@@ -1,0 +1,475 @@
+#' Render data frame object to string
+#'
+#' This function renders a data.frame into a string similar to its representation
+#'  when printed without line numbers
+#'
+#' @param df The data.frame to be rendered
+#' @param indent A string that defines the left indentation of the rendered
+#'   output.
+#' @return The output as string
+#' @export
+df.to.string <- function(df, indent=""){
+  max.widths <- as.numeric(lapply(rbind(df, names(df)), FUN=function(x) max(sapply(as.character(x), nchar), na.rm=TRUE)))
+  line = df[1,]
+
+  render.line <- function(line){
+    out <- indent
+    for(i in 1:length(line)){
+      out <- paste0(out, sprintf(paste0("%-", max.widths[i]+3, "s"), as.character(line[i])))
+    }
+    return(out)
+  }
+
+  out <- render.line(data.frame(as.list(names(df))))
+  for(i in 1:nrow(df)){
+    out <- paste(out, render.line(df[i,]), sep="\n")
+  }
+  return(out)
+}
+
+
+has.time <- function(datetime) {
+  stringr::str_detect(datetime, "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}")
+}
+
+
+#' Recode SEX field in a data frame
+#'
+#' This function recodes the SEX field in a data frame. All numerical values are
+#'   kept while "M" is recoded to 0 and "F" to 1.
+#'   If your downstream analysis requires different coding, please manually
+#'   re-code.
+#'
+#' @param obj The data.frame containing a SEX field
+#' @return The output data frame
+#' @import dplyr
+recode_sex <- function(obj){
+  obj %>%
+    dplyr::mutate(SEX=as.numeric(dplyr::case_match(as.character(SEX), "M"~0, "F"~1,
+                                     "1"~1, "0"~0, .default=NA)))
+}
+
+
+#' Make administration data set from EX domain
+#'
+#' This function expands the administration ranges specified by EXSTDTC and
+#'  EXENDTC in each record of EX to that the result has individual records for
+#'  all administrations, with the time point in the TIME column.
+#'
+#' @section Specific imputations:
+#'  If the end date (EXENDTC) is missing, i.e., the administration is ongoing
+#'  At the timeof the data cutoff of the SDTM data set, EXENDTC is replaced by
+#'  cut.off.date (which needs to be supplied in the format used by SDTM)
+#'
+#' @param ex EX domain
+#' @param cut.off.date The cut-off date to be used where no EXENDTC is recorded,
+#'  in "%Y-%m-%dT%H:%M" format.
+#' @param analyte.mapping A data frame with the columns of EXTRT and PCTESTCD
+#'  that associate both.
+#' @param impute.missing.end.time A logic value to indicate whether in rows
+#'  in EX where EXENDTC does not include a time, the time should be copied from
+#'  EXSTDTC.
+#' @return A tibble with individual administrations
+#' @import lubridate
+#' @import dplyr
+#' @import tidyr
+make_admin <- function(ex,
+                       analyte_mapping,
+                       cut.off.date,
+                       impute.missing.end.time=TRUE){
+  cutoff <- lubridate::as_datetime(
+    cut.off.date,
+    format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%d %H:%M"))
+
+  ret <- ex
+
+  # impute EXENDTC if not present (i.e., use cut-off date when administration ongoing)
+  temp <- ret %>%
+    filter(EXENDTC=="")
+
+  if(temp %>% nrow > 0){
+    out <- temp %>%
+      dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
+      df.to.string()
+    message(paste0("In ", temp %>% nrow(),
+      " administrations, EX contained no EXENDTC. ",
+      "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
+  }
+
+  ret <- ret %>%
+    dplyr::mutate(EXENDTC=dplyr::case_when(
+      EXENDTC=="" ~ format(cutoff, "%Y-%m-%dT%H:%M"),
+      .default=EXENDTC)) %>%
+
+    # convert EXSTDTC to to datetime object, start date and start time
+    dplyr::mutate(start=lubridate::as_datetime(
+      EXSTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+    dplyr::mutate(start.date=format(start, format="%Y-%m-%d")) %>%
+    dplyr::mutate(start.time=case_when(
+      has.time(EXSTDTC) ~ format(start, format="%H:%M"),
+      .default=NA)) %>%
+
+    # filter for entries with start before cut-off
+    dplyr::filter(start <= cutoff) %>%
+
+    # convert EXENDTC to datetime object, end date and end time
+    dplyr::mutate(end=lubridate::as_datetime(
+      EXENDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+    dplyr::mutate(end.date=format(end, format="%Y-%m-%d")) %>%
+    dplyr::mutate(end.time=case_when(
+      has.time(EXENDTC) ~ format(end, format="%H:%M"),
+      .default=NA))
+
+  # for rows with recorded start.time but missing end.time, impute end.time to
+  #  be equal to start.time
+  if(impute.missing.end.time){
+    temp <- ret %>%
+      dplyr::filter(is.na(end.time) & !is.na(start.time))
+    if(temp %>% nrow() != 0){
+      temp <- temp %>%
+        dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
+        df.to.string()
+      message(paste("Administration end time was imputed to start time",
+                    "for the following entries:\n", temp))
+      ret <- ret %>%
+        dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
+          .default= end.time))
+    }
+  }
+
+  ret <- ret %>%
+    # expand dates from start date to end date, time is end.time for last row,
+    #  otherwise start.time
+    dplyr::group_by(STUDYID, USUBJID, EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC,
+      EXSTDY, EXENDY, start.time, end.time) %>%
+    tidyr::expand(date=seq(as.Date(start.date), as.Date(end.date), by="1 day")) %>%
+    dplyr::mutate(time=case_when(
+      row_number()==n() ~ end.time,
+      .default=start.time)) %>%
+    mutate(EXDY=EXSTDY+(row_number()-1)) %>%
+    ungroup() %>%
+
+    # set treatment, standard fields
+    dplyr::mutate(treatment=EXTRT) %>%
+    dplyr::mutate(DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
+    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0) #%>%
+
+    # apply analyte mapping, introducing the field PCTESTCD
+    if(nrow(analyte_mapping)>0) {
+      ret <- ret %>%
+        dplyr::left_join(analyte_mapping, by="EXTRT")
+    } else {
+      ret <- ret %>%
+        mutate(PCTESTCD=EXTRT)
+    }
+  return(ret %>% as.data.frame())
+}
+
+
+#' Make observation data set from PC
+#'
+#' .
+#'
+#' @param pc The SDTM PC domain as a data.frame.
+#' @param spec The specimem to be represented in the NIF data set as string
+#'  (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
+#'  (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
+#'  or "PLASMA" is selected, depending what is found in the PC data.
+#' @return A tibble with individual observations with certain NONMEM input variables set
+#' @import dplyr
+#' @import lubridate
+make_obs <- function(pc, spec=""){
+  pcspecs <- pc %>% dplyr::distinct(PCSPEC)
+  if(spec==""){
+    if(is.element("PLASMA", pcspecs$PCSPEC)) {spec = "PLASMA"}
+    else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
+    else{spec ="none"}
+  }
+
+  obs <- pc %>%
+    dplyr::filter(PCSPEC==spec)
+
+  if("PCSTAT" %in% colnames(obs)){
+    obs <- obs %>% dplyr::filter(PCSTAT!="NOT DONE")
+  }
+
+  obs <- obs %>%
+    # extract date and time of observation
+    dplyr::mutate(DTC=lubridate::as_datetime(PCDTC,
+      format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+    dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
+    dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
+      .default=NA)) %>%
+    dplyr::mutate(treatment=NA)
+
+    obs <- obs %>%
+    dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1))) %>%
+    dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN, LNDV=log(DV)) %>%
+    dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0))
+  return(obs)
+}
+
+
+#' Extract last observation time from observation tibble
+#'
+#' .
+#'
+#' @param obs tibble as created with make_obs
+#' @return A datetime object representing the last recorded observation time
+#' @import dplyr
+last_obs_time <- function(obs){
+  last <- obs %>%
+    dplyr::distinct(USUBJID, DTC) %>%
+    dplyr::group_by(USUBJID) %>%
+    dplyr::summarize(last=max(DTC, na.rm=TRUE)) %>%
+    dplyr::summarize(last=max(last))
+  return(format(last$last, "%Y-%m-%dT%H:%M"))
+}
+
+
+#' Impute missing administration times
+#'
+#' This function fills in administration times from the PCREFDTC field when
+#'  available, and carries forward last administration dates
+#'
+#' @param admin An admin data set as created by 'make_admin()'.
+#' @param obs An observation data set as created by 'make_obs()'.
+#' @return An admin data set.
+#' @seealso [make_admin(), make_obs()]
+#' @import tidyr
+#' @import dplyr
+impute.administration.time <- function(admin, obs){
+  temp <- obs %>%
+    dplyr::mutate(dtc=lubridate::as_datetime(PCDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+    dplyr::mutate(dtc.date=format(dtc, format="%Y-%m-%d")) %>%
+    dplyr::mutate(ref.dtc=lubridate::as_datetime(PCRFTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+    dplyr::mutate(ref.date=format(ref.dtc, format="%Y-%m-%d")) %>%
+    dplyr::mutate(ref.time=format(ref.dtc, format="%H:%M")) %>%
+    dplyr::filter(dtc.date == ref.date) %>%
+    dplyr::group_by(USUBJID, dtc.date, PCTESTCD) %>%
+    dplyr::distinct(ref.time)
+
+  ret <- admin %>%
+    dplyr::mutate(dtc.date=format(date, format="%Y-%m-%d")) %>%
+    dplyr::left_join(temp, by=c("USUBJID"="USUBJID", "dtc.date"="dtc.date", "EXTRT"="PCTESTCD")) %>%
+    # take PCREFDTC where time is not available from EX
+    dplyr::mutate(admin.time=case_when(!is.na(ref.time) ~ ref.time, .default=time)) %>%
+    dplyr::group_by(USUBJID, EXTRT) %>%
+    dplyr::arrange(date) %>%
+    # carry forward last administration time
+    tidyr::fill(admin.time, .direction="down") %>%
+    # carry back first administration time
+    tidyr::fill(admin.time, .direction="up") %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(DTC=case_when((is.na(admin.time) | is.na(date)) ~ NA,
+      .default=lubridate::as_datetime(paste(date, admin.time),
+                                      format="%Y-%m-%d %H:%M"))) %>%
+    dplyr::select(-admin.time, -ref.time)
+  return(ret)
+}
+
+
+#' Make raw NIF data set from list of SDTM domains
+#'
+#' @description This function makes a basic NONMEM input file (NIF) data set, following the
+#'   conventions summarized in
+#'   [Bauer, CPT Pharmacometrics Syst. Pharmacol.
+#'   (2019)](https://doi.org/10.1002/psp4.12404).
+#'
+#'   For SDTM data sets in which the administered drugs (EXTRT in domain EX) and
+#'   the corresponding analyte (PCTESTCD in domain PC) have different names,
+#'   treatment-to-analyte mappings must be added to the sdtm object using
+#'   [add_mapping()].
+#'
+#' @section Imputations:
+#'   'make_nif()' uses a cut-off time that is equal to the last observation
+#'   time. All later administrations will not be in the data set.
+#'
+#'   Subjects-administration pairs that have no observations for the respective
+#'   analyte will be deleted from the data set.
+#'
+#' @section Output fields:
+#'   * `ID` Subject identification number
+#'   * `TIME` Recorded time of administration or observation events in hours
+#'   relative to the first individual event.
+#'   * `AMT` Dose administered for dosing record, or zero for observations.
+#'   * `DOSE` Dose in mg for administrations and post-dose observations.
+#'   * `DV` The dependent variable, i.e., observed concentration, or zero for
+#'   administration records.
+#'   * `RATE` Rate of infusion of drug or zero if drug is given as a bolus.
+#'   * `MDV` One for missing DV, else zero.
+#'   * `EVID` Event ID: 0 for observations, 1 for administrations.
+#'   * `CMT` Compartment: Will be set to 1 for administrations and 2 for
+#'   observations. Should be changed afterwards, if needed.
+#'
+#'
+#' @param sdtm.data A list of SDTM domains as data tables, e.g., as loaded using
+#'   read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.
+#' @param spec The specimem to be represented in the NIF data set as string
+#'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
+#'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
+#'   or "PLASMA" is selected, depending what is found in the PC data.
+#' @param impute.missing.end.time A logic value to indicate whether in rows
+#'   in EX where EXENDTC does not include a time, the time should be copied from
+#'   EXSTDTC.
+#' @return A NIF data set as nif object.
+#' @seealso [read_sdtm_sas()]
+#' @seealso [sdtm]
+#' @seealso [add_mapping()]
+#' @import tidyr
+#' @import dplyr
+#' @export
+make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
+  vs <- sdtm.data$vs
+  ex <- sdtm.data$ex
+  pc <- sdtm.data$pc
+  dm <- sdtm.data$dm
+
+  # Get baseline covariates on subject level from VS
+  bl.cov <- vs %>%
+    dplyr::filter(EPOCH=="SCREENING") %>%
+    dplyr::filter(VSTESTCD %in% c("HEIGHT", "WEIGHT")) %>%
+    dplyr::group_by(USUBJID, VSTESTCD) %>%
+    dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
+    tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
+
+  obs <- make_obs(pc, spec=spec)
+  cut.off.date <- last_obs_time(obs)
+  message(paste("Data cut-off was set to last observation time,", cut.off.date))
+
+  # subjects with observations by analyte
+  obs.sbs <- obs %>%
+    unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
+    distinct(USUBJID, PCTESTCD, ut)
+
+  admin <- make_admin(ex,
+                      analyte_mapping=sdtm.data$treatment.analyte.mappings,
+                      cut.off.date,
+                      impute.missing.end.time=impute.missing.end.time)
+
+  # Remove all administrations with PCTESTCD==NA
+  #  those rows may come from treatments that have not analyte mapping
+  admin <- admin %>% filter(!is.na(PCTESTCD))
+
+  # filter admin for subjects who actually have observations
+  no.obs.sbs <- admin %>%
+    unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
+    filter(!(ut %in% obs.sbs$ut)) %>%
+    distinct(USUBJID, PCTESTCD, ut) %>%
+    as.data.frame()
+
+  # Issue message about excluded administrations
+  if(nrow(no.obs.sbs)>0) {
+    out <- no.obs.sbs %>%
+      arrange(PCTESTCD, USUBJID) %>%
+      select(USUBJID, PCTESTCD) %>%
+      df.to.string()
+    message(paste0("The following subjects had no observations for ",
+      "the respective analyte and were removed from the data set:\n",
+      out))
+  }
+  # ...and filter out excluded administrations
+  admin <- admin %>%
+    unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
+    filter(ut %in% obs.sbs$ut) %>%
+    select(-ut)
+
+  admin <- impute.administration.time(admin, obs)
+
+  nif <- obs %>%
+    # join observations and administrations, then DM and baseline VS
+    dplyr::bind_rows(admin %>% filter(USUBJID %in% obs$USUBJID)) %>%
+    dplyr::left_join(dm, by=c("STUDYID", "USUBJID")) %>%
+    dplyr::left_join(bl.cov, by="USUBJID") %>%
+
+    # individual first event
+    dplyr::group_by(USUBJID) %>%
+    dplyr::mutate(first.event.dtc=min(DTC)) %>%
+    dplyr::ungroup() %>%
+
+    # fill missing fields
+    dplyr::arrange(USUBJID, DTC, -EVID) %>%
+    dplyr::group_by(USUBJID) %>%
+    tidyr::fill(DOSE) %>%
+    tidyr::fill(AGE, SEX, RACE, ETHNIC, ACTARMCD, HEIGHT, WEIGHT, COUNTRY, ARM,
+                SUBJID, .direction="down") %>%
+    dplyr::ungroup() %>%
+
+    dplyr::mutate(NTIME=PCTPTNUM) %>%
+    dplyr::mutate(RATE=0) %>%
+
+    # TIME is the difference in h to the first individual event time
+    dplyr::mutate(TIME=as.numeric(difftime(DTC, first.event.dtc, units="h"))) %>%
+    dplyr::mutate(ANALYTE=PCTESTCD) %>%
+
+    # recode SEX
+    recode_sex() %>%
+
+    # create ID column
+    dplyr::arrange(USUBJID, TIME, -EVID) %>%
+    dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
+    dplyr::relocate(ID) %>%
+    as.data.frame()
+  return(nif(nif))
+}
+
+
+
+#' This function finalizes a NIF data set by indexing the rows
+#'
+#' @param nif NIF dataset as created by make_raw_nif() and potentially modified for additional covariates
+#' @return A final NIF dataset including ID and REF fields
+#' @import dplyr
+#' @export
+index_nif <- function(nif) {
+  nif %>%
+    dplyr::arrange(USUBJID, TIME, -EVID) %>%
+    dplyr::mutate(REF=row_number()) %>%
+    dplyr::relocate(REF)
+}
+
+
+#' This function cleans up a NIF data set
+#'
+#' @param nif NIF dataset as created by make_raw_nif() and potentially modified for
+#'  additional covariates.
+#' @param ... Further optional parameters are fields to be included in the
+#'  output. If none are provided, the standard set will be used.
+#' @return A NIF dataset with only the specified fields
+#' @import dplyr
+#' @export
+compress_nif <- function(nif, ...) {
+  temp <- as.character(unlist(c(as.list(environment())[-1], list(...))))
+  if(length(temp)==0) {
+    columns <- standard_nif_fields
+  } else {
+    columns <- temp
+  }
+  nif %>%
+    dplyr::select(columns)
+}
+
+#' This function reduces a NIF data set on the subject level by excluding all administrations after
+#'  the last observation
+#'
+#' @param nif NIF dataset as created by make_raw_nif() and potentially modified for
+#'  additional covariates.
+#' @return A NIF dataset
+#' @import dplyr
+#' @export
+clip_nif <- function(nif){
+  last.obs <- nif %>%
+    filter(EVID==0) %>%
+    group_by(USUBJID) %>%
+    mutate(last.obs= max(TIME)) %>%
+    ungroup() %>%
+    distinct(USUBJID, last.obs)
+
+  ret <- nif %>%
+    left_join(last.obs, by="USUBJID") %>%
+    filter(TIME <= last.obs)
+  return(ret)
+}
+
+
+
