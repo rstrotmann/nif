@@ -25,10 +25,17 @@ print.nif <- function(obj){
     nrow()
   cat(paste(n.obs, "observations from",
             nrow(subjects(obj)), "subjects\n"))
-  n.sex <- obj %>% distinct(USUBJID, SEX) %>% group_by(SEX) %>%
-    summarize(n=n())
-  cat(paste0("Females: ", n.sex %>% filter(SEX==1) %>% pull(n), ", ",
-            "Males: ", n.sex %>% filter(SEX==0) %>% pull(n)), "\n\n")
+  n.sex <- obj %>%
+    dplyr::distinct(USUBJID, SEX) %>%
+    dplyr::group_by(SEX) %>%
+    dplyr::summarize(n=n())
+
+  cat(paste0("Females: ", n.sex %>%
+               dplyr::filter(SEX==1) %>%
+               dplyr::pull(n), ", ",
+            "Males: ", n.sex %>%
+              dplyr::filter(SEX==0) %>%
+              dplyr::pull(n)), "\n\n")
 
   cat(paste0("Studies:\n", paste(studies(obj), collapse="\n"), "\n\n"))
   cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
@@ -45,11 +52,16 @@ print.nif <- function(obj){
 #' @export
 subjects.nif <- function(obj) {
   obj %>%
-    distinct(USUBJID) %>%
-    pull(USUBJID)
+    dplyr::distinct(USUBJID) %>%
+    dplyr::pull(USUBJID)
 }
 
 
+#' Studies within a nif object
+#'
+#' @param obj A nif object
+#' @import dplyr
+#' @return A character vector of all STUDYIDs in the data set.
 #' @export
 subjects <- function(obj) {
   UseMethod("subjects")
@@ -64,8 +76,8 @@ subjects <- function(obj) {
 #' @export
 studies.nif <- function(obj) {
   obj %>%
-    distinct(STUDYID) %>%
-    pull(STUDYID)
+    dplyr::distinct(STUDYID) %>%
+    dplyr::pull(STUDYID)
 }
 
 #' @export
@@ -73,7 +85,11 @@ studies <- function(obj) {
   UseMethod("studies")
 }
 
-
+#' Doses within a nif object
+#'
+#' @param obj A nif object
+#' @import dplyr
+#' @return A number vector of all doses (AMT) in the data set.
 #' @export
 doses <- function(obj) {
   UseMethod("doses")
@@ -88,13 +104,17 @@ doses <- function(obj) {
 #' @export
 doses.nif <- function(obj){
   obj %>%
-    filter(AMT!=0) %>%
-    distinct(AMT) %>%
-    arrange(as.numeric(AMT)) %>%
-    pull(AMT)
+    dplyr::filter(AMT!=0) %>%
+    dplyr::distinct(AMT) %>%
+    dplyr::arrange(as.numeric(AMT)) %>%
+    dplyr::pull(AMT)
 }
 
-
+#' Export a nif object as csv file
+#'
+#' @param obj A nif object.
+#' @param filename The filename for the exported file.
+#' @import dplyr
 #' @export
 write_csv <- function(obj, filename) {
   UseMethod("write_csv")
@@ -108,7 +128,7 @@ write_csv <- function(obj, filename) {
 #' @export
 write_csv.nif <- function(obj, filename){
   temp <- obj %>%
-    mutate(across(c("TIME", "LNDV"), round, 3))
+    dplyr::mutate(across(c("TIME", "LNDV"), round, 3))
   write.csv(temp, filename, quote=F, row.names=F)
 }
 
@@ -122,9 +142,13 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
                          "ACTARMCD")
 
-
+#' Plot nif data set
+#'
+#' @param obj The nif object
+#' @param y_scale Type of y-axis scale. Can be 'log' or 'lin' (default).
+#' @return The plot object
 #' @export
-plot <- function(obj, y.scale="lin"){
+plot <- function(obj, y_scale="lin"){
   UseMethod("plot")
 }
 
@@ -143,9 +167,9 @@ plot_nif <- function(obj, y_scale="lin") {
     ggplot2::geom_line() +
     ggplot2::xlim(0, 25) +
     ggplot2::facet_wrap(~DOSE) +
-    theme_bw() +
-    theme(legend.position="bottom") +
-    labs(title="DV over time by dose")
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position="bottom") +
+    ggplot2::labs(title="DV over time by dose")
 
   if(y_scale=="log"){
     p <- p + scale_y_log10()
@@ -153,7 +177,3 @@ plot_nif <- function(obj, y_scale="lin") {
   return(p)
 }
 
-## to do
-#
-# add 'plot()'
-# add 'suggest()'

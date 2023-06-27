@@ -18,6 +18,3 @@ An admin data set.
 This function fills in administration times from the PCREFDTC field when
 available, and carries forward last administration dates
 }
-\seealso{
-\code{\link[=make_admin(), make_obs]{make_admin(), make_obs()}}
-}

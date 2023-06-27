@@ -16,7 +16,7 @@ nif_viewer <- function(nif) {
     dplyr::pull(USUBJID)
 
   max.dose <- nif %>%
-    pull(AMT) %>%
+    dplyr::pull(AMT) %>%
     max()
 
   nif_viewer.ui <- shiny::fluidPage(

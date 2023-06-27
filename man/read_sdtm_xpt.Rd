@@ -7,7 +7,9 @@
 read_sdtm_xpt(data.path, ...)
 }
 \arguments{
-\item{data.path}{Path to the required SDTM files in .xpt format. Further optional
+\item{data.path}{Path to the required SDTM files in .xpt format.}
+
+\item{...}{Further optional
 parameters may specify the individual SDTM domains to be loaded (lowercase,
 no file extensions). If no further parameters are given, the standard set of
 dm, ex, pc and vs are loaded.}

@@ -14,12 +14,18 @@ sdtm <- function(sdtm.data){
 
   temp <- list(
     study=dm[1,"STUDYID"],
-    subjects=pc %>% dplyr::distinct(USUBJID),
-    specimens=pc %>% dplyr::distinct(PCSPEC),
-    analytes=pc %>% dplyr::distinct(PCTEST, PCTESTCD),
-    treatments=ex %>% dplyr::distinct(EXTRT),
-    doses=ex %>% dplyr::distinct(EXDOSE),
-    arms=dm %>% dplyr::distinct(ACTARM, ACTARMCD),
+    subjects=pc %>%
+      dplyr::distinct(USUBJID),
+    specimens=pc %>%
+      dplyr::distinct(PCSPEC),
+    analytes=pc %>%
+      dplyr::distinct(PCTEST, PCTESTCD),
+    treatments=ex %>%
+      dplyr::distinct(EXTRT),
+    doses=ex %>%
+      dplyr::distinct(EXDOSE),
+    arms=dm %>%
+      dplyr::distinct(ACTARM, ACTARMCD),
     domains=domains,
     pc=pc,
     dm=dm,
@@ -33,6 +39,11 @@ sdtm <- function(sdtm.data){
 }
 
 
+#' Add a treatment-analyte mapping to an sdtm object
+#'
+#' @param obj A sdtm object
+#' @param extrt The treatment from EX
+#' @param pctestcd The analyte from PC
 #' @export
 add_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
   obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
@@ -40,13 +51,14 @@ add_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
   return(obj)
 }
 
+
 #' Add a treatment-analyte mapping to an sdtm object
 #'
 #' @param obj A sdtm object
-#' @param EXTRT The treatment from EX
-#' @param PCTESTCD The analyte from PC
+#' @param extrt The treatment from EX
+#' @param pctestcd The analyte from PC
 #' @export
-add_mapping <- function(obj, EXTRT="", PCTESTCD="") {
+add_mapping <- function(obj, extrt="", pctestcd="") {
   UseMethod("add_mapping")
 }
 
@@ -62,7 +74,6 @@ print.sdtm <- function(obj){
 
   cat("\n\nArms:\n")
   print(obj$arms, right=FALSE, justify=FALSE)
-  #cat(df.to.string(obj$arms))
 
   cat("\nTreatments:\n")
   print(obj$treatments, right=FALSE)
@@ -88,18 +99,32 @@ print.sdtm <- function(obj){
 }
 
 
-subject_info <- function(object, id="") {
-  UseMethod("subject_info")
-}
-
-domain <- function(object, dom="") {
+#' Get a specific domain from the sdtm object
+#'
+#' @param obj The sdtm object.
+#' @param dom The code of the domain to be returned.
+#' @return The specified domain as data.frame
+#' @export
+domain <- function(obj, dom="") {
   UseMethod("domain")
 }
 
+
+#' Get a specific domain from the sdtm object
+#'
+#' @param obj The sdtm object.
+#' @param dom The code of the domain to be returned.
+#' @return The specified domain as data.frame
+#' @export
 domain.sdtm <- function(obj, dom="dm") {
   obj$domains[[dom]]
 }
 
+
+#' Get the study names from an sdtm object
+#'
+#' @param obj The sdtm object.
+#' @export
 #' @export
 studies <- function(obj) {
   UseMethod(("studies"))
@@ -117,6 +142,10 @@ studies.sdtm <- function(obj) {
     as.character()
 }
 
+
+#' Get the USUBJID from an sdtm object
+#'
+#' @param obj The sdtm object.
 #' @export
 subjects <- function(obj) {
   UseMethod(("subjects"))
@@ -132,6 +161,17 @@ subjects.sdtm <- function(obj) {
     dplyr::pull(USUBJID) %>%
     as.character()
 }
+
+
+#' subject demographic information
+#'
+#' @param obj, a sdtm class object
+#' @param id the USUBJID
+#' @export
+subject_info <- function(object, id="") {
+  UseMethod("subject_info")
+}
+
 
 #' subject demographic information
 #'
@@ -150,9 +190,10 @@ subject_info <- function(obj, id="") {
   print(temp, quote = FALSE, col.names=FALSE)
 }
 
+
 pctptnum.matches.pceltm <- function(pc){
   temp <- pc %>%
-    mutate(x=stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)) %>%
+    dplyr::mutate(x=stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)) %>%
     dplyr::filter(!is.na(x)) %>%
     dplyr::mutate(test=(x==PCTPTNUM))
   all(temp$test)

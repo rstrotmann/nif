@@ -9,15 +9,15 @@ make_admin(ex, analyte_mapping, cut.off.date, impute.missing.end.time = TRUE)
 \arguments{
 \item{ex}{EX domain}
 
+\item{analyte_mapping}{A data frame with the columns of EXTRT and PCTESTCD
+that associate both.}
+
 \item{cut.off.date}{The cut-off date to be used where no EXENDTC is recorded,
 in "\%Y-\%m-\%dT\%H:\%M" format.}
 
 \item{impute.missing.end.time}{A logic value to indicate whether in rows
 in EX where EXENDTC does not include a time, the time should be copied from
 EXSTDTC.}
-
-\item{analyte.mapping}{A data frame with the columns of EXTRT and PCTESTCD
-that associate both.}
 }
 \value{
 A tibble with individual administrations

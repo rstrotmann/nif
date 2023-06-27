@@ -64,7 +64,7 @@ recode_sex <- function(obj){
 #' @param ex EX domain
 #' @param cut.off.date The cut-off date to be used where no EXENDTC is recorded,
 #'  in "%Y-%m-%dT%H:%M" format.
-#' @param analyte.mapping A data frame with the columns of EXTRT and PCTESTCD
+#' @param analyte_mapping A data frame with the columns of EXTRT and PCTESTCD
 #'  that associate both.
 #' @param impute.missing.end.time A logic value to indicate whether in rows
 #'  in EX where EXENDTC does not include a time, the time should be copied from
@@ -85,7 +85,7 @@ make_admin <- function(ex,
 
   # impute EXENDTC if not present (i.e., use cut-off date when administration ongoing)
   temp <- ret %>%
-    filter(EXENDTC=="")
+    dplyr::filter(EXENDTC=="")
 
   if(temp %>% nrow > 0){
     out <- temp %>%
@@ -146,8 +146,8 @@ make_admin <- function(ex,
     dplyr::mutate(time=case_when(
       row_number()==n() ~ end.time,
       .default=start.time)) %>%
-    mutate(EXDY=EXSTDY+(row_number()-1)) %>%
-    ungroup() %>%
+    dplyr::mutate(EXDY=EXSTDY+(row_number()-1)) %>%
+    dplyr::ungroup() %>%
 
     # set treatment, standard fields
     dplyr::mutate(treatment=EXTRT) %>%
@@ -160,7 +160,7 @@ make_admin <- function(ex,
         dplyr::left_join(analyte_mapping, by="EXTRT")
     } else {
       ret <- ret %>%
-        mutate(PCTESTCD=EXTRT)
+        dplyr::mutate(PCTESTCD=EXTRT)
     }
   return(ret %>% as.data.frame())
 }
@@ -179,7 +179,8 @@ make_admin <- function(ex,
 #' @import dplyr
 #' @import lubridate
 make_obs <- function(pc, spec=""){
-  pcspecs <- pc %>% dplyr::distinct(PCSPEC)
+  pcspecs <- pc %>%
+    dplyr::distinct(PCSPEC)
   if(spec==""){
     if(is.element("PLASMA", pcspecs$PCSPEC)) {spec = "PLASMA"}
     else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
@@ -190,7 +191,8 @@ make_obs <- function(pc, spec=""){
     dplyr::filter(PCSPEC==spec)
 
   if("PCSTAT" %in% colnames(obs)){
-    obs <- obs %>% dplyr::filter(PCSTAT!="NOT DONE")
+    obs <- obs %>%
+      dplyr::filter(PCSTAT!="NOT DONE")
   }
 
   obs <- obs %>%
@@ -235,7 +237,6 @@ last_obs_time <- function(obs){
 #' @param admin An admin data set as created by 'make_admin()'.
 #' @param obs An observation data set as created by 'make_obs()'.
 #' @return An admin data set.
-#' @seealso [make_admin(), make_obs()]
 #' @import tidyr
 #' @import dplyr
 impute.administration.time <- function(admin, obs){
@@ -339,8 +340,8 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
 
   # subjects with observations by analyte
   obs.sbs <- obs %>%
-    unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
-    distinct(USUBJID, PCTESTCD, ut)
+    tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
+    dplyr::distinct(USUBJID, PCTESTCD, ut)
 
   admin <- make_admin(ex,
                       analyte_mapping=sdtm.data$treatment.analyte.mappings,
@@ -349,20 +350,21 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
 
   # Remove all administrations with PCTESTCD==NA
   #  those rows may come from treatments that have not analyte mapping
-  admin <- admin %>% filter(!is.na(PCTESTCD))
+  admin <- admin %>%
+    filter(!is.na(PCTESTCD))
 
   # filter admin for subjects who actually have observations
   no.obs.sbs <- admin %>%
-    unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
-    filter(!(ut %in% obs.sbs$ut)) %>%
-    distinct(USUBJID, PCTESTCD, ut) %>%
+    tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
+    dplyr::filter(!(ut %in% obs.sbs$ut)) %>%
+    dplyr::distinct(USUBJID, PCTESTCD, ut) %>%
     as.data.frame()
 
   # Issue message about excluded administrations
   if(nrow(no.obs.sbs)>0) {
     out <- no.obs.sbs %>%
-      arrange(PCTESTCD, USUBJID) %>%
-      select(USUBJID, PCTESTCD) %>%
+      dplyr::arrange(PCTESTCD, USUBJID) %>%
+      dplyr::select(USUBJID, PCTESTCD) %>%
       df.to.string()
     message(paste0("The following subjects had no observations for ",
       "the respective analyte and were removed from the data set:\n",
@@ -370,15 +372,16 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
   }
   # ...and filter out excluded administrations
   admin <- admin %>%
-    unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
-    filter(ut %in% obs.sbs$ut) %>%
-    select(-ut)
+    tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
+    dplyr::filter(ut %in% obs.sbs$ut) %>%
+    dplyr::select(-ut)
 
   admin <- impute.administration.time(admin, obs)
 
   nif <- obs %>%
     # join observations and administrations, then DM and baseline VS
-    dplyr::bind_rows(admin %>% filter(USUBJID %in% obs$USUBJID)) %>%
+    dplyr::bind_rows(admin %>%
+                       dplyr::filter(USUBJID %in% obs$USUBJID)) %>%
     dplyr::left_join(dm, by=c("STUDYID", "USUBJID")) %>%
     dplyr::left_join(bl.cov, by="USUBJID") %>%
 
@@ -459,15 +462,15 @@ compress_nif <- function(nif, ...) {
 #' @export
 clip_nif <- function(nif){
   last.obs <- nif %>%
-    filter(EVID==0) %>%
-    group_by(USUBJID) %>%
-    mutate(last.obs= max(TIME)) %>%
-    ungroup() %>%
-    distinct(USUBJID, last.obs)
+    dplyr::filter(EVID==0) %>%
+    dplyr::group_by(USUBJID) %>%
+    dplyr::mutate(last.obs= max(TIME)) %>%
+    dplyr::ungroup() %>%
+    dplyr::distinct(USUBJID, last.obs)
 
   ret <- nif %>%
-    left_join(last.obs, by="USUBJID") %>%
-    filter(TIME <= last.obs)
+    dplyr::left_join(last.obs, by="USUBJID") %>%
+    dplyr::filter(TIME <= last.obs)
   return(ret)
 }
 

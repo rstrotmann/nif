@@ -5,6 +5,8 @@
 \title{subject demographic information}
 \usage{
 subject_info(obj, id = "")
+
+subject_info(obj, id = "")
 }
 \arguments{
 \item{obj, }{a sdtm class object}
@@ -12,5 +14,7 @@ subject_info(obj, id = "")
 \item{id}{the USUBJID}
 }
 \description{
+subject demographic information
+
 subject demographic information
 }

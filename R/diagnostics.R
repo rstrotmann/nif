@@ -42,7 +42,7 @@ nif_plot_id <- function(nif, id, y.scale="lin", max.time=NA){
       caption="vertical lines indicate administrations",
       color="analyte") +
     ggplot2::theme_bw() +
-    theme(legend.position="bottom")
+    ggplot2::theme(legend.position="bottom")
 
   if(y.scale=="log") {
     p <- p + scale_y_log10()
@@ -91,8 +91,8 @@ dose_plot_id <- function(nif, id, y.scale="lin", max.dose=100, max.time=NA){
     ggplot2::ylim(0, max.dose) +
     ggplot2::xlim(0, max.time) +
     ggplot2::labs(title=paste0(plot.label, ": ", id), color="treatment") +
-    theme_bw() +
-    theme(legend.position="bottom")
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position="bottom")
 
   if(y.scale=="log") {
     p <- p + scale_y_log10()
@@ -100,9 +100,6 @@ dose_plot_id <- function(nif, id, y.scale="lin", max.dose=100, max.time=NA){
   return(p)
 }
 
-
-## to do
-# ex_info: missing start, end times, other problems...
 
 
 
