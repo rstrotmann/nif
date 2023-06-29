@@ -24,9 +24,8 @@ print.nif <- function(obj){
     filter(EVID==0) %>%
     nrow()
   cat(paste(n.obs, "observations from",
-            length(subjects(obj)), "subjects\n"))
+            nrow(subjects(obj)), "subjects\n"))
   n.sex <- obj %>%
-    as.data.frame() %>%
     dplyr::distinct(USUBJID, SEX) %>%
     dplyr::group_by(SEX) %>%
     dplyr::summarize(n=n())
