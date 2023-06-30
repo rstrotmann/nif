@@ -158,14 +158,14 @@ plot <- function(obj, y_scale="lin"){
 #' @param y_scale Type of y-axis scale. Can be 'log' or 'lin' (default).
 #' @return The plot object
 #' @export
-plot_nif <- function(obj, y_scale="lin") {
+plot.nif <- function(obj, y_scale="lin") {
   p <- obj %>%
     filter(!is.na(DOSE)) %>%
     ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
       group=interaction(USUBJID, ANALYTE),
       color=ANALYTE)) +
     ggplot2::geom_line() +
-    ggplot2::xlim(0, 25) +
+    #ggplot2::xlim(0, 25) +
     ggplot2::facet_wrap(~DOSE) +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position="bottom") +
@@ -176,4 +176,3 @@ plot_nif <- function(obj, y_scale="lin") {
   }
   return(p)
 }
-

@@ -471,8 +471,44 @@ clip_nif <- function(nif){
   ret <- nif %>%
     dplyr::left_join(last.obs, by="USUBJID") %>%
     dplyr::filter(TIME <= last.obs)
-  return(ret)
+  return(nif(ret))
 }
 
 
+#' Add baseline covariates to a NIF data set
+#'
+#' Lab parameters not found in LB will be reported in a warning message.
+#'
+#' @param nif NIF dataset.
+#' @param lb SDTM LB domain as data frame.
+#' @param lbspec The specimen, usually "BLOOD" or "URINE".
+#' @param ... Lab parameters as encoded by LBTESTCD, as strings.
+#' @return A NIF dataset
+#' @import dplyr
+#' @import tidyr
+#' @export
+add_bl_lab <- function(nif, lb, lbspec, ...){
+  lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
+  temp <- lbtestcd %in% (lb %>%
+                           dplyr::distinct(LBTESTCD) %>%
+                           dplyr::pull(LBTESTCD))
+  if(!all(temp)) {
+    message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+    lbtestcd <- lbtestcd[temp]
+    if(length(lbtestcd)==0){
+      return(nif)
+    }
+  }
+  temp <- lb %>%
+    dplyr::filter(LBSPEC=="BLOOD") %>%
+    dplyr::filter(LBBLFL == "Y") %>%
+    dplyr::filter(LBTESTCD %in% lbtestcd) %>%
+    dplyr::select(USUBJID, LBTESTCD, LBSTRESN) %>%
+    tidyr::pivot_wider(names_from=LBTESTCD, values_from="LBSTRESN") %>%
+    dplyr::rename_with(~str_c("BL_", .), .cols=-1)
+  nif %>%
+    as.data.frame() %>%
+    dplyr::left_join(temp, by="USUBJID") %>%
+    nif()
+}
 
