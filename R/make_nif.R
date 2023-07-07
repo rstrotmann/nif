@@ -179,18 +179,26 @@ make_admin <- function(ex,
 #' @import dplyr
 #' @import lubridate
 make_obs <- function(pc, spec=""){
+  # Filter for sepcimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC)
   if(spec==""){
     if(is.element("PLASMA", pcspecs$PCSPEC)) {spec = "PLASMA"}
     else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
     else{spec ="none"}
+    message(paste("No specimem specified. Set to", spec, "as the most likely."))
   }
-
   obs <- pc %>%
     dplyr::filter(PCSPEC==spec)
 
+  # filter for PC data marked as 'not done'
   if("PCSTAT" %in% colnames(obs)){
+    nd <- obs %>%
+      dplyr::filter(PCSTAT=="NOT DONE") %>%
+      nrow()
+    if(nd>0){
+      message(paste(nd, "samples marked as 'not done' and removed from the data set."))
+    }
     obs <- obs %>%
       dplyr::filter(PCSTAT!="NOT DONE")
   }
@@ -398,7 +406,6 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
                 SUBJID, .direction="down") %>%
     dplyr::ungroup() %>%
 
-    dplyr::mutate(NTIME=PCTPTNUM) %>%
     dplyr::mutate(RATE=0) %>%
 
     # TIME is the difference in h to the first individual event time
