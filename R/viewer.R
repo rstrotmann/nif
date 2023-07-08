@@ -46,7 +46,11 @@ nif_viewer <- function(nif) {
     ),
     hr(),
     shiny::plotOutput("plot.pc"),
-    shiny::plotOutput("plot.dose")
+    shiny::plotOutput("plot.dose"),
+    tags$style(type="text/css",
+      ".shiny-output-error { visibility: hidden; }",
+      ".shiny-output-error:before { visibility: hidden; }"
+    )
   )
 
 

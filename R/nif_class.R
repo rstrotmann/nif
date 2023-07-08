@@ -25,26 +25,31 @@ print.nif <- function(obj){
     nrow()
   cat(paste(n.obs, "observations from",
             length(subjects(obj)), "subjects\n"))
+
   n.sex <- obj %>%
     dplyr::distinct(USUBJID, SEX) %>%
     dplyr::group_by(SEX) %>%
     dplyr::summarize(n=n())
 
-  cat(paste0("Females: ", n.sex %>%
-               dplyr::filter(SEX==1) %>%
-               dplyr::pull(n), ", ",
-            "Males: ", n.sex %>%
-              dplyr::filter(SEX==0) %>%
-              dplyr::pull(n)), "\n\n")
+  n_males <- n.sex %>%
+    dplyr::filter(SEX==0) %>%
+    dplyr::pull(n)
+  if(length(n_males)==0) {n_males=0}
+
+  n_females <- n.sex %>%
+    dplyr::filter(SEX==1) %>%
+    dplyr::pull(n)
+  if(length(n_females)==0) {n_females=0}
+
+  cat(paste0("Males: ", n_males, ", females: ", n_females, " (",
+             round(n_females/(n_males + n_females)*100, 1), "%)\n\n"))
 
   cat(paste0("Studies:\n", paste(studies(obj), collapse="\n"), "\n\n"))
   cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
   cat("Columns:\n")
   cat(paste(names(obj), collapse=", "), "\n")
   temp <- obj %>%
-    # as.data.frame() %>%
     dplyr::select(REF, ID, NTIME, TIME, ANALYTE, EVID, AMT, DOSE, DV) %>%
-    # head() %>%
     df.to.string(n=15)
   cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
 }
@@ -101,7 +106,6 @@ doses <- function(obj) {
   UseMethod("doses")
 }
 
-
 #' Doses within a nif object
 #'
 #' @param obj A nif object
@@ -114,6 +118,30 @@ doses.nif <- function(obj){
     dplyr::distinct(AMT) %>%
     dplyr::arrange(as.numeric(AMT)) %>%
     dplyr::pull(AMT)
+}
+
+#' Analytes within a nif object
+#'
+#' @param obj A nif object
+#' @import dplyr
+#' @return A character vector of all analytes in the data set.
+#' @export
+analytes <- function(obj) {
+  UseMethod("analytes")
+}
+
+#' Analytes within a nif object
+#'
+#' @param obj A nif object
+#' @import dplyr
+#' @return A character vector of all analytes in the data set.
+#' @export
+analytes.nif <- function(obj){
+  obj %>%
+    # dplyr::filter(AMT!=0) %>%
+    dplyr::distinct(ANALYTE) %>%
+    # dplyr::arrange(as.numeric(AMT)) %>%
+    dplyr::pull(ANALYTE)
 }
 
 #' Export a nif object as csv file
