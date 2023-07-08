@@ -8,7 +8,6 @@
 #' @import shiny
 #' @import dplyr
 #' @importFrom shinyjs useShinyjs enable disable
-#' @seealso
 #' @seealso [plot()]
 #' @export
 nif_viewer <- function(nif) {

@@ -10,7 +10,10 @@
   max_x = NULL,
   analyte = NULL,
   mean = FALSE,
-  doses = NULL
+  doses = NULL,
+  points = F,
+  id = NULL,
+  usubjid = NULL
 )
 }
 \description{

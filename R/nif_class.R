@@ -191,16 +191,26 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @export
-plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL,
-                 mean=FALSE, doses=NULL){
+plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
+                 doses=NULL, points=F, id=NULL, usubjid=NULL){
   UseMethod("plot")
 }
 
 #' Plot nif data set
 #'
 #' @export
-plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL,
-                     mean=FALSE, doses=NULL) {
+plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
+                     doses=NULL, points=F, id=NULL, usubjid=NULL) {
+  if(!is.null(id)) {
+    obj <- obj %>%
+      dplyr::filter(ID %in% id)
+  }
+
+  if(!is.null(usubjid)) {
+    obj <- obj %>%
+      dplyr::filter(USUBJID %in% usubjid)
+  }
+
   if(!is.null(analyte)) {
     obj <- obj %>%
       dplyr::filter(ANALYTE==analyte)
@@ -208,7 +218,7 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL,
 
   if(!is.null(doses)){
     obj <- obj %>%
-      filter(DOSE %in% doses)
+      dplyr::filter(DOSE %in% doses)
   }
 
   if(mean==TRUE){
@@ -224,7 +234,6 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL,
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position="bottom") +
       ggplot2::labs(title="DV over time by dose")
-
   } else {
     p <- obj %>%
       dplyr::filter(!is.na(DOSE)) %>%
@@ -237,12 +246,17 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL,
       ggplot2::theme(legend.position="bottom") +
       ggplot2::labs(title="DV over time by dose")
   }
+
   if(!is.null(max_x)) {
-    p <- p + xlim(0, max_x)
+    p <- p + ggplot2::xlim(0, max_x)
   }
 
   if(y_scale=="log"){
-    p <- p + scale_y_log10()
+    p <- p + ggplot2::scale_y_log10()
+  }
+
+  if(points){
+    p <- p + ggplot2::geom_point()
   }
   return(p)
 }
