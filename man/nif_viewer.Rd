@@ -7,7 +7,7 @@
 nif_viewer(nif)
 }
 \arguments{
-\item{nif}{The NIF data set as created by \code{\link[=make_nif]{make_nif()}}.}
+\item{nif}{The NIF data set.}
 }
 \value{
 None
@@ -16,5 +16,5 @@ None
 This function creates an interactive viewer for NIF data sets.
 }
 \seealso{
-\code{\link[=make_nif]{make_nif()}}
+\code{\link[=plot]{plot()}}
 }

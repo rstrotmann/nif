@@ -176,34 +176,70 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
                          "ACTARMCD")
 
-#' Plot nif data set
+#' Plot NIF data set by dose and analyte
 #'
-#' @param obj The nif object
-#' @param y_scale Type of y-axis scale. Can be 'log' or 'lin' (default).
+#' @param obj The NIF object to be plotted.
+#' @param y_scale Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".
+#' @param max_x Maximal x (time) scale value.
+#' @param analyte The analyte to be plotted If this argument is not supplied
+#'   (or set to NULL), all analytes are shown.
+#' @param mean Boolean value to indicate whether the mean value by dose and
+#'   analyte is to be plotted. In that case, the nominal time (NTIME) is shown
+#'   on the x axis.
+#' @param doses The doses to be plotted. Can be a scalar value or a numeric
+#'   vector or NULL to plot all doses.
 #' @return The plot object
+#' @seealso [nif_viewer()]
 #' @export
-plot <- function(obj, y_scale="lin"){
+plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL,
+                 mean=FALSE, doses=NULL){
   UseMethod("plot")
 }
 
 #' Plot nif data set
 #'
-#' @param obj The nif object
-#' @param y_scale Type of y-axis scale. Can be 'log' or 'lin' (default).
-#' @return The plot object
 #' @export
-plot.nif <- function(obj, y_scale="lin") {
-  p <- obj %>%
-    filter(!is.na(DOSE)) %>%
-    ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
-      group=interaction(USUBJID, ANALYTE),
-      color=ANALYTE)) +
-    ggplot2::geom_line() +
-    #ggplot2::xlim(0, 25) +
-    ggplot2::facet_wrap(~DOSE) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(legend.position="bottom") +
-    ggplot2::labs(title="DV over time by dose")
+plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL,
+                     mean=FALSE, doses=NULL) {
+  if(!is.null(analyte)) {
+    obj <- obj %>%
+      dplyr::filter(ANALYTE==analyte)
+  }
+
+  if(!is.null(doses)){
+    obj <- obj %>%
+      filter(DOSE %in% doses)
+  }
+
+  if(mean==TRUE){
+    p <- obj %>%
+      dplyr::filter(!is.na(DOSE)) %>%
+      dplyr::group_by(NTIME, ANALYTE, DOSE) %>%
+      dplyr::summarize(mean=mean(DV, na.rm=TRUE), sd=sd(DV, na.rm=TRUE), n=n()) %>%
+      ggplot2::ggplot(ggplot2::aes(x=NTIME, y=mean, group=ANALYTE, color=ANALYTE)) +
+      ggplot2::geom_ribbon(aes(ymin=mean-sd, ymax=mean+sd, fill=ANALYTE),
+                           alpha=0.3, color=NA) +
+      ggplot2::geom_line() +
+      ggplot2::facet_wrap(~DOSE) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position="bottom") +
+      ggplot2::labs(title="DV over time by dose")
+
+  } else {
+    p <- obj %>%
+      dplyr::filter(!is.na(DOSE)) %>%
+      ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
+        group=interaction(USUBJID, ANALYTE),
+        color=ANALYTE)) +
+      ggplot2::geom_line() +
+      ggplot2::facet_wrap(~DOSE) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position="bottom") +
+      ggplot2::labs(title="DV over time by dose")
+  }
+  if(!is.null(max_x)) {
+    p <- p + xlim(0, max_x)
+  }
 
   if(y_scale=="log"){
     p <- p + scale_y_log10()

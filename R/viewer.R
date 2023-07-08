@@ -3,12 +3,13 @@
 #'
 #' This function creates an interactive viewer for NIF data sets.
 #'
-#' @param nif The NIF data set as created by [make_nif()].
+#' @param nif The NIF data set.
 #' @return None
 #' @import shiny
 #' @import dplyr
 #' @importFrom shinyjs useShinyjs enable disable
-#' @seealso [make_nif()]
+#' @seealso
+#' @seealso [plot()]
 #' @export
 nif_viewer <- function(nif) {
   sbs <- nif %>%

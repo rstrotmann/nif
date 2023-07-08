@@ -4,15 +4,14 @@
 \alias{plot.nif}
 \title{Plot nif data set}
 \usage{
-\method{plot}{nif}(obj, y_scale = "lin")
-}
-\arguments{
-\item{obj}{The nif object}
-
-\item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin' (default).}
-}
-\value{
-The plot object
+\method{plot}{nif}(
+  obj,
+  y_scale = "lin",
+  max_x = NULL,
+  analyte = NULL,
+  mean = FALSE,
+  doses = NULL
+)
 }
 \description{
 Plot nif data set

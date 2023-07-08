@@ -2,18 +2,40 @@
 % Please edit documentation in R/nif_class.R
 \name{plot}
 \alias{plot}
-\title{Plot nif data set}
+\title{Plot NIF data set by dose and analyte}
 \usage{
-plot(obj, y_scale = "lin")
+plot(
+  obj,
+  y_scale = "lin",
+  max_x = NULL,
+  analyte = NULL,
+  mean = FALSE,
+  doses = NULL
+)
 }
 \arguments{
-\item{obj}{The nif object}
+\item{obj}{The NIF object to be plotted.}
 
-\item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin' (default).}
+\item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
+
+\item{max_x}{Maximal x (time) scale value.}
+
+\item{analyte}{The analyte to be plotted If this argument is not supplied
+(or set to NULL), all analytes are shown.}
+
+\item{mean}{Boolean value to indicate whether the mean value by dose and
+analyte is to be plotted. In that case, the nominal time (NTIME) is shown
+on the x axis.}
+
+\item{doses}{The doses to be plotted. Can be a scalar value or a numeric
+vector or NULL to plot all doses.}
 }
 \value{
 The plot object
 }
 \description{
-Plot nif data set
+Plot NIF data set by dose and analyte
+}
+\seealso{
+\code{\link[=nif_viewer]{nif_viewer()}}
 }
