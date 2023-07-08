@@ -8,7 +8,8 @@
 #'   output.
 #' @return The output as string
 #' @export
-df.to.string <- function(df, indent=""){
+df.to.string <- function(df, indent="", n=NULL){
+  df <- as.data.frame(df)
   max.widths <- as.numeric(lapply(rbind(df, names(df)), FUN=function(x) max(sapply(as.character(x), nchar), na.rm=TRUE)))
   line = df[1,]
 
@@ -21,6 +22,9 @@ df.to.string <- function(df, indent=""){
   }
 
   out <- render.line(data.frame(as.list(names(df))))
+  if(!is.null(n)){
+    df <- head(df, n=n)
+  }
   for(i in 1:nrow(df)){
     out <- paste(out, render.line(df[i,]), sep="\n")
   }
@@ -168,18 +172,19 @@ make_admin <- function(ex,
 
 #' Make observation data set from PC
 #'
-#' .
+#' Note that the DV is converted into mg/l assuming that PCSTRESN is provided
+#'   in mg/ml
 #'
 #' @param pc The SDTM PC domain as a data.frame.
 #' @param spec The specimem to be represented in the NIF data set as string
-#'  (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
-#'  (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
-#'  or "PLASMA" is selected, depending what is found in the PC data.
+#'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
+#'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
+#'   or "PLASMA" is selected, depending what is found in the PC data.
 #' @return A tibble with individual observations with certain NONMEM input variables set
 #' @import dplyr
 #' @import lubridate
 make_obs <- function(pc, spec=""){
-  # Filter for sepcimen, guess specimen if none defined
+  # Filter for sepecimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC)
   if(spec==""){
@@ -214,7 +219,7 @@ make_obs <- function(pc, spec=""){
 
     obs <- obs %>%
     dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1))) %>%
-    dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN, LNDV=log(DV)) %>%
+    dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
     dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0))
   return(obs)
 }

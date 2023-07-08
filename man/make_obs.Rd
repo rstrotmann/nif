@@ -18,5 +18,6 @@ or "PLASMA" is selected, depending what is found in the PC data.}
 A tibble with individual observations with certain NONMEM input variables set
 }
 \description{
-.
+Note that the DV is converted into mg/l assuming that PCSTRESN is provided
+in mg/ml
 }

@@ -39,8 +39,14 @@ print.nif <- function(obj){
 
   cat(paste0("Studies:\n", paste(studies(obj), collapse="\n"), "\n\n"))
   cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
-  cat("Fields:\n")
+  cat("Columns:\n")
   cat(paste(names(obj), collapse=", "), "\n")
+  temp <- obj %>%
+    # as.data.frame() %>%
+    dplyr::select(REF, ID, NTIME, TIME, ANALYTE, EVID, AMT, DOSE, DV) %>%
+    # head() %>%
+    df.to.string(n=15)
+  cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
 }
 
 
@@ -176,3 +182,4 @@ plot.nif <- function(obj, y_scale="lin") {
   }
   return(p)
 }
+
