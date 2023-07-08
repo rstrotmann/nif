@@ -2,19 +2,15 @@
 % Please edit documentation in R/sdtm_class.R
 \name{subject_info}
 \alias{subject_info}
-\title{subject demographic information}
+\title{Subject demographic information}
 \usage{
-subject_info(obj, id = "")
-
 subject_info(obj, id = "")
 }
 \arguments{
-\item{obj, }{a sdtm class object}
+\item{obj}{A SDTM object.}
 
-\item{id}{the USUBJID}
+\item{id}{The USUBJID}
 }
 \description{
-subject demographic information
-
-subject demographic information
+Subject demographic information
 }

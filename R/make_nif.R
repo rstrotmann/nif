@@ -461,7 +461,8 @@ compress_nif <- function(nif, ...) {
     columns <- temp
   }
   nif %>%
-    dplyr::select(columns)
+    dplyr::select(columns) %>%
+    nif()
 }
 
 #' This function reduces a NIF data set on the subject level by excluding all administrations after

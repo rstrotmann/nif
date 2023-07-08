@@ -9,7 +9,7 @@ subjects(obj)
 subjects(obj)
 }
 \arguments{
-\item{obj}{The sdtm object.}
+\item{obj}{The SDTM object.}
 }
 \value{
 A character vector of all STUDYIDs in the data set.

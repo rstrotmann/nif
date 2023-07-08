@@ -38,12 +38,25 @@ sdtm <- function(sdtm.data){
   temp
 }
 
-
-#' Add a treatment-analyte mapping to an sdtm object
+#' Attach a treatment-analyte mapping to an SDTM object
 #'
-#' @param obj A sdtm object
-#' @param extrt The treatment from EX
-#' @param pctestcd The analyte from PC
+#' In some studies, multiple drugs are co-administered, and there may be plasma
+#' concentration data from different parent drugs.
+#' In order to appropriately correlate observations with administrations, the
+#' [make_nif()] algorithm needs to know which analyte (PCTESTCD within PC) belongs
+#' to which drug (EXTRT within EX). If the respective names differ, add_mapping() can be
+#' used to attach this information to the SDTM object.
+#' Multiple mappings may be needed.
+#'
+#' @param obj A SDTM object.
+#' @param extrt The treatment as defined in EX.
+#' @param pctestcd The analyte as defined in PC.
+#' @seealso [make_nif()]
+#' @export
+add_mapping <- function(obj, extrt="", pctestcd="") {
+  UseMethod("add_mapping")
+}
+
 #' @export
 add_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
   obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
@@ -52,19 +65,9 @@ add_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
 }
 
 
-#' Add a treatment-analyte mapping to an sdtm object
-#'
-#' @param obj A sdtm object
-#' @param extrt The treatment from EX
-#' @param pctestcd The analyte from PC
-#' @export
-add_mapping <- function(obj, extrt="", pctestcd="") {
-  UseMethod("add_mapping")
-}
-
 #' print() implementation for SDTM
 #'
-#' @param obj, a sdtm class object
+#' @param obj A SDTM object.
 #' @export
 print.sdtm <- function(obj){
   cat(paste("Study", obj$study))
@@ -110,30 +113,21 @@ domain <- function(obj, dom="") {
 }
 
 
-#' Get a specific domain from the sdtm object
-#'
-#' @param obj The sdtm object.
-#' @param dom The code of the domain to be returned.
-#' @return The specified domain as data.frame
 #' @export
 domain.sdtm <- function(obj, dom="dm") {
   obj$domains[[dom]]
 }
 
 
-#' Get the study names from an sdtm object
+#' Get the study names from an SDTM object
 #'
-#' @param obj The sdtm object.
+#' @param obj The SDTM object.
 #' @export
 #' @export
 studies <- function(obj) {
   UseMethod(("studies"))
 }
 
-
-#' Get the study names from an sdtm object
-#'
-#' @param obj The sdtm object.
 #' @export
 studies.sdtm <- function(obj) {
   obj$dm %>%
@@ -143,17 +137,14 @@ studies.sdtm <- function(obj) {
 }
 
 
-#' Get the USUBJID from an sdtm object
+#' Get the USUBJIDs from an sdtm object
 #'
-#' @param obj The sdtm object.
+#' @param obj The SDTM object.
 #' @export
 subjects <- function(obj) {
   UseMethod(("subjects"))
 }
 
-#' Get the USUBJID from an sdtm object
-#'
-#' @param obj The sdtm object.
 #' @export
 subjects.sdtm <- function(obj) {
   obj$dm %>%
@@ -163,27 +154,22 @@ subjects.sdtm <- function(obj) {
 }
 
 
-#' subject demographic information
+#' Subject demographic information
 #'
-#' @param obj, a sdtm class object
-#' @param id the USUBJID
+#' @param obj A SDTM object.
+#' @param id The USUBJID.
 #' @export
 subject_info <- function(object, id="") {
   UseMethod("subject_info")
 }
 
-
-#' subject demographic information
-#'
-#' @param obj, a sdtm class object
-#' @param id the USUBJID
 #' @export
 subject_info <- function(obj, id="") {
-  if(!(id %in% (obj$subjects)$USUBJID)) {
-    stop(paste("Subject", id, "is not in study"))
-  }
+  # if(!(id %in% (obj$subjects)$USUBJID)) {
+  #   stop(paste("Subject", id, "is not in study"))
+  # }
   temp <- obj$domains[["dm"]] %>%
-    dplyr::filter(USUBJID==id) %>%
+    dplyr::filter(USUBJID %in% id) %>%
     t() %>%
     as.data.frame()
   colnames(temp) <- NULL

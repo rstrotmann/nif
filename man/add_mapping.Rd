@@ -2,17 +2,26 @@
 % Please edit documentation in R/sdtm_class.R
 \name{add_mapping}
 \alias{add_mapping}
-\title{Add a treatment-analyte mapping to an sdtm object}
+\title{Attach a treatment-analyte mapping to an SDTM object}
 \usage{
 add_mapping(obj, extrt = "", pctestcd = "")
 }
 \arguments{
-\item{obj}{A sdtm object}
+\item{obj}{A SDTM object.}
 
-\item{extrt}{The treatment from EX}
+\item{extrt}{The treatment as defined in EX.}
 
-\item{pctestcd}{The analyte from PC}
+\item{pctestcd}{The analyte as defined in PC.}
 }
 \description{
-Add a treatment-analyte mapping to an sdtm object
+In some studies, multiple drugs are co-administered, and there may be plasma
+concentration data from different parent drugs.
+In order to appropriately correlate observations with administrations, the
+\code{\link[=make_nif]{make_nif()}} algorithm needs to know which analyte (PCTESTCD within PC) belongs
+to which drug (EXTRT within EX). If the respective names differ, add_mapping() can be
+used to attach this information to the SDTM object.
+Multiple mappings may be needed.
+}
+\seealso{
+\code{\link[=make_nif]{make_nif()}}
 }

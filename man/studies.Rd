@@ -7,7 +7,7 @@
 studies(obj)
 }
 \arguments{
-\item{obj}{The sdtm object.}
+\item{obj}{The SDTM object.}
 }
 \description{
 Get the study names from an sdtm object
