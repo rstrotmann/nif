@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{studies}
 \alias{studies}
-\title{Get the study names from an sdtm object}
+\title{Get the study names from an SDTM object}
 \usage{
 studies(obj)
 }
@@ -10,5 +10,5 @@ studies(obj)
 \item{obj}{The SDTM object.}
 }
 \description{
-Get the study names from an sdtm object
+Get the study names from an SDTM object
 }

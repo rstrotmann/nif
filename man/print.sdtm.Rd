@@ -7,7 +7,7 @@
 \method{print}{sdtm}(obj)
 }
 \arguments{
-\item{obj, }{a sdtm class object}
+\item{obj}{A SDTM object.}
 }
 \description{
 print() implementation for SDTM

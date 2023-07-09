@@ -185,14 +185,21 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #'   (or set to NULL), all analytes are shown.
 #' @param mean Boolean value to indicate whether the mean value by dose and
 #'   analyte is to be plotted. In that case, the nominal time (NTIME) is shown
-#'   on the x axis.
+#'   on the x axis. 'mean=T' will cast an error if multiple analytes are in the
+#'   data set of have been defined with 'analyte'.
 #' @param doses The doses to be plotted. Can be a scalar value or a numeric
 #'   vector or NULL to plot all doses.
+#' @param points Boolean value to define whether points should be plotted.
+#' @param id Numerical scalar or vector of IDs to be plotted.
+#' @param usubjid Character scalar or vector of USUBJIDs to be plotted.
+#' @param covariate Character scalar to define a grouping variable. If specified,
+#'   this will cast an error if multiple analytes are in the data set or have
+#'   been defined by 'analyte'.
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @export
 plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
-                 doses=NULL, points=F, id=NULL, usubjid=NULL){
+                 doses=NULL, points=F, id=NULL, usubjid=NULL, covariate=NULL){
   UseMethod("plot")
 }
 
@@ -200,7 +207,8 @@ plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
 #'
 #' @export
 plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
-                     doses=NULL, points=F, id=NULL, usubjid=NULL) {
+                     doses=NULL, points=F, id=NULL, usubjid=NULL,
+                     covariate=NULL) {
   if(!is.null(id)) {
     obj <- obj %>%
       dplyr::filter(ID %in% id)
@@ -221,25 +229,47 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       dplyr::filter(DOSE %in% doses)
   }
 
+  if(!is.null(covariate)){
+    cov <- covariate
+    if(is.null(analyte) | length(analyte) > 1){
+      stop(paste0("Plotting multiple analytes in the same graph does not make ",
+                  "sense. Consider selecting a (single) analyte!"))
+    }
+  } else {
+    cov <- "ANALYTE"
+  }
+
   if(mean==TRUE){
+    if(!is.null(covariate) & is.null(analyte) & length(analytes(obj)>1)){
+      stop(paste0("Plotting means over multiple analytes does not make sense! ",
+                   "Consider selecting a specific analyte"))
+    }
     p <- obj %>%
       dplyr::filter(!is.na(DOSE)) %>%
-      dplyr::group_by(NTIME, ANALYTE, DOSE) %>%
+      dplyr::group_by(NTIME, .data[[cov]], DOSE) %>%
       dplyr::summarize(mean=mean(DV, na.rm=TRUE), sd=sd(DV, na.rm=TRUE), n=n()) %>%
-      ggplot2::ggplot(ggplot2::aes(x=NTIME, y=mean, group=ANALYTE, color=ANALYTE)) +
-      ggplot2::geom_ribbon(aes(ymin=mean-sd, ymax=mean+sd, fill=ANALYTE),
-                           alpha=0.3, color=NA) +
+      ggplot2::ggplot(ggplot2::aes(
+        x=NTIME, y=mean,
+        group=as.factor(.data[[cov]]),
+        color=as.factor(.data[[cov]]))) +
+      ggplot2::geom_ribbon(aes(ymin=mean-sd, ymax=mean+sd,
+                               fill=as.factor(.data[[cov]])),
+                               alpha=0.3, color=NA, show.legend=F) +
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position="bottom") +
-      ggplot2::labs(title="DV over time by dose")
+      ggplot2::labs(title="DV over time by dose", fill=NULL)
   } else {
     p <- obj %>%
       dplyr::filter(!is.na(DOSE)) %>%
-      ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
-        group=interaction(USUBJID, ANALYTE),
-        color=ANALYTE)) +
+      # ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
+      #   group=interaction(USUBJID, ANALYTE),
+      #   color=ANALYTE)) +
+      ggplot2::ggplot(ggplot2::aes(
+        x=TIME, y=DV,
+        group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
+        color=as.factor(.data[[cov]]))) +
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
@@ -258,6 +288,18 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
   if(points){
     p <- p + ggplot2::geom_point()
   }
+
+  # if(!is.null(analyte) & length(analyte) == 1){
+  if(length(analyte) == 1){
+    p <- p + labs(y=analyte)
+  }
+
+  if(!is.null(covariate)) {
+    p <- p + labs(color=covariate)
+  } else {
+    p <- p + labs(color="ANALYTE")
+  }
+
   return(p)
 }
 

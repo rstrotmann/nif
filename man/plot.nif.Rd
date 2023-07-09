@@ -13,7 +13,8 @@
   doses = NULL,
   points = F,
   id = NULL,
-  usubjid = NULL
+  usubjid = NULL,
+  covariate = NULL
 )
 }
 \description{

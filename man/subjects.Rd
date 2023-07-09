@@ -17,5 +17,5 @@ A character vector of all STUDYIDs in the data set.
 \description{
 Studies within a nif object
 
-Get the USUBJID from an sdtm object
+Get the USUBJIDs from an sdtm object
 }

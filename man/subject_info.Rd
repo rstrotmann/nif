@@ -9,7 +9,7 @@ subject_info(obj, id = "")
 \arguments{
 \item{obj}{A SDTM object.}
 
-\item{id}{The USUBJID}
+\item{id}{The USUBJID.}
 }
 \description{
 Subject demographic information

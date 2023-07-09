@@ -13,7 +13,8 @@ plot(
   doses = NULL,
   points = F,
   id = NULL,
-  usubjid = NULL
+  usubjid = NULL,
+  covariate = NULL
 )
 }
 \arguments{
@@ -28,10 +29,21 @@ plot(
 
 \item{mean}{Boolean value to indicate whether the mean value by dose and
 analyte is to be plotted. In that case, the nominal time (NTIME) is shown
-on the x axis.}
+on the x axis. 'mean=T' will cast an error if multiple analytes are in the
+data set of have been defined with 'analyte'.}
 
 \item{doses}{The doses to be plotted. Can be a scalar value or a numeric
 vector or NULL to plot all doses.}
+
+\item{points}{Boolean value to define whether points should be plotted.}
+
+\item{id}{Numerical scalar or vector of IDs to be plotted.}
+
+\item{usubjid}{Character scalar or vector of USUBJIDs to be plotted.}
+
+\item{covariate}{Character scalar to define a grouping variable. If specified,
+this will cast an error if multiple analytes are in the data set or have
+been defined by 'analyte'.}
 }
 \value{
 The plot object

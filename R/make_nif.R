@@ -500,7 +500,7 @@ clip_nif <- function(nif){
 #' @import dplyr
 #' @import tidyr
 #' @export
-add_bl_lab <- function(nif, lb, lbspec, ...){
+add_bl_lab <- function(nif, lb, lbspec="BLOOD", ...){
   lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
   temp <- lbtestcd %in% (lb %>%
                            dplyr::distinct(LBTESTCD) %>%
