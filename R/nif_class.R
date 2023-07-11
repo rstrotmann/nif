@@ -263,9 +263,6 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
   } else {
     p <- obj %>%
       dplyr::filter(!is.na(DOSE)) %>%
-      # ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
-      #   group=interaction(USUBJID, ANALYTE),
-      #   color=ANALYTE)) +
       ggplot2::ggplot(ggplot2::aes(
         x=TIME, y=DV,
         group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),

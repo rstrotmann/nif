@@ -11,9 +11,11 @@ df.to.string(df, indent = "", n = NULL)
 
 \item{indent}{A string that defines the left indentation of the rendered
 output.}
+
+\item{n}{The number of lines to be included, or all if NULL.}
 }
 \value{
-The output as string
+The output as string.
 }
 \description{
 This function renders a data.frame into a string similar to its representation

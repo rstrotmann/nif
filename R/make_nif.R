@@ -6,7 +6,8 @@
 #' @param df The data.frame to be rendered
 #' @param indent A string that defines the left indentation of the rendered
 #'   output.
-#' @return The output as string
+#' @param n The number of lines to be included, or all if NULL.
+#' @return The output as string.
 #' @export
 df.to.string <- function(df, indent="", n=NULL){
   df <- as.data.frame(df)
