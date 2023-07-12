@@ -49,7 +49,7 @@ print.nif <- function(obj){
   cat("Columns:\n")
   cat(paste(names(obj), collapse=", "), "\n")
   temp <- obj %>%
-    dplyr::select(REF, ID, NTIME, TIME, ANALYTE, EVID, AMT, DOSE, DV) %>%
+    dplyr::select(ID, NTIME, TIME, ANALYTE, EVID, AMT, DOSE, DV) %>%
     df.to.string(n=15)
   cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
 }
@@ -192,14 +192,14 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @param points Boolean value to define whether points should be plotted.
 #' @param id Numerical scalar or vector of IDs to be plotted.
 #' @param usubjid Character scalar or vector of USUBJIDs to be plotted.
-#' @param covariate Character scalar to define a grouping variable. If specified,
+#' @param group Character scalar to define a grouping variable. If specified,
 #'   this will cast an error if multiple analytes are in the data set or have
 #'   been defined by 'analyte'.
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @export
 plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
-                 doses=NULL, points=F, id=NULL, usubjid=NULL, covariate=NULL){
+                 doses=NULL, points=F, id=NULL, usubjid=NULL, group=NULL){
   UseMethod("plot")
 }
 
@@ -208,7 +208,7 @@ plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
 #' @export
 plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
                      doses=NULL, points=F, id=NULL, usubjid=NULL,
-                     covariate=NULL) {
+                     group=NULL) {
   if(!is.null(id)) {
     obj <- obj %>%
       dplyr::filter(ID %in% id)
@@ -229,8 +229,8 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       dplyr::filter(DOSE %in% doses)
   }
 
-  if(!is.null(covariate)){
-    cov <- covariate
+  if(!is.null(group)){
+    cov <- group
     if(is.null(analyte) | length(analyte) > 1){
       stop(paste0("Plotting multiple analytes in the same graph does not make ",
                   "sense. Consider selecting a (single) analyte!"))
@@ -240,7 +240,7 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
   }
 
   if(mean==TRUE){
-    if(!is.null(covariate) & is.null(analyte) & length(analytes(obj)>1)){
+    if(!is.null(group) & is.null(analyte) & length(analytes(obj)>1)){
       stop(paste0("Plotting means over multiple analytes does not make sense! ",
                    "Consider selecting a specific analyte"))
     }
@@ -291,8 +291,8 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
     p <- p + labs(y=analyte)
   }
 
-  if(!is.null(covariate)) {
-    p <- p + labs(color=covariate)
+  if(!is.null(group)) {
+    p <- p + labs(color=group)
   } else {
     p <- p + labs(color="ANALYTE")
   }

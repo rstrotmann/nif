@@ -14,7 +14,7 @@
   points = F,
   id = NULL,
   usubjid = NULL,
-  covariate = NULL
+  group = NULL
 )
 }
 \description{

@@ -27,6 +27,8 @@ nca.nif <- function(obj, group="SEX", analyte=NULL){
       message(paste0("No analyte specified, selected ",
                      current_analyte, " as the most likely!"))
     }
+  } else {
+    current_analyte <- analyte
   }
 
   obj <- obj %>%

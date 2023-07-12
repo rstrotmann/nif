@@ -108,7 +108,7 @@ make_admin <- function(ex,
 
     # convert EXSTDTC to to datetime object, start date and start time
     dplyr::mutate(start=lubridate::as_datetime(
-      EXSTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+      EXSTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
     dplyr::mutate(start.date=format(start, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(
       has.time(EXSTDTC) ~ format(start, format="%H:%M"),
@@ -119,7 +119,7 @@ make_admin <- function(ex,
 
     # convert EXENDTC to datetime object, end date and end time
     dplyr::mutate(end=lubridate::as_datetime(
-      EXENDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+      EXENDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
     dplyr::mutate(end.date=format(end, format="%Y-%m-%d")) %>%
     dplyr::mutate(end.time=case_when(
       has.time(EXENDTC) ~ format(end, format="%H:%M"),
@@ -155,7 +155,7 @@ make_admin <- function(ex,
     dplyr::ungroup() %>%
 
     # set treatment, standard fields
-    dplyr::mutate(treatment=EXTRT) %>%
+    # dplyr::mutate(treatment=EXTRT) %>%
     dplyr::mutate(DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
     dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0) #%>%
 
@@ -212,11 +212,11 @@ make_obs <- function(pc, spec=""){
   obs <- obs %>%
     # extract date and time of observation
     dplyr::mutate(DTC=lubridate::as_datetime(PCDTC,
-      format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+      format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
-      .default=NA)) %>%
-    dplyr::mutate(treatment=NA)
+      .default=NA)) #%>%
+    # dplyr::mutate(treatment=NA)
 
     obs <- obs %>%
     dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1))) %>%
@@ -255,9 +255,11 @@ last_obs_time <- function(obs){
 #' @import dplyr
 impute.administration.time <- function(admin, obs){
   temp <- obs %>%
-    dplyr::mutate(dtc=lubridate::as_datetime(PCDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+    dplyr::mutate(dtc=lubridate::as_datetime(
+      PCDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
     dplyr::mutate(dtc.date=format(dtc, format="%Y-%m-%d")) %>%
-    dplyr::mutate(ref.dtc=lubridate::as_datetime(PCRFTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d"))) %>%
+    dplyr::mutate(ref.dtc=lubridate::as_datetime(
+      PCRFTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
     dplyr::mutate(ref.date=format(ref.dtc, format="%Y-%m-%d")) %>%
     dplyr::mutate(ref.time=format(ref.dtc, format="%H:%M")) %>%
     dplyr::filter(dtc.date == ref.date) %>%
@@ -425,6 +427,8 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
     dplyr::relocate(ID) %>%
+    dplyr::select(-first.event.dtc, -dtc.date, -date, -time, -end.time,
+                  -start.date, -start.time, -DOMAIN.x, -DOMAIN.y) %>%
     as.data.frame()
   return(nif(nif))
 }
@@ -514,7 +518,7 @@ add_bl_lab <- function(nif, lb, lbspec="BLOOD", ...){
     }
   }
   temp <- lb %>%
-    dplyr::filter(LBSPEC=="BLOOD") %>%
+    dplyr::filter(LBSPEC==lbspec) %>%
     dplyr::filter(LBBLFL == "Y") %>%
     dplyr::filter(LBTESTCD %in% lbtestcd) %>%
     dplyr::select(USUBJID, LBTESTCD, LBSTRESN) %>%
@@ -526,3 +530,47 @@ add_bl_lab <- function(nif, lb, lbspec="BLOOD", ...){
     nif()
 }
 
+#' Add lab covariate
+#'
+#' @param obj The NIF data set.
+#' @param lb The LB SDTM domain
+#' @param lbspec The specimem, e.g., SERUM.
+#' @param lbtestcd Lab parameters to be included as character scalar or vector.
+#'
+#' @return A NIF data set
+#' @export
+add_lab <- function(obj, lb, lbspec="SERUM", lbtestcd){
+  # lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
+  temp <- lbtestcd %in% (lb %>%
+                           dplyr::distinct(LBTESTCD) %>%
+                           dplyr::pull(LBTESTCD))
+  if(!all(temp)) {
+    message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+    lbtestcd <- lbtestcd[temp]
+    if(length(lbtestcd)==0){
+      return(obj)
+    }
+  }
+
+  lb.params <- lb %>%
+    mutate(dtc=lubridate::as_datetime(
+      LBDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+    mutate(date=format(dtc, format="%Y-%m-%d")) %>%
+    mutate(labdate=date) %>%
+    dplyr::filter(LBSPEC==lbspec) %>%
+    dplyr::filter(LBTESTCD %in% lbtestcd) %>%
+    dplyr::select(USUBJID, date, labdate, LBTESTCD, LBSTRESN) %>%
+    pivot_wider(names_from=LBTESTCD, values_from=LBSTRESN)
+
+  temp <- obj %>%
+    as.data.frame() %>%
+    mutate(date=format(DTC, format="%Y-%m-%d")) %>%
+    bind_rows(lb.params) %>%
+    arrange(USUBJID, date) %>%
+    group_by(USUBJID) %>%
+    fill(all_of(lbtestcd), labdate) %>%
+    filter(!is.na(EVID)) %>%
+    ungroup()
+
+  return(nif(temp))
+}

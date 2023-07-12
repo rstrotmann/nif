@@ -14,7 +14,7 @@ plot(
   points = F,
   id = NULL,
   usubjid = NULL,
-  covariate = NULL
+  group = NULL
 )
 }
 \arguments{
@@ -41,7 +41,7 @@ vector or NULL to plot all doses.}
 
 \item{usubjid}{Character scalar or vector of USUBJIDs to be plotted.}
 
-\item{covariate}{Character scalar to define a grouping variable. If specified,
+\item{group}{Character scalar to define a grouping variable. If specified,
 this will cast an error if multiple analytes are in the data set or have
 been defined by 'analyte'.}
 }
