@@ -15,6 +15,12 @@ nif_viewer <- function(nif) {
     dplyr::distinct(USUBJID) %>%
     dplyr::pull(USUBJID)
 
+  doses <- nif %>%
+    dplyr::distinct(AMT) %>%
+    arrange(AMT) %>%
+    pull(AMT) %>%
+    as.character()
+
   max.dose <- nif %>%
     dplyr::pull(AMT) %>%
     max()
@@ -42,7 +48,9 @@ nif_viewer <- function(nif) {
       shiny::column(2,
         shiny::numericInput("maxtime", "max display time", value=NA)),
 
-      shiny::column(4, checkboxInput("log_yscale", "log y-scale"))
+      shiny::column(2, checkboxInput("log_yscale", "log y-scale")),
+      shiny::column(3,
+        shiny::selectInput("dose", label="dose", choices=c("all", doses)))
     ),
     hr(),
     shiny::plotOutput("plot.pc"),
@@ -53,6 +61,10 @@ nif_viewer <- function(nif) {
     )
   )
 
+  current_nif <- nif
+  current_sbs <- current_nif %>%
+    distinct(USUBJID) %>%
+    pull(USUBJID)
 
   nif_viewer.server <- function(input, output, session) {
     max.time <- function() {
@@ -70,28 +82,37 @@ nif_viewer <- function(nif) {
       }
     }
 
+    # current_nif <- nif
+    # current_sbs <- current_nif %>%
+    #   distinct(USUBJID) %>%
+    #   pull(USUBJID)
+
     output$plot.pc <- shiny::renderPlot({
       y_scale_type <- ifelse(input$log_yscale, "log", "lin")
       suppressWarnings(print(
-        nif::nif_plot_id(nif, input$subject, max.time=max.time(), y.scale=y_scale_type)))
+        nif::nif_plot_id(current_nif, input$subject, max.time=max.time(), y.scale=y_scale_type)))
     }, height=350)
 
     output$plot.dose <- shiny::renderPlot({
       suppressWarnings(print(
-        nif::dose_plot_id(nif, input$subject, max.dose=max.dose, max.time=max.time())))
+        nif::dose_plot_id(current_nif, input$subject, max.dose=max.dose, max.time=max.time())))
     }, height=250)
 
     shiny::observeEvent(input$prev.sb, {
-      current <- which(sbs==input$subject)
+      current <- which(current_sbs==input$subject)
       if(current > 0) {
-        shiny::updateSelectInput(session, "subject", choices=sbs, selected=sbs[current-1])
+        # shiny::updateSelectInput(session, "subject", choices=sbs, selected=sbs[current-1])
+        shiny::updateSelectInput(session, "subject",
+                                 choices=current_sbs, selected=current_sbs[current-1])
       }
     })
 
     shiny::observeEvent(input$next.sb, {
-      current <- which(sbs==input$subject)
-      if(current < length(sbs)) {
-        shiny::updateSelectInput(session, "subject", choices=sbs, selected=sbs[current+1])
+      current <- which(current_sbs==input$subject)
+      if(current < length(current_sbs)) {
+        # shiny::updateSelectInput(session, "subject", choices=sbs, selected=sbs[current+1])
+        shiny::updateSelectInput(session, "subject",
+                                 choices=current_sbs, selected=current_sbs[current+1])
       }
     })
 
@@ -101,6 +122,19 @@ nif_viewer <- function(nif) {
       } else {
         shinyjs::enable("maxtime")
       }
+    })
+
+    shiny::observeEvent(input$dose, {
+      if(input$dose != "all"){
+        current_nif <- nif %>%
+          filter(AMT==as.numeric(input$dose))
+      } else {
+        current_nif <- nif
+      }
+      current_sbs <- current_nif %>%
+        distinct(USUBJID) %>%
+        pull(USUBJID)
+      updateSelectInput(session, "subject", choices=current_sbs, selected=1)
     })
   }
 
