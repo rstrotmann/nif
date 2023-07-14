@@ -81,7 +81,8 @@ recode_sex <- function(obj){
 make_admin <- function(ex,
                        analyte_mapping,
                        cut.off.date,
-                       impute.missing.end.time=TRUE){
+                       impute.missing.end.time=TRUE,
+                       silent=F){
   cutoff <- lubridate::as_datetime(
     cut.off.date,
     format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%d %H:%M"))
@@ -96,9 +97,11 @@ make_admin <- function(ex,
     out <- temp %>%
       dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
       df.to.string()
-    message(paste0("In ", temp %>% nrow(),
-      " administrations, EX contained no EXENDTC. ",
-      "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
+    if(!silent){
+      message(paste0("In ", temp %>% nrow(),
+        " administrations, EX contained no EXENDTC. ",
+        "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
+    }
   }
 
   ret <- ret %>%
@@ -134,8 +137,10 @@ make_admin <- function(ex,
       temp <- temp %>%
         dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
         df.to.string()
-      message(paste("Administration end time was imputed to start time",
-                    "for the following entries:\n", temp))
+      if(!silent){
+        message(paste("Administration end time was imputed to start time",
+                      "for the following entries:\n", temp))
+      }
       ret <- ret %>%
         dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
           .default= end.time))
@@ -184,7 +189,7 @@ make_admin <- function(ex,
 #' @return A tibble with individual observations with certain NONMEM input variables set
 #' @import dplyr
 #' @import lubridate
-make_obs <- function(pc, spec=""){
+make_obs <- function(pc, spec="", silent=F){
   # Filter for sepecimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC)
@@ -192,7 +197,9 @@ make_obs <- function(pc, spec=""){
     if(is.element("PLASMA", pcspecs$PCSPEC)) {spec = "PLASMA"}
     else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
     else{spec ="none"}
-    message(paste("No specimem specified. Set to", spec, "as the most likely."))
+    if(!silent){
+      message(paste("No specimem specified. Set to", spec, "as the most likely."))
+    }
   }
   obs <- pc %>%
     dplyr::filter(PCSPEC==spec)
@@ -202,7 +209,7 @@ make_obs <- function(pc, spec=""){
     nd <- obs %>%
       dplyr::filter(PCSTAT=="NOT DONE") %>%
       nrow()
-    if(nd>0){
+    if(nd>0 & !silent){
       message(paste(nd, "samples marked as 'not done' and removed from the data set."))
     }
     obs <- obs %>%
@@ -336,7 +343,7 @@ impute.administration.time <- function(admin, obs){
 #' @import tidyr
 #' @import dplyr
 #' @export
-make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
+make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F) {
   vs <- sdtm.data$vs
   ex <- sdtm.data$ex
   pc <- sdtm.data$pc
@@ -350,9 +357,11 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
-  obs <- make_obs(pc, spec=spec)
+  obs <- make_obs(pc, spec=spec, silent=silent)
   cut.off.date <- last_obs_time(obs)
-  message(paste("Data cut-off was set to last observation time,", cut.off.date))
+  if(!silent) {
+    message(paste("Data cut-off was set to last observation time,", cut.off.date))
+  }
 
   # subjects with observations by analyte
   obs.sbs <- obs %>%
@@ -362,7 +371,8 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
   admin <- make_admin(ex,
                       analyte_mapping=sdtm.data$treatment.analyte.mappings,
                       cut.off.date,
-                      impute.missing.end.time=impute.missing.end.time)
+                      impute.missing.end.time=impute.missing.end.time,
+                      silent=silent)
 
   # Remove all administrations with PCTESTCD==NA
   #  those rows may come from treatments that have not analyte mapping
@@ -382,9 +392,11 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE) {
       dplyr::arrange(PCTESTCD, USUBJID) %>%
       dplyr::select(USUBJID, PCTESTCD) %>%
       df.to.string()
-    message(paste0("The following subjects had no observations for ",
-      "the respective analyte and were removed from the data set:\n",
-      out))
+    if(!silent){
+      message(paste0("The following subjects had no observations for ",
+        "the respective analyte and were removed from the data set:\n",
+        out))
+    }
   }
   # ...and filter out excluded administrations
   admin <- admin %>%
@@ -505,13 +517,15 @@ clip_nif <- function(nif){
 #' @import dplyr
 #' @import tidyr
 #' @export
-add_bl_lab <- function(nif, lb, lbspec="BLOOD", ...){
+add_bl_lab <- function(nif, lb, lbspec="BLOOD", silent=F, ...){
   lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
   temp <- lbtestcd %in% (lb %>%
                            dplyr::distinct(LBTESTCD) %>%
                            dplyr::pull(LBTESTCD))
   if(!all(temp)) {
-    message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+    if(!silent) {
+      message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+    }
     lbtestcd <- lbtestcd[temp]
     if(length(lbtestcd)==0){
       return(nif)
@@ -539,13 +553,15 @@ add_bl_lab <- function(nif, lb, lbspec="BLOOD", ...){
 #'
 #' @return A NIF data set
 #' @export
-add_lab <- function(obj, lb, lbspec="SERUM", lbtestcd){
+add_lab <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
   # lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
   temp <- lbtestcd %in% (lb %>%
                            dplyr::distinct(LBTESTCD) %>%
                            dplyr::pull(LBTESTCD))
   if(!all(temp)) {
-    message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+    if(!silent){
+      message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+    }
     lbtestcd <- lbtestcd[temp]
     if(length(lbtestcd)==0){
       return(obj)
