@@ -4,7 +4,7 @@
 \alias{add_lab}
 \title{Add lab covariate}
 \usage{
-add_lab(obj, lb, lbspec = "SERUM", lbtestcd)
+add_lab(obj, lb, lbspec = "SERUM", lbtestcd, silent = F)
 }
 \arguments{
 \item{obj}{The NIF data set.}

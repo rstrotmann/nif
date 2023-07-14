@@ -4,7 +4,7 @@
 \alias{make_obs}
 \title{Make observation data set from PC}
 \usage{
-make_obs(pc, spec = "")
+make_obs(pc, spec = "", silent = F)
 }
 \arguments{
 \item{pc}{The SDTM PC domain as a data.frame.}

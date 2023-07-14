@@ -4,7 +4,7 @@
 \alias{write_csv.nif}
 \title{Export a nif object as csv file}
 \usage{
-\method{write_csv}{nif}(obj, filename)
+write_csv.nif(obj, filename)
 }
 \arguments{
 \item{obj}{A nif object.}

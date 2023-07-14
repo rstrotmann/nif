@@ -144,15 +144,6 @@ analytes.nif <- function(obj){
     dplyr::pull(ANALYTE)
 }
 
-#' Export a nif object as csv file
-#'
-#' @param obj A nif object.
-#' @param filename The filename for the exported file.
-#' @import dplyr
-#' @export
-write_csv <- function(obj, filename) {
-  UseMethod("write_csv")
-}
 
 #' Export a nif object as csv file
 #'
@@ -176,6 +167,7 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
                          "ACTARMCD")
 
+
 #' Plot NIF data set by dose and analyte
 #'
 #' @param obj The NIF object to be plotted.
@@ -197,14 +189,6 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #'   been defined by 'analyte'.
 #' @return The plot object
 #' @seealso [nif_viewer()]
-#' @export
-plot <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
-                 doses=NULL, points=F, id=NULL, usubjid=NULL, group=NULL){
-  UseMethod("plot")
-}
-
-#' Plot nif data set
-#'
 #' @export
 plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
                      doses=NULL, points=F, id=NULL, usubjid=NULL,

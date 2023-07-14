@@ -4,7 +4,13 @@
 \alias{make_admin}
 \title{Make administration data set from EX domain}
 \usage{
-make_admin(ex, analyte_mapping, cut.off.date, impute.missing.end.time = TRUE)
+make_admin(
+  ex,
+  analyte_mapping,
+  cut.off.date,
+  impute.missing.end.time = TRUE,
+  silent = F
+)
 }
 \arguments{
 \item{ex}{EX domain}
