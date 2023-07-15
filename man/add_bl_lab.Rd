@@ -4,16 +4,16 @@
 \alias{add_bl_lab}
 \title{Add baseline covariates to a NIF data set}
 \usage{
-add_bl_lab(nif, lb, lbspec = "BLOOD", silent = F, ...)
+add_bl_lab(obj, lb, lbtestcd, lbspec = "", silent = F)
 }
 \arguments{
-\item{nif}{NIF dataset.}
-
 \item{lb}{SDTM LB domain as data frame.}
+
+\item{lbtestcd}{Lab parameters as encoded by LBTESTCD, as strings.}
 
 \item{lbspec}{The specimen, usually "BLOOD" or "URINE".}
 
-\item{...}{Lab parameters as encoded by LBTESTCD, as strings.}
+\item{nif}{NIF dataset.}
 }
 \value{
 A NIF dataset

@@ -223,7 +223,6 @@ make_obs <- function(pc, spec="", silent=F){
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
       .default=NA)) #%>%
-    # dplyr::mutate(treatment=NA)
 
     obs <- obs %>%
     dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1))) %>%
@@ -315,17 +314,20 @@ impute.administration.time <- function(admin, obs){
 #' @section Output fields:
 #'   * `ID` Subject identification number
 #'   * `TIME` Recorded time of administration or observation events in hours
-#'   relative to the first individual event.
+#'        relative to the first individual event.
 #'   * `AMT` Dose administered for dosing record, or zero for observations.
 #'   * `DOSE` Dose in mg for administrations and post-dose observations.
 #'   * `DV` The dependent variable, i.e., observed concentration, or zero for
-#'   administration records.
+#'        administration records.
 #'   * `RATE` Rate of infusion of drug or zero if drug is given as a bolus.
 #'   * `MDV` One for missing DV, else zero.
 #'   * `EVID` Event ID: 0 for observations, 1 for administrations.
-#'   * `CMT` Compartment: Will be set to 1 for administrations and 2 for
-#'   observations. Should be changed afterwards, if needed.
-#'
+#'   * `CMT` Pharmacokinetic compartment. Will be set to 1 for administrations and 2 for
+#'        observations. Should be changed afterwards, if needed.
+#'   * `FIRSTDTC` Date and time of first event per subject. This field is used
+#'        internally for the calculation of `TIME`. Although it is not needed
+#'        for NONMEM analysis, it is provided for subsequent NIF file building
+#'        steps, e.g., addition of further time-dependent endpoints.
 #'
 #' @param sdtm.data A list of SDTM domains as data tables, e.g., as loaded using
 #'   read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.
@@ -415,7 +417,8 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
 
     # individual first event
     dplyr::group_by(USUBJID) %>%
-    dplyr::mutate(first.event.dtc=min(DTC)) %>%
+    # dplyr::mutate(first.event.dtc=min(DTC)) %>%
+    dplyr::mutate(FIRSTDTC=min(DTC)) %>%
     dplyr::ungroup() %>%
 
     # fill missing fields
@@ -429,7 +432,8 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
     dplyr::mutate(RATE=0) %>%
 
     # TIME is the difference in h to the first individual event time
-    dplyr::mutate(TIME=as.numeric(difftime(DTC, first.event.dtc, units="h"))) %>%
+    # dplyr::mutate(TIME=as.numeric(difftime(DTC, first.event.dtc, units="h"))) %>%
+    dplyr::mutate(TIME=as.numeric(difftime(DTC, FIRSTDTC, units="h"))) %>%
     dplyr::mutate(ANALYTE=PCTESTCD) %>%
 
     # recode SEX
@@ -439,7 +443,7 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
     dplyr::relocate(ID) %>%
-    dplyr::select(-first.event.dtc, -dtc.date, -date, -time, -end.time,
+    dplyr::select(-dtc.date, -date, -time, -end.time,
                   -start.date, -start.time, -DOMAIN.x, -DOMAIN.y) %>%
     as.data.frame()
   return(nif(nif))
@@ -512,13 +516,13 @@ clip_nif <- function(nif){
 #' @param nif NIF dataset.
 #' @param lb SDTM LB domain as data frame.
 #' @param lbspec The specimen, usually "BLOOD" or "URINE".
-#' @param ... Lab parameters as encoded by LBTESTCD, as strings.
+#' @param lbtestcd Lab parameters as encoded by LBTESTCD, as strings.
 #' @return A NIF dataset
 #' @import dplyr
 #' @import tidyr
 #' @export
-add_bl_lab <- function(nif, lb, lbspec="BLOOD", silent=F, ...){
-  lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
+add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
+  # lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
   temp <- lbtestcd %in% (lb %>%
                            dplyr::distinct(LBTESTCD) %>%
                            dplyr::pull(LBTESTCD))
@@ -528,9 +532,10 @@ add_bl_lab <- function(nif, lb, lbspec="BLOOD", silent=F, ...){
     }
     lbtestcd <- lbtestcd[temp]
     if(length(lbtestcd)==0){
-      return(nif)
+      return(obj)
     }
   }
+
   temp <- lb %>%
     dplyr::filter(LBSPEC==lbspec) %>%
     dplyr::filter(LBBLFL == "Y") %>%
@@ -538,7 +543,8 @@ add_bl_lab <- function(nif, lb, lbspec="BLOOD", silent=F, ...){
     dplyr::select(USUBJID, LBTESTCD, LBSTRESN) %>%
     tidyr::pivot_wider(names_from=LBTESTCD, values_from="LBSTRESN") %>%
     dplyr::rename_with(~str_c("BL_", .), .cols=-1)
-  nif %>%
+
+  obj %>%
     as.data.frame() %>%
     dplyr::left_join(temp, by="USUBJID") %>%
     nif()
@@ -553,11 +559,12 @@ add_bl_lab <- function(nif, lb, lbspec="BLOOD", silent=F, ...){
 #'
 #' @return A NIF data set
 #' @export
-add_lab <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
-  # lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
-  temp <- lbtestcd %in% (lb %>%
-                           dplyr::distinct(LBTESTCD) %>%
-                           dplyr::pull(LBTESTCD))
+add_lab_covariate <- function(obj, lb, lbspec="", lbtestcd, silent=F){
+  temp <- lbtestcd %in% (
+    lb %>%
+    dplyr::distinct(LBTESTCD) %>%
+    dplyr::pull(LBTESTCD)
+  )
   if(!all(temp)) {
     if(!silent){
       message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
@@ -576,7 +583,7 @@ add_lab <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
     dplyr::filter(LBSPEC==lbspec) %>%
     dplyr::filter(LBTESTCD %in% lbtestcd) %>%
     dplyr::select(USUBJID, date, labdate, LBTESTCD, LBSTRESN) %>%
-    pivot_wider(names_from=LBTESTCD, values_from=LBSTRESN)
+    pivot_wider(names_from=LBTESTCD, values_from=LBSTRESN, values_fn=mean)
 
   temp <- obj %>%
     as.data.frame() %>%
@@ -590,3 +597,60 @@ add_lab <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 
   return(nif(temp))
 }
+
+
+#' Add Lab value as observation
+#'
+#' @param obj The NIF data set.
+#' @param lb The LB SDTM domain.
+#' @param lbspec The LBSPECT.
+#' @param lbtestcd The LBTESTCD.
+#' @param cmt A numerical value to specify the compartment this observation is
+#'   assigned to.
+#' @param silent Don't issue warnings.
+#'
+#' @return The resulting NIF data set.
+#' @export
+add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
+  if(!lbtestcd %in% (
+    lb %>%
+    dplyr::distinct(LBTESTCD) %>%
+    dplyr::pull(LBTESTCD))
+  ) {
+    stop(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+  }
+
+  lb.params <- lb %>%
+    mutate(DTC=lubridate::as_datetime(
+      LBDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+    # mutate(date=format(DTC, format="%Y-%m-%d")) %>%
+    # mutate(labdate=date) %>%
+    dplyr::filter(LBSPEC==lbspec) %>%
+    dplyr::filter(LBTESTCD==lbtestcd) %>%
+
+    left_join(obj %>% distinct(USUBJID, FIRSTDTC), by="USUBJID") %>%
+
+    mutate(ANALYTE=lbtestcd, CMT=cmt, MDV=0, EVID=0, AMT=0, RATE=0) %>%
+    dplyr::mutate(TIME=as.numeric(difftime(DTC, FIRSTDTC, units="h"))) %>%
+    mutate(DV=LBSTRESN) %>%
+    mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
+    select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, CMT, TIME, NTIME, DV, AMT)
+
+  temp <- obj %>%
+    as.data.frame() %>%
+    bind_rows(lb.params) %>%
+    dplyr::arrange(USUBJID, TIME, -EVID) %>%
+    dplyr::mutate(REF=row_number()) %>%
+    group_by(USUBJID) %>%
+    fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT) %>%
+    ungroup()
+
+  return(nif(temp))
+}
+
+
+
+
+
+
+

@@ -54,8 +54,12 @@ administration records.
 \item \code{RATE} Rate of infusion of drug or zero if drug is given as a bolus.
 \item \code{MDV} One for missing DV, else zero.
 \item \code{EVID} Event ID: 0 for observations, 1 for administrations.
-\item \code{CMT} Compartment: Will be set to 1 for administrations and 2 for
+\item \code{CMT} Pharmacokinetic compartment. Will be set to 1 for administrations and 2 for
 observations. Should be changed afterwards, if needed.
+\item \code{FIRSTDTC} Date and time of first event per subject. This field is used
+internally for the calculation of \code{TIME}. Although it is not needed
+for NONMEM analysis, it is provided for subsequent NIF file building
+steps, e.g., addition of further time-dependent endpoints.
 }
 }
 

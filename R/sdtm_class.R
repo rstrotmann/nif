@@ -91,14 +91,14 @@ print.sdtm <- function(obj){
     cat("none")
   }
 
-  if(!pctptnum.matches.pceltm(obj$pc)){
-    temp <- obj$pc %>%
-      dplyr::distinct(PCTPT, PCTPTNUM, PCELTM) %>%
-      as.data.frame()
-
-    message(paste0("\nCaution: In PC, PCTPTNUM and PCELTM do not match:\n",
-                  df.to.string(temp)))
-  }
+  # if(!pctptnum.matches.pceltm(obj$pc)){
+  #   temp <- obj$pc %>%
+  #     dplyr::distinct(PCTPT, PCTPTNUM, PCELTM) %>%
+  #     as.data.frame()
+  #
+  #   message(paste0("\nCaution: In PC, PCTPTNUM and PCELTM do not match:\n",
+  #                 df.to.string(temp)))
+  # }
 }
 
 
@@ -177,13 +177,13 @@ subject_info <- function(obj, id="") {
 }
 
 
-pctptnum.matches.pceltm <- function(pc){
-  temp <- pc %>%
-    dplyr::mutate(x=stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)) %>%
-    dplyr::filter(!is.na(x)) %>%
-    dplyr::mutate(test=(x==PCTPTNUM))
-  all(temp$test)
-}
+# pctptnum.matches.pceltm <- function(pc){
+#   temp <- pc %>%
+#     dplyr::mutate(x=stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)) %>%
+#     dplyr::filter(!is.na(x)) %>%
+#     dplyr::mutate(test=(x==PCTPTNUM))
+#   all(temp$test)
+# }
 
 
 #' Suggest common manual data programming steps for a sdtm data set

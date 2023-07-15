@@ -1,6 +1,6 @@
 
 #' @export
-nca <- function(obj, group="SEX"){
+nca <- function(obj, group="SEX", analyte=NULL){
   UseMethod("nca")
 }
 

@@ -49,7 +49,7 @@ print.nif <- function(obj){
   cat("Columns:\n")
   cat(paste(names(obj), collapse=", "), "\n")
   temp <- obj %>%
-    dplyr::select(ID, NTIME, TIME, ANALYTE, EVID, AMT, DOSE, DV) %>%
+    dplyr::select(ID, NTIME, TIME, ANALYTE, EVID, CMT, AMT, DOSE, DV) %>%
     df.to.string(n=15)
   cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
 }
