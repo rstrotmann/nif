@@ -46,6 +46,8 @@ nif_plot_id <- function(nif, id, y.scale="lin", max.time=NA){
 
   if(y.scale=="log") {
     p <- p + scale_y_log10()
+  } else {
+    p <- p + scale_y_continuous(limits = c(0, NA))
   }
   return(p)
 }

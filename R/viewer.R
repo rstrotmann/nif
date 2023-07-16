@@ -21,6 +21,11 @@ nif_viewer <- function(nif) {
     pull(AMT) %>%
     as.character()
 
+  analytes <- nif.001 %>%
+    as.data.frame() %>%
+    distinct(ANALYTE) %>%
+    pull(ANALYTE)
+
   max.dose <- nif %>%
     dplyr::pull(AMT) %>%
     max()
@@ -42,18 +47,23 @@ nif_viewer <- function(nif) {
         shiny::radioButtons(
           "timeselect",
           "time axis limit",
-          choices= c("Individual max" = "indiv",
-                     "Global max" = "global",
-                     "Custom" = "custom"))
+          choices= c("individual max" = "indiv",
+                     "global max" = "global",
+                     "custom" = "custom"))
       ),
 
       shiny::column(2,
         shiny::numericInput("maxtime", "max display time", value=NA)),
 
-      shiny::column(2, checkboxInput("log_yscale", "log y-scale")),
+      shiny::column(2,
+        checkboxInput("log_yscale", "log y-scale")),
+
       shiny::column(3,
         shiny::selectInput("dose", label="dose filter",
-                           choices=c("all", doses), selected="all"))
+                           choices=c("all", doses), selected="all"),
+
+      shiny::checkboxGroupInput("analytes", "analyte filter",
+                                choices=analytes, selected=analytes))
     ),
 
     hr(),
@@ -70,6 +80,7 @@ nif_viewer <- function(nif) {
   nif_viewer.server <- function(input, output, session) {
     current_nif <- reactiveVal(nif)
     current_sbs <- reactiveVal(sbs)
+    current_analytes <- reactiveVal(analytes)
 
     max.time <- function() {
       if(input$timeselect=="indiv") {
@@ -89,7 +100,11 @@ nif_viewer <- function(nif) {
     output$plot.pc <- shiny::renderPlot({
       y_scale_type <- ifelse(input$log_yscale, "log", "lin")
       suppressWarnings(print(
-        nif::nif_plot_id(current_nif(), input$subject, max.time=max.time(), y.scale=y_scale_type)))
+        nif::nif_plot_id(
+          current_nif() %>% filter(ANALYTE %in% input$analytes),
+          input$subject,
+          max.time=max.time(),
+          y.scale=y_scale_type)))
     }, height=350)
 
     output$plot.dose <- shiny::renderPlot({

@@ -634,7 +634,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
     dplyr::mutate(TIME=as.numeric(difftime(DTC, FIRSTDTC, units="h"))) %>%
     mutate(DV=LBSTRESN) %>%
     mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
-    select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, CMT, TIME, NTIME, DV, AMT)
+    select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, CMT, EVID, TIME, NTIME, DV, AMT)
 
   temp <- obj %>%
     as.data.frame() %>%
