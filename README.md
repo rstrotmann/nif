@@ -19,7 +19,7 @@ devtools::install_github("rstrotmann/nif")
 ## Example
 
 This is a basic example to load SDTM data from SAS files and create a
-NIF. The path `/path/to/sdtm/data` needs to point to a location whee at
+NIF. The path `/path/to/sdtm/data` needs to point to a location where at
 least the following SAS export files from a study needs to be present:
 
 - dm.sas7bdat
