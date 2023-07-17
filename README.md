@@ -6,36 +6,46 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of nif is to …
+This is a package to create NONMEM input files (NIF) from SDTM data.
 
 ## Installation
 
 You can install the development version of nif like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+devtools::install_github("rstrotmann/nif")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example to load SDTM data from SAS files and create a
+NIF. The path `/path/to/sdtm/data` needs to point to a location whee at
+least the following SAS export files from a study needs to be present:
+
+- dm.sas7bdat
+- ex.sas7bdat
+- vs.sas7bdat
+- pc.sas7bdat
 
 ``` r
-# library(nif)
-## basic example code
+library(nif)
+
+sdtm.data <- nif::read_sdtm_sas("/path/to/sdtm/data")
+
+nif.data <- nif::make_nif(sdtm.data) %>%
+  index_nif() %>%
+  compress_nif(standard_nif_fields)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+In most cases, you may want to add further covariates after `make_nif()`
+and before `ìndex_nif()`, consider a more complex example:
 
 ``` r
-# summary(cars)
+nif.data <- nif::make_nif(sdtm.data) %>%
+  filter(!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")) %>% 
+  add_lab_observation(sdtm.data$domains[["lb"]], "BILI", 5) %>% 
+  add_bl_lab(sdtm.data$domains[["lb"]], "HGB") %>% 
+  mutate(PART=str_sub(ACTARMCD,1,1), COHORT=as.numeric(str_sub(ACTARMCD, 2, 2))) %>%
+  index_nif() %>%
+  compress_nif(standard_nif_fields)
 ```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
