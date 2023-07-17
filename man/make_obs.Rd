@@ -13,6 +13,8 @@ make_obs(pc, spec = "", silent = F)
 (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 or "PLASMA" is selected, depending what is found in the PC data.}
+
+\item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
 A tibble with individual observations with certain NONMEM input variables set

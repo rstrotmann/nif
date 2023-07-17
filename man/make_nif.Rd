@@ -18,6 +18,8 @@ or "PLASMA" is selected, depending what is found in the PC data.}
 \item{impute.missing.end.time}{A logic value to indicate whether in rows
 in EX where EXENDTC does not include a time, the time should be copied from
 EXSTDTC.}
+
+\item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
 A NIF data set as nif object.

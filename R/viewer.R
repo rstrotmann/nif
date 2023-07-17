@@ -17,14 +17,14 @@ nif_viewer <- function(nif) {
 
   doses <- nif %>%
     dplyr::distinct(AMT) %>%
-    arrange(AMT) %>%
-    pull(AMT) %>%
+    dplyr::arrange(AMT) %>%
+    dplyr::pull(AMT) %>%
     as.character()
 
-  analytes <- nif.001 %>%
+  analytes <- nif %>%
     as.data.frame() %>%
-    distinct(ANALYTE) %>%
-    pull(ANALYTE)
+    dplyr::distinct(ANALYTE) %>%
+    dplyr::pull(ANALYTE)
 
   max.dose <- nif %>%
     dplyr::pull(AMT) %>%

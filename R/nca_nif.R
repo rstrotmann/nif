@@ -1,4 +1,12 @@
-
+#' Non-compartmental analysis
+#'
+#' @param obj The source NIF object.
+#' @param group The grouping variable. If none specified, defaults to SEX.
+#' @param analyte The analyte. If none specified and multiple analytes are in
+#'   the dataset, defaults to the first analyte.
+#' @return A PKNCA results object
+#' @import dplyr
+#' @import PKNCA
 #' @export
 nca <- function(obj, group="SEX", analyte=NULL){
   UseMethod("nca")

@@ -7,13 +7,15 @@
 add_bl_lab(obj, lb, lbtestcd, lbspec = "", silent = F)
 }
 \arguments{
+\item{obj}{NIF dataset.}
+
 \item{lb}{SDTM LB domain as data frame.}
 
 \item{lbtestcd}{Lab parameters as encoded by LBTESTCD, as strings.}
 
 \item{lbspec}{The specimen, usually "BLOOD" or "URINE".}
 
-\item{nif}{NIF dataset.}
+\item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
 A NIF dataset

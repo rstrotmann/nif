@@ -18,7 +18,7 @@ assigned to.}
 
 \item{lbspec}{The LBSPECT.}
 
-\item{silent}{Don't issue warnings.}
+\item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
 The resulting NIF data set.

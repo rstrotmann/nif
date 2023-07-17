@@ -24,6 +24,8 @@ in "\%Y-\%m-\%dT\%H:\%M" format.}
 \item{impute.missing.end.time}{A logic value to indicate whether in rows
 in EX where EXENDTC does not include a time, the time should be copied from
 EXSTDTC.}
+
+\item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
 A tibble with individual administrations

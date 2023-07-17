@@ -14,6 +14,8 @@ add_lab_covariate(obj, lb, lbspec = "", lbtestcd, silent = F)
 \item{lbspec}{The specimem, e.g., SERUM.}
 
 \item{lbtestcd}{Lab parameters to be included as character scalar or vector.}
+
+\item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
 A NIF data set

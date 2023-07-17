@@ -74,6 +74,7 @@ recode_sex <- function(obj){
 #' @param impute.missing.end.time A logic value to indicate whether in rows
 #'  in EX where EXENDTC does not include a time, the time should be copied from
 #'  EXSTDTC.
+#' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A tibble with individual administrations
 #' @import lubridate
 #' @import dplyr
@@ -186,6 +187,7 @@ make_admin <- function(ex,
 #'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 #'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 #'   or "PLASMA" is selected, depending what is found in the PC data.
+#' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A tibble with individual observations with certain NONMEM input variables set
 #' @import dplyr
 #' @import lubridate
@@ -338,6 +340,7 @@ impute.administration.time <- function(admin, obs){
 #' @param impute.missing.end.time A logic value to indicate whether in rows
 #'   in EX where EXENDTC does not include a time, the time should be copied from
 #'   EXSTDTC.
+#' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A NIF data set as nif object.
 #' @seealso [read_sdtm_sas()]
 #' @seealso [sdtm]
@@ -513,19 +516,20 @@ clip_nif <- function(nif){
 #'
 #' Lab parameters not found in LB will be reported in a warning message.
 #'
-#' @param nif NIF dataset.
+#' @param obj NIF dataset.
 #' @param lb SDTM LB domain as data frame.
 #' @param lbspec The specimen, usually "BLOOD" or "URINE".
 #' @param lbtestcd Lab parameters as encoded by LBTESTCD, as strings.
+#' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A NIF dataset
 #' @import dplyr
 #' @import tidyr
+#' @importFrom rlang .data
 #' @export
 add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
-  # lbtestcd <- unlist(c(as.list(environment())[-c(1, 2, 3)], list(...)))
   temp <- lbtestcd %in% (lb %>%
-                           dplyr::distinct(LBTESTCD) %>%
-                           dplyr::pull(LBTESTCD))
+                           dplyr::distinct(.data$LBTESTCD) %>%
+                           dplyr::pull(.data$LBTESTCD))
   if(!all(temp)) {
     if(!silent) {
       message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
@@ -537,11 +541,11 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
   }
 
   temp <- lb %>%
-    dplyr::filter(LBSPEC==lbspec) %>%
-    dplyr::filter(LBBLFL == "Y") %>%
-    dplyr::filter(LBTESTCD %in% lbtestcd) %>%
-    dplyr::select(USUBJID, LBTESTCD, LBSTRESN) %>%
-    tidyr::pivot_wider(names_from=LBTESTCD, values_from="LBSTRESN") %>%
+    dplyr::filter(.data$LBSPEC==lbspec) %>%
+    dplyr::filter(.data$LBBLFL == "Y") %>%
+    dplyr::filter(.data$LBTESTCD %in% lbtestcd) %>%
+    dplyr::select(.data$USUBJID, .data$LBTESTCD, .data$LBSTRESN) %>%
+    tidyr::pivot_wider(names_from="LBTESTCD", values_from="LBSTRESN") %>%
     dplyr::rename_with(~str_c("BL_", .), .cols=-1)
 
   obj %>%
@@ -556,7 +560,7 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
 #' @param lb The LB SDTM domain
 #' @param lbspec The specimem, e.g., SERUM.
 #' @param lbtestcd Lab parameters to be included as character scalar or vector.
-#'
+#' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A NIF data set
 #' @export
 add_lab_covariate <- function(obj, lb, lbspec="", lbtestcd, silent=F){
@@ -607,7 +611,7 @@ add_lab_covariate <- function(obj, lb, lbspec="", lbtestcd, silent=F){
 #' @param lbtestcd The LBTESTCD.
 #' @param cmt A numerical value to specify the compartment this observation is
 #'   assigned to.
-#' @param silent Don't issue warnings.
+#' @param silent Boolean value to indicate whether warnings should be printed.
 #'
 #' @return The resulting NIF data set.
 #' @export
