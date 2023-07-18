@@ -524,6 +524,7 @@ clip_nif <- function(nif){
 #' @return A NIF dataset
 #' @import dplyr
 #' @import tidyr
+#' @import stringr
 #' @importFrom rlang .data
 #' @export
 add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
@@ -546,7 +547,7 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
     dplyr::filter(.data$LBTESTCD %in% lbtestcd) %>%
     dplyr::select(.data$USUBJID, .data$LBTESTCD, .data$LBSTRESN) %>%
     tidyr::pivot_wider(names_from="LBTESTCD", values_from="LBSTRESN") %>%
-    dplyr::rename_with(~str_c("BL_", .), .cols=-1)
+    dplyr::rename_with(~stringr::str_c("BL_", .), .cols=-1)
 
   obj %>%
     as.data.frame() %>%

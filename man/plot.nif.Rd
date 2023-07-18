@@ -14,7 +14,8 @@
   points = F,
   id = NULL,
   usubjid = NULL,
-  group = NULL
+  group = NULL,
+  administrations = F
 )
 }
 \arguments{
@@ -44,6 +45,10 @@ vector or NULL to plot all doses.}
 \item{group}{Character scalar to define a grouping variable. If specified,
 this will cast an error if multiple analytes are in the data set or have
 been defined by 'analyte'.}
+
+\item{administrations}{Boolean value to indicate whether vertical lines
+marking the administration times should be plotted. Has no function if
+mean=F.}
 }
 \value{
 The plot object

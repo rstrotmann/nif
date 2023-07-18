@@ -187,12 +187,15 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @param group Character scalar to define a grouping variable. If specified,
 #'   this will cast an error if multiple analytes are in the data set or have
 #'   been defined by 'analyte'.
+#' @param administrations Boolean value to indicate whether vertical lines
+#'   marking the administration times should be plotted. Has no function if
+#'   mean=F.
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @export
 plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
                      doses=NULL, points=F, id=NULL, usubjid=NULL,
-                     group=NULL) {
+                     group=NULL, administrations=F) {
   if(!is.null(id)) {
     obj <- obj %>%
       dplyr::filter(ID %in% id)
@@ -242,8 +245,8 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position="bottom") +
-      ggplot2::labs(title="DV over time by dose", fill=NULL)
+      # ggplot2::labs(title="DV over time by dose", fill=NULL)
+      ggplot2::theme(legend.position="bottom")
   } else {
     p <- obj %>%
       dplyr::filter(!is.na(DOSE)) %>%
@@ -254,8 +257,17 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position="bottom") +
-      ggplot2::labs(title="DV over time by dose")
+      # ggplot2::labs(title="DV over time by dose")
+      ggplot2::theme(legend.position="bottom")
+    if(administrations) {
+      adm <- obj %>%
+        as.data.frame() %>%
+        filter(EVID==1) %>%
+        mutate(GROUP=as.factor(.data[[cov]])) %>%
+        distinct(TIME, GROUP)
+      p <- p +
+        geom_vline(aes(xintercept=TIME), data=adm, color="grey")
+    }
   }
 
   if(!is.null(max_x)) {
