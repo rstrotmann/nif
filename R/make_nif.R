@@ -162,7 +162,7 @@ make_admin <- function(ex,
 
     # set treatment, standard fields
     # dplyr::mutate(treatment=EXTRT) %>%
-    dplyr::mutate(DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
+    dplyr::mutate(NTIME=0, DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
     dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0) #%>%
 
     # apply analyte mapping, introducing the field PCTESTCD
