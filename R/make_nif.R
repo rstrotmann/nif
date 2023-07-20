@@ -557,22 +557,35 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
 
 #' Add lab covariate
 #'
+#' This functions adds columns for the lab parameters specified in `lbtestcd`, in
+#'   a time-varying way, i.e., the actual lab value at the time of the observation
+#'   or administration. This is in contrast to  [add_bl_lab()].
+#'   In rows of missing lab data, the last value is carried forward.
+#'
+#'   Note that for some lab parameters, e.g., leukocytes, bili, etc., there may
+#'   be observations both in serum and in urine. It is therefore necessary to
+#'   specify the specimen tested. This corresponds to the `LBSPEC` field used in
+#'   the LB SDTM domain.
+#'
 #' @param obj The NIF data set.
 #' @param lb The LB SDTM domain
-#' @param lbspec The specimem, e.g., SERUM.
+#' @param lbspec The specimen, e.g., SERUM.
 #' @param lbtestcd Lab parameters to be included as character scalar or vector.
 #' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A NIF data set
 #' @export
-add_lab_covariate <- function(obj, lb, lbspec="", lbtestcd, silent=F){
+#' @seealso [add_bl_lab()]
+#' @seealso [add_lab_observation()]
+add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
   temp <- lbtestcd %in% (
-    lb %>%
+    (lb %>% filter(LBSPEC==lbspec)) %>%
     dplyr::distinct(LBTESTCD) %>%
     dplyr::pull(LBTESTCD)
   )
   if(!all(temp)) {
     if(!silent){
-      message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+      message(paste0("The following was not found in lb: ",
+                     lbtestcd[!temp], " (", lbspec, ")\n"))
     }
     lbtestcd <- lbtestcd[temp]
     if(length(lbtestcd)==0){
@@ -604,7 +617,7 @@ add_lab_covariate <- function(obj, lb, lbspec="", lbtestcd, silent=F){
 }
 
 
-#' Add Lab value as observation
+#' Add lab value as observation
 #'
 #' @param obj The NIF data set.
 #' @param lb The LB SDTM domain.

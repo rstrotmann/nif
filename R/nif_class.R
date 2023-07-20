@@ -168,7 +168,10 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ACTARMCD")
 
 
-#' Plot NIF data set by dose and analyte
+#' Plot NIF data set
+#'
+#' This function plots a NIF data set, grouped by the variable `group`. If no
+#'   grouping variable is provided, `DOSE` will be used.
 #'
 #' @param obj The NIF object to be plotted.
 #' @param y_scale Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".
@@ -190,12 +193,14 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @param administrations Boolean value to indicate whether vertical lines
 #'   marking the administration times should be plotted. Has no function if
 #'   mean=F.
+#'@param nominal_time Boolean to indicate whether NTIME rather than TIME should
+#'   be plotted on the x-axis.
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @export
 plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
                      doses=NULL, points=F, id=NULL, usubjid=NULL,
-                     group=NULL, administrations=F) {
+                     group=NULL, administrations=F, nominal_time=F) {
   if(!is.null(id)) {
     obj <- obj %>%
       dplyr::filter(ID %in% id)
@@ -248,16 +253,38 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       # ggplot2::labs(title="DV over time by dose", fill=NULL)
       ggplot2::theme(legend.position="bottom")
   } else {
-    p <- obj %>%
-      dplyr::filter(!is.na(DOSE)) %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x=TIME, y=DV,
-        group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
-        color=as.factor(.data[[cov]]))) +
+    # p <- obj %>%
+    #   dplyr::filter(!is.na(DOSE)) %>%
+    #   ggplot2::ggplot(ggplot2::aes(
+    #     x=TIME, y=DV,
+    #     group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
+    #     color=as.factor(.data[[cov]]))) +
+    #   ggplot2::geom_line() +
+    #   ggplot2::facet_wrap(~DOSE) +
+    #   ggplot2::theme_bw() +
+    #   # ggplot2::labs(title="DV over time by dose")
+    #   ggplot2::theme(legend.position="bottom")
+
+    temp <- obj %>%
+      dplyr::filter(!is.na(DOSE))
+
+    if(nominal_time){
+      p <- temp %>%
+        ggplot2::ggplot(ggplot2::aes(
+          x=NTIME, y=DV,
+          group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
+          color=as.factor(.data[[cov]])))
+    } else {
+      p <- temp %>%
+        ggplot2::ggplot(ggplot2::aes(
+          x=TIME, y=DV,
+          group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
+          color=as.factor(.data[[cov]])))
+    }
+      p <- p +
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
-      # ggplot2::labs(title="DV over time by dose")
       ggplot2::theme(legend.position="bottom")
     if(administrations) {
       adm <- obj %>%

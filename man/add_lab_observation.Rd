@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_lab_observation}
 \alias{add_lab_observation}
-\title{Add Lab value as observation}
+\title{Add lab value as observation}
 \usage{
 add_lab_observation(obj, lb, lbtestcd, cmt, lbspec = "", silent = F)
 }
@@ -24,5 +24,5 @@ assigned to.}
 The resulting NIF data set.
 }
 \description{
-Add Lab value as observation
+Add lab value as observation
 }

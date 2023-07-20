@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{plot.nif}
 \alias{plot.nif}
-\title{Plot NIF data set by dose and analyte}
+\title{Plot NIF data set}
 \usage{
 \method{plot}{nif}(
   obj,
@@ -15,7 +15,8 @@
   id = NULL,
   usubjid = NULL,
   group = NULL,
-  administrations = F
+  administrations = F,
+  nominal_time = F
 )
 }
 \arguments{
@@ -49,12 +50,16 @@ been defined by 'analyte'.}
 \item{administrations}{Boolean value to indicate whether vertical lines
 marking the administration times should be plotted. Has no function if
 mean=F.}
+
+\item{nominal_time}{Boolean to indicate whether NTIME rather than TIME should
+be plotted on the x-axis.}
 }
 \value{
 The plot object
 }
 \description{
-Plot NIF data set by dose and analyte
+This function plots a NIF data set, grouped by the variable \code{group}. If no
+grouping variable is provided, \code{DOSE} will be used.
 }
 \seealso{
 \code{\link[=nif_viewer]{nif_viewer()}}

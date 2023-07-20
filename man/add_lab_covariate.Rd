@@ -4,14 +4,14 @@
 \alias{add_lab_covariate}
 \title{Add lab covariate}
 \usage{
-add_lab_covariate(obj, lb, lbspec = "", lbtestcd, silent = F)
+add_lab_covariate(obj, lb, lbspec = "SERUM", lbtestcd, silent = F)
 }
 \arguments{
 \item{obj}{The NIF data set.}
 
 \item{lb}{The LB SDTM domain}
 
-\item{lbspec}{The specimem, e.g., SERUM.}
+\item{lbspec}{The specimen, e.g., SERUM.}
 
 \item{lbtestcd}{Lab parameters to be included as character scalar or vector.}
 
@@ -21,5 +21,19 @@ add_lab_covariate(obj, lb, lbspec = "", lbtestcd, silent = F)
 A NIF data set
 }
 \description{
-Add lab covariate
+This functions adds columns for the lab parameters specified in \code{lbtestcd}, in
+a time-varying way, i.e., the actual lab value at the time of the observation
+or administration. This is in contrast to  \code{\link[=add_bl_lab]{add_bl_lab()}}.
+In rows of missing lab data, the last value is carried forward.
+}
+\details{
+Note that for some lab parameters, e.g., leukocytes, bili, etc., there may
+be observations both in serum and in urine. It is therefore necessary to
+specify the specimen tested. This corresponds to the \code{LBSPEC} field used in
+the LB SDTM domain.
+}
+\seealso{
+\code{\link[=add_bl_lab]{add_bl_lab()}}
+
+\code{\link[=add_lab_observation]{add_lab_observation()}}
 }
