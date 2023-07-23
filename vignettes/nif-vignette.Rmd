@@ -1,5 +1,5 @@
 ---
-title: "nif-vignette"
+title: "Making NIF files from SDTM data"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{nif-vignette}
@@ -7,13 +7,122 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+This is a tutorial on using the `nif` package to create NONMEM input files (NIF)
+from SDTM data.
+
+```{r echo=F, message=F, warning=F}
+library(tidyverse)
 ```
 
-```{r setup}
-library(nif)
+## Import SDTM data 
+
+The `nif` package is meant to help creating NIF files for pharmacokinetic
+(PK) data, e.g., to support population PK modeling.
+
+As a minimum, the following SDTM domains are expected to create a basic NIF file:
+
+* DM - demographic data, mostly age, sex and other variables per subject
+* VS - vital signs, particularly weight and height at enrollment, per subject
+* EX - exposure information for the administered drugs, e.g., the time of
+    administration, dose, etc.
+* PC - pharmacokinetic concentrations for the analytes associated with the 
+    administered drugs
+    
+In the most common use case, the respective SDTM data files, e.g., as *.sas7bdat
+files, are copied into one folder (in the below example into `path/to/sdtm/data`),
+and can then be loaded using:
+
+```{r, eval=FALSE, echo=T}
+nif::read_sdtm_sas("path/to/sdtm/data")
 ```
+
+As said above, the minimum required SDTM files are `dm.dat7bdat`, `vs.dat7bdat`, 
+`ex.dat7bdat` and `pc.dat7bdat`. However, if additional covariates from AE, LB
+or any other SDTM domain are to be added, an explicit list of the domains can 
+be provided to the loading function, e.g., 
+
+```{r, eval=FALSE, echo=T}
+read_sdtm_sas("path/to/sdtm/data", "dm", "vs", "ex", "pc", "lb", "ae")
+```
+
+The return value of the function is a `sdtm` object. As part of the `nif`
+package, sample data for a fictional study with the drug 'examplini' is
+included:
+
+```{r}
+sdtm.expl <- nif::sdtm(nif::examplinib)
+sdtm.expl
+```
+
+As shown above, printing an `sdtm` object shows basic information on the data
+set.
+
+## Suggestions
+
+Some fields in the SDTM data are study specific, and is therefore hard to
+fully automate the generation of standard NIF files for downstream analysis
+steps. This needs study-specific considerations and manual adaptations.
+
+As a starting point the function `suggest()` can provide useful suggestions for 
+this step:
+
+```{r}
+nif::suggest(sdtm.expl)
+```
+
+In this case, there are different treatment arms defined in the DM domain that
+should probably be included as covariates in the NIF file (see suggestion 1). 
+This will be programmed once a basic NIF file has been generated (see below).
+
+Also, the SDTM data do not provide a link between treatments and analytes (see
+suggestion 2). This is a common situation that is described in the below
+section:
+
+### Analyte mappings
+
+Often, the names for the treatments as listed in the EXTRT field of EX do not
+directly correspond to the names of the respective (parent) analytes codes used
+in the PC domain (i.e., in the PCTESTCD field).
+
+To establish these relationships, treatment-analyte mappings must be added to 
+the `sdtm` object. In this sample case, the analyte 'RS2023' refers to the
+(parent) plasma concentration for the drug 'examplinib':
+
+```{r}
+sdtm.expl <- nif::sdtm(nif::examplinib) %>% 
+  nif::add_mapping("EXAMPLINIB", "RS2023")
+```
+
+## Create a NIF file
+
+The following section details how to create NIF files from an `sdtm` object as 
+created above, and what assumptions and imputations underlie the algorithm.
+
+### Basic NIF file
+
+In the first step, `make_nif()` is used to create a data table that has
+individual rows for each administration and observation. Following the NONMEM
+convention for oral administration, the `EVID` field is 1 for the former, and 0
+for the latter.
+
+> **NOTE:** If other models are used, ...
+
+Standard demographic information including SEX, AGE, RACE is taken from the DM 
+domain and merged into the data table. Baseline WEIGHT and HEIGHT are taken from 
+the VS domain.
+
+```{r}
+nif.expl <- nif::make_nif(sdtm.expl)
+```
+
+The output of the function reminds that there may be pharmacokinetic data fro 
+multiple specimens in the PC domain, e.g., PLASMA and URINE or FECES. The exact
+specimen can be explicitly provided, e.g., `make_nif(sdtm.expl, spec="PASMA)`.
+
+
+
+
+
+
+
+
