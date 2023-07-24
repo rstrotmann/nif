@@ -152,7 +152,8 @@ make_admin <- function(ex,
     # expand dates from start date to end date, time is end.time for last row,
     #  otherwise start.time
     dplyr::group_by(STUDYID, USUBJID, EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC,
-      EXSTDY, EXENDY, start.time, end.time) %>%
+      EXSTDY, EXENDY, start.time, end.time, EPOCH) %>%
+    # dplyr::group_by_all() %>%
     tidyr::expand(date=seq(as.Date(start.date), as.Date(end.date), by="1 day")) %>%
     dplyr::mutate(time=case_when(
       row_number()==n() ~ end.time,
@@ -230,7 +231,7 @@ make_obs <- function(pc, spec="", silent=F){
     dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1))) %>%
     dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
     dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0))
-  return(obs)
+  return(obs %>% as.data.frame())
 }
 
 

@@ -224,7 +224,9 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023") {
     arrange(USUBJID, EXSTDTC) %>%
     group_by(USUBJID) %>%
     mutate(EXSEQ=row_number()) %>%
-    ungroup()
+    ungroup() %>%
+    mutate(EPOCH=case_when(EXSEQ==1 ~ "OPEN LABEL TREATMENT 1",
+                           EXSEQ==2 ~ "OPEN LABEL TREATMENT 2")) %>%
 
   return(ex %>% as.data.frame())
 }
@@ -296,7 +298,7 @@ reformat_date <- function(x) {
 }
 
 synthesize_sdtm <- function() {
-  dm <- make_dm(studyid="2023000400")
+  dm <- make_dm(studyid="2023000400", nsubs=20)
   vs <- make_vs(dm)
   ex <- make_sd_ex(dm, drug="RS2023")
   pc <- make_pc(ex, dm, vs)
