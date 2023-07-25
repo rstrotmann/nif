@@ -59,7 +59,7 @@ package, sample data for a fictional study with the drug 'examplinib' is
 included:
 
 ```{r}
-sdtm.expl <- sdtm(examplinib)
+sdtm.expl <- examplinib
 sdtm.expl
 ```
 
@@ -98,7 +98,7 @@ the `sdtm` object. In this sample case, the analyte 'RS2023' refers to the
 (parent) plasma concentration for the drug 'examplinib':
 
 ```{r}
-sdtm.expl <- sdtm(examplinib) %>% 
+sdtm.expl <- examplinib %>% 
   add_mapping("EXAMPLINIB", "RS2023")
 ```
 
