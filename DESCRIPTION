@@ -28,5 +28,5 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder:
     knitr,
-    dplyr
+    tidyverse
 LazyData: true

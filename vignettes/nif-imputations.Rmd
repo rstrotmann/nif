@@ -1,0 +1,75 @@
+---
+title: "Imputations and assumptions used by make_nif()"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Imputations and assumptions used by make_nif()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo=F, message=F, warning=F}
+library(nif)
+```
+
+This vignette outlines the inner workings of `make_nif()` to help understanding
+what assumptions are made by the function and how e.g., time information is
+derived.
+
+## Baseline covariates
+
+The subjects' height and body weight are included as standard fields in the 
+NIF file. They are derived from the 'VS' domain, filtered by
+`EPOCH=="SCREENING"`. If multiple measurements with this condition are included,
+the mean value is used.
+
+## Observations
+
+### Specimen
+
+The observations included in the NIF file are the pharmacokinetic concentrations
+included in the 'PC' domain. Depending on the design of the underlying clinical
+study, there may be data from different specimen types, e.g., blood, plasma,
+urine, feces.
+The specimen type to be included in the NIF file can be explicitly provided to
+`make_nif()`, e.g., `make_nif(sdtm.data, spec="PLASMA")`. If not provided, the
+most likely is used, i.e., either "PLASMA" or "BLOOD".
+
+### Measurements not done
+
+If the *permissible* field `PCSTAT` is used in the PC domain, providing
+information on the status of the pharmacokinetic samples, data records with 
+`PCSTAT=="NOT DONE"` are discarded.
+
+### Observation time
+
+The actual absolute date and time for each observation is taken from the `PCDTC`
+field. The nominal (planned) time is taken from the `PCELTM` (planned elapsed
+time) field. This *permissible* variable has the format "PTxxH" where *xx* is
+the time since the last administration.
+
+### Other fields required by NONMEM
+
+For all observations, the compartment (`CMT`) is fixed to 2. Depending on the
+further analysis, e.g., the structural model used in the nonlinear mixed-effects
+modeling, the compartment may need to be changed, or different compartments for
+the parent compound and metabolites may need to be defined.
+
+The `DV` field in the NIF output is set to `PCSTRESN/1000`. This assumes that
+the pharmacokinetic concentrations are given in ng/ml units. As per the NONMEM
+conventions, `LNDV` is the natural log of `DV`. `MDV` (*missing dependent
+variable*) is set to 1 for entries with missing `DV`.
+
+For all observations, `EVID` is fixed to zero.
+
+
+
+
+
+

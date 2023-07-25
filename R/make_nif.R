@@ -193,7 +193,7 @@ make_admin <- function(ex,
 #' @import dplyr
 #' @import lubridate
 make_obs <- function(pc, spec="", silent=F){
-  # Filter for sepecimen, guess specimen if none defined
+  # Filter for specimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC)
   if(spec==""){

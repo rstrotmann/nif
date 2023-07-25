@@ -7,12 +7,20 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
 This is a tutorial on using the `nif` package to create NONMEM input files (NIF)
 from SDTM data.
 
-```{r echo=F, message=F, warning=F}
+```{r setup, echo=F, message=F, warning=F}
 library(tidyverse)
 library(knitr)
+library(nif)
 ```
 
 ## Import SDTM data 
@@ -34,7 +42,7 @@ files, are copied into one folder (in the below example into `path/to/sdtm/data`
 and can then be loaded using:
 
 ```{r, eval=FALSE, echo=T}
-nif::read_sdtm_sas("path/to/sdtm/data")
+read_sdtm_sas("path/to/sdtm/data")
 ```
 
 As said above, the minimum required SDTM files are `dm.dat7bdat`, `vs.dat7bdat`, 
@@ -47,11 +55,11 @@ read_sdtm_sas("path/to/sdtm/data", "dm", "vs", "ex", "pc", "lb", "ae")
 ```
 
 The return value of the function is a `sdtm` object. As part of the `nif`
-package, sample data for a fictional study with the drug 'examplini' is
+package, sample data for a fictional study with the drug 'examplinib' is
 included:
 
 ```{r}
-sdtm.expl <- nif::sdtm(nif::examplinib)
+sdtm.expl <- sdtm(examplinib)
 sdtm.expl
 ```
 
@@ -68,7 +76,7 @@ As a starting point the function `suggest()` can provide useful suggestions for
 this step:
 
 ```{r}
-nif::suggest(sdtm.expl)
+suggest(sdtm.expl)
 ```
 
 In this case, there are different treatment arms defined in the DM domain that
@@ -90,8 +98,8 @@ the `sdtm` object. In this sample case, the analyte 'RS2023' refers to the
 (parent) plasma concentration for the drug 'examplinib':
 
 ```{r}
-sdtm.expl <- nif::sdtm(nif::examplinib) %>% 
-  nif::add_mapping("EXAMPLINIB", "RS2023")
+sdtm.expl <- sdtm(examplinib) %>% 
+  add_mapping("EXAMPLINIB", "RS2023")
 ```
 
 ## Creating NIF files
@@ -111,7 +119,7 @@ domain and merged into the data table. Baseline WEIGHT and HEIGHT are taken from
 the VS domain.
 
 ```{r}
-nif.expl <- nif::make_nif(sdtm.expl)
+nif.expl <- make_nif(sdtm.expl)
 ```
 
 The output of the function reminds that there may be pharmacokinetic data for
@@ -141,7 +149,7 @@ To create a `FASTED` covariate, first the period number is derived from the
 to `FASTED':
 
 ```{r}
-nif.expl <- nif::make_nif(sdtm.expl, silent=T) %>%
+nif.expl <- make_nif(sdtm.expl, silent=T) %>%
   mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>% 
   mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
   mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
@@ -154,7 +162,7 @@ see the first few lines of the the data:
 
 ```{r}
 nif.expl %>%
-  dplyr::select(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, AMT, DV) %>% 
+  select(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, AMT, DV) %>% 
   as.data.frame() %>% 
   head() %>% 
   kable()
