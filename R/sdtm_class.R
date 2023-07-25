@@ -79,7 +79,7 @@ print.sdtm <- function(obj){
   print(obj$arms, right=FALSE, justify=FALSE)
 
   cat("\nTreatments:\n")
-  print(obj$treatments, right=FALSE)
+  print(obj$treatments %>% as.data.frame(), right=FALSE)
   cat("\nSpecimens:\n")
   print(obj$specimens, right=FALSE)
   cat("\nAnalytes:\n")
