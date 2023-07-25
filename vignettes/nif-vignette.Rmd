@@ -1,8 +1,8 @@
 ---
-title: "Making NIF files from SDTM data"
+title: "Creating NIF files from SDTM data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{nif-vignette}
+  %\VignetteIndexEntry{"Creating NIF files from SDTM data"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -149,7 +149,7 @@ nif.expl <- nif::make_nif(sdtm.expl, silent=T) %>%
 
 Note the `silent=T` modifier that strips all messages from the function.
 
-the NIF file has now the additional fields `PERIOD`, `TREATMENT` and `FASTED`,
+The NIF file has now the additional fields `PERIOD`, `TREATMENT` and `FASTED`,
 see the first few lines of the the data:
 
 ```{r}
@@ -171,8 +171,18 @@ plot(nif.expl)
 To show the food effect on the parent compound, "RS2023":
 
 ```{r, warning=F, fig.width=4, fig.height=3}
-plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=T, points=T)
+plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=F, points=T, nominal_time=T)
 ```
 
+```{r, warning=F, fig.width=4, fig.height=3}
+plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=T)
+```
 
+There are further display options, refer to `?plot.nif` for details.
+
+Use `nif_viewer()` to show individual subjects interactively: 
+
+```{r, eval=FALSE, echo=T}
+nif_viewer(nif.expl)
+```
 

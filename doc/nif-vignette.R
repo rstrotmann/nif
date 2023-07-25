@@ -44,5 +44,11 @@ nif.expl %>%
 plot(nif.expl)
 
 ## ---- warning=F, fig.width=4, fig.height=3------------------------------------
-plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=T, points=T)
+plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=F, points=T, nominal_time=T)
+
+## ---- warning=F, fig.width=4, fig.height=3------------------------------------
+plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=T)
+
+## ---- eval=FALSE, echo=T------------------------------------------------------
+#  nif_viewer(nif.expl)
 
