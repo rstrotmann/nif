@@ -9,7 +9,7 @@ make_obs(pc, spec = "", silent = F)
 \arguments{
 \item{pc}{The SDTM PC domain as a data.frame.}
 
-\item{spec}{The specimem to be represented in the NIF data set as string
+\item{spec}{The specimen to be represented in the NIF data set as string
 (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 or "PLASMA" is selected, depending what is found in the PC data.}

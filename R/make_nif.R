@@ -184,7 +184,7 @@ make_admin <- function(ex,
 #'   in mg/ml
 #'
 #' @param pc The SDTM PC domain as a data.frame.
-#' @param spec The specimem to be represented in the NIF data set as string
+#' @param spec The specimen to be represented in the NIF data set as string
 #'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 #'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 #'   or "PLASMA" is selected, depending what is found in the PC data.
@@ -201,7 +201,7 @@ make_obs <- function(pc, spec="", silent=F){
     else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
     else{spec ="none"}
     if(!silent){
-      message(paste("No specimem specified. Set to", spec, "as the most likely."))
+      message(paste("No specimen specified. Set to", spec, "as the most likely."))
     }
   }
   obs <- pc %>%
@@ -334,7 +334,7 @@ impute.administration.time <- function(admin, obs){
 #'
 #' @param sdtm.data A list of SDTM domains as data tables, e.g., as loaded using
 #'   read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.
-#' @param spec The specimem to be represented in the NIF data set as string
+#' @param spec The specimen to be represented in the NIF data set as string
 #'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 #'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 #'   or "PLASMA" is selected, depending what is found in the PC data.

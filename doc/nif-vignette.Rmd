@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 This is a tutorial on using the `nif` package to create NONMEM input files (NIF)
 from SDTM data.
 
-```{r setup, echo=F, message=F, warning=F}
+```{r setup}
 library(tidyverse)
 library(knitr)
 library(nif)
@@ -60,7 +60,7 @@ included:
 
 ```{r}
 sdtm.expl <- examplinib
-examplinib
+sdtm.expl
 ```
 
 As shown above, printing an `sdtm` object shows basic information on the data
@@ -98,7 +98,7 @@ the `sdtm` object. In this sample case, the analyte 'RS2023' refers to the
 (parent) plasma concentration for the drug 'examplinib':
 
 ```{r}
-sdtm.expl <- sdtm(examplinib) %>% 
+sdtm.expl <- examplinib %>% 
   add_mapping("EXAMPLINIB", "RS2023")
 ```
 

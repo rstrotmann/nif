@@ -10,7 +10,7 @@ make_nif(sdtm.data, spec = "", impute.missing.end.time = TRUE, silent = F)
 \item{sdtm.data}{A list of SDTM domains as data tables, e.g., as loaded using
 read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.}
 
-\item{spec}{The specimem to be represented in the NIF data set as string
+\item{spec}{The specimen to be represented in the NIF data set as string
 (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 or "PLASMA" is selected, depending what is found in the PC data.}
