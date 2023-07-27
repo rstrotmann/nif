@@ -463,9 +463,11 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
 #' @export
 index_nif <- function(nif) {
   nif %>%
+    as.data.frame() %>%
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
-    dplyr::relocate(REF)
+    dplyr::relocate(REF) %>%
+    nif()
 }
 
 
@@ -486,7 +488,7 @@ compress_nif <- function(nif, ...) {
     columns <- temp
   }
   nif %>%
-    dplyr::select(columns) %>%
+    dplyr::select(any_of(columns)) %>%
     nif()
 }
 

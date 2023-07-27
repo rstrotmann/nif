@@ -70,6 +70,7 @@ add_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
 #' @param obj A SDTM object.
 #' @export
 print.sdtm <- function(obj){
+  cat("SDTM data set\n")
   cat(paste("Study", obj$study))
   cat(paste(" with", nrow(obj$subjects), "subjects\n"))
   cat("SDTM domains: ")

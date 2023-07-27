@@ -326,7 +326,8 @@ synthesize_sdtm <- function() {
 
 ####
 
-examplinib <- synthesize_sdtm()
+examplinib <- synthesize_sdtm() %>%
+  add_mapping("EXAMPLINIB", "RS2023")
 
 
 

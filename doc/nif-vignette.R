@@ -4,8 +4,10 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----setup--------------------------------------------------------------------
-library(tidyverse)
+## ----setup, message=F, warning=F----------------------------------------------
+library(tidyr)
+library(dplyr)
+library(stringr)
 library(knitr)
 library(nif)
 
