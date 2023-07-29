@@ -412,6 +412,15 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
 
   admin <- impute.administration.time(admin, obs)
 
+  if("RFSTDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
+    dm <- dm %>%
+      mutate(rfstdtc=lubridate::as_datetime(
+        RFSTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y"))) %>%
+      mutate(age1=floor(as.duration(interval(brthyr, rfstdtc))/as.duration(years(1)))) %>%
+      mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE))
+  }
+
   nif <- obs %>%
     # join observations and administrations, then DM and baseline VS
     dplyr::bind_rows(admin %>%

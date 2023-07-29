@@ -25,6 +25,9 @@ NIF file. They are derived from the 'VS' domain, filtered by
 `EPOCH=="SCREENING"`. If multiple measurements with this condition are included,
 the mean value is used.
 
+The subjects' age is derived from the `AGE` field in the 'DM' domain, or, if not
+available, as the difference between `RFSTDTC` and `BRTHDTC` from 'DM'.
+
 ## Observations
 
 ### Specimen

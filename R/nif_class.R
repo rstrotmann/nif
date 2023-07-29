@@ -326,3 +326,5 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
   return(p)
 }
 
+
+

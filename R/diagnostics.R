@@ -102,7 +102,95 @@ dose_plot_id <- function(nif, id, y.scale="lin", max.dose=100, max.time=NA){
   return(p)
 }
 
+#' Age histogram
+#'
+#' @param obj The NIF file object.
+#'
+#' @return A plot object.
+#' @export
+age_hist <- function(obj) {
+  obj %>%
+    distinct(ID, AGE) %>%
+    ggplot(aes(x=AGE)) +
+    geom_histogram(binwidth=5, fill= "grey") +
+    theme_bw() +
+    labs(x="age (years)", y="number of subjects")
+}
 
+#' Weight histogram
+#'
+#' @param obj The NIF file object.
+#'
+#' @return A plot object.
+#' @export
+weight_hist <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    distinct(ID, WEIGHT) %>%
+    ggplot(aes(x=WEIGHT)) +
+    geom_histogram(binwidth=5, fill= "grey") +
+    theme_bw() +
+    labs(x="body weight (kg)", y="number of subjects")
+}
 
+#' BMI histogram
+#'
+#' @param obj The NIF file object.
+#'
+#' @return A plot object.
+#' @export
+bmi_hist <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    distinct(ID, WEIGHT, HEIGHT) %>%
+    mutate(BMI=WEIGHT/(HEIGHT/100)^2) %>%
+    ggplot(aes(x=BMI)) +
+    geom_histogram(binwidth=1, fill= "grey") +
+    geom_vline(xintercept=c(18.5, 24.9, 30)) +
+    theme_bw() +
+    labs(x="BMI (kg/m^2)", y="number of subjects")
+}
 
+#' Weight by sex diagram
+#'
+#' @param obj The NIF file object.
+#'
+#' @return A plot object.
+#' @export
+wt_by_sex <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    distinct(ID, SEX, WEIGHT) %>%
+    group_by(SEX) %>%
+    mutate(count = n(), maxwt=max(WEIGHT)) %>%
+    ggplot(aes(x=SEX, y=WEIGHT, group=SEX)) +
+    scale_x_continuous(breaks=c(0, 1)) +
+    geom_boxplot(width=0.5) +
+    geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
+                 color="transparent", dotsize=1.2) +
+    geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
+               label.size=0, position=position_dodge(width = 0.75)) +
+    theme_bw()
+}
+
+#' Weight by race diagram
+#'
+#' @param obj The NIF file object.
+#'
+#' @return A plot object.
+#' @export
+wt_by_race <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    distinct(ID, WEIGHT, RACE) %>%
+    group_by(RACE) %>%
+    mutate(count = n(), maxwt=max(WEIGHT)) %>%
+    ggplot(aes(x=RACE, y=WEIGHT, group=RACE)) +
+    geom_boxplot(width=0.5) +
+    geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
+                 color="transparent", dotsize=1.2) +
+    geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
+               label.size=0, position=position_dodge(width = 0.75)) +
+    theme_bw()
+}
 
