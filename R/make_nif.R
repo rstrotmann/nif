@@ -672,7 +672,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
     group_by(USUBJID) %>%
-    fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT) %>%
+    fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
     ungroup()
 
   return(nif(temp))

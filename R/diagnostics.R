@@ -194,3 +194,17 @@ wt_by_race <- function(obj) {
     theme_bw()
 }
 
+# dose_hist <- function(obj) {
+#    obj %>%
+#     filter(EVID==1) %>%
+#     group_by(ID, ANALYTE) %>%
+#     arrange(TIME) %>%
+#     filter(row_number()==1) %>%
+#     ungroup() %>%
+#     mutate(DOSE=as.factor(DOSE)) %>%
+#     group_by(ANALYTE, DOSE) %>%
+#     summarize(n=n(), .groups="drop") %>%
+#     ggplot(aes(x=as.factor(DOSE), y=n)) +
+#     geom_point() +
+#     facet_wrap(~ANALYTE)
+# }
