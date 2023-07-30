@@ -160,16 +160,20 @@ bmi_hist <- function(obj) {
 wt_by_sex <- function(obj) {
   obj %>%
     as.data.frame() %>%
-    distinct(ID, SEX, WEIGHT) %>%
+    group_by(ID) %>%
+    mutate(bl_wt=mean(WEIGHT[TIME==0])) %>%
+    ungroup() %>%
+    distinct(ID, SEX, bl_wt) %>%
     group_by(SEX) %>%
-    mutate(count = n(), maxwt=max(WEIGHT)) %>%
-    ggplot(aes(x=SEX, y=WEIGHT, group=SEX)) +
+    mutate(count = n(), maxwt=max(bl_wt)) %>%
+    ggplot(aes(x=SEX, y=bl_wt, group=SEX)) +
     scale_x_continuous(breaks=c(0, 1)) +
     geom_boxplot(width=0.5) +
-    geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
-                 color="transparent", dotsize=1.2) +
+    # geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
+    #              color="transparent", dotsize=1.2) +
     geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
                label.size=0, position=position_dodge(width = 0.75)) +
+    labs(x="sex", y="baseline weight (kg)") +
     theme_bw()
 }
 
@@ -182,15 +186,20 @@ wt_by_sex <- function(obj) {
 wt_by_race <- function(obj) {
   obj %>%
     as.data.frame() %>%
-    distinct(ID, WEIGHT, RACE) %>%
-    group_by(RACE) %>%
-    mutate(count = n(), maxwt=max(WEIGHT)) %>%
-    ggplot(aes(x=RACE, y=WEIGHT, group=RACE)) +
+    group_by(ID) %>%
+    mutate(bl_wt=mean(WEIGHT[TIME==0])) %>%
+    ungroup() %>%
+    mutate(rc=as.factor(RACE)) %>%
+    distinct(ID, bl_wt, rc) %>%
+    group_by(rc) %>%
+    mutate(count = n(), maxwt=max(bl_wt)) %>%
+    ggplot(aes(x=rc, y=bl_wt, group=rc)) +
     geom_boxplot(width=0.5) +
-    geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
-                 color="transparent", dotsize=1.2) +
+    # geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
+    #              color="transparent", dotsize=1.2) +
     geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
                label.size=0, position=position_dodge(width = 0.75)) +
+    labs(x="race", y="baseline weight (kg)") +
     theme_bw()
 }
 

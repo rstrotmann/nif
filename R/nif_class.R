@@ -51,9 +51,15 @@ print.nif <- function(obj){
   cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
   cat("Columns:\n")
   cat(paste(names(obj), collapse=", "), "\n")
-  temp <- obj %>%
-    dplyr::select(ID, NTIME, TIME, ANALYTE, EVID, CMT, AMT, DOSE, DV) %>%
-    df.to.string(n=15)
+
+  temp <- obj[1:15, names(obj) %in% c("ID", "NTIME", "TIME", "ANALYTE", "EVID",
+                                   "CMT", "AMT", "DOSE", "DV")] %>%
+    as.data.frame()
+  # temp <- obj %>%
+  #   dplyr::select(ID, NTIME, TIME, ANALYTE, EVID, CMT, AMT, DOSE, DV) %>%
+
+  temp <- temp %>%
+    df.to.string()
   cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
 }
 
@@ -148,6 +154,18 @@ analytes.nif <- function(obj){
 }
 
 
+#' Implementation of the head function
+#'
+#' @param obj A nif object
+#' @import dplyr
+#' @return None
+#' @export
+head.nif <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    head()
+}
+
 #' Export a nif object as csv file
 #'
 #' @param obj A nif object.
@@ -239,10 +257,16 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       stop(paste0("Plotting means over multiple analytes does not make sense! ",
                    "Consider selecting a specific analyte"))
     }
-    p <- obj %>%
+    temp <- obj %>%
+      as.data.frame() %>%
+      filter(NTIME > 0) %>%
       dplyr::filter(!is.na(DOSE)) %>%
       dplyr::group_by(NTIME, .data[[cov]], DOSE) %>%
-      dplyr::summarize(mean=mean(DV, na.rm=TRUE), sd=sd(DV, na.rm=TRUE), n=n()) %>%
+      dplyr::summarize(mean=mean(DV, na.rm=TRUE), sd=sd(DV, na.rm=TRUE),
+                       n=n(), .groups="drop") %>%
+      mutate(max_y=mean+sd)
+
+    p <- temp %>%
       ggplot2::ggplot(ggplot2::aes(
         x=NTIME, y=mean,
         group=as.factor(.data[[cov]]),
@@ -253,21 +277,9 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
-      # ggplot2::labs(title="DV over time by dose", fill=NULL)
+      ylim(0, max(temp$max_y, na.rm=T)) +
       ggplot2::theme(legend.position="bottom")
   } else {
-    # p <- obj %>%
-    #   dplyr::filter(!is.na(DOSE)) %>%
-    #   ggplot2::ggplot(ggplot2::aes(
-    #     x=TIME, y=DV,
-    #     group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
-    #     color=as.factor(.data[[cov]]))) +
-    #   ggplot2::geom_line() +
-    #   ggplot2::facet_wrap(~DOSE) +
-    #   ggplot2::theme_bw() +
-    #   # ggplot2::labs(title="DV over time by dose")
-    #   ggplot2::theme(legend.position="bottom")
-
     temp <- obj %>%
       dplyr::filter(!is.na(DOSE))
 
