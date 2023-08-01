@@ -31,7 +31,8 @@ sdtm <- function(sdtm.data){
     dm=dm,
     ex=ex,
     vs=vs,
-    treatment.analyte.mappings=data.frame()
+    treatment.analyte.mappings=data.frame(),
+    time.mapping=data.frame()
   )
 
   class(temp) <- "sdtm"
@@ -53,14 +54,52 @@ sdtm <- function(sdtm.data){
 #' @param pctestcd The analyte as defined in PC.
 #' @seealso [make_nif()]
 #' @export
+add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
+  UseMethod("add_analyte_mapping")
+}
+
+#' Add mapping method for legacy compatibility
+#' @export
 add_mapping <- function(obj, extrt="", pctestcd="") {
-  UseMethod("add_mapping")
+  UseMethod("add_analyte_mapping")
 }
 
 #' @export
-add_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
+add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
   obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
+  return(obj)
+}
+
+
+#' Attach a time mapping to an sdtm object
+#'
+#' @param obj The sdtm object.
+#' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
+#'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
+#'   and NTIME corresponds to the nominal time in hours.
+#' @return The modified sdtm object
+#' @export
+#'
+#' @seealso [suggest()]
+add_time_mapping <- function(obj, ...) {
+  UseMethod("add_time_mapping")
+}
+
+#' Attach a time mapping to an sdtm object
+#'
+#' @param obj The sdtm object.
+#' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
+#'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
+#'   and NTIME corresponds to the nominal time in hours.
+#' @return The modified sdtm object
+#' @export
+#'
+#' @seealso [suggest()]
+add_time_mapping.sdtm <- function(obj, ...) {
+  temp <- unlist(c(as.list(environment())[-1], list(...)))
+  mapping <- data.frame(PCTPT=names(temp), NTIME=as.numeric(temp))
+  obj$time.mapping <- rbind(obj$time.mapping, mapping)
   return(obj)
 }
 
@@ -267,6 +306,17 @@ suggest.sdtm <- function(obj) {
       df.to.string(no.analyte.treatments, indent="   "), "\n\n",
       "   Available analytes:\n\n",
       df.to.string(obj$pc %>% dplyr::distinct(PCTESTCD), indent="   "), "\n\n"
+    ))
+    n.suggestion <- n.suggestion + 1
+  }
+
+  if(!("PCELTM" %in% names(obj$pc))){
+    message(paste0(
+      n.suggestion, ". There is no PCELTM field in PC! By default, the nominal time is\n",
+      "   derived from PCELTM. Please provide a mapping of PCTPT to the\n",
+      "   nominal time by adding the below code after creating the sdtm object:\n"
+
+      # temp <-
     ))
     n.suggestion <- n.suggestion + 1
   }

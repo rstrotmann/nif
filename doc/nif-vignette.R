@@ -26,7 +26,7 @@ suggest(sdtm.expl)
 
 ## -----------------------------------------------------------------------------
 sdtm.expl <- examplinib %>% 
-  add_mapping("EXAMPLINIB", "RS2023")
+  add_analyte_mapping("EXAMPLINIB", "RS2023")
 
 ## -----------------------------------------------------------------------------
 nif.expl <- make_nif(sdtm.expl)
