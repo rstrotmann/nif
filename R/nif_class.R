@@ -48,7 +48,16 @@ print.nif <- function(obj){
              round(n_females/(n_males + n_females)*100, 1), "%)\n\n"))
 
   cat(paste0("Studies:\n", paste(studies(obj), collapse="\n"), "\n\n"))
-  cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
+
+  # cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
+  cat("Doses:\n")
+  temp <- obj %>%
+    as.data.frame() %>%
+    dplyr::filter(AMT!=0) %>%
+    dplyr::distinct(EXTRT, AMT) %>%
+    dplyr::arrange(EXTRT, as.numeric(AMT))
+  cat(paste0(df.to.string(temp), "\n\n"))
+
   cat("Columns:\n")
   cat(paste(names(obj), collapse=", "), "\n")
 

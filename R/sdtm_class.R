@@ -111,7 +111,7 @@ add_time_mapping.sdtm <- function(obj, ...) {
 print.sdtm <- function(obj){
   cat("SDTM data set\n")
   cat(paste("Study", obj$study))
-  cat(paste(" with", nrow(obj$subjects), "subjects\n"))
+  cat(paste(" with", nrow(obj$subjects), "subjects providing PC data.\n"))
   cat("SDTM domains: ")
   cat(paste(names(obj$domains), collapse=", "))
 
@@ -124,12 +124,22 @@ print.sdtm <- function(obj){
   print(obj$specimens, right=FALSE)
   cat("\nAnalytes:\n")
   print(obj$analytes, right=FALSE)
+
   cat("\nTreatment-to-analyte mappings:\n")
   if(nrow(obj$treatment.analyte.mappings)>0){
     print(obj$treatment.analyte.mappings, right=FALSE)
   } else {
     cat("none")
   }
+
+  cat("\nTime mappings:\n")
+  if(nrow(obj$time.mapping)>0){
+    print(obj$time.mapping, right=FALSE)
+  } else {
+    cat("none")
+  }
+
+
 
   # if(!pctptnum.matches.pceltm(obj$pc)){
   #   temp <- obj$pc %>%
@@ -187,7 +197,7 @@ subjects <- function(obj) {
 
 #' @export
 subjects.sdtm <- function(obj) {
-  obj$dm %>%
+  obj$pc %>%
     dplyr::distinct(USUBJID) %>%
     dplyr::pull(USUBJID) %>%
     as.character()
@@ -311,12 +321,19 @@ suggest.sdtm <- function(obj) {
   }
 
   if(!("PCELTM" %in% names(obj$pc))){
-    message(paste0(
-      n.suggestion, ". There is no PCELTM field in PC! By default, the nominal time is\n",
-      "   derived from PCELTM. Please provide a mapping of PCTPT to the\n",
-      "   nominal time by adding the below code after creating the sdtm object:\n"
+    line <- function(x) {
+      return(paste0("     \"", x, "\" = 0,"))
+    }
+    temp <- paste(sapply(unique(obj$pc[,"PCTPT"]), line), collapse="\n")
 
-      # temp <-
+    message(paste0(
+      n.suggestion, ". By default, 'make_nif()' derives the nominal sampling time from the permissible field\n",
+      "   PCELTM in PC. However, in this data set, PCELTM is not defined, and the nominal time\n",
+      "   must be manually derived from PCTPT. Please provide a time mapping using 'add_time_mapping()',\n",
+      "   e.g., by adding the below code after creating the sdtm object. Obviously, you need to\n",
+      "   replace the zeros with the respective time after admininstation in hours:\n\n",
+      "   %>% add_time_mapping(\n",
+      substr(temp, 1, nchar(temp)-1), ")\n"
     ))
     n.suggestion <- n.suggestion + 1
   }

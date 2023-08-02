@@ -184,6 +184,7 @@ make_admin <- function(ex,
 #'   in mg/ml
 #'
 #' @param pc The SDTM PC domain as a data.frame.
+#' @param time_mapping The time mapping.
 #' @param spec The specimen to be represented in the NIF data set as string
 #'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 #'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
@@ -192,7 +193,7 @@ make_admin <- function(ex,
 #' @return A tibble with individual observations with certain NONMEM input variables set
 #' @import dplyr
 #' @import lubridate
-make_obs <- function(pc, spec="", silent=F){
+make_obs <- function(pc, time_mapping=NULL, spec="", silent=F){
   # Filter for specimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC)
@@ -227,8 +228,15 @@ make_obs <- function(pc, spec="", silent=F){
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
       .default=NA)) #%>%
 
+  if("PCELTM" %in% names(pc)){
     obs <- obs %>%
-    dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1))) %>%
+      dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)))
+  } else {
+    obs <- obs %>%
+      dplyr::left_join(time_mapping, by="PCTPT")
+  }
+
+    obs <- obs %>%
     dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
     dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0))
   return(obs %>% as.data.frame())
@@ -363,7 +371,7 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
-  obs <- make_obs(pc, spec=spec, silent=silent)
+  obs <- make_obs(pc, time_mapping=sdtm.data$time.mapping, spec=spec, silent=silent)
   cut.off.date <- last_obs_time(obs)
   if(!silent) {
     message(paste("Data cut-off was set to last observation time,", cut.off.date))
