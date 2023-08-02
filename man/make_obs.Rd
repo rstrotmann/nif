@@ -4,10 +4,12 @@
 \alias{make_obs}
 \title{Make observation data set from PC}
 \usage{
-make_obs(pc, spec = "", silent = F)
+make_obs(pc, time_mapping = NULL, spec = "", silent = F)
 }
 \arguments{
 \item{pc}{The SDTM PC domain as a data.frame.}
+
+\item{time_mapping}{The time mapping.}
 
 \item{spec}{The specimen to be represented in the NIF data set as string
 (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string

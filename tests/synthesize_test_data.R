@@ -327,7 +327,7 @@ synthesize_sdtm <- function() {
 ####
 
 examplinib <- synthesize_sdtm() %>%
-  add_mapping("EXAMPLINIB", "RS2023")
+  add_analyte_mapping("EXAMPLINIB", "RS2023")
 
 
 

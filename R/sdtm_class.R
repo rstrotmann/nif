@@ -129,14 +129,14 @@ print.sdtm <- function(obj){
   if(nrow(obj$treatment.analyte.mappings)>0){
     print(obj$treatment.analyte.mappings, right=FALSE)
   } else {
-    cat("none")
+    cat("none\n")
   }
 
   cat("\nTime mappings:\n")
   if(nrow(obj$time.mapping)>0){
     print(obj$time.mapping, right=FALSE)
   } else {
-    cat("none")
+    cat("none\n")
   }
 
 
