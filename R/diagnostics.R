@@ -16,10 +16,14 @@
 nif_plot_id <- function(nif, id, y.scale="lin", max.time=NA){
   if(id %in% nif$ID) {
     plot.label <- "ID"
-    nif <- nif %>% filter(ID==id)
+    nif <- nif %>%
+      filter(ID==id)
+    id_label <- ""
   }
   else if(id %in% nif$USUBJID) {
-    nif <- nif %>% filter(USUBJID==id)
+    nif <- nif %>%
+      filter(USUBJID==id)
+    id_label <- paste0(" (ID ", nif %>% distinct(ID) %>% pull(ID), ")")
     plot.label <- "USUBJID"
   }
   else {
@@ -38,7 +42,7 @@ nif_plot_id <- function(nif, id, y.scale="lin", max.time=NA){
     ggplot2::geom_line() +
     ggplot2::geom_point() +
     ggplot2::xlim(0, max.time) +
-    ggplot2::labs(title=paste0(plot.label, ": ", id),
+    ggplot2::labs(title=paste0(plot.label, ": ", id, id_label),
       caption="vertical lines indicate administrations",
       color="analyte") +
     ggplot2::theme_bw() +

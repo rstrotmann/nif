@@ -232,6 +232,10 @@ make_obs <- function(pc, time_mapping=NULL, spec="", silent=F){
     obs <- obs %>%
       dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)))
   } else {
+    if(is.null(time_mapping) | nrow(time_mapping)==0){
+      stop(paste("No PCELM in PC. Please add time mapping to SDTM data set",
+        "(see '?add_time_mapping()' for details)."))
+    }
     obs <- obs %>%
       dplyr::left_join(time_mapping, by="PCTPT")
   }
