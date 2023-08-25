@@ -50,13 +50,28 @@ print.nif <- function(obj){
   cat(paste0("Studies:\n", paste(studies(obj), collapse="\n"), "\n\n"))
 
   # cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
-  cat("Doses:\n")
-  temp <- obj %>%
+
+  cat("Doses (starting doses only):\n")
+
+  temp <-
+    obj %>%
     as.data.frame() %>%
-    dplyr::filter(AMT!=0) %>%
-    dplyr::distinct(EXTRT, AMT) %>%
-    dplyr::arrange(EXTRT, as.numeric(AMT))
-  cat(paste0(df.to.string(temp), "\n\n"))
+    group_by(ID, ANALYTE) %>%
+    mutate(first_admin_time=min(TIME[AMT!=0])) %>%
+    ungroup() %>%
+    filter(TIME==first_admin_time) %>%
+    select(ID, ANALYTE, AMT) %>%
+    pivot_wider(names_from = ANALYTE, values_from = AMT) %>%
+    unite("regimen", -ID, remove=F) %>%
+    group_by(regimen) %>%
+    mutate(n=n()) %>%
+    ungroup() %>%
+    select(-ID, -regimen) %>%
+    distinct() %>%
+    as.data.frame()
+
+  cat(df.to.string(temp))
+  cat("\n\n")
 
   cat("Columns:\n")
   cat(paste(names(obj), collapse=", "), "\n")

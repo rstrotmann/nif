@@ -446,9 +446,17 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
     dplyr::mutate(FIRSTDTC=min(DTC)) %>%
     dplyr::ungroup() %>%
 
+    # all observations before the first administration (per analyte) to have
+    #   a dose of NA
+    group_by(USUBJID, PCTESTCD) %>%
+    mutate(first_admin_dtc=min(DTC[AMT!=0]), na.rm=T) %>%
+    ungroup() %>%
+    mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
+
     # fill missing fields
-    dplyr::arrange(USUBJID, DTC, -EVID) %>%
-    dplyr::group_by(USUBJID) %>%
+    # dplyr::arrange(USUBJID, DTC, -EVID) %>%
+    dplyr::arrange(USUBJID, PCTESTCD, DTC, -EVID) %>%
+    dplyr::group_by(USUBJID, PCTESTCD) %>%
     tidyr::fill(DOSE) %>%
     tidyr::fill(AGE, SEX, RACE, ETHNIC, ACTARMCD, HEIGHT, WEIGHT, COUNTRY, ARM,
                 SUBJID, .direction="down") %>%
@@ -468,7 +476,9 @@ make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F)
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
     dplyr::relocate(ID) %>%
-    dplyr::select(-dtc.date, -date, -time, -end.time,
+    # dplyr::select(-dtc.date, -date, -time, -end.time,
+    #               -start.date, -start.time, -DOMAIN.x, -DOMAIN.y) %>%
+    dplyr::select(-date, -time, -end.time,
                   -start.date, -start.time, -DOMAIN.x, -DOMAIN.y) %>%
     as.data.frame()
   return(nif(nif))
