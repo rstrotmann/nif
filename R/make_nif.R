@@ -193,20 +193,27 @@ make_admin <- function(ex,
 #' @return A tibble with individual observations with certain NONMEM input variables set
 #' @import dplyr
 #' @import lubridate
-make_obs <- function(pc, time_mapping=NULL, spec="", silent=F){
+make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
   # Filter for specimen, guess specimen if none defined
   pcspecs <- pc %>%
-    dplyr::distinct(PCSPEC)
-  if(spec==""){
-    if(is.element("PLASMA", pcspecs$PCSPEC)) {spec = "PLASMA"}
-    else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
-    else{spec ="none"}
+    dplyr::distinct(PCSPEC) %>% pull(PCSPEC)
+
+  standard_specs <- c("PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
+                      "BLOOD", "Blood", "blood")
+  # if(spec==""){
+  #   if(is.element("PLASMA", pcspecs$PCSPEC)) {spec = "PLASMA"}
+  #   else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
+  #   else{spec ="none"}
+
+  if(length(spec)==0) {
+    spec <- standard_specs[standard_specs %in% pcspecs][1]
     if(!silent){
       message(paste("No specimen specified. Set to", spec, "as the most likely."))
     }
   }
   obs <- pc %>%
-    dplyr::filter(PCSPEC==spec)
+    # dplyr::filter(PCSPEC==spec)
+    dplyr::filter(PCSPEC %in% spec)
 
   # filter for PC data marked as 'not done'
   if("PCSTAT" %in% colnames(obs)){
@@ -361,7 +368,7 @@ impute.administration.time <- function(admin, obs){
 #' @import tidyr
 #' @import dplyr
 #' @export
-make_nif <- function(sdtm.data, spec="", impute.missing.end.time=TRUE, silent=F) {
+make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=F) {
   vs <- sdtm.data$vs
   ex <- sdtm.data$ex
   pc <- sdtm.data$pc
@@ -612,7 +619,8 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
 #' @seealso [add_lab_observation()]
 add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
   temp <- lbtestcd %in% (
-    (lb %>% filter(LBSPEC==lbspec)) %>%
+    # (lb %>% filter(LBSPEC==lbspec)) %>%
+    (lb %>% filter(LBSPEC %in% lbspec)) %>%
     dplyr::distinct(LBTESTCD) %>%
     dplyr::pull(LBTESTCD)
   )
@@ -632,7 +640,8 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
       LBDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
     mutate(date=format(dtc, format="%Y-%m-%d")) %>%
     mutate(labdate=date) %>%
-    dplyr::filter(LBSPEC==lbspec) %>%
+    # dplyr::filter(LBSPEC==lbspec) %>%
+    dplyr::filter(LBSPEC %in% lbspec) %>%
     dplyr::filter(LBTESTCD %in% lbtestcd) %>%
     dplyr::select(USUBJID, date, labdate, LBTESTCD, LBSTRESN) %>%
     pivot_wider(names_from=LBTESTCD, values_from=LBSTRESN, values_fn=mean)
@@ -677,7 +686,8 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
       LBDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
     # mutate(date=format(DTC, format="%Y-%m-%d")) %>%
     # mutate(labdate=date) %>%
-    dplyr::filter(LBSPEC==lbspec) %>%
+    # dplyr::filter(LBSPEC==lbspec) %>%
+    dplyr::filter(LBSPEC %in% lbspec) %>%
     dplyr::filter(LBTESTCD==lbtestcd) %>%
 
     left_join(obj %>% distinct(USUBJID, FIRSTDTC), by="USUBJID") %>%
