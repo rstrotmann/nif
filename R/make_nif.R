@@ -164,7 +164,7 @@ make_admin <- function(ex,
     # set treatment, standard fields
     # dplyr::mutate(treatment=EXTRT) %>%
     dplyr::mutate(NTIME=0, DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
-    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0) #%>%
+    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0)
 
     # apply analyte mapping, introducing the field PCTESTCD
     if(nrow(analyte_mapping)>0) {
@@ -372,7 +372,11 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
   vs <- sdtm.data$vs
   ex <- sdtm.data$ex
   pc <- sdtm.data$pc
-  dm <- sdtm.data$dm
+
+  dm <- sdtm.data$dm %>%
+    dplyr::select(STUDYID, USUBJID, SUBJID, RFSTDTC, RFENDTC, RFXSTDTC, RFXENDTC,
+                  RFICDTC, RFPENDTC, BRTHDTC, AGE, AGEU, SEX, RACE, ETHNIC,
+                  ARMCD, ARM, ACTARMCD, ACTARM, COUNTRY, DMDTC, DMDY)
 
   # Get baseline covariates on subject level from VS
   bl.cov <- vs %>%
@@ -382,7 +386,13 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
-  obs <- make_obs(pc, time_mapping=sdtm.data$time.mapping, spec=spec, silent=silent)
+  obs <- make_obs(pc, time_mapping=sdtm.data$time.mapping,
+                  spec=spec, silent=silent) %>%
+    select(STUDYID, USUBJID, PCSEQ, PCTESTCD, PCSTRESN, PCSTAT, PCSPEC, PCLLOQ,
+           VISITNUM, VISIT, EPOCH, PCDTC, PCDY, PCTPT, PCTPTNUM,
+           PCTPTREF, PCRFTDTC, DTC, start.date, start.time, NTIME, EVID, CMT,
+           AMT, DV, LNDV, MDV)
+
   cut.off.date <- last_obs_time(obs)
   if(!silent) {
     message(paste("Data cut-off was set to last observation time,", cut.off.date))
@@ -444,7 +454,7 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     # join observations and administrations, then DM and baseline VS
     dplyr::bind_rows(admin %>%
                        dplyr::filter(USUBJID %in% obs$USUBJID)) %>%
-    dplyr::left_join(dm, by=c("STUDYID", "USUBJID")) %>%
+    dplyr::left_join(dm, by=c("USUBJID", "STUDYID")) %>%
     dplyr::left_join(bl.cov, by="USUBJID") %>%
 
     # individual first event
@@ -456,7 +466,7 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     # all observations before the first administration (per analyte) to have
     #   a dose of NA
     group_by(USUBJID, PCTESTCD) %>%
-    mutate(first_admin_dtc=min(DTC[AMT!=0]), na.rm=T) %>%
+    mutate(first_admin_dtc=min(DTC[AMT!=0], na.rm=T)) %>%
     ungroup() %>%
     mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
 
@@ -486,8 +496,8 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     # dplyr::select(-dtc.date, -date, -time, -end.time,
     #               -start.date, -start.time, -DOMAIN.x, -DOMAIN.y) %>%
     dplyr::select(-date, -time, -end.time,
-                  -start.date, -start.time, -DOMAIN.x, -DOMAIN.y) %>%
-    as.data.frame()
+                  -start.date, -start.time) #%>%
+    # as.data.frame()
   return(nif(nif))
 }
 
