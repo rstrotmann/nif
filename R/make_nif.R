@@ -376,7 +376,7 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
   dm <- sdtm.data$dm %>%
     dplyr::select(STUDYID, USUBJID, SUBJID, RFSTDTC, RFENDTC, RFXSTDTC, RFXENDTC,
                   RFICDTC, RFPENDTC, BRTHDTC, AGE, AGEU, SEX, RACE, ETHNIC,
-                  ARMCD, ARM, ACTARMCD, ACTARM, COUNTRY, DMDTC, DMDY)
+                  ARMCD, ARM, ACTARMCD, ACTARM, COUNTRY)
 
   # Get baseline covariates on subject level from VS
   bl.cov <- vs %>%
@@ -441,12 +441,12 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
 
   admin <- impute.administration.time(admin, obs)
 
-  if("RFSTDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
+  if("RFICDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
-      mutate(rfstdtc=lubridate::as_datetime(
-        RFSTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
-      mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y"))) %>%
-      mutate(age1=floor(as.duration(interval(brthyr, rfstdtc))/as.duration(years(1)))) %>%
+      mutate(refdtc=lubridate::as_datetime(
+        RFICDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y-%m", "%Y"))) %>%
+      mutate(age1=floor(as.duration(interval(brthyr, refdtc))/as.duration(years(1)))) %>%
       mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE))
   }
 
@@ -465,8 +465,16 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
 
     # all observations before the first administration (per analyte) to have
     #   a dose of NA
+
+    # group_by(USUBJID, PCTESTCD) %>%
+    # mutate(first_admin_dtc=min(DTC[AMT!=0], na.rm=T)) %>%
+    # ungroup() %>%
+    # mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
+
     group_by(USUBJID, PCTESTCD) %>%
-    mutate(first_admin_dtc=min(DTC[AMT!=0], na.rm=T)) %>%
+    mutate(first_admin_dtc=case_when(
+      (max(AMT)>0) ~ min(DTC[AMT!=0], na.rm=T),
+      .default=NA)) %>%
     ungroup() %>%
     mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
 
