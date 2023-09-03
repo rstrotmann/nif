@@ -1,5 +1,7 @@
+#' The list of expected date/time formats in the SDTM data
+#'
+dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
 
-dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%d %H:%M")
 
 #' Render data frame object to string
 #'
@@ -12,7 +14,7 @@ dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%d %H:%M")
 #' @param n The number of lines to be included, or all if NULL.
 #' @return The output as string.
 #' @export
-df.to.string <- function(df, indent="", n=NULL){
+df.to.string <- function(df, indent="", n=NULL, header=T){
   df <- as.data.frame(df)
   max.widths <- as.numeric(lapply(
     rbind(df, names(df)),
@@ -28,7 +30,12 @@ df.to.string <- function(df, indent="", n=NULL){
     return(out)
   }
 
-  out <- render.line(data.frame(as.list(names(df))))
+  if(header==T) {
+    out <- render.line(data.frame(as.list(names(df))))
+  } else {
+    out <- ""
+  }
+
   if(!is.null(n)){
     df <- head(df, n=n)
   }
@@ -56,8 +63,13 @@ has.time <- function(datetime) {
 #' @import dplyr
 recode_sex <- function(obj){
   obj %>%
-    dplyr::mutate(SEX=as.numeric(dplyr::case_match(as.character(SEX), "M"~0, "F"~1,
-                                     "1"~1, "0"~0, .default=NA)))
+    dplyr::mutate(SEX=as.numeric(
+      dplyr::case_match(as.character(SEX),
+                        "M"~0,
+                        "F"~1,
+                        "1"~1,
+                        "0"~0,
+                        .default=NA)))
 }
 
 
@@ -97,10 +109,8 @@ make_admin <- function(ex,
   ret <- ex
 
   # impute EXENDTC if not present (i.e., use cut-off date when administration ongoing)
-  temp <- ret %>%
-    dplyr::filter(EXENDTC=="")
-
-  if(temp %>% nrow > 0){
+  temp <- ret %>% dplyr::filter(EXENDTC=="")
+  if(temp %>% nrow() > 0){
     out <- temp %>%
       dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
       df.to.string()
@@ -110,7 +120,6 @@ make_admin <- function(ex,
         "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
     }
   }
-
   ret <- ret %>%
     dplyr::mutate(EXENDTC=dplyr::case_when(
       EXENDTC=="" ~ format(cutoff, "%Y-%m-%dT%H:%M"),
@@ -136,7 +145,7 @@ make_admin <- function(ex,
       .default=NA))
 
   # for rows with recorded start.time but missing end.time, impute end.time to
-  #  be equal to start.time
+  #   be equal to start.time
   if(impute.missing.end.time){
     temp <- ret %>%
       dplyr::filter(is.na(end.time) & !is.na(start.time))
@@ -156,7 +165,7 @@ make_admin <- function(ex,
 
   ret <- ret %>%
     # expand dates from start date to end date, time is end.time for last row,
-    #  otherwise start.time
+    #   otherwise start.time
     dplyr::group_by(STUDYID, USUBJID, EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC,
       EXSTDY, EXENDY, start.time, end.time, EPOCH) %>%
     # dplyr::group_by_all() %>%
@@ -200,17 +209,12 @@ make_admin <- function(ex,
 #' @import dplyr
 #' @import lubridate
 make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
-  # Filter for specimen, guess specimen if none defined
+  # Filter for specific specimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC) %>% pull(PCSPEC)
 
   standard_specs <- c("PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
                       "BLOOD", "Blood", "blood")
-  # if(spec==""){
-  #   if(is.element("PLASMA", pcspecs$PCSPEC)) {spec = "PLASMA"}
-  #   else if(is.element("BLOOD", pcspecs$PCSPEC)) {spec = "BLOOD"}
-  #   else{spec ="none"}
-
   if(length(spec)==0) {
     spec <- standard_specs[standard_specs %in% pcspecs][1]
     if(!silent){
@@ -218,7 +222,6 @@ make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
     }
   }
   obs <- pc %>%
-    # dplyr::filter(PCSPEC==spec)
     dplyr::filter(PCSPEC %in% spec)
 
   # filter for PC data marked as 'not done'
@@ -239,11 +242,12 @@ make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
       format=dtc_formats)) %>%
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
-      .default=NA)) #%>%
+      .default=NA))
 
   if("PCELTM" %in% names(pc)){
     obs <- obs %>%
-      dplyr::mutate(NTIME=as.numeric(stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)))
+      dplyr::mutate(NTIME=as.numeric(
+        stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)))
   } else {
     if(is.null(time_mapping) | nrow(time_mapping)==0){
       stop(paste("No PCELM in PC. Please add time mapping to SDTM data set",
@@ -416,9 +420,9 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
                       silent=silent)
 
   # Remove all administrations with PCTESTCD==NA
-  #  those rows may come from treatments that have not analyte mapping
+  #  those rows may come from treatments that have no analyte mapping
   admin <- admin %>%
-    filter(!is.na(PCTESTCD))
+    dplyr::filter(!is.na(PCTESTCD))
 
   # filter admin for subjects who actually have observations
   no.obs.sbs <- admin %>%
@@ -449,11 +453,11 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
 
   if("RFICDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
-      mutate(refdtc=lubridate::as_datetime(
+      dplyr::mutate(refdtc=lubridate::as_datetime(
         RFICDTC, format=dtc_formats)) %>%
-      mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y-%m", "%Y"))) %>%
-      mutate(age1=floor(as.duration(interval(brthyr, refdtc))/as.duration(years(1)))) %>%
-      mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE))
+      dplyr::mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y-%m", "%Y"))) %>%
+      dplyr:: mutate(age1=floor(as.duration(interval(brthyr, refdtc))/as.duration(years(1)))) %>%
+      dplyr::mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE))
   }
 
   nif <- obs %>%
@@ -465,27 +469,19 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
 
     # individual first event
     dplyr::group_by(USUBJID) %>%
-    # dplyr::mutate(first.event.dtc=min(DTC)) %>%
     dplyr::mutate(FIRSTDTC=min(DTC)) %>%
     dplyr::ungroup() %>%
 
     # all observations before the first administration (per analyte) to have
     #   a dose of NA
-
-    # group_by(USUBJID, PCTESTCD) %>%
-    # mutate(first_admin_dtc=min(DTC[AMT!=0], na.rm=T)) %>%
-    # ungroup() %>%
-    # mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
-
     group_by(USUBJID, PCTESTCD) %>%
-    mutate(first_admin_dtc=case_when(
+    dplyr::mutate(first_admin_dtc=case_when(
       (max(AMT)>0) ~ min(DTC[AMT!=0], na.rm=T),
       .default=NA)) %>%
     ungroup() %>%
-    mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
+    dplyr::mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
 
     # fill missing fields
-    # dplyr::arrange(USUBJID, DTC, -EVID) %>%
     dplyr::arrange(USUBJID, PCTESTCD, DTC, -EVID) %>%
     dplyr::group_by(USUBJID, PCTESTCD) %>%
     tidyr::fill(DOSE) %>%
@@ -496,8 +492,8 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     dplyr::mutate(RATE=0) %>%
 
     # TIME is the difference in h to the first individual event time
-    # dplyr::mutate(TIME=as.numeric(difftime(DTC, first.event.dtc, units="h"))) %>%
-    dplyr::mutate(TIME=as.numeric(difftime(DTC, FIRSTDTC, units="h"))) %>%
+    dplyr::mutate(TIME=round(
+      as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3)) %>%
     dplyr::mutate(ANALYTE=PCTESTCD) %>%
 
     # recode SEX
@@ -507,11 +503,8 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
     dplyr::relocate(ID) %>%
-    # dplyr::select(-dtc.date, -date, -time, -end.time,
-    #               -start.date, -start.time, -DOMAIN.x, -DOMAIN.y) %>%
     dplyr::select(-date, -time, -end.time,
-                  -start.date, -start.time) #%>%
-    # as.data.frame()
+                  -start.date, -start.time)
   return(nif(nif))
 }
 
@@ -697,12 +690,18 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 #' @return The resulting NIF data set.
 #' @export
 add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
-  if(!lbtestcd %in% (
-    lb %>%
-    dplyr::distinct(LBTESTCD) %>%
-    dplyr::pull(LBTESTCD))
-  ) {
-    stop(paste0("The following was not found in lb: ", lbtestcd[!temp]))
+  # if(!lbtestcd %in% (
+  #   lb %>%
+  #   dplyr::distinct(LBTESTCD) %>%
+  #   dplyr::pull(LBTESTCD))
+  # ) {
+  #   stop(paste0("The following was not found in lb: ", lbtestcd[lbtestcd]))
+  # }
+
+  test <- lbtestcd %in% unique(lb$LBTESTCD)
+  if(!all(test)) {
+    stop(paste0("The following parameters were not not found in lb: ",
+                df.to.string(lbtestcd[!test], header=F)))
   }
 
   lb.params <- lb %>%
@@ -714,10 +713,12 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
     dplyr::filter(LBSPEC %in% lbspec) %>%
     dplyr::filter(LBTESTCD==lbtestcd) %>%
 
-    left_join(obj %>% distinct(USUBJID, FIRSTDTC), by="USUBJID") %>%
+    left_join(obj %>%
+                as.data.frame() %>%
+                distinct(USUBJID, FIRSTDTC), by="USUBJID") %>%
 
     mutate(ANALYTE=lbtestcd, CMT=cmt, MDV=0, EVID=0, AMT=0, RATE=0) %>%
-    dplyr::mutate(TIME=as.numeric(difftime(DTC, FIRSTDTC, units="h"))) %>%
+    dplyr::mutate(TIME=round(as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3)) %>%
     mutate(DV=LBSTRESN) %>%
     mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
     select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, CMT, EVID, TIME, NTIME, DV, AMT)

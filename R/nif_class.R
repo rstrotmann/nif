@@ -56,11 +56,23 @@ print.nif <- function(obj){
   temp <-
     obj %>%
     as.data.frame() %>%
+
+    # filter out analytes without administrations
+    group_by(ID, ANALYTE) %>%
+    filter(any(AMT>0)) %>%
+    ungroup() %>%
+
+    # identify first administration
     group_by(ID, ANALYTE) %>%
     mutate(first_admin_time=min(TIME[AMT!=0])) %>%
     ungroup() %>%
-    filter(TIME==first_admin_time) %>%
+
+    #as.data.frame() %>%
+
+    # filter for first administrations
+    filter(TIME==first_admin_time, AMT!=0) %>%
     select(ID, ANALYTE, AMT) %>%
+    #group_by(ID) %>%
     pivot_wider(names_from = ANALYTE, values_from = AMT) %>%
     unite("regimen", -ID, remove=F) %>%
     group_by(regimen) %>%
