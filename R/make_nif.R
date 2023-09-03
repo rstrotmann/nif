@@ -383,10 +383,10 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
   ex <- sdtm.data$ex
   pc <- sdtm.data$pc
 
-  dm <- sdtm.data$dm %>%
-    dplyr::select(STUDYID, USUBJID, SUBJID, RFSTDTC, RFENDTC, RFXSTDTC, RFXENDTC,
-                  RFICDTC, RFPENDTC, BRTHDTC, AGE, AGEU, SEX, RACE, ETHNIC,
-                  ARMCD, ARM, ACTARMCD, ACTARM, COUNTRY)
+  dm <- sdtm.data$dm #%>%
+    # dplyr::select(STUDYID, USUBJID, SUBJID, RFSTDTC,
+    #               RFICDTC, BRTHDTC, AGE, AGEU, SEX, RACE, ETHNIC,
+    #               ARMCD, ARM, ACTARMCD, ACTARM, COUNTRY)
 
   # Get baseline covariates on subject level from VS
   bl.cov <- vs %>%
@@ -397,11 +397,11 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
   obs <- make_obs(pc, time_mapping=sdtm.data$time.mapping,
-                  spec=spec, silent=silent) %>%
-    select(STUDYID, USUBJID, PCSEQ, PCTESTCD, PCSTRESN, PCSTAT, PCSPEC, PCLLOQ,
-           VISITNUM, VISIT, EPOCH, PCDTC, PCDY, PCTPT, PCTPTNUM,
-           PCTPTREF, PCRFTDTC, DTC, start.date, start.time, NTIME, EVID, CMT,
-           AMT, DV, LNDV, MDV)
+                  spec=spec, silent=silent) #%>%
+    # select(STUDYID, USUBJID, PCSEQ, PCTESTCD, PCSTRESN, PCSTAT, PCSPEC, PCLLOQ,
+    #        VISITNUM, VISIT, EPOCH, PCDTC, PCDY, PCTPT, PCTPTNUM,
+    #        PCTPTREF, PCRFTDTC, DTC, start.date, start.time, NTIME, EVID, CMT,
+    #        AMT, DV, LNDV, MDV)
 
   cut.off.date <- last_obs_time(obs)
   if(!silent) {

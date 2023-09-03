@@ -4,7 +4,7 @@
 \alias{make_nif}
 \title{Make raw NIF data set from list of SDTM domains}
 \usage{
-make_nif(sdtm.data, spec = "", impute.missing.end.time = TRUE, silent = F)
+make_nif(sdtm.data, spec = NULL, impute.missing.end.time = TRUE, silent = F)
 }
 \arguments{
 \item{sdtm.data}{A list of SDTM domains as data tables, e.g., as loaded using

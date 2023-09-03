@@ -4,7 +4,7 @@
 \alias{df.to.string}
 \title{Render data frame object to string}
 \usage{
-df.to.string(df, indent = "", n = NULL)
+df.to.string(df, indent = "", n = NULL, header = T)
 }
 \arguments{
 \item{df}{The data.frame to be rendered}
