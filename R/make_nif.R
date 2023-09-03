@@ -1,3 +1,6 @@
+
+dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%d %H:%M")
+
 #' Render data frame object to string
 #'
 #' This function renders a data.frame into a string similar to its representation
@@ -11,13 +14,16 @@
 #' @export
 df.to.string <- function(df, indent="", n=NULL){
   df <- as.data.frame(df)
-  max.widths <- as.numeric(lapply(rbind(df, names(df)), FUN=function(x) max(sapply(as.character(x), nchar), na.rm=TRUE)))
+  max.widths <- as.numeric(lapply(
+    rbind(df, names(df)),
+    FUN=function(x) max(sapply(as.character(x), nchar), na.rm=TRUE)))
   line = df[1,]
 
   render.line <- function(line){
     out <- indent
     for(i in 1:length(line)){
-      out <- paste0(out, sprintf(paste0("%-", max.widths[i]+3, "s"), as.character(line[i])))
+      out <- paste0(out, sprintf(paste0("%-", max.widths[i]+3, "s"),
+                                 as.character(line[i])))
     }
     return(out)
   }
@@ -86,7 +92,7 @@ make_admin <- function(ex,
                        silent=F){
   cutoff <- lubridate::as_datetime(
     cut.off.date,
-    format=c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%d %H:%M"))
+    format=dtc_formats)
 
   ret <- ex
 
@@ -112,7 +118,7 @@ make_admin <- function(ex,
 
     # convert EXSTDTC to to datetime object, start date and start time
     dplyr::mutate(start=lubridate::as_datetime(
-      EXSTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      EXSTDTC, format=dtc_formats)) %>%
     dplyr::mutate(start.date=format(start, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(
       has.time(EXSTDTC) ~ format(start, format="%H:%M"),
@@ -123,7 +129,7 @@ make_admin <- function(ex,
 
     # convert EXENDTC to datetime object, end date and end time
     dplyr::mutate(end=lubridate::as_datetime(
-      EXENDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      EXENDTC, format=dtc_formats)) %>%
     dplyr::mutate(end.date=format(end, format="%Y-%m-%d")) %>%
     dplyr::mutate(end.time=case_when(
       has.time(EXENDTC) ~ format(end, format="%H:%M"),
@@ -230,7 +236,7 @@ make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
   obs <- obs %>%
     # extract date and time of observation
     dplyr::mutate(DTC=lubridate::as_datetime(PCDTC,
-      format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      format=dtc_formats)) %>%
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
       .default=NA)) #%>%
@@ -284,10 +290,10 @@ last_obs_time <- function(obs){
 impute.administration.time <- function(admin, obs){
   temp <- obs %>%
     dplyr::mutate(dtc=lubridate::as_datetime(
-      PCDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      PCDTC, format=dtc_formats)) %>%
     dplyr::mutate(dtc.date=format(dtc, format="%Y-%m-%d")) %>%
     dplyr::mutate(ref.dtc=lubridate::as_datetime(
-      PCRFTDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      PCRFTDTC, format=dtc_formats)) %>%
     dplyr::mutate(ref.date=format(ref.dtc, format="%Y-%m-%d")) %>%
     dplyr::mutate(ref.time=format(ref.dtc, format="%H:%M")) %>%
     dplyr::filter(dtc.date == ref.date) %>%
@@ -444,7 +450,7 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
   if("RFICDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
       mutate(refdtc=lubridate::as_datetime(
-        RFICDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+        RFICDTC, format=dtc_formats)) %>%
       mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y-%m", "%Y"))) %>%
       mutate(age1=floor(as.duration(interval(brthyr, refdtc))/as.duration(years(1)))) %>%
       mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE))
@@ -655,7 +661,7 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 
   lb.params <- lb %>%
     mutate(dtc=lubridate::as_datetime(
-      LBDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      LBDTC, format=dtc_formats)) %>%
     mutate(date=format(dtc, format="%Y-%m-%d")) %>%
     mutate(labdate=date) %>%
     # dplyr::filter(LBSPEC==lbspec) %>%
@@ -701,7 +707,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
 
   lb.params <- lb %>%
     mutate(DTC=lubridate::as_datetime(
-      LBDTC, format=c("%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"))) %>%
+      LBDTC, format=dtc_formats)) %>%
     # mutate(date=format(DTC, format="%Y-%m-%d")) %>%
     # mutate(labdate=date) %>%
     # dplyr::filter(LBSPEC==lbspec) %>%
