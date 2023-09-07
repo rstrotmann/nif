@@ -130,7 +130,6 @@ add_time_mapping.sdtm <- function(obj, ...) {
 }
 
 
-
 #' print() implementation for SDTM
 #'
 #' @param obj A SDTM object.

@@ -2,17 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{head}
 \alias{head}
-\title{#' Implementation of the head function
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return None
-#' @import utils
-#' @export
-head <- function(obj, ...) {
-UseMethod("head")
-}
-Implementation of the head function}
+\title{Implementation of the head function}
 \usage{
 head(obj, ...)
 }
@@ -25,15 +15,5 @@ head(obj, ...)
 None
 }
 \description{
-#' Implementation of the head function
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return None
-#' @import utils
-#' @export
-head <- function(obj, ...) {
-UseMethod("head")
-}
 Implementation of the head function
 }

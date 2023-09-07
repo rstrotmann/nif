@@ -2,16 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{studies}
 \alias{studies}
-\title{#' Studies within a nif object
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return A character vector of all STUDYIDs in the data set.
-#' @export
-subjects <- function(obj) {
-UseMethod("subjects")
-}
-Studies within a nif object}
+\title{Studies within a nif object}
 \usage{
 studies(obj)
 }
@@ -22,14 +13,5 @@ studies(obj)
 A character vector of all STUDYIDs in the data set.
 }
 \description{
-#' Studies within a nif object
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return A character vector of all STUDYIDs in the data set.
-#' @export
-subjects <- function(obj) {
-UseMethod("subjects")
-}
 Studies within a nif object
 }

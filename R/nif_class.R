@@ -14,15 +14,6 @@ new_nif <- function(obj) {
   return(temp)
 }
 
-#' print() implementation for nif objects
-#'
-#' @param x A nif object.
-#' @param ... Additional parameters
-#'
-#' @export
-print <- function(x, ...) {
-  UseMethod("print.nif")
-}
 
 #' print() implementation for nif objects
 #'
@@ -124,16 +115,6 @@ subjects <- function(obj) {
 }
 
 
-#' #' Studies within a nif object
-#' #'
-#' #' @param obj A nif object
-#' #' @import dplyr
-#' #' @return A character vector of all STUDYIDs in the data set.
-#' #' @export
-#' subjects <- function(obj) {
-#'   UseMethod("subjects")
-#' }
-
 
 #' Studies within a nif object
 #'
@@ -147,20 +128,6 @@ studies <- function(obj) {
     dplyr::pull(STUDYID)
 }
 
-#' #' @export
-#' studies <- function(obj) {
-#'   UseMethod("studies")
-#' }
-
-#' #' Doses within a nif object
-#' #'
-#' #' @param obj A nif object
-#' #' @import dplyr
-#' #' @return A number vector of all doses (AMT) in the data set.
-#' #' @export
-#' doses <- function(obj) {
-#'   UseMethod("doses")
-#' }
 
 #' Doses within a nif object
 #'
@@ -176,15 +143,6 @@ doses <- function(obj){
     dplyr::pull(AMT)
 }
 
-#' #' Analytes within a nif object
-#' #'
-#' #' @param obj A nif object
-#' #' @import dplyr
-#' #' @return A character vector of all analytes in the data set.
-#' #' @export
-#' analytes <- function(obj) {
-#'   UseMethod("analytes")
-#' }
 
 #' Analytes within a nif object
 #'
@@ -200,17 +158,6 @@ analytes <- function(obj){
     dplyr::pull(ANALYTE)
 }
 
-
-#' #' Implementation of the head function
-#' #'
-#' #' @param obj A nif object
-#' #' @import dplyr
-#' #' @return None
-#' #' @import utils
-#' #' @export
-#' head <- function(obj, ...) {
-#'   UseMethod("head")
-#' }
 
 #' Implementation of the head function
 #'
@@ -249,20 +196,6 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
                          "ACTARMCD")
 
-#' #' @export
-#' plot <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
-#'                          doses=NULL, points=F, id=NULL, usubjid=NULL,
-#'                          group=NULL, administrations=F, nominal_time=F) {
-#'   UseMethod("plot")
-#' }
-
-#' #' @export
-#' plot <- function(x, ...) UseMethod("plot")
-
-#' @export
-plot <- function(obj, dummy, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
-                 doses=NULL, points=F, id=NULL, usubjid=NULL,
-                 group=NULL, administrations=F, nominal_time=F) UseMethod("plot")
 
 
 #' Plot NIF data set

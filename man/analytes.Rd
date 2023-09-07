@@ -2,16 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{analytes}
 \alias{analytes}
-\title{#' Analytes within a nif object
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return A character vector of all analytes in the data set.
-#' @export
-analytes <- function(obj) {
-UseMethod("analytes")
-}
-Analytes within a nif object}
+\title{Analytes within a nif object}
 \usage{
 analytes(obj)
 }
@@ -22,14 +13,5 @@ analytes(obj)
 A character vector of all analytes in the data set.
 }
 \description{
-#' Analytes within a nif object
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return A character vector of all analytes in the data set.
-#' @export
-analytes <- function(obj) {
-UseMethod("analytes")
-}
 Analytes within a nif object
 }
