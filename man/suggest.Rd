@@ -2,7 +2,18 @@
 % Please edit documentation in R/sdtm_class.R
 \name{suggest}
 \alias{suggest}
-\title{Suggest common manual data programming steps for a sdtm data set}
+\title{#' Suggest common manual data programming steps for a sdtm data set
+#'
+#' @param obj A sdtm object
+#' @seealso \code{\link[=read_sdtm_sas]{read_sdtm_sas()}}
+#' @export
+#' @examples
+#' suggest(examplinib)
+#'
+suggest <- function(obj){
+UseMethod("suggest")
+}
+Suggest common manual data programming steps for a sdtm data set}
 \usage{
 suggest(obj)
 }
@@ -10,11 +21,18 @@ suggest(obj)
 \item{obj}{A sdtm object}
 }
 \description{
-Suggest common manual data programming steps for a sdtm data set
+#' Suggest common manual data programming steps for a sdtm data set
+#'
+#' @param obj A sdtm object
+#' @seealso \code{\link[=read_sdtm_sas]{read_sdtm_sas()}}
+#' @export
+#' @examples
+#' suggest(examplinib)
+#'
+suggest <- function(obj){
+UseMethod("suggest")
 }
-\examples{
-suggest(examplinib)
-
+Suggest common manual data programming steps for a sdtm data set
 }
 \seealso{
 \code{\link[=read_sdtm_sas]{read_sdtm_sas()}}

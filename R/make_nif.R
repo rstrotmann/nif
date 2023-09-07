@@ -374,9 +374,8 @@ impute.administration.time <- function(admin, obs){
 #'   EXSTDTC.
 #' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A NIF data set as nif object.
-#' @seealso [read_sdtm_sas()]
-#' @seealso [sdtm]
-#' @seealso [add_mapping()]
+#' @seealso [add_analyte_mapping()]
+#' @seealso [add_time_mapping()]
 #' @import tidyr
 #' @import dplyr
 #' @export
@@ -507,7 +506,7 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     dplyr::relocate(ID) %>%
     dplyr::select(-date, -time, -end.time,
                   -start.date, -start.time)
-  return(nif(nif))
+  return(new_nif(nif))
 }
 
 
@@ -524,7 +523,7 @@ index_nif <- function(nif) {
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
     dplyr::relocate(REF) %>%
-    nif()
+    new_nif()
 }
 
 
@@ -546,7 +545,7 @@ compress_nif <- function(nif, ...) {
   }
   nif %>%
     dplyr::select(any_of(columns)) %>%
-    nif()
+    new_nif()
 }
 
 #' This function reduces a NIF data set on the subject level by excluding all administrations after
@@ -568,7 +567,7 @@ clip_nif <- function(nif){
   ret <- nif %>%
     dplyr::left_join(last.obs, by="USUBJID") %>%
     dplyr::filter(TIME <= last.obs)
-  return(nif(ret))
+  return(new_nif(ret))
 }
 
 
@@ -612,7 +611,7 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
   obj %>%
     as.data.frame() %>%
     dplyr::left_join(temp, by="USUBJID") %>%
-    nif()
+    new_nif()
 }
 
 #' Add lab covariate
@@ -678,7 +677,7 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
     filter(!is.na(.data$EVID)) %>%
     ungroup()
 
-  return(nif(temp))
+  return(new_nif(temp))
 }
 
 
@@ -737,7 +736,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
     fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
     ungroup()
 
-  return(nif(temp))
+  return(new_nif(temp))
 }
 
 

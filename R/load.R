@@ -22,7 +22,7 @@ read_sdtm_sas <- function(data.path, ...) {
     out[[domain]] <- as.data.frame(haven::read_sas(file.path(
       data.path, paste0(domain, ".sas7bdat"))))
   }
-  sdtm(out)
+  new_sdtm(out)
 }
 
 
@@ -50,5 +50,5 @@ read_sdtm_xpt <- function(data.path, ...) {
     out[[domain]] <- as.data.frame(haven::read_xpt(file.path(
       data.path, paste0(domain, ".xpt"))))
   }
-  sdtm(out)
+  new_sdtm(out)
 }

@@ -2,7 +2,20 @@
 % Please edit documentation in R/nif_class.R
 \name{doses}
 \alias{doses}
-\title{Doses within a nif object}
+\title{#' @export
+studies <- function(obj) {
+UseMethod("studies")
+}
+#' Doses within a nif object
+#'
+#' @param obj A nif object
+#' @import dplyr
+#' @return A number vector of all doses (AMT) in the data set.
+#' @export
+doses <- function(obj) {
+UseMethod("doses")
+}
+Doses within a nif object}
 \usage{
 doses(obj)
 }
@@ -13,5 +26,18 @@ doses(obj)
 A number vector of all doses (AMT) in the data set.
 }
 \description{
+#' @export
+studies <- function(obj) {
+UseMethod("studies")
+}
+#' Doses within a nif object
+#'
+#' @param obj A nif object
+#' @import dplyr
+#' @return A number vector of all doses (AMT) in the data set.
+#' @export
+doses <- function(obj) {
+UseMethod("doses")
+}
 Doses within a nif object
 }

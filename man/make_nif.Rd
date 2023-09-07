@@ -66,9 +66,7 @@ steps, e.g., addition of further time-dependent endpoints.
 }
 
 \seealso{
-\code{\link[=read_sdtm_sas]{read_sdtm_sas()}}
+\code{\link[=add_analyte_mapping]{add_analyte_mapping()}}
 
-\link{sdtm}
-
-\code{\link[=add_mapping]{add_mapping()}}
+\code{\link[=add_time_mapping]{add_time_mapping()}}
 }

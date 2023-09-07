@@ -4,10 +4,12 @@
 \alias{print.sdtm}
 \title{print() implementation for SDTM}
 \usage{
-\method{print}{sdtm}(obj)
+\method{print}{sdtm}(obj, ...)
 }
 \arguments{
 \item{obj}{A SDTM object.}
+
+\item{...}{Further parameters}
 }
 \description{
 print() implementation for SDTM

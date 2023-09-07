@@ -383,7 +383,7 @@ synthesize_sdtm <- function() {
     mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
     mutate(PCDTC=reformat_date(PCDTC))
 
-  return(sdtm(out))
+  return(new_sdtm(out))
 }
 
 #' Synthesize the package data for `examplinib`

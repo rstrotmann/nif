@@ -5,7 +5,7 @@
 #' @import dplyr
 #' @returns A sdtm object
 #' @export
-sdtm <- function(sdtm.data){
+new_sdtm <- function(sdtm.data){
   domains <- sdtm.data
   vs <- domains[["vs"]]
   ex <- domains[["ex"]]
@@ -130,11 +130,14 @@ add_time_mapping.sdtm <- function(obj, ...) {
 }
 
 
+
 #' print() implementation for SDTM
 #'
 #' @param obj A SDTM object.
+#' @param ... Further parameters
+#'
 #' @export
-print.sdtm <- function(obj){
+print.sdtm <- function(obj, ...){
   cat("SDTM data set\n")
   cat(paste("Study", obj$study))
   cat(paste(" with", nrow(obj$subjects), "subjects providing PC data.\n"))
@@ -178,79 +181,87 @@ print.sdtm <- function(obj){
 }
 
 
-#' Get a specific domain from the sdtm object
-#'
-#' @param obj The sdtm object.
-#' @param dom The code of the domain to be returned.
-#' @return The specified domain as data.frame
-#' @export
-#' @examples
-#' domain(examplinib, "dm")
-#'
-domain <- function(obj, dom="") {
-  UseMethod("domain")
-}
+#' #' Get a specific domain from the sdtm object
+#' #'
+#' #' @param obj The sdtm object.
+#' #' @param dom The code of the domain to be returned.
+#' #' @return The specified domain as data.frame
+#' #' @export
+#' #' @examples
+#' #' domain(examplinib, "dm")
+#' #'
+#' domain <- function(obj, dom="") {
+#'   UseMethod("domain")
+#' }
 
 
+#' @param dom The domain to return.
+#' @param obj The sdtm object
+#'
 #' @export
-domain.sdtm <- function(obj, dom="dm") {
+domain <- function(obj, dom="dm") {
   obj$domains[[dom]]
 }
 
 
-#' Get the study names from an SDTM object
+#' #' Get the study names from an SDTM object
+#' #'
+#' #' @param obj The SDTM object.
+#' #' @export
+#' #' @export
+#' #' @examples
+#' #' studies(examplinib)
+#' studies <- function(obj) {
+#'   UseMethod(("studies"))
+#' }
 #'
-#' @param obj The SDTM object.
-#' @export
-#' @export
-#' @examples
-#' studies(examplinib)
-studies <- function(obj) {
-  UseMethod(("studies"))
-}
-
-
-#' @export
-studies.sdtm <- function(obj) {
-  obj$dm %>%
-    dplyr::distinct(STUDYID) %>%
-    dplyr::pull(STUDYID) %>%
-    as.character()
-}
-
-
-#' Get the USUBJIDs from an sdtm object
 #'
-#' @param obj The SDTM object.
-#' @export
-#' @examples
-#' subjects(examplinib)
-#'
-subjects <- function(obj) {
-  UseMethod(("subjects"))
-}
+#' #' @export
+#' studies.sdtm <- function(obj) {
+#'   obj$dm %>%
+#'     dplyr::distinct(STUDYID) %>%
+#'     dplyr::pull(STUDYID) %>%
+#'     as.character()
+#' }
 
-#' @export
-subjects.sdtm <- function(obj) {
-  obj$pc %>%
-    dplyr::distinct(USUBJID) %>%
-    dplyr::pull(USUBJID) %>%
-    as.character()
-}
+
+#' #' Get the USUBJIDs from an sdtm object
+#' #'
+#' #' @param obj The SDTM object.
+#' #' @export
+#' #' @examples
+#' #' subjects(examplinib)
+#' #'
+#' subjects <- function(obj) {
+#'   UseMethod(("subjects"))
+#' }
+#'
+#' #' @export
+#' subjects.sdtm <- function(obj) {
+#'   obj$pc %>%
+#'     dplyr::distinct(USUBJID) %>%
+#'     dplyr::pull(USUBJID) %>%
+#'     as.character()
+#' }
+
+
+#' #' Subject demographic information
+#' #'
+#' #' @param obj A SDTM object.
+#' #' @param id The USUBJID.
+#' #' @export
+#' #' @examples
+#' #' subject_info(examplinib, "20230004001010001")
+#' #'
+#' subject_info <- function(object, id="") {
+#'   UseMethod("subject_info")
+#' }
 
 
 #' Subject demographic information
 #'
 #' @param obj A SDTM object.
 #' @param id The USUBJID.
-#' @export
-#' @examples
-#' subject_info(examplinib, "20230004001010001")
-#'
-subject_info <- function(object, id="") {
-  UseMethod("subject_info")
-}
-
 #' @export
 subject_info <- function(obj, id="") {
   # if(!(id %in% (obj$subjects)$USUBJID)) {
@@ -274,17 +285,17 @@ subject_info <- function(obj, id="") {
 # }
 
 
-#' Suggest common manual data programming steps for a sdtm data set
-#'
-#' @param obj A sdtm object
-#' @seealso [read_sdtm_sas()]
-#' @export
-#' @examples
-#' suggest(examplinib)
-#'
-suggest <- function(obj){
-  UseMethod("suggest")
-}
+#' #' Suggest common manual data programming steps for a sdtm data set
+#' #'
+#' #' @param obj A sdtm object
+#' #' @seealso [read_sdtm_sas()]
+#' #' @export
+#' #' @examples
+#' #' suggest(examplinib)
+#' #'
+#' suggest <- function(obj){
+#'   UseMethod("suggest")
+#' }
 
 
 #' Suggest common manual data programming steps for a sdtm data set
@@ -293,7 +304,7 @@ suggest <- function(obj){
 #' @seealso [read_sdtm_sas()]
 #' @import dplyr
 #' @export
-suggest.sdtm <- function(obj) {
+suggest <- function(obj) {
   n.suggestion <- 1
 
   arms <- obj$dm %>%

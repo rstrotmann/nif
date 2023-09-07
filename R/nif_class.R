@@ -4,7 +4,7 @@
 #' @import dplyr
 #' @return A nif object from the input data set.
 #' @export
-nif <- function(obj) {
+new_nif <- function(obj) {
   if(class(obj)[1] == "sdtm"){
     temp <- make_nif(obj)
   } else {
@@ -14,12 +14,23 @@ nif <- function(obj) {
   return(temp)
 }
 
+#' print() implementation for nif objects
+#'
+#' @param x A nif object.
+#' @param ... Additional parameters
+#'
+#' @export
+print <- function(x, ...) {
+  UseMethod("print.nif")
+}
 
 #' print() implementation for nif objects
 #'
 #' @param obj A nif object.
+#' @param ... Additional parameters
+#'
 #' @export
-print.nif <- function(obj){
+print.nif <- function(obj, ...){
   cat(paste("NONMEM input file (NIF) data set with data from",
             length(studies(obj)),
             "studies\n"))
@@ -106,22 +117,22 @@ print.nif <- function(obj){
 #' @import dplyr
 #' @return A character vector of all USUBJIDs in the data set.
 #' @export
-subjects.nif <- function(obj) {
+subjects <- function(obj) {
   obj %>%
     dplyr::distinct(USUBJID) %>%
     dplyr::pull(USUBJID)
 }
 
 
-#' Studies within a nif object
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return A character vector of all STUDYIDs in the data set.
-#' @export
-subjects <- function(obj) {
-  UseMethod("subjects")
-}
+#' #' Studies within a nif object
+#' #'
+#' #' @param obj A nif object
+#' #' @import dplyr
+#' #' @return A character vector of all STUDYIDs in the data set.
+#' #' @export
+#' subjects <- function(obj) {
+#'   UseMethod("subjects")
+#' }
 
 
 #' Studies within a nif object
@@ -130,16 +141,26 @@ subjects <- function(obj) {
 #' @import dplyr
 #' @return A character vector of all STUDYIDs in the data set.
 #' @export
-studies.nif <- function(obj) {
+studies <- function(obj) {
   obj %>%
     dplyr::distinct(STUDYID) %>%
     dplyr::pull(STUDYID)
 }
 
-#' @export
-studies <- function(obj) {
-  UseMethod("studies")
-}
+#' #' @export
+#' studies <- function(obj) {
+#'   UseMethod("studies")
+#' }
+
+#' #' Doses within a nif object
+#' #'
+#' #' @param obj A nif object
+#' #' @import dplyr
+#' #' @return A number vector of all doses (AMT) in the data set.
+#' #' @export
+#' doses <- function(obj) {
+#'   UseMethod("doses")
+#' }
 
 #' Doses within a nif object
 #'
@@ -147,17 +168,7 @@ studies <- function(obj) {
 #' @import dplyr
 #' @return A number vector of all doses (AMT) in the data set.
 #' @export
-doses <- function(obj) {
-  UseMethod("doses")
-}
-
-#' Doses within a nif object
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return A number vector of all doses (AMT) in the data set.
-#' @export
-doses.nif <- function(obj){
+doses <- function(obj){
   obj %>%
     dplyr::filter(AMT!=0) %>%
     dplyr::distinct(AMT) %>%
@@ -165,15 +176,15 @@ doses.nif <- function(obj){
     dplyr::pull(AMT)
 }
 
-#' Analytes within a nif object
-#'
-#' @param obj A nif object
-#' @import dplyr
-#' @return A character vector of all analytes in the data set.
-#' @export
-analytes <- function(obj) {
-  UseMethod("analytes")
-}
+#' #' Analytes within a nif object
+#' #'
+#' #' @param obj A nif object
+#' #' @import dplyr
+#' #' @return A character vector of all analytes in the data set.
+#' #' @export
+#' analytes <- function(obj) {
+#'   UseMethod("analytes")
+#' }
 
 #' Analytes within a nif object
 #'
@@ -181,7 +192,7 @@ analytes <- function(obj) {
 #' @import dplyr
 #' @return A character vector of all analytes in the data set.
 #' @export
-analytes.nif <- function(obj){
+analytes <- function(obj){
   obj %>%
     # dplyr::filter(AMT!=0) %>%
     dplyr::distinct(ANALYTE) %>%
@@ -190,14 +201,27 @@ analytes.nif <- function(obj){
 }
 
 
+#' #' Implementation of the head function
+#' #'
+#' #' @param obj A nif object
+#' #' @import dplyr
+#' #' @return None
+#' #' @import utils
+#' #' @export
+#' head <- function(obj, ...) {
+#'   UseMethod("head")
+#' }
+
 #' Implementation of the head function
 #'
 #' @param obj A nif object
+#' @param ... Further parameters
+#'
 #' @import dplyr
 #' @return None
 #' @import utils
 #' @export
-head.nif <- function(obj) {
+head <- function(obj, ...) {
   obj %>%
     as.data.frame() %>%
     utils::head()
@@ -224,6 +248,21 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ANALYTE", "AMT", "RATE", "DV", "LNDV", "CMT", "EVID",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
                          "ACTARMCD")
+
+#' #' @export
+#' plot <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
+#'                          doses=NULL, points=F, id=NULL, usubjid=NULL,
+#'                          group=NULL, administrations=F, nominal_time=F) {
+#'   UseMethod("plot")
+#' }
+
+#' #' @export
+#' plot <- function(x, ...) UseMethod("plot")
+
+#' @export
+plot <- function(obj, dummy, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
+                 doses=NULL, points=F, id=NULL, usubjid=NULL,
+                 group=NULL, administrations=F, nominal_time=F) UseMethod("plot")
 
 
 #' Plot NIF data set
