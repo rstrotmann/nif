@@ -45,22 +45,31 @@ sdtm <- function(sdtm.data){
 #' concentration data from different parent drugs.
 #' In order to appropriately correlate observations with administrations, the
 #' [make_nif()] algorithm needs to know which analyte (PCTESTCD within PC) belongs
-#' to which drug (EXTRT within EX). If the respective names differ, add_mapping() can be
-#' used to attach this information to the SDTM object.
-#' Multiple mappings may be needed.
+#' to which drug (EXTRT within EX). If the respective names differ,
+#' add_treatment_mapping() can be used to attach this information to the SDTM
+#' object. Multiple mappings may be needed.
 #'
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
 #' @param pctestcd The analyte as defined in PC.
 #' @seealso [make_nif()]
+#' @examples
+#' sdtm_object <- add_analyte_mapping(examplinib, "EXAMPLINIB", "RS2023")
+#'
 #' @export
 add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
   UseMethod("add_analyte_mapping")
 }
 
 #' Add mapping method for legacy compatibility
+#'
+#' @param obj A SDTM object.
+#' @param extrt The treatment as defined in EX.
+#' @param pctestcd The analyte as defined in PC.
+#' @description `r lifecycle::badge("deprecated")`
 #' @export
 add_mapping <- function(obj, extrt="", pctestcd="") {
+  lifecycle::deprecate_warn("0.19.0", "add_mapping()", "add_analyte_mapping()")
   UseMethod("add_analyte_mapping")
 }
 
@@ -80,6 +89,24 @@ add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
 #'   and NTIME corresponds to the nominal time in hours.
 #' @return The modified sdtm object
 #' @export
+#' @examples
+#' sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
+#'   "HOUR 0.5" = 0.5,
+#'   "HOUR 1" = 1,
+#'   "HOUR 1.5" = 1.5,
+#'   "HOUR 2" = 2,
+#'   "HOUR 3" = 3,
+#'   "HOUR 4" = 4,
+#'   "HOUR 6" = 6,
+#'   "HOUR 8" = 8,
+#'   "HOUR 10" = 10,
+#'   "HOUR 12" = 12,
+#'   "HOUR 24" = 24,
+#'   "HOUR 48" = 48,
+#'   "HOUR 72" = 72,
+#'   "HOUR 96" = 96,
+#'   "HOUR 144" = 144,
+#'   "HOUR 168" = 168)
 #'
 #' @seealso [suggest()]
 add_time_mapping <- function(obj, ...) {
@@ -94,7 +121,6 @@ add_time_mapping <- function(obj, ...) {
 #'   and NTIME corresponds to the nominal time in hours.
 #' @return The modified sdtm object
 #' @export
-#'
 #' @seealso [suggest()]
 add_time_mapping.sdtm <- function(obj, ...) {
   temp <- unlist(c(as.list(environment())[-1], list(...)))
@@ -158,6 +184,9 @@ print.sdtm <- function(obj){
 #' @param dom The code of the domain to be returned.
 #' @return The specified domain as data.frame
 #' @export
+#' @examples
+#' domain(examplinib, "dm")
+#'
 domain <- function(obj, dom="") {
   UseMethod("domain")
 }
@@ -174,9 +203,12 @@ domain.sdtm <- function(obj, dom="dm") {
 #' @param obj The SDTM object.
 #' @export
 #' @export
+#' @examples
+#' studies(examplinib)
 studies <- function(obj) {
   UseMethod(("studies"))
 }
+
 
 #' @export
 studies.sdtm <- function(obj) {
@@ -191,6 +223,9 @@ studies.sdtm <- function(obj) {
 #'
 #' @param obj The SDTM object.
 #' @export
+#' @examples
+#' subjects(examplinib)
+#'
 subjects <- function(obj) {
   UseMethod(("subjects"))
 }
@@ -209,6 +244,9 @@ subjects.sdtm <- function(obj) {
 #' @param obj A SDTM object.
 #' @param id The USUBJID.
 #' @export
+#' @examples
+#' subject_info(examplinib, "20230004001010001")
+#'
 subject_info <- function(object, id="") {
   UseMethod("subject_info")
 }
@@ -241,6 +279,9 @@ subject_info <- function(obj, id="") {
 #' @param obj A sdtm object
 #' @seealso [read_sdtm_sas()]
 #' @export
+#' @examples
+#' suggest(examplinib)
+#'
 suggest <- function(obj){
   UseMethod("suggest")
 }
@@ -312,7 +353,7 @@ suggest.sdtm <- function(obj) {
       "same name\n",
       "   (see below).\n",
       "   Consider adding a treatment-analyte mapping to the sdtm object\n",
-      "   See '?add_mapping' for additional information.\n\n",
+      "   See '?add_treatment_mapping' for additional information.\n\n",
       df.to.string(no.analyte.treatments, indent="   "), "\n\n",
       "   Available analytes:\n\n",
       df.to.string(obj$pc %>% dplyr::distinct(PCTESTCD), indent="   "), "\n\n"

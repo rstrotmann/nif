@@ -10,6 +10,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports:
     rlang,
+    utils,
     haven (>= 2.5.2),
     dplyr,
     tidyr,
@@ -18,7 +19,9 @@ Imports:
     lubridate,
     ggplot2,
     stringr,
-    PKNCA
+    PKNCA,
+    rxode2,
+    lifecycle
 Depends: 
     R (>= 2.10)
 Suggests: 

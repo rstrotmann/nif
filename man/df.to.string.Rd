@@ -13,6 +13,8 @@ df.to.string(df, indent = "", n = NULL, header = T)
 output.}
 
 \item{n}{The number of lines to be included, or all if NULL.}
+
+\item{header}{Boolean to indicate whether the header row is to be included.}
 }
 \value{
 The output as string.

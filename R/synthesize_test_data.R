@@ -1,6 +1,9 @@
-library(tidyverse)
-library(rxode2)
-library(nif)
+## This files contains code that is only used during package development to
+## generate the fictional `examplinib` SDTM data. It is included only for
+## documentation. If, during development, the dataset needs to be recreated,
+## please see the instructions at the end of the file.
+
+
 
 # PC
 #
@@ -11,10 +14,19 @@ library(nif)
 # PCORRES, PCORRESU, PCSTRESC, PCSTRESN, PCSTRESU, PCNAM, PCSPEC, PCLLOQ,
 # VISITNUM, PCDTC
 
-pk_sim <- function(sbs) {
-  # two-compartment model with sequential zero-order and first-order absorption,
-  #   renal excretion and metabolic elimination
-  mod <- rxode2({
+#' Simulate PK data for fictional subjects, using fictional popPK model
+#'
+#' Based on fictional two-compartment model with sequential zero-order and
+#'   first-order absorption, elimination from central compartment.
+#'
+#' @param sbs The subject baseline information as data frame. Needs at least
+#'   ID, PERIOD, SEX, AGE, HEIGHT, WEIGHT, and FOOD fields.
+#' @param sampling_scheme The PK sampling scheme as data frame. The field `time`
+#'   is to provide the sampling times in numerical form.
+#' @return The simulated PK data as data frame.
+#' @import rxode2
+pk_sim <- function(sbs, sampling_scheme) {
+  mod <- rxode2::rxode2({
     c_centr = centr / v_centr * (1+centr.err);
     c_peri = peri / v_peri;
     c_metab = metab / v_metab;
@@ -55,7 +67,8 @@ pk_sim <- function(sbs) {
     v_metab = 10
   )
 
-  omega <- lotri(eta.ke + eta.ka + eta.d1 + eta.fpar + eta.q + eta.cl + eta.kem + eta.fm ~ c(
+  omega <- rxode2::lotri(
+    eta.ke + eta.ka + eta.d1 + eta.fpar + eta.q + eta.cl + eta.kem + eta.fm ~ c(
     0.3^2,
     0,      0.1^2,
     0,      0,      0.2^2,
@@ -65,13 +78,13 @@ pk_sim <- function(sbs) {
     0,      0,      0,      0,      0,      0,      0.3^2,
     0,      0,      0,      0,      0,      0,      0,      0.03^2))
 
-  sigma <- lotri(centr.err ~ .1^2)
+  sigma <- rxode2::lotri(centr.err ~ .1^2)
 
   # reference: https://nlmixr2.github.io/rxode2/articles/rxode2-event-table.html
-  ev <- et(amountUnits="mg", timeUnits="hours") %>%
-    add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
-    add.sampling(c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168)) %>%
-    et(id=unique(temp$ID)) %>%
+  ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
+    rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
+    rxode2::add.sampling(sampling_scheme$time) %>%
+    rxode2::et(id=unique(sbs$ID)) %>%
     as.data.frame() %>%
     left_join(
       sbs %>%
@@ -81,32 +94,29 @@ pk_sim <- function(sbs) {
   sim <- mod$solve(theta, ev, omega=omega, sigma=sigma,
                    keep=c("FOOD", "PERIOD")) %>%
     as.data.frame()
-
   return(sim)
 }
 
 
-plot_pk <- function() {
-  sim <- pk_sim(6)
-
-  sim %>%
-    pivot_longer(
-      c("centr", "peri", "renal", "metab", "metab_excr"),
-      # c("centr"),
-      names_to="comp", values_to="value") %>%
-    ggplot(aes(x=time, y=value,
-               group=interaction(id, comp), color=as.factor(comp))) +
-    geom_line(alpha=.3) +
-    # geom_point() +
-    labs(x="time (h)", y="c (µg/ml)") +
-    xlim(0, 24) +
-    facet_wrap(~comp, scales="free")
-}
 
 
-
-
-make_subs <- function(studyid="1", nsubs=10, nsites=4, start_date="2000-12-20 10:00") {
+#' Simulate fictional subject disposition data
+#'
+#' This function generates the prespecified number of subjects across different
+#'   clinical sites with fictional dates for signing the informed consent and
+#'   treatment start.
+#'
+#' @param studyid The study identifyer as string.
+#' @param nsubs The number of subjects to be simulated.
+#' @param nsites The number of clinical sites to be simulated.
+#' @param screenfailure_rate The fraction of subjects to be screeing failures.
+#' @param start_date The fictional study start date.
+#'
+#' @import lubridate
+#'
+#' @return The disposition data for the simulated subjects as data frame.
+make_subs <- function(studyid="1", nsubs=10, nsites=4, screenfailure_rate=0.25,
+                      start_date="2000-12-20 10:00") {
   current_date <- lubridate::as_datetime(start_date, format="%Y-%m-%d %H:%M")
   site_names <- 100 + seq(1:nsites)
   sbs <- data.frame(SITEID="", SUBJID="", ACTARM="", ACTARMCD="", RFICDTC=NA,
@@ -118,7 +128,7 @@ make_subs <- function(studyid="1", nsubs=10, nsites=4, start_date="2000-12-20 10
     current_sb_no <- sbs_by_site[current_site] + 1
     current_date <- current_date + floor(abs(rnorm(1, 0.5, 2))) * 60*60*24
     siteid <- as.character(site_names[current_site])
-    enrolled = runif(1) > 0.25
+    enrolled = runif(1) > screenfailure_rate
     # if(enrolled){
       sbs_by_site[current_site] <- sbs_by_site[current_site] + 1
     # }
@@ -135,10 +145,24 @@ make_subs <- function(studyid="1", nsubs=10, nsites=4, start_date="2000-12-20 10
  return(sbs[-1,])
 }
 
+
+
 # required: STUDYID, DOMAIN, USUBJID, SUBJID, SITEID, SEX, ARMCD, ARM,
 #   ACTARMCD, ACTARM, COUNTRY
 # expected: RFSTDTC, RFENDTC, RFXSTDTC, RFXSTDTC, RFICDTC, RFPENDTC,
 #   DTHDTC, DTHFL, RACE
+
+#' Synthesize a fictional DM domain
+#'
+#' Currently geared toward a food effect study, but can be adapted easily to
+#'   generate other study types.
+#'
+#' @param studyid The study ID.
+#' @param nsubs The number of subjects to synthesize.
+#' @param nsites The number of clinical sites.
+#' @param duration The duration of the study.
+#'
+#' @return The DM data as data frame.
 make_dm <- function(studyid="2000950044", nsubs=10, nsites=5, duration=7) {
   sbs <- make_subs(studyid, nsubs, nsites)
   dm <- sbs %>%
@@ -180,7 +204,9 @@ make_dm <- function(studyid="2000950044", nsubs=10, nsites=5, duration=7) {
       SUBJID %in% seq1.sbs ~ "Fasted - Fed",
       SUBJID %in% seq2.sbs ~ "Fed - Fasted",
       .default="Screen Failure"))
-  }
+
+  return(dm)
+}
 
 # Required: STUDYID, DOMAIN, USUBJID, VSSEQ, VSTESTCD, VSTEST
 # Expected: VSORRES, VSORRESU, VSSTRESC, VSSTRESN, VSSTRESU, VSBLFL, VISITNUM, VSDTC
@@ -188,6 +214,12 @@ make_dm <- function(studyid="2000950044", nsubs=10, nsites=5, duration=7) {
 # height 179, 6.81
 # weigth 78.5 10.2
 
+#' Synthesize fictional baseline vital sign data (VS domain)
+#'
+#' @param dm The DM domain to provide the subject data to generate baseline
+#'   vital sign data for.
+#'
+#' @return The VS domain data as data frame.
 make_vs <- function(dm) {
   vs <- dm %>%
     # filter(ACTARMCD!="SCRNFAIL") %>%
@@ -209,6 +241,15 @@ make_vs <- function(dm) {
 
 # Required: USUBJID, STUDYID, DOMAIN, EXSEEQ, EXTRT
 # expected: EXDOSE, EXDOSEU, EXDOSEFRM, EXSTDTC, EXENDTC
+
+
+#' Synthesize a fictional EX domain for single dose administration
+#'
+#' @param dm The DM including the subject info for whom to synthesize EX.
+#' @param admindays The treatment days as vector.
+#' @param drug The name of the drug to be administered.
+#'
+#' @return EX data as data frame.
 make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023") {
   ex <- dm %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
@@ -227,8 +268,9 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023") {
     ungroup() %>%
     mutate(EPOCH=case_when(EXSEQ==1 ~ "OPEN LABEL TREATMENT 1",
                            EXSEQ==2 ~ "OPEN LABEL TREATMENT 2")) %>%
+    as.data.frame()
 
-  return(ex %>% as.data.frame())
+  return(ex)
 }
 
 # required: STUDYID, DOMAIN, USUBJID, PCSEQ, PCTESTCD, PCTEST
@@ -240,7 +282,15 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023") {
 # make PCTPT:
 # make PCSEQ:
 
-make_pc <- function(ex, dm, vs) {
+#' Synthesize a fictional PC domain.
+#'
+#' @param ex The EX domain to syntesize PC data for.
+#' @param dm The DM domain to syntesize PC data for.
+#' @param vs The VS domain to syntesize PC data for.
+#' @param sampling_scheme The sampling scheme to be used.
+#'
+#' @return PC data as data frame.
+make_pc <- function(ex, dm, vs, sampling_scheme) {
   sbs.vs <- vs %>%
     filter(EPOCH=="SCREENING") %>%
     dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
@@ -267,8 +317,8 @@ make_pc <- function(ex, dm, vs) {
     as.data.frame()
 
   sim <- rbind(
-    pk_sim(temp %>% filter(PERIOD==1)),
-    pk_sim(temp %>% filter(PERIOD==2)))
+    pk_sim((temp %>% filter(PERIOD==1)), sampling_scheme),
+    pk_sim((temp %>% filter(PERIOD==2)), sampling_scheme))
 
   pc <- sim %>%
     dplyr::select(id, time, c_centr, c_metab, PERIOD) %>%
@@ -279,6 +329,8 @@ make_pc <- function(ex, dm, vs) {
     left_join(temp %>% distinct(ID, USUBJID, RFSTDTC), by=c("id"="ID")) %>%
     mutate(STUDYID=unique(dm$STUDYID), DOMAIN="PC") %>%
     mutate(PCELTM=paste0("PT", as.character(time), "H")) %>%
+    mutate(PCTPTNUM=time) %>%
+    left_join(sampling_scheme, by="time") %>%
     mutate(PCDTC=RFSTDTC+ (PERIOD-1)*14*24*60*60 + time*60*60) %>%
     arrange(id, PCDTC, PCTESTCD) %>%
     group_by(id) %>%
@@ -297,11 +349,21 @@ reformat_date <- function(x) {
   return(format(x, "%Y-%m-%dT%H:%M"))
 }
 
+
+#' Synthesize SDTM data for a fictional study
+#'
+#' @return The SDTM data as sdtm object.
 synthesize_sdtm <- function() {
+  basic_sampling_scheme <- data.frame(
+    time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
+    PCTPT = c("PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
+              "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
+              "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"))
+
   dm <- make_dm(studyid="2023000400", nsubs=20)
   vs <- make_vs(dm)
   ex <- make_sd_ex(dm, drug="RS2023")
-  pc <- make_pc(ex, dm, vs)
+  pc <- make_pc(ex, dm, vs, basic_sampling_scheme)
 
   out <- list()
   out[["dm"]] <- dm %>%
@@ -324,12 +386,19 @@ synthesize_sdtm <- function() {
   return(sdtm(out))
 }
 
+#' Synthesize the package data for `examplinib`
+#'
+#' @return Nothing.
+make_examplinib_sdtm <- function() {
+  examplinib <- synthesize_sdtm()
+  return(examplinib)
+}
+
+#### Development note: To update the package data `examplinib` during the
+#### package development, run the following code:
 ####
-
-examplinib <- synthesize_sdtm() %>%
-  add_analyte_mapping("EXAMPLINIB", "RS2023")
-
-
+#### `examplinib <- make_examplinib_sdtm()`
+#### `use_data(examplinib, overwrite=T)`
 
 
 

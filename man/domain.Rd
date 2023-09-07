@@ -17,3 +17,7 @@ The specified domain as data.frame
 \description{
 Get a specific domain from the sdtm object
 }
+\examples{
+domain(examplinib, "dm")
+
+}

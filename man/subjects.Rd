@@ -19,3 +19,7 @@ Studies within a nif object
 
 Get the USUBJIDs from an sdtm object
 }
+\examples{
+subjects(examplinib)
+
+}

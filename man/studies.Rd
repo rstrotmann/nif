@@ -12,3 +12,6 @@ studies(obj)
 \description{
 Get the study names from an SDTM object
 }
+\examples{
+studies(examplinib)
+}

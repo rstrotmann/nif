@@ -19,6 +19,26 @@ The modified sdtm object
 \description{
 Attach a time mapping to an sdtm object
 }
+\examples{
+sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
+  "HOUR 0.5" = 0.5,
+  "HOUR 1" = 1,
+  "HOUR 1.5" = 1.5,
+  "HOUR 2" = 2,
+  "HOUR 3" = 3,
+  "HOUR 4" = 4,
+  "HOUR 6" = 6,
+  "HOUR 8" = 8,
+  "HOUR 10" = 10,
+  "HOUR 12" = 12,
+  "HOUR 24" = 24,
+  "HOUR 48" = 48,
+  "HOUR 72" = 72,
+  "HOUR 96" = 96,
+  "HOUR 144" = 144,
+  "HOUR 168" = 168)
+
+}
 \seealso{
 \code{\link[=suggest]{suggest()}}
 }

@@ -6,6 +6,13 @@
 \usage{
 add_mapping(obj, extrt = "", pctestcd = "")
 }
+\arguments{
+\item{obj}{A SDTM object.}
+
+\item{extrt}{The treatment as defined in EX.}
+
+\item{pctestcd}{The analyte as defined in PC.}
+}
 \description{
-Add mapping method for legacy compatibility
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }

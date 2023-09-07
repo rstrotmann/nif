@@ -195,11 +195,12 @@ analytes.nif <- function(obj){
 #' @param obj A nif object
 #' @import dplyr
 #' @return None
+#' @import utils
 #' @export
 head.nif <- function(obj) {
   obj %>%
     as.data.frame() %>%
-    head()
+    utils::head()
 }
 
 #' Export a nif object as csv file

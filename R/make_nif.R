@@ -11,8 +11,10 @@ dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
 #' @param df The data.frame to be rendered
 #' @param indent A string that defines the left indentation of the rendered
 #'   output.
+#' @param header Boolean to indicate whether the header row is to be included.
 #' @param n The number of lines to be included, or all if NULL.
 #' @return The output as string.
+#' @import utils
 #' @export
 df.to.string <- function(df, indent="", n=NULL, header=T){
   df <- as.data.frame(df)
@@ -37,7 +39,7 @@ df.to.string <- function(df, indent="", n=NULL, header=T){
   }
 
   if(!is.null(n)){
-    df <- head(df, n=n)
+    df <- utils::head(df, n=n)
   }
   for(i in 1:nrow(df)){
     out <- paste(out, render.line(df[i,]), sep="\n")
@@ -631,15 +633,16 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
 #' @param lbtestcd Lab parameters to be included as character scalar or vector.
 #' @param silent Boolean value to indicate whether warnings should be printed.
 #' @return A NIF data set
+#' @import dplyr
 #' @export
 #' @seealso [add_bl_lab()]
 #' @seealso [add_lab_observation()]
 add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
   temp <- lbtestcd %in% (
     # (lb %>% filter(LBSPEC==lbspec)) %>%
-    (lb %>% filter(LBSPEC %in% lbspec)) %>%
-    dplyr::distinct(LBTESTCD) %>%
-    dplyr::pull(LBTESTCD)
+    (lb %>% filter(.data$LBSPEC %in% lbspec) %>%
+    dplyr::distinct(.data$LBTESTCD) %>%
+    dplyr::pull(.data$LBTESTCD))
   )
   if(!all(temp)) {
     if(!silent){
@@ -654,23 +657,25 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 
   lb.params <- lb %>%
     mutate(dtc=lubridate::as_datetime(
-      LBDTC, format=dtc_formats)) %>%
-    mutate(date=format(dtc, format="%Y-%m-%d")) %>%
+      .data$LBDTC, format=dtc_formats)) %>%
+    mutate(date=format(.data$dtc, format="%Y-%m-%d")) %>%
     mutate(labdate=date) %>%
     # dplyr::filter(LBSPEC==lbspec) %>%
-    dplyr::filter(LBSPEC %in% lbspec) %>%
-    dplyr::filter(LBTESTCD %in% lbtestcd) %>%
-    dplyr::select(USUBJID, date, labdate, LBTESTCD, LBSTRESN) %>%
-    pivot_wider(names_from=LBTESTCD, values_from=LBSTRESN, values_fn=mean)
+    dplyr::filter(.data$LBSPEC %in% lbspec) %>%
+    dplyr::filter(.data$LBTESTCD %in% lbtestcd) %>%
+    dplyr::select(.data$USUBJID, .data$date, .data$labdate, .data$LBTESTCD,
+                  .data$LBSTRESN) %>%
+    pivot_wider(names_from=.data$LBTESTCD, values_from=.data$LBSTRESN,
+                values_fn=mean)
 
   temp <- obj %>%
     as.data.frame() %>%
-    mutate(date=format(DTC, format="%Y-%m-%d")) %>%
+    mutate(date=format(.data$DTC, format="%Y-%m-%d")) %>%
     bind_rows(lb.params) %>%
-    arrange(USUBJID, date) %>%
-    group_by(USUBJID) %>%
-    fill(all_of(lbtestcd), labdate) %>%
-    filter(!is.na(EVID)) %>%
+    arrange(.data$USUBJID, date) %>%
+    group_by(.data$USUBJID) %>%
+    fill(all_of(lbtestcd), .data$labdate) %>%
+    filter(!is.na(.data$EVID)) %>%
     ungroup()
 
   return(nif(temp))

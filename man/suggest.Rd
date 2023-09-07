@@ -12,6 +12,10 @@ suggest(obj)
 \description{
 Suggest common manual data programming steps for a sdtm data set
 }
+\examples{
+suggest(examplinib)
+
+}
 \seealso{
 \code{\link[=read_sdtm_sas]{read_sdtm_sas()}}
 }

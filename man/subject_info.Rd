@@ -14,3 +14,7 @@ subject_info(obj, id = "")
 \description{
 Subject demographic information
 }
+\examples{
+subject_info(examplinib, "20230004001010001")
+
+}
