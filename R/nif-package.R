@@ -21,4 +21,4 @@ utils::globalVariables(c(
   "t.d1", "eta.d1", "t.fm", "eta.fm", "t.cl", "eta.cl", "t.kem", "eta.kem",
   "eta.fpar", "t.fpar1", "t.q", "eta.q", "/<-", "dt", "dur<-", "renal",
   "metab_excr", "sd", "GROUP", "first_admin_time", "regimen", "PCTEST",
-  "no.analyte", "bl_wt", "rc", "maxwt"))
+  "no.analyte", "bl_wt", "rc", "maxwt", "DOMAIN", "no_admin"))

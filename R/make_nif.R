@@ -379,12 +379,16 @@ impute.administration.time <- function(admin, obs){
 #' @import tidyr
 #' @import dplyr
 #' @export
-make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=F) {
-  vs <- sdtm.data$vs
-  ex <- sdtm.data$ex
-  pc <- sdtm.data$pc
+make_nif <- function(
+    sdtm.data,
+    spec=NULL,
+    impute.missing.end.time=TRUE,
+    silent=F) {
+  vs <- sdtm.data$vs %>% dplyr::select(-DOMAIN)
+  ex <- sdtm.data$ex %>% dplyr::select(-DOMAIN)
+  pc <- sdtm.data$pc %>% dplyr::select(-DOMAIN)
+  dm <- sdtm.data$dm %>% dplyr::select(-DOMAIN)
 
-  dm <- sdtm.data$dm #%>%
     # dplyr::select(STUDYID, USUBJID, SUBJID, RFSTDTC,
     #               RFICDTC, BRTHDTC, AGE, AGEU, SEX, RACE, ETHNIC,
     #               ARMCD, ARM, ACTARMCD, ACTARM, COUNTRY)
@@ -452,6 +456,7 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
 
   admin <- impute.administration.time(admin, obs)
 
+  # calculate age from birthday and informed consent signature date
   if("RFICDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
       dplyr::mutate(refdtc=lubridate::as_datetime(
@@ -473,14 +478,29 @@ make_nif <- function(sdtm.data, spec=NULL, impute.missing.end.time=TRUE, silent=
     dplyr::mutate(FIRSTDTC=min(DTC)) %>%
     dplyr::ungroup() %>%
 
+    # filter out all analytes without administrations
+    group_by(USUBJID, PCTESTCD) %>%
+    dplyr::mutate(no_admin=case_when(
+      (max(AMT)==0) ~ 1,
+      .default=0)) %>%
+    ungroup() %>%
+    filter(no_admin==0) %>%
+
     # all observations before the first administration (per analyte) to have
     #   a dose of NA
     group_by(USUBJID, PCTESTCD) %>%
     dplyr::mutate(first_admin_dtc=case_when(
-      (max(AMT)>0) ~ min(DTC[AMT!=0], na.rm=T),
-      .default=NA)) %>%
+      no_admin==0 ~ min(DTC[AMT!=0]),
+      .default=NA
+    )) %>%
     ungroup() %>%
-    dplyr::mutate(DOSE=case_when((AMT==0 & DTC<first_admin_dtc) ~ NA, .default=DOSE)) %>%
+    select(-no_admin)
+
+
+  nif <- nif %>%
+    dplyr::mutate(DOSE=case_when(
+      (AMT==0 & DTC<first_admin_dtc) ~ NA,
+      .default=DOSE)) %>%
 
     # fill missing fields
     dplyr::arrange(USUBJID, PCTESTCD, DTC, -EVID) %>%
