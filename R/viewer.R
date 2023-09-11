@@ -10,6 +10,7 @@
 #' @importFrom shinyjs useShinyjs enable disable
 #' @seealso [plot()]
 #' @export
+#'
 nif_viewer <- function(nif) {
   sbs <- nif %>%
     dplyr::distinct(USUBJID) %>%

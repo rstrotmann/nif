@@ -3,9 +3,9 @@
 \docType{data}
 \name{examplinib}
 \alias{examplinib}
-\title{Sample SDTM data}
+\title{Sample sdtm data}
 \format{
-A SDTM object
+A sdtm object
 }
 \usage{
 examplinib

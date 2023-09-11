@@ -228,6 +228,15 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @param ... Further arguments.
 #' @return The plot object
 #' @seealso [nif_viewer()]
+#' @examples
+#' plot(examplinib_nif)
+#' plot(examplinib_nif, analyte="RS2023", points=TRUE)
+#' plot(examplinib_nif, analyte="RS2023", group="FASTED")
+#' plot(examplinib_nif, max_x=24, point=TRUE)
+#' plot(examplinib_nif, analyte="RS2023", group="FASTED", nominal_time=TRUE)
+#' plot(examplinib_nif, analyte="RS2023", group="FASTED", mean=TRUE)
+#' plot(examplinib_nif, analyte="RS2023", group="FASTED", mean=TRUE, max_x=24)
+#'
 #' @export
 plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
                      doses=NULL, points=F, id=NULL, usubjid=NULL,

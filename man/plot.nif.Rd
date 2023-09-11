@@ -64,6 +64,16 @@ The plot object
 This function plots a NIF data set, grouped by the variable \code{group}. If no
 grouping variable is provided, \code{DOSE} will be used.
 }
+\examples{
+plot(examplinib_nif)
+plot(examplinib_nif, analyte="RS2023", points=TRUE)
+plot(examplinib_nif, analyte="RS2023", group="FASTED")
+plot(examplinib_nif, max_x=24, point=TRUE)
+plot(examplinib_nif, analyte="RS2023", group="FASTED", nominal_time=TRUE)
+plot(examplinib_nif, analyte="RS2023", group="FASTED", mean=TRUE)
+plot(examplinib_nif, analyte="RS2023", group="FASTED", mean=TRUE, max_x=24)
+
+}
 \seealso{
 \code{\link[=nif_viewer]{nif_viewer()}}
 }

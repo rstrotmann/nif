@@ -291,7 +291,7 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023") {
 #'
 #' @return PC data as data frame.
 make_pc <- function(ex, dm, vs, sampling_scheme) {
-  sbs.vs <- vs %>%
+  abs_vs <- vs %>%
     filter(EPOCH=="SCREENING") %>%
     dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
     pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN") %>%
@@ -299,7 +299,7 @@ make_pc <- function(ex, dm, vs, sampling_scheme) {
 
   sbs <- dm %>%
     dplyr::select(USUBJID, SEX, AGE, ACTARMCD) %>%
-    left_join(sbs.vs, by="USUBJID") %>%
+    left_join(abs_vs, by="USUBJID") %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
     group_by(USUBJID) %>%
     mutate(ID=cur_group_id()) %>%
@@ -331,7 +331,7 @@ make_pc <- function(ex, dm, vs, sampling_scheme) {
     mutate(PCELTM=paste0("PT", as.character(time), "H")) %>%
     mutate(PCTPTNUM=time) %>%
     left_join(sampling_scheme, by="time") %>%
-    mutate(PCDTC=RFSTDTC+ (PERIOD-1)*14*24*60*60 + time*60*60) %>%
+    mutate(PCDTC=RFSTDTC + (PERIOD-1)*13*24*60*60 + time*60*60) %>%
     arrange(id, PCDTC, PCTESTCD) %>%
     group_by(id) %>%
     mutate(PCSEQ=row_number()) %>%
@@ -388,17 +388,35 @@ synthesize_sdtm <- function() {
 
 #' Synthesize the package data for `examplinib`
 #'
-#' @return Nothing.
+#' @return The sdtm object.
 make_examplinib_sdtm <- function() {
   examplinib <- synthesize_sdtm()
   return(examplinib)
 }
+
+#' Synthesize the package data for `examplinib`
+#'
+#' @return The nif object.
+make_examplinib_nif <- function() {
+  out <- make_examplinib_sdtm() %>%
+    add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
+    add_analyte_mapping("EXAMPLINIB", "RS2023487A") %>%
+    make_nif() %>%
+    mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>%
+    mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
+    mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
+  return(out)
+}
+
+
 
 #### Development note: To update the package data `examplinib` during the
 #### package development, run the following code:
 ####
 #### `examplinib <- make_examplinib_sdtm()`
 #### `use_data(examplinib, overwrite=T)`
+#### `examplinib_nif <- make_examplinib_nif()`
+#### `use_data(examplinib_nif, overwrite=T)`
 
 
 
