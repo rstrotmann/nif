@@ -17,21 +17,21 @@ new_nif <- function(obj) {
 
 #' print() implementation for nif objects
 #'
-#' @param obj A nif object.
+#' @param x A nif object.
 #' @param ... Additional parameters
 #'
 #' @export
-print.nif <- function(obj, ...){
+print.nif <- function(x, ...){
   cat(paste("NONMEM input file (NIF) data set with data from",
-            length(studies(obj)),
+            length(studies(x)),
             "studies\n"))
-  n.obs <- obj %>%
+  n.obs <- x %>%
     filter(EVID==0) %>%
     nrow()
   cat(paste(n.obs, "observations from",
-            length(subjects(obj)), "subjects\n"))
+            length(subjects(x)), "subjects\n"))
 
-  n.sex <- obj %>%
+  n.sex <- x %>%
     dplyr::distinct(USUBJID, SEX) %>%
     dplyr::group_by(SEX) %>%
     dplyr::summarize(n=n())
@@ -49,14 +49,14 @@ print.nif <- function(obj, ...){
   cat(paste0("Males: ", n_males, ", females: ", n_females, " (",
              round(n_females/(n_males + n_females)*100, 1), "%)\n\n"))
 
-  cat(paste0("Studies:\n", paste(studies(obj), collapse="\n"), "\n\n"))
+  cat(paste0("Studies:\n", paste(studies(x), collapse="\n"), "\n\n"))
 
   # cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
 
   cat("Doses (starting doses only):\n")
 
   temp <-
-    obj %>%
+    x %>%
     as.data.frame() %>%
 
     # filter out analytes without administrations
@@ -88,9 +88,9 @@ print.nif <- function(obj, ...){
   cat("\n\n")
 
   cat("Columns:\n")
-  cat(paste(names(obj), collapse=", "), "\n")
+  cat(paste(names(x), collapse=", "), "\n")
 
-  temp <- obj[1:15, names(obj) %in% c("ID", "NTIME", "TIME", "ANALYTE", "EVID",
+  temp <- x[1:15, names(x) %in% c("ID", "NTIME", "TIME", "ANALYTE", "EVID",
                                    "CMT", "AMT", "DOSE", "DV")] %>%
     as.data.frame()
   # temp <- obj %>%
@@ -203,7 +203,7 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' This function plots a NIF data set, grouped by the variable `group`. If no
 #'   grouping variable is provided, `DOSE` will be used.
 #'
-#' @param obj The NIF object to be plotted.
+#' @param x The NIF object to be plotted.
 #' @param y_scale Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".
 #' @param max_x Maximal x (time) scale value.
 #' @param analyte The analyte to be plotted If this argument is not supplied
@@ -223,31 +223,32 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @param administrations Boolean value to indicate whether vertical lines
 #'   marking the administration times should be plotted. Has no function if
 #'   mean=F.
-#'@param nominal_time Boolean to indicate whether NTIME rather than TIME should
+#' @param nominal_time Boolean to indicate whether NTIME rather than TIME should
 #'   be plotted on the x-axis.
+#' @param ... Further arguments.
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @export
-plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
+plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
                      doses=NULL, points=F, id=NULL, usubjid=NULL,
-                     group=NULL, administrations=F, nominal_time=F) {
+                     group=NULL, administrations=F, nominal_time=F, ...) {
   if(!is.null(id)) {
-    obj <- obj %>%
+    x <- x %>%
       dplyr::filter(ID %in% id)
   }
 
   if(!is.null(usubjid)) {
-    obj <- obj %>%
+    x <- x %>%
       dplyr::filter(USUBJID %in% usubjid)
   }
 
   if(!is.null(analyte)) {
-    obj <- obj %>%
+    x <- x %>%
       dplyr::filter(ANALYTE==analyte)
   }
 
   if(!is.null(doses)){
-    obj <- obj %>%
+    x <- x %>%
       dplyr::filter(DOSE %in% doses)
   }
 
@@ -262,11 +263,11 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
   }
 
   if(mean==TRUE){
-    if(!is.null(group) & is.null(analyte) & length(analytes(obj)>1)){
+    if(!is.null(group) & is.null(analyte) & length(analytes(x)>1)){
       stop(paste0("Plotting means over multiple analytes does not make sense! ",
                    "Consider selecting a specific analyte"))
     }
-    temp <- obj %>%
+    temp <- x %>%
       as.data.frame() %>%
       filter(NTIME > 0) %>%
       dplyr::filter(!is.na(DOSE)) %>%
@@ -289,7 +290,7 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       ylim(0, max(temp$max_y, na.rm=T)) +
       ggplot2::theme(legend.position="bottom")
   } else {
-    temp <- obj %>%
+    temp <- x %>%
       dplyr::filter(!is.na(DOSE))
 
     if(nominal_time){
@@ -311,7 +312,7 @@ plot.nif <- function(obj, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position="bottom")
     if(administrations) {
-      adm <- obj %>%
+      adm <- x %>%
         as.data.frame() %>%
         filter(EVID==1) %>%
         mutate(GROUP=as.factor(.data[[cov]])) %>%

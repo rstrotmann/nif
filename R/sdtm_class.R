@@ -132,37 +132,37 @@ add_time_mapping.sdtm <- function(obj, ...) {
 
 #' print() implementation for SDTM
 #'
-#' @param obj A SDTM object.
+#' @param x A SDTM object.
 #' @param ... Further parameters
 #'
 #' @export
-print.sdtm <- function(obj, ...){
+print.sdtm <- function(x, ...){
   cat("SDTM data set\n")
-  cat(paste("Study", obj$study))
-  cat(paste(" with", nrow(obj$subjects), "subjects providing PC data.\n"))
+  cat(paste("Study", x$study))
+  cat(paste(" with", nrow(x$subjects), "subjects providing PC data.\n"))
   cat("SDTM domains: ")
-  cat(paste(names(obj$domains), collapse=", "))
+  cat(paste(names(x$domains), collapse=", "))
 
   cat("\n\nArms:\n")
-  print(obj$arms, right=FALSE, justify=FALSE)
+  print(x$arms, right=FALSE, justify=FALSE)
 
   cat("\nTreatments:\n")
-  print(obj$treatments %>% as.data.frame(), right=FALSE)
+  print(x$treatments %>% as.data.frame(), right=FALSE)
   cat("\nSpecimens:\n")
-  print(obj$specimens, right=FALSE)
+  print(x$specimens, right=FALSE)
   cat("\nAnalytes:\n")
-  print(obj$analytes, right=FALSE)
+  print(x$analytes, right=FALSE)
 
   cat("\nTreatment-to-analyte mappings:\n")
-  if(nrow(obj$treatment.analyte.mappings)>0){
-    print(obj$treatment.analyte.mappings, right=FALSE)
+  if(nrow(x$treatment.analyte.mappings)>0){
+    print(x$treatment.analyte.mappings, right=FALSE)
   } else {
     cat("none\n")
   }
 
   cat("\nTime mappings:\n")
-  if(nrow(obj$time.mapping)>0){
-    print(obj$time.mapping, right=FALSE)
+  if(nrow(x$time.mapping)>0){
+    print(x$time.mapping, right=FALSE)
   } else {
     cat("none\n")
   }

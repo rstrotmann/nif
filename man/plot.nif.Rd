@@ -5,7 +5,7 @@
 \title{Plot NIF data set}
 \usage{
 \method{plot}{nif}(
-  obj,
+  x,
   y_scale = "lin",
   max_x = NULL,
   analyte = NULL,
@@ -16,11 +16,12 @@
   usubjid = NULL,
   group = NULL,
   administrations = F,
-  nominal_time = F
+  nominal_time = F,
+  ...
 )
 }
 \arguments{
-\item{obj}{The NIF object to be plotted.}
+\item{x}{The NIF object to be plotted.}
 
 \item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
 
@@ -53,6 +54,8 @@ mean=F.}
 
 \item{nominal_time}{Boolean to indicate whether NTIME rather than TIME should
 be plotted on the x-axis.}
+
+\item{...}{Further arguments.}
 }
 \value{
 The plot object

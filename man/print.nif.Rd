@@ -4,10 +4,10 @@
 \alias{print.nif}
 \title{print() implementation for nif objects}
 \usage{
-\method{print}{nif}(obj, ...)
+\method{print}{nif}(x, ...)
 }
 \arguments{
-\item{obj}{A nif object.}
+\item{x}{A nif object.}
 
 \item{...}{Additional parameters}
 }
