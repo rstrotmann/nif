@@ -390,7 +390,9 @@ synthesize_sdtm <- function() {
 #'
 #' @return The sdtm object.
 make_examplinib_sdtm <- function() {
-  examplinib <- synthesize_sdtm()
+  examplinib <- synthesize_sdtm() %>%
+    add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
+    add_analyte_mapping("EXAMPLINIB", "RS2023487A")
   return(examplinib)
 }
 

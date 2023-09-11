@@ -65,6 +65,10 @@ steps, e.g., addition of further time-dependent endpoints.
 }
 }
 
+\examples{
+make_nif(examplinib)
+
+}
 \seealso{
 \code{\link[=add_analyte_mapping]{add_analyte_mapping()}}
 

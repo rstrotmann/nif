@@ -379,6 +379,9 @@ impute.administration.time <- function(admin, obs){
 #' @import tidyr
 #' @import dplyr
 #' @export
+#' @examples
+#' make_nif(examplinib)
+#'
 make_nif <- function(
     sdtm.data,
     spec=NULL,
