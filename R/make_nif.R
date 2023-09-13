@@ -392,10 +392,6 @@ make_nif <- function(
   pc <- sdtm.data$pc %>% dplyr::select(-DOMAIN)
   dm <- sdtm.data$dm %>% dplyr::select(-DOMAIN)
 
-    # dplyr::select(STUDYID, USUBJID, SUBJID, RFSTDTC,
-    #               RFICDTC, BRTHDTC, AGE, AGEU, SEX, RACE, ETHNIC,
-    #               ARMCD, ARM, ACTARMCD, ACTARM, COUNTRY)
-
   # Get baseline covariates on subject level from VS
   bl.cov <- vs %>%
     dplyr::filter(EPOCH=="SCREENING") %>%
@@ -405,11 +401,7 @@ make_nif <- function(
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
   obs <- make_obs(pc, time_mapping=sdtm.data$time.mapping,
-                  spec=spec, silent=silent) #%>%
-    # select(STUDYID, USUBJID, PCSEQ, PCTESTCD, PCSTRESN, PCSTAT, PCSPEC, PCLLOQ,
-    #        VISITNUM, VISIT, EPOCH, PCDTC, PCDY, PCTPT, PCTPTNUM,
-    #        PCTPTREF, PCRFTDTC, DTC, start.date, start.time, NTIME, EVID, CMT,
-    #        AMT, DV, LNDV, MDV)
+                  spec=spec, silent=silent)
 
   cut.off.date <- last_obs_time(obs)
   if(!silent) {
@@ -421,11 +413,12 @@ make_nif <- function(
     tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
 
-  admin <- make_admin(ex,
-                      analyte_mapping=sdtm.data$treatment.analyte.mappings,
-                      cut.off.date,
-                      impute.missing.end.time=impute.missing.end.time,
-                      silent=silent)
+  admin <- make_admin(
+    ex,
+    analyte_mapping=sdtm.data$treatment.analyte.mappings,
+    cut.off.date,
+    impute.missing.end.time=impute.missing.end.time,
+    silent=silent)
 
   # Remove all administrations with PCTESTCD==NA
   #  those rows may come from treatments that have no analyte mapping
@@ -456,6 +449,17 @@ make_nif <- function(
     tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
     dplyr::filter(ut %in% obs.sbs$ut) %>%
     dplyr::select(-ut)
+
+  if(nrow(admin)==0) {
+    stop(paste0("No subjects in the data set left after filtering out ",
+    "subjects without observations.\n",
+    "  In most cases, this is because of `PCTESTCD` not matching with a ",
+    "corresponding `EXTRT`.\n",
+    "  Consider adding analyte mappings to the SDTM data object!\n",
+    "  For futher information, please see `?add_analyte_mapping`,",
+    "`suggest_sdtm()` and the\n",
+    "  vignette 'Creating NIF files from SDTM data'!"))
+  }
 
   admin <- impute.administration.time(admin, obs)
 
