@@ -400,7 +400,7 @@ make_nif <- function(
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
-  obs <- make_obs(pc, time_mapping=sdtm.data$time.mapping,
+  obs <- make_obs(pc, time_mapping=sdtm.data$time_mapping,
                   spec=spec, silent=silent)
 
   cut.off.date <- last_obs_time(obs)
@@ -415,7 +415,7 @@ make_nif <- function(
 
   admin <- make_admin(
     ex,
-    analyte_mapping=sdtm.data$treatment.analyte.mappings,
+    analyte_mapping=sdtm.data$analyte_mapping,
     cut.off.date,
     impute.missing.end.time=impute.missing.end.time,
     silent=silent)

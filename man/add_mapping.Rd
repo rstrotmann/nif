@@ -4,7 +4,7 @@
 \alias{add_mapping}
 \title{#' @export
 add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
-obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
+obj$analyte_mapping <- rbind(obj$analyte_mapping,
 data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
 return(obj)
 }

@@ -31,8 +31,8 @@ new_sdtm <- function(sdtm.data){
     dm=dm,
     ex=ex,
     vs=vs,
-    treatment.analyte.mappings=data.frame(),
-    time.mapping=data.frame()
+    analyte_mapping=data.frame(),
+    time_mapping=data.frame()
   )
 
   class(temp) <- "sdtm"
@@ -59,15 +59,15 @@ new_sdtm <- function(sdtm.data){
 #' @export
 add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
   #UseMethod("add_analyte_mapping")
-  obj$treatment.analyte.mappings <- rbind(
-    obj$treatment.analyte.mappings,
+  obj$analyte_mapping <- rbind(
+    obj$analyte_mapping,
     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
   return(obj)
 }
 
 #' #' @export
 #' add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
-#'   obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
+#'   obj$analyte_mapping <- rbind(obj$analyte_mapping,
 #'     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
 #'   return(obj)
 #' }
@@ -83,6 +83,21 @@ add_mapping <- function(obj, extrt="", pctestcd="") {
   lifecycle::deprecate_warn("0.19.0", "add_mapping()", "add_analyte_mapping()")
   UseMethod("add_analyte_mapping")
 }
+
+
+# add_metabolite_mapping <- function(
+#     obj,
+#     pctestcd_parent="",
+#     pctestcd_metabolite=""
+#     ) {
+#   obj$analyte_mapping <- rbind(
+#     obj$analyte_mapping,
+#     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
+#   return(obj)
+# }
+
+
+
 
 #' Attach a time mapping to an sdtm object
 #'
@@ -128,7 +143,7 @@ add_time_mapping <- function(obj, ...) {
 add_time_mapping.sdtm <- function(obj, ...) {
   temp <- unlist(c(as.list(environment())[-1], list(...)))
   mapping <- data.frame(PCTPT=names(temp), NTIME=as.numeric(temp))
-  obj$time.mapping <- rbind(obj$time.mapping, mapping)
+  obj$time_mapping <- rbind(obj$time_mapping, mapping)
   return(obj)
 }
 
@@ -157,15 +172,15 @@ print.sdtm <- function(x, ...){
   print(x$analytes, right=FALSE)
 
   cat("\nTreatment-to-analyte mappings:\n")
-  if(nrow(x$treatment.analyte.mappings)>0){
-    print(x$treatment.analyte.mappings, right=FALSE)
+  if(nrow(x$analyte_mapping)>0){
+    print(x$analyte_mapping, right=FALSE)
   } else {
     cat("none\n")
   }
 
   cat("\nTime mappings:\n")
-  if(nrow(x$time.mapping)>0){
-    print(x$time.mapping, right=FALSE)
+  if(nrow(x$time_mapping)>0){
+    print(x$time_mapping, right=FALSE)
   } else {
     cat("none\n")
   }
