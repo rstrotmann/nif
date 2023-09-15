@@ -2,7 +2,13 @@
 % Please edit documentation in R/sdtm_class.R
 \name{add_mapping}
 \alias{add_mapping}
-\title{Add mapping method for legacy compatibility}
+\title{#' @export
+add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
+obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
+data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
+return(obj)
+}
+Add mapping method for legacy compatibility}
 \usage{
 add_mapping(obj, extrt = "", pctestcd = "")
 }

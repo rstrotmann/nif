@@ -58,8 +58,19 @@ new_sdtm <- function(sdtm.data){
 #'
 #' @export
 add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
-  UseMethod("add_analyte_mapping")
+  #UseMethod("add_analyte_mapping")
+  obj$treatment.analyte.mappings <- rbind(
+    obj$treatment.analyte.mappings,
+    data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
+  return(obj)
 }
+
+#' #' @export
+#' add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
+#'   obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
+#'     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
+#'   return(obj)
+#' }
 
 #' Add mapping method for legacy compatibility
 #'
@@ -72,14 +83,6 @@ add_mapping <- function(obj, extrt="", pctestcd="") {
   lifecycle::deprecate_warn("0.19.0", "add_mapping()", "add_analyte_mapping()")
   UseMethod("add_analyte_mapping")
 }
-
-#' @export
-add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
-  obj$treatment.analyte.mappings <- rbind(obj$treatment.analyte.mappings,
-    data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
-  return(obj)
-}
-
 
 #' Attach a time mapping to an sdtm object
 #'
