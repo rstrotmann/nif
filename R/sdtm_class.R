@@ -32,6 +32,7 @@ new_sdtm <- function(sdtm.data){
     ex=ex,
     vs=vs,
     analyte_mapping=data.frame(),
+    metabolite_mapping=data.frame(),
     time_mapping=data.frame()
   )
 
@@ -65,13 +66,6 @@ add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
   return(obj)
 }
 
-#' #' @export
-#' add_analyte_mapping.sdtm <- function(obj, extrt="", pctestcd="") {
-#'   obj$analyte_mapping <- rbind(obj$analyte_mapping,
-#'     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
-#'   return(obj)
-#' }
-
 #' Add mapping method for legacy compatibility
 #'
 #' @param obj A SDTM object.
@@ -85,18 +79,24 @@ add_mapping <- function(obj, extrt="", pctestcd="") {
 }
 
 
-# add_metabolite_mapping <- function(
-#     obj,
-#     pctestcd_parent="",
-#     pctestcd_metabolite=""
-#     ) {
-#   obj$analyte_mapping <- rbind(
-#     obj$analyte_mapping,
-#     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
-#   return(obj)
-# }
-
-
+#' Attach a parent-metabolite mapping to a SDTM object.
+#'
+#' @param obj The SDTM object.
+#' @param pctestcd_parent The PCTESTCD of the parent compound.
+#' @param pctestcd_metabolite The PCTESTCD of the metabolite.
+#'
+#' @return The SDTM object.
+#' @export
+add_metabolite_mapping <- function(
+    obj,
+    pctestcd_parent="",
+    pctestcd_metabolite=""
+    ) {
+  obj$metabolite_mapping <- rbind(
+    obj$metabolite_mapping,
+    data.frame("PCTESTCD_parent"=pctestcd_parent, "PCTESTCD_metab"=pctestcd_metabolite))
+  return(obj)
+}
 
 
 #' Attach a time mapping to an sdtm object
@@ -174,6 +174,13 @@ print.sdtm <- function(x, ...){
   cat("\nTreatment-to-analyte mappings:\n")
   if(nrow(x$analyte_mapping)>0){
     print(x$analyte_mapping, right=FALSE)
+  } else {
+    cat("none\n")
+  }
+
+  cat("\nParent-to-analyte mappings:\n")
+  if(nrow(x$metabolite_mapping)>0){
+    print(x$metabolite_mapping, right=FALSE)
   } else {
     cat("none\n")
   }

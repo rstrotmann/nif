@@ -51,8 +51,6 @@ print.nif <- function(x, ...){
 
   cat(paste0("Studies:\n", paste(studies(x), collapse="\n"), "\n\n"))
 
-  # cat(paste0("Doses:\n", paste(doses(obj), collapse=", "), "\n\n"))
-
   cat("Doses (starting doses only):\n")
 
   temp <-
@@ -69,12 +67,9 @@ print.nif <- function(x, ...){
     mutate(first_admin_time=min(TIME[AMT!=0])) %>%
     ungroup() %>%
 
-    #as.data.frame() %>%
-
     # filter for first administrations
     filter(TIME==first_admin_time, AMT!=0) %>%
     select(ID, ANALYTE, AMT) %>%
-    #group_by(ID) %>%
     pivot_wider(names_from = ANALYTE, values_from = AMT) %>%
     unite("regimen", -ID, remove=F) %>%
     group_by(regimen) %>%
@@ -93,8 +88,6 @@ print.nif <- function(x, ...){
   temp <- x[1:15, names(x) %in% c("ID", "NTIME", "TIME", "ANALYTE", "EVID",
                                    "CMT", "AMT", "DOSE", "DV")] %>%
     as.data.frame()
-  # temp <- obj %>%
-  #   dplyr::select(ID, NTIME, TIME, ANALYTE, EVID, CMT, AMT, DOSE, DV) %>%
 
   temp <- temp %>%
     df.to.string()
