@@ -6,7 +6,7 @@
 \usage{
 make_admin(
   ex,
-  analyte_mapping,
+  drug_mapping,
   cut.off.date,
   impute.missing.end.time = TRUE,
   silent = F
@@ -15,7 +15,7 @@ make_admin(
 \arguments{
 \item{ex}{EX domain}
 
-\item{analyte_mapping}{A data frame with the columns of EXTRT and PCTESTCD
+\item{drug_mapping}{A data frame with the columns of EXTRT and PCTESTCD
 that associate both.}
 
 \item{cut.off.date}{The cut-off date to be used where no EXENDTC is recorded,

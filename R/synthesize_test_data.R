@@ -391,8 +391,8 @@ synthesize_sdtm <- function() {
 #' @return The sdtm object.
 make_examplinib_sdtm <- function() {
   examplinib <- synthesize_sdtm() %>%
-    add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
-    add_analyte_mapping("EXAMPLINIB", "RS2023487A")
+    add_analyte_mapping("EXAMPLINIB", "RS2023") #%>%
+    #add_analyte_mapping("EXAMPLINIB", "RS2023487A")
   return(examplinib)
 }
 
@@ -402,7 +402,7 @@ make_examplinib_sdtm <- function() {
 make_examplinib_nif <- function() {
   out <- make_examplinib_sdtm() %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
-    add_analyte_mapping("EXAMPLINIB", "RS2023487A") %>%
+    #add_analyte_mapping("EXAMPLINIB", "RS2023487A") %>%
     make_nif() %>%
     mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>%
     mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>%

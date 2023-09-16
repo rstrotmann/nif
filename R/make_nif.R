@@ -89,7 +89,7 @@ recode_sex <- function(obj){
 #' @param ex EX domain
 #' @param cut.off.date The cut-off date to be used where no EXENDTC is recorded,
 #'  in "%Y-%m-%dT%H:%M" format.
-#' @param analyte_mapping A data frame with the columns of EXTRT and PCTESTCD
+#' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
 #'  that associate both.
 #' @param impute.missing.end.time A logic value to indicate whether in rows
 #'  in EX where EXENDTC does not include a time, the time should be copied from
@@ -100,7 +100,7 @@ recode_sex <- function(obj){
 #' @import dplyr
 #' @import tidyr
 make_admin <- function(ex,
-                       analyte_mapping,
+                       drug_mapping,
                        cut.off.date,
                        impute.missing.end.time=TRUE,
                        silent=F){
@@ -182,15 +182,16 @@ make_admin <- function(ex,
     # set treatment, standard fields
     # dplyr::mutate(treatment=EXTRT) %>%
     dplyr::mutate(NTIME=0, DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
-    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0)
+    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0, ANALYTE=NA)
 
-    # apply analyte mapping, introducing the field PCTESTCD
-    if(nrow(analyte_mapping)>0) {
+    # apply drug mapping, introducing the field PCTESTCD
+    if(nrow(drug_mapping)>0) {
       ret <- ret %>%
-        dplyr::left_join(analyte_mapping, by="EXTRT")
+        dplyr::left_join(drug_mapping, by="EXTRT")
     } else {
-      ret <- ret %>%
-        dplyr::mutate(PCTESTCD=EXTRT)
+      # ret <- ret %>%
+      #   dplyr::mutate(PCTESTCD=EXTRT)
+      stop("no drug mapping")
     }
   return(ret %>% as.data.frame())
 }
@@ -261,8 +262,10 @@ make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
   }
 
     obs <- obs %>%
-    dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
-    dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0))
+      dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
+      dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0)) %>%
+      dplyr::mutate(ANALYTE=PCTESTCD)
+
   return(obs %>% as.data.frame())
 }
 
@@ -401,8 +404,31 @@ make_nif <- function(
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
+  #   PCTESTCD pairs that use the same label for both:
+  drug_mapping <- sdtm.data$analyte_mapping %>%
+    rbind(
+      data.frame(
+        EXTRT=intersect(unique(ex$EXTRT), unique(pc$PCTESTCD))
+      ) %>%
+        mutate(PCTESTCD=EXTRT)) %>%
+    mutate(PARENT=PCTESTCD)
+
+  if(nrow(sdtm.data$metabolite_mapping)!=0){
+    drug_mapping <- drug_mapping %>%
+      rbind(
+        sdtm.data$metabolite_mapping %>%
+          rename(PARENT=PCTESTCD_parent, PCTESTCD=PCTESTCD_metab) %>%
+          mutate(EXTRT=NA))
+  }
+
+  drug_mapping <- drug_mapping %>%
+    mutate(METABOLITE=(PCTESTCD!=PARENT)) %>%
+    distinct()
+
+
   obs <- make_obs(pc, time_mapping=sdtm.data$time_mapping,
-                  spec=spec, silent=silent)
+                  spec=spec, silent=silent) %>%
+    left_join(drug_mapping, by="PCTESTCD")
 
   # treatments <- unique(ex$EXTRT)
   # analytes <- unique(obs$PCTESTCD)
@@ -413,21 +439,7 @@ make_nif <- function(
 
 
   # complete the analyte mapping with the obvious pairings, i.e., those EXTRT-
-  #   PCTESTCD pairs that use the same label for both:
-  drug_mapping <- sdtm.data$analyte_mapping %>%
-    rbind(
-      data.frame(
-        EXTRT=intersect(unique(ex$EXTRT), unique(pc$PCTESTCD))
-      ) %>%
-        mutate(PCTESTCD=EXTRT)) %>%
-    mutate(PARENT=PCTESTCD) %>%
-    rbind(
-      metabolite_mapping %>%
-        rename(PARENT=PCTESTCD_parent, PCTESTCD=PCTESTCD_metab) %>%
-        mutate(EXTRT=NA)
-    ) %>%
-    mutate(METABOLITE=(PCTESTCD!=PARENT)) %>%
-    distinct()
+
 
 
   cut.off.date <- last_obs_time(obs)
@@ -440,9 +452,13 @@ make_nif <- function(
     tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
 
+
+
+
   admin <- make_admin(
     ex,
-    analyte_mapping=sdtm.data$analyte_mapping,
+    #analyte_mapping=sdtm.data$analyte_mapping,
+    drug_mapping = drug_mapping,
     cut.off.date,
     impute.missing.end.time=impute.missing.end.time,
     silent=silent)
@@ -500,6 +516,8 @@ make_nif <- function(
       dplyr::mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE))
   }
 
+  ## assemble NIF data set from administrations and observations and baseline
+  #    data.
   nif <- obs %>%
     # join observations and administrations, then DM and baseline VS
     dplyr::bind_rows(admin %>%
@@ -513,36 +531,57 @@ make_nif <- function(
     dplyr::ungroup() %>%
 
     # filter out all analytes without administrations
-    group_by(USUBJID, PCTESTCD) %>%
-    dplyr::mutate(no_admin=case_when(
-      (max(AMT)==0) ~ 1,
-      .default=0)) %>%
-    ungroup() %>%
-    filter(no_admin==0) %>%
+    # group_by(USUBJID, PCTESTCD) %>%
+    # dplyr::mutate(no_admin=case_when(
+    #   (max(AMT)==0) ~ 1,
+    #   .default=0)) %>%
+    # ungroup() %>%
+    # filter(no_admin==0) %>%
 
-    # all observations before the first administration (per analyte) to have
-    #   a dose of NA
-    group_by(USUBJID, PCTESTCD) %>%
-    dplyr::mutate(first_admin_dtc=case_when(
-      no_admin==0 ~ min(DTC[AMT!=0]),
-      .default=NA
-    )) %>%
-    ungroup() %>%
-    select(-no_admin)
+
+    ## to do: filter out all analytes without parent, if needed at all...
+    #    filter out all analytes without administrations
+    filter(!is.na(PARENT)) %>%
+
+
+    #all observations before the first administration (per analyte) to have
+    #  a dose of NA
+    # group_by(USUBJID, PARENT) %>%
+    # dplyr::mutate(first_admin_dtc=case_when(
+    #   no_admin==0 ~ min(DTC[AMT!=0]),
+    #   .default=NA
+    # )) %>%
+    # ungroup() %>%
+    # select(-no_admin)
+
+
+  group_by(USUBJID, PARENT) %>%
+    dplyr::mutate(first_admin_dtc=min(DTC[AMT!=0])) %>%
+    ungroup()
 
 
   nif <- nif %>%
-    dplyr::mutate(DOSE=case_when(
-      (AMT==0 & DTC<first_admin_dtc) ~ NA,
-      .default=DOSE)) %>%
+    # dplyr::mutate(DOSE=case_when(
+    #   (AMT==0 & DTC<first_admin_dtc) ~ NA,
+    #   .default=DOSE)) %>%
 
     # fill missing fields
-    dplyr::arrange(USUBJID, PCTESTCD, DTC, -EVID) %>%
-    dplyr::group_by(USUBJID, PCTESTCD) %>%
-    tidyr::fill(DOSE) %>%
+    # dplyr::arrange(USUBJID, PCTESTCD, DTC, -EVID) %>%
+    # dplyr::group_by(USUBJID, PCTESTCD) %>%
+    # tidyr::fill(DOSE) %>%
+    # tidyr::fill(AGE, SEX, RACE, ETHNIC, ACTARMCD, HEIGHT, WEIGHT, COUNTRY, ARM,
+    #             SUBJID, .direction="down") %>%
+    # dplyr::ungroup() %>%
+
+    dplyr::arrange(USUBJID, PARENT, DTC, EVID) %>%
+    dplyr::group_by(USUBJID, PARENT) %>%
+    tidyr::fill(DOSE, .direction = "down") %>%
     tidyr::fill(AGE, SEX, RACE, ETHNIC, ACTARMCD, HEIGHT, WEIGHT, COUNTRY, ARM,
                 SUBJID, .direction="down") %>%
     dplyr::ungroup() %>%
+
+
+
 
     dplyr::mutate(RATE=0) %>%
 
@@ -557,9 +596,9 @@ make_nif <- function(
     # create ID column
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
-    dplyr::relocate(ID) %>%
-    dplyr::select(-date, -time, -end.time,
-                  -start.date, -start.time)
+    dplyr::relocate(ID) #%>%
+    #dplyr::select(-date, -time, -end.time,
+    #              -start.date, -start.time)
   return(new_nif(nif))
 }
 

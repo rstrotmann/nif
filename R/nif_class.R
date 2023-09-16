@@ -187,7 +187,7 @@ write_csv.nif <- function(obj, filename){
 standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ANALYTE", "AMT", "RATE", "DV", "LNDV", "CMT", "EVID",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
-                         "ACTARMCD")
+                         "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE")
 
 
 

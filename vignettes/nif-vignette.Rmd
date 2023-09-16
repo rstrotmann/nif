@@ -101,7 +101,8 @@ the `sdtm` object. In this sample case, the analyte 'RS2023' refers to the
 
 ```{r}
 sdtm.expl <- examplinib %>% 
-  add_analyte_mapping("EXAMPLINIB", "RS2023")
+  add_analyte_mapping("EXAMPLINIB", "RS2023") %>% 
+  add_metabolite_mapping("RS2023", "RS2023487A")
 ```
 
 ## Creating NIF files

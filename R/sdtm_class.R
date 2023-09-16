@@ -178,7 +178,7 @@ print.sdtm <- function(x, ...){
     cat("none\n")
   }
 
-  cat("\nParent-to-analyte mappings:\n")
+  cat("\nParent-to-metabolite mappings:\n")
   if(nrow(x$metabolite_mapping)>0){
     print(x$metabolite_mapping, right=FALSE)
   } else {
