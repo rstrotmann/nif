@@ -122,6 +122,7 @@ make_admin <- function(ex,
         "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
     }
   }
+
   ret <- ret %>%
     dplyr::mutate(EXENDTC=dplyr::case_when(
       EXENDTC=="" ~ format(cutoff, "%Y-%m-%dT%H:%M"),
@@ -402,6 +403,32 @@ make_nif <- function(
 
   obs <- make_obs(pc, time_mapping=sdtm.data$time_mapping,
                   spec=spec, silent=silent)
+
+  # treatments <- unique(ex$EXTRT)
+  # analytes <- unique(obs$PCTESTCD)
+  # metabolites <- unique(sdtm.data$metabolite_mapping$PCTESTCD_metab)
+  # parents <- analytes[(!analytes %in% metabolites) &
+  #                       ((analytes %in% treatments) |
+  #                          (analytes %in% unique(analyte_mapping$PCTESTCD)))]
+
+
+  # complete the analyte mapping with the obvious pairings, i.e., those EXTRT-
+  #   PCTESTCD pairs that use the same label for both:
+  drug_mapping <- sdtm.data$analyte_mapping %>%
+    rbind(
+      data.frame(
+        EXTRT=intersect(unique(ex$EXTRT), unique(pc$PCTESTCD))
+      ) %>%
+        mutate(PCTESTCD=EXTRT)) %>%
+    mutate(PARENT=PCTESTCD) %>%
+    rbind(
+      metabolite_mapping %>%
+        rename(PARENT=PCTESTCD_parent, PCTESTCD=PCTESTCD_metab) %>%
+        mutate(EXTRT=NA)
+    ) %>%
+    mutate(METABOLITE=(PCTESTCD!=PARENT)) %>%
+    distinct()
+
 
   cut.off.date <- last_obs_time(obs)
   if(!silent) {
