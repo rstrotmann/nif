@@ -1,8 +1,10 @@
 ---
 title: "Creating NIF files from SDTM data"
+author: "Rainer Strotmann"
+date: "17-Sep-2023"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{"Creating NIF files from SDTM data"}
+  %\VignetteIndexEntry{Creating NIF files from SDTM data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,8 +16,21 @@ knitr::opts_chunk$set(
 )
 ```
 
-This is a tutorial on using the `nif` package to create NONMEM input files (NIF)
-from SDTM data.
+This is a basic tutorial on using the `nif` package to create NONMEM Input Files
+(NIF) from Study Data Tabulation Model (SDTM) data.
+
+The package is intended to facilitate providing the required data format for
+population PK or PK/PD modeling. The source data are typically contained in 
+different SDTM tables and need to be joined together, i.e., including but not
+limited to baseline demographic and vital sign data, drug exposure data, and
+pharmacokinetic concentrations.
+
+In addition to re-arranging and joining the data, certain standard data
+imputations are automatically performed by the functions provided in this
+package, some of which are discussed in more detail in the vignette "Imputations
+and assumptions used by make_nif()".
+
+This tutorial contains live code that depends on the following R packages:
 
 ```{r setup, message=F, warning=F}
 library(tidyr)
@@ -27,10 +42,8 @@ library(nif)
 
 ## Import SDTM data 
 
-The `nif` package is meant to help creating NIF files for pharmacokinetic
-(PK) data, e.g., to support population PK modeling.
-
-As a minimum, the following SDTM domains are expected to create a basic NIF file:
+As a minimum, the following SDTM domains are
+expected to create a basic NIF file:
 
 * DM - demographic data, mostly age, sex and other variables per subject
 * VS - vital signs, particularly weight and height at enrollment, per subject
@@ -47,125 +60,164 @@ and can then be loaded using:
 read_sdtm_sas("path/to/sdtm/data")
 ```
 
-As said above, the minimum required SDTM files are `dm.dat7bdat`, `vs.dat7bdat`, 
-`ex.dat7bdat` and `pc.dat7bdat`. However, if additional covariates from AE, LB
-or any other SDTM domain are to be added, an explicit list of the domains can 
-be provided to the loading function, e.g., 
+Based on the above, the minimum required SDTM files are `dm.dat7bdat`,
+`vs.dat7bdat`, `ex.dat7bdat` and `pc.dat7bdat`. However, if additional
+covariates from AE, LB or any other SDTM domain are to be added, an explicit
+list of the domains can be provided to the loading function, e.g., 
 
 ```{r, eval=FALSE, echo=T}
 read_sdtm_sas("path/to/sdtm/data", "dm", "vs", "ex", "pc", "lb", "ae")
 ```
 
-The return value of the function is a `sdtm` object. As part of the `nif`
-package, sample data for a fictional study with the drug 'examplinib' is
-included:
+The return value of the function is a `sdtm` object.
+
+## SDTM objects
+
+`sdtm` objects are essentially lists of the SDTM domains from a particular
+clinical study. The most common way of creating `sdtm`objects is by importing
+the SDTM data using `read_sdtm_sas()` or `read_sdtm_xpt()` (see above). 
+
+The original data can be retrieved accessing the individual domains like
+demonstrated below for the (fictional) sample data set `examplinib`:
 
 ```{r}
-sdtm.expl <- examplinib
-sdtm.expl
+examplinib$domains[["dm"]] %>% head()
 ```
 
-As shown above, printing an `sdtm` object shows basic information on the data
-set.
+The most relevant domains, "dm", "vs", "ex" and "pc", can also be accessed
+directly, e.g.:
+
+```{r}
+dm <- examplinib$dm
+```
+
+Printing an `sdtm` object shows basic information on the data set:
+
+```{r}
+examplinib
+```
+
 
 ## Suggestions
 
-Some fields in the SDTM data are study specific, and is therefore hard to
-fully automate the generation of standard NIF files for downstream analysis
+Some fields in the original SDTM data are study specific, and is therefore hard
+to fully automate the generation of standard NIF files for downstream analysis
 steps. This needs study-specific considerations and manual adaptations.
 
 As a starting point the function `suggest()` can provide useful suggestions for 
-this step:
+a `sdtm`object:
 
 ```{r}
-suggest(sdtm.expl)
+suggest(examplinib)
 ```
 
-In this case, there are different treatment arms defined in the DM domain that
-should probably be included as covariates in the NIF file (see suggestion 1). 
-This will be programmed once a basic NIF file has been generated (see below).
+In the case of "examplinib", there are different treatment arms defined in the
+DM domain that should probably be included as covariates in the NIF file (see
+suggestion 1). This will be programmed once a basic NIF file has been generated
+(see below).
 
-Also, the SDTM data do not provide a link between treatments and analytes (see
-suggestion 2). This is a common situation that is described in the below
-section:
+Also, the SDTM data do not provide a relation between treatments and analytes
+(see suggestion 2). The parent drug name in the SDTM field `EXTRT` (i.e.,
+"EXAMPLINIB) is different from the respective analyte for the parent compound as
+specified in the field `PCTESTCD` (i.e., "RS2023"). This is a common situation
+in data from clinical studies. However, to correctly associate pharmacokinetic
+concentrations with the administration of the corresponding drug, a link needs
+to be provided between the treament and the analyte. Similarly, metabolites
+(e.g., "RS2023487A") need to be linked to their parent compound - particularly
+if muliple drugs and metabolites are included in the data set.
+
+Both are described below.
+
 
 ### Analyte mappings
 
-Often, the names for the treatments as listed in the EXTRT field of EX do not
+Often, the names for the treatments as listed in the `EXTRT` field of EX do not
 directly correspond to the names of the respective (parent) analytes codes used
-in the PC domain (i.e., in the PCTESTCD field).
+in the PC domain (i.e., in the `PCTESTCD` field).
 
 To establish these relationships, treatment-analyte mappings must be added to 
-the `sdtm` object. In this sample case, the analyte 'RS2023' refers to the
-(parent) plasma concentration for the drug 'examplinib':
+the `sdtm` object with `add_analyte_mapping()`. In this sample case, the analyte
+"RS2023" refers to the (parent) plasma concentration for the drug "EXAMPLINIB." 
+
+To establish the relationships betwen metabolites and their parent copounds, 
+`add_metabolite_mapping()` can be used. In the sample data, the `PCTESTCD` of
+"RS2023487A" represents a metabolite of "RS2023":
 
 ```{r}
-sdtm.expl <- examplinib %>% 
+sdtm_expl <- examplinib %>% 
   add_analyte_mapping("EXAMPLINIB", "RS2023") %>% 
   add_metabolite_mapping("RS2023", "RS2023487A")
 ```
 
 ## Creating NIF files
 
-The following section details how to create NIF files from an `sdtm` object as 
-created above, and what assumptions and imputations underlie the algorithm.
+The following section details how to create NIF files from an `sdtm` object.
 
 ### Basic NIF file
 
-In the first step, `make_nif()` is used to create a data table that has
-individual rows for each administration and observation. Following the NONMEM
-convention for oral administration, the `EVID` field is 1 for the former, and 0
-for the latter.
+Most steps in the generation of a basic NIF file from an `sdtm` object are
+automated in the `make_nif()` function. The resulting `nif` object is essentially
+a data table that has individual rows for each administration and observation.
+Following the NONMEM convention for oral administration, the `EVID` field is "1"
+for the former, and "0" for the latter.
 
 Standard demographic information including SEX, AGE, RACE is taken from the DM 
 domain and merged into the data table. Baseline WEIGHT and HEIGHT are taken from 
 the VS domain.
 
 ```{r}
-nif.expl <- make_nif(sdtm.expl)
+nif_expl <- make_nif(sdtm_expl)
 ```
 
-The output of the function reminds that there may be pharmacokinetic data for
-multiple specimens in the PC domain, e.g., PLASMA and URINE or FECES. The exact
-specimen can be explicitly provided, e.g., `make_nif(sdtm.expl, spec="PLASMA)`.
+The output of the above code informs that there may be pharmacokinetic data for
+multiple specimens in the PC domain, e.g., PLASMA and URINE or FECES.
+As no specimem was specified, `make_nif()` takes the most likely, however, the
+specimen of interest can be explicitly provided (see `?make_nif()` for details).
+
+Also, a data cut-off was applied that reflects the date and time of the last
+observation. This may be most relevant in multiple-dose studies where further
+administrations may be recorded after the last oberservation. These
+administration events are excluded from the NIF file.
 
 ### Study-specific covariates
 
-In many clinical pharmacology studies, patients are treated in subgroups, e.g.,
-dose groups, formulations, or with and without co-administered drug interaction
+In many clinical studies, participants are treated in subgroups, e.g.,
+dose groups, formulations, co-administered drug interaction
 perpetrators. While dose is automatically included as a continuous covariate per
 the EX domain, other categorical covariates may need to be derived, e.g., from the
 study arm field.
 
-The example study is a food effect study in which participants receive the test
-drug fasted or fed in a randomized sequence (see the ACTARM, ACTARMCD in the
-output of `suggest()` above). The relevant fields are `EPOCH` and `ACTARMCD`:
+The inclcuded sample study is a food effect study in which participants received
+the test drug, EXAMPLINIB, fasted or fed in a randomized sequence (see `ACTARM`
+and `ACTARMCD` in the output of `suggest()` above). Often, relevant fields
+for consideration are `EPOCH` and `ACTARMCD`:
 
 ```{r}
-nif.expl %>% 
+nif_expl %>% 
   as.data.frame() %>% 
   distinct(EPOCH, ACTARMCD, ACTARM)
 ```
 
-To create a `FASTED` covariate, first the period number is derived from the
-`EPOCH` field, and then the current ACTARM in that treatment period is decoded
-to `FASTED':
+To create a `FASTED` covariate for the sample data set, first the period number
+is derived from the `EPOCH` field, and then the current `ACTARM` in that
+treatment period is decoded to `FASTED`:
 
 ```{r}
-nif.expl <- make_nif(sdtm.expl, silent=T) %>%
+nif_expl <- make_nif(sdtm_expl, silent=T) %>%
   mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>% 
   mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
   mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
 ```
 
-Note the `silent=T` modifier that strips all messages from the function.
+By the way, note the `silent=T` modifier that omits all messages from `make_nif()`.
 
 The NIF file has now the additional fields `PERIOD`, `TREATMENT` and `FASTED`,
 see the first few lines of the the data:
 
 ```{r}
-nif.expl %>%
-  select(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, AMT, DV) %>% 
+nif_expl %>%
+  select(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, AMT, ANALYTE, DV) %>% 
+  arrange(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, ANALYTE) %>% 
   as.data.frame() %>% 
   head() %>% 
   kable()
@@ -173,27 +225,41 @@ nif.expl %>%
 
 ## Graphical exploration
 
-In a first exploratory plot, all analytes are shown:
+NIF objects allow basic ploting functionality using `plot()`, directly applied
+to the object. The below shows some examples for common exploratory tasks (for 
+more detail, refer to `?plot.nif`).
+
+Obviously, more complex custom plots (or other analyses) can be done manually on
+the `nif` data. Note that in many cases, the `nif` object shoudl be converted to
+a data frame for this purpose (i.e., using `as.data.frame()`).
+
+In the simplest exploratory plot, all analytes are shown:
 
 ```{r, warning=F, fig.width=4, fig.height=3}
-plot(nif.expl)
+plot(nif_expl)
 ```
 
-To show the food effect on the parent compound, "RS2023":
+Modifiers to the `plot()` function allow common adjustments. To show, e.g., the
+food effect on the parent compound, "RS2023" in individual subjects, limiting
+the time axis to 24 h and showing the nominal time instead of the actual time:
 
 ```{r, warning=F, fig.width=4, fig.height=3}
-plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=F, points=T, nominal_time=T)
+plot(nif_expl, analyte="RS2023", group="FASTED", max_x=24, mean=F, points=T, nominal_time=T)
 ```
 
+The following shows the mean plasma concentration profiles over 24 h by food
+status:
+
 ```{r, warning=F, fig.width=4, fig.height=3}
-plot(nif.expl, analyte="RS2023", group="FASTED", max_x=24, mean=T)
+plot(nif_expl, analyte="RS2023", group="FASTED", max_x=24, mean=T)
 ```
 
 There are further display options, refer to `?plot.nif` for details.
 
-Use `nif_viewer()` to show individual subjects interactively: 
+For a quick overview, use `nif_viewer()` to show individual subjects
+interactively: 
 
 ```{r, eval=FALSE, echo=T}
-nif_viewer(nif.expl)
+nif_viewer(nif_expl)
 ```
 

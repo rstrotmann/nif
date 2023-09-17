@@ -25,7 +25,7 @@ This is a package to create NONMEM input files (NIF) from SDTM data.
 You can install the development version of nif like so:
 
 ``` r
-devtools::install_github("rstrotmann/nif")
+devtools::install_github("rstrotmann/nif", build_vignettes=TRUE)
 ```
 
 ## Example
@@ -60,4 +60,12 @@ nif.data <- nif::make_nif(sdtm.data) %>%
   index_nif() %>%
   compress_nif(standard_nif_fields)
 ```
+
+# Further information
+
+For further guidance see the help for individual functions and the included
+vignettes (see `browseVignettes("nif")`):
+
+* "Creating NIF files from SDTM data"
+* "Imputations and assumptions used by make_nif()"
 
