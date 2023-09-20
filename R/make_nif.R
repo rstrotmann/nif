@@ -413,6 +413,7 @@ make_nif <- function(
         mutate(PCTESTCD=EXTRT)) %>%
     mutate(PARENT=PCTESTCD)
 
+  # add metabolite mapping, if available
   if(nrow(sdtm.data$metabolite_mapping)!=0){
     drug_mapping <- drug_mapping %>%
       rbind(
@@ -420,12 +421,11 @@ make_nif <- function(
           rename(PARENT=PCTESTCD_parent, PCTESTCD=PCTESTCD_metab) %>%
           mutate(EXTRT=NA))
   }
-
   drug_mapping <- drug_mapping %>%
     mutate(METABOLITE=(PCTESTCD!=PARENT)) %>%
     distinct()
 
-
+  # make observations
   obs <- make_obs(pc, time_mapping=sdtm.data$time_mapping,
                   spec=spec, silent=silent) %>%
     left_join(drug_mapping, by="PCTESTCD")
@@ -441,23 +441,20 @@ make_nif <- function(
   # complete the analyte mapping with the obvious pairings, i.e., those EXTRT-
 
 
-
+  # define cut-off date
   cut.off.date <- last_obs_time(obs)
   if(!silent) {
     message(paste("Data cut-off was set to last observation time,", cut.off.date))
   }
 
-  # subjects with observations by analyte
+  # identify subjects with observations by analyte
   obs.sbs <- obs %>%
     tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
 
-
-
-
+  # make administrations
   admin <- make_admin(
     ex,
-    #analyte_mapping=sdtm.data$analyte_mapping,
     drug_mapping = drug_mapping,
     cut.off.date,
     impute.missing.end.time=impute.missing.end.time,
@@ -474,8 +471,7 @@ make_nif <- function(
     dplyr::filter(!(ut %in% obs.sbs$ut)) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut) %>%
     as.data.frame()
-
-  # Issue message about excluded administrations
+  # Issue message about excluded administrations, if applicable
   if(nrow(no.obs.sbs)>0) {
     out <- no.obs.sbs %>%
       dplyr::arrange(PCTESTCD, USUBJID) %>%
@@ -487,11 +483,12 @@ make_nif <- function(
         out))
     }
   }
-  # ...and filter out excluded administrations
+  # and filter out excluded administrations
   admin <- admin %>%
     tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
     dplyr::filter(ut %in% obs.sbs$ut) %>%
     dplyr::select(-ut)
+
 
   if(nrow(admin)==0) {
     stop(paste0("No subjects in the data set left after filtering out ",
@@ -504,6 +501,7 @@ make_nif <- function(
     "  vignette 'Creating NIF files from SDTM data'!"))
   }
 
+  # impute administration times
   admin <- impute.administration.time(admin, obs)
 
   # calculate age from birthday and informed consent signature date
@@ -513,7 +511,8 @@ make_nif <- function(
         RFICDTC, format=dtc_formats)) %>%
       dplyr::mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y-%m", "%Y"))) %>%
       dplyr:: mutate(age1=floor(as.duration(interval(brthyr, refdtc))/as.duration(years(1)))) %>%
-      dplyr::mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE))
+      dplyr::mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE)) %>%
+      dplyr::select(-age1)
   }
 
   ## assemble NIF data set from administrations and observations and baseline
@@ -530,30 +529,12 @@ make_nif <- function(
     dplyr::mutate(FIRSTDTC=min(DTC)) %>%
     dplyr::ungroup() %>%
 
-    # filter out all analytes without administrations
-    # group_by(USUBJID, PCTESTCD) %>%
-    # dplyr::mutate(no_admin=case_when(
-    #   (max(AMT)==0) ~ 1,
-    #   .default=0)) %>%
-    # ungroup() %>%
-    # filter(no_admin==0) %>%
-
-
-    ## to do: filter out all analytes without parent, if needed at all...
-    #    filter out all analytes without administrations
     filter(!is.na(PARENT)) %>%
 
-
-    #all observations before the first administration (per analyte) to have
-    #  a dose of NA
-    # group_by(USUBJID, PARENT) %>%
-    # dplyr::mutate(first_admin_dtc=case_when(
-    #   no_admin==0 ~ min(DTC[AMT!=0]),
-    #   .default=NA
-    # )) %>%
-    # ungroup() %>%
-    # select(-no_admin)
-
+    # filter out observations without administration
+    dplyr::group_by(USUBJID, PARENT) %>%
+    dplyr::filter(sum(AMT)!=0) %>%
+    ungroup() %>%
 
   group_by(USUBJID, PARENT) %>%
     dplyr::mutate(first_admin_dtc=min(DTC[AMT!=0])) %>%
@@ -580,9 +561,6 @@ make_nif <- function(
                 SUBJID, .direction="down") %>%
     dplyr::ungroup() %>%
 
-
-
-
     dplyr::mutate(RATE=0) %>%
 
     # TIME is the difference in h to the first individual event time
@@ -597,8 +575,6 @@ make_nif <- function(
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
     dplyr::relocate(ID) #%>%
-    #dplyr::select(-date, -time, -end.time,
-    #              -start.date, -start.time)
   return(new_nif(nif))
 }
 
