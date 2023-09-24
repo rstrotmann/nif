@@ -52,34 +52,6 @@ print.nif <- function(x, ...){
   cat(paste0("Studies:\n", paste(studies(x), collapse="\n"), "\n\n"))
 
   cat("Dose levels:\n")
-
-  # temp <-
-  #   x %>%
-  #   as.data.frame() %>%
-  #
-  #   # filter out analytes without administrations
-  #   group_by(ID, ANALYTE) %>%
-  #   filter(any(AMT>0)) %>%
-  #   ungroup() %>%
-  #
-  #   # identify first administration
-  #   group_by(ID, ANALYTE) %>%
-  #   mutate(first_admin_time=min(TIME[AMT!=0])) %>%
-  #   ungroup() %>%
-  #
-  #   # filter for first administrations
-  #   filter(TIME==first_admin_time, AMT!=0) %>%
-  #   select(ID, ANALYTE, AMT) %>%
-  #   pivot_wider(names_from = ANALYTE, values_from = AMT) %>%
-  #   unite("regimen", -ID, remove=F) %>%
-  #   group_by(regimen) %>%
-  #   mutate(n=n()) %>%
-  #   ungroup() %>%
-  #   select(-ID, -regimen) %>%
-  #   distinct() %>%
-  #   as.data.frame()
-  #
-  # cat(df.to.string(temp))
   cat(df.to.string(dose_levels(x, grouping=any_of(c("PART", "COHORT", "GROUP")))))
   cat("\n\n")
 
@@ -138,10 +110,27 @@ doses <- function(obj){
 }
 
 
+#' Dose levels
+#'
+#' In studies with multiple administrations, dose modifications may occur. The
+#' `dose_levels()` function only summarizes the initial (i.e., the first)
+#' administrations.
+#'
+#' @param obj A nif object.
+#' @param grouping Further fields to be included (and to be grouped by) in the
+#'   output.
+#'
+#' @return A data frame
+#' @export
+#'
+#' @examples
+#' dose_levels(examplinib_nif)
+#' dose_levels(examplinib_nif, grouping="SEX")
+#' dose_levels(examplinib_nif, grouping=c("SEX", "FASTED"))
 dose_levels <- function(obj, grouping=NULL) {
   obj %>%
     filter(PARENT != "", !is.na(DOSE), AMT != 0) %>%
-    group_by(ID, ANALYTE) %>%
+    group_by(ID, ANALYTE, across(any_of(grouping))) %>%
     arrange(ID, TIME) %>%
     filter(TIME==min(TIME)) %>%
     # select(ID, ANALYTE, DOSE, any_of(c("PART", "COHORT", "GROUP"))) %>%
