@@ -419,7 +419,7 @@ make_nif <- function(
       rbind(
         sdtm.data$metabolite_mapping %>%
           rename(PARENT=PCTESTCD_parent, PCTESTCD=PCTESTCD_metab) %>%
-          mutate(EXTRT=NA))
+          mutate(EXTRT=""))
   }
   drug_mapping <- drug_mapping %>%
     mutate(METABOLITE=(PCTESTCD!=PARENT)) %>%
@@ -529,7 +529,8 @@ make_nif <- function(
     dplyr::mutate(FIRSTDTC=min(DTC)) %>%
     dplyr::ungroup() %>%
 
-    filter(!is.na(PARENT)) %>%
+    # filter(!is.na(PARENT)) %>%
+    filter(PARENT != "") %>%
 
     # filter out observations without administration
     dplyr::group_by(USUBJID, PARENT) %>%
@@ -790,11 +791,11 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
                 as.data.frame() %>%
                 distinct(USUBJID, FIRSTDTC), by="USUBJID") %>%
 
-    mutate(ANALYTE=lbtestcd, CMT=cmt, MDV=0, EVID=0, AMT=0, RATE=0) %>%
+    mutate(ANALYTE=lbtestcd, PARENT="", CMT=cmt, MDV=0, EVID=0, AMT=0, RATE=0) %>%
     dplyr::mutate(TIME=round(as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3)) %>%
     mutate(DV=LBSTRESN) %>%
     mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
-    select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, CMT, EVID, TIME, NTIME, DV, AMT)
+    select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, PARENT, CMT, EVID, TIME, NTIME, DV, AMT)
 
   temp <- obj %>%
     as.data.frame() %>%
