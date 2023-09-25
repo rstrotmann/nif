@@ -22,4 +22,4 @@ utils::globalVariables(c(
   "eta.fpar", "t.fpar1", "t.q", "eta.q", "/<-", "dt", "dur<-", "renal",
   "metab_excr", "sd", "GROUP", "first_admin_time", "regimen", "PCTEST",
   "no.analyte", "bl_wt", "rc", "maxwt", "DOMAIN", "no_admin", "PARENT",
-  "PCTESTCD_metab", "PCTESTCD_parent"))
+  "PCTESTCD_metab", "PCTESTCD_parent", "METABOLITE", "GROUPING"))

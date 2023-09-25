@@ -129,6 +129,7 @@ doses <- function(obj){
 #' dose_levels(examplinib_nif, grouping=c("SEX", "FASTED"))
 dose_levels <- function(obj, grouping=NULL) {
   obj %>%
+    filter(METABOLITE==FALSE) %>%
     filter(PARENT != "", !is.na(DOSE), AMT != 0) %>%
     group_by(ID, ANALYTE, across(any_of(grouping))) %>%
     arrange(ID, TIME) %>%

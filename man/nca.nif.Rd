@@ -18,5 +18,6 @@ the dataset, defaults to the first analyte.}
 A PKNCA results object
 }
 \description{
-Non-compartmental analysis
+Note: This function is currently in expermental stage. It currently only
+supports single-dose NCA, and there must be a grouping variable!
 }
