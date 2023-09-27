@@ -4,18 +4,18 @@
 \alias{nca}
 \title{Non-compartmental analysis}
 \usage{
-nca(obj, group = "SEX", analyte = NULL)
+nca(obj, analyte = NULL, keep = NULL)
 }
 \arguments{
 \item{obj}{The source NIF object.}
 
-\item{group}{The grouping variable. If none specified, defaults to SEX.}
-
 \item{analyte}{The analyte. If none specified and multiple analytes are in
-the dataset, defaults to the first analyte.}
+#'   the dataset, defaults to the first analyte.}
+
+\item{keep}{A vector of fields to keep in the output.}
 }
 \value{
-A PKNCA results object
+A data frame.
 }
 \description{
 Non-compartmental analysis
