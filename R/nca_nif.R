@@ -142,7 +142,10 @@ nca1 <- function(obj, analyte=NULL, keep=NULL){
   conc <- obj %>%
     dplyr::filter(EVID==0) %>%
     dplyr::select(ID, TIME, DV) %>%
-    dplyr::distinct() %>%
+    dplyr::group_by(ID, TIME) %>%
+    dplyr::summarize(DV=mean(DV), .groups="drop") %>%
+    # dplyr::ungroup() %>%
+    # dplyr::distinct() %>%
     as.data.frame()
 
   intervals_manual <- data.frame(
@@ -164,7 +167,7 @@ nca1 <- function(obj, analyte=NULL, keep=NULL){
 
   data_obj <- PKNCA::PKNCAdata(
     conc_obj, dose_obj,
-    impute = "start_predose,start_conc0")
+    impute = "start_predose, start_conc0")
 
   results_obj <- PKNCA::pk.nca(data_obj)
   temp <- results_obj$result %>%

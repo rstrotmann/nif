@@ -34,8 +34,19 @@
 ##
 ## Change administraiton expansion algorithm in make_admin()
 ## accordingly.
-
-
+##
+## -------------------------------------------
+##
+## PROBLEM:
+##
+## NCA for multiple dose administration does not world_bank_pop
+##
+## NCA for nif.001 produces the error:
+##
+##   Error in check.interval.specification(intervals) :
+##   interval specification has no rows
+##
+## Is this due to the multiple administrations?
 
 
 
@@ -154,29 +165,42 @@ make_admin <- function(ex,
     cut.off.date,
     format=dtc_formats)
 
-  ret <- ex
+  # ret <- ex
 
   # impute EXENDTC if not present (i.e., use cut-off date when administration ongoing)
-  temp <- ret %>% dplyr::filter(EXENDTC=="")
-  if(temp %>% nrow() > 0){
-    out <- temp %>%
-      dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
-      df.to.string()
-    if(!silent){
-      message(paste0("In ", temp %>% nrow(),
-        " administrations, EX contained no EXENDTC. ",
-        "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
-    }
-  }
+  # temp <- ret %>% dplyr::filter(EXENDTC=="")
+  #
+  # if(temp %>% nrow() > 0){
+  #   out <- temp %>%
+  #     dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
+  #     df.to.string()
+  #   if(!silent){
+  #     message(paste0("In ", temp %>% nrow(),
+  #       " administrations, EX contained no EXENDTC. ",
+  #       "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
+  #   }
+  # }
 
-  ret <- ret %>%
-    dplyr::mutate(EXENDTC=dplyr::case_when(
-      EXENDTC=="" ~ format(cutoff, "%Y-%m-%dT%H:%M"),
-      .default=EXENDTC)) %>%
+  ret <- ex %>%
+    # dplyr::mutate(EXENDTC=dplyr::case_when(
+    #   EXENDTC=="" ~ format(cutoff, "%Y-%m-%dT%H:%M"),
+    #   .default=EXENDTC)) %>%
 
-    # convert EXSTDTC to to datetime object, start date and start time
     dplyr::mutate(start=lubridate::as_datetime(
       EXSTDTC, format=dtc_formats)) %>%
+    dplyr::mutate(end=lubridate::as_datetime(
+      EXENDTC, format=dtc_formats)) %>%
+
+    dplyr::group_by(USUBJID, EXTRT) %>%
+    dplyr::arrange(start) %>%
+    dplyr::mutate(next_start=lead(start)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(end=case_when(is.na(end)~next_start-days(1), .default=end)) %>%
+    dplyr::mutate(end=case_when(is.na(end)~cutoff, .default=end)) %>%
+    dplyr::select(-next_start) %>%
+
+
+    # convert EXSTDTC to to datetime object, start date and start time
     dplyr::mutate(start.date=format(start, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(
       has.time(EXSTDTC) ~ format(start, format="%H:%M"),
@@ -186,8 +210,6 @@ make_admin <- function(ex,
     dplyr::filter(start <= cutoff) %>%
 
     # convert EXENDTC to datetime object, end date and end time
-    dplyr::mutate(end=lubridate::as_datetime(
-      EXENDTC, format=dtc_formats)) %>%
     dplyr::mutate(end.date=format(end, format="%Y-%m-%d")) %>%
     dplyr::mutate(end.time=case_when(
       has.time(EXENDTC) ~ format(end, format="%H:%M"),
