@@ -1,3 +1,49 @@
+## BUGS TO BE FIXED
+## -------------------------------------------
+##
+## PROBLEM:
+##
+## Expansion of administrations in make_admin:
+##
+## The end DTC of an administration (EXENDTC) may be missing, and
+## currently, it is assumed that that administration epoch continues
+## until the cut-off date (confirm).
+##
+## However, there may be further administration epochs following,
+## and there seems to be an implicit agreement that in the case of
+## missing EXENDTC, the administration continues until the start of
+## the next epoch, see the example below.
+##
+## This is not adequately reflected in make_admin() and needs to be
+## implemented.
+##
+##
+## STUDYID DOMAIN           USUBJID EXSEQ EXGRPID EXSPID EXTRT EXDOSE EXDOSU EXDOSFRM EXDOSFRQ EXROUTE
+## 1 2019240001     EX 20192400013011005     1              1 M1774    180     mg  CAPSULE       QD    ORAL
+## 2 2019240001     EX 20192400013011005     2              2 M1774    180     mg  CAPSULE       QD    ORAL
+## 3 2019240001     EX 20192400013011005     3              4 M1774    150     mg  CAPSULE       QD    ORAL
+## 4 2019240001     EX 20192400013011005     4              6 M1774    150     mg  CAPSULE       QD    ORAL
+## EXADJ     EPOCH          EXSTDTC          EXENDTC EXSTDY EXENDY EXENRTPT EXENTPT
+## 1               TREATMENT 2022-06-29T15:55 2022-07-12T16:00      1     14
+## 2               TREATMENT 2022-07-27T12:00                      29     NA
+## 3 ADVERSE EVENT TREATMENT 2022-08-24T13:45 2022-09-06T12:00     57     70
+## 4               TREATMENT 2022-09-21T14:23       2022-10-04     85     98
+##
+##
+## SOLUTION:
+##
+## Change administraiton expansion algorithm in make_admin()
+## accordingly.
+
+
+
+
+
+
+
+
+
+
 #' The list of expected date/time formats in the SDTM data
 #'
 dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
