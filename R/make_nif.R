@@ -47,9 +47,12 @@
 ##   interval specification has no rows
 ##
 ## Is this due to the multiple administrations?
-
-
-
+##
+## -------------------------------------------
+##
+## PROBLEM:
+##
+## Implement LOQ!
 
 
 
@@ -250,7 +253,7 @@ make_admin <- function(ex,
     # set treatment, standard fields
     # dplyr::mutate(treatment=EXTRT) %>%
     dplyr::mutate(NTIME=0, DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
-    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0, ANALYTE=NA)
+    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0, ANALYTE=NA, MDV=1)
 
     # apply drug mapping, introducing the field PCTESTCD
     if(nrow(drug_mapping)>0) {
@@ -643,6 +646,7 @@ make_nif <- function(
     # create ID column
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
+    #dplyr::mutate(DV=case_when(is.na(DV)~0, .default=DV)) %>%
     dplyr::relocate(ID) #%>%
   return(new_nif(nif))
 }
