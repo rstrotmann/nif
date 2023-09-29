@@ -3,10 +3,12 @@
 #' @param obj The source NIF object.
 #' @param analyte The analyte. If none specified and multiple analytes are in
 #' #'   the dataset, defaults to the first analyte.
+#' @param grouping The grouping variable as string.
 #' @param keep A vector of fields to keep in the output.
+#' @import dplyr
 #' @return A data frame.
 #' @export
-nca <- function(obj, analyte=NULL, keep=NULL){
+nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
   if(is.null(analyte)){
     analytes <- obj %>%
       as.data.frame() %>%
@@ -21,27 +23,35 @@ nca <- function(obj, analyte=NULL, keep=NULL){
     current_analyte <- analyte
   }
 
-  obj <- obj %>%
+  obj1 <- obj %>%
     dplyr::filter(ANALYTE==current_analyte) %>%
     dplyr::mutate(DV=case_when(is.na(DV) ~ 0, .default=DV)) %>%
     as.data.frame()
 
   # preserve the columns to keep
-  keep_colunmns <- obj %>%
+  keep_colunmns <- obj1 %>%
     filter(EVID==1) %>%
     as.data.frame() %>%
     select(c(ID, any_of(keep))) %>%
     distinct()
 
-  admin <- obj %>%
+  admin <- obj1 %>%
     dplyr::filter(EVID==1) %>%
-    select(ID, TIME, DOSE, DV) %>%
+    select(ID, TIME, DOSE, DV, grouping) %>%
     as.data.frame()
 
-  conc <- obj %>%
-    dplyr::filter(EVID==0) %>%
-    dplyr::select(ID, TIME, DV) %>%
-    dplyr::group_by(ID, TIME) %>%
+  conc <- obj1 %>%
+    dplyr::filter(EVID==0)
+    #dplyr::select(ID, TIME, DV, FASTED) %>%
+
+  if(!is.null(grouping)){
+    conc <- conc %>%
+      dplyr::group_by(ID, TIME, .data[[grouping]])
+  } else {
+    conc <- conc %>% dplyr::group_by(ID, TIME)
+  }
+
+  conc <- conc %>%
     dplyr::summarize(DV=mean(DV), .groups="drop") %>%
     # dplyr::ungroup() %>%
     # dplyr::distinct() %>%
@@ -49,28 +59,48 @@ nca <- function(obj, analyte=NULL, keep=NULL){
 
   intervals_manual <- data.frame(
     start=0,
-    end=c(24, Inf),
-    cmax=c(FALSE, TRUE),
-    tmax=c(FALSE, TRUE),
+    #end=c(24, Inf),
+    end = Inf,
+    #cmax=c(FALSE, TRUE),
+    cmax = TRUE,
+    #tmax=c(FALSE, TRUE),
+    tmax = TRUE,
     auclast=TRUE,
-    aucinf.obs=c(FALSE, TRUE)
+    #auclast=c(FALSE, TRUE),
+    #aucinf.obs=c(FALSE, TRUE)
+    aucinf.obs = TRUE
   )
 
+  conc_formula <- "DV~TIME|ID"
+  dose_formula <- "DOSE~TIME|ID"
+  if(!is.null(grouping)) {
+    conc_formula <- paste0(conc_formula, "+", grouping)
+    dose_formula <- paste0(dose_formula, "+", grouping)
+  }
+
   conc_obj <- PKNCA::PKNCAconc(
-    conc, DV~TIME|ID
+    conc,
+    stats::as.formula(conc_formula)
   )
 
   dose_obj <- PKNCA::PKNCAdose(
-    admin, DOSE~TIME|ID
+    admin,
+    stats::as.formula(dose_formula)
+    # DOSE~TIME|ID+grouping
   )
 
   data_obj <- PKNCA::PKNCAdata(
-    conc_obj, dose_obj,
+    conc_obj,
+    dose_obj,
+    intervals=intervals_manual,
     impute = "start_predose, start_conc0")
 
   results_obj <- PKNCA::pk.nca(data_obj)
+
   temp <- results_obj$result %>%
     as.data.frame() %>%
+    mutate(!!grouping := factor(.data[[grouping]])) %>%
+    # mutate({{grouping}} := factor(.data[[grouping]])) %>%
     left_join(keep_colunmns, by="ID")
 
   return(temp)
@@ -108,6 +138,7 @@ nca <- function(obj, analyte=NULL, keep=NULL){
 dose_lin <- function(nca, parameters=c("aucinf.obs", "cmax"),
                      lower=0.8, upper=1.25) {
   pp <- nca %>%
+    filter(PPORRES!=0) %>%
     dplyr::mutate(ldose=log(DOSE), lpp=log(PPORRES))
 
   power_model <- t(sapply(parameters,

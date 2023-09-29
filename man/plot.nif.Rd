@@ -17,6 +17,7 @@
   group = NULL,
   administrations = F,
   nominal_time = F,
+  title = NULL,
   ...
 )
 }
@@ -54,6 +55,8 @@ mean=F.}
 
 \item{nominal_time}{Boolean to indicate whether NTIME rather than TIME should
 be plotted on the x-axis.}
+
+\item{title}{The plot title as string.}
 
 \item{...}{Further arguments.}
 }

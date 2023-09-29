@@ -4,7 +4,7 @@
 \alias{nca}
 \title{Non-compartmental analysis}
 \usage{
-nca(obj, analyte = NULL, keep = NULL)
+nca(obj, analyte = NULL, keep = NULL, grouping = NULL)
 }
 \arguments{
 \item{obj}{The source NIF object.}
@@ -13,6 +13,8 @@ nca(obj, analyte = NULL, keep = NULL)
 #'   the dataset, defaults to the first analyte.}
 
 \item{keep}{A vector of fields to keep in the output.}
+
+\item{grouping}{The grouping variable as string.}
 }
 \value{
 A data frame.

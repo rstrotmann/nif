@@ -225,7 +225,9 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #'   mean=F.
 #' @param nominal_time Boolean to indicate whether NTIME rather than TIME should
 #'   be plotted on the x-axis.
+#' @param title The plot title as string.
 #' @param ... Further arguments.
+#'
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @examples
@@ -240,7 +242,8 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @export
 plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
                      doses=NULL, points=F, id=NULL, usubjid=NULL,
-                     group=NULL, administrations=F, nominal_time=F, ...) {
+                     group=NULL, administrations=F, nominal_time=F,
+                     title=NULL, ...) {
   if(!is.null(id)) {
     x <- x %>%
       dplyr::filter(ID %in% id)
@@ -329,6 +332,10 @@ plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       p <- p +
         geom_vline(aes(xintercept=TIME), data=adm, color="grey")
     }
+  }
+
+  if(!is.null(title)) {
+    p <- p + ggtitle(title)
   }
 
   if(!is.null(max_x)) {
