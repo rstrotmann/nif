@@ -7,7 +7,8 @@
 \method{plot}{nif}(
   x,
   y_scale = "lin",
-  max_x = NULL,
+  min_x = NA,
+  max_x = NA,
   analyte = NULL,
   mean = FALSE,
   doses = NULL,

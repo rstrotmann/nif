@@ -41,8 +41,8 @@ nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
     as.data.frame()
 
   conc <- obj1 %>%
-    dplyr::filter(EVID==0)
-    #dplyr::select(ID, TIME, DV, FASTED) %>%
+    dplyr::filter(EVID==0) %>%
+    dplyr::select(ID, TIME, DV, grouping)
 
   if(!is.null(grouping)){
     conc <- conc %>%
@@ -99,9 +99,13 @@ nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
 
   temp <- results_obj$result %>%
     as.data.frame() %>%
-    mutate(!!grouping := factor(.data[[grouping]])) %>%
-    # mutate({{grouping}} := factor(.data[[grouping]])) %>%
     left_join(keep_colunmns, by="ID")
+
+  if(!is.null(grouping)) {
+    temp <- temp %>%
+    mutate(!!grouping := factor(.data[[grouping]]))
+    # mutate({{grouping}} := factor(.data[[grouping]])) %>%
+  }
 
   return(temp)
 }

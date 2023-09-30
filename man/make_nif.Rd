@@ -4,7 +4,13 @@
 \alias{make_nif}
 \title{Make raw NIF data set from list of SDTM domains}
 \usage{
-make_nif(sdtm.data, spec = NULL, impute.missing.end.time = TRUE, silent = F)
+make_nif(
+  sdtm.data,
+  spec = NULL,
+  impute.missing.end.time = TRUE,
+  silent = F,
+  truncate.to.last.observation = FALSE
+)
 }
 \arguments{
 \item{sdtm.data}{A list of SDTM domains as data tables, e.g., as loaded using
@@ -20,6 +26,10 @@ in EX where EXENDTC does not include a time, the time should be copied from
 EXSTDTC.}
 
 \item{silent}{Boolean value to indicate whether warnings should be printed.}
+
+\item{truncate.to.last.observation}{Boolean to indicate whether the data set
+should be truncated to the last observation. In this case, administrations
+after the last observation time point will deleted.}
 }
 \value{
 A NIF data set as nif object.

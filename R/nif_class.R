@@ -168,7 +168,7 @@ analytes <- function(obj){
 #' @return None
 #' @import utils
 #' @export
-head <- function(obj, ...) {
+head.nif <- function(obj, ...) {
   obj %>%
     as.data.frame() %>%
     utils::head()
@@ -240,8 +240,8 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' plot(examplinib_nif, analyte="RS2023", group="FASTED", mean=TRUE, max_x=24)
 #'
 #' @export
-plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
-                     doses=NULL, points=F, id=NULL, usubjid=NULL,
+plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
+                     mean=FALSE, doses=NULL, points=F, id=NULL, usubjid=NULL,
                      group=NULL, administrations=F, nominal_time=F,
                      title=NULL, ...) {
   if(!is.null(id)) {
@@ -302,6 +302,7 @@ plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       ylim(0, max(temp$max_y, na.rm=T)) +
       ggplot2::theme(legend.position="bottom")
   } else {
+    # mean == FALSE
     temp <- x %>%
       dplyr::filter(!is.na(DOSE))
 
@@ -318,11 +319,7 @@ plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
           group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
           color=as.factor(.data[[cov]])))
     }
-      p <- p +
-      ggplot2::geom_line() +
-      ggplot2::facet_wrap(~DOSE) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position="bottom")
+
     if(administrations) {
       adm <- x %>%
         as.data.frame() %>%
@@ -332,15 +329,24 @@ plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
       p <- p +
         geom_vline(aes(xintercept=TIME), data=adm, color="grey")
     }
+
+    p <- p +
+    ggplot2::geom_line() +
+    ggplot2::facet_wrap(~DOSE) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position="bottom")
   }
 
   if(!is.null(title)) {
     p <- p + ggtitle(title)
   }
 
-  if(!is.null(max_x)) {
-    p <- p + ggplot2::xlim(0, max_x)
-  }
+  # if(!is.null(max_x)) {
+  #   p <- p + ggplot2::xlim(min_x, max_x)
+  # } else {
+  #   p <- p + ggplot2::xlim(min_x, NA)
+  # }
+  p <- p + ggplot2::xlim(min_x, max_x)
 
   if(y_scale=="log"){
     p <- p + ggplot2::scale_y_log10()
@@ -363,6 +369,96 @@ plot.nif <- function(x, y_scale="lin", max_x=NULL, analyte=NULL, mean=FALSE,
 
   return(p)
 }
+
+
+#' Index dosing invervals
+#'
+#' This function adds a column `DI` that indicates the dosing interval. All
+#' baseline observations before the first dosing interval get assigned to the
+#' first dosing interval, too.
+#' In addition to `DI`, the function also calls `index_nif()`, thus creating
+#' the field `REF` as a side effect.
+#'
+#' @param obj The NIF data set.
+#'
+#' @return A new NIF data set.
+#' @export
+index_dosing_interval <- function(obj){
+  obj <- obj %>%
+    index_nif()
+
+  di <- obj %>%
+    as.data.frame() %>%
+    filter(EVID==1) %>%
+    # group_by(ID, CMT) %>%
+    group_by(across(any_of(c("ID", "CMT", "PARENT")))) %>%
+    arrange(TIME) %>%
+    mutate(DI=row_number()) %>%
+    ungroup() %>%
+    select(REF, DI)
+
+  obj %>%
+    left_join(di, by="REF") %>%
+    group_by(ID) %>%
+    arrange(REF) %>%
+    fill(DI, .direction="down") %>%
+    # all baseline before the first administration gets assigned to the first
+    #   dosing interval, too:
+    fill(DI, .direction="up") %>%
+    ungroup() %>%
+    new_nif()
+}
+
+#' Number of observations per dosing interval
+#'
+#' This function returns the number of observations by subject and analyte per
+#' dosing interval.
+#'
+#' @param obj The NIF data set.
+#'
+#' @return A data frame.
+#' @export
+n_observations_per_dosing_interval <- function(obj) {
+  obj %>%
+    index_dosing_interval() %>%
+    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT", "DI")))) %>%
+    summarize(N=sum(EVID==0), .groups="drop") %>%
+    as.data.frame()
+}
+
+
+#' Number of administrations per subject
+#'
+#' @param obj A NIF data set.
+#'
+#' @return A data frame.
+#' @export
+n_administrations <- function(obj) {
+  obj %>%
+    index_dosing_interval() %>%
+    group_by(across(any_of(c("ID", "USUBJID", "PARENT")))) %>%
+    summarize(N=max(DI), .groups="drop") %>%
+    as.data.frame()
+}
+
+
+#' Overview on the number of administrations in the subjects by parent
+#'
+#' @param obj A NIF data set.
+#'
+#' @return A data frame.
+#' @export
+administration_summary <- function(obj) {
+  obj %>%
+    n_administrations() %>%
+    group_by(across(any_of(c("PARENT")))) %>%
+    summarize(min=min(N), max=max(N), mean=mean(N), median=median(N)) %>%
+    as.data.frame()
+}
+
+
+
+
 
 
 

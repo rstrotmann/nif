@@ -118,7 +118,8 @@ age_hist <- function(obj) {
     ggplot(aes(x=AGE)) +
     geom_histogram(binwidth=5, fill= "grey") +
     theme_bw() +
-    labs(x="age (years)", y="number of subjects")
+    labs(x="age (years)", y="number of subjects") +
+    ggtitle("Age distribution")
 }
 
 #' Weight histogram
@@ -134,7 +135,8 @@ weight_hist <- function(obj) {
     ggplot(aes(x=WEIGHT)) +
     geom_histogram(binwidth=5, fill= "grey") +
     theme_bw() +
-    labs(x="body weight (kg)", y="number of subjects")
+    labs(x="body weight (kg)", y="number of subjects") +
+    ggtitle("Body weight distribution")
 }
 
 #' BMI histogram
@@ -152,7 +154,8 @@ bmi_hist <- function(obj) {
     geom_histogram(binwidth=1, fill= "grey") +
     geom_vline(xintercept=c(18.5, 24.9, 30)) +
     theme_bw() +
-    labs(x="BMI (kg/m^2)", y="number of subjects")
+    labs(x="BMI (kg/m^2)", y="number of subjects") +
+    ggtitle("BMI distribution")
 }
 
 #' Weight by sex diagram
@@ -178,7 +181,8 @@ wt_by_sex <- function(obj) {
     geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
                label.size=0, position=position_dodge(width = 0.75)) +
     labs(x="sex", y="baseline weight (kg)") +
-    theme_bw()
+    theme_bw() +
+    ggtitle("Body weight by sex")
 }
 
 #' Weight by race diagram
@@ -204,7 +208,8 @@ wt_by_race <- function(obj) {
     geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
                label.size=0, position=position_dodge(width = 0.75)) +
     labs(x="race", y="baseline weight (kg)") +
-    theme_bw()
+    theme_bw() +
+    ggtitle("Body weight by race")
 }
 
 

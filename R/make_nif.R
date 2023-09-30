@@ -305,7 +305,9 @@ make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
       dplyr::filter(PCSTAT=="NOT DONE") %>%
       nrow()
     if(nd>0 & !silent){
-      message(paste(nd, "samples marked as 'not done' and removed from the data set."))
+      message(paste(
+        nd,
+        "samples are marked as 'not done' and were removed fromthe data set."))
     }
     obs <- obs %>%
       dplyr::filter(PCSTAT!="NOT DONE")
@@ -348,13 +350,32 @@ make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
 #' @param obs tibble as created with make_obs
 #' @return A datetime object representing the last recorded observation time
 #' @import dplyr
-last_obs_time <- function(obs){
+last_obs_dtc <- function(obs){
   last <- obs %>%
     dplyr::distinct(USUBJID, DTC) %>%
     dplyr::group_by(USUBJID) %>%
     dplyr::summarize(last=max(DTC, na.rm=TRUE)) %>%
     dplyr::summarize(last=max(last))
   return(format(last$last, "%Y-%m-%dT%H:%M"))
+}
+
+
+#' Last administration DTC
+#'
+#' @param ex The EX domain as data table.
+#'
+#' @return The last administration in DTC format.
+#' @export
+last_ex_dtc <- function(ex) {
+  temp <- ex %>%
+    # dplyr::mutate(start=lubridate::as_datetime(
+    #   EXSTDTC, format=dtc_formats)) %>%
+    dplyr::mutate(end=lubridate::as_datetime(
+      EXENDTC, format=dtc_formats)) %>%
+    pull(end) %>%
+    max(na.rm=T)
+
+    return(format(temp, "%Y-%m-%dT%H:%M"))
 }
 
 
@@ -447,7 +468,11 @@ impute.administration.time <- function(admin, obs){
 #' @param impute.missing.end.time A logic value to indicate whether in rows
 #'   in EX where EXENDTC does not include a time, the time should be copied from
 #'   EXSTDTC.
+#' @param truncate.to.last.observation Boolean to indicate whether the data set
+#'   should be truncated to the last observation. In this case, administrations
+#'   after the last observation time point will deleted.
 #' @param silent Boolean value to indicate whether warnings should be printed.
+#'
 #' @return A NIF data set as nif object.
 #' @seealso [add_analyte_mapping()]
 #' @seealso [add_time_mapping()]
@@ -461,7 +486,8 @@ make_nif <- function(
     sdtm.data,
     spec=NULL,
     impute.missing.end.time=TRUE,
-    silent=F) {
+    silent=F,
+    truncate.to.last.observation=FALSE) {
   vs <- sdtm.data$vs %>% dplyr::select(-DOMAIN)
   ex <- sdtm.data$ex %>% dplyr::select(-DOMAIN)
   pc <- sdtm.data$pc %>% dplyr::select(-DOMAIN)
@@ -475,7 +501,7 @@ make_nif <- function(
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
-  #   PCTESTCD pairs that use the same label for both:
+  # create drug mapping
   drug_mapping <- sdtm.data$analyte_mapping %>%
     rbind(
       data.frame(
@@ -513,9 +539,13 @@ make_nif <- function(
 
 
   # define cut-off date
-  cut.off.date <- last_obs_time(obs)
-  if(!silent) {
-    message(paste("Data cut-off was set to last observation time,", cut.off.date))
+  if(truncate.to.last.observation==TRUE){
+    cut.off.date <- last_obs_dtc(obs)
+    if(!silent) {
+      message(paste("Data cut-off was set to last observation time,", cut.off.date))
+    }
+  } else {
+    cut.off.date <- last_ex_dtc(sdtm.data$ex)
   }
 
   # identify subjects with observations by analyte
