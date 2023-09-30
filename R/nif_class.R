@@ -159,19 +159,23 @@ analytes <- function(obj){
 }
 
 
+# head <- function(x, ...) {
+#   UseMethod("head", x)
+# }
+
 #' Implementation of the head function
 #'
+#' @param n Number of rows to return.
 #' @param obj A nif object
-#' @param ... Further parameters
 #'
 #' @import dplyr
 #' @return None
 #' @import utils
 #' @export
-head.nif <- function(obj, ...) {
+head <- function(obj, n=6) {
   obj %>%
     as.data.frame() %>%
-    utils::head()
+    utils::head(n=n)
 }
 
 #' Export a nif object as csv file
@@ -227,6 +231,7 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #'   be plotted on the x-axis.
 #' @param title The plot title as string.
 #' @param ... Further arguments.
+#' @param min_x Minimum x (time) scale value.
 #'
 #' @return The plot object
 #' @seealso [nif_viewer()]
@@ -447,12 +452,13 @@ n_administrations <- function(obj) {
 #' @param obj A NIF data set.
 #'
 #' @return A data frame.
+#' @importFrom stats median
 #' @export
 administration_summary <- function(obj) {
   obj %>%
     n_administrations() %>%
     group_by(across(any_of(c("PARENT")))) %>%
-    summarize(min=min(N), max=max(N), mean=mean(N), median=median(N)) %>%
+    summarize(min=min(N), max=max(N), mean=mean(N), median=stats::median(N)) %>%
     as.data.frame()
 }
 

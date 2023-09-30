@@ -7,7 +7,7 @@
 \method{plot}{nif}(
   x,
   y_scale = "lin",
-  min_x = NA,
+  min_x = 0,
   max_x = NA,
   analyte = NULL,
   mean = FALSE,
@@ -26,6 +26,8 @@
 \item{x}{The NIF object to be plotted.}
 
 \item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
+
+\item{min_x}{Minimum x (time) scale value.}
 
 \item{max_x}{Maximal x (time) scale value.}
 
