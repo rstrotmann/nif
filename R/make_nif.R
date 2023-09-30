@@ -677,8 +677,10 @@ make_nif <- function(
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
     #dplyr::mutate(DV=case_when(is.na(DV)~0, .default=DV)) %>%
-    dplyr::relocate(ID) #%>%
-  return(new_nif(nif))
+    dplyr::relocate(ID) %>%
+    new_nif() %>%
+    index_nif()
+  return(nif)
 }
 
 

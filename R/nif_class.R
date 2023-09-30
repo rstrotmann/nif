@@ -462,9 +462,94 @@ administration_summary <- function(obj) {
     as.data.frame()
 }
 
+#' Maximal administration time
+#'
+#' This function returns the time in hours of the last administration within
+#' the data set.
+#'
+#' @param obj The NIF data set
+#' @param analytes The analyte or analytes to filter for.
+#'
+#' @return A scalar representing the time in hours.
+#' @export
+max_admin_time <- function(obj, analytes=NULL) {
+  if(!is.null(analytes)) {
+    obj <- obj %>%
+      filter(ANALYTE %in% analytes)
+  }
+
+  obj %>%
+    as.data.frame() %>%
+    filter(EVID==1) %>%
+    pull(TIME) %>%
+    max()
+}
+
+#' Maximal ovservation time
+#'
+#' This function returns the time in hours of the last observation within the
+#' data set.
+#'
+#' @param obj The NIF data set
+#' @param analytes The analyte or analytes to filter for.
+#'
+#' @return A scalar representing the time in hours.
+#' @export
+max_observation_time <- function(obj, analytes=NULL) {
+  if(!is.null(analytes)) {
+    obj <- obj %>%
+      filter(ANALYTE %in% analytes)
+  }
+
+  obj %>%
+    as.data.frame() %>%
+    filter(EVID==0) %>%
+    pull(TIME) %>%
+    max()
+}
+
+#' Guess the most likely meant analyte
+#'
+#' @param obj A NIF data set
+#'
+#' @return The ANALYTE as character
+guess_analyte <- function(obj) {
+  temp <- obj %>%
+    as.data.frame() %>%
+    filter(EVID==0) %>%
+    group_by(ANALYTE, METABOLITE) %>%
+    summarize(n=n(), .groups="drop") %>%
+    arrange(METABOLITE, -n)
+  (temp %>% pull(ANALYTE))[1]
+}
 
 
+#' Mean dose plot
+#'
+#' This function plots the mean dose per day over time
+#'
+#' @param obj A NIF data set.
+#' @param analyte The compound as character (i.e., the ANALYTE within the data
+#'   set).
+#'
+#' @return A ggplot object.
+mean_dose_plot <- function(obj, analyte=NULL) {
+  if(is.null(analyte)) {
+    analyte <- guess_analyte(obj)
+  }
 
-
-
+  obj %>%
+    as.data.frame() %>%
+    mutate(DAY=floor(TIME/24)+1) %>%
+    filter(EVID==1, ANALYTE==analyte) %>%
+    group_by(DAY) %>%
+    summarize("mean dose (mg)"=mean(DOSE, na.rm=T), "N"=n(), .groups="drop") %>%
+    pivot_longer(cols=-DAY, names_to="PARAM", values_to="VAL") %>%
+    ggplot(aes(x=DAY, y=VAL)) +
+    geom_line() +
+    facet_grid(PARAM ~ ., scales="free_y") +
+    labs(x="time (days)", y="") +
+    theme_bw() +
+    ggtitle(paste0("Mean ", analyte, " dose over time"))
+}
 
