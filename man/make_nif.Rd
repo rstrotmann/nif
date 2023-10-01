@@ -9,7 +9,8 @@ make_nif(
   spec = NULL,
   impute.missing.end.time = TRUE,
   silent = F,
-  truncate.to.last.observation = FALSE
+  truncate.to.last.observation = FALSE,
+  use_pctptnum = TRUE
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ EXSTDTC.}
 \item{truncate.to.last.observation}{Boolean to indicate whether the data set
 should be truncated to the last observation. In this case, administrations
 after the last observation time point will deleted.}
+
+\item{use_pctptnum}{Boolean to indicate whether to derive nominal time
+(\code{NTIME}) from \code{PCTPTNUM}.}
 }
 \value{
 A NIF data set as nif object.

@@ -279,11 +279,17 @@ make_admin <- function(ex,
 #'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 #'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 #'   or "PLASMA" is selected, depending what is found in the PC data.
+#' @param use_pctptnum Use PCTPTNUM as nominal time.
 #' @param silent Boolean value to indicate whether warnings should be printed.
+#'
 #' @return A tibble with individual observations with certain NONMEM input variables set
 #' @import dplyr
 #' @import lubridate
-make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
+make_obs <- function(pc,
+                     time_mapping=NULL,
+                     spec=NULL,
+                     silent=F,
+                     use_pctptnum=F){
   # Filter for specific specimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC) %>% pull(PCSPEC)
@@ -321,17 +327,22 @@ make_obs <- function(pc, time_mapping=NULL, spec=NULL, silent=F){
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
       .default=NA))
 
-  if("PCELTM" %in% names(pc)){
+  if(use_pctptnum) {
     obs <- obs %>%
-      dplyr::mutate(NTIME=as.numeric(
-        stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)))
+      mutate(NTIME=as.numeric(PCTPTNUM))
   } else {
-    if(is.null(time_mapping) | nrow(time_mapping)==0){
-      stop(paste("No PCELM in PC. Please add time mapping to SDTM data set",
-        "(see '?add_time_mapping()' for details)."))
+    if("PCELTM" %in% names(pc)){
+      obs <- obs %>%
+        dplyr::mutate(NTIME=as.numeric(
+          stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)))
+    } else {
+      if(is.null(time_mapping) | nrow(time_mapping)==0){
+        stop(paste("No PCELM in PC. Please add time mapping to SDTM data set",
+          "(see '?add_time_mapping()' for details)."))
+      }
+      obs <- obs %>%
+        dplyr::left_join(time_mapping, by="PCTPT")
     }
-    obs <- obs %>%
-      dplyr::left_join(time_mapping, by="PCTPT")
   }
 
     obs <- obs %>%
@@ -472,6 +483,8 @@ impute.administration.time <- function(admin, obs){
 #'   should be truncated to the last observation. In this case, administrations
 #'   after the last observation time point will deleted.
 #' @param silent Boolean value to indicate whether warnings should be printed.
+#' @param use_pctptnum Boolean to indicate whether to derive nominal time
+#'   (`NTIME`) from `PCTPTNUM`.
 #'
 #' @return A NIF data set as nif object.
 #' @seealso [add_analyte_mapping()]
@@ -487,7 +500,8 @@ make_nif <- function(
     spec=NULL,
     impute.missing.end.time=TRUE,
     silent=F,
-    truncate.to.last.observation=FALSE) {
+    truncate.to.last.observation=FALSE,
+    use_pctptnum=TRUE) {
   vs <- sdtm.data$vs %>% dplyr::select(-DOMAIN)
   ex <- sdtm.data$ex %>% dplyr::select(-DOMAIN)
   pc <- sdtm.data$pc %>% dplyr::select(-DOMAIN)
@@ -524,7 +538,7 @@ make_nif <- function(
 
   # make observations
   obs <- make_obs(pc, time_mapping=sdtm.data$time_mapping,
-                  spec=spec, silent=silent) %>%
+                  spec=spec, silent=silent, use_pctptnum=use_pctptnum) %>%
     left_join(drug_mapping, by="PCTESTCD")
 
   # treatments <- unique(ex$EXTRT)

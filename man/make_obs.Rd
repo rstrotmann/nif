@@ -4,7 +4,7 @@
 \alias{make_obs}
 \title{Make observation data set from PC}
 \usage{
-make_obs(pc, time_mapping = NULL, spec = NULL, silent = F)
+make_obs(pc, time_mapping = NULL, spec = NULL, silent = F, use_pctptnum = F)
 }
 \arguments{
 \item{pc}{The SDTM PC domain as a data.frame.}
@@ -17,6 +17,8 @@ make_obs(pc, time_mapping = NULL, spec = NULL, silent = F)
 or "PLASMA" is selected, depending what is found in the PC data.}
 
 \item{silent}{Boolean value to indicate whether warnings should be printed.}
+
+\item{use_pctptnum}{Use PCTPTNUM as nominal time.}
 }
 \value{
 A tibble with individual observations with certain NONMEM input variables set

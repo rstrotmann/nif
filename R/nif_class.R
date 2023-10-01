@@ -420,10 +420,16 @@ index_dosing_interval <- function(obj){
 #' dosing interval.
 #'
 #' @param obj The NIF data set.
+#' @param analyte The analyte to filter for as character. Optional.
 #'
 #' @return A data frame.
 #' @export
-n_observations_per_dosing_interval <- function(obj) {
+n_observations_per_dosing_interval <- function(obj, analyte=NULL) {
+  if(!is.null(analyte)) {
+    obj <- obj %>%
+      filter(ANALYTE %in% analyte)
+  }
+
   obj %>%
     index_dosing_interval() %>%
     group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT", "DI")))) %>%

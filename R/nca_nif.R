@@ -9,16 +9,22 @@
 #' @return A data frame.
 #' @export
 nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
-  if(is.null(analyte)){
-    analytes <- obj %>%
-      as.data.frame() %>%
-      dplyr::distinct(ANALYTE) %>%
-      dplyr::pull(ANALYTE)
-    current_analyte <- analytes[1]
-    if(length(analytes)>1){
-      message(paste0("No analyte specified, selected ",
-                     current_analyte, " as the most likely!"))
-    }
+  # if(is.null(analyte)){
+  #   analytes <- obj %>%
+  #     as.data.frame() %>%
+  #     dplyr::distinct(ANALYTE) %>%
+  #     dplyr::pull(ANALYTE)
+  #   current_analyte <- analytes[1]
+  #   if(length(analytes)>1){
+  #     message(paste0("No analyte specified, selected ",
+  #                    current_analyte, " as the most likely!"))
+  #   }
+  # } else {
+  #   current_analyte <- analyte
+  # }
+
+  if(is.null(analyte)) {
+    current_analyte <- guess_analyte(obj)
   } else {
     current_analyte <- analyte
   }
@@ -42,7 +48,7 @@ nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
 
   conc <- obj1 %>%
     dplyr::filter(EVID==0) %>%
-    dplyr::select(ID, TIME, DV, grouping)
+    dplyr::select(any_of(c("ID", "TIME", "DV", grouping)))
 
   if(!is.null(grouping)){
     conc <- conc %>%
@@ -71,6 +77,15 @@ nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
     aucinf.obs = TRUE
   )
 
+  intervals_manual1 <- data.frame(
+    #start=0,
+    #end = Inf,
+    cmax = TRUE,
+    tmax = TRUE,
+    auclast=TRUE,
+    aucinf.obs = TRUE
+  )
+
   conc_formula <- "DV~TIME|ID"
   dose_formula <- "DOSE~TIME|ID"
   if(!is.null(grouping)) {
@@ -92,8 +107,9 @@ nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
   data_obj <- PKNCA::PKNCAdata(
     conc_obj,
     dose_obj,
-    intervals=intervals_manual,
-    impute = "start_predose, start_conc0")
+    #intervals=intervals_manual1,
+    impute = "start_predose, start_conc0"
+    )
 
   results_obj <- PKNCA::pk.nca(data_obj)
 

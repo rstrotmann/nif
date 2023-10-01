@@ -4,10 +4,12 @@
 \alias{n_observations_per_dosing_interval}
 \title{Number of observations per dosing interval}
 \usage{
-n_observations_per_dosing_interval(obj)
+n_observations_per_dosing_interval(obj, analyte = NULL)
 }
 \arguments{
 \item{obj}{The NIF data set.}
+
+\item{analyte}{The analyte to filter for as character. Optional.}
 }
 \value{
 A data frame.
