@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -11,10 +11,10 @@ library(stringr)
 library(knitr)
 library(nif)
 
-## ---- eval=FALSE, echo=T------------------------------------------------------
+## ----eval=FALSE, echo=T-------------------------------------------------------
 #  read_sdtm_sas("path/to/sdtm/data")
 
-## ---- eval=FALSE, echo=T------------------------------------------------------
+## ----eval=FALSE, echo=T-------------------------------------------------------
 #  read_sdtm_sas("path/to/sdtm/data", "dm", "vs", "ex", "pc", "lb", "ae")
 
 ## -----------------------------------------------------------------------------
@@ -56,15 +56,15 @@ nif_expl %>%
   head() %>% 
   kable()
 
-## ---- warning=F, fig.width=4, fig.height=3------------------------------------
+## ----warning=F, fig.width=4, fig.height=3-------------------------------------
 plot(nif_expl)
 
-## ---- warning=F, fig.width=4, fig.height=3------------------------------------
+## ----warning=F, fig.width=4, fig.height=3-------------------------------------
 plot(nif_expl, analyte="RS2023", group="FASTED", max_x=24, mean=F, points=T, nominal_time=T)
 
-## ---- warning=F, fig.width=4, fig.height=3------------------------------------
+## ----warning=F, fig.width=4, fig.height=3-------------------------------------
 plot(nif_expl, analyte="RS2023", group="FASTED", max_x=24, mean=T)
 
-## ---- eval=FALSE, echo=T------------------------------------------------------
+## ----eval=FALSE, echo=T-------------------------------------------------------
 #  nif_viewer(nif_expl)
 

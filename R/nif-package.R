@@ -23,4 +23,4 @@ utils::globalVariables(c(
   "metab_excr", "sd", "GROUP", "first_admin_time", "regimen", "PCTEST",
   "no.analyte", "bl_wt", "rc", "maxwt", "DOMAIN", "no_admin", "PARENT",
   "PCTESTCD_metab", "PCTESTCD_parent", "METABOLITE", "GROUPING", "PPORRES",
-  "PPTESTCD", "next_start", ":=", "DI", "N", "DAY", "VAL"))
+  "PPTESTCD", "next_start", ":=", "DI", "N", "DAY", "VAL", "PCTPTNUM"))
