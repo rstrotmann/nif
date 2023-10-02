@@ -390,7 +390,8 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
 #' @export
 index_dosing_interval <- function(obj){
   obj <- obj %>%
-    index_nif()
+    index_nif() %>%
+    select(-any_of("DI"))
 
   di <- obj %>%
     as.data.frame() %>%
@@ -403,6 +404,7 @@ index_dosing_interval <- function(obj){
     select(REF, DI)
 
   obj %>%
+    as.data.frame() %>%
     left_join(di, by="REF") %>%
     group_by(ID) %>%
     arrange(REF) %>%
@@ -539,6 +541,7 @@ guess_analyte <- function(obj) {
 #'   set).
 #'
 #' @return A ggplot object.
+#' @export
 mean_dose_plot <- function(obj, analyte=NULL) {
   if(is.null(analyte)) {
     analyte <- guess_analyte(obj)
