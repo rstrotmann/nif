@@ -4,17 +4,20 @@
 \alias{nca}
 \title{Non-compartmental analysis}
 \usage{
-nca(obj, analyte = NULL, keep = NULL, grouping = NULL)
+nca(obj, analyte = NULL, keep = NULL, group = NULL, nominal_time = F)
 }
 \arguments{
 \item{obj}{The source NIF object.}
 
 \item{analyte}{The analyte. If none specified and multiple analytes are in
-#'   the dataset, defaults to the first analyte.}
+the dataset, defaults to the first analyte.}
 
 \item{keep}{A vector of fields to keep in the output.}
 
-\item{grouping}{The grouping variable as string.}
+\item{group}{The grouping variable as string.}
+
+\item{nominal_time}{A boolean to indicate whether nominal time rather than
+actual time should be used for NCA.}
 }
 \value{
 A data frame.

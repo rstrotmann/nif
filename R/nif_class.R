@@ -397,16 +397,19 @@ index_dosing_interval <- function(obj){
     as.data.frame() %>%
     filter(EVID==1) %>%
     # group_by(ID, CMT) %>%
-    group_by(across(any_of(c("ID", "CMT", "PARENT")))) %>%
+    #group_by(across(any_of(c("ID", "CMT", "ANALYTE")))) %>%
+    group_by(ID, ANALYTE) %>%
     arrange(TIME) %>%
     mutate(DI=row_number()) %>%
     ungroup() %>%
-    select(REF, DI)
+    # select(REF, ID, TIME, ANALYTE, DI) %>%
+    select(REF, DI) %>%
+    as.data.frame()
 
   obj %>%
     as.data.frame() %>%
     left_join(di, by="REF") %>%
-    group_by(ID) %>%
+    group_by(ID, ANALYTE) %>%
     arrange(REF) %>%
     fill(DI, .direction="down") %>%
     # all baseline before the first administration gets assigned to the first

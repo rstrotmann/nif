@@ -1,96 +1,132 @@
+
+
+#' Identify and index rich PK sampling intervals
+#'
+#' @param obj The NIF data set.
+#' @param min_n The minimum number of PK samples per analyte to qualify as rich
+#'   sampling.
+#'
+#' @return A new NIF data set.
+#' @export
+index_rich_sampling_intervals <- function(obj, min_n=4) {
+  obj1 <- obj %>%
+    index_nif() %>%
+    index_dosing_interval() %>%
+    as.data.frame()
+
+  npdi <- obj %>%
+    group_by(ANALYTE) %>%
+    n_observations_per_dosing_interval() %>%
+    ungroup() %>%
+    select(ID, DI, ANALYTE, N)
+
+  temp <- obj1 %>%
+    left_join(npdi, by=c("ID", "DI", "ANALYTE")) %>%
+    mutate(RICHINT_TEMP=(N>min_n)) %>%
+
+    # add last observation before administration to rich interval
+    group_by(ID, ANALYTE) %>%
+    mutate(LEAD=lead(RICHINT_TEMP)) %>%
+    mutate(RICHINT= RICHINT_TEMP | (LEAD & EVID==0)) %>%
+
+    #mutate(RICHINT=lead(RICHINT_TEMP, n=1) | RICHINT_TEMP) %>%
+
+    fill(RICHINT, .direction="down") %>%
+    ungroup() %>%
+    select(-c("RICHINT_TEMP", "LEAD")) %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(FLAG=(RICHINT!=lag(RICHINT) | row_number()==1)) %>%
+    ungroup() %>%
+    as.data.frame()
+
+  rich_index <- temp %>%
+    filter(FLAG==TRUE & RICHINT==TRUE) %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(RICH_N=row_number()) %>%
+    ungroup() %>%
+    select(REF, RICH_N)
+
+  temp %>%
+    left_join(rich_index, by="REF") %>%
+    group_by(RICHINT) %>%
+    fill(RICH_N, .direction="down") %>%
+    ungroup() %>%
+    select(-c("N", "FLAG")) %>%
+    new_nif()
+}
+
+
+
+
+
+
+
+
 #' Non-compartmental analysis
 #'
 #' @param obj The source NIF object.
 #' @param analyte The analyte. If none specified and multiple analytes are in
-#' #'   the dataset, defaults to the first analyte.
-#' @param grouping The grouping variable as string.
+#'    the dataset, defaults to the first analyte.
+#' @param group The grouping variable as string.
+#' @param nominal_time A boolean to indicate whether nominal time rather than
+#'    actual time should be used for NCA.
 #' @param keep A vector of fields to keep in the output.
+#'
 #' @import dplyr
 #' @return A data frame.
 #' @export
-nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
-  # if(is.null(analyte)){
-  #   analytes <- obj %>%
-  #     as.data.frame() %>%
-  #     dplyr::distinct(ANALYTE) %>%
-  #     dplyr::pull(ANALYTE)
-  #   current_analyte <- analytes[1]
-  #   if(length(analytes)>1){
-  #     message(paste0("No analyte specified, selected ",
-  #                    current_analyte, " as the most likely!"))
-  #   }
-  # } else {
-  #   current_analyte <- analyte
-  # }
-
+nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F){
+  # guess analyte if not set
   if(is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
   } else {
     current_analyte <- analyte
   }
 
+  # filter for analyte, set selected TIME
   obj1 <- obj %>%
+    as.data.frame() %>%
     dplyr::filter(ANALYTE==current_analyte) %>%
+    dplyr::mutate(TIME=case_when(nominal_time==TRUE~NTIME, .default=TIME)) %>%
     dplyr::mutate(DV=case_when(is.na(DV) ~ 0, .default=DV)) %>%
     as.data.frame()
 
   # preserve the columns to keep
-  keep_colunmns <- obj1 %>%
+  keep_columns <- obj1 %>%
     filter(EVID==1) %>%
     as.data.frame() %>%
     select(c(ID, any_of(keep))) %>%
     distinct()
 
+  # administration times
   admin <- obj1 %>%
     dplyr::filter(EVID==1) %>%
-    select(ID, TIME, DOSE, DV, grouping) %>%
+    select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
     as.data.frame()
 
+  # concentration data
   conc <- obj1 %>%
     dplyr::filter(EVID==0) %>%
-    dplyr::select(any_of(c("ID", "TIME", "DV", grouping)))
+    dplyr::select(any_of(c("ID", "TIME", "DV", group)))
 
-  if(!is.null(grouping)){
+  if(!is.null(group)){
     conc <- conc %>%
-      dplyr::group_by(ID, TIME, .data[[grouping]])
+      dplyr::group_by(ID, TIME, .data[[group]])
   } else {
     conc <- conc %>% dplyr::group_by(ID, TIME)
   }
 
-  conc <- conc %>%
-    dplyr::summarize(DV=mean(DV), .groups="drop") %>%
-    # dplyr::ungroup() %>%
-    # dplyr::distinct() %>%
-    as.data.frame()
-
-  intervals_manual <- data.frame(
-    start=0,
-    #end=c(24, Inf),
-    end = Inf,
-    #cmax=c(FALSE, TRUE),
-    cmax = TRUE,
-    #tmax=c(FALSE, TRUE),
-    tmax = TRUE,
-    auclast=TRUE,
-    #auclast=c(FALSE, TRUE),
-    #aucinf.obs=c(FALSE, TRUE)
-    aucinf.obs = TRUE
-  )
-
-  intervals_manual1 <- data.frame(
-    #start=0,
-    #end = Inf,
-    cmax = TRUE,
-    tmax = TRUE,
-    auclast=TRUE,
-    aucinf.obs = TRUE
-  )
-
+  # generate formulae for the conc and admin objects, depending on whether there
+  #   is a grouping variable
+  #
+  ##  TO DO:
+  ##  IMPLEMENTE MULTIPLE GROUPINGS!
+  #
   conc_formula <- "DV~TIME|ID"
   dose_formula <- "DOSE~TIME|ID"
-  if(!is.null(grouping)) {
-    conc_formula <- paste0(conc_formula, "+", grouping)
-    dose_formula <- paste0(dose_formula, "+", grouping)
+  if(!is.null(group)) {
+    conc_formula <- paste0("DV~TIME|", group, "+ID")
+    dose_formula <- paste0("DOSE~TIME|", group, "+ID")
   }
 
   conc_obj <- PKNCA::PKNCAconc(
@@ -101,32 +137,28 @@ nca <- function(obj, analyte=NULL, keep=NULL, grouping=NULL){
   dose_obj <- PKNCA::PKNCAdose(
     admin,
     stats::as.formula(dose_formula)
-    # DOSE~TIME|ID+grouping
   )
 
   data_obj <- PKNCA::PKNCAdata(
     conc_obj,
     dose_obj,
-    #intervals=intervals_manual1,
-    impute = "start_predose, start_conc0"
+    impute = "start_conc0"
+    # impute = "start_predose, start_conc0"
     )
 
   results_obj <- PKNCA::pk.nca(data_obj)
 
   temp <- results_obj$result %>%
     as.data.frame() %>%
-    left_join(keep_colunmns, by="ID")
+    left_join(keep_columns, by="ID")
 
-  if(!is.null(grouping)) {
+  if(!is.null(group)) {
     temp <- temp %>%
-    mutate(!!grouping := factor(.data[[grouping]]))
-    # mutate({{grouping}} := factor(.data[[grouping]])) %>%
+    mutate(!!group := factor(.data[[group]]))
   }
 
   return(temp)
 }
-
-
 
 
 
