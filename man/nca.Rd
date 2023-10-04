@@ -25,6 +25,8 @@ the dataset, defaults to the first analyte.}
 
 \item{nominal_time}{A boolean to indicate whether nominal time rather than
 actual time should be used for NCA.}
+
+\item{silent}{No message output.}
 }
 \value{
 A data frame.
@@ -33,12 +35,7 @@ A data frame.
 Non-compartmental analysis
 }
 \examples{
-examplinib_nif \%>\% nca()
-examplinib_nif \%>\% nca(group=c("FASTED", "SEX"), analyte="RS2023")
-examplinib_nif \%>\% nca(group=c("FASTED", "SEX"), analyte="RS2023") \%>\%
-  filter(PPTESTCD \%in\% c("auclast", "aucinf.obs", "cmax")) \%>\%
-  ggplot(aes(x=FASTED, y=PPORRES, color=SEX)) +
-  geom_point() +
-  facet_wrap(~PPTESTCD, scales="free")
+nca(examplinib_nif)
+nca(examplinib_nif, group=c("FASTED", "SEX"), analyte="RS2023")
 
 }

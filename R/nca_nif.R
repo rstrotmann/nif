@@ -65,18 +65,14 @@ index_rich_sampling_intervals <- function(obj, min_n=4) {
 #' @param nominal_time A boolean to indicate whether nominal time rather than
 #'    actual time should be used for NCA.
 #' @param keep A vector of fields to keep in the output.
+#' @param silent No message output.
 #'
 #' @import dplyr
 #' @return A data frame.
 #' @export
 #' @examples
-#' examplinib_nif %>% nca()
-#' examplinib_nif %>% nca(group=c("FASTED", "SEX"), analyte="RS2023")
-#' examplinib_nif %>% nca(group=c("FASTED", "SEX"), analyte="RS2023") %>%
-#'   filter(PPTESTCD %in% c("auclast", "aucinf.obs", "cmax")) %>%
-#'   ggplot(aes(x=FASTED, y=PPORRES, color=SEX)) +
-#'   geom_point() +
-#'   facet_wrap(~PPTESTCD, scales="free")
+#' nca(examplinib_nif)
+#' nca(examplinib_nif, group=c("FASTED", "SEX"), analyte="RS2023")
 #'
 nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
                 silent=F){
@@ -84,7 +80,7 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
   if(is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
     if(silent==FALSE) {
-      message(paste("No analyte specified. Selected",
+      message(paste("NCA: No analyte specified. Selected",
                     current_analyte, "as the most likely."))
     }
   } else {
@@ -101,15 +97,15 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
 
   # preserve the columns to keep
   keep_columns <- obj1 %>%
-    filter(EVID==1) %>%
+    dplyr::filter(EVID==1) %>%
     as.data.frame() %>%
-    select(c(ID, any_of(keep))) %>%
-    distinct()
+    dplyr::select(c(ID, any_of(keep))) %>%
+    dplyr::distinct()
 
   # administration times
   admin <- obj1 %>%
     dplyr::filter(EVID==1) %>%
-    select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
+    dplyr::select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
     as.data.frame()
 
   # concentration data
@@ -125,10 +121,13 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
   }
 
   # generate formulae for the conc and admin objects, depending on whether there
-  group_string <- paste(group, collapse="+")
   conc_formula <- "DV~TIME|ID"
   dose_formula <- "DOSE~TIME|ID"
   if(!is.null(group)) {
+    group_string <- paste(group, collapse="+")
+    if(silent==F){
+      message(paste("NCA: Group by", group_string))
+    }
     conc_formula <- paste0("DV~TIME|", group_string, "+ID")
     dose_formula <- paste0("DOSE~TIME|", group_string, "+ID")
   }
@@ -154,11 +153,11 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
 
   temp <- results_obj$result %>%
     as.data.frame() %>%
-    left_join(keep_columns, by="ID")
+    dplyr::left_join(keep_columns, by="ID")
 
   if(!is.null(group)) {
     temp <- temp %>%
-      mutate_at(group, as.factor)
+      dplyr::mutate_at(group, as.factor)
   }
 
   return(temp)
