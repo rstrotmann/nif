@@ -346,11 +346,6 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     p <- p + ggtitle(title)
   }
 
-  # if(!is.null(max_x)) {
-  #   p <- p + ggplot2::xlim(min_x, max_x)
-  # } else {
-  #   p <- p + ggplot2::xlim(min_x, NA)
-  # }
   p <- p + ggplot2::xlim(min_x, max_x)
 
   if(y_scale=="log"){
@@ -361,7 +356,6 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     p <- p + ggplot2::geom_point()
   }
 
-  # if(!is.null(analyte) & length(analyte) == 1){
   if(length(analyte) == 1){
     p <- p + labs(y=analyte)
   }
@@ -429,6 +423,9 @@ index_dosing_interval <- function(obj){
 #'
 #' @return A data frame.
 #' @export
+#' @examples
+#' n_observations_per_dosing_interval(examplinib_nif)
+#'
 n_observations_per_dosing_interval <- function(obj, analyte=NULL) {
   if(!is.null(analyte)) {
     obj <- obj %>%
@@ -449,10 +446,13 @@ n_observations_per_dosing_interval <- function(obj, analyte=NULL) {
 #'
 #' @return A data frame.
 #' @export
+#' @examples
+#' n_administrations(examplinib_nif)
+#'
 n_administrations <- function(obj) {
   obj %>%
     index_dosing_interval() %>%
-    group_by(across(any_of(c("ID", "USUBJID", "PARENT")))) %>%
+    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT")))) %>%
     summarize(N=max(DI), .groups="drop") %>%
     as.data.frame()
 }
@@ -465,11 +465,15 @@ n_administrations <- function(obj) {
 #' @return A data frame.
 #' @importFrom stats median
 #' @export
+#' @examples
+#' administration_summary(examplinib_nif)
+#'
 administration_summary <- function(obj) {
   obj %>%
     n_administrations() %>%
     group_by(across(any_of(c("PARENT")))) %>%
-    summarize(min=min(N), max=max(N), mean=mean(N), median=stats::median(N)) %>%
+    summarize(min=min(N, na.rm=T), max=max(N, na.rm=T), mean=mean(N, na.rm=T),
+              median=stats::median(N, na.rm=T)) %>%
     as.data.frame()
 }
 
@@ -483,6 +487,9 @@ administration_summary <- function(obj) {
 #'
 #' @return A scalar representing the time in hours.
 #' @export
+#' @examples
+#' max_admin_time(examplinib_nif)
+#'
 max_admin_time <- function(obj, analytes=NULL) {
   if(!is.null(analytes)) {
     obj <- obj %>%
@@ -506,6 +513,9 @@ max_admin_time <- function(obj, analytes=NULL) {
 #'
 #' @return A scalar representing the time in hours.
 #' @export
+#' @examples
+#' max_observation_time(examplinib_nif)
+#'
 max_observation_time <- function(obj, analytes=NULL) {
   if(!is.null(analytes)) {
     obj <- obj %>%

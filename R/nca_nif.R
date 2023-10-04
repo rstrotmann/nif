@@ -66,6 +66,8 @@ index_rich_sampling_intervals <- function(obj, min_n=4) {
 #'    actual time should be used for NCA.
 #' @param keep A vector of fields to keep in the output.
 #' @param silent No message output.
+#' @param average_duplicates Boolean to indicate whether duplicate entries
+#'   should be averaged.
 #'
 #' @import dplyr
 #' @return A data frame.
@@ -75,7 +77,7 @@ index_rich_sampling_intervals <- function(obj, min_n=4) {
 #' nca(examplinib_nif, group=c("FASTED", "SEX"), analyte="RS2023")
 #'
 nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
-                silent=F){
+                silent=F, average_duplicates=T){
   # guess analyte if not defined
   if(is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
@@ -112,6 +114,12 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
   conc <- obj1 %>%
     dplyr::filter(EVID==0) %>%
     dplyr::select(any_of(c("ID", "TIME", "DV", group)))
+
+  if(average_duplicates==T){
+    conc <- conc %>%
+      group_by(across(any_of(c("ID", "TIME", group)))) %>%
+      summarize(DV=mean(DV, na.rm=T))
+  }
 
   if(!is.null(group)){
     conc <- conc %>%
