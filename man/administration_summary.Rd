@@ -15,3 +15,7 @@ A data frame.
 \description{
 Overview on the number of administrations in the subjects by parent
 }
+\examples{
+administration_summary(examplinib_nif)
+
+}

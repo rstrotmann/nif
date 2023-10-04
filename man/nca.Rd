@@ -10,7 +10,8 @@ nca(
   keep = NULL,
   group = NULL,
   nominal_time = F,
-  silent = F
+  silent = F,
+  average_duplicates = T
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ the dataset, defaults to the first analyte.}
 actual time should be used for NCA.}
 
 \item{silent}{No message output.}
+
+\item{average_duplicates}{Boolean to indicate whether duplicate entries
+should be averaged.}
 }
 \value{
 A data frame.

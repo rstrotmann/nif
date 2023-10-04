@@ -15,3 +15,7 @@ A data frame.
 \description{
 Number of administrations per subject
 }
+\examples{
+n_administrations(examplinib_nif)
+
+}
