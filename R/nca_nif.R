@@ -1,6 +1,6 @@
-
-
 #' Identify and index rich PK sampling intervals
+#'
+#' Currently experimental. Don't use in production!
 #'
 #' @param obj The NIF data set.
 #' @param min_n The minimum number of PK samples per analyte to qualify as rich
@@ -56,12 +56,6 @@ index_rich_sampling_intervals <- function(obj, min_n=4) {
 }
 
 
-
-
-
-
-
-
 #' Non-compartmental analysis
 #'
 #' @param obj The source NIF object.
@@ -75,10 +69,24 @@ index_rich_sampling_intervals <- function(obj, min_n=4) {
 #' @import dplyr
 #' @return A data frame.
 #' @export
-nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F){
-  # guess analyte if not set
+#' @examples
+#' examplinib_nif %>% nca()
+#' examplinib_nif %>% nca(group=c("FASTED", "SEX"), analyte="RS2023")
+#' examplinib_nif %>% nca(group=c("FASTED", "SEX"), analyte="RS2023") %>%
+#'   filter(PPTESTCD %in% c("auclast", "aucinf.obs", "cmax")) %>%
+#'   ggplot(aes(x=FASTED, y=PPORRES, color=SEX)) +
+#'   geom_point() +
+#'   facet_wrap(~PPTESTCD, scales="free")
+#'
+nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
+                silent=F){
+  # guess analyte if not defined
   if(is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
+    if(silent==FALSE) {
+      message(paste("No analyte specified. Selected",
+                    current_analyte, "as the most likely."))
+    }
   } else {
     current_analyte <- analyte
   }
@@ -111,22 +119,18 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F){
 
   if(!is.null(group)){
     conc <- conc %>%
-      dplyr::group_by(ID, TIME, .data[[group]])
+      dplyr::group_by(ID, TIME, across(any_of(group)))
   } else {
     conc <- conc %>% dplyr::group_by(ID, TIME)
   }
 
   # generate formulae for the conc and admin objects, depending on whether there
-  #   is a grouping variable
-  #
-  ##  TO DO:
-  ##  IMPLEMENTE MULTIPLE GROUPINGS!
-  #
+  group_string <- paste(group, collapse="+")
   conc_formula <- "DV~TIME|ID"
   dose_formula <- "DOSE~TIME|ID"
   if(!is.null(group)) {
-    conc_formula <- paste0("DV~TIME|", group, "+ID")
-    dose_formula <- paste0("DOSE~TIME|", group, "+ID")
+    conc_formula <- paste0("DV~TIME|", group_string, "+ID")
+    dose_formula <- paste0("DOSE~TIME|", group_string, "+ID")
   }
 
   conc_obj <- PKNCA::PKNCAconc(
@@ -154,17 +158,16 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F){
 
   if(!is.null(group)) {
     temp <- temp %>%
-    mutate(!!group := factor(.data[[group]]))
+      mutate_at(group, as.factor)
   }
 
   return(temp)
 }
 
 
-
-
-
 #' Test for dose linearity
+#'
+#' Currently experimental. Don't use in production!
 #'
 #' Using the power model described by [Hummel, 2009](https://doi.org/10.1002/pst.326).
 #' In brief, a power model is fitted with

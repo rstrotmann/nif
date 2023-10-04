@@ -19,10 +19,12 @@ dose_lin(nca, parameters = c("aucinf.obs", "cmax"), lower = 0.8, upper = 1.25)
 A data frame.
 }
 \description{
-Using the power model described by \href{https://doi.org/10.1002/pst.326}{Hummel, 2009}.
-In brief, a power model is fitted with
+Currently experimental. Don't use in production!
 }
 \details{
+Using the power model described by \href{https://doi.org/10.1002/pst.326}{Hummel, 2009}.
+In brief, a power model is fitted with
+
 ln(AUC) = mu + beta* ln(dose)
 
 and the 90\% CI of beta compared to the below acceptance criteria, assuming

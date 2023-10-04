@@ -4,7 +4,14 @@
 \alias{nca}
 \title{Non-compartmental analysis}
 \usage{
-nca(obj, analyte = NULL, keep = NULL, group = NULL, nominal_time = F)
+nca(
+  obj,
+  analyte = NULL,
+  keep = NULL,
+  group = NULL,
+  nominal_time = F,
+  silent = F
+)
 }
 \arguments{
 \item{obj}{The source NIF object.}
@@ -24,4 +31,14 @@ A data frame.
 }
 \description{
 Non-compartmental analysis
+}
+\examples{
+examplinib_nif \%>\% nca()
+examplinib_nif \%>\% nca(group=c("FASTED", "SEX"), analyte="RS2023")
+examplinib_nif \%>\% nca(group=c("FASTED", "SEX"), analyte="RS2023") \%>\%
+  filter(PPTESTCD \%in\% c("auclast", "aucinf.obs", "cmax")) \%>\%
+  ggplot(aes(x=FASTED, y=PPORRES, color=SEX)) +
+  geom_point() +
+  facet_wrap(~PPTESTCD, scales="free")
+
 }

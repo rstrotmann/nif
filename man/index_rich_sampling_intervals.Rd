@@ -16,5 +16,5 @@ sampling.}
 A new NIF data set.
 }
 \description{
-Identify and index rich PK sampling intervals
+Currently experimental. Don't use in production!
 }
