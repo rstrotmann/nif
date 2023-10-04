@@ -1,6 +1,6 @@
 Package: nif
 Title: Construct NONMEM input files from SDTM data
-Version: 0.27.4
+Version: 0.27.5
 Authors@R: 
     person("Rainer", "Strotmann", , "rainer.strotmann@mailbox.org", role = c("aut", "cre"))
 Description: Functions to import SDTM, and create and inspect NIF files.
