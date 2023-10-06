@@ -502,10 +502,10 @@ make_nif <- function(
     silent=F,
     truncate.to.last.observation=FALSE,
     use_pctptnum=TRUE) {
-  vs <- sdtm.data$vs %>% dplyr::select(-DOMAIN)
-  ex <- sdtm.data$ex %>% dplyr::select(-DOMAIN)
-  pc <- sdtm.data$pc %>% dplyr::select(-DOMAIN)
-  dm <- sdtm.data$dm %>% dplyr::select(-DOMAIN)
+  vs <- sdtm.data$domains[["vs"]] %>% dplyr::select(-DOMAIN)
+  ex <- sdtm.data$domains[["ex"]] %>% dplyr::select(-DOMAIN)
+  pc <- sdtm.data$domains[["pc"]] %>% dplyr::select(-DOMAIN)
+  dm <- sdtm.data$domains[["dm"]] %>% dplyr::select(-DOMAIN)
 
   # Get baseline covariates on subject level from VS
   bl.cov <- vs %>%
@@ -559,7 +559,7 @@ make_nif <- function(
       message(paste("Data cut-off was set to last observation time,", cut.off.date))
     }
   } else {
-    cut.off.date <- last_ex_dtc(sdtm.data$ex)
+    cut.off.date <- last_ex_dtc(sdtm.data$domains[["ex"]])
   }
 
   # identify subjects with observations by analyte
