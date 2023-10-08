@@ -65,7 +65,113 @@ print.nif <- function(x, ...){
   temp <- temp %>%
     df.to.string()
   cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
+  invisible(x)
 }
+
+
+#' NIF data set overview
+#'
+#' @param object The NIF data set.
+#' @param ... Further arguments.
+#'
+#' @return A summary_nif object.
+#' @export
+summary.nif <- function(object, ...) {
+  subjects <- subjects(object)
+  analytes <- analytes(object)
+
+  n_sex <- object %>%
+    dplyr::distinct(USUBJID, SEX) %>%
+    dplyr::group_by(SEX) %>%
+    dplyr::summarize(n=n())
+
+  n_males <- n_sex %>%
+    dplyr::filter(SEX==0) %>%
+    dplyr::pull(n)
+  if(length(n_males)==0) {n_males=0}
+
+  n_females <- n_sex %>%
+    dplyr::filter(SEX==1) %>%
+    dplyr::pull(n)
+  if(length(n_females)==0) {n_females=0}
+
+  out <- list(
+    nif = object,
+    studies = studies(object),
+    subjects = subjects,
+    n_subj = length(subjects),
+    n_males = n_males,
+    n_females = n_females,
+    n_obs = object %>%
+      filter(EVID==0) %>%
+      nrow(),
+    analytes=analytes,
+    n_analytes = length(analytes),
+    dose_levels = dose_levels(object,
+                              grouping=any_of(c("PART", "COHORT", "GROUP"))),
+    administration_duration = administration_summary(object)
+  )
+  class(out) <- "summary_nif"
+  return(out)
+}
+
+
+#' Print NIF summary
+#'
+#' @param x A summary_nif object.
+#' @param ... Further parameters.
+#'
+#' @return Nothing.
+#' @export
+print.summary_nif <- function(x, ...) {
+  cat(paste("NONMEM input file (NIF) data set summary\n\n"))
+  cat(paste("Data from", length(x$studies)), "studies:\n")
+  cat(paste0(paste(x$studies, collapse="\n"), "\n\n"))
+
+  cat(paste(x$n_obs, "observations from",
+            x$n_subj, "subjects\n"))
+
+  cat(paste0("Males: ", x$n_males, ", females: ", x$n_females, " (",
+             round(x$n_females/(x$n_males + x$n_females)*100, 1), "%)\n\n"))
+
+  cat(paste0("Analytes:\n", paste(x$analytes, collapse=", "), "\n\n"))
+
+  cat("Dose levels:\n")
+  cat(df.to.string(x$dose_levels))
+  cat("\n\n")
+  cat("Treatment duration overview:\n")
+  cat(df.to.string(x$administration_duration))
+  invisible(x)
+}
+
+
+#' Plot NIF summary
+#'
+#' @param x A NIF data set.
+#' @param ... Further arguments.
+#'
+#' @return Nothing.
+#' @export
+plot.summary_nif <- function(x, ...) {
+  invisible(
+    capture.output(
+      suppressWarnings(
+        print(
+          list(
+            x$nif %>% age_hist(),
+            x$nif %>% weight_hist(),
+            x$nif %>% bmi_hist(),
+            x$nif %>% wt_by_sex(),
+            x$nif %>% wt_by_race(),
+            x$nif %>% mean_dose_plot(),
+            x$nif %>% plot()
+          )
+        )
+      )
+    )
+  )
+}
+
 
 
 #' Subjects within a nif object

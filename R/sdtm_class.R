@@ -40,6 +40,96 @@ new_sdtm <- function(sdtm.data){
   temp
 }
 
+
+
+#' SDTM summary
+#'
+#' @param object A SDTM object.
+#' @param ... Further parameters.
+#'
+#' @return A sdtm_summary object.
+#' @export
+summary.sdtm <- function(object, ...) {
+  subjects = object$domains[["pc"]] %>%
+    dplyr::distinct(USUBJID) %>%
+    pull(USUBJID) %>%
+    as.character()
+
+  out <- list(
+    study = object$domains[["dm"]] %>%
+      distinct(STUDYID) %>%
+      pull(STUDYID) %>% as.character(),
+    subjects = subjects,
+    n_subs = length(subjects),
+    domains=names(object$domains),
+    arms = object$domains[["dm"]] %>%
+      dplyr::distinct(ACTARM, ACTARMCD),
+    doses = object$domains[["ex"]] %>%
+      distinct(EXTRT, EXDOSE),
+    specimems = object$domains[["pc"]] %>%
+      dplyr::distinct(PCSPEC) %>%
+      pull(PCSPEC) %>% as.character(),
+    analytes = object$domains[["pc"]] %>%
+      dplyr::distinct(PCTEST, PCTESTCD),
+    analyte_mapping = object$analyte_mapping,
+    metabolite_mapping = object$metabolite_mapping,
+    time_mapping = object$time_mapping
+  )
+  class(out) <- "summary_sdtm"
+  return(out)
+}
+
+
+#' print SDTM summary
+#'
+#' @param x SDTM object
+#' @param ... Further parameters
+#'
+#' @return none
+#' @export
+print.summary_sdtm <- function(x, ...) {
+  cat("SDTM data set summary\n\n")
+  cat(paste("Study", x$study))
+  cat(paste(" with", x$n_subs, "subjects providing PC data.\n"))
+  cat("SDTM domains: ")
+  cat(paste(x$domains, collapse=", "))
+
+  cat("\n\nArms:\n")
+  print(x$arms, right=FALSE, justify=FALSE)
+
+  cat("\nTreatments:\n")
+  print(x$treatments %>% as.data.frame(), right=FALSE)
+  cat("\nSpecimens:\n")
+  print(x$specimens, right=FALSE)
+  cat("\nAnalytes:\n")
+  print(x$analytes, right=FALSE)
+
+  cat("\nTreatment-to-analyte mappings:\n")
+  if(nrow(x$analyte_mapping)>0){
+    print(x$analyte_mapping, right=FALSE)
+  } else {
+    cat("none\n")
+  }
+
+  cat("\nParent-to-metabolite mappings:\n")
+  if(nrow(x$metabolite_mapping)>0){
+    print(x$metabolite_mapping, right=FALSE)
+  } else {
+    cat("none\n")
+  }
+
+  cat("\nTime mappings:\n")
+  if(nrow(x$time_mapping)>0){
+    print(x$time_mapping, right=FALSE)
+  } else {
+    cat("none\n")
+  }
+
+  invisible(x)
+}
+
+p
+
 #' Attach a treatment-analyte mapping to an SDTM object
 #'
 #' In some studies, multiple drugs are co-administered, and there may be plasma
@@ -155,53 +245,54 @@ add_time_mapping.sdtm <- function(obj, ...) {
 #'
 #' @export
 print.sdtm <- function(x, ...){
-  cat("SDTM data set\n")
-  cat(paste("Study", x$study))
-  cat(paste(" with", nrow(x$subjects), "subjects providing PC data.\n"))
-  cat("SDTM domains: ")
-  cat(paste(names(x$domains), collapse=", "))
-
-  cat("\n\nArms:\n")
-  print(x$arms, right=FALSE, justify=FALSE)
-
-  cat("\nTreatments:\n")
-  print(x$treatments %>% as.data.frame(), right=FALSE)
-  cat("\nSpecimens:\n")
-  print(x$specimens, right=FALSE)
-  cat("\nAnalytes:\n")
-  print(x$analytes, right=FALSE)
-
-  cat("\nTreatment-to-analyte mappings:\n")
-  if(nrow(x$analyte_mapping)>0){
-    print(x$analyte_mapping, right=FALSE)
-  } else {
-    cat("none\n")
-  }
-
-  cat("\nParent-to-metabolite mappings:\n")
-  if(nrow(x$metabolite_mapping)>0){
-    print(x$metabolite_mapping, right=FALSE)
-  } else {
-    cat("none\n")
-  }
-
-  cat("\nTime mappings:\n")
-  if(nrow(x$time_mapping)>0){
-    print(x$time_mapping, right=FALSE)
-  } else {
-    cat("none\n")
-  }
-
-
-
-  # if(!pctptnum.matches.pceltm(obj$pc)){
-  #   temp <- obj$pc %>%
-  #     dplyr::distinct(PCTPT, PCTPTNUM, PCELTM) %>%
-  #     as.data.frame()
+  # cat("SDTM data set\n")
+  # cat(paste("Study", x$study))
+  # cat(paste(" with", nrow(x$subjects), "subjects providing PC data.\n"))
+  # cat("SDTM domains: ")
+  # cat(paste(names(x$domains), collapse=", "))
   #
-  #   message(paste0("\nCaution: In PC, PCTPTNUM and PCELTM do not match:\n",
-  #                 df.to.string(temp)))
+  # cat("\n\nArms:\n")
+  # print(x$arms, right=FALSE, justify=FALSE)
+  #
+  # cat("\nTreatments:\n")
+  # print(x$treatments %>% as.data.frame(), right=FALSE)
+  # cat("\nSpecimens:\n")
+  # print(x$specimens, right=FALSE)
+  # cat("\nAnalytes:\n")
+  # print(x$analytes, right=FALSE)
+  #
+  # cat("\nTreatment-to-analyte mappings:\n")
+  # if(nrow(x$analyte_mapping)>0){
+  #   print(x$analyte_mapping, right=FALSE)
+  # } else {
+  #   cat("none\n")
   # }
+  #
+  # cat("\nParent-to-metabolite mappings:\n")
+  # if(nrow(x$metabolite_mapping)>0){
+  #   print(x$metabolite_mapping, right=FALSE)
+  # } else {
+  #   cat("none\n")
+  # }
+  #
+  # cat("\nTime mappings:\n")
+  # if(nrow(x$time_mapping)>0){
+  #   print(x$time_mapping, right=FALSE)
+  # } else {
+  #   cat("none\n")
+  # }
+  #
+  #
+  #
+  # # if(!pctptnum.matches.pceltm(obj$pc)){
+  # #   temp <- obj$pc %>%
+  # #     dplyr::distinct(PCTPT, PCTPTNUM, PCELTM) %>%
+  # #     as.data.frame()
+  # #
+  # #   message(paste0("\nCaution: In PC, PCTPTNUM and PCELTM do not match:\n",
+  # #                 df.to.string(temp)))
+  # # }
+  print(summary(x))
 }
 
 

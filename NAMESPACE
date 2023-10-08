@@ -2,8 +2,13 @@
 
 S3method(add_time_mapping,sdtm)
 S3method(plot,nif)
+S3method(plot,summary_nif)
 S3method(print,nif)
 S3method(print,sdtm)
+S3method(print,summary_nif)
+S3method(print,summary_sdtm)
+S3method(summary,nif)
+S3method(summary,sdtm)
 export(add_analyte_mapping)
 export(add_bl_lab)
 export(add_lab_covariate)
