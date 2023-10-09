@@ -577,6 +577,7 @@ n_administrations <- function(obj) {
 administration_summary <- function(obj) {
   obj %>%
     n_administrations() %>%
+    filter(PARENT!="") %>%
     group_by(across(any_of(c("PARENT")))) %>%
     summarize(min=min(N, na.rm=T), max=max(N, na.rm=T), mean=mean(N, na.rm=T),
               median=stats::median(N, na.rm=T)) %>%
