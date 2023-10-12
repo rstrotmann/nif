@@ -128,7 +128,7 @@ print.summary_sdtm <- function(x, ...) {
   invisible(x)
 }
 
-p
+
 
 #' Attach a treatment-analyte mapping to an SDTM object
 #'

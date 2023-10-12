@@ -157,14 +157,21 @@ plot.summary_nif <- function(x, ...) {
     capture.output(
       suppressWarnings(
         print(
-          list(
-            x$nif %>% age_hist(),
-            x$nif %>% weight_hist(),
-            x$nif %>% bmi_hist(),
-            x$nif %>% wt_by_sex(),
-            x$nif %>% wt_by_race(),
-            x$nif %>% mean_dose_plot(),
-            x$nif %>% plot()
+          c(
+            list(
+              x$nif %>% age_hist(),
+              x$nif %>% weight_hist(),
+              x$nif %>% bmi_hist(),
+              x$nif %>% wt_by_sex(),
+              x$nif %>% wt_by_race()#,
+              #x$nif %>% mean_dose_plot()
+            ),
+            lapply(x$analytes, function(a) {
+              x$nif %>%
+                plot(analyte=a,
+                     y_scale = "log",
+                     title=paste(a, "overview by dose"),
+                     max_x=max_observation_time(x$nif, a))})
           )
         )
       )
@@ -393,6 +400,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     temp <- x %>%
       as.data.frame() %>%
       filter(NTIME > 0) %>%
+      filter(EVID==0) %>%  ###################
       dplyr::filter(!is.na(DOSE)) %>%
       dplyr::group_by(NTIME, .data[[cov]], DOSE) %>%
       dplyr::summarize(mean=mean(DV, na.rm=TRUE), sd=sd(DV, na.rm=TRUE),
@@ -413,9 +421,12 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
       ylim(0, max(temp$max_y, na.rm=T)) +
       ggplot2::theme(legend.position="bottom")
   } else {
-    # mean == FALSE
+    # if mean == FALSE
     temp <- x %>%
-      dplyr::filter(!is.na(DOSE))
+      dplyr::filter(!is.na(DOSE)) %>%
+      filter(EVID==0) %>%   ###################
+      filter(!is.na(DV)) %>%
+      as.data.frame()
 
     if(nominal_time){
       p <- temp %>%
@@ -436,7 +447,8 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
         as.data.frame() %>%
         filter(EVID==1) %>%
         mutate(GROUP=as.factor(.data[[cov]])) %>%
-        distinct(TIME, GROUP)
+        distinct(TIME, GROUP, DOSE)
+
       p <- p +
         geom_vline(aes(xintercept=TIME), data=adm, color="grey")
     }
@@ -633,7 +645,7 @@ max_observation_time <- function(obj, analytes=NULL) {
     as.data.frame() %>%
     filter(EVID==0) %>%
     pull(TIME) %>%
-    max()
+    max(na.rm=TRUE)
 }
 
 #' Guess the most likely meant analyte
