@@ -153,32 +153,36 @@ print.summary_nif <- function(x, ...) {
 #' @return Nothing.
 #' @export
 plot.summary_nif <- function(x, ...) {
+  nif <- x$nif
+
+  invisible(capture.output(
+    suppressWarnings(
+      print(list(
+        age_hist(nif),
+        weight_hist(nif))))))
+
+  if("HEIGHT" %in% colnames(x$nif)){
+    invisible(capture.output(suppressWarnings(print(
+      bmi_hist(nif)))))
+  }
+
+  plots <- list(
+    wt_by_sex(nif),
+    wt_by_race(nif),
+    lapply(x$analytes, function(a) {
+      nif %>%
+        plot(analyte=a,
+             y_scale = "log",
+             title=paste(a, "overview by dose"),
+             max_x=max_observation_time(x$nif, a))}))
+
   invisible(
     capture.output(
       suppressWarnings(
-        print(
-          c(
-            list(
-              x$nif %>% age_hist(),
-              x$nif %>% weight_hist(),
-              x$nif %>% bmi_hist(),
-              x$nif %>% wt_by_sex(),
-              x$nif %>% wt_by_race()#,
-              #x$nif %>% mean_dose_plot()
-            ),
-            lapply(x$analytes, function(a) {
-              x$nif %>%
-                plot(analyte=a,
-                     y_scale = "log",
-                     title=paste(a, "overview by dose"),
-                     max_x=max_observation_time(x$nif, a))})
-          )
-        )
+        print(plots))
       )
     )
-  )
 }
-
 
 
 #' Subjects within a nif object
