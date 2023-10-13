@@ -2,37 +2,21 @@
 % Please edit documentation in R/sdtm_class.R
 \name{domain}
 \alias{domain}
-\title{#' Get a specific domain from the sdtm object
-#'
-#' @param obj The sdtm object.
-#' @param dom The code of the domain to be returned.
-#' @return The specified domain as data.frame
-#' @export
-#' @examples
-#' domain(examplinib, "dm")
-#'
-domain <- function(obj, dom="") {
-UseMethod("domain")
-}}
+\title{Get a specific domain from a SDTM object}
 \usage{
 domain(obj, dom = "dm")
 }
 \arguments{
-\item{obj}{The sdtm object}
+\item{obj}{The sdtm object.}
 
 \item{dom}{The domain to return.}
 }
-\description{
-#' Get a specific domain from the sdtm object
-#'
-#' @param obj The sdtm object.
-#' @param dom The code of the domain to be returned.
-#' @return The specified domain as data.frame
-#' @export
-#' @examples
-#' domain(examplinib, "dm")
-#'
-domain <- function(obj, dom="") {
-UseMethod("domain")
+\value{
+The specified domain as data.frame
 }
+\description{
+Get a specific domain from a SDTM object
+}
+\examples{
+domain(examplinib, "dm")
 }

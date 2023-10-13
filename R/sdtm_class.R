@@ -245,75 +245,19 @@ add_time_mapping.sdtm <- function(obj, ...) {
 #'
 #' @export
 print.sdtm <- function(x, ...){
-  # cat("SDTM data set\n")
-  # cat(paste("Study", x$study))
-  # cat(paste(" with", nrow(x$subjects), "subjects providing PC data.\n"))
-  # cat("SDTM domains: ")
-  # cat(paste(names(x$domains), collapse=", "))
-  #
-  # cat("\n\nArms:\n")
-  # print(x$arms, right=FALSE, justify=FALSE)
-  #
-  # cat("\nTreatments:\n")
-  # print(x$treatments %>% as.data.frame(), right=FALSE)
-  # cat("\nSpecimens:\n")
-  # print(x$specimens, right=FALSE)
-  # cat("\nAnalytes:\n")
-  # print(x$analytes, right=FALSE)
-  #
-  # cat("\nTreatment-to-analyte mappings:\n")
-  # if(nrow(x$analyte_mapping)>0){
-  #   print(x$analyte_mapping, right=FALSE)
-  # } else {
-  #   cat("none\n")
-  # }
-  #
-  # cat("\nParent-to-metabolite mappings:\n")
-  # if(nrow(x$metabolite_mapping)>0){
-  #   print(x$metabolite_mapping, right=FALSE)
-  # } else {
-  #   cat("none\n")
-  # }
-  #
-  # cat("\nTime mappings:\n")
-  # if(nrow(x$time_mapping)>0){
-  #   print(x$time_mapping, right=FALSE)
-  # } else {
-  #   cat("none\n")
-  # }
-  #
-  #
-  #
-  # # if(!pctptnum.matches.pceltm(obj$pc)){
-  # #   temp <- obj$pc %>%
-  # #     dplyr::distinct(PCTPT, PCTPTNUM, PCELTM) %>%
-  # #     as.data.frame()
-  # #
-  # #   message(paste0("\nCaution: In PC, PCTPTNUM and PCELTM do not match:\n",
-  # #                 df.to.string(temp)))
-  # # }
   print(summary(x))
 }
 
 
-#' #' Get a specific domain from the sdtm object
-#' #'
-#' #' @param obj The sdtm object.
-#' #' @param dom The code of the domain to be returned.
-#' #' @return The specified domain as data.frame
-#' #' @export
-#' #' @examples
-#' #' domain(examplinib, "dm")
-#' #'
-#' domain <- function(obj, dom="") {
-#'   UseMethod("domain")
-#' }
-
-
-#' @param dom The domain to return.
-#' @param obj The sdtm object
+#' Get a specific domain from a SDTM object
 #'
+#' @param obj The sdtm object.
+#' @param dom The domain to return.
+#'
+#' @return The specified domain as data.frame
 #' @export
+#' @examples
+#' domain(examplinib, "dm")
 domain <- function(obj, dom="dm") {
   obj$domains[[dom]]
 }
@@ -390,14 +334,6 @@ subject_info <- function(obj, id="") {
   print(temp, quote = FALSE, col.names=FALSE)
 }
 
-
-# pctptnum.matches.pceltm <- function(pc){
-#   temp <- pc %>%
-#     dplyr::mutate(x=stringr::str_extract(PCELTM, "PT([.0-9]+)H", group=1)) %>%
-#     dplyr::filter(!is.na(x)) %>%
-#     dplyr::mutate(test=(x==PCTPTNUM))
-#   all(temp$test)
-# }
 
 
 #' #' Suggest common manual data programming steps for a sdtm data set
