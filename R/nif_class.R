@@ -251,7 +251,6 @@ dose_levels <- function(obj, grouping=NULL) {
     group_by(ID, ANALYTE, across(any_of(grouping))) %>%
     arrange(ID, TIME) %>%
     filter(TIME==min(TIME)) %>%
-    # select(ID, ANALYTE, DOSE, any_of(c("PART", "COHORT", "GROUP"))) %>%
     select(ID, ANALYTE, DOSE, any_of(grouping)) %>%
     pivot_wider(names_from="ANALYTE", values_from="DOSE", values_fill = 0) %>%
 
@@ -269,16 +268,10 @@ dose_levels <- function(obj, grouping=NULL) {
 #' @export
 analytes <- function(obj){
   obj %>%
-    # dplyr::filter(AMT!=0) %>%
     dplyr::distinct(ANALYTE) %>%
-    # dplyr::arrange(as.numeric(AMT)) %>%
     dplyr::pull(ANALYTE)
 }
 
-
-# head <- function(x, ...) {
-#   UseMethod("head", x)
-# }
 
 #' Implementation of the head function
 #'
@@ -294,6 +287,7 @@ head <- function(obj, n=6) {
     as.data.frame() %>%
     utils::head(n=n)
 }
+
 
 #' Export a nif object as csv file
 #'
@@ -404,7 +398,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     temp <- x %>%
       as.data.frame() %>%
       filter(NTIME > 0) %>%
-      filter(EVID==0) %>%  ###################
+      filter(EVID==0) %>%
       dplyr::filter(!is.na(DOSE)) %>%
       dplyr::group_by(NTIME, .data[[cov]], DOSE) %>%
       dplyr::summarize(mean=mean(DV, na.rm=TRUE), sd=sd(DV, na.rm=TRUE),
@@ -428,7 +422,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     # if mean == FALSE
     temp <- x %>%
       dplyr::filter(!is.na(DOSE)) %>%
-      filter(EVID==0) %>%   ###################
+      filter(EVID==0) %>%
       filter(!is.na(DV)) %>%
       as.data.frame()
 
@@ -512,13 +506,10 @@ index_dosing_interval <- function(obj){
   di <- obj %>%
     as.data.frame() %>%
     filter(EVID==1) %>%
-    # group_by(ID, CMT) %>%
-    #group_by(across(any_of(c("ID", "CMT", "ANALYTE")))) %>%
     group_by(ID, ANALYTE) %>%
     arrange(TIME) %>%
     mutate(DI=row_number()) %>%
     ungroup() %>%
-    # select(REF, ID, TIME, ANALYTE, DI) %>%
     select(REF, DI) %>%
     as.data.frame()
 
@@ -534,6 +525,7 @@ index_dosing_interval <- function(obj){
     ungroup() %>%
     new_nif()
 }
+
 
 #' Number of observations per dosing interval
 #'
@@ -599,6 +591,7 @@ administration_summary <- function(obj) {
               median=stats::median(N, na.rm=T)) %>%
     as.data.frame()
 }
+
 
 #' Maximal administration time
 #'
