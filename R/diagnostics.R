@@ -68,11 +68,14 @@ nif_plot_id <- function(nif, id, y.scale="lin", max.time=NA){
 #' @param y.scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
 #' @param max.dose The upper limit of the dose scale
+#' @param analyte The analyte of interest.
 #' @param max.time The right limit of the time scale
+#'
 #' @return the plot object
 #' @import dplyr
 #' @export
-dose_plot_id <- function(nif, id, y.scale="lin", max.dose=100, max.time=NA){
+dose_plot_id <- function(nif, id, y.scale="lin", max.dose=NA, max.time=NA,
+                         analyte=NULL){
   if(id %in% nif$ID) {
     plot.label <- "ID"
     nif <- nif %>% filter(ID==id)
@@ -83,6 +86,11 @@ dose_plot_id <- function(nif, id, y.scale="lin", max.dose=100, max.time=NA){
   }
   else {
     stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
+  }
+
+  if(!is.null(analyte)) {
+    nif <- nif %>%
+      filter(ANALYTE %in% analyte)
   }
 
   admin <- nif %>%

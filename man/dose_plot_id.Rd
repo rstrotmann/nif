@@ -4,7 +4,14 @@
 \alias{dose_plot_id}
 \title{Plot dose time course data from individual subject}
 \usage{
-dose_plot_id(nif, id, y.scale = "lin", max.dose = 100, max.time = NA)
+dose_plot_id(
+  nif,
+  id,
+  y.scale = "lin",
+  max.dose = NA,
+  max.time = NA,
+  analyte = NULL
+)
 }
 \arguments{
 \item{nif}{The NIF data set.}
@@ -17,6 +24,8 @@ is "lin".}
 \item{max.dose}{The upper limit of the dose scale}
 
 \item{max.time}{The right limit of the time scale}
+
+\item{analyte}{The analyte of interest.}
 }
 \value{
 the plot object

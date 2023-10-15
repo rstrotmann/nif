@@ -79,6 +79,14 @@ print.nif <- function(x, ...){
 summary.nif <- function(object, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
+  parents <- object %>%
+    as.data.frame() %>%
+    distinct(PARENT) %>%
+    filter(PARENT != "") %>%
+    pull(PARENT)
+  dose_red_sbs <- lapply(parents,
+                         function(x) {dose_red_sbs(object, analyte=x)})
+  names(dose_red_sbs) <- parents
 
   n_sex <- object %>%
     dplyr::distinct(USUBJID, SEX) %>%
@@ -99,6 +107,7 @@ summary.nif <- function(object, ...) {
     nif = object,
     studies = studies(object),
     subjects = subjects,
+    dose_red_sbs=dose_red_sbs,
     n_subj = length(subjects),
     n_males = n_males,
     n_females = n_females,
@@ -107,6 +116,7 @@ summary.nif <- function(object, ...) {
       nrow(),
     analytes=analytes,
     n_analytes = length(analytes),
+    drugs = parents,
     dose_levels = dose_levels(object,
                               grouping=any_of(c("PART", "COHORT", "GROUP"))),
     administration_duration = administration_summary(object)
@@ -134,11 +144,20 @@ print.summary_nif <- function(x, ...) {
   cat(paste0("Males: ", x$n_males, ", females: ", x$n_females, " (",
              round(x$n_females/(x$n_males + x$n_females)*100, 1), "%)\n\n"))
 
+  cat(paste0("Administered drugs:\n", paste(x$drugs, collapse=", "), "\n\n"))
+
   cat(paste0("Analytes:\n", paste(x$analytes, collapse=", "), "\n\n"))
 
   cat("Dose levels:\n")
   cat(df.to.string(x$dose_levels))
   cat("\n\n")
+
+  dr_summary <- lapply(x$dose_red_sbs, length) %>%
+    data.frame()
+  cat("Subjects with dose reductions\n")
+  cat(df.to.string((dr_summary)))
+  cat("\n\n")
+
   cat("Treatment duration overview:\n")
   cat(df.to.string(x$administration_duration))
   invisible(x)
@@ -173,6 +192,7 @@ plot.summary_nif <- function(x, ...) {
       nif %>%
         plot(analyte=a,
              y_scale = "log",
+             points=F,
              title=paste(a, "overview by dose"),
              max_x=max_observation_time(x$nif, a))}))
 
@@ -198,6 +218,29 @@ subjects <- function(obj) {
 }
 
 
+#' Subjects with dose reduction
+#'
+#' @param obj A NIF data set object.
+#' @param analyte The analyte of interest as string.
+#'
+#' @return The USUBJIDs as string
+#' @export
+dose_red_sbs <- function(obj, analyte="") {
+  if(analyte!="") {
+    obj <- obj %>%  filter(ANALYTE %in% analyte)
+  }
+
+  obj %>%
+    as.data.frame() %>%
+    index_nif() %>%
+    filter(EVID==1) %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(initial_dose=DOSE[row_number()==1]) %>%
+    filter(DOSE < initial_dose & DOSE != 0) %>%
+    ungroup() %>%
+    distinct(USUBJID) %>%
+    pull(USUBJID)
+}
 
 #' Studies within a nif object
 #'
