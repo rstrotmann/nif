@@ -87,6 +87,18 @@ summary.nif <- function(object, ...) {
   dose_red_sbs <- lapply(parents,
                          function(x) {dose_red_sbs(object, analyte=x)})
   names(dose_red_sbs) <- parents
+  observations <- object %>%
+    as.data.frame() %>%
+    filter(EVID==0) %>%
+    group_by(ANALYTE) %>%
+    summarize(N=n(), .groups="drop") %>%
+    as.data.frame()
+
+  n_studies <- object %>%
+    as.data.frame() %>%
+    filter(EVID==1) %>%
+    group_by(STUDYID) %>%
+    summarize(N=n_distinct(USUBJID))
 
   n_sex <- object %>%
     dplyr::distinct(USUBJID, SEX) %>%
@@ -108,12 +120,14 @@ summary.nif <- function(object, ...) {
     studies = studies(object),
     subjects = subjects,
     dose_red_sbs=dose_red_sbs,
+    n_studies = n_studies,
     n_subj = length(subjects),
     n_males = n_males,
     n_females = n_females,
-    n_obs = object %>%
-      filter(EVID==0) %>%
-      nrow(),
+    # n_obs = object %>%
+    #   filter(EVID==0) %>%
+    #   nrow(),
+    n_obs = observations,
     analytes=analytes,
     n_analytes = length(analytes),
     drugs = parents,
@@ -135,18 +149,21 @@ summary.nif <- function(object, ...) {
 #' @export
 print.summary_nif <- function(x, ...) {
   cat(paste("NONMEM input file (NIF) data set summary\n\n"))
-  cat(paste("Data from", length(x$studies)), "studies:\n")
-  cat(paste0(paste(x$studies, collapse="\n"), "\n\n"))
 
-  cat(paste(x$n_obs, "observations from",
-            x$n_subj, "subjects\n"))
+  cat(paste("Data from", sum(x$n_studies$N), "subjects across", length(x$studies)), "studies:\n")
+  #cat(paste0(paste(x$studies, collapse="\n"), "\n\n"))
+  cat(paste0(df.to.string(x$n_studies), "\n\n"))
 
   cat(paste0("Males: ", x$n_males, ", females: ", x$n_females, " (",
              round(x$n_females/(x$n_males + x$n_females)*100, 1), "%)\n\n"))
 
-  cat(paste0("Administered drugs:\n", paste(x$drugs, collapse=", "), "\n\n"))
-
   cat(paste0("Analytes:\n", paste(x$analytes, collapse=", "), "\n\n"))
+
+  cat(paste(sum(x$n_obs$N), "observations:\n"))
+  cat(paste0(df.to.string(x$n_obs), "\n\n"))
+
+
+  cat(paste0("Administered drugs:\n", paste(x$drugs, collapse=", "), "\n\n"))
 
   cat("Dose levels:\n")
   cat(df.to.string(x$dose_levels))
