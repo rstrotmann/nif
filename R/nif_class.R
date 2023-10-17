@@ -362,6 +362,34 @@ write_csv.nif <- function(obj, filename){
 }
 
 
+
+#' Write as space-delimited, fixed-width file as required by NONMEM
+#'
+#' @param obj The NIF data set.
+#' @param fields The fields to export.
+#' @param filename The filename as string.
+#'
+#' @importFrom gdata write.fwf
+#' @export
+write_nif <- function(obj, filename, fields=NULL) {
+  if(is.null(fields)) {fields=standard_nif_fields}
+  temp <- obj %>%
+    compress_nif(fields) %>%
+    as.data.frame() %>%
+    dplyr::mutate_at(c("TIME", "DV", "LNDV"), signif, 4) %>%
+    mutate_at(.vars=vars(RATE, DV, LNDV),
+              .funs=function(x){case_when(is.na(x)~".",
+                                          .default=as.character(x))}) %>%
+    mutate_all(as.character)
+
+  temp <- rbind(colnames(temp), temp)
+
+  temp %>%
+    write.fwf(file=filename, colnames=FALSE)
+
+}
+
+
 #' Standard nif fields
 #'
 #' @return A character vector of the standard NIF fields

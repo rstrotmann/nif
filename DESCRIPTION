@@ -21,7 +21,8 @@ Imports:
     stringr,
     PKNCA,
     rxode2,
-    lifecycle
+    lifecycle,
+    gdata
 Depends: 
     R (>= 2.10)
 Suggests: 

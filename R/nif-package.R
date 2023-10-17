@@ -24,4 +24,5 @@ utils::globalVariables(c(
   "no.analyte", "bl_wt", "rc", "maxwt", "DOMAIN", "no_admin", "PARENT",
   "PCTESTCD_metab", "PCTESTCD_parent", "METABOLITE", "GROUPING", "PPORRES",
   "PPTESTCD", "next_start", ":=", "DI", "N", "DAY", "VAL", "PCTPTNUM",
-  "RICHINT_TEMP", "LEAD", "RICHINT", "FLAG", "RICH_N", "initial_dose"))
+  "RICHINT_TEMP", "LEAD", "RICHINT", "FLAG", "RICH_N", "initial_dose",
+  "RATE", "LNDV"))
