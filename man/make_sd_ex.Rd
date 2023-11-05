@@ -4,7 +4,7 @@
 \alias{make_sd_ex}
 \title{Synthesize a fictional EX domain for single dose administration}
 \usage{
-make_sd_ex(dm, admindays = c(1, 14), drug = "RS2023")
+make_sd_ex(dm, admindays = c(1, 14), drug = "RS2023", dose = 500)
 }
 \arguments{
 \item{dm}{The DM including the subject info for whom to synthesize EX.}
@@ -12,6 +12,8 @@ make_sd_ex(dm, admindays = c(1, 14), drug = "RS2023")
 \item{admindays}{The treatment days as vector.}
 
 \item{drug}{The name of the drug to be administered.}
+
+\item{dose}{The dose.}
 }
 \value{
 EX data as data frame.

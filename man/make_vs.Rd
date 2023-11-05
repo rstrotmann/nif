@@ -7,8 +7,7 @@
 make_vs(dm)
 }
 \arguments{
-\item{dm}{The DM domain to provide the subject data to generate baseline
-vital sign data for.}
+\item{dm}{The DM domain to provide the subject data.}
 }
 \value{
 The VS domain data as data frame.

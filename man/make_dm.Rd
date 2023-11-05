@@ -4,16 +4,30 @@
 \alias{make_dm}
 \title{Synthesize a fictional DM domain}
 \usage{
-make_dm(studyid = "2000950044", nsubs = 10, nsites = 5, duration = 7)
+make_dm(
+  studyid = "2023001",
+  nsubs = 10,
+  nsites = 5,
+  duration = 7,
+  female_fraction = 0.5,
+  min_age = 18,
+  max_age = 55
+)
 }
 \arguments{
 \item{studyid}{The study ID.}
 
-\item{nsubs}{The number of subjects to synthesize.}
+\item{nsubs}{The number of subjects.}
 
 \item{nsites}{The number of clinical sites.}
 
-\item{duration}{The duration of the study.}
+\item{duration}{The duration of the study in days.}
+
+\item{female_fraction}{The fraction of female subjects (between 0 and 1).}
+
+\item{min_age}{The minimum age.}
+
+\item{max_age}{The maximum age.}
 }
 \value{
 The DM data as data frame.

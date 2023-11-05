@@ -5,7 +5,7 @@
 \title{Simulate fictional subject disposition data}
 \usage{
 make_subs(
-  studyid = "1",
+  studyid = "2023001",
   nsubs = 10,
   nsites = 4,
   screenfailure_rate = 0.25,
@@ -13,7 +13,7 @@ make_subs(
 )
 }
 \arguments{
-\item{studyid}{The study identifyer as string.}
+\item{studyid}{The study identifier as string.}
 
 \item{nsubs}{The number of subjects to be simulated.}
 
@@ -27,7 +27,7 @@ make_subs(
 The disposition data for the simulated subjects as data frame.
 }
 \description{
-This function generates the prespecified number of subjects across different
+This function generates a pre-specified number of subjects across different
 clinical sites with fictional dates for signing the informed consent and
 treatment start.
 }
