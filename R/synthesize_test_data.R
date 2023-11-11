@@ -252,8 +252,10 @@ pk_sim <- function(event_table) {
   #   mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
   #   select(-EXDOSE)
 
+  # sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
+  #                  keep=c("FOOD", "PERIOD")) %>%
   sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
-                   keep=c("FOOD", "PERIOD")) %>%
+                   keep="NTIME") %>%
     as.data.frame()
   return(sim)
 }
@@ -440,38 +442,86 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023", dose=500) {
 
 
 
+#
+# expand_missed <- function(start_dtc, treatment_duration=50, missed_prob=0.15) {
+#   end_dtc <- start_dtc + 60*60*24 * treatment_duration
+#   n <- floor(treatment_duration * runif(1, 0, missed_prob))
+#   # temp <- sort(as.POSIXct(runif(n, start_dtc, end_dtc)))
+#   temp <- sort(floor(runif(n, 0, treatment_duration)))
+#   # print(paste("start_dtc", start_dtc))
+#   # print(temp)
+#
+#   if(length(temp)>0){
+#     df <- data.frame(
+#       # EXSTDTC = c(start_dtc, temp[1:length(temp)] + 60*60*24),
+#       EXSTDTC = c(start_dtc, temp + 60*60*24),
+#       EXENDTC = c(temp - 60*60*24, end_dtc)#,
+#       # temp=temp
+#     )
+#   } else {
+#     df <- data.frame(
+#       EXSTDTC = start_dtc,
+#       EXENDTC = end_dtc,
+#       temp=0
+#     )
+#   }
+#   return(df)
+# }
+#
 
-expand_missed <- function(start_dtc, treatment_duration=50, missed_prob=0.15) {
-  end_dtc <- start_dtc + 60*60*24 * treatment_duration
-  n <- treatment_duration * runif(1, 0, missed_prob)
-  temp <- sort(as.POSIXct(runif(floor(n), start_dtc, end_dtc)))
-  # print(paste("start_dtc", start_dtc))
-  # print(temp)
 
-  if(length(temp)>0){
-    df <- data.frame(
-      # EXSTDTC = c(start_dtc, temp[1:length(temp)] + 60*60*24),
-      EXSTDTC = c(start_dtc, temp + 60*60*24),
-      EXENDTC = c(temp - 60*60*24, end_dtc),
-      temp=list(temp)
-    )
-  } else {
-    df <- data.frame(
-      EXSTDTC = start_dtc,
-      EXENDTC = end_dtc,
-      temp=0
-    )
-  }
-  return(df)
+
+#' Create administration schedule with randomly missed doses
+#'
+#' @param start_dtc Starting DTC.
+#' @param treatment_duration Number of treatment days.
+#' @param missed_prob Probability of missing administration.
+#'
+#' @return EXSTDTC and EXENDTC as data frame.
+miss_admins <- function(start_dtc, treatment_duration=50, missed_prob=0.15) {
+  # create missed administration days
+  end_dtc <- start_dtc + 60*60*24 * (treatment_duration-1)
+  n <- floor(treatment_duration * runif(1, 0, missed_prob))
+  admins <- data.frame(
+    day=seq(1, treatment_duration),
+    dtc=seq(start_dtc, end_dtc, by="1 day")
+  )
+  missed <- sort(unique(floor(runif(n, 2, treatment_duration))))
+  admins[missed, "dtc"] <- NA
+
+  # to do:
+  # change times slightly
+  # omit times occasionally
+
+  # compress
+  admins %>%
+    mutate(block=lead(case_when(is.na(dtc)~1, .default=NA))) %>%
+    mutate(block=ifelse(row_number()==treatment_duration, 1, block)) %>%
+    filter(!is.na(dtc)) %>%
+    group_by(block) %>%
+    mutate(block_id=case_when(block==1 ~row_number(),
+                              .default=NA)) %>%
+    ungroup() %>%
+    fill(block_id, .direction="up") %>%
+    group_by(block_id) %>%
+    mutate(EXSTDTC=dtc[1], EXENDTC=dtc[n()]) %>%
+    ungroup() %>%
+    distinct(EXSTDTC, EXENDTC)
 }
 
 
-
+#' Synthesize a fictional EX domain for single dose administration
+#'
+#' @param dm The DM including the subject info for whom to synthesize EX.
+#' @param drug The name of the drug to be administered.
+#' @param dose The dose.
+#' @param treatment_duration The treatment duration in days.
+#' @param missed_prob Probability to miss doses.
+#' @param missed_doses Switch whether to include randomly missed doses as boolean.
+#'
+#' @return The EX domain as data frame.
 make_md_ex <- function(dm, drug="RS2023", dose=500, treatment_duration=50,
                        missed_prob=0.15, missed_doses=T) {
-  #############   remove before flight:
-  set.seed(5)
-  #############
   ex <- dm %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
     select(STUDYID, USUBJID, RFSTDTC) %>%
@@ -482,13 +532,13 @@ make_md_ex <- function(dm, drug="RS2023", dose=500, treatment_duration=50,
   if(missed_doses==TRUE) {
     ex <- ex %>%
       group_by(DOMAIN, STUDYID, USUBJID) %>%
-      expand(expand_missed(RFSTDTC, treatment_duration, missed_prob)) %>%
+      expand(miss_admins(EXSTDTC, as.numeric(EXENDTC-EXSTDTC), missed_prob)) %>%
       ungroup() %>%
       as.data.frame()
   }
 
   ex <- ex %>%
-    mutate(EXTRT=drug, EXDOSE=dose) %>%
+    mutate(EXTRT=drug, EXDOSE=dose, EPOCH="TREATMENT") %>%
     mutate(EXROUTE="ORAL", EXDOSFRM="TABLET") %>%
     arrange(USUBJID, EXSTDTC) %>%
     group_by(USUBJID) %>%
@@ -832,23 +882,28 @@ make_examplinib_sad_nif <- function() {
 #' @export
 synthesize_sdtm_poc_study <- function() {
   dose <- 500
-  #set.seed(1)
+  nrich <- 12
+  nsubs <- 80
+  nsites <- 6
   rich_sampling_scheme <- data.frame(
-    time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
+    NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
     PCTPT = c("PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
-              "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
-              "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"))
+              "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12"))
 
   sparse_sampling_scheme <- data.frame(
-    time = c(0, 1.5, 4),
+    NTIME = c(0, 1.5, 4),
     PCTPT = c("PRE", "1.5 H POST", "4 H POST")
   )
 
-  dm <- make_dm(studyid="2023000022", nsubs=50, nsites=10,
-                female_fraction=0.5, duration=120, min_age=52, max_age=84)
-
+  dm <- make_dm(studyid="2023000022", nsubs=nsubs, nsites=nsites,
+                female_fraction=0.4, duration=30, min_age=52, max_age=84) %>%
+    mutate(ACTARMCD=case_match(ACTARMCD, ""~"TREATMENT",
+                               .default=ACTARMCD)) %>%
+    mutate(ACTARM=case_match(ACTARMCD,
+                             "SCRNFAIL"~"Screen Faillure",
+                             "TREATMENT"~"Single Arm Treatment")) %>%
+    mutate(ARM=ACTARM, ARMCD=ACTARMCD)
   vs <- make_vs(dm)
-
   ex <- make_md_ex(dm, drug="RS2023", dose=500, missed_doses = T) %>%
     as.data.frame()
 
@@ -861,53 +916,134 @@ synthesize_sdtm_poc_study <- function() {
   # make md PC based on sparse sampling (run in with rich?)
   #
 
-  ex %>%
-    mutate(delta=EXENDTC-EXSTDTC)
+  sbs <- dm %>%
+    filter(ACTARMCD!="SCRNFAIL") %>%
+    left_join(vs %>%
+                select(USUBJID, VSTESTCD, VSSTRESN) %>%
+                group_by(USUBJID) %>%
+                pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN"),
+              by="USUBJID") %>%
+    select(USUBJID, SEX, AGE, HEIGHT, WEIGHT) %>%
+    mutate(ID=row_number()) %>%
+    mutate(rich=ID<=nrich)
 
   admin <- ex %>%
-    filter(USUBJID=="20230000221020010") %>%
-    group_by(USUBJID, EXSEQ) %>%
+    group_by(USUBJID) %>%
+    mutate(first_dtc=EXSTDTC[EXSEQ==1]) %>%
+    ungroup() %>%
+    group_by(USUBJID, EXSEQ, first_dtc) %>%
     expand(dtc=seq(EXSTDTC, EXENDTC, by="1 day")) %>%
+    ungroup() %>%
+    mutate(TIME=as.numeric(dtc-first_dtc)/3600) %>%
+    left_join(sbs, by="USUBJID") %>%
+    select(id=ID, USUBJID, time=TIME, SEX, AGE, HEIGHT, WEIGHT) %>%
+    mutate(cmt=0, amt=dose, rate=-2, evid=1, NTIME=0)
+
+  temp <- admin %>%
+    # day 8
+    group_by(USUBJID) %>%
+    filter(time>=8*24) %>%
+    summarize(ref_time=min(time), .groups="drop") %>%
+    # day 1
+    add_row(admin %>%
+              distinct(USUBJID) %>%
+              mutate(ref_time=0)) %>%
+    left_join(sbs %>% distinct(USUBJID, rich), by="USUBJID")
+
+  sampling <- rbind(
+    temp %>%
+      filter(rich==T) %>%
+      group_by_all() %>%
+      expand(rich_sampling_scheme) %>%
+      ungroup(),
+    temp %>%
+      filter(rich==F) %>%
+      group_by_all() %>%
+      expand(sparse_sampling_scheme) %>%
+      ungroup()
+  ) %>%
+    mutate(time=ref_time + NTIME) %>%
+    arrange(USUBJID, time) %>%
+
+    # time1: time since first dose with random variations in the sampling
+    #   time points:
+    group_by(NTIME==0) %>%
+    mutate(delta=case_when(NTIME==0~runif(n(), -1, -0.1),
+                           .default=rnorm(n(), 0, .02)*NTIME)) %>%
+    ungroup() %>%
+    mutate(time1=time+delta) %>%
+    left_join(sbs, by="USUBJID") %>%
+    select(id=ID, USUBJID, time=time1, SEX, AGE, HEIGHT, WEIGHT, NTIME) %>%
+    mutate(cmt=1, amt=0, rate=0, evid=0)
+
+  ev <- rbind(admin, sampling) %>%
+    arrange(id, time) %>%
+    mutate(FOOD=1) %>%
     as.data.frame()
 
-  # reference: https://nlmixr2.github.io/rxode2/articles/rxode2-event-table.html
-  ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
-    rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
-    rxode2::add.sampling(sampling_scheme$time) %>%
-    # rxode2::et(id=unique(sbs$ID)) %>%
-    rxode2::et(id=sbs$ID) %>%
-    as.data.frame() %>%
-    left_join(
-      sbs %>%
-        dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
-      by="id") %>%
-    mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
-    select(-EXDOSE)
+  pc <- pk_sim(ev) %>%
+    select(id, time, RS2023=c_centr, RS2023487A=c_metab, NTIME) %>%
+    pivot_longer(c("RS2023", "RS2023487A"), names_to="PCTESTCD", values_to="PCSTRESN") %>%
+    mutate(PCTEST=case_when(PCTESTCD=="RS2023" ~ "RS2023",
+                            PCTESTCD=="RS2023487A" ~"RS2023487A")) %>%
+    left_join(sbs %>% distinct(ID, USUBJID), by=c("id"="ID")) %>%
+    arrange(USUBJID, time) %>%
+    group_by(USUBJID) %>%
+    mutate(delta_time=time-time[row_number()==1]) %>%
+    ungroup() %>%
+    left_join(dm %>%
+                select(USUBJID, RFSTDTC, STUDYID),
+              by="USUBJID") %>%
+    mutate(PCDTC=RFSTDTC + delta_time*3600) %>%
+    mutate(DOMAIN="PC", PCSPEC="PLASMA", EPOCH="TREATMENT") %>%
+    mutate(PCTPT=case_when(NTIME==0~"PREDOSE",
+                           .default=paste0("POSTDOSE ", NTIME, " H"))) %>%
+    mutate(PCTPTNUM=NTIME) %>%
+    mutate(PCRFTDTC=RFSTDTC) %>%
+    select(-c(time, NTIME, delta_time, id)) %>%
+    arrange(USUBJID, PCDTC) %>%
+    group_by(USUBJID) %>%
+    mutate(PCSEQ=row_number()) %>%
+    ungroup() %>%
+    as.data.frame()
 
+  out <- list()
+  out[["dm"]] <- dm %>%
+    mutate(RFICDTC=reformat_date(RFICDTC)) %>%
+    mutate(RFSTDTC=reformat_date(RFSTDTC))
 
+  out[["vs"]] <- vs %>%
+    mutate(RFSTDTC=reformat_date(RFSTDTC))
 
-  # pc <- make_sd_pc(ex, dm, vs, rich_sampling_scheme)
-  #
-  # out <- list()
-  # out[["dm"]] <- dm %>%
-  #   mutate(RFICDTC=reformat_date(RFICDTC)) %>%
-  #   mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
-  #   select(-c("cohort", "dose"))
-  #
-  # out[["vs"]] <- vs %>%
-  #   mutate(RFSTDTC=reformat_date(RFSTDTC))
-  #
-  # out[["ex"]] <- ex %>%
-  #   mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
-  #   mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
-  #   mutate(EXENDTC=reformat_date(EXENDTC)) %>%
-  #   mutate(EXTRT="EXAMPLINIB")
-  #
-  # out[["pc"]] <- pc %>%
-  #   mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
-  #   mutate(PCDTC=reformat_date(PCDTC))
-  #
-  # temp <- new_sdtm(out) %>%
-  #   add_analyte_mapping("EXAMPLINIB", "RS2023")
-  # return(temp)
+  out[["ex"]] <- ex %>%
+    mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
+    mutate(EXENDTC=reformat_date(EXENDTC)) %>%
+    mutate(EXTRT="EXAMPLINIB")
+
+  out[["pc"]] <- pc %>%
+    mutate(PCDTC=reformat_date(PCDTC)) %>%
+    mutate(PCRFTDTC=reformat_date(PCRFTDTC))
+
+  out <- new_sdtm(out) %>%
+    add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
+    add_metabolite_mapping("RS2023", "RS2023487A")
+
+  return(out)
 }
+
+
+
+
+
+synthesize_examplinib <- function() {
+  examplinib_sad <- synthesize_sdtm_sad_study()
+  examplinib_poc <- synthesize_sdtm_poc_study()
+  examplinib_fe <- synthesize_sdtm_food_effect_study()
+}
+
+
+
+
+
+
+

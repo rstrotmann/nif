@@ -18,3 +18,7 @@ An admin data set.
 This function fills in administration times from the PCREFDTC field when
 available, and carries forward last administration dates
 }
+\details{
+PCRFTDTC is the time for nominal_time=0
+(ref: https://www.lexjansen.com/phuse/2016/pp/PP20.pdf)
+}

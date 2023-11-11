@@ -237,11 +237,23 @@ make_admin <- function(ex,
     }
   }
 
+  # Derive EXSTDTC and EXENDTC if not available in the original data set
+  if(!"EXSTDY" %in% names(ret)) {
+    ret <- ret %>%
+      arrange(USUBJID, start) %>%
+      group_by(USUBJID, EXTRT) %>%
+      mutate(ref=start[1]) %>%
+      mutate(EXSTDY=as.numeric(difftime(start, ref, units="days"))+1) %>%
+      mutate(EXENDY=as.numeric(difftime(end, ref, units="days"))+1) %>%
+      as.data.frame()
+  }
+
   ret <- ret %>%
     # expand dates from start date to end date, time is end.time for last row,
     #   otherwise start.time
     dplyr::group_by(STUDYID, USUBJID, EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC,
       EXSTDY, EXENDY, start.time, end.time, EPOCH) %>%
+
     # dplyr::group_by_all() %>%
     tidyr::expand(date=seq(as.Date(start.date), as.Date(end.date), by="1 day")) %>%
     dplyr::mutate(time=case_when(
@@ -395,12 +407,17 @@ last_ex_dtc <- function(ex) {
 #' This function fills in administration times from the PCREFDTC field when
 #'  available, and carries forward last administration dates
 #'
+#'  PCRFTDTC is the time for nominal_time=0
+#'  (ref: https://www.lexjansen.com/phuse/2016/pp/PP20.pdf)
+#'
 #' @param admin An admin data set as created by 'make_admin()'.
 #' @param obs An observation data set as created by 'make_obs()'.
 #' @return An admin data set.
 #' @import tidyr
 #' @import dplyr
 impute.administration.time <- function(admin, obs){
+
+
   temp <- obs %>%
     dplyr::mutate(dtc=lubridate::as_datetime(
       PCDTC, format=dtc_formats)) %>%
