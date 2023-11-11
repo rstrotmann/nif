@@ -1039,6 +1039,9 @@ synthesize_examplinib <- function() {
   examplinib_sad <- synthesize_sdtm_sad_study()
   examplinib_poc <- synthesize_sdtm_poc_study()
   examplinib_fe <- synthesize_sdtm_food_effect_study()
+  use_data(examplinib_sad, overwrite=T)
+  use_data(examplinib_poc, overwrite=T)
+  use_data(examplinib_fe, overwrite=T)
 }
 
 
