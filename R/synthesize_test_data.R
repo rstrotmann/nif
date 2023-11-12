@@ -474,20 +474,36 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023", dose=500) {
 #' Create administration schedule with randomly missed doses
 #'
 #' @param start_dtc Starting DTC.
-#' @param treatment_duration Number of treatment days.
 #' @param missed_prob Probability of missing administration.
+#' @param end_dtc End DTC.
+#' @param dose The normal dose.
+#' @param dose_red The reduced dose.
+#' @param red_prob The probability that a subject has a dose reduction. Dose
+#'   reductions, if any, occur at a random day after day 7.
 #'
 #' @return EXSTDTC and EXENDTC as data frame.
-miss_admins <- function(start_dtc, treatment_duration=50, missed_prob=0.15) {
+miss_admins <- function(start_dtc, end_dtc, dose=500, dose_red=250,
+                        missed_prob=0.15, red_prob=0.2) {
   # create missed administration days
-  end_dtc <- start_dtc + 60*60*24 * (treatment_duration-1)
+  #end_dtc <- start_dtc + 60*60*24 * (treatment_duration-1)
+  dose_reduction <- red_prob != 0
+  treatment_duration = as.numeric(end_dtc - start_dtc) +1
   n <- floor(treatment_duration * runif(1, 0, missed_prob))
   admins <- data.frame(
     day=seq(1, treatment_duration),
-    dtc=seq(start_dtc, end_dtc, by="1 day")
+    dtc=seq(start_dtc, end_dtc, by="1 day"),
+    dose=dose
   )
-  missed <- sort(unique(floor(runif(n, 2, treatment_duration))))
-  admins[missed, "dtc"] <- NA
+  missed_days <- sort(unique(floor(runif(n, 2, treatment_duration))))
+  admins[missed_days, "dtc"] <- NA
+
+  if(dose_reduction) {
+    if(runif(1, 0, 1) < red_prob) {
+      red_start_dy <- floor(runif(1, 7, treatment_duration))
+      red_days <- seq(red_start_dy, treatment_duration)
+      admins[red_days, "dose"] <- dose_red
+    }
+  }
 
   # to do:
   # change times slightly
@@ -495,19 +511,28 @@ miss_admins <- function(start_dtc, treatment_duration=50, missed_prob=0.15) {
 
   # compress
   admins %>%
-    mutate(block=lead(case_when(is.na(dtc)~1, .default=NA))) %>%
-    mutate(block=ifelse(row_number()==treatment_duration, 1, block)) %>%
+    # mutate(block=lead(case_when(is.na(dtc)~1, .default=NA))) %>%
+    mutate(prev_dose=lag(dose)) %>%
+    mutate(dose_red_start=dose!=prev_dose) %>%
+    mutate(dose_restart=lag(is.na(dtc))) %>%
+    # mutate(chg=case_when(is.na(dtc)~1, dose!=prev_dose~1, .default=NA)) %>%
+    # mutate(block=lag(chg)) %>%
+    # mutate(block=ifelse(row_number()==treatment_duration, 1, block)) %>%
     filter(!is.na(dtc)) %>%
+    mutate(block=dose_red_start==T | dose_restart==T | row_number()==1) %>%
     group_by(block) %>%
     mutate(block_id=case_when(block==1 ~row_number(),
                               .default=NA)) %>%
     ungroup() %>%
-    fill(block_id, .direction="up") %>%
+    as.data.frame() %>%
+    fill(block_id, .direction="down") %>%
     group_by(block_id) %>%
     mutate(EXSTDTC=dtc[1], EXENDTC=dtc[n()]) %>%
     ungroup() %>%
-    distinct(EXSTDTC, EXENDTC)
+    as.data.frame() %>%
+    distinct(EXSTDTC, EXENDTC, DOSE=dose)
 }
+
 
 
 #' Synthesize a fictional EX domain for single dose administration
@@ -521,24 +546,30 @@ miss_admins <- function(start_dtc, treatment_duration=50, missed_prob=0.15) {
 #'
 #' @return The EX domain as data frame.
 make_md_ex <- function(dm, drug="RS2023", dose=500, treatment_duration=50,
-                       missed_prob=0.15, missed_doses=T) {
+                       missed_prob=0.15, missed_doses=T, dose_reductions=T) {
   ex <- dm %>%
-    filter(ACTARMCD!="SCRNFAIL") %>%
+    filter(ACTARMCD!="SCRNFAIL")
+
+  ex <- ex %>%
     select(STUDYID, USUBJID, RFSTDTC) %>%
     mutate(DOMAIN="EX") %>%
+    mutate(trtdur=floor(runif(nrow(ex), treatment_duration*.6,
+                              treatment_duration+1))) %>%
     mutate(EXSTDTC=RFSTDTC,
-           EXENDTC=RFSTDTC+treatment_duration*3600*24)
+           # EXENDTC=RFSTDTC+treatment_duration*3600*24)
+           EXENDTC=RFSTDTC+trtdur*3600*24)
 
   if(missed_doses==TRUE) {
     ex <- ex %>%
       group_by(DOMAIN, STUDYID, USUBJID) %>%
-      expand(miss_admins(EXSTDTC, as.numeric(EXENDTC-EXSTDTC), missed_prob)) %>%
+      expand(miss_admins(EXSTDTC, EXENDTC)) %>%
       ungroup() %>%
       as.data.frame()
   }
 
+
   ex <- ex %>%
-    mutate(EXTRT=drug, EXDOSE=dose, EPOCH="TREATMENT") %>%
+    mutate(EXTRT=drug, EXDOSE=DOSE, EPOCH="TREATMENT") %>%
     mutate(EXROUTE="ORAL", EXDOSFRM="TABLET") %>%
     arrange(USUBJID, EXSTDTC) %>%
     group_by(USUBJID) %>%
@@ -912,7 +943,6 @@ synthesize_sdtm_poc_study <- function() {
   # to do
   #
   # omit time information randomly?
-  # implement dose reductions
   # make md PC based on sparse sampling (run in with rich?)
   #
 

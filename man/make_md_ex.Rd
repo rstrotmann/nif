@@ -10,7 +10,8 @@ make_md_ex(
   dose = 500,
   treatment_duration = 50,
   missed_prob = 0.15,
-  missed_doses = T
+  missed_doses = T,
+  dose_reductions = T
 )
 }
 \arguments{

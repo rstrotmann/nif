@@ -4,14 +4,28 @@
 \alias{miss_admins}
 \title{Create administration schedule with randomly missed doses}
 \usage{
-miss_admins(start_dtc, treatment_duration = 50, missed_prob = 0.15)
+miss_admins(
+  start_dtc,
+  end_dtc,
+  dose = 500,
+  dose_red = 250,
+  missed_prob = 0.15,
+  red_prob = 0.5
+)
 }
 \arguments{
 \item{start_dtc}{Starting DTC.}
 
-\item{treatment_duration}{Number of treatment days.}
+\item{end_dtc}{End DTC.}
+
+\item{dose}{The normal dose.}
+
+\item{dose_red}{The reduced dose.}
 
 \item{missed_prob}{Probability of missing administration.}
+
+\item{red_prob}{The probability that a subject has a dose reduction. Dose
+reductions, if any, occur at a random day after day 7.}
 }
 \value{
 EXSTDTC and EXENDTC as data frame.
