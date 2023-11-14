@@ -220,4 +220,6 @@ wt_by_race <- function(obj) {
     ggtitle("Body weight by race")
 }
 
+sbs_by_dl <- function(obj) {
 
+}

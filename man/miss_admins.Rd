@@ -10,7 +10,7 @@ miss_admins(
   dose = 500,
   dose_red = 250,
   missed_prob = 0.15,
-  red_prob = 0.5
+  red_prob = 0.2
 )
 }
 \arguments{

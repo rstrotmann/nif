@@ -776,6 +776,42 @@ clip_nif <- function(nif){
 }
 
 
+#' Add a dose level (`DL`) column to NIF data set.
+#'
+#' Dose level is defined as the starting dose. For data sets with single drug
+#'   administration, `DL`is a numerical value, for drug combinations, it is
+#'   a character value specifying the `PARENT` and dose level for the individual
+#'   components.
+#'
+#' @param obj A NIF dataset.
+#'
+#' @return A NIF dataset.
+#' @export
+add_dose_level <- function(obj) {
+  temp <- obj %>%
+    as.data.frame() %>%
+    filter(METABOLITE==FALSE) %>%
+    filter(PARENT != "", !is.na(DOSE), AMT != 0, EVID==1) %>%
+    group_by(ID, ANALYTE) %>%
+    arrange(ID, TIME, ANALYTE) %>%
+    filter(TIME==min(TIME)) %>%
+    select(ID, ANALYTE, DOSE)  %>%
+    group_by(ID)
+
+  if(temp %>% ungroup() %>% distinct(ANALYTE) %>% nrow()==1) {
+    temp <- temp %>% mutate(DL=DOSE)
+  } else {
+   temp <- temp %>%
+    mutate(DL=paste0(DOSE, "-", ANALYTE)) %>%
+    summarize(DL=paste0(DL, collapse="+"))
+  }
+
+  return(obj %>%
+           left_join(temp %>%
+                       select(ID, DL), by="ID"))
+}
+
+
 #' Add baseline covariates to a NIF data set
 #'
 #' Lab parameters not found in LB will be reported in a warning message.

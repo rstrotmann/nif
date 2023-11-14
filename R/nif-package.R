@@ -25,4 +25,6 @@ utils::globalVariables(c(
   "PCTESTCD_metab", "PCTESTCD_parent", "METABOLITE", "GROUPING", "PPORRES",
   "PPTESTCD", "next_start", ":=", "DI", "N", "DAY", "VAL", "PCTPTNUM",
   "RICHINT_TEMP", "LEAD", "RICHINT", "FLAG", "RICH_N", "initial_dose",
-  "RATE", "LNDV"))
+  "RATE", "LNDV", "use_data", "first_dtc", "rich", "ref_time", "delta",
+  "time1", "delta_time", "cohort", "dose", "DL", "block", "block_id",
+  "dose_red_start", "dose_restart", "i", "prev_dose", "ref", "trtdur"))

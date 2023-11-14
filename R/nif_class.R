@@ -240,7 +240,7 @@ subjects <- function(obj) {
 #' @param obj A NIF data set object.
 #' @param analyte The analyte of interest as string.
 #'
-#' @return The USUBJIDs as string
+#' @return The IDs.
 #' @export
 dose_red_sbs <- function(obj, analyte="") {
   if(analyte!="") {
@@ -255,8 +255,8 @@ dose_red_sbs <- function(obj, analyte="") {
     mutate(initial_dose=DOSE[row_number()==1]) %>%
     filter(DOSE < initial_dose & DOSE != 0) %>%
     ungroup() %>%
-    distinct(USUBJID) %>%
-    pull(USUBJID)
+    distinct(ID) %>%
+    pull(ID)
 }
 
 #' Studies within a nif object
@@ -313,7 +313,6 @@ dose_levels <- function(obj, grouping=NULL) {
     filter(TIME==min(TIME)) %>%
     select(ID, ANALYTE, DOSE, any_of(grouping)) %>%
     pivot_wider(names_from="ANALYTE", values_from="DOSE", values_fill = 0) %>%
-
     group_by(across(c(-ID))) %>%
     summarize(N=n()) %>%
     as.data.frame()

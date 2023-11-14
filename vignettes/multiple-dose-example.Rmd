@@ -1,0 +1,149 @@
+---
+title: "Example: Create and explore NIF data for a multiple-dose study"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{multiple-dose-example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message=F}
+library(tidyverse)
+library(knitr)
+library(nif)
+```
+
+# OVERVIEW
+
+This is an example for a fictional single-arm proof-of-concept study with a
+fictional drug, `RS2023`. As part of the package, a synthetic SDTM data set for
+this study (study `RS2023-0022`) is included as `examplinib_poc`:
+
+```{r, echo=F}
+print(summary(examplinib_poc))
+```
+
+## Study design
+
+This is a single-arm study in which subjects received multiple doses of 'RS2023'. 
+The treatment duration is different between subjects. PK sampling was on Days 1
+and 8 of the treatment period. The PK sampling schedule was rich in the initial
+subset of subjects and sparse in the others.
+
+## Objective
+
+The objective of this vignette is to outline how to approach the data set, 
+gradually exploring the subject disposition, treatment durations and the available
+pharmacokinetic data. This should always be the first step before entering 
+pharmacokinetic modeling.
+
+# CREATE THE NIF DATA SET
+
+Creation of the NIF dataset is straightforward. No imputations are needed, and
+no study-specific fields are created:
+
+```{r}
+nif_poc <- make_nif(examplinib_poc, spec="PLASMA")
+summary(nif_poc)
+```
+
+# EXPLORATION
+
+## Demographics
+
+The number of subjects and the sex distribution can already be seen from the
+`summary` output (above). We now want to get an overview on the age, body weigth
+and body mass index (BMI) distributions, as well as the weigth distribution by
+sex and race:
+
+```{r fig.width=3, fig.height=3}
+nif_poc %>% age_hist()
+nif_poc %>% weight_hist()
+nif_poc %>% bmi_hist()
+nif_poc %>% wt_by_sex()
+nif_poc %>% wt_by_race()
+```
+
+## Exposure
+
+In this study, all `r length(subjects(nif_poc))` subject received the same dose level: 
+
+```{r}
+nif_poc %>%
+  dose_levels() %>% 
+  kable(caption="Dose levels")
+```
+
+However, there were subjects with dose reductions, as we can see when filtering
+the NIF data set for EVID==1 (administrations) and summarizing the administered
+dose:
+
+```{r}
+nif_poc %>% 
+  as.data.frame() %>% 
+  filter(EVID==1) %>% 
+  group_by(DOSE) %>% 
+  summarize(n=n()) %>% 
+  kable()
+```
+
+Note that in the above code, the nif dataset was first converted into a data
+frame as the tidyverse verbs ('filter', 'group_by', 'summarize') are not defined
+for NIF objects. This is a common pattern that will often be used for more 
+complex analyses!
+
+To identify the subjects with dose reductions: 
+
+```{r}
+nif_poc %>% dose_red_sbs()
+```
+
+Let's have a plot of the doses over time in these subjects: 
+
+```{r fig.width=5, fig.height=2}
+nif_poc %>% 
+  as.data.frame() %>% 
+  filter(ID %in% (nif_poc %>% dose_red_sbs())) %>% 
+  filter(EVID==1) %>% 
+  ggplot(aes(x=TIME, y=DOSE, color=as.factor(ID))) + 
+  geom_point() +
+  geom_line() +
+  theme(legend.position="none")
+```
+
+We see that dose reductions happended at different times during treatment. Another
+way of visualizing this is per the `mean_dose_plot()` function:
+
+```{r fig.width=5, fig.height=3}
+nif_poc %>% mean_dose_plot()
+```
+
+The upper panel shows the mean dose over time, and we can see that after ~Day 13,
+the mean dose across all treated subjects drops due to dose reductions in some
+subjects. To put this into context, the lower panel shows the number of subjects
+on treatment over time, and we see that most subjects had treatment durations
+of around 30 days. Note the fluctuations that indicate single missed doses in
+individual subjects!
+
+## PK sampling
+
+The PK sampling time points in this study were:
+
+```{r}
+nif_poc %>% 
+  as.data.frame() %>% 
+  filter(EVID==0) %>% 
+  group_by(NTIME, ANALYTE) %>% 
+  summarize(n=n(), .groups="drop") %>% 
+  pivot_wider(names_from="ANALYTE", values_from="n") %>% 
+  kable(caption="Observations by time point and analyte")
+```
+
+
