@@ -1,5 +1,5 @@
 ---
-title: "Example: Create and explore NIF data for a multiple-dose study"
+title: "Example: NIF data for a multiple-dose study"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{multiple-dose-example}
@@ -22,18 +22,18 @@ library(nif)
 
 # OVERVIEW
 
-This is an example for a fictional single-arm proof-of-concept study with a
+This is an example for a fictional multiple-dose study with a
 fictional drug, `RS2023`. As part of the package, a synthetic SDTM data set for
 this study (study `RS2023-0022`) is included as `examplinib_poc`:
 
 ```{r, echo=F}
-print(summary(examplinib_psummary(examplinib_poc)oc))
+print(summary(examplinib_poc))
 ```
 
 ## Study design
 
 This is a single-arm study in which subjects received multiple doses of 'RS2023'. 
-The treatment duration is different between subjects. PK sampling was on Days 1
+The treatment duration is different across subjects. PK sampling was on Days 1
 and 8 of the treatment period. The PK sampling schedule was rich in the initial
 subset of subjects and sparse in the others.
 
@@ -73,7 +73,7 @@ nif_poc %>% wt_by_race()
 
 ## Exposure
 
-In this study, all `r length(subjects(nif_poc))` subject received the same dose level: 
+In this study, all `r nrow(subjects(nif_poc))` subject received the same dose level: 
 
 ```{r}
 nif_poc %>%
@@ -115,7 +115,8 @@ nif_poc %>%
   ggplot(aes(x=TIME, y=DOSE, color=as.factor(ID))) + 
   geom_point() +
   geom_line() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  theme_bw()
 ```
 
 We see that dose reductions happended at different times during treatment. Another
@@ -145,5 +146,59 @@ nif_poc %>%
   pivot_wider(names_from="ANALYTE", values_from="n") %>% 
   kable(caption="Observations by time point and analyte")
 ```
+
+From the different numbers of samplings per nominal time point, we see that only
+a subset of subjects had a rich sampling scheme. Let's identify those:
+
+```{r}
+nif_poc %>% 
+  rich_sampling_sbs(analyte="RS2023", max_time=24, n=4)
+```
+
+In this code, the function `rich_sampling_sbs()` receives as input the analyte
+of interest, the time interval across which the number of sanmples is evaluated,
+and the minimum number of samples to qualify the schedule as rich.
+
+## Plasma concentration data
+
+Let's plot the individual and mean plasma concentration profiles on Day 1 for
+the parent, RS2023, and the metabolite, RS2023487A:
+
+```{r fig.width=5, fig.height=3}
+temp <- nif_poc %>% 
+  filter(ID %in% (nif_poc %>%
+                    rich_sampling_sbs(analyte="RS2023", n=4, max_time=24)))
+temp %>% plot(points=T)
+```
+
+For the sampling on Day 1 only:
+
+```{r fig.width=3, fig.height=3, warning=F, message=F}
+temp <- temp %>% 
+    filter(TIME<=24)
+
+temp %>% plot(analyte="RS2023", points=T, administrations=T, max_x=15)
+
+temp %>% plot(analyte="RS2023", mean=T, y_scale="log")
+
+nif_poc %>% 
+  filter(ID %in% (nif_poc %>%
+                    rich_sampling_sbs(analyte="RS2023", n=4, max_time=24))) %>% 
+  plot(nominal_time=F, min_x=192)
+```
+
+The above code showcases some options for the `plot()` function: 
+
+* In addition to the line graphs, the individual data points can be shown with
+  the option `points=TRUE`.
+* `min_x` and `max_x` can be used to define a speficic time interval.
+* In the first 2 graphs, the analyte (RS2023) is specifically selected. In the
+  third graph, no analyte is specified, and both analytes are plotted.
+* `nonminal_time=TRUE` selects the nominal time for the x axis. The default for
+  individual curves is `nominal_time=FALSE`, i.e., the actual time is used. Note
+  that for mean profiles as shown in plot 2, nominal time is used automatically
+  for the averaging.
+* The option `y_scale="log"` can be used to plot the data on a log concentration
+  scale.
 
 

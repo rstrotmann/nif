@@ -29,7 +29,7 @@ print.nif <- function(x, ...){
     filter(EVID==0) %>%
     nrow()
   cat(paste(n.obs, "observations from",
-            length(subjects(x)), "subjects\n"))
+            subjects(x) %>% nrow(), "subjects\n"))
 
   n.sex <- x %>%
     dplyr::distinct(USUBJID, SEX) %>%
@@ -121,7 +121,7 @@ summary.nif <- function(object, ...) {
     subjects = subjects,
     dose_red_sbs=dose_red_sbs,
     n_studies = n_studies,
-    n_subj = length(subjects),
+    n_subj = nrow(subjects),
     n_males = n_males,
     n_females = n_females,
     # n_obs = object %>%
@@ -222,18 +222,29 @@ plot.summary_nif <- function(x, ...) {
 }
 
 
-#' Subjects within a nif object
+#' Subjects within a NIF object
 #'
-#' @param obj A nif object
+#' @param obj A NIF object
 #' @import dplyr
-#' @return A character vector of all USUBJIDs in the data set.
+#' @return A data frame of all ID - USUBJID pairs in the data set.
 #' @export
 subjects <- function(obj) {
   obj %>%
-    dplyr::distinct(USUBJID) %>%
-    dplyr::pull(USUBJID)
+    as.data.frame() %>%
+    dplyr::distinct(ID, USUBJID) #%>%
+    # dplyr::pull(USUBJID)
 }
 
+#' Get USUBJID of subject
+#'
+#' @param obj A NIF object.
+#' @param id A subject ID in numeric form.
+#'
+#' @return The USUBJID as character.
+#' @export
+usubjid <- function(obj, id) {
+  return(subjects(obj)[id, "USUBJID"])
+}
 
 #' Subjects with dose reduction
 #'
@@ -256,6 +267,35 @@ dose_red_sbs <- function(obj, analyte="") {
     filter(DOSE < initial_dose & DOSE != 0) %>%
     ungroup() %>%
     distinct(ID) %>%
+    pull(ID)
+}
+
+#' Identify subjects with rich sampling
+#'
+#' @param obj The NIF dataset.
+#' @param analyte The analyte. If the analyte is NA, the most likely will be
+#'   selected.
+#' @param max_time The end of the target interval across which the number of
+#'   samples is determined. If NA, the full treatment interval is selected.
+#' @param n The sample number cut-off.
+#'
+#' @return A list of IDs in numeric format.
+#' @export
+rich_sampling_sbs <- function(obj, analyte=NA, max_time=NA, n=4) {
+  if(is.na(analyte)) {
+    analyte <- guess_analyte(obj)
+  }
+
+  obj %>%
+    as.data.frame() %>%
+    filter(EVID==0, ANALYTE==analyte) %>%
+    group_by(ID) %>%
+    mutate(end_rich=case_when(is.na(max_time)~max(TIME), .default=max_time)) %>%
+    ungroup() %>%
+    filter(TIME < end_rich) %>%
+    group_by(ID, USUBJID) %>%
+    summarize(n_obs=n(), .groups="drop") %>%
+    filter(n_obs>n) %>%
     pull(ID)
 }
 

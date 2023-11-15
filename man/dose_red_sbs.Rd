@@ -12,7 +12,7 @@ dose_red_sbs(obj, analyte = "")
 \item{analyte}{The analyte of interest as string.}
 }
 \value{
-The USUBJIDs as string
+The IDs.
 }
 \description{
 Subjects with dose reduction

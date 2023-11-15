@@ -1,7 +1,5 @@
 ---
 title: "Imputations and assumptions used by make_nif()"
-author: "Rainer Strotmann"
-date: "17-Sep-2023"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Imputations and assumptions used by make_nif()}

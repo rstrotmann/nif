@@ -27,4 +27,5 @@ utils::globalVariables(c(
   "RICHINT_TEMP", "LEAD", "RICHINT", "FLAG", "RICH_N", "initial_dose",
   "RATE", "LNDV", "use_data", "first_dtc", "rich", "ref_time", "delta",
   "time1", "delta_time", "cohort", "dose", "DL", "block", "block_id",
-  "dose_red_start", "dose_restart", "i", "prev_dose", "ref", "trtdur"))
+  "dose_red_start", "dose_restart", "i", "prev_dose", "ref", "trtdur",
+  "end_rich", "n_obs"))

@@ -2,16 +2,16 @@
 % Please edit documentation in R/nif_class.R
 \name{subjects}
 \alias{subjects}
-\title{Subjects within a nif object}
+\title{Subjects within a NIF object}
 \usage{
 subjects(obj)
 }
 \arguments{
-\item{obj}{A nif object}
+\item{obj}{A NIF object}
 }
 \value{
-A character vector of all USUBJIDs in the data set.
+A data frame of all ID - USUBJID pairs in the data set.
 }
 \description{
-Subjects within a nif object
+Subjects within a NIF object
 }
