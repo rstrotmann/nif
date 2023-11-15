@@ -62,6 +62,8 @@ summary.sdtm <- function(object, ...) {
     subjects = subjects,
     n_subs = length(subjects),
     domains=names(object$domains),
+    treatments = object$domains[["ex"]] %>%
+      dplyr::distinct(EXTRT),
     arms = object$domains[["dm"]] %>%
       dplyr::distinct(ACTARM, ACTARMCD),
     doses = object$domains[["ex"]] %>%

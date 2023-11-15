@@ -27,7 +27,7 @@ fictional drug, `RS2023`. As part of the package, a synthetic SDTM data set for
 this study (study `RS2023-0022`) is included as `examplinib_poc`:
 
 ```{r, echo=F}
-print(summary(examplinib_poc))
+print(summary(examplinib_psummary(examplinib_poc)oc))
 ```
 
 ## Study design
