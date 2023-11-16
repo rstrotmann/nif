@@ -436,7 +436,7 @@ write_nif <- function(obj, filename, fields=NULL) {
 standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ANALYTE", "AMT", "RATE", "DV", "LNDV", "CMT", "EVID",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
-                         "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE")
+                         "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE", "TRTDY")
 
 
 
@@ -633,7 +633,8 @@ index_dosing_interval <- function(obj){
   di <- obj %>%
     as.data.frame() %>%
     filter(EVID==1) %>%
-    group_by(ID, ANALYTE) %>%
+    # group_by(ID, ANALYTE) %>%
+    group_by(ID, PARENT) %>%
     arrange(TIME) %>%
     mutate(DI=row_number()) %>%
     ungroup() %>%
@@ -643,9 +644,11 @@ index_dosing_interval <- function(obj){
   obj %>%
     as.data.frame() %>%
     left_join(di, by="REF") %>%
-    group_by(ID, ANALYTE) %>%
+    # group_by(ID, ANALYTE) %>%
+    group_by(ID) %>%
     arrange(REF) %>%
     fill(DI, .direction="down") %>%
+    as.data.frame() %>%
     # all baseline before the first administration gets assigned to the first
     #   dosing interval, too:
     fill(DI, .direction="up") %>%
@@ -818,3 +821,17 @@ mean_dose_plot <- function(obj, analyte=NULL) {
     ggtitle(paste0("Mean ", analyte, " dose over time"))
 }
 
+# add_day <- function(obj) {
+#   temp <- obj %>%
+#     as.data.frame() %>%
+#     filter(EVID==1) %>%
+#     dplyr::group_by(ID) %>%
+#     dplyr::mutate(FIRSADMINDATE=date(min(DTC))) %>%
+#     dplyr::ungroup() %>%
+#     # as.data.frame() %>%
+#     distinct(ID, FIRSADMINTIME)
+#
+#   ret <- obj %>%
+#     left_join(temp, by="ID") %>%
+#
+# }

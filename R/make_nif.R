@@ -592,6 +592,14 @@ make_nif <- function(
     impute.missing.end.time=impute.missing.end.time,
     silent=silent)
 
+  # # individual first administration
+  # first_admin <- admin %>%
+  #   filter(EVID==1) %>%
+  #   arrange(USUBJID, date) %>%
+  #   group_by(USUBJID) %>%
+  #   mutate(FIRSTADMINDATE=date(min(date))) %>%
+  #   distinct(USUBJID, FIRSTADMINDATE)
+
   # Remove all administrations with PCTESTCD==NA
   #  those rows may come from treatments that have no analyte mapping
   admin <- admin %>%
@@ -669,12 +677,13 @@ make_nif <- function(
     dplyr::filter(sum(AMT)!=0) %>%
     ungroup() %>%
 
-  group_by(USUBJID, PARENT) %>%
+    group_by(USUBJID, PARENT) %>%
     dplyr::mutate(first_admin_dtc=min(DTC[AMT!=0])) %>%
-    ungroup()
+    ungroup() %>%
+    group_by(USUBJID) %>%
+    mutate(first_treatment_dtc=min(first_admin_dtc)) %>%
+    ungroup() %>%
 
-
-  nif <- nif %>%
     # dplyr::mutate(DOSE=case_when(
     #   (AMT==0 & DTC<first_admin_dtc) ~ NA,
     #   .default=DOSE)) %>%
@@ -701,9 +710,16 @@ make_nif <- function(
       as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3)) %>%
     dplyr::mutate(ANALYTE=PCTESTCD) %>%
 
-    # recode SEX
-    recode_sex() %>%
+    # Treatment day
+    mutate(TRTDY=interval(date(first_treatment_dtc),
+                          date(DTC)) / days(1) +1) %>%
 
+    # recode SEX
+    recode_sex()
+
+
+
+    nif <- nif %>%
     # create ID column
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
