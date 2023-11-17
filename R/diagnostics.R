@@ -205,24 +205,22 @@ wt_by_race <- function(obj) {
     group_by(ID) %>%
     mutate(bl_wt=mean(WEIGHT[TIME==0])) %>%
     ungroup() %>%
-    #mutate(rc=as.factor(RACE)) %>%
-    mutate(rc=as.factor(case_match(RACE,
+    mutate(rc=as.factor(case_match(as.character(RACE),
                          "WHITE"~"White",
                          "BLACK OR AFRICAN AMERICAN"~"Black",
                          "ASIAN"~"Asian",
                          "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER"~"Pacific",
+                         "AMERICAN INDIAN OR ALASKA NATIVE"~"Native",
                          "OTHER"~"Other",
                          .default=RACE))) %>%
-    # as.data.frame() %>%
     distinct(ID, bl_wt, rc) %>%
+    mutate(maxwt=max(bl_wt, na.rm=T)) %>%
     group_by(rc) %>%
-    mutate(count = n(), maxwt=max(bl_wt)) %>%
+    mutate(count = n()) %>%
     ggplot(aes(x=rc, y=bl_wt, group=rc)) +
     geom_boxplot(width=0.5) +
-    # geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
-    #              color="transparent", dotsize=1.2) +
-    geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
-               label.size=0, position=position_dodge(width = 0.75)) +
+    geom_label(aes(label= paste0("N=", count), y=maxwt+5),
+               label.size=0) +
     labs(x="", y="baseline weight (kg)") +
     theme_bw() +
     ggtitle("Body weight by race")

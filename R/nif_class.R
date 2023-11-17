@@ -485,6 +485,8 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @param title The plot title as string.
 #' @param ... Further arguments.
 #' @param min_x Minimum x (time) scale value.
+#' @param lines Boolean to define whether lines are to be drawn.
+#' @param alpha Numerical value between 0 and 1, passed on as alpha to ggplot.
 #'
 #' @return The plot object
 #' @seealso [nif_viewer()]

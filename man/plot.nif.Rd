@@ -18,6 +18,8 @@
   group = NULL,
   administrations = F,
   nominal_time = F,
+  lines = T,
+  alpha = 1,
   title = NULL,
   ...
 )
@@ -58,6 +60,10 @@ mean=F.}
 
 \item{nominal_time}{Boolean to indicate whether NTIME rather than TIME should
 be plotted on the x-axis.}
+
+\item{lines}{Boolean to define whether lines are to be drawn.}
+
+\item{alpha}{Numerical value between 0 and 1, passed on as alpha to ggplot.}
 
 \item{title}{The plot title as string.}
 
