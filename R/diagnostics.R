@@ -205,7 +205,15 @@ wt_by_race <- function(obj) {
     group_by(ID) %>%
     mutate(bl_wt=mean(WEIGHT[TIME==0])) %>%
     ungroup() %>%
-    mutate(rc=as.factor(RACE)) %>%
+    #mutate(rc=as.factor(RACE)) %>%
+    mutate(rc=as.factor(case_match(RACE,
+                         "WHITE"~"White",
+                         "BLACK OR AFRICAN AMERICAN"~"Black",
+                         "ASIAN"~"Asian",
+                         "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER"~"Pacific",
+                         "OTHER"~"Other",
+                         .default=RACE))) %>%
+    # as.data.frame() %>%
     distinct(ID, bl_wt, rc) %>%
     group_by(rc) %>%
     mutate(count = n(), maxwt=max(bl_wt)) %>%
@@ -215,9 +223,27 @@ wt_by_race <- function(obj) {
     #              color="transparent", dotsize=1.2) +
     geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
                label.size=0, position=position_dodge(width = 0.75)) +
-    labs(x="race", y="baseline weight (kg)") +
+    labs(x="", y="baseline weight (kg)") +
     theme_bw() +
     ggtitle("Body weight by race")
+}
+
+#' Weight by height scatterplot
+#'
+#' @param obj The NIF object.
+#'
+#' @return A plot object.
+#' @export
+wt_by_ht <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    distinct(ID, HEIGHT, WEIGHT) %>%
+    ggplot(aes(x=HEIGHT, y=WEIGHT)) +
+    geom_smooth(method="lm", formula = 'y ~ x', alpha=0.3) +
+    geom_point(size=2) +
+    labs(x="height (cm)", y="baseline weight (kg)") +
+    ggtitle("Body weight by height") +
+    theme_bw()
 }
 
 sbs_by_dl <- function(obj) {

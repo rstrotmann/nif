@@ -191,15 +191,28 @@ print.summary_nif <- function(x, ...) {
 plot.summary_nif <- function(x, ...) {
   nif <- x$nif
 
-  invisible(capture.output(
-    suppressWarnings(
-      print(list(
-        age_hist(nif),
-        weight_hist(nif))))))
+  plots <- list(
+    age_hist(nif),
+    weight_hist(nif)
+  )
+  invisible(
+    capture.output(
+      suppressWarnings(
+        print(plots)
+      )
+    )
+  )
 
-  if("HEIGHT" %in% colnames(x$nif)){
-    invisible(capture.output(suppressWarnings(print(
-      bmi_hist(nif)))))
+  if("HEIGHT" %in% colnames(nif)){
+    plots <- list(
+        bmi_hist(nif),
+        wt_by_ht(nif))
+    invisible(
+      capture.output(
+        suppressWarnings(
+          print(plots))
+      )
+    )
   }
 
   plots <- list(
@@ -209,7 +222,9 @@ plot.summary_nif <- function(x, ...) {
       nif %>%
         plot(analyte=a,
              y_scale = "log",
-             points=F,
+             points=T,
+             line=F,
+             alpha=0.3,
              title=paste(a, "overview by dose"),
              max_x=max_observation_time(x$nif, a))}))
 
@@ -485,8 +500,8 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
 #' @export
 plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
                      mean=FALSE, doses=NULL, points=F, id=NULL, usubjid=NULL,
-                     group=NULL, administrations=F, nominal_time=F,
-                     title=NULL, ...) {
+                     group=NULL, administrations=F, nominal_time=F, lines=T,
+                     alpha=1, title=NULL, ...) {
   if(!is.null(id)) {
     x <- x %>%
       dplyr::filter(ID %in% id)
@@ -540,7 +555,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
       ggplot2::geom_ribbon(aes(ymin=mean-sd, ymax=mean+sd,
                                fill=as.factor(.data[[cov]])),
                                alpha=0.3, color=NA, show.legend=F) +
-      ggplot2::geom_line() +
+      #ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
       ylim(0, max(temp$max_y, na.rm=T)) +
@@ -579,7 +594,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     }
 
     p <- p +
-    ggplot2::geom_line() +
+    #ggplot2::geom_line() +
     ggplot2::facet_wrap(~DOSE) +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position="bottom")
@@ -596,7 +611,11 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
   }
 
   if(points){
-    p <- p + ggplot2::geom_point()
+    p <- p + ggplot2::geom_point(alpha=alpha)
+  }
+
+  if(lines) {
+    p <- p + ggplot2::geom_line(alpha=alpha)
   }
 
   if(length(analyte) == 1){
