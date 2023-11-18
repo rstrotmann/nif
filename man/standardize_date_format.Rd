@@ -15,10 +15,11 @@ standardize_date_format(obj, fields = NULL)
 A data frame
 }
 \description{
-This function converts date time code (DTC) variables from the format used
-in SDTM (i.e., something like "2001-01-02T09:59" where date and time are
-separated by "T") to standard POSIX format. The names of teh variables to be
-converted need to be provided by \code{fields}.
+This function converts date time code (DTC) variables from the
+\href{https://w.wiki/8Bzr}{ISO 8601} format used in SDTM (i.e., something
+like "2001-01-02T09:59" where date and
+time are separated by "T") to standard POSIXct format. The names of the
+variables to be converted need to be provided by \code{fields}.
 }
 \examples{
 standardize_date_format(examplinib_fe$domains[["ex"]], c("RFSTDTC", "EXSTDTC", "EXENDTC"))

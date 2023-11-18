@@ -19,6 +19,6 @@ This function returns the time in hours of the last administration within
 the data set.
 }
 \examples{
-max_admin_time(examplinib_nif)
+max_admin_time(examplinib_fe_nif)
 
 }

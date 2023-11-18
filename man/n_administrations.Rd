@@ -16,6 +16,6 @@ A data frame.
 Number of administrations per subject
 }
 \examples{
-n_administrations(examplinib_nif)
+n_administrations(examplinib_fe_nif)
 
 }

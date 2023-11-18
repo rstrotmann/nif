@@ -19,6 +19,6 @@ This function returns the time in hours of the last observation within the
 data set.
 }
 \examples{
-max_observation_time(examplinib_nif)
+max_observation_time(examplinib_fe_nif)
 
 }

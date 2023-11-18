@@ -36,7 +36,7 @@ after the last observation time point will deleted.}
 (\code{NTIME}) from \code{PCTPTNUM}.}
 }
 \value{
-A NIF data set as nif object.
+A NIF object.
 }
 \description{
 This function makes a basic NONMEM input file (NIF) data set, following the
@@ -50,11 +50,9 @@ treatment-to-analyte mappings must be added to the sdtm object using
 }
 \section{Imputations}{
 
-'make_nif()' uses a cut-off time that is equal to the last observation
-time. All later administrations will not be in the data set.
-
-Subjects-administration pairs that have no observations for the respective
-analyte will be deleted from the data set.
+Subjects with administration but no observations for the respective
+analyte are deleted from the data set. For further imputations, see the
+vignette "nif-imputations".
 }
 
 \section{Output fields}{
@@ -66,16 +64,25 @@ relative to the first individual event.
 \item \code{AMT} Dose administered for dosing record, or zero for observations.
 \item \code{DOSE} Dose in mg for administrations and post-dose observations.
 \item \code{DV} The dependent variable, i.e., observed concentration, or zero for
-administration records.
+administration records, in mg/l.
+\item \code{LNDV} The natural Log of DV.
 \item \code{RATE} Rate of infusion of drug or zero if drug is given as a bolus.
 \item \code{MDV} One for missing DV, else zero.
 \item \code{EVID} Event ID: 0 for observations, 1 for administrations.
 \item \code{CMT} Pharmacokinetic compartment. Will be set to 1 for administrations and 2 for
 observations. Should be changed afterwards, if needed.
+\item \code{DTC} The date-time of the data record.
 \item \code{FIRSTDTC} Date and time of first event per subject. This field is used
 internally for the calculation of \code{TIME}. Although it is not needed
 for NONMEM analysis, it is provided for subsequent NIF file building
 steps, e.g., addition of further time-dependent endpoints.
+\item \code{FIRSTADMINDTC} The date-time of the first administration of the
+respective parent drug for the respective subject.
+\item \code{FIRSTTRTDTC} The date-time of the first administration of any parent
+drug for the respective subject.
+\item \code{ANALYTE} The analyte or drug in the data record.
+\item \code{TRTDY} The treatment day, i.e., the relative day after the first
+treatment for the respective subject.
 }
 }
 

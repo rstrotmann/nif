@@ -74,27 +74,27 @@ The return value of the function is a `sdtm` object.
 ## SDTM objects
 
 `sdtm` objects are essentially lists of the SDTM domains from a particular
-clinical study. The most common way of creating `sdtm`objects is by importing
+clinical study. The most common way of creating `sdtm` objects is by importing
 the SDTM data using `read_sdtm_sas()` or `read_sdtm_xpt()` (see above). 
 
 The original data can be retrieved accessing the individual domains like
-demonstrated below for the (fictional) sample data set `examplinib`:
+demonstrated below for the (fictional) sample data set `examplinib_fe`:
 
 ```{r}
-examplinib$domains[["dm"]] %>% head()
+examplinib_fe$domains[["dm"]] %>% head()
 ```
 
 The most relevant domains, "dm", "vs", "ex" and "pc", can also be accessed
 directly, e.g.:
 
 ```{r}
-dm <- examplinib$dm
+dm <- examplinib_fe$dm
 ```
 
 Printing an `sdtm` object shows basic information on the data set:
 
 ```{r}
-examplinib
+examplinib_fe
 ```
 
 
@@ -108,17 +108,17 @@ As a starting point the function `suggest()` can provide useful suggestions for
 a `sdtm`object:
 
 ```{r}
-suggest(examplinib)
+suggest(examplinib_fe)
 ```
 
-In the case of "examplinib", there are different treatment arms defined in the
+In the case of `examplinib_fe`, there are different treatment arms defined in the
 DM domain that should probably be included as covariates in the NIF file (see
 suggestion 1). This will be programmed once a basic NIF file has been generated
 (see below).
 
 Also, the SDTM data do not provide a relation between treatments and analytes
 (see suggestion 2). The parent drug name in the SDTM field `EXTRT` (i.e.,
-"EXAMPLINIB) is different from the respective analyte for the parent compound as
+"EXAMPLINIB") is different from the respective analyte for the parent compound as
 specified in the field `PCTESTCD` (i.e., "RS2023"). This is a common situation
 in data from clinical studies. However, to correctly associate pharmacokinetic
 concentrations with the administration of the corresponding drug, a link needs
@@ -144,7 +144,7 @@ To establish the relationships betwen metabolites and their parent copounds,
 "RS2023487A" represents a metabolite of "RS2023":
 
 ```{r}
-sdtm_expl <- examplinib %>% 
+sdtm_expl <- examplinib_fe %>% 
   add_analyte_mapping("EXAMPLINIB", "RS2023") %>% 
   add_metabolite_mapping("RS2023", "RS2023487A")
 ```
@@ -170,9 +170,10 @@ nif_expl <- make_nif(sdtm_expl)
 ```
 
 The output of the above code informs that there may be pharmacokinetic data for
-multiple specimens in the PC domain, e.g., PLASMA and URINE or FECES.
-As no specimem was specified, `make_nif()` takes the most likely, however, the
-specimen of interest can be explicitly provided (see `?make_nif()` for details).
+multiple specimens in the PC domain, e.g., "PLASMA" and "URINE" or "FECES".
+As no specimem was defined, `make_nif()` takes the most likely ("PLASMA").
+Alternatively, the specimen of interest can be explicitly provided
+(see `?make_nif()` for details).
 
 Also, a data cut-off was applied that reflects the date and time of the last
 observation. This may be most relevant in multiple-dose studies where further
@@ -209,7 +210,7 @@ nif_expl <- make_nif(sdtm_expl, silent=T) %>%
   mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
 ```
 
-By the way, note the `silent=T` modifier that omits all messages from `make_nif()`.
+Note the `silent=T` modifier that omits all messages from `make_nif()`.
 
 The NIF file has now the additional fields `PERIOD`, `TREATMENT` and `FASTED`,
 see the first few lines of the the data:
@@ -227,11 +228,11 @@ nif_expl %>%
 
 NIF objects allow basic ploting functionality using `plot()`, directly applied
 to the object. The below shows some examples for common exploratory tasks (for 
-more detail, refer to `?plot.nif`).
+more detail, refer to `?plot.nif()`).
 
 Obviously, more complex custom plots (or other analyses) can be done manually on
-the `nif` data. Note that in many cases, the `nif` object shoudl be converted to
-a data frame for this purpose (i.e., using `as.data.frame()`).
+the `nif` data. Note that the `nif` object must be converted to a data frame for
+this purpose (i.e., using `as.data.frame()`):
 
 In the simplest exploratory plot, all analytes are shown:
 
@@ -254,7 +255,7 @@ status:
 plot(nif_expl, analyte="RS2023", group="FASTED", max_x=24, mean=T)
 ```
 
-There are further display options, refer to `?plot.nif` for details.
+There are further display options, refer to `?plot.nif()` for details.
 
 For a quick overview, use `nif_viewer()` to show individual subjects
 interactively: 

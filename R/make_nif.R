@@ -135,10 +135,11 @@ dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
 
 #' Convert date fileds to POSIX format
 #'
-#' This function converts date time code (DTC) variables from the format used
-#' in SDTM (i.e., something like "2001-01-02T09:59" where date and time are
-#' separated by "T") to standard POSIX format. The names of teh variables to be
-#' converted need to be provided by `fields`.
+#' This function converts date time code (DTC) variables from the
+#' \href{https://w.wiki/8Bzr}{ISO 8601} format used in SDTM (i.e., something
+#' like "2001-01-02T09:59" where date and
+#' time are separated by "T") to standard POSIXct format. The names of the
+#' variables to be converted need to be provided by `fields`.
 #'
 #' @param obj A data frame.
 #' @param fields Date variable names as character.
@@ -299,8 +300,17 @@ make_admin <- function(ex,
 
 #' Make observation data set from PC
 #'
+#' This function creates an observation data frame from PC SDTM data.
+#'
+#' @details
+#' Nominal time is either derived from `PCTPTNUM` (if `use_pctptnum=TRUE`), or
+#' from `PCELTM` (the relative nominal time). Both are permissible fields per
+#' the CDISC specification and may be absent from the clinical data. In contrast
+#' to `PCTPOTNUM`, `PCELTM` follows a defined format, i.e., the
+#' \href{https://w.wiki/8Bzr}{ISO 8601} specification for time durations.
+#'
 #' Note that the DV is converted into mg/l assuming that PCSTRESN is provided
-#'   in mg/ml
+#' in mg/ml!
 #'
 #' @param pc The SDTM PC domain as a data.frame.
 #' @param time_mapping The time mapping.
@@ -311,9 +321,11 @@ make_admin <- function(ex,
 #' @param use_pctptnum Use PCTPTNUM as nominal time.
 #' @param silent Boolean value to indicate whether warnings should be printed.
 #'
-#' @return A tibble with individual observations with certain NONMEM input variables set
+#' @return A data frame with individual observations with certain NONMEM input
+#' variables set
 #' @import dplyr
 #' @import lubridate
+#' @seealso [add_time_mapping()]
 make_obs <- function(pc,
                      time_mapping=NULL,
                      spec=NULL,
@@ -321,7 +333,8 @@ make_obs <- function(pc,
                      use_pctptnum=F){
   # Filter for specific specimen, guess specimen if none defined
   pcspecs <- pc %>%
-    dplyr::distinct(PCSPEC) %>% pull(PCSPEC)
+    dplyr::distinct(PCSPEC) %>%
+    dplyr::pull(PCSPEC)
 
   standard_specs <- c("PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
                       "BLOOD", "Blood", "blood")
@@ -348,17 +361,21 @@ make_obs <- function(pc,
       dplyr::filter(PCSTAT!="NOT DONE")
   }
 
+  # identify observation date and time
   obs <- obs %>%
     # extract date and time of observation
-    dplyr::mutate(DTC=lubridate::as_datetime(PCDTC,
-      format=dtc_formats)) %>%
+    # dplyr::mutate(DTC=lubridate::as_datetime(PCDTC,
+    #   format=dtc_formats)) %>%
+    mutate(DTC=PCDTC) %>%
+    standardize_date_format(c("PCRFTDTC", "DTC")) %>%
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
       .default=NA))
 
+  # identify nominal time
   if(use_pctptnum) {
     obs <- obs %>%
-      mutate(NTIME=as.numeric(PCTPTNUM))
+      dplyr::mutate(NTIME=as.numeric(PCTPTNUM))
   } else {
     if("PCELTM" %in% names(pc)){
       obs <- obs %>%
@@ -432,36 +449,30 @@ last_ex_dtc <- function(ex) {
 #' @return An admin data set.
 #' @import tidyr
 #' @import dplyr
-impute.administration.time <- function(admin, obs){
-
-
+impute.administration.time <- function(admin, obs) {
   temp <- obs %>%
-    dplyr::mutate(dtc=lubridate::as_datetime(
-      PCDTC, format=dtc_formats)) %>%
-    dplyr::mutate(dtc.date=format(dtc, format="%Y-%m-%d")) %>%
-    dplyr::mutate(ref.dtc=lubridate::as_datetime(
-      PCRFTDTC, format=dtc_formats)) %>%
-    dplyr::mutate(ref.date=format(ref.dtc, format="%Y-%m-%d")) %>%
-    dplyr::mutate(ref.time=format(ref.dtc, format="%H:%M")) %>%
+    dplyr::mutate(dtc.date=format(DTC, format="%Y-%m-%d")) %>%
+    dplyr::mutate(ref.date=format(PCRFTDTC, format="%Y-%m-%d")) %>%
+    dplyr::mutate(ref.time=format(PCRFTDTC, format="%H:%M")) %>%
     dplyr::filter(dtc.date == ref.date) %>%
     dplyr::group_by(USUBJID, dtc.date, PCTESTCD) %>%
     dplyr::distinct(ref.time)
 
   ret <- admin %>%
     dplyr::mutate(dtc.date=format(date, format="%Y-%m-%d")) %>%
-    dplyr::left_join(temp, by=c("USUBJID"="USUBJID", "dtc.date"="dtc.date", "EXTRT"="PCTESTCD")) %>%
+    dplyr::left_join(temp, by=c("USUBJID"="USUBJID", "dtc.date"="dtc.date",
+                                "EXTRT"="PCTESTCD")) %>%
     # take PCREFDTC where time is not available from EX
     dplyr::mutate(admin.time=case_when(!is.na(ref.time) ~ ref.time, .default=time)) %>%
     dplyr::group_by(USUBJID, EXTRT) %>%
     dplyr::arrange(date) %>%
-    # carry forward last administration time
-    tidyr::fill(admin.time, .direction="down") %>%
-    # carry back first administration time
-    tidyr::fill(admin.time, .direction="up") %>%
+    # carry forward/back last administration time
+    tidyr::fill(admin.time, .direction="downup") %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(DTC=case_when((is.na(admin.time) | is.na(date)) ~ NA,
-      .default=lubridate::as_datetime(paste(date, admin.time),
-                                      format="%Y-%m-%d %H:%M"))) %>%
+    dplyr::mutate(DTC=case_when(
+      (is.na(admin.time) | is.na(date)) ~ NA,
+      .default=lubridate::as_datetime(
+        paste(date, admin.time), format="%Y-%m-%d %H:%M"))) %>%
     dplyr::select(-admin.time, -ref.time)
   return(ret)
 }
@@ -480,11 +491,9 @@ impute.administration.time <- function(admin, obs){
 #'   [add_mapping()].
 #'
 #' @section Imputations:
-#'   'make_nif()' uses a cut-off time that is equal to the last observation
-#'   time. All later administrations will not be in the data set.
-#'
-#'   Subjects-administration pairs that have no observations for the respective
-#'   analyte will be deleted from the data set.
+#'   Subjects with administration but no observations for the respective
+#'   analyte are deleted from the data set. For further imputations, see the
+#'   vignette "nif-imputations".
 #'
 #' @section Output fields:
 #'   * `ID` Subject identification number
@@ -493,16 +502,25 @@ impute.administration.time <- function(admin, obs){
 #'   * `AMT` Dose administered for dosing record, or zero for observations.
 #'   * `DOSE` Dose in mg for administrations and post-dose observations.
 #'   * `DV` The dependent variable, i.e., observed concentration, or zero for
-#'        administration records.
+#'        administration records, in mg/l.
+#'   * `LNDV` The natural Log of DV.
 #'   * `RATE` Rate of infusion of drug or zero if drug is given as a bolus.
 #'   * `MDV` One for missing DV, else zero.
 #'   * `EVID` Event ID: 0 for observations, 1 for administrations.
 #'   * `CMT` Pharmacokinetic compartment. Will be set to 1 for administrations and 2 for
 #'        observations. Should be changed afterwards, if needed.
+#'   * `DTC` The date-time of the data record.
 #'   * `FIRSTDTC` Date and time of first event per subject. This field is used
 #'        internally for the calculation of `TIME`. Although it is not needed
 #'        for NONMEM analysis, it is provided for subsequent NIF file building
 #'        steps, e.g., addition of further time-dependent endpoints.
+#'   * `FIRSTADMINDTC` The date-time of the first administration of the
+#'        respective parent drug for the respective subject.
+#'   * `FIRSTTRTDTC` The date-time of the first administration of any parent
+#'        drug for the respective subject.
+#'   * `ANALYTE` The analyte or drug in the data record.
+#'   * `TRTDY` The treatment day, i.e., the relative day after the first
+#'        treatment for the respective subject.
 #'
 #' @param sdtm.data A list of SDTM domains as data tables, e.g., as loaded using
 #'   read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.
@@ -520,7 +538,7 @@ impute.administration.time <- function(admin, obs){
 #' @param use_pctptnum Boolean to indicate whether to derive nominal time
 #'   (`NTIME`) from `PCTPTNUM`.
 #'
-#' @return A NIF data set as nif object.
+#' @return A NIF object.
 #' @seealso [add_analyte_mapping()]
 #' @seealso [add_time_mapping()]
 #' @import tidyr
@@ -598,14 +616,6 @@ make_nif <- function(
     impute.missing.end.time=impute.missing.end.time,
     silent=silent)
 
-  # # individual first administration
-  # first_admin <- admin %>%
-  #   filter(EVID==1) %>%
-  #   arrange(USUBJID, date) %>%
-  #   group_by(USUBJID) %>%
-  #   mutate(FIRSTADMINDATE=date(min(date))) %>%
-  #   distinct(USUBJID, FIRSTADMINDATE)
-
   # Remove all administrations with PCTESTCD==NA
   #  those rows may come from treatments that have no analyte mapping
   admin <- admin %>%
@@ -635,7 +645,6 @@ make_nif <- function(
     dplyr::filter(ut %in% obs.sbs$ut) %>%
     dplyr::select(-ut)
 
-
   if(nrow(admin)==0) {
     stop(paste0("No subjects in the data set left after filtering out ",
     "subjects without observations.\n",
@@ -664,9 +673,9 @@ make_nif <- function(
   ## assemble NIF data set from administrations and observations and baseline
   #    data.
   nif <- obs %>%
-    # join observations and administrations, then DM and baseline VS
-    dplyr::bind_rows(admin %>%
-                       dplyr::filter(USUBJID %in% obs$USUBJID)) %>%
+    dplyr::bind_rows(
+      admin %>%
+        dplyr::filter(USUBJID %in% obs$USUBJID)) %>%
     dplyr::left_join(dm, by=c("USUBJID", "STUDYID")) %>%
     dplyr::left_join(bl.cov, by="USUBJID") %>%
 
@@ -675,32 +684,21 @@ make_nif <- function(
     dplyr::mutate(FIRSTDTC=min(DTC)) %>%
     dplyr::ungroup() %>%
 
-    # filter(!is.na(PARENT)) %>%
-    filter(PARENT != "") %>%
+    # filter out rows without parent information
+    dplyr::filter(PARENT != "") %>%
 
     # filter out observations without administration
     dplyr::group_by(USUBJID, PARENT) %>%
     dplyr::filter(sum(AMT)!=0) %>%
-    ungroup() %>%
+    dplyr::ungroup() %>%
 
+    # identify first administration per PARENT and first treatment overall
     group_by(USUBJID, PARENT) %>%
-    dplyr::mutate(first_admin_dtc=min(DTC[AMT!=0])) %>%
+    dplyr::mutate(FIRSTADMINDTC=min(DTC[EVID==1])) %>%
     ungroup() %>%
     group_by(USUBJID) %>%
-    mutate(first_treatment_dtc=min(first_admin_dtc)) %>%
+    mutate(FIRSTTRTDTC=min(FIRSTADMINDTC)) %>%
     ungroup() %>%
-
-    # dplyr::mutate(DOSE=case_when(
-    #   (AMT==0 & DTC<first_admin_dtc) ~ NA,
-    #   .default=DOSE)) %>%
-
-    # fill missing fields
-    # dplyr::arrange(USUBJID, PCTESTCD, DTC, -EVID) %>%
-    # dplyr::group_by(USUBJID, PCTESTCD) %>%
-    # tidyr::fill(DOSE) %>%
-    # tidyr::fill(AGE, SEX, RACE, ETHNIC, ACTARMCD, HEIGHT, WEIGHT, COUNTRY, ARM,
-    #             SUBJID, .direction="down") %>%
-    # dplyr::ungroup() %>%
 
     dplyr::arrange(USUBJID, PARENT, DTC, EVID) %>%
     dplyr::group_by(USUBJID, PARENT) %>%
@@ -717,19 +715,17 @@ make_nif <- function(
     dplyr::mutate(ANALYTE=PCTESTCD) %>%
 
     # Treatment day
-    mutate(TRTDY=interval(date(first_treatment_dtc),
+    # mutate(TRTDY=interval(date(first_treatment_dtc),
+    #                       date(DTC)) / days(1) +1) %>%
+    mutate(TRTDY=interval(date(FIRSTTRTDTC),
                           date(DTC)) / days(1) +1) %>%
-
     # recode SEX
     recode_sex()
-
-
 
     nif <- nif %>%
     # create ID column
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
-    #dplyr::mutate(DV=case_when(is.na(DV)~0, .default=DV)) %>%
     dplyr::relocate(ID) %>%
     new_nif() %>%
     index_nif()
@@ -957,14 +953,6 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 #' @return The resulting NIF data set.
 #' @export
 add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
-  # if(!lbtestcd %in% (
-  #   lb %>%
-  #   dplyr::distinct(LBTESTCD) %>%
-  #   dplyr::pull(LBTESTCD))
-  # ) {
-  #   stop(paste0("The following was not found in lb: ", lbtestcd[lbtestcd]))
-  # }
-
   test <- lbtestcd %in% unique(lb$LBTESTCD)
   if(!all(test)) {
     stop(paste0("The following parameters were not not found in lb: ",
@@ -972,11 +960,8 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
   }
 
   lb.params <- lb %>%
-    mutate(DTC=lubridate::as_datetime(
+    dplyr::mutate(DTC=lubridate::as_datetime(
       LBDTC, format=dtc_formats)) %>%
-    # mutate(date=format(DTC, format="%Y-%m-%d")) %>%
-    # mutate(labdate=date) %>%
-    # dplyr::filter(LBSPEC==lbspec) %>%
     dplyr::filter(LBSPEC %in% lbspec) %>%
     dplyr::filter(LBTESTCD==lbtestcd) %>%
 
@@ -984,20 +969,23 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
                 as.data.frame() %>%
                 distinct(USUBJID, FIRSTDTC), by="USUBJID") %>%
 
-    mutate(ANALYTE=lbtestcd, PARENT="", CMT=cmt, MDV=0, EVID=0, AMT=0, RATE=0) %>%
-    dplyr::mutate(TIME=round(as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3)) %>%
-    mutate(DV=LBSTRESN) %>%
-    mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
-    select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, PARENT, CMT, EVID, TIME, NTIME, DV, AMT)
+    dplyr::mutate(ANALYTE=lbtestcd, PARENT="", CMT=cmt, MDV=0, EVID=0,
+                  AMT=0, RATE=0) %>%
+    dplyr::mutate(TIME=round(as.numeric(difftime(DTC, FIRSTDTC, units="h")),
+                             digits=3)) %>%
+    dplyr::mutate(DV=LBSTRESN) %>%
+    dplyr::mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
+    dplyr::select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, PARENT, CMT, EVID,
+                  TIME, NTIME, DV, AMT)
 
   temp <- obj %>%
     as.data.frame() %>%
     bind_rows(lb.params) %>%
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
-    group_by(USUBJID) %>%
+    dplyr::group_by(USUBJID) %>%
     fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
-    ungroup()
+    dplyr::ungroup()
 
   return(new_nif(temp))
 }

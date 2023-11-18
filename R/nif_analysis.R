@@ -152,13 +152,13 @@ dose_plot_id <- function(nif, id, y.scale="lin", max.dose=NA, max.time=NA,
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @examples
-#' plot(examplinib_nif)
-#' plot(examplinib_nif, analyte="RS2023", points=TRUE)
-#' plot(examplinib_nif, analyte="RS2023", group="FASTED")
-#' plot(examplinib_nif, max_x=24, point=TRUE)
-#' plot(examplinib_nif, analyte="RS2023", group="FASTED", nominal_time=TRUE)
-#' plot(examplinib_nif, analyte="RS2023", group="FASTED", mean=TRUE)
-#' plot(examplinib_nif, analyte="RS2023", group="FASTED", mean=TRUE, max_x=24)
+#' plot(examplinib_fe_nif)
+#' plot(examplinib_fe_nif, analyte="RS2023", points=TRUE)
+#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED")
+#' plot(examplinib_fe_nif, max_x=24, point=TRUE)
+#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", nominal_time=TRUE)
+#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", mean=TRUE)
+#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", mean=TRUE, max_x=24)
 #'
 #' @export
 plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
@@ -605,7 +605,7 @@ wt_by_ht <- function(obj) {
 #' @importFrom stats median
 #' @export
 #' @examples
-#' administration_summary(examplinib_nif)
+#' administration_summary(examplinib_fe_nif)
 #'
 administration_summary <- function(obj) {
   obj %>%

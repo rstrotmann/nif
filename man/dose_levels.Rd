@@ -21,7 +21,7 @@ In studies with multiple administrations, dose modifications may occur. The
 administrations.
 }
 \examples{
-dose_levels(examplinib_nif)
-dose_levels(examplinib_nif, grouping="SEX")
-dose_levels(examplinib_nif, grouping=c("SEX", "FASTED"))
+dose_levels(examplinib_fe_nif)
+dose_levels(examplinib_fe_nif, grouping="SEX")
+dose_levels(examplinib_fe_nif, grouping=c("SEX", "FASTED"))
 }

@@ -188,9 +188,9 @@ doses <- function(obj){
 #' @export
 #'
 #' @examples
-#' dose_levels(examplinib_nif)
-#' dose_levels(examplinib_nif, grouping="SEX")
-#' dose_levels(examplinib_nif, grouping=c("SEX", "FASTED"))
+#' dose_levels(examplinib_fe_nif)
+#' dose_levels(examplinib_fe_nif, grouping="SEX")
+#' dose_levels(examplinib_fe_nif, grouping=c("SEX", "FASTED"))
 dose_levels <- function(obj, grouping=NULL) {
   obj %>%
     filter(METABOLITE==FALSE) %>%
@@ -343,7 +343,7 @@ index_dosing_interval <- function(obj){
 #' @return A data frame.
 #' @export
 #' @examples
-#' n_observations_per_dosing_interval(examplinib_nif)
+#' n_observations_per_dosing_interval(examplinib_fe_nif)
 #'
 n_observations_per_dosing_interval <- function(obj, analyte=NULL) {
   if(!is.null(analyte)) {
@@ -366,7 +366,7 @@ n_observations_per_dosing_interval <- function(obj, analyte=NULL) {
 #' @return A data frame.
 #' @export
 #' @examples
-#' n_administrations(examplinib_nif)
+#' n_administrations(examplinib_fe_nif)
 #'
 n_administrations <- function(obj) {
   obj %>%
@@ -389,7 +389,7 @@ n_administrations <- function(obj) {
 #' @return A scalar representing the time in hours.
 #' @export
 #' @examples
-#' max_admin_time(examplinib_nif)
+#' max_admin_time(examplinib_fe_nif)
 #'
 max_admin_time <- function(obj, analytes=NULL) {
   if(!is.null(analytes)) {
@@ -415,7 +415,7 @@ max_admin_time <- function(obj, analytes=NULL) {
 #' @return A scalar representing the time in hours.
 #' @export
 #' @examples
-#' max_observation_time(examplinib_nif)
+#' max_observation_time(examplinib_fe_nif)
 #'
 max_observation_time <- function(obj, analytes=NULL) {
   if(!is.null(analytes)) {

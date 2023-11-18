@@ -21,9 +21,22 @@ or "PLASMA" is selected, depending what is found in the PC data.}
 \item{use_pctptnum}{Use PCTPTNUM as nominal time.}
 }
 \value{
-A tibble with individual observations with certain NONMEM input variables set
+A data frame with individual observations with certain NONMEM input
+variables set
 }
 \description{
+This function creates an observation data frame from PC SDTM data.
+}
+\details{
+Nominal time is either derived from \code{PCTPTNUM} (if \code{use_pctptnum=TRUE}), or
+from \code{PCELTM} (the relative nominal time). Both are permissible fields per
+the CDISC specification and may be absent from the clinical data. In contrast
+to \code{PCTPOTNUM}, \code{PCELTM} follows a defined format, i.e., the
+\href{https://w.wiki/8Bzr}{ISO 8601} specification for time durations.
+
 Note that the DV is converted into mg/l assuming that PCSTRESN is provided
-in mg/ml
+in mg/ml!
+}
+\seealso{
+\code{\link[=add_time_mapping]{add_time_mapping()}}
 }

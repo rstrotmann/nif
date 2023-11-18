@@ -16,6 +16,6 @@ A data frame.
 Overview on the number of administrations in the subjects by parent
 }
 \examples{
-administration_summary(examplinib_nif)
+administration_summary(examplinib_fe_nif)
 
 }

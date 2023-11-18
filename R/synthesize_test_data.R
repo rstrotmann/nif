@@ -937,14 +937,6 @@ synthesize_sdtm_poc_study <- function() {
   ex <- make_md_ex(dm, drug="RS2023", dose=500, missed_doses = T) %>%
     as.data.frame()
 
-
-  #######################
-  # to do
-  #
-  # omit time information randomly?
-  # make md PC based on sparse sampling (run in with rich?)
-  #
-
   sbs <- dm %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
     left_join(vs %>%
@@ -1092,7 +1084,13 @@ synthesize_examplinib <- function() {
   # make NIF package data
   examplinib_sad_nif <- examplinib_sad %>% make_nif(spec="PLASMA")
   examplinib_poc_nif <- examplinib_poc %>% make_nif(spec="PLASMA")
-  examplinib_fe_nif <- examplinib_fe %>% make_nif(spec="PLASMA")
+
+  examplinib_fe_nif <- make_nif(examplinib_fe, spec="PLASMA") %>%
+    mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>%
+    mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
+    mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
+
+  # examplinib_fe %>% make_nif(spec="PLASMA")
 
   use_data(examplinib_sad_nif, overwrite=T)
   use_data(examplinib_poc_nif, overwrite=T)

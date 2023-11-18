@@ -19,6 +19,6 @@ This function returns the number of observations by subject and analyte per
 dosing interval.
 }
 \examples{
-n_observations_per_dosing_interval(examplinib_nif)
+n_observations_per_dosing_interval(examplinib_fe_nif)
 
 }
