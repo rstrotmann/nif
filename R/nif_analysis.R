@@ -648,7 +648,3 @@ mean_dose_plot <- function(obj, analyte=NULL) {
     ggtitle(paste0("Mean ", analyte, " dose over time"))
 }
 
-
-sbs_by_dl <- function(obj) {
-
-}

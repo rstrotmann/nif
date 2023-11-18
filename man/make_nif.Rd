@@ -80,7 +80,7 @@ steps, e.g., addition of further time-dependent endpoints.
 }
 
 \examples{
-make_nif(examplinib)
+make_nif(examplinib_fe)
 
 }
 \seealso{

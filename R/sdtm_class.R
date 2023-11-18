@@ -61,6 +61,8 @@ summary.sdtm <- function(object, ...) {
       pull(STUDYID) %>% as.character(),
     subjects = subjects,
     n_subs = length(subjects),
+    pc_timepoints = object$domains[["pc"]] %>%
+      dplyr::distinct(across(any_of(c("PCTPT", "PCTPTNUM")))),
     domains=names(object$domains),
     treatments = object$domains[["ex"]] %>%
       dplyr::distinct(EXTRT),

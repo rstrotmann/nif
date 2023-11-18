@@ -34,3 +34,28 @@
 #' @format
 #' A sdtm object
 "examplinib_fe"
+
+#' Synthetic NIF data from a fictional clinical SAD FIH study with rich PK
+#' sampling
+#'
+#' @format
+#' A NIF object
+"examplinib_sad_nif"
+
+#' Synthetic NIF data from a fictional clinical single-arm study with rich and
+#' sparse pk sampling.
+#'
+#' @format
+#' A NIF object
+"examplinib_poc_nif"
+
+#' Synthetic NIF data from a fictional clinical food effect study for
+#' 'examplinib'.
+#'
+#' @format
+#' A NIF object
+"examplinib_fe_nif"
+
+
+
+

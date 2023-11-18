@@ -55,14 +55,6 @@
 ## Implement LOQ!
 
 
-
-
-
-#' The list of expected date/time formats in the SDTM data
-#'
-dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
-
-
 #' Render data frame object to string
 #'
 #' This function renders a data.frame into a string similar to its representation
@@ -135,6 +127,35 @@ recode_sex <- function(obj){
 }
 
 
+#' The list of expected date/time formats in the SDTM data
+#'
+dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
+
+
+
+#' Convert date fileds to POSIX format
+#'
+#' This function converts date time code (DTC) variables from the format used
+#' in SDTM (i.e., something like "2001-01-02T09:59" where date and time are
+#' separated by "T") to standard POSIX format. The names of teh variables to be
+#' converted need to be provided by `fields`.
+#'
+#' @param obj A data frame.
+#' @param fields Date variable names as character.
+#'
+#' @return A data frame
+#' @export
+#'
+#' @examples
+#' standardize_date_format(examplinib_fe$domains[["ex"]], c("RFSTDTC", "EXSTDTC", "EXENDTC"))
+standardize_date_format <- function(obj, fields=NULL) {
+  obj %>%
+    dplyr::mutate_at(fields, function(x) {
+      lubridate::as_datetime(x, format=dtc_formats)
+    })
+}
+
+
 #' Make administration data set from EX domain
 #'
 #' This function expands the administration ranges specified by EXSTDTC and
@@ -185,10 +206,6 @@ make_admin <- function(ex,
   # }
 
   ret <- ex %>%
-    # dplyr::mutate(EXENDTC=dplyr::case_when(
-    #   EXENDTC=="" ~ format(cutoff, "%Y-%m-%dT%H:%M"),
-    #   .default=EXENDTC)) %>%
-
     dplyr::mutate(start=lubridate::as_datetime(
       EXSTDTC, format=dtc_formats)) %>%
     dplyr::mutate(end=lubridate::as_datetime(
@@ -510,7 +527,7 @@ impute.administration.time <- function(admin, obs){
 #' @import dplyr
 #' @export
 #' @examples
-#' make_nif(examplinib)
+#' make_nif(examplinib_fe)
 #'
 make_nif <- function(
     sdtm.data,
@@ -557,17 +574,6 @@ make_nif <- function(
   obs <- make_obs(pc, time_mapping=sdtm.data$time_mapping,
                   spec=spec, silent=silent, use_pctptnum=use_pctptnum) %>%
     left_join(drug_mapping, by="PCTESTCD")
-
-  # treatments <- unique(ex$EXTRT)
-  # analytes <- unique(obs$PCTESTCD)
-  # metabolites <- unique(sdtm.data$metabolite_mapping$PCTESTCD_metab)
-  # parents <- analytes[(!analytes %in% metabolites) &
-  #                       ((analytes %in% treatments) |
-  #                          (analytes %in% unique(analyte_mapping$PCTESTCD)))]
-
-
-  # complete the analyte mapping with the obvious pairings, i.e., those EXTRT-
-
 
   # define cut-off date
   if(truncate.to.last.observation==TRUE){
