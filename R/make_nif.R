@@ -987,7 +987,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt=NA, lbspec="", silent=F) 
     dplyr::mutate(REF=row_number()) %>%
     dplyr::group_by(USUBJID) %>%
     # tidyr::fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
-    tidyr::fill(ID, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
+    tidyr::fill(ID, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, DOSE, .direction="downup") %>%
     #tidyr::fill(all_of(standard_nif_fields), .direction="downup") %>%
     dplyr::ungroup()
 

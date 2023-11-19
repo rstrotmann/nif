@@ -226,6 +226,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
   } else {
     # if mean == FALSE
     temp <- x %>%
+      as.data.frame() %>%
       dplyr::filter(!is.na(DOSE)) %>%
       filter(EVID==0) %>%
       filter(!is.na(DV)) %>%
