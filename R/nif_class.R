@@ -469,3 +469,34 @@ guess_analyte <- function(obj) {
 #     left_join(temp, by="ID") %>%
 #
 # }
+
+
+
+#' Add baseline and change from baseline fields
+#'
+#' @details
+#' Output fields:
+#' * `DVBL` Baseline value for the dependent variable DV.
+#' * `DVCFB` Change from baseline for the dependent variable DV.
+#'
+#' @details
+#' The Baseline is calculated as the median of the DV for all times lower or
+#' equal to zero.
+#'
+#' @param obj A NIF object.
+#' @param bl_function The function to derive the baseline. This function is
+#' applied over the DV values at TIME less than or equal to zero. The default is
+#' `median`. Alternatively, `mean`, `min` or `max` can be considered.
+#'
+#' @return A NIF object
+#' @export
+add_cfb <- function(obj, bl_function=median) {
+  obj %>%
+    as.data.frame() %>%
+    group_by(ID, ANALYTE) %>%
+    #mutate(DVBL=median(DV[TIME<=0])) %>%
+    mutate(DVBL=bl_function(DV[TIME<=0])) %>%
+    mutate(DVCFB=DV-DVBL) %>%
+    new_nif()
+}
+

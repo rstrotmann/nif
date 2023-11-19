@@ -952,7 +952,7 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 #'
 #' @return The resulting NIF data set.
 #' @export
-add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
+add_lab_observation <- function(obj, lb, lbtestcd, cmt=NA, lbspec="", silent=F) {
   test <- lbtestcd %in% unique(lb$LBTESTCD)
   if(!all(test)) {
     stop(paste0("The following parameters were not not found in lb: ",
