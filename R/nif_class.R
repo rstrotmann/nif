@@ -286,6 +286,15 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE", "TRTDY")
 
 
+# carry_forward_fields <- function(obj, fields=standard_nif_fields) {
+#   obj %>%
+#     as.data.frame() %>%
+#     dplyr::group_by(ID, ANALYTE) %>%
+#     tidyr::fill(all_of(fields), .direction="downup") %>%
+#     new_nif() %>%
+#     as.data.frame() %>%
+#     head()
+# }
 
 
 #' Index dosing invervals

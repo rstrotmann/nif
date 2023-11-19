@@ -960,6 +960,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
   }
 
   lb.params <- lb %>%
+    dplyr::filter(USUBJID %in% (obj %>% subjects() %>% pull(USUBJID))) %>%
     dplyr::mutate(DTC=lubridate::as_datetime(
       LBDTC, format=dtc_formats)) %>%
     dplyr::filter(LBSPEC %in% lbspec) %>%
@@ -974,9 +975,10 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
     dplyr::mutate(TIME=round(as.numeric(difftime(DTC, FIRSTDTC, units="h")),
                              digits=3)) %>%
     dplyr::mutate(DV=LBSTRESN) %>%
+    dplyr::mutate(LNDV=log(DV)) %>%
     dplyr::mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
     dplyr::select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, PARENT, CMT, EVID,
-                  TIME, NTIME, DV, AMT)
+                  TIME, NTIME, DV, LNDV, AMT)
 
   temp <- obj %>%
     as.data.frame() %>%
@@ -984,7 +986,9 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt, lbspec="", silent=F) {
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
     dplyr::group_by(USUBJID) %>%
-    fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
+    # tidyr::fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
+    tidyr::fill(ID, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
+    #tidyr::fill(all_of(standard_nif_fields), .direction="downup") %>%
     dplyr::ungroup()
 
   return(new_nif(temp))
