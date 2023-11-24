@@ -51,6 +51,7 @@ new_sdtm <- function(sdtm.data){
 #' @export
 summary.sdtm <- function(object, ...) {
   subjects = object$domains[["pc"]] %>%
+    filter(!is.na(PCSTRESN)) %>%
     dplyr::distinct(USUBJID) %>%
     pull(USUBJID) %>%
     as.character()

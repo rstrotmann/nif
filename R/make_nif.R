@@ -605,6 +605,7 @@ make_nif <- function(
 
   # identify subjects with observations by analyte
   obs.sbs <- obs %>%
+    filter(!is.na(PCSTRESN)) %>%
     tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
 
