@@ -506,7 +506,68 @@ add_obs_per_dosing_interval <- function(obj) {
 }
 
 
+#' Identify and index rich PK sampling intervals
+#'
+#' Currently experimental. Don't use in production!
+#'
+#' @param obj The NIF data set.
+#' @param min_n The minimum number of PK samples per analyte to qualify as rich
+#'   sampling.
+#'
+#' @return A new NIF data set.
+#' @export
+index_rich_sampling_intervals <- function(obj, analyte=NA, min_n=4) {
+  if(is.na(analyte)) {
+    analyte <- guess_analyte(obj)
+  }
+  obj1 <- obj %>%
+    filter(ANALYTE %in% analyte) %>%
+    index_nif() %>%
+    index_dosing_interval() %>%
+    add_obs_per_dosing_interval() %>%
+    as.data.frame()
 
+  # npdi <- obj %>%
+  #   #group_by(ANALYTE) %>%
+  #   #n_observations_per_dosing_interval() %>%
+  #   add_obs_per_dosing_interval()
+  #   #ungroup() %>%
+  #   select(ID, DI, ANALYTE, N)
+
+  temp <- obj1 %>%
+    #left_join(npdi, by=c("ID", "DI", "ANALYTE")) %>%
+    mutate(RICHINT_TEMP=(OPDI>min_n)) %>%
+
+    # add last observation before administration to rich interval
+    group_by(ID, ANALYTE) %>%
+    mutate(LEAD=lead(RICHINT_TEMP)) %>%
+    mutate(RICHINT= RICHINT_TEMP | (LEAD & EVID==0)) %>%
+
+    #mutate(RICHINT=lead(RICHINT_TEMP, n=1) | RICHINT_TEMP) %>%
+
+    fill(RICHINT, .direction="down") %>%
+    ungroup() %>%
+    select(-c("RICHINT_TEMP", "LEAD")) %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(FLAG=(RICHINT!=lag(RICHINT) | row_number()==1)) %>%
+    ungroup() %>%
+    as.data.frame()
+
+  rich_index <- temp %>%
+    filter(FLAG==TRUE & RICHINT==TRUE) %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(RICH_N=row_number()) %>%
+    ungroup() %>%
+    select(REF, RICH_N)
+
+  temp %>%
+    left_join(rich_index, by="REF") %>%
+    group_by(RICHINT) %>%
+    fill(RICH_N, .direction="down") %>%
+    ungroup() %>%
+    #select(-c("N", "FLAG")) %>%
+    new_nif()
+}
 
 
 
