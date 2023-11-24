@@ -513,6 +513,8 @@ add_obs_per_dosing_interval <- function(obj) {
 #' @param obj The NIF data set.
 #' @param min_n The minimum number of PK samples per analyte to qualify as rich
 #'   sampling.
+#' @param analyte The analyte as character. If `NA` (default), the most likely
+#' will be selected automatically.
 #'
 #' @return A new NIF data set.
 #' @export

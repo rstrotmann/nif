@@ -9,6 +9,9 @@ index_rich_sampling_intervals(obj, analyte = NA, min_n = 4)
 \arguments{
 \item{obj}{The NIF data set.}
 
+\item{analyte}{The analyte as character. If \code{NA} (default), the most likely
+will be selected automatically.}
+
 \item{min_n}{The minimum number of PK samples per analyte to qualify as rich
 sampling.}
 }
