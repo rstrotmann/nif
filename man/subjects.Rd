@@ -15,3 +15,7 @@ A data frame of all ID - USUBJID pairs in the data set.
 \description{
 Subjects within a NIF object
 }
+\examples{
+subjects(examplinib_fe_nif)
+
+}

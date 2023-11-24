@@ -4,15 +4,20 @@
 \alias{write_nif}
 \title{Write as space-delimited, fixed-width file as required by NONMEM}
 \usage{
-write_nif(obj, filename, fields = NULL)
+write_nif(obj, filename = NA, fields = NULL)
 }
 \arguments{
 \item{obj}{The NIF data set.}
 
-\item{filename}{The filename as string.}
+\item{filename}{The filename as string. If not filename is specified, the
+file is printed only.}
 
 \item{fields}{The fields to export.}
 }
 \description{
 Write as space-delimited, fixed-width file as required by NONMEM
+}
+\examples{
+write_nif(examplinib_fe_nif)
+
 }

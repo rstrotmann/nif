@@ -13,9 +13,9 @@ n_administrations(obj)
 A data frame.
 }
 \description{
-Number of administrations per subject
+This function returns the number of administrations per \code{ID} and \code{PARENT}.
 }
 \examples{
-n_administrations(examplinib_fe_nif)
+n_administrations(examplinib_poc_nif)
 
 }

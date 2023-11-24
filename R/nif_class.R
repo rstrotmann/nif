@@ -75,12 +75,15 @@ print.nif <- function(x, ...){
 #' @import dplyr
 #' @return A data frame of all ID - USUBJID pairs in the data set.
 #' @export
+#' @examples
+#' subjects(examplinib_fe_nif)
+#'
 subjects <- function(obj) {
   obj %>%
     as.data.frame() %>%
-    dplyr::distinct(ID, USUBJID) #%>%
-    # dplyr::pull(USUBJID)
+    dplyr::distinct(ID, USUBJID)
 }
+
 
 #' Get USUBJID of subject
 #'
@@ -89,9 +92,13 @@ subjects <- function(obj) {
 #'
 #' @return The USUBJID as character.
 #' @export
+#' @examples
+#' usubjid(examplinib_fe_nif)
+#'
 usubjid <- function(obj, id) {
   return(subjects(obj)[id, "USUBJID"])
 }
+
 
 #' Subjects with dose reduction
 #'
@@ -100,6 +107,9 @@ usubjid <- function(obj, id) {
 #'
 #' @return The IDs.
 #' @export
+#' @examples
+#' dose_red_sbs(examplinib_poc_nif)
+#'
 dose_red_sbs <- function(obj, analyte="") {
   if(analyte!="") {
     obj <- obj %>%  filter(ANALYTE %in% analyte)
@@ -117,6 +127,7 @@ dose_red_sbs <- function(obj, analyte="") {
     pull(ID)
 }
 
+
 #' Identify subjects with rich sampling
 #'
 #' @param obj The NIF dataset.
@@ -128,6 +139,9 @@ dose_red_sbs <- function(obj, analyte="") {
 #'
 #' @return A list of IDs in numeric format.
 #' @export
+#' @examples
+#' rich_sampling_sbs(examplinib_poc_nif)
+#'
 rich_sampling_sbs <- function(obj, analyte=NA, max_time=NA, n=4) {
   if(is.na(analyte)) {
     analyte <- guess_analyte(obj)
@@ -145,6 +159,7 @@ rich_sampling_sbs <- function(obj, analyte=NA, max_time=NA, n=4) {
     filter(n_obs>n) %>%
     pull(ID)
 }
+
 
 #' Studies within a nif object
 #'
@@ -248,31 +263,35 @@ write_csv.nif <- function(obj, filename){
 }
 
 
-
 #' Write as space-delimited, fixed-width file as required by NONMEM
 #'
 #' @param obj The NIF data set.
 #' @param fields The fields to export.
-#' @param filename The filename as string.
+#' @param filename The filename as string. If not filename is specified, the
+#' file is printed only.
 #'
 #' @importFrom gdata write.fwf
 #' @export
-write_nif <- function(obj, filename, fields=NULL) {
+#' @examples
+#' write_nif(examplinib_fe_nif)
+#'
+write_nif <- function(obj, filename=NA, fields=NULL) {
   if(is.null(fields)) {fields=standard_nif_fields}
   temp <- obj %>%
     compress_nif(fields) %>%
     as.data.frame() %>%
     dplyr::mutate_at(c("TIME", "DV", "LNDV"), signif, 4) %>%
-    mutate_at(.vars=vars(RATE, DV, LNDV),
+    mutate_at(.vars=vars(RATE, DV, LNDV, DOSE),
               .funs=function(x){case_when(is.na(x)~".",
                                           .default=as.character(x))}) %>%
     mutate_all(as.character)
 
-  temp <- rbind(colnames(temp), temp)
-
-  temp %>%
-    write.fwf(file=filename, colnames=FALSE)
-
+  if(is.na(filename)) {
+    print(temp, row.names=FALSE, col.names=FALSE)
+  } else {
+    temp <- rbind(colnames(temp), temp)
+    write.fwf(temp, file=filename, colnames=FALSE)
+  }
 }
 
 
@@ -284,17 +303,6 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ANALYTE", "AMT", "RATE", "DV", "LNDV", "CMT", "EVID",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
                          "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE", "TRTDY")
-
-
-# carry_forward_fields <- function(obj, fields=standard_nif_fields) {
-#   obj %>%
-#     as.data.frame() %>%
-#     dplyr::group_by(ID, ANALYTE) %>%
-#     tidyr::fill(all_of(fields), .direction="downup") %>%
-#     new_nif() %>%
-#     as.data.frame() %>%
-#     head()
-# }
 
 
 #' Index dosing invervals
@@ -341,50 +349,24 @@ index_dosing_interval <- function(obj){
 }
 
 
-#' Number of observations per dosing interval
-#'
-#' This function returns the number of observations by subject and analyte per
-#' dosing interval.
-#'
-#' @param obj The NIF data set.
-#' @param analyte The analyte to filter for as character. Optional.
-#'
-#' @return A data frame.
-#' @export
-#' @examples
-#' n_observations_per_dosing_interval(examplinib_fe_nif)
-#'
-n_observations_per_dosing_interval <- function(obj, analyte=NULL) {
-  if(!is.null(analyte)) {
-    obj <- obj %>%
-      filter(ANALYTE %in% analyte)
-  }
-
-  obj %>%
-    index_dosing_interval() %>%
-    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT", "DI")))) %>%
-    summarize(N=sum(EVID==0), .groups="drop") %>%
-    as.data.frame()
-}
-
-
 #' Number of administrations per subject
+#'
+#' This function returns the number of administrations per `ID` and `PARENT`.
 #'
 #' @param obj A NIF data set.
 #'
 #' @return A data frame.
 #' @export
 #' @examples
-#' n_administrations(examplinib_fe_nif)
+#' n_administrations(examplinib_poc_nif)
 #'
 n_administrations <- function(obj) {
   obj %>%
     index_dosing_interval() %>%
-    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT")))) %>%
+    group_by(across(any_of(c("ID", "USUBJID", "PARENT")))) %>%
     summarize(N=max(DI), .groups="drop") %>%
     as.data.frame()
 }
-
 
 
 #' Maximal administration time
@@ -413,10 +395,11 @@ max_admin_time <- function(obj, analytes=NULL) {
     max()
 }
 
+
 #' Maximal ovservation time
 #'
-#' This function returns the time in hours of the last observation within the
-#' data set.
+#' This function returns the time in hours of the last observation relative to
+#' the first observation within the data set.
 #'
 #' @param obj The NIF data set
 #' @param analytes The analyte or analytes to filter for.
@@ -438,6 +421,7 @@ max_observation_time <- function(obj, analytes=NULL) {
     pull(TIME) %>%
     max(na.rm=TRUE)
 }
+
 
 #' Guess the most likely meant analyte
 #'
@@ -471,7 +455,6 @@ guess_analyte <- function(obj) {
 # }
 
 
-
 #' Add baseline and change from baseline fields
 #'
 #' @details
@@ -484,19 +467,50 @@ guess_analyte <- function(obj) {
 #' equal to zero.
 #'
 #' @param obj A NIF object.
-#' @param bl_function The function to derive the baseline. This function is
+#' @param summary_function The function to derive the baseline. This function is
 #' applied over the DV values at TIME less than or equal to zero. The default is
 #' `median`. Alternatively, `mean`, `min` or `max` can be considered.
 #'
 #' @return A NIF object
 #' @export
-add_cfb <- function(obj, bl_function=median) {
+add_cfb <- function(obj, summary_function=median) {
   obj %>%
     as.data.frame() %>%
     group_by(ID, ANALYTE) %>%
     #mutate(DVBL=median(DV[TIME<=0])) %>%
-    mutate(DVBL=bl_function(DV[TIME<=0])) %>%
+    mutate(DVBL=summary_function(DV[TIME<=0], na.rm=T)) %>%
     mutate(DVCFB=DV-DVBL) %>%
     new_nif()
 }
+
+
+#' Add the number of observations per dosing interval
+#'
+#' This function adds a variable, `OPDI`, to the NIF object that indicates the
+#' number of observations per analyte and dosing interval. This field can be
+#' helpful to identify dosing intervals across which rich sampling was conducted.
+#'
+#' @param obj A NIF object.
+#'
+#' @return Result as NIF object.
+#' @export
+#' @examples
+#' add_obs_per_dosing_interval(examplinib_poc_nif )
+add_obs_per_dosing_interval <- function(obj) {
+  obj %>%
+    index_nif() %>%
+    select(-any_of("DI")) %>%
+    index_dosing_interval() %>%
+    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT", "DI")))) %>%
+    mutate(OPDI=sum(EVID==0))
+}
+
+
+
+
+
+
+
+
+
 

@@ -17,3 +17,7 @@ The USUBJID as character.
 \description{
 Get USUBJID of subject
 }
+\examples{
+usubjid(examplinib_fe_nif)
+
+}

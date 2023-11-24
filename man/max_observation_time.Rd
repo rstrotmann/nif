@@ -15,8 +15,8 @@ max_observation_time(obj, analytes = NULL)
 A scalar representing the time in hours.
 }
 \description{
-This function returns the time in hours of the last observation within the
-data set.
+This function returns the time in hours of the last observation relative to
+the first observation within the data set.
 }
 \examples{
 max_observation_time(examplinib_fe_nif)

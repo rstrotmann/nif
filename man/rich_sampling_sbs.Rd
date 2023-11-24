@@ -23,3 +23,7 @@ A list of IDs in numeric format.
 \description{
 Identify subjects with rich sampling
 }
+\examples{
+rich_sampling_sbs(examplinib_poc_nif)
+
+}

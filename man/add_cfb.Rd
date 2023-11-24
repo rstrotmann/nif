@@ -4,12 +4,12 @@
 \alias{add_cfb}
 \title{Add baseline and change from baseline fields}
 \usage{
-add_cfb(obj, bl_function = median)
+add_cfb(obj, summary_function = median)
 }
 \arguments{
 \item{obj}{A NIF object.}
 
-\item{bl_function}{The function to derive the baseline. This function is
+\item{summary_function}{The function to derive the baseline. This function is
 applied over the DV values at TIME less than or equal to zero. The default is
 \code{median}. Alternatively, \code{mean}, \code{min} or \code{max} can be considered.}
 }
