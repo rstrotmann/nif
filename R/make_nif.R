@@ -816,11 +816,16 @@ add_dose_level <- function(obj) {
     select(ID, ANALYTE, DOSE)  %>%
     group_by(ID)
 
-  if(temp %>% ungroup() %>% distinct(ANALYTE) %>% nrow()==1) {
+  if(temp %>%
+     ungroup() %>%
+     distinct(ANALYTE) %>%
+     nrow()==1) {
     temp <- temp %>% mutate(DL=DOSE)
   } else {
    temp <- temp %>%
     mutate(DL=paste0(DOSE, "-", ANALYTE)) %>%
+    arrange(ID) %>%
+    arrange(factor(ANALYTE, levels=analytes(obj))) %>%
     summarize(DL=paste0(DL, collapse="+"))
   }
 
