@@ -681,7 +681,7 @@ make_nif <- function(
 
     # individual first event
     dplyr::group_by(USUBJID) %>%
-    dplyr::mutate(FIRSTDTC=min(DTC)) %>%
+    dplyr::mutate(FIRSTDTC=min(DTC, na.rm=T)) %>%
     dplyr::ungroup() %>%
 
     # filter out rows without parent information
@@ -694,10 +694,10 @@ make_nif <- function(
 
     # identify first administration per PARENT and first treatment overall
     group_by(USUBJID, PARENT) %>%
-    dplyr::mutate(FIRSTADMINDTC=min(DTC[EVID==1])) %>%
+    dplyr::mutate(FIRSTADMINDTC=min(DTC[EVID==1], na.rm=T)) %>%
     ungroup() %>%
     group_by(USUBJID) %>%
-    mutate(FIRSTTRTDTC=min(FIRSTADMINDTC)) %>%
+    mutate(FIRSTTRTDTC=min(FIRSTADMINDTC, na.rm=T)) %>%
     ungroup() %>%
 
     dplyr::arrange(USUBJID, PARENT, DTC, EVID) %>%
