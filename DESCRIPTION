@@ -22,7 +22,8 @@ Imports:
     PKNCA,
     rxode2,
     lifecycle,
-    gdata
+    gdata,
+    pracma
 Depends: 
     R (>= 2.10)
 Suggests: 
