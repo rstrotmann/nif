@@ -262,113 +262,6 @@ pk_sim <- function(event_table) {
 
 
 
-#' Glomerular filtration rate estimation from serum creatinine (Raynaud method)
-#'
-#' Reference:
-#' \href{https://doi.org/10.1136/bmj-2022-073654}{Raynaud, BMJ 2023;381:e073654}
-#'
-#' @param crea Serum creatinine in mg/dl.
-#' @param age Age in years.
-#' @param sex Sex encocded as number (male is 0) or character (male is "M").
-#' @param race Race. Dummy variable for compatibility, race is not used by this
-#'   method.
-#'
-#' @return Estimated GFR in ml/min/1.73 m^2.
-#' @export
-raynaud_egfr <- function(crea, age, sex, race="") {
-  male <- ifelse((sex==0) | (sex=="M"), 1, 0)
-  egfr <- exp(4.4275492 - 0.8230475 * log(crea) - 0.0124264 * crea**2 -
-      0.0055068 * age + 0.1806494 * male)
-  return(egfr)
-}
-
-
-#' Serum creatinine estimation from eGFR (Raynaud method)
-#'
-#' Inverse of the function published in
-#' \href{https://doi.org/10.1136/bmj-2022-073654}{Raynaud, BMJ 2023;381:e073654}
-#'
-#' To convert crea from mg/dl to umol/l, multiply by 88.4.
-#'
-#' @param egfr EGFR in ml/min/1.73 m^2.
-#' @param age Age in years.
-#' @param sex Sex encocded as number (male is 0) or character (male is "M").
-#' @param race Race. Dummy variable for compatibility, race is not used by this
-#'   method.
-#'
-#' @importFrom pracma lambertWn
-#' @importFrom pracma lambertWp
-#'
-#' @return Serum creatinine in mg/dl.
-#' @export
-raynaud_crea <- function(egfr, age, sex, race="") {
-  male <- ifelse((sex==0) | (sex=="M"), 1, 0)
-  A = 4.4275492 - 0.0055068*age + 0.1806494*male
-  B = 0.8230475
-  C = 0.0124264
-
-  z = 2*exp(2*A/B) * C*egfr^(-2/B) / B
-  # if(z < -1/exp(1)) {
-  #   stop("z is < -1/e")
-  # }
-
-
-  # if(z < 0) {
-  #   W <- pracma::lambertWn(z)
-  # } else {
-    W <- pracma::lambertWp(z)
-  # }
-  crea = 0.707107*sqrt(B)*sqrt(W)/sqrt(C)
-  return(crea)
-}
-
-
-#' Glomerular filtration rate estimation from serum creatinine (MDRD)
-#'
-#' Reference:
-#' \href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
-#'
-#' @param crea Serum creatinine in mg/dl.
-#' @param age Age in years.
-#' @param sex Sex encocded as number (female is 1) or character (female is "F").
-#' @param race Race as per CDISC nomenclature. Black race is identified as the
-#'   occurrence of 'black' in the value.
-#'
-#' @return Estimated GFR in ml/min/1.73 m^2.
-#' @export
-mdrd_egfr <- function(crea, age, sex, race="") {
-  female_factor <- ifelse((sex=1) | (sex=="F"), .742, 1)
-  race_factor <- ifelse(grepl("black", str_to_lower(race)), 1.212, 1)
-
-  egfr <- 175 * crea^-1.154 * age^-0.203 * female_factor * race_factor
-  return(egfr)
-}
-
-
-#' Serum creatinine estimation from eGFR (MDRD)
-#'
-#' Inverse of the function published in
-#' \href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
-#'
-#' To convert crea from mg/dl to umol/l, multiply by 88.4.
-#'
-#' @param egfr EGFR in ml/min/1.73 m^2.
-#' @param age Age in years.
-#' @param sex Sex encocded as number (female is 1) or character (female is "F").
-#' @param race Race as per CDISC nomenclature. Black race is identified as the
-#'   occurrence of 'black' in the value.
-#'
-#' @return Serum creatinine in mg/dl.
-#' @export
-mdrd_crea <- function(egfr, age, sex, race="") {
-  female_factor <- ifelse((sex=1) | (sex=="F"), .742, 1)
-  race_factor <- ifelse(grepl("black", str_to_lower(race)), 1.212, 1)
-
-  crea <- (egfr/(175 * age^-0.203 * female_factor * race_factor))^(1/-1.154)
-  return(crea)
-}
-
-
 #' Simulate fictional subject disposition data
 #'
 #' This function generates a pre-specified number of subjects across different
@@ -873,27 +766,35 @@ synthesize_sdtm_food_effect_study <- function() {
       .default="Screen Failure"))
 
   vs <- make_vs(dm)
+  lb <- make_lb(dm)
   ex <- make_sd_ex(dm, drug="RS2023")
   # pc <- make_pc(ex, dm, vs, basic_sampling_scheme)
   pc <- make_fe_pc(ex, dm, vs, basic_sampling_scheme)
 
   out <- list()
   out[["dm"]] <- dm %>%
-    mutate(RFICDTC=reformat_date(RFICDTC)) %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC))
+    isofy_date_format(c("RFICDTC", "RFSTDTC"))
+    # mutate(RFICDTC=reformat_date(RFICDTC)) %>%
+    # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["vs"]] <- vs %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC))
+    isofy_date_format(c("RFSTDTC"))
+    # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["ex"]] <- ex %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
-    mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
-    mutate(EXENDTC=reformat_date(EXENDTC)) %>%
+    isofy_date_format(c("RFSTDTC", "EXSTDTC", "EXENDTC")) %>%
+    # mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
+    # mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
+    # mutate(EXENDTC=reformat_date(EXENDTC)) %>%
     mutate(EXTRT="EXAMPLINIB")
 
   out[["pc"]] <- pc %>%
-    mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
-    mutate(PCDTC=reformat_date(PCDTC))
+    isofy_date_format(c("PCRFTDTC", "PCDTC"))
+    # mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
+    # mutate(PCDTC=reformat_date(PCDTC))
+
+  out[["lb"]] <- lb %>%
+    isofy_date_format("LBDTC")
 
   temp <- new_sdtm(out) %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023")
@@ -1044,7 +945,7 @@ synthesize_sdtm_poc_study <- function() {
   )
 
   dm <- make_dm(studyid="2023000022", nsubs=nsubs, nsites=nsites,
-                female_fraction=0.4, duration=30, min_age=52, max_age=84) %>%
+                female_fraction=0.4, duration=30, min_age=47, max_age=86) %>%
     mutate(ACTARMCD=case_match(ACTARMCD, ""~"TREATMENT",
                                .default=ACTARMCD)) %>%
     mutate(ACTARM=case_match(ACTARMCD,
@@ -1052,6 +953,7 @@ synthesize_sdtm_poc_study <- function() {
                              "TREATMENT"~"Single Arm Treatment")) %>%
     mutate(ARM=ACTARM, ARMCD=ACTARMCD)
   vs <- make_vs(dm)
+  lb <- make_lb(dm)
   ex <- make_md_ex(dm, drug="RS2023", dose=500, missed_doses = T) %>%
     as.data.frame()
 
@@ -1148,20 +1050,27 @@ synthesize_sdtm_poc_study <- function() {
 
   out <- list()
   out[["dm"]] <- dm %>%
-    mutate(RFICDTC=reformat_date(RFICDTC)) %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC))
+    isofy_date_format(c("RFICDTC", "RFSTDTC"))
+    # mutate(RFICDTC=reformat_date(RFICDTC)) %>%
+    # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["vs"]] <- vs %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC))
+    isofy_date_format("RFSTDTC")
+    # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["ex"]] <- ex %>%
-    mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
-    mutate(EXENDTC=reformat_date(EXENDTC)) %>%
+    isofy_date_format(c("EXSTDTC", "EXENDTC")) %>%
+    # mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
+    # mutate(EXENDTC=reformat_date(EXENDTC)) %>%
     mutate(EXTRT="EXAMPLINIB")
 
   out[["pc"]] <- pc %>%
-    mutate(PCDTC=reformat_date(PCDTC)) %>%
-    mutate(PCRFTDTC=reformat_date(PCRFTDTC))
+    isofy_date_format(c("PCDTC", "PCRFTDTC"))
+    # mutate(PCDTC=reformat_date(PCDTC)) %>%
+    # mutate(PCRFTDTC=reformat_date(PCRFTDTC))
+
+  out[["lb"]] <- lb %>%
+    isofy_date_format("LBDTC")
 
   out <- new_sdtm(out) %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
@@ -1199,15 +1108,22 @@ synthesize_examplinib <- function() {
   use_data(examplinib_fe, overwrite=T)
 
   # make NIF package data
-  examplinib_sad_nif <- examplinib_sad %>% make_nif(spec="PLASMA")
-  examplinib_poc_nif <- examplinib_poc %>% make_nif(spec="PLASMA")
+  examplinib_sad_nif <- examplinib_sad %>%
+    make_nif(spec="PLASMA") %>%
+    add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
+    compress_nif(standard_nif_fields, "BL_CREAT")
+
+  examplinib_poc_nif <- examplinib_poc %>%
+    make_nif(spec="PLASMA") %>%
+    add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
+    compress_nif(standard_nif_fields, "BL_CREAT")
 
   examplinib_fe_nif <- make_nif(examplinib_fe, spec="PLASMA") %>%
     mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>%
     mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
-    mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
-
-  # examplinib_fe %>% make_nif(spec="PLASMA")
+    mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0)) %>%
+    add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
+    compress_nif(standard_nif_fields, "PERIOD", "TREATMENT", "FASTED", "BL_CREAT")
 
   use_data(examplinib_sad_nif, overwrite=T)
   use_data(examplinib_poc_nif, overwrite=T)
