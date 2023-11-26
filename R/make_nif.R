@@ -157,6 +157,21 @@ standardize_date_format <- function(obj, fields=NULL) {
 }
 
 
+#' Convert date fields to ISO 8601 format
+#'
+#' @param obj A data frame.
+#' @param fields Date variable names as character.
+#'
+#' @return A data frame.
+#' @export
+isofy_date_format <- function(obj, fields=NULL) {
+  obj %>%
+    dplyr::mutate_at(fields, function(x) {
+      #lubridate::as_datetime(x, format=dtc_formats)
+      format(x, "%Y-%m-%dT%H:%M")
+    })
+}
+
 #' Make administration data set from EX domain
 #'
 #' This function expands the administration ranges specified by EXSTDTC and

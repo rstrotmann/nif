@@ -2,7 +2,7 @@
 % Please edit documentation in R/synthesize_test_data.R
 \name{synthesize_sdtm_sad_study}
 \alias{synthesize_sdtm_sad_study}
-\title{3 + 3 dose escalation}
+\title{Synthesize SDTM data for a 3 + 3 dose escalation study}
 \usage{
 synthesize_sdtm_sad_study()
 }
@@ -10,5 +10,5 @@ synthesize_sdtm_sad_study()
 A sdtm object.
 }
 \description{
-3 + 3 dose escalation
+Synthesize SDTM data for a 3 + 3 dose escalation study
 }

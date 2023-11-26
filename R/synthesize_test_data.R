@@ -350,7 +350,7 @@ mdrd_egfr <- function(crea, age, sex, race="") {
 #' Inverse of the function published in
 #' \href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
 #'
-#' To convert crea from mg/dl to umol/l, multiply by 88.4.#'
+#' To convert crea from mg/dl to umol/l, multiply by 88.4.
 #'
 #' @param egfr EGFR in ml/min/1.73 m^2.
 #' @param age Age in years.
@@ -837,6 +837,8 @@ reformat_date <- function(x) {
 }
 
 
+
+
 #' Synthesize SDTM data for a fictional food effect study
 #'
 #' @return The SDTM data as sdtm object.
@@ -932,10 +934,9 @@ make_examplinib_food_effect_nif <- function() {
 
 
 
-#' 3 + 3 dose escalation
+#' Synthesize SDTM data for a 3 + 3 dose escalation study
 #'
 #' @return A sdtm object.
-#' @export
 synthesize_sdtm_sad_study <- function() {
   rich_sampling_scheme <- data.frame(
     time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
@@ -953,7 +954,7 @@ synthesize_sdtm_sad_study <- function() {
     ungroup()
 
   dm <- make_dm(studyid="2023000001", nsubs=nrow(dose_levels), nsites=1,
-                female_fraction=0, duration=10)
+                female_fraction=0, duration=10, min_age=18, max_age=55)
 
   sb_assignment <- dose_levels %>%
     mutate(USUBJID=dm %>%
@@ -971,6 +972,7 @@ synthesize_sdtm_sad_study <- function() {
     mutate(ARM=ACTARM, ARMCD=ACTARMCD)
 
   vs <- make_vs(dm)
+  lb <- make_lb(dm)
 
   ex <- make_sd_ex(dm, drug="RS2023", admindays=1, dose=5) %>%
     select(-EXDOSE) %>%
@@ -979,22 +981,29 @@ synthesize_sdtm_sad_study <- function() {
 
   out <- list()
   out[["dm"]] <- dm %>%
-    mutate(RFICDTC=reformat_date(RFICDTC)) %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
+    # mutate(RFICDTC=reformat_date(RFICDTC)) %>%
+    # mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
+    isofy_date_format(c("RFICDTC", "RFSTDTC")) %>%
     select(-c("cohort", "dose"))
 
   out[["vs"]] <- vs %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC))
+    isofy_date_format("RFSTDTC")
+    # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["ex"]] <- ex %>%
-    mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
-    mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
-    mutate(EXENDTC=reformat_date(EXENDTC)) %>%
+    isofy_date_format(c("RFSTDTC", "EXSTDTC", "EXENDTC")) %>%
+    # mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
+    # mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
+    # mutate(EXENDTC=reformat_date(EXENDTC)) %>%
     mutate(EXTRT="EXAMPLINIB")
 
   out[["pc"]] <- pc %>%
-    mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
-    mutate(PCDTC=reformat_date(PCDTC))
+    isofy_date_format(c("PCRFTDTC", "PCDTC"))
+    # mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
+    # mutate(PCDTC=reformat_date(PCDTC))
+
+  out[["lb"]] <- lb %>%
+    isofy_date_format("LBDTC")
 
   temp <- new_sdtm(out) %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023")
@@ -1002,15 +1011,17 @@ synthesize_sdtm_sad_study <- function() {
 }
 
 
+#' Make NIF data set for examplinib SAD study
+#'
+#' @return A NIF data set.
 make_examplinib_sad_nif <- function() {
-  out <- synthesize_sdtm_sad_study() %>%
+  sdtm <- synthesize_sdtm_sad_study()
+  out <- sdtm %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
-    make_nif()
+    make_nif(silent = T) %>%
+    add_bl_lab(sdtm$domains[["lb"]], "CREAT", lbspec="SERUM")
   return(out)
 }
-
-
-
 
 
 #' MD study
@@ -1176,7 +1187,6 @@ synthesize_sdtm_poc_study <- function() {
 #' is parametrized with arbitrary parameters.
 #'
 #' @return None.
-#' @export
 synthesize_examplinib <- function() {
   set.seed(1234)
   # synthesize SDTM packae data
@@ -1206,7 +1216,6 @@ synthesize_examplinib <- function() {
 
 
 
-
 #' Synthesize baseline serum creatinine for fictional subjects
 #'
 #' @details
@@ -1229,7 +1238,6 @@ synthesize_examplinib <- function() {
 #' currently be `mdrd_crea` or `raynaud_crea`.
 #'
 #' @return A DM domain with additional fields as data frame.
-#' @export
 make_crea <- function(dm, crea_method=mdrd_crea) {
   empirical_egfr <- tribble(
     # Source: DOI:https://doi.org/10.1038/sj.ki.5002374, Table 1.
@@ -1248,7 +1256,6 @@ make_crea <- function(dm, crea_method=mdrd_crea) {
     0, 75, 79, 112, 70, 13, 41, 110, 45, 62, 70, 79, 91,
     0, 80, 84, 73, 67, 15, 41, 129, 43, 58, 69, 77, 87,
     0, 85, NA, 33, 62, 16, 34, 101, 35, 47, 65, 72, 92,
-
     1, 18, 24, 187, 91, 15, 58, 186, 72, 80, 90, 99, 112,
     1, 25, 29, 159, 85, 13, 55, 140, 63, 76, 83, 93, 107,
     1, 30, 34, 171, 85, 15, 53, 153, 63, 74, 83, 93, 113,
@@ -1271,10 +1278,49 @@ make_crea <- function(dm, crea_method=mdrd_crea) {
   dm <- dm %>%
     mutate(target_egfr=predict(m, dm %>%
                          mutate(female=case_when(SEX=="F"~1, .default=0))))
-
   renal <- rnorm(nrow(dm), dm$target_egfr, 13)
   dm %>%
     mutate(EGFR=renal) %>%
     mutate(CREA=crea_method(EGFR, AGE, SEX, RACE))
 }
+
+
+#' Synthesize baseline LB data
+#'
+#' @param dm The DM domain as data frame.
+#'
+#' @return The LB domain as data frame.
+make_lb <- function(dm) {
+  dm %>%
+    make_crea() %>%
+    #standardize_date_format("RFSTDTC") %>%
+    select(c(STUDYID, USUBJID, DOMAIN, RFSTDTC, CREA)) %>%
+    mutate(
+      DOMAIN="DM",
+      LBSEQ=1,
+      LBCAT="BIOCHEMISTRY",
+      LBSPEC="SERUM",
+      VISITNUM=1,
+      LBBLFL="Y",
+      LBDTC=RFSTDTC-24*60*60,
+      LBTESTCD="CREAT",
+      LBTEST="Creatinine",
+      LBORRES=CREA,
+      LBORRESU="mg/dL",
+      LBORNRLO=0.67,
+      LBORNRHI=1.17,
+      LBSTRESN=LBORRES*88.4,
+      LBSTRESC=as.character(round(LBSTRESN,3)),
+      LBSTRESU="umol/L",
+      LBSTNRLO=59.2,
+      LBSTNRHI=103.4
+    ) %>%
+    select(-c("RFSTDTC", "CREA"))
+}
+
+
+
+
+
+
 
