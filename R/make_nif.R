@@ -582,6 +582,12 @@ make_nif <- function(
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
     tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
 
+  # Calculate BMI if height and weight are available
+  if("HEIGHT" %in% colnames(bl.cov) & "WEIGHT" %in% colnames(bl.cov)) {
+    bl.cov <- bl.cov %>%
+      mutate(BMI=WEIGHT/(HEIGHT/100)^2)
+  }
+
   # create drug mapping
   drug_mapping <- sdtm.data$analyte_mapping %>%
     rbind(

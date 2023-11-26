@@ -301,7 +301,7 @@ write_nif <- function(obj, filename=NA, fields=NULL) {
 #' @export
 standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ANALYTE", "AMT", "RATE", "DV", "LNDV", "CMT", "EVID",
-                         "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
+                         "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT", "BMI",
                          "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE", "TRTDY")
 
 

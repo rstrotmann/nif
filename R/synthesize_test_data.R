@@ -1098,7 +1098,7 @@ synthesize_sdtm_poc_study <- function() {
 #' @return None.
 synthesize_examplinib <- function() {
   set.seed(1234)
-  # synthesize SDTM packae data
+  # synthesize SDTM package data
   examplinib_sad <- synthesize_sdtm_sad_study()
   examplinib_poc <- synthesize_sdtm_poc_study()
   examplinib_fe <- synthesize_sdtm_food_effect_study()
@@ -1110,20 +1110,24 @@ synthesize_examplinib <- function() {
   # make NIF package data
   examplinib_sad_nif <- examplinib_sad %>%
     make_nif(spec="PLASMA") %>%
-    add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-    compress_nif(standard_nif_fields, "BL_CREAT")
+    add_bl_lab(examplinib_sad$domains[["lb"]], "CREAT", "SERUM") %>%
+    mutate(BL_CRCL=mdrd_egfr(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+    compress_nif(standard_nif_fields, "BL_CREAT", "BL_CRCL")
 
   examplinib_poc_nif <- examplinib_poc %>%
     make_nif(spec="PLASMA") %>%
     add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-    compress_nif(standard_nif_fields, "BL_CREAT")
+    mutate(BL_CRCL=mdrd_egfr(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+    compress_nif(standard_nif_fields, "BL_CREAT", "BL_CRCL")
 
   examplinib_fe_nif <- make_nif(examplinib_fe, spec="PLASMA") %>%
     mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>%
     mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
     mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0)) %>%
-    add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-    compress_nif(standard_nif_fields, "PERIOD", "TREATMENT", "FASTED", "BL_CREAT")
+    add_bl_lab(examplinib_fe$domains[["lb"]], "CREAT", "SERUM") %>%
+    mutate(BL_CRCL=mdrd_egfr(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+    compress_nif(standard_nif_fields, "PERIOD", "TREATMENT", "FASTED",
+                 "BL_CREAT", "BL_CRCL")
 
   use_data(examplinib_sad_nif, overwrite=T)
   use_data(examplinib_poc_nif, overwrite=T)
@@ -1152,6 +1156,9 @@ synthesize_examplinib <- function() {
 #' @param dm The DM domain as data frame.
 #' @param crea_method The crea calculation function as function reference. Can
 #' currently be `mdrd_crea` or `raynaud_crea`.
+#'
+#' @importFrom stats glm
+#' @importFrom stats predict
 #'
 #' @return A DM domain with additional fields as data frame.
 make_crea <- function(dm, crea_method=mdrd_crea) {
@@ -1190,9 +1197,9 @@ make_crea <- function(dm, crea_method=mdrd_crea) {
     mutate(AGE=age_lo + (age_hi-age_lo)/2) %>%
     mutate(EGFR=Mean)
 
-  m <- glm(EGFR ~ AGE + female, family = "gaussian", data=empirical_egfr)
+  m <- stats::glm(EGFR ~ AGE + female, family = "gaussian", data=empirical_egfr)
   dm <- dm %>%
-    mutate(target_egfr=predict(m, dm %>%
+    mutate(target_egfr=stats::predict(m, dm %>%
                          mutate(female=case_when(SEX=="F"~1, .default=0))))
   renal <- rnorm(nrow(dm), dm$target_egfr, 13)
   dm %>%

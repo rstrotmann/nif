@@ -5,7 +5,7 @@
 \alias{standard_nif_fields}
 \title{Standard nif fields}
 \format{
-An object of class \code{character} of length 24.
+An object of class \code{character} of length 25.
 }
 \usage{
 standard_nif_fields
