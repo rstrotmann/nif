@@ -4,10 +4,13 @@
 \alias{plot.summary_nif}
 \title{Plot NIF summary}
 \usage{
-\method{plot}{summary_nif}(x, ...)
+\method{plot}{summary_nif}(x, type = "all", ...)
 }
 \arguments{
 \item{x}{A NIF data set.}
+
+\item{type}{Parameter to specify what overview to plot. Can be 'baseline',
+'analytes' or 'all' (default).}
 
 \item{...}{Further arguments.}
 }

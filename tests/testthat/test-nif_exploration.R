@@ -8,8 +8,10 @@ test_that("nif summary works", {
 
 
 test_that("nif_summary_plot works", {
-  temp <- examplinib_sad_nif %>%
+  summary_plot <- function() {
+    examplinib_sad_nif %>%
     summary() %>%
     plot()
-  expect_equal(length(temp), 8)
+  }
+  expect_no_error(summary_plot())
 })

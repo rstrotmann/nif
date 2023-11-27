@@ -290,6 +290,9 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     p <- p + labs(color=group)
   } else {
     p <- p + labs(color="ANALYTE")
+    if(length(analyte)<2) {
+      p <- p + theme(legend.position = "none")
+    }
   }
 
   return(p)
@@ -417,7 +420,7 @@ covariate_plot_parameters <- tribble(
   "WEIGHT", 5, "body weight (kg)", "Body weight", NULL,
   "HEIGHT", 5, "body height (cm)", "Height", NULL,
   "BMI", 1, "BMI (kg/m^2)", "Body mass index", c(18.5, 24.9, 30),
-  "BL_CRCL", NA, "baseline creatinine clearance (ml/min/1.73 m^2)",
+  "BL_CRCL", NA, "baseline creatinine clearance (ml/min)",
   "Baseline creatinine clearance", c(30, 60, 90)
 )
 
@@ -426,45 +429,67 @@ covariate_plot_parameters <- tribble(
 #'
 #' @param x A NIF data set.
 #' @param ... Further arguments.
+#' @param type Parameter to specify what overview to plot. Can be 'baseline',
+#'   'analytes' or 'all' (default).
 #'
 #' @return Nothing.
 #' @export
-plot.summary_nif <- function(x, ...) {
+plot.summary_nif <- function(x, type="all", ...) {
+  if(type=="all") {
+    type <- c("baseline", "analytes")
+  }
+
   nif <- x$nif
-  for(i in 1:nrow(covariate_plot_parameters)) {
-    current_cov <- covariate_plot_parameters[i, ]
-    if(current_cov$field %in% colnames(nif)) {
-      invisible(
-        capture.output(
-          suppressWarnings(
-            print(
-              covariate_hist(nif, current_cov)
+
+  if("baseline" %in% type) {
+    for(i in 1:nrow(covariate_plot_parameters)) {
+      current_cov <- covariate_plot_parameters[i, ]
+      if(current_cov$field %in% colnames(nif)) {
+        invisible(
+          capture.output(
+            suppressWarnings(
+              print(
+                covariate_hist(nif, current_cov)
+              )
+            )
+          )
+        )
+      }
+    }
+
+    invisible(
+      capture.output(
+        suppressWarnings(
+          print(
+            list(
+              wt_by_sex(nif),
+              wt_by_race(nif)
             )
           )
         )
       )
-    }
+    )
   }
 
-  plots <- list(
-    wt_by_sex(nif),
-    wt_by_race(nif),
-    lapply(x$analytes, function(a) {
-      nif %>%
-        plot(analyte=a,
-             y_scale = "log",
-             points=T,
-             line=F,
-             alpha=0.3,
-             title=paste(a, "overview by dose"),
-             max_x=max_observation_time(x$nif, a))}))
+  if("analytes" %in% type) {
+    plots <- list(
+      lapply(x$analytes, function(a) {
+        nif %>%
+          plot(analyte=a,
+               y_scale = "log",
+               points=T,
+               line=F,
+               alpha=0.3,
+               title=paste(a, "overview by dose"),
+               max_x=max_observation_time(x$nif, a))}))
 
-  invisible(
-    capture.output(
-      suppressWarnings(
-        print(plots))
+    invisible(
+      capture.output(
+        suppressWarnings(
+          print(plots))
+      )
     )
-  )
+  }
 }
 
 
