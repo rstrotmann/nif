@@ -1111,13 +1111,13 @@ synthesize_examplinib <- function() {
   examplinib_sad_nif <- examplinib_sad %>%
     make_nif(spec="PLASMA") %>%
     add_bl_lab(examplinib_sad$domains[["lb"]], "CREAT", "SERUM") %>%
-    mutate(BL_CRCL=mdrd_egfr(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+    mutate(BL_CRCL=egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
     compress_nif(standard_nif_fields, "BL_CREAT", "BL_CRCL")
 
   examplinib_poc_nif <- examplinib_poc %>%
     make_nif(spec="PLASMA") %>%
     add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-    mutate(BL_CRCL=mdrd_egfr(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+    mutate(BL_CRCL=egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
     compress_nif(standard_nif_fields, "BL_CREAT", "BL_CRCL")
 
   examplinib_fe_nif <- make_nif(examplinib_fe, spec="PLASMA") %>%
@@ -1125,7 +1125,7 @@ synthesize_examplinib <- function() {
     mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
     mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0)) %>%
     add_bl_lab(examplinib_fe$domains[["lb"]], "CREAT", "SERUM") %>%
-    mutate(BL_CRCL=mdrd_egfr(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+    mutate(BL_CRCL=egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
     compress_nif(standard_nif_fields, "PERIOD", "TREATMENT", "FASTED",
                  "BL_CREAT", "BL_CRCL")
 
@@ -1155,13 +1155,13 @@ synthesize_examplinib <- function() {
 #'
 #' @param dm The DM domain as data frame.
 #' @param crea_method The crea calculation function as function reference. Can
-#' currently be `mdrd_crea` or `raynaud_crea`.
+#' currently be `crea_mdrd` or `crea_raynaud`.
 #'
 #' @importFrom stats glm
 #' @importFrom stats predict
 #'
 #' @return A DM domain with additional fields as data frame.
-make_crea <- function(dm, crea_method=mdrd_crea) {
+make_crea <- function(dm, crea_method=crea_mdrd) {
   empirical_egfr <- tribble(
     # Source: DOI:https://doi.org/10.1038/sj.ki.5002374, Table 1.
     ~female, ~age_lo, ~age_hi, ~N, ~Mean, ~SD, ~min, ~max, ~P5, ~P25, ~P50, ~P75, ~P95,

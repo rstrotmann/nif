@@ -4,13 +4,13 @@
 \alias{make_crea}
 \title{Synthesize baseline serum creatinine for fictional subjects}
 \usage{
-make_crea(dm, crea_method = mdrd_crea)
+make_crea(dm, crea_method = crea_mdrd)
 }
 \arguments{
 \item{dm}{The DM domain as data frame.}
 
 \item{crea_method}{The crea calculation function as function reference. Can
-currently be \code{mdrd_crea} or \code{raynaud_crea}.}
+currently be \code{crea_mdrd} or \code{crea_raynaud}.}
 }
 \value{
 A DM domain with additional fields as data frame.

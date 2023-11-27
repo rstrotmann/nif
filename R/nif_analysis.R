@@ -16,7 +16,7 @@
 #'
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
-raynaud_egfr <- function(crea, age, sex, race="", molar=F) {
+egfr_raynaud <- function(crea, age, sex, race="", molar=F) {
   if(molar) {
     crea <- crea / 88.4
   }
@@ -46,7 +46,7 @@ raynaud_egfr <- function(crea, age, sex, race="", molar=F) {
 #'
 #' @return Serum creatinine in mg/dl.
 #' @export
-raynaud_crea <- function(egfr, age, sex, race="") {
+crea_raynaud <- function(egfr, age, sex, race="") {
   male <- ifelse((sex==0) | (sex=="M"), 1, 0)
   A = 4.4275492 - 0.0055068*age + 0.1806494*male
   B = 0.8230475
@@ -84,7 +84,7 @@ raynaud_crea <- function(egfr, age, sex, race="") {
 #' #'
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
-mdrd_egfr <- function(crea, age, sex, race="", molar=F) {
+egfr_mdrd <- function(crea, age, sex, race="", molar=F) {
   if(molar) {
     crea <- crea / 88.4
   }
@@ -112,7 +112,7 @@ mdrd_egfr <- function(crea, age, sex, race="", molar=F) {
 #'
 #' @return Serum creatinine in mg/dl.
 #' @export
-mdrd_crea <- function(egfr, age, sex, race="") {
+crea_mdrd <- function(egfr, age, sex, race="") {
   female_factor <- ifelse((sex=1) | (sex=="F"), .742, 1)
   race_factor <- ifelse(grepl("black", str_to_lower(race)), 1.212, 1)
 
@@ -120,3 +120,49 @@ mdrd_crea <- function(egfr, age, sex, race="") {
   attr(crea, "unit") <- "mg/dl"
   return(crea)
 }
+
+
+#' Glomerular filtration rate estimation from serum creatinine (Cockcroft-Gault)
+#'
+#' Reference:
+#' \href{https://doi.org/10.1159/000180580}{Cockcroft and Gault, Nephron 1976}
+#'
+#' @param crea Serum creatinine in mg/dl.
+#' @param age Age in years.
+#' @param sex Sex encocded as number (female is 1) or character (female is "F").
+#' @param race Race as per CDISC nomenclature. Black race is identified as the
+#'   occurrence of 'black' in the value. For campatibility onla, not used in
+#'   this formula.
+#' @param weight Body weight in kg.
+#' @param molar Switch to select whether the creatinine value is in mg/dl
+#' (default) or umol/l units.
+#' #'
+#' @return Estimated GFR in ml/min (as body size is accounted for by the weigth
+#'   in the input).
+#' @export
+egfr_cg <- function(crea, age, sex, race="", weight=NA, molar=F) {
+  if(molar) {
+    crea <- crea / 88.4
+  }
+  female_factor <- ifelse((sex=1) | (sex=="F"), .85, 1)
+
+  egfr <- (140 - age) * weight * female_factor / 72 / crea
+  attr(egfr, "unit") <- "ml/min"
+  return(egfr)
+}
+
+
+# egfr_ckd_epi <- function(crea, age, sex, race="", weight=NA, molar=F) {
+#   black <- ifelse(grepl("black", str_to_lower(race)), T, F)
+#   female <- ifelse((sex=1) | (sex=="F"), T, F)
+#   age_factor <- 0.993^age
+#
+#   if(male & !black) {
+#
+#   }
+# }
+
+
+
+
+
