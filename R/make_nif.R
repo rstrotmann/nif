@@ -170,7 +170,31 @@ isofy_date_format <- function(obj, fields=NULL) {
       #lubridate::as_datetime(x, format=dtc_formats)
       format(x, "%Y-%m-%dT%H:%M")
     })
+  #dplyr::mutate_at(fields, format(~., "%Y-%m-%dT%H:%M"))
 }
+
+
+#' Convert all DTC fields into POSIXct
+#'
+#' @param obj A data frame.
+#'
+#' @return A data frame.
+lubrify_dates <- function(obj) {
+  obj %>% dplyr::mutate_at(vars(ends_with("DTC")),
+                     ~lubridate::as_datetime(., format=dtc_formats))
+}
+
+
+#' Convert all DTC fields into ISO 8601 string format
+#'
+#' @param obj A data frame.
+#'
+#' @return A data frame.
+isofy_dates <- function(obj) {
+  obj %>%
+    dplyr::mutate_at(vars(ends_with("DTC")), ~format(., "%Y-%m-%dT%H:%M"))
+}
+
 
 #' Make administration data set from EX domain
 #'
@@ -204,22 +228,6 @@ make_admin <- function(ex,
   cutoff <- lubridate::as_datetime(
     cut.off.date,
     format=dtc_formats)
-
-  # ret <- ex
-
-  # impute EXENDTC if not present (i.e., use cut-off date when administration ongoing)
-  # temp <- ret %>% dplyr::filter(EXENDTC=="")
-  #
-  # if(temp %>% nrow() > 0){
-  #   out <- temp %>%
-  #     dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
-  #     df.to.string()
-  #   if(!silent){
-  #     message(paste0("In ", temp %>% nrow(),
-  #       " administrations, EX contained no EXENDTC. ",
-  #       "In these cases, EXENDTC was set to the cut off date (", cutoff, "):\n", out))
-  #   }
-  # }
 
   ret <- ex %>%
     dplyr::mutate(start=lubridate::as_datetime(
@@ -382,7 +390,8 @@ make_obs <- function(pc,
     # dplyr::mutate(DTC=lubridate::as_datetime(PCDTC,
     #   format=dtc_formats)) %>%
     mutate(DTC=PCDTC) %>%
-    standardize_date_format(c("PCRFTDTC", "DTC")) %>%
+    #standardize_date_format(c("PCRFTDTC", "DTC")) %>%
+    lubrify_dates() %>%
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
       .default=NA))
@@ -406,10 +415,10 @@ make_obs <- function(pc,
     }
   }
 
-    obs <- obs %>%
-      dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
-      dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0)) %>%
-      dplyr::mutate(ANALYTE=PCTESTCD)
+  obs <- obs %>%
+    dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
+    dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0)) %>%
+    dplyr::mutate(ANALYTE=PCTESTCD)
 
   return(obs %>% as.data.frame())
 }

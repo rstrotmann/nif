@@ -773,28 +773,33 @@ synthesize_sdtm_food_effect_study <- function() {
 
   out <- list()
   out[["dm"]] <- dm %>%
-    isofy_date_format(c("RFICDTC", "RFSTDTC"))
+    isofy_dates()
+    #isofy_date_format(c("RFICDTC", "RFSTDTC"))
     # mutate(RFICDTC=reformat_date(RFICDTC)) %>%
     # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["vs"]] <- vs %>%
-    isofy_date_format(c("RFSTDTC"))
+    isofy_dates()
+    #isofy_date_format(c("RFSTDTC"))
     # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["ex"]] <- ex %>%
-    isofy_date_format(c("RFSTDTC", "EXSTDTC", "EXENDTC")) %>%
+    mutate(EXTRT="EXAMPLINIB") %>%
+    isofy_dates()
+    #isofy_date_format(c("RFSTDTC", "EXSTDTC", "EXENDTC")) %>%
     # mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
     # mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
     # mutate(EXENDTC=reformat_date(EXENDTC)) %>%
-    mutate(EXTRT="EXAMPLINIB")
 
   out[["pc"]] <- pc %>%
-    isofy_date_format(c("PCRFTDTC", "PCDTC"))
+    isofy_dates()
+    #isofy_date_format(c("PCRFTDTC", "PCDTC"))
     # mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
     # mutate(PCDTC=reformat_date(PCDTC))
 
   out[["lb"]] <- lb %>%
-    isofy_date_format("LBDTC")
+    isofy_dates()
+    # isofy_date_format("LBDTC")
 
   temp <- new_sdtm(out) %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023")
@@ -882,29 +887,34 @@ synthesize_sdtm_sad_study <- function() {
 
   out <- list()
   out[["dm"]] <- dm %>%
+    select(-c("cohort", "dose")) %>%
+    isofy_dates()
     # mutate(RFICDTC=reformat_date(RFICDTC)) %>%
     # mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
-    isofy_date_format(c("RFICDTC", "RFSTDTC")) %>%
-    select(-c("cohort", "dose"))
+    # isofy_date_format(c("RFICDTC", "RFSTDTC"))
 
   out[["vs"]] <- vs %>%
-    isofy_date_format("RFSTDTC")
+    isofy_dates()
+    # isofy_date_format("RFSTDTC")
     # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["ex"]] <- ex %>%
-    isofy_date_format(c("RFSTDTC", "EXSTDTC", "EXENDTC")) %>%
+    mutate(EXTRT="EXAMPLINIB") %>%
+    isofy_dates()
+    # isofy_date_format(c("RFSTDTC", "EXSTDTC", "EXENDTC"))
     # mutate(RFSTDTC=reformat_date(RFSTDTC)) %>%
     # mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
     # mutate(EXENDTC=reformat_date(EXENDTC)) %>%
-    mutate(EXTRT="EXAMPLINIB")
 
   out[["pc"]] <- pc %>%
-    isofy_date_format(c("PCRFTDTC", "PCDTC"))
+    isofy_dates()
+    # isofy_date_format(c("PCRFTDTC", "PCDTC"))
     # mutate(PCRFTDTC=reformat_date(PCRFTDTC)) %>%
     # mutate(PCDTC=reformat_date(PCDTC))
 
   out[["lb"]] <- lb %>%
-    isofy_date_format("LBDTC")
+    isofy_dates()
+    # isofy_date_format("LBDTC")
 
   temp <- new_sdtm(out) %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023")
@@ -1050,27 +1060,32 @@ synthesize_sdtm_poc_study <- function() {
 
   out <- list()
   out[["dm"]] <- dm %>%
-    isofy_date_format(c("RFICDTC", "RFSTDTC"))
+    isofy_dates()
+    # isofy_date_format(c("RFICDTC", "RFSTDTC"))
     # mutate(RFICDTC=reformat_date(RFICDTC)) %>%
     # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["vs"]] <- vs %>%
-    isofy_date_format("RFSTDTC")
+    isofy_dates()
+    # isofy_date_format("RFSTDTC")
     # mutate(RFSTDTC=reformat_date(RFSTDTC))
 
   out[["ex"]] <- ex %>%
-    isofy_date_format(c("EXSTDTC", "EXENDTC")) %>%
+    mutate(EXTRT="EXAMPLINIB") %>%
+    isofy_dates()
+    # isofy_date_format(c("EXSTDTC", "EXENDTC"))
     # mutate(EXSTDTC=reformat_date(EXSTDTC)) %>%
     # mutate(EXENDTC=reformat_date(EXENDTC)) %>%
-    mutate(EXTRT="EXAMPLINIB")
 
   out[["pc"]] <- pc %>%
-    isofy_date_format(c("PCDTC", "PCRFTDTC"))
+    isofy_dates()
+    # isofy_date_format(c("PCDTC", "PCRFTDTC"))
     # mutate(PCDTC=reformat_date(PCDTC)) %>%
     # mutate(PCRFTDTC=reformat_date(PCRFTDTC))
 
   out[["lb"]] <- lb %>%
-    isofy_date_format("LBDTC")
+    isofy_dates()
+    # isofy_date_format("LBDTC")
 
   out <- new_sdtm(out) %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
