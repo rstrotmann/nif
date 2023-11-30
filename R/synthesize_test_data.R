@@ -200,7 +200,7 @@ pk_sim <- function(event_table) {
 
     d/dt(depot) = -ka * depot * fpar;
     dur(depot) = d1
-    d/dt(centr) = ka * depot * fpar - ke * c_centr - q * c_centr + q * c_peri;
+    d/dt(centr) = ka * depot * fpar - ke * c_centr - q * c_centr + q * c_peri - cl * c_centr;
     d/dt(peri) = q * c_centr - q * c_peri;
     d/dt(renal) = ke * c_centr * (1 - fm)
 
@@ -237,26 +237,6 @@ pk_sim <- function(event_table) {
 
   sigma <- rxode2::lotri(centr.err ~ .1^2)
 
-  # temp <- sbs %>%
-  #   select(USUBJID, EXDOSE) %>%
-  #   mutate(id=row_number())
-  #
-  # # reference: https://nlmixr2.github.io/rxode2/articles/rxode2-event-table.html
-  # ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
-  #   rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
-  #   rxode2::add.sampling(sampling_scheme$time) %>%
-  #   # rxode2::et(id=unique(sbs$ID)) %>%
-  #   rxode2::et(id=sbs$ID) %>%
-  #   as.data.frame() %>%
-  #   left_join(
-  #     sbs %>%
-  #       dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
-  #     by="id") %>%
-  #   mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
-  #   select(-EXDOSE)
-
-  # sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
-  #                  keep=c("FOOD", "PERIOD")) %>%
   sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
                    keep="NTIME") %>%
     as.data.frame()

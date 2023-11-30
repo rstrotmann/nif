@@ -84,7 +84,7 @@ simulate_pk <- function(n=20) {
     rxode2::et(id=sbs$ID) %>%
     as.data.frame() %>%
     left_join(
-      sbs %>% dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT),
+      sbs %>% dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, EGFR),
       by="id") %>%
     mutate(amt=500, FOOD=0, NTIME=time)
 
