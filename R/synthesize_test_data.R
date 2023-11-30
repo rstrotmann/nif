@@ -180,12 +180,17 @@ pk_sim1 <- function(sbs, sampling_scheme) {
 
 
 pk_sim <- function(event_table) {
+  if(!("EGFR" %in% colnames(event_table))) {
+    event_table <- event_table %>%
+      mutate(EGFR=1)
+  }
   mod <- rxode2::rxode2({
     c_centr = centr / v_centr * (1+centr.err);
     c_peri = peri / v_peri;
     c_metab = metab / v_metab;
 
-    ke = t.ke * exp(eta.ke)    # renal elimination constant
+    #ke = t.ke * exp(eta.ke)    # renal elimination constant
+    ke = t.ke * exp(eta.ke) * (EGFR/100)^0.9   # renal elimination constant
     ka = t.ka * exp(eta.ka) + FOOD * t.ka1
     d1 = t.d1 * exp(eta.d1)
     fm = t.fm * exp(eta.fm)   # fraction metabolized
@@ -924,13 +929,11 @@ make_examplinib_sad_nif <- function() {
 #' @param nrich The number of subjects with rich PK sampling.
 #' @param nsubs The number of subjects.
 #' @param nsites The number of clinical sites.
+#' @param studyid The study identifyer.
 #'
 #' @return A stdm object.
-synthesize_sdtm_poc_study <- function(dose=500, nrich=12, nsubs=80, nsites=8) {
-  # dose <- 500
-  # nrich <- 12
-  # nsubs <- 80
-  # nsites <- 8
+synthesize_sdtm_poc_study <- function(studyid="2023000022", dose=500, nrich=12,
+                                      nsubs=80, nsites=8) {
   rich_sampling_scheme <- data.frame(
     NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
     PCTPT = c("PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
@@ -941,7 +944,7 @@ synthesize_sdtm_poc_study <- function(dose=500, nrich=12, nsubs=80, nsites=8) {
     PCTPT = c("PRE", "1.5 H POST", "4 H POST")
   )
 
-  dm <- make_dm(studyid="2023000022", nsubs=nsubs, nsites=nsites,
+  dm <- make_dm(studyid=studyid, nsubs=nsubs, nsites=nsites,
                 female_fraction=0.4, duration=30, min_age=47, max_age=86) %>%
     mutate(ACTARMCD=case_match(ACTARMCD, ""~"TREATMENT",
                                .default=ACTARMCD)) %>%
@@ -955,13 +958,14 @@ synthesize_sdtm_poc_study <- function(dose=500, nrich=12, nsubs=80, nsites=8) {
     as.data.frame()
 
   sbs <- dm %>%
+    make_crea() %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
     left_join(vs %>%
                 select(USUBJID, VSTESTCD, VSSTRESN) %>%
                 group_by(USUBJID) %>%
                 pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN"),
               by="USUBJID") %>%
-    select(USUBJID, SEX, AGE, HEIGHT, WEIGHT) %>%
+    select(USUBJID, SEX, AGE, HEIGHT, WEIGHT, EGFR) %>%
     mutate(ID=row_number()) %>%
     mutate(rich=ID<=nrich)
 
@@ -974,7 +978,7 @@ synthesize_sdtm_poc_study <- function(dose=500, nrich=12, nsubs=80, nsites=8) {
     ungroup() %>%
     mutate(TIME=as.numeric(dtc-first_dtc)/3600) %>%
     left_join(sbs, by="USUBJID") %>%
-    select(id=ID, USUBJID, time=TIME, SEX, AGE, HEIGHT, WEIGHT) %>%
+    select(id=ID, USUBJID, time=TIME, SEX, AGE, HEIGHT, WEIGHT, EGFR) %>%
     mutate(cmt=0, amt=dose, rate=-2, evid=1, NTIME=0)
 
   temp <- admin %>%
@@ -1011,7 +1015,7 @@ synthesize_sdtm_poc_study <- function(dose=500, nrich=12, nsubs=80, nsites=8) {
     ungroup() %>%
     mutate(time1=time+delta) %>%
     left_join(sbs, by="USUBJID") %>%
-    select(id=ID, USUBJID, time=time1, SEX, AGE, HEIGHT, WEIGHT, NTIME) %>%
+    select(id=ID, USUBJID, time=time1, SEX, AGE, HEIGHT, WEIGHT, EGFR, NTIME) %>%
     mutate(cmt=1, amt=0, rate=0, evid=0)
 
   ev <- rbind(admin, sampling) %>%

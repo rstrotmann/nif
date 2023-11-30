@@ -110,6 +110,26 @@ test_that("PK model works", {
 
 
 
+test_that("EGFR is a covariate in PK model", {
+  expect_no_error(
+    pk <- simulate_pk(n=100) %>%
+      pivot_longer(cols=c("centr", "peri", "metab", "renal", "metab_excr"),
+                   names_to="COMP", values_to="VALUE"))
+
+  pk %>%
+    ggplot(aes(x=EGFR, y=ke)) +
+    geom_point(size=3) +
+    theme_bw()
+
+  pk %>%
+    group_by(time, COMP) %>%
+    summarize(MEAN=mean(VALUE), SD=sd(VALUE), .groups="drop") %>%
+    ggplot(aes(x=time, y=MEAN, color=COMP)) +
+    geom_ribbon(aes(ymin=MEAN-SD, ymax=MEAN+SD, fill=COMP), color=NA, alpha=0.2) +
+    geom_line() +
+    xlim(0, 50) +
+    theme_bw()
+})
 
 
 
