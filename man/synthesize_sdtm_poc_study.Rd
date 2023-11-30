@@ -4,9 +4,17 @@
 \alias{synthesize_sdtm_poc_study}
 \title{MD study}
 \usage{
-synthesize_sdtm_poc_study(dose = 500, nrich = 12, nsubs = 80, nsites = 8)
+synthesize_sdtm_poc_study(
+  studyid = "2023000022",
+  dose = 500,
+  nrich = 12,
+  nsubs = 80,
+  nsites = 8
+)
 }
 \arguments{
+\item{studyid}{The study identifyer.}
+
 \item{dose}{The dose to be administered. Defauts to 500.}
 
 \item{nrich}{The number of subjects with rich PK sampling.}
