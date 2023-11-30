@@ -937,13 +937,17 @@ make_examplinib_sad_nif <- function() {
 
 #' MD study
 #'
+#' @param dose The dose to be administered. Defauts to 500.
+#' @param nrich The number of subjects with rich PK sampling.
+#' @param nsubs The number of subjects.
+#' @param nsites The number of clinical sites.
+#'
 #' @return A stdm object.
-#' @export
-synthesize_sdtm_poc_study <- function() {
-  dose <- 500
-  nrich <- 12
-  nsubs <- 80
-  nsites <- 8
+synthesize_sdtm_poc_study <- function(dose=500, nrich=12, nsubs=80, nsites=8) {
+  # dose <- 500
+  # nrich <- 12
+  # nsubs <- 80
+  # nsites <- 8
   rich_sampling_scheme <- data.frame(
     NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
     PCTPT = c("PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
@@ -1139,8 +1143,8 @@ synthesize_examplinib <- function() {
     mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>%
     mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
     mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0)) %>%
-    add_bl_lab(examplinib_fe$domains[["lb"]], "CREAT", "SERUM") %>%
-    mutate(BL_CRCL=egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+    #add_bl_lab(examplinib_fe$domains[["lb"]], "CREAT", "SERUM") %>%
+    #mutate(BL_CRCL=egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
     compress_nif(standard_nif_fields, "PERIOD", "TREATMENT", "FASTED",
                  "BL_CREAT", "BL_CRCL")
 

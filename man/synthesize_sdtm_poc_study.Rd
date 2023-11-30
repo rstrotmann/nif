@@ -4,7 +4,16 @@
 \alias{synthesize_sdtm_poc_study}
 \title{MD study}
 \usage{
-synthesize_sdtm_poc_study()
+synthesize_sdtm_poc_study(dose = 500, nrich = 12, nsubs = 80, nsites = 8)
+}
+\arguments{
+\item{dose}{The dose to be administered. Defauts to 500.}
+
+\item{nrich}{The number of subjects with rich PK sampling.}
+
+\item{nsubs}{The number of subjects.}
+
+\item{nsites}{The number of clinical sites.}
 }
 \value{
 A stdm object.
