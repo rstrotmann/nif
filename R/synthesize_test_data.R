@@ -191,7 +191,10 @@ pk_sim <- function(event_table) {
     fm = t.fm * exp(eta.fm)   # fraction metabolized
 
     cl = t.cl * exp(eta.cl)    # metabolic clearance
-    kem = t.kem * exp(eta.kem) # elimination constant for metabolite
+    # clm = t.clm * exp(eta.clm)    # metabolic clearance
+    # clr = t.clr * exp(eta.clr)    # renal clearance
+
+    kem = t.kem * exp(eta.kem)    # elimination constant for metabolite
     fpar = 1 * exp(eta.fpar) + FOOD * t.fpar1
     q = t.q * exp(eta.q)
 
