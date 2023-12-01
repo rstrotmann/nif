@@ -178,26 +178,59 @@ pk_sim1 <- function(sbs, sampling_scheme) {
 }
 
 
+# pk_sim_sbs <- function(sbs, sampling_scheme) {
+#   temp <- sbs %>%
+#     select(USUBJID, EXDOSE) %>%
+#     mutate(id=row_number())
+#
+#   # reference: https://nlmixr2.github.io/rxode2/articles/rxode2-event-table.html
+#   ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
+#     rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
+#     rxode2::add.sampling(sampling_scheme$time) %>%
+#     rxode2::et(id=sbs$ID) %>%
+#     as.data.frame() %>%
+#     left_join(
+#       sbs %>%
+#         dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
+#       by="id") %>%
+#     mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
+#     select(-EXDOSE)
+#
+#   # sim <- mod$solve(theta, ev, omega=omega, sigma=sigma,
+#   #                  keep=c("FOOD", "PERIOD")) %>%
+#   #   as.data.frame()
+#   sim <- pk_sim(ev)
+#   return(sim)
+# }
 
+
+
+#' Simulate PK based on the examplinib PopPK model
+#'
+#' @param event_table The event table as required by RxODE.
+#'
+#' @return PK simulation as data frame
+#' @export
 pk_sim <- function(event_table) {
   if(!("EGFR" %in% colnames(event_table))) {
     event_table <- event_table %>%
       mutate(EGFR=1)
   }
+
+  # keep_columns <- event_table %>%
+  #   select(any_of(c("id", keep)))
+
   mod <- rxode2::rxode2({
     c_centr = centr / v_centr * (1+centr.err);
     c_peri = peri / v_peri;
     c_metab = metab / v_metab;
 
-    #ke = t.ke * exp(eta.ke)    # renal elimination constant
     ke = t.ke * exp(eta.ke) * (EGFR/100)^0.9   # renal elimination constant
     ka = t.ka * exp(eta.ka) + FOOD * t.ka1
     d1 = t.d1 * exp(eta.d1)
     fm = t.fm * exp(eta.fm)   # fraction metabolized
 
     cl = t.cl * exp(eta.cl)    # metabolic clearance
-    # clm = t.clm * exp(eta.clm)    # metabolic clearance
-    # clr = t.clr * exp(eta.clr)    # renal clearance
 
     kem = t.kem * exp(eta.kem)    # elimination constant for metabolite
     fpar = 1 * exp(eta.fpar) + FOOD * t.fpar1
@@ -221,7 +254,8 @@ pk_sim <- function(event_table) {
     t.ke = 30,
     t.q = 5,
     t.cl = 20,
-    t.kem = 10,
+    #t.kem = 10,
+    t.kem = 2,
     t.fm = 0.8,
 
     v_centr = 100,
@@ -242,9 +276,11 @@ pk_sim <- function(event_table) {
 
   sigma <- rxode2::lotri(centr.err ~ .1^2)
 
-  sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
-                   keep="NTIME") %>%
-    as.data.frame()
+  # sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
+  #                  keep="NTIME") %>%
+  sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma, keep="NTIME") %>%
+    as.data.frame() #%>%
+    # left_join(keep_columns, by="id")
   return(sim)
 }
 
@@ -642,7 +678,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
 }
 
 
-#' Title
+#' Create PC based on single-dose admninistration
 #'
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
@@ -659,38 +695,49 @@ make_sd_pc <- function(ex, dm, vs, sampling_scheme) {
     as.data.frame()
 
   sbs <- dm %>%
-    dplyr::select(USUBJID, SEX, AGE, ACTARMCD) %>%
+    dplyr::select(USUBJID, SEX, AGE, RACE, ACTARMCD, RFSTDTC) %>%
     left_join(abs_vs, by="USUBJID") %>%
+    left_join(ex %>% distinct(USUBJID, EXDOSE), by="USUBJID") %>%
+    #left_join(ex, by="USUBJID") %>%
+    make_crea() %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
     group_by(USUBJID) %>%
     mutate(ID=cur_group_id()) %>%
     ungroup() %>%
-    arrange(ID)
-
-  temp <- sbs %>%
     mutate(PERIOD=1) %>%
     mutate(EXDY=1) %>%
     mutate(FOOD=0) %>%
-    left_join(dm %>% select(USUBJID, RFSTDTC), by="USUBJID") %>%
-    left_join(ex %>% distinct(USUBJID, EXDOSE), by="USUBJID") %>%
-    as.data.frame()
+    arrange(ID)
 
-  sim <- pk_sim1(temp, sampling_scheme)
+  ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
+    rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
+    rxode2::add.sampling(sampling_scheme$time) %>%
+    rxode2::et(id=sbs$ID) %>%
+    mutate(NTIME=time) %>%
+    left_join(
+      sbs %>%
+        dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
+      by="id") %>%
+    mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
+    mutate(NTIME=time) %>%
+    select(-EXDOSE)
+
+  sim <- pk_sim(ev)
 
   pc <- sim %>%
-    dplyr::select(id, time, c_centr, c_metab, PERIOD) %>%
+    dplyr::select(id, time, c_centr, c_metab) %>%
     mutate(RS2023=c_centr, RS2023487A=c_metab) %>%
     pivot_longer(c("RS2023", "RS2023487A"), names_to="PCTESTCD",
                  values_to="PCSTRESN") %>%
     mutate(PCSTRESN=round(PCSTRESN, 3)) %>%
     mutate(PCTEST=case_when(PCTESTCD=="RS2023" ~ "RS2023",
                             PCTESTCD=="RS2023487A" ~"RS2023487A")) %>%
-    left_join(temp %>% distinct(ID, USUBJID, RFSTDTC), by=c("id"="ID")) %>%
+    left_join(sbs %>% distinct(ID, USUBJID, RFSTDTC), by=c("id"="ID")) %>%
     mutate(STUDYID=unique(dm$STUDYID), DOMAIN="PC") %>%
     mutate(PCELTM=paste0("PT", as.character(time), "H")) %>%
     mutate(PCTPTNUM=time) %>%
     left_join(sampling_scheme, by="time") %>%
-    mutate(PCDTC=RFSTDTC + (PERIOD-1)*13*24*60*60 + time*60*60) %>%
+    mutate(PCDTC=RFSTDTC + time*60*60) %>%
     arrange(id, PCDTC, PCTESTCD) %>%
     group_by(id) %>%
     mutate(PCSEQ=row_number()) %>%
@@ -698,8 +745,7 @@ make_sd_pc <- function(ex, dm, vs, sampling_scheme) {
     mutate(PCSPEC="PLASMA") %>%
     mutate(PCRFTDTC=RFSTDTC) %>%
     mutate(EPOCH="OPEN LABEL TREATMENT") %>%
-    dplyr::select(-id, -time, -c_centr, - c_metab, -RFSTDTC) %>%
-    as.data.frame()
+    dplyr::select(-id, -time, -c_centr, - c_metab, -RFSTDTC)
   return(pc)
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/synthesize_test_data.R
 \name{make_sd_pc}
 \alias{make_sd_pc}
-\title{Title}
+\title{Create PC based on single-dose admninistration}
 \usage{
 make_sd_pc(ex, dm, vs, sampling_scheme)
 }
@@ -19,5 +19,5 @@ make_sd_pc(ex, dm, vs, sampling_scheme)
 The PC domain as data frame.
 }
 \description{
-Title
+Create PC based on single-dose admninistration
 }

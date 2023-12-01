@@ -127,7 +127,7 @@ test_that("EGFR is a covariate in PK model", {
     ggplot(aes(x=time, y=MEAN, color=COMP)) +
     geom_ribbon(aes(ymin=MEAN-SD, ymax=MEAN+SD, fill=COMP), color=NA, alpha=0.2) +
     geom_line() +
-    xlim(0, 50) +
+    xlim(0, 24) +
     theme_bw()
 })
 
