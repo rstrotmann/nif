@@ -429,68 +429,87 @@ covariate_plot_parameters <- tribble(
 #'
 #' @param x A NIF data set.
 #' @param ... Further arguments.
-#' @param type Parameter to specify what overview to plot. Can be 'baseline',
-#'   'analytes' or 'all' (default).
-#'
-#' @return Nothing.
+#' @return A list of ggplot objects.
 #' @export
-plot.summary_nif <- function(x, type="all", ...) {
-  if(type=="all") {
-    type <- c("baseline", "analytes")
-  }
-
+# plot.summary_nif <- function(x, type="all", ...) {
+#   if(type=="all") {
+#     type <- c("baseline", "analytes")
+#   }
+#
+#   nif <- x$nif
+#
+#   if("baseline" %in% type) {
+#     for(i in 1:nrow(covariate_plot_parameters)) {
+#       current_cov <- covariate_plot_parameters[i, ]
+#       if(current_cov$field %in% colnames(nif)) {
+#         invisible(
+#           capture.output(
+#             suppressWarnings(
+#               print(
+#                 covariate_hist(nif, current_cov)
+#               )
+#             )
+#           )
+#         )
+#       }
+#     }
+#
+#     invisible(
+#       capture.output(
+#         suppressWarnings(
+#           print(
+#             list(
+#               wt_by_sex(nif),
+#               wt_by_race(nif)
+#             )
+#           )
+#         )
+#       )
+#     )
+#   }
+#
+#   if("analytes" %in% type) {
+#     plots <- list(
+#       lapply(x$analytes, function(a) {
+#         nif %>%
+#           plot(analyte=a,
+#                y_scale = "log",
+#                points=T,
+#                line=F,
+#                alpha=0.3,
+#                title=paste(a, "overview by dose"),
+#                max_x=max_observation_time(x$nif, a))}))
+#
+#     invisible(
+#       capture.output(
+#         suppressWarnings(
+#           print(plots))
+#       )
+#     )
+#   }
+# }
+plot.summary_nif <- function(x, ...) {
   nif <- x$nif
+  out <- list()
 
-  if("baseline" %in% type) {
-    for(i in 1:nrow(covariate_plot_parameters)) {
-      current_cov <- covariate_plot_parameters[i, ]
-      if(current_cov$field %in% colnames(nif)) {
-        invisible(
-          capture.output(
-            suppressWarnings(
-              print(
-                covariate_hist(nif, current_cov)
-              )
-            )
-          )
-        )
-      }
+  for(i in 1:nrow(covariate_plot_parameters)) {
+    current_parameters <- covariate_plot_parameters[i, ]
+    if(current_parameters$field %in% colnames(nif)) {
+      out[[current_parameters$field]] <- covariate_hist(nif, current_parameters)
     }
-
-    invisible(
-      capture.output(
-        suppressWarnings(
-          print(
-            list(
-              wt_by_sex(nif),
-              wt_by_race(nif)
-            )
-          )
-        )
-      )
-    )
   }
 
-  if("analytes" %in% type) {
-    plots <- list(
-      lapply(x$analytes, function(a) {
-        nif %>%
-          plot(analyte=a,
-               y_scale = "log",
-               points=T,
-               line=F,
-               alpha=0.3,
-               title=paste(a, "overview by dose"),
-               max_x=max_observation_time(x$nif, a))}))
+  out[["WT_SEX"]] <- wt_by_sex(nif)
+  out[["WT_RACE"]] <- wt_by_race(nif)
 
-    invisible(
-      capture.output(
-        suppressWarnings(
-          print(plots))
-      )
-    )
+  for(i in x$analytes) {
+    out[[i]] <- plot(nif, analyte=i, y_scale="log", points=T, line=F,
+           alpha=0.3, title=paste(i, "overview by dose"),
+           max_x=max_observation_time(x$nif, i))
   }
+  return(out)
 }
+
 
 
 #' Generic covariate distribution histogram

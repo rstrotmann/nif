@@ -613,6 +613,12 @@ make_md_ex <- function(dm, drug="RS2023", dose=500, treatment_duration=50,
 # make PCTPT:
 # make PCSEQ:
 
+
+
+
+
+
+
 #' Synthesize the PC domain for a food effect study.
 #'
 #' @param ex The EX domain to syntesize PC data for.
@@ -629,13 +635,15 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     as.data.frame()
 
   sbs <- dm %>%
-    dplyr::select(USUBJID, SEX, AGE, ACTARMCD) %>%
+    dplyr::select(USUBJID, SEX, AGE, RACE, ACTARMCD, RFSTDTC) %>%
     left_join(abs_vs, by="USUBJID") %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
     group_by(USUBJID) %>%
     mutate(ID=cur_group_id()) %>%
     ungroup() %>%
     arrange(ID)
+
+  # ev <- sd_event_table(ex, dm, vs, sampling_scheme)
 
   temp <- sbs %>%
     group_by_all() %>%
@@ -678,16 +686,17 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
 }
 
 
-#' Create PC based on single-dose admninistration
+
+#' Make RxODE event table for single dose administrations
 #'
-#' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
 #' @param vs The VS domain as data frame.
-#' @param sampling_scheme The PK sampling scheme as data frame.
+#' @param ex The EX domain as data frame.
+#' @param sampling_scheme The sampling scheme domain as data frame.
 #'
-#' @return The PC domain as data frame.
+#' @return An event table object.
 #' @export
-make_sd_pc <- function(ex, dm, vs, sampling_scheme) {
+sd_event_table <- function(ex, dm, vs, sampling_scheme) {
   abs_vs <- vs %>%
     filter(EPOCH=="SCREENING") %>%
     dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
@@ -697,13 +706,14 @@ make_sd_pc <- function(ex, dm, vs, sampling_scheme) {
   sbs <- dm %>%
     dplyr::select(USUBJID, SEX, AGE, RACE, ACTARMCD, RFSTDTC) %>%
     left_join(abs_vs, by="USUBJID") %>%
-    left_join(ex %>% distinct(USUBJID, EXDOSE), by="USUBJID") %>%
-    #left_join(ex, by="USUBJID") %>%
     make_crea() %>%
+    left_join(ex %>% distinct(USUBJID, EXDOSE), by="USUBJID") %>%
     filter(ACTARMCD!="SCRNFAIL") %>%
-    group_by(USUBJID) %>%
-    mutate(ID=cur_group_id()) %>%
-    ungroup() %>%
+    # group_by(USUBJID) %>%
+    # mutate(ID=cur_group_id()) %>%
+    # ungroup() %>%
+    mutate(ID=row_number()) %>%
+
     mutate(PERIOD=1) %>%
     mutate(EXDY=1) %>%
     mutate(FOOD=0) %>%
@@ -716,12 +726,65 @@ make_sd_pc <- function(ex, dm, vs, sampling_scheme) {
     mutate(NTIME=time) %>%
     left_join(
       sbs %>%
-        dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
+        dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EGFR, EXDOSE),
       by="id") %>%
     mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
-    mutate(NTIME=time) %>%
-    select(-EXDOSE)
+    mutate(NTIME=time) #%>%
+    #select(-EXDOSE)
+  return(ev)
+}
 
+
+
+
+
+
+#' Create PC based on single-dose admninistration
+#'
+#' @param ex The EX domain as data frame.
+#' @param dm The DM domain as data frame.
+#' @param vs The VS domain as data frame.
+#' @param sampling_scheme The PK sampling scheme as data frame.
+#'
+#' @return The PC domain as data frame.
+#' @export
+make_sd_pc <- function(ex, dm, vs, sampling_scheme) {
+  # abs_vs <- vs %>%
+  #   filter(EPOCH=="SCREENING") %>%
+  #   dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
+  #   pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN") %>%
+  #   as.data.frame()
+  #
+  # sbs <- dm %>%
+  #   dplyr::select(USUBJID, SEX, AGE, RACE, ACTARMCD, RFSTDTC) %>%
+  #   left_join(abs_vs, by="USUBJID") %>%
+  #   left_join(ex %>% distinct(USUBJID, EXDOSE), by="USUBJID") %>%
+  #   #left_join(ex, by="USUBJID") %>%
+  #   make_crea() %>%
+  #   filter(ACTARMCD!="SCRNFAIL") %>%
+  #   group_by(USUBJID) %>%
+  #   mutate(ID=cur_group_id()) %>%
+  #   ungroup() %>%
+  #
+  #   mutate(PERIOD=1) %>%
+  #   mutate(EXDY=1) %>%
+  #   mutate(FOOD=0) %>%
+  #   arrange(ID)
+  #
+  # ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
+  #   rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
+  #   rxode2::add.sampling(sampling_scheme$time) %>%
+  #   rxode2::et(id=sbs$ID) %>%
+  #   mutate(NTIME=time) %>%
+  #   left_join(
+  #     sbs %>%
+  #       dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
+  #     by="id") %>%
+  #   mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
+  #   mutate(NTIME=time) %>%
+  #   select(-EXDOSE)
+
+  ev <- sd_event_table(ex, dm, vs, sampling_scheme)
   sim <- pk_sim(ev)
 
   pc <- sim %>%

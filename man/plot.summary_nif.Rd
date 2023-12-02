@@ -4,18 +4,15 @@
 \alias{plot.summary_nif}
 \title{Plot NIF summary}
 \usage{
-\method{plot}{summary_nif}(x, type = "all", ...)
+\method{plot}{summary_nif}(x, ...)
 }
 \arguments{
 \item{x}{A NIF data set.}
 
-\item{type}{Parameter to specify what overview to plot. Can be 'baseline',
-'analytes' or 'all' (default).}
-
 \item{...}{Further arguments.}
 }
 \value{
-Nothing.
+A list of ggplot objects.
 }
 \description{
 Plot NIF summary
