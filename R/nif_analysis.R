@@ -11,12 +11,14 @@
 #' @param sex Sex encocded as number (male is 0) or character (male is "M").
 #' @param race Race. Dummy variable for compatibility, race is not used by this
 #'   method.
+#' @param weight Body weight. Not used in this formula but included for
+#' compatibility.
 #' @param molar Switch to select whether the creatinine value is in mg/dl
 #' (default) or umol/l units.
 #'
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
-egfr_raynaud <- function(crea, age, sex, race="", molar=F) {
+egfr_raynaud <- function(crea, age, sex, race="", weight=NA, molar=F) {
   if(molar) {
     crea <- crea / 88.4
   }
@@ -81,10 +83,12 @@ crea_raynaud <- function(egfr, age, sex, race="") {
 #'   occurrence of 'black' in the value.
 #' @param molar Switch to select whether the creatinine value is in mg/dl
 #' (default) or umol/l units.
+#' @param weight Body weight. Not used in this formula but included for
+#' compatibility.
 #' #'
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
-egfr_mdrd <- function(crea, age, sex, race="", molar=F) {
+egfr_mdrd <- function(crea, age, sex, race="", weight=NA, molar=F) {
   if(molar) {
     crea <- crea / 88.4
   }

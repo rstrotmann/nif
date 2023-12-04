@@ -4,7 +4,7 @@
 \alias{egfr_raynaud}
 \title{Glomerular filtration rate estimation from serum creatinine (Raynaud method)}
 \usage{
-egfr_raynaud(crea, age, sex, race = "", molar = F)
+egfr_raynaud(crea, age, sex, race = "", weight = NA, molar = F)
 }
 \arguments{
 \item{crea}{Serum creatinine in mg/dl or umol/l (if molar=TRUE).}
@@ -15,6 +15,9 @@ egfr_raynaud(crea, age, sex, race = "", molar = F)
 
 \item{race}{Race. Dummy variable for compatibility, race is not used by this
 method.}
+
+\item{weight}{Body weight. Not used in this formula but included for
+compatibility.}
 
 \item{molar}{Switch to select whether the creatinine value is in mg/dl
 (default) or umol/l units.}

@@ -4,7 +4,7 @@
 \alias{egfr_mdrd}
 \title{Glomerular filtration rate estimation from serum creatinine (MDRD)}
 \usage{
-egfr_mdrd(crea, age, sex, race = "", molar = F)
+egfr_mdrd(crea, age, sex, race = "", weight = NA, molar = F)
 }
 \arguments{
 \item{crea}{Serum creatinine in mg/dl.}
@@ -16,9 +16,12 @@ egfr_mdrd(crea, age, sex, race = "", molar = F)
 \item{race}{Race as per CDISC nomenclature. Black race is identified as the
 occurrence of 'black' in the value.}
 
-\item{molar}{Switch to select whether the creatinine value is in mg/dl
-(default) or umol/l units.
+\item{weight}{Body weight. Not used in this formula but included for
+compatibility.
 #'}
+
+\item{molar}{Switch to select whether the creatinine value is in mg/dl
+(default) or umol/l units.}
 }
 \value{
 Estimated GFR in ml/min/1.73 m^2.

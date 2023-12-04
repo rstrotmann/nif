@@ -304,10 +304,12 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
 #'
 #' @param object The NIF data set.
 #' @param ... Further arguments.
+#' @param egfr_function The function to be used for estimation of the renal
+#' function classes, see [add_bl_crcl()] for reference.
 #'
 #' @return A summary_nif object.
 #' @export
-summary.nif <- function(object, ...) {
+summary.nif <- function(object, egfr_function=egfr_cg, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
   parents <- object %>%
@@ -346,6 +348,13 @@ summary.nif <- function(object, ...) {
     dplyr::pull(n)
   if(length(n_females)==0) {n_females=0}
 
+  renal_function <- object %>%
+    add_bl_crcl(method=egfr_cg) %>%
+    as.data.frame() %>%
+    mutate(CLASS=cut(BL_CRCL, breaks=c(0, 30, 60, 90, Inf),
+                            labels=c("severe", "moderate", "mild", "normal"))) %>%
+    distinct(ID, CLASS)
+
   out <- list(
     nif = object,
     studies = studies(object),
@@ -355,15 +364,13 @@ summary.nif <- function(object, ...) {
     n_subj = nrow(subjects),
     n_males = n_males,
     n_females = n_females,
-    # n_obs = object %>%
-    #   filter(EVID==0) %>%
-    #   nrow(),
     n_obs = observations,
     analytes=analytes,
     n_analytes = length(analytes),
     drugs = parents,
     dose_levels = dose_levels(object,
                               grouping=any_of(c("PART", "COHORT", "GROUP"))),
+    renal_function = renal_function,
     administration_duration = administration_summary(object)
   )
   class(out) <- "summary_nif"
@@ -387,6 +394,15 @@ print.summary_nif <- function(x, ...) {
 
   cat(paste0("Males: ", x$n_males, ", females: ", x$n_females, " (",
              round(x$n_females/(x$n_males + x$n_females)*100, 1), "%)\n\n"))
+
+  cat(paste0("Renal function:\n", df.to.string(
+    x$renal_function %>%
+      as.data.frame() %>%
+      mutate(CLASS=as.character(CLASS)) %>%
+        group_by(CLASS) %>%
+        summarize(N=n()) %>%
+        arrange(ordered(CLASS, c("normal","mild", "moderate", "severe")))
+  ), "\n\n"))
 
   cat(paste0("Analytes:\n", paste(x$analytes, collapse=", "), "\n\n"))
 
@@ -431,63 +447,6 @@ covariate_plot_parameters <- tribble(
 #' @param ... Further arguments.
 #' @return A list of ggplot objects.
 #' @export
-# plot.summary_nif <- function(x, type="all", ...) {
-#   if(type=="all") {
-#     type <- c("baseline", "analytes")
-#   }
-#
-#   nif <- x$nif
-#
-#   if("baseline" %in% type) {
-#     for(i in 1:nrow(covariate_plot_parameters)) {
-#       current_cov <- covariate_plot_parameters[i, ]
-#       if(current_cov$field %in% colnames(nif)) {
-#         invisible(
-#           capture.output(
-#             suppressWarnings(
-#               print(
-#                 covariate_hist(nif, current_cov)
-#               )
-#             )
-#           )
-#         )
-#       }
-#     }
-#
-#     invisible(
-#       capture.output(
-#         suppressWarnings(
-#           print(
-#             list(
-#               wt_by_sex(nif),
-#               wt_by_race(nif)
-#             )
-#           )
-#         )
-#       )
-#     )
-#   }
-#
-#   if("analytes" %in% type) {
-#     plots <- list(
-#       lapply(x$analytes, function(a) {
-#         nif %>%
-#           plot(analyte=a,
-#                y_scale = "log",
-#                points=T,
-#                line=F,
-#                alpha=0.3,
-#                title=paste(a, "overview by dose"),
-#                max_x=max_observation_time(x$nif, a))}))
-#
-#     invisible(
-#       capture.output(
-#         suppressWarnings(
-#           print(plots))
-#       )
-#     )
-#   }
-# }
 plot.summary_nif <- function(x, ...) {
   nif <- x$nif
   out <- list()
@@ -551,8 +510,6 @@ covariate_hist <- function(obj, cov_params, nbins=11) {
 }
 
 
-
-
 #' Age histogram
 #'
 #' @param obj The NIF file object.
@@ -594,6 +551,7 @@ bmi_hist <- function(obj) {
     ggtitle("BMI distribution")
 }
 
+
 #' Weight by sex diagram
 #'
 #' @param obj The NIF file object.
@@ -620,6 +578,7 @@ wt_by_sex <- function(obj) {
     theme_bw() +
     ggtitle("Body weight by sex")
 }
+
 
 #' Weight by race diagram
 #'
@@ -654,6 +613,7 @@ wt_by_race <- function(obj) {
     ggtitle("Body weight by race")
 }
 
+
 #' Weight by height scatterplot
 #'
 #' @param obj The NIF object.
@@ -671,7 +631,6 @@ wt_by_ht <- function(obj) {
     ggtitle("Body weight by height") +
     theme_bw()
 }
-
 
 
 #' Overview on the number of administrations in the subjects by parent

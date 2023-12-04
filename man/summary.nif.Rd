@@ -4,10 +4,13 @@
 \alias{summary.nif}
 \title{NIF data set overview}
 \usage{
-\method{summary}{nif}(object, ...)
+\method{summary}{nif}(object, egfr_function = egfr_cg, ...)
 }
 \arguments{
 \item{object}{The NIF data set.}
+
+\item{egfr_function}{The function to be used for estimation of the renal
+function classes, see \code{\link[=add_bl_crcl]{add_bl_crcl()}} for reference.}
 
 \item{...}{Further arguments.}
 }

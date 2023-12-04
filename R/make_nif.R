@@ -910,26 +910,26 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
 }
 
 
-#' Add baseline creatinine clearance field.
-#'
-#' @param obj A NIF data set.
-#' @param method The function to calculate eGFR (CrCL) from serum creatinine.
-#' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
-#'
-#' @return A NIF data set.
-#' @seealso [egfr_mdrd()]
-#' @seealso [egfr_cg()]
-#' @seealso [egfr_raynaud()]
-#' @export
-add_bl_crcl <- function(obj, method=egfr_mdrd) {
-  if("BL_CREAT" %in% colnames(obj)) {
-  obj <- obj %>%
-    as.data.frame() %>%
-    mutate(BL_CRCL=method(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
-    new_nif()
-  }
-  return(obj)
-}
+#' #' Add baseline creatinine clearance field.
+#' #'
+#' #' @param obj A NIF data set.
+#' #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
+#' #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
+#' #'
+#' #' @return A NIF data set.
+#' #' @seealso [egfr_mdrd()]
+#' #' @seealso [egfr_cg()]
+#' #' @seealso [egfr_raynaud()]
+#' #' @export
+#' add_bl_crcl <- function(obj, method=egfr_mdrd) {
+#'   if("BL_CREAT" %in% colnames(obj)) {
+#'   obj <- obj %>%
+#'     as.data.frame() %>%
+#'     mutate(BL_CRCL=method(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
+#'     new_nif()
+#'   }
+#'   return(obj)
+#' }
 
 
 

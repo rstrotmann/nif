@@ -439,6 +439,30 @@ guess_analyte <- function(obj) {
 }
 
 
+#' Add baseline creatinine clearance field.
+#'
+#' @param obj A NIF data set.
+#' @param method The function to calculate eGFR (CrCL) from serum creatinine.
+#' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
+#'
+#' @return A NIF data set.
+#' @seealso [egfr_mdrd()]
+#' @seealso [egfr_cg()]
+#' @seealso [egfr_raynaud()]
+#' @export
+add_bl_crcl <- function(obj, method=egfr_mdrd) {
+  if("BL_CREAT" %in% colnames(obj)) {
+    obj %>%
+      as.data.frame() %>%
+      mutate(BL_CRCL=method(BL_CREAT, AGE, SEX, RACE, WEIGHT, molar=T)) %>%
+      new_nif()
+  } else {
+    obj %>%
+      mutate(BL_CRCL=as.numeric(NA))
+  }
+}
+
+
 # add_day <- function(obj) {
 #   temp <- obj %>%
 #     as.data.frame() %>%
