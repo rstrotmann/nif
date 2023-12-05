@@ -49,11 +49,11 @@ print.nif <- function(x, ...){
   cat(paste0("Males: ", n_males, ", females: ", n_females, " (",
              round(n_females/(n_males + n_females)*100, 1), "%)\n\n"))
 
-  cat(paste0("Studies:\n", paste(studies(x), collapse="\n"), "\n\n"))
-
-  cat("Dose levels:\n")
-  cat(df.to.string(dose_levels(x, grouping=any_of(c("PART", "COHORT", "GROUP")))))
-  cat("\n\n")
+  # cat(paste0("Studies:\n", paste(studies(x), collapse="\n"), "\n\n"))
+  #
+  # cat("Dose levels:\n")
+  # cat(df.to.string(dose_levels(x, grouping=any_of(c("PART", "COHORT", "GROUP")))))
+  # cat("\n\n")
 
   cat("Columns:\n")
   cat(paste(names(x), collapse=", "), "\n")
@@ -450,7 +450,7 @@ guess_analyte <- function(obj) {
 #' @seealso [egfr_cg()]
 #' @seealso [egfr_raynaud()]
 #' @export
-add_bl_crcl <- function(obj, method=egfr_mdrd) {
+add_bl_crcl <- function(obj, method=egfr_cg) {
   if("BL_CREAT" %in% colnames(obj)) {
     obj %>%
       as.data.frame() %>%

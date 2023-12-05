@@ -4,7 +4,7 @@
 \alias{add_bl_crcl}
 \title{Add baseline creatinine clearance field.}
 \usage{
-add_bl_crcl(obj, method = egfr_mdrd)
+add_bl_crcl(obj, method = egfr_cg)
 }
 \arguments{
 \item{obj}{A NIF data set.}

@@ -25,40 +25,64 @@ library(nif)
 
 # OVERVIEW
 
-This is an example for a fictional multiple-dose study with a
-fictional drug, `RS2023`. As part of the NIF package, a synthetic SDTM data set
-for this study (study `RS2023-0022`) is included as `examplinib_poc`:
+This vignette walks through the creation of a NIF data set for a prototypical
+multiple dose study (study 'RS2023-0022'), as well as some basic exploratory
+analyses.
 
-```{r, echo=F}
-print(summary(examplinib_poc))
-```
+The (entirely fictional) raw study data are provided in SDTM format as
+part of the NIF package as 'examplinib_poc'. Actual SDTM data can be loaded 
+using `read_sdtm_sas()` of `read_sdtm_xpt()` - for further information see the
+documentation for the respective functions.
 
 ## Study design
 
-This is a single-arm study in which subjects received multiple doses of 'RS2023'. 
+Study 'RS2023-0022' is a single-arm study in which subjects received multiple
+doses of 'examplinib' (substance code 'RS2023').
 The treatment duration is different across subjects. PK sampling was on Days 1
 and 8 of the treatment period. The PK sampling schedule was rich in the initial
 subset of subjects and sparse in the others.
 
-## Objective
+## Study SDTM data
 
-The objective of this vignette is to outline how to approach the data set, 
-gradually exploring the subject disposition, treatment durations and the available
-pharmacokinetic data. This should always be the first step before entering 
-pharmacokinetic modeling.
+SDTM data objects as defined in the NIF package are aggregates of the original
+SDTM domains together with some metadata. Let's print the 'examplinib_poc' SDTM
+object for a high-level overview on the data:
+
+
+```{r, echo=T}
+examplinib_poc
+```
+
+Note that in the EX domain, the administered drug is given as 'EXAMPLINIB' while
+in PC, the corresponding analyte is 'RS2023'. The other analyte, 'RS2023487A' is
+a metabolite.
+
+To clearly specify these correlations, the SDTM object contains the fields
+`examplinib_poc$analyte_mapping` and `examplinib_poc$metabolite_mapping`. Both
+need to be specified when the SDTM data set is created. See the documentation to
+`add_analyte_mapping()` and `add_metabolite_mapping()` for details.
+
+For this SDTM object, both have been added already.
 
 # CREATE THE NIF DATA SET
 
-Creation of the NIF dataset is straightforward. No imputations are needed, and
-no study-specific fields are created:
+Creation of the NIF data set for this study is straightforward. No imputations
+are needed, and no study-specific fields are created:
 
 ```{r}
 nif_poc <- make_nif(examplinib_poc, spec="PLASMA")
 ```
 
-For this data set, the LB domain contains baseline creatinine data which can be
-used to calculate the baseline creatinine clearance as an estimate for GFR
-(eGFR). In the last step, we clean up the NIF data set, keeping only the fields
+Of note, the LB domain within this SDTM object contains baseline creatinine data
+which can be used to calculate the baseline creatinine clearance as an estimate
+for glomerular filtration rate (eGFR). Please see the below code for details.
+
+In the first step, baseline creatinine is added from 'LB', and then the
+creatinineclearance is calculated using further demographic parameters (sex,
+age, race, weight). The standard method is Cockcroft-Gault but other methods can
+be specified.
+ 
+In the last step, the NIF data set, is cleaned up, keeping only the fields
 that are commonly used:
 
 ```{r}
@@ -68,25 +92,46 @@ nif_poc <- make_nif(examplinib_poc, spec="PLASMA") %>%
   compress_nif()
 ```
 
-By the way, this NIF data set is already included in the package under the name
-'examplinib_poc_nif'. It is equivalent to the above created data set.
+(In fact, the resulting NIF data set, including baseline creatinine clearance is
+already included in the package under the name 'examplinib_poc_nif'.)
+
+In case NIF data sets have been generated independently, they can be converted
+into NIF objects using `new_nif()`, see the documentation to this
+function for details.
+
+The resulting NIF object is essentially wrapper around a data frame which has
+the set of variables expected by NONMEM or other population analysis tools. This
+becomes visible when the object is converted into a data frame:
+
+```{r, comment="# "}
+nif_poc %>% 
+  as.data.frame() %>% 
+  head()
+```
+
+When the NIF object itself is printed, a summary of the data is shown instead:
+
+```{r, comment="# "}
+nif_poc
+```
 
 # EXPLORATION
 
 ## Demographics
 
-The number of subjects, the sex distributions and other baseline
-demographic data can be inspected with `summary()`. As we have added baseline
-eGFR to the data set, the output also summarizes the number of patients with 
-normal renal function or impaired renal function:
+A good initial overview on the distribution of baseline parameters, the
+administered drugs, analytes, observations, etc. can be inspected with
+`summary()`. Since we have above added baseline eGFR to the data set, the output
+also summarizes the number of patients with normal renal function or impaired
+renal function:
 
-```{r}
+```{r, comment="# "}
 summary(nif_poc)
 ```
 
-For a visual overview of the dataset `plot()` can be applied to the summary:
+For a visual overview of the NIF data set `plot()` can be applied to the summary:
 
-```{r fig.width=3, fig.height=3}
+```{r, results='hide', fig.width=3, fig.height=3}
 plot(summary(nif_poc))
 ```
 
@@ -120,8 +165,9 @@ complex analyses!
 
 To identify the subjects with dose reductions: 
 
-```{r}
-nif_poc %>% dose_red_sbs()
+```{r, comment="# "}
+nif_poc %>%
+  dose_red_sbs()
 ```
 
 Let's have a plot of the doses over time in these subjects: 
@@ -142,7 +188,8 @@ We see that dose reductions happended at different times during treatment. Anoth
 way of visualizing this is per the `mean_dose_plot()` function:
 
 ```{r fig.width=5, fig.height=3}
-nif_poc %>% mean_dose_plot()
+nif_poc %>%
+  mean_dose_plot()
 ```
 
 The upper panel shows the mean dose over time, and we can see that after ~Day 13,
@@ -169,7 +216,7 @@ nif_poc %>%
 From the different numbers of samplings per nominal time point, we see that only
 a subset of subjects had a rich sampling scheme. Let's identify those:
 
-```{r}
+```{r, comment="# "}
 nif_poc %>% 
   rich_sampling_sbs(analyte="RS2023", max_time=24, n=4)
 ```
@@ -192,7 +239,7 @@ temp %>% plot(points=T)
 
 For the sampling on Day 1 only:
 
-```{r fig.width=3, fig.height=3, warning=F, message=F}
+```{r fig.width=5, fig.height=3, warning=F, message=F}
 temp <- temp %>% 
     filter(TIME<=24)
 
