@@ -302,7 +302,8 @@ write_nif <- function(obj, filename=NA, fields=NULL) {
 standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ANALYTE", "AMT", "RATE", "DV", "LNDV", "CMT", "EVID",
                          "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT", "BMI",
-                         "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE", "TRTDY")
+                         "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE", "TRTDY",
+                         "BL_CRCL", "PART", "COHORT")
 
 
 #' Index dosing invervals
@@ -336,7 +337,6 @@ index_dosing_interval <- function(obj){
   obj %>%
     as.data.frame() %>%
     left_join(di, by="REF") %>%
-    # group_by(ID, ANALYTE) %>%
     group_by(ID) %>%
     arrange(REF) %>%
     fill(DI, .direction="down") %>%
@@ -463,22 +463,6 @@ add_bl_crcl <- function(obj, method=egfr_mdrd) {
 }
 
 
-# add_day <- function(obj) {
-#   temp <- obj %>%
-#     as.data.frame() %>%
-#     filter(EVID==1) %>%
-#     dplyr::group_by(ID) %>%
-#     dplyr::mutate(FIRSADMINDATE=date(min(DTC))) %>%
-#     dplyr::ungroup() %>%
-#     # as.data.frame() %>%
-#     distinct(ID, FIRSADMINTIME)
-#
-#   ret <- obj %>%
-#     left_join(temp, by="ID") %>%
-#
-# }
-
-
 #' Add baseline and change from baseline fields
 #'
 #' @details
@@ -501,7 +485,6 @@ add_cfb <- function(obj, summary_function=median) {
   obj %>%
     as.data.frame() %>%
     group_by(ID, ANALYTE) %>%
-    #mutate(DVBL=median(DV[TIME<=0])) %>%
     mutate(DVBL=summary_function(DV[TIME<=0], na.rm=T)) %>%
     mutate(DVCFB=DV-DVBL) %>%
     new_nif()
@@ -553,23 +536,13 @@ index_rich_sampling_intervals <- function(obj, analyte=NA, min_n=4) {
     add_obs_per_dosing_interval() %>%
     as.data.frame()
 
-  # npdi <- obj %>%
-  #   #group_by(ANALYTE) %>%
-  #   #n_observations_per_dosing_interval() %>%
-  #   add_obs_per_dosing_interval()
-  #   #ungroup() %>%
-  #   select(ID, DI, ANALYTE, N)
-
   temp <- obj1 %>%
-    #left_join(npdi, by=c("ID", "DI", "ANALYTE")) %>%
     mutate(RICHINT_TEMP=(OPDI>min_n)) %>%
 
     # add last observation before administration to rich interval
     group_by(ID, ANALYTE) %>%
     mutate(LEAD=lead(RICHINT_TEMP)) %>%
     mutate(RICHINT= RICHINT_TEMP | (LEAD & EVID==0)) %>%
-
-    #mutate(RICHINT=lead(RICHINT_TEMP, n=1) | RICHINT_TEMP) %>%
 
     fill(RICHINT, .direction="down") %>%
     ungroup() %>%
@@ -591,7 +564,6 @@ index_rich_sampling_intervals <- function(obj, analyte=NA, min_n=4) {
     group_by(RICHINT) %>%
     fill(RICH_N, .direction="down") %>%
     ungroup() %>%
-    #select(-c("N", "FLAG")) %>%
     new_nif()
 }
 

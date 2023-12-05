@@ -132,7 +132,6 @@ recode_sex <- function(obj){
 dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
 
 
-
 #' Convert date fileds to POSIX format
 #'
 #' This function converts date time code (DTC) variables from the
@@ -304,7 +303,6 @@ make_admin <- function(ex,
     dplyr::ungroup() %>%
 
     # set treatment, standard fields
-    # dplyr::mutate(treatment=EXTRT) %>%
     dplyr::mutate(NTIME=0, DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
     dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0, ANALYTE=NA, MDV=1)
 
@@ -313,8 +311,6 @@ make_admin <- function(ex,
       ret <- ret %>%
         dplyr::left_join(drug_mapping, by="EXTRT")
     } else {
-      # ret <- ret %>%
-      #   dplyr::mutate(PCTESTCD=EXTRT)
       stop("no drug mapping")
     }
   return(ret %>% as.data.frame())
@@ -387,10 +383,7 @@ make_obs <- function(pc,
   # identify observation date and time
   obs <- obs %>%
     # extract date and time of observation
-    # dplyr::mutate(DTC=lubridate::as_datetime(PCDTC,
-    #   format=dtc_formats)) %>%
     mutate(DTC=PCDTC) %>%
-    #standardize_date_format(c("PCRFTDTC", "DTC")) %>%
     lubrify_dates() %>%
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
@@ -449,8 +442,6 @@ last_obs_dtc <- function(obs){
 #' @export
 last_ex_dtc <- function(ex) {
   temp <- ex %>%
-    # dplyr::mutate(start=lubridate::as_datetime(
-    #   EXSTDTC, format=dtc_formats)) %>%
     dplyr::mutate(end=lubridate::as_datetime(
       EXENDTC, format=dtc_formats)) %>%
     pull(end) %>%
@@ -746,8 +737,6 @@ make_nif <- function(
     dplyr::mutate(ANALYTE=PCTESTCD) %>%
 
     # Treatment day
-    # mutate(TRTDY=interval(date(first_treatment_dtc),
-    #                       date(DTC)) / days(1) +1) %>%
     mutate(TRTDY=interval(date(FIRSTTRTDTC),
                           date(DTC)) / days(1) +1) %>%
     # recode SEX
@@ -762,7 +751,6 @@ make_nif <- function(
     index_nif()
   return(nif)
 }
-
 
 
 #' This function finalizes a NIF data set by indexing the rows
@@ -801,6 +789,7 @@ compress_nif <- function(nif, ...) {
     dplyr::select(any_of(columns)) %>%
     new_nif()
 }
+
 
 #' This function reduces a NIF data set on the subject level by excluding all administrations after
 #'  the last observation
@@ -910,29 +899,6 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
 }
 
 
-#' #' Add baseline creatinine clearance field.
-#' #'
-#' #' @param obj A NIF data set.
-#' #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
-#' #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
-#' #'
-#' #' @return A NIF data set.
-#' #' @seealso [egfr_mdrd()]
-#' #' @seealso [egfr_cg()]
-#' #' @seealso [egfr_raynaud()]
-#' #' @export
-#' add_bl_crcl <- function(obj, method=egfr_mdrd) {
-#'   if("BL_CREAT" %in% colnames(obj)) {
-#'   obj <- obj %>%
-#'     as.data.frame() %>%
-#'     mutate(BL_CRCL=method(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
-#'     new_nif()
-#'   }
-#'   return(obj)
-#' }
-
-
-
 #' Add lab covariate
 #'
 #' This functions adds columns for the lab parameters specified in `lbtestcd`, in
@@ -957,7 +923,6 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec="", silent=F){
 #' @seealso [add_lab_observation()]
 add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
   temp <- lbtestcd %in% (
-    # (lb %>% filter(LBSPEC==lbspec)) %>%
     (lb %>% filter(.data$LBSPEC %in% lbspec) %>%
     dplyr::distinct(.data$LBTESTCD) %>%
     dplyr::pull(.data$LBTESTCD))
@@ -978,7 +943,6 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
       .data$LBDTC, format=dtc_formats)) %>%
     mutate(date=format(.data$dtc, format="%Y-%m-%d")) %>%
     mutate(labdate=date) %>%
-    # dplyr::filter(LBSPEC==lbspec) %>%
     dplyr::filter(.data$LBSPEC %in% lbspec) %>%
     dplyr::filter(.data$LBTESTCD %in% lbtestcd) %>%
     dplyr::select(.data$USUBJID, .data$date, .data$labdate, .data$LBTESTCD,
@@ -1046,9 +1010,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt=NA, lbspec="", silent=F) 
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
     dplyr::group_by(USUBJID) %>%
-    # tidyr::fill(ID, DOSE, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, .direction="downup") %>%
     tidyr::fill(ID, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, DOSE, .direction="downup") %>%
-    #tidyr::fill(all_of(standard_nif_fields), .direction="downup") %>%
     dplyr::ungroup()
 
   return(new_nif(temp))

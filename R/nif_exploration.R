@@ -218,7 +218,6 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
       ggplot2::geom_ribbon(aes(ymin=mean-sd, ymax=mean+sd,
                                fill=as.factor(.data[[cov]])),
                            alpha=0.3, color=NA, show.legend=F) +
-      #ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
       ylim(0, max(temp$max_y, na.rm=T)) +
@@ -258,7 +257,6 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     }
 
     p <- p +
-      #ggplot2::geom_line() +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position="bottom")
@@ -350,14 +348,11 @@ summary.nif <- function(object, egfr_function=egfr_cg, ...) {
 
   if("BL_CRCL" %in% colnames(object)) {
   renal_function <- object %>%
-    # add_bl_crcl(method=egfr_cg) %>%
     as.data.frame() %>%
     mutate(CLASS=as.character(
       cut(BL_CRCL, breaks=c(0, 30, 60, 90, Inf),
           labels=c("severe", "moderate", "mild", "normal")))) %>%
     distinct(ID, CLASS) %>%
-    # as.data.frame() %>%
-    # mutate(CLASS=as.character(CLASS)) %>%
     group_by(CLASS) %>%
     summarize(N=n()) %>%
     arrange(ordered(CLASS, c("normal","mild", "moderate", "severe")))
@@ -399,29 +394,19 @@ print.summary_nif <- function(x, ...) {
   cat(paste("NONMEM input file (NIF) data set summary\n\n"))
 
   cat(paste("Data from", sum(x$n_studies$N), "subjects across", length(x$studies)), "studies:\n")
-  #cat(paste0(paste(x$studies, collapse="\n"), "\n\n"))
   cat(paste0(df.to.string(x$n_studies), "\n\n"))
 
   cat(paste0("Males: ", x$n_males, ", females: ", x$n_females, " (",
              round(x$n_females/(x$n_males + x$n_females)*100, 1), "%)\n\n"))
 
   if(!is.null(x$renal_function)) {
-    cat(paste0("Renal function:\n", df.to.string(
-      # x$renal_function %>%
-      #   as.data.frame() %>%
-      #   mutate(CLASS=as.character(CLASS)) %>%
-      #     group_by(CLASS) %>%
-      #     summarize(N=n()) %>%
-      #     arrange(ordered(CLASS, c("normal","mild", "moderate", "severe")))
-      x$renal_function
-    ), "\n\n"))
+    cat(paste0("Renal function:\n", df.to.string(x$renal_function), "\n\n"))
   }
 
   cat(paste0("Analytes:\n", paste(x$analytes, collapse=", "), "\n\n"))
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
   cat(paste0(df.to.string(x$n_obs), "\n\n"))
-
 
   cat(paste0("Administered drugs:\n", paste(x$drugs, collapse=", "), "\n\n"))
 
@@ -583,8 +568,6 @@ wt_by_sex <- function(obj) {
     ggplot(aes(x=SEX, y=bl_wt, group=SEX)) +
     scale_x_continuous(breaks=c(0, 1)) +
     geom_boxplot(width=0.5) +
-    # geom_dotplot(binaxis='y', stackdir='center', alpha=0.3,
-    #              color="transparent", dotsize=1.2) +
     geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
                label.size=0, position=position_dodge(width = 0.75)) +
     labs(x="sex", y="baseline weight (kg)") +
