@@ -54,24 +54,40 @@ no study-specific fields are created:
 
 ```{r}
 nif_poc <- make_nif(examplinib_poc, spec="PLASMA")
-summary(nif_poc)
 ```
+
+For this data set, the LB domain contains baseline creatinine data which can be
+used to calculate the baseline creatinine clearance as an estimate for GFR
+(eGFR). In the last step, we clean up the NIF data set, keeping only the fields
+that are commonly used:
+
+```{r}
+nif_poc <- make_nif(examplinib_poc, spec="PLASMA") %>% 
+  add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
+  add_bl_crcl() %>% 
+  compress_nif()
+```
+
+By the way, this NIF data set is already included in the package under the name
+'examplinib_poc_nif'. It is equivalent to the above created data set.
 
 # EXPLORATION
 
 ## Demographics
 
-The number of subjects and the sex distribution can already be seen from the
-`summary` output (above). We now want to get an overview on the age, body weigth
-and body mass index (BMI) distributions, as well as the weigth distribution by
-sex and race:
+The number of subjects, the sex distributions and other baseline
+demographic data can be inspected with `summary()`. As we have added baseline
+eGFR to the data set, the output also summarizes the number of patients with 
+normal renal function or impaired renal function:
+
+```{r}
+summary(nif_poc)
+```
+
+For a visual overview of the dataset `plot()` can be applied to the summary:
 
 ```{r fig.width=3, fig.height=3}
-nif_poc %>% age_hist()
-nif_poc %>% weight_hist()
-nif_poc %>% bmi_hist()
-nif_poc %>% wt_by_sex()
-nif_poc %>% wt_by_race()
+plot(summary(nif_poc))
 ```
 
 ## Exposure

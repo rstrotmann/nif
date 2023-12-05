@@ -5,203 +5,6 @@
 
 
 
-# PC
-#
-# Required fields as per SDTM domain model 3.2 are:
-# STUDYID, DOMAIN, USUBJID, PCSEQ, PCTESTCD, PCTEST
-#
-# Expected fields:
-# PCORRES, PCORRESU, PCSTRESC, PCSTRESN, PCSTRESU, PCNAM, PCSPEC, PCLLOQ,
-# VISITNUM, PCDTC
-
-#' Simulate PK data for fictional subjects, using fictional popPK model
-#'
-#' Based on fictional two-compartment model with sequential zero-order and
-#'   first-order absorption, elimination from central compartment.
-#'
-#' @param sbs The subject baseline information as data frame. Needs at least
-#'   ID, PERIOD, SEX, AGE, HEIGHT, WEIGHT, and FOOD fields.
-#' @param sampling_scheme The PK sampling scheme as data frame. The field `time`
-#'   is to provide the sampling times in numerical form.
-#' @return The simulated PK data as data frame.
-#' @import rxode2
-# pk_sim <- function(sbs, sampling_scheme) {
-#   mod <- rxode2::rxode2({
-#     c_centr = centr / v_centr * (1+centr.err);
-#     c_peri = peri / v_peri;
-#     c_metab = metab / v_metab;
-#
-#     ke = t.ke * exp(eta.ke)    # renal elimination constant
-#     ka = t.ka * exp(eta.ka) + FOOD * t.ka1
-#     d1 = t.d1 * exp(eta.d1)
-#     fm = t.fm * exp(eta.fm)   # fraction metabolized
-#
-#     cl = t.cl * exp(eta.cl)    # metabolic clearance
-#     kem = t.kem * exp(eta.kem) # elimination constant for metabolite
-#     fpar = 1 * exp(eta.fpar) + FOOD * t.fpar1
-#     q = t.q * exp(eta.q)
-#
-#     d/dt(depot) = -ka * depot * fpar;
-#     dur(depot) = d1
-#     d/dt(centr) = ka * depot * fpar - ke * c_centr - q * c_centr + q * c_peri;
-#     d/dt(peri) = q * c_centr - q * c_peri;
-#     d/dt(renal) = ke * c_centr * (1 - fm)
-#
-#     d/dt(metab) = cl * c_centr * fm - kem * c_metab
-#     d/dt(metab_excr) = kem * c_metab
-#   })
-#
-#   theta <- c(
-#     t.ka = 0.8,
-#     t.ka1 = 0.8, # food effect on Ka
-#     t.d1 = 1.8,
-#     t.fpar1 = 2, # food effect on F
-#     t.ke = 30,
-#     t.q = 5,
-#     t.cl = 20,
-#     t.kem = 10,
-#     t.fm = 0.8,
-#
-#     v_centr = 100,
-#     v_peri = 100,
-#     v_metab = 10
-#   )
-#
-#   omega <- rxode2::lotri(
-#     eta.ke + eta.ka + eta.d1 + eta.fpar + eta.q + eta.cl + eta.kem + eta.fm ~ c(
-#     0.3^2,
-#     0,      0.1^2,
-#     0,      0,      0.2^2,
-#     0,      0,      0,      0.3^2,
-#     0,      0,      0,      0,      0.3^2,
-#     0,      0,      0,      0,      0,      0.4^2,
-#     0,      0,      0,      0,      0,      0,      0.3^2,
-#     0,      0,      0,      0,      0,      0,      0,      0.03^2))
-#
-#   sigma <- rxode2::lotri(centr.err ~ .1^2)
-#
-#   # reference: https://nlmixr2.github.io/rxode2/articles/rxode2-event-table.html
-#   ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
-#     rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
-#     rxode2::add.sampling(sampling_scheme$time) %>%
-#     rxode2::et(id=unique(sbs$ID)) %>%
-#     as.data.frame() %>%
-#     left_join(
-#       sbs %>%
-#         dplyr::select(id=ID, PERIOD, SEX, AGE, HEIGHT, WEIGHT, FOOD),
-#       by="id")
-#
-#   sim <- mod$solve(theta, ev, omega=omega, sigma=sigma,
-#                    keep=c("FOOD", "PERIOD")) %>%
-#     as.data.frame()
-#   return(sim)
-# }
-
-
-pk_sim1 <- function(sbs, sampling_scheme) {
-  mod <- rxode2::rxode2({
-    c_centr = centr / v_centr * (1+centr.err);
-    c_peri = peri / v_peri;
-    c_metab = metab / v_metab;
-
-    ke = t.ke * exp(eta.ke)    # renal elimination constant
-    ka = t.ka * exp(eta.ka) + FOOD * t.ka1
-    d1 = t.d1 * exp(eta.d1)
-    fm = t.fm * exp(eta.fm)   # fraction metabolized
-
-    cl = t.cl * exp(eta.cl)    # metabolic clearance
-    kem = t.kem * exp(eta.kem) # elimination constant for metabolite
-    fpar = 1 * exp(eta.fpar) + FOOD * t.fpar1
-    q = t.q * exp(eta.q)
-
-    d/dt(depot) = -ka * depot * fpar;
-    dur(depot) = d1
-    d/dt(centr) = ka * depot * fpar - ke * c_centr - q * c_centr + q * c_peri;
-    d/dt(peri) = q * c_centr - q * c_peri;
-    d/dt(renal) = ke * c_centr * (1 - fm)
-
-    d/dt(metab) = cl * c_centr * fm - kem * c_metab
-    d/dt(metab_excr) = kem * c_metab
-  })
-
-  theta <- c(
-    t.ka = 0.8,
-    t.ka1 = 0.8, # food effect on Ka
-    t.d1 = 1.8,
-    t.fpar1 = 2, # food effect on F
-    t.ke = 30,
-    t.q = 5,
-    t.cl = 20,
-    t.kem = 10,
-    t.fm = 0.8,
-
-    v_centr = 100,
-    v_peri = 100,
-    v_metab = 10
-  )
-
-  omega <- rxode2::lotri(
-    eta.ke + eta.ka + eta.d1 + eta.fpar + eta.q + eta.cl + eta.kem + eta.fm ~ c(
-      0.3^2,
-      0,      0.1^2,
-      0,      0,      0.2^2,
-      0,      0,      0,      0.3^2,
-      0,      0,      0,      0,      0.3^2,
-      0,      0,      0,      0,      0,      0.4^2,
-      0,      0,      0,      0,      0,      0,      0.3^2,
-      0,      0,      0,      0,      0,      0,      0,      0.03^2))
-
-  sigma <- rxode2::lotri(centr.err ~ .1^2)
-
-  temp <- sbs %>%
-    select(USUBJID, EXDOSE) %>%
-    mutate(id=row_number())
-
-  # reference: https://nlmixr2.github.io/rxode2/articles/rxode2-event-table.html
-  ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
-    rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
-    rxode2::add.sampling(sampling_scheme$time) %>%
-    # rxode2::et(id=unique(sbs$ID)) %>%
-    rxode2::et(id=sbs$ID) %>%
-    as.data.frame() %>%
-    left_join(
-      sbs %>%
-        dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
-      by="id") %>%
-    mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
-    select(-EXDOSE)
-
-  sim <- mod$solve(theta, ev, omega=omega, sigma=sigma,
-                   keep=c("FOOD", "PERIOD")) %>%
-    as.data.frame()
-  return(sim)
-}
-
-
-# pk_sim_sbs <- function(sbs, sampling_scheme) {
-#   temp <- sbs %>%
-#     select(USUBJID, EXDOSE) %>%
-#     mutate(id=row_number())
-#
-#   # reference: https://nlmixr2.github.io/rxode2/articles/rxode2-event-table.html
-#   ev <- rxode2::et(amountUnits="mg", timeUnits="hours") %>%
-#     rxode2::add.dosing(dose=500, dosing.to="depot", rate=-2, start.time=0) %>%
-#     rxode2::add.sampling(sampling_scheme$time) %>%
-#     rxode2::et(id=sbs$ID) %>%
-#     as.data.frame() %>%
-#     left_join(
-#       sbs %>%
-#         dplyr::select(id=ID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EXDOSE),
-#       by="id") %>%
-#     mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
-#     select(-EXDOSE)
-#
-#   # sim <- mod$solve(theta, ev, omega=omega, sigma=sigma,
-#   #                  keep=c("FOOD", "PERIOD")) %>%
-#   #   as.data.frame()
-#   sim <- pk_sim(ev)
-#   return(sim)
-# }
 
 
 
@@ -210,7 +13,6 @@ pk_sim1 <- function(sbs, sampling_scheme) {
 #' @param event_table The event table as required by RxODE.
 #'
 #' @return PK simulation as data frame
-#' @export
 pk_sim <- function(event_table) {
   if(!("EGFR" %in% colnames(event_table))) {
     event_table <- event_table %>%
@@ -277,14 +79,9 @@ pk_sim <- function(event_table) {
 
   sigma <- rxode2::lotri(centr.err ~ .1^2)
 
-  # sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
-  #                  keep="NTIME") %>%
-  # sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma,
-  #                  keep="NTIME") %>%
   sim <- mod$solve(theta, event_table, omega=omega, sigma=sigma) %>%
     as.data.frame() %>%
     left_join(keep_columns, by=c("id", "time"))
-    # left_join(keep_columns, by="id")
   return(sim)
 }
 
@@ -376,28 +173,6 @@ make_dm <- function(studyid="2023001", nsubs=10, nsites=5, duration=7,
       ETHNIC=""
     ) %>%
     as.data.frame()
-
-  # seq1.sbs <- dm %>%
-  #   filter(ACTARMCD!="SCRNFAIL") %>%
-  #   as.data.frame() %>%
-  #   slice_sample(prop=0.5) %>%
-  #   pull(SUBJID)
-  #
-  # seq2.sbs <- dm %>%
-  #   filter(ACTARMCD!="SCRNFAIL") %>%
-  #   filter(!USUBJID %in% seq1.sbs) %>%
-  #   pull(SUBJID)
-  #
-  # dm <- dm %>%
-  #   mutate(ACTARMCD=case_when(
-  #     SUBJID %in% seq1.sbs ~ "AB",
-  #     SUBJID %in% seq2.sbs ~ "BA",
-  #     .default="SCRNFAIL")) %>%
-  #   mutate(ACTARM=case_when(
-  #     SUBJID %in% seq1.sbs ~ "Fasted - Fed",
-  #     SUBJID %in% seq2.sbs ~ "Fed - Fasted",
-  #     .default="Screen Failure"))
-
   return(dm)
 }
 
@@ -466,37 +241,6 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023", dose=500) {
 
   return(ex)
 }
-
-
-
-
-#
-# expand_missed <- function(start_dtc, treatment_duration=50, missed_prob=0.15) {
-#   end_dtc <- start_dtc + 60*60*24 * treatment_duration
-#   n <- floor(treatment_duration * runif(1, 0, missed_prob))
-#   # temp <- sort(as.POSIXct(runif(n, start_dtc, end_dtc)))
-#   temp <- sort(floor(runif(n, 0, treatment_duration)))
-#   # print(paste("start_dtc", start_dtc))
-#   # print(temp)
-#
-#   if(length(temp)>0){
-#     df <- data.frame(
-#       # EXSTDTC = c(start_dtc, temp[1:length(temp)] + 60*60*24),
-#       EXSTDTC = c(start_dtc, temp + 60*60*24),
-#       EXENDTC = c(temp - 60*60*24, end_dtc)#,
-#       # temp=temp
-#     )
-#   } else {
-#     df <- data.frame(
-#       EXSTDTC = start_dtc,
-#       EXENDTC = end_dtc,
-#       temp=0
-#     )
-#   }
-#   return(df)
-# }
-#
-
 
 
 #' Create administration schedule with randomly missed doses
@@ -626,34 +370,6 @@ make_md_ex <- function(dm, drug="RS2023", dose=500, treatment_duration=50,
 #'
 #' @return The PC domain as data frame.
 make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
-  # abs_vs <- vs %>%
-  #   filter(EPOCH=="SCREENING") %>%
-  #   dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
-  #   pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN") %>%
-  #   as.data.frame()
-  #
-  # sbs <- dm %>%
-  #   dplyr::select(USUBJID, SEX, AGE, RACE, ACTARMCD, RFSTDTC) %>%
-  #   left_join(abs_vs, by="USUBJID") %>%
-  #   make_crea() %>%
-  #   left_join(ex %>% distinct(USUBJID, EXDOSE), by="USUBJID") %>%
-  #   filter(ACTARMCD!="SCRNFAIL") %>%
-  #   mutate(ID=row_number()) %>%
-  #   mutate(PERIOD=1) %>%
-  #   mutate(EXDY=1) %>%
-  #   mutate(FOOD=0) %>%
-  #   arrange(ID)
-  #
-  # sbs <- dm %>%
-  #   filter(ACTARMCD!="SCRNFAIL") %>%
-  #   left_join(abs_vs, by="USUBJID") %>%
-  #   left_join(lb %>%
-  #               filter(LBBLFL=="Y", LBTESTCD=="CREAT") %>%
-  #               mutate(BL_CREAT=LBSTRESN), by="USUBJID") %>%
-  #   mutate(EGFR=egfr_cg(BL_CREAT, AGE, SEX, RACE, WEIGHT, molar=T)) %>%
-  #   mutate(FOOD=0, PERIOD=1, EXDOSE=500) %>%
-  #   select(USUBJID, SEX, AGE, HEIGHT, WEIGHT, EGFR, FOOD, PERIOD, EXDOSE) %>%
-  #   mutate(ID=row_number())
   sbs <- subject_baseline_data(dm, vs, lb) %>%
     left_join(ex %>%
                 distinct(USUBJID, EXDOSE) %>%
@@ -672,9 +388,6 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
       by="id") %>%
     mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
     mutate(NTIME=time)
-#
-#   subjects <- ev %>%
-#     distinct(id, USUBJID)
 
   sim <- pk_sim(ev) %>%
     left_join(sbs %>% select(id=ID, USUBJID), by="id")
@@ -717,23 +430,7 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
 #'
 #' @return PC data as data frame.
 make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
-  # abs_vs <- vs %>%
-  #   filter(EPOCH=="SCREENING") %>%
-  #   dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
-  #   pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN") %>%
-  #   as.data.frame()
-  #
-  # sbs <- dm %>%
-  #   dplyr::select(USUBJID, SEX, AGE, RACE, ACTARMCD, RFSTDTC) %>%
-  #   left_join(abs_vs, by="USUBJID") %>%
-  #   filter(ACTARMCD!="SCRNFAIL") %>%
-  #   group_by(USUBJID) %>%
-  #   mutate(ID=cur_group_id()) %>%
-  #   ungroup() %>%
-  #   arrange(ID)
-
   sbs <- subject_baseline_data(dm, vs, lb)
-  # ev <- sd_event_table(ex, dm, vs, sampling_scheme)
 
   temp <- sbs %>%
     group_by_all() %>%
@@ -750,7 +447,6 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     rxode2::add.sampling(sampling_scheme$time) %>%
     rxode2::et(id=sbs$ID) %>%
     as.data.frame() %>%
-    # mutate(NTIME=time) %>%
     group_by_all() %>%
     expand(PERIOD=c(1,2)) %>%
     mutate(time=time + 14*24*(PERIOD - 1)) %>%
@@ -760,22 +456,6 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
     mutate(NTIME=time) %>%
     arrange(id, time, evid)
-
-  #
-  #   left_join(
-  #     temp %>%
-  #       dplyr::select(id=ID, USUBJID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD,
-  #                     EGFR, EXDOSE),
-  #     by="id") %>%
-  #   mutate(amt=case_when(!is.na(amt)~EXDOSE, .default=NA)) %>%
-  #   mutate(NTIME=time)
-  #
-  #
-  #
-  #
-  # sim <- rbind(
-  #   pk_sim1((temp %>% filter(PERIOD==1)), sampling_scheme),
-  #   pk_sim1((temp %>% filter(PERIOD==2)), sampling_scheme))
 
   sim <- pk_sim(ev)
 
@@ -834,7 +514,6 @@ subject_baseline_data <- function(dm, vs, lb) {
 
   baseline_lb <- lb %>%
     filter(LBBLFL=="Y", LBTESTCD=="CREAT") %>%
-    # mutate(BL_CREAT=LBSTRESN) %>%
     select(USUBJID, BL_CREAT=LBSTRESN)
 
   sbs <- dm %>%
@@ -1272,7 +951,6 @@ make_crea <- function(dm, crea_method=crea_mdrd) {
 make_lb <- function(dm) {
   dm %>%
     make_crea() %>%
-    #standardize_date_format("RFSTDTC") %>%
     select(c(STUDYID, USUBJID, DOMAIN, RFSTDTC, CREA)) %>%
     mutate(
       DOMAIN="DM",
