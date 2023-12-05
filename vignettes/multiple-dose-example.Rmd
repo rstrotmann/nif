@@ -26,8 +26,8 @@ library(nif)
 # OVERVIEW
 
 This is an example for a fictional multiple-dose study with a
-fictional drug, `RS2023`. As part of the package, a synthetic SDTM data set for
-this study (study `RS2023-0022`) is included as `examplinib_poc`:
+fictional drug, `RS2023`. As part of the NIF package, a synthetic SDTM data set
+for this study (study `RS2023-0022`) is included as `examplinib_poc`:
 
 ```{r, echo=F}
 print(summary(examplinib_poc))

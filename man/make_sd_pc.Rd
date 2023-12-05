@@ -4,14 +4,16 @@
 \alias{make_sd_pc}
 \title{Create PC based on single-dose admninistration}
 \usage{
-make_sd_pc(ex, dm, vs, sampling_scheme)
+make_sd_pc(dm, ex, vs, lb, sampling_scheme)
 }
 \arguments{
-\item{ex}{The EX domain as data frame.}
-
 \item{dm}{The DM domain as data frame.}
 
+\item{ex}{The EX domain as data frame.}
+
 \item{vs}{The VS domain as data frame.}
+
+\item{lb}{The LB domain as data frame.}
 
 \item{sampling_scheme}{The PK sampling scheme as data frame.}
 }

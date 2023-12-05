@@ -284,7 +284,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
     p <- p + labs(y=analyte)
   }
 
-  if(!is.null(group)) {
+  if(!is.null(group) | length(unique(x$ANALYTE))>1) {
     p <- p + labs(color=group)
   } else {
     p <- p + labs(color="ANALYTE")
