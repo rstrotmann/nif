@@ -348,12 +348,22 @@ summary.nif <- function(object, egfr_function=egfr_cg, ...) {
     dplyr::pull(n)
   if(length(n_females)==0) {n_females=0}
 
+  if("BL_CRCL" %in% colnames(object)) {
   renal_function <- object %>%
-    add_bl_crcl(method=egfr_cg) %>%
+    # add_bl_crcl(method=egfr_cg) %>%
     as.data.frame() %>%
-    mutate(CLASS=cut(BL_CRCL, breaks=c(0, 30, 60, 90, Inf),
-                            labels=c("severe", "moderate", "mild", "normal"))) %>%
-    distinct(ID, CLASS)
+    mutate(CLASS=as.character(
+      cut(BL_CRCL, breaks=c(0, 30, 60, 90, Inf),
+          labels=c("severe", "moderate", "mild", "normal")))) %>%
+    distinct(ID, CLASS) %>%
+    # as.data.frame() %>%
+    # mutate(CLASS=as.character(CLASS)) %>%
+    group_by(CLASS) %>%
+    summarize(N=n()) %>%
+    arrange(ordered(CLASS, c("normal","mild", "moderate", "severe")))
+  } else {
+    renal_function=NULL
+  }
 
   out <- list(
     nif = object,
@@ -395,14 +405,17 @@ print.summary_nif <- function(x, ...) {
   cat(paste0("Males: ", x$n_males, ", females: ", x$n_females, " (",
              round(x$n_females/(x$n_males + x$n_females)*100, 1), "%)\n\n"))
 
-  cat(paste0("Renal function:\n", df.to.string(
-    x$renal_function %>%
-      as.data.frame() %>%
-      mutate(CLASS=as.character(CLASS)) %>%
-        group_by(CLASS) %>%
-        summarize(N=n()) %>%
-        arrange(ordered(CLASS, c("normal","mild", "moderate", "severe")))
-  ), "\n\n"))
+  if(!is.null(x$renal_function)) {
+    cat(paste0("Renal function:\n", df.to.string(
+      # x$renal_function %>%
+      #   as.data.frame() %>%
+      #   mutate(CLASS=as.character(CLASS)) %>%
+      #     group_by(CLASS) %>%
+      #     summarize(N=n()) %>%
+      #     arrange(ordered(CLASS, c("normal","mild", "moderate", "severe")))
+      x$renal_function
+    ), "\n\n"))
+  }
 
   cat(paste0("Analytes:\n", paste(x$analytes, collapse=", "), "\n\n"))
 
