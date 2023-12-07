@@ -420,7 +420,7 @@ suggest <- function(obj) {
       "same name\n",
       "   (see below).\n",
       "   Consider adding a treatment-analyte mapping to the sdtm object\n",
-      "   See '?add_treatment_mapping' for additional information.\n\n",
+      "   See '?add_analyte_mapping' for additional information.\n\n",
       df.to.string(no.analyte.treatments, indent="   "), "\n\n",
       "   Available analytes:\n\n",
       df.to.string(obj$pc %>% dplyr::distinct(PCTESTCD), indent="   "), "\n\n"

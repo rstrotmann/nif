@@ -13,6 +13,8 @@
 #' @param silent No message output.
 #' @param average_duplicates Boolean to indicate whether duplicate entries
 #'   should be averaged.
+#' @param parent The parent compound to derive the administration information
+#'   from. By default, equal to the analyte.
 #'
 #' @import dplyr
 #' @return A data frame.
@@ -21,8 +23,8 @@
 #' nca(examplinib_nif)
 #' nca(examplinib_nif, group=c("FASTED", "SEX"), analyte="RS2023")
 #'
-nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
-                silent=F, average_duplicates=T){
+nca <- function(obj, analyte=NULL, parent=NULL, keep=NULL, group=NULL,
+                nominal_time=F, silent=F, average_duplicates=T){
   # guess analyte if not defined
   if(is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
@@ -32,6 +34,10 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
     }
   } else {
     current_analyte <- analyte
+  }
+
+  if(is.null(parent)) {
+    parent <- current_analyte
   }
 
   # filter for analyte, set selected TIME
@@ -50,7 +56,16 @@ nca <- function(obj, analyte=NULL, keep=NULL, group=NULL, nominal_time=F,
     dplyr::distinct()
 
   # administration times
-  admin <- obj1 %>%
+  # admin <- obj1 %>%
+  #   dplyr::filter(EVID==1) %>%
+  #   dplyr::select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
+  #   as.data.frame()
+
+  admin <- obj %>%
+    as.data.frame() %>%
+    dplyr::filter(ANALYTE==parent) %>%
+    dplyr::mutate(TIME=case_when(nominal_time==TRUE~NTIME, .default=TIME)) %>%
+    dplyr::mutate(DV=case_when(is.na(DV) ~ 0, .default=DV)) %>%
     dplyr::filter(EVID==1) %>%
     dplyr::select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
     as.data.frame()

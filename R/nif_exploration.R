@@ -220,6 +220,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
                            alpha=0.3, color=NA, show.legend=F) +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
+      ggplot2::labs(caption="Data shown are mean \u00B1 SD") +
       ylim(0, max(temp$max_y, na.rm=T)) +
       ggplot2::theme(legend.position="bottom")
   } else {
@@ -644,7 +645,8 @@ administration_summary <- function(obj) {
     n_administrations() %>%
     filter(PARENT!="") %>%
     group_by(across(any_of(c("PARENT")))) %>%
-    summarize(min=min(N, na.rm=T), max=max(N, na.rm=T), mean=mean(N, na.rm=T),
+    summarize(min=min(N, na.rm=T), max=max(N, na.rm=T),
+              mean=round(mean(N, na.rm=T), 1),
               median=stats::median(N, na.rm=T)) %>%
     as.data.frame()
 }

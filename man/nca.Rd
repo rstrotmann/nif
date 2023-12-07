@@ -7,6 +7,7 @@
 nca(
   obj,
   analyte = NULL,
+  parent = NULL,
   keep = NULL,
   group = NULL,
   nominal_time = F,
@@ -19,6 +20,9 @@ nca(
 
 \item{analyte}{The analyte. If none specified and multiple analytes are in
 the dataset, defaults to the first analyte.}
+
+\item{parent}{The parent compound to derive the administration information
+from. By default, equal to the analyte.}
 
 \item{keep}{A vector of fields to keep in the output.}
 
