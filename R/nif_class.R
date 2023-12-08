@@ -477,6 +477,25 @@ add_bl_crcl <- function(obj, method=egfr_cg) {
 }
 
 
+#' Add baseline renal function class
+#'
+#' @param obj A NIF data set.
+#' @param method The function to calculate eGFR (CrCL) from serum creatinine.
+#' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
+#'
+#' @return A NIF data set.
+#' @export
+add_bl_renal <- function(obj, method=egfr_cg) {
+  obj %>%
+    add_bl_crcl(method=method) %>%
+    mutate(BL_RENAL=as.character(
+      cut(BL_CRCL, breaks=c(0, 30, 60, 90, Inf),
+          labels=c("severe", "moderate", "mild", "normal")))) %>%
+    mutate(BL_RENAL=factor(BL_RENAL,
+                           levels=c("", "normal", "mild", "moderate", "severe")))
+}
+
+
 #' Add baseline and change from baseline fields
 #'
 #' @details

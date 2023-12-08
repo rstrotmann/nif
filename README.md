@@ -28,7 +28,7 @@ library(nif)
 
 sdtm <- examplinib_sad
 
-nif <-make_nif(sdtm) %>% 
+nif <- make_nif(sdtm) %>% 
   compress_nif()
 ```
 
@@ -36,7 +36,7 @@ In most cases, you may want to add further covariates after `make_nif()`
 and before `ìndex_nif()`, consider a more complex example:
 
 ``` r
-nif <-make_nif(sdtm) %>% 
+nif <- make_nif(sdtm) %>% 
   compress_nif() %>% 
   mutate(COHORT=ACTARMCD) %>% 
   mutate(FOOD=0)
