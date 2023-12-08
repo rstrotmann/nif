@@ -2,61 +2,10 @@
 % Please edit documentation in R/sdtm_class.R
 \name{subject_info}
 \alias{subject_info}
-\title{#' Get the study names from an SDTM object
-#'
-#' @param obj The SDTM object.
-#' @export
-#' @export
-#' @examples
-#' studies(examplinib)
-studies <- function(obj) {
-UseMethod(("studies"))
-}}
+\title{Subject information generic method}
 \usage{
-subject_info(obj, id = "")
-}
-\arguments{
-\item{obj}{A SDTM object.}
-
-\item{id}{The USUBJID.}
+subject_info(obj, id)
 }
 \description{
-#' @export
-studies.sdtm <- function(obj) {
-obj$dm \%>\%
-dplyr::distinct(STUDYID) \%>\%
-dplyr::pull(STUDYID) \%>\%
-as.character()
-}
-#' Get the USUBJIDs from an sdtm object
-#'
-#' @param obj The SDTM object.
-#' @export
-#' @examples
-#' subjects(examplinib)
-#'
-subjects <- function(obj) {
-UseMethod(("subjects"))
-}
-}
-\details{
-#' @export
-subjects.sdtm <- function(obj) {
-obj$pc \%>\%
-dplyr::distinct(USUBJID) \%>\%
-dplyr::pull(USUBJID) \%>\%
-as.character()
-}
-#' Subject demographic information
-#'
-#' @param obj A SDTM object.
-#' @param id The USUBJID.
-#' @export
-#' @examples
-#' subject_info(examplinib, "20230004001010001")
-#'
-subject_info <- function(object, id="") {
-UseMethod("subject_info")
-}
-Subject demographic information
+Subject information generic method
 }

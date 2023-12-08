@@ -7,17 +7,20 @@
 add_time_mapping(obj, ...)
 }
 \arguments{
-\item{obj}{The sdtm object.}
+\item{obj}{The SDTM object.}
 
 \item{...}{Mappings in the form '"\if{html}{\out{<PCTPT>}}"=\if{html}{\out{<NTIME>}}' with multiple mappings
 separated by commas. \if{html}{\out{<PCTPT>}} corresponds to the value in the PCTPT fiels,
 and NTIME corresponds to the nominal time in hours.}
 }
 \value{
-The modified sdtm object
+The SDTM object
 }
 \description{
-Attach a time mapping to an sdtm object
+The nominal time of observations in PC (in the field PCTPT) is not required
+to follow a strict format and is in most cases provided as a composite
+string. 'add_time_mapping()' can be used to explicitly define the nominal
+observation times (in hours) for the values of PCTPT used in the PC domain.
 }
 \examples{
 sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
@@ -37,7 +40,6 @@ sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
   "HOUR 96" = 96,
   "HOUR 144" = 144,
   "HOUR 168" = 168)
-
 }
 \seealso{
 \code{\link[=suggest]{suggest()}}

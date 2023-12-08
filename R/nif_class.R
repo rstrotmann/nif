@@ -49,12 +49,6 @@ print.nif <- function(x, ...){
   cat(paste0("Males: ", n_males, ", females: ", n_females, " (",
              round(n_females/(n_males + n_females)*100, 1), "%)\n\n"))
 
-  # cat(paste0("Studies:\n", paste(studies(x), collapse="\n"), "\n\n"))
-  #
-  # cat("Dose levels:\n")
-  # cat(df.to.string(dose_levels(x, grouping=any_of(c("PART", "COHORT", "GROUP")))))
-  # cat("\n\n")
-
   cat("Columns:\n")
   cat(paste(names(x), collapse=", "), "\n")
 
@@ -66,6 +60,26 @@ print.nif <- function(x, ...){
     df.to.string()
   cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
   invisible(x)
+}
+
+
+#' Subject information
+#'
+#' @param obj A NIF object.
+#' @param id The USUBJID.
+#' @export
+subject_info.nif <- function(obj, id) {
+  temp <- obj %>%
+    as.data.frame() %>%
+    filter(id==ID | id==USUBJID) %>%
+    filter(!is.na(DOSE)) %>%
+    distinct(USUBJID, ID, SEX, AGE, RACE, WEIGHT, HEIGHT, BMI, ACTARMCD) %>%
+    ### to do:
+    ### add analytes, parent drugs, doses
+    t() %>%
+    as.data.frame()
+    colnames(temp) <- NULL
+    print(temp, quote=FALSE, col.names=FALSE)
 }
 
 

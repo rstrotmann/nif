@@ -154,12 +154,12 @@ print.summary_sdtm <- function(x, ...) {
 #'
 #' @export
 add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
-  #UseMethod("add_analyte_mapping")
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
     data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
   return(obj)
 }
+
 
 #' Add mapping method for legacy compatibility
 #'
@@ -175,6 +175,11 @@ add_mapping <- function(obj, extrt="", pctestcd="") {
 
 
 #' Attach a parent-metabolite mapping to a SDTM object.
+#'
+#' In case multiple analytes are measured for a specific administered drug,
+#' some functions need that information to correlate plasma concentrations
+#' with administrations. 'add_metabolite_mapping()' is used to attach this
+#' information to a SDTM object.
 #'
 #' @param obj The SDTM object.
 #' @param pctestcd_parent The PCTESTCD of the parent compound.
@@ -196,12 +201,18 @@ add_metabolite_mapping <- function(
 
 #' Attach a time mapping to an sdtm object
 #'
-#' @param obj The sdtm object.
+#' The nominal time of observations in PC (in the field PCTPT) is not required
+#' to follow a strict format and is in most cases provided as a composite
+#' string. 'add_time_mapping()' can be used to explicitly define the nominal
+#' observation times (in hours) for the values of PCTPT used in the PC domain.
+#'
+#' @param obj The SDTM object.
 #' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
 #'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
 #'   and NTIME corresponds to the nominal time in hours.
-#' @return The modified sdtm object
+#' @return The SDTM object
 #' @export
+#' @seealso [suggest()]
 #' @examples
 #' sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
 #'   "HOUR 0.5" = 0.5,
@@ -220,21 +231,43 @@ add_metabolite_mapping <- function(
 #'   "HOUR 96" = 96,
 #'   "HOUR 144" = 144,
 #'   "HOUR 168" = 168)
-#'
-#' @seealso [suggest()]
 add_time_mapping <- function(obj, ...) {
   UseMethod("add_time_mapping")
 }
 
+
 #' Attach a time mapping to an sdtm object
 #'
-#' @param obj The sdtm object.
+#' The nominal time of observations in PC (in the field PCTPT) is not required
+#' to follow a strict format and is in most cases provided as a composite
+#' string. 'add_time_mapping()' can be used to explicitly define the nominal
+#' observation times (in hours) for the values of PCTPT used in the PC domain.
+#'
+#' @param obj The SDTM object.
 #' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
 #'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
 #'   and NTIME corresponds to the nominal time in hours.
-#' @return The modified sdtm object
+#' @return The SDTM object
 #' @export
 #' @seealso [suggest()]
+#' @examples
+#' sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
+#'   "HOUR 0.5" = 0.5,
+#'   "HOUR 1" = 1,
+#'   "HOUR 1.5" = 1.5,
+#'   "HOUR 2" = 2,
+#'   "HOUR 3" = 3,
+#'   "HOUR 4" = 4,
+#'   "HOUR 6" = 6,
+#'   "HOUR 8" = 8,
+#'   "HOUR 10" = 10,
+#'   "HOUR 12" = 12,
+#'   "HOUR 24" = 24,
+#'   "HOUR 48" = 48,
+#'   "HOUR 72" = 72,
+#'   "HOUR 96" = 96,
+#'   "HOUR 144" = 144,
+#'   "HOUR 168" = 168)
 add_time_mapping.sdtm <- function(obj, ...) {
   temp <- unlist(c(as.list(environment())[-1], list(...)))
   mapping <- data.frame(PCTPT=names(temp), NTIME=as.numeric(temp))
@@ -268,58 +301,12 @@ domain <- function(obj, dom="dm") {
 }
 
 
-#' #' Get the study names from an SDTM object
-#' #'
-#' #' @param obj The SDTM object.
-#' #' @export
-#' #' @export
-#' #' @examples
-#' #' studies(examplinib)
-#' studies <- function(obj) {
-#'   UseMethod(("studies"))
-#' }
-#'
-#'
-#' #' @export
-#' studies.sdtm <- function(obj) {
-#'   obj$dm %>%
-#'     dplyr::distinct(STUDYID) %>%
-#'     dplyr::pull(STUDYID) %>%
-#'     as.character()
-#' }
 
-
-#' #' Get the USUBJIDs from an sdtm object
-#' #'
-#' #' @param obj The SDTM object.
-#' #' @export
-#' #' @examples
-#' #' subjects(examplinib)
-#' #'
-#' subjects <- function(obj) {
-#'   UseMethod(("subjects"))
-#' }
-#'
-#' #' @export
-#' subjects.sdtm <- function(obj) {
-#'   obj$pc %>%
-#'     dplyr::distinct(USUBJID) %>%
-#'     dplyr::pull(USUBJID) %>%
-#'     as.character()
-#' }
-
-
-#' #' Subject demographic information
-#' #'
-#' #' @param obj A SDTM object.
-#' #' @param id The USUBJID.
-#' #' @export
-#' #' @examples
-#' #' subject_info(examplinib, "20230004001010001")
-#' #'
-#' subject_info <- function(object, id="") {
-#'   UseMethod("subject_info")
-#' }
+#' Subject information generic method
+#' @export
+subject_info <- function(obj, id) {
+  UseMethod("subject_info")
+}
 
 
 #' Subject demographic information
@@ -327,10 +314,7 @@ domain <- function(obj, dom="dm") {
 #' @param obj A SDTM object.
 #' @param id The USUBJID.
 #' @export
-subject_info <- function(obj, id="") {
-  # if(!(id %in% (obj$subjects)$USUBJID)) {
-  #   stop(paste("Subject", id, "is not in study"))
-  # }
+subject_info.sdtm <- function(obj, id) {
   temp <- obj$domains[["dm"]] %>%
     dplyr::filter(USUBJID %in% id) %>%
     t() %>%
@@ -338,20 +322,6 @@ subject_info <- function(obj, id="") {
   colnames(temp) <- NULL
   print(temp, quote = FALSE, col.names=FALSE)
 }
-
-
-
-#' #' Suggest common manual data programming steps for a sdtm data set
-#' #'
-#' #' @param obj A sdtm object
-#' #' @seealso [read_sdtm_sas()]
-#' #' @export
-#' #' @examples
-#' #' suggest(examplinib)
-#' #'
-#' suggest <- function(obj){
-#'   UseMethod("suggest")
-#' }
 
 
 #' Suggest common manual data programming steps for a sdtm data set
