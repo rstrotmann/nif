@@ -6,6 +6,11 @@
 \usage{
 subject_info(obj, id)
 }
+\arguments{
+\item{obj}{The object, either an SDTM or NIF object.}
+
+\item{id}{The ID or USUBJID as numeric or character.}
+}
 \description{
 Subject information generic method
 }

@@ -301,8 +301,11 @@ domain <- function(obj, dom="dm") {
 }
 
 
-
 #' Subject information generic method
+#'
+#' @param obj The object, either an SDTM or NIF object.
+#' @param id The ID or USUBJID as numeric or character.
+#'
 #' @export
 subject_info <- function(obj, id) {
   UseMethod("subject_info")
@@ -317,10 +320,9 @@ subject_info <- function(obj, id) {
 subject_info.sdtm <- function(obj, id) {
   temp <- obj$domains[["dm"]] %>%
     dplyr::filter(USUBJID %in% id) %>%
-    t() %>%
     as.data.frame()
-  colnames(temp) <- NULL
-  print(temp, quote = FALSE, col.names=FALSE)
+  class(temp) <- c("subject_info", "data.frame")
+  return(temp)
 }
 
 

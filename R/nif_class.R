@@ -73,13 +73,30 @@ subject_info.nif <- function(obj, id) {
     as.data.frame() %>%
     filter(id==ID | id==USUBJID) %>%
     filter(!is.na(DOSE)) %>%
-    distinct(USUBJID, ID, SEX, AGE, RACE, WEIGHT, HEIGHT, BMI, ACTARMCD) %>%
+    select(any_of(
+        c("USUBJID", "ID", "SEX", "AGE", "RACE", "WEIGHT", "HEIGHT", "BMI",
+          "ACTARMCD", "PART", "COHORT")), starts_with("BL_")) %>%
+    distinct_all() #%>%
+
     ### to do:
     ### add analytes, parent drugs, doses
+  class(temp) <- c("subject_info", "data.frame")
+  return(temp)
+}
+
+
+#' Implementation of print for subject info
+#'
+#' @param x A data frame.
+#' @param ... Optional further parameters.
+#' @export
+print.subject_info <- function(x, ...) {
+  temp <- x %>%
     t() %>%
     as.data.frame()
-    colnames(temp) <- NULL
-    print(temp, quote=FALSE, col.names=FALSE)
+  colnames(temp) <- NULL
+  print(temp, quote=FALSE, col.names=FALSE)
+  invisible(x)
 }
 
 

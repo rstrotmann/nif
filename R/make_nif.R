@@ -1010,7 +1010,11 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt=NA, lbspec="", silent=F) 
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
     dplyr::group_by(USUBJID) %>%
-    tidyr::fill(ID, AGE, SEX, RACE, ACTARMCD, HEIGHT, WEIGHT, DOSE, .direction="downup") %>%
+    tidyr::fill(ID, AGE, SEX, RACE, BMI, ACTARMCD, HEIGHT, WEIGHT, DOSE,
+                .direction="downup") %>%
+    tidyr::fill(starts_with("BL_"), .direction="downup") %>%
+    tidyr::fill(any_of(c("PART", "COHORT")),
+                .direction="downup") %>%
     dplyr::ungroup()
 
   return(new_nif(temp))
