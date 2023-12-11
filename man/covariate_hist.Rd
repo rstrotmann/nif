@@ -4,13 +4,12 @@
 \alias{covariate_hist}
 \title{Generic covariate distribution histogram}
 \usage{
-covariate_hist(obj, cov_params, nbins = 11)
+covariate_hist(obj, field, nbins = 11)
 }
 \arguments{
-\item{obj}{The NIF file object.}
+\item{obj}{The NIF data set.}
 
-\item{cov_params}{The covariate parameter as provided by the respective row
-from 'covariate_plot_parameters'.}
+\item{field}{The field of the NIF object as character.}
 
 \item{nbins}{The number of bins to be used if no binwidth is specified.
 Defaults to 11.}
@@ -20,4 +19,9 @@ A plot object.
 }
 \description{
 Generic covariate distribution histogram
+}
+\examples{
+covariate_hist(examplinib_sad_nif, "AGE")
+covariate_hist(examplinib_sad_nif, "BL_CRCL")
+
 }

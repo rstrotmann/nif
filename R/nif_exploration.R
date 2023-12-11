@@ -427,17 +427,29 @@ print.summary_nif <- function(x, ...) {
 }
 
 
-# A constant data frame providing the parameters for standard covariate
-#   histograms.
-covariate_plot_parameters <- tribble(
-  ~field, ~binwidth, ~xlabel, ~title, ~limits,
-  "AGE", 5, "age (years)",  "Age", NULL,
-  "WEIGHT", 5, "body weight (kg)", "Body weight", NULL,
-  "HEIGHT", 5, "body height (cm)", "Height", NULL,
-  "BMI", 1, "BMI (kg/m^2)", "Body mass index", c(18.5, 24.9, 30),
-  "BL_CRCL", NA, "baseline creatinine clearance (ml/min)",
-  "Baseline creatinine clearance", c(30, 60, 90)
-)
+#' Get covariate plot parameters
+#'
+#' @param field The field of the NIF data set
+#'
+#' @return A data frame.
+get_cov_plot_params <- function(field) {
+  params <- tribble(
+    ~field, ~binwidth, ~xlabel, ~title, ~limits,
+    "AGE", 5, "age (years)",  "Age", NULL,
+    "WEIGHT", 5, "body weight (kg)", "Body weight", NULL,
+    "HEIGHT", 5, "body height (cm)", "Height", NULL,
+    "BMI", 1, "BMI (kg/m^2)", "Body mass index", c(18.5, 24.9, 30),
+    "BL_CRCL", NA, "baseline creatinine clearance (ml/min)",
+    "Baseline creatinine clearance", c(30, 60, 90)
+  )
+
+  if(field %in% params$field){
+    return(params[which(params$field==field),])
+  } else {
+    return(data.frame(field=field, binwidth=NA, xlabel=field,
+                      title=field))
+  }
+}
 
 
 #' Plot NIF summary
@@ -450,10 +462,9 @@ plot.summary_nif <- function(x, ...) {
   nif <- x$nif
   out <- list()
 
-  for(i in 1:nrow(covariate_plot_parameters)) {
-    current_parameters <- covariate_plot_parameters[i, ]
-    if(current_parameters$field %in% colnames(nif)) {
-      out[[current_parameters$field]] <- covariate_hist(nif, current_parameters)
+  for(i in c("AGE", "WEIGHT", "HEIGHT", "BMI", "BL_CRCL")) {
+    if(i %in% colnames(nif)) {
+      out[[i]] <- covariate_hist(nif, i)
     }
   }
 
@@ -472,14 +483,19 @@ plot.summary_nif <- function(x, ...) {
 
 #' Generic covariate distribution histogram
 #'
-#' @param obj The NIF file object.
+#' @param obj The NIF data set.
 #' @param nbins The number of bins to be used if no binwidth is specified.
 #' Defaults to 11.
-#' @param cov_params The covariate parameter as provided by the respective row
-#' from 'covariate_plot_parameters'.
+#' @param field The field of the NIF object as character.
 #'
 #' @return A plot object.
-covariate_hist <- function(obj, cov_params, nbins=11) {
+#' @export
+#' @examples
+#' covariate_hist(examplinib_sad_nif, "AGE")
+#' covariate_hist(examplinib_sad_nif, "BL_CRCL")
+#'
+covariate_hist <- function(obj, field, nbins=11) {
+  cov_params <- get_cov_plot_params(field)
   xlabel <- cov_params$xlabel
   if(is.na(xlabel)) {
     xlabel <- cov_params$field}
@@ -506,48 +522,6 @@ covariate_hist <- function(obj, cov_params, nbins=11) {
     theme_bw() +
     labs(x=xlabel, y="number of subjects") +
     ggtitle(title)
-}
-
-
-#' Age histogram
-#'
-#' @param obj The NIF file object.
-#'
-#' @return A plot object.
-#' @export
-age_hist <- function(obj) {
-  covariate_hist(obj, covariate_plot_parameters[1,])
-}
-
-
-#' Weight histogram
-#'
-#' @param obj The NIF file object.
-#'
-#' @return A plot object.
-#' @export
-weight_hist <- function(obj) {
-  covariate_hist(obj, covariate_plot_parameters[2,])
-}
-
-
-#' BMI histogram
-#'
-#' @param obj The NIF file object.
-#'
-#' @return A plot object.
-#' @export
-bmi_hist <- function(obj) {
-  obj %>%
-    as.data.frame() %>%
-    distinct(ID, WEIGHT, HEIGHT) %>%
-    mutate(BMI=WEIGHT/(HEIGHT/100)^2) %>%
-    ggplot(aes(x=BMI)) +
-    geom_histogram(binwidth=1, fill= "grey") +
-    geom_vline(xintercept=c(18.5, 24.9, 30)) +
-    theme_bw() +
-    labs(x="BMI (kg/m^2)", y="number of subjects") +
-    ggtitle("BMI distribution")
 }
 
 
