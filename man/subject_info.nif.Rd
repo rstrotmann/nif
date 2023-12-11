@@ -9,8 +9,21 @@
 \arguments{
 \item{obj}{A NIF object.}
 
-\item{id}{The USUBJID.}
+\item{id}{The USUBJID or ID.}
 }
 \description{
-Subject information
+This function summarizes baseline information for a subject or a list of
+subjects, including sex, age, weight, height, BMI, ACTARMCD, analytes, IMPs
+and baseline covariates as available.
+}
+\details{
+The output is an object of the class 'subject_info' which is a wrapper for
+the named list of the above.
+}
+\examples{
+subject_info(examplinib_poc_nif, 1)
+subject_info(examplinib_poc_nif, "20230000221010001")
+subject_info(examplinib_poc_nif, c(1, 2))
+unclass(subject_info(examplinib_poc_nif, 1))
+
 }

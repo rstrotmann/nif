@@ -65,23 +65,47 @@ print.nif <- function(x, ...){
 
 #' Subject information
 #'
+#' This function summarizes baseline information for a subject or a list of
+#' subjects, including sex, age, weight, height, BMI, ACTARMCD, analytes, IMPs
+#' and baseline covariates as available.
+#'
+#' The output is an object of the class 'subject_info' which is a wrapper for
+#' the named list of the above.
+#'
 #' @param obj A NIF object.
-#' @param id The USUBJID.
+#' @param id The USUBJID or ID.
 #' @export
+#' @examples
+#' subject_info(examplinib_poc_nif, 1)
+#' subject_info(examplinib_poc_nif, "20230000221010001")
+#' subject_info(examplinib_poc_nif, c(1, 2))
+#' unclass(subject_info(examplinib_poc_nif, 1))
+#'
 subject_info.nif <- function(obj, id) {
   temp <- obj %>%
     as.data.frame() %>%
-    filter(id==ID | id==USUBJID) %>%
-    filter(!is.na(DOSE)) %>%
+    filter(ID %in% id | USUBJID %in% id) %>%
+    filter(!is.na(DOSE))
+
+  out <- temp %>%
     select(any_of(
         c("USUBJID", "ID", "SEX", "AGE", "RACE", "WEIGHT", "HEIGHT", "BMI",
           "ACTARMCD", "PART", "COHORT")), starts_with("BL_")) %>%
-    distinct_all() #%>%
+    distinct_all()
 
-    ### to do:
-    ### add analytes, parent drugs, doses
-  class(temp) <- c("subject_info", "data.frame")
-  return(temp)
+  out$ANALYTE <- temp %>%
+    distinct(ANALYTE) %>%
+    pull(ANALYTE) %>%
+    list()
+
+  out$IMP <- temp %>%
+    filter(PARENT != "") %>%
+    distinct(PARENT) %>%
+    pull(PARENT) %>%
+    list()
+
+class(out) <- c("subject_info", "data.frame")
+  return(out)
 }
 
 
