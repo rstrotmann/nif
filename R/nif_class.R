@@ -381,7 +381,6 @@ index_dosing_interval <- function(obj){
   di <- obj %>%
     as.data.frame() %>%
     filter(EVID==1) %>%
-    # group_by(ID, ANALYTE) %>%
     group_by(ID, PARENT) %>%
     arrange(TIME) %>%
     mutate(DI=row_number()) %>%

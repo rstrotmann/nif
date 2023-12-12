@@ -4,17 +4,29 @@
 \alias{nif_plot_id}
 \title{Plot DV time course data from individual subject}
 \usage{
-nif_plot_id(nif, id, y.scale = "lin", max.time = NA)
+nif_plot_id(
+  nif,
+  id,
+  analyte = NULL,
+  y.scale = "lin",
+  max.time = NA,
+  imp = "none"
+)
 }
 \arguments{
 \item{nif}{The NIF data set}
 
 \item{id}{The subject ID to be plotted}
 
+\item{analyte}{The analytes to be displayes. Defaults to NULL (all).}
+
 \item{y.scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 is "lin".}
 
 \item{max.time}{The right limit of the time scale}
+
+\item{imp}{The IMP for which administrations are to be indicated by vertical
+lines. Defaults to 'none'.}
 }
 \value{
 the plot object

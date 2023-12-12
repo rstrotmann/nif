@@ -27,6 +27,11 @@ nif_viewer <- function(nif) {
     dplyr::distinct(ANALYTE) %>%
     dplyr::pull(ANALYTE)
 
+  imps <- nif %>%
+    as.data.frame() %>%
+    distinct(PARENT) %>%
+    pull(PARENT)
+
   max.dose <- nif %>%
     dplyr::pull(AMT) %>%
     max()
@@ -37,6 +42,8 @@ nif_viewer <- function(nif) {
 
     shiny::fluidRow(
       style="padding:10px; spacing:10",
+
+      ## Column 1
       shiny::column(3,
         shiny::selectInput("subject", label="subject", choices=sbs,
                            selected=sbs[1]),
@@ -44,29 +51,37 @@ nif_viewer <- function(nif) {
         shiny::actionButton("next.sb", "next")
       ),
 
+      # Column 2
       shiny::column(2,
         shiny::radioButtons(
           "timeselect",
           "time axis limit",
           choices= c("individual max" = "indiv",
                      "global max" = "global",
-                     "custom" = "custom"))
+                     "custom" = "custom")),
+
+        shiny::numericInput("maxtime", "max display time", value=NA)
       ),
 
+      # Column 3
       shiny::column(2,
-        shiny::numericInput("maxtime", "max display time", value=NA)),
-
-      shiny::column(2,
+        shiny::checkboxGroupInput("analytes", "analyte filter",
+                                  choices=analytes, selected=analytes),
         checkboxInput("log_yscale", "log y-scale")),
 
-      shiny::column(3,
+      # Columns 4
+      # shiny::column(2, shiny::checkboxGroupInput("imps", "IMP filter",
+      #                                            choices=imps, selected=imps),
+      # checkboxInput("show_admin", "administrations")),
+
+      # Collumn 5
+      shiny::column(2,
         shiny::selectInput("dose", label="dose filter",
                            choices=c("all", doses), selected="all"),
-
-      shiny::checkboxGroupInput("analytes", "analyte filter",
-                                choices=analytes, selected=analytes))
+      shiny::selectInput("admin", label="administrations",
+                         choices=c(imps, "none"), selected=imps[1])
+      ),
     ),
-
     hr(),
     shiny::plotOutput("plot.pc"),
     shiny::plotOutput("plot.dose"),
@@ -102,10 +117,13 @@ nif_viewer <- function(nif) {
       y_scale_type <- ifelse(input$log_yscale, "log", "lin")
       suppressWarnings(print(
         nif::nif_plot_id(
-          current_nif() %>% filter(ANALYTE %in% input$analytes),
+          current_nif(), #%>%
+            # filter(ANALYTE %in% input$analytes),
           input$subject,
+          analyte=input$analytes, #%>%
           max.time=max.time(),
-          y.scale=y_scale_type)))
+          y.scale=y_scale_type,
+          imp=input$admin)))
     }, height=350)
 
     output$plot.dose <- shiny::renderPlot({
@@ -116,16 +134,16 @@ nif_viewer <- function(nif) {
     shiny::observeEvent(input$prev.sb, {
       current <- which(current_sbs()==input$subject)
       if(current > 0) {
-        shiny::updateSelectInput(session, "subject",
-                                 choices=current_sbs(), selected=current_sbs()[current-1])
+        shiny::updateSelectInput(session, "subject", choices=current_sbs(),
+                                 selected=current_sbs()[current-1])
       }
     })
 
     shiny::observeEvent(input$next.sb, {
       current <- which(current_sbs()==input$subject)
       if(current < length(current_sbs())) {
-        shiny::updateSelectInput(session, "subject",
-                                 choices=current_sbs(), selected=current_sbs()[current+1])
+        shiny::updateSelectInput(session, "subject", choices=current_sbs(),
+                                 selected=current_sbs()[current+1])
       }
     })
 

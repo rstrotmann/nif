@@ -16,13 +16,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-This is a basic tutorial on using the `nif` package to create NONMEM Input Files
-(NIF) from Study Data Tabulation Model (SDTM) data.
+This is a basic tutorial on using the `nif` package to create NONMEM Input File
+(NIF) data sets from Study Data Tabulation Model- (SDTM) formatted data.
 
-The package is intended to facilitate providing the required data format for
+The package is intended to facilitate providing the required data table for
 population PK or PK/PD modeling. The source data are typically contained in 
-different SDTM tables and need to be joined together, i.e., including but not
-limited to baseline demographic and vital sign data, drug exposure data, and
+different SDTM tables and will be joined together, i.e., including but not
+limited to: baseline demographic and vital sign data, drug exposure data, and
 pharmacokinetic concentrations.
 
 In addition to re-arranging and joining the data, certain standard data

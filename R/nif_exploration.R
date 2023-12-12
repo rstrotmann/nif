@@ -8,33 +8,52 @@
 #' @param id The subject ID to be plotted
 #' @param y.scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
+#' @param analyte The analytes to be displayes. Defaults to NULL (all).
+#' @param imp The IMP for which administrations are to be indicated by vertical
+#'   lines. Defaults to 'none'.
 #' @param max.time The right limit of the time scale
+#'
 #' @return the plot object
 #' @import dplyr
 #' @import ggplot2
 #' @export
-nif_plot_id <- function(nif, id, y.scale="lin", max.time=NA){
+nif_plot_id <- function(nif, id, analyte=NULL, y.scale="lin", max.time=NA,
+                        imp="none"){
   if(id %in% nif$ID) {
     plot.label <- "ID"
     nif <- nif %>%
       filter(ID==id)
     id_label <- ""
+  } else {
+    if(id %in% nif$USUBJID) {
+      nif <- nif %>%
+        filter(USUBJID==id)
+      id_label <- paste0(" (ID ", nif %>% distinct(ID) %>% pull(ID), ")")
+      plot.label <- "USUBJID"
+    } else {
+      stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
+    }
   }
-  else if(id %in% nif$USUBJID) {
-    nif <- nif %>%
-      filter(USUBJID==id)
-    id_label <- paste0(" (ID ", nif %>% distinct(ID) %>% pull(ID), ")")
-    plot.label <- "USUBJID"
+
+  if(is.null(analytes)) {
+    analyte <- nif %>%
+      distinct(ANALYTE) %>%
+      pull(ANALYTE)
   }
-  else {
-    stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
-  }
+
+  obs <- nif %>%
+    as.data.frame() %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(EVID==0)
 
   admin <- nif %>%
-    dplyr::filter(EVID==1)
+    as.data.frame() %>%
+    dplyr::filter(EVID==1) %>%
+    dplyr::filter(PARENT==imp)
 
-  p <- nif %>%
-    filter(EVID!=1) %>%
+  # p <- nif %>%
+  #   filter(EVID!=1) %>%
+  p <- obs %>%
     ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
                                  group=interaction(ID, as.factor(ANALYTE)),
                                  color=as.factor(ANALYTE))) +
@@ -43,10 +62,14 @@ nif_plot_id <- function(nif, id, y.scale="lin", max.time=NA){
     ggplot2::geom_point() +
     ggplot2::xlim(0, max.time) +
     ggplot2::labs(title=paste0(plot.label, ": ", id, id_label),
-      caption="vertical lines indicate administrations",
       color="analyte") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position="bottom")
+
+  if(!(imp %in% c("NA", "", "none"))) {
+    p <- p +
+      labs(caption=paste("vertical lines indicate", imp, "administrations"))
+  }
 
   if(y.scale=="log") {
     p <- p + scale_y_log10()
