@@ -204,6 +204,7 @@ make_vs <- function(dm) {
     mutate(VSSTRESU=VSORRESU, EPOCH="SCREENING", DOMAIN="VS", VSBLFL="") %>%
     ungroup() %>%
     mutate(VISIT="SCREENING") %>%
+    mutate(VSBLFL="Y") %>%
     as.data.frame()
 }
 

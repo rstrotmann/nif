@@ -22,7 +22,6 @@ the named list of the above.
 }
 \examples{
 subject_info(examplinib_poc_nif, 1)
-subject_info(examplinib_poc_nif, "20230000221010001")
 subject_info(examplinib_poc_nif, c(1, 2))
 unclass(subject_info(examplinib_poc_nif, 1))
 
