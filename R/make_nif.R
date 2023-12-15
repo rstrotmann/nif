@@ -69,7 +69,8 @@
 #' @import utils
 #' @export
 df.to.string <- function(df, indent="", n=NULL, header=T){
-  df <- as.data.frame(df)
+  df <- as.data.frame(df) %>%
+    mutate(across(everything(), as.character))
   max.widths <- as.numeric(lapply(
     rbind(df, names(df)),
     FUN=function(x) max(sapply(as.character(x), nchar), na.rm=TRUE)))
@@ -100,10 +101,13 @@ df.to.string <- function(df, indent="", n=NULL, header=T){
 }
 
 
-has.time <- function(datetime) {
-  stringr::str_detect(datetime, "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}")
-}
+# has.time <- function(datetime) {
+#   stringr::str_detect(datetime, "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}")
+# }
 
+has_time <- function(datetime) {
+  as.numeric(datetime) %% 86400 != 0
+}
 
 #' Recode SEX field in a data frame
 #'
@@ -129,7 +133,7 @@ recode_sex <- function(obj){
 
 #' The list of expected date/time formats in the SDTM data
 #'
-dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S")
+dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y")
 
 
 #' Convert date fileds to POSIX format
@@ -179,8 +183,16 @@ isofy_date_format <- function(obj, fields=NULL) {
 #'
 #' @return A data frame.
 lubrify_dates <- function(obj) {
-  obj %>% dplyr::mutate_at(vars(ends_with("DTC")),
-                     ~lubridate::as_datetime(., format=dtc_formats))
+  # obj %>% dplyr::mutate_at(vars(ends_with("DTC")),
+  #                    ~lubridate::as_datetime(., format=dtc_formats))
+
+  f <- function(x) {
+    if(!is.POSIXct(x)) {
+      x <- lubridate::as_datetime(x, format=dtc_formats)
+      }
+    return(x)}
+
+  obj %>% dplyr::mutate_at(vars(ends_with("DTC")), f)
 }
 
 
@@ -192,6 +204,23 @@ lubrify_dates <- function(obj) {
 isofy_dates <- function(obj) {
   obj %>%
     dplyr::mutate_at(vars(ends_with("DTC")), ~format(., "%Y-%m-%dT%H:%M"))
+}
+
+
+
+#' Title
+#'
+#' @param date
+#' @param time
+#'
+#' @return
+compose_dtc <- function(date, time) {
+  data.frame(date=as.character(date), time=as.character(time)) %>%
+    mutate(time=case_when(is.na(time)~"", .default=time)) %>%
+    mutate(DTC=str_trim(paste(as.character(date), time))) %>%
+    mutate(DTC=lubridate::as_datetime(DTC,
+      format=c("%Y-%m-%d %H:%M", "%Y-%m-%d"))) %>%
+    pull(DTC)
 }
 
 
@@ -208,7 +237,7 @@ isofy_dates <- function(obj) {
 #'
 #' @param ex EX domain
 #' @param cut.off.date The cut-off date to be used where no EXENDTC is recorded,
-#'  in "%Y-%m-%dT%H:%M" format.
+#'  in POSIX format.
 #' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
 #'  that associate both.
 #' @param impute.missing.end.time A logic value to indicate whether in rows
@@ -219,76 +248,114 @@ isofy_dates <- function(obj) {
 #' @import lubridate
 #' @import dplyr
 #' @import tidyr
+#' @import assertr
 make_admin <- function(ex,
                        drug_mapping,
                        cut.off.date,
                        impute.missing.end.time=TRUE,
                        silent=F){
-  cutoff <- lubridate::as_datetime(
-    cut.off.date,
-    format=dtc_formats)
+  # Assertions
+  ex <- ex %>%
+    verify(has_all_names("STUDYID", "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC",
+                         "EXDOSE", "EPOCH"))
 
-  ret <- ex %>%
-    dplyr::mutate(start=lubridate::as_datetime(
-      EXSTDTC, format=dtc_formats)) %>%
-    dplyr::mutate(end=lubridate::as_datetime(
-      EXENDTC, format=dtc_formats)) %>%
+  admin <- ex %>%
+    lubrify_dates() %>%
+    mutate(EXSTDTC_has_time=has_time(EXSTDTC),
+           EXENDTC_has_time=has_time(EXENDTC)) %>%
 
+    ### The following should be probably done after expansion!
+    # filter for entries with start before cut-off
+    dplyr::filter(EXSTDTC <= cut.off.date) %>%
     dplyr::group_by(USUBJID, EXTRT) %>%
-    dplyr::arrange(start) %>%
-    dplyr::mutate(next_start=lead(start)) %>%
+    dplyr::arrange(EXSTDTC) %>%
+    dplyr::mutate(next_start=lead(EXSTDTC)) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(end=case_when(is.na(end)~next_start-days(1), .default=end)) %>%
-    dplyr::mutate(end=case_when(is.na(end)~cutoff, .default=end)) %>%
+
+    # dplyr::mutate(end=case_when(is.na(end)~next_start-days(1), .default=end)) %>%
+    # dplyr::mutate(end=case_when(is.na(end)~cutoff, .default=end)) %>%
+
+    dplyr::mutate(end=case_when(is.na(EXENDTC)~next_start-days(1),
+                                .default=EXENDTC)) %>%
+    # dplyr::mutate(end=case_when(is.na(EXENDTC)~cutoff,
+    #                             .default=EXENDTC)) %>%
+    dplyr::mutate(end=case_when(is.na(end)~cut.off.date,
+                                .default=end)) %>%
     dplyr::select(-next_start) %>%
 
-
     # convert EXSTDTC to to datetime object, start date and start time
-    dplyr::mutate(start.date=format(start, format="%Y-%m-%d")) %>%
+    # dplyr::mutate(start.date=format(start, format="%Y-%m-%d")) %>%
+    # dplyr::mutate(start.time=case_when(
+    #   has.time(EXSTDTC) ~ format(start, format="%H:%M"),
+    #   .default=NA)) %>%
+    dplyr::mutate(start.date=format(EXSTDTC, format="%Y-%m-%d")) %>%
+    # dplyr::mutate(start.time=case_when(
+    #   has.time(EXSTDTC) ~ format(EXSTDTC, format="%H:%M"),
+    #   .default=NA)) %>%
     dplyr::mutate(start.time=case_when(
-      has.time(EXSTDTC) ~ format(start, format="%H:%M"),
+      EXSTDTC_has_time==T ~ format(EXSTDTC, format="%H:%M"),
       .default=NA)) %>%
 
-    # filter for entries with start before cut-off
-    dplyr::filter(start <= cutoff) %>%
+    # # filter for entries with start before cut-off
+    # # dplyr::filter(start <= cutoff) %>%
+    # dplyr::filter(EXSTDTC <= cutoff) %>%
 
     # convert EXENDTC to datetime object, end date and end time
+    # dplyr::mutate(end.date=format(end, format="%Y-%m-%d")) %>%
+    # dplyr::mutate(end.time=case_when(
+    #   has.time(EXENDTC) ~ format(end, format="%H:%M"),
+    #   .default=NA))
     dplyr::mutate(end.date=format(end, format="%Y-%m-%d")) %>%
+    # dplyr::mutate(end.time=case_when(
+    #   has.time(EXENDTC) ~ format(EXENDTC, format="%H:%M"),
+    #   .default=NA))
     dplyr::mutate(end.time=case_when(
-      has.time(EXENDTC) ~ format(end, format="%H:%M"),
+      EXENDTC_has_time==T ~ format(end, format="%H:%M"),
       .default=NA))
+
+
+  # impute missing
+
 
   # for rows with recorded start.time but missing end.time, impute end.time to
   #   be equal to start.time
+  ##
+  ## to do:
+  ##
+  ## apply imputation only for entries that have an end DATE!!
+  ##
+
   if(impute.missing.end.time){
-    temp <- ret %>%
+    ## Issue message about imputations
+    temp <- admin %>%
       dplyr::filter(is.na(end.time) & !is.na(start.time))
-    if(temp %>% nrow() != 0){
+    if(nrow(temp) != 0){
       temp <- temp %>%
-        dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
+        dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, end) %>%
         df.to.string()
       if(!silent){
         message(paste("Administration end time was imputed to start time",
                       "for the following entries:\n", temp))
       }
-      ret <- ret %>%
-        dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
-          .default= end.time))
     }
+    ## conduct missing end time imputation
+    admin <- admin %>%
+      dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
+        .default=end.time))
   }
 
   # Derive EXSTDTC and EXENDTC if not available in the original data set
-  if(!"EXSTDY" %in% names(ret)) {
-    ret <- ret %>%
-      arrange(USUBJID, start) %>%
+  if(!"EXSTDY" %in% names(admin)) {
+    admin <- admin %>%
+      arrange(USUBJID, EXSTDTC) %>%
       group_by(USUBJID, EXTRT) %>%
-      mutate(ref=start[1]) %>%
-      mutate(EXSTDY=as.numeric(difftime(start, ref, units="days"))+1) %>%
-      mutate(EXENDY=as.numeric(difftime(end, ref, units="days"))+1) %>%
+      mutate(ref=EXSTDTC[1]) %>%
+      mutate(EXSTDY=floor(as.numeric(difftime(EXSTDTC, ref, units="days"))+1)) %>%
+      mutate(EXENDY=floor(as.numeric(difftime(end, ref, units="days"))+1)) %>%
       as.data.frame()
   }
 
-  ret <- ret %>%
+  ret <- admin %>%
     # expand dates from start date to end date, time is end.time for last row,
     #   otherwise start.time
     dplyr::group_by(STUDYID, USUBJID, EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC,
@@ -296,11 +363,14 @@ make_admin <- function(ex,
 
     # dplyr::group_by_all() %>%
     tidyr::expand(date=seq(as.Date(start.date), as.Date(end.date), by="1 day")) %>%
+
     dplyr::mutate(time=case_when(
       row_number()==n() ~ end.time,
       .default=start.time)) %>%
     dplyr::mutate(EXDY=EXSTDY+(row_number()-1)) %>%
     dplyr::ungroup() %>%
+
+    mutate(DTC=compose_dtc(date, time)) %>%
 
     # set treatment, standard fields
     dplyr::mutate(NTIME=0, DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
@@ -344,12 +414,17 @@ make_admin <- function(ex,
 #' variables set
 #' @import dplyr
 #' @import lubridate
+#' @import assertr
 #' @seealso [add_time_mapping()]
 make_obs <- function(pc,
                      time_mapping=NULL,
                      spec=NULL,
                      silent=F,
                      use_pctptnum=F){
+  # Assertions
+  pc <- pc %>%
+    verify(has_all_names("PCSPEC", "PCDTC", "PCSTRESN", "PCTESTCD"))
+
   # Filter for specific specimen, guess specimen if none defined
   pcspecs <- pc %>%
     dplyr::distinct(PCSPEC) %>%
@@ -386,8 +461,10 @@ make_obs <- function(pc,
     mutate(DTC=PCDTC) %>%
     lubrify_dates() %>%
     dplyr::mutate(start.date=format(DTC, format="%Y-%m-%d")) %>%
-    dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
-      .default=NA))
+    # dplyr::mutate(start.time=case_when(has.time(PCDTC) ~ format(DTC, format="%H:%M"),
+    #   .default=NA))
+    dplyr::mutate(start.time=case_when(has_time(PCDTC) ~ format(DTC, format="%H:%M"),
+                                       .default=NA))
 
   # identify nominal time
   if(use_pctptnum) {
@@ -425,12 +502,13 @@ make_obs <- function(pc,
 #' @return A datetime object representing the last recorded observation time
 #' @import dplyr
 last_obs_dtc <- function(obs){
-  last <- obs %>%
-    dplyr::distinct(USUBJID, DTC) %>%
-    dplyr::group_by(USUBJID) %>%
-    dplyr::summarize(last=max(DTC, na.rm=TRUE)) %>%
-    dplyr::summarize(last=max(last))
-  return(format(last$last, "%Y-%m-%dT%H:%M"))
+  # last <- obs %>%
+  #   dplyr::distinct(USUBJID, DTC) %>%
+  #   dplyr::group_by(USUBJID) %>%
+  #   dplyr::summarize(last=max(DTC, na.rm=TRUE)) %>%
+  #   dplyr::summarize(last=max(last))
+  # return(format(last$last, "%Y-%m-%dT%H:%M"))
+  return(max(obs$DTC, na.rm=T))
 }
 
 
@@ -440,14 +518,24 @@ last_obs_dtc <- function(obs){
 #'
 #' @return The last administration in DTC format.
 #' @export
+# last_ex_dtc <- function(ex) {
+#   temp <- ex %>%
+#     dplyr::mutate(end=lubridate::as_datetime(
+#       EXENDTC, format=dtc_formats)) %>%
+#     pull(end) %>%
+#     max(na.rm=T)
+#
+#     return(format(temp, "%Y-%m-%dT%H:%M"))
+# }
 last_ex_dtc <- function(ex) {
-  temp <- ex %>%
-    dplyr::mutate(end=lubridate::as_datetime(
-      EXENDTC, format=dtc_formats)) %>%
-    pull(end) %>%
-    max(na.rm=T)
-
-    return(format(temp, "%Y-%m-%dT%H:%M"))
+  # temp <- ex %>%
+  #   dplyr::mutate(end=lubridate::as_datetime(
+  #     EXENDTC, format=dtc_formats)) %>%
+  #   pull(end) %>%
+  #   max(na.rm=T)
+  #
+  # return(format(temp, "%Y-%m-%dT%H:%M"))
+  return(max(ex$EXENDTC, na.rm=T))
 }
 
 
@@ -465,7 +553,19 @@ last_ex_dtc <- function(ex) {
 #' @import tidyr
 #' @import dplyr
 impute.administration.time <- function(admin, obs) {
-  temp <- obs %>%
+  # Assertions
+  admin %>%
+    verify(has_all_names("USUBJID", "date", "PCTESTCD"))
+
+  obs %>%
+    verify(has_all_names("DTC", "PCRFTDTC", "USUBJID", "PCTESTCD"))
+
+  # 'reference' is the reference time by subject, analyte and observation date.
+  # This is the PCRFDTC that is recorded along with observations in PC, i.e.,
+  # the date/time of administration of the IMP related to the observation. This
+  # is a 'permissible' field as per SDTM, i.e., it cannot be expected that is is
+  # present in the data set.
+  reference <- obs %>%
     dplyr::mutate(dtc.date=format(DTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(ref.date=format(PCRFTDTC, format="%Y-%m-%d")) %>%
     dplyr::mutate(ref.time=format(PCRFTDTC, format="%H:%M")) %>%
@@ -475,19 +575,37 @@ impute.administration.time <- function(admin, obs) {
 
   ret <- admin %>%
     dplyr::mutate(dtc.date=format(date, format="%Y-%m-%d")) %>%
-    dplyr::left_join(temp, by=c("USUBJID"="USUBJID", "dtc.date"="dtc.date",
+    dplyr::left_join(reference, by=c("USUBJID"="USUBJID", "dtc.date"="dtc.date",
                                 "EXTRT"="PCTESTCD")) %>%
-    # take PCREFDTC where time is not available from EX
-    dplyr::mutate(admin.time=case_when(!is.na(ref.time) ~ ref.time, .default=time)) %>%
+
+    # take time for administration from PCREFDTC where time is not available
+    #   from EX
+    dplyr::mutate(admin.time=case_when(
+      !is.na(ref.time) ~ ref.time,
+      .default=time)) %>%
+    mutate(admin.time=case_when(is.na(admin.time)~"", .default=admin.time)) %>%
+
     dplyr::group_by(USUBJID, EXTRT) %>%
     dplyr::arrange(date) %>%
     # carry forward/back last administration time
     tidyr::fill(admin.time, .direction="downup") %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(DTC=case_when(
-      (is.na(admin.time) | is.na(date)) ~ NA,
-      .default=lubridate::as_datetime(
-        paste(date, admin.time), format="%Y-%m-%d %H:%M"))) %>%
+
+    # mutate(DTC=paste(as.character(date), admin.time)) %>%
+    # mutate(DTC=lubridate::as_datetime(
+    #   str_trim(DTC), format=c("%Y-%m-%d %H:%M", "%Y-%m-%d"))) %>%
+
+    mutate(DTC=compose_dtc(date, admin.time)) %>%
+
+    # mutate(DTC=lubridate::as_datetime(
+    #   paste(as.character(date), admin.time),
+    #   format=c("%Y-%m-%d %H:%M", "%Y-%m-%d")))
+
+    # dplyr::mutate(DTC=case_when(
+    #   (is.na(admin.time) | is.na(date)) ~ NA,
+    #   .default=lubridate::as_datetime(
+    #     paste(as.character(date), admin.time),
+    #     format=c("%Y-%m-%d %H:%M", "%Y-%m-%d")))) %>%
     dplyr::select(-admin.time, -ref.time)
   return(ret)
 }
@@ -569,10 +687,18 @@ make_nif <- function(
     silent=F,
     truncate.to.last.observation=FALSE,
     use_pctptnum=TRUE) {
-  vs <- sdtm.data$domains[["vs"]] %>% dplyr::select(-DOMAIN)
-  ex <- sdtm.data$domains[["ex"]] %>% dplyr::select(-DOMAIN)
-  pc <- sdtm.data$domains[["pc"]] %>% dplyr::select(-DOMAIN)
-  dm <- sdtm.data$domains[["dm"]] %>% dplyr::select(-DOMAIN)
+  vs <- sdtm.data$domains[["vs"]] %>%
+    dplyr::select(-DOMAIN) %>%
+    lubrify_dates()
+  ex <- sdtm.data$domains[["ex"]] %>%
+    dplyr::select(-DOMAIN) %>%
+    lubrify_dates()
+  pc <- sdtm.data$domains[["pc"]] %>%
+    dplyr::select(-DOMAIN) %>%
+    lubrify_dates()
+  dm <- sdtm.data$domains[["dm"]] %>%
+    dplyr::select(-DOMAIN) %>%
+    lubrify_dates()
 
   # Get baseline covariates on subject level from VS
   bl.cov <- vs %>%
@@ -621,7 +747,8 @@ make_nif <- function(
       message(paste("Data cut-off was set to last observation time,", cut.off.date))
     }
   } else {
-    cut.off.date <- last_ex_dtc(sdtm.data$domains[["ex"]])
+    # cut.off.date <- last_ex_dtc(sdtm.data$domains[["ex"]])
+    cut.off.date <- last_ex_dtc(ex)
   }
 
   # identify subjects with observations by analyte
@@ -684,10 +811,12 @@ make_nif <- function(
   # calculate age from birthday and informed consent signature date
   if("RFICDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
-      dplyr::mutate(refdtc=lubridate::as_datetime(
-        RFICDTC, format=dtc_formats)) %>%
-      dplyr::mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y-%m", "%Y"))) %>%
-      dplyr:: mutate(age1=floor(as.duration(interval(brthyr, refdtc))/as.duration(years(1)))) %>%
+      # dplyr::mutate(refdtc=lubridate::as_datetime(
+      #   RFICDTC, format=dtc_formats)) %>%
+      # mutate(refdtc=RFICDTC) %>%
+      # dplyr::mutate(brthyr=lubridate::as_datetime(BRTHDTC, format=c("%Y-%m-%d", "%Y-%m", "%Y"))) %>%
+      # mutate(brthyr=BRTHDTC) %>%
+      dplyr:: mutate(age1=floor(as.duration(interval(BRTHDTC, RFICDTC))/as.duration(years(1)))) %>%
       dplyr::mutate(AGE=case_when(is.na(AGE) ~ age1, .default=AGE)) %>%
       dplyr::select(-age1)
   }

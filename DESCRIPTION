@@ -23,7 +23,8 @@ Imports:
     rxode2,
     lifecycle,
     gdata,
-    pracma
+    pracma,
+    assertr
 Depends: 
     R (>= 2.10)
 Suggests: 

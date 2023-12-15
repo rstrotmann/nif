@@ -5,7 +5,7 @@
 \alias{dtc_formats}
 \title{The list of expected date/time formats in the SDTM data}
 \format{
-An object of class \code{character} of length 3.
+An object of class \code{character} of length 4.
 }
 \usage{
 dtc_formats

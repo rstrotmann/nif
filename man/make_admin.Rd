@@ -19,7 +19,7 @@ make_admin(
 that associate both.}
 
 \item{cut.off.date}{The cut-off date to be used where no EXENDTC is recorded,
-in "\%Y-\%m-\%dT\%H:\%M" format.}
+in POSIX format.}
 
 \item{impute.missing.end.time}{A logic value to indicate whether in rows
 in EX where EXENDTC does not include a time, the time should be copied from
