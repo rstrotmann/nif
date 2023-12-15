@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{lubrify_dates}
 \alias{lubrify_dates}
-\title{Convert all DTC fields into POSIXct}
+\title{Convert all DTC fields from ISO 8601 into POSIXct}
 \usage{
 lubrify_dates(obj)
 }
@@ -13,5 +13,5 @@ lubrify_dates(obj)
 A data frame.
 }
 \description{
-Convert all DTC fields into POSIXct
+Convert all DTC fields from ISO 8601 into POSIXct
 }
