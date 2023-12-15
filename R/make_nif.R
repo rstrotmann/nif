@@ -654,9 +654,16 @@ make_nif <- function(
     lubrify_dates()
 
   # Get baseline covariates on subject level from VS
-  bl.cov <- vs %>%
+  if("VSBLFL" %in% names(vs)) {
+    bl.cov <- vs %>%
+      filter(VSBLFL=="Y")
+  } else {
+    bl.cov <- vs %>%
+      filter(str_to_upper(VISIT)=="SCREENING")
+  }
+  bl.cov <- bl.cov %>%
     # dplyr::filter(EPOCH=="SCREENING") %>%
-    filter(str_to_upper(VISIT)=="SCREENING") %>%
+    # filter(str_to_upper(VISIT)=="SCREENING" | VSBLFL=="Y") %>%
     dplyr::filter(VSTESTCD %in% c("HEIGHT", "WEIGHT")) %>%
     dplyr::group_by(USUBJID, VSTESTCD) %>%
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
