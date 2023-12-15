@@ -620,10 +620,50 @@ wt_by_ht <- function(obj) {
     distinct(ID, HEIGHT, WEIGHT) %>%
     ggplot(aes(x=HEIGHT, y=WEIGHT)) +
     geom_smooth(method="lm", formula = 'y ~ x', alpha=0.3) +
-    geom_point(size=2) +
+    geom_point(size=3) +
     labs(x="height (cm)", y="baseline weight (kg)") +
     ggtitle("Body weight by height") +
     theme_bw()
+}
+
+
+#' Weight by height scatterplot
+#'
+#' @param obj The NIF object.
+#'
+#' @return A plot object.
+#' @export
+ht_by_wt <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    distinct(ID, HEIGHT, WEIGHT) %>%
+    ggplot(aes(x=WEIGHT, y=HEIGHT)) +
+    geom_smooth(method="lm", formula = 'y ~ x', alpha=0.3) +
+    geom_point(size=3) +
+    labs(y="height (cm)", x="baseline weight (kg)") +
+    ggtitle("Body height by weight") +
+    theme_bw()
+}
+
+
+#' BMI by age scatterplot
+#'
+#' @param obj The NIF object.
+#'
+#' @return A plot object.
+#' @export
+bmi_by_age <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    distinct(ID, AGE, BMI) %>%
+    ggplot(aes(x=AGE, y=BMI)) +
+    geom_smooth(method="lm", formula = 'y ~ x', alpha=0.3) +
+    # geom_point(size=3, aes( color=BMI>18.5)) +
+    geom_point(size=3) +
+    labs(y="BMI (kg/m^2)", x="age (y)") +
+    ggtitle("Body mass index by age") +
+    theme_bw() +
+    theme(legend.position="none")
 }
 
 

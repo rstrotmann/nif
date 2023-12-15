@@ -203,6 +203,7 @@ make_vs <- function(dm) {
     mutate(VSSTRESN=round(VSORRES, digits=1)) %>%
     mutate(VSSTRESU=VSORRESU, EPOCH="SCREENING", DOMAIN="VS", VSBLFL="") %>%
     ungroup() %>%
+    mutate(VISIT="SCREENING") %>%
     as.data.frame()
 }
 
