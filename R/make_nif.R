@@ -254,10 +254,11 @@ extract_time <- function(dtc) {
 #'  in POSIX format.
 #' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
 #'  that associate both.
-#' @param impute.missing.end.time A logic value to indicate whether in rows
+#' @param impute.missing.end.time A boolean value to indicate whether in rows
 #'  in EX where EXENDTC does not include a time, the time should be copied from
 #'  EXSTDTC.
 #' @param silent Boolean value to indicate whether warnings should be printed.
+#'
 #' @return A tibble with individual administrations
 #' @import lubridate
 #' @import dplyr
@@ -611,6 +612,10 @@ impute.administration.time <- function(admin, obs) {
 #' @param impute.missing.end.time A logic value to indicate whether in rows
 #'   in EX where EXENDTC does not include a time, the time should be copied from
 #'   EXSTDTC.
+#' @param impute.administration.time A boolean value to indicate whether the
+#'  time of administration is to be imputed from the PCRFDTC field from the
+#'  PC domain. This field is 'permissible' and may not be present in certain
+#'  SDTM data.
 #' @param truncate.to.last.observation Boolean to indicate whether the data set
 #'   should be truncated to the last observation. In this case, administrations
 #'   after the last observation time point will deleted.
@@ -631,6 +636,7 @@ make_nif <- function(
     sdtm.data,
     spec=NULL,
     impute.missing.end.time=TRUE,
+    impute.administration.time=TRUE,
     silent=F,
     truncate.to.last.observation=FALSE,
     use_pctptnum=TRUE) {
@@ -649,7 +655,8 @@ make_nif <- function(
 
   # Get baseline covariates on subject level from VS
   bl.cov <- vs %>%
-    dplyr::filter(EPOCH=="SCREENING") %>%
+    # dplyr::filter(EPOCH=="SCREENING") %>%
+    filter(str_to_upper(VISIT)=="SCREENING") %>%
     dplyr::filter(VSTESTCD %in% c("HEIGHT", "WEIGHT")) %>%
     dplyr::group_by(USUBJID, VSTESTCD) %>%
     dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
@@ -753,7 +760,9 @@ make_nif <- function(
   }
 
   # impute administration times
-  admin <- impute.administration.time(admin, obs)
+  if(impute.administration.time==TRUE) {
+    admin <- impute.administration.time(admin, obs)
+  }
 
   # calculate age from birthday and informed consent signature date
   if("RFICDTC" %in% colnames(dm) & "BRTHDTC" %in% colnames(dm)) {
@@ -796,8 +805,8 @@ make_nif <- function(
     dplyr::arrange(USUBJID, PARENT, DTC, EVID) %>%
     dplyr::group_by(USUBJID, PARENT) %>%
     tidyr::fill(DOSE, .direction = "down") %>%
-    tidyr::fill(AGE, SEX, RACE, ETHNIC, ACTARMCD, HEIGHT, WEIGHT, COUNTRY, ARM,
-                SUBJID, .direction="down") %>%
+    tidyr::fill(any_of(c("AGE", "SEX", "RACE", "ETHNIC", "ACTARMCD", "HEIGHT", "WEIGHT", "COUNTRY", "ARM",
+                "SUBJID")), .direction="down") %>%
     dplyr::ungroup() %>%
 
     dplyr::mutate(RATE=0) %>%
