@@ -339,10 +339,12 @@ make_admin <- function(ex,
       temp <- temp %>%
         dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, end) %>%
         df.to.string()
-      if(!silent){
-        message(paste("Administration end time was imputed to start time",
-                      "for the following entries:\n", temp))
-      }
+      # if(!silent){
+      #   message(paste("Administration end time was imputed to start time",
+      #                 "for the following entries:\n", temp))
+      # }
+      conditional_message("Administration end time was imputed to start time ",
+        "for the following entries:\n", temp, silent=silent)
     }
     ## conduct missing end time imputation
     admin <- admin %>%
@@ -440,9 +442,11 @@ make_obs <- function(pc,
                       "BLOOD", "Blood", "blood")
   if(length(spec)==0) {
     spec <- standard_specs[standard_specs %in% pcspecs][1]
-    if(!silent){
-      message(paste("No specimen specified. Set to", spec, "as the most likely."))
-    }
+    # if(!silent){
+    #   message(paste("No specimen specified. Set to", spec, "as the most likely."))
+    # }
+    conditional_message("No specimen specified. Set to ", spec,
+      " as the most likely.", silent=silent)
   }
   obs <- pc %>%
     dplyr::filter(PCSPEC %in% spec)
@@ -586,28 +590,13 @@ impute.administration.time <- function(admin, obs) {
 #' @param silent Boolean to indicate whether message output should be provided.
 #'
 #' @return Baseline VS data as wide data frame.
+#' @export
+#' @examples
+#' baseline_covariates(examplinib_sad$vs)
+#'
 baseline_covariates <- function(vs, silent=F) {
   temp <- vs %>%
     filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
-
-  # if("VISIT" %in% names(temp)) {
-  #   print("VISIT in VS")
-  #   if("SCREENING" %in% str_to_upper(unique(temp$VISIT))) {
-  #     n_screeing <- temp %>%
-  #       filter(str_to_upper(VISIT)=="SCREENING") %>%
-  #       distinct(USUBJID) %>%
-  #       nrow()
-  #     print(paste(n_screeing, "subjects have screeing weight/height"))
-  #   }
-  # }
-  #
-  # if("VSBLFL" %in% names(temp)) {
-  #   n_blfl <- temp %>%
-  #     filter(VSBLFL=="Y") %>%
-  #     distinct(USUBJID) %>%
-  #     nrow()
-  #   print(paste(n_blfl, "subjects with BLFL weight/height"))
-  # }
 
   bl_cov <- NULL
 
@@ -626,9 +615,11 @@ baseline_covariates <- function(vs, silent=F) {
       bl_cov <- temp %>%
         filter(VSBLFL=="Y")
     } else {
-      if(!silent){
-        message("Baseline VS data could not be identified!")
-      }
+      # if(!silent){
+      #   message("Baseline VS data could not be identified!")
+      # }
+      conditional_message("Baseline VS data could not be identified!",
+                          silent=silent)
     }
   }
 
@@ -645,17 +636,21 @@ baseline_covariates <- function(vs, silent=F) {
   return(bl_cov)
 }
 
-baseline_covariates(sdtm.0013$vs)
-baseline_covariates(sdtm.003$vs)
-baseline_covariates(sdtm.0033$vs)
-baseline_covariates(sdtm.0001$vs)
-baseline_covariates(sdtm.0020$vs)
-baseline_covariates(sdtm.0070$vs)
-baseline_covariates(sdtm.0044$vs)
-baseline_covariates(sdtm.0051$vs)
-baseline_covariates(sdtm.0031$vs)
 
-
+#' Issue message based on silent flag
+#'
+#' @param msg The message as character.
+#' @param silent A boolean.
+#' @param ... Further message components.
+#'
+#' @return Nothing.
+conditional_message <- function(msg, ..., silent=F){
+  parameters <- c(as.list(environment()), list(...))
+  parameters <- lapply(parameters, as.character)
+  if(!silent) {
+    message(paste(as.character(parameters[names(parameters) != "silent"])))
+  }
+}
 
 
 #' Make raw NIF data set from list of SDTM domains
@@ -753,27 +748,7 @@ make_nif <- function(
     lubrify_dates()
 
   # Get baseline covariates on subject level from VS
-  bl.cov <- baseline_covariates(vs)
-  # if("VSBLFL" %in% names(vs)) {
-  #   bl.cov <- vs %>%
-  #     filter(VSBLFL=="Y")
-  # } else {
-  #   bl.cov <- vs %>%
-  #     filter(str_to_upper(VISIT)=="SCREENING")
-  # }
-  # bl.cov <- bl.cov %>%
-  #   # dplyr::filter(EPOCH=="SCREENING") %>%
-  #   # filter(str_to_upper(VISIT)=="SCREENING" | VSBLFL=="Y") %>%
-  #   dplyr::filter(VSTESTCD %in% c("HEIGHT", "WEIGHT")) %>%
-  #   dplyr::group_by(USUBJID, VSTESTCD) %>%
-  #   dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
-  #   tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
-  #
-  # # Calculate BMI if height and weight are available
-  # if("HEIGHT" %in% colnames(bl.cov) & "WEIGHT" %in% colnames(bl.cov)) {
-  #   bl.cov <- bl.cov %>%
-  #     mutate(BMI=WEIGHT/(HEIGHT/100)^2)
-  # }
+  bl.cov <- baseline_covariates(vs, silent=silent)
 
   # create drug mapping
   drug_mapping <- sdtm.data$analyte_mapping %>%
@@ -804,11 +779,12 @@ make_nif <- function(
   # define cut-off date
   if(truncate.to.last.observation==TRUE){
     cut.off.date <- last_obs_dtc(obs)
-    if(!silent) {
-      message(paste("Data cut-off was set to last observation time,", cut.off.date))
-    }
+    # if(!silent) {
+    #   message(paste("Data cut-off was set to last observation time,", cut.off.date))
+    # }
+    conditional_message("Data cut-off was set to last observation time, ",
+                        cut.off.date, silent=silent)
   } else {
-    # cut.off.date <- last_ex_dtc(sdtm.data$domains[["ex"]])
     cut.off.date <- last_ex_dtc(ex)
   }
 
@@ -843,11 +819,14 @@ make_nif <- function(
       dplyr::arrange(PCTESTCD, USUBJID) %>%
       dplyr::select(USUBJID, PCTESTCD) %>%
       df.to.string()
-    if(!silent){
-      message(paste0("The following subjects had no observations for ",
-        "the respective analyte and were removed from the data set:\n",
-        out))
-    }
+    # if(!silent){
+    #   message(paste0("The following subjects had no observations for ",
+    #     "the respective analyte and were removed from the data set:\n",
+    #     out))
+    # }
+    conditional_message("The following subjects had no observations for ",
+      "the respective analyte and were removed from the data set:\n",
+      out, silent=silent)
   }
   # and filter out excluded administrations
   admin <- admin %>%
