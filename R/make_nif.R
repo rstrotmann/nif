@@ -238,6 +238,26 @@ extract_time <- function(dtc) {
 }
 
 
+impute.missing.end.time <- function(ex, silent=F) {
+  ## Issue message about imputations
+  temp <- admin %>%
+    dplyr::filter(is.na(end.time) & !is.na(start.time))
+  if(nrow(temp) != 0){
+    temp <- temp %>%
+      dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, end) %>%
+      df.to.string()
+    if(!silent){
+      message(paste("Administration end time was imputed to start time",
+                    "for the following entries:\n", temp))
+    }
+  }
+  ## conduct missing end time imputation
+  admin <- admin %>%
+    dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
+                                     .default=end.time))
+}
+
+
 #' Make administration data set from EX domain
 #'
 #' This function expands the administration ranges specified by EXSTDTC and
@@ -287,7 +307,7 @@ make_admin <- function(ex,
     dplyr::mutate(next_start=lead(EXSTDTC)) %>%
     dplyr::ungroup() %>%
 
-     dplyr::mutate(end=case_when(is.na(EXENDTC)~next_start-days(1),
+    dplyr::mutate(end=case_when(is.na(EXENDTC)~next_start-days(1),
                                 .default=EXENDTC)) %>%
     dplyr::mutate(end=case_when(is.na(end)~cut.off.date,
                                 .default=end)) %>%
@@ -559,6 +579,85 @@ impute.administration.time <- function(admin, obs) {
 }
 
 
+
+#' Extract baseline vital sign covariates from VS
+#'
+#' @param vs The VS domain as data frame.
+#' @param silent Boolean to indicate whether message output should be provided.
+#'
+#' @return Baseline VS data as wide data frame.
+baseline_covariates <- function(vs, silent=F) {
+  temp <- vs %>%
+    filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
+
+  # if("VISIT" %in% names(temp)) {
+  #   print("VISIT in VS")
+  #   if("SCREENING" %in% str_to_upper(unique(temp$VISIT))) {
+  #     n_screeing <- temp %>%
+  #       filter(str_to_upper(VISIT)=="SCREENING") %>%
+  #       distinct(USUBJID) %>%
+  #       nrow()
+  #     print(paste(n_screeing, "subjects have screeing weight/height"))
+  #   }
+  # }
+  #
+  # if("VSBLFL" %in% names(temp)) {
+  #   n_blfl <- temp %>%
+  #     filter(VSBLFL=="Y") %>%
+  #     distinct(USUBJID) %>%
+  #     nrow()
+  #   print(paste(n_blfl, "subjects with BLFL weight/height"))
+  # }
+
+  bl_cov <- NULL
+
+  if("VISIT" %in% names(temp)) {
+    if("SCREENING" %in% str_to_upper(unique(temp$VISIT))) {
+      bl_cov <- temp %>%
+        filter(str_to_upper(VISIT)=="SCREENING")
+    } else {
+      if("VSBLFL" %in% names(temp)) {
+        bl_cov <- temp %>%
+          filter(VSBLFL=="Y")
+      }
+    }
+  } else {
+    if("VSBLFL" %in% names(temp)) {
+      bl_cov <- temp %>%
+        filter(VSBLFL=="Y")
+    } else {
+      if(!silent){
+        message("Baseline VS data could not be identified!")
+      }
+    }
+  }
+
+  bl_cov <- bl_cov %>%
+    dplyr::group_by(USUBJID, VSTESTCD) %>%
+    dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
+    tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
+
+  # Calculate BMI if height and weight are available
+  if("HEIGHT" %in% colnames(bl_cov) & "WEIGHT" %in% colnames(bl_cov)) {
+    bl_cov <- bl_cov %>%
+      mutate(BMI=WEIGHT/(HEIGHT/100)^2)
+  }
+  return(bl_cov)
+}
+
+baseline_covariates(sdtm.0013$vs)
+baseline_covariates(sdtm.003$vs)
+baseline_covariates(sdtm.0033$vs)
+baseline_covariates(sdtm.0001$vs)
+baseline_covariates(sdtm.0020$vs)
+baseline_covariates(sdtm.0070$vs)
+baseline_covariates(sdtm.0044$vs)
+baseline_covariates(sdtm.0051$vs)
+baseline_covariates(sdtm.0031$vs)
+
+
+
+
 #' Make raw NIF data set from list of SDTM domains
 #'
 #' @description This function makes a basic NONMEM input file (NIF) data set, following the
@@ -654,26 +753,27 @@ make_nif <- function(
     lubrify_dates()
 
   # Get baseline covariates on subject level from VS
-  if("VSBLFL" %in% names(vs)) {
-    bl.cov <- vs %>%
-      filter(VSBLFL=="Y")
-  } else {
-    bl.cov <- vs %>%
-      filter(str_to_upper(VISIT)=="SCREENING")
-  }
-  bl.cov <- bl.cov %>%
-    # dplyr::filter(EPOCH=="SCREENING") %>%
-    # filter(str_to_upper(VISIT)=="SCREENING" | VSBLFL=="Y") %>%
-    dplyr::filter(VSTESTCD %in% c("HEIGHT", "WEIGHT")) %>%
-    dplyr::group_by(USUBJID, VSTESTCD) %>%
-    dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
-    tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
-
-  # Calculate BMI if height and weight are available
-  if("HEIGHT" %in% colnames(bl.cov) & "WEIGHT" %in% colnames(bl.cov)) {
-    bl.cov <- bl.cov %>%
-      mutate(BMI=WEIGHT/(HEIGHT/100)^2)
-  }
+  bl.cov <- baseline_covariates(vs)
+  # if("VSBLFL" %in% names(vs)) {
+  #   bl.cov <- vs %>%
+  #     filter(VSBLFL=="Y")
+  # } else {
+  #   bl.cov <- vs %>%
+  #     filter(str_to_upper(VISIT)=="SCREENING")
+  # }
+  # bl.cov <- bl.cov %>%
+  #   # dplyr::filter(EPOCH=="SCREENING") %>%
+  #   # filter(str_to_upper(VISIT)=="SCREENING" | VSBLFL=="Y") %>%
+  #   dplyr::filter(VSTESTCD %in% c("HEIGHT", "WEIGHT")) %>%
+  #   dplyr::group_by(USUBJID, VSTESTCD) %>%
+  #   dplyr::summarize(mean=mean(VSSTRESN), .groups="drop") %>%
+  #   tidyr::pivot_wider(names_from=VSTESTCD, values_from=mean)
+  #
+  # # Calculate BMI if height and weight are available
+  # if("HEIGHT" %in% colnames(bl.cov) & "WEIGHT" %in% colnames(bl.cov)) {
+  #   bl.cov <- bl.cov %>%
+  #     mutate(BMI=WEIGHT/(HEIGHT/100)^2)
+  # }
 
   # create drug mapping
   drug_mapping <- sdtm.data$analyte_mapping %>%

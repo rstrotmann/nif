@@ -1,3 +1,4 @@
+#' This ex test fixture has missing EXENDTC in rows 3 and 4.
 ex <- tribble(
   ~STUDYID, ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC,               ~EXENDTC,              ~EXDOSE, ~EPOCH,
   "001",    1,        1,      "TEST",  "2020-02-26T10:00:00", "2020-03-17T11:15:00", 10,      "TREATMENT",
@@ -74,6 +75,8 @@ test_that("make.admin works as intended", {
 })
 
 
+# This test tests
+#
 test_that("impute.administration.time works as intended", {
   cut.off.date <- last_ex_dtc(ex)
   admin <- make_admin(ex, drug_mapping=drug_mapping, cut.off.date=cut.off.date,
