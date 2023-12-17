@@ -87,5 +87,23 @@ test_that("impute.administration.time works as intended", {
 })
 
 
+test_that("impute_missing_EXENDTC works as intended", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,
+    1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00",
+    1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10",
+    1,        "TEST", "2022-08-23T13:30", "2022-09-05T11:00",
+    1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05",
+    1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00",
+    1,        "TEST", "2022-10-25T14:24", "",
+    1,        "TEST", "2022-11-15T14:20", "",
+    2,        "TEST", "2022-07-18T13:23", "2022-07-31",
+    3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50",
+    4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30",
+    4,        "TEST", "2022-08-08T14:35", "2022-08-21T12:16")
+
+  temp <- impute_missing_EXENDTC(ex, cut.off.date=now())
+  expect_equal(any(is.na(temp$EXENDTC)), FALSE)
+})
 
 

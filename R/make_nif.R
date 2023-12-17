@@ -238,7 +238,57 @@ extract_time <- function(dtc) {
 }
 
 
-impute.missing.end.time <- function(ex, silent=F) {
+
+
+#' Impute EXENDTC when not in the EX data set
+#'
+#' @param ex The EX domain as data frame.
+#' @param cut.off.date The cut-off date.
+#' @param silent Boolean.
+#'
+#' @return The EX domain as data frame.
+#' @import assertr
+impute_missing_EXENDTC <- function(ex, cut.off.date=NA, silent=F) {
+  ex %>%
+    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    lubrify_dates() %>%
+    assertr::verify(is.POSIXct(EXSTDTC)) %>%
+    assertr::verify(is.POSIXct(EXENDTC)) %>%
+
+    dplyr::arrange(USUBJID, EXSTDTC) %>%
+    dplyr::group_by(USUBJID, EXTRT) %>%
+    dplyr::mutate(next_start=lead(EXSTDTC)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(EXENDTC1=case_when(
+      is.na(EXENDTC)~next_start-days(1),
+      .default=EXENDTC)) %>%
+    dplyr::mutate(EXENDTC1=case_when(
+      is.na(EXENDTC1)~cut.off.date,
+      .default=EXENDTC1)) %>%
+    mutate(EXENDTC=EXENDTC1) %>%
+    dplyr::select(-c("next_start", "EXENDTC1"))
+}
+
+
+
+#' Title
+#'
+#' @param silent Boolean.
+#' @param ex The EX domain as data frame.
+#'
+#' @return A data frame.
+impute_missing_end_time <- function(ex, silent=F) {
+
+  mutate(start.date=extract_date(EXSTDTC)) %>%
+    dplyr::mutate(start.time=case_when(
+      EXSTDTC_has_time==T ~ extract_time(EXSTDTC),
+      .default=NA)) %>%
+
+    mutate(end.date=extract_date(end)) %>%
+    dplyr::mutate(end.time=case_when(
+      EXENDTC_has_time==T ~ extract_time(end),
+      .default=NA))
+
   ## Issue message about imputations
   temp <- admin %>%
     dplyr::filter(is.na(end.time) & !is.na(start.time))
@@ -256,6 +306,7 @@ impute.missing.end.time <- function(ex, silent=F) {
     dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
                                      .default=end.time))
 }
+
 
 
 #' Make administration data set from EX domain
@@ -302,26 +353,29 @@ make_admin <- function(ex,
     ### The following should be probably done after expansion!
     # filter for entries with start before cut-off
     dplyr::filter(EXSTDTC <= cut.off.date) %>%
-    dplyr::group_by(USUBJID, EXTRT) %>%
-    dplyr::arrange(EXSTDTC) %>%
-    dplyr::mutate(next_start=lead(EXSTDTC)) %>%
-    dplyr::ungroup() %>%
 
-    dplyr::mutate(end=case_when(is.na(EXENDTC)~next_start-days(1),
-                                .default=EXENDTC)) %>%
-    dplyr::mutate(end=case_when(is.na(end)~cut.off.date,
-                                .default=end)) %>%
-    dplyr::select(-next_start) %>%
+    # dplyr::group_by(USUBJID, EXTRT) %>%
+    # dplyr::arrange(EXSTDTC) %>%
+    # dplyr::mutate(next_start=lead(EXSTDTC)) %>%
+    # dplyr::ungroup() %>%
+    #
+    # dplyr::mutate(end=case_when(is.na(EXENDTC)~next_start-days(1),
+    #                             .default=EXENDTC)) %>%
+    # dplyr::mutate(end=case_when(is.na(end)~cut.off.date,
+    #                             .default=end)) %>%
+    # dplyr::select(-next_start) %>%
+    impute_missing_EXENDTC(cut.off.date=cut.off.date, silent=silent) %>%
 
-    # convert EXSTDTC to to datetime object, start date and start time
+    # isolate start and end dates and times
     mutate(start.date=extract_date(EXSTDTC)) %>%
     dplyr::mutate(start.time=case_when(
       EXSTDTC_has_time==T ~ extract_time(EXSTDTC),
       .default=NA)) %>%
 
-    mutate(end.date=extract_date(end)) %>%
-    dplyr::mutate(end.time=case_when(EXENDTC_has_time==T ~ extract_time(end),
-                                     .default=NA))
+    mutate(end.date=extract_date(EXENDTC)) %>%
+    dplyr::mutate(end.time=case_when(
+      EXENDTC_has_time==T ~ extract_time(EXENDTC),
+      .default=NA))
 
   # for rows with recorded start.time but missing end.time, impute end.time to
   #   be equal to start.time
@@ -331,13 +385,16 @@ make_admin <- function(ex,
   ## apply imputation only for entries that have an end DATE!!
   ##
 
+
+  ### section start
+  ## to be put in dedicated function, add tests
   if(impute.missing.end.time){
     ## Issue message about imputations
     temp <- admin %>%
       dplyr::filter(is.na(end.time) & !is.na(start.time))
     if(nrow(temp) != 0){
       temp <- temp %>%
-        dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, end) %>%
+        dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
         df.to.string()
       conditional_message("Administration end time was imputed to start time ",
         "for the following entries:\n", temp, silent=silent)
@@ -347,6 +404,9 @@ make_admin <- function(ex,
       dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
         .default=end.time))
   }
+  ##
+  ### section end
+
 
   # Derive EXSTDTC and EXENDTC if not available in the original data set
   if(!"EXSTDY" %in% names(admin)) {
@@ -355,7 +415,8 @@ make_admin <- function(ex,
       group_by(USUBJID, EXTRT) %>%
       mutate(ref=EXSTDTC[1]) %>%
       mutate(EXSTDY=floor(as.numeric(difftime(EXSTDTC, ref, units="days"))+1)) %>%
-      mutate(EXENDY=floor(as.numeric(difftime(end, ref, units="days"))+1)) %>%
+      # mutate(EXENDY=floor(as.numeric(difftime(end, ref, units="days"))+1)) %>%
+      mutate(EXENDY=floor(as.numeric(difftime(EXENDTC, ref, units="days"))+1)) %>%
       as.data.frame()
   }
 
@@ -591,9 +652,6 @@ baseline_covariates <- function(vs, silent=F) {
       bl_cov <- temp %>%
         filter(VSBLFL=="Y")
     } else {
-      # if(!silent){
-      #   message("Baseline VS data could not be identified!")
-      # }
       conditional_message("Baseline VS data could not be identified!",
                           silent=silent)
     }
