@@ -9,6 +9,8 @@ conditional_message(msg, ..., silent = F)
 \arguments{
 \item{msg}{The message as character.}
 
+\item{...}{Further message components.}
+
 \item{silent}{A boolean.}
 }
 \value{

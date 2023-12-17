@@ -10,7 +10,7 @@ make_nif(
   impute.missing.end.time = TRUE,
   impute.administration.time = TRUE,
   silent = F,
-  truncate.to.last.observation = FALSE,
+  truncate.to.last.observation = TRUE,
   use_pctptnum = TRUE
 )
 }

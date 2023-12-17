@@ -289,12 +289,12 @@ make_admin <- function(ex,
                        cut.off.date,
                        impute.missing.end.time=TRUE,
                        silent=F){
-  # Assertions
-  ex <- ex %>%
-    verify(has_all_names("STUDYID", "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC",
-                         "EXDOSE", "EPOCH"))
+  drug_mapping %>%
+    assertr::verify(nrow(.)>0)
 
   admin <- ex %>%
+    verify(has_all_names("STUDYID", "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
+      "EXENDTC", "EXDOSE", "EPOCH")) %>%
     lubrify_dates() %>%
     mutate(EXSTDTC_has_time=has_time(EXSTDTC),
            EXENDTC_has_time=has_time(EXENDTC)) %>%
@@ -339,10 +339,6 @@ make_admin <- function(ex,
       temp <- temp %>%
         dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, end) %>%
         df.to.string()
-      # if(!silent){
-      #   message(paste("Administration end time was imputed to start time",
-      #                 "for the following entries:\n", temp))
-      # }
       conditional_message("Administration end time was imputed to start time ",
         "for the following entries:\n", temp, silent=silent)
     }
@@ -368,8 +364,6 @@ make_admin <- function(ex,
     #   otherwise start.time
     dplyr::group_by(STUDYID, USUBJID, EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC,
       EXSTDY, EXENDY, start.time, end.time, EPOCH) %>%
-
-    # dplyr::group_by_all() %>%
     tidyr::expand(date=seq(as.Date(start.date), as.Date(end.date), by="1 day")) %>%
 
     dplyr::mutate(time=case_when(
@@ -377,21 +371,15 @@ make_admin <- function(ex,
       .default=start.time)) %>%
     dplyr::mutate(EXDY=EXSTDY+(row_number()-1)) %>%
     dplyr::ungroup() %>%
-
     mutate(DTC=compose_dtc(date, time)) %>%
 
     # set treatment, standard fields
     dplyr::mutate(NTIME=0, DV=NA, LNDV=NA, DOSE=EXDOSE, AMT=EXDOSE, EVID=1) %>%
-    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0, ANALYTE=NA, MDV=1)
+    dplyr::mutate(TYPE=NA, CMT=1, PCTPTNUM=0, MDV=1, RATE=0) %>%
+    dplyr::left_join(drug_mapping, by="EXTRT") %>%
+    mutate(ANALYTE=PCTESTCD)
 
-    # apply drug mapping, introducing the field PCTESTCD
-    if(nrow(drug_mapping)>0) {
-      ret <- ret %>%
-        dplyr::left_join(drug_mapping, by="EXTRT")
-    } else {
-      stop("no drug mapping")
-    }
-  return(ret %>% as.data.frame())
+  return(as.data.frame(ret))
 }
 
 
@@ -430,37 +418,26 @@ make_obs <- function(pc,
                      silent=F,
                      use_pctptnum=F){
   # Assertions
-  pc <- pc %>%
-    verify(has_all_names("PCSPEC", "PCDTC", "PCSTRESN", "PCTESTCD"))
+  pc %>% verify(has_all_names("PCSPEC", "PCDTC", "PCSTRESN", "PCTESTCD"))
 
   # Filter for specific specimen, guess specimen if none defined
-  pcspecs <- pc %>%
-    dplyr::distinct(PCSPEC) %>%
-    dplyr::pull(PCSPEC)
-
+  pcspecs <- unique(pc$PCSPEC)
   standard_specs <- c("PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
-                      "BLOOD", "Blood", "blood")
+    "BLOOD", "Blood", "blood")
   if(length(spec)==0) {
     spec <- standard_specs[standard_specs %in% pcspecs][1]
-    # if(!silent){
-    #   message(paste("No specimen specified. Set to", spec, "as the most likely."))
-    # }
     conditional_message("No specimen specified. Set to ", spec,
       " as the most likely.", silent=silent)
   }
+
   obs <- pc %>%
     dplyr::filter(PCSPEC %in% spec)
 
   # filter for PC data marked as 'not done'
   if("PCSTAT" %in% colnames(obs)){
-    nd <- obs %>%
-      dplyr::filter(PCSTAT=="NOT DONE") %>%
-      nrow()
-    if(nd>0 & !silent){
-      message(paste(
-        nd,
-        "samples are marked as 'not done' and were removed fromthe data set."))
-    }
+    n <- sum(obs$PCSTAT=="NOT DONE")
+    if(n>0) {conditional_message(n, " samples are marked as 'not done' and",
+    " were removed fromthe data set.", silent=silent)}
     obs <- obs %>%
       dplyr::filter(PCSTAT!="NOT DONE")
   }
@@ -469,9 +446,8 @@ make_obs <- function(pc,
   obs <- obs %>%
     # extract date and time of observation
     mutate(DTC=PCDTC) %>%
-    lubrify_dates() %>%
     mutate(start.date=extract_date(DTC)) %>%
-    dplyr::mutate(start.time=case_when(has_time(PCDTC) ~ extract_time(DTC),
+    mutate(start.time=case_when(has_time(PCDTC) ~ extract_time(DTC),
                                        .default=NA))
 
   # identify nominal time
@@ -496,7 +472,7 @@ make_obs <- function(pc,
   obs <- obs %>%
     dplyr::mutate(EVID=0, CMT=2, AMT=0, DV=PCSTRESN/1000, LNDV=log(DV)) %>%
     dplyr::mutate(MDV=case_when(is.na(DV) ~ 1, .default=0)) %>%
-    dplyr::mutate(ANALYTE=PCTESTCD)
+    dplyr::mutate(ANALYTE=PCTESTCD, RATE=0)
 
   return(obs %>% as.data.frame())
 }
@@ -653,6 +629,53 @@ conditional_message <- function(msg, ..., silent=F){
 }
 
 
+#' Create the drug mapping data frame from
+#'
+#' @param sdtm.data The sdtm data as SDTM object.
+#'
+#' @return A data frame.
+make_drug_mapping <- function(sdtm.data) {
+  drug_mapping <- sdtm.data$analyte_mapping %>%
+    rbind(
+      data.frame(EXTRT=intersect(unique(sdtm.data$ex$EXTRT),
+                                 unique(sdtm.data$pc$PCTESTCD))) %>%
+        mutate(PCTESTCD=EXTRT)) %>%
+    mutate(PARENT=PCTESTCD)
+
+  # add metabolite mapping, if available
+  if(nrow(sdtm.data$metabolite_mapping)!=0){
+    drug_mapping <- drug_mapping %>%
+      rbind(
+        sdtm.data$metabolite_mapping %>%
+          rename(PARENT=PCTESTCD_parent, PCTESTCD=PCTESTCD_metab) %>%
+          mutate(EXTRT=""))}
+
+  drug_mapping <- drug_mapping %>%
+    mutate(METABOLITE=(PCTESTCD!=PARENT)) %>%
+    distinct()
+}
+
+
+#' Add TIME field to table
+#'
+#' TIME is created as the difference between the DTC field and the first DTC
+#' field on the USUBJID level. TIME is in hours, rounded by 3 digits.
+#'
+#' @param x The table as data frame.
+#'
+#' @return A data frame with FIRSTDTC and TIME added.
+add_time <- function(x) {
+  x %>%
+    assertr::verify(has_all_names("USUBJID", "DTC")) %>%
+    assertr::verify(is.POSIXct(DTC)) %>%
+    dplyr::group_by(USUBJID) %>%
+    dplyr::mutate(FIRSTDTC=min(DTC, na.rm=T)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(TIME=round(
+      as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3))
+}
+
+
 #' Make raw NIF data set from list of SDTM domains
 #'
 #' @description This function makes a basic NONMEM input file (NIF) data set, following the
@@ -732,7 +755,7 @@ make_nif <- function(
     impute.missing.end.time=TRUE,
     impute.administration.time=TRUE,
     silent=F,
-    truncate.to.last.observation=FALSE,
+    truncate.to.last.observation=TRUE,
     use_pctptnum=TRUE) {
   vs <- sdtm.data$domains[["vs"]] %>%
     dplyr::select(-DOMAIN) %>%
@@ -747,29 +770,8 @@ make_nif <- function(
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
 
-  # Get baseline covariates on subject level from VS
   bl.cov <- baseline_covariates(vs, silent=silent)
-
-  # create drug mapping
-  drug_mapping <- sdtm.data$analyte_mapping %>%
-    rbind(
-      data.frame(
-        EXTRT=intersect(unique(ex$EXTRT), unique(pc$PCTESTCD))
-      ) %>%
-        mutate(PCTESTCD=EXTRT)) %>%
-    mutate(PARENT=PCTESTCD)
-
-  # add metabolite mapping, if available
-  if(nrow(sdtm.data$metabolite_mapping)!=0){
-    drug_mapping <- drug_mapping %>%
-      rbind(
-        sdtm.data$metabolite_mapping %>%
-          rename(PARENT=PCTESTCD_parent, PCTESTCD=PCTESTCD_metab) %>%
-          mutate(EXTRT=""))
-  }
-  drug_mapping <- drug_mapping %>%
-    mutate(METABOLITE=(PCTESTCD!=PARENT)) %>%
-    distinct()
+  drug_mapping <- make_drug_mapping(sdtm.data)
 
   # make observations
   obs <- make_obs(pc, time_mapping=sdtm.data$time_mapping,
@@ -779,11 +781,8 @@ make_nif <- function(
   # define cut-off date
   if(truncate.to.last.observation==TRUE){
     cut.off.date <- last_obs_dtc(obs)
-    # if(!silent) {
-    #   message(paste("Data cut-off was set to last observation time,", cut.off.date))
-    # }
     conditional_message("Data cut-off was set to last observation time, ",
-                        cut.off.date, silent=silent)
+      cut.off.date, silent=silent)
   } else {
     cut.off.date <- last_ex_dtc(ex)
   }
@@ -795,12 +794,8 @@ make_nif <- function(
     dplyr::distinct(USUBJID, PCTESTCD, ut)
 
   # make administrations
-  admin <- make_admin(
-    ex,
-    drug_mapping = drug_mapping,
-    cut.off.date,
-    impute.missing.end.time=impute.missing.end.time,
-    silent=silent)
+  admin <- make_admin(ex, drug_mapping = drug_mapping, cut.off.date,
+    impute.missing.end.time=impute.missing.end.time, silent=silent)
 
   # Remove all administrations with PCTESTCD==NA
   #  those rows may come from treatments that have no analyte mapping
@@ -813,17 +808,14 @@ make_nif <- function(
     dplyr::filter(!(ut %in% obs.sbs$ut)) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut) %>%
     as.data.frame()
+
   # Issue message about excluded administrations, if applicable
   if(nrow(no.obs.sbs)>0) {
     out <- no.obs.sbs %>%
       dplyr::arrange(PCTESTCD, USUBJID) %>%
       dplyr::select(USUBJID, PCTESTCD) %>%
       df.to.string()
-    # if(!silent){
-    #   message(paste0("The following subjects had no observations for ",
-    #     "the respective analyte and were removed from the data set:\n",
-    #     out))
-    # }
+
     conditional_message("The following subjects had no observations for ",
       "the respective analyte and were removed from the data set:\n",
       out, silent=silent)
@@ -867,11 +859,6 @@ make_nif <- function(
     dplyr::left_join(dm, by=c("USUBJID", "STUDYID")) %>%
     dplyr::left_join(bl.cov, by="USUBJID") %>%
 
-    # individual first event
-    dplyr::group_by(USUBJID) %>%
-    dplyr::mutate(FIRSTDTC=min(DTC, na.rm=T)) %>%
-    dplyr::ungroup() %>%
-
     # filter out rows without parent information
     dplyr::filter(PARENT != "") %>%
 
@@ -894,27 +881,15 @@ make_nif <- function(
     tidyr::fill(any_of(c("AGE", "SEX", "RACE", "ETHNIC", "ACTARMCD", "HEIGHT", "WEIGHT", "COUNTRY", "ARM",
                 "SUBJID")), .direction="down") %>%
     dplyr::ungroup() %>%
-
-    dplyr::mutate(RATE=0) %>%
-
-    # TIME is the difference in h to the first individual event time
-    dplyr::mutate(TIME=round(
-      as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3)) %>%
-    dplyr::mutate(ANALYTE=PCTESTCD) %>%
-
-    # Treatment day
-    mutate(TRTDY=interval(date(FIRSTTRTDTC),
-                          date(DTC)) / days(1) +1) %>%
-    # recode SEX
-    recode_sex()
-
-    nif <- nif %>%
-    # create ID column
+    add_time() %>%
+    mutate(TRTDY=interval(date(FIRSTTRTDTC), date(DTC)) / days(1) +1) %>%
+    recode_sex() %>%
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
     dplyr::relocate(ID) %>%
     new_nif() %>%
     index_nif()
+
   return(nif)
 }
 
