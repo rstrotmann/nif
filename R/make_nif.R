@@ -458,72 +458,9 @@ make_admin <- function(ex,
 
     make_EXSTDY_EXENDY(dm)
 
-  # for rows with recorded start.time but missing end.time, impute end.time to
-  #   be equal to start.time
-  ##
-  ## to do:
-  ##
-  ## apply imputation only for entries that have an end DATE!!
-  ##
-
-
-  # ### section start
-  # ## to be put in dedicated function, add tests
-  # if(impute.missing.end.time){
-  #   ## Issue message about imputations
-  #   temp <- admin %>%
-  #     dplyr::filter(is.na(end.time) & !is.na(start.time))
-  #   if(nrow(temp) != 0){
-  #     temp <- temp %>%
-  #       dplyr::select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC) %>%
-  #       df.to.string()
-  #     conditional_message("Administration end time was imputed to start time ",
-  #       "for the following entries:\n", temp, silent=silent)
-  #   }
-  #   ## conduct missing end time imputation
-  #   admin <- admin %>%
-  #     dplyr::mutate(end.time=case_when(is.na(end.time) & !is.na(start.time) ~ start.time,
-  #       .default=end.time))
-  # }
-  # ##
-  # ### section end
-
-  # if(impute.missing.end.time){
-  #   ex <- ex %>%
-  #     impute_missing_end_time(silent=silent)
-  # }
-
-  # # Derive EXSTDTC and EXENDTC if not available in the original data set
-  # ## should be done either way to address NAs introduced by the EXENDT imputations
-  # ##
-  # if(!"EXSTDY" %in% names(admin)) {
-  #   admin <- admin %>%
-  #     arrange(USUBJID, EXSTDTC) %>%
-  #     group_by(USUBJID, EXTRT) %>%
-  #     mutate(ref=EXSTDTC[1]) %>%
-  #     mutate(EXSTDY=floor(as.numeric(difftime(EXSTDTC, ref, units="days"))+1)) %>%
-  #     # mutate(EXENDY=floor(as.numeric(difftime(end, ref, units="days"))+1)) %>%
-  #     mutate(EXENDY=floor(as.numeric(difftime(EXENDTC, ref, units="days"))+1)) %>%
-  #     select(-ref) %>%
-  #     as.data.frame()
-  # }
-  # ##
-  # ##
-
   ret <- admin %>%
     # expand dates from start date to end date, time is end.time for last row,
     #   otherwise start.time
-    # dplyr::group_by(STUDYID, USUBJID, EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC,
-    #   EXSTDY, EXENDY, start.time, end.time, EPOCH) %>%
-    # group_by_all() %>%
-
-    # group_by(USUBJID, EXTRT, EXSTDTC, EXENDTC) %>%
-
-    # group_by(USUBJID, EXTRT) %>%
-    # tidyr::expand(date=seq(as.Date(start.date), as.Date(end.date), by="1 day")) %>%
-
-    # as.data.frame() %>%
-    # mutate(sd=as.Date(start.date), ed=as.Date(end.date)) %>%
     rowwise() %>%
     mutate(date = list(seq(as.Date(start.date), as.Date(end.date), by="days"))) %>%
     unnest(c(date)) %>%
@@ -929,16 +866,9 @@ make_nif <- function(
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
 
-  # filter EX to exclude EXSTDC after RFSTDTC
-  # ex <- ex %>%
-  #   left_join(dm %>% select(USUBJID, RFENDTC), by="USUBJID") %>%
-  #   group_by(USUBJID) %>%
-  #   filter(floor_date(EXSTDTC, "day") <= floor_date(RFENDTC, "day") | is.na(RFENDTC)) %>%
-  #   select(-RFENDTC)
-
-  ex <- exclude_EXSTDTC_after_RFENDTC(ex, dm)
-
-  ex <- impute_missing_EXENDTC_to_RFENDTC(ex, dm, silent=silent)
+  ex <- ex %>%
+    exclude_EXSTDTC_after_RFENDTC(dm) %>%
+    impute_missing_EXENDTC_to_RFENDTC(dm, silent=silent)
 
   bl.cov <- baseline_covariates(vs, silent=silent)
   drug_mapping <- make_drug_mapping(sdtm.data)
@@ -1166,9 +1096,7 @@ add_dose_level <- function(obj) {
     summarize(DL=paste0(DL, collapse="+"))
   }
 
-  return(obj %>%
-           left_join(temp %>%
-                       select(ID, DL), by="ID"))
+  return(obj %>% left_join(temp %>% select(ID, DL), by="ID"))
 }
 
 
