@@ -21,6 +21,3 @@ like "2001-01-02T09:59" where date and
 time are separated by "T") to standard POSIXct format. The names of the
 variables to be converted need to be provided by \code{fields}.
 }
-\examples{
-standardize_date_format(examplinib_fe$domains[["ex"]], c("RFSTDTC", "EXSTDTC", "EXENDTC"))
-}

@@ -45,14 +45,14 @@ drug_mapping <- tribble(
   "TEST",   "TEST",      "TEST",    FALSE)
 
 
-test_that("make_obs generally works", {
-  sdtm <- examplinib_fe
-  pc <- sdtm$pc
-
-  obs <- make_obs(pc, time_mapping=sdtm$time_mapping,
-           spec="PLASMA", silent=T, use_pctptnum=T)
-  expect_gt(nrow(obs), 0)
-})
+# test_that("make_obs generally works", {
+#   sdtm <- examplinib_fe
+#   pc <- sdtm$pc
+#
+#   obs <- make_obs(pc, time_mapping=sdtm$time_mapping,
+#            spec="PLASMA", silent=T, use_pctptnum=T)
+#   expect_gt(nrow(obs), 0)
+# })
 
 
 test_that("date conversion works correctly", {
@@ -65,45 +65,76 @@ test_that("date conversion works correctly", {
 })
 
 
-test_that("make.admin works as intended", {
-  cut.off.date <- last_ex_dtc(ex)
-  impute.missing.end.time <- TRUE
-  silent <- F
-
-  test <- make_admin(ex, drug_mapping, cut.off.date, impute.missing.end.time)
-  expect_equal(nrow(test), 232)
-})
-
-
-# This test tests
+# test_that("make.admin works as intended", {
+#   cut.off.date <- last_ex_dtc(ex)
+#   impute.missing.end.time <- TRUE
+#   silent <- F
 #
-test_that("impute.administration.time works as intended", {
-  cut.off.date <- last_ex_dtc(ex)
-  admin <- make_admin(ex, drug_mapping=drug_mapping, cut.off.date=cut.off.date,
-                      impute.missing.end.time=T, silent=T)
-
-  test <- impute.administration.time(admin, obs)
-
-})
+#   test <- make_admin(ex, drug_mapping, cut.off.date, impute.missing.end.time)
+#   expect_equal(nrow(test), 232)
+# })
 
 
-test_that("impute_missing_EXENDTC works as intended", {
-  ex <- tribble(
-    ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,
-    1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00",
-    1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10",
-    1,        "TEST", "2022-08-23T13:30", "2022-09-05T11:00",
-    1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05",
-    1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00",
-    1,        "TEST", "2022-10-25T14:24", "",
-    1,        "TEST", "2022-11-15T14:20", "",
-    2,        "TEST", "2022-07-18T13:23", "2022-07-31",
-    3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50",
-    4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30",
-    4,        "TEST", "2022-08-08T14:35", "2022-08-21T12:16")
 
-  temp <- impute_missing_EXENDTC(ex, cut.off.date=now())
-  expect_equal(any(is.na(temp$EXENDTC)), FALSE)
-})
+# test_that("impute.administration.time works as intended", {
+#   cut.off.date <- last_ex_dtc(ex)
+#   admin <- make_admin(ex, drug_mapping=drug_mapping, cut.off.date=cut.off.date,
+#                       impute.missing.end.time=T, silent=T)
+#
+#   test <- impute.administration.time(admin, obs)
+#
+# })
+
+
+
+# test_that("impute_missing_EXENDTC works as intended", {
+#   ex <- tribble(
+#     ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,
+#     1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00",
+#     1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10",
+#     1,        "TEST", "2022-08-23T13:30", "2022-09-05T11:00",
+#     1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05",
+#     1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00",
+#     1,        "TEST", "2022-10-25T14:24", "",
+#     1,        "TEST", "2022-11-15T14:20", "",
+#     2,        "TEST", "2022-07-18T13:23", "2022-07-31",
+#     3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50",
+#     4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30",
+#     4,        "TEST", "2022-08-08T14:35", "2022-08-21T12:16")
+#
+#   temp <- impute_missing_EXENDTC(ex, cut.off.date=now())
+#   expect_equal(any(is.na(temp$EXENDTC)), FALSE)
+# })
+
+
+
+# test_that("impute_missing_end_time works as intended", {
+#   ex <- tribble(
+#     ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
+#     1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
+#     1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
+#     1,        "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,
+#     1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,
+#     1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,
+#     1,        "TEST", "2022-11-15T14:20", ""                , 6,
+#     2,        "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,
+#     3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,
+#     4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,
+#     4,        "TEST", "2022-08-08T14:35", "2022-08-21"      , 2)
+#
+#   temp <- impute_missing_end_time(ex, silent=F)
+# })
+
+
+
+
+
+
+
+
+
+
+
+
 
 

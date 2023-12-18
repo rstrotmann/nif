@@ -6,6 +6,7 @@
 \usage{
 make_admin(
   ex,
+  dm,
   drug_mapping,
   cut.off.date,
   impute.missing.end.time = TRUE,
@@ -13,7 +14,9 @@ make_admin(
 )
 }
 \arguments{
-\item{ex}{EX domain}
+\item{ex}{EX domain as data frame.}
+
+\item{dm}{DM domain as data frame.}
 
 \item{drug_mapping}{A data frame with the columns of EXTRT and PCTESTCD
 that associate both.}

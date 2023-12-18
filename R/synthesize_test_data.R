@@ -239,6 +239,7 @@ make_sd_ex <- function(dm, admindays=c(1, 14), drug="RS2023", dose=500) {
     ungroup() %>%
     mutate(EPOCH=case_when(EXSEQ==1 ~ "OPEN LABEL TREATMENT 1",
                            EXSEQ==2 ~ "OPEN LABEL TREATMENT 2")) %>%
+    select(-RFSTDTC) %>%
     as.data.frame()
 
   return(ex)
@@ -499,6 +500,20 @@ reformat_date <- function(x) {
 }
 
 
+#' Title
+#'
+#' @param dm The DM domain as data frame.
+#' @param ex The EX domain as data frame.
+#'
+#' @return The updated DM domain as data frame.
+add_RFENDTC <- function(dm, ex) {
+  dm %>%
+    left_join(ex %>%
+                group_by(USUBJID) %>%
+                mutate(RFENDTC=max(EXENDTC, na.rm=T)) %>%
+                distinct(USUBJID, RFENDTC),
+              by="USUBJID")
+}
 
 
 #' Generate baseline subject data
@@ -574,6 +589,13 @@ synthesize_sdtm_sad_study <- function() {
                 distinct(USUBJID, EXDOSE=dose),
               by="USUBJID")
 
+  # ex <- ex %>%
+  #   group_by(USUBJID) %>%
+  #   mutate(RFENDTC=max(EXENDTC))
+
+  dm <- dm %>%
+    add_RFENDTC(ex)
+
   pc <- make_sd_pc(dm, ex, vs, lb, rich_sampling_scheme)
 
   out <- list()
@@ -635,6 +657,20 @@ synthesize_sdtm_poc_study <- function(studyid="2023000022", dose=500, nrich=12,
   vs <- make_vs(dm)
   lb <- make_lb(dm)
   ex <- make_md_ex(dm, drug="RS2023", dose=500, missed_doses = T)
+
+  # ex %>%
+  #   group_by(USUBJID) %>%
+  #   mutate(RFENDTC=max(EXENDTC))
+
+  # dm <- dm %>%
+  #   left_join(ex %>%
+  #               group_by(USUBJID) %>%
+  #               mutate(RFENDTC=max(EXENDTC, na.rm=T)) %>%
+  #               select(USUBJID, RFENDTC)
+  #             , by="USUBJID")
+
+  dm <- dm %>%
+    add_RFENDTC(ex)
 
   sbs <- subject_baseline_data(dm, vs, lb) %>%
     mutate(rich=ID<=nrich)
@@ -780,6 +816,14 @@ synthesize_sdtm_food_effect_study <- function() {
   vs <- make_vs(dm)
   lb <- make_lb(dm)
   ex <- make_sd_ex(dm, drug="RS2023")
+
+  # ex <- ex %>%
+  #   group_by(USUBJID) %>%
+  #   mutate(RFENDTC=max(EXENDTC))
+
+  dm <- dm %>%
+    add_RFENDTC(ex)
+
   pc <- make_fe_pc(ex, dm, vs, sampling_scheme)
 
   out <- list()
