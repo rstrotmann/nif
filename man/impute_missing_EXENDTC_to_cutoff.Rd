@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{impute_missing_EXENDTC_to_cutoff}
 \alias{impute_missing_EXENDTC_to_cutoff}
-\title{Impute EXENDTC to cutoff date when not given in the EX data set}
+\title{Impute last EXENDTC per subject and treatment to cutoff date when absent.}
 \usage{
 impute_missing_EXENDTC_to_cutoff(ex, cut.off.date = NA, silent = F)
 }
@@ -17,5 +17,5 @@ impute_missing_EXENDTC_to_cutoff(ex, cut.off.date = NA, silent = F)
 The EX domain as data frame.
 }
 \description{
-Impute EXENDTC to cutoff date when not given in the EX data set
+Impute last EXENDTC per subject and treatment to cutoff date when absent.
 }

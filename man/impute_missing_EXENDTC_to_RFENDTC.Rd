@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{impute_missing_EXENDTC_to_RFENDTC}
 \alias{impute_missing_EXENDTC_to_RFENDTC}
-\title{Impute EXENDTC when not in EX but in DM-RFENDTC}
+\title{Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent}
 \usage{
 impute_missing_EXENDTC_to_RFENDTC(ex, dm, silent = F)
 }
@@ -17,5 +17,5 @@ impute_missing_EXENDTC_to_RFENDTC(ex, dm, silent = F)
 The updated EX domain as data frame.
 }
 \description{
-Impute EXENDTC when not in EX but in DM-RFENDTC
+Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent
 }
