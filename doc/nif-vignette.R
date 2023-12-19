@@ -18,19 +18,19 @@ library(nif)
 #  read_sdtm_sas("path/to/sdtm/data", "dm", "vs", "ex", "pc", "lb", "ae")
 
 ## -----------------------------------------------------------------------------
-examplinib$domains[["dm"]] %>% head()
+examplinib_fe$domains[["dm"]] %>% head()
 
 ## -----------------------------------------------------------------------------
-dm <- examplinib$dm
+dm <- examplinib_fe$dm
 
 ## -----------------------------------------------------------------------------
-examplinib
+examplinib_fe
 
 ## -----------------------------------------------------------------------------
-suggest(examplinib)
+suggest(examplinib_fe)
 
 ## -----------------------------------------------------------------------------
-sdtm_expl <- examplinib %>% 
+sdtm_expl <- examplinib_fe %>% 
   add_analyte_mapping("EXAMPLINIB", "RS2023") %>% 
   add_metabolite_mapping("RS2023", "RS2023487A")
 

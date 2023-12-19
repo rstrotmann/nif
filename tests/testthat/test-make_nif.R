@@ -126,13 +126,34 @@ test_that("date conversion works correctly", {
 # })
 
 
+test_that("exclude_EXSTDTC_after_RFENDTC", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
+    1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
+    1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
+    1,        "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,
+    1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,
+    1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,
+    1,        "TEST", "2022-11-15T14:20", ""                , 6,
+    2,        "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,
+    3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,
+    4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,
+    4,        "TEST", "2022-08-08T14:35", "2022-08-21"      , 2) %>%
+    lubrify_dates()
 
+  # The reference end date (RFENDTC, i.e., the last administration time of study
+  # drug) for subject 1 in the below DM is before the last EXSTDTC for this
+  # subject in the above EX. The latter must be filtered out.
+  dm <- tribble(
+    ~USUBJID, ~RFSTDTC,           ~RFENDTC,
+    1,        "2022-07-11T13:50", "2022-11-14T09:00",
+    2,        "2022-07-18T13:23", "2022-07-31T12:00",
+    3,        "2022-07-18T17:03", "2022-07-31T11:50",
+    4,        "2022-07-18T13:54", "2022-08-21") %>%
+    lubrify_dates()
 
-
-
-
-
-
+  expect_no_error(exclude_EXSTDTC_after_RFENDTC(ex, dm))
+})
 
 
 

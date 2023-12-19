@@ -349,32 +349,32 @@ write_nif <- function(obj, filename=NA, fields=NULL) {
 }
 
 
-#' Convert three-letter country name to ISO 3166 codes
+#' #' Convert three-letter country name to ISO 3166 codes
+#' #'
+#' #' @param country_abbr The Country name in three-letter format according to
+#' #' ISO 3166.
+#' #'
+#' #' @return The numerical country code according to ISO 3166.
+#' #' @import DescTools
+#' #' @export
+#' country_code <- function(country_abbr) {
+#'   DescTools::d.countries %>%
+#'     filter(a3 %in% country_abbr) %>%
+#'     pull(code)
+#' }
 #'
-#' @param country_abbr The Country name in three-letter format according to
-#' ISO 3166.
 #'
-#' @return The numerical country code according to ISO 3166.
-#' @import DescTools
-#' @export
-country_code <- function(country_abbr) {
-  DescTools::d.countries %>%
-    filter(a3 %in% country_abbr) %>%
-    pull(code)
-}
-
-
-#' Convert ISO 3166 country code to three-letter country name.
-#'
-#' @param country_code The numerical country code according to ISO 3166.
-#'
-#' @return The three-letter country abbreviation.
-#' @export
-country_abbr <- function(country_code) {
-  DescTools::d.countries %>%
-    filter(code %in% country_code) %>%
-    pull(a3)
-}
+#' #' Convert ISO 3166 country code to three-letter country name.
+#' #'
+#' #' @param country_code The numerical country code according to ISO 3166.
+#' #'
+#' #' @return The three-letter country abbreviation.
+#' #' @export
+#' country_abbr <- function(country_code) {
+#'   DescTools::d.countries %>%
+#'     filter(code %in% country_code) %>%
+#'     pull(a3)
+#' }
 
 
 #' Standard nif fields
