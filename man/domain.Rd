@@ -4,12 +4,12 @@
 \alias{domain}
 \title{Get a specific domain from a SDTM object}
 \usage{
-domain(obj, dom = "dm")
+domain(obj, name)
 }
 \arguments{
 \item{obj}{The sdtm object.}
 
-\item{dom}{The domain to return.}
+\item{name}{The domain to return.}
 }
 \value{
 The specified domain as data.frame

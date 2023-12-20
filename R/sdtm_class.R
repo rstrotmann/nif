@@ -290,14 +290,14 @@ print.sdtm <- function(x, ...){
 #' Get a specific domain from a SDTM object
 #'
 #' @param obj The sdtm object.
-#' @param dom The domain to return.
+#' @param name The domain to return.
 #'
 #' @return The specified domain as data.frame
 #' @export
 #' @examples
 #' domain(examplinib, "dm")
-domain <- function(obj, dom="dm") {
-  obj$domains[[dom]]
+domain <- function(obj, name) {
+  obj$domains[[name]]
 }
 
 
