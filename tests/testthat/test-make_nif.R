@@ -107,52 +107,75 @@ test_that("date conversion works correctly", {
 # })
 
 
-
-# test_that("impute_missing_end_time works as intended", {
-#   ex <- tribble(
-#     ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
-#     1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
-#     1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
-#     1,        "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,
-#     1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,
-#     1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,
-#     1,        "TEST", "2022-11-15T14:20", ""                , 6,
-#     2,        "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,
-#     3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,
-#     4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,
-#     4,        "TEST", "2022-08-08T14:35", "2022-08-21"      , 2)
-#
-#   temp <- impute_missing_end_time(ex, silent=F)
-# })
-
-
-test_that("exclude_EXSTDTC_after_RFENDTC", {
+# This test confirms that `impute_missing_EXENDTC_time` completes missing
+# time information in EXENDTC from the respective EXSTDTC field.
+# The missing time information in rows 3, 7 and 10 in the test EX will be
+# imputed. For row 6 where no date is available, too, the function will return
+# 'NA'.
+test_that("impute_missing_end_time works as intended", {
   ex <- tribble(
-    ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
-    1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
-    1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
-    1,        "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,
-    1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,
-    1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,
-    1,        "TEST", "2022-11-15T14:20", ""                , 6,
-    2,        "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,
-    3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,
-    4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,
-    4,        "TEST", "2022-08-08T14:35", "2022-08-21"      , 2) %>%
+    ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
+    1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
+    1,        "EX",    "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
+    1,        "EX",    "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,
+    1,        "EX",    "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,
+    1,        "EX",    "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,
+    1,        "EX",    "TEST", "2022-11-15T14:20", ""                , 6,
+    2,        "EX",    "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,
+    3,        "EX",    "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,
+    4,        "EX",    "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,
+    4,        "EX",    "TEST", "2022-08-08T14:35", "2022-08-21"      , 2) %>%
+    lubrify_dates()
+
+  ex %>%
+    impute_missing_EXENDTC_time(silent=T) %>%
+    mutate(EXENDTC_has_time=has_time(EXENDTC)) %>%
+    summarize(sum=sum(EXENDTC_has_time==F, na.rm=T)) %>%
+    as.numeric() %>%
+    expect_equal(0)
+
+})
+
+
+# This test confirms that `impute_missing_EXENDTC_to_RFENDTC` completes missing
+# EXENDTC information to RFENDTC for the last administration in a subject for a
+# given EXTRT, provided it is contained in the DM domain.
+# In the below test data, subjects 1 and 4 have missing EXENDTC information on
+# their last administrations. For subject 1, DM provides a RFENDTC which is used
+# as the EXENDT. This is not the case for subject 4. In addition, subject 1 has
+# a missing EXENDTC on a non-last administration (row 3). This value is not
+# imputed by this function, either.
+test_that("impute_missing_EXENDTC_to_RFENDTC works as intended", {
+  ex <- tribble(
+    ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
+    1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
+    1,        "EX",    "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
+    1,        "EX",    "TEST", "2022-08-23T13:30", "",                 3,
+    1,        "EX",    "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,
+    1,        "EX",    "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,
+    1,        "EX",    "TEST", "2022-11-15T14:20", "",                 6,
+    2,        "EX",    "TEST", "2022-07-18T13:23", "2022-07-31T13:23", 1,
+    3,        "EX",    "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,
+    4,        "EX",    "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,
+    4,        "EX",    "TEST", "2022-08-08T14:35", "",                 2) %>%
     lubrify_dates()
 
   # The reference end date (RFENDTC, i.e., the last administration time of study
   # drug) for subject 1 in the below DM is before the last EXSTDTC for this
   # subject in the above EX. The latter must be filtered out.
   dm <- tribble(
-    ~USUBJID, ~RFSTDTC,           ~RFENDTC,
-    1,        "2022-07-11T13:50", "2022-11-14T09:00",
-    2,        "2022-07-18T13:23", "2022-07-31T12:00",
-    3,        "2022-07-18T17:03", "2022-07-31T11:50",
-    4,        "2022-07-18T13:54", "2022-08-21") %>%
+    ~USUBJID, ~DOMAIN, ~RFSTDTC,           ~RFENDTC,
+    1,        "DM",    "2022-07-11T13:50", "2022-11-14T09:00",
+    2,        "DM",    "2022-07-18T13:23", "2022-07-31T12:00",
+    3,        "DM",    "2022-07-18T17:03", "2022-07-31T11:50",
+    4,        "DM",    "2022-07-18T13:54", "") %>%
     lubrify_dates()
 
-  expect_no_error(exclude_EXSTDTC_after_RFENDTC(ex, dm))
+  ex %>%
+    impute_missing_EXENDTC_to_RFENDTC(dm, silent=F) %>%
+    summarize(sum=sum(is.na(EXENDTC))) %>%
+    as.numeric() %>%
+    expect_equal(2)
 })
 
 

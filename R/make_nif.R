@@ -235,6 +235,175 @@ extract_time <- function(dtc) {
 }
 
 
+#' Impute time of EXENDTC to time of EXSTDTC, when missing.
+#'
+#' @param ex The EX domain as data frame.
+#' @param silent A boolean.
+#'
+#' @return The updated EX domain as data frame.
+impute_missing_EXENDTC_time <- function(ex, silent=F) {
+  temp <- ex %>%
+    verify(has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
+                         "EXENDTC")) %>%
+    lubrify_dates() %>%
+    mutate(EXSTDTC_has_time=has_time(EXSTDTC),
+           EXENDTC_has_time=has_time(EXENDTC)) %>%
+
+    # extract start and end dates and times from EXSTDTC and EXENDTC
+    mutate(start.date=extract_date(EXSTDTC)) %>%
+    dplyr::mutate(start.time=case_when(
+      EXSTDTC_has_time==T ~ extract_time(EXSTDTC),
+      .default=NA)) %>%
+    mutate(end.date=extract_date(EXENDTC)) %>%
+    dplyr::mutate(end.time=case_when(
+      EXENDTC_has_time==T ~ extract_time(EXENDTC),
+      .default=NA)) %>%
+
+    # flag entries for EXENDTC time imputation
+    mutate(impute_EXENDTC_time = (!is.na(EXENDTC) & EXENDTC_has_time==FALSE &
+                                    !is.na(start.time)))
+
+  if(sum(temp$impute_EXENDTC_time)>0) {
+    temp <- temp %>%
+      mutate(EXENDTC1=case_when(
+        impute_EXENDTC_time==T ~ paste(as.character(end.date),
+                                       as.character(start.time)),
+        .default=NA) %>%
+          str_trim() %>%
+          as_datetime(format=c("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"))) %>%
+      mutate(EXENDTC_new=case_when(
+        impute_EXENDTC_time==T ~ EXENDTC1, .default=EXENDTC)) %>%
+      select(-EXENDTC1)
+
+    conditional_message(
+      "In ", sum(temp$impute_EXENDTC_time),
+      " administrations, a missing time in EXENDTC is imputed from EXSTDTC:\n",
+      temp %>%
+        filter(impute_EXENDTC_time==T) %>%
+        select(USUBJID, EXTRT, EXSTDTC, EXENDTC, EXENDTC_new) %>%
+        df.to.string(), "\n",
+      silent=silent)
+
+    temp <- temp %>%
+      mutate(EXENDTC=EXENDTC_new) %>%
+      select(-EXENDTC_new)
+  }
+
+  temp %>%
+    select(-c("EXENDTC_has_time", "EXSTDTC_has_time", "start.date",
+              "start.time", "end.date", "end.time", "impute_EXENDTC_time"))
+}
+
+
+#' Filter out EX events after the last dose as specified in RFENDTC
+#'
+#' @param ex The EX domain as data.frame.
+#' @param dm The DM domain as data.frame
+#' @param silent A boolean.
+#'
+#' @return The modified EX domain as data.frame.
+exclude_EXSTDTC_after_RFENDTC <- function(ex, dm, silent=FALSE) {
+  ex %>%
+    left_join(dm %>% select(USUBJID, RFENDTC), by="USUBJID") %>%
+    group_by(USUBJID) %>%
+    filter(floor_date(EXSTDTC, "day") <= floor_date(RFENDTC, "day") | is.na(RFENDTC)) %>%
+    select(-RFENDTC)
+}
+
+
+#' Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent
+#'
+#' @param ex The EX domain as data frame.
+#' @param dm The DM domain as data frame.
+#' @param silent Boolean.
+#'
+#' @return The updated EX domain as data frame.
+impute_missing_EXENDTC_to_RFENDTC <- function(ex, dm, silent=F) {
+  dm %>%
+    verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
+
+  temp <- ex %>%
+    verify(has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    arrange(USUBJID, EXTRT, EXSTDTC) %>%
+    group_by(USUBJID, EXTRT) %>%
+    mutate(LAST_ADMIN=row_number()==max(row_number())) %>%
+    left_join(dm %>% select(USUBJID, RFSTDTC, RFENDTC), by="USUBJID") %>%
+    ungroup()
+
+  replace_n <- temp %>%
+    filter(is.na(EXENDTC) & !is.na(RFENDTC) & LAST_ADMIN==TRUE) %>%
+    nrow()
+
+  if(replace_n>0) {
+    conditional_message(
+      replace_n,
+      " subjects in which a missing EXENDTC will be set to RFENDTC:\n",
+      df.to.string(temp %>%
+        filter(is.na(EXENDTC) & !is.na(RFENDTC) & LAST_ADMIN==T) %>%
+        select(USUBJID, EXTRT, EXSTDTC, EXENDTC, RFENDTC)), "\n",
+      silent=silent)
+
+    temp %>%
+      mutate(EXENDTC=case_when(
+        (LAST_ADMIN==TRUE & is.na(EXENDTC) & !is.na(RFENDTC)) ~ RFENDTC,
+        .default=EXENDTC)) %>%
+      select(-c(LAST_ADMIN, RFENDTC, RFSTDTC))
+  } else {
+    ex
+  }
+}
+
+
+#' Impute missing EXENDTC to the day before the next EXSTDTC.
+#'
+#' This imputation does not apply to the last administration per subject and
+#' EXTRT. For these cases, missing EXENDT can be imputed to the global cut off
+#' date using `impute_missing_EXENDTC_to_cutoff`.
+#'
+#' @param ex The EX domain as data frame.
+#' @param silent A boolean.
+#'
+#' @return The updated EX domain as data frame.
+impute_missing_EXENDTC <- function(ex, silent=F) {
+  temp <- ex %>%
+    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    lubrify_dates() %>%
+
+    arrange(USUBJID, EXSTDTC) %>%
+    group_by(USUBJID, EXTRT) %>%
+    mutate(next_start=lead(EXSTDTC)) %>%
+    mutate(LAST_ADMIN=row_number()==max(row_number())) %>%
+    ungroup()
+
+  to_replace <- temp %>%
+    filter(is.na(EXENDTC) & LAST_ADMIN==F)
+
+  if(nrow(to_replace >0)){
+    # conditional_message("Caution! ", nrow(to_replace), " rows in EX had no ",
+    # "EXENDTC. These values are imputed as the day before the next EXSTDTC.\n",
+    # "Note that this is based on assumptions. The missing data should be rather added ",
+    # "to the data set\nor manually imputed. The following entries are affected:\n",
+    # df.to.string(to_replace %>% select(USUBJID, EXTRT, EXSTDTC, EXENDTC)),
+    # silent=silent)
+
+    message(nrow(to_replace), " rows in EX had no ",
+            "EXENDTC. These values are imputed as the day before the next EXSTDTC.\n",
+            "Note that this is based on assumptions. The missing data should be rather added ",
+            "to the data set\nor manually imputed. The following entries are affected:\n",
+            df.to.string(to_replace %>% select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC)))
+
+    temp <- temp %>%
+      mutate(EXENDTC1=case_when(
+        (is.na(EXENDTC) & LAST_ADMIN==F) ~ next_start-days(1),
+        .default=EXENDTC)) %>%
+      mutate(EXENDTC=EXENDTC1) %>%
+      select(-EXENDTC1)
+  }
+  temp %>%
+    select(-c("next_start", "LAST_ADMIN"))
+}
+
+
 #' Impute last EXENDTC per subject and treatment to cutoff date when absent.
 #'
 #' @param ex The EX domain as data frame.
@@ -286,92 +455,10 @@ impute_missing_EXENDTC_to_cutoff <- function(ex, cut.off.date=NA, silent=F) {
 }
 
 
-#' Impute missing EXENDTC to the day before the next EXSTDTC.
-#'
-#' This imputation does not apply to the last administration per subject and
-#' EXTRT. For these cases, missing EXENDT can be imputed to the global cut off
-#' date using `impute_missing_EXENDTC_to_cutoff`.
-#'
-#' @param ex The EX domain as data frame.
-#' @param silent A boolean.
-#'
-#' @return The updated EX domain as data frame.
-impute_missing_EXENDTC <- function(ex, silent=F) {
-  temp <- ex %>%
-    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-    lubrify_dates() %>%
-
-    arrange(USUBJID, EXSTDTC) %>%
-    group_by(USUBJID, EXTRT) %>%
-    mutate(next_start=lead(EXSTDTC)) %>%
-    mutate(LAST_ADMIN=row_number()==max(row_number())) %>%
-    ungroup()
-
-  to_replace <- temp %>%
-    filter(is.na(EXENDTC) & LAST_ADMIN==F)
-
-  if(nrow(to_replace >0)){
-    # conditional_message("Caution! ", nrow(to_replace), " rows in EX had no ",
-    # "EXENDTC. These values are imputed as the day before the next EXSTDTC.\n",
-    # "Note that this is based on assumptions. The missing data should be rather added ",
-    # "to the data set\nor manually imputed. The following entries are affected:\n",
-    # df.to.string(to_replace %>% select(USUBJID, EXTRT, EXSTDTC, EXENDTC)),
-    # silent=silent)
-
-    message(nrow(to_replace), " rows in EX had no ",
-      "EXENDTC. These values are imputed as the day before the next EXSTDTC.\n",
-      "Note that this is based on assumptions. The missing data should be rather added ",
-      "to the data set\nor manually imputed. The following entries are affected:\n",
-      df.to.string(to_replace %>% select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC)))
-
-    temp <- temp %>%
-      mutate(EXENDTC1=case_when(
-      (is.na(EXENDTC) & LAST_ADMIN==F) ~ next_start-days(1),
-      .default=EXENDTC)) %>%
-    mutate(EXENDTC=EXENDTC1) %>%
-    select(-EXENDTC1)
-  }
-  temp %>%
-    select(-c("next_start", "LAST_ADMIN"))
-}
 
 
-#' Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent
-#'
-#' @param ex The EX domain as data frame.
-#' @param dm The DM domain as data frame.
-#' @param silent Boolean.
-#'
-#' @return The updated EX domain as data frame.
-impute_missing_EXENDTC_to_RFENDTC <- function(ex, dm, silent=F) {
-  temp <- ex %>%
-    arrange(USUBJID, EXTRT, EXSTDTC) %>%
-    group_by(USUBJID, EXTRT) %>%
-    mutate(LAST_ADMIN=row_number()==max(row_number())) %>%
-    left_join(dm %>% select(USUBJID, RFSTDTC, RFENDTC), by="USUBJID")
 
-  replace_n <- temp %>%
-    filter(is.na(EXENDTC) & !is.na(RFENDTC) & LAST_ADMIN==TRUE) %>%
-    nrow()
 
-  if(replace_n>0) {
-    conditional_message(
-      replace_n,
-      " subjects in which a missing EXENDTC will be set to RFENDTC:\n",
-      df.to.string(temp %>%
-                     filter(is.na(EXENDTC) & !is.na(RFENDTC)) %>%
-                     select(USUBJID, EXTRT, EXSTDTC, EXENDTC, RFENDTC)), "\n",
-      silent=silent)
-
-      temp %>%
-        mutate(EXENDTC=case_when(
-          (LAST_ADMIN==TRUE & is.na(EXENDTC) & !is.na(RFENDTC)) ~ RFENDTC,
-          .default=EXENDTC)) %>%
-        select(-c(LAST_ADMIN, RFENDTC, RFSTDTC))
-  } else {
-      ex
-  }
-}
 
 
 #' Title
@@ -427,20 +514,7 @@ impute_missing_EXENDTC_to_RFENDTC <- function(ex, dm, silent=F) {
 # }
 
 
-#' Filter out EX events after the last dose as specified in RFENDTC
-#'
-#' @param ex The EX domain as data.frame.
-#' @param dm The DM domain as data.frame
-#' @param silent A boolean.
-#'
-#' @return The modified EX domain as data.frame.
-exclude_EXSTDTC_after_RFENDTC <- function(ex, dm, silent=FALSE) {
-  ex %>%
-    left_join(dm %>% select(USUBJID, RFENDTC), by="USUBJID") %>%
-    group_by(USUBJID) %>%
-    filter(floor_date(EXSTDTC, "day") <= floor_date(RFENDTC, "day") | is.na(RFENDTC)) %>%
-    select(-RFENDTC)
-}
+
 
 
 #' Make EXSTDY and EXENDY by USUBJID, EXTRT
@@ -468,59 +542,7 @@ make_EXSTDY_EXENDY <- function(ex, dm) {
 }
 
 
-#' Impute time of EXENDTC to time of EXSTDTC, when missing.
-#'
-#' @param ex The EX domain as data frame.
-#' @param silent A boolean.
-#'
-#' @return The updated EX domain as data frame.
-impute_missing_EXENDTC_time <- function(ex, silent=F) {
-  temp <- ex %>%
-    verify(has_all_names("STUDYID", "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
-                         "EXENDTC", "EXDOSE", "EPOCH")) %>%
-    lubrify_dates() %>%
-    mutate(EXSTDTC_has_time=has_time(EXSTDTC),
-           EXENDTC_has_time=has_time(EXENDTC)) %>%
 
-    # extract start and end dates and times
-    mutate(start.date=extract_date(EXSTDTC)) %>%
-    dplyr::mutate(start.time=case_when(
-      EXSTDTC_has_time==T ~ extract_time(EXSTDTC),
-      .default=NA)) %>%
-
-    mutate(end.date=extract_date(EXENDTC)) %>%
-    dplyr::mutate(end.time=case_when(
-      EXENDTC_has_time==T ~ extract_time(EXENDTC),
-      .default=NA)) %>%
-
-    mutate(impute_EXENDTC_time = (!is.na(EXENDTC) & EXENDTC_has_time==FALSE &
-                                    !is.na(start.time)))
-
-  if(sum(temp$impute_EXENDTC_time)>0) {
-    conditional_message("In ", sum(temp$impute_EXENDTC_time),
-    " administrations, a missing time in EXENDTC is imputed from EXSTDTC:\n",
-    temp %>%
-      filter(impute_EXENDTC_time==T) %>%
-      select(USUBJID, EXTRT, EXSTDTC, EXENDTC) %>%
-      df.to.string(), "\n",
-    silent=silent)
-
-    temp <- temp %>%
-      mutate(EXENDTC1=case_when(
-        impute_EXENDTC_time==T ~ paste(as.character(end.date),
-                                      as.character(start.time)),
-        .default=NA) %>%
-          str_trim() %>%
-          as_datetime(format=c("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"))) %>%
-      mutate(EXENDTC=case_when(
-        impute_EXENDTC_time==T ~ EXENDTC1, .default=EXENDTC)) %>%
-      select(-EXENDTC1)
-  }
-
-  temp %>%
-    select(-c("EXENDTC_has_time", "EXSTDTC_has_time", "start.date",
-              "start.time", "end.date", "end.time", "impute_EXENDTC_time"))
-}
 
 
 #' Make administration data set from EX domain

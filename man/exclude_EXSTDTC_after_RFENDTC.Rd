@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{exclude_EXSTDTC_after_RFENDTC}
 \alias{exclude_EXSTDTC_after_RFENDTC}
-\title{Title}
+\title{Filter out EX events after the last dose as specified in RFENDTC}
 \usage{
 exclude_EXSTDTC_after_RFENDTC(ex, dm, silent = FALSE)
 }
@@ -14,11 +14,8 @@ exclude_EXSTDTC_after_RFENDTC(ex, dm, silent = FALSE)
 \item{silent}{A boolean.}
 }
 \value{
-A data frame.
-Filter out EX events after the last dose as specified in RFENDTC
-
 The modified EX domain as data.frame.
 }
 \description{
-Title
+Filter out EX events after the last dose as specified in RFENDTC
 }
