@@ -8,7 +8,7 @@ nca(
   obj,
   analyte = NULL,
   parent = NULL,
-  keep = NULL,
+  keep = "DOSE",
   group = NULL,
   nominal_time = F,
   silent = F,

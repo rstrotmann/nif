@@ -397,7 +397,7 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
 
   pc <- sim %>%
     dplyr::select(USUBJID, id, time, c_centr, c_metab) %>%
-    mutate(RS2023=c_centr, RS2023487A=c_metab) %>%
+    mutate(RS2023=c_centr*1000, RS2023487A=c_metab*1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"), names_to="PCTESTCD",
                  values_to="PCSTRESN") %>%
     mutate(PCTEST=case_when(PCTESTCD=="RS2023" ~ "RS2023",
@@ -464,7 +464,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
 
   pc <- sim %>%
     dplyr::select(id, time, c_centr, c_metab, PERIOD) %>%
-    mutate(RS2023=c_centr, RS2023487A=c_metab) %>%
+    mutate(RS2023=c_centr*1000, RS2023487A=c_metab*1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"), names_to="PCTESTCD", values_to="PCSTRESN") %>%
     mutate(PCTEST=case_when(PCTESTCD=="RS2023" ~ "RS2023",
                             PCTESTCD=="RS2023487A" ~"RS2023487A")) %>%
@@ -731,6 +731,7 @@ synthesize_sdtm_poc_study <- function(studyid="2023000022", dose=500, nrich=12,
 
   pc <- pk_sim(ev) %>%
     select(id, time, RS2023=c_centr, RS2023487A=c_metab, NTIME) %>%
+    mutate(RS2023=RS2023*1000, RS2023487A=RS2023487A*1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"), names_to="PCTESTCD", values_to="PCSTRESN") %>%
     mutate(PCTEST=case_when(PCTESTCD=="RS2023" ~ "RS2023",
                             PCTESTCD=="RS2023487A" ~"RS2023487A")) %>%

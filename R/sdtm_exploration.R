@@ -132,30 +132,6 @@ check_missing_time <- function(obj, verbose=T) {
 }
 
 
-# sdtm_table_missing_EXENDTC_time <- function(ex) {
-#   ex %>%
-#     verify(has_all_names("STUDYID", "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
-#                          "EXENDTC", "EXDOSE", "EPOCH")) %>%
-#     lubrify_dates() %>%
-#     mutate(EXSTDTC_has_time=has_time(EXSTDTC),
-#            EXENDTC_has_time=has_time(EXENDTC)) %>%
-#
-#     # extract start and end dates and times
-#     mutate(start.date=extract_date(EXSTDTC)) %>%
-#     dplyr::mutate(start.time=case_when(
-#       EXSTDTC_has_time==T ~ extract_time(EXSTDTC),
-#       .default=NA)) %>%
-#
-#     mutate(end.date=extract_date(EXENDTC)) %>%
-#     dplyr::mutate(end.time=case_when(
-#       EXENDTC_has_time==T ~ extract_time(EXENDTC),
-#       .default=NA)) %>%
-#
-#     mutate(impute_EXENDTC_time = !is.na(EXENDTC) & EXENDTC_has_time==FALSE &
-#                                     !is.na(start.time))
-# }
-
-
 #' Check EXENDTC for the last administration.
 #'
 #' Absent EXENDTC in the last administration by subject and treatment may

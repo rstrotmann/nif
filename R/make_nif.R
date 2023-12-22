@@ -381,16 +381,18 @@ impute_missing_EXENDTC <- function(ex, silent=F) {
   if(nrow(to_replace >0)){
     # conditional_message("Caution! ", nrow(to_replace), " rows in EX had no ",
     # "EXENDTC. These values are imputed as the day before the next EXSTDTC.\n",
-    # "Note that this is based on assumptions. The missing data should be rather added ",
+    # "Note that this is based on assumptions. The missing entries should be\n",
+
     # "to the data set\nor manually imputed. The following entries are affected:\n",
     # df.to.string(to_replace %>% select(USUBJID, EXTRT, EXSTDTC, EXENDTC)),
     # silent=silent)
 
-    message(nrow(to_replace), " rows in EX had no ",
-            "EXENDTC. These values are imputed as the day before the next EXSTDTC.\n",
-            "Note that this is based on assumptions. The missing data should be rather added ",
-            "to the data set\nor manually imputed. The following entries are affected:\n",
-            df.to.string(to_replace %>% select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC)))
+    message(nrow(to_replace),
+      " rows in EX had no EXENDTC. These values are imputed as the day before\n",
+      "the next EXSTDTC. The missing entries should be added to the SDTM data set\n",
+      "or manually imputed before running `make_nif()`.\n",
+       "The following entries are affected:\n",
+       df.to.string(to_replace %>% select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC)))
 
     temp <- temp %>%
       mutate(EXENDTC1=case_when(
@@ -439,19 +441,6 @@ impute_missing_EXENDTC_to_cutoff <- function(ex, cut.off.date=NA, silent=F) {
   }
   temp %>%
     select(-LAST_ADMIN)
-
-    # dplyr::arrange(USUBJID, EXSTDTC) %>%
-    # dplyr::group_by(USUBJID, EXTRT) %>%
-    # dplyr::mutate(next_start=lead(EXSTDTC)) %>%
-    # dplyr::ungroup() %>%
-    # dplyr::mutate(EXENDTC1=case_when(
-    #   is.na(EXENDTC)~next_start-days(1),
-    #   .default=EXENDTC)) %>%
-    # dplyr::mutate(EXENDTC1=case_when(
-    #   is.na(EXENDTC1)~cut.off.date,
-    #   .default=EXENDTC1)) %>%
-    # mutate(EXENDTC=EXENDTC1) %>%
-    # dplyr::select(-c("next_start", "EXENDTC1"))
 }
 
 
@@ -528,6 +517,7 @@ impute_missing_EXENDTC_to_cutoff <- function(ex, cut.off.date=NA, silent=F) {
 #'
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
+#'
 #' @import assertr
 #'
 #' @return The enhanced EX domain as data frame.
@@ -535,7 +525,9 @@ make_EXSTDY_EXENDY <- function(ex, dm) {
   ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     assertr::verify(is.POSIXct(c(EXSTDTC, EXENDTC))) %>%
-    left_join(dm %>% distinct(USUBJID, RFSTDTC), by="USUBJID") %>%
+    left_join(
+      dm %>%
+        distinct(USUBJID, RFSTDTC), by="USUBJID") %>%
     mutate(EXSTDY=floor(as.numeric(difftime(EXSTDTC, RFSTDTC), units="days"))+1) %>%
     mutate(EXENDY=floor(as.numeric(difftime(EXENDTC, RFSTDTC), units="days"))+1) %>%
     select(-RFSTDTC)
@@ -592,8 +584,6 @@ make_admin <- function(ex,
     # filter for entries with start before cut-off
     dplyr::filter(EXSTDTC <= cut.off.date) %>%
 
-    # impute_missing_EXENDTC_to_cutoff(cut.off.date=cut.off.date, silent=silent) %>%
-
     # isolate start and end dates and times
     mutate(start.date=extract_date(EXSTDTC)) %>%
     dplyr::mutate(start.time=case_when(
@@ -608,12 +598,6 @@ make_admin <- function(ex,
     make_EXSTDY_EXENDY(dm)
 
   ret <- admin %>%
-    # expand dates from start date to end date, time is end.time for last row,
-    #   otherwise start.time
-    # mutate(sd=as.Date(start.date), ed=as.Date(end.date)) %>%
-    # filter(ed<sd)
-
-
     rowwise() %>%
     mutate(date = list(seq(as.Date(start.date), as.Date(end.date), by="days"))) %>%
     unnest(c(date)) %>%
@@ -1042,12 +1026,8 @@ make_nif <- function(
     cut.off.date <- last_ex_dtc(ex)
   }
 
-  # if(impute.missing.end.time==TRUE) {
-    ex <- ex %>%
-      impute_missing_EXENDTC_to_cutoff(cut.off.date, silent=silent)
-  # }
-
   ex <- ex %>%
+    impute_missing_EXENDTC_to_cutoff(cut.off.date, silent=silent) %>%
     filter(EXENDTC>=EXSTDTC)
 
   # identify subjects with observations by analyte
@@ -1055,17 +1035,6 @@ make_nif <- function(
     filter(!is.na(PCSTRESN)) %>%
     tidyr::unite("ut", USUBJID, PCTESTCD, remove=FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
-
-  # EXENDTC imputations
-  # ex <- impute_missing_EXENDTC_to_RFENDTC(ex, dm, silent=silent)
-
-  # if(impute.missing.end.time==TRUE) {
-  #   ex <- impute_missing_EXENDTC_to_cutoff(ex, cut.off.date, silent=silent)
-  # }
-
-  # filter out entries with end time before start time.
-  # ex %>% filter(EXENDTC<EXSTDTC) %>% as.data.frame()
-
 
   # make administrations
   admin <- make_admin(ex, dm, drug_mapping = drug_mapping, cut.off.date,
@@ -1152,8 +1121,8 @@ make_nif <- function(
     dplyr::arrange(USUBJID, PARENT, DTC, EVID) %>%
     dplyr::group_by(USUBJID, PARENT) %>%
     tidyr::fill(DOSE, .direction = "down") %>%
-    tidyr::fill(any_of(c("AGE", "SEX", "RACE", "ETHNIC", "ACTARMCD", "HEIGHT", "WEIGHT", "COUNTRY", "ARM",
-                "SUBJID")), .direction="down") %>%
+    tidyr::fill(any_of(c("AGE", "SEX", "RACE", "ETHNIC", "ACTARMCD", "HEIGHT",
+      "WEIGHT", "COUNTRY", "ARM", "SUBJID")), .direction="down") %>%
     dplyr::ungroup() %>%
     add_time() %>%
     mutate(TRTDY=interval(date(FIRSTTRTDTC), date(DTC)) / days(1) +1) %>%

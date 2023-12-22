@@ -23,7 +23,7 @@
 #' nca(examplinib_nif)
 #' nca(examplinib_nif, group=c("FASTED", "SEX"), analyte="RS2023")
 #'
-nca <- function(obj, analyte=NULL, parent=NULL, keep=NULL, group=NULL,
+nca <- function(obj, analyte=NULL, parent=NULL, keep="DOSE", group=NULL,
                 nominal_time=F, silent=F, average_duplicates=T){
   # guess analyte if not defined
   if(is.null(analyte)) {
@@ -129,6 +129,57 @@ nca <- function(obj, analyte=NULL, parent=NULL, keep=NULL, group=NULL,
   }
 
   return(temp)
+}
+
+
+#' PK parameter summary statistics by dose
+#'
+#' @param nca The NCA results as provided by `nca`, as data frame.
+#' @param parameters The NCA paramters to be tabulated as character,
+#'
+#' @return A data frame
+#' @export
+#'
+#' @examples
+#' nca_overview(nca(examplinib_sad_nif, analyte="RS2023"))
+nca_overview <- function(nca, parameters=c("aucinf.obs", "cmax")) {
+  nca %>%
+    filter(PPTESTCD %in% parameters) %>%
+    group_by(DOSE, PPTESTCD) %>%
+    summarize(gmean=PKNCA::geomean(PPORRES, na.rm=T),
+              gcv=PKNCA::geocv(PPORRES, na.rm=T),
+              n=n()) %>%
+    pivot_wider(names_from=PPTESTCD, values_from=c(gmean, gcv))
+}
+
+
+#' Primary PK parameter summary statistics by dose.
+#'
+#' @param nca The NCA results as provided by `nca`, as data frame.
+#' @param caption The table title
+#'
+#' @return Markdown-formatted table as character.
+#' @importFrom knitr kable
+#' @export
+#'
+#' @examples
+#' nca_overview_table(nca(examplinib_sad_nif, analyte="RS2023"))
+nca_overview_table <- function(nca, caption="PK parameter overview") {
+  parameters=c("aucinf.obs", "cmax")
+
+  nca %>%
+    filter(PPTESTCD %in% parameters) %>%
+    group_by(DOSE, PPTESTCD) %>%
+    summarize(gmean=PKNCA::geomean(PPORRES, na.rm=T),
+              gcv=PKNCA::geocv(PPORRES, na.rm=T),
+              n=n()) %>%
+    mutate(out=paste0(as.character(round(gmean, digits=3)), " (",
+                      as.character(round(gcv, digits=1)), ")")) %>%
+    select(DOSE, PPTESTCD, n, out) %>%
+    pivot_wider(names_from="PPTESTCD", values_from=out) %>%
+    kable(col.names=c("dose (mg)", "$N$", "$AUC_{inf}$ (h*ug/ml)",
+                      "$C_{max}$ (ug/ml)"),
+          caption=caption)
 }
 
 
