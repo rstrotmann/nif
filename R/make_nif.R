@@ -444,68 +444,6 @@ impute_missing_EXENDTC_to_cutoff <- function(ex, cut.off.date=NA, silent=F) {
 }
 
 
-
-
-
-
-
-
-#' Title
-#'
-#' @param silent Boolean.
-#' @param ex The EX domain as data frame.
-#'
-#' @return A data frame.
-# impute_missing_end_time <- function(ex, silent=F) {
-#   ret <- ex %>%
-#     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC",
-#                                   "EXENDTC")) %>%
-#     lubrify_dates() %>%
-#
-#     mutate(EXSTDTC_has_time=has_time(EXSTDTC),
-#            EXENDTC_has_time=has_time(EXENDTC)) %>%
-#
-#     # mutate(start.date=extract_date(EXSTDTC)) %>%
-#     dplyr::mutate(start.time=case_when(
-#       EXSTDTC_has_time==T ~ extract_time(EXSTDTC),
-#       .default=NA)) %>%
-#
-#     mutate(end.date=extract_date(EXENDTC)) %>%
-#     dplyr::mutate(end.time=case_when(
-#       EXENDTC_has_time==T ~ extract_time(EXENDTC),
-#       .default=NA))
-#
-#     # Issue message about imputations
-#     temp <- ret %>%
-#       dplyr::filter(is.na(end.time) & !is.na(start.time))
-#     if(nrow(temp) != 0){
-#       temp <- temp %>%
-#         dplyr::select(USUBJID, EXTRT, EXSEQ, EXSTDTC, EXENDTC) %>%
-#         df.to.string()
-#       conditional_message("Administration end time was imputed to start time",
-#         "for the following entries:\n", temp, silent=silent)
-#     }
-#
-#     # conduct missing end time imputation
-#     ret <- ret %>%
-#       dplyr::mutate(end.time1=case_when(
-#         is.na(start.time) ~ "",
-#         is.na(end.time) & !is.na(start.time) ~ start.time,
-#         .default=end.time)) %>%
-#       mutate(end_dtc=case_when(
-#         is.na(end.date) ~ "",
-#         .default=str_trim(paste(end.date, end.time1, sep=" ")))) %>%
-#       mutate(EXENDTC=as_datetime(end_dtc,
-#         format=c("%Y-%m-%d %H:%M", "%Y-%m-%d", "%Y-%m-%d %H:%M:%S"))) %>%
-#       select(-c(EXSTDTC_has_time, EXENDTC_has_time, start.time, end.date,
-#                 end.time, end.time1, end_dtc))
-#   return(ret)
-# }
-
-
-
-
-
 #' Make EXSTDY and EXENDY by USUBJID, EXTRT
 #'
 #' Treatment days are calculated relative to RFSTDTC from DM.
@@ -532,9 +470,6 @@ make_EXSTDY_EXENDY <- function(ex, dm) {
     mutate(EXENDY=floor(as.numeric(difftime(EXENDTC, RFSTDTC), units="days"))+1) %>%
     select(-RFSTDTC)
 }
-
-
-
 
 
 #' Make administration data set from EX domain

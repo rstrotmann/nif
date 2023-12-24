@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{make_EXSTDY_EXENDY}
 \alias{make_EXSTDY_EXENDY}
-\title{Title}
+\title{Make EXSTDY and EXENDY by USUBJID, EXTRT}
 \usage{
 make_EXSTDY_EXENDY(ex, dm)
 }
@@ -10,19 +10,12 @@ make_EXSTDY_EXENDY(ex, dm)
 \item{ex}{The EX domain as data frame.}
 
 \item{dm}{The DM domain as data frame.}
-
-\item{silent}{Boolean.}
 }
 \value{
-A data frame.
-Make EXSTDY and EXENDY by USUBJID, EXTRT
-
-Treatment days are calculated relative to RFSTDTC from DM.
-
 The enhanced EX domain as data frame.
 }
 \description{
-Title
+Treatment days are calculated relative to RFSTDTC from DM.
 }
 \details{
 Caution: Currently, the function works only with treatment days after Day 1.

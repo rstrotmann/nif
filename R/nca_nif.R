@@ -136,50 +136,63 @@ nca <- function(obj, analyte=NULL, parent=NULL, keep="DOSE", group=NULL,
 #'
 #' @param nca The NCA results as provided by `nca`, as data frame.
 #' @param parameters The NCA paramters to be tabulated as character,
+#' @param group The grouping variable, defaults to DOSE.
 #'
 #' @return A data frame
+#' @importFrom PKNCA geomean
+#' @importFrom PKNCA geocv
 #' @export
 #'
 #' @examples
-#' nca_overview(nca(examplinib_sad_nif, analyte="RS2023"))
-nca_overview <- function(nca, parameters=c("aucinf.obs", "cmax")) {
+#' nca_summary(nca(examplinib_sad_nif, analyte="RS2023"))
+nca_summary <- function(
+  nca,
+  parameters=c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
+  group="DOSE"){
+  median_parameters <- c("tlast", "tmax", "lambda.z.n.points")
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
-    group_by(DOSE, PPTESTCD) %>%
-    summarize(gmean=PKNCA::geomean(PPORRES, na.rm=T),
-              gcv=PKNCA::geocv(PPORRES, na.rm=T),
-              n=n()) %>%
-    pivot_wider(names_from=PPTESTCD, values_from=c(gmean, gcv))
+    group_by(.data[[group]], PPTESTCD) %>%
+    summarize(geomean=PKNCA::geomean(PPORRES, na.rm=T),
+              geocv=PKNCA::geocv(PPORRES, na.rm=T),
+           median=median(PPORRES, na.rm=T), iqr=IQR(PPORRES, na.rm=T),
+           min=min(PPORRES, na.rm=T), max=max(PPORRES, na.rm=T), n=n())
 }
 
 
-#' Primary PK parameter summary statistics by dose.
+#' PK parameter summary statistics table by dose
 #'
 #' @param nca The NCA results as provided by `nca`, as data frame.
-#' @param caption The table title
+#' @param parameters The NCA paramters to be tabulated as character,
+#' @param digits The number of significant digits to be displayed.
+#' @param group The grouping variable, defaults to DOSE.
+#' @return A data frame
 #'
-#' @return Markdown-formatted table as character.
-#' @importFrom knitr kable
+#' @importFrom PKNCA geomean
+#' @importFrom PKNCA geocv
 #' @export
 #'
 #' @examples
-#' nca_overview_table(nca(examplinib_sad_nif, analyte="RS2023"))
-nca_overview_table <- function(nca, caption="PK parameter overview") {
-  parameters=c("aucinf.obs", "cmax")
-
-  nca %>%
-    filter(PPTESTCD %in% parameters) %>%
-    group_by(DOSE, PPTESTCD) %>%
-    summarize(gmean=PKNCA::geomean(PPORRES, na.rm=T),
-              gcv=PKNCA::geocv(PPORRES, na.rm=T),
-              n=n()) %>%
-    mutate(out=paste0(as.character(round(gmean, digits=3)), " (",
-                      as.character(round(gcv, digits=1)), ")")) %>%
-    select(DOSE, PPTESTCD, n, out) %>%
-    pivot_wider(names_from="PPTESTCD", values_from=out) %>%
-    kable(col.names=c("dose (mg)", "$N$", "$AUC_{inf}$ (h*ug/ml)",
-                      "$C_{max}$ (ug/ml)"),
-          caption=caption)
+#' nca_summary_table(nca(examplinib_sad_nif, analyte="RS2023"))
+nca_summary_table <- function(
+    nca,
+    parameters=c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
+    digits=2,
+    group="DOSE"){
+  s <- nca_summary(nca, parameters, group=group)
+  median_parameters <- c("tlast", "tmax", "lambda.z.n.points")
+  s %>%
+    mutate(
+      center=case_when(
+        PPTESTCD %in% median_parameters~as.character(round(median, digits=digits)),
+        .default=as.character(round(geomean, digits=digits))),
+      dispersion=case_when(
+        PPTESTCD %in% median_parameters~paste0(
+          as.character(round(min, digits=digits)), "; ",
+          as.character(round(max, digits=digits))),
+        .default=as.character(round(geocv)))) %>%
+    mutate(value=paste0(center, " (", dispersion, ")")) %>%
+    pivot_wider(id_cols=c(any_of(group), "n"), names_from="PPTESTCD", values_from=value)
 }
 
 
