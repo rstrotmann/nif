@@ -237,6 +237,16 @@ extract_time <- function(dtc) {
 
 #' Impute time of EXENDTC to time of EXSTDTC, when missing.
 #'
+#' Within the EX domain, some entries in EXENDTC may only have date but not time
+#' information included in the EXENDTC field. This is particularly often found
+#' in multiple-dose studies, and in cases where the affected administration
+#' interval is not associated with PK sampling, the exact time of these IMP
+#' administrations does not matter a lot. However, to convert the EXSTDTC to
+#' EXENDTC interval into a series of relative administration times, the time of
+#' the day in EXENDTC must be set to a plausible value. This is what this
+#' function does. For entries with missing time-of-the-day information in EXENDTC, it is
+#' assumed to be the same as for the EXSTDTC field.
+#'
 #' @param ex The EX domain as data frame.
 #' @param silent A boolean.
 #'
@@ -313,13 +323,22 @@ exclude_EXSTDTC_after_RFENDTC <- function(ex, dm, silent=FALSE) {
 
 #' Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent
 #'
+#' In EX for multiple-dose studies, the EXENDTC field for the very last
+#' administration epoch may be missing. This is occasionally found when SDTM
+#' data are generated before full cleaning of the clinical data, i.e., in the
+#' case of interim analyses of clinical study data. In some of these cases, the
+#' DM domain is however already completed with the RFENDTC field. This is the
+#' reference end date-time field that specifies the date-time of the last
+#' treatment administration. This function completes EXENDTC for the very last
+#' administration time based on the RFENDTC, if provided in DM.
+#'
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
 #' @param silent Boolean.
 #'
 #' @return The updated EX domain as data frame.
 impute_missing_EXENDTC_to_RFENDTC <- function(ex, dm, silent=F) {
-  dm %>%
+  dummy <- dm %>%
     verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
 
   temp <- ex %>%
@@ -356,11 +375,25 @@ impute_missing_EXENDTC_to_RFENDTC <- function(ex, dm, silent=F) {
 
 #' Impute missing EXENDTC to the day before the next EXSTDTC.
 #'
-#' This imputation does not apply to the last administration per subject and
-#' EXTRT. For these cases, missing EXENDT can be imputed to the global cut off
-#' date using `impute_missing_EXENDTC_to_cutoff`.
+#' In some cases, EX does not contain EXENDTC for administration epochs that
+#' are not the very last administration epoch This should only occur when
+#' non-clean clinical data is analyzed, e.g., in the context of an interim
+#' analysis. In most cases, such instances must be manually resolved. There
+#' could be AE information with consequences of "drug withdrawn" available
+#' that may be helpful, or other information from clinical context can be used
+#' to determine how many IMP administrations were done in the respective
+#' interval. This function should only be used if no other information is
+#' available as it takes a worst-case approach, i.e., assumes that IMP was
+#' administered up to the day before the subsequent administration interval.
+#' Note that this imputation does not apply to the last administration per
+#' subject and EXTRT. For these cases, missing EXENDT can be imputed to the
+#' global cut off date using `impute_missing_EXENDTC_to_cutoff`.
 #'
-#' @param ex The EX domain as data frame.
+#' As this function conducts rather aggressive imputations, the message output
+#' is not optional, i.e., cannot be suppressed using the `silent` flag, but is
+#' issued in all cases.
+#'
+#' @param ex The updated EX domain as data frame.
 #' @param silent A boolean.
 #'
 #' @return The updated EX domain as data frame.
@@ -379,14 +412,6 @@ impute_missing_EXENDTC <- function(ex, silent=F) {
     filter(is.na(EXENDTC) & LAST_ADMIN==F)
 
   if(nrow(to_replace >0)){
-    # conditional_message("Caution! ", nrow(to_replace), " rows in EX had no ",
-    # "EXENDTC. These values are imputed as the day before the next EXSTDTC.\n",
-    # "Note that this is based on assumptions. The missing entries should be\n",
-
-    # "to the data set\nor manually imputed. The following entries are affected:\n",
-    # df.to.string(to_replace %>% select(USUBJID, EXTRT, EXSTDTC, EXENDTC)),
-    # silent=silent)
-
     message(nrow(to_replace),
       " rows in EX had no EXENDTC. These values are imputed as the day before\n",
       "the next EXSTDTC. The missing entries should be added to the SDTM data set\n",
@@ -408,11 +433,18 @@ impute_missing_EXENDTC <- function(ex, silent=F) {
 
 #' Impute last EXENDTC per subject and treatment to cutoff date when absent.
 #'
+#' In some instances, particularly when analyzing non-cleaned SDTM data from
+#' ongoing clinical studies with multiple-dose administrations, the last
+#' administration epoch in EX may have an empty EXENDTC field. Often, the
+#' underlying reason is that the respective subjects are still on treatment.
+#' This function replaces the missing EXENDTC with the global data cut-off
+#' date, `cut.off.date`.
+#'
 #' @param ex The EX domain as data frame.
 #' @param cut.off.date The cut-off date.
 #' @param silent Boolean.
 #'
-#' @return The EX domain as data frame.
+#' @return The updated EX domain as data frame.
 #' @import assertr
 impute_missing_EXENDTC_to_cutoff <- function(ex, cut.off.date=NA, silent=F) {
   temp <- ex %>%

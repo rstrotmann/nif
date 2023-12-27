@@ -141,6 +141,7 @@ nca <- function(obj, analyte=NULL, parent=NULL, keep="DOSE", group=NULL,
 #' @return A data frame
 #' @importFrom PKNCA geomean
 #' @importFrom PKNCA geocv
+#' @importFrom stats IQR
 #' @export
 #'
 #' @examples

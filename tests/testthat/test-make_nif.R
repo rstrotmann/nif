@@ -112,7 +112,7 @@ test_that("date conversion works correctly", {
 # The missing time information in rows 3, 7 and 10 in the test EX will be
 # imputed. For row 6 where no date is available, too, the function will return
 # 'NA'.
-test_that("impute_missing_end_time works as intended", {
+test_that("impute_missing_EXENDTC_time works as intended", {
   ex <- tribble(
     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
     1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,

@@ -14,8 +14,13 @@ impute_missing_EXENDTC_to_cutoff(ex, cut.off.date = NA, silent = F)
 \item{silent}{Boolean.}
 }
 \value{
-The EX domain as data frame.
+The updated EX domain as data frame.
 }
 \description{
-Impute last EXENDTC per subject and treatment to cutoff date when absent.
+In some instances, particularly when analyzing non-cleaned SDTM data from
+ongoing clinical studies with multiple-dose administrations, the last
+administration epoch in EX may have an empty EXENDTC field. Often, the
+underlying reason is that the respective subjects are still on treatment.
+This function replaces the missing EXENDTC with the global data cut-off
+date, \code{cut.off.date}.
 }

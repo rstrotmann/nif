@@ -17,5 +17,12 @@ impute_missing_EXENDTC_to_RFENDTC(ex, dm, silent = F)
 The updated EX domain as data frame.
 }
 \description{
-Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent
+In EX for multiple-dose studies, the EXENDTC field for the very last
+administration epoch may be missing. This is occasionally found when SDTM
+data are generated before full cleaning of the clinical data, i.e., in the
+case of interim analyses of clinical study data. In some of these cases, the
+DM domain is however already completed with the RFENDTC field. This is the
+reference end date-time field that specifies the date-time of the last
+treatment administration. This function completes EXENDTC for the very last
+administration time based on the RFENDTC, if provided in DM.
 }

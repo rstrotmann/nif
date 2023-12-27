@@ -15,5 +15,13 @@ impute_missing_EXENDTC_time(ex, silent = F)
 The updated EX domain as data frame.
 }
 \description{
-Impute time of EXENDTC to time of EXSTDTC, when missing.
+Within the EX domain, some entries in EXENDTC may only have date but not time
+information included in the EXENDTC field. This is particularly often found
+in multiple-dose studies, and in cases where the affected administration
+interval is not associated with PK sampling, the exact time of these IMP
+administrations does not matter a lot. However, to convert the EXSTDTC to
+EXENDTC interval into a series of relative administration times, the time of
+the day in EXENDTC must be set to a plausible value. This is what this
+function does. For entries with missing time-of-the-day information in EXENDTC, it is
+assumed to be the same as for the EXSTDTC field.
 }
