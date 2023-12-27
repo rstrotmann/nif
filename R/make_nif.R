@@ -1131,6 +1131,7 @@ index_nif <- function(nif) {
 #' @export
 compress_nif <- function(nif, ...) {
   temp <- as.character(unlist(c(as.list(environment())[-1], list(...))))
+
   if(length(temp)==0) {
     columns <- standard_nif_fields
   } else {
@@ -1138,6 +1139,7 @@ compress_nif <- function(nif, ...) {
   }
   nif %>%
     dplyr::select(any_of(columns)) %>%
+    dplyr::select(any_of(c(columns, starts_with("BL_")))) %>%
     new_nif()
 }
 
@@ -1326,6 +1328,9 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 #' @return The resulting NIF data set.
 #' @export
 add_lab_observation <- function(obj, lb, lbtestcd, cmt=NULL, lbspec="", silent=F) {
+  obj %>%
+    verify(has_all_names("USUBJID", "TIME", "EVID"))
+
   test <- lbtestcd %in% unique(lb$LBTESTCD)
   if(!all(test)) {
     stop(paste0("The following parameters were not not found in lb: ",
@@ -1339,18 +1344,17 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt=NULL, lbspec="", silent=F
   }
 
   lb.params <- lb %>%
-    verify(has_all_names("USUBJID", "LBDTC", "LBSPEC", "LBTESTCD")) %>%
+    verify(has_all_names("USUBJID", "LBDTC", "LBSPEC", "LBTESTCD", "LBDY")) %>%
     lubrify_dates() %>%
     dplyr::filter(USUBJID %in% (obj %>%
                                   subjects() %>%
                                   pull(USUBJID))) %>%
-    # dplyr::mutate(DTC=lubridate::as_datetime(
-    #   LBDTC, format=dtc_formats)) %>%
     mutate(DTC=LBDTC) %>%
     dplyr::filter(LBSPEC %in% lbspec) %>%
     dplyr::filter(LBTESTCD==lbtestcd) %>%
 
     left_join(obj %>%
+                add_time() %>%
                 as.data.frame() %>%
                 distinct(USUBJID, FIRSTDTC), by="USUBJID") %>%
 
@@ -1362,21 +1366,22 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt=NULL, lbspec="", silent=F
     dplyr::mutate(LNDV=log(DV)) %>%
     dplyr::mutate(NTIME=case_when(LBDY<0 ~ LBDY*24, .default=(LBDY-1)*24)) %>%
     dplyr::select(STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, PARENT, CMT, EVID,
-                  TIME, NTIME, DV, LNDV, AMT)
+                  TIME, NTIME, DV, LNDV, AMT, RATE)
 
   temp <- obj %>%
     as.data.frame() %>%
     bind_rows(lb.params) %>%
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF=row_number()) %>%
+
     dplyr::group_by(USUBJID) %>%
-    tidyr::fill(ID, AGE, SEX, RACE, BMI, ACTARMCD, HEIGHT, WEIGHT, DOSE,
-                .direction="downup") %>%
     tidyr::fill(starts_with("BL_"), .direction="downup") %>%
-    tidyr::fill(any_of(c("PART", "COHORT")),
+    tidyr::fill(any_of(c("ID", "AGE", "SEX", "RACE", "BMI", "ACTARMCD",
+                         "HEIGHT", "WEIGHT", "DOSE", "PART", "COHORT")),
                 .direction="downup") %>%
     mutate(MDV=case_when(is.na(DV)~1, .default=0)) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    add_time()
 
   return(new_nif(temp))
 }

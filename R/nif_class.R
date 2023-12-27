@@ -385,7 +385,8 @@ standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
                          "ANALYTE", "AMT", "RATE", "DV", "LNDV", "MDV", "CMT",
                          "EVID", "DOSE", "AGE", "SEX", "RACE", "HEIGHT",
                          "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
-                         "METABOLITE", "TRTDY", "BL_CRCL", "PART", "COHORT")
+                         "METABOLITE", "TRTDY", "BL_CRCL", "PART", "COHORT",
+                         "FASTED", "DTC")
 
 
 #' Index dosing invervals

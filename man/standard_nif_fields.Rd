@@ -17,7 +17,7 @@ filter(a3 \%in\% country_abbr) \%>\%
 pull(code)
 }}
 \format{
-An object of class \code{character} of length 29.
+An object of class \code{character} of length 31.
 }
 \usage{
 standard_nif_fields
