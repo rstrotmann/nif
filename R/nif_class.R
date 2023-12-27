@@ -72,6 +72,9 @@ print.nif <- function(x, ...){
 #' The output is an object of the class 'subject_info' which is a wrapper for
 #' the named list of the above.
 #'
+#' The field `administrations` is not printed automatically but can be accessed
+#' as list item (see example).
+#'
 #' @param obj A NIF object.
 #' @param id The USUBJID or ID.
 #' @export
@@ -79,6 +82,7 @@ print.nif <- function(x, ...){
 #' subject_info(examplinib_poc_nif, 1)
 #' subject_info(examplinib_poc_nif, c(1, 2))
 #' unclass(subject_info(examplinib_poc_nif, 1))
+#' subject_info(examplinib_poc_nif, 1)$administrations
 #'
 subject_info.nif <- function(obj, id) {
   temp <- obj %>%
@@ -90,18 +94,27 @@ subject_info.nif <- function(obj, id) {
     select(any_of(
         c("USUBJID", "ID", "SEX", "AGE", "RACE", "WEIGHT", "HEIGHT", "BMI",
           "ACTARMCD", "PART", "COHORT")), starts_with("BL_")) %>%
-    distinct_all()
+    distinct_all() %>%
+    as.list()
 
   out$ANALYTE <- temp %>%
     distinct(ANALYTE) %>%
-    pull(ANALYTE) %>%
-    list()
+    pull(ANALYTE)
 
   out$IMP <- temp %>%
     filter(PARENT != "") %>%
     distinct(PARENT) %>%
-    pull(PARENT) %>%
-    list()
+    pull(PARENT)
+
+  out$administrations <- temp %>%
+    add_TRTDY() %>%
+    filter(EVID==1) %>%
+    select(USUBJID, TIME, ANALYTE, DTC, TRTDY) %>%
+    # mutate(DAY = floor(TIME/24) +1)
+    arrange(ANALYTE, TIME) %>%
+    select(ANALYTE, TIME, TRTDY) %>%
+    as.data.frame()
+
 
 class(out) <- c("subject_info", "data.frame")
   return(out)
@@ -114,9 +127,10 @@ class(out) <- c("subject_info", "data.frame")
 #' @param ... Optional further parameters.
 #' @export
 print.subject_info <- function(x, ...) {
-  temp <- x %>%
-    t() %>%
-    as.data.frame()
+  temp <- lapply(x, function(i) {paste(i, collapse = ", ")}) %>%
+    as.data.frame() %>%
+    select(-any_of(c("administrations"))) %>%
+    t()
   colnames(temp) <- NULL
   print(temp, quote=FALSE, col.names=FALSE)
   invisible(x)

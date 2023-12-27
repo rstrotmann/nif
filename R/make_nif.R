@@ -1091,8 +1091,10 @@ make_nif <- function(
     tidyr::fill(any_of(c("AGE", "SEX", "RACE", "ETHNIC", "ACTARMCD", "HEIGHT",
       "WEIGHT", "COUNTRY", "ARM", "SUBJID")), .direction="down") %>%
     dplyr::ungroup() %>%
+
     add_time() %>%
     mutate(TRTDY=interval(date(FIRSTTRTDTC), date(DTC)) / days(1) +1) %>%
+
     recode_sex() %>%
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(ID=as.numeric(as.factor(USUBJID))) %>%
@@ -1203,6 +1205,24 @@ add_dose_level <- function(obj) {
   }
 
   return(obj %>% left_join(temp %>% select(ID, DL), by="ID"))
+}
+
+
+#' Add treatment day
+#'
+#' @param obj The NIF data set as data frame.
+#'
+#' @return The updated NIF data set as data frame.
+add_TRTDY <- function(obj){
+  obj %>%
+    assertr::verify(has_all_names("USUBJID", "DTC", "EVID")) %>%
+    assertr::verify(is.POSIXct(DTC)) %>%
+    dplyr::group_by(USUBJID) %>%
+    dplyr::mutate(FIRSTTRTDTC=min(DTC[EVID==1], na.rm=T)) %>%
+    dplyr::ungroup() %>%
+    mutate(TRTDY=interval(date(FIRSTTRTDTC), date(DTC)) / days(1)) %>%
+    mutate(TRTDY=case_when(TRTDY<0~TRTDY, .default=TRTDY+1)) %>%
+    select(-FIRSTTRTDTC)
 }
 
 
@@ -1381,7 +1401,10 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt=NULL, lbspec="", silent=F
                 .direction="downup") %>%
     mutate(MDV=case_when(is.na(DV)~1, .default=0)) %>%
     dplyr::ungroup() %>%
-    add_time()
+    # add_time()
+    dplyr::mutate(TIME=round(
+      as.numeric(difftime(DTC, FIRSTDTC, units="h")), digits=3)) %>%
+    add_TRTDY()
 
   return(new_nif(temp))
 }

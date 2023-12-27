@@ -19,10 +19,14 @@ and baseline covariates as available.
 \details{
 The output is an object of the class 'subject_info' which is a wrapper for
 the named list of the above.
+
+The field \code{administrations} is not printed automatically but can be accessed
+as list item (see example).
 }
 \examples{
 subject_info(examplinib_poc_nif, 1)
 subject_info(examplinib_poc_nif, c(1, 2))
 unclass(subject_info(examplinib_poc_nif, 1))
+subject_info(examplinib_poc_nif, 1)$administrations
 
 }

@@ -320,7 +320,7 @@ subject_info <- function(obj, id) {
 subject_info.sdtm <- function(obj, id) {
   temp <- obj$domains[["dm"]] %>%
     dplyr::filter(USUBJID %in% id) %>%
-    as.data.frame()
+    as.list()
   class(temp) <- c("subject_info", "data.frame")
   return(temp)
 }
