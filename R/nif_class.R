@@ -382,10 +382,10 @@ write_nif <- function(obj, filename=NA, fields=NULL) {
 #' @return A character vector of the standard NIF fields
 #' @export
 standard_nif_fields <- c("REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
-                         "ANALYTE", "AMT", "RATE", "DV", "LNDV", "CMT", "EVID",
-                         "DOSE", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT", "BMI",
-                         "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE", "TRTDY",
-                         "BL_CRCL", "PART", "COHORT")
+                         "ANALYTE", "AMT", "RATE", "DV", "LNDV", "MDV", "CMT",
+                         "EVID", "DOSE", "AGE", "SEX", "RACE", "HEIGHT",
+                         "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
+                         "METABOLITE", "TRTDY", "BL_CRCL", "PART", "COHORT")
 
 
 #' Index dosing invervals

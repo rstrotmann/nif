@@ -1364,6 +1364,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt=NA, lbspec="", silent=F) 
     tidyr::fill(starts_with("BL_"), .direction="downup") %>%
     tidyr::fill(any_of(c("PART", "COHORT")),
                 .direction="downup") %>%
+    mutate(MDV=case_when(is.na(DV)~1, .default=0)) %>%
     dplyr::ungroup()
 
   return(new_nif(temp))
