@@ -1325,17 +1325,28 @@ add_lab_covariate <- function(obj, lb, lbspec="SERUM", lbtestcd, silent=F){
 #'
 #' @return The resulting NIF data set.
 #' @export
-add_lab_observation <- function(obj, lb, lbtestcd, cmt=NA, lbspec="", silent=F) {
+add_lab_observation <- function(obj, lb, lbtestcd, cmt=NULL, lbspec="", silent=F) {
   test <- lbtestcd %in% unique(lb$LBTESTCD)
   if(!all(test)) {
     stop(paste0("The following parameters were not not found in lb: ",
                 df.to.string(lbtestcd[!test], header=F)))
   }
 
+  if(is.null(cmt)) {
+    cmt <- max(obj$CMT) + 1
+    message(paste0("Compartment for ", lbtestcd,
+                   " was not specified and has beenset to ", cmt))
+  }
+
   lb.params <- lb %>%
-    dplyr::filter(USUBJID %in% (obj %>% subjects() %>% pull(USUBJID))) %>%
-    dplyr::mutate(DTC=lubridate::as_datetime(
-      LBDTC, format=dtc_formats)) %>%
+    verify(has_all_names("USUBJID", "LBDTC", "LBSPEC", "LBTESTCD")) %>%
+    lubrify_dates() %>%
+    dplyr::filter(USUBJID %in% (obj %>%
+                                  subjects() %>%
+                                  pull(USUBJID))) %>%
+    # dplyr::mutate(DTC=lubridate::as_datetime(
+    #   LBDTC, format=dtc_formats)) %>%
+    mutate(DTC=LBDTC) %>%
     dplyr::filter(LBSPEC %in% lbspec) %>%
     dplyr::filter(LBTESTCD==lbtestcd) %>%
 
