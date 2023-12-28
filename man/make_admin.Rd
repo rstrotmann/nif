@@ -9,7 +9,7 @@ make_admin(
   dm,
   drug_mapping,
   cut.off.date,
-  impute.missing.end.time = TRUE,
+  impute_missing_end_time = TRUE,
   silent = FALSE
 )
 }
@@ -24,7 +24,7 @@ that associate both.}
 \item{cut.off.date}{The cut-off date to be used where no EXENDTC is recorded,
 in POSIX format.}
 
-\item{impute.missing.end.time}{A boolean value to indicate whether in rows
+\item{impute_missing_end_time}{A boolean value to indicate whether in rows
 in EX where EXENDTC does not include a time, the time should be copied from
 EXSTDTC.}
 

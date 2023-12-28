@@ -70,7 +70,7 @@ test_that("date conversion works correctly", {
 #   impute.missing.end.time <- TRUE
 #   silent <- F
 #
-#   test <- make_admin(ex, drug_mapping, cut.off.date, impute.missing.end.time)
+#   test <- make_admin(ex, drug_mapping, cut.off.date, impute_missing_end_time)
 #   expect_equal(nrow(test), 232)
 # })
 
@@ -79,7 +79,7 @@ test_that("date conversion works correctly", {
 # test_that("impute.administration.time works as intended", {
 #   cut.off.date <- last_ex_dtc(ex)
 #   admin <- make_admin(ex, drug_mapping=drug_mapping, cut.off.date=cut.off.date,
-#                       impute.missing.end.time=T, silent=T)
+#                       impute_missing_end_time=T, silent=T)
 #
 #   test <- impute.administration.time(admin, obs)
 #

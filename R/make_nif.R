@@ -429,8 +429,7 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
 #'
 #' @return The updated EX domain as data frame.
 #' @import assertr
-impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA,
-                                             silent = FALSE) {
+impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
   temp <- ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
@@ -478,7 +477,7 @@ impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA,
 #' @import assertr
 #'
 #' @return The enhanced EX domain as data frame.
-make_EXSTDY_EXENDY <- function(ex, dm) {
+make_exstdy_exendy <- function(ex, dm) {
   ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     assertr::verify(is.POSIXct(c(EXSTDTC, EXENDTC))) %>%
@@ -488,8 +487,7 @@ make_EXSTDY_EXENDY <- function(ex, dm) {
       by = "USUBJID"
     ) %>%
     mutate(EXSTDY = floor(as.numeric(difftime(EXSTDTC, RFSTDTC),
-                                     units = "days"
-    )) + 1) %>%
+                                     units = "days")) + 1) %>%
     mutate(EXENDY = floor(as.numeric(difftime(EXENDTC, RFSTDTC),
                                      units = "days"
     )) + 1) %>%
@@ -514,7 +512,7 @@ make_EXSTDY_EXENDY <- function(ex, dm) {
 #'  in POSIX format.
 #' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
 #'  that associate both.
-#' @param impute.missing.end.time A boolean value to indicate whether in rows
+#' @param impute_missing_end_time A boolean value to indicate whether in rows
 #'  in EX where EXENDTC does not include a time, the time should be copied from
 #'  EXSTDTC.
 #' @param silent Boolean value to indicate whether warnings should be printed.
@@ -528,7 +526,7 @@ make_admin <- function(ex,
                        dm,
                        drug_mapping,
                        cut.off.date,
-                       impute.missing.end.time = TRUE,
+                       impute_missing_end_time = TRUE,
                        silent = FALSE) {
   drug_mapping %>%
     assertr::verify(nrow(.) > 0)
@@ -557,7 +555,7 @@ make_admin <- function(ex,
       EXENDTC_has_time == TRUE ~ extract_time(EXENDTC),
       .default = NA
     )) %>%
-    make_EXSTDY_EXENDY(dm)
+    make_exstdy_exendy(dm)
 
   ret <- admin %>%
     rowwise() %>%
@@ -1034,7 +1032,7 @@ make_nif <- function(
   # make administrations
   admin <- make_admin(ex, dm,
     drug_mapping = drug_mapping, cut.off.date,
-    impute.missing.end.time = impute_missing_end_time, silent = silent
+    impute_missing_end_time = impute_missing_end_time, silent = silent
   )
 
   # Remove all administrations with PCTESTCD==NA
