@@ -231,14 +231,14 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
       .default = NA
     )) %>%
     # flag entries for EXENDTC time imputation
-    mutate(impute_EXENDTC_time = (!is.na(EXENDTC) &
-      EXENDTC_has_time == FALSE &
-      !is.na(start.time)))
+    mutate(impute_exendtc_time = (!is.na(EXENDTC) &
+                                    EXENDTC_has_time == FALSE &
+                                    !is.na(start.time)))
 
-  if (sum(temp$impute_EXENDTC_time) > 0) {
+  if (sum(temp$impute_exendtc_time) > 0) {
     temp <- temp %>%
       mutate(EXENDTC1 = case_when(
-        impute_EXENDTC_time == TRUE ~ paste(
+        impute_exendtc_time == TRUE ~ paste(
           as.character(end.date),
           as.character(start.time)
         ),
@@ -247,16 +247,16 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
         str_trim() %>%
         as_datetime(format = c("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"))) %>%
       mutate(EXENDTC_new = case_when(
-        impute_EXENDTC_time == TRUE ~ EXENDTC1,
+        impute_exendtc_time == TRUE ~ EXENDTC1,
         .default = EXENDTC
       )) %>%
       select(-EXENDTC1)
 
     conditional_message(
-      "In ", sum(temp$impute_EXENDTC_time),
+      "In ", sum(temp$impute_exendtc_time),
       " administrations, a missing time in EXENDTC is imputed from EXSTDTC:\n",
       temp %>%
-        filter(impute_EXENDTC_time == TRUE) %>%
+        filter(impute_exendtc_time == TRUE) %>%
         select(USUBJID, EXTRT, EXSTDTC, EXENDTC, EXENDTC_new) %>%
         df_to_string(), "\n",
       silent = silent
@@ -270,7 +270,7 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
   temp %>%
     select(-c(
       "EXENDTC_has_time", "EXSTDTC_has_time", "start.date",
-      "start.time", "end.date", "end.time", "impute_EXENDTC_time"
+      "start.time", "end.date", "end.time", "impute_exendtc_time"
     ))
 }
 
@@ -288,7 +288,8 @@ exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
               by = "USUBJID") %>%
     group_by(USUBJID) %>%
     filter(floor_date(EXSTDTC, "day") <=
-      floor_date(RFENDTC, "day") | is.na(RFENDTC)) %>%
+             floor_date(RFENDTC, "day") |
+             is.na(RFENDTC)) %>%
     select(-RFENDTC)
 }
 
@@ -319,7 +320,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
     group_by(USUBJID, EXTRT) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
     left_join(dm %>%
-      select(USUBJID, RFSTDTC, RFENDTC), by = "USUBJID") %>%
+                select(USUBJID, RFSTDTC, RFENDTC), by = "USUBJID") %>%
     ungroup()
 
   replace_n <- temp %>%
@@ -397,7 +398,7 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
       "or manually imputed before running `make_nif()`.\n",
       "The following entries are affected:\n",
       df_to_string(to_replace %>%
-        select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC))
+                     select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC))
     )
 
     temp <- temp %>%
@@ -487,10 +488,10 @@ make_EXSTDY_EXENDY <- function(ex, dm) {
       by = "USUBJID"
     ) %>%
     mutate(EXSTDY = floor(as.numeric(difftime(EXSTDTC, RFSTDTC),
-      units = "days"
+                                     units = "days"
     )) + 1) %>%
     mutate(EXENDY = floor(as.numeric(difftime(EXENDTC, RFSTDTC),
-      units = "days"
+                                     units = "days"
     )) + 1) %>%
     select(-RFSTDTC)
 }
@@ -561,7 +562,7 @@ make_admin <- function(ex,
   ret <- admin %>%
     rowwise() %>%
     mutate(date = list(seq(as.Date(start.date), as.Date(end.date),
-      by = "days"
+                           by = "days"
     ))) %>%
     unnest(c(date)) %>%
     dplyr::mutate(time = case_when(
@@ -821,7 +822,7 @@ baseline_covariates <- function(vs, silent = FALSE) {
     tidyr::pivot_wider(names_from = VSTESTCD, values_from = mean)
 
   # Calculate BMI if height and weight are available
-  if ("HEIGHT" %in% colnames(bl_cov) & "WEIGHT" %in% colnames(bl_cov)) {
+  if ("HEIGHT" %in% colnames(bl_cov) && "WEIGHT" %in% colnames(bl_cov)) {
     bl_cov <- bl_cov %>%
       mutate(BMI = WEIGHT / (HEIGHT / 100)^2)
   }
@@ -847,25 +848,25 @@ conditional_message <- function(msg, ..., silent = FALSE) {
 
 #' Create the drug mapping data frame from
 #'
-#' @param sdtm.data The sdtm data as SDTM object.
+#' @param sdtm_data The sdtm data as SDTM object.
 #'
 #' @return A data frame.
-make_drug_mapping <- function(sdtm.data) {
-  drug_mapping <- sdtm.data$analyte_mapping %>%
+make_drug_mapping <- function(sdtm_data) {
+  drug_mapping <- sdtm_data$analyte_mapping %>%
     rbind(
       data.frame(EXTRT = intersect(
-        unique(sdtm.data$ex$EXTRT),
-        unique(sdtm.data$pc$PCTESTCD)
+        unique(sdtm_data$ex$EXTRT),
+        unique(sdtm_data$pc$PCTESTCD)
       )) %>%
         mutate(PCTESTCD = EXTRT)
     ) %>%
     mutate(PARENT = PCTESTCD)
 
   # add metabolite mapping, if available
-  if (nrow(sdtm.data$metabolite_mapping) != 0) {
+  if (nrow(sdtm_data$metabolite_mapping) != 0) {
     drug_mapping <- drug_mapping %>%
       rbind(
-        sdtm.data$metabolite_mapping %>%
+        sdtm_data$metabolite_mapping %>%
           rename(PARENT = PCTESTCD_parent, PCTESTCD = PCTESTCD_metab) %>%
           mutate(EXTRT = "")
       )
@@ -943,13 +944,13 @@ add_time <- function(x) {
 #'   * `TRTDY` The treatment day, i.e., the relative day after the first
 #'        treatment for the respective subject.
 #'
-#' @param sdtm.data A list of SDTM domains as data tables, e.g., as loaded using
+#' @param sdtm_data A list of SDTM domains as data tables, e.g., as loaded using
 #'   read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.
 #' @param spec The specimen to be represented in the NIF data set as string
 #'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 #'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 #'   or "PLASMA" is selected, depending what is found in the PC data.
-#' @param impute.missing.end.time A logic value to indicate whether in rows
+#' @param impute_missing_end_time A logic value to indicate whether in rows
 #'   in EX where EXENDTC does not include a time, the time should be copied from
 #'   EXSTDTC.
 #' @param impute.administration.time A boolean value to indicate whether the
@@ -973,23 +974,23 @@ add_time <- function(x) {
 #' make_nif(examplinib_fe)
 #'
 make_nif <- function(
-    sdtm.data,
+    sdtm_data,
     spec = NULL,
-    impute.missing.end.time = TRUE,
+    impute_missing_end_time = TRUE,
     impute.administration.time = TRUE,
     silent = FALSE,
     truncate.to.last.observation = TRUE,
     use_pctptnum = TRUE) {
-  vs <- sdtm.data$domains[["vs"]] %>%
+  vs <- sdtm_data$domains[["vs"]] %>%
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
-  ex <- sdtm.data$domains[["ex"]] %>%
+  ex <- sdtm_data$domains[["ex"]] %>%
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
-  pc <- sdtm.data$domains[["pc"]] %>%
+  pc <- sdtm_data$domains[["pc"]] %>%
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
-  dm <- sdtm.data$domains[["dm"]] %>%
+  dm <- sdtm_data$domains[["dm"]] %>%
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
 
@@ -999,12 +1000,12 @@ make_nif <- function(
     impute_exendtc_to_rfendtc(dm, silent = silent) %>%
     impute_missing_exendtc(silent = silent)
 
-  bl.cov <- baseline_covariates(vs, silent = silent)
-  drug_mapping <- make_drug_mapping(sdtm.data)
+  bl_cov <- baseline_covariates(vs, silent = silent)
+  drug_mapping <- make_drug_mapping(sdtm_data)
 
   # make observations
   obs <- make_obs(pc,
-    time_mapping = sdtm.data$time_mapping,
+    time_mapping = sdtm_data$time_mapping,
     spec = spec, silent = silent, use_pctptnum = use_pctptnum
   ) %>%
     left_join(drug_mapping, by = "PCTESTCD")
@@ -1025,7 +1026,7 @@ make_nif <- function(
     filter(EXENDTC >= EXSTDTC)
 
   # identify subjects with observations by analyte
-  obs.sbs <- obs %>%
+  obs_sbs <- obs %>%
     filter(!is.na(PCSTRESN)) %>%
     tidyr::unite("ut", USUBJID, PCTESTCD, remove = FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
@@ -1033,7 +1034,7 @@ make_nif <- function(
   # make administrations
   admin <- make_admin(ex, dm,
     drug_mapping = drug_mapping, cut.off.date,
-    impute.missing.end.time = impute.missing.end.time, silent = silent
+    impute.missing.end.time = impute_missing_end_time, silent = silent
   )
 
   # Remove all administrations with PCTESTCD==NA
@@ -1042,15 +1043,15 @@ make_nif <- function(
     dplyr::filter(!is.na(PCTESTCD))
 
   # filter admin for subjects who actually have observations
-  no.obs.sbs <- admin %>%
+  no_obs_sbs <- admin %>%
     tidyr::unite("ut", USUBJID, PCTESTCD, remove = FALSE) %>%
-    dplyr::filter(!(ut %in% obs.sbs$ut)) %>%
+    dplyr::filter(!(ut %in% obs_sbs$ut)) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut) %>%
     as.data.frame()
 
   # Issue message about excluded administrations, if applicable
-  if (nrow(no.obs.sbs) > 0) {
-    out <- no.obs.sbs %>%
+  if (nrow(no_obs_sbs) > 0) {
+    out <- no_obs_sbs %>%
       dplyr::arrange(PCTESTCD, USUBJID) %>%
       dplyr::select(USUBJID, PCTESTCD) %>%
       df_to_string()
@@ -1064,7 +1065,7 @@ make_nif <- function(
   # and filter out excluded administrations
   admin <- admin %>%
     tidyr::unite("ut", USUBJID, PCTESTCD, remove = FALSE) %>%
-    dplyr::filter(ut %in% obs.sbs$ut) %>%
+    dplyr::filter(ut %in% obs_sbs$ut) %>%
     dplyr::select(-ut)
 
   if (nrow(admin) == 0) {
@@ -1089,7 +1090,7 @@ make_nif <- function(
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
       dplyr::mutate(age1 = floor(as.duration(interval(BRTHDTC, RFICDTC)) /
-        as.duration(years(1)))) %>%
+                                   as.duration(years(1)))) %>%
       dplyr::mutate(AGE = case_when(is.na(AGE) ~ age1, .default = AGE)) %>%
       dplyr::select(-age1)
   }
@@ -1102,7 +1103,7 @@ make_nif <- function(
         dplyr::filter(USUBJID %in% obs$USUBJID)
     ) %>%
     dplyr::left_join(dm, by = c("USUBJID", "STUDYID")) %>%
-    dplyr::left_join(bl.cov, by = "USUBJID") %>%
+    dplyr::left_join(bl_cov, by = "USUBJID") %>%
     # filter out rows without parent information
     dplyr::filter(PARENT != "") %>%
     # filter out observations without administration
@@ -1224,9 +1225,9 @@ add_dose_level <- function(obj) {
     group_by(ID)
 
   if (temp %>%
-    ungroup() %>%
-    distinct(ANALYTE) %>%
-    nrow() == 1) {
+      ungroup() %>%
+      distinct(ANALYTE) %>%
+      nrow() == 1) {
     temp <- temp %>% mutate(DL = DOSE)
   } else {
     temp <- temp %>%
@@ -1345,7 +1346,7 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
     }
   }
 
-  lb.params <- lb %>%
+  lb_params <- lb %>%
     mutate(dtc = lubridate::as_datetime(
       .data$LBDTC,
       format = dtc_formats
@@ -1366,7 +1367,7 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
   temp <- obj %>%
     as.data.frame() %>%
     mutate(date = format(.data$DTC, format = "%Y-%m-%d")) %>%
-    bind_rows(lb.params) %>%
+    bind_rows(lb_params) %>%
     arrange(.data$USUBJID, date) %>%
     group_by(.data$USUBJID) %>%
     fill(all_of(lbtestcd), .data$labdate) %>%
@@ -1410,7 +1411,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     ))
   }
 
-  lb.params <- lb %>%
+  lb_params <- lb %>%
     verify(has_all_names("USUBJID", "LBDTC", "LBSPEC", "LBTESTCD", "LBDY")) %>%
     lubrify_dates() %>%
     dplyr::filter(USUBJID %in% (obj %>%
@@ -1442,7 +1443,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
 
   temp <- obj %>%
     as.data.frame() %>%
-    bind_rows(lb.params) %>%
+    bind_rows(lb_params) %>%
     dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::mutate(REF = row_number()) %>%
     dplyr::group_by(USUBJID) %>%

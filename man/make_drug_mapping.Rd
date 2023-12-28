@@ -4,10 +4,10 @@
 \alias{make_drug_mapping}
 \title{Create the drug mapping data frame from}
 \usage{
-make_drug_mapping(sdtm.data)
+make_drug_mapping(sdtm_data)
 }
 \arguments{
-\item{sdtm.data}{The sdtm data as SDTM object.}
+\item{sdtm_data}{The sdtm data as SDTM object.}
 }
 \value{
 A data frame.

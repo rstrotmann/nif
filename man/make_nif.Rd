@@ -5,9 +5,9 @@
 \title{Make raw NIF data set from list of SDTM domains}
 \usage{
 make_nif(
-  sdtm.data,
+  sdtm_data,
   spec = NULL,
-  impute.missing.end.time = TRUE,
+  impute_missing_end_time = TRUE,
   impute.administration.time = TRUE,
   silent = FALSE,
   truncate.to.last.observation = TRUE,
@@ -15,7 +15,7 @@ make_nif(
 )
 }
 \arguments{
-\item{sdtm.data}{A list of SDTM domains as data tables, e.g., as loaded using
+\item{sdtm_data}{A list of SDTM domains as data tables, e.g., as loaded using
 read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.}
 
 \item{spec}{The specimen to be represented in the NIF data set as string
@@ -23,7 +23,7 @@ read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.}
 (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 or "PLASMA" is selected, depending what is found in the PC data.}
 
-\item{impute.missing.end.time}{A logic value to indicate whether in rows
+\item{impute_missing_end_time}{A logic value to indicate whether in rows
 in EX where EXENDTC does not include a time, the time should be copied from
 EXSTDTC.}
 

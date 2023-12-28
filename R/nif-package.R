@@ -30,5 +30,6 @@ utils::globalVariables(c(
   "dose_red_start", "dose_restart", "i", "prev_dose", "ref", "trtdur",
   "end_rich", "n_obs", "FIRSTADMINDTC", "FIRSTTRTDTC", "DVBL", "DVCFB",
   "OPDI", "BL_CRCL", "age_lo", "age_hi", "Mean", "EGFR", "CREA", "LBORRES",
-  "BL_CREAT", "LAST_ADMIN", "RFENDTC", "TRTDY", "BL_RENAL"
+  "BL_CREAT", "LAST_ADMIN", "RFENDTC", "TRTDY", "BL_RENAL", "EXENDTC_has_time",
+  "EXENDTC1", "VISIT", "VSBLFL", "EXENDTC_new"
 ))
