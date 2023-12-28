@@ -4,7 +4,7 @@
 \alias{check_sdtm}
 \title{Check SDTM domains for missing date time information.}
 \usage{
-check_sdtm(sdtm, verbose = T)
+check_sdtm(sdtm, verbose = TRUE)
 }
 \arguments{
 \item{sdtm}{The SDTM as SDTM object.}

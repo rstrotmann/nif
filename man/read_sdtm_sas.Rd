@@ -4,10 +4,10 @@
 \alias{read_sdtm_sas}
 \title{Load SDTM data from sas7bdat files}
 \usage{
-read_sdtm_sas(data.path, ...)
+read_sdtm_sas(data_path, ...)
 }
 \arguments{
-\item{data.path}{Path to the required SDTM files in .sas7bdat format.}
+\item{data_path}{Path to the required SDTM files in .sas7bdat format.}
 
 \item{...}{Further optional
 parameters may specify the individual SDTM domains to be loaded (lowercase,

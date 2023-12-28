@@ -4,7 +4,7 @@
 \alias{add_bl_lab}
 \title{Add baseline covariates to a NIF data set}
 \usage{
-add_bl_lab(obj, lb, lbtestcd, lbspec = "", silent = F)
+add_bl_lab(obj, lb, lbtestcd, lbspec = "", silent = FALSE)
 }
 \arguments{
 \item{obj}{NIF dataset.}

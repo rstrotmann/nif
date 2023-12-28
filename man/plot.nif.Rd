@@ -78,12 +78,12 @@ grouping variable is provided, \code{DOSE} will be used.
 }
 \examples{
 plot(examplinib_fe_nif)
-plot(examplinib_fe_nif, analyte="RS2023", points=TRUE)
-plot(examplinib_fe_nif, analyte="RS2023", group="FASTED")
-plot(examplinib_fe_nif, max_x=24, point=TRUE)
-plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", nominal_time=TRUE)
-plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", mean=TRUE)
-plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", mean=TRUE, max_x=24)
+plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
+plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
+plot(examplinib_fe_nif, max_x = 24, point = TRUE)
+plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", nominal_time = TRUE)
+plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
+plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE, max_x = 24)
 
 }
 \seealso{

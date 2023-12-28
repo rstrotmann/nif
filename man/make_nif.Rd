@@ -9,7 +9,7 @@ make_nif(
   spec = NULL,
   impute.missing.end.time = TRUE,
   impute.administration.time = TRUE,
-  silent = F,
+  silent = FALSE,
   truncate.to.last.observation = TRUE,
   use_pctptnum = TRUE
 )
@@ -45,8 +45,8 @@ after the last observation time point will deleted.}
 A NIF object.
 }
 \description{
-This function makes a basic NONMEM input file (NIF) data set, following the
-conventions summarized in
+This function makes a basic NONMEM input file (NIF) data set,
+following the conventions summarized in
 \href{https://doi.org/10.1002/psp4.12404}{Bauer, CPT Pharmacometrics Syst. Pharmacol. (2019)}.
 
 For SDTM data sets in which the administered drugs (EXTRT in domain EX) and
@@ -75,8 +75,8 @@ administration records, in mg/l.
 \item \code{RATE} Rate of infusion of drug or zero if drug is given as a bolus.
 \item \code{MDV} One for missing DV, else zero.
 \item \code{EVID} Event ID: 0 for observations, 1 for administrations.
-\item \code{CMT} Pharmacokinetic compartment. Will be set to 1 for administrations and 2 for
-observations. Should be changed afterwards, if needed.
+\item \code{CMT} Pharmacokinetic compartment. Will be set to 1 for administrations
+and 2 for observations. Should be changed afterwards, if needed.
 \item \code{DTC} The date-time of the data record.
 \item \code{FIRSTDTC} Date and time of first event per subject. This field is used
 internally for the calculation of \code{TIME}. Although it is not needed

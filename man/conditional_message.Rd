@@ -4,7 +4,7 @@
 \alias{conditional_message}
 \title{Issue message based on silent flag}
 \usage{
-conditional_message(msg, ..., silent = F)
+conditional_message(msg, ..., silent = FALSE)
 }
 \arguments{
 \item{msg}{The message as character.}

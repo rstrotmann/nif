@@ -4,7 +4,7 @@
 \alias{filter_correct_date_format}
 \title{Filter out any rows containing DTC rows with incomplete data format}
 \usage{
-filter_correct_date_format(obj, verbose = T, silent = F)
+filter_correct_date_format(obj, verbose = TRUE, silent = FALSE)
 }
 \arguments{
 \item{obj}{The SDTM domain as data frame}

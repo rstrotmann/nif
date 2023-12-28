@@ -7,7 +7,8 @@
 index_nif(nif)
 }
 \arguments{
-\item{nif}{NIF dataset as created by make_raw_nif() and potentially modified for additional covariates}
+\item{nif}{NIF dataset as created by make_raw_nif() and potentially modified
+for additional covariates}
 }
 \value{
 A final NIF dataset including ID and REF fields

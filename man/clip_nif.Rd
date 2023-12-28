@@ -2,19 +2,19 @@
 % Please edit documentation in R/make_nif.R
 \name{clip_nif}
 \alias{clip_nif}
-\title{This function reduces a NIF data set on the subject level by excluding all administrations after
-the last observation}
+\title{This function reduces a NIF data set on the subject level by excluding all
+administrations after the last observation}
 \usage{
 clip_nif(nif)
 }
 \arguments{
-\item{nif}{NIF dataset as created by make_raw_nif() and potentially modified for
-additional covariates.}
+\item{nif}{NIF dataset as created by make_raw_nif() and potentially modified
+for additional covariates.}
 }
 \value{
 A NIF dataset
 }
 \description{
-This function reduces a NIF data set on the subject level by excluding all administrations after
-the last observation
+This function reduces a NIF data set on the subject level by excluding all
+administrations after the last observation
 }

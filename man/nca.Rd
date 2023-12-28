@@ -44,6 +44,6 @@ Non-compartmental analysis
 }
 \examples{
 nca(examplinib_nif)
-nca(examplinib_nif, group=c("FASTED", "SEX"), analyte="RS2023")
+nca(examplinib_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 
 }

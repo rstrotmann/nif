@@ -4,7 +4,7 @@
 \alias{baseline_covariates}
 \title{Extract baseline vital sign covariates from VS}
 \usage{
-baseline_covariates(vs, silent = F)
+baseline_covariates(vs, silent = FALSE)
 }
 \arguments{
 \item{vs}{The VS domain as data frame.}

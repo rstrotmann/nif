@@ -4,7 +4,7 @@
 \alias{check_missing_time}
 \title{Check for missing time in columns ending with "DTC"}
 \usage{
-check_missing_time(obj, verbose = T)
+check_missing_time(obj, verbose = TRUE)
 }
 \arguments{
 \item{obj}{The SDTM domain as data frame.}

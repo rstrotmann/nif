@@ -451,7 +451,7 @@ print.summary_nif <- function(x, ...) {
   cat(paste("NONMEM input file (NIF) data set summary\n\n"))
 
   cat(paste("Data from", sum(x$n_studies$N), "subjects across", length(x$studies)), "studies:\n")
-  cat(paste0(df.to.string(x$n_studies), "\n\n"))
+  cat(paste0(df_to_string(x$n_studies), "\n\n"))
 
   cat(paste0(
     "Males: ", x$n_males, ", females: ", x$n_females, " (",
@@ -459,28 +459,28 @@ print.summary_nif <- function(x, ...) {
   ))
 
   if (!is.null(x$renal_function)) {
-    cat(paste0("Renal function:\n", df.to.string(x$renal_function), "\n\n"))
+    cat(paste0("Renal function:\n", df_to_string(x$renal_function), "\n\n"))
   }
 
   cat(paste0("Analytes:\n", paste(x$analytes, collapse = ", "), "\n\n"))
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
-  cat(paste0(df.to.string(x$n_obs), "\n\n"))
+  cat(paste0(df_to_string(x$n_obs), "\n\n"))
 
   cat(paste0("Administered drugs:\n", paste(x$drugs, collapse = ", "), "\n\n"))
 
   cat("Dose levels:\n")
-  cat(df.to.string(x$dose_levels))
+  cat(df_to_string(x$dose_levels))
   cat("\n\n")
 
   dr_summary <- lapply(x$dose_red_sbs, length) %>%
     data.frame()
   cat("Subjects with dose reductions\n")
-  cat(df.to.string((dr_summary)))
+  cat(df_to_string((dr_summary)))
   cat("\n\n")
 
   cat("Treatment duration overview:\n")
-  cat(df.to.string(x$administration_duration))
+  cat(df_to_string(x$administration_duration))
   invisible(x)
 }
 

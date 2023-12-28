@@ -4,10 +4,10 @@
 \alias{new_sdtm}
 \title{SDTM class constructor, creating a sdtm object from a set of SDTM domains}
 \usage{
-new_sdtm(sdtm.data)
+new_sdtm(sdtm_data)
 }
 \arguments{
-\item{sdtm.data, }{a list of SDTM domains as data.frames}
+\item{sdtm_data, }{a list of SDTM domains as data.frames}
 }
 \value{
 A sdtm object

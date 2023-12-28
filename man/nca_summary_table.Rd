@@ -27,5 +27,5 @@ A data frame
 PK parameter summary statistics table by dose
 }
 \examples{
-nca_summary_table(nca(examplinib_sad_nif, analyte="RS2023"))
+nca_summary_table(nca(examplinib_sad_nif, analyte = "RS2023"))
 }

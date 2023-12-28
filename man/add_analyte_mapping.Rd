@@ -17,8 +17,8 @@ add_analyte_mapping(obj, extrt = "", pctestcd = "")
 In some studies, multiple drugs are co-administered, and there may be plasma
 concentration data from different parent drugs.
 In order to appropriately correlate observations with administrations, the
-\code{\link[=make_nif]{make_nif()}} algorithm needs to know which analyte (PCTESTCD within PC) belongs
-to which drug (EXTRT within EX). If the respective names differ,
+\code{\link[=make_nif]{make_nif()}} algorithm needs to know which analyte (PCTESTCD within PC)
+belongs to which drug (EXTRT within EX). If the respective names differ,
 add_treatment_mapping() can be used to attach this information to the SDTM
 object. Multiple mappings may be needed.
 }

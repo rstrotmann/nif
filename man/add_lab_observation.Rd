@@ -4,7 +4,7 @@
 \alias{add_lab_observation}
 \title{Add lab value as observation}
 \usage{
-add_lab_observation(obj, lb, lbtestcd, cmt = NULL, lbspec = "", silent = F)
+add_lab_observation(obj, lb, lbtestcd, cmt = NULL, lbspec = "", silent = FALSE)
 }
 \arguments{
 \item{obj}{The NIF data set.}

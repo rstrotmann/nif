@@ -4,7 +4,7 @@
 \alias{check_date_format}
 \title{Check for incomplete date format in columns ending with "DTC"}
 \usage{
-check_date_format(obj, verbose = T)
+check_date_format(obj, verbose = TRUE)
 }
 \arguments{
 \item{obj}{The SDTM domain as data frame}

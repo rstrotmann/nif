@@ -10,7 +10,7 @@ make_admin(
   drug_mapping,
   cut.off.date,
   impute.missing.end.time = TRUE,
-  silent = F
+  silent = FALSE
 )
 }
 \arguments{

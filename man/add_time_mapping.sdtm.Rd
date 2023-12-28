@@ -23,7 +23,8 @@ string. 'add_time_mapping()' can be used to explicitly define the nominal
 observation times (in hours) for the values of PCTPT used in the PC domain.
 }
 \examples{
-sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
+sdtm_object <- add_time_mapping(examplinib,
+  "PREDOSE" = 0,
   "HOUR 0.5" = 0.5,
   "HOUR 1" = 1,
   "HOUR 1.5" = 1.5,
@@ -39,7 +40,8 @@ sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
   "HOUR 72" = 72,
   "HOUR 96" = 96,
   "HOUR 144" = 144,
-  "HOUR 168" = 168)
+  "HOUR 168" = 168
+)
 }
 \seealso{
 \code{\link[=suggest]{suggest()}}

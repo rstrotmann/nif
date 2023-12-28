@@ -10,10 +10,10 @@
 #' @export
 #'
 #' @examples
-#' is.iso_date_time("2023-09-27T15:04")
-#' is.iso_date_time("2023-09-27T15:04:00")
-#' is.iso_date_time(c("2023-03-21T11:55", "2023-07-18"))
-is.iso_date_time <- function(x) {
+#' is_iso_date_time("2023-09-27T15:04")
+#' is_iso_date_time("2023-09-27T15:04:00")
+#' is_iso_date_time(c("2023-03-21T11:55", "2023-07-18"))
+is_iso_date_time <- function(x) {
   str_detect(x, "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}")
 }
 
@@ -30,9 +30,9 @@ is.iso_date_time <- function(x) {
 #' @export
 #'
 #' @examples
-#' is.iso_date("2023-09-27")
-#' is.iso_date(c("2023-03-21T11:55", "2023-07-18"))
-is.iso_date <- function(x) {
+#' is_iso_date("2023-09-27")
+#' is_iso_date(c("2023-03-21T11:55", "2023-07-18"))
+is_iso_date <- function(x) {
   str_detect(x, "\\d{4}-\\d{2}-\\d{2}")
 }
 
@@ -44,16 +44,16 @@ is.iso_date <- function(x) {
 #'
 #' @return The unchanged SDTM domain.
 #' @export
-check_date_format <- function(obj, verbose = T) {
+check_date_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ !(is.iso_date(.) | . == ""))) %>%
+    filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == ""))) %>%
     select(c(USUBJID, DOMAIN, ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Incomplete date format in ", nrow(temp), " rows")
     if (verbose) {
-      out <- paste0(out, ":\n", df.to.string(temp), "\n")
+      out <- paste0(out, ":\n", df_to_string(temp), "\n")
     }
     message(out)
   }
@@ -69,22 +69,22 @@ check_date_format <- function(obj, verbose = T) {
 #'
 #' @return The filtered SDTM domain as data frame.
 #' @export
-filter_correct_date_format <- function(obj, verbose = T, silent = F) {
+filter_correct_date_format <- function(obj, verbose = TRUE, silent = FALSE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ !(is.iso_date(.) | . == "")))
+    filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == "")))
 
   if (nrow(temp) > 0) {
     out <- paste0(
       domain, ": ", nrow(temp),
       " rows containing DTC fields with incomplete date format ignored!"
     )
-    if (verbose & !silent) {
+    if (verbose && !silent) {
       out <- paste0(out, "\n")
     }
     message(out)
     obj <- obj %>%
-      filter(if_all(ends_with("DTC"), ~ (is.iso_date(.) | . == "")))
+      filter(if_all(ends_with("DTC"), ~ (is_iso_date(.) | . == "")))
   }
   return(obj)
 }
@@ -97,16 +97,17 @@ filter_correct_date_format <- function(obj, verbose = T, silent = F) {
 #'
 #' @return The unchanged SDTM domain.
 #' @export
-check_date_time_format <- function(obj, verbose = T) {
+check_date_time_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ !(is.iso_date_time(.) | . == ""))) %>%
+    filter(if_any(ends_with("DTC"), ~ !(is_iso_date_time(.) | . == ""))) %>%
     select(c(USUBJID, DOMAIN, ends_with("DTC")))
 
   if (nrow(temp) > 0) {
-    out <- paste0(domain, ": Incomplete date-time format in ", nrow(temp), " rows")
+    out <- paste0(domain, ": Incomplete date-time format in ", nrow(temp),
+                  " rows")
     if (verbose) {
-      out <- paste0(out, ":\n", df.to.string(temp), "\n")
+      out <- paste0(out, ":\n", df_to_string(temp), "\n")
     }
     message(out)
   }
@@ -121,16 +122,17 @@ check_date_time_format <- function(obj, verbose = T) {
 #'
 #' @return The unchanged SDTM domain.
 #' @export
-check_missing_time <- function(obj, verbose = T) {
+check_missing_time <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ is.iso_date(.) & !(is.iso_date_time(.)))) %>%
+    filter(if_any(ends_with("DTC"),
+                  ~ is_iso_date(.) & !(is_iso_date_time(.)))) %>%
     select(c(USUBJID, DOMAIN, ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Missing time in ", nrow(temp), " rows")
     if (verbose) {
-      out <- paste0(out, ":\n", df.to.string(temp), "\n")
+      out <- paste0(out, ":\n", df_to_string(temp), "\n")
     }
     message(out)
   }
@@ -149,7 +151,7 @@ check_missing_time <- function(obj, verbose = T) {
 #'
 #' @return The unchanged EX domain.
 #' @export
-check_last_EXENDTC <- function(ex, verbose = T) {
+check_last_exendtc <- function(ex, verbose = TRUE) {
   domain <- ex %>% distinct(DOMAIN)
 
   temp <- ex %>%
@@ -158,7 +160,7 @@ check_last_EXENDTC <- function(ex, verbose = T) {
     group_by(USUBJID, EXTRT) %>%
     arrange(USUBJID, EXTRT, EXSTDTC) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
-    filter(LAST_ADMIN == T, is.na(EXENDTC)) %>%
+    filter(LAST_ADMIN == TRUE, is.na(EXENDTC)) %>%
     select(USUBJID, DOMAIN, EXTRT, EXSTDTC, EXENDTC)
 
   if (nrow(temp) > 0) {
@@ -167,7 +169,7 @@ check_last_EXENDTC <- function(ex, verbose = T) {
       nrow(temp), " rows"
     )
     if (verbose) {
-      out <- paste0(out, ":\n", df.to.string(temp), "\n")
+      out <- paste0(out, ":\n", df_to_string(temp), "\n")
     }
     message(out)
   }
@@ -182,9 +184,9 @@ check_last_EXENDTC <- function(ex, verbose = T) {
 #'
 #' @return Nothing.
 #' @export
-check_sdtm <- function(sdtm, verbose = T) {
+check_sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in DM
-  dummy <- sdtm %>%
+  sdtm %>%
     domain("dm") %>%
     filter(ACTARMCD != "SCRNFAIL") %>%
     select(USUBJID, DOMAIN, RFENDTC) %>%
@@ -192,18 +194,19 @@ check_sdtm <- function(sdtm, verbose = T) {
     check_missing_time(verbose = verbose)
 
   ## Date-times in EX
-  dummy <- sdtm %>%
+  sdtm %>%
     domain("ex") %>%
     check_date_format(verbose = verbose) %>%
     filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose) %>%
-    check_last_EXENDTC(verbose = verbose)
+    check_last_exendtc(verbose = verbose)
 
   ## Date-times in PC
-  dummy <- sdtm %>%
+  sdtm %>%
     domain("pc") %>%
     select(USUBJID, DOMAIN, PCDTC) %>%
     check_date_format(verbose = verbose) %>%
     filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose)
+  return(invisible(NULL))
 }

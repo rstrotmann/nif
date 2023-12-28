@@ -87,7 +87,7 @@ test_that("date conversion works correctly", {
 
 
 
-# test_that("impute_missing_EXENDTC works as intended", {
+# test_that("impute_missing_exendtc works as intended", {
 #   ex <- tribble(
 #     ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,
 #     1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00",
@@ -102,17 +102,17 @@ test_that("date conversion works correctly", {
 #     4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30",
 #     4,        "TEST", "2022-08-08T14:35", "2022-08-21T12:16")
 #
-#   temp <- impute_missing_EXENDTC(ex, cut.off.date=now())
+#   temp <- impute_missing_exendtc(ex, cut.off.date=now())
 #   expect_equal(any(is.na(temp$EXENDTC)), FALSE)
 # })
 
 
-# This test confirms that `impute_missing_EXENDTC_time` completes missing
+# This test confirms that `impute_missing_exendtc_time` completes missing
 # time information in EXENDTC from the respective EXSTDTC field.
 # The missing time information in rows 3, 7 and 10 in the test EX will be
 # imputed. For row 6 where no date is available, too, the function will return
 # 'NA'.
-test_that("impute_missing_EXENDTC_time works as intended", {
+test_that("impute_missing_exendtc_time works as intended", {
   ex <- tribble(
     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
     1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
@@ -128,7 +128,7 @@ test_that("impute_missing_EXENDTC_time works as intended", {
     lubrify_dates()
 
   ex %>%
-    impute_missing_EXENDTC_time(silent=T) %>%
+    impute_missing_exendtc_time(silent=T) %>%
     mutate(EXENDTC_has_time=has_time(EXENDTC)) %>%
     summarize(sum=sum(EXENDTC_has_time==F, na.rm=T)) %>%
     as.numeric() %>%
@@ -137,7 +137,7 @@ test_that("impute_missing_EXENDTC_time works as intended", {
 })
 
 
-# This test confirms that `impute_missing_EXENDTC_to_RFENDTC` completes missing
+# This test confirms that `impute_exendtc_to_rfendtc` completes missing
 # EXENDTC information to RFENDTC for the last administration in a subject for a
 # given EXTRT, provided it is contained in the DM domain.
 # In the below test data, subjects 1 and 4 have missing EXENDTC information on
@@ -145,7 +145,7 @@ test_that("impute_missing_EXENDTC_time works as intended", {
 # as the EXENDT. This is not the case for subject 4. In addition, subject 1 has
 # a missing EXENDTC on a non-last administration (row 3). This value is not
 # imputed by this function, either.
-test_that("impute_missing_EXENDTC_to_RFENDTC works as intended", {
+test_that("impute_exendtc_to_rfendtc works as intended", {
   ex <- tribble(
     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
     1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
@@ -172,7 +172,7 @@ test_that("impute_missing_EXENDTC_to_RFENDTC works as intended", {
     lubrify_dates()
 
   ex %>%
-    impute_missing_EXENDTC_to_RFENDTC(dm, silent=F) %>%
+    impute_exendtc_to_rfendtc(dm, silent=F) %>%
     summarize(sum=sum(is.na(EXENDTC))) %>%
     as.numeric() %>%
     expect_equal(2)

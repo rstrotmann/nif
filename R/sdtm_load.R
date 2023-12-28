@@ -4,15 +4,15 @@
 #' of NIF files from a folder. It assumes that DM, EX, PC and VS are available
 #' at this location and will throw an error if not.
 #'
-#' @param data.path Path to the required SDTM files in .sas7bdat format.
+#' @param data_path Path to the required SDTM files in .sas7bdat format.
 #' @param ... Further optional
 #' parameters may specify the individual SDTM domains to be loaded (lowercase,
 #' no file extensions). If no further parameters are given, the standard set of
 #' dm, ex, pc and vs are loaded.
 #' @return A named list of the relevant SDTM domains as data.frames
 #' @export
-read_sdtm_sas <- function(data.path, ...) {
-  pparameters <- c(as.list(environment()), list(...))
+read_sdtm_sas <- function(data_path, ...) {
+  parameters <- c(as.list(environment()), list(...))
   fs <- as.character(parameters[-1])
   if (length(fs) == 0) {
     fs <- c("dm", "ex", "pc", "vs")
@@ -20,7 +20,7 @@ read_sdtm_sas <- function(data.path, ...) {
   out <- list()
   for (domain in fs) {
     out[[domain]] <- as.data.frame(haven::read_sas(file.path(
-      data.path, paste0(domain, ".sas7bdat")
+      data_path, paste0(domain, ".sas7bdat")
     )))
   }
   new_sdtm(out)
@@ -33,14 +33,14 @@ read_sdtm_sas <- function(data.path, ...) {
 #' of NIF files from a folder. It assumes that DM, EX, PC and VS are available
 #' at this location and will throw an error if not.
 #'
-#' @param data.path Path to the required SDTM files in .xpt format.
+#' @param data_path Path to the required SDTM files in .xpt format.
 #' @param ... Further optional
 #' parameters may specify the individual SDTM domains to be loaded (lowercase,
 #' no file extensions). If no further parameters are given, the standard set of
 #' dm, ex, pc and vs are loaded.
 #' @return A named list of the relevant SDTM domains as data.frames
 #' @export
-read_sdtm_xpt <- function(data.path, ...) {
+read_sdtm_xpt <- function(data_path, ...) {
   parameters <- c(as.list(environment()), list(...))
   fs <- as.character(parameters[-1])
   if (length(fs) == 0) {
@@ -49,7 +49,7 @@ read_sdtm_xpt <- function(data.path, ...) {
   out <- list()
   for (domain in fs) {
     out[[domain]] <- as.data.frame(haven::read_xpt(file.path(
-      data.path, paste0(domain, ".xpt")
+      data_path, paste0(domain, ".xpt")
     )))
   }
   new_sdtm(out)

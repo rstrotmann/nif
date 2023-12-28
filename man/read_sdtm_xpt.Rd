@@ -4,10 +4,10 @@
 \alias{read_sdtm_xpt}
 \title{Load SDTM data from xpt files}
 \usage{
-read_sdtm_xpt(data.path, ...)
+read_sdtm_xpt(data_path, ...)
 }
 \arguments{
-\item{data.path}{Path to the required SDTM files in .xpt format.}
+\item{data_path}{Path to the required SDTM files in .xpt format.}
 
 \item{...}{Further optional
 parameters may specify the individual SDTM domains to be loaded (lowercase,

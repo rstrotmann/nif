@@ -1,11 +1,11 @@
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
-#' @param sdtm.data, a list of SDTM domains as data.frames
+#' @param sdtm_data, a list of SDTM domains as data.frames
 #' @import dplyr
 #' @returns A sdtm object
 #' @export
-new_sdtm <- function(sdtm.data) {
-  domains <- sdtm.data
+new_sdtm <- function(sdtm_data) {
+  domains <- sdtm_data
   vs <- domains[["vs"]]
   ex <- domains[["ex"]]
   pc <- domains[["pc"]]
@@ -58,7 +58,8 @@ summary.sdtm <- function(object, ...) {
   out <- list(
     study = object$domains[["dm"]] %>%
       distinct(STUDYID) %>%
-      pull(STUDYID) %>% as.character(),
+      pull(STUDYID) %>%
+      as.character(),
     subjects = subjects,
     n_subs = length(subjects),
     pc_timepoints = object$domains[["pc"]] %>%
@@ -72,7 +73,8 @@ summary.sdtm <- function(object, ...) {
       distinct(EXTRT, EXDOSE),
     specimems = object$domains[["pc"]] %>%
       dplyr::distinct(PCSPEC) %>%
-      pull(PCSPEC) %>% as.character(),
+      pull(PCSPEC) %>%
+      as.character(),
     analytes = object$domains[["pc"]] %>%
       dplyr::distinct(PCTEST, PCTESTCD),
     analyte_mapping = object$analyte_mapping,
@@ -139,8 +141,8 @@ print.summary_sdtm <- function(x, ...) {
 #' In some studies, multiple drugs are co-administered, and there may be plasma
 #' concentration data from different parent drugs.
 #' In order to appropriately correlate observations with administrations, the
-#' [make_nif()] algorithm needs to know which analyte (PCTESTCD within PC) belongs
-#' to which drug (EXTRT within EX). If the respective names differ,
+#' [make_nif()] algorithm needs to know which analyte (PCTESTCD within PC)
+#' belongs to which drug (EXTRT within EX). If the respective names differ,
 #' add_treatment_mapping() can be used to attach this information to the SDTM
 #' object. Multiple mappings may be needed.
 #'
@@ -340,7 +342,7 @@ subject_info.sdtm <- function(obj, id) {
 #' @import dplyr
 #' @export
 suggest <- function(obj) {
-  n.suggestion <- 1
+  n_suggestion <- 1
 
   arms <- obj$dm %>%
     dplyr::filter(ACTARMCD != "") %>%
@@ -348,13 +350,14 @@ suggest <- function(obj) {
 
   if (nrow(arms) > 1) {
     message(paste0(
-      n.suggestion, ". There are ", nrow(arms), " arms defined in DM (see below).\n",
+      n_suggestion, ". There are ", nrow(arms),
+      " arms defined in DM (see below).\n",
       "   Consider defining a PART or ARM variable in the nif dataset, \n",
       "   filtering for a particular arm, or defining a covariate based\n",
       "   on ACTARMCD.\n\n",
-      df.to.string(arms, indent = "   "), "\n"
+      df_to_string(arms, indent = "   "), "\n"
     ))
-    n.suggestion <- n.suggestion + 1
+    n_suggestion <- n_suggestion + 1
   }
 
   specimems <- obj$pc %>%
@@ -363,13 +366,14 @@ suggest <- function(obj) {
 
   if (nrow(specimems) > 1) {
     message(paste0(
-      n.suggestion, ". There are data from ", nrow(specimems),
+      n_suggestion, ". There are data from ", nrow(specimems),
       " different sample specimem types in PC\n",
       "   (see below).\n",
-      "   Consider filtering for a specific specimem, or defining CMT accordingly.\n\n",
-      df.to.string(specimems, indent = "   "), "\n"
+      "   Consider filtering for a specific specimem, or defining CMT",
+      "accordingly.\n\n",
+      df_to_string(specimems, indent = "   "), "\n"
     ))
-    n.suggestion <- n.suggestion + 1
+    n_suggestion <- n_suggestion + 1
   }
 
   treatments <- obj$ex %>%
@@ -377,34 +381,35 @@ suggest <- function(obj) {
 
   if (nrow(treatments) > 1) {
     message(paste0(
-      n.suggestion, ". There are ", nrow(treatments), " different treatments ",
-      "in EX (see below).\n", "   Consider filtering for a specific treatment.\n\n",
-      df.to.string(treatments, indent = "   "), "\n"
+      n_suggestion, ". There are ", nrow(treatments), " different treatments ",
+      "in EX (see below).\n",
+      "   Consider filtering for a specific treatment.\n\n",
+      df_to_string(treatments, indent = "   "), "\n"
     ))
-    n.suggestion <- n.suggestion + 1
+    n_suggestion <- n_suggestion + 1
   }
 
   analytes <- obj$pc %>%
     dplyr::distinct(PCTESTCD) %>%
     dplyr::pull(PCTESTCD)
 
-  no.analyte.treatments <- treatments %>%
+  no_analyte_treatments <- treatments %>%
     dplyr::mutate(no.analyte = !(EXTRT %in% analytes)) %>%
     dplyr::filter(no.analyte == TRUE) %>%
     dplyr::select(EXTRT)
 
-  if (nrow(no.analyte.treatments) > 0) {
+  if (nrow(no_analyte_treatments) > 0) {
     message(paste0(
-      n.suggestion, ". There are treatments (EXTRT) without analytes of the ",
+      n_suggestion, ". There are treatments (EXTRT) without analytes of the ",
       "same name\n",
       "   (see below).\n",
       "   Consider adding a treatment-analyte mapping to the sdtm object\n",
       "   See '?add_analyte_mapping' for additional information.\n\n",
-      df.to.string(no.analyte.treatments, indent = "   "), "\n\n",
+      df_to_string(no_analyte_treatments, indent = "   "), "\n\n",
       "   Available analytes:\n\n",
-      df.to.string(obj$pc %>% dplyr::distinct(PCTESTCD), indent = "   "), "\n\n"
+      df_to_string(obj$pc %>% dplyr::distinct(PCTESTCD), indent = "   "), "\n\n"
     ))
-    n.suggestion <- n.suggestion + 1
+    n_suggestion <- n_suggestion + 1
   }
 
   if (!("PCELTM" %in% names(obj$pc))) {
@@ -414,14 +419,20 @@ suggest <- function(obj) {
     temp <- paste(sapply(unique(obj$pc[, "PCTPT"]), line), collapse = "\n")
 
     message(paste0(
-      n.suggestion, ". By default, 'make_nif()' derives the nominal sampling time from the permissible field\n",
-      "   PCELTM in PC. However, in this data set, PCELTM is not defined, and the nominal time\n",
-      "   must be manually derived from PCTPT. Please provide a time mapping using 'add_time_mapping()',\n",
-      "   e.g., by adding the below code after creating the sdtm object. Obviously, you need to\n",
-      "   replace the zeros with the respective time after admininstation in hours:\n\n",
+      n_suggestion,
+      ". By default, 'make_nif()' derives the nominal sampling time from the ",
+      "permissible field\n",
+      "   PCELTM in PC. However, in this data set, PCELTM is not defined, and ",
+      "the nominal time\n",
+      "   must be manually derived from PCTPT. Please provide a time mapping ",
+      "using 'add_time_mapping()',\n",
+      "   e.g., by adding the below code after creating the sdtm object. ",
+      "Obviously, you need to\n",
+      "   replace the zeros with the respective time after admininstation in ",
+      "hours:\n\n",
       "   %>% add_time_mapping(\n",
       substr(temp, 1, nchar(temp) - 1), ")\n"
     ))
-    n.suggestion <- n.suggestion + 1
+    n_suggestion <- n_suggestion + 1
   }
 }

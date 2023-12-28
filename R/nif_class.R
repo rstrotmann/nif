@@ -27,27 +27,27 @@ print.nif <- function(x, ...) {
     length(studies(x)),
     "studies\n"
   ))
-  n.obs <- x %>%
+  n_obs <- x %>%
     filter(EVID == 0) %>%
     nrow()
   cat(paste(
-    n.obs, "observations from",
+    n_obs, "observations from",
     subjects(x) %>% nrow(), "subjects\n"
   ))
 
-  n.sex <- x %>%
+  n_sex <- x %>%
     dplyr::distinct(USUBJID, SEX) %>%
     dplyr::group_by(SEX) %>%
     dplyr::summarize(n = n())
 
-  n_males <- n.sex %>%
+  n_males <- n_sex %>%
     dplyr::filter(SEX == 0) %>%
     dplyr::pull(n)
   if (length(n_males) == 0) {
     n_males <- 0
   }
 
-  n_females <- n.sex %>%
+  n_females <- n_sex %>%
     dplyr::filter(SEX == 1) %>%
     dplyr::pull(n)
   if (length(n_females) == 0) {
@@ -69,7 +69,7 @@ print.nif <- function(x, ...) {
     as.data.frame()
 
   temp <- temp %>%
-    df.to.string()
+    df_to_string()
   cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
   invisible(x)
 }
@@ -125,7 +125,6 @@ subject_info.nif <- function(obj, id) {
     add_TRTDY() %>%
     filter(EVID == 1) %>%
     select(USUBJID, TIME, ANALYTE, DTC, TRTDY) %>%
-    # mutate(DAY = floor(TIME/24) +1)
     arrange(ANALYTE, TIME) %>%
     select(ANALYTE, TIME, TRTDY) %>%
     as.data.frame()
@@ -236,7 +235,9 @@ rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
     as.data.frame() %>%
     filter(EVID == 0, ANALYTE == analyte) %>%
     group_by(ID) %>%
-    mutate(end_rich = case_when(is.na(max_time) ~ max(TIME), .default = max_time)) %>%
+    mutate(end_rich = case_when(is.na(max_time) ~ max(TIME),
+      .default = max_time
+    )) %>%
     ungroup() %>%
     filter(TIME < end_rich) %>%
     group_by(ID, USUBJID) %>%
@@ -299,7 +300,10 @@ dose_levels <- function(obj, grouping = NULL) {
     arrange(ID, TIME) %>%
     filter(TIME == min(TIME)) %>%
     select(ID, ANALYTE, DOSE, any_of(grouping)) %>%
-    pivot_wider(names_from = "ANALYTE", values_from = "DOSE", values_fill = 0) %>%
+    pivot_wider(
+      names_from = "ANALYTE",
+      values_from = "DOSE", values_fill = 0
+    ) %>%
     group_by(across(c(-ID))) %>%
     summarize(N = n()) %>%
     as.data.frame()
@@ -344,7 +348,7 @@ head <- function(obj, n = 6) {
 write_csv.nif <- function(obj, filename) {
   temp <- obj %>%
     dplyr::mutate(across(c("TIME", "LNDV"), round, 3))
-  write.csv(temp, filename, quote = F, row.names = F)
+  write.csv(temp, filename, quote = FALSE, row.names = FALSE)
 }
 
 
@@ -576,7 +580,9 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
       as.data.frame() %>%
-      mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT, molar = T)) %>%
+      mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
+        molar = TRUE
+      )) %>%
       new_nif()
   } else {
     obj %>%
@@ -630,7 +636,7 @@ add_cfb <- function(obj, summary_function = median) {
   obj %>%
     as.data.frame() %>%
     group_by(ID, ANALYTE) %>%
-    mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = T)) %>%
+    mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
     mutate(DVCFB = DV - DVBL) %>%
     new_nif()
 }
@@ -640,7 +646,8 @@ add_cfb <- function(obj, summary_function = median) {
 #'
 #' This function adds a variable, `OPDI`, to the NIF object that indicates the
 #' number of observations per analyte and dosing interval. This field can be
-#' helpful to identify dosing intervals across which rich sampling was conducted.
+#' helpful to identify dosing intervals across which rich sampling was
+#' conducted.
 #'
 #' @param obj A NIF object.
 #'
