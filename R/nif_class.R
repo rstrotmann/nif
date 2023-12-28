@@ -122,7 +122,7 @@ subject_info.nif <- function(obj, id) {
     pull(PARENT)
 
   out$administrations <- temp %>%
-    add_TRTDY() %>%
+    add_trtdy() %>%
     filter(EVID == 1) %>%
     select(USUBJID, TIME, ANALYTE, DTC, TRTDY) %>%
     arrange(ANALYTE, TIME) %>%
