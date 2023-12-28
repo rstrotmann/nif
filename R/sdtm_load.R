@@ -12,15 +12,16 @@
 #' @return A named list of the relevant SDTM domains as data.frames
 #' @export
 read_sdtm_sas <- function(data.path, ...) {
-  parameters <- c(as.list(environment()), list(...))
+  pparameters <- c(as.list(environment()), list(...))
   fs <- as.character(parameters[-1])
-  if(length(fs)==0) {
+  if (length(fs) == 0) {
     fs <- c("dm", "ex", "pc", "vs")
   }
   out <- list()
   for (domain in fs) {
     out[[domain]] <- as.data.frame(haven::read_sas(file.path(
-      data.path, paste0(domain, ".sas7bdat"))))
+      data.path, paste0(domain, ".sas7bdat")
+    )))
   }
   new_sdtm(out)
 }
@@ -42,13 +43,14 @@ read_sdtm_sas <- function(data.path, ...) {
 read_sdtm_xpt <- function(data.path, ...) {
   parameters <- c(as.list(environment()), list(...))
   fs <- as.character(parameters[-1])
-  if(length(fs)==0) {
+  if (length(fs) == 0) {
     fs <- c("dm", "ex", "pc", "vs")
   }
   out <- list()
   for (domain in fs) {
     out[[domain]] <- as.data.frame(haven::read_xpt(file.path(
-      data.path, paste0(domain, ".xpt"))))
+      data.path, paste0(domain, ".xpt")
+    )))
   }
   new_sdtm(out)
 }

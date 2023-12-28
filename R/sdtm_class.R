@@ -1,11 +1,10 @@
-
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
 #' @param sdtm.data, a list of SDTM domains as data.frames
 #' @import dplyr
 #' @returns A sdtm object
 #' @export
-new_sdtm <- function(sdtm.data){
+new_sdtm <- function(sdtm.data) {
   domains <- sdtm.data
   vs <- domains[["vs"]]
   ex <- domains[["ex"]]
@@ -13,27 +12,27 @@ new_sdtm <- function(sdtm.data){
   dm <- domains[["dm"]]
 
   temp <- list(
-    study=dm[1,"STUDYID"],
-    subjects=pc %>%
+    study = dm[1, "STUDYID"],
+    subjects = pc %>%
       dplyr::distinct(USUBJID),
-    specimens=pc %>%
+    specimens = pc %>%
       dplyr::distinct(PCSPEC),
-    analytes=pc %>%
+    analytes = pc %>%
       dplyr::distinct(PCTEST, PCTESTCD),
-    treatments=ex %>%
+    treatments = ex %>%
       dplyr::distinct(EXTRT),
-    doses=ex %>%
+    doses = ex %>%
       dplyr::distinct(EXDOSE),
-    arms=dm %>%
+    arms = dm %>%
       dplyr::distinct(ACTARM, ACTARMCD),
-    domains=domains,
-    pc=pc,
-    dm=dm,
-    ex=ex,
-    vs=vs,
-    analyte_mapping=data.frame(),
-    metabolite_mapping=data.frame(),
-    time_mapping=data.frame()
+    domains = domains,
+    pc = pc,
+    dm = dm,
+    ex = ex,
+    vs = vs,
+    analyte_mapping = data.frame(),
+    metabolite_mapping = data.frame(),
+    time_mapping = data.frame()
   )
 
   class(temp) <- "sdtm"
@@ -50,7 +49,7 @@ new_sdtm <- function(sdtm.data){
 #' @return A sdtm_summary object.
 #' @export
 summary.sdtm <- function(object, ...) {
-  subjects = object$domains[["pc"]] %>%
+  subjects <- object$domains[["pc"]] %>%
     filter(!is.na(PCSTRESN)) %>%
     dplyr::distinct(USUBJID) %>%
     pull(USUBJID) %>%
@@ -64,7 +63,7 @@ summary.sdtm <- function(object, ...) {
     n_subs = length(subjects),
     pc_timepoints = object$domains[["pc"]] %>%
       dplyr::distinct(across(any_of(c("PCTPT", "PCTPTNUM")))),
-    domains=names(object$domains),
+    domains = names(object$domains),
     treatments = object$domains[["ex"]] %>%
       dplyr::distinct(EXTRT),
     arms = object$domains[["dm"]] %>%
@@ -97,35 +96,35 @@ print.summary_sdtm <- function(x, ...) {
   cat(paste("Study", x$study))
   cat(paste(" with", x$n_subs, "subjects providing PC data.\n"))
   cat("SDTM domains: ")
-  cat(paste(x$domains, collapse=", "))
+  cat(paste(x$domains, collapse = ", "))
 
   cat("\n\nArms:\n")
-  print(x$arms, right=FALSE, justify=FALSE)
+  print(x$arms, right = FALSE, justify = FALSE)
 
   cat("\nTreatments:\n")
-  print(x$treatments %>% as.data.frame(), right=FALSE)
+  print(x$treatments %>% as.data.frame(), right = FALSE)
   cat("\nSpecimens:\n")
-  print(x$specimens, right=FALSE)
+  print(x$specimens, right = FALSE)
   cat("\nAnalytes:\n")
-  print(x$analytes, right=FALSE)
+  print(x$analytes, right = FALSE)
 
   cat("\nTreatment-to-analyte mappings:\n")
-  if(nrow(x$analyte_mapping)>0){
-    print(x$analyte_mapping, right=FALSE)
+  if (nrow(x$analyte_mapping) > 0) {
+    print(x$analyte_mapping, right = FALSE)
   } else {
     cat("none\n")
   }
 
   cat("\nParent-to-metabolite mappings:\n")
-  if(nrow(x$metabolite_mapping)>0){
-    print(x$metabolite_mapping, right=FALSE)
+  if (nrow(x$metabolite_mapping) > 0) {
+    print(x$metabolite_mapping, right = FALSE)
   } else {
     cat("none\n")
   }
 
   cat("\nTime mappings:\n")
-  if(nrow(x$time_mapping)>0){
-    print(x$time_mapping, right=FALSE)
+  if (nrow(x$time_mapping) > 0) {
+    print(x$time_mapping, right = FALSE)
   } else {
     cat("none\n")
   }
@@ -153,10 +152,11 @@ print.summary_sdtm <- function(x, ...) {
 #' sdtm_object <- add_analyte_mapping(examplinib, "EXAMPLINIB", "RS2023")
 #'
 #' @export
-add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
+add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
-    data.frame("EXTRT"=extrt, "PCTESTCD"=pctestcd))
+    data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd)
+  )
   return(obj)
 }
 
@@ -168,7 +168,7 @@ add_analyte_mapping <- function(obj, extrt="", pctestcd="") {
 #' @param pctestcd The analyte as defined in PC.
 #' @description `r lifecycle::badge("deprecated")`
 #' @export
-add_mapping <- function(obj, extrt="", pctestcd="") {
+add_mapping <- function(obj, extrt = "", pctestcd = "") {
   lifecycle::deprecate_warn("0.19.0", "add_mapping()", "add_analyte_mapping()")
   UseMethod("add_analyte_mapping")
 }
@@ -189,12 +189,15 @@ add_mapping <- function(obj, extrt="", pctestcd="") {
 #' @export
 add_metabolite_mapping <- function(
     obj,
-    pctestcd_parent="",
-    pctestcd_metabolite=""
-    ) {
+    pctestcd_parent = "",
+    pctestcd_metabolite = "") {
   obj$metabolite_mapping <- rbind(
     obj$metabolite_mapping,
-    data.frame("PCTESTCD_parent"=pctestcd_parent, "PCTESTCD_metab"=pctestcd_metabolite))
+    data.frame(
+      "PCTESTCD_parent" = pctestcd_parent,
+      "PCTESTCD_metab" = pctestcd_metabolite
+    )
+  )
   return(obj)
 }
 
@@ -214,7 +217,8 @@ add_metabolite_mapping <- function(
 #' @export
 #' @seealso [suggest()]
 #' @examples
-#' sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
+#' sdtm_object <- add_time_mapping(examplinib,
+#'   "PREDOSE" = 0,
 #'   "HOUR 0.5" = 0.5,
 #'   "HOUR 1" = 1,
 #'   "HOUR 1.5" = 1.5,
@@ -230,7 +234,8 @@ add_metabolite_mapping <- function(
 #'   "HOUR 72" = 72,
 #'   "HOUR 96" = 96,
 #'   "HOUR 144" = 144,
-#'   "HOUR 168" = 168)
+#'   "HOUR 168" = 168
+#' )
 add_time_mapping <- function(obj, ...) {
   UseMethod("add_time_mapping")
 }
@@ -251,7 +256,8 @@ add_time_mapping <- function(obj, ...) {
 #' @export
 #' @seealso [suggest()]
 #' @examples
-#' sdtm_object <- add_time_mapping(examplinib, "PREDOSE" = 0,
+#' sdtm_object <- add_time_mapping(examplinib,
+#'   "PREDOSE" = 0,
 #'   "HOUR 0.5" = 0.5,
 #'   "HOUR 1" = 1,
 #'   "HOUR 1.5" = 1.5,
@@ -267,10 +273,11 @@ add_time_mapping <- function(obj, ...) {
 #'   "HOUR 72" = 72,
 #'   "HOUR 96" = 96,
 #'   "HOUR 144" = 144,
-#'   "HOUR 168" = 168)
+#'   "HOUR 168" = 168
+#' )
 add_time_mapping.sdtm <- function(obj, ...) {
   temp <- unlist(c(as.list(environment())[-1], list(...)))
-  mapping <- data.frame(PCTPT=names(temp), NTIME=as.numeric(temp))
+  mapping <- data.frame(PCTPT = names(temp), NTIME = as.numeric(temp))
   obj$time_mapping <- rbind(obj$time_mapping, mapping)
   return(obj)
 }
@@ -282,7 +289,7 @@ add_time_mapping.sdtm <- function(obj, ...) {
 #' @param ... Further parameters
 #'
 #' @export
-print.sdtm <- function(x, ...){
+print.sdtm <- function(x, ...) {
   print(summary(x))
 }
 
@@ -336,31 +343,31 @@ suggest <- function(obj) {
   n.suggestion <- 1
 
   arms <- obj$dm %>%
-    dplyr::filter(ACTARMCD !="") %>%
+    dplyr::filter(ACTARMCD != "") %>%
     dplyr::distinct(ACTARM, ACTARMCD)
 
-  if(nrow(arms)>1){
+  if (nrow(arms) > 1) {
     message(paste0(
       n.suggestion, ". There are ", nrow(arms), " arms defined in DM (see below).\n",
       "   Consider defining a PART or ARM variable in the nif dataset, \n",
       "   filtering for a particular arm, or defining a covariate based\n",
       "   on ACTARMCD.\n\n",
-      df.to.string(arms, indent="   "), "\n"
+      df.to.string(arms, indent = "   "), "\n"
     ))
     n.suggestion <- n.suggestion + 1
   }
 
   specimems <- obj$pc %>%
-    dplyr::filter(PCSPEC!="") %>%
+    dplyr::filter(PCSPEC != "") %>%
     dplyr::distinct(PCSPEC)
 
-  if(nrow(specimems)>1){
+  if (nrow(specimems) > 1) {
     message(paste0(
       n.suggestion, ". There are data from ", nrow(specimems),
       " different sample specimem types in PC\n",
       "   (see below).\n",
       "   Consider filtering for a specific specimem, or defining CMT accordingly.\n\n",
-      df.to.string(specimems, indent="   "), "\n"
+      df.to.string(specimems, indent = "   "), "\n"
     ))
     n.suggestion <- n.suggestion + 1
   }
@@ -368,13 +375,13 @@ suggest <- function(obj) {
   treatments <- obj$ex %>%
     dplyr::distinct(EXTRT)
 
-  if(nrow(treatments)>1){
+  if (nrow(treatments) > 1) {
     message(paste0(
       n.suggestion, ". There are ", nrow(treatments), " different treatments ",
       "in EX (see below).\n", "   Consider filtering for a specific treatment.\n\n",
-      df.to.string(treatments, indent="   "), "\n"
+      df.to.string(treatments, indent = "   "), "\n"
     ))
-    n.suggestion <- n.suggestion +1
+    n.suggestion <- n.suggestion + 1
   }
 
   analytes <- obj$pc %>%
@@ -382,29 +389,29 @@ suggest <- function(obj) {
     dplyr::pull(PCTESTCD)
 
   no.analyte.treatments <- treatments %>%
-    dplyr::mutate(no.analyte=!(EXTRT %in% analytes)) %>%
-    dplyr::filter(no.analyte==TRUE) %>%
+    dplyr::mutate(no.analyte = !(EXTRT %in% analytes)) %>%
+    dplyr::filter(no.analyte == TRUE) %>%
     dplyr::select(EXTRT)
 
-  if(nrow(no.analyte.treatments)>0){
+  if (nrow(no.analyte.treatments) > 0) {
     message(paste0(
       n.suggestion, ". There are treatments (EXTRT) without analytes of the ",
       "same name\n",
       "   (see below).\n",
       "   Consider adding a treatment-analyte mapping to the sdtm object\n",
       "   See '?add_analyte_mapping' for additional information.\n\n",
-      df.to.string(no.analyte.treatments, indent="   "), "\n\n",
+      df.to.string(no.analyte.treatments, indent = "   "), "\n\n",
       "   Available analytes:\n\n",
-      df.to.string(obj$pc %>% dplyr::distinct(PCTESTCD), indent="   "), "\n\n"
+      df.to.string(obj$pc %>% dplyr::distinct(PCTESTCD), indent = "   "), "\n\n"
     ))
     n.suggestion <- n.suggestion + 1
   }
 
-  if(!("PCELTM" %in% names(obj$pc))){
+  if (!("PCELTM" %in% names(obj$pc))) {
     line <- function(x) {
       return(paste0("     \"", x, "\" = 0,"))
     }
-    temp <- paste(sapply(unique(obj$pc[,"PCTPT"]), line), collapse="\n")
+    temp <- paste(sapply(unique(obj$pc[, "PCTPT"]), line), collapse = "\n")
 
     message(paste0(
       n.suggestion, ". By default, 'make_nif()' derives the nominal sampling time from the permissible field\n",
@@ -413,7 +420,7 @@ suggest <- function(obj) {
       "   e.g., by adding the below code after creating the sdtm object. Obviously, you need to\n",
       "   replace the zeros with the respective time after admininstation in hours:\n\n",
       "   %>% add_time_mapping(\n",
-      substr(temp, 1, nchar(temp)-1), ")\n"
+      substr(temp, 1, nchar(temp) - 1), ")\n"
     ))
     n.suggestion <- n.suggestion + 1
   }

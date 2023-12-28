@@ -17,17 +17,17 @@
 #' @import dplyr
 #' @import ggplot2
 #' @export
-nif_plot_id <- function(nif, id, analyte=NULL, y.scale="lin", max.time=NA,
-                        imp="none"){
-  if(id %in% nif$ID) {
+nif_plot_id <- function(nif, id, analyte = NULL, y.scale = "lin", max.time = NA,
+                        imp = "none") {
+  if (id %in% nif$ID) {
     plot.label <- "ID"
     nif <- nif %>%
-      filter(ID==id)
+      filter(ID == id)
     id_label <- ""
   } else {
-    if(id %in% nif$USUBJID) {
+    if (id %in% nif$USUBJID) {
       nif <- nif %>%
-        filter(USUBJID==id)
+        filter(USUBJID == id)
       id_label <- paste0(" (ID ", nif %>% distinct(ID) %>% pull(ID), ")")
       plot.label <- "USUBJID"
     } else {
@@ -35,7 +35,7 @@ nif_plot_id <- function(nif, id, analyte=NULL, y.scale="lin", max.time=NA,
     }
   }
 
-  if(is.null(analytes)) {
+  if (is.null(analytes)) {
     analyte <- nif %>%
       distinct(ANALYTE) %>%
       pull(ANALYTE)
@@ -44,34 +44,42 @@ nif_plot_id <- function(nif, id, analyte=NULL, y.scale="lin", max.time=NA,
   obs <- nif %>%
     as.data.frame() %>%
     filter(ANALYTE %in% analyte) %>%
-    filter(EVID==0)
+    filter(EVID == 0)
 
   admin <- nif %>%
     as.data.frame() %>%
-    dplyr::filter(EVID==1) %>%
-    dplyr::filter(PARENT==imp)
+    dplyr::filter(EVID == 1) %>%
+    dplyr::filter(PARENT == imp)
 
   # p <- nif %>%
   #   filter(EVID!=1) %>%
   p <- obs %>%
-    ggplot2::ggplot(ggplot2::aes(x=TIME, y=DV,
-                                 group=interaction(ID, as.factor(ANALYTE)),
-                                 color=as.factor(ANALYTE))) +
-    ggplot2::geom_vline(data=admin, ggplot2::aes(xintercept=TIME), color="gray") +
+    ggplot2::ggplot(ggplot2::aes(
+      x = TIME, y = DV,
+      group = interaction(ID, as.factor(ANALYTE)),
+      color = as.factor(ANALYTE)
+    )) +
+    ggplot2::geom_vline(
+      data = admin,
+      ggplot2::aes(xintercept = TIME),
+      color = "gray"
+    ) +
     ggplot2::geom_line() +
     ggplot2::geom_point() +
     ggplot2::xlim(0, max.time) +
-    ggplot2::labs(title=paste0(plot.label, ": ", id, id_label),
-      color="analyte") +
+    ggplot2::labs(
+      title = paste0(plot.label, ": ", id, id_label),
+      color = "analyte"
+    ) +
     ggplot2::theme_bw() +
-    ggplot2::theme(legend.position="bottom")
+    ggplot2::theme(legend.position = "bottom")
 
-  if(!(imp %in% c("NA", "", "none"))) {
+  if (!(imp %in% c("NA", "", "none"))) {
     p <- p +
-      labs(caption=paste("vertical lines indicate", imp, "administrations"))
+      labs(caption = paste("vertical lines indicate", imp, "administrations"))
   }
 
-  if(y.scale=="log") {
+  if (y.scale == "log") {
     p <- p + scale_y_log10()
   } else {
     p <- p + scale_y_continuous(limits = c(0, NA))
@@ -97,41 +105,41 @@ nif_plot_id <- function(nif, id, analyte=NULL, y.scale="lin", max.time=NA,
 #' @return the plot object
 #' @import dplyr
 #' @export
-dose_plot_id <- function(nif, id, y.scale="lin", max.dose=NA, max.time=NA,
-                         analyte=NULL){
-  if(id %in% nif$ID) {
+dose_plot_id <- function(nif, id, y.scale = "lin", max.dose = NA, max.time = NA,
+                         analyte = NULL) {
+  if (id %in% nif$ID) {
     plot.label <- "ID"
-    nif <- nif %>% filter(ID==id)
-  }
-  else if(id %in% nif$USUBJID) {
-    nif <- nif %>% filter(USUBJID==id)
+    nif <- nif %>% filter(ID == id)
+  } else if (id %in% nif$USUBJID) {
+    nif <- nif %>% filter(USUBJID == id)
     plot.label <- "USUBJID"
-  }
-  else {
+  } else {
     stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
   }
 
-  if(!is.null(analyte)) {
+  if (!is.null(analyte)) {
     nif <- nif %>%
       filter(ANALYTE %in% analyte)
   }
 
   admin <- nif %>%
-    dplyr::filter(EVID==1)
+    dplyr::filter(EVID == 1)
 
   p <- admin %>%
-    ggplot2::ggplot(ggplot2::aes(x=TIME, y=AMT,
-                                 group=interaction(ID, ANALYTE),
-                                 color=ANALYTE)) +
+    ggplot2::ggplot(ggplot2::aes(
+      x = TIME, y = AMT,
+      group = interaction(ID, ANALYTE),
+      color = ANALYTE
+    )) +
     ggplot2::geom_line() +
     ggplot2::geom_point() +
     ggplot2::ylim(0, max.dose) +
     ggplot2::xlim(0, max.time) +
-    ggplot2::labs(title=paste0(plot.label, ": ", id), color="treatment") +
+    ggplot2::labs(title = paste0(plot.label, ": ", id), color = "treatment") +
     ggplot2::theme_bw() +
-    ggplot2::theme(legend.position="bottom")
+    ggplot2::theme(legend.position = "bottom")
 
-  if(y.scale=="log") {
+  if (y.scale == "log") {
     p <- p + scale_y_log10()
   }
   return(p)
@@ -176,143 +184,156 @@ dose_plot_id <- function(nif, id, y.scale="lin", max.dose=NA, max.time=NA,
 #' @seealso [nif_viewer()]
 #' @examples
 #' plot(examplinib_fe_nif)
-#' plot(examplinib_fe_nif, analyte="RS2023", points=TRUE)
-#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED")
-#' plot(examplinib_fe_nif, max_x=24, point=TRUE)
-#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", nominal_time=TRUE)
-#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", mean=TRUE)
-#' plot(examplinib_fe_nif, analyte="RS2023", group="FASTED", mean=TRUE, max_x=24)
+#' plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
+#' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
+#' plot(examplinib_fe_nif, max_x = 24, point = TRUE)
+#' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", nominal_time = TRUE)
+#' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
+#' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE, max_x = 24)
 #'
 #' @export
-plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
-                     mean=FALSE, doses=NULL, points=F, id=NULL, usubjid=NULL,
-                     group=NULL, administrations=F, nominal_time=F, lines=T,
-                     alpha=1, title=NULL, ...) {
-  if(!is.null(id)) {
+plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
+                     mean = FALSE, doses = NULL, points = F, id = NULL, usubjid = NULL,
+                     group = NULL, administrations = F, nominal_time = F, lines = T,
+                     alpha = 1, title = NULL, ...) {
+  if (!is.null(id)) {
     x <- x %>%
       dplyr::filter(ID %in% id)
   }
 
-  if(!is.null(usubjid)) {
+  if (!is.null(usubjid)) {
     x <- x %>%
       dplyr::filter(USUBJID %in% usubjid)
   }
 
-  if(!is.null(analyte)) {
+  if (!is.null(analyte)) {
     x <- x %>%
-      dplyr::filter(ANALYTE==analyte)
+      dplyr::filter(ANALYTE == analyte)
   }
 
-  if(!is.null(doses)){
+  if (!is.null(doses)) {
     x <- x %>%
       dplyr::filter(DOSE %in% doses)
   }
 
-  if(!is.null(group)){
+  if (!is.null(group)) {
     cov <- group
-    if(is.null(analyte) | length(analyte) > 1){
-      stop(paste0("Plotting multiple analytes in the same graph does not make ",
-                  "sense. Consider selecting a (single) analyte!"))
+    if (is.null(analyte) | length(analyte) > 1) {
+      stop(paste0(
+        "Plotting multiple analytes in the same graph does not make ",
+        "sense. Consider selecting a (single) analyte!"
+      ))
     }
   } else {
     cov <- "ANALYTE"
   }
 
-  if(mean==TRUE){
-    if(!is.null(group) & is.null(analyte) & length(analytes(x)>1)){
-      stop(paste0("Plotting means over multiple analytes does not make sense! ",
-                  "Consider selecting a specific analyte"))
+  if (mean == TRUE) {
+    if (!is.null(group) & is.null(analyte) & length(analytes(x) > 1)) {
+      stop(paste0(
+        "Plotting means over multiple analytes does not make sense! ",
+        "Consider selecting a specific analyte"
+      ))
     }
     temp <- x %>%
       as.data.frame() %>%
       filter(NTIME > 0) %>%
-      filter(EVID==0) %>%
+      filter(EVID == 0) %>%
       dplyr::filter(!is.na(DOSE)) %>%
       dplyr::group_by(NTIME, .data[[cov]], DOSE) %>%
-      dplyr::summarize(mean=mean(DV, na.rm=TRUE), sd=sd(DV, na.rm=TRUE),
-                       n=n(), .groups="drop") %>%
-      mutate(max_y=mean+sd)
+      dplyr::summarize(
+        mean = mean(DV, na.rm = TRUE), sd = sd(DV, na.rm = TRUE),
+        n = n(), .groups = "drop"
+      ) %>%
+      mutate(max_y = mean + sd)
 
     p <- temp %>%
       ggplot2::ggplot(ggplot2::aes(
-        x=NTIME, y=mean,
-        group=as.factor(.data[[cov]]),
-        color=as.factor(.data[[cov]]))) +
-      ggplot2::geom_ribbon(aes(ymin=mean-sd, ymax=mean+sd,
-                               fill=as.factor(.data[[cov]])),
-                           alpha=0.3, color=NA, show.legend=F) +
+        x = NTIME, y = mean,
+        group = as.factor(.data[[cov]]),
+        color = as.factor(.data[[cov]])
+      )) +
+      ggplot2::geom_ribbon(
+        aes(
+          ymin = mean - sd, ymax = mean + sd,
+          fill = as.factor(.data[[cov]])
+        ),
+        alpha = 0.3, color = NA, show.legend = F
+      ) +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
-      ggplot2::labs(caption="Data shown are mean \u00B1 SD") +
-      ylim(0, max(temp$max_y, na.rm=T)) +
-      ggplot2::theme(legend.position="bottom")
+      ggplot2::labs(caption = "Data shown are mean \u00B1 SD") +
+      ylim(0, max(temp$max_y, na.rm = T)) +
+      ggplot2::theme(legend.position = "bottom")
   } else {
     # if mean == FALSE
     temp <- x %>%
       as.data.frame() %>%
       dplyr::filter(!is.na(DOSE)) %>%
-      filter(EVID==0) %>%
+      filter(EVID == 0) %>%
       filter(!is.na(DV)) %>%
       as.data.frame()
 
-    if(nominal_time){
+    if (nominal_time) {
       p <- temp %>%
         ggplot2::ggplot(ggplot2::aes(
-          x=NTIME, y=DV,
-          group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
-          color=as.factor(.data[[cov]])))
+          x = NTIME, y = DV,
+          group = interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
+          color = as.factor(.data[[cov]])
+        ))
     } else {
       p <- temp %>%
         ggplot2::ggplot(ggplot2::aes(
-          x=TIME, y=DV,
-          group=interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
-          color=as.factor(.data[[cov]])))
+          x = TIME, y = DV,
+          group = interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
+          color = as.factor(.data[[cov]])
+        ))
     }
 
-    if(administrations) {
+    if (administrations) {
       adm <- x %>%
         as.data.frame() %>%
-        filter(EVID==1) %>%
-        mutate(GROUP=as.factor(.data[[cov]])) %>%
+        filter(EVID == 1) %>%
+        mutate(GROUP = as.factor(.data[[cov]])) %>%
         distinct(TIME, GROUP, DOSE)
 
       p <- p +
-        geom_vline(aes(xintercept=TIME), data=adm, color="grey")
+        geom_vline(aes(xintercept = TIME), data = adm, color = "grey")
     }
 
     p <- p +
       ggplot2::facet_wrap(~DOSE) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position="bottom")
+      ggplot2::theme(legend.position = "bottom")
   }
 
-  if(!is.null(title)) {
+  if (!is.null(title)) {
     p <- p + ggtitle(title)
   }
 
   p <- p + ggplot2::xlim(min_x, max_x)
 
-  if(y_scale=="log"){
+  if (y_scale == "log") {
     p <- p + ggplot2::scale_y_log10()
   }
 
-  if(points){
-    p <- p + ggplot2::geom_point(alpha=alpha)
+  if (points) {
+    p <- p + ggplot2::geom_point(alpha = alpha)
   }
 
-  if(lines) {
-    p <- p + ggplot2::geom_line(alpha=alpha)
+  if (lines) {
+    p <- p + ggplot2::geom_line(alpha = alpha)
   }
 
-  if(length(analyte) == 1){
-    p <- p + labs(y=analyte)
+  if (length(analyte) == 1) {
+    p <- p + labs(y = analyte)
   }
 
-  if(!is.null(group) | length(unique(x$ANALYTE))>1) {
-    p <- p + labs(color=group)
+  if (!is.null(group) | length(unique(x$ANALYTE)) > 1) {
+    p <- p + labs(color = group)
   } else {
-    p <- p + labs(color="ANALYTE")
-    if(length(analyte)<2) {
+    p <- p + labs(color = "ANALYTE")
+    if (length(analyte) < 2) {
       p <- p + theme(legend.position = "none")
     }
   }
@@ -331,7 +352,7 @@ plot.nif <- function(x, y_scale="lin", min_x=0, max_x=NA, analyte=NULL,
 #'
 #' @return A summary_nif object.
 #' @export
-summary.nif <- function(object, egfr_function=egfr_cg, ...) {
+summary.nif <- function(object, egfr_function = egfr_cg, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
   parents <- object %>%
@@ -339,66 +360,78 @@ summary.nif <- function(object, egfr_function=egfr_cg, ...) {
     distinct(PARENT) %>%
     filter(PARENT != "") %>%
     pull(PARENT)
-  dose_red_sbs <- lapply(parents,
-                         function(x) {dose_red_sbs(object, analyte=x)})
+  dose_red_sbs <- lapply(
+    parents,
+    function(x) {
+      dose_red_sbs(object, analyte = x)
+    }
+  )
   names(dose_red_sbs) <- parents
   observations <- object %>%
     as.data.frame() %>%
-    filter(EVID==0) %>%
+    filter(EVID == 0) %>%
     group_by(ANALYTE) %>%
-    summarize(N=n(), .groups="drop") %>%
+    summarize(N = n(), .groups = "drop") %>%
     as.data.frame()
 
   n_studies <- object %>%
     as.data.frame() %>%
-    filter(EVID==1) %>%
+    filter(EVID == 1) %>%
     group_by(STUDYID) %>%
-    summarize(N=n_distinct(USUBJID))
+    summarize(N = n_distinct(USUBJID))
 
   n_sex <- object %>%
     dplyr::distinct(USUBJID, SEX) %>%
     dplyr::group_by(SEX) %>%
-    dplyr::summarize(n=n())
+    dplyr::summarize(n = n())
 
   n_males <- n_sex %>%
-    dplyr::filter(SEX==0) %>%
+    dplyr::filter(SEX == 0) %>%
     dplyr::pull(n)
-  if(length(n_males)==0) {n_males=0}
+  if (length(n_males) == 0) {
+    n_males <- 0
+  }
 
   n_females <- n_sex %>%
-    dplyr::filter(SEX==1) %>%
+    dplyr::filter(SEX == 1) %>%
     dplyr::pull(n)
-  if(length(n_females)==0) {n_females=0}
+  if (length(n_females) == 0) {
+    n_females <- 0
+  }
 
-  if("BL_CRCL" %in% colnames(object)) {
-  renal_function <- object %>%
-    as.data.frame() %>%
-    mutate(CLASS=as.character(
-      cut(BL_CRCL, breaks=c(0, 30, 60, 90, Inf),
-          labels=c("severe", "moderate", "mild", "normal")))) %>%
-    distinct(ID, CLASS) %>%
-    group_by(CLASS) %>%
-    summarize(N=n()) %>%
-    arrange(ordered(CLASS, c("normal","mild", "moderate", "severe")))
+  if ("BL_CRCL" %in% colnames(object)) {
+    renal_function <- object %>%
+      as.data.frame() %>%
+      mutate(CLASS = as.character(
+        cut(BL_CRCL,
+          breaks = c(0, 30, 60, 90, Inf),
+          labels = c("severe", "moderate", "mild", "normal")
+        )
+      )) %>%
+      distinct(ID, CLASS) %>%
+      group_by(CLASS) %>%
+      summarize(N = n()) %>%
+      arrange(ordered(CLASS, c("normal", "mild", "moderate", "severe")))
   } else {
-    renal_function=NULL
+    renal_function <- NULL
   }
 
   out <- list(
     nif = object,
     studies = studies(object),
     subjects = subjects,
-    dose_red_sbs=dose_red_sbs,
+    dose_red_sbs = dose_red_sbs,
     n_studies = n_studies,
     n_subj = nrow(subjects),
     n_males = n_males,
     n_females = n_females,
     n_obs = observations,
-    analytes=analytes,
+    analytes = analytes,
     n_analytes = length(analytes),
     drugs = parents,
     dose_levels = dose_levels(object,
-                              grouping=any_of(c("PART", "COHORT", "GROUP"))),
+      grouping = any_of(c("PART", "COHORT", "GROUP"))
+    ),
     renal_function = renal_function,
     administration_duration = administration_summary(object)
   )
@@ -420,19 +453,21 @@ print.summary_nif <- function(x, ...) {
   cat(paste("Data from", sum(x$n_studies$N), "subjects across", length(x$studies)), "studies:\n")
   cat(paste0(df.to.string(x$n_studies), "\n\n"))
 
-  cat(paste0("Males: ", x$n_males, ", females: ", x$n_females, " (",
-             round(x$n_females/(x$n_males + x$n_females)*100, 1), "%)\n\n"))
+  cat(paste0(
+    "Males: ", x$n_males, ", females: ", x$n_females, " (",
+    round(x$n_females / (x$n_males + x$n_females) * 100, 1), "%)\n\n"
+  ))
 
-  if(!is.null(x$renal_function)) {
+  if (!is.null(x$renal_function)) {
     cat(paste0("Renal function:\n", df.to.string(x$renal_function), "\n\n"))
   }
 
-  cat(paste0("Analytes:\n", paste(x$analytes, collapse=", "), "\n\n"))
+  cat(paste0("Analytes:\n", paste(x$analytes, collapse = ", "), "\n\n"))
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
   cat(paste0(df.to.string(x$n_obs), "\n\n"))
 
-  cat(paste0("Administered drugs:\n", paste(x$drugs, collapse=", "), "\n\n"))
+  cat(paste0("Administered drugs:\n", paste(x$drugs, collapse = ", "), "\n\n"))
 
   cat("Dose levels:\n")
   cat(df.to.string(x$dose_levels))
@@ -458,7 +493,7 @@ print.summary_nif <- function(x, ...) {
 get_cov_plot_params <- function(field) {
   params <- tribble(
     ~field, ~binwidth, ~xlabel, ~title, ~limits,
-    "AGE", 5, "age (years)",  "Age", NULL,
+    "AGE", 5, "age (years)", "Age", NULL,
     "WEIGHT", 5, "body weight (kg)", "Body weight", NULL,
     "HEIGHT", 5, "body height (cm)", "Height", NULL,
     "BMI", 1, "BMI (kg/m^2)", "Body mass index", c(18.5, 24.9, 30),
@@ -466,11 +501,13 @@ get_cov_plot_params <- function(field) {
     "Baseline creatinine clearance", c(30, 60, 90)
   )
 
-  if(field %in% params$field){
-    return(params[which(params$field==field),])
+  if (field %in% params$field) {
+    return(params[which(params$field == field), ])
   } else {
-    return(data.frame(field=field, binwidth=NA, xlabel=field,
-                      title=field))
+    return(data.frame(
+      field = field, binwidth = NA, xlabel = field,
+      title = field
+    ))
   }
 }
 
@@ -485,8 +522,8 @@ plot.summary_nif <- function(x, ...) {
   nif <- x$nif
   out <- list()
 
-  for(i in c("AGE", "WEIGHT", "HEIGHT", "BMI", "BL_CRCL")) {
-    if(i %in% colnames(nif)) {
+  for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI", "BL_CRCL")) {
+    if (i %in% colnames(nif)) {
       out[[i]] <- covariate_hist(nif, i)
     }
   }
@@ -494,10 +531,12 @@ plot.summary_nif <- function(x, ...) {
   out[["WT_SEX"]] <- wt_by_sex(nif)
   out[["WT_RACE"]] <- wt_by_race(nif)
 
-  for(i in x$analytes) {
-    out[[i]] <- plot(nif, analyte=i, y_scale="log", points=T, line=F,
-           alpha=0.3, title=paste(i, "overview by dose"),
-           max_x=max_observation_time(x$nif, i))
+  for (i in x$analytes) {
+    out[[i]] <- plot(nif,
+      analyte = i, y_scale = "log", points = T, line = F,
+      alpha = 0.3, title = paste(i, "overview by dose"),
+      max_x = max_observation_time(x$nif, i)
+    )
   }
   return(out)
 }
@@ -517,33 +556,35 @@ plot.summary_nif <- function(x, ...) {
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
 #'
-covariate_hist <- function(obj, field, nbins=11) {
+covariate_hist <- function(obj, field, nbins = 11) {
   cov_params <- get_cov_plot_params(field)
   xlabel <- cov_params$xlabel
-  if(is.na(xlabel)) {
-    xlabel <- cov_params$field}
+  if (is.na(xlabel)) {
+    xlabel <- cov_params$field
+  }
   title <- cov_params$title
-  if(is.na(title)) {
-    title <- paste(cov_params$field, "distribution")}
+  if (is.na(title)) {
+    title <- paste(cov_params$field, "distribution")
+  }
   limits <- unlist(cov_params$limits)
 
   temp <- obj %>%
     as.data.frame() %>%
     distinct(ID, .data[[cov_params$field]])
 
-  if(is.na(cov_params$binwidth)) {
+  if (is.na(cov_params$binwidth)) {
     p <- temp %>%
-      ggplot(aes(x=.data[[cov_params$field]])) +
-      geom_histogram(bins=nbins, fill= "grey")
+      ggplot(aes(x = .data[[cov_params$field]])) +
+      geom_histogram(bins = nbins, fill = "grey")
   } else {
     p <- temp %>%
-      ggplot(aes(x=.data[[cov_params$field]])) +
-      geom_histogram(binwidth=cov_params$binwidth, fill= "grey")
+      ggplot(aes(x = .data[[cov_params$field]])) +
+      geom_histogram(binwidth = cov_params$binwidth, fill = "grey")
   }
   p +
-    geom_vline(xintercept=limits, color="red") +
+    geom_vline(xintercept = limits, color = "red") +
     theme_bw() +
-    labs(x=xlabel, y="number of subjects") +
+    labs(x = xlabel, y = "number of subjects") +
     ggtitle(title)
 }
 
@@ -558,17 +599,18 @@ wt_by_sex <- function(obj) {
   obj %>%
     as.data.frame() %>%
     group_by(ID) %>%
-    mutate(bl_wt=mean(WEIGHT[TIME==0])) %>%
+    mutate(bl_wt = mean(WEIGHT[TIME == 0])) %>%
     ungroup() %>%
     distinct(ID, SEX, bl_wt) %>%
     group_by(SEX) %>%
-    mutate(count = n(), maxwt=max(bl_wt)) %>%
-    ggplot(aes(x=SEX, y=bl_wt, group=SEX)) +
-    scale_x_continuous(breaks=c(0, 1)) +
-    geom_boxplot(width=0.5) +
-    geom_label(aes(label= paste0("N=", count) , y = maxwt+5),
-               label.size=0, position=position_dodge(width = 0.75)) +
-    labs(x="sex", y="baseline weight (kg)") +
+    mutate(count = n(), maxwt = max(bl_wt)) %>%
+    ggplot(aes(x = SEX, y = bl_wt, group = SEX)) +
+    scale_x_continuous(breaks = c(0, 1)) +
+    geom_boxplot(width = 0.5) +
+    geom_label(aes(label = paste0("N=", count), y = maxwt + 5),
+      label.size = 0, position = position_dodge(width = 0.75)
+    ) +
+    labs(x = "sex", y = "baseline weight (kg)") +
     theme_bw() +
     ggtitle("Body weight by sex")
 }
@@ -584,25 +626,27 @@ wt_by_race <- function(obj) {
   obj %>%
     as.data.frame() %>%
     group_by(ID) %>%
-    mutate(bl_wt=mean(WEIGHT[TIME==0])) %>%
+    mutate(bl_wt = mean(WEIGHT[TIME == 0])) %>%
     ungroup() %>%
-    mutate(rc=as.factor(case_match(as.character(RACE),
-                         "WHITE"~"White",
-                         "BLACK OR AFRICAN AMERICAN"~"Black",
-                         "ASIAN"~"Asian",
-                         "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER"~"Pacific",
-                         "AMERICAN INDIAN OR ALASKA NATIVE"~"Native",
-                         "OTHER"~"Other",
-                         .default=RACE))) %>%
+    mutate(rc = as.factor(case_match(as.character(RACE),
+      "WHITE" ~ "White",
+      "BLACK OR AFRICAN AMERICAN" ~ "Black",
+      "ASIAN" ~ "Asian",
+      "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER" ~ "Pacific",
+      "AMERICAN INDIAN OR ALASKA NATIVE" ~ "Native",
+      "OTHER" ~ "Other",
+      .default = RACE
+    ))) %>%
     distinct(ID, bl_wt, rc) %>%
-    mutate(maxwt=max(bl_wt, na.rm=T)) %>%
+    mutate(maxwt = max(bl_wt, na.rm = T)) %>%
     group_by(rc) %>%
     mutate(count = n()) %>%
-    ggplot(aes(x=rc, y=bl_wt, group=rc)) +
-    geom_boxplot(width=0.5) +
-    geom_label(aes(label= paste0("N=", count), y=maxwt+5),
-               label.size=0) +
-    labs(x="", y="baseline weight (kg)") +
+    ggplot(aes(x = rc, y = bl_wt, group = rc)) +
+    geom_boxplot(width = 0.5) +
+    geom_label(aes(label = paste0("N=", count), y = maxwt + 5),
+      label.size = 0
+    ) +
+    labs(x = "", y = "baseline weight (kg)") +
     theme_bw() +
     ggtitle("Body weight by race")
 }
@@ -618,10 +662,10 @@ wt_by_ht <- function(obj) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
-    ggplot(aes(x=HEIGHT, y=WEIGHT)) +
-    geom_smooth(method="lm", formula = 'y ~ x', alpha=0.3) +
-    geom_point(size=3) +
-    labs(x="height (cm)", y="baseline weight (kg)") +
+    ggplot(aes(x = HEIGHT, y = WEIGHT)) +
+    geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
+    geom_point(size = 3) +
+    labs(x = "height (cm)", y = "baseline weight (kg)") +
     ggtitle("Body weight by height") +
     theme_bw()
 }
@@ -637,10 +681,10 @@ ht_by_wt <- function(obj) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
-    ggplot(aes(x=WEIGHT, y=HEIGHT)) +
-    geom_smooth(method="lm", formula = 'y ~ x', alpha=0.3) +
-    geom_point(size=3) +
-    labs(y="height (cm)", x="baseline weight (kg)") +
+    ggplot(aes(x = WEIGHT, y = HEIGHT)) +
+    geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
+    geom_point(size = 3) +
+    labs(y = "height (cm)", x = "baseline weight (kg)") +
     ggtitle("Body height by weight") +
     theme_bw()
 }
@@ -656,14 +700,14 @@ bmi_by_age <- function(obj) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, AGE, BMI) %>%
-    ggplot(aes(x=AGE, y=BMI)) +
-    geom_smooth(method="lm", formula = 'y ~ x', alpha=0.3) +
+    ggplot(aes(x = AGE, y = BMI)) +
+    geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
     # geom_point(size=3, aes( color=BMI>18.5)) +
-    geom_point(size=3) +
-    labs(y="BMI (kg/m^2)", x="age (y)") +
+    geom_point(size = 3) +
+    labs(y = "BMI (kg/m^2)", x = "age (y)") +
     ggtitle("Body mass index by age") +
     theme_bw() +
-    theme(legend.position="none")
+    theme(legend.position = "none")
 }
 
 
@@ -680,11 +724,13 @@ bmi_by_age <- function(obj) {
 administration_summary <- function(obj) {
   obj %>%
     n_administrations() %>%
-    filter(PARENT!="") %>%
+    filter(PARENT != "") %>%
     group_by(across(any_of(c("PARENT")))) %>%
-    summarize(min=min(N, na.rm=T), max=max(N, na.rm=T),
-              mean=round(mean(N, na.rm=T), 1),
-              median=stats::median(N, na.rm=T)) %>%
+    summarize(
+      min = min(N, na.rm = T), max = max(N, na.rm = T),
+      mean = round(mean(N, na.rm = T), 1),
+      median = stats::median(N, na.rm = T)
+    ) %>%
     as.data.frame()
 }
 
@@ -699,23 +745,22 @@ administration_summary <- function(obj) {
 #'
 #' @return A ggplot object.
 #' @export
-mean_dose_plot <- function(obj, analyte=NULL) {
-  if(is.null(analyte)) {
+mean_dose_plot <- function(obj, analyte = NULL) {
+  if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
   }
 
   obj %>%
     as.data.frame() %>%
-    mutate(DAY=floor(TIME/24)+1) %>%
-    filter(EVID==1, ANALYTE==analyte) %>%
+    mutate(DAY = floor(TIME / 24) + 1) %>%
+    filter(EVID == 1, ANALYTE == analyte) %>%
     group_by(DAY) %>%
-    summarize("mean dose (mg)"=mean(DOSE, na.rm=T), "N"=n(), .groups="drop") %>%
-    pivot_longer(cols=-DAY, names_to="PARAM", values_to="VAL") %>%
-    ggplot(aes(x=DAY, y=VAL)) +
+    summarize("mean dose (mg)" = mean(DOSE, na.rm = T), "N" = n(), .groups = "drop") %>%
+    pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") %>%
+    ggplot(aes(x = DAY, y = VAL)) +
     geom_line() +
-    facet_grid(PARAM ~ ., scales="free_y") +
-    labs(x="time (days)", y="") +
+    facet_grid(PARAM ~ ., scales = "free_y") +
+    labs(x = "time (days)", y = "") +
     theme_bw() +
     ggtitle(paste0("Mean ", analyte, " dose over time"))
 }
-

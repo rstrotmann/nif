@@ -1,6 +1,3 @@
-
-
-
 #' Non-compartmental analysis
 #'
 #' @param obj The source NIF object.
@@ -21,79 +18,80 @@
 #' @export
 #' @examples
 #' nca(examplinib_nif)
-#' nca(examplinib_nif, group=c("FASTED", "SEX"), analyte="RS2023")
+#' nca(examplinib_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 #'
-nca <- function(obj, analyte=NULL, parent=NULL, keep="DOSE", group=NULL,
-                nominal_time=F, silent=F, average_duplicates=T){
+nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
+                nominal_time = F, silent = F, average_duplicates = T) {
   # guess analyte if not defined
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
-    if(silent==FALSE) {
-      message(paste("NCA: No analyte specified. Selected",
-                    current_analyte, "as the most likely."))
+    if (silent == FALSE) {
+      message(paste(
+        "NCA: No analyte specified. Selected",
+        current_analyte, "as the most likely."
+      ))
     }
   } else {
     current_analyte <- analyte
   }
 
-  if(is.null(parent)) {
+  if (is.null(parent)) {
     parent <- current_analyte
   }
 
   # filter for analyte, set selected TIME
   obj1 <- obj %>%
     as.data.frame() %>%
-    dplyr::filter(ANALYTE==current_analyte) %>%
-    dplyr::mutate(TIME=case_when(nominal_time==TRUE~NTIME, .default=TIME)) %>%
-    dplyr::mutate(DV=case_when(is.na(DV) ~ 0, .default=DV)) %>%
+    dplyr::filter(ANALYTE == current_analyte) %>%
+    dplyr::mutate(TIME = case_when(nominal_time == TRUE ~ NTIME,
+      .default = TIME
+    )) %>%
+    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
     as.data.frame()
 
   # preserve the columns to keep
   keep_columns <- obj1 %>%
-    dplyr::filter(EVID==1) %>%
+    dplyr::filter(EVID == 1) %>%
     as.data.frame() %>%
     dplyr::select(c(ID, any_of(keep))) %>%
     dplyr::distinct()
 
-  # administration times
-  # admin <- obj1 %>%
-  #   dplyr::filter(EVID==1) %>%
-  #   dplyr::select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
-  #   as.data.frame()
-
   admin <- obj %>%
     as.data.frame() %>%
-    dplyr::filter(ANALYTE==parent) %>%
-    dplyr::mutate(TIME=case_when(nominal_time==TRUE~NTIME, .default=TIME)) %>%
-    dplyr::mutate(DV=case_when(is.na(DV) ~ 0, .default=DV)) %>%
-    dplyr::filter(EVID==1) %>%
+    dplyr::filter(ANALYTE == parent) %>%
+    dplyr::mutate(TIME = case_when(
+      nominal_time == TRUE ~ NTIME,
+      .default = TIME
+    )) %>%
+    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
+    dplyr::filter(EVID == 1) %>%
     dplyr::select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
     as.data.frame()
 
   # concentration data
   conc <- obj1 %>%
-    dplyr::filter(EVID==0) %>%
+    dplyr::filter(EVID == 0) %>%
     dplyr::select(any_of(c("ID", "TIME", "DV", group)))
 
-  if(average_duplicates==T){
+  if (average_duplicates == T) {
     conc <- conc %>%
       group_by(across(any_of(c("ID", "TIME", group)))) %>%
-      summarize(DV=mean(DV, na.rm=T))
+      summarize(DV = mean(DV, na.rm = T))
   }
 
-  if(!is.null(group)){
+  if (!is.null(group)) {
     conc <- conc %>%
       dplyr::group_by(ID, TIME, across(any_of(group)))
   } else {
     conc <- conc %>% dplyr::group_by(ID, TIME)
   }
 
-  # generate formulae for the conc and admin objects, depending on whether there
+  # generate formulae for the conc and admin objects
   conc_formula <- "DV~TIME|ID"
   dose_formula <- "DOSE~TIME|ID"
-  if(!is.null(group)) {
-    group_string <- paste(group, collapse="+")
-    if(silent==F){
+  if (!is.null(group)) {
+    group_string <- paste(group, collapse = "+")
+    if (silent == F) {
       message(paste("NCA: Group by", group_string))
     }
     conc_formula <- paste0("DV~TIME|", group_string, "+ID")
@@ -115,15 +113,15 @@ nca <- function(obj, analyte=NULL, parent=NULL, keep="DOSE", group=NULL,
     dose_obj,
     impute = "start_conc0"
     # impute = "start_predose, start_conc0"
-    )
+  )
 
   results_obj <- PKNCA::pk.nca(data_obj)
 
   temp <- results_obj$result %>%
     as.data.frame() %>%
-    dplyr::left_join(keep_columns, by="ID")
+    dplyr::left_join(keep_columns, by = "ID")
 
-  if(!is.null(group)) {
+  if (!is.null(group)) {
     temp <- temp %>%
       dplyr::mutate_at(group, as.factor)
   }
@@ -145,19 +143,21 @@ nca <- function(obj, analyte=NULL, parent=NULL, keep="DOSE", group=NULL,
 #' @export
 #'
 #' @examples
-#' nca_summary(nca(examplinib_sad_nif, analyte="RS2023"))
+#' nca_summary(nca(examplinib_sad_nif, analyte = "RS2023"))
 nca_summary <- function(
-  nca,
-  parameters=c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
-  group="DOSE"){
+    nca,
+    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
+    group = "DOSE") {
   median_parameters <- c("tlast", "tmax", "lambda.z.n.points")
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
     group_by(.data[[group]], PPTESTCD) %>%
-    summarize(geomean=PKNCA::geomean(PPORRES, na.rm=T),
-              geocv=PKNCA::geocv(PPORRES, na.rm=T),
-           median=median(PPORRES, na.rm=T), iqr=IQR(PPORRES, na.rm=T),
-           min=min(PPORRES, na.rm=T), max=max(PPORRES, na.rm=T), n=n())
+    summarize(
+      geomean = PKNCA::geomean(PPORRES, na.rm = T),
+      geocv = PKNCA::geocv(PPORRES, na.rm = T),
+      median = median(PPORRES, na.rm = T), iqr = IQR(PPORRES, na.rm = T),
+      min = min(PPORRES, na.rm = T), max = max(PPORRES, na.rm = T), n = n()
+    )
 }
 
 
@@ -174,26 +174,35 @@ nca_summary <- function(
 #' @export
 #'
 #' @examples
-#' nca_summary_table(nca(examplinib_sad_nif, analyte="RS2023"))
+#' nca_summary_table(nca(examplinib_sad_nif, analyte = "RS2023"))
 nca_summary_table <- function(
     nca,
-    parameters=c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
-    digits=2,
-    group="DOSE"){
-  s <- nca_summary(nca, parameters, group=group)
+    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
+    digits = 2,
+    group = "DOSE") {
+  s <- nca_summary(nca, parameters, group = group)
   median_parameters <- c("tlast", "tmax", "lambda.z.n.points")
   s %>%
     mutate(
-      center=case_when(
-        PPTESTCD %in% median_parameters~as.character(round(median, digits=digits)),
-        .default=as.character(round(geomean, digits=digits))),
-      dispersion=case_when(
-        PPTESTCD %in% median_parameters~paste0(
-          as.character(round(min, digits=digits)), "; ",
-          as.character(round(max, digits=digits))),
-        .default=as.character(round(geocv)))) %>%
-    mutate(value=paste0(center, " (", dispersion, ")")) %>%
-    pivot_wider(id_cols=c(any_of(group), "n"), names_from="PPTESTCD", values_from=value)
+      center = case_when(
+        PPTESTCD %in% median_parameters ~ as.character(round(median,
+          digits = digits
+        )),
+        .default = as.character(round(geomean, digits = digits))
+      ),
+      dispersion = case_when(
+        PPTESTCD %in% median_parameters ~ paste0(
+          as.character(round(min, digits = digits)), "; ",
+          as.character(round(max, digits = digits))
+        ),
+        .default = as.character(round(geocv))
+      )
+    ) %>%
+    mutate(value = paste0(center, " (", dispersion, ")")) %>%
+    pivot_wider(
+      id_cols = c(any_of(group), "n"),
+      names_from = "PPTESTCD", values_from = value
+    )
 }
 
 
@@ -222,32 +231,36 @@ nca_summary_table <- function(
 #'
 #' @return A data frame.
 #' @export
-dose_lin <- function(nca, parameters=c("aucinf.obs", "cmax"),
-                     lower=0.8, upper=1.25) {
+dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
+                     lower = 0.8, upper = 1.25) {
   pp <- nca %>%
-    filter(PPORRES!=0) %>%
-    dplyr::mutate(ldose=log(DOSE), lpp=log(PPORRES))
+    filter(PPORRES != 0) %>%
+    dplyr::mutate(ldose = log(DOSE), lpp = log(PPORRES))
 
-  power_model <- t(sapply(parameters,
-                   function(x){as.numeric(
-                     stats::confint(
-                       stats::lm(data=(pp %>% filter(PPTESTCD==x)), formula=lpp~ldose),
-                       "ldose",
-                       level=0.9))
-                   }))
-  lnr <- log(max(pp$DOSE)/min(pp$DOSE))
-  bl <- 1 + log(lower)/lnr
-  bu <- 1 + log(upper)/lnr
-  power_model = rbind("thresholds"=c(bl, bu), power_model)
+  power_model <- t(sapply(
+    parameters,
+    function(x) {
+      as.numeric(
+        stats::confint(
+          stats::lm(
+            data = (pp %>% filter(PPTESTCD == x)),
+            formula = lpp ~ ldose
+          ),
+          "ldose",
+          level = 0.9
+        )
+      )
+    }
+  ))
+  lnr <- log(max(pp$DOSE) / min(pp$DOSE))
+  bl <- 1 + log(lower) / lnr
+  bu <- 1 + log(upper) / lnr
+  power_model <- rbind("thresholds" = c(bl, bu), power_model)
   colnames(power_model) <- c("lower", "upper")
   power_model %>%
     as.data.frame() %>%
-    dplyr::mutate(dose_linear=case_when(
-      row_number()==1 ~ NA,
-      .default= lower>lower[1] & upper<upper[1]))
+    dplyr::mutate(dose_linear = case_when(
+      row_number() == 1 ~ NA,
+      .default = lower > lower[1] & upper < upper[1]
+    ))
 }
-
-
-
-
-
