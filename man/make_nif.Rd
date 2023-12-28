@@ -8,7 +8,7 @@ make_nif(
   sdtm_data,
   spec = NULL,
   impute_missing_end_time = TRUE,
-  impute.administration.time = TRUE,
+  impute_administration_time = TRUE,
   silent = FALSE,
   truncate.to.last.observation = TRUE,
   use_pctptnum = TRUE
@@ -27,7 +27,7 @@ or "PLASMA" is selected, depending what is found in the PC data.}
 in EX where EXENDTC does not include a time, the time should be copied from
 EXSTDTC.}
 
-\item{impute.administration.time}{A boolean value to indicate whether the
+\item{impute_administration_time}{A boolean value to indicate whether the
 time of administration is to be imputed from the PCRFDTC field from the
 PC domain. This field is 'permissible' and may not be present in certain
 SDTM data.}

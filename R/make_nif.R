@@ -729,7 +729,7 @@ last_ex_dtc <- function(ex) {
 #' @return An admin data set.
 #' @import tidyr
 #' @import dplyr
-impute.administration.time <- function(admin, obs) {
+impute_administration_time <- function(admin, obs) {
   # Assertions
   admin %>%
     verify(has_all_names("USUBJID", "date", "PCTESTCD"))
@@ -951,7 +951,7 @@ add_time <- function(x) {
 #' @param impute_missing_end_time A logic value to indicate whether in rows
 #'   in EX where EXENDTC does not include a time, the time should be copied from
 #'   EXSTDTC.
-#' @param impute.administration.time A boolean value to indicate whether the
+#' @param impute_administration_time A boolean value to indicate whether the
 #'  time of administration is to be imputed from the PCRFDTC field from the
 #'  PC domain. This field is 'permissible' and may not be present in certain
 #'  SDTM data.
@@ -975,7 +975,7 @@ make_nif <- function(
     sdtm_data,
     spec = NULL,
     impute_missing_end_time = TRUE,
-    impute.administration.time = TRUE,
+    impute_administration_time = TRUE,
     silent = FALSE,
     truncate.to.last.observation = TRUE,
     use_pctptnum = TRUE) {
@@ -1080,8 +1080,8 @@ make_nif <- function(
   }
 
   # impute administration times
-  if (impute.administration.time == TRUE) {
-    admin <- impute.administration.time(admin, obs)
+  if (impute_administration_time == TRUE) {
+    admin <- impute_administration_time(admin, obs)
   }
 
   # calculate age from birthday and informed consent signature date
