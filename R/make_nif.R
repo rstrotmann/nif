@@ -311,7 +311,7 @@ exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
 #'
 #' @return The updated EX domain as data frame.
 impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
-  dummy <- dm %>%
+  dm %>%
     verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
 
   temp <- ex %>%
@@ -489,8 +489,7 @@ make_exstdy_exendy <- function(ex, dm) {
     mutate(EXSTDY = floor(as.numeric(difftime(EXSTDTC, RFSTDTC),
                                      units = "days")) + 1) %>%
     mutate(EXENDY = floor(as.numeric(difftime(EXENDTC, RFSTDTC),
-                                     units = "days"
-    )) + 1) %>%
+                                     units = "days")) + 1) %>%
     select(-RFSTDTC)
 }
 
@@ -528,9 +527,6 @@ make_admin <- function(ex,
                        cut.off.date,
                        impute_missing_end_time = TRUE,
                        silent = FALSE) {
-  drug_mapping %>%
-    assertr::verify(nrow(.) > 0)
-
   admin <- ex %>%
     verify(has_all_names(
       "STUDYID", "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
@@ -559,9 +555,9 @@ make_admin <- function(ex,
 
   ret <- admin %>%
     rowwise() %>%
-    mutate(date = list(seq(as.Date(start.date), as.Date(end.date),
-                           by = "days"
-    ))) %>%
+    mutate(date = list(seq(as.Date(start.date),
+                           as.Date(end.date),
+                           by = "days"))) %>%
     unnest(c(date)) %>%
     dplyr::mutate(time = case_when(
       row_number() == n() ~ end.time,
@@ -1186,16 +1182,16 @@ compress_nif <- function(nif, ...) {
 #' @import dplyr
 #' @export
 clip_nif <- function(nif) {
-  last.obs <- nif %>%
+  last_obsobs <- nif %>%
     dplyr::filter(EVID == 0) %>%
     dplyr::group_by(USUBJID) %>%
     dplyr::mutate(last.obs = max(TIME)) %>%
     dplyr::ungroup() %>%
-    dplyr::distinct(USUBJID, last.obs)
+    dplyr::distinct(USUBJID, last_obsobs)
 
   ret <- nif %>%
-    dplyr::left_join(last.obs, by = "USUBJID") %>%
-    dplyr::filter(TIME <= last.obs)
+    dplyr::left_join(last_obsobs, by = "USUBJID") %>%
+    dplyr::filter(TIME <= last_obsobs)
   return(new_nif(ret))
 }
 
@@ -1223,9 +1219,9 @@ add_dose_level <- function(obj) {
     group_by(ID)
 
   if (temp %>%
-      ungroup() %>%
-      distinct(ANALYTE) %>%
-      nrow() == 1) {
+        ungroup() %>%
+        distinct(ANALYTE) %>%
+        nrow() == 1) {
     temp <- temp %>% mutate(DL = DOSE)
   } else {
     temp <- temp %>%
@@ -1244,7 +1240,7 @@ add_dose_level <- function(obj) {
 #' @param obj The NIF data set as data frame.
 #'
 #' @return The updated NIF data set as data frame.
-add_TRTDY <- function(obj) {
+add_trtdy <- function(obj) {
   obj %>%
     assertr::verify(has_all_names("USUBJID", "DTC", "EVID")) %>%
     assertr::verify(is.POSIXct(DTC)) %>%
@@ -1274,8 +1270,8 @@ add_TRTDY <- function(obj) {
 #' @export
 add_bl_lab <- function(obj, lb, lbtestcd, lbspec = "", silent = FALSE) {
   temp <- lbtestcd %in% (lb %>%
-    dplyr::distinct(.data$LBTESTCD) %>%
-    dplyr::pull(.data$LBTESTCD))
+                           dplyr::distinct(.data$LBTESTCD) %>%
+                           dplyr::pull(.data$LBTESTCD))
   if (!all(temp)) {
     if (!silent) {
       message(paste0("The following was not found in lb: ", lbtestcd[!temp]))
@@ -1413,15 +1409,16 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     verify(has_all_names("USUBJID", "LBDTC", "LBSPEC", "LBTESTCD", "LBDY")) %>%
     lubrify_dates() %>%
     dplyr::filter(USUBJID %in% (obj %>%
-      subjects() %>%
-      pull(USUBJID))) %>%
+                                  subjects() %>%
+                                  pull(USUBJID))) %>%
     mutate(DTC = LBDTC) %>%
     dplyr::filter(LBSPEC %in% lbspec) %>%
     dplyr::filter(LBTESTCD == lbtestcd) %>%
     left_join(obj %>%
-      add_time() %>%
-      as.data.frame() %>%
-      distinct(USUBJID, FIRSTDTC), by = "USUBJID") %>%
+                add_time() %>%
+                as.data.frame() %>%
+                distinct(USUBJID, FIRSTDTC),
+              by = "USUBJID") %>%
     dplyr::mutate(
       ANALYTE = lbtestcd, PARENT = "", CMT = cmt, MDV = 0, EVID = 0,
       AMT = 0, RATE = 0
@@ -1459,7 +1456,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
       as.numeric(difftime(DTC, FIRSTDTC, units = "h")),
       digits = 3
     )) %>%
-    add_TRTDY()
+    add_trtdy()
 
   return(new_nif(temp))
 }
