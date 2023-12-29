@@ -23,5 +23,5 @@ Mean plot over a selected covariate
 }
 \examples{
 nif_mean_plot(examplinib_sad_nif)
-nif_mean_plot(examplinib_fe_nif, group="FASTED")
+nif_mean_plot(examplinib_fe_nif, group = "FASTED")
 }

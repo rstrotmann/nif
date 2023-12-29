@@ -159,7 +159,7 @@ dose_plot_id <- function(nif, id, y_scale = "lin", max.dose = NA, max.time = NA,
 #'
 #' @examples
 #' nif_mean_plot(examplinib_sad_nif)
-#' nif_mean_plot(examplinib_fe_nif, group="FASTED")
+#' nif_mean_plot(examplinib_fe_nif, group = "FASTED")
 nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
   temp <- x %>%
     as.data.frame() %>%
@@ -180,8 +180,8 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
       group = as.factor(.data[[group]]),
       color = as.factor(.data[[group]])
     )) +
-    { if (lines) geom_line() } +
-    { if (points) geom_point() } +
+    {if (lines) geom_line()} +
+    {if (points) geom_point()} +
     ggplot2::geom_ribbon(
       aes(
         ymin = mean - sd, ymax = mean + sd,
@@ -189,10 +189,10 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
       ),
       alpha = 0.3, color = NA, show.legend = FALSE
     ) +
-    { if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE) } +
+    {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     ggplot2::theme_bw() +
     ggplot2::labs(caption = "Data shown are mean \u00B1 SD") +
-    labs(color=group) +
+    labs(color = group) +
     ylim(0, max(temp$max_y, na.rm = TRUE)) +
     ggplot2::theme(legend.position = "bottom")
 }
@@ -241,10 +241,10 @@ nif_spaghetti_plot <- function(x,
   }
 
   p +
-    { if (lines) geom_line() } +
-    { if (points) geom_point() } +
-    { if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE) } +
-    labs(color=group) +
+    {if (lines) geom_line()} +
+    {if (points) geom_point()} +
+    {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+    labs(color = group) +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 }
@@ -349,8 +349,10 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
       nif_mean_plot(points = points, lines = lines, group = cov)
   } else {
     p <- x %>%
-      nif_spaghetti_plot(points = points, lines = lines, group = cov,
-                         nominal_time = nominal_time)
+      nif_spaghetti_plot(
+        points = points, lines = lines, group = cov,
+        nominal_time = nominal_time
+      )
   }
 
   p +
@@ -362,10 +364,9 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
     {if (x %>%
          pull(cov) %>%
          unique() %>%
-         length() < 2) theme(legend.position = "none")}
+         length() < 2) {
+      theme(legend.position = "none")}}
 }
-
-
 
 
 #' NIF data set overview

@@ -22,7 +22,8 @@ A data frame.
 Currently experimental. Don't use in production!
 }
 \details{
-Using the power model described by \href{https://doi.org/10.1002/pst.326}{Hummel, 2009}.
+Using the power model described by
+\href{https://doi.org/10.1002/pst.326}{Hummel, 2009}.
 In brief, a power model is fitted with
 
 ln(AUC) = mu + beta* ln(dose)
@@ -33,5 +34,5 @@ theta_L of 0.8 and theta_U of 1.25:
 
 (beta_L, beta_U) = ( 1 + ln(theta_L) / ln(r), 1 + lntheta_U) / ln(r) )
 
-with ln(r) the logarithm of the ratio of the highest dose to the lowerst dose.
+with ln(r) the logarithm of the ratio of the highest dose to the lowest dose.
 }

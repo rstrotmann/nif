@@ -10,9 +10,9 @@ nca(
   parent = NULL,
   keep = "DOSE",
   group = NULL,
-  nominal_time = F,
-  silent = F,
-  average_duplicates = T
+  nominal_time = FALSE,
+  silent = FALSE,
+  average_duplicates = TRUE
 )
 }
 \arguments{

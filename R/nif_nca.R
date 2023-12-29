@@ -21,7 +21,8 @@
 #' nca(examplinib_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 #'
 nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
-                nominal_time = F, silent = F, average_duplicates = T) {
+                nominal_time = FALSE, silent = FALSE,
+                average_duplicates = TRUE) {
   # guess analyte if not defined
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
@@ -73,10 +74,10 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
     dplyr::filter(EVID == 0) %>%
     dplyr::select(any_of(c("ID", "TIME", "DV", group)))
 
-  if (average_duplicates == T) {
+  if (average_duplicates == TRUE) {
     conc <- conc %>%
       group_by(across(any_of(c("ID", "TIME", group)))) %>%
-      summarize(DV = mean(DV, na.rm = T))
+      summarize(DV = mean(DV, na.rm = TRUE))
   }
 
   if (!is.null(group)) {
@@ -91,7 +92,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
   dose_formula <- "DOSE~TIME|ID"
   if (!is.null(group)) {
     group_string <- paste(group, collapse = "+")
-    if (silent == F) {
+    if (silent == FALSE) {
       message(paste("NCA: Group by", group_string))
     }
     conc_formula <- paste0("DV~TIME|", group_string, "+ID")
@@ -112,7 +113,6 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
     conc_obj,
     dose_obj,
     impute = "start_conc0"
-    # impute = "start_predose, start_conc0"
   )
 
   results_obj <- PKNCA::pk.nca(data_obj)
@@ -148,15 +148,16 @@ nca_summary <- function(
     nca,
     parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
     group = "DOSE") {
-  median_parameters <- c("tlast", "tmax", "lambda.z.n.points")
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
     group_by(.data[[group]], PPTESTCD) %>%
     summarize(
-      geomean = PKNCA::geomean(PPORRES, na.rm = T),
-      geocv = PKNCA::geocv(PPORRES, na.rm = T),
-      median = median(PPORRES, na.rm = T), iqr = IQR(PPORRES, na.rm = T),
-      min = min(PPORRES, na.rm = T), max = max(PPORRES, na.rm = T), n = n()
+      geomean = PKNCA::geomean(PPORRES, na.rm = TRUE),
+      geocv = PKNCA::geocv(PPORRES, na.rm = TRUE),
+      median = median(PPORRES, na.rm = TRUE), iqr = IQR(PPORRES, na.rm = TRUE),
+      min = min(PPORRES, na.rm = TRUE),
+      max = max(PPORRES, na.rm = TRUE),
+      n = n()
     )
 }
 
@@ -210,7 +211,8 @@ nca_summary_table <- function(
 #'
 #' Currently experimental. Don't use in production!
 #'
-#' Using the power model described by [Hummel, 2009](https://doi.org/10.1002/pst.326).
+#' Using the power model described by
+#' [Hummel, 2009](https://doi.org/10.1002/pst.326).
 #' In brief, a power model is fitted with
 #'
 #' ln(AUC) = mu + beta* ln(dose)
@@ -221,7 +223,7 @@ nca_summary_table <- function(
 #'
 #' (beta_L, beta_U) = ( 1 + ln(theta_L) / ln(r), 1 + lntheta_U) / ln(r) )
 #'
-#' with ln(r) the logarithm of the ratio of the highest dose to the lowerst dose.
+#' with ln(r) the logarithm of the ratio of the highest dose to the lowest dose.
 #'
 #'
 #' @param nca The non-compartmental analysis data.
