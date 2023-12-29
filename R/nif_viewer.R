@@ -129,7 +129,7 @@ nif_viewer <- function(nif) {
             input$subject,
             analyte = input$analytes, # %>%
             max.time = max.time(),
-            y.scale = y_scale_type,
+            y_scale = y_scale_type,
             imp = input$admin
           )
         ))

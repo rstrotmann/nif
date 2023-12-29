@@ -7,7 +7,7 @@
 dose_plot_id(
   nif,
   id,
-  y.scale = "lin",
+  y_scale = "lin",
   max.dose = NA,
   max.time = NA,
   analyte = NULL
@@ -16,19 +16,19 @@ dose_plot_id(
 \arguments{
 \item{nif}{The NIF data set.}
 
-\item{id}{The subject ID to be plotted}
+\item{id}{The subject ID to be plotted.}
 
-\item{y.scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
+\item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 is "lin".}
 
-\item{max.dose}{The upper limit of the dose scale}
+\item{max.dose}{The upper limit of the dose scale.}
 
-\item{max.time}{The right limit of the time scale}
+\item{max.time}{The right limit of the time scale.}
 
 \item{analyte}{The analyte of interest.}
 }
 \value{
-the plot object
+A ggplot object.
 }
 \description{
 This function plots AMT over TIME for an individual subject, id. Id can be

@@ -31,5 +31,6 @@ utils::globalVariables(c(
   "end_rich", "n_obs", "FIRSTADMINDTC", "FIRSTTRTDTC", "DVBL", "DVCFB",
   "OPDI", "BL_CRCL", "age_lo", "age_hi", "Mean", "EGFR", "CREA", "LBORRES",
   "BL_CREAT", "LAST_ADMIN", "RFENDTC", "TRTDY", "BL_RENAL", "EXENDTC_has_time",
-  "EXENDTC1", "VISIT", "VSBLFL", "EXENDTC_new", "impute_exendtc_time"
+  "EXENDTC1", "VISIT", "VSBLFL", "EXENDTC_new", "impute_exendtc_time",
+  "CLASS"
 ))

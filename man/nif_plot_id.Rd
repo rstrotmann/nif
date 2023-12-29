@@ -8,7 +8,7 @@ nif_plot_id(
   nif,
   id,
   analyte = NULL,
-  y.scale = "lin",
+  y_scale = "lin",
   max.time = NA,
   imp = "none"
 )
@@ -20,7 +20,7 @@ nif_plot_id(
 
 \item{analyte}{The analytes to be displayes. Defaults to NULL (all).}
 
-\item{y.scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
+\item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 is "lin".}
 
 \item{max.time}{The right limit of the time scale}

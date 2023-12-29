@@ -485,6 +485,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     rxode2::add.sampling(sampling_scheme$time) %>%
     rxode2::et(id = sbs$ID) %>%
     as.data.frame() %>%
+    mutate(NTIME=time) %>%
     group_by_all() %>%
     expand(PERIOD = c(1, 2)) %>%
     mutate(time = time + 14 * 24 * (PERIOD - 1)) %>%
@@ -492,13 +493,13 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
       select(id = ID, PERIOD, FOOD, EXDOSE), by = c("id", "PERIOD")) %>%
     as.data.frame() %>%
     mutate(amt = case_when(!is.na(amt) ~ EXDOSE, .default = NA)) %>%
-    mutate(NTIME = time) %>%
+    # mutate(NTIME = time) %>%
     arrange(id, time, evid)
 
   sim <- pk_sim(ev)
 
   pc <- sim %>%
-    dplyr::select(id, time, c_centr, c_metab, PERIOD) %>%
+    dplyr::select(id, time, c_centr, c_metab, PERIOD, NTIME) %>%
     mutate(RS2023 = c_centr * 1000, RS2023487A = c_metab * 1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"),
       names_to = "PCTESTCD",
@@ -510,9 +511,12 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     )) %>%
     left_join(temp %>% distinct(ID, USUBJID, RFSTDTC), by = c("id" = "ID")) %>%
     mutate(STUDYID = unique(dm$STUDYID), DOMAIN = "PC") %>%
-    mutate(PCELTM = paste0("PT", as.character(time), "H")) %>%
-    mutate(PCTPTNUM = time) %>%
-    left_join(sampling_scheme, by = "time") %>%
+    # mutate(PCELTM = paste0("PT", as.character(time), "H")) %>%
+    mutate(PCELTM = paste0("PT", as.character(NTIME), "H")) %>%
+    # mutate(PCTPTNUM = time) %>%
+    mutate(PCTPTNUM = NTIME) %>%
+    # left_join(sampling_scheme, by = "time") %>%
+    left_join(sampling_scheme, by = c("NTIME"="time")) %>%
     mutate(PCDTC = RFSTDTC + (PERIOD - 1) * 13 * 24 * 60 * 60 + time * 60 * 60) %>%
     arrange(id, PCDTC, PCTESTCD) %>%
     group_by(id) %>%
@@ -524,7 +528,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
       PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
       2 ~ "OPEN LABEL TREATMENT 2"
     )) %>%
-    dplyr::select(-id, -time, -c_centr, -c_metab, -RFSTDTC) %>%
+    dplyr::select(-id, -time, -c_centr, -c_metab, -RFSTDTC, -NTIME) %>%
     as.data.frame()
   return(pc)
 }

@@ -6,7 +6,7 @@
 #'
 #' @param nif The NIF data set
 #' @param id The subject ID to be plotted
-#' @param y.scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
+#' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
 #' @param analyte The analytes to be displayes. Defaults to NULL (all).
 #' @param imp The IMP for which administrations are to be indicated by vertical
@@ -17,7 +17,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @export
-nif_plot_id <- function(nif, id, analyte = NULL, y.scale = "lin", max.time = NA,
+nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
                         imp = "none") {
   if (id %in% nif$ID) {
     plot.label <- "ID"
@@ -79,7 +79,7 @@ nif_plot_id <- function(nif, id, analyte = NULL, y.scale = "lin", max.time = NA,
       labs(caption = paste("vertical lines indicate", imp, "administrations"))
   }
 
-  if (y.scale == "log") {
+  if (y_scale == "log") {
     p <- p + scale_y_log10()
   } else {
     p <- p + scale_y_continuous(limits = c(0, NA))
@@ -95,17 +95,18 @@ nif_plot_id <- function(nif, id, analyte = NULL, y.scale = "lin", max.time = NA,
 #'   vertical lines.
 #'
 #' @param nif The NIF data set.
-#' @param id The subject ID to be plotted
-#' @param y.scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
+#' @param id The subject ID to be plotted.
+#' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
-#' @param max.dose The upper limit of the dose scale
+#' @param max.dose The upper limit of the dose scale.
 #' @param analyte The analyte of interest.
-#' @param max.time The right limit of the time scale
+#' @param max.time The right limit of the time scale.
 #'
-#' @return the plot object
+#' @return A ggplot object.
 #' @import dplyr
+#' @import ggplot2
 #' @export
-dose_plot_id <- function(nif, id, y.scale = "lin", max.dose = NA, max.time = NA,
+dose_plot_id <- function(nif, id, y_scale = "lin", max.dose = NA, max.time = NA,
                          analyte = NULL) {
   if (id %in% nif$ID) {
     plot.label <- "ID"
@@ -139,12 +140,114 @@ dose_plot_id <- function(nif, id, y.scale = "lin", max.dose = NA, max.time = NA,
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 
-  if (y.scale == "log") {
+  if (y_scale == "log") {
     p <- p + scale_y_log10()
   }
   return(p)
 }
 
+
+#' Mean plot over a selected covariate
+#'
+#' @param x The NIF data set.
+#' @param points Boolean to indicate whether points should be drawn.
+#' @param lines Boolean to indicate whether lines should be drawn.
+#' @param group The grouping covariate, defaults to 'ANALYTE'.
+#'
+#' @return A ggplot2 plot object.
+#' @export
+#'
+#' @examples
+#' nif_mean_plot(examplinib_sad_nif)
+#' nif_mean_plot(examplinib_fe_nif, group="FASTED")
+nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
+  temp <- x %>%
+    as.data.frame() %>%
+    verify(has_all_names("NTIME", "DOSE", "DV")) %>%
+    filter(NTIME > 0) %>%
+    filter(EVID == 0) %>%
+    dplyr::filter(!is.na(DOSE)) %>%
+    dplyr::group_by(NTIME, .data[[group]], DOSE) %>%
+    dplyr::summarize(
+      mean = mean(DV, na.rm = TRUE), sd = sd(DV, na.rm = TRUE),
+      n = n(), .groups = "drop"
+    ) %>%
+    mutate(max_y = mean + sd)
+
+  temp %>%
+    ggplot2::ggplot(ggplot2::aes(
+      x = NTIME, y = mean,
+      group = as.factor(.data[[group]]),
+      color = as.factor(.data[[group]])
+    )) +
+    { if (lines) geom_line() } +
+    { if (points) geom_point() } +
+    ggplot2::geom_ribbon(
+      aes(
+        ymin = mean - sd, ymax = mean + sd,
+        fill = as.factor(.data[[group]])
+      ),
+      alpha = 0.3, color = NA, show.legend = FALSE
+    ) +
+    { if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE) } +
+    ggplot2::theme_bw() +
+    ggplot2::labs(caption = "Data shown are mean \u00B1 SD") +
+    labs(color=group) +
+    ylim(0, max(temp$max_y, na.rm = TRUE)) +
+    ggplot2::theme(legend.position = "bottom")
+}
+
+
+#' Spaghetti plot over a selected covariate
+#'
+#' @param x The NIF data set.
+#' @param points Boolean to indicate whether points should be drawn.
+#' @param lines Boolean to indicate whether lines should be drawn.
+#' @param group The grouping covariate, defaults to 'ANALYTE'.
+#' @param nominal_time Boolean to indicate whether the x-axis should be NTIME
+#'  rather than TIME.
+#'
+#' @return A ggplot2 plot object.
+#' @export
+#'
+#' @examples
+#' nif_spaghetti_plot(examplinib_fe_nif)
+#' nif_spaghetti_plot(examplinib_sad_nif)
+nif_spaghetti_plot <- function(x,
+                               points = FALSE, lines = TRUE, group = "ANALYTE",
+                               nominal_time = FALSE) {
+  temp <- x %>%
+    as.data.frame() %>%
+    verify(has_all_names("NTIME", "DOSE", "DV")) %>%
+    dplyr::filter(!is.na(DOSE)) %>%
+    filter(EVID == 0) %>%
+    filter(!is.na(DV)) %>%
+    as.data.frame()
+
+  if (nominal_time) {
+    p <- temp %>%
+      ggplot2::ggplot(ggplot2::aes(
+        x = NTIME, y = DV,
+        group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
+        color = as.factor(.data[[group]])
+      ))
+  } else {
+    p <- temp %>%
+      ggplot2::ggplot(ggplot2::aes(
+        x = TIME, y = DV,
+        group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
+        color = as.factor(.data[[group]])
+      ))
+  }
+
+  p +
+    { if (lines) geom_line() } +
+    { if (points) geom_point() } +
+    { if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE) } +
+    labs(color=group) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "bottom")
+}
 
 
 #' Plot NIF data set
@@ -187,15 +290,22 @@ dose_plot_id <- function(nif, id, y.scale = "lin", max.dose = NA, max.time = NA,
 #' plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
 #' plot(examplinib_fe_nif, max_x = 24, point = TRUE)
-#' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", nominal_time = TRUE)
+#' plot(examplinib_fe_nif,
+#'   analyte = "RS2023", group = "FASTED",
+#'   nominal_time = TRUE
+#' )
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
-#' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE, max_x = 24)
+#' plot(examplinib_fe_nif,
+#'   analyte = "RS2023", group = "FASTED", mean = TRUE,
+#'   max_x = 24
+#' )
 #'
 #' @export
 plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
-                     mean = FALSE, doses = NULL, points = F, id = NULL, usubjid = NULL,
-                     group = NULL, administrations = F, nominal_time = F, lines = T,
-                     alpha = 1, title = NULL, ...) {
+                     mean = FALSE, doses = NULL, points = FALSE, id = NULL,
+                     usubjid = NULL, group = NULL, administrations = FALSE,
+                     nominal_time = FALSE, lines = TRUE, alpha = 1,
+                     title = NULL, ...) {
   if (!is.null(id)) {
     x <- x %>%
       dplyr::filter(ID %in% id)
@@ -218,7 +328,7 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
 
   if (!is.null(group)) {
     cov <- group
-    if (is.null(analyte) | length(analyte) > 1) {
+    if (is.null(analyte) || length(analyte) > 1) {
       stop(paste0(
         "Plotting multiple analytes in the same graph does not make ",
         "sense. Consider selecting a (single) analyte!"
@@ -229,117 +339,32 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
   }
 
   if (mean == TRUE) {
-    if (!is.null(group) & is.null(analyte) & length(analytes(x) > 1)) {
+    if (!is.null(group) && is.null(analyte) && length(analytes(x) > 1)) {
       stop(paste0(
         "Plotting means over multiple analytes does not make sense! ",
         "Consider selecting a specific analyte"
       ))
     }
-    temp <- x %>%
-      as.data.frame() %>%
-      filter(NTIME > 0) %>%
-      filter(EVID == 0) %>%
-      dplyr::filter(!is.na(DOSE)) %>%
-      dplyr::group_by(NTIME, .data[[cov]], DOSE) %>%
-      dplyr::summarize(
-        mean = mean(DV, na.rm = TRUE), sd = sd(DV, na.rm = TRUE),
-        n = n(), .groups = "drop"
-      ) %>%
-      mutate(max_y = mean + sd)
-
-    p <- temp %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = NTIME, y = mean,
-        group = as.factor(.data[[cov]]),
-        color = as.factor(.data[[cov]])
-      )) +
-      ggplot2::geom_ribbon(
-        aes(
-          ymin = mean - sd, ymax = mean + sd,
-          fill = as.factor(.data[[cov]])
-        ),
-        alpha = 0.3, color = NA, show.legend = F
-      ) +
-      ggplot2::facet_wrap(~DOSE) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(caption = "Data shown are mean \u00B1 SD") +
-      ylim(0, max(temp$max_y, na.rm = T)) +
-      ggplot2::theme(legend.position = "bottom")
+    p <- x %>%
+      nif_mean_plot(points = points, lines = lines, group = cov)
   } else {
-    # if mean == FALSE
-    temp <- x %>%
-      as.data.frame() %>%
-      dplyr::filter(!is.na(DOSE)) %>%
-      filter(EVID == 0) %>%
-      filter(!is.na(DV)) %>%
-      as.data.frame()
-
-    if (nominal_time) {
-      p <- temp %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = NTIME, y = DV,
-          group = interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
-          color = as.factor(.data[[cov]])
-        ))
-    } else {
-      p <- temp %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = TIME, y = DV,
-          group = interaction(USUBJID, ANALYTE, as.factor(.data[[cov]])),
-          color = as.factor(.data[[cov]])
-        ))
-    }
-
-    if (administrations) {
-      adm <- x %>%
-        as.data.frame() %>%
-        filter(EVID == 1) %>%
-        mutate(GROUP = as.factor(.data[[cov]])) %>%
-        distinct(TIME, GROUP, DOSE)
-
-      p <- p +
-        geom_vline(aes(xintercept = TIME), data = adm, color = "grey")
-    }
-
-    p <- p +
-      ggplot2::facet_wrap(~DOSE) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "bottom")
+    p <- x %>%
+      nif_spaghetti_plot(points = points, lines = lines, group = cov,
+                         nominal_time = nominal_time)
   }
 
-  if (!is.null(title)) {
-    p <- p + ggtitle(title)
-  }
-
-  p <- p + ggplot2::xlim(min_x, max_x)
-
-  if (y_scale == "log") {
-    p <- p + ggplot2::scale_y_log10()
-  }
-
-  if (points) {
-    p <- p + ggplot2::geom_point(alpha = alpha)
-  }
-
-  if (lines) {
-    p <- p + ggplot2::geom_line(alpha = alpha)
-  }
-
-  if (length(analyte) == 1) {
-    p <- p + labs(y = analyte)
-  }
-
-  if (!is.null(group) | length(unique(x$ANALYTE)) > 1) {
-    p <- p + labs(color = group)
-  } else {
-    p <- p + labs(color = "ANALYTE")
-    if (length(analyte) < 2) {
-      p <- p + theme(legend.position = "none")
-    }
-  }
-
-  return(p)
+  p +
+    xlim(min_x, max_x) +
+    {if (!is.null(title)) ggtitle(title)} +
+    {if (y_scale == "log") scale_y_log10()} +
+    {if (length(analyte) == 1) labs(y = analyte)} +
+    labs(color = cov) +
+    {if (x %>%
+         pull(cov) %>%
+         unique() %>%
+         length() < 2) theme(legend.position = "none")}
 }
+
 
 
 
@@ -411,7 +436,7 @@ summary.nif <- function(object, egfr_function = egfr_cg, ...) {
       distinct(ID, CLASS) %>%
       group_by(CLASS) %>%
       summarize(N = n()) %>%
-      arrange(ordered(CLASS, c("normal", "mild", "moderate", "severe")))
+      arrange(ordered("CLASS", c("normal", "mild", "moderate", "severe")))
   } else {
     renal_function <- NULL
   }
@@ -450,7 +475,10 @@ summary.nif <- function(object, egfr_function = egfr_cg, ...) {
 print.summary_nif <- function(x, ...) {
   cat(paste("NONMEM input file (NIF) data set summary\n\n"))
 
-  cat(paste("Data from", sum(x$n_studies$N), "subjects across", length(x$studies)), "studies:\n")
+  cat(paste(
+    "Data from", sum(x$n_studies$N), "subjects across",
+    length(x$studies)
+  ), "studies:\n")
   cat(paste0(df_to_string(x$n_studies), "\n\n"))
 
   cat(paste0(
@@ -533,7 +561,7 @@ plot.summary_nif <- function(x, ...) {
 
   for (i in x$analytes) {
     out[[i]] <- plot(nif,
-      analyte = i, y_scale = "log", points = T, line = F,
+      analyte = i, y_scale = "log", points = TRUE, line = FALSE,
       alpha = 0.3, title = paste(i, "overview by dose"),
       max_x = max_observation_time(x$nif, i)
     )
@@ -628,17 +656,19 @@ wt_by_race <- function(obj) {
     group_by(ID) %>%
     mutate(bl_wt = mean(WEIGHT[TIME == 0])) %>%
     ungroup() %>%
-    mutate(rc = as.factor(case_match(as.character(RACE),
-      "WHITE" ~ "White",
-      "BLACK OR AFRICAN AMERICAN" ~ "Black",
-      "ASIAN" ~ "Asian",
-      "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER" ~ "Pacific",
-      "AMERICAN INDIAN OR ALASKA NATIVE" ~ "Native",
-      "OTHER" ~ "Other",
-      .default = RACE
-    ))) %>%
+    mutate(rc = as.factor(
+      case_match(as.character(RACE),
+        "WHITE" ~ "White",
+        "BLACK OR AFRICAN AMERICAN" ~ "Black",
+        "ASIAN" ~ "Asian",
+        "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER" ~ "Pacific",
+        "AMERICAN INDIAN OR ALASKA NATIVE" ~ "Native",
+        "OTHER" ~ "Other",
+        .default = RACE
+      )
+    )) %>%
     distinct(ID, bl_wt, rc) %>%
-    mutate(maxwt = max(bl_wt, na.rm = T)) %>%
+    mutate(maxwt = max(bl_wt, na.rm = TRUE)) %>%
     group_by(rc) %>%
     mutate(count = n()) %>%
     ggplot(aes(x = rc, y = bl_wt, group = rc)) +
@@ -727,9 +757,9 @@ administration_summary <- function(obj) {
     filter(PARENT != "") %>%
     group_by(across(any_of(c("PARENT")))) %>%
     summarize(
-      min = min(N, na.rm = T), max = max(N, na.rm = T),
-      mean = round(mean(N, na.rm = T), 1),
-      median = stats::median(N, na.rm = T)
+      min = min(N, na.rm = TRUE), max = max(N, na.rm = TRUE),
+      mean = round(mean(N, na.rm = TRUE), 1),
+      median = stats::median(N, na.rm = TRUE)
     ) %>%
     as.data.frame()
 }
@@ -755,7 +785,10 @@ mean_dose_plot <- function(obj, analyte = NULL) {
     mutate(DAY = floor(TIME / 24) + 1) %>%
     filter(EVID == 1, ANALYTE == analyte) %>%
     group_by(DAY) %>%
-    summarize("mean dose (mg)" = mean(DOSE, na.rm = T), "N" = n(), .groups = "drop") %>%
+    summarize(
+      "mean dose (mg)" = mean(DOSE, na.rm = TRUE), "N" = n(),
+      .groups = "drop"
+    ) %>%
     pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") %>%
     ggplot(aes(x = DAY, y = VAL)) +
     geom_line() +
