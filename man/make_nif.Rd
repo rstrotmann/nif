@@ -10,7 +10,7 @@ make_nif(
   impute_missing_end_time = TRUE,
   impute_administration_time = TRUE,
   silent = FALSE,
-  truncate.to.last.observation = TRUE,
+  truncate_to_last_observation = TRUE,
   use_pctptnum = TRUE
 )
 }
@@ -34,7 +34,7 @@ SDTM data.}
 
 \item{silent}{Boolean value to indicate whether warnings should be printed.}
 
-\item{truncate.to.last.observation}{Boolean to indicate whether the data set
+\item{truncate_to_last_observation}{Boolean to indicate whether the data set
 should be truncated to the last observation. In this case, administrations
 after the last observation time point will deleted.}
 

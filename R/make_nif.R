@@ -951,7 +951,7 @@ add_time <- function(x) {
 #'  time of administration is to be imputed from the PCRFDTC field from the
 #'  PC domain. This field is 'permissible' and may not be present in certain
 #'  SDTM data.
-#' @param truncate.to.last.observation Boolean to indicate whether the data set
+#' @param truncate_to_last_observation Boolean to indicate whether the data set
 #'   should be truncated to the last observation. In this case, administrations
 #'   after the last observation time point will deleted.
 #' @param silent Boolean value to indicate whether warnings should be printed.
@@ -973,7 +973,7 @@ make_nif <- function(
     impute_missing_end_time = TRUE,
     impute_administration_time = TRUE,
     silent = FALSE,
-    truncate.to.last.observation = TRUE,
+    truncate_to_last_observation = TRUE,
     use_pctptnum = TRUE) {
   vs <- sdtm_data$domains[["vs"]] %>%
     dplyr::select(-DOMAIN) %>%
@@ -1005,7 +1005,7 @@ make_nif <- function(
     left_join(drug_mapping, by = "PCTESTCD")
 
   # define cut-off date
-  if (truncate.to.last.observation == TRUE) {
+  if (truncate_to_last_observation == TRUE) {
     cut.off.date <- last_obs_dtc(obs)
     conditional_message("Data cut-off was set to last observation time, ",
       cut.off.date, "\n",
