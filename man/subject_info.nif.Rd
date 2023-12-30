@@ -25,7 +25,6 @@ as list item (see example).
 }
 \examples{
 subject_info(examplinib_poc_nif, 1)
-subject_info(examplinib_poc_nif, c(1, 2))
 unclass(subject_info(examplinib_poc_nif, 1))
 subject_info(examplinib_poc_nif, 1)$administrations
 

@@ -355,7 +355,7 @@ suggest <- function(obj) {
       "   Consider defining a PART or ARM variable in the nif dataset, \n",
       "   filtering for a particular arm, or defining a covariate based\n",
       "   on ACTARMCD.\n\n",
-      df_to_string(arms, indent = "   "), "\n"
+      df_to_string(arms, indent = "       "), "\n"
     ))
     n_suggestion <- n_suggestion + 1
   }
@@ -371,7 +371,7 @@ suggest <- function(obj) {
       "   (see below).\n",
       "   Consider filtering for a specific specimem, or defining CMT",
       "accordingly.\n\n",
-      df_to_string(specimems, indent = "   "), "\n"
+      df_to_string(specimems, indent = "       "), "\n"
     ))
     n_suggestion <- n_suggestion + 1
   }
@@ -384,7 +384,7 @@ suggest <- function(obj) {
       n_suggestion, ". There are ", nrow(treatments), " different treatments ",
       "in EX (see below).\n",
       "   Consider filtering for a specific treatment.\n\n",
-      df_to_string(treatments, indent = "   "), "\n"
+      df_to_string(treatments, indent = "       "), "\n"
     ))
     n_suggestion <- n_suggestion + 1
   }
@@ -400,14 +400,14 @@ suggest <- function(obj) {
 
   if (nrow(no_analyte_treatments) > 0) {
     message(paste0(
-      n_suggestion, ". There are treatments (EXTRT) without analytes of the ",
-      "same name\n",
-      "   (see below).\n",
+      n_suggestion,
+      ". There are treatments (EXTRT) without analytes (PCTESTCD) of\n",
+      "   the same name (see below).\n",
       "   Consider adding a treatment-analyte mapping to the sdtm object\n",
       "   See '?add_analyte_mapping' for additional information.\n\n",
-      df_to_string(no_analyte_treatments, indent = "   "), "\n\n",
+      df_to_string(no_analyte_treatments, indent = "       "), "\n\n",
       "   Available analytes:\n\n",
-      df_to_string(obj$pc %>% dplyr::distinct(PCTESTCD), indent = "   "), "\n\n"
+      df_to_string(obj$pc %>% dplyr::distinct(PCTESTCD), indent = "       "), "\n"
     ))
     n_suggestion <- n_suggestion + 1
   }

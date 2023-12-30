@@ -1,7 +1,5 @@
 ---
 title: "Creating NIF files from SDTM data"
-author: "Rainer Strotmann"
-date: "17-Sep-2023"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Creating NIF files from SDTM data}
@@ -12,23 +10,25 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "> "
 )
 ```
 
 This is a basic tutorial on using the `nif` package to create NONMEM Input File
 (NIF) data sets from Study Data Tabulation Model- (SDTM) formatted data.
 
-The package is intended to facilitate providing the required data table for
-population PK or PK/PD modeling. The source data are typically contained in 
-different SDTM tables and will be joined together, i.e., including but not
-limited to: baseline demographic and vital sign data, drug exposure data, and
-pharmacokinetic concentrations.
+The package is intended to facilitate creating the input data in the format
+required for population PK or PK/PD modeling.
+The source data typically come from different SDTM tables, including but not 
+limited to:
+baseline demographic and vital sign, drug exposure, and pharmacokinetic
+concentration data.
 
-In addition to re-arranging and joining the data, certain standard data
-imputations are automatically performed by the functions provided in this
-package, some of which are discussed in more detail in the vignette "Imputations
-and assumptions used by make_nif()".
+The first part of this tutorial describes how to import SDTM data into a `sdtm`
+object, and some initial explorations based on the SDTM data.
+
+The second part of this tutorial walks through the generation of a NIF data set
+from SDTM data tables and some general exploratory analyses.
 
 This tutorial contains live code that depends on the following R packages:
 
@@ -39,6 +39,8 @@ library(stringr)
 library(knitr)
 library(nif)
 ```
+
+# SDTM DATA
 
 ## Import SDTM data 
 
@@ -74,11 +76,20 @@ The return value of the function is a `sdtm` object.
 ## SDTM objects
 
 `sdtm` objects are essentially lists of the SDTM domains from a particular
-clinical study. The most common way of creating `sdtm` objects is by importing
-the SDTM data using `read_sdtm_sas()` or `read_sdtm_xpt()` (see above). 
+clinical study plus some metadata. The most common way of creating `sdtm`
+objects is by importing the SDTM data using `read_sdtm_sas()` or
+`read_sdtm_xpt()` as shown above. 
 
-The original data can be retrieved accessing the individual domains like
-demonstrated below for the (fictional) sample data set `examplinib_fe`:
+This package includes sample SDTM data sets for demonstration purposes. These
+data do not come from actual clinical studies but are fully synthetic data sets
+from a fictional single ascending dose (SAD) study (`examplinib_sad`), a
+fictional typical food effect (FE) study (`examplinib_fe`), and a fictional
+single-arm proof-of-concept (POC) study with multiple-dose administrations
+(`examplinib_poc`).
+
+The original SDTM data can be retrieved from `sdtm` objects by accessing the
+individual SDTM domains like demonstrated below for the DM domain of the
+`examplinib_fe` data object.
 
 ```{r}
 examplinib_fe$domains[["dm"]] %>% head()
@@ -91,43 +102,59 @@ directly, e.g.:
 dm <- examplinib_fe$dm
 ```
 
-Printing an `sdtm` object shows basic information on the data set:
+Printing an `sdtm` object shows some of its basic properties:
 
 ```{r}
 examplinib_fe
 ```
 
+Note the 'Treatment-to-analyte mappings' and 'Parent-to-metabolite mapping'
+tables, we will get back to this when creating a NIF data set from these SDTM
+data.
 
-## Suggestions
+In addition to a general overview, general demographic data for individual 
+subjects can be extracted as shown below: 
 
-Some fields in the original SDTM data are study specific, and is therefore hard
-to fully automate the generation of standard NIF files for downstream analysis
-steps. This needs study-specific considerations and manual adaptations.
+```{r}
+examplinib_fe %>% subject_info("20230004001050001")
+```
 
-As a starting point the function `suggest()` can provide useful suggestions for 
-a `sdtm`object:
+## SDTM suggestions
+
+SDTM data may be incomplete, e.g., when emerging data that have not yet been
+fully cleaned are analyzed before data base lock. In addition, study-specific
+data may be encoded in a non-standard way, e.g., information on study parts,
+cohorts, treatment conditions, etc..
+
+Such data fields may need study-specific considerations and manual imputations
+during the creating of the NIF data set. To help deciding which study-specific
+factors need to be addressed, the `nif` package includes functions to explore
+the SDTM data.
+
+As a starting point, `suggest()` can provide useful suggestions for 
+a `sdtm` object:
 
 ```{r}
 suggest(examplinib_fe)
 ```
 
-In the case of `examplinib_fe`, there are different treatment arms defined in the
-DM domain that should probably be included as covariates in the NIF file (see
-suggestion 1). This will be programmed once a basic NIF file has been generated
-(see below).
+In the case of `examplinib_fe`, there are different treatment arms defined in 
+the DM domain that should probably be included as covariates in the NIF file
+(see suggestion 1). A respective variable within the NIF data set will be
+programmed once a basic NIF file has been generated (see below).
 
 Also, the SDTM data do not provide a relation between treatments and analytes
 (see suggestion 2). The parent drug name in the SDTM field `EXTRT` (i.e.,
-"EXAMPLINIB") is different from the respective analyte for the parent compound as
-specified in the field `PCTESTCD` (i.e., "RS2023"). This is a common situation
-in data from clinical studies. However, to correctly associate pharmacokinetic
-concentrations with the administration of the corresponding drug, a link needs
-to be provided between the treament and the analyte. Similarly, metabolites
-(e.g., "RS2023487A") need to be linked to their parent compound - particularly
-if muliple drugs and metabolites are included in the data set.
+"EXAMPLINIB") is different from the respective analyte for the parent compound
+as specified in the field `PCTESTCD` (i.e., "RS2023"). This is a common
+situation in data from clinical studies. However, to correctly associate
+pharmacokinetic concentrations with the administration of the corresponding
+drug, a link needs to be provided between the treament and the analyte.
+Similarly, metabolites (e.g., "RS2023487A") need to be linked to their parent
+compound - particularly if muliple drugs and metabolites are included in the
+data set.
 
-Both are described below.
-
+Both are addressed in the following.
 
 ### Analyte mappings
 
@@ -149,24 +176,32 @@ sdtm_expl <- examplinib_fe %>%
   add_metabolite_mapping("RS2023", "RS2023487A")
 ```
 
-## Creating NIF files
+# NIF DATA SETS
+
+## Creating NIF data sets
+
+In addition to re-arranging and joining these SDTM data tables, certain standard
+data imputations are automatically performed by the functions provided in this
+package, some of which are discussed in more detail in the vignette "Imputations
+and assumptions used by make_nif()".
+
 
 The following section details how to create NIF files from an `sdtm` object.
 
 ### Basic NIF file
 
 Most steps in the generation of a basic NIF file from an `sdtm` object are
-automated in the `make_nif()` function. The resulting `nif` object is essentially
-a data table that has individual rows for each administration and observation.
-Following the NONMEM convention for oral administration, the `EVID` field is "1"
-for the former, and "0" for the latter.
+automated in the `make_nif()` function. The resulting `nif` object is 
+a data table with individual rows for individual administrations and
+observations and follows the naming conventions summarized in 
+[Bauer, CPT Pharmacometrics Syst. Pharmacol. (2019)](https://doi.org/10.1002/psp4.12404).
 
 Standard demographic information including SEX, AGE, RACE is taken from the DM 
 domain and merged into the data table. Baseline WEIGHT and HEIGHT are taken from 
 the VS domain.
 
 ```{r}
-nif_expl <- make_nif(sdtm_expl)
+nif_expl <- make_nif(sdtm_expl, silent=TRUE)
 ```
 
 The output of the above code informs that there may be pharmacokinetic data for
