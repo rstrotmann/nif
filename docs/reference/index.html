@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -191,9 +191,20 @@ administrations after the last observation</dd>
         <dd>Compose DTC from date and time components</dd>
       </dl><dl><dt>
           
+          <code><a href="compress.html">compress()</a></code> 
+        </dt>
+        <dd>Generic function for compress</dd>
+      </dl><dl><dt>
+          
+          <code><a href="compress.nif.html">compress(<i>&lt;nif&gt;</i>)</a></code> 
+        </dt>
+        <dd>Compress a NIF data set</dd>
+      </dl><dl><dt>
+          
           <code><a href="compress_nif.html">compress_nif()</a></code> 
         </dt>
-        <dd>This function cleans up a NIF data set</dd>
+        <dd>This function removes columns from a NIF data set that are not needed for
+downstream analysis</dd>
       </dl><dl><dt>
           
           <code><a href="conditional_message.html">conditional_message()</a></code> 
@@ -394,7 +405,7 @@ sampling</dd>
           
           <code><a href="index_nif.html">index_nif()</a></code> 
         </dt>
-        <dd>This function finalizes a NIF data set by indexing the rows</dd>
+        <dd>This function orders a NIF data set and adds a REF field</dd>
       </dl><dl><dt>
           
           <code><a href="index_rich_sampling_intervals.html">index_rich_sampling_intervals()</a></code> 
@@ -479,7 +490,7 @@ sampling</dd>
           
           <code><a href="make_nif.html">make_nif()</a></code> 
         </dt>
-        <dd>Make raw NIF data set from list of SDTM domains</dd>
+        <dd>Make a NIF data set from SDTM-formatted data</dd>
       </dl><dl><dt>
           
           <code><a href="make_obs.html">make_obs()</a></code> 

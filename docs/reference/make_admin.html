@@ -14,7 +14,7 @@ all administrations, with the time point in the TIME column."><!-- mathjax --><s
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,14 +56,7 @@ all administrations, with the time point in the TIME column.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_admin</span><span class="op">(</span></span>
-<span>  <span class="va">ex</span>,</span>
-<span>  <span class="va">dm</span>,</span>
-<span>  <span class="va">drug_mapping</span>,</span>
-<span>  <span class="va">cut.off.date</span>,</span>
-<span>  impute_missing_end_time <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  silent <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_admin</span><span class="op">(</span><span class="va">ex</span>, <span class="va">dm</span>, <span class="va">drug_mapping</span>, <span class="va">cut.off.date</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -84,12 +77,6 @@ that associate both.</p></dd>
 <dt>cut.off.date</dt>
 <dd><p>The cut-off date to be used where no EXENDTC is recorded,
 in POSIX format.</p></dd>
-
-
-<dt>impute_missing_end_time</dt>
-<dd><p>A boolean value to indicate whether in rows
-in EX where EXENDTC does not include a time, the time should be copied from
-EXSTDTC.</p></dd>
 
 
 <dt>silent</dt>
