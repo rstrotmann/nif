@@ -15,3 +15,6 @@ A plot object.
 \description{
 Weight by height scatterplot
 }
+\examples{
+ht_by_wt(examplinib_poc_nif)
+}

@@ -36,3 +36,9 @@ This function plots DV over TIME for an individual subject, id. Id can be
 either the ID or the USUBJID. Administration time points are indicated with
 vertical lines.
 }
+\examples{
+nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
+nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
+nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
+}

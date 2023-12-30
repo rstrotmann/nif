@@ -17,3 +17,7 @@ A list of ggplot objects.
 \description{
 Plot NIF summary
 }
+\examples{
+plot(summary(examplinib_poc_nif))
+
+}

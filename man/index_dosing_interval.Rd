@@ -19,3 +19,7 @@ first dosing interval, too.
 In addition to \code{DI}, the function also calls \code{index_nif()}, thus creating
 the field \code{REF} as a side effect.
 }
+\examples{
+as.data.frame(index_dosing_interval(examplinib_fe_nif))
+
+}

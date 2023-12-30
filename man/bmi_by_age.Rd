@@ -15,3 +15,6 @@ A plot object.
 \description{
 BMI by age scatterplot
 }
+\examples{
+bmi_by_age(examplinib_poc_nif)
+}

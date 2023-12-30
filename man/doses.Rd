@@ -15,3 +15,6 @@ A number vector of all doses (AMT) in the data set.
 \description{
 Doses within a nif object
 }
+\examples{
+doses(examplinib_poc_nif)
+}

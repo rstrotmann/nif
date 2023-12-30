@@ -18,3 +18,6 @@ A NIF data set.
 \description{
 Add baseline renal function class
 }
+\examples{
+as.data.frame(add_bl_renal(examplinib_poc_nif))
+}

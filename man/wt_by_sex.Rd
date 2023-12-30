@@ -15,3 +15,7 @@ A plot object.
 \description{
 Weight by sex diagram
 }
+\examples{
+wt_by_sex(examplinib_poc_nif)
+
+}

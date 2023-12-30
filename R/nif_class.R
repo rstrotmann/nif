@@ -223,7 +223,7 @@ dose_red_sbs <- function(obj, analyte = "") {
 #' @return A list of IDs in numeric format.
 #' @export
 #' @examples
-#' rich_sampling_sbs(examplinib_poc_nif)
+#' rich_sampling_sbs(examplinib_poc_nif, n=6)
 #'
 rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
   if (is.na(analyte)) {
@@ -252,6 +252,9 @@ rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
 #' @import dplyr
 #' @return A character vector of all STUDYIDs in the data set.
 #' @export
+#' @examples
+#' studies(examplinib_poc_nif)
+#'
 studies <- function(obj) {
   obj %>%
     dplyr::distinct(STUDYID) %>%
@@ -265,6 +268,8 @@ studies <- function(obj) {
 #' @import dplyr
 #' @return A number vector of all doses (AMT) in the data set.
 #' @export
+#' @examples
+#' doses(examplinib_poc_nif)
 doses <- function(obj) {
   obj %>%
     dplyr::filter(AMT != 0) %>%
@@ -315,6 +320,10 @@ dose_levels <- function(obj, grouping = NULL) {
 #' @import dplyr
 #' @return A character vector of all analytes in the data set.
 #' @export
+#' @examples
+#' analytes(examplinib_fe_nif)
+#' analytes(examplinib_poc_nif)
+#'
 analytes <- function(obj) {
   obj %>%
     dplyr::distinct(ANALYTE) %>%
@@ -390,34 +399,6 @@ write_nif <- function(obj, filename = NA, fields = NULL) {
 }
 
 
-#' #' Convert three-letter country name to ISO 3166 codes
-#' #'
-#' #' @param country_abbr The Country name in three-letter format according to
-#' #' ISO 3166.
-#' #'
-#' #' @return The numerical country code according to ISO 3166.
-#' #' @import DescTools
-#' #' @export
-#' country_code <- function(country_abbr) {
-#'   DescTools::d.countries %>%
-#'     filter(a3 %in% country_abbr) %>%
-#'     pull(code)
-#' }
-#'
-#'
-#' #' Convert ISO 3166 country code to three-letter country name.
-#' #'
-#' #' @param country_code The numerical country code according to ISO 3166.
-#' #'
-#' #' @return The three-letter country abbreviation.
-#' #' @export
-#' country_abbr <- function(country_code) {
-#'   DescTools::d.countries %>%
-#'     filter(code %in% country_code) %>%
-#'     pull(a3)
-#' }
-
-
 #' Standard nif fields
 #'
 #' @return A character vector of the standard NIF fields
@@ -444,6 +425,9 @@ standard_nif_fields <- c(
 #'
 #' @return A new NIF data set.
 #' @export
+#' @examples
+#' as.data.frame(index_dosing_interval(examplinib_fe_nif))
+#'
 index_dosing_interval <- function(obj) {
   obj <- obj %>%
     index_nif() %>%
@@ -553,6 +537,10 @@ max_observation_time <- function(obj, analytes = NULL) {
 #' @param obj A NIF data set
 #'
 #' @return The ANALYTE as character
+#' @export
+#' @examples
+#' guess_analyte(examplinib_poc_nif)
+#'
 guess_analyte <- function(obj) {
   temp <- obj %>%
     as.data.frame() %>%
@@ -575,6 +563,8 @@ guess_analyte <- function(obj) {
 #' @seealso [egfr_cg()]
 #' @seealso [egfr_raynaud()]
 #' @export
+#' @examples
+#' as.data.frame(add_bl_crcl(examplinib_poc_nif))
 add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
@@ -598,6 +588,8 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
 #'
 #' @return A NIF data set.
 #' @export
+#' @examples
+#' as.data.frame(add_bl_renal(examplinib_poc_nif))
 add_bl_renal <- function(obj, method = egfr_cg) {
   obj %>%
     add_bl_crcl(method = method) %>%

@@ -644,18 +644,7 @@ sampling</dd>
           
           <code><a href="standard_nif_fields.html">standard_nif_fields</a></code> 
         </dt>
-        <dd>#' Convert three-letter country name to ISO 3166 codes
-#'
-#' @param country_abbr The Country name in three-letter format according to
-#' ISO 3166.
-#'
-#' @return The numerical country code according to ISO 3166.
-#' @import DescTools
-#' @export
-country_code &lt;- function(country_abbr) 
-DescTools::d.countries %&gt;%
-filter(a3 %in% country_abbr) %&gt;%
-pull(code)</dd>
+        <dd>Standard nif fields</dd>
       </dl><dl><dt>
           
           <code><a href="standardize_date_format.html">standardize_date_format()</a></code> 

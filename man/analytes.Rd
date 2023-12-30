@@ -15,3 +15,8 @@ A character vector of all analytes in the data set.
 \description{
 Analytes within a nif object
 }
+\examples{
+analytes(examplinib_fe_nif)
+analytes(examplinib_poc_nif)
+
+}

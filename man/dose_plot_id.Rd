@@ -35,3 +35,7 @@ This function plots AMT over TIME for an individual subject, id. Id can be
 either the ID or the USUBJID. Administration time points are indicated with
 vertical lines.
 }
+\examples{
+dose_plot_id(examplinib_poc_nif, 18)
+dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[4]])
+}

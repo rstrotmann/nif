@@ -18,3 +18,7 @@ A ggplot object.
 \description{
 This function plots the mean dose per day over time
 }
+\examples{
+mean_dose_plot(examplinib_poc_nif)
+
+}

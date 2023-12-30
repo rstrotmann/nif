@@ -15,3 +15,7 @@ The ANALYTE as character
 \description{
 Guess the most likely meant analyte
 }
+\examples{
+guess_analyte(examplinib_poc_nif)
+
+}

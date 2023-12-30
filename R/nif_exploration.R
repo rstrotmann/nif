@@ -17,6 +17,11 @@
 #' @import dplyr
 #' @import ggplot2
 #' @export
+#' @examples
+#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+#' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
+#' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
+#' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
 nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
                         imp = "none") {
   if (id %in% nif$ID) {
@@ -51,8 +56,6 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
     dplyr::filter(EVID == 1) %>%
     dplyr::filter(PARENT == imp)
 
-  # p <- nif %>%
-  #   filter(EVID!=1) %>%
   p <- obs %>%
     ggplot2::ggplot(ggplot2::aes(
       x = TIME, y = DV,
@@ -106,6 +109,9 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
 #' @import dplyr
 #' @import ggplot2
 #' @export
+#' @examples
+#' dose_plot_id(examplinib_poc_nif, 18)
+#' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[4]])
 dose_plot_id <- function(nif, id, y_scale = "lin", max.dose = NA, max.time = NA,
                          analyte = NULL) {
   if (id %in% nif$ID) {
@@ -378,6 +384,9 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
 #'
 #' @return A summary_nif object.
 #' @export
+#' @examples
+#' summary(examplinib_poc_nif)
+#'
 summary.nif <- function(object, egfr_function = egfr_cg, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
@@ -547,6 +556,9 @@ get_cov_plot_params <- function(field) {
 #' @param ... Further arguments.
 #' @return A list of ggplot objects.
 #' @export
+#' @examples
+#' plot(summary(examplinib_poc_nif))
+#'
 plot.summary_nif <- function(x, ...) {
   nif <- x$nif
   out <- list()
@@ -624,6 +636,9 @@ covariate_hist <- function(obj, field, nbins = 11) {
 #'
 #' @return A plot object.
 #' @export
+#' @examples
+#' wt_by_sex(examplinib_poc_nif)
+#'
 wt_by_sex <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -651,6 +666,8 @@ wt_by_sex <- function(obj) {
 #'
 #' @return A plot object.
 #' @export
+#' @examples
+#' wt_by_race(examplinib_poc_nif)
 wt_by_race <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -689,6 +706,8 @@ wt_by_race <- function(obj) {
 #'
 #' @return A plot object.
 #' @export
+#' @examples
+#' wt_by_ht(examplinib_poc_nif)
 wt_by_ht <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -708,6 +727,8 @@ wt_by_ht <- function(obj) {
 #'
 #' @return A plot object.
 #' @export
+#' @examples
+#' ht_by_wt(examplinib_poc_nif)
 ht_by_wt <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -727,13 +748,14 @@ ht_by_wt <- function(obj) {
 #'
 #' @return A plot object.
 #' @export
+#' @examples
+#' bmi_by_age(examplinib_poc_nif)
 bmi_by_age <- function(obj) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, AGE, BMI) %>%
     ggplot(aes(x = AGE, y = BMI)) +
     geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
-    # geom_point(size=3, aes( color=BMI>18.5)) +
     geom_point(size = 3) +
     labs(y = "BMI (kg/m^2)", x = "age (y)") +
     ggtitle("Body mass index by age") +
@@ -750,7 +772,7 @@ bmi_by_age <- function(obj) {
 #' @importFrom stats median
 #' @export
 #' @examples
-#' administration_summary(examplinib_fe_nif)
+#' administration_summary(examplinib_poc_nif)
 #'
 administration_summary <- function(obj) {
   obj %>%
@@ -776,6 +798,9 @@ administration_summary <- function(obj) {
 #'
 #' @return A ggplot object.
 #' @export
+#' @examples
+#' mean_dose_plot(examplinib_poc_nif)
+#'
 mean_dose_plot <- function(obj, analyte = NULL) {
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)

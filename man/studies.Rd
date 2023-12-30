@@ -15,3 +15,7 @@ A character vector of all STUDYIDs in the data set.
 \description{
 Studies within a nif object
 }
+\examples{
+studies(examplinib_poc_nif)
+
+}

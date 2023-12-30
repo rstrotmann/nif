@@ -20,3 +20,7 @@ A summary_nif object.
 \description{
 NIF data set overview
 }
+\examples{
+summary(examplinib_poc_nif)
+
+}
