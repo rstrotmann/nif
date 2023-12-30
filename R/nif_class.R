@@ -8,7 +8,7 @@ new_nif <- function(obj) {
   if (class(obj)[1] == "sdtm") {
     temp <- make_nif(obj)
   } else {
-    temp <- obj
+    temp <- obj %>% as.data.frame()
     class(temp) <- c("nif", "data.frame")
   }
   return(temp)
@@ -16,6 +16,11 @@ new_nif <- function(obj) {
 
 
 #' print() implementation for nif objects
+#'
+#' TO DO:
+#' It cannot be assumed that a nif file has all the fields used in this
+#' function. Update this function using defensive programming.
+#'
 #'
 #' @param x A nif object.
 #' @param ... Additional parameters

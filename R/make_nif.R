@@ -511,9 +511,7 @@ make_exstdy_exendy <- function(ex, dm) {
 #'  in POSIX format.
 #' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
 #'  that associate both.
-#' @param impute_missing_end_time A boolean value to indicate whether in rows
-#'  in EX where EXENDTC does not include a time, the time should be copied from
-#'  EXSTDTC.
+#'
 #' @param silent Boolean value to indicate whether warnings should be printed.
 #'
 #' @return A tibble with individual administrations
@@ -525,7 +523,6 @@ make_admin <- function(ex,
                        dm,
                        drug_mapping,
                        cut.off.date,
-                       impute_missing_end_time = TRUE,
                        silent = FALSE) {
   admin <- ex %>%
     verify(has_all_names(
@@ -894,73 +891,74 @@ add_time <- function(x) {
 }
 
 
-#' Make raw NIF data set from list of SDTM domains
+#' Make a NIF data set from SDTM-formatted data
 #'
-#' @description This function makes a basic NONMEM input file (NIF) data set,
-#'   following the conventions summarized in
-#'   [Bauer, CPT Pharmacometrics Syst. Pharmacol.
-#'   (2019)](https://doi.org/10.1002/psp4.12404).
-#'
-#'   For SDTM data sets in which the administered drugs (EXTRT in domain EX) and
-#'   the corresponding analyte (PCTESTCD in domain PC) have different names,
-#'   treatment-to-analyte mappings must be added to the sdtm object using
-#'   [add_mapping()].
+#' This function makes a basic NONMEM input file (NIF) data set from
+#' SDTM-formatted clinical study data following the conventions summarized in
+#' [Bauer, CPT Pharmacometrics Syst. Pharmacol. (2019)](https://doi.org/10.1002/psp4.12404).
+#' For a more in-depth tutorial, see `vignette("nif-vignette")`.
 #'
 #' @section Imputations:
-#'   Subjects with administration but no observations for the respective
-#'   analyte are deleted from the data set. For further imputations, see the
-#'   vignette "nif-imputations".
+#' Subjects with administration but no observations for the respective
+#' analyte are deleted from the data set. For further imputations, see
+#' `vignette("nif-imputations")`.
 #'
 #' @section Output fields:
-#'   * `ID` Subject identification number
-#'   * `TIME` Recorded time of administration or observation events in hours
-#'        relative to the first individual event.
-#'   * `AMT` Dose administered for dosing record, or zero for observations.
-#'   * `DOSE` Dose in mg for administrations and post-dose observations.
-#'   * `DV` The dependent variable, i.e., observed concentration, or zero for
-#'        administration records, in mg/l.
-#'   * `LNDV` The natural Log of DV.
-#'   * `RATE` Rate of infusion of drug or zero if drug is given as a bolus.
-#'   * `MDV` One for missing DV, else zero.
-#'   * `EVID` Event ID: 0 for observations, 1 for administrations.
-#'   * `CMT` Pharmacokinetic compartment. Will be set to 1 for administrations
-#'        and 2 for observations. Should be changed afterwards, if needed.
-#'   * `DTC` The date-time of the data record.
-#'   * `FIRSTDTC` Date and time of first event per subject. This field is used
-#'        internally for the calculation of `TIME`. Although it is not needed
-#'        for NONMEM analysis, it is provided for subsequent NIF file building
-#'        steps, e.g., addition of further time-dependent endpoints.
-#'   * `FIRSTADMINDTC` The date-time of the first administration of the
-#'        respective parent drug for the respective subject.
-#'   * `FIRSTTRTDTC` The date-time of the first administration of any parent
-#'        drug for the respective subject.
-#'   * `ANALYTE` The analyte or drug in the data record.
-#'   * `TRTDY` The treatment day, i.e., the relative day after the first
-#'        treatment for the respective subject.
+#' * `ID` Subject identification number
+#' * `TIME` Recorded time of administration or observation events in hours
+#'      relative to the first individual event.
+#' * `AMT` Dose administered for dosing record, or zero for observations.
+#' * `DOSE` Dose in mg for administrations and post-dose observations.
+#' * `DV` The dependent variable, i.e., observed concentration, or zero for
+#'      administration records, in mg/l.
+#' * `LNDV` The natural Log of DV.
+#' * `RATE` Rate of infusion of drug or zero if drug is given as a bolus.
+#' * `MDV` One for missing DV, else zero.
+#' * `EVID` Event ID: 0 for observations, 1 for administrations.
+#' * `CMT` Pharmacokinetic compartment. Will be set to 1 for administrations
+#'      and 2 for observations. Should be changed afterwards, if needed.
+#' * `DTC` The date-time of the data record.
+#' * `FIRSTDTC` Date and time of first event per subject. This field is used
+#'      internally for the calculation of `TIME`. Although it is not needed
+#'      for NONMEM analysis, it is provided for subsequent NIF file building
+#'      steps, e.g., addition of further time-dependent endpoints.
+#' * `FIRSTADMINDTC` The date-time of the first administration of the
+#'      respective parent drug for the respective subject.
+#' * `FIRSTTRTDTC` The date-time of the first administration of any parent
+#'      drug for the respective subject.
+#' * `ANALYTE` The analyte or drug in the data record.
+#' * `TRTDY` The treatment day, i.e., the relative day after the first
+#'      treatment for the respective subject.
 #'
-#' @param sdtm_data A list of SDTM domains as data tables, e.g., as loaded using
-#'   read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.
-#' @param spec The specimen to be represented in the NIF data set as string
-#'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
-#'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
-#'   or "PLASMA" is selected, depending what is found in the PC data.
-#' @param impute_missing_end_time A logic value to indicate whether in rows
-#'   in EX where EXENDTC does not include a time, the time should be copied from
-#'   EXSTDTC.
+#' @param sdtm_data A `sdtm` object, i.e., essentially a list of SDTM domains
+#' as data tables. Typically, the SDTM data are loaded using [read_sdtm_sas()]
+#' or [read_sdtm_xpt()]. As a minimum, the
+#' following SDTM domains are needed: DM, VS, PC and EX.
+#'
+#' @param spec The sample specimen for the PC data as string
+#' (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is NULL (default),
+#' the most likely specimen is selected.
+#'
 #' @param impute_administration_time A boolean value to indicate whether the
-#'  time of administration is to be imputed from the PCRFDTC field from the
-#'  PC domain. This field is 'permissible' and may not be present in certain
-#'  SDTM data.
+#' time of administration is to be imputed from the PCRFDTC field from the
+#' PC domain. This field is 'permissible' and may not be present in certain
+#' SDTM data. The default is 'TRUE'.
+#'
 #' @param truncate_to_last_observation Boolean to indicate whether the data set
-#'   should be truncated to the last observation. In this case, administrations
-#'   after the last observation time point will deleted.
+#' should be truncated to the last observation. In this case, administrations
+#' after the last observation time point will deleted. The default is 'TRUE'.
+#'
 #' @param silent Boolean value to indicate whether warnings should be printed.
+#' The default is 'FALSE'.
+#'
 #' @param use_pctptnum Boolean to indicate whether to derive nominal time
-#'   (`NTIME`) from `PCTPTNUM`.
+#' ('NTIME') from 'PCTPTNUM'.
 #'
 #' @return A NIF object.
-#' @seealso [add_analyte_mapping()]
-#' @seealso [add_time_mapping()]
+#' @seealso [summary.nif()]
+#' @seealso [plot.nif()]
+#' @seealso [write_nif()]
+#' @seealso [write_csv.nif()]
 #' @import tidyr
 #' @import dplyr
 #' @export
@@ -970,7 +968,6 @@ add_time <- function(x) {
 make_nif <- function(
     sdtm_data,
     spec = NULL,
-    impute_missing_end_time = TRUE,
     impute_administration_time = TRUE,
     silent = FALSE,
     truncate_to_last_observation = TRUE,
@@ -1028,7 +1025,7 @@ make_nif <- function(
   # make administrations
   admin <- make_admin(ex, dm,
     drug_mapping = drug_mapping, cut.off.date,
-    impute_missing_end_time = impute_missing_end_time, silent = silent
+    silent = silent
   )
 
   # Remove all administrations with PCTESTCD==NA
@@ -1132,13 +1129,21 @@ make_nif <- function(
 }
 
 
-#' This function finalizes a NIF data set by indexing the rows
+#' This function orders a NIF data set and adds a REF field
 #'
-#' @param nif NIF dataset as created by make_raw_nif() and potentially modified
-#'   for additional covariates
-#' @return A final NIF dataset including ID and REF fields
+#' The input data format expected by NONMEM requires all rows ordered by ID
+#' and TIME, and indexed sequentially on a subject level with a REF field.
+#' Re-indexing may be required if a NIF data set is extended, e.g., by merging
+#' in further data.
+#'
+#' @param nif NIF data set, e.g., as created by [make_nif()] and manually
+#' modified.
+#' @return The updated NIF dataset including an updated REF field.
 #' @import dplyr
 #' @export
+#' @examples
+#' index_nif(examplinib_fe_nif)
+#'
 index_nif <- function(nif) {
   nif %>%
     as.data.frame() %>%
@@ -1149,16 +1154,31 @@ index_nif <- function(nif) {
 }
 
 
-#' This function cleans up a NIF data set
+#' This function removes columns from a NIF data set that are not needed for
+#' downstream analysis
 #'
-#' @param nif NIF dataset as created by make_raw_nif() and potentially modified
-#' for additional covariates.
+#' During creating of a NIF data set using [make_nif()], multiple SDTM tables
+#' are aggregated without deleting the original fields (columns). Many of these
+#' fields may not be required for the final analysis. This function reduces the
+#' fields to those typically required in the downstream analysis. Applying
+#' [compress_nif()] is typically the last step in the creation of a NIF data
+#' set, after creating the basic NIF data set  with [make_nif()] and applying
+#' custom imputations and manually deriving convariates as needed.
+#'
+#' @param nif A NIF data set.
+#'
 #' @param ... Further optional parameters are fields to be included in the
 #'  output. If none are provided, the standard set will be used.
+#'
 #' @return A NIF dataset with only the specified fields
 #' @import dplyr
+#' @import lifecycle
 #' @export
+#' @examples
+#' compress_nif(examplinib_fe_nif)
+#'
 compress_nif <- function(nif, ...) {
+  lifecycle::deprecate_warn("0.40.1", "compress_nif()", "compress()")
   temp <- as.character(unlist(c(as.list(environment())[-1], list(...))))
 
   if (length(temp) == 0) {
@@ -1169,6 +1189,40 @@ compress_nif <- function(nif, ...) {
   nif %>%
     dplyr::select(any_of(columns)) %>%
     dplyr::select(any_of(c(columns, starts_with("BL_")))) %>%
+    new_nif()
+}
+
+
+#' Generic function for compress
+#'
+#' @param nif A NIF data set object.
+#' @param fields Fields to be kept as character.
+#'
+#' @return A NIF data set object.
+#' @export
+compress <- function(nif, fields=standard_nif_fields) {
+  UseMethod("compress")
+}
+
+
+#' Compress a NIF data set
+#'
+#' @param nif A NIF data set object.
+#' @param fields Fields to be included as character. If 'fields' is NULL
+#' (default), the fields defined in `standard_nif_fields` plus all fields with
+#' a name that starts with 'BL_' (baseline covariates) are included.
+#'
+#' @return A NIF data set object.
+#' @export
+compress.nif <- function(nif, fields=NULL) {
+  if (is.null(fields)) {
+    fields <- c(standard_nif_fields,
+                colnames(examplinib_poc_nif)[
+                  grep("BL_", colnames(examplinib_poc_nif))])
+  }
+  nif %>%
+    as.data.frame() %>%
+    dplyr::select(any_of(fields)) %>%
     new_nif()
 }
 

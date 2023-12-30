@@ -4,14 +4,7 @@
 \alias{make_admin}
 \title{Make administration data set from EX domain}
 \usage{
-make_admin(
-  ex,
-  dm,
-  drug_mapping,
-  cut.off.date,
-  impute_missing_end_time = TRUE,
-  silent = FALSE
-)
+make_admin(ex, dm, drug_mapping, cut.off.date, silent = FALSE)
 }
 \arguments{
 \item{ex}{EX domain as data frame.}
@@ -23,10 +16,6 @@ that associate both.}
 
 \item{cut.off.date}{The cut-off date to be used where no EXENDTC is recorded,
 in POSIX format.}
-
-\item{impute_missing_end_time}{A boolean value to indicate whether in rows
-in EX where EXENDTC does not include a time, the time should be copied from
-EXSTDTC.}
 
 \item{silent}{Boolean value to indicate whether warnings should be printed.}
 }

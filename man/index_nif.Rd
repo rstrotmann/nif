@@ -2,17 +2,24 @@
 % Please edit documentation in R/make_nif.R
 \name{index_nif}
 \alias{index_nif}
-\title{This function finalizes a NIF data set by indexing the rows}
+\title{This function orders a NIF data set and adds a REF field}
 \usage{
 index_nif(nif)
 }
 \arguments{
-\item{nif}{NIF dataset as created by make_raw_nif() and potentially modified
-for additional covariates}
+\item{nif}{NIF data set, e.g., as created by \code{\link[=make_nif]{make_nif()}} and manually
+modified.}
 }
 \value{
-A final NIF dataset including ID and REF fields
+The updated NIF dataset including an updated REF field.
 }
 \description{
-This function finalizes a NIF data set by indexing the rows
+The input data format expected by NONMEM requires all rows ordered by ID
+and TIME, and indexed sequentially on a subject level with a REF field.
+Re-indexing may be required if a NIF data set is extended, e.g., by merging
+in further data.
+}
+\examples{
+index_nif(examplinib_fe_nif)
+
 }

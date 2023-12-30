@@ -2,13 +2,13 @@
 % Please edit documentation in R/make_nif.R
 \name{compress_nif}
 \alias{compress_nif}
-\title{This function cleans up a NIF data set}
+\title{This function removes columns from a NIF data set that are not needed for
+downstream analysis}
 \usage{
 compress_nif(nif, ...)
 }
 \arguments{
-\item{nif}{NIF dataset as created by make_raw_nif() and potentially modified
-for additional covariates.}
+\item{nif}{A NIF data set.}
 
 \item{...}{Further optional parameters are fields to be included in the
 output. If none are provided, the standard set will be used.}
@@ -17,5 +17,15 @@ output. If none are provided, the standard set will be used.}
 A NIF dataset with only the specified fields
 }
 \description{
-This function cleans up a NIF data set
+During creating of a NIF data set using \code{\link[=make_nif]{make_nif()}}, multiple SDTM tables
+are aggregated without deleting the original fields (columns). Many of these
+fields may not be required for the final analysis. This function reduces the
+fields to those typically required in the downstream analysis. Applying
+\code{\link[=compress_nif]{compress_nif()}} is typically the last step in the creation of a NIF data
+set, after creating the basic NIF data set  with \code{\link[=make_nif]{make_nif()}} and applying
+custom imputations and manually deriving convariates as needed.
+}
+\examples{
+compress_nif(examplinib_fe_nif)
+
 }

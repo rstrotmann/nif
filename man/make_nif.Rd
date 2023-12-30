@@ -2,12 +2,11 @@
 % Please edit documentation in R/make_nif.R
 \name{make_nif}
 \alias{make_nif}
-\title{Make raw NIF data set from list of SDTM domains}
+\title{Make a NIF data set from SDTM-formatted data}
 \usage{
 make_nif(
   sdtm_data,
   spec = NULL,
-  impute_missing_end_time = TRUE,
   impute_administration_time = TRUE,
   silent = FALSE,
   truncate_to_last_observation = TRUE,
@@ -15,50 +14,44 @@ make_nif(
 )
 }
 \arguments{
-\item{sdtm_data}{A list of SDTM domains as data tables, e.g., as loaded using
-read_sas_sdtm(). As a minimum, dm, vs, pc and ex are needed.}
+\item{sdtm_data}{A \code{sdtm} object, i.e., essentially a list of SDTM domains
+as data tables. Typically, the SDTM data are loaded using \code{\link[=read_sdtm_sas]{read_sdtm_sas()}}
+or \code{\link[=read_sdtm_xpt]{read_sdtm_xpt()}}. As a minimum, the
+following SDTM domains are needed: DM, VS, PC and EX.}
 
-\item{spec}{The specimen to be represented in the NIF data set as string
-(e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
-(""), which is the default setting, the most likely specimen, i.e., "BLOOD"
-or "PLASMA" is selected, depending what is found in the PC data.}
-
-\item{impute_missing_end_time}{A logic value to indicate whether in rows
-in EX where EXENDTC does not include a time, the time should be copied from
-EXSTDTC.}
+\item{spec}{The sample specimen for the PC data as string
+(e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is NULL (default),
+the most likely specimen is selected.}
 
 \item{impute_administration_time}{A boolean value to indicate whether the
 time of administration is to be imputed from the PCRFDTC field from the
 PC domain. This field is 'permissible' and may not be present in certain
-SDTM data.}
+SDTM data. The default is 'TRUE'.}
 
-\item{silent}{Boolean value to indicate whether warnings should be printed.}
+\item{silent}{Boolean value to indicate whether warnings should be printed.
+The default is 'FALSE'.}
 
 \item{truncate_to_last_observation}{Boolean to indicate whether the data set
 should be truncated to the last observation. In this case, administrations
-after the last observation time point will deleted.}
+after the last observation time point will deleted. The default is 'TRUE'.}
 
 \item{use_pctptnum}{Boolean to indicate whether to derive nominal time
-(\code{NTIME}) from \code{PCTPTNUM}.}
+('NTIME') from 'PCTPTNUM'.}
 }
 \value{
 A NIF object.
 }
 \description{
-This function makes a basic NONMEM input file (NIF) data set,
-following the conventions summarized in
+This function makes a basic NONMEM input file (NIF) data set from
+SDTM-formatted clinical study data following the conventions summarized in
 \href{https://doi.org/10.1002/psp4.12404}{Bauer, CPT Pharmacometrics Syst. Pharmacol. (2019)}.
-
-For SDTM data sets in which the administered drugs (EXTRT in domain EX) and
-the corresponding analyte (PCTESTCD in domain PC) have different names,
-treatment-to-analyte mappings must be added to the sdtm object using
-\code{\link[=add_mapping]{add_mapping()}}.
+For a more in-depth tutorial, see \code{vignette("nif-vignette")}.
 }
 \section{Imputations}{
 
 Subjects with administration but no observations for the respective
-analyte are deleted from the data set. For further imputations, see the
-vignette "nif-imputations".
+analyte are deleted from the data set. For further imputations, see
+\code{vignette("nif-imputations")}.
 }
 
 \section{Output fields}{
@@ -97,7 +90,11 @@ make_nif(examplinib_fe)
 
 }
 \seealso{
-\code{\link[=add_analyte_mapping]{add_analyte_mapping()}}
+\code{\link[=summary.nif]{summary.nif()}}
 
-\code{\link[=add_time_mapping]{add_time_mapping()}}
+\code{\link[=plot.nif]{plot.nif()}}
+
+\code{\link[=write_nif]{write_nif()}}
+
+\code{\link[=write_csv.nif]{write_csv.nif()}}
 }
