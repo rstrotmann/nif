@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,10 +64,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Creating NIF files from SDTM data</h1>
-                        <h4 data-toc-skip class="author">Rainer
-Strotmann</h4>
             
-            <h4 data-toc-skip class="date">17-Sep-2023</h4>
       
       
       <div class="d-none name"><code>nif-vignette.Rmd</code></div>
@@ -75,18 +72,62 @@ Strotmann</h4>
 
     
     
+<div class="section level2">
+<h2 id="introduction">INTRODUCTION<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>This is a basic tutorial on using the <code>nif</code> package to
 create NONMEM Input File (NIF) data sets from Study Data Tabulation
 Model- (SDTM) formatted data.</p>
-<p>The package is intended to facilitate providing the required data
-table for population PK or PK/PD modeling. The source data are typically
-contained in different SDTM tables and will be joined together, i.e.,
-including but not limited to: baseline demographic and vital sign data,
-drug exposure data, and pharmacokinetic concentrations.</p>
-<p>In addition to re-arranging and joining the data, certain standard
-data imputations are automatically performed by the functions provided
-in this package, some of which are discussed in more detail in the
-vignette “Imputations and assumptions used by make_nif()”.</p>
+<div class="section level3">
+<h3 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
+</h3>
+<p>Following current regulatory standards, clinical study data are
+commonly provided in SDTM format, an observation-based data tabulation
+format in which logically related observations are organized into
+topical collections (domains). SDTM is defined and maintained by the <a href="https://www.cdisc.org/standards/foundational/sdtm" class="external-link">Clinical Data
+Interchange Standards Consortium (CDISC)</a>.</p>
+<p>For many exploratory analyses, data from different SDTM domains need
+to be combined. For example, demographic and pharmacokinetic
+concentration data from the DM and PC domains are both needed to
+evaluate exposure by age. More complex analyses like population-level PK
+and PK/PD analyses may include further data, e.g., clinical laboratory,
+vital sign, or biomarker data.</p>
+<p>NONMEM and other commonly used modeling software packages expect the
+input data integrated into a (long) data table format with strict
+requirements to the formatting and nomenclature of the variables (see,
+e.g., <a href="https://doi.org/10.1002/psp4.12404" class="external-link">Bauer, CPT
+Pharmacometrics Syst. Pharmacol. (2019)</a> for an introduction). The
+input data file for these analyses is often casually referred to as a
+‘NONMEM input file’ or ‘NIF file’, hence the name of this package.</p>
+<p>Depending on the nature of the analysis, some of the input variables,
+may be easily and automatically derived from the SDTM-formatted source
+data, e.g., ‘DOSE’ or ‘DV’ (the dependent variable for pharmacokinetic
+observations), or demographic covariates like AGE, SEX or RACE.</p>
+<p>Other fields of the input data set may require study-specific
+considerations, for example the calculation of baseline renal or hepatic
+function categories, definition of specific treatment conditions by
+study arm, or the encoding of adverse events or concomitant medications
+of interest as categorical covariates.</p>
+<p>In contrast to the latter variables which often need manual and
+study-specific data programming, the core NIF data set that integrates
+pharmacokinetic observations, drug administration information and a
+standard set of baseline covariates can often be generated automatically
+without too much study-specific user input. It should be however noted
+that even for such basic NIF files, missing data points and certain
+inconsistencies may need to be resolved to get to an analysis-ready data
+set, particularly so if the SDTM data stems from an ongoing clinical
+study and has not been fully cleaned yet. More on this point later
+on.</p>
+<p>The package is intended to facilitate the creation of analysis data
+sets (‘NIF data sets’) from SDTM-formatted clinical data. In addition,
+it includes a set of functions and tools to explore SDTM and NIF data
+sets.</p>
+<p>The first part of this tutorial describes how to import SDTM data
+into a <code>sdtm</code> object, and how to explore clinical data based
+on the SDTM level.</p>
+<p>The second part of this tutorial walks through the generation of a
+sample NIF data set from SDTM data and its initial exploratory
+analysis.</p>
 <p>This tutorial contains live code that depends on the following R
 packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -95,9 +136,14 @@ packages:</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
 <div class="section level2">
-<h2 id="import-sdtm-data">Import SDTM data<a class="anchor" aria-label="anchor" href="#import-sdtm-data"></a>
+<h2 id="sdtm-data">SDTM DATA<a class="anchor" aria-label="anchor" href="#sdtm-data"></a>
 </h2>
+<div class="section level3">
+<h3 id="import-sdtm-data">Import SDTM data<a class="anchor" aria-label="anchor" href="#import-sdtm-data"></a>
+</h3>
 <p>As a minimum, the following SDTM domains are expected to create a
 basic NIF file:</p>
 <ul>
@@ -125,133 +171,172 @@ function, e.g.,</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/read_sdtm_sas.html">read_sdtm_sas</a></span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span>, <span class="st">"dm"</span>, <span class="st">"vs"</span>, <span class="st">"ex"</span>, <span class="st">"pc"</span>, <span class="st">"lb"</span>, <span class="st">"ae"</span><span class="op">)</span></span></code></pre></div>
 <p>The return value of the function is a <code>sdtm</code> object.</p>
 </div>
-<div class="section level2">
-<h2 id="sdtm-objects">SDTM objects<a class="anchor" aria-label="anchor" href="#sdtm-objects"></a>
-</h2>
-<p><code>sdtm</code> objects are essentially lists of the SDTM domains
-from a particular clinical study. The most common way of creating
-<code>sdtm</code> objects is by importing the SDTM data using
-<code><a href="../reference/read_sdtm_sas.html">read_sdtm_sas()</a></code> or <code><a href="../reference/read_sdtm_xpt.html">read_sdtm_xpt()</a></code> (see
-above).</p>
-<p>The original data can be retrieved accessing the individual domains
-like demonstrated below for the (fictional) sample data set
-<code>examplinib_fe</code>:</p>
+<div class="section level3">
+<h3 id="sdtm-objects">SDTM objects<a class="anchor" aria-label="anchor" href="#sdtm-objects"></a>
+</h3>
+<p><code>Sdtm</code> objects are essentially lists of the SDTM domains
+from a particular clinical study plus some metadata. The most common way
+of creating <code>sdtm</code> objects is by importing the SDTM data
+using <code><a href="../reference/read_sdtm_sas.html">read_sdtm_sas()</a></code> or <code><a href="../reference/read_sdtm_xpt.html">read_sdtm_xpt()</a></code> as
+shown above.</p>
+<p>This package includes sample SDTM data sets for demonstration
+purposes. These data do not come from actual clinical studies but are
+fully synthetic data sets from a fictional single ascending dose (SAD)
+study (<code>examplinib_sad</code>), a fictional typical food effect
+(FE) study (<code>examplinib_fe</code>), and a fictional single-arm
+proof-of-concept (POC) study with multiple-dose administrations
+(<code>examplinib_poc</code>).</p>
+<p>The original SDTM data can be retrieved from <code>sdtm</code>
+objects by accessing the individual SDTM domains like demonstrated below
+for the DM domain of the <code>examplinib_fe</code> data object:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span><span class="op">$</span><span class="va">domains</span><span class="op">[[</span><span class="st">"dm"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC</span></span>
-<span><span class="co">#&gt; 1    105 1050001 Screen Failure SCRNFAIL 2000-12-20T11:04             &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2    102 1020001 Screen Failure SCRNFAIL 2000-12-23T12:14             &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3    104 1040001   Fed - Fasted       BA 2000-12-25T11:05 2001-01-06T11:05</span></span>
-<span><span class="co">#&gt; 4    104 1040002   Fed - Fasted       BA 2000-12-29T09:55 2001-01-05T09:55</span></span>
-<span><span class="co">#&gt; 5    104 1040003   Fed - Fasted       BA 2000-12-30T08:30 2001-01-10T08:30</span></span>
-<span><span class="co">#&gt; 6    103 1030001   Fed - Fasted       BA 2000-12-31T09:08 2001-01-06T09:08</span></span>
-<span><span class="co">#&gt;      STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN            ARM</span></span>
-<span><span class="co">#&gt; 1 2023000400 20230004001050001   M  34 YEARS     DEU     DM Screen Failure</span></span>
-<span><span class="co">#&gt; 2 2023000400 20230004001020001   F  36 YEARS     DEU     DM Screen Failure</span></span>
-<span><span class="co">#&gt; 3 2023000400 20230004001040001   M  32 YEARS     DEU     DM               </span></span>
-<span><span class="co">#&gt; 4 2023000400 20230004001040002   M  41 YEARS     DEU     DM               </span></span>
-<span><span class="co">#&gt; 5 2023000400 20230004001040003   M  19 YEARS     DEU     DM               </span></span>
-<span><span class="co">#&gt; 6 2023000400 20230004001030001   F  32 YEARS     DEU     DM               </span></span>
-<span><span class="co">#&gt;      ARMCD                      RACE ETHNIC          RFENDTC</span></span>
-<span><span class="co">#&gt; 1 SCRNFAIL                     WHITE                    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2 SCRNFAIL                     WHITE                    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3                              WHITE        2001-01-19T11:05</span></span>
-<span><span class="co">#&gt; 4          BLACK OR AFRICAN AMERICAN        2001-01-18T09:55</span></span>
-<span><span class="co">#&gt; 5                              WHITE        2001-01-23T08:30</span></span>
-<span><span class="co">#&gt; 6                              WHITE        2001-01-19T09:08</span></span></code></pre></div>
+<span><span class="co">##   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC</span></span>
+<span><span class="co">## 1    105 1050001 Screen Failure SCRNFAIL 2000-12-20T11:04             &lt;NA&gt;</span></span>
+<span><span class="co">## 2    102 1020001 Screen Failure SCRNFAIL 2000-12-23T12:14             &lt;NA&gt;</span></span>
+<span><span class="co">## 3    104 1040001   Fed - Fasted       BA 2000-12-25T11:05 2001-01-06T11:05</span></span>
+<span><span class="co">## 4    104 1040002   Fed - Fasted       BA 2000-12-29T09:55 2001-01-05T09:55</span></span>
+<span><span class="co">## 5    104 1040003   Fed - Fasted       BA 2000-12-30T08:30 2001-01-10T08:30</span></span>
+<span><span class="co">## 6    103 1030001   Fed - Fasted       BA 2000-12-31T09:08 2001-01-06T09:08</span></span>
+<span><span class="co">##      STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN            ARM</span></span>
+<span><span class="co">## 1 2023000400 20230004001050001   M  34 YEARS     DEU     DM Screen Failure</span></span>
+<span><span class="co">## 2 2023000400 20230004001020001   F  36 YEARS     DEU     DM Screen Failure</span></span>
+<span><span class="co">## 3 2023000400 20230004001040001   M  32 YEARS     DEU     DM               </span></span>
+<span><span class="co">## 4 2023000400 20230004001040002   M  41 YEARS     DEU     DM               </span></span>
+<span><span class="co">## 5 2023000400 20230004001040003   M  19 YEARS     DEU     DM               </span></span>
+<span><span class="co">## 6 2023000400 20230004001030001   F  32 YEARS     DEU     DM               </span></span>
+<span><span class="co">##      ARMCD                      RACE ETHNIC          RFENDTC</span></span>
+<span><span class="co">## 1 SCRNFAIL                     WHITE                    &lt;NA&gt;</span></span>
+<span><span class="co">## 2 SCRNFAIL                     WHITE                    &lt;NA&gt;</span></span>
+<span><span class="co">## 3                              WHITE        2001-01-19T11:05</span></span>
+<span><span class="co">## 4          BLACK OR AFRICAN AMERICAN        2001-01-18T09:55</span></span>
+<span><span class="co">## 5                              WHITE        2001-01-23T08:30</span></span>
+<span><span class="co">## 6                              WHITE        2001-01-19T09:08</span></span></code></pre></div>
 <p>The most relevant domains, “dm”, “vs”, “ex” and “pc”, can also be
 accessed directly, e.g.:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="va">examplinib_fe</span><span class="op">$</span><span class="va">dm</span></span></code></pre></div>
-<p>Printing an <code>sdtm</code> object shows basic information on the
-data set:</p>
+<p>Printing an <code>sdtm</code> object shows some of its basic
+properties:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span></span>
-<span><span class="co">#&gt; SDTM data set summary</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Study 2023000400 with 20 subjects providing PC data.</span></span>
-<span><span class="co">#&gt; SDTM domains: dm, vs, ex, pc, lb</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Arms:</span></span>
-<span><span class="co">#&gt;   ACTARM         ACTARMCD</span></span>
-<span><span class="co">#&gt; 1 Screen Failure SCRNFAIL</span></span>
-<span><span class="co">#&gt; 2 Fed - Fasted   BA      </span></span>
-<span><span class="co">#&gt; 3 Fasted - Fed   AB      </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Treatments:</span></span>
-<span><span class="co">#&gt;   EXTRT     </span></span>
-<span><span class="co">#&gt; 1 EXAMPLINIB</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Specimens:</span></span>
-<span><span class="co">#&gt; NULL</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Analytes:</span></span>
-<span><span class="co">#&gt;   PCTEST     PCTESTCD  </span></span>
-<span><span class="co">#&gt; 1 RS2023     RS2023    </span></span>
-<span><span class="co">#&gt; 2 RS2023487A RS2023487A</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Treatment-to-analyte mappings:</span></span>
-<span><span class="co">#&gt;   EXTRT      PCTESTCD</span></span>
-<span><span class="co">#&gt; 1 EXAMPLINIB RS2023  </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Parent-to-metabolite mappings:</span></span>
-<span><span class="co">#&gt; none</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time mappings:</span></span>
-<span><span class="co">#&gt; none</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="suggestions">Suggestions<a class="anchor" aria-label="anchor" href="#suggestions"></a>
-</h2>
-<p>Some fields in the original SDTM data are study specific, and is
-therefore hard to fully automate the generation of standard NIF files
-for downstream analysis steps. This needs study-specific considerations
-and manual adaptations.</p>
-<p>As a starting point the function <code><a href="../reference/suggest.html">suggest()</a></code> can provide
-useful suggestions for a <code>sdtm</code>object:</p>
+<span><span class="co">## SDTM data set summary</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Study 2023000400 with 20 subjects providing PC data.</span></span>
+<span><span class="co">## SDTM domains: dm, vs, ex, pc, lb</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Arms:</span></span>
+<span><span class="co">##   ACTARM         ACTARMCD</span></span>
+<span><span class="co">## 1 Screen Failure SCRNFAIL</span></span>
+<span><span class="co">## 2 Fed - Fasted   BA      </span></span>
+<span><span class="co">## 3 Fasted - Fed   AB      </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Treatments:</span></span>
+<span><span class="co">##   EXTRT     </span></span>
+<span><span class="co">## 1 EXAMPLINIB</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Specimens:</span></span>
+<span><span class="co">## NULL</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Analytes:</span></span>
+<span><span class="co">##   PCTEST     PCTESTCD  </span></span>
+<span><span class="co">## 1 RS2023     RS2023    </span></span>
+<span><span class="co">## 2 RS2023487A RS2023487A</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Treatment-to-analyte mappings:</span></span>
+<span><span class="co">##   EXTRT      PCTESTCD</span></span>
+<span><span class="co">## 1 EXAMPLINIB RS2023  </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Parent-to-metabolite mappings:</span></span>
+<span><span class="co">## none</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Time mappings:</span></span>
+<span><span class="co">## none</span></span></code></pre></div>
+<p>Note the ‘Treatment-to-analyte mappings’ and ‘Parent-to-metabolite
+mapping’ tables in the above output, we will get back to this when
+creating a NIF data set from these SDTM data.</p>
+<p>In addition to a general overview, general demographic data for
+individual subjects (by their USUBJID) can be extracted as shown
+below:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
+<span><span class="co">##          [,1]             </span></span>
+<span><span class="co">## SITEID   105              </span></span>
+<span><span class="co">## SUBJID   1050001          </span></span>
+<span><span class="co">## ACTARM   Screen Failure   </span></span>
+<span><span class="co">## ACTARMCD SCRNFAIL         </span></span>
+<span><span class="co">## RFICDTC  2000-12-20T11:04 </span></span>
+<span><span class="co">## RFSTDTC  NA               </span></span>
+<span><span class="co">## STUDYID  2023000400       </span></span>
+<span><span class="co">## USUBJID  20230004001050001</span></span>
+<span><span class="co">## SEX      M                </span></span>
+<span><span class="co">## AGE      34               </span></span>
+<span><span class="co">## AGEU     YEARS            </span></span>
+<span><span class="co">## COUNTRY  DEU              </span></span>
+<span><span class="co">## DOMAIN   DM               </span></span>
+<span><span class="co">## ARM      Screen Failure   </span></span>
+<span><span class="co">## ARMCD    SCRNFAIL         </span></span>
+<span><span class="co">## RACE     WHITE            </span></span>
+<span><span class="co">## ETHNIC                    </span></span>
+<span><span class="co">## RFENDTC  NA</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="sdtm-suggestions">SDTM suggestions<a class="anchor" aria-label="anchor" href="#sdtm-suggestions"></a>
+</h3>
+<p>SDTM data may be incomplete, e.g., when emerging data that have not
+yet been fully cleaned are analyzed. In addition, study-specific data
+may be encoded in a non-standard way, e.g., information on study parts,
+cohorts, treatment conditions, etc..</p>
+<p>Such data fields may need study-specific considerations and manual
+imputations during the creating of the NIF data set. To help deciding
+which study-specific factors need to be addressed, the <code>nif</code>
+package includes functions to explore the SDTM data.</p>
+<p>As a starting point, <code><a href="../reference/suggest.html">suggest()</a></code> can provide useful
+suggestions for manual imputations for a <code>sdtm</code> object:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/suggest.html">suggest</a></span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 1. There are 3 arms defined in DM (see below).</span></span>
-<span><span class="co">#&gt;    Consider defining a PART or ARM variable in the nif dataset, </span></span>
-<span><span class="co">#&gt;    filtering for a particular arm, or defining a covariate based</span></span>
-<span><span class="co">#&gt;    on ACTARMCD.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    ACTARM           ACTARMCD   </span></span>
-<span><span class="co">#&gt;    Screen Failure   SCRNFAIL   </span></span>
-<span><span class="co">#&gt;    Fed - Fasted     BA         </span></span>
-<span><span class="co">#&gt;    Fasted - Fed     AB</span></span>
-<span><span class="co">#&gt; 2. There are treatments (EXTRT) without analytes of the same name</span></span>
-<span><span class="co">#&gt;    (see below).</span></span>
-<span><span class="co">#&gt;    Consider adding a treatment-analyte mapping to the sdtm object</span></span>
-<span><span class="co">#&gt;    See '?add_analyte_mapping' for additional information.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    EXTRT        </span></span>
-<span><span class="co">#&gt;    EXAMPLINIB   </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    Available analytes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    PCTESTCD     </span></span>
-<span><span class="co">#&gt;    RS2023       </span></span>
-<span><span class="co">#&gt;    RS2023487A</span></span></code></pre></div>
+<span><span class="co">## 1. There are 3 arms defined in DM (see below).</span></span>
+<span><span class="co">##    Consider defining a PART or ARM variable in the nif dataset, </span></span>
+<span><span class="co">##    filtering for a particular arm, or defining a covariate based</span></span>
+<span><span class="co">##    on ACTARMCD.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##        ACTARM           ACTARMCD   </span></span>
+<span><span class="co">##        Screen Failure   SCRNFAIL   </span></span>
+<span><span class="co">##        Fed - Fasted     BA         </span></span>
+<span><span class="co">##        Fasted - Fed     AB</span></span>
+<span><span class="co">## 2. There are treatments (EXTRT) without analytes (PCTESTCD) of</span></span>
+<span><span class="co">##    the same name (see below).</span></span>
+<span><span class="co">##    Consider adding a treatment-analyte mapping to the sdtm object</span></span>
+<span><span class="co">##    See '?add_analyte_mapping' for additional information.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##        EXTRT        </span></span>
+<span><span class="co">##        EXAMPLINIB   </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##    Available analytes:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##        PCTESTCD     </span></span>
+<span><span class="co">##        RS2023       </span></span>
+<span><span class="co">##        RS2023487A</span></span></code></pre></div>
 <p>In the case of <code>examplinib_fe</code>, there are different
 treatment arms defined in the DM domain that should probably be included
-as covariates in the NIF file (see suggestion 1). This will be
-programmed once a basic NIF file has been generated (see below).</p>
+as covariates in the NIF file as they specify the sequence of fasted and
+fed administrations (see suggestion 1). A respective variable within the
+NIF data set will be programmed once a basic NIF file has been generated
+(see below).</p>
 <p>Also, the SDTM data do not provide a relation between treatments and
 analytes (see suggestion 2). The parent drug name in the SDTM field
 <code>EXTRT</code> (i.e., “EXAMPLINIB”) is different from the respective
 analyte for the parent compound as specified in the field
 <code>PCTESTCD</code> (i.e., “RS2023”). This is a common situation in
-data from clinical studies. However, to correctly associate
-pharmacokinetic concentrations with the administration of the
-corresponding drug, a link needs to be provided between the treament and
-the analyte. Similarly, metabolites (e.g., “RS2023487A”) need to be
-linked to their parent compound - particularly if muliple drugs and
-metabolites are included in the data set.</p>
-<p>Both are described below.</p>
-<div class="section level3">
-<h3 id="analyte-mappings">Analyte mappings<a class="anchor" aria-label="anchor" href="#analyte-mappings"></a>
-</h3>
+data from clinical studies.</p>
+<p>To correctly associate pharmacokinetic concentrations with the
+administration of the corresponding drug, a link needs to be provided
+between the treament and the analyte. Similarly, metabolites (e.g.,
+“RS2023487A”) need to be linked to their parent compound - particularly
+if muliple drugs and metabolites are included in the data set.</p>
+<div class="section level4">
+<h4 id="analyte-and-metabolite-mappings">Analyte and metabolite mappings<a class="anchor" aria-label="anchor" href="#analyte-and-metabolite-mappings"></a>
+</h4>
 <p>Often, the names for the treatments as listed in the
 <code>EXTRT</code> field of EX do not directly correspond to the names
 of the respective (parent) analytes codes used in the PC domain (i.e.,
@@ -265,34 +350,41 @@ added to the <code>sdtm</code> object with
 copounds, <code><a href="../reference/add_metabolite_mapping.html">add_metabolite_mapping()</a></code> can be used. In the
 sample data, the <code>PCTESTCD</code> of “RS2023487A” represents a
 metabolite of “RS2023”:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sdtm_expl</span> <span class="op">&lt;-</span> <span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_analyte_mapping.html">add_analyte_mapping</a></span><span class="op">(</span><span class="st">"EXAMPLINIB"</span>, <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_metabolite_mapping.html">add_metabolite_mapping</a></span><span class="op">(</span><span class="st">"RS2023"</span>, <span class="st">"RS2023487A"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
+</div>
 <div class="section level2">
-<h2 id="creating-nif-files">Creating NIF files<a class="anchor" aria-label="anchor" href="#creating-nif-files"></a>
+<h2 id="nif-data-sets">NIF DATA SETS<a class="anchor" aria-label="anchor" href="#nif-data-sets"></a>
 </h2>
+<div class="section level3">
+<h3 id="creating-nif-data-sets">Creating NIF data sets<a class="anchor" aria-label="anchor" href="#creating-nif-data-sets"></a>
+</h3>
+<!-- In addition to re-arranging and joining these SDTM data tables, certain standard -->
+<!-- data imputations are automatically performed by the functions provided in this -->
+<!-- package, some of which are discussed in more detail in the vignette "Imputations -->
+<!-- and assumptions used by make_nif()". -->
 <p>The following section details how to create NIF files from an
 <code>sdtm</code> object.</p>
-<div class="section level3">
-<h3 id="basic-nif-file">Basic NIF file<a class="anchor" aria-label="anchor" href="#basic-nif-file"></a>
-</h3>
+<div class="section level4">
+<h4 id="basic-nif-file">Basic NIF file<a class="anchor" aria-label="anchor" href="#basic-nif-file"></a>
+</h4>
 <p>Most steps in the generation of a basic NIF file from an
 <code>sdtm</code> object are automated in the <code><a href="../reference/make_nif.html">make_nif()</a></code>
-function. The resulting <code>nif</code> object is essentially a data
-table that has individual rows for each administration and observation.
-Following the NONMEM convention for oral administration, the
-<code>EVID</code> field is “1” for the former, and “0” for the
-latter.</p>
+function. The resulting <code>nif</code> object is a data table with
+individual rows for individual administrations and observations and
+follows the naming conventions summarized in <a href="https://doi.org/10.1002/psp4.12404" class="external-link">Bauer, CPT Pharmacometrics
+Syst. Pharmacol. (2019)</a>.</p>
 <p>Standard demographic information including SEX, AGE, RACE is taken
 from the DM domain and merged into the data table. Baseline WEIGHT and
 HEIGHT are taken from the VS domain.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm_expl</span><span class="op">)</span></span>
-<span><span class="co">#&gt; No specimen specified. Set to PLASMA as the most likely.</span></span>
-<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-03-12 10:13:00</span></span></code></pre></div>
+<span><span class="co">## No specimen specified. Set to PLASMA as the most likely.</span></span>
+<span><span class="co">## Data cut-off was set to last observation time, 2001-03-12 10:13:00</span></span></code></pre></div>
 <p>The output of the above code informs that there may be
 pharmacokinetic data for multiple specimens in the PC domain, e.g.,
 “PLASMA” and “URINE” or “FECES”. As no specimem was defined,
@@ -300,181 +392,203 @@ pharmacokinetic data for multiple specimens in the PC domain, e.g.,
 the specimen of interest can be explicitly provided (see
 <code>?make_nif()</code> for details).</p>
 <p>Also, a data cut-off was applied that reflects the date and time of
-the last observation. This may be most relevant in multiple-dose studies
+the last observation. This may be relevant in multiple-dose studies
 where further administrations may be recorded after the last
 oberservation. These administration events are excluded from the NIF
 file.</p>
 </div>
-<div class="section level3">
-<h3 id="study-specific-covariates">Study-specific covariates<a class="anchor" aria-label="anchor" href="#study-specific-covariates"></a>
-</h3>
-<p>In many clinical studies, participants are treated in subgroups,
-e.g., dose groups, formulations, co-administered drug interaction
-perpetrators. While dose is automatically included as a continuous
-covariate per the EX domain, other categorical covariates may need to be
-derived, e.g., from the study arm field.</p>
+<div class="section level4">
+<h4 id="study-specific-covariates">Study-specific covariates<a class="anchor" aria-label="anchor" href="#study-specific-covariates"></a>
+</h4>
+<p>In many clinical studies, participants are treated in subgroups or
+serial treatment periods, for example, dose escalation cohorts,
+cross-over periods with different formulations or co-administration of
+drug interaction perpetrators, etc.. While DOSE is automatically
+included as a continuous covariate, other categorical covariates may
+need to be derived, e.g., from the study arm (ARM) field.</p>
 <p>The inclcuded sample study is a food effect study in which
 participants received the test drug, EXAMPLINIB, fasted or fed in a
 randomized sequence (see <code>ACTARM</code> and <code>ACTARMCD</code>
-in the output of <code><a href="../reference/suggest.html">suggest()</a></code> above). Often, relevant fields
-for consideration are <code>EPOCH</code> and <code>ACTARMCD</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+in the output of <code><a href="../reference/suggest.html">suggest()</a></code> above). In many studies,
+relevant fields for consideration are <code>EPOCH</code> and
+<code>ACTARMCD</code>:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="va">ACTARMCD</span>, <span class="va">ACTARM</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                    EPOCH ACTARMCD       ACTARM</span></span>
-<span><span class="co">#&gt; 1 OPEN LABEL TREATMENT 1       BA Fed - Fasted</span></span>
-<span><span class="co">#&gt; 2 OPEN LABEL TREATMENT 2       BA Fed - Fasted</span></span>
-<span><span class="co">#&gt; 3 OPEN LABEL TREATMENT 1       AB Fasted - Fed</span></span>
-<span><span class="co">#&gt; 4 OPEN LABEL TREATMENT 2       AB Fasted - Fed</span></span></code></pre></div>
+<span><span class="co">##                    EPOCH ACTARMCD       ACTARM</span></span>
+<span><span class="co">## 1 OPEN LABEL TREATMENT 1       BA Fed - Fasted</span></span>
+<span><span class="co">## 2 OPEN LABEL TREATMENT 2       BA Fed - Fasted</span></span>
+<span><span class="co">## 3 OPEN LABEL TREATMENT 1       AB Fasted - Fed</span></span>
+<span><span class="co">## 4 OPEN LABEL TREATMENT 2       AB Fasted - Fed</span></span></code></pre></div>
 <p>To create a <code>FASTED</code> covariate for the sample data set,
 first the period number is derived from the <code>EPOCH</code> field,
 and then the current <code>ACTARM</code> in that treatment period is
 decoded to <code>FASTED</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm_expl</span>, silent<span class="op">=</span><span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PERIOD<span class="op">=</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TREATMENT<span class="op">=</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">PERIOD</span>, <span class="va">PERIOD</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span><span class="op">==</span><span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Note the <code>silent=T</code> modifier that omits all messages from
 <code><a href="../reference/make_nif.html">make_nif()</a></code>.</p>
-<p>The NIF file has now the additional fields <code>PERIOD</code>,
+<p>The NIF file includes now the additional fields <code>PERIOD</code>,
 <code>TREATMENT</code> and <code>FASTED</code>, see the first few lines
-of the the data:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+of the the data (some fields de-selected to make the output fit to the
+page width):</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">PERIOD</span>, <span class="va">TREATMENT</span>, <span class="va">FASTED</span>, <span class="va">TIME</span>, <span class="va">EVID</span>, <span class="va">AMT</span>, <span class="va">ANALYTE</span>, <span class="va">DV</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">PERIOD</span>, <span class="va">TREATMENT</span>, <span class="va">FASTED</span>, <span class="va">TIME</span>, <span class="va">EVID</span>, <span class="va">ANALYTE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="23%">
-<col width="9%">
-<col width="12%">
-<col width="9%">
-<col width="6%">
-<col width="6%">
-<col width="5%">
-<col width="14%">
-<col width="12%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">USUBJID</th>
-<th align="left">PERIOD</th>
-<th align="left">TREATMENT</th>
-<th align="right">FASTED</th>
-<th align="right">TIME</th>
-<th align="right">EVID</th>
-<th align="right">AMT</th>
-<th align="left">ANALYTE</th>
-<th align="right">DV</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">20230004001010001</td>
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">0</td>
-<td align="right">0.0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">RS2023</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="even">
-<td align="left">20230004001010001</td>
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">0</td>
-<td align="right">0.0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">RS2023487A</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="odd">
-<td align="left">20230004001010001</td>
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">0</td>
-<td align="right">0.0</td>
-<td align="right">1</td>
-<td align="right">500</td>
-<td align="left">RS2023</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">20230004001010001</td>
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">0</td>
-<td align="right">0.5</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">RS2023</td>
-<td align="right">0.9025036</td>
-</tr>
-<tr class="odd">
-<td align="left">20230004001010001</td>
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">0</td>
-<td align="right">0.5</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">RS2023487A</td>
-<td align="right">0.3859740</td>
-</tr>
-<tr class="even">
-<td align="left">20230004001010001</td>
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">0</td>
-<td align="right">1.0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">RS2023</td>
-<td align="right">1.6201458</td>
-</tr>
-</tbody>
-</table>
+<span>  <span class="fu"><a href="../reference/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">##             USUBJID PERIOD TREATMENT FASTED TIME EVID AMT    ANALYTE        DV</span></span>
+<span><span class="co">## 1 20230004001010001      1         B      0  0.0    1 500     RS2023        NA</span></span>
+<span><span class="co">## 2 20230004001010001      1         B      0  0.0    0   0     RS2023 0.0000000</span></span>
+<span><span class="co">## 3 20230004001010001      1         B      0  0.0    0   0 RS2023487A 0.0000000</span></span>
+<span><span class="co">## 4 20230004001010001      1         B      0  0.5    0   0     RS2023 0.9025036</span></span>
+<span><span class="co">## 5 20230004001010001      1         B      0  0.5    0   0 RS2023487A 0.3859740</span></span>
+<span><span class="co">## 6 20230004001010001      1         B      0  1.0    0   0     RS2023 1.6201458</span></span></code></pre></div>
 </div>
 </div>
-<div class="section level2">
-<h2 id="graphical-exploration">Graphical exploration<a class="anchor" aria-label="anchor" href="#graphical-exploration"></a>
-</h2>
+<div class="section level3">
+<h3 id="data-disposition">Data disposition<a class="anchor" aria-label="anchor" href="#data-disposition"></a>
+</h3>
+<p>It is generally advisable to explore data sets before proceeding into
+any more complex analysing.</p>
+<p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> function provides a general overview on
+the data disposition in a <code>nif</code> data set:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
+<span><span class="co">## NONMEM input file (NIF) data set summary</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Data from 20 subjects across 1 studies:</span></span>
+<span><span class="co">## STUDYID      N    </span></span>
+<span><span class="co">## 2023000400   20   </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Males: 14, females: 6 (30%)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Analytes:</span></span>
+<span><span class="co">## RS2023, RS2023487A</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## 1360 observations:</span></span>
+<span><span class="co">## ANALYTE      N     </span></span>
+<span><span class="co">## RS2023       680   </span></span>
+<span><span class="co">## RS2023487A   680   </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Administered drugs:</span></span>
+<span><span class="co">## RS2023</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Dose levels:</span></span>
+<span><span class="co">## RS2023   N    </span></span>
+<span><span class="co">## 500      20   </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Subjects with dose reductions</span></span>
+<span><span class="co">## RS2023   </span></span>
+<span><span class="co">## 0        </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Treatment duration overview:</span></span>
+<span><span class="co">## PARENT   min   max   mean   median   </span></span>
+<span><span class="co">## RS2023   2     2     2      2</span></span></code></pre></div>
+<p>Further to the above text output, the <code>nif</code> summary object
+can also be plotted for a quick graphical overview on the distribution
+of the baseline demographic data in the subject population and the
+analytes included in the <code>nif</code> data set. Note the
+<code>ìnvisible(capture.output())</code> construct around the
+<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function in the below code. This is used to omit
+some non-graphical output:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
+<span>   <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-15-1.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-2.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-3.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-4.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-5.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-6.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-7.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-8.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="plasma-concentration-data">Plasma concentration data<a class="anchor" aria-label="anchor" href="#plasma-concentration-data"></a>
+</h3>
 <p>NIF objects allow basic ploting functionality using
-<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>, directly applied to the object. The below shows
-some examples for common exploratory tasks (for more detail, refer to
-<code>?plot.nif()</code>).</p>
-<p>Obviously, more complex custom plots (or other analyses) can be done
-manually on the <code>nif</code> data. Note that the <code>nif</code>
-object must be converted to a data frame for this purpose (i.e., using
-<code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>):</p>
-<p>In the simplest exploratory plot, all analytes are shown:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>, directly applied to the <code>nif</code> object.
+The below shows some examples for common exploratory tasks (for more
+detail, refer to <code>?plot.nif()</code>).</p>
+<p>In the simplest exploratory plot, all analytes are shown over
+time:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nif-vignette_files/figure-html/unnamed-chunk-13-1.png" width="384"></p>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-16-1.png" width="384"></p>
 <p>Modifiers to the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allow common
 adjustments. To show, e.g., the food effect on the parent compound,
 “RS2023” in individual subjects, limiting the time axis to 24 h and
 showing the nominal time instead of the actual time:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span>, group<span class="op">=</span><span class="st">"FASTED"</span>, max_x<span class="op">=</span><span class="fl">24</span>, mean<span class="op">=</span><span class="cn">F</span>, points<span class="op">=</span><span class="cn">T</span>, nominal_time<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nif-vignette_files/figure-html/unnamed-chunk-14-1.png" width="384"></p>
-<p>The following shows the mean plasma concentration profiles over 24 h
-by food status:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span>, group<span class="op">=</span><span class="st">"FASTED"</span>, max_x<span class="op">=</span><span class="fl">24</span>, mean<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nif-vignette_files/figure-html/unnamed-chunk-15-1.png" width="384"></p>
-<p>There are further display options, refer to <code>?plot.nif()</code>
-for details.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span>,</span>
+<span>     analyte<span class="op">=</span><span class="st">"RS2023"</span>,</span>
+<span>     group<span class="op">=</span><span class="st">"FASTED"</span>,</span>
+<span>     max_x<span class="op">=</span><span class="fl">24</span>,</span>
+<span>     mean<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span>     points<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-17-1.png" width="384"></p>
+<p>The following shows the mean plasma concentration profiles aver all
+subjects, over 24 h by the food status:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span>,</span>
+<span>     analyte<span class="op">=</span><span class="st">"RS2023"</span>,</span>
+<span>     group<span class="op">=</span><span class="st">"FASTED"</span>,</span>
+<span>     max_x<span class="op">=</span><span class="fl">24</span>,</span>
+<span>     mean<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-18-1.png" width="384"></p>
+<p>There are further options, refer to <code>?plot.nif()</code> for
+details.</p>
 <p>For a quick overview, use <code><a href="../reference/nif_viewer.html">nif_viewer()</a></code> to show
 individual subjects interactively:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/nif_viewer.html">nif_viewer</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="non-compartmental-analysis">Non-compartmental analysis<a class="anchor" aria-label="anchor" href="#non-compartmental-analysis"></a>
+</h3>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nca</span> <span class="op">&lt;-</span> <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/nca.html">nca</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>,</span>
+<span>      group<span class="op">=</span><span class="st">"FASTED"</span>,</span>
+<span>      nominal_time<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">## NCA: Group by FASTED</span></span>
+<span></span>
+<span><span class="va">nca</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/nca_summary_table.html">nca_summary_table</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"FASTED"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">FASTED</th>
+<th align="right">n</th>
+<th align="left">aucinf.obs</th>
+<th align="left">auclast</th>
+<th align="left">cmax</th>
+<th align="left">half.life</th>
+<th align="left">tmax</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">20</td>
+<td align="left">25.25 (40)</td>
+<td align="left">22.01 (34)</td>
+<td align="left">3.81 (12)</td>
+<td align="left">20.29 (27)</td>
+<td align="left">2 (1.5; 4)</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="left">25.42 (41)</td>
+<td align="left">21.86 (34)</td>
+<td align="left">2.8 (19)</td>
+<td align="left">20.11 (27)</td>
+<td align="left">3 (2; 6)</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
