@@ -22,40 +22,49 @@
 #' @import ggplot2
 #' @export
 #' @examples
+#' nif_plot_id(examplinib_poc_nif, 1)
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
 nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
-                        max_time = NA, lines=TRUE, point_size=2,
-                        tad=FALSE, imp = "none") {
+                        max_time = NA, lines = TRUE, point_size = 2,
+                        tad = FALSE, imp = "none") {
+  x <- nif %>%
+    as.data.frame() %>%
+    verify(has_all_names(
+      "ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE",
+      "EVID"
+    )) %>%
+    filter(EVID == 0)
+
+  if (is.null(analyte)) {
+    analyte <- x %>%
+      distinct(ANALYTE) %>%
+      pull(ANALYTE)
+  }
+
   if (id %in% nif$ID) {
-    plot.label <- "ID"
-    nif <- nif %>%
+    plot_label <- "ID"
+    x <- x %>%
       filter(ID == id)
     id_label <- ""
   } else {
     if (id %in% nif$USUBJID) {
-      nif <- nif %>%
+      x <- x %>%
         filter(USUBJID == id)
       id_label <- paste0(" (ID ", nif %>% distinct(ID) %>% pull(ID), ")")
-      plot.label <- "USUBJID"
+      plot_label <- "USUBJID"
     } else {
       stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
     }
   }
 
-  if (is.null(analytes)) {
-    analyte <- nif %>%
-      distinct(ANALYTE) %>%
-      pull(ANALYTE)
-  }
-
   if (tad == TRUE) {
-    nif <- nif %>% mutate(TIME=TAD)
+    x <- x %>% mutate(TIME = TAD)
   }
 
-  obs <- nif %>%
+  obs <- x %>%
     as.data.frame() %>%
     filter(ANALYTE %in% analyte) %>%
     filter(EVID == 0)
@@ -67,17 +76,19 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 
   if (tad == TRUE) {
     p <- obs %>%
-    ggplot2::ggplot(ggplot2::aes(
-      x = TIME, y = DV,
-      group = interaction(ID, as.factor(ANALYTE), TRTDY),
-      color = interaction(as.factor(ANALYTE), TRTDY)))
+      ggplot2::ggplot(ggplot2::aes(
+        x = TIME, y = DV,
+        group = interaction(ID, as.factor(ANALYTE), TRTDY),
+        color = interaction(as.factor(ANALYTE), TRTDY)
+      ))
   } else {
     p <- obs %>%
       ggplot2::ggplot(ggplot2::aes(
         x = TIME, y = DV,
         group = interaction(ID, as.factor(ANALYTE)),
-        color = as.factor(ANALYTE)))
-    }
+        color = as.factor(ANALYTE)
+      ))
+  }
 
   p <- p +
     ggplot2::geom_vline(
@@ -85,12 +96,11 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
       ggplot2::aes(xintercept = TIME),
       color = "gray"
     ) +
-    {if (lines == TRUE) ggplot2::geom_line()} +
-    # ggplot2::geom_line() +
-    ggplot2::geom_point(size=point_size) +
+    { if (lines == TRUE) ggplot2::geom_line() } +
+    ggplot2::geom_point(size = point_size) +
     ggplot2::xlim(0, max_time) +
     ggplot2::labs(
-      title = paste0(plot.label, ": ", id, id_label),
+      title = paste0(plot_label, ": ", id, id_label),
       color = "analyte"
     ) +
     ggplot2::theme_bw() +
@@ -132,14 +142,14 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[4]])
-dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA, point_size=2,
-                         max_time = NA, analyte = NULL) {
+dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
+                         point_size = 2, max_time = NA, analyte = NULL) {
   if (id %in% nif$ID) {
-    plot.label <- "ID"
+    plot_label <- "ID"
     nif <- nif %>% filter(ID == id)
   } else if (id %in% nif$USUBJID) {
     nif <- nif %>% filter(USUBJID == id)
-    plot.label <- "USUBJID"
+    plot_label <- "USUBJID"
   } else {
     stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
   }
@@ -159,10 +169,10 @@ dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA, point_size=2,
       color = ANALYTE
     )) +
     ggplot2::geom_line() +
-    ggplot2::geom_point(size=point_size) +
+    ggplot2::geom_point(size = point_size) +
     ggplot2::ylim(0, max_dose) +
     ggplot2::xlim(0, max_time) +
-    ggplot2::labs(title = paste0(plot.label, ": ", id), color = "treatment") +
+    ggplot2::labs(title = paste0(plot_label, ": ", id), color = "treatment") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 
@@ -226,7 +236,7 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 
 #' Spaghetti plot over a selected covariate
 #'
-#' @param x The NIF data set.
+#' @param obj The NIF data set.
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
@@ -238,52 +248,78 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #'   be plotted.
 #'
 #' @return A ggplot2 plot object.
+#' @import assertr
 #' @export
 #'
 #' @examples
 #' nif_spaghetti_plot(examplinib_fe_nif)
 #' nif_spaghetti_plot(examplinib_sad_nif)
-nif_spaghetti_plot <- function(x,
+nif_spaghetti_plot <- function(obj,
                                points = FALSE, lines = TRUE, group = "ANALYTE",
-                               nominal_time = FALSE, tad=FALSE, analyte=NULL) {
+                               nominal_time = FALSE, tad = FALSE,
+                               analyte = NULL) {
+
+  x <- obj %>%
+    as.data.frame() %>%
+    verify(has_all_names("ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE")) %>%
+    dplyr::filter(!is.na(DOSE)) %>%
+    filter(EVID == 0) %>%
+    filter(!is.na(DV))
+
   if (!is.null(analyte)) {
     x <- x %>% dplyr::filter(ANALYTE == analyte)
   }
 
   if (tad == TRUE) {
-    x <- x %>% mutate(TIME=TAD)
+    x <- x %>%
+      verify(has_all_names("TAD")) %>%
+      filter(EVID == 0) %>%
+      mutate(TIME = TAD) %>%
+      mutate(GROUP = interaction(as.factor(ID),
+                                 as.factor(ANALYTE),
+                                 as.factor(TRTDY))) %>%
+      mutate(COLOR = interaction(as.factor(ANALYTE),
+                                 as.factor(TRTDY)))
+    x_label <- "TAD (h)"
+  } else {
+    x <- x %>%
+      filter(EVID == 0) %>%
+      # mutate(TIME = TAD) %>%
+      mutate(GROUP = interaction(as.factor(ID),
+                                 as.factor(ANALYTE),
+                                 as.factor(.data[[group]]),
+                                 TRTDY)) %>%
+      mutate(COLOR = .data[[group]])
+    x_label <- "TIME (h)"
   }
 
-  temp <- x %>%
-    as.data.frame() %>%
-    verify(has_all_names("NTIME", "DOSE", "DV")) %>%
-    dplyr::filter(!is.na(DOSE)) %>%
-    filter(EVID == 0) %>%
-    filter(!is.na(DV)) %>%
-    as.data.frame()
+  # x <- x
 
   if (nominal_time) {
-    p <- temp %>%
+    p <- x %>%
       ggplot2::ggplot(ggplot2::aes(
         x = NTIME, y = DV,
         group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
         color = as.factor(.data[[group]])
       ))
   } else {
-    p <- temp %>%
+    p <- x %>%
       ggplot2::ggplot(ggplot2::aes(
         x = TIME, y = DV,
-        group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
-        color = as.factor(.data[[group]])
+        group = GROUP,
+        color = COLOR
       ))
   }
 
   p +
     {if (lines) geom_line()} +
     {if (points) geom_point()} +
-    {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+    {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     labs(color = group) +
     ggplot2::theme_bw() +
+    labs(x = x_label) +
+    xlim(0, 24) +
+    scale_y_log10() +
     ggplot2::theme(legend.position = "bottom")
 }
 
@@ -378,10 +414,6 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
     cov <- "ANALYTE"
   }
 
-  if (tad == TRUE) {
-    x <- x %>% mutate(TIME=TAD)
-  }
-
   if (mean == TRUE) {
     if (!is.null(group) && is.null(analyte) && length(analytes(x) > 1)) {
       stop(paste0(
@@ -394,7 +426,7 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
   } else {
     p <- x %>%
       nif_spaghetti_plot(
-        points = points, lines = lines, group = cov,
+        points = points, lines = lines, group = cov, tad = tad,
         nominal_time = nominal_time
       )
   }

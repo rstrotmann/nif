@@ -5,7 +5,7 @@
 \title{Spaghetti plot over a selected covariate}
 \usage{
 nif_spaghetti_plot(
-  x,
+  obj,
   points = FALSE,
   lines = TRUE,
   group = "ANALYTE",
@@ -15,7 +15,7 @@ nif_spaghetti_plot(
 )
 }
 \arguments{
-\item{x}{The NIF data set.}
+\item{obj}{The NIF data set.}
 
 \item{points}{Boolean to indicate whether points should be drawn.}
 
