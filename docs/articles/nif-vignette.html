@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -500,7 +500,15 @@ some non-graphical output:</p>
 <span>   <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">y</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">y</span>, which will replace the existing scale.</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">y</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">y</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-15-1.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-2.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-3.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-4.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-5.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-6.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-7.png" width="700"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-8.png" width="700"></p>
 </div>
 <div class="section level3">
@@ -513,7 +521,9 @@ detail, refer to <code>?plot.nif()</code>).</p>
 <p>In the simplest exploratory plot, all analytes are shown over
 time:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-16-1.png" width="384"></p>
 <p>Modifiers to the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allow common
 adjustments. To show, e.g., the food effect on the parent compound,
@@ -526,7 +536,9 @@ showing the nominal time instead of the actual time:</p>
 <span>     max_x<span class="op">=</span><span class="fl">24</span>,</span>
 <span>     mean<span class="op">=</span><span class="cn">FALSE</span>,</span>
 <span>     points<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-17-1.png" width="384"></p>
 <p>The following shows the mean plasma concentration profiles aver all
 subjects, over 24 h by the food status:</p>

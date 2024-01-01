@@ -10,6 +10,7 @@ make_nif(
   impute_administration_time = TRUE,
   silent = FALSE,
   truncate_to_last_observation = TRUE,
+  truncate_to_last_individual_obs = TRUE,
   use_pctptnum = TRUE
 )
 }
@@ -34,6 +35,9 @@ The default is 'FALSE'.}
 \item{truncate_to_last_observation}{Boolean to indicate whether the data set
 should be truncated to the last observation. In this case, administrations
 after the last observation time point will deleted. The default is 'TRUE'.}
+
+\item{truncate_to_last_individual_obs}{Boolean to indicate whether
+observations should be truncted to the last individual observation.}
 
 \item{use_pctptnum}{Boolean to indicate whether to derive nominal time
 ('NTIME') from 'PCTPTNUM'.}
@@ -87,6 +91,7 @@ treatment for the respective subject.
 
 \examples{
 make_nif(examplinib_fe)
+make_nif(examplinib_poc)
 
 }
 \seealso{

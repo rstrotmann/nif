@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -288,15 +288,23 @@ normal renal function or impaired renal function:</p>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Subjects with dose reductions</span></span>
 <span><span class="co">#  RS2023   </span></span>
-<span><span class="co">#  12       </span></span>
+<span><span class="co">#  1        </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Treatment duration overview:</span></span>
 <span><span class="co">#  PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#  RS2023   12    51    38     39</span></span></code></pre></div>
+<span><span class="co">#  RS2023   7     9     8.6    9</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the summary:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif_poc</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif_poc</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span>
+<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">y</span> is already present.</span></span>
+<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">y</span>, which will replace the existing scale.</span></span>
+<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span>
+<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">y</span> is already present.</span></span>
+<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">y</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-1.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-2.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-3.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-4.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-5.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-6.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-7.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-8.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-9.png" width="288"></p>
 </div>
 <div class="section level3">
@@ -336,11 +344,11 @@ the administered dose:</p>
 <tbody>
 <tr class="odd">
 <td align="right">250</td>
-<td align="right">175</td>
+<td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="right">500</td>
-<td align="right">2866</td>
+<td align="right">686</td>
 </tr>
 </tbody>
 </table>
@@ -352,7 +360,7 @@ often be used for more complex analyses!</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#   [1]  1 10 18 23 29 34 36 48 52 59 65 75</span></span></code></pre></div>
+<span><span class="co">#  [1] 18</span></span></code></pre></div>
 <p>Let’s have a plot of the doses over time in these subjects:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -478,7 +486,9 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <code class="sourceCode R"><span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">(</span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>                    <span class="fu"><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>, n<span class="op">=</span><span class="fl">4</span>, max_time<span class="op">=</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>points<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>points<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-16-1.png" width="480"></p>
 <p>For the sampling on Day 1 only:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">

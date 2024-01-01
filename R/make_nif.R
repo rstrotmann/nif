@@ -556,10 +556,12 @@ make_admin <- function(ex,
                            as.Date(end.date),
                            by = "days"))) %>%
     unnest(c(date)) %>%
+    group_by(USUBJID, EXTRT, end.date) %>%
     dplyr::mutate(time = case_when(
       row_number() == n() ~ end.time,
       .default = start.time
     )) %>%
+    ungroup() %>%
     dplyr::mutate(EXDY = EXSTDY + (row_number() - 1)) %>%
     dplyr::ungroup() %>%
     mutate(DTC = compose_dtc(date, time)) %>%
@@ -954,6 +956,9 @@ add_time <- function(x) {
 #' @param use_pctptnum Boolean to indicate whether to derive nominal time
 #' ('NTIME') from 'PCTPTNUM'.
 #'
+#' @param truncate_to_last_individual_obs Boolean to indicate whether
+#' observations should be truncted to the last individual observation.
+#'
 #' @return A NIF object.
 #' @seealso [summary.nif()]
 #' @seealso [plot.nif()]
@@ -964,6 +969,7 @@ add_time <- function(x) {
 #' @export
 #' @examples
 #' make_nif(examplinib_fe)
+#' make_nif(examplinib_poc)
 #'
 make_nif <- function(
     sdtm_data,
@@ -971,6 +977,7 @@ make_nif <- function(
     impute_administration_time = TRUE,
     silent = FALSE,
     truncate_to_last_observation = TRUE,
+    truncate_to_last_individual_obs = TRUE,
     use_pctptnum = TRUE) {
   vs <- sdtm_data$domains[["vs"]] %>%
     dplyr::select(-DOMAIN) %>%
@@ -997,23 +1004,25 @@ make_nif <- function(
   # make observations
   obs <- make_obs(pc,
     time_mapping = sdtm_data$time_mapping,
-    spec = spec, silent = silent, use_pctptnum = use_pctptnum
-  ) %>%
-    left_join(drug_mapping, by = "PCTESTCD")
+    spec = spec, silent = silent, use_pctptnum = use_pctptnum) %>%
+    left_join(drug_mapping, by = "PCTESTCD") %>%
+    group_by(USUBJID, PARENT) %>%
+    mutate(last_obs=max(DTC, na.rm=T)) %>%
+    ungroup()
 
   # define cut-off date
   if (truncate_to_last_observation == TRUE) {
-    cut.off.date <- last_obs_dtc(obs)
+    cut_off_date <- last_obs_dtc(obs)
     conditional_message("Data cut-off was set to last observation time, ",
-      cut.off.date, "\n",
+      cut_off_date, "\n",
       silent = silent
     )
   } else {
-    cut.off.date <- last_ex_dtc(ex)
+    cut_off_date <- last_ex_dtc(ex)
   }
 
   ex <- ex %>%
-    impute_exendtc_to_cutoff(cut.off.date, silent = silent) %>%
+    impute_exendtc_to_cutoff(cut_off_date, silent = silent) %>%
     filter(EXENDTC >= EXSTDTC)
 
   # identify subjects with observations by analyte
@@ -1024,9 +1033,17 @@ make_nif <- function(
 
   # make administrations
   admin <- make_admin(ex, dm,
-    drug_mapping = drug_mapping, cut.off.date,
+    drug_mapping = drug_mapping, cut_off_date,
     silent = silent
   )
+
+  # truncate to last individual observation
+  if (truncate_to_last_individual_obs == TRUE) {
+    admin <- admin %>%
+      left_join(obs %>% distinct(USUBJID, PARENT, last_obs),
+                by = c("USUBJID", "PARENT")) %>%
+      filter(DTC <= last_obs)
+  }
 
   # Remove all administrations with PCTESTCD==NA
   #  those rows may come from treatments that have no analyte mapping

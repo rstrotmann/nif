@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nif_spaghetti_plot</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">obj</span>,</span>
 <span>  points <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  group <span class="op">=</span> <span class="st">"ANALYTE"</span>,</span>
@@ -63,7 +63,7 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt>obj</dt>
 <dd><p>The NIF data set.</p></dd>
 
 
@@ -104,8 +104,11 @@ be plotted.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">nif_spaghetti_plot</span><span class="op">(</span><span class="va">examplinib_fe_nif</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 440 rows containing missing values (`geom_line()`).</span>
 <span class="r-plt img"><img src="nif_spaghetti_plot-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">nif_spaghetti_plot</span><span class="op">(</span><span class="va">examplinib_sad_nif</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Transformation introduced infinite values in continuous y-axis</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 240 rows containing missing values (`geom_line()`).</span>
 <span class="r-plt img"><img src="nif_spaghetti_plot-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
