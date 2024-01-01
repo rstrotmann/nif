@@ -9,6 +9,7 @@ dose_plot_id(
   id,
   y_scale = "lin",
   max_dose = NA,
+  point_size = 2,
   max_time = NA,
   analyte = NULL
 )
@@ -22,6 +23,8 @@ dose_plot_id(
 is "lin".}
 
 \item{max_dose}{The upper limit of the dose scale.}
+
+\item{point_size}{The point size as numeric.}
 
 \item{max_time}{The right limit of the time scale.}
 

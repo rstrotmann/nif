@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,9 @@
 <span>  points <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  group <span class="op">=</span> <span class="st">"ANALYTE"</span>,</span>
-<span>  nominal_time <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  nominal_time <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  tad <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  analyte <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -80,6 +82,16 @@
 <dt>nominal_time</dt>
 <dd><p>Boolean to indicate whether the x-axis should be NTIME
 rather than TIME.</p></dd>
+
+
+<dt>tad</dt>
+<dd><p>Boolean to select whether time after dose (TAD) rather than TIME
+should be plotted.</p></dd>
+
+
+<dt>analyte</dt>
+<dd><p>The analyte as character. If NULL (default), all analytes will
+be plotted.</p></dd>
 
 </dl></div>
     <div class="section level2">

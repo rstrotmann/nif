@@ -132,7 +132,8 @@ nif_viewer <- function(nif) {
             max_time = max_time(),
             y_scale = y_scale_type,
             tad = input$tad,
-            lines = !input$tad,
+            # lines = !input$tad,
+            point_size = 3,
             imp = input$admin
           )
         ))
@@ -143,7 +144,8 @@ nif_viewer <- function(nif) {
     output$plot.dose <- shiny::renderPlot(
       {
         suppressWarnings(print(
-          nif::dose_plot_id(current_nif(), input$subject, max_dose = max_dose,
+          nif::dose_plot_id(current_nif(), input$subject, point_size=3,
+                            max_dose = max_dose,
                             max_time = max_time())
         ))
       },

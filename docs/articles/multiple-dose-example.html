@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -194,27 +194,27 @@ data frame:</p>
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#    REF    STUDYID ID           USUBJID NTIME TIME    ANALYTE AMT RATE        DV</span></span>
-<span><span class="co">#  1   1 2023000022  1 20230000221010001   0.0 0.00     RS2023 500    0        NA</span></span>
-<span><span class="co">#  2   2 2023000022  1 20230000221010001   0.0 0.00     RS2023   0    0 0.0000000</span></span>
-<span><span class="co">#  3   3 2023000022  1 20230000221010001   0.0 0.00 RS2023487A   0    0 0.0000000</span></span>
-<span><span class="co">#  4   4 2023000022  1 20230000221010001   1.5 1.75     RS2023   0    0 3.3677257</span></span>
-<span><span class="co">#  5   5 2023000022  1 20230000221010001   1.5 1.75 RS2023487A   0    0 3.8672063</span></span>
-<span><span class="co">#  6   6 2023000022  1 20230000221010001   4.0 4.40     RS2023   0    0 0.9731199</span></span>
-<span><span class="co">#           LNDV MDV CMT EVID DOSE AGE SEX  RACE HEIGHT WEIGHT      BMI  ACTARMCD</span></span>
-<span><span class="co">#  1          NA   1   1    1  500  84   0 WHITE  175.6     78 25.29563 TREATMENT</span></span>
-<span><span class="co">#  2        -Inf   0   2    0   NA  84   0 WHITE  175.6     78 25.29563 TREATMENT</span></span>
-<span><span class="co">#  3        -Inf   0   2    0   NA  84   0 WHITE  175.6     78 25.29563 TREATMENT</span></span>
-<span><span class="co">#  4  1.21423765   0   2    0  500  84   0 WHITE  175.6     78 25.29563 TREATMENT</span></span>
-<span><span class="co">#  5  1.35253235   0   2    0  500  84   0 WHITE  175.6     78 25.29563 TREATMENT</span></span>
-<span><span class="co">#  6 -0.02724796   0   2    0  500  84   0 WHITE  175.6     78 25.29563 TREATMENT</span></span>
-<span><span class="co">#    PARENT METABOLITE TRTDY  BL_CRCL                 DTC</span></span>
-<span><span class="co">#  1 RS2023      FALSE     1 57.37719 2001-01-17 08:24:00</span></span>
-<span><span class="co">#  2 RS2023      FALSE     1 57.37719 2001-01-17 08:24:00</span></span>
-<span><span class="co">#  3 RS2023       TRUE     1 57.37719 2001-01-17 08:24:00</span></span>
-<span><span class="co">#  4 RS2023      FALSE     1 57.37719 2001-01-17 10:09:00</span></span>
-<span><span class="co">#  5 RS2023       TRUE     1 57.37719 2001-01-17 10:09:00</span></span>
-<span><span class="co">#  6 RS2023      FALSE     1 57.37719 2001-01-17 12:48:00</span></span></code></pre></div>
+<span><span class="co">#    REF    STUDYID ID           USUBJID NTIME TIME  TAD    ANALYTE AMT RATE</span></span>
+<span><span class="co">#  1   1 2023000022  1 20230000221010001   0.0 0.00 0.00     RS2023 500    0</span></span>
+<span><span class="co">#  2   2 2023000022  1 20230000221010001   0.0 0.00 0.00     RS2023   0    0</span></span>
+<span><span class="co">#  3   3 2023000022  1 20230000221010001   0.0 0.00 0.00 RS2023487A   0    0</span></span>
+<span><span class="co">#  4   4 2023000022  1 20230000221010001   1.5 1.75 1.75     RS2023   0    0</span></span>
+<span><span class="co">#  5   5 2023000022  1 20230000221010001   1.5 1.75 1.75 RS2023487A   0    0</span></span>
+<span><span class="co">#  6   6 2023000022  1 20230000221010001   4.0 4.40 4.40     RS2023   0    0</span></span>
+<span><span class="co">#           DV        LNDV MDV CMT EVID DOSE AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
+<span><span class="co">#  1        NA          NA   1   1    1  500  84   0 WHITE  175.6     78 25.29563</span></span>
+<span><span class="co">#  2 0.0000000        -Inf   0   2    0   NA  84   0 WHITE  175.6     78 25.29563</span></span>
+<span><span class="co">#  3 0.0000000        -Inf   0   2    0   NA  84   0 WHITE  175.6     78 25.29563</span></span>
+<span><span class="co">#  4 3.3677257  1.21423765   0   2    0  500  84   0 WHITE  175.6     78 25.29563</span></span>
+<span><span class="co">#  5 3.8672063  1.35253235   0   2    0  500  84   0 WHITE  175.6     78 25.29563</span></span>
+<span><span class="co">#  6 0.9731199 -0.02724796   0   2    0  500  84   0 WHITE  175.6     78 25.29563</span></span>
+<span><span class="co">#     ACTARMCD PARENT METABOLITE TRTDY  BL_CRCL                 DTC</span></span>
+<span><span class="co">#  1 TREATMENT RS2023      FALSE     1 57.37719 2001-01-17 08:24:00</span></span>
+<span><span class="co">#  2 TREATMENT RS2023      FALSE     1 57.37719 2001-01-17 08:24:00</span></span>
+<span><span class="co">#  3 TREATMENT RS2023       TRUE     1 57.37719 2001-01-17 08:24:00</span></span>
+<span><span class="co">#  4 TREATMENT RS2023      FALSE     1 57.37719 2001-01-17 10:09:00</span></span>
+<span><span class="co">#  5 TREATMENT RS2023       TRUE     1 57.37719 2001-01-17 10:09:00</span></span>
+<span><span class="co">#  6 TREATMENT RS2023      FALSE     1 57.37719 2001-01-17 12:48:00</span></span></code></pre></div>
 <p>When the NIF object itself is printed, a summary of the data is shown
 instead:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -224,25 +224,25 @@ instead:</p>
 <span><span class="co">#  Males: 51, females: 29 (36.2%)</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Columns:</span></span>
-<span><span class="co">#  REF, STUDYID, ID, USUBJID, NTIME, TIME, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, BL_CRCL, DTC </span></span>
+<span><span class="co">#  REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, BL_CRCL, DTC </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  First rows of NIF data (selected columns):</span></span>
-<span><span class="co">#  ID   NTIME   TIME    ANALYTE      AMT   DV                   CMT   EVID   DOSE   </span></span>
-<span><span class="co">#  1    0       0       RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       0       RS2023       0     0                    2     0      NA     </span></span>
-<span><span class="co">#  1    0       0       RS2023487A   0     0                    2     0      NA     </span></span>
-<span><span class="co">#  1    1.5     1.75    RS2023       0     3.36772568843661     2     0      500    </span></span>
-<span><span class="co">#  1    1.5     1.75    RS2023487A   0     3.86720626722762     2     0      500    </span></span>
-<span><span class="co">#  1    4       4.4     RS2023       0     0.973119920231158    2     0      500    </span></span>
-<span><span class="co">#  1    4       4.4     RS2023487A   0     9.56502537142429     2     0      500    </span></span>
-<span><span class="co">#  1    0       24      RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       48      RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       72      RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       96      RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       120     RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       144     RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       168     RS2023       500   NA                   1     1      500    </span></span>
-<span><span class="co">#  1    0       191.3   RS2023       0     0.0362596629478831   2     0      500</span></span></code></pre></div>
+<span><span class="co">#  ID   NTIME   TIME    TAD    ANALYTE      AMT   DV                   CMT   EVID   DOSE   </span></span>
+<span><span class="co">#  1    0       0       0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       0       0      RS2023       0     0                    2     0      NA     </span></span>
+<span><span class="co">#  1    0       0       0      RS2023487A   0     0                    2     0      NA     </span></span>
+<span><span class="co">#  1    1.5     1.75    1.75   RS2023       0     3.36772568843661     2     0      500    </span></span>
+<span><span class="co">#  1    1.5     1.75    1.75   RS2023487A   0     3.86720626722762     2     0      500    </span></span>
+<span><span class="co">#  1    4       4.4     4.4    RS2023       0     0.973119920231158    2     0      500    </span></span>
+<span><span class="co">#  1    4       4.4     4.4    RS2023487A   0     9.56502537142429     2     0      500    </span></span>
+<span><span class="co">#  1    0       24      0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       48      0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       72      0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       96      0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       120     0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       144     0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       168     0      RS2023       500   NA                   1     1      500    </span></span>
+<span><span class="co">#  1    0       191.3   23.3   RS2023       0     0.0362596629478831   2     0      500</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploration">EXPLORATION<a class="anchor" aria-label="anchor" href="#exploration"></a>

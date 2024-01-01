@@ -14,7 +14,7 @@ vertical lines."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,10 @@ vertical lines.</p>
 <span>  <span class="va">id</span>,</span>
 <span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_scale <span class="op">=</span> <span class="st">"lin"</span>,</span>
-<span>  max.time <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  max_time <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  point_size <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  tad <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  imp <span class="op">=</span> <span class="st">"none"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -85,8 +88,21 @@ vertical lines.</p>
 is "lin".</p></dd>
 
 
-<dt>max.time</dt>
+<dt>max_time</dt>
 <dd><p>The right limit of the time scale</p></dd>
+
+
+<dt>lines</dt>
+<dd><p>Boolean to define whether lines should be plotted.</p></dd>
+
+
+<dt>point_size</dt>
+<dd><p>Point size as numeric.</p></dd>
+
+
+<dt>tad</dt>
+<dd><p>Boolean to select whether time after dose (TAD) rather than TIME
+should be plotted.</p></dd>
 
 
 <dt>imp</dt>

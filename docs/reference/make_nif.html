@@ -16,7 +16,7 @@ For a more in-depth tutorial, see vignette("nif-vignette").'><!-- mathjax --><sc
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.40.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.41.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -169,25 +169,25 @@ treatment for the respective subject.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 14, females: 6 (30%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> REF, ID, PERIOD, PCTESTCD, PCSTRESN, PCTEST, USUBJID, STUDYID, PCELTM, PCTPTNUM, PCTPT, PCDTC, PCSEQ, PCSPEC, PCRFTDTC, EPOCH, DTC, start.date, start.time, NTIME, EVID, CMT, AMT, DV, LNDV, MDV, ANALYTE, RATE, EXTRT, PARENT, METABOLITE, EXDY, EXSTDTC, EXSTDY, EXENDY, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, date, time, DOSE, TYPE, dtc.date, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TIME, TRTDY </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> REF, ID, PERIOD, PCTESTCD, PCSTRESN, PCTEST, USUBJID, STUDYID, PCELTM, PCTPTNUM, PCTPT, PCDTC, PCSEQ, PCSPEC, PCRFTDTC, EPOCH, DTC, start.date, start.time, NTIME, EVID, CMT, AMT, DV, LNDV, MDV, ANALYTE, RATE, EXTRT, PARENT, METABOLITE, EXDY, EXSTDTC, EXSTDY, EXENDY, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, date, time, DOSE, TYPE, dtc.date, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TIME, TRTDY, TAD </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First rows of NIF data (selected columns):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   EVID   CMT   AMT   DV                    ANALYTE   DOSE   TIME   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       1      1     500   NA                    RS2023    500    0      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0      2     0     0                     RS2023    NA     0      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.5     0      2     0     0.902503560799694     RS2023    500    0.5    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       0      2     0     1.6201458423574       RS2023    500    1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     0      2     0     3.45719508560444      RS2023    500    1.5    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2       0      2     0     3.02872200502414      RS2023    500    2      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    3       0      2     0     2.73796041824882      RS2023    500    3      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       0      2     0     1.57858378748303      RS2023    500    4      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    6       0      2     0     0.941951096527271     RS2023    500    6      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    8       0      2     0     0.459242625586454     RS2023    500    8      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    10      0      2     0     0.238956661290418     RS2023    500    10     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    12      0      2     0     0.201064807909193     RS2023    500    12     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    24      0      2     0     0.0364867151444544    RS2023    500    24     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    48      0      2     0     0.014237431673674     RS2023    500    48     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    72      0      2     0     0.00618959374465484   RS2023    500    72     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   EVID   CMT   AMT   DV                    ANALYTE   DOSE   TIME   TAD   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       1      1     500   NA                    RS2023    500    0      0     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0      2     0     0                     RS2023    NA     0      0     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.5     0      2     0     0.902503560799694     RS2023    500    0.5    0.5   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       0      2     0     1.6201458423574       RS2023    500    1      1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     0      2     0     3.45719508560444      RS2023    500    1.5    1.5   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2       0      2     0     3.02872200502414      RS2023    500    2      2     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    3       0      2     0     2.73796041824882      RS2023    500    3      3     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       0      2     0     1.57858378748303      RS2023    500    4      4     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    6       0      2     0     0.941951096527271     RS2023    500    6      6     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    8       0      2     0     0.459242625586454     RS2023    500    8      8     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    10      0      2     0     0.238956661290418     RS2023    500    10     10    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    12      0      2     0     0.201064807909193     RS2023    500    12     12    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    24      0      2     0     0.0364867151444544    RS2023    500    24     24    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    48      0      2     0     0.014237431673674     RS2023    500    48     48    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    72      0      2     0     0.00618959374465484   RS2023    500    72     72    </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

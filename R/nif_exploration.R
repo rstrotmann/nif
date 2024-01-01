@@ -14,6 +14,8 @@
 #' @param max_time The right limit of the time scale
 #' @param tad Boolean to select whether time after dose (TAD) rather than TIME
 #'   should be plotted.
+#' @param lines Boolean to define whether lines should be plotted.
+#' @param point_size Point size as numeric.
 #'
 #' @return the plot object
 #' @import dplyr
@@ -25,7 +27,7 @@
 #' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
 nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
-                        max_time = NA, lines=TRUE,
+                        max_time = NA, lines=TRUE, point_size=2,
                         tad=FALSE, imp = "none") {
   if (id %in% nif$ID) {
     plot.label <- "ID"
@@ -83,9 +85,9 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
       ggplot2::aes(xintercept = TIME),
       color = "gray"
     ) +
-    # {if (lines == TRUE) ggplot2::geom_line()} +
-    ggplot2::geom_line() +
-    ggplot2::geom_point() +
+    {if (lines == TRUE) ggplot2::geom_line()} +
+    # ggplot2::geom_line() +
+    ggplot2::geom_point(size=point_size) +
     ggplot2::xlim(0, max_time) +
     ggplot2::labs(
       title = paste0(plot.label, ": ", id, id_label),
@@ -121,6 +123,7 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 #' @param max_dose The upper limit of the dose scale.
 #' @param analyte The analyte of interest.
 #' @param max_time The right limit of the time scale.
+#' @param point_size The point size as numeric.
 #'
 #' @return A ggplot object.
 #' @import dplyr
@@ -129,7 +132,7 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[4]])
-dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
+dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA, point_size=2,
                          max_time = NA, analyte = NULL) {
   if (id %in% nif$ID) {
     plot.label <- "ID"
@@ -156,7 +159,7 @@ dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
       color = ANALYTE
     )) +
     ggplot2::geom_line() +
-    ggplot2::geom_point() +
+    ggplot2::geom_point(size=point_size) +
     ggplot2::ylim(0, max_dose) +
     ggplot2::xlim(0, max_time) +
     ggplot2::labs(title = paste0(plot.label, ": ", id), color = "treatment") +

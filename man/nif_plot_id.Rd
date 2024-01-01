@@ -10,6 +10,8 @@ nif_plot_id(
   analyte = NULL,
   y_scale = "lin",
   max_time = NA,
+  lines = TRUE,
+  point_size = 2,
   tad = FALSE,
   imp = "none"
 )
@@ -25,6 +27,10 @@ nif_plot_id(
 is "lin".}
 
 \item{max_time}{The right limit of the time scale}
+
+\item{lines}{Boolean to define whether lines should be plotted.}
+
+\item{point_size}{Point size as numeric.}
 
 \item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
 should be plotted.}
