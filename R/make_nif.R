@@ -1319,9 +1319,11 @@ add_dose_level <- function(obj) {
 #' @return The updated NIF data set as data frame.
 add_trtdy <- function(obj) {
   obj %>%
-    assertr::verify(has_all_names("USUBJID", "DTC", "EVID")) %>%
+    # assertr::verify(has_all_names("USUBJID", "DTC", "EVID")) %>%
+    assertr::verify(has_all_names("ID", "DTC", "EVID")) %>%
     assertr::verify(is.POSIXct(DTC)) %>%
-    dplyr::group_by(USUBJID) %>%
+    # dplyr::group_by(USUBJID) %>%
+    dplyr::group_by(ID) %>%
     dplyr::mutate(FIRSTTRTDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     mutate(TRTDY = interval(date(FIRSTTRTDTC), date(DTC)) / days(1)) %>%

@@ -33,27 +33,29 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
   x <- nif %>%
     as.data.frame() %>%
     verify(has_all_names(
-      "ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE",
+      "ID", "USUBJID", "TIME", "NTIME", "AMT", "DV", "ANALYTE",
       "EVID"
-    )) %>%
-    filter(EVID == 0)
+    )) #%>%
+    # filter(EVID == 0)
 
+  # if not specified, show all analytes
   if (is.null(analyte)) {
     analyte <- x %>%
       distinct(ANALYTE) %>%
       pull(ANALYTE)
   }
 
-  if (id %in% nif$ID) {
+  # filter for subject of interest
+  if (id %in% x$ID) {
     plot_label <- "ID"
     x <- x %>%
       filter(ID == id)
     id_label <- ""
   } else {
-    if (id %in% nif$USUBJID) {
+    if (id %in% x$USUBJID) {
       x <- x %>%
         filter(USUBJID == id)
-      id_label <- paste0(" (ID ", nif %>% distinct(ID) %>% pull(ID), ")")
+      id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
       plot_label <- "USUBJID"
     } else {
       stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
@@ -61,7 +63,12 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
   }
 
   if (tad == TRUE) {
-    x <- x %>% mutate(TIME = TAD)
+    if (!"TAD" %in% colnames(x)) {
+      x <- x %>% add_tad()
+    }
+    x <- x %>%
+      # add_trtdy() %>%
+      mutate(TIME = TAD)
   }
 
   obs <- x %>%
@@ -69,8 +76,8 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
     filter(ANALYTE %in% analyte) %>%
     filter(EVID == 0)
 
-  admin <- nif %>%
-    as.data.frame() %>%
+  admin <- x %>%
+    # as.data.frame() %>%
     dplyr::filter(EVID == 1) %>%
     dplyr::filter(PARENT == imp)
 
