@@ -31,7 +31,7 @@ nif_viewer <- function(nif) {
     distinct(PARENT) %>%
     pull(PARENT)
 
-  max.dose <- nif %>%
+  max_dose <- nif %>%
     dplyr::pull(AMT) %>%
     max()
 
@@ -64,6 +64,7 @@ nif_viewer <- function(nif) {
             "custom" = "custom"
           )
         ),
+        checkboxInput("tad", "TAD"),
         shiny::numericInput("maxtime", "max display time", value = NA)
       ),
 
@@ -106,7 +107,7 @@ nif_viewer <- function(nif) {
     current_sbs <- reactiveVal(sbs)
     current_analytes <- reactiveVal(analytes)
 
-    max.time <- function() {
+    max_time <- function() {
       if (input$timeselect == "indiv") {
         return(nif %>%
           dplyr::filter(USUBJID == input$subject) %>%
@@ -128,8 +129,10 @@ nif_viewer <- function(nif) {
             # filter(ANALYTE %in% input$analytes),
             input$subject,
             analyte = input$analytes, # %>%
-            max.time = max.time(),
+            max_time = max_time(),
             y_scale = y_scale_type,
+            tad = input$tad,
+            lines = !input$tad,
             imp = input$admin
           )
         ))
@@ -140,7 +143,8 @@ nif_viewer <- function(nif) {
     output$plot.dose <- shiny::renderPlot(
       {
         suppressWarnings(print(
-          nif::dose_plot_id(current_nif(), input$subject, max.dose = max.dose, max.time = max.time())
+          nif::dose_plot_id(current_nif(), input$subject, max_dose = max_dose,
+                            max_time = max_time())
         ))
       },
       height = 250

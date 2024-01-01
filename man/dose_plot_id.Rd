@@ -8,8 +8,8 @@ dose_plot_id(
   nif,
   id,
   y_scale = "lin",
-  max.dose = NA,
-  max.time = NA,
+  max_dose = NA,
+  max_time = NA,
   analyte = NULL
 )
 }
@@ -21,9 +21,9 @@ dose_plot_id(
 \item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 is "lin".}
 
-\item{max.dose}{The upper limit of the dose scale.}
+\item{max_dose}{The upper limit of the dose scale.}
 
-\item{max.time}{The right limit of the time scale.}
+\item{max_time}{The right limit of the time scale.}
 
 \item{analyte}{The analyte of interest.}
 }

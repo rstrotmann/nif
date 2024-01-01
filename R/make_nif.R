@@ -507,7 +507,7 @@ make_exstdy_exendy <- function(ex, dm) {
 #'
 #' @param ex EX domain as data frame.
 #' @param dm DM domain as data frame.
-#' @param cut.off.date The cut-off date to be used where no EXENDTC is recorded,
+#' @param cut_off_date The cut-off date to be used where no EXENDTC is recorded,
 #'  in POSIX format.
 #' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
 #'  that associate both.
@@ -522,7 +522,7 @@ make_exstdy_exendy <- function(ex, dm) {
 make_admin <- function(ex,
                        dm,
                        drug_mapping,
-                       cut.off.date,
+                       cut_off_date,
                        silent = FALSE) {
   admin <- ex %>%
     verify(has_all_names(
@@ -536,7 +536,7 @@ make_admin <- function(ex,
     ) %>%
     ### The following should be probably done after expansion!
     # filter for entries with start before cut-off
-    dplyr::filter(EXSTDTC <= cut.off.date) %>%
+    dplyr::filter(EXSTDTC <= cut_off_date) %>%
     # isolate start and end dates and times
     mutate(start.date = extract_date(EXSTDTC)) %>%
     dplyr::mutate(start.time = case_when(
@@ -1123,6 +1123,7 @@ make_nif <- function(
     dplyr::mutate(ID = as.numeric(as.factor(USUBJID))) %>%
     dplyr::relocate(ID) %>%
     new_nif() %>%
+    add_tad() %>%
     index_nif()
 
   return(nif)
@@ -1200,7 +1201,7 @@ compress_nif <- function(nif, ...) {
 #'
 #' @return A NIF data set object.
 #' @export
-compress <- function(nif, fields=standard_nif_fields) {
+compress <- function(nif, fields = standard_nif_fields) {
   UseMethod("compress")
 }
 
@@ -1214,15 +1215,37 @@ compress <- function(nif, fields=standard_nif_fields) {
 #'
 #' @return A NIF data set object.
 #' @export
-compress.nif <- function(nif, fields=NULL) {
+compress.nif <- function(nif, fields = NULL) {
   if (is.null(fields)) {
-    fields <- c(standard_nif_fields,
-                colnames(examplinib_poc_nif)[
-                  grep("BL_", colnames(examplinib_poc_nif))])
+    fields <- c(
+      standard_nif_fields,
+      colnames(examplinib_poc_nif)[grep("BL_", colnames(examplinib_poc_nif))])
   }
   nif %>%
     as.data.frame() %>%
     dplyr::select(any_of(fields)) %>%
+    new_nif()
+}
+
+
+#' Add time-after-dose (TAD) field
+#'
+#' @param nif A NIF object.
+#'
+#' @return The updated NIF object
+#' @export
+#'
+#' @examples
+#' add_tad(examplinib_poc_nif)
+add_tad <- function(nif) {
+  nif %>%
+    as.data.frame() %>%
+    mutate(admin_time = case_when(
+      EVID == 1 ~ TIME)) %>%
+    group_by(ID, PARENT) %>%
+    fill(admin_time, .direction = "down") %>%
+    mutate(TAD = TIME - admin_time) %>%
+    select(-admin_time) %>%
     new_nif()
 }
 
@@ -1510,7 +1533,9 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
       as.numeric(difftime(DTC, FIRSTDTC, units = "h")),
       digits = 3
     )) %>%
-    add_trtdy()
+    add_trtdy() %>%
+    add_tad() %>%
+    index_nif()
 
-  return(new_nif(temp))
+  # return(new_nif(temp))
 }

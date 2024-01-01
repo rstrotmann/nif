@@ -11,7 +11,9 @@
 #' @param analyte The analytes to be displayes. Defaults to NULL (all).
 #' @param imp The IMP for which administrations are to be indicated by vertical
 #'   lines. Defaults to 'none'.
-#' @param max.time The right limit of the time scale
+#' @param max_time The right limit of the time scale
+#' @param tad Boolean to select whether time after dose (TAD) rather than TIME
+#'   should be plotted.
 #'
 #' @return the plot object
 #' @import dplyr
@@ -22,8 +24,9 @@
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
-nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
-                        imp = "none") {
+nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
+                        max_time = NA, lines=TRUE,
+                        tad=FALSE, imp = "none") {
   if (id %in% nif$ID) {
     plot.label <- "ID"
     nif <- nif %>%
@@ -46,6 +49,10 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
       pull(ANALYTE)
   }
 
+  if (tad == TRUE) {
+    nif <- nif %>% mutate(TIME=TAD)
+  }
+
   obs <- nif %>%
     as.data.frame() %>%
     filter(ANALYTE %in% analyte) %>%
@@ -56,20 +63,30 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
     dplyr::filter(EVID == 1) %>%
     dplyr::filter(PARENT == imp)
 
-  p <- obs %>%
+  if (tad == TRUE) {
+    p <- obs %>%
     ggplot2::ggplot(ggplot2::aes(
       x = TIME, y = DV,
-      group = interaction(ID, as.factor(ANALYTE)),
-      color = as.factor(ANALYTE)
-    )) +
+      group = interaction(ID, as.factor(ANALYTE), TRTDY),
+      color = interaction(as.factor(ANALYTE), TRTDY)))
+  } else {
+    p <- obs %>%
+      ggplot2::ggplot(ggplot2::aes(
+        x = TIME, y = DV,
+        group = interaction(ID, as.factor(ANALYTE)),
+        color = as.factor(ANALYTE)))
+    }
+
+  p <- p +
     ggplot2::geom_vline(
       data = admin,
       ggplot2::aes(xintercept = TIME),
       color = "gray"
     ) +
+    # {if (lines == TRUE) ggplot2::geom_line()} +
     ggplot2::geom_line() +
     ggplot2::geom_point() +
-    ggplot2::xlim(0, max.time) +
+    ggplot2::xlim(0, max_time) +
     ggplot2::labs(
       title = paste0(plot.label, ": ", id, id_label),
       color = "analyte"
@@ -101,9 +118,9 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
 #' @param id The subject ID to be plotted.
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
-#' @param max.dose The upper limit of the dose scale.
+#' @param max_dose The upper limit of the dose scale.
 #' @param analyte The analyte of interest.
-#' @param max.time The right limit of the time scale.
+#' @param max_time The right limit of the time scale.
 #'
 #' @return A ggplot object.
 #' @import dplyr
@@ -112,8 +129,8 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin", max.time = NA,
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[4]])
-dose_plot_id <- function(nif, id, y_scale = "lin", max.dose = NA, max.time = NA,
-                         analyte = NULL) {
+dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
+                         max_time = NA, analyte = NULL) {
   if (id %in% nif$ID) {
     plot.label <- "ID"
     nif <- nif %>% filter(ID == id)
@@ -140,8 +157,8 @@ dose_plot_id <- function(nif, id, y_scale = "lin", max.dose = NA, max.time = NA,
     )) +
     ggplot2::geom_line() +
     ggplot2::geom_point() +
-    ggplot2::ylim(0, max.dose) +
-    ggplot2::xlim(0, max.time) +
+    ggplot2::ylim(0, max_dose) +
+    ggplot2::xlim(0, max_time) +
     ggplot2::labs(title = paste0(plot.label, ": ", id), color = "treatment") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
@@ -211,7 +228,11 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
 #' @param nominal_time Boolean to indicate whether the x-axis should be NTIME
-#'  rather than TIME.
+#'   rather than TIME.
+#' @param tad Boolean to select whether time after dose (TAD) rather than TIME
+#'   should be plotted.
+#' @param analyte The analyte as character. If NULL (default), all analytes will
+#'   be plotted.
 #'
 #' @return A ggplot2 plot object.
 #' @export
@@ -221,7 +242,15 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #' nif_spaghetti_plot(examplinib_sad_nif)
 nif_spaghetti_plot <- function(x,
                                points = FALSE, lines = TRUE, group = "ANALYTE",
-                               nominal_time = FALSE) {
+                               nominal_time = FALSE, tad=FALSE, analyte=NULL) {
+  if (!is.null(analyte)) {
+    x <- x %>% dplyr::filter(ANALYTE == analyte)
+  }
+
+  if (tad == TRUE) {
+    x <- x %>% mutate(TIME=TAD)
+  }
+
   temp <- x %>%
     as.data.frame() %>%
     verify(has_all_names("NTIME", "DOSE", "DV")) %>%
@@ -288,6 +317,8 @@ nif_spaghetti_plot <- function(x,
 #' @param min_x Minimum x (time) scale value.
 #' @param lines Boolean to define whether lines are to be drawn.
 #' @param alpha Numerical value between 0 and 1, passed on as alpha to ggplot.
+#' @param tad Boolean to select wheter time after dose (TAD) rather than TIME
+#'   should be plotted.
 #'
 #' @return The plot object
 #' @seealso [nif_viewer()]
@@ -310,7 +341,7 @@ nif_spaghetti_plot <- function(x,
 plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
                      mean = FALSE, doses = NULL, points = FALSE, id = NULL,
                      usubjid = NULL, group = NULL, administrations = FALSE,
-                     nominal_time = FALSE, lines = TRUE, alpha = 1,
+                     nominal_time = FALSE, tad = FALSE, lines = TRUE, alpha = 1,
                      title = NULL, ...) {
   if (!is.null(id)) {
     x <- x %>%
@@ -342,6 +373,10 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
     }
   } else {
     cov <- "ANALYTE"
+  }
+
+  if (tad == TRUE) {
+    x <- x %>% mutate(TIME=TAD)
   }
 
   if (mean == TRUE) {

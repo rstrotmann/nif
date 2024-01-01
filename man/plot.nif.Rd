@@ -18,6 +18,7 @@
   group = NULL,
   administrations = FALSE,
   nominal_time = FALSE,
+  tad = FALSE,
   lines = TRUE,
   alpha = 1,
   title = NULL,
@@ -60,6 +61,9 @@ mean=F.}
 
 \item{nominal_time}{Boolean to indicate whether NTIME rather than TIME should
 be plotted on the x-axis.}
+
+\item{tad}{Boolean to select wheter time after dose (TAD) rather than TIME
+should be plotted.}
 
 \item{lines}{Boolean to define whether lines are to be drawn.}
 

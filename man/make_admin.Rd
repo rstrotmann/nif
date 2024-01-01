@@ -4,7 +4,7 @@
 \alias{make_admin}
 \title{Make administration data set from EX domain}
 \usage{
-make_admin(ex, dm, drug_mapping, cut.off.date, silent = FALSE)
+make_admin(ex, dm, drug_mapping, cut_off_date, silent = FALSE)
 }
 \arguments{
 \item{ex}{EX domain as data frame.}
@@ -14,7 +14,7 @@ make_admin(ex, dm, drug_mapping, cut.off.date, silent = FALSE)
 \item{drug_mapping}{A data frame with the columns of EXTRT and PCTESTCD
 that associate both.}
 
-\item{cut.off.date}{The cut-off date to be used where no EXENDTC is recorded,
+\item{cut_off_date}{The cut-off date to be used where no EXENDTC is recorded,
 in POSIX format.}
 
 \item{silent}{Boolean value to indicate whether warnings should be printed.}

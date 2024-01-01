@@ -9,7 +9,8 @@ nif_plot_id(
   id,
   analyte = NULL,
   y_scale = "lin",
-  max.time = NA,
+  max_time = NA,
+  tad = FALSE,
   imp = "none"
 )
 }
@@ -23,7 +24,10 @@ nif_plot_id(
 \item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 is "lin".}
 
-\item{max.time}{The right limit of the time scale}
+\item{max_time}{The right limit of the time scale}
+
+\item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
+should be plotted.}
 
 \item{imp}{The IMP for which administrations are to be indicated by vertical
 lines. Defaults to 'none'.}

@@ -9,7 +9,9 @@ nif_spaghetti_plot(
   points = FALSE,
   lines = TRUE,
   group = "ANALYTE",
-  nominal_time = FALSE
+  nominal_time = FALSE,
+  tad = FALSE,
+  analyte = NULL
 )
 }
 \arguments{
@@ -23,6 +25,12 @@ nif_spaghetti_plot(
 
 \item{nominal_time}{Boolean to indicate whether the x-axis should be NTIME
 rather than TIME.}
+
+\item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
+should be plotted.}
+
+\item{analyte}{The analyte as character. If NULL (default), all analytes will
+be plotted.}
 }
 \value{
 A ggplot2 plot object.

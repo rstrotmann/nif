@@ -68,7 +68,7 @@ print.nif <- function(x, ...) {
   cat(paste(names(x), collapse = ", "), "\n")
 
   temp <- x[1:15, names(x) %in% c(
-    "ID", "NTIME", "TIME", "ANALYTE", "EVID",
+    "ID", "NTIME", "TIME", "TAD", "ANALYTE", "EVID",
     "CMT", "AMT", "DOSE", "DV"
   )] %>%
     as.data.frame()
@@ -409,7 +409,7 @@ write_nif <- function(obj, filename = NA, fields = NULL) {
 #' @return A character vector of the standard NIF fields
 #' @export
 standard_nif_fields <- c(
-  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME",
+  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD",
   "ANALYTE", "AMT", "RATE", "DV", "LNDV", "MDV", "CMT",
   "EVID", "DOSE", "AGE", "SEX", "RACE", "HEIGHT",
   "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
