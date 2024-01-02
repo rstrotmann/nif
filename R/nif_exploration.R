@@ -447,12 +447,14 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
     {if (!is.null(title)) ggtitle(title)} +
     {if (y_scale == "log") scale_y_log10()} +
     {if (length(analyte) == 1) labs(y = analyte)} +
+    # {if (tad == FALSE) labs(color = cov)} +
     labs(color = cov) +
-    {if (x %>%
-         pull(cov) %>%
-         unique() %>%
-         length() < 2) {
-      theme(legend.position = "none")}}
+    {if (tad == FALSE &&
+        x %>%
+          pull(cov) %>%
+          unique() %>%
+          length() < 2) {
+        theme(legend.position = "none")}}
 }
 
 
