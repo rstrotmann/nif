@@ -494,6 +494,44 @@ make_exstdy_exendy <- function(ex, dm) {
 }
 
 
+#' Replace administration time with time found in PCRFTDTC
+#'
+#' @param admin The administration data frame.
+#' @param obs The observation data frame.
+#' @param silent Boolean.
+#'
+#' @return The updated administration data frame.
+impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
+  temp <- admin %>%
+    left_join(
+      (
+        obs %>%
+          # mutate(ref.date = as.Date(format(PCRFTDTC, format = "%Y-%m-%d"))) %>%
+          mutate(ref.date = as.Date(extract_date(PCRFTDTC))) %>%
+          # mutate(ref.time = format(PCRFTDTC, format = "%H:%M")) %>%
+          mutate(ref.time = extract_time(PCRFTDTC)) %>%
+          distinct(USUBJID, PARENT, PCRFTDTC, ref.date, ref.time)),
+      by = c("USUBJID", "PARENT", "date" = "ref.date")
+    )
+
+  conditional_message(
+    paste0(
+      "Time found in PCRFTDTC used in ",
+      temp %>% filter(time != ref.time) %>% nrow(),
+      " cases."
+    ),
+    silent = silent
+  )
+
+  temp %>%
+    mutate(DTC = case_when(
+      time != ref.time ~ compose_dtc(date, ref.time),
+      .default = DTC
+    )) #%>%
+    # select(-c("PCRFTDTC", "ref.time"))
+}
+
+
 #' Make administration data set from EX domain
 #'
 #' This function expands the administration ranges specified by EXSTDTC and
@@ -719,56 +757,56 @@ last_ex_dtc <- function(ex) {
 #'  PCRFTDTC is the time for nominal_time=0
 #'  (ref: https://www.lexjansen.com/phuse/2016/pp/PP20.pdf)
 #'
-#' @param admin An admin data set as created by 'make_admin()'.
-#' @param obs An observation data set as created by 'make_obs()'.
-#' @return An admin data set.
-#' @import tidyr
-#' @import dplyr
-impute_administration_time <- function(admin, obs) {
-  # Assertions
-  admin %>%
-    verify(has_all_names("USUBJID", "date", "PCTESTCD"))
-
-  obs %>%
-    verify(has_all_names("DTC", "PCRFTDTC", "USUBJID", "PCTESTCD"))
-
-  # 'reference' is the reference time by subject, analyte and observation date.
-  # This is the PCRFDTC that is recorded along with observations in PC, i.e.,
-  # the date/time of administration of the IMP related to the observation. This
-  # is a 'permissible' field as per SDTM, i.e., it cannot be expected that is is
-  # present in the data set.
-  reference <- obs %>%
-    mutate(dtc.date = extract_date(DTC)) %>%
-    mutate(ref.date = extract_date(PCRFTDTC)) %>%
-    mutate(ref.time = extract_time(PCRFTDTC)) %>%
-    dplyr::filter(dtc.date == ref.date) %>%
-    dplyr::group_by(USUBJID, dtc.date, PCTESTCD) %>%
-    dplyr::distinct(ref.time)
-
-  ret <- admin %>%
-    mutate(dtc.date = extract_date(date)) %>%
-    dplyr::left_join(reference, by = c(
-      "USUBJID" = "USUBJID", "dtc.date" = "dtc.date",
-      "EXTRT" = "PCTESTCD"
-    )) %>%
-    # take time for administration from PCREFDTC where time is not available
-    #   from EX
-    dplyr::mutate(admin.time = case_when(
-      !is.na(ref.time) ~ ref.time,
-      .default = time
-    )) %>%
-    mutate(admin.time = case_when(is.na(admin.time) ~ "",
-      .default = admin.time
-    )) %>%
-    dplyr::group_by(USUBJID, EXTRT) %>%
-    dplyr::arrange(date) %>%
-    # carry forward/back last administration time
-    tidyr::fill(admin.time, .direction = "downup") %>%
-    dplyr::ungroup() %>%
-    mutate(DTC = compose_dtc(date, admin.time)) %>%
-    dplyr::select(-admin.time, -ref.time)
-  return(ret)
-}
+#' #@param admin An admin data set as created by 'make_admin()'.
+#' #@param obs An observation data set as created by 'make_obs()'.
+#' #@return An admin data set.
+#' #@import tidyr
+#' #@import dplyr
+# impute_administration_time <- function(admin, obs) {
+#   # Assertions
+#   admin %>%
+#     verify(has_all_names("USUBJID", "date", "PCTESTCD"))
+#
+#   obs %>%
+#     verify(has_all_names("DTC", "PCRFTDTC", "USUBJID", "PCTESTCD"))
+#
+#   # 'reference' is the reference time by subject, analyte and observation date.
+#   # This is the PCRFDTC that is recorded along with observations in PC, i.e.,
+#   # the date/time of administration of the IMP related to the observation. This
+#   # is a 'permissible' field as per SDTM, i.e., it cannot be expected that is is
+#   # present in the data set.
+#   reference <- obs %>%
+#     mutate(dtc.date = extract_date(DTC)) %>%
+#     mutate(ref.date = extract_date(PCRFTDTC)) %>%
+#     mutate(ref.time = extract_time(PCRFTDTC)) %>%
+#     dplyr::filter(dtc.date == ref.date) %>%
+#     dplyr::group_by(USUBJID, dtc.date, PCTESTCD) %>%
+#     dplyr::distinct(ref.time)
+#
+#   ret <- admin %>%
+#     mutate(dtc.date = extract_date(date)) %>%
+#     dplyr::left_join(reference, by = c(
+#       "USUBJID" = "USUBJID", "dtc.date" = "dtc.date",
+#       "EXTRT" = "PCTESTCD"
+#     )) %>%
+#     # take time for administration from PCREFDTC where time is not available
+#     #   from EX
+#     dplyr::mutate(admin.time = case_when(
+#       !is.na(ref.time) ~ ref.time,
+#       .default = time
+#     )) %>%
+#     mutate(admin.time = case_when(is.na(admin.time) ~ "",
+#       .default = admin.time
+#     )) %>%
+#     dplyr::group_by(USUBJID, EXTRT) %>%
+#     dplyr::arrange(date) %>%
+#     # carry forward/back last administration time
+#     tidyr::fill(admin.time, .direction = "downup") %>%
+#     dplyr::ungroup() %>%
+#     mutate(DTC = compose_dtc(date, admin.time)) %>%
+#     dplyr::select(-admin.time, -ref.time)
+#   return(ret)
+# }
 
 
 
@@ -992,16 +1030,10 @@ make_nif <- function(
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
 
-  ex <- ex %>%
-    impute_missing_exendtc_time(silent = silent) %>%
-    exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
-    impute_exendtc_to_rfendtc(dm, silent = silent) %>%
-    impute_missing_exendtc(silent = silent)
-
   bl_cov <- baseline_covariates(vs, silent = silent)
   drug_mapping <- make_drug_mapping(sdtm_data)
 
-  # make observations
+  # make observations from PC
   obs <- make_obs(pc,
     time_mapping = sdtm_data$time_mapping,
     spec = spec, silent = silent, use_pctptnum = use_pctptnum) %>%
@@ -1009,6 +1041,13 @@ make_nif <- function(
     group_by(USUBJID, PARENT) %>%
     mutate(last_obs=max(DTC, na.rm=T)) %>%
     ungroup()
+
+  # imputations for EX
+  ex <- ex %>%
+    impute_missing_exendtc_time(silent = silent) %>%
+    exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
+    impute_exendtc_to_rfendtc(dm, silent = silent) %>%
+    impute_missing_exendtc(silent = silent)
 
   # define cut-off date
   if (truncate_to_last_observation == TRUE) {
@@ -1031,11 +1070,12 @@ make_nif <- function(
     tidyr::unite("ut", USUBJID, PCTESTCD, remove = FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
 
-  # make administrations
+  # make administrations based on EX and change administration time
+  # to the time included in PCRFTDTC wherever possible.
   admin <- make_admin(ex, dm,
-    drug_mapping = drug_mapping, cut_off_date,
-    silent = silent
-  )
+                      drug_mapping = drug_mapping, cut_off_date,
+                      silent = silent) %>%
+    impute_admin_dtc_to_pcrftdtc(obs, silent = silent)
 
   # truncate to last individual observation
   if (truncate_to_last_individual_obs == TRUE) {
@@ -1090,9 +1130,9 @@ make_nif <- function(
   }
 
   # impute administration times
-  if (impute_administration_time == TRUE) {
-    admin <- impute_administration_time(admin, obs)
-  }
+  # if (impute_administration_time == TRUE) {
+  #   admin <- impute_administration_time(admin, obs)
+  # }
 
   # calculate age from birthday and informed consent signature date
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
