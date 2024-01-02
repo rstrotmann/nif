@@ -982,11 +982,6 @@ add_time <- function(x) {
 #' (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is NULL (default),
 #' the most likely specimen is selected.
 #'
-#' @param impute_administration_time A boolean value to indicate whether the
-#' time of administration is to be imputed from the PCRFDTC field from the
-#' PC domain. This field is 'permissible' and may not be present in certain
-#' SDTM data. The default is 'TRUE'.
-#'
 #' @param truncate_to_last_observation Boolean to indicate whether the data set
 #' should be truncated to the last observation. In this case, administrations
 #' after the last observation time point will deleted. The default is 'TRUE'.
@@ -1015,7 +1010,6 @@ add_time <- function(x) {
 make_nif <- function(
     sdtm_data,
     spec = NULL,
-    impute_administration_time = TRUE,
     silent = FALSE,
     truncate_to_last_observation = TRUE,
     truncate_to_last_individual_obs = TRUE,
@@ -1073,12 +1067,15 @@ make_nif <- function(
     tidyr::unite("ut", USUBJID, PCTESTCD, remove = FALSE) %>%
     dplyr::distinct(USUBJID, PCTESTCD, ut)
 
-  # make administrations based on EX and change administration time
-  # to the time included in PCRFTDTC wherever possible.
+  # make administrations based on EX
   admin <- make_admin(ex, dm,
                       drug_mapping = drug_mapping, cut_off_date,
-                      silent = silent) %>%
-    impute_admin_dtc_to_pcrftdtc(obs, silent = silent)
+                      silent = silent)
+  # change administration time to the time included in PCRFTDTC if available
+  if ("PCRFTDTC" %in% pc$names) {
+    admin <- admin %>%
+      impute_admin_dtc_to_pcrftdtc(obs, silent = silent)
+  }
 
   # truncate to last individual observation
   if (truncate_to_last_individual_obs == TRUE) {

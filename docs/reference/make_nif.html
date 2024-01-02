@@ -16,7 +16,7 @@ For a more in-depth tutorial, see vignette("nif-vignette").'><!-- mathjax --><sc
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,6 @@ For a more in-depth tutorial, see <code><a href="../articles/nif-vignette.html">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_nif</span><span class="op">(</span></span>
 <span>  <span class="va">sdtm_data</span>,</span>
 <span>  spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  impute_administration_time <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  truncate_to_last_observation <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  truncate_to_last_individual_obs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -83,13 +82,6 @@ following SDTM domains are needed: DM, VS, PC and EX.</p></dd>
 <dd><p>The sample specimen for the PC data as string
 (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is NULL (default),
 the most likely specimen is selected.</p></dd>
-
-
-<dt>impute_administration_time</dt>
-<dd><p>A boolean value to indicate whether the
-time of administration is to be imputed from the PCRFDTC field from the
-PC domain. This field is 'permissible' and may not be present in certain
-SDTM data. The default is 'TRUE'.</p></dd>
 
 
 <dt>silent</dt>
@@ -170,13 +162,12 @@ treatment for the respective subject.</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">make_nif</span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No specimen specified. Set to PLASMA as the most likely.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data cut-off was set to last observation time, 2001-03-12 10:13:00</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Time found in PCRFTDTC used in 0 cases.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NONMEM input file (NIF) data set with data from 1 studies</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 680 observations from 20 subjects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 14, females: 6 (30%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> REF, ID, PERIOD, PCTESTCD, PCSTRESN, PCTEST, USUBJID, STUDYID, PCELTM, PCTPTNUM, PCTPT, PCDTC, PCSEQ, PCSPEC, PCRFTDTC, EPOCH, DTC, start.date, start.time, NTIME, EVID, CMT, AMT, DV, LNDV, MDV, ANALYTE, RATE, EXTRT, PARENT, METABOLITE, last_obs, EXDY, EXSTDTC, EXSTDY, EXENDY, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, date, time, DOSE, TYPE, ref.time, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TIME, TRTDY, TAD </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> REF, ID, PERIOD, PCTESTCD, PCSTRESN, PCTEST, USUBJID, STUDYID, PCELTM, PCTPTNUM, PCTPT, PCDTC, PCSEQ, PCSPEC, PCRFTDTC, EPOCH, DTC, start.date, start.time, NTIME, EVID, CMT, AMT, DV, LNDV, MDV, ANALYTE, RATE, EXTRT, PARENT, METABOLITE, last_obs, EXDY, EXSTDTC, EXSTDY, EXENDY, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, date, time, DOSE, TYPE, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TIME, TRTDY, TAD </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First rows of NIF data (selected columns):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   EVID   CMT   AMT   DV                    ANALYTE   DOSE   TIME   TAD   </span>
@@ -198,13 +189,12 @@ treatment for the respective subject.</p></li>
 <span class="r-in"><span><span class="fu">make_nif</span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No specimen specified. Set to PLASMA as the most likely.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data cut-off was set to last observation time, 2001-04-27 14:31:00</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Time found in PCRFTDTC used in 0 cases.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NONMEM input file (NIF) data set with data from 1 studies</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1344 observations from 80 subjects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 51, females: 29 (36.2%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> REF, ID, PCTESTCD, PCSTRESN, PCTEST, USUBJID, RFSTDTC.x, STUDYID, PCDTC, PCSPEC, EPOCH, PCTPT, PCTPTNUM, PCRFTDTC, PCSEQ, DTC, start.date, start.time, NTIME, EVID, CMT, AMT, DV, LNDV, MDV, ANALYTE, RATE, EXTRT, PARENT, METABOLITE, last_obs, EXSTDTC, EXENDTC, DOSE, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, EXSTDY, EXENDY, date, time, EXDY, TYPE, ref.time, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC.y, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TIME, TRTDY, TAD </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> REF, ID, PCTESTCD, PCSTRESN, PCTEST, USUBJID, RFSTDTC.x, STUDYID, PCDTC, PCSPEC, EPOCH, PCTPT, PCTPTNUM, PCRFTDTC, PCSEQ, DTC, start.date, start.time, NTIME, EVID, CMT, AMT, DV, LNDV, MDV, ANALYTE, RATE, EXTRT, PARENT, METABOLITE, last_obs, EXSTDTC, EXENDTC, DOSE, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, EXSTDY, EXENDY, date, time, EXDY, TYPE, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC.y, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TIME, TRTDY, TAD </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First rows of NIF data (selected columns):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   EVID   CMT   AMT   DV                   ANALYTE      DOSE   TIME    TAD    </span>

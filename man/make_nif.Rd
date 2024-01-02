@@ -7,7 +7,6 @@
 make_nif(
   sdtm_data,
   spec = NULL,
-  impute_administration_time = TRUE,
   silent = FALSE,
   truncate_to_last_observation = TRUE,
   truncate_to_last_individual_obs = TRUE,
@@ -23,11 +22,6 @@ following SDTM domains are needed: DM, VS, PC and EX.}
 \item{spec}{The sample specimen for the PC data as string
 (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is NULL (default),
 the most likely specimen is selected.}
-
-\item{impute_administration_time}{A boolean value to indicate whether the
-time of administration is to be imputed from the PCRFDTC field from the
-PC domain. This field is 'permissible' and may not be present in certain
-SDTM data. The default is 'TRUE'.}
 
 \item{silent}{Boolean value to indicate whether warnings should be printed.
 The default is 'FALSE'.}

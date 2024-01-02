@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -158,8 +158,7 @@ specified when the SDTM data set is created. See the documentation to
 imputations are needed, and no study-specific fields are created:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, spec<span class="op">=</span><span class="st">"PLASMA"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-04-27 14:31:00</span></span>
-<span><span class="co">#&gt; Time found in PCRFTDTC used in 0 cases.</span></span></code></pre></div>
+<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-04-27 14:31:00</span></span></code></pre></div>
 <p>Of note, the LB domain within this SDTM object contains baseline
 creatinine data which can be used to calculate the baseline creatinine
 clearance as an estimate for glomerular filtration rate (eGFR). Please
@@ -180,8 +179,7 @@ fields that are commonly used:</p>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-04-27 14:31:00</span></span>
-<span><span class="co">#&gt; Time found in PCRFTDTC used in 0 cases.</span></span></code></pre></div>
+<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-04-27 14:31:00</span></span></code></pre></div>
 <p>(In fact, the resulting NIF data set, including baseline creatinine
 clearance is already included in the package under the name
 ‘examplinib_poc_nif’.)</p>
