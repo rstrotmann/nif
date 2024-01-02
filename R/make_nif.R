@@ -512,7 +512,10 @@ impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
           mutate(ref.time = extract_time(PCRFTDTC)) %>%
           distinct(USUBJID, PARENT, PCRFTDTC, ref.date, ref.time)),
       by = c("USUBJID", "PARENT", "date" = "ref.date")
-    )
+    ) %>%
+    group_by(USUBJID, PARENT) %>%
+    fill(ref.time, .direction = "down") %>%
+    ungroup()
 
   conditional_message(
     paste0(
@@ -525,7 +528,7 @@ impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
 
   temp %>%
     mutate(DTC = case_when(
-      time != ref.time ~ compose_dtc(date, ref.time),
+      (is.na(time) | time != ref.time) ~ compose_dtc(date, ref.time),
       .default = DTC
     )) #%>%
     # select(-c("PCRFTDTC", "ref.time"))
