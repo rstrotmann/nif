@@ -300,7 +300,7 @@ nif_spaghetti_plot <- function(obj,
       mutate(GROUP = interaction(as.factor(ID),
                                  # as.factor(ANALYTE),
                                  as.factor(.data[[group]]))) %>%
-      mutate(COLOR = .data[[group]])
+      mutate(COLOR = as.factor(.data[[group]]))
     x_label <- "TIME (h)"
   }
 
