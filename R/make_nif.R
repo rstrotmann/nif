@@ -497,20 +497,20 @@ make_exstdy_exendy <- function(ex, dm) {
 #' Make administration data set from EX domain
 #'
 #' This function expands the administration ranges specified by EXSTDTC and
-#'  EXENDTC in each record of EX to that the result has individual records for
-#'  all administrations, with the time point in the TIME column.
+#' EXENDTC in each record of EX to that the result has individual records for
+#' all administrations, with the time point in the TIME column.
 #'
 #' @section Specific imputations:
-#'  If the end date (EXENDTC) is missing, i.e., the administration is ongoing
-#'  At the timeof the data cutoff of the SDTM data set, EXENDTC is replaced by
-#'  cut.off.date (which needs to be supplied in the format used by SDTM)
+#' If the end date (EXENDTC) is missing, i.e., the administration is ongoing
+#' At the time of the data cutoff of the SDTM data set, EXENDTC is replaced by
+#' cut_off_date.
 #'
 #' @param ex EX domain as data frame.
 #' @param dm DM domain as data frame.
 #' @param cut_off_date The cut-off date to be used where no EXENDTC is recorded,
-#'  in POSIX format.
+#' in POSIX format.
 #' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
-#'  that associate both.
+#' that associate both.
 #'
 #' @param silent Boolean value to indicate whether warnings should be printed.
 #'

@@ -45,15 +45,6 @@ drug_mapping <- tribble(
   "TEST",   "TEST",      "TEST",    FALSE)
 
 
-# test_that("make_obs generally works", {
-#   sdtm <- examplinib_fe
-#   pc <- sdtm$pc
-#
-#   obs <- make_obs(pc, time_mapping=sdtm$time_mapping,
-#            spec="PLASMA", silent=T, use_pctptnum=T)
-#   expect_gt(nrow(obs), 0)
-# })
-
 
 test_that("date conversion works correctly", {
   test <- data.frame(
@@ -65,46 +56,40 @@ test_that("date conversion works correctly", {
 })
 
 
-# test_that("make.admin works as intended", {
-#   cut.off.date <- last_ex_dtc(ex)
-#   impute.missing.end.time <- TRUE
-#   silent <- F
-#
-#   test <- make_admin(ex, drug_mapping, cut.off.date, impute_missing_end_time)
-#   expect_equal(nrow(test), 232)
-# })
+
+test_that("make.admin works as intended", {
+  ex <- tribble(
+    ~STUDYID, ~USUBJID,       ~EXSTDTC,           ~EXENDTC, ~EXTRT, ~EXDOSE,   ~EPOCH, ~EXSEQ,
+    "1", "1010001", "2001-01-17T08:00", "2001-01-21T08:10", "x",     500, "TREATMENT",      1,
+    "1", "1010001", "2001-02-01T08:20", "2001-02-08T08:30", "x",     250, "TREATMENT",      2,
+    "1", "1010002", "2001-01-28T09:00", "2001-02-02T09:10", "x",     500, "TREATMENT",      1,
+    "1", "1010002", "2001-02-04T09:20", "",                 "x",     500, "TREATMENT",      2
+  ) %>% lubrify_dates()
+
+  dm <- tribble(
+    ~USUBJID,  ~RFSTDTC,           ~RFENDTC,
+    "1010001", "2001-01-17T08:00", "2001-02-08T08:30",
+    "1010002", "2001-01-28T09:00", "2001-02-08T09:30"
+  ) %>% lubrify_dates()
+
+  drug_mapping <- tribble(
+    ~EXTRT, ~PCTESTCD,
+    "x", "y"
+  )
+
+  cut_off_date <- last_ex_dtc(ex)
+  ex <- ex %>%
+    impute_missing_exendtc_time(silent = F) %>%
+    exclude_exstdtc_after_rfendtc(dm, silent = F) %>%
+    impute_exendtc_to_rfendtc(dm, silent = F) %>%
+    impute_missing_exendtc(silent = F)
+
+  test <- make_admin(ex, dm, drug_mapping, cut_off_date, silent=F)
+  expect_equal(nrow(test), 24)
+})
 
 
 
-# test_that("impute.administration.time works as intended", {
-#   cut.off.date <- last_ex_dtc(ex)
-#   admin <- make_admin(ex, drug_mapping=drug_mapping, cut.off.date=cut.off.date,
-#                       impute_missing_end_time=T, silent=T)
-#
-#   test <- impute.administration.time(admin, obs)
-#
-# })
-
-
-
-# test_that("impute_missing_exendtc works as intended", {
-#   ex <- tribble(
-#     ~USUBJID, ~EXTRT, ~EXSTDTC,           ~EXENDTC,
-#     1,        "TEST", "2022-07-11T13:50", "2022-07-24T09:00",
-#     1,        "TEST", "2022-08-02T13:45", "2022-08-15T11:10",
-#     1,        "TEST", "2022-08-23T13:30", "2022-09-05T11:00",
-#     1,        "TEST", "2022-09-13T13:48", "2022-09-26T11:05",
-#     1,        "TEST", "2022-10-04T13:32", "2022-10-17T11:00",
-#     1,        "TEST", "2022-10-25T14:24", "",
-#     1,        "TEST", "2022-11-15T14:20", "",
-#     2,        "TEST", "2022-07-18T13:23", "2022-07-31",
-#     3,        "TEST", "2022-07-18T17:03", "2022-07-31T11:50",
-#     4,        "TEST", "2022-07-18T13:54", "2022-07-31T12:30",
-#     4,        "TEST", "2022-08-08T14:35", "2022-08-21T12:16")
-#
-#   temp <- impute_missing_exendtc(ex, cut.off.date=now())
-#   expect_equal(any(is.na(temp$EXENDTC)), FALSE)
-# })
 
 
 # This test confirms that `impute_missing_exendtc_time` completes missing

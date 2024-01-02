@@ -30,7 +30,7 @@ all administrations, with the time point in the TIME column.
 \section{Specific imputations}{
 
 If the end date (EXENDTC) is missing, i.e., the administration is ongoing
-At the timeof the data cutoff of the SDTM data set, EXENDTC is replaced by
-cut.off.date (which needs to be supplied in the format used by SDTM)
+At the time of the data cutoff of the SDTM data set, EXENDTC is replaced by
+cut_off_date.
 }
 
