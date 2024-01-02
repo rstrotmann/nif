@@ -325,8 +325,8 @@ nif_spaghetti_plot <- function(obj,
     labs(color = group) +
     ggplot2::theme_bw() +
     labs(x = x_label) +
-    xlim(0, 24) +
-    scale_y_log10() +
+    # xlim(0, 24) +
+    # scale_y_log10() +
     ggplot2::theme(legend.position = "bottom")
 }
 
