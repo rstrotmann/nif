@@ -285,6 +285,7 @@ nif_spaghetti_plot <- function(obj,
       mutate(GROUP = interaction(as.factor(ID),
                                  as.factor(ANALYTE),
                                  as.factor(TRTDY))) %>%
+
       mutate(COLOR = interaction(as.factor(ANALYTE),
                                  as.factor(TRTDY)))
     x_label <- "TAD (h)"
@@ -292,10 +293,13 @@ nif_spaghetti_plot <- function(obj,
     x <- x %>%
       filter(EVID == 0) %>%
       # mutate(TIME = TAD) %>%
+      # mutate(GROUP = interaction(as.factor(ID),
+      #                            # as.factor(ANALYTE),
+      #                            as.factor(.data[[group]]),
+      #                            TRTDY)) %>%
       mutate(GROUP = interaction(as.factor(ID),
-                                 as.factor(ANALYTE),
-                                 as.factor(.data[[group]]),
-                                 TRTDY)) %>%
+                                 # as.factor(ANALYTE),
+                                 as.factor(.data[[group]]))) %>%
       mutate(COLOR = .data[[group]])
     x_label <- "TIME (h)"
   }
