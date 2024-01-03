@@ -398,32 +398,85 @@ write_nif <- function(obj, filename = NULL, fields = NULL, sep=NULL) {
 
   temp <- obj %>%
     as.data.frame() %>%
-    mutate(across(any_of(num_fields), signif, 4)) %>%
-    mutate(METABOLITE = case_when(
-      is.na(METABOLITE) ~ FALSE,
-      .default = METABOLITE)) %>%
-    # mutate_at(
-    #   .vars = num_fields,
-    #   .funs = function(x) {
-    #     case_when(is.na(x) ~ ".",
-    #       .default = as.character(x)
-    #     )
-    #   }
-    # ) %>%
+    mutate(across(any_of(num_fields), signif, 4))
+
+  if("METABOLITE" %in% names(obj)) {
+    temp <- temp %>%
+      mutate(METABOLITE = case_when(
+        is.na(METABOLITE) ~ FALSE,
+        .default = METABOLITE))}
+
+  temp <- temp %>%
     mutate(across(any_of(num_fields),
-                  function(x) {case_when(is.na(x) ~ ".",
-                                         .default = as.character(x))})) %>%
-    mutate_all(as.character)
+                function(x) {case_when(
+                  is.na(x) ~ ".",
+                  .default = as.character(x))})) %>%
+  mutate_all(as.character)
 
   if (is.null(filename)) {
     print(temp, row.names = FALSE, col.names = FALSE)
   } else {
-    temp <- rbind(colnames(temp), temp)
     if(is.null(sep)){
+      temp <- rbind(colnames(temp), temp)
       write.fwf(temp, file = filename, colnames = FALSE)
     } else {
-      write.table(temp, file = filename, sep = sep, dec = ".", quote = FALSE)
+      write.table(temp, file = filename, row.names = FALSE,
+                  sep = sep, dec = ".", quote = FALSE)
     }
+  }
+}
+
+
+#' Write as comma-separated file, complying with the format used by Monolix
+#'
+#' @param obj The NIF object.
+#' @param filename The filename as string. If not filename is specified, the
+#' file is printed only.
+#' @param fields The fields to export. If NULL (default), all fields will be
+#' exported.
+#'
+#' @return Nothing.
+#' @export
+#'
+#' @examples
+#' write_monolix(examplinib_fe_nif)
+write_monolix <- function(obj, filename = NULL, fields = NULL) {
+  double_fields <- c("NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
+                     "AGE", "HEIGHT", "WEIGHT", "BMI")
+  bl_fields <- names(obj)[str_detect(names(obj), "^BL_")]
+  int_fields <- c("REF", "ID", "MDV", "CMT", "EVID", "SEX", "TRTDY")
+  num_fields <- c(double_fields, int_fields, bl_fields)
+
+  if (is.null(fields)) {
+    fields <- names(obj)
+  }
+
+  temp <- obj %>%
+    as.data.frame() %>%
+    mutate(across(any_of(num_fields), signif, 4)) %>%
+    mutate(ADM = case_when(AMT != 0 ~ "1", .default = ".")) %>%
+    mutate(YTYPE = case_when(ADM == "1" ~ ".",
+                             .default=as.character(CMT-1)))
+
+  if("METABOLITE" %in% names(obj)) {
+    temp <- temp %>%
+      mutate(METABOLITE = case_when(
+        is.na(METABOLITE) ~ FALSE,
+        .default = METABOLITE))}
+
+  temp <- temp %>%
+    mutate(across(any_of(num_fields),
+                  function(x) {case_when(
+                    is.na(x) ~ ".",
+                    .default = as.character(x))})) %>%
+    mutate_all(as.character) %>%
+    mutate(Y = DV)
+
+  if (is.null(filename)) {
+    print(temp, row.names = FALSE, col.names = FALSE)
+  } else {
+      write.table(temp, file = filename, row.names = FALSE,
+                  sep = sep, dec = ".", quote = FALSE)
   }
 }
 
