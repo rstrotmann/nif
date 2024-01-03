@@ -2,9 +2,10 @@
 % Please edit documentation in R/nif_class.R
 \name{write_nif}
 \alias{write_nif}
-\title{Write as space-delimited, fixed-width file as required by NONMEM}
+\title{Write as space-delimited, fixed-width file as required by NONMEM or a
+character-separated file}
 \usage{
-write_nif(obj, filename = NA, fields = NULL)
+write_nif(obj, filename = NULL, fields = NULL, sep = NULL)
 }
 \arguments{
 \item{obj}{The NIF data set.}
@@ -12,10 +13,15 @@ write_nif(obj, filename = NA, fields = NULL)
 \item{filename}{The filename as string. If not filename is specified, the
 file is printed only.}
 
-\item{fields}{The fields to export.}
+\item{fields}{The fields to export. If NULL (default), all fields will be
+exported.}
+
+\item{sep}{The separating character, e.g. ',' or ';'. If NULL (default), the
+output has a space-separated, fixed-width format.}
 }
 \description{
-Write as space-delimited, fixed-width file as required by NONMEM
+All numeric fields are reduced to 4 significant places. All fields are con-
+verted to character, and NA-values are converted to '.'.
 }
 \examples{
 write_nif(examplinib_fe_nif)

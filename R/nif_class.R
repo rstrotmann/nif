@@ -360,46 +360,70 @@ head <- function(obj, n = 6) {
 #' @export
 write_csv.nif <- function(obj, filename) {
   temp <- obj %>%
-    dplyr::mutate(across(c("TIME", "LNDV"), round, 3))
+    as.data.frame() %>%
+    dplyr::mutate(across(c("TIME", "TAD", "DV", "LNDV"), round, 3))
   write.csv(temp, filename, quote = FALSE, row.names = FALSE)
 }
 
 
-#' Write as space-delimited, fixed-width file as required by NONMEM
+#' Write as space-delimited, fixed-width file as required by NONMEM or a
+#' character-separated file
+#'
+#' All numeric fields are reduced to 4 significant places. All fields are con-
+#' verted to character, and NA-values are converted to '.'.
 #'
 #' @param obj The NIF data set.
-#' @param fields The fields to export.
+#' @param fields The fields to export. If NULL (default), all fields will be
+#' exported.
 #' @param filename The filename as string. If not filename is specified, the
 #' file is printed only.
+#' @param sep The separating character, e.g. ',' or ';'. If NULL (default), the
+#' output has a space-separated, fixed-width format.
 #'
 #' @importFrom gdata write.fwf
 #' @export
 #' @examples
 #' write_nif(examplinib_fe_nif)
 #'
-write_nif <- function(obj, filename = NA, fields = NULL) {
+write_nif <- function(obj, filename = NULL, fields = NULL, sep=NULL) {
+  double_fields <- c("NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
+                     "AGE", "HEIGHT", "WEIGHT", "BMI")
+  bl_fields <- names(obj)[str_detect(names(obj), "^BL_")]
+  int_fields <- c("REF", "ID", "MDV", "CMT", "EVID", "SEX", "TRTDY")
+  num_fields <- c(double_fields, int_fields, bl_fields)
+
   if (is.null(fields)) {
-    fields <- standard_nif_fields
+    fields <- names(obj)
   }
+
   temp <- obj %>%
-    compress_nif(fields) %>%
     as.data.frame() %>%
-    dplyr::mutate_at(c("TIME", "DV", "LNDV"), signif, 4) %>%
-    mutate_at(
-      .vars = vars(RATE, DV, LNDV, DOSE),
-      .funs = function(x) {
-        case_when(is.na(x) ~ ".",
-          .default = as.character(x)
-        )
-      }
-    ) %>%
+    mutate(across(any_of(num_fields), signif, 4)) %>%
+    mutate(METABOLITE = case_when(
+      is.na(METABOLITE) ~ FALSE,
+      .default = METABOLITE)) %>%
+    # mutate_at(
+    #   .vars = num_fields,
+    #   .funs = function(x) {
+    #     case_when(is.na(x) ~ ".",
+    #       .default = as.character(x)
+    #     )
+    #   }
+    # ) %>%
+    mutate(across(any_of(num_fields),
+                  function(x) {case_when(is.na(x) ~ ".",
+                                         .default = as.character(x))})) %>%
     mutate_all(as.character)
 
-  if (is.na(filename)) {
+  if (is.null(filename)) {
     print(temp, row.names = FALSE, col.names = FALSE)
   } else {
     temp <- rbind(colnames(temp), temp)
-    write.fwf(temp, file = filename, colnames = FALSE)
+    if(is.null(sep)){
+      write.fwf(temp, file = filename, colnames = FALSE)
+    } else {
+      write.table(temp, file = filename, sep = sep, dec = ".", quote = FALSE)
+    }
   }
 }
 
