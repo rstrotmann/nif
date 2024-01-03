@@ -476,7 +476,7 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
     print(temp, row.names = FALSE, col.names = FALSE)
   } else {
       write.table(temp, file = filename, row.names = FALSE,
-                  sep = sep, dec = ".", quote = FALSE)
+                  sep = ",", dec = ".", quote = FALSE)
   }
 }
 
