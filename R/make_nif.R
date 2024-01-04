@@ -1205,7 +1205,8 @@ make_nif <- function(
 index_nif <- function(nif) {
   nif %>%
     as.data.frame() %>%
-    dplyr::arrange(USUBJID, TIME, -EVID) %>%
+    # dplyr::arrange(USUBJID, TIME, -EVID) %>%
+    dplyr::arrange(ID, TIME, -EVID) %>%
     dplyr::mutate(REF = row_number()) %>%
     dplyr::relocate(REF) %>%
     new_nif()

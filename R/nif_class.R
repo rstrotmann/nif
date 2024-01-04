@@ -214,25 +214,44 @@ parents <- function(obj) {
 #' Subjects with dose reduction
 #'
 #' @param obj A NIF data set object.
-#' @param analyte The analyte of interest as string.
+#' @param analyte The analyte of interest as string. considers all analytes if
+#' analyte is NULL (default).
 #'
 #' @return The IDs.
 #' @export
 #' @examples
 #' dose_red_sbs(examplinib_poc_nif)
 #'
-dose_red_sbs <- function(obj, analyte = "") {
-  if (analyte != "") {
+dose_red_sbs <- function(obj, analyte = NULL) {
+  # if (analyte != "") {
+  #   obj <- obj %>% filter(ANALYTE %in% analyte)
+  # }
+  if (!is.null(analyte)) {
     obj <- obj %>% filter(ANALYTE %in% analyte)
   }
+
+  if(!"ANALYTE" %in% names(obj)) {
+    obj <- obj %>% mutate(ANALYTE=CMT)
+  }
+
+  # obj %>%
+  #   as.data.frame() %>%
+  #   index_nif() %>%
+  #   filter(EVID == 1) %>%
+  #   group_by(ID, ANALYTE) %>%
+  #   mutate(initial_dose = DOSE[row_number() == 1]) %>%
+  #   filter(DOSE < initial_dose & DOSE != 0) %>%
+  #   ungroup() %>%
+  #   distinct(ID) %>%
+  #   pull(ID)
 
   obj %>%
     as.data.frame() %>%
     index_nif() %>%
     filter(EVID == 1) %>%
-    group_by(ID, ANALYTE) %>%
-    mutate(initial_dose = DOSE[row_number() == 1]) %>%
-    filter(DOSE < initial_dose & DOSE != 0) %>%
+    group_by(ID, CMT) %>%
+    mutate(initial_dose = AMT[row_number() == 1]) %>%
+    filter(AMT < initial_dose & AMT != 0) %>%
     ungroup() %>%
     distinct(ID) %>%
     pull(ID)
