@@ -40,38 +40,41 @@ print.nif <- function(x, ...) {
     subjects(x) %>% nrow(), "subjects\n"
   ))
 
-  n_sex <- x %>%
-    dplyr::distinct(USUBJID, SEX) %>%
-    dplyr::group_by(SEX) %>%
-    dplyr::summarize(n = n())
+  if ("SEX" %in% names(x)) {
+    n_sex <- x %>%
+      dplyr::distinct(USUBJID, SEX) %>%
+      dplyr::group_by(SEX) %>%
+      dplyr::summarize(n = n())
 
-  n_males <- n_sex %>%
-    dplyr::filter(SEX == 0) %>%
-    dplyr::pull(n)
-  if (length(n_males) == 0) {
-    n_males <- 0
+    n_males <- n_sex %>%
+      dplyr::filter(SEX == 0) %>%
+      dplyr::pull(n)
+    if (length(n_males) == 0) {
+      n_males <- 0
+    }
+
+    n_females <- n_sex %>%
+      dplyr::filter(SEX == 1) %>%
+      dplyr::pull(n)
+    if (length(n_females) == 0) {
+      n_females <- 0
+    }
+
+    cat(paste0(
+      "Males: ", n_males, ", females: ", n_females, " (",
+      round(n_females / (n_males + n_females) * 100, 1), "%)\n\n"
+    ))
   }
-
-  n_females <- n_sex %>%
-    dplyr::filter(SEX == 1) %>%
-    dplyr::pull(n)
-  if (length(n_females) == 0) {
-    n_females <- 0
-  }
-
-  cat(paste0(
-    "Males: ", n_males, ", females: ", n_females, " (",
-    round(n_females / (n_males + n_females) * 100, 1), "%)\n\n"
-  ))
 
   cat("Columns:\n")
   cat(paste(names(x), collapse = ", "), "\n")
 
-  temp <- x[1:15, names(x) %in% c(
-    "ID", "NTIME", "TIME", "TAD", "ANALYTE", "EVID",
-    "CMT", "AMT", "DOSE", "DV"
-  )] %>%
-    as.data.frame()
+  temp <- x %>%
+    as.data.frame() %>%
+    select(any_of(c(
+      "ID", "NTIME", "TIME", "TAD", "ANALYTE", "EVID",
+      "CMT", "AMT", "DOSE", "DV"))) %>%
+    head(15)
 
   temp <- temp %>%
     df_to_string()
@@ -169,7 +172,8 @@ print.subject_info <- function(x, ...) {
 subjects <- function(obj) {
   obj %>%
     as.data.frame() %>%
-    dplyr::distinct(ID, USUBJID)
+    dplyr::select(any_of(c("ID", "USUBJID"))) %>%
+    distinct()
 }
 
 
@@ -261,9 +265,16 @@ rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
 #' studies(examplinib_poc_nif)
 #'
 studies <- function(obj) {
-  obj %>%
-    dplyr::distinct(STUDYID) %>%
-    dplyr::pull(STUDYID)
+  if("STUDYID" %in% names(obj)){
+    return(
+      obj %>%
+        dplyr::distinct(STUDYID) %>%
+        dplyr::pull(STUDYID)
+    )
+  } else {
+    return(NA)
+  }
+
 }
 
 
