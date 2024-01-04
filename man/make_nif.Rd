@@ -10,7 +10,8 @@ make_nif(
   silent = FALSE,
   truncate_to_last_observation = TRUE,
   truncate_to_last_individual_obs = TRUE,
-  use_pctptnum = TRUE
+  use_pctptnum = TRUE,
+  analyte_cmt_mapping = NULL
 )
 }
 \arguments{
@@ -35,6 +36,9 @@ observations should be truncted to the last individual observation.}
 
 \item{use_pctptnum}{Boolean to indicate whether to derive nominal time
 ('NTIME') from 'PCTPTNUM'.}
+
+\item{analyte_cmt_mapping}{The analyte-compartment association as data frame with the
+columns 'ANALYTE' and 'CMT'.}
 }
 \value{
 A NIF object.

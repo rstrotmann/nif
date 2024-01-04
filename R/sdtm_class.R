@@ -149,6 +149,7 @@ print.summary_sdtm <- function(x, ...) {
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
 #' @param pctestcd The analyte as defined in PC.
+#'
 #' @seealso [make_nif()]
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib, "EXAMPLINIB", "RS2023")

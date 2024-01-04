@@ -6,6 +6,7 @@
 \usage{
 make_obs(
   pc,
+  drug_mapping,
   time_mapping = NULL,
   spec = NULL,
   silent = FALSE,
@@ -14,6 +15,8 @@ make_obs(
 }
 \arguments{
 \item{pc}{The SDTM PC domain as a data.frame.}
+
+\item{drug_mapping}{The drug mapping as data frame.}
 
 \item{time_mapping}{The time mapping.}
 

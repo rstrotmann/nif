@@ -226,12 +226,13 @@ dose_red_sbs <- function(obj, analyte = NULL) {
   # if (analyte != "") {
   #   obj <- obj %>% filter(ANALYTE %in% analyte)
   # }
-  if (!is.null(analyte)) {
-    obj <- obj %>% filter(ANALYTE %in% analyte)
-  }
 
   if(!"ANALYTE" %in% names(obj)) {
     obj <- obj %>% mutate(ANALYTE=CMT)
+  }
+
+  if (!is.null(analyte)) {
+    obj <- obj %>% filter(ANALYTE %in% analyte)
   }
 
   # obj %>%
@@ -381,13 +382,30 @@ dose_levels <- function(obj, grouping = NULL) {
 #' analytes(examplinib_poc_nif)
 #'
 analytes <- function(obj) {
-  if("ANALYTES" %in% names(obj)) {
+  if("ANALYTE" %in% names(obj)) {
     obj %>%
       dplyr::distinct(ANALYTE) %>%
       dplyr::pull(ANALYTE)
   } else {
     as.character(unique(obj$CMT))
   }
+}
+
+
+#' Analytes and compartments within a NIF object
+#'
+#' @param obj A NIF object.
+#'
+#' @return A data frame.
+#' @export
+#'
+#' @examples
+#' analytes_cmts(examplinib_poc_nif)
+analytes_cmts <- function(obj) {
+  obj %>%
+    filter(EVID==0) %>%
+    distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
+    as.data.frame()
 }
 
 

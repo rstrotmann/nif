@@ -4,12 +4,13 @@
 \alias{dose_red_sbs}
 \title{Subjects with dose reduction}
 \usage{
-dose_red_sbs(obj, analyte = "")
+dose_red_sbs(obj, analyte = NULL)
 }
 \arguments{
 \item{obj}{A NIF data set object.}
 
-\item{analyte}{The analyte of interest as string.}
+\item{analyte}{The analyte of interest as string. considers all analytes if
+analyte is NULL (default).}
 }
 \value{
 The IDs.

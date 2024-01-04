@@ -460,31 +460,32 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
 
 #' NIF data set overview
 #'
-#' @param obj The NIF data set.
+#' @param object The NIF data set.
 #' @param ... Further arguments.
-#' @param egfr_function The function to be used for estimation of the renal
-#' function classes, see [add_bl_crcl()] for reference.
+# @param egfr_function The function to be used for estimation of the renal
+# function classes, see [add_bl_crcl()] for reference.
 #'
 #' @return A summary_nif object.
 #' @export
 #' @examples
 #' summary(examplinib_poc_nif)
 #'
-summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
-  subjects <- subjects(obj)
-  analytes <- analytes(obj)
+# summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
+summary.nif <- function(object, ...) {
+  subjects <- subjects(object)
+  analytes <- analytes(object)
 
   # parents <- obj %>%
   #   as.data.frame() %>%
   #   distinct(PARENT) %>%
   #   filter(PARENT != "") %>%
   #   pull(PARENT)
-  parents <- parents(obj)
+  parents <- parents(object)
 
   dose_red_sbs <- lapply(
     parents,
     function(x) {
-      dose_red_sbs(obj, analyte = x)
+      dose_red_sbs(object, analyte = x)
     }
   )
   names(dose_red_sbs) <- parents
@@ -496,7 +497,7 @@ summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
   #   summarize(N = n(), .groups = "drop") %>%
   #   as.data.frame()
 
-  observations <- obj %>%
+  observations <- object %>%
     as.data.frame() %>%
     filter(EVID == 0) %>%
     group_by(across(any_of(c("CMT", "ANALYTE")))) %>%
@@ -509,7 +510,7 @@ summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
   #   group_by(STUDYID) %>%
   #   summarize(N = n_distinct(USUBJID))
 
-  n_studies <- obj %>%
+  n_studies <- object %>%
     as.data.frame() %>%
     filter(EVID == 1) %>%
     group_by(across(any_of(c("STUDYID")))) %>%
@@ -520,7 +521,7 @@ summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
   #   dplyr::group_by(SEX) %>%
   #   dplyr::summarize(n = n())
 
-  n_sex <- obj %>%
+  n_sex <- object %>%
     dplyr::distinct(across(any_of(c("ID", "SEX")))) %>%
     dplyr::group_by(across(any_of(c("SEX")))) %>%
     dplyr::summarize(n = n())
@@ -539,8 +540,8 @@ summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
     n_females <- 0
   }
 
-  if ("BL_CRCL" %in% colnames(obj)) {
-    renal_function <- obj %>%
+  if ("BL_CRCL" %in% colnames(object)) {
+    renal_function <- object %>%
       as.data.frame() %>%
       mutate(CLASS = as.character(
         cut(BL_CRCL,
@@ -557,8 +558,8 @@ summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
   }
 
   out <- list(
-    nif = obj,
-    studies = studies(obj),
+    nif = object,
+    studies = studies(object),
     subjects = subjects,
     dose_red_sbs = dose_red_sbs,
     n_studies = n_studies,
@@ -569,11 +570,11 @@ summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
     analytes = analytes,
     n_analytes = length(analytes),
     drugs = parents,
-    dose_levels = dose_levels(obj,
+    dose_levels = dose_levels(object,
       grouping = any_of(c("PART", "COHORT", "GROUP"))
     ),
     renal_function = renal_function,
-    administration_duration = administration_summary(obj)
+    administration_duration = administration_summary(object)
   )
   class(out) <- "summary_nif"
   return(out)

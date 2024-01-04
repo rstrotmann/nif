@@ -611,11 +611,41 @@ make_admin <- function(ex,
       NTIME = 0, DV = NA, LNDV = NA, DOSE = EXDOSE, AMT = EXDOSE,
       EVID = 1
     ) %>%
-    dplyr::mutate(TYPE = NA, CMT = 1, PCTPTNUM = 0, MDV = 1, RATE = 0) %>%
+    dplyr::mutate(TYPE = NA, PCTPTNUM = 0, MDV = 1, RATE = 0) %>%
     dplyr::left_join(drug_mapping, by = "EXTRT") %>%
-    mutate(ANALYTE = PCTESTCD)
+
+    ## CAUTION: there may be administrations of multiple drugs. They should
+    ## go to different administration compartments! For now, all go into CMT 1.
+    ## This needs to be resolved in the future!!
+
+    mutate(CMT = 1)
+    # mutate(ANALYTE = PCTESTCD)
 
   return(as.data.frame(ret))
+}
+
+
+#' Guess a PCSPEC
+#'
+#' @param pc A data frame.
+#' @param silent Boolean.
+#'
+#' @return The imputed spec as character.
+#' @export
+#'
+#' @examples
+#' guess_spec(examplinib_poc$pc)
+guess_spec <- function(pc, silent=T) {
+  pcspecs <- unique(pc$PCSPEC)
+  standard_specs <- c(
+    "PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
+    "BLOOD", "Blood", "blood"
+  )
+
+  spec <- standard_specs[standard_specs %in% pcspecs][1]
+  conditional_message("No specimen specified. Set to ", spec,
+                      " as the most likely.", "\n", silent = silent)
+  return(spec)
 }
 
 
@@ -641,6 +671,7 @@ make_admin <- function(ex,
 #'   or "PLASMA" is selected, depending what is found in the PC data.
 #' @param use_pctptnum Use PCTPTNUM as nominal time.
 #' @param silent Boolean value to indicate whether warnings should be printed.
+#' @param drug_mapping The drug mapping as data frame.
 #'
 #' @return A data frame with individual observations with certain NONMEM input
 #' variables set
@@ -649,6 +680,7 @@ make_admin <- function(ex,
 #' @import assertr
 #' @seealso [add_time_mapping()]
 make_obs <- function(pc,
+                     drug_mapping,
                      time_mapping = NULL,
                      spec = NULL,
                      silent = FALSE,
@@ -657,17 +689,18 @@ make_obs <- function(pc,
   pc %>% verify(has_all_names("PCSPEC", "PCDTC", "PCSTRESN", "PCTESTCD"))
 
   # Filter for specific specimen, guess specimen if none defined
-  pcspecs <- unique(pc$PCSPEC)
-  standard_specs <- c(
-    "PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
-    "BLOOD", "Blood", "blood"
-  )
+  # pcspecs <- unique(pc$PCSPEC)
+  # standard_specs <- c(
+  #   "PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
+  #   "BLOOD", "Blood", "blood"
+  # )
   if (length(spec) == 0) {
-    spec <- standard_specs[standard_specs %in% pcspecs][1]
-    conditional_message("No specimen specified. Set to ", spec,
-      " as the most likely.", "\n",
-      silent = silent
-    )
+    # spec <- standard_specs[standard_specs %in% pcspecs][1]
+    # conditional_message("No specimen specified. Set to ", spec,
+    #   " as the most likely.", "\n",
+    #   silent = silent
+    # )
+    spec <- guess_spec(pc)
   }
 
   obs <- pc %>%
@@ -719,11 +752,13 @@ make_obs <- function(pc,
 
   obs <- obs %>%
     dplyr::mutate(
-      EVID = 0, CMT = 2, AMT = 0, DV = PCSTRESN / 1000,
+      EVID = 0, AMT = 0, DV = PCSTRESN / 1000,
       LNDV = log(DV)
     ) %>%
     dplyr::mutate(MDV = case_when(is.na(DV) ~ 1, .default = 0)) %>%
-    dplyr::mutate(ANALYTE = PCTESTCD, RATE = 0)
+    dplyr::mutate(RATE = 0) %>%
+    left_join(drug_mapping, by = "PCTESTCD") %>%
+    filter(!is.na(CMT))
 
   return(obs %>% as.data.frame())
 }
@@ -908,6 +943,7 @@ make_drug_mapping <- function(sdtm_data) {
 
   drug_mapping <- drug_mapping %>%
     mutate(METABOLITE = (PCTESTCD != PARENT)) %>%
+    mutate(ANALYTE = PCTESTCD) %>%
     distinct()
 }
 
@@ -995,6 +1031,9 @@ add_time <- function(x) {
 #' @param truncate_to_last_individual_obs Boolean to indicate whether
 #' observations should be truncted to the last individual observation.
 #'
+#' @param analyte_cmt_mapping The analyte-compartment association as data frame with the
+#' columns 'ANALYTE' and 'CMT'.
+#'
 #' @return A NIF object.
 #' @seealso [summary.nif()]
 #' @seealso [plot.nif()]
@@ -1013,7 +1052,8 @@ make_nif <- function(
     silent = FALSE,
     truncate_to_last_observation = TRUE,
     truncate_to_last_individual_obs = TRUE,
-    use_pctptnum = TRUE) {
+    use_pctptnum = TRUE,
+    analyte_cmt_mapping = NULL) {
   vs <- sdtm_data$domains[["vs"]] %>%
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
@@ -1027,14 +1067,40 @@ make_nif <- function(
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
 
+  if (length(spec) == 0) {
+    spec <- guess_spec(pc, silent=silent)
+  }
+
+  if(is.null(analyte_cmt_mapping)) {
+    temp <- pc %>%
+      filter(PCSPEC == spec) %>%
+      filter(!is.na(PCSTRESN)) %>%
+      distinct(PCTESTCD) %>%
+      pull(PCTESTCD)
+    cmt_mapping <- data.frame(
+      ANALYTE = temp,
+      CMT = seq(2, length(temp) +1)
+    )
+  } else {
+    cmt_mapping <- data.frame(
+      ANALYTE = names(analyte_cmt_mapping),
+      CMT = analyte_cmt_mapping)
+  }
+
+  drug_mapping <- make_drug_mapping(sdtm_data) %>%
+    left_join(cmt_mapping, by = "ANALYTE")
+
   bl_cov <- baseline_covariates(vs, silent = silent)
-  drug_mapping <- make_drug_mapping(sdtm_data)
 
   # make observations from PC
   obs <- make_obs(pc,
-    time_mapping = sdtm_data$time_mapping,
-    spec = spec, silent = silent, use_pctptnum = use_pctptnum) %>%
-    left_join(drug_mapping, by = "PCTESTCD") %>%
+                  drug_mapping,
+                  time_mapping = sdtm_data$time_mapping,
+                  spec = spec,
+                  silent = silent,
+                  use_pctptnum = use_pctptnum) %>%
+    # left_join(drug_mapping, by = "PCTESTCD") %>%
+    # filter(!is.na(CMT)) %>%
     group_by(USUBJID, PARENT) %>%
     mutate(last_obs=max(DTC, na.rm=T)) %>%
     ungroup()
@@ -1069,7 +1135,8 @@ make_nif <- function(
 
   # make administrations based on EX
   admin <- make_admin(ex, dm,
-                      drug_mapping = drug_mapping, cut_off_date,
+                      drug_mapping,
+                      cut_off_date,
                       silent = silent)
   # change administration time to the time included in PCRFTDTC if available
   if ("PCRFTDTC" %in% pc$names) {
