@@ -17,11 +17,6 @@ new_nif <- function(obj) {
 
 #' print() implementation for nif objects
 #'
-#' TO DO:
-#' It cannot be assumed that a nif file has all the fields used in this
-#' function. Update this function using defensive programming.
-#'
-#'
 #' @param x A nif object.
 #' @param ... Additional parameters
 #'
@@ -72,8 +67,9 @@ print.nif <- function(x, ...) {
   temp <- x %>%
     as.data.frame() %>%
     select(any_of(c(
-      "ID", "NTIME", "TIME", "TAD", "ANALYTE", "EVID",
-      "CMT", "AMT", "DOSE", "DV"))) %>%
+      "ID", "NTIME", "TIME", "TAD", "ANALYTE",
+      "EVID",  "CMT", "AMT", "DOSE", "DV"
+    ))) %>%
     head(15)
 
   temp <- temp %>%
@@ -189,6 +185,29 @@ subjects <- function(obj) {
 #'
 usubjid <- function(obj, id) {
   return(subjects(obj)[id, "USUBJID"])
+}
+
+
+#' Parent compounds within a NIF object
+#'
+#' @param obj A NIF object.
+#'
+#' @return The parent compunds as character.
+#' @export
+#'
+#' @examples
+#' parents(examplinib_poc_nif)
+parents <- function(obj) {
+  if("PARENT" %in% names(obj)) {
+    return(
+      obj %>%
+      as.data.frame() %>%
+      distinct(PARENT) %>%
+      filter(PARENT != "") %>%
+      pull(PARENT))
+  } else {
+    return("UNKNOWN")
+  }
 }
 
 
@@ -332,6 +351,8 @@ dose_levels <- function(obj, grouping = NULL) {
 
 #' Analytes within a nif object
 #'
+#' If the field 'ANALYTE' is not present, 'CMT' is used instead.
+#'
 #' @param obj A nif object
 #' @import dplyr
 #' @return A character vector of all analytes in the data set.
@@ -341,9 +362,13 @@ dose_levels <- function(obj, grouping = NULL) {
 #' analytes(examplinib_poc_nif)
 #'
 analytes <- function(obj) {
-  obj %>%
-    dplyr::distinct(ANALYTE) %>%
-    dplyr::pull(ANALYTE)
+  if("ANALYTES" %in% names(obj)) {
+    obj %>%
+      dplyr::distinct(ANALYTE) %>%
+      dplyr::pull(ANALYTE)
+  } else {
+    as.character(unique(obj$CMT))
+  }
 }
 
 

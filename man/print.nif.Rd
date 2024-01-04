@@ -12,7 +12,5 @@
 \item{...}{Additional parameters}
 }
 \description{
-TO DO:
-It cannot be assumed that a nif file has all the fields used in this
-function. Update this function using defensive programming.
+print() implementation for nif objects
 }

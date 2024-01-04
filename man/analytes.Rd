@@ -13,7 +13,7 @@ analytes(obj)
 A character vector of all analytes in the data set.
 }
 \description{
-Analytes within a nif object
+If the field 'ANALYTE' is not present, 'CMT' is used instead.
 }
 \examples{
 analytes(examplinib_fe_nif)
