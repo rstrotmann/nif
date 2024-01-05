@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_obs</span><span class="op">(</span></span>
 <span>  <span class="va">pc</span>,</span>
+<span>  <span class="va">drug_mapping</span>,</span>
 <span>  time_mapping <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -63,6 +64,10 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>pc</dt>
 <dd><p>The SDTM PC domain as a data.frame.</p></dd>
+
+
+<dt>drug_mapping</dt>
+<dd><p>The drug mapping as data frame.</p></dd>
 
 
 <dt>time_mapping</dt>

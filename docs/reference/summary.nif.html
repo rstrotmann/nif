@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,18 +51,13 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for nif</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, egfr_function <span class="op">=</span> <span class="va">egfr_cg</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>object</dt>
 <dd><p>The NIF data set.</p></dd>
-
-
-<dt>egfr_function</dt>
-<dd><p>The function to be used for estimation of the renal
-function classes, see <code><a href="add_bl_crcl.html">add_bl_crcl()</a></code> for reference.</p></dd>
 
 
 <dt>...</dt>
@@ -85,21 +80,21 @@ function classes, see <code><a href="add_bl_crcl.html">add_bl_crcl()</a></code> 
 <span class="r-out co"><span class="r-pr">#&gt;</span> STUDYID      N    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2023000022   80   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Males: 51, females: 29 (36.2%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Males: 46, females: 34 (42.5%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Renal function:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CLASS      N    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mild       61   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> moderate   13   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> normal     6    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mild       52   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> moderate   20   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> normal     8    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023, RS2023487A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1344 observations:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ANALYTE      N     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RS2023       672   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RS2023487A   672   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CMT   ANALYTE      N     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     RS2023       672   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     RS2023487A   672   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Administered drugs:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023</span>
@@ -110,11 +105,11 @@ function classes, see <code><a href="add_bl_crcl.html">add_bl_crcl()</a></code> 
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Subjects with dose reductions</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment duration overview:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PARENT   min   max   mean   median   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RS2023   12    51    38     39       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RS2023   15    50    37.5   39       </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

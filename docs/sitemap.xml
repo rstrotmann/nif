@@ -85,6 +85,9 @@
     <loc>/reference/analytes.html</loc>
   </url>
   <url>
+    <loc>/reference/analytes_cmts.html</loc>
+  </url>
+  <url>
     <loc>/reference/baseline_covariates.html</loc>
   </url>
   <url>
@@ -206,6 +209,9 @@
   </url>
   <url>
     <loc>/reference/guess_analyte.html</loc>
+  </url>
+  <url>
+    <loc>/reference/guess_spec.html</loc>
   </url>
   <url>
     <loc>/reference/has_time.html</loc>
@@ -355,6 +361,9 @@
     <loc>/reference/nif_viewer.html</loc>
   </url>
   <url>
+    <loc>/reference/parents.html</loc>
+  </url>
+  <url>
     <loc>/reference/pk_sim.html</loc>
   </url>
   <url>
@@ -443,6 +452,9 @@
   </url>
   <url>
     <loc>/reference/write_csv.nif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_monolix.html</loc>
   </url>
   <url>
     <loc>/reference/write_nif.html</loc>

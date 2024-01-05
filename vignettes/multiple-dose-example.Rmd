@@ -151,17 +151,11 @@ dose:
 
 ```{r}
 nif_poc %>% 
-  as.data.frame() %>% 
   filter(EVID==1) %>% 
   group_by(DOSE) %>% 
   summarize(n=n()) %>% 
   kable()
 ```
-
-Note that in the above code, the nif dataset was first converted into a data
-frame as the tidyverse verbs ('filter', 'group_by', 'summarize') are not defined
-for NIF objects. This is a common pattern that will often be used for more 
-complex analyses!
 
 To identify the subjects with dose reductions: 
 
@@ -174,7 +168,6 @@ Let's have a plot of the doses over time in these subjects:
 
 ```{r fig.width=5, fig.height=2}
 nif_poc %>% 
-  as.data.frame() %>% 
   filter(ID %in% (nif_poc %>% dose_red_sbs())) %>% 
   filter(EVID==1) %>% 
   ggplot(aes(x=TIME, y=DOSE, color=as.factor(ID))) + 
@@ -205,7 +198,6 @@ The PK sampling time points in this study were:
 
 ```{r}
 nif_poc %>% 
-  as.data.frame() %>% 
   filter(EVID==0) %>% 
   group_by(NTIME, ANALYTE) %>% 
   summarize(n=n(), .groups="drop") %>% 
