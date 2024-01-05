@@ -719,7 +719,7 @@ guess_analyte <- function(obj) {
 #' @seealso [egfr_raynaud()]
 #' @export
 #' @examples
-#' as.data.frame(add_bl_crcl(examplinib_poc_nif))
+#' head(add_bl_crcl(examplinib_poc_nif))
 add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
@@ -778,6 +778,9 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #'
 #' @return A NIF object
 #' @export
+#' @examples
+#' head(add_cfb(examplinib_poc_nif))
+#'
 add_cfb <- function(obj, summary_function = median) {
   obj %>%
     as.data.frame() %>%

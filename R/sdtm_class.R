@@ -164,19 +164,6 @@ add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
 }
 
 
-#' Add mapping method for legacy compatibility
-#'
-#' @param obj A SDTM object.
-#' @param extrt The treatment as defined in EX.
-#' @param pctestcd The analyte as defined in PC.
-#' @description `r lifecycle::badge("deprecated")`
-#' @export
-add_mapping <- function(obj, extrt = "", pctestcd = "") {
-  lifecycle::deprecate_warn("0.19.0", "add_mapping()", "add_analyte_mapping()")
-  UseMethod("add_analyte_mapping")
-}
-
-
 #' Attach a parent-metabolite mapping to a SDTM object.
 #'
 #' In case multiple analytes are measured for a specific administered drug,
@@ -190,6 +177,9 @@ add_mapping <- function(obj, extrt = "", pctestcd = "") {
 #'
 #' @return The SDTM object.
 #' @export
+#' @examples
+#' add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
+#'
 add_metabolite_mapping <- function(
     obj,
     pctestcd_parent = "",

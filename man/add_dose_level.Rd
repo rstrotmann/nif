@@ -18,3 +18,7 @@ administration, \code{DL}is a numerical value, for drug combinations, it is
 a character value specifying the \code{PARENT} and dose level for the individual
 components.
 }
+\examples{
+head(add_dose_level(examplinib_sad_nif))
+
+}

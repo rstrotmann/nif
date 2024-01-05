@@ -29,3 +29,7 @@ Output fields:
 The Baseline is calculated as the median of the DV for all times lower or
 equal to zero.
 }
+\examples{
+head(add_cfb(examplinib_poc_nif))
+
+}

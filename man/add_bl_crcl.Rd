@@ -19,7 +19,7 @@ A NIF data set.
 Add baseline creatinine clearance field.
 }
 \examples{
-as.data.frame(add_bl_crcl(examplinib_poc_nif))
+head(add_bl_crcl(examplinib_poc_nif))
 }
 \seealso{
 \code{\link[=egfr_mdrd]{egfr_mdrd()}}

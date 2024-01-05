@@ -1415,6 +1415,9 @@ clip_nif <- function(nif) {
 #'
 #' @return A NIF dataset.
 #' @export
+#' @examples
+#' head(add_dose_level(examplinib_sad_nif))
+#'
 add_dose_level <- function(obj) {
   temp <- obj %>%
     as.data.frame() %>%
