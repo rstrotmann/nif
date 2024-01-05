@@ -328,8 +328,12 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
 #' @param missed_doses Switch whether to include randomly missed doses as boolean.
 #'
 #' @return The EX domain as data frame.
-make_md_ex <- function(dm, drug = "RS2023", dose = 500, treatment_duration = 50,
-                       missed_prob = 0.15, missed_doses = T) {
+make_md_ex <- function(dm,
+                       drug = "RS2023",
+                       dose = 500,
+                       treatment_duration = 50,
+                       missed_prob = 0.15,
+                       missed_doses = T) {
   ex <- dm %>%
     filter(ACTARMCD != "SCRNFAIL") %>%
     select(STUDYID, USUBJID, RFSTDTC) %>%
@@ -695,7 +699,8 @@ synthesize_sdtm_sad_study <- function() {
 #' @return A stdm object.
 synthesize_sdtm_poc_study <- function(studyid = "2023000022", dose = 500,
                                       nrich = 12,
-                                      nsubs = 80, nsites = 8) {
+                                      nsubs = 80,
+                                      nsites = 8) {
   rich_sampling_scheme <- data.frame(
     NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
     PCTPT = c(
@@ -829,6 +834,7 @@ synthesize_sdtm_poc_study <- function(studyid = "2023000022", dose = 500,
     )) %>%
     mutate(PCTPTNUM = NTIME) %>%
     mutate(PCRFTDTC = RFSTDTC) %>%
+    mutate(PCELTM = paste0("PT", as.character(NTIME), "H")) %>%
     select(-c(time, NTIME, delta_time, id)) %>%
     arrange(USUBJID, PCDTC) %>%
     group_by(USUBJID) %>%

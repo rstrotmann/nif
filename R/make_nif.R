@@ -503,27 +503,28 @@ make_exstdy_exendy <- function(ex, dm) {
 #' @return The updated administration data frame.
 impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
   temp <- admin %>%
+    select(-any_of(c("ref.time", "ref.date", "PCRFTDTC"))) %>%
     left_join(
-      (
-        obs %>%
-          # mutate(ref.date = as.Date(format(PCRFTDTC, format = "%Y-%m-%d"))) %>%
-          mutate(ref.date = as.Date(extract_date(PCRFTDTC))) %>%
-          # mutate(ref.time = format(PCRFTDTC, format = "%H:%M")) %>%
-          mutate(ref.time = extract_time(PCRFTDTC)) %>%
+      (obs %>%
+          mutate(ref.date = as.Date(format(PCRFTDTC, format = "%Y-%m-%d"))) %>%
+          # mutate(ref.date = as.Date(extract_date(PCRFTDTC))) %>%
+          mutate(ref.time = format(PCRFTDTC, format = "%H:%M")) %>%
+          # mutate(ref.time = extract_time(PCRFTDTC)) %>%
           distinct(USUBJID, PARENT, PCRFTDTC, ref.date, ref.time)),
-      by = c("USUBJID", "PARENT", "date" = "ref.date")
-    ) %>%
+      by = c("USUBJID", "PARENT", "date" = "ref.date")) %>%
     group_by(USUBJID, PARENT) %>%
     fill(ref.time, .direction = "down") %>%
     ungroup()
 
+  n_cases <- temp %>% filter(time != ref.time) %>% nrow()
+
   conditional_message(
     paste0(
       "Time found in PCRFTDTC used in ",
-      temp %>% filter(time != ref.time) %>% nrow(),
+      n_cases,
       " cases."
     ),
-    silent = silent
+    silent = silent || (n_cases==0)
   )
 
   temp %>%
@@ -603,6 +604,7 @@ make_admin <- function(ex,
       .default = start.time
     )) %>%
     ungroup() %>%
+    group_by(USUBJID, EXTRT) %>%
     dplyr::mutate(EXDY = EXSTDY + (row_number() - 1)) %>%
     dplyr::ungroup() %>%
     mutate(DTC = compose_dtc(date, time)) %>%
@@ -1051,8 +1053,8 @@ make_nif <- function(
     spec = NULL,
     silent = FALSE,
     truncate_to_last_observation = TRUE,
-    truncate_to_last_individual_obs = TRUE,
-    use_pctptnum = TRUE,
+    truncate_to_last_individual_obs = FALSE,
+    use_pctptnum = FALSE,
     analyte_cmt_mapping = NULL) {
   vs <- sdtm_data$domains[["vs"]] %>%
     dplyr::select(-DOMAIN) %>%
@@ -1067,13 +1069,15 @@ make_nif <- function(
     dplyr::select(-DOMAIN) %>%
     lubrify_dates()
 
+  # define sample specimen
   if (length(spec) == 0) {
     spec <- guess_spec(pc, silent=silent)
   }
 
+  # define compartment mapping
   if(is.null(analyte_cmt_mapping)) {
     temp <- pc %>%
-      filter(PCSPEC == spec) %>%
+      filter(PCSPEC %in% spec) %>%
       filter(!is.na(PCSTRESN)) %>%
       distinct(PCTESTCD) %>%
       pull(PCTESTCD)
@@ -1087,9 +1091,11 @@ make_nif <- function(
       CMT = analyte_cmt_mapping)
   }
 
+  # define final drug mapping
   drug_mapping <- make_drug_mapping(sdtm_data) %>%
     left_join(cmt_mapping, by = "ANALYTE")
 
+  # make baseline covariates
   bl_cov <- baseline_covariates(vs, silent = silent)
 
   # make observations from PC
@@ -1105,7 +1111,7 @@ make_nif <- function(
     mutate(last_obs=max(DTC, na.rm=T)) %>%
     ungroup()
 
-  # imputations for EX
+  # EX: basic imputations
   ex <- ex %>%
     impute_missing_exendtc_time(silent = silent) %>%
     exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
@@ -1123,6 +1129,7 @@ make_nif <- function(
     cut_off_date <- last_ex_dtc(ex)
   }
 
+  # EX: apply cut-off date
   ex <- ex %>%
     impute_exendtc_to_cutoff(cut_off_date, silent = silent) %>%
     filter(EXENDTC >= EXSTDTC)
@@ -1139,7 +1146,7 @@ make_nif <- function(
                       cut_off_date,
                       silent = silent)
   # change administration time to the time included in PCRFTDTC if available
-  if ("PCRFTDTC" %in% pc$names) {
+  if ("PCRFTDTC" %in% names(pc)) {
     admin <- admin %>%
       impute_admin_dtc_to_pcrftdtc(obs, silent = silent)
   }
@@ -1170,7 +1177,6 @@ make_nif <- function(
       dplyr::arrange(PCTESTCD, USUBJID) %>%
       dplyr::select(USUBJID, PCTESTCD) %>%
       df_to_string()
-
     conditional_message("The following subjects had no observations for ",
       "the respective analyte and were removed from the data set:\n",
       out, "\n",
@@ -1227,7 +1233,7 @@ make_nif <- function(
     dplyr::ungroup() %>%
     # identify first administration per PARENT and first treatment overall
     group_by(USUBJID, PARENT) %>%
-    dplyr::mutate(FIRSTADMINDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
+    mutate(FIRSTADMINDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
     ungroup() %>%
     group_by(USUBJID) %>%
     mutate(FIRSTTRTDTC = min(FIRSTADMINDTC, na.rm = TRUE)) %>%

@@ -148,7 +148,7 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 #' @export
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
-#' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[4]])
+#' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
 dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
                          point_size = 2, max_time = NA, analyte = NULL) {
   if (id %in% nif$ID) {

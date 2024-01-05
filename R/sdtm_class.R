@@ -108,7 +108,7 @@ print.summary_sdtm <- function(x, ...) {
   cat("\nSpecimens:\n")
   print(x$specimens, right = FALSE)
   cat("\nAnalytes:\n")
-  print(x$analytes, right = FALSE)
+  print(x$analytes %>% as.data.frame(), right = FALSE)
 
   cat("\nTreatment-to-analyte mappings:\n")
   if (nrow(x$analyte_mapping) > 0) {

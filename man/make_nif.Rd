@@ -9,8 +9,8 @@ make_nif(
   spec = NULL,
   silent = FALSE,
   truncate_to_last_observation = TRUE,
-  truncate_to_last_individual_obs = TRUE,
-  use_pctptnum = TRUE,
+  truncate_to_last_individual_obs = FALSE,
+  use_pctptnum = FALSE,
   analyte_cmt_mapping = NULL
 )
 }
