@@ -1,7 +1,7 @@
 ## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "> "
+  collapse = TRUE#,
+  #comment = "> "
 )
 
 ## ----setup, message=F, warning=F----------------------------------------------
@@ -18,7 +18,7 @@ library(nif)
 #  read_sdtm_sas("path/to/sdtm/data", "dm", "vs", "ex", "pc", "lb", "ae")
 
 ## -----------------------------------------------------------------------------
-examplinib_fe$domains[["dm"]] %>% head()
+examplinib_fe %>% domain("dm") %>% head(3)
 
 ## -----------------------------------------------------------------------------
 dm <- examplinib_fe$dm
@@ -38,11 +38,11 @@ sdtm_expl <- examplinib_fe %>%
   add_metabolite_mapping("RS2023", "RS2023487A")
 
 ## -----------------------------------------------------------------------------
-nif_expl <- make_nif(sdtm_expl, silent=TRUE)
+nif_expl <- make_nif(sdtm_expl)
 
 ## -----------------------------------------------------------------------------
 nif_expl %>% 
-  as.data.frame() %>% 
+  as.data.frame() %>%
   distinct(EPOCH, ACTARMCD, ACTARM)
 
 ## -----------------------------------------------------------------------------
@@ -54,20 +54,47 @@ nif_expl <- make_nif(sdtm_expl, silent=T) %>%
 ## -----------------------------------------------------------------------------
 nif_expl %>%
   select(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, AMT, ANALYTE, DV) %>% 
-  arrange(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, ANALYTE) %>% 
-  as.data.frame() %>% 
-  head() %>% 
-  kable()
+  head()
 
-## ----warning=F, fig.width=4, fig.height=3-------------------------------------
+## -----------------------------------------------------------------------------
+summary(nif_expl)
+
+## ----results='hide', fig.width=3, fig.height=3--------------------------------
+invisible(capture.output(
+   nif_expl %>% 
+  summary() %>% 
+  plot()
+))
+
+## ----warning=F, fig.width=5, fig.height=4-------------------------------------
 plot(nif_expl)
 
-## ----warning=F, fig.width=4, fig.height=3-------------------------------------
-plot(nif_expl, analyte="RS2023", group="FASTED", max_x=24, mean=F, points=T, nominal_time=T)
+## ----warning=F, fig.width=5, fig.height=4-------------------------------------
+plot(nif_expl,
+     analyte="RS2023",
+     group="FASTED",
+     max_x=24,
+     mean=FALSE,
+     points=TRUE,
+     nominal_time=TRUE)
 
-## ----warning=F, fig.width=4, fig.height=3-------------------------------------
-plot(nif_expl, analyte="RS2023", group="FASTED", max_x=24, mean=T)
+## ----warning=F, fig.width=5, fig.height=4-------------------------------------
+plot(nif_expl,
+     analyte="RS2023",
+     group="FASTED",
+     max_x=24,
+     mean=T)
 
 ## ----eval=FALSE, echo=T-------------------------------------------------------
 #  nif_viewer(nif_expl)
+
+## -----------------------------------------------------------------------------
+nca <- nif_expl %>% 
+  nca(analyte="RS2023",
+      group="FASTED",
+      nominal_time=T)
+
+nca %>% 
+  nca_summary_table(group="FASTED") %>% 
+  kable()
 

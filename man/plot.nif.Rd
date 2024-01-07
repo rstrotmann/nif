@@ -7,6 +7,7 @@
 \method{plot}{nif}(
   x,
   y_scale = "lin",
+  log = FALSE,
   min_x = 0,
   max_x = NA,
   analyte = NULL,
@@ -29,6 +30,9 @@
 \item{x}{The NIF object to be plotted.}
 
 \item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
+
+\item{log}{Boolean to select whether the y-scale is logarithmic. Alternative
+\code{y_scale="log"}.}
 
 \item{min_x}{Minimum x (time) scale value.}
 
@@ -90,11 +94,10 @@ plot(examplinib_fe_nif,
   nominal_time = TRUE
 )
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
-plot(examplinib_fe_nif,
-  analyte = "RS2023", group = "FASTED", mean = TRUE,
-  max_x = 24
-)
-
+plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
+  max_x = 24)
+plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
+  lines = FALSE, tad = TRUE, log =TRUE)
 }
 \seealso{
 \code{\link[=nif_viewer]{nif_viewer()}}

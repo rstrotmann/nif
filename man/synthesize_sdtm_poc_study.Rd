@@ -9,7 +9,8 @@ synthesize_sdtm_poc_study(
   dose = 500,
   nrich = 12,
   nsubs = 80,
-  nsites = 8
+  nsites = 8,
+  duration = 100
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ synthesize_sdtm_poc_study(
 \item{nsubs}{The number of subjects.}
 
 \item{nsites}{The number of clinical sites.}
+
+\item{duration}{The study duration in days.}
 }
 \value{
 A stdm object.

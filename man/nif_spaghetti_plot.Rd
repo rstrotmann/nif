@@ -11,7 +11,10 @@ nif_spaghetti_plot(
   group = "ANALYTE",
   nominal_time = FALSE,
   tad = FALSE,
-  analyte = NULL
+  dose = NULL,
+  analyte = NULL,
+  max_x = NULL,
+  log = FALSE
 )
 }
 \arguments{
@@ -29,8 +32,14 @@ rather than TIME.}
 \item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
 should be plotted.}
 
+\item{dose}{The dose(s) to filter for as numeric.}
+
 \item{analyte}{The analyte as character. If NULL (default), all analytes will
 be plotted.}
+
+\item{max_x}{The maximal value for the x scale as numeric.}
+
+\item{log}{Boolean to define whether y axis is plotted on the log scale.}
 }
 \value{
 A ggplot2 plot object.
@@ -41,4 +50,7 @@ Spaghetti plot over a selected covariate
 \examples{
 nif_spaghetti_plot(examplinib_fe_nif)
 nif_spaghetti_plot(examplinib_sad_nif)
+nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
+  dose = 500, log = TRUE, points = TRUE, lines = FALSE)
 }

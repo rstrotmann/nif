@@ -492,7 +492,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     mutate(NTIME=time) %>%
     group_by_all() %>%
     expand(PERIOD = c(1, 2)) %>%
-    mutate(time = time + 14 * 24 * (PERIOD - 1)) %>%
+    mutate(time = time + 13 * 24 * (PERIOD - 1)) %>%
     left_join(temp %>%
       select(id = ID, PERIOD, FOOD, EXDOSE), by = c("id", "PERIOD")) %>%
     as.data.frame() %>%
@@ -521,7 +521,8 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     mutate(PCTPTNUM = NTIME) %>%
     # left_join(sampling_scheme, by = "time") %>%
     left_join(sampling_scheme, by = c("NTIME"="time")) %>%
-    mutate(PCDTC = RFSTDTC + (PERIOD - 1) * 13 * 24 * 60 * 60 + time * 60 * 60) %>%
+    # mutate(PCDTC = RFSTDTC + (PERIOD - 1) * 14 * 24 * 60 * 60 + time * 60 * 60) %>%
+    mutate(PCDTC = RFSTDTC + time * 60 * 60) %>%
     arrange(id, PCDTC, PCTESTCD) %>%
     group_by(id) %>%
     mutate(PCSEQ = row_number()) %>%
@@ -695,12 +696,16 @@ synthesize_sdtm_sad_study <- function() {
 #' @param nsubs The number of subjects.
 #' @param nsites The number of clinical sites.
 #' @param studyid The study identifyer.
+#' @param duration The study duration in days.
 #'
 #' @return A stdm object.
-synthesize_sdtm_poc_study <- function(studyid = "2023000022", dose = 500,
-                                      nrich = 12,
-                                      nsubs = 80,
-                                      nsites = 8) {
+synthesize_sdtm_poc_study <- function(
+    studyid = "2023000022",
+    dose = 500,
+    nrich = 12,
+    nsubs = 80,
+    nsites = 8,
+    duration = 100) {
   rich_sampling_scheme <- data.frame(
     NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
     PCTPT = c(
@@ -716,7 +721,7 @@ synthesize_sdtm_poc_study <- function(studyid = "2023000022", dose = 500,
 
   dm <- make_dm(
     studyid = studyid, nsubs = nsubs, nsites = nsites,
-    female_fraction = 0.4, duration = 30, min_age = 47, max_age = 86
+    female_fraction = 0.4, duration = duration, min_age = 47, max_age = 86
   ) %>%
     mutate(ACTARMCD = case_match(ACTARMCD, "" ~ "TREATMENT",
       .default = ACTARMCD
@@ -730,7 +735,8 @@ synthesize_sdtm_poc_study <- function(studyid = "2023000022", dose = 500,
 
   vs <- make_vs(dm)
   lb <- make_lb(dm)
-  ex <- make_md_ex(dm, drug = "RS2023", dose = 500, missed_doses = T)
+  ex <- make_md_ex(dm, drug = "RS2023", dose = 500, missed_doses = T,
+                   treatment_duration = duration)
 
   # ex %>%
   #   group_by(USUBJID) %>%
@@ -877,41 +883,25 @@ synthesize_sdtm_food_effect_study <- function() {
     PCTPT = c(
       "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
       "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
-      "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"
-    )
-  )
+      "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"))
 
   dm <- make_dm(studyid = "2023000400", nsubs = 20)
-
-  seq1.sbs <- dm %>%
-    filter(ACTARMCD != "SCRNFAIL") %>%
-    slice_sample(prop = 0.5) %>%
-    pull(USUBJID)
-
-  seq2.sbs <- dm %>%
-    filter(ACTARMCD != "SCRNFAIL") %>%
-    filter(!(USUBJID %in% seq1.sbs)) %>%
-    pull(USUBJID)
+  i_treated <- which(dm$ACTARMCD != "SCRNFAIL")
+  i_seq1 <- sample(i_treated, length(i_treated)/2)
 
   dm <- dm %>%
     mutate(ACTARMCD = case_when(
-      USUBJID %in% seq1.sbs ~ "AB",
-      USUBJID %in% seq2.sbs ~ "BA",
-      .default = "SCRNFAIL"
-    )) %>%
-    mutate(ACTARM = case_when(
-      USUBJID %in% seq1.sbs ~ "Fasted - Fed",
-      USUBJID %in% seq2.sbs ~ "Fed - Fasted",
-      .default = "Screen Failure"
-    ))
+      row_number() %in% i_seq1 ~ "AB",
+      row_number() %in% i_treated & !(row_number() %in% i_seq1) ~ "BA",
+      .default = "SCRNFAIL")) %>%
+    mutate(ACTARM = case_match(ACTARMCD,
+      "AB" ~ "Fasted - Fed", "BA" ~ "Fed - Fasted",
+      .default = "Screen Failure")) %>%
+    mutate(ARM = ACTARM, ARMCD = ACTARMCD)
 
   vs <- make_vs(dm)
   lb <- make_lb(dm)
   ex <- make_sd_ex(dm, drug = "RS2023")
-
-  # ex <- ex %>%
-  #   group_by(USUBJID) %>%
-  #   mutate(RFENDTC=max(EXENDTC))
 
   dm <- dm %>%
     add_RFENDTC(ex)
@@ -919,21 +909,11 @@ synthesize_sdtm_food_effect_study <- function() {
   pc <- make_fe_pc(ex, dm, vs, sampling_scheme)
 
   out <- list()
-  out[["dm"]] <- dm %>%
-    isofy_dates()
-
-  out[["vs"]] <- vs %>%
-    isofy_dates()
-
-  out[["ex"]] <- ex %>%
-    mutate(EXTRT = "EXAMPLINIB") %>%
-    isofy_dates()
-
-  out[["pc"]] <- pc %>%
-    isofy_dates()
-
-  out[["lb"]] <- lb %>%
-    isofy_dates()
+  out[["dm"]] <- dm %>% isofy_dates()
+  out[["vs"]] <- vs %>% isofy_dates()
+  out[["ex"]] <- ex %>% mutate(EXTRT = "EXAMPLINIB") %>% isofy_dates()
+  out[["pc"]] <- pc %>% isofy_dates()
+  out[["lb"]] <- lb %>% isofy_dates()
 
   temp <- new_sdtm(out) %>%
     add_analyte_mapping("EXAMPLINIB", "RS2023")
@@ -991,18 +971,13 @@ synthesize_examplinib <- function() {
     make_nif(spec = "PLASMA") %>%
     add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
     mutate(BL_CRCL = egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar = T)) %>%
-    compress_nif(standard_nif_fields, "BL_CREAT", "BL_CRCL")
+    compress()
 
   examplinib_fe_nif <- make_nif(examplinib_fe, spec = "PLASMA") %>%
     mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>%
     mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
     mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) %>%
-    # add_bl_lab(examplinib_fe$domains[["lb"]], "CREAT", "SERUM") %>%
-    # mutate(BL_CRCL=egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar=T)) %>%
-    compress_nif(
-      standard_nif_fields, "PERIOD", "TREATMENT", "FASTED",
-      "BL_CREAT", "BL_CRCL"
-    )
+    compress()
 
   use_data(examplinib_sad_nif, overwrite = T)
   use_data(examplinib_poc_nif, overwrite = T)

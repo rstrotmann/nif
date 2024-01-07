@@ -285,7 +285,8 @@ treatment period is decoded to `FASTED`:
 nif_expl <- make_nif(sdtm_expl, silent=T) %>%
   mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>% 
   mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
-  mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
+  mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0)) #%>% 
+  # compress()
 ```
 
 Note the `silent=T` modifier that omits all messages from `make_nif()`.
@@ -339,6 +340,14 @@ In the simplest exploratory plot, all analytes are shown over time:
 ```{r, warning=F, fig.width=5, fig.height=4}
 plot(nif_expl)
 ```
+
+To check the integrity of the data set, if often makes sense to plot the analyte
+concentrations over time-after-dose (TAD). 
+
+```{r}
+plot(nif_expl %>% add_tad(), tad=T, analyte="RS2023")
+```
+
 
 Modifiers to the `plot()` function allow common adjustments. To show, e.g., the
 food effect on the parent compound, "RS2023" in individual subjects, limiting

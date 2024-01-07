@@ -1052,7 +1052,7 @@ make_nif <- function(
     sdtm_data,
     spec = NULL,
     silent = FALSE,
-    truncate_to_last_observation = TRUE,
+    truncate_to_last_observation = FALSE,
     truncate_to_last_individual_obs = FALSE,
     use_pctptnum = FALSE,
     analyte_cmt_mapping = NULL) {
@@ -1350,7 +1350,7 @@ compress.nif <- function(nif, fields = NULL) {
   if (is.null(fields)) {
     fields <- c(
       standard_nif_fields,
-      colnames(examplinib_poc_nif)[grep("BL_", colnames(examplinib_poc_nif))])
+      colnames(nif)[grep("BL_", colnames(nif))])
   }
   nif %>%
     as.data.frame() %>%
@@ -1373,8 +1373,10 @@ add_tad <- function(nif) {
     as.data.frame() %>%
     mutate(admin_time = case_when(
       EVID == 1 ~ TIME)) %>%
+    arrange(TIME) %>%
     group_by(ID, PARENT) %>%
     fill(admin_time, .direction = "down") %>%
+    ungroup() %>%
     mutate(TAD = TIME - admin_time) %>%
     select(-admin_time) %>%
     new_nif()

@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  warning = FALSE
 )
 ```
 
@@ -78,7 +79,7 @@ which can be used to calculate the baseline creatinine clearance as an estimate
 for glomerular filtration rate (eGFR). Please see the below code for details.
 
 In the first step, baseline creatinine is added from 'LB', and then the
-creatinineclearance is calculated using further demographic parameters (sex,
+creatinine clearance is calculated using further demographic parameters (sex,
 age, race, weight). The standard method is Cockcroft-Gault but other methods can
 be specified.
  
@@ -86,7 +87,8 @@ In the last step, the NIF data set, is cleaned up, keeping only the fields
 that are commonly used:
 
 ```{r}
-nif_poc <- make_nif(examplinib_poc, spec="PLASMA") %>% 
+nif_poc <- make_nif(examplinib_poc, spec="PLASMA",
+                    truncate_to_last_observation = FALSE) %>% 
   add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
   add_bl_crcl() %>% 
   compress_nif()

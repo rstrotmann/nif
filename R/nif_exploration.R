@@ -253,6 +253,9 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #'   should be plotted.
 #' @param analyte The analyte as character. If NULL (default), all analytes will
 #'   be plotted.
+#' @param dose The dose(s) to filter for as numeric.
+#' @param max_x The maximal value for the x scale as numeric.
+#' @param log Boolean to define whether y axis is plotted on the log scale.
 #'
 #' @return A ggplot2 plot object.
 #' @import assertr
@@ -261,17 +264,27 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #' @examples
 #' nif_spaghetti_plot(examplinib_fe_nif)
 #' nif_spaghetti_plot(examplinib_sad_nif)
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
+#'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
 nif_spaghetti_plot <- function(obj,
                                points = FALSE, lines = TRUE, group = "ANALYTE",
-                               nominal_time = FALSE, tad = FALSE,
-                               analyte = NULL) {
+                               nominal_time = FALSE, tad = FALSE, dose = NULL,
+                               analyte = NULL, max_x=NULL, log = FALSE) {
+
+  if (!is.null(dose)) {
+    obj <- obj %>%
+      dplyr::filter(DOSE %in% dose)}
+
+  if(is.null(max_x)) {
+    max_x <- max_observation_time(obj)}
 
   x <- obj %>%
+    index_dosing_interval() %>%
     as.data.frame() %>%
     verify(has_all_names("ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE")) %>%
     dplyr::filter(!is.na(DOSE)) %>%
-    filter(EVID == 0) %>%
-    filter(!is.na(DV))
+    filter(EVID==1 | !is.na(DV))
 
   if (!is.null(analyte)) {
     x <- x %>% dplyr::filter(ANALYTE == analyte)
@@ -282,55 +295,58 @@ nif_spaghetti_plot <- function(obj,
       verify(has_all_names("TAD")) %>%
       filter(EVID == 0) %>%
       mutate(TIME = TAD) %>%
-      mutate(GROUP = interaction(as.factor(ID),
-                                 as.factor(ANALYTE),
-                                 as.factor(TRTDY))) %>%
-
-      mutate(COLOR = interaction(as.factor(ANALYTE),
-                                 as.factor(TRTDY)))
+      mutate(GROUP = interaction(
+        as.factor(ID), as.factor(ANALYTE), as.factor(DI))) %>%
+      mutate(COLOR = interaction(as.factor(ANALYTE), as.factor(DI)))
     x_label <- "TAD (h)"
   } else {
+
+    # create mock administrations for all analytes, including metabolites
+    # to avoid connecting plot lines across administrations
+    mock_admin_for_metabolites <- x %>%
+      as.data.frame() %>%
+      filter(EVID==1) %>%
+      crossing(ANALYTE1=analytes(x)) %>%
+      mutate(ANALYTE=ANALYTE1) %>%
+      select(-ANALYTE1) %>%
+      filter(TIME <= max_x)
+
     x <- x %>%
+      filter(TIME <= max_x) %>%
       filter(EVID == 0) %>%
-      # mutate(TIME = TAD) %>%
-      # mutate(GROUP = interaction(as.factor(ID),
-      #                            # as.factor(ANALYTE),
-      #                            as.factor(.data[[group]]),
-      #                            TRTDY)) %>%
-      mutate(GROUP = interaction(as.factor(ID),
-                                 # as.factor(ANALYTE),
-                                 as.factor(.data[[group]]))) %>%
+      rbind(mock_admin_for_metabolites) %>%
+      mutate(GROUP = interaction(
+        as.factor(ID), as.factor(.data[[group]]))) %>%
       mutate(COLOR = as.factor(.data[[group]]))
     x_label <- "TIME (h)"
   }
 
-  # x <- x
-
   if (nominal_time) {
     p <- x %>%
       ggplot2::ggplot(ggplot2::aes(
-        x = NTIME, y = DV,
+        x = NTIME,
+        y = DV,
         group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
         color = as.factor(.data[[group]])
       ))
   } else {
     p <- x %>%
       ggplot2::ggplot(ggplot2::aes(
-        x = TIME, y = DV,
+        x = TIME,
+        y = DV,
         group = GROUP,
         color = COLOR
       ))
   }
 
   p +
-    {if (lines) geom_line()} +
-    {if (points) geom_point()} +
+    {if (lines) geom_line(na.rm = TRUE)} +
+    {if (points) geom_point(na.rm = TRUE)} +
     {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+    {if (log == TRUE) scale_y_log10()} +
     labs(color = group) +
     ggplot2::theme_bw() +
     labs(x = x_label) +
-    # xlim(0, 24) +
-    # scale_y_log10() +
     ggplot2::theme(legend.position = "bottom")
 }
 
@@ -369,6 +385,8 @@ nif_spaghetti_plot <- function(obj,
 #' @param alpha Numerical value between 0 and 1, passed on as alpha to ggplot.
 #' @param tad Boolean to select wheter time after dose (TAD) rather than TIME
 #'   should be plotted.
+#' @param log Boolean to select whether the y-scale is logarithmic. Alternative
+#' `y_scale="log"`.
 #'
 #' @return The plot object
 #' @seealso [nif_viewer()]
@@ -382,17 +400,16 @@ nif_spaghetti_plot <- function(obj,
 #'   nominal_time = TRUE
 #' )
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
-#' plot(examplinib_fe_nif,
-#'   analyte = "RS2023", group = "FASTED", mean = TRUE,
-#'   max_x = 24
-#' )
-#'
+#' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
+#'   max_x = 24)
+#' plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
+#'   lines = FALSE, tad = TRUE, log =TRUE)
 #' @export
-plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
-                     mean = FALSE, doses = NULL, points = FALSE, id = NULL,
-                     usubjid = NULL, group = NULL, administrations = FALSE,
-                     nominal_time = FALSE, tad = FALSE, lines = TRUE, alpha = 1,
-                     title = NULL, ...) {
+plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
+                     analyte = NULL, mean = FALSE, doses = NULL, points = FALSE,
+                     id = NULL, usubjid = NULL, group = NULL,
+                     administrations = FALSE, nominal_time = FALSE, tad = FALSE,
+                     lines = TRUE, alpha = 1, title = NULL, ...) {
   if (!is.null(id)) {
     x <- x %>%
       dplyr::filter(ID %in% id)
@@ -445,7 +462,7 @@ plot.nif <- function(x, y_scale = "lin", min_x = 0, max_x = NA, analyte = NULL,
   p +
     xlim(min_x, max_x) +
     {if (!is.null(title)) ggtitle(title)} +
-    {if (y_scale == "log") scale_y_log10()} +
+    {if (y_scale == "log" || log == TRUE) scale_y_log10()} +
     {if (length(analyte) == 1) labs(y = analyte)} +
     # {if (tad == FALSE) labs(color = cov)} +
     labs(color = cov) +
