@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.13</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -190,18 +190,18 @@ objects by accessing the individual SDTM domains like demonstrated below
 for the DM domain of the <code>examplinib_fe</code> data object:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/domain.html">domain</a></span><span class="op">(</span><span class="st">"dm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">##   SITEID  SUBJID       ACTARM ACTARMCD          RFICDTC          RFSTDTC</span></span>
-<span><span class="co">## 1    104 1040001 Fed - Fasted       BA 2000-12-24T09:48 2001-01-03T09:48</span></span>
-<span><span class="co">## 2    102 1020001 Fasted - Fed       AB 2000-12-26T09:24 2001-01-02T09:24</span></span>
-<span><span class="co">## 3    101 1010001 Fed - Fasted       BA 2000-12-31T09:52 2001-01-11T09:52</span></span>
-<span><span class="co">##      STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN ARM ARMCD</span></span>
-<span><span class="co">## 1 2023000400 20230004001040001   M  32 YEARS     DEU     DM          </span></span>
-<span><span class="co">## 2 2023000400 20230004001020001   F  41 YEARS     DEU     DM          </span></span>
-<span><span class="co">## 3 2023000400 20230004001010001   F  53 YEARS     DEU     DM          </span></span>
-<span><span class="co">##                        RACE ETHNIC          RFENDTC</span></span>
-<span><span class="co">## 1                     WHITE        2001-01-16T09:48</span></span>
-<span><span class="co">## 2                     WHITE        2001-01-15T09:24</span></span>
-<span><span class="co">## 3 BLACK OR AFRICAN AMERICAN        2001-01-24T09:52</span></span></code></pre></div>
+<span><span class="co">##   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC RFSTDTC    STUDYID</span></span>
+<span><span class="co">## 1    102 1020001 Screen Failure SCRNFAIL 2000-12-20T10:23    &lt;NA&gt; 2023000400</span></span>
+<span><span class="co">## 2    105 1050001 Screen Failure SCRNFAIL 2000-12-20T11:39    &lt;NA&gt; 2023000400</span></span>
+<span><span class="co">## 3    103 1030001 Screen Failure SCRNFAIL 2000-12-24T09:00    &lt;NA&gt; 2023000400</span></span>
+<span><span class="co">##             USUBJID SEX AGE  AGEU COUNTRY DOMAIN            ARM    ARMCD  RACE</span></span>
+<span><span class="co">## 1 20230004001020001   M  19 YEARS     DEU     DM Screen Failure SCRNFAIL WHITE</span></span>
+<span><span class="co">## 2 20230004001050001   F  42 YEARS     DEU     DM Screen Failure SCRNFAIL WHITE</span></span>
+<span><span class="co">## 3 20230004001030001   M  29 YEARS     DEU     DM Screen Failure SCRNFAIL WHITE</span></span>
+<span><span class="co">##   ETHNIC RFENDTC</span></span>
+<span><span class="co">## 1           &lt;NA&gt;</span></span>
+<span><span class="co">## 2           &lt;NA&gt;</span></span>
+<span><span class="co">## 3           &lt;NA&gt;</span></span></code></pre></div>
 <p>The most relevant domains, “dm”, “vs”, “ex” and “pc”, can also be
 accessed directly, e.g.:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -217,9 +217,9 @@ properties:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Arms:</span></span>
 <span><span class="co">##   ACTARM         ACTARMCD</span></span>
-<span><span class="co">## 1 Fed - Fasted   BA      </span></span>
-<span><span class="co">## 2 Fasted - Fed   AB      </span></span>
-<span><span class="co">## 3 Screen Failure SCRNFAIL</span></span>
+<span><span class="co">## 1 Screen Failure SCRNFAIL</span></span>
+<span><span class="co">## 2 Fed - Fasted   BA      </span></span>
+<span><span class="co">## 3 Fasted - Fed   AB      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Treatments:</span></span>
 <span><span class="co">##   EXTRT     </span></span>
@@ -253,22 +253,22 @@ below:</p>
 <span><span class="co">##          [,1]             </span></span>
 <span><span class="co">## SITEID   105              </span></span>
 <span><span class="co">## SUBJID   1050001          </span></span>
-<span><span class="co">## ACTARM   Fed - Fasted     </span></span>
-<span><span class="co">## ACTARMCD BA               </span></span>
-<span><span class="co">## RFICDTC  2001-01-03T10:09 </span></span>
-<span><span class="co">## RFSTDTC  2001-01-14T10:09 </span></span>
+<span><span class="co">## ACTARM   Screen Failure   </span></span>
+<span><span class="co">## ACTARMCD SCRNFAIL         </span></span>
+<span><span class="co">## RFICDTC  2000-12-20T11:39 </span></span>
+<span><span class="co">## RFSTDTC  NA               </span></span>
 <span><span class="co">## STUDYID  2023000400       </span></span>
 <span><span class="co">## USUBJID  20230004001050001</span></span>
 <span><span class="co">## SEX      F                </span></span>
-<span><span class="co">## AGE      50               </span></span>
+<span><span class="co">## AGE      42               </span></span>
 <span><span class="co">## AGEU     YEARS            </span></span>
 <span><span class="co">## COUNTRY  DEU              </span></span>
 <span><span class="co">## DOMAIN   DM               </span></span>
-<span><span class="co">## ARM                       </span></span>
-<span><span class="co">## ARMCD                     </span></span>
+<span><span class="co">## ARM      Screen Failure   </span></span>
+<span><span class="co">## ARMCD    SCRNFAIL         </span></span>
 <span><span class="co">## RACE     WHITE            </span></span>
 <span><span class="co">## ETHNIC                    </span></span>
-<span><span class="co">## RFENDTC  2001-01-27T10:09</span></span></code></pre></div>
+<span><span class="co">## RFENDTC  NA</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="sdtm-suggestions">SDTM suggestions<a class="anchor" aria-label="anchor" href="#sdtm-suggestions"></a>
@@ -291,9 +291,9 @@ suggestions for manual imputations for a <code>sdtm</code> object:</p>
 <span><span class="co">##    on ACTARMCD.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##        ACTARM           ACTARMCD   </span></span>
+<span><span class="co">##        Screen Failure   SCRNFAIL   </span></span>
 <span><span class="co">##        Fed - Fasted     BA         </span></span>
-<span><span class="co">##        Fasted - Fed     AB         </span></span>
-<span><span class="co">##        Screen Failure   SCRNFAIL</span></span>
+<span><span class="co">##        Fasted - Fed     AB</span></span>
 <span><span class="co">## 2. There are treatments (EXTRT) without analytes (PCTESTCD) of</span></span>
 <span><span class="co">##    the same name (see below).</span></span>
 <span><span class="co">##    Consider adding a treatment-analyte mapping to the sdtm object</span></span>
@@ -369,8 +369,7 @@ from the DM domain and merged into the data table. Baseline WEIGHT and
 HEIGHT are taken from the VS domain.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm_expl</span><span class="op">)</span></span>
-<span><span class="co">## No specimen specified. Set to PLASMA as the most likely.</span></span>
-<span><span class="co">## Data cut-off was set to last observation time, 2001-03-18 13:20:00</span></span></code></pre></div>
+<span><span class="co">## No specimen specified. Set to PLASMA as the most likely.</span></span></code></pre></div>
 <p>The output of the above code informs that there may be
 pharmacokinetic data for multiple specimens in the PC domain, e.g.,
 “PLASMA” and “URINE” or “FECES”. As no specimem was defined,
@@ -416,7 +415,8 @@ decoded to <code>FASTED</code>:</p>
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm_expl</span>, silent<span class="op">=</span><span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PERIOD<span class="op">=</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TREATMENT<span class="op">=</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">PERIOD</span>, <span class="va">PERIOD</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span><span class="op">==</span><span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span><span class="op">==</span><span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="co">#%&gt;% </span></span>
+<span>  <span class="co"># compress()</span></span></code></pre></div>
 <p>Note the <code>silent=T</code> modifier that omits all messages from
 <code><a href="../reference/make_nif.html">make_nif()</a></code>.</p>
 <p>As a side note: Alternatively, the SDTM domain YL which provides data
@@ -430,12 +430,12 @@ page width):</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">PERIOD</span>, <span class="va">TREATMENT</span>, <span class="va">FASTED</span>, <span class="va">TIME</span>, <span class="va">EVID</span>, <span class="va">AMT</span>, <span class="va">ANALYTE</span>, <span class="va">DV</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">##             USUBJID PERIOD TREATMENT FASTED TIME EVID AMT    ANALYTE        DV</span></span>
-<span><span class="co">## 1 20230004001010001      1         B      0  0.0    1 500     RS2023        NA</span></span>
-<span><span class="co">## 2 20230004001010001      1         B      0  0.0    0   0     RS2023 0.0000000</span></span>
-<span><span class="co">## 3 20230004001010001      1         B      0  0.0    0   0 RS2023487A 0.0000000</span></span>
-<span><span class="co">## 4 20230004001010001      1         B      0  0.5    0   0     RS2023 0.7943798</span></span>
-<span><span class="co">## 5 20230004001010001      1         B      0  0.5    0   0 RS2023487A 0.1463353</span></span>
-<span><span class="co">## 6 20230004001010001      1         B      0  1.0    0   0     RS2023 1.9337659</span></span></code></pre></div>
+<span><span class="co">## 1 20230004001010002      1         B      0  0.0    1 500     RS2023        NA</span></span>
+<span><span class="co">## 2 20230004001010002      1         B      0  0.0    0   0     RS2023 0.0000000</span></span>
+<span><span class="co">## 3 20230004001010002      1         B      0  0.0    0   0 RS2023487A 0.0000000</span></span>
+<span><span class="co">## 4 20230004001010002      1         B      0  0.5    0   0     RS2023 0.7591743</span></span>
+<span><span class="co">## 5 20230004001010002      1         B      0  0.5    0   0 RS2023487A 0.2282183</span></span>
+<span><span class="co">## 6 20230004001010002      1         B      0  1.0    0   0     RS2023 2.0689107</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -453,7 +453,7 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">## STUDYID      N    </span></span>
 <span><span class="co">## 2023000400   20   </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Males: 10, females: 10 (50%)</span></span>
+<span><span class="co">## Males: 12, females: 8 (40%)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Analytes:</span></span>
 <span><span class="co">## RS2023, RS2023487A</span></span>
@@ -503,11 +503,16 @@ time:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-16-1.png" width="480"></p>
+<p>To check the integrity of the data set, if often makes sense to plot
+the analyte concentrations over time-after-dose (TAD).</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/add_tad.html">add_tad</a></span><span class="op">(</span><span class="op">)</span>, tad<span class="op">=</span><span class="cn">T</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <p>Modifiers to the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allow common
 adjustments. To show, e.g., the food effect on the parent compound,
 “RS2023” in individual subjects, limiting the time axis to 24 h and
 showing the nominal time instead of the actual time:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span>,</span>
 <span>     analyte<span class="op">=</span><span class="st">"RS2023"</span>,</span>
 <span>     group<span class="op">=</span><span class="st">"FASTED"</span>,</span>
@@ -515,21 +520,21 @@ showing the nominal time instead of the actual time:</p>
 <span>     mean<span class="op">=</span><span class="cn">FALSE</span>,</span>
 <span>     points<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nif-vignette_files/figure-html/unnamed-chunk-17-1.png" width="480"></p>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-18-1.png" width="480"></p>
 <p>The following shows the mean plasma concentration profiles aver all
 subjects, over 24 h by the food status:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span>,</span>
 <span>     analyte<span class="op">=</span><span class="st">"RS2023"</span>,</span>
 <span>     group<span class="op">=</span><span class="st">"FASTED"</span>,</span>
 <span>     max_x<span class="op">=</span><span class="fl">24</span>,</span>
 <span>     mean<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nif-vignette_files/figure-html/unnamed-chunk-18-1.png" width="480"></p>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-19-1.png" width="480"></p>
 <p>There are further options, refer to <code>?plot.nif()</code> for
 details.</p>
 <p>For a quick overview, use <code><a href="../reference/nif_viewer.html">nif_viewer()</a></code> to show
 individual subjects interactively:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/nif_viewer.html">nif_viewer</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -539,7 +544,7 @@ individual subjects interactively:</p>
 rudimentary support for non-compartmental pharmacokinetic analysis. the
 <code><a href="../reference/nca.html">nca()</a></code> function is essentially a wrapper around the
 functions provided by the <code>PKNCA</code> package.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nca</span> <span class="op">&lt;-</span> <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/nca.html">nca</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>,</span>
 <span>      group<span class="op">=</span><span class="st">"FASTED"</span>,</span>
@@ -563,19 +568,19 @@ functions provided by the <code>PKNCA</code> package.</p>
 <tr class="odd">
 <td align="left">0</td>
 <td align="right">20</td>
-<td align="left">25.23 (46)</td>
-<td align="left">21.9 (39)</td>
-<td align="left">3.63 (14)</td>
-<td align="left">18.98 (25)</td>
+<td align="left">22.01 (37)</td>
+<td align="left">19.58 (31)</td>
+<td align="left">3.66 (16)</td>
+<td align="left">16.45 (31)</td>
 <td align="left">2 (1.5; 3)</td>
 </tr>
 <tr class="even">
 <td align="left">1</td>
 <td align="right">20</td>
-<td align="left">25.13 (46)</td>
-<td align="left">21.54 (38)</td>
-<td align="left">2.89 (19)</td>
-<td align="left">19.13 (25)</td>
+<td align="left">21.85 (37)</td>
+<td align="left">19.32 (31)</td>
+<td align="left">2.81 (16)</td>
+<td align="left">16.76 (32)</td>
 <td align="left">3 (2; 4)</td>
 </tr>
 </tbody>

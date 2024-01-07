@@ -12,7 +12,7 @@ grouping variable is provided, DOSE will be used."><!-- mathjax --><script src="
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.13</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +57,7 @@ grouping variable is provided, <code>DOSE</code> will be used.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  y_scale <span class="op">=</span> <span class="st">"lin"</span>,</span>
+<span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  min_x <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_x <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -84,6 +85,11 @@ grouping variable is provided, <code>DOSE</code> will be used.</p>
 
 <dt>y_scale</dt>
 <dd><p>Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".</p></dd>
+
+
+<dt>log</dt>
+<dd><p>Boolean to select whether the y-scale is logarithmic. Alternative
+<code>y_scale="log"</code>.</p></dd>
 
 
 <dt>min_x</dt>
@@ -181,8 +187,6 @@ should be plotted.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.nif-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, max_x <span class="op">=</span> <span class="fl">24</span>, point <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 440 rows containing missing values (`geom_line()`).</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 440 rows containing missing values (`geom_point()`).</span>
 <span class="r-plt img"><img src="plot.nif-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>,</span></span>
 <span class="r-in"><span>  analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>,</span></span>
@@ -191,13 +195,13 @@ should be plotted.</p></dd>
 <span class="r-plt img"><img src="plot.nif-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>, mean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.nif-6.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>,</span></span>
-<span class="r-in"><span>  analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>, mean <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  max_x <span class="op">=</span> <span class="fl">24</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>, mean <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  max_x <span class="op">=</span> <span class="fl">24</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 10 rows containing missing values (`geom_line()`).</span>
 <span class="r-plt img"><img src="plot.nif-7.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, dose <span class="op">=</span> <span class="fl">500</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, points <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  lines <span class="op">=</span> <span class="cn">FALSE</span>, tad <span class="op">=</span> <span class="cn">TRUE</span>, log <span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-8.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

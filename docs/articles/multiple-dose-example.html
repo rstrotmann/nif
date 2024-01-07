@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.13</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -157,29 +157,23 @@ specified when the SDTM data set is created. See the documentation to
 <p>Creation of the NIF data set for this study is straightforward. No
 imputations are needed, and no study-specific fields are created:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, spec<span class="op">=</span><span class="st">"PLASMA"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-05-05 14:08:00</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, spec<span class="op">=</span><span class="st">"PLASMA"</span><span class="op">)</span></span></code></pre></div>
 <p>Of note, the LB domain within this SDTM object contains baseline
 creatinine data which can be used to calculate the baseline creatinine
 clearance as an estimate for glomerular filtration rate (eGFR). Please
 see the below code for details.</p>
 <p>In the first step, baseline creatinine is added from ‘LB’, and then
-the creatinineclearance is calculated using further demographic
+the creatinine clearance is calculated using further demographic
 parameters (sex, age, race, weight). The standard method is
 Cockcroft-Gault but other methods can be specified.</p>
 <p>In the last step, the NIF data set, is cleaned up, keeping only the
 fields that are commonly used:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, spec<span class="op">=</span><span class="st">"PLASMA"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, spec<span class="op">=</span><span class="st">"PLASMA"</span>,</span>
+<span>                    truncate_to_last_observation <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_bl_lab.html">add_bl_lab</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">$</span><span class="va">domains</span><span class="op">[[</span><span class="st">"lb"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"CREAT"</span>, <span class="st">"SERUM"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_bl_crcl.html">add_bl_crcl</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/compress_nif.html">compress_nif</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: `compress_nif()` was deprecated in nif 0.40.1.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `compress()` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-05-05 14:08:00</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/compress_nif.html">compress_nif</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>(In fact, the resulting NIF data set, including baseline creatinine
 clearance is already included in the package under the name
 ‘examplinib_poc_nif’.)</p>
@@ -194,27 +188,27 @@ data frame:</p>
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#    REF    STUDYID ID           USUBJID NTIME  TIME   TAD    ANALYTE AMT RATE</span></span>
-<span><span class="co">#  1   1 2023000022  1 20230000221010001   0.0 0.000 0.000     RS2023 500    0</span></span>
-<span><span class="co">#  2   2 2023000022  1 20230000221010001   0.0 0.000 0.000     RS2023   0    0</span></span>
-<span><span class="co">#  3   3 2023000022  1 20230000221010001   0.0 0.000 0.000 RS2023487A   0    0</span></span>
-<span><span class="co">#  4   4 2023000022  1 20230000221010001   1.5 2.117 2.117     RS2023   0    0</span></span>
-<span><span class="co">#  5   5 2023000022  1 20230000221010001   1.5 2.117 2.117 RS2023487A   0    0</span></span>
-<span><span class="co">#  6   6 2023000022  1 20230000221010001   4.0 4.783 4.783     RS2023   0    0</span></span>
+<span><span class="co">#    REF    STUDYID ID           USUBJID NTIME TIME  TAD    ANALYTE AMT RATE</span></span>
+<span><span class="co">#  1   1 2023000022  1 20230000221010001   0.0 0.00 0.00     RS2023 500    0</span></span>
+<span><span class="co">#  2   2 2023000022  1 20230000221010001   0.0 0.00 0.00     RS2023   0    0</span></span>
+<span><span class="co">#  3   3 2023000022  1 20230000221010001   0.0 0.00 0.00 RS2023487A   0    0</span></span>
+<span><span class="co">#  4   4 2023000022  1 20230000221010001   1.5 2.45 2.45     RS2023   0    0</span></span>
+<span><span class="co">#  5   5 2023000022  1 20230000221010001   1.5 2.45 2.45 RS2023487A   0    0</span></span>
+<span><span class="co">#  6   6 2023000022  1 20230000221010001   4.0 4.95 4.95     RS2023   0    0</span></span>
 <span><span class="co">#          DV      LNDV MDV CMT EVID DOSE AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
 <span><span class="co">#  1       NA        NA   1   1    1  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
 <span><span class="co">#  2 0.000000      -Inf   0   2    0   NA  76   1 WHITE  177.6   68.7 21.78065</span></span>
 <span><span class="co">#  3 0.000000      -Inf   0   3    0   NA  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#  4 2.622052 0.9639571   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#  5 2.090434 0.7373718   0   3    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#  6 1.517682 0.4171842   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
+<span><span class="co">#  4 3.044488 1.1133329   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
+<span><span class="co">#  5 1.964398 0.6751858   0   3    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
+<span><span class="co">#  6 2.107888 0.7456863   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
 <span><span class="co">#     ACTARMCD PARENT METABOLITE TRTDY  BL_CRCL                 DTC</span></span>
 <span><span class="co">#  1 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00</span></span>
 <span><span class="co">#  2 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00</span></span>
 <span><span class="co">#  3 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  4 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 12:43:00</span></span>
-<span><span class="co">#  5 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 12:43:00</span></span>
-<span><span class="co">#  6 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 15:23:00</span></span></code></pre></div>
+<span><span class="co">#  4 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 13:03:00</span></span>
+<span><span class="co">#  5 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 13:03:00</span></span>
+<span><span class="co">#  6 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 15:33:00</span></span></code></pre></div>
 <p>When the NIF object itself is printed, a summary of the data is shown
 instead:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -227,22 +221,22 @@ instead:</p>
 <span><span class="co">#  REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, BL_CRCL, DTC </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  First rows of NIF data (selected columns):</span></span>
-<span><span class="co">#  ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV                 </span></span>
-<span><span class="co">#  1    0       0       0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       0       0       RS2023       0      2     0     NA     0                  </span></span>
-<span><span class="co">#  1    0       0       0       RS2023487A   0      3     0     NA     0                  </span></span>
-<span><span class="co">#  1    1.5     2.117   2.117   RS2023       0      2     0     500    2.62205160840749   </span></span>
-<span><span class="co">#  1    1.5     2.117   2.117   RS2023487A   0      3     0     500    2.09043431213051   </span></span>
-<span><span class="co">#  1    4       4.783   4.783   RS2023       0      2     0     500    1.51768201471153   </span></span>
-<span><span class="co">#  1    4       4.783   4.783   RS2023487A   0      3     0     500    7.76612564970058   </span></span>
-<span><span class="co">#  1    0       24      0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       48      0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       72      0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       96      0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       120     0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       144     0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       168     0       RS2023       1      1     500   500    NA                 </span></span>
-<span><span class="co">#  1    0       192     0       RS2023       1      1     500   500    NA</span></span></code></pre></div>
+<span><span class="co">#  ID   NTIME   TIME   TAD    ANALYTE      EVID   CMT   AMT   DOSE   DV                 </span></span>
+<span><span class="co">#  1    0       0      0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       0      0      RS2023       0      2     0     NA     0                  </span></span>
+<span><span class="co">#  1    0       0      0      RS2023487A   0      3     0     NA     0                  </span></span>
+<span><span class="co">#  1    1.5     2.45   2.45   RS2023       0      2     0     500    3.0444883980221    </span></span>
+<span><span class="co">#  1    1.5     2.45   2.45   RS2023487A   0      3     0     500    1.96439794067082   </span></span>
+<span><span class="co">#  1    4       4.95   4.95   RS2023       0      2     0     500    2.10788754762196   </span></span>
+<span><span class="co">#  1    4       4.95   4.95   RS2023487A   0      3     0     500    6.33869818154998   </span></span>
+<span><span class="co">#  1    0       24     0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       48     0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       72     0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       96     0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       120    0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       144    0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       168    0      RS2023       1      1     500   500    NA                 </span></span>
+<span><span class="co">#  1    0       192    0      RS2023       1      1     500   500    NA</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploration">EXPLORATION<a class="anchor" aria-label="anchor" href="#exploration"></a>
@@ -292,7 +286,7 @@ normal renal function or impaired renal function:</p>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Treatment duration overview:</span></span>
 <span><span class="co">#  PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#  RS2023   15    50    37.5   39</span></span></code></pre></div>
+<span><span class="co">#  RS2023   53    100   79.1   79.5</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the summary:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -335,11 +329,11 @@ the administered dose:</p>
 <tbody>
 <tr class="odd">
 <td align="right">250</td>
-<td align="right">257</td>
+<td align="right">429</td>
 </tr>
 <tr class="even">
 <td align="right">500</td>
-<td align="right">2740</td>
+<td align="right">5897</td>
 </tr>
 </tbody>
 </table>
@@ -347,7 +341,7 @@ the administered dose:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#   [1]  2 21 23 24 36 40 51 64 66 67 69 74 80</span></span></code></pre></div>
+<span><span class="co">#   [1]  2  5 18 21 41 43 51 57 61 64 75 77 79</span></span></code></pre></div>
 <p>Let’s have a plot of the doses over time in these subjects:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>

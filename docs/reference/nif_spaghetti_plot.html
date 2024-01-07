@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.13</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,10 @@
 <span>  group <span class="op">=</span> <span class="st">"ANALYTE"</span>,</span>
 <span>  nominal_time <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  tad <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  analyte <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  dose <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -89,9 +92,21 @@ rather than TIME.</p></dd>
 should be plotted.</p></dd>
 
 
+<dt>dose</dt>
+<dd><p>The dose(s) to filter for as numeric.</p></dd>
+
+
 <dt>analyte</dt>
 <dd><p>The analyte as character. If NULL (default), all analytes will
 be plotted.</p></dd>
+
+
+<dt>max_x</dt>
+<dd><p>The maximal value for the x scale as numeric.</p></dd>
+
+
+<dt>log</dt>
+<dd><p>Boolean to define whether y axis is plotted on the log scale.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -107,6 +122,11 @@ be plotted.</p></dd>
 <span class="r-plt img"><img src="nif_spaghetti_plot-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">nif_spaghetti_plot</span><span class="op">(</span><span class="va">examplinib_sad_nif</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="nif_spaghetti_plot-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">nif_spaghetti_plot</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="nif_spaghetti_plot-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">nif_spaghetti_plot</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span>, tad <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  dose <span class="op">=</span> <span class="fl">500</span>, log <span class="op">=</span> <span class="cn">TRUE</span>, points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="nif_spaghetti_plot-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
