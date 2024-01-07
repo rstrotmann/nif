@@ -13,8 +13,10 @@ nif_spaghetti_plot(
   tad = FALSE,
   dose = NULL,
   analyte = NULL,
+  min_x = NULL,
   max_x = NULL,
-  log = FALSE
+  log = FALSE,
+  point_size = 2
 )
 }
 \arguments{
@@ -37,9 +39,13 @@ should be plotted.}
 \item{analyte}{The analyte as character. If NULL (default), all analytes will
 be plotted.}
 
+\item{min_x}{The minimal value for the x scale as numeric.}
+
 \item{max_x}{The maximal value for the x scale as numeric.}
 
 \item{log}{Boolean to define whether y axis is plotted on the log scale.}
+
+\item{point_size}{the point size as numeric.}
 }
 \value{
 A ggplot2 plot object.

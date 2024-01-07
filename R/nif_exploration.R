@@ -254,8 +254,10 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #' @param analyte The analyte as character. If NULL (default), all analytes will
 #'   be plotted.
 #' @param dose The dose(s) to filter for as numeric.
+#' @param min_x The minimal value for the x scale as numeric.
 #' @param max_x The maximal value for the x scale as numeric.
 #' @param log Boolean to define whether y axis is plotted on the log scale.
+#' @param point_size the point size as numeric.
 #'
 #' @return A ggplot2 plot object.
 #' @import assertr
@@ -270,7 +272,8 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 nif_spaghetti_plot <- function(obj,
                                points = FALSE, lines = TRUE, group = "ANALYTE",
                                nominal_time = FALSE, tad = FALSE, dose = NULL,
-                               analyte = NULL, max_x=NULL, log = FALSE) {
+                               analyte = NULL, min_x = NULL, max_x = NULL,
+                               log = FALSE, point_size = 2) {
 
   if (!is.null(dose)) {
     obj <- obj %>%
@@ -278,6 +281,10 @@ nif_spaghetti_plot <- function(obj,
 
   if(is.null(max_x)) {
     max_x <- max_observation_time(obj)}
+
+  if(is.null(min_x)) {
+    min_x = 0
+  }
 
   x <- obj %>%
     index_dosing_interval() %>%
@@ -341,9 +348,10 @@ nif_spaghetti_plot <- function(obj,
 
   p +
     {if (lines) geom_line(na.rm = TRUE)} +
-    {if (points) geom_point(na.rm = TRUE)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size)} +
     {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     {if (log == TRUE) scale_y_log10()} +
+    xlim(min_x, max_x) +
     labs(color = group) +
     ggplot2::theme_bw() +
     labs(x = x_label) +
