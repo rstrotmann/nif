@@ -1052,7 +1052,7 @@ make_nif <- function(
     sdtm_data,
     spec = NULL,
     silent = FALSE,
-    truncate_to_last_observation = FALSE,
+    truncate_to_last_observation = TRUE,
     truncate_to_last_individual_obs = FALSE,
     use_pctptnum = FALSE,
     analyte_cmt_mapping = NULL) {
@@ -1328,11 +1328,15 @@ compress_nif <- function(nif, ...) {
 #' Generic function for compress
 #'
 #' @param nif A NIF data set object.
-#' @param fields Fields to be kept as character.
+#' @param fields Fields to be included as character. If 'fields' is NULL
+#' (default), the fields defined in `standard_nif_fields` plus all fields with
+#' a name that starts with 'BL_' (baseline covariates) are included.
+#' @param debug Boolean to indicate whether the debug fields, `PCREFID` and
+#' `EXSEQ` should be included in the NIF data set.
 #'
 #' @return A NIF data set object.
 #' @export
-compress <- function(nif, fields = standard_nif_fields) {
+compress <- function(nif, fields = standard_nif_fields, debug = TRUE) {
   UseMethod("compress")
 }
 
@@ -1343,14 +1347,19 @@ compress <- function(nif, fields = standard_nif_fields) {
 #' @param fields Fields to be included as character. If 'fields' is NULL
 #' (default), the fields defined in `standard_nif_fields` plus all fields with
 #' a name that starts with 'BL_' (baseline covariates) are included.
+#' @param debug Boolean to indicate whether the debug fields, `PCREFID` and
+#' `EXSEQ` should be included in the NIF data set.
 #'
 #' @return A NIF data set object.
 #' @export
-compress.nif <- function(nif, fields = NULL) {
+compress.nif <- function(nif, fields = NULL, debug = TRUE) {
   if (is.null(fields)) {
     fields <- c(
       standard_nif_fields,
       colnames(nif)[grep("BL_", colnames(nif))])
+  }
+  if(debug == TRUE) {
+    fields <- c(fields, "EXSEQ", "PCREFID")
   }
   nif %>%
     as.data.frame() %>%

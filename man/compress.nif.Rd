@@ -4,7 +4,7 @@
 \alias{compress.nif}
 \title{Compress a NIF data set}
 \usage{
-\method{compress}{nif}(nif, fields = NULL)
+\method{compress}{nif}(nif, fields = NULL, debug = TRUE)
 }
 \arguments{
 \item{nif}{A NIF data set object.}
@@ -12,6 +12,9 @@
 \item{fields}{Fields to be included as character. If 'fields' is NULL
 (default), the fields defined in \code{standard_nif_fields} plus all fields with
 a name that starts with 'BL_' (baseline covariates) are included.}
+
+\item{debug}{Boolean to indicate whether the debug fields, \code{PCREFID} and
+\code{EXSEQ} should be included in the NIF data set.}
 }
 \value{
 A NIF data set object.
