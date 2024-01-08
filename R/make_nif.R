@@ -576,9 +576,11 @@ make_admin <- function(ex,
       EXSTDTC_has_time = has_time(EXSTDTC),
       EXENDTC_has_time = has_time(EXENDTC)
     ) %>%
+
     ### The following should be probably done after expansion!
     # filter for entries with start before cut-off
     dplyr::filter(EXSTDTC <= cut_off_date) %>%
+
     # isolate start and end dates and times
     mutate(start.date = extract_date(EXSTDTC)) %>%
     dplyr::mutate(start.time = case_when(
@@ -608,6 +610,7 @@ make_admin <- function(ex,
     dplyr::mutate(EXDY = EXSTDY + (row_number() - 1)) %>%
     dplyr::ungroup() %>%
     mutate(DTC = compose_dtc(date, time)) %>%
+
     # set treatment, standard fields
     dplyr::mutate(
       NTIME = 0, DV = NA, LNDV = NA, DOSE = EXDOSE, AMT = EXDOSE,
@@ -621,7 +624,6 @@ make_admin <- function(ex,
     ## This needs to be resolved in the future!!
 
     mutate(CMT = 1)
-    # mutate(ANALYTE = PCTESTCD)
 
   return(as.data.frame(ret))
 }
@@ -1202,11 +1204,6 @@ make_nif <- function(
     ))
   }
 
-  # impute administration times
-  # if (impute_administration_time == TRUE) {
-  #   admin <- impute_administration_time(admin, obs)
-  # }
-
   # calculate age from birthday and informed consent signature date
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
@@ -1216,8 +1213,7 @@ make_nif <- function(
       dplyr::select(-age1)
   }
 
-  ## assemble NIF data set from administrations and observations and baseline
-  #    data.
+  ## assemble NIF data set from admin and obs and baseline data.
   nif <- obs %>%
     dplyr::bind_rows(
       admin %>%
@@ -1225,12 +1221,15 @@ make_nif <- function(
     ) %>%
     dplyr::left_join(dm, by = c("USUBJID", "STUDYID")) %>%
     dplyr::left_join(bl_cov, by = "USUBJID") %>%
+
     # filter out rows without parent information
     dplyr::filter(PARENT != "") %>%
+
     # filter out observations without administration
     dplyr::group_by(USUBJID, PARENT) %>%
     dplyr::filter(sum(AMT) != 0) %>%
     dplyr::ungroup() %>%
+
     # identify first administration per PARENT and first treatment overall
     group_by(USUBJID, PARENT) %>%
     mutate(FIRSTADMINDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
@@ -1243,7 +1242,7 @@ make_nif <- function(
     tidyr::fill(DOSE, .direction = "down") %>%
     tidyr::fill(any_of(c(
       "AGE", "SEX", "RACE", "ETHNIC", "ACTARMCD", "HEIGHT",
-      "WEIGHT", "COUNTRY", "ARM", "SUBJID"
+      "WEIGHT", "COUNTRY", "ARM", "SUBJID", "EXSEQ"
     )), .direction = "down") %>%
     dplyr::ungroup() %>%
     add_time() %>%

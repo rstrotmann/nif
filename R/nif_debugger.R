@@ -3,8 +3,9 @@
 #' @param nif A NIF data set.
 #'
 #' @return Nothing
+#' @import DT
 #' @export
-nif_debugger <- function(nif, analyte = NULL) {
+nif_debugger <- function(nif, sdtm, analyte = NULL) {
   if(is.null(analyte)) {
     analyte = guess_analyte(nif)
   }
@@ -52,14 +53,17 @@ nif_debugger <- function(nif, analyte = NULL) {
         choices = doses, selected = doses[[1]]))
     ),
     shiny::fluidRow(
-      dataTableOutput("pc_tqble")
+      style = "padding:10px; spacing:10",
+      DTOutput("nif_table"),
+      DTOutput("ex_table"),
+      DTOutput("pc_table")
     )
   )
 
 
   ## server
   nif_debugger.server <- function(input, output, session) {
-    id <- reactiveVal()
+    id <- reactiveVal(nif %>% filter(row_number()==1))
     # id <- NULL
 
     observeEvent(
@@ -72,29 +76,40 @@ nif_debugger <- function(nif, analyte = NULL) {
     )
 
     output$plot_nif <- shiny::renderPlot({
-        # suppressWarnings(print(
-          nif %>%
-            filter(DOSE == input$dose) %>%
-            # nif_spaghetti_plot(
-            #   tad = TRUE, points = TRUE, lines = FALSE, log = TRUE,
-            #   point_size=4, min_x = input$min_x, max_x = input$max_x) +
-            # theme(legend.position = "none")
-            filter(TAD >= input$min_x, TAD <= input$max_x) %>%
-            ggplot(aes(x=TAD, y=DV)) +
-            geom_point(size=4, alpha=.3) +
-            scale_y_log10() +
-            theme_bw()
-        # ))
-        },
+      nif %>%
+        filter(DOSE == input$dose) %>%
+        filter(TAD >= input$min_x, TAD <= input$max_x) %>%
+        ggplot(aes(x=TAD, y=DV, color=!(REF %in% (id() %>% pull(REF))))) +
+        geom_point(size=4, alpha=.8) +
+        scale_y_log10() +
+        theme_bw() +
+        theme(legend.position = "none")},
         height = 350)
 
-    output$pc_tqble <- renderDataTable(id())
+    output$ex_table <- renderDT(
+        sdtm$ex %>%
+          filter(USUBJID %in% (id() %>% pull(USUBJID))) %>%
+          filter(EXSEQ %in% (id() %>% pull(EXSEQ))) %>%
+          filter(EXTRT %in% (id() %>% pull(EXTRT))),
+        options = list(dom = '')
+    )
+
+    output$nif_table <- renderDT(
+      id() %>%
+        mutate(across(where(is.numeric), signif, 2)),
+      options = list(dom = '')
+    )
+
+    output$pc_table <- renderDT(
+        sdtm$pc %>%
+        filter(PCREFID %in% (id() %>% pull(PCREFID))),
+        options = list(dom = '')
+    )
 
     observeEvent(input$plot_nif_click, {
       temp <- nearPoints(nif, input$plot_nif_click, addDist=T)
-      id(temp %>% select(USUBJID, PCREFID, EXSEQ))
-      # print(id$PCREFID)
-      # output$pc_table <- renderTable(as.data.frame(id))
+      # id(as.data.frame(temp %>% select(USUBJID, PCREFID, EXSEQ)))
+      id(as.data.frame(temp))
     })
   }
 
