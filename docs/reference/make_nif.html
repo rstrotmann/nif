@@ -63,7 +63,7 @@ For a more in-depth tutorial, see <code><a href="../articles/nif-vignette.html">
 <span>  <span class="va">sdtm_data</span>,</span>
 <span>  spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  truncate_to_last_observation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  truncate_to_last_observation <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  truncate_to_last_individual_obs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  use_pctptnum <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  analyte_cmt_mapping <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -167,6 +167,7 @@ treatment for the respective subject.</p></li>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">make_nif</span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No specimen specified. Set to PLASMA as the most likely.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Data cut-off was set to last observation time, 2001-02-18 10:27:00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NONMEM input file (NIF) data set with data from 1 studies</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 680 observations from 20 subjects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 12, females: 8 (40%)</span>
@@ -193,6 +194,7 @@ treatment for the respective subject.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    72      72     72    RS2023    0      2     0     500    0.0314527380498496   </span>
 <span class="r-in"><span><span class="fu">make_nif</span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No specimen specified. Set to PLASMA as the most likely.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Data cut-off was set to last observation time, 2001-05-05 14:16:00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NONMEM input file (NIF) data set with data from 1 studies</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1344 observations from 80 subjects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 46, females: 34 (42.5%)</span>

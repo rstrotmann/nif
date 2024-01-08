@@ -369,7 +369,8 @@ from the DM domain and merged into the data table. Baseline WEIGHT and
 HEIGHT are taken from the VS domain.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm_expl</span><span class="op">)</span></span>
-<span><span class="co">## No specimen specified. Set to PLASMA as the most likely.</span></span></code></pre></div>
+<span><span class="co">## No specimen specified. Set to PLASMA as the most likely.</span></span>
+<span><span class="co">## Data cut-off was set to last observation time, 2001-02-18 10:27:00</span></span></code></pre></div>
 <p>The output of the above code informs that there may be
 pharmacokinetic data for multiple specimens in the PC domain, e.g.,
 “PLASMA” and “URINE” or “FECES”. As no specimem was defined,
@@ -489,7 +490,11 @@ some non-graphical output:</p>
 <span>   <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-15-1.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-2.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-3.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-4.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-5.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-6.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-7.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-8.png" width="288"></p>
 </div>
 <div class="section level3">
@@ -501,12 +506,16 @@ The below shows some examples for common exploratory tasks.</p>
 <p>In the simplest exploratory plot, all analytes are shown over
 time:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-16-1.png" width="480"></p>
 <p>To check the integrity of the data set, if often makes sense to plot
 the analyte concentrations over time-after-dose (TAD).</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/add_tad.html">add_tad</a></span><span class="op">(</span><span class="op">)</span>, tad<span class="op">=</span><span class="cn">T</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/add_tad.html">add_tad</a></span><span class="op">(</span><span class="op">)</span>, tad<span class="op">=</span><span class="cn">T</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span><span class="op">)</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <p>Modifiers to the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allow common
 adjustments. To show, e.g., the food effect on the parent compound,
@@ -519,7 +528,9 @@ showing the nominal time instead of the actual time:</p>
 <span>     max_x<span class="op">=</span><span class="fl">24</span>,</span>
 <span>     mean<span class="op">=</span><span class="cn">FALSE</span>,</span>
 <span>     points<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
+<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-18-1.png" width="480"></p>
 <p>The following shows the mean plasma concentration profiles aver all
 subjects, over 24 h by the food status:</p>

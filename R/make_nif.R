@@ -692,18 +692,7 @@ make_obs <- function(pc,
   # Assertions
   pc %>% verify(has_all_names("PCSPEC", "PCDTC", "PCSTRESN", "PCTESTCD"))
 
-  # Filter for specific specimen, guess specimen if none defined
-  # pcspecs <- unique(pc$PCSPEC)
-  # standard_specs <- c(
-  #   "PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
-  #   "BLOOD", "Blood", "blood"
-  # )
   if (length(spec) == 0) {
-    # spec <- standard_specs[standard_specs %in% pcspecs][1]
-    # conditional_message("No specimen specified. Set to ", spec,
-    #   " as the most likely.", "\n",
-    #   silent = silent
-    # )
     spec <- guess_spec(pc)
   }
 
@@ -1358,7 +1347,7 @@ compress.nif <- function(nif, fields = NULL, debug = TRUE) {
       colnames(nif)[grep("BL_", colnames(nif))])
   }
   if(debug == TRUE) {
-    fields <- c(fields, "EXSEQ", "PCREFID")
+    fields <- c(fields, "EXSEQ", "PCREFID", "EXTRT")
   }
   nif %>%
     as.data.frame() %>%

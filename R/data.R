@@ -57,5 +57,20 @@
 "examplinib_fe_nif"
 
 
+#' SDTM Domain Model variables
+#'
+#' An overview on the variables included in the SDTM specification.
+#'
+#' @format
+#' A data frame with 1969 rows:
+#' \describe{
+#'  \item{DOMAIN}{Domain name}
+#'  \item{VARNAM}{Variable name}
+#'  \item{VARLABEL}{Long-form variable name}
+#'  \item{DEFTYPE}{Variable type}
+#'  \item{LENGTH}{Length of variable}
+#'  \item{CORE}{Level of requiredness}
+#' }
+"sdtm_domain_model"
 
 

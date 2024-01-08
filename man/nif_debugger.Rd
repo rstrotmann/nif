@@ -4,10 +4,15 @@
 \alias{nif_debugger}
 \title{Title}
 \usage{
-nif_debugger(nif, analyte = NULL)
+nif_debugger(nif_data, sdtm_data, analyte = NULL)
 }
 \arguments{
-\item{nif}{A NIF data set.}
+\item{nif_data}{A NIF data set.}
+
+\item{sdtm_data}{The underlying SDTM data set.}
+
+\item{analyte}{The analyte as character. If NULL (default), the most likely
+analyte will be selected.}
 }
 \value{
 Nothing

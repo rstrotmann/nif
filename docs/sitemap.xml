@@ -349,6 +349,9 @@
     <loc>/reference/nif-package.html</loc>
   </url>
   <url>
+    <loc>/reference/nif_debugger.html</loc>
+  </url>
+  <url>
     <loc>/reference/nif_mean_plot.html</loc>
   </url>
   <url>
@@ -401,6 +404,9 @@
   </url>
   <url>
     <loc>/reference/rich_sampling_sbs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sdtm_domain_model.html</loc>
   </url>
   <url>
     <loc>/reference/standard_nif_fields.html</loc>
