@@ -1,4 +1,8 @@
-#' Title
+#' NIF file debugger
+#'
+#' This shiny app helps identifying suspicious data in the NIF data set. This
+#' may be due to missing data in the underlying SDTM data set or bad imputations
+#' during the generation of the NIF data set.
 #'
 #' @param nif_data A NIF data set.
 #' @param sdtm_data The underlying SDTM data set.
@@ -6,7 +10,7 @@
 #' analyte will be selected.
 #'
 #' @return Nothing
-#' @importFrom DT dataTableOutput renderDataTable
+#' @import DT
 #' @import shiny
 #' @importFrom shinyjs useShinyjs enable disable
 #' @export
@@ -66,6 +70,9 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
       DT::DTOutput("nif_table"),
       DT::DTOutput("ex_table"),
       DT::DTOutput("pc_table")
+      # shiny::dataTableOutput("nif_table"),
+      # shiny::dataTableOutput("ex_table"),
+      # shiny::dataTableOutput("pc_table")
     )
   )
 
@@ -99,6 +106,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
         height = 350)
 
     output$nif_table <- DT::renderDT(
+    # output$nif_table <- shiny::renderDataTable(
       nif %>%
         mutate_at(c("TIME", "TAD", "LNDV"), round, 2) %>%
         filter(
@@ -108,6 +116,8 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
     )
 
     output$ex_table <- DT::renderDT(
+    # output$ex_table <- shiny::renderDataTable(
+
         sdtm_data$ex %>%
           filter(USUBJID %in% (id() %>% pull(USUBJID))) %>%
           filter(EXSEQ %in% (id() %>% pull(EXSEQ))) %>%
@@ -116,6 +126,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
     )
 
     output$pc_table <- DT::renderDT(
+    # output$pc_table <- shiny::renderDataTable(
         sdtm_data$pc %>% filter(PCREFID %in% (id() %>% pull(PCREFID))),
         options = list(dom = '')
     )
