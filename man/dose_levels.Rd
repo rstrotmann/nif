@@ -2,26 +2,26 @@
 % Please edit documentation in R/nif_class.R
 \name{dose_levels}
 \alias{dose_levels}
-\title{Dose levels}
+\title{Dose levels within a NIF object}
 \usage{
-dose_levels(obj, grouping = NULL)
+dose_levels(obj, group = NULL)
 }
 \arguments{
-\item{obj}{A nif object.}
+\item{obj}{A NIF object.}
 
-\item{grouping}{Further fields to be included (and to be grouped by) in the
+\item{group}{Further fields to be included (and to be grouped by) in the
 output.}
 }
 \value{
-A data frame
+A data frame.
 }
 \description{
-In studies with multiple administrations, dose modifications may occur. The
-\code{dose_levels()} function only summarizes the initial (i.e., the first)
-administrations.
+This function summarizes the doses in the individual first administration
+by subject and drug, and the number of subjectes treated at this dose level.
+Subsequent dose modifications are ignored.
 }
 \examples{
 dose_levels(examplinib_fe_nif)
-dose_levels(examplinib_fe_nif, grouping = "SEX")
-dose_levels(examplinib_fe_nif, grouping = c("SEX", "FASTED"))
+dose_levels(examplinib_fe_nif, group = "SEX")
+dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
 }

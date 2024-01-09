@@ -7,7 +7,7 @@
 dose_red_sbs(obj, analyte = NULL)
 }
 \arguments{
-\item{obj}{A NIF data set object.}
+\item{obj}{A NIF object object.}
 
 \item{analyte}{The analyte of interest as string. considers all analytes if
 analyte is NULL (default).}

@@ -7,7 +7,7 @@
 \method{plot}{summary_nif}(x, ...)
 }
 \arguments{
-\item{x}{A NIF data set.}
+\item{x}{A NIF object.}
 
 \item{...}{Further arguments.}
 }

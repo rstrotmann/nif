@@ -7,7 +7,7 @@
 get_cov_plot_params(field)
 }
 \arguments{
-\item{field}{The field of the NIF data set}
+\item{field}{The field of the NIF object}
 }
 \value{
 A data frame.

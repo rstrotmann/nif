@@ -7,10 +7,10 @@
 add_trtdy(obj)
 }
 \arguments{
-\item{obj}{The NIF data set as data frame.}
+\item{obj}{The NIF object as data frame.}
 }
 \value{
-The updated NIF data set as data frame.
+The updated NIF object as data frame.
 }
 \description{
 Add treatment day

@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_bl_lab}
 \alias{add_bl_lab}
-\title{Add baseline covariates to a NIF data set}
+\title{Add baseline covariates to a NIF object}
 \usage{
 add_bl_lab(obj, lb, lbtestcd, lbspec = "", silent = FALSE)
 }

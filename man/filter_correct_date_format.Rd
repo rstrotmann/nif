@@ -2,12 +2,13 @@
 % Please edit documentation in R/sdtm_exploration.R
 \name{filter_correct_date_format}
 \alias{filter_correct_date_format}
-\title{Filter out any rows containing DTC rows with incomplete data format}
+\title{Filter out any rows containing DTC rows with incomplete data format as per
+ISO 8601}
 \usage{
 filter_correct_date_format(obj, verbose = TRUE, silent = FALSE)
 }
 \arguments{
-\item{obj}{The SDTM domain as data frame}
+\item{obj}{The SDTM domain as data frame.}
 
 \item{verbose}{Boolean to indicate whether to include details.}
 
@@ -17,5 +18,6 @@ filter_correct_date_format(obj, verbose = TRUE, silent = FALSE)
 The filtered SDTM domain as data frame.
 }
 \description{
-Filter out any rows containing DTC rows with incomplete data format
+Filter out any rows containing DTC rows with incomplete data format as per
+ISO 8601
 }

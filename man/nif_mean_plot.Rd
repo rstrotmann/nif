@@ -7,7 +7,7 @@
 nif_mean_plot(x, points = FALSE, lines = TRUE, group = "ANALYTE")
 }
 \arguments{
-\item{x}{The NIF data set.}
+\item{x}{The NIF object.}
 
 \item{points}{Boolean to indicate whether points should be drawn.}
 

@@ -7,13 +7,13 @@
 add_bl_crcl(obj, method = egfr_cg)
 }
 \arguments{
-\item{obj}{A NIF data set.}
+\item{obj}{A NIF object.}
 
 \item{method}{The function to calculate eGFR (CrCL) from serum creatinine.
 Currently either: egfr_mdrd, egfr_cg or egfr_raynaud}
 }
 \value{
-A NIF data set.
+A NIF object.
 }
 \description{
 Add baseline creatinine clearance field.

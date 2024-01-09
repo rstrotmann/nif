@@ -20,7 +20,7 @@ make_obs(
 
 \item{time_mapping}{The time mapping.}
 
-\item{spec}{The specimen to be represented in the NIF data set as string
+\item{spec}{The specimen to be represented in the NIF object as string
 (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 or "PLASMA" is selected, depending what is found in the PC data.}

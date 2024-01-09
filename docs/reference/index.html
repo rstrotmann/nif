@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.14</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
           
           <code><a href="add_bl_lab.html">add_bl_lab()</a></code> 
         </dt>
-        <dd>Add baseline covariates to a NIF data set</dd>
+        <dd>Add baseline covariates to a NIF object</dd>
       </dl><dl><dt>
           
           <code><a href="add_bl_renal.html">add_bl_renal()</a></code> 
@@ -87,7 +87,7 @@
           
           <code><a href="add_dose_level.html">add_dose_level()</a></code> 
         </dt>
-        <dd>Add a dose level (<code>DL</code>) column to NIF data set.</dd>
+        <dd>Add a dose level (<code>DL</code>) column to NIF object.</dd>
       </dl><dl><dt>
           
           <code><a href="add_lab_covariate.html">add_lab_covariate()</a></code> 
@@ -152,7 +152,7 @@
           
           <code><a href="baseline_covariates.html">baseline_covariates()</a></code> 
         </dt>
-        <dd>Impute missing administration times</dd>
+        <dd>Extract baseline vital sign covariates from VS</dd>
       </dl><dl><dt>
           
           <code><a href="bmi_by_age.html">bmi_by_age()</a></code> 
@@ -162,12 +162,13 @@
           
           <code><a href="check_date_format.html">check_date_format()</a></code> 
         </dt>
-        <dd>Check for incomplete date format in columns ending with "DTC"</dd>
+        <dd>Check for incomplete date format as per ISO 8601 in columns ending with 'DTC'</dd>
       </dl><dl><dt>
           
           <code><a href="check_date_time_format.html">check_date_time_format()</a></code> 
         </dt>
-        <dd>Check for incomplete date-time format in columns ending with "DTC"</dd>
+        <dd>Check for incomplete date-time format in columns ending with "DTC"as per
+ISO 8601</dd>
       </dl><dl><dt>
           
           <code><a href="check_last_exendtc.html">check_last_exendtc()</a></code> 
@@ -182,12 +183,12 @@
           
           <code><a href="check_sdtm.html">check_sdtm()</a></code> 
         </dt>
-        <dd>Check SDTM domains for missing date time information.</dd>
+        <dd>Check SDTM domains DM, EX and PC for missing date and time information.</dd>
       </dl><dl><dt>
           
           <code><a href="clip_nif.html">clip_nif()</a></code> 
         </dt>
-        <dd>This function reduces a NIF data set on the subject level by excluding all
+        <dd>Reduce a NIF object on the subject level by excluding all
 administrations after the last observation</dd>
       </dl><dl><dt>
           
@@ -201,14 +202,9 @@ administrations after the last observation</dd>
         <dd>Generic function for compress</dd>
       </dl><dl><dt>
           
-          <code><a href="compress.nif.html">compress(<i>&lt;nif&gt;</i>)</a></code> 
-        </dt>
-        <dd>Compress a NIF data set</dd>
-      </dl><dl><dt>
-          
           <code><a href="compress_nif.html">compress_nif()</a></code> 
         </dt>
-        <dd>This function removes columns from a NIF data set that are not needed for
+        <dd>This function removes columns from a NIF object that are not needed for
 downstream analysis</dd>
       </dl><dl><dt>
           
@@ -244,7 +240,7 @@ downstream analysis</dd>
           
           <code><a href="dose_levels.html">dose_levels()</a></code> 
         </dt>
-        <dd>Dose levels</dd>
+        <dd>Dose levels within a NIF object</dd>
       </dl><dl><dt>
           
           <code><a href="dose_lin.html">dose_lin()</a></code> 
@@ -350,7 +346,8 @@ sampling</dd>
           
           <code><a href="filter_correct_date_format.html">filter_correct_date_format()</a></code> 
         </dt>
-        <dd>Filter out any rows containing DTC rows with incomplete data format</dd>
+        <dd>Filter out any rows containing DTC rows with incomplete data format as per
+ISO 8601</dd>
       </dl><dl><dt>
           
           <code><a href="get_cov_plot_params.html">get_cov_plot_params()</a></code> 
@@ -360,7 +357,7 @@ sampling</dd>
           
           <code><a href="guess_analyte.html">guess_analyte()</a></code> 
         </dt>
-        <dd>Guess the most likely meant analyte</dd>
+        <dd>Guess the most likely analyte based on its prevalence in the NIF object</dd>
       </dl><dl><dt>
           
           <code><a href="guess_spec.html">guess_spec()</a></code> 
@@ -415,7 +412,7 @@ sampling</dd>
           
           <code><a href="index_nif.html">index_nif()</a></code> 
         </dt>
-        <dd>This function orders a NIF data set and adds a REF field</dd>
+        <dd>This function orders a NIF object and adds a REF field</dd>
       </dl><dl><dt>
           
           <code><a href="index_rich_sampling_intervals.html">index_rich_sampling_intervals()</a></code> 
@@ -500,7 +497,7 @@ sampling</dd>
           
           <code><a href="make_nif.html">make_nif()</a></code> 
         </dt>
-        <dd>Make a NIF data set from SDTM-formatted data</dd>
+        <dd>Make a NIF object from SDTM-formatted data</dd>
       </dl><dl><dt>
           
           <code><a href="make_obs.html">make_obs()</a></code> 
@@ -580,7 +577,7 @@ sampling</dd>
           
           <code><a href="nif_debugger.html">nif_debugger()</a></code> 
         </dt>
-        <dd>Title</dd>
+        <dd>NIF file debugger</dd>
       </dl><dl><dt>
           
           <code><a href="nif_mean_plot.html">nif_mean_plot()</a></code> 
@@ -615,7 +612,7 @@ sampling</dd>
           
           <code><a href="plot.nif.html">plot(<i>&lt;nif&gt;</i>)</a></code> 
         </dt>
-        <dd>Plot NIF data set</dd>
+        <dd>Plot NIF object</dd>
       </dl><dl><dt>
           
           <code><a href="plot.summary_nif.html">plot(<i>&lt;summary_nif&gt;</i>)</a></code> 
@@ -725,7 +722,7 @@ sampling</dd>
           
           <code><a href="summary.nif.html">summary(<i>&lt;nif&gt;</i>)</a></code> 
         </dt>
-        <dd>NIF data set overview</dd>
+        <dd>NIF object overview</dd>
       </dl><dl><dt>
           
           <code><a href="summary.sdtm.html">summary(<i>&lt;sdtm&gt;</i>)</a></code> 

@@ -2,18 +2,21 @@
 % Please edit documentation in R/sdtm_exploration.R
 \name{check_date_format}
 \alias{check_date_format}
-\title{Check for incomplete date format in columns ending with "DTC"}
+\title{Check for incomplete date format as per ISO 8601 in columns ending with 'DTC'}
 \usage{
 check_date_format(obj, verbose = TRUE)
 }
 \arguments{
-\item{obj}{The SDTM domain as data frame}
+\item{obj}{The SDTM domain as data frame.}
 
-\item{verbose}{Boolean to indicate whether to include details.}
+\item{verbose}{Boolean to indicate whether to issue message output.}
 }
 \value{
-The unchanged SDTM domain.
+The (unchanged) SDTM domain.
 }
 \description{
-Check for incomplete date format in columns ending with "DTC"
+Check for incomplete date format as per ISO 8601 in columns ending with 'DTC'
+}
+\examples{
+ex <- check_date_format(examplinib_poc$ex)
 }

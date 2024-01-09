@@ -7,7 +7,7 @@
 index_rich_sampling_intervals(obj, analyte = NA, min_n = 4)
 }
 \arguments{
-\item{obj}{The NIF data set.}
+\item{obj}{The NIF object.}
 
 \item{analyte}{The analyte as character. If \code{NA} (default), the most likely
 will be selected automatically.}
@@ -16,7 +16,7 @@ will be selected automatically.}
 sampling.}
 }
 \value{
-A new NIF data set.
+A new NIF object.
 }
 \description{
 Currently experimental. Don't use in production!

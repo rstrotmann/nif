@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_debugger.R
 \name{nif_debugger}
 \alias{nif_debugger}
-\title{Title}
+\title{NIF file debugger}
 \usage{
 nif_debugger(nif_data, sdtm_data, analyte = NULL)
 }
@@ -18,5 +18,7 @@ analyte will be selected.}
 Nothing
 }
 \description{
-Title
+This shiny app helps identifying suspicious data in the NIF data set. This
+may be due to missing data in the underlying SDTM data set or bad imputations
+during the generation of the NIF data set.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_dose_level}
 \alias{add_dose_level}
-\title{Add a dose level (\code{DL}) column to NIF data set.}
+\title{Add a dose level (\code{DL}) column to NIF object.}
 \usage{
 add_dose_level(obj)
 }

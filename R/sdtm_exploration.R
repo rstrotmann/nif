@@ -37,13 +37,15 @@ is_iso_date <- function(x) {
 }
 
 
-#' Check for incomplete date format in columns ending with "DTC"
+#' Check for incomplete date format as per ISO 8601 in columns ending with 'DTC'
 #'
-#' @param obj The SDTM domain as data frame
-#' @param verbose Boolean to indicate whether to include details.
+#' @param obj The SDTM domain as data frame.
+#' @param verbose Boolean to indicate whether to issue message output.
 #'
-#' @return The unchanged SDTM domain.
+#' @return The (unchanged) SDTM domain.
 #' @export
+#' @examples
+#' ex <- check_date_format(examplinib_poc$ex)
 check_date_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
@@ -61,9 +63,10 @@ check_date_format <- function(obj, verbose = TRUE) {
 }
 
 
-#' Filter out any rows containing DTC rows with incomplete data format
+#' Filter out any rows containing DTC rows with incomplete data format as per
+#' ISO 8601
 #'
-#' @param obj The SDTM domain as data frame
+#' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
 #' @param silent Boolean to indicate whether message output is produced.
 #'
@@ -90,7 +93,8 @@ filter_correct_date_format <- function(obj, verbose = TRUE, silent = FALSE) {
 }
 
 
-#' Check for incomplete date-time format in columns ending with "DTC"
+#' Check for incomplete date-time format in columns ending with "DTC"as per
+#' ISO 8601
 #'
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
@@ -177,13 +181,16 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
 }
 
 
-#' Check SDTM domains for missing date time information.
+#' Check SDTM domains DM, EX and PC for missing date and time information.
 #'
 #' @param sdtm The SDTM as SDTM object.
 #' @param verbose Boolean to indicate whether to include details.
 #'
 #' @return Nothing.
 #' @export
+#' @examples
+#' check_sdtm(examplinib_poc)
+#'
 check_sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in DM
   sdtm %>%

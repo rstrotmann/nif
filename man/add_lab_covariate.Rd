@@ -7,7 +7,7 @@
 add_lab_covariate(obj, lb, lbspec = "SERUM", lbtestcd, silent = FALSE)
 }
 \arguments{
-\item{obj}{The NIF data set.}
+\item{obj}{The NIF object.}
 
 \item{lb}{The LB SDTM domain}
 
@@ -18,7 +18,7 @@ add_lab_covariate(obj, lb, lbspec = "SERUM", lbtestcd, silent = FALSE)
 \item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
-A NIF data set
+A NIF object
 }
 \description{
 This functions adds columns for the lab parameters specified in \code{lbtestcd},

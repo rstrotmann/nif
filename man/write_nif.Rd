@@ -8,7 +8,7 @@ character-separated file}
 write_nif(obj, filename = NULL, fields = NULL, sep = NULL)
 }
 \arguments{
-\item{obj}{The NIF data set.}
+\item{obj}{The NIF object.}
 
 \item{filename}{The filename as string. If not filename is specified, the
 file is printed only.}

@@ -7,7 +7,7 @@
 add_lab_observation(obj, lb, lbtestcd, cmt = NULL, lbspec = "", silent = FALSE)
 }
 \arguments{
-\item{obj}{The NIF data set.}
+\item{obj}{The NIF object.}
 
 \item{lb}{The LB SDTM domain.}
 
@@ -21,7 +21,7 @@ assigned to.}
 \item{silent}{Boolean value to indicate whether warnings should be printed.}
 }
 \value{
-The resulting NIF data set.
+The resulting NIF object.
 }
 \description{
 Add lab value as observation

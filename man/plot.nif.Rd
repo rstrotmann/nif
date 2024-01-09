@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_exploration.R
 \name{plot.nif}
 \alias{plot.nif}
-\title{Plot NIF data set}
+\title{Plot NIF object}
 \usage{
 \method{plot}{nif}(
   x,
@@ -81,7 +81,7 @@ should be plotted.}
 The plot object
 }
 \description{
-This function plots a NIF data set, grouped by the variable \code{group}. If no
+This function plots a NIF object, grouped by the variable \code{group}. If no
 grouping variable is provided, \code{DOSE} will be used.
 }
 \examples{

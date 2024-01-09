@@ -7,7 +7,7 @@
 covariate_hist(obj, field, nbins = 11)
 }
 \arguments{
-\item{obj}{The NIF data set.}
+\item{obj}{The NIF object.}
 
 \item{field}{The field of the NIF object as character.}
 

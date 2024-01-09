@@ -7,7 +7,7 @@
 max_admin_time(obj, analytes = NULL)
 }
 \arguments{
-\item{obj}{The NIF data set}
+\item{obj}{The NIF object}
 
 \item{analytes}{The analyte or analytes to filter for.}
 }

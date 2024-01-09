@@ -4,7 +4,7 @@
 #'   either the ID or the USUBJID. Administration time points are indicated with
 #'   vertical lines.
 #'
-#' @param nif The NIF data set
+#' @param nif The NIF object
 #' @param id The subject ID to be plotted
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
@@ -58,7 +58,7 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
       id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
       plot_label <- "USUBJID"
     } else {
-      stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
+      stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
     }
   }
 
@@ -133,7 +133,7 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 #'   either the ID or the USUBJID. Administration time points are indicated with
 #'   vertical lines.
 #'
-#' @param nif The NIF data set.
+#' @param nif The NIF object.
 #' @param id The subject ID to be plotted.
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
@@ -158,7 +158,7 @@ dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
     nif <- nif %>% filter(USUBJID == id)
     plot_label <- "USUBJID"
   } else {
-    stop(paste(id, "is not an ID or USUBJID contained in the NIF data set"))
+    stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
   }
 
   if (!is.null(analyte)) {
@@ -192,7 +192,7 @@ dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
 
 #' Mean plot over a selected covariate
 #'
-#' @param x The NIF data set.
+#' @param x The NIF object.
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
@@ -243,7 +243,7 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 
 #' Spaghetti plot over a selected covariate
 #'
-#' @param obj The NIF data set.
+#' @param obj The NIF object.
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
@@ -359,9 +359,9 @@ nif_spaghetti_plot <- function(obj,
 }
 
 
-#' Plot NIF data set
+#' Plot NIF object
 #'
-#' This function plots a NIF data set, grouped by the variable `group`. If no
+#' This function plots a NIF object, grouped by the variable `group`. If no
 #'   grouping variable is provided, `DOSE` will be used.
 #'
 #' @param x The NIF object to be plotted.
@@ -483,9 +483,9 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
 }
 
 
-#' NIF data set overview
+#' NIF object overview
 #'
-#' @param object The NIF data set.
+#' @param object The NIF object.
 #' @param ... Further arguments.
 # @param egfr_function The function to be used for estimation of the renal
 # function classes, see [add_bl_crcl()] for reference.
@@ -499,12 +499,6 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
 summary.nif <- function(object, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
-
-  # parents <- obj %>%
-  #   as.data.frame() %>%
-  #   distinct(PARENT) %>%
-  #   filter(PARENT != "") %>%
-  #   pull(PARENT)
   parents <- parents(object)
 
   dose_red_sbs <- lapply(
@@ -515,13 +509,6 @@ summary.nif <- function(object, ...) {
   )
   names(dose_red_sbs) <- parents
 
-  # observations <- obj %>%
-  #   as.data.frame() %>%
-  #   filter(EVID == 0) %>%
-  #   group_by(ANALYTE) %>%
-  #   summarize(N = n(), .groups = "drop") %>%
-  #   as.data.frame()
-
   observations <- object %>%
     as.data.frame() %>%
     filter(EVID == 0) %>%
@@ -529,22 +516,11 @@ summary.nif <- function(object, ...) {
     summarize(N = n(), .groups = "drop") %>%
     as.data.frame()
 
-  # n_studies <- obj %>%
-  #   as.data.frame() %>%
-  #   filter(EVID == 1) %>%
-  #   group_by(STUDYID) %>%
-  #   summarize(N = n_distinct(USUBJID))
-
   n_studies <- object %>%
     as.data.frame() %>%
     filter(EVID == 1) %>%
     group_by(across(any_of(c("STUDYID")))) %>%
     summarize(N = n_distinct(ID))
-
-  # n_sex <- obj %>%
-  #   dplyr::distinct(ID, SEX) %>%
-  #   dplyr::group_by(SEX) %>%
-  #   dplyr::summarize(n = n())
 
   n_sex <- object %>%
     dplyr::distinct(across(any_of(c("ID", "SEX")))) %>%
@@ -596,7 +572,7 @@ summary.nif <- function(object, ...) {
     n_analytes = length(analytes),
     drugs = parents,
     dose_levels = dose_levels(object,
-      grouping = any_of(c("PART", "COHORT", "GROUP"))
+      group = any_of(c("PART", "COHORT", "GROUP"))
     ),
     renal_function = renal_function,
     administration_duration = administration_summary(object)
@@ -656,7 +632,7 @@ print.summary_nif <- function(x, ...) {
 
 #' Get covariate plot parameters
 #'
-#' @param field The field of the NIF data set
+#' @param field The field of the NIF object
 #'
 #' @return A data frame.
 get_cov_plot_params <- function(field) {
@@ -683,7 +659,7 @@ get_cov_plot_params <- function(field) {
 
 #' Plot NIF summary
 #'
-#' @param x A NIF data set.
+#' @param x A NIF object.
 #' @param ... Further arguments.
 #' @return A list of ggplot objects.
 #' @export
@@ -717,7 +693,7 @@ plot.summary_nif <- function(x, ...) {
 
 #' Generic covariate distribution histogram
 #'
-#' @param obj The NIF data set.
+#' @param obj The NIF object.
 #' @param nbins The number of bins to be used if no binwidth is specified.
 #' Defaults to 11.
 #' @param field The field of the NIF object as character.
@@ -897,7 +873,7 @@ bmi_by_age <- function(obj) {
 
 #' Overview on the number of administrations in the subjects by parent
 #'
-#' @param obj A NIF data set.
+#' @param obj A NIF object.
 #'
 #' @return A data frame.
 #' @importFrom stats median
@@ -923,7 +899,7 @@ administration_summary <- function(obj) {
 #'
 #' This function plots the mean dose per day over time
 #'
-#' @param obj A NIF data set.
+#' @param obj A NIF object.
 #' @param analyte The compound as character (i.e., the ANALYTE within the data
 #'   set).
 #'

@@ -2,12 +2,12 @@
 % Please edit documentation in R/nif_exploration.R
 \name{summary.nif}
 \alias{summary.nif}
-\title{NIF data set overview}
+\title{NIF object overview}
 \usage{
 \method{summary}{nif}(object, ...)
 }
 \arguments{
-\item{object}{The NIF data set.}
+\item{object}{The NIF object.}
 
 \item{...}{Further arguments.}
 }
@@ -15,7 +15,7 @@
 A summary_nif object.
 }
 \description{
-NIF data set overview
+NIF object overview
 }
 \examples{
 summary(examplinib_poc_nif)

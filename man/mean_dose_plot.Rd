@@ -7,7 +7,7 @@
 mean_dose_plot(obj, analyte = NULL)
 }
 \arguments{
-\item{obj}{A NIF data set.}
+\item{obj}{A NIF object.}
 
 \item{analyte}{The compound as character (i.e., the ANALYTE within the data
 set).}

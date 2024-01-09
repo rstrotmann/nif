@@ -2,7 +2,8 @@
 % Please edit documentation in R/sdtm_exploration.R
 \name{check_date_time_format}
 \alias{check_date_time_format}
-\title{Check for incomplete date-time format in columns ending with "DTC"}
+\title{Check for incomplete date-time format in columns ending with "DTC"as per
+ISO 8601}
 \usage{
 check_date_time_format(obj, verbose = TRUE)
 }
@@ -15,5 +16,6 @@ check_date_time_format(obj, verbose = TRUE)
 The unchanged SDTM domain.
 }
 \description{
-Check for incomplete date-time format in columns ending with "DTC"
+Check for incomplete date-time format in columns ending with "DTC"as per
+ISO 8601
 }

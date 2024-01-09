@@ -7,10 +7,10 @@
 index_dosing_interval(obj)
 }
 \arguments{
-\item{obj}{The NIF data set.}
+\item{obj}{The NIF object.}
 }
 \value{
-A new NIF data set.
+A new NIF object.
 }
 \description{
 This function adds a column \code{DI} that indicates the dosing interval. All

@@ -669,7 +669,7 @@ guess_spec <- function(pc, silent=T) {
 #'
 #' @param pc The SDTM PC domain as a data.frame.
 #' @param time_mapping The time mapping.
-#' @param spec The specimen to be represented in the NIF data set as string
+#' @param spec The specimen to be represented in the NIF object as string
 #'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
 #'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
 #'   or "PLASMA" is selected, depending what is found in the PC data.
@@ -778,67 +778,6 @@ last_obs_dtc <- function(obs) {
 last_ex_dtc <- function(ex) {
   return(max(ex$EXENDTC, na.rm = TRUE))
 }
-
-
-#' Impute missing administration times
-#'
-#' This function fills in administration times from the PCREFDTC field when
-#'  available, and carries forward last administration dates
-#'
-#'  PCRFTDTC is the time for nominal_time=0
-#'  (ref: https://www.lexjansen.com/phuse/2016/pp/PP20.pdf)
-#'
-#' #@param admin An admin data set as created by 'make_admin()'.
-#' #@param obs An observation data set as created by 'make_obs()'.
-#' #@return An admin data set.
-#' #@import tidyr
-#' #@import dplyr
-# impute_administration_time <- function(admin, obs) {
-#   # Assertions
-#   admin %>%
-#     verify(has_all_names("USUBJID", "date", "PCTESTCD"))
-#
-#   obs %>%
-#     verify(has_all_names("DTC", "PCRFTDTC", "USUBJID", "PCTESTCD"))
-#
-#   # 'reference' is the reference time by subject, analyte and observation date.
-#   # This is the PCRFDTC that is recorded along with observations in PC, i.e.,
-#   # the date/time of administration of the IMP related to the observation. This
-#   # is a 'permissible' field as per SDTM, i.e., it cannot be expected that is is
-#   # present in the data set.
-#   reference <- obs %>%
-#     mutate(dtc.date = extract_date(DTC)) %>%
-#     mutate(ref.date = extract_date(PCRFTDTC)) %>%
-#     mutate(ref.time = extract_time(PCRFTDTC)) %>%
-#     dplyr::filter(dtc.date == ref.date) %>%
-#     dplyr::group_by(USUBJID, dtc.date, PCTESTCD) %>%
-#     dplyr::distinct(ref.time)
-#
-#   ret <- admin %>%
-#     mutate(dtc.date = extract_date(date)) %>%
-#     dplyr::left_join(reference, by = c(
-#       "USUBJID" = "USUBJID", "dtc.date" = "dtc.date",
-#       "EXTRT" = "PCTESTCD"
-#     )) %>%
-#     # take time for administration from PCREFDTC where time is not available
-#     #   from EX
-#     dplyr::mutate(admin.time = case_when(
-#       !is.na(ref.time) ~ ref.time,
-#       .default = time
-#     )) %>%
-#     mutate(admin.time = case_when(is.na(admin.time) ~ "",
-#       .default = admin.time
-#     )) %>%
-#     dplyr::group_by(USUBJID, EXTRT) %>%
-#     dplyr::arrange(date) %>%
-#     # carry forward/back last administration time
-#     tidyr::fill(admin.time, .direction = "downup") %>%
-#     dplyr::ungroup() %>%
-#     mutate(DTC = compose_dtc(date, admin.time)) %>%
-#     dplyr::select(-admin.time, -ref.time)
-#   return(ret)
-# }
-
 
 
 #' Extract baseline vital sign covariates from VS
@@ -963,7 +902,7 @@ add_time <- function(x) {
 }
 
 
-#' Make a NIF data set from SDTM-formatted data
+#' Make a NIF object from SDTM-formatted data
 #'
 #' This function makes a basic NONMEM input file (NIF) data set from
 #' SDTM-formatted clinical study data following the conventions summarized in
@@ -1202,7 +1141,7 @@ make_nif <- function(
       dplyr::select(-age1)
   }
 
-  ## assemble NIF data set from admin and obs and baseline data.
+  ## assemble NIF object from admin and obs and baseline data.
   nif <- obs %>%
     dplyr::bind_rows(
       admin %>%
@@ -1248,14 +1187,14 @@ make_nif <- function(
 }
 
 
-#' This function orders a NIF data set and adds a REF field
+#' This function orders a NIF object and adds a REF field
 #'
 #' The input data format expected by NONMEM requires all rows ordered by ID
 #' and TIME, and indexed sequentially on a subject level with a REF field.
-#' Re-indexing may be required if a NIF data set is extended, e.g., by merging
+#' Re-indexing may be required if a NIF object is extended, e.g., by merging
 #' in further data.
 #'
-#' @param nif NIF data set, e.g., as created by [make_nif()] and manually
+#' @param nif NIF object, e.g., as created by [make_nif()] and manually
 #' modified.
 #' @return The updated NIF dataset including an updated REF field.
 #' @import dplyr
@@ -1274,18 +1213,18 @@ index_nif <- function(nif) {
 }
 
 
-#' This function removes columns from a NIF data set that are not needed for
+#' This function removes columns from a NIF object that are not needed for
 #' downstream analysis
 #'
-#' During creating of a NIF data set using [make_nif()], multiple SDTM tables
+#' During creating of a NIF object using [make_nif()], multiple SDTM tables
 #' are aggregated without deleting the original fields (columns). Many of these
 #' fields may not be required for the final analysis. This function reduces the
 #' fields to those typically required in the downstream analysis. Applying
 #' [compress_nif()] is typically the last step in the creation of a NIF data
-#' set, after creating the basic NIF data set  with [make_nif()] and applying
+#' set, after creating the basic NIF object  with [make_nif()] and applying
 #' custom imputations and manually deriving convariates as needed.
 #'
-#' @param nif A NIF data set.
+#' @param nif A NIF object.
 #'
 #' @param ... Further optional parameters are fields to be included in the
 #'  output. If none are provided, the standard set will be used.
@@ -1315,32 +1254,32 @@ compress_nif <- function(nif, ...) {
 
 #' Generic function for compress
 #'
-#' @param nif A NIF data set object.
+#' param nif A NIF object object.
+#' param fields Fields to be included as character. If 'fields' is NULL
+#' (default), the fields defined in `standard_nif_fields` plus all fields with
+#' a name that starts with 'BL_' (baseline covariates) are included.
+#' param debug Boolean to indicate whether the debug fields, `PCREFID` and
+#' `EXSEQ` should be included in the NIF object.
+#'
+#' return A NIF object object.
+#' export
+# compress <- function(nif, fields = standard_nif_fields, debug = TRUE) {
+#   UseMethod("compress")
+# }
+
+
+#' Compress a NIF object
+#'
+#' @param nif A NIF object object.
 #' @param fields Fields to be included as character. If 'fields' is NULL
 #' (default), the fields defined in `standard_nif_fields` plus all fields with
 #' a name that starts with 'BL_' (baseline covariates) are included.
 #' @param debug Boolean to indicate whether the debug fields, `PCREFID` and
-#' `EXSEQ` should be included in the NIF data set.
+#' `EXSEQ` should be included in the NIF object.
 #'
-#' @return A NIF data set object.
+#' @return A NIF object object.
 #' @export
-compress <- function(nif, fields = standard_nif_fields, debug = TRUE) {
-  UseMethod("compress")
-}
-
-
-#' Compress a NIF data set
-#'
-#' @param nif A NIF data set object.
-#' @param fields Fields to be included as character. If 'fields' is NULL
-#' (default), the fields defined in `standard_nif_fields` plus all fields with
-#' a name that starts with 'BL_' (baseline covariates) are included.
-#' @param debug Boolean to indicate whether the debug fields, `PCREFID` and
-#' `EXSEQ` should be included in the NIF data set.
-#'
-#' @return A NIF data set object.
-#' @export
-compress.nif <- function(nif, fields = NULL, debug = TRUE) {
+compress <- function(nif, fields = NULL, debug = TRUE) {
   if (is.null(fields)) {
     fields <- c(
       standard_nif_fields,
@@ -1380,30 +1319,33 @@ add_tad <- function(nif) {
 }
 
 
-#' This function reduces a NIF data set on the subject level by excluding all
+#' Reduce a NIF object on the subject level by excluding all
 #' administrations after the last observation
 #'
-#' @param nif NIF dataset as created by make_raw_nif() and potentially modified
-#' for additional covariates.
-#' @return A NIF dataset
+#' @param nif A NIF dataset.
+#' @return A NIF dataset.
 #' @import dplyr
 #' @export
+#' @examples
+#' clip_nif(examplinib_poc_nif)
+#'
 clip_nif <- function(nif) {
-  last_obsobs <- nif %>%
+  last_obs <- nif %>%
+    as.data.frame() %>%
     dplyr::filter(EVID == 0) %>%
     dplyr::group_by(USUBJID) %>%
-    dplyr::mutate(last.obs = max(TIME)) %>%
+    dplyr::mutate(last_obs = max(TIME)) %>%
     dplyr::ungroup() %>%
-    dplyr::distinct(USUBJID, last_obsobs)
+    dplyr::distinct(USUBJID, last_obs)
 
   ret <- nif %>%
-    dplyr::left_join(last_obsobs, by = "USUBJID") %>%
-    dplyr::filter(TIME <= last_obsobs)
+    dplyr::left_join(last_obs, by = "USUBJID") %>%
+    dplyr::filter(TIME <= last_obs)
   return(new_nif(ret))
 }
 
 
-#' Add a dose level (`DL`) column to NIF data set.
+#' Add a dose level (`DL`) column to NIF object.
 #'
 #' Dose level is defined as the starting dose. For data sets with single drug
 #'   administration, `DL`is a numerical value, for drug combinations, it is
@@ -1447,9 +1389,9 @@ add_dose_level <- function(obj) {
 
 #' Add treatment day
 #'
-#' @param obj The NIF data set as data frame.
+#' @param obj The NIF object as data frame.
 #'
-#' @return The updated NIF data set as data frame.
+#' @return The updated NIF object as data frame.
 add_trtdy <- function(obj) {
   obj %>%
     # assertr::verify(has_all_names("USUBJID", "DTC", "EVID")) %>%
@@ -1465,7 +1407,7 @@ add_trtdy <- function(obj) {
 }
 
 
-#' Add baseline covariates to a NIF data set
+#' Add baseline covariates to a NIF object
 #'
 #' Lab parameters not found in LB will be reported in a warning message.
 #'
@@ -1521,12 +1463,12 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec = "", silent = FALSE) {
 #'   specify the specimen tested. This corresponds to the `LBSPEC` field used in
 #'   the LB SDTM domain.
 #'
-#' @param obj The NIF data set.
+#' @param obj The NIF object.
 #' @param lb The LB SDTM domain
 #' @param lbspec The specimen, e.g., SERUM.
 #' @param lbtestcd Lab parameters to be included as character scalar or vector.
 #' @param silent Boolean value to indicate whether warnings should be printed.
-#' @return A NIF data set
+#' @return A NIF object
 #' @import dplyr
 #' @export
 #' @seealso [add_bl_lab()]
@@ -1586,7 +1528,7 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
 
 #' Add lab value as observation
 #'
-#' @param obj The NIF data set.
+#' @param obj The NIF object.
 #' @param lb The LB SDTM domain.
 #' @param lbspec The LBSPECT.
 #' @param lbtestcd The LBTESTCD.
@@ -1594,7 +1536,7 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
 #'   assigned to.
 #' @param silent Boolean value to indicate whether warnings should be printed.
 #'
-#' @return The resulting NIF data set.
+#' @return The resulting NIF object.
 #' @export
 add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
                                 silent = FALSE) {

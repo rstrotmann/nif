@@ -213,7 +213,7 @@ parents <- function(obj) {
 
 #' Subjects with dose reduction
 #'
-#' @param obj A NIF data set object.
+#' @param obj A NIF object object.
 #' @param analyte The analyte of interest as string. considers all analytes if
 #' analyte is NULL (default).
 #'
@@ -334,35 +334,34 @@ doses <- function(obj) {
 }
 
 
-#' Dose levels
+#' Dose levels within a NIF object
 #'
-#' In studies with multiple administrations, dose modifications may occur. The
-#' `dose_levels()` function only summarizes the initial (i.e., the first)
-#' administrations.
+#' This function summarizes the doses in the individual first administration
+#' by subject and drug, and the number of subjectes treated at this dose level.
+#' Subsequent dose modifications are ignored.
 #'
-#' @param obj A nif object.
-#' @param grouping Further fields to be included (and to be grouped by) in the
+#' @param obj A NIF object.
+#' @param group Further fields to be included (and to be grouped by) in the
 #'   output.
 #'
-#' @return A data frame
+#' @return A data frame.
 #' @export
 #'
 #' @examples
 #' dose_levels(examplinib_fe_nif)
-#' dose_levels(examplinib_fe_nif, grouping = "SEX")
-#' dose_levels(examplinib_fe_nif, grouping = c("SEX", "FASTED"))
-dose_levels <- function(obj, grouping = NULL) {
+#' dose_levels(examplinib_fe_nif, group = "SEX")
+#' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
+dose_levels <- function(obj, group = NULL) {
   obj %>%
     filter(METABOLITE == FALSE) %>%
     filter(PARENT != "", !is.na(DOSE), AMT != 0) %>%
-    group_by(ID, ANALYTE, across(any_of(grouping))) %>%
+    group_by(ID, ANALYTE, across(any_of(group))) %>%
     arrange(ID, TIME) %>%
     filter(TIME == min(TIME)) %>%
-    select(ID, ANALYTE, DOSE, any_of(grouping)) %>%
+    select(ID, ANALYTE, DOSE, any_of(group)) %>%
     pivot_wider(
       names_from = "ANALYTE",
-      values_from = "DOSE", values_fill = 0
-    ) %>%
+      values_from = "DOSE", values_fill = 0) %>%
     group_by(across(c(-ID))) %>%
     summarize(N = n()) %>%
     as.data.frame()
@@ -445,7 +444,7 @@ write_csv.nif <- function(obj, filename) {
 #' All numeric fields are reduced to 4 significant places. All fields are con-
 #' verted to character, and NA-values are converted to '.'.
 #'
-#' @param obj The NIF data set.
+#' @param obj The NIF object.
 #' @param fields The fields to export. If NULL (default), all fields will be
 #' exported.
 #' @param filename The filename as string. If not filename is specified, the
@@ -576,9 +575,9 @@ standard_nif_fields <- c(
 #' In addition to `DI`, the function also calls `index_nif()`, thus creating
 #' the field `REF` as a side effect.
 #'
-#' @param obj The NIF data set.
+#' @param obj The NIF object.
 #'
-#' @return A new NIF data set.
+#' @return A new NIF object.
 #' @export
 #' @examples
 #' as.data.frame(index_dosing_interval(examplinib_fe_nif))
@@ -617,7 +616,7 @@ index_dosing_interval <- function(obj) {
 #'
 #' This function returns the number of administrations per `ID` and `PARENT`.
 #'
-#' @param obj A NIF data set.
+#' @param obj A NIF object.
 #'
 #' @return A data frame.
 #' @export
@@ -638,7 +637,7 @@ n_administrations <- function(obj) {
 #' This function returns the time in hours of the last administration within
 #' the data set.
 #'
-#' @param obj The NIF data set
+#' @param obj The NIF object
 #' @param analytes The analyte or analytes to filter for.
 #'
 #' @return A scalar representing the time in hours.
@@ -665,7 +664,7 @@ max_admin_time <- function(obj, analytes = NULL) {
 #' This function returns the time in hours of the last observation relative to
 #' the first observation within the data set.
 #'
-#' @param obj The NIF data set
+#' @param obj The NIF object
 #' @param analytes The analyte or analytes to filter for.
 #'
 #' @return A scalar representing the time in hours.
@@ -687,11 +686,11 @@ max_observation_time <- function(obj, analytes = NULL) {
 }
 
 
-#' Guess the most likely meant analyte
+#' Guess the most likely analyte based on its prevalence in the NIF object
 #'
-#' @param obj A NIF data set
+#' @param obj A NIF object.
 #'
-#' @return The ANALYTE as character
+#' @return The analyte as character.
 #' @export
 #' @examples
 #' guess_analyte(examplinib_poc_nif)
@@ -709,11 +708,11 @@ guess_analyte <- function(obj) {
 
 #' Add baseline creatinine clearance field.
 #'
-#' @param obj A NIF data set.
+#' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
 #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
 #'
-#' @return A NIF data set.
+#' @return A NIF object.
 #' @seealso [egfr_mdrd()]
 #' @seealso [egfr_cg()]
 #' @seealso [egfr_raynaud()]
@@ -737,11 +736,11 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
 
 #' Add baseline renal function class
 #'
-#' @param obj A NIF data set.
+#' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
 #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
 #'
-#' @return A NIF data set.
+#' @return A NIF object.
 #' @export
 #' @examples
 #' as.data.frame(add_bl_renal(examplinib_poc_nif))
@@ -818,13 +817,13 @@ add_obs_per_dosing_interval <- function(obj) {
 #'
 #' Currently experimental. Don't use in production!
 #'
-#' @param obj The NIF data set.
+#' @param obj The NIF object.
 #' @param min_n The minimum number of PK samples per analyte to qualify as rich
 #'   sampling.
 #' @param analyte The analyte as character. If `NA` (default), the most likely
 #' will be selected automatically.
 #'
-#' @return A new NIF data set.
+#' @return A new NIF object.
 #' @export
 index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
   if (is.na(analyte)) {

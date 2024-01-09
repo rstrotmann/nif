@@ -2,12 +2,12 @@
 % Please edit documentation in R/make_nif.R
 \name{index_nif}
 \alias{index_nif}
-\title{This function orders a NIF data set and adds a REF field}
+\title{This function orders a NIF object and adds a REF field}
 \usage{
 index_nif(nif)
 }
 \arguments{
-\item{nif}{NIF data set, e.g., as created by \code{\link[=make_nif]{make_nif()}} and manually
+\item{nif}{NIF object, e.g., as created by \code{\link[=make_nif]{make_nif()}} and manually
 modified.}
 }
 \value{
@@ -16,7 +16,7 @@ The updated NIF dataset including an updated REF field.
 \description{
 The input data format expected by NONMEM requires all rows ordered by ID
 and TIME, and indexed sequentially on a subject level with a REF field.
-Re-indexing may be required if a NIF data set is extended, e.g., by merging
+Re-indexing may be required if a NIF object is extended, e.g., by merging
 in further data.
 }
 \examples{

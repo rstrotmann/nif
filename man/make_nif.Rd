@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{make_nif}
 \alias{make_nif}
-\title{Make a NIF data set from SDTM-formatted data}
+\title{Make a NIF object from SDTM-formatted data}
 \usage{
 make_nif(
   sdtm_data,

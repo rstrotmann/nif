@@ -20,7 +20,7 @@ nif_spaghetti_plot(
 )
 }
 \arguments{
-\item{obj}{The NIF data set.}
+\item{obj}{The NIF object.}
 
 \item{points}{Boolean to indicate whether points should be drawn.}
 

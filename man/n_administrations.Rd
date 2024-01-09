@@ -7,7 +7,7 @@
 n_administrations(obj)
 }
 \arguments{
-\item{obj}{A NIF data set.}
+\item{obj}{A NIF object.}
 }
 \value{
 A data frame.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_exploration.R
 \name{check_sdtm}
 \alias{check_sdtm}
-\title{Check SDTM domains for missing date time information.}
+\title{Check SDTM domains DM, EX and PC for missing date and time information.}
 \usage{
 check_sdtm(sdtm, verbose = TRUE)
 }
@@ -15,5 +15,9 @@ check_sdtm(sdtm, verbose = TRUE)
 Nothing.
 }
 \description{
-Check SDTM domains for missing date time information.
+Check SDTM domains DM, EX and PC for missing date and time information.
+}
+\examples{
+check_sdtm(examplinib_poc)
+
 }

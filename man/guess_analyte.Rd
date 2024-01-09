@@ -2,18 +2,18 @@
 % Please edit documentation in R/nif_class.R
 \name{guess_analyte}
 \alias{guess_analyte}
-\title{Guess the most likely meant analyte}
+\title{Guess the most likely analyte based on its prevalence in the NIF object}
 \usage{
 guess_analyte(obj)
 }
 \arguments{
-\item{obj}{A NIF data set}
+\item{obj}{A NIF object.}
 }
 \value{
-The ANALYTE as character
+The analyte as character.
 }
 \description{
-Guess the most likely meant analyte
+Guess the most likely analyte based on its prevalence in the NIF object
 }
 \examples{
 guess_analyte(examplinib_poc_nif)

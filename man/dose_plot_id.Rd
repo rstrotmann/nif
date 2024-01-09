@@ -15,7 +15,7 @@ dose_plot_id(
 )
 }
 \arguments{
-\item{nif}{The NIF data set.}
+\item{nif}{The NIF object.}
 
 \item{id}{The subject ID to be plotted.}
 
