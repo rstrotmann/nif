@@ -17,6 +17,11 @@ output. If none are provided, the standard set will be used.}
 A NIF dataset with only the specified fields
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{compress_nif()} has been superseded in favor of \code{\link[=compress]{compress()}}.
+}
+\details{
 During creating of a NIF object using \code{\link[=make_nif]{make_nif()}}, multiple SDTM tables
 are aggregated without deleting the original fields (columns). Many of these
 fields may not be required for the final analysis. This function reduces the

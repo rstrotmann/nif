@@ -217,3 +217,124 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
     check_missing_time(verbose = verbose)
   return(invisible(NULL))
 }
+
+
+
+#' Plot SDTM object
+#'
+#' @param x The sdtm object.
+#' @param domain The domain to be plotted, defaults to 'dm'.
+#' @param usubjid The USUBJID to filter for. All subjects if `NULL` (default).
+#' @param ... Further printing parameters.
+#' @param lines Boolean whether to plot lines.
+#' @param points Boolean whether to plot points.
+#' @param analyte The analyte to be plotted as character.
+#' @param log Boolean whether to use a logarithmic y axis.
+#'
+#' @return Nothing.
+#' @export
+#'
+#' @examples
+#' plot(examplinib_sad)
+#' plot(examplinib_poc, "dm")
+#' plot(examplinib_poc, domain="ex")
+#' plot(examplinib_poc, domain="pc")
+#' plot(examplinib_poc, domain="vs", lines = FALSE, points = TRUE)
+plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
+                      points = FALSE, analyte = NULL, log = FALSE, ...) {
+  obj <- x$domains[[domain]] %>%
+    filter(if (!is.null(usubjid)) USUBJID %in% usubjid else TRUE) %>%
+    lubrify_dates() %>%
+    as.data.frame()
+
+  if (domain == "pc") {
+    return(
+      obj %>%
+        filter (if(!is.null(analyte)) PCTESTCD %in% analyte else TRUE) %>%
+        ggplot(aes(
+          x = PCDTC,
+          y = PCSTRESN,
+          group = interaction(USUBJID, PCTESTCD),
+          color = PCTESTCD)) +
+      {if (lines == TRUE) geom_line()} +
+      {if (points == TRUE) geom_point()} +
+      {if (log == TRUE) scale_y_log10()} +
+      theme_bw() +
+      theme(legend.position = "bottom") +
+        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", PC"))
+    )
+  }
+
+  if (domain == "ex") {
+    return(
+      obj %>%
+        arrange(desc(EXSTDTC)) %>%
+        group_by(USUBJID) %>%
+        mutate(ID=cur_group_id()) %>%
+        arrange(ID) %>%
+        ggplot() +
+        geom_segment(aes(x=EXSTDTC,
+                         xend=EXENDTC,
+                         y=ID,
+                         yend=ID)) +
+        {if (points == TRUE) geom_point(aes(x=EXSTDTC, y=ID))} +
+        {if (points == TRUE) geom_point(aes(x=EXENDTC, y=ID))} +
+        # labs(x="EXSTDTC, EXENDTC", y="USUBJID") +
+        scale_y_discrete(name="USUBJID", labels=NULL) +
+        scale_x_datetime(name="EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d") +
+        theme_bw() +
+        theme(legend.position = "bottom") +
+        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", EX"))
+    )
+  }
+
+  if (domain == "dm") {
+    return(
+      obj %>%
+        group_by(USUBJID) %>%
+        mutate(ID=cur_group_id()) %>%
+        arrange(ID) %>%
+        ggplot() +
+        geom_segment(aes(x=RFSTDTC, xend=RFENDTC, y=ID, yend=ID)) +
+        scale_y_discrete(labels=NULL, name="USUBJID") +
+        scale_x_datetime(name="RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d") +
+        theme_bw() +
+        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", DM"))
+    )
+  }
+
+  if (domain == "lb") {
+    return(
+      obj %>%
+        filter(if(!is.null(analyte)) LBTESTCD %in% analyte else TRUE) %>%
+        ggplot(aes(
+          x=LBDTC, y=LBSTRESN, group=interaction(USUBJID, LBTESTCD),
+          color=LBTESTCD)) +
+        {if (lines == TRUE) geom_line()} +
+        {if (points == TRUE) geom_point()} +
+        {if (log == TRUE) scale_y_log10()} +
+        scale_x_datetime(name="LBDY", date_labels = "%Y-%m-%d") +
+        theme_bw() +
+        theme(legend.position = "bottom") +
+        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", LB"))
+    )
+  }
+
+  if (domain == "vs") {
+    return(
+      obj %>%
+        filter (if(!is.null(analyte)) VSTESTCD %in% analyte else TRUE) %>%
+        ggplot(aes(
+          x = VSDTC,
+          y = VSSTRESN,
+          group = interaction(USUBJID, VSTESTCD),
+          color = VSTESTCD)) +
+        {if (lines == TRUE) geom_line()} +
+        {if (points == TRUE) geom_point()} +
+        {if (log == TRUE) scale_y_log10()} +
+        theme_bw() +
+        theme(legend.position = "bottom") +
+        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", PC"))
+    )
+  }
+}

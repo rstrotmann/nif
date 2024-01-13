@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{compress}
 \alias{compress}
-\title{Generic function for compress}
+\title{Compress a NIF object}
 \usage{
 compress(nif, fields = NULL, debug = TRUE)
 }
@@ -20,15 +20,5 @@ a name that starts with 'BL_' (baseline covariates) are included.}
 A NIF object object.
 }
 \description{
-param nif A NIF object object.
-param fields Fields to be included as character. If 'fields' is NULL
-(default), the fields defined in \code{standard_nif_fields} plus all fields with
-a name that starts with 'BL_' (baseline covariates) are included.
-param debug Boolean to indicate whether the debug fields, \code{PCREFID} and
-\code{EXSEQ} should be included in the NIF object.
-}
-\details{
-return A NIF object object.
-export
 Compress a NIF object
 }

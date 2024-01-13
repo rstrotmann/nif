@@ -1224,6 +1224,11 @@ index_nif <- function(nif) {
 #' set, after creating the basic NIF object  with [make_nif()] and applying
 #' custom imputations and manually deriving convariates as needed.
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `compress_nif()` has been superseded in favor of [compress()].
+#'
 #' @param nif A NIF object.
 #'
 #' @param ... Further optional parameters are fields to be included in the
@@ -1250,22 +1255,6 @@ compress_nif <- function(nif, ...) {
     dplyr::select(any_of(c(columns, starts_with("BL_")))) %>%
     new_nif()
 }
-
-
-#' Generic function for compress
-#'
-#' param nif A NIF object object.
-#' param fields Fields to be included as character. If 'fields' is NULL
-#' (default), the fields defined in `standard_nif_fields` plus all fields with
-#' a name that starts with 'BL_' (baseline covariates) are included.
-#' param debug Boolean to indicate whether the debug fields, `PCREFID` and
-#' `EXSEQ` should be included in the NIF object.
-#'
-#' return A NIF object object.
-#' export
-# compress <- function(nif, fields = standard_nif_fields, debug = TRUE) {
-#   UseMethod("compress")
-# }
 
 
 #' Compress a NIF object

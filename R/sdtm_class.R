@@ -35,7 +35,7 @@ new_sdtm <- function(sdtm_data) {
     time_mapping = data.frame()
   )
 
-  class(temp) <- "sdtm"
+  class(temp) <- c("sdtm", "list")
   temp
 }
 
@@ -426,4 +426,21 @@ suggest <- function(obj) {
     ))
     n_suggestion <- n_suggestion + 1
   }
+}
+
+
+#' Unique subjects within a sdtm object
+#'
+#' @param obj The sdtm object.
+#'
+#' @return A data frame.
+#' @export
+#'
+#' @examples
+#' subjects(examplinib_poc)
+subjects.sdtm <- function(obj) {
+  obj %>%
+    domain("dm") %>%
+    as.data.frame() %>%
+    distinct(USUBJID)
 }

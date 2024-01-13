@@ -216,6 +216,7 @@ make_vs <- function(dm) {
     ungroup() %>%
     mutate(VISIT = "SCREENING") %>%
     mutate(VSBLFL = "Y") %>%
+    mutate(VSDTC=RFSTDTC) %>%
     as.data.frame()
 }
 
@@ -956,16 +957,16 @@ synthesize_examplinib <- function() {
   examplinib_poc <- synthesize_sdtm_poc_study()
   examplinib_fe <- synthesize_sdtm_food_effect_study()
 
-  use_data(examplinib_sad, overwrite = T)
-  use_data(examplinib_poc, overwrite = T)
-  use_data(examplinib_fe, overwrite = T)
+  usethis::use_data(examplinib_sad, overwrite = T)
+  usethis::use_data(examplinib_poc, overwrite = T)
+  usethis::use_data(examplinib_fe, overwrite = T)
 
   # make NIF package data
   examplinib_sad_nif <- examplinib_sad %>%
     make_nif(spec = "PLASMA") %>%
     add_bl_lab(examplinib_sad$domains[["lb"]], "CREAT", "SERUM") %>%
     add_bl_crcl() %>%
-    compress_nif(standard_nif_fields, "BL_CREAT")
+    compress()
 
   examplinib_poc_nif <- examplinib_poc %>%
     make_nif(spec = "PLASMA") %>%
@@ -979,9 +980,9 @@ synthesize_examplinib <- function() {
     mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) %>%
     compress()
 
-  use_data(examplinib_sad_nif, overwrite = T)
-  use_data(examplinib_poc_nif, overwrite = T)
-  use_data(examplinib_fe_nif, overwrite = T)
+  usethis::use_data(examplinib_sad_nif, overwrite = T)
+  usethis::use_data(examplinib_poc_nif, overwrite = T)
+  usethis::use_data(examplinib_fe_nif, overwrite = T)
 }
 
 

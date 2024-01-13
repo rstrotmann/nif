@@ -2,20 +2,16 @@
 % Please edit documentation in R/nif_class.R
 \name{subjects}
 \alias{subjects}
-\title{Subjects within a NIF object}
+\title{Unique subjects within a data set (generic method)}
 \usage{
 subjects(obj)
 }
 \arguments{
-\item{obj}{A NIF object}
+\item{obj}{The data set.}
 }
 \value{
-A data frame of all ID - USUBJID pairs in the data set.
+A data frame.
 }
 \description{
-Subjects within a NIF object
-}
-\examples{
-subjects(examplinib_fe_nif)
-
+Unique subjects within a data set (generic method)
 }

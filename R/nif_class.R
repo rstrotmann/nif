@@ -156,16 +156,27 @@ print.subject_info <- function(x, ...) {
 }
 
 
-#' Subjects within a NIF object
+#' Unique subjects within a data set (generic method)
 #'
-#' @param obj A NIF object
+#' @param obj The data set.
+#'
+#' @return A data frame.
+#' @export
+subjects <- function(obj) {
+  UseMethod("subjects")
+}
+
+
+#' Unique subjects within a NIF object
+#'
+#' @param obj A NIF object.
 #' @import dplyr
 #' @return A data frame of all ID - USUBJID pairs in the data set.
 #' @export
 #' @examples
 #' subjects(examplinib_fe_nif)
 #'
-subjects <- function(obj) {
+subjects.nif <- function(obj) {
   obj %>%
     as.data.frame() %>%
     dplyr::select(any_of(c("ID", "USUBJID"))) %>%

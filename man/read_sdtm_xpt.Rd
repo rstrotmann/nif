@@ -18,6 +18,11 @@ dm, ex, pc and vs are loaded.}
 A named list of the relevant SDTM domains as data.frames
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{read_sdtm_xpt()} has been deprecated in favor of \code{\link[=read_sdtm]{read_sdtm()}}.
+}
+\details{
 This function loads relevant SDTM domain files required for the generation
 of NIF files from a folder. It assumes that DM, EX, PC and VS are available
 at this location and will throw an error if not.
