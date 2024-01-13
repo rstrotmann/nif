@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,8 +72,28 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">domain</span><span class="op">(</span><span class="va">examplinib</span>, <span class="st">"dm"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'examplinib' not found</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">domain</span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="st">"dm"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    102 1020001 Screen Failure SCRNFAIL 2000-12-20T10:23             &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    105 1050001 Screen Failure SCRNFAIL 2000-12-20T11:39             &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    103 1030001 Screen Failure SCRNFAIL 2000-12-24T09:00             &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    102 1020002 Screen Failure SCRNFAIL 2000-12-26T09:11             &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    104 1040001   Fed - Fasted       BA 2000-12-26T10:38 2001-01-01T10:38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    104 1040002   Fasted - Fed       AB 2000-12-26T09:20 2001-01-05T09:20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN            ARM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2023000400 20230004001020001   M  19 YEARS     DEU     DM Screen Failure</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2023000400 20230004001050001   F  42 YEARS     DEU     DM Screen Failure</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2023000400 20230004001030001   M  29 YEARS     DEU     DM Screen Failure</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2023000400 20230004001020002   M  54 YEARS     DEU     DM Screen Failure</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2023000400 20230004001040001   M  22 YEARS     DEU     DM   Fed - Fasted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2023000400 20230004001040002   M  39 YEARS     DEU     DM   Fasted - Fed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ARMCD  RACE ETHNIC          RFENDTC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 SCRNFAIL WHITE                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 SCRNFAIL WHITE                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 SCRNFAIL WHITE                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 SCRNFAIL WHITE                    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       BA WHITE        2001-01-14T10:38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       AB WHITE        2001-01-18T09:20</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

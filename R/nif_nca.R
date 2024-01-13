@@ -17,8 +17,8 @@
 #' @return A data frame.
 #' @export
 #' @examples
-#' nca(examplinib_nif)
-#' nca(examplinib_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
+#' nca(examplinib_fe_nif)
+#' nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 #'
 nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
                 nominal_time = FALSE, silent = FALSE,

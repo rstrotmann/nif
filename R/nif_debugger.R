@@ -11,7 +11,9 @@
 #'
 #' @return Nothing
 #' @import DT
-#' @import shiny
+#' @import dplyr
+#' @importFrom shiny fluidPage fluidRow column plotOutput selectInput
+#' @importFrom shiny reactiveVal observeEvent renderPlot shinyApp
 #' @importFrom shinyjs useShinyjs enable disable
 #' @export
 nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
@@ -52,7 +54,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
       ## Column 1
       shiny::column(10,
         shiny::plotOutput("plot_nif", click = "plot_nif_click"),
-        fluidRow(
+        shiny::fluidRow(
           shiny::column(5, shiny::sliderInput(
             "min_x", "min time", min = 0, max = 100, value = 0)),
           shiny::column(5, shiny::sliderInput(
@@ -79,11 +81,11 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
 
   ## server
   nif_debugger.server <- function(input, output, session) {
-    id <- reactiveVal(nif %>%
+    id <- shiny::reactiveVal(nif %>%
                         filter(EVID==0) %>%
                         filter(row_number()==1))
 
-    selected_ref <- reactiveVal()
+    selected_ref <- shiny::reactiveVal()
 
     observeEvent(
       input$dose, {
@@ -131,7 +133,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
         options = list(dom = '')
     )
 
-    observeEvent(input$plot_nif_click, {
+    shiny::observeEvent(input$plot_nif_click, {
       temp <- nearPoints(nif, input$plot_nif_click, addDist=T)
       id(as.data.frame(temp))
       selected_ref(temp$REF)

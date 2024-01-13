@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,10 +109,632 @@ should be averaged.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">nca</span><span class="op">(</span><span class="va">examplinib_nif</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'examplinib_nif' not found</span>
-<span class="r-in"><span><span class="fu">nca</span><span class="op">(</span><span class="va">examplinib_nif</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FASTED"</span>, <span class="st">"SEX"</span><span class="op">)</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'examplinib_nif' not found</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">nca</span><span class="op">(</span><span class="va">examplinib_fe_nif</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> NCA: No analyte specified. Selected RS2023 as the most likely.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    ID start end PPTESTCD   PPORRES exclude DOSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1     0 312  auclast 32.565261    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   1     0 312     cmax  4.408785    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1     0 312     tmax  2.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   2     0 312  auclast 22.115436    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2     0 312     cmax  4.569367    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   2     0 312     tmax  1.500000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   3     0 312  auclast 22.801591    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   3     0 312     cmax  3.686222    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   3     0 312     tmax  1.500000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  4     0 312  auclast 20.039456    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  4     0 312     cmax  2.458971    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  4     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  5     0 312  auclast 10.548129    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  5     0 312     cmax  2.296200    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  5     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  6     0 312  auclast 22.084279    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  6     0 312     cmax  3.914514    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  6     0 312     tmax  2.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  7     0 312  auclast 51.586880    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  7     0 312     cmax  3.715244    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  7     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  8     0 312  auclast 14.093605    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  8     0 312     cmax  2.336897    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  8     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  9     0 312  auclast 19.813412    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  9     0 312     cmax  3.664259    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  9     0 312     tmax  2.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 10     0 312  auclast 24.175963    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 10     0 312     cmax  2.807271    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 10     0 312     tmax  4.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 11     0 312  auclast 18.789711    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 11     0 312     cmax  3.316243    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 11     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 12     0 312  auclast 16.976141    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 12     0 312     cmax  2.810579    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 12     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37 13     0 312  auclast 29.502888    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38 13     0 312     cmax  3.677984    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 13     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40 14     0 312  auclast 12.465728    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 14     0 312     cmax  2.871085    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42 14     0 312     tmax  2.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 15     0 312  auclast 23.132778    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 15     0 312     cmax  2.827520    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 15     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46 16     0 312  auclast 16.078689    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47 16     0 312     cmax  2.483096    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 16     0 312     tmax  2.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49 17     0 312  auclast 33.205295    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 17     0 312     cmax  3.296041    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51 17     0 312     tmax  3.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52 18     0 312  auclast 22.531635    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53 18     0 312     cmax  3.267233    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54 18     0 312     tmax  2.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55 19     0 312  auclast 28.293702    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56 19     0 312     cmax  3.029392    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57 19     0 312     tmax  4.000000    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58 20     0 312  auclast 24.311227    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59 20     0 312     cmax  3.667665    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60 20     0 312     tmax  1.500000    &lt;NA&gt;  500</span>
+<span class="r-in"><span><span class="fu">nca</span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FASTED"</span>, <span class="st">"SEX"</span><span class="op">)</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> NCA: Group by FASTED+SEX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     FASTED SEX ID start end            PPTESTCD      PPORRES exclude DOSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        0   1  1     0  24             auclast 2.751029e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        0   1  1     0 Inf                cmax 4.408785e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        0   1  1     0 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        0   1  1     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        0   1  1     0 Inf           clast.obs 9.795256e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        0   1  1     0 Inf            lambda.z 3.552105e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        0   1  1     0 Inf           r.squared 9.990338e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        0   1  1     0 Inf       adj.r.squared 9.987117e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9        0   1  1     0 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10       0   1  1     0 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11       0   1  1     0 Inf          clast.pred 9.909271e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12       0   1  1     0 Inf           half.life 1.951370e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13       0   1  1     0 Inf          span.ratio 6.149525e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14       0   1  1     0 Inf          aucinf.obs 3.256635e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15       1   1  1   312 336             auclast 2.543791e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16       1   1  1   312 Inf                cmax 3.492839e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17       1   1  1   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18       1   1  1   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19       1   1  1   312 Inf           clast.obs 9.718420e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20       1   1  1   312 Inf            lambda.z 3.628881e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21       1   1  1   312 Inf           r.squared 9.982066e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22       1   1  1   312 Inf       adj.r.squared 9.977583e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23       1   1  1   312 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24       1   1  1   312 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25       1   1  1   312 Inf          clast.pred 9.022885e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26       1   1  1   312 Inf           half.life 1.910085e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27       1   1  1   312 Inf          span.ratio 7.538930e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28       1   1  1   312 Inf          aucinf.obs 3.006130e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29       0   1  2     0  24             auclast 2.037150e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30       0   1  2     0 Inf                cmax 4.569367e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       0   1  2     0 Inf                tmax 1.500000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32       0   1  2     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33       0   1  2     0 Inf           clast.obs 5.486380e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34       0   1  2     0 Inf            lambda.z 3.065497e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35       0   1  2     0 Inf           r.squared 9.998270e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36       0   1  2     0 Inf       adj.r.squared 9.996540e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37       0   1  2     0 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38       0   1  2     0 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39       0   1  2     0 Inf          clast.pred 5.425413e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40       0   1  2     0 Inf           half.life 2.261125e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41       0   1  2     0 Inf          span.ratio 3.184255e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42       0   1  2     0 Inf          aucinf.obs 2.211614e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43       1   1  2   312 336             auclast 1.970308e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44       1   1  2   312 Inf                cmax 2.493472e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45       1   1  2   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46       1   1  2   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47       1   1  2   312 Inf           clast.obs 5.995588e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48       1   1  2   312 Inf            lambda.z 3.090923e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49       1   1  2   312 Inf           r.squared 9.997976e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50       1   1  2   312 Inf       adj.r.squared 9.997301e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51       1   1  2   312 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52       1   1  2   312 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53       1   1  2   312 Inf          clast.pred 5.854247e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54       1   1  2   312 Inf           half.life 2.242525e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55       1   1  2   312 Inf          span.ratio 5.351111e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56       1   1  2   312 Inf          aucinf.obs 2.147584e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57       0   0  3     0  24             auclast 2.003138e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58       0   0  3     0 Inf                cmax 3.686222e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59       0   0  3     0 Inf                tmax 1.500000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60       0   0  3     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61       0   0  3     0 Inf           clast.obs 3.882700e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62       0   0  3     0 Inf            lambda.z 5.815447e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63       0   0  3     0 Inf           r.squared 9.988121e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64       0   0  3     0 Inf       adj.r.squared 9.986141e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65       0   0  3     0 Inf lambda.z.time.first 1.000000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66       0   0  3     0 Inf   lambda.z.n.points 8.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67       0   0  3     0 Inf          clast.pred 4.009881e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68       0   0  3     0 Inf           half.life 1.191907e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69       0   0  3     0 Inf          span.ratio 1.325607e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70       0   0  3     0 Inf          aucinf.obs 2.280156e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71       1   0  3   312 336             auclast 1.924921e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72       1   0  3   312 Inf                cmax 2.904730e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73       1   0  3   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74       1   0  3   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75       1   0  3   312 Inf           clast.obs 5.214571e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76       1   0  3   312 Inf            lambda.z 5.210118e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77       1   0  3   312 Inf           r.squared 9.999997e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78       1   0  3   312 Inf       adj.r.squared 9.999994e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79       1   0  3   312 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80       1   0  3   312 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81       1   0  3   312 Inf          clast.pred 5.218737e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82       1   0  3   312 Inf           half.life 1.330387e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83       1   0  3   312 Inf          span.ratio 5.411960e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84       1   0  3   312 Inf          aucinf.obs 2.213135e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85       1   0  4     0  24             auclast 1.802146e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86       1   0  4     0 Inf                cmax 2.458971e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87       1   0  4     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88       1   0  4     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89       1   0  4     0 Inf           clast.obs 8.981165e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90       1   0  4     0 Inf            lambda.z 2.555002e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91       1   0  4     0 Inf           r.squared 9.965002e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92       1   0  4     0 Inf       adj.r.squared 9.930004e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93       1   0  4     0 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94       1   0  4     0 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95       1   0  4     0 Inf          clast.pred 8.612096e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96       1   0  4     0 Inf           half.life 2.712902e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97       1   0  4     0 Inf          span.ratio 2.653984e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98       1   0  4     0 Inf          aucinf.obs 2.004592e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99       0   0  4   312 336             auclast 1.957291e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100      0   0  4   312 Inf                cmax 3.531440e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101      0   0  4   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102      0   0  4   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103      0   0  4   312 Inf           clast.obs 8.028312e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104      0   0  4   312 Inf            lambda.z 2.780182e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105      0   0  4   312 Inf           r.squared 9.999511e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106      0   0  4   312 Inf       adj.r.squared 9.999022e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107      0   0  4   312 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108      0   0  4   312 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109      0   0  4   312 Inf          clast.pred 7.985176e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110      0   0  4   312 Inf           half.life 2.493172e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111      0   0  4   312 Inf          span.ratio 2.887887e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112      0   0  4   312 Inf          aucinf.obs 2.146728e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113      1   0  5     0  24             auclast 1.013063e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114      1   0  5     0 Inf                cmax 2.296200e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115      1   0  5     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116      1   0  5     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117      1   0  5     0 Inf           clast.obs 2.250005e-07    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118      1   0  5     0 Inf            lambda.z 8.197282e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119      1   0  5     0 Inf           r.squared 9.998188e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120      1   0  5     0 Inf       adj.r.squared 9.997584e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121      1   0  5     0 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 122      1   0  5     0 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123      1   0  5     0 Inf          clast.pred 2.324886e-07    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124      1   0  5     0 Inf           half.life 8.455817e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125      1   0  5     0 Inf          span.ratio 1.419141e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126      1   0  5     0 Inf          aucinf.obs 1.054813e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127      0   0  5   312 336             auclast 1.020011e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128      0   0  5   312 Inf                cmax 2.566982e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129      0   0  5   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130      0   0  5   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131      0   0  5   312 Inf           clast.obs 2.109642e-07    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132      0   0  5   312 Inf            lambda.z 8.297086e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133      0   0  5   312 Inf           r.squared 9.994455e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134      0   0  5   312 Inf       adj.r.squared 9.993346e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135      0   0  5   312 Inf lambda.z.time.first 1.200000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 136      0   0  5   312 Inf   lambda.z.n.points 7.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 137      0   0  5   312 Inf          clast.pred 2.243576e-07    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 138      0   0  5   312 Inf           half.life 8.354104e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 139      0   0  5   312 Inf          span.ratio 1.867346e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 140      0   0  5   312 Inf          aucinf.obs 1.062033e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141      0   1  6     0  24             auclast 1.992053e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142      0   1  6     0 Inf                cmax 3.914514e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143      0   1  6     0 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 144      0   1  6     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 145      0   1  6     0 Inf           clast.obs 9.901582e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 146      0   1  6     0 Inf            lambda.z 5.068319e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 147      0   1  6     0 Inf           r.squared 9.991967e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 148      0   1  6     0 Inf       adj.r.squared 9.987950e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 149      0   1  6     0 Inf lambda.z.time.first 7.200000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 150      0   1  6     0 Inf   lambda.z.n.points 4.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 151      0   1  6     0 Inf          clast.pred 1.055632e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 152      0   1  6     0 Inf           half.life 1.367608e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 153      0   1  6     0 Inf          span.ratio 7.019558e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 154      0   1  6     0 Inf          aucinf.obs 2.208410e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 155      1   1  6   312 336             auclast 1.988340e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 156      1   1  6   312 Inf                cmax 2.947608e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 157      1   1  6   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 158      1   1  6   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 159      1   1  6   312 Inf           clast.obs 1.264496e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 160      1   1  6   312 Inf            lambda.z 4.881790e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 161      1   1  6   312 Inf           r.squared 9.996696e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 162      1   1  6   312 Inf       adj.r.squared 9.995595e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 163      1   1  6   312 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 164      1   1  6   312 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 165      1   1  6   312 Inf          clast.pred 1.195405e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 166      1   1  6   312 Inf           half.life 1.419863e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 167      1   1  6   312 Inf          span.ratio 8.451521e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 168      1   1  6   312 Inf          aucinf.obs 2.253088e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 169      1   0  7     0  24             auclast 3.720355e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 170      1   0  7     0 Inf                cmax 3.715244e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 171      1   0  7     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 172      1   0  7     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 173      1   0  7     0 Inf           clast.obs 4.735107e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 174      1   0  7     0 Inf            lambda.z 3.156735e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 175      1   0  7     0 Inf           r.squared 9.982046e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 176      1   0  7     0 Inf       adj.r.squared 9.976061e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 177      1   0  7     0 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 178      1   0  7     0 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 179      1   0  7     0 Inf          clast.pred 4.362809e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 180      1   0  7     0 Inf           half.life 2.195772e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 181      1   0  7     0 Inf          span.ratio 5.465047e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 182      1   0  7     0 Inf          aucinf.obs 5.159572e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 183      0   0  7   312 336             auclast 3.731453e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 184      0   0  7   312 Inf                cmax 4.519455e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 185      0   0  7   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 186      0   0  7   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 187      0   0  7   312 Inf           clast.obs 4.444250e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 188      0   0  7   312 Inf            lambda.z 3.189820e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189      0   0  7   312 Inf           r.squared 9.997361e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 190      0   0  7   312 Inf       adj.r.squared 9.996702e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 191      0   0  7   312 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 192      0   0  7   312 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 193      0   0  7   312 Inf          clast.pred 4.525728e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 194      0   0  7   312 Inf           half.life 2.172998e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 195      0   0  7   312 Inf          span.ratio 6.626790e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196      0   0  7   312 Inf          aucinf.obs 5.135674e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197      1   1  8     0  24             auclast 1.328229e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198      1   1  8     0 Inf                cmax 2.336897e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199      1   1  8     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200      1   1  8     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 201      1   1  8     0 Inf           clast.obs 2.983581e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 202      1   1  8     0 Inf            lambda.z 4.874457e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 203      1   1  8     0 Inf           r.squared 9.999832e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 204      1   1  8     0 Inf       adj.r.squared 9.999665e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205      1   1  8     0 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206      1   1  8     0 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207      1   1  8     0 Inf          clast.pred 2.967123e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 208      1   1  8     0 Inf           half.life 1.421999e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 209      1   1  8     0 Inf          span.ratio 5.063296e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 210      1   1  8     0 Inf          aucinf.obs 1.409362e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 211      0   1  8   312 336             auclast 1.300376e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 212      0   1  8   312 Inf                cmax 3.324013e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 213      0   1  8   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 214      0   1  8   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 215      0   1  8   312 Inf           clast.obs 2.938413e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 216      0   1  8   312 Inf            lambda.z 5.118134e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 217      0   1  8   312 Inf           r.squared 9.997044e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 218      0   1  8   312 Inf       adj.r.squared 9.996305e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219      0   1  8   312 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 220      0   1  8   312 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 221      0   1  8   312 Inf          clast.pred 2.823023e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 222      0   1  8   312 Inf           half.life 1.354297e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 223      0   1  8   312 Inf          span.ratio 1.063283e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 224      0   1  8   312 Inf          aucinf.obs 1.389244e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 225      0   0  9     0  24             auclast 1.830534e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 226      0   0  9     0 Inf                cmax 3.664259e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227      0   0  9     0 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 228      0   0  9     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 229      0   0  9     0 Inf           clast.obs 2.665429e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 230      0   0  9     0 Inf            lambda.z 3.565364e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231      0   0  9     0 Inf           r.squared 9.998189e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 232      0   0  9     0 Inf       adj.r.squared 9.997283e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 233      0   0  9     0 Inf lambda.z.time.first 7.200000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 234      0   0  9     0 Inf   lambda.z.n.points 4.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 235      0   0  9     0 Inf          clast.pred 2.684355e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 236      0   0  9     0 Inf           half.life 1.944113e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 237      0   0  9     0 Inf          span.ratio 4.937984e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 238      0   0  9     0 Inf          aucinf.obs 1.981387e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 239      1   0  9   312 336             auclast 1.910235e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 240      1   0  9   312 Inf                cmax 3.110346e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 241      1   0  9   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 242      1   0  9   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 243      1   0  9   312 Inf           clast.obs 2.136751e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244      1   0  9   312 Inf            lambda.z 3.979186e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 245      1   0  9   312 Inf           r.squared 9.985612e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246      1   0  9   312 Inf       adj.r.squared 9.982015e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 247      1   0  9   312 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 248      1   0  9   312 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 249      1   0  9   312 Inf          clast.pred 2.421782e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 250      1   0  9   312 Inf           half.life 1.741932e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 251      1   0  9   312 Inf          span.ratio 8.266683e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 252      1   0  9   312 Inf          aucinf.obs 2.094423e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 253      1   1 10     0  24             auclast 2.137953e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 254      1   1 10     0 Inf                cmax 2.807271e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 255      1   1 10     0 Inf                tmax 4.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 256      1   1 10     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 257      1   1 10     0 Inf           clast.obs 1.430089e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 258      1   1 10     0 Inf            lambda.z 2.622218e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 259      1   1 10     0 Inf           r.squared 9.972453e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 260      1   1 10     0 Inf       adj.r.squared 9.963270e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 261      1   1 10     0 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 262      1   1 10     0 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 263      1   1 10     0 Inf          clast.pred 1.454907e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 264      1   1 10     0 Inf           half.life 2.643362e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 265      1   1 10     0 Inf          span.ratio 4.539674e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 266      1   1 10     0 Inf          aucinf.obs 2.417803e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 267      0   1 10   312 336             auclast 2.332188e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 268      0   1 10   312 Inf                cmax 3.736188e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 269      0   1 10   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 270      0   1 10   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 271      0   1 10   312 Inf           clast.obs 1.313091e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 272      0   1 10   312 Inf            lambda.z 2.777690e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 273      0   1 10   312 Inf           r.squared 9.993902e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 274      0   1 10   312 Inf       adj.r.squared 9.991869e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 275      0   1 10   312 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 276      0   1 10   312 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 277      0   1 10   312 Inf          clast.pred 1.354449e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 278      0   1 10   312 Inf           half.life 2.495408e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 279      0   1 10   312 Inf          span.ratio 4.808832e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 280      0   1 10   312 Inf          aucinf.obs 2.607617e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 281      0   0 11     0  24             auclast 1.745544e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 282      0   0 11     0 Inf                cmax 3.316243e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 283      0   0 11     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 284      0   0 11     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 285      0   0 11     0 Inf           clast.obs 4.605718e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 286      0   0 11     0 Inf            lambda.z 3.136574e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 287      0   0 11     0 Inf           r.squared 9.983733e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 288      0   0 11     0 Inf       adj.r.squared 9.979667e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 289      0   0 11     0 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 290      0   0 11     0 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 291      0   0 11     0 Inf          clast.pred 4.525369e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 292      0   0 11     0 Inf           half.life 2.209887e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 293      0   0 11     0 Inf          span.ratio 6.516172e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 294      0   0 11     0 Inf          aucinf.obs 1.879000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 295      1   0 11   312 336             auclast 1.671187e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 296      1   0 11   312 Inf                cmax 1.989202e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297      1   0 11   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298      1   0 11   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299      1   0 11   312 Inf           clast.obs 4.401919e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300      1   0 11   312 Inf            lambda.z 2.973221e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301      1   0 11   312 Inf           r.squared 9.995759e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 302      1   0 11   312 Inf       adj.r.squared 9.991517e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 303      1   0 11   312 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 304      1   0 11   312 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 305      1   0 11   312 Inf          clast.pred 4.327837e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 306      1   0 11   312 Inf           half.life 2.331301e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 307      1   0 11   312 Inf          span.ratio 3.088405e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 308      1   0 11   312 Inf          aucinf.obs 1.820557e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 309      1   0 12     0  24             auclast 1.549697e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 310      1   0 12     0 Inf                cmax 2.810579e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 311      1   0 12     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 312      1   0 12     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 313      1   0 12     0 Inf           clast.obs 2.137873e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 314      1   0 12     0 Inf            lambda.z 5.723513e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 315      1   0 12     0 Inf           r.squared 9.998757e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 316      1   0 12     0 Inf       adj.r.squared 9.998446e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 317      1   0 12     0 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 318      1   0 12     0 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 319      1   0 12     0 Inf          clast.pred 2.229266e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 320      1   0 12     0 Inf           half.life 1.211052e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 321      1   0 12     0 Inf          span.ratio 1.189049e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 322      1   0 12     0 Inf          aucinf.obs 1.697613e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 323      0   0 12   312 336             auclast 1.629738e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 324      0   0 12   312 Inf                cmax 3.056251e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 325      0   0 12   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 326      0   0 12   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 327      0   0 12   312 Inf           clast.obs 2.297606e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 328      0   0 12   312 Inf            lambda.z 5.668326e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 329      0   0 12   312 Inf           r.squared 9.999991e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 330      0   0 12   312 Inf       adj.r.squared 9.999983e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 331      0   0 12   312 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 332      0   0 12   312 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 333      0   0 12   312 Inf          clast.pred 2.300965e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 334      0   0 12   312 Inf           half.life 1.222843e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 335      0   0 12   312 Inf          span.ratio 5.887919e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 336      0   0 12   312 Inf          aucinf.obs 1.776752e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 337      0   1 13     0  24             auclast 2.491415e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 338      0   1 13     0 Inf                cmax 3.677984e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 339      0   1 13     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 340      0   1 13     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 341      0   1 13     0 Inf           clast.obs 7.323791e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 342      0   1 13     0 Inf            lambda.z 3.823131e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 343      0   1 13     0 Inf           r.squared 9.965497e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 344      0   1 13     0 Inf       adj.r.squared 9.956872e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 345      0   1 13     0 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 346      0   1 13     0 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 347      0   1 13     0 Inf          clast.pred 7.047417e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 348      0   1 13     0 Inf           half.life 1.813035e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 349      0   1 13     0 Inf          span.ratio 7.942482e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 350      0   1 13     0 Inf          aucinf.obs 2.950330e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 351      1   1 13   312 336             auclast 2.610825e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 352      1   1 13   312 Inf                cmax 2.960277e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 353      1   1 13   312 Inf                tmax 4.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 354      1   1 13   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 355      1   1 13   312 Inf           clast.obs 7.258131e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 356      1   1 13   312 Inf            lambda.z 3.814297e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 357      1   1 13   312 Inf           r.squared 9.979694e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 358      1   1 13   312 Inf       adj.r.squared 9.972925e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 359      1   1 13   312 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 360      1   1 13   312 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 361      1   1 13   312 Inf          clast.pred 7.661264e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 362      1   1 13   312 Inf           half.life 1.817234e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 363      1   1 13   312 Inf          span.ratio 6.603441e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 364      1   1 13   312 Inf          aucinf.obs 3.145115e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 365      0   0 14     0  24             auclast 1.176125e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 366      0   0 14     0 Inf                cmax 2.871085e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 367      0   0 14     0 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 368      0   0 14     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 369      0   0 14     0 Inf           clast.obs 3.255964e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 370      0   0 14     0 Inf            lambda.z 4.951129e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 371      0   0 14     0 Inf           r.squared 9.999989e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 372      0   0 14     0 Inf       adj.r.squared 9.999978e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 373      0   0 14     0 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 374      0   0 14     0 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 375      0   0 14     0 Inf          clast.pred 3.260629e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 376      0   0 14     0 Inf           half.life 1.399978e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 377      0   0 14     0 Inf          span.ratio 5.142938e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 378      0   0 14     0 Inf          aucinf.obs 1.246573e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 379      1   0 14   312 336             auclast 1.228487e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 380      1   0 14   312 Inf                cmax 2.725603e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 381      1   0 14   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 382      1   0 14   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 383      1   0 14   312 Inf           clast.obs 3.167113e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 384      1   0 14   312 Inf            lambda.z 4.832541e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 385      1   0 14   312 Inf           r.squared 9.995934e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 386      1   0 14   312 Inf       adj.r.squared 9.993900e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 387      1   0 14   312 Inf lambda.z.time.first 7.200000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 388      1   0 14   312 Inf   lambda.z.n.points 4.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 389      1   0 14   312 Inf          clast.pred 3.287921e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 390      1   0 14   312 Inf           half.life 1.434333e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 391      1   0 14   312 Inf          span.ratio 6.693007e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 392      1   0 14   312 Inf          aucinf.obs 1.308155e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 393      1   0 15     0  24             auclast 2.071969e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 394      1   0 15     0 Inf                cmax 2.827520e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 395      1   0 15     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 396      1   0 15     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 397      1   0 15     0 Inf           clast.obs 1.701043e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 398      1   0 15     0 Inf            lambda.z 4.474204e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 399      1   0 15     0 Inf           r.squared 9.999868e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 400      1   0 15     0 Inf       adj.r.squared 9.999736e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 401      1   0 15     0 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 402      1   0 15     0 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 403      1   0 15     0 Inf          clast.pred 1.708725e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 404      1   0 15     0 Inf           half.life 1.549208e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 405      1   0 15     0 Inf          span.ratio 4.647536e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 406      1   0 15     0 Inf          aucinf.obs 2.313286e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 407      0   0 15   312 336             auclast 2.109794e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 408      0   0 15   312 Inf                cmax 3.783086e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 409      0   0 15   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 410      0   0 15   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 411      0   0 15   312 Inf           clast.obs 1.685202e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 412      0   0 15   312 Inf            lambda.z 4.499667e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 413      0   0 15   312 Inf           r.squared 9.965789e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 414      0   0 15   312 Inf       adj.r.squared 9.957236e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 415      0   0 15   312 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 416      0   0 15   312 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 417      0   0 15   312 Inf          clast.pred 1.633421e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 418      0   0 15   312 Inf           half.life 1.540441e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 419      0   0 15   312 Inf          span.ratio 9.347973e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 420      0   0 15   312 Inf          aucinf.obs 2.347341e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 421      1   0 16     0  24             auclast 1.482987e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 422      1   0 16     0 Inf                cmax 2.483096e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 423      1   0 16     0 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 424      1   0 16     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 425      1   0 16     0 Inf           clast.obs 1.375929e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 426      1   0 16     0 Inf            lambda.z 5.687170e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 427      1   0 16     0 Inf           r.squared 9.993742e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 428      1   0 16     0 Inf       adj.r.squared 9.987484e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 429      1   0 16     0 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 430      1   0 16     0 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 431      1   0 16     0 Inf          clast.pred 1.431280e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 432      1   0 16     0 Inf           half.life 1.218791e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 433      1   0 16     0 Inf          span.ratio 5.907494e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 434      1   0 16     0 Inf          aucinf.obs 1.607869e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 435      0   0 16   312 336             auclast 1.568364e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 436      0   0 16   312 Inf                cmax 3.524862e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 437      0   0 16   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 438      0   0 16   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 439      0   0 16   312 Inf           clast.obs 1.561424e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 440      0   0 16   312 Inf            lambda.z 5.703961e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 441      0   0 16   312 Inf           r.squared 9.994024e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 442      0   0 16   312 Inf       adj.r.squared 9.992031e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 443      0   0 16   312 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 444      0   0 16   312 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 445      0   0 16   312 Inf          clast.pred 1.558172e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 446      0   0 16   312 Inf           half.life 1.215203e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 447      0   0 16   312 Inf          span.ratio 9.874891e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 448      0   0 16   312 Inf          aucinf.obs 1.684906e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 449      1   1 17     0  24             auclast 2.759735e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 450      1   1 17     0 Inf                cmax 3.296041e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 451      1   1 17     0 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 452      1   1 17     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 453      1   1 17     0 Inf           clast.obs 1.150634e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 454      1   1 17     0 Inf            lambda.z 3.567768e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 455      1   1 17     0 Inf           r.squared 9.978152e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 456      1   1 17     0 Inf       adj.r.squared 9.970870e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 457      1   1 17     0 Inf lambda.z.time.first 4.800000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 458      1   1 17     0 Inf   lambda.z.n.points 5.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 459      1   1 17     0 Inf          clast.pred 1.067050e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 460      1   1 17     0 Inf           half.life 1.942803e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 461      1   1 17     0 Inf          span.ratio 6.176642e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 462      1   1 17     0 Inf          aucinf.obs 3.320795e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 463      0   1 17   312 336             auclast 2.639418e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 464      0   1 17   312 Inf                cmax 4.264877e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 465      0   1 17   312 Inf                tmax 1.500000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 466      0   1 17   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 467      0   1 17   312 Inf           clast.obs 1.035371e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 468      0   1 17   312 Inf            lambda.z 3.493560e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 469      0   1 17   312 Inf           r.squared 9.985154e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 470      0   1 17   312 Inf       adj.r.squared 9.977731e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 471      0   1 17   312 Inf lambda.z.time.first 7.200000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 472      0   1 17   312 Inf   lambda.z.n.points 4.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 473      0   1 17   312 Inf          clast.pred 1.021313e-03    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 474      0   1 17   312 Inf           half.life 1.984071e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 475      0   1 17   312 Inf          span.ratio 4.838536e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 476      0   1 17   312 Inf          aucinf.obs 3.198868e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 477      0   0 18     0  24             auclast 1.969696e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 478      0   0 18     0 Inf                cmax 3.267233e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 479      0   0 18     0 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 480      0   0 18     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 481      0   0 18     0 Inf           clast.obs 4.054470e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 482      0   0 18     0 Inf            lambda.z 5.833204e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 483      0   0 18     0 Inf           r.squared 9.994257e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 484      0   0 18     0 Inf       adj.r.squared 9.992821e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 485      0   0 18     0 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 486      0   0 18     0 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 487      0   0 18     0 Inf          clast.pred 3.702284e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 488      0   0 18     0 Inf           half.life 1.188279e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 489      0   0 18     0 Inf          span.ratio 1.211837e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 490      0   0 18     0 Inf          aucinf.obs 2.253164e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 491      1   0 18   312 336             auclast 1.947097e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 492      1   0 18   312 Inf                cmax 2.611421e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 493      1   0 18   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 494      1   0 18   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 495      1   0 18   312 Inf           clast.obs 3.959475e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 496      1   0 18   312 Inf            lambda.z 5.611228e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 497      1   0 18   312 Inf           r.squared 9.999500e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 498      1   0 18   312 Inf       adj.r.squared 9.999000e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 499      1   0 18   312 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 500      1   0 18   312 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 501      1   0 18   312 Inf          clast.pred 3.916165e-05    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 502      1   0 18   312 Inf           half.life 1.235286e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 503      1   0 18   312 Inf          span.ratio 5.828609e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 504      1   0 18   312 Inf          aucinf.obs 2.216387e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 505      1   0 19     0  24             auclast 2.455279e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 506      1   0 19     0 Inf                cmax 3.029392e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 507      1   0 19     0 Inf                tmax 4.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 508      1   0 19     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 509      1   0 19     0 Inf           clast.obs 9.271100e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 510      1   0 19     0 Inf            lambda.z 2.927560e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 511      1   0 19     0 Inf           r.squared 9.989131e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 512      1   0 19     0 Inf       adj.r.squared 9.978262e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 513      1   0 19     0 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 514      1   0 19     0 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 515      1   0 19     0 Inf          clast.pred 9.026278e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 516      1   0 19     0 Inf           half.life 2.367662e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 517      1   0 19     0 Inf          span.ratio 3.040975e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 518      1   0 19     0 Inf          aucinf.obs 2.830006e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 519      0   0 19   312 336             auclast 2.411649e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 520      0   0 19   312 Inf                cmax 4.591985e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 521      0   0 19   312 Inf                tmax 2.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522      0   0 19   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 523      0   0 19   312 Inf           clast.obs 8.165378e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 524      0   0 19   312 Inf            lambda.z 3.117596e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 525      0   0 19   312 Inf           r.squared 9.999951e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 526      0   0 19   312 Inf       adj.r.squared 9.999901e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 527      0   0 19   312 Inf lambda.z.time.first 9.600000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 528      0   0 19   312 Inf   lambda.z.n.points 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 529      0   0 19   312 Inf          clast.pred 8.149704e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 530      0   0 19   312 Inf           half.life 2.223339e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 531      0   0 19   312 Inf          span.ratio 3.238373e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 532      0   0 19   312 Inf          aucinf.obs 2.738112e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 533      0   1 20     0  24             auclast 2.146752e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 534      0   1 20     0 Inf                cmax 3.667665e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 535      0   1 20     0 Inf                tmax 1.500000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 536      0   1 20     0 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 537      0   1 20     0 Inf           clast.obs 1.309922e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 538      0   1 20     0 Inf            lambda.z 4.765612e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 539      0   1 20     0 Inf           r.squared 9.987536e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 540      0   1 20     0 Inf       adj.r.squared 9.984420e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 541      0   1 20     0 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 542      0   1 20     0 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 543      0   1 20     0 Inf          clast.pred 1.404368e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 544      0   1 20     0 Inf           half.life 1.454477e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 545      0   1 20     0 Inf          span.ratio 9.900467e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 546      0   1 20     0 Inf          aucinf.obs 2.431113e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 547      1   1 20   312 336             auclast 2.200268e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 548      1   1 20   312 Inf                cmax 3.470424e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549      1   1 20   312 Inf                tmax 3.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 550      1   1 20   312 Inf               tlast 1.680000e+02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 551      1   1 20   312 Inf           clast.obs 1.663345e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 552      1   1 20   312 Inf            lambda.z 4.772071e-02    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 553      1   1 20   312 Inf           r.squared 9.978186e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 554      1   1 20   312 Inf       adj.r.squared 9.972732e-01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 555      1   1 20   312 Inf lambda.z.time.first 2.400000e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 556      1   1 20   312 Inf   lambda.z.n.points 6.000000e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 557      1   1 20   312 Inf          clast.pred 1.392763e-04    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 558      1   1 20   312 Inf           half.life 1.452508e+01    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 559      1   1 20   312 Inf          span.ratio 9.913886e+00    &lt;NA&gt;  500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 560      1   1 20   312 Inf          aucinf.obs 2.486625e+01    &lt;NA&gt;  500</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

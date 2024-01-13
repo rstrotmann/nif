@@ -419,31 +419,19 @@ analytes_cmts <- function(obj) {
 }
 
 
-#' Head (generic)
+#' Return the first lines of a nif object
 #'
-#' @param obj The object as data frame.
-#' @param ... Further parameters.
-#'
-#' @return A data frame.
-#' @export
-head <- function(obj, ...) {
-  UseMethod("head")
-}
-
-
-#' Implementation of the head function
-#'
-#' @param n Number of rows to return.
-#' @param obj A nif object
+#' @param x A nif object.
+#' @param ... Further arguments.
 #'
 #' @import dplyr
 #' @return A data frame.
 #' @import utils
 #' @export
-head.nif <- function(obj, n = 6) {
-  obj %>%
-    as.data.frame() %>%
-    utils::head(n = n)
+head.nif <- function(x, ...) {
+  x <- x %>%
+    as.data.frame()
+  NextMethod("head")
 }
 
 

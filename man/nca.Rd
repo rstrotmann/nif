@@ -43,7 +43,7 @@ A data frame.
 Non-compartmental analysis
 }
 \examples{
-nca(examplinib_nif)
-nca(examplinib_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
+nca(examplinib_fe_nif)
+nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 
 }

@@ -2,18 +2,18 @@
 % Please edit documentation in R/nif_class.R
 \name{head.nif}
 \alias{head.nif}
-\title{Implementation of the head function}
+\title{Return the first lines of a nif object}
 \usage{
-\method{head}{nif}(obj, n = 6)
+\method{head}{nif}(x, ...)
 }
 \arguments{
-\item{obj}{A nif object}
+\item{x}{A nif object.}
 
-\item{n}{Number of rows to return.}
+\item{...}{Further arguments.}
 }
 \value{
 A data frame.
 }
 \description{
-Implementation of the head function
+Return the first lines of a nif object
 }

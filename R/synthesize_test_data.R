@@ -949,6 +949,7 @@ synthesize_sdtm_food_effect_study <- function() {
 #' real clinical study data. This also applies to the pharmacokinetic data in
 #' the SDTM/PC domain. These data are created using a population PK model that
 #' is parametrized with arbitrary parameters.
+#' @import usethis
 #' @return None.
 synthesize_examplinib <- function() {
   set.seed(1234)

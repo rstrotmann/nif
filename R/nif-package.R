@@ -33,5 +33,7 @@ utils::globalVariables(c(
   "OPDI", "BL_CRCL", "age_lo", "age_hi", "Mean", "EGFR", "CREA", "LBORRES",
   "BL_CREAT", "LAST_ADMIN", "RFENDTC", "TRTDY", "BL_RENAL", "EXENDTC_has_time",
   "EXENDTC1", "VISIT", "VSBLFL", "EXENDTC_new", "impute_exendtc_time",
-  "CLASS", "center", "dispersion", "value", "admin_time", "TAD", "COLOR"
+  "CLASS", "center", "dispersion", "value", "admin_time", "TAD", "COLOR",
+  "ANALYTE1", "LBBLFL", "PCREFID", "RS2023", "RS2023487A", "VSDTC", "admin_REF",
+    "evid", "last_obs", "lb", "."
 ))

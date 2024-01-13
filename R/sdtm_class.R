@@ -210,7 +210,7 @@ add_metabolite_mapping <- function(
 #' @export
 #' @seealso [suggest()]
 #' @examples
-#' sdtm_object <- add_time_mapping(examplinib,
+#' sdtm_object <- add_time_mapping(examplinib_fe,
 #'   "PREDOSE" = 0,
 #'   "HOUR 0.5" = 0.5,
 #'   "HOUR 1" = 1,
@@ -230,45 +230,6 @@ add_metabolite_mapping <- function(
 #'   "HOUR 168" = 168
 #' )
 add_time_mapping <- function(obj, ...) {
-  UseMethod("add_time_mapping")
-}
-
-
-#' Attach a time mapping to an sdtm object
-#'
-#' The nominal time of observations in PC (in the field PCTPT) is not required
-#' to follow a strict format and is in most cases provided as a composite
-#' string. 'add_time_mapping()' can be used to explicitly define the nominal
-#' observation times (in hours) for the values of PCTPT used in the PC domain.
-#'
-#' @param obj The SDTM object.
-#' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
-#'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
-#'   and NTIME corresponds to the nominal time in hours.
-#' @return The SDTM object
-#' @export
-#' @seealso [suggest()]
-#' @examples
-#' sdtm_object <- add_time_mapping(examplinib,
-#'   "PREDOSE" = 0,
-#'   "HOUR 0.5" = 0.5,
-#'   "HOUR 1" = 1,
-#'   "HOUR 1.5" = 1.5,
-#'   "HOUR 2" = 2,
-#'   "HOUR 3" = 3,
-#'   "HOUR 4" = 4,
-#'   "HOUR 6" = 6,
-#'   "HOUR 8" = 8,
-#'   "HOUR 10" = 10,
-#'   "HOUR 12" = 12,
-#'   "HOUR 24" = 24,
-#'   "HOUR 48" = 48,
-#'   "HOUR 72" = 72,
-#'   "HOUR 96" = 96,
-#'   "HOUR 144" = 144,
-#'   "HOUR 168" = 168
-#' )
-add_time_mapping.sdtm <- function(obj, ...) {
   temp <- unlist(c(as.list(environment())[-1], list(...)))
   mapping <- data.frame(PCTPT = names(temp), NTIME = as.numeric(temp))
   obj$time_mapping <- rbind(obj$time_mapping, mapping)
@@ -295,7 +256,7 @@ print.sdtm <- function(x, ...) {
 #' @return The specified domain as data.frame
 #' @export
 #' @examples
-#' domain(examplinib, "dm")
+#' head(domain(examplinib_fe, "dm"))
 domain <- function(obj, name) {
   obj$domains[[name]]
 }
