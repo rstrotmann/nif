@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{sdtm}(
   x,
-  domain = "pc",
+  domain = "dm",
   usubjid = NULL,
   lines = TRUE,
   points = FALSE,
@@ -18,7 +18,7 @@
 \arguments{
 \item{x}{The sdtm object.}
 
-\item{domain}{The domain to be plotted, defaults to 'pc'.}
+\item{domain}{The domain to be plotted, defaults to 'dm'.}
 
 \item{usubjid}{The USUBJID to filter for. All subjects if \code{NULL} (default).}
 
@@ -40,6 +40,7 @@ Plot SDTM object
 }
 \examples{
 plot(examplinib_sad)
+plot(examplinib_poc, "dm")
 plot(examplinib_poc, domain="ex")
 plot(examplinib_poc, domain="pc")
 plot(examplinib_poc, domain="vs", lines = FALSE, points = TRUE)

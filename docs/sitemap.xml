@@ -373,6 +373,9 @@
     <loc>/reference/plot.nif.html</loc>
   </url>
   <url>
+    <loc>/reference/plot.sdtm.html</loc>
+  </url>
+  <url>
     <loc>/reference/plot.summary_nif.html</loc>
   </url>
   <url>
@@ -389,6 +392,9 @@
   </url>
   <url>
     <loc>/reference/print.summary_sdtm.html</loc>
+  </url>
+  <url>
+    <loc>/reference/read_sdtm.html</loc>
   </url>
   <url>
     <loc>/reference/read_sdtm_sas.html</loc>
@@ -431,6 +437,12 @@
   </url>
   <url>
     <loc>/reference/subjects.html</loc>
+  </url>
+  <url>
+    <loc>/reference/subjects.nif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/subjects.sdtm.html</loc>
   </url>
   <url>
     <loc>/reference/suggest.html</loc>

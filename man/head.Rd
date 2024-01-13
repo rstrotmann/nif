@@ -2,18 +2,18 @@
 % Please edit documentation in R/nif_class.R
 \name{head}
 \alias{head}
-\title{Implementation of the head function}
+\title{Head (generic)}
 \usage{
-head(obj, n = 6)
+head(obj, ...)
 }
 \arguments{
-\item{obj}{A nif object}
+\item{obj}{The object as data frame.}
 
-\item{n}{Number of rows to return.}
+\item{...}{Further parameters.}
 }
 \value{
-None
+A data frame.
 }
 \description{
-Implementation of the head function
+Head (generic)
 }

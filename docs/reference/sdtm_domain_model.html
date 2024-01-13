@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.42.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,8 @@
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A data frame with 1969 rows:</p><dl><dt>DOMAIN</dt>
+    <p>A data frame with 1969 rows and 6 columns.</p>
+<dl><dt>DOMAIN</dt>
 <dd><p>Domain name</p></dd>
 
 <dt>VARNAM</dt>
@@ -75,6 +76,25 @@
 
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The first few lines of the data set for reference:</p>
+<div class="sourceCode"><pre><code>
+DOMAIN   VARNAM                            VARLABEL DEFTYPE LENGTH CORE
+    TA  STUDYID                    Study Identifier    text     10  Req
+    TA   DOMAIN                 Domain Abbreviation    text      2  Req
+    TA    ARMCD                    Planned Arm Code    text     20  Req
+    TA      ARM          Description of Planned Arm    text    100  Req
+    TA  TAETORD Planned Order of Element within Arm integer      8  Req
+    TA     ETCD                        Element Code    text      8  Req
+    TA  ELEMENT              Description of Element    text    200 Perm
+    TA TABRANCH                              Branch    text    200  Exp
+    TA  TATRANS                     Transition Rule    text    200  Exp
+    TA    EPOCH                               Epoch    text    100  Req
+    ...
+</code></pre></div>
+
+    </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

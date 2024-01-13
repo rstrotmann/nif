@@ -23,7 +23,7 @@ add_treatment_mapping() can be used to attach this information to the SDTM
 object. Multiple mappings may be needed.
 }
 \examples{
-sdtm_object <- add_analyte_mapping(examplinib, "EXAMPLINIB", "RS2023")
+sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 
 }
 \seealso{

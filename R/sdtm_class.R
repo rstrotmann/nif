@@ -152,7 +152,7 @@ print.summary_sdtm <- function(x, ...) {
 #'
 #' @seealso [make_nif()]
 #' @examples
-#' sdtm_object <- add_analyte_mapping(examplinib, "EXAMPLINIB", "RS2023")
+#' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 #'
 #' @export
 add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {

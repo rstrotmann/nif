@@ -1,18 +1,3 @@
-#' Sample sdtm data
-#'
-#' Synthetic SDTM data from a fictional clinical study with 'examplinib'
-#'
-#' @format
-#' A sdtm object
-"examplinib"
-
-#' Sample nif data
-#'
-#' Synthetic nif data from the fictional 'examplinib' sdtm data set.
-#'
-#' @format
-#' A nif object
-"examplinib_nif"
 
 #' Synthetic SDTM data from a fictional clinical SAD FIH study with rich PK
 #' sampling
@@ -62,7 +47,8 @@
 #' An overview on the variables included in the SDTM specification.
 #'
 #' @format
-#' A data frame with 1969 rows:
+#' A data frame with 1969 rows and 6 columns.
+#'
 #' \describe{
 #'  \item{DOMAIN}{Domain name}
 #'  \item{VARNAM}{Variable name}
@@ -70,6 +56,24 @@
 #'  \item{DEFTYPE}{Variable type}
 #'  \item{LENGTH}{Length of variable}
 #'  \item{CORE}{Level of requiredness}
+#' }
+#'
+#' @details
+#' The first few lines of the data set for reference:
+#'
+#' \preformatted{
+#' DOMAIN   VARNAM                            VARLABEL DEFTYPE LENGTH CORE
+#'     TA  STUDYID                    Study Identifier    text     10  Req
+#'     TA   DOMAIN                 Domain Abbreviation    text      2  Req
+#'     TA    ARMCD                    Planned Arm Code    text     20  Req
+#'     TA      ARM          Description of Planned Arm    text    100  Req
+#'     TA  TAETORD Planned Order of Element within Arm integer      8  Req
+#'     TA     ETCD                        Element Code    text      8  Req
+#'     TA  ELEMENT              Description of Element    text    200 Perm
+#'     TA TABRANCH                              Branch    text    200  Exp
+#'     TA  TATRANS                     Transition Rule    text    200  Exp
+#'     TA    EPOCH                               Epoch    text    100  Req
+#'     ...
 #' }
 "sdtm_domain_model"
 
