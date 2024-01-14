@@ -4,7 +4,7 @@
 \alias{nif_debugger}
 \title{NIF file debugger}
 \usage{
-nif_debugger(nif_data, sdtm_data, analyte = NULL)
+nif_debugger(nif_data, sdtm_data, analyte = NULL, usubjid = NULL)
 }
 \arguments{
 \item{nif_data}{A NIF data set.}

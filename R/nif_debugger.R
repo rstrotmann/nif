@@ -10,21 +10,32 @@
 #' analyte will be selected.
 #'
 #' @return Nothing
-#' @rawNamespace import(shiny, except=c(dataTableOutput, renderDataTable))
+#' @import shiny
 #' @import DT
 #' @import dplyr
 #' @importFrom shinyjs useShinyjs enable disable
 #' @export
-nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
+nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
   if(is.null(analyte)) {
     analyte = guess_analyte(nif_data)
+  }
+
+  extrt <- sdtm_data$analyte_mapping %>%
+    filter(PCTESTCD %in% analyte) %>%
+    pull(EXTRT)
+
+  if(is.null(usubjid)) {
+    usubjid <- nif_data %>%
+      subjects() %>%
+      pull(USUBJID)
   }
 
   nif <- nif_data %>%
     index_nif() %>%
     as.data.frame() %>%
     select(-any_of(c("EXTRT"))) %>%
-    filter(ANALYTE == analyte) %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(USUBJID %in% usubjid) %>%
     mutate(admin_REF = case_when(EVID==1 ~ REF)) %>%
     group_by(ID, PARENT) %>%
     fill(admin_REF, .direction = "down") %>%
@@ -71,9 +82,9 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
       DT::DTOutput("nif_table"),
       DT::DTOutput("ex_table"),
       DT::DTOutput("pc_table")
-      # shiny::dataTableOutput("nif_table"),
-      # shiny::dataTableOutput("ex_table"),
-      # shiny::dataTableOutput("pc_table")
+      # shiny::tableOutput("nif_table"),
+      # shiny::tableOutput("ex_table"),
+      # shiny::tableOutput("pc_table")
     )
   )
 
@@ -103,9 +114,11 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
         geom_point(size=4, alpha=.6) +
         scale_y_log10() +
         theme_bw() +
+        ggtitle(paste0("Analyte: ", analyte)) +
         theme(legend.position = "none")},
         height = 350)
 
+    ## NIF table output
     output$nif_table <- DT::renderDT(
     # output$nif_table <- shiny::renderDataTable(
       nif %>%
@@ -116,9 +129,9 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
       options = list(dom = '')
     )
 
+    ## EX table output
     output$ex_table <- DT::renderDT(
     # output$ex_table <- shiny::renderDataTable(
-
         sdtm_data$ex %>%
           filter(USUBJID %in% (id() %>% pull(USUBJID))) %>%
           filter(EXSEQ %in% (id() %>% pull(EXSEQ))) %>%
@@ -126,9 +139,12 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
         options = list(dom = "")
     )
 
+    ## PC table output
     output$pc_table <- DT::renderDT(
     # output$pc_table <- shiny::renderDataTable(
-        sdtm_data$pc %>% filter(PCREFID %in% (id() %>% pull(PCREFID))),
+        sdtm_data$pc %>%
+          filter(PCTESTCD %in% analyte) %>%
+          filter(PCREFID %in% (id() %>%pull(PCREFID))),
         options = list(dom = '')
     )
 
