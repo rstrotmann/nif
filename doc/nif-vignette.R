@@ -1,4 +1,5 @@
 ## ----include = FALSE----------------------------------------------------------
+library(knitr)
 knitr::opts_chunk$set(
   collapse = TRUE#,
   #comment = "> "
@@ -8,7 +9,6 @@ knitr::opts_chunk$set(
 library(tidyr)
 library(dplyr)
 library(stringr)
-library(knitr)
 library(nif)
 
 ## ----eval=FALSE, echo=T-------------------------------------------------------
@@ -49,7 +49,8 @@ nif_expl %>%
 nif_expl <- make_nif(sdtm_expl, silent=T) %>%
   mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>% 
   mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
-  mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
+  mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0)) #%>% 
+  # compress()
 
 ## -----------------------------------------------------------------------------
 nif_expl %>%
@@ -68,6 +69,9 @@ invisible(capture.output(
 
 ## ----warning=F, fig.width=5, fig.height=4-------------------------------------
 plot(nif_expl)
+
+## -----------------------------------------------------------------------------
+plot(nif_expl %>% add_tad(), tad=T, analyte="RS2023")
 
 ## ----warning=F, fig.width=5, fig.height=4-------------------------------------
 plot(nif_expl,

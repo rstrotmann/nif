@@ -3,40 +3,45 @@ Title: Construct NONMEM input files from SDTM data
 Version: 0.43.1
 Authors@R: 
     person("Rainer", "Strotmann", , "rainer.strotmann@mailbox.org", role = c("aut", "cre"))
-Description: Functions to import SDTM, and create and inspect NIF files.
+Description: A system to import and explore Study Data Tabulation Model
+    (SDTM) formatted data from clinical studies, and to create and explore
+    NONMEM Input File (NIF) data sets from them that can be used for
+    pharmacometric analyses.
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
-Imports:
-    rlang,
-    utils,
-    haven (>= 2.5.2),
-    dplyr,
-    tidyr,
-    shiny,
-    shinyjs,
-    lubridate,
-    ggplot2,
-    stringr,
-    PKNCA,
-    rxode2,
-    lifecycle,
-    gdata,
-    pracma,
-    assertr,
-    knitr,
-    DT,
-    usethis
+URL: https://github.com/rstrotmann/nif,
+    https://rstrotmann.github.io/nif/reference/index.html
 Depends: 
     R (>= 2.10)
+Imports:
+    assertr,
+    dplyr,
+    DT,
+    gdata,
+    ggplot2,
+    haven (>= 2.5.2),
+    lifecycle,
+    lubridate,
+    PKNCA,
+    pracma,
+    rlang,
+    rxode2,
+    shiny,
+    shinyjs,
+    stringr,
+    tidyr,
+    usethis,
+    utils
 Suggests: 
+    knitr,
     rmarkdown,
     testthat (>= 3.0.0)
-Config/testthat/edition: 3
 VignetteBuilder:
-    knitr,
-    tidyr,
     dplyr,
-    stringr
+    knitr,
+    stringr,
+    tidyr
+Config/testthat/edition: 3
+Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

@@ -1,10 +1,16 @@
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
-#' @param sdtm_data, a list of SDTM domains as data.frames
+#' @param sdtm_data The SDTM domains as list of data frames.
+#' @param analyte_mapping The analyte mapping as data frame.
+#' @param metabolite_mapping The metabolite mapping as data frame.
+#' @param time_mapping The time mapping as data frame.
 #' @import dplyr
-#' @returns A sdtm object
+#' @returns A sdtm object.
 #' @export
-new_sdtm <- function(sdtm_data) {
+new_sdtm <- function(sdtm_data,
+                     analyte_mapping=data.frame(),
+                     metabolite_mapping=data.frame(),
+                     time_mapping=data.frame()) {
   domains <- sdtm_data
   vs <- domains[["vs"]]
   ex <- domains[["ex"]]
@@ -30,9 +36,9 @@ new_sdtm <- function(sdtm_data) {
     dm = dm,
     ex = ex,
     vs = vs,
-    analyte_mapping = data.frame(),
-    metabolite_mapping = data.frame(),
-    time_mapping = data.frame()
+    analyte_mapping = analyte_mapping,
+    metabolite_mapping = metabolite_mapping,
+    time_mapping = time_mapping
   )
 
   class(temp) <- c("sdtm", "list")
@@ -405,3 +411,47 @@ subjects.sdtm <- function(obj) {
     as.data.frame() %>%
     distinct(USUBJID)
 }
+
+
+#' Filter for specific USUBJID (generic)
+#'
+#' @param obj The object to filter.
+#' @param usubjid The USUBJID as character.
+#'
+#' @return The filtered object.
+#' @seealso [filter_subject.sdtm()]
+#' @seealso [filter_subject.nif()]
+#' @export
+filter_subject <- function(obj, usubjid) {
+  UseMethod("filter_subject")
+}
+
+
+#' Filter sdtm object for specific USUBJID
+#'
+#' @param obj The sdtm object.
+#' @param usubjid The USUBJID as character
+#'
+#' @return A sdtm object.
+#' @export
+#'
+#' @examples
+#' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
+filter_subject.sdtm <- function(obj, usubjid) {
+  temp <- lapply(obj$domains, function(x) filter(x, USUBJID %in% usubjid))
+  new_sdtm(sdtm_data = temp, analyte_mapping = obj$analyte_mapping,
+           metabolite_mapping = obj$metabolite_mapping,
+           time_mapping = obj$time_mapping)
+}
+
+
+
+
+
+
+
+
+
+
+
+

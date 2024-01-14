@@ -205,6 +205,15 @@
     <loc>/reference/filter_correct_date_format.html</loc>
   </url>
   <url>
+    <loc>/reference/filter_subject.html</loc>
+  </url>
+  <url>
+    <loc>/reference/filter_subject.nif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/filter_subject.sdtm.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_cov_plot_params.html</loc>
   </url>
   <url>

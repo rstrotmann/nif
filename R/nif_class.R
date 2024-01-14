@@ -875,3 +875,32 @@ index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
     ungroup() %>%
     new_nif()
 }
+
+
+#' Filter NIF object for specific USUBJID
+#'
+#' @param obj The NIF object.
+#' @param usubjid The USUBJID as character
+#'
+#' @return A NIF object.
+#' @export
+#'
+#' @examples
+#' filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
+filter_subject.nif <- function(obj, usubjid) {
+  obj %>%
+    filter(USUBJID %in% usubjid)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

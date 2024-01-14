@@ -10,10 +10,9 @@
 #' analyte will be selected.
 #'
 #' @return Nothing
+#' @rawNamespace import(shiny, except=c(dataTableOutput, renderDataTable))
 #' @import DT
 #' @import dplyr
-#' @importFrom shiny fluidPage fluidRow column plotOutput selectInput
-#' @importFrom shiny reactiveVal observeEvent renderPlot shinyApp
 #' @importFrom shinyjs useShinyjs enable disable
 #' @export
 nif_debugger <- function(nif_data, sdtm_data, analyte = NULL) {
