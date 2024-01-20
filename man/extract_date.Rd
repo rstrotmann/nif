@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{extract_date}
 \alias{extract_date}
-\title{Extract date component of a POSICct object}
+\title{Extract thendate component of a POSICct object}
 \usage{
 extract_date(dtc)
 }
@@ -13,5 +13,6 @@ extract_date(dtc)
 The date as character.
 }
 \description{
-Extract date component of a POSICct object
+Extract thendate component of a POSICct object
 }
+\keyword{internal}

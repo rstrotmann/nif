@@ -22,3 +22,4 @@ Caution: Currently, the function works only with treatment days after Day 1.
 If this be ever used for days before Day 1, a term must be
 implemented to correct for the missing Day 0 in the time nomenclature.
 }
+\keyword{internal}

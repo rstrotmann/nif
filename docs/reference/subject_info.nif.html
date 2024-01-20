@@ -63,7 +63,7 @@ and baseline covariates as available.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for nif</span></span>
-<span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">id</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">subject_info</span><span class="op">(</span><span class="va">obj</span>, <span class="va">id</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -79,14 +79,14 @@ and baseline covariates as available.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The output is an object of the class 'subject_info' which is a wrapper for
-the named list of the above.</p>
-<p>The field <code>administrations</code> is not printed automatically but can be accessed
+the named list of the above.
+The field <code>administrations</code> is not printed automatically but can be accessed
 as list item (see example).</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">subject_info</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USUBJID  20230000221010001 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ID       1                 </span>
@@ -101,7 +101,7 @@ as list item (see example).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> BL_CREAT 93.9531183967631  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ANALYTE  RS2023, RS2023487A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> IMP      RS2023            </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">unclass</a></span><span class="op">(</span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">unclass</a></span><span class="op">(</span><span class="fu">subject_info</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $USUBJID</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "20230000221010001"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -213,7 +213,7 @@ as list item (see example).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63  RS2023 1608    68</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64  RS2023 1632    69</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">administrations</span></span></span>
+<span class="r-in"><span><span class="fu">subject_info</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">administrations</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    ANALYTE TIME TRTDY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   RS2023    0     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   RS2023   24     2</span>
@@ -279,7 +279,6 @@ as list item (see example).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 62  RS2023 1584    67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63  RS2023 1608    68</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64  RS2023 1632    69</span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

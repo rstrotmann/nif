@@ -17,3 +17,4 @@ The unchanged SDTM domain.
 \description{
 Check for missing time in columns ending with "DTC"
 }
+\keyword{internal}

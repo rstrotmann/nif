@@ -11,7 +11,7 @@ impute_admin_dtc_to_pcrftdtc(admin, obs, silent = FALSE)
 
 \item{obs}{The observation data frame.}
 
-\item{silent}{Boolean.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The updated administration data frame.
@@ -19,3 +19,4 @@ The updated administration data frame.
 \description{
 Replace administration time with time found in PCRFTDTC
 }
+\keyword{internal}

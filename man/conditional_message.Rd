@@ -11,7 +11,7 @@ conditional_message(msg, ..., silent = FALSE)
 
 \item{...}{Further message components.}
 
-\item{silent}{A boolean.}
+\item{silent}{A Boolean.}
 }
 \value{
 Nothing.
@@ -19,3 +19,4 @@ Nothing.
 \description{
 Issue message based on silent flag
 }
+\keyword{internal}

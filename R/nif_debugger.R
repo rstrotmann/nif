@@ -7,8 +7,9 @@
 #' @param nif_data A NIF data set.
 #' @param sdtm_data The underlying SDTM data set.
 #' @param analyte The analyte as character. If NULL (default), the most likely
-#' analyte will be selected.
-#'
+#'   analyte will be selected.
+#' @param usubjid The subject USUBJID to filter for. If NULL (default), all
+#'   subjects are shown.
 #' @return Nothing
 #' @import shiny
 #' @import DT

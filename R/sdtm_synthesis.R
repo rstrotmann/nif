@@ -1,14 +1,8 @@
-## This files contains code that is only used during package development to
-## generate the fictional `examplinib` SDTM data. It is included only for
-## documentation. If, during development, the dataset needs to be recreated,
-## please see the instructions at the end of the file.
-
-
 #' Simulate PK based on the examplinib PopPK model
 #'
 #' @param event_table The event table as required by RxODE.
-#'
 #' @return PK simulation as data frame
+#' @keywords internal
 pk_sim <- function(event_table) {
   if (!("EGFR" %in% colnames(event_table))) {
     event_table <- event_table %>%
@@ -83,7 +77,6 @@ pk_sim <- function(event_table) {
 }
 
 
-
 #' Simulate fictional subject disposition data
 #'
 #' This function generates a pre-specified number of subjects across different
@@ -95,10 +88,9 @@ pk_sim <- function(event_table) {
 #' @param nsites The number of clinical sites to be simulated.
 #' @param screenfailure_rate The fraction of subjects to be screeing failures.
 #' @param start_date The fictional study start date.
-#'
 #' @import lubridate
-#'
 #' @return The disposition data for the simulated subjects as data frame.
+#' @keywords internal
 make_subs <- function(studyid = "2023001", nsubs = 10, nsites = 4,
                       screenfailure_rate = 0.25,
                       start_date = "2000-12-20 10:00") {
@@ -154,8 +146,8 @@ make_subs <- function(studyid = "2023001", nsubs = 10, nsites = 4,
 #' @param female_fraction The fraction of female subjects (between 0 and 1).
 #' @param min_age The minimum age.
 #' @param max_age The maximum age.
-#'
 #' @return The DM data as data frame.
+#' @keywords internal
 make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
                     female_fraction = 0.5, min_age = 18, max_age = 55) {
   sbs <- make_subs(studyid, nsubs, nsites)
@@ -172,8 +164,8 @@ make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
       ARM = ACTARM,
       ARMCD = ACTARMCD,
       RACE = cut(runif(1),
-        breaks = c(0, .05, .2, 1),
-        labels = c("ASIAN", "BLACK OR AFRICAN AMERICAN", "WHITE")
+                 breaks = c(0, .05, .2, 1),
+                 labels = c("ASIAN", "BLACK OR AFRICAN AMERICAN", "WHITE")
       ),
       ETHNIC = ""
     ) %>%
@@ -191,8 +183,8 @@ make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
 #' Synthesize fictional baseline vital sign data (VS domain)
 #'
 #' @param dm The DM domain to provide the subject data.
-#'
 #' @return The VS domain data as data frame.
+#' @keywords internal
 make_vs <- function(dm) {
   vs <- dm %>%
     # filter(ACTARMCD!="SCRNFAIL") %>%
@@ -231,8 +223,8 @@ make_vs <- function(dm) {
 #' @param admindays The treatment days as vector.
 #' @param drug The name of the drug to be administered.
 #' @param dose The dose.
-#'
 #' @return EX data as data frame.
+#' @keywords internal
 make_sd_ex <- function(dm, admindays = c(1, 14), drug = "RS2023", dose = 500) {
   ex <- dm %>%
     filter(ACTARMCD != "SCRNFAIL") %>%
@@ -269,8 +261,8 @@ make_sd_ex <- function(dm, admindays = c(1, 14), drug = "RS2023", dose = 500) {
 #' @param dose_red The reduced dose.
 #' @param red_prob The probability that a subject has a dose reduction. Dose
 #'   reductions, if any, occur at a random day after day 7.
-#'
 #' @return EXSTDTC and EXENDTC as data frame.
+#' @keywords internal
 miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
                         missed_prob = 0.15, red_prob = 0.2) {
   # create missed administration days
@@ -305,7 +297,7 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
     mutate(block = dose_red_start == T | dose_restart == T | row_number() == 1) %>%
     group_by(block) %>%
     mutate(block_id = case_when(block == 1 ~ row_number(),
-      .default = NA
+                                .default = NA
     )) %>%
     ungroup() %>%
     as.data.frame() %>%
@@ -318,7 +310,6 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
 }
 
 
-
 #' Synthesize a fictional EX domain for single dose administration
 #'
 #' @param dm The DM including the subject info for whom to synthesize EX.
@@ -327,8 +318,8 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
 #' @param treatment_duration The treatment duration in days.
 #' @param missed_prob Probability to miss doses.
 #' @param missed_doses Switch whether to include randomly missed doses as boolean.
-#'
 #' @return The EX domain as data frame.
+#' @keywords internal
 make_md_ex <- function(dm,
                        drug = "RS2023",
                        dose = 500,
@@ -385,9 +376,6 @@ make_md_ex <- function(dm,
 # make PCSEQ:
 
 
-
-
-
 #' Create PC based on single-dose admninistration
 #'
 #' @param ex The EX domain as data frame.
@@ -395,13 +383,13 @@ make_md_ex <- function(dm,
 #' @param vs The VS domain as data frame.
 #' @param lb The LB domain as data frame.
 #' @param sampling_scheme The PK sampling scheme as data frame.
-#'
 #' @return The PC domain as data frame.
+#' @keywords internal
 make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
   sbs <- subject_baseline_data(dm, vs, lb) %>%
     left_join(ex %>%
-      distinct(USUBJID, EXDOSE) %>%
-      select(USUBJID, EXDOSE), by = "USUBJID") %>%
+                distinct(USUBJID, EXDOSE) %>%
+                select(USUBJID, EXDOSE), by = "USUBJID") %>%
     mutate(FOOD = 0, PERIOD = 1)
 
   ev <- rxode2::et(amountUnits = "mg", timeUnits = "hours") %>%
@@ -430,8 +418,8 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
     dplyr::select(USUBJID, id, time, c_centr, c_metab) %>%
     mutate(RS2023 = c_centr * 1000, RS2023487A = c_metab * 1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"),
-      names_to = "PCTESTCD",
-      values_to = "PCSTRESN"
+                 names_to = "PCTESTCD",
+                 values_to = "PCSTRESN"
     ) %>%
     mutate(PCTEST = case_when(
       PCTESTCD == "RS2023" ~ "RS2023",
@@ -460,15 +448,14 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
 }
 
 
-
 #' Synthesize the PC domain for a food effect study.
 #'
 #' @param ex The EX domain to syntesize PC data for.
 #' @param dm The DM domain to syntesize PC data for.
 #' @param vs The VS domain to syntesize PC data for.
 #' @param sampling_scheme The sampling scheme to be used.
-#'
 #' @return PC data as data frame.
+#' @keywords internal
 make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
   sbs <- subject_baseline_data(dm, vs, lb)
 
@@ -495,7 +482,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     expand(PERIOD = c(1, 2)) %>%
     mutate(time = time + 13 * 24 * (PERIOD - 1)) %>%
     left_join(temp %>%
-      select(id = ID, PERIOD, FOOD, EXDOSE), by = c("id", "PERIOD")) %>%
+                select(id = ID, PERIOD, FOOD, EXDOSE), by = c("id", "PERIOD")) %>%
     as.data.frame() %>%
     mutate(amt = case_when(!is.na(amt) ~ EXDOSE, .default = NA)) %>%
     # mutate(NTIME = time) %>%
@@ -507,8 +494,8 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     dplyr::select(id, time, c_centr, c_metab, PERIOD, NTIME) %>%
     mutate(RS2023 = c_centr * 1000, RS2023487A = c_metab * 1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"),
-      names_to = "PCTESTCD",
-      values_to = "PCSTRESN"
+                 names_to = "PCTESTCD",
+                 values_to = "PCSTRESN"
     ) %>%
     mutate(PCTEST = case_when(
       PCTESTCD == "RS2023" ~ "RS2023",
@@ -540,13 +527,11 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
 }
 
 
-
 #' Reformat date to SDTM conventions
 #'
 #' @param x The date in POSIX format
-#'
 #' @return Date-time formatted as xxxx-xx-xxTxx:xx:xx
-#' @export
+#' @keywords internal
 reformat_date <- function(x) {
   return(format(x, "%Y-%m-%dT%H:%M"))
 }
@@ -556,8 +541,8 @@ reformat_date <- function(x) {
 #'
 #' @param dm The DM domain as data frame.
 #' @param ex The EX domain as data frame.
-#'
 #' @return The updated DM domain as data frame.
+#' @keywords internal
 add_RFENDTC <- function(dm, ex) {
   dm %>%
     left_join(
@@ -575,8 +560,8 @@ add_RFENDTC <- function(dm, ex) {
 #' @param dm The DM domain as data.frame.
 #' @param vs The VS domain as data.frame.
 #' @param lb The LB domain as data.frame.
-#'
 #' @return A data frame.
+#' @keywords internal
 subject_baseline_data <- function(dm, vs, lb) {
   baseline_vs <- vs %>%
     filter(EPOCH == "SCREENING") %>%
@@ -600,6 +585,7 @@ subject_baseline_data <- function(dm, vs, lb) {
 #' Synthesize SDTM data for a 3 + 3 dose escalation study
 #'
 #' @return A sdtm object.
+#' @keywords internal
 synthesize_sdtm_sad_study <- function() {
   rich_sampling_scheme <- data.frame(
     time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
@@ -627,20 +613,20 @@ synthesize_sdtm_sad_study <- function() {
 
   sb_assignment <- dose_levels %>%
     mutate(USUBJID = dm %>%
-      filter(ACTARMCD != "SCRNFAIL") %>%
-      arrange(USUBJID) %>%
-      pull(USUBJID))
+             filter(ACTARMCD != "SCRNFAIL") %>%
+             arrange(USUBJID) %>%
+             pull(USUBJID))
 
   dm <- dm %>%
     left_join(sb_assignment, by = "USUBJID") %>%
     mutate(ACTARMCD = case_match(ACTARMCD, "" ~ paste0("C", cohort),
-      .default = "SCRNFAIL"
+                                 .default = "SCRNFAIL"
     )) %>%
     mutate(ACTARM = case_match(ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
-      .default = paste0(
-        "Treatment cohort ", cohort, ", ",
-        dose, " mg examplinib"
-      )
+                               .default = paste0(
+                                 "Treatment cohort ", cohort, ", ",
+                                 dose, " mg examplinib"
+                               )
     )) %>%
     mutate(ARM = ACTARM, ARMCD = ACTARMCD)
 
@@ -688,8 +674,6 @@ synthesize_sdtm_sad_study <- function() {
 }
 
 
-
-
 #' MD study
 #'
 #' @param dose The dose to be administered. Defauts to 500.
@@ -698,8 +682,8 @@ synthesize_sdtm_sad_study <- function() {
 #' @param nsites The number of clinical sites.
 #' @param studyid The study identifyer.
 #' @param duration The study duration in days.
-#'
 #' @return A stdm object.
+#' @keywords internal
 synthesize_sdtm_poc_study <- function(
     studyid = "2023000022",
     dose = 500,
@@ -725,7 +709,7 @@ synthesize_sdtm_poc_study <- function(
     female_fraction = 0.4, duration = duration, min_age = 47, max_age = 86
   ) %>%
     mutate(ACTARMCD = case_match(ACTARMCD, "" ~ "TREATMENT",
-      .default = ACTARMCD
+                                 .default = ACTARMCD
     )) %>%
     mutate(ACTARM = case_match(
       ACTARMCD,
@@ -738,17 +722,6 @@ synthesize_sdtm_poc_study <- function(
   lb <- make_lb(dm)
   ex <- make_md_ex(dm, drug = "RS2023", dose = 500, missed_doses = T,
                    treatment_duration = duration)
-
-  # ex %>%
-  #   group_by(USUBJID) %>%
-  #   mutate(RFENDTC=max(EXENDTC))
-
-  # dm <- dm %>%
-  #   left_join(ex %>%
-  #               group_by(USUBJID) %>%
-  #               mutate(RFENDTC=max(EXENDTC, na.rm=T)) %>%
-  #               select(USUBJID, RFENDTC)
-  #             , by="USUBJID")
 
   dm <- dm %>%
     add_RFENDTC(ex)
@@ -775,8 +748,8 @@ synthesize_sdtm_poc_study <- function(
     summarize(ref_time = min(time), .groups = "drop") %>%
     # day 1
     add_row(admin %>%
-      distinct(USUBJID) %>%
-      mutate(ref_time = 0)) %>%
+              distinct(USUBJID) %>%
+              mutate(ref_time = 0)) %>%
     left_join(sbs %>% distinct(USUBJID, rich), by = "USUBJID")
 
   sampling <- rbind(
@@ -797,7 +770,7 @@ synthesize_sdtm_poc_study <- function(
     #   time points:
     group_by(NTIME == 0) %>%
     mutate(delta = case_when(NTIME == 0 ~ runif(n(), -1, -0.1),
-      .default = rnorm(n(), 0, .02) * NTIME
+                             .default = rnorm(n(), 0, .02) * NTIME
     )) %>%
     ungroup() %>%
     mutate(time1 = time + delta) %>%
@@ -817,8 +790,8 @@ synthesize_sdtm_poc_study <- function(
     select(id, time, RS2023 = c_centr, RS2023487A = c_metab, NTIME) %>%
     mutate(RS2023 = RS2023 * 1000, RS2023487A = RS2023487A * 1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"),
-      names_to = "PCTESTCD",
-      values_to = "PCSTRESN"
+                 names_to = "PCTESTCD",
+                 values_to = "PCSTRESN"
     ) %>%
     mutate(PCTEST = case_when(
       PCTESTCD == "RS2023" ~ "RS2023",
@@ -837,7 +810,7 @@ synthesize_sdtm_poc_study <- function(
     mutate(PCDTC = RFSTDTC + delta_time * 3600) %>%
     mutate(DOMAIN = "PC", PCSPEC = "PLASMA", EPOCH = "TREATMENT") %>%
     mutate(PCTPT = case_when(NTIME == 0 ~ "PREDOSE",
-      .default = paste0("POSTDOSE ", NTIME, " H")
+                             .default = paste0("POSTDOSE ", NTIME, " H")
     )) %>%
     mutate(PCTPTNUM = NTIME) %>%
     mutate(PCRFTDTC = RFSTDTC) %>%
@@ -874,10 +847,10 @@ synthesize_sdtm_poc_study <- function(
 }
 
 
-
 #' Synthesize SDTM data for a fictional food effect study
 #'
 #' @return The SDTM data as sdtm object.
+#' @keywords internal
 synthesize_sdtm_food_effect_study <- function() {
   sampling_scheme <- data.frame(
     time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
@@ -896,8 +869,8 @@ synthesize_sdtm_food_effect_study <- function() {
       row_number() %in% i_treated & !(row_number() %in% i_seq1) ~ "BA",
       .default = "SCRNFAIL")) %>%
     mutate(ACTARM = case_match(ACTARMCD,
-      "AB" ~ "Fasted - Fed", "BA" ~ "Fed - Fasted",
-      .default = "Screen Failure")) %>%
+                               "AB" ~ "Fasted - Fed", "BA" ~ "Fed - Fasted",
+                               .default = "Screen Failure")) %>%
     mutate(ARM = ACTARM, ARMCD = ACTARMCD)
 
   vs <- make_vs(dm)
@@ -922,79 +895,12 @@ synthesize_sdtm_food_effect_study <- function() {
 }
 
 
-
-
-#### Development note: To update the package data `examplinib` during the
-#### package development, run the following code:
-####
-#### `examplinib_fe_sdtm <- synthesize_sdtm_food_effect_study()`
-#### `use_data(examplinib_fe_sdtm, overwrite=T)`
-#### `examplinib_fe_nif <- make_examplinib_food_effect_nif()`
-#### `use_data(make_examplinib_fe_nif, overwrite=T)`
-
-
-
-
-#' Synthesize package data
-#'
-#' This function can be called during development to re-created the package
-#' data. The data include SDTM and NIF objects for the following fictional
-#' studies with the imaginary drug `examplinib`:
-#'
-#' * A single ascending dose (SAD) study
-#' * A single-arm multiple-dose proof-of-concept study
-#' * A cross-over food effect (FE) study
-#'
-#' All SDTM data are entirely synthetic and have no relation whatsoever with
-#' real clinical study data. This also applies to the pharmacokinetic data in
-#' the SDTM/PC domain. These data are created using a population PK model that
-#' is parametrized with arbitrary parameters.
-#' @import usethis
-#' @return None.
-synthesize_examplinib <- function() {
-  set.seed(1234)
-  # synthesize SDTM package data
-  examplinib_sad <- synthesize_sdtm_sad_study()
-  examplinib_poc <- synthesize_sdtm_poc_study()
-  examplinib_fe <- synthesize_sdtm_food_effect_study()
-
-  usethis::use_data(examplinib_sad, overwrite = T)
-  usethis::use_data(examplinib_poc, overwrite = T)
-  usethis::use_data(examplinib_fe, overwrite = T)
-
-  # make NIF package data
-  examplinib_sad_nif <- examplinib_sad %>%
-    make_nif(spec = "PLASMA") %>%
-    add_bl_lab(examplinib_sad$domains[["lb"]], "CREAT", "SERUM") %>%
-    add_bl_crcl() %>%
-    compress()
-
-  examplinib_poc_nif <- examplinib_poc %>%
-    make_nif(spec = "PLASMA") %>%
-    add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-    mutate(BL_CRCL = egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar = T)) %>%
-    compress()
-
-  examplinib_fe_nif <- make_nif(examplinib_fe, spec = "PLASMA") %>%
-    mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>%
-    mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
-    mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) %>%
-    compress()
-
-  usethis::use_data(examplinib_sad_nif, overwrite = T)
-  usethis::use_data(examplinib_poc_nif, overwrite = T)
-  usethis::use_data(examplinib_fe_nif, overwrite = T)
-}
-
-
-
 #' Synthesize baseline serum creatinine for fictional subjects
 #'
-#' @details
-#' This function makes use of empirical eGFR data from a study in non-diseased
-#' Caucasian subjects as published by [Wetzels et al.](https://doi.org/10.1038/sj.ki.5002374),
-#' Table 1. In this study, eGFR were calculated by the Modification of Diet in
-#' Renal Disease (MDRD) method.
+#' @details This function makes use of empirical eGFR data from a study in
+#' non-diseased Caucasian subjects as published by [Wetzels et
+#' al.](https://doi.org/10.1038/sj.ki.5002374), Table 1. In this study, eGFR
+#' were calculated by the Modification of Diet in Renal Disease (MDRD) method.
 #'
 #' The tabulated data is modeled using a generalized linear model based on age
 #' and sex. The model is used to predict the target eGFR (`target_egfr`) for the
@@ -1006,13 +912,12 @@ synthesize_examplinib <- function() {
 #' actual eGFR using the method specified in `crea_method`.
 #'
 #' @param dm The DM domain as data frame.
-#' @param crea_method The crea calculation function as function reference. Can
-#' currently be `crea_mdrd` or `crea_raynaud`.
-#'
+#' @param crea_method The creatinine calculation function as function reference.
+#'   Can currently be `crea_mdrd` or `crea_raynaud`.
 #' @importFrom stats glm
 #' @importFrom stats predict
-#'
 #' @return A DM domain with additional fields as data frame.
+#' @keywords internal
 make_crea <- function(dm, crea_method = crea_mdrd) {
   empirical_egfr <- tribble(
     # Source: DOI:https://doi.org/10.1038/sj.ki.5002374, Table 1.
@@ -1050,12 +955,12 @@ make_crea <- function(dm, crea_method = crea_mdrd) {
     mutate(EGFR = Mean)
 
   m <- stats::glm(EGFR ~ AGE + female,
-    family = "gaussian",
-    data = empirical_egfr
+                  family = "gaussian",
+                  data = empirical_egfr
   )
   dm <- dm %>%
     mutate(target_egfr = stats::predict(m, dm %>%
-      mutate(female = case_when(SEX == "F" ~ 1, .default = 0))))
+                                          mutate(female = case_when(SEX == "F" ~ 1, .default = 0))))
   renal <- rnorm(nrow(dm), dm$target_egfr, 13)
   dm %>%
     mutate(EGFR = renal) %>%
@@ -1066,8 +971,8 @@ make_crea <- function(dm, crea_method = crea_mdrd) {
 #' Synthesize baseline LB data
 #'
 #' @param dm The DM domain as data frame.
-#'
 #' @return The LB domain as data frame.
+#' @keywords internal
 make_lb <- function(dm) {
   dm %>%
     make_crea() %>%

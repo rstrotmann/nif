@@ -10,7 +10,7 @@
 #' @param n The number of lines to be included, or all if NULL.
 #' @return The output as string.
 #' @import utils
-#' @export
+#' @keywords internal
 df_to_string <- function(df, indent = "", n = NULL, header = TRUE) {
   df <- as.data.frame(df) %>%
     mutate(across(everything(), as.character))
@@ -46,7 +46,6 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE) {
 
   temp <- lapply(as.list(as.data.frame(t(df))), render_line)
   out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
-
   return(out)
 }
 
@@ -54,8 +53,8 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE) {
 #' Check whether POSIX datetime object includes time information
 #'
 #' @param datetime The datetime object in POSIX format.
-#'
-#' @return A boolean value.
+#' @return A Boolean value.
+#' @keywords internal
 has_time <- function(datetime) {
   as.numeric(datetime) %% 86400 != 0
 }
@@ -71,6 +70,7 @@ has_time <- function(datetime) {
 #' @param obj The data.frame containing a SEX field
 #' @return The output data frame
 #' @import dplyr
+#' @keywords internal
 recode_sex <- function(obj) {
   obj %>%
     dplyr::mutate(SEX = as.numeric(
@@ -85,24 +85,24 @@ recode_sex <- function(obj) {
 }
 
 
-#' The list of expected date/time formats in the SDTM data
-#'
+#' The list of expected date/time formats as per ISO 8601
+#' @keywords internal
 dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y")
 
 
-#' Convert date fileds to POSIX format
+#' Convert date fields to POSIX format
 #'
-#' This function converts date time code (DTC) variables from the
-#' \href{https://w.wiki/8Bzr}{ISO 8601} format used in SDTM (i.e., something
-#' like "2001-01-02T09:59" where date and
-#' time are separated by "T") to standard POSIXct format. The names of the
-#' variables to be converted need to be provided by `fields`.
+#' Convert date-time code (DTC) variables from the [ISO
+#' 8601](https://w.wiki/8Bzr) format used in SDTM (i.e., something like
+#' "2001-01-02T09:59" where date and time are separated by "T") to standard
+#' POSIXct format. The names of the variables to be converted need to be
+#' provided by `fields`.
 #'
 #' @param obj A data frame.
 #' @param fields Date variable names as character.
-#'
 #' @return A data frame
 #' @export
+#' @keywords internal
 standardize_date_format <- function(obj, fields = NULL) {
   obj %>%
     dplyr::mutate_at(fields, function(x) {
@@ -111,13 +111,16 @@ standardize_date_format <- function(obj, fields = NULL) {
 }
 
 
-#' Convert date fields to ISO 8601 format
+#' Convert all date fields to ISO 8601 format
 #'
+#' Change date-time columns in the input data frame form POSIXct to ISO 8601
+#' format.
 #' @param obj A data frame.
 #' @param fields Date variable names as character.
 #'
 #' @return A data frame.
 #' @export
+#' @keywords internal
 isofy_date_format <- function(obj, fields = NULL) {
   obj %>%
     dplyr::mutate_at(fields, function(x) {
@@ -128,9 +131,12 @@ isofy_date_format <- function(obj, fields = NULL) {
 
 #' Convert all DTC fields from ISO 8601 into POSIXct
 #'
+#' Change all columns in the input data frame that end with 'DTC' to standard
+#' POSIXct format.
 #' @param obj A data frame.
-#'
 #' @return A data frame.
+#' @seealso [isofy_dates()]
+#' @keywords internal
 lubrify_dates <- function(obj) {
   obj %>% dplyr::mutate_at(
     vars(ends_with("DTC")),
@@ -146,9 +152,12 @@ lubrify_dates <- function(obj) {
 
 #' Convert all DTC fields into ISO 8601 string format
 #'
+#' Change all columns in the input data frame that end with 'DTC' from POSIct to
+#' character using the ISO 8601 format.
 #' @param obj A data frame.
-#'
 #' @return A data frame.
+#' @seealso [lubrify_dates()]
+#' @keywords internal
 isofy_dates <- function(obj) {
   obj %>%
     dplyr::mutate_at(vars(ends_with("DTC")), ~ format(., "%Y-%m-%dT%H:%M"))
@@ -157,10 +166,12 @@ isofy_dates <- function(obj) {
 
 #' Compose DTC from date and time components
 #'
+#' Convert the date and time provided separately as character to a POSIXct
+#' date-time object.
 #' @param date A date in POSIX or character format.
 #' @param time A time in character format.
-#'
-#' @return A POSICct object
+#' @return A POSICct object.
+#' @keywords internal
 compose_dtc <- function(date, time) {
   data.frame(date = as.character(date), time = as.character(time)) %>%
     mutate(time = case_when(is.na(time) ~ "", .default = time)) %>%
@@ -172,11 +183,11 @@ compose_dtc <- function(date, time) {
 }
 
 
-#' Extract date component of a POSICct object
+#' Extract thendate component of a POSICct object
 #'
 #' @param dtc The POSIX-formatted datetime.
-#'
 #' @return The date as character.
+#' @keywords internal
 extract_date <- function(dtc) {
   format(dtc, format = "%Y-%m-%d")
 }
@@ -185,8 +196,8 @@ extract_date <- function(dtc) {
 #' Extract time component of a POSICct object
 #'
 #' @param dtc The POSIX-formatted datetime.
-#'
 #' @return The time as character.
+#' @keywords internal
 extract_time <- function(dtc) {
   format(dtc, format = "%H:%M")
 }
@@ -205,9 +216,9 @@ extract_time <- function(dtc) {
 #' EXENDTC, it is assumed to be the same as for the EXSTDTC field.
 #'
 #' @param ex The EX domain as data frame.
-#' @param silent A boolean.
-#'
+#' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
+#' @keywords internal
 impute_missing_exendtc_time <- function(ex, silent = FALSE) {
   temp <- ex %>%
     verify(has_all_names(
@@ -279,9 +290,9 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
 #'
 #' @param ex The EX domain as data.frame.
 #' @param dm The DM domain as data.frame
-#' @param silent A boolean.
-#'
+#' @param silent Switch to disable message output.
 #' @return The modified EX domain as data.frame.
+#' @keywords internal
 exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
   ex %>%
     left_join(dm %>% select(USUBJID, RFENDTC),
@@ -307,9 +318,9 @@ exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
 #'
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
-#' @param silent Boolean.
-#'
+#' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
+#' @keywords internal
 impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
   dm %>%
     verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
@@ -372,9 +383,9 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
 #' issued in all cases.
 #'
 #' @param ex The updated EX domain as data frame.
-#' @param silent A boolean.
-#'
+#' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
+#' @keywords internal
 impute_missing_exendtc <- function(ex, silent = FALSE) {
   temp <- ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
@@ -425,10 +436,10 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
 #'
 #' @param ex The EX domain as data frame.
 #' @param cut.off.date The cut-off date.
-#' @param silent Boolean.
-#'
+#' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
 #' @import assertr
+#' @keywords internal
 impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
   temp <- ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
@@ -473,10 +484,9 @@ impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
 #'
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
-#'
-#' @import assertr
-#'
 #' @return The enhanced EX domain as data frame.
+#' @import assertr
+#' @keywords internal
 make_exstdy_exendy <- function(ex, dm) {
   ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
@@ -498,9 +508,9 @@ make_exstdy_exendy <- function(ex, dm) {
 #'
 #' @param admin The administration data frame.
 #' @param obs The observation data frame.
-#' @param silent Boolean.
-#'
+#' @param silent Switch to disable message output.
 #' @return The updated administration data frame.
+#' @keywords internal
 impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
   temp <- admin %>%
     select(-any_of(c("ref.time", "ref.date", "PCRFTDTC"))) %>%
@@ -553,14 +563,13 @@ impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
 #' in POSIX format.
 #' @param drug_mapping A data frame with the columns of EXTRT and PCTESTCD
 #' that associate both.
-#'
-#' @param silent Boolean value to indicate whether warnings should be printed.
-#'
+#' @param silent Switch to disable message output.
 #' @return A tibble with individual administrations
 #' @import lubridate
 #' @import dplyr
 #' @import tidyr
 #' @import assertr
+#' @keywords internal
 make_admin <- function(ex,
                        dm,
                        drug_mapping,
@@ -629,14 +638,15 @@ make_admin <- function(ex,
 }
 
 
-#' Guess a PCSPEC
+#' Guess the most likely PCSPEC
 #'
+#' The PC specimen is selected based on the likelihood in the order of 'plasma'
+#' < 'serum' < 'blood'.
 #' @param pc A data frame.
-#' @param silent Boolean.
-#'
+#' @param silent Switch to disable message output.
 #' @return The imputed spec as character.
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' guess_spec(examplinib_poc$pc)
 guess_spec <- function(pc, silent=T) {
@@ -657,32 +667,30 @@ guess_spec <- function(pc, silent=T) {
 #'
 #' This function creates an observation data frame from PC SDTM data.
 #'
-#' @details
-#' Nominal time is either derived from `PCTPTNUM` (if `use_pctptnum=TRUE`), or
-#' from `PCELTM` (the relative nominal time). Both are permissible fields per
-#' the CDISC specification and may be absent from the clinical data. In contrast
-#' to `PCTPOTNUM`, `PCELTM` follows a defined format, i.e., the
-#' \href{https://w.wiki/8Bzr}{ISO 8601} specification for time durations.
-#'
-#' Note that the DV is converted into mg/l assuming that PCSTRESN is provided
-#' in mg/ml!
+#' @details Nominal time is either derived from `PCTPTNUM` (if
+#'   `use_pctptnum=TRUE`), or from `PCELTM` (the relative nominal time). Both
+#'   are permissible fields per the CDISC specification and may be absent from
+#'   the clinical data. In contrast to `PCTPOTNUM`, `PCELTM` follows a defined
+#'   format, i.e., the [ISO 8601](https://w.wiki/8Bzr) specification for time
+#'   durations. Note that the DV is converted into mg/l assuming that PCSTRESN
+#'   is provided in mg/ml!
 #'
 #' @param pc The SDTM PC domain as a data.frame.
 #' @param time_mapping The time mapping.
-#' @param spec The specimen to be represented in the NIF object as string
-#'   (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
-#'   (""), which is the default setting, the most likely specimen, i.e., "BLOOD"
-#'   or "PLASMA" is selected, depending what is found in the PC data.
+#' @param spec The specimen to be represented in the NIF object as string (e.g.,
+#'   "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string (""),
+#'   which is the default setting, the most likely specimen, i.e., "BLOOD" or
+#'   "PLASMA" is selected, depending what is found in the PC data.
 #' @param use_pctptnum Use PCTPTNUM as nominal time.
-#' @param silent Boolean value to indicate whether warnings should be printed.
+#' @param silent Switch to disable message output.
 #' @param drug_mapping The drug mapping as data frame.
-#'
 #' @return A data frame with individual observations with certain NONMEM input
-#' variables set
+#'   variables set
 #' @import dplyr
 #' @import lubridate
 #' @import assertr
 #' @seealso [add_time_mapping()]
+#' @keywords internal
 make_obs <- function(pc,
                      drug_mapping,
                      time_mapping = NULL,
@@ -759,11 +767,10 @@ make_obs <- function(pc,
 
 #' Extract last observation time from observation tibble
 #'
-#' .
-#'
 #' @param obs tibble as created with make_obs
 #' @return A datetime object representing the last recorded observation time
 #' @import dplyr
+#' @keywords internal
 last_obs_dtc <- function(obs) {
   return(max(obs$DTC, na.rm = TRUE))
 }
@@ -772,9 +779,8 @@ last_obs_dtc <- function(obs) {
 #' Last administration DTC
 #'
 #' @param ex The EX domain as data table.
-#'
 #' @return The last administration in DTC format.
-#' @export
+#' @keywords internal
 last_ex_dtc <- function(ex) {
   return(max(ex$EXENDTC, na.rm = TRUE))
 }
@@ -783,13 +789,12 @@ last_ex_dtc <- function(ex) {
 #' Extract baseline vital sign covariates from VS
 #'
 #' @param vs The VS domain as data frame.
-#' @param silent Boolean to indicate whether message output should be provided.
-#'
+#' @param silent Switch to disable message output.
 #' @return Baseline VS data as wide data frame.
 #' @export
+#' @keywords internal
 #' @examples
 #' baseline_covariates(examplinib_sad$vs)
-#'
 baseline_covariates <- function(vs, silent = FALSE) {
   temp <- vs %>%
     filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
@@ -834,10 +839,10 @@ baseline_covariates <- function(vs, silent = FALSE) {
 #' Issue message based on silent flag
 #'
 #' @param msg The message as character.
-#' @param silent A boolean.
+#' @param silent A Boolean.
 #' @param ... Further message components.
-#'
 #' @return Nothing.
+#' @keywords internal
 conditional_message <- function(msg, ..., silent = FALSE) {
   parameters <- c(as.list(environment()), list(...))
   parameters <- lapply(parameters, as.character)
@@ -850,8 +855,8 @@ conditional_message <- function(msg, ..., silent = FALSE) {
 #' Create the drug mapping data frame from
 #'
 #' @param sdtm_data The sdtm data as SDTM object.
-#'
 #' @return A data frame.
+#' @keywords internal
 make_drug_mapping <- function(sdtm_data) {
   drug_mapping <- sdtm_data$analyte_mapping %>%
     rbind(
@@ -884,10 +889,9 @@ make_drug_mapping <- function(sdtm_data) {
 #'
 #' TIME is created as the difference between the DTC field and the first DTC
 #' field on the USUBJID level. TIME is in hours, rounded by 3 digits.
-#'
 #' @param x The table as data frame.
-#'
 #' @return A data frame with FIRSTDTC and TIME added.
+#' @keywords internal
 add_time <- function(x) {
   x %>%
     assertr::verify(has_all_names("USUBJID", "DTC")) %>%
@@ -904,68 +908,60 @@ add_time <- function(x) {
 
 #' Make a NIF object from SDTM-formatted data
 #'
-#' This function makes a basic NONMEM input file (NIF) data set from
+#' This function creates a basic NONMEM input file (NIF) data set from
 #' SDTM-formatted clinical study data following the conventions summarized in
-#' [Bauer, CPT Pharmacometrics Syst. Pharmacol. (2019)](https://doi.org/10.1002/psp4.12404).
-#' For a more in-depth tutorial, see `vignette("nif-vignette")`.
+#' [Bauer, CPT Pharmacometrics Syst. Pharmacol.
+#' (2019)](https://doi.org/10.1002/psp4.12404). For a more in-depth tutorial,
+#' see `vignette("nif-vignette")`.
 #'
-#' @section Imputations:
-#' Subjects with administration but no observations for the respective
-#' analyte are deleted from the data set. For further imputations, see
-#' `vignette("nif-imputations")`.
+#' @section Imputations: Subjects with administration but no observations for
+#'   the respective analyte are deleted from the data set. For further
+#'   imputations, see `vignette("nif-imputations")`.
 #'
 #' @section Output fields:
 #' * `ID` Subject identification number
 #' * `TIME` Recorded time of administration or observation events in hours
-#'      relative to the first individual event.
+#'   relative to the first individual event.
 #' * `AMT` Dose administered for dosing record, or zero for observations.
 #' * `DOSE` Dose in mg for administrations and post-dose observations.
 #' * `DV` The dependent variable, i.e., observed concentration, or zero for
-#'      administration records, in mg/l.
+#'   administration records, in mg/l.
 #' * `LNDV` The natural Log of DV.
 #' * `RATE` Rate of infusion of drug or zero if drug is given as a bolus.
 #' * `MDV` One for missing DV, else zero.
 #' * `EVID` Event ID: 0 for observations, 1 for administrations.
 #' * `CMT` Pharmacokinetic compartment. Will be set to 1 for administrations
-#'      and 2 for observations. Should be changed afterwards, if needed.
+#'   and 2 for observations. Should be changed afterwards, if needed.
 #' * `DTC` The date-time of the data record.
 #' * `FIRSTDTC` Date and time of first event per subject. This field is used
-#'      internally for the calculation of `TIME`. Although it is not needed
-#'      for NONMEM analysis, it is provided for subsequent NIF file building
-#'      steps, e.g., addition of further time-dependent endpoints.
+#'   internally for the calculation of `TIME`. Although it is not needed for
+#'   NONMEM analysis, it is provided for subsequent NIF file building steps,
+#'   e.g., addition of further time-dependent endpoints.
 #' * `FIRSTADMINDTC` The date-time of the first administration of the
-#'      respective parent drug for the respective subject.
+#'   respective parent drug for the respective subject.
 #' * `FIRSTTRTDTC` The date-time of the first administration of any parent
-#'      drug for the respective subject.
+#'   drug for the respective subject.
 #' * `ANALYTE` The analyte or drug in the data record.
 #' * `TRTDY` The treatment day, i.e., the relative day after the first
-#'      treatment for the respective subject.
+#'   treatment for the respective subject.
 #'
-#' @param sdtm_data A `sdtm` object, i.e., essentially a list of SDTM domains
-#' as data tables. Typically, the SDTM data are loaded using [read_sdtm_sas()]
-#' or [read_sdtm_xpt()]. As a minimum, the
-#' following SDTM domains are needed: DM, VS, PC and EX.
-#'
-#' @param spec The sample specimen for the PC data as string
-#' (e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is NULL (default),
-#' the most likely specimen is selected.
-#'
+#' @param sdtm_data A `sdtm` object, i.e., essentially a list of SDTM domains as
+#'   data tables. Typically, the SDTM data are loaded using [read_sdtm_sas()] or
+#'   [read_sdtm_xpt()]. As a minimum, the following SDTM domains are needed: DM,
+#'   VS, PC and EX.
+#' @param spec The sample specimen for the PC data as string (e.g., "BLOOD",
+#'   "PLASMA", "URINE", "FECES"). When spec is NULL (default), the most likely
+#'   specimen is selected.
 #' @param truncate_to_last_observation Boolean to indicate whether the data set
-#' should be truncated to the last observation. In this case, administrations
-#' after the last observation time point will deleted. The default is 'TRUE'.
-#'
-#' @param silent Boolean value to indicate whether warnings should be printed.
-#' The default is 'FALSE'.
-#'
+#'   should be truncated to the last observation. In this case, administrations
+#'   after the last observation time point will deleted. The default is 'TRUE'.
+#' @param silent Switch to disable message output.
 #' @param use_pctptnum Boolean to indicate whether to derive nominal time
-#' ('NTIME') from 'PCTPTNUM'.
-#'
+#'   ('NTIME') from 'PCTPTNUM'.
 #' @param truncate_to_last_individual_obs Boolean to indicate whether
-#' observations should be truncted to the last individual observation.
-#'
-#' @param analyte_cmt_mapping The analyte-compartment association as data frame with the
-#' columns 'ANALYTE' and 'CMT'.
-#'
+#'   observations should be truncted to the last individual observation.
+#' @param analyte_cmt_mapping The analyte-compartment association as data frame
+#'   with the columns 'ANALYTE' and 'CMT'.
 #' @return A NIF object.
 #' @seealso [summary.nif()]
 #' @seealso [plot.nif()]
@@ -977,7 +973,6 @@ add_time <- function(x) {
 #' @examples
 #' make_nif(examplinib_fe)
 #' make_nif(examplinib_poc)
-#'
 make_nif <- function(
     sdtm_data,
     spec = NULL,
@@ -1189,23 +1184,21 @@ make_nif <- function(
 
 #' This function orders a NIF object and adds a REF field
 #'
-#' The input data format expected by NONMEM requires all rows ordered by ID
-#' and TIME, and indexed sequentially on a subject level with a REF field.
-#' Re-indexing may be required if a NIF object is extended, e.g., by merging
-#' in further data.
+#' The input data format expected by NONMEM requires all rows ordered by ID and
+#' TIME, and indexed sequentially on a subject level with a REF field.
+#' Re-indexing may be required if a NIF object is extended, e.g., by merging in
+#' further data.
 #'
 #' @param nif NIF object, e.g., as created by [make_nif()] and manually
-#' modified.
+#'   modified.
 #' @return The updated NIF dataset including an updated REF field.
 #' @import dplyr
 #' @export
 #' @examples
 #' index_nif(examplinib_fe_nif)
-#'
 index_nif <- function(nif) {
   nif %>%
     as.data.frame() %>%
-    # dplyr::arrange(USUBJID, TIME, -EVID) %>%
     dplyr::arrange(ID, TIME, -EVID) %>%
     dplyr::mutate(REF = row_number()) %>%
     dplyr::relocate(REF) %>%
@@ -1216,8 +1209,8 @@ index_nif <- function(nif) {
 #' This function removes columns from a NIF object that are not needed for
 #' downstream analysis
 #'
-#' During creating of a NIF object using [make_nif()], multiple SDTM tables
-#' are aggregated without deleting the original fields (columns). Many of these
+#' During creating of a NIF object using [make_nif()], multiple SDTM tables are
+#' aggregated without deleting the original fields (columns). Many of these
 #' fields may not be required for the final analysis. This function reduces the
 #' fields to those typically required in the downstream analysis. Applying
 #' [compress_nif()] is typically the last step in the creation of a NIF data
@@ -1228,19 +1221,15 @@ index_nif <- function(nif) {
 #' `r lifecycle::badge("deprecated")`
 #'
 #' `compress_nif()` has been superseded in favor of [compress()].
-#'
 #' @param nif A NIF object.
-#'
 #' @param ... Further optional parameters are fields to be included in the
 #'  output. If none are provided, the standard set will be used.
-#'
 #' @return A NIF dataset with only the specified fields
 #' @import dplyr
 #' @import lifecycle
 #' @export
 #' @examples
 #' compress_nif(examplinib_fe_nif)
-#'
 compress_nif <- function(nif, ...) {
   lifecycle::deprecate_warn("0.40.1", "compress_nif()", "compress()")
   temp <- as.character(unlist(c(as.list(environment())[-1], list(...))))
@@ -1290,7 +1279,6 @@ compress <- function(nif, fields = NULL, debug = TRUE) {
 #'
 #' @return The updated NIF object
 #' @export
-#'
 #' @examples
 #' add_tad(examplinib_poc_nif)
 add_tad <- function(nif) {
@@ -1317,7 +1305,6 @@ add_tad <- function(nif) {
 #' @export
 #' @examples
 #' clip_nif(examplinib_poc_nif)
-#'
 clip_nif <- function(nif) {
   last_obs <- nif %>%
     as.data.frame() %>%
@@ -1334,7 +1321,7 @@ clip_nif <- function(nif) {
 }
 
 
-#' Add a dose level (`DL`) column to NIF object.
+#' Add dose level (`DL`) column
 #'
 #' Dose level is defined as the starting dose. For data sets with single drug
 #'   administration, `DL`is a numerical value, for drug combinations, it is
@@ -1347,7 +1334,6 @@ clip_nif <- function(nif) {
 #' @export
 #' @examples
 #' head(add_dose_level(examplinib_sad_nif))
-#'
 add_dose_level <- function(obj) {
   temp <- obj %>%
     as.data.frame() %>%
@@ -1376,23 +1362,24 @@ add_dose_level <- function(obj) {
 }
 
 
-#' Add treatment day
+#' Add treatment day ('TRTDY') column
 #'
 #' @param obj The NIF object as data frame.
-#'
 #' @return The updated NIF object as data frame.
+#' @export
+#' @examples
+#' head(add_trtdy(examplinib_poc_nif))
 add_trtdy <- function(obj) {
   obj %>%
-    # assertr::verify(has_all_names("USUBJID", "DTC", "EVID")) %>%
     assertr::verify(has_all_names("ID", "DTC", "EVID")) %>%
     assertr::verify(is.POSIXct(DTC)) %>%
-    # dplyr::group_by(USUBJID) %>%
     dplyr::group_by(ID) %>%
     dplyr::mutate(FIRSTTRTDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     mutate(TRTDY = interval(date(FIRSTTRTDTC), date(DTC)) / days(1)) %>%
     mutate(TRTDY = case_when(TRTDY < 0 ~ TRTDY, .default = TRTDY + 1)) %>%
-    select(-FIRSTTRTDTC)
+    select(-FIRSTTRTDTC) %>%
+    new_nif()
 }
 
 
@@ -1404,8 +1391,8 @@ add_trtdy <- function(obj) {
 #' @param lb SDTM LB domain as data frame.
 #' @param lbspec The specimen, usually "BLOOD" or "URINE".
 #' @param lbtestcd Lab parameters as encoded by LBTESTCD, as strings.
-#' @param silent Boolean value to indicate whether warnings should be printed.
-#' @return A NIF dataset
+#' @param silent Switch to disable message output.
+#' @return A NIF dataset.
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
@@ -1444,19 +1431,19 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec = "", silent = FALSE) {
 #'
 #' This functions adds columns for the lab parameters specified in `lbtestcd`,
 #' in a time-varying way, i.e., the actual lab value at the time of the
-#' observation or administration. This is in contrast to  [add_bl_lab()].
-#'   In rows of missing lab data, the last value is carried forward.
+#' observation or administration. This is in contrast to  [add_bl_lab()]. In
+#' rows of missing lab data, the last value is carried forward.
 #'
-#'   Note that for some lab parameters, e.g., leukocytes, bili, etc., there may
-#'   be observations both in serum and in urine. It is therefore necessary to
-#'   specify the specimen tested. This corresponds to the `LBSPEC` field used in
-#'   the LB SDTM domain.
+#' Note that for some lab parameters, e.g., leukocytes, bili, etc., there may be
+#' observations both in serum and in urine. It is therefore necessary to specify
+#' the specimen tested. This corresponds to the `LBSPEC` field used in the LB
+#' SDTM domain.
 #'
 #' @param obj The NIF object.
 #' @param lb The LB SDTM domain
 #' @param lbspec The specimen, e.g., SERUM.
 #' @param lbtestcd Lab parameters to be included as character scalar or vector.
-#' @param silent Boolean value to indicate whether warnings should be printed.
+#' @param silent Switch to disable message output.
 #' @return A NIF object
 #' @import dplyr
 #' @export
@@ -1515,7 +1502,7 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
 }
 
 
-#' Add lab value as observation
+#' Add lab value observation
 #'
 #' @param obj The NIF object.
 #' @param lb The LB SDTM domain.
@@ -1523,8 +1510,7 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
 #' @param lbtestcd The LBTESTCD.
 #' @param cmt A numerical value to specify the compartment this observation is
 #'   assigned to.
-#' @param silent Boolean value to indicate whether warnings should be printed.
-#'
+#' @param silent Switch to disable message output.
 #' @return The resulting NIF object.
 #' @export
 add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",

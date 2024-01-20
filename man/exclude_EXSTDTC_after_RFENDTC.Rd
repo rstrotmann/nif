@@ -11,7 +11,7 @@ exclude_exstdtc_after_rfendtc(ex, dm, silent = FALSE)
 
 \item{dm}{The DM domain as data.frame}
 
-\item{silent}{A boolean.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The modified EX domain as data.frame.
@@ -19,3 +19,4 @@ The modified EX domain as data.frame.
 \description{
 Filter out EX events after the last dose as specified in RFENDTC
 }
+\keyword{internal}

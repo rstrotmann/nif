@@ -3,7 +3,6 @@
 #' This function loads relevant SDTM domain files required for the generation
 #' of NIF files from a folder. It assumes that DM, EX, PC and VS are available
 #' at this location and will throw an error if not.
-#'
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
@@ -34,22 +33,19 @@ read_sdtm_sas <- function(data_path, ...) {
 }
 
 
-#' Load SDTM data from xpt files
+#' Read SDTM data from xpt files
 #'
-#' This function loads relevant SDTM domain files required for the generation
-#' of NIF files from a folder. It assumes that DM, EX, PC and VS are available
-#' at this location and will throw an error if not.
-#'
+#' This function loads relevant SDTM domain files required for the generation of
+#' NIF files from a folder. It assumes that DM, EX, PC and VS are available at
+#' this location and will throw an error if not.
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
 #' `read_sdtm_xpt()` has been deprecated in favor of [`read_sdtm()`].
-#'
 #' @param data_path Path to the required SDTM files in .xpt format.
-#' @param ... Further optional
-#' parameters may specify the individual SDTM domains to be loaded (lowercase,
-#' no file extensions). If no further parameters are given, the standard set of
-#' dm, ex, pc and vs are loaded.
+#' @param ... Further optional parameters may specify the individual SDTM
+#'   domains to be loaded (lowercase, no file extensions). If no further
+#'   parameters are given, the standard set of dm, ex, pc and vs are loaded.
 #' @return A named list of the relevant SDTM domains as data.frames
 #' @export
 read_sdtm_xpt <- function(data_path, ...) {
@@ -80,7 +76,6 @@ read_sdtm_xpt <- function(data_path, ...) {
 #' `c("dm", "vs", "ex", "pc")`.
 #' @param format The format of the source files as character, either 'sas'
 #' (default) or 'xpt'.
-#'
 #' @return A `sdtm` object.
 #' @export
 read_sdtm <- function(data_path,

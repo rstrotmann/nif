@@ -2,16 +2,20 @@
 % Please edit documentation in R/nif_class.R
 \name{subjects}
 \alias{subjects}
-\title{Unique subjects within a data set (generic method)}
+\title{Unique subjects within a data set}
 \usage{
 subjects(obj)
 }
 \arguments{
-\item{obj}{The data set.}
+\item{obj}{The data set, either a \code{nif} or a \code{sdtm} object.}
 }
 \value{
 A data frame.
 }
 \description{
-Unique subjects within a data set (generic method)
+Unique subjects within a data set
+}
+\examples{
+subjects(examplinib_fe_nif)
+subjects(examplinib_poc)
 }

@@ -11,7 +11,7 @@ impute_exendtc_to_cutoff(ex, cut.off.date = NA, silent = FALSE)
 
 \item{cut.off.date}{The cut-off date.}
 
-\item{silent}{Boolean.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The updated EX domain as data frame.
@@ -24,3 +24,4 @@ underlying reason is that the respective subjects are still on treatment.
 This function replaces the missing EXENDTC with the global data cut-off
 date, \code{cut.off.date}.
 }
+\keyword{internal}

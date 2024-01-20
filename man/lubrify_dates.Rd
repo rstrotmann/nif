@@ -13,5 +13,10 @@ lubrify_dates(obj)
 A data frame.
 }
 \description{
-Convert all DTC fields from ISO 8601 into POSIXct
+Change all columns in the input data frame that end with 'DTC' to standard
+POSIXct format.
 }
+\seealso{
+\code{\link[=isofy_dates]{isofy_dates()}}
+}
+\keyword{internal}

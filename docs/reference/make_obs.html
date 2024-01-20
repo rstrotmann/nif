@@ -81,14 +81,14 @@
 
 
 <dt>spec</dt>
-<dd><p>The specimen to be represented in the NIF object as string
-(e.g., "BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string
-(""), which is the default setting, the most likely specimen, i.e., "BLOOD"
-or "PLASMA" is selected, depending what is found in the PC data.</p></dd>
+<dd><p>The specimen to be represented in the NIF object as string (e.g.,
+"BLOOD", "PLASMA", "URINE", "FECES"). When spec is an empty string (""),
+which is the default setting, the most likely specimen, i.e., "BLOOD" or
+"PLASMA" is selected, depending what is found in the PC data.</p></dd>
 
 
 <dt>silent</dt>
-<dd><p>Boolean value to indicate whether warnings should be printed.</p></dd>
+<dd><p>Switch to disable message output.</p></dd>
 
 
 <dt>use_pctptnum</dt>
@@ -104,13 +104,13 @@ variables set</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Nominal time is either derived from <code>PCTPTNUM</code> (if <code>use_pctptnum=TRUE</code>), or
-from <code>PCELTM</code> (the relative nominal time). Both are permissible fields per
-the CDISC specification and may be absent from the clinical data. In contrast
-to <code>PCTPOTNUM</code>, <code>PCELTM</code> follows a defined format, i.e., the
-<a href="https://w.wiki/8Bzr" class="external-link">ISO 8601</a> specification for time durations.</p>
-<p>Note that the DV is converted into mg/l assuming that PCSTRESN is provided
-in mg/ml!</p>
+    <p>Nominal time is either derived from <code>PCTPTNUM</code> (if
+<code>use_pctptnum=TRUE</code>), or from <code>PCELTM</code> (the relative nominal time). Both
+are permissible fields per the CDISC specification and may be absent from
+the clinical data. In contrast to <code>PCTPOTNUM</code>, <code>PCELTM</code> follows a defined
+format, i.e., the <a href="https://w.wiki/8Bzr" class="external-link">ISO 8601</a> specification for time
+durations. Note that the DV is converted into mg/l assuming that PCSTRESN
+is provided in mg/ml!</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

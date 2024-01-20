@@ -21,3 +21,4 @@ The filtered SDTM domain as data frame.
 Filter out any rows containing DTC rows with incomplete data format as per
 ISO 8601
 }
+\keyword{internal}

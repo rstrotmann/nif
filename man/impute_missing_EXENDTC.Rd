@@ -9,7 +9,7 @@ impute_missing_exendtc(ex, silent = FALSE)
 \arguments{
 \item{ex}{The updated EX domain as data frame.}
 
-\item{silent}{A boolean.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The updated EX domain as data frame.
@@ -34,3 +34,4 @@ As this function conducts rather aggressive imputations, the message output
 is not optional, i.e., cannot be suppressed using the \code{silent} flag, but is
 issued in all cases.
 }
+\keyword{internal}

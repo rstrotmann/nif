@@ -19,5 +19,4 @@ administrations after the last observation
 }
 \examples{
 clip_nif(examplinib_poc_nif)
-
 }

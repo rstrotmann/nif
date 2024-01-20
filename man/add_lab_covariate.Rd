@@ -15,7 +15,7 @@ add_lab_covariate(obj, lb, lbspec = "SERUM", lbtestcd, silent = FALSE)
 
 \item{lbtestcd}{Lab parameters to be included as character scalar or vector.}
 
-\item{silent}{Boolean value to indicate whether warnings should be printed.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 A NIF object
@@ -23,14 +23,14 @@ A NIF object
 \description{
 This functions adds columns for the lab parameters specified in \code{lbtestcd},
 in a time-varying way, i.e., the actual lab value at the time of the
-observation or administration. This is in contrast to  \code{\link[=add_bl_lab]{add_bl_lab()}}.
-In rows of missing lab data, the last value is carried forward.
+observation or administration. This is in contrast to  \code{\link[=add_bl_lab]{add_bl_lab()}}. In
+rows of missing lab data, the last value is carried forward.
 }
 \details{
-Note that for some lab parameters, e.g., leukocytes, bili, etc., there may
-be observations both in serum and in urine. It is therefore necessary to
-specify the specimen tested. This corresponds to the \code{LBSPEC} field used in
-the LB SDTM domain.
+Note that for some lab parameters, e.g., leukocytes, bili, etc., there may be
+observations both in serum and in urine. It is therefore necessary to specify
+the specimen tested. This corresponds to the \code{LBSPEC} field used in the LB
+SDTM domain.
 }
 \seealso{
 \code{\link[=add_bl_lab]{add_bl_lab()}}

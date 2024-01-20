@@ -9,7 +9,7 @@ baseline_covariates(vs, silent = FALSE)
 \arguments{
 \item{vs}{The VS domain as data frame.}
 
-\item{silent}{Boolean to indicate whether message output should be provided.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 Baseline VS data as wide data frame.
@@ -19,5 +19,5 @@ Extract baseline vital sign covariates from VS
 }
 \examples{
 baseline_covariates(examplinib_sad$vs)
-
 }
+\keyword{internal}

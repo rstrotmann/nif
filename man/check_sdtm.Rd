@@ -19,5 +19,5 @@ Check SDTM domains DM, EX and PC for missing date and time information.
 }
 \examples{
 check_sdtm(examplinib_poc)
-
 }
+\keyword{internal}

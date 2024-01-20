@@ -13,5 +13,6 @@ last_obs_dtc(obs)
 A datetime object representing the last recorded observation time
 }
 \description{
-.
+Extract last observation time from observation tibble
 }
+\keyword{internal}

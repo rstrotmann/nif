@@ -17,7 +17,7 @@ that associate both.}
 \item{cut_off_date}{The cut-off date to be used where no EXENDTC is recorded,
 in POSIX format.}
 
-\item{silent}{Boolean value to indicate whether warnings should be printed.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 A tibble with individual administrations
@@ -34,3 +34,4 @@ At the time of the data cutoff of the SDTM data set, EXENDTC is replaced by
 cut_off_date.
 }
 
+\keyword{internal}

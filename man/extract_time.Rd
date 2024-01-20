@@ -15,3 +15,4 @@ The time as character.
 \description{
 Extract time component of a POSICct object
 }
+\keyword{internal}

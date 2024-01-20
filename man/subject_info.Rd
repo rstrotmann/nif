@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{subject_info}
 \alias{subject_info}
-\title{Subject information generic method}
+\title{Details on selected subjects}
 \usage{
 subject_info(obj, id)
 }
@@ -12,5 +12,11 @@ subject_info(obj, id)
 \item{id}{The ID or USUBJID as numeric or character.}
 }
 \description{
-Subject information generic method
+Details on selected subjects
+}
+\examples{
+subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
+subject_info(examplinib_poc_nif, 1)
+unclass(subject_info(examplinib_poc_nif, 1))
+subject_info(examplinib_poc_nif, 1)$administrations
 }

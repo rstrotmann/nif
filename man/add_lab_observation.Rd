@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_lab_observation}
 \alias{add_lab_observation}
-\title{Add lab value as observation}
+\title{Add lab value observation}
 \usage{
 add_lab_observation(obj, lb, lbtestcd, cmt = NULL, lbspec = "", silent = FALSE)
 }
@@ -18,11 +18,11 @@ assigned to.}
 
 \item{lbspec}{The LBSPECT.}
 
-\item{silent}{Boolean value to indicate whether warnings should be printed.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The resulting NIF object.
 }
 \description{
-Add lab value as observation
+Add lab value observation
 }

@@ -19,8 +19,8 @@ new_nif <- function(obj) {
 #'
 #' @param x A nif object.
 #' @param ... Additional parameters
-#'
 #' @export
+#' @noRd
 print.nif <- function(x, ...) {
   cat(paste(
     "NONMEM input file (NIF) data set with data from",
@@ -84,21 +84,19 @@ print.nif <- function(x, ...) {
 #' This function summarizes baseline information for a subject or a list of
 #' subjects, including sex, age, weight, height, BMI, ACTARMCD, analytes, IMPs
 #' and baseline covariates as available.
-#'
+#' @details
 #' The output is an object of the class 'subject_info' which is a wrapper for
 #' the named list of the above.
-#'
 #' The field `administrations` is not printed automatically but can be accessed
 #' as list item (see example).
-#'
 #' @param obj A NIF object.
 #' @param id The USUBJID or ID.
 #' @export
+#' @noRd
 #' @examples
 #' subject_info(examplinib_poc_nif, 1)
 #' unclass(subject_info(examplinib_poc_nif, 1))
 #' subject_info(examplinib_poc_nif, 1)$administrations
-#'
 subject_info.nif <- function(obj, id) {
   temp <- obj %>%
     as.data.frame() %>%
@@ -143,6 +141,7 @@ subject_info.nif <- function(obj, id) {
 #' @param x A data frame.
 #' @param ... Optional further parameters.
 #' @export
+#' @noRd
 print.subject_info <- function(x, ...) {
   temp <- lapply(x, function(i) {
     paste(i, collapse = ", ")
@@ -156,12 +155,14 @@ print.subject_info <- function(x, ...) {
 }
 
 
-#' Unique subjects within a data set (generic method)
+#' Unique subjects within a data set
 #'
-#' @param obj The data set.
-#'
+#' @param obj The data set, either a `nif` or a `sdtm` object.
 #' @return A data frame.
 #' @export
+#' @examples
+#' subjects(examplinib_fe_nif)
+#' subjects(examplinib_poc)
 subjects <- function(obj) {
   UseMethod("subjects")
 }
@@ -175,7 +176,6 @@ subjects <- function(obj) {
 #' @export
 #' @examples
 #' subjects(examplinib_fe_nif)
-#'
 subjects.nif <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -184,7 +184,7 @@ subjects.nif <- function(obj) {
 }
 
 
-#' Get USUBJID of subject
+#' Get the USUBJID of subject
 #'
 #' @param obj A NIF object.
 #' @param id A subject ID in numeric form.
@@ -193,7 +193,6 @@ subjects.nif <- function(obj) {
 #' @export
 #' @examples
 #' usubjid(examplinib_fe_nif)
-#'
 usubjid <- function(obj, id) {
   return(subjects(obj)[id, "USUBJID"])
 }
@@ -428,6 +427,7 @@ analytes_cmts <- function(obj) {
 #' @return A data frame.
 #' @import utils
 #' @export
+#' @noRd
 head.nif <- function(x, ...) {
   x <- x %>%
     as.data.frame()
@@ -881,10 +881,9 @@ index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
 #'
 #' @param obj The NIF object.
 #' @param usubjid The USUBJID as character
-#'
 #' @return A NIF object.
 #' @export
-#'
+#' @noRd
 #' @examples
 #' filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 filter_subject.nif <- function(obj, usubjid) {

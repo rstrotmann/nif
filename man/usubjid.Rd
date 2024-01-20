@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{usubjid}
 \alias{usubjid}
-\title{Get USUBJID of subject}
+\title{Get the USUBJID of subject}
 \usage{
 usubjid(obj, id)
 }
@@ -15,9 +15,8 @@ usubjid(obj, id)
 The USUBJID as character.
 }
 \description{
-Get USUBJID of subject
+Get the USUBJID of subject
 }
 \examples{
 usubjid(examplinib_fe_nif)
-
 }

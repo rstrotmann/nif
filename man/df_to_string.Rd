@@ -23,3 +23,4 @@ The output as string.
 This function renders a data.frame into a string similar to its
 representation when printed without line numbers
 }
+\keyword{internal}

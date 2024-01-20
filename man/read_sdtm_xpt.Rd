@@ -2,17 +2,16 @@
 % Please edit documentation in R/sdtm_load.R
 \name{read_sdtm_xpt}
 \alias{read_sdtm_xpt}
-\title{Load SDTM data from xpt files}
+\title{Read SDTM data from xpt files}
 \usage{
 read_sdtm_xpt(data_path, ...)
 }
 \arguments{
 \item{data_path}{Path to the required SDTM files in .xpt format.}
 
-\item{...}{Further optional
-parameters may specify the individual SDTM domains to be loaded (lowercase,
-no file extensions). If no further parameters are given, the standard set of
-dm, ex, pc and vs are loaded.}
+\item{...}{Further optional parameters may specify the individual SDTM
+domains to be loaded (lowercase, no file extensions). If no further
+parameters are given, the standard set of dm, ex, pc and vs are loaded.}
 }
 \value{
 A named list of the relevant SDTM domains as data.frames
@@ -23,7 +22,7 @@ A named list of the relevant SDTM domains as data.frames
 \code{read_sdtm_xpt()} has been deprecated in favor of \code{\link[=read_sdtm]{read_sdtm()}}.
 }
 \details{
-This function loads relevant SDTM domain files required for the generation
-of NIF files from a folder. It assumes that DM, EX, PC and VS are available
-at this location and will throw an error if not.
+This function loads relevant SDTM domain files required for the generation of
+NIF files from a folder. It assumes that DM, EX, PC and VS are available at
+this location and will throw an error if not.
 }

@@ -2,12 +2,12 @@
 % Please edit documentation in R/sdtm_class.R
 \name{filter_subject}
 \alias{filter_subject}
-\title{Filter for specific USUBJID (generic)}
+\title{Keep only selected USUBJID in the data set}
 \usage{
 filter_subject(obj, usubjid)
 }
 \arguments{
-\item{obj}{The object to filter.}
+\item{obj}{The input, either a \code{nif} or \code{sdtm} object.}
 
 \item{usubjid}{The USUBJID as character.}
 }
@@ -15,10 +15,9 @@ filter_subject(obj, usubjid)
 The filtered object.
 }
 \description{
-Filter for specific USUBJID (generic)
+Keep only selected USUBJID in the data set
 }
-\seealso{
-\code{\link[=filter_subject.sdtm]{filter_subject.sdtm()}}
-
-\code{\link[=filter_subject.nif]{filter_subject.nif()}}
+\examples{
+filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
+filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 }

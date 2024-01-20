@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_trtdy}
 \alias{add_trtdy}
-\title{Add treatment day}
+\title{Add treatment day ('TRTDY') column}
 \usage{
 add_trtdy(obj)
 }
@@ -13,5 +13,8 @@ add_trtdy(obj)
 The updated NIF object as data frame.
 }
 \description{
-Add treatment day
+Add treatment day ('TRTDY') column
+}
+\examples{
+head(add_trtdy(examplinib_poc_nif))
 }

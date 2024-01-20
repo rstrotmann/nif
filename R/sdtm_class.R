@@ -51,7 +51,6 @@ new_sdtm <- function(sdtm_data,
 #'
 #' @param object A SDTM object.
 #' @param ... Further parameters.
-#'
 #' @return A sdtm_summary object.
 #' @export
 summary.sdtm <- function(object, ...) {
@@ -145,12 +144,12 @@ print.summary_sdtm <- function(x, ...) {
 #' Attach a treatment-analyte mapping to an SDTM object
 #'
 #' In some studies, multiple drugs are co-administered, and there may be plasma
-#' concentration data from different parent drugs.
-#' In order to appropriately correlate observations with administrations, the
-#' [make_nif()] algorithm needs to know which analyte (PCTESTCD within PC)
-#' belongs to which drug (EXTRT within EX). If the respective names differ,
-#' add_treatment_mapping() can be used to attach this information to the SDTM
-#' object. Multiple mappings may be needed.
+#' concentration data from different parent drugs. In order to appropriately
+#' correlate observations with administrations, the [make_nif()] algorithm needs
+#' to know which analyte (PCTESTCD within PC) belongs to which drug (EXTRT
+#' within EX). If the respective names differ, add_treatment_mapping() can be
+#' used to attach this information to the SDTM object. Multiple mappings may be
+#' needed.
 #'
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
@@ -159,7 +158,6 @@ print.summary_sdtm <- function(x, ...) {
 #' @seealso [make_nif()]
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
-#'
 #' @export
 add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
   obj$analyte_mapping <- rbind(
@@ -172,20 +170,18 @@ add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
 
 #' Attach a parent-metabolite mapping to a SDTM object.
 #'
-#' In case multiple analytes are measured for a specific administered drug,
-#' some functions need that information to correlate plasma concentrations
-#' with administrations. 'add_metabolite_mapping()' is used to attach this
+#' In case multiple analytes are measured for a specific administered drug, some
+#' functions need that information to correlate plasma concentrations with
+#' administrations. 'add_metabolite_mapping()' is used to attach this
 #' information to a SDTM object.
 #'
 #' @param obj The SDTM object.
 #' @param pctestcd_parent The PCTESTCD of the parent compound.
 #' @param pctestcd_metabolite The PCTESTCD of the metabolite.
-#'
 #' @return The SDTM object.
 #' @export
 #' @examples
 #' add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
-#'
 add_metabolite_mapping <- function(
     obj,
     pctestcd_parent = "",
@@ -247,18 +243,17 @@ add_time_mapping <- function(obj, ...) {
 #'
 #' @param x A SDTM object.
 #' @param ... Further parameters
-#'
 #' @export
+#' @noRd
 print.sdtm <- function(x, ...) {
   print(summary(x))
 }
 
 
-#' Get a specific domain from a SDTM object
+#' Return a specific domain from a SDTM object
 #'
 #' @param obj The sdtm object.
 #' @param name The domain to return.
-#'
 #' @return The specified domain as data.frame
 #' @export
 #' @examples
@@ -268,12 +263,16 @@ domain <- function(obj, name) {
 }
 
 
-#' Subject information generic method
+#' Details on selected subjects
 #'
 #' @param obj The object, either an SDTM or NIF object.
 #' @param id The ID or USUBJID as numeric or character.
-#'
 #' @export
+#' @examples
+#' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
+#' subject_info(examplinib_poc_nif, 1)
+#' unclass(subject_info(examplinib_poc_nif, 1))
+#' subject_info(examplinib_poc_nif, 1)$administrations
 subject_info <- function(obj, id) {
   UseMethod("subject_info")
 }
@@ -284,6 +283,9 @@ subject_info <- function(obj, id) {
 #' @param obj A SDTM object.
 #' @param id The USUBJID.
 #' @export
+#' @noRd
+#' @examples
+#' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
   temp <- obj$domains[["dm"]] %>%
     dplyr::filter(USUBJID %in% id) %>%
@@ -293,7 +295,7 @@ subject_info.sdtm <- function(obj, id) {
 }
 
 
-#' Suggest common manual data programming steps for a sdtm data set
+#' Suggest manual data programming steps for a sdtm data set
 #'
 #' @param obj A sdtm object
 #' @seealso [read_sdtm_sas()]
@@ -402,7 +404,7 @@ suggest <- function(obj) {
 #'
 #' @return A data frame.
 #' @export
-#'
+#' @noRd
 #' @examples
 #' subjects(examplinib_poc)
 subjects.sdtm <- function(obj) {
@@ -413,15 +415,15 @@ subjects.sdtm <- function(obj) {
 }
 
 
-#' Filter for specific USUBJID (generic)
+#' Keep only selected USUBJID in the data set
 #'
-#' @param obj The object to filter.
+#' @param obj The input, either a `nif` or `sdtm` object.
 #' @param usubjid The USUBJID as character.
-#'
 #' @return The filtered object.
-#' @seealso [filter_subject.sdtm()]
-#' @seealso [filter_subject.nif()]
 #' @export
+#' @examples
+#' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
+#' filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 filter_subject <- function(obj, usubjid) {
   UseMethod("filter_subject")
 }
@@ -431,10 +433,9 @@ filter_subject <- function(obj, usubjid) {
 #'
 #' @param obj The sdtm object.
 #' @param usubjid The USUBJID as character
-#'
 #' @return A sdtm object.
 #' @export
-#'
+#' @noRd
 #' @examples
 #' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 filter_subject.sdtm <- function(obj, usubjid) {

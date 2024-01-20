@@ -19,3 +19,4 @@ Absent EXENDTC in the last administration by subject and treatment may
 indicate that at the time of the data cut-off, this subject was still on
 treatment.
 }
+\keyword{internal}

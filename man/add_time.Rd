@@ -16,3 +16,4 @@ A data frame with FIRSTDTC and TIME added.
 TIME is created as the difference between the DTC field and the first DTC
 field on the USUBJID level. TIME is in hours, rounded by 3 digits.
 }
+\keyword{internal}

@@ -3,7 +3,7 @@
 \docType{data}
 \name{dtc_formats}
 \alias{dtc_formats}
-\title{The list of expected date/time formats in the SDTM data}
+\title{The list of expected date/time formats as per ISO 8601}
 \format{
 An object of class \code{character} of length 4.
 }
@@ -11,6 +11,6 @@ An object of class \code{character} of length 4.
 dtc_formats
 }
 \description{
-The list of expected date/time formats in the SDTM data
+The list of expected date/time formats as per ISO 8601
 }
-\keyword{datasets}
+\keyword{internal}

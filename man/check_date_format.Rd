@@ -20,3 +20,4 @@ Check for incomplete date format as per ISO 8601 in columns ending with 'DTC'
 \examples{
 ex <- check_date_format(examplinib_poc$ex)
 }
+\keyword{internal}

@@ -9,7 +9,7 @@ impute_missing_exendtc_time(ex, silent = FALSE)
 \arguments{
 \item{ex}{The EX domain as data frame.}
 
-\item{silent}{A boolean.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The updated EX domain as data frame.
@@ -25,3 +25,4 @@ the day in EXENDTC must be set to a plausible value. This is what this
 function does. For entries with missing time-of-the-day information in
 EXENDTC, it is assumed to be the same as for the EXSTDTC field.
 }
+\keyword{internal}

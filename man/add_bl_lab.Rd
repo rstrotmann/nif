@@ -15,10 +15,10 @@ add_bl_lab(obj, lb, lbtestcd, lbspec = "", silent = FALSE)
 
 \item{lbspec}{The specimen, usually "BLOOD" or "URINE".}
 
-\item{silent}{Boolean value to indicate whether warnings should be printed.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
-A NIF dataset
+A NIF dataset.
 }
 \description{
 Lab parameters not found in LB will be reported in a warning message.

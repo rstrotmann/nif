@@ -13,5 +13,10 @@ isofy_dates(obj)
 A data frame.
 }
 \description{
-Convert all DTC fields into ISO 8601 string format
+Change all columns in the input data frame that end with 'DTC' from POSIct to
+character using the ISO 8601 format.
 }
+\seealso{
+\code{\link[=lubrify_dates]{lubrify_dates()}}
+}
+\keyword{internal}

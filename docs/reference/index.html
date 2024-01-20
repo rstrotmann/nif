@@ -61,11 +61,6 @@
 
       <dl><dt>
           
-          <code><a href="add_RFENDTC.html">add_RFENDTC()</a></code> 
-        </dt>
-        <dd>Title</dd>
-      </dl><dl><dt>
-          
           <code><a href="add_analyte_mapping.html">add_analyte_mapping()</a></code> 
         </dt>
         <dd>Attach a treatment-analyte mapping to an SDTM object</dd>
@@ -93,7 +88,7 @@
           
           <code><a href="add_dose_level.html">add_dose_level()</a></code> 
         </dt>
-        <dd>Add a dose level (<code>DL</code>) column to NIF object.</dd>
+        <dd>Add dose level (<code>DL</code>) column</dd>
       </dl><dl><dt>
           
           <code><a href="add_lab_covariate.html">add_lab_covariate()</a></code> 
@@ -103,7 +98,7 @@
           
           <code><a href="add_lab_observation.html">add_lab_observation()</a></code> 
         </dt>
-        <dd>Add lab value as observation</dd>
+        <dd>Add lab value observation</dd>
       </dl><dl><dt>
           
           <code><a href="add_metabolite_mapping.html">add_metabolite_mapping()</a></code> 
@@ -121,11 +116,6 @@
         <dd>Add time-after-dose (TAD) field</dd>
       </dl><dl><dt>
           
-          <code><a href="add_time.html">add_time()</a></code> 
-        </dt>
-        <dd>Add TIME field to table</dd>
-      </dl><dl><dt>
-          
           <code><a href="add_time_mapping.html">add_time_mapping()</a></code> 
         </dt>
         <dd>Attach a time mapping to an sdtm object</dd>
@@ -133,7 +123,7 @@
           
           <code><a href="add_trtdy.html">add_trtdy()</a></code> 
         </dt>
-        <dd>Add treatment day</dd>
+        <dd>Add treatment day ('TRTDY') column</dd>
       </dl><dl><dt>
           
           <code><a href="administration_summary.html">administration_summary()</a></code> 
@@ -151,51 +141,15 @@
         <dd>Analytes and compartments within a NIF object</dd>
       </dl><dl><dt>
           
-          <code><a href="baseline_covariates.html">baseline_covariates()</a></code> 
-        </dt>
-        <dd>Extract baseline vital sign covariates from VS</dd>
-      </dl><dl><dt>
-          
           <code><a href="bmi_by_age.html">bmi_by_age()</a></code> 
         </dt>
         <dd>BMI by age scatterplot</dd>
-      </dl><dl><dt>
-          
-          <code><a href="check_date_format.html">check_date_format()</a></code> 
-        </dt>
-        <dd>Check for incomplete date format as per ISO 8601 in columns ending with 'DTC'</dd>
-      </dl><dl><dt>
-          
-          <code><a href="check_date_time_format.html">check_date_time_format()</a></code> 
-        </dt>
-        <dd>Check for incomplete date-time format in columns ending with "DTC"as per
-ISO 8601</dd>
-      </dl><dl><dt>
-          
-          <code><a href="check_last_exendtc.html">check_last_exendtc()</a></code> 
-        </dt>
-        <dd>Check EXENDTC for the last administration.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="check_missing_time.html">check_missing_time()</a></code> 
-        </dt>
-        <dd>Check for missing time in columns ending with "DTC"</dd>
-      </dl><dl><dt>
-          
-          <code><a href="check_sdtm.html">check_sdtm()</a></code> 
-        </dt>
-        <dd>Check SDTM domains DM, EX and PC for missing date and time information.</dd>
       </dl><dl><dt>
           
           <code><a href="clip_nif.html">clip_nif()</a></code> 
         </dt>
         <dd>Reduce a NIF object on the subject level by excluding all
 administrations after the last observation</dd>
-      </dl><dl><dt>
-          
-          <code><a href="compose_dtc.html">compose_dtc()</a></code> 
-        </dt>
-        <dd>Compose DTC from date and time components</dd>
       </dl><dl><dt>
           
           <code><a href="compress.html">compress()</a></code> 
@@ -207,11 +161,6 @@ administrations after the last observation</dd>
         </dt>
         <dd>This function removes columns from a NIF object that are not needed for
 downstream analysis</dd>
-      </dl><dl><dt>
-          
-          <code><a href="conditional_message.html">conditional_message()</a></code> 
-        </dt>
-        <dd>Issue message based on silent flag</dd>
       </dl><dl><dt>
           
           <code><a href="covariate_hist.html">covariate_hist()</a></code> 
@@ -229,14 +178,9 @@ downstream analysis</dd>
         <dd>Serum creatinine estimation from eGFR (Raynaud method)</dd>
       </dl><dl><dt>
           
-          <code><a href="df_to_string.html">df_to_string()</a></code> 
-        </dt>
-        <dd>Render data frame object to string</dd>
-      </dl><dl><dt>
-          
           <code><a href="domain.html">domain()</a></code> 
         </dt>
-        <dd>Get a specific domain from a SDTM object</dd>
+        <dd>Return a specific domain from a SDTM object</dd>
       </dl><dl><dt>
           
           <code><a href="dose_levels.html">dose_levels()</a></code> 
@@ -262,11 +206,6 @@ downstream analysis</dd>
           <code><a href="doses.html">doses()</a></code> 
         </dt>
         <dd>Doses within a nif object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dtc_formats.html">dtc_formats</a></code> 
-        </dt>
-        <dd>The list of expected date/time formats in the SDTM data</dd>
       </dl><dl><dt>
           
           <code><a href="egfr_cg.html">egfr_cg()</a></code> 
@@ -320,40 +259,9 @@ sampling</dd>
 sampling</dd>
       </dl><dl><dt>
           
-          <code><a href="exclude_exstdtc_after_rfendtc.html">exclude_exstdtc_after_rfendtc()</a></code> 
-        </dt>
-        <dd>Filter out EX events after the last dose as specified in RFENDTC</dd>
-      </dl><dl><dt>
-          
-          <code><a href="extract_date.html">extract_date()</a></code> 
-        </dt>
-        <dd>Extract date component of a POSICct object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="extract_time.html">extract_time()</a></code> 
-        </dt>
-        <dd>Extract time component of a POSICct object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="filter_correct_date_format.html">filter_correct_date_format()</a></code> 
-        </dt>
-        <dd>Filter out any rows containing DTC rows with incomplete data format as per
-ISO 8601</dd>
-      </dl><dl><dt>
-          
           <code><a href="filter_subject.html">filter_subject()</a></code> 
         </dt>
-        <dd>Filter for specific USUBJID (generic)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="filter_subject.nif.html">filter_subject(<i>&lt;nif&gt;</i>)</a></code> 
-        </dt>
-        <dd>Filter NIF object for specific USUBJID</dd>
-      </dl><dl><dt>
-          
-          <code><a href="filter_subject.sdtm.html">filter_subject(<i>&lt;sdtm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Filter sdtm object for specific USUBJID</dd>
+        <dd>Keep only selected USUBJID in the data set</dd>
       </dl><dl><dt>
           
           <code><a href="get_cov_plot_params.html">get_cov_plot_params()</a></code> 
@@ -366,49 +274,9 @@ ISO 8601</dd>
         <dd>Guess the most likely analyte based on its prevalence in the NIF object</dd>
       </dl><dl><dt>
           
-          <code><a href="guess_spec.html">guess_spec()</a></code> 
-        </dt>
-        <dd>Guess a PCSPEC</dd>
-      </dl><dl><dt>
-          
-          <code><a href="has_time.html">has_time()</a></code> 
-        </dt>
-        <dd>Check whether POSIX datetime object includes time information</dd>
-      </dl><dl><dt>
-          
-          <code><a href="head.nif.html">head(<i>&lt;nif&gt;</i>)</a></code> 
-        </dt>
-        <dd>Return the first lines of a nif object</dd>
-      </dl><dl><dt>
-          
           <code><a href="ht_by_wt.html">ht_by_wt()</a></code> 
         </dt>
         <dd>Weight by height scatterplot</dd>
-      </dl><dl><dt>
-          
-          <code><a href="impute_admin_dtc_to_pcrftdtc.html">impute_admin_dtc_to_pcrftdtc()</a></code> 
-        </dt>
-        <dd>Replace administration time with time found in PCRFTDTC</dd>
-      </dl><dl><dt>
-          
-          <code><a href="impute_exendtc_to_cutoff.html">impute_exendtc_to_cutoff()</a></code> 
-        </dt>
-        <dd>Impute last EXENDTC per subject and treatment to cutoff date when absent.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="impute_exendtc_to_rfendtc.html">impute_exendtc_to_rfendtc()</a></code> 
-        </dt>
-        <dd>Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent</dd>
-      </dl><dl><dt>
-          
-          <code><a href="impute_missing_exendtc.html">impute_missing_exendtc()</a></code> 
-        </dt>
-        <dd>Impute missing EXENDTC to the day before the next EXSTDTC.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="impute_missing_exendtc_time.html">impute_missing_exendtc_time()</a></code> 
-        </dt>
-        <dd>Impute time of EXENDTC to time of EXSTDTC, when missing.</dd>
       </dl><dl><dt>
           
           <code><a href="index_dosing_interval.html">index_dosing_interval()</a></code> 
@@ -426,109 +294,9 @@ ISO 8601</dd>
         <dd>Identify and index rich PK sampling intervals</dd>
       </dl><dl><dt>
           
-          <code><a href="is_iso_date.html">is_iso_date()</a></code> 
-        </dt>
-        <dd>Test whether string represents ISO 8601-formatted date</dd>
-      </dl><dl><dt>
-          
-          <code><a href="is_iso_date_time.html">is_iso_date_time()</a></code> 
-        </dt>
-        <dd>Test whether string represents ISO 8601-formatted date-time</dd>
-      </dl><dl><dt>
-          
-          <code><a href="isofy_date_format.html">isofy_date_format()</a></code> 
-        </dt>
-        <dd>Convert date fields to ISO 8601 format</dd>
-      </dl><dl><dt>
-          
-          <code><a href="isofy_dates.html">isofy_dates()</a></code> 
-        </dt>
-        <dd>Convert all DTC fields into ISO 8601 string format</dd>
-      </dl><dl><dt>
-          
-          <code><a href="last_ex_dtc.html">last_ex_dtc()</a></code> 
-        </dt>
-        <dd>Last administration DTC</dd>
-      </dl><dl><dt>
-          
-          <code><a href="last_obs_dtc.html">last_obs_dtc()</a></code> 
-        </dt>
-        <dd>Extract last observation time from observation tibble</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lubrify_dates.html">lubrify_dates()</a></code> 
-        </dt>
-        <dd>Convert all DTC fields from ISO 8601 into POSIXct</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_admin.html">make_admin()</a></code> 
-        </dt>
-        <dd>Make administration data set from EX domain</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_crea.html">make_crea()</a></code> 
-        </dt>
-        <dd>Synthesize baseline serum creatinine for fictional subjects</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_dm.html">make_dm()</a></code> 
-        </dt>
-        <dd>Synthesize a fictional DM domain</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_drug_mapping.html">make_drug_mapping()</a></code> 
-        </dt>
-        <dd>Create the drug mapping data frame from</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_exstdy_exendy.html">make_exstdy_exendy()</a></code> 
-        </dt>
-        <dd>Make EXSTDY and EXENDY by USUBJID, EXTRT</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_fe_pc.html">make_fe_pc()</a></code> 
-        </dt>
-        <dd>Synthesize the PC domain for a food effect study.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_lb.html">make_lb()</a></code> 
-        </dt>
-        <dd>Synthesize baseline LB data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_md_ex.html">make_md_ex()</a></code> 
-        </dt>
-        <dd>Synthesize a fictional EX domain for single dose administration</dd>
-      </dl><dl><dt>
-          
           <code><a href="make_nif.html">make_nif()</a></code> 
         </dt>
         <dd>Make a NIF object from SDTM-formatted data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_obs.html">make_obs()</a></code> 
-        </dt>
-        <dd>Make observation data set from PC</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_sd_ex.html">make_sd_ex()</a></code> 
-        </dt>
-        <dd>Synthesize a fictional EX domain for single dose administration</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_sd_pc.html">make_sd_pc()</a></code> 
-        </dt>
-        <dd>Create PC based on single-dose admninistration</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_subs.html">make_subs()</a></code> 
-        </dt>
-        <dd>Simulate fictional subject disposition data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="make_vs.html">make_vs()</a></code> 
-        </dt>
-        <dd>Synthesize fictional baseline vital sign data (VS domain)</dd>
       </dl><dl><dt>
           
           <code><a href="max_admin_time.html">max_admin_time()</a></code> 
@@ -544,11 +312,6 @@ ISO 8601</dd>
           <code><a href="mean_dose_plot.html">mean_dose_plot()</a></code> 
         </dt>
         <dd>Mean dose plot</dd>
-      </dl><dl><dt>
-          
-          <code><a href="miss_admins.html">miss_admins()</a></code> 
-        </dt>
-        <dd>Create administration schedule with randomly missed doses</dd>
       </dl><dl><dt>
           
           <code><a href="n_administrations.html">n_administrations()</a></code> 
@@ -611,11 +374,6 @@ ISO 8601</dd>
         <dd>Parent compounds within a NIF object</dd>
       </dl><dl><dt>
           
-          <code><a href="pk_sim.html">pk_sim()</a></code> 
-        </dt>
-        <dd>Simulate PK based on the examplinib PopPK model</dd>
-      </dl><dl><dt>
-          
           <code><a href="plot.nif.html">plot(<i>&lt;nif&gt;</i>)</a></code> 
         </dt>
         <dd>Plot NIF object</dd>
@@ -629,21 +387,6 @@ ISO 8601</dd>
           <code><a href="plot.summary_nif.html">plot(<i>&lt;summary_nif&gt;</i>)</a></code> 
         </dt>
         <dd>Plot NIF summary</dd>
-      </dl><dl><dt>
-          
-          <code><a href="print.nif.html">print(<i>&lt;nif&gt;</i>)</a></code> 
-        </dt>
-        <dd>print() implementation for nif objects</dd>
-      </dl><dl><dt>
-          
-          <code><a href="print.sdtm.html">print(<i>&lt;sdtm&gt;</i>)</a></code> 
-        </dt>
-        <dd>print() implementation for SDTM</dd>
-      </dl><dl><dt>
-          
-          <code><a href="print.subject_info.html">print(<i>&lt;subject_info&gt;</i>)</a></code> 
-        </dt>
-        <dd>Implementation of print for subject info</dd>
       </dl><dl><dt>
           
           <code><a href="print.summary_nif.html">print(<i>&lt;summary_nif&gt;</i>)</a></code> 
@@ -668,17 +411,7 @@ ISO 8601</dd>
           
           <code><a href="read_sdtm_xpt.html">read_sdtm_xpt()</a></code> 
         </dt>
-        <dd>Load SDTM data from xpt files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="recode_sex.html">recode_sex()</a></code> 
-        </dt>
-        <dd>Recode SEX field in a data frame</dd>
-      </dl><dl><dt>
-          
-          <code><a href="reformat_date.html">reformat_date()</a></code> 
-        </dt>
-        <dd>Reformat date to SDTM conventions</dd>
+        <dd>Read SDTM data from xpt files</dd>
       </dl><dl><dt>
           
           <code><a href="rich_sampling_sbs.html">rich_sampling_sbs()</a></code> 
@@ -696,39 +429,19 @@ ISO 8601</dd>
         <dd>Standard nif fields</dd>
       </dl><dl><dt>
           
-          <code><a href="standardize_date_format.html">standardize_date_format()</a></code> 
-        </dt>
-        <dd>Convert date fileds to POSIX format</dd>
-      </dl><dl><dt>
-          
           <code><a href="studies.html">studies()</a></code> 
         </dt>
         <dd>Studies within a nif object</dd>
       </dl><dl><dt>
           
-          <code><a href="subject_baseline_data.html">subject_baseline_data()</a></code> 
-        </dt>
-        <dd>Generate baseline subject data</dd>
-      </dl><dl><dt>
-          
           <code><a href="subject_info.html">subject_info()</a></code> 
         </dt>
-        <dd>Subject information generic method</dd>
-      </dl><dl><dt>
-          
-          <code><a href="subject_info.nif.html">subject_info(<i>&lt;nif&gt;</i>)</a></code> 
-        </dt>
-        <dd>Subject information</dd>
-      </dl><dl><dt>
-          
-          <code><a href="subject_info.sdtm.html">subject_info(<i>&lt;sdtm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Subject demographic information</dd>
+        <dd>Details on selected subjects</dd>
       </dl><dl><dt>
           
           <code><a href="subjects.html">subjects()</a></code> 
         </dt>
-        <dd>Unique subjects within a data set (generic method)</dd>
+        <dd>Unique subjects within a data set</dd>
       </dl><dl><dt>
           
           <code><a href="subjects.nif.html">subjects(<i>&lt;nif&gt;</i>)</a></code> 
@@ -736,14 +449,9 @@ ISO 8601</dd>
         <dd>Unique subjects within a NIF object</dd>
       </dl><dl><dt>
           
-          <code><a href="subjects.sdtm.html">subjects(<i>&lt;sdtm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Unique subjects within a sdtm object</dd>
-      </dl><dl><dt>
-          
           <code><a href="suggest.html">suggest()</a></code> 
         </dt>
-        <dd>Suggest common manual data programming steps for a sdtm data set</dd>
+        <dd>Suggest manual data programming steps for a sdtm data set</dd>
       </dl><dl><dt>
           
           <code><a href="summary.nif.html">summary(<i>&lt;nif&gt;</i>)</a></code> 
@@ -756,29 +464,9 @@ ISO 8601</dd>
         <dd>SDTM summary</dd>
       </dl><dl><dt>
           
-          <code><a href="synthesize_examplinib.html">synthesize_examplinib()</a></code> 
-        </dt>
-        <dd>Synthesize package data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="synthesize_sdtm_food_effect_study.html">synthesize_sdtm_food_effect_study()</a></code> 
-        </dt>
-        <dd>Synthesize SDTM data for a fictional food effect study</dd>
-      </dl><dl><dt>
-          
-          <code><a href="synthesize_sdtm_poc_study.html">synthesize_sdtm_poc_study()</a></code> 
-        </dt>
-        <dd>MD study</dd>
-      </dl><dl><dt>
-          
-          <code><a href="synthesize_sdtm_sad_study.html">synthesize_sdtm_sad_study()</a></code> 
-        </dt>
-        <dd>Synthesize SDTM data for a 3 + 3 dose escalation study</dd>
-      </dl><dl><dt>
-          
           <code><a href="usubjid.html">usubjid()</a></code> 
         </dt>
-        <dd>Get USUBJID of subject</dd>
+        <dd>Get the USUBJID of subject</dd>
       </dl><dl><dt>
           
           <code><a href="write_csv.nif.html">write_csv.nif()</a></code> 

@@ -29,7 +29,6 @@ Imports:
     shinyjs,
     stringr,
     tidyr,
-    usethis,
     utils
 Suggests: 
     knitr,

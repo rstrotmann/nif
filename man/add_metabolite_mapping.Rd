@@ -17,12 +17,11 @@ add_metabolite_mapping(obj, pctestcd_parent = "", pctestcd_metabolite = "")
 The SDTM object.
 }
 \description{
-In case multiple analytes are measured for a specific administered drug,
-some functions need that information to correlate plasma concentrations
-with administrations. 'add_metabolite_mapping()' is used to attach this
+In case multiple analytes are measured for a specific administered drug, some
+functions need that information to correlate plasma concentrations with
+administrations. 'add_metabolite_mapping()' is used to attach this
 information to a SDTM object.
 }
 \examples{
 add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
-
 }

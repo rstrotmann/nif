@@ -46,7 +46,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Synthesize baseline serum creatinine for fictional subjects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/synthesize_test_data.R" class="external-link"><code>R/synthesize_test_data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/sdtm_synthesis.R" class="external-link"><code>R/sdtm_synthesis.R</code></a></small>
       <div class="d-none name"><code>make_crea.Rd</code></div>
     </div>
 
@@ -66,8 +66,8 @@
 
 
 <dt>crea_method</dt>
-<dd><p>The crea calculation function as function reference. Can
-currently be <code>crea_mdrd</code> or <code>crea_raynaud</code>.</p></dd>
+<dd><p>The creatinine calculation function as function reference.
+Can currently be <code>crea_mdrd</code> or <code>crea_raynaud</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -78,10 +78,9 @@ currently be <code>crea_mdrd</code> or <code>crea_raynaud</code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function makes use of empirical eGFR data from a study in non-diseased
-Caucasian subjects as published by <a href="https://doi.org/10.1038/sj.ki.5002374" class="external-link">Wetzels et al.</a>,
-Table 1. In this study, eGFR were calculated by the Modification of Diet in
-Renal Disease (MDRD) method.</p>
+    <p>This function makes use of empirical eGFR data from a study in
+non-diseased Caucasian subjects as published by <a href="https://doi.org/10.1038/sj.ki.5002374" class="external-link">Wetzels et al.</a>, Table 1. In this study, eGFR
+were calculated by the Modification of Diet in Renal Disease (MDRD) method.</p>
 <p>The tabulated data is modeled using a generalized linear model based on age
 and sex. The model is used to predict the target eGFR (<code>target_egfr</code>) for the
 subjects in DM. An actual eGFR (<code>egfr</code>) is then generated for each subjects

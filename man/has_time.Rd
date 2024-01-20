@@ -10,8 +10,9 @@ has_time(datetime)
 \item{datetime}{The datetime object in POSIX format.}
 }
 \value{
-A boolean value.
+A Boolean value.
 }
 \description{
 Check whether POSIX datetime object includes time information
 }
+\keyword{internal}

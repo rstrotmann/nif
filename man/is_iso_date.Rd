@@ -21,3 +21,4 @@ objects like "dddd-dd-ddTdd:dd" are also recognized.
 is_iso_date("2023-09-27")
 is_iso_date(c("2023-03-21T11:55", "2023-07-18"))
 }
+\keyword{internal}

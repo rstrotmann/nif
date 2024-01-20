@@ -12,8 +12,10 @@ compose_dtc(date, time)
 \item{time}{A time in character format.}
 }
 \value{
-A POSICct object
+A POSICct object.
 }
 \description{
-Compose DTC from date and time components
+Convert the date and time provided separately as character to a POSIXct
+date-time object.
 }
+\keyword{internal}

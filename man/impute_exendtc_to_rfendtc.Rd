@@ -11,7 +11,7 @@ impute_exendtc_to_rfendtc(ex, dm, silent = FALSE)
 
 \item{dm}{The DM domain as data frame.}
 
-\item{silent}{Boolean.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The updated EX domain as data frame.
@@ -26,3 +26,4 @@ reference end date-time field that specifies the date-time of the last
 treatment administration. This function completes EXENDTC for the very last
 administration time based on the RFENDTC, if provided in DM.
 }
+\keyword{internal}

@@ -1,14 +1,12 @@
 #' Test whether string represents ISO 8601-formatted date-time
 #'
-#' @param x The input as character.
-#'
 #' The expected format is "dddd-dd-ddTdd:dd" with "d" a digit. This function
 #' tests whether the above is part of the input, i.e., dat-time formats that
 #' also include seconds information are also recognized.
-#'
+#' @param x The input as character.
 #' @return Boolean.
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' is_iso_date_time("2023-09-27T15:04")
 #' is_iso_date_time("2023-09-27T15:04:00")
@@ -23,12 +21,10 @@ is_iso_date_time <- function(x) {
 #' The expected format is "dddd-dd-dd" with "d" a digit. This function tests
 #' whether the above is part of the input, i.e., ISO 8601-formatted date-time
 #' objects like "dddd-dd-ddTdd:dd" are also recognized.
-#'
 #' @param x The input as character.
-#'
 #' @return Boolean.
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' is_iso_date("2023-09-27")
 #' is_iso_date(c("2023-03-21T11:55", "2023-07-18"))
@@ -41,9 +37,9 @@ is_iso_date <- function(x) {
 #'
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to issue message output.
-#'
 #' @return The (unchanged) SDTM domain.
 #' @export
+#' @keywords internal
 #' @examples
 #' ex <- check_date_format(examplinib_poc$ex)
 check_date_format <- function(obj, verbose = TRUE) {
@@ -69,8 +65,8 @@ check_date_format <- function(obj, verbose = TRUE) {
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
 #' @param silent Boolean to indicate whether message output is produced.
-#'
 #' @return The filtered SDTM domain as data frame.
+#' @keywords internal
 #' @export
 filter_correct_date_format <- function(obj, verbose = TRUE, silent = FALSE) {
   domain <- obj %>% distinct(DOMAIN)
@@ -98,9 +94,9 @@ filter_correct_date_format <- function(obj, verbose = TRUE, silent = FALSE) {
 #'
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
-#'
 #' @return The unchanged SDTM domain.
 #' @export
+#' @keywords internal
 check_date_time_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
@@ -123,9 +119,9 @@ check_date_time_format <- function(obj, verbose = TRUE) {
 #'
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
-#'
 #' @return The unchanged SDTM domain.
 #' @export
+#' @keywords internal
 check_missing_time <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
@@ -149,12 +145,11 @@ check_missing_time <- function(obj, verbose = TRUE) {
 #' Absent EXENDTC in the last administration by subject and treatment may
 #' indicate that at the time of the data cut-off, this subject was still on
 #' treatment.
-#'
 #' @param ex The SDTM EX domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
-#'
 #' @return The unchanged EX domain.
 #' @export
+#' @keywords internal
 check_last_exendtc <- function(ex, verbose = TRUE) {
   domain <- ex %>% distinct(DOMAIN)
 
@@ -188,9 +183,9 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
 #'
 #' @return Nothing.
 #' @export
+#' @keywords internal
 #' @examples
 #' check_sdtm(examplinib_poc)
-#'
 check_sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in DM
   sdtm %>%
@@ -219,7 +214,6 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 }
 
 
-
 #' Plot SDTM object
 #'
 #' @param x The sdtm object.
@@ -230,10 +224,8 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' @param points Boolean whether to plot points.
 #' @param analyte The analyte to be plotted as character.
 #' @param log Boolean whether to use a logarithmic y axis.
-#'
 #' @return Nothing.
 #' @export
-#'
 #' @examples
 #' plot(examplinib_sad)
 #' plot(examplinib_poc, "dm")

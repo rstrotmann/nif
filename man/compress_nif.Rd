@@ -22,8 +22,8 @@ A NIF dataset with only the specified fields
 \code{compress_nif()} has been superseded in favor of \code{\link[=compress]{compress()}}.
 }
 \details{
-During creating of a NIF object using \code{\link[=make_nif]{make_nif()}}, multiple SDTM tables
-are aggregated without deleting the original fields (columns). Many of these
+During creating of a NIF object using \code{\link[=make_nif]{make_nif()}}, multiple SDTM tables are
+aggregated without deleting the original fields (columns). Many of these
 fields may not be required for the final analysis. This function reduces the
 fields to those typically required in the downstream analysis. Applying
 \code{\link[=compress_nif]{compress_nif()}} is typically the last step in the creation of a NIF data
@@ -32,5 +32,4 @@ custom imputations and manually deriving convariates as needed.
 }
 \examples{
 compress_nif(examplinib_fe_nif)
-
 }

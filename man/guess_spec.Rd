@@ -2,21 +2,23 @@
 % Please edit documentation in R/make_nif.R
 \name{guess_spec}
 \alias{guess_spec}
-\title{Guess a PCSPEC}
+\title{Guess the most likely PCSPEC}
 \usage{
 guess_spec(pc, silent = T)
 }
 \arguments{
 \item{pc}{A data frame.}
 
-\item{silent}{Boolean.}
+\item{silent}{Switch to disable message output.}
 }
 \value{
 The imputed spec as character.
 }
 \description{
-Guess a PCSPEC
+The PC specimen is selected based on the likelihood in the order of 'plasma'
+< 'serum' < 'blood'.
 }
 \examples{
 guess_spec(examplinib_poc$pc)
 }
+\keyword{internal}

@@ -15,3 +15,4 @@ A data frame.
 \description{
 Create the drug mapping data frame from
 }
+\keyword{internal}

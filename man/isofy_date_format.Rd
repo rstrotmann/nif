@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{isofy_date_format}
 \alias{isofy_date_format}
-\title{Convert date fields to ISO 8601 format}
+\title{Convert all date fields to ISO 8601 format}
 \usage{
 isofy_date_format(obj, fields = NULL)
 }
@@ -15,5 +15,7 @@ isofy_date_format(obj, fields = NULL)
 A data frame.
 }
 \description{
-Convert date fields to ISO 8601 format
+Change date-time columns in the input data frame form POSIXct to ISO 8601
+format.
 }
+\keyword{internal}

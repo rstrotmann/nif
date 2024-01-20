@@ -7,20 +7,19 @@
 is_iso_date_time(x)
 }
 \arguments{
-\item{x}{The input as character.
-
-The expected format is "dddd-dd-ddTdd:dd" with "d" a digit. This function
-tests whether the above is part of the input, i.e., dat-time formats that
-also include seconds information are also recognized.}
+\item{x}{The input as character.}
 }
 \value{
 Boolean.
 }
 \description{
-Test whether string represents ISO 8601-formatted date-time
+The expected format is "dddd-dd-ddTdd:dd" with "d" a digit. This function
+tests whether the above is part of the input, i.e., dat-time formats that
+also include seconds information are also recognized.
 }
 \examples{
 is_iso_date_time("2023-09-27T15:04")
 is_iso_date_time("2023-09-27T15:04:00")
 is_iso_date_time(c("2023-03-21T11:55", "2023-07-18"))
 }
+\keyword{internal}

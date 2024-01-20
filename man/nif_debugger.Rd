@@ -13,6 +13,9 @@ nif_debugger(nif_data, sdtm_data, analyte = NULL, usubjid = NULL)
 
 \item{analyte}{The analyte as character. If NULL (default), the most likely
 analyte will be selected.}
+
+\item{usubjid}{The subject USUBJID to filter for. If NULL (default), all
+subjects are shown.}
 }
 \value{
 Nothing
