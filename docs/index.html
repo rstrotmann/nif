@@ -80,7 +80,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of nif like so:</p>
+<p>You can install the development version of <code>nif</code> like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rstrotmann/nif"</span>, build_vignettes<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -90,34 +90,137 @@
 <div class="section level3">
 <h3 id="nif-data-set-creation">NIF data set creation<a class="anchor" aria-label="anchor" href="#nif-data-set-creation"></a>
 </h3>
-<p>This is a basic example using a sample SDTM object to create a NIF data set:</p>
+<p>This is a very basic example using a sample SDTM object to create a NIF data set using <code><a href="reference/make_nif.html">make_nif()</a></code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstrotmann/nif" class="external-link">nif</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sdtm</span> <span class="op">&lt;-</span> <span class="va">examplinib_sad</span></span>
 <span></span>
-<span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu"><a href="reference/compress_nif.html">compress_nif</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>In most cases, you may want to add further covariates after <code><a href="reference/make_nif.html">make_nif()</a></code> and before <code>ìndex_nif()</code>, consider a more complex example:</p>
+<span><span class="fu"><a href="reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="reference/compress.html">compress</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   REF    STUDYID ID           USUBJID NTIME TIME TAD ANALYTE AMT RATE        DV</span></span>
+<span><span class="co">#&gt; 1   1 2023000001  1 20230000011010001   0.0  0.0 0.0  RS2023   5    0        NA</span></span>
+<span><span class="co">#&gt; 2   2 2023000001  1 20230000011010001   0.0  0.0 0.0  RS2023   0    0 0.0000000</span></span>
+<span><span class="co">#&gt; 3   3 2023000001  1 20230000011010001   0.5  0.5 0.5  RS2023   0    0 0.0024470</span></span>
+<span><span class="co">#&gt; 4   4 2023000001  1 20230000011010001   1.0  1.0 1.0  RS2023   0    0 0.0072445</span></span>
+<span><span class="co">#&gt; 5   5 2023000001  1 20230000011010001   1.5  1.5 1.5  RS2023   0    0 0.0157476</span></span>
+<span><span class="co">#&gt; 6   6 2023000001  1 20230000011010001   2.0  2.0 2.0  RS2023   0    0 0.0209229</span></span>
+<span><span class="co">#&gt;        LNDV MDV CMT EVID DOSE AGE SEX  RACE HEIGHT WEIGHT     BMI ACTARMCD</span></span>
+<span><span class="co">#&gt; 1        NA   1   1    1    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 2      -Inf   0   2    0   NA  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 3 -6.012892   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 4 -4.927513   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 5 -4.151067   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 6 -3.866911   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt;   PARENT METABOLITE TRTDY                 DTC EXSEQ      EXTRT</span></span>
+<span><span class="co">#&gt; 1 RS2023      FALSE     1 2000-12-31 10:18:00     1 EXAMPLINIB</span></span>
+<span><span class="co">#&gt; 2 RS2023      FALSE     1 2000-12-31 10:18:00    NA EXAMPLINIB</span></span>
+<span><span class="co">#&gt; 3 RS2023      FALSE     1 2000-12-31 10:48:00     1 EXAMPLINIB</span></span>
+<span><span class="co">#&gt; 4 RS2023      FALSE     1 2000-12-31 11:18:00     1 EXAMPLINIB</span></span>
+<span><span class="co">#&gt; 5 RS2023      FALSE     1 2000-12-31 11:48:00     1 EXAMPLINIB</span></span>
+<span><span class="co">#&gt; 6 RS2023      FALSE     1 2000-12-31 12:18:00     1 EXAMPLINIB</span></span></code></pre></div>
+<p>In many cases, you may want to add further covariates after <code><a href="reference/make_nif.html">make_nif()</a></code>, see this slightly more elaborate example:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu"><a href="reference/compress_nif.html">compress_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>COHORT<span class="op">=</span><span class="va">ACTARMCD</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>FOOD<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="reference/compress.html">compress</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>COHORT <span class="op">=</span> <span class="va">ACTARMCD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="reference/add_bl_lab.html">add_bl_lab</a></span><span class="op">(</span><span class="va">examplinib_sad</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="reference/domain.html">domain</a></span><span class="op">(</span><span class="st">"lb"</span><span class="op">)</span>, <span class="st">"CREAT"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="reference/add_bl_crcl.html">add_bl_crcl</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   REF    STUDYID ID           USUBJID NTIME TIME TAD ANALYTE AMT RATE        DV</span></span>
+<span><span class="co">#&gt; 1   1 2023000001  1 20230000011010001   0.0  0.0 0.0  RS2023   5    0        NA</span></span>
+<span><span class="co">#&gt; 2   2 2023000001  1 20230000011010001   0.0  0.0 0.0  RS2023   0    0 0.0000000</span></span>
+<span><span class="co">#&gt; 3   3 2023000001  1 20230000011010001   0.5  0.5 0.5  RS2023   0    0 0.0024470</span></span>
+<span><span class="co">#&gt; 4   4 2023000001  1 20230000011010001   1.0  1.0 1.0  RS2023   0    0 0.0072445</span></span>
+<span><span class="co">#&gt; 5   5 2023000001  1 20230000011010001   1.5  1.5 1.5  RS2023   0    0 0.0157476</span></span>
+<span><span class="co">#&gt; 6   6 2023000001  1 20230000011010001   2.0  2.0 2.0  RS2023   0    0 0.0209229</span></span>
+<span><span class="co">#&gt;        LNDV MDV CMT EVID DOSE AGE SEX  RACE HEIGHT WEIGHT     BMI ACTARMCD</span></span>
+<span><span class="co">#&gt; 1        NA   1   1    1    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 2      -Inf   0   2    0   NA  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 3 -6.012892   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 4 -4.927513   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 5 -4.151067   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt; 6 -3.866911   0   2    0    5  43   0 WHITE  187.4     77 21.9256       C1</span></span>
+<span><span class="co">#&gt;   PARENT METABOLITE TRTDY                 DTC EXSEQ      EXTRT COHORT BL_CREAT</span></span>
+<span><span class="co">#&gt; 1 RS2023      FALSE     1 2000-12-31 10:18:00     1 EXAMPLINIB     C1  67.4825</span></span>
+<span><span class="co">#&gt; 2 RS2023      FALSE     1 2000-12-31 10:18:00    NA EXAMPLINIB     C1  67.4825</span></span>
+<span><span class="co">#&gt; 3 RS2023      FALSE     1 2000-12-31 10:48:00     1 EXAMPLINIB     C1  67.4825</span></span>
+<span><span class="co">#&gt; 4 RS2023      FALSE     1 2000-12-31 11:18:00     1 EXAMPLINIB     C1  67.4825</span></span>
+<span><span class="co">#&gt; 5 RS2023      FALSE     1 2000-12-31 11:48:00     1 EXAMPLINIB     C1  67.4825</span></span>
+<span><span class="co">#&gt; 6 RS2023      FALSE     1 2000-12-31 12:18:00     1 EXAMPLINIB     C1  67.4825</span></span>
+<span><span class="co">#&gt;    BL_CRCL</span></span>
+<span><span class="co">#&gt; 1 115.5074</span></span>
+<span><span class="co">#&gt; 2 115.5074</span></span>
+<span><span class="co">#&gt; 3 115.5074</span></span>
+<span><span class="co">#&gt; 4 115.5074</span></span>
+<span><span class="co">#&gt; 5 115.5074</span></span>
+<span><span class="co">#&gt; 6 115.5074</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-exploration">Data exploration<a class="anchor" aria-label="anchor" href="#data-exploration"></a>
 </h3>
+<p><code>nif</code> contains functions to explore and summarize NIF files:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; NONMEM input file (NIF) data set summary</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Data from 48 subjects across 1 studies:</span></span>
+<span><span class="co">#&gt; STUDYID      N    </span></span>
+<span><span class="co">#&gt; 2023000001   48   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Males: 48, females: 0 (0%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Renal function:</span></span>
+<span><span class="co">#&gt; CLASS    N    </span></span>
+<span><span class="co">#&gt; mild     6    </span></span>
+<span><span class="co">#&gt; normal   42   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Analytes:</span></span>
+<span><span class="co">#&gt; RS2023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 816 observations:</span></span>
+<span><span class="co">#&gt; CMT   ANALYTE   N     </span></span>
+<span><span class="co">#&gt; 2     RS2023    816   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Administered drugs:</span></span>
+<span><span class="co">#&gt; RS2023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Dose levels:</span></span>
+<span><span class="co">#&gt; COHORT   RS2023   N    </span></span>
+<span><span class="co">#&gt; C1       5        3    </span></span>
+<span><span class="co">#&gt; C10      500      12   </span></span>
+<span><span class="co">#&gt; C2       10       3    </span></span>
+<span><span class="co">#&gt; C3       20       3    </span></span>
+<span><span class="co">#&gt; C4       50       3    </span></span>
+<span><span class="co">#&gt; C5       100      6    </span></span>
+<span><span class="co">#&gt; C6       200      3    </span></span>
+<span><span class="co">#&gt; C7       500      6    </span></span>
+<span><span class="co">#&gt; C8       800      6    </span></span>
+<span><span class="co">#&gt; C9       1000     3    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Subjects with dose reductions</span></span>
+<span><span class="co">#&gt; RS2023   </span></span>
+<span><span class="co">#&gt; 0        </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Treatment duration overview:</span></span>
+<span><span class="co">#&gt; PARENT   min   max   mean   median   </span></span>
+<span><span class="co">#&gt; RS2023   1     1     1      1</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"><img src="reference/figures/README-unnamed-chunk-4-2.png" width="100%"><img src="reference/figures/README-unnamed-chunk-4-3.png" width="100%"><img src="reference/figures/README-unnamed-chunk-4-4.png" width="100%"><img src="reference/figures/README-unnamed-chunk-4-5.png" width="100%"><img src="reference/figures/README-unnamed-chunk-4-6.png" width="100%"><img src="reference/figures/README-unnamed-chunk-4-7.png" width="100%"><img src="reference/figures/README-unnamed-chunk-4-8.png" width="100%"></p>
 </div>
 </div>
 </div>
 <div class="section level1">
 <h1 id="further-information">Further information<a class="anchor" aria-label="anchor" href="#further-information"></a>
 </h1>
-<p>For further guidance see the help for individual functions and the included vignettes (see <code>browseVignettes("nif")</code>):</p>
+<p>For further guidance see the help for individual functions and the <a href="https://rstrotmann.github.io/nif/" class="external-link">project website</a> on github pages.</p>
 </div>
 
   </main><aside class="col-md-3"><div class="links">

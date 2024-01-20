@@ -648,8 +648,8 @@ make_admin <- function(ex,
 #' @export
 #' @keywords internal
 #' @examples
-#' guess_spec(examplinib_poc$pc)
-guess_spec <- function(pc, silent=T) {
+#' guess_pcspec(examplinib_poc$pc)
+guess_pcspec <- function(pc, silent = TRUE) {
   pcspecs <- unique(pc$PCSPEC)
   standard_specs <- c(
     "PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
@@ -659,6 +659,25 @@ guess_spec <- function(pc, silent=T) {
   spec <- standard_specs[standard_specs %in% pcspecs][1]
   conditional_message("No specimen specified. Set to ", spec,
                       " as the most likely.", "\n", silent = silent)
+  return(spec)
+}
+
+
+#' Guess the most likely LBSPEC
+#'
+#' @param lb The LB SDTM domain as data frame.
+#' @param silent Switch to disable message output.
+#' @return the imputed LBSPEC as character.
+#' @export
+#' @keywords internal
+#' @examples
+#' guess_lbspec(domain(examplinib_poc, "lb"))
+guess_lbspec <- function(lb, silent = TRUE) {
+  lbspecs <- unique(lb$LBSPEC)
+  standard_specs <- c("SERUM", "serum", "URINE", "urine")
+  spec <- standard_specs[standard_specs %in% lbspecs][1]
+  conditional_message("No specimen specified. Set to '", spec,
+                      "' as the most likely.", "\n", silent = silent)
   return(spec)
 }
 
@@ -701,7 +720,7 @@ make_obs <- function(pc,
   pc %>% verify(has_all_names("PCSPEC", "PCDTC", "PCSTRESN", "PCTESTCD"))
 
   if (length(spec) == 0) {
-    spec <- guess_spec(pc)
+    spec <- guess_pcspec(pc)
   }
 
   obs <- pc %>%
@@ -996,7 +1015,7 @@ make_nif <- function(
 
   # define sample specimen
   if (length(spec) == 0) {
-    spec <- guess_spec(pc, silent=silent)
+    spec <- guess_pcspec(pc, silent=silent)
   }
 
   # define compartment mapping
@@ -1398,7 +1417,10 @@ add_trtdy <- function(obj) {
 #' @import stringr
 #' @importFrom rlang .data
 #' @export
-add_bl_lab <- function(obj, lb, lbtestcd, lbspec = "", silent = FALSE) {
+add_bl_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
+  if(is.null(lbspec)) {
+    lbspec = guess_lbspec(lb)
+  }
   temp <- lbtestcd %in% (lb %>%
                            dplyr::distinct(.data$LBTESTCD) %>%
                            dplyr::pull(.data$LBTESTCD))

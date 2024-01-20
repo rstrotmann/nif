@@ -22,7 +22,7 @@ This is a package to create NONMEM input files (NIF) from SDTM data.
 
 ## Installation
 
-You can install the development version of nif like so:
+You can install the development version of `nif` like so:
 
 ``` r
 devtools::install_github("rstrotmann/nif", build_vignettes=TRUE)
@@ -32,37 +32,48 @@ devtools::install_github("rstrotmann/nif", build_vignettes=TRUE)
 
 ### NIF data set creation
 
-This is a basic example using a sample SDTM object to create a NIF data set:
+This is a very basic example using a sample SDTM object to create a NIF data
+set using `make_nif()`:
 
-``` r
+```{r message = FALSE, warning = FALSE}
 library(nif)
+library(tidyverse)
 
 sdtm <- examplinib_sad
 
-nif <- make_nif(sdtm) %>% 
-  compress_nif()
+make_nif(sdtm) %>% 
+  compress() %>%
+  head()
 ```
 
-In most cases, you may want to add further covariates after `make_nif()` and
-before `ìndex_nif()`, consider a more complex example:
+In many cases, you may want to add further covariates after `make_nif()`,
+see this slightly more elaborate example:
 
-``` r
-nif <- make_nif(sdtm) %>% 
-  compress_nif() %>% 
-  mutate(COHORT=ACTARMCD) %>% 
-  mutate(FOOD=0)
+```{r}
+nif <- make_nif(sdtm, silent = TRUE) %>% 
+  compress() %>% 
+  mutate(COHORT = ACTARMCD) %>% 
+  add_bl_lab(examplinib_sad %>% domain("lb"), "CREAT") %>% 
+  add_bl_crcl()
+
+head(nif)
 ```
 
 ### Data exploration
 
-``` r
+`nif` contains functions to explore and summarize NIF files:
+
+```{r, message = FALSE, warning = FALSE, fig.width=4, fig.height=4}
 summary(nif)
-plot(summary(nif))
+
+invisible(capture.output(
+  summary(nif) %>%
+    plot()
+))
 ```
 
 # Further information
 
-For further guidance see the help for individual functions and the included
-vignettes (see `browseVignettes("nif")`):
-
+For further guidance see the help for individual functions and the [project
+website](https://rstrotmann.github.io/nif/) on github pages.
 
