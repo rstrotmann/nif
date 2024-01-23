@@ -20,5 +20,4 @@ Subjects with dose reduction
 }
 \examples{
 dose_red_sbs(examplinib_poc_nif)
-
 }

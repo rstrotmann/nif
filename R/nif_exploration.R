@@ -1,8 +1,8 @@
 #' Plot DV time course data from individual subject
 #'
 #' This function plots DV over TIME for an individual subject, id. Id can be
-#'   either the ID or the USUBJID. Administration time points are indicated with
-#'   vertical lines.
+#' either the ID or the USUBJID. Administration time points are indicated with
+#' vertical lines.
 #'
 #' @param nif The NIF object
 #' @param id The subject ID to be plotted
@@ -21,6 +21,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @export
+#' @keywords internal
 #' @examples
 #' nif_plot_id(examplinib_poc_nif, 1)
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
@@ -130,9 +131,8 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 #' Plot dose time course data from individual subject
 #'
 #' This function plots AMT over TIME for an individual subject, id. Id can be
-#'   either the ID or the USUBJID. Administration time points are indicated with
-#'   vertical lines.
-#'
+#' either the ID or the USUBJID. Administration time points are indicated with
+#' vertical lines.
 #' @param nif The NIF object.
 #' @param id The subject ID to be plotted.
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
@@ -141,11 +141,11 @@ nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
 #' @param analyte The analyte of interest.
 #' @param max_time The right limit of the time scale.
 #' @param point_size The point size as numeric.
-#'
 #' @return A ggplot object.
 #' @import dplyr
 #' @import ggplot2
 #' @export
+#' @keywords internal
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
@@ -196,10 +196,9 @@ dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
-#'
 #' @return A ggplot2 plot object.
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' nif_mean_plot(examplinib_sad_nif)
 #' nif_mean_plot(examplinib_fe_nif, group = "FASTED")
@@ -258,11 +257,10 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #' @param max_x The maximal value for the x scale as numeric.
 #' @param log Boolean to define whether y axis is plotted on the log scale.
 #' @param point_size the point size as numeric.
-#'
 #' @return A ggplot2 plot object.
 #' @import assertr
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' nif_spaghetti_plot(examplinib_fe_nif)
 #' nif_spaghetti_plot(examplinib_sad_nif)
@@ -362,8 +360,7 @@ nif_spaghetti_plot <- function(obj,
 #' Plot NIF object
 #'
 #' This function plots a NIF object, grouped by the variable `group`. If no
-#'   grouping variable is provided, `DOSE` will be used.
-#'
+#' grouping variable is provided, `DOSE` will be used.
 #' @param x The NIF object to be plotted.
 #' @param y_scale Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".
 #' @param max_x Maximal x (time) scale value.
@@ -395,7 +392,6 @@ nif_spaghetti_plot <- function(obj,
 #'   should be plotted.
 #' @param log Boolean to select whether the y-scale is logarithmic. Alternative
 #' `y_scale="log"`.
-#'
 #' @return The plot object
 #' @seealso [nif_viewer()]
 #' @examples
@@ -483,18 +479,31 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
 }
 
 
+
+#' NIF or SDTM object overview
+#'
+#' @param object The NIF or SDTM object.
+#' @param ... Further arguments.
+#' @return A summary_nif or summary_sdtm object.
+#' @export
+#' @examples
+#' summary(examplinib_poc)
+#' summary(examplinib_poc_nif)
+summary <- function(object, ...) {
+  UseMethod("summary")
+}
+
 #' NIF object overview
 #'
 #' @param object The NIF object.
 #' @param ... Further arguments.
 # @param egfr_function The function to be used for estimation of the renal
-# function classes, see [add_bl_crcl()] for reference.
-#'
+#   function classes, see [add_bl_crcl()] for reference.
 #' @return A summary_nif object.
 #' @export
+#' @noRd
 #' @examples
 #' summary(examplinib_poc_nif)
-#'
 # summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
 summary.nif <- function(object, ...) {
   subjects <- subjects(object)
@@ -586,7 +595,7 @@ summary.nif <- function(object, ...) {
 #'
 #' @param x A summary_nif object.
 #' @param ... Further parameters.
-#'
+#' @noRd
 #' @return Nothing.
 #' @export
 print.summary_nif <- function(x, ...) {
@@ -633,7 +642,7 @@ print.summary_nif <- function(x, ...) {
 #' Get covariate plot parameters
 #'
 #' @param field The field of the NIF object
-#'
+#' @keywords internal
 #' @return A data frame.
 get_cov_plot_params <- function(field) {
   params <- tribble(
@@ -663,9 +672,9 @@ get_cov_plot_params <- function(field) {
 #' @param ... Further arguments.
 #' @return A list of ggplot objects.
 #' @export
+#' @noRd
 #' @examples
 #' plot(summary(examplinib_poc_nif))
-#'
 plot.summary_nif <- function(x, ...) {
   nif <- x$nif
   out <- list()
@@ -690,20 +699,17 @@ plot.summary_nif <- function(x, ...) {
 }
 
 
-
 #' Generic covariate distribution histogram
 #'
 #' @param obj The NIF object.
 #' @param nbins The number of bins to be used if no binwidth is specified.
 #' Defaults to 11.
 #' @param field The field of the NIF object as character.
-#'
 #' @return A plot object.
 #' @export
 #' @examples
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
-#'
 covariate_hist <- function(obj, field, nbins = 11) {
   cov_params <- get_cov_plot_params(field)
   xlabel <- cov_params$xlabel
@@ -743,9 +749,9 @@ covariate_hist <- function(obj, field, nbins = 11) {
 #'
 #' @return A plot object.
 #' @export
+#' @keywords internal
 #' @examples
 #' wt_by_sex(examplinib_poc_nif)
-#'
 wt_by_sex <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -770,9 +776,9 @@ wt_by_sex <- function(obj) {
 #' Weight by race diagram
 #'
 #' @param obj The NIF file object.
-#'
 #' @return A plot object.
 #' @export
+#' @keywords internal
 #' @examples
 #' wt_by_race(examplinib_poc_nif)
 wt_by_race <- function(obj) {
@@ -831,7 +837,6 @@ wt_by_ht <- function(obj) {
 #' Weight by height scatterplot
 #'
 #' @param obj The NIF object.
-#'
 #' @return A plot object.
 #' @export
 #' @examples
@@ -874,13 +879,11 @@ bmi_by_age <- function(obj) {
 #' Overview on the number of administrations in the subjects by parent
 #'
 #' @param obj A NIF object.
-#'
 #' @return A data frame.
 #' @importFrom stats median
 #' @export
 #' @examples
 #' administration_summary(examplinib_poc_nif)
-#'
 administration_summary <- function(obj) {
   obj %>%
     n_administrations() %>%
@@ -898,16 +901,14 @@ administration_summary <- function(obj) {
 #' Mean dose plot
 #'
 #' This function plots the mean dose per day over time
-#'
 #' @param obj A NIF object.
 #' @param analyte The compound as character (i.e., the ANALYTE within the data
 #'   set).
-#'
 #' @return A ggplot object.
 #' @export
+#' @keywords internal
 #' @examples
 #' mean_dose_plot(examplinib_poc_nif)
-#'
 mean_dose_plot <- function(obj, analyte = NULL) {
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)

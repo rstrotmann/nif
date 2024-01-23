@@ -15,3 +15,4 @@ A data frame.
 \description{
 Get covariate plot parameters
 }
+\keyword{internal}

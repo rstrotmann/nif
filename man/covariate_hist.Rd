@@ -23,5 +23,4 @@ Generic covariate distribution histogram
 \examples{
 covariate_hist(examplinib_sad_nif, "AGE")
 covariate_hist(examplinib_sad_nif, "BL_CRCL")
-
 }

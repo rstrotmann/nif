@@ -1247,6 +1247,7 @@ index_nif <- function(nif) {
 #' @import dplyr
 #' @import lifecycle
 #' @export
+#' @noRd
 #' @examples
 #' compress_nif(examplinib_fe_nif)
 compress_nif <- function(nif, ...) {

@@ -60,3 +60,4 @@ nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
 nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
 }
+\keyword{internal}

@@ -4,7 +4,7 @@
 \alias{dose_levels}
 \title{Dose levels within a NIF object}
 \usage{
-dose_levels(obj, group = NULL)
+dose_levels(obj, cmt = 1, group = NULL)
 }
 \arguments{
 \item{obj}{A NIF object.}

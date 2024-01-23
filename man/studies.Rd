@@ -17,5 +17,4 @@ Studies within a nif object
 }
 \examples{
 studies(examplinib_poc_nif)
-
 }

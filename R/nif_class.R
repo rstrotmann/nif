@@ -174,6 +174,7 @@ subjects <- function(obj) {
 #' @import dplyr
 #' @return A data frame of all ID - USUBJID pairs in the data set.
 #' @export
+#' @noRd
 #' @examples
 #' subjects(examplinib_fe_nif)
 subjects.nif <- function(obj) {
@@ -201,10 +202,8 @@ usubjid <- function(obj, id) {
 #' Parent compounds within a NIF object
 #'
 #' @param obj A NIF object.
-#'
 #' @return The parent compunds as character.
 #' @export
-#'
 #' @examples
 #' parents(examplinib_poc_nif)
 parents <- function(obj) {
@@ -225,18 +224,12 @@ parents <- function(obj) {
 #'
 #' @param obj A NIF object object.
 #' @param analyte The analyte of interest as string. considers all analytes if
-#' analyte is NULL (default).
-#'
+#'   analyte is NULL (default).
 #' @return The IDs.
 #' @export
 #' @examples
 #' dose_red_sbs(examplinib_poc_nif)
-#'
 dose_red_sbs <- function(obj, analyte = NULL) {
-  # if (analyte != "") {
-  #   obj <- obj %>% filter(ANALYTE %in% analyte)
-  # }
-
   if(!"ANALYTE" %in% names(obj)) {
     obj <- obj %>% mutate(ANALYTE=CMT)
   }
@@ -244,17 +237,6 @@ dose_red_sbs <- function(obj, analyte = NULL) {
   if (!is.null(analyte)) {
     obj <- obj %>% filter(ANALYTE %in% analyte)
   }
-
-  # obj %>%
-  #   as.data.frame() %>%
-  #   index_nif() %>%
-  #   filter(EVID == 1) %>%
-  #   group_by(ID, ANALYTE) %>%
-  #   mutate(initial_dose = DOSE[row_number() == 1]) %>%
-  #   filter(DOSE < initial_dose & DOSE != 0) %>%
-  #   ungroup() %>%
-  #   distinct(ID) %>%
-  #   pull(ID)
 
   obj %>%
     as.data.frame() %>%
@@ -277,12 +259,10 @@ dose_red_sbs <- function(obj, analyte = NULL) {
 #' @param max_time The end of the target interval across which the number of
 #'   samples is determined. If NA, the full treatment interval is selected.
 #' @param n The sample number cut-off.
-#'
 #' @return A list of IDs in numeric format.
 #' @export
 #' @examples
 #' rich_sampling_sbs(examplinib_poc_nif, n=6)
-#'
 rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
   if (is.na(analyte)) {
     analyte <- guess_analyte(obj)
@@ -312,7 +292,6 @@ rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
 #' @export
 #' @examples
 #' studies(examplinib_poc_nif)
-#'
 studies <- function(obj) {
   if("STUDYID" %in% names(obj)){
     return(
@@ -323,7 +302,6 @@ studies <- function(obj) {
   } else {
     return(NA)
   }
-
 }
 
 
@@ -349,32 +327,59 @@ doses <- function(obj) {
 #' This function summarizes the doses in the individual first administration
 #' by subject and drug, and the number of subjectes treated at this dose level.
 #' Subsequent dose modifications are ignored.
-#'
 #' @param obj A NIF object.
 #' @param group Further fields to be included (and to be grouped by) in the
 #'   output.
-#'
 #' @return A data frame.
 #' @export
-#'
 #' @examples
 #' dose_levels(examplinib_fe_nif)
 #' dose_levels(examplinib_fe_nif, group = "SEX")
 #' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
-dose_levels <- function(obj, group = NULL) {
-  obj %>%
-    filter(METABOLITE == FALSE) %>%
-    filter(PARENT != "", !is.na(DOSE), AMT != 0) %>%
-    group_by(ID, ANALYTE, across(any_of(group))) %>%
-    arrange(ID, TIME) %>%
-    filter(TIME == min(TIME)) %>%
-    select(ID, ANALYTE, DOSE, any_of(group)) %>%
-    pivot_wider(
-      names_from = "ANALYTE",
-      values_from = "DOSE", values_fill = 0) %>%
-    group_by(across(c(-ID))) %>%
-    summarize(N = n()) %>%
-    as.data.frame()
+dose_levels <- function(obj, cmt = 1, group = NULL) {
+  # obj %>%
+  #   filter(METABOLITE == FALSE) %>%
+  #   filter(PARENT != "", !is.na(DOSE), AMT != 0) %>%
+  #   group_by(ID, ANALYTE, across(any_of(group))) %>%
+  #   arrange(ID, TIME) %>%
+  #   filter(TIME == min(TIME)) %>%
+  #   select(ID, ANALYTE, DOSE, any_of(group)) %>%
+  #   pivot_wider(
+  #     names_from = "ANALYTE",
+  #     values_from = "DOSE", values_fill = 0) %>%
+  #   group_by(across(c(-ID))) %>%
+  #   summarize(N = n()) %>%
+  #   as.data.frame()
+
+  if("ANALYTE" %in% names(obj)) {
+    obj %>%
+      filter(AMT != 0) %>%
+      group_by(ID, ANALYTE, across(any_of(group))) %>%
+      arrange(ID, TIME) %>%
+      filter(TIME == min(TIME)) %>%
+      select(ID, ANALYTE, AMT, any_of(group)) %>%
+      pivot_wider(
+        names_from = "ANALYTE",
+        values_from = "AMT", values_fill = 0) %>%
+      group_by(across(c(-ID))) %>%
+      summarize(N = n()) %>%
+      as.data.frame()
+  } else {
+    obj %>%
+      filter(CMT %in% cmt) %>%
+      mutate(cmt_name = paste0("CMT", CMT)) %>%
+      filter(AMT != 0) %>%
+      group_by(ID, cmt_name, across(any_of("group"))) %>%
+      arrange(ID, TIME) %>%
+      filter(TIME == min(TIME)) %>%
+      select(ID, cmt_name, AMT, any_of(group)) %>%
+      pivot_wider(
+        names_from = "cmt_name",
+        values_from = "AMT", values_fill = 0) %>%
+      group_by(across(c(-ID))) %>%
+      summarize(N = n()) %>%
+      as.data.frame()
+  }
 }
 
 

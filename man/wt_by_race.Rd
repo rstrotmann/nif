@@ -18,3 +18,4 @@ Weight by race diagram
 \examples{
 wt_by_race(examplinib_poc_nif)
 }
+\keyword{internal}

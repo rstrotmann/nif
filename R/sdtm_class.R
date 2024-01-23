@@ -52,6 +52,7 @@ new_sdtm <- function(sdtm_data,
 #' @param object A SDTM object.
 #' @param ... Further parameters.
 #' @return A sdtm_summary object.
+#' @noRd
 #' @export
 summary.sdtm <- function(object, ...) {
   subjects <- object$domains[["pc"]] %>%

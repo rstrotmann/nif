@@ -184,6 +184,9 @@
     <loc>/reference/examplinib_poc.html</loc>
   </url>
   <url>
+    <loc>/reference/examplinib_poc_min_nif.html</loc>
+  </url>
+  <url>
     <loc>/reference/examplinib_poc_nif.html</loc>
   </url>
   <url>
@@ -464,6 +467,9 @@
   </url>
   <url>
     <loc>/reference/suggest.html</loc>
+  </url>
+  <url>
+    <loc>/reference/summary.html</loc>
   </url>
   <url>
     <loc>/reference/summary.nif.html</loc>

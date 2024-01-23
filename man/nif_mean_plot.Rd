@@ -25,3 +25,4 @@ Mean plot over a selected covariate
 nif_mean_plot(examplinib_sad_nif)
 nif_mean_plot(examplinib_fe_nif, group = "FASTED")
 }
+\keyword{internal}

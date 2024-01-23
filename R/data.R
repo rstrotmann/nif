@@ -1,23 +1,22 @@
 
 #' Synthetic SDTM data from a fictional clinical SAD FIH study with rich PK
 #' sampling
-#'
+#' @noRd
 #' @format
 #' A sdtm object
 "examplinib_sad"
 
 #' Synthetic SDTM data from a fictional clinical single-arm study with rich and
 #' sparse pk sampling.
-#'
+#' @noRd
 #' @format
 #' A sdtm object
 "examplinib_poc"
 
 #' Synthetic SDTM data from a fictional clinical food effect study for
 #' 'examplinib'.
-#'
-#' @format
-#' A sdtm object
+#' @noRd
+#' @format#' A sdtm object
 "examplinib_fe"
 
 #' Synthetic NIF data from a fictional clinical SAD FIH study with rich PK
@@ -33,6 +32,13 @@
 #' @format
 #' A NIF object
 "examplinib_poc_nif"
+
+#' Synthetic NIF data from a fictional clinical single-arm study with rich and
+#' sparse pk sampling. Reduced to the minimally required fields.
+#'
+#' @format
+#' A NIF object
+"examplinib_poc_min_nif"
 
 #' Synthetic NIF data from a fictional clinical food effect study for
 #' 'examplinib'.

@@ -25,5 +25,4 @@ Identify subjects with rich sampling
 }
 \examples{
 rich_sampling_sbs(examplinib_poc_nif, n=6)
-
 }

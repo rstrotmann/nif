@@ -1,19 +1,15 @@
-# This script can be executed to re-create the package data for the sample study
-# data. The data include SDTM and NIF objects for the following fictional
-# studies with the imaginary drug `examplinib`:
-#
-# * A single ascending dose (SAD) study
-# * A single-arm multiple-dose proof-of-concept study
-# * A cross-over food effect (FE) study
-#
-# All SDTM data are entirely synthetic and have no relation whatsoever with real
-# clinical study data. This also applies to the pharmacokinetic data in the
-# SDTM/PC domain. These data are created using a population PK model that is
-# parametrized with arbitrary parameters.
-
-#############################
-# sample data generation
-#############################
+#' This script can be executed to re-create the package data for the sample study
+#' data. The data include SDTM and NIF objects for the following fictional
+#' studies with the imaginary drug `examplinib`:
+#'
+#' * A single ascending dose (SAD) study
+#' * A single-arm multiple-dose proof-of-concept study
+#' * A cross-over food effect (FE) study
+#'
+#' All SDTM data are entirely synthetic and have no relation whatsoever with real
+#' clinical study data. This also applies to the pharmacokinetic data in the
+#' SDTM/PC domain. These data are created using a population PK model that is
+#' parametrized with arbitrary parameters.
 
 set.seed(1234)
 

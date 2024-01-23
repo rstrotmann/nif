@@ -42,3 +42,4 @@ vertical lines.
 dose_plot_id(examplinib_poc_nif, 18)
 dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
 }
+\keyword{internal}

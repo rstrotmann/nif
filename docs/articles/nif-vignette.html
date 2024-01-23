@@ -165,7 +165,7 @@ the administered drugs</li>
 *.sas7bdat files, are copied into one folder (in the below example into
 <code>path/to/sdtm/data</code>), and can then be loaded using:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/read_sdtm_sas.html">read_sdtm_sas</a></span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">read_sdtm_sas</span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span><span class="op">)</span></span></code></pre></div>
 <p>Based on the above, the minimum required SDTM files are
 <code>dm.dat7bdat</code>, <code>vs.dat7bdat</code>,
 <code>ex.dat7bdat</code> and <code>pc.dat7bdat</code>. However, if
@@ -173,7 +173,7 @@ additional covariates from AE, LB or any other SDTM domain are to be
 added, an explicit list of the domains can be provided to the loading
 function, e.g.,</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/read_sdtm_sas.html">read_sdtm_sas</a></span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span>, <span class="st">"dm"</span>, <span class="st">"vs"</span>, <span class="st">"ex"</span>, <span class="st">"pc"</span>, <span class="st">"lb"</span>, <span class="st">"ae"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">read_sdtm_sas</span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span>, <span class="st">"dm"</span>, <span class="st">"vs"</span>, <span class="st">"ex"</span>, <span class="st">"pc"</span>, <span class="st">"lb"</span>, <span class="st">"ae"</span><span class="op">)</span></span></code></pre></div>
 <p>The return value of this function is a <code>sdtm</code> object.</p>
 </div>
 <div class="section level3">
@@ -182,7 +182,7 @@ function, e.g.,</p>
 <p><code>Sdtm</code> objects are essentially lists of the SDTM domains
 from a particular clinical study, plus some metadata. The easiest way of
 creating <code>sdtm</code> objects is by importing the SDTM data using
-<code><a href="../reference/read_sdtm_sas.html">read_sdtm_sas()</a></code> or <code><a href="../reference/read_sdtm_xpt.html">read_sdtm_xpt()</a></code> as shown
+<code>read_sdtm_sas()</code> or <code>read_sdtm_xpt()</code> as shown
 above.</p>
 <p>The <code>nif</code> package includes sample SDTM data sets for
 demonstration purposes. These data do not come from actual clinical
@@ -450,10 +450,10 @@ page width):</p>
 </h3>
 <p>It is generally advisable to explore data sets before proceeding into
 any more complex analyses.</p>
-<p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> function provides a general overview on
+<p>The <code><a href="../reference/summary.html">summary()</a></code> function provides a general overview on
 the data disposition in a <code>nif</code> data set:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
 <span><span class="co">## NONMEM input file (NIF) data set summary</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Data from 20 subjects across 1 studies:</span></span>
@@ -494,7 +494,7 @@ some non-graphical output:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
 <span>   <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
