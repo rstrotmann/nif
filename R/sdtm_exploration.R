@@ -227,7 +227,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' @return Nothing.
 #' @export
 #' @examples
-#' plot(examplinib_sad)
+#' plot(examplinib_poc)
 #' plot(examplinib_poc, "dm")
 #' plot(examplinib_poc, domain="ex")
 #' plot(examplinib_poc, domain="pc")

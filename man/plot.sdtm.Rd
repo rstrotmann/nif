@@ -39,7 +39,7 @@ Nothing.
 Plot SDTM object
 }
 \examples{
-plot(examplinib_sad)
+plot(examplinib_poc)
 plot(examplinib_poc, "dm")
 plot(examplinib_poc, domain="ex")
 plot(examplinib_poc, domain="pc")

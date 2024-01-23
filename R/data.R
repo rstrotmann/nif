@@ -38,7 +38,16 @@
 #'
 #' @format
 #' A NIF object
+#' @noRd
 "examplinib_poc_min_nif"
+
+#' Synthetic NIF data from a fictional clinical SAD FIH study with rich PK
+#' sampling. Reduced to the minimally required fields.
+#'
+#' @format
+#' A NIF object
+#' @noRd
+"examplinib_sad_min_nif"
 
 #' Synthetic NIF data from a fictional clinical food effect study for
 #' 'examplinib'.

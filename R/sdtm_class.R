@@ -46,7 +46,6 @@ new_sdtm <- function(sdtm_data,
 }
 
 
-
 #' SDTM summary
 #'
 #' @param object A SDTM object.
@@ -96,9 +95,9 @@ summary.sdtm <- function(object, ...) {
 #'
 #' @param x SDTM object
 #' @param ... Further parameters
-#'
 #' @return none
 #' @export
+#' @noRd
 print.summary_sdtm <- function(x, ...) {
   cat("SDTM data set summary\n\n")
   cat(paste("Study", x$study))
@@ -141,7 +140,6 @@ print.summary_sdtm <- function(x, ...) {
 }
 
 
-
 #' Attach a treatment-analyte mapping to an SDTM object
 #'
 #' In some studies, multiple drugs are co-administered, and there may be plasma
@@ -151,11 +149,9 @@ print.summary_sdtm <- function(x, ...) {
 #' within EX). If the respective names differ, add_treatment_mapping() can be
 #' used to attach this information to the SDTM object. Multiple mappings may be
 #' needed.
-#'
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
 #' @param pctestcd The analyte as defined in PC.
-#'
 #' @seealso [make_nif()]
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
@@ -175,7 +171,6 @@ add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
 #' functions need that information to correlate plasma concentrations with
 #' administrations. 'add_metabolite_mapping()' is used to attach this
 #' information to a SDTM object.
-#'
 #' @param obj The SDTM object.
 #' @param pctestcd_parent The PCTESTCD of the parent compound.
 #' @param pctestcd_metabolite The PCTESTCD of the metabolite.
@@ -204,7 +199,6 @@ add_metabolite_mapping <- function(
 #' to follow a strict format and is in most cases provided as a composite
 #' string. 'add_time_mapping()' can be used to explicitly define the nominal
 #' observation times (in hours) for the values of PCTPT used in the PC domain.
-#'
 #' @param obj The SDTM object.
 #' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
 #'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
@@ -240,7 +234,7 @@ add_time_mapping <- function(obj, ...) {
 }
 
 
-#' print() implementation for SDTM
+#' print() implementation for a sdtm object
 #'
 #' @param x A SDTM object.
 #' @param ... Further parameters
@@ -251,7 +245,7 @@ print.sdtm <- function(x, ...) {
 }
 
 
-#' Return a specific domain from a SDTM object
+#' Return a specific domain from a sdtm object
 #'
 #' @param obj The sdtm object.
 #' @param name The domain to return.

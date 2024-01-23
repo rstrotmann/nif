@@ -336,6 +336,7 @@ doses <- function(obj) {
 #' dose_levels(examplinib_fe_nif)
 #' dose_levels(examplinib_fe_nif, group = "SEX")
 #' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
+#' dose_levels(examplinib_sad_min_nif)
 dose_levels <- function(obj, cmt = 1, group = NULL) {
   # obj %>%
   #   filter(METABOLITE == FALSE) %>%

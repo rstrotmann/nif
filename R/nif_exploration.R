@@ -479,7 +479,6 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
 }
 
 
-
 #' NIF or SDTM object overview
 #'
 #' @param object The NIF or SDTM object.
@@ -492,6 +491,7 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
 summary <- function(object, ...) {
   UseMethod("summary")
 }
+
 
 #' NIF object overview
 #'

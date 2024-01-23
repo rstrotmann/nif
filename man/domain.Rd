@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{domain}
 \alias{domain}
-\title{Return a specific domain from a SDTM object}
+\title{Return a specific domain from a sdtm object}
 \usage{
 domain(obj, name)
 }
@@ -15,7 +15,7 @@ domain(obj, name)
 The specified domain as data.frame
 }
 \description{
-Return a specific domain from a SDTM object
+Return a specific domain from a sdtm object
 }
 \examples{
 head(domain(examplinib_fe, "dm"))
