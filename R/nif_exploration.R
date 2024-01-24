@@ -25,56 +25,51 @@
 #' @examples
 #' nif_plot_id(examplinib_poc_nif, 1)
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
-nif_plot_id <- function(nif, id, analyte = NULL, y_scale = "lin",
+nif_plot_id <- function(nif, id, analyte = NULL, cmt = NULL, y_scale = "lin",
                         max_time = NA, lines = TRUE, point_size = 2,
                         tad = FALSE, imp = "none") {
   x <- nif %>%
     as.data.frame() %>%
     verify(has_all_names(
-      "ID", "USUBJID", "TIME", "NTIME", "AMT", "DV", "ANALYTE",
-      "EVID"
-    )) #%>%
-    # filter(EVID == 0)
+      "ID", "TIME", "AMT", "DV", "EVID")) %>%
+    {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
+    {if(!"ANALYTE" %in% names(nif)) mutate(., ANALYTE = paste0("CMT", .$CMT)) else .} %>%
+    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
 
-  # if not specified, show all analytes
-  if (is.null(analyte)) {
-    analyte <- x %>%
-      distinct(ANALYTE) %>%
-      pull(ANALYTE)
-  }
-
+  id_label <- ""
+  plot_label <- ""
   # filter for subject of interest
   if (id %in% x$ID) {
     plot_label <- "ID"
     x <- x %>%
       filter(ID == id)
-    id_label <- ""
+    # id_label <- ""
   } else {
-    if (id %in% x$USUBJID) {
-      x <- x %>%
-        filter(USUBJID == id)
-      id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
-      plot_label <- "USUBJID"
-    } else {
-      stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
+    if("USUBJID" %in% names(x)) {
+      if (id %in% x$USUBJID) {
+        x <- x %>%
+          filter(USUBJID == id)
+        id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
+        plot_label <- "USUBJID"
+      } else {
+        stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
+      }
     }
   }
 
-  if (tad == TRUE) {
+  if (tad == TRUE && "PARENT" %in% names(x)) {
     if (!"TAD" %in% colnames(x)) {
       x <- x %>% add_tad()
     }
     x <- x %>%
-      # add_trtdy() %>%
       mutate(TIME = TAD)
   }
 
   obs <- x %>%
-    as.data.frame() %>%
-    filter(ANALYTE %in% analyte) %>%
     filter(EVID == 0)
 
   admin <- x %>%

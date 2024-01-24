@@ -2,7 +2,6 @@
 #'
 #' This function renders a data.frame into a string similar to its
 #' representation when printed without line numbers
-#'
 #' @param df The data.frame to be rendered
 #' @param indent A string that defines the left indentation of the rendered
 #'   output.
@@ -66,7 +65,6 @@ has_time <- function(datetime) {
 #'   kept while "M" is recoded to 0 and "F" to 1.
 #'   If your downstream analysis requires different coding, please manually
 #'   re-code.
-#'
 #' @param obj The data.frame containing a SEX field
 #' @return The output data frame
 #' @import dplyr

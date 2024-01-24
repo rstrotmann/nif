@@ -15,3 +15,26 @@ test_that("nif_summary_plot works", {
   }
   expect_no_error(summary_plot())
 })
+
+
+test_that("nif_plot_id", {
+  expect_no_error(
+    nif_plot_id(examplinib_poc_nif, 1)
+  )
+
+  expect_no_error(
+    nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+  )
+
+  expect_no_error(
+    nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
+  )
+
+  expect_no_error(
+    nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
+  )
+
+  expect_no_error(
+    nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
+  )
+})
