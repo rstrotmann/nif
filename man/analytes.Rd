@@ -18,5 +18,5 @@ If the field 'ANALYTE' is not present, 'CMT' is used instead.
 \examples{
 analytes(examplinib_fe_nif)
 analytes(examplinib_poc_nif)
-
+analytes(examplinib_poc_min_nif)
 }

@@ -458,7 +458,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 #' @examples
 #' analytes(examplinib_fe_nif)
 #' analytes(examplinib_poc_nif)
-#'
+#' analytes(examplinib_poc_min_nif)
 analytes <- function(obj) {
   if("ANALYTE" %in% names(obj)) {
     obj %>%
@@ -481,6 +481,23 @@ analytes <- function(obj) {
 #' analytes_cmts(examplinib_poc_nif)
 analytes_cmts <- function(obj) {
   obj %>%
+    filter(EVID==0) %>%
+    distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
+    as.data.frame()
+}
+
+
+#' Analyte - compartment mapping
+#'
+#' @param obj A NIF object
+#' @return A data frame
+#' @export
+#' @examples
+#' cmt_mapping(examplinib_poc_nif)
+#' cmt_mapping(examplinib_poc_min_nif)
+cmt_mapping <- function(obj) {
+  obj %>%
+    {if(!"ANALYTE" %in% names(obj)) mutate(., ANALYTE = NA) else .} %>%
     filter(EVID==0) %>%
     distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
     as.data.frame()
