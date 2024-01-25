@@ -352,6 +352,124 @@ nif_spaghetti_plot <- function(obj,
 }
 
 
+#' Spaghetti plot over a selected covariate
+#'
+#' @param obj The NIF object.
+#' @param points Boolean to indicate whether points should be drawn.
+#' @param lines Boolean to indicate whether lines should be drawn.
+#' @param group The grouping covariate, defaults to 'ANALYTE'.
+#' @param nominal_time Boolean to indicate whether the x-axis should be NTIME
+#'   rather than TIME.
+#' @param tad Boolean to select whether time after dose (TAD) rather than TIME
+#'   should be plotted.
+#' @param analyte The analyte as character. If NULL (default), all analytes will
+#'   be plotted.
+#' @param dose The dose(s) to filter for as numeric.
+#' @param min_x The minimal value for the x scale as numeric.
+#' @param max_x The maximal value for the x scale as numeric.
+#' @param log Boolean to define whether y axis is plotted on the log scale.
+#' @param point_size the point size as numeric.
+#' @return A ggplot2 plot object.
+#' @import assertr
+#' @export
+#' @keywords internal
+#' @examples
+#' nif_spaghetti_plot(examplinib_fe_nif)
+#' nif_spaghetti_plot(examplinib_sad_nif)
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
+#'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
+nif_spaghetti_plot1 <- function(obj,
+                               points = FALSE, lines = TRUE, group = "ANALYTE",
+                               nominal_time = FALSE, tad = FALSE, dose = NULL,
+                               analyte = NULL, min_x = NULL, max_x = NULL,
+                               log = FALSE, point_size = 2) {
+
+  # if (!is.null(dose)) {
+  #   obj <- obj %>%
+  #     dplyr::filter(DOSE %in% dose)}
+
+  # if(is.null(max_x)) {
+  #   max_x <- max_observation_time(obj)}
+
+  # if(is.null(min_x)) {
+  #   min_x = 0
+  # }
+
+  x <- obj %>%
+    # index_dosing_interval() %>%
+    as.data.frame() %>%
+    # verify(has_all_names("ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE")) %>%
+    # dplyr::filter(!is.na(DOSE)) %>%
+    filter(EVID==1 | !is.na(DV))
+
+  if (!is.null(analyte)) {
+    x <- x %>% dplyr::filter(ANALYTE == analyte)
+  }
+
+  if (tad == TRUE) {
+    x <- x %>%
+      verify(has_all_names("TAD")) %>%
+      filter(EVID == 0) %>%
+      mutate(TIME = TAD) %>%
+      mutate(GROUP = interaction(
+        as.factor(ID), as.factor(ANALYTE), as.factor(DI))) %>%
+      mutate(COLOR = interaction(as.factor(ANALYTE), as.factor(DI)))
+    x_label <- "TAD (h)"
+  } else {
+
+    # create mock administrations for all analytes, including metabolites
+    # to avoid connecting plot lines across administrations
+    mock_admin_for_metabolites <- x %>%
+      as.data.frame() %>%
+      filter(EVID==1) %>%
+      crossing(ANALYTE1=analytes(x)) %>%
+      mutate(ANALYTE=ANALYTE1) %>%
+      select(-ANALYTE1) %>%
+      filter(TIME <= max_x)
+
+    x <- x %>%
+      filter(TIME <= max_x) %>%
+      filter(EVID == 0) %>%
+      rbind(mock_admin_for_metabolites) %>%
+      mutate(GROUP = interaction(
+        as.factor(ID), as.factor(.data[[group]]))) %>%
+      mutate(COLOR = as.factor(.data[[group]]))
+    x_label <- "TIME (h)"
+  }
+
+  if (nominal_time) {
+    p <- x %>%
+      ggplot2::ggplot(ggplot2::aes(
+        x = NTIME,
+        y = DV,
+        group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
+        color = as.factor(.data[[group]])
+      ))
+  } else {
+    p <- x %>%
+      ggplot2::ggplot(ggplot2::aes(
+        x = TIME,
+        y = DV,
+        group = GROUP,
+        color = COLOR
+      ))
+  }
+
+  p +
+    {if (lines) geom_line(na.rm = TRUE)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size)} +
+    {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+    {if (log == TRUE) scale_y_log10()} +
+    xlim(min_x, max_x) +
+    labs(color = group) +
+    ggplot2::theme_bw() +
+    labs(x = x_label) +
+    ggplot2::theme(legend.position = "bottom")
+}
+
+
+
 #' Plot NIF object
 #'
 #' This function plots a NIF object, grouped by the variable `group`. If no

@@ -4,7 +4,7 @@
 \alias{max_admin_time}
 \title{Maximal administration time}
 \usage{
-max_admin_time(obj, analytes = NULL)
+max_admin_time(obj, analyte = NULL)
 }
 \arguments{
 \item{obj}{The NIF object}
@@ -20,5 +20,7 @@ the data set.
 }
 \examples{
 max_admin_time(examplinib_fe_nif)
-
+max_admin_time(examplinib_poc_nif)
+max_admin_time(examplinib_poc_min_nif)
+max_admin_time(examplinib_poc_min_nif, analyte = "CMT2")
 }

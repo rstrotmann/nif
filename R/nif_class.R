@@ -368,7 +368,62 @@ studies <- function(obj) {
 }
 
 
-#' Doses within a nif object
+#' Ensure that the ANALYTE field is present in a NIF file.
+#'
+#' If 'ANALYTE' is not in the column names, the field is created based on the
+#' compartment (CMT).
+#' @param obj A NIF object.
+#' @return A NIF object.
+#' @keywords internal
+#' @examples
+#' head(ensure_analyte(examplinib_poc_nif))
+#' head(ensure_analyte(examplinib_poc_min_nif))
+ensure_analyte <- function(obj) {
+  obj %>%
+    {if(!"ANALYTE" %in% names(obj))
+      mutate(., ANALYTE = paste0("CMT", CMT)) else .}
+}
+
+
+#' Ensure that the PARENT field is present in a NIF file.
+#'
+#' @param obj A NIF object.
+#' @return A NIF object.
+#' @keywords internal
+#' @examples
+#' head(ensure_parent(examplinib_poc_nif))
+#' head(ensure_parent(examplinib_poc_min_nif))
+ensure_parent <- function(obj) {
+  if(!"PARENT" %in% names(obj)) {
+    obj <- obj %>%
+      mutate(PARENT = case_when(EVID == 1 ~ paste0("CMT", CMT) ,
+                                .default = NA)) %>%
+      fill(PARENT, .direction = "down")
+
+  }
+  return(obj)
+}
+
+#' Ensure that the METABOLITE field is present in a NIF file.
+#'
+#' @param obj A NIF object.
+#' @return A NIF object.
+#' @keywords internal
+#' @examples
+#' head(ensure_metabolite(examplinib_poc_nif))
+#' head(ensure_metabolite(examplinib_poc_min_nif))
+ensure_metabolite <- function(obj) {
+  if(!"METABOLITE" %in% names(obj)) {
+    obj <- obj %>%
+      mutate(METABOLITE = case_when(EVID == 1 ~ FALSE ,
+                                .default = FALSE)) %>%
+      fill(METABOLITE, .direction = "down")
+
+  }
+  return(obj)
+}
+
+#' Doses within a NIF object
 #'
 #' @param obj A nif object
 #' @import dplyr
@@ -387,12 +442,14 @@ doses <- function(obj) {
 
 #' Dose levels within a NIF object
 #'
-#' This function summarizes the doses in the individual first administration
-#' by subject and drug, and the number of subjectes treated at this dose level.
+#' This function summarizes the doses in the individual first administration by
+#' subject and drug, and the number of subjectes treated at this dose level.
 #' Subsequent dose modifications are ignored.
-#' @param obj A NIF object.
+#'
+#' @param obj A rich or minimal NIF object.
 #' @param group Further fields to be included (and to be grouped by) in the
 #'   output.
+#' @param cmt The compartment (CMT) as numeric.
 #' @return A data frame.
 #' @export
 #' @examples
@@ -401,86 +458,79 @@ doses <- function(obj) {
 #' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
 #' dose_levels(examplinib_sad_min_nif)
 dose_levels <- function(obj, cmt = 1, group = NULL) {
-  # obj %>%
-  #   filter(METABOLITE == FALSE) %>%
-  #   filter(PARENT != "", !is.na(DOSE), AMT != 0) %>%
-  #   group_by(ID, ANALYTE, across(any_of(group))) %>%
-  #   arrange(ID, TIME) %>%
-  #   filter(TIME == min(TIME)) %>%
-  #   select(ID, ANALYTE, DOSE, any_of(group)) %>%
-  #   pivot_wider(
-  #     names_from = "ANALYTE",
-  #     values_from = "DOSE", values_fill = 0) %>%
-  #   group_by(across(c(-ID))) %>%
-  #   summarize(N = n()) %>%
-  #   as.data.frame()
-
-  if("ANALYTE" %in% names(obj)) {
-    obj %>%
-      filter(AMT != 0) %>%
-      group_by(ID, ANALYTE, across(any_of(group))) %>%
-      arrange(ID, TIME) %>%
-      filter(TIME == min(TIME)) %>%
-      select(ID, ANALYTE, AMT, any_of(group)) %>%
-      pivot_wider(
-        names_from = "ANALYTE",
-        values_from = "AMT", values_fill = 0) %>%
-      group_by(across(c(-ID))) %>%
-      summarize(N = n()) %>%
-      as.data.frame()
-  } else {
-    obj %>%
-      filter(CMT %in% cmt) %>%
-      mutate(cmt_name = paste0("CMT", CMT)) %>%
-      filter(AMT != 0) %>%
-      group_by(ID, cmt_name, across(any_of("group"))) %>%
-      arrange(ID, TIME) %>%
-      filter(TIME == min(TIME)) %>%
-      select(ID, cmt_name, AMT, any_of(group)) %>%
-      pivot_wider(
-        names_from = "cmt_name",
-        values_from = "AMT", values_fill = 0) %>%
-      group_by(across(c(-ID))) %>%
-      summarize(N = n()) %>%
-      as.data.frame()
-  }
+  # if("ANALYTE" %in% names(obj)) {
+  #   obj %>%
+  #     filter(AMT != 0) %>%
+  #     group_by(ID, ANALYTE, across(any_of(group))) %>%
+  #     arrange(ID, TIME) %>%
+  #     filter(TIME == min(TIME)) %>%
+  #     select(ID, ANALYTE, AMT, any_of(group)) %>%
+  #     pivot_wider(
+  #       names_from = "ANALYTE",
+  #       values_from = "AMT", values_fill = 0) %>%
+  #     group_by(across(c(-ID))) %>%
+  #     summarize(N = n()) %>%
+  #     as.data.frame()
+  # } else {
+  #   obj %>%
+  #     filter(CMT %in% cmt) %>%
+  #     mutate(cmt_name = paste0("CMT", CMT)) %>%
+  #     filter(AMT != 0) %>%
+  #     group_by(ID, cmt_name, across(any_of("group"))) %>%
+  #     arrange(ID, TIME) %>%
+  #     filter(TIME == min(TIME)) %>%
+  #     select(ID, cmt_name, AMT, any_of(group)) %>%
+  #     pivot_wider(
+  #       names_from = "cmt_name",
+  #       values_from = "AMT", values_fill = 0) %>%
+  #     group_by(across(c(-ID))) %>%
+  #     summarize(N = n()) %>%
+  #     as.data.frame()
+  # }
+  obj %>%
+    ensure_analyte() %>%
+    filter(AMT != 0) %>%
+    group_by(ID, ANALYTE, across(any_of(group))) %>%
+    arrange(ID, TIME) %>%
+    filter(TIME == min(TIME)) %>%
+    select(ID, ANALYTE, AMT, any_of(group)) %>%
+    pivot_wider(
+      names_from = "ANALYTE",
+      values_from = "AMT", values_fill = 0) %>%
+    group_by(across(c(-ID))) %>%
+    summarize(N = n()) %>%
+    as.data.frame()
 }
 
 
-#' Analytes within a nif object
+#' Analytes within a NIF object
 #'
-#' If the field 'ANALYTE' is not present, 'CMT' is used instead.
-#'
-#' @param obj A nif object
+#' All analytes found in the NIF object. If the field 'ANALYTE' is not present,
+#' "1" is returned.
+#' @param obj A NIF object
 #' @import dplyr
-#' @return A character vector of all analytes in the data set.
+#' @return Character.
 #' @export
 #' @examples
 #' analytes(examplinib_fe_nif)
 #' analytes(examplinib_poc_nif)
 #' analytes(examplinib_poc_min_nif)
 analytes <- function(obj) {
-  if("ANALYTE" %in% names(obj)) {
-    obj %>%
-      dplyr::distinct(ANALYTE) %>%
-      dplyr::pull(ANALYTE)
-  } else {
-    as.character(unique(obj$CMT))
-  }
+  unique(ensure_analyte(obj)$ANALYTE)
 }
 
 
 #' Analytes and compartments within a NIF object
 #'
 #' @param obj A NIF object.
-#'
 #' @return A data frame.
 #' @export
-#'
 #' @examples
 #' analytes_cmts(examplinib_poc_nif)
+#' analytes_cmts(examplinib_poc_min_nif)
 analytes_cmts <- function(obj) {
   obj %>%
+    ensure_analyte() %>%
     filter(EVID==0) %>%
     distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
     as.data.frame()
@@ -497,7 +547,8 @@ analytes_cmts <- function(obj) {
 #' cmt_mapping(examplinib_poc_min_nif)
 cmt_mapping <- function(obj) {
   obj %>%
-    {if(!"ANALYTE" %in% names(obj)) mutate(., ANALYTE = NA) else .} %>%
+    ensure_analyte() %>%
+    # {if(!"ANALYTE" %in% names(obj)) mutate(., ANALYTE = NA) else .} %>%
     filter(EVID==0) %>%
     distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
     as.data.frame()
@@ -521,9 +572,9 @@ head.nif <- function(x, ...) {
 }
 
 
-#' Export a nif object as csv file
+#' Export a NIF object as csv file
 #'
-#' @param obj A nif object.
+#' @param obj A NIF object.
 #' @param filename The filename for the exported file.
 #' @import dplyr
 #' @export
@@ -538,9 +589,8 @@ write_csv.nif <- function(obj, filename) {
 #' Write as space-delimited, fixed-width file as required by NONMEM or a
 #' character-separated file
 #'
-#' All numeric fields are reduced to 4 significant places. All fields are con-
-#' verted to character, and NA-values are converted to '.'.
-#'
+#' All numeric fields are reduced to 4 significant places. All fields are
+#' converted to character, and NA-values are converted to '.'.
 #' @param obj The NIF object.
 #' @param fields The fields to export. If NULL (default), all fields will be
 #' exported.
@@ -548,12 +598,10 @@ write_csv.nif <- function(obj, filename) {
 #' file is printed only.
 #' @param sep The separating character, e.g. ',' or ';'. If NULL (default), the
 #' output has a space-separated, fixed-width format.
-#'
 #' @importFrom gdata write.fwf
 #' @export
 #' @examples
 #' write_nif(examplinib_fe_nif)
-#'
 write_nif <- function(obj, filename = NULL, fields = NULL, sep=NULL) {
   double_fields <- c("NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
                      "AGE", "HEIGHT", "WEIGHT", "BMI")
@@ -603,10 +651,8 @@ write_nif <- function(obj, filename = NULL, fields = NULL, sep=NULL) {
 #' file is printed only.
 #' @param fields The fields to export. If NULL (default), all fields will be
 #' exported.
-#'
 #' @return Nothing.
 #' @export
-#'
 #' @examples
 #' write_monolix(examplinib_fe_nif)
 write_monolix <- function(obj, filename = NULL, fields = NULL) {
@@ -668,19 +714,18 @@ standard_nif_fields <- c(
 #'
 #' This function adds a column `DI` that indicates the dosing interval. All
 #' baseline observations before the first dosing interval get assigned to the
-#' first dosing interval, too.
-#' In addition to `DI`, the function also calls `index_nif()`, thus creating
-#' the field `REF` as a side effect.
-#'
+#' first dosing interval, too. In addition to `DI`, the function also calls
+#' `index_nif()`, thus creating the field `REF` as a side effect.
 #' @param obj The NIF object.
-#'
 #' @return A new NIF object.
 #' @export
 #' @examples
-#' as.data.frame(index_dosing_interval(examplinib_fe_nif))
-#'
+#' head(index_dosing_interval(examplinib_fe_nif))
+#' head(index_dosing_interval(examplinib_poc_nif))
+#' head(index_dosing_interval(examplinib_poc_min_nif))
 index_dosing_interval <- function(obj) {
   obj <- obj %>%
+    ensure_parent() %>%
     index_nif() %>%
     select(-any_of("DI"))
 
@@ -691,19 +736,13 @@ index_dosing_interval <- function(obj) {
     arrange(TIME) %>%
     mutate(DI = row_number()) %>%
     ungroup() %>%
-    select(REF, DI) %>%
-    as.data.frame()
+    select(REF, DI)
 
   obj %>%
-    as.data.frame() %>%
     left_join(di, by = "REF") %>%
-    group_by(ID) %>%
+    group_by(ID, PARENT) %>%
     arrange(REF) %>%
-    fill(DI, .direction = "down") %>%
-    as.data.frame() %>%
-    # all baseline before the first administration gets assigned to the first
-    #   dosing interval, too:
-    fill(DI, .direction = "up") %>%
+    fill(DI, .direction = "downup") %>%
     ungroup() %>%
     new_nif()
 }
@@ -719,7 +758,7 @@ index_dosing_interval <- function(obj) {
 #' @export
 #' @examples
 #' n_administrations(examplinib_poc_nif)
-#'
+#' n_administrations(examplinib_poc_min_nif)
 n_administrations <- function(obj) {
   obj %>%
     index_dosing_interval() %>%
@@ -741,22 +780,25 @@ n_administrations <- function(obj) {
 #' @export
 #' @examples
 #' max_admin_time(examplinib_fe_nif)
-#'
-max_admin_time <- function(obj, analytes = NULL) {
-  if (!is.null(analytes)) {
-    obj <- obj %>%
-      filter(ANALYTE %in% analytes)
-  }
-
-  obj %>%
-    as.data.frame() %>%
+#' max_admin_time(examplinib_poc_nif)
+#' max_admin_time(examplinib_poc_min_nif)
+#' max_admin_time(examplinib_poc_min_nif, analyte = "CMT2")
+max_admin_time <- function(obj, analyte = NULL) {
+  times <- obj %>%
+    ensure_analyte() %>%
+    {if(!is.null(analyte)) filter(., ANALYTE %in% analyte) else .} %>%
     filter(EVID == 1) %>%
-    pull(TIME) %>%
-    max()
+    pull(TIME)
+
+  if(length(times) == 0) {
+    return(NA)
+  } else {
+    return(max(times, na.rm = TRUE))
+  }
 }
 
 
-#' Maximal ovservation time
+#' Maximal observation time
 #'
 #' This function returns the time in hours of the last observation relative to
 #' the first observation within the data set.
@@ -768,38 +810,44 @@ max_admin_time <- function(obj, analytes = NULL) {
 #' @export
 #' @examples
 #' max_observation_time(examplinib_fe_nif)
-#'
-max_observation_time <- function(obj, analytes = NULL) {
-  if (!is.null(analytes)) {
-    obj <- obj %>%
-      filter(ANALYTE %in% analytes)
-  }
-
-  obj %>%
-    as.data.frame() %>%
+#' max_observation_time(examplinib_poc_nif)
+#' max_observation_time(examplinib_poc_min_nif)
+#' max_observation_time(examplinib_poc_min_nif, analyte = "CMT4")
+max_observation_time <- function(obj, analyte = NULL) {
+  times <- obj %>%
+    ensure_analyte() %>%
+    {if(!is.null(analyte)) filter(., ANALYTE %in% analyte) else .} %>%
     filter(EVID == 0) %>%
-    pull(TIME) %>%
-    max(na.rm = TRUE)
+    pull(TIME)
+
+  if(length(times) == 0) {
+    return(NA)
+  } else {
+    return(max(times, na.rm = TRUE))
+  }
 }
 
 
 #' Guess the most likely analyte based on its prevalence in the NIF object
 #'
 #' @param obj A NIF object.
-#'
 #' @return The analyte as character.
 #' @export
 #' @examples
 #' guess_analyte(examplinib_poc_nif)
-#'
+#' guess_analyte(examplinib_poc_min_nif)
 guess_analyte <- function(obj) {
   temp <- obj %>%
+    ensure_analyte() %>%
+    ensure_metabolite() %>%
     as.data.frame() %>%
     filter(EVID == 0) %>%
     group_by(ANALYTE, METABOLITE) %>%
     summarize(n = n(), .groups = "drop") %>%
-    arrange(METABOLITE, -n)
-  (temp %>% pull(ANALYTE))[1]
+    filter(METABOLITE == FALSE) %>%
+    filter(n == max(n)) %>%
+    arrange(ANALYTE)
+  return(as.character(temp[1, "ANALYTE"]))
 }
 
 

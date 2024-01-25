@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{doses}
 \alias{doses}
-\title{Doses within a nif object}
+\title{Doses within a NIF object}
 \usage{
 doses(obj)
 }
@@ -13,7 +13,7 @@ doses(obj)
 A number vector of all doses (AMT) in the data set.
 }
 \description{
-Doses within a nif object
+Doses within a NIF object
 }
 \examples{
 doses(examplinib_poc_nif)

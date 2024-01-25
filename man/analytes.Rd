@@ -2,18 +2,19 @@
 % Please edit documentation in R/nif_class.R
 \name{analytes}
 \alias{analytes}
-\title{Analytes within a nif object}
+\title{Analytes within a NIF object}
 \usage{
 analytes(obj)
 }
 \arguments{
-\item{obj}{A nif object}
+\item{obj}{A NIF object}
 }
 \value{
-A character vector of all analytes in the data set.
+Character.
 }
 \description{
-If the field 'ANALYTE' is not present, 'CMT' is used instead.
+All analytes found in the NIF object. If the field 'ANALYTE' is not present,
+"1" is returned.
 }
 \examples{
 analytes(examplinib_fe_nif)

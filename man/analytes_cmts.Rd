@@ -17,4 +17,5 @@ Analytes and compartments within a NIF object
 }
 \examples{
 analytes_cmts(examplinib_poc_nif)
+analytes_cmts(examplinib_poc_min_nif)
 }

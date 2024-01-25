@@ -1,0 +1,29 @@
+TO DO:
+
+Adaptation of all nif functions to work with minimal NIF files.
+
+done:
+* ensure_analyte
+* ensure_parent
+* ensure_metabolite
+* doses
+* dose_levels
+* analytes
+* analytes_cmts
+* cmt_mapping
+* index_dosing_interval
+* n_administrations
+* max_admin_time
+* max_observation_time
+* guess_analyte
+
+
+TO DO:
+* add unit test for guess_analyte (try multiple analytes with different n_obs)
+
+
+
+
+General:
+
+* if the ANALYTE field is not included in the NIF file, the analyte is always 1.

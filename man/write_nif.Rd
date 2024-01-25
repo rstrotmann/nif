@@ -20,10 +20,9 @@ exported.}
 output has a space-separated, fixed-width format.}
 }
 \description{
-All numeric fields are reduced to 4 significant places. All fields are con-
-verted to character, and NA-values are converted to '.'.
+All numeric fields are reduced to 4 significant places. All fields are
+converted to character, and NA-values are converted to '.'.
 }
 \examples{
 write_nif(examplinib_fe_nif)
-
 }

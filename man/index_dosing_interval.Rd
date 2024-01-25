@@ -15,11 +15,11 @@ A new NIF object.
 \description{
 This function adds a column \code{DI} that indicates the dosing interval. All
 baseline observations before the first dosing interval get assigned to the
-first dosing interval, too.
-In addition to \code{DI}, the function also calls \code{index_nif()}, thus creating
-the field \code{REF} as a side effect.
+first dosing interval, too. In addition to \code{DI}, the function also calls
+\code{index_nif()}, thus creating the field \code{REF} as a side effect.
 }
 \examples{
-as.data.frame(index_dosing_interval(examplinib_fe_nif))
-
+head(index_dosing_interval(examplinib_fe_nif))
+head(index_dosing_interval(examplinib_poc_nif))
+head(index_dosing_interval(examplinib_poc_min_nif))
 }

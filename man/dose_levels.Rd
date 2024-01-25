@@ -7,7 +7,9 @@
 dose_levels(obj, cmt = 1, group = NULL)
 }
 \arguments{
-\item{obj}{A NIF object.}
+\item{obj}{A rich or minimal NIF object.}
+
+\item{cmt}{The compartment (CMT) as numeric.}
 
 \item{group}{Further fields to be included (and to be grouped by) in the
 output.}
@@ -16,8 +18,8 @@ output.}
 A data frame.
 }
 \description{
-This function summarizes the doses in the individual first administration
-by subject and drug, and the number of subjectes treated at this dose level.
+This function summarizes the doses in the individual first administration by
+subject and drug, and the number of subjectes treated at this dose level.
 Subsequent dose modifications are ignored.
 }
 \examples{

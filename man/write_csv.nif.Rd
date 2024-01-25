@@ -2,15 +2,15 @@
 % Please edit documentation in R/nif_class.R
 \name{write_csv.nif}
 \alias{write_csv.nif}
-\title{Export a nif object as csv file}
+\title{Export a NIF object as csv file}
 \usage{
 write_csv.nif(obj, filename)
 }
 \arguments{
-\item{obj}{A nif object.}
+\item{obj}{A NIF object.}
 
 \item{filename}{The filename for the exported file.}
 }
 \description{
-Export a nif object as csv file
+Export a NIF object as csv file
 }

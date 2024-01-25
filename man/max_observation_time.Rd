@@ -2,9 +2,9 @@
 % Please edit documentation in R/nif_class.R
 \name{max_observation_time}
 \alias{max_observation_time}
-\title{Maximal ovservation time}
+\title{Maximal observation time}
 \usage{
-max_observation_time(obj, analytes = NULL)
+max_observation_time(obj, analyte = NULL)
 }
 \arguments{
 \item{obj}{The NIF object}
@@ -20,5 +20,7 @@ the first observation within the data set.
 }
 \examples{
 max_observation_time(examplinib_fe_nif)
-
+max_observation_time(examplinib_poc_nif)
+max_observation_time(examplinib_poc_min_nif)
+max_observation_time(examplinib_poc_min_nif, analyte = "CMT4")
 }
