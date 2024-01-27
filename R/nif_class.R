@@ -517,7 +517,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 #' Analytes within a NIF object
 #'
 #' All analytes found in the NIF object. If the field 'ANALYTE' is not present,
-#' "1" is returned.
+#' The analyte title is derived from the compartment.
 #' @param obj A NIF object
 #' @import dplyr
 #' @return Character.
@@ -527,7 +527,11 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 #' analytes(examplinib_poc_nif)
 #' analytes(examplinib_poc_min_nif)
 analytes <- function(obj) {
-  unique(ensure_analyte(obj)$ANALYTE)
+  ensure_analyte(obj) %>%
+    as.data.frame() %>%
+    filter(EVID==0) %>%
+    distinct(ANALYTE) %>%
+    pull(ANALYTE)
 }
 
 

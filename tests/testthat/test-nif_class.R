@@ -17,6 +17,20 @@ test_that("subjects works with minimal NIF" , {
 })
 
 
+test_that("doses works with minimal NIF", {
+  expect_no_error(doses(examplinib_poc_min_nif))
+})
+
+
+test_that("dose_levels works with minimal NIF", {
+  expect_no_error(dose_levels(examplinib_poc_min_nif))
+})
+
+test_that("analytes works with minimal NIF and rich NIF", {
+  expect_no_error(analytes(examplinib_poc_min_nif))
+  expect_no_error(analytes(examplinib_poc_nif))
+})
+
 # test_that("subject_info works with minimal NIF" , {
 #   expect_no_error(subject_info(examplinib_poc_min_nif, 1))
 #   expect_no_error(subject_info(examplinib_sad_min_nif, 1))
