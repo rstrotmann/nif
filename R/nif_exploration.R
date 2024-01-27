@@ -3,7 +3,6 @@
 #' This function plots DV over TIME for an individual subject, id. Id can be
 #' either the ID or the USUBJID. Administration time points are indicated with
 #' vertical lines.
-#'
 #' @param nif The NIF object
 #' @param id The subject ID to be plotted
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
@@ -16,8 +15,7 @@
 #'   should be plotted.
 #' @param lines Boolean to define whether lines should be plotted.
 #' @param point_size Point size as numeric.
-#'
-#' @return the plot object
+#' @return A ggplot2 object.
 #' @import dplyr
 #' @import ggplot2
 #' @export
@@ -601,6 +599,7 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
 #' @examples
 #' summary(examplinib_poc)
 #' summary(examplinib_poc_nif)
+#' summary(examplinib_poc_min_nif)
 summary <- function(object, ...) {
   UseMethod("summary")
 }
@@ -712,6 +711,7 @@ summary.nif <- function(object, ...) {
 #' @return Nothing.
 #' @export
 print.summary_nif <- function(x, ...) {
+  color = TRUE
   hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
 
@@ -723,7 +723,7 @@ print.summary_nif <- function(x, ...) {
     cat(paste0(length(x$studies), "studies:\n"))
   }
 
-  cat(paste0(df_to_string(x$n_studies), "\n\n"))
+  cat(paste0(df_to_string(x$n_studies, color=color), "\n\n"))
 
   cat(paste0(
     "Males: ", x$n_males, ", females: ", x$n_females, " (",
@@ -731,28 +731,29 @@ print.summary_nif <- function(x, ...) {
   ))
 
   if (!is.null(x$renal_function)) {
-    cat(paste0("Renal function:\n", df_to_string(x$renal_function), "\n\n"))
+    cat(paste0("Renal function:\n", df_to_string(x$renal_function,
+                                                 color=color), "\n\n"))
   }
 
   cat(paste0("Analytes:\n", paste(x$analytes, collapse = ", "), "\n\n"))
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
-  cat(paste0(df_to_string(x$n_obs), "\n\n"))
+  cat(paste0(df_to_string(x$n_obs, color=color), "\n\n"))
 
   cat(paste0("Administered drugs:\n", paste(x$drugs, collapse = ", "), "\n\n"))
 
   cat("Dose levels:\n")
-  cat(df_to_string(x$dose_levels))
+  cat(df_to_string(x$dose_levels, color=color))
   cat("\n\n")
 
   dr_summary <- lapply(x$dose_red_sbs, length) %>%
     data.frame()
   cat("Subjects with dose reductions\n")
-  cat(df_to_string((dr_summary)))
+  cat(df_to_string(dr_summary, color=color))
   cat("\n\n")
 
   cat("Treatment duration overview:\n")
-  cat(df_to_string(x$administration_duration))
+  cat(df_to_string(x$administration_duration, color=color))
   invisible(x)
 }
 

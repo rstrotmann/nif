@@ -80,7 +80,7 @@ print.nif <- function(x, ...) {
     df_to_string()
   cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
   cat(paste0("\u001b[38;5;248m",
-             nrow(x)-15, " more rows",
+             "# ", nrow(x)-15, " more rows",
              "\u001b[0m"))
   invisible(x)
 }

@@ -10,7 +10,8 @@
 #' @return The output as string.
 #' @import utils
 #' @keywords internal
-df_to_string <- function(df, indent = "", n = NULL, header = TRUE) {
+df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
+                         color = FALSE) {
   df <- as.data.frame(df) %>%
     mutate(across(everything(), as.character))
   max_widths <- as.numeric(lapply(
@@ -34,7 +35,16 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE) {
   }
 
   if (header == TRUE) {
-    out <- render_line(data.frame(as.list(names(df))))
+    # out <- render_line(data.frame(as.list(names(df))))
+    if(color == TRUE) {
+      out <- paste0(
+        "\u001b[38;5;248m",
+        render_line(data.frame(as.list(names(df)))),
+        "\u001b[0m"
+      )
+    } else {
+      out <- render_line(data.frame(as.list(names(df))))
+    }
   } else {
     out <- ""
   }
