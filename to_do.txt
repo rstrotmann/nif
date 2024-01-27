@@ -16,6 +16,8 @@ done:
 * max_admin_time
 * max_observation_time
 * guess_analyte
+* add_cfb
+
 
 
 TO DO:

@@ -79,10 +79,9 @@ print.nif <- function(x, ...) {
   temp <- temp %>%
     df_to_string()
   cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
-  cat(paste0("\033[37m",
-             nrow(x), " further rows not shown...",
-             "\033[0m"))
-
+  cat(paste0("\u001b[38;5;248m",
+             nrow(x)-15, " more rows",
+             "\u001b[0m"))
   invisible(x)
 }
 
@@ -925,23 +924,20 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' Output fields:
 #' * `DVBL` Baseline value for the dependent variable DV.
 #' * `DVCFB` Change from baseline for the dependent variable DV.
-#'
-#' @details
-#' The Baseline is calculated as the median of the DV for all times lower or
-#' equal to zero.
-#'
+#' @details The Baseline is calculated as the median of the DV for all times
+#' lower or equal to zero.
 #' @param obj A NIF object.
 #' @param summary_function The function to derive the baseline. This function is
-#' applied over the DV values at TIME less than or equal to zero. The default is
-#' `median`. Alternatively, `mean`, `min` or `max` can be considered.
-#'
+#'   applied over the DV values at TIME less than or equal to zero. The default
+#'   is `median`. Alternatively, `mean`, `min` or `max` can be considered.
 #' @return A NIF object
 #' @export
 #' @examples
 #' head(add_cfb(examplinib_poc_nif))
-#'
+#' head(add_cfb(examplinib_poc_min_nif))
 add_cfb <- function(obj, summary_function = median) {
   obj %>%
+    ensure_analyte() %>%
     as.data.frame() %>%
     group_by(ID, ANALYTE) %>%
     mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
@@ -963,6 +959,7 @@ add_cfb <- function(obj, summary_function = median) {
 #' @export
 #' @examples
 #' add_obs_per_dosing_interval(examplinib_poc_nif)
+#' add_obs_per_dosing_interval(examplinib_poc_min_nif)
 add_obs_per_dosing_interval <- function(obj) {
   obj %>%
     index_nif() %>%
