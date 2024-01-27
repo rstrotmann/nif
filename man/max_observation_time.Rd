@@ -9,7 +9,8 @@ max_observation_time(obj, analyte = NULL)
 \arguments{
 \item{obj}{The NIF object}
 
-\item{analytes}{The analyte or analytes to filter for.}
+\item{analyte}{The analyte as character. If \code{NULL} (default), all analytes
+are selected.}
 }
 \value{
 A scalar representing the time in hours.

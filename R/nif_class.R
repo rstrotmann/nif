@@ -22,11 +22,15 @@ new_nif <- function(obj) {
 #' @export
 #' @noRd
 print.nif <- function(x, ...) {
-  cat(paste(
-    "NONMEM input file (NIF) data set with data from",
-    length(studies(x)),
-    "studies\n"
+  hline <- paste0(rep("\U2500", 8), collapse="")
+  cat(paste0(
+    hline, " NONMEM input file (NIF) object ", hline, "\n"
   ))
+  if(length(studies(x)) == 1) {
+    cat(paste0("Data from one study\n"))
+  } else{
+    cat(paste0("Data from ", length(studies(x)), " studies\n"))
+  }
   n_obs <- x %>%
     filter(EVID == 0) %>%
     nrow()
@@ -74,7 +78,11 @@ print.nif <- function(x, ...) {
 
   temp <- temp %>%
     df_to_string()
-  cat(paste0("\nFirst rows of NIF data (selected columns):\n", temp))
+  cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
+  cat(paste0("\033[37m",
+             nrow(x), " further rows not shown...",
+             "\033[0m"))
+
   invisible(x)
 }
 
@@ -375,6 +383,7 @@ studies <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
+#' @export
 #' @examples
 #' head(ensure_analyte(examplinib_poc_nif))
 #' head(ensure_analyte(examplinib_poc_min_nif))
@@ -390,6 +399,7 @@ ensure_analyte <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
+#' @export
 #' @examples
 #' head(ensure_parent(examplinib_poc_nif))
 #' head(ensure_parent(examplinib_poc_min_nif))
@@ -409,6 +419,7 @@ ensure_parent <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
+#' @export
 #' @examples
 #' head(ensure_metabolite(examplinib_poc_nif))
 #' head(ensure_metabolite(examplinib_poc_min_nif))
@@ -774,7 +785,7 @@ n_administrations <- function(obj) {
 #' the data set.
 #'
 #' @param obj The NIF object
-#' @param analytes The analyte or analytes to filter for.
+#' @param analyte The analyte or analytes to filter for.
 #'
 #' @return A scalar representing the time in hours.
 #' @export
@@ -803,9 +814,9 @@ max_admin_time <- function(obj, analyte = NULL) {
 #' This function returns the time in hours of the last observation relative to
 #' the first observation within the data set.
 #'
+#' @param analyte The analyte as character. If `NULL` (default), all analytes
+#'   are selected.
 #' @param obj The NIF object
-#' @param analytes The analyte or analytes to filter for.
-#'
 #' @return A scalar representing the time in hours.
 #' @export
 #' @examples

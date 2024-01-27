@@ -712,12 +712,17 @@ summary.nif <- function(object, ...) {
 #' @return Nothing.
 #' @export
 print.summary_nif <- function(x, ...) {
-  cat(paste("NONMEM input file (NIF) data set summary\n\n"))
+  hline <- paste0(rep("\U2500", 8), collapse="")
+  cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
 
   cat(paste(
-    "Data from", sum(x$n_studies$N), "subjects across",
-    length(x$studies)
-  ), "studies:\n")
+    "Data from", sum(x$n_studies$N), "subjects across "))
+  if(length(x$studies == 1)) {
+    cat("one study:\n")
+  } else {
+    cat(paste0(length(x$studies), "studies:\n"))
+  }
+
   cat(paste0(df_to_string(x$n_studies), "\n\n"))
 
   cat(paste0(

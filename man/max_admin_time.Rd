@@ -9,7 +9,7 @@ max_admin_time(obj, analyte = NULL)
 \arguments{
 \item{obj}{The NIF object}
 
-\item{analytes}{The analyte or analytes to filter for.}
+\item{analyte}{The analyte or analytes to filter for.}
 }
 \value{
 A scalar representing the time in hours.

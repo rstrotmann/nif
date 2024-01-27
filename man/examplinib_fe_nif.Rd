@@ -15,4 +15,4 @@ examplinib_fe_nif
 Synthetic NIF data from a fictional clinical food effect study for
 'examplinib'.
 }
-\keyword{datasets}
+\keyword{internal}
