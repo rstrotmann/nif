@@ -712,6 +712,7 @@ summary.nif <- function(object, ...) {
 #' @export
 print.summary_nif <- function(x, ...) {
   color = TRUE
+  indent = " "
   hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
 
@@ -723,7 +724,7 @@ print.summary_nif <- function(x, ...) {
     cat(paste0(length(x$studies), "studies:\n"))
   }
 
-  cat(paste0(df_to_string(x$n_studies, color=color), "\n\n"))
+  cat(paste0(df_to_string(x$n_studies, color=color, indent = indent), "\n\n"))
 
   cat(paste0(
     "Males: ", x$n_males, ", females: ", x$n_females, " (",
@@ -731,29 +732,29 @@ print.summary_nif <- function(x, ...) {
   ))
 
   if (!is.null(x$renal_function)) {
-    cat(paste0("Renal function:\n", df_to_string(x$renal_function,
-                                                 color=color), "\n\n"))
+    cat(paste0("Renal function:\n", df_to_string(
+      x$renal_function, color=color, indent = indent), "\n\n"))
   }
 
-  cat(paste0("Analytes:\n", paste(x$analytes, collapse = ", "), "\n\n"))
+  cat(paste0("Analytes:\n", paste0(indent, paste0(x$analytes, collapse = ", ")), "\n\n"))
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
-  cat(paste0(df_to_string(x$n_obs, color=color), "\n\n"))
+  cat(paste0(df_to_string(x$n_obs, color=color, indent = indent), "\n\n"))
 
-  cat(paste0("Administered drugs:\n", paste(x$drugs, collapse = ", "), "\n\n"))
+  cat(paste0("Administered drugs:\n", paste0(indent, paste(x$drugs, collapse = ", ")), "\n\n"))
 
   cat("Dose levels:\n")
-  cat(df_to_string(x$dose_levels, color=color))
+  cat(df_to_string(x$dose_levels, color=color, indent = indent))
   cat("\n\n")
 
   dr_summary <- lapply(x$dose_red_sbs, length) %>%
     data.frame()
   cat("Subjects with dose reductions\n")
-  cat(df_to_string(dr_summary, color=color))
+  cat(df_to_string(dr_summary, color=color, indent = indent))
   cat("\n\n")
 
   cat("Treatment duration overview:\n")
-  cat(df_to_string(x$administration_duration, color=color))
+  cat(df_to_string(x$administration_duration, color=color, indent = indent))
   invisible(x)
 }
 
