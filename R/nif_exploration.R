@@ -298,7 +298,7 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
 #'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
-#' nif_spaghetti_plot(examplinib_poc_min_nif)
+#' nif_spaghetti_plot(examplinib_sad_min_nif)
 nif_spaghetti_plot <- function(obj,
                                points = FALSE, lines = TRUE, group = "ANALYTE",
                                nominal_time = FALSE, tad = FALSE, dose = NULL,
@@ -309,12 +309,12 @@ nif_spaghetti_plot <- function(obj,
   #   obj <- obj %>%
   #     dplyr::filter(DOSE %in% dose)}
   #
-  # if(is.null(max_x)) {
-  #   max_x <- max_observation_time(obj)}
-  #
-  # if(is.null(min_x)) {
-  #   min_x = 0
-  # }
+  if(is.null(max_x)) {
+    max_x <- max_observation_time(obj)}
+
+  if(is.null(min_x)) {
+    min_x = 0
+  }
   #
   # x <- obj %>%
   #   index_dosing_interval() %>%
@@ -330,12 +330,13 @@ nif_spaghetti_plot <- function(obj,
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
+    ensure_dose() %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
     verify(has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
-    {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
+    # {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
 
 
@@ -367,6 +368,7 @@ nif_spaghetti_plot <- function(obj,
     x <- x %>%
       filter(TIME <= max_x) %>%
       filter(EVID == 0) %>%
+      filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
       mutate(GROUP = interaction(
         as.factor(ID), as.factor(.data[[group]]))) %>%
@@ -375,13 +377,17 @@ nif_spaghetti_plot <- function(obj,
   }
 
   if (nominal_time) {
-    p <- x %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = NTIME,
-        y = DV,
-        group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
-        color = as.factor(.data[[group]])
-      ))
+    if(!"NTIME" %in% names(x)) {
+      stop("NTIME not included in NIF data set.")
+    } else {
+      p <- x %>%
+        ggplot2::ggplot(ggplot2::aes(
+          x = NTIME,
+          y = DV,
+          group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
+          color = as.factor(.data[[group]])
+        ))
+    }
   } else {
     p <- x %>%
       ggplot2::ggplot(ggplot2::aes(
@@ -574,6 +580,7 @@ nif_spaghetti_plot1 <- function(obj,
 #'   max_x = 24)
 #' plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
 #'   lines = FALSE, tad = TRUE, log =TRUE)
+#' plot(examplinib_poc_min_nif)
 #' @export
 plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
                      analyte = NULL, mean = FALSE, doses = NULL, points = FALSE,

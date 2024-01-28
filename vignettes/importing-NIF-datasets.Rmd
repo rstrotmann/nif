@@ -14,7 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette describes how to import NIF data sets created not with make_nif().
+This vignette describes how to import NIF data sets not created  with
+`make_nif()`.
 
 # BACKGROUND
 

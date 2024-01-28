@@ -312,7 +312,7 @@ studies <- function(obj) {
 }
 
 
-#' Ensure that the ANALYTE field is present in a NIF file.
+#' Ensure that the ANALYTE field is present
 #'
 #' If 'ANALYTE' is not in the column names, the field is created based on the
 #' compartment (CMT).
@@ -324,11 +324,31 @@ studies <- function(obj) {
 #' head(ensure_analyte(examplinib_poc_nif))
 #' head(ensure_analyte(examplinib_poc_min_nif))
 ensure_analyte <- function(obj) {
+  # obj %>%
+  #   {if(!"ANALYTE" %in% names(obj))
+  #     mutate(., ANALYTE = paste0("CMT", CMT)) else .}
   obj %>%
     {if(!"ANALYTE" %in% names(obj))
-      mutate(., ANALYTE = paste0("CMT", CMT)) else .}
+      mutate(., ANALYTE = "dafault") else .}
 }
 
+
+#' Ensure that the DOSE field is present
+#'
+#' @param obj A NIF object.
+#' @return A NIF object.
+#' @export
+#' @examples
+#' ensure_dose(examplinib_poc_min_nif)
+ensure_dose <- function(obj) {
+  obj %>%
+    {if(!"DOSE" %in% names(obj))
+      index_nif(.) %>%
+        mutate(DOSE = case_when(EVID==1 ~ AMT, .default = NA)) %>%
+        fill(DOSE, .direction = "downup")
+      else .
+    }
+}
 
 #' Ensure that the PARENT field is present in a NIF file.
 #'
@@ -340,14 +360,16 @@ ensure_analyte <- function(obj) {
 #' head(ensure_parent(examplinib_poc_nif))
 #' head(ensure_parent(examplinib_poc_min_nif))
 ensure_parent <- function(obj) {
-  if(!"PARENT" %in% names(obj)) {
+  # if(!"PARENT" %in% names(obj)) {
+    # obj <- obj %>%
+    #   mutate(PARENT = case_when(EVID == 1 ~ paste0("CMT", CMT) ,
+    #                             .default = NA)) %>%
+    #   fill(PARENT, .direction = "down")
+  # }
+  # return(obj)
     obj <- obj %>%
-      mutate(PARENT = case_when(EVID == 1 ~ paste0("CMT", CMT) ,
-                                .default = NA)) %>%
-      fill(PARENT, .direction = "down")
-
-  }
-  return(obj)
+      {if(!"PARENT" %in% names(obj))
+        mutate(., PARENT = "default") else .}
 }
 
 #' Ensure that the METABOLITE field is present in a NIF file.
@@ -360,14 +382,17 @@ ensure_parent <- function(obj) {
 #' head(ensure_metabolite(examplinib_poc_nif))
 #' head(ensure_metabolite(examplinib_poc_min_nif))
 ensure_metabolite <- function(obj) {
-  if(!"METABOLITE" %in% names(obj)) {
-    obj <- obj %>%
-      mutate(METABOLITE = case_when(EVID == 1 ~ FALSE ,
-                                .default = FALSE)) %>%
-      fill(METABOLITE, .direction = "down")
-
-  }
-  return(obj)
+  # if(!"METABOLITE" %in% names(obj)) {
+  #   obj <- obj %>%
+  #     mutate(METABOLITE = case_when(EVID == 1 ~ FALSE ,
+  #                               .default = FALSE)) %>%
+  #     fill(METABOLITE, .direction = "down")
+  #
+  # }
+  # return(obj)
+  obj <- obj %>%
+    {if(!"METABOLITE" %in% names(obj))
+      mutate(., METABOLITE = FALSE) else .}
 }
 
 #' Doses within a NIF object
