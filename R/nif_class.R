@@ -388,25 +388,24 @@ ensure_metabolite <- function(obj) {
 #' @return A NIF object.
 #' @keywords internal
 #' @examples
-#' ensure_ntime(examplinib_sad_min_nif)
 ensure_ntime <- function(obj) {
-  if(!"NTIME" %in% names(obj)) {
-    late_labels <- seq(24, ceiling(max_observation_time(obj)/24)*24, 24)
-    late_breaks <- late_labels + 12
-
-    obj %>%
-      nif::ensure_parent() %>%
-      nif::add_tad() %>%
-      as.data.frame() %>%
-      mutate(NTIME = as.numeric(as.character(cut(TAD,
-        # breaks=c(-Inf, 0, 0.25,  .5,   1, 1.5, 2, 3, 4, 6, 8, 10, 12, 16, 24),
-        breaks=  c(c(-Inf, 0, 0.125, .375, .75, 1.25, 1.75, 2.5, 3.5, 5,
-                   7, 9, 11, 14, 20, 24), late_breaks),
-        labels=c(c(0, 0, 0.25, .5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 16, 24),
-                 late_labels)))))
-  } else {
-    return(obj)
-  }
+  # if(!"NTIME" %in% names(obj)) {
+  #   late_labels <- seq(24, ceiling(max_observation_time(obj)/24)*24, 24)
+  #   late_breaks <- late_labels + 12
+  #
+  #   obj %>%
+  #     nif::ensure_parent() %>%
+  #     nif::add_tad() %>%
+  #     as.data.frame() %>%
+  #     mutate(NTIME = as.numeric(as.character(cut(TAD,
+  #       # breaks=c(-Inf, 0, 0.25,  .5,   1, 1.5, 2, 3, 4, 6, 8, 10, 12, 16, 24),
+  #       breaks=  c(c(-Inf, 0, 0.125, .375, .75, 1.25, 1.75, 2.5, 3.5, 5,
+  #                  7, 9, 11, 14, 20, 24), late_breaks),
+  #       labels=c(c(0, 0, 0.25, .5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 16, 24),
+  #                late_labels)))))
+  # } else {
+  #   return(obj)
+  # }
 }
 
 
@@ -894,7 +893,6 @@ add_trtdy <- function(obj) {
 #' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
 #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
-#'
 #' @return A NIF object.
 #' @seealso [egfr_mdrd()]
 #' @seealso [egfr_cg()]
@@ -922,7 +920,6 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
 #' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
 #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
-#'
 #' @return A NIF object.
 #' @export
 #' @examples
@@ -976,9 +973,7 @@ add_cfb <- function(obj, summary_function = median) {
 #' number of observations per analyte and dosing interval. This field can be
 #' helpful to identify dosing intervals across which rich sampling was
 #' conducted.
-#'
 #' @param obj A NIF object.
-#'
 #' @return Result as NIF object.
 #' @export
 #' @examples

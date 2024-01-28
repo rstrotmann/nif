@@ -326,6 +326,7 @@ nif_mean_plot <- function(x,
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
 #'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
 #' nif_spaghetti_plot(examplinib_sad_min_nif)
+#' nif_spaghetti_plot(examplinib_poc_min_nif)
 nif_spaghetti_plot <- function(obj,
                                points = FALSE, lines = TRUE, group = "ANALYTE",
                                nominal_time = FALSE, tad = FALSE, dose = NULL,
@@ -569,7 +570,7 @@ nif_spaghetti_plot1 <- function(obj,
 #'   analyte is to be plotted. In that case, the nominal time (NTIME) is shown
 #'   on the x axis. 'mean=T' will cast an error if multiple analytes are in the
 #'   data set of have been defined with 'analyte'.
-#' @param doses The doses to be plotted. Can be a scalar value or a numeric
+#' @param dose The doses to be plotted. Can be a scalar value or a numeric
 #'   vector or NULL to plot all doses.
 #' @param points Boolean value to define whether points should be plotted.
 #' @param id Numerical scalar or vector of IDs to be plotted.
@@ -600,39 +601,57 @@ nif_spaghetti_plot1 <- function(obj,
 #' plot(examplinib_fe_nif, max_x = 24, point = TRUE)
 #' plot(examplinib_fe_nif,
 #'   analyte = "RS2023", group = "FASTED",
-#'   nominal_time = TRUE
+#'   nominal_time = TRUE, points = TRUE
 #' )
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
 #'   max_x = 24)
 #' plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
 #'   lines = FALSE, tad = TRUE, log =TRUE)
-#' plot(examplinib_poc_min_nif)
+#' plot(examplinib_poc_min_nif, dose=500, tad = TRUE, cmt = 2, max_x = 24,
+#'   points = TRUE, lines = FALSE)
 #' @export
-plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
-                     analyte = NULL, mean = FALSE, doses = NULL, points = FALSE,
-                     id = NULL, usubjid = NULL, group = NULL,
-                     administrations = FALSE, nominal_time = FALSE, tad = FALSE,
-                     lines = TRUE, alpha = 1, title = NULL, ...) {
-  if (!is.null(id)) {
-    x <- x %>%
-      dplyr::filter(ID %in% id)
-  }
+plot.nif <- function(x, y_scale = "lin", log = FALSE, min_x = NULL,
+                     max_x = NULL, analyte = NULL, cmt = NULL, mean = FALSE,
+                     dose = NULL, points = FALSE, id = NULL, usubjid = NULL,
+                     group = NULL, administrations = FALSE,
+                     nominal_time = FALSE, tad = FALSE, lines = TRUE,
+                     alpha = 1, title = NULL, ...) {
 
-  if (!is.null(usubjid)) {
-    x <- x %>%
-      dplyr::filter(USUBJID %in% usubjid)
-  }
+x <- x %>%
+  ensure_parent() %>%
+  ensure_analyte() %>%
+  ensure_dose() %>%
+  add_tad() %>%
+  # index_dosing_interval() %>%
+  as.data.frame() %>%
+  verify(has_all_names(
+    "ID", "TIME", "AMT", "DV", "EVID")) %>%
+  # {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
+  # {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
+  {if(!is.null(id)) filter(., .$ID %in% id) else .} %>%
+  {if(!is.null(usubjid)) filter(., .$USUBJID %in% usubjid) else .} %>%
+  {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .}
 
-  if (!is.null(analyte)) {
-    x <- x %>%
-      dplyr::filter(ANALYTE == analyte)
-  }
+  # if (!is.null(id)) {
+  #   x <- x %>%
+  #     dplyr::filter(ID %in% id)
+  # }
 
-  if (!is.null(doses)) {
-    x <- x %>%
-      dplyr::filter(DOSE %in% doses)
-  }
+  # if (!is.null(usubjid)) {
+  #   x <- x %>%
+  #     dplyr::filter(USUBJID %in% usubjid)
+  # }
+
+  # if (!is.null(analyte)) {
+  #   x <- x %>%
+  #     dplyr::filter(ANALYTE == analyte)
+  # }
+
+  # if (!is.null(doses)) {
+  #   x <- x %>%
+  #     dplyr::filter(DOSE %in% doses)
+  # }
 
   if (!is.null(group)) {
     cov <- group
@@ -646,6 +665,10 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
     cov <- "ANALYTE"
   }
 
+  # x <- x %>%
+  #   ensure_analyte() %>%
+  #   ensure_dose()
+
   if (mean == TRUE) {
     if (!is.null(group) && is.null(analyte) && length(analytes(x) > 1)) {
       stop(paste0(
@@ -654,19 +677,21 @@ plot.nif <- function(x, y_scale = "lin", log=FALSE, min_x = 0, max_x = NA,
       ))
     }
     p <- x %>%
-      nif_mean_plot(points = points, lines = lines, group = cov)
+      # assert_rows("NTIME") %>%
+      nif_mean_plot(points = points, lines = lines, group = cov, min_x = min_x,
+                    max_x = max_x, log = log, dose = dose, analyte = analyte)
   } else {
     p <- x %>%
       nif_spaghetti_plot(
         points = points, lines = lines, group = cov, tad = tad,
-        nominal_time = nominal_time
-      )
+        nominal_time = nominal_time, dose = dose, analyte = analyte,
+        min_x = min_x, max_x = max_x, log = log)
   }
 
   p +
-    xlim(min_x, max_x) +
+    # xlim(min_x, max_x) +
     {if (!is.null(title)) ggtitle(title)} +
-    {if (y_scale == "log" || log == TRUE) scale_y_log10()} +
+    # {if (y_scale == "log" || log == TRUE) scale_y_log10()} +
     {if (length(analyte) == 1) labs(y = analyte)} +
     # {if (tad == FALSE) labs(color = cov)} +
     labs(color = cov) +

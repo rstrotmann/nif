@@ -8,11 +8,12 @@
   x,
   y_scale = "lin",
   log = FALSE,
-  min_x = 0,
-  max_x = NA,
+  min_x = NULL,
+  max_x = NULL,
   analyte = NULL,
+  cmt = NULL,
   mean = FALSE,
-  doses = NULL,
+  dose = NULL,
   points = FALSE,
   id = NULL,
   usubjid = NULL,
@@ -46,7 +47,7 @@ analyte is to be plotted. In that case, the nominal time (NTIME) is shown
 on the x axis. 'mean=T' will cast an error if multiple analytes are in the
 data set of have been defined with 'analyte'.}
 
-\item{doses}{The doses to be plotted. Can be a scalar value or a numeric
+\item{dose}{The doses to be plotted. Can be a scalar value or a numeric
 vector or NULL to plot all doses.}
 
 \item{points}{Boolean value to define whether points should be plotted.}
@@ -91,14 +92,15 @@ plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
 plot(examplinib_fe_nif, max_x = 24, point = TRUE)
 plot(examplinib_fe_nif,
   analyte = "RS2023", group = "FASTED",
-  nominal_time = TRUE
+  nominal_time = TRUE, points = TRUE
 )
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
   max_x = 24)
 plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
   lines = FALSE, tad = TRUE, log =TRUE)
-plot(examplinib_poc_min_nif)
+plot(examplinib_poc_min_nif, dose=500, tad = TRUE, cmt = 2, max_x = 24,
+  points = TRUE, lines = FALSE)
 }
 \seealso{
 \code{\link[=nif_viewer]{nif_viewer()}}

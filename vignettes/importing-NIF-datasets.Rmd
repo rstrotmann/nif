@@ -22,12 +22,12 @@ This vignette describes how to import NIF data sets not created  with
 NIF data sets created from SDTM data using `make_nif()` inherit fields from the
 original data that provide information on the analyte. These fields include:
 
-* `ANALYTE` (character), the name of the analyte/the administered drug. This field
-is derived from the `PCTESTCD` variable of the SDTM domain 'PC'. Please see the
-`vignette("nif-vignette")` and the documentation to `add_treatment_mapping()`
-for details on how the analyte name can be linked to the respective drug name
-(i.e., `EXTRT` in the SDTM domain 'EX'). The `ANALYTE` name is used for both,
-observations and administrations of the compound.
+* `ANALYTE` (character), the name of the analyte/the administered drug. This
+field is derived from the `PCTESTCD` variable of the SDTM domain 'PC'. Please
+see the `vignette("nif-vignette")` and the documentation to
+`add_treatment_mapping()` for details on how the analyte name can be linked to
+the respective drug name (i.e., `EXTRT` in the SDTM domain 'EX'). The `ANALYTE`
+name is used for both, observations and administrations of the compound.
 
 * `PARENT` (character), the name of the parent compound that the analyte belongs
 to. This is the same as the `ANALYTE` for parent compounds. However, if
