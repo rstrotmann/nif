@@ -18,13 +18,14 @@ done:
 * guess_analyte
 * add_cfb
 * add_tad
-* nof_plot_id
+* nif_plot_id
+* dose_plot_id
 
 
 
 TO DO:
 * add unit test for guess_analyte (try multiple analytes with different n_obs)
-
+* subject_info_nif() to work with minimal NIF
 
 
 

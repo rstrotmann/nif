@@ -1,7 +1,19 @@
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
-})
 
+test_that("ensure_parent works as intended" , {
+  nif <- tribble(
+    ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT,
+    1,   0,     100,  1,     NA,  1,
+    1,   1,     0,    0,     1,   2,
+    1,   2,     0,    0,     2,   2,
+    1,   3,     0,    0,     3,   2
+  )
+
+  nif %>%
+    new_nif() %>%
+    ensure_analyte() %>%
+    ensure_parent() %>%
+    as.data.frame()
+})
 
 test_that("print works with minimal NIF" , {
   expect_no_error(print(examplinib_poc_min_nif))
@@ -30,12 +42,6 @@ test_that("analytes works with minimal NIF and rich NIF", {
   expect_no_error(analytes(examplinib_poc_min_nif))
   expect_no_error(analytes(examplinib_poc_nif))
 })
-
-# test_that("subject_info works with minimal NIF" , {
-#   expect_no_error(subject_info(examplinib_poc_min_nif, 1))
-#   expect_no_error(subject_info(examplinib_sad_min_nif, 1))
-# })
-
 
 test_that("index_dosing_interval works with single parent" , {
   nif <- tribble(

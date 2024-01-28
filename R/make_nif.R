@@ -991,7 +991,7 @@ add_time <- function(x) {
 #' @param analyte_cmt_mapping The analyte-compartment association as data frame
 #'   with the columns 'ANALYTE' and 'CMT'.
 #' @return A NIF object.
-#' @seealso [summary.nif()]
+#' @seealso [summary()]
 #' @seealso [plot.nif()]
 #' @seealso [write_nif()]
 #' @seealso [write_csv.nif()]
@@ -1256,7 +1256,6 @@ index_nif <- function(nif) {
 #' @import dplyr
 #' @import lifecycle
 #' @export
-#' @noRd
 #' @examples
 #' compress_nif(examplinib_fe_nif)
 compress_nif <- function(nif, ...) {

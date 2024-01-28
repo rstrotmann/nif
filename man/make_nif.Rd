@@ -90,7 +90,7 @@ make_nif(examplinib_fe)
 make_nif(examplinib_poc)
 }
 \seealso{
-\code{\link[=summary.nif]{summary.nif()}}
+\code{\link[=summary]{summary()}}
 
 \code{\link[=plot.nif]{plot.nif()}}
 

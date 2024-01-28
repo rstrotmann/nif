@@ -298,33 +298,50 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
 #'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
+#' nif_spaghetti_plot(examplinib_poc_min_nif)
 nif_spaghetti_plot <- function(obj,
                                points = FALSE, lines = TRUE, group = "ANALYTE",
                                nominal_time = FALSE, tad = FALSE, dose = NULL,
                                analyte = NULL, min_x = NULL, max_x = NULL,
                                log = FALSE, point_size = 2) {
 
-  if (!is.null(dose)) {
-    obj <- obj %>%
-      dplyr::filter(DOSE %in% dose)}
-
-  if(is.null(max_x)) {
-    max_x <- max_observation_time(obj)}
-
-  if(is.null(min_x)) {
-    min_x = 0
-  }
+  # if (!is.null(dose)) {
+  #   obj <- obj %>%
+  #     dplyr::filter(DOSE %in% dose)}
+  #
+  # if(is.null(max_x)) {
+  #   max_x <- max_observation_time(obj)}
+  #
+  # if(is.null(min_x)) {
+  #   min_x = 0
+  # }
+  #
+  # x <- obj %>%
+  #   index_dosing_interval() %>%
+  #   as.data.frame() %>%
+  #   verify(has_all_names("ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE")) %>%
+  #   dplyr::filter(!is.na(DOSE)) %>%
+  #   filter(EVID==1 | !is.na(DV))
+  #
+  # if (!is.null(analyte)) {
+  #   x <- x %>% dplyr::filter(ANALYTE == analyte)
+  # }
 
   x <- obj %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
-    verify(has_all_names("ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE")) %>%
-    dplyr::filter(!is.na(DOSE)) %>%
-    filter(EVID==1 | !is.na(DV))
+    verify(has_all_names(
+      "ID", "TIME", "AMT", "DV", "EVID")) %>%
+    {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
+    {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
+    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
 
-  if (!is.null(analyte)) {
-    x <- x %>% dplyr::filter(ANALYTE == analyte)
-  }
+
+
+
+
 
   if (tad == TRUE) {
     x <- x %>%
@@ -654,7 +671,6 @@ summary <- function(object, ...) {
 #' @noRd
 #' @examples
 #' summary(examplinib_poc_nif)
-# summary(examplinib_poc_min_nif)
 summary.nif <- function(object, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
