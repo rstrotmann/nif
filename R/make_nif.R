@@ -40,11 +40,12 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
   if (header == TRUE) {
     # out <- render_line(data.frame(as.list(names(df))))
     if(color == TRUE) {
-      out <- paste0(
-        "\u001b[38;5;248m",
-        render_line(data.frame(as.list(names(df)))),
-        "\u001b[0m"
-      )
+      # out <- paste0(
+      #   "\u001b[38;5;248m",
+      #   render_line(data.frame(as.list(names(df)))),
+      #   "\u001b[0m"
+      # )
+      out <- render_line(data.frame(as.list(names(df))))
     } else {
       out <- render_line(data.frame(as.list(names(df))))
     }
@@ -75,9 +76,8 @@ has_time <- function(datetime) {
 #' Recode SEX field in a data frame
 #'
 #' This function recodes the SEX field in a data frame. All numerical values are
-#'   kept while "M" is recoded to 0 and "F" to 1.
-#'   If your downstream analysis requires different coding, please manually
-#'   re-code.
+#' kept while "M" is recoded to 0 and "F" to 1. If your downstream analysis
+#' requires different coding, please manually re-code.
 #' @param obj The data.frame containing a SEX field
 #' @return The output data frame
 #' @import dplyr
@@ -108,7 +108,6 @@ dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y")
 #' "2001-01-02T09:59" where date and time are separated by "T") to standard
 #' POSIXct format. The names of the variables to be converted need to be
 #' provided by `fields`.
-#'
 #' @param obj A data frame.
 #' @param fields Date variable names as character.
 #' @return A data frame
@@ -128,7 +127,6 @@ standardize_date_format <- function(obj, fields = NULL) {
 #' format.
 #' @param obj A data frame.
 #' @param fields Date variable names as character.
-#'
 #' @return A data frame.
 #' @export
 #' @keywords internal
@@ -223,7 +221,6 @@ extract_time <- function(dtc) {
 #' the day in EXENDTC must be set to a plausible value. This is what this
 #' function does. For entries with missing time-of-the-day information in
 #' EXENDTC, it is assumed to be the same as for the EXSTDTC field.
-#'
 #' @param ex The EX domain as data frame.
 #' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
@@ -324,7 +321,6 @@ exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
 #' reference end date-time field that specifies the date-time of the last
 #' treatment administration. This function completes EXENDTC for the very last
 #' administration time based on the RFENDTC, if provided in DM.
-#'
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
 #' @param silent Switch to disable message output.

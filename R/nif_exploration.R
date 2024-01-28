@@ -249,7 +249,7 @@ nif_mean_plot <- function(x,
                           dose = NULL, analyte = NULL, min_x = NULL,
                           max_x = NULL, log = FALSE, point_size = 2) {
   if(is.null(max_x)) {
-    max_x <- max_observation_time(obj)}
+    max_x <- max_observation_time(x)}
   if(is.null(min_x)) {
     min_x = 0}
 
@@ -290,7 +290,8 @@ nif_mean_plot <- function(x,
     ) +
     {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     ggplot2::theme_bw() +
-    ggplot2::labs(caption = "Data shown are mean \u00B1 SD") +
+    # ggplot2::labs(caption = "Data shown are mean \u00B1 SD") +
+    ggplot2::labs(caption = "Data shown are mean and SD") +
     labs(color = group) +
     ylim(0, max(temp$max_y, na.rm = TRUE)) +
     ggplot2::theme(legend.position = "bottom")
@@ -800,7 +801,8 @@ summary.nif <- function(object, ...) {
 print.summary_nif <- function(x, ...) {
   color = TRUE
   indent = " "
-  hline <- paste0(rep("\U2500", 8), collapse="")
+  # hline <- paste0(rep("\U2500", 8), collapse="")
+  hline <- paste0(rep("-", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
 
   cat(paste(

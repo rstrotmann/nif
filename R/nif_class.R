@@ -11,7 +11,6 @@ new_nif <- function(obj) {
     temp <- obj %>% as.data.frame()
     class(temp) <- c("nif", "data.frame")
   }
-  # return(index_nif(temp))
   return(temp)
 }
 
@@ -23,7 +22,8 @@ new_nif <- function(obj) {
 #' @export
 #' @noRd
 print.nif <- function(x, ...) {
-  hline <- paste0(rep("\U2500", 8), collapse="")
+  # hline <- paste0(rep("\U2500", 8), collapse="")
+  hline <- paste0(rep("-", 8), collapse="")
   cat(paste0(
     hline, " NONMEM input file (NIF) object ", hline, "\n"
   ))
@@ -82,9 +82,10 @@ print.nif <- function(x, ...) {
     mutate(across(where(is.numeric), ~ round(., 3))) %>%
     df_to_string(color = TRUE)
   cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
-  cat(paste0("\u001b[38;5;248m",
-             "# ", nrow(x)-10, " more rows",
-             "\u001b[0m"))
+  # cat(paste0("\u001b[38;5;248m",
+  #            "# ", nrow(x)-10, " more rows",
+  #            "\u001b[0m"))
+  cat(paste0("# ", nrow(x)-10, " more rows"))
   invisible(x)
 }
 
@@ -137,7 +138,6 @@ subject_info.nif <- function(obj, id) {
     arrange(ANALYTE, TIME) %>%
     select(ANALYTE, TIME, TRTDY) %>%
     as.data.frame()
-
 
   class(out) <- c("subject_info", "data.frame")
   return(out)
@@ -325,9 +325,6 @@ studies <- function(obj) {
 #' head(ensure_analyte(examplinib_poc_nif))
 #' head(ensure_analyte(examplinib_poc_min_nif))
 ensure_analyte <- function(obj) {
-  # obj %>%
-  #   {if(!"ANALYTE" %in% names(obj))
-  #     mutate(., ANALYTE = paste0("CMT", CMT)) else .}
   obj %>%
     {if(!"ANALYTE" %in% names(obj))
       mutate(., ANALYTE = "dafault") else .}
@@ -361,16 +358,9 @@ ensure_dose <- function(obj) {
 #' head(ensure_parent(examplinib_poc_nif))
 #' head(ensure_parent(examplinib_poc_min_nif))
 ensure_parent <- function(obj) {
-  # if(!"PARENT" %in% names(obj)) {
-    # obj <- obj %>%
-    #   mutate(PARENT = case_when(EVID == 1 ~ paste0("CMT", CMT) ,
-    #                             .default = NA)) %>%
-    #   fill(PARENT, .direction = "down")
-  # }
-  # return(obj)
-    obj <- obj %>%
-      {if(!"PARENT" %in% names(obj))
-        mutate(., PARENT = "default") else .}
+  obj <- obj %>%
+    {if(!"PARENT" %in% names(obj))
+      mutate(., PARENT = "default") else .}
 }
 
 
@@ -384,14 +374,6 @@ ensure_parent <- function(obj) {
 #' head(ensure_metabolite(examplinib_poc_nif))
 #' head(ensure_metabolite(examplinib_poc_min_nif))
 ensure_metabolite <- function(obj) {
-  # if(!"METABOLITE" %in% names(obj)) {
-  #   obj <- obj %>%
-  #     mutate(METABOLITE = case_when(EVID == 1 ~ FALSE ,
-  #                               .default = FALSE)) %>%
-  #     fill(METABOLITE, .direction = "down")
-  #
-  # }
-  # return(obj)
   obj <- obj %>%
     {if(!"METABOLITE" %in% names(obj))
       mutate(., METABOLITE = FALSE) else .}
@@ -426,8 +408,6 @@ ensure_ntime <- function(obj) {
     return(obj)
   }
 }
-
-
 
 
 #' Doses within a NIF object
