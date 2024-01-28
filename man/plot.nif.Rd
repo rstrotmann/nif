@@ -98,6 +98,7 @@ plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
   max_x = 24)
 plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
   lines = FALSE, tad = TRUE, log =TRUE)
+plot(examplinib_poc_min_nif)
 }
 \seealso{
 \code{\link[=nif_viewer]{nif_viewer()}}

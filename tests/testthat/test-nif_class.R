@@ -15,6 +15,7 @@ test_that("ensure_parent works as intended" , {
     as.data.frame()
 })
 
+
 test_that("print works with minimal NIF" , {
   expect_no_error(print(examplinib_poc_min_nif))
   expect_no_error(print(examplinib_sad_min_nif))

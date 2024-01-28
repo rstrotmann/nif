@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{ensure_analyte}
 \alias{ensure_analyte}
-\title{Ensure that the ANALYTE field is present in a NIF file.}
+\title{Ensure that the ANALYTE field is present}
 \usage{
 ensure_analyte(obj)
 }

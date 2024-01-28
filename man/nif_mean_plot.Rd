@@ -4,7 +4,18 @@
 \alias{nif_mean_plot}
 \title{Mean plot over a selected covariate}
 \usage{
-nif_mean_plot(x, points = FALSE, lines = TRUE, group = "ANALYTE")
+nif_mean_plot(
+  x,
+  points = FALSE,
+  lines = TRUE,
+  group = "ANALYTE",
+  dose = NULL,
+  analyte = NULL,
+  min_x = NULL,
+  max_x = NULL,
+  log = FALSE,
+  point_size = 2
+)
 }
 \arguments{
 \item{x}{The NIF object.}
@@ -14,15 +25,30 @@ nif_mean_plot(x, points = FALSE, lines = TRUE, group = "ANALYTE")
 \item{lines}{Boolean to indicate whether lines should be drawn.}
 
 \item{group}{The grouping covariate, defaults to 'ANALYTE'.}
+
+\item{dose}{The dose(s) to filter for as numeric.}
+
+\item{analyte}{The analyte as character. If NULL (default), all analytes will
+be plotted.}
+
+\item{min_x}{The minimal value for the x scale as numeric.}
+
+\item{max_x}{The maximal value for the x scale as numeric.}
+
+\item{log}{Logarithmic y scale as logical.}
+
+\item{point_size}{The point size as numeric, defaults to 2.}
 }
 \value{
 A ggplot2 plot object.
 }
 \description{
-Mean plot over a selected covariate
+The averaging over subjects expects the \code{NTIME} field be in the data set.
 }
 \examples{
 nif_mean_plot(examplinib_sad_nif)
 nif_mean_plot(examplinib_fe_nif, group = "FASTED")
+nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 24)
+nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 12, group = "SEX")
 }
 \keyword{internal}

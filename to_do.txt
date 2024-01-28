@@ -27,6 +27,8 @@ TO DO:
 * add unit test for guess_analyte (try multiple analytes with different n_obs)
 * subject_info_nif() to work with minimal NIF
 
+* nif_mean_plot()
+* plot.nif()
 
 
 General:

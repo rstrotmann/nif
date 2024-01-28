@@ -223,9 +223,18 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 
 #' Mean plot over a selected covariate
 #'
+#' The averaging over subjects expects the `NTIME` field be in the data set.
+#'
 #' @param x The NIF object.
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
+#' @param dose The dose(s) to filter for as numeric.
+#' @param analyte The analyte as character. If NULL (default), all analytes will
+#'   be plotted.
+#' @param min_x The minimal value for the x scale as numeric.
+#' @param max_x The maximal value for the x scale as numeric.
+#' @param log Logarithmic y scale as logical.
+#' @param point_size The point size as numeric, defaults to 2.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
 #' @return A ggplot2 plot object.
 #' @export
@@ -233,10 +242,26 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @examples
 #' nif_mean_plot(examplinib_sad_nif)
 #' nif_mean_plot(examplinib_fe_nif, group = "FASTED")
-nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
+#' nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 24)
+#' nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 12, group = "SEX")
+nif_mean_plot <- function(x,
+                          points = FALSE, lines = TRUE, group = "ANALYTE",
+                          dose = NULL, analyte = NULL, min_x = NULL,
+                          max_x = NULL, log = FALSE, point_size = 2) {
+  if(is.null(max_x)) {
+    max_x <- max_observation_time(obj)}
+  if(is.null(min_x)) {
+    min_x = 0}
+
   temp <- x %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
+    ensure_dose() %>%
     as.data.frame() %>%
     verify(has_all_names("NTIME", "DOSE", "DV")) %>%
+    {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
+    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
+
     filter(NTIME > 0) %>%
     filter(EVID == 0) %>%
     dplyr::filter(!is.na(DOSE)) %>%
@@ -253,8 +278,9 @@ nif_mean_plot <- function(x, points = FALSE, lines = TRUE, group = "ANALYTE") {
       group = as.factor(.data[[group]]),
       color = as.factor(.data[[group]])
     )) +
-    {if (lines) geom_line()} +
-    {if (points) geom_point()} +
+    {if (lines) geom_line(na.rm = TRUE)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size)} +
+    xlim(min_x, max_x) +
     ggplot2::geom_ribbon(
       aes(
         ymin = mean - sd, ymax = mean + sd,
