@@ -5,7 +5,7 @@
 \title{Plot dose time course data from individual subject}
 \usage{
 dose_plot_id(
-  nif,
+  obj,
   id,
   y_scale = "lin",
   max_dose = NA,
@@ -15,7 +15,7 @@ dose_plot_id(
 )
 }
 \arguments{
-\item{nif}{The NIF object.}
+\item{obj}{The NIF object.}
 
 \item{id}{The subject ID to be plotted.}
 
@@ -41,5 +41,6 @@ vertical lines.
 \examples{
 dose_plot_id(examplinib_poc_nif, 18)
 dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
+dose_plot_id(examplinib_poc_min_nif, 18)
 }
 \keyword{internal}

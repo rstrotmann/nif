@@ -14,7 +14,7 @@ nif_plot_id(
   lines = TRUE,
   point_size = 2,
   tad = FALSE,
-  imp = "none"
+  imp = NULL
 )
 }
 \arguments{
@@ -37,7 +37,7 @@ is "lin".}
 should be plotted.}
 
 \item{imp}{The IMP for which administrations are to be indicated by vertical
-lines. Defaults to 'none'.}
+lines. Defaults to NULL.}
 }
 \value{
 A ggplot2 object.
@@ -52,6 +52,7 @@ nif_plot_id(examplinib_poc_nif, 1)
 nif_plot_id(examplinib_poc_min_nif, 1)
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
+nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))

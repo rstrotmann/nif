@@ -9,7 +9,7 @@
 #'   is "lin".
 #' @param analyte The analytes to be displayes. Defaults to NULL (all).
 #' @param imp The IMP for which administrations are to be indicated by vertical
-#'   lines. Defaults to 'none'.
+#'   lines. Defaults to NULL.
 #' @param max_time The right limit of the time scale
 #' @param tad Boolean to select whether time after dose (TAD) rather than TIME
 #'   should be plotted.
@@ -26,13 +26,14 @@
 #' #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
+#' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
 #' nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
 #' nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
 nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
                         max_time = NA, lines = TRUE, point_size = 2,
-                        tad = FALSE, imp = "none") {
+                        tad = FALSE, imp = NULL) {
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
@@ -76,16 +77,12 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
     filter(EVID == 0)
 
   admin <- x %>%
+    # as.data.frame() %>%
     dplyr::filter(EVID == 1) %>%
-    dplyr::filter(PARENT == imp)
+    # dplyr::filter(PARENT == imp)
+    {if(!is.null(imp)) filter(., PARENT == imp) else NULL}
 
   if (tad == TRUE) {
-    # p <- obs %>%
-    #   ggplot2::ggplot(ggplot2::aes(
-    #     x = TIME, y = DV,
-    #     group = interaction(ID, as.factor(ANALYTE), TRTDY),
-    #     color = interaction(as.factor(ANALYTE), TRTDY)
-    #   ))
     p <- obs %>%
       ggplot2::ggplot(ggplot2::aes(
         x = TIME, y = DV,
@@ -102,11 +99,10 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
   }
 
   p <- p +
-    ggplot2::geom_vline(
-      data = admin,
-      ggplot2::aes(xintercept = TIME),
-      color = "gray"
-    ) +
+    { if(!is.null(admin) > 0)
+      geom_vline(data = admin,
+                 aes(xintercept = TIME),
+                 color = "gray")} +
     { if (lines == TRUE) ggplot2::geom_line() } +
     ggplot2::geom_point(size = point_size) +
     ggplot2::xlim(0, max_time) +
@@ -117,7 +113,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 
-  if (!(imp %in% c("NA", "", "none"))) {
+  if(!is.null(imp)) {
     p <- p +
       labs(caption = paste("vertical lines indicate", imp, "administrations"))
   }
@@ -136,7 +132,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
 #' This function plots AMT over TIME for an individual subject, id. Id can be
 #' either the ID or the USUBJID. Administration time points are indicated with
 #' vertical lines.
-#' @param nif The NIF object.
+#' @param obj The NIF object.
 #' @param id The subject ID to be plotted.
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
@@ -153,24 +149,55 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
 #' dose_plot_id(examplinib_poc_nif, 18)
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
 #' dose_plot_id(examplinib_poc_min_nif, 18)
-dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
+dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
                          point_size = 2, max_time = NA, analyte = NULL) {
-  if (id %in% nif$ID) {
+
+  x <- obj %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
+    index_dosing_interval() %>%
+    as.data.frame() %>%
+    verify(has_all_names(
+      "ID", "TIME", "AMT", "DV", "EVID")) %>%
+    # {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
+    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
+
+  id_label <- ""
+  plot_label <- ""
+  # filter for subject of interest
+  if (id %in% x$ID) {
     plot_label <- "ID"
-    nif <- nif %>% filter(ID == id)
-  } else if (id %in% nif$USUBJID) {
-    nif <- nif %>% filter(USUBJID == id)
-    plot_label <- "USUBJID"
+    x <- x %>%
+      filter(ID == id)
   } else {
-    stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
+    if("USUBJID" %in% names(x)) {
+      if (id %in% x$USUBJID) {
+        x <- x %>%
+          filter(USUBJID == id)
+        id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
+        plot_label <- "USUBJID"
+      } else {
+        stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
+      }
+    }
   }
 
-  if (!is.null(analyte)) {
-    nif <- nif %>%
-      filter(ANALYTE %in% analyte)
-  }
+  # if (id %in% obj$ID) {
+  #   plot_label <- "ID"
+  #   obj <- obj %>% filter(ID == id)
+  # } else if (id %in% obj$USUBJID) {
+  #   obj <- obj %>% filter(USUBJID == id)
+  #   plot_label <- "USUBJID"
+  # } else {
+  #   stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
+  # }
+  #
+  # if (!is.null(analyte)) {
+  #   obj <- obj %>%
+  #     filter(ANALYTE %in% analyte)
+  # }
 
-  admin <- nif %>%
+  admin <- x %>%
     dplyr::filter(EVID == 1)
 
   p <- admin %>%
