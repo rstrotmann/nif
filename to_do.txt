@@ -17,6 +17,8 @@ done:
 * max_observation_time
 * guess_analyte
 * add_cfb
+* add_tad
+* nof_plot_id
 
 
 

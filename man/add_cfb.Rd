@@ -10,8 +10,8 @@ add_cfb(obj, summary_function = median)
 \item{obj}{A NIF object.}
 
 \item{summary_function}{The function to derive the baseline. This function is
-applied over the DV values at TIME less than or equal to zero. The default is
-\code{median}. Alternatively, \code{mean}, \code{min} or \code{max} can be considered.}
+applied over the DV values at TIME less than or equal to zero. The default
+is \code{median}. Alternatively, \code{mean}, \code{min} or \code{max} can be considered.}
 }
 \value{
 A NIF object
@@ -26,10 +26,10 @@ Output fields:
 \item \code{DVCFB} Change from baseline for the dependent variable DV.
 }
 
-The Baseline is calculated as the median of the DV for all times lower or
-equal to zero.
+The Baseline is calculated as the median of the DV for all times
+lower or equal to zero.
 }
 \examples{
 head(add_cfb(examplinib_poc_nif))
-
+head(add_cfb(examplinib_poc_min_nif))
 }

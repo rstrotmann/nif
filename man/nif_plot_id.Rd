@@ -5,7 +5,7 @@
 \title{Plot DV time course data from individual subject}
 \usage{
 nif_plot_id(
-  nif,
+  obj,
   id,
   analyte = NULL,
   cmt = NULL,
@@ -18,7 +18,7 @@ nif_plot_id(
 )
 }
 \arguments{
-\item{nif}{The NIF object}
+\item{obj}{The NIF object}
 
 \item{id}{The subject ID to be plotted}
 
@@ -40,7 +40,7 @@ should be plotted.}
 lines. Defaults to 'none'.}
 }
 \value{
-the plot object
+A ggplot2 object.
 }
 \description{
 This function plots DV over TIME for an individual subject, id. Id can be
@@ -49,10 +49,13 @@ vertical lines.
 }
 \examples{
 nif_plot_id(examplinib_poc_nif, 1)
-nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+nif_plot_id(examplinib_poc_min_nif, 1)
+#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
 nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
+nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
+nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
 }
 \keyword{internal}

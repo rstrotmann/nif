@@ -15,4 +15,4 @@ examplinib_poc_min_nif
 Synthetic NIF data from a fictional clinical single-arm study with rich and
 sparse pk sampling. Reduced to the minimally required fields.
 }
-\keyword{internal}
+\keyword{datasets}

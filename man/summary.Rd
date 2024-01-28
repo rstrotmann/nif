@@ -20,4 +20,5 @@ NIF or SDTM object overview
 \examples{
 summary(examplinib_poc)
 summary(examplinib_poc_nif)
+summary(examplinib_poc_min_nif)
 }

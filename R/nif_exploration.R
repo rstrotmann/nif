@@ -3,7 +3,7 @@
 #' This function plots DV over TIME for an individual subject, id. Id can be
 #' either the ID or the USUBJID. Administration time points are indicated with
 #' vertical lines.
-#' @param nif The NIF object
+#' @param obj The NIF object
 #' @param id The subject ID to be plotted
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 #'   is "lin".
@@ -22,20 +22,25 @@
 #' @keywords internal
 #' @examples
 #' nif_plot_id(examplinib_poc_nif, 1)
-#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+#' nif_plot_id(examplinib_poc_min_nif, 1)
+#' #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
-nif_plot_id <- function(nif, id, analyte = NULL, cmt = NULL, y_scale = "lin",
+#' nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
+#' nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
+nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
                         max_time = NA, lines = TRUE, point_size = 2,
                         tad = FALSE, imp = "none") {
-  x <- nif %>%
+  x <- obj %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
+    index_dosing_interval() %>%
     as.data.frame() %>%
     verify(has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
-    {if(!"ANALYTE" %in% names(nif)) mutate(., ANALYTE = paste0("CMT", .$CMT)) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
 
   id_label <- ""
@@ -71,16 +76,21 @@ nif_plot_id <- function(nif, id, analyte = NULL, cmt = NULL, y_scale = "lin",
     filter(EVID == 0)
 
   admin <- x %>%
-    # as.data.frame() %>%
     dplyr::filter(EVID == 1) %>%
     dplyr::filter(PARENT == imp)
 
   if (tad == TRUE) {
+    # p <- obs %>%
+    #   ggplot2::ggplot(ggplot2::aes(
+    #     x = TIME, y = DV,
+    #     group = interaction(ID, as.factor(ANALYTE), TRTDY),
+    #     color = interaction(as.factor(ANALYTE), TRTDY)
+    #   ))
     p <- obs %>%
       ggplot2::ggplot(ggplot2::aes(
         x = TIME, y = DV,
-        group = interaction(ID, as.factor(ANALYTE), TRTDY),
-        color = interaction(as.factor(ANALYTE), TRTDY)
+        group = interaction(ID, as.factor(ANALYTE), DI),
+        color = interaction(as.factor(ANALYTE), DI)
       ))
   } else {
     p <- obs %>%
@@ -142,6 +152,7 @@ nif_plot_id <- function(nif, id, analyte = NULL, cmt = NULL, y_scale = "lin",
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
+#' dose_plot_id(examplinib_poc_min_nif, 18)
 dose_plot_id <- function(nif, id, y_scale = "lin", max_dose = NA,
                          point_size = 2, max_time = NA, analyte = NULL) {
   if (id %in% nif$ID) {
@@ -616,7 +627,7 @@ summary <- function(object, ...) {
 #' @noRd
 #' @examples
 #' summary(examplinib_poc_nif)
-# summary.nif <- function(obj, egfr_function = egfr_cg, ...) {
+# summary(examplinib_poc_min_nif)
 summary.nif <- function(object, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)

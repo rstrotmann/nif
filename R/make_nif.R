@@ -2,11 +2,14 @@
 #'
 #' This function renders a data.frame into a string similar to its
 #' representation when printed without line numbers
+#'
 #' @param df The data.frame to be rendered
 #' @param indent A string that defines the left indentation of the rendered
 #'   output.
 #' @param header Boolean to indicate whether the header row is to be included.
+#' @param color Print headers in grey as logical.
 #' @param n The number of lines to be included, or all if NULL.
+#'
 #' @return The output as string.
 #' @import utils
 #' @keywords internal
@@ -144,7 +147,6 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' @param obj A data frame.
 #' @return A data frame.
 #' @seealso [isofy_dates()]
-#' @keywords internal
 lubrify_dates <- function(obj) {
   obj %>% dplyr::mutate_at(
     vars(ends_with("DTC")),
@@ -165,7 +167,6 @@ lubrify_dates <- function(obj) {
 #' @param obj A data frame.
 #' @return A data frame.
 #' @seealso [lubrify_dates()]
-#' @keywords internal
 isofy_dates <- function(obj) {
   obj %>%
     dplyr::mutate_at(vars(ends_with("DTC")), ~ format(., "%Y-%m-%dT%H:%M"))
@@ -1301,29 +1302,6 @@ compress <- function(nif, fields = NULL, debug = TRUE) {
 }
 
 
-#' Add time-after-dose (TAD) field
-#'
-#' @param nif A NIF object.
-#'
-#' @return The updated NIF object
-#' @export
-#' @examples
-#' add_tad(examplinib_poc_nif)
-add_tad <- function(nif) {
-  nif %>%
-    as.data.frame() %>%
-    mutate(admin_time = case_when(
-      EVID == 1 ~ TIME)) %>%
-    arrange(TIME) %>%
-    group_by(ID, PARENT) %>%
-    fill(admin_time, .direction = "down") %>%
-    ungroup() %>%
-    mutate(TAD = TIME - admin_time) %>%
-    select(-admin_time) %>%
-    new_nif()
-}
-
-
 #' Reduce a NIF object on the subject level by excluding all
 #' administrations after the last observation
 #'
@@ -1387,27 +1365,6 @@ add_dose_level <- function(obj) {
   }
 
   return(obj %>% left_join(temp %>% select(ID, DL), by = "ID"))
-}
-
-
-#' Add treatment day ('TRTDY') column
-#'
-#' @param obj The NIF object as data frame.
-#' @return The updated NIF object as data frame.
-#' @export
-#' @examples
-#' head(add_trtdy(examplinib_poc_nif))
-add_trtdy <- function(obj) {
-  obj %>%
-    assertr::verify(has_all_names("ID", "DTC", "EVID")) %>%
-    assertr::verify(is.POSIXct(DTC)) %>%
-    dplyr::group_by(ID) %>%
-    dplyr::mutate(FIRSTTRTDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
-    dplyr::ungroup() %>%
-    mutate(TRTDY = interval(date(FIRSTTRTDTC), date(DTC)) / days(1)) %>%
-    mutate(TRTDY = case_when(TRTDY < 0 ~ TRTDY, .default = TRTDY + 1)) %>%
-    select(-FIRSTTRTDTC) %>%
-    new_nif()
 }
 
 

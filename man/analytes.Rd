@@ -14,7 +14,7 @@ Character.
 }
 \description{
 All analytes found in the NIF object. If the field 'ANALYTE' is not present,
-"1" is returned.
+The analyte title is derived from the compartment.
 }
 \examples{
 analytes(examplinib_fe_nif)

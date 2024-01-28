@@ -11,6 +11,7 @@ new_nif <- function(obj) {
     temp <- obj %>% as.data.frame()
     class(temp) <- c("nif", "data.frame")
   }
+  # return(index_nif(temp))
   return(temp)
 }
 
@@ -74,13 +75,14 @@ print.nif <- function(x, ...) {
       "ID", "NTIME", "TIME", "TAD", "ANALYTE",
       "EVID",  "CMT", "AMT", "DOSE", "DV"
     ))) %>%
-    head(15)
+    head(10)
 
   temp <- temp %>%
-    df_to_string()
+    mutate(across(where(is.numeric), round, 3)) %>%
+    df_to_string(color = TRUE)
   cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
   cat(paste0("\u001b[38;5;248m",
-             "# ", nrow(x)-15, " more rows",
+             "# ", nrow(x)-10, " more rows",
              "\u001b[0m"))
   invisible(x)
 }
@@ -243,7 +245,6 @@ subjects <- function(obj) {
 #' @import dplyr
 #' @return A data frame of all ID - USUBJID pairs in the data set.
 #' @export
-#' @noRd
 #' @examples
 #' subjects(examplinib_fe_nif)
 subjects.nif <- function(obj) {
@@ -862,6 +863,53 @@ guess_analyte <- function(obj) {
     filter(n == max(n)) %>%
     arrange(ANALYTE)
   return(as.character(temp[1, "ANALYTE"]))
+}
+
+
+#' Add time-after-dose (TAD) field
+#'
+#' @param nif A NIF object.
+#'
+#' @return The updated NIF object
+#' @export
+#' @examples
+#' add_tad(examplinib_poc_nif)
+#' add_tad(examplinib_poc_min_nif)
+add_tad <- function(nif) {
+  nif %>%
+    ensure_parent() %>%
+    as.data.frame() %>%
+    mutate(admin_time = case_when(
+      EVID == 1 ~ TIME)) %>%
+    arrange(TIME) %>%
+    group_by(ID, PARENT) %>%
+    fill(admin_time, .direction = "down") %>%
+    ungroup() %>%
+    mutate(TAD = TIME - admin_time) %>%
+    select(-admin_time) %>%
+    new_nif() %>%
+    index_nif()
+}
+
+
+#' Add treatment day ('TRTDY') column
+#'
+#' @param obj The NIF object as data frame.
+#' @return The updated NIF object as data frame.
+#' @export
+#' @examples
+#' head(add_trtdy(examplinib_poc_nif))
+add_trtdy <- function(obj) {
+  obj %>%
+    assertr::verify(has_all_names("ID", "DTC", "EVID")) %>%
+    assertr::verify(is.POSIXct(DTC)) %>%
+    dplyr::group_by(ID) %>%
+    dplyr::mutate(FIRSTTRTDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
+    dplyr::ungroup() %>%
+    mutate(TRTDY = interval(date(FIRSTTRTDTC), date(DTC)) / days(1)) %>%
+    mutate(TRTDY = case_when(TRTDY < 0 ~ TRTDY, .default = TRTDY + 1)) %>%
+    select(-FIRSTTRTDTC) %>%
+    new_nif()
 }
 
 

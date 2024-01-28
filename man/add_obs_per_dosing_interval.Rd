@@ -20,4 +20,5 @@ conducted.
 }
 \examples{
 add_obs_per_dosing_interval(examplinib_poc_nif)
+add_obs_per_dosing_interval(examplinib_poc_min_nif)
 }

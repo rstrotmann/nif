@@ -4,7 +4,7 @@
 \alias{df_to_string}
 \title{Render data frame object to string}
 \usage{
-df_to_string(df, indent = "", n = NULL, header = TRUE)
+df_to_string(df, indent = "", n = NULL, header = TRUE, color = FALSE)
 }
 \arguments{
 \item{df}{The data.frame to be rendered}
@@ -15,6 +15,8 @@ output.}
 \item{n}{The number of lines to be included, or all if NULL.}
 
 \item{header}{Boolean to indicate whether the header row is to be included.}
+
+\item{color}{Print headers in grey as logical.}
 }
 \value{
 The output as string.
