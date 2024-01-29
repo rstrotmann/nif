@@ -2,15 +2,16 @@
 % Please edit documentation in R/nif_exploration.R
 \name{nif_mean_plot}
 \alias{nif_mean_plot}
-\title{Mean plot over a selected covariate}
+\title{Mean plot}
 \usage{
 nif_mean_plot(
-  x,
+  obj,
   points = FALSE,
   lines = TRUE,
   group = "ANALYTE",
   dose = NULL,
   analyte = NULL,
+  cmt = NULL,
   min_x = NULL,
   max_x = NULL,
   log = FALSE,
@@ -18,7 +19,7 @@ nif_mean_plot(
 )
 }
 \arguments{
-\item{x}{The NIF object.}
+\item{obj}{The NIF object.}
 
 \item{points}{Boolean to indicate whether points should be drawn.}
 
@@ -30,6 +31,9 @@ nif_mean_plot(
 
 \item{analyte}{The analyte as character. If NULL (default), all analytes will
 be plotted.}
+
+\item{cmt}{The compartment to plot. If NULL (default), all compartments are
+plotted, unless 'analyte' is defined.}
 
 \item{min_x}{The minimal value for the x scale as numeric.}
 
@@ -43,7 +47,8 @@ be plotted.}
 A ggplot2 plot object.
 }
 \description{
-The averaging over subjects expects the \code{NTIME} field be in the data set.
+This function expects the \code{NTIME} field in the data set and will stop
+otherwise.
 }
 \examples{
 nif_mean_plot(examplinib_sad_nif)

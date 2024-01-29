@@ -24,9 +24,9 @@ new_nif <- function(obj) {
 print.nif <- function(x, ...) {
   # hline <- paste0(rep("\U2500", 8), collapse="")
   hline <- paste0(rep("-", 8), collapse="")
-  cat(paste0(
-    hline, " NONMEM input file (NIF) object ", hline, "\n"
-  ))
+  cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
+  # message(paste0(hline, " NONMEM input file (NIF) object ", hline))
+
   if(length(studies(x)) == 1) {
     cat(paste0("Data from one study\n"))
   } else{
@@ -327,7 +327,7 @@ studies <- function(obj) {
 ensure_analyte <- function(obj) {
   obj %>%
     {if(!"ANALYTE" %in% names(obj))
-      mutate(., ANALYTE = "dafault") else .}
+      mutate(., ANALYTE = "default") else .}
 }
 
 
@@ -380,6 +380,21 @@ ensure_metabolite <- function(obj) {
 }
 
 
+#' Ensure that TAD is present in the NIF object
+#'
+#' @param obj A NIF object.
+#' @return A NIF object.
+#' @export
+#' @examples
+#' head(ensure_tad(examplinib_poc_nif))
+#' head(ensure_tad(examplinib_poc_min_nif))
+ensure_tad <- function(obj) {
+  obj <- obj %>%
+    {if(!"TAD" %in% names(obj))
+      add_tad(.) else .}
+}
+
+
 #' Ensure that NTIME is present in the NIF object
 #'
 #' Experimental, do not use in production! Uses assumptions about the sampling
@@ -387,7 +402,6 @@ ensure_metabolite <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
-#' @examples
 ensure_ntime <- function(obj) {
   # if(!"NTIME" %in% names(obj)) {
   #   late_labels <- seq(24, ceiling(max_observation_time(obj)/24)*24, 24)

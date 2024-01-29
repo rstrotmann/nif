@@ -16,7 +16,4 @@ A NIF object.
 Experimental, do not use in production! Uses assumptions about the sampling
 time points.
 }
-\examples{
-ensure_ntime(examplinib_sad_min_nif)
-}
 \keyword{internal}
