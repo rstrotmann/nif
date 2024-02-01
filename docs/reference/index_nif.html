@@ -16,7 +16,7 @@ further data."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,7 @@ further data."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">Example: NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -85,30 +86,27 @@ modified.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">index_nif</span><span class="op">(</span><span class="va">examplinib_fe_nif</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NONMEM input file (NIF) data set with data from 1 studies</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -------- NONMEM input file (NIF) object --------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data from one study</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 680 observations from 20 subjects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 12, females: 8 (40%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, FASTED, DTC, EXSEQ, EXTRT </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> First rows of NIF data (selected columns):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME   TAD   ANALYTE   EVID   CMT   AMT   DOSE   DV                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0      0     RS2023    1      1     500   500    NA                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0      0     RS2023    0      2     0     NA     0                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.5     0.5    0.5   RS2023    0      2     0     500    0.759174250682555    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       1      1     RS2023    0      2     0     500    2.06891069908339     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     1.5    1.5   RS2023    0      2     0     500    3.09367852060082     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2       2      2     RS2023    0      2     0     500    4.40878531112077     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    3       3      3     RS2023    0      2     0     500    3.16748276540274     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4      4     RS2023    0      2     0     500    3.17767931565555     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    6       6      6     RS2023    0      2     0     500    1.98100041907275     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    8       8      8     RS2023    0      2     0     500    1.36207823931419     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    10      10     10    RS2023    0      2     0     500    0.886426379649201    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    12      12     12    RS2023    0      2     0     500    0.603273892680986    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    24      24     24    RS2023    0      2     0     500    0.209211433251896    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    48      48     48    RS2023    0      2     0     500    0.0706883956798091   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    72      72     72    RS2023    0      2     0     500    0.0314527380498496   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NIF data (selected columns):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME   TAD   ANALYTE   EVID   CMT   AMT   DOSE   DV      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0      0     RS2023    1      1     500   500    NA      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0      0     RS2023    0      2     0     NA     0       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.5     0.5    0.5   RS2023    0      2     0     500    0.759   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       1      1     RS2023    0      2     0     500    2.069   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     1.5    1.5   RS2023    0      2     0     500    3.094   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2       2      2     RS2023    0      2     0     500    4.409   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    3       3      3     RS2023    0      2     0     500    3.167   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4      4     RS2023    0      2     0     500    3.178   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    6       6      6     RS2023    0      2     0     500    1.981   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    8       8      8     RS2023    0      2     0     500    1.362   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 710 more rows</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

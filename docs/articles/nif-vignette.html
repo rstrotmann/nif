@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">Example: NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -165,7 +166,7 @@ the administered drugs</li>
 *.sas7bdat files, are copied into one folder (in the below example into
 <code>path/to/sdtm/data</code>), and can then be loaded using:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">read_sdtm_sas</span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/read_sdtm_sas.html">read_sdtm_sas</a></span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span><span class="op">)</span></span></code></pre></div>
 <p>Based on the above, the minimum required SDTM files are
 <code>dm.dat7bdat</code>, <code>vs.dat7bdat</code>,
 <code>ex.dat7bdat</code> and <code>pc.dat7bdat</code>. However, if
@@ -173,7 +174,7 @@ additional covariates from AE, LB or any other SDTM domain are to be
 added, an explicit list of the domains can be provided to the loading
 function, e.g.,</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">read_sdtm_sas</span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span>, <span class="st">"dm"</span>, <span class="st">"vs"</span>, <span class="st">"ex"</span>, <span class="st">"pc"</span>, <span class="st">"lb"</span>, <span class="st">"ae"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/read_sdtm_sas.html">read_sdtm_sas</a></span><span class="op">(</span><span class="st">"path/to/sdtm/data"</span>, <span class="st">"dm"</span>, <span class="st">"vs"</span>, <span class="st">"ex"</span>, <span class="st">"pc"</span>, <span class="st">"lb"</span>, <span class="st">"ae"</span><span class="op">)</span></span></code></pre></div>
 <p>The return value of this function is a <code>sdtm</code> object.</p>
 </div>
 <div class="section level3">
@@ -182,7 +183,7 @@ function, e.g.,</p>
 <p><code>Sdtm</code> objects are essentially lists of the SDTM domains
 from a particular clinical study, plus some metadata. The easiest way of
 creating <code>sdtm</code> objects is by importing the SDTM data using
-<code>read_sdtm_sas()</code> or <code>read_sdtm_xpt()</code> as shown
+<code><a href="../reference/read_sdtm_sas.html">read_sdtm_sas()</a></code> or <code><a href="../reference/read_sdtm_xpt.html">read_sdtm_xpt()</a></code> as shown
 above.</p>
 <p>The <code>nif</code> package includes sample SDTM data sets for
 demonstration purposes. These data do not come from actual clinical
@@ -454,36 +455,35 @@ any more complex analyses.</p>
 the data disposition in a <code>nif</code> data set:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
-<span><span class="co">## NONMEM input file (NIF) data set summary</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Data from 20 subjects across 1 studies:</span></span>
-<span><span class="co">## STUDYID      N    </span></span>
-<span><span class="co">## 2023000400   20   </span></span>
+<span><span class="co">## -------- NONMEM input file (NIF) object summary --------</span></span>
+<span><span class="co">## Data from 20 subjects across one study:</span></span>
+<span><span class="co">##  STUDYID      N    </span></span>
+<span><span class="co">##  2023000400   20   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Males: 12, females: 8 (40%)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Analytes:</span></span>
-<span><span class="co">## RS2023, RS2023487A</span></span>
+<span><span class="co">##  RS2023, RS2023487A</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## 1360 observations:</span></span>
-<span><span class="co">## CMT   ANALYTE      N     </span></span>
-<span><span class="co">## 2     RS2023       680   </span></span>
-<span><span class="co">## 3     RS2023487A   680   </span></span>
+<span><span class="co">##  CMT   ANALYTE      N     </span></span>
+<span><span class="co">##  2     RS2023       680   </span></span>
+<span><span class="co">##  3     RS2023487A   680   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Administered drugs:</span></span>
-<span><span class="co">## RS2023</span></span>
+<span><span class="co">##  RS2023</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Dose levels:</span></span>
-<span><span class="co">## RS2023   N    </span></span>
-<span><span class="co">## 500      20   </span></span>
+<span><span class="co">##  RS2023   N    </span></span>
+<span><span class="co">##  500      20   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Subjects with dose reductions</span></span>
-<span><span class="co">## RS2023   </span></span>
-<span><span class="co">## 0        </span></span>
+<span><span class="co">##  RS2023   </span></span>
+<span><span class="co">##  0        </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Treatment duration overview:</span></span>
-<span><span class="co">## PARENT   min   max   mean   median   </span></span>
-<span><span class="co">## RS2023   2     2     2      2</span></span></code></pre></div>
+<span><span class="co">##  PARENT   min   max   mean   median   </span></span>
+<span><span class="co">##  RS2023   2     2     2      2</span></span></code></pre></div>
 <p>Further to the above text output, the <code>nif</code> summary object
 can also be plotted for a quick graphical overview on the distribution
 of the baseline demographic data in the subject population and the
@@ -496,11 +496,7 @@ some non-graphical output:</p>
 <span>   <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
-<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span>
-<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
-<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-15-1.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-2.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-3.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-4.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-5.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-6.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-7.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-8.png" width="288"></p>
 </div>
 <div class="section level3">
@@ -512,16 +508,14 @@ The below shows some examples for common exploratory tasks.</p>
 <p>In the simplest exploratory plot, all analytes are shown over
 time:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
-<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
-<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-16-1.png" width="480"></p>
 <p>To check the integrity of the data set, if often makes sense to plot
 the analyte concentrations over time-after-dose (TAD).</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/add_tad.html">add_tad</a></span><span class="op">(</span><span class="op">)</span>, tad<span class="op">=</span><span class="cn">T</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span><span class="op">)</span></span>
-<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
-<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
+<span><span class="co">## `geom_line()`: Each group consists of only one observation.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Do you need to adjust the <span style="color: #00BB00;">group</span> aesthetic?</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <p>Modifiers to the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allow common
 adjustments. To show, e.g., the food effect on the parent compound,
@@ -534,9 +528,7 @@ showing the nominal time instead of the actual time:</p>
 <span>     max_x<span class="op">=</span><span class="fl">24</span>,</span>
 <span>     mean<span class="op">=</span><span class="cn">FALSE</span>,</span>
 <span>     points<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">## Scale for <span style="color: #00BB00;">x</span> is already present.</span></span>
-<span><span class="co">## Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span></span></code></pre></div>
+<span>     nominal_time<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-18-1.png" width="480"></p>
 <p>The following shows the mean plasma concentration profiles aver all
 subjects, over 24 h by the food status:</p>

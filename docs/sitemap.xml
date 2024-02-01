@@ -10,6 +10,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/articles/importing-NIF-datasets.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -112,6 +115,9 @@
     <loc>/reference/clip_nif.html</loc>
   </url>
   <url>
+    <loc>/reference/cmt_mapping.html</loc>
+  </url>
+  <url>
     <loc>/reference/compose_dtc.html</loc>
   </url>
   <url>
@@ -169,6 +175,21 @@
     <loc>/reference/egfr_raynaud.html</loc>
   </url>
   <url>
+    <loc>/reference/ensure_analyte.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ensure_dose.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ensure_metabolite.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ensure_ntime.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ensure_parent.html</loc>
+  </url>
+  <url>
     <loc>/reference/examplinib.html</loc>
   </url>
   <url>
@@ -191,6 +212,9 @@
   </url>
   <url>
     <loc>/reference/examplinib_sad.html</loc>
+  </url>
+  <url>
+    <loc>/reference/examplinib_sad_min_nif.html</loc>
   </url>
   <url>
     <loc>/reference/examplinib_sad_nif.html</loc>
@@ -380,6 +404,9 @@
   </url>
   <url>
     <loc>/reference/nif_spaghetti_plot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/nif_spaghetti_plot1.html</loc>
   </url>
   <url>
     <loc>/reference/nif_viewer.html</loc>

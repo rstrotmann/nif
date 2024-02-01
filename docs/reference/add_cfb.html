@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">Example: NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -67,8 +68,8 @@
 
 <dt>summary_function</dt>
 <dd><p>The function to derive the baseline. This function is
-applied over the DV values at TIME less than or equal to zero. The default is
-<code>median</code>. Alternatively, <code>mean</code>, <code>min</code> or <code>max</code> can be considered.</p></dd>
+applied over the DV values at TIME less than or equal to zero. The default
+is <code>median</code>. Alternatively, <code>mean</code>, <code>min</code> or <code>max</code> can be considered.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -81,8 +82,8 @@ applied over the DV values at TIME less than or equal to zero. The default is
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Output fields:</p><ul><li><p><code>DVBL</code> Baseline value for the dependent variable DV.</p></li>
 <li><p><code>DVCFB</code> Change from baseline for the dependent variable DV.</p></li>
-</ul><p>The Baseline is calculated as the median of the DV for all times lower or
-equal to zero.</p>
+</ul><p>The Baseline is calculated as the median of the DV for all times
+lower or equal to zero.</p>
     </div>
 
     <div class="section level2">
@@ -116,7 +117,14 @@ equal to zero.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 EXAMPLINIB    0 3.044488</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5               0 1.964398</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 EXAMPLINIB    0 2.107888</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">add_cfb</span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ID TIME AMT RATE EVID       DV CMT MDV ANALYTE DVBL    DVCFB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 0.00 500    0    1       NA   1   1 default    0       NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1 0.00   0    0    0 0.000000   2   0 default    0 0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1 0.00   0    0    0 0.000000   3   0 default    0 0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1 2.45   0    0    0 3.044488   2   0 default    0 3.044488</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1 2.45   0    0    0 1.964398   3   0 default    0 1.964398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1 4.95   0    0    0 2.107888   2   0 default    0 2.107888</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

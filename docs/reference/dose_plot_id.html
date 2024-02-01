@@ -14,7 +14,7 @@ vertical lines."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@ vertical lines."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">Example: NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -63,7 +64,7 @@ vertical lines.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dose_plot_id</span><span class="op">(</span></span>
-<span>  <span class="va">nif</span>,</span>
+<span>  <span class="va">obj</span>,</span>
 <span>  <span class="va">id</span>,</span>
 <span>  y_scale <span class="op">=</span> <span class="st">"lin"</span>,</span>
 <span>  max_dose <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -75,7 +76,7 @@ vertical lines.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>nif</dt>
+    <dl><dt>obj</dt>
 <dd><p>The NIF object.</p></dd>
 
 
@@ -117,6 +118,8 @@ is "lin".</p></dd>
 <span class="r-plt img"><img src="dose_plot_id-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">dose_plot_id</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fu"><a href="dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="dose_plot_id-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">dose_plot_id</span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span>, <span class="fl">18</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="dose_plot_id-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

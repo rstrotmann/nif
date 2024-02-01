@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">Example: NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -156,7 +157,88 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 78 78 20230000221070019 RS2023  24</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 79 79 20230000221080002 RS2023  71</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 80 80 20230000221080003 RS2023  60</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">n_administrations</span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    ID  PARENT   N</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 default  64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2 default  71</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3 default  55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4 default  78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5 default  95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6 default  91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7 default  60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8 default  75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 default  63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 default  61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 11 default  59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 12 default  29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 13 default  52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 14 default  75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 15 default  60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 16 default  75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 17 default  58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 18 default  64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 19 default  75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 20 default  58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 21 default  64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 22 default  60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 23 default  77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 24 default  57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 25 default  34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 26 default  51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 27 default  85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 28 default  88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 29 default  64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 30 default  73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 31 default  67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 32 default  93</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 33 default  54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 34 default  81</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 35 default  42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 36 default  47</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37 37 default  47</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38 38 default  95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 39 default  57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40 40 default  86</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 41 default  74</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42 42 default  94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 43 default  75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 44 default  79</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 45 default  69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46 46 default  58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47 47 default  51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 48 default  36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49 49 default  28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 50 default  96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51 51 default  92</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52 52 default  82</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53 53 default  95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54 54 default  85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55 55 default  83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56 56 default  96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57 57 default  69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58 58 default  89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59 59 default 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60 60 default  31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61 61 default  36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62 62 default  26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63 63 default  85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64 64 default  69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65 65 default  88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66 66 default  81</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67 67 default  59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68 68 default  77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69 69 default  61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70 70 default  53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71 71 default  56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72 72 default  80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73 73 default  45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74 74 default  52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75 75 default  38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76 76 default  32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77 77 default  55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78 78 default  24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79 79 default  71</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80 80 default  60</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

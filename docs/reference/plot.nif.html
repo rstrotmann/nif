@@ -12,7 +12,7 @@ grouping variable is provided, DOSE will be used."><!-- mathjax --><script src="
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.43.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,7 @@ grouping variable is provided, DOSE will be used."><!-- mathjax --><script src="
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">Example: NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -64,11 +65,12 @@ grouping variable is provided, <code>DOSE</code> will be used.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  y_scale <span class="op">=</span> <span class="st">"lin"</span>,</span>
 <span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  min_x <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  max_x <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  min_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mean <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  doses <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dose <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  points <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  usubjid <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -94,8 +96,7 @@ grouping variable is provided, <code>DOSE</code> will be used.</p>
 
 
 <dt>log</dt>
-<dd><p>Boolean to select whether the y-scale is logarithmic. Alternative
-<code>y_scale="log"</code>.</p></dd>
+<dd><p>Boolean to select whether the y-scale is logarithmic. Alternative</p></dd>
 
 
 <dt>min_x</dt>
@@ -111,6 +112,11 @@ grouping variable is provided, <code>DOSE</code> will be used.</p>
 (or set to NULL), all analytes are shown.</p></dd>
 
 
+<dt>cmt</dt>
+<dd><p>The compartment to be plotted as numeric.
+<code>y_scale="log"</code>.</p></dd>
+
+
 <dt>mean</dt>
 <dd><p>Boolean value to indicate whether the mean value by dose and
 analyte is to be plotted. In that case, the nominal time (NTIME) is shown
@@ -118,7 +124,7 @@ on the x axis. 'mean=T' will cast an error if multiple analytes are in the
 data set of have been defined with 'analyte'.</p></dd>
 
 
-<dt>doses</dt>
+<dt>dose</dt>
 <dd><p>The doses to be plotted. Can be a scalar value or a numeric
 vector or NULL to plot all doses.</p></dd>
 
@@ -177,7 +183,7 @@ should be plotted.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>The plot object</p>
+<p>A ggplot2 object.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -187,39 +193,29 @@ should be plotted.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">x</span> is already present.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span>
 <span class="r-plt img"><img src="plot.nif-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">x</span> is already present.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span>
 <span class="r-plt img"><img src="plot.nif-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">x</span> is already present.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span>
 <span class="r-plt img"><img src="plot.nif-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, max_x <span class="op">=</span> <span class="fl">24</span>, point <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">x</span> is already present.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span>
 <span class="r-plt img"><img src="plot.nif-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>,</span></span>
 <span class="r-in"><span>  analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>,</span></span>
-<span class="r-in"><span>  nominal_time <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>  nominal_time <span class="op">=</span> <span class="cn">TRUE</span>, points <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">x</span> is already present.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span>
 <span class="r-plt img"><img src="plot.nif-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>, mean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.nif-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>, mean <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  max_x <span class="op">=</span> <span class="fl">24</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 10 rows containing missing values (`geom_line()`).</span>
 <span class="r-plt img"><img src="plot.nif-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, dose <span class="op">=</span> <span class="fl">500</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, points <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  lines <span class="op">=</span> <span class="cn">FALSE</span>, tad <span class="op">=</span> <span class="cn">TRUE</span>, log <span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">x</span> is already present.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">x</span>, which will replace the existing scale.</span>
 <span class="r-plt img"><img src="plot.nif-8.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span>, dose<span class="op">=</span><span class="fl">500</span>, tad <span class="op">=</span> <span class="cn">TRUE</span>, cmt <span class="op">=</span> <span class="fl">2</span>, max_x <span class="op">=</span> <span class="fl">24</span>,</span></span>
+<span class="r-in"><span>  points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-9.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
