@@ -345,6 +345,7 @@ nif_spaghetti_plot <- function(obj,
   if(is.null(min_x)) {
     min_x = 0
   }
+
   #
   # x <- obj %>%
   #   index_dosing_interval() %>%
@@ -367,12 +368,8 @@ nif_spaghetti_plot <- function(obj,
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
     # {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
-    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
-
-
-
-
-
+    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
+    filter(!is.na(DV))
 
   if (tad == TRUE) {
     x <- x %>%
