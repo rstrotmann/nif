@@ -4,7 +4,7 @@
 #'
 #' @param nif The NIF data set.
 #' @return None
-#' @import shiny
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @import dplyr
 #' @importFrom shinyjs useShinyjs enable disable
 #' @seealso [plot()]

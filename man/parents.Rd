@@ -17,4 +17,5 @@ Parent compounds within a NIF object
 }
 \examples{
 parents(examplinib_poc_nif)
+parents(examplinib_poc_min_nif)
 }

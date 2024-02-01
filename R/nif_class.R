@@ -214,17 +214,14 @@ usubjid <- function(obj, id) {
 #' @export
 #' @examples
 #' parents(examplinib_poc_nif)
+#' parents(examplinib_poc_min_nif)
 parents <- function(obj) {
-  if("PARENT" %in% names(obj)) {
-    return(
-      obj %>%
-      as.data.frame() %>%
-      distinct(PARENT) %>%
-      filter(PARENT != "") %>%
-      pull(PARENT))
-  } else {
-    return("UNKNOWN")
-  }
+  obj %>%
+    ensure_parent() %>%
+    as.data.frame() %>%
+    distinct(PARENT) %>%
+    filter(PARENT != "") %>%
+    pull(PARENT)
 }
 
 
@@ -327,7 +324,7 @@ studies <- function(obj) {
 ensure_analyte <- function(obj) {
   obj %>%
     {if(!"ANALYTE" %in% names(obj))
-      mutate(., ANALYTE = "dafault") else .}
+      mutate(., ANALYTE = "default") else .}
 }
 
 
@@ -387,7 +384,6 @@ ensure_metabolite <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
-#' @examples
 ensure_ntime <- function(obj) {
   # if(!"NTIME" %in% names(obj)) {
   #   late_labels <- seq(24, ceiling(max_observation_time(obj)/24)*24, 24)

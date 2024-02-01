@@ -11,7 +11,7 @@
 #' @param usubjid The subject USUBJID to filter for. If NULL (default), all
 #'   subjects are shown.
 #' @return Nothing
-#' @import shiny
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @import DT
 #' @import dplyr
 #' @importFrom shinyjs useShinyjs enable disable
@@ -83,9 +83,10 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
       DT::DTOutput("nif_table"),
       DT::DTOutput("ex_table"),
       DT::DTOutput("pc_table")
-      # shiny::tableOutput("nif_table"),
-      # shiny::tableOutput("ex_table"),
-      # shiny::tableOutput("pc_table")
+
+      # DT::dataTableOutput("nif_table"),
+      # DT::dataTableOutput("ex_table"),
+      # DT::dataTableOutput("pc_table")
     )
   )
 
@@ -121,7 +122,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
 
     ## NIF table output
     output$nif_table <- DT::renderDT(
-    # output$nif_table <- shiny::renderDataTable(
+    # output$nif_table <- DT::renderDataTable(
       nif %>%
         mutate_at(c("TIME", "TAD", "LNDV"), round, 2) %>%
         filter(
@@ -132,7 +133,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
 
     ## EX table output
     output$ex_table <- DT::renderDT(
-    # output$ex_table <- shiny::renderDataTable(
+    # output$ex_table <- DT::renderDataTable(
         sdtm_data$ex %>%
           filter(USUBJID %in% (id() %>% pull(USUBJID))) %>%
           filter(EXSEQ %in% (id() %>% pull(EXSEQ))) %>%
@@ -142,7 +143,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
 
     ## PC table output
     output$pc_table <- DT::renderDT(
-    # output$pc_table <- shiny::renderDataTable(
+    # output$pc_table <- DT::renderDataTable(
         sdtm_data$pc %>%
           filter(PCTESTCD %in% analyte) %>%
           filter(PCREFID %in% (id() %>%pull(PCREFID))),

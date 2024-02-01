@@ -3,6 +3,7 @@
 #' This function plots DV over TIME for an individual subject, id. Id can be
 #' either the ID or the USUBJID. Administration time points are indicated with
 #' vertical lines.
+#'
 #' @param obj The NIF object
 #' @param id The subject ID to be plotted
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
@@ -11,9 +12,10 @@
 #' @param imp The IMP for which administrations are to be indicated by vertical
 #'   lines. Defaults to NULL.
 #' @param max_time The right limit of the time scale
-#' @param tad Boolean to select whether time after dose (TAD) rather than TIME
-#'   should be plotted.
-#' @param lines Boolean to define whether lines should be plotted.
+#' @param tad Logivcal value to select whether time after dose (TAD) rather than
+#'   TIME should be plotted.
+#' @param lines Plot lines as logical.
+#' @param cmt The compartment to plot as numeric.
 #' @param point_size Point size as numeric.
 #' @return A ggplot2 object.
 #' @import dplyr
@@ -561,6 +563,7 @@ nif_spaghetti_plot1 <- function(obj,
 #'
 #' This function plots a NIF object, grouped by the variable `group`. If no
 #' grouping variable is provided, `DOSE` will be used.
+#'
 #' @param x The NIF object to be plotted.
 #' @param y_scale Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".
 #' @param max_x Maximal x (time) scale value.
@@ -591,8 +594,9 @@ nif_spaghetti_plot1 <- function(obj,
 #' @param tad Boolean to select wheter time after dose (TAD) rather than TIME
 #'   should be plotted.
 #' @param log Boolean to select whether the y-scale is logarithmic. Alternative
+#' @param cmt The compartment to be plotted as numeric.
 #' `y_scale="log"`.
-#' @return The plot object
+#' @return A ggplot2 object.
 #' @seealso [nif_viewer()]
 #' @examples
 #' plot(examplinib_fe_nif)
@@ -730,6 +734,7 @@ summary <- function(object, ...) {
 #' @noRd
 #' @examples
 #' summary(examplinib_poc_nif)
+#' summary(examplinib_poc_min_nif)
 summary.nif <- function(object, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
@@ -757,23 +762,14 @@ summary.nif <- function(object, ...) {
     summarize(N = n_distinct(ID))
 
   n_sex <- object %>%
-    dplyr::distinct(across(any_of(c("ID", "SEX")))) %>%
-    dplyr::group_by(across(any_of(c("SEX")))) %>%
-    dplyr::summarize(n = n())
-
-  n_males <- n_sex %>%
-    dplyr::filter(SEX == 0) %>%
-    dplyr::pull(n)
-  if (length(n_males) == 0) {
-    n_males <- 0
-  }
-
-  n_females <- n_sex %>%
-    dplyr::filter(SEX == 1) %>%
-    dplyr::pull(n)
-  if (length(n_females) == 0) {
-    n_females <- 0
-  }
+    as.data.frame() %>%
+    {if(!"SEX" %in% names(.)) mutate(., SEX = NA) else .} %>%
+    mutate(SEX = factor(SEX, levels=c(0, 1))) %>%
+    distinct(ID, SEX) %>%
+    reframe(n = n(), .by = factor("SEX")) %>%
+    spread(SEX, n, fill = NA, drop = FALSE)
+  n_males <- n_sex[1, "0"]
+  n_females <- n_sex[1, "1"]
 
   if ("BL_CRCL" %in% colnames(object)) {
     renal_function <- object %>%

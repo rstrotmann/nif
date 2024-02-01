@@ -32,8 +32,7 @@
 
 \item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
 
-\item{log}{Boolean to select whether the y-scale is logarithmic. Alternative
-\code{y_scale="log"}.}
+\item{log}{Boolean to select whether the y-scale is logarithmic. Alternative}
 
 \item{min_x}{Minimum x (time) scale value.}
 
@@ -41,6 +40,9 @@
 
 \item{analyte}{The analyte to be plotted If this argument is not supplied
 (or set to NULL), all analytes are shown.}
+
+\item{cmt}{The compartment to be plotted as numeric.
+\code{y_scale="log"}.}
 
 \item{mean}{Boolean value to indicate whether the mean value by dose and
 analyte is to be plotted. In that case, the nominal time (NTIME) is shown
@@ -79,7 +81,7 @@ should be plotted.}
 \item{...}{Further arguments.}
 }
 \value{
-The plot object
+A ggplot2 object.
 }
 \description{
 This function plots a NIF object, grouped by the variable \code{group}. If no

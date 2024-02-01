@@ -24,17 +24,19 @@ nif_plot_id(
 
 \item{analyte}{The analytes to be displayes. Defaults to NULL (all).}
 
+\item{cmt}{The compartment to plot as numeric.}
+
 \item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
 is "lin".}
 
 \item{max_time}{The right limit of the time scale}
 
-\item{lines}{Boolean to define whether lines should be plotted.}
+\item{lines}{Plot lines as logical.}
 
 \item{point_size}{Point size as numeric.}
 
-\item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
-should be plotted.}
+\item{tad}{Logivcal value to select whether time after dose (TAD) rather than
+TIME should be plotted.}
 
 \item{imp}{The IMP for which administrations are to be indicated by vertical
 lines. Defaults to NULL.}
