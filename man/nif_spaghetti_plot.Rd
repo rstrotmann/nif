@@ -2,17 +2,18 @@
 % Please edit documentation in R/nif_exploration.R
 \name{nif_spaghetti_plot}
 \alias{nif_spaghetti_plot}
-\title{Spaghetti plot over a selected covariate}
+\title{Spaghetti plot}
 \usage{
 nif_spaghetti_plot(
   obj,
   points = FALSE,
   lines = TRUE,
-  group = "ANALYTE",
+  group = NULL,
   nominal_time = FALSE,
   tad = FALSE,
   dose = NULL,
   analyte = NULL,
+  cmt = NULL,
   min_x = NULL,
   max_x = NULL,
   log = FALSE,
@@ -39,11 +40,14 @@ should be plotted.}
 \item{analyte}{The analyte as character. If NULL (default), all analytes will
 be plotted.}
 
+\item{cmt}{The compartment to plot. If NULL (default), all compartments are
+plotted, unless 'analyte' is defined.}
+
 \item{min_x}{The minimal value for the x scale as numeric.}
 
 \item{max_x}{The maximal value for the x scale as numeric.}
 
-\item{log}{Boolean to define whether y axis is plotted on the log scale.}
+\item{log}{Logarithmic y axis as logical.}
 
 \item{point_size}{the point size as numeric.}
 }
@@ -51,15 +55,18 @@ be plotted.}
 A ggplot2 plot object.
 }
 \description{
-Spaghetti plot over a selected covariate
+Spaghetti plot
 }
 \examples{
 nif_spaghetti_plot(examplinib_fe_nif)
 nif_spaghetti_plot(examplinib_sad_nif)
 nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+nif_spaghetti_plot(examplinib_poc_nif, dose = 500, group = "SEX")
+
 nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
-nif_spaghetti_plot(examplinib_sad_min_nif)
-nif_spaghetti_plot(examplinib_poc_min_nif)
+nif_spaghetti_plot(examplinib_fe_nif, group = "FASTED", analyte="RS2023")
+nif_spaghetti_plot(examplinib_sad_min_nif, log = TRUE)
+nif_spaghetti_plot(examplinib_poc_nif, dose = 500, cmt = 2, group = "SEX")
 }
 \keyword{internal}

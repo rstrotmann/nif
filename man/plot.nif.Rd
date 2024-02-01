@@ -17,7 +17,7 @@
   points = FALSE,
   id = NULL,
   usubjid = NULL,
-  group = NULL,
+  group = "ANALYTE",
   administrations = FALSE,
   nominal_time = FALSE,
   tad = FALSE,
@@ -91,6 +91,7 @@ grouping variable is provided, \code{DOSE} will be used.
 plot(examplinib_fe_nif)
 plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
+plot(examplinib_fe_nif, group = "FASTED")
 plot(examplinib_fe_nif, max_x = 24, point = TRUE)
 plot(examplinib_fe_nif,
   analyte = "RS2023", group = "FASTED",
@@ -100,7 +101,8 @@ plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
   max_x = 24)
 plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
-  lines = FALSE, tad = TRUE, log =TRUE)
+  lines = FALSE, tad = TRUE, log = TRUE)
+plot(examplinib_poc_nif, dose = 500, group = "SEX")
 plot(examplinib_poc_min_nif, dose=500, tad = TRUE, cmt = 2, max_x = 24,
   points = TRUE, lines = FALSE)
 }

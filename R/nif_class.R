@@ -24,9 +24,9 @@ new_nif <- function(obj) {
 print.nif <- function(x, ...) {
   # hline <- paste0(rep("\U2500", 8), collapse="")
   hline <- paste0(rep("-", 8), collapse="")
-  cat(paste0(
-    hline, " NONMEM input file (NIF) object ", hline, "\n"
-  ))
+  cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
+  # message(paste0(hline, " NONMEM input file (NIF) object ", hline))
+
   if(length(studies(x)) == 1) {
     cat(paste0("Data from one study\n"))
   } else{
@@ -374,6 +374,21 @@ ensure_metabolite <- function(obj) {
   obj <- obj %>%
     {if(!"METABOLITE" %in% names(obj))
       mutate(., METABOLITE = FALSE) else .}
+}
+
+
+#' Ensure that TAD is present in the NIF object
+#'
+#' @param obj A NIF object.
+#' @return A NIF object.
+#' @export
+#' @examples
+#' head(ensure_tad(examplinib_poc_nif))
+#' head(ensure_tad(examplinib_poc_min_nif))
+ensure_tad <- function(obj) {
+  obj <- obj %>%
+    {if(!"TAD" %in% names(obj))
+      add_tad(.) else .}
 }
 
 
