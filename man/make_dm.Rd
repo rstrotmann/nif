@@ -36,4 +36,3 @@ The DM data as data frame.
 Currently geared toward a food effect study, but can be adapted easily to
 generate other study types.
 }
-\keyword{internal}

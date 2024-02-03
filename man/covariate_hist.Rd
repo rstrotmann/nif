@@ -4,12 +4,12 @@
 \alias{covariate_hist}
 \title{Generic covariate distribution histogram}
 \usage{
-covariate_hist(obj, field, nbins = 11)
+covariate_hist(obj, cov, nbins = 11)
 }
 \arguments{
 \item{obj}{The NIF object.}
 
-\item{field}{The field of the NIF object as character.}
+\item{cov}{The covariate field of the NIF object to analyze, as character.}
 
 \item{nbins}{The number of bins to be used if no binwidth is specified.
 Defaults to 11.}

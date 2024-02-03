@@ -819,8 +819,7 @@ summary.nif <- function(object, ...) {
 print.summary_nif <- function(x, ...) {
   color = TRUE
   indent = " "
-  # hline <- paste0(rep("\U2500", 8), collapse="")
-  hline <- paste0(rep("-", 8), collapse="")
+  hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
 
   cat(paste(
@@ -843,16 +842,18 @@ print.summary_nif <- function(x, ...) {
       x$renal_function, color=color, indent = indent), "\n\n"))
   }
 
-  cat(paste0("Analytes:\n", paste0(indent, paste0(x$analytes, collapse = ", ")), "\n\n"))
+  cat(paste0("Administered drugs:\n",
+             paste0(indent, paste(x$drugs,collapse = ", ")), "\n\n"))
+
+  cat(paste0("Analytes:\n",
+             paste0(indent, paste0(x$analytes, collapse = ", ")), "\n\n"))
+
+  cat("Subjects per dose levels:\n")
+  cat(df_to_string(x$dose_levels, color=color, indent = indent))
+  cat("\n\n")
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
   cat(paste0(df_to_string(x$n_obs, color=color, indent = indent), "\n\n"))
-
-  cat(paste0("Administered drugs:\n", paste0(indent, paste(x$drugs, collapse = ", ")), "\n\n"))
-
-  cat("Dose levels:\n")
-  cat(df_to_string(x$dose_levels, color=color, indent = indent))
-  cat("\n\n")
 
   dr_summary <- lapply(x$dose_red_sbs, length) %>%
     data.frame()
@@ -931,14 +932,14 @@ plot.summary_nif <- function(x, ...) {
 #' @param obj The NIF object.
 #' @param nbins The number of bins to be used if no binwidth is specified.
 #' Defaults to 11.
-#' @param field The field of the NIF object as character.
+#' @param cov The covariate field of the NIF object to analyze, as character.
 #' @return A plot object.
 #' @export
 #' @examples
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
-covariate_hist <- function(obj, field, nbins = 11) {
-  cov_params <- get_cov_plot_params(field)
+covariate_hist <- function(obj, cov, nbins = 11) {
+  cov_params <- get_cov_plot_params(cov)
   xlabel <- cov_params$xlabel
   if (is.na(xlabel)) {
     xlabel <- cov_params$field
@@ -1158,3 +1159,65 @@ mean_dose_plot <- function(obj, analyte = NULL) {
     theme_bw() +
     ggtitle(paste0("Mean ", analyte, " dose over time"))
 }
+
+
+#' Subjects per dose level
+#'
+#' The number of subjects that have observations, per dose level and analyte.
+#'
+#' @param obj A NIF object.
+#' @param group An (optional) grouping variable as character. Defaults to
+#' @param analyte The analyte as character. If `NULL` (default), all analytes
+#'   are selected.
+#' @return A data frame.
+#' @export
+#' @examples
+#' subs_per_dose_level(examplinib_poc_nif)
+#' subs_per_dose_level(examplinib_sad_nif)
+#' subs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
+subs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
+  if(is.null(analyte)) {
+    analyte <- analytes(obj)
+  }
+  obj %>%
+    ensure_analyte() %>%
+    add_dose_level() %>%
+    as.data.frame() %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(EVID == 0) %>%
+    distinct(across(any_of(c("ID", "DL", "ANALYTE", group)))) %>%
+    reframe(N = n(), .by=any_of(c("DL", "ANALYTE", "SEX"))) %>%
+    arrange(DL, ANALYTE)
+}
+
+
+#' Observations per dose level
+#'
+#' The total number of observations, per dose level and analyte.
+#' @param group An (optional) grouping variable as character. Defaults to
+#'   'NULL'.
+#' @param analyte The analyte as character. If `NULL` (default), all analytes
+#'   are selected.
+#' @param obj A NIF object.
+#' @return A data frame.
+#' @export
+#' @examples
+#' obs_per_dose_level(examplinib_poc_nif)
+#' obs_per_dose_level(examplinib_sad_nif)
+#' obs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
+obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
+  if(is.null(analyte)) {
+    analyte <- analytes(obj)
+  }
+  obj %>%
+    ensure_analyte() %>%
+    add_dose_level() %>%
+    as.data.frame() %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(EVID == 0) %>%
+    reframe(N = n(), .by=any_of(c("DL", "ANALYTE", group))) %>%
+    arrange(DL, ANALYTE)
+}
+
+
+

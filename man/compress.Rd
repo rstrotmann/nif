@@ -4,20 +4,20 @@
 \alias{compress}
 \title{Compress a NIF object}
 \usage{
-compress(nif, fields = NULL, debug = TRUE)
+compress(nif, fields = NULL, debug = FALSE)
 }
 \arguments{
-\item{nif}{A NIF object object.}
+\item{nif}{A NIF object}
 
 \item{fields}{Fields to be included as character. If 'fields' is NULL
 (default), the fields defined in \code{standard_nif_fields} plus all fields with
 a name that starts with 'BL_' (baseline covariates) are included.}
 
-\item{debug}{Boolean to indicate whether the debug fields, \code{PCREFID} and
+\item{debug}{Logic value to indicate whether the debug fields, \code{PCREFID} and
 \code{EXSEQ} should be included in the NIF object.}
 }
 \value{
-A NIF object object.
+A NIF object
 }
 \description{
 Compress a NIF object

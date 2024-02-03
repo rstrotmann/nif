@@ -1272,16 +1272,15 @@ compress_nif <- function(nif, ...) {
 
 #' Compress a NIF object
 #'
-#' @param nif A NIF object object.
+#' @param nif A NIF object
 #' @param fields Fields to be included as character. If 'fields' is NULL
 #' (default), the fields defined in `standard_nif_fields` plus all fields with
 #' a name that starts with 'BL_' (baseline covariates) are included.
-#' @param debug Boolean to indicate whether the debug fields, `PCREFID` and
+#' @param debug Logic value to indicate whether the debug fields, `PCREFID` and
 #' `EXSEQ` should be included in the NIF object.
-#'
-#' @return A NIF object object.
+#' @return A NIF object
 #' @export
-compress <- function(nif, fields = NULL, debug = TRUE) {
+compress <- function(nif, fields = NULL, debug = FALSE) {
   if (is.null(fields)) {
     fields <- c(
       standard_nif_fields,
@@ -1319,47 +1318,6 @@ clip_nif <- function(nif) {
     dplyr::left_join(last_obs, by = "USUBJID") %>%
     dplyr::filter(TIME <= last_obs)
   return(new_nif(ret))
-}
-
-
-#' Add dose level (`DL`) column
-#'
-#' Dose level is defined as the starting dose. For data sets with single drug
-#'   administration, `DL`is a numerical value, for drug combinations, it is
-#'   a character value specifying the `PARENT` and dose level for the individual
-#'   components.
-#'
-#' @param obj A NIF dataset.
-#'
-#' @return A NIF dataset.
-#' @export
-#' @examples
-#' head(add_dose_level(examplinib_sad_nif))
-add_dose_level <- function(obj) {
-  temp <- obj %>%
-    as.data.frame() %>%
-    filter(METABOLITE == FALSE) %>%
-    filter(PARENT != "", !is.na(DOSE), AMT != 0, EVID == 1) %>%
-    group_by(ID, ANALYTE) %>%
-    arrange(ID, TIME, ANALYTE) %>%
-    filter(TIME == min(TIME)) %>%
-    select(ID, ANALYTE, DOSE) %>%
-    group_by(ID)
-
-  if (temp %>%
-        ungroup() %>%
-        distinct(ANALYTE) %>%
-        nrow() == 1) {
-    temp <- temp %>% mutate(DL = DOSE)
-  } else {
-    temp <- temp %>%
-      mutate(DL = paste0(DOSE, "-", ANALYTE)) %>%
-      arrange(ID) %>%
-      arrange(factor(ANALYTE, levels = analytes(obj))) %>%
-      summarize(DL = paste0(DL, collapse = "+"))
-  }
-
-  return(obj %>% left_join(temp %>% select(ID, DL), by = "ID"))
 }
 
 

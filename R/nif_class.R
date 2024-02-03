@@ -455,35 +455,6 @@ doses <- function(obj) {
 #' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
 #' dose_levels(examplinib_sad_min_nif)
 dose_levels <- function(obj, cmt = 1, group = NULL) {
-  # if("ANALYTE" %in% names(obj)) {
-  #   obj %>%
-  #     filter(AMT != 0) %>%
-  #     group_by(ID, ANALYTE, across(any_of(group))) %>%
-  #     arrange(ID, TIME) %>%
-  #     filter(TIME == min(TIME)) %>%
-  #     select(ID, ANALYTE, AMT, any_of(group)) %>%
-  #     pivot_wider(
-  #       names_from = "ANALYTE",
-  #       values_from = "AMT", values_fill = 0) %>%
-  #     group_by(across(c(-ID))) %>%
-  #     summarize(N = n()) %>%
-  #     as.data.frame()
-  # } else {
-  #   obj %>%
-  #     filter(CMT %in% cmt) %>%
-  #     mutate(cmt_name = paste0("CMT", CMT)) %>%
-  #     filter(AMT != 0) %>%
-  #     group_by(ID, cmt_name, across(any_of("group"))) %>%
-  #     arrange(ID, TIME) %>%
-  #     filter(TIME == min(TIME)) %>%
-  #     select(ID, cmt_name, AMT, any_of(group)) %>%
-  #     pivot_wider(
-  #       names_from = "cmt_name",
-  #       values_from = "AMT", values_fill = 0) %>%
-  #     group_by(across(c(-ID))) %>%
-  #     summarize(N = n()) %>%
-  #     as.data.frame()
-  # }
   obj %>%
     ensure_analyte() %>%
     filter(AMT != 0) %>%
@@ -849,6 +820,50 @@ guess_analyte <- function(obj) {
     filter(n == max(n)) %>%
     arrange(ANALYTE)
   return(as.character(temp[1, "ANALYTE"]))
+}
+
+
+#' Add dose level (`DL`) column
+#'
+#' Dose level is defined as the starting dose. For data sets with single drug
+#' administration, `DL`is a numerical value, for drug combinations, it is a
+#' character value specifying the `PARENT` and dose level for the individual
+#' components.
+#' @param obj A NIF dataset.
+#' @return A NIF dataset.
+#' @export
+#' @examples
+#' head(add_dose_level(examplinib_sad_nif))
+#' head(add_dose_level(examplinib_sad_min_nif))
+add_dose_level <- function(obj) {
+  temp <- obj %>%
+    ensure_dose() %>%
+    ensure_analyte() %>%
+    ensure_parent() %>%
+    ensure_metabolite() %>%
+    as.data.frame() %>%
+    filter(METABOLITE == FALSE) %>%
+    filter(PARENT != "", !is.na(DOSE), AMT != 0, EVID == 1) %>%
+    group_by(ID, ANALYTE) %>%
+    arrange(ID, TIME, ANALYTE) %>%
+    filter(TIME == min(TIME)) %>%
+    select(ID, ANALYTE, DOSE) %>%
+    group_by(ID)
+
+  if (temp %>%
+      ungroup() %>%
+      distinct(ANALYTE) %>%
+      nrow() == 1) {
+    temp <- temp %>% mutate(DL = DOSE)
+  } else {
+    temp <- temp %>%
+      mutate(DL = paste0(DOSE, "-", ANALYTE)) %>%
+      arrange(ID) %>%
+      arrange(factor(ANALYTE, levels = analytes(obj))) %>%
+      summarize(DL = paste0(DL, collapse = "+"))
+  }
+
+  return(obj %>% left_join(temp %>% select(ID, DL), by = "ID"))
 }
 
 

@@ -147,7 +147,8 @@ make_subs <- function(studyid = "2023001", nsubs = 10, nsites = 4,
 #' @param min_age The minimum age.
 #' @param max_age The maximum age.
 #' @return The DM data as data frame.
-#' @keywords internal
+#' @import dplyr
+#' @export
 make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
                     female_fraction = 0.5, min_age = 18, max_age = 55) {
   sbs <- make_subs(studyid, nsubs, nsites)
