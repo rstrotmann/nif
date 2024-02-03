@@ -353,7 +353,7 @@ make_md_ex <- function(dm,
   ex <- ex %>%
     mutate(
       EXTRT = drug,
-      EXDOSE = DOSE,
+      EXDOSE = dose,
       EPOCH = "TREATMENT",
       EXROUTE = "ORAL",
       EXDOSFRM = "TABLET"
