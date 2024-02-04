@@ -23,6 +23,8 @@ library(ggplot2)
 library(dplyr)
 library(stringr)
 library(nif)
+
+theme_set(theme_bw())
 ```
 
 # OVERVIEW
@@ -92,7 +94,7 @@ nif_poc <- make_nif(examplinib_poc, spec="PLASMA",
                     truncate_to_last_observation = FALSE) %>% 
   add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
   add_bl_crcl() %>% 
-  compress_nif()
+  compress()
 ```
 
 (In fact, the resulting NIF data set, including baseline creatinine clearance is
@@ -108,7 +110,6 @@ becomes visible when the object is converted into a data frame:
 
 ```{r, comment="# "}
 nif_poc %>% 
-  as.data.frame() %>% 
   head()
 ```
 
@@ -176,8 +177,7 @@ nif_poc %>%
   ggplot(aes(x=TIME, y=DOSE, color=as.factor(ID))) + 
   geom_point() +
   geom_line() +
-  theme(legend.position="none") +
-  theme_bw()
+  theme(legend.position="none") 
 ```
 
 We see that dose reductions happended at different times during treatment. Another

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,9 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstrotmann/nif" class="external-link">nif</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstrotmann/nif" class="external-link">nif</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_set</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">OVERVIEW<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -165,7 +167,7 @@ specified when the SDTM data set is created. See the documentation to
 imputations are needed, and no study-specific fields are created:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, spec<span class="op">=</span><span class="st">"PLASMA"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-05-05 14:16:00</span></span></code></pre></div>
+<span><span class="co">#&gt; Data cut-off was set to last observation time, 2001-05-05 14:02:00</span></span></code></pre></div>
 <p>Of note, the LB domain within this SDTM object contains baseline
 creatinine data which can be used to calculate the baseline creatinine
 clearance as an estimate for glomerular filtration rate (eGFR). Please
@@ -181,7 +183,7 @@ fields that are commonly used:</p>
 <span>                    truncate_to_last_observation <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_bl_lab.html">add_bl_lab</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">$</span><span class="va">domains</span><span class="op">[[</span><span class="st">"lb"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"CREAT"</span>, <span class="st">"SERUM"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_bl_crcl.html">add_bl_crcl</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/compress_nif.html">compress_nif</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>(In fact, the resulting NIF data set, including baseline creatinine
 clearance is already included in the package under the name
 ‘examplinib_poc_nif’.)</p>
@@ -194,54 +196,53 @@ analysis tools. This becomes visible when the object is converted into a
 data frame:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#    REF    STUDYID ID           USUBJID NTIME TIME  TAD    ANALYTE AMT RATE</span></span>
-<span><span class="co">#  1   1 2023000022  1 20230000221010001   0.0 0.00 0.00     RS2023 500    0</span></span>
-<span><span class="co">#  2   2 2023000022  1 20230000221010001   0.0 0.00 0.00     RS2023   0    0</span></span>
-<span><span class="co">#  3   3 2023000022  1 20230000221010001   0.0 0.00 0.00 RS2023487A   0    0</span></span>
-<span><span class="co">#  4   4 2023000022  1 20230000221010001   1.5 2.45 2.45     RS2023   0    0</span></span>
-<span><span class="co">#  5   5 2023000022  1 20230000221010001   1.5 2.45 2.45 RS2023487A   0    0</span></span>
-<span><span class="co">#  6   6 2023000022  1 20230000221010001   4.0 4.95 4.95     RS2023   0    0</span></span>
+<span><span class="co">#    REF    STUDYID ID           USUBJID NTIME  TIME   TAD    ANALYTE AMT RATE</span></span>
+<span><span class="co">#  1   1 2023000022  1 20230000221010001   0.0 0.000 0.000     RS2023 500    0</span></span>
+<span><span class="co">#  2   2 2023000022  1 20230000221010001   0.0 0.000 0.000     RS2023   0    0</span></span>
+<span><span class="co">#  3   3 2023000022  1 20230000221010001   0.0 0.000 0.000 RS2023487A   0    0</span></span>
+<span><span class="co">#  4   4 2023000022  1 20230000221010001   1.5 2.167 2.167     RS2023   0    0</span></span>
+<span><span class="co">#  5   5 2023000022  1 20230000221010001   1.5 2.167 2.167 RS2023487A   0    0</span></span>
+<span><span class="co">#  6   6 2023000022  1 20230000221010001   4.0 4.633 4.633     RS2023   0    0</span></span>
 <span><span class="co">#          DV      LNDV MDV CMT EVID DOSE AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
 <span><span class="co">#  1       NA        NA   1   1    1  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
 <span><span class="co">#  2 0.000000      -Inf   0   2    0   NA  76   1 WHITE  177.6   68.7 21.78065</span></span>
 <span><span class="co">#  3 0.000000      -Inf   0   3    0   NA  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#  4 3.044488 1.1133329   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#  5 1.964398 0.6751858   0   3    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#  6 2.107888 0.7456863   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#     ACTARMCD PARENT METABOLITE TRTDY  BL_CRCL                 DTC</span></span>
-<span><span class="co">#  1 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  2 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  3 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  4 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 13:03:00</span></span>
-<span><span class="co">#  5 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 13:03:00</span></span>
-<span><span class="co">#  6 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 15:33:00</span></span></code></pre></div>
+<span><span class="co">#  4 3.380265 1.2179540   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
+<span><span class="co">#  5 3.453869 1.2394950   0   3    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
+<span><span class="co">#  6 1.477397 0.3902816   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
+<span><span class="co">#     ACTARMCD PARENT METABOLITE TRTDY  BL_CRCL                 DTC BL_CREAT</span></span>
+<span><span class="co">#  1 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00 93.95312</span></span>
+<span><span class="co">#  2 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00 93.95312</span></span>
+<span><span class="co">#  3 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 10:36:00 93.95312</span></span>
+<span><span class="co">#  4 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 12:46:00 93.95312</span></span>
+<span><span class="co">#  5 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 12:46:00 93.95312</span></span>
+<span><span class="co">#  6 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 15:14:00 93.95312</span></span></code></pre></div>
 <p>When the NIF object itself is printed, a summary of the data is shown
 instead:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span></span>
-<span><span class="co">#  -------- NONMEM input file (NIF) object --------</span></span>
+<span><span class="co">#  ──────── NONMEM input file (NIF) object ────────</span></span>
 <span><span class="co">#  Data from one study</span></span>
 <span><span class="co">#  1344 observations from 80 subjects</span></span>
 <span><span class="co">#  Males: 46, females: 34 (42.5%)</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Columns:</span></span>
-<span><span class="co">#  REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, BL_CRCL, DTC </span></span>
+<span><span class="co">#  REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, BL_CRCL, DTC, BL_CREAT </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  NIF data (selected columns):</span></span>
-<span><span class="co">#  ID   NTIME   TIME   TAD    ANALYTE      EVID   CMT   AMT   DOSE   DV      </span></span>
-<span><span class="co">#  1    0       0      0      RS2023       1      1     500   500    NA      </span></span>
-<span><span class="co">#  1    0       0      0      RS2023       0      2     0     NA     0       </span></span>
-<span><span class="co">#  1    0       0      0      RS2023487A   0      3     0     NA     0       </span></span>
-<span><span class="co">#  1    1.5     2.45   2.45   RS2023       0      2     0     500    3.044   </span></span>
-<span><span class="co">#  1    1.5     2.45   2.45   RS2023487A   0      3     0     500    1.964   </span></span>
-<span><span class="co">#  1    4       4.95   4.95   RS2023       0      2     0     500    2.108   </span></span>
-<span><span class="co">#  1    4       4.95   4.95   RS2023487A   0      3     0     500    6.339   </span></span>
-<span><span class="co">#  1    0       24     0      RS2023       1      1     500   500    NA      </span></span>
-<span><span class="co">#  1    0       48     0      RS2023       1      1     500   500    NA      </span></span>
-<span><span class="co">#  1    0       72     0      RS2023       1      1     500   500    NA      </span></span>
-<span><span class="co">#  # 7660 more rows</span></span></code></pre></div>
+<span><span class="co">#  ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV       </span></span>
+<span><span class="co">#  1    0       0       0       RS2023       1      1     500   500    NA       </span></span>
+<span><span class="co">#  1    0       0       0       RS2023       0      2     0     NA     0        </span></span>
+<span><span class="co">#  1    0       0       0       RS2023487A   0      3     0     NA     0        </span></span>
+<span><span class="co">#  1    1.5     2.167   2.167   RS2023       0      2     0     500    3.38     </span></span>
+<span><span class="co">#  1    1.5     2.167   2.167   RS2023487A   0      3     0     500    3.454    </span></span>
+<span><span class="co">#  1    4       4.633   4.633   RS2023       0      2     0     500    1.477    </span></span>
+<span><span class="co">#  1    4       4.633   4.633   RS2023487A   0      3     0     500    10.828   </span></span>
+<span><span class="co">#  1    0       24      0       RS2023       1      1     500   500    NA       </span></span>
+<span><span class="co">#  1    0       48      0       RS2023       1      1     500   500    NA       </span></span>
+<span><span class="co">#  1    0       72      0       RS2023       1      1     500   500    NA       </span></span>
+<span><span class="co">#  # 7644 more rows</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploration">EXPLORATION<a class="anchor" aria-label="anchor" href="#exploration"></a>
@@ -256,7 +257,7 @@ the data set, the output also summarizes the number of patients with
 normal renal function or impaired renal function:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">nif_poc</span><span class="op">)</span></span>
-<span><span class="co">#  -------- NONMEM input file (NIF) object summary --------</span></span>
+<span><span class="co">#  ──────── NONMEM input file (NIF) object summary ────────</span></span>
 <span><span class="co">#  Data from 80 subjects across one study:</span></span>
 <span><span class="co">#   STUDYID      N    </span></span>
 <span><span class="co">#   2023000022   80   </span></span>
@@ -269,33 +270,33 @@ normal renal function or impaired renal function:</p>
 <span><span class="co">#   moderate   13   </span></span>
 <span><span class="co">#   normal     32   </span></span>
 <span><span class="co">#  </span></span>
+<span><span class="co">#  Administered drugs:</span></span>
+<span><span class="co">#   RS2023</span></span>
+<span><span class="co">#  </span></span>
 <span><span class="co">#  Analytes:</span></span>
 <span><span class="co">#   RS2023, RS2023487A</span></span>
+<span><span class="co">#  </span></span>
+<span><span class="co">#  Subjects per dose levels:</span></span>
+<span><span class="co">#   RS2023   N    </span></span>
+<span><span class="co">#   500      80   </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  1344 observations:</span></span>
 <span><span class="co">#   CMT   ANALYTE      N     </span></span>
 <span><span class="co">#   2     RS2023       672   </span></span>
 <span><span class="co">#   3     RS2023487A   672   </span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Administered drugs:</span></span>
-<span><span class="co">#   RS2023</span></span>
-<span><span class="co">#  </span></span>
-<span><span class="co">#  Dose levels:</span></span>
-<span><span class="co">#   RS2023   N    </span></span>
-<span><span class="co">#   500      80   </span></span>
-<span><span class="co">#  </span></span>
 <span><span class="co">#  Subjects with dose reductions</span></span>
 <span><span class="co">#   RS2023   </span></span>
-<span><span class="co">#   13       </span></span>
+<span><span class="co">#   27       </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Treatment duration overview:</span></span>
 <span><span class="co">#   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#   RS2023   53    100   79.1   79.5</span></span></code></pre></div>
+<span><span class="co">#   RS2023   53    98    78.9   81</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the summary:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">nif_poc</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-1.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-2.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-3.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-4.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-5.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-6.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-7.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-8.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-9.png" width="288"></p>
+<p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-1.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-2.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-3.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-4.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-5.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-6.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-7.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-8.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-9.png" width="288"><img src="multiple-dose-example_files/figure-html/unnamed-chunk-8-10.png" width="288"></p>
 </div>
 <div class="section level3">
 <h3 id="exposure">Exposure<a class="anchor" aria-label="anchor" href="#exposure"></a>
@@ -333,11 +334,11 @@ the administered dose:</p>
 <tbody>
 <tr class="odd">
 <td align="right">250</td>
-<td align="right">429</td>
+<td align="right">1198</td>
 </tr>
 <tr class="even">
 <td align="right">500</td>
-<td align="right">5897</td>
+<td align="right">5112</td>
 </tr>
 </tbody>
 </table>
@@ -345,7 +346,8 @@ the administered dose:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#   [1]  2  5 18 21 41 43 51 57 61 64 75 77 79</span></span></code></pre></div>
+<span><span class="co">#   [1]  2  5  7 11 18 21 22 24 25 28 35 37 38 39 43 45 46 48 57 60 63 70 71 73 76</span></span>
+<span><span class="co">#  [26] 77 78</span></span></code></pre></div>
 <p>Let’s have a plot of the doses over time in these subjects:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -354,8 +356,7 @@ the administered dose:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">TIME</span>, y<span class="op">=</span><span class="va">DOSE</span>, color<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">ID</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-12-1.png" width="480"></p>
 <p>We see that dose reductions happended at different times during
 treatment. Another way of visualizing this is per the
@@ -476,11 +477,11 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <code class="sourceCode R"><span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">TIME</span><span class="op">&lt;=</span><span class="fl">24</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>, points<span class="op">=</span><span class="cn">T</span>, administrations<span class="op">=</span><span class="cn">T</span>, max_x<span class="op">=</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>, points<span class="op">=</span><span class="cn">T</span>, max_x<span class="op">=</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-17-1.png" width="480"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>, mean<span class="op">=</span><span class="cn">T</span>, y_scale<span class="op">=</span><span class="st">"log"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>, mean<span class="op">=</span><span class="cn">T</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-17-2.png" width="480"></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -506,8 +507,8 @@ axis. The default for individual curves is
 <code>nominal_time=FALSE</code>, i.e., the actual time is used. Note
 that for mean profiles as shown in plot 2, nominal time is used
 automatically for the averaging.</li>
-<li>The option <code>y_scale="log"</code> can be used to plot the data
-on a log concentration scale.</li>
+<li>The option <code>log == TRUE</code> can be used to plot the data on
+a log concentration scale.</li>
 </ul>
 </div>
 </div>

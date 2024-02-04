@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -197,18 +197,18 @@ objects by accessing the individual SDTM domains like demonstrated below
 for the DM domain of the <code>examplinib_fe</code> data object:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/domain.html">domain</a></span><span class="op">(</span><span class="st">"dm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">##   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC RFSTDTC    STUDYID</span></span>
-<span><span class="co">## 1    102 1020001 Screen Failure SCRNFAIL 2000-12-20T10:23    &lt;NA&gt; 2023000400</span></span>
-<span><span class="co">## 2    105 1050001 Screen Failure SCRNFAIL 2000-12-20T11:39    &lt;NA&gt; 2023000400</span></span>
-<span><span class="co">## 3    103 1030001 Screen Failure SCRNFAIL 2000-12-24T09:00    &lt;NA&gt; 2023000400</span></span>
-<span><span class="co">##             USUBJID SEX AGE  AGEU COUNTRY DOMAIN            ARM    ARMCD  RACE</span></span>
-<span><span class="co">## 1 20230004001020001   M  19 YEARS     DEU     DM Screen Failure SCRNFAIL WHITE</span></span>
-<span><span class="co">## 2 20230004001050001   F  42 YEARS     DEU     DM Screen Failure SCRNFAIL WHITE</span></span>
-<span><span class="co">## 3 20230004001030001   M  29 YEARS     DEU     DM Screen Failure SCRNFAIL WHITE</span></span>
-<span><span class="co">##   ETHNIC RFENDTC</span></span>
-<span><span class="co">## 1           &lt;NA&gt;</span></span>
-<span><span class="co">## 2           &lt;NA&gt;</span></span>
-<span><span class="co">## 3           &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">##   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC</span></span>
+<span><span class="co">## 1    102 1020001   Fed - Fasted       BA 2000-12-21T10:29 2000-12-26T10:29</span></span>
+<span><span class="co">## 2    104 1040001   Fed - Fasted       BA 2000-12-22T10:24 2000-12-28T10:24</span></span>
+<span><span class="co">## 3    102 1020002 Screen Failure SCRNFAIL 2000-12-22T09:18             &lt;NA&gt;</span></span>
+<span><span class="co">##      STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN            ARM</span></span>
+<span><span class="co">## 1 2023000400 20230004001020001   M  22 YEARS     DEU     DM   Fed - Fasted</span></span>
+<span><span class="co">## 2 2023000400 20230004001040001   M  43 YEARS     DEU     DM   Fed - Fasted</span></span>
+<span><span class="co">## 3 2023000400 20230004001020002   M  55 YEARS     DEU     DM Screen Failure</span></span>
+<span><span class="co">##      ARMCD                      RACE ETHNIC          RFENDTC</span></span>
+<span><span class="co">## 1       BA                     WHITE        2001-01-08T10:29</span></span>
+<span><span class="co">## 2       BA                     WHITE        2001-01-10T10:24</span></span>
+<span><span class="co">## 3 SCRNFAIL BLACK OR AFRICAN AMERICAN                    &lt;NA&gt;</span></span></code></pre></div>
 <p>The most relevant domains, “dm”, “vs”, “ex” and “pc”, can also be
 accessed directly, e.g.:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -224,8 +224,8 @@ properties:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Arms:</span></span>
 <span><span class="co">##   ACTARM         ACTARMCD</span></span>
-<span><span class="co">## 1 Screen Failure SCRNFAIL</span></span>
-<span><span class="co">## 2 Fed - Fasted   BA      </span></span>
+<span><span class="co">## 1 Fed - Fasted   BA      </span></span>
+<span><span class="co">## 2 Screen Failure SCRNFAIL</span></span>
 <span><span class="co">## 3 Fasted - Fed   AB      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Treatments:</span></span>
@@ -260,22 +260,22 @@ below:</p>
 <span><span class="co">##          [,1]             </span></span>
 <span><span class="co">## SITEID   105              </span></span>
 <span><span class="co">## SUBJID   1050001          </span></span>
-<span><span class="co">## ACTARM   Screen Failure   </span></span>
-<span><span class="co">## ACTARMCD SCRNFAIL         </span></span>
-<span><span class="co">## RFICDTC  2000-12-20T11:39 </span></span>
-<span><span class="co">## RFSTDTC  NA               </span></span>
+<span><span class="co">## ACTARM   Fasted - Fed     </span></span>
+<span><span class="co">## ACTARMCD AB               </span></span>
+<span><span class="co">## RFICDTC  2000-12-24T11:59 </span></span>
+<span><span class="co">## RFSTDTC  2001-01-01T11:59 </span></span>
 <span><span class="co">## STUDYID  2023000400       </span></span>
 <span><span class="co">## USUBJID  20230004001050001</span></span>
-<span><span class="co">## SEX      F                </span></span>
-<span><span class="co">## AGE      42               </span></span>
+<span><span class="co">## SEX      M                </span></span>
+<span><span class="co">## AGE      54               </span></span>
 <span><span class="co">## AGEU     YEARS            </span></span>
 <span><span class="co">## COUNTRY  DEU              </span></span>
 <span><span class="co">## DOMAIN   DM               </span></span>
-<span><span class="co">## ARM      Screen Failure   </span></span>
-<span><span class="co">## ARMCD    SCRNFAIL         </span></span>
+<span><span class="co">## ARM      Fasted - Fed     </span></span>
+<span><span class="co">## ARMCD    AB               </span></span>
 <span><span class="co">## RACE     WHITE            </span></span>
 <span><span class="co">## ETHNIC                    </span></span>
-<span><span class="co">## RFENDTC  NA</span></span></code></pre></div>
+<span><span class="co">## RFENDTC  2001-01-14T11:59</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="sdtm-suggestions">SDTM suggestions<a class="anchor" aria-label="anchor" href="#sdtm-suggestions"></a>
@@ -298,8 +298,8 @@ suggestions for manual imputations for a <code>sdtm</code> object:</p>
 <span><span class="co">##    on ACTARMCD.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##        ACTARM           ACTARMCD   </span></span>
-<span><span class="co">##        Screen Failure   SCRNFAIL   </span></span>
 <span><span class="co">##        Fed - Fasted     BA         </span></span>
+<span><span class="co">##        Screen Failure   SCRNFAIL   </span></span>
 <span><span class="co">##        Fasted - Fed     AB</span></span>
 <span><span class="co">## 2. There are treatments (EXTRT) without analytes (PCTESTCD) of</span></span>
 <span><span class="co">##    the same name (see below).</span></span>
@@ -377,7 +377,7 @@ HEIGHT are taken from the VS domain.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm_expl</span><span class="op">)</span></span>
 <span><span class="co">## No specimen specified. Set to PLASMA as the most likely.</span></span>
-<span><span class="co">## Data cut-off was set to last observation time, 2001-02-18 10:27:00</span></span></code></pre></div>
+<span><span class="co">## Data cut-off was set to last observation time, 2001-02-19 11:45:00</span></span></code></pre></div>
 <p>The output of the above code informs that there may be
 pharmacokinetic data for multiple specimens in the PC domain, e.g.,
 “PLASMA” and “URINE” or “FECES”. As no specimem was defined,
@@ -411,10 +411,10 @@ consideration may be <code>EPOCH</code>:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="va">ACTARMCD</span>, <span class="va">ACTARM</span><span class="op">)</span></span>
 <span><span class="co">##                    EPOCH ACTARMCD       ACTARM</span></span>
-<span><span class="co">## 1 OPEN LABEL TREATMENT 1       BA Fed - Fasted</span></span>
-<span><span class="co">## 2 OPEN LABEL TREATMENT 2       BA Fed - Fasted</span></span>
-<span><span class="co">## 3 OPEN LABEL TREATMENT 1       AB Fasted - Fed</span></span>
-<span><span class="co">## 4 OPEN LABEL TREATMENT 2       AB Fasted - Fed</span></span></code></pre></div>
+<span><span class="co">## 1 OPEN LABEL TREATMENT 1       AB Fasted - Fed</span></span>
+<span><span class="co">## 2 OPEN LABEL TREATMENT 2       AB Fasted - Fed</span></span>
+<span><span class="co">## 3 OPEN LABEL TREATMENT 1       BA Fed - Fasted</span></span>
+<span><span class="co">## 4 OPEN LABEL TREATMENT 2       BA Fed - Fasted</span></span></code></pre></div>
 <p>In this example, to create a <code>FASTED</code> covariate field,
 first the period number is derived from the <code>EPOCH</code> field,
 and then the current <code>ACTARM</code> in that treatment period is
@@ -438,12 +438,12 @@ page width):</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">PERIOD</span>, <span class="va">TREATMENT</span>, <span class="va">FASTED</span>, <span class="va">TIME</span>, <span class="va">EVID</span>, <span class="va">AMT</span>, <span class="va">ANALYTE</span>, <span class="va">DV</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">##             USUBJID PERIOD TREATMENT FASTED TIME EVID AMT    ANALYTE        DV</span></span>
-<span><span class="co">## 1 20230004001010002      1         B      0  0.0    1 500     RS2023        NA</span></span>
-<span><span class="co">## 2 20230004001010002      1         B      0  0.0    0   0     RS2023 0.0000000</span></span>
-<span><span class="co">## 3 20230004001010002      1         B      0  0.0    0   0 RS2023487A 0.0000000</span></span>
-<span><span class="co">## 4 20230004001010002      1         B      0  0.5    0   0     RS2023 0.7591743</span></span>
-<span><span class="co">## 5 20230004001010002      1         B      0  0.5    0   0 RS2023487A 0.2282183</span></span>
-<span><span class="co">## 6 20230004001010002      1         B      0  1.0    0   0     RS2023 2.0689107</span></span></code></pre></div>
+<span><span class="co">## 1 20230004001010001      1         A      1  0.0    1 500     RS2023        NA</span></span>
+<span><span class="co">## 2 20230004001010001      1         A      1  0.0    0   0     RS2023 0.0000000</span></span>
+<span><span class="co">## 3 20230004001010001      1         A      1  0.0    0   0 RS2023487A 0.0000000</span></span>
+<span><span class="co">## 4 20230004001010001      1         A      1  0.5    0   0     RS2023 0.2494928</span></span>
+<span><span class="co">## 5 20230004001010001      1         A      1  0.5    0   0 RS2023487A 0.1308674</span></span>
+<span><span class="co">## 6 20230004001010001      1         A      1  1.0    0   0     RS2023 0.8582198</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -455,27 +455,27 @@ any more complex analyses.</p>
 the data disposition in a <code>nif</code> data set:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
-<span><span class="co">## -------- NONMEM input file (NIF) object summary --------</span></span>
+<span><span class="co">## ──────── NONMEM input file (NIF) object summary ────────</span></span>
 <span><span class="co">## Data from 20 subjects across one study:</span></span>
 <span><span class="co">##  STUDYID      N    </span></span>
 <span><span class="co">##  2023000400   20   </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Males: 12, females: 8 (40%)</span></span>
+<span><span class="co">## Males: 17, females: 3 (15%)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Administered drugs:</span></span>
+<span><span class="co">##  RS2023</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Analytes:</span></span>
 <span><span class="co">##  RS2023, RS2023487A</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Subjects per dose levels:</span></span>
+<span><span class="co">##  RS2023   N    </span></span>
+<span><span class="co">##  500      20   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## 1360 observations:</span></span>
 <span><span class="co">##  CMT   ANALYTE      N     </span></span>
 <span><span class="co">##  2     RS2023       680   </span></span>
 <span><span class="co">##  3     RS2023487A   680   </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Administered drugs:</span></span>
-<span><span class="co">##  RS2023</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Dose levels:</span></span>
-<span><span class="co">##  RS2023   N    </span></span>
-<span><span class="co">##  500      20   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Subjects with dose reductions</span></span>
 <span><span class="co">##  RS2023   </span></span>
@@ -577,20 +577,20 @@ functions provided by the <code>PKNCA</code> package.</p>
 <tr class="odd">
 <td align="left">0</td>
 <td align="right">20</td>
-<td align="left">22.01 (37)</td>
-<td align="left">19.58 (31)</td>
-<td align="left">3.66 (16)</td>
-<td align="left">16.45 (31)</td>
-<td align="left">2 (1.5; 3)</td>
+<td align="left">26.11 (36)</td>
+<td align="left">22.57 (30)</td>
+<td align="left">3.72 (13)</td>
+<td align="left">18.72 (22)</td>
+<td align="left">2 (1.5; 4)</td>
 </tr>
 <tr class="even">
 <td align="left">1</td>
 <td align="right">20</td>
-<td align="left">21.85 (37)</td>
-<td align="left">19.32 (31)</td>
-<td align="left">2.81 (16)</td>
-<td align="left">16.76 (32)</td>
-<td align="left">3 (2; 4)</td>
+<td align="left">26.23 (38)</td>
+<td align="left">22.44 (31)</td>
+<td align="left">2.91 (16)</td>
+<td align="left">19 (25)</td>
+<td align="left">4 (2; 6)</td>
 </tr>
 </tbody>
 </table>

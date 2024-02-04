@@ -4,73 +4,14 @@
 \alias{plot.nif}
 \title{Plot NIF object}
 \usage{
-\method{plot}{nif}(
-  x,
-  mean = FALSE,
-  analyte = NULL,
-  cmt = NULL,
-  dose = NULL,
-  group = "ANALYTE",
-  tad = FALSE,
-  cfb = FALSE,
-  summary_function = median,
-  points = FALSE,
-  point_size = 2,
-  alpha = 1,
-  lines = TRUE,
-  log = FALSE,
-  min_x = NULL,
-  max_x = NULL,
-  nominal_time = FALSE,
-  title = ""
-)
+\method{plot}{nif}(x, mean = FALSE, ...)
 }
 \arguments{
 \item{x}{The NIF object to be plotted.}
 
-\item{mean}{Boolean value to indicate whether the mean value by dose and
-analyte is to be plotted. In that case, the nominal time (NTIME) is shown
-on the x axis. 'mean=T' will cast an error if multiple analytes are in the
-data set of have been defined with 'analyte'.}
+\item{mean}{Plot the mean instead individual subjects.}
 
-\item{analyte}{The analyte to be plotted If this argument is not supplied
-(or set to NULL), all analytes are shown.}
-
-\item{cmt}{The compartment to be plotted as numeric.}
-
-\item{dose}{The doses to be plotted. Can be a scalar value or a numeric
-vector or NULL to plot all doses.}
-
-\item{group}{Character scalar to define a grouping variable. If specified,
-this will cast an error if multiple analytes are in the data set or have
-been defined by 'analyte'.}
-
-\item{tad}{Boolean to select wheter time after dose (TAD) rather than TIME
-should be plotted.}
-
-\item{cfb}{Plot change from baseline.}
-
-\item{summary_function}{The summary function for the baseline value.}
-
-\item{points}{Boolean value to define whether points should be plotted.}
-
-\item{point_size}{The point size as numeric.}
-
-\item{alpha}{Numerical value between 0 and 1, passed on as alpha to ggplot.}
-
-\item{lines}{Boolean to define whether lines are to be drawn.}
-
-\item{log}{Boolean to select whether the y-scale is logarithmic. Alternative}
-
-\item{min_x}{Minimum x (time) scale value.}
-
-\item{max_x}{Maximal x (time) scale value.}
-
-\item{nominal_time}{Plot NTIME rather than TIME. Defaults to FALSE.}
-
-\item{title}{The plot title as string.}
-
-\item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
+\item{...}{Further parameters}
 }
 \value{
 A ggplot2 object.
@@ -93,7 +34,4 @@ plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
   max_x = 24)
 plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
   lines = FALSE, tad = TRUE, log =TRUE)
-}
-\seealso{
-\code{\link[=nif_viewer]{nif_viewer()}}
 }

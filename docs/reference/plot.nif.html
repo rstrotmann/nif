@@ -12,7 +12,7 @@ grouping variable is provided, DOSE will be used."><!-- mathjax --><script src="
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.44.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,28 +61,7 @@ grouping variable is provided, <code>DOSE</code> will be used.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for nif</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  y_scale <span class="op">=</span> <span class="st">"lin"</span>,</span>
-<span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  min_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  mean <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  dose <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  points <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  usubjid <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  administrations <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  nominal_time <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tad <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -91,92 +70,12 @@ grouping variable is provided, <code>DOSE</code> will be used.</p>
 <dd><p>The NIF object to be plotted.</p></dd>
 
 
-<dt>y_scale</dt>
-<dd><p>Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".</p></dd>
-
-
-<dt>log</dt>
-<dd><p>Boolean to select whether the y-scale is logarithmic. Alternative</p></dd>
-
-
-<dt>min_x</dt>
-<dd><p>Minimum x (time) scale value.</p></dd>
-
-
-<dt>max_x</dt>
-<dd><p>Maximal x (time) scale value.</p></dd>
-
-
-<dt>analyte</dt>
-<dd><p>The analyte to be plotted If this argument is not supplied
-(or set to NULL), all analytes are shown.</p></dd>
-
-
-<dt>cmt</dt>
-<dd><p>The compartment to be plotted as numeric.
-<code>y_scale="log"</code>.</p></dd>
-
-
 <dt>mean</dt>
-<dd><p>Boolean value to indicate whether the mean value by dose and
-analyte is to be plotted. In that case, the nominal time (NTIME) is shown
-on the x axis. 'mean=T' will cast an error if multiple analytes are in the
-data set of have been defined with 'analyte'.</p></dd>
-
-
-<dt>dose</dt>
-<dd><p>The doses to be plotted. Can be a scalar value or a numeric
-vector or NULL to plot all doses.</p></dd>
-
-
-<dt>points</dt>
-<dd><p>Boolean value to define whether points should be plotted.</p></dd>
-
-
-<dt>id</dt>
-<dd><p>Numerical scalar or vector of IDs to be plotted.</p></dd>
-
-
-<dt>usubjid</dt>
-<dd><p>Character scalar or vector of USUBJIDs to be plotted.</p></dd>
-
-
-<dt>group</dt>
-<dd><p>Character scalar to define a grouping variable. If specified,
-this will cast an error if multiple analytes are in the data set or have
-been defined by 'analyte'.</p></dd>
-
-
-<dt>administrations</dt>
-<dd><p>Boolean value to indicate whether vertical lines
-marking the administration times should be plotted. Has no function if
-mean=F.</p></dd>
-
-
-<dt>nominal_time</dt>
-<dd><p>Boolean to indicate whether NTIME rather than TIME should
-be plotted on the x-axis.</p></dd>
-
-
-<dt>tad</dt>
-<dd><p>Boolean to select wheter time after dose (TAD) rather than TIME
-should be plotted.</p></dd>
-
-
-<dt>lines</dt>
-<dd><p>Boolean to define whether lines are to be drawn.</p></dd>
-
-
-<dt>alpha</dt>
-<dd><p>Numerical value between 0 and 1, passed on as alpha to ggplot.</p></dd>
-
-
-<dt>title</dt>
-<dd><p>The plot title as string.</p></dd>
+<dd><p>Plot the mean instead individual subjects.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Further arguments.</p></dd>
+<dd><p>Further parameters</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -184,10 +83,6 @@ should be plotted.</p></dd>
     
 
 <p>A ggplot2 object.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="nif_viewer.html">nif_viewer()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -198,7 +93,7 @@ should be plotted.</p></dd>
 <span class="r-plt img"><img src="plot.nif-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.nif-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, max_x <span class="op">=</span> <span class="fl">24</span>, point <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, max_x <span class="op">=</span> <span class="fl">24</span>, points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.nif-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>,</span></span>
 <span class="r-in"><span>  analyte <span class="op">=</span> <span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span>,</span></span>
@@ -213,9 +108,6 @@ should be plotted.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, dose <span class="op">=</span> <span class="fl">500</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, points <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  lines <span class="op">=</span> <span class="cn">FALSE</span>, tad <span class="op">=</span> <span class="cn">TRUE</span>, log <span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.nif-8.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span>, dose<span class="op">=</span><span class="fl">500</span>, tad <span class="op">=</span> <span class="cn">TRUE</span>, cmt <span class="op">=</span> <span class="fl">2</span>, max_x <span class="op">=</span> <span class="fl">24</span>,</span></span>
-<span class="r-in"><span>  points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.nif-9.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

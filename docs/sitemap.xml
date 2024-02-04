@@ -190,6 +190,9 @@
     <loc>/reference/ensure_parent.html</loc>
   </url>
   <url>
+    <loc>/reference/ensure_tad.html</loc>
+  </url>
+  <url>
     <loc>/reference/examplinib.html</loc>
   </url>
   <url>
@@ -412,6 +415,9 @@
     <loc>/reference/nif_viewer.html</loc>
   </url>
   <url>
+    <loc>/reference/obs_per_dose_level.html</loc>
+  </url>
+  <url>
     <loc>/reference/parents.html</loc>
   </url>
   <url>
@@ -491,6 +497,9 @@
   </url>
   <url>
     <loc>/reference/subjects.sdtm.html</loc>
+  </url>
+  <url>
+    <loc>/reference/subs_per_dose_level.html</loc>
   </url>
   <url>
     <loc>/reference/suggest.html</loc>

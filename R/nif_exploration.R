@@ -489,36 +489,9 @@ nif_spaghetti_plot <- function(obj,
 #' grouping variable is provided, `DOSE` will be used.
 #'
 #' @param x The NIF object to be plotted.
-#' @param y_scale Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".
-#' @param max_x Maximal x (time) scale value.
-#' @param analyte The analyte to be plotted If this argument is not supplied
-#'   (or set to NULL), all analytes are shown.
-#' @param mean Boolean value to indicate whether the mean value by dose and
-#'   analyte is to be plotted. In that case, the nominal time (NTIME) is shown
-#'   on the x axis. 'mean=T' will cast an error if multiple analytes are in the
-#'   data set of have been defined with 'analyte'.
-#' @param dose The doses to be plotted. Can be a scalar value or a numeric
-#'   vector or NULL to plot all doses.
-#' @param points Boolean value to define whether points should be plotted.
-#' @param group Character scalar to define a grouping variable. If specified,
-#'   this will cast an error if multiple analytes are in the data set or have
-#'   been defined by 'analyte'.
-#' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
-#' @param title The plot title as string.
-#' @param min_x Minimum x (time) scale value.
-#' @param lines Boolean to define whether lines are to be drawn.
-#' @param alpha Numerical value between 0 and 1, passed on as alpha to ggplot.
-#' @param tad Boolean to select wheter time after dose (TAD) rather than TIME
-#'   should be plotted.
-#' @param log Boolean to select whether the y-scale is logarithmic. Alternative
-#' @param cmt The compartment to be plotted as numeric.
-#' @param cfb Plot change from baseline.
-#' @param summary_function The summary function for the baseline value.
-#' @param point_size The point size as numeric.
-#'
+#' @param ... Further parameters
+#' @param mean Plot the mean instead individual subjects.
 #' @return A ggplot2 object.
-#' @seealso [nif_viewer()]
-#' @import lifecycle
 #' @examples
 #' plot(examplinib_fe_nif)
 #' plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
@@ -534,12 +507,7 @@ nif_spaghetti_plot <- function(obj,
 #' plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
 #'   lines = FALSE, tad = TRUE, log =TRUE)
 #' @export
-plot.nif <- function(x, mean = FALSE, analyte = NULL, cmt = NULL, dose = NULL,
-                     group = "ANALYTE", tad = FALSE, cfb = FALSE,
-                     summary_function = median, points = FALSE,
-                     point_size = 2, alpha = 1, lines = TRUE,
-                     log = FALSE, min_x = NULL, max_x = NULL,
-                     nominal_time = FALSE, title = "") {
+plot.nif <- function(x, mean = FALSE, ...) {
   if(mean == TRUE) {
     nif_mean_plot(x, ...)
   } else {
@@ -761,13 +729,8 @@ plot.summary_nif <- function(x, ...) {
   out[["WT_RACE"]] <- wt_by_race(nif)
 
   for (i in x$analytes) {
-    # out[[i]] <- plot(nif,
-    #   analyte = i, y_scale = "log", points = TRUE, line = FALSE,
-    #   alpha = 0.3, title = paste(i, "overview by dose"),
-    #   max_x = max_observation_time(x$nif, i)
-    # )
     out[[i]] <- nif_spaghetti_plot(nif,
-                     analyte = i, log = TRUE, points = TRUE, line = FALSE,
+                     analyte = i, log = TRUE, points = TRUE, lines = FALSE,
                      alpha = 0.3, title = paste(i, "overview by dose"),
                      max_x = max_observation_time(x$nif, i)
     )
