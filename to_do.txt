@@ -28,6 +28,14 @@ done:
 TO DO:
 * add unit test for guess_analyte (try multiple analytes with different n_obs)
 * subject_info_nif() to work with minimal NIF
+* implement LLOQ for the synthetic data sets
 
 * plot.nif()
 
+
+plot TAD:
+* the TAD plot is not plasible (below). Check whether the data points beyond
+  24 h are correctly assigned:
+
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
+#'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)

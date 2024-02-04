@@ -22,8 +22,8 @@ new_nif <- function(obj) {
 #' @export
 #' @noRd
 print.nif <- function(x, ...) {
-  # hline <- paste0(rep("\U2500", 8), collapse="")
-  hline <- paste0(rep("-", 8), collapse="")
+  # hline <- paste0(rep("-", 8), collapse="")
+  hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
   # message(paste0(hline, " NONMEM input file (NIF) object ", hline))
 

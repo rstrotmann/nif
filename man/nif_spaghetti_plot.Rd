@@ -6,46 +6,61 @@
 \usage{
 nif_spaghetti_plot(
   obj,
-  points = FALSE,
-  lines = TRUE,
-  group = "ANALYTE",
-  nominal_time = FALSE,
-  tad = FALSE,
-  dose = NULL,
   analyte = NULL,
+  cmt = NULL,
+  dose = NULL,
+  group = "ANALYTE",
+  tad = FALSE,
+  cfb = FALSE,
+  summary_function = median,
+  points = FALSE,
+  point_size = 2,
+  alpha = 1,
+  lines = TRUE,
+  log = FALSE,
   min_x = NULL,
   max_x = NULL,
-  log = FALSE,
-  point_size = 2
+  nominal_time = FALSE,
+  title = ""
 )
 }
 \arguments{
 \item{obj}{The NIF object.}
 
-\item{points}{Boolean to indicate whether points should be drawn.}
+\item{analyte}{The analyte as character. If NULL (default), all analytes will
+be plotted.}
 
-\item{lines}{Boolean to indicate whether lines should be drawn.}
+\item{cmt}{The compartment to filter for as numeric.}
+
+\item{dose}{The dose(s) to filter for as numeric.}
 
 \item{group}{The grouping covariate, defaults to 'ANALYTE'.}
-
-\item{nominal_time}{Boolean to indicate whether the x-axis should be NTIME
-rather than TIME.}
 
 \item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
 should be plotted.}
 
-\item{dose}{The dose(s) to filter for as numeric.}
+\item{cfb}{Y value is change from baseline, defaults to FALSE.}
 
-\item{analyte}{The analyte as character. If NULL (default), all analytes will
-be plotted.}
+\item{summary_function}{The summary function used for the definition of the
+baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
+
+\item{points}{Boolean to indicate whether points should be drawn.}
+
+\item{point_size}{the point size as numeric.}
+
+\item{alpha}{The alpha value for the points as numeric.}
+
+\item{lines}{Boolean to indicate whether lines should be drawn.}
+
+\item{log}{Boolean to define whether y axis is plotted on the log scale.}
 
 \item{min_x}{The minimal value for the x scale as numeric.}
 
 \item{max_x}{The maximal value for the x scale as numeric.}
 
-\item{log}{Boolean to define whether y axis is plotted on the log scale.}
+\item{nominal_time}{Plot NTIME rather than TIME. Defaults to FALSE.}
 
-\item{point_size}{the point size as numeric.}
+\item{title}{The plot title}
 }
 \value{
 A ggplot2 plot object.
@@ -55,11 +70,14 @@ Spaghetti plot over a selected covariate
 }
 \examples{
 nif_spaghetti_plot(examplinib_fe_nif)
+nif_spaghetti_plot(examplinib_fe_nif, nominal_time =T, group = "FASTED")
 nif_spaghetti_plot(examplinib_sad_nif)
 nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = T,
+  group = "SEX", points = T, lines = F)
 nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
-  dose = 500, log = TRUE, points = TRUE, lines = FALSE)
+  dose = 500, log = F, points = TRUE, lines = FALSE)
 nif_spaghetti_plot(examplinib_sad_min_nif)
-nif_spaghetti_plot(examplinib_poc_min_nif)
+nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
 }
 \keyword{internal}

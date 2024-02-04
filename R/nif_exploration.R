@@ -226,76 +226,98 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' Mean plot over a selected covariate
 #'
 #' The averaging over subjects expects the `NTIME` field be in the data set.
-#'
-#' @param x The NIF object.
+#' @param obj The NIF object.
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
-#' @param dose The dose(s) to filter for as numeric.
+#' @param group The grouping covariate, defaults to 'ANALYTE'.
+#' @param tad Boolean to select whether time after dose (TAD) rather than TIME
+#'   should be plotted.
 #' @param analyte The analyte as character. If NULL (default), all analytes will
 #'   be plotted.
+#' @param dose The dose(s) to filter for as numeric.
 #' @param min_x The minimal value for the x scale as numeric.
 #' @param max_x The maximal value for the x scale as numeric.
-#' @param log Logarithmic y scale as logical.
-#' @param point_size The point size as numeric, defaults to 2.
-#' @param group The grouping covariate, defaults to 'ANALYTE'.
+#' @param log Boolean to define whether y axis is plotted on the log scale.
+#' @param cmt The compartment to filter for as numeric.
+#' @param cfb Y value is change from baseline, defaults to FALSE.
+#' @param point_size the point size as numeric.
+#' @param summary_function The summary function used for the definition of the
+#'   baseline value, in case cfb = TRUE, see [add_cfb()].
+#' @param alpha The alpha value for the points as numeric.
+#' @param title The plot title
+#' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
 #' @return A ggplot2 plot object.
 #' @export
 #' @keywords internal
 #' @examples
-#' nif_mean_plot(examplinib_sad_nif)
+#' nif_mean_plot(examplinib_sad_nif, log = TRUE)
 #' nif_mean_plot(examplinib_fe_nif, group = "FASTED")
-#' nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 24)
-#' nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 12, group = "SEX")
-nif_mean_plot <- function(x,
-                          points = FALSE, lines = TRUE, group = "ANALYTE",
-                          dose = NULL, analyte = NULL, min_x = NULL,
-                          max_x = NULL, log = FALSE, point_size = 2) {
-  if(is.null(max_x)) {
-    max_x <- max_observation_time(x)}
-  if(is.null(min_x)) {
-    min_x = 0}
-
-  temp <- x %>%
+#' nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 24, log = TRUE)
+#' nif_mean_plot(examplinib_poc_nif, max_x = 12, group = "SEX")
+nif_mean_plot <- function(obj,
+                          analyte = NULL, cmt = NULL, dose = NULL,
+                          group = "ANALYTE", tad = FALSE, cfb = FALSE,
+                          summary_function = median, points = FALSE,
+                          point_size = 2, alpha = 1, lines = TRUE,
+                          log = FALSE, min_x = NULL, max_x = NULL,
+                          nominal_time = FALSE, title = ""){
+  temp <- obj %>%
+    verify(has_all_names("NTIME", "DOSE", "DV")) %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
     as.data.frame() %>%
-    verify(has_all_names("NTIME", "DOSE", "DV")) %>%
     {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
-
+    as.data.frame() %>%
     filter(NTIME > 0) %>%
+    mutate(TIME = NTIME) %>%
     filter(EVID == 0) %>%
-    dplyr::filter(!is.na(DOSE)) %>%
-    dplyr::group_by(NTIME, .data[[group]], DOSE) %>%
-    dplyr::summarize(
-      mean = mean(DV, na.rm = TRUE), sd = sd(DV, na.rm = TRUE),
-      n = n(), .groups = "drop"
-    ) %>%
-    mutate(max_y = mean + sd)
+    dplyr::filter(!is.na(DOSE))
+
+  if(is.null(max_x)) {
+    max_x <- max_observation_time(temp)}
+  if(is.null(min_x)) {
+    min_x = 0}
 
   temp %>%
+    mutate(GROUP = as.factor(.data[[group]])) %>%
+    mutate(COLOR = as.factor(.data[[group]])) %>%
+    reframe(mean = mean(DV, na.rm = TRUE),
+            sd = sd(DV, na.rm = TRUE),
+            n = n(),
+            DOSE = DOSE,
+            ANALYTE = ANALYTE,
+            GROUP = GROUP,
+            COLOR = COLOR,
+            .by = c(TIME, GROUP)) %>%
+    mutate(max_y = mean + sd) %>%
     ggplot2::ggplot(ggplot2::aes(
-      x = NTIME, y = mean,
-      group = as.factor(.data[[group]]),
-      color = as.factor(.data[[group]])
+      # x = NTIME,
+      x = TIME,
+      y = mean,
+      group = GROUP,
+      color = COLOR
     )) +
     {if (lines) geom_line(na.rm = TRUE)} +
-    {if (points) geom_point(na.rm = TRUE, size = point_size)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
+    {if (log == TRUE) scale_y_log10()} +
     xlim(min_x, max_x) +
     ggplot2::geom_ribbon(
-      aes(
-        ymin = mean - sd, ymax = mean + sd,
-        fill = as.factor(.data[[group]])
-      ),
-      alpha = 0.3, color = NA, show.legend = FALSE
-    ) +
+      aes(ymin = mean - sd,
+          ymax = mean + sd,
+          # fill = as.factor(.data[[group]])),
+          fill = as.factor(GROUP)),
+      alpha = 0.3,
+      color = NA,
+      show.legend = FALSE) +
     {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+    labs(x = "NTIME",
+         color = group,
+         title = title,
+         caption = "Data shown are mean and SD") +
+    # ylim(0, max(temp$max_y, na.rm = TRUE)) +
     ggplot2::theme_bw() +
-    # ggplot2::labs(caption = "Data shown are mean \u00B1 SD") +
-    ggplot2::labs(caption = "Data shown are mean and SD") +
-    labs(color = group) +
-    ylim(0, max(temp$max_y, na.rm = TRUE)) +
     ggplot2::theme(legend.position = "bottom")
 }
 
@@ -306,8 +328,6 @@ nif_mean_plot <- function(x,
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
-#' @param nominal_time Boolean to indicate whether the x-axis should be NTIME
-#'   rather than TIME.
 #' @param tad Boolean to select whether time after dose (TAD) rather than TIME
 #'   should be plotted.
 #' @param analyte The analyte as character. If NULL (default), all analytes will
@@ -316,59 +336,50 @@ nif_mean_plot <- function(x,
 #' @param min_x The minimal value for the x scale as numeric.
 #' @param max_x The maximal value for the x scale as numeric.
 #' @param log Boolean to define whether y axis is plotted on the log scale.
+#' @param cmt The compartment to filter for as numeric.
+#' @param cfb Y value is change from baseline, defaults to FALSE.
 #' @param point_size the point size as numeric.
+#' @param summary_function The summary function used for the definition of the
+#'   baseline value, in case cfb = TRUE, see [add_cfb()].
+#' @param alpha The alpha value for the points as numeric.
+#' @param title The plot title
+#' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
 #' @return A ggplot2 plot object.
 #' @import assertr
+#' @import dplyr
 #' @export
 #' @keywords internal
 #' @examples
 #' nif_spaghetti_plot(examplinib_fe_nif)
+#' nif_spaghetti_plot(examplinib_fe_nif, nominal_time =T, group = "FASTED")
 #' nif_spaghetti_plot(examplinib_sad_nif)
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = T,
+#'   group = "SEX", points = T, lines = F)
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
-#'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
+#'   dose = 500, log = F, points = TRUE, lines = FALSE)
 #' nif_spaghetti_plot(examplinib_sad_min_nif)
-#' nif_spaghetti_plot(examplinib_poc_min_nif)
+#' nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
 nif_spaghetti_plot <- function(obj,
-                               points = FALSE, lines = TRUE, group = "ANALYTE",
-                               nominal_time = FALSE, tad = FALSE, dose = NULL,
-                               analyte = NULL, min_x = NULL, max_x = NULL,
-                               log = FALSE, point_size = 2) {
-
-  # if (!is.null(dose)) {
-  #   obj <- obj %>%
-  #     dplyr::filter(DOSE %in% dose)}
-  #
-  if(is.null(max_x)) {
-    max_x <- max_observation_time(obj)}
-
-  if(is.null(min_x)) {
-    min_x = 0
-  }
-
-  #
-  # x <- obj %>%
-  #   index_dosing_interval() %>%
-  #   as.data.frame() %>%
-  #   verify(has_all_names("ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE")) %>%
-  #   dplyr::filter(!is.na(DOSE)) %>%
-  #   filter(EVID==1 | !is.na(DV))
-  #
-  # if (!is.null(analyte)) {
-  #   x <- x %>% dplyr::filter(ANALYTE == analyte)
-  # }
-
+                               analyte = NULL, cmt = NULL, dose = NULL,
+                               group = "ANALYTE", tad = FALSE, cfb = FALSE,
+                               summary_function = median, points = FALSE,
+                               point_size = 2, alpha = 1, lines = TRUE,
+                               log = FALSE, min_x = NULL, max_x = NULL,
+                               nominal_time = FALSE, title = "") {
   x <- obj %>%
+    verify(has_all_names(
+      "ID", "TIME", "AMT", "DV", "EVID")) %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
+    add_cfb(summary_function = summary_function) %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
-    verify(has_all_names(
-      "ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
-    # {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
+    {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
     filter(!is.na(DV))
 
   if (tad == TRUE) {
@@ -381,7 +392,6 @@ nif_spaghetti_plot <- function(obj,
       mutate(COLOR = interaction(as.factor(ANALYTE), as.factor(DI)))
     x_label <- "TAD (h)"
   } else {
-
     # create mock administrations for all analytes, including metabolites
     # to avoid connecting plot lines across administrations
     mock_admin_for_metabolites <- x %>%
@@ -389,11 +399,9 @@ nif_spaghetti_plot <- function(obj,
       filter(EVID==1) %>%
       crossing(ANALYTE1=analytes(x)) %>%
       mutate(ANALYTE=ANALYTE1) %>%
-      select(-ANALYTE1) %>%
-      filter(TIME <= max_x)
+      select(-ANALYTE1)
 
     x <- x %>%
-      filter(TIME <= max_x) %>%
       filter(EVID == 0) %>%
       filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
@@ -403,157 +411,42 @@ nif_spaghetti_plot <- function(obj,
     x_label <- "TIME (h)"
   }
 
-  if (nominal_time) {
+  if(isTRUE(nominal_time)){
     if(!"NTIME" %in% names(x)) {
-      stop("NTIME not included in NIF data set.")
+      stop("NTIME not in NIF object!")
     } else {
-      p <- x %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = NTIME,
-          y = DV,
-          group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
-          color = as.factor(.data[[group]])
-        ))
+      x <- x %>%
+        mutate(TIME = NTIME) %>%
+        mutate(GROUP = interaction(USUBJID, ANALYTE, DI,
+                                   as.factor(.data[[group]]))) %>%
+        mutate(COLOR = as.factor(.data[[group]]))
     }
-  } else {
-    p <- x %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = TIME,
-        y = DV,
-        group = GROUP,
-        color = COLOR
-      ))
   }
 
-  p +
+  if(is.null(min_x)) {
+    min_x = 0}
+
+  if(is.null(max_x)) {
+    max_x <- max_observation_time(x)}
+
+  x %>%
+    filter(TIME <= max_x) %>%
+    ggplot2::ggplot(ggplot2::aes(
+      x = TIME,
+      y = DV,
+      group = GROUP,
+      color = COLOR
+    )) +
     {if (lines) geom_line(na.rm = TRUE)} +
-    {if (points) geom_point(na.rm = TRUE, size = point_size)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
     {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     {if (log == TRUE) scale_y_log10()} +
     xlim(min_x, max_x) +
-    labs(color = group) +
+    # labs(color = group) +
+    labs(x = x_label, title = title, color = group) +
     ggplot2::theme_bw() +
-    labs(x = x_label) +
     ggplot2::theme(legend.position = "bottom")
 }
-
-
-#' Spaghetti plot over a selected covariate
-#'
-#' @param obj The NIF object.
-#' @param points Boolean to indicate whether points should be drawn.
-#' @param lines Boolean to indicate whether lines should be drawn.
-#' @param group The grouping covariate, defaults to 'ANALYTE'.
-#' @param nominal_time Boolean to indicate whether the x-axis should be NTIME
-#'   rather than TIME.
-#' @param tad Boolean to select whether time after dose (TAD) rather than TIME
-#'   should be plotted.
-#' @param analyte The analyte as character. If NULL (default), all analytes will
-#'   be plotted.
-#' @param dose The dose(s) to filter for as numeric.
-#' @param min_x The minimal value for the x scale as numeric.
-#' @param max_x The maximal value for the x scale as numeric.
-#' @param log Boolean to define whether y axis is plotted on the log scale.
-#' @param point_size the point size as numeric.
-#' @return A ggplot2 plot object.
-#' @import assertr
-#' @export
-#' @keywords internal
-#' @examples
-#' nif_spaghetti_plot(examplinib_fe_nif)
-#' nif_spaghetti_plot(examplinib_sad_nif)
-#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
-#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
-#'   dose = 500, log = TRUE, points = TRUE, lines = FALSE)
-nif_spaghetti_plot1 <- function(obj,
-                               points = FALSE, lines = TRUE, group = "ANALYTE",
-                               nominal_time = FALSE, tad = FALSE, dose = NULL,
-                               analyte = NULL, min_x = NULL, max_x = NULL,
-                               log = FALSE, point_size = 2) {
-
-  # if (!is.null(dose)) {
-  #   obj <- obj %>%
-  #     dplyr::filter(DOSE %in% dose)}
-
-  # if(is.null(max_x)) {
-  #   max_x <- max_observation_time(obj)}
-
-  # if(is.null(min_x)) {
-  #   min_x = 0
-  # }
-
-  x <- obj %>%
-    # index_dosing_interval() %>%
-    as.data.frame() %>%
-    # verify(has_all_names("ID", "TIME", "NTIME", "AMT", "DV", "ANALYTE")) %>%
-    # dplyr::filter(!is.na(DOSE)) %>%
-    filter(EVID==1 | !is.na(DV))
-
-  if (!is.null(analyte)) {
-    x <- x %>% dplyr::filter(ANALYTE == analyte)
-  }
-
-  if (tad == TRUE) {
-    x <- x %>%
-      verify(has_all_names("TAD")) %>%
-      filter(EVID == 0) %>%
-      mutate(TIME = TAD) %>%
-      mutate(GROUP = interaction(
-        as.factor(ID), as.factor(ANALYTE), as.factor(DI))) %>%
-      mutate(COLOR = interaction(as.factor(ANALYTE), as.factor(DI)))
-    x_label <- "TAD (h)"
-  } else {
-
-    # create mock administrations for all analytes, including metabolites
-    # to avoid connecting plot lines across administrations
-    mock_admin_for_metabolites <- x %>%
-      as.data.frame() %>%
-      filter(EVID==1) %>%
-      crossing(ANALYTE1=analytes(x)) %>%
-      mutate(ANALYTE=ANALYTE1) %>%
-      select(-ANALYTE1) %>%
-      filter(TIME <= max_x)
-
-    x <- x %>%
-      filter(TIME <= max_x) %>%
-      filter(EVID == 0) %>%
-      rbind(mock_admin_for_metabolites) %>%
-      mutate(GROUP = interaction(
-        as.factor(ID), as.factor(.data[[group]]))) %>%
-      mutate(COLOR = as.factor(.data[[group]]))
-    x_label <- "TIME (h)"
-  }
-
-  if (nominal_time) {
-    p <- x %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = NTIME,
-        y = DV,
-        group = interaction(USUBJID, ANALYTE, as.factor(.data[[group]])),
-        color = as.factor(.data[[group]])
-      ))
-  } else {
-    p <- x %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = TIME,
-        y = DV,
-        group = GROUP,
-        color = COLOR
-      ))
-  }
-
-  p +
-    {if (lines) geom_line(na.rm = TRUE)} +
-    {if (points) geom_point(na.rm = TRUE, size = point_size)} +
-    {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
-    {if (log == TRUE) scale_y_log10()} +
-    xlim(min_x, max_x) +
-    labs(color = group) +
-    ggplot2::theme_bw() +
-    labs(x = x_label) +
-    ggplot2::theme(legend.position = "bottom")
-}
-
 
 
 #' Plot NIF object
@@ -581,8 +474,7 @@ nif_spaghetti_plot1 <- function(obj,
 #' @param administrations Boolean value to indicate whether vertical lines
 #'   marking the administration times should be plotted. Has no function if
 #'   mean=F.
-#' @param nominal_time Boolean to indicate whether NTIME rather than TIME should
-#'   be plotted on the x-axis.
+#' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
 #' @param title The plot title as string.
 #' @param ... Further arguments.
 #' @param min_x Minimum x (time) scale value.
@@ -907,7 +799,8 @@ plot.summary_nif <- function(x, ...) {
   nif <- x$nif
   out <- list()
 
-  for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI", "BL_CRCL")) {
+  for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI",
+              str_subset(names(nif.001), "BL_.*"))) {
     if (i %in% colnames(nif)) {
       out[[i]] <- covariate_hist(nif, i)
     }
@@ -917,10 +810,15 @@ plot.summary_nif <- function(x, ...) {
   out[["WT_RACE"]] <- wt_by_race(nif)
 
   for (i in x$analytes) {
-    out[[i]] <- plot(nif,
-      analyte = i, y_scale = "log", points = TRUE, line = FALSE,
-      alpha = 0.3, title = paste(i, "overview by dose"),
-      max_x = max_observation_time(x$nif, i)
+    # out[[i]] <- plot(nif,
+    #   analyte = i, y_scale = "log", points = TRUE, line = FALSE,
+    #   alpha = 0.3, title = paste(i, "overview by dose"),
+    #   max_x = max_observation_time(x$nif, i)
+    # )
+    out[[i]] <- nif_spaghetti_plot(nif,
+                     analyte = i, log = TRUE, points = TRUE, line = FALSE,
+                     alpha = 0.3, title = paste(i, "overview by dose"),
+                     max_x = max_observation_time(x$nif, i)
     )
   }
   return(out)

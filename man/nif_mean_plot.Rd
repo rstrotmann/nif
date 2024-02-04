@@ -5,39 +5,62 @@
 \title{Mean plot over a selected covariate}
 \usage{
 nif_mean_plot(
-  x,
-  points = FALSE,
-  lines = TRUE,
-  group = "ANALYTE",
-  dose = NULL,
+  obj,
   analyte = NULL,
+  cmt = NULL,
+  dose = NULL,
+  group = "ANALYTE",
+  tad = FALSE,
+  cfb = FALSE,
+  summary_function = median,
+  points = FALSE,
+  point_size = 2,
+  alpha = 1,
+  lines = TRUE,
+  log = FALSE,
   min_x = NULL,
   max_x = NULL,
-  log = FALSE,
-  point_size = 2
+  nominal_time = FALSE,
+  title = ""
 )
 }
 \arguments{
-\item{x}{The NIF object.}
-
-\item{points}{Boolean to indicate whether points should be drawn.}
-
-\item{lines}{Boolean to indicate whether lines should be drawn.}
-
-\item{group}{The grouping covariate, defaults to 'ANALYTE'.}
-
-\item{dose}{The dose(s) to filter for as numeric.}
+\item{obj}{The NIF object.}
 
 \item{analyte}{The analyte as character. If NULL (default), all analytes will
 be plotted.}
+
+\item{cmt}{The compartment to filter for as numeric.}
+
+\item{dose}{The dose(s) to filter for as numeric.}
+
+\item{group}{The grouping covariate, defaults to 'ANALYTE'.}
+
+\item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
+should be plotted.}
+
+\item{cfb}{Y value is change from baseline, defaults to FALSE.}
+
+\item{summary_function}{The summary function used for the definition of the
+baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
+
+\item{points}{Boolean to indicate whether points should be drawn.}
+
+\item{point_size}{the point size as numeric.}
+
+\item{alpha}{The alpha value for the points as numeric.}
+
+\item{lines}{Boolean to indicate whether lines should be drawn.}
+
+\item{log}{Boolean to define whether y axis is plotted on the log scale.}
 
 \item{min_x}{The minimal value for the x scale as numeric.}
 
 \item{max_x}{The maximal value for the x scale as numeric.}
 
-\item{log}{Logarithmic y scale as logical.}
+\item{nominal_time}{Plot NTIME rather than TIME. Defaults to FALSE.}
 
-\item{point_size}{The point size as numeric, defaults to 2.}
+\item{title}{The plot title}
 }
 \value{
 A ggplot2 plot object.

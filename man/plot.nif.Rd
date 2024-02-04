@@ -66,8 +66,7 @@ been defined by 'analyte'.}
 marking the administration times should be plotted. Has no function if
 mean=F.}
 
-\item{nominal_time}{Boolean to indicate whether NTIME rather than TIME should
-be plotted on the x-axis.}
+\item{nominal_time}{Plot NTIME rather than TIME. Defaults to FALSE.}
 
 \item{tad}{Boolean to select wheter time after dose (TAD) rather than TIME
 should be plotted.}
