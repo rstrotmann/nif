@@ -265,7 +265,7 @@ make_sd_ex <- function(dm, admindays = c(1, 14), drug = "RS2023", dose = 500) {
 #' @return EXSTDTC and EXENDTC as data frame.
 #' @keywords internal
 miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
-                        missed_prob = 0.15, red_prob = 0.2) {
+                        missed_prob = 0.15, red_prob = 0.3) {
   # create missed administration days
   dose_reduction <- red_prob != 0
   treatment_duration <- as.numeric(end_dtc - start_dtc) + 1
@@ -318,7 +318,9 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
 #' @param dose The dose.
 #' @param treatment_duration The treatment duration in days.
 #' @param missed_prob Probability to miss doses.
+#' @param red_prob The dose reduction probability.
 #' @param missed_doses Switch whether to include randomly missed doses as boolean.
+#'
 #' @return The EX domain as data frame.
 #' @keywords internal
 make_md_ex <- function(dm,
@@ -326,7 +328,8 @@ make_md_ex <- function(dm,
                        dose = 500,
                        treatment_duration = 50,
                        missed_prob = 0.15,
-                       missed_doses = T) {
+                       missed_doses = T,
+                       red_prob = 0.3){
   ex <- dm %>%
     filter(ACTARMCD != "SCRNFAIL") %>%
     select(STUDYID, USUBJID, RFSTDTC) %>%
@@ -345,7 +348,7 @@ make_md_ex <- function(dm,
   if (missed_doses == TRUE) {
     ex <- ex %>%
       group_by(DOMAIN, STUDYID, USUBJID) %>%
-      expand(miss_admins(EXSTDTC, EXENDTC)) %>%
+      expand(miss_admins(EXSTDTC, EXENDTC, red_prob = red_prob)) %>%
       ungroup() %>%
       as.data.frame()
   }
@@ -353,7 +356,7 @@ make_md_ex <- function(dm,
   ex <- ex %>%
     mutate(
       EXTRT = drug,
-      EXDOSE = dose,
+      EXDOSE = DOSE,
       EPOCH = "TREATMENT",
       EXROUTE = "ORAL",
       EXDOSFRM = "TABLET"
@@ -682,7 +685,9 @@ synthesize_sdtm_sad_study <- function() {
 #' @param nsubs The number of subjects.
 #' @param nsites The number of clinical sites.
 #' @param studyid The study identifyer.
+#' @param red_prob The dose reduction probability.
 #' @param duration The study duration in days.
+#'
 #' @return A stdm object.
 #' @keywords internal
 synthesize_sdtm_poc_study <- function(
@@ -691,7 +696,8 @@ synthesize_sdtm_poc_study <- function(
     nrich = 12,
     nsubs = 80,
     nsites = 8,
-    duration = 100) {
+    duration = 100,
+    red_prob = 0.3) {
   rich_sampling_scheme <- data.frame(
     NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
     PCTPT = c(
@@ -722,7 +728,7 @@ synthesize_sdtm_poc_study <- function(
   vs <- make_vs(dm)
   lb <- make_lb(dm)
   ex <- make_md_ex(dm, drug = "RS2023", dose = 500, missed_doses = T,
-                   treatment_duration = duration)
+                   treatment_duration = duration, red_prob = red_prob)
 
   dm <- dm %>%
     add_RFENDTC(ex)

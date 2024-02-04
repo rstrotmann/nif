@@ -4,50 +4,24 @@
 \alias{plot.nif}
 \title{Plot NIF object}
 \usage{
-\method{plot}{nif}(
-  x,
-  y_scale = "lin",
-  log = FALSE,
-  min_x = NULL,
-  max_x = NULL,
-  analyte = NULL,
-  cmt = NULL,
-  mean = FALSE,
-  dose = NULL,
-  points = FALSE,
-  id = NULL,
-  usubjid = NULL,
-  group = NULL,
-  administrations = FALSE,
-  nominal_time = FALSE,
-  tad = FALSE,
-  lines = TRUE,
-  alpha = 1,
-  title = NULL,
-  ...
-)
+\method{plot}{nif}(x, mean = FALSE, ...)
 }
 \arguments{
 \item{x}{The NIF object to be plotted.}
-
-\item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
-
-\item{log}{Boolean to select whether the y-scale is logarithmic. Alternative}
-
-\item{min_x}{Minimum x (time) scale value.}
-
-\item{max_x}{Maximal x (time) scale value.}
-
-\item{analyte}{The analyte to be plotted If this argument is not supplied
-(or set to NULL), all analytes are shown.}
-
-\item{cmt}{The compartment to be plotted as numeric.
-\code{y_scale="log"}.}
 
 \item{mean}{Boolean value to indicate whether the mean value by dose and
 analyte is to be plotted. In that case, the nominal time (NTIME) is shown
 on the x axis. 'mean=T' will cast an error if multiple analytes are in the
 data set of have been defined with 'analyte'.}
+
+\item{...}{Further arguments.}
+
+\item{y_scale}{Type of y-axis scale. Can be 'log' or 'lin'. Default is "lin".}
+
+\item{max_x}{Maximal x (time) scale value.}
+
+\item{analyte}{The analyte to be plotted If this argument is not supplied
+(or set to NULL), all analytes are shown.}
 
 \item{dose}{The doses to be plotted. Can be a scalar value or a numeric
 vector or NULL to plot all doses.}
@@ -68,16 +42,21 @@ mean=F.}
 
 \item{nominal_time}{Plot NTIME rather than TIME. Defaults to FALSE.}
 
-\item{tad}{Boolean to select wheter time after dose (TAD) rather than TIME
-should be plotted.}
+\item{title}{The plot title as string.}
+
+\item{min_x}{Minimum x (time) scale value.}
 
 \item{lines}{Boolean to define whether lines are to be drawn.}
 
 \item{alpha}{Numerical value between 0 and 1, passed on as alpha to ggplot.}
 
-\item{title}{The plot title as string.}
+\item{tad}{Boolean to select wheter time after dose (TAD) rather than TIME
+should be plotted.}
 
-\item{...}{Further arguments.}
+\item{log}{Boolean to select whether the y-scale is logarithmic. Alternative}
+
+\item{cmt}{The compartment to be plotted as numeric.
+\code{y_scale="log"}.}
 }
 \value{
 A ggplot2 object.
@@ -90,7 +69,7 @@ grouping variable is provided, \code{DOSE} will be used.
 plot(examplinib_fe_nif)
 plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
-plot(examplinib_fe_nif, max_x = 24, point = TRUE)
+plot(examplinib_fe_nif, max_x = 24, points = TRUE)
 plot(examplinib_fe_nif,
   analyte = "RS2023", group = "FASTED",
   nominal_time = TRUE, points = TRUE

@@ -10,7 +10,8 @@ synthesize_sdtm_poc_study(
   nrich = 12,
   nsubs = 80,
   nsites = 8,
-  duration = 100
+  duration = 100,
+  red_prob = 0.3
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ synthesize_sdtm_poc_study(
 \item{nsites}{The number of clinical sites.}
 
 \item{duration}{The study duration in days.}
+
+\item{red_prob}{The dose reduction probability.}
 }
 \value{
 A stdm object.

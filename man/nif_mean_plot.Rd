@@ -36,8 +36,7 @@ be plotted.}
 
 \item{group}{The grouping covariate, defaults to 'ANALYTE'.}
 
-\item{tad}{Boolean to select whether time after dose (TAD) rather than TIME
-should be plotted.}
+\item{tad}{Time after dose. Not used, only for compatibility.}
 
 \item{cfb}{Y value is change from baseline, defaults to FALSE.}
 
@@ -58,9 +57,10 @@ baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
 
 \item{max_x}{The maximal value for the x scale as numeric.}
 
-\item{nominal_time}{Plot NTIME rather than TIME. Defaults to FALSE.}
+\item{nominal_time}{Nominal time. Always used, this switch only for
+compatibility.}
 
-\item{title}{The plot title}
+\item{title}{The plot title.}
 }
 \value{
 A ggplot2 plot object.
@@ -70,8 +70,11 @@ The averaging over subjects expects the \code{NTIME} field be in the data set.
 }
 \examples{
 nif_mean_plot(examplinib_sad_nif)
-nif_mean_plot(examplinib_fe_nif, group = "FASTED")
-nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 24)
-nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 12, group = "SEX")
+nif_mean_plot(examplinib_sad_nif, log = TRUE)
+nif_mean_plot(examplinib_fe_nif, group = "FASTED", max_x = 12, points = TRUE)
+nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 24, log = TRUE)
+nif_mean_plot(examplinib_poc_nif, max_x = 12, group = "SEX")
+nif_mean_plot(examplinib_poc_nif, max_x = 12, group = "SEX",
+  analyte = "RS2023")
 }
 \keyword{internal}

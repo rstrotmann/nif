@@ -10,7 +10,8 @@ make_md_ex(
   dose = 500,
   treatment_duration = 50,
   missed_prob = 0.15,
-  missed_doses = T
+  missed_doses = T,
+  red_prob = 0.3
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ make_md_ex(
 \item{missed_prob}{Probability to miss doses.}
 
 \item{missed_doses}{Switch whether to include randomly missed doses as boolean.}
+
+\item{red_prob}{The dose reduction probability.}
 }
 \value{
 The EX domain as data frame.

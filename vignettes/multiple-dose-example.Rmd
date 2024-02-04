@@ -238,9 +238,9 @@ For the sampling on Day 1 only:
 temp <- temp %>% 
     filter(TIME<=24)
 
-temp %>% plot(analyte="RS2023", points=T, administrations=T, max_x=15)
+temp %>% plot(analyte="RS2023", points=T, max_x=15)
 
-temp %>% plot(analyte="RS2023", mean=T, y_scale="log")
+temp %>% plot(analyte="RS2023", mean=T, log = TRUE)
 
 nif_poc %>% 
   filter(ID %in% (nif_poc %>%
@@ -259,7 +259,7 @@ The above code showcases some options for the `plot()` function:
   individual curves is `nominal_time=FALSE`, i.e., the actual time is used. Note
   that for mean profiles as shown in plot 2, nominal time is used automatically
   for the averaging.
-* The option `y_scale="log"` can be used to plot the data on a log concentration
+* The option `log == TRUE` can be used to plot the data on a log concentration
   scale.
 
 

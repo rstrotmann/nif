@@ -230,7 +230,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
-#' @param tad Time after dose. Not used.
+#' @param tad Time after dose. Not used, only for compatibility.
 #' @param analyte The analyte as character. If NULL (default), all analytes will
 #'   be plotted.
 #' @param dose The dose(s) to filter for as numeric.
@@ -257,8 +257,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' nif_mean_plot(examplinib_poc_nif, max_x = 12, group = "SEX")
 #' nif_mean_plot(examplinib_poc_nif, max_x = 12, group = "SEX",
 #'   analyte = "RS2023")
-#' nif_mean_plot(mutate(examplinib_poc_nif, YOUNG = AGE < 50),
-#'   group = c("SEX", "YOUNG"), analyte = "RS2023")
 nif_mean_plot <- function(obj,
                           analyte = NULL, cmt = NULL, dose = NULL,
                           group = "ANALYTE", tad = FALSE, cfb = FALSE,
@@ -370,15 +368,18 @@ nif_mean_plot <- function(obj,
 #' @keywords internal
 #' @examples
 #' nif_spaghetti_plot(examplinib_fe_nif)
-#' nif_spaghetti_plot(examplinib_fe_nif, nominal_time =T, group = "FASTED")
+#' nif_spaghetti_plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
 #' nif_spaghetti_plot(examplinib_sad_nif)
+#' nif_spaghetti_plot(examplinib_sad_nif, cfb = TRUE)
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
-#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = T,
-#'   group = "SEX", points = T, lines = F)
+#' nif_spaghetti_plot(examplinib_poc_nif)
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = TRUE,
+#'   group = "SEX", points = TRUE, lines = FALSE)
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
-#'   dose = 500, log = F, points = TRUE, lines = FALSE)
+#'   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
 #' nif_spaghetti_plot(examplinib_sad_min_nif)
 #' nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
+#' nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2, tad = TRUE)
 nif_spaghetti_plot <- function(obj,
                                analyte = NULL, cmt = NULL, dose = NULL,
                                group = "ANALYTE", tad = FALSE, cfb = FALSE,
@@ -392,6 +393,7 @@ nif_spaghetti_plot <- function(obj,
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
+    add_tad() %>%
     add_cfb(summary_function = summary_function) %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
@@ -401,15 +403,30 @@ nif_spaghetti_plot <- function(obj,
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
     filter(!is.na(DV))
 
+  n_analytes <- length(unique(x$ANALYTE))
+
+  if(n_analytes == 1) {
+    y_label <- unique(x$ANALYTE)
+    if(cfb == TRUE) {
+      y_label <- paste(y_label, "change from baseline")
+    }
+    group <- unique(group)
+  } else {
+    if(cfb == TRUE) {
+      y_label <- "change from baseline"
+    } else {
+      y_label <- "DV"
+    }
+    group <- unique(c(group, "ANALYTE"))
+  }
+
   if (tad == TRUE) {
     x <- x %>%
-      verify(has_all_names("TAD")) %>%
       filter(EVID == 0) %>%
       mutate(TIME = TAD) %>%
-      mutate(GROUP = interaction(
-        as.factor(ID), as.factor(ANALYTE), as.factor(DI))) %>%
-      mutate(COLOR = interaction(as.factor(ANALYTE), as.factor(DI)))
-    x_label <- "TAD (h)"
+      unite(GROUP, c(group, "DI", "ID"), sep = " | ", remove = FALSE) %>%
+      unite(COLOR, c(group, "DI"), sep = " | ", remove = FALSE)
+    x_label <- "TAD"
   } else {
     # create mock administrations for all analytes, including metabolites
     # to avoid connecting plot lines across administrations
@@ -424,10 +441,9 @@ nif_spaghetti_plot <- function(obj,
       filter(EVID == 0) %>%
       filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
-      mutate(GROUP = interaction(
-        as.factor(ID), as.factor(.data[[group]]))) %>%
-      mutate(COLOR = as.factor(.data[[group]]))
-    x_label <- "TIME (h)"
+      unite(GROUP, c(group, "ID"), sep = " | ", remove = FALSE) %>%
+      unite(COLOR, group, sep = " | ", remove = FALSE)
+    x_label <- "TIME"
   }
 
   if(isTRUE(nominal_time)){
@@ -435,10 +451,8 @@ nif_spaghetti_plot <- function(obj,
       stop("NTIME not in NIF object!")
     } else {
       x <- x %>%
-        mutate(TIME = NTIME) %>%
-        mutate(GROUP = interaction(USUBJID, ANALYTE, DI,
-                                   as.factor(.data[[group]]))) %>%
-        mutate(COLOR = as.factor(.data[[group]]))
+        mutate(TIME = NTIME)
+      x_label <- "NTIME"
     }
   }
 
@@ -461,10 +475,11 @@ nif_spaghetti_plot <- function(obj,
     {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     {if (log == TRUE) scale_y_log10()} +
     xlim(min_x, max_x) +
-    # labs(color = group) +
-    labs(x = x_label, title = title, color = group) +
+    labs(x = x_label, y = y_label, title = title, color = group) +
     ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = "bottom")
+    {if(all(group == "ANALYTE") & n_analytes == 1)
+      theme(legend.position = "none") else
+        theme(legend.position = "bottom")}
 }
 
 
@@ -510,7 +525,7 @@ nif_spaghetti_plot <- function(obj,
 #' plot(examplinib_fe_nif)
 #' plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
-#' plot(examplinib_fe_nif, max_x = 24, point = TRUE)
+#' plot(examplinib_fe_nif, max_x = 24, points = TRUE)
 #' plot(examplinib_fe_nif,
 #'   analyte = "RS2023", group = "FASTED",
 #'   nominal_time = TRUE, points = TRUE
@@ -523,96 +538,12 @@ nif_spaghetti_plot <- function(obj,
 #' plot(examplinib_poc_min_nif, dose=500, tad = TRUE, cmt = 2, max_x = 24,
 #'   points = TRUE, lines = FALSE)
 #' @export
-plot.nif <- function(x, y_scale = "lin", log = FALSE, min_x = NULL,
-                     max_x = NULL, analyte = NULL, cmt = NULL, mean = FALSE,
-                     dose = NULL, points = FALSE, id = NULL, usubjid = NULL,
-                     group = NULL, administrations = FALSE,
-                     nominal_time = FALSE, tad = FALSE, lines = TRUE,
-                     alpha = 1, title = NULL, ...) {
-
-x <- x %>%
-  ensure_parent() %>%
-  ensure_analyte() %>%
-  ensure_dose() %>%
-  add_tad() %>%
-  # index_dosing_interval() %>%
-  as.data.frame() %>%
-  verify(has_all_names(
-    "ID", "TIME", "AMT", "DV", "EVID")) %>%
-  # {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
-  # {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
-  {if(!is.null(id)) filter(., .$ID %in% id) else .} %>%
-  {if(!is.null(usubjid)) filter(., .$USUBJID %in% usubjid) else .} %>%
-  {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .}
-
-  # if (!is.null(id)) {
-  #   x <- x %>%
-  #     dplyr::filter(ID %in% id)
-  # }
-
-  # if (!is.null(usubjid)) {
-  #   x <- x %>%
-  #     dplyr::filter(USUBJID %in% usubjid)
-  # }
-
-  # if (!is.null(analyte)) {
-  #   x <- x %>%
-  #     dplyr::filter(ANALYTE == analyte)
-  # }
-
-  # if (!is.null(doses)) {
-  #   x <- x %>%
-  #     dplyr::filter(DOSE %in% doses)
-  # }
-
-  if (!is.null(group)) {
-    cov <- group
-    if (is.null(analyte) || length(analyte) > 1) {
-      stop(paste0(
-        "Plotting multiple analytes in the same graph does not make ",
-        "sense. Consider selecting a (single) analyte!"
-      ))
-    }
+plot.nif <- function(x, mean = FALSE, ...) {
+  if(mean == TRUE) {
+    nif_mean_plot(x, ...)
   } else {
-    cov <- "ANALYTE"
+    nif_spaghetti_plot(x, ...)
   }
-
-  # x <- x %>%
-  #   ensure_analyte() %>%
-  #   ensure_dose()
-
-  if (mean == TRUE) {
-    if (!is.null(group) && is.null(analyte) && length(analytes(x) > 1)) {
-      stop(paste0(
-        "Plotting means over multiple analytes does not make sense! ",
-        "Consider selecting a specific analyte"
-      ))
-    }
-    p <- x %>%
-      # assert_rows("NTIME") %>%
-      nif_mean_plot(points = points, lines = lines, group = cov, min_x = min_x,
-                    max_x = max_x, log = log, dose = dose, analyte = analyte)
-  } else {
-    p <- x %>%
-      nif_spaghetti_plot(
-        points = points, lines = lines, group = cov, tad = tad,
-        nominal_time = nominal_time, dose = dose, analyte = analyte,
-        min_x = min_x, max_x = max_x, log = log)
-  }
-
-  p +
-    # xlim(min_x, max_x) +
-    {if (!is.null(title)) ggtitle(title)} +
-    # {if (y_scale == "log" || log == TRUE) scale_y_log10()} +
-    {if (length(analyte) == 1) labs(y = analyte)} +
-    # {if (tad == FALSE) labs(color = cov)} +
-    labs(color = cov) +
-    {if (tad == FALSE &&
-        x %>%
-          pull(cov) %>%
-          unique() %>%
-          length() < 2) {
-        theme(legend.position = "none")}}
 }
 
 
@@ -819,7 +750,7 @@ plot.summary_nif <- function(x, ...) {
   out <- list()
 
   for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI",
-              str_subset(names(nif.001), "BL_.*"))) {
+              str_subset(names(nif), "BL_.*"))) {
     if (i %in% colnames(nif)) {
       out[[i]] <- covariate_hist(nif, i)
     }
