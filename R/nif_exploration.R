@@ -230,8 +230,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
 #' @param group The grouping covariate, defaults to 'ANALYTE'.
-#' @param tad Boolean to select whether time after dose (TAD) rather than TIME
-#'   should be plotted.
+#' @param tad Time after dose. Not used.
 #' @param analyte The analyte as character. If NULL (default), all analytes will
 #'   be plotted.
 #' @param dose The dose(s) to filter for as numeric.
@@ -244,16 +243,22 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @param summary_function The summary function used for the definition of the
 #'   baseline value, in case cfb = TRUE, see [add_cfb()].
 #' @param alpha The alpha value for the points as numeric.
-#' @param title The plot title
-#' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
+#' @param title The plot title.
+#' @param nominal_time Nominal time. Always used, this switch only for
+#'   compatibility.
 #' @return A ggplot2 plot object.
 #' @export
 #' @keywords internal
 #' @examples
+#' nif_mean_plot(examplinib_sad_nif)
 #' nif_mean_plot(examplinib_sad_nif, log = TRUE)
-#' nif_mean_plot(examplinib_fe_nif, group = "FASTED")
+#' nif_mean_plot(examplinib_fe_nif, group = "FASTED", max_x = 12, points = TRUE)
 #' nif_mean_plot(examplinib_poc_nif, dose = 500, max_x = 24, log = TRUE)
 #' nif_mean_plot(examplinib_poc_nif, max_x = 12, group = "SEX")
+#' nif_mean_plot(examplinib_poc_nif, max_x = 12, group = "SEX",
+#'   analyte = "RS2023")
+#' nif_mean_plot(mutate(examplinib_poc_nif, YOUNG = AGE < 50),
+#'   group = c("SEX", "YOUNG"), analyte = "RS2023")
 nif_mean_plot <- function(obj,
                           analyte = NULL, cmt = NULL, dose = NULL,
                           group = "ANALYTE", tad = FALSE, cfb = FALSE,
@@ -261,43 +266,56 @@ nif_mean_plot <- function(obj,
                           point_size = 2, alpha = 1, lines = TRUE,
                           log = FALSE, min_x = NULL, max_x = NULL,
                           nominal_time = FALSE, title = ""){
+
+
   temp <- obj %>%
     verify(has_all_names("NTIME", "DOSE", "DV")) %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
+    add_cfb(summary_function = summary_function) %>%
     as.data.frame() %>%
     {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
+    {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
+    filter(!is.na(DV)) %>%
     as.data.frame() %>%
     filter(NTIME > 0) %>%
     mutate(TIME = NTIME) %>%
     filter(EVID == 0) %>%
     dplyr::filter(!is.na(DOSE))
 
+
   if(is.null(max_x)) {
     max_x <- max_observation_time(temp)}
   if(is.null(min_x)) {
     min_x = 0}
 
+  n_analytes <- length(unique(temp$ANALYTE))
+
+  if(n_analytes == 1) {
+    y_label <- unique(temp$ANALYTE)
+  } else {
+    y_label <- "mean"
+    group <- unique(c(group, "ANALYTE"))
+  }
+
   temp %>%
-    mutate(GROUP = as.factor(.data[[group]])) %>%
-    mutate(COLOR = as.factor(.data[[group]])) %>%
+    unite(GROUP, group, sep = " | ", remove = FALSE) %>%
     reframe(mean = mean(DV, na.rm = TRUE),
             sd = sd(DV, na.rm = TRUE),
             n = n(),
             DOSE = DOSE,
             ANALYTE = ANALYTE,
             GROUP = GROUP,
-            COLOR = COLOR,
             .by = c(TIME, GROUP)) %>%
     mutate(max_y = mean + sd) %>%
     ggplot2::ggplot(ggplot2::aes(
-      # x = NTIME,
       x = TIME,
       y = mean,
       group = GROUP,
-      color = COLOR
+      color = GROUP
     )) +
     {if (lines) geom_line(na.rm = TRUE)} +
     {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
@@ -306,19 +324,20 @@ nif_mean_plot <- function(obj,
     ggplot2::geom_ribbon(
       aes(ymin = mean - sd,
           ymax = mean + sd,
-          # fill = as.factor(.data[[group]])),
           fill = as.factor(GROUP)),
       alpha = 0.3,
       color = NA,
       show.legend = FALSE) +
     {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     labs(x = "NTIME",
+         y = y_label,
          color = group,
          title = title,
          caption = "Data shown are mean and SD") +
-    # ylim(0, max(temp$max_y, na.rm = TRUE)) +
     ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = "bottom")
+    {if(all(group == "ANALYTE") & n_analytes == 1)
+      theme(legend.position = "none") else
+        theme(legend.position = "bottom")}
 }
 
 
