@@ -500,17 +500,11 @@ nif_spaghetti_plot <- function(obj,
 #' @param dose The doses to be plotted. Can be a scalar value or a numeric
 #'   vector or NULL to plot all doses.
 #' @param points Boolean value to define whether points should be plotted.
-#' @param id Numerical scalar or vector of IDs to be plotted.
-#' @param usubjid Character scalar or vector of USUBJIDs to be plotted.
 #' @param group Character scalar to define a grouping variable. If specified,
 #'   this will cast an error if multiple analytes are in the data set or have
 #'   been defined by 'analyte'.
-#' @param administrations Boolean value to indicate whether vertical lines
-#'   marking the administration times should be plotted. Has no function if
-#'   mean=F.
 #' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
 #' @param title The plot title as string.
-#' @param ... Further arguments.
 #' @param min_x Minimum x (time) scale value.
 #' @param lines Boolean to define whether lines are to be drawn.
 #' @param alpha Numerical value between 0 and 1, passed on as alpha to ggplot.
@@ -518,9 +512,13 @@ nif_spaghetti_plot <- function(obj,
 #'   should be plotted.
 #' @param log Boolean to select whether the y-scale is logarithmic. Alternative
 #' @param cmt The compartment to be plotted as numeric.
-#' `y_scale="log"`.
+#' @param cfb Plot change from baseline.
+#' @param summary_function The summary function for the baseline value.
+#' @param point_size The point size as numeric.
+#'
 #' @return A ggplot2 object.
 #' @seealso [nif_viewer()]
+#' @import lifecycle
 #' @examples
 #' plot(examplinib_fe_nif)
 #' plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
@@ -535,10 +533,13 @@ nif_spaghetti_plot <- function(obj,
 #'   max_x = 24)
 #' plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
 #'   lines = FALSE, tad = TRUE, log =TRUE)
-#' plot(examplinib_poc_min_nif, dose=500, tad = TRUE, cmt = 2, max_x = 24,
-#'   points = TRUE, lines = FALSE)
 #' @export
-plot.nif <- function(x, mean = FALSE, ...) {
+plot.nif <- function(x, mean = FALSE, analyte = NULL, cmt = NULL, dose = NULL,
+                     group = "ANALYTE", tad = FALSE, cfb = FALSE,
+                     summary_function = median, points = FALSE,
+                     point_size = 2, alpha = 1, lines = TRUE,
+                     log = FALSE, min_x = NULL, max_x = NULL,
+                     nominal_time = FALSE, title = "") {
   if(mean == TRUE) {
     nif_mean_plot(x, ...)
   } else {
