@@ -4,14 +4,72 @@
 \alias{plot.nif}
 \title{Plot NIF object}
 \usage{
-\method{plot}{nif}(x, mean = FALSE, ...)
+\method{plot}{nif}(
+  x,
+  mean = FALSE,
+  analyte = NULL,
+  cmt = NULL,
+  dose = NULL,
+  group = "ANALYTE",
+  tad = FALSE,
+  cfb = FALSE,
+  summary_function = median,
+  points = FALSE,
+  point_size = 2,
+  alpha = 1,
+  lines = TRUE,
+  log = FALSE,
+  min_x = NULL,
+  max_x = NULL,
+  nominal_time = FALSE,
+  title = "",
+  y_scale = deprecated(),
+  ...
+)
 }
 \arguments{
-\item{x}{The NIF object to be plotted.}
+\item{x}{A NIF object.}
 
 \item{mean}{Plot the mean instead individual subjects.}
 
-\item{...}{Further parameters}
+\item{analyte}{The analyte as character. If NULL (default), all analytes will
+be plotted.}
+
+\item{cmt}{The compartment to filter for as numeric.}
+
+\item{dose}{The dose(s) to filter for as numeric.}
+
+\item{group}{The grouping covariate, defaults to 'ANALYTE'.}
+
+\item{tad}{Plot time after dose (TAD) rather than TIME.}
+
+\item{cfb}{Plot change from baseline.}
+
+\item{summary_function}{The summary function used for the definition of the
+baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
+
+\item{points}{Plot points.}
+
+\item{point_size}{The point size as numeric.}
+
+\item{alpha}{The alpha value for the points as numeric.}
+
+\item{lines}{plot lines.}
+
+\item{log}{Logarithmic y axis.}
+
+\item{min_x}{The minimal value for the x scale as numeric.}
+
+\item{max_x}{The maximal value for the x scale as numeric.}
+
+\item{nominal_time}{Plot NTIME rather than TIME.}
+
+\item{title}{The plot title.}
+
+\item{y_scale}{Type of y scale, can be "lin" or "log". Deprecated argument,
+use the parameter "log" instead.}
+
+\item{...}{Further plot parameters.}
 }
 \value{
 A ggplot2 object.
@@ -22,6 +80,7 @@ grouping variable is provided, \code{DOSE} will be used.
 }
 \examples{
 plot(examplinib_fe_nif)
+plot(examplinib_fe_nif, log = TRUE)
 plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
 plot(examplinib_fe_nif, max_x = 24, points = TRUE)

@@ -9,12 +9,13 @@ nif_plot_id(
   id,
   analyte = NULL,
   cmt = NULL,
-  y_scale = "lin",
   max_time = NA,
   lines = TRUE,
   point_size = 2,
+  log = FALSE,
   tad = FALSE,
-  imp = NULL
+  imp = NULL,
+  y_scale = "lin"
 )
 }
 \arguments{
@@ -26,20 +27,22 @@ nif_plot_id(
 
 \item{cmt}{The compartment to plot as numeric.}
 
-\item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
-is "lin".}
-
 \item{max_time}{The right limit of the time scale}
 
 \item{lines}{Plot lines as logical.}
 
 \item{point_size}{Point size as numeric.}
 
-\item{tad}{Logivcal value to select whether time after dose (TAD) rather than
+\item{log}{Logarithmic y scale.}
+
+\item{tad}{Logical value to select whether time after dose (TAD) rather than
 TIME should be plotted.}
 
 \item{imp}{The IMP for which administrations are to be indicated by vertical
 lines. Defaults to NULL.}
+
+\item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
+is "lin". This argument is deprecated. Use 'log'.}
 }
 \value{
 A ggplot2 object.
@@ -51,8 +54,9 @@ vertical lines.
 }
 \examples{
 nif_plot_id(examplinib_poc_nif, 1)
-nif_plot_id(examplinib_poc_min_nif, 1)
-#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+nif_plot_id(examplinib_poc_min_nif, 1, y_scale = "log")
+nif_plot_id(examplinib_poc_nif, 1, log = TRUE)
+nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
 nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")

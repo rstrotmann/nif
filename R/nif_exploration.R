@@ -7,25 +7,28 @@
 #' @param obj The NIF object
 #' @param id The subject ID to be plotted
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
-#'   is "lin".
+#'   is "lin". This argument is deprecated. Use 'log'.
 #' @param analyte The analytes to be displayes. Defaults to NULL (all).
 #' @param imp The IMP for which administrations are to be indicated by vertical
 #'   lines. Defaults to NULL.
 #' @param max_time The right limit of the time scale
-#' @param tad Logivcal value to select whether time after dose (TAD) rather than
+#' @param tad Logical value to select whether time after dose (TAD) rather than
 #'   TIME should be plotted.
 #' @param lines Plot lines as logical.
 #' @param cmt The compartment to plot as numeric.
+#' @param log Logarithmic y scale.
 #' @param point_size Point size as numeric.
 #' @return A ggplot2 object.
 #' @import dplyr
 #' @import ggplot2
+#' @import lifecycle
 #' @export
 #' @keywords internal
 #' @examples
 #' nif_plot_id(examplinib_poc_nif, 1)
-#' nif_plot_id(examplinib_poc_min_nif, 1)
-#' #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+#' nif_plot_id(examplinib_poc_min_nif, 1, y_scale = "log")
+#' nif_plot_id(examplinib_poc_nif, 1, log = TRUE)
+#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
@@ -33,9 +36,15 @@
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
 #' nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
 #' nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
-nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
-                        max_time = NA, lines = TRUE, point_size = 2,
-                        tad = FALSE, imp = NULL) {
+nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
+                        max_time = NA, lines = TRUE,
+                        point_size = 2, log = FALSE, tad = FALSE, imp = NULL,
+                        y_scale = "lin") {
+  if (is_present(y_scale)) {
+    lifecycle::deprecate_warn("0.44.1", "nif_plot_id(y_scale)",
+                              "nif_plot_id(log)")
+    if(y_scale == "log") {log = TRUE} else {log = FALSE}
+  }
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
@@ -120,7 +129,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL, y_scale = "lin",
       labs(caption = paste("vertical lines indicate", imp, "administrations"))
   }
 
-  if (y_scale == "log") {
+  if (y_scale == "log" | log == TRUE) {
     p <- p + scale_y_log10()
   } else {
     p <- p + scale_y_continuous(limits = c(0, NA))
@@ -488,12 +497,34 @@ nif_spaghetti_plot <- function(obj,
 #' This function plots a NIF object, grouped by the variable `group`. If no
 #' grouping variable is provided, `DOSE` will be used.
 #'
-#' @param x The NIF object to be plotted.
-#' @param ... Further parameters
+#' @param x A NIF object.
 #' @param mean Plot the mean instead individual subjects.
+#' @param points Plot points.
+#' @param lines plot lines.
+#' @param group The grouping covariate, defaults to 'ANALYTE'.
+#' @param tad Plot time after dose (TAD) rather than TIME.
+#' @param analyte The analyte as character. If NULL (default), all analytes will
+#'   be plotted.
+#' @param dose The dose(s) to filter for as numeric.
+#' @param min_x The minimal value for the x scale as numeric.
+#' @param max_x The maximal value for the x scale as numeric.
+#' @param log Logarithmic y axis.
+#' @param cmt The compartment to filter for as numeric.
+#' @param cfb Plot change from baseline.
+#' @param point_size The point size as numeric.
+#' @param summary_function The summary function used for the definition of the
+#'   baseline value, in case cfb = TRUE, see [add_cfb()].
+#' @param alpha The alpha value for the points as numeric.
+#' @param title The plot title.
+#' @param nominal_time Plot NTIME rather than TIME.
+#' @param y_scale Type of y scale, can be "lin" or "log". Deprecated argument,
+#'   use the parameter "log" instead.
+#' @param ... Further plot parameters.
 #' @return A ggplot2 object.
+#' @import lifecycle
 #' @examples
 #' plot(examplinib_fe_nif)
+#' plot(examplinib_fe_nif, log = TRUE)
 #' plot(examplinib_fe_nif, analyte = "RS2023", points = TRUE)
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED")
 #' plot(examplinib_fe_nif, max_x = 24, points = TRUE)
@@ -507,11 +538,31 @@ nif_spaghetti_plot <- function(obj,
 #' plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
 #'   lines = FALSE, tad = TRUE, log =TRUE)
 #' @export
-plot.nif <- function(x, mean = FALSE, ...) {
+plot.nif <- function(x, mean = FALSE, analyte = NULL, cmt = NULL, dose = NULL,
+                     group = "ANALYTE", tad = FALSE, cfb = FALSE,
+                     summary_function = median, points = FALSE,
+                     point_size = 2, alpha = 1, lines = TRUE,
+                     log = FALSE, min_x = NULL, max_x = NULL,
+                     nominal_time = FALSE, title = "", y_scale = deprecated(),
+                     ...) {
+  if (is_present(y_scale)) {
+    lifecycle::deprecate_warn("0.44.1", "plot.nif(y_scale)",
+                              "plot.nif(log)")
+    if(y_scale == "log") {log = TRUE} else {log = FALSE}
+  }
   if(mean == TRUE) {
-    nif_mean_plot(x, ...)
+    nif_mean_plot(x, analyte = analyte, cmt = cmt, dose = dose, group = group,
+                  tad = tad, cfb = cfb, summary_function = summary_function,
+                  points = points, point_size = point_size, alpha = alpha,
+                  lines = lines, log = log, min_x = min_x, max_x = max_x,
+                  nominal_time = nominal_time, title = title, ...)
   } else {
-    nif_spaghetti_plot(x, ...)
+    nif_spaghetti_plot(x, analyte = analyte, cmt = cmt, dose = dose,
+                       group = group, tad = tad, cfb = cfb,
+                       summary_function = summary_function, points = points,
+                       point_size = point_size, alpha = alpha, lines = lines,
+                       log = log, min_x = min_x, max_x = max_x,
+                       nominal_time = nominal_time, title = title, ...)
   }
 }
 

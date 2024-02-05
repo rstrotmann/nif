@@ -266,3 +266,32 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
       .default = lower > lower[1] & upper < upper[1]
     ))
 }
+
+nca_power_model <- function(nca, parameter) {
+  pp <- nca %>%
+    filter(PPTESTCD %in% parameter)
+
+
+
+  pp %>%
+    ggplot(aes(x = DOSE, y = PPORRES)) +
+    geom_point(size = 2) +
+    facet_wrap(~PPTESTCD) +
+    theme_bw()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
