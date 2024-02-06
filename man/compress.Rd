@@ -11,7 +11,8 @@ compress(nif, fields = NULL, debug = FALSE)
 
 \item{fields}{Fields to be included as character. If 'fields' is NULL
 (default), the fields defined in \code{standard_nif_fields} plus all fields with
-a name that starts with 'BL_' (baseline covariates) are included.}
+a name that starts with 'BL_' (baseline covariates) or 'TV_' (time varying
+covariates) are included.}
 
 \item{debug}{Logic value to indicate whether the debug fields, \code{PCREFID} and
 \code{EXSEQ} should be included in the NIF object.}

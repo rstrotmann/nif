@@ -1202,6 +1202,7 @@ make_nif <- function(
     add_tad() %>%
     index_nif()
 
+  comment(nif) <- paste0("created with nif ", packageVersion("nif"))
   return(nif)
 }
 
@@ -1274,8 +1275,9 @@ compress_nif <- function(nif, ...) {
 #'
 #' @param nif A NIF object
 #' @param fields Fields to be included as character. If 'fields' is NULL
-#' (default), the fields defined in `standard_nif_fields` plus all fields with
-#' a name that starts with 'BL_' (baseline covariates) are included.
+#'   (default), the fields defined in `standard_nif_fields` plus all fields with
+#'   a name that starts with 'BL_' (baseline covariates) or 'TV_' (time varying
+#'   covariates) are included.
 #' @param debug Logic value to indicate whether the debug fields, `PCREFID` and
 #' `EXSEQ` should be included in the NIF object.
 #' @return A NIF object
@@ -1284,7 +1286,8 @@ compress <- function(nif, fields = NULL, debug = FALSE) {
   if (is.null(fields)) {
     fields <- c(
       standard_nif_fields,
-      colnames(nif)[grep("BL_", colnames(nif))])
+      colnames(nif)[grep("BL_", colnames(nif))],
+      colnames(nif)[grep("TV_", colnames(nif))])
   }
   if(debug == TRUE) {
     fields <- c(fields, "EXSEQ", "PCREFID", "EXTRT")
@@ -1292,6 +1295,7 @@ compress <- function(nif, fields = NULL, debug = FALSE) {
   nif %>%
     as.data.frame() %>%
     dplyr::select(any_of(fields)) %>%
+    fill_bl_tv() %>%
     new_nif()
 }
 
@@ -1321,15 +1325,15 @@ clip_nif <- function(nif) {
 }
 
 
-#' Add baseline covariates to a NIF object
+#' Add baseline lab covariate
 #'
+#' @details
 #' Lab parameters not found in LB will be reported in a warning message.
-#'
-#' @param obj NIF dataset.
+#' @param obj A NIF dataset.
 #' @param lb SDTM LB domain as data frame.
-#' @param lbspec The specimen, usually "BLOOD" or "URINE".
-#' @param lbtestcd Lab parameters as encoded by LBTESTCD, as strings.
-#' @param silent Switch to disable message output.
+#' @param lbspec The specimen, e.g., "BLOOD", "SERUM" or "URINE".
+#' @param lbtestcd Lab parameter(s) as encoded by LBTESTCD.
+#' @param silent Disable messages.
 #' @return A NIF dataset.
 #' @import dplyr
 #' @import tidyr
@@ -1365,6 +1369,99 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
     as.data.frame() %>%
     dplyr::left_join(temp, by = "USUBJID") %>%
     new_nif()
+}
+
+
+#' Add time-variant lab covariate
+#'
+#' Add column named 'TV_xxx' with the time-varying values for the respective
+#' lab covariate. Last values are carried forward.
+#' @details
+#' Lab parameters not found in LB will be reported in a warning message.
+#' @inheritParams add_bl_lab
+#' @return A NIF object.
+#' @export
+add_tv_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
+  if(is.null(lbspec)) {
+    lbspec = guess_lbspec(lb)
+  }
+  temp <- lbtestcd %in% unique(lb$LBTESTCD)
+
+  if(!all(temp)) {
+    conditional_message(
+      paste0("The following was not found in lb: ", lbtestcd[!temp]),
+      silent=silent)
+    if(all(temp == FALSE)) {
+      return(obj)
+    }
+  }
+
+  tv_cov <- lb %>%
+    lubrify_dates() %>%
+    filter(!LBSTAT %in% c("NOT DONE")) %>%
+    filter(!is.na(LBSTRESN)) %>%
+    filter(LBSPEC == lbspec, LBTESTCD %in% lbtestcd[temp]) %>%
+    select(USUBJID, DTC = LBDTC, LBTESTCD, LBSTRESN) %>%
+    distinct() %>%
+    pivot_wider(names_from = "LBTESTCD", values_from = "LBSTRESN") %>%
+    rename_with(~ stringr::str_c("TV_", .), .cols = -c(USUBJID, DTC)) %>%
+    mutate(FLAG = TRUE)
+
+  out <- bind_rows(obj, tv_cov) %>%
+    arrange(USUBJID, DTC) %>%
+    fill(starts_with("TV_"), .direction = "down") %>%
+    filter(is.na(FLAG)) %>%
+    select(-FLAG)
+
+  return(out)
+}
+
+
+#' Add time-variant vital sign covariate
+#'
+#' Add column named 'TV_xxx' with the time-varying values for the respective
+#' vital sign covariate. Last values are carried forward.
+#' @inheritParams add_bl_lab
+#' @param vs SDTM VS domain as data frame.
+#' @param vstestcd Vital sign parameter(s) as encoded by VSTESTCD.
+#' @param duplicate_function A function to resolve duplicate entries into a
+#'   single entry, e.g., `mean`, `min`, or `median`. Defaults to `mean`.
+#' @return A NIF object.
+#' @export
+add_tv_vs <- function(obj, vs, vstestcd, duplicate_function = mean,
+                      silent = FALSE) {
+  temp <- vstestcd %in% unique(vs$VSTESTCD)
+
+  if(!all(temp)) {
+    conditional_message(
+      paste0("The following was not found in vs: ", vstestcd[!temp]),
+      silent=silent)
+    if(all(temp == FALSE)) {
+      return(obj)
+    }
+  }
+
+  vs_cov <- vs %>%
+    lubrify_dates() %>%
+    filter(!VSSTAT %in% c("NOT DONE")) %>%
+    filter(!is.na(VSSTRESN)) %>%
+    filter(VSTESTCD %in% vstestcd[temp]) %>%
+    select(USUBJID, DTC = VSDTC, VSTESTCD, VSSTRESN) %>%
+    distinct() %>%
+    dplyr::group_by(USUBJID, DTC, VSTESTCD) %>%
+    dplyr::summarise(VSSTRESN = duplicate_function(VSSTRESN, na.rm = TRUE),
+                     .groups = "drop") %>%
+    pivot_wider(names_from = "VSTESTCD", values_from = "VSSTRESN") %>%
+    rename_with(~ stringr::str_c("TV_", .), .cols = -c(USUBJID, DTC)) %>%
+    mutate(FLAG = TRUE)
+
+  out <- bind_rows(obj, vs_cov) %>%
+    arrange(USUBJID, DTC) %>%
+    fill(starts_with("TV_"), .direction = "down") %>%
+    filter(is.na(FLAG)) %>%
+    select(-FLAG)
+
+  return(out)
 }
 
 
@@ -1531,4 +1628,16 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     index_nif()
 
   # return(new_nif(temp))
+}
+
+
+#' Fill all baseline and time-varying covariates
+#'
+#' @param obj A NIF object.
+#' @return A NIF object.
+fill_bl_tv <- function(obj) {
+  obj %>%
+    arrange(ID, TIME) %>%
+    fill(starts_with("BL_"), .direction = "down") %>%
+    fill(starts_with("TV_"), .direction = "down")
 }

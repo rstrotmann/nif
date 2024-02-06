@@ -11,6 +11,7 @@ new_nif <- function(obj) {
     temp <- obj %>% as.data.frame()
     class(temp) <- c("nif", "data.frame")
   }
+  comment(temp) <- paste0("created with nif ", packageVersion("nif"))
   return(temp)
 }
 
