@@ -82,6 +82,12 @@
     <loc>/reference/add_trtdy.html</loc>
   </url>
   <url>
+    <loc>/reference/add_tv_lab.html</loc>
+  </url>
+  <url>
+    <loc>/reference/add_tv_vs.html</loc>
+  </url>
+  <url>
     <loc>/reference/administration_summary.html</loc>
   </url>
   <url>
@@ -230,6 +236,9 @@
   </url>
   <url>
     <loc>/reference/extract_time.html</loc>
+  </url>
+  <url>
+    <loc>/reference/fill_bl_tv.html</loc>
   </url>
   <url>
     <loc>/reference/filter_correct_date_format.html</loc>
