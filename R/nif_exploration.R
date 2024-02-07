@@ -448,7 +448,7 @@ nif_spaghetti_plot <- function(obj,
 
     x <- x %>%
       filter(EVID == 0) %>%
-      filter(!is.na(DOSE)) %>%
+      # filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
       unite(GROUP, c(group, "ID"), sep = " | ", remove = FALSE) %>%
       unite(COLOR, group, sep = " | ", remove = FALSE)

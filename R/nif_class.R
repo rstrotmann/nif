@@ -674,12 +674,15 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
 #' @return A character vector of the standard NIF fields
 #' @export
 standard_nif_fields <- c(
-  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD",
-  "ANALYTE", "AMT", "RATE", "DV", "LNDV", "MDV", "CMT",
-  "EVID", "DOSE", "AGE", "SEX", "RACE", "HEIGHT",
-  "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
-  "METABOLITE", "TRTDY", "BL_CRCL", "PART", "COHORT",
-  "FASTED", "DTC"
+  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "ANALYTE", "AMT",
+  "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX", "RACE",
+  "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE",
+  "TRTDY", "DI", "PART", "COHORT", "FASTED", "DTC"
+)
+
+fillable_nif_fields <- c(
+  "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
+  "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED"
 )
 
 
@@ -898,6 +901,7 @@ add_tad <- function(nif) {
 #'
 #' @param obj The NIF object as data frame.
 #' @return The updated NIF object as data frame.
+#' @import assertr
 #' @export
 #' @examples
 #' head(add_trtdy(examplinib_poc_nif))

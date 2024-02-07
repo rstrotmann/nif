@@ -1266,7 +1266,8 @@ compress_nif <- function(nif, ...) {
   }
   nif %>%
     dplyr::select(any_of(columns)) %>%
-    dplyr::select(any_of(c(columns, starts_with("BL_")))) %>%
+    dplyr::select(any_of(c(columns, starts_with("BL_"),
+                           starts_with("TV_")))) %>%
     new_nif()
 }
 
@@ -1641,3 +1642,78 @@ fill_bl_tv <- function(obj) {
     fill(starts_with("BL_"), .direction = "down") %>%
     fill(starts_with("TV_"), .direction = "down")
 }
+
+
+#' Add an observation from a generic source
+#'
+#' @param obj A NIF object.
+#' @param source The data source as data frame.
+#' @param DTC_field The date-time information field as character.
+#' @param selector R code to conduct filtering of the data set.
+#' @param DV_field The DV field as data character.
+#' @param analyte_name The name of the analyte in the output, as character.
+#' @param silent Suppress messages.
+#' @param cmt The comopartment for the added observation.
+#'
+#' @return A NIF object
+#' @import assertr
+#' @export
+#' @examples
+#' add_generic_observation(examplinib_poc_nif, domain(examplinib_poc, "vs"),
+#'   "VSDTC", {VSTESTCD == "WEIGHT"}, "VSSTRESN", "wt")
+add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
+                                    analyte_name, cmt = NULL, silent = FALSE) {
+  filter_term <- substitute(selector)
+  if (is.null(cmt)) {
+    cmt <- max(obj$CMT) + 1
+    conditional_message(paste0(
+      "Compartment for ", DV_field,
+      " was not specified and has been set to ", cmt), silent = silent)
+  }
+  obs <- source %>%
+    assertr::verify(has_all_names("USUBJID", DTC_field, DV_field)) %>%
+    filter(USUBJID %in% unique(obj$USUBJID)) %>%
+    lubrify_dates() %>%
+    filter(eval(filter_term)) %>%
+    mutate(DTC = .data[[DTC_field]]) %>%
+    mutate(DV = .data[[DV_field]]) %>%
+    mutate(ANALYTE = analyte_name) %>%
+    mutate(TIME = NA, EVID = 0, AMT = 0, CMT = cmt, RATE = 0) %>%
+    mutate(PARENT = NA, METABOLITE = FALSE) %>%
+    mutate(LNDV = log(DV)) %>%
+    mutate(MDV = is.na(DV)) %>%
+    select(STUDYID, USUBJID, TIME, DTC, ANALYTE, PARENT, METABOLITE, EVID, AMT,
+           RATE, CMT, DV, LNDV, MDV) %>%
+    left_join(subjects(obj), by = "USUBJID")
+
+  obj %>%
+    bind_rows(obs) %>%
+    add_time() %>%
+    arrange(USUBJID, TIME, -EVID) %>%
+    tidyr::fill(any_of(fillable_nif_fields),
+      .direction = "downup") %>%
+    fill(any_of(c(starts_with("TV_"), starts_with("BL_"))),
+         .direction = "downup") %>%
+    new_nif() %>%
+    add_tad() %>%
+    add_trtdy() %>%
+    index_nif()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
