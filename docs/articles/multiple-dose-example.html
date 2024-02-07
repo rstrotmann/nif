@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.45.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.45.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -211,13 +211,13 @@ data frame:</p>
 <span><span class="co">#  4 3.380265 1.2179540   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
 <span><span class="co">#  5 3.453869 1.2394950   0   3    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
 <span><span class="co">#  6 1.477397 0.3902816   0   2    0  500  76   1 WHITE  177.6   68.7 21.78065</span></span>
-<span><span class="co">#     ACTARMCD PARENT METABOLITE TRTDY  BL_CRCL                 DTC BL_CREAT</span></span>
-<span><span class="co">#  1 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00 93.95312</span></span>
-<span><span class="co">#  2 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 10:36:00 93.95312</span></span>
-<span><span class="co">#  3 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 10:36:00 93.95312</span></span>
-<span><span class="co">#  4 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 12:46:00 93.95312</span></span>
-<span><span class="co">#  5 TREATMENT RS2023       TRUE     1 48.83871 2001-01-15 12:46:00 93.95312</span></span>
-<span><span class="co">#  6 TREATMENT RS2023      FALSE     1 48.83871 2001-01-15 15:14:00 93.95312</span></span></code></pre></div>
+<span><span class="co">#     ACTARMCD PARENT METABOLITE TRTDY                 DTC BL_CREAT  BL_CRCL</span></span>
+<span><span class="co">#  1 TREATMENT RS2023      FALSE     1 2001-01-15 10:36:00 93.95312 48.83871</span></span>
+<span><span class="co">#  2 TREATMENT RS2023      FALSE     1 2001-01-15 10:36:00 93.95312 48.83871</span></span>
+<span><span class="co">#  3 TREATMENT RS2023       TRUE     1 2001-01-15 10:36:00 93.95312 48.83871</span></span>
+<span><span class="co">#  4 TREATMENT RS2023      FALSE     1 2001-01-15 12:46:00 93.95312 48.83871</span></span>
+<span><span class="co">#  5 TREATMENT RS2023       TRUE     1 2001-01-15 12:46:00 93.95312 48.83871</span></span>
+<span><span class="co">#  6 TREATMENT RS2023      FALSE     1 2001-01-15 15:14:00 93.95312 48.83871</span></span></code></pre></div>
 <p>When the NIF object itself is printed, a summary of the data is shown
 instead:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -228,7 +228,7 @@ instead:</p>
 <span><span class="co">#  Males: 46, females: 34 (42.5%)</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Columns:</span></span>
-<span><span class="co">#  REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, BL_CRCL, DTC, BL_CREAT </span></span>
+<span><span class="co">#  REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, DTC, BL_CREAT, BL_CRCL </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  NIF data (selected columns):</span></span>
 <span><span class="co">#  ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV       </span></span>
@@ -470,7 +470,9 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <code class="sourceCode R"><span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">(</span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>                    <span class="fu"><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs</a></span><span class="op">(</span>analyte<span class="op">=</span><span class="st">"RS2023"</span>, n<span class="op">=</span><span class="fl">4</span>, max_time<span class="op">=</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>points<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>points<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `geom_line()`: Each group consists of only one observation.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Do you need to adjust the <span style="color: #00BB00;">group</span> aesthetic?</span></span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-16-1.png" width="480"></p>
 <p>For the sampling on Day 1 only:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
