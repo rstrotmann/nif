@@ -4,10 +4,12 @@
 \alias{wt_by_ht}
 \title{Weight by height scatterplot}
 \usage{
-wt_by_ht(obj)
+wt_by_ht(obj, alpha = 0.7)
 }
 \arguments{
 \item{obj}{The NIF object.}
+
+\item{alpha}{The alpha for the point rendering.}
 }
 \value{
 A plot object.

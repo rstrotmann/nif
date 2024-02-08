@@ -4,10 +4,12 @@
 \alias{bmi_by_age}
 \title{BMI by age scatterplot}
 \usage{
-bmi_by_age(obj)
+bmi_by_age(obj, alpha = 0.7)
 }
 \arguments{
 \item{obj}{The NIF object.}
+
+\item{alpha}{The alpha for the point rendering.}
 }
 \value{
 A plot object.

@@ -19,5 +19,18 @@ sampling.}
 A new NIF object.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Currently experimental. Don't use in production!
+
+Adds the fields \code{DI} (dosing interval per analyte), \code{RICHINT} (rich sampling
+interval), and \code{RICH_N} (index of the rich sampling interval by analyte).
+}
+\details{
+This function identifies rich sampling intervals by the number of
+observations that follow an administration. A number of \code{min_n} or more
+observations before the next administration is interpreted as a rich sampling
+interval and the corresponding observations are flagged with \code{RICHINT} ==
+TRUE. The index of the rich sampling intervals per subject and analyte is
+reported in the \code{RICH_N} field.
 }

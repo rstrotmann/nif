@@ -1022,8 +1022,20 @@ add_obs_per_dosing_interval <- function(obj) {
 
 #' Identify and index rich PK sampling intervals
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Currently experimental. Don't use in production!
 #'
+#' Adds the fields `DI` (dosing interval per analyte), `RICHINT` (rich sampling
+#' interval), and `RICH_N` (index of the rich sampling interval by analyte).
+#' @details
+#' This function identifies rich sampling intervals by the number of
+#' observations that follow an administration. A number of `min_n` or more
+#' observations before the next administration is interpreted as a rich sampling
+#' interval and the corresponding observations are flagged with `RICHINT` ==
+#' TRUE. The index of the rich sampling intervals per subject and analyte is
+#' reported in the `RICH_N` field.
 #' @param obj The NIF object.
 #' @param min_n The minimum number of PK samples per analyte to qualify as rich
 #'   sampling.
@@ -1036,15 +1048,15 @@ index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
   if (is.na(analyte)) {
     analyte <- guess_analyte(obj)
   }
-  obj1 <- obj %>%
+
+  temp <- obj %>%
+    as.data.frame() %>%
     filter(ANALYTE %in% analyte) %>%
     index_nif() %>%
     index_dosing_interval() %>%
     add_obs_per_dosing_interval() %>%
-    as.data.frame()
+    mutate(RICHINT_TEMP = (OPDI >= min_n)) %>%
 
-  temp <- obj1 %>%
-    mutate(RICHINT_TEMP = (OPDI > min_n)) %>%
     # add last observation before administration to rich interval
     group_by(ID, ANALYTE) %>%
     mutate(LEAD = lead(RICHINT_TEMP)) %>%
@@ -1053,23 +1065,40 @@ index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
     ungroup() %>%
     select(-c("RICHINT_TEMP", "LEAD")) %>%
     group_by(ID, ANALYTE) %>%
+
+    # `FLAG` marks the start of all rich dosing intervals and the start of the
+    #  respective following non-rich dosing intervals
     mutate(FLAG = (RICHINT != lag(RICHINT) | row_number() == 1)) %>%
     ungroup() %>%
-    as.data.frame()
 
-  rich_index <- temp %>%
-    filter(FLAG == TRUE & RICHINT == TRUE) %>%
-    group_by(ID, ANALYTE) %>%
-    mutate(RICH_N = row_number()) %>%
+    # `rich_start` marks the start of a rich sampling interval
+    mutate(rich_start = FLAG == TRUE & RICHINT == TRUE) %>%
+    arrange(ID, ANALYTE, -rich_start) %>%
+    mutate(RICH_N = case_when(rich_start == TRUE ~ row_number(),
+                              .default = NA)) %>%
     ungroup() %>%
-    select(REF, RICH_N)
-
-  temp %>%
-    left_join(rich_index, by = "REF") %>%
+    arrange(REF) %>%
     group_by(RICHINT) %>%
     fill(RICH_N, .direction = "down") %>%
     ungroup() %>%
-    new_nif()
+    select(-c("rich_start", "FLAG")) %>%
+    as.data.frame()
+
+  # rich_index <- temp %>%
+  #   filter(FLAG == TRUE & RICHINT == TRUE) %>%
+  #   group_by(ID, ANALYTE) %>%
+  #   mutate(RICH_N = row_number()) %>%
+  #   ungroup() %>%
+  #   select(REF, RICH_N)
+  #
+  # temp %>%
+  #   left_join(rich_index, by = "REF") %>%
+  #   group_by(RICHINT) %>%
+  #   fill(RICH_N, .direction = "down") %>%
+  #   ungroup() %>%
+  #   new_nif()
+
+  return(new_nif(temp))
 }
 
 
