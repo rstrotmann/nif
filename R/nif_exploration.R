@@ -907,18 +907,18 @@ wt_by_race <- function(obj) {
 #' Weight by height scatterplot
 #'
 #' @param obj The NIF object.
-#'
+#' @param alpha The alpha for the point rendering.
 #' @return A plot object.
 #' @export
 #' @examples
 #' wt_by_ht(examplinib_poc_nif)
-wt_by_ht <- function(obj) {
+wt_by_ht <- function(obj, alpha = 0.7) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
     ggplot(aes(x = HEIGHT, y = WEIGHT)) +
     geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
-    geom_point(size = 3) +
+    geom_point(size = 3, alpha = alpha) +
     labs(x = "height (cm)", y = "baseline weight (kg)") +
     ggtitle("Body weight by height") +
     theme_bw()
@@ -928,17 +928,18 @@ wt_by_ht <- function(obj) {
 #' Weight by height scatterplot
 #'
 #' @param obj The NIF object.
+#' @param alpha The alpha for the point rendering.
 #' @return A plot object.
 #' @export
 #' @examples
 #' ht_by_wt(examplinib_poc_nif)
-ht_by_wt <- function(obj) {
+ht_by_wt <- function(obj, alpha = 0.7) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
     ggplot(aes(x = WEIGHT, y = HEIGHT)) +
     geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
-    geom_point(size = 3) +
+    geom_point(size = 3, alpha = alpha) +
     labs(y = "height (cm)", x = "baseline weight (kg)") +
     ggtitle("Body height by weight") +
     theme_bw()
@@ -948,18 +949,18 @@ ht_by_wt <- function(obj) {
 #' BMI by age scatterplot
 #'
 #' @param obj The NIF object.
-#'
+#' @param alpha The alpha for the point rendering.
 #' @return A plot object.
 #' @export
 #' @examples
 #' bmi_by_age(examplinib_poc_nif)
-bmi_by_age <- function(obj) {
+bmi_by_age <- function(obj, alpha = 0.7) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, AGE, BMI) %>%
     ggplot(aes(x = AGE, y = BMI)) +
     geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
-    geom_point(size = 3) +
+    geom_point(size = 3, alpha = alpha) +
     labs(y = "BMI (kg/m^2)", x = "age (y)") +
     ggtitle("Body mass index by age") +
     theme_bw() +
