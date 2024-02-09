@@ -672,10 +672,10 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
 #' @return A character vector of the standard NIF fields
 #' @export
 standard_nif_fields <- c(
-  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "ANALYTE", "AMT",
-  "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX", "RACE",
-  "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT", "METABOLITE",
-  "TRTDY", "DI", "PART", "COHORT", "FASTED", "DTC"
+  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "TAFD", "ANALYTE",
+  "AMT", "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX",
+  "RACE", "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
+  "METABOLITE", "TRTDY", "DI", "PART", "COHORT", "FASTED", "DTC", "RICH_N"
 )
 
 fillable_nif_fields <- c(
@@ -684,7 +684,7 @@ fillable_nif_fields <- c(
 )
 
 
-#' Index dosing invervals
+#' Index dosing intervals
 #'
 #' This function adds a column `DI` that indicates the dosing interval. All
 #' baseline observations before the first dosing interval get assigned to the
@@ -892,6 +892,28 @@ add_tad <- function(nif) {
     select(-admin_time) %>%
     new_nif() %>%
     index_nif()
+}
+
+
+#' Add time after first dose field
+#'
+#' @param nif A NIF object.
+#' @return A NIF object.
+#' @export
+#' @import assertr
+#' @examples
+#' add_tafd(examplinib_poc_nif)
+add_tafd <- function(nif) {
+  nif %>%
+    assertr::verify(has_all_names("ID", "TIME", "EVID")) %>%
+    ensure_parent() %>%
+    arrange(ID, PARENT, TIME) %>%
+    group_by(ID, PARENT) %>%
+    mutate(first_admin = min(TIME[EVID == 1])) %>%
+    mutate(TAFD = TIME-first_admin) %>%
+    mutate(TAFD = case_when(TAFD < 0 ~ 0, .default = TAFD)) %>%
+    select(-first_admin) %>%
+    new_nif()
 }
 
 
