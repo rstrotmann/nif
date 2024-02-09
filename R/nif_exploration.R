@@ -686,10 +686,10 @@ print.summary_nif <- function(x, ...) {
 
   cat(paste(
     "Data from", sum(x$n_studies$N), "subjects across "))
-  if(length(x$studies == 1)) {
+  if(length(x$studies) == 1) {
     cat("one study:\n")
   } else {
-    cat(paste0(length(x$studies), "studies:\n"))
+    cat(paste0(length(x$studies), " studies:\n"))
   }
 
   cat(paste0(df_to_string(x$n_studies, color=color, indent = indent), "\n\n"))

@@ -23,10 +23,8 @@ new_nif <- function(obj) {
 #' @export
 #' @noRd
 print.nif <- function(x, ...) {
-  # hline <- paste0(rep("-", 8), collapse="")
   hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
-  # message(paste0(hline, " NONMEM input file (NIF) object ", hline))
 
   if(length(studies(x)) == 1) {
     cat(paste0("Data from one study\n"))
@@ -1083,20 +1081,6 @@ index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
     ungroup() %>%
     select(-c("rich_start", "FLAG")) %>%
     as.data.frame()
-
-  # rich_index <- temp %>%
-  #   filter(FLAG == TRUE & RICHINT == TRUE) %>%
-  #   group_by(ID, ANALYTE) %>%
-  #   mutate(RICH_N = row_number()) %>%
-  #   ungroup() %>%
-  #   select(REF, RICH_N)
-  #
-  # temp %>%
-  #   left_join(rich_index, by = "REF") %>%
-  #   group_by(RICHINT) %>%
-  #   fill(RICH_N, .direction = "down") %>%
-  #   ungroup() %>%
-  #   new_nif()
 
   return(new_nif(temp))
 }
