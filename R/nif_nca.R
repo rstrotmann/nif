@@ -269,23 +269,43 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 }
 
 
-nca_power_model <- function(nca, parameter) {
+#' Power fit for PK parameters
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' Plot the PK parameter defined by `parameter` over `DOSE` and overlay with
+#' a linear model of the log-transformed parameter and the log-transformed dose.
+#' The slope is printed in the caption line.
+#' @param nca PK parameters as data frame.
+#' @param parameter The PK parameter as character.
+#' @return A ggplot2 object.
+#' @importFrom stats lm predict.lm
+#' @export
+#' @examples
+#' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")
+nca_power_model <- function(nca, parameter = "aucinf.obs") {
   pp <- nca %>%
     filter(PPTESTCD %in% parameter)
 
-
+  pm <- pp %>%
+    lm(log(PPORRES) ~ log(DOSE), data = .)
 
   pp %>%
-    ggplot(aes(x = DOSE, y = PPORRES)) +
-    geom_point(size = 2) +
-    facet_wrap(~PPTESTCD) +
-    theme_bw()
+    bind_cols(predict.lm(pm, pp, interval='prediction',
+                         se.fit = T,
+                         level=0.9)$fit) %>%
+
+    ggplot(aes(x = DOSE, y=exp(fit))) +
+    geom_line() +
+    geom_ribbon(aes(x = DOSE, ymin = exp(lwr), ymax = exp(upr)),
+                fill='lightgrey', alpha=0.5) +
+    geom_point(aes(x = DOSE, y = PPORRES), size=2) +
+    theme_bw() +
+    labs(x = "dose (mg)", y = parameter,
+         caption = paste0("mean and 90% PI, slope = ",
+                          round(pm$coefficients[2], 3)))
 }
-
-
-
-
-
 
 
 
