@@ -19,17 +19,20 @@ new_nif <- function(obj) {
 #' print() implementation for nif objects
 #'
 #' @param x A nif object.
+#' @param color Colored output.
 #' @param ... Additional parameters
+#'
 #' @export
 #' @noRd
-print.nif <- function(x, ...) {
+print.nif <- function(x, color=TRUE, ...) {
   hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
 
   if(length(studies(x)) == 1) {
-    cat(paste0("Data from one study\n"))
+    cat(paste0(guess_analyte(x), " data from one study\n"))
   } else{
-    cat(paste0("Data from ", length(studies(x)), " studies\n"))
+    cat(paste0(guess_analyte(x), " data from ", length(studies(x)),
+               " studies\n"))
   }
   n_obs <- x %>%
     filter(EVID == 0) %>%
@@ -79,12 +82,15 @@ print.nif <- function(x, ...) {
   temp <- temp %>%
     # mutate(across(where(is.numeric), round, 3)) %>%
     mutate(across(where(is.numeric), ~ round(., 3))) %>%
-    df_to_string(color = TRUE)
+    df_to_string(color = color)
   cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
-  # cat(paste0("\u001b[38;5;248m",
-  #            "# ", nrow(x)-10, " more rows",
-  #            "\u001b[0m"))
-  cat(paste0("# ", nrow(x)-10, " more rows"))
+
+  footer <- paste0(positive_or_zero(nrow(x)-10), " more rows")
+  if(color == TRUE) {
+    cat(paste0("\u001b[38;5;248m", footer, "\u001b[0m"))
+  } else {
+    cat(footer)
+  }
   invisible(x)
 }
 

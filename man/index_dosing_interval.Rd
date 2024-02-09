@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{index_dosing_interval}
 \alias{index_dosing_interval}
-\title{Index dosing invervals}
+\title{Index dosing intervals}
 \usage{
 index_dosing_interval(obj)
 }
