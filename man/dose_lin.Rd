@@ -19,9 +19,10 @@ dose_lin(nca, parameters = c("aucinf.obs", "cmax"), lower = 0.8, upper = 1.25)
 A data frame.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Currently experimental. Don't use in production!
-}
-\details{
+
 Using the power model described by
 \href{https://doi.org/10.1002/pst.326}{Hummel, 2009}.
 In brief, a power model is fitted with

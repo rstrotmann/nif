@@ -674,12 +674,13 @@ summary.nif <- function(object, ...) {
 #' Print NIF summary
 #'
 #' @param x A summary_nif object.
+#' @param color Colorful output.
 #' @param ... Further parameters.
+#'
 #' @noRd
 #' @return Nothing.
 #' @export
-print.summary_nif <- function(x, ...) {
-  color = TRUE
+print.summary_nif <- function(x, color = FALSE, ...) {
   indent = " "
   hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))

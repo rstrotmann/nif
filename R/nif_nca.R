@@ -209,6 +209,9 @@ nca_summary_table <- function(
 
 #' Test for dose linearity
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Currently experimental. Don't use in production!
 #'
 #' Using the power model described by
@@ -224,8 +227,6 @@ nca_summary_table <- function(
 #' (beta_L, beta_U) = ( 1 + ln(theta_L) / ln(r), 1 + lntheta_U) / ln(r) )
 #'
 #' with ln(r) the logarithm of the ratio of the highest dose to the lowest dose.
-#'
-#'
 #' @param nca The non-compartmental analysis data.
 #' @param parameters The NCA parameters to investigate for dose linearity.
 #' @param lower The lower threshold for Rdnm.
@@ -266,6 +267,7 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
       .default = lower > lower[1] & upper < upper[1]
     ))
 }
+
 
 nca_power_model <- function(nca, parameter) {
   pp <- nca %>%

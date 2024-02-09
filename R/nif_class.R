@@ -24,7 +24,7 @@ new_nif <- function(obj) {
 #'
 #' @export
 #' @noRd
-print.nif <- function(x, color=TRUE, ...) {
+print.nif <- function(x, color=FALSE, ...) {
   hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
 
@@ -1100,6 +1100,7 @@ index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
     # `rich_start` marks the start of a rich sampling interval
     mutate(rich_start = FLAG == TRUE & RICHINT == TRUE) %>%
     arrange(ID, ANALYTE, -rich_start) %>%
+    group_by(ID, ANALYTE) %>%
     mutate(RICH_N = case_when(rich_start == TRUE ~ row_number(),
                               .default = NA)) %>%
     ungroup() %>%
