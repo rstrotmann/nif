@@ -170,7 +170,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     as.data.frame() %>%
     verify(has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
-    # {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
 
   id_label <- ""
@@ -192,21 +191,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
       }
     }
   }
-
-  # if (id %in% obj$ID) {
-  #   plot_label <- "ID"
-  #   obj <- obj %>% filter(ID == id)
-  # } else if (id %in% obj$USUBJID) {
-  #   obj <- obj %>% filter(USUBJID == id)
-  #   plot_label <- "USUBJID"
-  # } else {
-  #   stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
-  # }
-  #
-  # if (!is.null(analyte)) {
-  #   obj <- obj %>%
-  #     filter(ANALYTE %in% analyte)
-  # }
 
   admin <- x %>%
     dplyr::filter(EVID == 1)

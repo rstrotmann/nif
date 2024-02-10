@@ -100,7 +100,7 @@ summary.sdtm <- function(object, ...) {
 #' @noRd
 print.summary_sdtm <- function(x, ...) {
   hline <- paste0(rep("\U2500", 8), collapse="")
-  cat(paste0(hline, "SDTM data set summary ", hline, "\n\n"))
+  cat(paste0(hline, "SDTM data set summary ", hline, "\n"))
   cat(paste("Study", x$study))
   cat(paste(" with", x$n_subs, "subjects providing PC data.\n"))
   cat("SDTM domains: ")
