@@ -7,7 +7,7 @@
 NULL
 
 utils::globalVariables(c(
-  "LBSTRESN", "LBDY", "STUDYID", "ANALYTE", "CMT", "EVID", "TIME", "NTIME",
+  "ANALYTE", "CMT", "EVID", "TIME", "NTIME",
   "DV", "AMT", "ID", "DOSE", "AGE", "age1", "SEX", "RACE", "ACTARMCD", "HEIGHT",
   "WEIGHT", "BMI", "PCDTC", "dtc", "PCRFTDTC", "ref.dtc", "dtc.date",
   "ref.date", "PCTESTCD", "ref.time", "time", "EXTRT", "admin.time", "REF",

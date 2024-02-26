@@ -1416,7 +1416,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
                 distinct(.data$USUBJID, .data$FIRSTDTC),
               by = "USUBJID") %>%
     dplyr::mutate(
-      ANALYTE = .data$lbtestcd, PARENT = "", CMT = .data$cmt, MDV = 0, EVID = 0,
+      ANALYTE = lbtestcd, PARENT = "", CMT = cmt, MDV = 0, EVID = 0,
       AMT = 0, RATE = 0
     ) %>%
     dplyr::mutate(

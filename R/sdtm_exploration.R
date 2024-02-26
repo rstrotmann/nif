@@ -254,7 +254,7 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
       {if (log == TRUE) scale_y_log10()} +
       theme_bw() +
       theme(legend.position = "bottom") +
-        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", PC"))
+        ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", PC"))
     )
   }
 
@@ -277,7 +277,7 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         scale_x_datetime(name="EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d") +
         theme_bw() +
         theme(legend.position = "bottom") +
-        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", EX"))
+        ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", EX"))
     )
   }
 
@@ -295,7 +295,7 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         scale_y_discrete(labels = NULL, name = "USUBJID") +
         scale_x_datetime(name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d") +
         theme_bw() +
-        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", DM"))
+        ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", DM"))
     )
   }
 
@@ -314,7 +314,7 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         scale_x_datetime(name="LBDY", date_labels = "%Y-%m-%d") +
         theme_bw() +
         theme(legend.position = "bottom") +
-        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", LB"))
+        ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", LB"))
     )
   }
 
@@ -332,7 +332,7 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         {if (log == TRUE) scale_y_log10()} +
         theme_bw() +
         theme(legend.position = "bottom") +
-        ggtitle(paste0("Study ", distinct(obj, STUDYID), ", PC"))
+        ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", PC"))
     )
   }
 }

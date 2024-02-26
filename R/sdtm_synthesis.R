@@ -156,14 +156,14 @@ make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
     group_by_all() %>%
     mutate(
       STUDYID = as.character(studyid),
-      USUBJID = paste0(STUDYID, SUBJID),
+      USUBJID = paste0(.data$STUDYID, .data$SUBJID),
       SEX = case_when(runif(1) > female_fraction ~ "M", .default = "F"),
       AGE = round(runif(1, min_age, max_age), 0),
       AGEU = "YEARS",
       COUNTRY = "DEU",
       DOMAIN = "DM",
-      ARM = ACTARM,
-      ARMCD = ACTARMCD,
+      ARM = .data$ACTARM,
+      ARMCD = .data$ACTARMCD,
       RACE = cut(runif(1),
                  breaks = c(0, .05, .2, 1),
                  labels = c("ASIAN", "BLACK OR AFRICAN AMERICAN", "WHITE")
@@ -1013,7 +1013,7 @@ make_lb <- function(dm) {
       LBORNRLO = 0.67,
       LBORNRHI = 1.17,
       LBSTRESN = LBORRES * 88.4,
-      LBSTRESC = as.character(round(LBSTRESN, 3)),
+      LBSTRESC = as.character(round(.data$LBSTRESN, 3)),
       LBSTRESU = "umol/L",
       LBSTNRLO = 59.2,
       LBSTNRHI = 103.4

@@ -306,8 +306,8 @@ studies <- function(obj) {
   if("STUDYID" %in% names(obj)){
     return(
       obj %>%
-        dplyr::distinct(STUDYID) %>%
-        dplyr::pull(STUDYID)
+        dplyr::distinct(.data$STUDYID) %>%
+        dplyr::pull(.data$STUDYID)
     )
   } else {
     return(NA)
@@ -344,7 +344,7 @@ ensure_dose <- function(obj) {
   obj %>%
     {if(!"DOSE" %in% names(obj))
       index_nif(.) %>%
-        mutate(DOSE = case_when(EVID==1 ~ AMT, .default = NA)) %>%
+        mutate(DOSE = case_when(.data$EVID == 1 ~ AMT, .default = NA)) %>%
         fill(DOSE, .direction = "downup")
       else .
     }

@@ -53,6 +53,8 @@ new_sdtm <- function(sdtm_data,
 #' @return A sdtm_summary object.
 #' @noRd
 #' @export
+#' @examples
+#' summary(examplinib_poc)
 summary.sdtm <- function(object, ...) {
   subjects <- object$domains[["pc"]] %>%
     filter(!is.na(.data$PCSTRESN)) %>%
@@ -62,8 +64,8 @@ summary.sdtm <- function(object, ...) {
 
   out <- list(
     study = object$domains[["dm"]] %>%
-      distinct(STUDYID) %>%
-      pull(STUDYID) %>%
+      distinct(.data$STUDYID) %>%
+      pull(.data$STUDYID) %>%
       as.character(),
     subjects = subjects,
     n_subs = length(subjects),
@@ -71,17 +73,17 @@ summary.sdtm <- function(object, ...) {
       dplyr::distinct(across(any_of(c("PCTPT", "PCTPTNUM")))),
     domains = names(object$domains),
     treatments = object$domains[["ex"]] %>%
-      dplyr::distinct(EXTRT),
+      dplyr::distinct(.data$EXTRT),
     arms = object$domains[["dm"]] %>%
-      dplyr::distinct(ACTARM, ACTARMCD),
+      dplyr::distinct(.data$ACTARM, .data$ACTARMCD),
     doses = object$domains[["ex"]] %>%
-      distinct(EXTRT, EXDOSE),
+      distinct(.data$EXTRT, .data$EXDOSE),
     specimems = object$domains[["pc"]] %>%
-      dplyr::distinct(PCSPEC) %>%
-      pull(PCSPEC) %>%
+      dplyr::distinct(.data$PCSPEC) %>%
+      pull(.data$PCSPEC) %>%
       as.character(),
     analytes = object$domains[["pc"]] %>%
-      dplyr::distinct(PCTEST, PCTESTCD),
+      dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
     time_mapping = object$time_mapping
