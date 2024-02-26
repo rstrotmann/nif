@@ -35,7 +35,7 @@ print.nif <- function(x, color=FALSE, ...) {
                " studies\n"))
   }
   n_obs <- x %>%
-    filter(EVID == 0) %>%
+    filter(.data$EVID == 0) %>%
     nrow()
   cat(paste(
     n_obs, "observations from",
@@ -44,20 +44,20 @@ print.nif <- function(x, color=FALSE, ...) {
 
   if ("SEX" %in% names(x)) {
     n_sex <- x %>%
-      dplyr::distinct(USUBJID, SEX) %>%
-      dplyr::group_by(SEX) %>%
+      dplyr::distinct(.data$USUBJID, .data$SEX) %>%
+      dplyr::group_by(.data$SEX) %>%
       dplyr::summarize(n = n())
 
     n_males <- n_sex %>%
-      dplyr::filter(SEX == 0) %>%
-      dplyr::pull(n)
+      dplyr::filter(.data$SEX == 0) %>%
+      dplyr::pull(.data$n)
     if (length(n_males) == 0) {
       n_males <- 0
     }
 
     n_females <- n_sex %>%
-      dplyr::filter(SEX == 1) %>%
-      dplyr::pull(n)
+      dplyr::filter(.data$SEX == 1) %>%
+      dplyr::pull(.data$n)
     if (length(n_females) == 0) {
       n_females <- 0
     }
@@ -116,8 +116,8 @@ print.nif <- function(x, color=FALSE, ...) {
 subject_info.nif <- function(obj, id) {
   temp <- obj %>%
     as.data.frame() %>%
-    filter(ID %in% id | USUBJID %in% id) %>%
-    filter(!is.na(DOSE))
+    filter(.data$ID %in% id | .data$USUBJID %in% id) %>%
+    filter(!is.na(.data$DOSE))
 
   out <- temp %>%
     select(any_of(
@@ -128,20 +128,20 @@ subject_info.nif <- function(obj, id) {
     as.list()
 
   out$ANALYTE <- temp %>%
-    distinct(ANALYTE) %>%
-    pull(ANALYTE)
+    distinct(.data$ANALYTE) %>%
+    pull(.data$ANALYTE)
 
   out$IMP <- temp %>%
-    filter(PARENT != "") %>%
-    distinct(PARENT) %>%
-    pull(PARENT)
+    filter(.data$PARENT != "") %>%
+    distinct(.data$PARENT) %>%
+    pull(.data$PARENT)
 
   out$administrations <- temp %>%
     add_trtdy() %>%
     filter(EVID == 1) %>%
-    select(USUBJID, TIME, ANALYTE, DTC, TRTDY) %>%
-    arrange(ANALYTE, TIME) %>%
-    select(ANALYTE, TIME, TRTDY) %>%
+    select(.data$USUBJID, .data$TIME, .data$ANALYTE, .data$DTC, .data$TRTDY) %>%
+    arrange(.data$ANALYTE, .data$TIME) %>%
+    select(.data$ANALYTE, .data$TIME, .data$TRTDY) %>%
     as.data.frame()
 
   class(out) <- c("subject_info", "data.frame")
@@ -281,16 +281,16 @@ rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
   obj %>%
     as.data.frame() %>%
     filter(EVID == 0, ANALYTE == analyte) %>%
-    group_by(ID) %>%
-    mutate(end_rich = case_when(is.na(max_time) ~ max(TIME),
+    group_by(.data$ID) %>%
+    mutate(end_rich = case_when(is.na(max_time) ~ max(.data$TIME),
       .default = max_time
     )) %>%
     ungroup() %>%
-    filter(TIME < end_rich) %>%
-    group_by(ID, USUBJID) %>%
+    filter(.data$TIME < .data$end_rich) %>%
+    group_by(.data$ID, .data$USUBJID) %>%
     summarize(n_obs = n(), .groups = "drop") %>%
-    filter(n_obs > n) %>%
-    pull(ID)
+    filter(.data$n_obs > n) %>%
+    pull(.data$ID)
 }
 
 
@@ -934,13 +934,16 @@ add_tafd <- function(nif) {
 add_trtdy <- function(obj) {
   obj %>%
     assertr::verify(has_all_names("ID", "DTC", "EVID")) %>%
-    assertr::verify(is.POSIXct(DTC)) %>%
-    dplyr::group_by(ID) %>%
-    dplyr::mutate(FIRSTTRTDTC = min(DTC[EVID == 1], na.rm = TRUE)) %>%
+    assertr::verify(is.POSIXct(.data$DTC)) %>%
+    dplyr::group_by(.data$ID) %>%
+    dplyr::mutate(FIRSTTRTDTC = min(.data$DTC[.data$EVID == 1],
+                                    na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    mutate(TRTDY = interval(date(FIRSTTRTDTC), date(DTC)) / days(1)) %>%
-    mutate(TRTDY = case_when(TRTDY < 0 ~ TRTDY, .default = TRTDY + 1)) %>%
-    select(-FIRSTTRTDTC) %>%
+    mutate(TRTDY = interval(date(.data$FIRSTTRTDTC),
+                            date(.data$DTC)) / days(1)) %>%
+    mutate(TRTDY = case_when(.data$TRTDY < 0 ~ .data$TRTDY,
+                             .default = .data$TRTDY + 1)) %>%
+    select(-.data$FIRSTTRTDTC) %>%
     new_nif()
 }
 
@@ -1126,7 +1129,7 @@ index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
 #' filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 filter_subject.nif <- function(obj, usubjid) {
   obj %>%
-    filter(USUBJID %in% usubjid)
+    filter(.data$USUBJID %in% usubjid)
 }
 
 

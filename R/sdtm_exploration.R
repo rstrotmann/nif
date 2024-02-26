@@ -43,10 +43,10 @@ is_iso_date <- function(x) {
 #' @examples
 #' ex <- check_date_format(examplinib_poc$ex)
 check_date_format <- function(obj, verbose = TRUE) {
-  domain <- obj %>% distinct(DOMAIN)
+  domain <- obj %>% distinct(.data$DOMAIN)
   temp <- obj %>%
     filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == ""))) %>%
-    select(c(USUBJID, DOMAIN, ends_with("DTC")))
+    select(c(.data$USUBJID, .data$DOMAIN, ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Incomplete date format in ", nrow(temp), " rows")
@@ -101,7 +101,7 @@ check_date_time_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
     filter(if_any(ends_with("DTC"), ~ !(is_iso_date_time(.) | . == ""))) %>%
-    select(c(USUBJID, DOMAIN, ends_with("DTC")))
+    select(c(.data$USUBJID, .data$DOMAIN, ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Incomplete date-time format in ", nrow(temp),
@@ -127,7 +127,7 @@ check_missing_time <- function(obj, verbose = TRUE) {
   temp <- obj %>%
     filter(if_any(ends_with("DTC"),
                   ~ is_iso_date(.) & !(is_iso_date_time(.)))) %>%
-    select(c(USUBJID, DOMAIN, ends_with("DTC")))
+    select(c(.data$USUBJID, .data$DOMAIN, ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Missing time in ", nrow(temp), " rows")
@@ -156,11 +156,12 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
   temp <- ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
-    group_by(USUBJID, EXTRT) %>%
-    arrange(USUBJID, EXTRT, EXSTDTC) %>%
+    group_by(.data$USUBJID, .data$EXTRT) %>%
+    arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
-    filter(LAST_ADMIN == TRUE, is.na(EXENDTC)) %>%
-    select(USUBJID, DOMAIN, EXTRT, EXSTDTC, EXENDTC)
+    filter(LAST_ADMIN == TRUE, is.na(.data$EXENDTC)) %>%
+    select(.data$USUBJID, .data$DOMAIN, .data$EXTRT, .data$EXSTDTC,
+           .data$EXENDTC)
 
   if (nrow(temp) > 0) {
     out <- paste0(
@@ -190,8 +191,8 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in DM
   sdtm %>%
     domain("dm") %>%
-    filter(ACTARMCD != "SCRNFAIL") %>%
-    select(USUBJID, DOMAIN, RFENDTC) %>%
+    filter(.data$ACTARMCD != "SCRNFAIL") %>%
+    select(.data$USUBJID, .data$DOMAIN, .data$RFENDTC) %>%
     check_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose)
 
@@ -206,7 +207,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in PC
   sdtm %>%
     domain("pc") %>%
-    select(USUBJID, DOMAIN, PCDTC) %>%
+    select(.data$USUBJID, .data$DOMAIN, .data$PCDTC) %>%
     check_date_format(verbose = verbose) %>%
     filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose)
@@ -235,19 +236,19 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
                       points = FALSE, analyte = NULL, log = FALSE, ...) {
   obj <- x$domains[[domain]] %>%
-    filter(if (!is.null(usubjid)) USUBJID %in% usubjid else TRUE) %>%
+    filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
     lubrify_dates() %>%
     as.data.frame()
 
   if (domain == "pc") {
     return(
       obj %>%
-        filter (if(!is.null(analyte)) PCTESTCD %in% analyte else TRUE) %>%
+        filter (if(!is.null(analyte)) .data$PCTESTCD %in% analyte else TRUE) %>%
         ggplot(aes(
-          x = PCDTC,
-          y = PCSTRESN,
-          group = interaction(USUBJID, PCTESTCD),
-          color = PCTESTCD)) +
+          x = .data$PCDTC,
+          y = .data$PCSTRESN,
+          group = interaction(.data$USUBJID, .data$PCTESTCD),
+          color = .data$PCTESTCD)) +
       {if (lines == TRUE) geom_line()} +
       {if (points == TRUE) geom_point()} +
       {if (log == TRUE) scale_y_log10()} +
@@ -260,17 +261,17 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "ex") {
     return(
       obj %>%
-        arrange(desc(EXSTDTC)) %>%
-        group_by(USUBJID) %>%
-        mutate(ID=cur_group_id()) %>%
-        arrange(ID) %>%
+        arrange(desc(.data$EXSTDTC)) %>%
+        group_by(.data$USUBJID) %>%
+        mutate(ID = cur_group_id()) %>%
+        arrange(.data$ID) %>%
         ggplot() +
-        geom_segment(aes(x=EXSTDTC,
-                         xend=EXENDTC,
-                         y=ID,
-                         yend=ID)) +
-        {if (points == TRUE) geom_point(aes(x=EXSTDTC, y=ID))} +
-        {if (points == TRUE) geom_point(aes(x=EXENDTC, y=ID))} +
+        geom_segment(aes(x = .data$EXSTDTC,
+                         xend = .data$EXENDTC,
+                         y = .data$ID,
+                         yend = .data$ID)) +
+        {if (points == TRUE) geom_point(aes(x = .data$EXSTDTC, y = .data$ID))} +
+        {if (points == TRUE) geom_point(aes(x = .data$EXENDTC, y = .data$ID))} +
         # labs(x="EXSTDTC, EXENDTC", y="USUBJID") +
         scale_y_discrete(name="USUBJID", labels=NULL) +
         scale_x_datetime(name="EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d") +
@@ -283,13 +284,16 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "dm") {
     return(
       obj %>%
-        group_by(USUBJID) %>%
-        mutate(ID=cur_group_id()) %>%
-        arrange(ID) %>%
+        group_by(.data$USUBJID) %>%
+        mutate(ID = cur_group_id()) %>%
+        arrange(.data$ID) %>%
         ggplot() +
-        geom_segment(aes(x=RFSTDTC, xend=RFENDTC, y=ID, yend=ID)) +
-        scale_y_discrete(labels=NULL, name="USUBJID") +
-        scale_x_datetime(name="RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d") +
+        geom_segment(aes(x = .data$RFSTDTC,
+                         xend = .data$RFENDTC,
+                         y = .data$ID,
+                         yend = .data$ID)) +
+        scale_y_discrete(labels = NULL, name = "USUBJID") +
+        scale_x_datetime(name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d") +
         theme_bw() +
         ggtitle(paste0("Study ", distinct(obj, STUDYID), ", DM"))
     )
@@ -298,12 +302,12 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "lb") {
     return(
       obj %>%
-        filter(if(!is.null(analyte)) LBTESTCD %in% analyte else TRUE) %>%
+        filter(if(!is.null(analyte)) .data$LBTESTCD %in% analyte else TRUE) %>%
         ggplot(aes(
-          x=.data$LBDTC,
-          y=.data$LBSTRESN,
-          group=interaction(.data$USUBJID, .data$LBTESTCD),
-          color=LBTESTCD)) +
+          x = .data$LBDTC,
+          y = .data$LBSTRESN,
+          group = interaction(.data$USUBJID, .data$LBTESTCD),
+          color = .data$LBTESTCD)) +
         {if (lines == TRUE) geom_line()} +
         {if (points == TRUE) geom_point()} +
         {if (log == TRUE) scale_y_log10()} +
@@ -319,10 +323,10 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
       obj %>%
         filter (if(!is.null(analyte)) VSTESTCD %in% analyte else TRUE) %>%
         ggplot(aes(
-          x = VSDTC,
-          y = VSSTRESN,
-          group = interaction(USUBJID, VSTESTCD),
-          color = VSTESTCD)) +
+          x = .data$VSDTC,
+          y = .data$VSSTRESN,
+          group = interaction(.data$USUBJID, .data$VSTESTCD),
+          color = .data$VSTESTCD)) +
         {if (lines == TRUE) geom_line()} +
         {if (points == TRUE) geom_point()} +
         {if (log == TRUE) scale_y_log10()} +

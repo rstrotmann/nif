@@ -20,17 +20,17 @@ new_sdtm <- function(sdtm_data,
   temp <- list(
     study = dm[1, "STUDYID"],
     subjects = pc %>%
-      dplyr::distinct(USUBJID),
+      dplyr::distinct(.data$USUBJID),
     specimens = pc %>%
-      dplyr::distinct(PCSPEC),
+      dplyr::distinct(.data$PCSPEC),
     analytes = pc %>%
-      dplyr::distinct(PCTEST, PCTESTCD),
+      dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
     treatments = ex %>%
-      dplyr::distinct(EXTRT),
+      dplyr::distinct(.data$EXTRT),
     doses = ex %>%
-      dplyr::distinct(EXDOSE),
+      dplyr::distinct(.data$EXDOSE),
     arms = dm %>%
-      dplyr::distinct(ACTARM, ACTARMCD),
+      dplyr::distinct(.data$ACTARM, .data$ACTARMCD),
     domains = domains,
     pc = pc,
     dm = dm,
@@ -55,9 +55,9 @@ new_sdtm <- function(sdtm_data,
 #' @export
 summary.sdtm <- function(object, ...) {
   subjects <- object$domains[["pc"]] %>%
-    filter(!is.na(PCSTRESN)) %>%
-    dplyr::distinct(USUBJID) %>%
-    pull(USUBJID) %>%
+    filter(!is.na(.data$PCSTRESN)) %>%
+    dplyr::distinct(.data$USUBJID) %>%
+    pull(.data$USUBJID) %>%
     as.character()
 
   out <- list(
@@ -284,7 +284,7 @@ subject_info <- function(obj, id) {
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
   temp <- obj$domains[["dm"]] %>%
-    dplyr::filter(USUBJID %in% id) %>%
+    dplyr::filter(.data$USUBJID %in% id) %>%
     as.list()
   class(temp) <- c("subject_info", "data.frame")
   return(temp)
@@ -407,7 +407,7 @@ subjects.sdtm <- function(obj) {
   obj %>%
     domain("dm") %>%
     as.data.frame() %>%
-    distinct(USUBJID)
+    distinct(.data$USUBJID)
 }
 
 
@@ -435,7 +435,7 @@ filter_subject <- function(obj, usubjid) {
 #' @examples
 #' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 filter_subject.sdtm <- function(obj, usubjid) {
-  temp <- lapply(obj$domains, function(x) filter(x, USUBJID %in% usubjid))
+  temp <- lapply(obj$domains, function(x) filter(x, .data$USUBJID %in% usubjid))
   new_sdtm(sdtm_data = temp, analyte_mapping = obj$analyte_mapping,
            metabolite_mapping = obj$metabolite_mapping,
            time_mapping = obj$time_mapping)

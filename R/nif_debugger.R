@@ -22,32 +22,32 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
   }
 
   extrt <- sdtm_data$analyte_mapping %>%
-    filter(PCTESTCD %in% analyte) %>%
-    pull(EXTRT)
+    filter(.data$PCTESTCD %in% analyte) %>%
+    pull(.data$EXTRT)
 
   if(is.null(usubjid)) {
     usubjid <- nif_data %>%
       subjects() %>%
-      pull(USUBJID)
+      pull(.data$USUBJID)
   }
 
   nif <- nif_data %>%
     index_nif() %>%
     as.data.frame() %>%
     select(-any_of(c("EXTRT"))) %>%
-    filter(ANALYTE %in% analyte) %>%
-    filter(USUBJID %in% usubjid) %>%
-    mutate(admin_REF = case_when(EVID==1 ~ REF)) %>%
-    group_by(ID, PARENT) %>%
-    fill(admin_REF, .direction = "down") %>%
+    filter(.data$ANALYTE %in% analyte) %>%
+    filter(.data$USUBJID %in% usubjid) %>%
+    mutate(admin_REF = case_when(.data$EVID==1 ~ .data$REF)) %>%
+    group_by(.data$ID, .data$PARENT) %>%
+    fill(.data$admin_REF, .direction = "down") %>%
     ungroup() %>%
     left_join(sdtm_data$analyte_mapping, by=c("ANALYTE"="PCTESTCD")) %>%
-    filter(!(is.na(DV) & EVID == 0))
+    filter(!(is.na(.data$DV) & EVID == 0))
 
   doses <- nif %>%
-    dplyr::distinct(DOSE) %>%
-    dplyr::arrange(DOSE) %>%
-    dplyr::pull(DOSE) %>%
+    dplyr::distinct(.data$DOSE) %>%
+    dplyr::arrange(.data$DOSE) %>%
+    dplyr::pull(.data$DOSE) %>%
     as.character()
 
 
@@ -135,9 +135,9 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
     output$ex_table <- DT::renderDT(
     # output$ex_table <- DT::renderDataTable(
         sdtm_data$ex %>%
-          filter(USUBJID %in% (id() %>% pull(USUBJID))) %>%
-          filter(EXSEQ %in% (id() %>% pull(EXSEQ))) %>%
-          filter(EXTRT %in% (id() %>% pull(EXTRT))),
+          filter(.data$USUBJID %in% (id() %>% pull(.data$USUBJID))) %>%
+          filter(.data$EXSEQ %in% (id() %>% pull(.data$EXSEQ))) %>%
+          filter(.data$EXTRT %in% (id() %>% pull(.data$EXTRT))),
         options = list(dom = "")
     )
 

@@ -12,27 +12,27 @@
 #'
 nif_viewer <- function(nif) {
   sbs <- nif %>%
-    dplyr::distinct(USUBJID) %>%
-    dplyr::pull(USUBJID)
+    dplyr::distinct(.data$USUBJID) %>%
+    dplyr::pull(.data$USUBJID)
 
   doses <- nif %>%
-    dplyr::distinct(AMT) %>%
-    dplyr::arrange(AMT) %>%
-    dplyr::pull(AMT) %>%
+    dplyr::distinct(.data$AMT) %>%
+    dplyr::arrange(.data$AMT) %>%
+    dplyr::pull(.data$AMT) %>%
     as.character()
 
   analytes <- nif %>%
     as.data.frame() %>%
-    dplyr::distinct(ANALYTE) %>%
-    dplyr::pull(ANALYTE)
+    dplyr::distinct(.data$ANALYTE) %>%
+    dplyr::pull(.data$ANALYTE)
 
   imps <- nif %>%
     as.data.frame() %>%
-    distinct(PARENT) %>%
-    pull(PARENT)
+    distinct(.data$PARENT) %>%
+    pull(.data$PARENT)
 
   max_dose <- nif %>%
-    dplyr::pull(AMT) %>%
+    dplyr::pull(.data$AMT) %>%
     max()
 
   nif_viewer.ui <- shiny::fluidPage(
@@ -110,8 +110,8 @@ nif_viewer <- function(nif) {
     max_time <- function() {
       if (input$timeselect == "indiv") {
         return(nif %>%
-          dplyr::filter(USUBJID == input$subject) %>%
-          dplyr::pull(TIME) %>%
+          dplyr::filter(.data$USUBJID == input$subject) %>%
+          dplyr::pull(.data$TIME) %>%
           max())
       } else if (input$timeselect == "global") {
         return(max(nif$TIME))
@@ -191,8 +191,8 @@ nif_viewer <- function(nif) {
       }
 
       current_sbs(current_nif() %>%
-        distinct(USUBJID) %>%
-        pull(USUBJID))
+        distinct(.data$USUBJID) %>%
+        pull(.data$USUBJID))
 
       updateSelectInput(
         session, "subject",

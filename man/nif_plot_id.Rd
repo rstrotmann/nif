@@ -41,8 +41,8 @@ TIME should be plotted.}
 \item{imp}{The IMP for which administrations are to be indicated by vertical
 lines. Defaults to NULL.}
 
-\item{y_scale}{Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
-is "lin". This argument is deprecated. Use 'log'.}
+\item{y_scale}{Y scale type. Use 'scale="log"' for a logarithmic y scale.
+Default is "lin". Note that this argument is deprecated. Use 'log' instead.}
 }
 \value{
 A ggplot2 object.
@@ -54,7 +54,7 @@ vertical lines.
 }
 \examples{
 nif_plot_id(examplinib_poc_nif, 1)
-nif_plot_id(examplinib_poc_min_nif, 1, y_scale = "log")
+nif_plot_id(examplinib_poc_min_nif, 1, log = TRUE)
 nif_plot_id(examplinib_poc_nif, 1, log = TRUE)
 nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)

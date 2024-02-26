@@ -164,12 +164,12 @@ isofy_dates <- function(obj) {
 #' @keywords internal
 compose_dtc <- function(date, time) {
   data.frame(date = as.character(date), time = as.character(time)) %>%
-    mutate(time = case_when(is.na(time) ~ "", .default = time)) %>%
-    mutate(DTC = str_trim(paste(as.character(date), time))) %>%
-    mutate(DTC = lubridate::as_datetime(DTC,
+    mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) %>%
+    mutate(DTC = str_trim(paste(as.character(.data$date), .data$time))) %>%
+    mutate(DTC = lubridate::as_datetime(.data$DTC,
                                         format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
     )) %>%
-    pull(DTC)
+    pull(.data$DTC)
 }
 
 

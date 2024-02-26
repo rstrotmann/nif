@@ -6,8 +6,8 @@
 #'
 #' @param obj The NIF object
 #' @param id The subject ID to be plotted
-#' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
-#'   is "lin". This argument is deprecated. Use 'log'.
+#' @param y_scale Y scale type. Use 'scale="log"' for a logarithmic y scale.
+#'   Default is "lin". Note that this argument is deprecated. Use 'log' instead.
 #' @param analyte The analytes to be displayes. Defaults to NULL (all).
 #' @param imp The IMP for which administrations are to be indicated by vertical
 #'   lines. Defaults to NULL.
@@ -26,7 +26,7 @@
 #' @keywords internal
 #' @examples
 #' nif_plot_id(examplinib_poc_nif, 1)
-#' nif_plot_id(examplinib_poc_min_nif, 1, y_scale = "log")
+#' nif_plot_id(examplinib_poc_min_nif, 1, log = TRUE)
 #' nif_plot_id(examplinib_poc_nif, 1, log = TRUE)
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
 #' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
@@ -67,7 +67,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
     if("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {
         x <- x %>%
-          filter(USUBJID == id)
+          filter(.data$USUBJID == id)
         id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
         plot_label <- "USUBJID"
       } else {
@@ -183,7 +183,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     if("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {
         x <- x %>%
-          filter(USUBJID == id)
+          filter(.data$USUBJID == id)
         id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
         plot_label <- "USUBJID"
       } else {
@@ -435,6 +435,7 @@ nif_spaghetti_plot <- function(obj,
       # filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
       unite(GROUP, c(group, "ID"), sep = " | ", remove = FALSE) %>%
+      # unite(GROUP, all_of(group, "ID"), sep = " | ", remove = FALSE) %>%
       unite(COLOR, group, sep = " | ", remove = FALSE)
     x_label <- "TIME"
   }
