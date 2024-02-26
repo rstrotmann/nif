@@ -296,9 +296,9 @@ nca_power_model <- function(nca, parameter = "aucinf.obs") {
                          se.fit = T,
                          level=0.9)$fit) %>%
 
-    ggplot(aes(x = DOSE, y=exp(fit))) +
+    ggplot(aes(x = DOSE, y=exp(.data$fit))) +
     geom_line() +
-    geom_ribbon(aes(x = DOSE, ymin = exp(lwr), ymax = exp(upr)),
+    geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
                 fill='lightgrey', alpha=0.5) +
     geom_point(aes(x = DOSE, y = PPORRES), size=2) +
     theme_bw() +

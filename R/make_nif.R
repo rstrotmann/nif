@@ -1212,8 +1212,8 @@ add_tv_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
     lubrify_dates() %>%
     filter(!LBSTAT %in% c("NOT DONE")) %>%
     filter(!is.na(LBSTRESN)) %>%
-    filter(LBSPEC == lbspec, LBTESTCD %in% lbtestcd[temp]) %>%
-    select(USUBJID, DTC = LBDTC, LBTESTCD, LBSTRESN) %>%
+    filter(.data$LBSPEC == lbspec, LBTESTCD %in% lbtestcd[temp]) %>%
+    select(USUBJID, DTC = .data$LBDTC, LBTESTCD, LBSTRESN) %>%
     distinct() %>%
     pivot_wider(names_from = "LBTESTCD", values_from = "LBSTRESN") %>%
     rename_with(~ stringr::str_c("TV_", .), .cols = -c(USUBJID, DTC)) %>%
@@ -1390,9 +1390,9 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     dplyr::filter(USUBJID %in% (obj %>%
                                   subjects() %>%
                                   pull(USUBJID))) %>%
-    mutate(DTC = LBDTC) %>%
-    dplyr::filter(LBSPEC %in% lbspec) %>%
-    dplyr::filter(LBTESTCD == lbtestcd) %>%
+    mutate(DTC = .data$LBDTC) %>%
+    dplyr::filter(.data$LBSPEC %in% lbspec) %>%
+    dplyr::filter(.data$LBTESTCD == lbtestcd) %>%
     left_join(obj %>%
                 add_time() %>%
                 as.data.frame() %>%
@@ -1405,10 +1405,10 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     dplyr::mutate(TIME = round(as.numeric(difftime(DTC, FIRSTDTC, units = "h")),
       digits = 3
     )) %>%
-    dplyr::mutate(DV = LBSTRESN) %>%
+    dplyr::mutate(DV = .data$LBSTRESN) %>%
     dplyr::mutate(LNDV = log(DV)) %>%
     dplyr::mutate(NTIME = case_when(LBDY < 0 ~ LBDY * 24,
-      .default = (LBDY - 1) * 24
+      .default = (.data$LBDY - 1) * 24
     )) %>%
     dplyr::select(
       STUDYID, USUBJID, DTC, FIRSTDTC, ANALYTE, PARENT, CMT, EVID,

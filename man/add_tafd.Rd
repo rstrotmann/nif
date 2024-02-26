@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{add_tafd}
 \alias{add_tafd}
-\title{Add time after first dose field}
+\title{Add time after first dose column}
 \usage{
 add_tafd(nif)
 }
@@ -13,7 +13,7 @@ add_tafd(nif)
 A NIF object.
 }
 \description{
-Add time after first dose field
+Add time after first dose column
 }
 \examples{
 add_tafd(examplinib_poc_nif)

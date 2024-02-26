@@ -901,7 +901,7 @@ add_tad <- function(nif) {
 }
 
 
-#' Add time after first dose field
+#' Add time after first dose column
 #'
 #' @param nif A NIF object.
 #' @return A NIF object.
@@ -916,9 +916,9 @@ add_tafd <- function(nif) {
     arrange(ID, PARENT, TIME) %>%
     group_by(ID, PARENT) %>%
     mutate(first_admin = min(TIME[EVID == 1])) %>%
-    mutate(TAFD = TIME-first_admin) %>%
-    mutate(TAFD = case_when(TAFD < 0 ~ 0, .default = TAFD)) %>%
-    select(-first_admin) %>%
+    mutate(TAFD = TIME-.data$first_admin) %>%
+    mutate(TAFD = case_when(TAFD < 0 ~ 0, .default = .data$TAFD)) %>%
+    select(-.data$first_admin) %>%
     new_nif()
 }
 

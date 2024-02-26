@@ -7,7 +7,7 @@
 NULL
 
 utils::globalVariables(c(
-  "labdate", "LBDTC", "LBSPEC", "LBTESTCD", "USUBJID", "FIRSTDTC", "DTC",
+  "LBTESTCD", "USUBJID", "FIRSTDTC", "DTC",
   "LBSTRESN", "LBDY", "STUDYID", "ANALYTE", "CMT", "EVID", "TIME", "NTIME",
   "DV", "AMT", "ID", "DOSE", "AGE", "age1", "SEX", "RACE", "ACTARMCD", "HEIGHT",
   "WEIGHT", "BMI", "PCDTC", "dtc", "PCRFTDTC", "ref.dtc", "dtc.date",
@@ -36,5 +36,5 @@ utils::globalVariables(c(
   "CLASS", "center", "dispersion", "value", "admin_time", "TAD", "COLOR",
   "ANALYTE1", "LBBLFL", "PCREFID", "RS2023", "RS2023487A", "VSDTC", "admin_REF",
   "evid", "last_obs", "lb", ".", "cmt_name", "LBSTAT", "VSSTAT", "MDV",
-  "rich_start", "TAFD", "first_admin", "fit", "lwr", "upr"
+  "rich_start"
 ))

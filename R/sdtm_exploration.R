@@ -300,7 +300,9 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
       obj %>%
         filter(if(!is.null(analyte)) LBTESTCD %in% analyte else TRUE) %>%
         ggplot(aes(
-          x=LBDTC, y=LBSTRESN, group=interaction(USUBJID, LBTESTCD),
+          x=.data$LBDTC,
+          y=.data$LBSTRESN,
+          group=interaction(.data$USUBJID, .data$LBTESTCD),
           color=LBTESTCD)) +
         {if (lines == TRUE) geom_line()} +
         {if (points == TRUE) geom_point()} +
