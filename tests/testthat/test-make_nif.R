@@ -97,25 +97,30 @@ test_that("make.admin works as intended", {
 # 'NA'.
 test_that("impute_missing_exendtc_time works as intended", {
   ex <- tribble(
-    ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
-    1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
-    1,        "EX",    "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
-    1,        "EX",    "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,
-    1,        "EX",    "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,
-    1,        "EX",    "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,
-    1,        "EX",    "TEST", "2022-11-15T14:20", ""                , 6,
-    2,        "EX",    "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,
-    3,        "EX",    "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,
-    4,        "EX",    "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,
-    4,        "EX",    "TEST", "2022-08-08T14:35", "2022-08-21"      , 2) %>%
+    ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ, ~imputation_expected,
+    1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,     FALSE,
+    1,        "EX",    "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,     FALSE,
+    1,        "EX",    "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,     TRUE,
+    1,        "EX",    "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,     FALSE,
+    1,        "EX",    "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,     FALSE,
+    1,        "EX",    "TEST", "2022-11-15T14:20", ""                , 6,     FALSE,
+    2,        "EX",    "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,     TRUE,
+    3,        "EX",    "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,     FALSE,
+    4,        "EX",    "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,     FALSE,
+    4,        "EX",    "TEST", "2022-08-08T14:35", "2022-08-21"      , 2,     TRUE
+    ) %>%
     lubrify_dates()
 
-  ex %>%
-    impute_missing_exendtc_time(silent=T) %>%
-    mutate(EXENDTC_has_time=has_time(EXENDTC)) %>%
-    summarize(sum=sum(EXENDTC_has_time==F, na.rm=T)) %>%
+  temp <- ex %>%
+    impute_missing_exendtc_time(silent = T) %>%
+    mutate(EXENDTC_has_time = has_time(EXENDTC))
+
+  temp %>%
+    summarize(sum = sum(EXENDTC_has_time == F, na.rm = T)) %>%
     as.numeric() %>%
     expect_equal(0)
+
+    expect_equal(all((temp$IMPT_TIME != "") == temp$imputation_expected), TRUE)
 
 })
 

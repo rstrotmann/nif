@@ -686,7 +686,8 @@ standard_nif_fields <- c(
 
 fillable_nif_fields <- c(
   "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
-  "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED"
+  "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED",
+  "IMPT_TIME"
 )
 
 
