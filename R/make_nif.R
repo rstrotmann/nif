@@ -196,7 +196,8 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
 #' @keywords internal
 impute_missing_exendtc <- function(ex, silent = FALSE) {
   temp <- ex %>%
-    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    assertr::verify(has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
+                                  "EXENDTC")) %>%
     lubrify_dates() %>%
     arrange(.data$USUBJID, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
@@ -211,23 +212,21 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
     message(
       nrow(to_replace),
       " rows in EX had no EXENDTC. These values are imputed as the day ",
-      "before\n",
-      "the next EXSTDTC. The missing entries should be added to the SDTM data ",
-      "set\n",
-      "or manually imputed before running `make_nif()`.\n",
-      "The following entries are affected:\n",
-      df_to_string(to_replace %>%
-                     select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC))
+      "before\nthe next EXSTDTC. The following entries are affected:\n",
+      df_to_string(select(to_replace, USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC))
     )
 
     temp <- temp %>%
-      mutate(EXENDTC1 = case_when(
-        (is.na(.data$EXENDTC) & LAST_ADMIN == FALSE) ~ next_start - days(1),
-        .default = .data$EXENDTC
-      )) %>%
-      mutate(EXENDTC = .data$EXENDTC1) %>%
-      select(-EXENDTC1)
+      mutate(imputation_flag = (is.na(.data$EXENDTC) & LAST_ADMIN == FALSE)) %>%
+      mutate(EXENDTC = case_match(imputation_flag,
+        TRUE ~ next_start - days(1),
+        FALSE ~ .data$EXENDTC)) %>%
+      mutate(IMPT_TIME = case_match(imputation_flag,
+        TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
+        FALSE ~ .data$IMPT_TIME)) %>%
+      select(-imputation_flag)
   }
+
   temp %>%
     select(-c("next_start", "LAST_ADMIN"))
 }

@@ -185,7 +185,7 @@ test_that("impute_admin_dtc_to_pcrftdtc works as intended", {
     1,        "A",     "2022-07-11T14:50", "2022-07-11T13:50",
     2,        "A",     "2022-08-11T15:50", "2022-08-11T14:50",
     3,        "A",     "2022-09-11T15:50", ""
-  ) %>% lubrify_dates()%>%
+  ) %>% lubrify_dates() %>%
     mutate(IMPT_TIME = "")
 
   temp <- impute_admin_dtc_to_pcrftdtc(admin, obs, silent = TRUE)
@@ -193,3 +193,16 @@ test_that("impute_admin_dtc_to_pcrftdtc works as intended", {
 })
 
 
+test_that("impute_missing_exendtc", {
+  ex <- tribble(
+    ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC,            ~EXENDTC,           ~imputation_expected,
+    1,        1,      "A",    "2022-01-01T08:00",  "2022-01-03T08:00", FALSE,
+    1,        2,      "A",    "2022-01-07T08:00",  "2022-01-09",       FALSE,
+    1,        3,      "A",    "2022-01-14T08:00",  "",                 TRUE,
+    1,        4,      "A",    "2022-01-21T08:00",  "2022-01-23T08:00", FALSE,
+  ) %>% lubrify_dates() %>%
+    mutate(IMPT_TIME = "")
+
+  temp <- impute_missing_exendtc(ex, silent = F)
+  expect_equal(temp$IMPT_TIME != "", temp$imputation_expected)
+})

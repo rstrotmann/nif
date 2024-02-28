@@ -23,7 +23,6 @@
   max_x = NULL,
   nominal_time = FALSE,
   title = "",
-  y_scale = deprecated(),
   ...
 )
 }
@@ -65,9 +64,6 @@ baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
 \item{nominal_time}{Plot NTIME rather than TIME.}
 
 \item{title}{The plot title.}
-
-\item{y_scale}{Type of y scale, can be "lin" or "log". Deprecated argument,
-use the parameter "log" instead.}
 
 \item{...}{Further plot parameters.}
 }

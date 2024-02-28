@@ -14,8 +14,7 @@ nif_plot_id(
   point_size = 2,
   log = FALSE,
   tad = FALSE,
-  imp = NULL,
-  y_scale = "lin"
+  imp = NULL
 )
 }
 \arguments{
@@ -40,9 +39,6 @@ TIME should be plotted.}
 
 \item{imp}{The IMP for which administrations are to be indicated by vertical
 lines. Defaults to NULL.}
-
-\item{y_scale}{Y scale type. Use 'scale="log"' for a logarithmic y scale.
-Default is "lin". Note that this argument is deprecated. Use 'log' instead.}
 }
 \value{
 A ggplot2 object.
