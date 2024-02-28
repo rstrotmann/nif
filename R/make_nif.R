@@ -66,7 +66,6 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
         str_trim() %>%
         as_datetime(format = c("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"))) %>%
 
-      # mutate(EXENDTC_new = case_when(
       mutate(EXENDTC = case_when(
         impute_exendtc_time == TRUE ~ EXENDTC1,
         .default = EXENDTC
@@ -74,7 +73,7 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
       select(-EXENDTC1) %>%
       mutate(IMPT_TIME = case_when(
         impute_exendtc_time == TRUE ~ "time imputed from EXSTDTC",
-        .default = ""
+        .default = IMPT_TIME
       ))
 
     conditional_message(
@@ -86,16 +85,9 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
         df_to_string(), "\n",
       silent = silent
     )
-    # temp <- temp %>%
-    #   mutate(EXENDTC = .data$EXENDTC_new) %>%
-    #   select(-EXENDTC_new)
   }
 
   temp %>%
-    # select(-c(
-    #   "EXENDTC_has_time", "EXSTDTC_has_time", "start.date",
-    #   "start.time", "end.date", "end.time", "impute_exendtc_time"
-    # ))
     select(-c(EXENDTC_has_time, EXSTDTC_has_time, start.date, start.time,
               end.date, end.time, impute_exendtc_time))
 }
@@ -110,7 +102,7 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
 #' @keywords internal
 exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
   ex %>%
-    left_join(dm %>% select(.data$USUBJID, .data$RFENDTC),
+    left_join(dm %>% select(USUBJID, RFENDTC),
               by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     filter(floor_date(EXSTDTC, "day") <=
@@ -144,8 +136,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
-    left_join(dm %>%
-                select(.data$USUBJID, .data$RFSTDTC, .data$RFENDTC),
+    left_join(dm %>% select(USUBJID, RFSTDTC, RFENDTC),
               by = "USUBJID") %>%
     ungroup()
 
@@ -161,8 +152,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
         temp %>%
           filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) &
                    .data$LAST_ADMIN == TRUE) %>%
-          select(.data$USUBJID, .data$EXTRT, .data$EXSTDTC, .data$EXENDTC,
-                 .data$RFENDTC)
+          select(USUBJID, EXTRT, EXSTDTC, EXENDTC, RFENDTC)
       ), "\n",
       silent = silent
     )
@@ -173,7 +163,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
            !is.na(.data$RFENDTC)) ~ .data$RFENDTC,
         .default = .data$EXENDTC
       )) %>%
-      select(-c(.data$LAST_ADMIN, .data$RFENDTC, .data$RFSTDTC))
+      select(-c(LAST_ADMIN, RFENDTC, RFSTDTC))
   } else {
     ex
   }
@@ -227,8 +217,7 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
       "or manually imputed before running `make_nif()`.\n",
       "The following entries are affected:\n",
       df_to_string(to_replace %>%
-                     select(.data$USUBJID, .data$EXSEQ, .data$EXTRT,
-                            .data$EXSTDTC, .data$EXENDTC))
+                     select(USUBJID, EXSEQ, EXTRT, EXSTDTC, EXENDTC))
     )
 
     temp <- temp %>%
@@ -237,7 +226,7 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
         .default = .data$EXENDTC
       )) %>%
       mutate(EXENDTC = .data$EXENDTC1) %>%
-      select(-.data$EXENDTC1)
+      select(-EXENDTC1)
   }
   temp %>%
     select(-c("next_start", "LAST_ADMIN"))
@@ -289,7 +278,7 @@ impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
       ))
   }
   temp %>%
-    select(-.data$LAST_ADMIN)
+    select(-LAST_ADMIN)
 }
 
 
@@ -320,7 +309,7 @@ make_exstdy_exendy <- function(ex, dm) {
                                      units = "days")) + 1) %>%
     mutate(EXENDY = floor(as.numeric(difftime(.data$EXENDTC, .data$RFSTDTC),
                                      units = "days")) + 1) %>%
-    select(-.data$RFSTDTC)
+    select(-RFSTDTC)
 }
 
 
@@ -331,41 +320,51 @@ make_exstdy_exendy <- function(ex, dm) {
 #' @param silent Switch to disable message output.
 #' @return The updated administration data frame.
 #' @keywords internal
+#' @import assertr
 impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
   temp <- admin %>%
+    assertr::verify(has_all_names("USUBJID", "PARENT", "date", "time")) %>%
     select(-any_of(c("ref.time", "ref.date", "PCRFTDTC"))) %>%
     left_join(
       (obs %>%
-          mutate(ref.date = as.Date(format(.data$PCRFTDTC,
-                                           format = "%Y-%m-%d"))) %>%
-          # mutate(ref.date = as.Date(extract_date(PCRFTDTC))) %>%
-          mutate(ref.time = format(.data$PCRFTDTC, format = "%H:%M")) %>%
-          # mutate(ref.time = extract_time(PCRFTDTC)) %>%
-          distinct(.data$USUBJID, .data$PARENT, .data$PCRFTDTC, .data$ref.date,
+         assertr::verify(has_all_names("USUBJID", "PARENT", "PCRFTDTC")) %>%
+          # mutate(ref.date = as.Date(format(.data$PCRFTDTC,
+          #                                  format = "%Y-%m-%d"))) %>%
+         mutate(ref.date = as.Date(extract_date(.data$PCRFTDTC))) %>%
+          # mutate(ref.time = format(.data$PCRFTDTC, format = "%H:%M")) %>%
+         mutate(ref.time = extract_time(.data$PCRFTDTC)) %>%
+         distinct(.data$USUBJID, .data$PARENT, .data$PCRFTDTC, .data$ref.date,
                    .data$ref.time)),
       by = c("USUBJID", "PARENT", "date" = "ref.date")) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%
-    fill(.data$ref.time, .direction = "down") %>%
+    fill(ref.time, .direction = "down") %>%
     ungroup()
 
-  n_cases <- temp %>% filter(.data$time != .data$ref.time) %>% nrow()
+  n_cases <- temp %>%
+    filter(.data$time != .data$ref.time) %>%
+    nrow()
 
   conditional_message(
-    paste0(
-      "Time found in PCRFTDTC used in ",
-      n_cases,
-      " cases."
-    ),
-    silent = silent || (n_cases==0)
+    paste0("Time found in PCRFTDTC used in ", n_cases, " cases."),
+    silent = silent || (n_cases == 0)
   )
 
   temp %>%
-    mutate(DTC = case_when(
-      (is.na(.data$time) | .data$time != .data$ref.time) ~
-        compose_dtc(.data$date, .data$ref.time),
-      .default = .data$DTC
-    )) #%>%
-    # select(-c("PCRFTDTC", "ref.time"))
+    mutate(imputation_flag = case_when(
+      (is.na(.data$time) | .data$time != .data$ref.time) ~ TRUE,
+      .default = FALSE)) %>%
+    # mutate(DTC = case_when(
+    #   (is.na(.data$time) | .data$time != .data$ref.time) ~
+    #     compose_dtc(.data$date, .data$ref.time),
+    #   .default = .data$DTC
+    # )) %>%
+    mutate(DTC = case_match(.data$imputation_flag,
+      TRUE ~ compose_dtc(.data$date, .data$ref.time),
+      FALSE ~ .data$DTC)) %>%
+    mutate(IMPT_TIME = case_match(.data$imputation_flag,
+      TRUE ~ "time imputed from PCRFTDTC",
+      FALSE ~ IMPT_TIME)) %>%
+    select(-imputation_flag)
 }
 
 
@@ -431,7 +430,7 @@ make_admin <- function(ex,
     mutate(date = list(seq(as.Date(.data$start.date),
                            as.Date(.data$end.date),
                            by = "days"))) %>%
-    unnest(c(.data$date)) %>%
+    unnest(c(date)) %>%
     group_by(.data$USUBJID, .data$EXTRT, .data$end.date) %>%
     dplyr::mutate(time = case_when(
       row_number() == n() ~ .data$end.time,
@@ -945,7 +944,7 @@ make_nif <- function(
   if (nrow(no_obs_sbs) > 0) {
     out <- no_obs_sbs %>%
       arrange(.data$PCTESTCD, .data$USUBJID) %>%
-      select(.data$USUBJID, .data$PCTESTCD) %>%
+      select(USUBJID, PCTESTCD) %>%
       df_to_string()
 
     conditional_message("The following subjects had no observations for ",
@@ -1187,7 +1186,7 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
     dplyr::filter(.data$LBSPEC == lbspec) %>%
     dplyr::filter(.data$LBBLFL == "Y") %>%
     dplyr::filter(.data$LBTESTCD %in% lbtestcd) %>%
-    dplyr::select(.data$USUBJID, .data$LBTESTCD, .data$LBSTRESN) %>%
+    dplyr::select(USUBJID, LBTESTCD, LBSTRESN) %>%
     tidyr::pivot_wider(names_from = "LBTESTCD", values_from = "LBSTRESN") %>%
     dplyr::rename_with(~ stringr::str_c("BL_", .), .cols = -1)
 
@@ -1227,7 +1226,7 @@ add_tv_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
     filter(!.data$LBSTAT %in% c("NOT DONE")) %>%
     filter(!is.na(.data$LBSTRESN)) %>%
     filter(.data$LBSPEC == lbspec, .data$LBTESTCD %in% lbtestcd[temp]) %>%
-    select(.data$USUBJID, DTC = .data$LBDTC, .data$LBTESTCD, .data$LBSTRESN) %>%
+    select(USUBJID, DTC = LBDTC, LBTESTCD, LBSTRESN) %>%
     distinct() %>%
     pivot_wider(names_from = "LBTESTCD", values_from = "LBSTRESN") %>%
     rename_with(~ stringr::str_c("TV_", .),
@@ -1238,7 +1237,7 @@ add_tv_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
     arrange(.data$USUBJID, .data$DTC) %>%
     fill(starts_with("TV_"), .direction = "down") %>%
     filter(is.na(.data$FLAG)) %>%
-    select(-.data$FLAG)
+    select(-FLAG)
 
   return(out)
 }
@@ -1273,7 +1272,7 @@ add_tv_vs <- function(obj, vs, vstestcd, duplicate_function = mean,
     filter(!.data$VSSTAT %in% c("NOT DONE")) %>%
     filter(!is.na(.data$VSSTRESN)) %>%
     filter(.data$VSTESTCD %in% vstestcd[temp]) %>%
-    select(.data$USUBJID, DTC = .data$VSDTC, .data$VSTESTCD, .data$VSSTRESN) %>%
+    select(USUBJID, DTC = VSDTC, VSTESTCD, VSSTRESN) %>%
     distinct() %>%
     dplyr::group_by(.data$USUBJID, .data$DTC, .data$VSTESTCD) %>%
     dplyr::summarise(
@@ -1288,7 +1287,7 @@ add_tv_vs <- function(obj, vs, vstestcd, duplicate_function = mean,
     arrange(.data$USUBJID, .data$DTC) %>%
     fill(starts_with("TV_"), .direction = "down") %>%
     filter(is.na(.data$FLAG)) %>%
-    select(-.data$FLAG)
+    select(-FLAG)
 
   return(out)
 }
@@ -1346,10 +1345,7 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
     mutate(labdate = date) %>%
     dplyr::filter(.data$LBSPEC %in% lbspec) %>%
     dplyr::filter(.data$LBTESTCD %in% lbtestcd) %>%
-    dplyr::select(
-      .data$USUBJID, .data$date, .data$labdate, .data$LBTESTCD,
-      .data$LBSTRESN
-    ) %>%
+    dplyr::select(USUBJID, date, labdate, LBTESTCD, LBSTRESN) %>%
     pivot_wider(
       names_from = .data$LBTESTCD, values_from = .data$LBSTRESN,
       values_fn = mean
@@ -1453,11 +1449,12 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
       as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
       digits = 3
     )) %>%
+    new_nif() %>%
     add_trtdy() %>%
     add_tad() %>%
     index_nif()
 
-  # return(new_nif(temp))
+  return(temp)
 }
 
 
@@ -1511,9 +1508,8 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
     mutate(PARENT = NA, METABOLITE = FALSE) %>%
     mutate(LNDV = log(.data$DV)) %>%
     mutate(MDV = is.na(.data$DV)) %>%
-    select(.data$STUDYID, .data$USUBJID, .data$TIME, .data$DTC, .data$ANALYTE,
-           .data$PARENT, .data$METABOLITE, .data$EVID, .data$AMT,
-           .data$RATE, .data$CMT, .data$DV, .data$LNDV, .data$MDV) %>%
+    select(STUDYID, USUBJID, TIME, DTC, ANALYTE, PARENT, METABOLITE, EVID, AMT,
+           RATE, CMT, DV, LNDV, MDV) %>%
     left_join(subjects(obj), by = "USUBJID")
 
   obj %>%

@@ -139,9 +139,9 @@ subject_info.nif <- function(obj, id) {
   out$administrations <- temp %>%
     add_trtdy() %>%
     filter(EVID == 1) %>%
-    select(.data$USUBJID, .data$TIME, .data$ANALYTE, .data$DTC, .data$TRTDY) %>%
+    select(USUBJID, TIME, ANALYTE, DTC, TRTDY) %>%
     arrange(.data$ANALYTE, .data$TIME) %>%
-    select(.data$ANALYTE, .data$TIME, .data$TRTDY) %>%
+    select(ANALYTE, TIME, TRTDY) %>%
     as.data.frame()
 
   class(out) <- c("subject_info", "data.frame")
@@ -919,7 +919,7 @@ add_tafd <- function(nif) {
     mutate(first_admin = min(TIME[EVID == 1])) %>%
     mutate(TAFD = TIME-.data$first_admin) %>%
     mutate(TAFD = case_when(TAFD < 0 ~ 0, .default = .data$TAFD)) %>%
-    select(-.data$first_admin) %>%
+    select(-first_admin) %>%
     new_nif()
 }
 
@@ -944,7 +944,7 @@ add_trtdy <- function(obj) {
                             date(.data$DTC)) / days(1)) %>%
     mutate(TRTDY = case_when(.data$TRTDY < 0 ~ .data$TRTDY,
                              .default = .data$TRTDY + 1)) %>%
-    select(-.data$FIRSTTRTDTC) %>%
+    select(-FIRSTTRTDTC) %>%
     new_nif()
 }
 

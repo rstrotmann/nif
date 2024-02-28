@@ -6,8 +6,6 @@
 #'
 #' @param obj The NIF object
 #' @param id The subject ID to be plotted
-#' @param y_scale Y scale type. Use 'scale="log"' for a logarithmic y scale.
-#'   Default is "lin". Note that this argument is deprecated. Use 'log' instead.
 #' @param analyte The analytes to be displayes. Defaults to NULL (all).
 #' @param imp The IMP for which administrations are to be indicated by vertical
 #'   lines. Defaults to NULL.
@@ -37,14 +35,15 @@
 #' nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
 #' nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
 nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
-                        max_time = NA, lines = TRUE,
-                        point_size = 2, log = FALSE, tad = FALSE, imp = NULL,
-                        y_scale = "lin") {
-  if (is_present(y_scale)) {
-    lifecycle::deprecate_warn("0.44.1", "nif_plot_id(y_scale)",
-                              "nif_plot_id(log)")
-    if(y_scale == "log") {log = TRUE} else {log = FALSE}
-  }
+                        max_time = NA, lines = TRUE, point_size = 2,
+                        log = FALSE, tad = FALSE, imp = NULL
+                        # y_scale = "lin"
+                        ) {
+  # if (is_present(y_scale)) {
+  #   lifecycle::deprecate_warn("0.44.1", "nif_plot_id(y_scale)",
+  #                             "nif_plot_id(log)")
+  #   if(y_scale == "log") {log = TRUE} else {log = FALSE}
+  # }
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
@@ -129,7 +128,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
       labs(caption = paste("vertical lines indicate", imp, "administrations"))
   }
 
-  if (y_scale == "log" | log == TRUE) {
+  if (log == TRUE) {
     p <- p + scale_y_log10()
   } else {
     p <- p + scale_y_continuous(limits = c(0, NA))
@@ -434,9 +433,9 @@ nif_spaghetti_plot <- function(obj,
       filter(EVID == 0) %>%
       # filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
-      unite(GROUP, c(group, "ID"), sep = " | ", remove = FALSE) %>%
-      # unite(GROUP, all_of(group, "ID"), sep = " | ", remove = FALSE) %>%
-      unite(COLOR, group, sep = " | ", remove = FALSE)
+      # unite(GROUP, c(group, "ID"), sep = " | ", remove = FALSE) %>%
+      unite(GROUP, all_of(c(group, "ID")), sep = " | ", remove = FALSE) %>%
+      unite(COLOR, all_of(group), sep = " | ", remove = FALSE)
     x_label <- "TIME"
   }
 
@@ -502,8 +501,6 @@ nif_spaghetti_plot <- function(obj,
 #' @param alpha The alpha value for the points as numeric.
 #' @param title The plot title.
 #' @param nominal_time Plot NTIME rather than TIME.
-#' @param y_scale Type of y scale, can be "lin" or "log". Deprecated argument,
-#'   use the parameter "log" instead.
 #' @param ... Further plot parameters.
 #' @return A ggplot2 object.
 #' @import lifecycle
@@ -528,13 +525,14 @@ plot.nif <- function(x, mean = FALSE, analyte = NULL, cmt = NULL, dose = NULL,
                      summary_function = median, points = FALSE,
                      point_size = 2, alpha = 1, lines = TRUE,
                      log = FALSE, min_x = NULL, max_x = NULL,
-                     nominal_time = FALSE, title = "", y_scale = deprecated(),
+                     nominal_time = FALSE, title = "",
+                     # y_scale = deprecated(),
                      ...) {
-  if (is_present(y_scale)) {
-    lifecycle::deprecate_warn("0.44.1", "plot.nif(y_scale)",
-                              "plot.nif(log)")
-    if(y_scale == "log") {log = TRUE} else {log = FALSE}
-  }
+  # if (is_present(y_scale)) {
+  #   lifecycle::deprecate_warn("0.44.1", "plot.nif(y_scale)",
+  #                             "plot.nif(log)")
+  #   if(y_scale == "log") {log = TRUE} else {log = FALSE}
+  # }
   if(mean == TRUE) {
     nif_mean_plot(x, analyte = analyte, cmt = cmt, dose = dose, group = group,
                   tad = tad, cfb = cfb, summary_function = summary_function,
