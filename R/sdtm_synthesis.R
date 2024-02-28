@@ -189,20 +189,20 @@ make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
 make_vs <- function(dm) {
   vs <- dm %>%
     # filter(ACTARMCD!="SCRNFAIL") %>%
-    dplyr::select(STUDYID, USUBJID, RFSTDTC) %>%
+    dplyr::select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
     group_by_all() %>%
     expand(VSTESTCD = c("HEIGHT", "WEIGHT")) %>%
     mutate(VSORRES = case_when(
-      VSTESTCD == "HEIGHT" ~ rnorm(1, 179, 6.81),
-      VSTESTCD == "WEIGHT" ~ rnorm(1, 78.5, 10.2)
+      .data$VSTESTCD == "HEIGHT" ~ rnorm(1, 179, 6.81),
+      .data$VSTESTCD == "WEIGHT" ~ rnorm(1, 78.5, 10.2)
     )) %>%
     mutate(VSTEST = case_when(
-      VSTESTCD == "HEIGHT" ~ "Height",
-      VSTESTCD == "WEIGHT" ~ "Weight"
+      .data$VSTESTCD == "HEIGHT" ~ "Height",
+      .data$VSTESTCD == "WEIGHT" ~ "Weight"
     )) %>%
     mutate(VSORRESU = case_when(
-      VSTESTCD == "HEIGHT" ~ "cm",
-      VSTESTCD == "WEIGHT" ~ "kg"
+      .data$VSTESTCD == "HEIGHT" ~ "cm",
+      .data$VSTESTCD == "WEIGHT" ~ "kg"
     )) %>%
     mutate(VSSTRESN = round(.data$VSORRES, digits = 1)) %>%
     mutate(VSSTRESU = .data$VSORRESU, EPOCH = "SCREENING", DOMAIN = "VS",
@@ -230,7 +230,7 @@ make_vs <- function(dm) {
 make_sd_ex <- function(dm, admindays = c(1, 14), drug = "RS2023", dose = 500) {
   ex <- dm %>%
     filter(.data$ACTARMCD != "SCRNFAIL") %>%
-    dplyr::select(STUDYID, USUBJID, RFSTDTC) %>%
+    dplyr::select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
     mutate(DOMAIN = "EX") %>%
     group_by_all() %>%
     expand(EXDY = admindays) %>%
@@ -247,7 +247,7 @@ make_sd_ex <- function(dm, admindays = c(1, 14), drug = "RS2023", dose = 500) {
       EXSEQ == 1 ~ "OPEN LABEL TREATMENT 1",
       EXSEQ == 2 ~ "OPEN LABEL TREATMENT 2"
     )) %>%
-    select(-RFSTDTC) %>%
+    select(-"RFSTDTC") %>%
     as.data.frame()
 
   return(ex)
@@ -333,7 +333,7 @@ make_md_ex <- function(dm,
                        red_prob = 0.3){
   ex <- dm %>%
     filter(.data$ACTARMCD != "SCRNFAIL") %>%
-    select(STUDYID, USUBJID, RFSTDTC) %>%
+    select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
     mutate(DOMAIN = "EX") %>%
     # make random treatment duration between 60% and 100% of the specified
     mutate(trtdur = floor(runif(
@@ -357,7 +357,7 @@ make_md_ex <- function(dm,
   ex <- ex %>%
     mutate(
       EXTRT = drug,
-      EXDOSE = DOSE,
+      EXDOSE = .data$DOSE,
       EPOCH = "TREATMENT",
       EXROUTE = "ORAL",
       EXDOSFRM = "TABLET"
@@ -394,7 +394,7 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
   sbs <- subject_baseline_data(dm, vs, lb) %>%
     left_join(ex %>%
                 distinct(.data$USUBJID, .data$EXDOSE) %>%
-                select(USUBJID, EXDOSE), by = "USUBJID") %>%
+                select(c("USUBJID", "EXDOSE")), by = "USUBJID") %>%
     mutate(FOOD = 0, PERIOD = 1)
 
   ev <- rxode2::et(amountUnits = "mg", timeUnits = "hours") %>%
@@ -407,21 +407,18 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
     mutate(NTIME = .data$time) %>%
     left_join(
       sbs %>%
-        dplyr::select(
-          id = ID, USUBJID, SEX, AGE, HEIGHT, WEIGHT, FOOD, PERIOD, EGFR,
-          EXDOSE
-        ),
-      by = "id"
-    ) %>%
+        dplyr::select(c("id" = "ID", "USUBJID", "SEX", "AGE", "HEIGHT",
+                        "WEIGHT", "FOOD", "PERIOD", "EGFR", "EXDOSE")),
+      by = "id") %>%
     mutate(amt = case_when(!is.na(.data$amt) ~ .data$EXDOSE, .default = NA)) %>%
     mutate(NTIME = .data$time)
 
   sim <- pk_sim(ev) %>%
-    left_join(sbs %>% select(id = ID, USUBJID), by = "id")
+    left_join(sbs %>% select(c("id" = "ID", "USUBJID")), by = "id")
 
   pc <- sim %>%
-    dplyr::select(USUBJID, id, time, c_centr, c_metab) %>%
-    mutate(RS2023 = c_centr * 1000, RS2023487A = c_metab * 1000) %>%
+    dplyr::select(c("USUBJID", "id", "time", "c_centr", "c_metab")) %>%
+    mutate(RS2023 = .data$c_centr * 1000, RS2023487A = .data$c_metab * 1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"),
                  names_to = "PCTESTCD",
                  values_to = "PCSTRESN"
@@ -573,12 +570,12 @@ add_RFENDTC <- function(dm, ex) {
 subject_baseline_data <- function(dm, vs, lb) {
   baseline_vs <- vs %>%
     filter(EPOCH == "SCREENING") %>%
-    dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
+    dplyr::select(c("USUBJID", "VSTESTCD", "VSSTRESN")) %>%
     pivot_wider(names_from = "VSTESTCD", values_from = "VSSTRESN")
 
   baseline_lb <- lb %>%
     filter(.data$LBBLFL == "Y", .data$LBTESTCD == "CREAT") %>%
-    select(USUBJID, BL_CREAT = LBSTRESN)
+    select(c("USUBJID", "BL_CREAT" = "LBSTRESN"))
 
   sbs <- dm %>%
     filter(.data$ACTARMCD != "SCRNFAIL") %>%
@@ -586,7 +583,8 @@ subject_baseline_data <- function(dm, vs, lb) {
     left_join(baseline_lb, by = "USUBJID") %>%
     mutate(EGFR = egfr_cg(.data$BL_CREAT, .data$AGE, .data$SEX, .data$RACE,
                           .data$WEIGHT, molar = T)) %>%
-    select(USUBJID, RFSTDTC, SEX, AGE, HEIGHT, WEIGHT, EGFR, ACTARMCD) %>%
+    select(c("USUBJID", "RFSTDTC", "SEX", "AGE", "HEIGHT", "WEIGHT", "EGFR",
+             "ACTARMCD")) %>%
     mutate(ID = row_number())
 }
 
@@ -739,7 +737,7 @@ synthesize_sdtm_poc_study <- function(
     add_RFENDTC(ex)
 
   sbs <- subject_baseline_data(dm, vs, lb) %>%
-    mutate(rich = ID <= nrich)
+    mutate(rich = .data$ID <= nrich)
 
   admin <- ex %>%
     group_by(.data$USUBJID) %>%
@@ -750,14 +748,14 @@ synthesize_sdtm_poc_study <- function(
     ungroup() %>%
     mutate(TIME = as.numeric(.data$dtc - .data$first_dtc) / 3600) %>%
     left_join(sbs, by = "USUBJID") %>%
-    select(id = ID, USUBJID, time = TIME, SEX,
-           AGE, HEIGHT, WEIGHT, EGFR) %>%
+    select(c("id" = "ID", "USUBJID", "time" = "TIME", "SEX", "AGE", "HEIGHT",
+             "WEIGHT", "EGFR")) %>%
     mutate(cmt = 0, amt = dose, rate = -2, evid = 1, NTIME = 0)
 
   temp <- admin %>%
     # day 8
     group_by(.data$USUBJID) %>%
-    filter(time >= 8 * 24) %>%
+    filter(.data$time >= 8 * 24) %>%
     summarize(ref_time = min(.data$time), .groups = "drop") %>%
     # day 1
     add_row(admin %>%
@@ -788,18 +786,18 @@ synthesize_sdtm_poc_study <- function(
     ungroup() %>%
     mutate(time1 = .data$time + .data$delta) %>%
     left_join(sbs, by = "USUBJID") %>%
-    select(
-      id = ID, USUBJID, time = time1, SEX, AGE, HEIGHT, WEIGHT, EGFR, NTIME
-    ) %>%
+    select(c("id" = "ID", "USUBJID", "time" = "time1", "SEX", "AGE", "HEIGHT",
+             "WEIGHT", "EGFR", "NTIME")) %>%
     mutate(cmt = 1, amt = 0, rate = 0, evid = 0)
 
   ev <- rbind(admin, sampling) %>%
-    arrange(id, time) %>%
+    arrange(.data$id, .data$time) %>%
     mutate(FOOD = 1) %>%
     as.data.frame()
 
   pc <- pk_sim(ev) %>%
-    select(id, time, RS2023 = c_centr, RS2023487A = c_metab, NTIME) %>%
+    select(c("id", "time", "RS2023" = "c_centr", "RS2023487A" = "c_metab",
+             "NTIME")) %>%
     mutate(RS2023 = .data$RS2023 * 1000,
            RS2023487A = .data$RS2023487A * 1000) %>%
     pivot_longer(c("RS2023", "RS2023487A"),
@@ -818,7 +816,7 @@ synthesize_sdtm_poc_study <- function(
     ungroup() %>%
     left_join(
       dm %>%
-        select(USUBJID, RFSTDTC, STUDYID),
+        select(c("USUBJID", "RFSTDTC", "STUDYID")),
       by = "USUBJID"
     ) %>%
     mutate(PCDTC = .data$RFSTDTC + .data$delta_time * 3600) %>%
@@ -829,7 +827,7 @@ synthesize_sdtm_poc_study <- function(
     mutate(PCTPTNUM = .data$NTIME) %>%
     mutate(PCRFTDTC = .data$RFSTDTC) %>%
     mutate(PCELTM = paste0("PT", as.character(.data$NTIME), "H")) %>%
-    select(-c(time, NTIME, delta_time, id)) %>%
+    select(-c("time", "NTIME", "delta_time", "id")) %>%
     arrange(.data$USUBJID, .data$PCDTC) %>%
     group_by(.data$USUBJID) %>%
     mutate(PCSEQ = row_number()) %>%
@@ -990,7 +988,7 @@ make_crea <- function(dm, crea_method = crea_mdrd) {
 make_lb <- function(dm) {
   dm %>%
     make_crea() %>%
-    select(c(STUDYID, USUBJID, DOMAIN, RFSTDTC, CREA)) %>%
+    select(c("STUDYID", "USUBJID", "DOMAIN", "RFSTDTC", "CREA")) %>%
     mutate(
       DOMAIN = "DM",
       LBSEQ = 1,
@@ -998,14 +996,14 @@ make_lb <- function(dm) {
       LBSPEC = "SERUM",
       VISITNUM = 1,
       LBBLFL = "Y",
-      LBDTC = RFSTDTC - 24 * 60 * 60,
+      LBDTC = .data$RFSTDTC - 24 * 60 * 60,
       LBTESTCD = "CREAT",
       LBTEST = "Creatinine",
-      LBORRES = CREA,
+      LBORRES = .data$CREA,
       LBORRESU = "mg/dL",
       LBORNRLO = 0.67,
       LBORNRHI = 1.17,
-      LBSTRESN = LBORRES * 88.4,
+      LBSTRESN = .data$LBORRES * 88.4,
       LBSTRESC = as.character(round(.data$LBSTRESN, 3)),
       LBSTRESU = "umol/L",
       LBSTNRLO = 59.2,

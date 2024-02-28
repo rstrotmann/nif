@@ -139,9 +139,9 @@ subject_info.nif <- function(obj, id) {
   out$administrations <- temp %>%
     add_trtdy() %>%
     filter(EVID == 1) %>%
-    select(USUBJID, TIME, ANALYTE, DTC, TRTDY) %>%
+    select(c("USUBJID", "TIME", "ANALYTE", "DTC", "TRTDY")) %>%
     arrange(.data$ANALYTE, .data$TIME) %>%
-    select(ANALYTE, TIME, TRTDY) %>%
+    select(c("ANALYTE", "TIME", "TRTDY")) %>%
     as.data.frame()
 
   class(out) <- c("subject_info", "data.frame")
@@ -914,12 +914,12 @@ add_tafd <- function(nif) {
   nif %>%
     assertr::verify(has_all_names("ID", "TIME", "EVID")) %>%
     ensure_parent() %>%
-    arrange(ID, PARENT, TIME) %>%
-    group_by(ID, PARENT) %>%
-    mutate(first_admin = min(TIME[EVID == 1])) %>%
-    mutate(TAFD = TIME-.data$first_admin) %>%
-    mutate(TAFD = case_when(TAFD < 0 ~ 0, .default = .data$TAFD)) %>%
-    select(-first_admin) %>%
+    arrange(.data$ID, .data$PARENT, .data$TIME) %>%
+    group_by(.data$ID, .data$PARENT) %>%
+    mutate(first_admin = min(.data$TIME[.data$EVID == 1])) %>%
+    mutate(TAFD = .data$TIME-.data$first_admin) %>%
+    mutate(TAFD = case_when(.data$TAFD < 0 ~ 0, .default = .data$TAFD)) %>%
+    select(-c("first_admin")) %>%
     new_nif()
 }
 

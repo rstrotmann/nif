@@ -1,3 +1,21 @@
+#' Recode SEX field in a data frame
+#'
+#' This function recodes the SEX field in a data frame. All numerical values are
+#' kept while "M" is recoded to 0 and "F" to 1. If your downstream analysis
+#' requires different coding, please manually re-code.
+#' @param obj The data.frame containing a SEX field
+#' @return The output data frame
+#' @import dplyr
+#' @keywords internal
+recode_sex <- function(obj) {
+  obj %>%
+    dplyr::mutate(SEX = as.numeric(
+      dplyr::case_match(as.character(SEX),
+                        "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0, .default = NA)
+    ))
+}
+
+
 #' Render data frame object to string
 #'
 #' This function renders a data.frame into a string similar to its
