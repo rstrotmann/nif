@@ -272,7 +272,6 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
                          yend = .data$ID)) +
         {if (points == TRUE) geom_point(aes(x = .data$EXSTDTC, y = .data$ID))} +
         {if (points == TRUE) geom_point(aes(x = .data$EXENDTC, y = .data$ID))} +
-        # labs(x="EXSTDTC, EXENDTC", y="USUBJID") +
         scale_y_discrete(name="USUBJID", labels=NULL) +
         scale_x_datetime(name="EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d") +
         theme_bw() +
@@ -333,6 +332,28 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         theme_bw() +
         theme(legend.position = "bottom") +
         ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", PC"))
+    )
+  }
+
+  if(!domain %in% c("pc", "dm", "lb", "vs", "ex")) {
+    dtc_variable <- paste0(toupper(domain), "DTC")
+    return(
+      obj %>%
+        group_by(.data$USUBJID) %>%
+        filter(sum(!is.na({{dtc_variable}})) > 0) %>%
+        mutate(ID = cur_group_id()) %>%
+        mutate(min_time = min(.data[[dtc_variable]], na.rm = TRUE),
+               max_time = max(.data[[dtc_variable]], na.rm = TRUE)) %>%
+        arrange(.data$ID) %>%
+        ggplot(aes(x = .data[[dtc_variable]], y = .data$ID)) +
+        {if (points == TRUE) geom_point()} +
+        geom_segment(aes(x = .data$min_time, xend = .data$max_time,
+                         y = .data$ID, yend = .data$ID)) +
+        scale_y_discrete(labels = NULL, name = "USUBJID") +
+        scale_x_datetime(name = dtc_variable, date_labels = "%Y-%m-%d") +
+        theme_bw() +
+        ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", ",
+                       toupper(domain)))
     )
   }
 }
