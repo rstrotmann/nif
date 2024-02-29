@@ -108,14 +108,16 @@ print.summary_sdtm <- function(x, ...) {
   cat("SDTM domains: ")
   cat(paste(x$domains, collapse = ", "))
 
-  cat("\n\nArms:\n")
+  cat("\n\nArms (DM):\n")
   print(x$arms, right = FALSE, justify = FALSE)
 
-  cat("\nTreatments:\n")
+  cat("\nTreatments (EX):\n")
   print(x$treatments %>% as.data.frame(), right = FALSE)
-  cat("\nSpecimens:\n")
+
+  cat("\nSpecimens (PC):\n")
   print(x$specimens, right = FALSE)
-  cat("\nAnalytes:\n")
+
+  cat("\nAnalytes (PC):\n")
   print(x$analytes %>% as.data.frame(), right = FALSE)
 
   cat("\nTreatment-to-analyte mappings:\n")

@@ -29,14 +29,13 @@ theme_set(theme_bw())
 
 # OVERVIEW
 
-This vignette walks through the creation of a NIF data set for a prototypical
-multiple dose study (study 'RS2023-0022'), as well as some basic exploratory
-analyses.
+This vignette walks through the creation of a NONMEM input fil (NIF) data set
+for a prototypical multiple dose study (study 'RS2023-0022'), followed by some
+basic exploratory analyses.
 
-The (entirely fictional) raw study data are provided in SDTM format as
-part of the NIF package as 'examplinib_poc'. Actual SDTM data can be loaded 
-using `read_sdtm_sas()` of `read_sdtm_xpt()` - for further information see the
-documentation for the respective functions.
+The (fictional) raw study data are included as part of the NIF package as
+'examplinib_poc'. Custom SDTM data can be loaded using `read_sdtm()` - for
+further information see the documentation for that function.
 
 ## Study design
 
@@ -48,9 +47,10 @@ subset of subjects and sparse in the others.
 
 ## Study SDTM data
 
-SDTM data objects as defined in the NIF package are aggregates of the original
-SDTM domains together with some metadata. Let's print the 'examplinib_poc' SDTM
-object for a high-level overview on the data:
+The  package provides the 'sdtm' class as a wrapper to keep all
+SDTM domain tables of a clinical study together in one object. The
+`examplinib_poc` sdtm object contains the DM, EX, PC and VS domains. Let's
+print the 'examplinib_poc' sdtm object for a high-level overview:
 
 
 ```{r, echo=T}
@@ -61,14 +61,19 @@ Note that in the EX domain, the administered drug is given as 'EXAMPLINIB' while
 in PC, the corresponding analyte is 'RS2023'. The other analyte, 'RS2023487A' is
 a metabolite.
 
-To clearly specify these correlations, the SDTM object contains the fields
+To clearly specify these correlations, the SDTM object includes the fields
 `examplinib_poc$analyte_mapping` and `examplinib_poc$metabolite_mapping`. Both
-need to be specified when the SDTM data set is created. See the documentation to
+can be specified when the SDTM data set is created. See the documentation to
 `add_analyte_mapping()` and `add_metabolite_mapping()` for details.
 
-For this SDTM object, both have been added already.
+For this SDTM object, both mappings have been added already.
 
-# CREATE THE NIF DATA SET
+# CREATING A NIF DATA SET
+
+To enable more complex analyses and analyses in the time domain, the data from
+different SDTM domains must be integrated into a single data frame in long 
+table format. For modeling analyses, a common format specification is the NONMEM
+input file (NIF) format that is at the core of the `nif` package.
 
 Creation of the NIF data set for this study is straightforward. No imputations
 are needed, and no study-specific fields are created:
@@ -123,11 +128,11 @@ nif_poc
 
 ## Demographics
 
-A good initial overview on the distribution of baseline parameters, the
-administered drugs, analytes, observations, etc. can be inspected with
-`summary()`. Since we have above added baseline eGFR to the data set, the output
-also summarizes the number of patients with normal renal function or impaired
-renal function:
+For an initial overview on the distribution of baseline parameters, the
+administered drugs, analytes, observations, etc., NIF objects can be inspected
+with the `summary()` function. Note that since we have added baseline eGFR to
+the data set, the output also summarizes the number of patients with normal
+renal function or impaired renal function:
 
 ```{r, comment="# "}
 summary(nif_poc)
