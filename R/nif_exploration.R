@@ -385,7 +385,7 @@ nif_spaghetti_plot <- function(obj,
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
-    add_tad() %>%
+    ensure_tad() %>%
     add_cfb(summary_function = summary_function) %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
@@ -393,7 +393,7 @@ nif_spaghetti_plot <- function(obj,
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
     {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
-    filter(!is.na(DV))
+    filter(!is.na(DV) | EVID == 1)
 
   n_analytes <- length(unique(x$ANALYTE))
 
@@ -424,10 +424,11 @@ nif_spaghetti_plot <- function(obj,
     # to avoid connecting plot lines across administrations
     mock_admin_for_metabolites <- x %>%
       as.data.frame() %>%
-      filter(EVID==1) %>%
-      crossing(ANALYTE1=analytes(x)) %>%
-      mutate(ANALYTE=ANALYTE1) %>%
+      filter(EVID == 1) %>%
+      crossing(ANALYTE1 = analytes(x)) %>%
+      mutate(ANALYTE = ANALYTE1) %>%
       select(-ANALYTE1)
+      # crossing(ANALYTE = analytes(x))
 
     x <- x %>%
       filter(EVID == 0) %>%
@@ -457,7 +458,7 @@ nif_spaghetti_plot <- function(obj,
 
   x %>%
     filter(TIME <= max_x) %>%
-    ggplot2::ggplot(ggplot2::aes(
+    ggplot(ggplot2::aes(
       x = TIME,
       y = DV,
       group = GROUP,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{add_tad_non_pk}
 \alias{add_tad_non_pk}
-\title{Add time-after-dose (TAD) field}
+\title{Add time-after-dose (TAD) field for a non-PK analyte}
 \usage{
 add_tad_non_pk(nif, analyte = NULL, parent = NULL)
 }
@@ -17,5 +17,5 @@ add_tad_non_pk(nif, analyte = NULL, parent = NULL)
 A NIF object.
 }
 \description{
-Add time-after-dose (TAD) field
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
