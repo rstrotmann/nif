@@ -147,28 +147,34 @@ print.summary_sdtm <- function(x, ...) {
 
 #' Attach a treatment-analyte mapping to an SDTM object
 #'
-#' In some studies, multiple drugs are co-administered, and there may be plasma
-#' concentration data from different parent drugs. In order to appropriately
-#' correlate observations with administrations, the [make_nif()] algorithm needs
-#' to know which analyte (PCTESTCD within PC) belongs to which drug (EXTRT
-#' within EX). If the respective names differ, add_treatment_mapping() can be
-#' used to attach this information to the SDTM object. Multiple mappings may be
-#' needed.
+#' In some studies, multiple drugs are co-administered, and there may be analyte
+#' data related to different parent drugs. In order to appropriately correlate
+#' observations with administrations, the [make_nif()] algorithm needs to know
+#' which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
+#' The same applies to non-PK observations. [add_treatment_mapping()] is used to
+#' attach this information to the SDTM object. Multiple mappings may be needed.
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
-#' @param pctestcd The analyte as defined in PC.
+#' @param testcd The analyte as character (as in 'PCTESTCD' for PK observations
+#'   or, e.g., 'VSTESTCD' for vital sign observations, etc.).
 #' @seealso [make_nif()]
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 #' @export
-add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
+# add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
+#   obj$analyte_mapping <- rbind(
+#     obj$analyte_mapping,
+#     data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd)
+#   )
+#   return(obj)
+# }
+add_analyte_mapping <- function(obj, extrt = "", testcd = "") {
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
-    data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd)
+    data.frame("EXTRT" = extrt, "TESTCD" = testcd)
   )
   return(obj)
 }
-
 
 #' Attach a parent-metabolite mapping to a SDTM object.
 #'

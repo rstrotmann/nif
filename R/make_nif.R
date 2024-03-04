@@ -671,13 +671,16 @@ conditional_message <- function(msg, ..., silent = FALSE) {
 }
 
 
-#' Create the drug mapping data frame from
+#' Create the drug mapping data frame for PC observations
 #'
 #' @param sdtm_data The sdtm data as SDTM object.
 #' @return A data frame.
 #' @keywords internal
 make_drug_mapping <- function(sdtm_data) {
   drug_mapping <- sdtm_data$analyte_mapping %>%
+    filter(TESTCD %in% unique(sdtm_data$pc$PCTESTCD)) %>%
+    mutate(PCTESTCD = TESTCD) %>%
+    select(-TESTCD) %>%
     rbind(
       data.frame(EXTRT = intersect(
         unique(sdtm_data$ex$EXTRT),
@@ -1351,10 +1354,10 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
 #' @param silent Switch to disable message output.
 #' @return The resulting NIF object.
 #' @export
-add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
-                                silent = FALSE) {
+add_lab_observation <- function(obj, lb, lbtestcd, analyte_mapping = NULL,
+                                cmt = NULL, lbspec = "", silent = FALSE) {
   obj %>%
-    verify(has_all_names("USUBJID", "TIME", "EVID"))
+    verify(has_all_names("ID", "USUBJID", "TIME", "EVID"))
 
   test <- lbtestcd %in% unique(lb$LBTESTCD)
   if (!all(test)) {
@@ -1381,13 +1384,16 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     mutate(DTC = .data$LBDTC) %>%
     filter(.data$LBSPEC %in% lbspec) %>%
     filter(.data$LBTESTCD == lbtestcd) %>%
+    left_join(analyte_mapping, by = c("LBTESTCD" = "TESTCD")) %>%
+    mutate(PARENT = EXTRT) %>%
+
     left_join(obj %>%
                 add_time() %>%
                 as.data.frame() %>%
-                distinct(.data$USUBJID, .data$FIRSTDTC),
+                distinct(.data$USUBJID, .data$FIRSTDTC, .data$ID),
               by = "USUBJID") %>%
     dplyr::mutate(
-      ANALYTE = lbtestcd, PARENT = "", CMT = cmt, MDV = 0, EVID = 0,
+      ANALYTE = lbtestcd, CMT = cmt, MDV = 0, EVID = 0,
       AMT = 0, RATE = 0
     ) %>%
     dplyr::mutate(
@@ -1400,8 +1406,9 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     mutate(NTIME = case_when(.data$LBDY < 0 ~ .data$LBDY * 24,
       .default = (.data$LBDY - 1) * 24
     )) %>%
+    # add_tad() %>%
     dplyr::select(all_of(c(
-      "STUDYID", "USUBJID", "DTC", "FIRSTDTC", "ANALYTE", "PARENT", "CMT",
+      "ID", "STUDYID", "USUBJID", "DTC", "FIRSTDTC", "ANALYTE", "PARENT", "CMT",
       "EVID", "TIME", "NTIME", "DV", "LNDV", "AMT", "RATE", "IMPT_TIME"
     )))
 
