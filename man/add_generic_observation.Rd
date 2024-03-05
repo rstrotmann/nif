@@ -12,6 +12,7 @@ add_generic_observation(
   DV_field,
   analyte_name,
   cmt = NULL,
+  parent = NA,
   silent = FALSE
 )
 }
@@ -29,6 +30,10 @@ add_generic_observation(
 \item{analyte_name}{The name of the analyte in the output, as character.}
 
 \item{cmt}{The comopartment for the added observation.}
+
+\item{parent}{The parent as character. If provided, the parent field defines
+which parent compound administration is taken as the reference time when
+time after dose (TAD) is calculated.}
 
 \item{silent}{Suppress messages.}
 }

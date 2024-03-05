@@ -4,14 +4,14 @@
 \alias{add_analyte_mapping}
 \title{Attach a treatment-analyte mapping to an SDTM object}
 \usage{
-add_analyte_mapping(obj, extrt = "", testcd = "")
+add_analyte_mapping(obj, extrt = "", pctestcd = "")
 }
 \arguments{
 \item{obj}{A SDTM object.}
 
 \item{extrt}{The treatment as defined in EX.}
 
-\item{testcd}{The analyte as character (as in 'PCTESTCD' for PK observations
+\item{pctestcd}{The analyte as character (as in 'PCTESTCD' for PK observations
 or, e.g., 'VSTESTCD' for vital sign observations, etc.).}
 }
 \description{

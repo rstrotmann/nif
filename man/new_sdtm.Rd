@@ -8,6 +8,7 @@ new_sdtm(
   sdtm_data,
   analyte_mapping = data.frame(),
   metabolite_mapping = data.frame(),
+  parent_mapping = data.frame(),
   time_mapping = data.frame()
 )
 }
@@ -17,6 +18,8 @@ new_sdtm(
 \item{analyte_mapping}{The analyte mapping as data frame.}
 
 \item{metabolite_mapping}{The metabolite mapping as data frame.}
+
+\item{parent_mapping}{The parent mapping as data frame.}
 
 \item{time_mapping}{The time mapping as data frame.}
 }

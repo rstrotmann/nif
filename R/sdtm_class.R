@@ -90,7 +90,7 @@ summary.sdtm <- function(object, ...) {
       dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
-    parent_mapping = object$parent_mapping,
+    # parent_mapping = object$parent_mapping,
     time_mapping = object$time_mapping
   )
   class(out) <- "summary_sdtm"
@@ -139,12 +139,12 @@ print.summary_sdtm <- function(x, ...) {
     cat("none\n")
   }
 
-  cat("\nParent mappings:\n")
-  if(nrow(x$parent_mapping) > 0){
-    print(x$parent_mapping, right = FALSE)
-  } else {
-    cat("none\n")
-  }
+  # cat("\nParent mappings:\n")
+  # if(nrow(x$parent_mapping) > 0){
+  #   print(x$parent_mapping, right = FALSE)
+  # } else {
+  #   cat("none\n")
+  # }
 
   cat("\nTime mappings:\n")
   if (nrow(x$time_mapping) > 0) {
@@ -163,30 +163,30 @@ print.summary_sdtm <- function(x, ...) {
 #' data related to different parent drugs. In order to appropriately correlate
 #' observations with administrations, the [make_nif()] algorithm needs to know
 #' which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
-#' The same applies to non-PK observations. [add_treatment_mapping()] is used to
-#' attach this information to the SDTM object. Multiple mappings may be needed.
+#' Multiple mappings may be needed.
+#'
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
-#' @param testcd The analyte as character (as in 'PCTESTCD' for PK observations
+#' @param pctestcd The analyte as character (as in 'PCTESTCD' for PK observations
 #'   or, e.g., 'VSTESTCD' for vital sign observations, etc.).
 #' @seealso [make_nif()]
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 #' @export
-# add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
-#   obj$analyte_mapping <- rbind(
-#     obj$analyte_mapping,
-#     data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd)
-#   )
-#   return(obj)
-# }
-add_analyte_mapping <- function(obj, extrt = "", testcd = "") {
+add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
-    data.frame(EXTRT = extrt, TESTCD = testcd)
+    data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd)
   )
   return(obj)
 }
+# add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
+#   obj$analyte_mapping <- rbind(
+#     obj$analyte_mapping,
+#     data.frame(EXTRT = extrt, PCTESTCD = pctestcd)
+#   )
+#   return(obj)
+# }
 
 
 #' Add parent mapping

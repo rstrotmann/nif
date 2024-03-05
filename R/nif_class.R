@@ -902,47 +902,6 @@ add_tad <- function(nif) {
 }
 
 
-#' Add time-after-dose (TAD) field for a non-PK analyte
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#' @param nif A NIF object.
-#' @param analyte The analyte as character.
-#' @param parent The drug to set the administration reference to, as character.
-#'
-#' @return A NIF object.
-#' @export
-add_tad_non_pk <- function(nif, analyte = NULL, parent = NULL) {
-  temp <- nif %>%
-    ensure_parent() %>%
-    as.data.frame()
-
-  # make mock administrations
-  mock_admin <- temp %>%
-    filter(ANALYTE == parent, EVID == 1) %>%
-    mutate(PARENT = analyte, ANALYTE = analyte) %>%
-    mutate(MOCK_ADMIN = TRUE)
-
-  temp %>%
-    mutate(MOCK_ADMIN = FALSE) %>%
-    bind_rows(mock_admin) %>%
-    arrange(.data$ID, .data$TIME) %>%
-    mutate(admin_time = case_when(
-      (.data$EVID == 1 & .data$ANALYTE == analyte) ~ .data$TIME)) %>%
-    # arrange(.data$TIME) %>%
-    group_by(.data$ID, .data$ANALYTE) %>%
-    fill(admin_time, .direction = "down") %>%
-    ungroup() %>%
-    mutate(TAD = case_when(
-      .data$ANALYTE == analyte ~ .data$TIME - .data$admin_time,
-      .default = .data$TAD)) %>%
-    filter(.data$MOCK_ADMIN == FALSE) %>%
-    select(-c("admin_time", "MOCK_ADMIN")) %>%
-    new_nif() %>%
-    index_nif()
-}
-
-
 #' Add time after first dose column
 #'
 #' @param nif A NIF object.

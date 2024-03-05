@@ -678,9 +678,9 @@ conditional_message <- function(msg, ..., silent = FALSE) {
 #' @keywords internal
 make_drug_mapping <- function(sdtm_data) {
   drug_mapping <- sdtm_data$analyte_mapping %>%
-    filter(TESTCD %in% unique(sdtm_data$pc$PCTESTCD)) %>%
-    mutate(PCTESTCD = TESTCD) %>%
-    select(-TESTCD) %>%
+    filter(PCTESTCD %in% unique(sdtm_data$pc$PCTESTCD)) %>%
+    # mutate(PCTESTCD = TESTCD) %>%
+    # select(-TESTCD) %>%
     rbind(
       data.frame(EXTRT = intersect(
         unique(sdtm_data$ex$EXTRT),
@@ -1351,11 +1351,15 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
 #' @param lbtestcd The LBTESTCD.
 #' @param cmt A numerical value to specify the compartment this observation is
 #'   assigned to.
+#' @param parent The parent as character. If provided, the parent field defines
+#'   which parent compound administration is taken as the reference time when
+#'   time after dose (TAD) is calculated.
 #' @param silent Switch to disable message output.
+#'
 #' @return The resulting NIF object.
 #' @export
 add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
-                                analyte_mapping = NULL, silent = FALSE) {
+                                parent = NA, silent = FALSE) {
   obj %>%
     verify(has_all_names("ID", "USUBJID", "TIME", "EVID"))
 
@@ -1375,9 +1379,9 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     ))
   }
 
-  if(is.null(analyte_mapping)) {
-    analyte_mapping <- data.frame(EXTRT = NA, TESTCD = NA)
-  }
+  # if(is.null(parent)) {
+  #   parent <- data.frame(EXTRT = NA, TESTCD = NA)
+  # }
 
   lb_params <- lb %>%
     verify(has_all_names("USUBJID", "LBDTC", "LBSPEC", "LBTESTCD", "LBDY")) %>%
@@ -1388,18 +1392,16 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     mutate(DTC = .data$LBDTC) %>%
     filter(.data$LBSPEC %in% lbspec) %>%
     filter(.data$LBTESTCD == lbtestcd) %>%
-    left_join(analyte_mapping, by = c("LBTESTCD" = "TESTCD")) %>%
-    mutate(PARENT = EXTRT) %>%
+    # left_join(analyte_mapping, by = c("LBTESTCD" = "TESTCD")) %>%
+    # mutate(PARENT = EXTRT) %>%
 
     left_join(obj %>%
                 add_time() %>%
                 as.data.frame() %>%
                 distinct(.data$USUBJID, .data$FIRSTDTC, .data$ID),
               by = "USUBJID") %>%
-    dplyr::mutate(
-      ANALYTE = lbtestcd, CMT = cmt, MDV = 0, EVID = 0,
-      AMT = 0, RATE = 0
-    ) %>%
+    dplyr::mutate(ANALYTE = lbtestcd, CMT = cmt, MDV = 0, EVID = 0, AMT = 0,
+                  RATE = 0, PARENT = parent) %>%
     dplyr::mutate(
       TIME = round(as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
       digits = 3
@@ -1466,6 +1468,9 @@ fill_bl_tv <- function(obj) {
 #' @param analyte_name The name of the analyte in the output, as character.
 #' @param silent Suppress messages.
 #' @param cmt The comopartment for the added observation.
+#' @param parent The parent as character. If provided, the parent field defines
+#'   which parent compound administration is taken as the reference time when
+#'   time after dose (TAD) is calculated.
 #'
 #' @return A NIF object
 #' @import assertr
@@ -1474,7 +1479,8 @@ fill_bl_tv <- function(obj) {
 #' add_generic_observation(examplinib_poc_nif, domain(examplinib_poc, "vs"),
 #'   "VSDTC", {VSTESTCD == "WEIGHT"}, "VSSTRESN", "wt")
 add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
-                                    analyte_name, cmt = NULL, silent = FALSE) {
+                                    analyte_name, cmt = NULL, parent = NA,
+                                    silent = FALSE) {
   filter_term <- substitute(selector)
   if (is.null(cmt)) {
     cmt <- max(obj$CMT) + 1
@@ -1491,7 +1497,8 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
     mutate(DV = .data[[DV_field]]) %>%
     mutate(ANALYTE = analyte_name) %>%
     mutate(TIME = NA, EVID = 0, AMT = 0, CMT = cmt, RATE = 0) %>%
-    mutate(PARENT = NA, METABOLITE = FALSE) %>%
+    mutate(PARENT = parent) %>%
+    mutate(METABOLITE = FALSE) %>%
     mutate(LNDV = log(.data$DV)) %>%
     mutate(MDV = is.na(.data$DV)) %>%
     select(c("STUDYID", "USUBJID", "TIME", "DTC", "ANALYTE", "PARENT",

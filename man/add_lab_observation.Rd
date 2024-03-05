@@ -10,7 +10,7 @@ add_lab_observation(
   lbtestcd,
   cmt = NULL,
   lbspec = "",
-  analyte_mapping = NULL,
+  parent = NA,
   silent = FALSE
 )
 }
@@ -25,6 +25,10 @@ add_lab_observation(
 assigned to.}
 
 \item{lbspec}{The LBSPECT.}
+
+\item{parent}{The parent as character. If provided, the parent field defines
+which parent compound administration is taken as the reference time when
+time after dose (TAD) is calculated.}
 
 \item{silent}{Switch to disable message output.}
 }
