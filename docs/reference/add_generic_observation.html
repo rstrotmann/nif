@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.45.3.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.46.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,6 +65,7 @@
 <span>  <span class="va">DV_field</span>,</span>
 <span>  <span class="va">analyte_name</span>,</span>
 <span>  cmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  parent <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -97,6 +98,12 @@
 
 <dt>cmt</dt>
 <dd><p>The comopartment for the added observation.</p></dd>
+
+
+<dt>parent</dt>
+<dd><p>The parent as character. If provided, the parent field defines
+which parent compound administration is taken as the reference time when
+time after dose (TAD) is calculated.</p></dd>
 
 
 <dt>silent</dt>
