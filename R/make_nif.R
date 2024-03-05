@@ -1354,8 +1354,8 @@ add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
 #' @param silent Switch to disable message output.
 #' @return The resulting NIF object.
 #' @export
-add_lab_observation <- function(obj, lb, lbtestcd, analyte_mapping = NULL,
-                                cmt = NULL, lbspec = "", silent = FALSE) {
+add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
+                                analyte_mapping = NULL, silent = FALSE) {
   obj %>%
     verify(has_all_names("ID", "USUBJID", "TIME", "EVID"))
 
@@ -1373,6 +1373,10 @@ add_lab_observation <- function(obj, lb, lbtestcd, analyte_mapping = NULL,
       "Compartment for ", lbtestcd,
       " was not specified and has been set to ", cmt
     ))
+  }
+
+  if(is.null(analyte_mapping)) {
+    analyte_mapping <- data.frame(EXTRT = NA, TESTCD = NA)
   }
 
   lb_params <- lb %>%

@@ -4,23 +4,23 @@
 \alias{add_analyte_mapping}
 \title{Attach a treatment-analyte mapping to an SDTM object}
 \usage{
-add_analyte_mapping(obj, extrt = "", pctestcd = "")
+add_analyte_mapping(obj, extrt = "", testcd = "")
 }
 \arguments{
 \item{obj}{A SDTM object.}
 
 \item{extrt}{The treatment as defined in EX.}
 
-\item{pctestcd}{The analyte as defined in PC.}
+\item{testcd}{The analyte as character (as in 'PCTESTCD' for PK observations
+or, e.g., 'VSTESTCD' for vital sign observations, etc.).}
 }
 \description{
-In some studies, multiple drugs are co-administered, and there may be plasma
-concentration data from different parent drugs. In order to appropriately
-correlate observations with administrations, the \code{\link[=make_nif]{make_nif()}} algorithm needs
-to know which analyte (PCTESTCD within PC) belongs to which drug (EXTRT
-within EX). If the respective names differ, add_treatment_mapping() can be
-used to attach this information to the SDTM object. Multiple mappings may be
-needed.
+In some studies, multiple drugs are co-administered, and there may be analyte
+data related to different parent drugs. In order to appropriately correlate
+observations with administrations, the \code{\link[=make_nif]{make_nif()}} algorithm needs to know
+which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
+The same applies to non-PK observations. \code{\link[=add_treatment_mapping]{add_treatment_mapping()}} is used to
+attach this information to the SDTM object. Multiple mappings may be needed.
 }
 \examples{
 sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")

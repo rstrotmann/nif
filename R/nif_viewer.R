@@ -130,7 +130,8 @@ nif_viewer <- function(nif) {
             input$subject,
             analyte = input$analytes, # %>%
             max_time = max_time(),
-            y_scale = y_scale_type,
+            # y_scale = y_scale_type,
+            log = input$log_yscale,
             tad = input$tad,
             # lines = !input$tad,
             point_size = 3,

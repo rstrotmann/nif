@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{make_drug_mapping}
 \alias{make_drug_mapping}
-\title{Create the drug mapping data frame from}
+\title{Create the drug mapping data frame for PC observations}
 \usage{
 make_drug_mapping(sdtm_data)
 }
@@ -13,6 +13,6 @@ make_drug_mapping(sdtm_data)
 A data frame.
 }
 \description{
-Create the drug mapping data frame from
+Create the drug mapping data frame for PC observations
 }
 \keyword{internal}

@@ -3,13 +3,16 @@
 #' @param sdtm_data The SDTM domains as list of data frames.
 #' @param analyte_mapping The analyte mapping as data frame.
 #' @param metabolite_mapping The metabolite mapping as data frame.
+#' @param parent_mapping The parent mapping as data frame.
 #' @param time_mapping The time mapping as data frame.
+#'
 #' @import dplyr
 #' @returns A sdtm object.
 #' @export
 new_sdtm <- function(sdtm_data,
                      analyte_mapping=data.frame(),
                      metabolite_mapping=data.frame(),
+                     parent_mapping=data.frame(),
                      time_mapping=data.frame()) {
   domains <- sdtm_data
   vs <- domains[["vs"]]
@@ -38,6 +41,7 @@ new_sdtm <- function(sdtm_data,
     vs = vs,
     analyte_mapping = analyte_mapping,
     metabolite_mapping = metabolite_mapping,
+    parent_mapping = parent_mapping,
     time_mapping = time_mapping
   )
 
@@ -86,6 +90,7 @@ summary.sdtm <- function(object, ...) {
       dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
+    parent_mapping = object$parent_mapping,
     time_mapping = object$time_mapping
   )
   class(out) <- "summary_sdtm"
@@ -134,6 +139,13 @@ print.summary_sdtm <- function(x, ...) {
     cat("none\n")
   }
 
+  cat("\nParent mappings:\n")
+  if(nrow(x$parent_mapping) > 0){
+    print(x$parent_mapping, right = FALSE)
+  } else {
+    cat("none\n")
+  }
+
   cat("\nTime mappings:\n")
   if (nrow(x$time_mapping) > 0) {
     print(x$time_mapping, right = FALSE)
@@ -171,10 +183,28 @@ print.summary_sdtm <- function(x, ...) {
 add_analyte_mapping <- function(obj, extrt = "", testcd = "") {
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
-    data.frame("EXTRT" = extrt, "TESTCD" = testcd)
+    data.frame(EXTRT = extrt, TESTCD = testcd)
   )
   return(obj)
 }
+
+
+#' Add parent mapping
+#'
+#' @param obj A sdtm object.
+#' @param analyte The analyte as character.
+#' @param parent The parent as character.
+#'
+#' @return A sdtm object.
+#' @export
+add_parent_mapping <- function(obj, analyte, parent) {
+  obj$parent_mapping <- rbind(
+    obj$parent_mapping,
+    data.frame(ANALYTE = analyte, PARENT = parent)
+  )
+  return(obj)
+}
+
 
 #' Attach a parent-metabolite mapping to a SDTM object.
 #'
@@ -190,9 +220,7 @@ add_analyte_mapping <- function(obj, extrt = "", testcd = "") {
 #' @examples
 #' add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
 add_metabolite_mapping <- function(
-    obj,
-    pctestcd_parent = "",
-    pctestcd_metabolite = "") {
+    obj, pctestcd_parent = "", pctestcd_metabolite = "") {
   obj$metabolite_mapping <- rbind(
     obj$metabolite_mapping,
     data.frame(
