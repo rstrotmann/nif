@@ -393,7 +393,10 @@ nif_spaghetti_plot <- function(obj,
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
     {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
-    filter(!is.na(DV) | EVID == 1)
+    # filter(!is.na(DV) | EVID == 1)
+    group_by(ANALYTE, DOSE) %>%
+    filter(sum(!is.na(DV)) > 0) %>%
+    ungroup()
 
   n_analytes <- length(unique(x$ANALYTE))
 

@@ -19,8 +19,7 @@ In some studies, multiple drugs are co-administered, and there may be analyte
 data related to different parent drugs. In order to appropriately correlate
 observations with administrations, the \code{\link[=make_nif]{make_nif()}} algorithm needs to know
 which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
-The same applies to non-PK observations. \code{\link[=add_treatment_mapping]{add_treatment_mapping()}} is used to
-attach this information to the SDTM object. Multiple mappings may be needed.
+Multiple mappings may be needed.
 }
 \examples{
 sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
