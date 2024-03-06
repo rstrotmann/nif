@@ -218,6 +218,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' Mean plot over a selected covariate
 #'
 #' The averaging over subjects expects the `NTIME` field be in the data set.
+#'
 #' @param obj The NIF object.
 #' @param points Boolean to indicate whether points should be drawn.
 #' @param lines Boolean to indicate whether lines should be drawn.
@@ -238,6 +239,8 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @param title The plot title.
 #' @param nominal_time Nominal time. Always used, this switch only for
 #'   compatibility.
+#' @param admin Plot administrations.
+#'
 #' @return A ggplot2 plot object.
 #' @export
 #' @keywords internal
@@ -255,7 +258,7 @@ nif_mean_plot <- function(obj,
                           summary_function = median, points = FALSE,
                           point_size = 2, alpha = 1, lines = TRUE,
                           log = FALSE, min_x = NULL, max_x = NULL,
-                          nominal_time = FALSE, title = ""){
+                          nominal_time = FALSE, title = "", admin = FALSE){
 
 
   temp <- obj %>%
@@ -352,7 +355,9 @@ nif_mean_plot <- function(obj,
 #'   baseline value, in case cfb = TRUE, see [add_cfb()].
 #' @param alpha The alpha value for the points as numeric.
 #' @param title The plot title
+#' @param admin Plot administrations.
 #' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
+#'
 #' @return A ggplot2 plot object.
 #' @import assertr
 #' @import dplyr
@@ -363,7 +368,7 @@ nif_mean_plot <- function(obj,
 #' nif_spaghetti_plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
 #' nif_spaghetti_plot(examplinib_sad_nif)
 #' nif_spaghetti_plot(examplinib_sad_nif, cfb = TRUE)
-#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", admin = T)
 #' nif_spaghetti_plot(examplinib_poc_nif)
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = TRUE,
 #'   group = "SEX", points = TRUE, lines = FALSE)
@@ -378,7 +383,8 @@ nif_spaghetti_plot <- function(obj,
                                summary_function = median, points = FALSE,
                                point_size = 2, alpha = 1, lines = TRUE,
                                log = FALSE, min_x = NULL, max_x = NULL,
-                               nominal_time = FALSE, title = "") {
+                               nominal_time = FALSE, title = "",
+                               admin = FALSE) {
   x <- obj %>%
     verify(has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
@@ -417,7 +423,7 @@ nif_spaghetti_plot <- function(obj,
 
   if (tad == TRUE) {
     x <- x %>%
-      filter(EVID == 0) %>%
+      # filter(EVID == 0) %>%
       mutate(TIME = TAD) %>%
       unite(GROUP, c(group, "DI", "ID"), sep = " | ", remove = FALSE) %>%
       unite(COLOR, c(group, "DI"), sep = " | ", remove = FALSE)
@@ -434,7 +440,7 @@ nif_spaghetti_plot <- function(obj,
       # crossing(ANALYTE = analytes(x))
 
     x <- x %>%
-      filter(EVID == 0) %>%
+      # filter(EVID == 0) %>%
       # filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
       # unite(GROUP, c(group, "ID"), sep = " | ", remove = FALSE) %>%
@@ -461,16 +467,19 @@ nif_spaghetti_plot <- function(obj,
 
   x %>%
     filter(TIME <= max_x) %>%
+    filter(!is.na(DOSE)) %>%
     ggplot(ggplot2::aes(
       x = TIME,
       y = DV,
       group = GROUP,
-      color = COLOR
+      color = COLOR,
+      admin = EVID
     )) +
     {if (lines) geom_line(na.rm = TRUE)} +
     {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
     {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
     {if (log == TRUE) scale_y_log10()} +
+    {if(admin == TRUE) geom_admin()} +
     xlim(min_x, max_x) +
     labs(x = x_label, y = y_label, title = title, color = group) +
     ggplot2::theme_bw() +
@@ -505,7 +514,9 @@ nif_spaghetti_plot <- function(obj,
 #' @param alpha The alpha value for the points as numeric.
 #' @param title The plot title.
 #' @param nominal_time Plot NTIME rather than TIME.
+#' @param admin Plot administrations.
 #' @param ... Further plot parameters.
+#'
 #' @return A ggplot2 object.
 #' @import lifecycle
 #' @examples
@@ -522,34 +533,29 @@ nif_spaghetti_plot <- function(obj,
 #' plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
 #'   max_x = 24)
 #' plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
-#'   lines = FALSE, tad = TRUE, log =TRUE)
+#'   lines = FALSE, tad = TRUE, log = TRUE)
 #' @export
 plot.nif <- function(x, mean = FALSE, analyte = NULL, cmt = NULL, dose = NULL,
                      group = "ANALYTE", tad = FALSE, cfb = FALSE,
                      summary_function = median, points = FALSE,
                      point_size = 2, alpha = 1, lines = TRUE,
                      log = FALSE, min_x = NULL, max_x = NULL,
-                     nominal_time = FALSE, title = "",
-                     # y_scale = deprecated(),
-                     ...) {
-  # if (is_present(y_scale)) {
-  #   lifecycle::deprecate_warn("0.44.1", "plot.nif(y_scale)",
-  #                             "plot.nif(log)")
-  #   if(y_scale == "log") {log = TRUE} else {log = FALSE}
-  # }
+                     nominal_time = FALSE, title = "", admin = FALSE, ...) {
   if(mean == TRUE) {
     nif_mean_plot(x, analyte = analyte, cmt = cmt, dose = dose, group = group,
                   tad = tad, cfb = cfb, summary_function = summary_function,
                   points = points, point_size = point_size, alpha = alpha,
                   lines = lines, log = log, min_x = min_x, max_x = max_x,
-                  nominal_time = nominal_time, title = title, ...)
+                  nominal_time = nominal_time, title = title, admin = admin,
+                  ...)
   } else {
     nif_spaghetti_plot(x, analyte = analyte, cmt = cmt, dose = dose,
                        group = group, tad = tad, cfb = cfb,
                        summary_function = summary_function, points = points,
                        point_size = point_size, alpha = alpha, lines = lines,
                        log = log, min_x = min_x, max_x = max_x,
-                       nominal_time = nominal_time, title = title, ...)
+                       nominal_time = nominal_time, title = title, admin = admin,
+                       ...)
   }
 }
 

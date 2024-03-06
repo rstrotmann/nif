@@ -21,7 +21,8 @@ nif_mean_plot(
   min_x = NULL,
   max_x = NULL,
   nominal_time = FALSE,
-  title = ""
+  title = "",
+  admin = FALSE
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
 compatibility.}
 
 \item{title}{The plot title.}
+
+\item{admin}{Plot administrations.}
 }
 \value{
 A ggplot2 plot object.

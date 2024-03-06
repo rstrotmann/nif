@@ -23,6 +23,7 @@
   max_x = NULL,
   nominal_time = FALSE,
   title = "",
+  admin = FALSE,
   ...
 )
 }
@@ -65,6 +66,8 @@ baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
 
 \item{title}{The plot title.}
 
+\item{admin}{Plot administrations.}
+
 \item{...}{Further plot parameters.}
 }
 \value{
@@ -88,5 +91,5 @@ plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE)
 plot(examplinib_fe_nif, analyte = "RS2023", group = "FASTED", mean = TRUE,
   max_x = 24)
 plot(examplinib_poc_nif, dose = 500, analyte = "RS2023", points = TRUE,
-  lines = FALSE, tad = TRUE, log =TRUE)
+  lines = FALSE, tad = TRUE, log = TRUE)
 }

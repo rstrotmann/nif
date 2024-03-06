@@ -21,7 +21,8 @@ nif_spaghetti_plot(
   min_x = NULL,
   max_x = NULL,
   nominal_time = FALSE,
-  title = ""
+  title = "",
+  admin = FALSE
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ baseline value, in case cfb = TRUE, see \code{\link[=add_cfb]{add_cfb()}}.}
 \item{nominal_time}{Plot NTIME rather than TIME. Defaults to FALSE.}
 
 \item{title}{The plot title}
+
+\item{admin}{Plot administrations.}
 }
 \value{
 A ggplot2 plot object.
@@ -73,7 +76,7 @@ nif_spaghetti_plot(examplinib_fe_nif)
 nif_spaghetti_plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
 nif_spaghetti_plot(examplinib_sad_nif)
 nif_spaghetti_plot(examplinib_sad_nif, cfb = TRUE)
-nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023")
+nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", admin = T)
 nif_spaghetti_plot(examplinib_poc_nif)
 nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = TRUE,
   group = "SEX", points = TRUE, lines = FALSE)
