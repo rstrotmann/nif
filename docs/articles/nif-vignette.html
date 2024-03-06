@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.46.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.46.0.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -507,7 +507,9 @@ The below shows some examples for common exploratory tasks.</p>
 <p>In the simplest exploratory plot, all analytes are shown over
 time:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif_expl</span><span class="op">)</span></span>
+<span><span class="co">## `geom_line()`: Each group consists of only one observation.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Do you need to adjust the <span style="color: #00BB00;">group</span> aesthetic?</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-16-1.png" width="480"></p>
 <p>To check the integrity of the data set, if often makes sense to plot
 the analyte concentrations over time-after-dose (TAD).</p>
