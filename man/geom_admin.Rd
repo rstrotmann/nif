@@ -53,8 +53,3 @@ a ggplot2 layer.
 \description{
 administration geom layer for ggplot
 }
-\examples{
-ggplot2::ggplot(filter(examplinib_poc_nif, ID==1), aes(x=TIME, y=DV,
-  admin=EVID)) + geom_point() + geom_admin()
-
-}

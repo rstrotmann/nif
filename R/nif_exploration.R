@@ -368,7 +368,7 @@ nif_mean_plot <- function(obj,
 #' nif_spaghetti_plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
 #' nif_spaghetti_plot(examplinib_sad_nif)
 #' nif_spaghetti_plot(examplinib_sad_nif, cfb = TRUE)
-#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", admin = T)
+#' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
 #' nif_spaghetti_plot(examplinib_poc_nif)
 #' nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = TRUE,
 #'   group = "SEX", points = TRUE, lines = FALSE)
@@ -376,7 +376,8 @@ nif_mean_plot <- function(obj,
 #'   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
 #' nif_spaghetti_plot(examplinib_sad_min_nif)
 #' nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
-#' nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2, tad = TRUE)
+#' nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2, tad = TRUE,
+#'   points = TRUE, lines = FALSE)
 nif_spaghetti_plot <- function(obj,
                                analyte = NULL, cmt = NULL, dose = NULL,
                                group = "ANALYTE", tad = FALSE, cfb = FALSE,
@@ -400,7 +401,11 @@ nif_spaghetti_plot <- function(obj,
     {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
     # filter(!is.na(DV) | EVID == 1)
-    group_by(ANALYTE, DOSE) %>%
+
+    # group_by(ANALYTE, DOSE) %>%
+    # filter(sum(!is.na(DV)) > 0) %>%
+
+    group_by(all_of(group)) %>%
     filter(sum(!is.na(DV)) > 0) %>%
     ungroup()
 
@@ -467,7 +472,10 @@ nif_spaghetti_plot <- function(obj,
 
   x %>%
     filter(TIME <= max_x) %>%
-    filter(!is.na(DOSE)) %>%
+    group_by(DOSE, ID) %>%
+    filter(sum(EVID==0 & !is.na(DV)) > 1) %>%
+    ungroup() %>%
+    # filter(!is.na(DOSE)) %>%
     ggplot(ggplot2::aes(
       x = TIME,
       y = DV,

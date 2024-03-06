@@ -76,7 +76,7 @@ nif_spaghetti_plot(examplinib_fe_nif)
 nif_spaghetti_plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
 nif_spaghetti_plot(examplinib_sad_nif)
 nif_spaghetti_plot(examplinib_sad_nif, cfb = TRUE)
-nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", admin = T)
+nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
 nif_spaghetti_plot(examplinib_poc_nif)
 nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", nominal_time = TRUE,
   group = "SEX", points = TRUE, lines = FALSE)
@@ -84,6 +84,7 @@ nif_spaghetti_plot(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
 nif_spaghetti_plot(examplinib_sad_min_nif)
 nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
-nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2, tad = TRUE)
+nif_spaghetti_plot(examplinib_poc_min_nif, dose = 500, cmt = 2, tad = TRUE,
+  points = TRUE, lines = FALSE)
 }
 \keyword{internal}
