@@ -41,6 +41,9 @@ GeomAdmin <- ggproto("GeomAdmin", GeomVline,
 #' @return a ggplot2 layer.
 #' @import ggplot2
 #' @export
+#' @examples
+#' ggplot2::ggplot(filter(examplinib_poc_nif, ID==1), aes(x=TIME, y=DV,
+#'   admin=EVID)) + geom_point() + geom_admin()
 #'
 geom_admin <- function(mapping = NULL, data = NULL, stat = StatAdmin,
                        position = "identity", na.rm = FALSE,
