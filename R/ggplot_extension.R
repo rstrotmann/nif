@@ -41,17 +41,21 @@ GeomAdmin <- ggproto("GeomAdmin", GeomVline,
 #' @return a ggplot2 layer.
 #' @import ggplot2
 #' @export
-geom_admin <- function(mapping = NULL, data = NULL, stat = StatAdmin,
-                       position = "identity", na.rm = FALSE,
-                       show.legend = NA, inherit.aes = TRUE, ...) {
+geom_admin <- function(mapping = NULL, data = NULL,
+                       # stat = StatAdmin,
+                       # position = "identity",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       # inherit.aes = TRUE,
+                       ...) {
   layer(
     geom = GeomAdmin,
     data = data,
     mapping = mapping,
-    stat = stat,
-    position = position,
+    stat = StatAdmin,
+    position = "identity",
     show.legend = show.legend,
-    inherit.aes = inherit.aes,
+    # inherit.aes = inherit.aes,
     params = list(na.rm = na.rm, color = "gray", ...)
   )
 }

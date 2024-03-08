@@ -328,8 +328,10 @@ studies <- function(obj) {
 #' head(ensure_analyte(examplinib_poc_min_nif))
 ensure_analyte <- function(obj) {
   obj %>%
+    # {if(!"ANALYTE" %in% names(obj))
+    #   mutate(., ANALYTE = "default") else .}
     {if(!"ANALYTE" %in% names(obj))
-      mutate(., ANALYTE = "default") else .}
+      mutate(., ANALYTE = CMT) else .}
 }
 
 
@@ -360,9 +362,16 @@ ensure_dose <- function(obj) {
 #' head(ensure_parent(examplinib_poc_nif))
 #' head(ensure_parent(examplinib_poc_min_nif))
 ensure_parent <- function(obj) {
+  admin_cmt <- obj %>%
+    as.data.frame() %>%
+    filter(EVID == 1) %>%
+    distinct(CMT)
+
   obj <- obj %>%
-    {if(!"PARENT" %in% names(obj))
-      mutate(., PARENT = "default") else .}
+    # {if(!"PARENT" %in% names(obj))
+    #   mutate(., PARENT = "default") else .}
+  {if(!"PARENT" %in% names(obj))
+    mutate(., PARENT = admin_cmt[[1]]) else .}
 }
 
 
@@ -808,6 +817,30 @@ max_observation_time <- function(obj, analyte = NULL) {
   }
 }
 
+
+#' Maximal time in nif object
+#'
+#' @param obj A nif object.
+#' @param analyte The analyte to filter for, as character.
+#' @param only_observations Maximal ovservation time as logical.
+#'
+#' @return Numeric.
+#' @export
+#'
+#' @examples
+#' max_time(examplinib_poc_nif)
+#' max_time(examplinib_poc_nif, analyte = "RS2023")
+#' max_time(examplinib_poc_nif, only_observations = TRUE)
+max_time <- function(obj, analyte = NULL, only_observations = FALSE) {
+  times <- obj %>%
+    ensure_analyte() %>%
+    {if(!is.null(analyte)) filter(., .data$ANALYTE %in% analyte) else .} %>%
+    {if(only_observations == TRUE) filter(., .data$EVID == 0) else .} %>%
+    pull(TIME)
+
+  if(length(times) == 0) return(NA)
+  return(max(times, na.rm = TRUE))
+}
 
 #' Guess the most likely analyte based on its prevalence in the NIF object
 #'

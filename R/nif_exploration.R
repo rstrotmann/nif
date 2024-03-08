@@ -568,6 +568,231 @@ plot.nif <- function(x, mean = FALSE, analyte = NULL, cmt = NULL, dose = NULL,
 }
 
 
+#' Plot nif object per subject
+#'
+#' @param x A nif object.
+#' @param analyte The analyte.
+#' @param group The grouping variable(s).
+#' @param tad Time after dose as logical.
+#' @param cfb Change from baseline as logical.
+#' @param log Logarithmic y scale as logical.
+#' @param admin Plot administrations as logical.
+#' @param points Plot points as logical.
+#' @param lines Plot lines as logical.
+#' @param point_size The point size as numeric.
+#' @param alpha The alpha value for point plotting.
+#' @param summary_function The summary function to apply if multiple baseline
+#' @param dose The dose(s) to select as numeric.
+#' @param min_time The minimum time as numeric.
+#' @param max_time The maximum time as numeric.
+#' @param min_x `r lifecycle::badge("deprecated")` Use min_time instead.
+#' @param max_x `r lifecycle::badge("deprecated")` Use max_time instead. values
+#'   are present.
+#' @param limit_time_to_observations Truncate time axis to last observation, as
+#'   logical.
+#' @return A ggplot object.
+#' @importFrom lifecycle deprecate_warn
+#' @export
+#' @keywords internal
+#'
+#' @examples
+#' nif_spaghetti_plot1(examplinib_poc_nif)
+#' nif_spaghetti_plot1(examplinib_poc_min_nif)
+#' nif_spaghetti_plot1(examplinib_poc_min_nif, tad = TRUE, points = TRUE,
+#'   lines = FALSE)
+#' nif_spaghetti_plot1(examplinib_poc_nif, dose = 500, analyte = "RS2023",
+#'   tad = TRUE, points = TRUE, point_size = 4, alpha = 0.3, lines = FALSE,
+#'   max_time = 12)
+#' nif_spaghetti_plot1(examplinib_poc_nif, analyte = "RS2023", title="Test")
+#' nif_spaghetti_plot1(examplinib_poc_nif, analyte = "RS2023",
+#'   limit_time_to_observations = FALSE)
+#' nif_spaghetti_plot1(examplinib_poc_nif, analyte = "RS2023", admin = TRUE)
+#' nif_spaghetti_plot1(examplinib_poc_nif, analyte = "RS2023", , tad = TRUE,
+#'   admin = TRUE)
+#' nif_spaghetti_plot1(examplinib_poc_nif, analyte = "RS2023", group = "SEX")
+#' nif_spaghetti_plot1(examplinib_poc_nif, analyte = "RS2023", tad = TRUE,
+#'   points = TRUE, lines = FALSE, dose = 500)
+#' nif_spaghetti_plot1(examplinib_fe_nif, analyte = "RS2023", group = c("SEX", "FASTED"))
+nif_spaghetti_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
+                      min_time = 0, max_time = NULL,
+                      min_x = NULL, max_x = NULL,
+                      limit_time_to_observations = TRUE,
+                      points = FALSE, lines = TRUE, point_size = 2, alpha = 1,
+                      tad = FALSE, cfb = FALSE, log = FALSE, admin = FALSE,
+                      summary_function = median, title = "") {
+  # deprecation warnings
+  if(!is.null(min_x)) {
+    lifecycle::deprecate_warn("0.46.0", "plot1.nif(min_x)", "plot1.nif(min_time)")
+    min_time <- min_x
+  }
+  if(!is.null(max_x)) {
+    lifecycle::deprecate_warn("0.46.0", "plot1.nif(max_x)", "plot1.nif(max_time)")
+    max_time <- max_x
+  }
+
+  if(is.null(max_time)) {
+    max_time <- max_time(x, only_observations = limit_time_to_observations)
+  }
+
+  # ensure required fields and limit data set to max_time
+  obj <- x %>%
+    verify(has_all_names("ID", "TIME", "AMT", "DV", "EVID")) %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
+    ensure_dose() %>%
+    ensure_tad() %>%
+    add_cfb(summary_function = summary_function) %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .}
+
+  # Selecting the time metric (TIME or TAD)
+  x_label <- "time (h)"
+  if (tad == TRUE) {
+    obj <- obj %>%
+      index_dosing_interval() %>%
+      filter(EVID == 0 | (EVID == 1 & DI == 1)) %>%
+      # filter(EVID == 0) %>%
+      mutate(TIME = TAD) #%>%
+    x_label <- "time after dose (h)"
+    group <- c(group, "DI")
+  }
+
+  obj <- filter(obj, TIME <= max_time)
+
+  # in the filtered data set, filter for analytes and doses
+  if(is.null(analyte)) {analyte <- analytes(obj)}
+  if(is.null(dose)) {dose <- doses(obj)}
+
+  if(length(analyte) > 1) {
+    group <- unique(c("ANALYTE", group))
+  }
+
+  obj <- obj %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(DOSE %in% dose) %>%
+    unite(GROUP, unique(c("ID", group)), sep = "_", remove = FALSE)
+
+  if(length(group) == 0) {
+    obj <- mutate(obj, COLOR = .data$ANALYTE)
+    color_label <- "ANALYTE"
+  }
+  if(length(group) == 1) {
+    obj <- mutate(obj, COLOR = as.factor(.data[[group]]))
+    color_label <- group
+  }
+  if(length(group) > 1) {
+    obj <- unite(obj, COLOR, unique(group), sep = ", ", remove = FALSE)
+    color_label <- nice_enumeration(unique(group))
+  }
+
+  # define labels
+  show_color = TRUE
+  if(length(analyte) == 1) {
+    y_label <- analyte
+    if(length(group) == 0) {show_color = FALSE}
+  } else {
+    y_label <- "DV"
+  }
+
+  obj %>%
+    ggplot(aes(x = TIME, y = DV, group = GROUP, color = COLOR, admin = EVID)) +
+    {if (log == TRUE) scale_y_log10()} +
+    {if (lines) geom_line(na.rm = TRUE)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
+    {if (log == TRUE) scale_y_log10()} +
+    {if(admin == TRUE) geom_admin()} +
+    labs(x = x_label, y = y_label, color = color_label) +
+    {if(length(unique(obj$DOSE)) > 1) facet_wrap(~DOSE)} +
+    ggtitle(title) +
+    ggplot2::theme_bw() +
+    {if(show_color == FALSE) theme(legend.position = "none") else
+        theme(legend.position = "bottom")}
+
+}
+
+
+# nif_mean_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
+#                            min_time = 0, max_time = NULL,
+#                            min_x = NULL, max_x = NULL,
+#                            tad = FALSE, cfb = FALSE,
+#                            limit_time_to_observations = TRUE,
+#                            points = FALSE, lines = TRUE, point_size = 2,
+#                            alpha = 1, log = FALSE,
+#                            title = "", admin = FALSE,
+#                            summary_function = median){
+#   obj <- x %>%
+#     verify(has_all_names("NTIME", "DOSE", "DV")) %>%
+#     ensure_parent() %>%
+#     ensure_analyte() %>%
+#     ensure_dose() %>%
+#     add_cfb(summary_function = summary_function) %>%
+#     as.data.frame() %>%
+#     {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
+#     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
+#     {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
+#     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
+#     filter(!is.na(DV)) %>%
+#     as.data.frame() %>%
+#     filter(NTIME > 0) %>%
+#     mutate(TIME = NTIME) %>%
+#     filter(EVID == 0) %>%
+#     dplyr::filter(!is.na(DOSE))
+#
+#
+#   if(is.null(max_x)) {
+#     max_x <- max_observation_time(temp)}
+#   if(is.null(min_x)) {
+#     min_x = 0}
+#
+#   n_analytes <- length(unique(temp$ANALYTE))
+#
+#   if(n_analytes == 1) {
+#     y_label <- unique(temp$ANALYTE)
+#   } else {
+#     y_label <- "mean"
+#     group <- unique(c(group, "ANALYTE"))
+#   }
+#
+#   temp %>%
+#     unite(GROUP, group, sep = " | ", remove = FALSE) %>%
+#     reframe(mean = mean(DV, na.rm = TRUE),
+#             sd = sd(DV, na.rm = TRUE),
+#             n = n(),
+#             DOSE = DOSE,
+#             ANALYTE = ANALYTE,
+#             GROUP = GROUP,
+#             .by = c(TIME, GROUP)) %>%
+#     mutate(max_y = mean + sd) %>%
+#     ggplot2::ggplot(ggplot2::aes(
+#       x = TIME,
+#       y = mean,
+#       group = GROUP,
+#       color = GROUP
+#     )) +
+#     {if (lines) geom_line(na.rm = TRUE)} +
+#     {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
+#     {if (log == TRUE) scale_y_log10()} +
+#     xlim(min_x, max_x) +
+#     ggplot2::geom_ribbon(
+#       aes(ymin = mean - sd,
+#           ymax = mean + sd,
+#           fill = as.factor(GROUP)),
+#       alpha = 0.3,
+#       color = NA,
+#       show.legend = FALSE) +
+#     {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+#     labs(x = "NTIME",
+#          y = y_label,
+#          color = group,
+#          title = title,
+#          caption = "Data shown are mean and SD") +
+#     ggplot2::theme_bw() +
+#     {if(all(group == "ANALYTE") & n_analytes == 1)
+#       theme(legend.position = "none") else
+#         theme(legend.position = "bottom")}
+# }
+
+
+
 #' NIF or SDTM object overview
 #'
 #' @param object The NIF or SDTM object.

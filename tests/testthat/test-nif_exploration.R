@@ -38,3 +38,27 @@ test_that("nif_plot_id", {
     nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
   )
 })
+
+
+####################
+# temporaray tests for plot1
+
+test_that("plot1.nif", {
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

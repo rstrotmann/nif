@@ -4,16 +4,7 @@
 \alias{geom_admin}
 \title{administration geom layer for ggplot}
 \usage{
-geom_admin(
-  mapping = NULL,
-  data = NULL,
-  stat = StatAdmin,
-  position = "identity",
-  na.rm = FALSE,
-  show.legend = NA,
-  inherit.aes = TRUE,
-  ...
-)
+geom_admin(mapping = NULL, data = NULL, na.rm = FALSE, show.legend = NA, ...)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{aes()}}.}

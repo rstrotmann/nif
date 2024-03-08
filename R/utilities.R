@@ -221,3 +221,25 @@ has_time <- function(datetime) {
 }
 
 
+#' Nice enumeration of multiple strings
+#'
+#' @param items Items to enumerate as character.
+#'
+#' @return Enumeration as character.
+#' @export
+#'
+#' @examples
+#' nice_enumeration("A")
+#' nice_enumeration(c("A", "B"))
+#' nice_enumeration(c("A", "B", "C"))
+nice_enumeration <- function(items) {
+  if(length(items) == 1) {
+    return(items[[1]])
+  }
+  if(length(items) > 1) {
+    return(paste(paste(items[1:length(items)-1], collapse = ", "), "and",
+                 items[length(items)]))
+  }
+}
+
+
