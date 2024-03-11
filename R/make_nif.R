@@ -1528,7 +1528,7 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
 #' @param dm The DM domain as data table.
 #' @param vs The VS domain as data table.
 #' @param silent No messages as logical.
-#' @param subject_filter
+#' @param subject_filter The filtering to apply to the DM domain.
 #' @param cleanup Keep only required fields, as logical.
 #'
 #' @return A data table.
@@ -1618,7 +1618,8 @@ make_observation <- function(sdtm,
                              cmt = NA,
                              parent = NULL,
                              observation_filter = {TRUE},
-                             subject_filter = {ACTARMCD != "SCRNFAIL"},
+                             # subject_filter = {ACTARMCD != "SCRNFAIL"},
+                             subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
                              NTIME_lookup = NULL,
                              silent = FALSE,
                              cleanup = TRUE) {
@@ -1661,25 +1662,24 @@ make_observation <- function(sdtm,
 #'
 #' @param sdtm A sdtm object.
 #' @param subject_filter The filtering to apply to the DM domain.
-#' @param extrt
-#' @param analyte
-#' @param cmt
-#' @param cut_off_date
-#' @param silent
-#' @param cleanup
+#' @param extrt The EXTRT for the administration, as character.
+#' @param analyte The name of the analyte as character.
+#' @param cmt The compartment for the administration as numeric.
+#' @param cut_off_date The data cut-off date as Posix date-time.
+#' @param silent Suppress messages, as logical.
+#' @param cleanup Remove unnecessary fields, as logical.
 #'
 #' @return A data frame.
 #' @export
 #' @keywords internal
-#'
-#' @examples
 make_administration <- function(
     sdtm,
     extrt,
     analyte = NA,
     cmt = 1,
     cut_off_date = NULL,
-    subject_filter = {ACTARMCD != "SCRNFAIL"},
+    # subject_filter = {ACTARMCD != "SCRNFAIL"},
+    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
     silent = FALSE,
     cleanup = TRUE) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
@@ -1704,10 +1704,10 @@ make_administration <- function(
     )) %>%
 
     # eliminate duplicates
-    group_by(USUBJID, EXTRT, start_date) %>%
     mutate(DUPLICATE_start_date = n() > 1) %>%
     ungroup() %>%
-    filter(!(DUPLICATE_start_date == TRUE & EXSTDTC_has_time == FALSE)) %>%
+    filter(!(.data$DUPLICATE_start_date == TRUE &
+               .data$EXSTDTC_has_time == FALSE)) %>%
 
     # time imputations
     mutate(IMPT_TIME = "") %>%
@@ -1747,7 +1747,7 @@ make_administration <- function(
     unnest(c(date)) %>%
 
     # make time, EXDY and DTC
-    group_by(USUBJID, end_date) %>%
+    group_by("USUBJID", "end_date") %>%
     mutate(time = case_when(
       row_number() == n() ~ .data$end_time,
       .default = .data$start_time
@@ -1775,8 +1775,6 @@ make_administration <- function(
 #'
 #' @return An empty nif object.
 #' @export
-#'
-#' @examples
 nif <- function() {
   temp <- data.frame(matrix(nrow=0, ncol=length(minimal_nif_fields)))
   colnames(temp) <- minimal_nif_fields
@@ -1793,8 +1791,6 @@ nif <- function() {
 #' @return A nif object.
 #' @export
 #' @keywords internal
-#'
-#' @examples
 make_time <- function(obj) {
   obj %>%
     verify(has_all_names("ID", "DTC")) %>%
@@ -1810,6 +1806,23 @@ make_time <- function(obj) {
 }
 
 
+# make_tad <- function(nif) {
+#   nif %>%
+#     ensure_parent() %>%
+#     as.data.frame() %>%
+#     mutate(admin_time = case_when(
+#       .data$EVID == 1 ~ .data$TIME)) %>%
+#     arrange(.data$TIME) %>%
+#     group_by(.data$ID, .data$PARENT) %>%
+#     fill(admin_time, .direction = "down") %>%
+#     ungroup() %>%
+#     mutate(TAD = .data$TIME - .data$admin_time) %>%
+#     select(-"admin_time") %>%
+#     new_nif() %>%
+#     index_nif()
+# }
+
+
 #' Complete DOSE field
 #'
 #' @param obj A nif object.
@@ -1817,11 +1830,9 @@ make_time <- function(obj) {
 #' @return A nif object.
 #' @export
 #' @keywords internal
-#'
-#' @examples
 carry_forward_dose <- function(obj) {
   obj %>%
-    arrange(ID, DTC, -EVID) %>%
+    arrange(.data$ID, .data$DTC, -.data$EVID) %>%
     group_by(ID, PARENT) %>%
     fill(DOSE, .direction = "down") %>%
     ungroup()
@@ -1831,16 +1842,46 @@ carry_forward_dose <- function(obj) {
 #' Add observation
 #'
 #' @param nif A nif object.
-#' @inheritDotParams make_observation
-#' @param ...
+#' @inheritParams make_observation
 #'
 #' @return A nif object.
 #' @export
-#'
-#' @examples
-add_observation <- function(nif, ...) {
-  bind_rows(nif, make_observation(...)) %>%
-    arrange(ID, DTC) %>%
+add_observation <- function(nif,
+                            sdtm,
+                            domain,
+                            DTC_field,
+                            DV_field,
+                            analyte = NA,
+                            cmt = NULL,
+                            parent = NULL,
+                            observation_filter = {TRUE},
+                            # subject_filter = {ACTARMCD != "SCRNFAIL"},
+                            subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+                            NTIME_lookup = NULL,
+                            silent = FALSE,
+                            cleanup = TRUE) {
+  if (is.null(cmt)) {
+    cmt <- max(nif$CMT) + 1
+    conditional_message(paste0(
+      "Compartment for ", analyte,
+      " was not specified and has been set to ", cmt), silent = silent)
+  }
+
+  bind_rows(nif, make_observation(
+    sdtm = sdtm,
+    domain = domain,
+    DTC_field = {{DTC_field}},
+    DV_field = {{DV_field}},
+    analyte = analyte,
+    cmt = cmt,
+    parent = parent,
+    observation_filter = {{observation_filter}},
+    subject_filter = {{subject_filter}},
+    NTIME_lookup = NTIME_lookup,
+    silent = silent,
+    cleanup = cleanup
+  )) %>%
+    arrange(.data$ID, .data$DTC) %>%
     make_time() %>%
     carry_forward_dose() %>%
     new_nif()
@@ -1850,16 +1891,31 @@ add_observation <- function(nif, ...) {
 #' Add adminisration
 #'
 #' @param nif A nif object.
-#' @inheritDotParams make_administration
-#' @param ...
+#' @inheritParams make_administration
 #'
 #' @return A nif object.
 #' @export
-#'
-#' @examples
-add_administration <- function(nif, ...) {
-  bind_rows(nif, make_administration(...)) %>%
-    arrange(ID, DTC) %>%
+add_administration <- function(nif,
+                               sdtm,
+                               extrt,
+                               analyte = NA,
+                               cmt = 1,
+                               cut_off_date = NULL,
+                               # subject_filter = {ACTARMCD != "SCRNFAIL"},
+                               subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+                               silent = FALSE,
+                               cleanup = TRUE) {
+  bind_rows(nif, make_administration(
+    sdtm = sdtm,
+    extrt = extrt,
+    analyte = analyte,
+    cmt = cmt,
+    cut_off_date = cut_off_date,
+    subject_filter = {{subject_filter}},
+    silent = silent,
+    cleanup = cleanup
+  )) %>%
+    arrange(.data$ID, .data$DTC) %>%
     make_time() %>%
     carry_forward_dose() %>%
     new_nif()
@@ -1870,11 +1926,10 @@ add_administration <- function(nif, ...) {
 #'
 #' @param obj A nif object.
 #' @param individual Apply by ID, as logical.
+#' @param keep_no_obs_sbs Retain subjects without observations.
 #'
 #' @return A nif object.
 #' @export
-#'
-#' @examples
 limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   max_or_inf <- function(x) {
     if(length(x) == 0) return(max(obj$DTC, na.rm = TRUE))
@@ -1893,8 +1948,8 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       group_by(ID) %>%
       mutate(LAST_OBS_DTC = max_or_inf(DTC[EVID == 0])) %>%
       ungroup() %>%
-      filter(DTC <= LAST_OBS_DTC) %>%
-      select(-LAST_OBS_DTC) %>%
+      filter(DTC <= .data$LAST_OBS_DTC) %>%
+      select(-c("LAST_OBS_DTC")) %>%
       new_nif()
   } else {
     last_obs_dtc <- max(obj$DTC[obj$EVID == 0])
@@ -1904,6 +1959,24 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   }
 }
 
+
+#' Filter nif object, eliminating subjects without observations or administrations
+#'
+#' @param obj A nif object.
+#' @param keep_no_obs Retain subjects without observations, as logical.
+#' @param keep_no_admin Retain subjects without administeration, as logical.
+#'
+#' @return A nif object.
+#' @export
+filter_subjects <- function(obj,
+                            keep_no_obs = FALSE,
+                            keep_no_admin = FALSE) {
+  obj %>%
+    group_by(ID) %>%
+    {if(keep_no_obs == FALSE) filter(., sum(EVID == 0) > 1) else .} %>%
+    {if(keep_no_admin == FALSE) filter(., sum(EVID == 1) > 1) else .} %>%
+    new_nif()
+}
 
 
 

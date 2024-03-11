@@ -393,7 +393,7 @@ ensure_parent <- function(obj) {
 #' head(ensure_metabolite(examplinib_poc_nif))
 #' head(ensure_metabolite(examplinib_poc_min_nif))
 ensure_metabolite <- function(obj) {
-  obj <- obj %>%
+  obj %>%
     {if(!"METABOLITE" %in% names(obj))
       mutate(., METABOLITE = FALSE) else .}
 }
@@ -869,18 +869,22 @@ max_time <- function(obj, analyte = NULL, only_observations = FALSE) {
 #' guess_analyte(examplinib_poc_min_nif)
 guess_analyte <- function(obj) {
   temp <- obj %>%
+    as.data.frame() %>%
     ensure_analyte() %>%
     ensure_metabolite() %>%
     as.data.frame() %>%
     filter(EVID == 0)
+
   if(length(analytes(temp)) > 0) {
     temp %>%
-      group_by(ANALYTE, METABOLITE) %>%
-      summarize(n = n(), .groups = "drop") %>%
       filter(METABOLITE == FALSE) %>%
+      group_by(ANALYTE) %>%
+      # filter(sum(EVID == 0) > 0) %>%
+      summarize(n = n(), .groups = "drop") %>%
       filter(n == max(n)) %>%
-      arrange(ANALYTE)
-    return(as.character(temp[1, "ANALYTE"]))
+      arrange(ANALYTE) %>%
+      slice(1) %>%
+      pull("ANALYTE")
   } else {
     return(NA)
   }

@@ -21,6 +21,8 @@ make_subjects(
 
 \item{silent}{No messages as logical.}
 
+\item{subject_filter}{The filtering to apply to the DM domain.}
+
 \item{cleanup}{Keep only required fields, as logical.}
 }
 \value{

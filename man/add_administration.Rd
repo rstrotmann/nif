@@ -4,18 +4,38 @@
 \alias{add_administration}
 \title{Add adminisration}
 \usage{
-add_administration(nif, ...)
+add_administration(
+  nif,
+  sdtm,
+  extrt,
+  analyte = NA,
+  cmt = 1,
+  cut_off_date = NULL,
+  subject_filter = {
+     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
+ },
+  silent = FALSE,
+  cleanup = TRUE
+)
 }
 \arguments{
 \item{nif}{A nif object.}
 
-\item{...}{
-  Arguments passed on to \code{\link[=make_administration]{make_administration}}
-  \describe{
-    \item{\code{sdtm}}{A sdtm object.}
-    \item{\code{subject_filter}}{The filtering to apply to the DM domain.}
-    \item{\code{cleanup}}{}
-  }}
+\item{sdtm}{A sdtm object.}
+
+\item{extrt}{The EXTRT for the administration, as character.}
+
+\item{analyte}{The name of the analyte as character.}
+
+\item{cmt}{The compartment for the administration as numeric.}
+
+\item{cut_off_date}{The data cut-off date as Posix date-time.}
+
+\item{subject_filter}{The filtering to apply to the DM domain.}
+
+\item{silent}{Suppress messages, as logical.}
+
+\item{cleanup}{Remove unnecessary fields, as logical.}
 }
 \value{
 A nif object.

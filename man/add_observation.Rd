@@ -4,33 +4,58 @@
 \alias{add_observation}
 \title{Add observation}
 \usage{
-add_observation(nif, ...)
+add_observation(
+  nif,
+  sdtm,
+  domain,
+  DTC_field,
+  DV_field,
+  analyte = NA,
+  cmt = NULL,
+  parent = NULL,
+  observation_filter = {
+     TRUE
+ },
+  subject_filter = {
+     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
+ },
+  NTIME_lookup = NULL,
+  silent = FALSE,
+  cleanup = TRUE
+)
 }
 \arguments{
 \item{nif}{A nif object.}
 
-\item{...}{
-  Arguments passed on to \code{\link[=make_observation]{make_observation}}
-  \describe{
-    \item{\code{sdtm}}{A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
+\item{sdtm}{A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
 domain the observations come from.}
-    \item{\code{domain}}{The domain as character.}
-    \item{\code{DTC_field}}{The field to use as the date-time code for the observation.}
-    \item{\code{DV_field}}{the field to use as the dependent variable.}
-    \item{\code{analyte}}{The name of the observed analyte.}
-    \item{\code{cmt}}{The compartment for the observation as numeric.}
-    \item{\code{parent}}{The name of the parent analyte for the observation as
+
+\item{domain}{The domain as character.}
+
+\item{DTC_field}{The field to use as the date-time code for the observation.}
+
+\item{DV_field}{the field to use as the dependent variable.}
+
+\item{analyte}{The name of the observed analyte.}
+
+\item{cmt}{The compartment for the observation as numeric.}
+
+\item{parent}{The name of the parent analyte for the observation as
 character.}
-    \item{\code{silent}}{Suppress messages as logical.}
-    \item{\code{observation_filter}}{The filtering to apply to the observation source
+
+\item{observation_filter}{The filtering to apply to the observation source
 data.}
-    \item{\code{subject_filter}}{The filtering to apply to the DM domain.}
-    \item{\code{NTIME_lookup}}{A data frame with two columns, a column that defines the
+
+\item{subject_filter}{The filtering to apply to the DM domain.}
+
+\item{NTIME_lookup}{A data frame with two columns, a column that defines the
 custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_join()ed into the observation data frame
 to provide the NTIME field.}
-    \item{\code{cleanup}}{Keep only necessary fields, as logical.}
-  }}
+
+\item{silent}{Suppress messages as logical.}
+
+\item{cleanup}{Keep only necessary fields, as logical.}
 }
 \value{
 A nif object.

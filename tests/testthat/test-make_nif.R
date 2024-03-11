@@ -271,21 +271,44 @@ test_that("make_administration works", {
 # make_administration(sdtm.0001, "M1774", "M1774")
 #
 
-temp <- new_nif() %>%
-  add_administration(examplinib_poc, "EXAMPLINIB", "RS2023") %>%
-  add_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, analyte = "RS2023",
-                  parent = "RS2023", cmt = 2,
-                  observation_filter = {PCTESTCD == "RS2023"}) %>%
-  add_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, analyte = "RS2023487A",
-                  parent = "RS2023", cmt = 3,
-                  observation_filter = {PCTESTCD == "RS2023487A"})
+# temp <- new_nif() %>%
+#   add_administration(examplinib_poc, "EXAMPLINIB", "RS2023") %>%
+#   add_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, analyte = "RS2023",
+#                   parent = "RS2023", cmt = 2,
+#                   observation_filter = {PCTESTCD == "RS2023"}) %>%
+#   add_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, analyte = "RS2023487A",
+#                   parent = "RS2023", cmt = 3,
+#                   observation_filter = {PCTESTCD == "RS2023487A"}) %>%
+#   limit()
+#
+#
+#
+# nif.test <- make_nif(sdtm.0001, spec="PLASMA", silent = TRUE,
+#                     analyte_cmt_mapping = c("M1774"=2, "NIRA"=3)) %>%
+#   add_observation(sdtm.0001, domain = "lb", DTC_field = LBDTC,
+#                   DV_field = LBSTRESN, analyte = "HGB", cmt = 4,
+#                   parent = "M1774", observation_filter = {LBTESTCD == "HGB"}) %>%
+#   filter(!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")) %>%
+#   compress()
+#
+#
+# temp <- new_nif() %>%
+#   add_administration(sdtm.0001, extrt = "M1774", analyte = "M1774") %>%
+#   add_administration(sdtm.0001, extrt = "NIRAPARIB", analyte = "NIRA") %>%
+#   add_observation(sdtm.0001, domain = "pc", DTC_field = PCDTC,
+#                   DV_field = PCSTRESN, analyte = "M1774", cmt = 2,
+#                   parent = "M1774", observation_filter = {PCTESTCD == "M1774"}) %>%
+#   add_observation(sdtm.0001, domain = "pc", DTC_field = PCDTC,
+#                   DV_field = PCSTRESN, analyte = "NIRA", cmt = 3,
+#                   parent = "NIRA", observation_filter = {PCTESTCD == "NIRA"}) %>%
+#   add_observation(sdtm.0001, domain = "lb", DTC_field = LBDTC,
+#                   DV_field = LBSTRESN, analyte = "HGB", cmt = 4,
+#                   parent = "M1774", observation_filter = {LBTESTCD == "HGB"}) %>%
+#   filter(USUBJID %in% unique(sdtm.0001$pc$USUBJID)) %>%
+#   filter_subjects() #%>%
+#   # limit()
 
 
-temp <- new_nif() %>%
-  add_administration(sdtm.0001, extrt = "M1774", analyte = "M1774", cmt = 1,
-                     silent = TRUE) %>%
-  add_observation(sdtm.0001, domain = "pc", DTC_field = PCDTC,
-                  DV_field = PCSTRESN, analyte = "M1774", cmt = 2,
-                  parent = "M1774", observation_filter = {PCTESTCD == "M1774"}) %>%
-  limit()
+# setdiff(subjects(temp)$USUBJID, subjects(nif.test)$USUBJID)
+
 

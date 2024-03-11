@@ -11,7 +11,7 @@ make_administration(
   cmt = 1,
   cut_off_date = NULL,
   subject_filter = {
-     ACTARMCD != "SCRNFAIL"
+     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
  },
   silent = FALSE,
   cleanup = TRUE
@@ -20,9 +20,19 @@ make_administration(
 \arguments{
 \item{sdtm}{A sdtm object.}
 
+\item{extrt}{The EXTRT for the administration, as character.}
+
+\item{analyte}{The name of the analyte as character.}
+
+\item{cmt}{The compartment for the administration as numeric.}
+
+\item{cut_off_date}{The data cut-off date as Posix date-time.}
+
 \item{subject_filter}{The filtering to apply to the DM domain.}
 
-\item{cleanup}{}
+\item{silent}{Suppress messages, as logical.}
+
+\item{cleanup}{Remove unnecessary fields, as logical.}
 }
 \value{
 A data frame.
