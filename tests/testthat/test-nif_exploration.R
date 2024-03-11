@@ -40,14 +40,6 @@ test_that("nif_plot_id", {
 })
 
 
-####################
-# temporaray tests for plot1
-
-test_that("plot1.nif", {
-
-})
-
-
 
 
 

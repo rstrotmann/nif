@@ -249,8 +249,8 @@ impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
     conditional_message("In ", nrow(to_replace), " subjects, EXENDTC is ",
       "absent and is replaced by the cut off date, ",
       format(cut.off.date, format = "%Y-%m-%d %H:%M"), ":\n",
-      df_to_string(to_replace %>% select(.data$USUBJID, .data$EXTRT,
-                                         .data$EXSTDTC, .data$EXENDTC)),
+      df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
+                                         "EXSTDTC", "EXENDTC")))),
       "\n",
       silent = silent
     )
@@ -642,9 +642,9 @@ baseline_covariates <- function(vs, silent = FALSE) {
   }
 
   bl_cov <- bl_cov %>%
-    dplyr::group_by(.data$USUBJID, .data$VSTESTCD) %>%
-    dplyr::summarize(mean = mean(.data$VSSTRESN), .groups = "drop") %>%
-    tidyr::pivot_wider(names_from = .data$VSTESTCD, values_from = .data$mean)
+    group_by(.data$USUBJID, .data$VSTESTCD) %>%
+    summarize(mean = mean(VSSTRESN), .groups = "drop") %>%
+    pivot_wider(names_from = "VSTESTCD", values_from = "mean")
 
   # Calculate BMI if height and weight are available
   if ("HEIGHT" %in% colnames(bl_cov) && "WEIGHT" %in% colnames(bl_cov)) {
@@ -665,7 +665,7 @@ baseline_covariates <- function(vs, silent = FALSE) {
 conditional_message <- function(msg, ..., silent = FALSE) {
   parameters <- c(as.list(environment()), list(...))
   parameters <- lapply(parameters, as.character)
-  if (!silent) {
+  if (silent == FALSE) {
     message(paste(as.character(parameters[names(parameters) != "silent"])))
   }
 }
@@ -1474,6 +1474,7 @@ fill_bl_tv <- function(obj) {
 #'
 #' @return A NIF object
 #' @import assertr
+#' @import rlang
 #' @export
 #' @examples
 #' add_generic_observation(examplinib_poc_nif, domain(examplinib_poc, "vs"),
@@ -1522,15 +1523,386 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
 
 
 
+#' Compile subject information
+#'
+#' @param dm The DM domain as data table.
+#' @param vs The VS domain as data table.
+#' @param silent No messages as logical.
+#' @param subject_filter
+#' @param cleanup Keep only required fields, as logical.
+#'
+#' @return A data table.
+#' @import assertr
+#' @import tidyselect
+#' @export
+#' @keywords internal
+make_subjects <- function(
+    dm, vs, silent = FALSE, subject_filter = {ACTARMCD != "SCRNFAIL"},
+    cleanup = TRUE
+  ) {
+  # if AGE is not present in DM, calculate age from birthday and informed
+  #   consent signature date
+  if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
+    dm <- dm %>%
+      lubrify_dates() %>%
+      mutate(age_brthdtc = floor(as.duration(
+        interval(.data$BRTHDTC, .data$RFICDTC)) / as.duration(years(1)))) %>%
+      mutate(AGE = case_when(is.na(.data$AGE) ~ .data$age_brthdtc,
+                             .default = .data$AGE)) %>%
+      select(-"age_brthdtc")
+  }
+
+  out <- dm %>%
+    lubrify_dates() %>%
+    verify(has_all_names("USUBJID", "SEX", "ACTARMCD")) %>%
+    filter({{subject_filter}}) %>%
+    left_join(baseline_covariates(vs, silent = silent),
+              by = "USUBJID") %>%
+    recode_sex() %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    relocate("ID") %>%
+    arrange("ID") %>%
+    {if(cleanup == TRUE) select(., any_of(c(
+      "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
+      "WEIGHT", "BMI", "ACTARMCD"))) else .}
+  return(out)
+}
 
 
+#' Compile observation data frame
+#'
+#' @description
+#' Create a data frame of observations from a SDTM domain specified by 'domain'
+#' where the dependent variable comes from the 'DV_field' parameter and the
+#' timing information from the 'DTC_field' parameter.
+#'
+#' The 'TIME' in the output is `NA` throughout and needs to be calculated based
+#' on administration time point information provided separately.
+#'
+#' If the 'NTIME_lookup' parameter is provided, 'NTIME' can be derived from a
+#' field contained in the input data set, e.g., 'PCELTM' (see the code
+#' examples). Otherwise, 'NTIME' will be `NA`.
+#'
+#' @param sdtm A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
+#'   domain the observations come from.
+#' @param domain The domain as character.
+#' @param DTC_field The field to use as the date-time code for the observation.
+#' @param DV_field the field to use as the dependent variable.
+#' @param analyte The name of the observed analyte.
+#' @param cmt The compartment for the observation as numeric.
+#' @param parent The name of the parent analyte for the observation as
+#'   character.
+#' @param silent Suppress messages as logical.
+#' @param observation_filter The filtering to apply to the observation source
+#'   data.
+#' @param subject_filter The filtering to apply to the DM domain.
+#' @param NTIME_lookup A data frame with two columns, a column that defines the
+#'   custom nominal time information in the target domain (e.g., 'PCELTM'), and
+#'   'NTIME'. This data frame is left_join()ed into the observation data frame
+#'   to provide the NTIME field.
+#' @param cleanup Keep only necessary fields, as logical.
+#'
+#' @return A data frame.
+#' @export
+#'
+#' @examples
+#' make_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, "TEST",
+#'   NTIME_lookup = data.frame(PCELTM = c("PT0H", "PT1.5H", "PT4H"),
+#'   NTIME = c(0, 1.5, 4)))
+#' make_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, "TEST")
+make_observation <- function(sdtm,
+                             domain,
+                             DTC_field,
+                             DV_field,
+                             analyte = NA,
+                             cmt = NA,
+                             parent = NULL,
+                             observation_filter = {TRUE},
+                             subject_filter = {ACTARMCD != "SCRNFAIL"},
+                             NTIME_lookup = NULL,
+                             silent = FALSE,
+                             cleanup = TRUE) {
+  sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
+                       subject_filter = {{subject_filter}}, cleanup = cleanup)
+
+  if(is.null(parent)) {parent = analyte}
+
+  obs <- domain(sdtm, str_to_lower(domain)) %>%
+    lubrify_dates() %>%
+    filter({{observation_filter}}) %>%
+    mutate(
+      DTC = {{DTC_field}},
+      DV = {{DV_field}},
+      ANALYTE = analyte,
+      TIME = NA,
+      CMT = cmt,
+      AMT = 0,
+      DOSE = NA,
+      PARENT = parent,
+      METABOLITE = FALSE,
+      EVID = 0,
+      MDV = as.numeric(is.na(DV)),
+      IMPT_TIME = "") %>%
+    {if(cleanup == TRUE) select(., any_of(c("ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",  "HEIGHT",
+             "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "PCELTM", "EVID", "AMT",
+             "ANALYTE", "CMT",  "PARENT", "METABOLITE", "DOSE", "DV", "MDV",
+             "ACTARMCD", "IMPT_TIME"))) else .} %>%
+    inner_join(sbs, by = "USUBJID") %>%
+    {if(!is.null(NTIME_lookup)) left_join(., NTIME_lookup) else
+      mutate(., NTIME = NA)} %>%
+    # make_time() %>%
+    new_nif()
+
+  return(obs)
+}
 
 
+#' Compile administration data frame
+#'
+#' @param sdtm A sdtm object.
+#' @param subject_filter The filtering to apply to the DM domain.
+#' @param extrt
+#' @param analyte
+#' @param cmt
+#' @param cut_off_date
+#' @param silent
+#' @param cleanup
+#'
+#' @return A data frame.
+#' @export
+#' @keywords internal
+#'
+#' @examples
+make_administration <- function(
+    sdtm,
+    extrt,
+    analyte = NA,
+    cmt = 1,
+    cut_off_date = NULL,
+    subject_filter = {ACTARMCD != "SCRNFAIL"},
+    silent = FALSE,
+    cleanup = TRUE) {
+  dm <- domain(sdtm, "dm") %>% lubrify_dates()
+  ex <- domain(sdtm, "ex") %>% lubrify_dates()
+  if(is.na(analyte)) {analyte <- extrt}
+
+  if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
+
+  sbs <- make_subjects(dm, domain(sdtm, "vs"),
+                       subject_filter = {{subject_filter}}, cleanup = cleanup)
+
+  admin <- ex %>%
+    filter(EXTRT == extrt) %>%
+    filter(EXSTDTC <= cut_off_date) %>%
+
+    # get start date and time
+    mutate(EXSTDTC_has_time = has_time(EXSTDTC)) %>%
+    mutate(start_date = extract_date(.data$EXSTDTC)) %>%
+    mutate(start_time = case_when(
+      EXSTDTC_has_time == TRUE ~ extract_time(.data$EXSTDTC),
+      .default = NA
+    )) %>%
+
+    # eliminate duplicates
+    group_by(USUBJID, EXTRT, start_date) %>%
+    mutate(DUPLICATE_start_date = n() > 1) %>%
+    ungroup() %>%
+    filter(!(DUPLICATE_start_date == TRUE & EXSTDTC_has_time == FALSE)) %>%
+
+    # time imputations
+    mutate(IMPT_TIME = "") %>%
+    impute_exendtc_to_cutoff(cut.off.date = cut_off_date,
+                             silent = silent) %>%
+    impute_missing_exendtc_time(silent = silent) %>%
+    exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
+    impute_exendtc_to_rfendtc(dm, silent = silent) %>%
+    impute_missing_exendtc(silent = silent) %>%
+
+    # get end dates and times
+    mutate(EXENDTC_has_time = has_time(EXENDTC)) %>%
+    mutate(end_date = extract_date(.data$EXENDTC)) %>%
+    mutate(end_time = case_when(
+      EXENDTC_has_time == TRUE ~ extract_time(.data$EXENDTC),
+      .default = NA
+    )) %>%
+
+    # make generic fields
+    mutate(
+      TIME = NA,
+      NTIME = 0,
+      ANALYTE = analyte,
+      PARENT = analyte,
+      METABOLITE = FALSE,
+      DV = NA,
+      CMT = cmt,
+      EVID = 1,
+      MDV = 1,
+      DOSE = EXDOSE,
+      AMT = EXDOSE) %>%
+
+    # expand administrations
+    rowwise() %>%
+    mutate(date = list(
+      seq(as.Date(.data$start_date), as.Date(.data$end_date), by = "days"))) %>%
+    unnest(c(date)) %>%
+
+    # make time, EXDY and DTC
+    group_by(USUBJID, end_date) %>%
+    mutate(time = case_when(
+      row_number() == n() ~ .data$end_time,
+      .default = .data$start_time
+    )) %>%
+    ungroup() %>%
+    # group_by(USUBJID) %>%
+    # mutate(EXDY = .data$EXSTDY + (row_number() - 1)) %>%
+    # ungroup() %>%
+    mutate(DTC = compose_dtc(.data$date, .data$time)) %>%
+    {if(cleanup == TRUE)
+      select(., any_of(c("STUDYID", "USUBJID", "IMPT_TIME", "TIME", "ANALYTE",
+                       "PARENT", "METABOLITE", "DV", "CMT", "EVID", "MDV",
+                       "DOSE", "AMT", "EXDY", "DTC")))
+      else .
+    } %>%
+    inner_join(sbs, by = "USUBJID") %>%
+    # make_time() %>%
+    new_nif()
+
+  return(admin)
+}
 
 
+#' Make empty nif object.
+#'
+#' @return An empty nif object.
+#' @export
+#'
+#' @examples
+nif <- function() {
+  temp <- data.frame(matrix(nrow=0, ncol=length(minimal_nif_fields)))
+  colnames(temp) <- minimal_nif_fields
+  class(temp) <- c("nif", "data.frame")
+  comment(temp) <- paste0("created with nif ", packageVersion("nif"))
+  return(temp)
+}
 
 
+#' Calculate TIME field
+#'
+#' @param obj A nif object.
+#'
+#' @return A nif object.
+#' @export
+#' @keywords internal
+#'
+#' @examples
+make_time <- function(obj) {
+  obj %>%
+    verify(has_all_names("ID", "DTC")) %>%
+    verify(is.POSIXct(.data$DTC)) %>%
+    group_by(ID) %>%
+    mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(TIME = round(
+      as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
+      digits = 3
+    )) %>%
+    new_nif()
+}
 
+
+#' Complete DOSE field
+#'
+#' @param obj A nif object.
+#'
+#' @return A nif object.
+#' @export
+#' @keywords internal
+#'
+#' @examples
+carry_forward_dose <- function(obj) {
+  obj %>%
+    arrange(ID, DTC, -EVID) %>%
+    group_by(ID, PARENT) %>%
+    fill(DOSE, .direction = "down") %>%
+    ungroup()
+}
+
+
+#' Add observation
+#'
+#' @param nif A nif object.
+#' @inheritDotParams make_observation
+#' @param ...
+#'
+#' @return A nif object.
+#' @export
+#'
+#' @examples
+add_observation <- function(nif, ...) {
+  bind_rows(nif, make_observation(...)) %>%
+    arrange(ID, DTC) %>%
+    make_time() %>%
+    carry_forward_dose() %>%
+    new_nif()
+}
+
+
+#' Add adminisration
+#'
+#' @param nif A nif object.
+#' @inheritDotParams make_administration
+#' @param ...
+#'
+#' @return A nif object.
+#' @export
+#'
+#' @examples
+add_administration <- function(nif, ...) {
+  bind_rows(nif, make_administration(...)) %>%
+    arrange(ID, DTC) %>%
+    make_time() %>%
+    carry_forward_dose() %>%
+    new_nif()
+}
+
+
+#' Subset nif to rows with DTC before the last individual or global observation
+#'
+#' @param obj A nif object.
+#' @param individual Apply by ID, as logical.
+#'
+#' @return A nif object.
+#' @export
+#'
+#' @examples
+limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
+  max_or_inf <- function(x) {
+    if(length(x) == 0) return(max(obj$DTC, na.rm = TRUE))
+    return(max(x, na.rm = TRUE))
+  }
+
+  if(keep_no_obs_sbs == FALSE) {
+    obj <- obj %>%
+      group_by(ID) %>%
+      filter(sum(EVID == 0) > 0) %>%
+      ungroup()
+  }
+  if(individual == TRUE) {
+    obj %>%
+      # as.data.frame() %>%
+      group_by(ID) %>%
+      mutate(LAST_OBS_DTC = max_or_inf(DTC[EVID == 0])) %>%
+      ungroup() %>%
+      filter(DTC <= LAST_OBS_DTC) %>%
+      select(-LAST_OBS_DTC) %>%
+      new_nif()
+  } else {
+    last_obs_dtc <- max(obj$DTC[obj$EVID == 0])
+    obj %>%
+      filter(DTC <= last_obs_dtc) %>%
+      new_nif()
+  }
+}
 
 
 

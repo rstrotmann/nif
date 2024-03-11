@@ -9,8 +9,8 @@
 #' @keywords internal
 recode_sex <- function(obj) {
   obj %>%
-    dplyr::mutate(SEX = as.numeric(
-      dplyr::case_match(as.character(SEX),
+    mutate(SEX = as.numeric(
+      case_match(as.character(.data$SEX),
                         "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0, .default = NA)
     ))
 }

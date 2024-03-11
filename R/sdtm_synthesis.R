@@ -88,10 +88,11 @@ pk_sim <- function(event_table) {
 #' @param nsites The number of clinical sites to be simulated.
 #' @param screenfailure_rate The fraction of subjects to be screeing failures.
 #' @param start_date The fictional study start date.
+#'
 #' @import lubridate
 #' @return The disposition data for the simulated subjects as data frame.
 #' @keywords internal
-make_subs <- function(studyid = "2023001", nsubs = 10, nsites = 4,
+synthesize_subjects <- function(studyid = "2023001", nsubs = 10, nsites = 4,
                       screenfailure_rate = 0.25,
                       start_date = "2000-12-20 10:00") {
   current_date <- lubridate::as_datetime(start_date, format = "%Y-%m-%d %H:%M")
@@ -149,9 +150,9 @@ make_subs <- function(studyid = "2023001", nsubs = 10, nsites = 4,
 #' @return The DM data as data frame.
 #' @import dplyr
 #' @export
-make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
+synthesize_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
                     female_fraction = 0.5, min_age = 18, max_age = 55) {
-  sbs <- make_subs(studyid, nsubs, nsites)
+  sbs <- synthesize_subjects(studyid, nsubs, nsites)
   dm <- sbs %>%
     group_by_all() %>%
     mutate(
@@ -186,7 +187,7 @@ make_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
 #' @param dm The DM domain to provide the subject data.
 #' @return The VS domain data as data frame.
 #' @keywords internal
-make_vs <- function(dm) {
+synthesize_vs <- function(dm) {
   vs <- dm %>%
     # filter(ACTARMCD!="SCRNFAIL") %>%
     dplyr::select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
@@ -613,7 +614,7 @@ synthesize_sdtm_sad_study <- function() {
     select(-i) %>%
     ungroup()
 
-  dm <- make_dm(
+  dm <- synthesize_dm(
     studyid = "2023000001", nsubs = nrow(dose_levels), nsites = 1,
     female_fraction = 0, duration = 10, min_age = 18, max_age = 55
   )
@@ -637,8 +638,8 @@ synthesize_sdtm_sad_study <- function() {
     )) %>%
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
 
-  vs <- make_vs(dm)
-  lb <- make_lb(dm)
+  vs <- synthesize_vs(dm)
+  lb <- synthesize_lb(dm)
 
   ex <- make_sd_ex(dm, drug = "RS2023", admindays = 1, dose = NA) %>%
     select(-EXDOSE) %>%
@@ -714,7 +715,7 @@ synthesize_sdtm_poc_study <- function(
     PCTPT = c("PRE", "1.5 H POST", "4 H POST")
   )
 
-  dm <- make_dm(
+  dm <- synthesize_dm(
     studyid = studyid, nsubs = nsubs, nsites = nsites,
     female_fraction = 0.4, duration = duration, min_age = 47, max_age = 86
   ) %>%
@@ -728,8 +729,8 @@ synthesize_sdtm_poc_study <- function(
     )) %>%
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
 
-  vs <- make_vs(dm)
-  lb <- make_lb(dm)
+  vs <- synthesize_vs(dm)
+  lb <- synthesize_lb(dm)
   ex <- make_md_ex(dm, drug = "RS2023", dose = 500, missed_doses = T,
                    treatment_duration = duration, red_prob = red_prob)
 
@@ -871,7 +872,7 @@ synthesize_sdtm_food_effect_study <- function() {
       "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
       "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"))
 
-  dm <- make_dm(studyid = "2023000400", nsubs = 20)
+  dm <- synthesize_dm(studyid = "2023000400", nsubs = 20)
   i_treated <- which(dm$ACTARMCD != "SCRNFAIL")
   i_seq1 <- sample(i_treated, length(i_treated)/2)
 
@@ -885,8 +886,8 @@ synthesize_sdtm_food_effect_study <- function() {
                                .default = "Screen Failure")) %>%
     mutate(ARM = ACTARM, ARMCD = ACTARMCD)
 
-  vs <- make_vs(dm)
-  lb <- make_lb(dm)
+  vs <- synthesize_vs(dm)
+  lb <- synthesize_lb(dm)
   ex <- make_sd_ex(dm, drug = "RS2023")
 
   dm <- dm %>%
@@ -930,7 +931,7 @@ synthesize_sdtm_food_effect_study <- function() {
 #' @importFrom stats predict
 #' @return A DM domain with additional fields as data frame.
 #' @keywords internal
-make_crea <- function(dm, crea_method = crea_mdrd) {
+synthesize_crea <- function(dm, crea_method = crea_mdrd) {
   empirical_egfr <- tribble(
     # Source: DOI:https://doi.org/10.1038/sj.ki.5002374, Table 1.
     ~female, ~age_lo, ~age_hi, ~N, ~Mean, ~SD, ~min, ~max, ~P5, ~P25, ~P50, ~P75, ~P95,
@@ -985,9 +986,9 @@ make_crea <- function(dm, crea_method = crea_mdrd) {
 #' @param dm The DM domain as data frame.
 #' @return The LB domain as data frame.
 #' @keywords internal
-make_lb <- function(dm) {
+synthesize_lb <- function(dm) {
   dm %>%
-    make_crea() %>%
+    synthesize_crea() %>%
     select(c("STUDYID", "USUBJID", "DOMAIN", "RFSTDTC", "CREA")) %>%
     mutate(
       DOMAIN = "DM",

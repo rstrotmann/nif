@@ -2,7 +2,6 @@
 % Please edit documentation in R/nif-package.R
 \docType{package}
 \name{nif-package}
-\alias{nif}
 \alias{nif-package}
 \title{nif: Construct NONMEM input files from SDTM data}
 \description{

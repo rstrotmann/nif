@@ -4,15 +4,23 @@
 #' @import dplyr
 #' @return A nif object from the input data set.
 #' @export
-new_nif <- function(obj) {
-  if (class(obj)[1] == "sdtm") {
-    temp <- make_nif(obj)
-  } else {
-    temp <- obj %>% as.data.frame()
+new_nif <- function(obj = NULL) {
+  if(is.null(obj)) {
+    temp <- data.frame(matrix(nrow=0, ncol=length(minimal_nif_fields)))
+    colnames(temp) <- minimal_nif_fields
     class(temp) <- c("nif", "data.frame")
+    comment(temp) <- paste0("created with nif ", packageVersion("nif"))
+    return(temp)
+  } else {
+    if (class(obj)[1] == "sdtm") {
+      temp <- make_nif(obj)
+    } else {
+      temp <- obj %>% as.data.frame()
+      class(temp) <- c("nif", "data.frame")
+    }
+    comment(temp) <- paste0("created with nif ", packageVersion("nif"))
+    return(temp)
   }
-  comment(temp) <- paste0("created with nif ", packageVersion("nif"))
-  return(temp)
 }
 
 
@@ -310,7 +318,7 @@ studies <- function(obj) {
         dplyr::pull(.data$STUDYID)
     )
   } else {
-    return(NA)
+    return(NULL)
   }
 }
 
@@ -682,6 +690,15 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
 }
 
 
+#' Minimal nif fields
+#'
+#' @return A character vector of the minimal NIF fields
+#' @export
+minimal_nif_fields <- c(
+  "ID", "TIME", "AMT", "CMT", "EVID", "DOSE", "DV", "MDV"
+)
+
+
 #' Standard nif fields
 #'
 #' @return A character vector of the standard NIF fields
@@ -855,13 +872,18 @@ guess_analyte <- function(obj) {
     ensure_analyte() %>%
     ensure_metabolite() %>%
     as.data.frame() %>%
-    filter(EVID == 0) %>%
-    group_by(ANALYTE, METABOLITE) %>%
-    summarize(n = n(), .groups = "drop") %>%
-    filter(METABOLITE == FALSE) %>%
-    filter(n == max(n)) %>%
-    arrange(ANALYTE)
-  return(as.character(temp[1, "ANALYTE"]))
+    filter(EVID == 0)
+  if(length(analytes(temp)) > 0) {
+    temp %>%
+      group_by(ANALYTE, METABOLITE) %>%
+      summarize(n = n(), .groups = "drop") %>%
+      filter(METABOLITE == FALSE) %>%
+      filter(n == max(n)) %>%
+      arrange(ANALYTE)
+    return(as.character(temp[1, "ANALYTE"]))
+  } else {
+    return(NA)
+  }
 }
 
 

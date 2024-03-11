@@ -8,11 +8,13 @@ test_that("ensure_parent works as intended" , {
     1,   3,     0,    0,     3,   2
   )
 
-  nif %>%
+  expect_no_error(
+    nif %>%
     new_nif() %>%
     ensure_analyte() %>%
     ensure_parent() %>%
     as.data.frame()
+  )
 })
 
 

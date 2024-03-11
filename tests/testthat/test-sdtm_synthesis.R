@@ -1,12 +1,12 @@
 
-test_that("make_crea works", {
+test_that("synthesize_crea works", {
   make_dataset <- function(){
-    dm <- make_dm(nsubs = 100, min_age = 18, max_age = 95)
-    vs <- make_vs(dm) %>%
+    dm <- synthesize_dm(nsubs = 100, min_age = 18, max_age = 95)
+    vs <- synthesize_vs(dm) %>%
       select(USUBJID, VSSTRESN, VSTESTCD) %>%
       pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN")
     dm %>%
-      make_crea() %>%
+      synthesize_crea() %>%
       left_join(vs, by="USUBJID") %>%
       dplyr::select(USUBJID, AGE, SEX, RACE,
                     WEIGHT, HEIGHT, CREA) %>%
@@ -52,9 +52,9 @@ test_that("make_crea works", {
 
 
 create_subjects <- function(n=100) {
-  dm <- make_dm(nsubs = n, min_age = 18, max_age = 90) %>%
-    make_crea()
-  vs <- make_vs(dm) %>%
+  dm <- synthesize_dm(nsubs = n, min_age = 18, max_age = 90) %>%
+    synthesize_crea()
+  vs <- synthesize_vs(dm) %>%
     filter(EPOCH == "SCREENING") %>%
     dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
     pivot_wider(names_from = "VSTESTCD", values_from = "VSSTRESN") %>%

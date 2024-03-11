@@ -206,3 +206,86 @@ test_that("impute_missing_exendtc", {
   temp <- impute_missing_exendtc(ex, silent = F)
   expect_equal(temp$IMPT_TIME != "", temp$imputation_expected)
 })
+
+
+test_that("make_subjects works", {
+  sdtm <- examplinib_poc
+  temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
+  expect_equal(nrow(temp), 80)
+})
+
+
+test_that("make_observation works", {
+  sdtm <- examplinib_poc
+  ntime_lu <- data.frame(
+    PCELTM = c("PT0H", "PT1.5H", "PT_4H"),
+    NTIME = c(0, 1.5, 4)
+  )
+  expect_no_error(
+    make_observation(sdtm, "pc", PCDTC, PCSTRESN, "TEST",
+                     NTIME_lookup = ntime_lu)
+    )
+  expect_no_error(
+    make_observation(sdtm, "pc", PCDTC, PCSTRESN, "TEST")
+  )
+  expect_no_error(
+    make_observation(sdtm, "vs", VSDTC, VSSTRESN, "WT",
+                     observation_filter = {VSTESTCD == "WEIGHT"})
+    )
+})
+
+
+test_that("make_administration works", {
+  expect_no_error(
+    make_administration(examplinib_poc, "EXAMPLINIB", "RS2023")
+  )
+})
+
+
+# sdtm.0001$domains[["ex"]] %>%
+#   filter(USUBJID == "20192400012031008") %>%
+#   filter(EXSEQ %in% seq(5, 7))
+#
+# sdtm.0001$domains[["ex"]] %>%
+#   lubrify_dates() %>%
+#   mutate(
+#     EXSTDTC_has_time = has_time(EXSTDTC),
+#     EXENDTC_has_time = has_time(EXENDTC)
+#   ) %>%
+#   mutate(start_date = extract_date(.data$EXSTDTC)) %>%
+#   mutate(start_time = case_when(
+#     EXSTDTC_has_time == TRUE ~ extract_time(.data$EXSTDTC),
+#     .default = NA
+#   )) %>%
+#   mutate(end_date = extract_date(.data$EXENDTC)) %>%
+#   mutate(end_time = case_when(
+#     EXENDTC_has_time == TRUE ~ extract_time(.data$EXENDTC),
+#     .default = NA
+#   )) %>%
+#   group_by(USUBJID, EXTRT, start_date) %>%
+#   filter(n()>1) %>%
+#   as.data.frame()
+
+
+
+# make_administration(sdtm.0001, "M1774", "M1774")
+#
+
+temp <- new_nif() %>%
+  add_administration(examplinib_poc, "EXAMPLINIB", "RS2023") %>%
+  add_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, analyte = "RS2023",
+                  parent = "RS2023", cmt = 2,
+                  observation_filter = {PCTESTCD == "RS2023"}) %>%
+  add_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, analyte = "RS2023487A",
+                  parent = "RS2023", cmt = 3,
+                  observation_filter = {PCTESTCD == "RS2023487A"})
+
+
+temp <- new_nif() %>%
+  add_administration(sdtm.0001, extrt = "M1774", analyte = "M1774", cmt = 1,
+                     silent = TRUE) %>%
+  add_observation(sdtm.0001, domain = "pc", DTC_field = PCDTC,
+                  DV_field = PCSTRESN, analyte = "M1774", cmt = 2,
+                  parent = "M1774", observation_filter = {PCTESTCD == "M1774"}) %>%
+  limit()
+

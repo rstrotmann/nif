@@ -405,7 +405,7 @@ nif_spaghetti_plot <- function(obj,
     # group_by(ANALYTE, DOSE) %>%
     # filter(sum(!is.na(DV)) > 0) %>%
 
-    group_by(all_of(group)) %>%
+    group_by(across(c(all_of(group)))) %>%
     filter(sum(!is.na(DV)) > 0) %>%
     ungroup()
 
