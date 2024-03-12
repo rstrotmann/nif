@@ -34,6 +34,9 @@
     <loc>/reference/add_RFENDTC.html</loc>
   </url>
   <url>
+    <loc>/reference/add_administration.html</loc>
+  </url>
+  <url>
     <loc>/reference/add_analyte_mapping.html</loc>
   </url>
   <url>
@@ -68,6 +71,9 @@
   </url>
   <url>
     <loc>/reference/add_obs_per_dosing_interval.html</loc>
+  </url>
+  <url>
+    <loc>/reference/add_observation.html</loc>
   </url>
   <url>
     <loc>/reference/add_parent_mapping.html</loc>
@@ -113,6 +119,9 @@
   </url>
   <url>
     <loc>/reference/bmi_by_age.html</loc>
+  </url>
+  <url>
+    <loc>/reference/carry_forward_dose.html</loc>
   </url>
   <url>
     <loc>/reference/check_date_format.html</loc>
@@ -265,6 +274,9 @@
     <loc>/reference/filter_subject.sdtm.html</loc>
   </url>
   <url>
+    <loc>/reference/filter_subjects.html</loc>
+  </url>
+  <url>
     <loc>/reference/geom_admin.html</loc>
   </url>
   <url>
@@ -343,10 +355,16 @@
     <loc>/reference/last_obs_dtc.html</loc>
   </url>
   <url>
+    <loc>/reference/limit.html</loc>
+  </url>
+  <url>
     <loc>/reference/lubrify_dates.html</loc>
   </url>
   <url>
     <loc>/reference/make_admin.html</loc>
+  </url>
+  <url>
+    <loc>/reference/make_administration.html</loc>
   </url>
   <url>
     <loc>/reference/make_crea.html</loc>
@@ -376,13 +394,22 @@
     <loc>/reference/make_obs.html</loc>
   </url>
   <url>
+    <loc>/reference/make_observation.html</loc>
+  </url>
+  <url>
     <loc>/reference/make_sd_ex.html</loc>
   </url>
   <url>
     <loc>/reference/make_sd_pc.html</loc>
   </url>
   <url>
+    <loc>/reference/make_subjects.html</loc>
+  </url>
+  <url>
     <loc>/reference/make_subs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/make_time.html</loc>
   </url>
   <url>
     <loc>/reference/make_vs.html</loc>
@@ -394,7 +421,13 @@
     <loc>/reference/max_observation_time.html</loc>
   </url>
   <url>
+    <loc>/reference/max_time.html</loc>
+  </url>
+  <url>
     <loc>/reference/mean_dose_plot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/minimal_nif_fields.html</loc>
   </url>
   <url>
     <loc>/reference/miss_admins.html</loc>
@@ -421,7 +454,13 @@
     <loc>/reference/new_sdtm.html</loc>
   </url>
   <url>
+    <loc>/reference/nice_enumeration.html</loc>
+  </url>
+  <url>
     <loc>/reference/nif-package.html</loc>
+  </url>
+  <url>
+    <loc>/reference/nif.html</loc>
   </url>
   <url>
     <loc>/reference/nif_debugger.html</loc>
@@ -544,7 +583,16 @@
     <loc>/reference/summary.sdtm.html</loc>
   </url>
   <url>
+    <loc>/reference/synthesize_crea.html</loc>
+  </url>
+  <url>
+    <loc>/reference/synthesize_dm.html</loc>
+  </url>
+  <url>
     <loc>/reference/synthesize_examplinib.html</loc>
+  </url>
+  <url>
+    <loc>/reference/synthesize_lb.html</loc>
   </url>
   <url>
     <loc>/reference/synthesize_sdtm_food_effect_study.html</loc>
@@ -554,6 +602,12 @@
   </url>
   <url>
     <loc>/reference/synthesize_sdtm_sad_study.html</loc>
+  </url>
+  <url>
+    <loc>/reference/synthesize_subjects.html</loc>
+  </url>
+  <url>
+    <loc>/reference/synthesize_vs.html</loc>
   </url>
   <url>
     <loc>/reference/usubjid.html</loc>

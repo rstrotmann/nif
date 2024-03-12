@@ -1522,7 +1522,6 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
 }
 
 
-
 #' Compile subject information
 #'
 #' @param dm The DM domain as data table.

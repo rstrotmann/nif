@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.46.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,6 +61,11 @@
       
 
       <dl><dt>
+          
+          <code><a href="add_administration.html">add_administration()</a></code> 
+        </dt>
+        <dd>Add adminisration</dd>
+      </dl><dl><dt>
           
           <code><a href="add_analyte_mapping.html">add_analyte_mapping()</a></code> 
         </dt>
@@ -115,6 +120,11 @@
           <code><a href="add_obs_per_dosing_interval.html">add_obs_per_dosing_interval()</a></code> 
         </dt>
         <dd>Add the number of observations per dosing interval</dd>
+      </dl><dl><dt>
+          
+          <code><a href="add_observation.html">add_observation()</a></code> 
+        </dt>
+        <dd>Add observation</dd>
       </dl><dl><dt>
           
           <code><a href="add_parent_mapping.html">add_parent_mapping()</a></code> 
@@ -317,6 +327,11 @@ sampling</dd>
         <dd>Keep only selected USUBJID in the data set</dd>
       </dl><dl><dt>
           
+          <code><a href="filter_subjects.html">filter_subjects()</a></code> 
+        </dt>
+        <dd>Filter nif object, eliminating subjects without observations or administrations</dd>
+      </dl><dl><dt>
+          
           <code><a href="geom_admin.html">geom_admin()</a></code> 
         </dt>
         <dd>administration geom layer for ggplot</dd>
@@ -352,19 +367,24 @@ sampling</dd>
         <dd>Convert all DTC fields into ISO 8601 string format</dd>
       </dl><dl><dt>
           
+          <code><a href="limit.html">limit()</a></code> 
+        </dt>
+        <dd>Subset nif to rows with DTC before the last individual or global observation</dd>
+      </dl><dl><dt>
+          
           <code><a href="lubrify_dates.html">lubrify_dates()</a></code> 
         </dt>
         <dd>Convert all DTC fields from ISO 8601 into POSIXct</dd>
       </dl><dl><dt>
           
-          <code><a href="make_dm.html">make_dm()</a></code> 
-        </dt>
-        <dd>Synthesize a fictional DM domain</dd>
-      </dl><dl><dt>
-          
           <code><a href="make_nif.html">make_nif()</a></code> 
         </dt>
         <dd>Make a NIF object from SDTM-formatted data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="make_observation.html">make_observation()</a></code> 
+        </dt>
+        <dd>Compile observation data frame</dd>
       </dl><dl><dt>
           
           <code><a href="max_admin_time.html">max_admin_time()</a></code> 
@@ -375,6 +395,16 @@ sampling</dd>
           <code><a href="max_observation_time.html">max_observation_time()</a></code> 
         </dt>
         <dd>Maximal observation time</dd>
+      </dl><dl><dt>
+          
+          <code><a href="max_time.html">max_time()</a></code> 
+        </dt>
+        <dd>Maximal time in nif object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="minimal_nif_fields.html">minimal_nif_fields</a></code> 
+        </dt>
+        <dd>Minimal nif fields</dd>
       </dl><dl><dt>
           
           <code><a href="n_administrations.html">n_administrations()</a></code> 
@@ -410,6 +440,16 @@ sampling</dd>
           <code><a href="new_sdtm.html">new_sdtm()</a></code> 
         </dt>
         <dd>SDTM class constructor, creating a sdtm object from a set of SDTM domains</dd>
+      </dl><dl><dt>
+          
+          <code><a href="nice_enumeration.html">nice_enumeration()</a></code> 
+        </dt>
+        <dd>Nice enumeration of multiple strings</dd>
+      </dl><dl><dt>
+          
+          <code><a href="nif.html">nif()</a></code> 
+        </dt>
+        <dd>Make empty nif object.</dd>
       </dl><dl><dt>
           
           <code><a href="nif_debugger.html">nif_debugger()</a></code> 
@@ -505,6 +545,11 @@ sampling</dd>
           <code><a href="summary.html">summary()</a></code> 
         </dt>
         <dd>NIF or SDTM object overview</dd>
+      </dl><dl><dt>
+          
+          <code><a href="synthesize_dm.html">synthesize_dm()</a></code> 
+        </dt>
+        <dd>Synthesize a fictional DM domain</dd>
       </dl><dl><dt>
           
           <code><a href="usubjid.html">usubjid()</a></code> 
