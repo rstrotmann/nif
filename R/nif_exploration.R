@@ -852,7 +852,7 @@ summary.nif <- function(object, ...) {
     mutate(SEX = factor(SEX, levels=c(0, 1))) %>%
     distinct(ID, SEX) %>%
     reframe(n = n(), .by = factor("SEX")) %>%
-    spread(SEX, n, fill = NA, drop = FALSE)
+    spread(SEX, n, fill = 0, drop = FALSE)
   n_males <- n_sex[1, "0"]
   n_females <- n_sex[1, "1"]
 

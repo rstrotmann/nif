@@ -242,6 +242,15 @@ test_that("make_administration works", {
 })
 
 
+test_that("make_nif", {
+  sdtm <- examplinib_sad
+  nif <- new_nif() %>%
+    add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "EXPB") %>%
+    add_observation(sdtm, domain = "pc", DTC_field = PCDTC,
+      DV_field = PCSTRESN, analyte = "EXPB", cmt = 2, parent = "EXPB",
+      observation_filter = {PCTESTCD == "RS2023"})
+})
+
 # sdtm.0001$domains[["ex"]] %>%
 #   filter(USUBJID == "20192400012031008") %>%
 #   filter(EXSEQ %in% seq(5, 7))
