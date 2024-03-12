@@ -1587,8 +1587,10 @@ make_subjects <- function(
 #'   domain the observations come from.
 #' @param domain The domain as character.
 #' @param DTC_field The field to use as the date-time code for the observation.
-#' @param DV_field the field to use as the dependent variable.
-#' @param analyte The name of the observed analyte.
+#'   Defaults to the two-character domain name followed by 'DTC', if NULL.
+#' @param DV_field the field to use as the dependent variable. Defaults to the
+#'   two-character domain name followed by 'STRESN', if NULL.
+#' @param analyte The name for the analyte. Defaults to the 'testcd', if NULL.
 #' @param cmt The compartment for the observation as numeric.
 #' @param parent The name of the parent analyte for the observation as
 #'   character.
@@ -1601,39 +1603,60 @@ make_subjects <- function(
 #'   'NTIME'. This data frame is left_join()ed into the observation data frame
 #'   to provide the NTIME field.
 #' @param cleanup Keep only necessary fields, as logical.
+#' @param testcd The xxTESTCD entry that corresponds to the analyte of interest,
+#'   as character.
+#' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
+#'   name followed by 'TESTCD', if NULL.
 #'
 #' @return A data frame.
 #' @export
+#' @import stringr
 #'
-#' @examples
-#' make_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, "TEST",
-#'   NTIME_lookup = data.frame(PCELTM = c("PT0H", "PT1.5H", "PT4H"),
-#'   NTIME = c(0, 1.5, 4)))
-#' make_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, "TEST")
-make_observation <- function(sdtm,
-                             domain,
-                             DTC_field,
-                             DV_field,
-                             analyte = NA,
-                             cmt = NA,
-                             parent = NULL,
-                             observation_filter = {TRUE},
-                             # subject_filter = {ACTARMCD != "SCRNFAIL"},
-                             subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-                             NTIME_lookup = NULL,
-                             silent = FALSE,
-                             cleanup = TRUE) {
+make_observation <- function(
+    sdtm,
+    domain,
+    testcd,
+    analyte = NULL,
+    parent = NULL,
+    DTC_field = NULL,
+    DV_field = NULL,
+    TESTCD_field = NULL,
+    cmt = NA,
+    observation_filter = {TRUE},
+    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    NTIME_lookup = NULL,
+    silent = FALSE,
+    cleanup = TRUE) {
+  if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
+  if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
+  if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
+                                                   "TESTCD")
+  if(is.null(analyte)) analyte <- testcd
+  if(is.null(parent)) parent <- analyte
+
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
 
-  if(is.null(parent)) {parent = analyte}
+  obj <- domain(sdtm, str_to_lower(domain)) %>%
+    lubrify_dates()
 
-  obs <- domain(sdtm, str_to_lower(domain)) %>%
-    lubrify_dates() %>%
+  if(is.null(NTIME_lookup)) {
+    if("PCELTM" %in% names(obj)) {
+      NTIME_lookup <- obj %>%
+        distinct(.data$PCELTM) %>%
+        mutate(NTIME = stringr::str_extract(
+          .data$PCELTM, "PT([.0-9]+)H", group = 1))
+    }
+  }
+
+  obj %>%
     filter({{observation_filter}}) %>%
+    filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
-      DTC = {{DTC_field}},
-      DV = {{DV_field}},
+      # DTC = {{DTC_field}},
+      # DV = {{DV_field}},
+      DTC = .data[[DTC_field]],
+      DV = .data[[DV_field]],
       ANALYTE = analyte,
       TIME = NA,
       CMT = cmt,
@@ -1651,10 +1674,7 @@ make_observation <- function(sdtm,
     inner_join(sbs, by = "USUBJID") %>%
     {if(!is.null(NTIME_lookup)) left_join(., NTIME_lookup) else
       mutate(., NTIME = NA)} %>%
-    # make_time() %>%
     new_nif()
-
-  return(obs)
 }
 
 
@@ -1678,7 +1698,6 @@ make_administration <- function(
     analyte = NA,
     cmt = 1,
     cut_off_date = NULL,
-    # subject_filter = {ACTARMCD != "SCRNFAIL"},
     subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
     silent = FALSE,
     cleanup = TRUE) {
@@ -1802,25 +1821,9 @@ make_time <- function(obj) {
       as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
       digits = 3
     )) %>%
+    add_tad() %>%
     new_nif()
 }
-
-
-# make_tad <- function(nif) {
-#   nif %>%
-#     ensure_parent() %>%
-#     as.data.frame() %>%
-#     mutate(admin_time = case_when(
-#       .data$EVID == 1 ~ .data$TIME)) %>%
-#     arrange(.data$TIME) %>%
-#     group_by(.data$ID, .data$PARENT) %>%
-#     fill(admin_time, .direction = "down") %>%
-#     ungroup() %>%
-#     mutate(TAD = .data$TIME - .data$admin_time) %>%
-#     select(-"admin_time") %>%
-#     new_nif() %>%
-#     index_nif()
-# }
 
 
 #' Complete DOSE field
@@ -1839,27 +1842,29 @@ carry_forward_dose <- function(obj) {
 }
 
 
-#' Add observation
+#' Add an observation to a nif object
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
 #'
 #' @return A nif object.
 #' @export
-add_observation <- function(nif,
-                            sdtm,
-                            domain,
-                            DTC_field,
-                            DV_field,
-                            analyte = NA,
-                            cmt = NULL,
-                            parent = NULL,
-                            observation_filter = {TRUE},
-                            # subject_filter = {ACTARMCD != "SCRNFAIL"},
-                            subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-                            NTIME_lookup = NULL,
-                            silent = FALSE,
-                            cleanup = TRUE) {
+add_observation <- function(
+    nif,
+    sdtm,
+    domain,
+    testcd,
+    analyte = NULL,
+    parent = NULL,
+    DTC_field = NULL,
+    DV_field = NULL,
+    TESTCD_field = NULL,
+    cmt = NA,
+    observation_filter = {TRUE},
+    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    NTIME_lookup = NULL,
+    silent = FALSE,
+    cleanup = TRUE) {
   if (is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
@@ -1870,17 +1875,18 @@ add_observation <- function(nif,
   bind_rows(nif, make_observation(
     sdtm = sdtm,
     domain = domain,
-    DTC_field = {{DTC_field}},
-    DV_field = {{DV_field}},
+    testcd = testcd,
     analyte = analyte,
-    cmt = cmt,
     parent = parent,
-    observation_filter = {{observation_filter}},
+    DTC_field = DTC_field,
+    DV_field = DV_field,
+    TESTCD_field = TESTCD_field,
+    cmt = cmt,
+    observation_filter = observation_filter,
     subject_filter = {{subject_filter}},
     NTIME_lookup = NTIME_lookup,
     silent = silent,
-    cleanup = cleanup
-  )) %>%
+    cleanup = cleanup)) %>%
     arrange(.data$ID, .data$DTC) %>%
     make_time() %>%
     carry_forward_dose() %>%
@@ -1888,23 +1894,23 @@ add_observation <- function(nif,
 }
 
 
-#' Add adminisration
+#' Add an administration to a nif object
 #'
 #' @param nif A nif object.
 #' @inheritParams make_administration
 #'
 #' @return A nif object.
 #' @export
-add_administration <- function(nif,
-                               sdtm,
-                               extrt,
-                               analyte = NA,
-                               cmt = 1,
-                               cut_off_date = NULL,
-                               # subject_filter = {ACTARMCD != "SCRNFAIL"},
-                               subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-                               silent = FALSE,
-                               cleanup = TRUE) {
+add_administration <- function(
+    nif,
+    sdtm,
+    extrt,
+    analyte = NA,
+    cmt = 1,
+    cut_off_date = NULL,
+    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    silent = FALSE,
+    cleanup = TRUE) {
   bind_rows(nif, make_administration(
     sdtm = sdtm,
     extrt = extrt,
@@ -1960,7 +1966,8 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 }
 
 
-#' Filter nif object, eliminating subjects without observations or administrations
+#' Filter nif object, eliminating subjects without observations or
+#' administrations
 #'
 #' @param obj A nif object.
 #' @param keep_no_obs Retain subjects without observations, as logical.

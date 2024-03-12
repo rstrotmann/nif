@@ -7,11 +7,13 @@
 make_observation(
   sdtm,
   domain,
-  DTC_field,
-  DV_field,
-  analyte = NA,
-  cmt = NA,
+  testcd,
+  analyte = NULL,
   parent = NULL,
+  DTC_field = NULL,
+  DV_field = NULL,
+  TESTCD_field = NULL,
+  cmt = NA,
   observation_filter = {
      TRUE
  },
@@ -29,16 +31,24 @@ domain the observations come from.}
 
 \item{domain}{The domain as character.}
 
-\item{DTC_field}{The field to use as the date-time code for the observation.}
+\item{testcd}{The xxTESTCD entry that corresponds to the analyte of interest,
+as character.}
 
-\item{DV_field}{the field to use as the dependent variable.}
-
-\item{analyte}{The name of the observed analyte.}
-
-\item{cmt}{The compartment for the observation as numeric.}
+\item{analyte}{The name for the analyte. Defaults to the 'testcd', if NULL.}
 
 \item{parent}{The name of the parent analyte for the observation as
 character.}
+
+\item{DTC_field}{The field to use as the date-time code for the observation.
+Defaults to the two-character domain name followed by 'DTC', if NULL.}
+
+\item{DV_field}{the field to use as the dependent variable. Defaults to the
+two-character domain name followed by 'STRESN', if NULL.}
+
+\item{TESTCD_field}{The xxTESTCD field. Defaults to the two-character domain
+name followed by 'TESTCD', if NULL.}
+
+\item{cmt}{The compartment for the observation as numeric.}
 
 \item{observation_filter}{The filtering to apply to the observation source
 data.}
@@ -68,10 +78,4 @@ on administration time point information provided separately.
 If the 'NTIME_lookup' parameter is provided, 'NTIME' can be derived from a
 field contained in the input data set, e.g., 'PCELTM' (see the code
 examples). Otherwise, 'NTIME' will be \code{NA}.
-}
-\examples{
-make_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, "TEST",
-  NTIME_lookup = data.frame(PCELTM = c("PT0H", "PT1.5H", "PT4H"),
-  NTIME = c(0, 1.5, 4)))
-make_observation(examplinib_poc, "pc", PCDTC, PCSTRESN, "TEST")
 }

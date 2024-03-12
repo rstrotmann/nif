@@ -222,16 +222,19 @@ test_that("make_observation works", {
     NTIME = c(0, 1.5, 4)
   )
   expect_no_error(
-    make_observation(sdtm, "pc", PCDTC, PCSTRESN, "TEST",
+    make_observation(sdtm, "pc", "RS2023",
                      NTIME_lookup = ntime_lu)
-    )
-  expect_no_error(
-    make_observation(sdtm, "pc", PCDTC, PCSTRESN, "TEST")
   )
   expect_no_error(
-    make_observation(sdtm, "vs", VSDTC, VSSTRESN, "WT",
-                     observation_filter = {VSTESTCD == "WEIGHT"})
-    )
+    make_observation(sdtm, "pc", "RS2023")
+  )
+  expect_no_error(
+    make_observation(sdtm, "vs", "WEIGHT")
+  )
+
+  expect_no_error(
+    make_observation(sdtm, "vs", "WEIGHT", observation_filter = {USUBJID == "20230000011010001"})
+  )
 })
 
 
@@ -245,11 +248,13 @@ test_that("make_administration works", {
 test_that("make_nif", {
   sdtm <- examplinib_sad
   nif <- new_nif() %>%
-    add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "EXPB") %>%
-    add_observation(sdtm, domain = "pc", DTC_field = PCDTC,
-      DV_field = PCSTRESN, analyte = "EXPB", cmt = 2, parent = "EXPB",
-      observation_filter = {PCTESTCD == "RS2023"})
+    add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>%
+    add_observation(sdtm, domain = "pc", testcd = "RS2023", cmt = 2)
+
+  expect_true(
+    all.equal(obs_per_dose_level(nif), obs_per_dose_level(examplinib_sad_nif)))
 })
+
 
 # sdtm.0001$domains[["ex"]] %>%
 #   filter(USUBJID == "20192400012031008") %>%
