@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,36 +80,44 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">filter_subject</span><span class="op">(</span><span class="va">examplinib_poc</span>, <span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ────────SDTM data set summary ────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── SDTM data set summary ──────── </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Study 2023000022 with 1 subjects providing PC data.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SDTM domains: dm, vs, ex, pc, lb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Subjects per domain:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DOMAIN   N   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  dm       1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  vs       1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ex       1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  pc       1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  lb       1   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Arms (DM):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ACTARM               ACTARMCD </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Single Arm Treatment TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ACTARM                 ACTARMCD    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Single Arm Treatment   TREATMENT   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatments (EX):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   EXTRT     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 EXAMPLINIB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  EXTRT        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  EXAMPLINIB    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Specimens (PC):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  none </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes (PC):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   PCTEST     PCTESTCD  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 RS2023     RS2023    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 RS2023487A RS2023487A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  PCTEST       PCTESTCD     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023       RS2023       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023487A   RS2023487A    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment-to-analyte mappings:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   EXTRT      PCTESTCD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 EXAMPLINIB RS2023  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  EXTRT        PCTESTCD   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  EXAMPLINIB   RS2023      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Parent-to-metabolite mappings:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   PCTESTCD_parent PCTESTCD_metab</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 RS2023          RS2023487A    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  PCTESTCD_parent   PCTESTCD_metab   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023            RS2023487A        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Time mappings:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  none </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu">filter_subject</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ──────── NONMEM input file (NIF) object ────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>

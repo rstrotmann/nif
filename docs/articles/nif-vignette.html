@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -217,37 +217,44 @@ accessed directly, e.g.:</p>
 properties:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span></span>
-<span><span class="co">## ────────SDTM data set summary ────────</span></span>
+<span><span class="co">## ──────── SDTM data set summary ──────── </span></span>
 <span><span class="co">## Study 2023000400 with 20 subjects providing PC data.</span></span>
-<span><span class="co">## SDTM domains: dm, vs, ex, pc, lb</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Subjects per domain:</span></span>
+<span><span class="co">##  DOMAIN   N    </span></span>
+<span><span class="co">##  dm       27   </span></span>
+<span><span class="co">##  vs       27   </span></span>
+<span><span class="co">##  ex       20   </span></span>
+<span><span class="co">##  pc       20   </span></span>
+<span><span class="co">##  lb       27   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Arms (DM):</span></span>
-<span><span class="co">##   ACTARM         ACTARMCD</span></span>
-<span><span class="co">## 1 Fed - Fasted   BA      </span></span>
-<span><span class="co">## 2 Screen Failure SCRNFAIL</span></span>
-<span><span class="co">## 3 Fasted - Fed   AB      </span></span>
+<span><span class="co">##  ACTARM           ACTARMCD   </span></span>
+<span><span class="co">##  Fed - Fasted     BA         </span></span>
+<span><span class="co">##  Screen Failure   SCRNFAIL   </span></span>
+<span><span class="co">##  Fasted - Fed     AB         </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Treatments (EX):</span></span>
-<span><span class="co">##   EXTRT     </span></span>
-<span><span class="co">## 1 EXAMPLINIB</span></span>
+<span><span class="co">##  EXTRT        </span></span>
+<span><span class="co">##  EXAMPLINIB    </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Specimens (PC):</span></span>
-<span><span class="co">## NULL</span></span>
+<span><span class="co">##  none </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Analytes (PC):</span></span>
-<span><span class="co">##   PCTEST     PCTESTCD  </span></span>
-<span><span class="co">## 1 RS2023     RS2023    </span></span>
-<span><span class="co">## 2 RS2023487A RS2023487A</span></span>
+<span><span class="co">##  PCTEST       PCTESTCD     </span></span>
+<span><span class="co">##  RS2023       RS2023       </span></span>
+<span><span class="co">##  RS2023487A   RS2023487A    </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Treatment-to-analyte mappings:</span></span>
-<span><span class="co">##   EXTRT      PCTESTCD</span></span>
-<span><span class="co">## 1 EXAMPLINIB RS2023  </span></span>
+<span><span class="co">##  EXTRT        PCTESTCD   </span></span>
+<span><span class="co">##  EXAMPLINIB   RS2023      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Parent-to-metabolite mappings:</span></span>
-<span><span class="co">## none</span></span>
+<span><span class="co">##  none </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Time mappings:</span></span>
-<span><span class="co">## none</span></span></code></pre></div>
+<span><span class="co">##  none</span></span></code></pre></div>
 <p>Note the ‘Treatment-to-analyte mappings’ and ‘Parent-to-metabolite
 mapping’ tables in the above output, we will get back to this when
 creating a NIF data set from these SDTM data.</p>

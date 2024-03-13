@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,37 +117,44 @@ domains. Let’s print the ‘examplinib_poc’ sdtm object for a high-level
 overview:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_poc</span></span>
-<span><span class="co">#&gt; ────────SDTM data set summary ────────</span></span>
+<span><span class="co">#&gt; ──────── SDTM data set summary ──────── </span></span>
 <span><span class="co">#&gt; Study 2023000022 with 80 subjects providing PC data.</span></span>
-<span><span class="co">#&gt; SDTM domains: dm, vs, ex, pc, lb</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Subjects per domain:</span></span>
+<span><span class="co">#&gt;  DOMAIN   N     </span></span>
+<span><span class="co">#&gt;  dm       103   </span></span>
+<span><span class="co">#&gt;  vs       103   </span></span>
+<span><span class="co">#&gt;  ex       80    </span></span>
+<span><span class="co">#&gt;  pc       80    </span></span>
+<span><span class="co">#&gt;  lb       103   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Arms (DM):</span></span>
-<span><span class="co">#&gt;   ACTARM               ACTARMCD </span></span>
-<span><span class="co">#&gt; 1 Single Arm Treatment TREATMENT</span></span>
-<span><span class="co">#&gt; 2 Screen Faillure      SCRNFAIL </span></span>
+<span><span class="co">#&gt;  ACTARM                 ACTARMCD    </span></span>
+<span><span class="co">#&gt;  Single Arm Treatment   TREATMENT   </span></span>
+<span><span class="co">#&gt;  Screen Faillure        SCRNFAIL    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments (EX):</span></span>
-<span><span class="co">#&gt;   EXTRT     </span></span>
-<span><span class="co">#&gt; 1 EXAMPLINIB</span></span>
+<span><span class="co">#&gt;  EXTRT        </span></span>
+<span><span class="co">#&gt;  EXAMPLINIB    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Specimens (PC):</span></span>
-<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt;  none </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Analytes (PC):</span></span>
-<span><span class="co">#&gt;   PCTEST     PCTESTCD  </span></span>
-<span><span class="co">#&gt; 1 RS2023     RS2023    </span></span>
-<span><span class="co">#&gt; 2 RS2023487A RS2023487A</span></span>
+<span><span class="co">#&gt;  PCTEST       PCTESTCD     </span></span>
+<span><span class="co">#&gt;  RS2023       RS2023       </span></span>
+<span><span class="co">#&gt;  RS2023487A   RS2023487A    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment-to-analyte mappings:</span></span>
-<span><span class="co">#&gt;   EXTRT      PCTESTCD</span></span>
-<span><span class="co">#&gt; 1 EXAMPLINIB RS2023  </span></span>
+<span><span class="co">#&gt;  EXTRT        PCTESTCD   </span></span>
+<span><span class="co">#&gt;  EXAMPLINIB   RS2023      </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parent-to-metabolite mappings:</span></span>
-<span><span class="co">#&gt;   PCTESTCD_parent PCTESTCD_metab</span></span>
-<span><span class="co">#&gt; 1 RS2023          RS2023487A    </span></span>
+<span><span class="co">#&gt;  PCTESTCD_parent   PCTESTCD_metab   </span></span>
+<span><span class="co">#&gt;  RS2023            RS2023487A        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time mappings:</span></span>
-<span><span class="co">#&gt; none</span></span></code></pre></div>
+<span><span class="co">#&gt;  none</span></span></code></pre></div>
 <p>Note that in the EX domain, the administered drug is given as
 ‘EXAMPLINIB’ while in PC, the corresponding analyte is ‘RS2023’. The
 other analyte, ‘RS2023487A’ is a metabolite.</p>
