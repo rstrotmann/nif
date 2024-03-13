@@ -1616,7 +1616,7 @@ make_observation <- function(
     domain,
     testcd,
     analyte = NULL,
-    parent = NULL,
+    parent = NA,
     DTC_field = NULL,
     DV_field = NULL,
     TESTCD_field = NULL,
@@ -1631,7 +1631,7 @@ make_observation <- function(
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
                                                    "TESTCD")
   if(is.null(analyte)) analyte <- testcd
-  if(is.null(parent)) parent <- analyte
+  # if(is.null(parent)) parent <- analyte
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
@@ -1640,11 +1640,16 @@ make_observation <- function(
     lubrify_dates()
 
   if(is.null(NTIME_lookup)) {
-    if("PCELTM" %in% names(obj)) {
-      NTIME_lookup <- obj %>%
-        distinct(.data$PCELTM) %>%
-        mutate(NTIME = stringr::str_extract(
-          .data$PCELTM, "PT([.0-9]+)H", group = 1))
+    if("time_mapping" %in% names(sdtm) & nrow(sdtm$time_mapping) > 0 &
+       any(names(sdtm$time_mapping) %in% names(obj))){
+      NTIME_lookup <- sdtm$time_mapping
+    } else {
+      if("PCELTM" %in% names(obj)) {
+        NTIME_lookup <- obj %>%
+          distinct(.data$PCELTM) %>%
+          mutate(NTIME = stringr::str_extract(
+            .data$PCELTM, "PT([.0-9]+)H", group = 1))
+      }
     }
   }
 
@@ -1666,13 +1671,14 @@ make_observation <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPT_TIME = "") %>%
+    {if(!is.null(NTIME_lookup)) suppressMessages(
+      left_join(., NTIME_lookup)) else
+      mutate(., NTIME = NA)} %>%
     {if(cleanup == TRUE) select(., any_of(c("ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",  "HEIGHT",
              "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "PCELTM", "EVID", "AMT",
              "ANALYTE", "CMT",  "PARENT", "METABOLITE", "DOSE", "DV", "MDV",
              "ACTARMCD", "IMPT_TIME"))) else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
-    {if(!is.null(NTIME_lookup)) left_join(., NTIME_lookup) else
-      mutate(., NTIME = NA)} %>%
     new_nif()
 }
 
@@ -1858,7 +1864,7 @@ add_observation <- function(
     DTC_field = NULL,
     DV_field = NULL,
     TESTCD_field = NULL,
-    cmt = NA,
+    cmt = NULL,
     observation_filter = {TRUE},
     subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
     NTIME_lookup = NULL,
@@ -1867,7 +1873,7 @@ add_observation <- function(
   if (is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
-      "Compartment for ", analyte,
+      "Compartment for ", testcd,
       " was not specified and has been set to ", cmt), silent = silent)
   }
 
@@ -1978,9 +1984,13 @@ filter_subjects <- function(obj,
                             keep_no_obs = FALSE,
                             keep_no_admin = FALSE) {
   obj %>%
+    as.data.frame() %>%
     group_by(ID) %>%
-    {if(keep_no_obs == FALSE) filter(., sum(EVID == 0) > 1) else .} %>%
-    {if(keep_no_admin == FALSE) filter(., sum(EVID == 1) > 1) else .} %>%
+    # mutate(nadmin = sum(EVID==1)) %>%
+    {if(keep_no_obs == FALSE) filter(., sum(EVID == 0) > 0) else .} %>%
+    {if(keep_no_admin == FALSE) filter(., sum(EVID == 1) > 0) else .} %>%
+    # {if(keep_no_admin == FALSE) filter(., nadmin > 0) else .} %>%
+    # select(-nadmin) %>%
     new_nif()
 }
 

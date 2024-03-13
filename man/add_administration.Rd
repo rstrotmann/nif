@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_administration}
 \alias{add_administration}
-\title{Add adminisration}
+\title{Add an administration to a nif object}
 \usage{
 add_administration(
   nif,
@@ -41,5 +41,5 @@ add_administration(
 A nif object.
 }
 \description{
-Add adminisration
+Add an administration to a nif object
 }

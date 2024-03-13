@@ -2,7 +2,8 @@
 % Please edit documentation in R/make_nif.R
 \name{filter_subjects}
 \alias{filter_subjects}
-\title{Filter nif object, eliminating subjects without observations or administrations}
+\title{Filter nif object, eliminating subjects without observations or
+administrations}
 \usage{
 filter_subjects(obj, keep_no_obs = FALSE, keep_no_admin = FALSE)
 }
@@ -17,5 +18,6 @@ filter_subjects(obj, keep_no_obs = FALSE, keep_no_admin = FALSE)
 A nif object.
 }
 \description{
-Filter nif object, eliminating subjects without observations or administrations
+Filter nif object, eliminating subjects without observations or
+administrations
 }

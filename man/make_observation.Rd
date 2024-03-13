@@ -9,7 +9,7 @@ make_observation(
   domain,
   testcd,
   analyte = NULL,
-  parent = NULL,
+  parent = NA,
   DTC_field = NULL,
   DV_field = NULL,
   TESTCD_field = NULL,

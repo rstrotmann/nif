@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_observation}
 \alias{add_observation}
-\title{Add observation}
+\title{Add an observation to a nif object}
 \usage{
 add_observation(
   nif,
@@ -14,7 +14,7 @@ add_observation(
   DTC_field = NULL,
   DV_field = NULL,
   TESTCD_field = NULL,
-  cmt = NA,
+  cmt = NULL,
   observation_filter = {
      TRUE
  },
@@ -71,5 +71,5 @@ to provide the NTIME field.}
 A nif object.
 }
 \description{
-Add observation
+Add an observation to a nif object
 }
