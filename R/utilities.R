@@ -32,7 +32,7 @@ recode_sex <- function(obj) {
 #' @import utils
 #' @keywords internal
 df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
-                         color = FALSE) {
+                         color = FALSE, show_none = FALSE) {
   df <- as.data.frame(df) %>%
     mutate(across(everything(), as.character))
   max_widths <- as.numeric(lapply(
@@ -76,7 +76,12 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
   }
 
   temp <- lapply(as.list(as.data.frame(t(df))), render_line)
-  out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
+
+  if(show_none & length(temp) == 0) {
+    out <- paste0(indent, "none")
+  } else {
+    out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
+  }
   return(out)
 }
 

@@ -75,7 +75,11 @@ summary.sdtm <- function(object, ...) {
     n_subs = length(subjects),
     pc_timepoints = object$domains[["pc"]] %>%
       dplyr::distinct(across(any_of(c("PCTPT", "PCTPTNUM")))),
-    domains = names(object$domains),
+    # domains = names(object$domains),
+    domains = data.frame(
+      name = names(object$domains),
+      N = as.numeric(lapply(object$domains, function(x) {length(unique(x$USUBJID))}))
+    ),
     treatments = object$domains[["ex"]] %>%
       dplyr::distinct(.data$EXTRT),
     arms = object$domains[["dm"]] %>%
@@ -105,53 +109,63 @@ summary.sdtm <- function(object, ...) {
 #' @return none
 #' @export
 #' @noRd
-print.summary_sdtm <- function(x, ...) {
+print.summary_sdtm <- function(x, color = FALSE, ...) {
   hline <- paste0(rep("\U2500", 8), collapse="")
-  cat(paste0(hline, "SDTM data set summary ", hline, "\n"))
+  indent = " "
+
+  cat(paste(hline, "SDTM data set summary", hline, "\n"))
   cat(paste("Study", x$study))
   cat(paste(" with", x$n_subs, "subjects providing PC data.\n"))
-  cat("SDTM domains: ")
-  cat(paste(x$domains, collapse = ", "))
+  # cat("SDTM domains: ")
+  # cat(paste(x$domains, collapse = ", "))
 
-  cat("\n\nArms (DM):\n")
-  print(x$arms, right = FALSE, justify = FALSE)
+  cat("\nSubjects per domain:\n")
+  temp <- x$domains
+  # print(x$domains, right = FALSE)
+  cat(paste0(df_to_string(x$domains, color = color, indent = indent, show_none = TRUE), "\n\n"))
 
-  cat("\nTreatments (EX):\n")
-  print(x$treatments %>% as.data.frame(), right = FALSE)
+  cat("Arms (DM):\n")
+  # print(x$arms, right = FALSE, justify = FALSE)
+  cat(paste0(df_to_string(x$arms, color = color, indent = indent, show_none = TRUE), "\n\n"))
 
-  cat("\nSpecimens (PC):\n")
-  print(x$specimens, right = FALSE)
+  cat("Treatments (EX):\n")
+  # print(x$treatments %>% as.data.frame(), right = FALSE)
+  cat(df_to_string(x$treatments, color = color, indent = indent, show_none = TRUE), "\n\n")
 
-  cat("\nAnalytes (PC):\n")
-  print(x$analytes %>% as.data.frame(), right = FALSE)
+  cat("Specimens (PC):\n")
+  # print(x$specimens, right = FALSE)
+  cat(df_to_string(x$specimens, color = color, indent = indent, show_none = TRUE), "\n\n")
 
-  cat("\nTreatment-to-analyte mappings:\n")
-  if (nrow(x$analyte_mapping) > 0) {
-    print(x$analyte_mapping, right = FALSE)
-  } else {
-    cat("none\n")
-  }
+  cat("Analytes (PC):\n")
+  # print(x$analytes %>% as.data.frame(), right = FALSE)
+  cat(df_to_string(x$analytes, color = color, indent = indent, show_none = TRUE), "\n\n")
 
-  cat("\nParent-to-metabolite mappings:\n")
-  if (nrow(x$metabolite_mapping) > 0) {
-    print(x$metabolite_mapping, right = FALSE)
-  } else {
-    cat("none\n")
-  }
-
-  # cat("\nParent mappings:\n")
-  # if(nrow(x$parent_mapping) > 0){
-  #   print(x$parent_mapping, right = FALSE)
+  cat("Treatment-to-analyte mappings:\n")
+  cat(df_to_string(x$analyte_mapping, color = color, indent = indent, show_none = TRUE), "\n\n")
+  # if (nrow(x$analyte_mapping) > 0) {
+  #   # print(x$analyte_mapping, right = FALSE)
+  #   cat(df_to_string(x$analyte_mapping, color = color, indent = indent), "\n\n")
   # } else {
   #   cat("none\n")
   # }
 
-  cat("\nTime mappings:\n")
-  if (nrow(x$time_mapping) > 0) {
-    print(x$time_mapping, right = FALSE)
-  } else {
-    cat("none\n")
-  }
+  cat("Parent-to-metabolite mappings:\n")
+  cat(df_to_string(x$metabolite_mapping, color = color, indent = indent, show_none = TRUE), "\n\n")
+  # if (nrow(x$metabolite_mapping) > 0) {
+  #   # print(x$metabolite_mapping, right = FALSE)
+  #   cat(df_to_string(x$metabolite_mapping, color = color, indent = indent), "\n\n")
+  # } else {
+  #   cat("none\n")
+  # }
+
+  cat("Time mappings:\n")
+  cat(df_to_string(x$time_mapping, color = color, indent = indent, show_none = TRUE), "\n\n")
+  # if (nrow(x$time_mapping) > 0) {
+  #   # print(x$time_mapping, right = FALSE)
+  #   cat(df_to_string(x$time_mapping, color = color, indent = indent), "\n\n")
+  # } else {
+  #   cat("none\n")
+  # }
 
   invisible(x)
 }
