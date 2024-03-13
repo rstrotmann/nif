@@ -27,6 +27,7 @@ recode_sex <- function(obj) {
 #' @param header Boolean to indicate whether the header row is to be included.
 #' @param color Print headers in grey as logical.
 #' @param n The number of lines to be included, or all if NULL.
+#' @param show_none Show empty data frame as 'none', as logical.
 #'
 #' @return The output as string.
 #' @import utils
@@ -56,14 +57,12 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
   }
 
   if (header == TRUE) {
-    # out <- render_line(data.frame(as.list(names(df))))
     if(color == TRUE) {
       out <- paste0(
         "\u001b[38;5;248m",
         render_line(data.frame(as.list(names(df)))),
         "\u001b[0m"
       )
-      # out <- render_line(data.frame(as.list(names(df))))
     } else {
       out <- render_line(data.frame(as.list(names(df))))
     }

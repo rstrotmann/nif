@@ -284,14 +284,16 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
     return(
       obj %>%
         group_by(.data$USUBJID) %>%
-        mutate(ID = cur_group_id()) %>%
-        arrange(.data$ID) %>%
+        mutate(ID = factor(cur_group_id())) %>%
+        mutate(ID = factor(ID, levels = rev(levels(ID)))) %>%
         ggplot() +
         geom_segment(aes(x = .data$RFSTDTC,
                          xend = .data$RFENDTC,
                          y = .data$ID,
                          yend = .data$ID)) +
-        scale_y_discrete(labels = NULL, name = "USUBJID") +
+        {if(points == TRUE) geom_point(aes(x = .data$RFSTDTC, y = .data$ID))} +
+        {if(points == TRUE) geom_point(aes(x = .data$RFENDTC, y = .data$ID))} +
+        scale_y_discrete(labels = NULL, breaks = NULL, name = "USUBJID") +
         scale_x_datetime(name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d") +
         theme_bw() +
         ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", DM"))
