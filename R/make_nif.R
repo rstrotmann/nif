@@ -1714,6 +1714,7 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
     mutate(DTC_time = case_when(is.na(DTC_time) ~ PCRFTDTC_time,
                                 .default = DTC_time)) %>%
     mutate(DTC = compose_dtc(DTC_date, DTC_time)) %>%
+    # select(-c("PCRFTDTC"))
     select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
 }
 
@@ -1753,95 +1754,160 @@ make_administration <- function(
   sbs <- make_subjects(dm, domain(sdtm, "vs"),
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
 
+  # admin <- ex %>%
+  #   filter(EXTRT == extrt) %>%
+  #   filter(EXSTDTC <= cut_off_date) %>%
+  #
+  #   # get start date and time
+  #   mutate(EXSTDTC_has_time = has_time(EXSTDTC)) %>%
+  #   mutate(start_date = extract_date(.data$EXSTDTC)) %>%
+  #   mutate(start_time = case_when(
+  #     EXSTDTC_has_time == TRUE ~ extract_time(.data$EXSTDTC),
+  #     .default = NA
+  #   )) %>%
+  #
+  #   # eliminate duplicates
+  #   group_by(USUBJID, EXTRT, start_date) %>%
+  #   mutate(DUPLICATE_start_date = n() > 1) %>%
+  #   ungroup() %>%
+  #   filter(!(.data$DUPLICATE_start_date == TRUE &
+  #              .data$EXSTDTC_has_time == FALSE)) %>%
+  #
+  #   # time imputations
+  #   mutate(IMPT_TIME = "") %>%
+  #   impute_exendtc_to_cutoff(cut.off.date = cut_off_date,
+  #                            silent = silent) %>%
+  #   impute_missing_exendtc_time(silent = silent) %>%
+  #   exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
+  #   impute_exendtc_to_rfendtc(dm, silent = silent) %>%
+  #   impute_missing_exendtc(silent = silent) %>%
+  #
+  #   # get end dates and times
+  #   mutate(EXENDTC_has_time = has_time(EXENDTC)) %>%
+  #   mutate(end_date = extract_date(.data$EXENDTC)) %>%
+  #   mutate(end_time = case_when(
+  #     EXENDTC_has_time == TRUE ~ extract_time(.data$EXENDTC),
+  #     .default = NA
+  #   )) %>%
+  #
+  #   # make generic fields
+  #   mutate(
+  #     TIME = NA,
+  #     NTIME = 0,
+  #     ANALYTE = analyte,
+  #     PARENT = analyte,
+  #     METABOLITE = FALSE,
+  #     DV = NA,
+  #     CMT = cmt,
+  #     EVID = 1,
+  #     MDV = 1,
+  #     DOSE = EXDOSE,
+  #     AMT = EXDOSE) %>%
+  #
+  #   # expand administrations
+  #   rowwise() %>%
+  #   mutate(date = list(
+  #     seq(as.Date(.data$start_date), as.Date(.data$end_date), by = "days"))) %>%
+  #   unnest(c(date)) %>%
+  #
+  #   # make time
+  #   group_by("USUBJID", "end_date") %>%
+  #   mutate(time = case_when(
+  #     row_number() == n() ~ .data$end_time,
+  #     .default = .data$start_time
+  #   )) %>%
+  #   ungroup() %>%
+  #
+  #   # group_by(USUBJID) %>%
+  #   # mutate(EXDY = .data$EXSTDY + (row_number() - 1)) %>%
+  #   # ungroup() %>%
+  #
+  #   mutate(DTC = compose_dtc(.data$date, .data$time)) %>%
+  #
+  #   # impute missing administration times from PCRFTDTC
+  #   impute_admin_times_from_pcrftdtc(pc, analyte, analyte) %>%
+  #
+  #   # carry forward missing administration times
+  #   # decompose_dtc(DTC) %>%
+  #   # arrange(USUBJID, ANALYTE, DTC) %>%
+  #   # group_by(USUBJID, ANALYTE) %>%
+  #   # fill(DTC_time) %>%
+  #   # ungroup() %>%
+  #   # mutate(DTC = compose_dtc(DTC_date, DTC_time)) %>%
+  #
+  #   {if(cleanup == TRUE)
+  #     select(., any_of(c("STUDYID", "USUBJID", "IMPT_TIME", "TIME", "ANALYTE",
+  #                      "PARENT", "METABOLITE", "DV", "CMT", "EVID", "MDV",
+  #                      "DOSE", "AMT", "EXDY", "DTC")))
+  #     else .
+  #   } %>%
+  #   inner_join(sbs, by = "USUBJID") %>%
+  #   # make_time() %>%
+  #   new_nif()
+
   admin <- ex %>%
     filter(EXTRT == extrt) %>%
     filter(EXSTDTC <= cut_off_date) %>%
-
-    # get start date and time
-    mutate(EXSTDTC_has_time = has_time(EXSTDTC)) %>%
-    mutate(start_date = extract_date(.data$EXSTDTC)) %>%
-    mutate(start_time = case_when(
-      EXSTDTC_has_time == TRUE ~ extract_time(.data$EXSTDTC),
-      .default = NA
-    )) %>%
-
-    # eliminate duplicates
-    group_by(USUBJID, EXTRT, start_date) %>%
-    mutate(DUPLICATE_start_date = n() > 1) %>%
-    ungroup() %>%
-    filter(!(.data$DUPLICATE_start_date == TRUE &
-               .data$EXSTDTC_has_time == FALSE)) %>%
+    decompose_dtc("EXSTDTC") %>%
 
     # time imputations
     mutate(IMPT_TIME = "") %>%
-    impute_exendtc_to_cutoff(cut.off.date = cut_off_date,
-                             silent = silent) %>%
-    impute_missing_exendtc_time(silent = silent) %>%
-    exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
     impute_exendtc_to_rfendtc(dm, silent = silent) %>%
+    impute_exendtc_to_cutoff(cut.off.date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
-
-    # get end dates and times
-    mutate(EXENDTC_has_time = has_time(EXENDTC)) %>%
-    mutate(end_date = extract_date(.data$EXENDTC)) %>%
-    mutate(end_time = case_when(
-      EXENDTC_has_time == TRUE ~ extract_time(.data$EXENDTC),
-      .default = NA
-    )) %>%
+    decompose_dtc("EXENDTC") %>%
 
     # make generic fields
-    mutate(
-      TIME = NA,
-      NTIME = 0,
-      ANALYTE = analyte,
-      PARENT = analyte,
-      METABOLITE = FALSE,
-      DV = NA,
-      CMT = cmt,
-      EVID = 1,
-      MDV = 1,
-      DOSE = EXDOSE,
-      AMT = EXDOSE) %>%
+    mutate(TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
+           METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
+           DOSE = EXDOSE, AMT = EXDOSE) %>%
 
-    # expand administrations
+    # expand administration intervals to individual entries per administration
     rowwise() %>%
-    mutate(date = list(
-      seq(as.Date(.data$start_date), as.Date(.data$end_date), by = "days"))) %>%
-    unnest(c(date)) %>%
+    mutate(DTC_date = list(seq(
+      as.Date(.data$EXSTDTC_date),
+      as.Date(.data$EXENDTC_date),
+      by = "days"))) %>%
+    mutate(EXDY = list(seq(EXSTDY, EXENDY))) %>%
+    unnest(c(DTC_date, EXDY)) %>%
 
     # make time
-    group_by("USUBJID", "end_date") %>%
-    mutate(time = case_when(
-      row_number() == n() ~ .data$end_time,
-      .default = .data$start_time
+    group_by(USUBJID, ANALYTE, EXENDTC_date) %>%
+    mutate(DTC_time = case_when(
+      row_number() == n() ~ .data$EXENDTC_time,
+      .default = .data$EXSTDTC_time
     )) %>%
     ungroup() %>%
 
-    # group_by(USUBJID) %>%
-    # mutate(EXDY = .data$EXSTDY + (row_number() - 1)) %>%
-    # ungroup() %>%
+    select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",
+              "EXENDTC_time")) %>%
 
-    mutate(DTC = compose_dtc(.data$date, .data$time)) %>%
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
 
     # impute missing administration times from PCRFTDTC
     impute_admin_times_from_pcrftdtc(pc, analyte, analyte) %>%
 
     # carry forward missing administration times
-    # decompose_dtc(DTC) %>%
-    # arrange(USUBJID, ANALYTE, DTC) %>%
-    # group_by(USUBJID, ANALYTE) %>%
-    # fill(DTC_time) %>%
-    # ungroup() %>%
-    # mutate(DTC = compose_dtc(DTC_date, DTC_time)) %>%
+    decompose_dtc("DTC") %>%
+    arrange(USUBJID, ANALYTE, DTC) %>%
+    mutate(IMPT_TIME = case_when(
+      is.na(DTC_time) == TRUE ~ append_statement(IMPT_TIME, "time carried forward"),
+      .default = IMPT_TIME)) %>%
+    group_by(USUBJID, ANALYTE) %>%
+    fill(DTC_time, .direction = "down") %>%
+    ungroup() %>%
+
+    mutate(DTC = compose_dtc(DTC_date, DTC_time)) %>%
+
+    select(-c("DTC_date", "DTC_time")) %>%
 
     {if(cleanup == TRUE)
       select(., any_of(c("STUDYID", "USUBJID", "IMPT_TIME", "TIME", "ANALYTE",
-                       "PARENT", "METABOLITE", "DV", "CMT", "EVID", "MDV",
-                       "DOSE", "AMT", "EXDY", "DTC")))
+                         "PARENT", "METABOLITE", "DV", "CMT", "EVID", "MDV",
+                         "DOSE", "AMT", "EXDY", "DTC")))
       else .
     } %>%
     inner_join(sbs, by = "USUBJID") %>%
-    # make_time() %>%
     new_nif()
 
   return(admin)

@@ -180,10 +180,14 @@ isofy_dates <- function(obj) {
 #'
 #' Convert the date and time provided separately as character to a POSIXct
 #' date-time object.
+#'
 #' @param date A date in POSIX or character format.
 #' @param time A time in character format.
+#'
 #' @return A POSICct object.
 #' @keywords internal
+#' @examples
+#' compose_dtc(date = "2022-09-29", time = "09:30")
 compose_dtc <- function(date, time) {
   data.frame(date = as.character(date), time = as.character(time)) %>%
     mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) %>%
@@ -260,6 +264,7 @@ has_time <- function(datetime) {
 #'
 #' @return Enumeration as character.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' nice_enumeration("A")
@@ -276,6 +281,24 @@ nice_enumeration <- function(items) {
 }
 
 
-
+#' Add string to string, separated by a comma
+#'
+#' @param object The base string as character.
+#' @param statement The string to be added as character.
+#'
+#' @return A string
+#' @export
+#' @keywords internal
+#'
+#' @examples
+#' append_statement("A", "B")
+#' append_statement("", "B")
+#' append_statement(c("A1", "A2", "A3"), "B")
+#' append_statement(c("A1", "", "A3", ""), "B")
+append_statement <- function(object, statement) {
+  i <- which(lapply(object, str_length) > 0)
+  object[i] <- paste0(object[i], ", ")
+  paste0(object, statement)
+}
 
 
