@@ -1683,6 +1683,43 @@ make_observation <- function(
 }
 
 
+
+#' Derive administration time from the PCRFTDTC
+#'
+#' @param obj A data frame.
+#' @param pc The corresponding PC domain as data frame.
+#' @param analyte The analyte as string.
+#' @param pctestcd The PCTESTCD corresponding to the analyte.
+#'
+#' @return A data frame.
+#' @keywords internal
+#' @export
+impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
+  pc_ref <- pc %>%
+    filter(PCTESTCD == pctestcd) %>%
+    mutate(ANALYTE = analyte) %>%
+    decompose_dtc("PCRFTDTC") %>%
+    select(c("USUBJID", "ANALYTE", "PCRFTDTC_date",
+             "PCRFTDTC_time")) %>%
+    distinct()
+
+  obj %>%
+    decompose_dtc("DTC") %>%
+    left_join(pc_ref,
+              by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
+    mutate(IMPT_TIME = case_when(
+      is.na(DTC_time) & !is.na(PCRFTDTC_time) ~
+        paste(IMPT_TIME, "admin time imputed from PCRFTDTC"),
+      .default = IMPT_TIME)) %>%
+    mutate(DTC_time = case_when(is.na(DTC_time) ~ PCRFTDTC_time,
+                                .default = DTC_time)) %>%
+    mutate(DTC = compose_dtc(DTC_date, DTC_time)) %>%
+    select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
+}
+
+
+
+
 #' Compile administration data frame
 #'
 #' @param sdtm A sdtm object.
@@ -1708,8 +1745,9 @@ make_administration <- function(
     cleanup = TRUE) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
-  if(is.na(analyte)) {analyte <- extrt}
+  pc <- domain(sdtm, "pc") %>% lubrify_dates()
 
+  if(is.na(analyte)) {analyte <- extrt}
   if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
 
   sbs <- make_subjects(dm, domain(sdtm, "vs"),
@@ -1728,6 +1766,7 @@ make_administration <- function(
     )) %>%
 
     # eliminate duplicates
+    group_by(USUBJID, EXTRT, start_date) %>%
     mutate(DUPLICATE_start_date = n() > 1) %>%
     ungroup() %>%
     filter(!(.data$DUPLICATE_start_date == TRUE &
@@ -1770,17 +1809,31 @@ make_administration <- function(
       seq(as.Date(.data$start_date), as.Date(.data$end_date), by = "days"))) %>%
     unnest(c(date)) %>%
 
-    # make time, EXDY and DTC
+    # make time
     group_by("USUBJID", "end_date") %>%
     mutate(time = case_when(
       row_number() == n() ~ .data$end_time,
       .default = .data$start_time
     )) %>%
     ungroup() %>%
+
     # group_by(USUBJID) %>%
     # mutate(EXDY = .data$EXSTDY + (row_number() - 1)) %>%
     # ungroup() %>%
+
     mutate(DTC = compose_dtc(.data$date, .data$time)) %>%
+
+    # impute missing administration times from PCRFTDTC
+    impute_admin_times_from_pcrftdtc(pc, analyte, analyte) %>%
+
+    # carry forward missing administration times
+    # decompose_dtc(DTC) %>%
+    # arrange(USUBJID, ANALYTE, DTC) %>%
+    # group_by(USUBJID, ANALYTE) %>%
+    # fill(DTC_time) %>%
+    # ungroup() %>%
+    # mutate(DTC = compose_dtc(DTC_date, DTC_time)) %>%
+
     {if(cleanup == TRUE)
       select(., any_of(c("STUDYID", "USUBJID", "IMPT_TIME", "TIME", "ANALYTE",
                        "PARENT", "METABOLITE", "DV", "CMT", "EVID", "MDV",
@@ -1792,19 +1845,6 @@ make_administration <- function(
     new_nif()
 
   return(admin)
-}
-
-
-#' Make empty nif object.
-#'
-#' @return An empty nif object.
-#' @export
-nif <- function() {
-  temp <- data.frame(matrix(nrow=0, ncol=length(minimal_nif_fields)))
-  colnames(temp) <- minimal_nif_fields
-  class(temp) <- c("nif", "data.frame")
-  comment(temp) <- paste0("created with nif ", packageVersion("nif"))
-  return(temp)
 }
 
 

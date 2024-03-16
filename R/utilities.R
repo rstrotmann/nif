@@ -195,6 +195,35 @@ compose_dtc <- function(date, time) {
 }
 
 
+#' Decompose DTC field into date and time components
+#'
+#' @param obj A data frame.
+#' @param DTC_field The field to decompose as character.
+#'
+#' @return A data frame.
+#' @export
+decompose_dtc <- function(obj, DTC_field) {
+  dec_dtc <- function(fld) {
+    DTC_date <- paste0(fld, "_date")
+    DTC_time <- paste0(fld, "_time")
+    obj %>%
+      mutate(has_time = has_time(.data[[fld]])) %>%
+      mutate({{DTC_date}} := extract_date(.data[[fld]])) %>%
+      mutate({{DTC_time}} := case_when(
+        .data$has_time == TRUE ~ extract_time(.data[[fld]]),
+        .default = NA)) %>%
+      select(-has_time)
+  }
+
+  for(i in DTC_field) {
+    obj <- dec_dtc(i)
+  }
+  return(obj)
+}
+
+
+
+
 #' Extract thendate component of a POSICct object
 #'
 #' @param dtc The POSIX-formatted datetime.
@@ -245,5 +274,8 @@ nice_enumeration <- function(items) {
                  items[length(items)]))
   }
 }
+
+
+
 
 

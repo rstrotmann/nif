@@ -476,7 +476,7 @@ nif_spaghetti_plot <- function(obj,
     filter(sum(EVID==0 & !is.na(DV)) > 1) %>%
     ungroup() %>%
     # filter(!is.na(DOSE)) %>%
-    ggplot(ggplot2::aes(
+    ggplot(aes(
       x = TIME,
       y = DV,
       group = GROUP,
