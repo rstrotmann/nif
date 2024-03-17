@@ -710,86 +710,170 @@ nif_spaghetti_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
 }
 
 
-# nif_mean_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
-#                            min_time = 0, max_time = NULL,
-#                            min_x = NULL, max_x = NULL,
-#                            tad = FALSE, cfb = FALSE,
-#                            limit_time_to_observations = TRUE,
-#                            points = FALSE, lines = TRUE, point_size = 2,
-#                            alpha = 1, log = FALSE,
-#                            title = "", admin = FALSE,
-#                            summary_function = median){
-#   obj <- x %>%
-#     verify(has_all_names("NTIME", "DOSE", "DV")) %>%
-#     ensure_parent() %>%
-#     ensure_analyte() %>%
-#     ensure_dose() %>%
-#     add_cfb(summary_function = summary_function) %>%
-#     as.data.frame() %>%
-#     {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .} %>%
-#     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
-#     {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
-#     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
-#     filter(!is.na(DV)) %>%
-#     as.data.frame() %>%
-#     filter(NTIME > 0) %>%
-#     mutate(TIME = NTIME) %>%
-#     filter(EVID == 0) %>%
-#     dplyr::filter(!is.na(DOSE))
-#
-#
-#   if(is.null(max_x)) {
-#     max_x <- max_observation_time(temp)}
-#   if(is.null(min_x)) {
-#     min_x = 0}
-#
-#   n_analytes <- length(unique(temp$ANALYTE))
-#
-#   if(n_analytes == 1) {
-#     y_label <- unique(temp$ANALYTE)
-#   } else {
-#     y_label <- "mean"
-#     group <- unique(c(group, "ANALYTE"))
-#   }
-#
-#   temp %>%
-#     unite(GROUP, group, sep = " | ", remove = FALSE) %>%
-#     reframe(mean = mean(DV, na.rm = TRUE),
-#             sd = sd(DV, na.rm = TRUE),
-#             n = n(),
-#             DOSE = DOSE,
-#             ANALYTE = ANALYTE,
-#             GROUP = GROUP,
-#             .by = c(TIME, GROUP)) %>%
-#     mutate(max_y = mean + sd) %>%
-#     ggplot2::ggplot(ggplot2::aes(
-#       x = TIME,
-#       y = mean,
-#       group = GROUP,
-#       color = GROUP
-#     )) +
-#     {if (lines) geom_line(na.rm = TRUE)} +
-#     {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
-#     {if (log == TRUE) scale_y_log10()} +
-#     xlim(min_x, max_x) +
-#     ggplot2::geom_ribbon(
-#       aes(ymin = mean - sd,
-#           ymax = mean + sd,
-#           fill = as.factor(GROUP)),
-#       alpha = 0.3,
-#       color = NA,
-#       show.legend = FALSE) +
-#     {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
-#     labs(x = "NTIME",
-#          y = y_label,
-#          color = group,
-#          title = title,
-#          caption = "Data shown are mean and SD") +
-#     ggplot2::theme_bw() +
-#     {if(all(group == "ANALYTE") & n_analytes == 1)
-#       theme(legend.position = "none") else
-#         theme(legend.position = "bottom")}
-# }
+nif_mean_plot1 <- function(
+    # x, analyte = NULL, dose = NULL, group = NULL,
+    #                   min_time = 0, max_time = NULL,
+    #                   min_x = NULL, max_x = NULL,
+    #                   limit_time_to_observations = TRUE,
+    #                   points = FALSE, lines = TRUE, point_size = 2, alpha = 1,
+    #                   tad = FALSE, cfb = FALSE, log = FALSE, admin = FALSE,
+    #                   summary_function = median, title = ""
+    x,
+    analyte = NULL,
+    dose = NULL,
+    group = NULL,
+    min_time = 0,
+    max_time = NULL,
+    min_x = NULL,
+    max_x = NULL,
+    limit_time_to_observations = TRUE,
+    points = FALSE,
+    lines = TRUE,
+    point_size = 2,
+    alpha = 1,
+    tad = FALSE,
+    cfb = FALSE,
+    log = FALSE,
+    admin = FALSE,
+    summary_function = median,
+    title = ""){
+  # deprecation warnings
+  if(!is.null(min_x)) {
+    lifecycle::deprecate_warn("0.46.0", "plot1.nif(min_x)", "plot1.nif(min_time)")
+    min_time <- min_x
+  }
+  if(!is.null(max_x)) {
+    lifecycle::deprecate_warn("0.46.0", "plot1.nif(max_x)", "plot1.nif(max_time)")
+    max_time <- max_x
+  }
+
+  if(is.null(max_time)) {
+    max_time <- max_time(x, only_observations = limit_time_to_observations)
+  }
+
+  if(is.null(analyte)) {analyte <- analytes(x)}
+  if(is.null(dose)) {dose <- doses(x)}
+
+  obj <- x %>%
+    verify(has_all_names("ID", "TIME", "NTIME", "DOSE", "DV")) %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
+    ensure_dose() %>%
+    ensure_tad() %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(DOSE %in% dose) %>%
+    filter(TIME <= max_time) %>%
+    add_cfb(summary_function = summary_function) %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
+    as.data.frame()
+
+  # Selecting the time metric (TIME or TAD)
+  # if (tad == TRUE) {
+  #   obj <- obj %>%
+  #     index_dosing_interval() %>%
+  #     filter(EVID == 0 | (EVID == 1 & DI == 1)) %>%
+  #     mutate(TIME = TAD) #%>%
+  #   x_label <- "time after dose (h)"
+  #   group <- c(group, "DI")
+  # } else {
+  #   obj <- obj %>%
+  #     mutate(TIME = NTIME)
+  #   x_label <- "nominal time (h)"
+  # }
+
+  # # set figure labels
+  # if(n_analytes == 1) {
+  #   y_label <- unique(obj$ANALYTE)
+  # } else {
+  #   y_label <- "mean"
+  #   group <- unique(c(group, "ANALYTE"))
+  # }
+
+  # obj <- obj %>%
+  #   filter(TIME <= max_time)
+
+  # if(is.null(analyte)) {analyte <- analytes(obj)}
+  # if(is.null(dose)) {dose <- doses(obj)}
+
+    # {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .} %>%
+    # {if(!is.null(dose)) filter(., .$DOSE %in% dose) else .}
+    # {if(!is.null(cmt)) filter(., .$CMT %in% cmt | .$EVID==1) else .} %>%
+    # {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
+
+
+  if(length(analyte) > 1) {
+    group <- unique(c("ANALYTE", group))
+  }
+  if(length(group) == 0) {
+    group <- "ANALYTE"
+  }
+
+  obj <- obj %>%
+    # filter(ANALYTE %in% analyte) %>%
+    # filter(DOSE %in% dose) %>%
+    # {if(length(group) == 0) mutate(GROUP = 1)} %>%
+    # {if(length(group) > 0)
+     unite(GROUP, unique(c(group)), sep = "_", remove = FALSE)
+      # else .}
+
+  if(length(group) == 0) {
+    obj <- mutate(obj, COLOR = .data$ANALYTE)
+    color_label <- "ANALYTE"
+  }
+  if(length(group) == 1) {
+    obj <- mutate(obj, COLOR = as.factor(.data[[group]]))
+    color_label <- group
+  }
+  if(length(group) > 1) {
+    obj <- unite(obj, COLOR, unique(group), sep = ", ", remove = FALSE)
+    color_label <- nice_enumeration(unique(group))
+  }
+
+  # define labels
+  show_color = TRUE
+  if(length(analyte) == 1) {
+    y_label <- analyte
+    if(length(group) == 0) {show_color = FALSE}
+  } else {
+    y_label <- "DV"
+  }
+
+  obj %>%
+    filter(EVID == 0) %>%
+    reframe(
+      mean = mean(DV, na.rm = TRUE),
+      sd = sd(DV, na.rm = TRUE),
+      n = n(),
+      COLOR = COLOR,
+      .by = c(GROUP, DOSE, NTIME)) %>%
+
+    ggplot(ggplot2::aes(
+      x = NTIME,
+      y = mean,
+      group = GROUP,
+      color = COLOR
+    )) +
+    {if (lines) geom_line(na.rm = TRUE)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
+    {if (log == TRUE) scale_y_log10()} +
+    # xlim(min_x, max_x) +
+    geom_ribbon(
+      aes(ymin = mean - sd,
+          ymax = mean + sd,
+          fill = as.factor(GROUP)),
+      alpha = 0.3,
+      color = NA,
+      show.legend = FALSE) +
+    {if (length(unique(obj$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+    labs(x = "nominal time (h)",
+         y = y_label,
+         color = color_label,
+         title = title,
+         caption = "Data shown are mean and SD") +
+    theme_bw() +
+    {if(show_color == FALSE) theme(legend.position = "none") else
+      theme(legend.position = "bottom")}
+}
 
 
 
