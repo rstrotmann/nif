@@ -4,7 +4,7 @@
 \alias{index_rich_sampling_intervals}
 \title{Identify and index rich PK sampling intervals}
 \usage{
-index_rich_sampling_intervals(obj, analyte = NA, min_n = 4)
+index_rich_sampling_intervals(obj, analyte = NULL, min_n = 4)
 }
 \arguments{
 \item{obj}{The NIF object.}

@@ -185,6 +185,7 @@ isofy_dates <- function(obj) {
 #' @param time A time in character format.
 #'
 #' @return A POSICct object.
+#' @export
 #' @keywords internal
 #' @examples
 #' compose_dtc(date = "2022-09-29", time = "09:30")

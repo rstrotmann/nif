@@ -8,9 +8,9 @@ test_that("split_DTC works", {
              "2023-02-16",
              "2023-02-17T00:00")) %>%
     lubrify_dates() %>%
-    decompose_dtc("test_DTC")
+    decompose_dtc("test1_DTC")
 
-  expect_equal(!is.na(test$test_DTC_time), c(TRUE, FALSE, FALSE))
+  expect_equal(!is.na(test$test1_DTC_time), c(TRUE, FALSE, FALSE))
 })
 
 

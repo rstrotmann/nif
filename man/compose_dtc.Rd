@@ -18,4 +18,7 @@ A POSICct object.
 Convert the date and time provided separately as character to a POSIXct
 date-time object.
 }
+\examples{
+compose_dtc(date = "2022-09-29", time = "09:30")
+}
 \keyword{internal}

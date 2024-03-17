@@ -19,5 +19,8 @@ Add string to string, separated by a comma
 }
 \examples{
 append_statement("A", "B")
-append_statement("", "A")
+append_statement("", "B")
+append_statement(c("A1", "A2", "A3"), "B")
+append_statement(c("A1", "", "A3", ""), "B")
 }
+\keyword{internal}

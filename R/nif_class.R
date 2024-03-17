@@ -10,7 +10,8 @@ new_nif <- function(obj = NULL) {
     colnames(temp) <- minimal_nif_fields
     class(temp) <- c("nif", "data.frame")
     comment(temp) <- paste0("created with nif ", packageVersion("nif"))
-    return(temp)
+    temp %>%
+      order_nif_columns()
   } else {
     if (class(obj)[1] == "sdtm") {
       temp <- make_nif(obj)
@@ -19,8 +20,26 @@ new_nif <- function(obj = NULL) {
       class(temp) <- c("nif", "data.frame")
     }
     comment(temp) <- paste0("created with nif ", packageVersion("nif"))
-    return(temp)
+    temp %>%
+      order_nif_columns()
   }
+}
+
+
+#' Establish standard order of nif object columns
+#'
+#' @param obj A data frame.
+#'
+#' @return A data.frame.
+#' @export
+#'
+#' @examples
+#' order_nif_columns(examplinib_poc_nif)
+order_nif_columns <- function(obj) {
+  obj %>%
+    relocate(any_of(c("ID", "USUBJID", "STUDYID", "DTC", "TIME", "NTIME",
+                      "IMPT_TIME", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
+                      "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
 }
 
 
@@ -1133,48 +1152,53 @@ add_obs_per_dosing_interval <- function(obj) {
 #'
 #' @return A new NIF object.
 #' @export
-index_rich_sampling_intervals <- function(obj, analyte = NA, min_n = 4) {
-  if (is.na(analyte)) {
+index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
+  if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
   }
 
-  temp <- obj %>%
+  obj %>%
+    ensure_analyte() %>%
     as.data.frame() %>%
-    filter(ANALYTE %in% analyte) %>%
-    index_nif() %>%
+    arrange(ID, TIME, ANALYTE) %>%
     index_dosing_interval() %>%
     add_obs_per_dosing_interval() %>%
     mutate(RICHINT_TEMP = (OPDI >= min_n)) %>%
 
     # add last observation before administration to rich interval
-    group_by(ID, ANALYTE) %>%
-    mutate(LEAD = lead(RICHINT_TEMP)) %>%
-    mutate(RICHINT = RICHINT_TEMP | (LEAD & EVID == 0)) %>%
-    fill(RICHINT, .direction = "down") %>%
-    ungroup() %>%
-    select(-c("RICHINT_TEMP", "LEAD")) %>%
-    group_by(ID, ANALYTE) %>%
+    # group_by(ID, ANALYTE) %>%
+    # mutate(RICHINT = RICHINT_TEMP | (lead(RICHINT_TEMP) & EVID == 0)) %>%
+    # fill(RICHINT, .direction = "down") %>%
+    # ungroup() %>%
+    # select(-c("RICHINT_TEMP")) %>%
 
-    # `FLAG` marks the start of all rich dosing intervals and the start of the
-    #  respective following non-rich dosing intervals
-    mutate(FLAG = (RICHINT != lag(RICHINT) | row_number() == 1)) %>%
+    group_by(ID, ANALYTE, DI) %>%
+    # group_by(DI) %>%
+    mutate(RICH_START = case_when(
+      # row_number() == 1 & RICHINT_TEMP == TRUE ~ dense_rank(DI),
+      row_number() == 1 & RICHINT_TEMP == TRUE ~ TRUE,
+      .default = FALSE)) %>%
+    # mutate(test = dense_rank(DI)) %>%
     ungroup() %>%
 
-    # `rich_start` marks the start of a rich sampling interval
-    mutate(rich_start = FLAG == TRUE & RICHINT == TRUE) %>%
-    arrange(ID, ANALYTE, -rich_start) %>%
-    group_by(ID, ANALYTE) %>%
-    mutate(RICH_N = case_when(rich_start == TRUE ~ row_number(),
-                              .default = NA)) %>%
+    group_by(ID, ANALYTE, RICH_START) %>%
+    mutate(RICH_N = case_when(
+      RICHINT_TEMP == TRUE & .data$RICH_START == TRUE ~ row_number(),
+      .default = NA)) %>%
     ungroup() %>%
-    arrange(REF) %>%
-    group_by(RICHINT) %>%
+
+    group_by(ID, ANALYTE, DI, RICHINT_TEMP) %>%
     fill(RICH_N, .direction = "down") %>%
     ungroup() %>%
-    select(-c("rich_start", "FLAG")) %>%
-    as.data.frame()
 
-  return(new_nif(temp))
+    # filter(ID == 4) %>%
+    # as.data.frame() %>%
+    # head(30)
+    #
+
+    select(-c("RICHINT_TEMP", "RICH_START")) %>%
+    new_nif()
+
 }
 
 

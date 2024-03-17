@@ -20,3 +20,4 @@ nice_enumeration("A")
 nice_enumeration(c("A", "B"))
 nice_enumeration(c("A", "B", "C"))
 }
+\keyword{internal}
