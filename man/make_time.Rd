@@ -13,6 +13,13 @@ make_time(obj)
 A nif object.
 }
 \description{
-Calculate TIME field
+This function generates the following time fields:
+
+'TIME' is the time in hours relative to the subject's first record, be it an
+administration or observation event.
+
+'TAFD' is the time in hours relative to the subject's first administration of
+the respective parent. Note that if a subject has received multiple drugs
+(parents), the 'TAFD' field refers to the respective first administration.
 }
 \keyword{internal}

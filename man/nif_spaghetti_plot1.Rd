@@ -9,6 +9,7 @@ nif_spaghetti_plot1(
   analyte = NULL,
   dose = NULL,
   group = NULL,
+  time_field = "TIME",
   min_time = 0,
   max_time = NULL,
   min_x = NULL,
@@ -19,6 +20,7 @@ nif_spaghetti_plot1(
   point_size = 2,
   alpha = 1,
   tad = FALSE,
+  nominal_time = FALSE,
   cfb = FALSE,
   log = FALSE,
   admin = FALSE,
@@ -34,6 +36,8 @@ nif_spaghetti_plot1(
 \item{dose}{The dose(s) to select as numeric.}
 
 \item{group}{The grouping variable(s).}
+
+\item{time_field}{The field to use as the time metric, as character.}
 
 \item{min_time}{The minimum time as numeric.}
 
@@ -57,6 +61,8 @@ logical.}
 
 \item{tad}{Time after dose as logical.}
 
+\item{nominal_time}{Plot NTIME on x axis, as logical.}
+
 \item{cfb}{Change from baseline as logical.}
 
 \item{log}{Logarithmic y scale as logical.}
@@ -64,6 +70,8 @@ logical.}
 \item{admin}{Plot administrations as logical.}
 
 \item{summary_function}{The summary function to apply if multiple baseline}
+
+\item{title}{The plot title as character.}
 }
 \value{
 A ggplot object.

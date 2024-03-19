@@ -37,9 +37,9 @@ new_nif <- function(obj = NULL) {
 #' order_nif_columns(examplinib_poc_nif)
 order_nif_columns <- function(obj) {
   obj %>%
-    relocate(any_of(c("ID", "USUBJID", "STUDYID", "DTC", "TIME", "NTIME",
-                      "IMPT_TIME", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
-                      "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
+    relocate(any_of(c("ID", "USUBJID", "STUDYID", "DTC", "TIME", "TAFD",
+      "NTIME", "IMPT_TIME", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
+      "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
 }
 
 
@@ -871,12 +871,13 @@ max_time <- function(obj, analyte = NULL, only_observations = FALSE) {
   times <- obj %>%
     ensure_analyte() %>%
     {if(!is.null(analyte)) filter(., .data$ANALYTE %in% analyte) else .} %>%
-    {if(only_observations == TRUE) filter(., .data$EVID == 0) else .} %>%
+    {if(only_observations == TRUE) filter(., (.data$EVID == 0 & !is.na(.data$DV))) else .} %>%
     pull(TIME)
 
   if(length(times) == 0) return(NA)
   return(max(times, na.rm = TRUE))
 }
+
 
 #' Guess the most likely analyte based on its prevalence in the NIF object
 #'

@@ -1674,10 +1674,10 @@ make_observation <- function(
     {if(!is.null(NTIME_lookup)) suppressMessages(
       left_join(., NTIME_lookup)) else
       mutate(., NTIME = NA)} %>%
-    {if(cleanup == TRUE) select(., any_of(c("ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",  "HEIGHT",
-             "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "PCELTM", "EVID", "AMT",
-             "ANALYTE", "CMT",  "PARENT", "METABOLITE", "DOSE", "DV", "MDV",
-             "ACTARMCD", "IMPT_TIME"))) else .} %>%
+    {if(cleanup == TRUE) select(., any_of(c("ID", "STUDYID", "USUBJID", "AGE",
+      "SEX", "RACE",  "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD",
+      "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "METABOLITE",
+      "DOSE", "DV", "MDV", "ACTARMCD", "IMPT_TIME"))) else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
     new_nif()
 }
@@ -1811,8 +1811,8 @@ make_administration <- function(
 
     {if(cleanup == TRUE)
       select(., any_of(c("STUDYID", "USUBJID", "IMPT_TIME", "TIME", "NTIME",
-         "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID", "MDV",
-         "DOSE", "AMT", "EXDY", "DTC")))
+         "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
+         "MDV", "DOSE", "AMT", "EXDY", "DTC")))
       else .
     } %>%
     inner_join(sbs, by = "USUBJID") %>%
@@ -1824,23 +1824,39 @@ make_administration <- function(
 
 #' Calculate TIME field
 #'
+#' @description
+#' This function generates the following time fields:
+#'
+#' 'TIME' is the time in hours relative to the subject's first record, be it an
+#' administration or observation event.
+#'
+#' 'TAFD' is the time in hours relative to the subject's first administration of
+#' the respective parent. Note that if a subject has received multiple drugs
+#' (parents), the 'TAFD' field refers to the respective first administration.
+#'
 #' @param obj A nif object.
 #'
 #' @return A nif object.
 #' @export
+#' @import assertr
 #' @keywords internal
 make_time <- function(obj) {
   obj %>%
-    verify(has_all_names("ID", "DTC")) %>%
+    verify(has_all_names("ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
     verify(is.POSIXct(.data$DTC)) %>%
     group_by(ID) %>%
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     ungroup() %>%
+    group_by(ID, PARENT) %>%
+    mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1])) %>%
+    ungroup() %>%
     mutate(TIME = round(
       as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
-      digits = 3
-    )) %>%
-    add_tad() %>%
+      digits = 3)) %>%
+    mutate(TAFD = round(
+      as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "h")),
+      digits = 3)) %>%
+    # add_tad() %>%
     new_nif()
 }
 
