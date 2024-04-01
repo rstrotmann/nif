@@ -64,11 +64,23 @@ nif_viewer <- function(nif) {
             "custom" = "custom"
           )
         ),
-        checkboxInput("tad", "TAD"),
+        #checkboxInput(" %>% ", "TAD"),
         shiny::numericInput("maxtime", "max display time", value = NA)
       ),
 
       # Column 3
+      shiny::column(
+        2,
+        shiny::radioButtons(
+          "time",
+          "time axis",
+          choices = c(
+            "TIME", "TAFD", "TAD"
+          )
+        )
+      ),
+
+      # Column 4
       shiny::column(
         2,
         shiny::checkboxGroupInput("analytes", "analyte filter",
@@ -132,7 +144,8 @@ nif_viewer <- function(nif) {
             max_time = max_time(),
             # y_scale = y_scale_type,
             log = input$log_yscale,
-            tad = input$tad,
+            # tad = input$tad,
+            tad = input$time == "TAD",
             # lines = !input$tad,
             point_size = 3,
             imp = input$admin

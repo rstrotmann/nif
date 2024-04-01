@@ -196,7 +196,7 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
       " rows in EX had no EXENDTC. These values are imputed as the day ",
       "before\nthe next EXSTDTC. The following entries are affected:\n",
       df_to_string(select(to_replace, c("USUBJID", "EXSEQ", "EXTRT",
-                            "EXSTDTC", "EXENDTC")))
+                            "EXSTDTC", "EXENDTC")), indent = "  ")
     )
 
     temp <- temp %>%
@@ -1636,7 +1636,6 @@ make_observation <- function(
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
-                       # subject_filter = {TRUE}, cleanup = cleanup)
 
   obj <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates()
@@ -1906,7 +1905,7 @@ make_time <- function(obj) {
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     ungroup() %>%
     group_by(ID, PARENT) %>%
-    mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1])) %>%
+    mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1]), na.rm = TRUE) %>%
     ungroup() %>%
     mutate(TIME = round(
       as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
@@ -1914,7 +1913,7 @@ make_time <- function(obj) {
     mutate(TAFD = round(
       as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "h")),
       digits = 3)) %>%
-    # add_tad() %>%
+    add_tad() %>%
     new_nif()
 }
 
@@ -1965,7 +1964,7 @@ add_observation <- function(
       " was not specified and has been set to ", cmt), silent = silent)
   }
 
-  bind_rows(nif,
+  obj <- bind_rows(nif,
             make_observation(
               sdtm = sdtm,
               domain = domain,
@@ -1976,15 +1975,40 @@ add_observation <- function(
               DV_field = DV_field,
               TESTCD_field = TESTCD_field,
               cmt = cmt,
-              observation_filter = observation_filter,
-              # subject_filter = {{subject_filter}},
-              subject_filter = {TRUE},
+              observation_filter = {{observation_filter}},
+              subject_filter = {{subject_filter}},
+              # subject_filter = {TRUE},
               NTIME_lookup = NTIME_lookup,
               silent = silent,
               cleanup = cleanup)
             ) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    group_by(USUBJID, PARENT) %>%
+    mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE, .default = FALSE)) %>%
+    ungroup()
+
+  n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
+  if(n_no_admin != 0) {
+    conditional_message(paste0("Missing administration information in ",
+      n_no_admin, " observations (did you set a\n",
+      "parent for these observations?):\n",
+      df_to_string(
+          obj %>%
+            filter(NO_ADMIN_FLAG == TRUE) %>%
+            group_by(USUBJID, PARENT, ANALYTE) %>%
+            mutate(N = sum(EVID == 0)) %>%
+            ungroup() %>%
+            distinct(USUBJID, PARENT, ANALYTE, N),
+        indent = "  ")),
+      silent = silent)
+
+    obj <- obj %>%
+      filter(NO_ADMIN_FLAG == 0) %>%
+      select(-NO_ADMIN_FLAG)
+  }
+
+  obj %>%
     make_time() %>%
     carry_forward_dose() %>%
     new_nif()

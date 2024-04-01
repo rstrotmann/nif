@@ -672,6 +672,110 @@ nif_spaghetti_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
 }
 
 
+nif_spaghetti_plot2 <- function(x, analyte = NULL, dose = NULL, group = NULL,
+                                time_field = "TIME",
+                                min_time = 0, max_time = NULL,
+                                min_x = NULL, max_x = NULL,
+                                limit_time_to_observations = TRUE,
+                                points = FALSE, lines = TRUE, point_size = 2, alpha = 1,
+                                tad = FALSE, nominal_time = FALSE, cfb = FALSE,
+                                log = FALSE, admin = FALSE, summary_function = median,
+                                title = "",
+                                ...) {
+  # deprecation warnings
+  if(!is.null(min_x)) {
+    lifecycle::deprecate_warn("0.46.0", "plot1.nif(min_x)", "plot1.nif(min_time)")
+    min_time <- min_x
+  }
+
+  if(!is.null(max_x)) {
+    lifecycle::deprecate_warn("0.46.0", "plot1.nif(max_x)", "plot1.nif(max_time)")
+    max_time <- max_x
+  }
+
+  if(is.null(max_time)) {
+    max_time <- max_time(x, only_observations = limit_time_to_observations)
+  }
+
+
+  # ensure required fields and limit data set to max_time
+  obj <- x %>%
+    verify(has_all_names("ID", "TIME", "AMT", "DV", "EVID")) %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
+    ensure_dose() %>%
+    ensure_tad() %>%
+    add_cfb(summary_function = summary_function) %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .}
+
+  if(time_field == "TAD") {
+    obj <- obj %>%
+      index_dosing_interval()
+    group <- c(group, "DI")
+  }
+
+  # obj <- filter(obj, TIME <= max_time)
+  obj <- filter(obj, .data[[time_field]] <= max_time)
+
+
+  obj <- obj %>%
+    mutate(active_time = .data[[time_field]])
+  x_label <- paste0(as.character(time_field), " (h)")
+
+  # in the filtered data set, filter for analytes and doses
+  if(is.null(analyte)) {analyte <- analytes(obj)}
+  if(is.null(dose)) {dose <- doses(obj)}
+
+  if(length(analyte) > 1) {
+    group <- unique(c("ANALYTE", group))
+  }
+
+  obj <- obj %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(DOSE %in% dose) %>%
+    unite(GROUP, unique(c("ID", group)), sep = "_", remove = FALSE)
+
+  if(length(group) == 0) {
+    obj <- mutate(obj, COLOR = .data$ANALYTE)
+    color_label <- "ANALYTE"
+  }
+  if(length(group) == 1) {
+    obj <- mutate(obj, COLOR = as.factor(.data[[group]]))
+    color_label <- group
+  }
+  if(length(group) > 1) {
+    obj <- unite(obj, COLOR, unique(group), sep = ", ", remove = FALSE)
+    color_label <- nice_enumeration(unique(group))
+  }
+
+  # define labels
+  show_color = TRUE
+  if(length(analyte) == 1) {
+    y_label <- analyte
+    if(length(group) == 0) {show_color = FALSE}
+  } else {
+    y_label <- "DV"
+  }
+
+  obj %>%
+    ggplot(aes(x = active_time, y = DV, group = as.factor(GROUP),
+               color = as.factor(COLOR), admin = EVID), ...) +
+    {if (log == TRUE) scale_y_log10()} +
+    {if (lines) geom_line(na.rm = TRUE, ...)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha,
+                            ...)} +
+    {if (log == TRUE) scale_y_log10()} +
+    {if(admin == TRUE) geom_admin()} +
+    labs(x = x_label, y = y_label, color = color_label, ...) +
+    {if(length(unique(obj$DOSE)) > 1) facet_wrap(~DOSE)} +
+    ggtitle(title) +
+    ggplot2::theme_bw() +
+    {if(show_color == FALSE) theme(legend.position = "none") else
+      theme(legend.position = "bottom")}
+
+}
+
+
 #' Mean plot for nif object
 #'
 #' @inheritParams nif_spaghetti_plot1
@@ -835,7 +939,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, group = NULL,
       title = title,
       ...)
   } else {
-    nif_spaghetti_plot1(
+    nif_spaghetti_plot2(
       x,
       analyte = analyte,
       time_field = time_field,
