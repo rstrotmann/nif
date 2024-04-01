@@ -1558,7 +1558,8 @@ make_subjects <- function(
     left_join(baseline_covariates(vs, silent = silent),
               by = "USUBJID") %>%
     recode_sex() %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    # mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    mutate(ID = NA) %>%
     relocate("ID") %>%
     arrange("ID") %>%
     {if(cleanup == TRUE) select(., any_of(c(
@@ -1631,10 +1632,11 @@ make_observation <- function(
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
                                                    "TESTCD")
   if(is.null(analyte)) analyte <- testcd
-  # if(is.null(parent)) parent <- analyte
+  if(is.null(parent)) parent <- analyte
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
+                       # subject_filter = {TRUE}, cleanup = cleanup)
 
   obj <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates()
@@ -1657,8 +1659,6 @@ make_observation <- function(
     filter({{observation_filter}}) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
-      # DTC = {{DTC_field}},
-      # DV = {{DV_field}},
       DTC = .data[[DTC_field]],
       DV = .data[[DV_field]],
       ANALYTE = analyte,
@@ -1679,9 +1679,66 @@ make_observation <- function(
       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "METABOLITE",
       "DOSE", "DV", "MDV", "ACTARMCD", "IMPT_TIME"))) else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
+    filter(!is.na(DTC)) %>%
     new_nif()
 }
 
+
+#' Add a baseline filed to a nif object
+#'
+#' @param sdtm A sdtm object.
+#' @param domain The domain as character.
+#' @param DV_field the field to use as the dependent variable. Defaults to the
+#'   two-character domain name followed by 'STRESN'.
+#' @param observation_filter The filtering to apply to the observation source
+#'   data.
+#' @param subject_filter The filtering to apply to the DM domain.
+#' @param testcd The xxTESTCD to filter for, as character.
+#' @param TESTCD_field The xxTESTCD field as character. Defaults to "xxTESTCD"
+#'   where xx is the domain name.
+#' @param baseline_filter The filter to identify the baseline value. Defaults to
+#'   {xxBLFL == 'Y'} where xx is the domain name.
+#' @param summary_function The summary funcition to apply if there are multiple
+#'   baseline values, defaults to `mean`.
+#' @param silent Suppress messages as logical.
+#'
+#' @return A data frame.
+#'
+#' @import rlang
+#' @export
+make_baseline <- function(
+    sdtm,
+    domain,
+    testcd,
+    DV_field = NULL,
+    TESTCD_field = NULL,
+    observation_filter = {TRUE},
+    subject_filter = {TRUE},
+    baseline_filter = NULL,
+    summary_function = mean,
+    silent = FALSE) {
+
+  if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
+  if(is.null(TESTCD_field)) TESTCD_field <- paste0(
+    str_to_upper(domain), "TESTCD")
+  if(is.null(baseline_filter)) baseline_filter <- paste0(
+    ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
+
+  sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
+                       subject_filter = {{subject_filter}}, cleanup = cleanup)
+
+  temp <- domain(sdtm, str_to_lower(domain)) %>%
+    lubrify_dates() %>%
+    filter(!!{{observation_filter}}) %>%
+    filter(.data[[TESTCD_field]] == testcd) %>%
+    filter(!!parse_expr(baseline_filter)) %>%
+    select(USUBJID, {{DV_field}}) %>%
+    group_by(USUBJID) %>%
+    summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
+    rename_with(~str_c("BL_", testcd), .cols = BL)
+
+  return(temp)
+}
 
 
 #' Derive administration time from the PCRFTDTC
@@ -1842,6 +1899,7 @@ make_administration <- function(
 #' @keywords internal
 make_time <- function(obj) {
   obj %>%
+    as.data.frame() %>%
     verify(has_all_names("ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
     verify(is.POSIXct(.data$DTC)) %>%
     group_by(ID) %>%
@@ -1907,22 +1965,26 @@ add_observation <- function(
       " was not specified and has been set to ", cmt), silent = silent)
   }
 
-  bind_rows(nif, make_observation(
-    sdtm = sdtm,
-    domain = domain,
-    testcd = testcd,
-    analyte = analyte,
-    parent = parent,
-    DTC_field = DTC_field,
-    DV_field = DV_field,
-    TESTCD_field = TESTCD_field,
-    cmt = cmt,
-    observation_filter = observation_filter,
-    subject_filter = {{subject_filter}},
-    NTIME_lookup = NTIME_lookup,
-    silent = silent,
-    cleanup = cleanup)) %>%
-    arrange(.data$ID, .data$DTC) %>%
+  bind_rows(nif,
+            make_observation(
+              sdtm = sdtm,
+              domain = domain,
+              testcd = testcd,
+              analyte = analyte,
+              parent = parent,
+              DTC_field = DTC_field,
+              DV_field = DV_field,
+              TESTCD_field = TESTCD_field,
+              cmt = cmt,
+              observation_filter = observation_filter,
+              # subject_filter = {{subject_filter}},
+              subject_filter = {TRUE},
+              NTIME_lookup = NTIME_lookup,
+              silent = silent,
+              cleanup = cleanup)
+            ) %>%
+    arrange(.data$USUBJID, .data$DTC) %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     make_time() %>%
     carry_forward_dose() %>%
     new_nif()
@@ -1950,11 +2012,41 @@ add_administration <- function(
     silent = silent,
     cleanup = cleanup
   )) %>%
-    arrange(.data$ID, .data$DTC) %>%
+    arrange(.data$USUBJID, .data$DTC) %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     make_time() %>%
     carry_forward_dose() %>%
     new_nif()
 }
+
+
+#' Title
+#'
+#' @param nif A nif object.
+#' @inheritParams make_baseline
+#'
+#' @return A nif object.
+#' @export
+add_baseline <- function(
+    nif,
+    sdtm,
+    domain,
+    testcd,
+    DV_field = NULL,
+    TESTCD_field = NULL,
+    observation_filter = {TRUE},
+    subject_filter = {TRUE},
+    baseline_filter = NULL,
+    summary_function = mean,
+    silent = FALSE) {
+  temp <- make_baseline(
+    sdtm, domain, testcd, DV_field, TESTCD_field, observation_filter,
+    subject_filter, baseline_filter, summary_function, silent)
+
+  nif %>%
+    left_join(temp, by = "USUBJID")
+}
+
 
 
 #' Subset nif to rows with DTC before the last individual or global observation

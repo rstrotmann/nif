@@ -25,7 +25,8 @@ nif_spaghetti_plot1(
   log = FALSE,
   admin = FALSE,
   summary_function = median,
-  title = ""
+  title = "",
+  ...
 )
 }
 \arguments{
@@ -72,6 +73,8 @@ logical.}
 \item{summary_function}{The summary function to apply if multiple baseline}
 
 \item{title}{The plot title as character.}
+
+\item{...}{Further graphical parameters.}
 }
 \value{
 A ggplot object.

@@ -76,6 +76,8 @@ logical.}
 \item{title}{The plot title as character.}
 
 \item{mean}{Mean plot as logical.}
+
+\item{...}{Further graphical parameters.}
 }
 \description{
 Plot nif object.

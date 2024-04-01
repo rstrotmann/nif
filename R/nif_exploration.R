@@ -522,6 +522,7 @@ nif_spaghetti_plot <- function(obj,
 #' @param nominal_time Plot NTIME on x axis, as logical.
 #' @param title The plot title as character.
 #' @param time_field The field to use as the time metric, as character.
+#' @param ... Further graphical parameters.
 #'
 #' @return A ggplot object.
 #' @importFrom lifecycle deprecate_warn
@@ -554,7 +555,8 @@ nif_spaghetti_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
                       points = FALSE, lines = TRUE, point_size = 2, alpha = 1,
                       tad = FALSE, nominal_time = FALSE, cfb = FALSE,
                       log = FALSE, admin = FALSE, summary_function = median,
-                      title = "") {
+                      title = "",
+                      ...) {
   # deprecation warnings
   if(!is.null(min_x)) {
     lifecycle::deprecate_warn("0.46.0", "plot1.nif(min_x)", "plot1.nif(min_time)")
@@ -653,13 +655,14 @@ nif_spaghetti_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
     # ggplot(aes(x = TIME, y = DV, group = as.factor(GROUP),
     #            color = as.factor(COLOR), admin = EVID)) +
     ggplot(aes(x = active_time, y = DV, group = as.factor(GROUP),
-               color = as.factor(COLOR), admin = EVID)) +
+               color = as.factor(COLOR), admin = EVID), ...) +
     {if (log == TRUE) scale_y_log10()} +
-    {if (lines) geom_line(na.rm = TRUE)} +
-    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
+    {if (lines) geom_line(na.rm = TRUE, ...)} +
+    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha,
+                            ...)} +
     {if (log == TRUE) scale_y_log10()} +
     {if(admin == TRUE) geom_admin()} +
-    labs(x = x_label, y = y_label, color = color_label) +
+    labs(x = x_label, y = y_label, color = color_label, ...) +
     {if(length(unique(obj$DOSE)) > 1) facet_wrap(~DOSE)} +
     ggtitle(title) +
     ggplot2::theme_bw() +
@@ -829,7 +832,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, group = NULL,
       log = log,
       admin = admin,
       summary_function = summary_function,
-      title = title, ...)
+      title = title,
+      ...)
   } else {
     nif_spaghetti_plot1(
       x,
@@ -1270,8 +1274,6 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 #' @return A ggplot object.
 #' @import assertr
 #' @export
-#'
-#' @examples
 time_by_ntime <- function(obj, max_time = NULL, ...) {
   if(is.null(max_time)) {
     max_time <- max_time(x, only_observations = limit_time_to_observations)
