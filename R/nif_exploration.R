@@ -15,7 +15,10 @@
 #' @param lines Plot lines as logical.
 #' @param cmt The compartment to plot as numeric.
 #' @param log Logarithmic y scale.
+#' @param time_field The field to use as the time metric, as character.
+#' @param ... Further graphical parameters.
 #' @param point_size Point size as numeric.
+#'
 #' @return A ggplot2 object.
 #' @import dplyr
 #' @import ggplot2
@@ -35,15 +38,17 @@
 #' nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
 #' nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
 nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
-                        max_time = NA, lines = TRUE, point_size = 2,
-                        log = FALSE, tad = FALSE, imp = NULL
-                        # y_scale = "lin"
-                        ) {
+                        time_field = "TIME", max_time = NA, lines = TRUE,
+                        point_size = 2, log = FALSE,
+                        # tad = FALSE,
+                        imp = NULL,
+                        ...) {
   # if (is_present(y_scale)) {
   #   lifecycle::deprecate_warn("0.44.1", "nif_plot_id(y_scale)",
   #                             "nif_plot_id(log)")
   #   if(y_scale == "log") {log = TRUE} else {log = FALSE}
   # }
+
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
@@ -56,6 +61,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 
   id_label <- ""
   plot_label <- ""
+
   # filter for subject of interest
   if (id %in% x$ID) {
     plot_label <- "ID"
@@ -75,48 +81,67 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
     }
   }
 
-  if (tad == TRUE && "PARENT" %in% names(x)) {
-    if (!"TAD" %in% colnames(x)) {
-      x <- x %>% add_tad()
-    }
-    x <- x %>%
-      mutate(TIME = TAD)
-  }
+  # if (tad == TRUE && "PARENT" %in% names(x)) {
+  #   if (!"TAD" %in% colnames(x)) {
+  #     x <- x %>% add_tad()
+  #   }
+  #   x <- x %>%
+  #     mutate(TIME = TAD)
+  # }
 
   obs <- x %>%
-    filter(EVID == 0)
+    mutate(active_time = .data[[time_field]]) %>%
+    filter(EVID == 0, !is.na(DV)) %>%
+    {if(time_field == "TAD")
+      mutate(., group = interaction(ID, as.factor(ANALYTE), DI),
+             color = interaction(as.factor(ANALYTE), DI))
+      else mutate(., group = interaction(ID, as.factor(ANALYTE)),
+                  color = as.factor(ANALYTE))}
 
   admin <- x %>%
+    mutate(active_time = .data[[time_field]]) %>%
     # as.data.frame() %>%
     dplyr::filter(EVID == 1) %>%
     # dplyr::filter(PARENT == imp)
     {if(!is.null(imp)) filter(., PARENT == imp) else NULL}
 
-  if (tad == TRUE) {
-    p <- obs %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = TIME, y = DV,
-        group = interaction(ID, as.factor(ANALYTE), DI),
-        color = interaction(as.factor(ANALYTE), DI)
-      ))
-  } else {
-    p <- obs %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = TIME, y = DV,
-        group = interaction(ID, as.factor(ANALYTE)),
-        color = as.factor(ANALYTE)
-      ))
-  }
+  # if (tad == TRUE) {
+  #   p <- obs %>%
+  #     ggplot2::ggplot(ggplot2::aes(
+  #       # x = TIME,
+  #       x = active_time,
+  #       y = DV,
+  #       group = interaction(ID, as.factor(ANALYTE), DI),
+  #       color = interaction(as.factor(ANALYTE), DI)
+  #     ))
+  # } else {
+  #   p <- obs %>%
+  #     ggplot2::ggplot(ggplot2::aes(
+  #       # x = TIME,
+  #       x = active_time,
+  #       y = DV,
+  #       group = interaction(ID, as.factor(ANALYTE)),
+  #       color = as.factor(ANALYTE)
+  #     ))
+  # }
 
-  p <- p +
+  p <- obs %>%
+    ggplot(aes(
+      x = active_time,
+      y = DV,
+      group = group,
+      color = color
+    )) +
     { if(!is.null(admin) > 0)
       geom_vline(data = admin,
-                 aes(xintercept = TIME),
+                 # aes(xintercept = TIME),
+                 aes(xintercept = active_time),
                  color = "gray")} +
     { if (lines == TRUE) ggplot2::geom_line() } +
     ggplot2::geom_point(size = point_size) +
     ggplot2::xlim(0, max_time) +
     ggplot2::labs(
+      x = time_field,
       title = paste0(plot_label, ": ", id, id_label),
       color = "analyte"
     ) +
@@ -142,6 +167,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 #' This function plots AMT over TIME for an individual subject, id. Id can be
 #' either the ID or the USUBJID. Administration time points are indicated with
 #' vertical lines.
+#'
 #' @param obj The NIF object.
 #' @param id The subject ID to be plotted.
 #' @param y_scale Y-scale. Use 'scale="log"' for a logarithmic y scale. Default
@@ -149,7 +175,10 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 #' @param max_dose The upper limit of the dose scale.
 #' @param analyte The analyte of interest.
 #' @param max_time The right limit of the time scale.
+#' @param time_field The field to use as the time metric, as character.
+#' @param ... Further graphical parameters.
 #' @param point_size The point size as numeric.
+#'
 #' @return A ggplot object.
 #' @import dplyr
 #' @import ggplot2
@@ -160,7 +189,8 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
 #' dose_plot_id(examplinib_poc_min_nif, 18)
 dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
-                         point_size = 2, max_time = NA, analyte = NULL) {
+                         time_field = "TIME", point_size = 2, max_time = NA,
+                         analyte = NULL, ...) {
 
   x <- obj %>%
     ensure_parent() %>%
@@ -173,6 +203,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 
   id_label <- ""
   plot_label <- ""
+
   # filter for subject of interest
   if (id %in% x$ID) {
     plot_label <- "ID"
@@ -192,11 +223,14 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
   }
 
   admin <- x %>%
-    dplyr::filter(EVID == 1)
+    dplyr::filter(EVID == 1) %>%
+    mutate(active_time = .data[[time_field]])
 
   p <- admin %>%
     ggplot2::ggplot(ggplot2::aes(
-      x = TIME, y = AMT,
+      # x = TIME,
+      x = active_time,
+      y = AMT,
       group = interaction(ID, ANALYTE),
       color = ANALYTE
     )) +
@@ -657,7 +691,7 @@ nif_spaghetti_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
     ggplot(aes(x = active_time, y = DV, group = as.factor(GROUP),
                color = as.factor(COLOR), admin = EVID), ...) +
     {if (log == TRUE) scale_y_log10()} +
-    {if (lines) geom_line(na.rm = TRUE, ...)} +
+    {if (lines) geom_line(na.rm = TRUE)} +
     {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha,
                             ...)} +
     {if (log == TRUE) scale_y_log10()} +
@@ -672,31 +706,67 @@ nif_spaghetti_plot1 <- function(x, analyte = NULL, dose = NULL, group = NULL,
 }
 
 
-nif_spaghetti_plot2 <- function(x, analyte = NULL, dose = NULL, group = NULL,
+
+nif_spaghetti_plot2 <- function(x,
+                                analyte = NULL,
+                                dose = NULL,
+                                group = NULL,
                                 time_field = "TIME",
-                                min_time = 0, max_time = NULL,
-                                min_x = NULL, max_x = NULL,
+                                min_time = 0,
+                                max_time = NULL,
+                                min_x = NULL,
+                                max_x = NULL,
                                 limit_time_to_observations = TRUE,
-                                points = FALSE, lines = TRUE, point_size = 2, alpha = 1,
-                                tad = FALSE, nominal_time = FALSE, cfb = FALSE,
-                                log = FALSE, admin = FALSE, summary_function = median,
+                                points = FALSE,
+                                lines = TRUE,
+                                # tad = FALSE,
+                                nominal_time = FALSE,
+                                cfb = FALSE,
+                                log = FALSE,
+                                admin = FALSE,
+                                summary_function = median,
                                 title = "",
+                                legend = TRUE,
                                 ...) {
-  # deprecation warnings
-  if(!is.null(min_x)) {
-    lifecycle::deprecate_warn("0.46.0", "plot1.nif(min_x)", "plot1.nif(min_time)")
-    min_time <- min_x
-  }
+  ## test init
+  # analyte = NULL
+  # dose = NULL
+  # group = NULL
+  # time_field = "TIME"
+  # min_time = 0
+  # max_time = NULL
+  # min_x = NULL
+  # max_x = NULL
+  # limit_time_to_observations = TRUE
+  # points = FALSE
+  # lines = TRUE
+  # nominal_time = FALSE
+  # cfb = FALSE
+  # log = FALSE
+  # admin = FALSE
+  # summary_function = median
+  # title = ""
+  ## end test init
 
-  if(!is.null(max_x)) {
-    lifecycle::deprecate_warn("0.46.0", "plot1.nif(max_x)", "plot1.nif(max_time)")
-    max_time <- max_x
-  }
+  # if(is.null(max_time)) {
+  #   max_time <- max_time(x, time_field = time_field,
+  #                        only_observations = limit_time_to_observations)
+  # }
 
-  if(is.null(max_time)) {
-    max_time <- max_time(x, only_observations = limit_time_to_observations)
-  }
+  # if(time_field == "TAD") {
+  #   group <- c(group, "DI")
+  #   # x <- filter(x, EVID == 0)
+  # }
 
+  x_label <- paste0(as.character(time_field), " (h)")
+
+  # in the filtered data set, filter for analytes and doses
+  if(is.null(analyte)) {analyte <- analytes(x)}
+  if(is.null(dose)) {dose <- doses(x)}
+
+  if(length(analyte) > 1) {
+    group <- unique(c("ANALYTE", group))
+  }
 
   # ensure required fields and limit data set to max_time
   obj <- x %>%
@@ -706,33 +776,25 @@ nif_spaghetti_plot2 <- function(x, analyte = NULL, dose = NULL, group = NULL,
     ensure_dose() %>%
     ensure_tad() %>%
     add_cfb(summary_function = summary_function) %>%
-    {if(cfb == TRUE) mutate(., DV = DVCFB) else .}
+    index_dosing_interval() %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
+    filter(ANALYTE %in% analyte) %>%
+    filter(DOSE %in% dose)
 
   if(time_field == "TAD") {
-    obj <- obj %>%
-      index_dosing_interval()
     group <- c(group, "DI")
+    obj <- filter(obj, EVID == 0)
   }
 
-  # obj <- filter(obj, TIME <= max_time)
-  obj <- filter(obj, .data[[time_field]] <= max_time)
-
-
-  obj <- obj %>%
-    mutate(active_time = .data[[time_field]])
-  x_label <- paste0(as.character(time_field), " (h)")
-
-  # in the filtered data set, filter for analytes and doses
-  if(is.null(analyte)) {analyte <- analytes(obj)}
-  if(is.null(dose)) {dose <- doses(obj)}
-
-  if(length(analyte) > 1) {
-    group <- unique(c("ANALYTE", group))
+  if(is.null(max_time)) {
+    max_time <- max_time(obj, time_field = time_field,
+                         only_observations = limit_time_to_observations)
   }
 
   obj <- obj %>%
-    filter(ANALYTE %in% analyte) %>%
-    filter(DOSE %in% dose) %>%
+    mutate(active_time = .data[[time_field]]) %>%
+    filter(active_time <= max_time) %>%
+    as.data.frame() %>%
     unite(GROUP, unique(c("ID", group)), sep = "_", remove = FALSE)
 
   if(length(group) == 0) {
@@ -749,7 +811,8 @@ nif_spaghetti_plot2 <- function(x, analyte = NULL, dose = NULL, group = NULL,
   }
 
   # define labels
-  show_color = TRUE
+  show_color = legend
+
   if(length(analyte) == 1) {
     y_label <- analyte
     if(length(group) == 0) {show_color = FALSE}
@@ -758,12 +821,13 @@ nif_spaghetti_plot2 <- function(x, analyte = NULL, dose = NULL, group = NULL,
   }
 
   obj %>%
-    ggplot(aes(x = active_time, y = DV, group = as.factor(GROUP),
-               color = as.factor(COLOR), admin = EVID), ...) +
+    ggplot(aes(x = active_time,
+               y = DV, group = as.factor(GROUP),
+               color = as.factor(COLOR),
+               admin = EVID), ...) +
     {if (log == TRUE) scale_y_log10()} +
-    {if (lines) geom_line(na.rm = TRUE, ...)} +
-    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha,
-                            ...)} +
+    {if (lines) geom_line(na.rm = TRUE)} +
+    {if (points) geom_point(na.rm = TRUE, ...)} +
     {if (log == TRUE) scale_y_log10()} +
     {if(admin == TRUE) geom_admin()} +
     labs(x = x_label, y = y_label, color = color_label, ...) +

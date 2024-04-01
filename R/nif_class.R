@@ -859,6 +859,7 @@ max_observation_time <- function(obj, analyte = NULL) {
 #' @param obj A nif object.
 #' @param analyte The analyte to filter for, as character.
 #' @param only_observations Maximal ovservation time as logical.
+#' @param time_field The field to use as the time metric, as character.
 #'
 #' @return Numeric.
 #' @export
@@ -867,12 +868,14 @@ max_observation_time <- function(obj, analyte = NULL) {
 #' max_time(examplinib_poc_nif)
 #' max_time(examplinib_poc_nif, analyte = "RS2023")
 #' max_time(examplinib_poc_nif, only_observations = TRUE)
-max_time <- function(obj, analyte = NULL, only_observations = FALSE) {
+max_time <- function(obj, time_field = "TIME", analyte = NULL,
+                     only_observations = TRUE) {
   times <- obj %>%
     ensure_analyte() %>%
     {if(!is.null(analyte)) filter(., .data$ANALYTE %in% analyte) else .} %>%
-    {if(only_observations == TRUE) filter(., (.data$EVID == 0 & !is.na(.data$DV))) else .} %>%
-    pull(TIME)
+    {if(only_observations == TRUE) filter(., .data$EVID == 0 & !is.na(.data$DV)) else .} %>%
+    # pull(TIME)
+    pull(.data[[time_field]])
 
   if(length(times) == 0) return(NA)
   return(max(times, na.rm = TRUE))
