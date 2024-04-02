@@ -1728,7 +1728,8 @@ make_baseline <- function(
 
   temp <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates() %>%
-    filter(!!{{observation_filter}}) %>%
+    # filter(eval(observation_filter)) %>%
+    filter(eval_tidy(observation_filter)) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     filter(!!parse_expr(baseline_filter)) %>%
     select(USUBJID, {{DV_field}}) %>%
@@ -2044,12 +2045,25 @@ add_administration <- function(
 }
 
 
-#' Title
+#' Add baseline field
 #'
 #' @param nif A nif object.
-#' @inheritParams make_baseline
+#' @param sdtm A sdtm object.
+#' @param domain The domain as character.
+#' @param testcd The xxTESTCD with xx the domain name, as character.
+#' @param DV_field The name of the DV field as character.
+#' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD with
+#'   xx the domain name, as character.
+#' @param observation_filter A filter term for the `domain`.
+#' @param subject_filter A filter term for the DM domain.
+#' @param baseline_filter A filter term to identify the baseline condition
+#'   within the `domain`. Defaults to `xxBLFL == "Y"` with xx the domain name.
+#' @param summary_function The summary function to summarize multiple baseline
+#'   values. Defaults to `mean`.
+#' @param silent Suppress messages, as logical.
 #'
 #' @return A nif object.
+#' @import assertr
 #' @export
 add_baseline <- function(
     nif,
@@ -2063,13 +2077,35 @@ add_baseline <- function(
     baseline_filter = NULL,
     summary_function = mean,
     silent = FALSE) {
-  temp <- make_baseline(
-    sdtm, domain, testcd, DV_field, TESTCD_field, observation_filter,
-    subject_filter, baseline_filter, summary_function, silent)
+
+  if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
+  if(is.null(TESTCD_field)) TESTCD_field <- paste0(
+    str_to_upper(domain), "TESTCD")
+  if(is.null(baseline_filter)) baseline_filter <- paste0(
+    ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
+
+  sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
+                       subject_filter = {{subject_filter}})
+
+  temp <- domain(sdtm, str_to_lower(domain)) %>%
+    # verify(exec(has_all_names(!!!c("USUBJID", DV_field, TESTCD_field)))) %>%
+    lubrify_dates() %>%
+    filter({{observation_filter}}) %>%
+    filter(.data[[TESTCD_field]] == testcd) %>%
+    filter(!!parse_expr(baseline_filter)) %>%
+    select(USUBJID, {{DV_field}}) %>%
+    group_by(USUBJID) %>%
+    summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
+    rename_with(~str_c("BL_", testcd), .cols = BL)
 
   nif %>%
     left_join(temp, by = "USUBJID")
 }
+
+
+
+
+
 
 
 

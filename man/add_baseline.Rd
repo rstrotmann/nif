@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_baseline}
 \alias{add_baseline}
-\title{Title}
+\title{Add baseline field}
 \usage{
 add_baseline(
   nif,
@@ -29,30 +29,28 @@ add_baseline(
 
 \item{domain}{The domain as character.}
 
-\item{testcd}{The xxTESTCD to filter for, as character.}
+\item{testcd}{The xxTESTCD with xx the domain name, as character.}
 
-\item{DV_field}{the field to use as the dependent variable. Defaults to the
-two-character domain name followed by 'STRESN'.}
+\item{DV_field}{The name of the DV field as character.}
 
-\item{TESTCD_field}{The xxTESTCD field as character. Defaults to "xxTESTCD"
-where xx is the domain name.}
+\item{TESTCD_field}{The name of the TESTCD field. defaults to xxTESTCD with
+xx the domain name, as character.}
 
-\item{observation_filter}{The filtering to apply to the observation source
-data.}
+\item{observation_filter}{A filter term for the \code{domain}.}
 
-\item{subject_filter}{The filtering to apply to the DM domain.}
+\item{subject_filter}{A filter term for the DM domain.}
 
-\item{baseline_filter}{The filter to identify the baseline value. Defaults to
-{xxBLFL == 'Y'} where xx is the domain name.}
+\item{baseline_filter}{A filter term to identify the baseline condition
+within the \code{domain}. Defaults to \code{xxBLFL == "Y"} with xx the domain name.}
 
-\item{summary_function}{The summary funcition to apply if there are multiple
-baseline values, defaults to \code{mean}.}
+\item{summary_function}{The summary function to summarize multiple baseline
+values. Defaults to \code{mean}.}
 
-\item{silent}{Suppress messages as logical.}
+\item{silent}{Suppress messages, as logical.}
 }
 \value{
 A nif object.
 }
 \description{
-Title
+Add baseline field
 }

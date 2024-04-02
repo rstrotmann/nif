@@ -9,9 +9,11 @@ dose_plot_id(
   id,
   y_scale = "lin",
   max_dose = NA,
+  time_field = "TIME",
   point_size = 2,
   max_time = NA,
-  analyte = NULL
+  analyte = NULL,
+  ...
 )
 }
 \arguments{
@@ -24,11 +26,15 @@ is "lin".}
 
 \item{max_dose}{The upper limit of the dose scale.}
 
+\item{time_field}{The field to use as the time metric, as character.}
+
 \item{point_size}{The point size as numeric.}
 
 \item{max_time}{The right limit of the time scale.}
 
 \item{analyte}{The analyte of interest.}
+
+\item{...}{Further graphical parameters.}
 }
 \value{
 A ggplot object.

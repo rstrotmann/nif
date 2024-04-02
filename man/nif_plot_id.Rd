@@ -9,12 +9,13 @@ nif_plot_id(
   id,
   analyte = NULL,
   cmt = NULL,
+  time_field = "TIME",
   max_time = NA,
   lines = TRUE,
   point_size = 2,
   log = FALSE,
-  tad = FALSE,
-  imp = NULL
+  imp = NULL,
+  ...
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ nif_plot_id(
 
 \item{cmt}{The compartment to plot as numeric.}
 
+\item{time_field}{The field to use as the time metric, as character.}
+
 \item{max_time}{The right limit of the time scale}
 
 \item{lines}{Plot lines as logical.}
@@ -34,11 +37,13 @@ nif_plot_id(
 
 \item{log}{Logarithmic y scale.}
 
-\item{tad}{Logical value to select whether time after dose (TAD) rather than
-TIME should be plotted.}
-
 \item{imp}{The IMP for which administrations are to be indicated by vertical
 lines. Defaults to NULL.}
+
+\item{...}{Further graphical parameters.}
+
+\item{tad}{Logical value to select whether time after dose (TAD) rather than
+TIME should be plotted.}
 }
 \value{
 A ggplot2 object.

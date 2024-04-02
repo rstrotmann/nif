@@ -4,10 +4,12 @@
 \alias{max_time}
 \title{Maximal time in nif object}
 \usage{
-max_time(obj, analyte = NULL, only_observations = FALSE)
+max_time(obj, time_field = "TIME", analyte = NULL, only_observations = TRUE)
 }
 \arguments{
 \item{obj}{A nif object.}
+
+\item{time_field}{The field to use as the time metric, as character.}
 
 \item{analyte}{The analyte to filter for, as character.}
 

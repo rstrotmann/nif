@@ -272,7 +272,9 @@ test_that("make_time", {
     1,   "B",      "B",     "2024-03-18T09:15", 1,
     1,   "B",      "B",     "2024-03-18T09:45", 0,
     1,   "B",      "B",     "2024-03-18T10:00", 0
-  ) %>% lubrify_dates()
+  ) %>%
+    lubrify_dates() %>%
+    mutate(CMT = 1)
 
   expect_no_error(temp <- make_time(test) %>% as.data.frame())
 })
