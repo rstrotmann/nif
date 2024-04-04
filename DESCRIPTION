@@ -30,7 +30,8 @@ Imports:
     shinyjs,
     stringr,
     tidyr,
-    utils
+    utils,
+    ggrepel
 Suggests: 
     knitr,
     rmarkdown,

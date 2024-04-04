@@ -840,6 +840,198 @@ nif_spaghetti_plot2 <- function(x,
 }
 
 
+#' Plot nif object.
+#'
+#' @param nif A nif object.
+#' @param analyte The analyte as character.
+#' @param dose The dose as numeric.
+#' @param log Logarithmic y scale
+#' @param time The time field to use, as character. Can be 'TIME', 'NTIME',
+#'   'TAFD' or 'TAD'.
+#' @param group The grouping variable as character.
+#' @param min_time The minimal time as numeric.
+#' @param max_time The maximal time as numeric.
+#' @param points Show data points as logical.
+#' @param lines Show lines as logical.
+#' @param admin Show vertical lines for administrations, as logical.
+#' @param cfb Show change from baseline, as logical.
+#' @param silent Suppress messages as logical.
+#' @param mean Show a mean plot, as logical.
+#' @param title The plot title as character.
+#' @param caption The plot caption line as character.
+#' @param ... Further graphical parameters.
+#' @param integrate_predose Complete 'DOSE' field for predose values.
+#' @param summary_function The summarizing function to apply to multiple
+#'   baseline values.
+#' @param legend Show legend, as logical.
+#'
+#' @return A ggplot object.
+#' @export
+#'
+#' @examples
+#' plot_z(examplinib_fe_nif, points = TRUE)
+#' plot_z(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
+#' plot_z(examplinib_sad_nif)
+#' plot_z(examplinib_sad_nif, cfb = TRUE)
+#' plot_z(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
+#' plot_z(examplinib_poc_nif)
+#' plot_z(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
+#'   group = "SEX", points = TRUE, lines = FALSE)
+#' plot_z(examplinib_poc_nif, analyte="RS2023", time = "TAD",
+#'   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
+#' plot_z(examplinib_sad_min_nif)
+#' plot_z(examplinib_poc_min_nif, dose = 500, cmt = 2)
+#' plot_z(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
+#'   points = TRUE, lines = FALSE)
+plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
+                               time = "TIME", group = NULL, min_time = 0,
+                               max_time = NULL, points = FALSE, lines = TRUE,
+                               admin = FALSE, cfb = FALSE,
+                               summary_function = median, silent = TRUE,
+                               mean = FALSE, title = "", caption = "",
+                               integrate_predose = TRUE, legend = TRUE,
+                               ...) {
+  # Assert time field
+  if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
+    stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
+  }
+
+  # Assert fields
+  x <- nif %>%
+    ensure_parent() %>%
+    ensure_analyte() %>%
+    ensure_dose() %>%
+    ensure_tad() %>%
+    index_dosing_interval() %>%
+    mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
+    # verify(exec(has_all_names,
+    #   !!!c("USUBJID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) %>%
+    verify(exec(has_all_names,
+                !!!c("ID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) %>%
+    as.data.frame()
+
+  # fill dose to predose values
+  if(integrate_predose == TRUE){
+    x <- x %>%
+      arrange(ID, ANALYTE, TIME) %>%
+      group_by(ID, ANALYTE) %>%
+      fill(DOSE, .direction = "up") %>%
+      ungroup()
+  }
+
+  # implement change from baseline
+  x <- x %>%
+    add_cfb(summary_function = summary_function) %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .}
+
+  # make active time field
+  x <- mutate(x, active_time = .data[[time]])
+  x_label = paste0(time, " (h)")
+
+  # implement max_time, min_time
+  if(is.null(max_time)) {max_time <- max_time(x, time_field = time)}
+  x <- filter(x, active_time <= max_time & active_time >= min_time)
+
+  # filter for analyte, set y axis label
+  if(is.null(analyte)) {analyte <- analytes(nif)}
+  x <- filter(x, (ANALYTE %in% analyte))
+  n_analyte <- x %>%
+    filter(EVID == 0) %>%
+    distinct(ANALYTE) %>%
+    nrow()
+  y_label <- ifelse(n_analyte == 1, unique(x$ANALYTE), "DV")
+
+  # filter for dose
+  if(is.null(dose)) {dose <- unique(x$DOSE[x$EVID == 0])}
+  x <- filter(x, (DOSE %in% dose) )
+
+  # remove subjects without observation
+  x <- x %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(n_obs = sum(EVID == 0)) %>%
+    ungroup()
+
+  n_no_obs <- x %>%
+    filter(n_obs == 0) %>%
+    distinct(ID, ANALYTE) %>%
+    nrow()
+
+  if(n_no_obs != 0) {
+    conditional_message(
+      paste0(n_no_obs, " subjects had no observation for the analyte(s) ",
+             nice_enumeration(analyte, "or"),
+             " and were excluded from plotting:\n",
+      df_to_string(filter(x, n_obs == 0) %>% distinct(ID, ANALYTE, DOSE),
+                   indent = "  ")), silent = silent)}
+  x <- filter(x, n_obs > 0)
+
+  # remove trailing administrations
+  x <- x %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(last_obs_time = max(TIME[EVID == 0], na.rm = TRUE)) %>%
+    ungroup()
+
+  n_trailing <- x %>%
+    filter(TIME > last_obs_time) %>%
+    distinct(ID) %>%
+    nrow()
+
+  if(n_trailing > 0) {
+    conditional_message(
+      paste0("Trailing administrations in ", n_trailing,
+      " subjects were removed before plotting."), silent = silent)}
+  x <- x %>%
+    filter(TIME <= last_obs_time) %>%
+    as.data.frame()
+
+  # make ggplot group and color
+  if(mean == FALSE) {
+    group <- c(group, "ID")}
+  if(time == "TAD") {
+    group <- c(group, "DI")}
+  if(n_analyte > 1) {group <- unique(c(group, "ANALYTE"))}
+  x <- x %>%
+    unite(GROUP, group, sep = "_", remove = FALSE) %>%
+    {if(length(group[!group == "ID"]) > 0)
+      unite(., COLOR, group[!group == "ID"], sep = "_", remove = FALSE)
+      else mutate(., COLOR = TRUE)}
+  color_label <- nice_enumeration(unique(group[!group == "ID"]))
+  show_color <- length(unique(group[!group == "ID"])) > 0
+
+  # make admin
+  # if(!is.null(admin)) {
+  if(admin == TRUE) {
+    x <- mutate(x, ADMIN = as.numeric(EVID == 1))
+    caption <- paste0("markers: administration")
+  } else {
+    x <- mutate(x, ADMIN = 0)
+  }
+
+  # plot
+  x %>%
+    ggplot(aes(x = active_time, y = DV, group = GROUP, color = COLOR ,
+               admin = ADMIN)) +
+    {if(!is.null(admin)) geom_admin()} +
+    {if(points == TRUE) geom_point(na.rm = TRUE)} +
+    {if (lines) geom_line(na.rm = TRUE)} +
+    {if (log == TRUE) scale_y_log10()} +
+    {if(length(unique(x$DOSE)) > 1) facet_wrap(~DOSE)} +
+    labs(x = x_label, y = y_label, color = color_label, caption = caption) +
+    theme_bw() +
+    theme(legend.position = ifelse(show_color == TRUE & legend == TRUE,
+                                   "bottom", "none")) +
+    ggtitle(title)
+}
+
+
+
+
+
+
+
+
+
+
 #' Mean plot for nif object
 #'
 #' @inheritParams nif_spaghetti_plot1
@@ -1574,5 +1766,70 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
     arrange(DL, ANALYTE)
 }
 
+#' Evaluation of drug-induced serious hepatotoxicity (eDISH) plot
+#'
+#' @description
+#' DOI: 10.2165/11586600-000000000-00000
+#'
+#' @param nif A nif object.
+#' @param lb The LB SDTM domain as data frame.
+#' @param enzyme The transaminase to be plotted on the x axis as character.
+#' @param title The plot title as character.
+#' @param size The point size as numeric.
+#' @param alpha The alpha value as numeric.
+#' @param ... Further graphical parameters.
+#' @param show_labels Show ID labels per point.
+#' @param nominal_time Use NTIME as logical.
+#' @param time time/nominal time filter as numeric.
+#'
+#' @return A ggplot object.
+#' @importFrom ggrepel geom_text_repel
+#' @export
+edish_plot <- function(nif, lb, enzyme = "ALT", show_labels = FALSE,
+                       nominal_time = TRUE, time = NULL,
+                       title = "eDISH plot: All time points", size = 3,
+                       alpha = 0.5, ...) {
+  lb_hy <- lb %>%
+    filter(LBTESTCD %in% c(enzyme, "BILI")) %>%
+    mutate(LBTESTCD = case_match(LBTESTCD, "BILI" ~ "BILI",
+                                 .default = "ENZ")) %>%
+    mutate(LBTESTCD = paste0(LBTESTCD, "_X_ULN"),
+           LBSTRESN = LBSTRESN / LBSTNRHI)
 
+  if(nominal_time == TRUE) {
+    nif <- nif %>%
+      mutate(TIME = NTIME)
+  }
+  if(!is.null(time)) {
+    nif <- nif %>%
+      filter(TIME %in% time)
+  }
+
+  suppressWarnings({
+    p <- nif %>%
+      # add_lab_observation(lb_hy, lbtestcd = "ENZ_X_ULN", lbspec = "SERUM",
+      #                     silent = TRUE) %>%
+      # add_lab_observation(lb_hy, lbtestcd = "BILI_X_ULN", lbspec = "SERUM",
+      #                     silent = TRUE) %>%
+      add_lab_observation(lb_hy, lbtestcd = "ENZ_X_ULN", silent = TRUE) %>%
+      add_lab_observation(lb_hy, lbtestcd = "BILI_X_ULN", silent = TRUE) %>%
+      as.data.frame() %>%
+      filter(ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
+      select(ID, TIME, ANALYTE, DV) %>%
+      group_by(ID, TIME) %>%
+      pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
+      ungroup() %>%
+      ggplot(aes(x = ENZ_X_ULN, y = BILI_X_ULN, color = (TIME > 0), label = ID)) +
+      geom_point(size = size, alpha = alpha, ...) +
+      {if(show_labels == TRUE) geom_text_repel()} +
+      scale_x_log10() +
+      scale_y_log10() +
+      geom_hline(yintercept = 2, linetype="dashed") +
+      geom_vline(xintercept = 3, linetype="dashed") +
+      labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
+      theme(legend.position = "none") +
+      ggtitle(title)
+  })
+  return(p)
+}
 

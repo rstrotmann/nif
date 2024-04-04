@@ -262,6 +262,7 @@ has_time <- function(datetime) {
 #' Nice enumeration of multiple strings
 #'
 #' @param items Items to enumerate as character.
+#' @param conjunction The conjunction between the last and penultmate items.
 #'
 #' @return Enumeration as character.
 #' @export
@@ -271,12 +272,13 @@ has_time <- function(datetime) {
 #' nice_enumeration("A")
 #' nice_enumeration(c("A", "B"))
 #' nice_enumeration(c("A", "B", "C"))
-nice_enumeration <- function(items) {
+#' nice_enumeration(c("A", "B", "C"), conjunction = "or")
+nice_enumeration <- function(items, conjunction = "and") {
   if(length(items) == 1) {
     return(items[[1]])
   }
   if(length(items) > 1) {
-    return(paste(paste(items[1:length(items)-1], collapse = ", "), "and",
+    return(paste(paste(items[1:length(items)-1], collapse = ", "), conjunction,
                  items[length(items)]))
   }
 }

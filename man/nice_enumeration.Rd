@@ -4,10 +4,12 @@
 \alias{nice_enumeration}
 \title{Nice enumeration of multiple strings}
 \usage{
-nice_enumeration(items)
+nice_enumeration(items, conjunction = "and")
 }
 \arguments{
 \item{items}{Items to enumerate as character.}
+
+\item{conjunction}{The conjunction between the last and penultmate items.}
 }
 \value{
 Enumeration as character.
@@ -19,5 +21,6 @@ Nice enumeration of multiple strings
 nice_enumeration("A")
 nice_enumeration(c("A", "B"))
 nice_enumeration(c("A", "B", "C"))
+nice_enumeration(c("A", "B", "C"), conjunction = "or")
 }
 \keyword{internal}

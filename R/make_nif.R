@@ -1760,18 +1760,30 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
              "PCRFTDTC_time")) %>%
     distinct()
 
+  # obj %>%
+  #   decompose_dtc("DTC") %>%
+  #   left_join(pc_ref,
+  #             by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
+  #   mutate(IMPT_TIME = case_when(
+  #     is.na(DTC_time) & !is.na(PCRFTDTC_time) ~
+  #       paste(.data$IMPT_TIME, "admin time imputed from PCRFTDTC"),
+  #     .default = .data$IMPT_TIME)) %>%
+  #   mutate(DTC_time = case_when(is.na(DTC_time) ~ PCRFTDTC_time,
+  #                               .default = .data$DTC_time)) %>%
+  #   mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
+  #   select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
+
   obj %>%
     decompose_dtc("DTC") %>%
     left_join(pc_ref,
               by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
     mutate(IMPT_TIME = case_when(
-      is.na(DTC_time) & !is.na(PCRFTDTC_time) ~
+      !is.na(PCRFTDTC_time) ~
         paste(.data$IMPT_TIME, "admin time imputed from PCRFTDTC"),
       .default = .data$IMPT_TIME)) %>%
-    mutate(DTC_time = case_when(is.na(DTC_time) ~ PCRFTDTC_time,
+    mutate(DTC_time = case_when(!is.na(PCRFTDTC_time) ~ PCRFTDTC_time,
                                 .default = .data$DTC_time)) %>%
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
-    # select(-c("PCRFTDTC"))
     select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
 }
 
@@ -1906,7 +1918,7 @@ make_time <- function(obj) {
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     ungroup() %>%
     group_by(ID, PARENT) %>%
-    mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1]), na.rm = TRUE) %>%
+    mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1], na.rm = TRUE)) %>%
     ungroup() %>%
     mutate(TIME = round(
       as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),

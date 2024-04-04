@@ -973,7 +973,7 @@ add_tad <- function(nif) {
     as.data.frame() %>%
     mutate(admin_time = case_when(
       .data$EVID == 1 ~ .data$TIME)) %>%
-    arrange(.data$TIME) %>%
+    arrange(.data$ID, .data$PARENT, .data$TIME) %>%
     group_by(.data$ID, .data$PARENT) %>%
     fill(admin_time, .direction = "down") %>%
     ungroup() %>%
@@ -1105,6 +1105,7 @@ add_cfb <- function(obj, summary_function = median) {
     as.data.frame() %>%
     group_by(ID, ANALYTE) %>%
     mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
+    # mutate(DVBL = summary_function(DV[TIME <= 0])) %>%
     mutate(DVCFB = DV - DVBL) %>%
     new_nif()
 }
