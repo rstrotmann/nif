@@ -2,13 +2,13 @@
 % Please edit documentation in R/nif_exploration.R
 \name{plot_z}
 \alias{plot_z}
-\title{Title}
+\title{Plot nif object.}
 \usage{
 plot_z(
   nif,
   analyte = NULL,
   dose = NULL,
-  log = TRUE,
+  log = FALSE,
   time = "TIME",
   group = NULL,
   min_time = 0,
@@ -17,10 +17,14 @@ plot_z(
   lines = TRUE,
   admin = FALSE,
   cfb = FALSE,
+  summary_function = median,
   silent = TRUE,
   mean = FALSE,
   title = "",
   caption = "",
+  integrate_predose = TRUE,
+  legend = TRUE,
+  show_n = FALSE,
   ...
 )
 }
@@ -50,6 +54,9 @@ plot_z(
 
 \item{cfb}{Show change from baseline, as logical.}
 
+\item{summary_function}{The summarizing function to apply to multiple
+baseline values.}
+
 \item{silent}{Suppress messages as logical.}
 
 \item{mean}{Show a mean plot, as logical.}
@@ -58,27 +65,31 @@ plot_z(
 
 \item{caption}{The plot caption line as character.}
 
+\item{integrate_predose}{Complete 'DOSE' field for predose values.}
+
+\item{legend}{Show legend, as logical.}
+
 \item{...}{Further graphical parameters.}
 }
 \value{
 A ggplot object.
 }
 \description{
-Title
+Plot nif object.
 }
 \examples{
-plot_z(examplinib_fe_nif)
+plot_z(examplinib_fe_nif, points = TRUE)
 plot_z(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
 plot_z(examplinib_sad_nif)
 plot_z(examplinib_sad_nif, cfb = TRUE)
 plot_z(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
 plot_z(examplinib_poc_nif)
-plot_z(examplinib_poc_nif, analyte="RS2023", nominal_time = TRUE,
+plot_z(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
   group = "SEX", points = TRUE, lines = FALSE)
-plot_z(examplinib_poc_nif, analyte="RS2023", tad = TRUE,
+plot_z(examplinib_poc_nif, analyte="RS2023", time = "TAD",
   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
 plot_z(examplinib_sad_min_nif)
 plot_z(examplinib_poc_min_nif, dose = 500, cmt = 2)
-plot_z(examplinib_poc_min_nif, dose = 500, cmt = 2, tad = TRUE,
+plot_z(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
   points = TRUE, lines = FALSE)
 }

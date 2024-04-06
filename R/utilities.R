@@ -305,3 +305,50 @@ append_statement <- function(object, statement) {
 }
 
 
+#' Mean derivative that works with vectors containing NaN
+#'
+#' @param x The input as numeric.
+#'
+#' @return The mean as numeric.
+#' @export
+#' @keywords internal
+safe_mean <- function(x) {
+  temp <- x[!is.nan(x) & !is.na(x)]
+  if(length(temp) == 0) return(NA)
+  out <- mean(temp, na.rm = T)
+  attributes(out)$N <- length(temp[!is.na(temp)])
+  return(out)
+}
+
+
+#' SD derivative that works with vectors containing NaN
+#'
+#' @param x The input as numeric.
+#'
+#' @return The mean as numeric.
+#' @export
+#' @keywords internal
+safe_sd <- function(x) {
+  temp <- x[!is.nan(x) & !is.na(x)]
+  if(length(temp) == 0) return(NA)
+  out <- sd(temp, na.rm = T)
+  attributes(out)$N <- length(temp[!is.na(temp)])
+  return(out)
+}
+
+
+#' Min derivative that works with vectors containing NaN
+#'
+#' @param x The input as numeric.
+#'
+#' @return The mean as numeric.
+#' @export
+#' @keywords internal
+safe_min <- function(x) {
+  temp <- x[!is.nan(x) & !is.na(x)]
+  if(length(temp) == 0) return(NA)
+  out <- min(temp, na.rm = T)
+  attributes(out)$N <- length(temp[!is.na(temp)])
+  return(out)
+}
+

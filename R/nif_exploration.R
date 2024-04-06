@@ -864,6 +864,7 @@ nif_spaghetti_plot2 <- function(x,
 #' @param summary_function The summarizing function to apply to multiple
 #'   baseline values.
 #' @param legend Show legend, as logical.
+#' @param show_n Show sample size in mean plot, as logical.
 #'
 #' @return A ggplot object.
 #' @export
@@ -890,6 +891,7 @@ plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
                                summary_function = median, silent = TRUE,
                                mean = FALSE, title = "", caption = "",
                                integrate_predose = TRUE, legend = TRUE,
+                   show_n = FALSE,
                                ...) {
   # Assert time field
   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
@@ -904,10 +906,9 @@ plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
     ensure_tad() %>%
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
-    # verify(exec(has_all_names,
-    #   !!!c("USUBJID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) %>%
-    verify(exec(has_all_names,
-                !!!c("ID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) %>%
+    verify(exec(
+      has_all_names,
+      !!!c("ID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) %>%
     as.data.frame()
 
   # fill dose to predose values
@@ -990,8 +991,10 @@ plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
   if(time == "TAD") {
     group <- c(group, "DI")}
   if(n_analyte > 1) {group <- unique(c(group, "ANALYTE"))}
+
   x <- x %>%
-    unite(GROUP, group, sep = "_", remove = FALSE) %>%
+    {if(length(group) > 0) unite(., GROUP, group, sep = "_", remove = FALSE)
+      else mutate(., GROUP = TRUE)} %>%
     {if(length(group[!group == "ID"]) > 0)
       unite(., COLOR, group[!group == "ID"], sep = "_", remove = FALSE)
       else mutate(., COLOR = TRUE)}
@@ -999,7 +1002,6 @@ plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
   show_color <- length(unique(group[!group == "ID"])) > 0
 
   # make admin
-  # if(!is.null(admin)) {
   if(admin == TRUE) {
     x <- mutate(x, ADMIN = as.numeric(EVID == 1))
     caption <- paste0("markers: administration")
@@ -1007,26 +1009,72 @@ plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
     x <- mutate(x, ADMIN = 0)
   }
 
-  # plot
-  x %>%
-    ggplot(aes(x = active_time, y = DV, group = GROUP, color = COLOR ,
-               admin = ADMIN)) +
-    {if(!is.null(admin)) geom_admin()} +
-    {if(points == TRUE) geom_point(na.rm = TRUE)} +
-    {if (lines) geom_line(na.rm = TRUE)} +
-    {if (log == TRUE) scale_y_log10()} +
-    {if(length(unique(x$DOSE)) > 1) facet_wrap(~DOSE)} +
-    labs(x = x_label, y = y_label, color = color_label, caption = caption) +
-    theme_bw() +
-    theme(legend.position = ifelse(show_color == TRUE & legend == TRUE,
-                                   "bottom", "none")) +
-    ggtitle(title)
+  if(mean == TRUE) {
+    # mean plot
+    x %>%
+      filter(EVID == 0) %>%
+      {if(length(group[!group == "ID"]) > 0)
+        unite(., GROUP, group[!group == "ID"], sep = "_", remove = FALSE) else
+          mutate(., GROUP = TRUE)} %>%
+      group_by(NTIME, DOSE, GROUP, COLOR) %>%
+      summarize(n = n(), mean = safe_mean(DV),
+                sd = safe_sd(DV)) %>%
+      ungroup() %>%
+
+      # group_by(DOSE, GROUP) %>%
+      # mutate(n_group = max(n)) %>%
+      # ungroup() %>%
+      #
+      # reframe(
+      #   n = n(),
+      #   n_label = paste(unique(paste0("N=", n, " (", GROUP, ")")),
+      #                   collapse = ", "),
+      #   .by = c("DOSE")
+      # ) %>%
+
+      ggplot(aes(
+        x = NTIME, y = mean, group = GROUP, color = COLOR)) +
+      {if (lines) geom_line(na.rm = TRUE)} +
+      {if (points) geom_point(na.rm = TRUE)} +
+      {if (log == TRUE) scale_y_log10()} +
+      geom_ribbon(
+        aes(ymin = mean - sd, ymax = mean + sd, fill = as.factor(GROUP)),
+        alpha = 0.3, color = NA, show.legend = FALSE) +
+      {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+      labs(x = "nominal time (h)", y = y_label, color = color_label,
+           caption = "Mean and SD") +
+      # {if(show_n == TRUE) geom_text(
+      #   aes(label =
+      #     n_label),
+      #   x = -Inf,
+      #   y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
+      theme_bw() +
+      theme(legend.position = ifelse(
+        show_color == TRUE & legend == TRUE, "bottom", "none"))
+
+  } else {
+    # spaghetti plot
+    x %>%
+      ggplot(aes(x = active_time, y = DV, group = GROUP, color = COLOR ,
+                 admin = ADMIN)) +
+      {if(!is.null(admin)) geom_admin()} +
+      {if(points == TRUE) geom_point(na.rm = TRUE)} +
+      {if (lines) geom_line(na.rm = TRUE)} +
+      {if (log == TRUE) scale_y_log10()} +
+      {if(length(unique(x$DOSE)) > 1) facet_wrap(~DOSE)} +
+      labs(x = x_label, y = y_label, color = color_label, caption = caption) +
+      theme_bw() +
+      theme(legend.position =
+              ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +
+      ggtitle(title)
+  }
 }
 
 
-
-
-
+## TO DO:
+##
+## - replace geom_admin() with a custom function that plots the administration
+##   of the parent, irrespective of the analyte!
 
 
 

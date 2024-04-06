@@ -973,7 +973,7 @@ add_tad <- function(nif) {
     as.data.frame() %>%
     mutate(admin_time = case_when(
       .data$EVID == 1 ~ .data$TIME)) %>%
-    arrange(.data$ID, .data$PARENT, .data$TIME) %>%
+    arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) %>%
     group_by(.data$ID, .data$PARENT) %>%
     fill(admin_time, .direction = "down") %>%
     ungroup() %>%
