@@ -99,7 +99,7 @@ synthesize_subjects <- function(studyid = "2023001", nsubs = 10, nsites = 4,
   site_names <- 100 + seq(1:nsites)
   sbs <- data.frame(
     SITEID = "", SUBJID = "", ACTARM = "", ACTARMCD = "", RFICDTC = NA,
-    RFSTDTC = NA
+    RFSTDTC = NA, RFXSTDTC = NA
   )
   sbs_by_site <- rep(0, nsites)
 
@@ -123,7 +123,8 @@ synthesize_subjects <- function(studyid = "2023001", nsubs = 10, nsites = 4,
         RFSTDTC = case_when(
           enrolled ~ RFICDTC + floor(rnorm(1, 10, 2)) * 60 * 60 * 24,
           .default = NA
-        )
+        ),
+        RFXSTDTC = RFSTDTC
       )
   }
   return(sbs[-1, ])
@@ -150,8 +151,9 @@ synthesize_subjects <- function(studyid = "2023001", nsubs = 10, nsites = 4,
 #' @return The DM data as data frame.
 #' @import dplyr
 #' @export
-synthesize_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5, duration = 7,
-                    female_fraction = 0.5, min_age = 18, max_age = 55) {
+synthesize_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5,
+                          duration = 7, female_fraction = 0.5, min_age = 18,
+                          max_age = 55) {
   sbs <- synthesize_subjects(studyid, nsubs, nsites)
   dm <- sbs %>%
     group_by_all() %>%
