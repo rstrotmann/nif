@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,11 @@
           <code><a href="add_analyte_mapping.html">add_analyte_mapping()</a></code> 
         </dt>
         <dd>Attach a treatment-analyte mapping to an SDTM object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="add_baseline.html">add_baseline()</a></code> 
+        </dt>
+        <dd>Add baseline field</dd>
       </dl><dl><dt>
           
           <code><a href="add_bl_crcl.html">add_bl_crcl()</a></code> 
@@ -219,6 +224,11 @@ downstream analysis</dd>
         <dd>Serum creatinine estimation from eGFR (Raynaud method)</dd>
       </dl><dl><dt>
           
+          <code><a href="decompose_dtc.html">decompose_dtc()</a></code> 
+        </dt>
+        <dd>Decompose DTC field into date and time components</dd>
+      </dl><dl><dt>
+          
           <code><a href="domain.html">domain()</a></code> 
         </dt>
         <dd>Return a specific domain from a sdtm object</dd>
@@ -242,6 +252,11 @@ downstream analysis</dd>
           <code><a href="doses.html">doses()</a></code> 
         </dt>
         <dd>Doses within a NIF object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="edish_plot.html">edish_plot()</a></code> 
+        </dt>
+        <dd>Evaluation of drug-induced serious hepatotoxicity (eDISH) plot</dd>
       </dl><dl><dt>
           
           <code><a href="egfr_cg.html">egfr_cg()</a></code> 
@@ -378,6 +393,11 @@ administrations</dd>
         <dd>Convert all DTC fields from ISO 8601 into POSIXct</dd>
       </dl><dl><dt>
           
+          <code><a href="make_baseline.html">make_baseline()</a></code> 
+        </dt>
+        <dd>Add a baseline filed to a nif object</dd>
+      </dl><dl><dt>
+          
           <code><a href="make_nif.html">make_nif()</a></code> 
         </dt>
         <dd>Make a NIF object from SDTM-formatted data</dd>
@@ -443,19 +463,14 @@ administrations</dd>
         <dd>SDTM class constructor, creating a sdtm object from a set of SDTM domains</dd>
       </dl><dl><dt>
           
-          <code><a href="nice_enumeration.html">nice_enumeration()</a></code> 
-        </dt>
-        <dd>Nice enumeration of multiple strings</dd>
-      </dl><dl><dt>
-          
-          <code><a href="nif.html">nif()</a></code> 
-        </dt>
-        <dd>Make empty nif object.</dd>
-      </dl><dl><dt>
-          
           <code><a href="nif_debugger.html">nif_debugger()</a></code> 
         </dt>
         <dd>NIF file debugger</dd>
+      </dl><dl><dt>
+          
+          <code><a href="nif_mean_plot1.html">nif_mean_plot1()</a></code> 
+        </dt>
+        <dd>Mean plot for nif object</dd>
       </dl><dl><dt>
           
           <code><a href="nif_viewer.html">nif_viewer()</a></code> 
@@ -468,6 +483,11 @@ administrations</dd>
         <dd>Observations per dose level</dd>
       </dl><dl><dt>
           
+          <code><a href="order_nif_columns.html">order_nif_columns()</a></code> 
+        </dt>
+        <dd>Establish standard order of nif object columns</dd>
+      </dl><dl><dt>
+          
           <code><a href="parents.html">parents()</a></code> 
         </dt>
         <dd>Parent compounds within a NIF object</dd>
@@ -475,12 +495,17 @@ administrations</dd>
           
           <code><a href="plot.nif.html">plot(<i>&lt;nif&gt;</i>)</a></code> 
         </dt>
-        <dd>Plot NIF object</dd>
+        <dd>Plot nif object.</dd>
       </dl><dl><dt>
           
           <code><a href="plot.sdtm.html">plot(<i>&lt;sdtm&gt;</i>)</a></code> 
         </dt>
         <dd>Plot SDTM object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_z.html">plot_z()</a></code> 
+        </dt>
+        <dd>Plot nif object.</dd>
       </dl><dl><dt>
           
           <code><a href="read_sdtm.html">read_sdtm()</a></code> 
@@ -551,6 +576,11 @@ administrations</dd>
           <code><a href="synthesize_dm.html">synthesize_dm()</a></code> 
         </dt>
         <dd>Synthesize a fictional DM domain</dd>
+      </dl><dl><dt>
+          
+          <code><a href="time_by_ntime.html">time_by_ntime()</a></code> 
+        </dt>
+        <dd>Plot TIME vs NTIME</dd>
       </dl><dl><dt>
           
           <code><a href="usubjid.html">usubjid()</a></code> 

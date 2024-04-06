@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,27 +80,27 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">domain</span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="st">"dm"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    102 1020001   Fed - Fasted       BA 2000-12-21T10:29 2000-12-26T10:29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    104 1040001   Fed - Fasted       BA 2000-12-22T10:24 2000-12-28T10:24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    102 1020002 Screen Failure SCRNFAIL 2000-12-22T09:18             &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    105 1050001   Fasted - Fed       AB 2000-12-24T11:59 2001-01-01T11:59</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    102 1020003   Fed - Fasted       BA 2000-12-24T10:03 2001-01-02T10:03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    105 1050002   Fasted - Fed       AB 2000-12-24T08:40 2001-01-03T08:40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN            ARM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2023000400 20230004001020001   M  22 YEARS     DEU     DM   Fed - Fasted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2023000400 20230004001040001   M  43 YEARS     DEU     DM   Fed - Fasted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2023000400 20230004001020002   M  55 YEARS     DEU     DM Screen Failure</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2023000400 20230004001050001   M  54 YEARS     DEU     DM   Fasted - Fed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2023000400 20230004001020003   M  37 YEARS     DEU     DM   Fed - Fasted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2023000400 20230004001050002   M  24 YEARS     DEU     DM   Fasted - Fed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      ARMCD                      RACE ETHNIC          RFENDTC</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       BA                     WHITE        2001-01-08T10:29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       BA                     WHITE        2001-01-10T10:24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 SCRNFAIL BLACK OR AFRICAN AMERICAN                    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       AB                     WHITE        2001-01-14T11:59</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       BA BLACK OR AFRICAN AMERICAN        2001-01-15T10:03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       AB                     WHITE        2001-01-16T08:40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SITEID  SUBJID       ACTARM ACTARMCD          RFICDTC          RFSTDTC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    104 1040001 Fasted - Fed       AB 2000-12-24T09:15 2001-01-05T09:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    101 1010001 Fed - Fasted       BA 2000-12-27T08:27 2001-01-04T08:27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    102 1020001 Fed - Fasted       BA 2000-12-29T11:50 2001-01-08T11:50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    101 1010002 Fasted - Fed       AB 2000-12-31T09:06 2001-01-08T09:06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    104 1040002 Fed - Fasted       BA 2001-01-02T10:37 2001-01-13T10:37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    104 1040003 Fasted - Fed       AB 2001-01-02T11:19 2001-01-16T11:19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           RFXSTDTC    STUDYID           USUBJID SEX AGE  AGEU COUNTRY DOMAIN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-05T09:15 2023000400 20230004001040001   F  51 YEARS     DEU     DM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-04T08:27 2023000400 20230004001010001   M  24 YEARS     DEU     DM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-08T11:50 2023000400 20230004001020001   F  19 YEARS     DEU     DM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-08T09:06 2023000400 20230004001010002   F  49 YEARS     DEU     DM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-13T10:37 2023000400 20230004001040002   F  34 YEARS     DEU     DM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-16T11:19 2023000400 20230004001040003   F  46 YEARS     DEU     DM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            ARM ARMCD                      RACE ETHNIC          RFENDTC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Fasted - Fed    AB                     WHITE        2001-01-18T09:15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Fed - Fasted    BA                     WHITE        2001-01-17T08:27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Fed - Fasted    BA                     WHITE        2001-01-21T11:50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Fasted - Fed    AB BLACK OR AFRICAN AMERICAN        2001-01-21T09:06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Fed - Fasted    BA                     WHITE        2001-01-26T10:37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Fasted - Fed    AB                     WHITE        2001-01-29T11:19</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

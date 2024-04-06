@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,31 +81,28 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">filter_subject</span><span class="op">(</span><span class="va">examplinib_poc</span>, <span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ──────── SDTM data set summary ──────── </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Study 2023000022 with 1 subjects providing PC data.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Study 2023000022 with 0 subjects providing PC data.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Subjects per domain:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  DOMAIN   N   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  dm       1   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  vs       1   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ex       1   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  pc       1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ex       0   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  pc       0   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  lb       1   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Arms (DM):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ACTARM                 ACTARMCD    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Single Arm Treatment   TREATMENT   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ACTARM            ACTARMCD   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Screen Faillure   SCRNFAIL   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatments (EX):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  EXTRT        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  EXAMPLINIB    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  none </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Specimens (PC):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  none </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes (PC):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  PCTEST       PCTESTCD     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023       RS2023       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023487A   RS2023487A    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  none </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment-to-analyte mappings:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  EXTRT        PCTESTCD   </span>
@@ -121,25 +118,25 @@
 <span class="r-in"><span><span class="fu">filter_subject</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ──────── NONMEM input file (NIF) object ────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 observations from 1 subjects</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Males: 0, females: 1 (100%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 observations from 1 subjects</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Males: 1, females: 0 (0%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> REF, STUDYID, ID, USUBJID, NTIME, TIME, TAD, ANALYTE, AMT, RATE, DV, LNDV, MDV, CMT, EVID, DOSE, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, PARENT, METABOLITE, TRTDY, BL_CRCL, DTC, BL_CREAT </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, NTIME, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, REF, TAD, RATE, LNDV, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, TRTDY, BL_CREAT, BL_CRCL </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NIF data (selected columns):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       1      1     500   500    NA       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       0      2     0     NA     0        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023487A   0      3     0     NA     0        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023       0      2     0     500    3.38     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023487A   0      3     0     500    3.454    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023       0      2     0     500    1.477    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023487A   0      3     0     500    10.828   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       24      0       RS2023       1      1     500   500    NA       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       48      0       RS2023       1      1     500   500    NA       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       72      0       RS2023       1      1     500   500    NA       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66 more rows</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       1      1     500   500    NA      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       0      2     0     NA     0       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023487A   0      3     0     NA     0       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.5     0.85    0.85    RS2023       0      2     0     500    1.101   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.5     0.85    0.85    RS2023487A   0      3     0     500    0.317   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       1.383   1.383   RS2023       0      2     0     500    2.553   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       1.383   1.383   RS2023487A   0      3     0     500    1.646   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     1.9     1.9     RS2023       0      2     0     500    3.08    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     1.9     1.9     RS2023487A   0      3     0     500    3.687   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2       2.383   2.383   RS2023       0      2     0     500    2.642   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 more rows</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

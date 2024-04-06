@@ -40,6 +40,9 @@
     <loc>/reference/add_analyte_mapping.html</loc>
   </url>
   <url>
+    <loc>/reference/add_baseline.html</loc>
+  </url>
+  <url>
     <loc>/reference/add_bl_crcl.html</loc>
   </url>
   <url>
@@ -115,6 +118,9 @@
     <loc>/reference/analytes_cmts.html</loc>
   </url>
   <url>
+    <loc>/reference/append_statement.html</loc>
+  </url>
+  <url>
     <loc>/reference/baseline_covariates.html</loc>
   </url>
   <url>
@@ -169,6 +175,9 @@
     <loc>/reference/crea_raynaud.html</loc>
   </url>
   <url>
+    <loc>/reference/decompose_dtc.html</loc>
+  </url>
+  <url>
     <loc>/reference/df_to_string.html</loc>
   </url>
   <url>
@@ -191,6 +200,9 @@
   </url>
   <url>
     <loc>/reference/dtc_formats.html</loc>
+  </url>
+  <url>
+    <loc>/reference/edish_plot.html</loc>
   </url>
   <url>
     <loc>/reference/egfr_cg.html</loc>
@@ -310,6 +322,9 @@
     <loc>/reference/impute_admin_dtc_to_pcrftdtc.html</loc>
   </url>
   <url>
+    <loc>/reference/impute_admin_times_from_pcrftdtc.html</loc>
+  </url>
+  <url>
     <loc>/reference/impute_administration_time.html</loc>
   </url>
   <url>
@@ -365,6 +380,9 @@
   </url>
   <url>
     <loc>/reference/make_administration.html</loc>
+  </url>
+  <url>
+    <loc>/reference/make_baseline.html</loc>
   </url>
   <url>
     <loc>/reference/make_crea.html</loc>
@@ -469,6 +487,9 @@
     <loc>/reference/nif_mean_plot.html</loc>
   </url>
   <url>
+    <loc>/reference/nif_mean_plot1.html</loc>
+  </url>
+  <url>
     <loc>/reference/nif_plot_id.html</loc>
   </url>
   <url>
@@ -484,6 +505,9 @@
     <loc>/reference/obs_per_dose_level.html</loc>
   </url>
   <url>
+    <loc>/reference/order_nif_columns.html</loc>
+  </url>
+  <url>
     <loc>/reference/parents.html</loc>
   </url>
   <url>
@@ -497,6 +521,9 @@
   </url>
   <url>
     <loc>/reference/plot.summary_nif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_z.html</loc>
   </url>
   <url>
     <loc>/reference/positive_or_zero.html</loc>
@@ -533,6 +560,15 @@
   </url>
   <url>
     <loc>/reference/rich_sampling_sbs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/safe_mean.html</loc>
+  </url>
+  <url>
+    <loc>/reference/safe_min.html</loc>
+  </url>
+  <url>
+    <loc>/reference/safe_sd.html</loc>
   </url>
   <url>
     <loc>/reference/sdtm_domain_model.html</loc>
@@ -608,6 +644,9 @@
   </url>
   <url>
     <loc>/reference/synthesize_vs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/time_by_ntime.html</loc>
   </url>
   <url>
     <loc>/reference/usubjid.html</loc>

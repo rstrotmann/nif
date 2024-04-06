@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.47.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,7 @@
 <span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dose <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  time_field <span class="op">=</span> <span class="st">"TIME"</span>,</span>
 <span>  min_time <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -72,11 +73,13 @@
 <span>  point_size <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  tad <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  nominal_time <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cfb <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  admin <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  summary_function <span class="op">=</span> <span class="va">median</span>,</span>
-<span>  title <span class="op">=</span> <span class="st">""</span></span>
+<span>  title <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,6 +99,10 @@
 
 <dt>group</dt>
 <dd><p>The grouping variable(s).</p></dd>
+
+
+<dt>time_field</dt>
+<dd><p>The field to use as the time metric, as character.</p></dd>
 
 
 <dt>min_time</dt>
@@ -140,6 +147,10 @@ logical.</p></dd>
 <dd><p>Time after dose as logical.</p></dd>
 
 
+<dt>nominal_time</dt>
+<dd><p>Plot NTIME on x axis, as logical.</p></dd>
+
+
 <dt>cfb</dt>
 <dd><p>Change from baseline as logical.</p></dd>
 
@@ -154,6 +165,14 @@ logical.</p></dd>
 
 <dt>summary_function</dt>
 <dd><p>The summary function to apply if multiple baseline</p></dd>
+
+
+<dt>title</dt>
+<dd><p>The plot title as character.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>Further graphical parameters.</p></dd>
 
 </dl></div>
     <div class="section level2">
