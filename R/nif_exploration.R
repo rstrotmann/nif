@@ -870,21 +870,21 @@ nif_spaghetti_plot2 <- function(x,
 #' @export
 #'
 #' @examples
-#' plot_z(examplinib_fe_nif, points = TRUE)
-#' plot_z(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
-#' plot_z(examplinib_sad_nif)
-#' plot_z(examplinib_sad_nif, cfb = TRUE)
-#' plot_z(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
-#' plot_z(examplinib_poc_nif)
-#' plot_z(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
+#' plot(examplinib_fe_nif, points = TRUE)
+#' plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
+#' plot(examplinib_sad_nif)
+#' plot(examplinib_sad_nif, cfb = TRUE)
+#' plot(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
+#' plot(examplinib_poc_nif)
+#' plot(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
 #'   group = "SEX", points = TRUE, lines = FALSE)
-#' plot_z(examplinib_poc_nif, analyte="RS2023", time = "TAD",
+#' plot(examplinib_poc_nif, analyte="RS2023", time = "TAD",
 #'   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
-#' plot_z(examplinib_sad_min_nif)
-#' plot_z(examplinib_poc_min_nif, dose = 500, cmt = 2)
-#' plot_z(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
+#' plot(examplinib_sad_min_nif)
+#' plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
+#' plot(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
 #'   points = TRUE, lines = FALSE)
-plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
+plot.nif <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
                                time = "TIME", group = NULL, min_time = 0,
                                max_time = NULL, points = FALSE, lines = TRUE,
                                admin = FALSE, cfb = FALSE,
@@ -1214,7 +1214,7 @@ nif_mean_plot1 <- function(
 #' @inheritParams nif_spaghetti_plot1
 #' @param mean Mean plot as logical.
 #' @export
-plot.nif <- function(x, analyte = NULL, dose = NULL, group = NULL,
+plot.nif.bak <- function(x, analyte = NULL, dose = NULL, group = NULL,
                      time_field = "TIME",
                      min_time = 0, max_time = NULL,
                      min_x = NULL, max_x = NULL,

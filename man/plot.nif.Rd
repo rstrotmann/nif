@@ -5,80 +5,93 @@
 \title{Plot nif object.}
 \usage{
 \method{plot}{nif}(
-  x,
+  nif,
   analyte = NULL,
   dose = NULL,
+  log = FALSE,
+  time = "TIME",
   group = NULL,
-  time_field = "TIME",
   min_time = 0,
   max_time = NULL,
-  min_x = NULL,
-  max_x = NULL,
-  limit_time_to_observations = TRUE,
   points = FALSE,
   lines = TRUE,
-  point_size = 2,
-  alpha = 1,
-  tad = FALSE,
-  nominal_time = FALSE,
-  cfb = FALSE,
-  log = FALSE,
   admin = FALSE,
+  cfb = FALSE,
   summary_function = median,
+  silent = TRUE,
+  mean = FALSE,
   title = "",
-  mean = F,
+  caption = "",
+  integrate_predose = TRUE,
+  legend = TRUE,
+  show_n = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{A nif object.}
+\item{nif}{A nif object.}
 
-\item{analyte}{The analyte.}
+\item{analyte}{The analyte as character.}
 
-\item{dose}{The dose(s) to select as numeric.}
+\item{dose}{The dose as numeric.}
 
-\item{group}{The grouping variable(s).}
+\item{log}{Logarithmic y scale}
 
-\item{time_field}{The field to use as the time metric, as character.}
+\item{time}{The time field to use, as character. Can be 'TIME', 'NTIME',
+'TAFD' or 'TAD'.}
 
-\item{min_time}{The minimum time as numeric.}
+\item{group}{The grouping variable as character.}
 
-\item{max_time}{The maximum time as numeric.}
+\item{min_time}{The minimal time as numeric.}
 
-\item{min_x}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Use min_time instead.}
+\item{max_time}{The maximal time as numeric.}
 
-\item{max_x}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Use max_time instead. values
-are present.}
+\item{points}{Show data points as logical.}
 
-\item{limit_time_to_observations}{Truncate time axis to last observation, as
-logical.}
+\item{lines}{Show lines as logical.}
 
-\item{points}{Plot points as logical.}
+\item{admin}{Show vertical lines for administrations, as logical.}
 
-\item{lines}{Plot lines as logical.}
+\item{cfb}{Show change from baseline, as logical.}
 
-\item{point_size}{The point size as numeric.}
+\item{summary_function}{The summarizing function to apply to multiple
+baseline values.}
 
-\item{alpha}{The alpha value for point plotting.}
+\item{silent}{Suppress messages as logical.}
 
-\item{tad}{Time after dose as logical.}
-
-\item{nominal_time}{Plot NTIME on x axis, as logical.}
-
-\item{cfb}{Change from baseline as logical.}
-
-\item{log}{Logarithmic y scale as logical.}
-
-\item{admin}{Plot administrations as logical.}
-
-\item{summary_function}{The summary function to apply if multiple baseline}
+\item{mean}{Show a mean plot, as logical.}
 
 \item{title}{The plot title as character.}
 
-\item{mean}{Mean plot as logical.}
+\item{caption}{The plot caption line as character.}
+
+\item{integrate_predose}{Complete 'DOSE' field for predose values.}
+
+\item{legend}{Show legend, as logical.}
+
+\item{show_n}{Show sample size in mean plot, as logical.}
 
 \item{...}{Further graphical parameters.}
 }
+\value{
+A ggplot object.
+}
 \description{
 Plot nif object.
+}
+\examples{
+plot(examplinib_fe_nif, points = TRUE)
+plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
+plot(examplinib_sad_nif)
+plot(examplinib_sad_nif, cfb = TRUE)
+plot(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
+plot(examplinib_poc_nif)
+plot(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
+  group = "SEX", points = TRUE, lines = FALSE)
+plot(examplinib_poc_nif, analyte="RS2023", time = "TAD",
+  dose = 500, log = FALSE, points = TRUE, lines = FALSE)
+plot(examplinib_sad_min_nif)
+plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
+plot(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
+  points = TRUE, lines = FALSE)
 }
