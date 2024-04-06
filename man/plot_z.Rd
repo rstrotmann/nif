@@ -69,6 +69,8 @@ baseline values.}
 
 \item{legend}{Show legend, as logical.}
 
+\item{show_n}{Show sample size in mean plot, as logical.}
+
 \item{...}{Further graphical parameters.}
 }
 \value{

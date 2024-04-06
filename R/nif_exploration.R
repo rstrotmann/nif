@@ -1024,30 +1024,33 @@ plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
       # group_by(DOSE, GROUP) %>%
       # mutate(n_group = max(n)) %>%
       # ungroup() %>%
-      #
+
       # reframe(
       #   n = n(),
-      #   n_label = paste(unique(paste0("N=", n, " (", GROUP, ")")),
-      #                   collapse = ", "),
+      #   # n_label = paste(unique(paste0("N=", n, " (", GROUP, ")")),
+      #   #                 collapse = ", "),
       #   .by = c("DOSE")
       # ) %>%
 
       ggplot(aes(
         x = NTIME, y = mean, group = GROUP, color = COLOR)) +
       {if (lines) geom_line(na.rm = TRUE)} +
-      {if (points) geom_point(na.rm = TRUE)} +
+      {if (points) geom_point(na.rm = TRUE, ...)} +
       {if (log == TRUE) scale_y_log10()} +
       geom_ribbon(
         aes(ymin = mean - sd, ymax = mean + sd, fill = as.factor(GROUP)),
         alpha = 0.3, color = NA, show.legend = FALSE) +
       {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+      xlim(c(min_time, max_time)) +
       labs(x = "nominal time (h)", y = y_label, color = color_label,
            caption = "Mean and SD") +
+
       # {if(show_n == TRUE) geom_text(
       #   aes(label =
-      #     n_label),
+      #     n),
       #   x = -Inf,
       #   y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
+
       theme_bw() +
       theme(legend.position = ifelse(
         show_color == TRUE & legend == TRUE, "bottom", "none"))
@@ -1058,11 +1061,12 @@ plot_z <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
       ggplot(aes(x = active_time, y = DV, group = GROUP, color = COLOR ,
                  admin = ADMIN)) +
       {if(!is.null(admin)) geom_admin()} +
-      {if(points == TRUE) geom_point(na.rm = TRUE)} +
+      {if(points == TRUE) geom_point(na.rm = TRUE, ...)} +
       {if (lines) geom_line(na.rm = TRUE)} +
       {if (log == TRUE) scale_y_log10()} +
       {if(length(unique(x$DOSE)) > 1) facet_wrap(~DOSE)} +
       labs(x = x_label, y = y_label, color = color_label, caption = caption) +
+      xlim(c(min_time, max_time)) +
       theme_bw() +
       theme(legend.position =
               ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +

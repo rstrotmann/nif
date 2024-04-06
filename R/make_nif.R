@@ -1536,7 +1536,8 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
 #' @export
 #' @keywords internal
 make_subjects <- function(
-    dm, vs, silent = FALSE, subject_filter = {ACTARMCD != "SCRNFAIL"},
+    dm, vs, silent = FALSE,
+    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
     cleanup = TRUE
   ) {
   # if AGE is not present in DM, calculate age from birthday and informed
@@ -1553,18 +1554,17 @@ make_subjects <- function(
 
   out <- dm %>%
     lubrify_dates() %>%
-    verify(has_all_names("USUBJID", "SEX", "ACTARMCD")) %>%
+    verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     filter({{subject_filter}}) %>%
     left_join(baseline_covariates(vs, silent = silent),
               by = "USUBJID") %>%
     recode_sex() %>%
-    # mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     mutate(ID = NA) %>%
     relocate("ID") %>%
     arrange("ID") %>%
     {if(cleanup == TRUE) select(., any_of(c(
       "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD"))) else .}
+      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))) else .}
   return(out)
 }
 
@@ -1678,6 +1678,10 @@ make_observation <- function(
       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "METABOLITE",
       "DOSE", "DV", "MDV", "ACTARMCD", "IMPT_TIME"))) else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
+    group_by(USUBJID) %>%
+    mutate(TRTDY = as.numeric(
+      difftime(date(DTC), date(safe_min(RFXSTDTC))), units = "days") + 1) %>%
+    ungroup() %>%
     filter(!is.na(DTC)) %>%
     new_nif()
 }
@@ -1885,6 +1889,11 @@ make_administration <- function(
       else .
     } %>%
     inner_join(sbs, by = "USUBJID") %>%
+    group_by(USUBJID) %>%
+    mutate(TRTDY = as.numeric(
+      difftime(date(DTC), date(safe_min(RFXSTDTC))), units = "days") + 1) %>%
+      # difftime(date(DTC), date(RFXSTDT), units = "days") + 1)) %>%
+    ungroup() %>%
     new_nif()
 
   return(admin)

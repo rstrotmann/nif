@@ -9,7 +9,7 @@ make_subjects(
   vs,
   silent = FALSE,
   subject_filter = {
-     ACTARMCD != "SCRNFAIL"
+     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
  },
   cleanup = TRUE
 )
