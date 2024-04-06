@@ -884,7 +884,7 @@ nif_spaghetti_plot2 <- function(x,
 #' plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
 #' plot(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
 #'   points = TRUE, lines = FALSE)
-plot.nif <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
+plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE,
                                time = "TIME", group = NULL, min_time = 0,
                                max_time = NULL, points = FALSE, lines = TRUE,
                                admin = FALSE, cfb = FALSE,
@@ -899,7 +899,7 @@ plot.nif <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
   }
 
   # Assert fields
-  x <- nif %>%
+  x <- x %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
@@ -934,7 +934,7 @@ plot.nif <- function(nif, analyte = NULL, dose = NULL, log = FALSE,
   x <- filter(x, active_time <= max_time & active_time >= min_time)
 
   # filter for analyte, set y axis label
-  if(is.null(analyte)) {analyte <- analytes(nif)}
+  if(is.null(analyte)) {analyte <- analytes(x)}
   x <- filter(x, (ANALYTE %in% analyte))
   n_analyte <- x %>%
     filter(EVID == 0) %>%

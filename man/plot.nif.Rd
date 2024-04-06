@@ -5,7 +5,7 @@
 \title{Plot nif object.}
 \usage{
 \method{plot}{nif}(
-  nif,
+  x,
   analyte = NULL,
   dose = NULL,
   log = FALSE,
@@ -29,8 +29,6 @@
 )
 }
 \arguments{
-\item{nif}{A nif object.}
-
 \item{analyte}{The analyte as character.}
 
 \item{dose}{The dose as numeric.}
@@ -72,6 +70,8 @@ baseline values.}
 \item{show_n}{Show sample size in mean plot, as logical.}
 
 \item{...}{Further graphical parameters.}
+
+\item{nif}{A nif object.}
 }
 \value{
 A ggplot object.
