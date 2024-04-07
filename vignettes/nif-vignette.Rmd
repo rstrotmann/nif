@@ -109,7 +109,7 @@ covariates from AE, LB or any other SDTM domain are to be added, an explicit
 list of the domains can be provided to the loading function, e.g., 
 
 ```{r, eval=FALSE, echo=T}
-read_sdtm_sas("path/to/sdtm/data", "dm", "vs", "ex", "pc", "lb", "ae")
+read_sdtm("path/to/sdtm/data", c("dm", "vs", "ex", "pc", "lb", "ae"))
 ```
 
 The return value of this function is a `sdtm` object.

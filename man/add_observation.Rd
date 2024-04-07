@@ -19,7 +19,7 @@ add_observation(
      TRUE
  },
   subject_filter = {
-     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
+     TRUE
  },
   NTIME_lookup = NULL,
   silent = FALSE,

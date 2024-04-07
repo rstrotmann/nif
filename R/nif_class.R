@@ -433,6 +433,35 @@ ensure_tad <- function(obj) {
 }
 
 
+#' Title
+#'
+#' @param obj A nif object.
+#'
+#' @return A nif object.
+#' @export
+ensure_tafd <- function(obj) {
+  obj <- obj %>%
+    {if(!"TAFD" %in% names(obj))
+      add_tafd(.) else .}
+}
+
+
+#' Ensure that all time fields are in the nif object
+#'
+#' @param obj A nif object.
+#'
+#' @return A nif object.
+#' @export
+#'
+#' @examples
+#' head(ensure_time(examplinib_poc_nif))
+ensure_time <- function(obj) {
+  obj <- obj %>%
+    {if(!all(c("TIME", "TAD", "TAFD") %in% names(obj)))
+      make_time(.) else .}
+}
+
+
 #' Ensure that NTIME is present in the NIF object
 #'
 #' Experimental, do not use in production! Uses assumptions about the sampling

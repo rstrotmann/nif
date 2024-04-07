@@ -4,7 +4,7 @@
 \alias{safe_sd}
 \title{SD derivative that works with vectors containing NaN}
 \usage{
-safe_sd(x)
+safe_sd(x, ...)
 }
 \arguments{
 \item{x}{The input as numeric.}

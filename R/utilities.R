@@ -312,7 +312,7 @@ append_statement <- function(object, statement) {
 #' @return The mean as numeric.
 #' @export
 #' @keywords internal
-safe_mean <- function(x) {
+safe_mean <- function(x, ...) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if(length(temp) == 0) return(NA)
   out <- mean(temp, na.rm = T)
@@ -328,7 +328,7 @@ safe_mean <- function(x) {
 #' @return The mean as numeric.
 #' @export
 #' @keywords internal
-safe_sd <- function(x) {
+safe_sd <- function(x, ...) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if(length(temp) == 0) return(NA)
   out <- sd(temp, na.rm = T)
@@ -344,11 +344,33 @@ safe_sd <- function(x) {
 #' @return The mean as numeric.
 #' @export
 #' @keywords internal
-safe_min <- function(x) {
+safe_min <- function(x, ...) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if(length(temp) == 0) return(NA)
   out <- min(temp, na.rm = T)
   attributes(out)$N <- length(temp[!is.na(temp)])
   return(out)
+}
+
+
+#' Difference, or zero, if difference is negative
+#'
+#' @param a A as numeric.
+#' @param b B as numeric.
+#'
+#' @return Numeric.
+#' @export
+#' @keywords internal
+pos_diff <- function(a, b) {
+  # temp <- a - b
+  # temp[temp < 0] <- a
+  # return(temp)
+
+  data.frame(
+    a = a,
+    b = b
+  ) %>%
+    mutate(diff = case_when(a - b < 0 ~ NA, .default = a - b)) %>%
+    pull(diff)
 }
 

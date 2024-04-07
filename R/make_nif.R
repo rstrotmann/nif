@@ -1001,7 +1001,8 @@ make_nif <- function(
     dplyr::mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     dplyr::relocate(.data$ID) %>%
     new_nif() %>%
-    add_tad() %>%
+    # add_tad() %>%
+    make_time() %>%
     index_nif()
 
   comment(nif) <- paste0("created with nif ", packageVersion("nif"))
@@ -1623,7 +1624,8 @@ make_observation <- function(
     TESTCD_field = NULL,
     cmt = NA,
     observation_filter = {TRUE},
-    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    # subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    subject_filter = {TRUE},
     NTIME_lookup = NULL,
     silent = FALSE,
     cleanup = TRUE) {
@@ -1641,15 +1643,32 @@ make_observation <- function(
     lubrify_dates()
 
   if(is.null(NTIME_lookup)) {
-    if("time_mapping" %in% names(sdtm) & nrow(sdtm$time_mapping) > 0 &
-       any(names(sdtm$time_mapping) %in% names(obj))){
-      NTIME_lookup <- sdtm$time_mapping
+    if(str_to_lower(domain) == "pc") {
+      if("time_mapping" %in% names(sdtm) & nrow(sdtm$time_mapping) > 0 &
+          any(names(sdtm$time_mapping) %in% names(obj))){
+        NTIME_lookup <- sdtm$time_mapping
+      } else {
+        if("PCELTM" %in% names(obj)) {
+          if("PCDY" %in% names(obj)){
+            NTIME_lookup <- obj %>%
+              distinct(.data$PCDY, .data$PCELTM) %>%
+            mutate(NTIME = as.numeric(stringr::str_extract(
+              .data$PCELTM, "PT([.0-9]+)H", group = 1)) +
+                (.data[["PCDY"]] - 1) * 24)
+
+          } else {
+            NTIME_lookup <- obj %>%
+              distinct(.data$PCELTM) %>%
+              mutate(NTIME = as.numeric(stringr::str_extract(
+                .data$PCELTM, "PT([.0-9]+)H", group = 1)))
+          }
+        }
+      }
     } else {
-      if("PCELTM" %in% names(obj)) {
-        NTIME_lookup <- obj %>%
-          distinct(.data$PCELTM) %>%
-          mutate(NTIME = as.numeric(stringr::str_extract(
-            .data$PCELTM, "PT([.0-9]+)H", group = 1)))
+      xxdy <- paste0(str_to_upper(domain), "DY")
+      if(xxdy %in% names(obj)) {
+        NTIME_lookup <- distinct(obj, .data[[xxdy]]) %>%
+          mutate(NTIME = (.data[[xxdy]] - 1) * 24)
       }
     }
   }
@@ -1975,7 +1994,8 @@ add_observation <- function(
     TESTCD_field = NULL,
     cmt = NULL,
     observation_filter = {TRUE},
-    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    # subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    subject_filter = {TRUE},
     NTIME_lookup = NULL,
     silent = FALSE,
     cleanup = TRUE) {

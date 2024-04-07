@@ -4,7 +4,7 @@
 \alias{safe_mean}
 \title{Mean derivative that works with vectors containing NaN}
 \usage{
-safe_mean(x)
+safe_mean(x, ...)
 }
 \arguments{
 \item{x}{The input as numeric.}

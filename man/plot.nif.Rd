@@ -9,13 +9,13 @@
   analyte = NULL,
   dose = NULL,
   log = FALSE,
-  time = "TIME",
+  time = "TAFD",
   group = NULL,
-  min_time = 0,
+  min_time = NULL,
   max_time = NULL,
   points = FALSE,
   lines = TRUE,
-  admin = FALSE,
+  admin = NULL,
   cfb = FALSE,
   summary_function = median,
   silent = TRUE,
@@ -29,6 +29,8 @@
 )
 }
 \arguments{
+\item{x}{A nif object.}
+
 \item{analyte}{The analyte as character.}
 
 \item{dose}{The dose as numeric.}
@@ -70,8 +72,6 @@ baseline values.}
 \item{show_n}{Show sample size in mean plot, as logical.}
 
 \item{...}{Further graphical parameters.}
-
-\item{nif}{A nif object.}
 }
 \value{
 A ggplot object.
