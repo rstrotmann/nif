@@ -6,7 +6,7 @@
 \usage{
 edish_plot(
   nif,
-  lb,
+  sdtm,
   enzyme = "ALT",
   show_labels = FALSE,
   nominal_time = TRUE,
@@ -19,8 +19,6 @@ edish_plot(
 }
 \arguments{
 \item{nif}{A nif object.}
-
-\item{lb}{The LB SDTM domain as data frame.}
 
 \item{enzyme}{The transaminase to be plotted on the x axis as character.}
 
@@ -37,6 +35,8 @@ edish_plot(
 \item{alpha}{The alpha value as numeric.}
 
 \item{...}{Further graphical parameters.}
+
+\item{lb}{The LB SDTM domain as data frame.}
 }
 \value{
 A ggplot object.

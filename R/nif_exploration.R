@@ -1825,7 +1825,7 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' DOI: 10.2165/11586600-000000000-00000
 #'
 #' @param nif A nif object.
-#' @param lb The LB SDTM domain as data frame.
+#' @param sdtm A sdtm object.
 #' @param enzyme The transaminase to be plotted on the x axis as character.
 #' @param title The plot title as character.
 #' @param size The point size as numeric.
@@ -1838,16 +1838,20 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
 #' @export
-edish_plot <- function(nif, lb, enzyme = "ALT", show_labels = FALSE,
+edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
                        nominal_time = TRUE, time = NULL,
                        title = "eDISH plot: All time points", size = 3,
                        alpha = 0.5, ...) {
-  lb_hy <- lb %>%
+  lb <- sdtm$domains[["lb"]]
+  lb1 <- lb %>%
+    mutate(LB1DTC = LBDTC) %>%
     filter(LBTESTCD %in% c(enzyme, "BILI")) %>%
-    mutate(LBTESTCD = case_match(LBTESTCD, "BILI" ~ "BILI",
+    mutate(LB1TESTCD = case_match(LBTESTCD, "BILI" ~ "BILI",
                                  .default = "ENZ")) %>%
-    mutate(LBTESTCD = paste0(LBTESTCD, "_X_ULN"),
-           LBSTRESN = LBSTRESN / LBSTNRHI)
+    mutate(LB1TESTCD = paste0(LB1TESTCD, "_X_ULN"),
+           LB1STRESN = LBSTRESN / LBSTNRHI)
+
+  sdtm$domains[["lb1"]] <- lb1
 
   if(nominal_time == TRUE) {
     nif <- nif %>%
@@ -1858,14 +1862,13 @@ edish_plot <- function(nif, lb, enzyme = "ALT", show_labels = FALSE,
       filter(TIME %in% time)
   }
 
+  parent = guess_analyte(nif)
+
   suppressWarnings({
     p <- nif %>%
-      # add_lab_observation(lb_hy, lbtestcd = "ENZ_X_ULN", lbspec = "SERUM",
-      #                     silent = TRUE) %>%
-      # add_lab_observation(lb_hy, lbtestcd = "BILI_X_ULN", lbspec = "SERUM",
-      #                     silent = TRUE) %>%
-      add_lab_observation(lb_hy, lbtestcd = "ENZ_X_ULN", silent = TRUE) %>%
-      add_lab_observation(lb_hy, lbtestcd = "BILI_X_ULN", silent = TRUE) %>%
+      add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent, silent = TRUE) %>%
+      add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent, silent = TRUE) %>%
+
       as.data.frame() %>%
       filter(ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
       select(ID, TIME, ANALYTE, DV) %>%
@@ -1885,4 +1888,12 @@ edish_plot <- function(nif, lb, enzyme = "ALT", show_labels = FALSE,
   })
   return(p)
 }
+
+
+
+
+
+
+
+
 
