@@ -62,25 +62,23 @@
 <span>  <span class="va">x</span>,</span>
 <span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dose <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  time <span class="op">=</span> <span class="st">"TAFD"</span>,</span>
 <span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  time_field <span class="op">=</span> <span class="st">"TIME"</span>,</span>
-<span>  min_time <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  min_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  min_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  limit_time_to_observations <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  points <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  point_size <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  tad <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  nominal_time <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  admin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cfb <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  admin <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  summary_function <span class="op">=</span> <span class="va">median</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  mean <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  mean <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  caption <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  integrate_predose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_n <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -92,96 +90,123 @@
 
 
 <dt>analyte</dt>
-<dd><p>The analyte.</p></dd>
+<dd><p>The analyte as character.</p></dd>
 
 
 <dt>dose</dt>
-<dd><p>The dose(s) to select as numeric.</p></dd>
-
-
-<dt>group</dt>
-<dd><p>The grouping variable(s).</p></dd>
-
-
-<dt>time_field</dt>
-<dd><p>The field to use as the time metric, as character.</p></dd>
-
-
-<dt>min_time</dt>
-<dd><p>The minimum time as numeric.</p></dd>
-
-
-<dt>max_time</dt>
-<dd><p>The maximum time as numeric.</p></dd>
-
-
-<dt>min_x</dt>
-<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Use min_time instead.</p></dd>
-
-
-<dt>max_x</dt>
-<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Use max_time instead. values
-are present.</p></dd>
-
-
-<dt>limit_time_to_observations</dt>
-<dd><p>Truncate time axis to last observation, as
-logical.</p></dd>
-
-
-<dt>points</dt>
-<dd><p>Plot points as logical.</p></dd>
-
-
-<dt>lines</dt>
-<dd><p>Plot lines as logical.</p></dd>
-
-
-<dt>point_size</dt>
-<dd><p>The point size as numeric.</p></dd>
-
-
-<dt>alpha</dt>
-<dd><p>The alpha value for point plotting.</p></dd>
-
-
-<dt>tad</dt>
-<dd><p>Time after dose as logical.</p></dd>
-
-
-<dt>nominal_time</dt>
-<dd><p>Plot NTIME on x axis, as logical.</p></dd>
-
-
-<dt>cfb</dt>
-<dd><p>Change from baseline as logical.</p></dd>
+<dd><p>The dose as numeric.</p></dd>
 
 
 <dt>log</dt>
-<dd><p>Logarithmic y scale as logical.</p></dd>
+<dd><p>Logarithmic y scale</p></dd>
+
+
+<dt>time</dt>
+<dd><p>The time field to use, as character. Can be 'TIME', 'NTIME',
+'TAFD' or 'TAD'.</p></dd>
+
+
+<dt>group</dt>
+<dd><p>The grouping variable as character.</p></dd>
+
+
+<dt>min_time</dt>
+<dd><p>The minimal time as numeric.</p></dd>
+
+
+<dt>max_time</dt>
+<dd><p>The maximal time as numeric.</p></dd>
+
+
+<dt>points</dt>
+<dd><p>Show data points as logical.</p></dd>
+
+
+<dt>lines</dt>
+<dd><p>Show lines as logical.</p></dd>
 
 
 <dt>admin</dt>
-<dd><p>Plot administrations as logical.</p></dd>
+<dd><p>Show vertical lines for administrations, as logical.</p></dd>
+
+
+<dt>cfb</dt>
+<dd><p>Show change from baseline, as logical.</p></dd>
 
 
 <dt>summary_function</dt>
-<dd><p>The summary function to apply if multiple baseline</p></dd>
+<dd><p>The summarizing function to apply to multiple
+baseline values.</p></dd>
+
+
+<dt>silent</dt>
+<dd><p>Suppress messages as logical.</p></dd>
+
+
+<dt>mean</dt>
+<dd><p>Show a mean plot, as logical.</p></dd>
 
 
 <dt>title</dt>
 <dd><p>The plot title as character.</p></dd>
 
 
-<dt>mean</dt>
-<dd><p>Mean plot as logical.</p></dd>
+<dt>caption</dt>
+<dd><p>The plot caption line as character.</p></dd>
+
+
+<dt>integrate_predose</dt>
+<dd><p>Complete 'DOSE' field for predose values.</p></dd>
+
+
+<dt>legend</dt>
+<dd><p>Show legend, as logical.</p></dd>
+
+
+<dt>show_n</dt>
+<dd><p>Show sample size in mean plot, as logical.</p></dd>
 
 
 <dt>...</dt>
 <dd><p>Further graphical parameters.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
 
+<p>A ggplot object.</p>
+    </div>
+
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, nominal_time <span class="op">=</span> <span class="cn">TRUE</span>, group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_sad_nif</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_sad_nif</span>, cfb <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span>, admin <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-6.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span>, time <span class="op">=</span> <span class="st">"NTIME"</span>,</span></span>
+<span class="r-in"><span>  group <span class="op">=</span> <span class="st">"SEX"</span>, points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-7.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span>, time <span class="op">=</span> <span class="st">"TAD"</span>,</span></span>
+<span class="r-in"><span>  dose <span class="op">=</span> <span class="fl">500</span>, log <span class="op">=</span> <span class="cn">FALSE</span>, points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-8.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_sad_min_nif</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-9.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span>, dose <span class="op">=</span> <span class="fl">500</span>, cmt <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-10.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span>, dose <span class="op">=</span> <span class="fl">500</span>, cmt <span class="op">=</span> <span class="fl">2</span>, time <span class="op">=</span> <span class="st">"TAD"</span>,</span></span>
+<span class="r-in"><span>  points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-11.png" alt="" width="700" height="433"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

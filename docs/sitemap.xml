@@ -232,6 +232,12 @@
     <loc>/reference/ensure_tad.html</loc>
   </url>
   <url>
+    <loc>/reference/ensure_tafd.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ensure_time.html</loc>
+  </url>
+  <url>
     <loc>/reference/examplinib.html</loc>
   </url>
   <url>
@@ -514,6 +520,9 @@
     <loc>/reference/pk_sim.html</loc>
   </url>
   <url>
+    <loc>/reference/plot.nif.bak.html</loc>
+  </url>
+  <url>
     <loc>/reference/plot.nif.html</loc>
   </url>
   <url>
@@ -524,6 +533,9 @@
   </url>
   <url>
     <loc>/reference/plot_z.html</loc>
+  </url>
+  <url>
+    <loc>/reference/pos_diff.html</loc>
   </url>
   <url>
     <loc>/reference/positive_or_zero.html</loc>

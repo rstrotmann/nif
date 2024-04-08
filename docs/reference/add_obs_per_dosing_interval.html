@@ -85,42 +85,42 @@ conducted.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_obs_per_dosing_interval</span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6,443 × 31</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   ID, USUBJID, ANALYTE, PARENT, DI [5,297]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ID USUBJID          STUDYID DTC                  TIME NTIME ANALYTE PARENT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">09:35:00</span>  0      0   RS2023  RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">09:35:00</span>  0      0   RS2023  RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">09:35:00</span>  0      0   RS2023… RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">10:26:00</span>  0.85   0.5 RS2023  RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">10:26:00</span>  0.85   0.5 RS2023… RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">10:58:00</span>  1.38   1   RS2023  RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">10:58:00</span>  1.38   1   RS2023… RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">11:29:00</span>  1.9    1.5 RS2023  RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">11:29:00</span>  1.9    1.5 RS2023… RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 202300002210100… 202300… 2001-01-04 <span style="color: #949494;">11:58:00</span>  2.38   2   RS2023  RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6,433 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6,578 × 32</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   ID, USUBJID, ANALYTE, PARENT, DI [5,427]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       ID USUBJID    STUDYID DTC                  TIME  TAFD NTIME ANALYTE PARENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 202300002… 202300… 2001-01-15 <span style="color: #949494;">10:36:00</span>  0     0      0   RS2023  RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 202300002… 202300… 2001-01-15 <span style="color: #949494;">10:36:00</span>  0     0      0   RS2023  RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1 202300002… 202300… 2001-01-15 <span style="color: #949494;">10:36:00</span>  0     0      0   RS2023… RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1 202300002… 202300… 2001-01-15 <span style="color: #949494;">12:46:00</span>  2.17  2.17   1.5 RS2023  RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1 202300002… 202300… 2001-01-15 <span style="color: #949494;">12:46:00</span>  2.17  2.17   1.5 RS2023… RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1 202300002… 202300… 2001-01-15 <span style="color: #949494;">15:14:00</span>  4.63  4.63   4   RS2023  RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1 202300002… 202300… 2001-01-15 <span style="color: #949494;">15:14:00</span>  4.63  4.63   4   RS2023… RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 202300002… 202300… 2001-01-16 <span style="color: #949494;">10:36:00</span> 24    24      0   RS2023  RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 202300002… 202300… 2001-01-17 <span style="color: #949494;">10:36:00</span> 48    48      0   RS2023  RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 202300002… 202300… 2001-01-18 <span style="color: #949494;">10:36:00</span> 72    72      0   RS2023  RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6,568 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 23 more variables: METABOLITE &lt;lgl&gt;, DOSE &lt;dbl&gt;, AMT &lt;dbl&gt;, CMT &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   EVID &lt;dbl&gt;, DV &lt;dbl&gt;, MDV &lt;dbl&gt;, REF &lt;int&gt;, TAD &lt;dbl&gt;, RATE &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   LNDV &lt;dbl&gt;, AGE &lt;dbl&gt;, SEX &lt;dbl&gt;, RACE &lt;fct&gt;, HEIGHT &lt;dbl&gt;, WEIGHT &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   BMI &lt;dbl&gt;, ACTARMCD &lt;chr&gt;, TRTDY &lt;dbl&gt;, BL_CREAT &lt;dbl&gt;, BL_CRCL &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   DI &lt;int&gt;, OPDI &lt;int&gt;</span></span>
 <span class="r-in"><span><span class="fu">add_obs_per_dosing_interval</span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6,614 × 12</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   ID, PARENT, DI [5,270]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6,578 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   ID, PARENT, DI [5,234]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       ID  TIME PARENT   AMT   CMT  EVID    DV   MDV   REF  RATE    DI  OPDI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1  0         1   500     1     1 <span style="color: #BB0000;">NA</span>        1     1     0     1     6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1  0         1     0     2     0  0        0     2     0     1     6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1  0         1     0     3     0  0        0     3     0     1     6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1  2.45      1     0     2     0  3.04     0     4     0     1     6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1  2.45      1     0     3     0  1.96     0     5     0     1     6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1  4.95      1     0     2     0  2.11     0     6     0     1     6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1  4.95      1     0     3     0  6.34     0     7     0     1     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1  2.17      1     0     2     0  3.38     0     4     0     1     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1  2.17      1     0     3     0  3.45     0     5     0     1     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1  4.63      1     0     2     0  1.48     0     6     0     1     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1  4.63      1     0     3     0 10.8      0     7     0     1     6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1 24         1   500     1     1 <span style="color: #BB0000;">NA</span>        1     8     0     2     0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 48         1   500     1     1 <span style="color: #BB0000;">NA</span>        1     9     0     3     0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1 72         1   500     1     1 <span style="color: #BB0000;">NA</span>        1    10     0     4     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6,604 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6,568 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
