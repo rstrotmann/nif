@@ -11,6 +11,7 @@ edish_plot(
   show_labels = FALSE,
   nominal_time = TRUE,
   time = NULL,
+  parent = NULL,
   title = "eDISH plot: All time points",
   size = 3,
   alpha = 0.5,
@@ -20,6 +21,8 @@ edish_plot(
 \arguments{
 \item{nif}{A nif object.}
 
+\item{sdtm}{A sdtm object.}
+
 \item{enzyme}{The transaminase to be plotted on the x axis as character.}
 
 \item{show_labels}{Show ID labels per point.}
@@ -28,6 +31,8 @@ edish_plot(
 
 \item{time}{time/nominal time filter as numeric.}
 
+\item{parent}{The parent compound as character.}
+
 \item{title}{The plot title as character.}
 
 \item{size}{The point size as numeric.}
@@ -35,8 +40,6 @@ edish_plot(
 \item{alpha}{The alpha value as numeric.}
 
 \item{...}{Further graphical parameters.}
-
-\item{lb}{The LB SDTM domain as data frame.}
 }
 \value{
 A ggplot object.

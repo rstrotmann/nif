@@ -872,6 +872,7 @@ nif_spaghetti_plot2 <- function(x,
 #' @param show_n Show sample size in mean plot, as logical.
 #'
 #' @return A ggplot object.
+#' @import assertr
 #' @export
 #'
 #' @examples
@@ -1834,12 +1835,13 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @param show_labels Show ID labels per point.
 #' @param nominal_time Use NTIME as logical.
 #' @param time time/nominal time filter as numeric.
+#' @param parent The parent compound as character.
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
 #' @export
 edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
-                       nominal_time = TRUE, time = NULL,
+                       nominal_time = TRUE, time = NULL, parent = NULL,
                        title = "eDISH plot: All time points", size = 3,
                        alpha = 0.5, ...) {
   lb <- sdtm$domains[["lb"]]
@@ -1861,8 +1863,9 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
     nif <- nif %>%
       filter(TIME %in% time)
   }
-
-  parent = guess_analyte(nif)
+  if(is.null(parent)) {
+    parent <- guess_analyte(nif)
+  }
 
   suppressWarnings({
     p <- nif %>%
@@ -1870,19 +1873,23 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
       add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent, silent = TRUE) %>%
 
       as.data.frame() %>%
+      filter(!is.na(DV)) %>%
       filter(ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
       select(ID, TIME, ANALYTE, DV) %>%
+      group_by(ID, TIME, ANALYTE) %>%
+      summarize(DV = mean(DV, na.rm = TRUE), .groups = "drop") %>%
       group_by(ID, TIME) %>%
       pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
       ungroup() %>%
       ggplot(aes(x = ENZ_X_ULN, y = BILI_X_ULN, color = (TIME > 0), label = ID)) +
-      geom_point(size = size, alpha = alpha, ...) +
+      geom_point(size = size, alpha = alpha) +
       {if(show_labels == TRUE) geom_text_repel()} +
       scale_x_log10() +
       scale_y_log10() +
       geom_hline(yintercept = 2, linetype="dashed") +
       geom_vline(xintercept = 3, linetype="dashed") +
       labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
+      theme_bw() +
       theme(legend.position = "none") +
       ggtitle(title)
   })
