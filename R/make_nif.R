@@ -1636,6 +1636,22 @@ make_observation <- function(
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
 
+  # imp <- nif %>%
+  #   as.data.frame() %>%
+  #   filter(EVID == 1) %>%
+  #   distinct(ANALYTE) %>%
+  #   pull(ANALYTE)
+  #
+  # if(is.null(parent)) {
+  #   if(analyte %in% imp) {
+  #     parent <- analyte
+  #   } else {
+  #     parent <- guess_parent(nif)
+  #     conditional_message(paste0("Parent for ", analyte, " was set to ",
+  #                                parent, "!"), silent = silent)
+  #   }
+  # }
+
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
 
@@ -1653,8 +1669,9 @@ make_observation <- function(
             NTIME_lookup <- obj %>%
               distinct(.data$PCDY, .data$PCELTM) %>%
             mutate(NTIME = as.numeric(stringr::str_extract(
-              .data$PCELTM, "PT([.0-9]+)H", group = 1)) +
-                (.data[["PCDY"]] - 1) * 24)
+              .data$PCELTM, "PT([.0-9]+)H", group = 1)) #+
+                # (.data[["PCDY"]] - 1) * 24)
+            )
 
           } else {
             NTIME_lookup <- obj %>%
@@ -1982,28 +1999,35 @@ carry_forward_dose <- function(obj) {
 #'
 #' @return A nif object.
 #' @export
-add_observation <- function(
-    nif,
-    sdtm,
-    domain,
-    testcd,
-    analyte = NULL,
-    parent = NULL,
-    DTC_field = NULL,
-    DV_field = NULL,
-    TESTCD_field = NULL,
-    cmt = NULL,
-    observation_filter = {TRUE},
+add_observation <- function(nif, sdtm, domain, testcd,
+    analyte = NULL, parent = NULL, DTC_field = NULL, DV_field = NULL,
+    TESTCD_field = NULL, cmt = NULL, observation_filter = {TRUE},
     # subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-    subject_filter = {TRUE},
-    NTIME_lookup = NULL,
-    silent = FALSE,
+    subject_filter = {TRUE}, NTIME_lookup = NULL, silent = FALSE,
     cleanup = TRUE) {
-  if (is.null(cmt)) {
+  if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
       "Compartment for ", testcd,
       " was not specified and has been set to ", cmt), silent = silent)
+  }
+
+  if(is.null(analyte)) analyte <- testcd
+
+  imp <- nif %>%
+    as.data.frame() %>%
+    filter(EVID == 1) %>%
+    distinct(ANALYTE) %>%
+    pull(ANALYTE)
+
+  if(is.null(parent)) {
+    if(analyte %in% imp) {
+      parent <- analyte
+    } else {
+      parent <- guess_parent(nif)
+      conditional_message(paste0("Parent for ", analyte, " was set to ",
+                                 parent, "!"), silent = silent)
+    }
   }
 
   obj <- bind_rows(nif,

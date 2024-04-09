@@ -943,6 +943,41 @@ guess_analyte <- function(obj) {
 }
 
 
+#' Guess the most likely parent based on its prevalence in the NIF object
+#'
+#' @param obj A nif object.
+#'
+#' @return The parent as character
+#' @export
+#'
+#' @examples
+#' guess_parent(examplinib_sad_nif)
+#' guess_parent(examplinib_poc_nif)
+#' guess_parent(examplinib_poc_min_nif)
+guess_parent <- function(obj) {
+  temp <- obj %>%
+    as.data.frame() %>%
+    ensure_analyte() %>%
+    ensure_metabolite() %>%
+    ensure_parent() %>%
+    as.data.frame() %>%
+    filter(EVID == 0)
+
+  if(length(analytes(temp)) > 0) {
+    temp %>%
+      filter(METABOLITE == FALSE) %>%
+      group_by(PARENT) %>%
+      summarize(n = n(), .groups = "drop") %>%
+      filter(n == max(n)) %>%
+      arrange(PARENT) %>%
+      slice(1) %>%
+      pull("PARENT")
+  } else {
+    return(NULL)
+  }
+}
+
+
 #' Add dose level (`DL`) column
 #'
 #' Dose level is defined as the starting dose. For data sets with single drug

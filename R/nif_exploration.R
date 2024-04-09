@@ -935,11 +935,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   temp <- mutate(temp, active_time = .data[[time]])
   x_label = paste0(time, " (h)")
 
-  # # implement max_time, min_time
-  # if(is.null(max_time)) {max_time <- max_time(temp, time_field = time)}
-  # if(is.null(min_time)) {min_time <- min(temp$active_time, na.rm = TRUE)}
-  # temp <- filter(temp, active_time <= max_time & active_time >= min_time)
-
   # filter for dose
   if(is.null(dose)) {dose <- unique(temp$DOSE[temp$EVID == 0])}
   temp <- filter(temp, (DOSE %in% dose) )
@@ -958,7 +953,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   if(is.null(max_time)) {max_time <- max_time(filter(temp, EVID == 0),
                                               time_field = time)}
   if(is.null(min_time)) {min_time <- min(temp$active_time, na.rm = TRUE)}
-  temp <- filter(temp, active_time <= max_time & active_time >= min_time)
+  # temp <- filter(temp, active_time <= max_time & active_time >= min_time)
 
   # remove subjects without observation
   temp <- temp %>%
@@ -1063,7 +1058,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
 
       theme_bw() +
       theme(legend.position = ifelse(
-        show_color == TRUE & legend == TRUE, "bottom", "none"))
+        show_color == TRUE & legend == TRUE, "bottom", "none")) +
+      ggtitle(title)
 
   } else {
     # spaghetti plot
@@ -1077,7 +1073,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       {if (log == TRUE) scale_y_log10()} +
       {if(length(unique(temp$DOSE)) > 1) facet_wrap(~DOSE)} +
       labs(x = x_label, y = y_label, color = color_label, caption = caption) +
-      # xlim(c(min_time, max_time)) +
+      xlim(c(min_time, max_time)) +
       theme_bw() +
       theme(legend.position =
               ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +
