@@ -947,7 +947,12 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     filter(EVID == 0) %>%
     distinct(ANALYTE) %>%
     nrow()
-  y_label <- ifelse(n_analyte == 1, unique(temp$ANALYTE), "DV")
+  y_label <- ifelse(n_analyte == 1,
+                    # unique(temp$ANALYTE),
+                    as.character(temp %>%
+                      filter(EVID == 0) %>%
+                      distinct(ANALYTE)),
+                    "DV")
 
   # implement max_time, min_time
   if(is.null(max_time)) {max_time <- max_time(filter(temp, EVID == 0),
