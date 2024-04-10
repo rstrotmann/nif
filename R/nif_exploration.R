@@ -1836,11 +1836,15 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
 #' @export
-edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
+edish_plot <- function(nif, sdtm, enzyme = "ALT",
+                       # lbspec = "SERUM",
+                       show_labels = FALSE,
                        nominal_time = TRUE, time = NULL, parent = NULL,
                        title = "eDISH plot: All time points", size = 3,
                        alpha = 0.5, ...) {
-  lb <- sdtm$domains[["lb"]]
+  lb <- sdtm$domains[["lb"]] %>%
+    # filter(LBSPEC == lbspec)
+    filter(LBSPEC != "URINE")
   lb1 <- lb %>%
     mutate(LB1DTC = LBDTC) %>%
     filter(LBTESTCD %in% c(enzyme, "BILI")) %>%
@@ -1867,7 +1871,6 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
     p <- nif %>%
       add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent, silent = TRUE) %>%
       add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent, silent = TRUE) %>%
-
       as.data.frame() %>%
       filter(!is.na(DV)) %>%
       filter(ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
@@ -1882,9 +1885,14 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
       {if(show_labels == TRUE) geom_text_repel()} +
       scale_x_log10() +
       scale_y_log10() +
+      annotate('rect', xmin = 3, xmax = Inf, ymin = 2, ymax = Inf, alpha=.15,
+               fill='grey') +
       geom_hline(yintercept = 2, linetype="dashed") +
       geom_vline(xintercept = 3, linetype="dashed") +
-      labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
+      labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN",
+           caption = paste0(
+             length(unique(nif$ID)),
+             " subjects, red: predose, grey area: Hy's law.")) +
       theme_bw() +
       theme(legend.position = "none") +
       ggtitle(title)

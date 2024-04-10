@@ -312,7 +312,6 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs")) {
   #        caption = paste0("mean and 90% PI, slope = ",
   #                         round(pm$coefficients[2], 3)))
 
-
   pm_plot <- function(param) {
     pp <- nca %>%
       filter(PPTESTCD == param) %>%
@@ -322,14 +321,12 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs")) {
       lm(log(PPORRES) ~ log(DOSE), data = .)
 
     pp %>%
-      bind_cols(predict.lm(pm, pp, interval='prediction',
-                           se.fit = T,
-                           level=0.9)$fit) %>%
-
+      bind_cols(predict.lm(pm, pp, interval = 'prediction', se.fit = T,
+                           level = 0.9)$fit) %>%
       ggplot(aes(x = DOSE, y=exp(.data$fit))) +
       geom_line() +
       geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
-                  fill='lightgrey', alpha=0.5) +
+                  fill = 'lightgrey', alpha = 0.5) +
       geom_point(aes(x = DOSE, y = PPORRES), size=2) +
       theme_bw() +
       labs(x = "dose (mg)", y = param,
