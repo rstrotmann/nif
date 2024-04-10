@@ -12,7 +12,7 @@ nca_power_model(nca, parameter = "aucinf.obs")
 \item{parameter}{The PK parameter as character.}
 }
 \value{
-A ggplot2 object.
+A list of ggplot2 objects.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -20,7 +20,11 @@ A ggplot2 object.
 Plot the PK parameter defined by \code{parameter} over \code{DOSE} and overlay with
 a linear model of the log-transformed parameter and the log-transformed dose.
 The slope is printed in the caption line.
+
+All zero values for the selected paramter are filtered out before analysis.
 }
 \examples{
 nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")
+nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
+  c("cmax", "aucinf.obs"))
 }

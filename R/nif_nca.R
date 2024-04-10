@@ -277,34 +277,66 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' Plot the PK parameter defined by `parameter` over `DOSE` and overlay with
 #' a linear model of the log-transformed parameter and the log-transformed dose.
 #' The slope is printed in the caption line.
+#'
+#' All zero values for the selected paramter are filtered out before analysis.
+#'
 #' @param nca PK parameters as data frame.
 #' @param parameter The PK parameter as character.
-#' @return A ggplot2 object.
+#' @return A list of ggplot2 objects.
 #' @importFrom stats lm predict.lm
 #' @export
 #' @examples
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")
-nca_power_model <- function(nca, parameter = "aucinf.obs") {
-  pp <- nca %>%
-    filter(PPTESTCD %in% parameter)
+#' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
+#'   c("cmax", "aucinf.obs"))
+nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs")) {
+  # pp <- nca %>%
+  #   filter(PPTESTCD %in% parameter) %>%
+  #   filter(PPORRES != 0)
+  #
+  # pm <- pp %>%
+  #   lm(log(PPORRES) ~ log(DOSE), data = .)
+  #
+  # pp %>%
+  #   bind_cols(predict.lm(pm, pp, interval='prediction',
+  #                        se.fit = T,
+  #                        level=0.9)$fit) %>%
+  #
+  #   ggplot(aes(x = DOSE, y=exp(.data$fit))) +
+  #   geom_line() +
+  #   geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
+  #               fill='lightgrey', alpha=0.5) +
+  #   geom_point(aes(x = DOSE, y = PPORRES), size=2) +
+  #   theme_bw() +
+  #   labs(x = "dose (mg)", y = parameter,
+  #        caption = paste0("mean and 90% PI, slope = ",
+  #                         round(pm$coefficients[2], 3)))
 
-  pm <- pp %>%
-    lm(log(PPORRES) ~ log(DOSE), data = .)
 
-  pp %>%
-    bind_cols(predict.lm(pm, pp, interval='prediction',
-                         se.fit = T,
-                         level=0.9)$fit) %>%
+  pm_plot <- function(param) {
+    pp <- nca %>%
+      filter(PPTESTCD == param) %>%
+      filter(PPORRES != 0)
 
-    ggplot(aes(x = DOSE, y=exp(.data$fit))) +
-    geom_line() +
-    geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
-                fill='lightgrey', alpha=0.5) +
-    geom_point(aes(x = DOSE, y = PPORRES), size=2) +
-    theme_bw() +
-    labs(x = "dose (mg)", y = parameter,
-         caption = paste0("mean and 90% PI, slope = ",
-                          round(pm$coefficients[2], 3)))
+    pm <- pp %>%
+      lm(log(PPORRES) ~ log(DOSE), data = .)
+
+    pp %>%
+      bind_cols(predict.lm(pm, pp, interval='prediction',
+                           se.fit = T,
+                           level=0.9)$fit) %>%
+
+      ggplot(aes(x = DOSE, y=exp(.data$fit))) +
+      geom_line() +
+      geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
+                  fill='lightgrey', alpha=0.5) +
+      geom_point(aes(x = DOSE, y = PPORRES), size=2) +
+      theme_bw() +
+      labs(x = "dose (mg)", y = param,
+           caption = paste0("mean and 90% PI, slope = ",
+                            round(pm$coefficients[2], 3)))
+  }
+  lapply(parameter, pm_plot)
 }
 
 
