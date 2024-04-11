@@ -129,17 +129,24 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
   if (replace_n > 0) {
     conditional_message(
       replace_n,
-      " subjects in which a missing EXENDTC will be set to RFENDTC:\n",
+      " subjects had a missing EXENDTC in their final administration episode.\n",
+      "In these cases, EXENDTC was imputed to RFENDTC:\n",
       df_to_string(
         temp %>%
           filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) &
                    .data$LAST_ADMIN == TRUE) %>%
-          select(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "RFENDTC"))
+          select(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")),
+        indent = "  "
       ), "\n",
       silent = silent
     )
 
     temp %>%
+      mutate(IMPT_TIME = case_when(
+        (LAST_ADMIN == TRUE & is.na(EXENDTC) & !is.na(RFENDTC)) ~
+          paste(IMPT_TIME, "missing EXENDTC set to RFENDTC"),
+        .default = IMPT_TIME
+      )) %>%
       mutate(EXENDTC = case_when(
         (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
            !is.na(.data$RFENDTC)) ~ .data$RFENDTC,
@@ -262,6 +269,75 @@ impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
   }
   temp %>%
     select(-"LAST_ADMIN")
+}
+
+
+#' Remove administrations with EXSTDTC after RFENDTC
+#'
+#' @param ex The EX domain as data frame.
+#' @param dm the DM domain as data frame.
+#' @param silent Suppress messages as logical.
+#'
+#' @return A data frame.
+#' @export
+filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
+  out <- ex %>%
+    left_join(
+      dm %>%
+        decompose_dtc("RFENDTC") %>%
+        select(USUBJID, RFENDTC_date),
+      by = "USUBJID"
+    )
+
+  temp <- out %>%
+    filter(!(EXSTDTC <= EXENDTC) & (EXSTDTC_date > RFENDTC_date))
+
+  if(nrow(temp) > 0) {
+    conditional_message(paste0(
+      nrow(temp),
+      " subjects had an administration episode with the EXSTDTC date after ",
+      "their RFENDTC date.\nThese administrations were ",
+      "removed from the data set:\n",
+      df_to_string(select(temp, USUBJID, EXTRT, EXSEQ, EXSTDTC, EXENDTC,
+                          RFENDTC_date), indent = "  ")),
+      silent = silent)
+  }
+
+  out %>%
+    filter((EXSTDTC_date < EXENDTC_date) | (EXSTDTC_date <= RFENDTC_date))
+}
+
+
+#' Remove administrations with EXSTDTC after EXENDTC
+#'
+#' @param ex The ex domain as data frame.
+#' @param silent Suppress messages as logical.
+#' @param dm The dm domain as data frame.
+#'
+#' @return A data frame.
+#' @export
+filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
+  temp <- ex %>%
+    filter(EXSTDTC > EXENDTC) %>%
+    left_join(
+      dm %>%
+        select(USUBJID, RFENDTC),
+      by = "USUBJID"
+    )
+
+  if(nrow(temp) > 0) {
+    conditional_message(paste0(
+      nrow(temp),
+      " administration episodes had an EXENDTC before the EXSTDTC and were\n",
+      "removed from the data set:\n",
+      df_to_string(select(temp, USUBJID, EXTRT, EXSEQ, EXSTDTC, EXENDTC,
+                          RFENDTC),
+                   indent = "  "),
+      "\n"),
+      silent = silent)
+  }
+  ex %>%
+    filter(EXSTDTC <= EXENDTC)
 }
 
 
@@ -1864,13 +1940,16 @@ make_administration <- function(
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
 
   admin <- ex %>%
+    mutate(IMPT_TIME = "") %>%
     filter(EXTRT == extrt) %>%
     filter(EXSTDTC <= cut_off_date) %>%
     decompose_dtc("EXSTDTC") %>%
 
-    # time imputations
-    mutate(IMPT_TIME = "") %>%
     impute_exendtc_to_rfendtc(dm, silent = silent) %>%
+    filter_EXSTDTC_after_EXENDTC(dm, silent = silent) %>%
+
+    # time imputations
+    # impute_exendtc_to_rfendtc(dm, silent = silent) %>%
     impute_exendtc_to_cutoff(cut.off.date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
     decompose_dtc("EXENDTC") %>%

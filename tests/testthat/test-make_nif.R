@@ -77,6 +77,7 @@ test_that("make.admin works as intended", {
 
   cut_off_date <- last_ex_dtc(ex)
   ex <- ex %>%
+    mutate(IMPT_TIME = "") %>%
     impute_missing_exendtc_time(silent = F) %>%
     exclude_exstdtc_after_rfendtc(dm, silent = F) %>%
     impute_exendtc_to_rfendtc(dm, silent = F) %>%
@@ -161,6 +162,7 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
     lubrify_dates()
 
   ex %>%
+    mutate(IMPT_TIME = "") %>%
     impute_exendtc_to_rfendtc(dm, silent=F) %>%
     summarize(sum=sum(is.na(EXENDTC))) %>%
     as.numeric() %>%

@@ -4,7 +4,7 @@
 \alias{nca_power_model}
 \title{Power fit for PK parameters}
 \usage{
-nca_power_model(nca, parameter = "aucinf.obs")
+nca_power_model(nca, parameter = c("cmax", "aucinf.obs"))
 }
 \arguments{
 \item{nca}{PK parameters as data frame.}
