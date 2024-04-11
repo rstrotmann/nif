@@ -329,6 +329,7 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs")) {
                   fill = 'lightgrey', alpha = 0.5) +
       geom_point(aes(x = DOSE, y = PPORRES), size=2) +
       theme_bw() +
+      expand_limits(x = 0) +
       labs(x = "dose (mg)", y = param,
            caption = paste0("mean and 90% PI, slope = ",
                             round(pm$coefficients[2], 3)))
