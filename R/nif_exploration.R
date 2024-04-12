@@ -870,6 +870,8 @@ nif_spaghetti_plot2 <- function(x,
 #'   baseline values.
 #' @param legend Show legend, as logical.
 #' @param show_n Show sample size in mean plot, as logical.
+#' @param watermark Show watermark as character or logical. If watermark = TRUE,
+#'   a standard text will be shown.
 #'
 #' @return A ggplot object.
 #' @import assertr
@@ -890,12 +892,15 @@ nif_spaghetti_plot2 <- function(x,
 #' plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
 #' plot(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
 #'   points = TRUE, lines = FALSE)
+#' plot(examplinib_fe_nif, points = TRUE, watermark = TRUE)
+#' plot(examplinib_fe_nif, points = TRUE, watermark = "Examplinib food effect")
 plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                      group = NULL, min_time = NULL, max_time = NULL,
                      points = FALSE, lines = TRUE, admin = NULL, cfb = FALSE,
                      summary_function = median, silent = TRUE, mean = FALSE,
                      title = "", caption = "", integrate_predose = TRUE,
-                     legend = TRUE, show_n = FALSE, ...) {
+                     legend = TRUE, show_n = FALSE,
+                     watermark = "", ...) {
   # Assert time field
   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
     stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
@@ -923,6 +928,14 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       group_by(ID, ANALYTE) %>%
       fill(DOSE, .direction = "up") %>%
       ungroup()
+  }
+
+  # implement watermark
+  if(watermark == TRUE) {
+    watermark = "Not QCed - not for distribution"
+  }
+  if(watermark == FALSE) {
+    watermark = ""
   }
 
   # implement change from baseline
@@ -1064,7 +1077,10 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       theme_bw() +
       theme(legend.position = ifelse(
         show_color == TRUE & legend == TRUE, "bottom", "none")) +
-      ggtitle(title)
+      ggtitle(title) +
+      {if(watermark != "") annotate("text", x = Inf, y = Inf, label = watermark,
+                                    hjust = 2, vjust = 2, col = "lightgrey",
+                                    cex = 6, fontface = "bold", alpha = 0.6)}
 
   } else {
     # spaghetti plot
@@ -1082,7 +1098,10 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       theme_bw() +
       theme(legend.position =
               ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +
-      ggtitle(title)
+      ggtitle(title) +
+      {if(watermark != "") annotate("text", x = Inf, y = Inf, label = watermark,
+                                    hjust = 1.1, vjust = 2, col = "lightgrey",
+                                    cex = 6, fontface = "bold", alpha = 0.6)}
   }
 }
 

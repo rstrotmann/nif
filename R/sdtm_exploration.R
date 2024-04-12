@@ -283,6 +283,11 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "dm") {
     return(
       obj %>%
+        group_by(USUBJID) %>%
+        mutate(start = min(RFSTDTC)) %>%
+        ungroup() %>%
+        arrange(start) %>%
+        # arrange(.data$RFSTDTC) %>%
         group_by(.data$USUBJID) %>%
         mutate(ID = factor(cur_group_id())) %>%
         mutate(ID = factor(ID, levels = rev(levels(ID)))) %>%

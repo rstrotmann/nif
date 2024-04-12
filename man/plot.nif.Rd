@@ -25,6 +25,7 @@
   integrate_predose = TRUE,
   legend = TRUE,
   show_n = FALSE,
+  watermark = "",
   ...
 )
 }
@@ -71,6 +72,9 @@ baseline values.}
 
 \item{show_n}{Show sample size in mean plot, as logical.}
 
+\item{watermark}{Show watermark as character or logical. If watermark = TRUE,
+a standard text will be shown.}
+
 \item{...}{Further graphical parameters.}
 }
 \value{
@@ -94,4 +98,6 @@ plot(examplinib_sad_min_nif)
 plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
 plot(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
   points = TRUE, lines = FALSE)
+plot(examplinib_fe_nif, points = TRUE, watermark = TRUE)
+plot(examplinib_fe_nif, points = TRUE, watermark = "Examplinib food effect")
 }
