@@ -864,7 +864,7 @@ nif_spaghetti_plot2 <- function(x,
 #' @param mean Show a mean plot, as logical.
 #' @param title The plot title as character.
 #' @param caption The plot caption line as character.
-#' @param ... Further graphical parameters.
+#' @param ... Further graphical parameters for geom_point().
 #' @param integrate_predose Complete 'DOSE' field for predose values.
 #' @param summary_function The summarizing function to apply to multiple
 #'   baseline values.
@@ -1085,11 +1085,12 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   } else {
     # spaghetti plot
     obs_data %>%
+      {if(log == TRUE) filter(., DV != 0) else .} %>%
       ggplot(aes(x = active_time, y = DV, group = GROUP, color = COLOR)) +
       {if(!is.null(admin)) geom_vline(data = admin_data,
                                     aes(xintercept = active_time),
                                     color = "gray")} +
-      {if(points == TRUE) geom_point(na.rm = TRUE)} +
+      {if(points == TRUE) geom_point(na.rm = TRUE, ...)} +
       {if (lines) geom_line(na.rm = TRUE)} +
       {if (log == TRUE) scale_y_log10()} +
       {if(length(unique(temp$DOSE)) > 1) facet_wrap(~DOSE)} +
@@ -1503,7 +1504,13 @@ plot.summary_nif <- function(x, ...) {
   for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI",
               str_subset(names(nif), "BL_.*"))) {
     if (i %in% colnames(nif)) {
-      out[[i]] <- covariate_hist(nif, i)
+      if(is.numeric(nif[[i]])) {
+        out[[i]] <- covariate_hist(nif, i)
+      }
+      if(is.factor(nif[[i]])) {
+        # print(paste(i, "is a factor"))
+        out[[i]] <- covariate_barplot(nif, i)
+      }
     }
   }
 
@@ -1511,11 +1518,16 @@ plot.summary_nif <- function(x, ...) {
   out[["WT_RACE"]] <- wt_by_race(nif)
 
   for (i in x$analytes) {
-    out[[i]] <- nif_spaghetti_plot(nif,
-                     analyte = i, log = TRUE, points = TRUE, lines = FALSE,
-                     alpha = 0.3, title = paste(i, "overview by dose"),
-                     max_x = max_observation_time(x$nif, i)
-    )
+    # out[[i]] <- nif_spaghetti_plot(nif,
+    #                  analyte = i, log = TRUE, points = TRUE, lines = FALSE,
+    #                  alpha = 0.3, title = paste(i, "overview by dose"),
+    #                  max_x = max_observation_time(x$nif, i)
+    out[[i]] <- plot(nif,
+      analyte = i, log = TRUE, points = TRUE, lines = FALSE, time = "TIME",
+      alpha = 0.3, title = paste(i, "by dose"),
+      max_time = max_observation_time(x$nif, i)
+    ) +
+      labs(y = "")
   }
   return(out)
 }
@@ -1561,6 +1573,37 @@ covariate_hist <- function(obj, cov, nbins = 11) {
     geom_vline(xintercept = limits, color = "red") +
     theme_bw() +
     labs(x = xlabel, y = "number of subjects") +
+    ggtitle(title)
+}
+
+
+#' Generic covariate barplot
+#'
+#' @param obj A nif object.
+#' @param cov The (categorical) baseline covariate as character.
+#' @param title The plot title as character. Defaults to cov, if NULL.
+#'
+#' @return A ggplot object.
+#' @export
+#'
+#' @examples
+#' covariate_barplot(examplinib_poc_nif, "SEX")
+covariate_barplot <- function(obj, cov, title = NULL) {
+  if(is.null(title)) {
+    title = cov
+  }
+
+  obj %>%
+    as.data.frame() %>%
+    mutate(CLASS = as.factor(.data[[cov]])) %>%
+    group_by(CLASS) %>%
+    distinct(ID) %>%
+    summarize(n = n()) %>%
+    ggplot(aes(x = CLASS, y = n)) +
+    scale_x_discrete(drop = FALSE, name = cov) +
+    geom_bar(stat = "identity", fill = "white", color = "black", width = 0.5) +
+    theme_bw() +
+    labs(y = "N") +
     ggtitle(title)
 }
 

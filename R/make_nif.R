@@ -2130,7 +2130,8 @@ add_observation <- function(nif, sdtm, domain, testcd,
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(USUBJID, PARENT) %>%
-    mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE, .default = FALSE)) %>%
+    mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE,
+                                     .default = FALSE)) %>%
     ungroup()
 
   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
@@ -2149,11 +2150,11 @@ add_observation <- function(nif, sdtm, domain, testcd,
       silent = silent)
 
     obj <- obj %>%
-      filter(NO_ADMIN_FLAG == 0) %>%
-      select(-NO_ADMIN_FLAG)
+      filter(NO_ADMIN_FLAG == 0)
   }
 
   obj %>%
+    select(-NO_ADMIN_FLAG) %>%
     make_time() %>%
     carry_forward_dose() %>%
     new_nif()

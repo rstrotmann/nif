@@ -1141,7 +1141,7 @@ add_bl_renal <- function(obj, method = egfr_cg) {
       )
     )) %>%
     mutate(BL_RENAL = factor(BL_RENAL,
-      levels = c("", "normal", "mild", "moderate", "severe")
+      levels = c("normal", "mild", "moderate", "severe")
     ))
 }
 

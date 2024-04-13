@@ -75,7 +75,7 @@ baseline values.}
 \item{watermark}{Show watermark as character or logical. If watermark = TRUE,
 a standard text will be shown.}
 
-\item{...}{Further graphical parameters.}
+\item{...}{Further graphical parameters for geom_point().}
 }
 \value{
 A ggplot object.
