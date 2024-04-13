@@ -38,7 +38,7 @@ new_nif <- function(obj = NULL) {
 order_nif_columns <- function(obj) {
   obj %>%
     relocate(any_of(c("ID", "USUBJID", "STUDYID", "DTC", "TIME", "TAFD",
-      "NTIME", "IMPT_TIME", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
+      "NTIME", "IMPUTATION", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
       "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
 }
 
@@ -761,7 +761,7 @@ standard_nif_fields <- c(
 fillable_nif_fields <- c(
   "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
   "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED",
-  "IMPT_TIME"
+  "IMPUTATION"
 )
 
 
@@ -1094,6 +1094,10 @@ add_trtdy <- function(obj) {
     new_nif()
 }
 
+
+# add_ntafd <- function(obj) {
+
+# }
 
 #' Add baseline creatinine clearance field.
 #'

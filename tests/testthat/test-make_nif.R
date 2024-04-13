@@ -77,7 +77,7 @@ test_that("make.admin works as intended", {
 
   cut_off_date <- last_ex_dtc(ex)
   ex <- ex %>%
-    mutate(IMPT_TIME = "") %>%
+    mutate(IMPUTATION = "") %>%
     impute_missing_exendtc_time(silent = F) %>%
     exclude_exstdtc_after_rfendtc(dm, silent = F) %>%
     impute_exendtc_to_rfendtc(dm, silent = F) %>%
@@ -111,7 +111,7 @@ test_that("impute_missing_exendtc_time works as intended", {
     4,        "EX",    "TEST", "2022-08-08T14:35", "2022-08-21"      , 2,     TRUE
     ) %>%
     lubrify_dates() %>%
-    mutate(IMPT_TIME = "")
+    mutate(IMPUTATION = "")
 
   temp <- ex %>%
     impute_missing_exendtc_time(silent = T) %>%
@@ -122,7 +122,7 @@ test_that("impute_missing_exendtc_time works as intended", {
     as.numeric() %>%
     expect_equal(0)
 
-    expect_equal(all((temp$IMPT_TIME != "") == temp$imputation_expected), TRUE)
+    expect_equal(all((temp$IMPUTATION != "") == temp$imputation_expected), TRUE)
 
 })
 
@@ -162,7 +162,7 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
     lubrify_dates()
 
   ex %>%
-    mutate(IMPT_TIME = "") %>%
+    mutate(IMPUTATION = "") %>%
     impute_exendtc_to_rfendtc(dm, silent=F) %>%
     summarize(sum=sum(is.na(EXENDTC))) %>%
     as.numeric() %>%
@@ -180,7 +180,7 @@ test_that("impute_admin_dtc_to_pcrftdtc works as intended", {
     lubrify_dates() %>%
     mutate(date = as.Date(extract_date(DTC))) %>%
     mutate(time = extract_time(DTC)) %>%
-    mutate(IMPT_TIME = "")
+    mutate(IMPUTATION = "")
 
   obs <- tribble(
     ~USUBJID, ~PARENT, ~DTC,               ~PCRFTDTC,
@@ -188,10 +188,10 @@ test_that("impute_admin_dtc_to_pcrftdtc works as intended", {
     2,        "A",     "2022-08-11T15:50", "2022-08-11T14:50",
     3,        "A",     "2022-09-11T15:50", ""
   ) %>% lubrify_dates() %>%
-    mutate(IMPT_TIME = "")
+    mutate(IMPUTATION = "")
 
   temp <- impute_admin_dtc_to_pcrftdtc(admin, obs, silent = TRUE)
-  expect_equal(temp$IMPT_TIME != "", c(FALSE, TRUE, FALSE))
+  expect_equal(temp$IMPUTATION != "", c(FALSE, TRUE, FALSE))
 })
 
 
@@ -203,10 +203,10 @@ test_that("impute_missing_exendtc", {
     1,        3,      "A",    "2022-01-14T08:00",  "",                 TRUE,
     1,        4,      "A",    "2022-01-21T08:00",  "2022-01-23T08:00", FALSE,
   ) %>% lubrify_dates() %>%
-    mutate(IMPT_TIME = "")
+    mutate(IMPUTATION = "")
 
   temp <- impute_missing_exendtc(ex, silent = F)
-  expect_equal(temp$IMPT_TIME != "", temp$imputation_expected)
+  expect_equal(temp$IMPUTATION != "", temp$imputation_expected)
 })
 
 

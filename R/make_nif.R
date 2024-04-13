@@ -53,9 +53,9 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
         .default = EXENDTC
       )) %>%
       select(-EXENDTC1) %>%
-      mutate(IMPT_TIME = case_when(
+      mutate(IMPUTATION = case_when(
         impute_exendtc_time == TRUE ~ "time imputed from EXSTDTC",
-        .default = .data$IMPT_TIME
+        .default = .data$IMPUTATION
       ))
 
     conditional_message(
@@ -142,10 +142,10 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
     )
 
     temp %>%
-      mutate(IMPT_TIME = case_when(
+      mutate(IMPUTATION = case_when(
         (LAST_ADMIN == TRUE & is.na(EXENDTC) & !is.na(RFENDTC)) ~
-          paste(IMPT_TIME, "missing EXENDTC set to RFENDTC"),
-        .default = IMPT_TIME
+          paste(IMPUTATION, "missing EXENDTC set to RFENDTC"),
+        .default = IMPUTATION
       )) %>%
       mutate(EXENDTC = case_when(
         (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
@@ -212,9 +212,9 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
       mutate(EXENDTC = case_match(.data$imputation_flag,
         TRUE ~ .data$next_start - days(1),
         FALSE ~ .data$EXENDTC)) %>%
-      mutate(IMPT_TIME = case_match(.data$imputation_flag,
+      mutate(IMPUTATION = case_match(.data$imputation_flag,
         TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
-        FALSE ~ .data$IMPT_TIME)) %>%
+        FALSE ~ .data$IMPUTATION)) %>%
       select(-"imputation_flag")
   }
 
@@ -412,9 +412,9 @@ impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
     mutate(DTC = case_match(.data$imputation_flag,
       TRUE ~ compose_dtc(.data$date, .data$ref.time),
       FALSE ~ .data$DTC)) %>%
-    mutate(IMPT_TIME = case_match(.data$imputation_flag,
+    mutate(IMPUTATION = case_match(.data$imputation_flag,
       TRUE ~ "time imputed from PCRFTDTC",
-      FALSE ~ IMPT_TIME)) %>%
+      FALSE ~ IMPUTATION)) %>%
     select(-"imputation_flag")
 }
 
@@ -651,7 +651,7 @@ make_obs <- function(pc,
       LNDV = log(.data$DV),
       MDV = case_when(is.na(.data$DV) ~ 1, .default = 0),
       RATE = 0) %>%
-    mutate(IMPT_TIME = "") %>%
+    mutate(IMPUTATION = "") %>%
     left_join(drug_mapping, by = "PCTESTCD") %>%
     filter(!is.na(.data$CMT))
 
@@ -935,7 +935,7 @@ make_nif <- function(
 
   # EX: basic imputations
   ex <- ex %>%
-    mutate(IMPT_TIME = "") %>%
+    mutate(IMPUTATION = "") %>%
     impute_missing_exendtc_time(silent = silent) %>%
     exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
     impute_exendtc_to_rfendtc(dm, silent = silent) %>%
@@ -1170,7 +1170,7 @@ compress <- function(nif, fields = NULL, debug = FALSE) {
       colnames(nif)[grep("TV_", colnames(nif))])
   }
   if(debug == TRUE) {
-    fields <- c(fields, "EXSEQ", "PCREFID", "EXTRT", "IMPT_TIME")
+    fields <- c(fields, "EXSEQ", "PCREFID", "EXTRT", "IMPUTATION")
   }
   nif %>%
     as.data.frame() %>%
@@ -1483,7 +1483,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
       TIME = round(as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
       digits = 3
     )) %>%
-    mutate(IMPT_TIME = "") %>%
+    mutate(IMPUTATION = "") %>%
     mutate(DV = .data$LBSTRESN) %>%
     mutate(LNDV = log(.data$DV)) %>%
     mutate(NTIME = case_when(.data$LBDY < 0 ~ .data$LBDY * 24,
@@ -1492,7 +1492,7 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
     # add_tad() %>%
     dplyr::select(all_of(c(
       "ID", "STUDYID", "USUBJID", "DTC", "FIRSTDTC", "ANALYTE", "PARENT", "CMT",
-      "EVID", "TIME", "NTIME", "DV", "LNDV", "AMT", "RATE", "IMPT_TIME"
+      "EVID", "TIME", "NTIME", "DV", "LNDV", "AMT", "RATE", "IMPUTATION"
     )))
 
   temp <- obj %>%
@@ -1781,14 +1781,14 @@ make_observation <- function(
       METABOLITE = FALSE,
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
-      IMPT_TIME = "") %>%
+      IMPUTATION = "") %>%
     {if(!is.null(NTIME_lookup)) suppressMessages(
       left_join(., NTIME_lookup)) else
       mutate(., NTIME = NA)} %>%
     {if(cleanup == TRUE) select(., any_of(c("ID", "STUDYID", "USUBJID", "AGE",
       "SEX", "RACE",  "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD",
       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "METABOLITE",
-      "DOSE", "DV", "MDV", "ACTARMCD", "IMPT_TIME"))) else .} %>%
+      "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION"))) else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(USUBJID) %>%
     mutate(TRTDY = as.numeric(
@@ -1880,10 +1880,10 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
   #   decompose_dtc("DTC") %>%
   #   left_join(pc_ref,
   #             by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
-  #   mutate(IMPT_TIME = case_when(
+  #   mutate(IMPUTATION = case_when(
   #     is.na(DTC_time) & !is.na(PCRFTDTC_time) ~
-  #       paste(.data$IMPT_TIME, "admin time imputed from PCRFTDTC"),
-  #     .default = .data$IMPT_TIME)) %>%
+  #       paste(.data$IMPUTATION, "admin time imputed from PCRFTDTC"),
+  #     .default = .data$IMPUTATION)) %>%
   #   mutate(DTC_time = case_when(is.na(DTC_time) ~ PCRFTDTC_time,
   #                               .default = .data$DTC_time)) %>%
   #   mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
@@ -1893,10 +1893,10 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
     decompose_dtc("DTC") %>%
     left_join(pc_ref,
               by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
-    mutate(IMPT_TIME = case_when(
+    mutate(IMPUTATION = case_when(
       !is.na(PCRFTDTC_time) ~
-        paste(.data$IMPT_TIME, "admin time imputed from PCRFTDTC"),
-      .default = .data$IMPT_TIME)) %>%
+        paste(.data$IMPUTATION, "admin time imputed from PCRFTDTC"),
+      .default = .data$IMPUTATION)) %>%
     mutate(DTC_time = case_when(!is.na(PCRFTDTC_time) ~ PCRFTDTC_time,
                                 .default = .data$DTC_time)) %>%
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
@@ -1940,7 +1940,7 @@ make_administration <- function(
                        subject_filter = {{subject_filter}}, cleanup = cleanup)
 
   admin <- ex %>%
-    mutate(IMPT_TIME = "") %>%
+    mutate(IMPUTATION = "") %>%
     filter(EXTRT == extrt) %>%
     filter(EXSTDTC <= cut_off_date) %>%
     decompose_dtc("EXSTDTC") %>%
@@ -1987,9 +1987,9 @@ make_administration <- function(
     # carry forward missing administration times
     decompose_dtc("DTC") %>%
     arrange(USUBJID, ANALYTE, DTC) %>%
-    mutate(IMPT_TIME = case_when(
-      is.na(DTC_time) == TRUE ~ append_statement(IMPT_TIME, "time carried forward"),
-      .default = IMPT_TIME)) %>%
+    mutate(IMPUTATION = case_when(
+      is.na(DTC_time) == TRUE ~ append_statement(IMPUTATION, "time carried forward"),
+      .default = IMPUTATION)) %>%
     group_by(USUBJID, ANALYTE) %>%
     fill(DTC_time, .direction = "down") %>%
     ungroup() %>%
@@ -1999,7 +1999,7 @@ make_administration <- function(
     select(-c("DTC_date", "DTC_time")) %>%
 
     {if(cleanup == TRUE)
-      select(., any_of(c("STUDYID", "USUBJID", "IMPT_TIME", "TIME", "NTIME",
+      select(., any_of(c("STUDYID", "USUBJID", "IMPUTATION", "TIME", "NTIME",
          "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
          "MDV", "DOSE", "AMT", "EXDY", "DTC")))
       else .
