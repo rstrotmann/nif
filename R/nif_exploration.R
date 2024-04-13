@@ -1508,7 +1508,6 @@ plot.summary_nif <- function(x, ...) {
         out[[i]] <- covariate_hist(nif, i)
       }
       if(is.factor(nif[[i]])) {
-        # print(paste(i, "is a factor"))
         out[[i]] <- covariate_barplot(nif, i)
       }
     }
@@ -1518,10 +1517,6 @@ plot.summary_nif <- function(x, ...) {
   out[["WT_RACE"]] <- wt_by_race(nif)
 
   for (i in x$analytes) {
-    # out[[i]] <- nif_spaghetti_plot(nif,
-    #                  analyte = i, log = TRUE, points = TRUE, lines = FALSE,
-    #                  alpha = 0.3, title = paste(i, "overview by dose"),
-    #                  max_x = max_observation_time(x$nif, i)
     out[[i]] <- plot(nif,
       analyte = i, log = TRUE, points = TRUE, lines = FALSE, time = "TIME",
       alpha = 0.3, title = paste(i, "by dose"),

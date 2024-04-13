@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,6 +25,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
+    <a class="dropdown-item" href="../articles/making-nif-files.html">Making nif data sets from SDTM data</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">Example: NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -79,6 +80,7 @@
 <span>  integrate_predose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  show_n <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  watermark <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -167,8 +169,13 @@ baseline values.</p></dd>
 <dd><p>Show sample size in mean plot, as logical.</p></dd>
 
 
+<dt>watermark</dt>
+<dd><p>Show watermark as character or logical. If watermark = TRUE,
+a standard text will be shown.</p></dd>
+
+
 <dt>...</dt>
-<dd><p>Further graphical parameters.</p></dd>
+<dd><p>Further graphical parameters for geom_point().</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -204,7 +211,12 @@ baseline values.</p></dd>
 <span class="r-plt img"><img src="plot.nif-10.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span>, dose <span class="op">=</span> <span class="fl">500</span>, cmt <span class="op">=</span> <span class="fl">2</span>, time <span class="op">=</span> <span class="st">"TAD"</span>,</span></span>
 <span class="r-in"><span>  points <span class="op">=</span> <span class="cn">TRUE</span>, lines <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring unknown parameters: `cmt`</span>
 <span class="r-plt img"><img src="plot.nif-11.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, points <span class="op">=</span> <span class="cn">TRUE</span>, watermark <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-12.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, points <span class="op">=</span> <span class="cn">TRUE</span>, watermark <span class="op">=</span> <span class="st">"Examplinib food effect"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.nif-13.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
