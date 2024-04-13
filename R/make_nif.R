@@ -2002,8 +2002,7 @@ make_administration <- function(
       select(., any_of(c("STUDYID", "USUBJID", "IMPUTATION", "TIME", "NTIME",
          "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
          "MDV", "DOSE", "AMT", "EXDY", "DTC")))
-      else .
-    } %>%
+      else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(USUBJID) %>%
     mutate(TRTDY = as.numeric(
@@ -2067,7 +2066,7 @@ carry_forward_dose <- function(obj) {
   obj %>%
     arrange(.data$ID, .data$DTC, -.data$EVID) %>%
     group_by(ID, PARENT) %>%
-    fill(DOSE, .direction = "down") %>%
+    fill(DOSE, .direction = "downup") %>%
     ungroup()
 }
 
@@ -2082,8 +2081,9 @@ carry_forward_dose <- function(obj) {
 add_observation <- function(nif, sdtm, domain, testcd,
     analyte = NULL, parent = NULL, DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL, cmt = NULL, observation_filter = {TRUE},
-    # subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-    subject_filter = {TRUE}, NTIME_lookup = NULL, silent = FALSE,
+    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    # subject_filter = {TRUE},
+    NTIME_lookup = NULL, silent = FALSE,
     cleanup = TRUE) {
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
