@@ -1981,8 +1981,8 @@ make_administration <- function(
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
 
     # impute missing administration times from PCRFTDTC
-    {if("RFTDTC" %in% names(pc))
-        impute_admin_times_from_pcrftdtc(pc, analyte, analyte) else .} %>%
+    {if("PCRFTDTC" %in% names(pc))
+        impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .} %>%
 
     # carry forward missing administration times
     decompose_dtc("DTC") %>%
