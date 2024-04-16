@@ -1413,7 +1413,8 @@ summary.nif <- function(object, ...) {
 #' @export
 print.summary_nif <- function(x, color = FALSE, ...) {
   indent = " "
-  hline <- paste0(rep("\U2500", 8), collapse="")
+  # hline <- paste0(rep("\U2500", 8), collapse="")
+  hline <- "-----"
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
 
   cat(paste(

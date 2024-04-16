@@ -52,7 +52,8 @@ order_nif_columns <- function(obj) {
 #' @export
 #' @noRd
 print.nif <- function(x, color=FALSE, ...) {
-  hline <- paste0(rep("\U2500", 8), collapse="")
+  hline <- "-----"
+  # hline <- paste0(rep("\U2500", 8), collapse="")
   cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
 
   if(length(studies(x)) == 1) {
