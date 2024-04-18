@@ -4,10 +4,18 @@
 \alias{baseline_covariates}
 \title{Extract baseline vital sign covariates from VS}
 \usage{
-baseline_covariates(vs, silent = FALSE)
+baseline_covariates(
+  vs,
+  baseline_filter = {
+     TRUE
+ },
+  silent = FALSE
+)
 }
 \arguments{
 \item{vs}{The VS domain as data frame.}
+
+\item{baseline_filter}{R filter expression to select the baseline time point.}
 
 \item{silent}{Switch to disable message output.}
 }

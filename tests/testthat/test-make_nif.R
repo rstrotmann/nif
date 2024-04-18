@@ -284,7 +284,7 @@ test_that("make_time", {
 
 
 test_that("multiple imputations", {
-  ex <- tibble::tribble(
+  ex <- tribble(
     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSEQ, ~EXSTDTC,           ~EXENDTC,
     "1",      "EX",    "A",    1,      "2021-09-10T10:10", "2021-09-13T22:00", #
     "1",      "EX",    "A",    2,      "2021-09-17T10:35", "2021-09-20T22:35", # on the last day the time is not the administration time!
@@ -294,7 +294,7 @@ test_that("multiple imputations", {
     "1",      "EX",    "A",    6,      "2021-10-21T10:00", "2021-10-24T22:00"  #
   ) %>% lubrify_dates()
 
-  pc <- tibble::tribble(
+  pc <- tribble(
     ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCRFTDTC,          ~PCDTC,              ~PCDY,       ~PCTPT,   #
     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T09:59",  1,       "PRE-DOSE",   #
     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T10:40",  1, "0.5H POST-DOSE",   #
@@ -355,14 +355,14 @@ test_that("multiple imputations", {
 
 
 make_test_sdtm <- function() {
-  dm <- tibble::tribble(
+  dm <- tribble(
     ~USUBJID, ~DOMAIN, ~SEX,   ~ACTARMCD,          ~RFXSTDTC,
     "20230000221040001", "DM", "M", "TREATMENT", "2001-01-01T10:29",
     "20230000221040002", "DM", "M", "TREATMENT", "2001-01-02T09:09",
     "20230000221070001", "DM", "M", "TREATMENT", "2000-12-29T09:07",
     "20230000221060001", "DM", "F", "TREATMENT", "2001-01-06T11:18"
   )
-  vs <- tibble::tribble(
+  vs <- tribble(
     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
     "20230000221040001", "VS", "HEIGHT",     "Y",     190.8,
     "20230000221040001", "VS", "WEIGHT",     "Y",      79.3,
@@ -373,7 +373,7 @@ make_test_sdtm <- function() {
     "20230000221070001", "VS", "HEIGHT",     "Y",     177.8,
     "20230000221070001", "VS", "WEIGHT",     "Y",      83.3
   )
-  lb <- tibble::tribble(
+  lb <- tribble(
     ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBBLFL, ~LBTESTCD,        ~LBSTRESN,
     "20230000221040001",    "DM", "SERUM",     "Y",   "CREAT", 89.2690855827183,
     "20230000221040002",    "DM", "SERUM",     "Y",   "CREAT", 73.3255705088018,

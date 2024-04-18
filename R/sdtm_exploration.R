@@ -283,14 +283,14 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "dm") {
     return(
       obj %>%
-        group_by(USUBJID) %>%
-        mutate(start = min(RFSTDTC)) %>%
+        group_by(.data$USUBJID) %>%
+        mutate(start = min(.data$RFSTDTC)) %>%
         ungroup() %>%
-        arrange(start) %>%
+        arrange(.data$start) %>%
         # arrange(.data$RFSTDTC) %>%
         group_by(.data$USUBJID) %>%
         mutate(ID = factor(cur_group_id())) %>%
-        mutate(ID = factor(ID, levels = rev(levels(ID)))) %>%
+        mutate(ID = factor(.data$ID, levels = rev(levels(ID)))) %>%
         ggplot() +
         geom_segment(aes(x = .data$RFSTDTC,
                          xend = .data$RFENDTC,

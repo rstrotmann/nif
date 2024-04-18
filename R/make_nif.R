@@ -52,7 +52,7 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
         impute_exendtc_time == TRUE ~ EXENDTC1,
         .default = EXENDTC
       )) %>%
-      select(-EXENDTC1) %>%
+      select(-c("EXENDTC1")) %>%
       mutate(IMPUTATION = case_when(
         impute_exendtc_time == TRUE ~ "time imputed from EXSTDTC",
         .default = .data$IMPUTATION
@@ -143,9 +143,9 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
 
     temp %>%
       mutate(IMPUTATION = case_when(
-        (LAST_ADMIN == TRUE & is.na(EXENDTC) & !is.na(RFENDTC)) ~
-          paste(IMPUTATION, "missing EXENDTC set to RFENDTC"),
-        .default = IMPUTATION
+        (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
+           !is.na(.data$RFENDTC)) ~ "missing EXENDTC set to RFENDTC",
+        .default = .data$IMPUTATION
       )) %>%
       mutate(EXENDTC = case_when(
         (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
@@ -285,12 +285,13 @@ filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
     left_join(
       dm %>%
         decompose_dtc("RFENDTC") %>%
-        select(USUBJID, RFENDTC_date),
+        select(.data$USUBJID, .data$RFENDTC_date),
       by = "USUBJID"
     )
 
   temp <- out %>%
-    filter(!(EXSTDTC <= EXENDTC) & (EXSTDTC_date > RFENDTC_date))
+    filter(!(.data$EXSTDTC <= .data$EXENDTC) &
+             (.data$EXSTDTC_date > .data$RFENDTC_date))
 
   if(nrow(temp) > 0) {
     conditional_message(paste0(
@@ -298,13 +299,15 @@ filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
       " subjects had an administration episode with the EXSTDTC date after ",
       "their RFENDTC date.\nThese administrations were ",
       "removed from the data set:\n",
-      df_to_string(select(temp, USUBJID, EXTRT, EXSEQ, EXSTDTC, EXENDTC,
-                          RFENDTC_date), indent = "  ")),
+      df_to_string(select(temp, .data$USUBJID, .data$EXTRT, .data$EXSEQ,
+                          .data$EXSTDTC, .data$EXENDTC,
+                          .data$RFENDTC_date), indent = "  ")),
       silent = silent)
   }
 
   out %>%
-    filter((EXSTDTC_date < EXENDTC_date) | (EXSTDTC_date <= RFENDTC_date))
+    filter((.data$EXSTDTC_date < .data$EXENDTC_date) |
+             (.data$EXSTDTC_date <= .data$RFENDTC_date))
 }
 
 
@@ -318,10 +321,10 @@ filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
 #' @export
 filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
   temp <- ex %>%
-    filter(EXSTDTC > EXENDTC) %>%
+    filter(.data$EXSTDTC > .data$EXENDTC) %>%
     left_join(
       dm %>%
-        select(USUBJID, RFENDTC),
+        select(.data$USUBJID, .data$RFENDTC),
       by = "USUBJID"
     )
 
@@ -330,14 +333,14 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
       nrow(temp),
       " administration episodes had an EXENDTC before the EXSTDTC and were\n",
       "removed from the data set:\n",
-      df_to_string(select(temp, USUBJID, EXTRT, EXSEQ, EXSTDTC, EXENDTC,
-                          RFENDTC),
+      df_to_string(select(temp, .data$USUBJID, .data$EXTRT, .data$EXSEQ,
+                          .data$EXSTDTC, .data$EXENDTC, .data$RFENDTC),
                    indent = "  "),
       "\n"),
       silent = silent)
   }
   ex %>%
-    filter(EXSTDTC <= EXENDTC)
+    filter(.data$EXSTDTC <= .data$EXENDTC)
 }
 
 
@@ -1750,7 +1753,6 @@ make_observation <- function(
               .data$PCELTM, "PT([.0-9]+)H", group = 1)) #+
                 # (.data[["PCDY"]] - 1) * 24)
             )
-
           } else {
             NTIME_lookup <- obj %>%
               distinct(.data$PCELTM) %>%
@@ -1792,11 +1794,12 @@ make_observation <- function(
       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "METABOLITE",
       "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION"))) else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
-    group_by(USUBJID) %>%
+    group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      difftime(date(DTC), date(safe_min(RFXSTDTC))), units = "days") + 1) %>%
+      difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      units = "days") + 1) %>%
     ungroup() %>%
-    filter(!is.na(DTC)) %>%
+    filter(!is.na(.data$DTC)) %>%
     new_nif()
 }
 
@@ -1849,10 +1852,10 @@ make_baseline <- function(
     filter(eval_tidy(observation_filter)) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     filter(!!parse_expr(baseline_filter)) %>%
-    select(USUBJID, {{DV_field}}) %>%
-    group_by(USUBJID) %>%
+    select("USUBJID", {{DV_field}}) %>%
+    group_by(.data$USUBJID) %>%
     summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
-    rename_with(~str_c("BL_", testcd), .cols = BL)
+    rename_with(~str_c("BL_", testcd), .cols = .data$BL)
 
   return(temp)
 }
@@ -1942,8 +1945,8 @@ make_administration <- function(
 
   admin <- ex %>%
     mutate(IMPUTATION = "") %>%
-    filter(EXTRT == extrt) %>%
-    filter(EXSTDTC <= cut_off_date) %>%
+    filter(.data$EXTRT == extrt) %>%
+    filter(.data$EXSTDTC <= cut_off_date) %>%
     decompose_dtc("EXSTDTC") %>%
 
     impute_exendtc_to_rfendtc(dm, silent = silent) %>%
@@ -1966,10 +1969,10 @@ make_administration <- function(
       as.Date(.data$EXSTDTC_date),
       as.Date(.data$EXENDTC_date),
       by = "days"))) %>%
-    unnest(DTC_date) %>%
+    unnest(.data$DTC_date) %>%
 
     # make time
-    group_by(USUBJID, ANALYTE, EXENDTC_date) %>%
+    group_by(.data$USUBJID, .data$ANALYTE, .data$EXENDTC_date) %>%
     mutate(DTC_time = case_when(
       row_number() == n() ~ .data$EXENDTC_time,
       .default = .data$EXSTDTC_time
@@ -1987,15 +1990,16 @@ make_administration <- function(
 
     # carry forward missing administration times
     decompose_dtc("DTC") %>%
-    arrange(USUBJID, ANALYTE, DTC) %>%
+    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) %>%
     mutate(IMPUTATION = case_when(
-      is.na(DTC_time) == TRUE ~ append_statement(IMPUTATION, "time carried forward"),
-      .default = IMPUTATION)) %>%
-    group_by(USUBJID, ANALYTE) %>%
-    fill(DTC_time, .direction = "down") %>%
+      # is.na(.data$DTC_time) == TRUE ~ append_statement(IMPUTATION, "time carried forward"),
+      is.na(.data$DTC_time) == TRUE ~ "time carried forward",
+      .default = .data$IMPUTATION)) %>%
+    group_by(.data$USUBJID, .data$ANALYTE) %>%
+    fill(.data$DTC_time, .direction = "down") %>%
     ungroup() %>%
 
-    mutate(DTC = compose_dtc(DTC_date, DTC_time)) %>%
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
 
     select(-c("DTC_date", "DTC_time")) %>%
 
@@ -2005,10 +2009,10 @@ make_administration <- function(
          "MDV", "DOSE", "AMT", "EXDY", "DTC")))
       else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
-    group_by(USUBJID) %>%
+    group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      difftime(date(DTC), date(safe_min(RFXSTDTC))), units = "days") + 1) %>%
-      # difftime(date(DTC), date(RFXSTDT), units = "days") + 1)) %>%
+      difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      units = "days") + 1) %>%
     ungroup() %>%
     new_nif()
 
@@ -2039,10 +2043,10 @@ make_time <- function(obj) {
     as.data.frame() %>%
     verify(has_all_names("ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
     verify(is.POSIXct(.data$DTC)) %>%
-    group_by(ID) %>%
+    group_by(.data$ID) %>%
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     ungroup() %>%
-    group_by(ID, PARENT) %>%
+    group_by(.data$ID, .data$PARENT) %>%
     mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1], na.rm = TRUE)) %>%
     ungroup() %>%
     mutate(TIME = round(
@@ -2066,7 +2070,7 @@ make_time <- function(obj) {
 carry_forward_dose <- function(obj) {
   obj %>%
     arrange(.data$ID, .data$DTC, -.data$EVID) %>%
-    group_by(ID, PARENT) %>%
+    group_by(.data$ID, .data$PARENT) %>%
     fill(DOSE, .direction = "downup") %>%
     ungroup()
 }
@@ -2083,7 +2087,6 @@ add_observation <- function(nif, sdtm, domain, testcd,
     analyte = NULL, parent = NULL, DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL, cmt = NULL, observation_filter = {TRUE},
     subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-    # subject_filter = {TRUE},
     NTIME_lookup = NULL, silent = FALSE,
     cleanup = TRUE) {
   if(is.null(cmt)) {
@@ -2124,14 +2127,13 @@ add_observation <- function(nif, sdtm, domain, testcd,
               cmt = cmt,
               observation_filter = {{observation_filter}},
               subject_filter = {{subject_filter}},
-              # subject_filter = {TRUE},
               NTIME_lookup = NTIME_lookup,
               silent = silent,
               cleanup = cleanup)
             ) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
-    group_by(USUBJID, PARENT) %>%
+    group_by(.data$USUBJID, .data$PARENT) %>%
     mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE,
                                      .default = FALSE)) %>%
     ungroup()
@@ -2143,20 +2145,20 @@ add_observation <- function(nif, sdtm, domain, testcd,
       "parent for these observations?):\n",
       df_to_string(
           obj %>%
-            filter(NO_ADMIN_FLAG == TRUE) %>%
-            group_by(USUBJID, PARENT, ANALYTE) %>%
+            filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+            group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
             mutate(N = sum(EVID == 0)) %>%
             ungroup() %>%
-            distinct(USUBJID, PARENT, ANALYTE, N),
+            distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
         indent = "  ")),
       silent = silent)
 
     obj <- obj %>%
-      filter(NO_ADMIN_FLAG == 0)
+      filter(.data$NO_ADMIN_FLAG == 0)
   }
 
   obj %>%
-    select(-NO_ADMIN_FLAG) %>%
+    select(-c("NO_ADMIN_FLAG")) %>%
     make_time() %>%
     carry_forward_dose() %>%
     new_nif()
@@ -2240,10 +2242,10 @@ add_baseline <- function(
     filter({{observation_filter}}) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     filter(!!parse_expr(baseline_filter)) %>%
-    select(USUBJID, {{DV_field}}) %>%
+    select("USUBJID", {{DV_field}}) %>%
     group_by(.data$USUBJID) %>%
     summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
-    rename_with(~str_c("BL_", testcd), .cols = BL)
+    rename_with(~str_c("BL_", testcd), .cols = .data$BL)
 
   nif %>%
     left_join(temp, by = "USUBJID")
@@ -2272,23 +2274,23 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 
   if(keep_no_obs_sbs == FALSE) {
     obj <- obj %>%
-      group_by(ID) %>%
+      group_by(.data$ID) %>%
       filter(sum(EVID == 0) > 0) %>%
       ungroup()
   }
   if(individual == TRUE) {
     obj %>%
       # as.data.frame() %>%
-      group_by(ID) %>%
-      mutate(LAST_OBS_DTC = max_or_inf(DTC[EVID == 0])) %>%
+      group_by(.data$ID) %>%
+      mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[EVID == 0])) %>%
       ungroup() %>%
-      filter(DTC <= .data$LAST_OBS_DTC) %>%
+      filter(.data$DTC <= .data$LAST_OBS_DTC) %>%
       select(-c("LAST_OBS_DTC")) %>%
       new_nif()
   } else {
     last_obs_dtc <- max(obj$DTC[obj$EVID == 0])
     obj %>%
-      filter(DTC <= last_obs_dtc) %>%
+      filter(.data$DTC <= last_obs_dtc) %>%
       new_nif()
   }
 }
@@ -2308,7 +2310,7 @@ filter_subjects <- function(obj,
                             keep_no_admin = FALSE) {
   obj %>%
     as.data.frame() %>%
-    group_by(ID) %>%
+    group_by(.data$ID) %>%
     # mutate(nadmin = sum(EVID==1)) %>%
     {if(keep_no_obs == FALSE) filter(., sum(EVID == 0) > 0) else .} %>%
     {if(keep_no_admin == FALSE) filter(., sum(EVID == 1) > 0) else .} %>%

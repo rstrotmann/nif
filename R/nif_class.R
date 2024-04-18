@@ -1234,10 +1234,10 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
   obj %>%
     ensure_analyte() %>%
     as.data.frame() %>%
-    arrange(ID, TIME, ANALYTE) %>%
+    arrange(.data$ID, .data$TIME, .data$ANALYTE) %>%
     index_dosing_interval() %>%
     add_obs_per_dosing_interval() %>%
-    mutate(RICHINT_TEMP = (OPDI >= min_n)) %>%
+    mutate(RICHINT_TEMP = (.data$OPDI >= min_n)) %>%
 
     # add last observation before administration to rich interval
     # group_by(ID, ANALYTE) %>%
@@ -1246,23 +1246,23 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
     # ungroup() %>%
     # select(-c("RICHINT_TEMP")) %>%
 
-    group_by(ID, ANALYTE, DI) %>%
+    group_by(.data$ID, .data$ANALYTE, .data$DI) %>%
     # group_by(DI) %>%
     mutate(RICH_START = case_when(
       # row_number() == 1 & RICHINT_TEMP == TRUE ~ dense_rank(DI),
-      row_number() == 1 & RICHINT_TEMP == TRUE ~ TRUE,
+      row_number() == 1 & .data$RICHINT_TEMP == TRUE ~ TRUE,
       .default = FALSE)) %>%
     # mutate(test = dense_rank(DI)) %>%
     ungroup() %>%
 
-    group_by(ID, ANALYTE, RICH_START) %>%
+    group_by(.data$ID, .data$ANALYTE, .data$RICH_START) %>%
     mutate(RICH_N = case_when(
-      RICHINT_TEMP == TRUE & .data$RICH_START == TRUE ~ row_number(),
+      .data$RICHINT_TEMP == TRUE & .data$RICH_START == TRUE ~ row_number(),
       .default = NA)) %>%
     ungroup() %>%
 
-    group_by(ID, ANALYTE, DI, RICHINT_TEMP) %>%
-    fill(RICH_N, .direction = "down") %>%
+    group_by(.data$ID, .data$ANALYTE, .data$DI, .data$RICHINT_TEMP) %>%
+    fill(.data$RICH_N, .direction = "down") %>%
     ungroup() %>%
 
     # filter(ID == 4) %>%
