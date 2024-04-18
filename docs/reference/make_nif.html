@@ -12,11 +12,11 @@ see vignette("nif-vignette").'><!-- mathjax --><script src="https://cdnjs.cloudf
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -173,13 +173,13 @@ treatment for the respective subject.</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">make_nif</span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No specimen specified. Set to PLASMA as the most likely.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data cut-off was set to last observation time, 2001-02-19 11:45:00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── NONMEM input file (NIF) object ────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 680 observations from 20 subjects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 17, females: 3 (15%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPT_TIME, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, EXDY, REF, PERIOD, PCTESTCD, PCSTRESN, PCTEST, PCELTM, PCTPTNUM, PCTPT, PCDTC, PCSEQ, PCSPEC, PCRFTDTC, EPOCH, start.date, start.time, LNDV, RATE, EXTRT, last_obs, EXSTDTC, EXSTDY, EXENDY, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, date, time, TYPE, ref.time, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC, RFXSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TRTDY, FIRSTADMIN, TAD </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPUTATION, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, EXDY, REF, PERIOD, PCTESTCD, PCSTRESN, PCTEST, PCELTM, PCTPTNUM, PCTPT, PCDTC, PCSEQ, PCSPEC, PCRFTDTC, EPOCH, start.date, start.time, LNDV, RATE, EXTRT, last_obs, EXSTDTC, EXSTDY, EXENDY, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, date, time, TYPE, ref.time, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC, RFXSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TRTDY, FIRSTADMIN, TAD </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NIF data (selected columns):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME   TAD   ANALYTE   EVID   CMT   AMT   DOSE   DV      </span>
@@ -197,13 +197,13 @@ treatment for the respective subject.</p></li>
 <span class="r-in"><span><span class="fu">make_nif</span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No specimen specified. Set to PLASMA as the most likely.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data cut-off was set to last observation time, 2001-05-05 14:02:00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── NONMEM input file (NIF) object ────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1344 observations from 80 subjects</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Males: 46, females: 34 (42.5%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPT_TIME, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, EXDY, REF, PCTESTCD, PCSTRESN, PCTEST, RFSTDTC.x, PCDTC, PCSPEC, EPOCH, PCTPT, PCTPTNUM, PCRFTDTC, PCELTM, PCSEQ, start.date, start.time, LNDV, RATE, EXTRT, last_obs, EXSTDTC, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, EXSTDY, EXENDY, date, time, TYPE, ref.time, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC.y, RFXSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TRTDY, FIRSTADMIN, TAD </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPUTATION, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, EXDY, REF, PCTESTCD, PCSTRESN, PCTEST, RFSTDTC.x, PCDTC, PCSPEC, EPOCH, PCTPT, PCTPTNUM, PCRFTDTC, PCELTM, PCSEQ, start.date, start.time, LNDV, RATE, EXTRT, last_obs, EXSTDTC, EXENDTC, EXDOSE, EXROUTE, EXDOSFRM, EXSEQ, EXSTDTC_has_time, EXENDTC_has_time, end.date, end.time, EXSTDY, EXENDY, date, time, TYPE, ref.time, SITEID, SUBJID, ACTARM, ACTARMCD, RFICDTC, RFSTDTC.y, RFXSTDTC, SEX, AGE, AGEU, COUNTRY, ARM, ARMCD, RACE, ETHNIC, RFENDTC, HEIGHT, WEIGHT, BMI, FIRSTADMINDTC, FIRSTTRTDTC, FIRSTDTC, TRTDY, FIRSTADMIN, TAD </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NIF data (selected columns):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV       </span>
@@ -229,7 +229,7 @@ treatment for the respective subject.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
     </footer></div>

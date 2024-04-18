@@ -22,11 +22,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -162,34 +162,41 @@ observations, and baseline columns.</p>
 <span>  <span class="fu"><a href="../reference/add_bl_renal.html">add_bl_renal</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   ID           USUBJID    STUDYID                 DTC TIME TAFD NTIME IMPT_TIME</span></span>
-<span><span class="co">#&gt; 1  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0          </span></span>
-<span><span class="co">#&gt; 2  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0          </span></span>
-<span><span class="co">#&gt; 3  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0          </span></span>
-<span><span class="co">#&gt; 4  1 20230000011010001 2023000001 2000-12-31 10:48:00  0.5  0.5   0.5          </span></span>
-<span><span class="co">#&gt; 5  1 20230000011010001 2023000001 2000-12-31 10:48:00  0.5  0.5   0.5          </span></span>
-<span><span class="co">#&gt; 6  1 20230000011010001 2023000001 2000-12-31 11:18:00  1.0  1.0   1.0          </span></span>
-<span><span class="co">#&gt;      ANALYTE PARENT METABOLITE DOSE AMT CMT EVID     DV MDV EXDY REF SEX  RACE</span></span>
-<span><span class="co">#&gt; 1     RS2023 RS2023      FALSE    5   5   1    1     NA   1    1   1   0 WHITE</span></span>
-<span><span class="co">#&gt; 2     RS2023 RS2023      FALSE    5   0   2    0 0.0000   0   NA   2   0 WHITE</span></span>
-<span><span class="co">#&gt; 3 RS2023487A RS2023      FALSE    5   0   3    0 0.0000   0   NA   3   0 WHITE</span></span>
-<span><span class="co">#&gt; 4     RS2023 RS2023      FALSE    5   0   2    0 2.4470   0   NA   4   0 WHITE</span></span>
-<span><span class="co">#&gt; 5 RS2023487A RS2023      FALSE    5   0   3    0 0.4573   0   NA   5   0 WHITE</span></span>
-<span><span class="co">#&gt; 6     RS2023 RS2023      FALSE    5   0   2    0 7.2445   0   NA   6   0 WHITE</span></span>
-<span><span class="co">#&gt;   ETHNIC COUNTRY AGE HEIGHT WEIGHT     BMI ACTARMCD            RFXSTDTC TRTDY</span></span>
-<span><span class="co">#&gt; 1            DEU  43  187.4     77 21.9256       C1 2000-12-31 10:18:00     1</span></span>
-<span><span class="co">#&gt; 2            DEU  43  187.4     77 21.9256       C1 2000-12-31 10:18:00     1</span></span>
-<span><span class="co">#&gt; 3            DEU  43  187.4     77 21.9256       C1 2000-12-31 10:18:00     1</span></span>
-<span><span class="co">#&gt; 4            DEU  43  187.4     77 21.9256       C1 2000-12-31 10:18:00     1</span></span>
-<span><span class="co">#&gt; 5            DEU  43  187.4     77 21.9256       C1 2000-12-31 10:18:00     1</span></span>
-<span><span class="co">#&gt; 6            DEU  43  187.4     77 21.9256       C1 2000-12-31 10:18:00     1</span></span>
-<span><span class="co">#&gt;              FIRSTDTC          FIRSTADMIN TAD PCELTM BL_CREAT  BL_CRCL BL_RENAL</span></span>
-<span><span class="co">#&gt; 1 2000-12-31 10:18:00 2000-12-31 10:18:00 0.0   &lt;NA&gt;  67.4825 115.5074   normal</span></span>
-<span><span class="co">#&gt; 2 2000-12-31 10:18:00 2000-12-31 10:18:00 0.0   PT0H  67.4825 115.5074   normal</span></span>
-<span><span class="co">#&gt; 3 2000-12-31 10:18:00 2000-12-31 10:18:00 0.0   PT0H  67.4825 115.5074   normal</span></span>
-<span><span class="co">#&gt; 4 2000-12-31 10:18:00 2000-12-31 10:18:00 0.5 PT0.5H  67.4825 115.5074   normal</span></span>
-<span><span class="co">#&gt; 5 2000-12-31 10:18:00 2000-12-31 10:18:00 0.5 PT0.5H  67.4825 115.5074   normal</span></span>
-<span><span class="co">#&gt; 6 2000-12-31 10:18:00 2000-12-31 10:18:00 1.0   PT1H  67.4825 115.5074   normal</span></span></code></pre></div>
+<span><span class="co">#&gt;   ID           USUBJID    STUDYID                 DTC TIME TAFD NTIME</span></span>
+<span><span class="co">#&gt; 1  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0</span></span>
+<span><span class="co">#&gt; 2  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0</span></span>
+<span><span class="co">#&gt; 3  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0</span></span>
+<span><span class="co">#&gt; 4  1 20230000011010001 2023000001 2000-12-31 10:48:00  0.5  0.5   0.5</span></span>
+<span><span class="co">#&gt; 5  1 20230000011010001 2023000001 2000-12-31 10:48:00  0.5  0.5   0.5</span></span>
+<span><span class="co">#&gt; 6  1 20230000011010001 2023000001 2000-12-31 11:18:00  1.0  1.0   1.0</span></span>
+<span><span class="co">#&gt;                          IMPUTATION    ANALYTE PARENT METABOLITE DOSE AMT CMT</span></span>
+<span><span class="co">#&gt; 1  admin time imputed from PCRFTDTC     RS2023 RS2023      FALSE    5   5   1</span></span>
+<span><span class="co">#&gt; 2                                       RS2023 RS2023      FALSE    5   0   2</span></span>
+<span><span class="co">#&gt; 3                                   RS2023487A RS2023      FALSE    5   0   3</span></span>
+<span><span class="co">#&gt; 4                                       RS2023 RS2023      FALSE    5   0   2</span></span>
+<span><span class="co">#&gt; 5                                   RS2023487A RS2023      FALSE    5   0   3</span></span>
+<span><span class="co">#&gt; 6                                       RS2023 RS2023      FALSE    5   0   2</span></span>
+<span><span class="co">#&gt;   EVID     DV MDV EXDY REF SEX  RACE ETHNIC COUNTRY AGE HEIGHT WEIGHT     BMI</span></span>
+<span><span class="co">#&gt; 1    1     NA   1    1   1   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 2    0 0.0000   0   NA   2   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 3    0 0.0000   0   NA   3   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 4    0 2.4470   0   NA   4   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 5    0 0.4573   0   NA   5   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 6    0 7.2445   0   NA   6   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt;   ACTARMCD            RFXSTDTC TRTDY            FIRSTDTC          FIRSTADMIN</span></span>
+<span><span class="co">#&gt; 1       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
+<span><span class="co">#&gt; 2       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
+<span><span class="co">#&gt; 3       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
+<span><span class="co">#&gt; 4       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
+<span><span class="co">#&gt; 5       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
+<span><span class="co">#&gt; 6       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
+<span><span class="co">#&gt;   TAD PCELTM BL_CREAT  BL_CRCL BL_RENAL</span></span>
+<span><span class="co">#&gt; 1 0.0   &lt;NA&gt;  67.4825 115.5074   normal</span></span>
+<span><span class="co">#&gt; 2 0.0   PT0H  67.4825 115.5074   normal</span></span>
+<span><span class="co">#&gt; 3 0.0   PT0H  67.4825 115.5074   normal</span></span>
+<span><span class="co">#&gt; 4 0.5 PT0.5H  67.4825 115.5074   normal</span></span>
+<span><span class="co">#&gt; 5 0.5 PT0.5H  67.4825 115.5074   normal</span></span>
+<span><span class="co">#&gt; 6 1.0   PT1H  67.4825 115.5074   normal</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data-exploration">DATA EXPLORATION<a class="anchor" aria-label="anchor" href="#data-exploration"></a>
@@ -199,7 +206,7 @@ the summary for a graphical representation of the baseline
 characteristics of the population and the analytes:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ──────── NONMEM input file (NIF) object summary ────────</span></span>
+<span><span class="co">#&gt; ----- NONMEM input file (NIF) object summary -----</span></span>
 <span><span class="co">#&gt; Data from 48 subjects across one study:</span></span>
 <span><span class="co">#&gt;  STUDYID      N    </span></span>
 <span><span class="co">#&gt;  2023000001   48   </span></span>
@@ -389,7 +396,7 @@ and graphical analyses are supported:</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
     </footer>
