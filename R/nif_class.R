@@ -1151,6 +1151,50 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 }
 
 
+#' Add baseline hepatic function class
+#'
+#' Based on the NCI ODWG criteria with TB the total (direct and indirect) serum
+#' bilirubin, and AST aspartate aminotransferase.
+#'
+#' normal: TB & AST ≤ upper limit of normal (ULN)
+#' mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
+#' moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
+#' severe tic dysfunction: TB >3 - 10 x ULN, any AST
+#'
+#' @param obj A nif object.
+#' @param sdtm The corresponding sdtm object.
+#'
+#' @return A nif object.
+#' @export
+add_bl_odwg <- function(obj, sdtm) {
+  lb1 <- sdtm$domains[["lb"]] %>%
+    filter(.data$LBSPEC != "URINE") %>%
+    mutate(LB1DTC = .data$LBDTC) %>%
+    filter(.data$LBTESTCD %in% c("AST", "BILI")) %>%
+    mutate(LB1TESTCD = .data$LBTESTCD) %>%
+    mutate(LB1BLFL = .data$LBBLFL) %>%
+    mutate(LB1TESTCD = paste0(.data$LB1TESTCD, "_X_ULN"),
+           LB1STRESN = .data$LBSTRESN / .data$LBSTNRHI)
+
+  sdtm$domains[["lb1"]] <- lb1
+
+  obj %>%
+    add_baseline(sdtm, "lb1", "BILI_X_ULN") %>%
+    add_baseline(sdtm, "lb1", "AST_X_ULN") %>%
+    mutate(BL_ODWG = case_when(
+      .data$BL_BILI_X_ULN > 3 & .data$BL_BILI_X_ULN <= 10 ~ "severe",
+      .data$BL_BILI_X_ULN > 1.5 & .data$BL_BILI_X_ULN <= 3 ~ "moderate",
+      (.data$BL_BILI_X_ULN > 1 & .data$BL_BILI_X_ULN <= 1.5) |
+        .data$BL_AST_X_ULN > 1 ~ "mild",
+      .data$BL_BILI_X_ULN <= 1 & .data$BL_BILI_X_ULN <= 1 &
+        .data$BL_AST_X_ULN <= 1 ~ "normal",
+      .default = NA
+    )) %>%
+    mutate(BL_ODWG = factor(BL_ODWG,
+      levels = c("normal", "mild", "moderate", "severe")))
+}
+
+
 #' Add baseline and change from baseline fields
 #'
 #' @details

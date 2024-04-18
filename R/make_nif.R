@@ -2245,7 +2245,7 @@ add_baseline <- function(
     select("USUBJID", {{DV_field}}) %>%
     group_by(.data$USUBJID) %>%
     summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
-    rename_with(~str_c("BL_", testcd), .cols = .data$BL)
+    rename_with(~str_c("BL_", testcd), .cols = BL)
 
   nif %>%
     left_join(temp, by = "USUBJID")
