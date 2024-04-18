@@ -684,13 +684,15 @@ last_ex_dtc <- function(ex) {
 #' Extract baseline vital sign covariates from VS
 #'
 #' @param vs The VS domain as data frame.
+#' @param baseline_filter R filter expression to select the baseline time point.
 #' @param silent Switch to disable message output.
+#'
 #' @return Baseline VS data as wide data frame.
 #' @export
 #' @keywords internal
 #' @examples
 #' baseline_covariates(examplinib_sad$vs)
-baseline_covariates <- function(vs, silent = FALSE) {
+baseline_covariates <- function(vs, baseline_filter = {TRUE}, silent = FALSE) {
   temp <- vs %>%
     filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
 
@@ -1630,8 +1632,8 @@ make_subjects <- function(
   }
 
   out <- dm %>%
-    lubrify_dates() %>%
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
+    lubrify_dates() %>%
     filter({{subject_filter}}) %>%
     left_join(baseline_covariates(vs, silent = silent),
               by = "USUBJID") %>%
@@ -1840,11 +1842,10 @@ make_baseline <- function(
     ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
-                       subject_filter = {{subject_filter}}, cleanup = cleanup)
+                       subject_filter = {{subject_filter}}, cleanup = FALSE)
 
   temp <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates() %>%
-    # filter(eval(observation_filter)) %>%
     filter(eval_tidy(observation_filter)) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     filter(!!parse_expr(baseline_filter)) %>%
@@ -2240,7 +2241,7 @@ add_baseline <- function(
     filter(.data[[TESTCD_field]] == testcd) %>%
     filter(!!parse_expr(baseline_filter)) %>%
     select(USUBJID, {{DV_field}}) %>%
-    group_by(USUBJID) %>%
+    group_by(.data$USUBJID) %>%
     summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
     rename_with(~str_c("BL_", testcd), .cols = BL)
 
