@@ -16,9 +16,11 @@ knitr::opts_chunk$set(
 # NIF
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/nif)](https://CRAN.R-project.org/package=nif)
 <!-- badges: end -->
 
-This is a package to create NONMEM input files (NIF) from SDTM data.
+This is a package to create NONMEM input file (NIF) objects from SDTM-formatted
+clinical study data.
 
 ## Installation
 
@@ -30,10 +32,10 @@ devtools::install_github("rstrotmann/nif", build_vignettes=TRUE)
 
 ## Example
 
-### NIF data set creation
+### Generate a NIF data set
 
-This is a very basic example using a sample SDTM object to create a NIF data
-set using `make_nif()`:
+This is a very basic example using sample SDTM data from a fictional single
+ascending dose study to create a NIF data set using `make_nif()`:
 
 ```{r message = FALSE, warning = FALSE}
 library(nif)
@@ -41,29 +43,29 @@ library(tidyverse)
 
 sdtm <- examplinib_sad
 
-make_nif(sdtm) %>% 
-  compress() %>%
-  head()
-```
-
-In many cases, you may want to add further covariates after `make_nif()`,
-see this slightly more elaborate example:
-
-```{r}
-nif <- make_nif(sdtm, silent = TRUE) %>% 
-  compress() %>% 
-  mutate(COHORT = ACTARMCD) %>% 
-  add_bl_lab(examplinib_sad %>% domain("lb"), "CREAT") %>% 
-  add_bl_crcl()
+nif <- new_nif() %>% 
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
+  add_observation(sdtm, "pc", "RS2023", analyte = "RS2023")
 
 head(nif)
 ```
 
+In many cases, you may want to add further covariates, e.g., baseline creatinine
+from the LB domain:
+
+```{r}
+nif <- nif %>%  
+  mutate(COHORT = ACTARMCD) %>% 
+  add_baseline(sdtm, "lb", "CREAT") %>% 
+  add_bl_crcl()
+```
+
 ### Data exploration
 
-`nif` contains functions to explore and summarize NIF files:
+The `nif` package provides a range of functions to explore and summarize NIF
+files:
 
-```{r, message = FALSE, warning = FALSE, fig.width=4, fig.height=4}
+```{r, message = FALSE, warning = FALSE, fig.width=3, fig.height=3}
 summary(nif)
 
 invisible(capture.output(
