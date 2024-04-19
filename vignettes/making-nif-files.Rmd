@@ -21,7 +21,7 @@ are provided as part of the package.
 This vignette makes use of the following packages:
 
 ```{r setup, message = FALSE, warning = FALSE}
-library(tidyverse)
+library(dplyr)
 library(knitr)
 library(nif)
 ```

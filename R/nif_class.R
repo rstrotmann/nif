@@ -1190,7 +1190,7 @@ add_bl_odwg <- function(obj, sdtm) {
         .data$BL_AST_X_ULN <= 1 ~ "normal",
       .default = NA
     )) %>%
-    mutate(BL_ODWG = factor(BL_ODWG,
+    mutate(BL_ODWG = factor(.data$BL_ODWG,
       levels = c("normal", "mild", "moderate", "severe")))
 }
 
