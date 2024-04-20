@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.2.9001</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,27 +84,34 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  1 20230000221010001 2023000022 2001-01-15 12:46:00 2.167 2.167   1.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  1 20230000221010001 2023000022 2001-01-15 12:46:00 2.167 2.167   1.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  1 20230000221010001 2023000022 2001-01-15 15:14:00 4.633 4.633   4.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      ANALYTE PARENT METABOLITE DOSE AMT CMT EVID       DV MDV REF   TAD RATE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     RS2023 RS2023      FALSE  500 500   1    1       NA   1   1 0.000    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     RS2023 RS2023      FALSE   NA   0   2    0 0.000000   0   2 0.000    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 RS2023487A RS2023       TRUE   NA   0   3    0 0.000000   0   3 0.000    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     RS2023 RS2023      FALSE  500   0   2    0 3.380265   0   4 2.167    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 RS2023487A RS2023       TRUE  500   0   3    0 3.453869   0   5 2.167    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     RS2023 RS2023      FALSE  500   0   2    0 1.477397   0   6 4.633    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        LNDV AGE SEX  RACE HEIGHT WEIGHT      BMI  ACTARMCD TRTDY BL_CREAT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        NA  76   1 WHITE  177.6   68.7 21.78065 TREATMENT     1 93.95312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      -Inf  76   1 WHITE  177.6   68.7 21.78065 TREATMENT     1 93.95312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      -Inf  76   1 WHITE  177.6   68.7 21.78065 TREATMENT     1 93.95312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1.2179540  76   1 WHITE  177.6   68.7 21.78065 TREATMENT     1 93.95312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 1.2394950  76   1 WHITE  177.6   68.7 21.78065 TREATMENT     1 93.95312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0.3902816  76   1 WHITE  177.6   68.7 21.78065 TREATMENT     1 93.95312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   BL_CRCL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 50.2462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 50.2462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 50.2462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 50.2462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 50.2462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 50.2462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          IMPUTATION    ANALYTE PARENT METABOLITE DOSE AMT CMT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  admin time imputed from PCRFTDTC     RS2023 RS2023      FALSE  500 500   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       RS2023 RS2023      FALSE  500   0   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                   RS2023487A RS2023      FALSE  500   0   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                       RS2023 RS2023      FALSE  500   0   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                   RS2023487A RS2023      FALSE  500   0   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                       RS2023 RS2023      FALSE  500   0   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   EVID       DV MDV REF     EPOCH SEX  RACE ETHNIC COUNTRY AGE HEIGHT WEIGHT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1       NA   1   1 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0    0.000   0   2 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0    0.000   0   3 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0 3380.265   0   4 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0 3453.869   0   5 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0 1477.397   0   6 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        BMI  ACTARMCD            RFXSTDTC TRTDY            FIRSTDTC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            FIRSTADMIN   TAD PCELTM BL_CREAT  BL_CRCL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-15 10:36:00 0.000   &lt;NA&gt; 93.95312 48.83871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-15 10:36:00 0.000   PT0H 93.95312 48.83871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-15 10:36:00 0.000   PT0H 93.95312 48.83871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-15 10:36:00 2.167 PT1.5H 93.95312 48.83871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-15 10:36:00 2.167 PT1.5H 93.95312 48.83871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-15 10:36:00 4.633   PT4H 93.95312 48.83871</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

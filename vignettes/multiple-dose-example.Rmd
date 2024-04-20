@@ -265,7 +265,8 @@ nca <- examplinib_poc_nif %>%
   nca("RS2023", group = "RICH_N")
 
 nca %>% 
-  nca_summary_table(group = "RICH_N")
+  nca_summary_table(group = "RICH_N") %>% 
+  kable()
 ```
 
 
