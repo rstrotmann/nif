@@ -15,6 +15,4 @@ A nif object.
 \description{
 Ensure that all time fields are in the nif object
 }
-\examples{
-head(ensure_time(examplinib_poc_nif))
-}
+\keyword{internal}

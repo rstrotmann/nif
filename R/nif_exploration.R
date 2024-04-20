@@ -511,14 +511,16 @@ nif_spaghetti_plot <- function(obj,
 #' @param mean Show a mean plot, as logical.
 #' @param title The plot title as character.
 #' @param caption The plot caption line as character.
-#' @param ... Further graphical parameters for geom_point().
+#' @param ... Further graphical parameters for `geom_point()`.
 #' @param integrate_predose Complete 'DOSE' field for predose values.
 #' @param summary_function The summarizing function to apply to multiple
 #'   baseline values.
 #' @param legend Show legend, as logical.
-#' @param show_n Show sample size in mean plot, as logical.
+#' @param show_n Show sample size in mean plot, as logical. Does currently not
+#'   implement grouping! `r lifecycle::badge("experimental")`
 #' @param watermark Show watermark as character or logical. If watermark = TRUE,
 #'   a standard text will be shown.
+#' @param shading Show ribbons when mean = TRUE, as logical.
 #'
 #' @return A ggplot object.
 #' @import assertr
@@ -527,26 +529,22 @@ nif_spaghetti_plot <- function(obj,
 #' @examples
 #' plot(examplinib_fe_nif, points = TRUE)
 #' plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
-#' plot(examplinib_sad_nif)
-#' plot(examplinib_sad_nif, cfb = TRUE)
+#' plot(examplinib_sad_nif, mean = TRUE, max_time = 24, show_n = TRUE)
 #' plot(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
-#' plot(examplinib_poc_nif)
 #' plot(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
 #'   group = "SEX", points = TRUE, lines = FALSE)
 #' plot(examplinib_poc_nif, analyte="RS2023", time = "TAD",
 #'   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
-#' plot(examplinib_sad_min_nif)
 #' plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
-#' plot(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
-#'   points = TRUE, lines = FALSE)
 #' plot(examplinib_fe_nif, points = TRUE, watermark = TRUE)
+#' plot(examplinib_fe_nif, mean = TRUE, group = "FASTED", max_time = 24)
 #' plot(examplinib_fe_nif, points = TRUE, watermark = "Examplinib food effect")
 plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                      group = NULL, min_time = NULL, max_time = NULL,
                      points = FALSE, lines = TRUE, admin = NULL, cfb = FALSE,
                      summary_function = median, silent = TRUE, mean = FALSE,
                      title = "", caption = "", integrate_predose = TRUE,
-                     legend = TRUE, show_n = FALSE,
+                     legend = TRUE, show_n = FALSE, shading = TRUE,
                      watermark = "", ...) {
   # Assert time field
   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
@@ -707,19 +705,19 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       {if (lines) geom_line(na.rm = TRUE)} +
       {if (points) geom_point(na.rm = TRUE)} +
       {if (log == TRUE) scale_y_log10()} +
-      geom_ribbon(aes(ymin = pos_diff(mean, sd), ymax = mean + sd,
-                      fill = as.factor(GROUP)),
-        alpha = 0.3, color = NA, show.legend = FALSE) +
+      {if (shading == TRUE) geom_ribbon(aes(ymin = pos_diff(mean, sd),
+        ymax = mean + sd, fill = as.factor(GROUP)), alpha = 0.3, color = NA,
+        show.legend = FALSE)} +
       {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
       xlim(c(min_time, max_time)) +
       labs(x = "nominal time (h)", y = y_label, color = color_label,
            caption = "Mean and SD") +
 
-      # {if(show_n == TRUE) geom_text(
-      #   aes(label =
-      #     n),
-      #   x = -Inf,
-      #   y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
+      {if(show_n == TRUE) geom_text(
+        aes(label =
+          paste0 ("N = ", n)),
+        x = -Inf,
+        y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
 
       theme_bw() +
       theme(legend.position = ifelse(
@@ -755,19 +753,19 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
 }
 
 
-#' NIF or SDTM object overview
-#'
-#' @param object The NIF or SDTM object.
-#' @param ... Further arguments.
-#' @return A summary_nif or summary_sdtm object.
-#' @export
-#' @examples
-#' summary(examplinib_poc)
-#' summary(examplinib_poc_nif)
-#' summary(examplinib_poc_min_nif)
-summary <- function(object, ...) {
-  UseMethod("summary")
-}
+# ' NIF or SDTM object overview
+# '
+# ' @param object The NIF or SDTM object.
+# ' @param ... Further arguments.
+# ' @return A summary_nif or summary_sdtm object.
+# ' @export
+# ' @examples
+# ' summary(examplinib_poc)
+# ' summary(examplinib_poc_nif)
+# ' summary(examplinib_poc_min_nif)
+# summary <- function(object, ...) {
+#   UseMethod("summary")
+# }
 
 
 #' NIF object overview
@@ -1356,14 +1354,15 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
     arrange(DL, ANALYTE)
 }
 
-#' Evaluation of drug-induced serious hepatotoxicity (eDISH) plot
+#' Drug-induced serious hepatotoxicity (eDISH) plot
 #'
 #' @description
 #' DOI: 10.2165/11586600-000000000-00000
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.
-#' @param enzyme The transaminase to be plotted on the x axis as character.
+#' @param enzyme The transaminase enzyme to be plotted on the x axis as
+#'   character, can be 'AST' or 'ALT' (default).
 #' @param title The plot title as character.
 #' @param size The point size as numeric.
 #' @param alpha The alpha value as numeric.

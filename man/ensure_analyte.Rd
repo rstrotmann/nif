@@ -16,8 +16,4 @@ A NIF object.
 If 'ANALYTE' is not in the column names, the field is created based on the
 compartment (CMT).
 }
-\examples{
-head(ensure_analyte(examplinib_poc_nif))
-head(ensure_analyte(examplinib_poc_min_nif))
-}
 \keyword{internal}

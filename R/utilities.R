@@ -1,3 +1,19 @@
+#' Issue message based on silent flag
+#'
+#' @param msg The message as character.
+#' @param silent A Boolean.
+#' @param ... Further message components.
+#' @return Nothing.
+#' @keywords internal
+conditional_message <- function(msg, ..., silent = FALSE) {
+  parameters <- c(as.list(environment()), list(...))
+  parameters <- lapply(parameters, as.character)
+  if (silent == FALSE) {
+    message(paste(as.character(parameters[names(parameters) != "silent"])))
+  }
+}
+
+
 #' Recode SEX field in a data frame
 #'
 #' This function recodes the SEX field in a data frame. All numerical values are
@@ -207,6 +223,7 @@ compose_dtc <- function(date, time) {
 #'
 #' @return A data frame.
 #' @export
+#' @keywords internal
 decompose_dtc <- function(obj, DTC_field) {
   dec_dtc <- function(fld) {
     DTC_date <- paste0(fld, "_date")

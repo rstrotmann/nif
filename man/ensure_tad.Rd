@@ -15,7 +15,4 @@ A NIF object.
 \description{
 Ensure that TAD is present in the NIF object
 }
-\examples{
-head(ensure_tad(examplinib_poc_nif))
-head(ensure_tad(examplinib_poc_min_nif))
-}
+\keyword{internal}

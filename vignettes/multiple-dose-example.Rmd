@@ -29,13 +29,12 @@ theme_set(theme_bw())
 
 # OVERVIEW
 
-This vignette walks through the creation of a NONMEM input fil (NIF) data set
+This vignette walks through the creation of a NONMEM input file (NIF) data set
 for a prototypical multiple dose study (study 'RS2023-0022'), followed by some
 basic exploratory analyses.
 
 The (fictional) raw study data are included as part of the NIF package as
-'examplinib_poc'. Custom SDTM data can be loaded using `read_sdtm()` - for
-further information see the documentation for that function.
+`examplinib_poc`. Custom SDTM data can be loaded using `read_sdtm()`.
 
 ## Study design
 
@@ -50,7 +49,7 @@ subset of subjects and sparse in the others.
 The  package provides the 'sdtm' class as a wrapper to keep all
 SDTM domain tables of a clinical study together in one object. The
 `examplinib_poc` sdtm object contains the DM, EX, PC and VS domains. Let's
-print the 'examplinib_poc' sdtm object for a high-level overview:
+print the `examplinib_poc` sdtm object for a high-level overview:
 
 
 ```{r, echo=T}
@@ -63,7 +62,7 @@ a metabolite.
 
 To clearly specify these correlations, the SDTM object includes the fields
 `examplinib_poc$analyte_mapping` and `examplinib_poc$metabolite_mapping`. Both
-can be specified when the SDTM data set is created. See the documentation to
+can be defined when the SDTM data set is created. See the documentation to
 `add_analyte_mapping()` and `add_metabolite_mapping()` for details.
 
 For this SDTM object, both mappings have been added already.
@@ -75,46 +74,63 @@ different SDTM domains must be integrated into a single data frame in long
 table format. For modeling analyses, a common format specification is the NONMEM
 input file (NIF) format that is at the core of the `nif` package.
 
-Creation of the NIF data set for this study is straightforward. No imputations
-are needed, and no study-specific fields are created:
+`nif` objects are minimally composed from administrations and observations.
+Following the NONMEM nomenclature, the former have an 'EVID' of 1, the latter an
+'EVID' of 0. In the following code, an empty nif object is created using
+`new_nif()`, to which 'EXAMPLINIB' administrations are then added using
+`add_administration()`. Note that the analyte field for this drug is set to
+'RS2023'. In a second step, pharmacokinetic concentrations for 'RS2023' are
+added from the 'PC' SDTM domain. To match the administration, the analyte field
+is again 'RS2023'. The compartment is automatically set to 2. Both functions
+have as their first arguemt the 'sdtm' object:
 
 ```{r}
-nif_poc <- make_nif(examplinib_poc, spec="PLASMA")
+# nif_poc <- make_nif(examplinib_poc, spec="PLASMA")
+
+sdtm <- examplinib_poc
+
+nif_poc <- new_nif() %>% 
+  add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>% 
+  add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023")
 ```
 
-Of note, the LB domain within this SDTM object contains baseline creatinine data
-which can be used to calculate the baseline creatinine clearance as an estimate
-for glomerular filtration rate (eGFR). Please see the below code for details.
+The 'LB' domain within this sdtm object contains baseline creatinine data which
+can be used to calculate the individual baseline creatinine clearance as an
+estimate for glomerular filtration rate (eGFR). Baseline covariates are created
+using 'add_baseline()`.
 
 In the first step, baseline creatinine is added from 'LB', and then the
 creatinine clearance is calculated using further demographic parameters (sex,
 age, race, weight). The standard method is Cockcroft-Gault but other methods can
-be specified.
- 
-In the last step, the NIF data set, is cleaned up, keeping only the fields
-that are commonly used:
+be specified:
 
 ```{r}
-nif_poc <- make_nif(examplinib_poc, spec="PLASMA",
-                    truncate_to_last_observation = FALSE) %>% 
-  add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-  add_bl_crcl() %>% 
-  compress()
+# nif_poc <- make_nif(examplinib_poc, spec="PLASMA",
+#                     truncate_to_last_observation = FALSE) %>% 
+#   add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
+#   add_bl_crcl() %>% 
+#   compress()
+
+nif_poc <- nif_poc %>% 
+  add_baseline(sdtm, domain = "lb", testcd = "CREAT") %>% 
+  add_bl_crcl()
 ```
 
-(In fact, the resulting NIF data set, including baseline creatinine clearance is
-already included in the package under the name 'examplinib_poc_nif'.)
+In fact, the nif data set that we have just created, including the baseline
+creatinine clearance data, is already included in the `nif` package as
+`examplinib_poc_nif`.
 
-In case NIF data sets have been generated independently, they can be converted
-into NIF objects using `new_nif()`, see the documentation to this
-function for details.
+In case NIF data sets have been generated externally, they can be converted into
+nif objects using `new_nif()`, see the documentation to this function for
+details.
 
-The resulting NIF object is essentially wrapper around a data frame which has
-the set of variables expected by NONMEM or other population analysis tools. This
-becomes visible when the object is converted into a data frame:
+Note that a nif object is essentially a wrapper around a data frame with the set
+of variables expected by NONMEM or other population analysis tools. This becomes
+visible when the object is converted into a data frame:
 
 ```{r, comment="# "}
 nif_poc %>% 
+  as.data.frame() %>% 
   head()
 ```
 
@@ -155,7 +171,7 @@ nif_poc %>%
 ```
 
 However, there were subjects with dose reductions, as we can see when filtering
-the NIF data set for EVID==1 (administrations) and summarizing the administered
+the nif data set for EVID == 1 (administrations) and summarizing the administered
 dose:
 
 ```{r}
@@ -178,8 +194,8 @@ Let's have a plot of the doses over time in these subjects:
 ```{r fig.width=5, fig.height=2}
 nif_poc %>% 
   filter(ID %in% (nif_poc %>% dose_red_sbs())) %>% 
-  filter(EVID==1) %>% 
-  ggplot(aes(x=TIME, y=DOSE, color=as.factor(ID))) + 
+  filter(EVID == 1) %>% 
+  ggplot(aes(x = TIME, y = DOSE, color = as.factor(ID))) + 
   geom_point() +
   geom_line() +
   theme(legend.position="none") 
@@ -206,11 +222,11 @@ The PK sampling time points in this study were:
 
 ```{r}
 nif_poc %>% 
-  filter(EVID==0) %>% 
+  filter(EVID == 0) %>% 
   group_by(NTIME, ANALYTE) %>% 
-  summarize(n=n(), .groups="drop") %>% 
-  pivot_wider(names_from="ANALYTE", values_from="n") %>% 
-  kable(caption="Observations by time point and analyte")
+  summarize(n = n(), .groups = "drop") %>% 
+  pivot_wider(names_from = "ANALYTE", values_from = "n") %>% 
+  kable(caption = "Observations by time point and analyte")
 ```
 
 From the different numbers of samplings per nominal time point, we see that only
@@ -218,7 +234,7 @@ a subset of subjects had a rich sampling scheme. Let's identify those:
 
 ```{r, comment="# "}
 nif_poc %>% 
-  rich_sampling_sbs(analyte="RS2023", max_time=24, n=4)
+  rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 4)
 ```
 
 In this code, the function `rich_sampling_sbs()` receives as input the analyte
@@ -232,39 +248,22 @@ the parent, RS2023, and the metabolite, RS2023487A:
 
 ```{r fig.width=5, fig.height=3}
 temp <- nif_poc %>% 
-  filter(ID %in% (nif_poc %>%
-                    rich_sampling_sbs(analyte="RS2023", n=4, max_time=24)))
-temp %>% plot(points=T)
+  filter(ID %in% (rich_sampling_sbs(nif_poc, analyte = "RS2023", n=4)))
+temp %>% plot(dose = 500, points = TRUE, title = "Rich sampling subjects")
 ```
 
-For the sampling on Day 1 only:
+For single and mutliple dose administrations separately: 
 
 ```{r fig.width=5, fig.height=3, warning=F, message=F}
 temp <- temp %>% 
-    filter(TIME<=24)
+  index_rich_sampling_intervals()
 
-temp %>% plot(analyte="RS2023", points=T, max_x=15)
+temp %>% filter(RICH_N == 1) %>% 
+  plot(analyte = "RS2023", mean = TRUE, title = "Single-dose PK")
 
-temp %>% plot(analyte="RS2023", mean=T, log = TRUE)
-
-nif_poc %>% 
-  filter(ID %in% (nif_poc %>%
-                    rich_sampling_sbs(analyte="RS2023", n=4, max_time=24))) %>% 
-  plot(nominal_time=F, min_x=192)
+temp %>% filter(RICH_N == 2) %>% 
+  plot(analyte = "RS2023", title = "Multiple-dose PK", time = "NTIME", mean = T)
 ```
 
-The above code showcases some options for the `plot()` function: 
-
-* In addition to the line graphs, the individual data points can be shown with
-  the option `points=TRUE`.
-* `min_x` and `max_x` can be used to define a speficic time interval.
-* In the first 2 graphs, the analyte (RS2023) is specifically selected. In the
-  third graph, no analyte is specified, and both analytes are plotted.
-* `nonminal_time=TRUE` selects the nominal time for the x axis. The default for
-  individual curves is `nominal_time=FALSE`, i.e., the actual time is used. Note
-  that for mean profiles as shown in plot 2, nominal time is used automatically
-  for the averaging.
-* The option `log == TRUE` can be used to plot the data on a log concentration
-  scale.
 
 

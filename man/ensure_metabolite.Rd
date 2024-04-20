@@ -15,8 +15,4 @@ A NIF object.
 \description{
 Ensure that the METABOLITE field is present in a NIF file.
 }
-\examples{
-head(ensure_metabolite(examplinib_poc_nif))
-head(ensure_metabolite(examplinib_poc_min_nif))
-}
 \keyword{internal}

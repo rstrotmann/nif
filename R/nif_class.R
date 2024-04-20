@@ -350,10 +350,6 @@ studies <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
-#' @export
-#' @examples
-#' head(ensure_analyte(examplinib_poc_nif))
-#' head(ensure_analyte(examplinib_poc_min_nif))
 ensure_analyte <- function(obj) {
   obj %>%
     # {if(!"ANALYTE" %in% names(obj))
@@ -367,9 +363,7 @@ ensure_analyte <- function(obj) {
 #'
 #' @param obj A NIF object.
 #' @return A NIF object.
-#' @export
-#' @examples
-#' ensure_dose(examplinib_poc_min_nif)
+#' @keywords internal
 ensure_dose <- function(obj) {
   obj %>%
     {if(!"DOSE" %in% names(obj))
@@ -385,10 +379,6 @@ ensure_dose <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
-#' @export
-#' @examples
-#' head(ensure_parent(examplinib_poc_nif))
-#' head(ensure_parent(examplinib_poc_min_nif))
 ensure_parent <- function(obj) {
   admin_cmt <- obj %>%
     as.data.frame() %>%
@@ -408,10 +398,6 @@ ensure_parent <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
-#' @export
-#' @examples
-#' head(ensure_metabolite(examplinib_poc_nif))
-#' head(ensure_metabolite(examplinib_poc_min_nif))
 ensure_metabolite <- function(obj) {
   obj %>%
     {if(!"METABOLITE" %in% names(obj))
@@ -423,10 +409,7 @@ ensure_metabolite <- function(obj) {
 #'
 #' @param obj A NIF object.
 #' @return A NIF object.
-#' @export
-#' @examples
-#' head(ensure_tad(examplinib_poc_nif))
-#' head(ensure_tad(examplinib_poc_min_nif))
+#' @keywords internal
 ensure_tad <- function(obj) {
   obj <- obj %>%
     {if(!"TAD" %in% names(obj))
@@ -434,12 +417,12 @@ ensure_tad <- function(obj) {
 }
 
 
-#' Title
+#' Ensure TAFD is present in the NIF object
 #'
 #' @param obj A nif object.
 #'
 #' @return A nif object.
-#' @export
+#' @keywords internal
 ensure_tafd <- function(obj) {
   obj <- obj %>%
     {if(!"TAFD" %in% names(obj))
@@ -452,42 +435,11 @@ ensure_tafd <- function(obj) {
 #' @param obj A nif object.
 #'
 #' @return A nif object.
-#' @export
-#'
-#' @examples
-#' head(ensure_time(examplinib_poc_nif))
+#' @keywords internal
 ensure_time <- function(obj) {
   obj <- obj %>%
     {if(!all(c("TIME", "TAD", "TAFD") %in% names(obj)))
       make_time(.) else .}
-}
-
-
-#' Ensure that NTIME is present in the NIF object
-#'
-#' Experimental, do not use in production! Uses assumptions about the sampling
-#' time points.
-#' @param obj A NIF object.
-#' @return A NIF object.
-#' @keywords internal
-ensure_ntime <- function(obj) {
-  # if(!"NTIME" %in% names(obj)) {
-  #   late_labels <- seq(24, ceiling(max_observation_time(obj)/24)*24, 24)
-  #   late_breaks <- late_labels + 12
-  #
-  #   obj %>%
-  #     nif::ensure_parent() %>%
-  #     nif::add_tad() %>%
-  #     as.data.frame() %>%
-  #     mutate(NTIME = as.numeric(as.character(cut(TAD,
-  #       # breaks=c(-Inf, 0, 0.25,  .5,   1, 1.5, 2, 3, 4, 6, 8, 10, 12, 16, 24),
-  #       breaks=  c(c(-Inf, 0, 0.125, .375, .75, 1.25, 1.75, 2.5, 3.5, 5,
-  #                  7, 9, 11, 14, 20, 24), late_breaks),
-  #       labels=c(c(0, 0, 0.25, .5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 16, 24),
-  #                late_labels)))))
-  # } else {
-  #   return(obj)
-  # }
 }
 
 
@@ -615,18 +567,18 @@ head.nif <- function(x, ...) {
 }
 
 
-#' Export a NIF object as csv file
-#'
-#' @param obj A NIF object.
-#' @param filename The filename for the exported file.
-#' @import dplyr
-#' @export
-write_csv.nif <- function(obj, filename) {
-  temp <- obj %>%
-    as.data.frame() %>%
-    dplyr::mutate(across(c("TIME", "TAD", "DV", "LNDV"), round, 3))
-  write.csv(temp, filename, quote = FALSE, row.names = FALSE)
-}
+# ' Export a NIF object as csv file
+# '
+# ' @param obj A NIF object.
+# ' @param filename The filename for the exported file.
+# ' @import dplyr
+# ' @export
+# write_csv.nif <- function(obj, filename) {
+#   temp <- obj %>%
+#     as.data.frame() %>%
+#     dplyr::mutate(across(c("TIME", "TAD", "DV", "LNDV"), round, 3))
+#   write.csv(temp, filename, quote = FALSE, row.names = FALSE)
+# }
 
 
 #' Write as space-delimited, fixed-width file as required by NONMEM or a
@@ -645,33 +597,54 @@ write_csv.nif <- function(obj, filename) {
 #' @export
 #' @examples
 #' write_nif(examplinib_fe_nif)
-write_nif <- function(obj, filename = NULL, fields = NULL, sep=NULL) {
-  double_fields <- c("NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
-                     "AGE", "HEIGHT", "WEIGHT", "BMI")
-  bl_fields <- names(obj)[str_detect(names(obj), "^BL_")]
-  int_fields <- c("REF", "ID", "MDV", "CMT", "EVID", "SEX", "TRTDY")
-  num_fields <- c(double_fields, int_fields, bl_fields)
-
-  if (is.null(fields)) {
-    fields <- names(obj)
-  }
-
+# write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
+#   double_fields <- c("NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
+#                      "AGE", "HEIGHT", "WEIGHT", "BMI")
+#   bl_fields <- names(obj)[str_detect(names(obj), "^BL_")]
+#   int_fields <- c("REF", "ID", "MDV", "CMT", "EVID", "SEX", "TRTDY")
+#   num_fields <- c(double_fields, int_fields, bl_fields)
+#
+#   if (is.null(fields)) {
+#     fields <- names(obj)
+#   }
+#
+#   temp <- obj %>%
+#     as.data.frame() %>%
+#     mutate(across(any_of(num_fields), signif, 4))
+#
+#   if("METABOLITE" %in% names(obj)) {
+#     temp <- temp %>%
+#       mutate(METABOLITE = case_when(
+#         is.na(METABOLITE) ~ FALSE,
+#         .default = METABOLITE))}
+#
+#   temp <- temp %>%
+#     mutate(across(any_of(num_fields),
+#                 function(x) {case_when(
+#                   is.na(x) ~ ".",
+#                   .default = as.character(x))})) %>%
+#   mutate_all(as.character)
+#
+#   if (is.null(filename)) {
+#     print(temp, row.names = FALSE, col.names = FALSE)
+#   } else {
+#     if(is.null(sep)){
+#       temp <- rbind(colnames(temp), temp)
+#       write.fwf(temp, file = filename, colnames = FALSE)
+#     } else {
+#       write.table(temp, file = filename, row.names = FALSE,
+#                   sep = sep, dec = ".", quote = FALSE)
+#     }
+#   }
+# }
+write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
   temp <- obj %>%
     as.data.frame() %>%
-    mutate(across(any_of(num_fields), signif, 4))
-
-  if("METABOLITE" %in% names(obj)) {
-    temp <- temp %>%
-      mutate(METABOLITE = case_when(
-        is.na(METABOLITE) ~ FALSE,
-        .default = METABOLITE))}
-
-  temp <- temp %>%
-    mutate(across(any_of(num_fields),
-                function(x) {case_when(
-                  is.na(x) ~ ".",
-                  .default = as.character(x))})) %>%
-  mutate_all(as.character)
+    mutate_if(is.numeric, round, digits = 4) %>%
+    mutate_all(as.character()) %>%
+    mutate_all(function(x) {
+      case_when(is.na(x) ~ ".",.default = as.character(x))
+    })
 
   if (is.null(filename)) {
     print(temp, row.names = FALSE, col.names = FALSE)
@@ -685,6 +658,8 @@ write_nif <- function(obj, filename = NULL, fields = NULL, sep=NULL) {
     }
   }
 }
+
+
 
 
 #' Write as comma-separated file, complying with the format used by Monolix
@@ -1156,10 +1131,13 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' Based on the NCI ODWG criteria with TB the total (direct and indirect) serum
 #' bilirubin, and AST aspartate aminotransferase.
 #'
-#' normal: TB & AST ≤ upper limit of normal (ULN)
-#' mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
-#' moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
-#' severe tic dysfunction: TB >3 - 10 x ULN, any AST
+#' * normal: TB & AST ≤ upper limit of normal (ULN)
+#'
+#' * mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
+#'
+#' * moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
+#'
+#' * severe tic dysfunction: TB >3 - 10 x ULN, any AST
 #'
 #' @param obj A nif object.
 #' @param sdtm The corresponding sdtm object.

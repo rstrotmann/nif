@@ -15,6 +15,4 @@ A NIF object.
 \description{
 Ensure that the DOSE field is present
 }
-\examples{
-ensure_dose(examplinib_poc_min_nif)
-}
+\keyword{internal}

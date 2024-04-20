@@ -25,6 +25,7 @@
   integrate_predose = TRUE,
   legend = TRUE,
   show_n = FALSE,
+  shading = TRUE,
   watermark = "",
   ...
 )
@@ -70,12 +71,15 @@ baseline values.}
 
 \item{legend}{Show legend, as logical.}
 
-\item{show_n}{Show sample size in mean plot, as logical.}
+\item{show_n}{Show sample size in mean plot, as logical. Does currently not
+implement grouping! \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
+
+\item{shading}{Show ribbons when mean = TRUE, as logical.}
 
 \item{watermark}{Show watermark as character or logical. If watermark = TRUE,
 a standard text will be shown.}
 
-\item{...}{Further graphical parameters for geom_point().}
+\item{...}{Further graphical parameters for \code{geom_point()}.}
 }
 \value{
 A ggplot object.
@@ -86,18 +90,14 @@ Plot nif object.
 \examples{
 plot(examplinib_fe_nif, points = TRUE)
 plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
-plot(examplinib_sad_nif)
-plot(examplinib_sad_nif, cfb = TRUE)
+plot(examplinib_sad_nif, mean = TRUE, max_time = 24, show_n = TRUE)
 plot(examplinib_poc_nif, analyte="RS2023", admin = TRUE)
-plot(examplinib_poc_nif)
 plot(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
   group = "SEX", points = TRUE, lines = FALSE)
 plot(examplinib_poc_nif, analyte="RS2023", time = "TAD",
   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
-plot(examplinib_sad_min_nif)
 plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
-plot(examplinib_poc_min_nif, dose = 500, cmt = 2, time = "TAD",
-  points = TRUE, lines = FALSE)
 plot(examplinib_fe_nif, points = TRUE, watermark = TRUE)
+plot(examplinib_fe_nif, mean = TRUE, group = "FASTED", max_time = 24)
 plot(examplinib_fe_nif, points = TRUE, watermark = "Examplinib food effect")
 }

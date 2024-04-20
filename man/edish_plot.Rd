@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_exploration.R
 \name{edish_plot}
 \alias{edish_plot}
-\title{Evaluation of drug-induced serious hepatotoxicity (eDISH) plot}
+\title{Drug-induced serious hepatotoxicity (eDISH) plot}
 \usage{
 edish_plot(
   nif,
@@ -23,7 +23,8 @@ edish_plot(
 
 \item{sdtm}{A sdtm object.}
 
-\item{enzyme}{The transaminase to be plotted on the x axis as character.}
+\item{enzyme}{The transaminase enzyme to be plotted on the x axis as
+character, can be 'AST' or 'ALT' (default).}
 
 \item{show_labels}{Show ID labels per point.}
 

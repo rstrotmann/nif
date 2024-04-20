@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{ensure_tafd}
 \alias{ensure_tafd}
-\title{Title}
+\title{Ensure TAFD is present in the NIF object}
 \usage{
 ensure_tafd(obj)
 }
@@ -13,5 +13,6 @@ ensure_tafd(obj)
 A nif object.
 }
 \description{
-Title
+Ensure TAFD is present in the NIF object
 }
+\keyword{internal}
