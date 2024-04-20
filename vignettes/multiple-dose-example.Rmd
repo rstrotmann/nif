@@ -226,7 +226,7 @@ a subset of subjects had a rich sampling scheme. Let's identify those:
 
 ```{r, comment="# "}
 nif_poc %>% 
-  rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 4)
+  rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 6)
 ```
 
 In this code, the function `rich_sampling_sbs()` receives as input the analyte
@@ -257,5 +257,15 @@ temp %>% filter(RICH_N == 2) %>%
   plot(analyte = "RS2023", title = "Multiple-dose PK", time = "NTIME", mean = T)
 ```
 
+## Non-compartmental analysis
+
+```{r message = F, warning= F}
+nca <- examplinib_poc_nif %>% 
+  index_rich_sampling_intervals(analyte = "RS2023", min_n = 4) %>% 
+  nca("RS2023", group = "RICH_N")
+
+nca %>% 
+  nca_summary_table(group = "RICH_N")
+```
 
 

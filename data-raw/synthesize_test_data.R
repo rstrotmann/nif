@@ -23,23 +23,44 @@ usethis::use_data(examplinib_poc, overwrite = T)
 usethis::use_data(examplinib_fe, overwrite = T)
 
 # make NIF package data
-examplinib_sad_nif <- examplinib_sad %>%
-  make_nif(spec = "PLASMA", silent = TRUE) %>%
-  add_bl_lab(examplinib_sad$domains[["lb"]], "CREAT", "SERUM") %>%
-  add_bl_crcl() %>%
-  compress()
+# examplinib_sad_nif <- examplinib_sad %>%
+#   make_nif(spec = "PLASMA", silent = TRUE) %>%
+#   add_bl_lab(examplinib_sad$domains[["lb"]], "CREAT", "SERUM") %>%
+#   add_bl_crcl() %>%
+#   compress()
 
-examplinib_poc_nif <- examplinib_poc %>%
-  make_nif(spec = "PLASMA", silent = TRUE) %>%
-  add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-  mutate(BL_CRCL = egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar = T)) %>%
-  compress()
+examplinib_sad_nif <- new_nif() %>%
+  add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) %>%
+  add_baseline(examplinib_sad, "lb", "CREAT") %>%
+  add_bl_crcl()
 
-examplinib_fe_nif <- make_nif(examplinib_fe, spec = "PLASMA", silent = TRUE) %>%
+# examplinib_poc_nif <- examplinib_poc %>%
+#   make_nif(spec = "PLASMA", silent = TRUE) %>%
+#   add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
+#   mutate(BL_CRCL = egfr_mdrd(BL_CREAT, AGE, SEX, RACE, molar = T)) %>%
+#   compress()
+
+examplinib_poc_nif <- new_nif() %>%
+  add_administration(examplinib_poc, "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(examplinib_poc, "pc", "RS2023", cmt = 2) %>%
+  add_observation(examplinib_poc, "pc", "RS2023487A", parent = "RS2023",
+                  cmt = 3) %>%
+  add_baseline(examplinib_poc, "lb", "CREAT") %>%
+  add_bl_crcl()
+
+# examplinib_fe_nif <- make_nif(examplinib_fe, spec = "PLASMA", silent = TRUE) %>%
+#   mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>%
+#   mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
+#   mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) %>%
+#   compress()
+
+examplinib_fe_nif <- new_nif() %>%
+  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(examplinib_fe, "pc", "RS2023", cmt = 2) %>%
   mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>%
   mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
-  mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) %>%
-  compress()
+  mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0))
 
 usethis::use_data(examplinib_sad_nif, overwrite = T)
 usethis::use_data(examplinib_poc_nif, overwrite = T)

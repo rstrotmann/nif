@@ -1045,7 +1045,7 @@ make_administration <- function(
     {if(cleanup == TRUE)
       select(., any_of(c("STUDYID", "USUBJID", "IMPUTATION", "TIME", "NTIME",
          "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
-         "MDV", "DOSE", "AMT", "EXDY", "DTC")))
+         "MDV", "DOSE", "AMT", "EXDY", "DTC", "EPOCH")))
       else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
@@ -1111,6 +1111,22 @@ carry_forward_dose <- function(obj) {
     arrange(.data$ID, .data$DTC, -.data$EVID) %>%
     group_by(.data$ID, .data$PARENT) %>%
     fill(DOSE, .direction = "downup") %>%
+    ungroup()
+}
+
+
+#' Complete EPOCH field
+#'
+#' @param obj A nif object.
+#'
+#' @return A nif object.
+#' @export
+#' @keywords internal
+carry_forward_epoch <- function(obj) {
+  obj %>%
+    arrange(.data$ID, .data$DTC, -.data$EVID) %>%
+    group_by(.data$ID, .data$PARENT) %>%
+    fill(EPOCH, .direction = "downup") %>%
     ungroup()
 }
 
@@ -1200,6 +1216,7 @@ add_observation <- function(nif, sdtm, domain, testcd,
     select(-c("NO_ADMIN_FLAG")) %>%
     make_time() %>%
     carry_forward_dose() %>%
+    carry_forward_epoch() %>%
     new_nif()
 }
 
@@ -1229,6 +1246,7 @@ add_administration <- function(
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     make_time() %>%
     carry_forward_dose() %>%
+    carry_forward_epoch() %>%
     new_nif()
 }
 

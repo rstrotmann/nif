@@ -687,7 +687,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
           mutate(., GROUP = TRUE)} %>%
       group_by(NTIME, DOSE, GROUP, COLOR) %>%
       summarize(n = n(), mean = safe_mean(DV),
-                sd = safe_sd(DV)) %>%
+                sd = safe_sd(DV), .groups = "drop") %>%
       ungroup() %>%
 
       # group_by(DOSE, GROUP) %>%
@@ -804,7 +804,7 @@ summary.nif <- function(object, ...) {
     as.data.frame() %>%
     filter(EVID == 1) %>%
     group_by(across(any_of(c("STUDYID")))) %>%
-    summarize(N = n_distinct(ID))
+    summarize(N = n_distinct(ID), .groups = "drop")
 
   n_sex <- object %>%
     as.data.frame() %>%
