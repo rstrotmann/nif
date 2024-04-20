@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.2.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Add an observation from a generic source</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/make_nif.R" class="external-link"><code>R/make_nif.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/make_nif_deprecated.R" class="external-link"><code>R/make_nif_deprecated.R</code></a></small>
       <div class="d-none name"><code>add_generic_observation.Rd</code></div>
     </div>
 
@@ -122,7 +122,30 @@ time after dose (TAD) is calculated.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_generic_observation</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fu"><a href="domain.html">domain</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, <span class="st">"vs"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"VSDTC"</span>, <span class="op">{</span><span class="va">VSTESTCD</span> <span class="op">==</span> <span class="st">"WEIGHT"</span><span class="op">}</span>, <span class="st">"VSSTRESN"</span>, <span class="st">"wt"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in add_generic_observation(examplinib_poc_nif, domain(examplinib_poc,     "vs"), "VSDTC", {    VSTESTCD == "WEIGHT"}, "VSSTRESN", "wt"):</span> could not find function "add_generic_observation"</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`add_generic_observation()` was deprecated in nif 0.48.2.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `add_observation()` instead.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for VSSTRESN was not specified and has been set to 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1424 observations from 80 subjects</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Males: 46, females: 34 (42.5%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, REF, TAD, RATE, LNDV, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, ACTARMCD, TRTDY, BL_CREAT, BL_CRCL, FIRSTDTC </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NIF data (selected columns):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       1      1     500   500    NA       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       0      2     0     NA     0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023487A   0      3     0     NA     0        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    NA      0       NA      wt           0      4     0     NA     68.7     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023       0      2     0     500    3.38     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023487A   0      3     0     500    3.454    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023       0      2     0     500    1.477    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023487A   0      3     0     500    10.828   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       24      0       RS2023       1      1     500   500    NA       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       48      0       RS2023       1      1     500   500    NA       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6648 more rows</span>
 <span class="r-in"><span>  <span class="co"># -&gt;</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="va">examplinib_poc</span>, <span class="st">"vs"</span>, <span class="st">"WEIGHT"</span>,</span></span>
 <span class="r-in"><span>  analyte <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></span></span>

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.48.2.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -384,8 +384,27 @@ from the DM domain and merged into the data table. Baseline WEIGHT and
 HEIGHT are taken from the VS domain.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_nif.html">make_nif</a></span><span class="op">(</span><span class="va">sdtm_expl</span><span class="op">)</span></span>
+<span><span class="co">## Warning: `make_nif()` was deprecated in nif 0.48.2.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Please use `new_nif()` instead.</span></span>
+<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">## <span style="color: #555555;">generated.</span></span></span>
 <span><span class="co">## No specimen specified. Set to PLASMA as the most likely.</span></span>
-<span><span class="co">## Data cut-off was set to last observation time, 2001-02-19 11:45:00</span></span></code></pre></div>
+<span><span class="co">## Warning: `make_obs()` was deprecated in nif 0.48.2.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Please use `make_observation()` instead.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">nif</span> package.</span></span>
+<span><span class="co">##   Please report the issue to the authors.</span></span>
+<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">## <span style="color: #555555;">generated.</span></span></span>
+<span><span class="co">## Data cut-off was set to last observation time, 2001-02-19 11:45:00</span></span>
+<span><span class="co">## Warning: `make_admin()` was deprecated in nif 0.48.2.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Please use `make_administration()` instead.</span></span>
+<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">nif</span> package.</span></span>
+<span><span class="co">##   Please report the issue to the authors.</span></span>
+<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">## <span style="color: #555555;">generated.</span></span></span></code></pre></div>
 <p>The output of the above code informs that there may be
 pharmacokinetic data for multiple specimens in the PC domain, e.g.,
 “PLASMA” and “URINE” or “FECES”. As no specimem was defined,

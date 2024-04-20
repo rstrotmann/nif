@@ -85,8 +85,6 @@ is again 'RS2023'. The compartment is automatically set to 2. Both functions
 have as their first arguemt the 'sdtm' object:
 
 ```{r}
-# nif_poc <- make_nif(examplinib_poc, spec="PLASMA")
-
 sdtm <- examplinib_poc
 
 nif_poc <- new_nif() %>% 
@@ -105,12 +103,6 @@ age, race, weight). The standard method is Cockcroft-Gault but other methods can
 be specified:
 
 ```{r}
-# nif_poc <- make_nif(examplinib_poc, spec="PLASMA",
-#                     truncate_to_last_observation = FALSE) %>% 
-#   add_bl_lab(examplinib_poc$domains[["lb"]], "CREAT", "SERUM") %>%
-#   add_bl_crcl() %>% 
-#   compress()
-
 nif_poc <- nif_poc %>% 
   add_baseline(sdtm, domain = "lb", testcd = "CREAT") %>% 
   add_bl_crcl()
