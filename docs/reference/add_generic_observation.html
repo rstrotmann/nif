@@ -118,62 +118,6 @@ time after dose (TAD) is calculated.</p></dd>
 <p>A NIF object</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_generic_observation</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fu"><a href="domain.html">domain</a></span><span class="op">(</span><span class="va">examplinib_poc</span>, <span class="st">"vs"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"VSDTC"</span>, <span class="op">{</span><span class="va">VSTESTCD</span> <span class="op">==</span> <span class="st">"WEIGHT"</span><span class="op">}</span>, <span class="st">"VSSTRESN"</span>, <span class="st">"wt"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`add_generic_observation()` was deprecated in nif 0.48.2.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `add_observation()` instead.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for VSSTRESN was not specified and has been set to 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1424 observations from 80 subjects</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Males: 46, females: 34 (42.5%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPUTATION, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, REF, EPOCH, SEX, RACE, ETHNIC, COUNTRY, AGE, HEIGHT, WEIGHT, BMI, ACTARMCD, RFXSTDTC, TRTDY, FIRSTDTC, FIRSTADMIN, TAD, PCELTM, BL_CREAT, BL_CRCL, RATE, LNDV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NIF data (selected columns):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       1      1     500   500    NA          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       0      2     0     500    0           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023487A   0      3     0     500    0           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    NA      0       NA      wt           0      4     0     NA     68.7        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023       0      2     0     500    3380.265    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023487A   0      3     0     500    3453.869    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023       0      2     0     500    1477.397    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023487A   0      3     0     500    10827.937   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       24      0       RS2023       1      1     500   500    NA          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       48      0       RS2023       1      1     500   500    NA          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7724 more rows</span>
-<span class="r-in"><span>  <span class="co"># -&gt;</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="va">examplinib_poc</span>, <span class="st">"vs"</span>, <span class="st">"WEIGHT"</span>,</span></span>
-<span class="r-in"><span>  analyte <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for WEIGHT was not specified and has been set to 4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Parent for wt was set to RS2023!</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1424 observations from 80 subjects</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Males: 46, females: 34 (42.5%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPUTATION, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, REF, EPOCH, SEX, RACE, ETHNIC, COUNTRY, AGE, HEIGHT, WEIGHT, BMI, ACTARMCD, RFXSTDTC, TRTDY, FIRSTDTC, FIRSTADMIN, TAD, PCELTM, BL_CREAT, BL_CRCL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NIF data (selected columns):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       1      1     500   500    NA          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023       0      2     0     500    0           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       0       0       RS2023487A   0      3     0     500    0           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    NA      0       0       wt           0      4     0     500    68.7        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023       0      2     0     500    3380.265    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1.5     2.167   2.167   RS2023487A   0      3     0     500    3453.869    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023       0      2     0     500    1477.397    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4       4.633   4.633   RS2023487A   0      3     0     500    10827.937   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       24      0       RS2023       1      1     500   500    NA          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0       48      0       RS2023       1      1     500   500    NA          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7724 more rows</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
