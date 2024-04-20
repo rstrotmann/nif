@@ -87,10 +87,6 @@ treatment for the respective subject.
 }
 }
 
-\examples{
-make_nif(examplinib_fe)
-make_nif(examplinib_poc)
-}
 \seealso{
 \code{\link[=summary]{summary()}}
 
@@ -98,3 +94,4 @@ make_nif(examplinib_poc)
 
 \code{\link[=write_nif]{write_nif()}}
 }
+\keyword{internal}

@@ -15,8 +15,4 @@ The parent as character
 \description{
 Guess the most likely parent based on its prevalence in the NIF object
 }
-\examples{
-guess_parent(examplinib_sad_nif)
-guess_parent(examplinib_poc_nif)
-guess_parent(examplinib_poc_min_nif)
-}
+\keyword{internal}

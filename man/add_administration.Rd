@@ -43,3 +43,6 @@ A nif object.
 \description{
 Add an administration to a nif object
 }
+\examples{
+add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
+}

@@ -43,11 +43,4 @@ A NIF object
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
-\examples{
-add_generic_observation(examplinib_poc_nif, domain(examplinib_poc, "vs"),
-  "VSDTC", {VSTESTCD == "WEIGHT"}, "VSSTRESN", "wt")
-  # ->
-add_observation(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
-  analyte = "wt")
-}
 \keyword{internal}

@@ -100,7 +100,7 @@ files, are copied into one folder (in the below example into `path/to/sdtm/data`
 and can then be loaded using:
 
 ```{r, eval=FALSE, echo=T}
-read_sdtm_sas("path/to/sdtm/data")
+read_sdtm("path/to/sdtm/data")
 ```
 
 Based on the above, the minimum required SDTM files are `dm.dat7bdat`,
@@ -109,7 +109,7 @@ covariates from AE, LB or any other SDTM domain are to be added, an explicit
 list of the domains can be provided to the loading function, e.g., 
 
 ```{r, eval=FALSE, echo=T}
-read_sdtm("path/to/sdtm/data", c("dm", "vs", "ex", "pc", "lb", "ae"))
+read_sdtm("path/to/sdtm/data", domain = c("dm", "vs", "ex", "pc", "lb", "ae"))
 ```
 
 The return value of this function is a `sdtm` object.
@@ -239,7 +239,11 @@ domain and merged into the data table. Baseline WEIGHT and HEIGHT are taken from
 the VS domain.
 
 ```{r}
-nif_expl <- make_nif(sdtm_expl)
+# nif_expl <- make_nif(sdtm_expl)
+nif_expl <- new_nif() %>% 
+  add_administration(sdtm_expl, "EXAMPLINIB", analyte = "RS2023") %>% 
+  add_observation(sdtm_expl, "pc", "RS2023", cmt = 2)
+
 ```
 
 The output of the above code informs that there may be pharmacokinetic data for
@@ -274,7 +278,7 @@ consideration may be `EPOCH`:
 ```{r}
 nif_expl %>% 
   as.data.frame() %>%
-  distinct(EPOCH, ACTARMCD, ACTARM)
+  distinct(EPOCH, ACTARMCD)
 ```
 
 In this example, to create a `FASTED` covariate field, first the period number
@@ -282,11 +286,10 @@ is derived from the `EPOCH` field, and then the current `ACTARM` in that
 treatment period is decoded to `FASTED`:
 
 ```{r}
-nif_expl <- make_nif(sdtm_expl, silent=T) %>%
+nif_expl <- nif_expl %>%
   mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>% 
   mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
-  mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0)) #%>% 
-  # compress()
+  mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
 ```
 
 Note the `silent=T` modifier that omits all messages from `make_nif()`.
@@ -345,7 +348,8 @@ To check the integrity of the data set, if often makes sense to plot the analyte
 concentrations over time-after-dose (TAD). 
 
 ```{r}
-plot(nif_expl %>% add_tad(), tad=T, analyte="RS2023")
+nif_expl %>% 
+  plot(time = "TAD", analyte="RS2023", points = T, lines = F, log = T)
 ```
 
 
@@ -354,24 +358,17 @@ food effect on the parent compound, "RS2023" in individual subjects, limiting
 the time axis to 24 h and showing the nominal time instead of the actual time:
 
 ```{r, warning=F, fig.width=5, fig.height=4}
-plot(nif_expl,
-     analyte="RS2023",
-     group="FASTED",
-     max_x=24,
-     mean=FALSE,
-     points=TRUE,
-     nominal_time=TRUE)
+nif_expl %>% 
+  plot(analyte = "RS2023", group = "FASTED", max_time = 24, mean = FALSE,
+       points = TRUE)
 ```
 
 The following shows the mean plasma concentration profiles aver all subjects,
 over 24 h by the food status:
 
 ```{r, warning=F, fig.width=5, fig.height=4}
-plot(nif_expl,
-     analyte="RS2023",
-     group="FASTED",
-     max_x=24,
-     mean=T)
+nif_expl %>% 
+  plot( analyte = "RS2023", group = "FASTED", max_time = 24, mean = TRUE)
 ```
 
 There are further options, refer to `?plot.nif()` for details.
@@ -391,9 +388,9 @@ a wrapper around the functions provided by the `PKNCA` package.
 
 ```{r}
 nca <- nif_expl %>% 
-  nca(analyte="RS2023",
-      group="FASTED",
-      nominal_time=T)
+  nca(analyte = "RS2023",
+      group = "FASTED",
+      nominal_time = T)
 
 nca %>% 
   nca_summary_table(group="FASTED") %>% 

@@ -53,3 +53,4 @@ A data frame.
 \description{
 Add a baseline filed to a nif object
 }
+\keyword{internal}

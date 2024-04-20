@@ -15,7 +15,4 @@ The analyte as character.
 \description{
 Guess the most likely analyte based on its prevalence in the NIF object
 }
-\examples{
-guess_analyte(examplinib_poc_nif)
-guess_analyte(examplinib_poc_min_nif)
-}
+\keyword{internal}

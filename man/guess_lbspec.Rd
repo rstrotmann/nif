@@ -17,7 +17,4 @@ the imputed LBSPEC as character.
 \description{
 Guess the most likely LBSPEC
 }
-\examples{
-guess_lbspec(domain(examplinib_poc, "lb"))
-}
 \keyword{internal}

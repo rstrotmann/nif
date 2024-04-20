@@ -891,10 +891,7 @@ max_time <- function(obj, time_field = "TIME", analyte = NULL,
 #'
 #' @param obj A NIF object.
 #' @return The analyte as character.
-#' @export
-#' @examples
-#' guess_analyte(examplinib_poc_nif)
-#' guess_analyte(examplinib_poc_min_nif)
+#' @keywords internal
 guess_analyte <- function(obj) {
   temp <- obj %>%
     as.data.frame() %>%
@@ -924,12 +921,7 @@ guess_analyte <- function(obj) {
 #' @param obj A nif object.
 #'
 #' @return The parent as character
-#' @export
-#'
-#' @examples
-#' guess_parent(examplinib_sad_nif)
-#' guess_parent(examplinib_poc_nif)
-#' guess_parent(examplinib_poc_min_nif)
+#' @keywords internal
 guess_parent <- function(obj) {
   temp <- obj %>%
     as.data.frame() %>%

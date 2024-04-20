@@ -19,3 +19,4 @@ A data frame.
 \description{
 Remove administrations with EXSTDTC after RFENDTC
 }
+\keyword{internal}

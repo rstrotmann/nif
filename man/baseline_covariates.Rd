@@ -25,7 +25,4 @@ Baseline VS data as wide data frame.
 \description{
 Extract baseline vital sign covariates from VS
 }
-\examples{
-baseline_covariates(examplinib_sad$vs)
-}
 \keyword{internal}

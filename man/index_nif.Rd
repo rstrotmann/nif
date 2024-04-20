@@ -19,6 +19,4 @@ TIME, and indexed sequentially on a subject level with a REF field.
 Re-indexing may be required if a NIF object is extended, e.g., by merging in
 further data.
 }
-\examples{
-index_nif(examplinib_fe_nif)
-}
+\keyword{internal}

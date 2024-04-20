@@ -19,3 +19,4 @@ POSIXct format.
 \seealso{
 \code{\link[=isofy_dates]{isofy_dates()}}
 }
+\keyword{internal}

@@ -149,7 +149,6 @@ standardize_date_format <- function(obj, fields = NULL) {
 #' @param obj A data frame.
 #' @param fields Date variable names as character.
 #' @return A data frame.
-#' @export
 #' @keywords internal
 isofy_date_format <- function(obj, fields = NULL) {
   obj %>%
@@ -166,6 +165,7 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' @param obj A data frame.
 #' @return A data frame.
 #' @seealso [isofy_dates()]
+#' @keywords internal
 lubrify_dates <- function(obj) {
   obj %>% dplyr::mutate_at(
     vars(ends_with("DTC")),

@@ -79,3 +79,4 @@ If the 'NTIME_lookup' parameter is provided, 'NTIME' can be derived from a
 field contained in the input data set, e.g., 'PCELTM' (see the code
 examples). Otherwise, 'NTIME' will be \code{NA}.
 }
+\keyword{internal}

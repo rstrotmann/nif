@@ -18,7 +18,4 @@ The imputed spec as character.
 The PC specimen is selected based on the likelihood in the order of 'plasma'
 < 'serum' < 'blood'.
 }
-\examples{
-guess_pcspec(examplinib_poc$pc)
-}
 \keyword{internal}

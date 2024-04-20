@@ -54,3 +54,6 @@ A nif object.
 \description{
 Add baseline field
 }
+\examples{
+add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
+}

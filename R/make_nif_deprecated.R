@@ -295,12 +295,6 @@ add_lab_observation <- function(obj, lb, lbtestcd, cmt = NULL, lbspec = "",
 #' @import rlang
 #' @export
 #' @keywords internal
-#' @examples
-#' add_generic_observation(examplinib_poc_nif, domain(examplinib_poc, "vs"),
-#'   "VSDTC", {VSTESTCD == "WEIGHT"}, "VSSTRESN", "wt")
-#'   # ->
-#' add_observation(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
-#'   analyte = "wt")
 add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
                                     analyte_name, cmt = NULL, parent = NA,
                                     silent = FALSE) {
@@ -411,10 +405,7 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
 #' @seealso [write_nif()]
 #' @import tidyr
 #' @import dplyr
-#' @export
-#' @examples
-#' make_nif(examplinib_fe)
-#' make_nif(examplinib_poc)
+#' @keywords internal
 make_nif <- function(
     sdtm_data,
     spec = NULL,
@@ -981,6 +972,7 @@ compress <- function(nif, fields = NULL, debug = FALSE) {
 #'
 #' @param obj A NIF object.
 #' @return A NIF object.
+#' @keywords internal
 fill_bl_tv <- function(obj) {
   lifecycle::deprecate_warn("0.48.2", "fill_bl_tv()", "")
   obj %>%

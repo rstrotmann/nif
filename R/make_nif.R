@@ -281,7 +281,6 @@ impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
 #'
 #' @return A data frame.
 #' @keywords internal
-#' @export
 impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
   pc_ref <- pc %>%
     filter(PCTESTCD == pctestcd) %>%
@@ -326,7 +325,7 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
 #' @param silent Suppress messages as logical.
 #'
 #' @return A data frame.
-#' @export
+#' @keywords internal
 filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
   out <- ex %>%
     left_join(
@@ -365,7 +364,7 @@ filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
 #' @param dm The dm domain as data frame.
 #'
 #' @return A data frame.
-#' @export
+#' @keywords internal
 filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
   temp <- ex %>%
     filter(.data$EXSTDTC > .data$EXENDTC) %>%
@@ -478,8 +477,6 @@ impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
 #' @return The imputed spec as character.
 #' @export
 #' @keywords internal
-#' @examples
-#' guess_pcspec(examplinib_poc$pc)
 guess_pcspec <- function(pc, silent = TRUE) {
   pcspecs <- unique(pc$PCSPEC)
   standard_specs <- c(
@@ -501,8 +498,6 @@ guess_pcspec <- function(pc, silent = TRUE) {
 #' @return the imputed LBSPEC as character.
 #' @export
 #' @keywords internal
-#' @examples
-#' guess_lbspec(domain(examplinib_poc, "lb"))
 guess_lbspec <- function(lb, silent = TRUE) {
   lbspecs <- unique(lb$LBSPEC)
   standard_specs <- c("SERUM", "serum", "URINE", "urine")
@@ -543,8 +538,6 @@ last_ex_dtc <- function(ex) {
 #' @return Baseline VS data as wide data frame.
 #' @export
 #' @keywords internal
-#' @examples
-#' baseline_covariates(examplinib_sad$vs)
 baseline_covariates <- function(vs, baseline_filter = {TRUE}, silent = FALSE) {
   temp <- vs %>%
     filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
@@ -654,9 +647,7 @@ add_time <- function(x) {
 #'   modified.
 #' @return The updated NIF dataset including an updated REF field.
 #' @import dplyr
-#' @export
-#' @examples
-#' index_nif(examplinib_fe_nif)
+#' @keywords internal
 index_nif <- function(nif) {
   nif %>%
     as.data.frame() %>%
@@ -779,7 +770,7 @@ make_subjects <- function(
 #'   name followed by 'TESTCD', if NULL.
 #'
 #' @return A data frame.
-#' @export
+#' @keywords internal
 #' @import stringr
 #'
 make_observation <- function(
@@ -913,7 +904,7 @@ make_observation <- function(
 #' @return A data frame.
 #'
 #' @import rlang
-#' @export
+#' @keywords internal
 make_baseline <- function(
     sdtm,
     domain,
@@ -1228,6 +1219,8 @@ add_observation <- function(nif, sdtm, domain, testcd,
 #'
 #' @return A nif object.
 #' @export
+#' @examples
+#' add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
 add_administration <- function(
     nif, sdtm, extrt, analyte = NA, cmt = 1, cut_off_date = NULL,
     subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
@@ -1271,6 +1264,8 @@ add_administration <- function(
 #' @return A nif object.
 #' @import assertr
 #' @export
+#' @examples
+#' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
 add_baseline <- function(
     nif,
     sdtm,
@@ -1376,10 +1371,6 @@ add_covariate <- function(nif, sdtm, domain, testcd,
 }
 
 
-
-
-
-
 #' Subset nif to rows with DTC before the last individual or global observation
 #'
 #' @param obj A nif object.
@@ -1416,30 +1407,6 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       new_nif()
   }
 }
-
-
-# ' Filter nif object, eliminating subjects without observations or
-# ' administrations
-# '
-# ' @param obj A nif object.
-# ' @param keep_no_obs Retain subjects without observations, as logical.
-# ' @param keep_no_admin Retain subjects without administeration, as logical.
-# '
-# ' @return A nif object.
-# ' @export
-# filter_subjects <- function(obj,
-#                             keep_no_obs = FALSE,
-#                             keep_no_admin = FALSE) {
-#   obj %>%
-#     as.data.frame() %>%
-#     group_by(.data$ID) %>%
-#     # mutate(nadmin = sum(EVID==1)) %>%
-#     {if(keep_no_obs == FALSE) filter(., sum(EVID == 0) > 0) else .} %>%
-#     {if(keep_no_admin == FALSE) filter(., sum(EVID == 1) > 0) else .} %>%
-#     # {if(keep_no_admin == FALSE) filter(., nadmin > 0) else .} %>%
-#     # select(-nadmin) %>%
-#     new_nif()
-# }
 
 
 
