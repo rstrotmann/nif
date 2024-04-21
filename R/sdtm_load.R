@@ -15,7 +15,7 @@
 #' dm, ex, pc and vs are loaded.
 #' @return A named list of the relevant SDTM domains as data.frames
 #' @seealso [read_sdtm()]
-#' @export
+#' @keywords internal
 read_sdtm_sas <- function(data_path, ...) {
   lifecycle::deprecate_warn("0.42.14", "read_sdtm_sas()", "read_sdtm()")
   parameters <- c(as.list(environment()), list(...))
@@ -47,7 +47,7 @@ read_sdtm_sas <- function(data_path, ...) {
 #'   domains to be loaded (lowercase, no file extensions). If no further
 #'   parameters are given, the standard set of dm, ex, pc and vs are loaded.
 #' @return A named list of the relevant SDTM domains as data.frames
-#' @export
+#' @keywords internal
 read_sdtm_xpt <- function(data_path, ...) {
   lifecycle::deprecate_warn("0.42.14", "read_sdtm_xpt()", "read_sdtm()")
   parameters <- c(as.list(environment()), list(...))

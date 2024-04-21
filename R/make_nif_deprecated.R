@@ -19,9 +19,7 @@
 #' @return A NIF dataset with only the specified fields
 #' @import dplyr
 #' @import lifecycle
-#' @export
-#' @examples
-#' compress_nif(examplinib_fe_nif)
+#' @keywords internal
 compress_nif <- function(nif, ...) {
   lifecycle::deprecate_warn("0.40.1", "compress_nif()", "compress()")
   temp <- as.character(unlist(c(as.list(environment())[-1], list(...))))
@@ -111,7 +109,7 @@ add_bl_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
 #' @param silent Switch to disable message output.
 #' @return A NIF object
 #' @import dplyr
-#' @export
+#' @keywords internal
 #' @seealso [add_bl_lab()]
 #' @seealso [add_lab_observation()]
 add_lab_covariate <- function(obj, lb, lbspec = "SERUM", lbtestcd,
@@ -837,7 +835,7 @@ make_obs <- function(pc,
 #' Lab parameters not found in LB will be reported in a warning message.
 #' @inheritParams add_bl_lab
 #' @return A NIF object.
-#' @export
+#' @keywords internal
 add_tv_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
   lifecycle::deprecate_warn("0.48.2", "add_tv_lab()", "add_covariate()")
   if(is.null(lbspec)) {
@@ -889,7 +887,7 @@ add_tv_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
 #' @param duplicate_function A function to resolve duplicate entries into a
 #'   single entry, e.g., `mean`, `min`, or `median`. Defaults to `mean`.
 #' @return A NIF object.
-#' @export
+#' @keywords internal
 add_tv_vs <- function(obj, vs, vstestcd, duplicate_function = mean,
                       silent = FALSE) {
   lifecycle::deprecate_warn("0.48.2", "add_tv_vs()", "add_covariate()")
@@ -944,7 +942,7 @@ add_tv_vs <- function(obj, vs, vstestcd, duplicate_function = mean,
 #' @param debug Logic value to indicate whether the debug fields, `PCREFID` and
 #' `EXSEQ` should be included in the NIF object.
 #' @return A NIF object
-#' @export
+#' @keywords internal
 compress <- function(nif, fields = NULL, debug = FALSE) {
   lifecycle::deprecate_warn("0.48.2", "compress()", "")
   if (is.null(fields)) {

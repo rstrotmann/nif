@@ -29,3 +29,4 @@ lab covariate. Last values are carried forward.
 \details{
 Lab parameters not found in LB will be reported in a warning message.
 }
+\keyword{internal}

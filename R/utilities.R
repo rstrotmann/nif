@@ -186,6 +186,7 @@ lubrify_dates <- function(obj) {
 #' @param obj A data frame.
 #' @return A data frame.
 #' @seealso [lubrify_dates()]
+#' @keywords internal
 isofy_dates <- function(obj) {
   obj %>%
     dplyr::mutate_at(vars(ends_with("DTC")), ~ format(., "%Y-%m-%dT%H:%M"))

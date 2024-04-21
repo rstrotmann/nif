@@ -2,7 +2,7 @@
 title: "Making nif data sets from SDTM data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{making-nif-files}
+  %\VignetteIndexEntry{Making nif data sets from SDTM data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

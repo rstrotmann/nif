@@ -37,3 +37,4 @@ SDTM domain.
 
 \code{\link[=add_lab_observation]{add_lab_observation()}}
 }
+\keyword{internal}

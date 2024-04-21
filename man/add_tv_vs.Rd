@@ -27,3 +27,4 @@ A NIF object.
 Add column named 'TV_xxx' with the time-varying values for the respective
 vital sign covariate. Last values are carried forward.
 }
+\keyword{internal}

@@ -1,8 +1,8 @@
 ---
-title: "Example: NIF data for a multiple-dose study"
+title: "NIF data for a multiple-dose study"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{multiple-dose-example}
+  %\VignetteIndexEntry{NIF data for a multiple-dose study}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

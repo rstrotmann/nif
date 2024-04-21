@@ -2,7 +2,7 @@
 title: "Importing NIF data sets"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{importing-NIF-datasets}
+  %\VignetteIndexEntry{Importing NIF data sets}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

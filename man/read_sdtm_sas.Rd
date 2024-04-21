@@ -30,3 +30,4 @@ at this location and will throw an error if not.
 \seealso{
 \code{\link[=read_sdtm]{read_sdtm()}}
 }
+\keyword{internal}

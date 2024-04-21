@@ -150,7 +150,7 @@ synthesize_subjects <- function(studyid = "2023001", nsubs = 10, nsites = 4,
 #' @param max_age The maximum age.
 #' @return The DM data as data frame.
 #' @import dplyr
-#' @export
+#' @keywords internal
 synthesize_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5,
                           duration = 7, female_fraction = 0.5, min_age = 18,
                           max_age = 55) {

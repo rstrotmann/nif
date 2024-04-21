@@ -30,6 +30,4 @@ fields to those typically required in the downstream analysis. Applying
 set, after creating the basic NIF object  with \code{\link[=make_nif]{make_nif()}} and applying
 custom imputations and manually deriving convariates as needed.
 }
-\examples{
-compress_nif(examplinib_fe_nif)
-}
+\keyword{internal}

@@ -26,3 +26,4 @@ This function loads relevant SDTM domain files required for the generation of
 NIF files from a folder. It assumes that DM, EX, PC and VS are available at
 this location and will throw an error if not.
 }
+\keyword{internal}
