@@ -698,9 +698,9 @@ clip_nif <- function(nif) {
 #' @keywords internal
 make_subjects <- function(
     dm, vs, silent = FALSE,
-    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cleanup = TRUE
-  ) {
+) {
   # if AGE is not present in DM, calculate age from birthday and informed
   #   consent signature date
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
@@ -716,7 +716,7 @@ make_subjects <- function(
   out <- dm %>%
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
-    filter({{subject_filter}}) %>%
+    filter(eval(parse(text = subject_filter))) %>%
     left_join(baseline_covariates(vs, silent = silent),
               by = "USUBJID") %>%
     recode_sex() %>%
@@ -764,8 +764,7 @@ make_subjects <- function(
 #'   'NTIME'. This data frame is left_join()ed into the observation data frame
 #'   to provide the NTIME field.
 #' @param cleanup Keep only necessary fields, as logical.
-#' @param testcd The xxTESTCD entry that corresponds to the analyte of interest,
-#'   as character.
+#' @param testcd The observation variable, as character.
 #' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
 #'   name followed by 'TESTCD', if NULL.
 #'
@@ -783,9 +782,10 @@ make_observation <- function(
     DV_field = NULL,
     TESTCD_field = NULL,
     cmt = NA,
-    observation_filter = {TRUE},
+    # observation_filter = {TRUE},
+    observation_filter = "TRUE",
     # subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-    subject_filter = {TRUE},
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     NTIME_lookup = NULL,
     silent = FALSE,
     cleanup = TRUE) {
@@ -813,7 +813,7 @@ make_observation <- function(
   # }
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
-                       subject_filter = {{subject_filter}}, cleanup = cleanup)
+                       subject_filter = subject_filter, cleanup = cleanup)
 
   obj <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates()
@@ -850,7 +850,8 @@ make_observation <- function(
   }
 
   obj %>%
-    filter({{observation_filter}}) %>%
+    # filter({{observation_filter}}) %>%
+    filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
       DTC = .data[[DTC_field]],
@@ -883,61 +884,62 @@ make_observation <- function(
 }
 
 
-#' Add a baseline filed to a nif object
-#'
-#' @param sdtm A sdtm object.
-#' @param domain The domain as character.
-#' @param DV_field the field to use as the dependent variable. Defaults to the
-#'   two-character domain name followed by 'STRESN'.
-#' @param observation_filter The filtering to apply to the observation source
-#'   data.
-#' @param subject_filter The filtering to apply to the DM domain.
-#' @param testcd The xxTESTCD to filter for, as character.
-#' @param TESTCD_field The xxTESTCD field as character. Defaults to "xxTESTCD"
-#'   where xx is the domain name.
-#' @param baseline_filter The filter to identify the baseline value. Defaults to
-#'   {xxBLFL == 'Y'} where xx is the domain name.
-#' @param summary_function The summary funcition to apply if there are multiple
-#'   baseline values, defaults to `mean`.
-#' @param silent Suppress messages as logical.
-#'
-#' @return A data frame.
-#'
-#' @import rlang
-#' @keywords internal
-make_baseline <- function(
-    sdtm,
-    domain,
-    testcd,
-    DV_field = NULL,
-    TESTCD_field = NULL,
-    observation_filter = {TRUE},
-    subject_filter = {TRUE},
-    baseline_filter = NULL,
-    summary_function = mean,
-    silent = FALSE) {
-
-  if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-  if(is.null(TESTCD_field)) TESTCD_field <- paste0(
-    str_to_upper(domain), "TESTCD")
-  if(is.null(baseline_filter)) baseline_filter <- paste0(
-    ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
-
-  sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
-                       subject_filter = {{subject_filter}}, cleanup = FALSE)
-
-  temp <- domain(sdtm, str_to_lower(domain)) %>%
-    lubrify_dates() %>%
-    filter(eval_tidy(observation_filter)) %>%
-    filter(.data[[TESTCD_field]] == testcd) %>%
-    filter(!!parse_expr(baseline_filter)) %>%
-    select("USUBJID", {{DV_field}}) %>%
-    group_by(.data$USUBJID) %>%
-    summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
-    rename_with(~str_c("BL_", testcd), .cols = .data$BL)
-
-  return(temp)
-}
+# ' Add a baseline field to a nif object
+# '
+# ' @param sdtm A sdtm object.
+# ' @param domain The domain as character.
+# ' @param DV_field the field to use as the dependent variable. Defaults to the
+# '   two-character domain name followed by 'STRESN'.
+# ' @param observation_filter The filtering to apply to the observation source
+# '   data.
+# ' @param subject_filter The filtering to apply to the DM domain.
+# ' @param testcd The xxTESTCD to filter for, as character.
+# ' @param TESTCD_field The xxTESTCD field as character. Defaults to "xxTESTCD"
+# '   where xx is the domain name.
+# ' @param baseline_filter The filter to identify the baseline value. Defaults to
+# '   {xxBLFL == 'Y'} where xx is the domain name.
+# ' @param summary_function The summary funcition to apply if there are multiple
+# '   baseline values, defaults to `mean`.
+# ' @param silent Suppress messages as logical.
+# '
+# ' @return A data frame.
+# '
+# ' @import rlang
+# ' @keywords internal
+# make_baseline <- function(
+#     sdtm,
+#     domain,
+#     testcd,
+#     DV_field = NULL,
+#     TESTCD_field = NULL,
+#     observation_filter = "TRUE",
+#     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+#     baseline_filter = NULL,
+#     summary_function = mean,
+#     silent = FALSE) {
+#
+#   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
+#   if(is.null(TESTCD_field)) TESTCD_field <- paste0(
+#     str_to_upper(domain), "TESTCD")
+#   if(is.null(baseline_filter)) baseline_filter <- paste0(
+#     ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
+#
+#   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
+#                        subject_filter = subject_filter, cleanup = FALSE)
+#
+#   temp <- domain(sdtm, str_to_lower(domain)) %>%
+#     lubrify_dates() %>%
+#     # filter(eval_tidy(observation_filter)) %>%
+#     filter(eval(parse(text = observation_filter))) %>%
+#     filter(.data[[TESTCD_field]] == testcd) %>%
+#     filter(!!parse_expr(baseline_filter)) %>%
+#     select("USUBJID", {{DV_field}}) %>%
+#     group_by(.data$USUBJID) %>%
+#     summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
+#     rename_with(~str_c("BL_", testcd), .cols = .data$BL)
+#
+#   return(temp)
+# }
 
 
 #' Compile administration data frame
@@ -960,7 +962,7 @@ make_administration <- function(
     analyte = NA,
     cmt = 1,
     cut_off_date = NULL,
-    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     silent = FALSE,
     cleanup = TRUE) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
@@ -971,7 +973,7 @@ make_administration <- function(
   if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
 
   sbs <- make_subjects(dm, domain(sdtm, "vs"),
-                       subject_filter = {{subject_filter}}, cleanup = cleanup)
+                       subject_filter = subject_filter, cleanup = cleanup)
 
   admin <- ex %>%
     mutate(IMPUTATION = "") %>%
@@ -1016,7 +1018,7 @@ make_administration <- function(
 
     # impute missing administration times from PCRFTDTC
     {if("PCRFTDTC" %in% names(pc))
-        impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .} %>%
+      impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .} %>%
 
     # carry forward missing administration times
     decompose_dtc("DTC") %>%
@@ -1035,8 +1037,8 @@ make_administration <- function(
 
     {if(cleanup == TRUE)
       select(., any_of(c("STUDYID", "USUBJID", "IMPUTATION", "TIME", "NTIME",
-         "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
-         "MDV", "DOSE", "AMT", "EXDY", "DTC", "EPOCH")))
+                         "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
+                         "MDV", "DOSE", "AMT", "EXDY", "DTC", "EPOCH")))
       else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
@@ -1048,6 +1050,7 @@ make_administration <- function(
 
   return(admin)
 }
+
 
 
 #' Calculate TIME field
@@ -1122,17 +1125,68 @@ carry_forward_epoch <- function(obj) {
 }
 
 
-#' Add an observation to a nif object
+#' Append drug administration events
+#'
+#' Drug administration information is taken from the EX domain of the sdtm
+#' object. The 'extrt' field specifies the drug name as represented in 'EX',
+#' however, a different 'analyte' name can be assigned to match with
+#' pharmacokinetic observations for the parent drug in plasma.
+#'
+#' @param nif A nif object.
+#' @inheritParams make_administration
+#'
+#' @return A nif object.
+#' @export
+#' @examples
+#' add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
+#'
+add_administration <- function(
+    nif, sdtm, extrt, analyte = NA, cmt = 1, cut_off_date = NULL,
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+    silent = FALSE, cleanup = TRUE) {
+  bind_rows(nif, make_administration(
+    sdtm = sdtm,
+    extrt = extrt,
+    analyte = analyte,
+    cmt = cmt,
+    cut_off_date = cut_off_date,
+    subject_filter = subject_filter,
+    silent = silent,
+    cleanup = cleanup
+  )) %>%
+    arrange(.data$USUBJID, .data$DTC) %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    make_time() %>%
+    carry_forward_dose() %>%
+    carry_forward_epoch() %>%
+    new_nif()
+}
+
+
+#' Append observation events
+#'
+#' Observations can be pharmacokinetic observations from the PC domain, or any
+#' other class of observation from any SDTM domain. The 'testcd' specifies the
+#' value of the respective 'xxTESTCD' field (e.g, 'PCTESTCD', 'VSTESTCD', etc.).
+#' Observations can be attached to an administered compound by specifying the
+#' 'parent' field.
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
 #'
 #' @return A nif object.
+#' @seealso [add_administration()]
 #' @export
+#' @examples
+#' add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",
+#'   parent = "RS2023")
+#'
 add_observation <- function(nif, sdtm, domain, testcd,
     analyte = NULL, parent = NULL, DTC_field = NULL, DV_field = NULL,
-    TESTCD_field = NULL, cmt = NULL, observation_filter = {TRUE},
-    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+    TESTCD_field = NULL, cmt = NULL,
+    # observation_filter = {TRUE},
+    observation_filter = "TRUE",
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     NTIME_lookup = NULL, silent = FALSE,
     cleanup = TRUE) {
   if(is.null(cmt)) {
@@ -1171,8 +1225,9 @@ add_observation <- function(nif, sdtm, domain, testcd,
               DV_field = DV_field,
               TESTCD_field = TESTCD_field,
               cmt = cmt,
-              observation_filter = {{observation_filter}},
-              subject_filter = {{subject_filter}},
+              # observation_filter = {{observation_filter}},
+              observation_filter = observation_filter,
+              subject_filter = subject_filter,
               NTIME_lookup = NTIME_lookup,
               silent = silent,
               cleanup = cleanup)
@@ -1212,44 +1267,17 @@ add_observation <- function(nif, sdtm, domain, testcd,
 }
 
 
-#' Add an administration to a nif object
+#' Attach baseline covariate column
 #'
-#' @param nif A nif object.
-#' @inheritParams make_administration
-#'
-#' @return A nif object.
-#' @export
-#' @examples
-#' add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
-add_administration <- function(
-    nif, sdtm, extrt, analyte = NA, cmt = 1, cut_off_date = NULL,
-    subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
-    silent = FALSE, cleanup = TRUE) {
-  bind_rows(nif, make_administration(
-    sdtm = sdtm,
-    extrt = extrt,
-    analyte = analyte,
-    cmt = cmt,
-    cut_off_date = cut_off_date,
-    subject_filter = {{subject_filter}},
-    silent = silent,
-    cleanup = cleanup
-  )) %>%
-    arrange(.data$USUBJID, .data$DTC) %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
-    make_time() %>%
-    carry_forward_dose() %>%
-    carry_forward_epoch() %>%
-    new_nif()
-}
-
-
-#' Add baseline field
+#' Baseline covariates, specified by the 'testcd' field, can come from any SDTM
+#' domain. By default, the baseline time point is identified by xxBLFL having a
+#' value of "Y" in the respective SDTM domain. Alternatively, a custom
+#' observation filter can be defined.
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.
 #' @param domain The domain as character.
-#' @param testcd The xxTESTCD with xx the domain name, as character.
+#' @param testcd The covariate variable name as character.
 #' @param DV_field The name of the DV field as character.
 #' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD with
 #'   xx the domain name, as character.
@@ -1266,6 +1294,8 @@ add_administration <- function(
 #' @export
 #' @examples
 #' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
+#' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
+#'   baseline_filter = "VSBLFL == 'Y'")
 add_baseline <- function(
     nif,
     sdtm,
@@ -1273,8 +1303,8 @@ add_baseline <- function(
     testcd,
     DV_field = NULL,
     TESTCD_field = NULL,
-    observation_filter = {TRUE},
-    subject_filter = {TRUE},
+    observation_filter = "TRUE",
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     baseline_filter = NULL,
     summary_function = mean,
     silent = FALSE) {
@@ -1286,14 +1316,15 @@ add_baseline <- function(
     ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
-                       subject_filter = {{subject_filter}})
+                       subject_filter = subject_filter)
 
   temp <- domain(sdtm, str_to_lower(domain)) %>%
     # verify(exec(has_all_names(!!!c("USUBJID", DV_field, TESTCD_field)))) %>%
     lubrify_dates() %>%
-    filter({{observation_filter}}) %>%
+    filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
-    filter(!!parse_expr(baseline_filter)) %>%
+    # filter(!!parse_expr(baseline_filter)) %>%
+    filter(eval(parse(text = baseline_filter))) %>%
     select("USUBJID", {{DV_field}}) %>%
     group_by(.data$USUBJID) %>%
     summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
@@ -1304,7 +1335,8 @@ add_baseline <- function(
 }
 
 
-#' Add covariate column to nif object
+
+#' Attach covariate column
 #'
 #' A time-varying covariate is added as a new field with daily time granularity
 #' and carried forward for missing entries.
@@ -1331,7 +1363,8 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     covariate = NULL,
     DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL,
-    observation_filter = {TRUE}
+    # observation_filter = {TRUE}
+    observation_filter = "TRUE"
     ) {
 
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
@@ -1347,7 +1380,8 @@ add_covariate <- function(nif, sdtm, domain, testcd,
   cov <- domain(sdtm, str_to_lower(domain)) %>%
     filter(.data$USUBJID %in% unique(nif$USUBJID)) %>%
     lubrify_dates() %>%
-    filter({{observation_filter}}) %>%
+    # filter({{observation_filter}}) %>%
+    filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     select(.data$USUBJID, DTC = .data[[DTC_field]],
            !!COV_field := .data[[DV_field]]) %>%

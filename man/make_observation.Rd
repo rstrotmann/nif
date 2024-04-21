@@ -14,12 +14,8 @@ make_observation(
   DV_field = NULL,
   TESTCD_field = NULL,
   cmt = NA,
-  observation_filter = {
-     TRUE
- },
-  subject_filter = {
-     TRUE
- },
+  observation_filter = "TRUE",
+  subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   NTIME_lookup = NULL,
   silent = FALSE,
   cleanup = TRUE
@@ -31,8 +27,7 @@ domain the observations come from.}
 
 \item{domain}{The domain as character.}
 
-\item{testcd}{The xxTESTCD entry that corresponds to the analyte of interest,
-as character.}
+\item{testcd}{The observation variable, as character.}
 
 \item{analyte}{The name for the analyte. Defaults to the 'testcd', if NULL.}
 

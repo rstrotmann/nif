@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_observation}
 \alias{add_observation}
-\title{Add an observation to a nif object}
+\title{Append observation events}
 \usage{
 add_observation(
   nif,
@@ -15,12 +15,8 @@ add_observation(
   DV_field = NULL,
   TESTCD_field = NULL,
   cmt = NULL,
-  observation_filter = {
-     TRUE
- },
-  subject_filter = {
-     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
- },
+  observation_filter = "TRUE",
+  subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   NTIME_lookup = NULL,
   silent = FALSE,
   cleanup = TRUE
@@ -34,8 +30,7 @@ domain the observations come from.}
 
 \item{domain}{The domain as character.}
 
-\item{testcd}{The xxTESTCD entry that corresponds to the analyte of interest,
-as character.}
+\item{testcd}{The observation variable, as character.}
 
 \item{analyte}{The name for the analyte. Defaults to the 'testcd', if NULL.}
 
@@ -71,5 +66,17 @@ to provide the NTIME field.}
 A nif object.
 }
 \description{
-Add an observation to a nif object
+Observations can be pharmacokinetic observations from the PC domain, or any
+other class of observation from any SDTM domain. The 'testcd' specifies the
+value of the respective 'xxTESTCD' field (e.g, 'PCTESTCD', 'VSTESTCD', etc.).
+Observations can be attached to an administered compound by specifying the
+'parent' field.
+}
+\examples{
+add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",
+  parent = "RS2023")
+
+}
+\seealso{
+\code{\link[=add_administration]{add_administration()}}
 }

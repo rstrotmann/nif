@@ -236,7 +236,7 @@ test_that("make_observation works", {
 
   expect_no_error(
     make_observation(sdtm, "vs", "WEIGHT",
-                     observation_filter = {USUBJID == "20230000011010001"})
+                     observation_filter = "USUBJID == '20230000011010001'")
   )
 })
 
@@ -409,13 +409,13 @@ test_that("make subjects", {
 })
 
 
-test_that("make baseline", {
-  sdtm <- make_test_sdtm()
-  expect_no_error(
-    test <- make_baseline(sdtm, "lb", "CREAT")
-  )
-  expect_equal(dim(test), c(4, 2))
-})
+# test_that("make baseline", {
+#   sdtm <- make_test_sdtm()
+#   expect_no_error(
+#     test <- make_baseline(sdtm, "lb", "CREAT")
+#   )
+#   expect_equal(dim(test), c(4, 2))
+# })
 
 
 test_that("add_covariate", {

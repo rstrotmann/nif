@@ -10,9 +10,7 @@ make_administration(
   analyte = NA,
   cmt = 1,
   cut_off_date = NULL,
-  subject_filter = {
-     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
- },
+  subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   silent = FALSE,
   cleanup = TRUE
 )

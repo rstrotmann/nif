@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_administration}
 \alias{add_administration}
-\title{Add an administration to a nif object}
+\title{Append drug administration events}
 \usage{
 add_administration(
   nif,
@@ -11,9 +11,7 @@ add_administration(
   analyte = NA,
   cmt = 1,
   cut_off_date = NULL,
-  subject_filter = {
-     !ACTARMCD \%in\% c("SCRNFAIL", "NOTTRT")
- },
+  subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   silent = FALSE,
   cleanup = TRUE
 )
@@ -41,8 +39,12 @@ add_administration(
 A nif object.
 }
 \description{
-Add an administration to a nif object
+Drug administration information is taken from the EX domain of the sdtm
+object. The 'extrt' field specifies the drug name as represented in 'EX',
+however, a different 'analyte' name can be assigned to match with
+pharmacokinetic observations for the parent drug in plasma.
 }
 \examples{
 add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
+
 }

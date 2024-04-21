@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_covariate}
 \alias{add_covariate}
-\title{Add covariate column to nif object}
+\title{Attach covariate column}
 \usage{
 add_covariate(
   nif,
@@ -13,9 +13,7 @@ add_covariate(
   DTC_field = NULL,
   DV_field = NULL,
   TESTCD_field = NULL,
-  observation_filter = {
-     TRUE
- }
+  observation_filter = "TRUE"
 )
 }
 \arguments{

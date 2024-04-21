@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_baseline}
 \alias{add_baseline}
-\title{Add baseline field}
+\title{Attach baseline covariate column}
 \usage{
 add_baseline(
   nif,
@@ -11,12 +11,8 @@ add_baseline(
   testcd,
   DV_field = NULL,
   TESTCD_field = NULL,
-  observation_filter = {
-     TRUE
- },
-  subject_filter = {
-     TRUE
- },
+  observation_filter = "TRUE",
+  subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   baseline_filter = NULL,
   summary_function = mean,
   silent = FALSE
@@ -29,7 +25,7 @@ add_baseline(
 
 \item{domain}{The domain as character.}
 
-\item{testcd}{The xxTESTCD with xx the domain name, as character.}
+\item{testcd}{The covariate variable name as character.}
 
 \item{DV_field}{The name of the DV field as character.}
 
@@ -52,8 +48,13 @@ values. Defaults to \code{mean}.}
 A nif object.
 }
 \description{
-Add baseline field
+Baseline covariates, specified by the 'testcd' field, can come from any SDTM
+domain. By default, the baseline time point is identified by xxBLFL having a
+value of "Y" in the respective SDTM domain. Alternatively, a custom
+observation filter can be defined.
 }
 \examples{
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
+add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
+  baseline_filter = "VSBLFL == 'Y'")
 }
