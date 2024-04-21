@@ -26,7 +26,7 @@ make_administration(
 
 \item{cut_off_date}{The data cut-off date as Posix date-time.}
 
-\item{subject_filter}{The filtering to apply to the DM domain.}
+\item{subject_filter}{The filtering to apply to the DM domain, as string,}
 
 \item{silent}{Suppress messages, as logical.}
 

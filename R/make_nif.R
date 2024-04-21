@@ -945,7 +945,7 @@ make_observation <- function(
 #' Compile administration data frame
 #'
 #' @param sdtm A sdtm object.
-#' @param subject_filter The filtering to apply to the DM domain.
+#' @param subject_filter The filtering to apply to the DM domain, as string,
 #' @param extrt The EXTRT for the administration, as character.
 #' @param analyte The name of the analyte as character.
 #' @param cmt The compartment for the administration as numeric.
@@ -1127,9 +1127,9 @@ carry_forward_epoch <- function(obj) {
 
 #' Append drug administration events
 #'
-#' Drug administration information is taken from the EX domain of the sdtm
-#' object. The 'extrt' field specifies the drug name as represented in 'EX',
-#' however, a different 'analyte' name can be assigned to match with
+#' Drug administration data is taken from the EX domain of the sdtm object. The
+#' 'extrt' field specifies the drug name as represented in 'EX', however, a
+#' different 'analyte' name can be assigned to match with that of the
 #' pharmacokinetic observations for the parent drug in plasma.
 #'
 #' @param nif A nif object.
@@ -1166,10 +1166,12 @@ add_administration <- function(
 #' Append observation events
 #'
 #' Observations can be pharmacokinetic observations from the PC domain, or any
-#' other class of observation from any SDTM domain. The 'testcd' specifies the
-#' value of the respective 'xxTESTCD' field (e.g, 'PCTESTCD', 'VSTESTCD', etc.).
-#' Observations can be attached to an administered compound by specifying the
-#' 'parent' field.
+#' other class of observation from any other SDTM domain. The 'testcd' specifies
+#' the value of the respective 'xxTESTCD' field (depending on the domain, e.g.,
+#' the 'PCTESTCD' or 'VSTESTCD' fields), to define the observation. Observations
+#' can be attached to an administered compound by specifying the 'parent' field.
+#' This influences, e.g., the time-after-dose ('TAD') and time-after-first-dose
+#' ('TAFD') time metrics.
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
@@ -1184,7 +1186,6 @@ add_administration <- function(
 add_observation <- function(nif, sdtm, domain, testcd,
     analyte = NULL, parent = NULL, DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL, cmt = NULL,
-    # observation_filter = {TRUE},
     observation_filter = "TRUE",
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     NTIME_lookup = NULL, silent = FALSE,
@@ -1270,9 +1271,10 @@ add_observation <- function(nif, sdtm, domain, testcd,
 #' Attach baseline covariate column
 #'
 #' Baseline covariates, specified by the 'testcd' field, can come from any SDTM
-#' domain. By default, the baseline time point is identified by xxBLFL having a
-#' value of "Y" in the respective SDTM domain. Alternatively, a custom
-#' observation filter can be defined.
+#' domain. By default, the baseline value is identified by xxBLFL having a value
+#' of "Y" in the respective SDTM domain. Alternatively, a custom observation
+#' filter can be defined. The name of the baseline covariate is 'testcd',
+#' prefixed with 'BL_'.
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.
@@ -1281,10 +1283,11 @@ add_observation <- function(nif, sdtm, domain, testcd,
 #' @param DV_field The name of the DV field as character.
 #' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD with
 #'   xx the domain name, as character.
-#' @param observation_filter A filter term for the `domain`.
-#' @param subject_filter A filter term for the DM domain.
+#' @param observation_filter A filter term for the `domain`, as character.
+#' @param subject_filter A filter term for the DM domain, as character.
 #' @param baseline_filter A filter term to identify the baseline condition
-#'   within the `domain`. Defaults to `xxBLFL == "Y"` with xx the domain name.
+#'   within the `domain`. Defaults to "xxBLFL == 'Y'" (with xx the domain
+#'   code).
 #' @param summary_function The summary function to summarize multiple baseline
 #'   values. Defaults to `mean`.
 #' @param silent Suppress messages, as logical.
@@ -1346,14 +1349,15 @@ add_baseline <- function(
 #' @param domain The domain as character.
 #' @param testcd The xxTESTCD with xx the domain name, as character.
 #' @param DV_field The name of the DV field as character.
-#' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD with
-#'   xx the domain name, as character.
-#' @param observation_filter A filter term for the `domain`.
+#' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD (with
+#'   xx the domain code), as character.
+#' @param observation_filter A filter term for the `domain`, as character.
 #' @param covariate The name of the covariate, defaults to the testcd if 'NULL'.
 #' @param DTC_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
 #'
 #' @return A nif object.
+#' @seealso add_baseline()
 #' @export
 #'
 #' @examples
@@ -1363,7 +1367,6 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     covariate = NULL,
     DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL,
-    # observation_filter = {TRUE}
     observation_filter = "TRUE"
     ) {
 

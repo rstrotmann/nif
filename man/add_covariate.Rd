@@ -32,10 +32,10 @@ Defaults to the two-character domain name followed by 'DTC', if NULL.}
 
 \item{DV_field}{The name of the DV field as character.}
 
-\item{TESTCD_field}{The name of the TESTCD field. defaults to xxTESTCD with
-xx the domain name, as character.}
+\item{TESTCD_field}{The name of the TESTCD field. defaults to xxTESTCD (with
+xx the domain code), as character.}
 
-\item{observation_filter}{A filter term for the \code{domain}.}
+\item{observation_filter}{A filter term for the \code{domain}, as character.}
 }
 \value{
 A nif object.
@@ -47,4 +47,7 @@ and carried forward for missing entries.
 \examples{
 add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
   covariate = "wt")
+}
+\seealso{
+add_baseline()
 }
