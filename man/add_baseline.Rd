@@ -52,7 +52,7 @@ A nif object.
 Baseline covariates, specified by the 'testcd' field, can come from any SDTM
 domain. By default, the baseline value is identified by xxBLFL having a value
 of "Y" in the respective SDTM domain. Alternatively, a custom observation
-filter can be defined. The name of the baseline covariate is 'testcd',
+filter can be defined. The name of the baseline covariate is the 'testcd',
 prefixed with 'BL_'.
 }
 \examples{

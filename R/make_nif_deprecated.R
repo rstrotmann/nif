@@ -55,7 +55,7 @@ compress_nif <- function(nif, ...) {
 #' @import tidyr
 #' @import stringr
 #' @importFrom rlang .data
-#' @export
+#' @keywords internal
 add_bl_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
   lifecycle::deprecate_warn("0.48.2", "add_bl_lab()", "add_baseline()")
   if(is.null(lbspec)) {

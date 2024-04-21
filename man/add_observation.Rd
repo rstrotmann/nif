@@ -70,9 +70,9 @@ Observations can be pharmacokinetic observations from the PC domain, or any
 other class of observation from any other SDTM domain. The 'testcd' specifies
 the value of the respective 'xxTESTCD' field (depending on the domain, e.g.,
 the 'PCTESTCD' or 'VSTESTCD' fields), to define the observation. Observations
-can be attached to an administered compound by specifying the 'parent' field.
-This influences, e.g., the time-after-dose ('TAD') and time-after-first-dose
-('TAFD') time metrics.
+can be attached to an administered drug by specifying the 'parent' field.
+This is required for, e.g., the time-after-dose ('TAD') and
+time-after-first-dose ('TAFD') time calculation.
 }
 \examples{
 add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",

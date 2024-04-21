@@ -42,7 +42,9 @@ A nif object.
 }
 \description{
 A time-varying covariate is added as a new field with daily time granularity
-and carried forward for missing entries.
+and carried forward for missing entries. The name of the covariate can be
+specified by 'covariate'. By default, it is set to the 'testcd' (without any
+prefix).
 }
 \examples{
 add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",

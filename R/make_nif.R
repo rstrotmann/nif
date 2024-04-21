@@ -1169,9 +1169,9 @@ add_administration <- function(
 #' other class of observation from any other SDTM domain. The 'testcd' specifies
 #' the value of the respective 'xxTESTCD' field (depending on the domain, e.g.,
 #' the 'PCTESTCD' or 'VSTESTCD' fields), to define the observation. Observations
-#' can be attached to an administered compound by specifying the 'parent' field.
-#' This influences, e.g., the time-after-dose ('TAD') and time-after-first-dose
-#' ('TAFD') time metrics.
+#' can be attached to an administered drug by specifying the 'parent' field.
+#' This is required for, e.g., the time-after-dose ('TAD') and
+#' time-after-first-dose ('TAFD') time calculation.
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
@@ -1273,7 +1273,7 @@ add_observation <- function(nif, sdtm, domain, testcd,
 #' Baseline covariates, specified by the 'testcd' field, can come from any SDTM
 #' domain. By default, the baseline value is identified by xxBLFL having a value
 #' of "Y" in the respective SDTM domain. Alternatively, a custom observation
-#' filter can be defined. The name of the baseline covariate is 'testcd',
+#' filter can be defined. The name of the baseline covariate is the 'testcd',
 #' prefixed with 'BL_'.
 #'
 #' @param nif A nif object.
@@ -1342,7 +1342,9 @@ add_baseline <- function(
 #' Attach covariate column
 #'
 #' A time-varying covariate is added as a new field with daily time granularity
-#' and carried forward for missing entries.
+#' and carried forward for missing entries. The name of the covariate can be
+#' specified by 'covariate'. By default, it is set to the 'testcd' (without any
+#' prefix).
 #'
 #' @param nif A nif object.
 #' @param sdtm The corresponding sdtm object.
