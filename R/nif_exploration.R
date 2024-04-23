@@ -1391,7 +1391,7 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
                        size = 3, alpha = 0.5, ...) {
   lb <- sdtm$domains[["lb"]] %>%
     filter(.data$LBSPEC != "URINE")
-  if(!all(c("BILI", enzyme) %in% x)) stop("Liver markers values not found in LB")
+  if(!all(c("BILI", enzyme) %in% lb$LBTESTCD)) stop("Liver markers values not found in LB")
 
   lb1 <- lb %>%
     mutate(LB1DTC = .data$LBDTC) %>%
