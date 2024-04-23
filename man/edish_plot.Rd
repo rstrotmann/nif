@@ -9,6 +9,7 @@ edish_plot(
   sdtm,
   enzyme = "ALT",
   show_labels = FALSE,
+  shading = TRUE,
   nominal_time = TRUE,
   time = NULL,
   parent = NULL,
@@ -28,6 +29,8 @@ character, can be 'AST' or 'ALT' (default).}
 
 \item{show_labels}{Show ID labels per point.}
 
+\item{shading}{Highlight Hy's law area, as logical.}
+
 \item{nominal_time}{Use NTIME as logical.}
 
 \item{time}{time/nominal time filter as numeric.}
@@ -46,5 +49,6 @@ character, can be 'AST' or 'ALT' (default).}
 A ggplot object.
 }
 \description{
-DOI: 10.2165/11586600-000000000-00000
+Refer to the \href{https://www.fda.gov/media/116737/download}{FDA guidance on Drug-induced liver injury}
+and \href{https://doi.org/10.2165/11586600-000000000-00000}{Watkins 2011}.
 }

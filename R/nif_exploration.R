@@ -967,38 +967,44 @@ get_cov_plot_params <- function(field) {
 #' Plot NIF summary
 #'
 #' @param x A NIF object.
+#' @param baseline Plot baseline data, as logical.
+#' @param analytes Plot analyte overview as logical.
 #' @param ... Further arguments.
+#'
 #' @return A list of ggplot objects.
 #' @export
 #' @noRd
 #' @examples
 #' plot(summary(examplinib_poc_nif))
-plot.summary_nif <- function(x, ...) {
+plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
   nif <- x$nif
   out <- list()
 
-  for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI",
-              str_subset(names(nif), "BL_.*"))) {
-    if (i %in% colnames(nif)) {
-      if(is.numeric(nif[[i]])) {
-        out[[i]] <- covariate_hist(nif, i)
-      }
-      if(is.factor(nif[[i]])) {
-        out[[i]] <- covariate_barplot(nif, i)
+  if(baseline == TRUE){
+    for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI",
+                str_subset(names(nif), "BL_.*"))) {
+      if (i %in% colnames(nif)) {
+        if(is.numeric(nif[[i]])) {
+          out[[i]] <- covariate_hist(nif, i)
+        }
+        if(is.factor(nif[[i]])) {
+          out[[i]] <- covariate_barplot(nif, i)
+        }
       }
     }
+    out[["WT_SEX"]] <- wt_by_sex(nif)
+    out[["WT_RACE"]] <- wt_by_race(nif)
   }
 
-  out[["WT_SEX"]] <- wt_by_sex(nif)
-  out[["WT_RACE"]] <- wt_by_race(nif)
-
-  for (i in x$analytes) {
-    out[[i]] <- plot(nif,
-      analyte = i, log = TRUE, points = TRUE, lines = FALSE, time = "TIME",
-      alpha = 0.3, title = paste(i, "by dose"),
-      max_time = max_observation_time(x$nif, i)
-    ) +
-      labs(y = "")
+  if(analytes == TRUE){
+    for (i in x$analytes) {
+      out[[i]] <- plot(nif,
+        analyte = i, log = TRUE, points = TRUE, lines = FALSE, time = "TIME",
+        alpha = 0.3, title = paste(i, "by dose"),
+        max_time = max_observation_time(x$nif, i)
+      ) +
+        labs(y = "")
+    }
   }
   return(out)
 }
@@ -1354,10 +1360,13 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
     arrange(DL, ANALYTE)
 }
 
+
 #' Drug-induced serious hepatotoxicity (eDISH) plot
 #'
 #' @description
-#' DOI: 10.2165/11586600-000000000-00000
+#'
+#' Refer to the [FDA guidance on Drug-induced liver injury](https://www.fda.gov/media/116737/download)
+#' and [Watkins 2011](https://doi.org/10.2165/11586600-000000000-00000).
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.
@@ -1371,17 +1380,19 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @param nominal_time Use NTIME as logical.
 #' @param time time/nominal time filter as numeric.
 #' @param parent The parent compound as character.
+#' @param shading Highlight Hy's law area, as logical.
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
 #' @export
-edish_plot <- function(nif, sdtm, enzyme = "ALT",
-                       show_labels = FALSE,
-                       nominal_time = TRUE, time = NULL, parent = NULL,
-                       title = "eDISH plot: All time points", size = 3,
-                       alpha = 0.5, ...) {
+edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
+                       shading = TRUE, nominal_time = TRUE, time = NULL,
+                       parent = NULL, title = "eDISH plot: All time points",
+                       size = 3, alpha = 0.5, ...) {
   lb <- sdtm$domains[["lb"]] %>%
     filter(.data$LBSPEC != "URINE")
+  if(!all(c("BILI", enzyme) %in% x)) stop("Liver markers values not found in LB")
+
   lb1 <- lb %>%
     mutate(LB1DTC = .data$LBDTC) %>%
     filter(.data$LBTESTCD %in% c(enzyme, "BILI")) %>%
@@ -1423,17 +1434,21 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
       {if(show_labels == TRUE) geom_text_repel()} +
       scale_x_log10() +
       scale_y_log10() +
-      annotate('rect', xmin = 3, xmax = Inf, ymin = 2, ymax = Inf, alpha=.15,
-               fill='grey') +
+      {if(shading == TRUE) annotate('rect', xmin = 3, xmax = Inf, ymin = 2,
+                                    ymax = Inf, alpha=.15, fill='grey')} +
       geom_hline(yintercept = 2, linetype="dashed") +
       geom_vline(xintercept = 3, linetype="dashed") +
-      labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN",
-           caption = paste0(
-             length(unique(nif$ID)),
-             " subjects, red: predose, grey area: Hy's law.")) +
+      labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +#,
+           # caption = paste0(length(unique(nif$ID)),
+           #   " subjects", "red: predose, grey area: Hy's law.")) +
       theme_bw() +
       theme(legend.position = "none") +
       ggtitle(title)
+
+    caption <- paste0(length(unique(nif$ID)), " subjects, red: predose")
+    caption <- ifelse(shading == TRUE,
+                      paste0(caption, ", grey area: Hy's law."), caption)
+    p <- p + labs(caption = caption)
   })
   return(p)
 }

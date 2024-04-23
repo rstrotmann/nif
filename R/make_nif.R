@@ -1410,6 +1410,33 @@ add_covariate <- function(nif, sdtm, domain, testcd,
 }
 
 
+add_food <- function(nif, sdtm) {
+  stopifnot("YL domain not found!" = ("yl" %in% names(sdtm$domains)))
+  food <- sdtm$domains[["yl"]] %>%
+    lubrify_dates() %>%
+    filter(YLCAT %in% c("BREAKFAST", "MEAL")) %>%
+    distinct(USUBJID, DTC = YLSTDTC, FASTED = FALSE, temporary = TRUE)
+
+  # food <- bind_rows(food, food %>% mutate(DTC = DTC + hours(4), FASTED = TRUE)) %>%
+  #   arrange(USUBJID, DTC)
+
+
+  nif %>%
+    filter(PART == "C") %>%
+    bind_rows(food) %>%
+    arrange(USUBJID, DTC, -EVID) %>%
+    as.data.frame() %>%
+    select(USUBJID, DTC, TIME, EVID, ANALYTE, FASTED)
+}
+
+
+
+
+
+
+
+
+
 #' Subset nif to rows with DTC before the last individual or global observation
 #'
 #' @param obj A nif object.
