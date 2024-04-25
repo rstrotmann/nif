@@ -944,6 +944,9 @@ make_observation <- function(
 
 #' Compile administration data frame
 #'
+#' @details
+#' A discussion on EC vs EX is provided [here](https://www.cdisc.org/kb/ecrf/exposure-collected#:~:text=In%20the%20SDTMIG%2C%20the%20Exposure,data%20collected%20on%20the%20CRF.)
+#'
 #' @param sdtm A sdtm object.
 #' @param subject_filter The filtering to apply to the DM domain, as string,
 #' @param extrt The EXTRT for the administration, as character.
@@ -985,7 +988,6 @@ make_administration <- function(
     filter_EXSTDTC_after_EXENDTC(dm, silent = silent) %>%
 
     # time imputations
-    # impute_exendtc_to_rfendtc(dm, silent = silent) %>%
     impute_exendtc_to_cutoff(cut.off.date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
     decompose_dtc("EXENDTC") %>%
@@ -1024,12 +1026,17 @@ make_administration <- function(
     decompose_dtc("DTC") %>%
     arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) %>%
     mutate(IMPUTATION = case_when(
-      # is.na(.data$DTC_time) == TRUE ~ append_statement(IMPUTATION, "time carried forward"),
       is.na(.data$DTC_time) == TRUE ~ "time carried forward",
       .default = .data$IMPUTATION)) %>%
     group_by(.data$USUBJID, .data$ANALYTE) %>%
     fill(.data$DTC_time, .direction = "down") %>%
     ungroup() %>%
+
+    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
+
+    # # impute missing administration times from PCRFTDTC
+    # {if("PCRFTDTC" %in% names(pc))
+    #   impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .} %>%
 
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
 
@@ -1410,24 +1417,24 @@ add_covariate <- function(nif, sdtm, domain, testcd,
 }
 
 
-add_food <- function(nif, sdtm) {
-  stopifnot("YL domain not found!" = ("yl" %in% names(sdtm$domains)))
-  food <- sdtm$domains[["yl"]] %>%
-    lubrify_dates() %>%
-    filter(YLCAT %in% c("BREAKFAST", "MEAL")) %>%
-    distinct(USUBJID, DTC = YLSTDTC, FASTED = FALSE, temporary = TRUE)
-
-  # food <- bind_rows(food, food %>% mutate(DTC = DTC + hours(4), FASTED = TRUE)) %>%
-  #   arrange(USUBJID, DTC)
-
-
-  nif %>%
-    filter(PART == "C") %>%
-    bind_rows(food) %>%
-    arrange(USUBJID, DTC, -EVID) %>%
-    as.data.frame() %>%
-    select(USUBJID, DTC, TIME, EVID, ANALYTE, FASTED)
-}
+# add_food <- function(nif, sdtm) {
+#   stopifnot("YL domain not found!" = ("yl" %in% names(sdtm$domains)))
+#   food <- sdtm$domains[["yl"]] %>%
+#     lubrify_dates() %>%
+#     filter(YLCAT %in% c("BREAKFAST", "MEAL")) %>%
+#     distinct(USUBJID, DTC = YLSTDTC, FASTED = FALSE, temporary = TRUE)
+#
+#   # food <- bind_rows(food, food %>% mutate(DTC = DTC + hours(4), FASTED = TRUE)) %>%
+#   #   arrange(USUBJID, DTC)
+#
+#
+#   nif %>%
+#     filter(PART == "C") %>%
+#     bind_rows(food) %>%
+#     arrange(USUBJID, DTC, -EVID) %>%
+#     as.data.frame() %>%
+#     select(USUBJID, DTC, TIME, EVID, ANALYTE, FASTED)
+# }
 
 
 

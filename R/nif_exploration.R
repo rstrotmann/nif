@@ -1415,7 +1415,7 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
     parent <- guess_analyte(nif)
   }
 
-  suppressWarnings({
+  # suppressWarnings({
     p <- nif %>%
       add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent, silent = TRUE) %>%
       add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent, silent = TRUE) %>%
@@ -1449,7 +1449,7 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
     caption <- ifelse(shading == TRUE,
                       paste0(caption, ", grey area: Hy's law."), caption)
     p <- p + labs(caption = caption)
-  })
+  # })
   return(p)
 }
 
