@@ -1,99 +1,3 @@
-#' Impute time of EXENDTC to time of EXSTDTC, when missing.
-#'
-#' Within the EX domain, some entries in EXENDTC may only have date but not time
-#' information included in the EXENDTC field. This is particularly often found
-#' in multiple-dose studies, and in cases where the affected administration
-#' interval is not associated with PK sampling, the exact time of these IMP
-#' administrations does not matter a lot. However, to convert the EXSTDTC to
-#' EXENDTC interval into a series of relative administration times, the time of
-#' the day in EXENDTC must be set to a plausible value. This is what this
-#' function does. For entries with missing time-of-the-day information in
-#' EXENDTC, it is assumed to be the same as for the EXSTDTC field.
-#' @param ex The EX domain as data frame.
-#' @param silent Switch to disable message output.
-#' @return The updated EX domain as data frame.
-#' @keywords internal
-impute_missing_exendtc_time <- function(ex, silent = FALSE) {
-  temp <- ex %>%
-    verify(has_all_names(
-      "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-    lubrify_dates() %>%
-    mutate(
-      EXSTDTC_has_time = has_time(EXSTDTC),
-      EXENDTC_has_time = has_time(EXENDTC)
-    ) %>%
-    # extract start and end dates and times from EXSTDTC and EXENDTC
-    mutate(start.date = extract_date(EXSTDTC)) %>%
-    mutate(start.time = case_when(
-      EXSTDTC_has_time == TRUE ~ extract_time(EXSTDTC),
-      .default = NA
-    )) %>%
-    mutate(end.date = extract_date(EXENDTC)) %>%
-    mutate(end.time = case_when(
-      EXENDTC_has_time == TRUE ~ extract_time(EXENDTC),
-      .default = NA
-    )) %>%
-    # flag entries for EXENDTC time imputation
-    mutate(impute_exendtc_time = (!is.na(EXENDTC) &
-                                    EXENDTC_has_time == FALSE &
-                                    !is.na(start.time)))
-
-  if (sum(temp$impute_exendtc_time) > 0) {
-    temp <- temp %>%
-      mutate(EXENDTC1 = case_when(
-        impute_exendtc_time == TRUE ~ paste(
-          as.character(end.date),
-          as.character(start.time)
-        ), .default = NA) %>%
-        str_trim() %>%
-        as_datetime(format = c("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"))) %>%
-
-      mutate(EXENDTC = case_when(
-        impute_exendtc_time == TRUE ~ EXENDTC1,
-        .default = EXENDTC
-      )) %>%
-      select(-c("EXENDTC1")) %>%
-      mutate(IMPUTATION = case_when(
-        impute_exendtc_time == TRUE ~ "time imputed from EXSTDTC",
-        .default = .data$IMPUTATION
-      ))
-
-    conditional_message(
-      "In ", sum(temp$impute_exendtc_time),
-      " administrations, a missing time in EXENDTC is imputed from EXSTDTC:\n",
-      temp %>%
-        filter(impute_exendtc_time == TRUE) %>%
-        select(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-        df_to_string(), "\n",
-      silent = silent
-    )
-  }
-
-  temp %>%
-    select(-c("EXENDTC_has_time", "EXSTDTC_has_time", "start.date",
-              "start.time", "end.date", "end.time", "impute_exendtc_time"))
-}
-
-
-#' Filter out EX events after the last dose as specified in RFENDTC
-#'
-#' @param ex The EX domain as data.frame.
-#' @param dm The DM domain as data.frame
-#' @param silent Switch to disable message output.
-#' @return The modified EX domain as data.frame.
-#' @keywords internal
-exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
-  ex %>%
-    left_join(dm %>% select(c("USUBJID", "RFENDTC")),
-              by = "USUBJID") %>%
-    group_by(.data$USUBJID) %>%
-    filter(floor_date(.data$EXSTDTC, "day") <=
-             floor_date(.data$RFENDTC, "day") |
-             is.na(.data$RFENDTC)) %>%
-    select(-"RFENDTC")
-}
-
-
 #' Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent
 #'
 #' In EX for multiple-dose studies, the EXENDTC field for the very last
@@ -161,8 +65,8 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
 
 #' Impute missing EXENDTC to the day before the next EXSTDTC.
 #'
-#' In some cases, EX does not contain EXENDTC for administration epochs that
-#' are not the very last administration epoch This should only occur when
+#' In some cases, EX does not contain EXENDTC for administration episodes that
+#' are not the very last administration episode. This should only occur when
 #' non-clean clinical data is analyzed, e.g., in the context of an interim
 #' analysis. In most cases, such instances must be manually resolved. There
 #' could be AE information with consequences of "drug withdrawn" available
@@ -173,10 +77,10 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
 #' administered up to the day before the subsequent administration interval.
 #' Note that this imputation does not apply to the last administration per
 #' subject and EXTRT. For these cases, missing EXENDT can be imputed to the
-#' global cut off date using `impute_exendtc_to_cutoff`.
+#' global cut off date using [impute_exendtc_to_cutoff()].
 #'
 #' As this function conducts rather aggressive imputations, the message output
-#' is not optional, i.e., cannot be suppressed using the `silent` flag, but is
+#' is not optional, i.e., cannot be suppressed using the 'silent' flag, but is
 #' issued in all cases.
 #'
 #' @param ex The updated EX domain as data frame.
@@ -230,7 +134,7 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
 #' administration epoch in EX may have an empty EXENDTC field. Often, the
 #' underlying reason is that the respective subjects are still on treatment.
 #' This function replaces the missing EXENDTC with the global data cut-off
-#' date, `cut.off.date`.
+#' date, `cut_off_date`.
 #'
 #' @param ex The EX domain as data frame.
 #' @param cut.off.date The cut-off date.
@@ -238,7 +142,7 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
 #' @return The updated EX domain as data frame.
 #' @import assertr
 #' @keywords internal
-impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
+impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = FALSE) {
   temp <- ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
@@ -254,21 +158,26 @@ impute_exendtc_to_cutoff <- function(ex, cut.off.date = NA, silent = FALSE) {
 
   if (nrow(to_replace) > 0) {
     conditional_message("In ", nrow(to_replace), " subjects, EXENDTC is ",
-      "absent and is replaced by the cut off date, ",
-      format(cut.off.date, format = "%Y-%m-%d %H:%M"), ":\n",
-      df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
-                                         "EXSTDTC", "EXENDTC")))),
-      "\n",
-      silent = silent
+                        "absent and is replaced by the cut off date, ",
+                        format(cut_off_date, format = "%Y-%m-%d %H:%M"), ":\n",
+                        df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
+                                                                    "EXSTDTC", "EXENDTC")))),
+                        "\n",
+                        silent = silent
     )
+
     temp <- temp %>%
       mutate(EXENDTC = case_when(
-        (LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) ~ cut.off.date,
+        (LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) ~ cut_off_date,
         .default = .data$EXENDTC
+      )) %>%
+      mutate(IMPUTATION = case_when(
+        LAST_ADMIN == TRUE & is.na(.data$EXENDTC) ~
+          "missing EXENDTC set to data cutoff",
+        .default = IMPUTATION
       ))
   }
-  temp %>%
-    select(-"LAST_ADMIN")
+  return(temp %>% select(-"LAST_ADMIN"))
 }
 
 
@@ -290,70 +199,18 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
              "PCRFTDTC_time")) %>%
     distinct()
 
-  # obj %>%
-  #   decompose_dtc("DTC") %>%
-  #   left_join(pc_ref,
-  #             by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
-  #   mutate(IMPUTATION = case_when(
-  #     is.na(DTC_time) & !is.na(PCRFTDTC_time) ~
-  #       paste(.data$IMPUTATION, "admin time imputed from PCRFTDTC"),
-  #     .default = .data$IMPUTATION)) %>%
-  #   mutate(DTC_time = case_when(is.na(DTC_time) ~ PCRFTDTC_time,
-  #                               .default = .data$DTC_time)) %>%
-  #   mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
-  #   select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
-
   obj %>%
     decompose_dtc("DTC") %>%
     left_join(pc_ref,
               by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
     mutate(IMPUTATION = case_when(
       !is.na(PCRFTDTC_time) ~
-        paste(.data$IMPUTATION, "admin time imputed from PCRFTDTC"),
+        "admin time imputed from PCRFTDTC",
       .default = .data$IMPUTATION)) %>%
     mutate(DTC_time = case_when(!is.na(PCRFTDTC_time) ~ PCRFTDTC_time,
                                 .default = .data$DTC_time)) %>%
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
     select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
-}
-
-
-#' Remove administrations with EXSTDTC after RFENDTC
-#'
-#' @param ex The EX domain as data frame.
-#' @param dm the DM domain as data frame.
-#' @param silent Suppress messages as logical.
-#'
-#' @return A data frame.
-#' @keywords internal
-filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
-  out <- ex %>%
-    left_join(
-      dm %>%
-        decompose_dtc("RFENDTC") %>%
-        select(.data$USUBJID, .data$RFENDTC_date),
-      by = "USUBJID"
-    )
-
-  temp <- out %>%
-    filter(!(.data$EXSTDTC <= .data$EXENDTC) &
-             (.data$EXSTDTC_date > .data$RFENDTC_date))
-
-  if(nrow(temp) > 0) {
-    conditional_message(paste0(
-      nrow(temp),
-      " subjects had an administration episode with the EXSTDTC date after ",
-      "their RFENDTC date.\nThese administrations were ",
-      "removed from the data set:\n",
-      df_to_string(select(temp, .data$USUBJID, .data$EXTRT, .data$EXSEQ,
-                          .data$EXSTDTC, .data$EXENDTC,
-                          .data$RFENDTC_date), indent = "  ")),
-      silent = silent)
-  }
-
-  out %>%
-    filter((.data$EXSTDTC_date < .data$EXENDTC_date) |
-             (.data$EXSTDTC_date <= .data$RFENDTC_date))
 }
 
 
@@ -418,53 +275,6 @@ make_exstdy_exendy <- function(ex, dm) {
     mutate(EXENDY = floor(as.numeric(difftime(.data$EXENDTC, .data$RFSTDTC),
                                      units = "days")) + 1) %>%
     select(-RFSTDTC)
-}
-
-
-#' Replace administration time with time found in PCRFTDTC
-#'
-#' @param admin The administration data frame.
-#' @param obs The observation data frame.
-#' @param silent Switch to disable message output.
-#' @return The updated administration data frame.
-#' @keywords internal
-#' @import assertr
-impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
-  temp <- admin %>%
-    assertr::verify(has_all_names("USUBJID", "PARENT", "date", "time")) %>%
-    select(-any_of(c("ref.time", "ref.date", "PCRFTDTC"))) %>%
-    left_join(
-      (obs %>%
-         assertr::verify(has_all_names("USUBJID", "PARENT", "PCRFTDTC")) %>%
-         mutate(ref.date = as.Date(extract_date(.data$PCRFTDTC))) %>%
-         mutate(ref.time = extract_time(.data$PCRFTDTC)) %>%
-         distinct(.data$USUBJID, .data$PARENT, .data$PCRFTDTC, .data$ref.date,
-                   .data$ref.time)),
-      by = c("USUBJID", "PARENT", "date" = "ref.date")) %>%
-    group_by(.data$USUBJID, .data$PARENT) %>%
-    fill(ref.time, .direction = "down") %>%
-    ungroup()
-
-  n_cases <- temp %>%
-    filter(.data$time != .data$ref.time) %>%
-    nrow()
-
-  conditional_message(
-    paste0("Time found in PCRFTDTC used in ", n_cases, " cases."),
-    silent = silent || (n_cases == 0)
-  )
-
-  temp %>%
-    mutate(imputation_flag = case_when(
-      (is.na(.data$time) | .data$time != .data$ref.time) ~ TRUE,
-      .default = FALSE)) %>%
-    mutate(DTC = case_match(.data$imputation_flag,
-      TRUE ~ compose_dtc(.data$date, .data$ref.time),
-      FALSE ~ .data$DTC)) %>%
-    mutate(IMPUTATION = case_match(.data$imputation_flag,
-      TRUE ~ "time imputed from PCRFTDTC",
-      FALSE ~ IMPUTATION)) %>%
-    select(-"imputation_flag")
 }
 
 
@@ -947,6 +757,63 @@ make_observation <- function(
 #' @details
 #' A discussion on EC vs EX is provided [here](https://www.cdisc.org/kb/ecrf/exposure-collected#:~:text=In%20the%20SDTMIG%2C%20the%20Exposure,data%20collected%20on%20the%20CRF.)
 #'
+#' @details
+#' # Time imputations and filtering
+#'
+#' The following time imputations and filters are applied in the given
+#' order:
+#'
+#' ## 1. [impute_exendtc_to_rfendtc()]
+#'
+#' If EXENDTC is missing in the last administration episode for a given subject,
+#' it is replaced with DM.RFENDTC, if available.
+#'
+#' ## 2. [filter_EXSTDTC_after_EXENDTC()]
+#'
+#' Administration episodes in which EXSTDTC is after EXENDT are deleted from the
+#' data set.
+#'
+#' ## 3. [impute_exendtc_to_cutoff()]
+#'
+#' If in the last administration episode per subject and treatment, EXENDTC is
+#' missing, for example because the treatment is still ongoing at the time of
+#' the SDTM generation, EXENDTC is replaced with the cut-off date.
+#'
+#' ## 4. [impute_missing_exendtc()]
+#'
+#' If in any further episode, EXENDTC is missing, it is replaced with the day
+#' before the subsequent administration episode start (EXSTDTX). It should be
+#' understood that this reflects a rather strong assumption, i.e., that the
+#' treatment was continued into the next administration episode. This imputation
+#' therefore issues a warning that cannot be suppressed with `silent = TRUE`.
+#'
+#' ## 5. Expand administration episodes
+#'
+#' All administration episodes, i.e., the intervals between EXSTDTC and EXENDTC
+#' for a given row in EX, are expanded into a sequence of rows with one
+#' administration day per row. The administration times for all rows except for
+#' the last are taken from the time information in EXSTDTD, wherease the time
+#' for the last administration event in the respective episode is taken from the
+#' time information in EXENDTC.
+#'
+#' **Development note:** In the present version of the function, once-daily (QD)
+#' dosing is assumed. Multiple-daily dosings are not supported. In future
+#' versions, the dosing frequency provided in `EXDOSFRQ` may be taken into
+#' account to adequately handle multiple daily administrations.
+#'
+#' ## 6. [impute_admin_times_from_pcrftdtc()]
+#'
+#' For administration days for which PK sampling events are recorded in PC, the
+#' administration time is taken from PC.PCRFTDTC, if this field is available.
+#'
+#' **Development note:** This may be updated in future versions of the function
+#' to work with multiple-daily administrations.
+#'
+#' ## 7. Carry forward time
+#'
+#' For all administration events per subject and treatment, missing time
+#' information is finally carried forward from available time information.
+#'
 #' @param sdtm A sdtm object.
 #' @param subject_filter The filtering to apply to the DM domain, as string,
 #' @param extrt The EXTRT for the administration, as character.
@@ -959,7 +826,8 @@ make_observation <- function(
 #' @return A data frame.
 #' @export
 #' @keywords internal
-make_administration <- function(
+#' @seealso [add_administration()]
+  make_administration <- function(
     sdtm,
     extrt,
     analyte = NA,
@@ -988,7 +856,7 @@ make_administration <- function(
     filter_EXSTDTC_after_EXENDTC(dm, silent = silent) %>%
 
     # time imputations
-    impute_exendtc_to_cutoff(cut.off.date = cut_off_date, silent = silent) %>%
+    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
     decompose_dtc("EXENDTC") %>%
 
@@ -1031,12 +899,6 @@ make_administration <- function(
     group_by(.data$USUBJID, .data$ANALYTE) %>%
     fill(.data$DTC_time, .direction = "down") %>%
     ungroup() %>%
-
-    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
-
-    # # impute missing administration times from PCRFTDTC
-    # {if("PCRFTDTC" %in% names(pc))
-    #   impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .} %>%
 
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
 

@@ -1,3 +1,254 @@
+#' Impute time of EXENDTC to time of EXSTDTC, when missing.
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' Within the EX domain, some entries in EXENDTC may only have date but not time
+#' information included in the EXENDTC field. This is particularly often found
+#' in multiple-dose studies, and in cases where the affected administration
+#' interval is not associated with PK sampling, the exact time of these IMP
+#' administrations does not matter a lot. However, to convert the EXSTDTC to
+#' EXENDTC interval into a series of relative administration times, the time of
+#' the day in EXENDTC must be set to a plausible value. This is what this
+#' function does. For entries with missing time-of-the-day information in
+#' EXENDTC, it is assumed to be the same as for the EXSTDTC field.
+#' @param ex The EX domain as data frame.
+#' @param silent Switch to disable message output.
+#' @return The updated EX domain as data frame.
+#' @keywords internal
+impute_missing_exendtc_time <- function(ex, silent = FALSE) {
+  lifecycle::deprecate_warn("0.49.1", "impute_missing_exendtc_time()", "")
+  temp <- ex %>%
+    verify(has_all_names(
+      "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    lubrify_dates() %>%
+    mutate(
+      EXSTDTC_has_time = has_time(EXSTDTC),
+      EXENDTC_has_time = has_time(EXENDTC)
+    ) %>%
+    # extract start and end dates and times from EXSTDTC and EXENDTC
+    mutate(start.date = extract_date(EXSTDTC)) %>%
+    mutate(start.time = case_when(
+      EXSTDTC_has_time == TRUE ~ extract_time(EXSTDTC),
+      .default = NA
+    )) %>%
+    mutate(end.date = extract_date(EXENDTC)) %>%
+    mutate(end.time = case_when(
+      EXENDTC_has_time == TRUE ~ extract_time(EXENDTC),
+      .default = NA
+    )) %>%
+    # flag entries for EXENDTC time imputation
+    mutate(impute_exendtc_time = (!is.na(EXENDTC) &
+                                    EXENDTC_has_time == FALSE &
+                                    !is.na(start.time)))
+
+  if (sum(temp$impute_exendtc_time) > 0) {
+    temp <- temp %>%
+      mutate(EXENDTC1 = case_when(
+        impute_exendtc_time == TRUE ~ paste(
+          as.character(end.date),
+          as.character(start.time)
+        ), .default = NA) %>%
+          str_trim() %>%
+          as_datetime(format = c("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"))) %>%
+
+      mutate(EXENDTC = case_when(
+        impute_exendtc_time == TRUE ~ EXENDTC1,
+        .default = EXENDTC
+      )) %>%
+      select(-c("EXENDTC1")) %>%
+      mutate(IMPUTATION = case_when(
+        impute_exendtc_time == TRUE ~ "time imputed from EXSTDTC",
+        .default = .data$IMPUTATION
+      ))
+
+    conditional_message(
+      "In ", sum(temp$impute_exendtc_time),
+      " administrations, a missing time in EXENDTC is imputed from EXSTDTC:\n",
+      temp %>%
+        filter(impute_exendtc_time == TRUE) %>%
+        select(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+        df_to_string(), "\n",
+      silent = silent
+    )
+  }
+  temp %>%
+    select(-c("EXENDTC_has_time", "EXSTDTC_has_time", "start.date",
+              "start.time", "end.date", "end.time", "impute_exendtc_time"))
+}
+
+
+#' Filter out EX events after the last dose as specified in RFENDTC
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @param ex The EX domain as data.frame.
+#' @param dm The DM domain as data.frame
+#' @param silent Switch to disable message output.
+#' @return The modified EX domain as data.frame.
+#' @keywords internal
+exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
+  lifecycle::deprecate_warn("0.49.1", "exclude_exstdtc_after_rfendtc()", "")
+  ex %>%
+    left_join(dm %>% select(c("USUBJID", "RFENDTC")),
+              by = "USUBJID") %>%
+    group_by(.data$USUBJID) %>%
+    filter(floor_date(.data$EXSTDTC, "day") <=
+             floor_date(.data$RFENDTC, "day") |
+             is.na(.data$RFENDTC)) %>%
+    select(-"RFENDTC")
+}
+
+
+#' Impute last EXENDTC per subject and treatment to cutoff date when absent.
+#'
+#' In some instances, particularly when analyzing non-cleaned SDTM data from
+#' ongoing clinical studies with multiple-dose administrations, the last
+#' administration epoch in EX may have an empty EXENDTC field. Often, the
+#' underlying reason is that the respective subjects are still on treatment.
+#' This function replaces the missing EXENDTC with the global data cut-off
+#' date, `cut_off_date`.
+#'
+#' @param ex The EX domain as data frame.
+#' @param cut.off.date The cut-off date.
+#' @param silent Switch to disable message output.
+#' @return The updated EX domain as data frame.
+#' @import assertr
+#' @keywords internal
+impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = FALSE) {
+  temp <- ex %>%
+    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    lubrify_dates() %>%
+    assertr::verify(is.POSIXct(.data$EXSTDTC)) %>%
+    assertr::verify(is.POSIXct(.data$EXENDTC)) %>%
+    # identify last administration per subject and EXTRT
+    arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
+    group_by(.data$USUBJID, .data$EXTRT) %>%
+    mutate(LAST_ADMIN = row_number() == max(row_number()))
+
+  to_replace <- temp %>%
+    filter(.data$LAST_ADMIN == TRUE, is.na(.data$EXENDTC))
+
+  if (nrow(to_replace) > 0) {
+    conditional_message("In ", nrow(to_replace), " subjects, EXENDTC is ",
+      "absent and is replaced by the cut off date, ",
+      format(cut_off_date, format = "%Y-%m-%d %H:%M"), ":\n",
+      df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
+                                         "EXSTDTC", "EXENDTC")))),
+      "\n",
+      silent = silent
+    )
+
+    temp <- temp %>%
+      mutate(EXENDTC = case_when(
+        (LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) ~ cut_off_date,
+        .default = .data$EXENDTC
+      )) %>%
+      mutate(IMPUTATION = case_when(
+        LAST_ADMIN == TRUE & is.na(.data$EXENDTC) ~
+          "missing EXENDTC set to data cutoff",
+        .default = IMPUTATION
+      ))
+  }
+  return(temp %>% select(-"LAST_ADMIN"))
+}
+
+
+#' Remove administrations with EXSTDTC after RFENDTC
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @param ex The EX domain as data frame.
+#' @param dm the DM domain as data frame.
+#' @param silent Suppress messages as logical.
+#'
+#' @return A data frame.
+#' @keywords internal
+filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
+  lifecycle::deprecate_warn("0.49.1", "filter_EXSTDTC()", "")
+  out <- ex %>%
+    left_join(
+      dm %>%
+        decompose_dtc("RFENDTC") %>%
+        select(.data$USUBJID, .data$RFENDTC_date),
+      by = "USUBJID"
+    )
+
+  temp <- out %>%
+    filter(!(.data$EXSTDTC <= .data$EXENDTC) &
+             (.data$EXSTDTC_date > .data$RFENDTC_date))
+
+  if(nrow(temp) > 0) {
+    conditional_message(paste0(
+      nrow(temp),
+      " subjects had an administration episode with the EXSTDTC date after ",
+      "their RFENDTC date.\nThese administrations were ",
+      "removed from the data set:\n",
+      df_to_string(select(temp, .data$USUBJID, .data$EXTRT, .data$EXSEQ,
+                          .data$EXSTDTC, .data$EXENDTC,
+                          .data$RFENDTC_date), indent = "  ")),
+      silent = silent)
+  }
+
+  out %>%
+    filter((.data$EXSTDTC_date < .data$EXENDTC_date) |
+             (.data$EXSTDTC_date <= .data$RFENDTC_date))
+}
+
+
+#' Replace administration time with time found in PCRFTDTC
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @param admin The administration data frame.
+#' @param obs The observation data frame.
+#' @param silent Switch to disable message output.
+#' @return The updated administration data frame.
+#' @keywords internal
+#' @import assertr
+impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
+  lifecycle::deprecate_warn("0.49.1", "impute_admin_dtc_to_pcrftdtc()", "")
+  temp <- admin %>%
+    assertr::verify(has_all_names("USUBJID", "PARENT", "date", "time")) %>%
+    select(-any_of(c("ref.time", "ref.date", "PCRFTDTC"))) %>%
+    left_join(
+      (obs %>%
+         assertr::verify(has_all_names("USUBJID", "PARENT", "PCRFTDTC")) %>%
+         mutate(ref.date = as.Date(extract_date(.data$PCRFTDTC))) %>%
+         mutate(ref.time = extract_time(.data$PCRFTDTC)) %>%
+         distinct(.data$USUBJID, .data$PARENT, .data$PCRFTDTC, .data$ref.date,
+                  .data$ref.time)),
+      by = c("USUBJID", "PARENT", "date" = "ref.date")) %>%
+    group_by(.data$USUBJID, .data$PARENT) %>%
+    fill(ref.time, .direction = "down") %>%
+    ungroup()
+
+  n_cases <- temp %>%
+    filter(.data$time != .data$ref.time) %>%
+    nrow()
+
+  conditional_message(
+    paste0("Time found in PCRFTDTC used in ", n_cases, " cases."),
+    silent = silent || (n_cases == 0)
+  )
+
+  temp %>%
+    mutate(imputation_flag = case_when(
+      (is.na(.data$time) | .data$time != .data$ref.time) ~ TRUE,
+      .default = FALSE)) %>%
+    mutate(DTC = case_match(.data$imputation_flag,
+                            TRUE ~ compose_dtc(.data$date, .data$ref.time),
+                            FALSE ~ .data$DTC)) %>%
+    mutate(IMPUTATION = case_match(.data$imputation_flag,
+                                   TRUE ~ "time imputed from PCRFTDTC",
+                                   FALSE ~ IMPUTATION)) %>%
+    select(-"imputation_flag")
+}
+
+
 #' This function removes columns from a NIF object that are not needed for
 #' downstream analysis
 #'

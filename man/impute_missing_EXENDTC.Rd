@@ -15,8 +15,8 @@ impute_missing_exendtc(ex, silent = FALSE)
 The updated EX domain as data frame.
 }
 \description{
-In some cases, EX does not contain EXENDTC for administration epochs that
-are not the very last administration epoch This should only occur when
+In some cases, EX does not contain EXENDTC for administration episodes that
+are not the very last administration episode. This should only occur when
 non-clean clinical data is analyzed, e.g., in the context of an interim
 analysis. In most cases, such instances must be manually resolved. There
 could be AE information with consequences of "drug withdrawn" available
@@ -27,11 +27,11 @@ available as it takes a worst-case approach, i.e., assumes that IMP was
 administered up to the day before the subsequent administration interval.
 Note that this imputation does not apply to the last administration per
 subject and EXTRT. For these cases, missing EXENDT can be imputed to the
-global cut off date using \code{impute_exendtc_to_cutoff}.
+global cut off date using \code{\link[=impute_exendtc_to_cutoff]{impute_exendtc_to_cutoff()}}.
 }
 \details{
 As this function conducts rather aggressive imputations, the message output
-is not optional, i.e., cannot be suppressed using the \code{silent} flag, but is
+is not optional, i.e., cannot be suppressed using the 'silent' flag, but is
 issued in all cases.
 }
 \keyword{internal}
