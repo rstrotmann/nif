@@ -24,4 +24,3 @@ Write as comma-separated file, complying with the format used by Monolix
 \examples{
 write_monolix(examplinib_fe_nif)
 }
-\keyword{internal}

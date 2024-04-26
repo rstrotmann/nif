@@ -66,7 +66,7 @@ the SDTM generation, EXENDTC is replaced with the cut-off date.
 \subsection{4. \code{\link[=impute_missing_exendtc]{impute_missing_exendtc()}}}{
 
 If in any further episode, EXENDTC is missing, it is replaced with the day
-before the subsequent administration episode start (EXSTDTX). It should be
+before the subsequent administration episode start (EXSTDTC). It should be
 understood that this reflects a rather strong assumption, i.e., that the
 treatment was continued into the next administration episode. This imputation
 therefore issues a warning that cannot be suppressed with \code{silent = TRUE}.
@@ -77,7 +77,7 @@ therefore issues a warning that cannot be suppressed with \code{silent = TRUE}.
 All administration episodes, i.e., the intervals between EXSTDTC and EXENDTC
 for a given row in EX, are expanded into a sequence of rows with one
 administration day per row. The administration times for all rows except for
-the last are taken from the time information in EXSTDTD, wherease the time
+the last are taken from the time information in EXSTDTD, whereas the time
 for the last administration event in the respective episode is taken from the
 time information in EXENDTC.
 

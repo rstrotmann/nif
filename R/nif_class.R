@@ -670,7 +670,7 @@ write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
 #' @param fields The fields to export. If NULL (default), all fields will be
 #' exported.
 #' @return Nothing.
-#' @keywords internal
+#' @export
 #' @examples
 #' write_monolix(examplinib_fe_nif)
 write_monolix <- function(obj, filename = NULL, fields = NULL) {

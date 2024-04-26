@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="nif">
-<title>Imputations and assumptions used by make_nif() • nif</title>
+<title>Imputations and assumptions • nif</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Imputations and assumptions used by make_nif()">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Imputations and assumptions">
 <meta property="og:description" content="nif">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
     <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/making-nif-files.html">Making nif data sets from SDTM data</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a>
-    <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
+    <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
   </div>
 </li>
@@ -72,7 +72,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Imputations and assumptions used by make_nif()</h1>
+      <img src="" class="logo" alt=""><h1>Imputations and assumptions</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/vignettes/nif-imputations.Rmd" class="external-link"><code>vignettes/nif-imputations.Rmd</code></a></small>
@@ -81,158 +81,222 @@
 
     
     
-<p>This vignette outlines the inner workings of <code><a href="../reference/make_nif.html">make_nif()</a></code>
-to help understanding what assumptions are made by the function and how
-e.g., time information is derived.</p>
+<p>This vignette outlines the inner workings of the two main functions
+provided by the <code>nif</code> package to create nif objects, i.e.,
+<code><a href="../reference/add_administration.html">add_administration()</a></code> and <code>add_obervation()</code>. It
+is meant to summarize what assumptions are made and how missing
+information is imputed.</p>
 <div class="section level2">
-<h2 id="baseline-covariates">Baseline covariates<a class="anchor" aria-label="anchor" href="#baseline-covariates"></a>
+<h2 id="baseline-parameters">Baseline parameters<a class="anchor" aria-label="anchor" href="#baseline-parameters"></a>
 </h2>
-<p>The subjects’ height and body weight are included as standard fields
-in the NIF file. They are derived from the ‘VS’ domain, filtered by
-<code>EPOCH=="SCREENING"</code>. If multiple measurements with this
-condition are included, the mean value is used.</p>
-<p>The subjects’ age is derived from the <code>AGE</code> field in the
-‘DM’ domain, or, if not available, as the difference between
-<code>RFSTDTC</code> and <code>BRTHDTC</code> from ‘DM’.</p>
-</div>
-<div class="section level2">
-<h2 id="observations">Observations<a class="anchor" aria-label="anchor" href="#observations"></a>
-</h2>
-<div class="section level3">
-<h3 id="specimen">Specimen<a class="anchor" aria-label="anchor" href="#specimen"></a>
-</h3>
-<p>The observations included in the NIF file are the pharmacokinetic
-concentrations included in the ‘PC’ domain. Depending on the design of
-the underlying clinical study, there may be data from different specimen
-types, e.g., blood, plasma, urine, feces. The specimen type to be
-included in the NIF file can be explicitly provided to
-<code><a href="../reference/make_nif.html">make_nif()</a></code>, e.g.,
-<code>make_nif(sdtm.data, spec="PLASMA")</code>. If not provided, the
-most likely is used, i.e., either “PLASMA” or “BLOOD”.</p>
-</div>
-<div class="section level3">
-<h3 id="measurements-not-done">Measurements not done<a class="anchor" aria-label="anchor" href="#measurements-not-done"></a>
-</h3>
-<p>If the <em>permissible</em> field <code>PCSTAT</code> is used in the
-PC domain, providing information on the status of the pharmacokinetic
-samples, data records with <code>PCSTAT=="NOT DONE"</code> are
-discarded.</p>
-</div>
-<div class="section level3">
-<h3 id="observation-time">Observation time<a class="anchor" aria-label="anchor" href="#observation-time"></a>
-</h3>
-<p>The actual absolute date and time for each observation is taken from
-the <code>PCDTC</code> field. The nominal (planned) time is taken from
-the <code>PCELTM</code> (planned elapsed time) field. This
-<em>permissible</em> variable has the format “PTxxH” where <em>xx</em>
-is the time since the last administration.</p>
-</div>
-<div class="section level3">
-<h3 id="other-fields-required-by-nonmem">Other fields required by NONMEM<a class="anchor" aria-label="anchor" href="#other-fields-required-by-nonmem"></a>
-</h3>
-<p>For all observations, the compartment (<code>CMT</code>) is fixed to
-2. Depending on the further analysis, e.g., the structural model used in
-the nonlinear mixed-effects modeling, the compartment may need to be
-changed, or different compartments for the parent compound and
-metabolites may need to be defined.</p>
-<p>The <code>DV</code> field in the NIF output is set to
-<code>PCSTRESN/1000</code>. This assumes that the pharmacokinetic
-concentrations are given in ng/ml units. As per the NONMEM conventions,
-<code>LNDV</code> is the natural log of <code>DV</code>.
-<code>MDV</code> (<em>missing dependent variable</em>) is set to 1 for
-entries with missing <code>DV</code>.</p>
-<p>For all observations, <code>EVID</code> is fixed to zero.</p>
-</div>
-<div class="section level3">
-<h3 id="sex-recoding">SEX recoding<a class="anchor" aria-label="anchor" href="#sex-recoding"></a>
-</h3>
-<p>As per the SDTM definitions, the subjects’ sex is encoded in
-<code>SEX</code> as “M” or “F”. In the NIF output file, “M” is recoded
-to “0” and “F” to “1” to facilitate downstream analysis.</p>
-</div>
+<p>The subjects’ age is derived from the ‘AGE’ field in the ‘DM’ domain
+(such domain/field pairs are referred to in the following as, e.g.,
+<em>DM.AGE</em>). If ‘DM.AGE’ is missing, age is derived as the
+difference between ‘DM.RFSTDTC’ and ‘DM.BRTHDTC’.</p>
+<p>Besides age, the subjects’ height and body weight are included as
+standard fields in the nif object. Both values are derived from the ‘VS’
+domain, where the baseline time point is identified as either ‘VISIT’ =
+“SCREENING” or ‘VSBLFL’ = “Y”. If multiple measurements fulfilling these
+condition are found for a given subject, the mean value is used.</p>
 </div>
 <div class="section level2">
 <h2 id="administrations">Administrations<a class="anchor" aria-label="anchor" href="#administrations"></a>
 </h2>
-<p>The administrations included in the NIF file come from the EX SDTM
-domain, but only administration data from subjects who have
-corresponding observations are included.</p>
+<p>In general, drug administration events are added to a nif object in
+the following way:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstrotmann/nif" class="external-link">nif</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">examplinib_sad</span>, extrt <span class="op">=</span> <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span></code></pre></div>
+<p>The <code><a href="../reference/add_administration.html">add_administration()</a></code> function uses the drug
+administration data from ‘EX’ with ‘EX.EXTRT’ filtered for the indicated
+treatment. If an ‘analyte’ is specified, this analyte name is used
+instead of the ‘extrt’.</p>
 <div class="section level3">
-<h3 id="date-expansion">Date expansion<a class="anchor" aria-label="anchor" href="#date-expansion"></a>
+<h3 id="subject-filtering">Subject filtering<a class="anchor" aria-label="anchor" href="#subject-filtering"></a>
+</h3>
+<p>By default, the subjects included by
+<code><a href="../reference/add_administration.html">add_administration()</a></code> exclude screening failures, as well as
+subjects not treated (see the default ‘subject_filter’ string of
+<code>!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')</code>. Other exclusion
+filters can be used, if needed.</p>
+</div>
+<div class="section level3">
+<h3 id="time-imputations">Time imputations<a class="anchor" aria-label="anchor" href="#time-imputations"></a>
 </h3>
 <p>Depending on the study type (single vs. multiple administrations),
-the EX domain may define administration intervals, i.e., from
-<code>EXSTDTC</code> to <code>EXENDTC</code>. A typical example is shown
-below (some columns omitted for clarity):</p>
+‘EX’ may define administration episodes spanning multiple
+administrations, i.e., from ‘EX.EXSTDTC’ to ‘EX.EXENDTC’. A typical
+example is shown below (some columns omitted for clarity):</p>
 <pre><code>STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC
 2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21T08:43</code></pre>
-<p>During NIF generation, <code><a href="../reference/make_nif.html">make_nif()</a></code> expands the time range
-to individual rows for each day. The respective administration time is
-assumed to be the administration time noted for the start date for the
-whole administration interval (i.e., 8:06 in the above example), except
-for the end date for which the time specified for that date is taken
-(i.e., 8:43 in the above example).</p>
+<p><code><a href="../reference/add_administration.html">add_administration()</a></code> expands administration episodes to
+individual rows for each day.</p>
+<p>Administration episodes do not include time information for
+individual days. In addition, the time part of ‘EXSDTDTC’ or ‘EXENDTC’
+may be missing. This if often the case when uncleaned data is analyzed.
+Since precise time information for administration events is essential
+for all downstream analyses, a series of time imputations are performed
+by <code>add_admininstration()</code>.</p>
+<p>A first set of imputations (see 1. through 3. below) is performed on
+the non-expanded EX domain with the aim to ensure that each episode has
+‘EXSTDTC’ and ‘EXENDTC’ fields. Imputations 5. and 6. are performed
+after expansion of the administratin episodes:</p>
+<div class="section level4">
+<h4 id="missing-last-exendtc">1. Missing last EXENDTC<a class="anchor" aria-label="anchor" href="#missing-last-exendtc"></a>
+</h4>
+<p>If the last administration episode for a subject (and a treatment)
+has an empty ‘EXENDTC’, it is replaced with the date/time provided by
+‘DM.RFENDTC’, if available, i.e., the subject’s reference end date. See
+the documentation for the (internal) function
+<code><a href="../reference/impute_exendtc_to_rfendtc.html">impute_exendtc_to_rfendtc()</a></code> for further details.</p>
 </div>
-<div class="section level3">
-<h3 id="analyte-mapping">Analyte mapping<a class="anchor" aria-label="anchor" href="#analyte-mapping"></a>
-</h3>
-<p>To distinguish administrations and observations relating to multiple
-drugs, <code><a href="../reference/make_nif.html">make_nif()</a></code> introduces the field <code>ANALYTE</code>
-into the NIF output file. Its values correspond to the values used in
-<code>PCTESTCD</code> in the PC domain. The SDTM variable in the EX
-domain that defines the administered drug is <code>EXTRT</code>, and in
-many cases, its values do not correspond to the values defined in
-<code>PCTESTCD</code> for the respective parent compound analytes. In
-order to associate administrations to the parent plasma concentrations,
-mapping information must be provided on the level of the
-<code>sdtm</code> object (see <code>?add_mapping()</code> for additional
-information).</p>
+<div class="section level4">
+<h4 id="ongoing-treatment">2. Ongoing treatment<a class="anchor" aria-label="anchor" href="#ongoing-treatment"></a>
+</h4>
+<p>If after the above imputation attempt, the last administration
+episode still has no ‘EXENDTC’ entry, it is replaced with
+<code>cut_off_date</code>. This situation is often found in interim
+analyses where some subjects are still on treatment. The
+<code>cut_off_date</code> parameter can be specified in the call to
+<code><a href="../reference/add_administration.html">add_administration()</a></code>, or, if not specified, is set to the
+last administration event found in the whole dataset (refer to the
+documentation of <code><a href="../reference/impute_exendtc_to_cutoff.html">impute_exendtc_to_cutoff()</a></code> for
+details).</p>
+</div>
+<div class="section level4">
+<h4 id="missing-exendtc-in-other-administration-episodes">3. Missing EXENDTC in other administration episodes<a class="anchor" aria-label="anchor" href="#missing-exendtc-in-other-administration-episodes"></a>
+</h4>
+<p>If in an unclean data set, ‘EXENDTC’ is missing in episodes that are
+not the last episode for a given subject and treatment, it is replaced
+with the day before the subsequent administration episode start
+(‘EXSTDTC’). It should be understood that this reflects a rather strong
+assumption, i.e., that the treatment was continued into the next
+administration episode. Consider this a last-resort imputation that
+should be avoided by prior data cleaning, if ever possible. This
+imputation, if conducted, therefore issues a warning that cannot be
+suppressed with <code>silent = TRUE</code> (see the documentation to
+<code><a href="../reference/impute_missing_exendtc.html">impute_missing_exendtc()</a></code> for details).</p>
+</div>
+<div class="section level4">
+<h4 id="expansion-of-treatment-administration-episodes">4. Expansion of treatment administration episodes<a class="anchor" aria-label="anchor" href="#expansion-of-treatment-administration-episodes"></a>
+</h4>
+<p>All administration episodes, i.e., the intervals between ‘EXSTDTC’
+and ‘EXENDTC’ for a given row in EX, are expanded into a sequence of
+rows with one administration day per row. The administration times for
+all rows except for the last are taken from the time information in
+EXSTDTD, whereas the time for the last administration event in the
+respective episode is taken from the time information in EXENDTC.</p>
+</div>
+<div class="section level4">
+<h4 id="impute-administration-time-from-pcrftdtc">5. Impute administration time from PCRFTDTC<a class="anchor" aria-label="anchor" href="#impute-administration-time-from-pcrftdtc"></a>
+</h4>
+<p>For administration days for which PK sampling events are recorded in
+PC, the administration time is taken from PC.PCRFTDTC, if this field is
+available. Time information derived during expansion (see 4.) is
+overwritten during this process. See the documentation to
+<code><a href="../reference/impute_admin_times_from_pcrftdtc.html">impute_admin_times_from_pcrftdtc()</a></code> for details.</p>
+</div>
+<div class="section level4">
+<h4 id="carry-forward-administration-time">6. Carry forward administration time<a class="anchor" aria-label="anchor" href="#carry-forward-administration-time"></a>
+</h4>
+<p>Finally, for all administration events per subject and treatment,
+further missing time information is carried forward from the last
+available time information.</p>
+<!-- # Observations -->
+<!-- ## Specimen -->
+<!-- The observations included in the NIF file are the pharmacokinetic concentrations -->
+<!-- included in the 'PC' domain. Depending on the design of the underlying clinical -->
+<!-- study, there may be data from different specimen types, e.g., blood, plasma, -->
+<!-- urine, feces. -->
+<!-- The specimen type to be included in the NIF file can be explicitly provided to -->
+<!-- `make_nif()`, e.g., `make_nif(sdtm.data, spec="PLASMA")`. If not provided, the -->
+<!-- most likely is used, i.e., either "PLASMA" or "BLOOD". -->
+<!-- ### Measurements not done -->
+<!-- If the *permissible* field `PCSTAT` is used in the PC domain, providing -->
+<!-- information on the status of the pharmacokinetic samples, data records with  -->
+<!-- `PCSTAT=="NOT DONE"` are discarded. -->
+<!-- ### Observation time -->
+<!-- The actual absolute date and time for each observation is taken from the `PCDTC` -->
+<!-- field. The nominal (planned) time is taken from the `PCELTM` (planned elapsed -->
+<!-- time) field. This *permissible* variable has the format "PTxxH" where *xx* is -->
+<!-- the time since the last administration. -->
+<!-- ### Other fields required by NONMEM -->
+<!-- For all observations, the compartment (`CMT`) is fixed to 2. Depending on the -->
+<!-- further analysis, e.g., the structural model used in the nonlinear mixed-effects -->
+<!-- modeling, the compartment may need to be changed, or different compartments for -->
+<!-- the parent compound and metabolites may need to be defined. -->
+<!-- The `DV` field in the NIF output is set to `PCSTRESN/1000`. This assumes that -->
+<!-- the pharmacokinetic concentrations are given in ng/ml units. As per the NONMEM -->
+<!-- conventions, `LNDV` is the natural log of `DV`. `MDV` (*missing dependent -->
+<!-- variable*) is set to 1 for entries with missing `DV`. -->
+<!-- For all observations, `EVID` is fixed to zero. -->
+<!-- ### SEX recoding -->
+<!-- As per the SDTM definitions, the subjects' sex is encoded in `SEX` as "M" or -->
+<!-- "F". In the NIF output file, "M" is recoded to "0" and "F" to "1" to facilitate -->
+<!-- downstream analysis. -->
+<!-- ## Administrations -->
+<!-- The administrations included in the NIF file come from the EX SDTM domain, but -->
+<!-- only administration data from subjects who have corresponding observations are -->
+<!-- included. -->
+<!-- ### Date expansion -->
+<!-- Depending on the study type (single vs. multiple administrations), the EX -->
+<!-- domain may define administration intervals, i.e., from `EXSTDTC` to `EXENDTC`.  -->
+<!-- A typical example is shown below (some columns omitted for clarity): -->
+<!-- ``` -->
+<!-- STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC -->
+<!-- 2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21T08:43 -->
+<!-- ``` -->
+<!-- During NIF generation, `make_nif()` expands the time range to individual -->
+<!-- rows for each day. The respective administration time is assumed to be the  -->
+<!-- administration time noted for the start date for the whole administration  -->
+<!-- interval (i.e., 8:06 in the above example), except for the end date for which -->
+<!-- the time specified for that date is taken (i.e., 8:43 in the above example). -->
+<!-- ### Analyte mapping -->
+<!-- To distinguish administrations and observations relating to multiple drugs,  -->
+<!-- `make_nif()` introduces the field `ANALYTE` into the NIF output file. Its -->
+<!-- values correspond to the values used in `PCTESTCD` in the PC domain. The SDTM -->
+<!-- variable in the EX domain that defines the administered drug is `EXTRT`, and in -->
+<!-- many cases, its values do not correspond to the values defined in `PCTESTCD` for -->
+<!-- the respective parent compound analytes. In order to associate administrations -->
+<!-- to the parent plasma concentrations, mapping information must be provided on  -->
+<!-- the level of the `sdtm` object (see `?add_mapping()` for additional -->
+<!-- information). -->
+<!-- ## Data cut-off and date and time imputations -->
+<!-- During the creation of the NIF file, a global cut-off date is defined that -->
+<!-- reflects the last observation across all subjects in the PC domain. -->
+<!-- In ongoing studies, the treatment end date for some records may not be  -->
+<!-- defined, e.g., `EXENDTC` is empty in the respective record in the `EX` domain. -->
+<!-- This is often the case when the treatment is still ongoing at the time of the -->
+<!-- data cut-off. In these records, `EXENDTC` is set to the cut-off date. -->
+<!-- ### Missing treatment start time -->
+<!-- Specifically for administrations that are followed by observations on the same -->
+<!-- day, the administration time point is critical information to calculate precise -->
+<!-- post-dose time points. If time information is not included in EX for such days -->
+<!-- (see the example below), `make_nif()` cross references with the `PCRFDTC` -->
+<!-- variable in PC, i.e., the reference time recorded the observations on this day. -->
+<!-- ``` -->
+<!-- STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC     EXENDTC -->
+<!-- 2023000400  0230004001010002  500     ONCE      2023-08-18  2023-08-21T08:43 -->
+<!-- ``` -->
+<!-- That time is then also carried forward to the following administrations in the -->
+<!-- whole administration interval. -->
+<!-- ### Missing treatment end time -->
+<!-- In some cases, no end time is included in `EXENDTC`, see the example below. In  -->
+<!-- these cases, `make_nif()` assumes the end time to be the same for `EXSTDTC` and -->
+<!-- `EXENDTC`. -->
+<!-- ``` -->
+<!-- STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC -->
+<!-- 2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21 -->
+<!-- ``` -->
+<!-- ## TIME -->
+<!-- As per the NONMEM requirements, the `TIME` variable in the NIF file gives the -->
+<!-- elapsed time in hours since the individual first recorded event, most often the -->
+<!-- first pre-dose observation or the first administration. -->
 </div>
 </div>
-<div class="section level2">
-<h2 id="data-cut-off-and-date-and-time-imputations">Data cut-off and date and time imputations<a class="anchor" aria-label="anchor" href="#data-cut-off-and-date-and-time-imputations"></a>
-</h2>
-<p>During the creation of the NIF file, a global cut-off date is defined
-that reflects the last observation across all subjects in the PC
-domain.</p>
-<p>In ongoing studies, the treatment end date for some records may not
-be defined, e.g., <code>EXENDTC</code> is empty in the respective record
-in the <code>EX</code> domain. This is often the case when the treatment
-is still ongoing at the time of the data cut-off. In these records,
-<code>EXENDTC</code> is set to the cut-off date.</p>
-<div class="section level3">
-<h3 id="missing-treatment-start-time">Missing treatment start time<a class="anchor" aria-label="anchor" href="#missing-treatment-start-time"></a>
-</h3>
-<p>Specifically for administrations that are followed by observations on
-the same day, the administration time point is critical information to
-calculate precise post-dose time points. If time information is not
-included in EX for such days (see the example below),
-<code><a href="../reference/make_nif.html">make_nif()</a></code> cross references with the <code>PCRFDTC</code>
-variable in PC, i.e., the reference time recorded the observations on
-this day.</p>
-<pre><code>STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC     EXENDTC
-2023000400  0230004001010002  500     ONCE      2023-08-18  2023-08-21T08:43</code></pre>
-<p>That time is then also carried forward to the following
-administrations in the whole administration interval.</p>
-</div>
-<div class="section level3">
-<h3 id="missing-treatment-end-time">Missing treatment end time<a class="anchor" aria-label="anchor" href="#missing-treatment-end-time"></a>
-</h3>
-<p>In some cases, no end time is included in <code>EXENDTC</code>, see
-the example below. In these cases, <code><a href="../reference/make_nif.html">make_nif()</a></code> assumes the
-end time to be the same for <code>EXSTDTC</code> and
-<code>EXENDTC</code>.</p>
-<pre><code>STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC
-2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21</code></pre>
-</div>
-</div>
-<div class="section level2">
-<h2 id="time">TIME<a class="anchor" aria-label="anchor" href="#time"></a>
-</h2>
-<p>As per the NONMEM requirements, the <code>TIME</code> variable in the
-NIF file gives the elapsed time in hours since the individual first
-recorded event, most often the first pre-dose observation or the first
-administration.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +27,7 @@
     <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/making-nif-files.html">Making nif data sets from SDTM data</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a>
-    <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
+    <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
   </div>
 </li>
@@ -109,6 +109,88 @@
     
 
 <p>A data frame.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>A discussion on EC vs EX is provided <a href="https://www.cdisc.org/kb/ecrf/exposure-collected#:~:text=In%20the%20SDTMIG%2C%20the%20Exposure,data%20collected%20on%20the%20CRF." class="external-link">here</a></p>
+    </div>
+    <div class="section level2">
+    <h2 id="time-imputations-and-filtering">Time imputations and filtering<a class="anchor" aria-label="anchor" href="#time-imputations-and-filtering"></a></h2>
+    <p>The following time imputations and filters are applied in the given
+order:</p><div class="section">
+<h3 id="-impute-exendtc-to-rfendtc-">1. <code><a href="impute_exendtc_to_rfendtc.html">impute_exendtc_to_rfendtc()</a></code><a class="anchor" aria-label="anchor" href="#-impute-exendtc-to-rfendtc-"></a></h3>
+
+
+<p>If EXENDTC is missing in the last administration episode for a given subject,
+it is replaced with DM.RFENDTC, if available.</p>
+</div>
+
+<div class="section">
+<h3 id="-filter-exstdtc-after-exendtc-">2. <code><a href="filter_EXSTDTC_after_EXENDTC.html">filter_EXSTDTC_after_EXENDTC()</a></code><a class="anchor" aria-label="anchor" href="#-filter-exstdtc-after-exendtc-"></a></h3>
+
+
+<p>Administration episodes in which EXSTDTC is after EXENDT are deleted from the
+data set.</p>
+</div>
+
+<div class="section">
+<h3 id="-impute-exendtc-to-cutoff-">3. <code><a href="impute_exendtc_to_cutoff.html">impute_exendtc_to_cutoff()</a></code><a class="anchor" aria-label="anchor" href="#-impute-exendtc-to-cutoff-"></a></h3>
+
+
+<p>If in the last administration episode per subject and treatment, EXENDTC is
+missing, for example because the treatment is still ongoing at the time of
+the SDTM generation, EXENDTC is replaced with the cut-off date.</p>
+</div>
+
+<div class="section">
+<h3 id="-impute-missing-exendtc-">4. <code><a href="impute_missing_exendtc.html">impute_missing_exendtc()</a></code><a class="anchor" aria-label="anchor" href="#-impute-missing-exendtc-"></a></h3>
+
+
+<p>If in any further episode, EXENDTC is missing, it is replaced with the day
+before the subsequent administration episode start (EXSTDTC). It should be
+understood that this reflects a rather strong assumption, i.e., that the
+treatment was continued into the next administration episode. This imputation
+therefore issues a warning that cannot be suppressed with <code>silent = TRUE</code>.</p>
+</div>
+
+<div class="section">
+<h3 id="-expand-administration-episodes">5. Expand administration episodes<a class="anchor" aria-label="anchor" href="#-expand-administration-episodes"></a></h3>
+
+
+<p>All administration episodes, i.e., the intervals between EXSTDTC and EXENDTC
+for a given row in EX, are expanded into a sequence of rows with one
+administration day per row. The administration times for all rows except for
+the last are taken from the time information in EXSTDTD, whereas the time
+for the last administration event in the respective episode is taken from the
+time information in EXENDTC.</p>
+<p><strong>Development note:</strong> In the present version of the function, once-daily (QD)
+dosing is assumed. Multiple-daily dosings are not supported. In future
+versions, the dosing frequency provided in <code>EXDOSFRQ</code> may be taken into
+account to adequately handle multiple daily administrations.</p>
+</div>
+
+<div class="section">
+<h3 id="-impute-admin-times-from-pcrftdtc-">6. <code><a href="impute_admin_times_from_pcrftdtc.html">impute_admin_times_from_pcrftdtc()</a></code><a class="anchor" aria-label="anchor" href="#-impute-admin-times-from-pcrftdtc-"></a></h3>
+
+
+<p>For administration days for which PK sampling events are recorded in PC, the
+administration time is taken from PC.PCRFTDTC, if this field is available.</p>
+<p><strong>Development note:</strong> This may be updated in future versions of the function
+to work with multiple-daily administrations.</p>
+</div>
+
+<div class="section">
+<h3 id="-carry-forward-time">7. Carry forward time<a class="anchor" aria-label="anchor" href="#-carry-forward-time"></a></h3>
+
+
+<p>For all administration events per subject and treatment, missing time
+information is finally carried forward from available time information.</p>
+</div>
+
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="add_administration.html">add_administration()</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

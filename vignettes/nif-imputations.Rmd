@@ -1,8 +1,8 @@
 ---
-title: "Imputations and assumptions used by make_nif()"
+title: "Imputations and assumptions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Imputations and assumptions used by make_nif()}
+  %\VignetteIndexEntry{Imputations and assumptions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,145 +12,255 @@ library(knitr)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  message=FALSE,
+  warning=FALSE
 )
 ```
 
-This vignette outlines the inner workings of `make_nif()` to help understanding
-what assumptions are made by the function and how e.g., time information is
-derived.
+This vignette outlines the inner workings of the two main functions provided by
+the `nif` package to create nif objects, i.e., `add_administration()` and
+`add_obervation()`. It is meant to summarize what assumptions are made and how
+missing information is imputed.
 
-## Baseline covariates
+# Baseline parameters
 
-The subjects' height and body weight are included as standard fields in the 
-NIF file. They are derived from the 'VS' domain, filtered by
-`EPOCH=="SCREENING"`. If multiple measurements with this condition are included,
-the mean value is used.
+The subjects' age is derived from the 'AGE' field in the 'DM' domain (such
+domain/field pairs are referred to in the following as, e.g., *DM.AGE*). If
+'DM.AGE' is missing, age is derived as the difference between 'DM.RFSTDTC'
+and 'DM.BRTHDTC'.
 
-The subjects' age is derived from the `AGE` field in the 'DM' domain, or, if not
-available, as the difference between `RFSTDTC` and `BRTHDTC` from 'DM'.
+Besides age, the subjects' height and body weight are included as standard
+fields in the nif object. Both values are derived from the 'VS' domain, where
+the baseline time point is identified as either 'VISIT' = "SCREENING" or
+'VSBLFL' = "Y". If multiple measurements fulfilling these condition are found
+for a given subject, the mean value is used.
 
-## Observations
+# Administrations
 
-### Specimen
+In general, drug administration events are added to a nif object in the
+following way:
 
-The observations included in the NIF file are the pharmacokinetic concentrations
-included in the 'PC' domain. Depending on the design of the underlying clinical
-study, there may be data from different specimen types, e.g., blood, plasma,
-urine, feces.
-The specimen type to be included in the NIF file can be explicitly provided to
-`make_nif()`, e.g., `make_nif(sdtm.data, spec="PLASMA")`. If not provided, the
-most likely is used, i.e., either "PLASMA" or "BLOOD".
+```{r}
+library(tidyverse)
+library(nif)
 
-### Measurements not done
+my_nif <- new_nif() %>% 
+  add_administration(examplinib_sad, extrt = "EXAMPLINIB", analyte = "RS2023")
+```
 
-If the *permissible* field `PCSTAT` is used in the PC domain, providing
-information on the status of the pharmacokinetic samples, data records with 
-`PCSTAT=="NOT DONE"` are discarded.
+The `add_administration()` function uses the drug administration data from 'EX'
+with 'EX.EXTRT' filtered for the indicated treatment. If an 'analyte' is
+specified, this analyte name is used instead of the 'extrt'.
 
-### Observation time
+## Subject filtering
 
-The actual absolute date and time for each observation is taken from the `PCDTC`
-field. The nominal (planned) time is taken from the `PCELTM` (planned elapsed
-time) field. This *permissible* variable has the format "PTxxH" where *xx* is
-the time since the last administration.
+By default, the subjects included by `add_administration()` exclude screening
+failures, as well as subjects not treated (see the default 'subject_filter'
+string of `!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')`. Other exclusion filters
+can be used, if needed.
 
-### Other fields required by NONMEM
+## Time imputations
 
-For all observations, the compartment (`CMT`) is fixed to 2. Depending on the
-further analysis, e.g., the structural model used in the nonlinear mixed-effects
-modeling, the compartment may need to be changed, or different compartments for
-the parent compound and metabolites may need to be defined.
-
-The `DV` field in the NIF output is set to `PCSTRESN/1000`. This assumes that
-the pharmacokinetic concentrations are given in ng/ml units. As per the NONMEM
-conventions, `LNDV` is the natural log of `DV`. `MDV` (*missing dependent
-variable*) is set to 1 for entries with missing `DV`.
-
-For all observations, `EVID` is fixed to zero.
-
-### SEX recoding
-
-As per the SDTM definitions, the subjects' sex is encoded in `SEX` as "M" or
-"F". In the NIF output file, "M" is recoded to "0" and "F" to "1" to facilitate
-downstream analysis.
-
-## Administrations
-
-The administrations included in the NIF file come from the EX SDTM domain, but
-only administration data from subjects who have corresponding observations are
-included.
-
-### Date expansion
-
-Depending on the study type (single vs. multiple administrations), the EX
-domain may define administration intervals, i.e., from `EXSTDTC` to `EXENDTC`. 
-A typical example is shown below (some columns omitted for clarity):
+Depending on the study type (single vs. multiple administrations), 'EX' may
+define administration episodes spanning multiple administrations, i.e., from
+'EX.EXSTDTC' to 'EX.EXENDTC'. A typical example is shown below (some columns
+omitted for clarity):
 
 ```
 STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC
 2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21T08:43
 ```
-During NIF generation, `make_nif()` expands the time range to individual
-rows for each day. The respective administration time is assumed to be the 
-administration time noted for the start date for the whole administration 
-interval (i.e., 8:06 in the above example), except for the end date for which
-the time specified for that date is taken (i.e., 8:43 in the above example).
 
-### Analyte mapping
+`add_administration()` expands administration episodes to individual rows for
+each day.
 
-To distinguish administrations and observations relating to multiple drugs, 
-`make_nif()` introduces the field `ANALYTE` into the NIF output file. Its
-values correspond to the values used in `PCTESTCD` in the PC domain. The SDTM
-variable in the EX domain that defines the administered drug is `EXTRT`, and in
-many cases, its values do not correspond to the values defined in `PCTESTCD` for
-the respective parent compound analytes. In order to associate administrations
-to the parent plasma concentrations, mapping information must be provided on 
-the level of the `sdtm` object (see `?add_mapping()` for additional
-information).
+Administration episodes do not include time information for individual days. In
+addition, the time part of 'EXSDTDTC' or 'EXENDTC' may be missing. This if often
+the case when uncleaned data is analyzed. Since precise time information for 
+administration events is essential for all downstream analyses, a series of time
+imputations are performed by `add_admininstration()`.
 
-## Data cut-off and date and time imputations
+A first set of imputations (see 1. through 3. below) is performed on the
+non-expanded EX domain with the aim to ensure that each episode has 'EXSTDTC'
+and 'EXENDTC' fields. Imputations 5. and 6. are performed after expansion of the
+administratin episodes:
 
-During the creation of the NIF file, a global cut-off date is defined that
-reflects the last observation across all subjects in the PC domain.
+### 1. Missing last EXENDTC
 
-In ongoing studies, the treatment end date for some records may not be 
-defined, e.g., `EXENDTC` is empty in the respective record in the `EX` domain.
-This is often the case when the treatment is still ongoing at the time of the
-data cut-off. In these records, `EXENDTC` is set to the cut-off date.
+If the last administration episode for a subject (and a treatment) has an empty
+'EXENDTC', it is replaced with the date/time provided by 'DM.RFENDTC', if
+available, i.e., the subject's reference end date. See the documentation for the
+(internal) function `impute_exendtc_to_rfendtc()` for further details.
 
-### Missing treatment start time
+### 2. Ongoing treatment
 
-Specifically for administrations that are followed by observations on the same
-day, the administration time point is critical information to calculate precise
-post-dose time points. If time information is not included in EX for such days
-(see the example below), `make_nif()` cross references with the `PCRFDTC`
-variable in PC, i.e., the reference time recorded the observations on this day.
+If after the above imputation attempt, the last administration episode still has
+no 'EXENDTC' entry, it is replaced with `cut_off_date`. This situation is
+often found in interim analyses where some subjects are still on treatment.
+The `cut_off_date` parameter can be specified in the call to
+`add_administration()`, or, if not specified, is set to the last administration
+event found in the whole dataset (refer to the documentation of
+`impute_exendtc_to_cutoff()` for details).
 
-```
-STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC     EXENDTC
-2023000400  0230004001010002  500     ONCE      2023-08-18  2023-08-21T08:43
-```
+### 3. Missing EXENDTC in other administration episodes
 
-That time is then also carried forward to the following administrations in the
-whole administration interval.
+If in an unclean data set, 'EXENDTC' is missing in episodes that are not the
+last episode for a given subject and treatment, it is replaced with the day
+before the subsequent administration episode start ('EXSTDTC'). It should be
+understood that this reflects a rather strong assumption, i.e., that the
+treatment was continued into the next administration episode. Consider this a 
+last-resort imputation that should be avoided by prior data cleaning, if ever
+possible. This imputation, if conducted, therefore issues a warning that cannot
+be suppressed with `silent = TRUE` (see the documentation to
+`impute_missing_exendtc()` for details).
 
-### Missing treatment end time
+### 4. Expansion of treatment administration episodes
 
-In some cases, no end time is included in `EXENDTC`, see the example below. In 
-these cases, `make_nif()` assumes the end time to be the same for `EXSTDTC` and
-`EXENDTC`.
+All administration episodes, i.e., the intervals between 'EXSTDTC' and 'EXENDTC'
+for a given row in EX, are expanded into a sequence of rows with one
+administration day per row. The administration times for all rows except for
+the last are taken from the time information in EXSTDTD, whereas the time
+for the last administration event in the respective episode is taken from the
+time information in EXENDTC.
 
-```
-STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC
-2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21
-```
+### 5. Impute administration time from PCRFTDTC
 
-## TIME
+For administration days for which PK sampling events are recorded in PC, the
+administration time is taken from PC.PCRFTDTC, if this field is available. Time
+information derived during expansion (see 4.) is overwritten during this
+process. See the documentation to `impute_admin_times_from_pcrftdtc()` for
+details.
 
-As per the NONMEM requirements, the `TIME` variable in the NIF file gives the
-elapsed time in hours since the individual first recorded event, most often the
-first pre-dose observation or the first administration.
+### 6. Carry forward administration time
+
+Finally, for all administration events per subject and treatment, further
+missing time information is carried forward from the last available time
+information.
+
+
+<!-- # Observations -->
+
+<!-- ## Specimen -->
+
+<!-- The observations included in the NIF file are the pharmacokinetic concentrations -->
+<!-- included in the 'PC' domain. Depending on the design of the underlying clinical -->
+<!-- study, there may be data from different specimen types, e.g., blood, plasma, -->
+<!-- urine, feces. -->
+
+<!-- The specimen type to be included in the NIF file can be explicitly provided to -->
+<!-- `make_nif()`, e.g., `make_nif(sdtm.data, spec="PLASMA")`. If not provided, the -->
+<!-- most likely is used, i.e., either "PLASMA" or "BLOOD". -->
+
+<!-- ### Measurements not done -->
+
+<!-- If the *permissible* field `PCSTAT` is used in the PC domain, providing -->
+<!-- information on the status of the pharmacokinetic samples, data records with  -->
+<!-- `PCSTAT=="NOT DONE"` are discarded. -->
+
+<!-- ### Observation time -->
+
+<!-- The actual absolute date and time for each observation is taken from the `PCDTC` -->
+<!-- field. The nominal (planned) time is taken from the `PCELTM` (planned elapsed -->
+<!-- time) field. This *permissible* variable has the format "PTxxH" where *xx* is -->
+<!-- the time since the last administration. -->
+
+<!-- ### Other fields required by NONMEM -->
+
+<!-- For all observations, the compartment (`CMT`) is fixed to 2. Depending on the -->
+<!-- further analysis, e.g., the structural model used in the nonlinear mixed-effects -->
+<!-- modeling, the compartment may need to be changed, or different compartments for -->
+<!-- the parent compound and metabolites may need to be defined. -->
+
+<!-- The `DV` field in the NIF output is set to `PCSTRESN/1000`. This assumes that -->
+<!-- the pharmacokinetic concentrations are given in ng/ml units. As per the NONMEM -->
+<!-- conventions, `LNDV` is the natural log of `DV`. `MDV` (*missing dependent -->
+<!-- variable*) is set to 1 for entries with missing `DV`. -->
+
+<!-- For all observations, `EVID` is fixed to zero. -->
+
+<!-- ### SEX recoding -->
+
+<!-- As per the SDTM definitions, the subjects' sex is encoded in `SEX` as "M" or -->
+<!-- "F". In the NIF output file, "M" is recoded to "0" and "F" to "1" to facilitate -->
+<!-- downstream analysis. -->
+
+<!-- ## Administrations -->
+
+<!-- The administrations included in the NIF file come from the EX SDTM domain, but -->
+<!-- only administration data from subjects who have corresponding observations are -->
+<!-- included. -->
+
+<!-- ### Date expansion -->
+
+<!-- Depending on the study type (single vs. multiple administrations), the EX -->
+<!-- domain may define administration intervals, i.e., from `EXSTDTC` to `EXENDTC`.  -->
+<!-- A typical example is shown below (some columns omitted for clarity): -->
+
+<!-- ``` -->
+<!-- STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC -->
+<!-- 2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21T08:43 -->
+<!-- ``` -->
+<!-- During NIF generation, `make_nif()` expands the time range to individual -->
+<!-- rows for each day. The respective administration time is assumed to be the  -->
+<!-- administration time noted for the start date for the whole administration  -->
+<!-- interval (i.e., 8:06 in the above example), except for the end date for which -->
+<!-- the time specified for that date is taken (i.e., 8:43 in the above example). -->
+
+<!-- ### Analyte mapping -->
+
+<!-- To distinguish administrations and observations relating to multiple drugs,  -->
+<!-- `make_nif()` introduces the field `ANALYTE` into the NIF output file. Its -->
+<!-- values correspond to the values used in `PCTESTCD` in the PC domain. The SDTM -->
+<!-- variable in the EX domain that defines the administered drug is `EXTRT`, and in -->
+<!-- many cases, its values do not correspond to the values defined in `PCTESTCD` for -->
+<!-- the respective parent compound analytes. In order to associate administrations -->
+<!-- to the parent plasma concentrations, mapping information must be provided on  -->
+<!-- the level of the `sdtm` object (see `?add_mapping()` for additional -->
+<!-- information). -->
+
+<!-- ## Data cut-off and date and time imputations -->
+
+<!-- During the creation of the NIF file, a global cut-off date is defined that -->
+<!-- reflects the last observation across all subjects in the PC domain. -->
+
+<!-- In ongoing studies, the treatment end date for some records may not be  -->
+<!-- defined, e.g., `EXENDTC` is empty in the respective record in the `EX` domain. -->
+<!-- This is often the case when the treatment is still ongoing at the time of the -->
+<!-- data cut-off. In these records, `EXENDTC` is set to the cut-off date. -->
+
+<!-- ### Missing treatment start time -->
+
+<!-- Specifically for administrations that are followed by observations on the same -->
+<!-- day, the administration time point is critical information to calculate precise -->
+<!-- post-dose time points. If time information is not included in EX for such days -->
+<!-- (see the example below), `make_nif()` cross references with the `PCRFDTC` -->
+<!-- variable in PC, i.e., the reference time recorded the observations on this day. -->
+
+<!-- ``` -->
+<!-- STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC     EXENDTC -->
+<!-- 2023000400  0230004001010002  500     ONCE      2023-08-18  2023-08-21T08:43 -->
+<!-- ``` -->
+
+<!-- That time is then also carried forward to the following administrations in the -->
+<!-- whole administration interval. -->
+
+<!-- ### Missing treatment end time -->
+
+<!-- In some cases, no end time is included in `EXENDTC`, see the example below. In  -->
+<!-- these cases, `make_nif()` assumes the end time to be the same for `EXSTDTC` and -->
+<!-- `EXENDTC`. -->
+
+<!-- ``` -->
+<!-- STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC -->
+<!-- 2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21 -->
+<!-- ``` -->
+
+<!-- ## TIME -->
+
+<!-- As per the NONMEM requirements, the `TIME` variable in the NIF file gives the -->
+<!-- elapsed time in hours since the individual first recorded event, most often the -->
+<!-- first pre-dose observation or the first administration. -->
 
 
 

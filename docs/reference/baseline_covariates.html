@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +27,7 @@
     <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
     <a class="dropdown-item" href="../articles/making-nif-files.html">Making nif data sets from SDTM data</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a>
-    <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions used by make_nif()</a>
+    <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
   </div>
 </li>
@@ -58,23 +58,13 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">baseline_covariates</span><span class="op">(</span></span>
-<span>  <span class="va">vs</span>,</span>
-<span>  baseline_filter <span class="op">=</span> <span class="op">{</span></span>
-<span>     <span class="cn">TRUE</span></span>
-<span> <span class="op">}</span>,</span>
-<span>  silent <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">baseline_covariates</span><span class="op">(</span><span class="va">vs</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>vs</dt>
 <dd><p>The VS domain as data frame.</p></dd>
-
-
-<dt>baseline_filter</dt>
-<dd><p>R filter expression to select the baseline time point.</p></dd>
 
 
 <dt>silent</dt>

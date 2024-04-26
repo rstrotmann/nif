@@ -342,13 +342,12 @@ last_ex_dtc <- function(ex) {
 #' Extract baseline vital sign covariates from VS
 #'
 #' @param vs The VS domain as data frame.
-#' @param baseline_filter R filter expression to select the baseline time point.
 #' @param silent Switch to disable message output.
 #'
 #' @return Baseline VS data as wide data frame.
 #' @export
 #' @keywords internal
-baseline_covariates <- function(vs, baseline_filter = {TRUE}, silent = FALSE) {
+baseline_covariates <- function(vs, silent = FALSE) {
   temp <- vs %>%
     filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
 
@@ -509,8 +508,7 @@ clip_nif <- function(nif) {
 make_subjects <- function(
     dm, vs, silent = FALSE,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cleanup = TRUE
-) {
+    cleanup = TRUE) {
   # if AGE is not present in DM, calculate age from birthday and informed
   #   consent signature date
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
@@ -527,8 +525,7 @@ make_subjects <- function(
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter))) %>%
-    left_join(baseline_covariates(vs, silent = silent),
-              by = "USUBJID") %>%
+    left_join(baseline_covariates(vs, silent = silent), by = "USUBJID") %>%
     recode_sex() %>%
     mutate(ID = NA) %>%
     relocate("ID") %>%
@@ -782,7 +779,7 @@ make_observation <- function(
 #' ## 4. [impute_missing_exendtc()]
 #'
 #' If in any further episode, EXENDTC is missing, it is replaced with the day
-#' before the subsequent administration episode start (EXSTDTX). It should be
+#' before the subsequent administration episode start (EXSTDTC). It should be
 #' understood that this reflects a rather strong assumption, i.e., that the
 #' treatment was continued into the next administration episode. This imputation
 #' therefore issues a warning that cannot be suppressed with `silent = TRUE`.
@@ -792,7 +789,7 @@ make_observation <- function(
 #' All administration episodes, i.e., the intervals between EXSTDTC and EXENDTC
 #' for a given row in EX, are expanded into a sequence of rows with one
 #' administration day per row. The administration times for all rows except for
-#' the last are taken from the time information in EXSTDTD, wherease the time
+#' the last are taken from the time information in EXSTDTD, whereas the time
 #' for the last administration event in the respective episode is taken from the
 #' time information in EXENDTC.
 #'

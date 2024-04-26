@@ -17,7 +17,7 @@
 #' @return The updated EX domain as data frame.
 #' @keywords internal
 impute_missing_exendtc_time <- function(ex, silent = FALSE) {
-  lifecycle::deprecate_warn("0.49.1", "impute_missing_exendtc_time()", "")
+  lifecycle::deprecate_warn("0.49.1", "impute_missing_exendtc_time()", NULL)
   temp <- ex %>%
     verify(has_all_names(
       "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
@@ -89,7 +89,7 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
 #' @return The modified EX domain as data.frame.
 #' @keywords internal
 exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
-  lifecycle::deprecate_warn("0.49.1", "exclude_exstdtc_after_rfendtc()", "")
+  lifecycle::deprecate_warn("0.49.1", "exclude_exstdtc_after_rfendtc()", NULL)
   ex %>%
     left_join(dm %>% select(c("USUBJID", "RFENDTC")),
               by = "USUBJID") %>%
@@ -167,7 +167,7 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = FALSE) {
 #' @return A data frame.
 #' @keywords internal
 filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
-  lifecycle::deprecate_warn("0.49.1", "filter_EXSTDTC()", "")
+  lifecycle::deprecate_warn("0.49.1", "filter_EXSTDTC()", NULL)
   out <- ex %>%
     left_join(
       dm %>%
@@ -210,7 +210,7 @@ filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
 #' @keywords internal
 #' @import assertr
 impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
-  lifecycle::deprecate_warn("0.49.1", "impute_admin_dtc_to_pcrftdtc()", "")
+  lifecycle::deprecate_warn("0.49.1", "impute_admin_dtc_to_pcrftdtc()", NULL)
   temp <- admin %>%
     assertr::verify(has_all_names("USUBJID", "PARENT", "date", "time")) %>%
     select(-any_of(c("ref.time", "ref.date", "PCRFTDTC"))) %>%
@@ -1195,7 +1195,7 @@ add_tv_vs <- function(obj, vs, vstestcd, duplicate_function = mean,
 #' @return A NIF object
 #' @keywords internal
 compress <- function(nif, fields = NULL, debug = FALSE) {
-  lifecycle::deprecate_warn("0.48.2", "compress()", "")
+  lifecycle::deprecate_warn("0.48.2", "compress()", NULL)
   if (is.null(fields)) {
     fields <- c(
       standard_nif_fields,
@@ -1223,7 +1223,7 @@ compress <- function(nif, fields = NULL, debug = FALSE) {
 #' @return A NIF object.
 #' @keywords internal
 fill_bl_tv <- function(obj) {
-  lifecycle::deprecate_warn("0.48.2", "fill_bl_tv()", "")
+  lifecycle::deprecate_warn("0.48.2", "fill_bl_tv()", NULL)
   obj %>%
     arrange(ID, TIME) %>%
     fill(starts_with("BL_"), .direction = "down") %>%
