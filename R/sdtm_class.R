@@ -10,10 +10,10 @@
 #' @returns A sdtm object.
 #' @export
 new_sdtm <- function(sdtm_data,
-                     analyte_mapping=data.frame(),
-                     metabolite_mapping=data.frame(),
-                     parent_mapping=data.frame(),
-                     time_mapping=data.frame()) {
+                     analyte_mapping = data.frame(),
+                     metabolite_mapping = data.frame(),
+                     parent_mapping = data.frame(),
+                     time_mapping = data.frame()) {
   domains <- sdtm_data
   vs <- domains[["vs"]]
   ex <- domains[["ex"]]
@@ -161,28 +161,24 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 #' which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
 #' Multiple mappings may be needed.
 #'
+#' <TO DO> Update documentation, remove references to make_nif().
+#'
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
 #' @param pctestcd The analyte as character (as in 'PCTESTCD' for PK observations
-#'   or, e.g., 'VSTESTCD' for vital sign observations, etc.).
-#' @seealso [make_nif()]
+#' @param analyte The analyte name to be used in the nif object, as character.
+#' @seealso [nif_auto()]
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 #' @export
-add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
+add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
+  if(is.null(analyte)) analyte <- pctestcd
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
-    data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd)
+    data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd, "ANALYTE" = analyte)
   )
   return(obj)
 }
-# add_analyte_mapping <- function(obj, extrt = "", pctestcd = "") {
-#   obj$analyte_mapping <- rbind(
-#     obj$analyte_mapping,
-#     data.frame(EXTRT = extrt, PCTESTCD = pctestcd)
-#   )
-#   return(obj)
-# }
 
 
 #' Add parent mapping
@@ -208,15 +204,16 @@ add_parent_mapping <- function(obj, analyte, parent) {
 #' functions need that information to correlate plasma concentrations with
 #' administrations. 'add_metabolite_mapping()' is used to attach this
 #' information to a SDTM object.
+#'
 #' @param obj The SDTM object.
 #' @param pctestcd_parent The PCTESTCD of the parent compound.
 #' @param pctestcd_metabolite The PCTESTCD of the metabolite.
 #' @return The SDTM object.
 #' @export
+#' @seealso [nif_auto()]
 #' @examples
 #' add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
-add_metabolite_mapping <- function(
-    obj, pctestcd_parent = "", pctestcd_metabolite = "") {
+add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
   obj$metabolite_mapping <- rbind(
     obj$metabolite_mapping,
     data.frame(

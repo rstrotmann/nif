@@ -4,7 +4,7 @@
 \alias{add_metabolite_mapping}
 \title{Attach a parent-metabolite mapping to a SDTM object.}
 \usage{
-add_metabolite_mapping(obj, pctestcd_parent = "", pctestcd_metabolite = "")
+add_metabolite_mapping(obj, pctestcd_parent, pctestcd_metabolite)
 }
 \arguments{
 \item{obj}{The SDTM object.}
@@ -24,4 +24,7 @@ information to a SDTM object.
 }
 \examples{
 add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
+}
+\seealso{
+\code{\link[=nif_auto]{nif_auto()}}
 }

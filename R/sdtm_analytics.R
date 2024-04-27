@@ -32,3 +32,5 @@ compare_ex_ec <- function(sdtm) {
 
 #' EC with ECCAT == "DISCRETE"
 #' compare with PCRFDTC, should be the same!
+
+

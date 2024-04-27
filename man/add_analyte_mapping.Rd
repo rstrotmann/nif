@@ -4,15 +4,16 @@
 \alias{add_analyte_mapping}
 \title{Attach a treatment-analyte mapping to an SDTM object}
 \usage{
-add_analyte_mapping(obj, extrt = "", pctestcd = "")
+add_analyte_mapping(obj, extrt, pctestcd, analyte = NULL)
 }
 \arguments{
 \item{obj}{A SDTM object.}
 
 \item{extrt}{The treatment as defined in EX.}
 
-\item{pctestcd}{The analyte as character (as in 'PCTESTCD' for PK observations
-or, e.g., 'VSTESTCD' for vital sign observations, etc.).}
+\item{pctestcd}{The analyte as character (as in 'PCTESTCD' for PK observations}
+
+\item{analyte}{The analyte name to be used in the nif object, as character.}
 }
 \description{
 In some studies, multiple drugs are co-administered, and there may be analyte
@@ -21,9 +22,12 @@ observations with administrations, the \code{\link[=make_nif]{make_nif()}} algor
 which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
 Multiple mappings may be needed.
 }
+\details{
+\if{html}{\out{<TO DO>}} Update documentation, remove references to make_nif().
+}
 \examples{
 sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 }
 \seealso{
-\code{\link[=make_nif]{make_nif()}}
+\code{\link[=nif_auto]{nif_auto()}}
 }

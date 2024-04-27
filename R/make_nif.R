@@ -603,22 +603,6 @@ make_observation <- function(
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
 
-  # imp <- nif %>%
-  #   as.data.frame() %>%
-  #   filter(EVID == 1) %>%
-  #   distinct(ANALYTE) %>%
-  #   pull(ANALYTE)
-  #
-  # if(is.null(parent)) {
-  #   if(analyte %in% imp) {
-  #     parent <- analyte
-  #   } else {
-  #     parent <- guess_parent(nif)
-  #     conditional_message(paste0("Parent for ", analyte, " was set to ",
-  #                                parent, "!"), silent = silent)
-  #   }
-  # }
-
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
                        subject_filter = subject_filter, cleanup = cleanup)
 
@@ -689,64 +673,6 @@ make_observation <- function(
     filter(!is.na(.data$DTC)) %>%
     new_nif()
 }
-
-
-# ' Add a baseline field to a nif object
-# '
-# ' @param sdtm A sdtm object.
-# ' @param domain The domain as character.
-# ' @param DV_field the field to use as the dependent variable. Defaults to the
-# '   two-character domain name followed by 'STRESN'.
-# ' @param observation_filter The filtering to apply to the observation source
-# '   data.
-# ' @param subject_filter The filtering to apply to the DM domain.
-# ' @param testcd The xxTESTCD to filter for, as character.
-# ' @param TESTCD_field The xxTESTCD field as character. Defaults to "xxTESTCD"
-# '   where xx is the domain name.
-# ' @param baseline_filter The filter to identify the baseline value. Defaults to
-# '   {xxBLFL == 'Y'} where xx is the domain name.
-# ' @param summary_function The summary funcition to apply if there are multiple
-# '   baseline values, defaults to `mean`.
-# ' @param silent Suppress messages as logical.
-# '
-# ' @return A data frame.
-# '
-# ' @import rlang
-# ' @keywords internal
-# make_baseline <- function(
-#     sdtm,
-#     domain,
-#     testcd,
-#     DV_field = NULL,
-#     TESTCD_field = NULL,
-#     observation_filter = "TRUE",
-#     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-#     baseline_filter = NULL,
-#     summary_function = mean,
-#     silent = FALSE) {
-#
-#   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-#   if(is.null(TESTCD_field)) TESTCD_field <- paste0(
-#     str_to_upper(domain), "TESTCD")
-#   if(is.null(baseline_filter)) baseline_filter <- paste0(
-#     ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
-#
-#   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
-#                        subject_filter = subject_filter, cleanup = FALSE)
-#
-#   temp <- domain(sdtm, str_to_lower(domain)) %>%
-#     lubrify_dates() %>%
-#     # filter(eval_tidy(observation_filter)) %>%
-#     filter(eval(parse(text = observation_filter))) %>%
-#     filter(.data[[TESTCD_field]] == testcd) %>%
-#     filter(!!parse_expr(baseline_filter)) %>%
-#     select("USUBJID", {{DV_field}}) %>%
-#     group_by(.data$USUBJID) %>%
-#     summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
-#     rename_with(~str_c("BL_", testcd), .cols = .data$BL)
-#
-#   return(temp)
-# }
 
 
 #' Compile administration data frame
@@ -1325,7 +1251,6 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   }
   if(individual == TRUE) {
     obj %>%
-      # as.data.frame() %>%
       group_by(.data$ID) %>%
       mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[EVID == 0])) %>%
       ungroup() %>%
@@ -1339,6 +1264,99 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       new_nif()
   }
 }
+
+
+
+#' Automatically generate a nif object with pharmacokinetic observations
+#'
+#' Automatically generate a nif object from SDTM data. All treatments and
+#' analytes must be defined in the `treatment_mapping` and `metabolite_mapping`
+#' objects that are attached to the sdtm object.
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param sdtm The source SDTM object.
+#' @param silent Suppress messages.
+#' @param bl_creat Include baseline creatinine, creatinine clearance and renal
+#'   function class fields.
+#' @param bl_odwg Include baseline ODWG hepatic function class.
+#'
+#' @return A nif object.
+#' @seealso [add_analyte_mapping()]
+#' @seealso [add_metabolite_mapping()]
+#' @export
+#'
+#' @examples
+#' nif_auto(examplinib_sad)
+nif_auto <- function(sdtm, silent = TRUE, bl_creat = TRUE, bl_odwg = TRUE) {
+  analyte_mapping <- sdtm$analyte_mapping %>%
+    mutate(PARENT = PCTESTCD, METABOLITE = FALSE) %>%
+    {if(!"ANALYTE" %in% names(.)) mutate(., ANALYTE = PCTESTCD) else .}
+
+  metabolite_mapping <- sdtm$metabolite_mapping
+  if(nrow(metabolite_mapping > 0)){
+    metabolite_mapping <- metabolite_mapping %>%
+      rename(ANALYTE = PCTESTCD_metab, PARENT = PCTESTCD_parent) %>%
+      mutate(EXTRT = NA, METABOLITE = TRUE, PCTESTCD = ANALYTE)
+  }
+  temp <- bind_rows(analyte_mapping, metabolite_mapping) %>%
+    distinct()
+
+  nif <- new_nif()
+
+  # Treatments
+  treatments <- analyte_mapping$EXTRT
+  conditional_message(paste0("Adding treatment(s): ",
+                             nice_enumeration(treatments)), silent = FALSE)
+  for(i in seq(1:nrow(analyte_mapping))){
+    # print(analyte_mapping[i,])
+    nif <- add_administration(nif, sdtm, analyte_mapping[i, "EXTRT"],
+            analyte = analyte_mapping[i, "ANALYTE"], silent = silent)
+  }
+
+  # PC observations
+  observations <- temp$ANALYTE
+  conditional_message(paste0("Adding PC observations(s): ",
+                             nice_enumeration(observations)), silent = FALSE)
+  for(i in seq(1:nrow(temp))) {
+    # print(temp[i, "PCTESTCD"])
+    nif <- add_observation(nif, sdtm, "pc", temp[i, "PCTESTCD"],
+            analyte = temp[i, "ANALYTE"], parent = temp[i, "PARENT"],
+            silent = silent)
+  }
+
+  # Baseline CREAT
+  if(bl_creat == TRUE) {
+    lb <- domain(sdtm, "lb")
+    if(!"CREAT" %in% unique(lb$LBTESTCD)) {
+      conditional_message("CREAT not found in LB!", silent = FALSE)
+    } else {
+      conditional_message("Adding baseline renal function", silent = FALSE)
+      nif <- add_baseline(nif, sdtm, "lb", "CREAT", silent = silent) %>%
+        add_bl_crcl() %>%
+        add_bl_renal()
+    }
+  }
+
+  # Baseline ODWG hepatic function class
+  if(bl_odwg == TRUE) {
+    conditional_message("Adding baseline hepatic function", silent = FALSE)
+    lb <- domain(sdtm, "lb")
+    nif <- add_bl_odwg(nif, sdtm)
+  }
+
+  return(nif)
+}
+
+
+
+
+
+
+
+
+
 
 
 
