@@ -1,6 +1,6 @@
 Package: nif
 Title: Construct NONMEM input files from SDTM data
-Version: 0.49.3
+Version: 0.49.4
 Authors@R: 
     person("Rainer", "Strotmann", , "rainer.strotmann@mailbox.org", role = c("aut", "cre"))
 Description: A system to import and explore Study Data Tabulation Model
