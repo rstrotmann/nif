@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -219,13 +219,13 @@ data frame:</p>
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#    ID           USUBJID    STUDYID                 DTC   TIME   TAFD NTIME</span></span>
-<span><span class="co">#  1  1 20230000221010001 2023000022 2001-01-15 10:36:00  0.000  0.000   0.0</span></span>
-<span><span class="co">#  2  1 20230000221010001 2023000022 2001-01-15 10:36:00  0.000  0.000   0.0</span></span>
-<span><span class="co">#  3  1 20230000221010001 2023000022 2001-01-15 12:46:00  2.167  2.167   1.5</span></span>
-<span><span class="co">#  4  1 20230000221010001 2023000022 2001-01-15 15:14:00  4.633  4.633   4.0</span></span>
-<span><span class="co">#  5  1 20230000221010001 2023000022 2001-01-16 10:36:00 24.000 24.000   0.0</span></span>
-<span><span class="co">#  6  1 20230000221010001 2023000022 2001-01-17 10:36:00 48.000 48.000   0.0</span></span>
+<span><span class="co">#    REF ID           USUBJID    STUDYID                 DTC   TIME   TAFD NTIME</span></span>
+<span><span class="co">#  1   1  1 20230000221010001 2023000022 2001-01-15 10:36:00  0.000  0.000   0.0</span></span>
+<span><span class="co">#  2   2  1 20230000221010001 2023000022 2001-01-15 10:36:00  0.000  0.000   0.0</span></span>
+<span><span class="co">#  3   3  1 20230000221010001 2023000022 2001-01-15 12:46:00  2.167  2.167   1.5</span></span>
+<span><span class="co">#  4   4  1 20230000221010001 2023000022 2001-01-15 15:14:00  4.633  4.633   4.0</span></span>
+<span><span class="co">#  5   5  1 20230000221010001 2023000022 2001-01-16 10:36:00 24.000 24.000   0.0</span></span>
+<span><span class="co">#  6   6  1 20230000221010001 2023000022 2001-01-17 10:36:00 48.000 48.000   0.0</span></span>
 <span><span class="co">#                          IMPUTATION ANALYTE PARENT METABOLITE DOSE AMT CMT EVID</span></span>
 <span><span class="co">#  1 admin time imputed from PCRFTDTC  RS2023 RS2023      FALSE  500 500   1    1</span></span>
 <span><span class="co">#  2                                   RS2023 RS2023      FALSE  500   0   2    0</span></span>
@@ -233,27 +233,20 @@ data frame:</p>
 <span><span class="co">#  4                                   RS2023 RS2023      FALSE  500   0   2    0</span></span>
 <span><span class="co">#  5                                   RS2023 RS2023      FALSE  500 500   1    1</span></span>
 <span><span class="co">#  6                                   RS2023 RS2023      FALSE  500 500   1    1</span></span>
-<span><span class="co">#          DV MDV REF     EPOCH SEX  RACE ETHNIC COUNTRY AGE HEIGHT WEIGHT</span></span>
-<span><span class="co">#  1       NA   1   1 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span></span>
-<span><span class="co">#  2    0.000   0   2 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span></span>
-<span><span class="co">#  3 3380.265   0   3 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span></span>
-<span><span class="co">#  4 1477.397   0   4 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span></span>
-<span><span class="co">#  5       NA   1   5 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span></span>
-<span><span class="co">#  6       NA   1   6 TREATMENT   1 WHITE            DEU  76  177.6   68.7</span></span>
-<span><span class="co">#         BMI  ACTARMCD            RFXSTDTC TRTDY            FIRSTDTC</span></span>
-<span><span class="co">#  1 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  2 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  3 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  4 21.78065 TREATMENT 2001-01-15 10:36:00     1 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  5 21.78065 TREATMENT 2001-01-15 10:36:00     2 2001-01-15 10:36:00</span></span>
-<span><span class="co">#  6 21.78065 TREATMENT 2001-01-15 10:36:00     3 2001-01-15 10:36:00</span></span>
-<span><span class="co">#             FIRSTADMIN   TAD PCELTM BL_CREAT  BL_CRCL</span></span>
-<span><span class="co">#  1 2001-01-15 10:36:00 0.000   &lt;NA&gt; 93.95312 48.83871</span></span>
-<span><span class="co">#  2 2001-01-15 10:36:00 0.000   PT0H 93.95312 48.83871</span></span>
-<span><span class="co">#  3 2001-01-15 10:36:00 2.167 PT1.5H 93.95312 48.83871</span></span>
-<span><span class="co">#  4 2001-01-15 10:36:00 4.633   PT4H 93.95312 48.83871</span></span>
-<span><span class="co">#  5 2001-01-15 10:36:00 0.000   &lt;NA&gt; 93.95312 48.83871</span></span>
-<span><span class="co">#  6 2001-01-15 10:36:00 0.000   &lt;NA&gt; 93.95312 48.83871</span></span></code></pre></div>
+<span><span class="co">#          DV MDV AGE SEX  RACE HEIGHT WEIGHT      BMI PCELTM TRTDY  ACTARMCD</span></span>
+<span><span class="co">#  1       NA   1  76   1 WHITE  177.6   68.7 21.78065   &lt;NA&gt;     1 TREATMENT</span></span>
+<span><span class="co">#  2    0.000   0  76   1 WHITE  177.6   68.7 21.78065   PT0H     1 TREATMENT</span></span>
+<span><span class="co">#  3 3380.265   0  76   1 WHITE  177.6   68.7 21.78065 PT1.5H     1 TREATMENT</span></span>
+<span><span class="co">#  4 1477.397   0  76   1 WHITE  177.6   68.7 21.78065   PT4H     1 TREATMENT</span></span>
+<span><span class="co">#  5       NA   1  76   1 WHITE  177.6   68.7 21.78065   &lt;NA&gt;     2 TREATMENT</span></span>
+<span><span class="co">#  6       NA   1  76   1 WHITE  177.6   68.7 21.78065   &lt;NA&gt;     3 TREATMENT</span></span>
+<span><span class="co">#    BL_CREAT  BL_CRCL</span></span>
+<span><span class="co">#  1 93.95312 48.83871</span></span>
+<span><span class="co">#  2 93.95312 48.83871</span></span>
+<span><span class="co">#  3 93.95312 48.83871</span></span>
+<span><span class="co">#  4 93.95312 48.83871</span></span>
+<span><span class="co">#  5 93.95312 48.83871</span></span>
+<span><span class="co">#  6 93.95312 48.83871</span></span></code></pre></div>
 <p>When the NIF object itself is printed, a summary of the data is shown
 instead:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -264,20 +257,20 @@ instead:</p>
 <span><span class="co">#  Males: 46, females: 34 (42.5%)</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Columns:</span></span>
-<span><span class="co">#  ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPUTATION, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, REF, EPOCH, SEX, RACE, ETHNIC, COUNTRY, AGE, HEIGHT, WEIGHT, BMI, ACTARMCD, RFXSTDTC, TRTDY, FIRSTDTC, FIRSTADMIN, TAD, PCELTM, BL_CREAT, BL_CRCL </span></span>
+<span><span class="co">#  REF, ID, USUBJID, STUDYID, DTC, TIME, TAFD, NTIME, IMPUTATION, ANALYTE, PARENT, METABOLITE, DOSE, AMT, CMT, EVID, DV, MDV, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, PCELTM, TRTDY, ACTARMCD, BL_CREAT, BL_CRCL </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  NIF data (selected columns):</span></span>
-<span><span class="co">#  ID   NTIME   TIME    TAD     ANALYTE   EVID   CMT   AMT   DOSE   DV         </span></span>
-<span><span class="co">#  1    0       0       0       RS2023    1      1     500   500    NA         </span></span>
-<span><span class="co">#  1    0       0       0       RS2023    0      2     0     500    0          </span></span>
-<span><span class="co">#  1    1.5     2.167   2.167   RS2023    0      2     0     500    3380.265   </span></span>
-<span><span class="co">#  1    4       4.633   4.633   RS2023    0      2     0     500    1477.397   </span></span>
-<span><span class="co">#  1    0       24      0       RS2023    1      1     500   500    NA         </span></span>
-<span><span class="co">#  1    0       48      0       RS2023    1      1     500   500    NA         </span></span>
-<span><span class="co">#  1    0       72      0       RS2023    1      1     500   500    NA         </span></span>
-<span><span class="co">#  1    0       96      0       RS2023    1      1     500   500    NA         </span></span>
-<span><span class="co">#  1    0       120     0       RS2023    1      1     500   500    NA         </span></span>
-<span><span class="co">#  1    0       144     0       RS2023    1      1     500   500    NA         </span></span>
+<span><span class="co">#  ID   NTIME   TIME    ANALYTE   EVID   CMT   AMT   DOSE   DV         </span></span>
+<span><span class="co">#  1    0       0       RS2023    1      1     500   500    NA         </span></span>
+<span><span class="co">#  1    0       0       RS2023    0      2     0     500    0          </span></span>
+<span><span class="co">#  1    1.5     2.167   RS2023    0      2     0     500    3380.265   </span></span>
+<span><span class="co">#  1    4       4.633   RS2023    0      2     0     500    1477.397   </span></span>
+<span><span class="co">#  1    0       24      RS2023    1      1     500   500    NA         </span></span>
+<span><span class="co">#  1    0       48      RS2023    1      1     500   500    NA         </span></span>
+<span><span class="co">#  1    0       72      RS2023    1      1     500   500    NA         </span></span>
+<span><span class="co">#  1    0       96      RS2023    1      1     500   500    NA         </span></span>
+<span><span class="co">#  1    0       120     RS2023    1      1     500   500    NA         </span></span>
+<span><span class="co">#  1    0       144     RS2023    1      1     500   500    NA         </span></span>
 <span><span class="co">#  6972 more rows</span></span></code></pre></div>
 </div>
 <div class="section level2">

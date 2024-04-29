@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -197,7 +197,9 @@ administrations (<code>examplinib_poc</code>).</p>
 objects by accessing the individual SDTM domains like demonstrated below
 for the DM domain of the <code>examplinib_fe</code> data object:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/domain.html">domain</a></span><span class="op">(</span><span class="st">"dm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/domain.html">domain</a></span><span class="op">(</span><span class="st">"dm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">##   SITEID  SUBJID         ACTARM ACTARMCD          RFICDTC          RFSTDTC</span></span>
 <span><span class="co">## 1    102 1020001   Fed - Fasted       BA 2000-12-21T10:29 2000-12-26T10:29</span></span>
 <span><span class="co">## 2    104 1040001   Fed - Fasted       BA 2000-12-22T10:24 2000-12-28T10:24</span></span>
@@ -263,7 +265,8 @@ creating a NIF data set from these SDTM data.</p>
 individual subjects (by their USUBJID) can be extracted as shown
 below:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
 <span><span class="co">##          [,1]             </span></span>
 <span><span class="co">## SITEID   105              </span></span>
 <span><span class="co">## SUBJID   1050001          </span></span>
@@ -383,8 +386,7 @@ Syst. Pharmacol. (2019)</a>.</p>
 from the DM domain and merged into the data table. Baseline WEIGHT and
 HEIGHT are taken from the VS domain.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># nif_expl &lt;- make_nif(sdtm_expl)</span></span>
-<span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm_expl</span>, <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm_expl</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span>, cmt <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>The output of the above code informs that there may be
@@ -416,25 +418,30 @@ sequence (see <code>ACTARM</code> and <code>ACTARMCD</code> in the
 output of <code><a href="../reference/suggest.html">suggest()</a></code>, above). Another field for
 consideration may be <code>EPOCH</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm_expl</span>, <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, keep <span class="op">=</span> <span class="st">"EPOCH"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm_expl</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span>, cmt <span class="op">=</span> <span class="fl">2</span>, keep <span class="op">=</span> <span class="st">"EPOCH"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="va">ACTARMCD</span><span class="op">)</span></span>
-<span><span class="co">##                    EPOCH ACTARMCD</span></span>
-<span><span class="co">## 1 OPEN LABEL TREATMENT 1       AB</span></span>
-<span><span class="co">## 2 OPEN LABEL TREATMENT 2       AB</span></span>
-<span><span class="co">## 3 OPEN LABEL TREATMENT 1       BA</span></span>
-<span><span class="co">## 4 OPEN LABEL TREATMENT 2       BA</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">EPOCH</span><span class="op">)</span></span>
+<span><span class="co">##   ACTARMCD                  EPOCH</span></span>
+<span><span class="co">## 1       AB OPEN LABEL TREATMENT 1</span></span>
+<span><span class="co">## 2       AB OPEN LABEL TREATMENT 2</span></span>
+<span><span class="co">## 3       BA OPEN LABEL TREATMENT 1</span></span>
+<span><span class="co">## 4       BA OPEN LABEL TREATMENT 2</span></span></code></pre></div>
 <p>In this example, to create a <code>FASTED</code> covariate field,
 first the period number is derived from the <code>EPOCH</code> field,
 and then the current <code>ACTARM</code> in that treatment period is
 decoded to <code>FASTED</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op">&lt;-</span> <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PERIOD<span class="op">=</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TREATMENT<span class="op">=</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">PERIOD</span>, <span class="va">PERIOD</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span><span class="op">==</span><span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Note the <code>silent=T</code> modifier that omits all messages from
-<code><a href="../reference/make_nif.html">make_nif()</a></code>.</p>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PERIOD <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TREATMENT <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">PERIOD</span>, <span class="va">PERIOD</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span><span class="op">==</span><span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/normalize_nif.html">normalize_nif</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Note the <code>silent = TRUE</code> modifier that omits all messages
+from <code><a href="../reference/make_nif.html">make_nif()</a></code>.</p>
 <p>As a side note: Alternatively, the SDTM domain YL which provides data
 on meals may be used for the derivation of the food status.</p>
 <p>The NIF file includes now the additional fields <code>PERIOD</code>,
@@ -500,9 +507,9 @@ analytes included in the <code>nif</code> data set. Note the
 some non-graphical output:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
-<span>   <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-15-1.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-2.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-3.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-4.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-5.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-6.png" width="288"><img src="nif-vignette_files/figure-html/unnamed-chunk-15-7.png" width="288"></p>
 </div>
@@ -521,7 +528,7 @@ time:</p>
 the analyte concentrations over time-after-dose (TAD).</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>time <span class="op">=</span> <span class="st">"TAD"</span>, analyte<span class="op">=</span><span class="st">"RS2023"</span>, points <span class="op">=</span> <span class="cn">T</span>, lines <span class="op">=</span> <span class="cn">F</span>, log <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>time <span class="op">=</span> <span class="st">"TAD"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, points <span class="op">=</span> <span class="cn">T</span>, lines <span class="op">=</span> <span class="cn">F</span>, log <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <p>Modifiers to the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allow common
 adjustments. To show, e.g., the food effect on the parent compound,
@@ -555,8 +562,7 @@ functions provided by the <code>PKNCA</code> package.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nca</span> <span class="op">&lt;-</span> <span class="va">nif_expl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/nca.html">nca</a></span><span class="op">(</span>analyte <span class="op">=</span> <span class="st">"RS2023"</span>,</span>
-<span>      group <span class="op">=</span> <span class="st">"FASTED"</span>,</span>
-<span>      nominal_time <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>      group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span></span>
 <span><span class="co">## NCA: Group by FASTED</span></span>
 <span></span>
 <span><span class="va">nca</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>

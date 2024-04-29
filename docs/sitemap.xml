@@ -517,6 +517,9 @@
     <loc>/reference/nif_auto.html</loc>
   </url>
   <url>
+    <loc>/reference/nif_cleanup.html</loc>
+  </url>
+  <url>
     <loc>/reference/nif_debugger.html</loc>
   </url>
   <url>
@@ -536,6 +539,9 @@
   </url>
   <url>
     <loc>/reference/nif_viewer.html</loc>
+  </url>
+  <url>
+    <loc>/reference/normalize_nif.html</loc>
   </url>
   <url>
     <loc>/reference/obs_per_dose_level.html</loc>
