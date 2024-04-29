@@ -133,7 +133,9 @@ individual SDTM domains like demonstrated below for the DM domain of the
 `examplinib_fe` data object:
 
 ```{r}
-examplinib_fe %>% domain("dm") %>% head(3)
+examplinib_fe %>%
+  domain("dm") %>%
+  head(3)
 ```
 
 The most relevant domains, "dm", "vs", "ex" and "pc", can also be accessed
@@ -157,7 +159,8 @@ In addition to a general overview, general demographic data for individual
 subjects (by their USUBJID) can be extracted as shown below: 
 
 ```{r}
-examplinib_fe %>% subject_info("20230004001050001")
+examplinib_fe %>%
+  subject_info("20230004001050001")
 ```
 
 ## SDTM suggestions
@@ -239,11 +242,9 @@ domain and merged into the data table. Baseline WEIGHT and HEIGHT are taken from
 the VS domain.
 
 ```{r}
-# nif_expl <- make_nif(sdtm_expl)
 nif_expl <- new_nif() %>% 
   add_administration(sdtm_expl, "EXAMPLINIB", analyte = "RS2023") %>% 
   add_observation(sdtm_expl, "pc", "RS2023", cmt = 2)
-
 ```
 
 The output of the above code informs that there may be pharmacokinetic data for
@@ -276,9 +277,13 @@ and `ACTARMCD` in the output of `suggest()`, above). Another field for
 consideration may be `EPOCH`:
 
 ```{r}
+nif_expl <- new_nif() %>% 
+  add_administration(sdtm_expl, "EXAMPLINIB", analyte = "RS2023", keep = "EPOCH") %>% 
+  add_observation(sdtm_expl, "pc", "RS2023", cmt = 2, keep = "EPOCH")
+
 nif_expl %>% 
   as.data.frame() %>%
-  distinct(EPOCH, ACTARMCD)
+  distinct(ACTARMCD, EPOCH)
 ```
 
 In this example, to create a `FASTED` covariate field, first the period number
@@ -287,12 +292,13 @@ treatment period is decoded to `FASTED`:
 
 ```{r}
 nif_expl <- nif_expl %>%
-  mutate(PERIOD=str_sub(EPOCH, -1, -1)) %>% 
-  mutate(TREATMENT=str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
-  mutate(FASTED=case_when(TREATMENT=="A" ~ 1, .default=0))
+  mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>% 
+  mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
+  mutate(FASTED = case_when(TREATMENT=="A" ~ 1, .default=0)) %>%
+  normalize_nif()
 ```
 
-Note the `silent=T` modifier that omits all messages from `make_nif()`.
+Note the `silent = TRUE` modifier that omits all messages from `make_nif()`.
 
 As a side note: Alternatively, the SDTM domain YL which provides data on meals 
 may be used for the derivation of the food status.
@@ -327,9 +333,9 @@ in the below code. This is used to omit some non-graphical output:
 
 ```{r results='hide', fig.width=3, fig.height=3}
 invisible(capture.output(
-   nif_expl %>% 
-  summary() %>% 
-  plot()
+  nif_expl %>% 
+    summary() %>% 
+    plot()
 ))
 ```
 
@@ -349,7 +355,7 @@ concentrations over time-after-dose (TAD).
 
 ```{r}
 nif_expl %>% 
-  plot(time = "TAD", analyte="RS2023", points = T, lines = F, log = T)
+  plot(time = "TAD", analyte = "RS2023", points = T, lines = F, log = T)
 ```
 
 
@@ -389,8 +395,7 @@ a wrapper around the functions provided by the `PKNCA` package.
 ```{r}
 nca <- nif_expl %>% 
   nca(analyte = "RS2023",
-      group = "FASTED",
-      nominal_time = T)
+      group = "FASTED")
 
 nca %>% 
   nca_summary_table(group="FASTED") %>% 

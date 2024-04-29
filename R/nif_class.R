@@ -6,7 +6,7 @@
 #' @export
 new_nif <- function(obj = NULL) {
   if(is.null(obj)) {
-    temp <- data.frame(matrix(nrow=0, ncol=length(minimal_nif_fields)))
+    temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
     colnames(temp) <- minimal_nif_fields
     class(temp) <- c("nif", "data.frame")
     comment(temp) <- paste0("created with nif ", packageVersion("nif"))
@@ -14,14 +14,14 @@ new_nif <- function(obj = NULL) {
       order_nif_columns()
   } else {
     if (class(obj)[1] == "sdtm") {
-      temp <- make_nif(obj)
+      # temp <- make_nif(obj)
+      temp <- nif_auto(obj)
     } else {
-      temp <- obj %>% as.data.frame()
+      temp <- as.data.frame(obj)
       class(temp) <- c("nif", "data.frame")
     }
     comment(temp) <- paste0("created with nif ", packageVersion("nif"))
-    temp %>%
-      order_nif_columns()
+    order_nif_columns(temp)
   }
 }
 
@@ -37,7 +37,7 @@ new_nif <- function(obj = NULL) {
 #' order_nif_columns(examplinib_poc_nif)
 order_nif_columns <- function(obj) {
   obj %>%
-    relocate(any_of(c("ID", "USUBJID", "STUDYID", "DTC", "TIME", "TAFD",
+    relocate(any_of(c("REF", "ID", "USUBJID", "STUDYID", "DTC", "TIME", "TAFD",
       "NTIME", "IMPUTATION", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
       "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
 }

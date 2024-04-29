@@ -45,6 +45,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
     as.data.frame() %>%
     dplyr::filter(ANALYTE == current_analyte) %>%
     dplyr::mutate(TIME = case_when(nominal_time == TRUE ~ NTIME,
+      # .default = TIME
       .default = TIME
     )) %>%
     dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
@@ -77,7 +78,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
   if (average_duplicates == TRUE) {
     conc <- conc %>%
       group_by(across(any_of(c("ID", "TIME", group)))) %>%
-      summarize(DV = mean(DV, na.rm = TRUE))
+      summarize(DV = mean(DV, na.rm = TRUE), .groups = "drop")
   }
 
   if (!is.null(group)) {

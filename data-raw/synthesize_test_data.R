@@ -56,9 +56,9 @@ examplinib_poc_nif <- new_nif() %>%
 #   compress()
 
 examplinib_fe_nif <- new_nif() %>%
-  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023") %>%
-  add_observation(examplinib_fe, "pc", "RS2023", cmt = 2) %>%
-  mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>%
+  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023", keep = "EPOCH") %>%
+  add_observation(examplinib_fe, "pc", "RS2023", cmt = 2, keep = "EPOCH") %>%
+  mutate(PERIOD = as.numeric(str_sub(EPOCH, -1, -1))) %>%
   mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
   mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0))
 

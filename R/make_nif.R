@@ -227,7 +227,7 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
     filter(.data$EXSTDTC > .data$EXENDTC) %>%
     left_join(
       dm %>%
-        select(.data$USUBJID, .data$RFENDTC),
+        select("USUBJID", "RFENDTC"),
       by = "USUBJID"
     )
 
@@ -236,8 +236,8 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
       nrow(temp),
       " administration episodes had an EXENDTC before the EXSTDTC and were\n",
       "removed from the data set:\n",
-      df_to_string(select(temp, .data$USUBJID, .data$EXTRT, .data$EXSEQ,
-                          .data$EXSTDTC, .data$EXENDTC, .data$RFENDTC),
+      df_to_string(select(temp, "USUBJID", "EXTRT", "EXSEQ",
+                          "EXSTDTC", "EXENDTC", "RFENDTC"),
                    indent = "  "),
       "\n"),
       silent = silent)
@@ -445,28 +445,6 @@ add_time <- function(x) {
 }
 
 
-#' This function orders a NIF object and adds a REF field
-#'
-#' The input data format expected by NONMEM requires all rows ordered by ID and
-#' TIME, and indexed sequentially on a subject level with a REF field.
-#' Re-indexing may be required if a NIF object is extended, e.g., by merging in
-#' further data.
-#'
-#' @param nif NIF object, e.g., as created by [make_nif()] and manually
-#'   modified.
-#' @return The updated NIF dataset including an updated REF field.
-#' @import dplyr
-#' @keywords internal
-index_nif <- function(nif) {
-  nif %>%
-    as.data.frame() %>%
-    dplyr::arrange(ID, TIME, -EVID) %>%
-    dplyr::mutate(REF = row_number()) %>%
-    dplyr::relocate(REF) %>%
-    new_nif()
-}
-
-
 #' Reduce a NIF object on the subject level by excluding all
 #' administrations after the last observation
 #'
@@ -505,10 +483,8 @@ clip_nif <- function(nif) {
 #' @import tidyselect
 #' @export
 #' @keywords internal
-make_subjects <- function(
-    dm, vs, silent = FALSE,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cleanup = TRUE) {
+make_subjects <- function(dm, vs, silent = FALSE,
+  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')", cleanup = TRUE) {
   # if AGE is not present in DM, calculate age from birthday and informed
   #   consent signature date
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
@@ -530,9 +506,13 @@ make_subjects <- function(
     mutate(ID = NA) %>%
     relocate("ID") %>%
     arrange("ID") %>%
-    {if(cleanup == TRUE) select(., any_of(c(
+    # {if(cleanup == TRUE) select(., any_of(c(
+    #   "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
+    #   "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))) else .}
+    # {if(cleanup == TRUE) nif_cleanup() else .}
+    select(., any_of(c(
       "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))) else .}
+      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC")))
   return(out)
 }
 
@@ -574,28 +554,17 @@ make_subjects <- function(
 #' @param testcd The observation variable, as character.
 #' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
 #'   name followed by 'TESTCD', if NULL.
+#' @param keep Columns to keep after cleanup, as character.
 #'
 #' @return A data frame.
 #' @keywords internal
 #' @import stringr
 #'
-make_observation <- function(
-    sdtm,
-    domain,
-    testcd,
-    analyte = NULL,
-    parent = NA,
-    DTC_field = NULL,
-    DV_field = NULL,
-    TESTCD_field = NULL,
-    cmt = NA,
-    # observation_filter = {TRUE},
-    observation_filter = "TRUE",
-    # subject_filter = {!ACTARMCD %in% c("SCRNFAIL", "NOTTRT")},
+make_observation <- function(sdtm, domain, testcd,
+    analyte = NULL, parent = NA, DTC_field = NULL, DV_field = NULL,
+    TESTCD_field = NULL, cmt = NA, observation_filter = "TRUE",
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    NTIME_lookup = NULL,
-    silent = FALSE,
-    cleanup = TRUE) {
+    NTIME_lookup = NULL, silent = FALSE, cleanup = FALSE, keep = NULL) {
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
@@ -641,7 +610,6 @@ make_observation <- function(
   }
 
   obj %>%
-    # filter({{observation_filter}}) %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
@@ -660,10 +628,12 @@ make_observation <- function(
     {if(!is.null(NTIME_lookup)) suppressMessages(
       left_join(., NTIME_lookup)) else
       mutate(., NTIME = NA)} %>%
-    {if(cleanup == TRUE) select(., any_of(c("ID", "STUDYID", "USUBJID", "AGE",
-      "SEX", "RACE",  "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD",
-      "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "METABOLITE",
-      "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION"))) else .} %>%
+    # {if(cleanup == TRUE) select(., any_of(c("ID", "STUDYID", "USUBJID", "AGE",
+    #   "SEX", "RACE",  "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD",
+    #   "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "METABOLITE",
+    #   "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION"))) else .} %>%
+    {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
+
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
@@ -745,20 +715,16 @@ make_observation <- function(
 #' @param cut_off_date The data cut-off date as Posix date-time.
 #' @param silent Suppress messages, as logical.
 #' @param cleanup Remove unnecessary fields, as logical.
+#' @param keep Columns to keep after cleanup, as character.
 #'
 #' @return A data frame.
 #' @export
 #' @keywords internal
 #' @seealso [add_administration()]
-  make_administration <- function(
-    sdtm,
-    extrt,
-    analyte = NA,
-    cmt = 1,
+make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
     cut_off_date = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    silent = FALSE,
-    cleanup = TRUE) {
+    silent = FALSE, cleanup = FALSE, keep = TRUE) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
   pc <- domain(sdtm, "pc") %>% lubrify_dates()
@@ -794,7 +760,7 @@ make_observation <- function(
       as.Date(.data$EXSTDTC_date),
       as.Date(.data$EXENDTC_date),
       by = "days"))) %>%
-    unnest(.data$DTC_date) %>%
+    unnest(DTC_date) %>%
 
     # make time
     group_by(.data$USUBJID, .data$ANALYTE, .data$EXENDTC_date) %>%
@@ -820,18 +786,19 @@ make_observation <- function(
       is.na(.data$DTC_time) == TRUE ~ "time carried forward",
       .default = .data$IMPUTATION)) %>%
     group_by(.data$USUBJID, .data$ANALYTE) %>%
-    fill(.data$DTC_time, .direction = "down") %>%
+    fill(DTC_time, .direction = "down") %>%
     ungroup() %>%
 
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
 
     select(-c("DTC_date", "DTC_time")) %>%
 
-    {if(cleanup == TRUE)
-      select(., any_of(c("STUDYID", "USUBJID", "IMPUTATION", "TIME", "NTIME",
-                         "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
-                         "MDV", "DOSE", "AMT", "EXDY", "DTC", "EPOCH")))
-      else .} %>%
+    # {if(cleanup == TRUE)
+    #   select(., any_of(c("STUDYID", "USUBJID", "IMPUTATION", "TIME", "NTIME",
+    #                      "TAFD", "TAD", "ANALYTE", "PARENT", "METABOLITE", "DV", "CMT", "EVID",
+    #                      "MDV", "DOSE", "AMT", "EXDY", "DTC", "EPOCH")))
+    #   else .} %>%
+    {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
@@ -885,35 +852,96 @@ make_time <- function(obj) {
 }
 
 
-#' Complete DOSE field
+# ' Complete DOSE field
+# '
+# ' @param obj A nif object.
+# '
+# ' @return A nif object.
+# ' @export
+# ' @keywords internal
+# carry_forward_dose <- function(obj) {
+#   obj %>%
+#     arrange(.data$ID, .data$DTC, -.data$EVID) %>%
+#     group_by(.data$ID, .data$PARENT) %>%
+#     fill(DOSE, .direction = "downup") %>%
+#     ungroup()
+# }
+
+
+# ' Complete EPOCH field
+# '
+# ' @param obj A nif object.
+# '
+# ' @return A nif object.
+# ' @export
+# ' @keywords internal
+# carry_forward_epoch <- function(obj) {
+#   obj %>%
+#     arrange(.data$ID, .data$DTC, -.data$EVID) %>%
+#     group_by(.data$ID, .data$PARENT) %>%
+#     fill(EPOCH, .direction = "downup") %>%
+#     ungroup()
+# }
+
+
+# ' Carry forward nif fields
+# '
+# ' @param obj A data frame.
+# '
+# ' @return A data frame.
+# ' @keywords internal
+# carry_forward_fields <- function(obj) {
+#   obj %>%
+#     arrange(.data$ID, .data$DTC, -.data$EVID) %>%
+#     group_by(.data$ID, .data$PARENT) %>%
+#     fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%
+#     ungroup()
+# }
+
+
+#' This function orders a NIF object and adds a REF field
 #'
-#' @param obj A nif object.
+#' The input data format expected by NONMEM requires all rows ordered by ID and
+#' TIME, and indexed sequentially on a subject level with a REF field.
+#' Re-indexing may be required if a NIF object is extended, e.g., by merging in
+#' further data.
 #'
-#' @return A nif object.
-#' @export
+#' @param nif NIF object, e.g., as created by [make_nif()] and manually
+#'   modified.
+#' @return The updated NIF dataset including an updated REF field.
+#' @import dplyr
 #' @keywords internal
-carry_forward_dose <- function(obj) {
-  obj %>%
-    arrange(.data$ID, .data$DTC, -.data$EVID) %>%
-    group_by(.data$ID, .data$PARENT) %>%
-    fill(DOSE, .direction = "downup") %>%
-    ungroup()
+index_nif <- function(nif) {
+  nif %>%
+    as.data.frame() %>%
+    dplyr::arrange(ID, TIME, -EVID) %>%
+    dplyr::mutate(REF = row_number()) %>%
+    dplyr::relocate(REF) %>%
+    new_nif()
 }
 
 
-#' Complete EPOCH field
+#' Order nif object, index and fill missing fields
 #'
 #' @param obj A nif object.
+#' @param keep Fields to explicitly keep, as character.
+#' @param cleanup Remove non-essential fields, as logical.
 #'
 #' @return A nif object.
 #' @export
-#' @keywords internal
-carry_forward_epoch <- function(obj) {
+#'
+#' @examples
+#' normalize_nif(examplinib_sad_nif)
+normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   obj %>%
-    arrange(.data$ID, .data$DTC, -.data$EVID) %>%
+    make_time() %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
-    fill(EPOCH, .direction = "downup") %>%
-    ungroup()
+    fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%
+    ungroup() %>%
+    {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
+    new_nif()
 }
 
 
@@ -935,7 +963,7 @@ carry_forward_epoch <- function(obj) {
 add_administration <- function(
     nif, sdtm, extrt, analyte = NA, cmt = 1, cut_off_date = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    silent = FALSE, cleanup = TRUE) {
+    silent = FALSE, cleanup = TRUE, keep = NULL) {
   bind_rows(nif, make_administration(
     sdtm = sdtm,
     extrt = extrt,
@@ -944,14 +972,17 @@ add_administration <- function(
     cut_off_date = cut_off_date,
     subject_filter = subject_filter,
     silent = silent,
-    cleanup = cleanup
+    cleanup = F,
+    keep = keep
   )) %>%
-    arrange(.data$USUBJID, .data$DTC) %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
-    make_time() %>%
-    carry_forward_dose() %>%
-    carry_forward_epoch() %>%
-    new_nif()
+    # arrange(.data$USUBJID, .data$DTC) %>%
+    # mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    # make_time() %>%
+    # carry_forward_dose() %>%
+    # carry_forward_epoch() %>%
+    # carry_forward_fields() %>%
+    # new_nif()
+    normalize_nif(keep = keep)
 }
 
 
@@ -981,7 +1012,9 @@ add_observation <- function(nif, sdtm, domain, testcd,
     observation_filter = "TRUE",
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     NTIME_lookup = NULL, silent = FALSE,
-    cleanup = TRUE) {
+    cleanup = FALSE, keep = NULL) {
+  if(length(parents(nif)) == 0)
+    stop("Please add at least one administration first!")
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
@@ -1023,7 +1056,8 @@ add_observation <- function(nif, sdtm, domain, testcd,
               subject_filter = subject_filter,
               NTIME_lookup = NTIME_lookup,
               silent = silent,
-              cleanup = cleanup)
+              cleanup = cleanup,
+              keep = keep)
             ) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
@@ -1053,10 +1087,12 @@ add_observation <- function(nif, sdtm, domain, testcd,
 
   obj %>%
     select(-c("NO_ADMIN_FLAG")) %>%
-    make_time() %>%
-    carry_forward_dose() %>%
-    carry_forward_epoch() %>%
-    new_nif()
+    # make_time() %>%
+    # carry_forward_dose() %>%
+    # carry_forward_epoch() %>%
+    # carry_forward_fields() %>%
+    # new_nif()
+    normalize_nif(keep = keep)
 }
 
 
@@ -1180,7 +1216,9 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     # filter({{observation_filter}}) %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
-    select(.data$USUBJID, DTC = .data[[DTC_field]],
+    # select(.data$USUBJID, DTC = .data[[DTC_field]],
+    #        !!COV_field := .data[[DV_field]]) %>%
+    select("USUBJID", "DTC" = .data[[DTC_field]],
            !!COV_field := .data[[DV_field]]) %>%
     decompose_dtc("DTC") %>%
     select(-c("DTC", "DTC_time")) %>%
@@ -1265,6 +1303,24 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   }
 }
 
+#' Remove non-essential fields
+#'
+#' @param nif A nif object.
+#' @param keep Fields to explicitly keep, as character.
+#'
+#' @return A nif object
+#' @export
+nif_cleanup <- function(nif, keep = NULL) {
+  nif %>%
+    select(any_of(
+      unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
+               "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD",
+               "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+               "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+               "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
+               "TREATMENT", keep))
+    ))
+}
 
 
 #' Automatically generate a nif object with pharmacokinetic observations
@@ -1281,16 +1337,26 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @param bl_creat Include baseline creatinine, creatinine clearance and renal
 #'   function class fields.
 #' @param bl_odwg Include baseline ODWG hepatic function class.
+#' @param cleanup Delete non-essential fields.
+#' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
 #' @seealso [add_analyte_mapping()]
 #' @seealso [add_metabolite_mapping()]
+#' @import assertr
 #' @export
 #'
 #' @examples
 #' nif_auto(examplinib_sad)
-nif_auto <- function(sdtm, silent = TRUE, bl_creat = TRUE, bl_odwg = TRUE) {
-  analyte_mapping <- sdtm$analyte_mapping %>%
+nif_auto <- function(sdtm, silent = TRUE, bl_creat = TRUE, bl_odwg = TRUE,
+                     cleanup = TRUE, keep = "") {
+  analyte_mapping <- sdtm$analyte_mapping
+  if(nrow(analyte_mapping) == 0) {
+    stop("Missing analyte mapping in sdtm object.")
+  }
+
+  analyte_mapping <- analyte_mapping %>%
+    verify(has_all_names("EXTRT", "PCTESTCD", "ANALYTE")) %>%
     mutate(PARENT = PCTESTCD, METABOLITE = FALSE) %>%
     {if(!"ANALYTE" %in% names(.)) mutate(., ANALYTE = PCTESTCD) else .}
 
@@ -1310,9 +1376,9 @@ nif_auto <- function(sdtm, silent = TRUE, bl_creat = TRUE, bl_odwg = TRUE) {
   conditional_message(paste0("Adding treatment(s): ",
                              nice_enumeration(treatments)), silent = FALSE)
   for(i in seq(1:nrow(analyte_mapping))){
-    # print(analyte_mapping[i,])
     nif <- add_administration(nif, sdtm, analyte_mapping[i, "EXTRT"],
-            analyte = analyte_mapping[i, "ANALYTE"], silent = silent)
+            analyte = analyte_mapping[i, "ANALYTE"], silent = silent,
+            cleanup = cleanup, keep = keep)
   }
 
   # PC observations
@@ -1320,32 +1386,36 @@ nif_auto <- function(sdtm, silent = TRUE, bl_creat = TRUE, bl_odwg = TRUE) {
   conditional_message(paste0("Adding PC observations(s): ",
                              nice_enumeration(observations)), silent = FALSE)
   for(i in seq(1:nrow(temp))) {
-    # print(temp[i, "PCTESTCD"])
     nif <- add_observation(nif, sdtm, "pc", temp[i, "PCTESTCD"],
             analyte = temp[i, "ANALYTE"], parent = temp[i, "PARENT"],
-            silent = silent)
+            silent = silent, cleanup = cleanup, keep = keep)
   }
 
-  # Baseline CREAT
-  if(bl_creat == TRUE) {
+  if(bl_creat == TRUE | bl_odwg == TRUE){
     lb <- domain(sdtm, "lb")
-    if(!"CREAT" %in% unique(lb$LBTESTCD)) {
-      conditional_message("CREAT not found in LB!", silent = FALSE)
+    if(is.null(lb)) {
+      conditional_message("LB not found in sdtm object!")
     } else {
-      conditional_message("Adding baseline renal function", silent = FALSE)
-      nif <- add_baseline(nif, sdtm, "lb", "CREAT", silent = silent) %>%
-        add_bl_crcl() %>%
-        add_bl_renal()
+      # Baseline CREAT
+      if(bl_creat == TRUE) {
+        if(!"CREAT" %in% unique(lb$LBTESTCD)) {
+          conditional_message("CREAT not found in LB!", silent = FALSE)
+        } else {
+          conditional_message("Adding baseline renal function", silent = FALSE)
+          nif <- add_baseline(nif, sdtm, "lb", "CREAT", silent = silent) %>%
+            add_bl_crcl() %>%
+            add_bl_renal()
+        }
+      }
+
+      # Baseline ODWG hepatic function class
+      if(bl_odwg == TRUE) {
+        # lb <- domain(sdtm, "lb")
+        conditional_message("Adding baseline hepatic function", silent = FALSE)
+        nif <- add_bl_odwg(nif, sdtm)
+      }
     }
   }
-
-  # Baseline ODWG hepatic function class
-  if(bl_odwg == TRUE) {
-    conditional_message("Adding baseline hepatic function", silent = FALSE)
-    lb <- domain(sdtm, "lb")
-    nif <- add_bl_odwg(nif, sdtm)
-  }
-
   return(nif)
 }
 

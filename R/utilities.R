@@ -235,7 +235,7 @@ decompose_dtc <- function(obj, DTC_field) {
       mutate({{DTC_time}} := case_when(
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
         .default = NA)) %>%
-      select(-has_time)
+      select(-c("has_time"))
   }
 
   for(i in DTC_field) {

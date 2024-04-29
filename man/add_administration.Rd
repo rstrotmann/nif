@@ -13,7 +13,8 @@ add_administration(
   cut_off_date = NULL,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   silent = FALSE,
-  cleanup = TRUE
+  cleanup = TRUE,
+  keep = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ add_administration(
 \item{silent}{Suppress messages, as logical.}
 
 \item{cleanup}{Remove unnecessary fields, as logical.}
+
+\item{keep}{Columns to keep after cleanup, as character.}
 }
 \value{
 A nif object.

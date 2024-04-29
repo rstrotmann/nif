@@ -19,7 +19,8 @@ add_observation(
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   NTIME_lookup = NULL,
   silent = FALSE,
-  cleanup = TRUE
+  cleanup = FALSE,
+  keep = NULL
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ to provide the NTIME field.}
 \item{silent}{Suppress messages as logical.}
 
 \item{cleanup}{Keep only necessary fields, as logical.}
+
+\item{keep}{Columns to keep after cleanup, as character.}
 }
 \value{
 A nif object.
