@@ -1,10 +1,12 @@
 #' nif class constructor
 #'
+#' @param ... Further arguments.
 #' @param obj A data frame containing the actual NIF data or a sdtm object.
+#'
 #' @import dplyr
 #' @return A nif object from the input data set.
 #' @export
-new_nif <- function(obj = NULL) {
+new_nif <- function(obj = NULL, ...) {
   if(is.null(obj)) {
     temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
     colnames(temp) <- minimal_nif_fields
@@ -15,7 +17,7 @@ new_nif <- function(obj = NULL) {
   } else {
     if (class(obj)[1] == "sdtm") {
       # temp <- make_nif(obj)
-      temp <- nif_auto(obj)
+      temp <- nif_auto(obj, ...)
     } else {
       temp <- as.data.frame(obj)
       class(temp) <- c("nif", "data.frame")

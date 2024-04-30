@@ -245,8 +245,6 @@ decompose_dtc <- function(obj, DTC_field) {
 }
 
 
-
-
 #' Extract thendate component of a POSICct object
 #'
 #' @param dtc The POSIX-formatted datetime.
@@ -269,13 +267,16 @@ extract_time <- function(dtc) {
 
 #' Check whether POSIX datetime object includes time information
 #'
-#' @param datetime The datetime object in POSIX format.
+#' @param datetime The datetime object as POSIX or as ISO 8601-formatted string.
 #' @return A Boolean value.
 #' @keywords internal
-has_time <- function(datetime) {
-  as.numeric(datetime) %% 86400 != 0
+has_time <- function(obj) {
+  if(is.POSIXct(obj)) {
+    as.numeric(obj) %% 86400 != 0
+  } else {
+    grepl(".*T[0-9]{2}:[0-9]{2}", obj)
+  }
 }
-
 
 #' Nice enumeration of multiple strings
 #'

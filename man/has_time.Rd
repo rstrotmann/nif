@@ -4,10 +4,10 @@
 \alias{has_time}
 \title{Check whether POSIX datetime object includes time information}
 \usage{
-has_time(datetime)
+has_time(obj)
 }
 \arguments{
-\item{datetime}{The datetime object in POSIX format.}
+\item{datetime}{The datetime object as POSIX or as ISO 8601-formatted string.}
 }
 \value{
 A Boolean value.

@@ -15,22 +15,62 @@ compare_ex_ec <- function(sdtm) {
 }
 
 
-# sdtm <- sdtm.001
-#
-# sdtm <- sdtm.101
-#
-# d1 <- ex %>% filter(USUBJID == "20192400011011003")
-#
-# d2 <- ec %>% filter(USUBJID == "20192400011011003")
-#
-# all.equal(d1, d2)
-#
-# all.equal(ex, ec)
+
+#' Number of DTC entries with missing time information
+#'
+#' @param sdtm A stm object.
+#' @param fields The fields to test, as character.
+#'
+#' @return A data frame.
+#' @export
+#'
+#' @examples
+#' missing_time(examplinib_poc, c("EXSTDTC", "EXENDTC"))
+missing_time <- function(sdtm, fields) {
+  n_missing_time <- function(field) {
+    dom <- domain(sdtm, tolower(str_sub(field, 1, 2)))
+    dom %>%
+      filter(has_time(.data[[field]]) == FALSE) %>%
+      nrow()
+  }
+
+  n_total <- function(field) {
+    dom <- domain(sdtm, tolower(str_sub(field, 1, 2)))
+    dom %>%
+      nrow()
+  }
+
+  data.frame(field = fields,
+             missing = as.numeric(lapply(fields, n_missing_time)),
+             total = as.numeric(lapply(fields, n_total))) %>%
+    mutate(percent_missing = round(missing/total*100, 1))
+}
 
 
 
 
-#' EC with ECCAT == "DISCRETE"
-#' compare with PCRFDTC, should be the same!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
