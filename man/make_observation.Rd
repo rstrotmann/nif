@@ -19,7 +19,8 @@ make_observation(
   NTIME_lookup = NULL,
   silent = FALSE,
   cleanup = FALSE,
-  keep = NULL
+  keep = NULL,
+  factor = 1
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ to provide the NTIME field.}
 \item{cleanup}{Keep only necessary fields, as logical.}
 
 \item{keep}{Columns to keep after cleanup, as character.}
+
+\item{factor}{Multiplier for the DV field, as numeric.}
 }
 \value{
 A data frame.

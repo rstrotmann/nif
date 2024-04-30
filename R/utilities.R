@@ -112,7 +112,7 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
 #' positive_or_zero(-2)
 #' positive_or_zero(c(2, 1, 0, -1, -2))
 positive_or_zero <- function(x) {
-  x[which(x <0)] <- 0
+  x[which(x < 0 | is.na(x))] <- 0
   return(x)
 }
 
@@ -190,6 +190,20 @@ lubrify_dates <- function(obj) {
 isofy_dates <- function(obj) {
   obj %>%
     dplyr::mutate_at(vars(ends_with("DTC")), ~ format(., "%Y-%m-%dT%H:%M"))
+}
+
+
+#' Convert ISO 8601-formatted duration to hours
+#'
+#' @param iso The duration as ISO 8601-formatted string.
+#'
+#' @return Duration in hours.
+#' @export
+#'
+#' @examples
+#' pt_to_hours(c("PT1H15M", "PT1.5H"))
+pt_to_hours <- function(iso) {
+  as.numeric(duration(iso))/60/60
 }
 
 

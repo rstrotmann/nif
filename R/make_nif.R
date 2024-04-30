@@ -558,6 +558,7 @@ make_subjects <- function(dm, vs, silent = FALSE,
 #' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
 #'   name followed by 'TESTCD', if NULL.
 #' @param keep Columns to keep after cleanup, as character.
+#' @param factor Multiplier for the DV field, as numeric.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -567,7 +568,8 @@ make_observation <- function(sdtm, domain, testcd,
     analyte = NULL, parent = NA, DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL, cmt = NA, observation_filter = "TRUE",
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    NTIME_lookup = NULL, silent = FALSE, cleanup = FALSE, keep = NULL) {
+    NTIME_lookup = NULL, silent = FALSE, cleanup = FALSE, keep = NULL,
+    factor = 1) {
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
@@ -591,10 +593,9 @@ make_observation <- function(sdtm, domain, testcd,
           if("PCDY" %in% names(obj)){
             NTIME_lookup <- obj %>%
               distinct(.data$PCDY, .data$PCELTM) %>%
-            mutate(NTIME = as.numeric(stringr::str_extract(
-              .data$PCELTM, "PT([.0-9]+)H", group = 1)) #+
-                # (.data[["PCDY"]] - 1) * 24)
-            )
+            # mutate(NTIME = as.numeric(stringr::str_extract(
+            #   .data$PCELTM, "PT([.0-9]+)H", group = 1)))
+            mutate(NTIME = pt_to_hours(.data$PCELTM))
           } else {
             NTIME_lookup <- obj %>%
               distinct(.data$PCELTM) %>%
@@ -617,7 +618,7 @@ make_observation <- function(sdtm, domain, testcd,
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
       DTC = .data[[DTC_field]],
-      DV = .data[[DV_field]],
+      DV = .data[[DV_field]] * factor,
       ANALYTE = analyte,
       TIME = NA,
       CMT = cmt,
@@ -1012,7 +1013,7 @@ add_administration <- function(
 add_observation <- function(nif, sdtm, domain, testcd,
     analyte = NULL, parent = NULL, DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL, cmt = NULL,
-    observation_filter = "TRUE",
+    observation_filter = "TRUE", factor = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     NTIME_lookup = NULL, silent = FALSE,
     cleanup = FALSE, keep = NULL) {
@@ -1054,7 +1055,7 @@ add_observation <- function(nif, sdtm, domain, testcd,
               DV_field = DV_field,
               TESTCD_field = TESTCD_field,
               cmt = cmt,
-              # observation_filter = {{observation_filter}},
+              factor = factor,
               observation_filter = observation_filter,
               subject_filter = subject_filter,
               NTIME_lookup = NTIME_lookup,
