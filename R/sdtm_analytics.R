@@ -25,8 +25,8 @@ compare_ex_ec <- function(sdtm) {
 #' @export
 #'
 #' @examples
-#' missing_time(examplinib_poc, c("EXSTDTC", "EXENDTC"))
-missing_time <- function(sdtm, fields) {
+#' sdtm_missing_times(examplinib_poc, c("EXSTDTC", "EXENDTC"))
+sdtm_missing_times <- function(sdtm, fields) {
   n_missing_time <- function(field) {
     dom <- domain(sdtm, tolower(str_sub(field, 1, 2)))
     dom %>%

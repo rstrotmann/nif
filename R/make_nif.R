@@ -477,6 +477,7 @@ clip_nif <- function(nif) {
 #' @param silent No messages as logical.
 #' @param subject_filter The filtering to apply to the DM domain.
 #' @param cleanup Keep only required fields, as logical.
+#' @param keep Columns to keep, as character.
 #'
 #' @return A data table.
 #' @import assertr
@@ -484,7 +485,8 @@ clip_nif <- function(nif) {
 #' @export
 #' @keywords internal
 make_subjects <- function(dm, vs, silent = FALSE,
-  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')", cleanup = TRUE) {
+  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')", cleanup = TRUE,
+  keep = "") {
   # if AGE is not present in DM, calculate age from birthday and informed
   #   consent signature date
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
@@ -512,7 +514,8 @@ make_subjects <- function(dm, vs, silent = FALSE,
     # {if(cleanup == TRUE) nif_cleanup() else .}
     select(., any_of(c(
       "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC")))
+      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", keep)))
+    # nif_cleanup(keep = keep)
   return(out)
 }
 
@@ -732,8 +735,8 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
   if(is.na(analyte)) {analyte <- extrt}
   if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
 
-  sbs <- make_subjects(dm, domain(sdtm, "vs"),
-                       subject_filter = subject_filter, cleanup = cleanup)
+  sbs <- make_subjects(dm, domain(sdtm, "vs"), subject_filter = subject_filter,
+                       cleanup = cleanup, keep = keep)
 
   admin <- ex %>%
     mutate(IMPUTATION = "") %>%
