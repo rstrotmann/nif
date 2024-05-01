@@ -10,17 +10,16 @@ make_observation(
   testcd,
   analyte = NULL,
   parent = NA,
+  cmt = NA,
+  subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
+  observation_filter = "TRUE",
+  TESTCD_field = NULL,
   DTC_field = NULL,
   DV_field = NULL,
-  TESTCD_field = NULL,
-  cmt = NA,
-  observation_filter = "TRUE",
-  subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
+  factor = 1,
   NTIME_lookup = NULL,
-  silent = FALSE,
-  cleanup = FALSE,
   keep = NULL,
-  factor = 1
+  silent = FALSE
 )
 }
 \arguments{
@@ -36,34 +35,32 @@ domain the observations come from.}
 \item{parent}{The name of the parent analyte for the observation as
 character.}
 
+\item{cmt}{The compartment for the observation as numeric.}
+
+\item{subject_filter}{The filtering to apply to the DM domain.}
+
+\item{observation_filter}{The filtering to apply to the observation source
+data.}
+
+\item{TESTCD_field}{The xxTESTCD field. Defaults to the two-character domain
+name followed by 'TESTCD', if NULL.}
+
 \item{DTC_field}{The field to use as the date-time code for the observation.
 Defaults to the two-character domain name followed by 'DTC', if NULL.}
 
 \item{DV_field}{the field to use as the dependent variable. Defaults to the
 two-character domain name followed by 'STRESN', if NULL.}
 
-\item{TESTCD_field}{The xxTESTCD field. Defaults to the two-character domain
-name followed by 'TESTCD', if NULL.}
-
-\item{cmt}{The compartment for the observation as numeric.}
-
-\item{observation_filter}{The filtering to apply to the observation source
-data.}
-
-\item{subject_filter}{The filtering to apply to the DM domain.}
+\item{factor}{Multiplier for the DV field, as numeric.}
 
 \item{NTIME_lookup}{A data frame with two columns, a column that defines the
 custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_join()ed into the observation data frame
 to provide the NTIME field.}
 
-\item{silent}{Suppress messages as logical.}
-
-\item{cleanup}{Keep only necessary fields, as logical.}
-
 \item{keep}{Columns to keep after cleanup, as character.}
 
-\item{factor}{Multiplier for the DV field, as numeric.}
+\item{silent}{Suppress messages as logical.}
 }
 \value{
 A data frame.

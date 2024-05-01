@@ -101,60 +101,6 @@ exclude_exstdtc_after_rfendtc <- function(ex, dm, silent = FALSE) {
 }
 
 
-#' Impute last EXENDTC per subject and treatment to cutoff date when absent.
-#'
-#' In some instances, particularly when analyzing non-cleaned SDTM data from
-#' ongoing clinical studies with multiple-dose administrations, the last
-#' administration epoch in EX may have an empty EXENDTC field. Often, the
-#' underlying reason is that the respective subjects are still on treatment.
-#' This function replaces the missing EXENDTC with the global data cut-off
-#' date, `cut_off_date`.
-#'
-#' @param ex The EX domain as data frame.
-#' @param cut.off.date The cut-off date.
-#' @param silent Switch to disable message output.
-#' @return The updated EX domain as data frame.
-#' @import assertr
-#' @keywords internal
-impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = FALSE) {
-  temp <- ex %>%
-    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-    lubrify_dates() %>%
-    assertr::verify(is.POSIXct(.data$EXSTDTC)) %>%
-    assertr::verify(is.POSIXct(.data$EXENDTC)) %>%
-    # identify last administration per subject and EXTRT
-    arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
-    group_by(.data$USUBJID, .data$EXTRT) %>%
-    mutate(LAST_ADMIN = row_number() == max(row_number()))
-
-  to_replace <- temp %>%
-    filter(.data$LAST_ADMIN == TRUE, is.na(.data$EXENDTC))
-
-  if (nrow(to_replace) > 0) {
-    conditional_message("In ", nrow(to_replace), " subjects, EXENDTC is ",
-      "absent and is replaced by the cut off date, ",
-      format(cut_off_date, format = "%Y-%m-%d %H:%M"), ":\n",
-      df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
-                                         "EXSTDTC", "EXENDTC")))),
-      "\n",
-      silent = silent
-    )
-
-    temp <- temp %>%
-      mutate(EXENDTC = case_when(
-        (LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) ~ cut_off_date,
-        .default = .data$EXENDTC
-      )) %>%
-      mutate(IMPUTATION = case_when(
-        LAST_ADMIN == TRUE & is.na(.data$EXENDTC) ~
-          "missing EXENDTC set to data cutoff",
-        .default = IMPUTATION
-      ))
-  }
-  return(temp %>% select(-"LAST_ADMIN"))
-}
-
-
 #' Remove administrations with EXSTDTC after RFENDTC
 #'
 #' @description

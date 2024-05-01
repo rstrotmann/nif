@@ -164,7 +164,7 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
 
   ex %>%
     mutate(IMPUTATION = "") %>%
-    impute_exendtc_to_rfendtc(dm, silent=F) %>%
+    impute_exendtc_to_rfendtc(dm, silent = TRUE) %>%
     summarize(sum=sum(is.na(EXENDTC))) %>%
     as.numeric() %>%
     expect_equal(2)
@@ -206,14 +206,14 @@ test_that("impute_missing_exendtc", {
   ) %>% lubrify_dates() %>%
     mutate(IMPUTATION = "")
 
-  temp <- impute_missing_exendtc(ex, silent = F)
+  temp <- impute_missing_exendtc(ex, silent = TRUE)
   expect_equal(temp$IMPUTATION != "", temp$imputation_expected)
 })
 
 
 test_that("make_subjects works", {
   sdtm <- examplinib_poc
-  temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
+  temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"), silent = TRUE)
   expect_equal(nrow(temp), 80)
 })
 
@@ -452,7 +452,8 @@ test_that("add_covariate", {
 
   sdtm = list(domains = list(lb = lb))
   expect_no_error(
-    temp <- add_covariate(nif, sdtm, "lb", "TEST") %>% as.data.frame()
+    temp <- add_covariate(nif, sdtm, "lb", "TEST") %>%
+      as.data.frame()
   )
   expect_equal(all(!is.na(temp$TEST)), TRUE)
 })
@@ -462,7 +463,7 @@ test_that("add_administration, add_observation", {
   expect_no_error(
     nif <- new_nif() %>%
     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
-    add_observation(examplinib_sad, "pc", "RS2023")
+    add_observation(examplinib_sad, "pc", "RS2023", silent = TRUE)
   )
   expect_equal(analytes(nif), "RS2023")
 })
@@ -470,7 +471,7 @@ test_that("add_administration, add_observation", {
 
 test_that("nif_auto works", {
   expect_no_error(
-    nif <- nif_auto(examplinib_poc)
+    nif <- nif_auto(examplinib_poc, silent = TRUE)
   )
   expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
 })

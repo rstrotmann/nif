@@ -1,18 +1,18 @@
 
 
 
-compare_ex_ec <- function(sdtm) {
-  if(!all(c("ex", "ec") %in% names(sdtm$domains)))
-    stop("EX and EC not both found in the sdtm object!")
-  ec <- domain(sdtm, "ec") %>%
-    assertr::verify(has_all_names("USUBJID", "ECTRT", "ECSTDTC", "ECENDTC")) %>%
-    filter(ECMOOD == "PERFORMED", !is.na(ECDOSE)) %>%
-    select(USUBJID, TRT = ECTRT, STDTC = ECSTDTC, ENDY = ECENDTC, DOSE = ECDOSE)
-  ex <- domain(sdtm, "ex") %>%
-    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-    select(USUBJID, TRT = EXTRT, STDTC = EXSTDTC, ENDY = EXENDTC, DOSE = EXDOSE)
-
-}
+# compare_ex_ec <- function(sdtm) {
+#   if(!all(c("ex", "ec") %in% names(sdtm$domains)))
+#     stop("EX and EC not both found in the sdtm object!")
+#   ec <- domain(sdtm, "ec") %>%
+#     assertr::verify(has_all_names("USUBJID", "ECTRT", "ECSTDTC", "ECENDTC")) %>%
+#     filter(ECMOOD == "PERFORMED", !is.na(ECDOSE)) %>%
+#     select(USUBJID, TRT = ECTRT, STDTC = ECSTDTC, ENDY = ECENDTC, DOSE = ECDOSE)
+#   ex <- domain(sdtm, "ex") %>%
+#     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+#     select(USUBJID, TRT = EXTRT, STDTC = EXSTDTC, ENDY = EXENDTC, DOSE = EXDOSE)
+#
+# }
 
 
 
@@ -43,7 +43,7 @@ sdtm_missing_times <- function(sdtm, fields) {
   data.frame(field = fields,
              missing = as.numeric(lapply(fields, n_missing_time)),
              total = as.numeric(lapply(fields, n_total))) %>%
-    mutate(percent_missing = round(missing/total*100, 1))
+    mutate(percent_missing = round(.data$missing/.data$total*100, 1))
 }
 
 

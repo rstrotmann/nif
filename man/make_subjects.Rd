@@ -7,10 +7,9 @@
 make_subjects(
   dm,
   vs,
-  silent = FALSE,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
-  cleanup = TRUE,
-  keep = ""
+  keep = "",
+  silent = FALSE
 )
 }
 \arguments{
@@ -18,13 +17,11 @@ make_subjects(
 
 \item{vs}{The VS domain as data table.}
 
-\item{silent}{No messages as logical.}
-
 \item{subject_filter}{The filtering to apply to the DM domain.}
 
-\item{cleanup}{Keep only required fields, as logical.}
-
 \item{keep}{Columns to keep, as character.}
+
+\item{silent}{No messages as logical.}
 }
 \value{
 A data table.

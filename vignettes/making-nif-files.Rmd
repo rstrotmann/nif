@@ -8,6 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+library(knitr)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -22,7 +24,6 @@ This vignette makes use of the following packages:
 
 ```{r setup, message = FALSE, warning = FALSE}
 library(dplyr)
-library(knitr)
 library(nif)
 ```
 

@@ -395,10 +395,6 @@ safe_min <- function(x, ...) {
 #' @export
 #' @keywords internal
 pos_diff <- function(a, b) {
-  # temp <- a - b
-  # temp[temp < 0] <- a
-  # return(temp)
-
   data.frame(
     a = a,
     b = b

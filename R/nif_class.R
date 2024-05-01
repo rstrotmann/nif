@@ -16,7 +16,6 @@ new_nif <- function(obj = NULL, ...) {
       order_nif_columns()
   } else {
     if (class(obj)[1] == "sdtm") {
-      # temp <- make_nif(obj)
       temp <- nif_auto(obj, ...)
     } else {
       temp <- as.data.frame(obj)

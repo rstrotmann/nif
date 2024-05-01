@@ -4,28 +4,19 @@
 \alias{nif_auto}
 \title{Automatically generate a nif object with pharmacokinetic observations}
 \usage{
-nif_auto(
-  sdtm,
-  silent = TRUE,
-  bl_creat = TRUE,
-  bl_odwg = TRUE,
-  cleanup = TRUE,
-  keep = ""
-)
+nif_auto(sdtm, bl_creat = TRUE, bl_odwg = TRUE, keep = "", silent = TRUE)
 }
 \arguments{
 \item{sdtm}{The source SDTM object.}
-
-\item{silent}{Suppress messages.}
 
 \item{bl_creat}{Include baseline creatinine, creatinine clearance and renal
 function class fields.}
 
 \item{bl_odwg}{Include baseline ODWG hepatic function class.}
 
-\item{cleanup}{Delete non-essential fields.}
-
 \item{keep}{Columns to keep, as character.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 A nif object.
