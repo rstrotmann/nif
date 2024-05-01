@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{normalize_nif}
 \alias{normalize_nif}
-\title{Order nif object, index and fill missing fields}
+\title{Normalize nif object}
 \usage{
 normalize_nif(obj, cleanup = TRUE, keep = NULL)
 }
@@ -17,7 +17,8 @@ normalize_nif(obj, cleanup = TRUE, keep = NULL)
 A nif object.
 }
 \description{
-Order nif object, index and fill missing fields
+Order nif object, index and fill missing fields, and reduce to essential
+columns.
 }
 \examples{
 normalize_nif(examplinib_sad_nif)

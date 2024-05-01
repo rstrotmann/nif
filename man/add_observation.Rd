@@ -61,7 +61,7 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_join()ed into the observation data frame
 to provide the NTIME field.}
 
-\item{keep}{Columns to keep after cleanup, as character.}
+\item{keep}{Columns to keep, as character.}
 
 \item{silent}{Suppress messages as logical.}
 }
@@ -69,13 +69,20 @@ to provide the NTIME field.}
 A nif object.
 }
 \description{
-Observations can be pharmacokinetic observations from the PC domain, or any
-other class of observation from any other SDTM domain. The 'testcd' specifies
-the value of the respective 'xxTESTCD' field (depending on the domain, e.g.,
-the 'PCTESTCD' or 'VSTESTCD' fields), to define the observation. Observations
+Observations can be pharmacokinetic observations (i.e., from the PC domain),
+or any other class of observation from any other SDTM domain. The 'testcd'
+specifies the value of the respective \strong{TESTCD} field (e.g., 'PCTESTCD',
+'VSTESTCD' or 'LBTESTCD') that defines the observation. Observation events
 can be attached to an administered drug by specifying the 'parent' field.
 This is required for, e.g., the time-after-dose ('TAD') and
 time-after-first-dose ('TAFD') time calculation.
+}
+\details{
+Observations can be further specified with the 'observation_filter' term. The
+filter term can refer to any field of the respective SDTM domain.
+
+A PK/PD model compartment can be specified with 'cmt' or will be
+automatically assigned if \code{cmt = NULL}.
 }
 \examples{
 add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",

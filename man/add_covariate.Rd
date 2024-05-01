@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_covariate}
 \alias{add_covariate}
-\title{Attach covariate column}
+\title{Attach time-varying covariate}
 \usage{
 add_covariate(
   nif,

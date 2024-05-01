@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_administration}
 \alias{add_administration}
-\title{Append drug administration events}
+\title{Append administration events}
 \usage{
 add_administration(
   nif,

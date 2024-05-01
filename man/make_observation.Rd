@@ -58,7 +58,7 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_join()ed into the observation data frame
 to provide the NTIME field.}
 
-\item{keep}{Columns to keep after cleanup, as character.}
+\item{keep}{Columns to keep, as character.}
 
 \item{silent}{Suppress messages as logical.}
 }

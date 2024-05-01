@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{index_nif}
 \alias{index_nif}
-\title{This function orders a NIF object and adds a REF field}
+\title{Sort nif object and add REF field}
 \usage{
 index_nif(nif)
 }

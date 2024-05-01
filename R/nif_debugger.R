@@ -39,17 +39,18 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
     filter(.data$USUBJID %in% usubjid) %>%
     mutate(admin_REF = case_when(.data$EVID==1 ~ .data$REF)) %>%
     group_by(.data$ID, .data$PARENT) %>%
-    fill(.data$admin_REF, .direction = "down") %>%
+    fill(admin_REF, .direction = "down") %>%
     ungroup() %>%
     left_join(sdtm_data$analyte_mapping, by=c("ANALYTE"="PCTESTCD")) %>%
     filter(!(is.na(.data$DV) & EVID == 0))
 
-  doses <- nif %>%
-    dplyr::distinct(.data$DOSE) %>%
-    dplyr::arrange(.data$DOSE) %>%
-    dplyr::pull(.data$DOSE) %>%
-    as.character()
+  # doses <- nif %>%
+  #   dplyr::distinct(.data$DOSE) %>%
+  #   dplyr::arrange(.data$DOSE) %>%
+  #   dplyr::pull(.data$DOSE) %>%
+  #   as.character()
 
+  doses <- as.character(sort(unique(nif$DOSE)))
 
   max_time <- function(dose) {
     max(nif[which(nif$DOSE==dose), "TAD"], na.rm=T)
@@ -99,13 +100,13 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
 
     selected_ref <- shiny::reactiveVal()
 
-    observeEvent(
-      input$dose, {
-        temp <- max_time(as.numeric(input$dose))
-        updateSliderInput(session, "min_x", max = temp, value = 0)
-        updateSliderInput(session, "max_x", max = temp, value = temp)
-      }
-    )
+    # observeEvent(
+    #   input$dose, {
+    #     temp <- max_time(as.numeric(input$dose))
+    #     updateSliderInput(session, "min_x", max = temp, value = 0)
+    #     updateSliderInput(session, "max_x", max = temp, value = temp)
+    #   }
+    # )
 
     output$plot_nif <- shiny::renderPlot({
       nif %>%
@@ -121,40 +122,40 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
         height = 350)
 
     ## NIF table output
-    output$nif_table <- DT::renderDT(
-    # output$nif_table <- DT::renderDataTable(
-      nif %>%
-        mutate_at(c("TIME", "TAD", "LNDV"), round, 2) %>%
-        filter(
-          REF %in% selected_ref() |
-          REF %in% (nif %>% filter(REF %in% selected_ref()) %>% pull(admin_REF))),
-      options = list(dom = '')
-    )
+    # output$nif_table <- DT::renderDT(
+    # # output$nif_table <- DT::renderDataTable(
+    #   nif %>%
+    #     mutate_at(c("TIME", "TAD", "LNDV"), round, 2) %>%
+    #     filter(
+    #       REF %in% selected_ref() |
+    #       REF %in% (nif %>% filter(REF %in% selected_ref()) %>% pull(admin_REF))),
+    #   options = list(dom = '')
+    # )
 
     ## EX table output
-    output$ex_table <- DT::renderDT(
-    # output$ex_table <- DT::renderDataTable(
-        sdtm_data$ex %>%
-          filter(.data$USUBJID %in% (id() %>% pull(.data$USUBJID))) %>%
-          filter(.data$EXSEQ %in% (id() %>% pull(.data$EXSEQ))) %>%
-          filter(.data$EXTRT %in% (id() %>% pull(.data$EXTRT))),
-        options = list(dom = "")
-    )
+    # output$ex_table <- DT::renderDT(
+    # # output$ex_table <- DT::renderDataTable(
+    #     sdtm_data$ex %>%
+    #       filter(.data$USUBJID %in% (id() %>% pull(.data$USUBJID))) %>%
+    #       filter(.data$EXSEQ %in% (id() %>% pull(.data$EXSEQ))) %>%
+    #       filter(.data$EXTRT %in% (id() %>% pull(.data$EXTRT))),
+    #     options = list(dom = "")
+    # )
 
     ## PC table output
-    output$pc_table <- DT::renderDT(
-    # output$pc_table <- DT::renderDataTable(
-        sdtm_data$pc %>%
-          filter(PCTESTCD %in% analyte) %>%
-          filter(PCREFID %in% (id() %>%pull(PCREFID))),
-        options = list(dom = '')
-    )
+    # output$pc_table <- DT::renderDT(
+    # # output$pc_table <- DT::renderDataTable(
+    #     sdtm_data$pc %>%
+    #       filter(PCTESTCD %in% analyte) %>%
+    #       filter(PCREFID %in% (id() %>%pull(PCREFID))),
+    #     options = list(dom = '')
+    # )
 
-    shiny::observeEvent(input$plot_nif_click, {
-      temp <- nearPoints(nif, input$plot_nif_click, addDist=T)
-      id(as.data.frame(temp))
-      selected_ref(temp$REF)
-    })
+    # shiny::observeEvent(input$plot_nif_click, {
+    #   temp <- nearPoints(nif, input$plot_nif_click, addDist=T)
+    #   id(as.data.frame(temp))
+    #   selected_ref(temp$REF)
+    # })
   }
 
   shiny::shinyApp(nif_debugger.ui, nif_debugger.server)

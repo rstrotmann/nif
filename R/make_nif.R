@@ -546,7 +546,7 @@ make_subjects <- function(dm, vs,
 #' @param testcd The observation variable, as character.
 #' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
 #'   name followed by 'TESTCD', if NULL.
-#' @param keep Columns to keep after cleanup, as character.
+#' @param keep Columns to keep, as character.
 #' @param factor Multiplier for the DV field, as numeric.
 #'
 #' @return A data frame.
@@ -841,7 +841,7 @@ make_time <- function(obj) {
 }
 
 
-#' This function orders a NIF object and adds a REF field
+#' Sort nif object and add REF field
 #'
 #' The input data format expected by NONMEM requires all rows ordered by ID and
 #' TIME, and indexed sequentially on a subject level with a REF field.
@@ -863,7 +863,10 @@ index_nif <- function(nif) {
 }
 
 
-#' Order nif object, index and fill missing fields
+#' Normalize nif object
+#'
+#' Order nif object, index and fill missing fields, and reduce to essential
+#' columns.
 #'
 #' @param obj A nif object.
 #' @param keep Fields to explicitly keep, as character.
@@ -887,7 +890,7 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
 }
 
 
-#' Append drug administration events
+#' Append administration events
 #'
 #' Drug administration data is taken from the EX domain of the sdtm object. The
 #' 'extrt' field specifies the drug name as represented in 'EX', however, a
@@ -914,13 +917,19 @@ add_administration <- function(nif, sdtm, extrt, analyte = NA, cmt = 1,
 
 #' Append observation events
 #'
-#' Observations can be pharmacokinetic observations from the PC domain, or any
-#' other class of observation from any other SDTM domain. The 'testcd' specifies
-#' the value of the respective 'xxTESTCD' field (depending on the domain, e.g.,
-#' the 'PCTESTCD' or 'VSTESTCD' fields), to define the observation. Observations
+#' Observations can be pharmacokinetic observations (i.e., from the PC domain),
+#' or any other class of observation from any other SDTM domain. The 'testcd'
+#' specifies the value of the respective __TESTCD__ field (e.g., 'PCTESTCD',
+#' 'VSTESTCD' or 'LBTESTCD') that defines the observation. Observation events
 #' can be attached to an administered drug by specifying the 'parent' field.
 #' This is required for, e.g., the time-after-dose ('TAD') and
 #' time-after-first-dose ('TAFD') time calculation.
+#'
+#' Observations can be further specified with the 'observation_filter' term. The
+#' filter term can refer to any field of the respective SDTM domain.
+#'
+#' A PK/PD model compartment can be specified with 'cmt' or will be
+#' automatically assigned if `cmt = NULL`.
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
@@ -1011,13 +1020,13 @@ add_observation <- function(
 }
 
 
-#' Attach baseline covariate column
+#' Attach baseline covariate
 #'
-#' Baseline covariates, specified by the 'testcd' field, can come from any SDTM
-#' domain. By default, the baseline value is identified by xxBLFL having a value
-#' of "Y" in the respective SDTM domain. Alternatively, a custom observation
-#' filter can be defined. The name of the baseline covariate is the 'testcd',
-#' prefixed with 'BL_'.
+#' Baseline covariates, as specified by the 'testcd' field, can come from any
+#' SDTM domain. By default, the baseline value is identified by `xxBLFL == "Y"`
+#' in the respective SDTM domain. Alternatively, a custom observation filter can
+#' be defined. The name of the baseline covariate is the 'testcd', prefixed with
+#' 'BL_'.
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.
@@ -1072,7 +1081,7 @@ add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
 
 
 
-#' Attach covariate column
+#' Attach time-varying covariate
 #'
 #' A time-varying covariate is added as a new field with daily time granularity
 #' and carried forward for missing entries. The name of the covariate can be

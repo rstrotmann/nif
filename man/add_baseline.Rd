@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{add_baseline}
 \alias{add_baseline}
-\title{Attach baseline covariate column}
+\title{Attach baseline covariate}
 \usage{
 add_baseline(
   nif,
@@ -49,11 +49,11 @@ values. Defaults to \code{mean}.}
 A nif object.
 }
 \description{
-Baseline covariates, specified by the 'testcd' field, can come from any SDTM
-domain. By default, the baseline value is identified by xxBLFL having a value
-of "Y" in the respective SDTM domain. Alternatively, a custom observation
-filter can be defined. The name of the baseline covariate is the 'testcd',
-prefixed with 'BL_'.
+Baseline covariates, as specified by the 'testcd' field, can come from any
+SDTM domain. By default, the baseline value is identified by \code{xxBLFL == "Y"}
+in the respective SDTM domain. Alternatively, a custom observation filter can
+be defined. The name of the baseline covariate is the 'testcd', prefixed with
+'BL_'.
 }
 \examples{
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
