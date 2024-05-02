@@ -863,33 +863,6 @@ index_nif <- function(nif) {
 }
 
 
-#' Normalize nif object
-#'
-#' Order nif object, index and fill missing fields, and reduce to essential
-#' columns.
-#'
-#' @param obj A nif object.
-#' @param keep Fields to explicitly keep, as character.
-#' @param cleanup Remove non-essential fields, as logical.
-#'
-#' @return A nif object.
-#' @export
-#'
-#' @examples
-#' normalize_nif(examplinib_sad_nif)
-normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
-  obj %>%
-    make_time() %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
-    index_nif() %>%
-    group_by(.data$ID, .data$PARENT) %>%
-    fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%
-    ungroup() %>%
-    {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
-    new_nif()
-}
-
-
 #' Append administration events
 #'
 #' Drug administration data is taken from the EX domain of the sdtm object. The
@@ -1208,6 +1181,34 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 }
 
 
+#' Normalize nif object
+#'
+#' Order nif object, index and fill missing fields, and reduce to essential
+#' columns.
+#'
+#' @param obj A nif object.
+#' @param keep Fields to explicitly keep, as character.
+#' @param cleanup Remove non-essential fields, as logical.
+#'
+#' @return A nif object.
+#' @export
+#'
+#' @examples
+#' normalize_nif(examplinib_sad_nif)
+normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
+  obj %>%
+    make_time() %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    index_nif() %>%
+    group_by(.data$ID, .data$PARENT) %>%
+    fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%
+    ungroup() %>%
+    # {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
+    nif_cleanup(keep = keep) %>%
+    new_nif()
+}
+
+
 #' Remove non-essential fields
 #'
 #' @param nif A nif object.
@@ -1216,15 +1217,24 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @return A nif object
 #' @export
 nif_cleanup <- function(nif, keep = NULL) {
+  selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
+                       "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
+                       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+                       "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+                       "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
+                       "TREATMENT", keep))
+  selector <- selector[selector %in% names(nif)]
   nif %>%
-    select(any_of(
-      unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
-               "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD",
-               "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
-               "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
-               "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
-               "TREATMENT", keep))
-    ))
+    select(all_of(selector))
+  # nif %>%
+  #   select(any_of(
+  #     unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
+  #              "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
+  #              "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+  #              "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+  #              "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
+  #              "TREATMENT", keep))
+  #   ))
 }
 
 

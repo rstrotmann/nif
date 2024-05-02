@@ -32,6 +32,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
   }
 
   nif <- nif_data %>%
+    ensure_tad() %>%
     index_nif() %>%
     as.data.frame() %>%
     select(-any_of(c("EXTRT"))) %>%
@@ -43,6 +44,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
     ungroup() %>%
     left_join(sdtm_data$analyte_mapping, by=c("ANALYTE"="PCTESTCD")) %>%
     filter(!(is.na(.data$DV) & EVID == 0))
+
 
   # doses <- nif %>%
   #   dplyr::distinct(.data$DOSE) %>%
@@ -95,8 +97,8 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
   ## server
   nif_debugger.server <- function(input, output, session) {
     id <- shiny::reactiveVal(nif %>%
-                        filter(EVID==0) %>%
-                        filter(row_number()==1))
+                        filter(EVID == 0) %>%
+                        filter(row_number() == 1))
 
     selected_ref <- shiny::reactiveVal()
 
@@ -112,8 +114,9 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
       nif %>%
         filter(DOSE == input$dose) %>%
         filter(EVID == 0) %>%
-        filter(TAD >= input$min_x, TAD <= input$max_x) %>%
-        ggplot(aes(x=TAD, y=DV, color=!(REF %in% (id() %>% pull(REF))))) +
+        # filter(TAD >= input$min_x, TAD <= input$max_x) %>%
+        # ggplot(aes(x = TAD, y = DV, color=!(REF %in% (id() %>% pull(REF))))) +
+        ggplot(aes(x = TIME, y = DV, color=!(REF %in% (id() %>% pull(REF))))) +
         geom_point(size=4, alpha=.6) +
         scale_y_log10() +
         theme_bw() +

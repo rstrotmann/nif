@@ -24,6 +24,7 @@ new_nif <- function(obj = NULL, ...) {
     comment(temp) <- paste0("created with nif ", packageVersion("nif"))
     order_nif_columns(temp)
   }
+  # nif_cleanup(temp)
 }
 
 
@@ -37,10 +38,20 @@ new_nif <- function(obj = NULL, ...) {
 #' @examples
 #' order_nif_columns(examplinib_poc_nif)
 order_nif_columns <- function(obj) {
+  # obj %>%
+  #   relocate(any_of(c("REF", "ID", "USUBJID", "STUDYID", "DTC", "TIME", "TAFD",
+  #     "NTIME", "IMPUTATION", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
+  #     "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
+
+  selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
+    "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
+    "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+    "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+    "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
+    "TREATMENT"))
+
   obj %>%
-    relocate(any_of(c("REF", "ID", "USUBJID", "STUDYID", "DTC", "TIME", "TAFD",
-      "NTIME", "IMPUTATION", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
-      "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
+    relocate(any_of(selector))
 }
 
 
@@ -1083,11 +1094,11 @@ add_trtdy <- function(obj) {
 add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
-      as.data.frame() %>%
+      # as.data.frame() %>%
       mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
         molar = TRUE
-      )) %>%
-      new_nif()
+      )) #%>%
+      # new_nif()
   } else {
     obj %>%
       mutate(BL_CRCL = as.numeric(NA))
