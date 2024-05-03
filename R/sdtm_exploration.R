@@ -64,11 +64,16 @@ check_date_format <- function(obj, verbose = TRUE) {
 #'
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
-#' @param silent Boolean to indicate whether message output is produced.
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
+#'
 #' @return The filtered SDTM domain as data frame.
 #' @keywords internal
 #' @export
-filter_correct_date_format <- function(obj, verbose = TRUE, silent = FALSE) {
+filter_correct_date_format <- function(obj, verbose = TRUE,
+                                       silent = deprecated()
+                                       ) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
     filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == "")))
@@ -78,7 +83,7 @@ filter_correct_date_format <- function(obj, verbose = TRUE, silent = FALSE) {
       domain, ": ", nrow(temp),
       " rows containing DTC fields with incomplete date format ignored!"
     )
-    if (verbose && !silent) {
+    if (verbose && !get("silent", .nif_env)) {
       out <- paste0(out, "\n")
     }
     message(out)

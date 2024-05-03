@@ -5,11 +5,22 @@
 #' @param ... Further message components.
 #' @return Nothing.
 #' @keywords internal
-conditional_message <- function(msg, ..., silent = FALSE) {
-  parameters <- c(as.list(environment()), list(...))
-  parameters <- lapply(parameters, as.character)
+# conditional_message <- function(msg, ...) {
+#   parameters <- c(as.list(environment()), list(...))
+#   parameters <- lapply(parameters, as.character)
+#   silent <- get("silent", .nif_env)
+#   if (silent == FALSE) {
+#     message(paste(as.character(parameters[names(parameters) != "silent"])))
+#   }
+# }
+conditional_message <- function(...) {
+  # parameters <- c(as.list(environment()), list(...))
+  # parameters <- list(...)
+  args <- lapply(list(...), as.character)
+  silent <- get("silent", .nif_env)
   if (silent == FALSE) {
-    message(paste(as.character(parameters[names(parameters) != "silent"])))
+    # message(paste(as.character(parameters[names(parameters) != "silent"])))
+    message(paste(args, collapse = ""))
   }
 }
 

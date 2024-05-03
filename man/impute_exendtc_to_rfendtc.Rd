@@ -4,14 +4,12 @@
 \alias{impute_exendtc_to_rfendtc}
 \title{Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent}
 \usage{
-impute_exendtc_to_rfendtc(ex, dm, silent = FALSE)
+impute_exendtc_to_rfendtc(ex, dm)
 }
 \arguments{
 \item{ex}{The EX domain as data frame.}
 
 \item{dm}{The DM domain as data frame.}
-
-\item{silent}{Switch to disable message output.}
 }
 \value{
 The updated EX domain as data frame.

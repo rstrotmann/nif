@@ -4,12 +4,10 @@
 \alias{guess_pcspec}
 \title{Guess the most likely PCSPEC}
 \usage{
-guess_pcspec(pc, silent = TRUE)
+guess_pcspec(pc)
 }
 \arguments{
 \item{pc}{A data frame.}
-
-\item{silent}{Switch to disable message output.}
 }
 \value{
 The imputed spec as character.

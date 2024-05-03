@@ -68,8 +68,7 @@ impute_missing_exendtc_time <- function(ex, silent = FALSE) {
       temp %>%
         filter(impute_exendtc_time == TRUE) %>%
         select(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-        df_to_string(), "\n",
-      silent = silent
+        df_to_string(), "\n"
     )
   }
   temp %>%
@@ -134,8 +133,7 @@ filter_EXSTDTC <- function(ex, dm, silent = FALSE) {
       "removed from the data set:\n",
       df_to_string(select(temp, .data$USUBJID, .data$EXTRT, .data$EXSEQ,
                           .data$EXSTDTC, .data$EXENDTC,
-                          .data$RFENDTC_date), indent = "  ")),
-      silent = silent)
+                          .data$RFENDTC_date), indent = "  ")))
   }
 
   out %>%
@@ -177,8 +175,7 @@ impute_admin_dtc_to_pcrftdtc <- function(admin, obs, silent = FALSE) {
     nrow()
 
   conditional_message(
-    paste0("Time found in PCRFTDTC used in ", n_cases, " cases."),
-    silent = silent || (n_cases == 0)
+    paste0("Time found in PCRFTDTC used in ", n_cases, " cases.")
   )
 
   temp %>%
@@ -500,7 +497,7 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
     cmt <- max(obj$CMT) + 1
     conditional_message(paste0(
       "Compartment for ", DV_field,
-      " was not specified and has been set to ", cmt), silent = silent)
+      " was not specified and has been set to ", cmt))
   }
   obs <- source %>%
     assertr::verify(has_all_names("USUBJID", DTC_field, DV_field)) %>%
@@ -624,7 +621,7 @@ make_nif <- function(
     lubrify_dates()
 
   # define sample specimen
-  if (length(spec) == 0) {spec <- guess_pcspec(pc, silent = silent)}
+  if (length(spec) == 0) {spec <- guess_pcspec(pc)}
 
   # define compartment mapping
   if(is.null(analyte_cmt_mapping)) {
@@ -648,7 +645,7 @@ make_nif <- function(
     left_join(cmt_mapping, by = "ANALYTE")
 
   # make baseline covariates
-  bl_cov <- baseline_covariates(vs, silent = silent)
+  bl_cov <- baseline_covariates(vs)
 
   # make observations from PC
   obs <- make_obs(pc,
@@ -668,23 +665,21 @@ make_nif <- function(
     mutate(IMPUTATION = "") %>%
     impute_missing_exendtc_time(silent = silent) %>%
     exclude_exstdtc_after_rfendtc(dm, silent = silent) %>%
-    impute_exendtc_to_rfendtc(dm, silent = silent) %>%
-    impute_missing_exendtc(silent = silent)
+    impute_exendtc_to_rfendtc(dm) %>%
+    impute_missing_exendtc()
 
   # define cut-off date
   if (truncate_to_last_observation == TRUE) {
     cut_off_date <- last_obs_dtc(obs)
     conditional_message("Data cut-off was set to last observation time, ",
-                        cut_off_date, "\n",
-                        silent = silent
-    )
+                        cut_off_date, "\n")
   } else {
     cut_off_date <- last_ex_dtc(ex)
   }
 
   # EX: apply cut-off date
   ex <- ex %>%
-    impute_exendtc_to_cutoff(cut_off_date, silent = silent) %>%
+    impute_exendtc_to_cutoff(cut_off_date) %>%
     filter(.data$EXENDTC >= .data$EXSTDTC)
 
   # identify subjects with observations by analyte
@@ -701,7 +696,7 @@ make_nif <- function(
   # change administration time to the time included in PCRFTDTC if available
   if ("PCRFTDTC" %in% names(pc)) {
     admin <- admin %>%
-      impute_admin_dtc_to_pcrftdtc(obs, silent = silent)
+      impute_admin_dtc_to_pcrftdtc(obs)
   }
 
   # truncate to last individual observation
@@ -733,9 +728,7 @@ make_nif <- function(
 
     conditional_message("The following subjects had no observations for ",
                         "the respective analyte and were removed from the data set:\n",
-                        out, "\n",
-                        silent = silent
-    )
+                        out, "\n")
   }
   # and filter out excluded administrations
   admin <- admin %>%
@@ -964,9 +957,7 @@ make_obs <- function(pc,
     n <- sum(obs$PCSTAT == "NOT DONE")
     if (n > 0) {
       conditional_message(n, " samples are marked as 'not done' and",
-                          " were removed fromthe data set.", "\n",
-                          silent = silent
-      )
+                          " were removed fromthe data set.", "\n")
     }
     obs <- obs %>%
       dplyr::filter(.data$PCSTAT != "NOT DONE")
@@ -1042,8 +1033,7 @@ add_tv_lab <- function(obj, lb, lbtestcd, lbspec = NULL, silent = FALSE) {
 
   if(!all(temp)) {
     conditional_message(
-      paste0("The following was not found in lb: ", lbtestcd[!temp]),
-      silent=silent)
+      paste0("The following was not found in lb: ", lbtestcd[!temp]))
     if(all(temp == FALSE)) {
       return(obj)
     }
@@ -1093,8 +1083,7 @@ add_tv_vs <- function(obj, vs, vstestcd, duplicate_function = mean,
 
   if(!all(temp)) {
     conditional_message(
-      paste0("The following was not found in vs: ", vstestcd[!temp]),
-      silent=silent)
+      paste0("The following was not found in vs: ", vstestcd[!temp]))
     if(all(temp == FALSE)) {
       return(obj)
     }

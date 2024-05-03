@@ -4,12 +4,10 @@
 \alias{baseline_covariates}
 \title{Extract baseline vital sign covariates from VS}
 \usage{
-baseline_covariates(vs, silent = FALSE)
+baseline_covariates(vs)
 }
 \arguments{
 \item{vs}{The VS domain as data frame.}
-
-\item{silent}{Switch to disable message output.}
 }
 \value{
 Baseline VS data as wide data frame.

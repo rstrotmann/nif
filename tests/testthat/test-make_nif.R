@@ -164,7 +164,7 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
 
   ex %>%
     mutate(IMPUTATION = "") %>%
-    impute_exendtc_to_rfendtc(dm, silent = TRUE) %>%
+    impute_exendtc_to_rfendtc(dm) %>%
     summarize(sum=sum(is.na(EXENDTC))) %>%
     as.numeric() %>%
     expect_equal(2)
@@ -206,14 +206,14 @@ test_that("impute_missing_exendtc", {
   ) %>% lubrify_dates() %>%
     mutate(IMPUTATION = "")
 
-  temp <- impute_missing_exendtc(ex, silent = TRUE)
+  temp <- impute_missing_exendtc(ex)
   expect_equal(temp$IMPUTATION != "", temp$imputation_expected)
 })
 
 
 test_that("make_subjects works", {
   sdtm <- examplinib_poc
-  temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"), silent = TRUE)
+  temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
   expect_equal(nrow(temp), 80)
 })
 
@@ -393,7 +393,7 @@ make_test_sdtm <- function() {
 test_that("baseline covariates", {
   vs <- make_test_sdtm()$domains$vs
   expect_no_error(
-    test <- baseline_covariates(vs, silent = T)
+    test <- baseline_covariates(vs)
   )
   expect_equal(names(vs), c("USUBJID", "DOMAIN", "VSTESTCD", "VSBLFL", "VSSTRESN"))
   expect_equal(dim(test), c(4, 4))
@@ -404,7 +404,7 @@ test_that("baseline covariates", {
 test_that("make subjects", {
   sdtm <- make_test_sdtm()$domains
   expect_no_error(
-    test <- make_subjects(sdtm$dm, sdtm$vs, silent = TRUE)
+    test <- make_subjects(sdtm$dm, sdtm$vs)
   )
   expect_equal(dim(test), c(4, 8))
 })
@@ -471,7 +471,7 @@ test_that("add_administration, add_observation", {
 
 test_that("nif_auto works", {
   expect_no_error(
-    nif <- nif_auto(examplinib_poc, silent = TRUE)
+    nif <- nif_auto(examplinib_poc)
   )
   expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
 })

@@ -5,14 +5,16 @@
 \title{Filter out any rows containing DTC rows with incomplete data format as per
 ISO 8601}
 \usage{
-filter_correct_date_format(obj, verbose = TRUE, silent = FALSE)
+filter_correct_date_format(obj, verbose = TRUE, silent = deprecated())
 }
 \arguments{
 \item{obj}{The SDTM domain as data frame.}
 
 \item{verbose}{Boolean to indicate whether to include details.}
 
-\item{silent}{Boolean to indicate whether message output is produced.}
+\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
+compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
+suppress messages.}
 }
 \value{
 The filtered SDTM domain as data frame.

@@ -4,14 +4,12 @@
 \alias{filter_EXSTDTC_after_EXENDTC}
 \title{Remove administrations with EXSTDTC after EXENDTC}
 \usage{
-filter_EXSTDTC_after_EXENDTC(ex, dm, silent = FALSE)
+filter_EXSTDTC_after_EXENDTC(ex, dm)
 }
 \arguments{
 \item{ex}{The ex domain as data frame.}
 
 \item{dm}{The dm domain as data frame.}
-
-\item{silent}{Suppress messages as logical.}
 }
 \value{
 A data frame.

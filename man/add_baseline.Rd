@@ -15,7 +15,7 @@ add_baseline(
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   baseline_filter = NULL,
   summary_function = mean,
-  silent = FALSE
+  silent = deprecated()
 )
 }
 \arguments{
@@ -43,7 +43,9 @@ code).}
 \item{summary_function}{The summary function to summarize multiple baseline
 values. Defaults to \code{mean}.}
 
-\item{silent}{Suppress messages, as logical.}
+\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
+compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
+suppress messages.}
 }
 \value{
 A nif object.

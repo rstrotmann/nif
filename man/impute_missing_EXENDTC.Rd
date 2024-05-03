@@ -4,12 +4,10 @@
 \alias{impute_missing_exendtc}
 \title{Impute missing EXENDTC to the day before the next EXSTDTC.}
 \usage{
-impute_missing_exendtc(ex, silent = FALSE)
+impute_missing_exendtc(ex)
 }
 \arguments{
 \item{ex}{The updated EX domain as data frame.}
-
-\item{silent}{Switch to disable message output.}
 }
 \value{
 The updated EX domain as data frame.
@@ -31,7 +29,7 @@ global cut off date using \code{\link[=impute_exendtc_to_cutoff]{impute_exendtc_
 }
 \details{
 As this function conducts rather aggressive imputations, the message output
-is not optional, i.e., cannot be suppressed using the 'silent' flag, but is
-issued in all cases.
+is not optional, i.e., cannot be suppressed using the blobal 'silent' option,
+but is issued in all cases.
 }
 \keyword{internal}

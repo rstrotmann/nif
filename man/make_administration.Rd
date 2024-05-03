@@ -11,8 +11,7 @@ make_administration(
   cmt = 1,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
-  keep = "",
-  silent = FALSE
+  keep = ""
 )
 }
 \arguments{
@@ -29,8 +28,6 @@ make_administration(
 \item{cut_off_date}{The data cut-off date as Posix date-time.}
 
 \item{keep}{Columns to keep after cleanup, as character.}
-
-\item{silent}{Suppress messages, as logical.}
 }
 \value{
 A data frame.
@@ -69,7 +66,7 @@ If in any further episode, EXENDTC is missing, it is replaced with the day
 before the subsequent administration episode start (EXSTDTC). It should be
 understood that this reflects a rather strong assumption, i.e., that the
 treatment was continued into the next administration episode. This imputation
-therefore issues a warning that cannot be suppressed with \code{silent = TRUE}.
+therefore issues a warning that cannot be suppressed.
 }
 
 \subsection{5. Expand administration episodes}{

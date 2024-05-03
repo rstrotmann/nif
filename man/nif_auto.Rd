@@ -4,7 +4,7 @@
 \alias{nif_auto}
 \title{Automatically generate a nif object with pharmacokinetic observations}
 \usage{
-nif_auto(sdtm, bl_creat = TRUE, bl_odwg = TRUE, keep = "", silent = TRUE)
+nif_auto(sdtm, bl_creat = TRUE, bl_odwg = TRUE, keep = "")
 }
 \arguments{
 \item{sdtm}{The source SDTM object.}
@@ -15,8 +15,6 @@ function class fields.}
 \item{bl_odwg}{Include baseline ODWG hepatic function class.}
 
 \item{keep}{Columns to keep, as character.}
-
-\item{silent}{Suppress messages.}
 }
 \value{
 A nif object.

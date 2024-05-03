@@ -4,12 +4,10 @@
 \alias{guess_lbspec}
 \title{Guess the most likely LBSPEC}
 \usage{
-guess_lbspec(lb, silent = TRUE)
+guess_lbspec(lb)
 }
 \arguments{
 \item{lb}{The LB SDTM domain as data frame.}
-
-\item{silent}{Switch to disable message output.}
 }
 \value{
 the imputed LBSPEC as character.

@@ -13,7 +13,8 @@ add_covariate(
   DTC_field = NULL,
   DV_field = NULL,
   TESTCD_field = NULL,
-  observation_filter = "TRUE"
+  observation_filter = "TRUE",
+  silent = deprecated()
 )
 }
 \arguments{
@@ -36,6 +37,10 @@ Defaults to the two-character domain name followed by 'DTC', if NULL.}
 xx the domain code), as character.}
 
 \item{observation_filter}{A filter term for the \code{domain}, as character.}
+
+\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
+compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
+suppress messages.}
 }
 \value{
 A nif object.

@@ -507,7 +507,9 @@ nif_spaghetti_plot <- function(obj,
 #' @param lines Show lines as logical.
 #' @param admin Show vertical lines for administrations, as logical.
 #' @param cfb Show change from baseline, as logical.
-#' @param silent Suppress messages as logical.
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
 #' @param mean Show a mean plot, as logical.
 #' @param title The plot title as character.
 #' @param caption The plot caption line as character.
@@ -542,10 +544,12 @@ nif_spaghetti_plot <- function(obj,
 plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                      group = NULL, min_time = NULL, max_time = NULL,
                      points = FALSE, lines = TRUE, admin = NULL, cfb = FALSE,
-                     summary_function = median, silent = TRUE, mean = FALSE,
+                     summary_function = median, mean = FALSE,
                      title = "", caption = "", integrate_predose = TRUE,
                      legend = TRUE, show_n = FALSE, shading = TRUE,
-                     watermark = "", ...) {
+                     watermark = "",
+                     silent = deprecated(),
+                     ...) {
   # Assert time field
   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
     stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
@@ -634,7 +638,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
              " and were excluded from plotting:\n",
       df_to_string(filter(temp, n_obs == 0, EVID == 0) %>%
                      distinct(ID, ANALYTE, DOSE),
-                   indent = "  ")), silent = silent)}
+                   indent = "  ")))}
   temp <- filter(temp, n_obs > 0 | EVID == 1)
 
   # remove trailing administrations
@@ -649,7 +653,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   # if(n_trailing > 0) {
   #   conditional_message(
   #     paste0("Trailing administrations in ", n_trailing,
-  #     " subjects were removed before plotting."), silent = silent)}
+  #     " subjects were removed before plotting."))}
   # temp <- temp %>%
   #   filter(TIME <= last_obs_time) %>%
   #   as.data.frame()
@@ -1417,8 +1421,8 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
 
   # suppressWarnings({
     p <- nif %>%
-      add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent, silent = TRUE) %>%
-      add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent, silent = TRUE) %>%
+      add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent) %>%
+      add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent) %>%
       as.data.frame() %>%
       filter(!is.na(DV)) %>%
       filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%

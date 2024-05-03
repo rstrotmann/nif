@@ -18,8 +18,7 @@ make_observation(
   DV_field = NULL,
   factor = 1,
   NTIME_lookup = NULL,
-  keep = NULL,
-  silent = FALSE
+  keep = NULL
 )
 }
 \arguments{
@@ -59,8 +58,6 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 to provide the NTIME field.}
 
 \item{keep}{Columns to keep, as character.}
-
-\item{silent}{Suppress messages as logical.}
 }
 \value{
 A data frame.

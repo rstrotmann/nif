@@ -7,7 +7,9 @@
 #' @param nominal_time A boolean to indicate whether nominal time rather than
 #'    actual time should be used for NCA.
 #' @param keep A vector of fields to keep in the output.
-#' @param silent No message output.
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
 #' @param average_duplicates Boolean to indicate whether duplicate entries
 #'   should be averaged.
 #' @param parent The parent compound to derive the administration information
@@ -21,12 +23,13 @@
 #' nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 #'
 nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
-                nominal_time = FALSE, silent = FALSE,
-                average_duplicates = TRUE) {
+                nominal_time = FALSE,
+                average_duplicates = TRUE,
+                silent = deprecated()) {
   # guess analyte if not defined
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
-    if (silent == FALSE) {
+    if (get("silent", .nif_env) == FALSE) {
       message(paste(
         "NCA: No analyte specified. Selected",
         current_analyte, "as the most likely."
@@ -93,7 +96,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
   dose_formula <- "DOSE~TIME|ID"
   if (!is.null(group)) {
     group_string <- paste(group, collapse = "+")
-    if (silent == FALSE) {
+    if(get("silent", .nif_env) == FALSE) {
       message(paste("NCA: Group by", group_string))
     }
     conc_formula <- paste0("DV~TIME|", group_string, "+ID")
@@ -299,7 +302,9 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' All zero values for the selected paramter are filtered out before analysis.
 #'
 #' @param nca PK parameters as data frame.
+#' @param group Grouping parameter as character.
 #' @param parameter The PK parameter as character.
+#'
 #' @return A list of ggplot2 objects.
 #' @importFrom stats lm predict.lm
 #' @export

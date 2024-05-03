@@ -18,7 +18,6 @@
   admin = NULL,
   cfb = FALSE,
   summary_function = median,
-  silent = TRUE,
   mean = FALSE,
   title = "",
   caption = "",
@@ -27,6 +26,7 @@
   show_n = FALSE,
   shading = TRUE,
   watermark = "",
+  silent = deprecated(),
   ...
 )
 }
@@ -59,8 +59,6 @@
 \item{summary_function}{The summarizing function to apply to multiple
 baseline values.}
 
-\item{silent}{Suppress messages as logical.}
-
 \item{mean}{Show a mean plot, as logical.}
 
 \item{title}{The plot title as character.}
@@ -78,6 +76,10 @@ implement grouping! \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/sta
 
 \item{watermark}{Show watermark as character or logical. If watermark = TRUE,
 a standard text will be shown.}
+
+\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
+compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
+suppress messages.}
 
 \item{...}{Further graphical parameters for \code{geom_point()}.}
 }

@@ -4,12 +4,12 @@
 \alias{conditional_message}
 \title{Issue message based on silent flag}
 \usage{
-conditional_message(msg, ..., silent = FALSE)
+conditional_message(...)
 }
 \arguments{
-\item{msg}{The message as character.}
-
 \item{...}{Further message components.}
+
+\item{msg}{The message as character.}
 
 \item{silent}{A Boolean.}
 }

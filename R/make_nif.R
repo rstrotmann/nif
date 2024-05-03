@@ -10,10 +10,9 @@
 #' administration time based on the RFENDTC, if provided in DM.
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
-#' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
 #' @keywords internal
-impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
+impute_exendtc_to_rfendtc <- function(ex, dm) {
   dm %>%
     verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
 
@@ -41,8 +40,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
                    .data$LAST_ADMIN == TRUE) %>%
           select(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")),
         indent = "  "
-      ), "\n",
-      silent = silent
+      ), "\n"
     )
 
     temp %>%
@@ -80,14 +78,13 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = FALSE) {
 #' global cut off date using [impute_exendtc_to_cutoff()].
 #'
 #' As this function conducts rather aggressive imputations, the message output
-#' is not optional, i.e., cannot be suppressed using the 'silent' flag, but is
-#' issued in all cases.
+#' is not optional, i.e., cannot be suppressed using the blobal 'silent' option,
+#' but is issued in all cases.
 #'
 #' @param ex The updated EX domain as data frame.
-#' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
 #' @keywords internal
-impute_missing_exendtc <- function(ex, silent = FALSE) {
+impute_missing_exendtc <- function(ex) {
   temp <- ex %>%
     assertr::verify(has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
                                   "EXENDTC")) %>%
@@ -138,11 +135,10 @@ impute_missing_exendtc <- function(ex, silent = FALSE) {
 #'
 #' @param ex The EX domain as data frame.
 #' @param cut.off.date The cut-off date.
-#' @param silent Switch to disable message output.
 #' @return The updated EX domain as data frame.
 #' @import assertr
 #' @keywords internal
-impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = FALSE) {
+impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
   temp <- ex %>%
     assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
@@ -162,7 +158,7 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = FALSE) {
       "absent and is replaced by the cut off date, ",
       format(cut_off_date, format = "%Y-%m-%d %H:%M"), ":\n",
       df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
-        "EXSTDTC", "EXENDTC")))), "\n", silent = silent)
+        "EXSTDTC", "EXENDTC")))), "\n")
 
     temp <- temp %>%
       mutate(EXENDTC = case_when(
@@ -215,12 +211,11 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
 #' Remove administrations with EXSTDTC after EXENDTC
 #'
 #' @param ex The ex domain as data frame.
-#' @param silent Suppress messages as logical.
 #' @param dm The dm domain as data frame.
 #'
 #' @return A data frame.
 #' @keywords internal
-filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
+filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
   temp <- ex %>%
     filter(.data$EXSTDTC > .data$EXENDTC) %>%
     left_join(
@@ -237,8 +232,7 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = FALSE) {
       df_to_string(select(temp, "USUBJID", "EXTRT", "EXSEQ",
                           "EXSTDTC", "EXENDTC", "RFENDTC"),
                    indent = "  "),
-      "\n"),
-      silent = silent)
+      "\n"))
   }
   ex %>%
     filter(.data$EXSTDTC <= .data$EXENDTC)
@@ -281,11 +275,10 @@ make_exstdy_exendy <- function(ex, dm) {
 #' The PC specimen is selected based on the likelihood in the order of 'plasma'
 #' < 'serum' < 'blood'.
 #' @param pc A data frame.
-#' @param silent Switch to disable message output.
 #' @return The imputed spec as character.
 #' @export
 #' @keywords internal
-guess_pcspec <- function(pc, silent = TRUE) {
+guess_pcspec <- function(pc) {
   pcspecs <- unique(pc$PCSPEC)
   standard_specs <- c(
     "PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
@@ -294,7 +287,7 @@ guess_pcspec <- function(pc, silent = TRUE) {
 
   spec <- standard_specs[standard_specs %in% pcspecs][1]
   conditional_message("No specimen specified. Set to ", spec,
-                      " as the most likely.", "\n", silent = silent)
+                      " as the most likely.", "\n")
   return(spec)
 }
 
@@ -302,16 +295,15 @@ guess_pcspec <- function(pc, silent = TRUE) {
 #' Guess the most likely LBSPEC
 #'
 #' @param lb The LB SDTM domain as data frame.
-#' @param silent Switch to disable message output.
 #' @return the imputed LBSPEC as character.
 #' @export
 #' @keywords internal
-guess_lbspec <- function(lb, silent = TRUE) {
+guess_lbspec <- function(lb) {
   lbspecs <- unique(lb$LBSPEC)
   standard_specs <- c("SERUM", "serum", "URINE", "urine")
   spec <- standard_specs[standard_specs %in% lbspecs][1]
   conditional_message("No specimen specified. Set to '", spec,
-                      "' as the most likely.", "\n", silent = silent)
+                      "' as the most likely.", "\n")
   return(spec)
 }
 
@@ -340,12 +332,11 @@ last_ex_dtc <- function(ex) {
 #' Extract baseline vital sign covariates from VS
 #'
 #' @param vs The VS domain as data frame.
-#' @param silent Switch to disable message output.
 #'
 #' @return Baseline VS data as wide data frame.
 #' @export
 #' @keywords internal
-baseline_covariates <- function(vs, silent = FALSE) {
+baseline_covariates <- function(vs) {
   temp <- vs %>%
     filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
 
@@ -366,9 +357,7 @@ baseline_covariates <- function(vs, silent = FALSE) {
       bl_cov <- temp %>%
         filter(VSBLFL == "Y")
     } else {
-      conditional_message("Baseline VS data could not be identified!", "\n",
-        silent = silent
-      )
+      conditional_message("Baseline VS data could not be identified!", "\n")
     }
   }
 
@@ -470,7 +459,6 @@ clip_nif <- function(nif) {
 #'
 #' @param dm The DM domain as data table.
 #' @param vs The VS domain as data table.
-#' @param silent No messages as logical.
 #' @param subject_filter The filtering to apply to the DM domain.
 #' @param keep Columns to keep, as character.
 #'
@@ -481,7 +469,7 @@ clip_nif <- function(nif) {
 #' @keywords internal
 make_subjects <- function(dm, vs,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-  keep = "", silent = FALSE) {
+  keep = "") {
   # if AGE is not present in DM, calculate age from birthday and informed
   #   consent signature date
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
@@ -498,7 +486,7 @@ make_subjects <- function(dm, vs,
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter))) %>%
-    left_join(baseline_covariates(vs, silent = silent), by = "USUBJID") %>%
+    left_join(baseline_covariates(vs), by = "USUBJID") %>%
     recode_sex() %>%
     mutate(ID = NA) %>%
     relocate("ID") %>%
@@ -535,7 +523,6 @@ make_subjects <- function(dm, vs,
 #' @param cmt The compartment for the observation as numeric.
 #' @param parent The name of the parent analyte for the observation as
 #'   character.
-#' @param silent Suppress messages as logical.
 #' @param observation_filter The filtering to apply to the observation source
 #'   data.
 #' @param subject_filter The filtering to apply to the DM domain.
@@ -567,8 +554,7 @@ make_observation <- function(
     DV_field = NULL,
     factor = 1,
     NTIME_lookup = NULL,
-    keep = NULL,
-    silent = FALSE
+    keep = NULL
     ) {
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
@@ -578,7 +564,7 @@ make_observation <- function(
   if(is.null(parent)) parent <- analyte
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter,
-                       keep, silent)
+                       keep)
 
   obj <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates()
@@ -675,7 +661,7 @@ make_observation <- function(
 #' before the subsequent administration episode start (EXSTDTC). It should be
 #' understood that this reflects a rather strong assumption, i.e., that the
 #' treatment was continued into the next administration episode. This imputation
-#' therefore issues a warning that cannot be suppressed with `silent = TRUE`.
+#' therefore issues a warning that cannot be suppressed.
 #'
 #' ## 5. Expand administration episodes
 #'
@@ -710,7 +696,6 @@ make_observation <- function(
 #' @param analyte The name of the analyte as character.
 #' @param cmt The compartment for the administration as numeric.
 #' @param cut_off_date The data cut-off date as Posix date-time.
-#' @param silent Suppress messages, as logical.
 #' @param keep Columns to keep after cleanup, as character.
 #'
 #' @return A data frame.
@@ -720,8 +705,7 @@ make_observation <- function(
 make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cut_off_date = NULL,
-    keep = "",
-    silent = FALSE
+    keep = ""
     ) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
@@ -730,7 +714,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
   if(is.na(analyte)) {analyte <- extrt}
   if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
 
-  sbs <- make_subjects(dm, domain(sdtm, "vs"), subject_filter, keep, silent)
+  sbs <- make_subjects(dm, domain(sdtm, "vs"), subject_filter, keep)
 
   admin <- ex %>%
     mutate(IMPUTATION = "") %>%
@@ -738,12 +722,12 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
     filter(.data$EXSTDTC <= cut_off_date) %>%
     decompose_dtc("EXSTDTC") %>%
 
-    impute_exendtc_to_rfendtc(dm, silent = silent) %>%
-    filter_EXSTDTC_after_EXENDTC(dm, silent = silent) %>%
+    impute_exendtc_to_rfendtc(dm) %>%
+    filter_EXSTDTC_after_EXENDTC(dm) %>%
 
     # time imputations
-    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
-    impute_missing_exendtc(silent = silent) %>%
+    impute_exendtc_to_cutoff(cut_off_date = cut_off_date) %>%
+    impute_missing_exendtc() %>%
     decompose_dtc("EXENDTC") %>%
 
     # make generic fields
@@ -872,6 +856,9 @@ index_nif <- function(nif) {
 #'
 #' @param nif A nif object.
 #' @inheritParams make_administration
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
 #'
 #' @return A nif object.
 #' @export
@@ -880,10 +867,10 @@ index_nif <- function(nif) {
 #'
 add_administration <- function(nif, sdtm, extrt, analyte = NA, cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cut_off_date = NULL, keep = NULL, silent = FALSE) {
+    cut_off_date = NULL, keep = NULL, silent = deprecated()) {
   bind_rows(nif,
             make_administration(sdtm, extrt, analyte, cmt, subject_filter,
-                                     cut_off_date, keep, silent)) %>%
+                                     cut_off_date, keep)) %>%
     normalize_nif(keep = keep)
 }
 
@@ -906,6 +893,9 @@ add_administration <- function(nif, sdtm, extrt, analyte = NA, cmt = 1,
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
 #'
 #' @return A nif object.
 #' @seealso [add_administration()]
@@ -927,7 +917,7 @@ add_observation <- function(
     factor = 1,
     NTIME_lookup = NULL,
     keep = NULL,
-    silent = FALSE
+    silent = deprecated()
   ) {
   if(length(parents(nif)) == 0)
     stop("Please add at least one administration first!")
@@ -935,7 +925,7 @@ add_observation <- function(
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
       "Compartment for ", testcd,
-      " was not specified and has been set to ", cmt), silent = silent)
+      " was not specified and has been set to ", cmt))
   }
 
   if(is.null(analyte)) analyte <- testcd
@@ -952,7 +942,7 @@ add_observation <- function(
     } else {
       parent <- guess_parent(nif)
       conditional_message(paste0("Parent for ", analyte, " was set to ",
-                                 parent, "!"), silent = silent)
+                                 parent, "!"))
     }
   }
 
@@ -960,7 +950,7 @@ add_observation <- function(
     nif,
     make_observation(sdtm, domain, testcd, analyte, parent, cmt, subject_filter,
                      observation_filter, TESTCD_field, DTC_field, DV_field,
-                     factor, NTIME_lookup, keep, silent)) %>%
+                     factor, NTIME_lookup, keep)) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%
@@ -980,8 +970,7 @@ add_observation <- function(
             mutate(N = sum(EVID == 0)) %>%
             ungroup() %>%
             distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-        indent = "  ")),
-      silent = silent)
+        indent = "  ")))
 
     obj <- obj %>%
       filter(.data$NO_ADMIN_FLAG == 0)
@@ -1015,7 +1004,9 @@ add_observation <- function(
 #'   code).
 #' @param summary_function The summary function to summarize multiple baseline
 #'   values. Defaults to `mean`.
-#' @param silent Suppress messages, as logical.
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
 #'
 #' @return A nif object.
 #' @import assertr
@@ -1027,7 +1018,7 @@ add_observation <- function(
 add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
     TESTCD_field = NULL, observation_filter = "TRUE",
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    baseline_filter = NULL, summary_function = mean, silent = FALSE) {
+    baseline_filter = NULL, summary_function = mean, silent = deprecated()) {
 
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(
@@ -1036,7 +1027,7 @@ add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
     ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
 
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
-                       subject_filter, "", silent)
+                       subject_filter, "")
 
   temp <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates() %>%
@@ -1072,6 +1063,9 @@ add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
 #' @param covariate The name of the covariate, defaults to the testcd if 'NULL'.
 #' @param DTC_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
 #'
 #' @return A nif object.
 #' @seealso add_baseline()
@@ -1084,9 +1078,8 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     covariate = NULL,
     DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL,
-    observation_filter = "TRUE"
+    observation_filter = "TRUE", silent = deprecated()
     ) {
-
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
@@ -1248,7 +1241,6 @@ nif_cleanup <- function(nif, keep = NULL) {
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param sdtm The source SDTM object.
-#' @param silent Suppress messages.
 #' @param bl_creat Include baseline creatinine, creatinine clearance and renal
 #'   function class fields.
 #' @param bl_odwg Include baseline ODWG hepatic function class.
@@ -1265,8 +1257,7 @@ nif_cleanup <- function(nif, keep = NULL) {
 nif_auto <- function(sdtm,
                      bl_creat = TRUE,
                      bl_odwg = TRUE,
-                     keep = "",
-                     silent = TRUE
+                     keep = ""
                      ) {
   analyte_mapping <- sdtm$analyte_mapping
   if(nrow(analyte_mapping) == 0) {
@@ -1292,21 +1283,20 @@ nif_auto <- function(sdtm,
   # Treatments
   treatments <- analyte_mapping$EXTRT
   conditional_message(paste0("Adding treatment(s): ",
-                             nice_enumeration(treatments)), silent = silent)
+                             nice_enumeration(treatments)))
   for(i in seq(1:nrow(analyte_mapping))){
     nif <- add_administration(nif, sdtm, analyte_mapping[i, "EXTRT"],
-            analyte = analyte_mapping[i, "ANALYTE"], keep = keep,
-            silent = silent)
+            analyte = analyte_mapping[i, "ANALYTE"], keep = keep)
   }
 
   # PC observations
   observations <- temp$ANALYTE
   conditional_message(paste0("Adding PC observations(s): ",
-                             nice_enumeration(observations)), silent = silent)
+                             nice_enumeration(observations)))
   for(i in seq(1:nrow(temp))) {
     nif <- add_observation(nif, sdtm, "pc", temp[i, "PCTESTCD"],
             analyte = temp[i, "ANALYTE"], parent = temp[i, "PARENT"],
-            keep = keep, silent = silent)
+            keep = keep)
   }
 
   if(bl_creat == TRUE | bl_odwg == TRUE){
@@ -1317,10 +1307,10 @@ nif_auto <- function(sdtm,
       # Baseline CREAT
       if(bl_creat == TRUE) {
         if(!"CREAT" %in% unique(lb$LBTESTCD)) {
-          conditional_message("CREAT not found in LB!", silent = silent)
+          conditional_message("CREAT not found in LB!")
         } else {
-          conditional_message("Adding baseline renal function", silent = silent)
-          nif <- add_baseline(nif, sdtm, "lb", "CREAT", silent = silent) %>%
+          conditional_message("Adding baseline renal function")
+          nif <- add_baseline(nif, sdtm, "lb", "CREAT") %>%
             add_bl_crcl() %>%
             add_bl_renal()
         }
@@ -1329,7 +1319,7 @@ nif_auto <- function(sdtm,
       # Baseline ODWG hepatic function class
       if(bl_odwg == TRUE) {
         # lb <- domain(sdtm, "lb")
-        conditional_message("Adding baseline hepatic function", silent = silent)
+        conditional_message("Adding baseline hepatic function")
         nif <- add_bl_odwg(nif, sdtm)
       }
     }

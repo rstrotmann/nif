@@ -11,8 +11,8 @@ nca(
   keep = "DOSE",
   group = NULL,
   nominal_time = FALSE,
-  silent = FALSE,
-  average_duplicates = TRUE
+  average_duplicates = TRUE,
+  silent = deprecated()
 )
 }
 \arguments{
@@ -31,10 +31,12 @@ from. By default, equal to the analyte.}
 \item{nominal_time}{A boolean to indicate whether nominal time rather than
 actual time should be used for NCA.}
 
-\item{silent}{No message output.}
-
 \item{average_duplicates}{Boolean to indicate whether duplicate entries
 should be averaged.}
+
+\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
+compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
+suppress messages.}
 }
 \value{
 A data frame.

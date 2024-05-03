@@ -20,7 +20,7 @@ add_observation(
   factor = 1,
   NTIME_lookup = NULL,
   keep = NULL,
-  silent = FALSE
+  silent = deprecated()
 )
 }
 \arguments{
@@ -63,7 +63,9 @@ to provide the NTIME field.}
 
 \item{keep}{Columns to keep, as character.}
 
-\item{silent}{Suppress messages as logical.}
+\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
+compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
+suppress messages.}
 }
 \value{
 A nif object.

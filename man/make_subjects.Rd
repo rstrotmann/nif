@@ -8,8 +8,7 @@ make_subjects(
   dm,
   vs,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
-  keep = "",
-  silent = FALSE
+  keep = ""
 )
 }
 \arguments{
@@ -20,8 +19,6 @@ make_subjects(
 \item{subject_filter}{The filtering to apply to the DM domain.}
 
 \item{keep}{Columns to keep, as character.}
-
-\item{silent}{No messages as logical.}
 }
 \value{
 A data table.
