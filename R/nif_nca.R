@@ -45,8 +45,8 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
     as.data.frame() %>%
     dplyr::filter(ANALYTE == current_analyte) %>%
     dplyr::mutate(TIME = case_when(nominal_time == TRUE ~ NTIME,
-      # .default = TIME
-      .default = TIME
+                                   # .default = TIME
+                                   .default = TIME
     )) %>%
     dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
     as.data.frame()
@@ -145,13 +145,30 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
 #'
 #' @examples
 #' nca_summary(nca(examplinib_sad_nif, analyte = "RS2023"))
+# nca_summary <- function(
+#     nca,
+#     parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
+#     group = "DOSE") {
+#   nca %>%
+#     filter(PPTESTCD %in% parameters) %>%
+#     group_by(.data[[group]], PPTESTCD) %>%
+#     summarize(
+#       geomean = PKNCA::geomean(PPORRES, na.rm = TRUE),
+#       geocv = PKNCA::geocv(PPORRES, na.rm = TRUE),
+#       median = median(PPORRES, na.rm = TRUE), iqr = IQR(PPORRES, na.rm = TRUE),
+#       min = min(PPORRES, na.rm = TRUE),
+#       max = max(PPORRES, na.rm = TRUE),
+#       n = n()
+#     )
+# }
 nca_summary <- function(
     nca,
     parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
-    group = "DOSE") {
+    group = NULL) {
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
-    group_by(.data[[group]], PPTESTCD) %>%
+    filter(is.na(exclude)) %>%
+    group_by_at(c(group, "DOSE", "PPTESTCD")) %>%
     summarize(
       geomean = PKNCA::geomean(PPORRES, na.rm = TRUE),
       geocv = PKNCA::geocv(PPORRES, na.rm = TRUE),
@@ -181,7 +198,7 @@ nca_summary_table <- function(
     nca,
     parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
     digits = 2,
-    group = "DOSE") {
+    group = NULL) {
   s <- nca_summary(nca, parameters, group = group)
   median_parameters <- c("tlast", "tmax", "lambda.z.n.points")
   s %>%
@@ -202,7 +219,7 @@ nca_summary_table <- function(
     ) %>%
     mutate(value = paste0(center, " (", dispersion, ")")) %>%
     pivot_wider(
-      id_cols = c(any_of(group), "n"),
+      id_cols = c(any_of(c(group, "DOSE")), "n"),
       names_from = "PPTESTCD", values_from = value
     )
 }
@@ -290,29 +307,8 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
 #'   c("cmax", "aucinf.obs"))
-nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs")) {
-  # pp <- nca %>%
-  #   filter(PPTESTCD %in% parameter) %>%
-  #   filter(PPORRES != 0)
-  #
-  # pm <- pp %>%
-  #   lm(log(PPORRES) ~ log(DOSE), data = .)
-  #
-  # pp %>%
-  #   bind_cols(predict.lm(pm, pp, interval='prediction',
-  #                        se.fit = T,
-  #                        level=0.9)$fit) %>%
-  #
-  #   ggplot(aes(x = DOSE, y=exp(.data$fit))) +
-  #   geom_line() +
-  #   geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
-  #               fill='lightgrey', alpha=0.5) +
-  #   geom_point(aes(x = DOSE, y = PPORRES), size=2) +
-  #   theme_bw() +
-  #   labs(x = "dose (mg)", y = parameter,
-  #        caption = paste0("mean and 90% PI, slope = ",
-  #                         round(pm$coefficients[2], 3)))
-
+nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
+                                               group = NULL) {
   pm_plot <- function(param) {
     pp <- nca %>%
       filter(PPTESTCD == param) %>%
@@ -321,19 +317,26 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs")) {
     pm <- pp %>%
       lm(log(PPORRES) ~ log(DOSE), data = .)
 
+    color_label <- nice_enumeration(unique(group))
+
     pp %>%
+      {if(!is.null(group))
+        unite(., COLOR, all_of(group), sep = "-", remove = FALSE) else .} %>%
       bind_cols(predict.lm(pm, pp, interval = 'prediction', se.fit = T,
                            level = 0.9)$fit) %>%
       ggplot(aes(x = DOSE, y=exp(.data$fit))) +
       geom_line() +
       geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
                   fill = 'lightgrey', alpha = 0.5) +
-      geom_point(aes(x = DOSE, y = PPORRES), size=2) +
+      {if(!is.null(group)) geom_point(
+        aes(x = DOSE, y = PPORRES, color = COLOR), size = 2) else
+          geom_point(aes(x = DOSE, y = PPORRES), size = 2)} +
       theme_bw() +
       expand_limits(x = 0) +
       labs(x = "dose (mg)", y = param,
            caption = paste0("mean and 90% PI, slope = ",
-                            round(pm$coefficients[2], 3)))
+                            round(pm$coefficients[2], 3))) +
+      {if(!is.null(group)) labs(color = color_label)}
   }
   lapply(parameter, pm_plot)
 }

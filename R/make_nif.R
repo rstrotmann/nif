@@ -1225,7 +1225,7 @@ nif_cleanup <- function(nif, keep = NULL) {
                        "TREATMENT", keep))
   selector <- selector[selector %in% names(nif)]
   nif %>%
-    select(all_of(selector))
+    select(all_of(selector), starts_with("BL_"))
   # nif %>%
   #   select(any_of(
   #     unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
