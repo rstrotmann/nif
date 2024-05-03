@@ -304,6 +304,7 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' @param nca PK parameters as data frame.
 #' @param group Grouping parameter as character.
 #' @param parameter The PK parameter as character.
+#' @param title The title as character.
 #'
 #' @return A list of ggplot2 objects.
 #' @importFrom stats lm predict.lm
@@ -313,7 +314,7 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
 #'   c("cmax", "aucinf.obs"))
 nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
-                                               group = NULL) {
+    group = NULL, title = NULL) {
   pm_plot <- function(param) {
     pp <- nca %>%
       filter(PPTESTCD == param) %>%
@@ -341,7 +342,8 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
       labs(x = "dose (mg)", y = param,
            caption = paste0("mean and 90% PI, slope = ",
                             round(pm$coefficients[2], 3))) +
-      {if(!is.null(group)) labs(color = color_label)}
+      {if(!is.null(group)) labs(color = color_label)} +
+      {if(!is.null(title)) ggtitle(title)}
   }
   lapply(parameter, pm_plot)
 }
