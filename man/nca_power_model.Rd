@@ -4,7 +4,12 @@
 \alias{nca_power_model}
 \title{Power fit for PK parameters}
 \usage{
-nca_power_model(nca, parameter = c("cmax", "aucinf.obs"), group = NULL)
+nca_power_model(
+  nca,
+  parameter = c("cmax", "aucinf.obs"),
+  group = NULL,
+  title = NULL
+)
 }
 \arguments{
 \item{nca}{PK parameters as data frame.}
@@ -12,6 +17,8 @@ nca_power_model(nca, parameter = c("cmax", "aucinf.obs"), group = NULL)
 \item{parameter}{The PK parameter as character.}
 
 \item{group}{Grouping parameter as character.}
+
+\item{title}{The title as character.}
 }
 \value{
 A list of ggplot2 objects.

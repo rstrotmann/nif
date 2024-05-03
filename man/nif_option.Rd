@@ -13,7 +13,11 @@ nif_option(...)
 Nothing.
 }
 \description{
-Set global options
+Set global behavior options for all \code{nif} package functions. Currently
+supported:
+\itemize{
+\item \code{silent} as logical: Suppress messages.
+}
 }
 \examples{
 nif_option(silent = TRUE)

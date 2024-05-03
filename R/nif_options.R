@@ -6,6 +6,12 @@ assign("silent", FALSE, envir = .nif_env)
 
 #' Set global options
 #'
+#' @description
+#' Set global behavior options for all `nif` package functions. Currently
+#' supported:
+#'
+#' * `silent` as logical: Suppress messages.
+#'
 #' @param ... Options as named values.
 #'
 #' @return Nothing.
