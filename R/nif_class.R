@@ -11,7 +11,6 @@ new_nif <- function(obj = NULL, ...) {
     temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
     colnames(temp) <- minimal_nif_fields
     class(temp) <- c("nif", "data.frame")
-    comment(temp) <- paste0("created with nif ", packageVersion("nif"))
     temp %>%
       order_nif_columns()
   } else {
@@ -21,10 +20,9 @@ new_nif <- function(obj = NULL, ...) {
       temp <- as.data.frame(obj)
       class(temp) <- c("nif", "data.frame")
     }
-    comment(temp) <- paste0("created with nif ", packageVersion("nif"))
+    class(temp) <- c("nif", "data.frame")
     order_nif_columns(temp)
   }
-  # nif_cleanup(temp)
 }
 
 
@@ -38,11 +36,6 @@ new_nif <- function(obj = NULL, ...) {
 #' @examples
 #' order_nif_columns(examplinib_poc_nif)
 order_nif_columns <- function(obj) {
-  # obj %>%
-  #   relocate(any_of(c("REF", "ID", "USUBJID", "STUDYID", "DTC", "TIME", "TAFD",
-  #     "NTIME", "IMPUTATION", "ANALYTE", "PARENT", "METABOLITE", "DOSE",
-  #     "AMT", "CMT", "EVID", "DV", "MDV", "EXDY")))
-
   selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
     "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
     "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
@@ -364,8 +357,6 @@ studies <- function(obj) {
 #' @keywords internal
 ensure_analyte <- function(obj) {
   obj %>%
-    # {if(!"ANALYTE" %in% names(obj))
-    #   mutate(., ANALYTE = "default") else .}
     {if(!"ANALYTE" %in% names(obj))
       mutate(., ANALYTE = CMT) else .}
 }
@@ -608,47 +599,6 @@ head.nif <- function(x, ...) {
 #' @importFrom gdata write.fwf
 #' @export
 #' @examples
-#' write_nif(examplinib_fe_nif)
-# write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
-#   double_fields <- c("NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
-#                      "AGE", "HEIGHT", "WEIGHT", "BMI")
-#   bl_fields <- names(obj)[str_detect(names(obj), "^BL_")]
-#   int_fields <- c("REF", "ID", "MDV", "CMT", "EVID", "SEX", "TRTDY")
-#   num_fields <- c(double_fields, int_fields, bl_fields)
-#
-#   if (is.null(fields)) {
-#     fields <- names(obj)
-#   }
-#
-#   temp <- obj %>%
-#     as.data.frame() %>%
-#     mutate(across(any_of(num_fields), signif, 4))
-#
-#   if("METABOLITE" %in% names(obj)) {
-#     temp <- temp %>%
-#       mutate(METABOLITE = case_when(
-#         is.na(METABOLITE) ~ FALSE,
-#         .default = METABOLITE))}
-#
-#   temp <- temp %>%
-#     mutate(across(any_of(num_fields),
-#                 function(x) {case_when(
-#                   is.na(x) ~ ".",
-#                   .default = as.character(x))})) %>%
-#   mutate_all(as.character)
-#
-#   if (is.null(filename)) {
-#     print(temp, row.names = FALSE, col.names = FALSE)
-#   } else {
-#     if(is.null(sep)){
-#       temp <- rbind(colnames(temp), temp)
-#       write.fwf(temp, file = filename, colnames = FALSE)
-#     } else {
-#       write.table(temp, file = filename, row.names = FALSE,
-#                   sep = sep, dec = ".", quote = FALSE)
-#     }
-#   }
-# }
 write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
   temp <- obj %>%
     as.data.frame() %>%
@@ -670,8 +620,6 @@ write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
     }
   }
 }
-
-
 
 
 #' Write as comma-separated file, complying with the format used by Monolix
@@ -1290,11 +1238,6 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
     group_by(.data$ID, .data$ANALYTE, .data$DI, .data$RICHINT_TEMP) %>%
     fill(.data$RICH_N, .direction = "down") %>%
     ungroup() %>%
-
-    # filter(ID == 4) %>%
-    # as.data.frame() %>%
-    # head(30)
-    #
 
     select(-c("RICHINT_TEMP", "RICH_START")) %>%
     new_nif()
