@@ -16,7 +16,7 @@ prefix)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.5.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,8 @@ prefix).</p>
 <span>  DTC_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  DV_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  TESTCD_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  observation_filter <span class="op">=</span> <span class="st">"TRUE"</span></span>
+<span>  observation_filter <span class="op">=</span> <span class="st">"TRUE"</span>,</span>
+<span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -118,6 +119,12 @@ xx the domain code), as character.</p></dd>
 
 <dt>observation_filter</dt>
 <dd><p>A filter term for the <code>domain</code>, as character.</p></dd>
+
+
+<dt>silent</dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Dummy option for
+compatibility, set the global option <code><a href="nif_option.html">nif_option()</a></code> with <code>silent = TRUE</code> to
+suppress messages.</p></dd>
 
 </dl></div>
     <div class="section level2">

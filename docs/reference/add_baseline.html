@@ -18,7 +18,7 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.5.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,7 +81,7 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
 <span>  subject_filter <span class="op">=</span> <span class="st">"!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')"</span>,</span>
 <span>  baseline_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  summary_function <span class="op">=</span> <span class="va">mean</span>,</span>
-<span>  silent <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -132,7 +132,9 @@ values. Defaults to <code>mean</code>.</p></dd>
 
 
 <dt>silent</dt>
-<dd><p>Suppress messages, as logical.</p></dd>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Dummy option for
+compatibility, set the global option <code><a href="nif_option.html">nif_option()</a></code> with <code>silent = TRUE</code> to
+suppress messages.</p></dd>
 
 </dl></div>
     <div class="section level2">
