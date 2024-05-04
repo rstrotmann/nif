@@ -536,9 +536,7 @@ nif_spaghetti_plot <- function(obj,
 #' plot(examplinib_poc_nif, analyte="RS2023", time = "TAD",
 #'   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
 #' plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
-#' plot(examplinib_fe_nif, points = TRUE, watermark = TRUE)
 #' plot(examplinib_fe_nif, mean = TRUE, group = "FASTED", max_time = 24)
-#' plot(examplinib_fe_nif, points = TRUE, watermark = "Examplinib food effect")
 plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                      group = NULL, min_time = NULL, max_time = NULL,
                      points = FALSE, lines = TRUE, admin = NULL, cfb = FALSE,
@@ -1006,7 +1004,15 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
   }
 
   if(analytes == TRUE){
-    for (i in x$analytes) {
+    # put analytes for parents first:
+    analyte_list <- x$nif %>%
+      as.data.frame() %>%
+      distinct(PARENT, ANALYTE) %>%
+      mutate(score = PARENT == ANALYTE) %>%
+      arrange(-score, ANALYTE) %>%
+      pull(ANALYTE)
+
+    for (i in analyte_list) {
       out[[i]] <- plot(nif,
         analyte = i, log = TRUE, points = TRUE, lines = FALSE, time = "TIME",
         alpha = 0.3, title = paste(i, "by dose"),
