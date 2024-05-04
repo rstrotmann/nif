@@ -15,7 +15,4 @@ The option value, if existent, or NA.
 \description{
 Get the value of global options
 }
-\examples{
-nif_option_get("silent")
-}
 \keyword{internal}

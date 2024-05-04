@@ -18,6 +18,7 @@ supported:
 \itemize{
 \item \code{silent} as logical: Suppress messages.
 \item \code{watermark} as character: Watermark text on all figures.
+\item \code{debug} as logical: Print debug information.
 }
 }
 \examples{

@@ -58,9 +58,6 @@ nif_option <- function(...) {
 #'
 #' @return The option value, if existent, or NA.
 #' @keywords internal
-#'
-#' @examples
-#' nif_option_get("silent")
 nif_option_value <- function(option) {
   if(!exists(".nif_env")) return(NA)
   if(!exists(option, envir = .nif_env)){
