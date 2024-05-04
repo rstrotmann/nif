@@ -25,7 +25,6 @@
   legend = TRUE,
   show_n = FALSE,
   shading = TRUE,
-  watermark = "",
   silent = deprecated(),
   ...
 )
@@ -73,9 +72,6 @@ baseline values.}
 implement grouping! \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 
 \item{shading}{Show ribbons when mean = TRUE, as logical.}
-
-\item{watermark}{Show watermark as character or logical. If watermark = TRUE,
-a standard text will be shown.}
 
 \item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
 compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to

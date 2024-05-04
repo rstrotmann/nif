@@ -14,12 +14,13 @@
 #   }
 # }
 conditional_message <- function(...) {
-  # parameters <- c(as.list(environment()), list(...))
-  # parameters <- list(...)
   args <- lapply(list(...), as.character)
-  silent <- get("silent", .nif_env)
+  if(exists("silent", envir = .nif_env)) {
+    silent <- get("silent", .nif_env)
+  } else {
+    silent = FALSE
+  }
   if (silent == FALSE) {
-    # message(paste(as.character(parameters[names(parameters) != "silent"])))
     message(paste(args, collapse = ""))
   }
 }

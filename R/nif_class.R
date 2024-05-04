@@ -599,6 +599,7 @@ head.nif <- function(x, ...) {
 #' @importFrom gdata write.fwf
 #' @export
 #' @examples
+#' write_nif(examplinib_fe_nif)
 write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
   temp <- obj %>%
     as.data.frame() %>%

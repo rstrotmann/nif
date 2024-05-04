@@ -170,7 +170,7 @@ nca_summary <- function(
     group = NULL) {
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
-    filter(is.na(exclude)) %>%
+    filter(is.na(.data$exclude)) %>%
     group_by_at(c(group, "DOSE", "PPTESTCD")) %>%
     summarize(
       geomean = PKNCA::geomean(PPORRES, na.rm = TRUE),

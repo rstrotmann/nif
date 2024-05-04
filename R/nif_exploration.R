@@ -520,8 +520,6 @@ nif_spaghetti_plot <- function(obj,
 #' @param legend Show legend, as logical.
 #' @param show_n Show sample size in mean plot, as logical. Does currently not
 #'   implement grouping! `r lifecycle::badge("experimental")`
-#' @param watermark Show watermark as character or logical. If watermark = TRUE,
-#'   a standard text will be shown.
 #' @param shading Show ribbons when mean = TRUE, as logical.
 #'
 #' @return A ggplot object.
@@ -547,12 +545,19 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                      summary_function = median, mean = FALSE,
                      title = "", caption = "", integrate_predose = TRUE,
                      legend = TRUE, show_n = FALSE, shading = TRUE,
-                     watermark = "",
+                     # watermark = "",
                      silent = deprecated(),
                      ...) {
   # Assert time field
   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
     stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
+  }
+
+  # watermark
+  if(exists("watermark", envir = .nif_env)) {
+    watermark = get("watermark", envir = .nif_env)
+  } else {
+    watermark = ""
   }
 
   # Assert fields
@@ -579,13 +584,13 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       ungroup()
   }
 
-  # implement watermark
-  if(watermark == TRUE) {
-    watermark = "Not QCed - not for distribution"
-  }
-  if(watermark == FALSE) {
-    watermark = ""
-  }
+  # # implement watermark
+  # if(watermark == TRUE) {
+  #   watermark = "Not QCed - not for distribution"
+  # }
+  # if(watermark == FALSE) {
+  #   watermark = ""
+  # }
 
   # implement change from baseline
   temp <- temp %>%

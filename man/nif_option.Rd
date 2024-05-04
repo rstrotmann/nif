@@ -17,6 +17,7 @@ Set global behavior options for all \code{nif} package functions. Currently
 supported:
 \itemize{
 \item \code{silent} as logical: Suppress messages.
+\item \code{watermark} as character: Watermark text on all figures.
 }
 }
 \examples{
