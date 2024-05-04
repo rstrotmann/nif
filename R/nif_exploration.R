@@ -494,6 +494,10 @@ nif_spaghetti_plot <- function(obj,
 
 #' Plot nif object.
 #'
+#' @details
+#' A watermark can be added by setting the global option 'watermark', e.g.,
+#' `nif_option(watermark = "text")`.
+#'
 #' @param x A nif object.
 #' @param analyte The analyte as character.
 #' @param dose The dose as numeric.
@@ -508,8 +512,8 @@ nif_spaghetti_plot <- function(obj,
 #' @param admin Show vertical lines for administrations, as logical.
 #' @param cfb Show change from baseline, as logical.
 #' @param silent `r lifecycle::badge("deprecated")` Dummy option for
-#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
-#' suppress messages.
+#'   compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#'   suppress messages.
 #' @param mean Show a mean plot, as logical.
 #' @param title The plot title as character.
 #' @param caption The plot caption line as character.
@@ -525,6 +529,8 @@ nif_spaghetti_plot <- function(obj,
 #' @return A ggplot object.
 #' @import assertr
 #' @export
+#'
+#' @seealso [nif_option()]
 #'
 #' @examples
 #' plot(examplinib_fe_nif, points = TRUE)
@@ -543,7 +549,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                      summary_function = median, mean = FALSE,
                      title = "", caption = "", integrate_predose = TRUE,
                      legend = TRUE, show_n = FALSE, shading = TRUE,
-                     # watermark = "",
                      silent = deprecated(),
                      ...) {
   # Assert time field
@@ -582,14 +587,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       ungroup()
   }
 
-  # # implement watermark
-  # if(watermark == TRUE) {
-  #   watermark = "Not QCed - not for distribution"
-  # }
-  # if(watermark == FALSE) {
-  #   watermark = ""
-  # }
-
   # implement change from baseline
   temp <- temp %>%
     add_cfb(summary_function = summary_function) %>%
@@ -623,13 +620,14 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   if(is.null(max_time)) {max_time <- max_time(filter(temp, EVID == 0),
                                               time_field = time)}
   if(is.null(min_time)) {min_time <- min(temp$active_time, na.rm = TRUE)}
-  # temp <- filter(temp, active_time <= max_time & active_time >= min_time)
+  temp <- filter(temp, active_time <= max_time & active_time >= min_time)
 
   # remove subjects without observation
   temp <- temp %>%
     group_by(ID, ANALYTE) %>%
     mutate(n_obs = sum(EVID == 0)) %>%
     ungroup()
+
   n_no_obs <- temp %>%
     filter(n_obs == 0, EVID == 0) %>%
     distinct(ID, ANALYTE) %>%
@@ -642,7 +640,9 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       df_to_string(filter(temp, n_obs == 0, EVID == 0) %>%
                      distinct(ID, ANALYTE, DOSE),
                    indent = "  ")))}
+
   temp <- filter(temp, n_obs > 0 | EVID == 1)
+  # temp <- filter(temp, n_obs > 0)
 
   # remove trailing administrations
   # temp <- temp %>%
@@ -737,14 +737,15 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   } else {
     # spaghetti plot
     obs_data %>%
-      {if(log == TRUE) filter(., DV != 0) else .} %>%
+      {if(log == TRUE) filter(., DV != 0 | is.na(DV)) else .} %>%
       ggplot(aes(x = .data$active_time, y = .data$DV, group = .data$GROUP,
                  color = .data$COLOR)) +
       {if(!is.null(admin)) geom_vline(data = admin_data,
                                     aes(xintercept = .data$active_time),
                                     color = "gray")} +
       {if(points == TRUE) geom_point(na.rm = TRUE, ...)} +
-      {if (lines) geom_line(na.rm = TRUE)} +
+      # {if (lines) geom_line(na.rm = TRUE)} +
+      {if (lines) geom_line()} +
       {if (log == TRUE) scale_y_log10()} +
       {if(length(unique(temp$DOSE)) > 1) facet_wrap(~DOSE)} +
       labs(x = x_label, y = y_label, color = color_label, caption = caption) +

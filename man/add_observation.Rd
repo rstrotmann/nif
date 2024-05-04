@@ -58,7 +58,7 @@ two-character domain name followed by 'STRESN', if NULL.}
 
 \item{NTIME_lookup}{A data frame with two columns, a column that defines the
 custom nominal time information in the target domain (e.g., 'PCELTM'), and
-'NTIME'. This data frame is left_join()ed into the observation data frame
+'NTIME'. This data frame is left_joined into the observation data frame
 to provide the NTIME field.}
 
 \item{keep}{Columns to keep, as character.}

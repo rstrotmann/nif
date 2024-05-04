@@ -355,8 +355,7 @@ suggest <- function(obj) {
     message(paste0(
       n_suggestion, ". There are data from ", nrow(specimems),
       " different sample specimem types in PC\n",
-      "   (see below).\n",
-      "   Consider filtering for a specific specimem, or defining CMT",
+      "   Consider filtering for a specific specimem, or defining CMT ",
       "accordingly.\n\n",
       df_to_string(specimems, indent = "       "), "\n"
     ))
@@ -370,7 +369,7 @@ suggest <- function(obj) {
     message(paste0(
       n_suggestion, ". There are ", nrow(treatments), " different treatments ",
       "in EX (see below).\n",
-      "   Consider filtering for a specific treatment.\n\n",
+      "   Consider adding them to the nif object using 'add_administration()'.\n\n",
       df_to_string(treatments, indent = "       "), "\n"
     ))
     n_suggestion <- n_suggestion + 1
@@ -401,24 +400,20 @@ suggest <- function(obj) {
 
   if (!("PCELTM" %in% names(obj$pc))) {
     line <- function(x) {
-      return(paste0("     \"", x, "\" = 0,"))
+      return(paste0("     \"", x, "\", 0,"))
     }
     temp <- paste(sapply(unique(obj$pc[, "PCTPT"]), line), collapse = "\n")
 
     message(paste0(
       n_suggestion,
-      ". By default, 'make_nif()' derives the nominal sampling time from the ",
-      "permissible field\n",
-      "   PCELTM in PC. However, in this data set, PCELTM is not defined, and ",
-      "the nominal time\n",
-      "   must be manually derived from PCTPT. Please provide a time mapping ",
-      "using 'add_time_mapping()',\n",
-      "   e.g., by adding the below code after creating the sdtm object. ",
-      "Obviously, you need to\n",
-      "   replace the zeros with the respective time after admininstation in ",
-      "hours:\n\n",
-      "   %>% add_time_mapping(\n",
-      substr(temp, 1, nchar(temp) - 1), ")\n"
+      ". By default, 'add_observation()' takes the nominal sampling time from the\n",
+      "   (permissible) field PC.PCELTM. However, in this data set, PCELTM is not defined, \n",
+      "   and the nominal time must be manually derived from, e.g., PCTPT. Consider\n",
+      "   providing a NTIME_lookup parameter to 'add_observation()' (replace the zeros\n",
+      "   with the appropriate values):\n\n",
+      "   NTIME_lookup = tribble(\n",
+      "     ~PCTPT, ~NTIME,\n",
+      substr(temp, 1, nchar(temp) - 1), "\n   )\n"
     ))
     n_suggestion <- n_suggestion + 1
   }

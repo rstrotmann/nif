@@ -85,6 +85,10 @@ A ggplot object.
 \description{
 Plot nif object.
 }
+\details{
+A watermark can be added by setting the global option 'watermark', e.g.,
+\code{nif_option(watermark = "text")}.
+}
 \examples{
 plot(examplinib_fe_nif, points = TRUE)
 plot(examplinib_fe_nif, nominal_time = TRUE, group = "FASTED")
@@ -95,7 +99,8 @@ plot(examplinib_poc_nif, analyte="RS2023", time = "NTIME",
 plot(examplinib_poc_nif, analyte="RS2023", time = "TAD",
   dose = 500, log = FALSE, points = TRUE, lines = FALSE)
 plot(examplinib_poc_min_nif, dose = 500, cmt = 2)
-plot(examplinib_fe_nif, points = TRUE, watermark = TRUE)
 plot(examplinib_fe_nif, mean = TRUE, group = "FASTED", max_time = 24)
-plot(examplinib_fe_nif, points = TRUE, watermark = "Examplinib food effect")
+}
+\seealso{
+\code{\link[=nif_option]{nif_option()}}
 }

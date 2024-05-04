@@ -528,7 +528,7 @@ make_subjects <- function(dm, vs,
 #' @param subject_filter The filtering to apply to the DM domain.
 #' @param NTIME_lookup A data frame with two columns, a column that defines the
 #'   custom nominal time information in the target domain (e.g., 'PCELTM'), and
-#'   'NTIME'. This data frame is left_join()ed into the observation data frame
+#'   'NTIME'. This data frame is left_joined into the observation data frame
 #'   to provide the NTIME field.
 #' @param testcd The observation variable, as character.
 #' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
@@ -586,6 +586,9 @@ make_observation <- function(
               mutate(NTIME = as.numeric(stringr::str_extract(
                 .data$PCELTM, "PT([.0-9]+)H", group = 1)))
           }
+        } else {
+          conditional_message("PC.PCELM is not defined. Provide a NTIME lookup",
+                              "table to define nominal time!")
         }
       }
     } else {
