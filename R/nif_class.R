@@ -56,75 +56,81 @@ order_nif_columns <- function(obj) {
 #'
 #' @export
 #' @noRd
-print.nif <- function(x, color=FALSE, ...) {
-  hline <- "-----"
-  # hline <- paste0(rep("\U2500", 8), collapse="")
-  cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
-
-  if(length(studies(x)) == 1) {
-    cat(paste0(guess_analyte(x), " data from one study\n"))
-  } else{
-    cat(paste0(guess_analyte(x), " data from ", length(studies(x)),
-               " studies\n"))
-  }
-  n_obs <- x %>%
-    filter(.data$EVID == 0) %>%
-    nrow()
-  cat(paste(
-    n_obs, "observations from",
-    subjects(x) %>% nrow(), "subjects\n"
-  ))
-
-  if ("SEX" %in% names(x)) {
-    n_sex <- x %>%
-      dplyr::distinct(.data$USUBJID, .data$SEX) %>%
-      dplyr::group_by(.data$SEX) %>%
-      dplyr::summarize(n = n())
-
-    n_males <- n_sex %>%
-      dplyr::filter(.data$SEX == 0) %>%
-      dplyr::pull(.data$n)
-    if (length(n_males) == 0) {
-      n_males <- 0
-    }
-
-    n_females <- n_sex %>%
-      dplyr::filter(.data$SEX == 1) %>%
-      dplyr::pull(.data$n)
-    if (length(n_females) == 0) {
-      n_females <- 0
-    }
-
-    cat(paste0(
-      "Males: ", n_males, ", females: ", n_females, " (",
-      round(n_females / (n_males + n_females) * 100, 1), "%)\n\n"
-    ))
-  }
-
-  cat("Columns:\n")
-  cat(paste(names(x), collapse = ", "), "\n")
-
-  temp <- x %>%
-    as.data.frame() %>%
-    select(any_of(c(
-      "ID", "NTIME", "TIME", "TAD", "ANALYTE",
-      "EVID",  "CMT", "AMT", "DOSE", "DV"
-    ))) %>%
-    head(10)
-
-  temp <- temp %>%
-    # mutate(across(where(is.numeric), round, 3)) %>%
-    mutate(across(where(is.numeric), ~ round(., 3))) %>%
-    df_to_string(color = color)
-  cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
-
-  footer <- paste0(positive_or_zero(nrow(x)-10), " more rows")
-  if(color == TRUE) {
-    cat(paste0("\u001b[38;5;248m", footer, "\u001b[0m"))
+print.nif <- function(x, color = FALSE, ...) {
+  debug <- is_true(nif_option_value("debug"))
+  if(debug == TRUE) {
+    print(x %>%
+      as.data.frame())
   } else {
-    cat(footer)
+    hline <- "-----"
+    # hline <- paste0(rep("\U2500", 8), collapse="")
+    cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
+
+    if(length(studies(x)) == 1) {
+      cat(paste0(guess_analyte(x), " data from one study\n"))
+    } else{
+      cat(paste0(guess_analyte(x), " data from ", length(studies(x)),
+                 " studies\n"))
+    }
+    n_obs <- x %>%
+      filter(.data$EVID == 0) %>%
+      nrow()
+    cat(paste(
+      n_obs, "observations from",
+      subjects(x) %>% nrow(), "subjects\n"
+    ))
+
+    if ("SEX" %in% names(x)) {
+      n_sex <- x %>%
+        dplyr::distinct(.data$USUBJID, .data$SEX) %>%
+        dplyr::group_by(.data$SEX) %>%
+        dplyr::summarize(n = n())
+
+      n_males <- n_sex %>%
+        dplyr::filter(.data$SEX == 0) %>%
+        dplyr::pull(.data$n)
+      if (length(n_males) == 0) {
+        n_males <- 0
+      }
+
+      n_females <- n_sex %>%
+        dplyr::filter(.data$SEX == 1) %>%
+        dplyr::pull(.data$n)
+      if (length(n_females) == 0) {
+        n_females <- 0
+      }
+
+      cat(paste0(
+        "Males: ", n_males, ", females: ", n_females, " (",
+        round(n_females / (n_males + n_females) * 100, 1), "%)\n\n"
+      ))
+    }
+
+    cat("Columns:\n")
+    cat(paste(names(x), collapse = ", "), "\n")
+
+    temp <- x %>%
+      as.data.frame() %>%
+      select(any_of(c(
+        "ID", "NTIME", "TIME", "TAD", "ANALYTE",
+        "EVID",  "CMT", "AMT", "DOSE", "DV"
+      ))) %>%
+      head(10)
+
+    temp <- temp %>%
+      # mutate(across(where(is.numeric), round, 3)) %>%
+      mutate(across(where(is.numeric), ~ round(., 3))) %>%
+      df_to_string(color = color)
+    cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
+
+    footer <- paste0(positive_or_zero(nrow(x)-10), " more rows")
+    if(color == TRUE) {
+      cat(paste0("\u001b[38;5;248m", footer, "\u001b[0m"))
+    } else {
+      cat(footer)
+    }
+    invisible(x)
   }
-  invisible(x)
 }
 
 
@@ -389,8 +395,6 @@ ensure_parent <- function(obj) {
     distinct(CMT)
 
   obj <- obj %>%
-    # {if(!"PARENT" %in% names(obj))
-    #   mutate(., PARENT = "default") else .}
   {if(!"PARENT" %in% names(obj))
     mutate(., PARENT = admin_cmt[[1]]) else .}
 }
@@ -546,7 +550,6 @@ analytes_cmts <- function(obj) {
 cmt_mapping <- function(obj) {
   obj %>%
     ensure_analyte() %>%
-    # {if(!"ANALYTE" %in% names(obj)) mutate(., ANALYTE = NA) else .} %>%
     filter(EVID==0) %>%
     distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
     as.data.frame()
@@ -1032,7 +1035,7 @@ add_trtdy <- function(obj) {
 #'
 #' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
-#' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
+#'   Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
 #' @return A NIF object.
 #' @seealso [egfr_mdrd()]
 #' @seealso [egfr_cg()]
@@ -1043,11 +1046,9 @@ add_trtdy <- function(obj) {
 add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
-      # as.data.frame() %>%
       mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
         molar = TRUE
-      )) #%>%
-      # new_nif()
+      ))
   } else {
     obj %>%
       mutate(BL_CRCL = as.numeric(NA))
@@ -1195,7 +1196,7 @@ add_obs_per_dosing_interval <- function(obj) {
 #' reported in the `RICH_N` field.
 #' @param obj The NIF object.
 #' @param min_n The minimum number of PK samples per analyte to qualify as rich
-#'   sampling.
+#' sampling.
 #' @param analyte The analyte as character. If `NA` (default), the most likely
 #' will be selected automatically.
 #'

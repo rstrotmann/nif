@@ -1214,23 +1214,14 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
 #' @export
 nif_cleanup <- function(nif, keep = NULL) {
   selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
-                       "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
-                       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
-                       "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
-                       "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
-                       "TREATMENT", keep))
+    "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
+    "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+    "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+    "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
+    "TREATMENT", keep))
   selector <- selector[selector %in% names(nif)]
   nif %>%
     select(all_of(selector), starts_with("BL_"))
-  # nif %>%
-  #   select(any_of(
-  #     unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
-  #              "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
-  #              "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
-  #              "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
-  #              "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
-  #              "TREATMENT", keep))
-  #   ))
 }
 
 
@@ -1307,7 +1298,7 @@ nif_auto <- function(sdtm,
     if(is.null(lb)) {
       conditional_message("LB not found in sdtm object!")
     } else {
-      # Baseline CREAT
+      # Baseline CREAT, CRCL and renal function class
       if(bl_creat == TRUE) {
         if(!"CREAT" %in% unique(lb$LBTESTCD)) {
           conditional_message("CREAT not found in LB!")
@@ -1321,7 +1312,6 @@ nif_auto <- function(sdtm,
 
       # Baseline ODWG hepatic function class
       if(bl_odwg == TRUE) {
-        # lb <- domain(sdtm, "lb")
         conditional_message("Adding baseline hepatic function")
         nif <- add_bl_odwg(nif, sdtm)
       }

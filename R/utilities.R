@@ -26,6 +26,20 @@ conditional_message <- function(...) {
 }
 
 
+#' Debug output
+#'
+#' Print an object only if the global option 'debug' is `TRUE`.
+#'
+#' @param obj An object.
+#'
+#' @return Nothing
+#' @export
+#' @seealso [nif_option()]
+print_debug <- function(obj) {
+  if(is_true(nif_option_value("debug"))) print(obj)
+}
+
+
 #' Recode SEX field in a data frame
 #'
 #' This function recodes the SEX field in a data frame. All numerical values are

@@ -109,7 +109,8 @@ summary.sdtm <- function(object, ...) {
 #' @export
 #' @noRd
 print.summary_sdtm <- function(x, color = FALSE, ...) {
-  hline <- paste0(rep("\U2500", 8), collapse="")
+  # hline <- paste0(rep("\U2500", 8), collapse="")
+  hline <- paste0(rep("-", 8), collapse="")
   indent = " "
 
   cat(paste(hline, "SDTM data set summary", hline, "\n"))

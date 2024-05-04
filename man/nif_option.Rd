@@ -2,15 +2,15 @@
 % Please edit documentation in R/nif_options.R
 \name{nif_option}
 \alias{nif_option}
-\title{Set global options}
+\title{Set or get global options}
 \usage{
 nif_option(...)
 }
 \arguments{
-\item{...}{Options as named values.}
+\item{...}{Options as named values, or nothing.}
 }
 \value{
-Nothing.
+The global options as list, if ... is empty, or nothing.
 }
 \description{
 Set global behavior options for all \code{nif} package functions. Currently
