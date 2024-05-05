@@ -343,7 +343,8 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
            caption = paste0("mean and 90% PI, slope = ",
                             round(pm$coefficients[2], 3))) +
       {if(!is.null(group)) labs(color = color_label)} +
-      {if(!is.null(title)) ggtitle(title)}
+      {if(!is.null(title)) ggtitle(title)} +
+      watermark(cex = 1.5)
   }
   lapply(parameter, pm_plot)
 }

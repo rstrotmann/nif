@@ -397,6 +397,7 @@ ensure_parent <- function(obj) {
   obj <- obj %>%
   {if(!"PARENT" %in% names(obj))
     mutate(., PARENT = admin_cmt[[1]]) else .}
+  return(obj)
 }
 
 

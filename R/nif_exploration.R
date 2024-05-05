@@ -610,7 +610,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     distinct(ANALYTE) %>%
     nrow()
   y_label <- ifelse(n_analyte == 1,
-                    # unique(temp$ANALYTE),
                     as.character(temp %>%
                       filter(EVID == 0) %>%
                       distinct(ANALYTE)),
@@ -640,9 +639,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       df_to_string(filter(temp, n_obs == 0, EVID == 0) %>%
                      distinct(ID, ANALYTE, DOSE),
                    indent = "  ")))}
-
   temp <- filter(temp, n_obs > 0 | EVID == 1)
-  # temp <- filter(temp, n_obs > 0)
 
   # remove trailing administrations
   # temp <- temp %>%
@@ -696,6 +693,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       summarize(n = n(), mean = safe_mean(DV),
                 sd = safe_sd(DV), .groups = "drop") %>%
       ungroup() %>%
+      arrange(DOSE, NTIME, GROUP) %>%
 
       # group_by(DOSE, GROUP) %>%
       # mutate(n_group = max(n)) %>%
@@ -719,20 +717,21 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       xlim(c(min_time, max_time)) +
       labs(x = "nominal time (h)", y = y_label, color = color_label,
            caption = "Mean and SD") +
-
       {if(show_n == TRUE) geom_text(
         aes(label =
           paste0 ("N = ", n)),
         x = -Inf,
         y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
-
       theme_bw() +
+      # theme_nif() +
       theme(legend.position = ifelse(
         show_color == TRUE & legend == TRUE, "bottom", "none")) +
       ggtitle(title) +
-      {if(watermark != "") annotate("text", x = Inf, y = Inf, label = watermark,
-                                    hjust = 2, vjust = 2, col = "lightgrey",
-                                    cex = 6, fontface = "bold", alpha = 0.6)}
+      # {if(watermark != "") annotate("text",
+      #                               x = 0, y = Inf, label = watermark,
+      #                               hjust = 2, vjust = 2, col = "lightgrey",
+      #                               cex = 6, fontface = "bold", alpha = 0.6)}
+      watermark(cex = 1.5)
 
   } else {
     # spaghetti plot
@@ -751,12 +750,18 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       labs(x = x_label, y = y_label, color = color_label, caption = caption) +
       xlim(c(min_time, max_time)) +
       theme_bw() +
+      # theme_nif() +
       theme(legend.position =
               ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +
       ggtitle(title) +
-      {if(watermark != "") annotate("text", x = Inf, y = Inf, label = watermark,
-                                    hjust = 1.1, vjust = 2, col = "lightgrey",
-                                    cex = 6, fontface = "bold", alpha = 0.6)}
+      # {if(watermark != "") annotate("text",
+      #                               x = Inf, y = Inf,
+      #                               label = watermark,
+      #                               # hjust = 1.1, vjust = 2,
+      #                               hjust = 0.5, vjust = 0.5,
+      #                               col = "lightgrey",
+      #                               cex = 6, fontface = "bold", alpha = 0.6)}
+      watermark(cex = 1.5)
   }
 }
 
@@ -1464,7 +1469,9 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
     caption <- paste0(length(unique(nif$ID)), " subjects, red: predose")
     caption <- ifelse(shading == TRUE,
                       paste0(caption, ", grey area: Hy's law."), caption)
-    p <- p + labs(caption = caption)
+    p <- p +
+      labs(caption = caption) +
+      watermark(cex = 1.5)
   # })
   return(p)
 }
