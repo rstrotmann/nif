@@ -81,12 +81,12 @@ geom_admin <- function(mapping = NULL, data = NULL,
 
 #' Add a watermark annotation layer for a ggplot2 object
 #' @name watermark
-#' @param watermark String to be added as watermark
-#' @param fontsize Font size
-#' @param colour Font colour
-#' @param alpha Alpha (transparency; lower number = more transparent)
+#'
+#' @param watermark_text The watermark as character.
+#' @param cex The cex as numeric.
 #' @param fontface Font face ("bold" by default)
-#' @param angle Angle of the watermark
+#'
+#' @return A grob.
 #' @import grid
 #' @export
 watermark <- function(watermark_text = NULL,
@@ -104,7 +104,7 @@ watermark <- function(watermark_text = NULL,
     watermark_text,
     x = unit(0.5, "npc"), y = unit(1, "npc"),
     vjust = 1.5,
-    gp = gpar(
+    gp = grid::gpar(
       # hadjust = 1,
       # vjust = 1,
       # hjust = 0,
