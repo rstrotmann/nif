@@ -1071,7 +1071,8 @@ covariate_hist <- function(obj, cov, nbins = 11) {
     geom_vline(xintercept = limits, color = "red") +
     theme_bw() +
     labs(x = xlabel, y = "number of subjects") +
-    ggtitle(title)
+    ggtitle(title) +
+    watermark(cex = 1.5)
 }
 
 
@@ -1102,7 +1103,8 @@ covariate_barplot <- function(obj, cov, title = NULL) {
     geom_bar(stat = "identity", fill = "white", color = "black", width = 0.5) +
     theme_bw() +
     labs(y = "N") +
-    ggtitle(title)
+    ggtitle(title) +
+    watermark()
 }
 
 
@@ -1132,7 +1134,8 @@ wt_by_sex <- function(obj) {
     ) +
     labs(x = "sex", y = "baseline weight (kg)") +
     theme_bw() +
-    ggtitle("Body weight by sex")
+    ggtitle("Body weight by sex") +
+    watermark()
 }
 
 
@@ -1172,7 +1175,8 @@ wt_by_race <- function(obj) {
     ) +
     labs(x = "", y = "baseline weight (kg)") +
     theme_bw() +
-    ggtitle("Body weight by race")
+    ggtitle("Body weight by race") +
+    watermark()
 }
 
 
@@ -1214,7 +1218,8 @@ ht_by_wt <- function(obj, alpha = 0.7) {
     geom_point(size = 3, alpha = alpha) +
     labs(y = "height (cm)", x = "baseline weight (kg)") +
     ggtitle("Body height by weight") +
-    theme_bw()
+    theme_bw() +
+    watermark()
 }
 
 
@@ -1236,7 +1241,8 @@ bmi_by_age <- function(obj, alpha = 0.7) {
     labs(y = "BMI (kg/m^2)", x = "age (y)") +
     ggtitle("Body mass index by age") +
     theme_bw() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    watermark()
 }
 
 
@@ -1262,7 +1268,8 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
     filter(!is.na(TIME)) %>%
     ggplot(aes(x = NTIME, y = TIME, group = ID)) +
     geom_point(...) +
-    theme_bw()
+    theme_bw() +
+    watermark()
 }
 
 
@@ -1319,7 +1326,8 @@ mean_dose_plot <- function(obj, analyte = NULL) {
     facet_grid(PARAM ~ ., scales = "free_y") +
     labs(x = "time (days)", y = "") +
     theme_bw() +
-    ggtitle(paste0("Mean ", analyte, " dose over time"))
+    ggtitle(paste0("Mean ", analyte, " dose over time")) +
+    watermark()
 }
 
 

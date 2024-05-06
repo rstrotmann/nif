@@ -90,7 +90,7 @@ geom_admin <- function(mapping = NULL, data = NULL,
 #' @import grid
 #' @export
 watermark <- function(watermark_text = NULL,
-                      cex = 2,
+                      cex = 1.5,
                       fontface = "bold"
                       ) {
 
@@ -105,9 +105,6 @@ watermark <- function(watermark_text = NULL,
     x = unit(0.5, "npc"), y = unit(1, "npc"),
     vjust = 1.5,
     gp = grid::gpar(
-      # hadjust = 1,
-      # vjust = 1,
-      # hjust = 0,
       color = "lightgrey",
       alpha = .1,
       fontface = fontface,
