@@ -1002,7 +1002,7 @@ add_observation <- function(
 #'   xx the domain name, as character.
 #' @param observation_filter A filter term for the `domain`, as character.
 #' @param subject_filter A filter term for the DM domain, as character.
-#' @param baseline_filter A filter term to identify the baseline condition
+#' @param baseline_filter A filter term to identify the baseline condition.
 #'   within the `domain`. Defaults to "xxBLFL == 'Y'" (with xx the domain
 #'   code).
 #' @param summary_function The summary function to summarize multiple baseline
@@ -1039,7 +1039,10 @@ add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
     filter(eval(parse(text = baseline_filter))) %>%
     select("USUBJID", {{DV_field}}) %>%
     group_by(.data$USUBJID) %>%
-    summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
+    # summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
+
+    summarize(BL = summary_function(na.omit(.data[[DV_field]]), na.rm = TRUE)) %>%
+
     rename_with(~str_c("BL_", testcd), .cols = "BL")
 
   nif %>%
@@ -1270,7 +1273,7 @@ nif_auto <- function(sdtm,
   if(nrow(metabolite_mapping > 0)){
     metabolite_mapping <- metabolite_mapping %>%
       rename(ANALYTE = PCTESTCD_metab, PARENT = PCTESTCD_parent) %>%
-      mutate(EXTRT = NA, METABOLITE = TRUE, PCTESTCD = ANALYTE)
+      mutate(EXTRT = NULL, METABOLITE = TRUE, PCTESTCD = ANALYTE)
   }
   analytes <- bind_rows(analyte_mapping, metabolite_mapping) %>%
     distinct()
@@ -1279,7 +1282,7 @@ nif_auto <- function(sdtm,
 
   # Treatments
   # treatments <- analyte_mapping$EXTRT
-  treatments <- unique(analytes$EXTRT)
+  treatments <- na.omit(unique(analytes$EXTRT))
 
   conditional_message(
     paste0("Adding treatment(s): ", nice_enumeration(treatments)))
@@ -1289,8 +1292,10 @@ nif_auto <- function(sdtm,
   #           analyte = analyte_mapping[i, "ANALYTE"], keep = keep)
   # }
   for(i in seq(1:nrow(analytes))){
-    nif <- add_administration(nif, sdtm, analytes[i, "EXTRT"],
-                              analyte = analytes[i, "ANALYTE"], keep = keep)
+    if(!is.na(analytes[i, "EXTRT"])) {
+      nif <- add_administration(nif, sdtm, analytes[i, "EXTRT"],
+                                analyte = analytes[i, "ANALYTE"], keep = keep)
+    }
   }
 
   # PC observations

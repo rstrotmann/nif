@@ -451,6 +451,14 @@ ensure_time <- function(obj) {
 }
 
 
+ensure_cfb <- function(obj) {
+  obj <- obj %>%
+    # {if(!all(c("ID", "TIME", "ANALYTE", "EVID", "DV") %in% names(obj)))
+    #   add_cfb(.) else .}
+    {if(!"DVCFB" %in% names(obj)) add_cfb(.) else .}
+}
+
+
 #' Doses within a NIF object
 #'
 #' @param obj A nif object
@@ -1108,10 +1116,14 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #'
 #' @param obj A nif object.
 #' @param sdtm The corresponding sdtm object.
+#' @param baseline_filter A filter term to identify the baseline condition.
+#' @param summary_function The summary function to summarize multiple baseline
+#'   values. Defaults to `mean`
 #'
 #' @return A nif object.
 #' @export
-add_bl_odwg <- function(obj, sdtm) {
+add_bl_odwg <- function(obj, sdtm, baseline_filter = NULL,
+                        summary_function = mean) {
   lb1 <- sdtm$domains[["lb"]] %>%
     filter(.data$LBSPEC != "URINE") %>%
     mutate(LB1DTC = .data$LBDTC) %>%
@@ -1124,8 +1136,8 @@ add_bl_odwg <- function(obj, sdtm) {
   sdtm$domains[["lb1"]] <- lb1
 
   obj %>%
-    add_baseline(sdtm, "lb1", "BILI_X_ULN") %>%
-    add_baseline(sdtm, "lb1", "AST_X_ULN") %>%
+    add_baseline(sdtm, "lb1", "BILI_X_ULN", baseline_filter = baseline_filter) %>%
+    add_baseline(sdtm, "lb1", "AST_X_ULN", baseline_filter = baseline_filter) %>%
     mutate(BL_ODWG = case_when(
       .data$BL_BILI_X_ULN > 3 & .data$BL_BILI_X_ULN <= 10 ~ "severe",
       .data$BL_BILI_X_ULN > 1.5 & .data$BL_BILI_X_ULN <= 3 ~ "moderate",
@@ -1148,22 +1160,43 @@ add_bl_odwg <- function(obj, sdtm) {
 #' * `DVCFB` Change from baseline for the dependent variable DV.
 #' @details The Baseline is calculated as the median of the DV for all times
 #' lower or equal to zero.
+#'
 #' @param obj A NIF object.
 #' @param summary_function The function to derive the baseline. This function is
 #'   applied over the DV values at TIME less than or equal to zero. The default
+#' @param baseline_filter A filter term to identify the baseline condition.
 #'   is `median`. Alternatively, `mean`, `min` or `max` can be considered.
 #' @return A NIF object
 #' @export
 #' @examples
 #' head(add_cfb(examplinib_poc_nif))
 #' head(add_cfb(examplinib_poc_min_nif))
-add_cfb <- function(obj, summary_function = median) {
+add_cfb <- function(obj, baseline_filter = "TIME <= 0",
+                    summary_function = median) {
+  # obj %>%
+  #   ensure_analyte() %>%
+  #   as.data.frame() %>%
+  #   group_by(ID, ANALYTE) %>%
+  #   # mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
+  #   mutate(DVBL = summary_function(na.omit(DV[TIME <= 0]))) %>%
+  #   mutate(DVCFB = DV - DVBL) %>%
+  #   new_nif()
+
+  # f <- function(x) {
+  #   temp <- x[eval(parse(text = baseline_filter))]
+  #   temp <- na.omit(temp)
+  #   return(summary_function(temp))
+  # }
+
   obj %>%
     ensure_analyte() %>%
     as.data.frame() %>%
     group_by(ID, ANALYTE) %>%
-    mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
-    # mutate(DVBL = summary_function(DV[TIME <= 0])) %>%
+    # mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
+    # mutate(DVBL = f(DV)) %>%
+
+    mutate(DVBL = summary_function(
+      na.omit(DV[eval(parse(text = baseline_filter))]))) %>%
     mutate(DVCFB = DV - DVBL) %>%
     new_nif()
 }

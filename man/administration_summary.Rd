@@ -17,4 +17,5 @@ Overview on the number of administrations in the subjects by parent
 }
 \examples{
 administration_summary(examplinib_poc_nif)
+administration_summary(new_nif())
 }

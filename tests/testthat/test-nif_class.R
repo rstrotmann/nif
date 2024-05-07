@@ -165,3 +165,36 @@ test_that("add baseline hepatic function class", {
 })
 
 
+
+test_that("cfb works", {
+  obj <- tribble(
+    ~ID, ~ANALYTE, ~EVID, ~TIME, ~DV,
+    1,   "A",      0,     0,     NA,
+    1,   "A",      0,     1,     1,
+    1,   "A",      0,     2,     2,
+    1,   "A",      0,     3,     3,
+    1,   "A",      0,     4,     4,
+    1,   "A",      0,     5,     5
+  )
+
+  expect_no_error(
+    test <- obj %>%
+      add_cfb(baseline_filter = "TIME < 4", summary_function = last) %>%
+      as.data.frame() %>%
+      pull(DVBL)
+  )
+
+  expect_equal(unique(test), 3)
+})
+
+
+
+
+
+
+
+
+
+
+
+

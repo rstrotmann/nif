@@ -4,12 +4,17 @@
 \alias{add_bl_odwg}
 \title{Add baseline hepatic function class}
 \usage{
-add_bl_odwg(obj, sdtm)
+add_bl_odwg(obj, sdtm, baseline_filter = NULL, summary_function = mean)
 }
 \arguments{
 \item{obj}{A nif object.}
 
 \item{sdtm}{The corresponding sdtm object.}
+
+\item{baseline_filter}{A filter term to identify the baseline condition.}
+
+\item{summary_function}{The summary function to summarize multiple baseline
+values. Defaults to \code{mean}}
 }
 \value{
 A nif object.

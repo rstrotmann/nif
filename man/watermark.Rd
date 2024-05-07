@@ -4,7 +4,7 @@
 \alias{watermark}
 \title{Add a watermark annotation layer for a ggplot2 object}
 \usage{
-watermark(watermark_text = NULL, cex = 2, fontface = "bold")
+watermark(watermark_text = NULL, cex = 1.5, fontface = "bold")
 }
 \arguments{
 \item{watermark_text}{The watermark as character.}

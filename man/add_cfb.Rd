@@ -4,7 +4,7 @@
 \alias{add_cfb}
 \title{Add baseline and change from baseline fields}
 \usage{
-add_cfb(obj, summary_function = median)
+add_cfb(obj, baseline_filter = "TIME <= 0", summary_function = median)
 }
 \arguments{
 \item{obj}{A NIF object.}

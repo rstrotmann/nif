@@ -4,7 +4,7 @@
 \alias{nif_auto}
 \title{Automatically generate a nif object with pharmacokinetic observations}
 \usage{
-nif_auto(sdtm, bl_creat = TRUE, bl_odwg = TRUE, keep = "")
+nif_auto(sdtm, bl_creat = TRUE, bl_odwg = TRUE, keep = NULL)
 }
 \arguments{
 \item{sdtm}{The source SDTM object.}

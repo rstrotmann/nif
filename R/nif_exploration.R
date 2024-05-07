@@ -570,6 +570,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     ensure_dose() %>%
     ensure_tad() %>%
     ensure_tafd() %>%
+    ensure_cfb() %>%
     # ensure_time() %>%
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
@@ -589,8 +590,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
 
   # implement change from baseline
   temp <- temp %>%
-    add_cfb(summary_function = summary_function) %>%
-    as.data.frame() %>%
+  #   add_cfb(summary_function = summary_function) %>%
+  #   as.data.frame() %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .}
 
   # make active time field
@@ -793,6 +794,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
 #' @examples
 #' summary(examplinib_poc_nif)
 #' summary(examplinib_poc_min_nif)
+#' summary(new_nif())
 summary.nif <- function(object, ...) {
   subjects <- subjects(object)
   analytes <- analytes(object)
