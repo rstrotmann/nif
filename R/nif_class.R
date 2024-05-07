@@ -485,20 +485,27 @@ doses <- function(obj) {
 #' dose_levels(examplinib_fe_nif, group = "SEX")
 #' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
 #' dose_levels(examplinib_sad_min_nif)
+#' dose_levels(new_nif())
 dose_levels <- function(obj, cmt = 1, group = NULL) {
-  obj %>%
+  temp <- obj %>%
     ensure_analyte() %>%
     filter(AMT != 0) %>%
     group_by(ID, ANALYTE, across(any_of(group))) %>%
-    arrange(ID, TIME) %>%
-    filter(TIME == min(TIME)) %>%
-    select(ID, ANALYTE, AMT, any_of(group)) %>%
-    pivot_wider(
-      names_from = "ANALYTE",
-      values_from = "AMT", values_fill = 0) %>%
-    group_by(across(c(-ID))) %>%
-    summarize(N = n()) %>%
-    as.data.frame()
+    arrange(ID, TIME)
+
+  if(nrow(temp) == 0) {
+    return(NULL)
+  } else {
+    temp %>%
+      filter(TIME == min(TIME)) %>%
+      select(ID, ANALYTE, AMT, any_of(group)) %>%
+      pivot_wider(
+        names_from = "ANALYTE",
+        values_from = "AMT", values_fill = 0) %>%
+      group_by(across(c(-ID))) %>%
+      summarize(N = n()) %>%
+      as.data.frame()
+  }
 }
 
 
@@ -755,12 +762,17 @@ index_dosing_interval <- function(obj) {
 #' @examples
 #' n_administrations(examplinib_poc_nif)
 #' n_administrations(examplinib_poc_min_nif)
+#' n_administrations(new_nif())
 n_administrations <- function(obj) {
-  obj %>%
-    index_dosing_interval() %>%
-    group_by(across(any_of(c("ID", "USUBJID", "PARENT")))) %>%
-    summarize(N = max(DI), .groups = "drop") %>%
-    as.data.frame()
+  if(nrow(obj) == 0) {
+    return(mutate(obj, N = NA))
+  } else {
+    obj %>%
+      index_dosing_interval() %>%
+      group_by(across(any_of(c("ID", "USUBJID", "PARENT")))) %>%
+      summarize(N = max(DI), .groups = "drop") %>%
+      as.data.frame()
+  }
 }
 
 

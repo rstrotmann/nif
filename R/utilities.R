@@ -145,7 +145,7 @@ positive_or_zero <- function(x) {
 
 #' The list of expected date/time formats as per ISO 8601
 #' @keywords internal
-dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y")
+dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m", "%Y-%m-%dT%H:%M:%S", "%Y")
 
 
 #' Convert date fields to POSIX format
@@ -182,6 +182,8 @@ isofy_date_format <- function(obj, fields = NULL) {
       format(x, "%Y-%m-%dT%H:%M")
     })
 }
+
+
 
 
 #' Convert all DTC fields from ISO 8601 into POSIXct

@@ -1281,17 +1281,26 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
 #' @export
 #' @examples
 #' administration_summary(examplinib_poc_nif)
+#' administration_summary(new_nif())
 administration_summary <- function(obj) {
-  obj %>%
-    n_administrations() %>%
-    filter(PARENT != "") %>%
-    group_by(across(any_of(c("PARENT")))) %>%
-    summarize(
-      min = min(N, na.rm = TRUE), max = max(N, na.rm = TRUE),
-      mean = round(mean(N, na.rm = TRUE), 1),
-      median = stats::median(N, na.rm = TRUE)
-    ) %>%
-    as.data.frame()
+  temp <- obj %>%
+    ensure_parent() %>%
+    n_administrations()
+
+  if(nrow(temp) == 0) {
+    data.frame(PARENT = character(), min = numeric(), max = numeric(),
+               mean = numeric(), median = numeric())
+  } else {
+    temp %>%
+      filter(PARENT != "") %>%
+      group_by(across(any_of(c("PARENT")))) %>%
+      summarize(
+        min = min(N, na.rm = TRUE), max = max(N, na.rm = TRUE),
+        mean = round(mean(N, na.rm = TRUE), 1),
+        median = stats::median(N, na.rm = TRUE)
+      ) %>%
+      as.data.frame()
+  }
 }
 
 

@@ -1251,8 +1251,11 @@ nif_cleanup <- function(nif, keep = NULL) {
 nif_auto <- function(sdtm,
                      bl_creat = TRUE,
                      bl_odwg = TRUE,
-                     keep = ""
+                     keep = NULL
                      ) {
+  ## TO DO:
+  ## try generating analyte mapping automatically
+  ##
   analyte_mapping <- sdtm$analyte_mapping
   if(nrow(analyte_mapping) == 0) {
     stop("Missing analyte mapping in sdtm object.")
@@ -1269,27 +1272,36 @@ nif_auto <- function(sdtm,
       rename(ANALYTE = PCTESTCD_metab, PARENT = PCTESTCD_parent) %>%
       mutate(EXTRT = NA, METABOLITE = TRUE, PCTESTCD = ANALYTE)
   }
-  temp <- bind_rows(analyte_mapping, metabolite_mapping) %>%
+  analytes <- bind_rows(analyte_mapping, metabolite_mapping) %>%
     distinct()
 
   nif <- new_nif()
 
   # Treatments
-  treatments <- analyte_mapping$EXTRT
-  conditional_message(paste0("Adding treatment(s): ",
-                             nice_enumeration(treatments)))
-  for(i in seq(1:nrow(analyte_mapping))){
-    nif <- add_administration(nif, sdtm, analyte_mapping[i, "EXTRT"],
-            analyte = analyte_mapping[i, "ANALYTE"], keep = keep)
+  # treatments <- analyte_mapping$EXTRT
+  treatments <- unique(analytes$EXTRT)
+
+  conditional_message(
+    paste0("Adding treatment(s): ", nice_enumeration(treatments)))
+
+  # for(i in seq(1:nrow(analyte_mapping))){
+  #   nif <- add_administration(nif, sdtm, analyte_mapping[i, "EXTRT"],
+  #           analyte = analyte_mapping[i, "ANALYTE"], keep = keep)
+  # }
+  for(i in seq(1:nrow(analytes))){
+    nif <- add_administration(nif, sdtm, analytes[i, "EXTRT"],
+                              analyte = analytes[i, "ANALYTE"], keep = keep)
   }
 
   # PC observations
-  observations <- temp$ANALYTE
-  conditional_message(paste0("Adding PC observations(s): ",
-                             nice_enumeration(observations)))
-  for(i in seq(1:nrow(temp))) {
-    nif <- add_observation(nif, sdtm, "pc", temp[i, "PCTESTCD"],
-            analyte = temp[i, "ANALYTE"], parent = temp[i, "PARENT"],
+  observations <- unique(analytes$ANALYTE)
+
+  conditional_message(
+    paste0("Adding PC observations(s): ", nice_enumeration(observations)))
+
+  for(i in seq(1:nrow(analytes))) {
+    nif <- add_observation(nif, sdtm, "pc", analytes[i, "PCTESTCD"],
+            analyte = analytes[i, "ANALYTE"], parent = analytes[i, "PARENT"],
             keep = keep)
   }
 
