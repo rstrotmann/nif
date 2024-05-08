@@ -1135,7 +1135,7 @@ add_bl_odwg <- function(obj, sdtm,
     mutate(LB1DTC = .data$LBDTC) %>%
     filter(.data$LBTESTCD %in% c("AST", "BILI")) %>%
     mutate(LB1TESTCD = .data$LBTESTCD) %>%
-    mutate(LB1BLFL = .data$LBBLFL) %>%
+    # mutate(LB1BLFL = .data$LBBLFL) %>%
     mutate(LB1TESTCD = paste0(.data$LB1TESTCD, "_X_ULN"),
            LB1STRESN = .data$LBSTRESN / .data$LBSTNRHI)
 
