@@ -22,19 +22,24 @@
 #' nca(examplinib_fe_nif)
 #' nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 #'
-nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
+nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
+                group = NULL,
                 nominal_time = FALSE,
                 average_duplicates = TRUE,
                 silent = deprecated()) {
   # guess analyte if not defined
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
-    if (get("silent", .nif_env) == FALSE) {
-      message(paste(
-        "NCA: No analyte specified. Selected",
-        current_analyte, "as the most likely."
-      ))
-    }
+    # if (get("silent", .nif_env) == FALSE) {
+    #   message(paste(
+    #     "NCA: No analyte specified. Selected",
+    #     current_analyte, "as the most likely."
+    #   ))
+    # }
+    conditional_message(paste(
+      "NCA: No analyte specified. Selected",
+      current_analyte, "as the most likely."
+    ))
   } else {
     current_analyte <- analyte
   }
@@ -48,9 +53,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
     as.data.frame() %>%
     dplyr::filter(ANALYTE == current_analyte) %>%
     dplyr::mutate(TIME = case_when(nominal_time == TRUE ~ NTIME,
-                                   # .default = TIME
-                                   .default = TIME
-    )) %>%
+                                   .default = TIME)) %>%
     dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
     as.data.frame()
 
@@ -76,11 +79,11 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE", group = NULL,
   # concentration data
   conc <- obj1 %>%
     dplyr::filter(EVID == 0) %>%
-    dplyr::select(any_of(c("ID", "TIME", "DV", group)))
+    dplyr::select(any_of(c("ID", "TIME", "DV", "DOSE", group)))
 
   if (average_duplicates == TRUE) {
     conc <- conc %>%
-      group_by(across(any_of(c("ID", "TIME", group)))) %>%
+      group_by(across(any_of(c("ID", "TIME", "DOSE", group)))) %>%
       summarize(DV = mean(DV, na.rm = TRUE), .groups = "drop")
   }
 
@@ -349,7 +352,9 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
       {if(!is.null(title)) ggtitle(title)} +
       watermark(cex = 1.5)
   }
-  lapply(parameter, pm_plot)
+  out <- lapply(parameter, pm_plot)
+  names(out) <- parameter
+  return(out)
 }
 
 
