@@ -12,7 +12,7 @@ and Watkins 2011."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,9 @@ and <a href="https://doi.org/10.2165/11586600-000000000-00000" class="external-l
 <span>  <span class="va">nif</span>,</span>
 <span>  <span class="va">sdtm</span>,</span>
 <span>  enzyme <span class="op">=</span> <span class="st">"ALT"</span>,</span>
+<span>  observation_filter <span class="op">=</span> <span class="st">"LBSPEC != 'URINE'"</span>,</span>
 <span>  show_labels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  autoscale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  shading <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  nominal_time <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  time <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -94,6 +96,11 @@ character, can be 'AST' or 'ALT' (default).</p></dd>
 
 <dt>show_labels</dt>
 <dd><p>Show ID labels per point.</p></dd>
+
+
+<dt>autoscale</dt>
+<dd><p>Use automatic axis scaling, as logical. Defaults to
+0.01-1000 for ALT/AST and 0.01-100 for bili.</p></dd>
 
 
 <dt>shading</dt>
