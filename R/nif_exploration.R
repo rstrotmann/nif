@@ -1421,17 +1421,26 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @param time time/nominal time filter as numeric.
 #' @param parent The parent compound as character.
 #' @param shading Highlight Hy's law area, as logical.
+#' @param observation_filter
+#' @param autoscale Use automatic axis scaling, as logical. Defaults to
+#'   0.01-1000 for ALT/AST and 0.01-100 for bili.
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
+#' @import assertr
 #' @export
-edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
+edish_plot <- function(nif, sdtm, enzyme = "ALT",
+                       observation_filter = "LBSPEC != 'URINE'",
+                       show_labels = FALSE, autoscale = FALSE,
                        shading = TRUE, nominal_time = TRUE, time = NULL,
                        parent = NULL, title = "eDISH plot: All time points",
                        size = 3, alpha = 0.5, ...) {
   lb <- sdtm$domains[["lb"]] %>%
-    filter(.data$LBSPEC != "URINE")
-  if(!all(c("BILI", enzyme) %in% lb$LBTESTCD)) stop("Liver markers values not found in LB")
+    filter(eval(parse(text = observation_filter))) %>%
+    verify(has_all_names("USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
+
+  if(!all(c("BILI", enzyme) %in% lb$LBTESTCD))
+    stop("Liver markers values not found in LB")
 
   lb1 <- lb %>%
     mutate(LB1DTC = .data$LBDTC) %>%
@@ -1472,8 +1481,11 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT", show_labels = FALSE,
                  label = .data$ID)) +
       geom_point(size = size, alpha = alpha) +
       {if(show_labels == TRUE) geom_text_repel()} +
-      scale_x_log10() +
-      scale_y_log10() +
+      {if(!autoscale == TRUE) scale_x_log10(limits = c(0.01, 1000)) else
+        scale_x_log10()} +
+      {if(!autoscale == TRUE) scale_y_log10(limits = c(0.01, 100)) else
+        scale_y_log10()} +
+
       {if(shading == TRUE) annotate('rect', xmin = 3, xmax = Inf, ymin = 2,
                                     ymax = Inf, alpha=.15, fill='grey')} +
       geom_hline(yintercept = 2, linetype="dashed") +
