@@ -1421,7 +1421,7 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @param time time/nominal time filter as numeric.
 #' @param parent The parent compound as character.
 #' @param shading Highlight Hy's law area, as logical.
-#' @param observation_filter
+#' @param observation_filter A filter term as character.
 #' @param autoscale Use automatic axis scaling, as logical. Defaults to
 #'   0.01-1000 for ALT/AST and 0.01-100 for bili.
 #'

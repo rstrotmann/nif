@@ -4,14 +4,24 @@
 \alias{add_bl_odwg}
 \title{Add baseline hepatic function class}
 \usage{
-add_bl_odwg(obj, sdtm, baseline_filter = NULL, summary_function = mean)
+add_bl_odwg(
+  obj,
+  sdtm,
+  observation_filter = "LBSPEC != 'URINE'",
+  baseline_filter = NULL,
+  summary_function = mean
+)
 }
 \arguments{
 \item{obj}{A nif object.}
 
 \item{sdtm}{The corresponding sdtm object.}
 
-\item{baseline_filter}{A filter term to identify the baseline condition.}
+\item{observation_filter}{The filter term for the observation source data, as
+character.}
+
+\item{baseline_filter}{A filter term to identify the baseline condition, as
+character.}
 
 \item{summary_function}{The summary function to summarize multiple baseline
 values. Defaults to \code{mean}}

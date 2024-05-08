@@ -8,7 +8,9 @@ nca_power_model(
   nca,
   parameter = c("cmax", "aucinf.obs"),
   group = NULL,
-  title = NULL
+  title = NULL,
+  size = 2,
+  alpha = 1
 )
 }
 \arguments{
@@ -19,6 +21,10 @@ nca_power_model(
 \item{group}{Grouping parameter as character.}
 
 \item{title}{The title as character.}
+
+\item{size}{The point size as numeric.}
+
+\item{alpha}{The alpha value for the data points as numeric.}
 }
 \value{
 A list of ggplot2 objects.

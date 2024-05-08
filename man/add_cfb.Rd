@@ -9,9 +9,11 @@ add_cfb(obj, baseline_filter = "TIME <= 0", summary_function = median)
 \arguments{
 \item{obj}{A NIF object.}
 
-\item{summary_function}{The function to derive the baseline. This function is
-applied over the DV values at TIME less than or equal to zero. The default
+\item{baseline_filter}{A filter term to identify the baseline condition.
 is \code{median}. Alternatively, \code{mean}, \code{min} or \code{max} can be considered.}
+
+\item{summary_function}{The function to derive the baseline. This function is
+applied over the DV values at TIME less than or equal to zero. The default}
 }
 \value{
 A NIF object

@@ -8,7 +8,9 @@ edish_plot(
   nif,
   sdtm,
   enzyme = "ALT",
+  observation_filter = "LBSPEC != 'URINE'",
   show_labels = FALSE,
+  autoscale = TRUE,
   shading = TRUE,
   nominal_time = TRUE,
   time = NULL,
@@ -28,6 +30,9 @@ edish_plot(
 character, can be 'AST' or 'ALT' (default).}
 
 \item{show_labels}{Show ID labels per point.}
+
+\item{autoscale}{Use automatic axis scaling, as logical. Defaults to
+0.01-1000 for ALT/AST and 0.01-100 for bili.}
 
 \item{shading}{Highlight Hy's law area, as logical.}
 
