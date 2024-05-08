@@ -305,6 +305,8 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' @param group Grouping parameter as character.
 #' @param parameter The PK parameter as character.
 #' @param title The title as character.
+#' @param size The point size as numeric.
+#' @param alpha The alpha value for the data points as numeric.
 #'
 #' @return A list of ggplot2 objects.
 #' @importFrom stats lm predict.lm
@@ -314,7 +316,7 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
 #'   c("cmax", "aucinf.obs"))
 nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
-    group = NULL, title = NULL) {
+    group = NULL, title = NULL, size = 2, alpha = 1) {
   pm_plot <- function(param) {
     pp <- nca %>%
       filter(PPTESTCD == param) %>%
@@ -335,8 +337,9 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
       geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
                   fill = 'lightgrey', alpha = 0.5) +
       {if(!is.null(group)) geom_point(
-        aes(x = DOSE, y = PPORRES, color = COLOR), size = 2) else
-          geom_point(aes(x = DOSE, y = PPORRES), size = 2)} +
+        aes(x = DOSE, y = PPORRES, color = COLOR), size = size, alpha = alpha)
+          else
+          geom_point(aes(x = DOSE, y = PPORRES), size = size, alpha = alpha)} +
       theme_bw() +
       expand_limits(x = 0) +
       labs(x = "dose (mg)", y = param,

@@ -1431,7 +1431,7 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @export
 edish_plot <- function(nif, sdtm, enzyme = "ALT",
                        observation_filter = "LBSPEC != 'URINE'",
-                       show_labels = FALSE, autoscale = FALSE,
+                       show_labels = FALSE, autoscale = TRUE,
                        shading = TRUE, nominal_time = TRUE, time = NULL,
                        parent = NULL, title = "eDISH plot: All time points",
                        size = 3, alpha = 0.5, ...) {

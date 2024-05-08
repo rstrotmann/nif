@@ -1116,16 +1116,22 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #'
 #' @param obj A nif object.
 #' @param sdtm The corresponding sdtm object.
-#' @param baseline_filter A filter term to identify the baseline condition.
+#' @param baseline_filter A filter term to identify the baseline condition, as
+#'   character.
 #' @param summary_function The summary function to summarize multiple baseline
 #'   values. Defaults to `mean`
+#' @param observation_filter The filter term for the observation source data, as
+#'   character.
 #'
 #' @return A nif object.
 #' @export
-add_bl_odwg <- function(obj, sdtm, baseline_filter = NULL,
+add_bl_odwg <- function(obj, sdtm,
+                        observation_filter = "LBSPEC != 'URINE'",
+                        baseline_filter = NULL,
                         summary_function = mean) {
   lb1 <- sdtm$domains[["lb"]] %>%
-    filter(.data$LBSPEC != "URINE") %>%
+    # filter(.data$LBSPEC != "URINE") %>%
+    filter(eval(parse(text = observation_filter))) %>%
     mutate(LB1DTC = .data$LBDTC) %>%
     filter(.data$LBTESTCD %in% c("AST", "BILI")) %>%
     mutate(LB1TESTCD = .data$LBTESTCD) %>%
