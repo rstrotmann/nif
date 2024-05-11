@@ -1461,7 +1461,7 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
       filter(.data$TIME %in% time)
   }
   if(is.null(parent)) {
-    parent <- guess_analyte(nif)
+    parent <- guess_parent(nif)
   }
 
   # suppressWarnings({
