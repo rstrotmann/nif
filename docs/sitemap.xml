@@ -55,6 +55,9 @@
     <loc>/reference/add_bl_lab.html</loc>
   </url>
   <url>
+    <loc>/reference/add_bl_lbm.html</loc>
+  </url>
+  <url>
     <loc>/reference/add_bl_odwg.html</loc>
   </url>
   <url>
@@ -401,6 +404,15 @@
   </url>
   <url>
     <loc>/reference/last_obs_dtc.html</loc>
+  </url>
+  <url>
+    <loc>/reference/lbm_boer.html</loc>
+  </url>
+  <url>
+    <loc>/reference/lbm_hume.html</loc>
+  </url>
+  <url>
+    <loc>/reference/lbm_peters.html</loc>
   </url>
   <url>
     <loc>/reference/limit.html</loc>
