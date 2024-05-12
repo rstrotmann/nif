@@ -1127,23 +1127,24 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' @export
 add_bl_odwg <- function(obj, sdtm,
                         observation_filter = "LBSPEC != 'URINE'",
-                        baseline_filter = NULL,
+                        baseline_filter = "LBBLFL == 'Y'",
                         summary_function = mean) {
   lb1 <- sdtm$domains[["lb"]] %>%
     # filter(.data$LBSPEC != "URINE") %>%
+    filter(eval(parse(text = baseline_filter))) %>%
     filter(eval(parse(text = observation_filter))) %>%
-    mutate(LB1DTC = .data$LBDTC) %>%
+    # mutate(LBDTC = .data$LBDTC) %>%
     filter(.data$LBTESTCD %in% c("AST", "BILI")) %>%
-    mutate(LB1TESTCD = .data$LBTESTCD) %>%
+    # mutate(LBTESTCD = .data$LBTESTCD) %>%
     # mutate(LB1BLFL = .data$LBBLFL) %>%
-    mutate(LB1TESTCD = paste0(.data$LB1TESTCD, "_X_ULN"),
-           LB1STRESN = .data$LBSTRESN / .data$LBSTNRHI)
+    mutate(LBTESTCD = paste0(.data$LBTESTCD, "_X_ULN"),
+           LBSTRESN = .data$LBSTRESN / .data$LBSTNRHI)
 
-  sdtm$domains[["lb1"]] <- lb1
+  sdtm$domains[["lb"]] <- lb1
 
   obj %>%
-    add_baseline(sdtm, "lb1", "BILI_X_ULN", baseline_filter = baseline_filter) %>%
-    add_baseline(sdtm, "lb1", "AST_X_ULN", baseline_filter = baseline_filter) %>%
+    add_baseline(sdtm, "lb", "BILI_X_ULN", baseline_filter = baseline_filter) %>%
+    add_baseline(sdtm, "lb", "AST_X_ULN", baseline_filter = baseline_filter) %>%
     mutate(BL_ODWG = case_when(
       .data$BL_BILI_X_ULN > 3 & .data$BL_BILI_X_ULN <= 10 ~ "severe",
       .data$BL_BILI_X_ULN > 1.5 & .data$BL_BILI_X_ULN <= 3 ~ "moderate",
