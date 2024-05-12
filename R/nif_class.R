@@ -1112,7 +1112,7 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #'
 #' * moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
 #'
-#' * severe tic dysfunction: TB >3 - 10 x ULN, any AST
+#' * severe hepatic dysfunction: TB >3 - 10 x ULN, any AST
 #'
 #' @param obj A nif object.
 #' @param sdtm The corresponding sdtm object.
@@ -1129,7 +1129,8 @@ add_bl_odwg <- function(obj, sdtm,
                         observation_filter = "LBSPEC != 'URINE'",
                         baseline_filter = "LBBLFL == 'Y'",
                         summary_function = mean) {
-  lb1 <- sdtm$domains[["lb"]] %>%
+  lb1 <- sdtm %>%
+    domain("lb") %>%
     # filter(.data$LBSPEC != "URINE") %>%
     filter(eval(parse(text = baseline_filter))) %>%
     filter(eval(parse(text = observation_filter))) %>%

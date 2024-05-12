@@ -1435,7 +1435,8 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
                        shading = TRUE, nominal_time = TRUE, time = NULL,
                        parent = NULL, title = "eDISH plot: All time points",
                        size = 3, alpha = 0.5, ...) {
-  lb <- sdtm$domains[["lb"]] %>%
+  lb <- sdtm %>%
+    domain("lb") %>%
     filter(eval(parse(text = observation_filter))) %>%
     verify(has_all_names("USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
 

@@ -60,36 +60,44 @@ new_sdtm <- function(sdtm_data,
 #' @examples
 #' summary(examplinib_poc)
 summary.sdtm <- function(object, ...) {
-  subjects <- object$domains[["pc"]] %>%
+  subjects <- object %>%
+    domain("pc") %>%
     filter(!is.na(.data$PCSTRESN)) %>%
     dplyr::distinct(.data$USUBJID) %>%
     pull(.data$USUBJID) %>%
     as.character()
 
   out <- list(
-    study = object$domains[["dm"]] %>%
+    study = object %>%
+      domain("dm") %>%
       distinct(.data$STUDYID) %>%
       pull(.data$STUDYID) %>%
       as.character(),
     subjects = subjects,
     n_subs = length(subjects),
-    pc_timepoints = object$domains[["pc"]] %>%
+    pc_timepoints = object %>%
+      domain("pc") %>%
       dplyr::distinct(across(any_of(c("PCTPT", "PCTPTNUM")))),
     domains = data.frame(
       DOMAIN = names(object$domains),
       N = as.numeric(lapply(object$domains, function(x) {length(unique(x$USUBJID))}))
     ),
-    treatments = object$domains[["ex"]] %>%
+    treatments = object %>%
+      domain("ex") %>%
       dplyr::distinct(.data$EXTRT),
-    arms = object$domains[["dm"]] %>%
+    arms = object %>%
+      domain("dm") %>%
       dplyr::distinct(.data$ACTARM, .data$ACTARMCD),
-    doses = object$domains[["ex"]] %>%
+    doses = object %>%
+      domain("ex") %>%
       distinct(.data$EXTRT, .data$EXDOSE),
-    specimems = object$domains[["pc"]] %>%
+    specimems = object %>%
+      domain("pc") %>%
       dplyr::distinct(.data$PCSPEC) %>%
       pull(.data$PCSPEC) %>%
       as.character(),
-    analytes = object$domains[["pc"]] %>%
+    analytes = object %>%
+      domain("pc") %>%
       dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
@@ -315,7 +323,8 @@ subject_info <- function(obj, id) {
 #' @examples
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
-  temp <- obj$domains[["dm"]] %>%
+  temp <- obj %>%
+    domain("dm") %>%
     dplyr::filter(.data$USUBJID %in% id) %>%
     as.list()
   class(temp) <- c("subject_info", "data.frame")

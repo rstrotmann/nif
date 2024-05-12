@@ -240,7 +240,9 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' plot(examplinib_poc, domain="vs", lines = FALSE, points = TRUE)
 plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
                       points = FALSE, analyte = NULL, log = FALSE, ...) {
-  obj <- x$domains[[domain]] %>%
+  # obj <- x$domains[[domain]] %>%
+  obj <- x %>%
+    domain(domain) %>%
     filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
     lubrify_dates() %>%
     as.data.frame()
