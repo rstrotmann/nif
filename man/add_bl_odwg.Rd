@@ -8,7 +8,7 @@ add_bl_odwg(
   obj,
   sdtm,
   observation_filter = "LBSPEC != 'URINE'",
-  baseline_filter = NULL,
+  baseline_filter = "LBBLFL == 'Y'",
   summary_function = mean
 )
 }
@@ -38,6 +38,6 @@ bilirubin, and AST aspartate aminotransferase.
 \item normal: TB & AST ≤ upper limit of normal (ULN)
 \item mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
 \item moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
-\item severe tic dysfunction: TB >3 - 10 x ULN, any AST
+\item severe hepatic dysfunction: TB >3 - 10 x ULN, any AST
 }
 }

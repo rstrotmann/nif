@@ -29,6 +29,8 @@ edish_plot(
 \item{enzyme}{The transaminase enzyme to be plotted on the x axis as
 character, can be 'AST' or 'ALT' (default).}
 
+\item{observation_filter}{A filter term as character.}
+
 \item{show_labels}{Show ID labels per point.}
 
 \item{autoscale}{Use automatic axis scaling, as logical. Defaults to

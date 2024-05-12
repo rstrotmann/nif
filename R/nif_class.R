@@ -1175,6 +1175,7 @@ add_bl_odwg <- function(obj, sdtm,
 #' @param baseline_filter A filter term to identify the baseline condition.
 #'   is `median`. Alternatively, `mean`, `min` or `max` can be considered.
 #' @return A NIF object
+#' @importFrom stats na.omit
 #' @export
 #' @examples
 #' head(add_cfb(examplinib_poc_nif))

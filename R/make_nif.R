@@ -1013,6 +1013,7 @@ add_observation <- function(
 #'
 #' @return A nif object.
 #' @import assertr
+#' @importFrom stats na.omit
 #' @export
 #' @examples
 #' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
@@ -1247,6 +1248,7 @@ nif_cleanup <- function(nif, keep = NULL) {
 #' @seealso [add_analyte_mapping()]
 #' @seealso [add_metabolite_mapping()]
 #' @import assertr
+#' @importFrom stats na.omit
 #' @export
 #'
 #' @examples
