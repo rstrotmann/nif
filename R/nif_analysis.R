@@ -7,7 +7,7 @@
 #'
 #' @param crea Serum creatinine in mg/dl or umol/l (if molar=TRUE).
 #' @param age Age in years.
-#' @param sex Sex encocded as number (male is 0) or character (male is "M").
+#' @param sex Sex encoded as number (male is 0) or character (male is "M").
 #' @param race Race. Dummy variable for compatibility, race is not used by this
 #'   method.
 #' @param weight Body weight. Not used in this formula but included for
@@ -164,3 +164,62 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #
 #   }
 # }
+
+
+#' Lean body mass (Boer formula)
+#'
+#' Source: Caruso D, De Santis D, Rivosecchi F, Zerunian M, Panvini N, Montesano
+#' M, Biondi T, Bellini D, Rengo M, Laghi A. Lean Body Weight-Tailored Iodinated
+#' Contrast Injection in Obese Patient: Boer versus James Formula. Biomed Res
+#' Int. 2018 Aug 13;2018:8521893. doi: 10.1155/2018/8521893. PMID: 30186869;
+#' PMCID: PMC6110034.
+#'
+#' @param weight Body weight in kg, as numeric.
+#' @param height Body height in cm, as numeric.
+#' @param sex Sex encoded as number (male is 0) or character (male is "M").
+#'
+#' @return Lean body mass in kg, as numeric.
+#' @export
+lbm_boer <- function(weight, height, sex) {
+  ifelse((sex == "M") | (sex == 0),
+         (0.407 * weight) + (0.267 * height) - 19.2,
+         (0.252 * weight) + (0.473 * height) - 48.3)
+}
+
+
+#' Lean body mass (Hume formula)
+#'
+#' Source: Hume R. Prediction of lean body mass from height and weight. J Clin
+#' Pathol. 1966 Jul;19(4):389-91. doi: 10.1136/jcp.19.4.389. PMID: 5929341;
+#' PMCID: PMC473290.
+#'
+#' @param weight Body weight in kg, as numeric.
+#' @param height Body height in cm, as numeric.
+#' @param sex Sex encoded as number (male is 0) or character (male is "M").
+#'
+#' @return Lean body mass in kg, as numeric.
+#' @export
+lbm_hume <- function(weight, height, sex) {
+  ifelse((sex == "M") | (sex == 0),
+         (0.32810 * weight) + (0.33929 * height) - 29.5336,
+         (0.29569 * weight) + (0.41813 * height) - 43.2933)
+}
+
+
+#' Lean body mass (Peters formula)
+#'
+#' Source: Peters AM, Snelling HL, Glass DM, Bird NJ. Estimation of lean body
+#' mass in children. Br J Anaesth. 2011 May;106(5):719-23. doi:
+#' 10.1093/bja/aer057. PMID: 21498495.
+#'
+#' @param weight Body weight in kg, as numeric.
+#' @param height Body height in cm, as numeric.
+#' @param sex Sex encoded as number (male is 0) or character (male is "M").
+#'
+#' @return Lean body mass in kg, as numeric.
+#' @export
+lbm_peters <- function(weight, height, sex) {
+  3.8 * (0.0215 * weight**0.6469 * height** 0.7236)
+}
+
+

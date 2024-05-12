@@ -1101,6 +1101,34 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 }
 
 
+#' Add baseline lean body mass (LBM)
+#'
+#' @param obj A nif object.
+#' @param method The function to calculate LBM, i.e., [lbm_boer()],
+#' [lbm_hume()] or [lbm_peters()].
+#'
+#' @return A nif object.
+#' @seealso [lbm_hume()]
+#' @seealso [lbm_boer()]
+#' @seealso [lbm_peters()]
+#' @import assertr
+#' @export
+add_bl_lbm <- function(obj, method = lbm_boer) {
+  # if ("BL_CREAT" %in% colnames(obj)) {
+  #   obj %>%
+  #     mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
+  #                             molar = TRUE
+  #     ))
+  # } else {
+  #   obj %>%
+  #     mutate(BL_CRCL = as.numeric(NA))
+  # }
+  obj %>%
+    verify(has_all_names("WEIGHT", "HEIGHT", "SEX")) %>%
+    mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
+}
+
+
 #' Add baseline hepatic function class
 #'
 #' Based on the NCI ODWG criteria with TB the total (direct and indirect) serum
