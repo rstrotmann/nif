@@ -525,6 +525,7 @@ nif_spaghetti_plot <- function(obj,
 #' @param show_n Show sample size in mean plot, as logical. Does currently not
 #'   implement grouping! `r lifecycle::badge("experimental")`
 #' @param shading Show ribbons when mean = TRUE, as logical.
+#' @param dose_norm Dose-normalized exposure, as logical.
 #'
 #' @return A ggplot object.
 #' @import assertr
@@ -549,7 +550,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                      summary_function = median, mean = FALSE,
                      title = "", caption = "", integrate_predose = TRUE,
                      legend = TRUE, show_n = FALSE, shading = TRUE,
-                     silent = deprecated(),
+                     silent = deprecated(), dose_norm = FALSE,
                      ...) {
   # Assert time field
   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
@@ -615,6 +616,14 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                       filter(EVID == 0) %>%
                       distinct(ANALYTE)),
                     "DV")
+
+  # dose-normalize, if applicable
+  if(dose_norm == TRUE) {
+    temp <- temp %>%
+      mutate(DV = DV/DOSE) %>%
+      mutate(DOSE = NA)
+    y_label <- paste0(y_label, " / DOSE")
+  }
 
   # implement max_time, min_time
   if(is.null(max_time)) {max_time <- max_time(filter(temp, EVID == 0),
