@@ -16,7 +16,7 @@ conducted."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9009</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,7 +86,7 @@ conducted.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_obs_per_dosing_interval</span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7,654 × 31</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7,654 × 32</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   ID, USUBJID, ANALYTE, PARENT, DI [6,503]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      REF    ID STUDYID    USUBJID            AGE   SEX RACE  HEIGHT WEIGHT   BMI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -101,8 +101,8 @@ conducted.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     9     1 2023000022 202300002210100…    76     1 WHITE   178.   68.7  21.8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    10     1 2023000022 202300002210100…    76     1 WHITE   178.   68.7  21.8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7,644 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 21 more variables: DTC &lt;dttm&gt;, TIME &lt;dbl&gt;, NTIME &lt;dbl&gt;, TAFD &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   PCELTM &lt;chr&gt;, EVID &lt;dbl&gt;, AMT &lt;dbl&gt;, ANALYTE &lt;chr&gt;, CMT &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 22 more variables: DTC &lt;dttm&gt;, TIME &lt;dbl&gt;, NTIME &lt;dbl&gt;, TAFD &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   TAD &lt;dbl&gt;, PCELTM &lt;chr&gt;, EVID &lt;dbl&gt;, AMT &lt;dbl&gt;, ANALYTE &lt;chr&gt;, CMT &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   PARENT &lt;chr&gt;, TRTDY &lt;dbl&gt;, METABOLITE &lt;lgl&gt;, DOSE &lt;dbl&gt;, DV &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   MDV &lt;dbl&gt;, ACTARMCD &lt;chr&gt;, IMPUTATION &lt;chr&gt;, DI &lt;int&gt;, BL_CREAT &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   BL_CRCL &lt;dbl&gt;, OPDI &lt;int&gt;</span></span>
