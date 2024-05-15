@@ -329,50 +329,50 @@ last_ex_dtc <- function(ex) {
 }
 
 
-#' Extract baseline vital sign covariates from VS
-#'
-#' @param vs The VS domain as data frame.
-#'
-#' @return Baseline VS data as wide data frame.
-#' @export
-#' @keywords internal
-baseline_covariates <- function(vs) {
-  temp <- vs %>%
-    filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
-
-  bl_cov <- NULL
-
-  if ("VISIT" %in% names(temp)) {
-    if ("SCREENING" %in% str_to_upper(unique(temp$VISIT))) {
-      bl_cov <- temp %>%
-        filter(str_to_upper(VISIT) == "SCREENING")
-    } else {
-      if ("VSBLFL" %in% names(temp)) {
-        bl_cov <- temp %>%
-          filter(VSBLFL == "Y")
-      }
-    }
-  } else {
-    if ("VSBLFL" %in% names(temp)) {
-      bl_cov <- temp %>%
-        filter(VSBLFL == "Y")
-    } else {
-      conditional_message("Baseline VS data could not be identified!", "\n")
-    }
-  }
-
-  bl_cov <- bl_cov %>%
-    group_by(.data$USUBJID, .data$VSTESTCD) %>%
-    summarize(mean = mean(VSSTRESN), .groups = "drop") %>%
-    pivot_wider(names_from = "VSTESTCD", values_from = "mean")
-
-  # Calculate BMI if height and weight are available
-  if ("HEIGHT" %in% colnames(bl_cov) && "WEIGHT" %in% colnames(bl_cov)) {
-    bl_cov <- bl_cov %>%
-      mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
-  }
-  return(bl_cov)
-}
+# ' Extract baseline vital sign covariates from VS
+# '
+# ' @param vs The VS domain as data frame.
+# '
+# ' @return Baseline VS data as wide data frame.
+# ' @export
+# ' @keywords internal
+# baseline_covariates <- function(vs) {
+#   temp <- vs %>%
+#     filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
+#
+#   bl_cov <- NULL
+#
+#   if ("VISIT" %in% names(temp)) {
+#     if ("SCREENING" %in% str_to_upper(unique(temp$VISIT))) {
+#       bl_cov <- temp %>%
+#         filter(str_to_upper(VISIT) == "SCREENING")
+#     } else {
+#       if ("VSBLFL" %in% names(temp)) {
+#         bl_cov <- temp %>%
+#           filter(VSBLFL == "Y")
+#       }
+#     }
+#   } else {
+#     if ("VSBLFL" %in% names(temp)) {
+#       bl_cov <- temp %>%
+#         filter(VSBLFL == "Y")
+#     } else {
+#       conditional_message("Baseline VS data could not be identified!", "\n")
+#     }
+#   }
+#
+#   bl_cov <- bl_cov %>%
+#     group_by(.data$USUBJID, .data$VSTESTCD) %>%
+#     summarize(mean = mean(VSSTRESN), .groups = "drop") %>%
+#     pivot_wider(names_from = "VSTESTCD", values_from = "mean")
+#
+#   # Calculate BMI if height and weight are available
+#   if ("HEIGHT" %in% colnames(bl_cov) && "WEIGHT" %in% colnames(bl_cov)) {
+#     bl_cov <- bl_cov %>%
+#       mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
+#   }
+#   return(bl_cov)
+# }
 
 
 #' Create the drug mapping data frame for PC observations
@@ -482,11 +482,28 @@ make_subjects <- function(dm, vs,
       select(-"age_brthdtc")
   }
 
+  baseline_covariates <- vs %>%
+    lubrify_dates() %>%
+    left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID") %>%
+    {if("VSBLFL" %in% names(vs)) filter(., VSBLFL == "Y") else
+      filter(., VSDTC < RFSTDTC)} %>%
+    filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) %>%
+    group_by(.data$USUBJID, .data$VSTESTCD) %>%
+    summarize(mean = mean(.data$VSSTRESN), .groups = "drop") %>%
+    pivot_wider(names_from = "VSTESTCD", values_from = "mean")
+
+  if ("HEIGHT" %in% colnames(baseline_covariates) &&
+      "WEIGHT" %in% colnames(baseline_covariates)) {
+    baseline_covariates <- baseline_covariates %>%
+      mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
+  }
+
   out <- dm %>%
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter))) %>%
-    left_join(baseline_covariates(vs), by = "USUBJID") %>%
+    # left_join(baseline_covariates(vs), by = "USUBJID") %>%
+    left_join(baseline_covariates, by = "USUBJID") %>%
     recode_sex() %>%
     mutate(ID = NA) %>%
     relocate("ID") %>%

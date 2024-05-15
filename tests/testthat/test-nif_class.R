@@ -128,7 +128,9 @@ test_that("add baseline hepatic function class", {
     "3", "DM", "M", "TREATMENT", "2000-12-29T09:07",
     "4", "DM", "F", "TREATMENT", "2001-01-06T11:18",
     "5", "DM", "F", "TREATMENT", "2001-01-07T11:18"
-  )
+  ) %>%
+    mutate(RFSTDTC = RFXSTDTC)
+
   vs <- tribble(
     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
     "1", "VS", "HEIGHT",     "Y",     190.8,

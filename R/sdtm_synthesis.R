@@ -214,6 +214,7 @@ synthesize_vs <- function(dm) {
     mutate(VISIT = "SCREENING") %>%
     mutate(VSBLFL = "Y") %>%
     mutate(VSDTC = .data$RFSTDTC) %>%
+    select(-c("RFSTDTC")) %>%
     as.data.frame()
 }
 

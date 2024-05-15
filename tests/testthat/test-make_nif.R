@@ -362,7 +362,8 @@ make_test_sdtm <- function() {
     "20230000221040002", "DM", "M", "TREATMENT", "2001-01-02T09:09",
     "20230000221070001", "DM", "M", "TREATMENT", "2000-12-29T09:07",
     "20230000221060001", "DM", "F", "TREATMENT", "2001-01-06T11:18"
-  )
+  ) %>%
+    mutate(RFSTDTC = RFXSTDTC)
   vs <- tribble(
     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
     "20230000221040001", "VS", "HEIGHT",     "Y",     190.8,
@@ -388,17 +389,6 @@ make_test_sdtm <- function() {
   )
   return(list(domains = temp))
 }
-
-
-test_that("baseline covariates", {
-  vs <- make_test_sdtm()$domains$vs
-  expect_no_error(
-    test <- baseline_covariates(vs)
-  )
-  expect_equal(names(vs), c("USUBJID", "DOMAIN", "VSTESTCD", "VSBLFL", "VSSTRESN"))
-  expect_equal(dim(test), c(4, 4))
-
-})
 
 
 test_that("make subjects", {

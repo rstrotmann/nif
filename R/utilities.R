@@ -53,7 +53,9 @@ recode_sex <- function(obj) {
   obj %>%
     mutate(SEX = as.numeric(
       case_match(as.character(.data$SEX),
-                        "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0, .default = NA)
+                 "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
+                 "男" ~0, "女" ~1,
+                 .default = NA)
     ))
 }
 
