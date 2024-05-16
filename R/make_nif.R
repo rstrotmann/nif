@@ -720,6 +720,7 @@ make_observation <- function(
 #'
 #' @return A data frame.
 #' @export
+#' @importFrom assertthat assert_that
 #' @keywords internal
 #' @seealso [add_administration()]
 make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
@@ -731,12 +732,18 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
   pc <- domain(sdtm, "pc") %>% lubrify_dates()
 
+  assert_that(
+    extrt %in% ex$EXTRT,
+    msg = paste0("Treatment '", extrt, "' not found in EX.EXTRT!")
+  )
+
   if(is.na(analyte)) {analyte <- extrt}
   if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
 
   sbs <- make_subjects(dm, domain(sdtm, "vs"), subject_filter, keep)
 
   admin <- ex %>%
+    # assertr::verify(extrt %in% EXTRT) %>%
     mutate(IMPUTATION = "") %>%
     filter(.data$EXTRT == extrt) %>%
     filter(.data$EXSTDTC <= cut_off_date) %>%

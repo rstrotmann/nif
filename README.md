@@ -14,7 +14,7 @@ SDTM-formatted clinical study data.
 
 ## Installation
 
-You can install the development version of `nif` like so:
+You can install the development version of `nif` like this:
 
 ``` r
 devtools::install_github("rstrotmann/nif", build_vignettes=TRUE)
@@ -38,41 +38,27 @@ nif <- new_nif() %>%
   add_observation(sdtm, "pc", "RS2023", analyte = "RS2023")
 
 head(nif)
-#>   ID           USUBJID    STUDYID                 DTC TIME TAFD NTIME
-#> 1  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0
-#> 2  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0
-#> 3  1 20230000011010001 2023000001 2000-12-31 10:48:00  0.5  0.5   0.5
-#> 4  1 20230000011010001 2023000001 2000-12-31 11:18:00  1.0  1.0   1.0
-#> 5  1 20230000011010001 2023000001 2000-12-31 11:48:00  1.5  1.5   1.5
-#> 6  1 20230000011010001 2023000001 2000-12-31 12:18:00  2.0  2.0   2.0
-#>                          IMPUTATION ANALYTE PARENT METABOLITE DOSE AMT CMT EVID
-#> 1  admin time imputed from PCRFTDTC  RS2023 RS2023      FALSE    5   5   1    1
-#> 2                                    RS2023 RS2023      FALSE    5   0   2    0
-#> 3                                    RS2023 RS2023      FALSE    5   0   2    0
-#> 4                                    RS2023 RS2023      FALSE    5   0   2    0
-#> 5                                    RS2023 RS2023      FALSE    5   0   2    0
-#> 6                                    RS2023 RS2023      FALSE    5   0   2    0
-#>        DV MDV EXDY REF SEX  RACE ETHNIC COUNTRY AGE HEIGHT WEIGHT     BMI
-#> 1      NA   1    1   1   0 WHITE            DEU  43  187.4     77 21.9256
-#> 2  0.0000   0   NA   2   0 WHITE            DEU  43  187.4     77 21.9256
-#> 3  2.4470   0   NA   3   0 WHITE            DEU  43  187.4     77 21.9256
-#> 4  7.2445   0   NA   4   0 WHITE            DEU  43  187.4     77 21.9256
-#> 5 15.7476   0   NA   5   0 WHITE            DEU  43  187.4     77 21.9256
-#> 6 20.9229   0   NA   6   0 WHITE            DEU  43  187.4     77 21.9256
-#>   ACTARMCD            RFXSTDTC TRTDY            FIRSTDTC          FIRSTADMIN
-#> 1       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00
-#> 2       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00
-#> 3       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00
-#> 4       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00
-#> 5       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00
-#> 6       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00
-#>   TAD PCELTM
-#> 1 0.0   <NA>
-#> 2 0.0   PT0H
-#> 3 0.5 PT0.5H
-#> 4 1.0   PT1H
-#> 5 1.5 PT1.5H
-#> 6 2.0   PT2H
+#>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
+#> 1   1  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942
+#> 2   2  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942
+#> 3   3  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942
+#> 4   4  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942
+#> 5   5  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942
+#> 6   6  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942
+#>                   DTC TIME NTIME TAFD TAD PCELTM EVID AMT ANALYTE CMT PARENT
+#> 1 2000-12-30 10:20:00  0.0   0.0  0.0 0.0   <NA>    1   5  RS2023   1 RS2023
+#> 2 2000-12-30 10:20:00  0.0   0.0  0.0 0.0   PT0H    0   0  RS2023   2 RS2023
+#> 3 2000-12-30 10:50:00  0.5   0.5  0.5 0.5 PT0.5H    0   0  RS2023   2 RS2023
+#> 4 2000-12-30 11:20:00  1.0   1.0  1.0 1.0   PT1H    0   0  RS2023   2 RS2023
+#> 5 2000-12-30 11:50:00  1.5   1.5  1.5 1.5 PT1.5H    0   0  RS2023   2 RS2023
+#> 6 2000-12-30 12:20:00  2.0   2.0  2.0 2.0   PT2H    0   0  RS2023   2 RS2023
+#>   TRTDY METABOLITE DOSE      DV MDV ACTARMCD                       IMPUTATION
+#> 1     1      FALSE    5      NA   1       C1 admin time imputed from PCRFTDTC
+#> 2     1      FALSE    5  0.0000   0       C1                                 
+#> 3     1      FALSE    5  1.7829   0       C1                                 
+#> 4     1      FALSE    5  7.1328   0       C1                                 
+#> 5     1      FALSE    5 13.7709   0       C1                                 
+#> 6     1      FALSE    5 16.6334   0       C1
 ```
 
 In many cases, you may want to add further covariates, e.g., baseline
@@ -101,8 +87,8 @@ summary(nif)
 #> 
 #> Renal impairment class:
 #>  CLASS    N    
-#>  mild     6    
-#>  normal   42   
+#>  mild     4    
+#>  normal   44   
 #> 
 #> Administered drugs:
 #>  RS2023

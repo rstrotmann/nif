@@ -26,6 +26,7 @@
   show_n = FALSE,
   shading = TRUE,
   silent = deprecated(),
+  dose_norm = FALSE,
   ...
 )
 }
@@ -76,6 +77,8 @@ implement grouping! \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/sta
 \item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
 compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
 suppress messages.}
+
+\item{dose_norm}{Dose-normalized exposure, as logical.}
 
 \item{...}{Further graphical parameters for \code{geom_point()}.}
 }

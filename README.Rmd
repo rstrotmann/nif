@@ -24,7 +24,7 @@ clinical study data.
 
 ## Installation
 
-You can install the development version of `nif` like so:
+You can install the development version of `nif` like this:
 
 ``` r
 devtools::install_github("rstrotmann/nif", build_vignettes=TRUE)
