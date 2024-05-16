@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9011</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of <code>nif</code> like so:</p>
+<p>You can install the development version of <code>nif</code> like this:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"rstrotmann/nif"</span>, build_vignettes<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -98,41 +98,27 @@
 <span>  <span class="fu"><a href="reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   ID           USUBJID    STUDYID                 DTC TIME TAFD NTIME</span></span>
-<span><span class="co">#&gt; 1  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0</span></span>
-<span><span class="co">#&gt; 2  1 20230000011010001 2023000001 2000-12-31 10:18:00  0.0  0.0   0.0</span></span>
-<span><span class="co">#&gt; 3  1 20230000011010001 2023000001 2000-12-31 10:48:00  0.5  0.5   0.5</span></span>
-<span><span class="co">#&gt; 4  1 20230000011010001 2023000001 2000-12-31 11:18:00  1.0  1.0   1.0</span></span>
-<span><span class="co">#&gt; 5  1 20230000011010001 2023000001 2000-12-31 11:48:00  1.5  1.5   1.5</span></span>
-<span><span class="co">#&gt; 6  1 20230000011010001 2023000001 2000-12-31 12:18:00  2.0  2.0   2.0</span></span>
-<span><span class="co">#&gt;                          IMPUTATION ANALYTE PARENT METABOLITE DOSE AMT CMT EVID</span></span>
-<span><span class="co">#&gt; 1  admin time imputed from PCRFTDTC  RS2023 RS2023      FALSE    5   5   1    1</span></span>
-<span><span class="co">#&gt; 2                                    RS2023 RS2023      FALSE    5   0   2    0</span></span>
-<span><span class="co">#&gt; 3                                    RS2023 RS2023      FALSE    5   0   2    0</span></span>
-<span><span class="co">#&gt; 4                                    RS2023 RS2023      FALSE    5   0   2    0</span></span>
-<span><span class="co">#&gt; 5                                    RS2023 RS2023      FALSE    5   0   2    0</span></span>
-<span><span class="co">#&gt; 6                                    RS2023 RS2023      FALSE    5   0   2    0</span></span>
-<span><span class="co">#&gt;        DV MDV EXDY REF SEX  RACE ETHNIC COUNTRY AGE HEIGHT WEIGHT     BMI</span></span>
-<span><span class="co">#&gt; 1      NA   1    1   1   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt; 2  0.0000   0   NA   2   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt; 3  2.4470   0   NA   3   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt; 4  7.2445   0   NA   4   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt; 5 15.7476   0   NA   5   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt; 6 20.9229   0   NA   6   0 WHITE            DEU  43  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt;   ACTARMCD            RFXSTDTC TRTDY            FIRSTDTC          FIRSTADMIN</span></span>
-<span><span class="co">#&gt; 1       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
-<span><span class="co">#&gt; 2       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
-<span><span class="co">#&gt; 3       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
-<span><span class="co">#&gt; 4       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
-<span><span class="co">#&gt; 5       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
-<span><span class="co">#&gt; 6       C1 2000-12-31 10:18:00     1 2000-12-31 10:18:00 2000-12-31 10:18:00</span></span>
-<span><span class="co">#&gt;   TAD PCELTM</span></span>
-<span><span class="co">#&gt; 1 0.0   &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2 0.0   PT0H</span></span>
-<span><span class="co">#&gt; 3 0.5 PT0.5H</span></span>
-<span><span class="co">#&gt; 4 1.0   PT1H</span></span>
-<span><span class="co">#&gt; 5 1.5 PT1.5H</span></span>
-<span><span class="co">#&gt; 6 2.0   PT2H</span></span></code></pre></div>
+<span><span class="co">#&gt;   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
+<span><span class="co">#&gt; 1   1  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
+<span><span class="co">#&gt; 2   2  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
+<span><span class="co">#&gt; 3   3  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
+<span><span class="co">#&gt; 4   4  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
+<span><span class="co">#&gt; 5   5  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
+<span><span class="co">#&gt; 6   6  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
+<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD PCELTM EVID AMT ANALYTE CMT PARENT</span></span>
+<span><span class="co">#&gt; 1 2000-12-30 10:20:00  0.0   0.0  0.0 0.0   &lt;NA&gt;    1   5  RS2023   1 RS2023</span></span>
+<span><span class="co">#&gt; 2 2000-12-30 10:20:00  0.0   0.0  0.0 0.0   PT0H    0   0  RS2023   2 RS2023</span></span>
+<span><span class="co">#&gt; 3 2000-12-30 10:50:00  0.5   0.5  0.5 0.5 PT0.5H    0   0  RS2023   2 RS2023</span></span>
+<span><span class="co">#&gt; 4 2000-12-30 11:20:00  1.0   1.0  1.0 1.0   PT1H    0   0  RS2023   2 RS2023</span></span>
+<span><span class="co">#&gt; 5 2000-12-30 11:50:00  1.5   1.5  1.5 1.5 PT1.5H    0   0  RS2023   2 RS2023</span></span>
+<span><span class="co">#&gt; 6 2000-12-30 12:20:00  2.0   2.0  2.0 2.0   PT2H    0   0  RS2023   2 RS2023</span></span>
+<span><span class="co">#&gt;   TRTDY METABOLITE DOSE      DV MDV ACTARMCD                       IMPUTATION</span></span>
+<span><span class="co">#&gt; 1     1      FALSE    5      NA   1       C1 admin time imputed from PCRFTDTC</span></span>
+<span><span class="co">#&gt; 2     1      FALSE    5  0.0000   0       C1                                 </span></span>
+<span><span class="co">#&gt; 3     1      FALSE    5  1.7829   0       C1                                 </span></span>
+<span><span class="co">#&gt; 4     1      FALSE    5  7.1328   0       C1                                 </span></span>
+<span><span class="co">#&gt; 5     1      FALSE    5 13.7709   0       C1                                 </span></span>
+<span><span class="co">#&gt; 6     1      FALSE    5 16.6334   0       C1</span></span></code></pre></div>
 <p>In many cases, you may want to add further covariates, e.g., baseline creatinine from the LB domain:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  </span>
@@ -155,8 +141,8 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Renal impairment class:</span></span>
 <span><span class="co">#&gt;  CLASS    N    </span></span>
-<span><span class="co">#&gt;  mild     6    </span></span>
-<span><span class="co">#&gt;  normal   42   </span></span>
+<span><span class="co">#&gt;  mild     4    </span></span>
+<span><span class="co">#&gt;  normal   44   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Administered drugs:</span></span>
 <span><span class="co">#&gt;  RS2023</span></span>
