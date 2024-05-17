@@ -829,7 +829,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
 #' @return A nif object.
 #' @export
 #' @import assertr
-#' @keywords internal
+#' @export
 make_time <- function(obj) {
   obj %>%
     as.data.frame() %>%
