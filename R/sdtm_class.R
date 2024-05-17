@@ -335,97 +335,84 @@ subject_info.sdtm <- function(obj, id) {
 #' Suggest manual data programming steps for a sdtm data set
 #'
 #' @param obj A sdtm object
-#' @seealso [read_sdtm_sas()]
 #' @import dplyr
 #' @export
 suggest <- function(obj) {
+  suggest_out <- function(n, text, table = NULL) {
+    out <- paste0(str_wrap(
+          paste0(n, ". ", text), width = 80, indent = 0, exdent = 3), "\n")
+    if(!is.null(table)){
+      out <- paste0(out, "\n", df_to_string(table, indent = "       "), "\n")
+    }
+    message(out)
+    return(n + 1)
+  }
+
   n_suggestion <- 1
 
   arms <- obj$dm %>%
     dplyr::filter(ACTARMCD != "") %>%
     dplyr::distinct(ACTARM, ACTARMCD)
-
   if (nrow(arms) > 1) {
-    message(paste0(
-      n_suggestion, ". There are ", nrow(arms),
-      " arms defined in DM (see below).\n",
-      "   Consider defining a PART or ARM variable in the nif dataset, \n",
-      "   filtering for a particular arm, or defining a covariate based\n",
-      "   on ACTARMCD.\n\n",
-      df_to_string(arms, indent = "       "), "\n"
-    ))
-    n_suggestion <- n_suggestion + 1
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+        "There are ", nrow(arms), " arms defined in DM (see ",
+        "below). Consider defining a PART or ARM variable in the nif dataset, ",
+        "filtering for a particular arm, or defining a covariate based on ",
+        "ACTARMCD."))
   }
 
   specimems <- obj$pc %>%
     dplyr::filter(PCSPEC != "") %>%
     dplyr::distinct(PCSPEC)
-
   if (nrow(specimems) > 1) {
-    message(paste0(
-      n_suggestion, ". There are data from ", nrow(specimems),
-      " different sample specimem types in PC\n",
-      "   Consider filtering for a specific specimem, or defining CMT ",
-      "accordingly.\n\n",
-      df_to_string(specimems, indent = "       "), "\n"
-    ))
-    n_suggestion <- n_suggestion + 1
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+      "There are data from ", nrow(specimems), " different sample specimem ",
+      "types in PC. Consider filtering for a specific specimem, or defining ",
+      "CMT accordingly."), table = specimems)
   }
 
   treatments <- obj$ex %>%
     dplyr::distinct(EXTRT)
-
   if (nrow(treatments) > 1) {
-    message(paste0(
-      n_suggestion, ". There are ", nrow(treatments), " different treatments ",
-      "in EX (see below).\n",
-      "   Consider adding them to the nif object using 'add_administration()'.\n\n",
-      df_to_string(treatments, indent = "       "), "\n"
-    ))
-    n_suggestion <- n_suggestion + 1
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+      "There are ", nrow(treatments), " different treatments in EX (see ",
+      "below). Consider adding them to the nif object using ",
+      "'add_administration()'.\n\n"), table = treatments)
   }
 
   analytes <- obj$pc %>%
     dplyr::distinct(PCTESTCD) %>%
     dplyr::pull(PCTESTCD)
-
   no_analyte_treatments <- treatments %>%
     dplyr::mutate(no.analyte = !(EXTRT %in% analytes)) %>%
     dplyr::filter(no.analyte == TRUE) %>%
     dplyr::select(EXTRT)
-
   if (nrow(no_analyte_treatments) > 0) {
-    message(paste0(
-      n_suggestion,
-      ". There are treatments (EXTRT) without analytes (PCTESTCD) of\n",
-      "   the same name (see below).\n",
-      "   Consider adding a treatment-analyte mapping to the sdtm object\n",
-      "   See '?add_analyte_mapping' for additional information.\n\n",
-      df_to_string(no_analyte_treatments, indent = "       "), "\n\n",
-      "   Available analytes:\n\n",
-      df_to_string(obj$pc %>% dplyr::distinct(PCTESTCD), indent = "       "), "\n"
-    ))
-    n_suggestion <- n_suggestion + 1
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+      "There are treatments (EXTRT) without analytes (PCTESTCD) os the same ",
+      "name (see below). Consider adding a treatment-analyte mapping to the ",
+      "sdtm object (see ´?add_analyte_mapping` for additional information)."),
+      table = distinct(obj$pc, PCTESTCD))
   }
 
   if (!("PCELTM" %in% names(obj$pc))) {
     line <- function(x) {
-      return(paste0("     \"", x, "\", 0,"))
+      return(paste0("     \"", x, "\", NA,"))
     }
-    temp <- paste(sapply(unique(obj$pc[, "PCTPT"]), line), collapse = "\n")
-
+    temp <- paste0("   ", sapply(unique(obj$pc[, "PCTPT"]), line), collapse = "\n")
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+      "By default, 'add_observation()' takes the nominal sampling time from ",
+      "the (permissible) field PC.PCELTM. However, in this data set, PCELTM ",
+      "is not defined, and the nominal time must be manually derived from, e.g., ",
+      "PCTPT. Consider providing the NTIME_lookup parameter to ",
+      "'add_observation()' as the below data frame (make sure to replace the ",
+      "NA with the appropriate values):\n"))
     message(paste0(
-      n_suggestion,
-      ". By default, 'add_observation()' takes the nominal sampling time from the\n",
-      "   (permissible) field PC.PCELTM. However, in this data set, PCELTM is not defined, \n",
-      "   and the nominal time must be manually derived from, e.g., PCTPT. Consider\n",
-      "   providing a NTIME_lookup parameter to 'add_observation()' (replace the zeros\n",
-      "   with the appropriate values):\n\n",
-      "   NTIME_lookup = tribble(\n",
-      "     ~PCTPT, ~NTIME,\n",
-      substr(temp, 1, nchar(temp) - 1), "\n   )\n"
+      "      NTIME_lookup = tribble(\n",
+      "        ~PCTPT, ~NTIME,\n",
+      substr(temp, 1, nchar(temp) - 1), "\n",
+      "      )\n"
     ))
-    n_suggestion <- n_suggestion + 1
   }
 }
 

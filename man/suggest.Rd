@@ -12,6 +12,3 @@ suggest(obj)
 \description{
 Suggest manual data programming steps for a sdtm data set
 }
-\seealso{
-\code{\link[=read_sdtm_sas]{read_sdtm_sas()}}
-}
