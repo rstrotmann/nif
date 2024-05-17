@@ -399,18 +399,22 @@ suggest <- function(obj) {
     line <- function(x) {
       return(paste0("     \"", x, "\", NA,"))
     }
-    temp <- paste0("   ", sapply(unique(obj$pc[, "PCTPT"]), line), collapse = "\n")
+
+    temp <- guess_ntime(obj) %>%
+      mutate(out = paste0('"', PCTPT, '", ', NTIME, ','))
+    out <- paste0("        ", temp$out, collapse = "\n")
+
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "By default, 'add_observation()' takes the nominal sampling time from ",
       "the (permissible) field PC.PCELTM. However, in this data set, PCELTM ",
       "is not defined, and the nominal time must be manually derived from, e.g., ",
       "PCTPT. Consider providing the NTIME_lookup parameter to ",
-      "'add_observation()' as the below data frame (make sure to replace the ",
-      "NA with the appropriate values):\n"))
+      "'add_observation()' as the below data frame (make sure to review the ",
+      "suggested NTIME values):\n"))
     message(paste0(
       "      NTIME_lookup = tribble(\n",
       "        ~PCTPT, ~NTIME,\n",
-      substr(temp, 1, nchar(temp) - 1), "\n",
+      out, "\n",
       "      )\n"
     ))
   }
@@ -465,6 +469,26 @@ filter_subject.sdtm <- function(obj, usubjid) {
 }
 
 
+#' Guess NTIME from PCTPT
+#'
+#' @param sdtm A sdtm object.
+#'
+#' @return A data frame.
+#' @export
+#'
+#' @examples
+#' guess_ntime(examplinib_poc)
+guess_ntime <- function(sdtm) {
+  sdtm$pc %>%
+    distinct(PCTPT) %>%
+    mutate(time = str_extract(tolower(PCTPT), "([0-9.]+)\\s*(h)", group = 1)) %>%
+    mutate(pre = str_match(tolower(PCTPT), "pre") == "pre") %>%
+    mutate(NTIME = case_when(is.na(time) & pre == TRUE ~ 0,
+                             !is.na(time) & pre == TRUE ~ -as.numeric(time),
+                             is.na(time) & is.na(pre) ~ NA,
+                             .default = as.numeric(time))) %>%
+    select(-c("time", "pre"))
+}
 
 
 
