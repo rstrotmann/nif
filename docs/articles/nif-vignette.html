@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9011</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9012</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -303,24 +303,12 @@ package includes functions to explore the structure of SDTM data.</p>
 suggestions for manual imputations for a <code>sdtm</code> object:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/suggest.html">suggest</a></span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span></span>
-<span><span class="co">## 1. There are 3 arms defined in DM (see below).</span></span>
-<span><span class="co">##    Consider defining a PART or ARM variable in the nif dataset, </span></span>
-<span><span class="co">##    filtering for a particular arm, or defining a covariate based</span></span>
-<span><span class="co">##    on ACTARMCD.</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##        ACTARM           ACTARMCD   </span></span>
-<span><span class="co">##        Fed - Fasted     BA         </span></span>
-<span><span class="co">##        Screen Failure   SCRNFAIL   </span></span>
-<span><span class="co">##        Fasted - Fed     AB</span></span>
-<span><span class="co">## 2. There are treatments (EXTRT) without analytes (PCTESTCD) of</span></span>
-<span><span class="co">##    the same name (see below).</span></span>
-<span><span class="co">##    Consider adding a treatment-analyte mapping to the sdtm object</span></span>
-<span><span class="co">##    See '?add_analyte_mapping' for additional information.</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##        EXTRT        </span></span>
-<span><span class="co">##        EXAMPLINIB   </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##    Available analytes:</span></span>
+<span><span class="co">## 1. There are 3 arms defined in DM (see below). Consider defining a PART or ARM</span></span>
+<span><span class="co">##    variable in the nif dataset, filtering for a particular arm, or defining a</span></span>
+<span><span class="co">##    covariate based on ACTARMCD.</span></span>
+<span><span class="co">## 2. There are treatments (EXTRT) without analytes (PCTESTCD) os the same name</span></span>
+<span><span class="co">##    (see below). Consider adding a treatment-analyte mapping to the sdtm object</span></span>
+<span><span class="co">##    (see ´?add_analyte_mapping` for additional information).</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##        PCTESTCD     </span></span>
 <span><span class="co">##        RS2023       </span></span>
