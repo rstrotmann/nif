@@ -396,14 +396,12 @@ suggest <- function(obj) {
   }
 
   if (!("PCELTM" %in% names(obj$pc))) {
-    line <- function(x) {
-      return(paste0("     \"", x, "\", NA,"))
-    }
-
+    # line <- function(x) {
+    #   return(paste0("     \"", x, "\", NA,"))
+    # }
     temp <- guess_ntime(obj) %>%
       mutate(out = paste0('"', PCTPT, '", ', NTIME, ','))
     out <- paste0("        ", temp$out, collapse = "\n")
-
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "By default, 'add_observation()' takes the nominal sampling time from ",
       "the (permissible) field PC.PCELTM. However, in this data set, PCELTM ",
