@@ -11,8 +11,8 @@ vignette: >
 library(knitr)
 
 knitr::opts_chunk$set(
-  collapse = TRUE#,
-  #comment = "> "
+  collapse = TRUE,
+  comment = NA
 )
 ```
 

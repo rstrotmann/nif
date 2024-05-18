@@ -2,19 +2,18 @@
 % Please edit documentation in R/nif_class.R
 \name{analytes}
 \alias{analytes}
-\title{Analytes within a NIF object}
+\title{Analytes within a NIF or SDTM object}
 \usage{
-analytes(obj)
+analytes(nif)
 }
 \arguments{
-\item{obj}{A NIF object}
+\item{obj}{A nif or sdtm object.}
 }
 \value{
 Character.
 }
 \description{
-All analytes found in the NIF object. If the field 'ANALYTE' is not present,
-The analyte title is derived from the compartment.
+Analytes within a NIF or SDTM object
 }
 \examples{
 analytes(examplinib_fe_nif)

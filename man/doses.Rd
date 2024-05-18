@@ -2,18 +2,18 @@
 % Please edit documentation in R/nif_class.R
 \name{doses}
 \alias{doses}
-\title{Doses within a NIF object}
+\title{Doses in a nif or sdtm object}
 \usage{
 doses(obj)
 }
 \arguments{
-\item{obj}{A nif object}
+\item{obj}{A nif or sdtm object.}
 }
 \value{
-A number vector of all doses (AMT) in the data set.
+Numeric.
 }
 \description{
-Doses within a NIF object
+Doses in a nif or sdtm object
 }
 \examples{
 doses(examplinib_poc_nif)

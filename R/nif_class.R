@@ -459,6 +459,20 @@ ensure_cfb <- function(obj) {
 }
 
 
+#' Doses in a nif or sdtm object
+#'
+#' @param obj A nif or sdtm object.
+#'
+#' @return Numeric.
+#' @export
+#'
+#' @examples
+#' doses(examplinib_poc_nif)
+doses <- function(obj) {
+  UseMethod("doses")
+}
+
+
 #' Doses within a NIF object
 #'
 #' @param obj A nif object
@@ -467,7 +481,7 @@ ensure_cfb <- function(obj) {
 #' @export
 #' @examples
 #' doses(examplinib_poc_nif)
-doses <- function(obj) {
+doses.nif <- function(obj) {
   obj %>%
     dplyr::filter(AMT != 0) %>%
     dplyr::distinct(AMT) %>%
@@ -517,6 +531,21 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 }
 
 
+#' Analytes within a NIF or SDTM object
+#'
+#' @param obj A nif or sdtm object.
+#' @import dplyr
+#' @return Character.
+#' @export
+#' @examples
+#' analytes(examplinib_fe_nif)
+#' analytes(examplinib_poc_nif)
+#' analytes(examplinib_poc_min_nif)
+analytes <- function(nif) {
+  UseMethod("analytes")
+}
+
+
 #' Analytes within a NIF object
 #'
 #' All analytes found in the NIF object. If the field 'ANALYTE' is not present,
@@ -529,7 +558,28 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 #' analytes(examplinib_fe_nif)
 #' analytes(examplinib_poc_nif)
 #' analytes(examplinib_poc_min_nif)
-analytes <- function(obj) {
+analytes.nif <- function(obj) {
+  ensure_analyte(obj) %>%
+    as.data.frame() %>%
+    filter(EVID==0) %>%
+    distinct(ANALYTE) %>%
+    pull(ANALYTE)
+}
+
+
+#' Analytes within a NIF object
+#'
+#' All analytes found in the NIF object. If the field 'ANALYTE' is not present,
+#' The analyte title is derived from the compartment.
+#' @param obj A NIF object
+#' @import dplyr
+#' @return Character.
+#' @export
+#' @examples
+#' analytes(examplinib_fe_nif)
+#' analytes(examplinib_poc_nif)
+#' analytes(examplinib_poc_min_nif)
+analytes.data.frame <- function(obj) {
   ensure_analyte(obj) %>%
     as.data.frame() %>%
     filter(EVID==0) %>%
@@ -569,6 +619,30 @@ cmt_mapping <- function(obj) {
     filter(EVID==0) %>%
     distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
     as.data.frame()
+}
+
+
+treatments <- function(obj) {
+  UseMethod("treatments")
+}
+
+
+#' Treatments in a nif object
+#'
+#' @param obj A nif object.
+#'
+#' @return Character.
+#' @export
+#'
+#' @examples
+#' treatments(examplinib_poc_nif)
+treatments.nif <- function(obj) {
+  obj %>%
+    ensure_parent() %>%
+    as.data.frame() %>%
+    distinct(PARENT) %>%
+    filter(PARENT != "") %>%
+    pull(PARENT)
 }
 
 

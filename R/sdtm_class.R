@@ -433,6 +433,48 @@ subjects.sdtm <- function(obj) {
 }
 
 
+#' Analytes in a sdtm object
+#'
+#' @param sdtm The sdtm object.
+#'
+#' @return Character.
+#' @export
+#'
+#' @examples
+#' analytes(examplinib_sad)
+analytes.sdtm <- function(sdtm) {
+  unique(domain(sdtm, "pc")$PCTESTCD)
+}
+
+
+#' Doses in a sdtm object
+#'
+#' @param sdtm A sdtm object.
+#'
+#' @return Numeric.
+#' @export
+#'
+#' @examples
+#' doses(examplinib_poc)
+doses.sdtm <- function(sdtm) {
+  unique(domain(sdtm, "ex")$EXDOSE)
+}
+
+
+#' Treatments in a sdtm object
+#'
+#' @param obj A sdtm object.
+#'
+#' @return Character.
+#' @export
+#'
+#' @examples
+#' treatments(examplinib_poc)
+treatments.sdtm <- function(obj) {
+  unique(domain(sdtm, "ex")$EXTRT)
+}
+
+
 #' Keep only selected USUBJID in the data set
 #'
 #' @param obj The input, either a `nif` or `sdtm` object.
@@ -486,6 +528,10 @@ guess_ntime <- function(sdtm) {
 }
 
 
+# guess_analyte_mapping <- function(sdtm) {
+#   extrt <- unique(sdtm$domains[["ex"]]$EXTRT)
+#   pctestcd <- unique(sdtm$domains[["pc"]]$PCTESTCD)
+# }
 
 
 
