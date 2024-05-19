@@ -435,7 +435,7 @@ subjects.sdtm <- function(obj) {
 
 #' Analytes in a sdtm object
 #'
-#' @param sdtm The sdtm object.
+#' @param obj The sdtm object.
 #'
 #' @return Character.
 #' @export
@@ -449,7 +449,7 @@ analytes.sdtm <- function(obj) {
 
 #' Doses in a sdtm object
 #'
-#' @param sdtm A sdtm object.
+#' @param obj A sdtm object.
 #'
 #' @return Numeric.
 #' @export
@@ -517,13 +517,15 @@ filter_subject.sdtm <- function(obj, usubjid) {
 #' guess_ntime(examplinib_poc)
 guess_ntime <- function(sdtm) {
   sdtm$pc %>%
-    distinct(PCTPT) %>%
-    mutate(time = str_extract(tolower(PCTPT), "([0-9.]+)\\s*(h)", group = 1)) %>%
-    mutate(pre = str_match(tolower(PCTPT), "pre") == "pre") %>%
-    mutate(NTIME = case_when(is.na(time) & pre == TRUE ~ 0,
-                             !is.na(time) & pre == TRUE ~ -as.numeric(time),
-                             is.na(time) & is.na(pre) ~ NA,
-                             .default = as.numeric(time))) %>%
+    distinct(.data$PCTPT) %>%
+    mutate(time = str_extract(tolower(.data$PCTPT),
+                              "([0-9.]+)\\s*(h)", group = 1)) %>%
+    mutate(pre = str_match(tolower(.data$PCTPT), "pre") == "pre") %>%
+    mutate(NTIME = case_when(
+      is.na(.data$time) & pre == TRUE ~ 0,
+      !is.na(.data$time) & pre == TRUE ~ -as.numeric(.data$time),
+      is.na(.data$time) & is.na(.data$pre) ~ NA,
+      .default = as.numeric(.data$time))) %>%
     select(-c("time", "pre"))
 }
 
