@@ -1141,12 +1141,14 @@ add_trtdy <- function(obj) {
 #' @seealso [egfr_mdrd()]
 #' @seealso [egfr_cg()]
 #' @seealso [egfr_raynaud()]
+#' @import assertr
 #' @export
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
 add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
+      verify(has_all_names("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT")) %>%
       mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
         molar = TRUE
       ))
