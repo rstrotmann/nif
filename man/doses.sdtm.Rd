@@ -4,7 +4,7 @@
 \alias{doses.sdtm}
 \title{Doses in a sdtm object}
 \usage{
-\method{doses}{sdtm}(sdtm)
+\method{doses}{sdtm}(obj)
 }
 \arguments{
 \item{sdtm}{A sdtm object.}

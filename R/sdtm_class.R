@@ -456,8 +456,8 @@ analytes.sdtm <- function(obj) {
 #'
 #' @examples
 #' doses(examplinib_poc)
-doses.sdtm <- function(sdtm) {
-  unique(domain(sdtm, "ex")$EXDOSE)
+doses.sdtm <- function(obj) {
+  unique(domain(obj, "ex")$EXDOSE)
 }
 
 

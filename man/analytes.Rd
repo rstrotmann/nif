@@ -4,7 +4,7 @@
 \alias{analytes}
 \title{Analytes within a NIF or SDTM object}
 \usage{
-analytes(nif)
+analytes(obj)
 }
 \arguments{
 \item{obj}{A nif or sdtm object.}

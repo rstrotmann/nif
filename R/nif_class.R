@@ -541,7 +541,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 #' analytes(examplinib_fe_nif)
 #' analytes(examplinib_poc_nif)
 #' analytes(examplinib_poc_min_nif)
-analytes <- function(nif) {
+analytes <- function(obj) {
   UseMethod("analytes")
 }
 
@@ -622,6 +622,12 @@ cmt_mapping <- function(obj) {
 }
 
 
+#' Treatments in a nif or sdtm object
+#'
+#' @param obj A nif or sdtm object.
+#'
+#' @return Character.
+#' @export
 treatments <- function(obj) {
   UseMethod("treatments")
 }
