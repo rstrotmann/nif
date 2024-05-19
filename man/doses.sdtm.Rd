@@ -7,7 +7,7 @@
 \method{doses}{sdtm}(obj)
 }
 \arguments{
-\item{sdtm}{A sdtm object.}
+\item{obj}{A sdtm object.}
 }
 \value{
 Numeric.

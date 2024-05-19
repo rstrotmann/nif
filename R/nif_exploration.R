@@ -629,7 +629,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   if(is.null(max_time)) {max_time <- max_time(filter(temp, EVID == 0),
                                               time_field = time)}
   if(is.null(min_time)) {min_time <- min(temp$active_time, na.rm = TRUE)}
-  temp <- filter(temp, active_time <= max_time & active_time >= min_time)
+  temp <- filter(temp, .data$active_time <= max_time &
+                   .data$active_time >= min_time)
 
   # remove subjects without observation
   temp <- temp %>%
@@ -1028,7 +1029,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
       as.data.frame() %>%
       distinct(PARENT, ANALYTE) %>%
       mutate(score = PARENT == ANALYTE) %>%
-      arrange(-score, ANALYTE) %>%
+      arrange(-.data$score, .data$ANALYTE) %>%
       pull(ANALYTE)
 
     for (i in analyte_list) {

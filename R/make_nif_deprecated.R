@@ -532,6 +532,56 @@ add_generic_observation <- function(obj, source, DTC_field, selector, DV_field,
 }
 
 
+#'Extract baseline vital sign covariates from VS
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#'@param vs The VS domain as data frame.
+#'
+#'@return Baseline VS data as wide data frame.
+#'@export
+#'@keywords internal
+baseline_covariates <- function(vs) {
+  lifecycle::deprecate_warn("0.49.7", "baseline_covariates()", "")
+  temp <- vs %>%
+    filter(VSTESTCD %in% c("HEIGHT", "WEIGHT"))
+
+  bl_cov <- NULL
+
+  if ("VISIT" %in% names(temp)) {
+    if ("SCREENING" %in% str_to_upper(unique(temp$VISIT))) {
+      bl_cov <- temp %>%
+        filter(str_to_upper(VISIT) == "SCREENING")
+    } else {
+      if ("VSBLFL" %in% names(temp)) {
+        bl_cov <- temp %>%
+          filter(VSBLFL == "Y")
+      }
+    }
+  } else {
+    if ("VSBLFL" %in% names(temp)) {
+      bl_cov <- temp %>%
+        filter(VSBLFL == "Y")
+    } else {
+      conditional_message("Baseline VS data could not be identified!", "\n")
+    }
+  }
+
+  bl_cov <- bl_cov %>%
+    group_by(.data$USUBJID, .data$VSTESTCD) %>%
+    summarize(mean = mean(VSSTRESN), .groups = "drop") %>%
+    pivot_wider(names_from = "VSTESTCD", values_from = "mean")
+
+  # Calculate BMI if height and weight are available
+  if ("HEIGHT" %in% colnames(bl_cov) && "WEIGHT" %in% colnames(bl_cov)) {
+    bl_cov <- bl_cov %>%
+      mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
+  }
+  return(bl_cov)
+}
+
+
 #' Make a NIF object from SDTM-formatted data
 #'
 #' @description

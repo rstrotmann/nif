@@ -397,7 +397,7 @@ suggest <- function(obj) {
 
   if (!("PCELTM" %in% names(obj$pc))) {
     temp <- guess_ntime(obj) %>%
-      mutate(out = paste0('"', PCTPT, '", ', NTIME, ','))
+      mutate(out = paste0('"', .data$PCTPT, '", ', .data$NTIME, ','))
     out <- paste0("        ", temp$out, collapse = "\n")
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "By default, 'add_observation()' takes the nominal sampling time from ",

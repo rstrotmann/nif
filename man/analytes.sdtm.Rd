@@ -7,7 +7,7 @@
 \method{analytes}{sdtm}(obj)
 }
 \arguments{
-\item{sdtm}{The sdtm object.}
+\item{obj}{The sdtm object.}
 }
 \value{
 Character.
