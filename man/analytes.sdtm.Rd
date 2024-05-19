@@ -4,7 +4,7 @@
 \alias{analytes.sdtm}
 \title{Analytes in a sdtm object}
 \usage{
-\method{analytes}{sdtm}(sdtm)
+\method{analytes}{sdtm}(obj)
 }
 \arguments{
 \item{sdtm}{The sdtm object.}

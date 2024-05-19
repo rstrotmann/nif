@@ -1016,8 +1016,10 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
         }
       }
     }
-    out[["WT_SEX"]] <- wt_by_sex(nif)
-    out[["WT_RACE"]] <- wt_by_race(nif)
+    if("WEIGTH" %in% names(nif) & "SEX" %in% names(nif))
+      out[["WT_SEX"]] <- wt_by_sex(nif)
+    if("WEIGTH" %in% names(nif) & "RACE" %in% names(nif))
+      out[["WT_RACE"]] <- wt_by_race(nif)
   }
 
   if(analytes == TRUE){

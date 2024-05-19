@@ -442,8 +442,8 @@ subjects.sdtm <- function(obj) {
 #'
 #' @examples
 #' analytes(examplinib_sad)
-analytes.sdtm <- function(sdtm) {
-  unique(domain(sdtm, "pc")$PCTESTCD)
+analytes.sdtm <- function(obj) {
+  unique(domain(obj, "pc")$PCTESTCD)
 }
 
 
@@ -471,7 +471,7 @@ doses.sdtm <- function(sdtm) {
 #' @examples
 #' treatments(examplinib_poc)
 treatments.sdtm <- function(obj) {
-  unique(domain(sdtm, "ex")$EXTRT)
+  unique(domain(obj, "ex")$EXTRT)
 }
 
 
@@ -528,9 +528,38 @@ guess_ntime <- function(sdtm) {
 }
 
 
-# guess_analyte_mapping <- function(sdtm) {
-#   extrt <- unique(sdtm$domains[["ex"]]$EXTRT)
-#   pctestcd <- unique(sdtm$domains[["pc"]]$PCTESTCD)
+# guess_analyte_mapping <- function(obj) {
+#   t <- data.frame(EXTRT = treatments(obj))
+#   p <- data.frame(PCTESTCD = analytes(obj))
+#
+#   t %>%
+#     fuzzy_inner_join(p, by = c("EXTRT" = "PCTESTCD"), match_fun = str_detect) %>%
+#     mutate(ANALYTE = PCTESTCD)
+#
+#   t_in_p <- sapply(t$EXTRT, function(x) {t[str_detect(p$PCTESTCD, x), "EXTRT"]})
+#   p_in_t <- sapply(p$PCTESTCD, function(x) {p[str_detect(t$EXTRT, x), "PCTESTCD"]})
+#
+#
+#   t <- treatments(obj)
+#   p <- analytes(obj)
+#
+#   result <- list()
+#
+#   t_in_p <- function(x) {
+#     temp <- p[str_detect(p, x)]
+#     result[[x]] = temp
+#     # return(result)
+#   }
+#   result <- sapply(t, t_in_p)
+#
+#   p_in_t <- function(x) {
+#     temp <- t[str_detect(t, x)]
+#     if(length(temp) == 1) {
+#       result[[temp]] <- x
+#     }
+#   }
+#   result <- sapply(p, p_in_t)
+#
 # }
 
 
