@@ -127,7 +127,16 @@
     <loc>/reference/administration_summary.html</loc>
   </url>
   <url>
+    <loc>/reference/analytes.data.frame.html</loc>
+  </url>
+  <url>
     <loc>/reference/analytes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/analytes.nif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/analytes.sdtm.html</loc>
   </url>
   <url>
     <loc>/reference/analytes_cmts.html</loc>
@@ -218,6 +227,12 @@
   </url>
   <url>
     <loc>/reference/doses.html</loc>
+  </url>
+  <url>
+    <loc>/reference/doses.nif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/doses.sdtm.html</loc>
   </url>
   <url>
     <loc>/reference/dtc_formats.html</loc>
@@ -332,6 +347,9 @@
   </url>
   <url>
     <loc>/reference/guess_lbspec.html</loc>
+  </url>
+  <url>
+    <loc>/reference/guess_ntime.html</loc>
   </url>
   <url>
     <loc>/reference/guess_parent.html</loc>
@@ -725,6 +743,15 @@
   </url>
   <url>
     <loc>/reference/time_by_ntime.html</loc>
+  </url>
+  <url>
+    <loc>/reference/treatments.html</loc>
+  </url>
+  <url>
+    <loc>/reference/treatments.nif.html</loc>
+  </url>
+  <url>
+    <loc>/reference/treatments.sdtm.html</loc>
   </url>
   <url>
     <loc>/reference/usubjid.html</loc>
