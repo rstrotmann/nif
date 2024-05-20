@@ -348,18 +348,69 @@ suggest <- function(obj) {
     return(n + 1)
   }
 
+  col = 34
   n_suggestion <- 1
 
-  arms <- obj$dm %>%
-    dplyr::filter(ACTARMCD != "") %>%
-    dplyr::distinct(ACTARM, ACTARMCD)
-  if (nrow(arms) > 1) {
+  treatments <- obj$ex %>%
+    distinct(EXTRT)
+  analytes <- obj$pc %>%
+    distinct(PCTEST, PCTESTCD)
+  n_suggestion <- suggest_out(n_suggestion, paste0(
+    "Only needed if you want to generate nif objects automatically (using ",
+    "'nif_auto()'): ",
+    "There are ", nrow(treatments), " treatments (EXTRT) in 'EX', and ",
+    nrow(analytes),
+    " pharmacokinetic analytes (PCTESTCD) in 'PC':"))
+  message(paste0(df_to_string(treatments, indent = "       "), "\n"))
+  message(paste0(df_to_string(analytes, indent = "       "), "\n"))
+  message(paste0(str_wrap(paste0(
+      "To associate treatments with their respective parent analyte, consider ",
+      "adding analyte mapping(s) to the sdtm object using the below code ",
+      "snippet (replace 'x' with the corresponding PCTESTCD):"),
+    width = 80, indent = 3, exdent = 3), "\n"))
+  out <- sapply(treatments$EXTRT, function(x) {
+    paste0("         add_analyte_mapping('", x, "', 'x')")
+  })
+  message(paste0(paste0("\033[0;", col, "m",
+                        c("      ", out), collapse = " %>%\n")), "\033[0m", "\n")
+  message(paste0(str_wrap(paste0(
+      "For further information see the documentation to 'add_analyte_mapping ",
+      "('?add_analyte_mapping')."),
+    width = 80, indent = 3, exdent = 3), "\n"))
+
+
+  n_trt <- length(unique(obj$ex$EXTRT))
+  n_analytes <- length(unique(obj$pc$PCTESTCD))
+  if (n_analytes > n_trt) {
     n_suggestion <- suggest_out(n_suggestion, paste0(
-        "There are ", nrow(arms), " arms defined in DM (see ",
-        "below). Consider defining a PART or ARM variable in the nif dataset, ",
-        "filtering for a particular arm, or defining a covariate based on ",
-        "ACTARMCD."), table = arms)
+      "Only needed if you want to generate nif objects automatically (using ",
+      "'nif_auto()'): ",
+      "There are more pharmacokinetic analytes in 'PC' than treatments in ",
+      "'EX'. If you want to include pharmacokinetic observations of ",
+      "metabolites, you can add metabolite mapping(s) to the sdtm object ",
+      "using 'add_metabolite_mapping' (see ?add_metabolite_mapping for ",
+      "further information)."))
   }
+
+
+  treatments <- obj$ex %>%
+    dplyr::distinct(EXTRT)
+  if (nrow(treatments) > 0) {
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+      "There are ", nrow(treatments), " different treatments in 'EX' (see ",
+      "below). Consider adding them to the nif object using ",
+      "'add_administration()'.\n\n"), table = treatments)
+  }
+
+  obs <- obj$pc %>%
+    distinct(PCTESTCD)
+  if (nrow(obs) > 0) {
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+      "There are ", nrow(obs), " different pharmacokinetic observations in ",
+      "'PC' (see below). Consider adding them to the nif object using ",
+      "'add_observation()'.\n\n"), table = obs)
+  }
+
 
   specimems <- obj$pc %>%
     dplyr::filter(PCSPEC != "") %>%
@@ -367,33 +418,26 @@ suggest <- function(obj) {
   if (nrow(specimems) > 1) {
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "There are data from ", nrow(specimems), " different sample specimem ",
-      "types in PC. Consider filtering for a specific specimem, or defining ",
-      "CMT accordingly."), table = specimems)
+      "types in 'PC'. ",
+      "When calling 'add_observation()', consider filtering for a specific ",
+      "specimem using the 'observation_filter' parameter."), table = specimems)
   }
 
-  treatments <- obj$ex %>%
-    dplyr::distinct(EXTRT)
-  if (nrow(treatments) > 1) {
-    n_suggestion <- suggest_out(n_suggestion, paste0(
-      "There are ", nrow(treatments), " different treatments in EX (see ",
-      "below). Consider adding them to the nif object using ",
-      "'add_administration()'.\n\n"), table = treatments)
-  }
 
-  analytes <- obj$pc %>%
-    dplyr::distinct(PCTESTCD) %>%
-    dplyr::pull(PCTESTCD)
-  no_analyte_treatments <- treatments %>%
-    dplyr::mutate(no.analyte = !(EXTRT %in% analytes)) %>%
-    dplyr::filter(no.analyte == TRUE) %>%
-    dplyr::select(EXTRT)
-  if (nrow(no_analyte_treatments) > 0) {
-    n_suggestion <- suggest_out(n_suggestion, paste0(
-      "There are treatments (EXTRT) without analytes (PCTESTCD) os the same ",
-      "name (see below). Consider adding a treatment-analyte mapping to the ",
-      "sdtm object (see '?add_analyte_mapping' %>%  for additional information)."),
-      table = distinct(obj$pc, PCTESTCD))
-  }
+  # analytes <- obj$pc %>%
+  #   dplyr::distinct(PCTESTCD) %>%
+  #   dplyr::pull(PCTESTCD)
+  # no_analyte_treatments <- treatments %>%
+  #   dplyr::mutate(no.analyte = !(EXTRT %in% analytes)) %>%
+  #   dplyr::filter(no.analyte == TRUE) %>%
+  #   dplyr::select(EXTRT)
+  # if (nrow(no_analyte_treatments) > 0) {
+  #   n_suggestion <- suggest_out(n_suggestion, paste0(
+  #     "There are treatments (EXTRT) without analytes (PCTESTCD) os the same ",
+  #     "name (see below). Consider adding a treatment-analyte mapping to the ",
+  #     "sdtm object (see '?add_analyte_mapping' %>%  for additional information)."),
+  #     table = distinct(obj$pc, PCTESTCD))
+  # }
 
   if (!("PCELTM" %in% names(obj$pc))) {
     temp <- guess_ntime(obj) %>%
@@ -407,11 +451,24 @@ suggest <- function(obj) {
       "'add_observation()' as the below data frame (make sure to review the ",
       "suggested NTIME values):\n"))
     message(paste0(
+      "\033[0;", col, "m",
       "      NTIME_lookup = tribble(\n",
       "        ~PCTPT, ~NTIME,\n",
       out, "\n",
-      "      )\n"
+      "      )\n", "\033[0m"
     ))
+  }
+
+
+  arms <- obj$dm %>%
+    dplyr::filter(ACTARMCD != "") %>%
+    dplyr::distinct(ACTARM, ACTARMCD)
+  if (nrow(arms) > 1) {
+    n_suggestion <- suggest_out(n_suggestion, paste0(
+      "There are ", nrow(arms), " arms defined in DM (see ",
+      "below). Consider defining a PART or ARM variable in the nif dataset, ",
+      "filtering for a particular arm, or defining a covariate based on ",
+      "ACTARMCD."), table = arms)
   }
 }
 
