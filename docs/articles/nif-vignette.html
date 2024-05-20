@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9018</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,8 +41,6 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/importing-NIF-datasets.html">Importing NIF data sets</a>
-    <a class="dropdown-item" href="../articles/making-nif-files.html">Making nif data sets from SDTM data</a>
     <a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a>
     <a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a>
     <a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a>
@@ -304,11 +302,11 @@ suggestions for manual imputations for a <code>sdtm</code> object:</p>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>   covariate based on ACTARMCD.</span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="fl">2.</span> There are <span class="fu">treatments</span> (EXTRT) without <span class="fu">analytes</span> (PCTESTCD) os the same name</span>
 <span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>   (see below). Consider adding a treatment<span class="sc">-</span>analyte mapping to the sdtm object</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>   (see ´?add_analyte_mapping<span class="st">`</span><span class="at"> for additional information).</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>   (see <span class="st">'?add_analyte_mapping'</span> <span class="sc">%&gt;%</span> <span class="cf">for</span> additional information).</span>
 <span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="at">       PCTESTCD     </span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="at">       RS2023       </span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="at">       RS2023487A   </span></span></code></pre></div>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>       PCTESTCD     </span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>       RS2023       </span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>       RS2023487A   </span></code></pre></div>
 <p>In the case of <code>examplinib_fe</code>, there are different
 treatment arms defined in the DM domain that should probably be included
 as covariates in the NIF file as they specify the sequence of fasted and
