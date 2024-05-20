@@ -358,7 +358,7 @@ suggest <- function(obj) {
         "There are ", nrow(arms), " arms defined in DM (see ",
         "below). Consider defining a PART or ARM variable in the nif dataset, ",
         "filtering for a particular arm, or defining a covariate based on ",
-        "ACTARMCD."))
+        "ACTARMCD."), table = arms)
   }
 
   specimems <- obj$pc %>%
