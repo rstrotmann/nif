@@ -20,4 +20,3 @@ Convert date-time code (DTC) variables from the \href{https://w.wiki/8Bzr}{ISO 8
 POSIXct format. The names of the variables to be converted need to be
 provided by \code{fields}.
 }
-\keyword{internal}

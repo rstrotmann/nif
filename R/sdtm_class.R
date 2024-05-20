@@ -391,7 +391,7 @@ suggest <- function(obj) {
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "There are treatments (EXTRT) without analytes (PCTESTCD) os the same ",
       "name (see below). Consider adding a treatment-analyte mapping to the ",
-      "sdtm object (see ´?add_analyte_mapping` for additional information)."),
+      "sdtm object (see '?add_analyte_mapping' %>%  for additional information)."),
       table = distinct(obj$pc, PCTESTCD))
   }
 

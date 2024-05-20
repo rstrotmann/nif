@@ -4,13 +4,15 @@
 \alias{mean_dose_plot}
 \title{Mean dose plot}
 \usage{
-mean_dose_plot(obj, analyte = NULL)
+mean_dose_plot(obj, analyte = NULL, title = NULL)
 }
 \arguments{
 \item{obj}{A NIF object.}
 
 \item{analyte}{The compound as character (i.e., the ANALYTE within the data
 set).}
+
+\item{title}{The plot title as character.}
 }
 \value{
 A ggplot object.

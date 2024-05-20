@@ -5,7 +5,7 @@
 \alias{dtc_formats}
 \title{The list of expected date/time formats as per ISO 8601}
 \format{
-An object of class \code{character} of length 5.
+An object of class \code{character} of length 7.
 }
 \usage{
 dtc_formats

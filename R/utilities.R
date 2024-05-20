@@ -54,7 +54,8 @@ recode_sex <- function(obj) {
     mutate(SEX = as.numeric(
       case_match(as.character(.data$SEX),
                  "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-                 "男" ~0, "女" ~1,
+                 # "男" ~ 0, "女" ~ 1,
+                 "\u7537" ~ 0, "\u5973" ~ 1,
                  .default = NA)
     ))
 }
@@ -147,7 +148,13 @@ positive_or_zero <- function(x) {
 
 #' The list of expected date/time formats as per ISO 8601
 #' @keywords internal
-dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m", "%Y-%m-%dT%H:%M:%S", "%Y")
+dtc_formats <- c("%Y-%m-%dT%H:%M",
+                 "%Y-%m-%d",
+                 "%Y-%m",
+                 "%Y-%m-%dT%H:%M:%S",
+                 "%Y",
+                 "%Y-%m-%d %H:%M",
+                 "%Y-%m-%d %H:%M:%S")
 
 
 #' Convert date fields to POSIX format
@@ -161,7 +168,6 @@ dtc_formats <- c("%Y-%m-%dT%H:%M", "%Y-%m-%d", "%Y-%m", "%Y-%m-%dT%H:%M:%S", "%Y
 #' @param fields Date variable names as character.
 #' @return A data frame
 #' @export
-#' @keywords internal
 standardize_date_format <- function(obj, fields = NULL) {
   obj %>%
     dplyr::mutate_at(fields, function(x) {
@@ -279,7 +285,7 @@ decompose_dtc <- function(obj, DTC_field) {
       mutate({{DTC_time}} := case_when(
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
         .default = NA)) %>%
-      select(-c("has_time"))
+      select(-all_of(c("has_time")))
   }
 
   for(i in DTC_field) {

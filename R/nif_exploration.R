@@ -1321,17 +1321,23 @@ administration_summary <- function(obj) {
 #' Mean dose plot
 #'
 #' This function plots the mean dose per day over time
+#'
 #' @param obj A NIF object.
 #' @param analyte The compound as character (i.e., the ANALYTE within the data
 #'   set).
+#' @param title The plot title as character.
 #' @return A ggplot object.
 #' @export
 #' @keywords internal
 #' @examples
 #' mean_dose_plot(examplinib_poc_nif)
-mean_dose_plot <- function(obj, analyte = NULL) {
+mean_dose_plot <- function(obj, analyte = NULL, title = NULL) {
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
+  }
+
+  if(is.null(title)) {
+    title <- paste0("Mean ", analyte, " dose over time")
   }
 
   obj %>%
@@ -1349,7 +1355,7 @@ mean_dose_plot <- function(obj, analyte = NULL) {
     facet_grid(PARAM ~ ., scales = "free_y") +
     labs(x = "time (days)", y = "") +
     theme_bw() +
-    ggtitle(paste0("Mean ", analyte, " dose over time")) +
+    ggtitle(title) +
     watermark()
 }
 

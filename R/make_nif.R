@@ -1303,8 +1303,8 @@ nif_auto <- function(sdtm,
           conditional_message("Adding baseline renal function")
           nif <- add_baseline(nif, sdtm, "lb", "CREAT") %>%
             {if(all(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(.)))
-              add_bl_crcl() else .} %>%
-            {if("BL_CRCL" %in% names(.)) add_bl_renal() else .}
+              add_bl_crcl(.) else .} %>%
+            {if("BL_CRCL" %in% names(.)) add_bl_renal(.) else .}
         }
       }
 
