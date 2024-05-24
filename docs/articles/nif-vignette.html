@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9020</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -297,16 +297,46 @@ package includes functions to explore the structure of SDTM data.</p>
 <p>As a starting point, <code><a href="../reference/suggest.html">suggest()</a></code> can provide useful
 suggestions for manual imputations for a <code>sdtm</code> object:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">suggest</span>(examplinib_fe)</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fl">1.</span> There are <span class="dv">3</span> arms defined <span class="cf">in</span> <span class="fu">DM</span> (see below). Consider defining a PART or ARM</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>   variable <span class="cf">in</span> the nif dataset, filtering <span class="cf">for</span> a particular arm, or defining a</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>   covariate based on ACTARMCD.</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="fl">2.</span> There are <span class="fu">treatments</span> (EXTRT) without <span class="fu">analytes</span> (PCTESTCD) os the same name</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>   (see below). Consider adding a treatment<span class="sc">-</span>analyte mapping to the sdtm object</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>   (see <span class="st">'?add_analyte_mapping'</span> <span class="sc">%&gt;%</span> <span class="cf">for</span> additional information).</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>       PCTESTCD     </span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>       RS2023       </span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>       RS2023487A   </span></code></pre></div>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fl">1.</span> Only needed <span class="cf">if</span> you want to generate nif objects <span class="fu">automatically</span> (using</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>   <span class="st">'nif_auto()'</span>)<span class="sc">:</span> There are <span class="dv">1</span> <span class="fu">treatments</span> (EXTRT) <span class="cf">in</span> <span class="st">'EX'</span>, and <span class="dv">2</span> pharmacokinetic</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>   <span class="fu">analytes</span> (PCTESTCD) <span class="cf">in</span> <span class="st">'PC'</span><span class="sc">:</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>       EXTRT        </span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>       EXAMPLINIB   </span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>       PCTEST       PCTESTCD     </span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>       RS2023       RS2023       </span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>       RS2023487A   RS2023487A   </span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>   To associate treatments with their respective parent analyte, consider adding</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>   analyte <span class="fu">mapping</span>(s) to the sdtm object using the below code <span class="fu">snippet</span> (replace</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>   <span class="st">'x'</span> with the corresponding PCTESTCD)<span class="sc">:</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a> [<span class="dv">0</span>;34m       <span class="sc">%&gt;%</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a> [<span class="dv">0</span>;34m         <span class="fu">add_analyte_mapping</span>(<span class="st">'EXAMPLINIB'</span>, <span class="st">'x'</span>) [0m</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>   For further information see the documentation to <span class="st">'add_analyte_mapping</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="st">   ('</span>?add_analyte_mapping<span class="st">').</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="st">2. Only needed if you want to generate nif objects automatically (using</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="st">   '</span><span class="fu">nif_auto</span>()<span class="st">'): There are more pharmacokinetic analytes in '</span>PC<span class="st">' than</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="st">   treatments in '</span>EX<span class="st">'. If you want to include pharmacokinetic observations</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="st">   of metabolites, you can add metabolite mapping(s) to the sdtm object</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="st">   using '</span>add_metabolite_mapping<span class="st">' (see ?add_metabolite_mapping for further</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="st">   information).</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="st">3. There are 1 different treatments in '</span>EX<span class="st">' (see below). Consider adding them to</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="st">   the nif object using '</span><span class="fu">add_administration</span>()<span class="st">'.</span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="st">       EXTRT        </span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="st">       EXAMPLINIB   </span></span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="st">4. There are 2 different pharmacokinetic observations in '</span>PC<span class="st">' (see below).</span></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="st">   Consider adding them to the nif object using '</span><span class="fu">add_observation</span>()<span class="st">'.</span></span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="st">       PCTESTCD     </span></span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a><span class="st">       RS2023       </span></span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a><span class="st">       RS2023487A   </span></span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a><span class="st">5. There are 3 arms defined in DM (see below). Consider defining a PART or ARM</span></span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a><span class="st">   variable in the nif dataset, filtering for a particular arm, or defining a</span></span>
+<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a><span class="st">   covariate based on ACTARMCD.</span></span>
+<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a></span>
+<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a><span class="st">       ACTARM           ACTARMCD   </span></span>
+<span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a><span class="st">       Fed - Fasted     BA         </span></span>
+<span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a><span class="st">       Screen Failure   SCRNFAIL   </span></span>
+<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a><span class="st">       Fasted - Fed     AB         </span></span></code></pre></div>
 <p>In the case of <code>examplinib_fe</code>, there are different
 treatment arms defined in the DM domain that should probably be included
 as covariates in the NIF file as they specify the sequence of fasted and
