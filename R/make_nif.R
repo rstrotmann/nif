@@ -1178,7 +1178,8 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   obj %>%
     make_time() %>%
     arrange(.data$DTC) %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    # mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
     fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%

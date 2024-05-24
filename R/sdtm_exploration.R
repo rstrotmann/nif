@@ -229,7 +229,9 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' @param lines Boolean whether to plot lines.
 #' @param points Boolean whether to plot points.
 #' @param analyte The analyte to be plotted as character.
+#' @param legend Show legend, as logical.
 #' @param log Boolean whether to use a logarithmic y axis.
+#'
 #' @return Nothing.
 #' @export
 #' @examples
@@ -239,7 +241,8 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' plot(examplinib_poc, domain="pc")
 #' plot(examplinib_poc, domain="vs", lines = FALSE, points = TRUE)
 plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
-                      points = FALSE, analyte = NULL, log = FALSE, ...) {
+                      points = FALSE, analyte = NULL, log = FALSE,
+                      legend = FALSE, ...) {
   # obj <- x$domains[[domain]] %>%
   obj <- x %>%
     domain(domain) %>%
@@ -268,10 +271,12 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "ex") {
     return(
       obj %>%
-        arrange(desc(.data$EXSTDTC)) %>%
-        group_by(.data$USUBJID) %>%
-        mutate(ID = cur_group_id()) %>%
-        arrange(.data$ID) %>%
+        arrange(.data$EXSTDTC) %>%
+        # group_by(.data$USUBJID) %>%
+        # mutate(ID = cur_group_id()) %>%
+        # # mutate(ID = as.numeric(factor(cur_group_id(), unique(cur_group_id())))) %>%
+        # arrange(.data$ID) %>%
+        mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
         ggplot() +
         geom_segment(aes(x = .data$EXSTDTC,
                          xend = .data$EXENDTC,
@@ -282,7 +287,8 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         scale_y_discrete(name="USUBJID", labels=NULL) +
         scale_x_datetime(name="EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d") +
         theme_bw() +
-        theme(legend.position = "bottom") +
+        {if(legend == TRUE) theme(legend.position = "bottom") else
+          theme(legend.position = "none")} +
         ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", EX"))
     )
   }
@@ -290,14 +296,17 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "dm") {
     return(
       obj %>%
-        group_by(.data$USUBJID) %>%
-        mutate(start = min(.data$RFSTDTC)) %>%
-        ungroup() %>%
-        arrange(.data$start) %>%
-        # arrange(.data$RFSTDTC) %>%
-        group_by(.data$USUBJID) %>%
-        mutate(ID = factor(cur_group_id())) %>%
-        mutate(ID = factor(.data$ID, levels = rev(levels(ID)))) %>%
+        # group_by(.data$USUBJID) %>%
+        # mutate(start = min(.data$RFSTDTC)) %>%
+        # ungroup() %>%
+        # arrange(.data$start) %>%
+        # # arrange(.data$RFSTDTC) %>%
+        # group_by(.data$USUBJID) %>%
+        # mutate(ID = factor(cur_group_id())) %>%
+        # mutate(ID = factor(.data$ID, levels = rev(levels(ID)))) %>%
+        filter(!is.na(.data$RFSTDTC)) %>%
+        arrange(.data$RFSTDTC) %>%
+        mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
         ggplot() +
         geom_segment(aes(x = .data$RFSTDTC,
                          xend = .data$RFENDTC,
@@ -308,6 +317,8 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         scale_y_discrete(labels = NULL, breaks = NULL, name = "USUBJID") +
         scale_x_datetime(name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d") +
         theme_bw() +
+        {if(legend == TRUE) theme(legend.position = "bottom") else
+          theme(legend.position = "none")} +
         ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", DM"))
     )
   }
@@ -326,7 +337,8 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         {if (log == TRUE) scale_y_log10()} +
         scale_x_datetime(name="LBDY", date_labels = "%Y-%m-%d") +
         theme_bw() +
-        theme(legend.position = "bottom") +
+        {if(legend == TRUE) theme(legend.position = "bottom") else
+          theme(legend.position = "none")} +
         ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", LB"))
     )
   }
@@ -344,7 +356,8 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         {if (points == TRUE) geom_point()} +
         {if (log == TRUE) scale_y_log10()} +
         theme_bw() +
-        theme(legend.position = "bottom") +
+        {if(legend == TRUE) theme(legend.position = "bottom") else
+          theme(legend.position = "none")} +
         ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", PC"))
     )
   }
@@ -365,6 +378,8 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
                          y = .data$ID, yend = .data$ID)) +
         scale_y_discrete(labels = NULL, name = "USUBJID") +
         scale_x_datetime(name = dtc_variable, date_labels = "%Y-%m-%d") +
+        {if(legend == TRUE) theme(legend.position = "bottom") else
+          theme(legend.position = "none")} +
         theme_bw() +
         ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", ",
                        toupper(domain)))
