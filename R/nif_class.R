@@ -22,6 +22,8 @@ new_nif <- function(obj = NULL, ...) {
     }
     class(temp) <- c("nif", "data.frame")
     order_nif_columns(temp)
+    # attr(temp, "version") <- paste0(
+    #   "Created with nif, Version ", packageVersion("nif"))
   }
 }
 

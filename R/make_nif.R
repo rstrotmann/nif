@@ -104,7 +104,8 @@ impute_missing_exendtc <- function(ex) {
       " rows in EX had no EXENDTC. These values are imputed as the day ",
       "before\nthe next EXSTDTC. The following entries are affected:\n",
       df_to_string(select(to_replace, c("USUBJID", "EXSEQ", "EXTRT",
-                            "EXSTDTC", "EXENDTC")), indent = "  ")
+                            "EXSTDTC", "EXENDTC")), indent = "  "),
+      "\n"
     )
 
     temp <- temp %>%
@@ -456,7 +457,6 @@ make_subjects <- function(dm, vs,
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter))) %>%
-    # left_join(baseline_covariates(vs), by = "USUBJID") %>%
     left_join(baseline_covariates, by = "USUBJID") %>%
     recode_sex() %>%
     mutate(ID = NA) %>%
@@ -951,7 +951,7 @@ add_observation <- function(
             mutate(N = sum(EVID == 0)) %>%
             ungroup() %>%
             distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-        indent = "  ")))
+        indent = "  "), "\n"))
 
     obj <- obj %>%
       filter(.data$NO_ADMIN_FLAG == 0)
@@ -1173,9 +1173,11 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #'
 #' @examples
 #' normalize_nif(examplinib_sad_nif)
+
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   obj %>%
     make_time() %>%
+    arrange(DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
