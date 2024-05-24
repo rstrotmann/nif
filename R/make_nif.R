@@ -1177,7 +1177,7 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   obj %>%
     make_time() %>%
-    arrange(.data$DTC) %>%
+    arrange(.data$uDTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
