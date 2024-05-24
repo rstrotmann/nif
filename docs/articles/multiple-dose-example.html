@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9021</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -373,7 +373,7 @@ summarizing the administered dose:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#   [1]  2  5  9 14 17 20 24 26 28 30 31 37 42 54 56 58 61 62 69 72 77 79 80</span></span></code></pre></div>
+<span><span class="co">#   [1]  2  3  6 10 15 19 21 24 26 29 34 39 45 50 51 53 59 60 65 66 74 75 76</span></span></code></pre></div>
 <p>Let’s have a plot of the doses over time in these subjects:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -469,7 +469,7 @@ identify those:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs</a></span><span class="op">(</span>analyte <span class="op">=</span> <span class="st">"RS2023"</span>, max_time <span class="op">=</span> <span class="fl">24</span>, n <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">#   [1]  1  5  6  7 20 31 42 43 53 67 74 75</span></span></code></pre></div>
+<span><span class="co">#   [1]  1  2  3  4  5  6  7  8  9 10 11 14</span></span></code></pre></div>
 <p>In this code, the function <code><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs()</a></code> receives
 as input the analyte of interest, the time interval across which the
 number of sanmples is evaluated, and the minimum number of samples to

@@ -12,6 +12,7 @@
   points = FALSE,
   analyte = NULL,
   log = FALSE,
+  legend = FALSE,
   ...
 )
 }
@@ -29,6 +30,8 @@
 \item{analyte}{The analyte to be plotted as character.}
 
 \item{log}{Boolean whether to use a logarithmic y axis.}
+
+\item{legend}{Show legend, as logical.}
 
 \item{...}{Further printing parameters.}
 }

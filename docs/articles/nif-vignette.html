@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9021</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -437,10 +437,10 @@ consideration may be <code>EPOCH</code>:</p>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="fu">distinct</span>(ACTARMCD, EPOCH)</span>
 <span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  ACTARMCD                  EPOCH</span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="dv">1</span>       AB OPEN LABEL TREATMENT <span class="dv">1</span></span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="dv">2</span>       AB OPEN LABEL TREATMENT <span class="dv">2</span></span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="dv">3</span>       BA OPEN LABEL TREATMENT <span class="dv">1</span></span>
-<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="dv">4</span>       BA OPEN LABEL TREATMENT <span class="dv">2</span></span></code></pre></div>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="dv">1</span>       BA OPEN LABEL TREATMENT <span class="dv">1</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="dv">2</span>       BA OPEN LABEL TREATMENT <span class="dv">2</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="dv">3</span>       AB OPEN LABEL TREATMENT <span class="dv">1</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="dv">4</span>       AB OPEN LABEL TREATMENT <span class="dv">2</span></span></code></pre></div>
 <p>In this example, to create a <code>FASTED</code> covariate field,
 first the period number is derived from the <code>EPOCH</code> field,
 and then the current <code>ACTARM</code> in that treatment period is
@@ -463,12 +463,12 @@ page width):</p>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">select</span>(USUBJID, PERIOD, TREATMENT, FASTED, TIME, EVID, AMT, ANALYTE, DV) <span class="sc">%&gt;%</span> </span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">head</span>()</span>
 <span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>            USUBJID PERIOD TREATMENT FASTED TIME EVID AMT ANALYTE        DV</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="dv">1</span> <span class="dv">20230004001010001</span>      <span class="dv">1</span>         A      <span class="dv">1</span>  <span class="fl">0.0</span>    <span class="dv">1</span> <span class="dv">500</span>  RS2023        <span class="cn">NA</span></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="dv">2</span> <span class="dv">20230004001010001</span>      <span class="dv">1</span>         A      <span class="dv">1</span>  <span class="fl">0.0</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023    <span class="fl">0.0000</span></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="dv">3</span> <span class="dv">20230004001010001</span>      <span class="dv">1</span>         A      <span class="dv">1</span>  <span class="fl">0.5</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023  <span class="fl">249.4928</span></span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="dv">4</span> <span class="dv">20230004001010001</span>      <span class="dv">1</span>         A      <span class="dv">1</span>  <span class="fl">1.0</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023  <span class="fl">858.2198</span></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="dv">5</span> <span class="dv">20230004001010001</span>      <span class="dv">1</span>         A      <span class="dv">1</span>  <span class="fl">1.5</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023 <span class="fl">1767.3117</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="dv">6</span> <span class="dv">20230004001010001</span>      <span class="dv">1</span>         A      <span class="dv">1</span>  <span class="fl">2.0</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023 <span class="fl">2176.5018</span></span></code></pre></div>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="dv">1</span> <span class="dv">20230004001020001</span>      <span class="dv">1</span>         B      <span class="dv">0</span>  <span class="fl">0.0</span>    <span class="dv">1</span> <span class="dv">500</span>  RS2023        <span class="cn">NA</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="dv">2</span> <span class="dv">20230004001020001</span>      <span class="dv">1</span>         B      <span class="dv">0</span>  <span class="fl">0.0</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023    <span class="fl">0.0000</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="dv">3</span> <span class="dv">20230004001020001</span>      <span class="dv">1</span>         B      <span class="dv">0</span>  <span class="fl">0.5</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023  <span class="fl">607.8332</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="dv">4</span> <span class="dv">20230004001020001</span>      <span class="dv">1</span>         B      <span class="dv">0</span>  <span class="fl">1.0</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023 <span class="fl">1734.4646</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="dv">5</span> <span class="dv">20230004001020001</span>      <span class="dv">1</span>         B      <span class="dv">0</span>  <span class="fl">1.5</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023 <span class="fl">2176.6537</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="dv">6</span> <span class="dv">20230004001020001</span>      <span class="dv">1</span>         B      <span class="dv">0</span>  <span class="fl">2.0</span>    <span class="dv">0</span>   <span class="dv">0</span>  RS2023 <span class="fl">3472.0221</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
