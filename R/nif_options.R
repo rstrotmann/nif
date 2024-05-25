@@ -3,7 +3,7 @@
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
-assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
+#assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
 
 
 #' Set or get global options
@@ -26,11 +26,12 @@ assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
 nif_option <- function(...) {
   args <- list(...)
   allowed_options <- tribble(
-    ~name,       ~type_test,
-    "silent",    is.logical,
-    "watermark", is.character,
-    "debug",     is.logical,
-    "test",      is.character,
+    ~name,        ~type_test,
+    "silent",     is.logical,
+    "watermark",  is.character,
+    "debug",      is.logical,
+    "test",       is.character
+    # "disclaimer", is.character
   )
 
   if(length(args) == 0) {
@@ -70,14 +71,20 @@ nif_option_value <- function(option) {
 }
 
 
-#' Get a disclaimer
+#' Disclaimer statement
+#'
+#' @param disclaimer_text Additional disclaimer text.
 #'
 #' @return Character.
 #' @export
 #'
 #' @examples
 #' nif_disclaimer()
-nif_disclaimer <- function() {
-  paste0("Data set created with `nif`, version ", packageVersion("nif"), "\n",
-         nif_option_value("disclaimer"))
+nif_disclaimer <- function(disclaimer_text = NA) {
+  temp <- paste0("Data set created with `nif`, version ", packageVersion("nif"))
+  disc = disclaimer_text
+  if(!is.na(disc)) {
+    temp <- paste0(temp, "\n", disc)
+  }
+  return(temp)
 }
