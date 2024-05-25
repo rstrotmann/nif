@@ -2,6 +2,8 @@
 
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
+assign("version", packageVersion("nif"), envir = .nif_env)
+assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
 
 
 #' Set or get global options
@@ -67,3 +69,15 @@ nif_option_value <- function(option) {
   }
 }
 
+
+#' Get a disclaimer
+#'
+#' @return Character.
+#' @export
+#'
+#' @examples
+#' nif_disclaimer()
+nif_disclaimer <- function() {
+  paste0("Data set created with `nif`, version ", packageVersion("nif"), "\n",
+         nif_option_value("disclaimer"))
+}
