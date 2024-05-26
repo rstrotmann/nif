@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{extract_date}
 \alias{extract_date}
-\title{Extract thendate component of a POSICct object}
+\title{Extract the date component of a POSICct object}
 \usage{
 extract_date(dtc)
 }
@@ -13,6 +13,6 @@ extract_date(dtc)
 The date as character.
 }
 \description{
-Extract thendate component of a POSICct object
+Extract the date component of a POSICct object
 }
 \keyword{internal}

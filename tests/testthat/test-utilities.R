@@ -23,3 +23,27 @@ test_that("has time works", {
   expect_true(all(has_time(valid_times1)))
   expect_false(all(has_time(invalid_times)))
 })
+
+
+test_that("decompoase_dtc works", {
+  test <- data.frame(
+    test1_dtc = c(
+      "2024-01-01T8:00",
+      "2024-02-01",
+      "2024-03-15T01:02:03"
+    ),
+    test2_dtc = c(
+      "2024-04-01T10:11:12",
+      "2024-04-15T11:12",
+      "2024-05-01"
+    )
+  ) %>% lubrify_dates()
+
+  expect_no_error(
+    temp <- decompose_dtc(test, "test1_dtc")
+  )
+  expect_equal(temp$test1_dtc_date, c("2024-01-01", "2024-02-01", "2024-03-15"))
+  expect_equal(temp$test1_dtc_time, c("08:00", NA, "01:02"))
+})
+
+

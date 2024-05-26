@@ -5,14 +5,6 @@
 #' @param ... Further message components.
 #' @return Nothing.
 #' @keywords internal
-# conditional_message <- function(msg, ...) {
-#   parameters <- c(as.list(environment()), list(...))
-#   parameters <- lapply(parameters, as.character)
-#   silent <- get("silent", .nif_env)
-#   if (silent == FALSE) {
-#     message(paste(as.character(parameters[names(parameters) != "silent"])))
-#   }
-# }
 conditional_message <- function(...) {
   args <- lapply(list(...), as.character)
   if(exists("silent", envir = .nif_env)) {
@@ -285,7 +277,7 @@ decompose_dtc <- function(obj, DTC_field) {
       mutate({{DTC_time}} := case_when(
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
         .default = NA)) %>%
-      select(-all_of(c("has_time")))
+      select(-c("has_time"))
   }
 
   for(i in DTC_field) {
@@ -295,7 +287,7 @@ decompose_dtc <- function(obj, DTC_field) {
 }
 
 
-#' Extract thendate component of a POSICct object
+#' Extract the date component of a POSICct object
 #'
 #' @param dtc The POSIX-formatted datetime.
 #' @return The date as character.
