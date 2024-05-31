@@ -1054,7 +1054,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 #' @param alpha The alpha as numeric.
 #' @param cov The covariate field of the NIF object to analyze, as character.
 #' @param title The title as character.
-#' @param bins The number of bins, as numeric.
+#' @param density Plot density instead of N on the y axis, as logical.
 #'
 #' @return A plot object.
 #' @export
@@ -1062,7 +1062,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
 covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
-                           bins = NULL, title = NULL) {
+                           density = TRUE, title = NULL) {
   cov_params <- get_cov_plot_params(cov)
   xlabel <- cov_params$xlabel
   if (is.na(xlabel)) {
@@ -1080,14 +1080,12 @@ covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
   limits <- unlist(cov_params$limits)
 
   binwidth = NULL
-  if(is_null(bins)){
-    if(is.na(cov_params$binwidth)) {
-      binwidth = NULL
-      bins = nbins
-    } else {
-      binwidth = cov_params$binwidth
-      bins = NULL
-    }
+  if(is.na(cov_params$binwidth)) {
+    binwidth = NULL
+    bins = nbins
+  } else {
+    binwidth = cov_params$binwidth
+    bins = NULL
   }
 
   if(!is.null(group)) {
@@ -1098,20 +1096,25 @@ covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
       distinct_at(c("ID", cov_params$field, "GROUP")) %>%
       ggplot(aes(x = .data[[cov_params$field]], group = GROUP,
                  fill = GROUP)) +
-      geom_histogram(bins = bins, binwidth = binwidth, position = "identity",
-                     alpha = alpha)
+      {if(density == FALSE) geom_histogram(bins = bins, binwidth = binwidth,
+        position = "identity", alpha = alpha) else
+          geom_histogram(aes(y = after_stat(density)), bins = bins, binwidth = binwidth,
+                         position = "identity", alpha = alpha)}
   } else {
     p <- obj %>%
       as.data.frame() %>%
       distinct_at(c("ID", cov_params$field)) %>%
       ggplot(aes(x = .data[[cov_params$field]])) +
-      geom_histogram(bins = bins, binwidth = binwidth, position = "identity",
-                     fill = "grey")
+      {if(density == FALSE) geom_histogram(bins = bins, binwidth = binwidth,
+        position = "identity", fill = "grey") else
+          geom_histogram(aes(y = after_stat(density)), bins = bins,
+            binwidth = binwidth, position = "identity", fill = "grey")}
   }
   p +
     geom_vline(xintercept = limits, color = "red") +
     theme_bw() +
-    labs(x = xlabel, y = "number of subjects") +
+    {if(density == FALSE) labs(x = xlabel, y = "number of subjects") else
+      labs(x = xlabel, y = "density")} +
     ggtitle(title) +
     watermark(cex = 1.5)
 }

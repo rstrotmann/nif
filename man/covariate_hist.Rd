@@ -10,7 +10,7 @@ covariate_hist(
   nbins = 11,
   group = NULL,
   alpha = 0.5,
-  bins = NULL,
+  density = TRUE,
   title = NULL
 )
 }
@@ -26,7 +26,7 @@ Defaults to 11.}
 
 \item{alpha}{The alpha as numeric.}
 
-\item{bins}{The number of bins, as numeric.}
+\item{density}{Plot density instead of N on the y axis, as logical.}
 
 \item{title}{The title as character.}
 }
