@@ -4,7 +4,7 @@
 \alias{covariate_hist}
 \title{Generic covariate distribution histogram}
 \usage{
-covariate_hist(obj, cov, nbins = 11)
+covariate_hist(obj, cov, nbins = 11, group = NULL, alpha = 0.5, title = NULL)
 }
 \arguments{
 \item{obj}{The NIF object.}
@@ -13,6 +13,12 @@ covariate_hist(obj, cov, nbins = 11)
 
 \item{nbins}{The number of bins to be used if no binwidth is specified.
 Defaults to 11.}
+
+\item{group}{The field(s) to group by, as character.}
+
+\item{alpha}{The alpha as numeric.}
+
+\item{title}{The title as character.}
 }
 \value{
 A plot object.
