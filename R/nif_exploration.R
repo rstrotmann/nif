@@ -1054,6 +1054,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 #' @param alpha The alpha as numeric.
 #' @param cov The covariate field of the NIF object to analyze, as character.
 #' @param title The title as character.
+#' @param bins The number of bins, as numeric.
 #'
 #' @return A plot object.
 #' @export
@@ -1061,7 +1062,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
 covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
-                           title = NULL) {
+                           bins = NULL, title = NULL) {
   cov_params <- get_cov_plot_params(cov)
   xlabel <- cov_params$xlabel
   if (is.na(xlabel)) {
@@ -1078,12 +1079,15 @@ covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
   }
   limits <- unlist(cov_params$limits)
 
-  if (is.na(cov_params$binwidth)) {
-    binwidth = NULL
-    bins = nbins
-  } else {
-    binwidth = cov_params$binwidth
-    bins = NULL
+  binwidth = NULL
+  if(is_null(bins)){
+    if(is.na(cov_params$binwidth)) {
+      binwidth = NULL
+      bins = nbins
+    } else {
+      binwidth = cov_params$binwidth
+      bins = NULL
+    }
   }
 
   if(!is.null(group)) {
