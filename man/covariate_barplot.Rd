@@ -4,12 +4,14 @@
 \alias{covariate_barplot}
 \title{Generic covariate barplot}
 \usage{
-covariate_barplot(obj, cov, title = NULL)
+covariate_barplot(obj, cov, group = NULL, title = NULL)
 }
 \arguments{
 \item{obj}{A nif object.}
 
 \item{cov}{The (categorical) baseline covariate as character.}
+
+\item{group}{A grouping variable, as character.}
 
 \item{title}{The plot title as character. Defaults to cov, if NULL.}
 }
@@ -21,4 +23,6 @@ Generic covariate barplot
 }
 \examples{
 covariate_barplot(examplinib_poc_nif, "SEX")
+covariate_barplot(mutate(examplinib_poc_nif, OLD = AGE > 65), "SEX",
+  group = "OLD")
 }

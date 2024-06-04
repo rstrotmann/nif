@@ -1125,26 +1125,49 @@ covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
 #' @param obj A nif object.
 #' @param cov The (categorical) baseline covariate as character.
 #' @param title The plot title as character. Defaults to cov, if NULL.
+#' @param group A grouping variable, as character.
 #'
 #' @return A ggplot object.
 #' @export
 #'
 #' @examples
 #' covariate_barplot(examplinib_poc_nif, "SEX")
-covariate_barplot <- function(obj, cov, title = NULL) {
+covariate_barplot <- function(obj, cov, group = NULL, title = NULL) {
   if(is.null(title)) {
     title = cov
+    if(!is.null(group)) {
+      title <- paste0(title, " grouped by ", nice_enumeration(group))
+    }
   }
 
-  obj %>%
-    as.data.frame() %>%
-    mutate(CLASS = as.factor(.data[[cov]])) %>%
-    group_by(CLASS) %>%
-    distinct(ID) %>%
-    summarize(n = n()) %>%
-    ggplot(aes(x = CLASS, y = n)) +
-    scale_x_discrete(drop = FALSE, name = cov) +
-    geom_bar(stat = "identity", fill = "white", color = "black", width = 0.5) +
+  if(!is.null(group)) {
+    out <- obj %>%
+      as.data.frame() %>%
+      mutate_at(group, factor) %>%
+      unite(GROUP, all_of(group), remove = FALSE) %>%
+      mutate(CLASS = as.factor(.data[[cov]])) %>%
+      distinct_at(c("ID", "CLASS", "GROUP")) %>%
+      group_by(CLASS, GROUP) %>%
+      summarize(n = n(), .groups = "drop") %>%
+      ggplot(aes(x = CLASS, y = n, group = GROUP, fill = GROUP)) +
+      scale_x_discrete(drop = FALSE, name = cov) +
+      geom_bar(stat = "identity",
+               position = position_dodge(preserve = "single"), width = 0.5,
+               alpha = 0.8) +
+      labs(fill = group)
+  } else {
+    out <- obj %>%
+      as.data.frame() %>%
+      mutate(CLASS = as.factor(.data[[cov]])) %>%
+      distinct(ID, CLASS) %>%
+      group_by(CLASS) %>%
+      summarize(n = n()) %>%
+      ggplot(aes(x = CLASS, y = n)) +
+      scale_x_discrete(drop = FALSE, name = cov) +
+      geom_bar(stat = "identity", fill = "white", color = "black", width = 0.5)
+  }
+
+  out +
     theme_bw() +
     labs(y = "N") +
     ggtitle(title) +
