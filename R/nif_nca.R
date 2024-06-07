@@ -146,7 +146,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
 #'
 #' @return A data frame.
 #' @export
-nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = "DOSE") {
+nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL) {
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
     conditional_message(paste(
@@ -159,9 +159,10 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = "DOSE") {
   # preserve the columns to keep
   keep_data <- obj %>%
     as.data.frame() %>%
+    filter(ANALYTE == current_analyte) %>%
     filter(EVID == 1) %>%
     select(c("ID", "USUBJID", any_of(keep), any_of(c("AGE", "SEX", "RACE", "WEIGHT",
-      "HEIGHT", "BMI", "PART", "COHORT")), starts_with("BL_"))) %>%
+      "HEIGHT", "BMI", "PART", "COHORT", "DOSE")), starts_with("BL_"))) %>%
     distinct()
 
   if(!"pp" %in% names(sdtm_data$domains)) {
@@ -169,10 +170,10 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = "DOSE") {
   }
 
   sdtm_data$domains[["pp"]] %>%
+    filter(PPCAT == current_analyte) %>%
     select(c("USUBJID", "PPTESTCD", "ANALYTE" = "PPCAT", "PPSTRESN", "PPSPEC",
              "PPRFTDTC")) %>%
-    left_join(keep_data, by = "USUBJID") %>%
-    filter(ANALYTE == current_analyte)
+    left_join(keep_data, by = "USUBJID")
 }
 
 
