@@ -363,8 +363,14 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
 #'   c("cmax", "aucinf.obs"))
-nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
+nca_power_model <- function(nca, parameter = NULL,
     group = NULL, title = NULL, size = 2, alpha = 1) {
+
+  if(is.null(parameter)) {
+    std_parameters = c("cmax", "aucinf.obs", "CMAX", "AUCIFP")
+    parameter <- std_parameters[which(std_parameters %in% unique(nca$PPTESTCD))]
+  }
+
   pm_plot <- function(param) {
     pp <- nca %>%
       filter(PPTESTCD == param) %>%
