@@ -23,6 +23,4 @@ Generic covariate barplot
 }
 \examples{
 covariate_barplot(examplinib_poc_nif, "SEX")
-covariate_barplot(mutate(examplinib_poc_nif, OLD = AGE > 65), "SEX",
-  group = "OLD")
 }

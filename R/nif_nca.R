@@ -137,6 +137,45 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
 }
 
 
+#' Generate NCA table from the SDTM.PP domain
+#'
+#' @param obj A nif object.
+#' @param sdtm_data A stdm data object.
+#' @param analyte The analyte as character.
+#' @param keep Column names to keep, as character.
+#'
+#' @return A data frame.
+#' @export
+nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = "DOSE") {
+  if (is.null(analyte)) {
+    current_analyte <- guess_analyte(obj)
+    conditional_message(paste(
+      "NCA: No analyte specified. Selected", current_analyte,
+      "as the most likely."))
+  } else {
+    current_analyte <- analyte
+  }
+
+  # preserve the columns to keep
+  keep_data <- obj %>%
+    as.data.frame() %>%
+    filter(EVID == 1) %>%
+    select(c("ID", "USUBJID", any_of(keep), any_of(c("AGE", "SEX", "RACE", "WEIGHT",
+      "HEIGHT", "BMI", "PART", "COHORT")), starts_with("BL_"))) %>%
+    distinct()
+
+  if(!"pp" %in% names(sdtm_data$domains)) {
+    stop("Domain PP is not included in the sdtm object!")
+  }
+
+  sdtm_data$domains[["pp"]] %>%
+    select(c("USUBJID", "PPTESTCD", "ANALYTE" = "PPCAT", "PPSTRESN", "PPSPEC",
+             "PPRFTDTC")) %>%
+    left_join(keep_data, by = "USUBJID") %>%
+    filter(ANALYTE == current_analyte)
+}
+
+
 #' PK parameter summary statistics by dose
 #'
 #' @param nca The NCA results as provided by `nca`, as data frame.
@@ -173,7 +212,9 @@ nca_summary <- function(
     group = NULL) {
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
-    filter(is.na(.data$exclude)) %>%
+    {if("exclude" %in% names(.)) filter(., is.na(.data$exclude)) else .} %>%
+    {if(!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.))
+        mutate(., PPORRES = .data$PPSTRESN) else .} %>%
     group_by_at(c(group, "DOSE", "PPTESTCD")) %>%
     summarize(
       geomean = PKNCA::geomean(PPORRES, na.rm = TRUE),
@@ -323,6 +364,8 @@ nca_power_model <- function(nca, parameter = c("cmax", "aucinf.obs"),
   pm_plot <- function(param) {
     pp <- nca %>%
       filter(PPTESTCD == param) %>%
+      {if(!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.))
+        mutate(., PPORRES = .data$PPSTRESN) else .} %>%
       filter(PPORRES != 0)
 
     pm <- pp %>%
