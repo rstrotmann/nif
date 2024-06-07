@@ -208,7 +208,8 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = "DOSE") {
 # }
 nca_summary <- function(
     nca,
-    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
+    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs",
+                   "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"),
     group = NULL) {
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
@@ -243,11 +244,14 @@ nca_summary <- function(
 #' nca_summary_table(nca(examplinib_sad_nif, analyte = "RS2023"))
 nca_summary_table <- function(
     nca,
-    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
+    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs",
+                   "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"),
     digits = 2,
     group = NULL) {
   s <- nca_summary(nca, parameters, group = group)
-  median_parameters <- c("tlast", "tmax", "lambda.z.n.points")
+
+  median_parameters <- c("tlast", "tmax", "lambda.z.n.points", "TMAX",
+                         "LAMZNPT")
   s %>%
     mutate(
       center = case_when(
