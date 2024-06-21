@@ -392,3 +392,44 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
     )
   }
 }
+
+
+#' AE summary
+#'
+#' @param sdtm_data An sdtm object.
+#' @param level The level to summarize by, as character. Can be one or multiple
+#' of:
+#'
+#' * 'TERM':   Reported term
+#' * 'LLT':    Lowest level term
+#' * 'DECOD':  Dictionary-derived term
+#' * 'HLT':    High level term
+#' * 'BODSYS': Body system or organ class
+#' * 'SOC':    System organ class
+#' @param show_cd Show AE term code, as logical.
+#' @param group Additional grouping variable, as character.
+#' @param order_by_subj Order by number of subject, instead of by number of
+#' event, as logical.
+#'
+#' @return A data frame.
+#' @export
+ae_summary <- function(sdtm_data, level = "SOC", show_cd = FALSE, group = NULL,
+                       order_by_subj = F) {
+  if(!all(level %in% c("TERM", "LLT", "DECOD", "HLT", "BODSYS", "SOC"))) {
+    stop("unknown level!")
+  }
+  level <- paste0("AE", level)
+  ae <- sdtm_data %>% domain("ae")
+
+  grouping <- c(level, group)
+  if(show_cd == TRUE) {
+    grouping <- c(grouping, paste0(level, "CD"))
+  }
+
+  ae %>%
+    group_by(across(all_of(grouping))) %>%
+    summarize(n = n(), n_subj = n_distinct(.data$USUBJID), .groups = "drop") %>%
+    {if(order_by_subj == T) arrange(., desc(.data$n_subj)) else
+      arrange(., desc(.data$n))} %>%
+    as.data.frame()
+}

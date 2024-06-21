@@ -6,7 +6,7 @@
 \usage{
 nca_power_model(
   nca,
-  parameter = c("cmax", "aucinf.obs"),
+  parameter = NULL,
   group = NULL,
   title = NULL,
   size = 2,

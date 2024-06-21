@@ -170,7 +170,7 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL) {
   }
 
   sdtm_data$domains[["pp"]] %>%
-    filter(PPCAT == current_analyte) %>%
+    filter(.data$PPCAT == current_analyte) %>%
     select(c("USUBJID", "PPTESTCD", "ANALYTE" = "PPCAT", "PPSTRESN", "PPSPEC",
              "PPRFTDTC")) %>%
     left_join(keep_data, by = "USUBJID")

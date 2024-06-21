@@ -4,7 +4,7 @@
 \alias{nca_from_pp}
 \title{Generate NCA table from the SDTM.PP domain}
 \usage{
-nca_from_pp(obj, sdtm_data, analyte = NULL, keep = "DOSE")
+nca_from_pp(obj, sdtm_data, analyte = NULL, keep = NULL)
 }
 \arguments{
 \item{obj}{A nif object.}
