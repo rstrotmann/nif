@@ -43,6 +43,9 @@
     <loc>/reference/add_administration.html</loc>
   </url>
   <url>
+    <loc>/reference/add_ae.html</loc>
+  </url>
+  <url>
     <loc>/reference/add_analyte_mapping.html</loc>
   </url>
   <url>
@@ -125,6 +128,9 @@
   </url>
   <url>
     <loc>/reference/administration_summary.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ae_summary.html</loc>
   </url>
   <url>
     <loc>/reference/analytes.data.frame.html</loc>
@@ -443,6 +449,9 @@
   </url>
   <url>
     <loc>/reference/make_administration.html</loc>
+  </url>
+  <url>
+    <loc>/reference/make_ae.html</loc>
   </url>
   <url>
     <loc>/reference/make_baseline.html</loc>
