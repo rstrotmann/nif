@@ -30,12 +30,6 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
   # guess analyte if not defined
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
-    # if (get("silent", .nif_env) == FALSE) {
-    #   message(paste(
-    #     "NCA: No analyte specified. Selected",
-    #     current_analyte, "as the most likely."
-    #   ))
-    # }
     conditional_message(paste(
       "NCA: No analyte specified. Selected",
       current_analyte, "as the most likely."
@@ -73,7 +67,9 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
     )) %>%
     dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
     dplyr::filter(EVID == 1) %>%
-    dplyr::select(any_of(c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
+    mutate(PPRFTDTC = DTC) %>%
+    dplyr::select(any_of(
+      c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
     as.data.frame()
 
   # concentration data
@@ -191,22 +187,6 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL) {
 #'
 #' @examples
 #' nca_summary(nca(examplinib_sad_nif, analyte = "RS2023"))
-# nca_summary <- function(
-#     nca,
-#     parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs"),
-#     group = "DOSE") {
-#   nca %>%
-#     filter(PPTESTCD %in% parameters) %>%
-#     group_by(.data[[group]], PPTESTCD) %>%
-#     summarize(
-#       geomean = PKNCA::geomean(PPORRES, na.rm = TRUE),
-#       geocv = PKNCA::geocv(PPORRES, na.rm = TRUE),
-#       median = median(PPORRES, na.rm = TRUE), iqr = IQR(PPORRES, na.rm = TRUE),
-#       min = min(PPORRES, na.rm = TRUE),
-#       max = max(PPORRES, na.rm = TRUE),
-#       n = n()
-#     )
-# }
 nca_summary <- function(
     nca,
     parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs",

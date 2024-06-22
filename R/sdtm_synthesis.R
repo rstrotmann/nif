@@ -385,7 +385,7 @@ make_md_ex <- function(dm,
 # make PCSEQ:
 
 
-#' Create PC based on single-dose admninistration
+#' Create PC based on single-dose administration
 #'
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
@@ -1014,4 +1014,58 @@ synthesize_lb <- function(dm) {
       LBSTNRHI = 103.4
     ) %>%
     select(-c("RFSTDTC", "CREA"))
+}
+
+
+synthesize_pp <- function(sdtm) {
+  pp_translation <- tribble(
+    ~PKNCAPARAM,        ~PPTESTCD,                         ~PPTEST,    ~PPORRESU,    ~PPSTRESU,
+    "aucinf.obs",        "AUCIFP",              "AUC Infinity Pred",    "h*ng/mL",    "h*ng/mL",
+    "auclast",           "AUCLST",       "AUC to Last Nonzero Conc",    "h*ng/mL",    "h*ng/mL",
+    "cmax",              "CMAX",                         "Max Conc",      "ng/mL",      "ng/mL",
+    "lambda.z",          "LAMZ",                         "Lambda z",        "1/h",        "1/h",
+    "half.life",         "LAMZHL",             "Half-Life Lambda z",          "h",          "h",
+    "lambda.z.n.points", "LAMZNPT", "Number of Points for Lambda z",           NA,           NA,
+    "adj.r.squared",     "R2ADJ",              "R Squared Adjusted",           NA,           NA,
+    "tlast",             "TLST",        "Time of Last Nonzero Conc",          "h",          "h",
+    "tmax",              "TMAX",                     "Time of CMAX",          "h",          "h",
+  )
+
+  nif <- nif_auto(sdtm) %>%
+    index_rich_sampling_intervals()
+
+  analytes <- nif %>%
+    as.data.frame() %>%
+    distinct(ANALYTE, PARENT, METABOLITE)
+
+  nif <- nif %>%
+    as.data.frame() %>%
+    mutate(PPRFTDTC = case_when(EVID == 1 ~ DTC, .default = NA)) %>%
+    group_by(USUBJID, PARENT) %>%
+    arrange(DTC) %>%
+    fill(PPRFTDTC, .direction = "down") %>%
+    as.data.frame()
+
+  out = data.frame()
+  for(i in nrow(analytes)) {
+    temp <- nca(nif, analyte = analytes[i, "ANALYTE"],
+      parent=analytes[i, "PARENT"],
+      keep = c("USUBJID", "STUDYID","PPRFTDTC", "ID"),
+      group = "RICH_N")
+
+    out <- rbind(out, temp %>%
+      mutate(DOMAIN = "PP", PPSTRESN = PPORRES, PPSPEC = "PLASMA") %>%
+      mutate(PPSCAT = "NON-COMPARTMENTAL") %>%
+      mutate(PPCAT = analytes[i, "ANALYTE"]) %>%
+      rename(PKNCAPARAM = PPTESTCD) %>%
+      right_join(pp_translation, by = "PKNCAPARAM") %>%
+      select(-c("PKNCAPARAM", "start", "end", "exclude", "ID")) %>%
+      group_by(USUBJID) %>%
+      mutate(PPSEQ = row_number()) %>%
+      ungroup() %>%
+      as.data.frame() %>%
+      select(STUDYID, DOMAIN, USUBJID, PPSEQ, PPTESTCD, PPTEST, PPCAT, PPORRES,
+             PPORRESU, PPSTRESN, PPSTRESU, PPSPEC)
+    )
+  }
 }
