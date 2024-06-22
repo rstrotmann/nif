@@ -67,7 +67,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
     )) %>%
     dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
     dplyr::filter(EVID == 1) %>%
-    mutate(PPRFTDTC = DTC) %>%
+    mutate(PPRFTDTC = .data$DTC) %>%
     dplyr::select(any_of(
       c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
     as.data.frame()
@@ -92,14 +92,15 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
 
   # generate formulae for the conc and admin objects
   conc_formula <- "DV~TIME|ID"
-  dose_formula <- "DOSE~TIME|ID"
+  # dose_formula <- "DOSE~TIME|ID"
+  dose_formula <- "DOSE~TIME|PPRFTDTC+ID"
   if (!is.null(group)) {
     group_string <- paste(group, collapse = "+")
     if(get("silent", .nif_env) == FALSE) {
       message(paste("NCA: Group by", group_string))
     }
     conc_formula <- paste0("DV~TIME|", group_string, "+ID")
-    dose_formula <- paste0("DOSE~TIME|", group_string, "+ID")
+    dose_formula <- paste0("DOSE~TIME|", group_string, "+PPRFTDTC+ID")
   }
 
   conc_obj <- PKNCA::PKNCAconc(

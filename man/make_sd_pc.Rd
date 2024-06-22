@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_synthesis.R
 \name{make_sd_pc}
 \alias{make_sd_pc}
-\title{Create PC based on single-dose admninistration}
+\title{Create PC based on single-dose administration}
 \usage{
 make_sd_pc(dm, ex, vs, lb, sampling_scheme)
 }
@@ -21,6 +21,6 @@ make_sd_pc(dm, ex, vs, lb, sampling_scheme)
 The PC domain as data frame.
 }
 \description{
-Create PC based on single-dose admninistration
+Create PC based on single-dose administration
 }
 \keyword{internal}

@@ -660,6 +660,7 @@ synthesize_sdtm_sad_study <- function() {
     add_RFENDTC(ex)
 
   pc <- make_sd_pc(dm, ex, vs, lb, rich_sampling_scheme)
+  pp <- synthesize_pp()
 
   out <- list()
   out[["dm"]] <- dm %>%
@@ -1017,7 +1018,13 @@ synthesize_lb <- function(dm) {
 }
 
 
-synthesize_pp <- function(sdtm) {
+#' Synthesize PP domain
+#'
+#' @param nif A nif object.
+#'
+#' @return The PP domain as data frame.
+#' @keywords internal
+synthesize_pp <- function(nif) {
   pp_translation <- tribble(
     ~PKNCAPARAM,        ~PPTESTCD,                         ~PPTEST,    ~PPORRESU,    ~PPSTRESU,
     "aucinf.obs",        "AUCIFP",              "AUC Infinity Pred",    "h*ng/mL",    "h*ng/mL",
@@ -1031,41 +1038,39 @@ synthesize_pp <- function(sdtm) {
     "tmax",              "TMAX",                     "Time of CMAX",          "h",          "h",
   )
 
-  nif <- nif_auto(sdtm) %>%
-    index_rich_sampling_intervals()
+  nif <- nif %>%
+    index_rich_sampling_intervals() %>%
+    as.data.frame() %>%
+    filter(!is.na(RICH_N)) %>%
+    new_nif()
 
   analytes <- nif %>%
     as.data.frame() %>%
     distinct(ANALYTE, PARENT, METABOLITE)
 
-  nif <- nif %>%
-    as.data.frame() %>%
-    mutate(PPRFTDTC = case_when(EVID == 1 ~ DTC, .default = NA)) %>%
-    group_by(USUBJID, PARENT) %>%
-    arrange(DTC) %>%
-    fill(PPRFTDTC, .direction = "down") %>%
-    as.data.frame()
-
   out = data.frame()
-  for(i in nrow(analytes)) {
+  for(i in 1:nrow(analytes)) {
     temp <- nca(nif, analyte = analytes[i, "ANALYTE"],
-      parent=analytes[i, "PARENT"],
-      keep = c("USUBJID", "STUDYID","PPRFTDTC", "ID"),
+      parent = analytes[i, "PARENT"],
+      keep = c("USUBJID", "STUDYID", "ID", "DOSE"),
       group = "RICH_N")
 
-    out <- rbind(out, temp %>%
+    out <- bind_rows(out, temp %>%
       mutate(DOMAIN = "PP", PPSTRESN = PPORRES, PPSPEC = "PLASMA") %>%
       mutate(PPSCAT = "NON-COMPARTMENTAL") %>%
       mutate(PPCAT = analytes[i, "ANALYTE"]) %>%
       rename(PKNCAPARAM = PPTESTCD) %>%
       right_join(pp_translation, by = "PKNCAPARAM") %>%
       select(-c("PKNCAPARAM", "start", "end", "exclude", "ID")) %>%
-      group_by(USUBJID) %>%
+      group_by(.data$USUBJID) %>%
       mutate(PPSEQ = row_number()) %>%
       ungroup() %>%
       as.data.frame() %>%
-      select(STUDYID, DOMAIN, USUBJID, PPSEQ, PPTESTCD, PPTEST, PPCAT, PPORRES,
-             PPORRESU, PPSTRESN, PPSTRESU, PPSPEC)
+      select(c(.data$STUDYID, .data$DOMAIN, .data$USUBJID, .data$PPSEQ,
+               .data$PPTESTCD, .data$PPTEST, .data$PPCAT, .data$PPORRES,
+               .data$PPORRESU, .data$PPSTRESN, .data$PPSTRESU, .data$PPSPEC,
+               .data$PPRFTDTC, .data$DOSE))
     )
   }
+  return(out)
 }
