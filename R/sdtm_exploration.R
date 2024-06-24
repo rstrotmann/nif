@@ -410,11 +410,12 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
 #' @param group Additional grouping variable, as character.
 #' @param order_by_subj Order by number of subject, instead of by number of
 #' event, as logical.
+#' @param ae_filter A filter term as character.
 #'
 #' @return A data frame.
 #' @export
 ae_summary <- function(sdtm_data, level = "SOC", show_cd = FALSE, group = NULL,
-                       order_by_subj = F) {
+                       order_by_subj = F, ae_filter = "TRUE") {
   if(!all(level %in% c("TERM", "LLT", "DECOD", "HLT", "BODSYS", "SOC"))) {
     stop("unknown level!")
   }
@@ -427,6 +428,7 @@ ae_summary <- function(sdtm_data, level = "SOC", show_cd = FALSE, group = NULL,
   }
 
   ae %>%
+    filter(eval(parse(text = ae_filter))) %>%
     group_by(across(all_of(grouping))) %>%
     summarize(n = n(), n_subj = n_distinct(.data$USUBJID), .groups = "drop") %>%
     {if(order_by_subj == T) arrange(., desc(.data$n_subj)) else

@@ -9,7 +9,8 @@ ae_summary(
   level = "SOC",
   show_cd = FALSE,
   group = NULL,
-  order_by_subj = F
+  order_by_subj = F,
+  ae_filter = "TRUE"
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ of:
 
 \item{order_by_subj}{Order by number of subject, instead of by number of
 event, as logical.}
+
+\item{ae_filter}{A filter term as character.}
 }
 \value{
 A data frame.
