@@ -140,10 +140,12 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
 #' @param sdtm_data A stdm data object.
 #' @param analyte The analyte as character.
 #' @param keep Column names to keep, as character.
+#' @param observation_filter Observation filter term, as character.
 #'
 #' @return A data frame.
 #' @export
-nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL) {
+nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL,
+                        observation_filter = "TRUE") {
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
     conditional_message(paste(
@@ -167,9 +169,10 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL) {
   }
 
   sdtm_data$domains[["pp"]] %>%
-    filter(.data$PPCAT == current_analyte) %>%
-    select(c("USUBJID", "PPTESTCD", "ANALYTE" = "PPCAT", "PPSTRESN", "PPSPEC",
-             "PPRFTDTC")) %>%
+    # filter(.data$PPCAT == current_analyte) %>%
+    filter(eval(parse(text = observation_filter))) %>%
+    select(any_of(c("USUBJID", "PPTESTCD", "ANALYTE" = current_analyte,
+                    "PPSTRESN", "PPSPEC", "PPCAT", "PPRFTDTC"))) %>%
     left_join(keep_data, by = "USUBJID")
 }
 

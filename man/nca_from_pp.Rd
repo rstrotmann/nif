@@ -4,7 +4,13 @@
 \alias{nca_from_pp}
 \title{Generate NCA table from the SDTM.PP domain}
 \usage{
-nca_from_pp(obj, sdtm_data, analyte = NULL, keep = NULL)
+nca_from_pp(
+  obj,
+  sdtm_data,
+  analyte = NULL,
+  keep = NULL,
+  observation_filter = "TRUE"
+)
 }
 \arguments{
 \item{obj}{A nif object.}
@@ -14,6 +20,8 @@ nca_from_pp(obj, sdtm_data, analyte = NULL, keep = NULL)
 \item{analyte}{The analyte as character.}
 
 \item{keep}{Column names to keep, as character.}
+
+\item{observation_filter}{Observation filter term, as character.}
 }
 \value{
 A data frame.
