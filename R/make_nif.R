@@ -1173,8 +1173,29 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #'
 #' @examples
 #' normalize_nif(examplinib_sad_nif)
+# normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
+#   obj %>%
+#     make_time() %>%
+#     arrange(.data$DTC) %>%
+#     # mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+#     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+#     index_nif() %>%
+#     group_by(.data$ID, .data$PARENT) %>%
+#     fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%
+#     ungroup() %>%
+#     # {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
+#     nif_cleanup(keep = keep) %>%
+#     new_nif()
+# }
 
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
+  selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
+                       "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
+                       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+                       "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+                       "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
+                       "TREATMENT"))
+
   obj %>%
     make_time() %>%
     arrange(.data$DTC) %>%
@@ -1182,12 +1203,27 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
-    fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%
+    fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", starts_with("BL_"))),
+         .direction = "downup") %>%
     ungroup() %>%
     # {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
     nif_cleanup(keep = keep) %>%
     new_nif()
 }
+
+
+
+# selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
+#                      "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
+#                      "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+#                      "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+#                      "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
+#                      "TREATMENT", keep))
+# selector <- selector[selector %in% names(nif)]
+# nif %>%
+#   select(all_of(selector), starts_with("BL_"))
+
+
 
 
 #' Remove non-essential fields
