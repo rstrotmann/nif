@@ -1213,17 +1213,6 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
 
 
 
-# selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
-#                      "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
-#                      "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
-#                      "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
-#                      "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
-#                      "TREATMENT", keep))
-# selector <- selector[selector %in% names(nif)]
-# nif %>%
-#   select(all_of(selector), starts_with("BL_"))
-
-
 
 
 #' Remove non-essential fields
