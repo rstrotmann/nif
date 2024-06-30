@@ -1203,7 +1203,8 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
-    fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", starts_with("BL_"))),
+    fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED",
+                  starts_with("BL_"))),
          .direction = "downup") %>%
     ungroup() %>%
     # {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
