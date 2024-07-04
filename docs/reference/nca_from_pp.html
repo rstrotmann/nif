@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9032</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9037</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,13 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nca_from_pp</span><span class="op">(</span><span class="va">obj</span>, <span class="va">sdtm_data</span>, analyte <span class="op">=</span> <span class="cn">NULL</span>, keep <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nca_from_pp</span><span class="op">(</span></span>
+<span>  <span class="va">obj</span>,</span>
+<span>  <span class="va">sdtm_data</span>,</span>
+<span>  analyte <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  observation_filter <span class="op">=</span> <span class="st">"TRUE"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,6 +81,10 @@
 
 <dt>keep</dt>
 <dd><p>Column names to keep, as character.</p></dd>
+
+
+<dt>observation_filter</dt>
+<dd><p>Observation filter term, as character.</p></dd>
 
 </dl></div>
     <div class="section level2">
