@@ -141,11 +141,12 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
 #' @param analyte The analyte as character.
 #' @param keep Column names to keep, as character.
 #' @param observation_filter Observation filter term, as character.
+#' @param group Grouping variable as character.
 #'
 #' @return A data frame.
 #' @export
 nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL,
-                        observation_filter = "TRUE") {
+                        group = NULL, observation_filter = "TRUE") {
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
     conditional_message(paste(
@@ -172,7 +173,7 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL,
     # filter(.data$PPCAT == current_analyte) %>%
     filter(eval(parse(text = observation_filter))) %>%
     select(any_of(c("USUBJID", "PPTESTCD", "ANALYTE" = current_analyte,
-                    "PPSTRESN", "PPSPEC", "PPCAT", "PPRFTDTC"))) %>%
+                    "PPSTRESN", "PPSPEC", "PPCAT", "PPRFTDTC", group))) %>%
     left_join(keep_data, by = "USUBJID")
 }
 
