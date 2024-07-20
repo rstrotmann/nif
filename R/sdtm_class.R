@@ -423,22 +423,6 @@ suggest <- function(obj) {
       "specimem using the 'observation_filter' parameter."), table = specimems)
   }
 
-
-  # analytes <- obj$pc %>%
-  #   dplyr::distinct(PCTESTCD) %>%
-  #   dplyr::pull(PCTESTCD)
-  # no_analyte_treatments <- treatments %>%
-  #   dplyr::mutate(no.analyte = !(EXTRT %in% analytes)) %>%
-  #   dplyr::filter(no.analyte == TRUE) %>%
-  #   dplyr::select(EXTRT)
-  # if (nrow(no_analyte_treatments) > 0) {
-  #   n_suggestion <- suggest_out(n_suggestion, paste0(
-  #     "There are treatments (EXTRT) without analytes (PCTESTCD) os the same ",
-  #     "name (see below). Consider adding a treatment-analyte mapping to the ",
-  #     "sdtm object (see '?add_analyte_mapping' %>%  for additional information)."),
-  #     table = distinct(obj$pc, PCTESTCD))
-  # }
-
   if (!("PCELTM" %in% names(obj$pc))) {
     temp <- guess_ntime(obj) %>%
       mutate(out = paste0('"', .data$PCTPT, '", ', .data$NTIME, ','))
@@ -585,41 +569,6 @@ guess_ntime <- function(sdtm) {
       .default = as.numeric(.data$time))) %>%
     select(-c("time", "pre"))
 }
-
-
-# guess_analyte_mapping <- function(obj) {
-#   t <- data.frame(EXTRT = treatments(obj))
-#   p <- data.frame(PCTESTCD = analytes(obj))
-#
-#   t %>%
-#     fuzzy_inner_join(p, by = c("EXTRT" = "PCTESTCD"), match_fun = str_detect) %>%
-#     mutate(ANALYTE = PCTESTCD)
-#
-#   t_in_p <- sapply(t$EXTRT, function(x) {t[str_detect(p$PCTESTCD, x), "EXTRT"]})
-#   p_in_t <- sapply(p$PCTESTCD, function(x) {p[str_detect(t$EXTRT, x), "PCTESTCD"]})
-#
-#
-#   t <- treatments(obj)
-#   p <- analytes(obj)
-#
-#   result <- list()
-#
-#   t_in_p <- function(x) {
-#     temp <- p[str_detect(p, x)]
-#     result[[x]] = temp
-#     # return(result)
-#   }
-#   result <- sapply(t, t_in_p)
-#
-#   p_in_t <- function(x) {
-#     temp <- t[str_detect(t, x)]
-#     if(length(temp) == 1) {
-#       result[[temp]] <- x
-#     }
-#   }
-#   result <- sapply(p, p_in_t)
-#
-# }
 
 
 #' Calculate SLD for SDTM.TR domain
