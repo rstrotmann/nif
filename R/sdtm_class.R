@@ -622,6 +622,51 @@ guess_ntime <- function(sdtm) {
 # }
 
 
+#' Calculate SLD for SDTM.TR domain
+#'
+#' Calculate the sum of longest diameters (SLD) and number of lesions by subject
+#' and time point, and add as rows. If a SDTM.TR domain is not included in the
+#' input SDTM object, the SDTM object is returned as-is.
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param sdtm_obj A SDTM object.
+#' @param observation_filter A filter term, as character.
+#'
+#' @return A SDTM object.
+#' @export
+derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
+  if(!"tr" %in% names(sdtm_obj$domains)) {
+    return(sdtm_obj)
+  }
+
+  tr <- domain(sdtm_obj, "tr") %>%
+    assertr::verify(has_all_names("USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"))
+
+  tr <- tr %>%
+    add_row(tr %>%
+      filter(eval(parse(text = observation_filter))) %>%
+      filter(.data$TRTESTCD == "DIAMETER") %>%
+      reframe(N_TARGET = n(), SLD = sum(.data$TRSTRESN),
+              .by = any_of(c("STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
+                             "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
+                             "TRMETHOD", "TRREFID", "TRSPID", "TRGRPID"))) %>%
+      distinct() %>%
+      pivot_longer(cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
+                   values_to = "TRSTRESN") %>%
+      mutate(TRSTRESU = case_match(.data$TRTESTCD, "SLD" ~ "mm", .default = "")) %>%
+      mutate(TRTEST = case_match(.data$TRTESTCD, "SLD" ~ "Sum of longest diameters",
+                                 "N_TARGET" ~ "Number of target lesions")) %>%
+      mutate(DOMAIN = "TR") %>%
+      as.data.frame()
+    ) %>%
+    arrange(.data$USUBJID, .data$TRDTC)
+
+  temp = sdtm_obj
+  temp$domains[["tr"]] <- tr
+  return(temp)
+}
 
 
 

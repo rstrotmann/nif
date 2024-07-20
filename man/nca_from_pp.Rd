@@ -9,6 +9,7 @@ nca_from_pp(
   sdtm_data,
   analyte = NULL,
   keep = NULL,
+  group = NULL,
   observation_filter = "TRUE"
 )
 }
@@ -20,6 +21,8 @@ nca_from_pp(
 \item{analyte}{The analyte as character.}
 
 \item{keep}{Column names to keep, as character.}
+
+\item{group}{Grouping variable as character.}
 
 \item{observation_filter}{Observation filter term, as character.}
 }
