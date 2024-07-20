@@ -669,17 +669,3 @@ derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
   return(temp)
 }
 
-
-# tr %>%
-#   lubrify_dates() %>%
-#   filter(TRTESTCD == "SLD") %>%
-#   ggplot(aes(x = TRDY, y = TRSTRESN, group = USUBJID)) +
-#   geom_point() +
-#   geom_line() +
-#   scale_y_log10() +
-#   theme_bw()
-#
-# tr %>%
-#   filter(USUBJID == "HRS-1167-I-101-CN014-CN014002") %>%
-#   filter(TRTESTCD == "DIAMETER")
-
