@@ -651,7 +651,8 @@ derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
       reframe(N_TARGET = n(), SLD = sum(.data$TRSTRESN),
               .by = any_of(c("STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
                              "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
-                             "TRMETHOD", "TRREFID", "TRSPID", "TRGRPID"))) %>%
+                             "TRMETHOD", "TRGRPID", "TRREFID"))) %>%
+      #, "TRREFID", "TRSPID"
       distinct() %>%
       pivot_longer(cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
                    values_to = "TRSTRESN") %>%
@@ -669,7 +670,16 @@ derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
 }
 
 
-
-
-
+# tr %>%
+#   lubrify_dates() %>%
+#   filter(TRTESTCD == "SLD") %>%
+#   ggplot(aes(x = TRDY, y = TRSTRESN, group = USUBJID)) +
+#   geom_point() +
+#   geom_line() +
+#   scale_y_log10() +
+#   theme_bw()
+#
+# tr %>%
+#   filter(USUBJID == "HRS-1167-I-101-CN014-CN014002") %>%
+#   filter(TRTESTCD == "DIAMETER")
 
