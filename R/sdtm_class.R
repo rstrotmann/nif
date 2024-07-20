@@ -101,7 +101,6 @@ summary.sdtm <- function(object, ...) {
       dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
-    # parent_mapping = object$parent_mapping,
     time_mapping = object$time_mapping
   )
   class(out) <- "summary_sdtm"
@@ -117,7 +116,6 @@ summary.sdtm <- function(object, ...) {
 #' @export
 #' @noRd
 print.summary_sdtm <- function(x, color = FALSE, ...) {
-  # hline <- paste0(rep("\U2500", 8), collapse="")
   hline <- paste0(rep("-", 8), collapse="")
   indent = " "
 
@@ -601,7 +599,6 @@ derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
               .by = any_of(c("STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
                              "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
                              "TRMETHOD", "TRGRPID", "TRREFID"))) %>%
-      #, "TRREFID", "TRSPID"
       distinct() %>%
       pivot_longer(cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
                    values_to = "TRSTRESN") %>%
