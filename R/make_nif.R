@@ -1018,7 +1018,6 @@ add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
     filter(eval(parse(text = baseline_filter))) %>%
     select("USUBJID", {{DV_field}}) %>%
     group_by(.data$USUBJID) %>%
-    # summarize(BL = summary_function(.data[[DV_field]], na.rm = TRUE)) %>%
 
     summarize(BL = summary_function(na.omit(.data[[DV_field]]), na.rm = TRUE)) %>%
 
@@ -1063,7 +1062,8 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     covariate = NULL,
     DTC_field = NULL, DV_field = NULL,
     TESTCD_field = NULL,
-    observation_filter = "TRUE", silent = deprecated()
+    observation_filter = "TRUE",
+    silent = deprecated()
     ) {
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
@@ -1100,26 +1100,6 @@ add_covariate <- function(nif, sdtm, domain, testcd,
 
   return(temp)
 }
-
-
-# add_food <- function(nif, sdtm) {
-#   stopifnot("YL domain not found!" = ("yl" %in% names(sdtm$domains)))
-#   food <- sdtm$domains[["yl"]] %>%
-#     lubrify_dates() %>%
-#     filter(YLCAT %in% c("BREAKFAST", "MEAL")) %>%
-#     distinct(USUBJID, DTC = YLSTDTC, FASTED = FALSE, temporary = TRUE)
-#
-#   # food <- bind_rows(food, food %>% mutate(DTC = DTC + hours(4), FASTED = TRUE)) %>%
-#   #   arrange(USUBJID, DTC)
-#
-#
-#   nif %>%
-#     filter(PART == "C") %>%
-#     bind_rows(food) %>%
-#     arrange(USUBJID, DTC, -EVID) %>%
-#     as.data.frame() %>%
-#     select(USUBJID, DTC, TIME, EVID, ANALYTE, FASTED)
-# }
 
 
 #' Subset nif to rows with DTC before the last individual or global observation
@@ -1173,21 +1153,6 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #'
 #' @examples
 #' normalize_nif(examplinib_sad_nif)
-# normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
-#   obj %>%
-#     make_time() %>%
-#     arrange(.data$DTC) %>%
-#     # mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
-#     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
-#     index_nif() %>%
-#     group_by(.data$ID, .data$PARENT) %>%
-#     fill(any_of(c("DOSE", "EPOCH")), .direction = "downup") %>%
-#     ungroup() %>%
-#     # {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
-#     nif_cleanup(keep = keep) %>%
-#     new_nif()
-# }
-
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
                        "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
@@ -1199,7 +1164,6 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   obj %>%
     make_time() %>%
     arrange(.data$DTC) %>%
-    # mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
@@ -1207,7 +1171,6 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
                   starts_with("BL_"))),
          .direction = "downup") %>%
     ungroup() %>%
-    # {if(cleanup == TRUE) nif_cleanup(., keep = keep) else .} %>%
     nif_cleanup(keep = keep) %>%
     new_nif()
 }
