@@ -571,12 +571,19 @@ make_observation <- function(
     }
   }
 
+  # # multiply DV only for numerical values
+  # dv <- obj[[DV_field]]
+  # if(is.numeric((dv))) {
+  #   dv <- dv * factor
+  # }
+
   obj %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
       DTC = .data[[DTC_field]],
-      DV = .data[[DV_field]] * factor,
+      # DV = .data[[DV_field]] * factor,
+      DV = .data[[DV_field]],
       ANALYTE = analyte,
       TIME = NA,
       CMT = cmt,
@@ -587,6 +594,7 @@ make_observation <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPUTATION = "") %>%
+    {if(is.numeric(.$DV)) mutate(., DV = DV * factor)} %>%
     {if(!is.null(NTIME_lookup)) suppressMessages(
       left_join(., NTIME_lookup)) else
       mutate(., NTIME = NA)} %>%
