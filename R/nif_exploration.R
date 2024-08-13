@@ -564,6 +564,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     watermark = ""
   }
 
+  #################################
+
   # Assert fields
   temp <- x %>%
     ensure_parent() %>%
@@ -581,7 +583,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     as.data.frame()
 
   # fill dose to predose values
-  if(integrate_predose == TRUE){
+  if (integrate_predose == TRUE) {
     temp <- temp %>%
       arrange(ID, ANALYTE, TIME) %>%
       group_by(ID, ANALYTE) %>%
@@ -591,8 +593,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
 
   # implement change from baseline
   temp <- temp %>%
-  #   add_cfb(summary_function = summary_function) %>%
-  #   as.data.frame() %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .}
 
   # make active time field
@@ -600,28 +600,29 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   x_label = paste0(time, " (h)")
 
   # filter for dose
-  if(is.null(dose)) {dose <- unique(temp$DOSE[temp$EVID == 0])}
-  temp <- filter(temp, (DOSE %in% dose) )
+  if (is.null(dose)) {dose <- unique(temp$DOSE[temp$EVID == 0])}
+  temp <- filter(temp, (DOSE %in% dose))
 
-  # filter for analyte, set y axis label.
+  # filter for analyte
   if(is.null(analyte)) {analyte <- analytes(temp)}
-  temp <- filter(temp, (ANALYTE %in% analyte) |
-                       (EVID == 1 & ANALYTE %in% admin))
+  temp <- filter(temp,
+    (ANALYTE %in% analyte) | (EVID == 1 & ANALYTE %in% admin))
+
+  # set y axis label
   n_analyte <- temp %>%
     filter(EVID == 0) %>%
     distinct(ANALYTE) %>%
     nrow()
   y_label <- ifelse(n_analyte == 1,
-                    as.character(temp %>%
-                      filter(EVID == 0) %>%
-                      distinct(ANALYTE)),
-                    "DV")
+    as.character(temp %>% filter(EVID == 0) %>% distinct(ANALYTE)), "DV")
 
   # dose-normalize, if applicable
+  # if(dose_norm == TRUE) {
+  #   temp <- temp %>%
+  #     mutate(DV = DV/DOSE) %>%
+  #     mutate(DOSE = NA)
   if(dose_norm == TRUE) {
-    temp <- temp %>%
-      mutate(DV = DV/DOSE) %>%
-      mutate(DOSE = NA)
+    temp <- mutate(temp, DV = DV/DOSE, DOSE = NA)
     y_label <- paste0(y_label, " / DOSE")
   }
 
@@ -637,7 +638,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     group_by(ID, ANALYTE) %>%
     mutate(n_obs = sum(EVID == 0)) %>%
     ungroup()
-
   n_no_obs <- temp %>%
     filter(n_obs == 0, EVID == 0) %>%
     distinct(ID, ANALYTE) %>%
@@ -647,9 +647,9 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       paste0(n_no_obs, " subjects had no observation for the analyte(s) ",
              nice_enumeration(analyte, "or"),
              " and were excluded from plotting:\n",
-      df_to_string(filter(temp, n_obs == 0, EVID == 0) %>%
-                     distinct(ID, ANALYTE, DOSE),
-                   indent = "  ")))}
+             df_to_string(filter(temp, n_obs == 0, EVID == 0) %>%
+                            distinct(ID, ANALYTE, DOSE),
+                          indent = "  ")))}
   temp <- filter(temp, n_obs > 0 | EVID == 1)
 
   # remove trailing administrations
@@ -669,27 +669,44 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   #   filter(TIME <= last_obs_time) %>%
   #   as.data.frame()
 
-  # make ggplot group and color
-  if(mean == FALSE) {
-    group <- c(group, "ID")}
-  if(time == "TAD") {
-    group <- c(group, "DI")}
-  if(n_analyte > 1) {group <- unique(c(group, "ANALYTE"))}
 
   temp <- temp %>%
-    {if(length(group) > 0) unite(., GROUP, all_of(group), sep = "_", remove = FALSE)
-      else mutate(., GROUP = TRUE)} %>%
-    {if(length(group[!group == "ID"]) > 0)
-      unite(., COLOR, all_of(group[!group == "ID"]), sep = "_", remove = FALSE)
+    select(c("ID", "active_time", "EVID", "ANALYTE", "DOSE", "DV",
+             "DI", "n_obs"), all_of(group)) %>%
+    as.data.frame()
+
+  # make plotting group and color
+  if(mean == FALSE) {
+    plot_group <- unique(c(group, "ID"))}
+  if(time == "TAD") {
+    plot_group <- unique(c(plot_group, "DI"))}
+  if(n_analyte > 1) {plot_group <- unique(c(plot_group, "ANALYTE"))}
+
+  temp <- temp %>%
+    {if(length(plot_group) > 0)
+      unite(., GROUP, all_of(plot_group), sep = "_", remove = FALSE)
+      else mutate(., GROUP = TRUE)}
+
+  # temp <- temp %>%
+  #   {if(length(group[!group == "ID"]) > 0)
+  #     unite(., COLOR, all_of(group[!group == "ID"]), sep = "_", remove = FALSE)
+  #     # unite(., COLOR, all_of(group[!group %in% c("DI", "ID")]), sep = "_", remove = FALSE)
+  #     else mutate(., COLOR = TRUE)}
+
+  temp <- temp %>%
+    {if(length(group) > 0)
+      unite(., COLOR, all_of(group), sep = "_", remove = FALSE)
       else mutate(., COLOR = TRUE)}
-  color_label <- nice_enumeration(unique(group[!group == "ID"]))
-  show_color <- length(unique(group[!group == "ID"])) > 0
+
+  # color_label <- nice_enumeration(unique(group[!group == "ID"]))
+  # show_color <- length(unique(group[!group == "ID"])) > 0
+
+  color_label <- nice_enumeration(unique(group))
+  show_color <- length(unique(group)) > 0
 
   # make observations and administrations
-  # obs_data <- filter(temp, EVID == 0)
   obs_data <- filter(temp, ANALYTE %in% analyte) %>%
     mutate(DV = case_when(EVID == 1 ~ NA, .default = DV))
-
   admin_data <- filter(temp, EVID == 1, ANALYTE %in% admin)
 
   # plotting
@@ -717,20 +734,20 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       #   .by = c("DOSE")
       # ) %>%
 
-      ggplot(aes(x = NTIME, y = mean, group = GROUP, color = COLOR)) +
+    ggplot(aes(x = NTIME, y = mean, group = GROUP, color = COLOR)) +
       {if (lines) geom_line(na.rm = TRUE)} +
       {if (points) geom_point(na.rm = TRUE)} +
       {if (log == TRUE) scale_y_log10()} +
       {if (shading == TRUE) geom_ribbon(aes(ymin = pos_diff(mean, sd),
-        ymax = mean + sd, fill = as.factor(GROUP)), alpha = 0.3, color = NA,
-        show.legend = FALSE)} +
+                                            ymax = mean + sd, fill = as.factor(GROUP)), alpha = 0.3, color = NA,
+                                        show.legend = FALSE)} +
       {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
       xlim(c(min_time, max_time)) +
       labs(x = "nominal time (h)", y = y_label, color = color_label,
            caption = "Mean and SD") +
       {if(show_n == TRUE) geom_text(
         aes(label =
-          paste0 ("N = ", n)),
+              paste0 ("N = ", n)),
         x = -Inf,
         y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
       theme_bw() +
@@ -751,8 +768,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       ggplot(aes(x = .data$active_time, y = .data$DV, group = .data$GROUP,
                  color = .data$COLOR)) +
       {if(!is.null(admin)) geom_vline(data = admin_data,
-                                    aes(xintercept = .data$active_time),
-                                    color = "gray")} +
+                                      aes(xintercept = .data$active_time),
+                                      color = "gray")} +
       {if(points == TRUE) geom_point(na.rm = TRUE, ...)} +
       # {if (lines) geom_line(na.rm = TRUE)} +
       {if (lines) geom_line()} +
@@ -761,20 +778,247 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       labs(x = x_label, y = y_label, color = color_label, caption = caption) +
       xlim(c(min_time, max_time)) +
       theme_bw() +
-      # theme_nif() +
       theme(legend.position =
               ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +
       ggtitle(title) +
-      # {if(watermark != "") annotate("text",
-      #                               x = Inf, y = Inf,
-      #                               label = watermark,
-      #                               # hjust = 1.1, vjust = 2,
-      #                               hjust = 0.5, vjust = 0.5,
-      #                               col = "lightgrey",
-      #                               cex = 6, fontface = "bold", alpha = 0.6)}
       watermark(cex = 1.5)
   }
 }
+
+# plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
+#                      group = NULL, min_time = NULL, max_time = NULL,
+#                      points = FALSE, lines = TRUE, admin = NULL, cfb = FALSE,
+#                      summary_function = median, mean = FALSE,
+#                      title = "", caption = "", integrate_predose = TRUE,
+#                      legend = TRUE, show_n = FALSE, shading = TRUE,
+#                      silent = deprecated(), dose_norm = FALSE,
+#                      ...) {
+#   # Assert time field
+#   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
+#     stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
+#   }
+#
+#   # watermark
+#   if(exists("watermark", envir = .nif_env)) {
+#     watermark = get("watermark", envir = .nif_env)
+#   } else {
+#     watermark = ""
+#   }
+#
+#   # Assert fields
+#   temp <- x %>%
+#     ensure_parent() %>%
+#     ensure_analyte() %>%
+#     ensure_dose() %>%
+#     ensure_tad() %>%
+#     ensure_tafd() %>%
+#     ensure_cfb() %>%
+#     # ensure_time() %>%
+#     index_dosing_interval() %>%
+#     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
+#     verify(exec(
+#       has_all_names,
+#       !!!c("ID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) %>%
+#     as.data.frame()
+#
+#   # fill dose to predose values
+#   if(integrate_predose == TRUE){
+#     temp <- temp %>%
+#       arrange(ID, ANALYTE, TIME) %>%
+#       group_by(ID, ANALYTE) %>%
+#       fill(DOSE, .direction = "up") %>%
+#       ungroup()
+#   }
+#
+#   # implement change from baseline
+#   temp <- temp %>%
+#   #   add_cfb(summary_function = summary_function) %>%
+#   #   as.data.frame() %>%
+#     {if(cfb == TRUE) mutate(., DV = DVCFB) else .}
+#
+#   # make active time field
+#   temp <- mutate(temp, active_time = .data[[time]])
+#   x_label = paste0(time, " (h)")
+#
+#   # filter for dose
+#   if(is.null(dose)) {dose <- unique(temp$DOSE[temp$EVID == 0])}
+#   temp <- filter(temp, (DOSE %in% dose) )
+#
+#   # filter for analyte, set y axis label.
+#   if(is.null(analyte)) {analyte <- analytes(temp)}
+#   temp <- filter(temp, (ANALYTE %in% analyte) |
+#                        (EVID == 1 & ANALYTE %in% admin))
+#   n_analyte <- temp %>%
+#     filter(EVID == 0) %>%
+#     distinct(ANALYTE) %>%
+#     nrow()
+#   y_label <- ifelse(n_analyte == 1,
+#                     as.character(temp %>%
+#                       filter(EVID == 0) %>%
+#                       distinct(ANALYTE)),
+#                     "DV")
+#
+#   # dose-normalize, if applicable
+#   if(dose_norm == TRUE) {
+#     temp <- temp %>%
+#       mutate(DV = DV/DOSE) %>%
+#       mutate(DOSE = NA)
+#     y_label <- paste0(y_label, " / DOSE")
+#   }
+#
+#   # implement max_time, min_time
+#   if(is.null(max_time)) {max_time <- max_time(filter(temp, EVID == 0),
+#                                               time_field = time)}
+#   if(is.null(min_time)) {min_time <- min(temp$active_time, na.rm = TRUE)}
+#   temp <- filter(temp, .data$active_time <= max_time &
+#                    .data$active_time >= min_time)
+#
+#   # remove subjects without observation
+#   temp <- temp %>%
+#     group_by(ID, ANALYTE) %>%
+#     mutate(n_obs = sum(EVID == 0)) %>%
+#     ungroup()
+#
+#   n_no_obs <- temp %>%
+#     filter(n_obs == 0, EVID == 0) %>%
+#     distinct(ID, ANALYTE) %>%
+#     nrow()
+#   if(n_no_obs != 0) {
+#     conditional_message(
+#       paste0(n_no_obs, " subjects had no observation for the analyte(s) ",
+#              nice_enumeration(analyte, "or"),
+#              " and were excluded from plotting:\n",
+#       df_to_string(filter(temp, n_obs == 0, EVID == 0) %>%
+#                      distinct(ID, ANALYTE, DOSE),
+#                    indent = "  ")))}
+#   temp <- filter(temp, n_obs > 0 | EVID == 1)
+#
+#   # remove trailing administrations
+#   # temp <- temp %>%
+#   #   group_by(ID, ANALYTE) %>%
+#   #   mutate(last_obs_time = max(TIME[EVID == 0], na.rm = TRUE)) %>%
+#   #   ungroup()
+#   # n_trailing <- temp %>%
+#   #   filter(TIME > last_obs_time) %>%
+#   #   distinct(ID) %>%
+#   #   nrow()
+#   # if(n_trailing > 0) {
+#   #   conditional_message(
+#   #     paste0("Trailing administrations in ", n_trailing,
+#   #     " subjects were removed before plotting."))}
+#   # temp <- temp %>%
+#   #   filter(TIME <= last_obs_time) %>%
+#   #   as.data.frame()
+#
+#   # make ggplot group and color
+#   if(mean == FALSE) {
+#     group <- c(group, "ID")}
+#     # group <- group}
+#   if(time == "TAD") {
+#     group <- c(group, "DI")}
+#     # group <- group}
+#   if(n_analyte > 1) {group <- unique(c(group, "ANALYTE"))}
+#
+#   temp <- temp %>%
+#     {if(length(group) > 0) unite(., GROUP, all_of(group), sep = "_", remove = FALSE)
+#       else mutate(., GROUP = TRUE)} %>%
+#     {if(length(group[!group == "ID"]) > 0)
+#       # unite(., COLOR, all_of(group[!group == "ID"]), sep = "_", remove = FALSE)
+#       unite(., COLOR, all_of(group[!group %in% c("DI", "ID")]), sep = "_", remove = FALSE)
+#       else mutate(., COLOR = TRUE)}
+#   color_label <- nice_enumeration(unique(group[!group == "ID"]))
+#   show_color <- length(unique(group[!group == "ID"])) > 0
+#
+#   # make observations and administrations
+#   # obs_data <- filter(temp, EVID == 0)
+#   obs_data <- filter(temp, ANALYTE %in% analyte) %>%
+#     mutate(DV = case_when(EVID == 1 ~ NA, .default = DV))
+#
+#   admin_data <- filter(temp, EVID == 1, ANALYTE %in% admin)
+#
+#   # plotting
+#   if(mean == TRUE) {
+#     # mean plot
+#     temp %>%
+#       filter(EVID == 0) %>%
+#       {if(length(group[!group == "ID"]) > 0)
+#         unite(., GROUP, group[!group == "ID"], sep = "_", remove = FALSE) else
+#           mutate(., GROUP = TRUE)} %>%
+#       group_by(NTIME, DOSE, GROUP, COLOR) %>%
+#       summarize(n = n(), mean = safe_mean(DV),
+#                 sd = safe_sd(DV), .groups = "drop") %>%
+#       ungroup() %>%
+#       arrange(DOSE, NTIME, GROUP) %>%
+#
+#       # group_by(DOSE, GROUP) %>%
+#       # mutate(n_group = max(n)) %>%
+#       # ungroup() %>%
+#
+#       # reframe(
+#       #   n = n(),
+#       #   # n_label = paste(unique(paste0("N=", n, " (", GROUP, ")")),
+#       #   #                 collapse = ", "),
+#       #   .by = c("DOSE")
+#       # ) %>%
+#
+#       ggplot(aes(x = NTIME, y = mean, group = GROUP, color = COLOR)) +
+#       {if (lines) geom_line(na.rm = TRUE)} +
+#       {if (points) geom_point(na.rm = TRUE)} +
+#       {if (log == TRUE) scale_y_log10()} +
+#       {if (shading == TRUE) geom_ribbon(aes(ymin = pos_diff(mean, sd),
+#         ymax = mean + sd, fill = as.factor(GROUP)), alpha = 0.3, color = NA,
+#         show.legend = FALSE)} +
+#       {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+#       xlim(c(min_time, max_time)) +
+#       labs(x = "nominal time (h)", y = y_label, color = color_label,
+#            caption = "Mean and SD") +
+#       {if(show_n == TRUE) geom_text(
+#         aes(label =
+#           paste0 ("N = ", n)),
+#         x = -Inf,
+#         y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
+#       theme_bw() +
+#       # theme_nif() +
+#       theme(legend.position = ifelse(
+#         show_color == TRUE & legend == TRUE, "bottom", "none")) +
+#       ggtitle(title) +
+#       # {if(watermark != "") annotate("text",
+#       #                               x = 0, y = Inf, label = watermark,
+#       #                               hjust = 2, vjust = 2, col = "lightgrey",
+#       #                               cex = 6, fontface = "bold", alpha = 0.6)}
+#       watermark(cex = 1.5)
+#
+#   } else {
+#     # spaghetti plot
+#     obs_data %>%
+#       {if(log == TRUE) filter(., DV != 0 | is.na(DV)) else .} %>%
+#       ggplot(aes(x = .data$active_time, y = .data$DV, group = .data$GROUP,
+#                  color = .data$COLOR)) +
+#       {if(!is.null(admin)) geom_vline(data = admin_data,
+#                                     aes(xintercept = .data$active_time),
+#                                     color = "gray")} +
+#       {if(points == TRUE) geom_point(na.rm = TRUE, ...)} +
+#       # {if (lines) geom_line(na.rm = TRUE)} +
+#       {if (lines) geom_line()} +
+#       {if (log == TRUE) scale_y_log10()} +
+#       {if(length(unique(temp$DOSE)) > 1) facet_wrap(~DOSE)} +
+#       labs(x = x_label, y = y_label, color = color_label, caption = caption) +
+#       xlim(c(min_time, max_time)) +
+#       theme_bw() +
+#       # theme_nif() +
+#       theme(legend.position =
+#               ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +
+#       ggtitle(title) +
+#       # {if(watermark != "") annotate("text",
+#       #                               x = Inf, y = Inf,
+#       #                               label = watermark,
+#       #                               # hjust = 1.1, vjust = 2,
+#       #                               hjust = 0.5, vjust = 0.5,
+#       #                               col = "lightgrey",
+#       #                               cex = 6, fontface = "bold", alpha = 0.6)}
+#       watermark(cex = 1.5)
+#   }
+# }
 
 
 # ' NIF or SDTM object overview
