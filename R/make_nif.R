@@ -506,6 +506,10 @@ make_subjects <- function(dm, vs,
 #'   name followed by 'TESTCD', if NULL.
 #' @param keep Columns to keep, as character.
 #' @param factor Multiplier for the DV field, as numeric.
+#' @param coding_table Coding table to translate arbitrary columns of the source
+#'   domain into a numerical value, as data frame. The data frame must have at
+#'   least one column that matches a column in the domain, and a numerical 'DV'
+#'   column that provides the recoding result.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -523,6 +527,7 @@ make_observation <- function(
     TESTCD_field = NULL,
     DTC_field = NULL,
     DV_field = NULL,
+    coding_table = NULL,
     factor = 1,
     NTIME_lookup = NULL,
     keep = NULL
@@ -571,11 +576,22 @@ make_observation <- function(
     }
   }
 
-  # # multiply DV only for numerical values
-  # dv <- obj[[DV_field]]
-  # if(is.numeric((dv))) {
-  #   dv <- dv * factor
-  # }
+  # apply coding table, if not NULL
+  if(!is.null(coding_table)) {
+    if(!any(names(coding_table) %in% names(obj))){
+      stop("Coding table cannot be applied to data set!")
+    }
+    if(!is.numeric(coding_table$DV)){
+      stop("DV field in coding table must be numeric!")
+    }
+    suppressMessages(
+      obj <- obj %>%
+        left_join(coding_table)
+    )
+  } else {
+    obj <- obj %>%
+      mutate(DV = .data[[DV_field]] * factor)
+  }
 
   obj %>%
     filter(eval(parse(text = observation_filter))) %>%
@@ -583,7 +599,7 @@ make_observation <- function(
     mutate(
       DTC = .data[[DTC_field]],
       # DV = .data[[DV_field]] * factor,
-      DV = .data[[DV_field]],
+      # DV = .data[[DV_field]],
       ANALYTE = analyte,
       TIME = NA,
       CMT = cmt,
@@ -594,7 +610,8 @@ make_observation <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPUTATION = "") %>%
-    {if(is.numeric(.$DV)) mutate(., DV = DV * factor)} %>%
+    {if(is.numeric(.$DV)) mutate(., DV = DV * factor) else .} %>%
+
     {if(!is.null(NTIME_lookup)) suppressMessages(
       left_join(., NTIME_lookup)) else
       mutate(., NTIME = NA)} %>%
@@ -903,6 +920,7 @@ add_observation <- function(
     TESTCD_field = NULL,
     DTC_field = NULL,
     DV_field = NULL,
+    coding_table = NULL,
     factor = 1,
     NTIME_lookup = NULL,
     keep = NULL,
@@ -939,7 +957,7 @@ add_observation <- function(
     nif,
     make_observation(sdtm, domain, testcd, analyte, parent, cmt, subject_filter,
                      observation_filter, TESTCD_field, DTC_field, DV_field,
-                     factor, NTIME_lookup, keep)) %>%
+                     coding_table, factor, NTIME_lookup, keep)) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%
