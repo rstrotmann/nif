@@ -506,10 +506,10 @@ make_subjects <- function(dm, vs,
 #'   name followed by 'TESTCD', if NULL.
 #' @param keep Columns to keep, as character.
 #' @param factor Multiplier for the DV field, as numeric.
-#' @param coding_table Coding table to translate arbitrary columns of the source
-#'   domain into a numerical value, as data frame. The data frame must have at
-#'   least one column that matches a column in the domain, and a numerical 'DV'
-#'   column that provides the recoding result.
+#' @param coding_table Coding table to translate a categorical values into
+#'   numerical values, as data frame. The data frame must have at least one
+#'   column that matches a column in the domain, and a numerical 'DV' column
+#'   that provides the recoding result.
 #'
 #' @return A data frame.
 #' @keywords internal
