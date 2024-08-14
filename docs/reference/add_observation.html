@@ -22,7 +22,7 @@ time-after-first-dose ('TAFD') time calculation."><!-- mathjax --><script src="h
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9039</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9041</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,6 +87,7 @@ time-after-first-dose ('TAFD') time calculation.</p>
 <span>  TESTCD_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  DTC_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  DV_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  coding_table <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  NTIME_lookup <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -148,6 +149,13 @@ Defaults to the two-character domain name followed by 'DTC', if NULL.</p></dd>
 <dt>DV_field</dt>
 <dd><p>the field to use as the dependent variable. Defaults to the
 two-character domain name followed by 'STRESN', if NULL.</p></dd>
+
+
+<dt>coding_table</dt>
+<dd><p>Coding table to translate arbitrary columns of the source
+domain into a numerical value, as data frame. The data frame must have at
+least one column that matches a column in the domain, and a numerical 'DV'
+column that provides the recoding result.</p></dd>
 
 
 <dt>factor</dt>
