@@ -1047,20 +1047,35 @@ add_baseline <- function(
 
   bl_field <- paste0("BL_", testcd)
 
+  # baseline <- domain(sdtm, str_to_lower(domain)) %>%
+  #   lubrify_dates() %>%
+  #   filter(eval(parse(text = observation_filter))) %>%
+  #   filter(.data[[TESTCD_field]] == testcd) %>%
+  #   filter(eval(parse(text = baseline_filter))) %>%
+  #   select("USUBJID", {{DV_field}}) %>%
+  #   group_by(.data$USUBJID) %>%
+  #   summarize(BL = summary_function(na.omit(.data[[DV_field]]), na.rm = TRUE)) %>%
+  #   rename_with(~str_c("BL_", testcd), .cols = "BL")
+
   baseline <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = observation_filter))) %>%
-    filter(.data[[TESTCD_field]] == testcd) %>%
+    filter(.data[[TESTCD_field]] %in% testcd) %>%
     filter(eval(parse(text = baseline_filter))) %>%
-    select("USUBJID", {{DV_field}}) %>%
+    pivot_wider(names_from = all_of(TESTCD_field),
+                values_from = all_of(DV_field)) %>%
+    select("USUBJID", {{testcd}}) %>%
     group_by(.data$USUBJID) %>%
-    summarize(BL = summary_function(na.omit(.data[[DV_field]]), na.rm = TRUE)) %>%
-    rename_with(~str_c("BL_", testcd), .cols = "BL")
+    summarize(across(all_of(testcd),
+                     ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
+    rename_with(~bl_field, .cols = testcd) %>%
+    ungroup()
 
   out <- nif %>%
     left_join(baseline, by = "USUBJID")
 
   # coalesce duplicate baseline columns
+  # TO DO: This still needs to be vectorized!
   if(all(c(paste0(bl_field, ".x"), paste0(bl_field, ".y")) %in% names(out))) {
     out <- out %>%
       mutate({{bl_field}} := coalesce(.data[[paste0(bl_field, ".x")]],
