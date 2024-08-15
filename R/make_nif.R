@@ -1023,10 +1023,18 @@ add_observation <- function(
 #' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
 #' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
 #'   baseline_filter = "VSBLFL == 'Y'")
-add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
-    TESTCD_field = NULL, observation_filter = "TRUE",
+add_baseline <- function(
+    nif,
+    sdtm,
+    domain,
+    testcd,
+    DV_field = NULL,
+    TESTCD_field = NULL,
+    observation_filter = "TRUE",
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    baseline_filter = NULL, summary_function = mean, silent = deprecated()) {
+    baseline_filter = NULL,
+    summary_function = mean,
+    silent = deprecated()) {
 
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(
@@ -1037,20 +1045,29 @@ add_baseline <- function(nif, sdtm, domain, testcd, DV_field = NULL,
   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
                        subject_filter, "")
 
-  temp <- domain(sdtm, str_to_lower(domain)) %>%
+  bl_field <- paste0("BL_", testcd)
+
+  baseline <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     filter(eval(parse(text = baseline_filter))) %>%
     select("USUBJID", {{DV_field}}) %>%
     group_by(.data$USUBJID) %>%
-
     summarize(BL = summary_function(na.omit(.data[[DV_field]]), na.rm = TRUE)) %>%
-
     rename_with(~str_c("BL_", testcd), .cols = "BL")
 
-  nif %>%
-    left_join(temp, by = "USUBJID")
+  out <- nif %>%
+    left_join(baseline, by = "USUBJID")
+
+  # coalesce duplicate baseline columns
+  if(all(c(paste0(bl_field, ".x"), paste0(bl_field, ".y")) %in% names(out))) {
+    out <- out %>%
+      mutate({{bl_field}} := coalesce(.data[[paste0(bl_field, ".x")]],
+                                    .data[[paste0(bl_field, ".y")]])) %>%
+      select(-c(paste0(bl_field, ".x"), paste0(bl_field, ".y")))}
+
+  return(out)
 }
 
 
