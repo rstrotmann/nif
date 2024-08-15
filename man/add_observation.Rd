@@ -55,10 +55,10 @@ Defaults to the two-character domain name followed by 'DTC', if NULL.}
 \item{DV_field}{the field to use as the dependent variable. Defaults to the
 two-character domain name followed by 'STRESN', if NULL.}
 
-\item{coding_table}{Coding table to translate arbitrary columns of the source
-domain into a numerical value, as data frame. The data frame must have at
-least one column that matches a column in the domain, and a numerical 'DV'
-column that provides the recoding result.}
+\item{coding_table}{Coding table to translate a categorical values into
+numerical values, as data frame. The data frame must have at least one
+column that matches a column in the domain, and a numerical 'DV' column
+that provides the recoding result.}
 
 \item{factor}{Multiplier for the DV field, as numeric.}
 

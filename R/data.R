@@ -76,6 +76,6 @@
 #'     TA    EPOCH                               Epoch    text    100  Req
 #'     ...
 #' }
-"sdtm_domain_model"
+"domain_model"
 
 
