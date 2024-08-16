@@ -4,7 +4,7 @@
 \alias{read_sdtm}
 \title{Read SDTM data}
 \usage{
-read_sdtm(data_path, domain = c("dm", "vs", "ex", "pc"), format = "sas")
+read_sdtm(data_path, domain = c("dm", "vs", "ex", "pc"), format = "sas", ...)
 }
 \arguments{
 \item{data_path}{The file system path to the source folder as character.}
@@ -12,7 +12,9 @@ read_sdtm(data_path, domain = c("dm", "vs", "ex", "pc"), format = "sas")
 \item{domain}{The domain name(s) as character, defaults to
 \code{c("dm", "vs", "ex", "pc")}.}
 
-\item{format}{The format of the source files as character, either 'sas'
+\item{format}{The format of the source files as character, either 'sas'}
+
+\item{...}{Further parameters for format == 'csv', refer to readr::read_csv.
 (default), 'xpt', or 'csv'.}
 }
 \value{
