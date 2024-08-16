@@ -4,7 +4,13 @@
 \alias{read_sdtm}
 \title{Read SDTM data}
 \usage{
-read_sdtm(data_path, domain = c("dm", "vs", "ex", "pc"), format = "sas", ...)
+read_sdtm(
+  data_path,
+  domain = c("dm", "vs", "ex", "pc"),
+  format = "sas",
+  delim = ",",
+  ...
+)
 }
 \arguments{
 \item{data_path}{The file system path to the source folder as character.}

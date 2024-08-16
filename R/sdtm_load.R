@@ -81,7 +81,7 @@ read_sdtm_xpt <- function(data_path, ...) {
 #' @export
 read_sdtm <- function(data_path,
                       domain=c("dm", "vs", "ex", "pc"),
-                      format="sas", ...) {
+                      format="sas", delim = ",", ...) {
   out <- list()
   if(format == "sas"){
     for (x in domain) {
@@ -98,7 +98,7 @@ read_sdtm <- function(data_path,
   if(format == "csv") {
     for (x in domain) {
       out[[x]] <- as.data.frame(
-        readr::read_csv(
+        readr::read_delim(
           file.path(data_path, paste0(x, ".csv"))), ...)
     }
   }
