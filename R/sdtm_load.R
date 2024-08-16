@@ -75,7 +75,7 @@ read_sdtm_xpt <- function(data_path, ...) {
 #' @param domain The domain name(s) as character, defaults to
 #' `c("dm", "vs", "ex", "pc")`.
 #' @param format The format of the source files as character, either 'sas'
-#' (default) or 'xpt'.
+#' (default), 'xpt', or 'csv'.
 #' @return A `sdtm` object.
 #' @export
 read_sdtm <- function(data_path,
@@ -92,6 +92,13 @@ read_sdtm <- function(data_path,
     for (x in domain) {
       out[[x]] <- as.data.frame(haven::read_xpt(
         file.path(data_path, paste0(x, ".xpt"))))
+    }
+  }
+  if(format == "csv") {
+    for (x in domain) {
+      out[[x]] <- as.data.frame(
+        readr::read_csv(
+          file.path(data_path, paste0(x, ".csv"))))
     }
   }
   new_sdtm(out)

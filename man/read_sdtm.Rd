@@ -13,7 +13,7 @@ read_sdtm(data_path, domain = c("dm", "vs", "ex", "pc"), format = "sas")
 \code{c("dm", "vs", "ex", "pc")}.}
 
 \item{format}{The format of the source files as character, either 'sas'
-(default) or 'xpt'.}
+(default), 'xpt', or 'csv'.}
 }
 \value{
 A \code{sdtm} object.
