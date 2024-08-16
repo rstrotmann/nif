@@ -1071,16 +1071,25 @@ add_baseline <- function(
     rename_with(~bl_field, .cols = testcd) %>%
     ungroup()
 
-  out <- nif %>%
-    left_join(baseline, by = "USUBJID")
+  # out <- nif %>%
+  #   left_join(baseline, by = "USUBJID")
 
-  # coalesce duplicate baseline columns
-  # TO DO: This still needs to be vectorized!
-  if(all(c(paste0(bl_field, ".x"), paste0(bl_field, ".y")) %in% names(out))) {
-    out <- out %>%
-      mutate({{bl_field}} := coalesce(.data[[paste0(bl_field, ".x")]],
-                                    .data[[paste0(bl_field, ".y")]])) %>%
-      select(-c(paste0(bl_field, ".x"), paste0(bl_field, ".y")))}
+  # # coalesce duplicate baseline columns
+  # # TO DO: This still needs to be vectorized!
+  # if(all(c(paste0(bl_field, ".x"), paste0(bl_field, ".y")) %in% names(out))) {
+  #   # out <- out %>%
+  #   #   mutate({{bl_field}} := coalesce(.data[[paste0(bl_field, ".x")]],
+  #   #                                 .data[[paste0(bl_field, ".y")]])) %>%
+  #   #   select(-c(paste0(bl_field, ".x"), paste0(bl_field, ".y")))}
+  #
+  #   out <- out %>%
+  #     mutate({{bl_field}} := coalesce(.data[[paste0(bl_field, ".x")]],
+  #                                     .data[[paste0(bl_field, ".y")]]),
+  #            .keep = "unused")}
+
+
+  out <- nif %>%
+    coalesce_join(baseline, by = "USUBJID", join = 'left_join')
 
   return(out)
 }
@@ -1340,8 +1349,8 @@ nif_auto <- function(sdtm,
             keep = keep)
   }
 
+  lb <- domain(sdtm, "lb")
   if(bl_creat == TRUE | bl_odwg == TRUE){
-    lb <- domain(sdtm, "lb")
     if(is.null(lb)) {
       conditional_message("LB not found in sdtm object!")
     } else {
@@ -1359,9 +1368,14 @@ nif_auto <- function(sdtm,
       }
 
       # Baseline ODWG hepatic function class
+      # if(bl_odwg == TRUE) {
       if(bl_odwg == TRUE) {
-        conditional_message("Adding baseline hepatic function")
-        nif <- add_bl_odwg(nif, sdtm)
+        if(all(c("BILI", "ALT") %in% unique(lb$LBTESTCD))) {
+          conditional_message("Adding baseline hepatic function")
+          nif <- add_bl_odwg(nif, sdtm)
+        } else {
+          conditional_message("Cannot make BL_ODWG: BILI and AST not found in LB!")
+        }
       }
     }
   }

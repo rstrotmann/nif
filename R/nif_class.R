@@ -1243,13 +1243,9 @@ add_bl_odwg <- function(obj, sdtm,
                         summary_function = mean) {
   lb1 <- sdtm %>%
     domain("lb") %>%
-    # filter(.data$LBSPEC != "URINE") %>%
     filter(eval(parse(text = baseline_filter))) %>%
     filter(eval(parse(text = observation_filter))) %>%
-    # mutate(LBDTC = .data$LBDTC) %>%
     filter(.data$LBTESTCD %in% c("AST", "BILI")) %>%
-    # mutate(LBTESTCD = .data$LBTESTCD) %>%
-    # mutate(LB1BLFL = .data$LBBLFL) %>%
     mutate(LBTESTCD = paste0(.data$LBTESTCD, "_X_ULN"),
            LBSTRESN = .data$LBSTRESN / .data$LBSTNRHI)
 
