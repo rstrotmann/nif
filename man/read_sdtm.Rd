@@ -18,10 +18,11 @@ read_sdtm(
 \item{domain}{The domain name(s) as character, defaults to
 \code{c("dm", "vs", "ex", "pc")}.}
 
-\item{format}{The format of the source files as character, either 'sas'}
+\item{format}{The format of the source files as character, either 'sas'
+(default), 'xpt', 'xlsx', or 'csv'.}
 
-\item{...}{Further parameters for format == 'csv', refer to readr::read_csv.
-(default), 'xpt', or 'csv'.}
+\item{...}{Further parameters, refer to readr::read_csv and
+readxl::read_xlsx.}
 }
 \value{
 A \code{sdtm} object.

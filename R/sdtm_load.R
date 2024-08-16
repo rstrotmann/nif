@@ -73,10 +73,11 @@ read_sdtm_xpt <- function(data_path, ...) {
 #'
 #' @param data_path The file system path to the source folder as character.
 #' @param domain The domain name(s) as character, defaults to
-#' `c("dm", "vs", "ex", "pc")`.
+#'   `c("dm", "vs", "ex", "pc")`.
 #' @param format The format of the source files as character, either 'sas'
-#' @param ... Further parameters for format == 'csv', refer to readr::read_csv.
-#' (default), 'xpt', or 'csv'.
+#'   (default), 'xpt', 'xlsx', or 'csv'.
+#' @param ... Further parameters, refer to readr::read_csv and
+#'   readxl::read_xlsx.
 #' @return A `sdtm` object.
 #' @export
 read_sdtm <- function(data_path,
@@ -100,6 +101,13 @@ read_sdtm <- function(data_path,
       out[[x]] <- as.data.frame(
         readr::read_delim(
           file.path(data_path, paste0(x, ".csv"))), ...)
+    }
+  }
+  if(format == "xlsx") {
+    for (x in domain) {
+      out[[x]] <- as.data.frame(
+        readxl::read_xlsx(
+          file.path(data_path, paste0(x, ".xlsx"))), ...)
     }
   }
   new_sdtm(out)
