@@ -598,8 +598,6 @@ make_observation <- function(
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
       DTC = .data[[DTC_field]],
-      # DV = .data[[DV_field]] * factor,
-      # DV = .data[[DV_field]],
       ANALYTE = analyte,
       TIME = NA,
       CMT = cmt,
@@ -1047,16 +1045,6 @@ add_baseline <- function(
 
   bl_field <- paste0("BL_", testcd)
 
-  # baseline <- domain(sdtm, str_to_lower(domain)) %>%
-  #   lubrify_dates() %>%
-  #   filter(eval(parse(text = observation_filter))) %>%
-  #   filter(.data[[TESTCD_field]] == testcd) %>%
-  #   filter(eval(parse(text = baseline_filter))) %>%
-  #   select("USUBJID", {{DV_field}}) %>%
-  #   group_by(.data$USUBJID) %>%
-  #   summarize(BL = summary_function(na.omit(.data[[DV_field]]), na.rm = TRUE)) %>%
-  #   rename_with(~str_c("BL_", testcd), .cols = "BL")
-
   baseline <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = observation_filter))) %>%
@@ -1070,23 +1058,6 @@ add_baseline <- function(
                      ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
     rename_with(~bl_field, .cols = testcd) %>%
     ungroup()
-
-  # out <- nif %>%
-  #   left_join(baseline, by = "USUBJID")
-
-  # # coalesce duplicate baseline columns
-  # # TO DO: This still needs to be vectorized!
-  # if(all(c(paste0(bl_field, ".x"), paste0(bl_field, ".y")) %in% names(out))) {
-  #   # out <- out %>%
-  #   #   mutate({{bl_field}} := coalesce(.data[[paste0(bl_field, ".x")]],
-  #   #                                 .data[[paste0(bl_field, ".y")]])) %>%
-  #   #   select(-c(paste0(bl_field, ".x"), paste0(bl_field, ".y")))}
-  #
-  #   out <- out %>%
-  #     mutate({{bl_field}} := coalesce(.data[[paste0(bl_field, ".x")]],
-  #                                     .data[[paste0(bl_field, ".y")]]),
-  #            .keep = "unused")}
-
 
   out <- nif %>%
     coalesce_join(baseline, by = "USUBJID", join = 'left_join')
@@ -1326,10 +1297,6 @@ nif_auto <- function(sdtm,
   conditional_message(
     paste0("Adding treatment(s): ", nice_enumeration(treatments)))
 
-  # for(i in seq(1:nrow(analyte_mapping))){
-  #   nif <- add_administration(nif, sdtm, analyte_mapping[i, "EXTRT"],
-  #           analyte = analyte_mapping[i, "ANALYTE"], keep = keep)
-  # }
   for(i in seq(1:nrow(analytes))){
     if(!is.na(analytes[i, "EXTRT"])) {
       nif <- add_administration(nif, sdtm, analytes[i, "EXTRT"],
@@ -1368,7 +1335,6 @@ nif_auto <- function(sdtm,
       }
 
       # Baseline ODWG hepatic function class
-      # if(bl_odwg == TRUE) {
       if(bl_odwg == TRUE) {
         if(all(c("BILI", "ALT") %in% unique(lb$LBTESTCD))) {
           conditional_message("Adding baseline hepatic function")
