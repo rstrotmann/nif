@@ -1012,6 +1012,7 @@ add_observation <- function(
 #' @param silent `r lifecycle::badge("deprecated")` Dummy option for
 #' compatibility, set the global option [nif_option()] with `silent = TRUE` to
 #' suppress messages.
+#' @param coding_table
 #'
 #' @return A nif object.
 #' @import assertr
@@ -1031,6 +1032,7 @@ add_baseline <- function(
     observation_filter = "TRUE",
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     baseline_filter = NULL,
+    coding_table = NULL,
     summary_function = mean,
     silent = deprecated()) {
 
@@ -1045,14 +1047,41 @@ add_baseline <- function(
 
   bl_field <- paste0("BL_", testcd)
 
+  # baseline <- domain(sdtm, str_to_lower(domain)) %>%
+  #   lubrify_dates() %>%
+  #   filter(eval(parse(text = observation_filter))) %>%
+  #   filter(.data[[TESTCD_field]] %in% testcd) %>%
+  #   filter(eval(parse(text = baseline_filter))) %>%
+  #   pivot_wider(names_from = all_of(TESTCD_field),
+  #               values_from = all_of(DV_field)) %>%
+  #   # select("USUBJID", {{testcd}}) %>%
+  #   select(all_of(c("USUBJID", {{testcd}}))) %>%
+  #
+  #   group_by(.data$USUBJID) %>%
+  #   summarize(across(all_of(testcd),
+  #                    ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
+  #   rename_with(~bl_field, .cols = testcd) %>%
+  #   ungroup()
+
+  join_fields <- intersect(names(coding_table),
+                           names(domain(sdtm, str_to_lower(domain))))
+  if(!is.null(coding_table) & length(join_fields) == 0) {
+    stop("Coding table cannot be applied - no valid data column!")
+  } else {
+    conditional_message(paste0("Recoding from ", join_fields))
+  }
+
   baseline <- domain(sdtm, str_to_lower(domain)) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] %in% testcd) %>%
     filter(eval(parse(text = baseline_filter))) %>%
+    {if(is.null(coding_table)) mutate(., DV = .data[[DV_field]]) else
+      left_join(., coding_table, by = join_fields)} %>%
     pivot_wider(names_from = all_of(TESTCD_field),
-                values_from = all_of(DV_field)) %>%
-    select("USUBJID", {{testcd}}) %>%
+                values_from = DV) %>%
+    # select("USUBJID", {{testcd}}) %>%
+    select(all_of(c("USUBJID", {{testcd}}))) %>%
     group_by(.data$USUBJID) %>%
     summarize(across(all_of(testcd),
                      ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
