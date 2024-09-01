@@ -18,7 +18,7 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9044</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9047</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,6 +78,7 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
 <span>  observation_filter <span class="op">=</span> <span class="st">"TRUE"</span>,</span>
 <span>  subject_filter <span class="op">=</span> <span class="st">"!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')"</span>,</span>
 <span>  baseline_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  coding_table <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  summary_function <span class="op">=</span> <span class="va">mean</span>,</span>
 <span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -124,6 +125,12 @@ within the <code>domain</code>. Defaults to "xxBLFL == 'Y'" (with xx the domain
 code).</p></dd>
 
 
+<dt>coding_table</dt>
+<dd><p>A recoding table as data frame, or NULL. If present, the
+table needs to have a field that matches a column in the domain, and a
+field 'DV' that provides the re-coded value.</p></dd>
+
+
 <dt>summary_function</dt>
 <dd><p>The summary function to summarize multiple baseline
 values. Defaults to <code>mean</code>.</p></dd>
@@ -145,6 +152,7 @@ suppress messages.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_baseline</span><span class="op">(</span><span class="va">examplinib_sad_nif</span>, <span class="va">examplinib_sad</span>, <span class="st">"vs"</span>, <span class="st">"WEIGHT"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Recoding from </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 816 observations from 48 subjects</span>
@@ -168,6 +176,7 @@ suppress messages.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 854 more rows</span>
 <span class="r-in"><span><span class="fu">add_baseline</span><span class="op">(</span><span class="va">examplinib_sad_nif</span>, <span class="va">examplinib_sad</span>, <span class="st">"vs"</span>, <span class="st">"WEIGHT"</span>,</span></span>
 <span class="r-in"><span>  baseline_filter <span class="op">=</span> <span class="st">"VSBLFL == 'Y'"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Recoding from </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RS2023 data from one study</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 816 observations from 48 subjects</span>
