@@ -21,6 +21,8 @@ read_sdtm(
 \item{format}{The format of the source files as character, either 'sas'
 (default), 'xpt', 'xlsx', or 'csv'.}
 
+\item{delim}{Deliminator.}
+
 \item{...}{Further parameters, refer to readr::read_csv and
 readxl::read_xlsx.}
 }

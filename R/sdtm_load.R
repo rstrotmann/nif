@@ -78,6 +78,7 @@ read_sdtm_xpt <- function(data_path, ...) {
 #'   (default), 'xpt', 'xlsx', or 'csv'.
 #' @param ... Further parameters, refer to readr::read_csv and
 #'   readxl::read_xlsx.
+#' @param delim Deliminator.
 #' @return A `sdtm` object.
 #' @export
 read_sdtm <- function(data_path,

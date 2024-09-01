@@ -77,7 +77,7 @@ test_that("EGFR is age-dependent", {
 
 
 simulate_pk <- function(n = 20) {
-  sbs <- create_subjects(n=n)
+  sbs <- create_subjects(n = n)
 
   sampling_scheme <- data.frame(
     time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168))

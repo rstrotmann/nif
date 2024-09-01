@@ -14,6 +14,7 @@ add_baseline(
   observation_filter = "TRUE",
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   baseline_filter = NULL,
+  coding_table = NULL,
   summary_function = mean,
   silent = deprecated()
 )
@@ -39,6 +40,10 @@ xx the domain name, as character.}
 \item{baseline_filter}{A filter term to identify the baseline condition.
 within the \code{domain}. Defaults to "xxBLFL == 'Y'" (with xx the domain
 code).}
+
+\item{coding_table}{A recoding table as data frame, or NULL. If present, the
+table needs to have a field that matches a column in the domain, and a
+field 'DV' that provides the re-coded value.}
 
 \item{summary_function}{The summary function to summarize multiple baseline
 values. Defaults to \code{mean}.}

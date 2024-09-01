@@ -1012,7 +1012,9 @@ add_observation <- function(
 #' @param silent `r lifecycle::badge("deprecated")` Dummy option for
 #' compatibility, set the global option [nif_option()] with `silent = TRUE` to
 #' suppress messages.
-#' @param coding_table
+#' @param coding_table A recoding table as data frame, or NULL. If present, the
+#'   table needs to have a field that matches a column in the domain, and a
+#'   field 'DV' that provides the re-coded value.
 #'
 #' @return A nif object.
 #' @import assertr
@@ -1085,7 +1087,7 @@ add_baseline <- function(
     group_by(.data$USUBJID) %>%
     summarize(across(all_of(testcd),
                      ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
-    rename_with(~bl_field, .cols = testcd) %>%
+    rename_with(~bl_field, .cols = all_of(testcd)) %>%
     ungroup()
 
   out <- nif %>%
@@ -1151,6 +1153,7 @@ add_covariate <- function(nif, sdtm, domain, testcd,
            !!COV_field := .data[[DV_field]]) %>%
     decompose_dtc("DTC") %>%
     select(-c("DTC", "DTC_time")) %>%
+    # select(!c("DTC", "DTC_time")) %>%
     distinct()
 
   temp <- nif %>%

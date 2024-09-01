@@ -10,6 +10,8 @@ pk_sim <- function(event_table) {
   }
 
   keep_columns <- event_table %>%
+    mutate(time = as.numeric(time)) %>%
+    mutate(NTIME = as.numeric(NTIME)) %>%
     select(any_of(c("id", "time", "NTIME", "PERIOD"))) %>%
     distinct()
 
