@@ -244,7 +244,6 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
                       points = FALSE, analyte = NULL, log = FALSE,
                       legend = FALSE, subject_filter = TRUE, ...) {
-  # obj <- x$domains[[domain]] %>%
   obj <- x %>%
     domain(domain) %>%
     filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
@@ -275,10 +274,6 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
     return(
       obj %>%
         arrange(.data$EXSTDTC) %>%
-        # group_by(.data$USUBJID) %>%
-        # mutate(ID = cur_group_id()) %>%
-        # # mutate(ID = as.numeric(factor(cur_group_id(), unique(cur_group_id())))) %>%
-        # arrange(.data$ID) %>%
         mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
         ggplot() +
         geom_segment(aes(x = .data$EXSTDTC,
@@ -300,14 +295,6 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
   if (domain == "dm") {
     return(
       obj %>%
-        # group_by(.data$USUBJID) %>%
-        # mutate(start = min(.data$RFSTDTC)) %>%
-        # ungroup() %>%
-        # arrange(.data$start) %>%
-        # # arrange(.data$RFSTDTC) %>%
-        # group_by(.data$USUBJID) %>%
-        # mutate(ID = factor(cur_group_id())) %>%
-        # mutate(ID = factor(.data$ID, levels = rev(levels(ID)))) %>%
         filter(!is.na(.data$RFSTDTC)) %>%
         arrange(.data$RFSTDTC) %>%
         mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
