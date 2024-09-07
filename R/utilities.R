@@ -272,7 +272,6 @@ decompose_dtc <- function(obj, DTC_field) {
     DTC_date <- paste0(fld, "_date")
     DTC_time <- paste0(fld, "_time")
     obj %>%
-      # mutate(has_time = has_time(.data[[fld]])) %>%
       mutate(has_time = has_time(.data[[fld]])) %>%
       mutate({{DTC_date}} := extract_date(.data[[fld]])) %>%
       mutate({{DTC_time}} := case_when(

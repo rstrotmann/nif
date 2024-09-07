@@ -231,6 +231,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' @param analyte The analyte to be plotted as character.
 #' @param legend Show legend, as logical.
 #' @param log Boolean whether to use a logarithmic y axis.
+#' @param subject_filter Filter term as character.
 #'
 #' @return Nothing.
 #' @export
@@ -242,12 +243,13 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' plot(examplinib_poc, domain="vs", lines = FALSE, points = TRUE)
 plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
                       points = FALSE, analyte = NULL, log = FALSE,
-                      legend = FALSE, ...) {
+                      legend = FALSE, subject_filter = TRUE, ...) {
   # obj <- x$domains[[domain]] %>%
   obj <- x %>%
     domain(domain) %>%
     filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
     lubrify_dates() %>%
+    filter(eval(parse(text = subject_filter))) %>%
     as.data.frame()
 
   if (domain == "pc") {

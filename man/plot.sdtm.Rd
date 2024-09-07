@@ -13,6 +13,7 @@
   analyte = NULL,
   log = FALSE,
   legend = FALSE,
+  subject_filter = TRUE,
   ...
 )
 }
@@ -32,6 +33,8 @@
 \item{log}{Boolean whether to use a logarithmic y axis.}
 
 \item{legend}{Show legend, as logical.}
+
+\item{subject_filter}{Filter term as character.}
 
 \item{...}{Further printing parameters.}
 }
