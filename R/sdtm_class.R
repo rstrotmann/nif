@@ -21,19 +21,19 @@ new_sdtm <- function(sdtm_data,
   dm <- domains[["dm"]]
 
   temp <- list(
-    study = dm[1, "STUDYID"],
-    subjects = pc %>%
-      dplyr::distinct(.data$USUBJID),
-    specimens = pc %>%
-      dplyr::distinct(.data$PCSPEC),
-    analytes = pc %>%
-      dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
-    treatments = ex %>%
-      dplyr::distinct(.data$EXTRT),
-    doses = ex %>%
-      dplyr::distinct(.data$EXDOSE),
-    arms = dm %>%
-      dplyr::distinct(.data$ACTARM, .data$ACTARMCD),
+    # study = dm[1, "STUDYID"],
+    # subjects = pc %>%
+    #   dplyr::distinct(.data$USUBJID),
+    # specimens = pc %>%
+    #   dplyr::distinct(.data$PCSPEC),
+    # analytes = pc %>%
+    #   dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
+    # treatments = ex %>%
+    #   dplyr::distinct(.data$EXTRT),
+    # doses = ex %>%
+    #   dplyr::distinct(.data$EXDOSE),
+    # arms = dm %>%
+    #   dplyr::distinct(.data$ACTARM, .data$ACTARMCD),
     domains = domains,
     pc = pc,
     dm = dm,
@@ -60,45 +60,20 @@ new_sdtm <- function(sdtm_data,
 #' @examples
 #' summary(examplinib_poc)
 summary.sdtm <- function(object, ...) {
-  subjects <- object %>%
-    domain("pc") %>%
-    filter(!is.na(.data$PCSTRESN)) %>%
-    dplyr::distinct(.data$USUBJID) %>%
-    pull(.data$USUBJID) %>%
-    as.character()
-
   out <- list(
-    study = object %>%
-      domain("dm") %>%
-      distinct(.data$STUDYID) %>%
-      pull(.data$STUDYID) %>%
-      as.character(),
-    subjects = subjects,
-    n_subs = length(subjects),
-    pc_timepoints = object %>%
-      domain("pc") %>%
-      dplyr::distinct(across(any_of(c("PCTPT", "PCTPTNUM")))),
+    study = unique(domain(object, "dm")$STUDYID),
+    subjects = unique(domain(object, "pc")$USUBJID),
+    pc_timepoints = unique(domain(object, "pc")[c("PCTPT", "PCTPTNUM")]),
     domains = data.frame(
       DOMAIN = names(object$domains),
-      N = as.numeric(lapply(object$domains, function(x) {length(unique(x$USUBJID))}))
+      N = as.numeric(lapply(
+        object$domains, function(x) {length(unique(x$USUBJID))}))
     ),
-    treatments = object %>%
-      domain("ex") %>%
-      dplyr::distinct(.data$EXTRT),
-    arms = object %>%
-      domain("dm") %>%
-      dplyr::distinct(.data$ACTARM, .data$ACTARMCD),
-    doses = object %>%
-      domain("ex") %>%
-      distinct(.data$EXTRT, .data$EXDOSE),
-    specimems = object %>%
-      domain("pc") %>%
-      dplyr::distinct(.data$PCSPEC) %>%
-      pull(.data$PCSPEC) %>%
-      as.character(),
-    analytes = object %>%
-      domain("pc") %>%
-      dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
+    treatments = unique(domain(object, "ex")$EXTRT),
+    arms = unique(domain(object, "dm")[c("ACTARMCD", "ACTARM")]),
+    doses = unique(domain(object, "ex")[c("EXTRT", "EXDOSE")]),
+    specimems = unique(domain(object, "pc")$PCSPEC),
+    analytes = unique(domain(object, "pc")[c("PCTEST", "PCTESTCD")]),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
     time_mapping = object$time_mapping
@@ -119,9 +94,13 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   hline <- paste0(rep("-", 8), collapse="")
   indent = " "
 
+  n <- filter(x$domains, DOMAIN == "pc")$N
+  if(length(n) == 0) n <- 0
+
   cat(paste(hline, "SDTM data set summary", hline, "\n"))
   cat(paste("Study", x$study))
-  cat(paste(" with", x$n_subs, "subjects providing PC data.\n"))
+  cat(paste(" with", n,
+            "subjects providing PC data.\n"))
 
   cat("\nSubjects per domain:\n")
   temp <- x$domains
@@ -144,17 +123,20 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   cat(df_to_string(x$analytes, color = color, indent = indent,
                    show_none = TRUE), "\n\n")
 
-  cat("Treatment-to-analyte mappings:\n")
-  cat(df_to_string(x$analyte_mapping, color = color, indent = indent,
-                   show_none = TRUE), "\n\n")
+  if(nrow(x$analyte_mapping) != 0) {
+    cat("Treatment-to-analyte mappings:\n")
+    cat(df_to_string(x$analyte_mapping, color = color, indent = indent,
+                     show_none = TRUE), "\n\n")}
 
-  cat("Parent-to-metabolite mappings:\n")
-  cat(df_to_string(x$metabolite_mapping, color = color, indent = indent,
-                   show_none = TRUE), "\n\n")
+  if(nrow(x$metabolite_mapping) != 0) {
+    cat("Parent-to-metabolite mappings:\n")
+    cat(df_to_string(x$metabolite_mapping, color = color, indent = indent,
+                     show_none = TRUE), "\n\n")}
 
-  cat("Time mappings:\n")
-  cat(df_to_string(x$time_mapping, color = color, indent = indent,
-                   show_none = TRUE), "\n\n")
+  if(nrow(x$time_mapping) != 0) {
+    cat("Time mappings:\n")
+    cat(df_to_string(x$time_mapping, color = color, indent = indent,
+                     show_none = TRUE), "\n\n")}
 
   invisible(x)
 }

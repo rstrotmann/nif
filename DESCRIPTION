@@ -33,7 +33,8 @@ Imports:
     tidyr,
     utils,
     ggrepel,
-    readr
+    readr,
+    readxl
 Suggests: 
     knitr,
     rmarkdown,

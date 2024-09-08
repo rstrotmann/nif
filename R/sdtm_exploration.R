@@ -424,3 +424,29 @@ ae_summary <- function(sdtm_data, level = "SOC", show_cd = FALSE, group = NULL,
       arrange(., desc(.data$n))} %>%
     as.data.frame()
 }
+
+
+#' Subject disposition overview
+#'
+#' @param sdtm_data SDTM data object.
+#'
+#' @return A data frame
+#' @export
+#' @import assertr
+#' @examples
+#' disposition_summary(examplinib_sad)
+disposition_summary <- function(sdtm_data) {
+  dm <- domain(sdtm_data, "dm")
+  if(is.null(dm)) stop("DM not found in SDTM data!")
+
+  dm %>%
+    verify(has_all_names("USUBJID", "ACTARMCD", "RFSTDTC", "RFENDTC")) %>%
+    distinct(.data$USUBJID, .data$ACTARMCD, .data$RFSTDTC, .data$RFENDTC) %>%
+    mutate(ONGOING = case_when(
+      .data$RFSTDTC != "" & .data$RFENDTC == "" ~ TRUE,
+      .data$RFSTDTC != "" & .data$RFENDTC != "" ~ FALSE)) %>%
+    select(-all_of(c("RFSTDTC", "RFENDTC"))) %>%
+    reframe(N = n(), .by = c("ACTARMCD", "ONGOING")) %>%
+    arrange(.data$ACTARMCD, -.data$ONGOING)
+}
+
