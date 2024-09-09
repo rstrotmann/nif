@@ -707,7 +707,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
     ) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
-  pc <- domain(sdtm, "pc") %>% lubrify_dates()
+  # pc <- domain(sdtm, "pc") %>% lubrify_dates()
 
   assert_that(
     extrt %in% ex$EXTRT,
@@ -758,12 +758,17 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
     select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",
               "EXENDTC_time")) %>%
 
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
 
-    # impute missing administration times from PCRFTDTC
+  # impute missing administration times from PCRFTDTC
+  if("pc" %in% names(sdtm$domains)) {
+    pc <- domain(sdtm, "pc") %>% lubrify_dates()
+    admin <- admin %>%
     {if("PCRFTDTC" %in% names(pc))
-      impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .} %>%
+      impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .}
+  }
 
+  admin <- admin %>%
     # carry forward missing administration times
     decompose_dtc("DTC") %>%
     arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) %>%

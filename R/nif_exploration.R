@@ -787,21 +787,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
 }
 
 
-# ' NIF or SDTM object overview
-# '
-# ' @param object The NIF or SDTM object.
-# ' @param ... Further arguments.
-# ' @return A summary_nif or summary_sdtm object.
-# ' @export
-# ' @examples
-# ' summary(examplinib_poc)
-# ' summary(examplinib_poc_nif)
-# ' summary(examplinib_poc_min_nif)
-# summary <- function(object, ...) {
-#   UseMethod("summary")
-# }
-
-
 #' NIF object overview
 #'
 #' @param object The NIF object.
