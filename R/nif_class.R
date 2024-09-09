@@ -1274,14 +1274,16 @@ add_bl_odwg <- function(obj, sdtm,
 #' Output fields:
 #' * `DVBL` Baseline value for the dependent variable DV.
 #' * `DVCFB` Change from baseline for the dependent variable DV.
-#' @details The Baseline is calculated as the median of the DV for all times
-#' lower or equal to zero.
+#' @details The Baseline is calculated as the median (or the summary function
+#' output) of the DV field for all time points identified by the
+#' baseline_filter' term.
 #'
 #' @param obj A NIF object.
 #' @param summary_function The function to derive the baseline. This function is
-#'   applied over the DV values at TIME less than or equal to zero. The default
+#'   applied over the DV values identified by the 'baseline_filter' term. The
+#'   default function is `median`. Alternatively, `mean`, `min` or `max` can be
+#'   considered.
 #' @param baseline_filter A filter term to identify the baseline condition.
-#'   is `median`. Alternatively, `mean`, `min` or `max` can be considered.
 #' @return A NIF object
 #' @importFrom stats na.omit
 #' @export
@@ -1290,31 +1292,48 @@ add_bl_odwg <- function(obj, sdtm,
 #' head(add_cfb(examplinib_poc_min_nif))
 add_cfb <- function(obj, baseline_filter = "TIME <= 0",
                     summary_function = median) {
-  # obj %>%
-  #   ensure_analyte() %>%
-  #   as.data.frame() %>%
-  #   group_by(ID, ANALYTE) %>%
-  #   # mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
-  #   mutate(DVBL = summary_function(na.omit(DV[TIME <= 0]))) %>%
-  #   mutate(DVCFB = DV - DVBL) %>%
-  #   new_nif()
-
-  # f <- function(x) {
-  #   temp <- x[eval(parse(text = baseline_filter))]
-  #   temp <- na.omit(temp)
-  #   return(summary_function(temp))
-  # }
-
   obj %>%
     ensure_analyte() %>%
     as.data.frame() %>%
     group_by(ID, ANALYTE) %>%
-    # mutate(DVBL = summary_function(DV[TIME <= 0], na.rm = TRUE)) %>%
-    # mutate(DVBL = f(DV)) %>%
-
     mutate(DVBL = summary_function(
       na.omit(DV[eval(parse(text = baseline_filter))]))) %>%
     mutate(DVCFB = DV - DVBL) %>%
+    new_nif()
+}
+
+
+#' Add baseline and relative-to-baseline fields
+#'
+#' @details
+#' Output fields:
+#' * `DVBL` Baseline value for the dependent variable DV.
+#' * `DVRTB` Relative-to-baseline value for the dependent variable DV.
+#' @details The Baseline is calculated as the median (or the summary function
+#' output) of the DV field for all time points identified by the
+#' baseline_filter' term.
+#'
+#' @param obj A NIF object.
+#' @param summary_function The function to derive the baseline. This function is
+#'   applied over the DV values identified by the 'baseline_filter' term. The
+#'   default function is `median`. Alternatively, `mean`, `min` or `max` can be
+#'   considered.
+#' @param baseline_filter A filter term to identify the baseline condition.
+#' @return A NIF object
+#' @importFrom stats na.omit
+#' @export
+#' @examples
+#' head(add_rtb(examplinib_poc_nif))
+#' head(add_rtb(examplinib_poc_min_nif))
+add_rtb <- function(obj, baseline_filter = "TIME <= 0",
+                    summary_function = median) {
+  obj %>%
+    ensure_analyte() %>%
+    as.data.frame() %>%
+    group_by(ID, ANALYTE) %>%
+    mutate(DVBL = summary_function(
+      na.omit(DV[eval(parse(text = baseline_filter))]))) %>%
+    mutate(DVRTB = DV/DVBL) %>%
     new_nif()
 }
 

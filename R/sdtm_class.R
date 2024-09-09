@@ -21,19 +21,6 @@ new_sdtm <- function(sdtm_data,
   dm <- domains[["dm"]]
 
   temp <- list(
-    # study = dm[1, "STUDYID"],
-    # subjects = pc %>%
-    #   dplyr::distinct(.data$USUBJID),
-    # specimens = pc %>%
-    #   dplyr::distinct(.data$PCSPEC),
-    # analytes = pc %>%
-    #   dplyr::distinct(.data$PCTEST, .data$PCTESTCD),
-    # treatments = ex %>%
-    #   dplyr::distinct(.data$EXTRT),
-    # doses = ex %>%
-    #   dplyr::distinct(.data$EXDOSE),
-    # arms = dm %>%
-    #   dplyr::distinct(.data$ACTARM, .data$ACTARMCD),
     domains = domains,
     pc = pc,
     dm = dm,
