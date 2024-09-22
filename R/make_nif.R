@@ -437,27 +437,29 @@ make_subjects <- function(dm, vs,
       select(-"age_brthdtc")
   }
 
-  baseline_covariates <- vs %>%
-    lubrify_dates() %>%
-    left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID") %>%
-    {if("VSBLFL" %in% names(vs)) filter(., VSBLFL == "Y") else
-      filter(., VSDTC < RFSTDTC)} %>%
-    filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) %>%
-    group_by(.data$USUBJID, .data$VSTESTCD) %>%
-    summarize(mean = mean(.data$VSSTRESN), .groups = "drop") %>%
-    pivot_wider(names_from = "VSTESTCD", values_from = "mean")
+  if(!is.null(vs)){
+    baseline_covariates <- vs %>%
+      lubrify_dates() %>%
+      left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID") %>%
+      {if("VSBLFL" %in% names(vs)) filter(., VSBLFL == "Y") else
+        filter(., VSDTC < RFSTDTC)} %>%
+      filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) %>%
+      group_by(.data$USUBJID, .data$VSTESTCD) %>%
+      summarize(mean = mean(.data$VSSTRESN), .groups = "drop") %>%
+      pivot_wider(names_from = "VSTESTCD", values_from = "mean")
 
-  if ("HEIGHT" %in% colnames(baseline_covariates) &&
-      "WEIGHT" %in% colnames(baseline_covariates)) {
-    baseline_covariates <- baseline_covariates %>%
-      mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
+    if ("HEIGHT" %in% colnames(baseline_covariates) &&
+        "WEIGHT" %in% colnames(baseline_covariates)) {
+      baseline_covariates <- baseline_covariates %>%
+        mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
+    }
   }
 
   out <- dm %>%
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter))) %>%
-    left_join(baseline_covariates, by = "USUBJID") %>%
+    {if(!is.null(vs)) left_join(baseline_covariates, by = "USUBJID") else .} %>%
     recode_sex() %>%
     mutate(ID = NA) %>%
     relocate("ID") %>%
@@ -703,8 +705,7 @@ make_observation <- function(
 make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cut_off_date = NULL,
-    keep = ""
-    ) {
+    keep = "") {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
   # pc <- domain(sdtm, "pc") %>% lubrify_dates()
