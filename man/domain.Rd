@@ -18,5 +18,5 @@ The specified domain as data.frame
 Return a specific domain from a sdtm object
 }
 \examples{
-head(domain(examplinib_fe, "dm"))
+head(domain(examplinib_fe, "dm"), 3)
 }

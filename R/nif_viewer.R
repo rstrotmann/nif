@@ -49,7 +49,8 @@ nif_viewer <- function(nif) {
           selected = sbs[1]
         ),
         shiny::actionButton("prev.sb", "previous"),
-        shiny::actionButton("next.sb", "next")
+        shiny::actionButton("next.sb", "next") #,
+        # shiny::textInput("search", "", placeholder = "Search subject")
       ),
 
       # Column 2
@@ -217,6 +218,17 @@ nif_viewer <- function(nif) {
         choices = current_sbs(), selected = current_sbs()[1]
       )
     })
+
+    # shiny::observeEvent(input$search, {
+    #   # id <- if(nchar(input$search)) {
+    #   #   as.numeric(input$search)
+    #   # }
+    #   # if(id %in% input$subject) {message(id)}
+    #   # shiny::updateSelectInput(session, "subject",
+    #   #                          choices = current_sbs(),
+    #   #                          selected = current_sbs()[current - 1]
+    #   # )
+    # })
   }
 
   shiny::shinyApp(nif_viewer.ui, nif_viewer.server)

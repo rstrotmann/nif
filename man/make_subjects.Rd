@@ -6,7 +6,7 @@
 \usage{
 make_subjects(
   dm,
-  vs,
+  vs = NULL,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   keep = ""
 )
