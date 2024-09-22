@@ -1154,9 +1154,7 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     pivot_wider(names_from = all_of(TESTCD_field),
                 values_from = all_of(DV_field)) %>%
     rename("DTC" = all_of(DTC_field)) %>%
-    # rename("{COV_field}" := testcd) %>%
-    # rename(!!COV_field := testcd) %>%
-    rename_with(~COV_field, testcd) %>%
+    rename_with(~COV_field, all_of(testcd)) %>%
     decompose_dtc("DTC") %>%
     select(!all_of(c("DTC", "DTC_time"))) %>%
     select(all_of(c("USUBJID", "DTC_date", COV_field))) %>%
