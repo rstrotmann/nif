@@ -461,7 +461,7 @@ test_that("add_administration, add_observation", {
 
 test_that("nif_auto works", {
   expect_no_error(
-    nif <- nif_auto(examplinib_poc)
+    nif <- nif_auto(examplinib_poc, bl_creat = FALSE, bl_odwg = FALSE)
   )
   expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
 })

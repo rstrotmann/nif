@@ -1146,19 +1146,20 @@ add_covariate <- function(nif, sdtm, domain, testcd,
   if(is.null(covariate)) covariate <- str_to_upper(testcd)
   COV_field <- covariate
 
-  obj <- domain(sdtm, str_to_lower(domain)) %>%
-    lubrify_dates()
-
   cov <- domain(sdtm, str_to_lower(domain)) %>%
     filter(.data$USUBJID %in% unique(nif$USUBJID)) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
-    select("USUBJID", "DTC" = .data[[DTC_field]],
-           !!COV_field := .data[[DV_field]]) %>%
+    pivot_wider(names_from = all_of(TESTCD_field),
+                values_from = all_of(DV_field)) %>%
+    rename("DTC" = all_of(DTC_field)) %>%
+    # rename("{COV_field}" := testcd) %>%
+    # rename(!!COV_field := testcd) %>%
+    rename_with(~COV_field, testcd) %>%
     decompose_dtc("DTC") %>%
-    select(-c("DTC", "DTC_time")) %>%
-    # select(!c("DTC", "DTC_time")) %>%
+    select(!all_of(c("DTC", "DTC_time"))) %>%
+    select(all_of(c("USUBJID", "DTC_date", COV_field))) %>%
     distinct()
 
   temp <- nif %>%
@@ -1170,7 +1171,7 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     fill(!!COV_field) %>%
     ungroup() %>%
     filter(.data$original == TRUE) %>%
-    select(-c("original", "DTC_date", "DTC_time")) %>%
+    select(!any_of(c("original", "DTC_date", "DTC_time"))) %>%
     new_nif()
 
   return(temp)
