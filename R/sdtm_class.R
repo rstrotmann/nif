@@ -260,9 +260,12 @@ print.sdtm <- function(x, ...) {
 #' @return The specified domain as data.frame
 #' @export
 #' @examples
-#' head(domain(examplinib_fe, "dm"))
+#' head(domain(examplinib_fe, "dm"), 3)
 domain <- function(obj, name) {
-  obj$domains[[name]]
+  # obj$domains[[name]]
+  temp <- obj$domains[name]
+  if(length(temp) == 1) temp <- temp[[1]]
+  return(temp)
 }
 
 
