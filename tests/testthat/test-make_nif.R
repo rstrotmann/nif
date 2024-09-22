@@ -162,12 +162,14 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
     4,        "DM",    "2022-07-18T13:54", "") %>%
     lubrify_dates()
 
-  ex %>%
-    mutate(IMPUTATION = "") %>%
-    impute_exendtc_to_rfendtc(dm) %>%
-    summarize(sum=sum(is.na(EXENDTC))) %>%
-    as.numeric() %>%
-    expect_equal(2)
+  suppressMessages(
+    ex %>%
+      mutate(IMPUTATION = "") %>%
+      impute_exendtc_to_rfendtc(dm) %>%
+      summarize(sum = sum(is.na(EXENDTC))) %>%
+      as.numeric() %>%
+      expect_equal(2)
+  )
 })
 
 
@@ -206,7 +208,9 @@ test_that("impute_missing_exendtc", {
   ) %>% lubrify_dates() %>%
     mutate(IMPUTATION = "")
 
-  temp <- impute_missing_exendtc(ex)
+  suppressMessages(
+    temp <- impute_missing_exendtc(ex)
+  )
   expect_equal(temp$IMPUTATION != "", temp$imputation_expected)
 })
 
@@ -450,18 +454,23 @@ test_that("add_covariate", {
 
 
 test_that("add_administration, add_observation", {
-  expect_no_error(
-    nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
-    add_observation(examplinib_sad, "pc", "RS2023", silent = TRUE)
+  suppressMessages(
+    expect_no_error(
+      nif <- new_nif() %>%
+      add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
+      add_observation(examplinib_sad, "pc", "RS2023", silent = TRUE)
+    )
   )
   expect_equal(analytes(nif), "RS2023")
+
 })
 
 
 test_that("nif_auto works", {
-  expect_no_error(
-    nif <- nif_auto(examplinib_poc, bl_creat = FALSE, bl_odwg = FALSE)
+  suppressMessages(
+    expect_no_error(
+      nif <- nif_auto(examplinib_poc, bl_creat = FALSE, bl_odwg = FALSE)
+    )
   )
   expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
 })

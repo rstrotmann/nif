@@ -422,7 +422,7 @@ clip_nif <- function(nif) {
 #' @import tidyselect
 #' @export
 #' @keywords internal
-make_subjects <- function(dm, vs,
+make_subjects <- function(dm, vs = NULL,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   keep = "") {
   # if AGE is not present in DM, calculate age from birthday and informed
@@ -459,7 +459,8 @@ make_subjects <- function(dm, vs,
     verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter))) %>%
-    {if(!is.null(vs)) left_join(baseline_covariates, by = "USUBJID") else .} %>%
+    # {if(!is.null(vs)) left_join(baseline_covariates, by = "USUBJID") else .} %>%
+    left_join(baseline_covariates, by = "USUBJID") %>%
     recode_sex() %>%
     mutate(ID = NA) %>%
     relocate("ID") %>%

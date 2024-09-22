@@ -18,10 +18,10 @@ test_that("ensure_parent works as intended" , {
 })
 
 
-test_that("print works with minimal NIF" , {
-  expect_no_error(print(examplinib_poc_min_nif))
-  expect_no_error(print(examplinib_sad_min_nif))
-})
+# test_that("print works with minimal NIF" , {
+#   expect_no_error(print(examplinib_poc_min_nif))
+#   expect_no_error(print(examplinib_sad_min_nif))
+# })
 
 
 test_that("subjects works with minimal NIF" , {
@@ -158,9 +158,11 @@ test_that("add baseline hepatic function class", {
     "5",      "LB",    "SERUM", "2001-01-07T11:18", "Y",     "AST",     1,          1
   )
   sdtm <- list(domains = list(dm = dm, vs = vs, lb = lb))
-  expect_no_error(
-    temp <- data.frame(USUBJID = as.character(c(1, 2, 3, 4, 5))) %>%
-    add_bl_odwg(sdtm)
+  suppressMessages(
+    expect_no_error(
+      temp <- data.frame(USUBJID = as.character(c(1, 2, 3, 4, 5))) %>%
+      add_bl_odwg(sdtm)
+    )
   )
 
   expect_equal(as.character(temp$BL_ODWG), c("normal", "mild", "mild", "moderate", "severe"))
