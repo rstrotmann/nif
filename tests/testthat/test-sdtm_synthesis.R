@@ -21,32 +21,37 @@ test_that("synthesize_crea works", {
   expect_no_error(temp <- make_dataset())
 
   temp %>%
-    ggplot(aes(x = .data$AGE, y = .data$MDRD, color = .data$SEX)) +
-    geom_point(size=3) +
-    geom_hline(yintercept=c(30, 60, 90)) +
-    theme_bw() +
-    ggtitle("eGFR (MDRD) by age", subtitle="Synthetic data")
+    ggplot2::ggplot(ggplot2::aes(x = .data$AGE, y = .data$MDRD,
+                                 color = .data$SEX)) +
+    ggplot2::geom_point(size=3) +
+    ggplot2::geom_hline(yintercept=c(30, 60, 90)) +
+    ggplot2::theme_bw() +
+    ggplot2::ggtitle("eGFR (MDRD) by age", subtitle="Synthetic data")
 
   temp %>%
-    ggplot(aes(x = .data$MDRD, y = .data$RAYNAUD, color = .data$RACE)) +
-    geom_point(size=3) +
-    geom_abline(slope = 1, intercept = 0) +
-    theme_bw() +
-    ggtitle("MDRD vs Raynoud method for eGFT by RACE", subtitle="Synthetic data")
+    ggplot2::ggplot(ggplot2::aes(x = .data$MDRD, y = .data$RAYNAUD,
+                                 color = .data$RACE)) +
+    ggplot2::geom_point(size=3) +
+    ggplot2::geom_abline(slope = 1, intercept = 0) +
+    ggplot2::theme_bw() +
+    ggplot2::ggtitle("MDRD vs Raynoud method for eGFT by RACE",
+                     subtitle="Synthetic data")
 
   temp %>%
-    ggplot(aes(x = MDRD, y = CG, color = SEX)) +
-    geom_point(size=3) +
-    geom_abline(slope=1, intercept=0) +
-    theme_bw() +
-    ggtitle("MDRD vs CG method for eGFT by RACE", subtitle="Synthetic data")
+    ggplot2::ggplot(ggplot2::aes(x = MDRD, y = CG, color = SEX)) +
+    ggplot2::geom_point(size=3) +
+    ggplot2::geom_abline(slope=1, intercept=0) +
+    ggplot2::theme_bw() +
+    ggplot2::ggtitle("MDRD vs CG method for eGFT by RACE",
+                     subtitle="Synthetic data")
 
   temp %>%
-    ggplot(aes(x=MDRD, y=RAYNAUD, color=SEX)) +
-    geom_point(size=3) +
-    geom_abline(slope=1, intercept=0) +
-    theme_bw() +
-    ggtitle("MDRD vs Raynoud method for eGFT by SEX", subtitle="Synthetic data")
+    ggplot2::ggplot(ggplot2::aes(x=MDRD, y=RAYNAUD, color=SEX)) +
+    ggplot2::geom_point(size=3) +
+    ggplot2::geom_abline(slope=1, intercept=0) +
+    ggplot2::theme_bw() +
+    ggplot2::ggtitle("MDRD vs Raynoud method for eGFT by SEX",
+                     subtitle="Synthetic data")
 })
 
 
@@ -70,9 +75,9 @@ create_subjects <- function(n=100) {
 test_that("EGFR is age-dependent", {
   expect_no_error(sbs <- create_subjects())
   sbs %>%
-    ggplot(aes(x = AGE, y = EGFR)) +
-    geom_point(size = 3) +
-    theme_bw()
+    ggplot2::ggplot(ggplot2::aes(x = AGE, y = EGFR)) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::theme_bw()
 })
 
 
@@ -106,12 +111,12 @@ test_that("PK model works", {
   pk %>%
     group_by(time, COMP) %>%
     summarize(MEAN = mean(VALUE), SD = sd(VALUE), .groups = "drop") %>%
-    ggplot(aes(x = time, y = MEAN, color = COMP)) +
-    geom_ribbon(aes(ymin = MEAN-SD, ymax = MEAN+SD, fill = COMP), color = NA,
-                alpha = 0.2) +
-    geom_line() +
-    xlim(0, 50) +
-    theme_bw()
+    ggplot2::ggplot(ggplot2::aes(x = time, y = MEAN, color = COMP)) +
+    ggplot2::geom_ribbon(ggplot2::aes(
+      ymin = MEAN-SD, ymax = MEAN+SD, fill = COMP), color = NA, alpha = 0.2) +
+    ggplot2::geom_line() +
+    ggplot2::xlim(0, 50) +
+    ggplot2::theme_bw()
 })
 
 
@@ -123,19 +128,19 @@ test_that("EGFR is a covariate in PK model", {
                    names_to = "COMP", values_to = "VALUE"))
 
   pk %>%
-    ggplot(aes(x = EGFR, y = ke)) +
-    geom_point(size = 3) +
-    theme_bw()
+    ggplot2::ggplot(ggplot2::aes(x = EGFR, y = ke)) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::theme_bw()
 
   pk %>%
     group_by(time, COMP) %>%
     summarize(MEAN = mean(VALUE), SD = sd(VALUE), .groups = "drop") %>%
-    ggplot(aes(x = time, y = MEAN, color = COMP)) +
-    geom_ribbon(aes(ymin = MEAN-SD, ymax = MEAN+SD, fill = COMP), color = NA,
-                alpha = 0.2) +
-    geom_line() +
-    xlim(0, 24) +
-    theme_bw()
+    ggplot2::ggplot(ggplot2::aes(x = time, y = MEAN, color = COMP)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = MEAN-SD, ymax = MEAN+SD,
+                                      fill = COMP), color = NA, alpha = 0.2) +
+    ggplot2::geom_line() +
+    ggplot2::xlim(0, 24) +
+    ggplot2::theme_bw()
 })
 
 

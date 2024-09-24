@@ -80,8 +80,6 @@ read_sdtm_xpt <- function(data_path, ...) {
 #'   readxl::read_xlsx.
 #' @param delim Deliminator.
 #' @return A `sdtm` object.
-#' @import readr
-#' @import readxl
 #' @export
 read_sdtm <- function(data_path,
                       domain=c("dm", "vs", "ex", "pc"),

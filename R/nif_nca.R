@@ -374,21 +374,23 @@ nca_power_model <- function(nca, parameter = NULL,
         unite(., COLOR, all_of(group), sep = "-", remove = FALSE) else .} %>%
       bind_cols(predict.lm(pm, pp, interval = 'prediction', se.fit = T,
                            level = 0.9)$fit) %>%
-      ggplot(aes(x = DOSE, y=exp(.data$fit))) +
-      geom_line() +
-      geom_ribbon(aes(x = DOSE, ymin = exp(.data$lwr), ymax = exp(.data$upr)),
-                  fill = 'lightgrey', alpha = 0.5) +
-      {if(!is.null(group)) geom_point(
-        aes(x = DOSE, y = PPORRES, color = COLOR), size = size, alpha = alpha)
+      ggplot2::ggplot(ggplot2::aes(x = DOSE, y = exp(.data$fit))) +
+      ggplot2::geom_line() +
+      ggplot2::geom_ribbon(ggplot2::aes(x = DOSE, ymin = exp(.data$lwr),
+                                        ymax = exp(.data$upr)),
+                           fill = 'lightgrey', alpha = 0.5) +
+      {if(!is.null(group)) ggplot2::geom_point(
+        ggplot2::aes(x = DOSE, y = PPORRES, color = COLOR), size = size, alpha = alpha)
           else
-          geom_point(aes(x = DOSE, y = PPORRES), size = size, alpha = alpha)} +
-      theme_bw() +
-      expand_limits(x = 0) +
-      labs(x = "dose (mg)", y = param,
+            ggplot2::geom_point(ggplot2::aes(x = DOSE, y = PPORRES),
+                                size = size, alpha = alpha)} +
+      ggplot2::theme_bw() +
+      ggplot2::expand_limits(x = 0) +
+      ggplot2::labs(x = "dose (mg)", y = param,
            caption = paste0("mean and 90% PI, slope = ",
                             round(pm$coefficients[2], 3))) +
-      {if(!is.null(group)) labs(color = color_label)} +
-      {if(!is.null(title)) ggtitle(title)} +
+      {if(!is.null(group)) ggplot2::labs(color = color_label)} +
+      {if(!is.null(title)) ggplot2::ggtitle(title)} +
       watermark(cex = 1.5)
   }
   out <- lapply(parameter, pm_plot)

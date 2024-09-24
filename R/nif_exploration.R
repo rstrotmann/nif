@@ -21,8 +21,6 @@
 #'
 #' @return A ggplot2 object.
 #' @import dplyr
-#' @import ggplot2
-#' @import lifecycle
 #' @export
 #' @keywords internal
 #' @examples
@@ -48,7 +46,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
     ensure_analyte() %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
-    verify(has_all_names(
+    assertr::verify(has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
@@ -61,7 +59,6 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
     plot_label <- "ID"
     x <- x %>%
       filter(ID == id)
-    # id_label <- ""
   } else {
     if("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {
@@ -86,23 +83,21 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 
   admin <- x %>%
     mutate(active_time = .data[[time_field]]) %>%
-    # as.data.frame() %>%
     dplyr::filter(EVID == 1) %>%
-    # dplyr::filter(PARENT == imp)
     {if(!is.null(imp)) filter(., PARENT == imp) else NULL}
 
   p <- obs %>%
-    ggplot(aes(
+    ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time,
       y = .data$DV,
       group = .data$group,
       color = .data$color
     )) +
-    { if(!is.null(admin) > 0)
-      geom_vline(data = admin,
-                 aes(xintercept = .data$active_time),
+    {if(!is.null(admin) > 0)
+      ggplot2::geom_vline(data = admin,
+                 ggplot2::aes(xintercept = .data$active_time),
                  color = "gray")} +
-    { if (lines == TRUE) ggplot2::geom_line() } +
+    {if (lines == TRUE) ggplot2::geom_line() } +
     ggplot2::geom_point(size = point_size) +
     ggplot2::xlim(0, max_time) +
     ggplot2::labs(
@@ -115,13 +110,14 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 
   if(!is.null(imp)) {
     p <- p +
-      labs(caption = paste("vertical lines indicate", imp, "administrations"))
+      ggplot2::labs(caption = paste("vertical lines indicate",
+                                    imp, "administrations"))
   }
 
   if (log == TRUE) {
-    p <- p + scale_y_log10()
+    p <- p + ggplot2::scale_y_log10()
   } else {
-    p <- p + scale_y_continuous(limits = c(0, NA))
+    p <- p + ggplot2::scale_y_continuous(limits = c(0, NA))
   }
   return(p)
 }
@@ -146,7 +142,6 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 #'
 #' @return A ggplot object.
 #' @import dplyr
-#' @import ggplot2
 #' @export
 #' @keywords internal
 #' @examples
@@ -161,8 +156,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     ensure_parent() %>%
     ensure_analyte() %>%
     index_dosing_interval() %>%
-    as.data.frame() %>%
-    verify(has_all_names("ID", "TIME", "AMT", "DV", "EVID")) %>%
+    assertr::verify(has_all_names("ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
 
   id_label <- ""
@@ -178,9 +172,10 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
       if (id %in% x$USUBJID) {
         x <- x %>%
           filter(.data$USUBJID == id)
-        id_label <- paste0(" (ID ",
-                           x %>% distinct(.data$ID) %>% pull(.data$ID),
-                           ")")
+        id_label <- paste0(
+          " (ID ",
+          x %>% distinct(.data$ID) %>% pull(.data$ID),
+          ")")
         plot_label <- "USUBJID"
       } else {
         stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
@@ -194,7 +189,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 
   p <- admin %>%
     ggplot2::ggplot(ggplot2::aes(
-      # x = TIME,
       x = .data$active_time,
       y = .data$AMT,
       group = interaction(.data$ID, .data$ANALYTE),
@@ -209,7 +203,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     ggplot2::theme(legend.position = "bottom")
 
   if (y_scale == "log") {
-    p <- p + scale_y_log10()
+    p <- p + ggplot2::scale_y_log10()
   }
   return(p)
 }
@@ -262,7 +256,7 @@ nif_mean_plot <- function(obj,
 
 
   temp <- obj %>%
-    verify(has_all_names("NTIME", "DOSE", "DV")) %>%
+    assertr::verify(has_all_names("NTIME", "DOSE", "DV")) %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
@@ -310,27 +304,24 @@ nif_mean_plot <- function(obj,
       group = GROUP,
       color = GROUP
     )) +
-    {if (lines) geom_line(na.rm = TRUE)} +
-    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
-    {if (log == TRUE) scale_y_log10()} +
-    xlim(min_x, max_x) +
+    {if (lines) ggplot2::geom_line(na.rm = TRUE)} +
+    {if (points) ggplot2::geom_point(na.rm = TRUE, size = point_size,
+                                     alpha = alpha)} +
+    {if (log == TRUE) ggplot2::scale_y_log10()} +
+    ggplot2::xlim(min_x, max_x) +
     ggplot2::geom_ribbon(
-      aes(ymin = mean - sd,
-          ymax = mean + sd,
-          fill = as.factor(GROUP)),
-      alpha = 0.3,
-      color = NA,
-      show.legend = FALSE) +
+      ggplot2::aes(ymin = mean - sd, ymax = mean + sd, fill = as.factor(GROUP)),
+      alpha = 0.3, color = NA, show.legend = FALSE) +
     {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
-    labs(x = "NTIME",
+    ggplot2::labs(x = "NTIME",
          y = y_label,
          color = group,
          title = title,
          caption = "Data shown are mean and SD") +
     ggplot2::theme_bw() +
     {if(all(group == "ANALYTE") & n_analytes == 1)
-      theme(legend.position = "none") else
-        theme(legend.position = "bottom")}
+      ggplot2::theme(legend.position = "none") else
+        ggplot2::theme(legend.position = "bottom")}
 }
 
 
@@ -359,7 +350,6 @@ nif_mean_plot <- function(obj,
 # ' @param nominal_time Plot NTIME rather than TIME. Defaults to FALSE.
 # '
 # ' @return A ggplot2 plot object.
-# ' @import assertr
 # ' @import dplyr
 # ' @export
 # ' @keywords internal
@@ -387,7 +377,7 @@ nif_spaghetti_plot <- function(obj,
                                nominal_time = FALSE, title = "",
                                admin = FALSE) {
   x <- obj %>%
-    verify(has_all_names(
+    assertr::verify(has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
     ensure_parent() %>%
     ensure_analyte() %>%
@@ -423,7 +413,6 @@ nif_spaghetti_plot <- function(obj,
 
   if (tad == TRUE) {
     x <- x %>%
-      # filter(EVID == 0) %>%
       mutate(TIME = TAD) %>%
       unite(GROUP, c(group, "DI", "ID"), sep = " | ", remove = FALSE) %>%
       unite(COLOR, c(group, "DI"), sep = " | ", remove = FALSE)
@@ -437,13 +426,9 @@ nif_spaghetti_plot <- function(obj,
       crossing(ANALYTE1 = analytes(x)) %>%
       mutate(ANALYTE = ANALYTE1) %>%
       select(-ANALYTE1)
-      # crossing(ANALYTE = analytes(x))
 
     x <- x %>%
-      # filter(EVID == 0) %>%
-      # filter(!is.na(DOSE)) %>%
       rbind(mock_admin_for_metabolites) %>%
-      # unite(GROUP, c(group, "ID"), sep = " | ", remove = FALSE) %>%
       unite(GROUP, all_of(c(group, "ID")), sep = " | ", remove = FALSE) %>%
       unite(COLOR, all_of(group), sep = " | ", remove = FALSE)
     x_label <- "TIME"
@@ -470,25 +455,25 @@ nif_spaghetti_plot <- function(obj,
     group_by(DOSE, ID) %>%
     filter(sum(EVID==0 & !is.na(DV)) > 1) %>%
     ungroup() %>%
-    # filter(!is.na(DOSE)) %>%
-    ggplot(aes(
+    ggplot2::ggplot(ggplot2::aes(
       x = TIME,
       y = DV,
       group = GROUP,
       color = COLOR,
       admin = EVID
     )) +
-    {if (lines) geom_line(na.rm = TRUE)} +
-    {if (points) geom_point(na.rm = TRUE, size = point_size, alpha = alpha)} +
+    {if (lines) ggplot2::geom_line(na.rm = TRUE)} +
+    {if (points) ggplot2::geom_point(na.rm = TRUE, size = point_size,
+                                     alpha = alpha)} +
     {if (length(unique(x$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
-    {if (log == TRUE) scale_y_log10()} +
+    {if (log == TRUE) ggplot2::scale_y_log10()} +
     {if(admin == TRUE) geom_admin()} +
-    xlim(min_x, max_x) +
-    labs(x = x_label, y = y_label, title = title, color = group) +
+    ggplot2::xlim(min_x, max_x) +
+    ggplot2::labs(x = x_label, y = y_label, title = title, color = group) +
     ggplot2::theme_bw() +
     {if(all(group == "ANALYTE") & n_analytes == 1)
-      theme(legend.position = "none") else
-        theme(legend.position = "bottom")}
+      ggplot2::theme(legend.position = "none") else
+        ggplot2::theme(legend.position = "bottom")}
 }
 
 
@@ -528,7 +513,6 @@ nif_spaghetti_plot <- function(obj,
 #' @param dose_norm Dose-normalized exposure, as logical.
 #'
 #' @return A ggplot object.
-#' @import assertr
 #' @export
 #'
 #' @seealso [nif_option()]
@@ -574,13 +558,12 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     ensure_tad() %>%
     ensure_tafd() %>%
     ensure_cfb() %>%
-    # ensure_time() %>%
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
-    verify(exec(
+    assertr::verify(exec(
       has_all_names,
-      !!!c("ID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) %>%
-    as.data.frame()
+      !!!c("ID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) #%>%
+    # as.data.frame()
 
   # fill dose to predose values
   if (integrate_predose == TRUE) {
@@ -616,11 +599,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   y_label <- ifelse(n_analyte == 1,
     as.character(temp %>% filter(EVID == 0) %>% distinct(ANALYTE)), "DV")
 
-  # dose-normalize, if applicable
-  # if(dose_norm == TRUE) {
-  #   temp <- temp %>%
-  #     mutate(DV = DV/DOSE) %>%
-  #     mutate(DOSE = NA)
   if(dose_norm == TRUE) {
     temp <- mutate(temp, DV = DV/DOSE, DOSE = NA)
     y_label <- paste0(y_label, " / DOSE")
@@ -638,10 +616,12 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     group_by(ID, ANALYTE) %>%
     mutate(n_obs = sum(EVID == 0)) %>%
     ungroup()
+
   n_no_obs <- temp %>%
     filter(n_obs == 0, EVID == 0) %>%
     distinct(ID, ANALYTE) %>%
     nrow()
+
   if(n_no_obs != 0) {
     conditional_message(
       paste0(n_no_obs, " subjects had no observation for the analyte(s) ",
@@ -651,29 +631,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
                             distinct(ID, ANALYTE, DOSE),
                           indent = "  ")))}
   temp <- filter(temp, n_obs > 0 | EVID == 1)
-
-  # remove trailing administrations
-  # temp <- temp %>%
-  #   group_by(ID, ANALYTE) %>%
-  #   mutate(last_obs_time = max(TIME[EVID == 0], na.rm = TRUE)) %>%
-  #   ungroup()
-  # n_trailing <- temp %>%
-  #   filter(TIME > last_obs_time) %>%
-  #   distinct(ID) %>%
-  #   nrow()
-  # if(n_trailing > 0) {
-  #   conditional_message(
-  #     paste0("Trailing administrations in ", n_trailing,
-  #     " subjects were removed before plotting."))}
-  # temp <- temp %>%
-  #   filter(TIME <= last_obs_time) %>%
-  #   as.data.frame()
-
-
-  # temp <- temp %>%
-  #   select(c("ID", "active_time", "EVID", "ANALYTE", "DOSE", "DV",
-  #            "DI", "n_obs"), all_of(group)) %>%
-  #   as.data.frame()
 
   # make plotting group and color
   plot_group <- group
@@ -688,19 +645,10 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       unite(., GROUP, all_of(plot_group), sep = "_", remove = FALSE)
       else mutate(., GROUP = TRUE)}
 
-  # temp <- temp %>%
-  #   {if(length(group[!group == "ID"]) > 0)
-  #     unite(., COLOR, all_of(group[!group == "ID"]), sep = "_", remove = FALSE)
-  #     # unite(., COLOR, all_of(group[!group %in% c("DI", "ID")]), sep = "_", remove = FALSE)
-  #     else mutate(., COLOR = TRUE)}
-
   temp <- temp %>%
     {if(length(group) > 0)
       unite(., COLOR, all_of(group), sep = "_", remove = FALSE)
       else mutate(., COLOR = TRUE)}
-
-  # color_label <- nice_enumeration(unique(group[!group == "ID"]))
-  # show_color <- length(unique(group[!group == "ID"])) > 0
 
   color_label <- nice_enumeration(unique(group))
   show_color <- length(unique(group)) > 0
@@ -724,64 +672,58 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
       ungroup() %>%
       arrange(DOSE, NTIME, GROUP) %>%
 
-      # group_by(DOSE, GROUP) %>%
-      # mutate(n_group = max(n)) %>%
-      # ungroup() %>%
-
-      # reframe(
-      #   n = n(),
-      #   # n_label = paste(unique(paste0("N=", n, " (", GROUP, ")")),
-      #   #                 collapse = ", "),
-      #   .by = c("DOSE")
-      # ) %>%
-
-    ggplot(aes(x = NTIME, y = mean, group = GROUP, color = COLOR)) +
-      {if (lines) geom_line(na.rm = TRUE)} +
-      {if (points) geom_point(na.rm = TRUE)} +
-      {if (log == TRUE) scale_y_log10()} +
-      {if (shading == TRUE) geom_ribbon(aes(ymin = pos_diff(mean, sd),
-                                            ymax = mean + sd, fill = as.factor(GROUP)), alpha = 0.3, color = NA,
-                                        show.legend = FALSE)} +
+    ggplot2::ggplot(ggplot2::aes(
+      x = .data$NTIME,
+      y = .data$mean,
+      group = .data$GROUP,
+      color = .data$COLOR)) +
+      {if (lines) ggplot2::geom_line(na.rm = TRUE)} +
+      {if (points) ggplot2::geom_point(na.rm = TRUE)} +
+      {if (log == TRUE) ggplot2::scale_y_log10()} +
+      {if (shading == TRUE) ggplot2::geom_ribbon(
+        ggplot2::aes(ymin = pos_diff(mean, sd),
+                     ymax = mean + sd,
+                     fill = as.factor(GROUP)),
+        alpha = 0.3,
+        color = NA,
+        show.legend = FALSE)} +
       {if (length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
-      xlim(c(min_time, max_time)) +
-      labs(x = "nominal time (h)", y = y_label, color = color_label,
+      ggplot2::xlim(c(min_time, max_time)) +
+      ggplot2::labs(x = "nominal time (h)", y = y_label, color = color_label,
            caption = "Mean and SD") +
-      {if(show_n == TRUE) geom_text(
-        aes(label =
-              paste0 ("N = ", n)),
+      {if(show_n == TRUE) ggplot2::geom_text(
+        ggplot2::aes(label = paste0 ("N = ", n)),
         x = -Inf,
         y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)} +
-      theme_bw() +
-      # theme_nif() +
-      theme(legend.position = ifelse(
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position = ifelse(
         show_color == TRUE & legend == TRUE, "bottom", "none")) +
-      ggtitle(title) +
-      # {if(watermark != "") annotate("text",
-      #                               x = 0, y = Inf, label = watermark,
-      #                               hjust = 2, vjust = 2, col = "lightgrey",
-      #                               cex = 6, fontface = "bold", alpha = 0.6)}
+      ggplot2::ggtitle(title) +
       watermark(cex = 1.5)
 
   } else {
     # spaghetti plot
     obs_data %>%
       {if(log == TRUE) filter(., DV != 0 | is.na(DV)) else .} %>%
-      ggplot(aes(x = .data$active_time, y = .data$DV, group = .data$GROUP,
-                 color = .data$COLOR)) +
-      {if(!is.null(admin)) geom_vline(data = admin_data,
-                                      aes(xintercept = .data$active_time),
-                                      color = "gray")} +
-      {if(points == TRUE) geom_point(na.rm = TRUE, ...)} +
-      # {if (lines) geom_line(na.rm = TRUE)} +
-      {if (lines) geom_line()} +
-      {if (log == TRUE) scale_y_log10()} +
-      {if(length(unique(temp$DOSE)) > 1) facet_wrap(~DOSE)} +
-      labs(x = x_label, y = y_label, color = color_label, caption = caption) +
-      xlim(c(min_time, max_time)) +
-      theme_bw() +
-      theme(legend.position =
+      ggplot2::ggplot(ggplot2::aes(
+        x = .data$active_time,
+        y = .data$DV,
+        group = .data$GROUP,
+        color = .data$COLOR)) +
+      {if(!is.null(admin)) ggplot2::geom_vline(
+        data = admin_data,
+        ggplot2::aes(xintercept = .data$active_time), color = "gray")} +
+      {if(points == TRUE) ggplot2::geom_point(na.rm = TRUE, ...)} +
+      {if (lines) ggplot2::geom_line()} +
+      {if (log == TRUE) ggplot2::scale_y_log10()} +
+      {if(length(unique(temp$DOSE)) > 1) ggplot2::facet_wrap(~DOSE)} +
+      ggplot2::labs(x = x_label, y = y_label, color = color_label,
+                    caption = caption) +
+      ggplot2::xlim(c(min_time, max_time)) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position =
               ifelse(show_color == TRUE & legend == TRUE, "bottom", "none")) +
-      ggtitle(title) +
+      ggplot2::ggtitle(title) +
       watermark(cex = 1.5)
   }
 }
@@ -1033,7 +975,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
         alpha = 0.3, title = paste(i, "by dose"),
         max_time = max_observation_time(x$nif, i)
       ) +
-        labs(y = "")
+        ggplot2::labs(y = "")
     }
   }
   return(out)
@@ -1089,28 +1031,35 @@ covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
       mutate_at(group, factor) %>%
       unite(GROUP, all_of(group), remove = FALSE) %>%
       distinct_at(c("ID", cov_params$field, "GROUP")) %>%
-      ggplot(aes(x = .data[[cov_params$field]], group = GROUP,
+      ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]], group = GROUP,
                  fill = GROUP)) +
-      {if(density == FALSE) geom_histogram(bins = bins, binwidth = binwidth,
-        position = "identity", alpha = alpha) else
-          geom_histogram(aes(y = after_stat(density)), bins = bins, binwidth = binwidth,
-                         position = "identity", alpha = alpha)}
+      {if(density == FALSE) ggplot2::geom_histogram(
+        bins = bins, binwidth = binwidth, position = "identity",
+        alpha = alpha) else
+          ggplot2::geom_histogram(ggplot2::aes(
+            y = ggplot2::after_stat(density)),
+            bins = bins, binwidth = binwidth,
+            position = "identity", alpha = alpha)}
   } else {
     p <- obj %>%
       as.data.frame() %>%
       distinct_at(c("ID", cov_params$field)) %>%
-      ggplot(aes(x = .data[[cov_params$field]])) +
-      {if(density == FALSE) geom_histogram(bins = bins, binwidth = binwidth,
+      ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]])) +
+      {if(density == FALSE) ggplot2::geom_histogram(
+        bins = bins, binwidth = binwidth,
         position = "identity", fill = "grey") else
-          geom_histogram(aes(y = after_stat(density)), bins = bins,
+          ggplot2::geom_histogram(ggplot2::aes(
+            y = ggplot2::after_stat(density)),
+            bins = bins,
             binwidth = binwidth, position = "identity", fill = "grey")}
   }
   p +
-    geom_vline(xintercept = limits, color = "red") +
-    theme_bw() +
-    {if(density == FALSE) labs(x = xlabel, y = "number of subjects") else
-      labs(x = xlabel, y = "density")} +
-    ggtitle(title) +
+    ggplot2::geom_vline(xintercept = limits, color = "red") +
+    ggplot2::theme_bw() +
+    {if(density == FALSE) ggplot2::labs(
+      x = xlabel, y = "number of subjects") else
+        ggplot2::labs(x = xlabel, y = "density")} +
+    ggplot2::ggtitle(title) +
     watermark(cex = 1.5)
 }
 
@@ -1144,12 +1093,13 @@ covariate_barplot <- function(obj, cov, group = NULL, title = NULL) {
       distinct_at(c("ID", "CLASS", "GROUP")) %>%
       group_by(CLASS, GROUP) %>%
       summarize(n = n(), .groups = "drop") %>%
-      ggplot(aes(x = CLASS, y = n, group = GROUP, fill = GROUP)) +
-      scale_x_discrete(drop = FALSE, name = cov) +
-      geom_bar(stat = "identity",
-               position = position_dodge(preserve = "single"), width = 0.5,
-               alpha = 0.8) +
-      labs(fill = group)
+      ggplot2::ggplot(ggplot2::aes(
+        x = CLASS, y = n, group = GROUP, fill = GROUP)) +
+      ggplot2::scale_x_discrete(drop = FALSE, name = cov) +
+      ggplot2::geom_bar(stat = "identity",
+               position = ggplot2::position_dodge(preserve = "single"),
+               width = 0.5, alpha = 0.8) +
+      ggplot2::labs(fill = group)
   } else {
     out <- obj %>%
       as.data.frame() %>%
@@ -1157,15 +1107,16 @@ covariate_barplot <- function(obj, cov, group = NULL, title = NULL) {
       distinct(ID, CLASS) %>%
       group_by(CLASS) %>%
       summarize(n = n()) %>%
-      ggplot(aes(x = CLASS, y = n)) +
-      scale_x_discrete(drop = FALSE, name = cov) +
-      geom_bar(stat = "identity", fill = "white", color = "black", width = 0.5)
+      ggplot2::ggplot(ggplot2::aes(x = CLASS, y = n)) +
+      ggplot2::scale_x_discrete(drop = FALSE, name = cov) +
+      ggplot2::geom_bar(
+        stat = "identity", fill = "white", color = "black", width = 0.5)
   }
 
   out +
-    theme_bw() +
-    labs(y = "N") +
-    ggtitle(title) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(y = "N") +
+    ggplot2::ggtitle(title) +
     watermark()
 }
 
@@ -1188,15 +1139,16 @@ wt_by_sex <- function(obj) {
     distinct(ID, SEX, bl_wt) %>%
     group_by(SEX) %>%
     mutate(count = n(), maxwt = max(bl_wt)) %>%
-    ggplot(aes(x = SEX, y = bl_wt, group = SEX)) +
-    scale_x_continuous(breaks = c(0, 1)) +
-    geom_boxplot(width = 0.5) +
-    geom_label(aes(label = paste0("N=", count), y = maxwt + 5),
-      label.size = 0, position = position_dodge(width = 0.75)
+    ggplot2::ggplot(ggplot2::aes(x = SEX, y = bl_wt, group = SEX)) +
+    ggplot2::scale_x_continuous(breaks = c(0, 1)) +
+    ggplot2::geom_boxplot(width = 0.5) +
+    ggplot2::geom_label(ggplot2::aes(
+      label = paste0("N=", count), y = maxwt + 5),
+      label.size = 0, position = ggplot2::position_dodge(width = 0.75)
     ) +
-    labs(x = "sex", y = "baseline weight (kg)") +
-    theme_bw() +
-    ggtitle("Body weight by sex") +
+    ggplot2::labs(x = "sex", y = "baseline weight (kg)") +
+    ggplot2::theme_bw() +
+    ggplot2::ggtitle("Body weight by sex") +
     watermark()
 }
 
@@ -1230,14 +1182,14 @@ wt_by_race <- function(obj) {
     mutate(maxwt = max(bl_wt, na.rm = TRUE)) %>%
     group_by(rc) %>%
     mutate(count = n()) %>%
-    ggplot(aes(x = rc, y = bl_wt, group = rc)) +
-    geom_boxplot(width = 0.5) +
-    geom_label(aes(label = paste0("N=", count), y = maxwt + 5),
-      label.size = 0
+    ggplot2::ggplot(ggplot2::aes(x = rc, y = bl_wt, group = rc)) +
+    ggplot2::geom_boxplot(width = 0.5) +
+    ggplot2::geom_label(ggplot2::aes(
+      label = paste0("N=", count), y = maxwt + 5), label.size = 0
     ) +
-    labs(x = "", y = "baseline weight (kg)") +
-    theme_bw() +
-    ggtitle("Body weight by race") +
+    ggplot2::labs(x = "", y = "baseline weight (kg)") +
+    ggplot2::theme_bw() +
+    ggplot2::ggtitle("Body weight by race") +
     watermark()
 }
 
@@ -1254,12 +1206,12 @@ wt_by_ht <- function(obj, alpha = 0.7) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
-    ggplot(aes(x = HEIGHT, y = WEIGHT)) +
-    geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
-    geom_point(size = 3, alpha = alpha) +
-    labs(x = "height (cm)", y = "baseline weight (kg)") +
-    ggtitle("Body weight by height") +
-    theme_bw()
+    ggplot2::ggplot(ggplot2::aes(x = HEIGHT, y = WEIGHT)) +
+    ggplot2::geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
+    ggplot2::geom_point(size = 3, alpha = alpha) +
+    ggplot2::labs(x = "height (cm)", y = "baseline weight (kg)") +
+    ggplot2::ggtitle("Body weight by height") +
+    ggplot2::theme_bw()
 }
 
 
@@ -1275,12 +1227,12 @@ ht_by_wt <- function(obj, alpha = 0.7) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
-    ggplot(aes(x = WEIGHT, y = HEIGHT)) +
-    geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
-    geom_point(size = 3, alpha = alpha) +
-    labs(y = "height (cm)", x = "baseline weight (kg)") +
-    ggtitle("Body height by weight") +
-    theme_bw() +
+    ggplot2::ggplot(ggplot2::aes(x = WEIGHT, y = HEIGHT)) +
+    ggplot2::geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
+    ggplot2::geom_point(size = 3, alpha = alpha) +
+    ggplot2::labs(y = "height (cm)", x = "baseline weight (kg)") +
+    ggplot2::ggtitle("Body height by weight") +
+    ggplot2::theme_bw() +
     watermark()
 }
 
@@ -1297,13 +1249,13 @@ bmi_by_age <- function(obj, alpha = 0.7) {
   obj %>%
     as.data.frame() %>%
     distinct(ID, AGE, BMI) %>%
-    ggplot(aes(x = AGE, y = BMI)) +
-    geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
-    geom_point(size = 3, alpha = alpha) +
-    labs(y = "BMI (kg/m^2)", x = "age (y)") +
-    ggtitle("Body mass index by age") +
-    theme_bw() +
-    theme(legend.position = "none") +
+    ggplot2::ggplot(ggplot2::aes(x = AGE, y = BMI)) +
+    ggplot2::geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
+    ggplot2::geom_point(size = 3, alpha = alpha) +
+    ggplot2::labs(y = "BMI (kg/m^2)", x = "age (y)") +
+    ggplot2::ggtitle("Body mass index by age") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none") +
     watermark()
 }
 
@@ -1315,7 +1267,6 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 #' @param ... Further graphical parameters.
 #'
 #' @return A ggplot object.
-#' @import assertr
 #' @export
 time_by_ntime <- function(obj, max_time = NULL, ...) {
   if(is.null(max_time)) {
@@ -1328,9 +1279,9 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
     filter(TIME <= max_time) %>%
     filter(EVID == 0) %>%
     filter(!is.na(TIME)) %>%
-    ggplot(aes(x = NTIME, y = TIME, group = ID)) +
-    geom_point(...) +
-    theme_bw() +
+    ggplot2::ggplot(ggplot2::aes(x = NTIME, y = TIME, group = ID)) +
+    ggplot2::geom_point(...) +
+    ggplot2::theme_bw() +
     watermark()
 }
 
@@ -1398,12 +1349,12 @@ mean_dose_plot <- function(obj, analyte = NULL, title = NULL) {
       .groups = "drop"
     ) %>%
     pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") %>%
-    ggplot(aes(x = DAY, y = VAL)) +
-    geom_line() +
-    facet_grid(PARAM ~ ., scales = "free_y") +
-    labs(x = "time (days)", y = "") +
-    theme_bw() +
-    ggtitle(title) +
+    ggplot2::ggplot(ggplot2::aes(x = DAY, y = VAL)) +
+    ggplot2::geom_line() +
+    ggplot2::facet_grid(PARAM ~ ., scales = "free_y") +
+    ggplot2::labs(x = "time (days)", y = "") +
+    ggplot2::theme_bw() +
+    ggplot2::ggtitle(title) +
     watermark()
 }
 
@@ -1493,7 +1444,6 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
-#' @import assertr
 #' @export
 edish_plot <- function(nif, sdtm, enzyme = "ALT",
                        observation_filter = "LBSPEC != 'URINE'",
@@ -1504,7 +1454,7 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
   lb <- sdtm %>%
     domain("lb") %>%
     filter(eval(parse(text = observation_filter))) %>%
-    verify(has_all_names("USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
+    assertr::verify(has_all_names("USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
 
   if(!all(c("BILI", enzyme) %in% lb$LBTESTCD))
     stop("Liver markers values not found in LB")
@@ -1544,31 +1494,32 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
       group_by(.data$ID, .data$TIME) %>%
       pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
       ungroup() %>%
-      ggplot(aes(x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN, color = (TIME > 0),
-                 label = .data$ID)) +
-      geom_point(size = size, alpha = alpha) +
-      {if(show_labels == TRUE) geom_text_repel()} +
-      {if(!autoscale == TRUE) scale_x_log10(limits = c(0.01, 1000)) else
-        scale_x_log10()} +
-      {if(!autoscale == TRUE) scale_y_log10(limits = c(0.01, 100)) else
-        scale_y_log10()} +
+      ggplot2::ggplot(ggplot2::aes(x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
+                                   color = (TIME > 0), label = .data$ID)) +
+      ggplot2::geom_point(size = size, alpha = alpha) +
+      {if(show_labels == TRUE) ggrepel::geom_text_repel()} +
+      {if(!autoscale == TRUE) ggplot2::scale_x_log10(
+        limits = c(0.01, 1000)) else ggplot2::scale_x_log10()} +
+      {if(!autoscale == TRUE) ggplot2::scale_y_log10(limits = c(0.01, 100)) else
+        ggplot2::scale_y_log10()} +
 
-      {if(shading == TRUE) annotate('rect', xmin = 3, xmax = Inf, ymin = 2,
-                                    ymax = Inf, alpha=.15, fill='grey')} +
-      geom_hline(yintercept = 2, linetype="dashed") +
-      geom_vline(xintercept = 3, linetype="dashed") +
-      labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +#,
+      {if(shading == TRUE) ggplot2::annotate('rect', xmin = 3, xmax = Inf,
+                                             ymin = 2, ymax = Inf, alpha=.15,
+                                             fill='grey')} +
+      ggplot2::geom_hline(yintercept = 2, linetype="dashed") +
+      ggplot2::geom_vline(xintercept = 3, linetype="dashed") +
+      ggplot2::labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +#,
            # caption = paste0(length(unique(nif$ID)),
            #   " subjects", "red: predose, grey area: Hy's law.")) +
-      theme_bw() +
-      theme(legend.position = "none") +
-      ggtitle(title)
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position = "none") +
+      ggplot2::ggtitle(title)
 
     caption <- paste0(length(unique(nif$ID)), " subjects, red: predose")
     caption <- ifelse(shading == TRUE,
                       paste0(caption, ", grey area: Hy's law."), caption)
     p <- p +
-      labs(caption = caption) +
+      ggplot2::labs(caption = caption) +
       watermark(cex = 1.5)
   # })
   return(p)

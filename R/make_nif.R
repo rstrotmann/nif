@@ -137,7 +137,6 @@ impute_missing_exendtc <- function(ex) {
 #' @param ex The EX domain as data frame.
 #' @param cut.off.date The cut-off date.
 #' @return The updated EX domain as data frame.
-#' @import assertr
 #' @keywords internal
 impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
   temp <- ex %>%
@@ -252,7 +251,6 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
 #' @param ex The EX domain as data frame.
 #' @param dm The DM domain as data frame.
 #' @return The enhanced EX domain as data frame.
-#' @import assertr
 #' @keywords internal
 make_exstdy_exendy <- function(ex, dm) {
   ex %>%
@@ -418,7 +416,6 @@ clip_nif <- function(nif) {
 #' @param keep Columns to keep, as character.
 #'
 #' @return A data table.
-#' @import assertr
 #' @import tidyselect
 #' @export
 #' @keywords internal
@@ -812,13 +809,11 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
 #'
 #' @return A nif object.
 #' @export
-#' @import assertr
-#' @export
 make_time <- function(obj) {
   obj %>%
     as.data.frame() %>%
-    verify(has_all_names("ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
-    verify(is.POSIXct(.data$DTC)) %>%
+    assertr::verify(has_all_names("ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
+    assertr::verify(is.POSIXct(.data$DTC)) %>%
     group_by(.data$ID) %>%
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     ungroup() %>%
@@ -1024,7 +1019,6 @@ add_observation <- function(
 #'   field 'DV' that provides the re-coded value.
 #'
 #' @return A nif object.
-#' @import assertr
 #' @importFrom stats na.omit
 #' @export
 #' @examples
@@ -1056,22 +1050,6 @@ add_baseline <- function(
 
   bl_field <- paste0("BL_", testcd)
 
-  # baseline <- domain(sdtm, str_to_lower(domain)) %>%
-  #   lubrify_dates() %>%
-  #   filter(eval(parse(text = observation_filter))) %>%
-  #   filter(.data[[TESTCD_field]] %in% testcd) %>%
-  #   filter(eval(parse(text = baseline_filter))) %>%
-  #   pivot_wider(names_from = all_of(TESTCD_field),
-  #               values_from = all_of(DV_field)) %>%
-  #   # select("USUBJID", {{testcd}}) %>%
-  #   select(all_of(c("USUBJID", {{testcd}}))) %>%
-  #
-  #   group_by(.data$USUBJID) %>%
-  #   summarize(across(all_of(testcd),
-  #                    ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
-  #   rename_with(~bl_field, .cols = testcd) %>%
-  #   ungroup()
-
   join_fields <- intersect(names(coding_table),
                            names(domain(sdtm, str_to_lower(domain))))
   if(!is.null(coding_table) & length(join_fields) == 0) {
@@ -1089,7 +1067,6 @@ add_baseline <- function(
       left_join(., coding_table, by = join_fields)} %>%
     pivot_wider(names_from = all_of(TESTCD_field),
                 values_from = DV) %>%
-    # select("USUBJID", {{testcd}}) %>%
     select(all_of(c("USUBJID", {{testcd}}))) %>%
     group_by(.data$USUBJID) %>%
     summarize(across(all_of(testcd),
@@ -1293,7 +1270,6 @@ nif_cleanup <- function(nif, keep = NULL) {
 #' @return A nif object.
 #' @seealso [add_analyte_mapping()]
 #' @seealso [add_metabolite_mapping()]
-#' @import assertr
 #' @importFrom stats na.omit
 #' @export
 #'
@@ -1313,7 +1289,7 @@ nif_auto <- function(sdtm,
   }
 
   analyte_mapping <- analyte_mapping %>%
-    verify(has_all_names("EXTRT", "PCTESTCD", "ANALYTE")) %>%
+    assertr::verify(has_all_names("EXTRT", "PCTESTCD", "ANALYTE")) %>%
     mutate(PARENT = PCTESTCD, METABOLITE = FALSE) %>%
     {if(!"ANALYTE" %in% names(.)) mutate(., ANALYTE = PCTESTCD) else .}
 

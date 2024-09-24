@@ -1088,7 +1088,6 @@ add_tad <- function(nif) {
 #' @param nif A NIF object.
 #' @return A NIF object.
 #' @export
-#' @import assertr
 #' @examples
 #' add_tafd(examplinib_poc_nif)
 add_tafd <- function(nif) {
@@ -1109,7 +1108,6 @@ add_tafd <- function(nif) {
 #'
 #' @param obj The NIF object as data frame.
 #' @return The updated NIF object as data frame.
-#' @import assertr
 #' @export
 #' @examples
 #' head(add_trtdy(examplinib_poc_nif))
@@ -1143,14 +1141,14 @@ add_trtdy <- function(obj) {
 #' @seealso [egfr_mdrd()]
 #' @seealso [egfr_cg()]
 #' @seealso [egfr_raynaud()]
-#' @import assertr
 #' @export
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
 add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
-      verify(has_all_names("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT")) %>%
+      assertr::verify(has_all_names(
+        "BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT")) %>%
       mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
         molar = TRUE
       ))
@@ -1195,20 +1193,10 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' @seealso [lbm_hume()]
 #' @seealso [lbm_boer()]
 #' @seealso [lbm_peters()]
-#' @import assertr
 #' @export
 add_bl_lbm <- function(obj, method = lbm_boer) {
-  # if ("BL_CREAT" %in% colnames(obj)) {
-  #   obj %>%
-  #     mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
-  #                             molar = TRUE
-  #     ))
-  # } else {
-  #   obj %>%
-  #     mutate(BL_CRCL = as.numeric(NA))
-  # }
   obj %>%
-    verify(has_all_names("WEIGHT", "HEIGHT", "SEX")) %>%
+    assertr::verify(has_all_names("WEIGHT", "HEIGHT", "SEX")) %>%
     mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
 }
 

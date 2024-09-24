@@ -1,6 +1,7 @@
 # source: https://ggplot2-book.org/extensions#sec-modifying-geom-defaults
 
-StatAdmin <- ggproto("StatAdmin", Stat,
+
+StatAdmin <- ggplot2::ggproto("StatAdmin", ggplot2::Stat,
   compute_group = function(data, scales) {
     temp <- data[which(data$admin == 1), ]
     temp$xintercept <- temp$x
@@ -9,6 +10,22 @@ StatAdmin <- ggproto("StatAdmin", Stat,
   required_aes = c("x", "admin")
 )
 
+
+#' ggplot stat for treatment administrations
+#'
+#' @param mapping The mapping.
+#' @param data The data as data frame.
+#' @param geom The geom.
+#' @param position The position.
+#' @param na.rm Remove NA, as logical.
+#' @param show.legend Show legend as logical.
+#' @param inherit.aes Inherit aesthetics as logical.
+#' @param xintercept The x intercept.
+#' @param ... Further parameters.
+#'
+#' @return A ggplot layer object.
+#' @importFrom ggplot2 layer
+#' @export
 stat_admin <- function(mapping = NULL, data = NULL,
                        geom = "vline", position = "identity",
                        na.rm = FALSE, show.legend = NA,
@@ -25,21 +42,24 @@ stat_admin <- function(mapping = NULL, data = NULL,
   )
 }
 
-GeomAdmin <- ggproto("GeomAdmin", GeomVline,
-                             default_aes = aes(
-                               colour = "grey",
-                               fill = NA,
-                               linewidth = 0.5,
-                               linetype = 1,
-                               alpha = NA
-                             )
+
+GeomAdmin <- ggplot2::ggproto(
+  "GeomAdmin", ggplot2::GeomVline,
+  default_aes = ggplot2::aes(
+    colour = "grey",
+    fill = NA,
+    linewidth = 0.5,
+    linetype = 1,
+    alpha = NA
+    )
 )
 
-#' administration geom layer for ggplot
+
+#' Administration geom layer for ggplot
 #'
 #' @inheritParams ggplot2::geom_vline
 #' @return a ggplot2 layer.
-#' @import ggplot2
+#' @importFrom ggplot2 layer
 #' @export
 geom_admin <- function(mapping = NULL, data = NULL,
                        # stat = StatAdmin,
@@ -48,7 +68,7 @@ geom_admin <- function(mapping = NULL, data = NULL,
                        show.legend = NA,
                        # inherit.aes = TRUE,
                        ...) {
-  layer(
+  ggplot2::layer(
     geom = GeomAdmin,
     data = data,
     mapping = mapping,
@@ -61,24 +81,6 @@ geom_admin <- function(mapping = NULL, data = NULL,
 }
 
 
-# geom_watermark <- function(watermark = NULL, ...) {
-#   # if(is.null(watermark)) watermark = nif_option_value("watermark")
-#
-#   layer(
-#     geom = GeomText,
-#     data = NULL,
-#     mapping = NULL,
-#     stat = "identity",
-#     position = "identity",
-#     params = list(color = "gray",
-#                   label = watermark,
-#                   x = 0, y = 0,
-#                   vjust = 0.5,
-#                   hjust = 0.5, ...)
-#   )
-# }
-
-
 #' Add a watermark annotation layer for a ggplot2 object
 #' @name watermark
 #'
@@ -87,7 +89,8 @@ geom_admin <- function(mapping = NULL, data = NULL,
 #' @param fontface Font face ("bold" by default)
 #'
 #' @return A grob.
-#' @import grid
+#' @importFrom grid textGrob
+#' @importFrom grid gpar
 #' @export
 watermark <- function(watermark_text = NULL,
                       cex = 1.5,
@@ -102,7 +105,8 @@ watermark <- function(watermark_text = NULL,
 
   watermark_grob <- grid::textGrob(
     watermark_text,
-    x = unit(0.5, "npc"), y = unit(1, "npc"),
+    x = grid::unit(0.5, "npc"),
+    y = grid::unit(1, "npc"),
     vjust = 1.5,
     gp = grid::gpar(
       color = "lightgrey",
@@ -113,6 +117,6 @@ watermark <- function(watermark_text = NULL,
     rot = 0
   )
 
-  if(watermark_text != "") annotation_custom(grob = watermark_grob)
+  if(watermark_text != "") ggplot2::annotation_custom(grob = watermark_grob)
 }
 

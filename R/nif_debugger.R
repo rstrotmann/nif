@@ -116,12 +116,15 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
         filter(EVID == 0) %>%
         # filter(TAD >= input$min_x, TAD <= input$max_x) %>%
         # ggplot(aes(x = TAD, y = DV, color=!(REF %in% (id() %>% pull(REF))))) +
-        ggplot(aes(x = TIME, y = DV, color=!(REF %in% (id() %>% pull(REF))))) +
-        geom_point(size=4, alpha=.6) +
-        scale_y_log10() +
-        theme_bw() +
-        ggtitle(paste0("Analyte: ", analyte)) +
-        theme(legend.position = "none")},
+        ggplot2::ggplot(ggplot2::aes(
+          x = TIME,
+          y = DV,
+          color=!(REF %in% (id() %>% pull(REF))))) +
+        ggplot2::geom_point(size=4, alpha=.6) +
+        ggplot2::scale_y_log10() +
+        ggplot2::theme_bw() +
+        ggplot2::ggtitle(paste0("Analyte: ", analyte)) +
+        ggplot2::theme(legend.position = "none")},
         height = 350)
 
     ## NIF table output

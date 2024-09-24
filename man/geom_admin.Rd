@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot_extension.R
 \name{geom_admin}
 \alias{geom_admin}
-\title{administration geom layer for ggplot}
+\title{Administration geom layer for ggplot}
 \usage{
 geom_admin(mapping = NULL, data = NULL, na.rm = FALSE, show.legend = NA, ...)
 }
@@ -42,5 +42,5 @@ to the paired geom/stat.}
 a ggplot2 layer.
 }
 \description{
-administration geom layer for ggplot
+Administration geom layer for ggplot
 }
