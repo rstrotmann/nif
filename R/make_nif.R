@@ -14,10 +14,11 @@
 #' @keywords internal
 impute_exendtc_to_rfendtc <- function(ex, dm) {
   dm %>%
-    verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
+    assertr::verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
 
   temp <- ex %>%
-    verify(has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    assertr::verify(
+      has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
@@ -708,7 +709,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
   # pc <- domain(sdtm, "pc") %>% lubrify_dates()
 
-  assert_that(
+  assertthat::assert_that(
     extrt %in% ex$EXTRT,
     msg = paste0("Treatment '", extrt, "' not found in EX.EXTRT!")
   )
@@ -1055,7 +1056,8 @@ add_baseline <- function(
   if(!is.null(coding_table) & length(join_fields) == 0) {
     stop("Coding table cannot be applied - no valid data column!")
   } else {
-    conditional_message(paste0("Recoding from ", join_fields))
+    if(!is.null(coding_table)) {
+      conditional_message(paste0("Recoding from ", join_fields))}
   }
 
   baseline <- domain(sdtm, str_to_lower(domain)) %>%
