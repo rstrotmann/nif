@@ -255,7 +255,7 @@ nca_summary_table <- function(
       )
     ) %>%
     mutate(value = paste0(center, " (", dispersion, ")")) %>%
-    pivot_wider(
+    tidyr::pivot_wider(
       id_cols = c(any_of(c(group, "DOSE")), "n"),
       names_from = "PPTESTCD", values_from = value
     )
@@ -371,7 +371,7 @@ nca_power_model <- function(nca, parameter = NULL,
 
     pp %>%
       {if(!is.null(group))
-        unite(., COLOR, all_of(group), sep = "-", remove = FALSE) else .} %>%
+        tidyr::unite(., COLOR, all_of(group), sep = "-", remove = FALSE) else .} %>%
       bind_cols(predict.lm(pm, pp, interval = 'prediction', se.fit = T,
                            level = 0.9)$fit) %>%
       ggplot2::ggplot(ggplot2::aes(x = DOSE, y = exp(.data$fit))) +

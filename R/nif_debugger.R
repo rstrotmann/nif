@@ -40,7 +40,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, usubjid = NULL) {
     filter(.data$USUBJID %in% usubjid) %>%
     mutate(admin_REF = case_when(.data$EVID==1 ~ .data$REF)) %>%
     group_by(.data$ID, .data$PARENT) %>%
-    fill(admin_REF, .direction = "down") %>%
+    tidyr::fill(admin_REF, .direction = "down") %>%
     ungroup() %>%
     left_join(sdtm_data$analyte_mapping, by=c("ANALYTE"="PCTESTCD")) %>%
     filter(!(is.na(.data$DV) & EVID == 0))

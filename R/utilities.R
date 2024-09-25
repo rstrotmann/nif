@@ -28,7 +28,7 @@ conditional_message <- function(...) {
 #' @export
 #' @seealso [nif_option()]
 print_debug <- function(obj) {
-  if(is_true(nif_option_value("debug"))) print(obj)
+  if(rlang::is_true(nif_option_value("debug"))) print(obj)
 }
 
 

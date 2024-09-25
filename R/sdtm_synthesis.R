@@ -196,7 +196,7 @@ synthesize_vs <- function(dm) {
     # filter(ACTARMCD!="SCRNFAIL") %>%
     dplyr::select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
     group_by_all() %>%
-    expand(VSTESTCD = c("HEIGHT", "WEIGHT")) %>%
+    tidyr::expand(VSTESTCD = c("HEIGHT", "WEIGHT")) %>%
     mutate(VSORRES = case_when(
       .data$VSTESTCD == "HEIGHT" ~ rnorm(1, 179, 6.81),
       .data$VSTESTCD == "WEIGHT" ~ rnorm(1, 78.5, 10.2)
@@ -239,7 +239,7 @@ make_sd_ex <- function(dm, admindays = c(1, 14), drug = "RS2023", dose = 500) {
     dplyr::select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
     mutate(DOMAIN = "EX") %>%
     group_by_all() %>%
-    expand(EXDY = admindays) %>%
+    tidyr::expand(EXDY = admindays) %>%
     ungroup() %>%
     mutate(EXSTDTC = .data$RFSTDTC + (.data$EXDY - 1) * 60 * 60 * 24) %>%
     mutate(EXSTDY = .data$EXDY, EXENDY = .data$EXDY) %>%
@@ -309,7 +309,7 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
     )) %>%
     ungroup() %>%
     as.data.frame() %>%
-    fill(block_id, .direction = "down") %>%
+    tidyr::fill(block_id, .direction = "down") %>%
     group_by(block_id) %>%
     mutate(EXSTDTC = dtc[1], EXENDTC = dtc[n()]) %>%
     ungroup() %>%
@@ -355,7 +355,7 @@ make_md_ex <- function(dm,
   if (missed_doses == TRUE) {
     ex <- ex %>%
       group_by(.data$DOMAIN, .data$STUDYID, .data$USUBJID) %>%
-      expand(miss_admins(EXSTDTC, EXENDTC, red_prob = red_prob)) %>%
+      tidyr::expand(miss_admins(EXSTDTC, EXENDTC, red_prob = red_prob)) %>%
       ungroup() %>%
       as.data.frame()
   }
@@ -425,7 +425,7 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
   pc <- sim %>%
     dplyr::select(c("USUBJID", "id", "time", "c_centr", "c_metab")) %>%
     mutate(RS2023 = .data$c_centr * 1000, RS2023487A = .data$c_metab * 1000) %>%
-    pivot_longer(c("RS2023", "RS2023487A"),
+    tidyr::pivot_longer(c("RS2023", "RS2023487A"),
                  names_to = "PCTESTCD",
                  values_to = "PCSTRESN"
     ) %>%
@@ -469,7 +469,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
 
   temp <- sbs %>%
     group_by_all() %>%
-    expand(PERIOD = c(1, 2)) %>%
+    tidyr::expand(PERIOD = c(1, 2)) %>%
     ungroup() %>%
     mutate(EXDY = case_when(.data$PERIOD == 1 ~ 1, .data$PERIOD == 2 ~ 14)) %>%
     mutate(TREATMENT = str_sub(.data$ACTARMCD, .data$PERIOD, .data$PERIOD)) %>%
@@ -487,7 +487,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     as.data.frame() %>%
     mutate(NTIME = .data$time) %>%
     group_by_all() %>%
-    expand(PERIOD = c(1, 2)) %>%
+    tidyr::expand(PERIOD = c(1, 2)) %>%
     mutate(time = .data$time + 13 * 24 * (.data$PERIOD - 1)) %>%
     left_join(temp %>%
                 select(id = ID, PERIOD, FOOD, EXDOSE),
@@ -502,7 +502,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
   pc <- sim %>%
     dplyr::select(id, time, c_centr, c_metab, PERIOD, NTIME) %>%
     mutate(RS2023 = c_centr * 1000, RS2023487A = c_metab * 1000) %>%
-    pivot_longer(c("RS2023", "RS2023487A"),
+    tidyr::pivot_longer(c("RS2023", "RS2023487A"),
                  names_to = "PCTESTCD",
                  values_to = "PCSTRESN"
     ) %>%
@@ -577,7 +577,7 @@ subject_baseline_data <- function(dm, vs, lb) {
   baseline_vs <- vs %>%
     filter(EPOCH == "SCREENING") %>%
     dplyr::select(c("USUBJID", "VSTESTCD", "VSSTRESN")) %>%
-    pivot_wider(names_from = "VSTESTCD", values_from = "VSSTRESN")
+    tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "VSSTRESN")
 
   baseline_lb <- lb %>%
     filter(.data$LBBLFL == "Y", .data$LBTESTCD == "CREAT") %>%
@@ -615,7 +615,7 @@ synthesize_sdtm_sad_study <- function() {
   ) %>%
     mutate(cohort = row_number()) %>%
     group_by(.data$cohort, .data$dose) %>%
-    expand(i = seq(n)) %>%
+    tidyr::expand(i = seq(n)) %>%
     select(-i) %>%
     ungroup()
 
@@ -751,7 +751,7 @@ synthesize_sdtm_poc_study <- function(
     mutate(first_dtc = .data$EXSTDTC[.data$EXSEQ == 1]) %>%
     ungroup() %>%
     group_by(.data$USUBJID, .data$EXSEQ, .data$first_dtc) %>%
-    expand(dtc = seq(.data$EXSTDTC, .data$EXENDTC, by = "1 day")) %>%
+    tidyr::expand(dtc = seq(.data$EXSTDTC, .data$EXENDTC, by = "1 day")) %>%
     ungroup() %>%
     mutate(TIME = as.numeric(.data$dtc - .data$first_dtc) / 3600) %>%
     left_join(sbs, by = "USUBJID") %>%
@@ -774,12 +774,12 @@ synthesize_sdtm_poc_study <- function(
     temp %>%
       filter(rich == T) %>%
       group_by_all() %>%
-      expand(rich_sampling_scheme) %>%
+      tidyr::expand(rich_sampling_scheme) %>%
       ungroup(),
     temp %>%
       filter(rich == F) %>%
       group_by_all() %>%
-      expand(sparse_sampling_scheme) %>%
+      tidyr::expand(sparse_sampling_scheme) %>%
       ungroup()
   ) %>%
     mutate(time = .data$ref_time + .data$NTIME) %>%
@@ -807,7 +807,7 @@ synthesize_sdtm_poc_study <- function(
              "NTIME")) %>%
     mutate(RS2023 = .data$RS2023 * 1000,
            RS2023487A = .data$RS2023487A * 1000) %>%
-    pivot_longer(c("RS2023", "RS2023487A"),
+    tidyr::pivot_longer(c("RS2023", "RS2023487A"),
                  names_to = "PCTESTCD",
                  values_to = "PCSTRESN"
     ) %>%

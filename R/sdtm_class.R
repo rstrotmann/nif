@@ -133,7 +133,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 #'
 #' In some studies, multiple drugs are co-administered, and there may be analyte
 #' data related to different parent drugs. In order to appropriately correlate
-#' observations with administrations, the [make_nif()] algorithm needs to know
+#' observations with administrations, the [nif_auto()] algorithm needs to know
 #' which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
 #' Multiple mappings may be needed.
 #'
@@ -561,7 +561,8 @@ derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
   }
 
   tr <- domain(sdtm_obj, "tr") %>%
-    assertr::verify(has_all_names("USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"))
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"))
 
   tr <- tr %>%
     add_row(tr %>%
@@ -572,7 +573,7 @@ derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
                              "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
                              "TRMETHOD", "TRGRPID", "TRREFID"))) %>%
       distinct() %>%
-      pivot_longer(cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
+        tidyr::pivot_longer(cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
                    values_to = "TRSTRESN") %>%
       mutate(TRSTRESU = case_match(.data$TRTESTCD, "SLD" ~ "mm", .default = "")) %>%
       mutate(TRTEST = case_match(.data$TRTESTCD, "SLD" ~ "Sum of longest diameters",

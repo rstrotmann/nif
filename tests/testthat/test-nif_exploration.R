@@ -8,12 +8,17 @@ test_that("nif summary works", {
 
 
 test_that("nif_summary_plot works", {
-  summary_plot <- function() {
+  # summary_plot <- function() {
+  #   examplinib_sad_nif %>%
+  #   summary() %>%
+  #   plot()
+  # }
+  # expect_no_error(summary_plot())
+  expect_no_error(
     examplinib_sad_nif %>%
-    summary() %>%
-    plot()
-  }
-  expect_no_error(summary_plot())
+      summary() %>%
+      plot()
+  )
 })
 
 

@@ -337,7 +337,7 @@ test_that("multiple imputations", {
       as.Date(.data$EXSTDTC_date),
       as.Date(.data$EXENDTC_date),
       by = "days"))) %>%
-    unnest(DTC_date) %>%
+    tidyr::unnest(DTC_date) %>%
     # make time
     group_by(USUBJID, ANALYTE, EXENDTC_date) %>%
     mutate(DTC_time = case_when(
@@ -468,11 +468,11 @@ test_that("add_administration, add_observation", {
 
 test_that("nif_auto works", {
   suppressMessages(
-    expect_no_error(
+    testthat::expect_no_error(
       nif <- nif_auto(examplinib_poc, bl_creat = FALSE, bl_odwg = FALSE)
     )
   )
-  expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
+  testthat::expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
 })
 
 

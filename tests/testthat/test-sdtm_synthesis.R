@@ -4,7 +4,7 @@ test_that("synthesize_crea works", {
     dm <- synthesize_dm(nsubs = 100, min_age = 18, max_age = 95)
     vs <- synthesize_vs(dm) %>%
       select(USUBJID, VSSTRESN, VSTESTCD) %>%
-      pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN")
+      tidyr::pivot_wider(names_from="VSTESTCD", values_from="VSSTRESN")
     dm %>%
       synthesize_crea() %>%
       left_join(vs, by="USUBJID") %>%
@@ -62,7 +62,7 @@ create_subjects <- function(n=100) {
   vs <- synthesize_vs(dm) %>%
     filter(EPOCH == "SCREENING") %>%
     dplyr::select("USUBJID", "VSTESTCD", "VSSTRESN") %>%
-    pivot_wider(names_from = "VSTESTCD", values_from = "VSSTRESN") %>%
+    tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "VSSTRESN") %>%
     as.data.frame()
   sbs <- dm %>%
     left_join(vs, by = "USUBJID") %>%
@@ -105,7 +105,7 @@ simulate_pk <- function(n = 20) {
 test_that("PK model works", {
   expect_no_error(
     pk <- simulate_pk(n = 20) %>%
-      pivot_longer(cols = c("centr", "peri", "metab", "renal", "metab_excr"),
+      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal", "metab_excr"),
                    names_to = "COMP", values_to = "VALUE"))
 
   pk %>%
@@ -124,7 +124,7 @@ test_that("PK model works", {
 test_that("EGFR is a covariate in PK model", {
   expect_no_error(
     pk <- simulate_pk(n = 100) %>%
-      pivot_longer(cols = c("centr", "peri", "metab", "renal", "metab_excr"),
+      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal", "metab_excr"),
                    names_to = "COMP", values_to = "VALUE"))
 
   pk %>%

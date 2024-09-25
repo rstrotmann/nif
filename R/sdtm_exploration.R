@@ -159,7 +159,8 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
   domain <- ex %>% distinct(DOMAIN)
 
   temp <- ex %>%
-    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
@@ -457,7 +458,7 @@ disposition_summary <- function(sdtm_data) {
   if(is.null(dm)) stop("DM not found in SDTM data!")
 
   dm %>%
-    assertr::verify(has_all_names(
+    assertr::verify(assertr::has_all_names(
       "USUBJID", "ACTARMCD", "RFSTDTC", "RFENDTC")) %>%
     distinct(.data$USUBJID, .data$ACTARMCD, .data$RFSTDTC, .data$RFENDTC) %>%
     mutate(ONGOING = case_when(

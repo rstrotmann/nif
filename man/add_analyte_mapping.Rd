@@ -18,7 +18,7 @@ add_analyte_mapping(obj, extrt, pctestcd, analyte = NULL)
 \description{
 In some studies, multiple drugs are co-administered, and there may be analyte
 data related to different parent drugs. In order to appropriately correlate
-observations with administrations, the \code{\link[=make_nif]{make_nif()}} algorithm needs to know
+observations with administrations, the \code{\link[=nif_auto]{nif_auto()}} algorithm needs to know
 which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
 Multiple mappings may be needed.
 }

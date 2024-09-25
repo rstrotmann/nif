@@ -14,11 +14,12 @@
 #' @keywords internal
 impute_exendtc_to_rfendtc <- function(ex, dm) {
   dm %>%
-    assertr::verify(has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
+    assertr::verify(assertr::has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
 
   temp <- ex %>%
     assertr::verify(
-      has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+      assertr::has_all_names(
+        "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
@@ -87,8 +88,8 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
 #' @keywords internal
 impute_missing_exendtc <- function(ex) {
   temp <- ex %>%
-    assertr::verify(has_all_names("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC",
-                                  "EXENDTC")) %>%
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
     arrange(.data$USUBJID, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
@@ -141,7 +142,8 @@ impute_missing_exendtc <- function(ex) {
 #' @keywords internal
 impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
   temp <- ex %>%
-    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
     assertr::verify(is.POSIXct(.data$EXSTDTC)) %>%
     assertr::verify(is.POSIXct(.data$EXENDTC)) %>%
@@ -255,7 +257,8 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
 #' @keywords internal
 make_exstdy_exendy <- function(ex, dm) {
   ex %>%
-    assertr::verify(has_all_names("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     assertr::verify(is.POSIXct(c(EXSTDTC, EXENDTC))) %>%
     left_join(
       dm %>%
@@ -372,7 +375,7 @@ make_drug_mapping <- function(sdtm_data) {
 #' @keywords internal
 add_time <- function(x) {
   x %>%
-    assertr::verify(has_all_names("USUBJID", "DTC")) %>%
+    assertr::verify(assertr::has_all_names("USUBJID", "DTC")) %>%
     assertr::verify(is.POSIXct(.data$DTC)) %>%
     dplyr::group_by(.data$USUBJID) %>%
     dplyr::mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
@@ -444,7 +447,7 @@ make_subjects <- function(dm, vs = NULL,
       filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) %>%
       group_by(.data$USUBJID, .data$VSTESTCD) %>%
       summarize(mean = mean(.data$VSSTRESN), .groups = "drop") %>%
-      pivot_wider(names_from = "VSTESTCD", values_from = "mean")
+      tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "mean")
 
     if ("HEIGHT" %in% colnames(baseline_covariates) &&
         "WEIGHT" %in% colnames(baseline_covariates)) {
@@ -454,7 +457,8 @@ make_subjects <- function(dm, vs = NULL,
   }
 
   out <- dm %>%
-    verify(has_all_names("USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "SEX", "ACTARMCD", "RFXSTDTC")) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter))) %>%
     # {if(!is.null(vs)) left_join(baseline_covariates, by = "USUBJID") else .} %>%
@@ -745,7 +749,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
       as.Date(.data$EXSTDTC_date),
       as.Date(.data$EXENDTC_date),
       by = "days"))) %>%
-    unnest("DTC_date") %>%
+    tidyr::unnest("DTC_date") %>%
 
     # make time
     group_by(.data$USUBJID, .data$ANALYTE, .data$EXENDTC_date) %>%
@@ -776,7 +780,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
       is.na(.data$DTC_time) == TRUE ~ "time carried forward",
       .default = .data$IMPUTATION)) %>%
     group_by(.data$USUBJID, .data$ANALYTE) %>%
-    fill("DTC_time", .direction = "down") %>%
+    tidyr::fill("DTC_time", .direction = "down") %>%
     ungroup() %>%
 
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
@@ -813,7 +817,8 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
 make_time <- function(obj) {
   obj %>%
     as.data.frame() %>%
-    assertr::verify(has_all_names("ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
+    assertr::verify(assertr::has_all_names(
+      "ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
     assertr::verify(is.POSIXct(.data$DTC)) %>%
     group_by(.data$ID) %>%
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
@@ -839,8 +844,7 @@ make_time <- function(obj) {
 #' Re-indexing may be required if a NIF object is extended, e.g., by merging in
 #' further data.
 #'
-#' @param nif NIF object, e.g., as created by [make_nif()] and manually
-#'   modified.
+#' @param nif NIF object.
 #' @return The updated NIF dataset including an updated REF field.
 #' @import dplyr
 #' @keywords internal
@@ -1067,7 +1071,7 @@ add_baseline <- function(
     filter(eval(parse(text = baseline_filter))) %>%
     {if(is.null(coding_table)) mutate(., DV = .data[[DV_field]]) else
       left_join(., coding_table, by = join_fields)} %>%
-    pivot_wider(names_from = all_of(TESTCD_field),
+    tidyr::pivot_wider(names_from = all_of(TESTCD_field),
                 values_from = DV) %>%
     select(all_of(c("USUBJID", {{testcd}}))) %>%
     group_by(.data$USUBJID) %>%
@@ -1132,7 +1136,7 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     lubrify_dates() %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
-    pivot_wider(names_from = all_of(TESTCD_field),
+    tidyr::pivot_wider(names_from = all_of(TESTCD_field),
                 values_from = all_of(DV_field)) %>%
     rename("DTC" = all_of(DTC_field)) %>%
     rename_with(~COV_field, all_of(testcd)) %>%
@@ -1147,7 +1151,7 @@ add_covariate <- function(nif, sdtm, domain, testcd,
     full_join(cov, by = c("USUBJID", "DTC_date")) %>%
     arrange(.data$USUBJID, .data$DTC_date) %>%
     group_by(.data$USUBJID) %>%
-    fill(!!COV_field) %>%
+    tidyr::fill(!!COV_field) %>%
     ungroup() %>%
     filter(.data$original == TRUE) %>%
     select(!any_of(c("original", "DTC_date", "DTC_time"))) %>%
@@ -1222,7 +1226,7 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
-    fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED",
+    tidyr::fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED",
                   starts_with("BL_"))),
          .direction = "downup") %>%
     ungroup() %>%
@@ -1291,7 +1295,7 @@ nif_auto <- function(sdtm,
   }
 
   analyte_mapping <- analyte_mapping %>%
-    assertr::verify(has_all_names("EXTRT", "PCTESTCD", "ANALYTE")) %>%
+    assertr::verify(assertr::has_all_names("EXTRT", "PCTESTCD", "ANALYTE")) %>%
     mutate(PARENT = PCTESTCD, METABOLITE = FALSE) %>%
     {if(!"ANALYTE" %in% names(.)) mutate(., ANALYTE = PCTESTCD) else .}
 

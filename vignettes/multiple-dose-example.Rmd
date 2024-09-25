@@ -217,7 +217,7 @@ nif_poc %>%
   filter(EVID == 0) %>% 
   group_by(NTIME, ANALYTE) %>% 
   summarize(n = n(), .groups = "drop") %>% 
-  pivot_wider(names_from = "ANALYTE", values_from = "n") %>% 
+  tidyr::pivot_wider(names_from = "ANALYTE", values_from = "n") %>% 
   kable(caption = "Observations by time point and analyte")
 ```
 

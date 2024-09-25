@@ -97,7 +97,7 @@ watermark <- function(watermark_text = NULL,
                       fontface = "bold"
                       ) {
 
-  if(is_null(watermark_text)) watermark_text = nif_option_value("watermark")
+  if(is.null(watermark_text)) watermark_text = nif_option_value("watermark")
   if(is.na(watermark_text)) watermark_text <- ""
 
   l <- str_length(watermark_text)

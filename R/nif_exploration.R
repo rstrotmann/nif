@@ -46,7 +46,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
     ensure_analyte() %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
-    assertr::verify(has_all_names(
+    assertr::verify(assertr::has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
@@ -156,7 +156,8 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     ensure_parent() %>%
     ensure_analyte() %>%
     index_dosing_interval() %>%
-    assertr::verify(has_all_names("ID", "TIME", "AMT", "DV", "EVID")) %>%
+    assertr::verify(assertr::has_all_names(
+      "ID", "TIME", "AMT", "DV", "EVID")) %>%
     {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
 
   id_label <- ""
@@ -256,7 +257,7 @@ nif_mean_plot <- function(obj,
 
 
   temp <- obj %>%
-    assertr::verify(has_all_names("NTIME", "DOSE", "DV")) %>%
+    assertr::verify(assertr::has_all_names("NTIME", "DOSE", "DV")) %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     ensure_dose() %>%
@@ -289,7 +290,7 @@ nif_mean_plot <- function(obj,
   }
 
   temp %>%
-    unite(GROUP, group, sep = " | ", remove = FALSE) %>%
+    tidyr::unite(GROUP, group, sep = " | ", remove = FALSE) %>%
     reframe(mean = mean(DV, na.rm = TRUE),
             sd = sd(DV, na.rm = TRUE),
             n = n(),
@@ -377,7 +378,7 @@ nif_spaghetti_plot <- function(obj,
                                nominal_time = FALSE, title = "",
                                admin = FALSE) {
   x <- obj %>%
-    assertr::verify(has_all_names(
+    assertr::verify(assertr::has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID")) %>%
     ensure_parent() %>%
     ensure_analyte() %>%
@@ -414,8 +415,8 @@ nif_spaghetti_plot <- function(obj,
   if (tad == TRUE) {
     x <- x %>%
       mutate(TIME = TAD) %>%
-      unite(GROUP, c(group, "DI", "ID"), sep = " | ", remove = FALSE) %>%
-      unite(COLOR, c(group, "DI"), sep = " | ", remove = FALSE)
+      tidyr::unite(GROUP, c(group, "DI", "ID"), sep = " | ", remove = FALSE) %>%
+      tidyr::unite(COLOR, c(group, "DI"), sep = " | ", remove = FALSE)
     x_label <- "TAD"
   } else {
     # create mock administrations for all analytes, including metabolites
@@ -423,14 +424,14 @@ nif_spaghetti_plot <- function(obj,
     mock_admin_for_metabolites <- x %>%
       as.data.frame() %>%
       filter(EVID == 1) %>%
-      crossing(ANALYTE1 = analytes(x)) %>%
+      tidyr::crossing(ANALYTE1 = analytes(x)) %>%
       mutate(ANALYTE = ANALYTE1) %>%
       select(-ANALYTE1)
 
     x <- x %>%
       rbind(mock_admin_for_metabolites) %>%
-      unite(GROUP, all_of(c(group, "ID")), sep = " | ", remove = FALSE) %>%
-      unite(COLOR, all_of(group), sep = " | ", remove = FALSE)
+      tidyr::unite(GROUP, all_of(c(group, "ID")), sep = " | ", remove = FALSE) %>%
+      tidyr::unite(COLOR, all_of(group), sep = " | ", remove = FALSE)
     x_label <- "TIME"
   }
 
@@ -542,11 +543,11 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
   }
 
   # watermark
-  if(exists("watermark", envir = .nif_env)) {
-    watermark = get("watermark", envir = .nif_env)
-  } else {
-    watermark = ""
-  }
+  # if(exists("watermark", envir = .nif_env)) {
+  #   watermark = get("watermark", envir = .nif_env)
+  # } else {
+  #   watermark = ""
+  # }
 
   #################################
 
@@ -560,8 +561,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     ensure_cfb() %>%
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
-    assertr::verify(exec(
-      has_all_names,
+    assertr::verify(rlang::exec(
+      assertr::has_all_names,
       !!!c("ID", time, "ANALYTE", "PARENT", "DOSE", "DV", "EVID"))) #%>%
     # as.data.frame()
 
@@ -570,7 +571,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     temp <- temp %>%
       arrange(ID, ANALYTE, TIME) %>%
       group_by(ID, ANALYTE) %>%
-      fill(DOSE, .direction = "up") %>%
+      tidyr::fill(DOSE, .direction = "up") %>%
       ungroup()
   }
 
@@ -642,12 +643,12 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
 
   temp <- temp %>%
     {if(length(plot_group) > 0)
-      unite(., GROUP, all_of(plot_group), sep = "_", remove = FALSE)
+      tidyr::unite(., GROUP, all_of(plot_group), sep = "_", remove = FALSE)
       else mutate(., GROUP = TRUE)}
 
   temp <- temp %>%
     {if(length(group) > 0)
-      unite(., COLOR, all_of(group), sep = "_", remove = FALSE)
+      tidyr::unite(., COLOR, all_of(group), sep = "_", remove = FALSE)
       else mutate(., COLOR = TRUE)}
 
   color_label <- nice_enumeration(unique(group))
@@ -664,7 +665,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, log = FALSE, time = "TAFD",
     temp %>%
       filter(EVID == 0) %>%
       {if(length(group[!group == "ID"]) > 0)
-        unite(., GROUP, group[!group == "ID"], sep = "_", remove = FALSE) else
+        tidyr::unite(., GROUP, group[!group == "ID"], sep = "_", remove = FALSE) else
           mutate(., GROUP = TRUE)} %>%
       group_by(NTIME, DOSE, GROUP, COLOR) %>%
       summarize(n = n(), mean = safe_mean(DV),
@@ -774,7 +775,7 @@ summary.nif <- function(object, ...) {
     mutate(SEX = factor(SEX, levels=c(0, 1))) %>%
     distinct(ID, SEX) %>%
     reframe(n = n(), .by = factor("SEX")) %>%
-    spread(SEX, n, fill = 0, drop = FALSE)
+    tidyr::spread(SEX, n, fill = 0, drop = FALSE)
   n_males <- n_sex[1, "0"]
   n_females <- n_sex[1, "1"]
 
@@ -1029,7 +1030,7 @@ covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
     p <- obj %>%
       as.data.frame() %>%
       mutate_at(group, factor) %>%
-      unite(GROUP, all_of(group), remove = FALSE) %>%
+      tidyr::unite(GROUP, all_of(group), remove = FALSE) %>%
       distinct_at(c("ID", cov_params$field, "GROUP")) %>%
       ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]], group = GROUP,
                  fill = GROUP)) +
@@ -1088,7 +1089,7 @@ covariate_barplot <- function(obj, cov, group = NULL, title = NULL) {
     out <- obj %>%
       as.data.frame() %>%
       mutate_at(group, factor) %>%
-      unite(GROUP, all_of(group), remove = FALSE) %>%
+      tidyr::unite(GROUP, all_of(group), remove = FALSE) %>%
       mutate(CLASS = as.factor(.data[[cov]])) %>%
       distinct_at(c("ID", "CLASS", "GROUP")) %>%
       group_by(CLASS, GROUP) %>%
@@ -1275,7 +1276,8 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
 
   obj %>%
     ensure_analyte() %>%
-    assertr::verify(has_all_names("ID", "TIME", "NTIME", "EVID", "ANALYTE")) %>%
+    assertr::verify(assertr::has_all_names(
+      "ID", "TIME", "NTIME", "EVID", "ANALYTE")) %>%
     filter(TIME <= max_time) %>%
     filter(EVID == 0) %>%
     filter(!is.na(TIME)) %>%
@@ -1348,7 +1350,7 @@ mean_dose_plot <- function(obj, analyte = NULL, title = NULL) {
       "mean dose (mg)" = mean(DOSE, na.rm = TRUE), "N" = n(),
       .groups = "drop"
     ) %>%
-    pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") %>%
+    tidyr::pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") %>%
     ggplot2::ggplot(ggplot2::aes(x = DAY, y = VAL)) +
     ggplot2::geom_line() +
     ggplot2::facet_grid(PARAM ~ ., scales = "free_y") +
@@ -1454,7 +1456,8 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
   lb <- sdtm %>%
     domain("lb") %>%
     filter(eval(parse(text = observation_filter))) %>%
-    assertr::verify(has_all_names("USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
 
   if(!all(c("BILI", enzyme) %in% lb$LBTESTCD))
     stop("Liver markers values not found in LB")
@@ -1492,7 +1495,7 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
       group_by(.data$ID, .data$TIME, .data$ANALYTE) %>%
       summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop") %>%
       group_by(.data$ID, .data$TIME) %>%
-      pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
+      tidyr::pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
       ungroup() %>%
       ggplot2::ggplot(ggplot2::aes(x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
                                    color = (TIME > 0), label = .data$ID)) +

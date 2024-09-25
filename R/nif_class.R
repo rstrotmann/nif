@@ -59,7 +59,7 @@ order_nif_columns <- function(obj) {
 #' @export
 #' @noRd
 print.nif <- function(x, color = FALSE, ...) {
-  debug <- is_true(nif_option_value("debug"))
+  debug <- rlang::is_true(nif_option_value("debug"))
   if(debug == TRUE) {
     print(x %>%
       as.data.frame())
@@ -380,7 +380,7 @@ ensure_dose <- function(obj) {
     {if(!"DOSE" %in% names(obj))
       index_nif(.) %>%
         mutate(DOSE = case_when(.data$EVID == 1 ~ AMT, .default = NA)) %>%
-        fill(DOSE, .direction = "downup")
+        tidyr::fill(DOSE, .direction = "downup")
       else .
     }
 }
@@ -523,7 +523,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
     temp %>%
       filter(TIME == min(TIME)) %>%
       select(ID, ANALYTE, AMT, any_of(group)) %>%
-      pivot_wider(
+      tidyr::pivot_wider(
         names_from = "ANALYTE",
         values_from = "AMT", values_fill = 0) %>%
       group_by(across(c(-ID))) %>%
@@ -835,7 +835,7 @@ index_dosing_interval <- function(obj) {
     left_join(di, by = "REF") %>%
     group_by(ID, PARENT) %>%
     arrange(REF) %>%
-    fill(DI, .direction = "downup") %>%
+    tidyr::fill(DI, .direction = "downup") %>%
     ungroup() %>%
     new_nif()
 }
@@ -1074,7 +1074,7 @@ add_tad <- function(nif) {
       .data$EVID == 1 ~ .data$TIME)) %>%
     arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) %>%
     group_by(.data$ID, .data$PARENT) %>%
-    fill(admin_time, .direction = "down") %>%
+    tidyr::fill(admin_time, .direction = "down") %>%
     ungroup() %>%
     mutate(TAD = .data$TIME - .data$admin_time) %>%
     select(-"admin_time") %>%
@@ -1092,7 +1092,7 @@ add_tad <- function(nif) {
 #' add_tafd(examplinib_poc_nif)
 add_tafd <- function(nif) {
   nif %>%
-    assertr::verify(has_all_names("ID", "TIME", "EVID")) %>%
+    assertr::verify(assertr::has_all_names("ID", "TIME", "EVID")) %>%
     ensure_parent() %>%
     arrange(.data$ID, .data$PARENT, .data$TIME) %>%
     group_by(.data$ID, .data$PARENT) %>%
@@ -1113,7 +1113,7 @@ add_tafd <- function(nif) {
 #' head(add_trtdy(examplinib_poc_nif))
 add_trtdy <- function(obj) {
   obj %>%
-    assertr::verify(has_all_names("ID", "DTC", "EVID")) %>%
+    assertr::verify(assertr::has_all_names("ID", "DTC", "EVID")) %>%
     assertr::verify(is.POSIXct(.data$DTC)) %>%
     dplyr::group_by(.data$ID) %>%
     dplyr::mutate(FIRSTTRTDTC = min(.data$DTC[.data$EVID == 1],
@@ -1147,7 +1147,7 @@ add_trtdy <- function(obj) {
 add_bl_crcl <- function(obj, method = egfr_cg) {
   if ("BL_CREAT" %in% colnames(obj)) {
     obj %>%
-      assertr::verify(has_all_names(
+      assertr::verify(assertr::has_all_names(
         "BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT")) %>%
       mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
         molar = TRUE
@@ -1196,7 +1196,7 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' @export
 add_bl_lbm <- function(obj, method = lbm_boer) {
   obj %>%
-    assertr::verify(has_all_names("WEIGHT", "HEIGHT", "SEX")) %>%
+    assertr::verify(assertr::has_all_names("WEIGHT", "HEIGHT", "SEX")) %>%
     mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
 }
 
@@ -1408,7 +1408,7 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
     ungroup() %>%
 
     group_by(.data$ID, .data$ANALYTE, .data$DI, .data$RICHINT_TEMP) %>%
-    fill(.data$RICH_N, .direction = "down") %>%
+    tidyr::fill(.data$RICH_N, .direction = "down") %>%
     ungroup() %>%
 
     select(-c("RICHINT_TEMP", "RICH_START")) %>%

@@ -7,8 +7,7 @@
 index_nif(nif)
 }
 \arguments{
-\item{nif}{NIF object, e.g., as created by \code{\link[=make_nif]{make_nif()}} and manually
-modified.}
+\item{nif}{NIF object.}
 }
 \value{
 The updated NIF dataset including an updated REF field.
