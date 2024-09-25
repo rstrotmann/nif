@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.49.7.9050</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.50.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -384,7 +384,7 @@ an <code>sdtm</code> object.</p>
 <h4 id="basic-nif-file">Basic NIF file<a class="anchor" aria-label="anchor" href="#basic-nif-file"></a>
 </h4>
 <p>Most steps in the generation of a basic NIF file from an
-<code>sdtm</code> object are automated in the <code><a href="../reference/make_nif.html">make_nif()</a></code>
+<code>sdtm</code> object are automated in the <code>make_nif()</code>
 function. The resulting <code>nif</code> object is a data table with
 individual rows for individual administrations and observations and
 follows the naming conventions summarized in <a href="https://doi.org/10.1002/psp4.12404" class="external-link">Bauer, CPT Pharmacometrics
@@ -399,7 +399,7 @@ HEIGHT are taken from the VS domain.</p>
 <p>The output of the above code informs that there may be
 pharmacokinetic data for multiple specimens in the PC domain, e.g.,
 “PLASMA” and “URINE” or “FECES”. As no specimem was defined,
-<code><a href="../reference/make_nif.html">make_nif()</a></code> takes what it considers the the most likely
+<code>make_nif()</code> takes what it considers the the most likely
 (“PLASMA” in this case). Alternatively, the specimen of interest can be
 explicitly provided (see <code>?make_nif()</code> for details).</p>
 <p>Also, a data cut-off was applied that reflects the date and time of
@@ -408,7 +408,7 @@ where further administrations may be recorded after the last
 oberservation. These administration events are excluded from the NIF
 file. If this default behavior is not wanted, the
 <code>truncate_to_last_observation</code> attribute to
-<code><a href="../reference/make_nif.html">make_nif()</a></code> should be set to <code>FALSE</code>.</p>
+<code>make_nif()</code> should be set to <code>FALSE</code>.</p>
 </div>
 <div class="section level4">
 <h4 id="study-specific-covariates">Study-specific covariates<a class="anchor" aria-label="anchor" href="#study-specific-covariates"></a>
@@ -447,7 +447,7 @@ decoded to <code>FASTED</code>:</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span><span class="op">==</span><span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/normalize_nif.html">normalize_nif</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Note the <code>silent = TRUE</code> modifier that omits all messages
-from <code><a href="../reference/make_nif.html">make_nif()</a></code>.</p>
+from <code>make_nif()</code>.</p>
 <p>As a side note: Alternatively, the SDTM domain YL which provides data
 on meals may be used for the derivation of the food status.</p>
 <p>The NIF file includes now the additional fields <code>PERIOD</code>,
