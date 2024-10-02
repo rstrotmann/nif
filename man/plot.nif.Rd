@@ -27,6 +27,7 @@
   shading = TRUE,
   silent = deprecated(),
   dose_norm = FALSE,
+  .by = "DOSE",
   ...
 )
 }
