@@ -493,6 +493,9 @@
     <loc>/reference/make_md_ex.html</loc>
   </url>
   <url>
+    <loc>/reference/make_mean_plot_data_set.html</loc>
+  </url>
+  <url>
     <loc>/reference/make_nif.html</loc>
   </url>
   <url>
@@ -500,6 +503,9 @@
   </url>
   <url>
     <loc>/reference/make_observation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/make_plot_data_set.html</loc>
   </url>
   <url>
     <loc>/reference/make_sd_ex.html</loc>
