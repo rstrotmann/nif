@@ -366,7 +366,7 @@ the time axis to 24 h and showing the nominal time instead of the actual time:
 
 ```{r, warning=F, fig.width=5, fig.height=4}
 nif_expl %>% 
-  plot(analyte = "RS2023", group = "FASTED", max_time = 24, mean = FALSE,
+  plot(analyte = "RS2023", color = "FASTED", max_time = 24, mean = FALSE,
        points = TRUE)
 ```
 
