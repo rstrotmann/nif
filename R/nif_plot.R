@@ -39,19 +39,32 @@ make_plot_data_set <- function(
       }
   }
 
-  if (is.null(dose)){
-    dose <- unique(nif$DOSE[nif$EVID == 0])}
   if(is.null(analyte)){
     analyte <- analytes(nif)}
 
+  temp <- nif %>%
+    as.data.frame() %>%
+    distinct(ANALYTE, PARENT)
+
+  parent <- temp %>%
+    filter(ANALYTE %in% analyte) %>%
+    pull(PARENT)
+
   out <- nif %>%
     as.data.frame() %>%
+    filter((ANALYTE %in% analyte & EVID == 0) | (ANALYTE %in% parent & EVID == 1))
+
+  if (is.null(dose)){
+    dose <- unique(out$DOSE[out$EVID == 0])}
+
+  out <- out %>%
+    # as.data.frame() %>%
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
     mutate(active_time = .data[[time]]) %>%
     filter(DOSE %in% dose) %>%
-    filter(ANALYTE %in% analyte | EVID == 1) %>%
+    # filter(ANALYTE %in% analyte | EVID == 1) %>%
     {if(dose_norm == TRUE) mutate(., DV = DV/DOSE) else .} %>%
     {if(!is.null(min_time)) filter(., .data$active_time >= min_time) else .} %>%
     {if(!is.null(max_time)) filter(., .data$active_time <= max_time) else .} %>%
@@ -93,7 +106,7 @@ make_mean_plot_data_set <- function(data_set) {
     reframe(ID = 1, n = n(), mean = safe_mean(DV), sd = safe_sd(DV),
             .by = any_of(c(
               "active_time", data_set$color, data_set$facet, "EVID",
-              "COLOR", "FACET"))) %>%
+              "COLOR", "FACET", "ANALYTE"))) %>%
 
     rename(DV = mean)
 
@@ -157,19 +170,21 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, time = "TAFD",
                      ){
   if(lifecycle::is_present(group)) {
     lifecycle::deprecate_warn("0.50.1", "plot(group)", "plot(color)")
-    color <- group
-  }
+    color <- group}
 
   temp <- make_plot_data_set(
     x, analyte, dose, time, color, min_time, max_time, cfb, dose_norm, facet)
   if(isTRUE(mean)) {
     temp <- make_mean_plot_data_set(temp)
-    if(is.null(caption)) caption <- "Mean and SD"
-  }
+    if(is.null(caption)) caption <- "Mean and SD"}
 
   plot_data <- temp$data %>%
     tidyr::unite(GROUP, any_of(c((temp$group), (temp$color), (temp$facet))),
           sep = "-", remove = FALSE)
+
+  analytes <- unique(plot_data$ANALYTE)
+  y_label <- ifelse(length(analytes) == 1, analytes, "DV")
+  if(isTRUE(dose_norm)) y_label <- paste0(y_label, "/DOSE")
 
   admin_data <- plot_data %>%
     filter(EVID == 1)
@@ -181,22 +196,15 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, time = "TAFD",
         dplyr::mutate(DV = NA)
     ) %>%
 
-    ggplot2::ggplot(ggplot2::aes(x = .data$active_time,
-               y = DV,
-               group = GROUP,
-               color = COLOR)) +
+    ggplot2::ggplot(ggplot2::aes(
+      x = .data$active_time, y = DV, group = GROUP, color = COLOR)) +
     {if(!is.null(admin)) ggplot2::geom_vline(
       data = admin_data,
-      ggplot2::aes(
-        xintercept = .data$active_time),
-      color = "gray")} +
+      ggplot2::aes(xintercept = .data$active_time), color = "gray")} +
     {if(isTRUE(lines)) ggplot2::geom_line()} +
     {if(isTRUE(points)) ggplot2::geom_point(size = size, alpha = alpha)} +
     {if(isTRUE(mean)) ggplot2::geom_ribbon(
-      ggplot2::aes(
-        ymin = pos_diff(DV, sd),
-        ymax = DV + sd,
-        fill = COLOR),
+      ggplot2::aes(ymin = pos_diff(DV, sd), ymax = DV + sd, fill = COLOR),
       alpha = 0.3, color = NA, show.legend = FALSE)} +
     {if(!is.null(temp$facet)) ggplot2::facet_wrap(~FACET, scales = scales)} +
     {if(isTRUE(log)) ggplot2::scale_y_log10()} +
@@ -205,14 +213,11 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, time = "TAFD",
     ggplot2::theme_bw() +
     ggplot2::theme(
       legend.position = ifelse(
-        legend == TRUE & length(temp$color) > 0,
-        "bottom",
-        "none")) +
+        legend == TRUE & length(temp$color) > 0, "bottom", "none")) +
     ggplot2::ggtitle(title) +
     watermark(cex = 1.5) +
-
-    ggplot2::labs(x = time, color = nice_enumeration(temp$color)) +
-    {if(dose_norm == T) ggplot2::labs(y = "DV/DOSE")} #+
+    ggplot2::labs(x = time, y = y_label, color = nice_enumeration(temp$color)) #+
+    # {if(dose_norm == T) ggplot2::labs(y = "DV / DOSE")} #+
 
     # {if(show_n == TRUE) ggplot2::geom_text(
     #   ggplot2::aes(

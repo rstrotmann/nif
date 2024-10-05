@@ -17,6 +17,10 @@ test_that("plot.nif" , {
               admin = "RS2023"))
 
   expect_no_error(
+    plot.nif(examplinib_sad_nif, log = T, mean = T, points = T, dose_norm = T,
+             admin = "RS2023"))
+
+  expect_no_error(
     plot.nif(examplinib_sad_nif, mean = T, points = F, color = "RACE",
               log = T))
 
