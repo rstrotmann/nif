@@ -39,14 +39,6 @@ make_plot_data_set <- function(
   if(is.null(analyte)){
     analyte <- analytes(nif)}
 
-  # temp <- nif %>%
-  #   as.data.frame() %>%
-  #   distinct(ANALYTE, PARENT)
-  #
-  # parent <- temp %>%
-  #   filter(ANALYTE %in% analyte) %>%
-  #   pull(PARENT)
-
   parent <- as.data.frame(nif) %>%
     distinct(ANALYTE, PARENT) %>%
     filter(ANALYTE %in% analyte) %>%
@@ -54,14 +46,6 @@ make_plot_data_set <- function(
 
   out <- as.data.frame(nif) %>%
     filter((ANALYTE %in% analyte & EVID == 0) | (ANALYTE %in% parent & EVID == 1))
-
-  # if (is.null(dose)){
-  #   # dose <- unique(out$DOSE[out$EVID == 0])
-  #   dose <- out %>%
-  #     filter(EVID == 0) %>%
-  #     distinct(DOSE) %>%
-  #     pull(DOSE)
-  # }
 
   if (is.null(dose)){
     dose <- unique(filter(out, EVID == 0)$DOSE)}
@@ -82,33 +66,13 @@ make_plot_data_set <- function(
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
-    # mutate(active_time = .data[[time]]) %>%
-    # filter(DOSE %in% dose) %>%
-    # filter(ANALYTE %in% analyte | EVID == 1) %>%
     {if(dose_norm == TRUE) mutate(., DV = DV/DOSE) else .} %>%
-    # {if(!is.null(min_time)) filter(., .data$active_time >= min_time) else .} %>%
-    # {if(!is.null(max_time)) filter(., .data$active_time <= max_time) else .} %>%
     filter(.data$active_time >= min_time) %>%
     filter(.data$active_time <= max_time) %>%
     group_by(ID, ANALYTE) %>%
     mutate(n_obs = sum(EVID == 0)) %>%
     ungroup() %>%
     as.data.frame()
-
-  # out <- out %>%
-  #   index_dosing_interval() %>%
-  #   mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
-  #   {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
-  #   mutate(active_time = .data[[time]]) %>%
-  #   # filter(DOSE %in% dose) %>%
-  #   # filter(ANALYTE %in% analyte | EVID == 1) %>%
-  #   {if(dose_norm == TRUE) mutate(., DV = DV/DOSE) else .} %>%
-  #   {if(!is.null(min_time)) filter(., .data$active_time >= min_time) else .} %>%
-  #   {if(!is.null(max_time)) filter(., .data$active_time <= max_time) else .} %>%
-  #   group_by(ID, ANALYTE) %>%
-  #   mutate(n_obs = sum(EVID == 0)) %>%
-  #   ungroup() %>%
-  #   as.data.frame()
 
   if(length(analyte) > 1) {
     color <- unique(c("ANALYTE", color))
