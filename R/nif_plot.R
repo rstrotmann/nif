@@ -29,49 +29,86 @@ make_plot_data_set <- function(
 ) {
   # assert time parameter
   if(!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
-    stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
-  }
+    stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")}
 
   # assert facet parameter
   if(!is.null(facet)) {
       if(!facet %in% names(nif)) {
-        stop(paste0("Facetting variable ", facet, " not found in data set!"))
-      }
-  }
+        stop(paste0("Facetting variable ", facet, " not found in data set!"))}}
 
   if(is.null(analyte)){
     analyte <- analytes(nif)}
 
-  temp <- nif %>%
-    as.data.frame() %>%
-    distinct(ANALYTE, PARENT)
+  # temp <- nif %>%
+  #   as.data.frame() %>%
+  #   distinct(ANALYTE, PARENT)
+  #
+  # parent <- temp %>%
+  #   filter(ANALYTE %in% analyte) %>%
+  #   pull(PARENT)
 
-  parent <- temp %>%
+  parent <- as.data.frame(nif) %>%
+    distinct(ANALYTE, PARENT) %>%
     filter(ANALYTE %in% analyte) %>%
     pull(PARENT)
 
-  out <- nif %>%
-    as.data.frame() %>%
+  out <- as.data.frame(nif) %>%
     filter((ANALYTE %in% analyte & EVID == 0) | (ANALYTE %in% parent & EVID == 1))
 
+  # if (is.null(dose)){
+  #   # dose <- unique(out$DOSE[out$EVID == 0])
+  #   dose <- out %>%
+  #     filter(EVID == 0) %>%
+  #     distinct(DOSE) %>%
+  #     pull(DOSE)
+  # }
+
   if (is.null(dose)){
-    dose <- unique(out$DOSE[out$EVID == 0])}
+    dose <- unique(filter(out, EVID == 0)$DOSE)}
 
   out <- out %>%
-    # as.data.frame() %>%
+    filter(DOSE %in% dose) %>%
+    mutate(active_time = .data[[time]])
+
+  if(is.null(max_time)) {
+    max_time <- max(filter(out, EVID == 0)$active_time)
+  }
+
+  if(is.null(min_time)) {
+    min_time <- min(out$active_time)
+  }
+
+  out <- out %>%
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
     {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
-    mutate(active_time = .data[[time]]) %>%
-    filter(DOSE %in% dose) %>%
+    # mutate(active_time = .data[[time]]) %>%
+    # filter(DOSE %in% dose) %>%
     # filter(ANALYTE %in% analyte | EVID == 1) %>%
     {if(dose_norm == TRUE) mutate(., DV = DV/DOSE) else .} %>%
-    {if(!is.null(min_time)) filter(., .data$active_time >= min_time) else .} %>%
-    {if(!is.null(max_time)) filter(., .data$active_time <= max_time) else .} %>%
+    # {if(!is.null(min_time)) filter(., .data$active_time >= min_time) else .} %>%
+    # {if(!is.null(max_time)) filter(., .data$active_time <= max_time) else .} %>%
+    filter(.data$active_time >= min_time) %>%
+    filter(.data$active_time <= max_time) %>%
     group_by(ID, ANALYTE) %>%
     mutate(n_obs = sum(EVID == 0)) %>%
     ungroup() %>%
     as.data.frame()
+
+  # out <- out %>%
+  #   index_dosing_interval() %>%
+  #   mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
+  #   {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
+  #   mutate(active_time = .data[[time]]) %>%
+  #   # filter(DOSE %in% dose) %>%
+  #   # filter(ANALYTE %in% analyte | EVID == 1) %>%
+  #   {if(dose_norm == TRUE) mutate(., DV = DV/DOSE) else .} %>%
+  #   {if(!is.null(min_time)) filter(., .data$active_time >= min_time) else .} %>%
+  #   {if(!is.null(max_time)) filter(., .data$active_time <= max_time) else .} %>%
+  #   group_by(ID, ANALYTE) %>%
+  #   mutate(n_obs = sum(EVID == 0)) %>%
+  #   ungroup() %>%
+  #   as.data.frame()
 
   if(length(analyte) > 1) {
     color <- unique(c("ANALYTE", color))
@@ -159,7 +196,8 @@ make_mean_plot_data_set <- function(data_set) {
 #' plot(examplinib_poc_nif, points = TRUE, dose_norm = TRUE, facet = NULL,
 #'   color = "SEX", max_time = 25, time = "TAD", lines = FALSE, size = 3,
 #'   alpha = 0.5, title = "POC study: all analytes and doses")
-plot.nif <- function(x, analyte = NULL, dose = NULL, time = "TAFD",
+plot.nif <- function(x, analyte = NULL, dose = NULL,
+                     time = "TAFD",
                      color = NULL, min_time = NULL, max_time = NULL,
                      cfb = FALSE, dose_norm = FALSE, facet = "DOSE",
                      admin = NULL, points = FALSE, lines = TRUE,
@@ -174,6 +212,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, time = "TAFD",
 
   temp <- make_plot_data_set(
     x, analyte, dose, time, color, min_time, max_time, cfb, dose_norm, facet)
+
   if(isTRUE(mean)) {
     temp <- make_mean_plot_data_set(temp)
     if(is.null(caption)) caption <- "Mean and SD"}
@@ -186,8 +225,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, time = "TAFD",
   y_label <- ifelse(length(analytes) == 1, analytes, "DV")
   if(isTRUE(dose_norm)) y_label <- paste0(y_label, "/DOSE")
 
-  admin_data <- plot_data %>%
-    filter(EVID == 1)
+  admin_data <- filter(plot_data, EVID == 1)
 
   p <- plot_data %>%
     filter(EVID == 0) %>%
@@ -216,7 +254,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL, time = "TAFD",
         legend == TRUE & length(temp$color) > 0, "bottom", "none")) +
     ggplot2::ggtitle(title) +
     watermark(cex = 1.5) +
-    ggplot2::labs(x = time, y = y_label, color = nice_enumeration(temp$color)) #+
+    ggplot2::labs(x = time, y = y_label, color = nice_enumeration(temp$color))
+
     # {if(dose_norm == T) ggplot2::labs(y = "DV / DOSE")} #+
 
     # {if(show_n == TRUE) ggplot2::geom_text(
