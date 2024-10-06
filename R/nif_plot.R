@@ -167,9 +167,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
                      admin = NULL, points = FALSE, lines = TRUE,
                      log = FALSE, mean = FALSE, title = NULL, legend = TRUE,
                      size = 1.5, scales = "fixed", alpha = 1, caption = NULL,
-                     group = deprecated(), ...
-                     # show_n = TRUE
-                     ){
+                     group = deprecated(), ...){
   if(lifecycle::is_present(group)) {
     lifecycle::deprecate_warn("0.50.1", "plot(group)", "plot(color)")
     color <- group}
