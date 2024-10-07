@@ -226,7 +226,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
     #   x = -Inf,
     #   y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)}
 
-  suppressWarnings(print(p))
+  # suppressWarnings(print(p))
+  suppressWarnings(return(p))
 }
 
 
