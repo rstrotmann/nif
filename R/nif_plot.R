@@ -55,11 +55,11 @@ make_plot_data_set <- function(
     mutate(active_time = .data[[time]])
 
   if(is.null(max_time)) {
-    max_time <- max(filter(out, EVID == 0)$active_time)
+    max_time <- max(filter(out, EVID == 0)$active_time, na.rm = TRUE)
   }
 
   if(is.null(min_time)) {
-    min_time <- min(out$active_time)
+    min_time <- min(out$active_time, na.rm = TRUE)
   }
 
   out <- out %>%
