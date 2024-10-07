@@ -1,825 +1,276 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/articles/exclude/nif-imputations.html</loc>
-  </url>
-  <url>
-    <loc>/articles/importing-NIF-datasets.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/making-nif-files.html</loc>
-  </url>
-  <url>
-    <loc>/articles/multiple-dose-example.html</loc>
-  </url>
-  <url>
-    <loc>/articles/nif-imputations.html</loc>
-  </url>
-  <url>
-    <loc>/articles/nif-vignette.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_RFENDTC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_administration.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_ae.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_analyte_mapping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_baseline.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_bl_crcl.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_bl_lab.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_bl_lbm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_bl_odwg.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_bl_renal.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_cfb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_covariate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_dose_level.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_generic_observation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_lab_covariate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_lab_observation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_mapping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_metabolite_mapping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_obs_per_dosing_interval.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_observation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_parent_mapping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_rtb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_tad.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_tad_non_pk.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_tafd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_time_mapping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_time_mapping.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_trtdy.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_tv_lab.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_tv_vs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/administration_summary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ae_summary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/analytes.data.frame.html</loc>
-  </url>
-  <url>
-    <loc>/reference/analytes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/analytes.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/analytes.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/analytes_cmts.html</loc>
-  </url>
-  <url>
-    <loc>/reference/append_statement.html</loc>
-  </url>
-  <url>
-    <loc>/reference/baseline_covariates.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bmi_by_age.html</loc>
-  </url>
-  <url>
-    <loc>/reference/carry_forward_dose.html</loc>
-  </url>
-  <url>
-    <loc>/reference/carry_forward_epoch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_date_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_date_time_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_last_exendtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_missing_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/clip_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cmt_mapping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/coalesce_join.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compose_dtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compress.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compress.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compress_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/conditional_message.html</loc>
-  </url>
-  <url>
-    <loc>/reference/covariate_barplot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/covariate_hist.html</loc>
-  </url>
-  <url>
-    <loc>/reference/crea_mdrd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/crea_raynaud.html</loc>
-  </url>
-  <url>
-    <loc>/reference/decompose_dtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/derive_sld.html</loc>
-  </url>
-  <url>
-    <loc>/reference/df_to_string.html</loc>
-  </url>
-  <url>
-    <loc>/reference/disposition_summary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/domain.html</loc>
-  </url>
-  <url>
-    <loc>/reference/domain_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dose_levels.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dose_lin.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dose_plot_id.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dose_red_sbs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/doses.html</loc>
-  </url>
-  <url>
-    <loc>/reference/doses.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/doses.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dtc_formats.html</loc>
-  </url>
-  <url>
-    <loc>/reference/edish_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/egfr_cg.html</loc>
-  </url>
-  <url>
-    <loc>/reference/egfr_mdrd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/egfr_raynaud.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_analyte.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_dose.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_metabolite.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_ntime.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_parent.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_tad.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_tafd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ensure_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_fe.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_fe_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_poc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_poc_min_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_poc_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_sad.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_sad_min_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/examplinib_sad_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/exclude_exstdtc_after_rfendtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extract_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extract_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fill_bl_tv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_EXSTDTC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_EXSTDTC_after_EXENDTC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_correct_date_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_subject.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_subject.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_subject.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_subjects.html</loc>
-  </url>
-  <url>
-    <loc>/reference/geom_admin.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_cov_plot_params.html</loc>
-  </url>
-  <url>
-    <loc>/reference/guess_analyte.html</loc>
-  </url>
-  <url>
-    <loc>/reference/guess_lbspec.html</loc>
-  </url>
-  <url>
-    <loc>/reference/guess_ntime.html</loc>
-  </url>
-  <url>
-    <loc>/reference/guess_parent.html</loc>
-  </url>
-  <url>
-    <loc>/reference/guess_pcspec.html</loc>
-  </url>
-  <url>
-    <loc>/reference/guess_spec.html</loc>
-  </url>
-  <url>
-    <loc>/reference/has_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/head.html</loc>
-  </url>
-  <url>
-    <loc>/reference/head.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ht_by_wt.html</loc>
-  </url>
-  <url>
-    <loc>/reference/impute_admin_dtc_to_pcrftdtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/impute_admin_times_from_pcrftdtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/impute_administration_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/impute_exendtc_to_cutoff.html</loc>
-  </url>
-  <url>
-    <loc>/reference/impute_exendtc_to_rfendtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/impute_missing_exendtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/impute_missing_exendtc_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index_dosing_interval.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index_rich_sampling_intervals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_iso_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_iso_date_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/isofy_date_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/isofy_dates.html</loc>
-  </url>
-  <url>
-    <loc>/reference/last_ex_dtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/last_obs_dtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lbm_boer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lbm_hume.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lbm_peters.html</loc>
-  </url>
-  <url>
-    <loc>/reference/limit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lubrify_dates.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_admin.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_administration.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_ae.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_baseline.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_crea.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_dm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_drug_mapping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_exstdy_exendy.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_fe_pc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_lb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_md_ex.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_mean_plot_data_set.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_obs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_observation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_plot_data_set.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_sd_ex.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_sd_pc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_subjects.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_subs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_vs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/max_admin_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/max_observation_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/max_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mean_dose_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/minimal_nif_fields.html</loc>
-  </url>
-  <url>
-    <loc>/reference/miss_admins.html</loc>
-  </url>
-  <url>
-    <loc>/reference/missing_time.html</loc>
-  </url>
-  <url>
-    <loc>/reference/n_administrations.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nca.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nca_from_pp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nca_power_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nca_summary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nca_summary_table.html</loc>
-  </url>
-  <url>
-    <loc>/reference/new_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/new_sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nice_enumeration.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif-package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_auto.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_cleanup.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_debugger.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_disclaimer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_mean_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_mean_plot1.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_option.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_option_value.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_plot_id.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_spaghetti_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_spaghetti_plot1.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nif_viewer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/normalize_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/obs_per_dose_level.html</loc>
-  </url>
-  <url>
-    <loc>/reference/order_nif_columns.html</loc>
-  </url>
-  <url>
-    <loc>/reference/parents.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pk_sim.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.nif.bak.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.summary_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_old.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_z.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pos_diff.html</loc>
-  </url>
-  <url>
-    <loc>/reference/positive_or_zero.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.subject_info.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.summary_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.summary_sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print_debug.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pt_to_hours.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_sdtm_sas.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_sdtm_xpt.html</loc>
-  </url>
-  <url>
-    <loc>/reference/recode_sex.html</loc>
-  </url>
-  <url>
-    <loc>/reference/reformat_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rich_sampling_sbs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/safe_mean.html</loc>
-  </url>
-  <url>
-    <loc>/reference/safe_min.html</loc>
-  </url>
-  <url>
-    <loc>/reference/safe_sd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sdtm_domain_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sdtm_missing_times.html</loc>
-  </url>
-  <url>
-    <loc>/reference/standard_nif_fields.html</loc>
-  </url>
-  <url>
-    <loc>/reference/standardize_date_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/stat_admin.html</loc>
-  </url>
-  <url>
-    <loc>/reference/studies.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subject_baseline_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subject_info.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subject_info.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subject_info.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subjects.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subjects.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subjects.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subs_per_dose_level.html</loc>
-  </url>
-  <url>
-    <loc>/reference/suggest.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_crea.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_dm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_examplinib.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_lb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_pp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_sdtm_food_effect_study.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_sdtm_poc_study.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_sdtm_sad_study.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_subjects.html</loc>
-  </url>
-  <url>
-    <loc>/reference/synthesize_vs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/time_by_ntime.html</loc>
-  </url>
-  <url>
-    <loc>/reference/treatments.html</loc>
-  </url>
-  <url>
-    <loc>/reference/treatments.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/treatments.sdtm.html</loc>
-  </url>
-  <url>
-    <loc>/reference/usubjid.html</loc>
-  </url>
-  <url>
-    <loc>/reference/watermark.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_csv.nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_monolix.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_nif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wt_by_ht.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wt_by_race.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wt_by_sex.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/exclude/nif-imputations.html</loc></url>
+<url><loc>/articles/importing-NIF-datasets.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/making-nif-files.html</loc></url>
+<url><loc>/articles/multiple-dose-example.html</loc></url>
+<url><loc>/articles/nif-imputations.html</loc></url>
+<url><loc>/articles/nif-vignette.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/add_RFENDTC.html</loc></url>
+<url><loc>/reference/add_administration.html</loc></url>
+<url><loc>/reference/add_ae.html</loc></url>
+<url><loc>/reference/add_analyte_mapping.html</loc></url>
+<url><loc>/reference/add_baseline.html</loc></url>
+<url><loc>/reference/add_bl_crcl.html</loc></url>
+<url><loc>/reference/add_bl_lab.html</loc></url>
+<url><loc>/reference/add_bl_lbm.html</loc></url>
+<url><loc>/reference/add_bl_odwg.html</loc></url>
+<url><loc>/reference/add_bl_renal.html</loc></url>
+<url><loc>/reference/add_cfb.html</loc></url>
+<url><loc>/reference/add_covariate.html</loc></url>
+<url><loc>/reference/add_dose_level.html</loc></url>
+<url><loc>/reference/add_generic_observation.html</loc></url>
+<url><loc>/reference/add_lab_covariate.html</loc></url>
+<url><loc>/reference/add_lab_observation.html</loc></url>
+<url><loc>/reference/add_mapping.html</loc></url>
+<url><loc>/reference/add_metabolite_mapping.html</loc></url>
+<url><loc>/reference/add_obs_per_dosing_interval.html</loc></url>
+<url><loc>/reference/add_observation.html</loc></url>
+<url><loc>/reference/add_parent_mapping.html</loc></url>
+<url><loc>/reference/add_rtb.html</loc></url>
+<url><loc>/reference/add_tad.html</loc></url>
+<url><loc>/reference/add_tad_non_pk.html</loc></url>
+<url><loc>/reference/add_tafd.html</loc></url>
+<url><loc>/reference/add_time.html</loc></url>
+<url><loc>/reference/add_time_mapping.html</loc></url>
+<url><loc>/reference/add_time_mapping.sdtm.html</loc></url>
+<url><loc>/reference/add_trtdy.html</loc></url>
+<url><loc>/reference/add_tv_lab.html</loc></url>
+<url><loc>/reference/add_tv_vs.html</loc></url>
+<url><loc>/reference/administration_summary.html</loc></url>
+<url><loc>/reference/ae_summary.html</loc></url>
+<url><loc>/reference/analytes.data.frame.html</loc></url>
+<url><loc>/reference/analytes.html</loc></url>
+<url><loc>/reference/analytes.nif.html</loc></url>
+<url><loc>/reference/analytes.sdtm.html</loc></url>
+<url><loc>/reference/analytes_cmts.html</loc></url>
+<url><loc>/reference/append_statement.html</loc></url>
+<url><loc>/reference/baseline_covariates.html</loc></url>
+<url><loc>/reference/bmi_by_age.html</loc></url>
+<url><loc>/reference/carry_forward_dose.html</loc></url>
+<url><loc>/reference/carry_forward_epoch.html</loc></url>
+<url><loc>/reference/check_date_format.html</loc></url>
+<url><loc>/reference/check_date_time_format.html</loc></url>
+<url><loc>/reference/check_last_exendtc.html</loc></url>
+<url><loc>/reference/check_missing_time.html</loc></url>
+<url><loc>/reference/check_sdtm.html</loc></url>
+<url><loc>/reference/clip_nif.html</loc></url>
+<url><loc>/reference/cmt_mapping.html</loc></url>
+<url><loc>/reference/coalesce_join.html</loc></url>
+<url><loc>/reference/compose_dtc.html</loc></url>
+<url><loc>/reference/compress.html</loc></url>
+<url><loc>/reference/compress.nif.html</loc></url>
+<url><loc>/reference/compress_nif.html</loc></url>
+<url><loc>/reference/conditional_message.html</loc></url>
+<url><loc>/reference/covariate_barplot.html</loc></url>
+<url><loc>/reference/covariate_hist.html</loc></url>
+<url><loc>/reference/crea_mdrd.html</loc></url>
+<url><loc>/reference/crea_raynaud.html</loc></url>
+<url><loc>/reference/decompose_dtc.html</loc></url>
+<url><loc>/reference/derive_sld.html</loc></url>
+<url><loc>/reference/df_to_string.html</loc></url>
+<url><loc>/reference/disposition_summary.html</loc></url>
+<url><loc>/reference/domain.html</loc></url>
+<url><loc>/reference/domain_model.html</loc></url>
+<url><loc>/reference/dose_levels.html</loc></url>
+<url><loc>/reference/dose_lin.html</loc></url>
+<url><loc>/reference/dose_plot_id.html</loc></url>
+<url><loc>/reference/dose_red_sbs.html</loc></url>
+<url><loc>/reference/doses.html</loc></url>
+<url><loc>/reference/doses.nif.html</loc></url>
+<url><loc>/reference/doses.sdtm.html</loc></url>
+<url><loc>/reference/dtc_formats.html</loc></url>
+<url><loc>/reference/edish_plot.html</loc></url>
+<url><loc>/reference/egfr_cg.html</loc></url>
+<url><loc>/reference/egfr_mdrd.html</loc></url>
+<url><loc>/reference/egfr_raynaud.html</loc></url>
+<url><loc>/reference/ensure_analyte.html</loc></url>
+<url><loc>/reference/ensure_dose.html</loc></url>
+<url><loc>/reference/ensure_metabolite.html</loc></url>
+<url><loc>/reference/ensure_ntime.html</loc></url>
+<url><loc>/reference/ensure_parent.html</loc></url>
+<url><loc>/reference/ensure_tad.html</loc></url>
+<url><loc>/reference/ensure_tafd.html</loc></url>
+<url><loc>/reference/ensure_time.html</loc></url>
+<url><loc>/reference/examplinib.html</loc></url>
+<url><loc>/reference/examplinib_fe.html</loc></url>
+<url><loc>/reference/examplinib_fe_nif.html</loc></url>
+<url><loc>/reference/examplinib_nif.html</loc></url>
+<url><loc>/reference/examplinib_poc.html</loc></url>
+<url><loc>/reference/examplinib_poc_min_nif.html</loc></url>
+<url><loc>/reference/examplinib_poc_nif.html</loc></url>
+<url><loc>/reference/examplinib_sad.html</loc></url>
+<url><loc>/reference/examplinib_sad_min_nif.html</loc></url>
+<url><loc>/reference/examplinib_sad_nif.html</loc></url>
+<url><loc>/reference/exclude_exstdtc_after_rfendtc.html</loc></url>
+<url><loc>/reference/extract_date.html</loc></url>
+<url><loc>/reference/extract_time.html</loc></url>
+<url><loc>/reference/fill_bl_tv.html</loc></url>
+<url><loc>/reference/filter_EXSTDTC.html</loc></url>
+<url><loc>/reference/filter_EXSTDTC_after_EXENDTC.html</loc></url>
+<url><loc>/reference/filter_correct_date_format.html</loc></url>
+<url><loc>/reference/filter_subject.html</loc></url>
+<url><loc>/reference/filter_subject.nif.html</loc></url>
+<url><loc>/reference/filter_subject.sdtm.html</loc></url>
+<url><loc>/reference/filter_subjects.html</loc></url>
+<url><loc>/reference/geom_admin.html</loc></url>
+<url><loc>/reference/get_cov_plot_params.html</loc></url>
+<url><loc>/reference/guess_analyte.html</loc></url>
+<url><loc>/reference/guess_lbspec.html</loc></url>
+<url><loc>/reference/guess_ntime.html</loc></url>
+<url><loc>/reference/guess_parent.html</loc></url>
+<url><loc>/reference/guess_pcspec.html</loc></url>
+<url><loc>/reference/guess_spec.html</loc></url>
+<url><loc>/reference/has_time.html</loc></url>
+<url><loc>/reference/head.html</loc></url>
+<url><loc>/reference/head.nif.html</loc></url>
+<url><loc>/reference/ht_by_wt.html</loc></url>
+<url><loc>/reference/impute_admin_dtc_to_pcrftdtc.html</loc></url>
+<url><loc>/reference/impute_admin_times_from_pcrftdtc.html</loc></url>
+<url><loc>/reference/impute_administration_time.html</loc></url>
+<url><loc>/reference/impute_exendtc_to_cutoff.html</loc></url>
+<url><loc>/reference/impute_exendtc_to_rfendtc.html</loc></url>
+<url><loc>/reference/impute_missing_exendtc.html</loc></url>
+<url><loc>/reference/impute_missing_exendtc_time.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/index_dosing_interval.html</loc></url>
+<url><loc>/reference/index_nif.html</loc></url>
+<url><loc>/reference/index_rich_sampling_intervals.html</loc></url>
+<url><loc>/reference/is_iso_date.html</loc></url>
+<url><loc>/reference/is_iso_date_time.html</loc></url>
+<url><loc>/reference/isofy_date_format.html</loc></url>
+<url><loc>/reference/isofy_dates.html</loc></url>
+<url><loc>/reference/last_ex_dtc.html</loc></url>
+<url><loc>/reference/last_obs_dtc.html</loc></url>
+<url><loc>/reference/lbm_boer.html</loc></url>
+<url><loc>/reference/lbm_hume.html</loc></url>
+<url><loc>/reference/lbm_peters.html</loc></url>
+<url><loc>/reference/limit.html</loc></url>
+<url><loc>/reference/lubrify_dates.html</loc></url>
+<url><loc>/reference/make_admin.html</loc></url>
+<url><loc>/reference/make_administration.html</loc></url>
+<url><loc>/reference/make_ae.html</loc></url>
+<url><loc>/reference/make_baseline.html</loc></url>
+<url><loc>/reference/make_crea.html</loc></url>
+<url><loc>/reference/make_dm.html</loc></url>
+<url><loc>/reference/make_drug_mapping.html</loc></url>
+<url><loc>/reference/make_exstdy_exendy.html</loc></url>
+<url><loc>/reference/make_fe_pc.html</loc></url>
+<url><loc>/reference/make_lb.html</loc></url>
+<url><loc>/reference/make_md_ex.html</loc></url>
+<url><loc>/reference/make_mean_plot_data_set.html</loc></url>
+<url><loc>/reference/make_nif.html</loc></url>
+<url><loc>/reference/make_obs.html</loc></url>
+<url><loc>/reference/make_observation.html</loc></url>
+<url><loc>/reference/make_plot_data_set.html</loc></url>
+<url><loc>/reference/make_sd_ex.html</loc></url>
+<url><loc>/reference/make_sd_pc.html</loc></url>
+<url><loc>/reference/make_subjects.html</loc></url>
+<url><loc>/reference/make_subs.html</loc></url>
+<url><loc>/reference/make_time.html</loc></url>
+<url><loc>/reference/make_vs.html</loc></url>
+<url><loc>/reference/max_admin_time.html</loc></url>
+<url><loc>/reference/max_observation_time.html</loc></url>
+<url><loc>/reference/max_time.html</loc></url>
+<url><loc>/reference/mean_dose_plot.html</loc></url>
+<url><loc>/reference/minimal_nif_fields.html</loc></url>
+<url><loc>/reference/miss_admins.html</loc></url>
+<url><loc>/reference/missing_time.html</loc></url>
+<url><loc>/reference/n_administrations.html</loc></url>
+<url><loc>/reference/nca.html</loc></url>
+<url><loc>/reference/nca_from_pp.html</loc></url>
+<url><loc>/reference/nca_power_model.html</loc></url>
+<url><loc>/reference/nca_summary.html</loc></url>
+<url><loc>/reference/nca_summary_table.html</loc></url>
+<url><loc>/reference/new_nif.html</loc></url>
+<url><loc>/reference/new_sdtm.html</loc></url>
+<url><loc>/reference/nice_enumeration.html</loc></url>
+<url><loc>/reference/nif-package.html</loc></url>
+<url><loc>/reference/nif_auto.html</loc></url>
+<url><loc>/reference/nif_cleanup.html</loc></url>
+<url><loc>/reference/nif_debugger.html</loc></url>
+<url><loc>/reference/nif_disclaimer.html</loc></url>
+<url><loc>/reference/nif_mean_plot.html</loc></url>
+<url><loc>/reference/nif_mean_plot1.html</loc></url>
+<url><loc>/reference/nif_option.html</loc></url>
+<url><loc>/reference/nif_option_value.html</loc></url>
+<url><loc>/reference/nif_plot_id.html</loc></url>
+<url><loc>/reference/nif_spaghetti_plot.html</loc></url>
+<url><loc>/reference/nif_spaghetti_plot1.html</loc></url>
+<url><loc>/reference/nif_viewer.html</loc></url>
+<url><loc>/reference/normalize_nif.html</loc></url>
+<url><loc>/reference/obs_per_dose_level.html</loc></url>
+<url><loc>/reference/order_nif_columns.html</loc></url>
+<url><loc>/reference/parents.html</loc></url>
+<url><loc>/reference/pk_sim.html</loc></url>
+<url><loc>/reference/plot.nif.bak.html</loc></url>
+<url><loc>/reference/plot.nif.html</loc></url>
+<url><loc>/reference/plot.sdtm.html</loc></url>
+<url><loc>/reference/plot.summary_nif.html</loc></url>
+<url><loc>/reference/plot_old.html</loc></url>
+<url><loc>/reference/plot_z.html</loc></url>
+<url><loc>/reference/pos_diff.html</loc></url>
+<url><loc>/reference/positive_or_zero.html</loc></url>
+<url><loc>/reference/print.nif.html</loc></url>
+<url><loc>/reference/print.sdtm.html</loc></url>
+<url><loc>/reference/print.subject_info.html</loc></url>
+<url><loc>/reference/print.summary_nif.html</loc></url>
+<url><loc>/reference/print.summary_sdtm.html</loc></url>
+<url><loc>/reference/print_debug.html</loc></url>
+<url><loc>/reference/pt_to_hours.html</loc></url>
+<url><loc>/reference/read_sdtm.html</loc></url>
+<url><loc>/reference/read_sdtm_sas.html</loc></url>
+<url><loc>/reference/read_sdtm_xpt.html</loc></url>
+<url><loc>/reference/recode_sex.html</loc></url>
+<url><loc>/reference/reformat_date.html</loc></url>
+<url><loc>/reference/rich_sampling_sbs.html</loc></url>
+<url><loc>/reference/safe_mean.html</loc></url>
+<url><loc>/reference/safe_min.html</loc></url>
+<url><loc>/reference/safe_sd.html</loc></url>
+<url><loc>/reference/sdtm_domain_model.html</loc></url>
+<url><loc>/reference/sdtm_missing_times.html</loc></url>
+<url><loc>/reference/standard_nif_fields.html</loc></url>
+<url><loc>/reference/standardize_date_format.html</loc></url>
+<url><loc>/reference/stat_admin.html</loc></url>
+<url><loc>/reference/studies.html</loc></url>
+<url><loc>/reference/subject_baseline_data.html</loc></url>
+<url><loc>/reference/subject_info.html</loc></url>
+<url><loc>/reference/subject_info.nif.html</loc></url>
+<url><loc>/reference/subject_info.sdtm.html</loc></url>
+<url><loc>/reference/subjects.html</loc></url>
+<url><loc>/reference/subjects.nif.html</loc></url>
+<url><loc>/reference/subjects.sdtm.html</loc></url>
+<url><loc>/reference/subs_per_dose_level.html</loc></url>
+<url><loc>/reference/suggest.html</loc></url>
+<url><loc>/reference/summary.html</loc></url>
+<url><loc>/reference/summary.nif.html</loc></url>
+<url><loc>/reference/summary.sdtm.html</loc></url>
+<url><loc>/reference/synthesize_crea.html</loc></url>
+<url><loc>/reference/synthesize_dm.html</loc></url>
+<url><loc>/reference/synthesize_examplinib.html</loc></url>
+<url><loc>/reference/synthesize_lb.html</loc></url>
+<url><loc>/reference/synthesize_pp.html</loc></url>
+<url><loc>/reference/synthesize_sdtm_food_effect_study.html</loc></url>
+<url><loc>/reference/synthesize_sdtm_poc_study.html</loc></url>
+<url><loc>/reference/synthesize_sdtm_sad_study.html</loc></url>
+<url><loc>/reference/synthesize_subjects.html</loc></url>
+<url><loc>/reference/synthesize_vs.html</loc></url>
+<url><loc>/reference/time_by_ntime.html</loc></url>
+<url><loc>/reference/treatments.html</loc></url>
+<url><loc>/reference/treatments.nif.html</loc></url>
+<url><loc>/reference/treatments.sdtm.html</loc></url>
+<url><loc>/reference/usubjid.html</loc></url>
+<url><loc>/reference/watermark.html</loc></url>
+<url><loc>/reference/write_csv.nif.html</loc></url>
+<url><loc>/reference/write_monolix.html</loc></url>
+<url><loc>/reference/write_nif.html</loc></url>
+<url><loc>/reference/wt_by_ht.html</loc></url>
+<url><loc>/reference/wt_by_race.html</loc></url>
+<url><loc>/reference/wt_by_sex.html</loc></url>
 </urlset>
+
