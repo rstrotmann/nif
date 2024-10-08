@@ -81,7 +81,7 @@ suppress messages.}
 
 \item{dose_norm}{Dose-normalized exposure, as logical.}
 
-\item{.by}{}
+\item{.by}{Facetting variable, as character.}
 
 \item{...}{Further graphical parameters for \code{geom_point()}.}
 }

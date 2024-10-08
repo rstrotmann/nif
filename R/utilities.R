@@ -1,8 +1,7 @@
 #' Issue message based on silent flag
 #'
-#' @param msg The message as character.
-#' @param silent A Boolean.
-#' @param ... Further message components.
+#' @param ... Message components.
+#'
 #' @return Nothing.
 #' @keywords internal
 conditional_message <- function(...) {
@@ -310,7 +309,8 @@ extract_time <- function(dtc) {
 
 #' Check whether POSIX datetime object includes time information
 #'
-#' @param datetime The datetime object as POSIX or as ISO 8601-formatted string.
+#' @param obj POSIX datetime object.
+#'
 #' @return A Boolean value.
 #' @keywords internal
 has_time <- function(obj) {

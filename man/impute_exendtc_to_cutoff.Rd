@@ -9,7 +9,7 @@ impute_exendtc_to_cutoff(ex, cut_off_date = NA)
 \arguments{
 \item{ex}{The EX domain as data frame.}
 
-\item{cut.off.date}{The cut-off date.}
+\item{cut_off_date}{The cut-off date.}
 }
 \value{
 The updated EX domain as data frame.

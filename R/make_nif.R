@@ -137,7 +137,7 @@ impute_missing_exendtc <- function(ex) {
 #' date, `cut_off_date`.
 #'
 #' @param ex The EX domain as data frame.
-#' @param cut.off.date The cut-off date.
+#' @param cut_off_date The cut-off date.
 #' @return The updated EX domain as data frame.
 #' @keywords internal
 impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {

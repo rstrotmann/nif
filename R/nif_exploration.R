@@ -10,8 +10,6 @@
 #' @param imp The IMP for which administrations are to be indicated by vertical
 #'   lines. Defaults to NULL.
 #' @param max_time The right limit of the time scale
-#' @param tad Logical value to select whether time after dose (TAD) rather than
-#'   TIME should be plotted.
 #' @param lines Plot lines as logical.
 #' @param cmt The compartment to plot as numeric.
 #' @param log Logarithmic y scale.
@@ -512,7 +510,7 @@ nif_spaghetti_plot <- function(obj,
 #'   implement grouping! `r lifecycle::badge("experimental")`
 #' @param shading Show ribbons when mean = TRUE, as logical.
 #' @param dose_norm Dose-normalized exposure, as logical.
-#' @param .by
+#' @param .by Facetting variable, as character.
 #'
 #' @return A ggplot object.
 # @export

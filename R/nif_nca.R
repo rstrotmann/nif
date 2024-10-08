@@ -133,19 +133,46 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
   return(temp)
 }
 
-################################
-################################
 
-nca1 <- function(obj,
+#' Non-compartmental analysis of NIF data
+#'
+#' This function is a wrapper around the NCA functions provided by the
+#' [PKNCA](https://CRAN.R-project.org/package=PKNCA) package.
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param nif A nif object.
+#' @param analyte The analyte as character.
+#' @param parent The parent as character.
+#' @param keep Columns to keep, as character.
+#' @param group Columns to group by, as character.
+#' @param time The time field as character.
+#' @param average_duplicates Average duplicate concentration values, as logical.
+#'
+#' @return A data frame.
+#' @export
+#'
+#' @examples
+#' nca1(examplinib_sad_nif, time = "TAD")
+#' nca1(examplinib_fe_nif, time = "TAD", group = "FASTED")
+nca1 <- function(nif,
                  analyte = NULL, parent = NULL,
-                 keep = "DOSE", group = NULL,
-                 nominal_time = FALSE,
-                 average_duplicates = TRUE,
-                 silent = deprecated()) {
+                 keep = NULL, group = NULL,
+                 time = "TAD",
+                 average_duplicates = TRUE) {
+
+  allowed_times <- c("TIME", "NTIME", "TAFD", "TAD")
+  if(!time %in% allowed_times) {
+    stop(paste0("'time' parameter must be one of ",
+                nice_enumeration(allowed_times, conjunction = "or")))
+  }
+
+  ## check that analyte and parent are scalars!
 
   # guess analyte if not defined
-  if (is.null(analyte)) {
-    current_analyte <- guess_analyte(obj)
+  if(is.null(analyte)) {
+    current_analyte <- guess_analyte(nif)
     conditional_message(
       "NCA: No analyte specified. Selected ",
       current_analyte, " as the most likely."
@@ -154,103 +181,65 @@ nca1 <- function(obj,
     current_analyte <- analyte
   }
 
+  # assign parent if not defined
   if (is.null(parent)) {
-    parent <- current_analyte
+    analytes_parents <- analyte_overview(nif)
+    parent <- analytes_parents[analytes_parents$ANALYTE == current_analyte,
+                               "PARENT"]
   }
 
-  # filter for analyte, set selected TIME
-  obj1 <- obj %>%
+  # make observation and administration data sets
+  obj <- nif %>%
+    ensure_time() %>%
+    index_dosing_interval() %>%
     as.data.frame() %>%
-    dplyr::filter(ANALYTE == current_analyte) %>%
-    dplyr::mutate(TIME = case_when(nominal_time == TRUE ~ NTIME,
-                                   .default = TIME)) %>%
-    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
-    as.data.frame()
-
-  # preserve the columns to keep
-  keep_columns <- obj1 %>%
-    dplyr::filter(EVID == 1) %>%
-    as.data.frame() %>%
-    dplyr::select(c(ID, any_of(keep))) %>%
-    dplyr::distinct()
+    mutate(TIME = .data[[time]]) %>%
+    mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
+    select(any_of(
+      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
 
   admin <- obj %>%
-    as.data.frame() %>%
-    dplyr::filter(ANALYTE == parent) %>%
-    dplyr::mutate(TIME = case_when(
-      nominal_time == TRUE ~ NTIME,
-      .default = TIME
-    )) %>%
-    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
-    dplyr::filter(EVID == 1) %>%
-    mutate(PPRFTDTC = .data$DTC) %>%
-    dplyr::select(any_of(
-      c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
-    as.data.frame()
+    filter(.data$ANALYTE == parent) %>%
+    filter(.data$EVID == 1) #%>%
+
+  # preserve the columns to keep
+  keep_columns <- obj %>%
+    filter(EVID == 1) %>%
+    select(c(ID, any_of(c(keep, "DOSE", "DI")))) %>%
+    distinct()
 
   # concentration data
-  conc <- obj1 %>%
-    dplyr::filter(EVID == 0) %>%
-    dplyr::select(any_of(c("ID", "TIME", "DV", "DOSE", group)))
+  conc <- obj %>%
+    filter(.data$ANALYTE == current_analyte) %>%
+    filter(.data$EVID == 0) #%>%
 
   if (average_duplicates == TRUE) {
     conc <- conc %>%
-      group_by(across(any_of(c("ID", "TIME", "DOSE", group)))) %>%
+      group_by(across(any_of(c("ID", "TIME", "DOSE", "DI", group)))) %>%
       summarize(DV = mean(DV, na.rm = TRUE), .groups = "drop")
   }
 
-  if (!is.null(group)) {
-    conc <- conc %>%
-      dplyr::group_by(ID, TIME, across(any_of(group)))
-  } else {
-    conc <- conc %>% dplyr::group_by(ID, TIME)
+  group_string <- paste(group, collapse = "+")
+  if(group_string != ""){
+    conditional_message(paste("NCA: Group by", group_string))
+    group_string <- paste0(group_string, "+")
   }
 
-  # generate formulae for the conc and admin objects
-  conc_formula <- "DV~TIME|ID"
-  # dose_formula <- "DOSE~TIME|ID"
-  dose_formula <- "DOSE~TIME|PPRFTDTC+ID"
-  if (!is.null(group)) {
-    group_string <- paste(group, collapse = "+")
-    if(get("silent", .nif_env) == FALSE) {
-      message(paste("NCA: Group by", group_string))
-    }
-    conc_formula <- paste0("DV~TIME|", group_string, "+ID")
-    dose_formula <- paste0("DOSE~TIME|", group_string, "+PPRFTDTC+ID")
-  }
+  conc_formula <- paste0("DV~TIME|", group_string, "ID+DI")
+  dose_formula <- paste0("DOSE~TIME|", group_string, "ID+DI")
 
-  conc_obj <- PKNCA::PKNCAconc(
-    conc,
-    stats::as.formula(conc_formula)
-  )
+  nca <- PKNCA::pk.nca(
+    PKNCA::PKNCAdata(
+      PKNCA::PKNCAconc(conc, stats::as.formula(conc_formula)),
+      PKNCA::PKNCAdose(admin, stats::as.formula(dose_formula)),
+      impute = "start_conc0")
+    )
 
-  dose_obj <- PKNCA::PKNCAdose(
-    admin,
-    stats::as.formula(dose_formula)
-  )
-
-  data_obj <- PKNCA::PKNCAdata(
-    conc_obj,
-    dose_obj,
-    impute = "start_conc0"
-  )
-
-  results_obj <- PKNCA::pk.nca(data_obj)
-
-  temp <- results_obj$result %>%
+  nca$result %>%
+    left_join(keep_columns, by = c("ID", "DI")) %>%
     as.data.frame() %>%
-    dplyr::left_join(keep_columns, by = "ID")
-
-  if (!is.null(group)) {
-    temp <- temp %>%
-      dplyr::mutate_at(group, as.factor)
-  }
-
-  return(temp)
+    dplyr::mutate_at(group, as.factor)
 }
-
-################################
-################################
 
 
 #' Generate NCA table from the SDTM.PP domain

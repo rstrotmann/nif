@@ -7,7 +7,7 @@
 has_time(obj)
 }
 \arguments{
-\item{datetime}{The datetime object as POSIX or as ISO 8601-formatted string.}
+\item{obj}{POSIX datetime object.}
 }
 \value{
 A Boolean value.

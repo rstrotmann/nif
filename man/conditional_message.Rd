@@ -7,11 +7,7 @@
 conditional_message(...)
 }
 \arguments{
-\item{...}{Further message components.}
-
-\item{msg}{The message as character.}
-
-\item{silent}{A Boolean.}
+\item{...}{Message components.}
 }
 \value{
 Nothing.
