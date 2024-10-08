@@ -42,7 +42,8 @@ suppress messages.}
 A data frame.
 }
 \description{
-Non-compartmental analysis
+This function is a wrapper around the NCA functions provided by the
+\href{https://CRAN.R-project.org/package=PKNCA}{PKNCA} package.
 }
 \examples{
 nca(examplinib_fe_nif)

@@ -1,5 +1,8 @@
 #' Non-compartmental analysis
 #'
+#' This function is a wrapper around the NCA functions provided by the
+#' [PKNCA](https://CRAN.R-project.org/package=PKNCA) package.
+#'
 #' @param obj The source NIF object.
 #' @param analyte The analyte. If none specified and multiple analytes are in
 #'    the dataset, defaults to the first analyte.
@@ -159,7 +162,7 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
 nca1 <- function(nif,
                  analyte = NULL, parent = NULL,
                  keep = NULL, group = NULL,
-                 time = "TAD",
+                 time = "TIME",
                  average_duplicates = TRUE) {
 
   allowed_times <- c("TIME", "NTIME", "TAFD", "TAD")
@@ -194,24 +197,30 @@ nca1 <- function(nif,
     index_dosing_interval() %>%
     as.data.frame() %>%
     mutate(TIME = .data[[time]]) %>%
-    mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
-    select(any_of(
-      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
-
-  admin <- obj %>%
-    filter(.data$ANALYTE == parent) %>%
-    filter(.data$EVID == 1) #%>%
+    mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) #%>%
+    # select(any_of(
+    #   c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
 
   # preserve the columns to keep
   keep_columns <- obj %>%
-    filter(EVID == 1) %>%
-    select(c(ID, any_of(c(keep, "DOSE", "DI")))) %>%
+    # as.data.frame() %>%
+    # filter(EVID == 1) %>%
+    select(c("ID", "DOSE", "DI", any_of(c(keep)))) %>%
     distinct()
+
+  # dosint data
+  admin <- obj %>%
+    filter(.data$ANALYTE == parent) %>%
+    filter(.data$EVID == 1) %>%
+    select(any_of(
+      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
 
   # concentration data
   conc <- obj %>%
     filter(.data$ANALYTE == current_analyte) %>%
-    filter(.data$EVID == 0) #%>%
+    filter(.data$EVID == 0) %>%
+    select(any_of(
+      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
 
   if (average_duplicates == TRUE) {
     conc <- conc %>%

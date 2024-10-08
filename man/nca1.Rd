@@ -10,7 +10,7 @@ nca1(
   parent = NULL,
   keep = NULL,
   group = NULL,
-  time = "TAD",
+  time = "TIME",
   average_duplicates = TRUE
 )
 }

@@ -41,9 +41,6 @@ nif_plot_id(
 lines. Defaults to NULL.}
 
 \item{...}{Further graphical parameters.}
-
-\item{tad}{Logical value to select whether time after dose (TAD) rather than
-TIME should be plotted.}
 }
 \value{
 A ggplot2 object.
