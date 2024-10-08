@@ -46,7 +46,7 @@ check_date_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(.data$DOMAIN)
   temp <- obj %>%
     filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == ""))) %>%
-    select(c(.data$USUBJID, .data$DOMAIN, ends_with("DTC")))
+    select(c("USUBJID", "DOMAIN", ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Incomplete date format in ", nrow(temp), " rows")
@@ -106,7 +106,7 @@ check_date_time_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(DOMAIN)
   temp <- obj %>%
     filter(if_any(ends_with("DTC"), ~ !(is_iso_date_time(.) | . == ""))) %>%
-    select(c(.data$USUBJID, .data$DOMAIN, ends_with("DTC")))
+    select(c("USUBJID", "DOMAIN", ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Incomplete date-time format in ", nrow(temp),
@@ -132,7 +132,7 @@ check_missing_time <- function(obj, verbose = TRUE) {
   temp <- obj %>%
     filter(if_any(ends_with("DTC"),
                   ~ is_iso_date(.) & !(is_iso_date_time(.)))) %>%
-    select(c(.data$USUBJID, .data$DOMAIN, ends_with("DTC")))
+    select(c("USUBJID", "DOMAIN", ends_with("DTC")))
 
   if (nrow(temp) > 0) {
     out <- paste0(domain, ": Missing time in ", nrow(temp), " rows")
@@ -166,8 +166,7 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
     filter(LAST_ADMIN == TRUE, is.na(.data$EXENDTC)) %>%
-    select(.data$USUBJID, .data$DOMAIN, .data$EXTRT, .data$EXSTDTC,
-           .data$EXENDTC)
+    select("USUBJID", "DOMAIN", "EXTRT", "EXSTDTC", "EXENDTC")
 
   if (nrow(temp) > 0) {
     out <- paste0(
@@ -198,7 +197,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
   sdtm %>%
     domain("dm") %>%
     filter(.data$ACTARMCD != "SCRNFAIL") %>%
-    select(.data$USUBJID, .data$DOMAIN, .data$RFENDTC) %>%
+    select("USUBJID", "DOMAIN", "RFENDTC") %>%
     check_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose)
 
@@ -213,7 +212,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in PC
   sdtm %>%
     domain("pc") %>%
-    select(.data$USUBJID, .data$DOMAIN, .data$PCDTC) %>%
+    select("USUBJID", "DOMAIN", "PCDTC") %>%
     check_date_format(verbose = verbose) %>%
     filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose)

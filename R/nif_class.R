@@ -22,8 +22,6 @@ new_nif <- function(obj = NULL, ...) {
     }
     class(temp) <- c("nif", "data.frame")
     order_nif_columns(temp)
-    # attr(temp, "version") <- paste0(
-    #   "Created with nif, Version ", packageVersion("nif"))
   }
 }
 
@@ -179,7 +177,7 @@ subject_info.nif <- function(obj, id) {
 
   out$administrations <- temp %>%
     add_trtdy() %>%
-    filter(EVID == 1) %>%
+    filter(.data$EVID == 1) %>%
     select(c("USUBJID", "TIME", "ANALYTE", "DTC", "TRTDY")) %>%
     arrange(.data$ANALYTE, .data$TIME) %>%
     select(c("ANALYTE", "TIME", "TRTDY")) %>%
@@ -234,7 +232,7 @@ subjects.nif <- function(obj) {
   obj %>%
     as.data.frame() %>%
     {if(!"USUBJID" %in% names(.)) mutate(., USUBJID = NA) else .} %>%
-    dplyr::select(any_of(c("ID", "USUBJID"))) %>%
+    select(any_of(c("ID", "USUBJID"))) %>%
     distinct()
 }
 
@@ -265,9 +263,9 @@ parents <- function(obj) {
   obj %>%
     ensure_parent() %>%
     as.data.frame() %>%
-    distinct(PARENT) %>%
-    filter(PARENT != "") %>%
-    pull(PARENT)
+    distinct(.data$PARENT) %>%
+    filter(.data$PARENT != "") %>%
+    pull(.data$PARENT)
 }
 
 
@@ -282,23 +280,25 @@ parents <- function(obj) {
 #' dose_red_sbs(examplinib_poc_nif)
 dose_red_sbs <- function(obj, analyte = NULL) {
   if(!"ANALYTE" %in% names(obj)) {
-    obj <- obj %>% mutate(ANALYTE=CMT)
+    obj <- obj %>%
+      mutate(ANALYTE = .data$CMT)
   }
 
   if (!is.null(analyte)) {
-    obj <- obj %>% filter(ANALYTE %in% analyte)
+    obj <- obj %>%
+      filter(.data$ANALYTE %in% analyte)
   }
 
   obj %>%
     as.data.frame() %>%
     index_nif() %>%
-    filter(EVID == 1) %>%
-    group_by(ID, CMT) %>%
-    mutate(initial_dose = AMT[row_number() == 1]) %>%
-    filter(AMT < initial_dose & AMT != 0) %>%
+    filter(.data$EVID == 1) %>%
+    group_by(.data$ID, .data$CMT) %>%
+    mutate(initial_dose = .data$AMT[row_number() == 1]) %>%
+    filter(.data$AMT < initial_dose & .data$AMT != 0) %>%
     ungroup() %>%
-    distinct(ID) %>%
-    pull(ID)
+    distinct(.data$ID) %>%
+    pull(.data$ID)
 }
 
 
@@ -314,14 +314,15 @@ dose_red_sbs <- function(obj, analyte = NULL) {
 #' @export
 #' @examples
 #' rich_sampling_sbs(examplinib_poc_nif, n=6)
-rich_sampling_sbs <- function(obj, analyte = NA, max_time = NA, n = 4) {
+rich_sampling_sbs <- function(obj,
+                              analyte = NA, max_time = NA, n = 4) {
   if (is.na(analyte)) {
     analyte <- guess_analyte(obj)
   }
 
   obj %>%
     as.data.frame() %>%
-    filter(EVID == 0, ANALYTE == analyte) %>%
+    filter(.data$EVID == 0, .data$ANALYTE == analyte) %>%
     group_by(.data$ID) %>%
     mutate(end_rich = case_when(is.na(max_time) ~ max(.data$TIME),
       .default = max_time
@@ -347,8 +348,8 @@ studies <- function(obj) {
   if("STUDYID" %in% names(obj)){
     return(
       obj %>%
-        dplyr::distinct(.data$STUDYID) %>%
-        dplyr::pull(.data$STUDYID)
+        distinct(.data$STUDYID) %>%
+        pull(.data$STUDYID)
     )
   } else {
     return(NULL)
@@ -393,8 +394,8 @@ ensure_dose <- function(obj) {
 ensure_parent <- function(obj) {
   admin_cmt <- obj %>%
     as.data.frame() %>%
-    filter(EVID == 1) %>%
-    distinct(CMT)
+    filter(.data$EVID == 1) %>%
+    distinct(.data$CMT)
 
   obj <- obj %>%
   {if(!"PARENT" %in% names(obj))
@@ -455,8 +456,6 @@ ensure_time <- function(obj) {
 
 ensure_cfb <- function(obj) {
   obj <- obj %>%
-    # {if(!all(c("ID", "TIME", "ANALYTE", "EVID", "DV") %in% names(obj)))
-    #   add_cfb(.) else .}
     {if(!"DVCFB" %in% names(obj)) add_cfb(.) else .}
 }
 
@@ -485,10 +484,10 @@ doses <- function(obj) {
 #' doses(examplinib_poc_nif)
 doses.nif <- function(obj) {
   obj %>%
-    dplyr::filter(AMT != 0) %>%
-    dplyr::distinct(AMT) %>%
-    dplyr::arrange(as.numeric(AMT)) %>%
-    dplyr::pull(AMT)
+    filter(.data$AMT != 0) %>%
+    distinct(.data$AMT) %>%
+    arrange(as.numeric(.data$AMT)) %>%
+    pull(.data$AMT)
 }
 
 
@@ -513,16 +512,16 @@ doses.nif <- function(obj) {
 dose_levels <- function(obj, cmt = 1, group = NULL) {
   temp <- obj %>%
     ensure_analyte() %>%
-    filter(AMT != 0) %>%
-    group_by(ID, ANALYTE, across(any_of(group))) %>%
-    arrange(ID, TIME)
+    filter(.data$AMT != 0) %>%
+    group_by(.data$ID, .data$ANALYTE, across(any_of(group))) %>%
+    arrange(.data$ID, .data$TIME)
 
   if(nrow(temp) == 0) {
     return(NULL)
   } else {
     temp %>%
-      filter(TIME == min(TIME)) %>%
-      select(ID, ANALYTE, AMT, any_of(group)) %>%
+      filter(.data$TIME == min(.data$TIME)) %>%
+      select("ID", "ANALYTE", "AMT", any_of(group)) %>%
       tidyr::pivot_wider(
         names_from = "ANALYTE",
         values_from = "AMT", values_fill = 0) %>%
@@ -563,9 +562,9 @@ analytes <- function(obj) {
 analytes.nif <- function(obj) {
   ensure_analyte(obj) %>%
     as.data.frame() %>%
-    filter(EVID==0) %>%
-    distinct(ANALYTE) %>%
-    pull(ANALYTE)
+    filter(.data$EVID == 0) %>%
+    distinct(.data$ANALYTE) %>%
+    pull(.data$ANALYTE)
 }
 
 
@@ -583,7 +582,7 @@ analyte_overview <- function(obj) {
     as.data.frame() %>%
     ensure_analyte() %>%
     ensure_parent() %>%
-    distinct(ANALYTE, PARENT)
+    distinct(.data$ANALYTE, .data$PARENT)
 }
 
 
@@ -602,9 +601,9 @@ analyte_overview <- function(obj) {
 analytes.data.frame <- function(obj) {
   ensure_analyte(obj) %>%
     as.data.frame() %>%
-    filter(EVID==0) %>%
-    distinct(ANALYTE) %>%
-    pull(ANALYTE)
+    filter(.data$EVID == 0) %>%
+    distinct(.data$ANALYTE) %>%
+    pull(.data$ANALYTE)
 }
 
 
@@ -619,7 +618,7 @@ analytes.data.frame <- function(obj) {
 analytes_cmts <- function(obj) {
   obj %>%
     ensure_analyte() %>%
-    filter(EVID==0) %>%
+    filter(.data$EVID == 0) %>%
     distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
     as.data.frame()
 }
@@ -636,7 +635,7 @@ analytes_cmts <- function(obj) {
 cmt_mapping <- function(obj) {
   obj %>%
     ensure_analyte() %>%
-    filter(EVID==0) %>%
+    filter(.data$EVID == 0) %>%
     distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
     as.data.frame()
 }
@@ -666,9 +665,9 @@ treatments.nif <- function(obj) {
   obj %>%
     ensure_parent() %>%
     as.data.frame() %>%
-    distinct(PARENT) %>%
-    filter(PARENT != "") %>%
-    pull(PARENT)
+    distinct(.data$PARENT) %>%
+    filter(.data$PARENT != "") %>%
+    pull(.data$PARENT)
 }
 
 
@@ -687,20 +686,6 @@ head.nif <- function(x, ...) {
     as.data.frame()
   NextMethod("head")
 }
-
-
-# ' Export a NIF object as csv file
-# '
-# ' @param obj A NIF object.
-# ' @param filename The filename for the exported file.
-# ' @import dplyr
-# ' @export
-# write_csv.nif <- function(obj, filename) {
-#   temp <- obj %>%
-#     as.data.frame() %>%
-#     dplyr::mutate(across(c("TIME", "TAD", "DV", "LNDV"), round, 3))
-#   write.csv(temp, filename, quote = FALSE, row.names = FALSE)
-# }
 
 
 #' Write as space-delimited, fixed-width file as required by NONMEM or a
@@ -767,15 +752,15 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
   temp <- obj %>%
     as.data.frame() %>%
     mutate(across(any_of(num_fields), signif, 4)) %>%
-    mutate(ADM = case_when(AMT != 0 ~ "1", .default = ".")) %>%
-    mutate(YTYPE = case_when(ADM == "1" ~ ".",
+    mutate(ADM = case_when(.data$AMT != 0 ~ "1", .default = ".")) %>%
+    mutate(YTYPE = case_when(.data$ADM == "1" ~ ".",
                              .default=as.character(CMT-1)))
 
   if("METABOLITE" %in% names(obj)) {
     temp <- temp %>%
       mutate(METABOLITE = case_when(
-        is.na(METABOLITE) ~ FALSE,
-        .default = METABOLITE))}
+        is.na(.data$METABOLITE) ~ FALSE,
+        .default = .data$METABOLITE))}
 
   temp <- temp %>%
     mutate(across(any_of(num_fields),
@@ -783,7 +768,7 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
                     is.na(x) ~ ".",
                     .default = as.character(x))})) %>%
     mutate_all(as.character) %>%
-    mutate(Y = DV)
+    mutate(Y = .data$DV)
 
   if (is.null(filename)) {
     print(temp, row.names = FALSE, col.names = FALSE)
@@ -842,17 +827,17 @@ index_dosing_interval <- function(obj) {
 
   di <- obj %>%
     as.data.frame() %>%
-    filter(EVID == 1) %>%
-    group_by(ID, PARENT) %>%
-    arrange(TIME) %>%
+    filter(.data$EVID == 1) %>%
+    group_by(.data$ID, .data$PARENT) %>%
+    arrange(.data$TIME) %>%
     mutate(DI = row_number()) %>%
     ungroup() %>%
-    select(REF, DI)
+    select("REF", "DI")
 
   obj %>%
     left_join(di, by = "REF") %>%
-    group_by(ID, PARENT) %>%
-    arrange(REF) %>%
+    group_by(.data$ID, .data$PARENT) %>%
+    arrange(.data$REF) %>%
     tidyr::fill(DI, .direction = "downup") %>%
     ungroup() %>%
     new_nif()
@@ -878,7 +863,7 @@ n_administrations <- function(obj) {
     obj %>%
       index_dosing_interval() %>%
       group_by(across(any_of(c("ID", "USUBJID", "PARENT")))) %>%
-      summarize(N = max(DI), .groups = "drop") %>%
+      summarize(N = max(.data$DI), .groups = "drop") %>%
       as.data.frame()
   }
 }
@@ -903,8 +888,8 @@ max_admin_time <- function(obj, analyte = NULL) {
   times <- obj %>%
     ensure_analyte() %>%
     {if(!is.null(analyte)) filter(., ANALYTE %in% analyte) else .} %>%
-    filter(EVID == 1) %>%
-    pull(TIME)
+    filter(.data$EVID == 1) %>%
+    pull(.data$TIME)
 
   if(length(times) == 0) {
     return(NA)
@@ -933,8 +918,8 @@ max_observation_time <- function(obj, analyte = NULL) {
   times <- obj %>%
     ensure_analyte() %>%
     {if(!is.null(analyte)) filter(., ANALYTE %in% analyte) else .} %>%
-    filter(EVID == 0) %>%
-    pull(TIME)
+    filter(.data$EVID == 0) %>%
+    pull(.data$TIME)
 
   if(length(times) == 0) {
     return(NA)
@@ -964,7 +949,6 @@ max_time <- function(obj, time_field = "TIME", analyte = NULL,
     ensure_analyte() %>%
     {if(!is.null(analyte)) filter(., .data$ANALYTE %in% analyte) else .} %>%
     {if(only_observations == TRUE) filter(., .data$EVID == 0 & !is.na(.data$DV)) else .} %>%
-    # pull(TIME)
     pull(.data[[time_field]])
 
   if(length(times) == 0) return(NA)
@@ -983,16 +967,15 @@ guess_analyte <- function(obj) {
     ensure_analyte() %>%
     ensure_metabolite() %>%
     as.data.frame() %>%
-    filter(EVID == 0)
+    filter(.data$EVID == 0)
 
   if(length(analytes(temp)) > 0) {
     temp %>%
-      filter(METABOLITE == FALSE) %>%
-      group_by(ANALYTE) %>%
-      # filter(sum(EVID == 0) > 0) %>%
+      filter(.data$METABOLITE == FALSE) %>%
+      group_by(.data$ANALYTE) %>%
       summarize(n = n(), .groups = "drop") %>%
-      filter(n == max(n)) %>%
-      arrange(ANALYTE) %>%
+      filter(n == max(.data$n)) %>%
+      arrange(.data$ANALYTE) %>%
       slice(1) %>%
       pull("ANALYTE")
   } else {
@@ -1014,15 +997,15 @@ guess_parent <- function(obj) {
     ensure_metabolite() %>%
     ensure_parent() %>%
     as.data.frame() %>%
-    filter(EVID == 0)
+    filter(.data$EVID == 0)
 
   if(length(analytes(temp)) > 0) {
     temp %>%
-      filter(METABOLITE == FALSE) %>%
-      group_by(PARENT) %>%
+      filter(.data$METABOLITE == FALSE) %>%
+      group_by(.data$PARENT) %>%
       summarize(n = n(), .groups = "drop") %>%
-      filter(n == max(n)) %>%
-      arrange(PARENT) %>%
+      filter(n == max(.data$n)) %>%
+      arrange(.data$PARENT) %>%
       slice(1) %>%
       pull("PARENT")
   } else {
@@ -1050,28 +1033,29 @@ add_dose_level <- function(obj) {
     ensure_parent() %>%
     ensure_metabolite() %>%
     as.data.frame() %>%
-    filter(METABOLITE == FALSE) %>%
-    filter(PARENT != "", !is.na(DOSE), AMT != 0, EVID == 1) %>%
-    group_by(ID, ANALYTE) %>%
-    arrange(ID, TIME, ANALYTE) %>%
-    filter(TIME == min(TIME)) %>%
-    select(ID, ANALYTE, DOSE) %>%
-    group_by(ID)
+    filter(.data$METABOLITE == FALSE) %>%
+    filter(.data$PARENT != "", !is.na(.data$DOSE), .data$AMT != 0,
+           .data$EVID == 1) %>%
+    group_by(.data$ID, .data$ANALYTE) %>%
+    arrange(.data$ID, .data$TIME, .data$ANALYTE) %>%
+    filter(.data$TIME == min(.data$TIME)) %>%
+    select("ID", "ANALYTE", "DOSE") %>%
+    group_by(.data$ID)
 
   if (temp %>%
       ungroup() %>%
-      distinct(ANALYTE) %>%
+      distinct(.data$ANALYTE) %>%
       nrow() == 1) {
-    temp <- temp %>% mutate(DL = DOSE)
+    temp <- temp %>% mutate(DL = .data$DOSE)
   } else {
     temp <- temp %>%
-      mutate(DL = paste0(DOSE, "-", ANALYTE)) %>%
-      arrange(ID) %>%
-      arrange(factor(ANALYTE, levels = analytes(obj))) %>%
-      summarize(DL = paste0(DL, collapse = "+"))
+      mutate(DL = paste0(.data$DOSE, "-", .data$ANALYTE)) %>%
+      arrange(.data$ID) %>%
+      arrange(factor(.data$ANALYTE, levels = analytes(obj))) %>%
+      summarize(DL = paste0(.data$DL, collapse = "+"))
   }
 
-  return(obj %>% left_join(temp %>% select(ID, DL), by = "ID"))
+  return(obj %>%left_join(temp %>% select(ID, DL), by = "ID"))
 }
 
 
@@ -1146,10 +1130,6 @@ add_trtdy <- function(obj) {
 }
 
 
-# add_ntafd <- function(obj) {
-
-# }
-
 #' Add baseline creatinine clearance field.
 #'
 #' @param obj A NIF object.
@@ -1190,12 +1170,12 @@ add_bl_renal <- function(obj, method = egfr_cg) {
   obj %>%
     add_bl_crcl(method = method) %>%
     mutate(BL_RENAL = as.character(
-      cut(BL_CRCL,
+      cut(.data$BL_CRCL,
         breaks = c(0, 30, 60, 90, Inf),
         labels = c("severe", "moderate", "mild", "normal")
       )
     )) %>%
-    mutate(BL_RENAL = factor(BL_RENAL,
+    mutate(BL_RENAL = factor(.data$BL_RENAL,
       levels = c("normal", "mild", "moderate", "severe")
     ))
 }
@@ -1301,10 +1281,10 @@ add_cfb <- function(obj, baseline_filter = "TIME <= 0",
   obj %>%
     ensure_analyte() %>%
     as.data.frame() %>%
-    group_by(ID, ANALYTE) %>%
+    group_by(.data$ID, .data$ANALYTE) %>%
     mutate(DVBL = summary_function(
-      na.omit(DV[eval(parse(text = baseline_filter))]))) %>%
-    mutate(DVCFB = DV - DVBL) %>%
+      na.omit(.data$DV[eval(parse(text = baseline_filter))]))) %>%
+    mutate(DVCFB = .data$DV - .data$DVBL) %>%
     new_nif()
 }
 
@@ -1336,10 +1316,10 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
   obj %>%
     ensure_analyte() %>%
     as.data.frame() %>%
-    group_by(ID, ANALYTE) %>%
+    group_by(.data$ID, .data$ANALYTE) %>%
     mutate(DVBL = summary_function(
-      na.omit(DV[eval(parse(text = baseline_filter))]))) %>%
-    mutate(DVRTB = DV/DVBL) %>%
+      na.omit(.data$DV[eval(parse(text = baseline_filter))]))) %>%
+    mutate(DVRTB = .data$DV/.data$DVBL) %>%
     new_nif()
 }
 
@@ -1362,7 +1342,7 @@ add_obs_per_dosing_interval <- function(obj) {
     select(-any_of("DI")) %>%
     index_dosing_interval() %>%
     group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT", "DI")))) %>%
-    mutate(OPDI = sum(EVID == 0))
+    mutate(OPDI = sum(.data$EVID == 0))
 }
 
 
@@ -1411,12 +1391,9 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
     # select(-c("RICHINT_TEMP")) %>%
 
     group_by(.data$ID, .data$ANALYTE, .data$DI) %>%
-    # group_by(DI) %>%
     mutate(RICH_START = case_when(
-      # row_number() == 1 & RICHINT_TEMP == TRUE ~ dense_rank(DI),
       row_number() == 1 & .data$RICHINT_TEMP == TRUE ~ TRUE,
       .default = FALSE)) %>%
-    # mutate(test = dense_rank(DI)) %>%
     ungroup() %>%
 
     group_by(.data$ID, .data$ANALYTE, .data$RICH_START) %>%
