@@ -133,6 +133,125 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
   return(temp)
 }
 
+################################
+################################
+
+nca1 <- function(obj,
+                 analyte = NULL, parent = NULL,
+                 keep = "DOSE", group = NULL,
+                 nominal_time = FALSE,
+                 average_duplicates = TRUE,
+                 silent = deprecated()) {
+
+  # guess analyte if not defined
+  if (is.null(analyte)) {
+    current_analyte <- guess_analyte(obj)
+    conditional_message(
+      "NCA: No analyte specified. Selected ",
+      current_analyte, " as the most likely."
+    )
+  } else {
+    current_analyte <- analyte
+  }
+
+  if (is.null(parent)) {
+    parent <- current_analyte
+  }
+
+  # filter for analyte, set selected TIME
+  obj1 <- obj %>%
+    as.data.frame() %>%
+    dplyr::filter(ANALYTE == current_analyte) %>%
+    dplyr::mutate(TIME = case_when(nominal_time == TRUE ~ NTIME,
+                                   .default = TIME)) %>%
+    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
+    as.data.frame()
+
+  # preserve the columns to keep
+  keep_columns <- obj1 %>%
+    dplyr::filter(EVID == 1) %>%
+    as.data.frame() %>%
+    dplyr::select(c(ID, any_of(keep))) %>%
+    dplyr::distinct()
+
+  admin <- obj %>%
+    as.data.frame() %>%
+    dplyr::filter(ANALYTE == parent) %>%
+    dplyr::mutate(TIME = case_when(
+      nominal_time == TRUE ~ NTIME,
+      .default = TIME
+    )) %>%
+    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
+    dplyr::filter(EVID == 1) %>%
+    mutate(PPRFTDTC = .data$DTC) %>%
+    dplyr::select(any_of(
+      c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
+    as.data.frame()
+
+  # concentration data
+  conc <- obj1 %>%
+    dplyr::filter(EVID == 0) %>%
+    dplyr::select(any_of(c("ID", "TIME", "DV", "DOSE", group)))
+
+  if (average_duplicates == TRUE) {
+    conc <- conc %>%
+      group_by(across(any_of(c("ID", "TIME", "DOSE", group)))) %>%
+      summarize(DV = mean(DV, na.rm = TRUE), .groups = "drop")
+  }
+
+  if (!is.null(group)) {
+    conc <- conc %>%
+      dplyr::group_by(ID, TIME, across(any_of(group)))
+  } else {
+    conc <- conc %>% dplyr::group_by(ID, TIME)
+  }
+
+  # generate formulae for the conc and admin objects
+  conc_formula <- "DV~TIME|ID"
+  # dose_formula <- "DOSE~TIME|ID"
+  dose_formula <- "DOSE~TIME|PPRFTDTC+ID"
+  if (!is.null(group)) {
+    group_string <- paste(group, collapse = "+")
+    if(get("silent", .nif_env) == FALSE) {
+      message(paste("NCA: Group by", group_string))
+    }
+    conc_formula <- paste0("DV~TIME|", group_string, "+ID")
+    dose_formula <- paste0("DOSE~TIME|", group_string, "+PPRFTDTC+ID")
+  }
+
+  conc_obj <- PKNCA::PKNCAconc(
+    conc,
+    stats::as.formula(conc_formula)
+  )
+
+  dose_obj <- PKNCA::PKNCAdose(
+    admin,
+    stats::as.formula(dose_formula)
+  )
+
+  data_obj <- PKNCA::PKNCAdata(
+    conc_obj,
+    dose_obj,
+    impute = "start_conc0"
+  )
+
+  results_obj <- PKNCA::pk.nca(data_obj)
+
+  temp <- results_obj$result %>%
+    as.data.frame() %>%
+    dplyr::left_join(keep_columns, by = "ID")
+
+  if (!is.null(group)) {
+    temp <- temp %>%
+      dplyr::mutate_at(group, as.factor)
+  }
+
+  return(temp)
+}
+
+################################
+################################
+
 
 #' Generate NCA table from the SDTM.PP domain
 #'

@@ -192,6 +192,12 @@ test_that("cfb works", {
 })
 
 
+test_that("analyte_overview", {
+  expect_no_error(
+    temp <- analyte_overview(examplinib_poc_nif)
+  )
+  expect_equal(dim(temp), c(2, 2))
+})
 
 
 

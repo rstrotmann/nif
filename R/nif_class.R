@@ -569,6 +569,24 @@ analytes.nif <- function(obj) {
 }
 
 
+#' Overview on analytes and parents
+#'
+#' @param obj A nif object.
+#'
+#' @return A data frame.
+#' @export
+#'
+#' @examples
+#' analyte_overview(examplinib_poc_nif)
+analyte_overview <- function(obj) {
+  obj %>%
+    as.data.frame() %>%
+    ensure_analyte() %>%
+    ensure_parent() %>%
+    distinct(ANALYTE, PARENT)
+}
+
+
 #' Analytes within a NIF object
 #'
 #' All analytes found in the NIF object. If the field 'ANALYTE' is not present,
