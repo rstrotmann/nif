@@ -145,8 +145,9 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
 #'
 #' @return A data frame.
 #' @export
-nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL,
-                        group = NULL, observation_filter = "TRUE") {
+nca_from_pp <- function(
+    obj, sdtm_data,
+    analyte = NULL, keep = NULL, group = NULL, observation_filter = "TRUE") {
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
     conditional_message(paste(
@@ -160,7 +161,7 @@ nca_from_pp <- function(obj, sdtm_data, analyte = NULL, keep = NULL,
   keep_data <- obj %>%
     as.data.frame() %>%
     filter(ANALYTE == current_analyte) %>%
-    filter(EVID == 1) %>%
+    filter(.data$EVID == 1) %>%
     select(c("ID", "USUBJID", any_of(keep), any_of(c("AGE", "SEX", "RACE", "WEIGHT",
       "HEIGHT", "BMI", "PART", "COHORT", "DOSE")), starts_with("BL_"))) %>%
     distinct()
