@@ -44,6 +44,7 @@
 <url><loc>/reference/add_tv_vs.html</loc></url>
 <url><loc>/reference/administration_summary.html</loc></url>
 <url><loc>/reference/ae_summary.html</loc></url>
+<url><loc>/reference/analyte_overview.html</loc></url>
 <url><loc>/reference/analytes.data.frame.html</loc></url>
 <url><loc>/reference/analytes.html</loc></url>
 <url><loc>/reference/analytes.nif.html</loc></url>
@@ -183,6 +184,7 @@
 <url><loc>/reference/missing_time.html</loc></url>
 <url><loc>/reference/n_administrations.html</loc></url>
 <url><loc>/reference/nca.html</loc></url>
+<url><loc>/reference/nca1.html</loc></url>
 <url><loc>/reference/nca_from_pp.html</loc></url>
 <url><loc>/reference/nca_power_model.html</loc></url>
 <url><loc>/reference/nca_summary.html</loc></url>
