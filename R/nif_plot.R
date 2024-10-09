@@ -180,6 +180,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
     if(is.null(caption)) caption <- "Mean and SD"}
 
   plot_data <- temp$data %>%
+    {if(isTRUE(log)) mutate(., DV = case_match(DV, 0 ~ NA, .default = DV)) else .} %>%
     tidyr::unite(GROUP, any_of(c((temp$group), (temp$color), (temp$facet))),
           sep = "-", remove = FALSE)
 
@@ -191,6 +192,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
 
   p <- plot_data %>%
     filter(EVID == 0) %>%
+    filter(!is.na(DV)) %>%
     dplyr::bind_rows(
       admin_data %>%
         dplyr::mutate(DV = NA)
@@ -201,8 +203,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
     {if(!is.null(admin)) ggplot2::geom_vline(
       data = admin_data,
       ggplot2::aes(xintercept = .data$active_time), color = "gray")} +
-    {if(isTRUE(lines)) ggplot2::geom_line()} +
-    {if(isTRUE(points)) ggplot2::geom_point(size = size, alpha = alpha)} +
+    {if(isTRUE(lines)) ggplot2::geom_line(na.rm = TRUE)} +
+    {if(isTRUE(points)) ggplot2::geom_point(size = size, alpha = alpha, na.rm = TRUE)} +
     {if(isTRUE(mean)) ggplot2::geom_ribbon(
       ggplot2::aes(ymin = pos_diff(DV, sd), ymax = DV + sd, fill = COLOR),
       alpha = 0.3, color = NA, show.legend = FALSE)} +
