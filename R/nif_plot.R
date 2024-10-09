@@ -206,7 +206,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
     {if(isTRUE(mean)) ggplot2::geom_ribbon(
       ggplot2::aes(ymin = pos_diff(DV, sd), ymax = DV + sd, fill = COLOR),
       alpha = 0.3, color = NA, show.legend = FALSE)} +
-    {if(!is.null(temp$facet)) ggplot2::facet_wrap(~FACET, scales = scales)} +
+    {if(!is.null(temp$facet) & length(unique(plot_data[[temp$facet]])) > 1)
+      ggplot2::facet_wrap(~FACET, scales = scales)} +
     {if(isTRUE(log)) ggplot2::scale_y_log10()} +
     ggplot2::labs(color = nice_enumeration(temp$color)) +
     {if(!is.null(caption)) ggplot2::labs(caption = caption)} +
