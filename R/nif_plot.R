@@ -45,7 +45,8 @@ make_plot_data_set <- function(
     pull(PARENT)
 
   out <- as.data.frame(nif) %>%
-    filter((ANALYTE %in% analyte & EVID == 0) | (ANALYTE %in% parent & EVID == 1))
+    filter((ANALYTE %in% analyte & EVID == 0) |
+             (ANALYTE %in% parent & EVID == 1))
 
   if (is.null(dose)){
     dose <- unique(filter(out, EVID == 0)$DOSE)}
@@ -85,7 +86,8 @@ make_plot_data_set <- function(
         mutate(., COLOR = TRUE)} %>%
     {if(length(facet) > 0)
       if(length(facet) == 1) mutate(., FACET = .data[[facet]]) else
-        tidyr::unite(., .data$FACET, all_of(facet), sep = "-", remove = FALSE) else .} %>%
+        tidyr::unite(., .data$FACET,
+                     all_of(facet), sep = "-", remove = FALSE) else .} %>%
     arrange("ID", "COLOR", "DOSE", "FACET")
 
   return(list(data = out, group = "ID", color = color, facet = facet))
@@ -111,7 +113,8 @@ make_mean_plot_data_set <- function(data_set) {
 
     rename(DV = mean)
 
-  return(list(data = out, group = "ID", color = data_set$color, facet = data_set$facet))
+  return(list(
+    data = out, group = "ID", color = data_set$color, facet = data_set$facet))
 }
 
 
@@ -140,8 +143,8 @@ make_mean_plot_data_set <- function(data_set) {
 #' @param title The plot title, as character.
 #' @param legend Show the plot legend, as logical.
 #' @param size The `size` parameter to [ggplot2::geom_point()] as numeric.
-#' @param scales The `scales` parameter to [ggplot2::facet_wrap()], can be "fixed"
-#'   (default), "free", "free_x" or "free_y".
+#' @param scales The `scales` parameter to [ggplot2::facet_wrap()], can be
+#'   "fixed" (default), "free", "free_x" or "free_y".
 #' @param alpha The `alpha` parameter to [ggplot2::geom_point()], as numeric.
 #' @param group `r lifecycle::badge("deprecated")` Grouping variable. Use the
 #'   `color` or `facet` parameters instead.
@@ -180,13 +183,14 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
     if(is.null(caption)) caption <- "Mean and SD"}
 
   plot_data <- temp$data %>%
-    {if(isTRUE(log)) mutate(., DV = case_match(DV, 0 ~ NA, .default = DV)) else .} %>%
+    {if(isTRUE(log))
+      mutate(., DV = case_match(DV, 0 ~ NA, .default = DV)) else .} %>%
     tidyr::unite(GROUP, any_of(c((temp$group), (temp$color), (temp$facet))),
           sep = "-", remove = FALSE)
 
   analytes <- unique(plot_data$ANALYTE)
   y_label <- ifelse(length(analytes) == 1, analytes, "DV")
-  if(isTRUE(dose_norm)) y_label <- paste0(y_label, "/DOSE")
+  if(isTRUE(dose_norm)) y_label <- paste0(y_label, " / DOSE")
 
   admin_data <- filter(plot_data, EVID == 1)
 
@@ -204,11 +208,12 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
       data = admin_data,
       ggplot2::aes(xintercept = .data$active_time), color = "gray")} +
     {if(isTRUE(lines)) ggplot2::geom_line(na.rm = TRUE)} +
-    {if(isTRUE(points)) ggplot2::geom_point(size = size, alpha = alpha, na.rm = TRUE)} +
+    {if(isTRUE(points)) ggplot2::geom_point(size = size, alpha = alpha,
+                                            na.rm = TRUE)} +
     {if(isTRUE(mean)) ggplot2::geom_ribbon(
       ggplot2::aes(ymin = pos_diff(DV, sd), ymax = DV + sd, fill = COLOR),
       alpha = 0.3, color = NA, show.legend = FALSE)} +
-    {if(!is.null(temp$facet) & length(unique(plot_data[[temp$facet]])) > 1)
+    {if(!is.null(temp$facet)) if(length(unique(plot_data[[temp$facet]])) > 1)
       ggplot2::facet_wrap(~FACET, scales = scales)} +
     {if(isTRUE(log)) ggplot2::scale_y_log10()} +
     ggplot2::labs(color = nice_enumeration(temp$color)) +
@@ -220,8 +225,6 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
     ggplot2::ggtitle(title) +
     watermark(cex = 1.5) +
     ggplot2::labs(x = time, y = y_label, color = nice_enumeration(temp$color))
-
-    # {if(dose_norm == T) ggplot2::labs(y = "DV / DOSE")} #+
 
     # {if(show_n == TRUE) ggplot2::geom_text(
     #   ggplot2::aes(
