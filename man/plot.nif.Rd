@@ -71,8 +71,8 @@ character.}
 
 \item{size}{The \code{size} parameter to \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}} as numeric.}
 
-\item{scales}{The \code{scales} parameter to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}, can be "fixed"
-(default), "free", "free_x" or "free_y".}
+\item{scales}{The \code{scales} parameter to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}, can be
+"fixed" (default), "free", "free_x" or "free_y".}
 
 \item{alpha}{The \code{alpha} parameter to \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}, as numeric.}
 
@@ -91,11 +91,17 @@ Plot NIF object.
 }
 \examples{
 plot(examplinib_fe_nif, facet = NULL)
-plot(examplinib_sad_nif, mean = FALSE, points = TRUE, dose_norm = FALSE,
-  facet = "RACE", log = TRUE, max_time = 72)
-plot(examplinib_fe_nif, points = TRUE, color = c("FASTED"), mean = TRUE,
-  max_time = 12, admin = "RS2023")
-plot(examplinib_poc_nif, points = TRUE, dose_norm = TRUE, facet = NULL,
+plot(examplinib_sad_nif,
+  mean = FALSE, points = TRUE, dose_norm = FALSE,
+  facet = "RACE", log = TRUE, max_time = 72
+)
+plot(examplinib_fe_nif,
+  points = TRUE, color = c("FASTED"), mean = TRUE,
+  max_time = 12, admin = "RS2023"
+)
+plot(examplinib_poc_nif,
+  points = TRUE, dose_norm = TRUE, facet = NULL,
   color = "SEX", max_time = 25, time = "TAD", lines = FALSE, size = 3,
-  alpha = 0.5, title = "POC study: all analytes and doses")
+  alpha = 0.5, title = "POC study: all analytes and doses"
+)
 }
