@@ -33,14 +33,6 @@ Source:
 \deqn{
  eGFR = 175 * crea^{1.154} * age^{0.203} * 0.742 (female) * 1.212 (black)
 }
-
-with:
-\itemize{
-\item \code{crea} in mg/dl
-\item \code{age} in years
-\item \code{female} and \code{black} as conditional factors for femal sex and Black skin
-color
-}
 }
 \seealso{
 \code{\link[=egfr_raynaud]{egfr_raynaud()}}

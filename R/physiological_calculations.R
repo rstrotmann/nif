@@ -19,7 +19,7 @@
 #' compatibility.
 #' @param molar Switch to select whether the creatinine value is in mg/dl
 #' (default) or umol/l units.
-#' @seealso [efgr_mdrd()]
+#' @seealso [egfr_mdrd()]
 #' @seealso [egfr_cg()]
 #'
 #' @return Estimated GFR in ml/min/1.73 m^2.

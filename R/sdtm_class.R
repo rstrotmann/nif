@@ -35,10 +35,27 @@ new_sdtm <- function(sdtm_data,
 
 #' SDTM summary
 #'
+#' This function returns a named list of properties of the SDTM object:
+#'
+#' * `study` The study identifier as character.
+#' * `subjects` The USUBJIDs as character.
+#' * `domains` The included domains by their SDTM code and the number of
+#'   respective unique USUBJID, as data frame,
+#' * `treatments` The unique `EXTRT` as character.
+#' * `arms` The unique `ACTAMCD` and `ACTARM` as data frame.
+#' * `doses` The unique `EXTRT` and `EXDOSE` as data frame.
+#' * `specimems` The unique `PCSPEC` as character.
+#' * `analytes` The unique `PCTEST` and `PCTESTCD` as data frame.
+#' * `pc_timepoints` The unique `PCTPT` and `PCTPTNUM` as data frame.
+#' * `analyte_mapping` The analyte mapping as data frame (see
+#'   [add_analyte_mapping()]).
+#' * `metabolite_mapping` The metabolite mapping as data frame (see
+#'   [add_metabolite_mapping()]).
+#' * `time_mapping` The time mapping as data frame (see [add_time_mapping()]).
+#'
 #' @param object A SDTM object.
 #' @param ... Further parameters.
 #' @return A sdtm_summary object.
-#' @noRd
 #' @export
 #' @examples
 #' summary(examplinib_poc)
@@ -282,7 +299,6 @@ print.sdtm <- function(x, ...) {
 #' @examples
 #' head(domain(examplinib_fe, "dm"), 3)
 domain <- function(obj, name) {
-  # obj$domains[[name]]
   temp <- obj$domains[name]
   if (length(temp) == 1) temp <- temp[[1]]
   return(temp)
@@ -559,6 +575,7 @@ filter_subject.sdtm <- function(obj, usubjid) {
 #'
 #' @return A data frame.
 #' @export
+#' @noRd
 #'
 #' @examples
 #' guess_ntime(examplinib_poc)
