@@ -15,17 +15,13 @@ new_sdtm <- function(sdtm_data,
                      parent_mapping = data.frame(),
                      time_mapping = data.frame()) {
   domains <- sdtm_data
-  vs <- domains[["vs"]]
-  ex <- domains[["ex"]]
-  pc <- domains[["pc"]]
-  dm <- domains[["dm"]]
 
   temp <- list(
     domains = domains,
-    pc = pc,
-    dm = dm,
-    ex = ex,
-    vs = vs,
+    pc = domains[["pc"]],
+    dm = domains[["dm"]],
+    ex = domains[["ex"]],
+    vs = domains[["vs"]],
     analyte_mapping = analyte_mapping,
     metabolite_mapping = metabolite_mapping,
     parent_mapping = parent_mapping,

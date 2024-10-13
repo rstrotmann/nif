@@ -6,7 +6,9 @@
 #' [doi: 10.1136/bmj-2022-073654](https://doi.org/10.1136/bmj-2022-073654).
 #' PMID: 37257905; PMCID: PMC10231444.
 #'
-#' Internally, the function uses mg/dl units
+#' \deqn{
+#'  eGFR = e^{4.43 - 0.82 * ln(crea) - 0.012 * crea^2 - 0.006 * age + 0.18 * male}
+#' }
 #'
 #' @param crea Serum creatinine in mg/dl or umol/l (if molar=TRUE).
 #' @param age Age in years.
@@ -79,6 +81,10 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
 #'
 #' Source:
 #' [National Kidney Foundation](https://www.kidney.org/content/mdrd-study-equation)
+#'
+#' \deqn{
+#'  eGFR = 175 * crea^{1.154} * age^{0.203} * 0.742 (female) * 1.212 (black)
+#' }
 #'
 #' @param crea Serum creatinine in mg/dl.
 #' @param age Age in years.

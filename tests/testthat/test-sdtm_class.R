@@ -1,5 +1,3 @@
-
-
 test_that("guess_ntime works", {
   sdtm = list()
   sdtm$pc <- tribble(
@@ -18,4 +16,9 @@ test_that("guess_ntime works", {
   )
 
   expect_equal(sdtm$pc$time, guess_ntime(sdtm)$NTIME)
+})
+
+
+test_that("new_sdtm", {
+
 })

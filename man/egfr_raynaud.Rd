@@ -33,7 +33,16 @@ validation study. BMJ. 2023 May 31;381:e073654.
 PMID: 37257905; PMCID: PMC10231444.
 }
 \details{
-Internally, the function uses mg/dl units
+\deqn{
+ eGFR = e^{4.43 - 0.82 * ln(crea) - 0.012 * crea^2 - 0.006 * age + 0.18 * male}
+}
+
+with:
+\itemize{
+\item \code{crea} in mg/dl
+\item \code{age} in years
+\item \code{male} 1 for male and 0 for female patients
+}
 }
 \seealso{
 \code{\link[=efgr_mdrd]{efgr_mdrd()}}
