@@ -31,8 +31,9 @@ add_ae_observation(
 \item AEHLGT:   High-level group term
 \item AESOC:    System organ class
 \item AEBODSYS: Body system or organ class
-or any other SDTM.AE field.
-}}
+}
+
+or any other SDTM.AE field.}
 
 \item{parent}{The parent compound as character.}
 
