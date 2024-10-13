@@ -6,7 +6,7 @@
 \usage{
 ae_summary(
   sdtm_data,
-  level = "SOC",
+  level = "AESOC",
   show_cd = FALSE,
   group = NULL,
   order_by_subj = F,
@@ -19,12 +19,12 @@ ae_summary(
 \item{level}{The level to summarize by, as character. Can be one or multiple
 of:
 \itemize{
-\item 'TERM':   Reported term
-\item 'LLT':    Lowest level term
-\item 'DECOD':  Dictionary-derived term
-\item 'HLT':    High level term
-\item 'BODSYS': Body system or organ class
-\item 'SOC':    System organ class
+\item 'AETERM':   Reported term
+\item 'AELLT':    Lowest level term
+\item 'AEDECOD':  Dictionary-derived term
+\item 'AEHLT':    High level term
+\item 'AEBODSYS': Body system or organ class
+\item 'AESOC':    System organ class
 }}
 
 \item{show_cd}{Show AE term code, as logical.}

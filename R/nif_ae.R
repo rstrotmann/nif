@@ -80,7 +80,7 @@ make_ae <- function(
 #'
 #' @return A nif object.
 #' @export
-add_ae <- function(
+add_ae_observation <- function(
     nif,
     sdtm,
     ae_term,

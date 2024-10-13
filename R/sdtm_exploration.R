@@ -461,12 +461,12 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
 #' @param level The level to summarize by, as character. Can be one or multiple
 #' of:
 #'
-#' * 'TERM':   Reported term
-#' * 'LLT':    Lowest level term
-#' * 'DECOD':  Dictionary-derived term
-#' * 'HLT':    High level term
-#' * 'BODSYS': Body system or organ class
-#' * 'SOC':    System organ class
+#' * 'AETERM':   Reported term
+#' * 'AELLT':    Lowest level term
+#' * 'AEDECOD':  Dictionary-derived term
+#' * 'AEHLT':    High level term
+#' * 'AEBODSYS': Body system or organ class
+#' * 'AESOC':    System organ class
 #' @param show_cd Show AE term code, as logical.
 #' @param group Additional grouping variable, as character.
 #' @param order_by_subj Order by number of subject, instead of by number of
@@ -475,12 +475,15 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
 #'
 #' @return A data frame.
 #' @export
-ae_summary <- function(sdtm_data, level = "SOC", show_cd = FALSE, group = NULL,
-                       order_by_subj = F, ae_filter = "TRUE") {
-  if (!all(level %in% c("TERM", "LLT", "DECOD", "HLT", "BODSYS", "SOC"))) {
+ae_summary <- function(sdtm_data, level = "AESOC", show_cd = FALSE,
+                       group = NULL, order_by_subj = F, ae_filter = "TRUE") {
+  if (!all(level %in% c("AETERM", "AELLT", "AEDECOD", "AEHLT", "AEBODSYS",
+                        "AESOC"))) {
     stop("unknown level!")
   }
-  level <- paste0("AE", level)
+
+  # level <- paste0("AE", level)
+  level = toupper(level)
   ae <- sdtm_data %>% domain("ae")
 
   grouping <- c(level, group)
