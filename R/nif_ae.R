@@ -48,7 +48,7 @@ make_ae <- function(
       DV = as.numeric(.data[["AETOXGR"]])) %>%
     select("USUBJID", "DTC", "DV") %>%
     mutate(
-      ANALYTE = paste0("AE_", ae_term),
+      ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
       TIME = NA,
       CMT = cmt,
       AMT = 0,

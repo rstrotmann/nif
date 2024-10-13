@@ -467,6 +467,7 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
 #' * 'AEHLT':    High level term
 #' * 'AEBODSYS': Body system or organ class
 #' * 'AESOC':    System organ class
+#'
 #' @param show_cd Show AE term code, as logical.
 #' @param group Additional grouping variable, as character.
 #' @param order_by_subj Order by number of subject, instead of by number of
