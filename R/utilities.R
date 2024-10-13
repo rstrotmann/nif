@@ -220,6 +220,41 @@ isofy_dates <- function(obj) {
 }
 
 
+#' Test whether string represents ISO 8601-formatted date-time
+#'
+#' The expected format is "dddd-dd-ddTdd:dd" with "d" a digit. This function
+#' tests whether the above is part of the input, i.e., dat-time formats that
+#' also include seconds information are also recognized.
+#' @param x The input as character.
+#' @return Boolean.
+#' @export
+#' @keywords internal
+#' @examples
+#' is_iso_date_time("2023-09-27T15:04")
+#' is_iso_date_time("2023-09-27T15:04:00")
+#' is_iso_date_time(c("2023-03-21T11:55", "2023-07-18"))
+is_iso_date_time <- function(x) {
+  str_detect(x, "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}")
+}
+
+
+#' Test whether string represents ISO 8601-formatted date
+#'
+#' The expected format is "dddd-dd-dd" with "d" a digit. This function tests
+#' whether the above is part of the input, i.e., ISO 8601-formatted date-time
+#' objects like "dddd-dd-ddTdd:dd" are also recognized.
+#' @param x The input as character.
+#' @return Boolean.
+#' @export
+#' @keywords internal
+#' @examples
+#' is_iso_date("2023-09-27")
+#' is_iso_date(c("2023-03-21T11:55", "2023-07-18"))
+is_iso_date <- function(x) {
+  str_detect(x, "\\d{4}-\\d{2}-\\d{2}")
+}
+
+
 #' Convert ISO 8601-formatted duration to hours
 #'
 #' @param iso The duration as ISO 8601-formatted string.
@@ -230,7 +265,7 @@ isofy_dates <- function(obj) {
 #' @examples
 #' pt_to_hours(c("PT1H15M", "PT1.5H"))
 pt_to_hours <- function(iso) {
-  as.numeric(duration(iso))/60/60
+  as.numeric(duration(iso)) / 60 / 60
 }
 
 
@@ -315,7 +350,7 @@ extract_time <- function(dtc) {
 #' @return A Boolean value.
 #' @keywords internal
 has_time <- function(obj) {
-  if(is.POSIXct(obj)) {
+  if (is.POSIXct(obj)) {
     as.numeric(obj) %% 86400 != 0
   } else {
     grepl(".*T[0-9]{2}:[0-9]{2}", obj)
@@ -379,7 +414,9 @@ append_statement <- function(object, statement) {
 #' @keywords internal
 safe_mean <- function(x, ...) {
   temp <- x[!is.nan(x) & !is.na(x)]
-  if(length(temp) == 0) return(NA)
+  if (length(temp) == 0) {
+    return(NA)
+  }
   out <- mean(temp, na.rm = T)
   attributes(out)$N <- length(temp[!is.na(temp)])
   return(out)
@@ -395,7 +432,9 @@ safe_mean <- function(x, ...) {
 #' @keywords internal
 safe_sd <- function(x, ...) {
   temp <- x[!is.nan(x) & !is.na(x)]
-  if(length(temp) == 0) return(NA)
+  if (length(temp) == 0) {
+    return(NA)
+  }
   out <- sd(temp, na.rm = T)
   attributes(out)$N <- length(temp[!is.na(temp)])
   return(out)
@@ -411,7 +450,9 @@ safe_sd <- function(x, ...) {
 #' @keywords internal
 safe_min <- function(x, ...) {
   temp <- x[!is.nan(x) & !is.na(x)]
-  if(length(temp) == 0) return(NA)
+  if (length(temp) == 0) {
+    return(NA)
+  }
   out <- min(temp, na.rm = T)
   attributes(out)$N <- length(temp[!is.na(temp)])
   return(out)

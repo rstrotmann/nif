@@ -24,5 +24,5 @@ A list of IDs in numeric format.
 Identify subjects with rich sampling
 }
 \examples{
-rich_sampling_sbs(examplinib_poc_nif, n=6)
+rich_sampling_sbs(examplinib_poc_nif, n = 6)
 }

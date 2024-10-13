@@ -47,7 +47,7 @@ Plot SDTM object
 \examples{
 plot(examplinib_poc)
 plot(examplinib_poc, "dm")
-plot(examplinib_poc, domain="ex")
-plot(examplinib_poc, domain="pc")
-plot(examplinib_poc, domain="vs", lines = FALSE, points = TRUE)
+plot(examplinib_poc, domain = "ex")
+plot(examplinib_poc, domain = "pc")
+plot(examplinib_poc, domain = "vs", lines = FALSE, points = TRUE)
 }

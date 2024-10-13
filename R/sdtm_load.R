@@ -82,33 +82,39 @@ read_sdtm_xpt <- function(data_path, ...) {
 #' @return A `sdtm` object.
 #' @export
 read_sdtm <- function(data_path,
-                      domain=c("dm", "vs", "ex", "pc"),
-                      format="sas", delim = ",", ...) {
+                      domain = c("dm", "vs", "ex", "pc"),
+                      format = "sas", delim = ",", ...) {
   out <- list()
-  if(format == "sas"){
+  if (format == "sas") {
     for (x in domain) {
       out[[x]] <- as.data.frame(haven::read_sas(
-        file.path(data_path, paste0(x, ".sas7bdat"))))
+        file.path(data_path, paste0(x, ".sas7bdat"))
+      ))
     }
   }
-  if(format == "xpt") {
+  if (format == "xpt") {
     for (x in domain) {
       out[[x]] <- as.data.frame(haven::read_xpt(
-        file.path(data_path, paste0(x, ".xpt"))))
+        file.path(data_path, paste0(x, ".xpt"))
+      ))
     }
   }
-  if(format == "csv") {
+  if (format == "csv") {
     for (x in domain) {
       out[[x]] <- as.data.frame(
         readr::read_delim(
-          file.path(data_path, paste0(x, ".csv"))), ...)
+          file.path(data_path, paste0(x, ".csv"))
+        ), ...
+      )
     }
   }
-  if(format == "xlsx") {
+  if (format == "xlsx") {
     for (x in domain) {
       out[[x]] <- as.data.frame(
         readxl::read_xlsx(
-          file.path(data_path, paste0(x, ".xlsx"))), ...)
+          file.path(data_path, paste0(x, ".xlsx"))
+        ), ...
+      )
     }
   }
   new_sdtm(out)
