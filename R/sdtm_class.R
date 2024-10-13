@@ -50,7 +50,10 @@ summary.sdtm <- function(object, ...) {
     domains = data.frame(
       DOMAIN = names(object$domains),
       N = as.numeric(lapply(
-        object$domains, function(x) {length(unique(x$USUBJID))}))
+        object$domains, function(x) {
+          length(unique(x$USUBJID))
+        }
+      ))
     ),
     treatments = unique(domain(object, "ex")$EXTRT),
     arms = unique(domain(object, "dm")[c("ACTARMCD", "ACTARM")]),
@@ -74,52 +77,73 @@ summary.sdtm <- function(object, ...) {
 #' @export
 #' @noRd
 print.summary_sdtm <- function(x, color = FALSE, ...) {
-  hline <- paste0(rep("-", 8), collapse="")
-  indent = " "
+  hline <- paste0(rep("-", 8), collapse = "")
+  indent <- " "
 
   n <- filter(x$domains, DOMAIN == "pc")$N
-  if(length(n) == 0) n <- 0
+  if (length(n) == 0) n <- 0
 
   cat(paste(hline, "SDTM data set summary", hline, "\n"))
   cat(paste("Study", x$study))
-  cat(paste(" with", n,
-            "subjects providing PC data.\n"))
+  cat(paste(
+    " with", n,
+    "subjects providing PC data.\n"
+  ))
 
   cat("\nSubjects per domain:\n")
   temp <- x$domains
-  cat(paste0(df_to_string(x$domains, color = color, indent = indent,
-                          show_none = TRUE), "\n\n"))
+  cat(paste0(df_to_string(x$domains,
+    color = color, indent = indent,
+    show_none = TRUE
+  ), "\n\n"))
 
   cat("Arms (DM):\n")
-  cat(paste0(df_to_string(x$arms, color = color, indent = indent,
-                          show_none = TRUE), "\n\n"))
+  cat(paste0(df_to_string(x$arms,
+    color = color, indent = indent,
+    show_none = TRUE
+  ), "\n\n"))
 
   cat("Treatments (EX):\n")
-  cat(df_to_string(x$treatments, color = color, indent = indent,
-                   show_none = TRUE), "\n\n")
+  cat(df_to_string(x$treatments,
+    color = color, indent = indent,
+    show_none = TRUE
+  ), "\n\n")
 
   cat("Specimens (PC):\n")
-  cat(df_to_string(x$specimens, color = color, indent = indent,
-                   show_none = TRUE), "\n\n")
+  cat(df_to_string(x$specimens,
+    color = color, indent = indent,
+    show_none = TRUE
+  ), "\n\n")
 
   cat("Analytes (PC):\n")
-  cat(df_to_string(x$analytes, color = color, indent = indent,
-                   show_none = TRUE), "\n\n")
+  cat(df_to_string(x$analytes,
+    color = color, indent = indent,
+    show_none = TRUE
+  ), "\n\n")
 
-  if(nrow(x$analyte_mapping) != 0) {
+  if (nrow(x$analyte_mapping) != 0) {
     cat("Treatment-to-analyte mappings:\n")
-    cat(df_to_string(x$analyte_mapping, color = color, indent = indent,
-                     show_none = TRUE), "\n\n")}
+    cat(df_to_string(x$analyte_mapping,
+      color = color, indent = indent,
+      show_none = TRUE
+    ), "\n\n")
+  }
 
-  if(nrow(x$metabolite_mapping) != 0) {
+  if (nrow(x$metabolite_mapping) != 0) {
     cat("Parent-to-metabolite mappings:\n")
-    cat(df_to_string(x$metabolite_mapping, color = color, indent = indent,
-                     show_none = TRUE), "\n\n")}
+    cat(df_to_string(x$metabolite_mapping,
+      color = color, indent = indent,
+      show_none = TRUE
+    ), "\n\n")
+  }
 
-  if(nrow(x$time_mapping) != 0) {
+  if (nrow(x$time_mapping) != 0) {
     cat("Time mappings:\n")
-    cat(df_to_string(x$time_mapping, color = color, indent = indent,
-                     show_none = TRUE), "\n\n")}
+    cat(df_to_string(x$time_mapping,
+      color = color, indent = indent,
+      show_none = TRUE
+    ), "\n\n")
+  }
 
   invisible(x)
 }
@@ -144,7 +168,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 #' @export
 add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
-  if(is.null(analyte)) analyte <- pctestcd
+  if (is.null(analyte)) analyte <- pctestcd
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
     data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd, "ANALYTE" = analyte)
@@ -260,7 +284,7 @@ print.sdtm <- function(x, ...) {
 domain <- function(obj, name) {
   # obj$domains[[name]]
   temp <- obj$domains[name]
-  if(length(temp) == 1) temp <- temp[[1]]
+  if (length(temp) == 1) temp <- temp[[1]]
   return(temp)
 }
 
@@ -306,15 +330,17 @@ subject_info.sdtm <- function(obj, id) {
 suggest <- function(obj) {
   suggest_out <- function(n, text, table = NULL) {
     out <- paste0(str_wrap(
-          paste0(n, ". ", text), width = 80, indent = 0, exdent = 3), "\n")
-    if(!is.null(table)){
+      paste0(n, ". ", text),
+      width = 80, indent = 0, exdent = 3
+    ), "\n")
+    if (!is.null(table)) {
       out <- paste0(out, "\n", df_to_string(table, indent = "       "), "\n")
     }
     message(out)
     return(n + 1)
   }
 
-  col = 34
+  col <- 34
   n_suggestion <- 1
 
   treatments <- obj$ex %>%
@@ -326,23 +352,32 @@ suggest <- function(obj) {
     "'nif_auto()'): ",
     "There are ", nrow(treatments), " treatments (EXTRT) in 'EX', and ",
     nrow(analytes),
-    " pharmacokinetic analytes (PCTESTCD) in 'PC':"))
+    " pharmacokinetic analytes (PCTESTCD) in 'PC':"
+  ))
   message(paste0(df_to_string(treatments, indent = "       "), "\n"))
   message(paste0(df_to_string(analytes, indent = "       "), "\n"))
-  message(paste0(str_wrap(paste0(
+  message(paste0(str_wrap(
+    paste0(
       "To associate treatments with their respective parent analyte, consider ",
       "adding analyte mapping(s) to the sdtm object using the below code ",
-      "snippet (replace 'x' with the corresponding PCTESTCD):"),
-    width = 80, indent = 3, exdent = 3), "\n"))
+      "snippet (replace 'x' with the corresponding PCTESTCD):"
+    ),
+    width = 80, indent = 3, exdent = 3
+  ), "\n"))
   out <- sapply(treatments$EXTRT, function(x) {
     paste0("         add_analyte_mapping('", x, "', 'x')")
   })
   message(paste0(paste0("\033[0;", col, "m",
-                        c("      ", out), collapse = " %>%\n")), "\033[0m", "\n")
-  message(paste0(str_wrap(paste0(
+    c("      ", out),
+    collapse = " %>%\n"
+  )), "\033[0m", "\n")
+  message(paste0(str_wrap(
+    paste0(
       "For further information see the documentation to 'add_analyte_mapping ",
-      "('?add_analyte_mapping')."),
-    width = 80, indent = 3, exdent = 3), "\n"))
+      "('?add_analyte_mapping')."
+    ),
+    width = 80, indent = 3, exdent = 3
+  ), "\n"))
 
 
   n_trt <- length(unique(obj$ex$EXTRT))
@@ -355,9 +390,9 @@ suggest <- function(obj) {
       "'EX'. If you want to include pharmacokinetic observations of ",
       "metabolites, you can add metabolite mapping(s) to the sdtm object ",
       "using 'add_metabolite_mapping' (see ?add_metabolite_mapping for ",
-      "further information)."))
+      "further information)."
+    ))
   }
-
 
   treatments <- obj$ex %>%
     dplyr::distinct(EXTRT)
@@ -365,7 +400,8 @@ suggest <- function(obj) {
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "There are ", nrow(treatments), " different treatments in 'EX' (see ",
       "below). Consider adding them to the nif object using ",
-      "'add_administration()'.\n\n"), table = treatments)
+      "'add_administration()'.\n\n"
+    ), table = treatments)
   }
 
   obs <- obj$pc %>%
@@ -374,9 +410,9 @@ suggest <- function(obj) {
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "There are ", nrow(obs), " different pharmacokinetic observations in ",
       "'PC' (see below). Consider adding them to the nif object using ",
-      "'add_observation()'.\n\n"), table = obs)
+      "'add_observation()'.\n\n"
+    ), table = obs)
   }
-
 
   specimems <- obj$pc %>%
     dplyr::filter(PCSPEC != "") %>%
@@ -386,12 +422,13 @@ suggest <- function(obj) {
       "There are data from ", nrow(specimems), " different sample specimem ",
       "types in 'PC'. ",
       "When calling 'add_observation()', consider filtering for a specific ",
-      "specimem using the 'observation_filter' parameter."), table = specimems)
+      "specimem using the 'observation_filter' parameter."
+    ), table = specimems)
   }
 
   if (!("PCELTM" %in% names(obj$pc))) {
     temp <- guess_ntime(obj) %>%
-      mutate(out = paste0('"', .data$PCTPT, '", ', .data$NTIME, ','))
+      mutate(out = paste0('"', .data$PCTPT, '", ', .data$NTIME, ","))
     out <- paste0("        ", temp$out, collapse = "\n")
     n_suggestion <- suggest_out(n_suggestion, paste0(
       "By default, 'add_observation()' takes the nominal sampling time from ",
@@ -399,7 +436,8 @@ suggest <- function(obj) {
       "is not defined, and the nominal time must be manually derived from, e.g., ",
       "PCTPT. Consider providing the NTIME_lookup parameter to ",
       "'add_observation()' as the below data frame (make sure to review the ",
-      "suggested NTIME values):\n"))
+      "suggested NTIME values):\n"
+    ))
     message(paste0(
       "\033[0;", col, "m",
       "      NTIME_lookup = tribble(\n",
@@ -409,7 +447,6 @@ suggest <- function(obj) {
     ))
   }
 
-
   arms <- obj$dm %>%
     dplyr::filter(ACTARMCD != "") %>%
     dplyr::distinct(ACTARM, ACTARMCD)
@@ -418,7 +455,8 @@ suggest <- function(obj) {
       "There are ", nrow(arms), " arms defined in DM (see ",
       "below). Consider defining a PART or ARM variable in the nif dataset, ",
       "filtering for a particular arm, or defining a covariate based on ",
-      "ACTARMCD."), table = arms)
+      "ACTARMCD."
+    ), table = arms)
   }
 }
 
@@ -507,9 +545,11 @@ filter_subject <- function(obj, usubjid) {
 #' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 filter_subject.sdtm <- function(obj, usubjid) {
   temp <- lapply(obj$domains, function(x) filter(x, .data$USUBJID %in% usubjid))
-  new_sdtm(sdtm_data = temp, analyte_mapping = obj$analyte_mapping,
-           metabolite_mapping = obj$metabolite_mapping,
-           time_mapping = obj$time_mapping)
+  new_sdtm(
+    sdtm_data = temp, analyte_mapping = obj$analyte_mapping,
+    metabolite_mapping = obj$metabolite_mapping,
+    time_mapping = obj$time_mapping
+  )
 }
 
 
@@ -526,13 +566,16 @@ guess_ntime <- function(sdtm) {
   sdtm$pc %>%
     distinct(.data$PCTPT) %>%
     mutate(time = str_extract(tolower(.data$PCTPT),
-                              "([0-9.]+)\\s*(h)", group = 1)) %>%
+      "([0-9.]+)\\s*(h)",
+      group = 1
+    )) %>%
     mutate(pre = str_match(tolower(.data$PCTPT), "pre") == "pre") %>%
     mutate(NTIME = case_when(
       is.na(.data$time) & pre == TRUE ~ 0,
       !is.na(.data$time) & pre == TRUE ~ -as.numeric(.data$time),
       is.na(.data$time) & is.na(.data$pre) ~ NA,
-      .default = as.numeric(.data$time))) %>%
+      .default = as.numeric(.data$time)
+    )) %>%
     select(-c("time", "pre"))
 }
 
@@ -552,35 +595,42 @@ guess_ntime <- function(sdtm) {
 #' @return A SDTM object.
 #' @export
 derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
-  if(!"tr" %in% names(sdtm_obj$domains)) {
+  if (!"tr" %in% names(sdtm_obj$domains)) {
     return(sdtm_obj)
   }
 
   tr <- domain(sdtm_obj, "tr") %>%
     assertr::verify(assertr::has_all_names(
-      "USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"))
+      "USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"
+    ))
 
   tr <- tr %>%
     add_row(tr %>%
       filter(eval(parse(text = observation_filter))) %>%
       filter(.data$TRTESTCD == "DIAMETER") %>%
-      reframe(N_TARGET = n(), SLD = sum(.data$TRSTRESN),
-              .by = any_of(c("STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
-                             "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
-                             "TRMETHOD", "TRGRPID", "TRREFID"))) %>%
+      reframe(
+        N_TARGET = n(), SLD = sum(.data$TRSTRESN),
+        .by = any_of(c(
+          "STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
+          "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
+          "TRMETHOD", "TRGRPID", "TRREFID"
+        ))
+      ) %>%
       distinct() %>%
-        tidyr::pivot_longer(cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
-                   values_to = "TRSTRESN") %>%
+      tidyr::pivot_longer(
+        cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
+        values_to = "TRSTRESN"
+      ) %>%
       mutate(TRSTRESU = case_match(.data$TRTESTCD, "SLD" ~ "mm", .default = "")) %>%
-      mutate(TRTEST = case_match(.data$TRTESTCD, "SLD" ~ "Sum of longest diameters",
-                                 "N_TARGET" ~ "Number of target lesions")) %>%
+      mutate(TRTEST = case_match(
+        .data$TRTESTCD, "SLD" ~ "Sum of longest diameters",
+        "N_TARGET" ~ "Number of target lesions"
+      )) %>%
       mutate(DOMAIN = "TR") %>%
-      as.data.frame()
-    ) %>%
+      as.data.frame()) %>%
     arrange(.data$USUBJID, .data$TRDTC)
 
-  temp = sdtm_obj
+  temp <- sdtm_obj
   temp$domains[["tr"]] <- tr
   return(temp)
 }
-

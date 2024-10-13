@@ -20,5 +20,21 @@ test_that("guess_ntime works", {
 
 
 test_that("new_sdtm", {
+  temp <- examplinib_sad
+  expect_no_error(
+    new_sdtm(list(
+      dm = domain(temp, "dm"),
+      vs = domain(temp, "vs"),
+      lb = domain(temp, "lb"),
+      ex = domain(temp, "ex"),
+      pc = domain(temp, "pc")
+    ))
+  )
+})
 
+
+test_that("sdtm summary", {
+  expect_no_error(
+    summary(examplinib_sad)
+  )
 })
