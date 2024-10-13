@@ -201,7 +201,6 @@ add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
 #'
 #' @return A sdtm object.
 #' @export
-#' @noRd
 add_parent_mapping <- function(obj, analyte, parent) {
   obj$parent_mapping <- rbind(
     obj$parent_mapping,
@@ -323,6 +322,7 @@ subject_info <- function(obj, id) {
 #' Baseline details for specific subjects
 #'
 #' @inheritParams subject_info
+#' @export
 #' @examples
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
@@ -575,7 +575,6 @@ filter_subject.sdtm <- function(obj, usubjid) {
 #'
 #' @return A data frame.
 #' @export
-#' @noRd
 #'
 #' @examples
 #' guess_ntime(examplinib_poc)
