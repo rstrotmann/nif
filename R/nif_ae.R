@@ -8,12 +8,14 @@
 #' @param sdtm A sdtm object.
 #' @param ae_term The AE term as character.
 #' @param ae_field The field in which the AE term is specified in. Can be:
+#'
 #' * AEDECOD:  Dictionary-derived term
 #' * AELLT:    Lowest-level term
 #' * AEHLT:    High-level term
 #' * AEHLGT:   High-level group term
 #' * AESOC:    System organ class
 #' * AEBODSYS: Body system or organ class
+#'
 #' or any other SDTM.AE field.
 #' @param parent The parent compound as character.
 #' @param cmt The compartment as numeric.
