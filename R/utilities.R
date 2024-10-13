@@ -6,10 +6,10 @@
 #' @keywords internal
 conditional_message <- function(...) {
   args <- lapply(list(...), as.character)
-  if(exists("silent", envir = .nif_env)) {
+  if (exists("silent", envir = .nif_env)) {
     silent <- get("silent", .nif_env)
   } else {
-    silent = FALSE
+    silent <- FALSE
   }
   if (silent == FALSE) {
     message(paste(args, collapse = ""))
@@ -27,7 +27,7 @@ conditional_message <- function(...) {
 #' @export
 #' @seealso [nif_option()]
 print_debug <- function(obj) {
-  if(rlang::is_true(nif_option_value("debug"))) print(obj)
+  if (rlang::is_true(nif_option_value("debug"))) print(obj)
 }
 
 
@@ -44,10 +44,11 @@ recode_sex <- function(obj) {
   obj %>%
     mutate(SEX = as.numeric(
       case_match(as.character(.data$SEX),
-                 "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-                 # "男" ~ 0, "女" ~ 1,
-                 "\u7537" ~ 0, "\u5973" ~ 1,
-                 .default = NA)
+        "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
+        # "男" ~ 0, "女" ~ 1,
+        "\u7537" ~ 0, "\u5973" ~ 1,
+        .default = NA
+      )
     ))
 }
 
@@ -93,7 +94,7 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
   }
 
   if (header == TRUE) {
-    if(color == TRUE) {
+    if (color == TRUE) {
       out <- paste0(
         "\u001b[38;5;248m",
         render_line(data.frame(as.list(names(df)))),
@@ -112,7 +113,7 @@ df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
 
   temp <- lapply(as.list(as.data.frame(t(df))), render_line)
 
-  if(show_none & length(temp) == 0) {
+  if (show_none & length(temp) == 0) {
     out <- paste0(indent, "none")
   } else {
     out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
@@ -139,13 +140,15 @@ positive_or_zero <- function(x) {
 
 #' The list of expected date/time formats as per ISO 8601
 #' @keywords internal
-dtc_formats <- c("%Y-%m-%dT%H:%M",
-                 "%Y-%m-%d",
-                 "%Y-%m",
-                 "%Y-%m-%dT%H:%M:%S",
-                 "%Y",
-                 "%Y-%m-%d %H:%M",
-                 "%Y-%m-%d %H:%M:%S")
+dtc_formats <- c(
+  "%Y-%m-%dT%H:%M",
+  "%Y-%m-%d",
+  "%Y-%m",
+  "%Y-%m-%dT%H:%M:%S",
+  "%Y",
+  "%Y-%m-%d %H:%M",
+  "%Y-%m-%d %H:%M:%S"
+)
 
 
 #' Convert date fields to POSIX format
@@ -181,9 +184,6 @@ isofy_date_format <- function(obj, fields = NULL) {
       format(x, "%Y-%m-%dT%H:%M")
     })
 }
-
-
-
 
 #' Convert all DTC fields from ISO 8601 into POSIXct
 #'
@@ -252,7 +252,7 @@ compose_dtc <- function(date, time) {
     mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) %>%
     mutate(DTC = str_trim(paste(as.character(.data$date), .data$time))) %>%
     mutate(DTC = lubridate::as_datetime(.data$DTC,
-                                        format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
+      format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
     )) %>%
     pull(.data$DTC)
 }
@@ -272,15 +272,16 @@ decompose_dtc <- function(obj, DTC_field) {
     DTC_time <- paste0(fld, "_time")
     obj %>%
       mutate(has_time = has_time(.data[[fld]])) %>%
-      mutate({{DTC_date}} := extract_date(.data[[fld]])) %>%
-      mutate({{DTC_time}} := case_when(
+      mutate({{ DTC_date }} := extract_date(.data[[fld]])) %>%
+      mutate({{ DTC_time }} := case_when(
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
-        .default = NA)) %>%
+        .default = NA
+      )) %>%
       # select(!all_of(c("has_time")))
       select(-c("has_time"))
   }
 
-  for(i in DTC_field) {
+  for (i in DTC_field) {
     obj <- dec_dtc(i)
   }
   return(obj)
@@ -336,12 +337,14 @@ has_time <- function(obj) {
 #' nice_enumeration(c("A", "B", "C"))
 #' nice_enumeration(c("A", "B", "C"), conjunction = "or")
 nice_enumeration <- function(items, conjunction = "and") {
-  if(length(items) == 1) {
+  if (length(items) == 1) {
     return(items[[1]])
   }
-  if(length(items) > 1) {
-    return(paste(paste(items[1:length(items)-1], collapse = ", "), conjunction,
-                 items[length(items)]))
+  if (length(items) > 1) {
+    return(paste(
+      paste(items[1:length(items) - 1], collapse = ", "), conjunction,
+      items[length(items)]
+    ))
   }
 }
 
@@ -452,18 +455,17 @@ coalesce_join <- function(
     x, y, by = NULL,
     keep = c("left", "right"),
     suffix = c(".x", ".y"),
-    join = c("full_join","left_join", "right_join", "inner_join")
-) {
-  keep = match.arg(keep)
+    join = c("full_join", "left_join", "right_join", "inner_join")) {
+  keep <- match.arg(keep)
 
   # Confirm the join argument is in the list and matches the string to the
   # function
-  join = match.arg(join)
-  join = match.fun(join)
+  join <- match.arg(join)
+  join <- match.fun(join)
 
   # Depends on the keep argument, overwrite the duplicate value
   # If keep = "left", the value from the left table will be kept, vice versa.
-  if (keep == "left") suffix_ = suffix else suffix_ = rev(suffix)
+  if (keep == "left") suffix_ <- suffix else suffix_ <- rev(suffix)
 
   join(x, y, by = by, suffix = suffix) %>%
     mutate(
@@ -472,10 +474,11 @@ coalesce_join <- function(
         ends_with(suffix_[1]),
         # Replace .x in var.x with .y to generate var.y, if keep = "left"; or
         # vice versa.
-        ~coalesce(., get(str_replace(cur_column(), suffix_[1], suffix_[2]))),
+        ~ coalesce(., get(str_replace(cur_column(), suffix_[1], suffix_[2]))),
         # Remove the suffix from the combined columns
         .names = "{str_remove(.col, suffix_[1])}"
       ),
       # Remove the temporary columns ended with suffix
-      .keep = "unused")
+      .keep = "unused"
+    )
 }
