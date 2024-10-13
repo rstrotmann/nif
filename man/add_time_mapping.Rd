@@ -17,10 +17,10 @@ and NTIME corresponds to the nominal time in hours.}
 The SDTM object
 }
 \description{
-The nominal time of observations in PC (in the field PCTPT) is not required
+The nominal time of observations (e.g., \code{PCTPT}) is not required
 to follow a strict format and is in most cases provided as a composite
-string. 'add_time_mapping()' can be used to explicitly define the nominal
-observation times (in hours) for the values of PCTPT used in the PC domain.
+string. This function can be used to explicitly define the nominal
+observation times (in hours) for the values of, e.g., \code{PCTPT}.
 }
 \examples{
 sdtm_object <- add_time_mapping(examplinib_fe,

@@ -38,7 +38,7 @@ PMID: 37257905; PMCID: PMC10231444.
 }
 }
 \seealso{
-\code{\link[=efgr_mdrd]{efgr_mdrd()}}
+\code{\link[=egfr_mdrd]{egfr_mdrd()}}
 
 \code{\link[=egfr_cg]{egfr_cg()}}
 }

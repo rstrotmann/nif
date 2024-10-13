@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{suggest}
 \alias{suggest}
-\title{Suggest manual data programming steps for a sdtm data set}
+\title{Suggest data programming steps for a sdtm object}
 \usage{
 suggest(obj)
 }
@@ -10,5 +10,8 @@ suggest(obj)
 \item{obj}{A sdtm object}
 }
 \description{
-Suggest manual data programming steps for a sdtm data set
+Suggest data programming steps for a sdtm object
+}
+\examples{
+suggest(examplinib_poc)
 }

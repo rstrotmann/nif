@@ -166,15 +166,13 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 }
 
 
-#' Attach a treatment-analyte mapping to an SDTM object
+#' Attach a treatment-analyte mapping to SDTM object
 #'
 #' In some studies, multiple drugs are co-administered, and there may be analyte
 #' data related to different parent drugs. In order to appropriately correlate
-#' observations with administrations, the [nif_auto()] algorithm needs to know
-#' which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
-#' Multiple mappings may be needed.
-#'
-#' <TO DO> Update documentation, remove references to make_nif().
+#' observations with administrations, the [nif_auto()] function needs to know
+#' which analyte (`PCTESTCD`) belongs to which drug (`EXTRT`). Multiple mappings
+#' can be provided.
 #'
 #' @param obj A SDTM object.
 #' @param extrt The treatment as defined in EX.
@@ -194,7 +192,8 @@ add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
 }
 
 
-#' Add parent mapping
+#' Attach parent mapping to SDTM object
+#'
 #'
 #' @param obj A sdtm object.
 #' @param analyte The analyte as character.
@@ -202,6 +201,7 @@ add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
 #'
 #' @return A sdtm object.
 #' @export
+#' @noRd
 add_parent_mapping <- function(obj, analyte, parent) {
   obj$parent_mapping <- rbind(
     obj$parent_mapping,
@@ -211,12 +211,11 @@ add_parent_mapping <- function(obj, analyte, parent) {
 }
 
 
-#' Attach a parent-metabolite mapping to a SDTM object.
+#' Attach a parent-metabolite mapping to a SDTM object
 #'
 #' In case multiple analytes are measured for a specific administered drug, some
 #' functions need that information to correlate plasma concentrations with
-#' administrations. 'add_metabolite_mapping()' is used to attach this
-#' information to a SDTM object.
+#' administrations.
 #'
 #' @param obj The SDTM object.
 #' @param pctestcd_parent The PCTESTCD of the parent compound.
@@ -240,10 +239,11 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
 
 #' Attach a time mapping to an sdtm object
 #'
-#' The nominal time of observations in PC (in the field PCTPT) is not required
+#' The nominal time of observations (e.g., `PCTPT`) is not required
 #' to follow a strict format and is in most cases provided as a composite
-#' string. 'add_time_mapping()' can be used to explicitly define the nominal
-#' observation times (in hours) for the values of PCTPT used in the PC domain.
+#' string. This function can be used to explicitly define the nominal
+#' observation times (in hours) for the values of, e.g., `PCTPT`.
+#'
 #' @param obj The SDTM object.
 #' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
 #'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
@@ -305,7 +305,7 @@ domain <- function(obj, name) {
 }
 
 
-#' Details on selected subjects
+#' Baseline details for specific subjects
 #'
 #' @param obj The object, either an SDTM or NIF object.
 #' @param id The ID or USUBJID as numeric or character.
@@ -320,12 +320,9 @@ subject_info <- function(obj, id) {
 }
 
 
-#' Subject demographic information
+#' Baseline details for specific subjects
 #'
-#' @param obj A SDTM object.
-#' @param id The USUBJID.
-#' @export
-#' @noRd
+#' @inheritParams subject_info
 #' @examples
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
@@ -338,11 +335,14 @@ subject_info.sdtm <- function(obj, id) {
 }
 
 
-#' Suggest manual data programming steps for a sdtm data set
+#' Suggest data programming steps for a sdtm object
 #'
 #' @param obj A sdtm object
 #' @import dplyr
 #' @export
+#'
+#' @examples
+#' suggest(examplinib_poc)
 suggest <- function(obj) {
   suggest_out <- function(n, text, table = NULL) {
     out <- paste0(str_wrap(
@@ -611,6 +611,7 @@ guess_ntime <- function(sdtm) {
 #'
 #' @return A SDTM object.
 #' @export
+#'
 derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
   if (!"tr" %in% names(sdtm_obj$domains)) {
     return(sdtm_obj)

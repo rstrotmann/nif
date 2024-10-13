@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{add_analyte_mapping}
 \alias{add_analyte_mapping}
-\title{Attach a treatment-analyte mapping to an SDTM object}
+\title{Attach a treatment-analyte mapping to SDTM object}
 \usage{
 add_analyte_mapping(obj, extrt, pctestcd, analyte = NULL)
 }
@@ -18,12 +18,9 @@ add_analyte_mapping(obj, extrt, pctestcd, analyte = NULL)
 \description{
 In some studies, multiple drugs are co-administered, and there may be analyte
 data related to different parent drugs. In order to appropriately correlate
-observations with administrations, the \code{\link[=nif_auto]{nif_auto()}} algorithm needs to know
-which analyte (PCTESTCD within PC) belongs to which drug (EXTRT within EX).
-Multiple mappings may be needed.
-}
-\details{
-\if{html}{\out{<TO DO>}} Update documentation, remove references to make_nif().
+observations with administrations, the \code{\link[=nif_auto]{nif_auto()}} function needs to know
+which analyte (\code{PCTESTCD}) belongs to which drug (\code{EXTRT}). Multiple mappings
+can be provided.
 }
 \examples{
 sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
