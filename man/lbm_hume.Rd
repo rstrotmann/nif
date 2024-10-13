@@ -18,6 +18,12 @@ Lean body mass in kg, as numeric.
 }
 \description{
 Source: Hume R. Prediction of lean body mass from height and weight. J Clin
-Pathol. 1966 Jul;19(4):389-91. doi: 10.1136/jcp.19.4.389. PMID: 5929341;
-PMCID: PMC473290.
+Pathol. 1966 Jul;19(4):389-91.
+\href{https://doi.org/10.1136/jcp.19.4.389}{doi: 10.1136/jcp.19.4.389}.
+PMID: 5929341; PMCID: PMC473290.
+}
+\seealso{
+\code{\link[=lbm_boer]{lbm_boer()}}
+
+\code{\link[=lbm_peters]{lbm_peters()}}
 }

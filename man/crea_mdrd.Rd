@@ -26,3 +26,6 @@ Inverse of the function published in
 \details{
 To convert crea from mg/dl to umol/l, multiply by 88.4.
 }
+\seealso{
+\code{\link[=crea_raynaud]{crea_raynaud()}}
+}

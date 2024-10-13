@@ -21,8 +21,11 @@ Serum creatinine in mg/dl.
 }
 \description{
 Inverse of the function published in
-\href{https://doi.org/10.1136/bmj-2022-073654}{Raynaud, BMJ 2023;381:e073654}
+\href{https://doi.org/10.1136/bmj-2022-073654}{doi: 10.1136/bmj-2022-073654}.
 }
 \details{
 To convert crea from mg/dl to umol/l, multiply by 88.4.
+}
+\seealso{
+\code{\link[=crea_mdrd]{crea_mdrd()}}
 }

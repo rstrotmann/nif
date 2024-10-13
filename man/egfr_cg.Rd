@@ -20,14 +20,18 @@ this formula.}
 \item{weight}{Body weight in kg.}
 
 \item{molar}{Switch to select whether the creatinine value is in mg/dl
-(default) or umol/l units.
-#'}
+(default) or umol/l units.}
 }
 \value{
-Estimated GFR in ml/min (as body size is accounted for by the weigth
+Estimated GFR in ml/min (as body size is accounted for by the weight
 in the input).
 }
 \description{
 Reference:
 \href{https://doi.org/10.1159/000180580}{Cockcroft and Gault, Nephron 1976}
+}
+\seealso{
+\link{egfr_raynaud}
+
+\code{\link[=egfr_mdrd]{egfr_mdrd()}}
 }

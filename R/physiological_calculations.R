@@ -1,7 +1,10 @@
 #' Glomerular filtration rate estimation from serum creatinine (Raynaud method)
 #'
-#' Reference:
-#' \href{https://doi.org/10.1136/bmj-2022-073654}{Raynaud, BMJ 2023;381:e073654}
+#' Source: Raynaud M, et al., Race-free estimated glomerular
+#' filtration rate equation in kidney transplant recipients: development and
+#' validation study. BMJ. 2023 May 31;381:e073654.
+#' [doi: 10.1136/bmj-2022-073654](https://doi.org/10.1136/bmj-2022-073654).
+#' PMID: 37257905; PMCID: PMC10231444.
 #'
 #' Internally, the function uses mg/dl units
 #'
@@ -14,6 +17,8 @@
 #' compatibility.
 #' @param molar Switch to select whether the creatinine value is in mg/dl
 #' (default) or umol/l units.
+#' @seealso [efgr_mdrd()]
+#' @seealso [egfr_cg()]
 #'
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
@@ -32,7 +37,7 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' Serum creatinine estimation from eGFR (Raynaud method)
 #'
 #' Inverse of the function published in
-#' \href{https://doi.org/10.1136/bmj-2022-073654}{Raynaud, BMJ 2023;381:e073654}
+#' [doi: 10.1136/bmj-2022-073654](https://doi.org/10.1136/bmj-2022-073654).
 #'
 #' To convert crea from mg/dl to umol/l, multiply by 88.4.
 #'
@@ -44,6 +49,7 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #'
 #' @importFrom pracma lambertWn
 #' @importFrom pracma lambertWp
+#' @seealso [crea_mdrd()]
 #'
 #' @return Serum creatinine in mg/dl.
 #' @export
@@ -58,7 +64,6 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
   #   stop("z is < -1/e")
   # }
 
-
   # if(z < 0) {
   #   W <- pracma::lambertWn(z)
   # } else {
@@ -72,8 +77,8 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
 
 #' Glomerular filtration rate estimation from serum creatinine (MDRD)
 #'
-#' Reference:
-#' \href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
+#' Source:
+#' [National Kidney Foundation](https://www.kidney.org/content/mdrd-study-equation)
 #'
 #' @param crea Serum creatinine in mg/dl.
 #' @param age Age in years.
@@ -84,7 +89,8 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
 #' (default) or umol/l units.
 #' @param weight Body weight. Not used in this formula but included for
 #' compatibility.
-#' #'
+#' @seealso [egfr_raynaud()]
+#' @seealso [egfr_cg()]
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
 egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
@@ -112,6 +118,7 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' @param sex Sex encocded as number (female is 1) or character (female is "F").
 #' @param race Race as per CDISC nomenclature. Black race is identified as the
 #'   occurrence of 'black' in the value.
+#' @seealso [crea_raynaud()]
 #'
 #' @return Serum creatinine in mg/dl.
 #' @export
@@ -138,10 +145,11 @@ crea_mdrd <- function(egfr, age, sex, race = "") {
 #'   this formula.
 #' @param weight Body weight in kg.
 #' @param molar Switch to select whether the creatinine value is in mg/dl
-#' (default) or umol/l units.
-#' #'
-#' @return Estimated GFR in ml/min (as body size is accounted for by the weigth
+#'   (default) or umol/l units.
+#' @return Estimated GFR in ml/min (as body size is accounted for by the weight
 #'   in the input).
+#' @seealso [egfr_raynaud]
+#' @seealso [egfr_mdrd()]
 #' @export
 egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
   if (molar) {
@@ -168,58 +176,66 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 
 #' Lean body mass (Boer formula)
 #'
-#' Source: Caruso D, De Santis D, Rivosecchi F, Zerunian M, Panvini N, Montesano
-#' M, Biondi T, Bellini D, Rengo M, Laghi A. Lean Body Weight-Tailored Iodinated
+#' Source: Caruso D, et al., Lean Body Weight-Tailored Iodinated
 #' Contrast Injection in Obese Patient: Boer versus James Formula. Biomed Res
-#' Int. 2018 Aug 13;2018:8521893. doi: 10.1155/2018/8521893. PMID: 30186869;
-#' PMCID: PMC6110034.
+#' Int. 2018 Aug 13;2018:8521893.
+#' [doi: 10.1155/2018/8521893](https://doi.org/10.1155/2018/8521893).
+#' PMID: 30186869; PMCID: PMC6110034.
 #'
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
 #' @param sex Sex encoded as number (male is 0) or character (male is "M").
+#' @seealso [lbm_hume()]
+#' @seealso [lbm_peters()]
 #'
 #' @return Lean body mass in kg, as numeric.
 #' @export
 lbm_boer <- function(weight, height, sex) {
   ifelse((sex == "M") | (sex == 0),
-         (0.407 * weight) + (0.267 * height) - 19.2,
-         (0.252 * weight) + (0.473 * height) - 48.3)
+    (0.407 * weight) + (0.267 * height) - 19.2,
+    (0.252 * weight) + (0.473 * height) - 48.3
+  )
 }
 
 
 #' Lean body mass (Hume formula)
 #'
 #' Source: Hume R. Prediction of lean body mass from height and weight. J Clin
-#' Pathol. 1966 Jul;19(4):389-91. doi: 10.1136/jcp.19.4.389. PMID: 5929341;
-#' PMCID: PMC473290.
+#' Pathol. 1966 Jul;19(4):389-91.
+#' [doi: 10.1136/jcp.19.4.389](https://doi.org/10.1136/jcp.19.4.389).
+#' PMID: 5929341; PMCID: PMC473290.
 #'
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
 #' @param sex Sex encoded as number (male is 0) or character (male is "M").
+#' @seealso [lbm_boer()]
+#' @seealso [lbm_peters()]
 #'
 #' @return Lean body mass in kg, as numeric.
 #' @export
 lbm_hume <- function(weight, height, sex) {
   ifelse((sex == "M") | (sex == 0),
-         (0.32810 * weight) + (0.33929 * height) - 29.5336,
-         (0.29569 * weight) + (0.41813 * height) - 43.2933)
+    (0.32810 * weight) + (0.33929 * height) - 29.5336,
+    (0.29569 * weight) + (0.41813 * height) - 43.2933
+  )
 }
 
 
 #' Lean body mass (Peters formula)
 #'
 #' Source: Peters AM, Snelling HL, Glass DM, Bird NJ. Estimation of lean body
-#' mass in children. Br J Anaesth. 2011 May;106(5):719-23. doi:
-#' 10.1093/bja/aer057. PMID: 21498495.
+#' mass in children. Br J Anaesth. 2011 May;106(5):719-23.
+#' [doi: 10.1093/bja/aer057](https://doi.org/10.1093/bja/aer057).
+#' PMID: 21498495.
 #'
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
 #' @param sex Sex encoded as number (male is 0) or character (male is "M").
+#' @seealso [lbm_boer()]
+#' @seealso [lbm_hume()]
 #'
 #' @return Lean body mass in kg, as numeric.
 #' @export
 lbm_peters <- function(weight, height, sex) {
-  3.8 * (0.0215 * weight**0.6469 * height** 0.7236)
+  3.8 * (0.0215 * weight**0.6469 * height**0.7236)
 }
-
-

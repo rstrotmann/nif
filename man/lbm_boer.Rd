@@ -17,9 +17,14 @@ lbm_boer(weight, height, sex)
 Lean body mass in kg, as numeric.
 }
 \description{
-Source: Caruso D, De Santis D, Rivosecchi F, Zerunian M, Panvini N, Montesano
-M, Biondi T, Bellini D, Rengo M, Laghi A. Lean Body Weight-Tailored Iodinated
+Source: Caruso D, et al., Lean Body Weight-Tailored Iodinated
 Contrast Injection in Obese Patient: Boer versus James Formula. Biomed Res
-Int. 2018 Aug 13;2018:8521893. doi: 10.1155/2018/8521893. PMID: 30186869;
-PMCID: PMC6110034.
+Int. 2018 Aug 13;2018:8521893.
+\href{https://doi.org/10.1155/2018/8521893}{doi: 10.1155/2018/8521893}.
+PMID: 30186869; PMCID: PMC6110034.
+}
+\seealso{
+\code{\link[=lbm_hume]{lbm_hume()}}
+
+\code{\link[=lbm_peters]{lbm_peters()}}
 }

@@ -17,8 +17,7 @@ egfr_mdrd(crea, age, sex, race = "", weight = NA, molar = F)
 occurrence of 'black' in the value.}
 
 \item{weight}{Body weight. Not used in this formula but included for
-compatibility.
-#'}
+compatibility.}
 
 \item{molar}{Switch to select whether the creatinine value is in mg/dl
 (default) or umol/l units.}
@@ -27,6 +26,11 @@ compatibility.
 Estimated GFR in ml/min/1.73 m^2.
 }
 \description{
-Reference:
+Source:
 \href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
+}
+\seealso{
+\code{\link[=egfr_raynaud]{egfr_raynaud()}}
+
+\code{\link[=egfr_cg]{egfr_cg()}}
 }

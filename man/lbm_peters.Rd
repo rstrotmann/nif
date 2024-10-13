@@ -18,6 +18,12 @@ Lean body mass in kg, as numeric.
 }
 \description{
 Source: Peters AM, Snelling HL, Glass DM, Bird NJ. Estimation of lean body
-mass in children. Br J Anaesth. 2011 May;106(5):719-23. doi:
-10.1093/bja/aer057. PMID: 21498495.
+mass in children. Br J Anaesth. 2011 May;106(5):719-23.
+\href{https://doi.org/10.1093/bja/aer057}{doi: 10.1093/bja/aer057}.
+PMID: 21498495.
+}
+\seealso{
+\code{\link[=lbm_boer]{lbm_boer()}}
+
+\code{\link[=lbm_hume]{lbm_hume()}}
 }
