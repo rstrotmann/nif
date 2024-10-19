@@ -179,7 +179,7 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
 }
 
 
-#' Derive administration time from the PCRFTDTC
+#' Derive administration time from PCRFTDTC
 #'
 #' @param obj A data frame.
 #' @param pc The corresponding PC domain as data frame.
@@ -538,10 +538,12 @@ make_observation <- function(
     NTIME_lookup = NULL,
     keep = NULL
     ) {
-  if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
-  if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-  if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
-                                                   "TESTCD")
+  if(is.null(DTC_field))
+    DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
+  if(is.null(DV_field))
+    DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
+  if(is.null(TESTCD_field))
+    TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
 
@@ -712,11 +714,10 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
     keep = "") {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
-  # pc <- domain(sdtm, "pc") %>% lubrify_dates()
 
   assertthat::assert_that(
     extrt %in% ex$EXTRT,
-    msg = paste0("Treatment '", extrt, "' not found in EX.EXTRT!")
+    msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
   )
 
   if(is.na(analyte)) {analyte <- extrt}

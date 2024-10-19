@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{impute_admin_times_from_pcrftdtc}
 \alias{impute_admin_times_from_pcrftdtc}
-\title{Derive administration time from the PCRFTDTC}
+\title{Derive administration time from PCRFTDTC}
 \usage{
 impute_admin_times_from_pcrftdtc(obj, pc, analyte, pctestcd)
 }
@@ -19,6 +19,6 @@ impute_admin_times_from_pcrftdtc(obj, pc, analyte, pctestcd)
 A data frame.
 }
 \description{
-Derive administration time from the PCRFTDTC
+Derive administration time from PCRFTDTC
 }
 \keyword{internal}

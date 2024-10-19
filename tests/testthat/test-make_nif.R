@@ -54,80 +54,6 @@ test_that("date conversion works correctly", {
 })
 
 
-
-# test_that("make_admin", {
-#   ex <- tribble(
-#     ~STUDYID, ~USUBJID,       ~EXSTDTC,           ~EXENDTC, ~EXTRT, ~EXDOSE,   ~EPOCH, ~EXSEQ,
-#     "1", "1010001", "2001-01-17T08:00", "2001-01-21T08:10", "x",     500, "TREATMENT",      1,
-#     "1", "1010001", "2001-02-01T08:20", "2001-02-08T08:30", "x",     250, "TREATMENT",      2,
-#     "1", "1010002", "2001-01-28T09:00", "2001-02-02T09:10", "x",     500, "TREATMENT",      1,
-#     "1", "1010002", "2001-02-04T09:20", "",                 "x",     500, "TREATMENT",      2
-#   ) %>% lubrify_dates() %>% mutate(DOMAIN = "EX")
-#
-#   dm <- tribble(
-#     ~USUBJID,  ~RFSTDTC,           ~RFENDTC,
-#     "1010001", "2001-01-17T08:00", "2001-02-08T08:30",
-#     "1010002", "2001-01-28T09:00", "2001-02-08T09:30"
-#   ) %>% lubrify_dates() %>% mutate(DOMAIN = "DM")
-#
-#   drug_mapping <- tribble(
-#     ~EXTRT, ~PCTESTCD,
-#     "x", "y"
-#   )
-#
-#   cut_off_date <- last_ex_dtc(ex)
-#   ex <- ex %>%
-#     mutate(IMPUTATION = "") %>%
-#     # impute_missing_exendtc_time(silent = F) %>%
-#     impute_exendtc_to_rfendtc(dm, silent = F) #%>%
-#   #   exclude_exstdtc_after_rfendtc(dm, silent = F) %>%
-#   #   impute_exendtc_to_rfendtc(dm, silent = F) %>%
-#   #   impute_missing_exendtc(silent = F)
-#
-#   test <- make_administration(ex, dm, drug_mapping, cut_off_date, silent=F)
-#   expect_equal(nrow(test), 24)
-# })
-
-
-
-
-
-# This test confirms that `impute_missing_exendtc_time` completes missing
-# time information in EXENDTC from the respective EXSTDTC field.
-# The missing time information in rows 3, 7 and 10 in the test EX will be
-# imputed. For row 6 where no date is available, too, the function will return
-# 'NA'.
-# test_that("impute_missing_exendtc_time works as intended", {
-#   ex <- tribble(
-#     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ, ~imputation_expected,
-#     1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,     FALSE,
-#     1,        "EX",    "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,     FALSE,
-#     1,        "EX",    "TEST", "2022-08-23T13:30", "2022-09-05"      , 3,     TRUE,
-#     1,        "EX",    "TEST", "2022-09-13T13:48", "2022-09-26T11:05", 4,     FALSE,
-#     1,        "EX",    "TEST", "2022-10-04T13:32", "2022-10-17T11:00", 5,     FALSE,
-#     1,        "EX",    "TEST", "2022-11-15T14:20", ""                , 6,     FALSE,
-#     2,        "EX",    "TEST", "2022-07-18T13:23", "2022-07-31"      , 1,     TRUE,
-#     3,        "EX",    "TEST", "2022-07-18T17:03", "2022-07-31T11:50", 1,     FALSE,
-#     4,        "EX",    "TEST", "2022-07-18T13:54", "2022-07-31T12:30", 1,     FALSE,
-#     4,        "EX",    "TEST", "2022-08-08T14:35", "2022-08-21"      , 2,     TRUE
-#     ) %>%
-#     lubrify_dates() %>%
-#     mutate(IMPUTATION = "")
-#
-#   temp <- ex %>%
-#     impute_missing_exendtc_time(silent = T) %>%
-#     mutate(EXENDTC_has_time = has_time(EXENDTC))
-#
-#   temp %>%
-#     summarize(sum = sum(EXENDTC_has_time == F, na.rm = T)) %>%
-#     as.numeric() %>%
-#     expect_equal(0)
-#
-#     expect_equal(all((temp$IMPUTATION != "") == temp$imputation_expected), TRUE)
-#
-# })
-
-
 # This test confirms that `impute_exendtc_to_rfendtc` completes missing
 # EXENDTC information to RFENDTC for the last administration in a subject for a
 # given EXTRT, provided it is contained in the DM domain.
@@ -173,31 +99,6 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
 })
 
 
-# test_that("impute_admin_dtc_to_pcrftdtc works as intended", {
-#   admin <- tribble(
-#     ~USUBJID, ~PARENT, ~DTC,
-#     1,        "A",     "2022-07-11T13:50",
-#     2,        "A",     "2022-08-11",
-#     3,        "A",     "2022-09-11",
-#   ) %>%
-#     lubrify_dates() %>%
-#     mutate(date = as.Date(extract_date(DTC))) %>%
-#     mutate(time = extract_time(DTC)) %>%
-#     mutate(IMPUTATION = "")
-#
-#   obs <- tribble(
-#     ~USUBJID, ~PARENT, ~DTC,               ~PCRFTDTC,
-#     1,        "A",     "2022-07-11T14:50", "2022-07-11T13:50",
-#     2,        "A",     "2022-08-11T15:50", "2022-08-11T14:50",
-#     3,        "A",     "2022-09-11T15:50", ""
-#   ) %>% lubrify_dates() %>%
-#     mutate(IMPUTATION = "")
-#
-#   temp <- impute_admin_dtc_to_pcrftdtc(admin, obs, silent = TRUE)
-#   expect_equal(temp$IMPUTATION != "", c(FALSE, TRUE, FALSE))
-# })
-
-
 test_that("impute_missing_exendtc", {
   ex <- tribble(
     ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~imputation_expected,
@@ -235,9 +136,11 @@ test_that("impute_exendtc_to_cutoff works", {
     mutate(DOMAIN = "EX", IMPUTATION = NA) %>%
     lubrify_dates()
   expect_no_error(
-    temp <- impute_exendtc_to_cutoff(
+    suppressMessages(
+      temp <- impute_exendtc_to_cutoff(
       ex,
       cutoff_date)
+    )
   )
   expect_true(all(filter(temp, replace == TRUE)$EXENDTC == cutoff_date))
 })
@@ -245,8 +148,14 @@ test_that("impute_exendtc_to_cutoff works", {
 
 test_that("make_subjects works", {
   sdtm <- examplinib_poc
-  temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
+  expect_no_error(
+    temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
+  )
   expect_equal(nrow(temp), 80)
+  expect_equal(
+    names(temp),
+    c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
+      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))
 })
 
 
