@@ -90,7 +90,9 @@ A ggplot2 object.
 Plot NIF object.
 }
 \examples{
-plot(examplinib_fe_nif, facet = NULL)
+plot(examplinib_fe_nif)
+plot(examplinib_fe_nif, facet = "FASTED", time = "TAD")
+plot(examplinib_fe_nif, color = "FASTED", time = "TAD", facet = "SEX")
 plot(examplinib_sad_nif,
   mean = FALSE, points = TRUE, dose_norm = FALSE,
   facet = "RACE", log = TRUE, max_time = 72

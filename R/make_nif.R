@@ -157,8 +157,8 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
     filter(.data$LAST_ADMIN == TRUE, is.na(.data$EXENDTC))
 
   if (nrow(to_replace) > 0) {
-    conditional_message("In ", nrow(to_replace), " subjects, EXENDTC is ",
-      "absent and is replaced by the cut off date, ",
+    conditional_message("In ", nrow(to_replace), " subjects, EXENDTC for the ",
+      "last row is absent and is replaced by the cut off date, ",
       format(cut_off_date, format = "%Y-%m-%d %H:%M"), ":\n",
       df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
         "EXSTDTC", "EXENDTC")))), "\n")
@@ -172,7 +172,8 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
         LAST_ADMIN == TRUE & is.na(.data$EXENDTC) ~
           "missing EXENDTC set to data cutoff",
         .default = .data$IMPUTATION
-      ))
+      )) %>%
+      ungroup()
   }
   return(temp %>% select(-"LAST_ADMIN"))
 }

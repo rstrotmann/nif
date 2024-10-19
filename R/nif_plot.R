@@ -91,7 +91,7 @@ make_plot_data_set <- function(
     arrange("ID", "DOSE") %>%
     {
       if (length(color) != 0) {
-        tidyr::unite(., COLOR, all_of(color), sep = "-", remove = FALSE)
+        tidyr::unite(., COLOR, all_of(!!color), sep = "-", remove = FALSE)
       } else {
         mutate(., COLOR = TRUE)
       }
@@ -179,7 +179,9 @@ make_mean_plot_data_set <- function(data_set) {
 #' @export
 #'
 #' @examples
-#' plot(examplinib_fe_nif, facet = NULL)
+#' plot(examplinib_fe_nif)
+#' plot(examplinib_fe_nif, facet = "FASTED", time = "TAD")
+#' plot(examplinib_fe_nif, color = "FASTED", time = "TAD", facet = "SEX")
 #' plot(examplinib_sad_nif,
 #'   mean = FALSE, points = TRUE, dose_norm = FALSE,
 #'   facet = "RACE", log = TRUE, max_time = 72
@@ -303,3 +305,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
   # suppressWarnings(print(p))
   suppressWarnings(return(p))
 }
+
+
+
+

@@ -215,6 +215,34 @@ test_that("impute_missing_exendtc", {
 })
 
 
+test_that("impute_exendtc_to_cutoff works", {
+  cutoff_date <- lubridate::as_datetime("2022-12-1", format = "%Y-%m-%d")
+
+  ex <- tribble(
+    ~USUBJID,           ~EXSTDTC,           ~EXENDTC, ~EXSEQ, ~replace, ~EXTRT,
+    1, "2022-07-11T13:50", "2022-07-24T09:00",      1,    FALSE,    "A",
+    1, "2022-08-02T13:45", "2022-08-15T11:10",      2,    FALSE,    "A",
+    1, "2022-08-23T13:30",                 NA,      3,    FALSE,    "A",
+    1, "2022-09-13T13:48", "2022-09-26T11:05",      4,    FALSE,    "A",
+    1, "2022-10-04T13:32", "2022-10-17T11:00",      5,    FALSE,    "A",
+    1, "2022-11-15T14:20",                 NA,      6,     TRUE,    "A",
+    2, "2022-07-18T13:23", "2022-07-31T13:23",      1,    FALSE,    "A",
+    3, "2022-07-18T17:03", "2022-07-31T11:50",      1,    FALSE,    "A",
+    3, "2022-07-18T17:03",                 NA,      1,    TRUE,     "B",
+    4, "2022-07-18T13:54", "2022-07-31T12:30",      1,    FALSE,    "A",
+    4, "2022-08-08T14:35",                 NA,      2,     TRUE,    "A"
+  ) %>%
+    mutate(DOMAIN = "EX", IMPUTATION = NA) %>%
+    lubrify_dates()
+  expect_no_error(
+    temp <- impute_exendtc_to_cutoff(
+      ex,
+      cutoff_date)
+  )
+  expect_true(all(filter(temp, replace == TRUE)$EXENDTC == cutoff_date))
+})
+
+
 test_that("make_subjects works", {
   sdtm <- examplinib_poc
   temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
