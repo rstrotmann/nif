@@ -41,7 +41,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
           filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) &
                    .data$LAST_ADMIN == TRUE) %>%
           select(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")),
-        indent = "  "
+        indent = 2
       ), "\n"
     )
 
@@ -106,7 +106,7 @@ impute_missing_exendtc <- function(ex) {
       " rows in EX had no EXENDTC. These values are imputed as the day ",
       "before\nthe next EXSTDTC. The following entries are affected:\n",
       df_to_string(select(to_replace, c("USUBJID", "EXSEQ", "EXTRT",
-                            "EXSTDTC", "EXENDTC")), indent = "  "),
+                            "EXSTDTC", "EXENDTC")), indent = 2),
       "\n"
     )
 
@@ -235,7 +235,7 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
       "removed from the data set:\n",
       df_to_string(select(temp, "USUBJID", "EXTRT", "EXSEQ",
                           "EXSTDTC", "EXENDTC", "RFENDTC"),
-                   indent = "  "),
+                   indent = 2),
       "\n"))
   }
   ex %>%
@@ -984,7 +984,7 @@ add_observation <- function(
             mutate(N = sum(EVID == 0)) %>%
             ungroup() %>%
             distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-        indent = "  "), "\n"))
+        indent = 2), "\n"))
 
     obj <- obj %>%
       filter(.data$NO_ADMIN_FLAG == 0)

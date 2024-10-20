@@ -59,8 +59,7 @@ recode_sex <- function(obj) {
 #' representation when printed without line numbers
 #'
 #' @param df The data.frame to be rendered
-#' @param indent A string that defines the left indentation of the rendered
-#'   output.
+#' @param indent Indentation level, as numeric.
 #' @param header Boolean to indicate whether the header row is to be included.
 #' @param color Print headers in grey as logical.
 #' @param n The number of lines to be included, or all if NULL.
@@ -69,8 +68,9 @@ recode_sex <- function(obj) {
 #' @return The output as string.
 #' @import utils
 #' @keywords internal
-df_to_string <- function(df, indent = "", n = NULL, header = TRUE,
+df_to_string <- function(df, indent = 0, n = NULL, header = TRUE,
                          color = FALSE, show_none = FALSE) {
+  indent = paste(replicate(indent, " "), collapse = "")
   df <- as.data.frame(df) %>%
     mutate(across(everything(), as.character))
   max_widths <- as.numeric(lapply(

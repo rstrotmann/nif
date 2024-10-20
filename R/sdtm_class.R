@@ -95,7 +95,7 @@ summary.sdtm <- function(object, ...) {
 #' @noRd
 print.summary_sdtm <- function(x, color = FALSE, ...) {
   hline <- paste0(rep("-", 8), collapse = "")
-  indent <- " "
+  indent <- 1
 
   n <- filter(x$domains, DOMAIN == "pc")$N
   if (length(n) == 0) n <- 0
@@ -344,17 +344,19 @@ subject_info.sdtm <- function(obj, id) {
 #' @examples
 #' suggest(examplinib_poc)
 suggest <- function(obj) {
+
   suggest_out <- function(n, text, table = NULL) {
-    out <- paste0(str_wrap(
-      paste0(n, ". ", text),
+    out <- paste0(str_wrap(paste0(n, ". ", text),
       width = 80, indent = 0, exdent = 3
     ), "\n")
     if (!is.null(table)) {
-      out <- paste0(out, "\n", df_to_string(table, indent = "       "), "\n")
+      out <- paste0(out, "\n", df_to_string(table, indent = 7), "\n")
     }
     message(out)
     return(n + 1)
   }
+
+
 
   col <- 34
   n_suggestion <- 1
@@ -365,13 +367,13 @@ suggest <- function(obj) {
     distinct(PCTEST, PCTESTCD)
   n_suggestion <- suggest_out(n_suggestion, paste0(
     "Only needed if you want to generate nif objects automatically (using ",
-    "'nif_auto()'): ",
+    "`nif_auto()`): ",
     "There are ", nrow(treatments), " treatments (EXTRT) in 'EX', and ",
     nrow(analytes),
     " pharmacokinetic analytes (PCTESTCD) in 'PC':"
   ))
-  message(paste0(df_to_string(treatments, indent = "       "), "\n"))
-  message(paste0(df_to_string(analytes, indent = "       "), "\n"))
+  message(paste0(df_to_string(treatments, indent = 7), "\n"))
+  message(paste0(df_to_string(analytes, indent = 7), "\n"))
   message(paste0(str_wrap(
     paste0(
       "To associate treatments with their respective parent analyte, consider ",

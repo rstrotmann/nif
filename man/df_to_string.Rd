@@ -6,7 +6,7 @@
 \usage{
 df_to_string(
   df,
-  indent = "",
+  indent = 0,
   n = NULL,
   header = TRUE,
   color = FALSE,

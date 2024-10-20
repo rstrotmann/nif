@@ -648,7 +648,7 @@ plot_old <- function(
             " and were excluded from plotting:\n",
             df_to_string(filter(temp, n_obs == 0, EVID == 0) %>%
                            distinct(ID, ANALYTE, DOSE),
-                         indent = "  ")))}
+                         indent = 2)))}
  temp <- filter(temp, n_obs > 0 | EVID == 1)
 
  # make plotting group and color
@@ -905,7 +905,7 @@ summary.nif <- function(object, ...) {
 #' @return Nothing.
 #' @export
 print.summary_nif <- function(x, color = FALSE, ...) {
-  indent = " "
+  indent = 1
   # hline <- paste0(rep("\U2500", 8), collapse="")
   hline <- "-----"
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
@@ -936,10 +936,13 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   }
 
   cat(paste0("Administered drugs:\n",
-             paste0(indent, paste(x$drugs,collapse = ", ")), "\n\n"))
+             paste0(" ", paste(x$drugs,collapse = ", ")), "\n\n"))
+
+  cat(paste0("Administered drugs:\n",
+             paste0(" ", paste(x$drugs,collapse = ", ")), "\n\n"))
 
   cat(paste0("Analytes:\n",
-             paste0(indent, paste0(x$analytes, collapse = ", ")), "\n\n"))
+             paste0(" ", paste0(x$analytes, collapse = ", ")), "\n\n"))
 
   cat("Subjects per dose levels:\n")
   cat(df_to_string(x$dose_levels, color=color, indent = indent))
