@@ -16,8 +16,7 @@ df_to_string(
 \arguments{
 \item{df}{The data.frame to be rendered}
 
-\item{indent}{A string that defines the left indentation of the rendered
-output.}
+\item{indent}{Indentation level, as numeric.}
 
 \item{n}{The number of lines to be included, or all if NULL.}
 

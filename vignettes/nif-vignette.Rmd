@@ -166,6 +166,7 @@ look at a timeline view of individual domains, e.g. for DM:
 ```{r fig.width=6, fig.asp = 0.3}
 plot(examplinib_fe, "dm")
 ```
+
 ## SDTM suggestions
 
 SDTM data may be incomplete, e.g., when emerging data that have not yet been

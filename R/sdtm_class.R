@@ -357,14 +357,12 @@ suggest <- function(obj) {
   }
 
 
-
   col <- 34
   n_suggestion <- 1
 
-  treatments <- obj$ex %>%
-    distinct(EXTRT)
-  analytes <- obj$pc %>%
-    distinct(PCTEST, PCTESTCD)
+  treatments <- distinct(obj$ex, EXTRT)
+  analytes <- distinct(obj$pc, PCTEST, PCTESTCD)
+
   n_suggestion <- suggest_out(n_suggestion, paste0(
     "Only needed if you want to generate nif objects automatically (using ",
     "`nif_auto()`): ",
