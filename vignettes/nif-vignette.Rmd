@@ -23,55 +23,54 @@ This is a basic tutorial on using the `nif` package to create NONMEM Input File
 
 ## Background
 
-Following current regulatory standards, clinical study data are commonly
-provided in SDTM format, an observation-based data tabulation format in which
-logically related observations are organized into topical collections (domains).
-SDTM is defined and maintained by the [Clinical Data Interchange Standards Consortium (CDISC)](https://www.cdisc.org/standards/foundational/sdtm).
+Following regulatory standards, clinical study data are commonly provided in
+SDTM format, an observation-based data tabulation format in which logically
+related observations are organized into topical collections (domains). SDTM is
+defined and maintained by the [Clinical Data Interchange Standards Consortium
+(CDISC)](https://www.cdisc.org/standards/foundational/sdtm).
 
-For many exploratory analyses, data from different SDTM domains need to be
-combined. For example, demographic and pharmacokinetic concentration data from
-the DM and PC domains are both needed to evaluate exposure by age. More complex
-analyses like population-level PK and PK/PD analyses may include further data, 
-e.g., clinical laboratory, vital sign, or biomarker data.
+To support typical pharmacometric analyses, data from different SDTM domains
+need to be first aggregated into a common analysis data set. For example,
+demographic and pharmacokinetic concentration data from the DM and PC domains
+are both required to evaluate exposure by age. More complex analyses like
+population-level PK and PK/PD analyses may include further data, e.g., clinical
+laboratory, vital sign, or biomarker data.
 
-NONMEM and other commonly used modeling software packages expect the input data
-integrated into a (long) data table format with strict requirements to the
-formatting and nomenclature of the variables (see, e.g.,
-[Bauer, CPT Pharmacometrics Syst. Pharmacol. (2019)](https://doi.org/10.1002/psp4.12404)
-for an introduction).
-The input data file for these analyses is often casually referred to as a
+NONMEM and other modeling software packages expect the input data provided in
+(long) tabular arrangement with strict requirements to the formatting and
+nomenclature of the variables (see, e.g., [Bauer, CPT Pharmacometrics Syst.
+Pharmacol. (2019)](https://doi.org/10.1002/psp4.12404) for an introduction). The
+input data file for these analyses is sometimes casually referred to as a
 'NONMEM input file' or 'NIF file', hence the name of this package.
 
-Depending on the nature of the analysis, some of the input variables, may be 
-easily and automatically derived from the SDTM-formatted source data, e.g.,
-'DOSE' or 'DV' (the dependent variable for pharmacokinetic observations), or
-demographic covariates like AGE, SEX or RACE.
+Contingent on the downstream analyses, some of the variables in the analysis
+data set can be easily and automatically derived from the SDTM source data,
+e.g., 'DOSE' (the administered dose) or 'DV' (the dependent variable for
+observations), or demographic covariates like 'AGE', 'SEX' or 'RACE'. Other
+fields of the input data set may require study-specific considerations, for
+example the calculation of baseline renal or hepatic function categories,
+definition of specific treatment conditions by study arm, or the encoding of
+adverse events or concomitant medications, as categorical covariates.
 
-Other fields of the input data set
-may require study-specific considerations, for example the calculation of
-baseline renal or hepatic function categories, definition of specific treatment
-conditions by study arm, or the encoding of adverse events or concomitant
-medications of interest as categorical covariates.
-
-In contrast to the latter variables which often need manual and study-specific
-data programming, the core NIF data set that integrates pharmacokinetic
-observations, drug administration information and a standard set of baseline
-covariates can often be generated automatically without too much study-specific
-user input. It should be however noted that even for such basic NIF files,
-missing data points and certain inconsistencies may need to be resolved to get
-to an analysis-ready data set, particularly so if the SDTM data stems from an 
-ongoing clinical study and has not been fully cleaned yet. More on this point
-later.
+While the latter variables often need manual and study-specific data
+programming, the core NIF data set can generally be generated automatically
+without study-specific user input. It should be noted that even for such basic
+NIF files, missing data points and certain inconsistencies may need to be
+resolved to get to an analysis-ready data set, particularly so if the SDTM data
+stems from an ongoing clinical study and has not been fully cleaned yet. More on
+this point later.
 
 This package is intended to facilitate the creation of analysis data sets ('NIF
-data sets') from SDTM-formatted clinical data. In addition, it includes a set of
-functions and tools to explore SDTM and NIF data sets.
+data sets') from SDTM-formatted clinical data. It also includes a set of
+functions and tools to support inital exploration of SDTM and NIF data sets.
 
-The first part of this tutorial describes how to import SDTM data into a `sdtm`
+## Outline
+
+The [first][SDTM DATA] part of this tutorial describes how to import SDTM data into a `sdtm`
 object, and how to explore clinical data on the SDTM level.
 
-The second part of this tutorial walks through the generation of a sample NIF
-data set from SDTM data and its initial exploratory analysis.
+The [second][NIF DATA SETS] part of this tutorial walks through the generation of a sample `nif`
+data set from SDTM data, and its exploratory analysis.
 
 This tutorial contains live code that depends on the following R packages:
 
@@ -84,49 +83,55 @@ library(nif)
 
 # SDTM DATA
 
-## Import SDTM data 
+## Importing SDTM data 
 
-As a minimum, the following SDTM domains are
-expected to create a basic NIF file:
+<!-- As a minimum, the following SDTM domains are -->
+<!-- expected to create a basic NIF file: -->
 
-* DM - demographic data, mostly age, sex and other variables per subject
-* VS - vital signs, particularly weight and height at enrollment, per subject
-* EX - exposure information for the administered drugs, e.g., the time of
-    administration, dose, etc.
-* PC - pharmacokinetic concentrations for the analytes associated with the 
-    administered drugs
+<!-- * DM - demographic data, mostly age, sex and other variables per subject -->
+<!-- * VS - vital signs, particularly weight and height at enrollment, per subject -->
+<!-- * EX - exposure information for the administered drugs, e.g., the time of -->
+<!--     administration, dose, etc. -->
+<!-- * PC - pharmacokinetic concentrations for the analytes associated with the  -->
+<!--     administered drugs -->
     
-In the most common use case, the respective SDTM data files, e.g., as *.sas7bdat
-files, are copied into one folder (in the below example into `path/to/sdtm/data`),
-and can then be loaded using:
+In most cases, the source SDTM data are provided as one file per domain, e.g.,
+in SAS binary data base storage (.sas7bdat) or SAS Transport File (.xpt) format.
+
+With `path/to/sdtm/data`, the location to the source folder, SDTM data can be
+loaded using `read_sdtm()`:
 
 ```{r, eval=FALSE, echo=T}
 read_sdtm("path/to/sdtm/data")
 ```
 
-Based on the above, the minimum required SDTM files are `dm.dat7bdat`,
-`vs.dat7bdat`, `ex.dat7bdat` and `pc.dat7bdat`. However, if additional
-covariates from AE, LB or any other SDTM domain are to be added, an explicit
-list of the domains can be provided to the loading function, e.g., 
+Windows users may want to provide the file path as raw string, i.e., in the form
+of
 
 ```{r, eval=FALSE, echo=T}
-read_sdtm("path/to/sdtm/data", domain = c("dm", "vs", "ex", "pc", "lb", "ae"))
+read_sdtm(r"(path\to\sdtm\data)")
 ```
+
+to ensure that the backslashes in the file path are correctly captured. Note the
+parentheses around the file path!
+
+If no domains are explicitly specified, the function attempts to load 'DM',
+'VS', 'EX' and 'PC' as a generic set of SDTM domains suitable to create a basic
+pharmacokinetic analysis data set.
 
 The return value of this function is a `sdtm` object.
 
 ## SDTM objects
 
-`Sdtm` objects are essentially lists of the SDTM domains from a particular
-clinical study, plus some metadata. The easiest way of creating `sdtm`
-objects is by importing the SDTM data using `read_sdtm_sas()` or
-`read_sdtm_xpt()` as shown above. 
+`sdtm` objects are essentially aggregates (lists) of the SDTM domains from a
+particular clinical study, plus some metadata. The easiest way of creating
+`sdtm` objects is by importing the SDTM data using `read_sdtm()` as shown above.
 
-The `nif` package includes sample SDTM data sets for demonstration purposes. These
-data do not come from actual clinical studies but are fully synthetic data sets
-from a fictional single ascending dose (SAD) study (`examplinib_sad`), a
-fictional food effect (FE) study (`examplinib_fe`), and a fictional
-single-arm proof-of-concept (POC) study with multiple-dose administrations
+The `nif` package includes sample SDTM data sets for demonstration purposes.
+These data do not come from actual clinical studies but are fully synthetic data
+sets from a fictional single ascending dose (SAD) study (`examplinib_sad`), a
+fictional food effect (FE) study (`examplinib_fe`), and a fictional single-arm
+proof-of-concept (POC) study with multiple-dose administrations
 (`examplinib_poc`).
 
 The original SDTM data can be retrieved from `sdtm` objects by accessing the
@@ -134,36 +139,33 @@ individual SDTM domains like demonstrated below for the DM domain of the
 `examplinib_fe` data object:
 
 ```{r}
-examplinib_fe %>%
-  domain("dm") %>%
+domain(examplinib_sad, "dm") %>% 
   head(3)
 ```
 
-The most relevant domains, "dm", "vs", "ex" and "pc", can also be accessed
-directly, e.g.:
-
-```{r}
-dm <- examplinib_fe$dm
-```
-
-Printing an `sdtm` object shows some of its basic properties:
+Printing an `sdtm` object shows relevant summary information:
 
 ```{r}
 examplinib_fe
 ```
 
 Note the 'Treatment-to-analyte mappings' and 'Parent-to-metabolite mapping'
-tables in the above output, we will get back to this when creating a NIF data
-set from these SDTM data.
+tables in the output, we will get back to this when automatically creating NIF
+data sets from SDTM data.
 
-In addition to a general overview, general demographic data for individual 
-subjects (by their USUBJID) can be extracted as shown below: 
+Further subject-level summary data can be extracted using `subject_info()`:
 
 ```{r}
 examplinib_fe %>%
   subject_info("20230004001050001")
 ```
 
+For a broad-strokes overview on the data disposition, it may be informative to
+look at a timeline view of individual domains, e.g. for DM:
+
+```{r fig.width=6, fig.asp = 0.3}
+plot(examplinib_fe, "dm")
+```
 ## SDTM suggestions
 
 SDTM data may be incomplete, e.g., when emerging data that have not yet been
@@ -179,7 +181,7 @@ the structure of SDTM data.
 As a starting point, `suggest()` can provide useful suggestions for manual 
 imputations for a `sdtm` object:
 
-```{r}
+```{r results="asis"}
 suggest(examplinib_fe)
 ```
 
