@@ -9,6 +9,7 @@ df_to_string(
   indent = 0,
   n = NULL,
   header = TRUE,
+  header_sep = FALSE,
   color = FALSE,
   show_none = FALSE
 )
@@ -21,6 +22,8 @@ df_to_string(
 \item{n}{The number of lines to be included, or all if NULL.}
 
 \item{header}{Boolean to indicate whether the header row is to be included.}
+
+\item{header_sep}{Show separation line after header, as logical.}
 
 \item{color}{Print headers in grey as logical.}
 

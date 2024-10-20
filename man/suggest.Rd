@@ -4,10 +4,13 @@
 \alias{suggest}
 \title{Suggest data programming steps for a sdtm object}
 \usage{
-suggest(obj)
+suggest(obj, consider_nif_auto = FALSE)
 }
 \arguments{
 \item{obj}{A sdtm object}
+
+\item{consider_nif_auto}{Include suggestions regarding parent or metabolite
+mappings to the sdtm object, as logical.}
 }
 \description{
 Suggest data programming steps for a sdtm object

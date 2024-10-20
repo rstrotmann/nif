@@ -53,6 +53,17 @@ recode_sex <- function(obj) {
 }
 
 
+#' Convert indent level to padding string of spaces
+#'
+#' @param indent The indenbt level as numeric.
+#'
+#' @return A character string
+#' @keywords internal
+indent_string <- function(indent = 0) {
+  paste(replicate(indent, " "), collapse = "")
+}
+
+
 #' Render data frame object to string
 #'
 #' This function renders a data.frame into a string similar to its
@@ -64,19 +75,29 @@ recode_sex <- function(obj) {
 #' @param color Print headers in grey as logical.
 #' @param n The number of lines to be included, or all if NULL.
 #' @param show_none Show empty data frame as 'none', as logical.
+#' @param header_sep Show separation line after header, as logical.
 #'
 #' @return The output as string.
 #' @import utils
 #' @keywords internal
-df_to_string <- function(df, indent = 0, n = NULL, header = TRUE,
-                         color = FALSE, show_none = FALSE) {
-  indent = paste(replicate(indent, " "), collapse = "")
+df_to_string <- function(
+    df, indent = 0, n = NULL, header = TRUE, header_sep = FALSE,
+    color = FALSE, show_none = FALSE) {
+  # indent = paste(replicate(indent, " "), collapse = "")
+  indent = indent_string(indent)
   df <- as.data.frame(df) %>%
     mutate(across(everything(), as.character))
+
   max_widths <- as.numeric(lapply(
     rbind(df, names(df)),
     FUN = function(x) max(sapply(as.character(x), nchar), na.rm = TRUE)
   ))
+
+  header_separator <- paste(
+    lapply(
+      max_widths,
+      function(n) paste(replicate(n, "-"), collapse = "")),
+    collapse = "   ")
 
   render_line <- function(line) {
     paste0(
@@ -106,6 +127,9 @@ df_to_string <- function(df, indent = 0, n = NULL, header = TRUE,
   } else {
     out <- ""
   }
+
+  if(isTRUE(header) & isTRUE(header_sep))
+     out <- paste0(out, "\n", indent, header_separator)
 
   if (!is.null(n)) {
     df <- utils::head(df, n = n)
