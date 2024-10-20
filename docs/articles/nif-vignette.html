@@ -81,7 +81,7 @@ which logically related observations are organized into topical
 collections (domains). SDTM is defined and maintained by the <a href="https://www.cdisc.org/standards/foundational/sdtm" class="external-link">Clinical Data
 Interchange Standards Consortium (CDISC)</a>.</p>
 <p>To support typical pharmacometric analyses, data from different SDTM
-domains need to be first aggregated into a common analysis data set. For
+domains need to be aggregated into a single analysis data set. For
 example, demographic and pharmacokinetic concentration data from the DM
 and PC domains are both required to evaluate exposure by age. More
 complex analyses like population-level PK and PK/PD analyses may include
@@ -103,12 +103,19 @@ function categories, definition of specific treatment conditions by
 study arm, or the encoding of adverse events or concomitant medications,
 as categorical covariates.</p>
 <p>While the latter variables often need manual and study-specific data
-programming, the core NIF data set can generally be generated
-automatically without study-specific user input. It should be noted that
-even for such basic NIF files, missing data points and certain
-inconsistencies may need to be resolved to get to an analysis-ready data
-set, particularly so if the SDTM data stems from an ongoing clinical
-study and has not been fully cleaned yet. More on this point later.</p>
+programming, the core NIF data set can in most cases be generated in a
+quite standardized way. Both approaches are substantially made easier by
+the functions that the <code>nif</code> package provides. Often,
+analysis data sets can be created with only a handful of lines of
+code.</p>
+<p>It should be noted that even for basic NIF files, missing data points
+or data inconsistencies are challenges that need to be resolved by data
+imputation to get to analysis-ready data sets. This is frequently
+encountered when analyzing preliminary data from ongoing clinical
+studies that have not been fully cleaned yet. The <code>nif</code>
+package provides a number of standardized imputation rules to resolve
+these issues. More on this point later as well in a separate vignette
+(<code><a href="../articles/nif-imputations.html">vignette("nif-imputations")</a></code>).</p>
 <p>This package is intended to facilitate the creation of analysis data
 sets (‘NIF data sets’) from SDTM-formatted clinical data. It also
 includes a set of functions and tools to support inital exploration of
@@ -267,7 +274,7 @@ informative to look at a timeline view of individual domains, e.g. for
 DM:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="st">"dm"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nif-vignette_files/figure-html/unnamed-chunk-7-1.png" width="576"></p>
+<p><img src="nif-vignette_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="sdtm-suggestions">SDTM suggestions<a class="anchor" aria-label="anchor" href="#sdtm-suggestions"></a>

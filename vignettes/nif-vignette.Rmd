@@ -30,7 +30,7 @@ defined and maintained by the [Clinical Data Interchange Standards Consortium
 (CDISC)](https://www.cdisc.org/standards/foundational/sdtm).
 
 To support typical pharmacometric analyses, data from different SDTM domains
-need to be first aggregated into a common analysis data set. For example,
+need to be aggregated into a single analysis data set. For example,
 demographic and pharmacokinetic concentration data from the DM and PC domains
 are both required to evaluate exposure by age. More complex analyses like
 population-level PK and PK/PD analyses may include further data, e.g., clinical
@@ -53,12 +53,18 @@ definition of specific treatment conditions by study arm, or the encoding of
 adverse events or concomitant medications, as categorical covariates.
 
 While the latter variables often need manual and study-specific data
-programming, the core NIF data set can generally be generated automatically
-without study-specific user input. It should be noted that even for such basic
-NIF files, missing data points and certain inconsistencies may need to be
-resolved to get to an analysis-ready data set, particularly so if the SDTM data
-stems from an ongoing clinical study and has not been fully cleaned yet. More on
-this point later.
+programming, the core NIF data set can in most cases be generated in a quite
+standardized way. Both approaches are substantially made easier by the functions
+that the `nif` package provides. Often, analysis data sets can be created with
+only a handful of lines of code.
+
+It should be noted that even for basic NIF files, missing data points or data
+inconsistencies are challenges that need to be resolved by data imputation to
+get to analysis-ready data sets. This is frequently encountered when analyzing
+preliminary data from ongoing clinical studies that have not been fully cleaned
+yet. The `nif` package provides a number of standardized imputation rules to
+resolve these issues. More on this point later as well in a separate
+vignette (`vignette("nif-imputations")`).
 
 This package is intended to facilitate the creation of analysis data sets ('NIF
 data sets') from SDTM-formatted clinical data. It also includes a set of
@@ -84,21 +90,12 @@ library(nif)
 # SDTM DATA
 
 ## Importing SDTM data 
-
-<!-- As a minimum, the following SDTM domains are -->
-<!-- expected to create a basic NIF file: -->
-
-<!-- * DM - demographic data, mostly age, sex and other variables per subject -->
-<!-- * VS - vital signs, particularly weight and height at enrollment, per subject -->
-<!-- * EX - exposure information for the administered drugs, e.g., the time of -->
-<!--     administration, dose, etc. -->
-<!-- * PC - pharmacokinetic concentrations for the analytes associated with the  -->
-<!--     administered drugs -->
     
 In most cases, the source SDTM data are provided as one file per domain, e.g.,
-in SAS binary data base storage (.sas7bdat) or SAS Transport File (.xpt) format.
+in SAS binary data base storage format (.sas7bdat) or SAS Transport File (.xpt)
+format.
 
-With `path/to/sdtm/data`, the location to the source folder, SDTM data can be
+With `path/to/sdtm/data` the location to the source folder, SDTM data can be
 loaded using `read_sdtm()`:
 
 ```{r, eval=FALSE, echo=T}
@@ -113,7 +110,7 @@ read_sdtm(r"(path\to\sdtm\data)")
 ```
 
 to ensure that the backslashes in the file path are correctly captured. Note the
-parentheses around the file path!
+inner parentheses around the file path!
 
 If no domains are explicitly specified, the function attempts to load 'DM',
 'VS', 'EX' and 'PC' as a generic set of SDTM domains suitable to create a basic
@@ -153,34 +150,35 @@ Note the 'Treatment-to-analyte mappings' and 'Parent-to-metabolite mapping'
 tables in the output, we will get back to this when automatically creating NIF
 data sets from SDTM data.
 
-Further subject-level summary data can be extracted using `subject_info()`:
+High-level subject-level disposition data can be extracted using
+`subject_info()`:
 
 ```{r}
 examplinib_fe %>%
   subject_info("20230004001050001")
 ```
 
-For a broad-strokes overview on the data disposition, it may be informative to
-look at a timeline view of individual domains, e.g. for DM:
+For a broad-strokes overview on the overall data disposition, it may be
+informative to look at a timeline view of individual domains, e.g. for DM:
 
-```{r fig.width=6, fig.asp = 0.3}
+```{r fig.asp = 0.3}
 plot(examplinib_fe, "dm")
 ```
 
 ## SDTM suggestions
 
 SDTM data may be incomplete, e.g., when emerging data that have not yet been
-fully cleaned are analyzed. In addition, some study-specific
-data may be encoded in a non-standardized way, e.g., information on study parts,
-cohorts, treatment conditions, etc..
+fully cleaned are analyzed. In addition, some study-specific data may be encoded
+in a non-standardized way, e.g., information on study parts, cohorts, treatment
+conditions, etc..
 
 Such data fields may need study-specific considerations and manual imputations
-during the creating of the NIF data set. To help deciding which study-specific
-factors need to be addressed, the `nif` package includes functions to explore
-the structure of SDTM data.
+during the creating of the analysis data set. To help deciding which
+study-specific factors need to be addressed, the `nif` package includes
+functions to explore the structure of SDTM data.
 
-As a starting point, `suggest()` can provide useful suggestions for manual 
-imputations for a `sdtm` object:
+As a starting point, `suggest()` can provide useful suggestions for the creation
+of analysis data sets:
 
 ```{r results="asis"}
 suggest(examplinib_fe)
@@ -188,7 +186,7 @@ suggest(examplinib_fe)
 
 In the case of `examplinib_fe`, there are different treatment arms defined in 
 the DM domain that should probably be included as covariates in the NIF file as
-they specify the sequence of fasted and fed administrations (suggestion 1).
+they specify the sequence of fasted and fed administrations (suggestion 3).
 A respective variable within the NIF data set will be programmed once a basic
 NIF file has been generated (see below).
 

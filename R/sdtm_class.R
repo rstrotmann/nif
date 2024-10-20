@@ -121,18 +121,24 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   ), "\n\n"))
 
   cat("Treatments (EX):\n")
-  cat(df_to_string(x$treatments,
-    color = color, indent = indent,
-    show_none = TRUE
-  ), "\n\n")
+  # cat(df_to_string(x$treatments,
+  #   color = color, indent = indent,
+  #   show_none = TRUE
+  # ), "\n\n")
+  temp <- paste0(" ", x$treatments, collapse = ", ")
+  temp <- ifelse(temp == "", " none", temp)
+  cat(temp, "\n\n")
 
-  cat("Specimens (PC):\n")
-  cat(df_to_string(x$specimens,
-    color = color, indent = indent,
-    show_none = TRUE
-  ), "\n\n")
+  cat("PK sample specimens (PC):\n")
+  # cat(df_to_string(x$specimens,
+  #   color = color, indent = indent,
+  #   show_none = TRUE
+  # ), "\n\n")
+  temp <- paste0(x$specimens, collapse = ", ")
+  temp <- ifelse(temp == "", " none", temp)
+  cat(temp, "\n\n")
 
-  cat("Analytes (PC):\n")
+  cat("PK analytes (PC):\n")
   cat(df_to_string(x$analytes,
     color = color, indent = indent,
     show_none = TRUE
