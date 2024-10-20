@@ -369,13 +369,11 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     lines <- paste0(indent_string(indent + 2), sapply(data, fct))
 
     message(paste0(
-      # indent_string(indent), "```\n",
       indent_string(indent), "---\n",
       header,
       paste0(lines, collapse = paste0(collapse, "\n")),
       footer,
       "\n",
-      # indent_string(indent), "```\n"))
       indent_string(indent), "---\n"))
   }
 
@@ -391,7 +389,7 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   }
 
   # Function body
-  col <- 34
+  # col <- 34
   n_suggestion <- 1
 
   treatments <- distinct(obj$ex, EXTRT)
