@@ -408,6 +408,35 @@ nice_enumeration <- function(items, conjunction = "and") {
 }
 
 
+#' Return singular or plural form of word
+#'
+#' @param word Source word in singular form, as character.
+#' @param plural Return plural form, as character.
+#'
+#' @return Character.
+#' @export
+#' @keywords internal
+#' @examples
+#' plural("subject", FALSE)
+#' plural("subject", TRUE)
+#' plural("study", FALSE)
+#' plural("study", TRUE)
+plural <- function(word, plural) {
+  exceptions = tribble(
+    ~singular, ~plural,
+    "study", "studies",
+  )
+  if(plural) {
+    if(word %in% exceptions$singular)
+      return(as.character(exceptions[exceptions$singular == word, "plural"]))
+    else
+      return(paste0(word, "s"))
+  } else {
+    return(word)
+  }
+}
+
+
 #' Add string to string, separated by a comma
 #'
 #' @param object The base string as character.

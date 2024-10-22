@@ -71,12 +71,15 @@ print.nif <- function(x, color = FALSE, ...) {
     n_obs <- x %>%
       filter(.data$EVID == 0) %>%
       nrow()
+    n_subs <- subjects(x) %>% nrow()
+    n_studies <- length(unique(x$STUDYID))
 
     cat(paste(
-      n_obs, "observations from",
-      subjects(x) %>% nrow(), "subjects",
+      n_obs,
+      plural("observation", n_obs != 1), "from",
+      n_subs, plural("subject", n_subs != 1),
       ifelse("STUDYID" %in% names(x),
-             paste("across", length(unique(x$STUDYID)), "studies"),
+             paste("across", n_studies, plural("study", n_studies > 1)),
              ""),
       "\n")
     )
@@ -86,10 +89,12 @@ print.nif <- function(x, color = FALSE, ...) {
         "Analytes:", nice_enumeration(unique(x$ANALYTE)), "\n"
       ))
     } else {
+      obs_cmt <- sapply(unique(x[x$EVID == 0, "CMT"]),
+                        function(x) paste0("'", x, "'"))
       cat(paste(
-        "Observations in compartments", nice_enumeration(
-          unique(x[x$EVID == 0, "CMT"])
-        )
+        length(obs_cmt),
+        plural("compartment", length(obs_cmt) != 1),
+        "with observations:", nice_enumeration(obs_cmt)
       ), "\n")
     }
 
@@ -113,9 +118,16 @@ print.nif <- function(x, color = FALSE, ...) {
         n_females <- 0
       }
 
+      # cat(paste0(
+      #   "Males: ", n_males, ", females: ", n_females, " (",
+      #   round(n_females / (n_males + n_females) * 100, 1), "%)\n"
+      # ))
+
       cat(paste0(
-        "Males: ", n_males, ", females: ", n_females, " (",
-        round(n_females / (n_males + n_females) * 100, 1), "%)\n"
+        n_males, plural(" male", n_males != 1),
+        " (", round(n_males / (n_males + n_females) * 100, 1), "%), ",
+        n_females, plural(" female", n_males != 1),
+        " (", round(n_females / (n_males + n_females) * 100, 1), "%)\n"
       ))
     }
 
