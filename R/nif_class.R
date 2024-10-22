@@ -81,9 +81,17 @@ print.nif <- function(x, color = FALSE, ...) {
       "\n")
     )
 
-    cat(paste(
-      "Analytes:", nice_enumeration(analytes(x)), "\n"
-    ))
+    if("ANALYTE" %in% names(x)) {
+      cat(paste(
+        "Analytes:", nice_enumeration(unique(x$ANALYTE)), "\n"
+      ))
+    } else {
+      cat(paste(
+        "Observations in compartments", nice_enumeration(
+          unique(x[x$EVID == 0, "CMT"])
+        )
+      ), "\n")
+    }
 
     if ("SEX" %in% names(x)) {
       n_sex <- x %>%
@@ -107,12 +115,13 @@ print.nif <- function(x, color = FALSE, ...) {
 
       cat(paste0(
         "Males: ", n_males, ", females: ", n_females, " (",
-        round(n_females / (n_males + n_females) * 100, 1), "%)\n\n"
+        round(n_females / (n_males + n_females) * 100, 1), "%)\n"
       ))
     }
 
-    cat("Columns:\n")
-    cat(paste(names(x), collapse = ", "), "\n")
+    cat("\nColumns:\n")
+    cat(str_wrap(paste(names(x), collapse = ", "),
+                 width = 80, indent = 2, exdent = 2), "\n")
 
     temp <- x %>%
       as.data.frame() %>%
@@ -123,9 +132,8 @@ print.nif <- function(x, color = FALSE, ...) {
       head(10)
 
     temp <- temp %>%
-      # mutate(across(where(is.numeric), round, 3)) %>%
       mutate(across(where(is.numeric), ~ round(., 3))) %>%
-      df_to_string(color = color)
+      df_to_string(color = color, indent = 2)
     cat(paste0("\nData (selected columns):\n", temp, "\n"))
 
     footer <- paste0(positive_or_zero(nrow(x) - 10), " more rows")
