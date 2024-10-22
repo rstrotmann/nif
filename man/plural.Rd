@@ -18,9 +18,9 @@ Character.
 Return singular or plural form of word
 }
 \examples{
-plural("subject", F)
-plural("subject", T)
-plural("study", F)
-plural("study", T)
+plural("subject", FALSE)
+plural("subject", TRUE)
+plural("study", FALSE)
+plural("study", TRUE)
 }
 \keyword{internal}

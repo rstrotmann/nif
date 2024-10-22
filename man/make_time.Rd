@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{make_time}
 \alias{make_time}
-\title{Calculate TIME field}
+\title{Calculate time fields based on DTC}
 \usage{
 make_time(obj)
 }
@@ -22,3 +22,4 @@ administration or observation event.
 the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.
 }
+\keyword{internal}
