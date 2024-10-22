@@ -508,7 +508,10 @@ ensure_time <- function(obj) {
   obj <- obj %>%
     {
       if (!all(c("TIME", "TAD", "TAFD") %in% names(obj))) {
-        make_time(.)
+        if("DTC" %in% names(obj))
+          make_time(.)
+        else
+          make_time_from_TIME(.)
       } else {
         .
       }

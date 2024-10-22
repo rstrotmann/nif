@@ -921,7 +921,10 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat(paste0(df_to_string(x$n_studies, color=color, indent = indent), "\n\n"))
 
   cat(paste0(
-    "Males: ", x$n_males, ", females: ", x$n_females, " (",
+    "Sex distribution:\n",
+    " males: ", x$n_males, " (",
+    round(x$n_males / (x$n_males + x$n_females) * 100, 1), "%)",
+    ", females: ", x$n_females," (",
     round(x$n_females / (x$n_males + x$n_females) * 100, 1), "%)\n\n"
   ))
 
@@ -938,13 +941,10 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat(paste0("Administered drugs:\n",
              paste0(" ", paste(x$drugs,collapse = ", ")), "\n\n"))
 
-  cat(paste0("Administered drugs:\n",
-             paste0(" ", paste(x$drugs,collapse = ", ")), "\n\n"))
-
   cat(paste0("Analytes:\n",
              paste0(" ", paste0(x$analytes, collapse = ", ")), "\n\n"))
 
-  cat("Subjects per dose levels:\n")
+  cat("Subjects per dose level:\n")
   cat(df_to_string(x$dose_levels, color=color, indent = indent))
   cat("\n\n")
 
