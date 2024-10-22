@@ -800,7 +800,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
 
 
 
-#' Calculate TIME field
+#' Calculate time fields based on DTC
 #'
 #' @description
 #' This function generates the following time fields:
@@ -816,6 +816,7 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
 #'
 #' @return A nif object.
 #' @export
+#' @keywords internal
 make_time <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -837,6 +838,36 @@ make_time <- function(obj) {
     add_tad() %>%
     new_nif()
 }
+
+
+#' Calculate time fields based on TIME
+#'
+#' @param obj A nif object.
+#'
+#' @return A nif object.
+#' @export
+#' @examples
+#' make_time_from_TIME(examplinib_poc_min_nif)
+make_time_from_TIME <- function(obj) {
+  as.data.frame(obj) %>%
+    assertr::verify(assertr::has_all_names(
+      "ID", "CMT", "EVID")) %>%
+    group_by(.data$ID) %>%
+    mutate(.first_time = min(.data$TIME, na.rm = TRUE)) %>%
+    mutate(.first_admin = min(.data$TIME[.data$EVID == 1], na.rm = TRUE)) %>%
+    mutate(TAFD = round(.data$TIME - .data$.first_admin, digits = 3)) %>%
+    arrange(.data$ID, .data$TIME, -.data$EVID) %>%
+    mutate(.admin_time = case_when(.data$EVID == 1 ~ .data$TIME)) %>%
+    tidyr::fill(.data$.admin_time, .direction = "down") %>%
+    mutate(TAD = .data$TIME - .data$.admin_time) %>%
+    ungroup() %>%
+    select(-c(".first_time", ".first_admin", ".admin_time")) %>%
+    new_nif()
+}
+
+
+
+
 
 
 #' Sort nif object and add REF field

@@ -9,6 +9,10 @@ read_nif <- function(filename, format="csv") {
     if(length(missing_fields) != 0)
       stop("Required fields missing!")
   # }
-  out <- new_nif(raw)
+  out <- new_nif(raw) %>%
+    ensure_analyte() %>%
+    ensure_parent() %>%
+    ensure_time()
+
   return(out)
 }
