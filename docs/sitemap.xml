@@ -176,6 +176,7 @@
 <url><loc>/reference/make_subjects.html</loc></url>
 <url><loc>/reference/make_subs.html</loc></url>
 <url><loc>/reference/make_time.html</loc></url>
+<url><loc>/reference/make_time_from_TIME.html</loc></url>
 <url><loc>/reference/make_vs.html</loc></url>
 <url><loc>/reference/max_admin_time.html</loc></url>
 <url><loc>/reference/max_observation_time.html</loc></url>
@@ -218,6 +219,7 @@
 <url><loc>/reference/plot.summary_nif.html</loc></url>
 <url><loc>/reference/plot_old.html</loc></url>
 <url><loc>/reference/plot_z.html</loc></url>
+<url><loc>/reference/plural.html</loc></url>
 <url><loc>/reference/pos_diff.html</loc></url>
 <url><loc>/reference/positive_or_zero.html</loc></url>
 <url><loc>/reference/print.nif.html</loc></url>
@@ -227,6 +229,7 @@
 <url><loc>/reference/print.summary_sdtm.html</loc></url>
 <url><loc>/reference/print_debug.html</loc></url>
 <url><loc>/reference/pt_to_hours.html</loc></url>
+<url><loc>/reference/read_nif.html</loc></url>
 <url><loc>/reference/read_sdtm.html</loc></url>
 <url><loc>/reference/read_sdtm_sas.html</loc></url>
 <url><loc>/reference/read_sdtm_xpt.html</loc></url>
