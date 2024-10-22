@@ -417,10 +417,10 @@ nice_enumeration <- function(items, conjunction = "and") {
 #' @export
 #' @keywords internal
 #' @examples
-#' plural("subject", F)
-#' plural("subject", T)
-#' plural("study", F)
-#' plural("study", T)
+#' plural("subject", FALSE)
+#' plural("subject", TRUE)
+#' plural("study", FALSE)
+#' plural("study", TRUE)
 plural <- function(word, plural) {
   exceptions = tribble(
     ~singular, ~plural,
