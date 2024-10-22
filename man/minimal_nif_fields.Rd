@@ -5,7 +5,7 @@
 \alias{minimal_nif_fields}
 \title{Minimal nif fields}
 \format{
-An object of class \code{character} of length 8.
+An object of class \code{character} of length 7.
 }
 \usage{
 minimal_nif_fields
