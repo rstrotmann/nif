@@ -20,3 +20,4 @@ Weight by height scatterplot
 \examples{
 ht_by_wt(examplinib_poc_nif)
 }
+\keyword{internal}

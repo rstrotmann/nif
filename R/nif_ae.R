@@ -16,7 +16,7 @@
 #' * AESOC:    System organ class
 #' * AEBODSYS: Body system or organ class
 #'
-#' or any other SDTM.AE field.
+#' or any other field from the 'AE' domain
 #' @param parent The parent compound as character.
 #' @param cmt The compartment as numeric.
 #' @param subject_filter A subject filter term.
@@ -24,7 +24,6 @@
 #' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
-#' @export
 make_ae <- function(
     sdtm,
     ae_term,

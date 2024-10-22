@@ -18,3 +18,4 @@ Convert ISO 8601-formatted duration to hours
 \examples{
 pt_to_hours(c("PT1H15M", "PT1.5H"))
 }
+\keyword{internal}

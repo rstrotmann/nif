@@ -18,3 +18,4 @@ Add time after first dose column
 \examples{
 add_tafd(examplinib_poc_nif)
 }
+\keyword{internal}

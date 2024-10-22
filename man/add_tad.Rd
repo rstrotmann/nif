@@ -15,7 +15,4 @@ A NIF object.
 \description{
 Add time-after-dose (TAD) field
 }
-\examples{
-add_tad(examplinib_poc_nif)
-add_tad(examplinib_poc_min_nif)
-}
+\keyword{internal}

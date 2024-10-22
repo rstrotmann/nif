@@ -18,3 +18,4 @@ Guess NTIME from PCTPT
 \examples{
 guess_ntime(examplinib_poc)
 }
+\keyword{internal}

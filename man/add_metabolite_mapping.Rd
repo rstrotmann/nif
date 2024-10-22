@@ -27,3 +27,4 @@ add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
 \seealso{
 \code{\link[=nif_auto]{nif_auto()}}
 }
+\keyword{internal}

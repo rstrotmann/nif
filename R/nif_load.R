@@ -3,7 +3,7 @@
 #' @param filename The filename as character.
 #' @param format The data format, as character. Can be only "csv".
 #'
-#' @return A nif object.
+#' @return A nigitggf object.
 #' @export
 read_nif <- function(filename, format="csv") {
   if(!format %in% c("csv"))

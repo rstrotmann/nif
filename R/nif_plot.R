@@ -122,7 +122,6 @@ make_plot_data_set <- function(
 #'
 #' @return A list.
 #' @seealso [make_plot_data_set()]
-#' @export
 make_mean_plot_data_set <- function(data_set) {
   out <- data_set$data %>%
     mutate(active_time = NTIME) %>%

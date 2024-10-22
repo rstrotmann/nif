@@ -12,7 +12,7 @@ read_nif(filename, format = "csv")
 \item{format}{The data format, as character. Can be only "csv".}
 }
 \value{
-A nif object.
+A nigitggf object.
 }
 \description{
 Load NIF file

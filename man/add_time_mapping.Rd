@@ -46,3 +46,4 @@ sdtm_object <- add_time_mapping(examplinib_fe,
 \seealso{
 \code{\link[=suggest]{suggest()}}
 }
+\keyword{internal}

@@ -177,9 +177,10 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 #' @param pctestcd The analyte as character (as in 'PCTESTCD' for PK observations
 #' @param analyte The analyte name to be used in the nif object, as character.
 #' @seealso [nif_auto()]
+#' @keywords internal
+#' @export
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
-#' @export
 add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
   if (is.null(analyte)) analyte <- pctestcd
   obj$analyte_mapping <- rbind(
@@ -198,6 +199,7 @@ add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
 #' @param parent The parent as character.
 #'
 #' @return A sdtm object.
+#' @keywords internal
 #' @export
 add_parent_mapping <- function(obj, analyte, parent) {
   obj$parent_mapping <- rbind(
@@ -219,6 +221,7 @@ add_parent_mapping <- function(obj, analyte, parent) {
 #' @param pctestcd_metabolite The PCTESTCD of the metabolite.
 #' @return The SDTM object.
 #' @export
+#' @keywords internal
 #' @seealso [nif_auto()]
 #' @examples
 #' add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
@@ -247,6 +250,7 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
 #'   and NTIME corresponds to the nominal time in hours.
 #' @return The SDTM object
 #' @export
+#' @keywords internal
 #' @seealso [suggest()]
 #' @examples
 #' sdtm_object <- add_time_mapping(examplinib_fe,
@@ -610,6 +614,7 @@ filter_subject.sdtm <- function(obj, usubjid) {
 #'
 #' @return A data frame.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' guess_ntime(examplinib_poc)

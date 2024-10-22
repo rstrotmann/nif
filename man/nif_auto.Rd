@@ -27,9 +27,6 @@ Automatically generate a nif object from SDTM data. All treatments and
 analytes must be defined in the \code{treatment_mapping} and \code{metabolite_mapping}
 objects that are attached to the sdtm object.
 }
-\examples{
-nif_auto(examplinib_sad)
-}
 \seealso{
 \code{\link[=add_analyte_mapping]{add_analyte_mapping()}}
 

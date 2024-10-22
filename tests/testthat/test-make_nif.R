@@ -225,22 +225,22 @@ test_that("make_time", {
 })
 
 
-test_that("make_time_from_TIME", {
-  test <- tribble(
-    ~ID, ~TIME, ~EVID, ~CMT,            ~comment,
-      1,   -10,     0,    2,          "baseline",
-      1,    -1,     0,    2,           "predose",
-      1,     0,     1,    1, "admininstration 1",
-      1,     1,     0,    2,                  "",
-      1,     4,     0,    2,                  "",
-      1,    24,     1,    1,  "administration 2",
-      1,    25,     0,    2,                  "",
-      1,    28,     0,    2,                  "",
-      1,    48,     1,    1,  "administration 3",
-      1,  47.5,     0,    2,                  ""
-  ) %>% new_nif()
-
-})
+# test_that("make_time_from_TIME", {
+#   test <- tribble(
+#     ~ID, ~TIME, ~EVID, ~CMT,            ~comment,
+#       1,   -10,     0,    2,          "baseline",
+#       1,    -1,     0,    2,           "predose",
+#       1,     0,     1,    1, "admininstration 1",
+#       1,     1,     0,    2,                  "",
+#       1,     4,     0,    2,                  "",
+#       1,    24,     1,    1,  "administration 2",
+#       1,    25,     0,    2,                  "",
+#       1,    28,     0,    2,                  "",
+#       1,    48,     1,    1,  "administration 3",
+#       1,  47.5,     0,    2,                  ""
+#   ) %>% new_nif()
+#
+# })
 
 
 test_that("multiple imputations", {

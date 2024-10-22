@@ -28,3 +28,4 @@ sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 \seealso{
 \code{\link[=nif_auto]{nif_auto()}}
 }
+\keyword{internal}

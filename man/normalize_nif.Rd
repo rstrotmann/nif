@@ -20,6 +20,3 @@ A nif object.
 Order nif object, index and fill missing fields, and reduce to essential
 columns.
 }
-\examples{
-normalize_nif(examplinib_sad_nif)
-}

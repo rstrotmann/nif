@@ -1264,6 +1264,7 @@ wt_by_race <- function(obj) {
 #' @param alpha The alpha for the point rendering.
 #' @return A plot object.
 #' @export
+#' @keywords internal
 #' @examples
 #' wt_by_ht(examplinib_poc_nif)
 wt_by_ht <- function(obj, alpha = 0.7) {
@@ -1285,6 +1286,7 @@ wt_by_ht <- function(obj, alpha = 0.7) {
 #' @param alpha The alpha for the point rendering.
 #' @return A plot object.
 #' @export
+#' @keywords internal
 #' @examples
 #' ht_by_wt(examplinib_poc_nif)
 ht_by_wt <- function(obj, alpha = 0.7) {
@@ -1307,6 +1309,7 @@ ht_by_wt <- function(obj, alpha = 0.7) {
 #' @param alpha The alpha for the point rendering.
 #' @return A plot object.
 #' @export
+#' @keywords internal
 #' @examples
 #' bmi_by_age(examplinib_poc_nif)
 bmi_by_age <- function(obj, alpha = 0.7) {
@@ -1331,6 +1334,7 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 #' @param ... Further graphical parameters.
 #'
 #' @return A ggplot object.
+#' @keywords internal
 #' @export
 time_by_ntime <- function(obj, max_time = NULL, ...) {
   if(is.null(max_time)) {

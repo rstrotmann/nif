@@ -31,10 +31,6 @@ new_nif <- function(obj = NULL, ...) {
 #' @param obj A data frame.
 #'
 #' @return A data.frame.
-#' @export
-#'
-#' @examples
-#' order_nif_columns(examplinib_poc_nif)
 order_nif_columns <- function(obj) {
   selector <- unique(c(
     "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
@@ -675,23 +671,6 @@ analytes.data.frame <- function(obj) {
 }
 
 
-#' Analytes and compartments within a NIF object
-#'
-#' @param obj A NIF object.
-#' @return A data frame.
-#' @export
-#' @examples
-#' analytes_cmts(examplinib_poc_nif)
-#' analytes_cmts(examplinib_poc_min_nif)
-analytes_cmts <- function(obj) {
-  obj %>%
-    ensure_analyte() %>%
-    filter(.data$EVID == 0) %>%
-    distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
-    as.data.frame()
-}
-
-
 #' Analyte - compartment mapping
 #'
 #' @param obj A NIF object
@@ -771,7 +750,7 @@ head.nif <- function(x, ...) {
 #' @importFrom gdata write.fwf
 #' @export
 #' @examples
-#' write_nif(examplinib_fe_nif)
+#' head(write_nif(examplinib_fe_nif), 5)
 write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
   temp <- obj %>%
     as.data.frame() %>%
@@ -864,7 +843,6 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
 #' Minimal nif fields
 #'
 #' @return A character vector of the minimal NIF fields
-#' @export
 minimal_nif_fields <- c(
   "ID", "TIME", "AMT", "CMT", "EVID", "DOSE", "DV"
 )
@@ -873,7 +851,6 @@ minimal_nif_fields <- c(
 #' Standard nif fields
 #'
 #' @return A character vector of the standard NIF fields
-#' @export
 standard_nif_fields <- c(
   "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "TAFD", "ANALYTE",
   "AMT", "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX",
@@ -1160,9 +1137,7 @@ add_dose_level <- function(obj) {
 #'
 #' @return A NIF object.
 #' @export
-#' @examples
-#' add_tad(examplinib_poc_nif)
-#' add_tad(examplinib_poc_min_nif)
+#' @keywords internal
 add_tad <- function(nif) {
   nif %>%
     ensure_parent() %>%
@@ -1186,6 +1161,7 @@ add_tad <- function(nif) {
 #' @param nif A NIF object.
 #' @return A NIF object.
 #' @export
+#' @keywords internal
 #' @examples
 #' add_tafd(examplinib_poc_nif)
 add_tafd <- function(nif) {

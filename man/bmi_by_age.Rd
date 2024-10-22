@@ -20,3 +20,4 @@ BMI by age scatterplot
 \examples{
 bmi_by_age(examplinib_poc_nif)
 }
+\keyword{internal}

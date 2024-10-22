@@ -22,4 +22,3 @@ administration or observation event.
 the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.
 }
-\keyword{internal}

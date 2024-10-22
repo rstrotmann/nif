@@ -19,3 +19,4 @@ A ggplot object.
 \description{
 Plot TIME vs NTIME
 }
+\keyword{internal}

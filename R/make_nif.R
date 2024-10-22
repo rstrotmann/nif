@@ -815,8 +815,6 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
 #' @param obj A nif object.
 #'
 #' @return A nif object.
-#' @export
-#' @keywords internal
 make_time <- function(obj) {
   obj %>%
     as.data.frame() %>%
@@ -845,9 +843,6 @@ make_time <- function(obj) {
 #' @param obj A nif object.
 #'
 #' @return A nif object.
-#' @export
-#' @examples
-#' make_time_from_TIME(examplinib_poc_min_nif)
 make_time_from_TIME <- function(obj) {
   as.data.frame(obj) %>%
     assertr::verify(assertr::has_all_names(
@@ -864,10 +859,6 @@ make_time_from_TIME <- function(obj) {
     select(-c(".first_time", ".first_admin", ".admin_time")) %>%
     new_nif()
 }
-
-
-
-
 
 
 #' Sort nif object and add REF field
@@ -1241,10 +1232,6 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @param cleanup Remove non-essential fields, as logical.
 #'
 #' @return A nif object.
-#' @export
-#'
-#' @examples
-#' normalize_nif(examplinib_sad_nif)
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
                        "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
@@ -1277,7 +1264,6 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
 #' @param keep Fields to explicitly keep, as character.
 #'
 #' @return A nif object
-#' @export
 nif_cleanup <- function(nif, keep = NULL) {
   selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
     "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
@@ -1310,10 +1296,6 @@ nif_cleanup <- function(nif, keep = NULL) {
 #' @seealso [add_analyte_mapping()]
 #' @seealso [add_metabolite_mapping()]
 #' @importFrom stats na.omit
-#' @export
-#'
-#' @examples
-#' nif_auto(examplinib_sad)
 nif_auto <- function(sdtm,
                      bl_creat = TRUE,
                      bl_odwg = TRUE,

@@ -15,6 +15,3 @@ A nif object.
 \description{
 Calculate time fields based on TIME
 }
-\examples{
-make_time_from_TIME(examplinib_poc_min_nif)
-}

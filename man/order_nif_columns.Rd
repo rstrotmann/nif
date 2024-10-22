@@ -15,6 +15,3 @@ A data.frame.
 \description{
 Establish standard order of nif object columns
 }
-\examples{
-order_nif_columns(examplinib_poc_nif)
-}

@@ -19,3 +19,4 @@ A sdtm object.
 \description{
 Attach parent mapping to SDTM object
 }
+\keyword{internal}

@@ -285,7 +285,7 @@ is_iso_date <- function(x) {
 #'
 #' @return Duration in hours.
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' pt_to_hours(c("PT1H15M", "PT1.5H"))
 pt_to_hours <- function(iso) {
@@ -437,25 +437,25 @@ plural <- function(word, plural) {
 }
 
 
-#' Add string to string, separated by a comma
-#'
-#' @param object The base string as character.
-#' @param statement The string to be added as character.
-#'
-#' @return A string
-#' @export
-#' @keywords internal
-#'
-#' @examples
+# Add string to string, separated by a comma
+#
+# @param object The base string as character.
+# @param statement The string to be added as character.
+#
+# @return A string
+# @export
+# @keywords internal
+#
+# @examples
 #' append_statement("A", "B")
 #' append_statement("", "B")
 #' append_statement(c("A1", "A2", "A3"), "B")
 #' append_statement(c("A1", "", "A3", ""), "B")
-append_statement <- function(object, statement) {
-  i <- which(lapply(object, str_length) > 0)
-  object[i] <- paste0(object[i], ", ")
-  paste0(object, statement)
-}
+# append_statement <- function(object, statement) {
+#   i <- which(lapply(object, str_length) > 0)
+#   object[i] <- paste0(object[i], ", ")
+#   paste0(object, statement)
+# }
 
 
 #' Mean derivative that works with vectors containing NaN

@@ -2,7 +2,11 @@
 % Please edit documentation in R/utilities.R
 \name{safe_mean}
 \alias{safe_mean}
-\title{Mean derivative that works with vectors containing NaN}
+\title{append_statement("A", "B")
+append_statement("", "B")
+append_statement(c("A1", "A2", "A3"), "B")
+append_statement(c("A1", "", "A3", ""), "B")
+Mean derivative that works with vectors containing NaN}
 \usage{
 safe_mean(x, ...)
 }
@@ -13,6 +17,10 @@ safe_mean(x, ...)
 The mean as numeric.
 }
 \description{
+append_statement("A", "B")
+append_statement("", "B")
+append_statement(c("A1", "A2", "A3"), "B")
+append_statement(c("A1", "", "A3", ""), "B")
 Mean derivative that works with vectors containing NaN
 }
 \keyword{internal}

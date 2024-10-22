@@ -33,7 +33,7 @@ add_ae_observation(
 \item AEBODSYS: Body system or organ class
 }
 
-or any other SDTM.AE field.}
+or any other field from the 'AE' domain}
 
 \item{parent}{The parent compound as character.}
 
