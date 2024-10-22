@@ -68,20 +68,21 @@ print.nif <- function(x, color = FALSE, ...) {
     # hline <- paste0(rep("\U2500", 8), collapse="")
     cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
 
-    if (length(studies(x)) == 1) {
-      cat(paste0(guess_analyte(x), " data from one study\n"))
-    } else {
-      cat(paste0(
-        guess_analyte(x), " data from ", length(studies(x)),
-        " studies\n"
-      ))
-    }
     n_obs <- x %>%
       filter(.data$EVID == 0) %>%
       nrow()
+
     cat(paste(
       n_obs, "observations from",
-      subjects(x) %>% nrow(), "subjects\n"
+      subjects(x) %>% nrow(), "subjects",
+      ifelse("STUDYID" %in% names(x),
+             paste("across", length(unique(x$STUDYID)), "studies"),
+             ""),
+      "\n")
+    )
+
+    cat(paste(
+      "Analytes:", nice_enumeration(analytes(x)), "\n"
     ))
 
     if ("SEX" %in% names(x)) {
@@ -125,7 +126,7 @@ print.nif <- function(x, color = FALSE, ...) {
       # mutate(across(where(is.numeric), round, 3)) %>%
       mutate(across(where(is.numeric), ~ round(., 3))) %>%
       df_to_string(color = color)
-    cat(paste0("\nNIF data (selected columns):\n", temp, "\n"))
+    cat(paste0("\nData (selected columns):\n", temp, "\n"))
 
     footer <- paste0(positive_or_zero(nrow(x) - 10), " more rows")
     if (color == TRUE) {
@@ -842,7 +843,7 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
 #' @return A character vector of the minimal NIF fields
 #' @export
 minimal_nif_fields <- c(
-  "ID", "TIME", "AMT", "CMT", "EVID", "DOSE", "DV", "MDV"
+  "ID", "TIME", "AMT", "CMT", "EVID", "DOSE", "DV"
 )
 
 
