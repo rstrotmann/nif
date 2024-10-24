@@ -1230,8 +1230,8 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @param obj A nif object.
 #' @param keep Fields to explicitly keep, as character.
 #' @param cleanup Remove non-essential fields, as logical.
-#'
 #' @return A nif object.
+#' @export
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
                        "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
