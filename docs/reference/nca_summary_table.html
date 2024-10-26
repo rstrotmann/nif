@@ -83,17 +83,17 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">nca_summary_table</span><span class="op">(</span><span class="fu"><a href="nca.html">nca</a></span><span class="op">(</span><span class="va">examplinib_sad_nif</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   DOSE [9]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    DOSE     n aucinf.obs    auclast       cmax         half.life  tmax      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     5     3 103.07 (34)   99.1 (32)     21.5 (22)    16.12 (18) 2 (2; 3)  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>    10     3 153.51 (48)   147.91 (46)   31.56 (29)   16.63 (29) 3 (2; 3)  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>    20     3 283.96 (36)   276.31 (35)   71.4 (18)    16.38 (25) 3 (2; 3)  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>    50     3 1045.81 (26)  997.46 (24)   198.72 (24)  15.57 (5)  3 (3; 3)  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>   100     6 1973.02 (34)  1898 (32)     418.94 (17)  19.19 (29) 2.5 (2; 3)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>   200     3 3039.88 (18)  2944.08 (18)  783.15 (2)   10.81 (14) 2 (2; 3)  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span>   500    18 7809.64 (33)  7570.69 (32)  1817.79 (15) 15.11 (33) 3 (1.5; 3)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span>   800     6 16418.51 (13) 15683.42 (12) 3242.61 (9)  15.35 (11) 2 (1.5; 3)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span>  <span style="text-decoration: underline;">1</span>000     3 20151.21 (24) 19251.66 (23) 4075 (10)    15.24 (38) 3 (2; 3)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    DOSE     n aucinf.obs    auclast       cmax         half.life tmax          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     5     3 146.54 (15)   145.1 (15)    41.63 (18)   7.77 (3)  1.5 (1; 1.5)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>    10     3 298.41 (12)   295.55 (13)   89.8 (18)    8.01 (11) 1.5 (1; 1.5)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>    20     3 928.17 (8)    918.08 (8)    266.76 (11)  7.52 (10) 1.5 (1.5; 1.5)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>    50     3 1189.4 (35)   1180.21 (35)  405.29 (22)  7.25 (11) 1 (1; 1.5)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>   100     6 2591.21 (29)  2569.32 (29)  835.58 (32)  7.5 (10)  1 (1; 1.5)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>   200     3 5080.18 (8)   5041.35 (8)   1591.46 (11) 6.91 (5)  1.5 (1; 1.5)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span>   500    18 13229.72 (28) 13122.15 (28) 4267.07 (26) 7.39 (6)  1 (1; 1.5)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span>   800     6 22918.43 (25) 22721.37 (25) 7505.62 (24) 7.69 (8)  1 (1; 1.5)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span>  <span style="text-decoration: underline;">1</span>000     3 22795.13 (19) 22606.85 (19) 7549.78 (24) 7.87 (5)  1 (1; 1.5)    </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -72,34 +72,34 @@ components.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">add_dose_level</span><span class="op">(</span><span class="va">examplinib_sad_nif</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX                      RACE HEIGHT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000001 20230000011010003  46   0 BLACK OR AFRICAN AMERICAN  174.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000001 20230000011010003  46   0 BLACK OR AFRICAN AMERICAN  174.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000001 20230000011010003  46   0 BLACK OR AFRICAN AMERICAN  174.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000001 20230000011010003  46   0 BLACK OR AFRICAN AMERICAN  174.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000001 20230000011010003  46   0 BLACK OR AFRICAN AMERICAN  174.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000001 20230000011010003  46   0 BLACK OR AFRICAN AMERICAN  174.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   WEIGHT      BMI                 DTC TIME NTIME TAFD TAD PCELTM EVID AMT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     80 26.24228 2000-12-29 09:22:00  0.0   0.0  0.0 0.0   &lt;NA&gt;    1   5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     80 26.24228 2000-12-29 09:22:00  0.0   0.0  0.0 0.0   PT0H    0   0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     80 26.24228 2000-12-29 09:52:00  0.5   0.5  0.5 0.5 PT0.5H    0   0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     80 26.24228 2000-12-29 10:22:00  1.0   1.0  1.0 1.0   PT1H    0   0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     80 26.24228 2000-12-29 10:52:00  1.5   1.5  1.5 1.5 PT1.5H    0   0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     80 26.24228 2000-12-29 11:22:00  2.0   2.0  2.0 2.0   PT2H    0   0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ANALYTE CMT PARENT TRTDY METABOLITE DOSE      DV MDV ACTARMCD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  RS2023   1 RS2023     1      FALSE    5      NA   1       C1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  RS2023   2 RS2023     1      FALSE    5  0.0000   0       C1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  RS2023   2 RS2023     1      FALSE    5  1.1647   0       C1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  RS2023   2 RS2023     1      FALSE    5  4.0486   0       C1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  RS2023   2 RS2023     1      FALSE    5  7.1668   0       C1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  RS2023   2 RS2023     1      FALSE    5 12.2003   0       C1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         IMPUTATION BL_CREAT  BL_CRCL DL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 admin time imputed from PCRFTDTC 90.12031 87.08309  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                  90.12031 87.08309  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                  90.12031 87.08309  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                  90.12031 87.08309  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                  90.12031 87.08309  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                  90.12031 87.08309  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000001 20230000011010001  53   0 ASIAN  184.1   78.5 23.16125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000001 20230000011010001  53   0 ASIAN  184.1   78.5 23.16125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000001 20230000011010001  53   0 ASIAN  184.1   78.5 23.16125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000001 20230000011010001  53   0 ASIAN  184.1   78.5 23.16125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000001 20230000011010001  53   0 ASIAN  184.1   78.5 23.16125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000001 20230000011010001  53   0 ASIAN  184.1   78.5 23.16125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC TIME NTIME TAFD TAD PCELTM EVID AMT ANALYTE CMT PARENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2000-12-31 09:10:00  0.0   0.0  0.0 0.0   &lt;NA&gt;    1   5  RS2023   1 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2000-12-31 09:10:00  0.0   0.0  0.0 0.0   PT0H    0   0  RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2000-12-31 09:40:00  0.5   0.5  0.5 0.5 PT0.5H    0   0  RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2000-12-31 10:10:00  1.0   1.0  1.0 1.0   PT1H    0   0  RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2000-12-31 10:40:00  1.5   1.5  1.5 1.5 PT1.5H    0   0  RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2000-12-31 11:10:00  2.0   2.0  2.0 2.0   PT2H    0   0  RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   TRTDY METABOLITE DOSE      DV MDV ACTARMCD                       IMPUTATION</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE    5      NA   1       C1 admin time imputed from PCRFTDTC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE    5  0.0000   0       C1                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE    5 22.4481   0       C1                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE    5 40.5897   0       C1                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE    5 40.0734   0       C1                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE    5 37.2404   0       C1                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   BL_CREAT  BL_CRCL DL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 80.22286 88.84428  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 80.22286 88.84428  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 80.22286 88.84428  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 80.22286 88.84428  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 80.22286 88.84428  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 80.22286 88.84428  5</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">add_dose_level</span><span class="op">(</span><span class="va">examplinib_sad_min_nif</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ID TIME AMT RATE EVID        DV CMT MDV DL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  1  0.0   5    0    1        NA   1   1  5</span>
