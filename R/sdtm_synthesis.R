@@ -3,10 +3,84 @@
 #' @param event_table The event table as required by RxODE.
 #' @return PK simulation as data frame
 #' @keywords internal
+# pk_sim <- function(event_table) {
+#   if (!("EGFR" %in% colnames(event_table))) {
+#     event_table <- event_table %>%
+#       mutate(EGFR = 1)
+#   }
+#
+#   keep_columns <- event_table %>%
+#     mutate(time = as.numeric(time)) %>%
+#     mutate(NTIME = as.numeric(NTIME)) %>%
+#     select(any_of(c("id", "time", "NTIME", "PERIOD"))) %>%
+#     distinct()
+#
+#   mod <- rxode2::rxode2({
+#     c_centr <- centr / v_centr * (1 + centr.err)
+#     c_peri <- peri / v_peri
+#     c_metab <- metab / v_metab
+#
+#     ke <- t.ke * exp(eta.ke) * (EGFR / 100)^0.9 # renal elimination constant
+#     ka <- t.ka * exp(eta.ka) + FOOD * t.ka1
+#     d1 <- t.d1 * exp(eta.d1)
+#     fm <- t.fm * exp(eta.fm) # fraction metabolized
+#
+#     cl <- t.cl * exp(eta.cl) # metabolic clearance
+#
+#     kem <- t.kem * exp(eta.kem) # elimination constant for metabolite
+#     fpar <- 1 * exp(eta.fpar) + FOOD * t.fpar1
+#     q <- t.q * exp(eta.q)
+#
+#     d / dt(depot) <- -ka * depot * fpar
+#     dur(depot) <- d1
+#     d / dt(centr) <- ka * depot * fpar - ke * c_centr - q * c_centr + q * c_peri - cl * c_centr
+#     d / dt(peri) <- q * c_centr - q * c_peri
+#     d / dt(renal) <- ke * c_centr * (1 - fm)
+#
+#     d / dt(metab) <- cl * c_centr * fm - kem * c_metab
+#     d / dt(metab_excr) <- kem * c_metab
+#   })
+#
+#   theta <- c(
+#     t.ka = 0.8,
+#     t.ka1 = 0.8, # food effect on Ka
+#     t.d1 = 1.8,
+#     t.fpar1 = 2, # food effect on F
+#     t.ke = 30,
+#     t.q = 5,
+#     t.cl = 20,
+#     # t.kem = 10,
+#     t.kem = 2,
+#     t.fm = 0.8,
+#     v_centr = 100,
+#     v_peri = 100,
+#     v_metab = 10
+#   )
+#
+#   omega <- rxode2::lotri(
+#     eta.ke + eta.ka + eta.d1 + eta.fpar + eta.q + eta.cl + eta.kem + eta.fm ~ c(
+#       0.3^2,
+#       0, 0.1^2,
+#       0, 0, 0.2^2,
+#       0, 0, 0, 0.3^2,
+#       0, 0, 0, 0, 0.3^2,
+#       0, 0, 0, 0, 0, 0.4^2,
+#       0, 0, 0, 0, 0, 0, 0.3^2,
+#       0, 0, 0, 0, 0, 0, 0, 0.03^2
+#     )
+#   )
+#
+#   sigma <- rxode2::lotri(centr.err ~ .1^2)
+#
+#   sim <- mod$solve(theta, event_table, omega = omega, sigma = sigma) %>%
+#     as.data.frame() %>%
+#     left_join(keep_columns, by = c("id", "time"))
+#   return(sim)
+# }
 pk_sim <- function(event_table) {
   if (!("EGFR" %in% colnames(event_table))) {
     event_table <- event_table %>%
-      mutate(EGFR = 1)
+      mutate(EGFR = 120)
   }
 
   keep_columns <- event_table %>%
@@ -16,66 +90,70 @@ pk_sim <- function(event_table) {
     distinct()
 
   mod <- rxode2::rxode2({
+    v_centr <- t_v_centr * (WEIGHT/70)^1
+
     c_centr <- centr / v_centr * (1 + centr.err)
     c_peri <- peri / v_peri
-    c_metab <- metab / v_metab
+    c_metab <- metab / v_centr
 
-    ke <- t.ke * exp(eta.ke) * (EGFR / 100)^0.9 # renal elimination constant
-    ka <- t.ka * exp(eta.ka) + FOOD * t.ka1
-    d1 <- t.d1 * exp(eta.d1)
-    fm <- t.fm * exp(eta.fm) # fraction metabolized
+    ka <- (t_ka + FOOD * t_ka_f) * exp(eta_ka)
+    d1 <- t_d1 + FOOD * t_d1_f
+    f <- t_f  * exp(eta_f) + FOOD * t_f_f * exp(eta_f_f)
+    ke <- t_ke * exp(eta_ke) * (EGFR/120)^1.2               # renal clearance
+    cl_par <- t_cl_par * (WEIGHT/70)^0.75 * exp(eta_cl_par) # clearance of parent to metabolite
+    cl_met <- t_cl_met * (WEIGHT/70)^0.75 * exp(eta_cl_met) # clearance of metabolite
+    q <- t_q * exp(eta_q)
 
-    cl <- t.cl * exp(eta.cl) # metabolic clearance
-
-    kem <- t.kem * exp(eta.kem) # elimination constant for metabolite
-    fpar <- 1 * exp(eta.fpar) + FOOD * t.fpar1
-    q <- t.q * exp(eta.q)
-
-    d / dt(depot) <- -ka * depot * fpar
+    d/dt(depot) <- -ka * depot
     dur(depot) <- d1
-    d / dt(centr) <- ka * depot * fpar - ke * c_centr - q * c_centr + q * c_peri - cl * c_centr
-    d / dt(peri) <- q * c_centr - q * c_peri
-    d / dt(renal) <- ke * c_centr * (1 - fm)
-
-    d / dt(metab) <- cl * c_centr * fm - kem * c_metab
-    d / dt(metab_excr) <- kem * c_metab
+    d/dt(centr) <- ka * depot * f - ke * centr - q * centr + q * peri - cl_par * centr
+    d/dt(peri) <- q * centr - q * peri
+    d/dt(metab) <- cl_par * centr - cl_met * metab
+    d/dt(renal) <- ke * centr
+    d/dt(auc) <- centr
+    d/dt(auc_metab) <- metab
   })
 
   theta <- c(
-    t.ka = 0.8,
-    t.ka1 = 0.8, # food effect on Ka
-    t.d1 = 1.8,
-    t.fpar1 = 2, # food effect on F
-    t.ke = 30,
-    t.q = 5,
-    t.cl = 20,
-    # t.kem = 10,
-    t.kem = 2,
-    t.fm = 0.8,
-    v_centr = 100,
-    v_peri = 100,
-    v_metab = 10
+    t_d1 = 0.01,
+    t_d1_f = 1,   # food effect on D1
+    t_f = 0.5,
+    t_f_f = 0.2,    # food effect on F
+    t_ka = 0.6,
+    t_ka_f = -0.35, # food effect on Ka
+    t_ke = 5/10,
+    t_cl_par = 10/10,
+    t_q = 10/100,
+    t_cl_met = 10/10,
+    t_v_centr = 10,
+
+    # v_centr = 10,
+    v_peri = 100
   )
 
   omega <- rxode2::lotri(
-    eta.ke + eta.ka + eta.d1 + eta.fpar + eta.q + eta.cl + eta.kem + eta.fm ~ c(
-      0.3^2,
+    eta_ka + eta_ke + eta_f + eta_f_f + eta_q + eta_cl_par + eta_cl_met ~ c(
+      0.1^2,
       0, 0.1^2,
-      0, 0, 0.2^2,
-      0, 0, 0, 0.3^2,
-      0, 0, 0, 0, 0.3^2,
-      0, 0, 0, 0, 0, 0.4^2,
-      0, 0, 0, 0, 0, 0, 0.3^2,
-      0, 0, 0, 0, 0, 0, 0, 0.03^2
+      0, 0, 0.1^2,
+      0, 0, 0, 0.1^2,
+      0, 0, 0, 0, 0.1^2,
+      0, 0, 0, 0, 0, 0.1^2,
+      0, 0, 0, 0, 0, 0, 0.1^2
     )
   )
 
-  sigma <- rxode2::lotri(centr.err ~ .1^2)
+  sigma <- rxode2::lotri(centr.err ~ .03^2)
 
-  sim <- mod$solve(theta, event_table, omega = omega, sigma = sigma) %>%
+  mod$solve(theta, event_table, omega = omega, sigma = sigma,
+            keep = c("NTIME", "EGFR", "WEIGHT", "AGE")) %>%
+    as.data.frame()
+
+  mod$solve(theta, event_table, omega = omega, sigma = sigma#,
+                   # keep = c("NTIME", "EGFR", "WEIGHT", "AGE", "PERIOD")
+            ) %>%
     as.data.frame() %>%
     left_join(keep_columns, by = c("id", "time"))
-  return(sim)
 }
 
 
@@ -477,7 +555,7 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     mutate(EXDOSE = 500) %>%
     as.data.frame()
 
-  ev <- rxode2::et(amountUnits = "mg", timeUnits = "hours") %>%
+  ev <- rxode2::et() %>%
     rxode2::add.dosing(
       dose = 500, dosing.to = "depot",
       rate = -2, start.time = 0
@@ -489,9 +567,10 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     group_by_all() %>%
     tidyr::expand(PERIOD = c(1, 2)) %>%
     mutate(time = .data$time + 13 * 24 * (.data$PERIOD - 1)) %>%
-    left_join(temp %>%
-                select(id = ID, PERIOD, FOOD, EXDOSE),
-              by = c("id", "PERIOD")) %>%
+    left_join(
+      temp %>%
+        select(id = ID, PERIOD, FOOD, EXDOSE, AGE, WEIGHT, SEX, EGFR),
+      by = c("id", "PERIOD")) %>%
     as.data.frame() %>%
     mutate(amt = case_when(!is.na(.data$amt) ~ .data$EXDOSE, .default = NA)) %>%
     # mutate(NTIME = time) %>%
@@ -662,7 +741,7 @@ synthesize_sdtm_sad_study <- function() {
     add_RFENDTC(ex)
 
   pc <- make_sd_pc(dm, ex, vs, lb, rich_sampling_scheme)
-  pp <- synthesize_pp()
+  # pp <- synthesize_pp()
 
   out <- list()
   out[["dm"]] <- dm %>%

@@ -105,7 +105,7 @@ simulate_pk <- function(n = 20) {
 test_that("PK model works", {
   expect_no_error(
     pk <- simulate_pk(n = 20) %>%
-      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal", "metab_excr"),
+      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal"),
                    names_to = "COMP", values_to = "VALUE"))
 
   pk %>%
@@ -124,7 +124,7 @@ test_that("PK model works", {
 test_that("EGFR is a covariate in PK model", {
   expect_no_error(
     pk <- simulate_pk(n = 100) %>%
-      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal", "metab_excr"),
+      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal"),
                    names_to = "COMP", values_to = "VALUE"))
 
   pk %>%
