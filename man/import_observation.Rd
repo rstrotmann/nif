@@ -14,7 +14,8 @@ import_observation(
   USUBJID_field = "USUBJID",
   DTC_field = NULL,
   NTIME_field = NA,
-  DV_field = NULL
+  DV_field = NULL,
+  keep = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ import_observation(
 \item{NTIME_field}{The field specifying the NTIME, as character.}
 
 \item{DV_field}{The field specifying the dependent variable, as character.}
+
+\item{keep}{Columns to keep, as character.}
 }
 \value{
 A nif object.
