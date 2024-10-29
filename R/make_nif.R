@@ -1050,6 +1050,7 @@ first_admin_dtc <- function(x) {
 #' @param DTC_field The field specifying the DTC, as character.
 #' @param NTIME_field The field specifying the NTIME, as character.
 #' @param DV_field The field specifying the dependent variable, as character.
+#' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
 #' @export
@@ -1063,7 +1064,8 @@ import_observation <- function(
     USUBJID_field = "USUBJID",
     DTC_field = NULL,
     NTIME_field = NA,
-    DV_field = NULL) {
+    DV_field = NULL,
+    keep = NULL) {
   if(length(parents(nif)) == 0)
     stop("Please add at least one administration first!")
 
@@ -1101,7 +1103,8 @@ import_observation <- function(
   sbs <- nif %>%
     as.data.frame() %>%
     filter(EVID == 1) %>%
-    select("USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_")) %>%
+    select("USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_"),
+           any_of(keep)) %>%
     distinct() %>%
     mutate(IMPUTATION = "")
 
@@ -1141,7 +1144,7 @@ import_observation <- function(
     as.data.frame(nif),
     obs
   ) %>%
-    normalize_nif()
+    normalize_nif(keep = keep)
   return(out)
 }
 

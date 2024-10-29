@@ -438,13 +438,14 @@ test_that("import_observation", {
     "20230000011010001", 1,     2,
     "20230000011010001", 2,     3,
     "20230000011010001", 3,     4,
-  )
+  ) #%>% mutate(COUNTRY = "x")
 
   suppressMessages(
     testthat::expect_no_error(
       temp <- examplinib_sad_nif %>%
+        mutate(COUNTRY = "X") %>%
         import_observation(raw, "TEST", USUBJID_field = "SUBJ",
-                           NTIME_field = "TIME", DV_field = "VAL")
+                           NTIME_field = "TIME", DV_field = "VAL", keep = "COUNTRY")
     ))
 })
 
