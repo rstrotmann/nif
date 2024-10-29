@@ -120,6 +120,7 @@
 <url><loc>/reference/filter_subject.nif.html</loc></url>
 <url><loc>/reference/filter_subject.sdtm.html</loc></url>
 <url><loc>/reference/filter_subjects.html</loc></url>
+<url><loc>/reference/first_admin_dtc.html</loc></url>
 <url><loc>/reference/geom_admin.html</loc></url>
 <url><loc>/reference/get_cov_plot_params.html</loc></url>
 <url><loc>/reference/guess_analyte.html</loc></url>
@@ -132,6 +133,7 @@
 <url><loc>/reference/head.html</loc></url>
 <url><loc>/reference/head.nif.html</loc></url>
 <url><loc>/reference/ht_by_wt.html</loc></url>
+<url><loc>/reference/import_observation.html</loc></url>
 <url><loc>/reference/impute_admin_dtc_to_pcrftdtc.html</loc></url>
 <url><loc>/reference/impute_admin_times_from_pcrftdtc.html</loc></url>
 <url><loc>/reference/impute_administration_time.html</loc></url>
