@@ -431,6 +431,22 @@ test_that("nif_auto works", {
 })
 
 
+test_that("import_observation", {
+  raw <- tribble(
+    ~SUBJ,             ~TIME, ~VAL,
+    "20230000011010001", 0,     1,
+    "20230000011010001", 1,     2,
+    "20230000011010001", 2,     3,
+    "20230000011010001", 3,     4,
+  )
+
+  suppressMessages(
+    testthat::expect_no_error(
+      temp <- examplinib_sad_nif %>%
+        import_observation(raw, "TEST", USUBJID_field = "SUBJ",
+                           NTIME_field = "TIME", DV_field = "VAL")
+    ))
+})
 
 
 
