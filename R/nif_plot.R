@@ -196,8 +196,10 @@ make_mean_plot_data_set <- function(data_set) {
 #' )
 plot.nif <- function(x, analyte = NULL, dose = NULL,
                      time = "TAFD",
-                     color = NULL, min_time = NULL, max_time = NULL,
-                     cfb = FALSE, dose_norm = FALSE, facet = "DOSE",
+                     color = NULL,
+                     facet = "DOSE",
+                     min_time = NULL, max_time = NULL,
+                     cfb = FALSE, dose_norm = FALSE,
                      admin = NULL, points = FALSE, lines = TRUE,
                      log = FALSE, mean = FALSE, title = NULL, legend = TRUE,
                      size = 1.5, scales = "fixed", alpha = 1, caption = NULL,

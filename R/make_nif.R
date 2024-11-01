@@ -516,6 +516,7 @@ make_subjects <- function(dm, vs = NULL,
 #'   numerical values, as data frame. The data frame must have at least one
 #'   column that matches a column in the domain, and a numerical 'DV' column
 #'   that provides the recoding result.
+#' @param metabolite Observation is a metabolite, as logical.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -527,6 +528,7 @@ make_observation <- function(
     testcd,
     analyte = NULL,
     parent = NA,
+    metabolite = FALSE,
     cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
@@ -612,7 +614,7 @@ make_observation <- function(
       AMT = 0,
       DOSE = NA,
       PARENT = parent,
-      METABOLITE = FALSE,
+      METABOLITE = metabolite,
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPUTATION = "") %>%
@@ -943,6 +945,7 @@ add_observation <- function(
     nif, sdtm, domain, testcd,
     analyte = NULL,
     parent = NULL,
+    metabolite = FALSE,
     cmt = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
@@ -984,9 +987,10 @@ add_observation <- function(
 
   obj <- bind_rows(
     nif,
-    make_observation(sdtm, domain, testcd, analyte, parent, cmt, subject_filter,
-                     observation_filter, TESTCD_field, DTC_field, DV_field,
-                     coding_table, factor, NTIME_lookup, keep)) %>%
+    make_observation(
+      sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
+      observation_filter, TESTCD_field, DTC_field, DV_field,
+      coding_table, factor, NTIME_lookup, keep)) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%

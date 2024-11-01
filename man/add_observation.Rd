@@ -11,6 +11,7 @@ add_observation(
   testcd,
   analyte = NULL,
   parent = NULL,
+  metabolite = FALSE,
   cmt = NULL,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
@@ -38,6 +39,8 @@ domain the observations come from.}
 
 \item{parent}{The name of the parent analyte for the observation as
 character.}
+
+\item{metabolite}{Observation is a metabolite, as logical.}
 
 \item{cmt}{The compartment for the observation as numeric.}
 

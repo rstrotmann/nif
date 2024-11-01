@@ -10,11 +10,11 @@
   dose = NULL,
   time = "TAFD",
   color = NULL,
+  facet = "DOSE",
   min_time = NULL,
   max_time = NULL,
   cfb = FALSE,
   dose_norm = FALSE,
-  facet = "DOSE",
   admin = NULL,
   points = FALSE,
   lines = TRUE,
@@ -42,6 +42,8 @@
 
 \item{color}{The column(s) to be used for coloring.}
 
+\item{facet}{The column(s) to be used for faceting.}
+
 \item{min_time}{The minimal time in units of the selected time field, as
 numeric.}
 
@@ -51,8 +53,6 @@ numeric.}
 \item{cfb}{Plot change from baseline, as logical.}
 
 \item{dose_norm}{Dose-normalized values, as logical.}
-
-\item{facet}{The column(s) to be used for faceting.}
 
 \item{admin}{The analyte to be plotted as administration markers, as
 character.}
