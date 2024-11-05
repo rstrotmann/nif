@@ -613,7 +613,10 @@ make_observation <- function(
 
   obj %>%
     mutate(SRC_DOMAIN = .data$DOMAIN) %>%
-    mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
+    # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
+    {if(paste0(toupper(domain), "SEQ") %in% names(obj))
+      mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
+        mutate(SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
@@ -747,7 +750,9 @@ make_administration <- function(
 
   admin <- ex %>%
     mutate(SRC_DOMAIN = "EX") %>%
-    mutate(SRC_SEQ = EXSEQ) %>%
+    # mutate(SRC_SEQ = EXSEQ) %>%
+    {if("EXSEQ" %in% names(ex)) mutate(., SRC_SEQ = EXSEQ) else
+      mutate(., SRC_SEQ = NA)} %>%
 
     # assertr::verify(extrt %in% EXTRT) %>%
     mutate(IMPUTATION = "") %>%
