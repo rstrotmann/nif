@@ -444,8 +444,9 @@ test_that("import_observation", {
     testthat::expect_no_error(
       temp <- examplinib_sad_nif %>%
         mutate(COUNTRY = "X") %>%
-        import_observation(raw, "TEST", USUBJID_field = "SUBJ",
-                           NTIME_field = "TIME", DV_field = "VAL", keep = "COUNTRY")
+        import_observation(
+          raw, "TEST", USUBJID_field = "SUBJ", NTIME_field = "TIME",
+          DV_field = "VAL", keep = "COUNTRY", debug = TRUE)
     ))
 })
 

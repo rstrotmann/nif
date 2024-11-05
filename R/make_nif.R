@@ -1111,7 +1111,11 @@ import_observation <- function(
     DTC_field = NULL,
     NTIME_field = NA,
     DV_field = NULL,
-    keep = NULL) {
+    keep = NULL,
+    debug = FALSE) {
+  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
   if(length(parents(nif)) == 0)
     stop("Please add at least one administration first!")
 
@@ -1170,6 +1174,9 @@ import_observation <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV))) %>%
     inner_join(sbs, by = "USUBJID") %>%
+    mutate(
+      SRC_DOMAIN = "IMPORT",
+      SRC_SEQ = NA) %>%
     as.data.frame()
 
   # derive time from DTC, if present, or generate DTC from first administration
