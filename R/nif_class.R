@@ -38,7 +38,7 @@ order_nif_columns <- function(obj) {
     "PCELTM", "EVID", "AMT", "ANALYTE", "CMT", "PARENT", "TRTDY",
     "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
     "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
-    "TREATMENT"
+    "TREATMENT", "SRC_DOMAIN", "SRC_SEQ"
   ))
 
   obj %>%

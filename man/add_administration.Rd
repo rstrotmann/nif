@@ -13,6 +13,7 @@ add_administration(
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
   keep = NULL,
+  debug = FALSE,
   silent = deprecated()
 )
 }
@@ -32,6 +33,8 @@ add_administration(
 \item{cut_off_date}{The data cut-off date as Posix date-time.}
 
 \item{keep}{Columns to keep after cleanup, as character.}
+
+\item{debug}{Include debug fields, as logical.}
 
 \item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
 compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to

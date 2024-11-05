@@ -539,13 +539,20 @@ make_observation <- function(
     factor = 1,
     NTIME_lookup = NULL,
     keep = NULL
+    # debug = NULL
     ) {
+  # debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  # message(paste0("debug is ", debug))
+
   if(is.null(DTC_field))
     DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
+
   if(is.null(DV_field))
     DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
+
   if(is.null(TESTCD_field))
     TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
+
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
 
@@ -573,8 +580,9 @@ make_observation <- function(
                 .data$PCELTM, "PT([.0-9]+)H", group = 1)))
           }
         } else {
-          conditional_message("PC.PCELM is not defined. Provide a NTIME lookup",
-                              "table to define nominal time!")
+          conditional_message(
+            "PCELM is not defined. Provide a NTIME lookup",
+            "table to define nominal time!")
         }
       }
     } else {
@@ -604,6 +612,8 @@ make_observation <- function(
   }
 
   obj %>%
+    mutate(SRC_DOMAIN = .data$DOMAIN) %>%
+    mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
@@ -622,7 +632,7 @@ make_observation <- function(
 
     {if(!is.null(NTIME_lookup)) suppressMessages(
       left_join(., NTIME_lookup)) else
-      mutate(., NTIME = NA)} %>%
+        mutate(., NTIME = NA)} %>%
 
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
@@ -710,10 +720,18 @@ make_observation <- function(
 #' @importFrom assertthat assert_that
 #' @keywords internal
 #' @seealso [add_administration()]
-make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
+make_administration <- function(
+    sdtm,
+    extrt,
+    analyte = NA,
+    cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cut_off_date = NULL,
-    keep = "") {
+    keep = ""
+    # debug = NULL
+    ) {
+  # debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
 
@@ -728,6 +746,9 @@ make_administration <- function(sdtm, extrt, analyte = NA, cmt = 1,
   sbs <- make_subjects(dm, domain(sdtm, "vs"), subject_filter, keep)
 
   admin <- ex %>%
+    mutate(SRC_DOMAIN = "EX") %>%
+    mutate(SRC_SEQ = EXSEQ) %>%
+
     # assertr::verify(extrt %in% EXTRT) %>%
     mutate(IMPUTATION = "") %>%
     filter(.data$EXTRT == extrt) %>%
@@ -893,6 +914,7 @@ index_nif <- function(nif) {
 #'
 #' @param nif A nif object.
 #' @inheritParams make_administration
+#' @param debug Include debug fields, as logical.
 #' @param silent `r lifecycle::badge("deprecated")` Dummy option for
 #' compatibility, set the global option [nif_option()] with `silent = TRUE` to
 #' suppress messages.
@@ -902,9 +924,19 @@ index_nif <- function(nif) {
 #' @examples
 #' add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
 #'
-add_administration <- function(nif, sdtm, extrt, analyte = NA, cmt = 1,
+add_administration <- function(
+    nif,
+    sdtm,
+    extrt,
+    analyte = NA,
+    cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cut_off_date = NULL, keep = NULL, silent = deprecated()) {
+    cut_off_date = NULL,
+    keep = NULL,
+    debug = FALSE,
+    silent = deprecated()) {
+  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
   bind_rows(nif,
             make_administration(sdtm, extrt, analyte, cmt, subject_filter,
                                      cut_off_date, keep)) %>%
@@ -930,6 +962,7 @@ add_administration <- function(nif, sdtm, extrt, analyte = NA, cmt = 1,
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
+#' @param debug Include debug fields, as logical.
 #' @param silent `r lifecycle::badge("deprecated")` Dummy option for
 #' compatibility, set the global option [nif_option()] with `silent = TRUE` to
 #' suppress messages.
@@ -956,8 +989,12 @@ add_observation <- function(
     factor = 1,
     NTIME_lookup = NULL,
     keep = NULL,
+    debug = FALSE,
     silent = deprecated()
   ) {
+  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
   if(length(parents(nif)) == 0)
     stop("Please add at least one administration first!")
   if(is.null(cmt)) {
@@ -1368,12 +1405,12 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @return A nif object.
 #' @export
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
-  selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
-                       "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
-                       "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
-                       "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
-                       "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
-                       "TREATMENT"))
+  selector <- unique(c(
+    "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
+    "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD", "PCELTM", "EVID", "AMT",
+    "ANALYTE", "CMT",  "PARENT", "TRTDY", "METABOLITE", "DOSE", "DV", "MDV",
+    "ACTARMCD", "IMPUTATION", "FOOD", "PART", "PERIOD", "COHORT", "FASTED",
+    "RICH_N", "DI", "TREATMENT"))
 
   obj %>%
     make_time() %>%

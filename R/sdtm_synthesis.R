@@ -295,7 +295,10 @@ synthesize_vs <- function(dm) {
     mutate(VSBLFL = "Y") %>%
     mutate(VSDTC = .data$RFSTDTC) %>%
     select(-c("RFSTDTC")) %>%
+    group_by(USUBJID) %>%
+    mutate(VSSEQ = row_number()) %>%
     as.data.frame()
+  return(vs)
 }
 
 

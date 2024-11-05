@@ -22,6 +22,7 @@ add_observation(
   factor = 1,
   NTIME_lookup = NULL,
   keep = NULL,
+  debug = FALSE,
   silent = deprecated()
 )
 }
@@ -71,6 +72,8 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 to provide the NTIME field.}
 
 \item{keep}{Columns to keep, as character.}
+
+\item{debug}{Include debug fields, as logical.}
 
 \item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
 compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to

@@ -78,6 +78,7 @@ make_ae <- function(
 #'
 #' @inheritParams make_ae
 #' @param nif A nif object.
+#' @param debug Include debug fields, as logical.
 #'
 #' @return A nif object.
 #' @export
@@ -90,7 +91,11 @@ add_ae_observation <- function(
     cmt = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
-    keep = "") {
+    keep = "",
+    debug = FALSE) {
+  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
   if(is.null(parent)) {
       parent <- guess_parent(nif)
       conditional_message(paste0("Parent for ", ae_term, " was set to ",
