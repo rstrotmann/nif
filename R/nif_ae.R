@@ -38,14 +38,21 @@ make_ae <- function(
   if(!"ae" %in% names(sdtm$domains))
     stop("Domain AE not included in sdtm object!")
 
-  domain(sdtm, "ae") %>%
-    lubrify_dates() %>%
+  obj <- domain(sdtm, "ae") %>%
+    lubrify_dates()
+
+  obj %>%
+    mutate(SRC_DOMAIN = "AE") %>%
+    # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
+    {if("AESEQ" %in% names(obj))
+      mutate(., SRC_SEQ = .data[["AESEQ"]]) else
+        mutate(., SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[ae_field]] == ae_term) %>%
     mutate(
       DTC = .data[["AESTDTC"]],
       DV = as.numeric(.data[["AETOXGR"]])) %>%
-    select("USUBJID", "DTC", "DV") %>%
+    select("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN") %>%
     mutate(
       ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
       TIME = NA,

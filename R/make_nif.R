@@ -616,7 +616,7 @@ make_observation <- function(
     # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
     {if(paste0(toupper(domain), "SEQ") %in% names(obj))
       mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
-        mutate(SRC_SEQ = NA)} %>%
+        mutate(., SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
