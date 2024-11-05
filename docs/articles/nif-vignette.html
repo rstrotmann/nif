@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.50.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.50.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -186,21 +186,21 @@ for the DM domain of the <code>examplinib_fe</code> data object:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/domain.html">domain</a></span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="st">"dm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   SITEID  SUBJID                              ACTARM ACTARMCD          RFICDTC</span></span>
-<span><span class="co">#&gt; 1    101 1010001 Treatment cohort 1, 5 mg examplinib       C1 2000-12-20T09:10</span></span>
-<span><span class="co">#&gt; 2    101 1010002                      Screen Failure SCRNFAIL 2000-12-24T09:00</span></span>
-<span><span class="co">#&gt; 3    101 1010003 Treatment cohort 1, 5 mg examplinib       C1 2000-12-24T08:47</span></span>
+<span><span class="co">#&gt; 1    101 1010001                      Screen Failure SCRNFAIL 2000-12-21T08:45</span></span>
+<span><span class="co">#&gt; 2    101 1010002 Treatment cohort 1, 5 mg examplinib       C1 2000-12-21T12:21</span></span>
+<span><span class="co">#&gt; 3    101 1010003 Treatment cohort 1, 5 mg examplinib       C1 2000-12-21T10:14</span></span>
 <span><span class="co">#&gt;            RFSTDTC         RFXSTDTC    STUDYID           USUBJID SEX AGE  AGEU</span></span>
-<span><span class="co">#&gt; 1 2000-12-31T09:10 2000-12-31T09:10 2023000001 20230000011010001   M  53 YEARS</span></span>
-<span><span class="co">#&gt; 2             &lt;NA&gt;             &lt;NA&gt; 2023000001 20230000011010002   M  45 YEARS</span></span>
-<span><span class="co">#&gt; 3 2001-01-04T08:47 2001-01-04T08:47 2023000001 20230000011010003   M  20 YEARS</span></span>
-<span><span class="co">#&gt;   COUNTRY DOMAIN                                 ARM    ARMCD</span></span>
-<span><span class="co">#&gt; 1     DEU     DM Treatment cohort 1, 5 mg examplinib       C1</span></span>
-<span><span class="co">#&gt; 2     DEU     DM                      Screen Failure SCRNFAIL</span></span>
-<span><span class="co">#&gt; 3     DEU     DM Treatment cohort 1, 5 mg examplinib       C1</span></span>
-<span><span class="co">#&gt;                        RACE ETHNIC          RFENDTC</span></span>
-<span><span class="co">#&gt; 1                     ASIAN        2000-12-31T09:10</span></span>
-<span><span class="co">#&gt; 2 BLACK OR AFRICAN AMERICAN                    &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3                     WHITE        2001-01-04T08:47</span></span></code></pre></div>
+<span><span class="co">#&gt; 1             &lt;NA&gt;             &lt;NA&gt; 2023000001 20230000011010001   M  43 YEARS</span></span>
+<span><span class="co">#&gt; 2 2000-12-28T12:21 2000-12-28T12:21 2023000001 20230000011010002   M  48 YEARS</span></span>
+<span><span class="co">#&gt; 3 2000-12-28T10:14 2000-12-28T10:14 2023000001 20230000011010003   M  26 YEARS</span></span>
+<span><span class="co">#&gt;   COUNTRY DOMAIN                                 ARM    ARMCD  RACE ETHNIC</span></span>
+<span><span class="co">#&gt; 1     DEU     DM                      Screen Failure SCRNFAIL WHITE       </span></span>
+<span><span class="co">#&gt; 2     DEU     DM Treatment cohort 1, 5 mg examplinib       C1 WHITE       </span></span>
+<span><span class="co">#&gt; 3     DEU     DM Treatment cohort 1, 5 mg examplinib       C1 WHITE       </span></span>
+<span><span class="co">#&gt;            RFENDTC</span></span>
+<span><span class="co">#&gt; 1             &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2 2000-12-28T12:21</span></span>
+<span><span class="co">#&gt; 3 2000-12-28T10:14</span></span></code></pre></div>
 <p>Printing an <code>sdtm</code> object shows relevant summary
 information:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
