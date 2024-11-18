@@ -192,11 +192,11 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
 
 
 deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
-                         pctestcd = NULL,
-                         usubjid = NULL) {
+                         pctestcd = NULL, usubjid = NULL) {
   if(is.null(usubjid)) usubjid <- unique(nif_data$USUBJID)
 
   if(is.null(analyte)) analyte = guess_analyte(nif_data)
+
   if(is.null(extrt)) {
     extrt <- analyte
     if(!extrt %in% unique(domain(sdtm_data, "ex")$EXTRT))
@@ -218,9 +218,13 @@ deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
     filter(.data$ANALYTE %in% analyte) %>%
     filter(.data$USUBJID %in% usubjid) %>%
     mutate(admin_REF = case_when(.data$EVID == 1 ~ .data$REF)) %>%
+    mutate(admin_SEQ = .data$SRC_SEQ[REF == admin_REF]) %>%
     group_by(.data$ID, .data$PARENT) %>%
     tidyr::fill(admin_REF, .direction = "down") %>%
+    tidyr::fill(admin_SEQ, .direction = "down") %>%
     ungroup() %>%
+    mutate(admin_id = interaction(USUBJID, PARENT, admin_SEQ)) %>%
+    mutate(obs_id = interaction(USUBJID, ANALYTE, SRC_DOMAIN, SRC_SEQ)) %>%
     filter(!(is.na(.data$DV) & EVID == 0)) %>%
     mutate(display_time = TIME) %>%
     as.data.frame()
@@ -234,13 +238,10 @@ deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
   ###########################
   ## user interface
   deb.ui <- shiny::fluidPage(
-    # title = "NIF debugger",
-    # shinyjs::useShinyjs(),
+    shinyjs::useShinyjs(),
 
     # Row 1
     shiny::fluidRow(
-      # style = "padding:10px; spacing:10",
-
       # Column 1
       shiny::column(10,
         shiny::plotOutput("plot_nif", click = "plot_nif_click")
@@ -264,89 +265,112 @@ deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
       )
     ),
 
-    # Row 2
     shiny::fluidRow(
-      # style = "padding:10px; spacing:10",
+      style = "padding:10px;",
       DT::DTOutput("nif_table"),
       DT::DTOutput("ex_table"),
-      # DT::DTOutput("pc_table")
+      DT::DTOutput("pc_table")
     )
+
   )
 
   ###########################
   ## server
   deb.server <- function(input, output, session) {
+    selection <- shiny::reactiveVal(NULL)
+    current_nif <- shiny::reactiveVal(NULL)
+    current_pc <- shiny::reactiveVal(NULL)
+    current_ex <- shiny::reactiveVal(NULL)
 
-    # the selected data frame
-    id <- shiny::reactiveVal(
-      nif %>%
-        filter(EVID == 0) %>%
-        # filter(DOSE %in% input$dose) %>%
-        slice(1)
-    )
-
-    # id <- shiny::reactiveVal(
-    #   slice(filter(nif, EVID == 0), 1))
-
-    # the selected REF
-    selected_ref <- shiny::reactiveVal(1)
-
-    observeEvent(input$time, {
-      nif <- nif %>%
-        mutate(display_time = .data[[input$time]])
-      # message(paste0("Changed display time to ", input$time))
-    })
-
+    # Plot
     output$plot_nif <- shiny::renderPlot({
-      print(head(nif, 1))
       nif %>%
         filter(DOSE == input$dose) %>%
         filter(EVID == 0) %>%
         ggplot2::ggplot(ggplot2::aes(
-          # x = TIME, y = DV, color=!(REF %in% (id() %>% pull(REF))))) +
-          # x = .data[[input$time]], y = DV, color=!(REF %in% (id() %>% pull(REF))))) +
-          x = TIME, y = DV, color = !(REF %in% selected_ref()))) +
+          x = TIME, y = DV, color = !(REF %in% selection()$REF))) +
+          # x = active_time, y = DV, color = !(REF %in% selection()$REF))) +
         ggplot2::geom_point(size=4, alpha=.6) +
         ggplot2::scale_y_log10() +
         ggplot2::labs(x = input$time) +
         ggplot2::theme_bw() +
-        # ggplot2::ggtitle(paste0("Analyte: ", analyte)) +
         ggplot2::theme(legend.position = "none")},
       height = 350)
 
     ## NIF table output
     output$nif_table <- DT::renderDT(
-      nif %>%
-        mutate(across(c("TAFD", "TAD", "TIME"), round, 1)) %>%
-        mutate(across(c("DV"), signif, 3)) %>%
-        select(any_of(c("REF", "ID", "USUBJID", "TIME", "TAFD", "TAD", "NTIME",
-                      "AMT", "DOSE", "ANALYTE", "EVID", "DV"))) %>%
-        filter(
-          REF %in% selected_ref() |
-            REF %in% (
-              filter(nif, REF %in% selected_ref())$admin_REF)),
-      options = list(dom = '')
+      current_nif(),
+      options = list(dom = ''),
+      caption = htmltools::tags$caption(
+        "NIF data",
+        style = "color:black; background-color:#e0e0e0; font-size:120%;
+        font-weight:bold; padding:5px;")
     )
 
     ## EX table output
     output$ex_table <- DT::renderDT(
-      # output$ex_table <- DT::renderDataTable(
-      domain(sdtm_data, "ex") %>%
-        filter(.data$USUBJID %in% (id() %>% pull(.data$USUBJID))) %>%
-        filter(.data$EXSEQ %in% (id() %>% pull(.data$EXSEQ))) %>%
-        filter(.data$EXTRT %in% (id() %>% pull(.data$EXTRT))),
-      options = list(dom = "")
+      current_ex(),
+      options = list(dom = ""),
+      caption = htmltools::tags$caption(
+        "EX domain",
+        style = "color:black; background-color:#e0e0e0; font-size:120%;
+        font-weight:bold; padding:5px; margin-top:20px")
     )
 
+    ## PC table output
+    output$pc_table <- DT::renderDT(
+      current_pc(),
+      options = list(dom = ""),
+      caption = htmltools::tags$caption(
+        "PC domain",
+        style = "color:black; background-color:#e0e0e0; font-size:120%;
+        font-weight:bold; padding:5px; margin-top:20px")
+    )
+
+    shiny::observeEvent(input$time, {
+      nif <- nif %>%
+        mutate(active_time = .data[[input$time]])
+    })
+
     shiny::observeEvent(input$plot_nif_click, {
-      # print(input$plot_nif_click)
-      temp <- nearPoints(nif, input$plot_nif_click, addDist = T)
-      print(temp)
-      id(as.data.frame(temp))
-      selected_ref(temp$REF)
-      # message(selected_ref())
+      # plot selection
+      selection(
+        as.data.frame(
+          nearPoints(nif, input$plot_nif_click, addDist = T)) %>%
+        filter(DOSE %in% input$dose)
+      )
+
+      ## current nif
+      current_nif(
+        nif %>%
+          filter(DOSE %in% input$dose) %>%
+          mutate(across(c("TAFD", "TAD", "TIME"), round, 1)) %>%
+          mutate(across(c("DV"), signif, 3)) %>%
+          select(any_of(c(
+            "REF", "ID", "USUBJID", "DTC", "TIME", "TAFD", "TAD", "NTIME", "AMT",
+            "DOSE", "ANALYTE", "EVID", "DV", "SRC_DOMAIN", "SRC_SEQ"))) %>%
+          filter(
+            (REF %in% selection()$REF & EVID == 0) |
+              (REF %in% (filter(nif, REF %in% selection())$admin_REF) & EVID == 1)
+          )
+      )
+
+      ## current pc
+      current_pc(
+        domain(sdtm_data, "pc") %>%
+          mutate(obs_id = interaction(USUBJID, pctestcd, "PC", PCSEQ)) %>%
+          filter(obs_id %in% selection()$obs_id)
+      )
+
+      ## current ex
+      current_ex(
+        domain(sdtm_data, "ex") %>%
+          mutate(admin_id = interaction(USUBJID, EXTRT, EXSEQ)) %>%
+          filter(admin_id %in% unique(selection()$admin_id))
+      )
     })
   }
 
   shiny::shinyApp(deb.ui, deb.server)
 }
+
