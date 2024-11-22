@@ -238,7 +238,7 @@ deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
   ###########################
   ## user interface
   deb.ui <- shiny::fluidPage(
-    shinyjs::useShinyjs(),
+    # shinyjs::useShinyjs(),
 
     # Row 1
     shiny::fluidRow(
@@ -277,6 +277,8 @@ deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
   ###########################
   ## server
   deb.server <- function(input, output, session) {
+    # active_nif <- shiny::reactiveVal(nif)
+
     selection <- shiny::reactiveVal(NULL)
     current_nif <- shiny::reactiveVal(NULL)
     current_pc <- shiny::reactiveVal(NULL)
@@ -285,11 +287,14 @@ deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
     # Plot
     output$plot_nif <- shiny::renderPlot({
       nif %>%
+      # active_nif() %>%
         filter(DOSE == input$dose) %>%
         filter(EVID == 0) %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = TIME, y = DV, color = !(REF %in% selection()$REF))) +
-          # x = active_time, y = DV, color = !(REF %in% selection()$REF))) +
+        # ggplot2::ggplot(ggplot2::aes(
+        #   # x = TIME, y = DV, color = !(REF %in% selection()$REF))) +
+        #   x = display_time, y = DV, color = !(REF %in% selection()$REF))) +
+        ggplot2::ggplot(ggplot2::aes_string(
+          x = input$time, y = "DV", color = !(REF %in% selection()$REF))) +
         ggplot2::geom_point(size=4, alpha=.6) +
         ggplot2::scale_y_log10() +
         ggplot2::labs(x = input$time) +
@@ -327,22 +332,26 @@ deb <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
         font-weight:bold; padding:5px; margin-top:20px")
     )
 
-    shiny::observeEvent(input$time, {
-      nif <- nif %>%
-        mutate(active_time = .data[[input$time]])
-    })
+    # shiny::observeEvent(input$time, {
+    #   active_nif(
+    #     active_nif %>%
+    #       mutate(active_time = .data[[input$time]])
+    #   )
+    # })
 
     shiny::observeEvent(input$plot_nif_click, {
       # plot selection
       selection(
         as.data.frame(
           nearPoints(nif, input$plot_nif_click, addDist = T)) %>%
+          # nearPoints(active_nif(), input$plot_nif_click, addDist = T)) %>%
         filter(DOSE %in% input$dose)
       )
 
       ## current nif
       current_nif(
         nif %>%
+        # active_nif() %>%
           filter(DOSE %in% input$dose) %>%
           mutate(across(c("TAFD", "TAD", "TIME"), round, 1)) %>%
           mutate(across(c("DV"), signif, 3)) %>%
