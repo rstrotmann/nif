@@ -185,6 +185,8 @@ make_mean_plot_data_set <- function(data_set) {
 #'   mean = FALSE, points = TRUE, dose_norm = FALSE,
 #'   facet = "RACE", log = TRUE, max_time = 72
 #' )
+#' plot(examplinib_sad_nif, dose_norm = TRUE, facet = NULL, log = TRUE,
+#'   max_time = 48, points = TRUE)
 #' plot(examplinib_fe_nif,
 #'   points = TRUE, color = c("FASTED"), mean = TRUE,
 #'   max_time = 12, admin = "RS2023"
