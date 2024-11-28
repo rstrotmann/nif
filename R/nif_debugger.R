@@ -65,7 +65,6 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
     max(nif[which(nif$DOSE==dose), "TAD"], na.rm=T)
   }
 
-  ###########################
   ## user interface
   deb.ui <- shiny::fluidPage(
     # shinyjs::useShinyjs(),
@@ -104,7 +103,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
 
   )
 
-  ###########################
+
   ## server
   deb.server <- function(input, output, session) {
     selection <- shiny::reactiveVal(NULL)
