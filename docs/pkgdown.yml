@@ -2,7 +2,8 @@ pandoc: '3.2'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
+  creating-multiple-study-nif: creating-multiple-study-nif.html
   multiple-dose-example: multiple-dose-example.html
   nif-imputations: nif-imputations.html
   nif-vignette: nif-vignette.html
-last_built: 2024-11-05T08:09Z
+last_built: 2024-11-28T07:11Z
