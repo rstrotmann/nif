@@ -844,6 +844,26 @@ make_administration <- function(
 #'
 #' @return A nif object.
 make_time <- function(obj) {
+  # obj %>%
+  #   as.data.frame() %>%
+  #   assertr::verify(assertr::has_all_names(
+  #     "ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
+  #   assertr::verify(is.POSIXct(.data$DTC)) %>%
+  #   group_by(.data$ID) %>%
+  #   mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
+  #   ungroup() %>%
+  #   group_by(.data$ID, .data$PARENT) %>%
+  #   mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1], na.rm = TRUE)) %>%
+  #   ungroup() %>%
+  #   mutate(TIME = round(
+  #     as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
+  #     digits = 3)) %>%
+  #   mutate(TAFD = round(
+  #     as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "h")),
+  #     digits = 3)) %>%
+  #   add_tad() %>%
+  #   new_nif()
+
   obj %>%
     as.data.frame() %>%
     assertr::verify(assertr::has_all_names(
@@ -1424,15 +1444,28 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     "ACTARMCD", "IMPUTATION", "FOOD", "PART", "PERIOD", "COHORT", "FASTED",
     "RICH_N", "DI", "TREATMENT"))
 
+  # obj %>%
+  #   make_time() %>%
+  #   arrange(.data$DTC) %>%
+  #   mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+  #   index_nif() %>%
+  #   group_by(.data$ID, .data$PARENT) %>%
+  #   tidyr::fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED",
+  #                 starts_with("BL_"))),
+  #        .direction = "downup") %>%
+  #   ungroup() %>%
+  #   nif_cleanup(keep = keep) %>%
+  #   new_nif()
+
   obj %>%
+    mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     make_time() %>%
     arrange(.data$DTC) %>%
-    mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     index_nif() %>%
     group_by(.data$ID, .data$PARENT) %>%
     tidyr::fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED",
-                  starts_with("BL_"))),
-         .direction = "downup") %>%
+                         starts_with("BL_"))),
+                .direction = "downup") %>%
     ungroup() %>%
     nif_cleanup(keep = keep) %>%
     new_nif()

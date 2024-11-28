@@ -1,0 +1,38 @@
+---
+title: "creating-multiple-study-nif"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{creating-multiple-study-nif}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(nif)
+```
+
+```{r}
+nif <- new_nif() %>% 
+  add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>% 
+  add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) %>% 
+  add_baseline(examplinib_sad, "lb", "CREAT") %>% 
+  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023") %>% 
+  add_observation(examplinib_fe, "pc", "RS2023", cmt = 2) %>%
+  add_baseline(examplinib_fe, "lb", "CREAT") %>% 
+  add_administration(examplinib_poc, "EXAMPLINIB", analyte = "RS2023") %>% 
+  add_observation(examplinib_poc, "pc", "RS2023", cmt = 2) %>% 
+  add_baseline(examplinib_poc, "lb", "CREAT") %>% 
+  add_bl_crcl() %>% 
+  add_bl_renal()
+
+nif %>%   
+  summary()
+```
+
