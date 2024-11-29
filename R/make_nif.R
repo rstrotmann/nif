@@ -1117,6 +1117,7 @@ first_admin_dtc <- function(x) {
 #' @param NTIME_field The field specifying the NTIME, as character.
 #' @param DV_field The field specifying the dependent variable, as character.
 #' @param keep Columns to keep, as character.
+#' @param debug Keep debug information.
 #'
 #' @return A nif object.
 #' @export

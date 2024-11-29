@@ -21,6 +21,10 @@ nif_debugger(
 \item{analyte}{The analyte as character. If NULL (default), the most likely
 analyte will be selected.}
 
+\item{extrt}{The EXTRT field.}
+
+\item{pctestcd}{The PCTESTCD field.}
+
 \item{usubjid}{The subject USUBJID to filter for. If NULL (default), all
 subjects are shown.}
 }
@@ -28,6 +32,8 @@ subjects are shown.}
 Nothing
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 This shiny app helps identifying suspicious data in the NIF data set. This
 may be due to missing data in the underlying SDTM data set or bad imputations
 during the generation of the NIF data set.

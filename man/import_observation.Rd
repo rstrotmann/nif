@@ -15,7 +15,8 @@ import_observation(
   DTC_field = NULL,
   NTIME_field = NA,
   DV_field = NULL,
-  keep = NULL
+  keep = NULL,
+  debug = FALSE
 )
 }
 \arguments{
