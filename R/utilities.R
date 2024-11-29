@@ -287,9 +287,17 @@ is_iso_date <- function(x) {
 #' @export
 #' @keywords internal
 #' @examples
-#' pt_to_hours(c("PT1H15M", "PT1.5H"))
+#' pt_to_hours(c("PT1H15M", "PT1.5H", "-PT4H30M"))
 pt_to_hours <- function(iso) {
-  as.numeric(duration(iso)) / 60 / 60
+  # as.numeric(duration(iso)) / 60 / 60
+  temp <- str_extract(iso, regex("(-)?PT(([0-9.]*)H)?(([0-9.]*)M)?"), group = c(1, 3, 5))
+
+  as.data.frame(temp) %>%
+    mutate(sign = case_match(V1, "-" ~ -1, .default = 1)) %>%
+    mutate(hours = case_when(is.na(V2) ~ 0, .default = as.numeric(V2))) %>%
+    mutate(mins = case_when(is.na(V3) ~ 0, .default = as.numeric(V3))) %>%
+    mutate(out = sign * (hours + mins/60)) %>%
+    pull(out)
 }
 
 

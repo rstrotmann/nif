@@ -1,4 +1,19 @@
 
+test_that("pt_to_hours works", {
+  test <- tibble::tribble(
+    ~iso,  ~out,
+    "3H",     0,
+    "PT3H",     3,
+    "-PT3H",    -3,
+    "PT15M",  0.25,
+    "PT3H15M",  3.25,
+    "-PT3H15M", -3.25,
+    "PT1H15M30S", 1.25
+  )
+  expect_equal(pt_to_hours(test$iso), test$out)
+})
+
+
 test_that("split_DTC works", {
   test <- data.frame(
     test1_DTC = c("2022-02-15T09:30",

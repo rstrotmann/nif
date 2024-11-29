@@ -41,6 +41,8 @@ import_observation(
 \item{DV_field}{The field specifying the dependent variable, as character.}
 
 \item{keep}{Columns to keep, as character.}
+
+\item{debug}{Keep debug information.}
 }
 \value{
 A nif object.
