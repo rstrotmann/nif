@@ -1176,8 +1176,8 @@ import_observation <- function(
     filter(EVID == 1) %>%
     select("USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_"),
            any_of(keep)) %>%
-    distinct() %>%
-    mutate(IMPUTATION = "")
+    mutate(IMPUTATION = "") %>%
+    distinct()
 
   obs <- raw %>%
     filter(eval(parse(text = observation_filter))) %>%
