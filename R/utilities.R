@@ -209,6 +209,7 @@ isofy_date_format <- function(obj, fields = NULL) {
     })
 }
 
+
 #' Convert all DTC fields from ISO 8601 into POSIXct
 #'
 #' Change all columns in the input data frame that end with 'DTC' to standard
@@ -344,7 +345,6 @@ decompose_dtc <- function(obj, DTC_field) {
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
         .default = NA
       )) %>%
-      # select(!all_of(c("has_time")))
       select(-c("has_time"))
   }
 
@@ -443,27 +443,6 @@ plural <- function(word, plural) {
     return(word)
   }
 }
-
-
-# Add string to string, separated by a comma
-#
-# @param object The base string as character.
-# @param statement The string to be added as character.
-#
-# @return A string
-# @export
-# @keywords internal
-#
-# @examples
-#' append_statement("A", "B")
-#' append_statement("", "B")
-#' append_statement(c("A1", "A2", "A3"), "B")
-#' append_statement(c("A1", "", "A3", ""), "B")
-# append_statement <- function(object, statement) {
-#   i <- which(lapply(object, str_length) > 0)
-#   object[i] <- paste0(object[i], ", ")
-#   paste0(object, statement)
-# }
 
 
 #' Mean derivative that works with vectors containing NaN
@@ -575,7 +554,7 @@ coalesce_join <- function(
         # Select columns ended with .x if keep = "left"; or .y if keep = "right"
         ends_with(suffix_[1]),
         # Replace .x in var.x with .y to generate var.y, if keep = "left"; or
-        # vice versa.
+        # vice versa
         ~ coalesce(., get(str_replace(cur_column(), suffix_[1], suffix_[2]))),
         # Remove the suffix from the combined columns
         .names = "{str_remove(.col, suffix_[1])}"
