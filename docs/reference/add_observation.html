@@ -19,7 +19,7 @@ time-after-first-dose ('TAFD') time calculation."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.50.14.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,6 +82,7 @@ time-after-first-dose ('TAFD') time calculation.</p>
 <span>  NTIME_lookup <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  debug <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include_day_in_ntime <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -172,6 +173,11 @@ to provide the NTIME field.</p></dd>
 
 <dt id="arg-debug">debug<a class="anchor" aria-label="anchor" href="#arg-debug"></a></dt>
 <dd><p>Include debug fields, as logical.</p></dd>
+
+
+<dt id="arg-include-day-in-ntime">include_day_in_ntime<a class="anchor" aria-label="anchor" href="#arg-include-day-in-ntime"></a></dt>
+<dd><p>Include treatment day in the calculation of
+NTIME, as logical.</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>

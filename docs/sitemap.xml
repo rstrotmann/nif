@@ -172,6 +172,7 @@
 <url><loc>/reference/make_md_ex.html</loc></url>
 <url><loc>/reference/make_mean_plot_data_set.html</loc></url>
 <url><loc>/reference/make_nif.html</loc></url>
+<url><loc>/reference/make_ntime.html</loc></url>
 <url><loc>/reference/make_obs.html</loc></url>
 <url><loc>/reference/make_observation.html</loc></url>
 <url><loc>/reference/make_plot_data_set.html</loc></url>
@@ -275,6 +276,7 @@
 <url><loc>/reference/treatments.html</loc></url>
 <url><loc>/reference/treatments.nif.html</loc></url>
 <url><loc>/reference/treatments.sdtm.html</loc></url>
+<url><loc>/reference/trialday_to_day.html</loc></url>
 <url><loc>/reference/usubjid.html</loc></url>
 <url><loc>/reference/watermark.html</loc></url>
 <url><loc>/reference/write_csv.nif.html</loc></url>
