@@ -475,6 +475,47 @@ make_subjects <- function(dm, vs = NULL,
 }
 
 
+#' Make nominal time
+#'
+#' Return NTIME lookup table or NULL if the xxELTM field is not included in
+#' the input data frame.
+#'
+#' @param obj The input as data table.
+#' @param include_day Include time component of treatment day, as logical.
+#'
+#' @return A data frame.
+#' @keywords intern
+make_ntime <- function(obj, include_day = FALSE) {
+  pull_column <- function(col_tail) {
+    col_index <- which(col_tail == str_sub(names(obj), 3, -1))
+    if(length(col_index) == 0) return(NULL)
+    if(length(col_index) > 1) stop(paste0("Multiple columns ending in ", col_tail))
+    return(pull(obj, col_index))
+  }
+
+  if(is.null(pull_column("ELTM"))) {
+    conditional_message(
+      "ELTM is not defined. Provide a NTIME lookup",
+      "table to define nominal time!")
+    return(NULL)
+  }
+
+  eltn_name <- names(obj)[which(str_sub(names(obj), 3, -1) == "ELTM")]
+
+  tm <- pt_to_hours(pull_column("ELTM"))
+  dy <- trialday_to_day(pull_column("DY")) * 24
+
+  out <- data.frame(
+    pull_column("ELTM"),
+    NTIME = tm
+  ) %>%
+    {if(isTRUE(include_day)) mutate(., NTIME = NTIME + dy) else .} %>%
+    distinct()
+  colnames(out)[1] <- eltn_name
+  return(out)
+}
+
+
 #' Compile observation data frame
 #'
 #' @description
@@ -517,6 +558,8 @@ make_subjects <- function(dm, vs = NULL,
 #'   column that matches a column in the domain, and a numerical 'DV' column
 #'   that provides the recoding result.
 #' @param metabolite Observation is a metabolite, as logical.
+#' @param include_day_in_ntime Include treatment day in the calculation of
+#'   NTIME, as logical.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -527,7 +570,7 @@ make_observation <- function(
     domain,
     testcd,
     analyte = NULL,
-    parent = NA,
+    parent = NA, #should this be NULL?
     metabolite = FALSE,
     cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
@@ -538,12 +581,9 @@ make_observation <- function(
     coding_table = NULL,
     factor = 1,
     NTIME_lookup = NULL,
-    keep = NULL
-    # debug = NULL
+    keep = NULL,
+    include_day_in_ntime = FALSE
     ) {
-  # debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  # message(paste0("debug is ", debug))
-
   if(is.null(DTC_field))
     DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
 
@@ -563,35 +603,36 @@ make_observation <- function(
     lubrify_dates()
 
   if(is.null(NTIME_lookup)) {
-    if(str_to_lower(domain) == "pc") {
-      if("time_mapping" %in% names(sdtm) & nrow(sdtm$time_mapping) > 0 &
-          any(names(sdtm$time_mapping) %in% names(obj))){
-        NTIME_lookup <- sdtm$time_mapping
-      } else {
-        if("PCELTM" %in% names(obj)) {
-          if("PCDY" %in% names(obj)){
-            NTIME_lookup <- obj %>%
-              distinct(.data$PCDY, .data$PCELTM) %>%
-            mutate(NTIME = pt_to_hours(.data$PCELTM))
-          } else {
-            NTIME_lookup <- obj %>%
-              distinct(.data$PCELTM) %>%
-              mutate(NTIME = as.numeric(stringr::str_extract(
-                .data$PCELTM, "PT([.0-9]+)H", group = 1)))
-          }
-        } else {
-          conditional_message(
-            "PCELM is not defined. Provide a NTIME lookup",
-            "table to define nominal time!")
-        }
-      }
-    } else {
-      xxdy <- paste0(str_to_upper(domain), "DY")
-      if(xxdy %in% names(obj)) {
-        NTIME_lookup <- distinct(obj, .data[[xxdy]]) %>%
-          mutate(NTIME = (.data[[xxdy]] - 1) * 24)
-      }
-    }
+    # if(str_to_lower(domain) == "pc") {
+    #   if("time_mapping" %in% names(sdtm) & nrow(sdtm$time_mapping) > 0 &
+    #       any(names(sdtm$time_mapping) %in% names(obj))){
+    #     NTIME_lookup <- sdtm$time_mapping
+    #   } else {
+    #     if("PCELTM" %in% names(obj)) {
+    #       if("PCDY" %in% names(obj)){
+    #         NTIME_lookup <- obj %>%
+    #           distinct(.data$PCDY, .data$PCELTM) %>%
+    #         mutate(NTIME = pt_to_hours(.data$PCELTM))
+    #       } else {
+    #         NTIME_lookup <- obj %>%
+    #           distinct(.data$PCELTM) %>%
+    #           mutate(NTIME = as.numeric(stringr::str_extract(
+    #             .data$PCELTM, "PT([.0-9]+)H", group = 1)))
+    #       }
+    #     } else {
+    #       conditional_message(
+    #         "PCELM is not defined. Provide a NTIME lookup",
+    #         "table to define nominal time!")
+    #     }
+    #   }
+    # } else {
+    #   xxdy <- paste0(str_to_upper(domain), "DY")
+    #   if(xxdy %in% names(obj)) {
+    #     NTIME_lookup <- distinct(obj, .data[[xxdy]]) %>%
+    #       mutate(NTIME = (.data[[xxdy]] - 1) * 24)
+    #   }
+    # }
+    NTIME_lookup = make_ntime(obj, include_day = include_day_in_ntime)
   }
 
   # apply coding table, if not NULL
@@ -1015,6 +1056,7 @@ add_observation <- function(
     NTIME_lookup = NULL,
     keep = NULL,
     debug = FALSE,
+    include_day_in_ntime = FALSE,
     silent = deprecated()
   ) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
@@ -1052,7 +1094,8 @@ add_observation <- function(
     make_observation(
       sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
       observation_filter, TESTCD_field, DTC_field, DV_field,
-      coding_table, factor, NTIME_lookup, keep)) %>%
+      coding_table, factor, NTIME_lookup, keep,
+      include_day_in_ntime = include_day_in_ntime)) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%

@@ -451,8 +451,23 @@ test_that("import_observation", {
 })
 
 
+test_that("make_ntime works", {
+  obj <- tribble(
+    ~ID, ~TIME, ~PCELTM,  ~PCDY,
+    1,   0,     "PT0H",   1,
+    1,   0.5,   "PT0.5H", 1,
+    1,   1,     "PT1H",   1,
+    1,   2,     "PT2H",   1,
+    1,   0,     "PT0H",   15,
+    1,   0.5,   "PT0.5H", 15,
+    1,   1,     "PT1H",   15,
+    1,   2,     "PT2H",   15
+  )
 
+  expect_no_error(make_ntime(obj, include_day = F))
+  expect_no_error(make_ntime(obj, include_day = T))
 
+})
 
 
 

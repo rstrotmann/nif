@@ -1,13 +1,14 @@
 
 test_that("pt_to_hours works", {
   test <- tibble::tribble(
-    ~iso,  ~out,
-    "3H",     0,
-    "PT3H",     3,
-    "-PT3H",    -3,
-    "PT15M",  0.25,
-    "PT3H15M",  3.25,
-    "-PT3H15M", -3.25,
+    ~iso,         ~out,
+    "",           NA,
+    "3H",         NA,
+    "PT3H",       3,
+    "-PT3H",      -3,
+    "PT15M",      0.25,
+    "PT3H15M",    3.25,
+    "-PT3H15M",   -3.25,
     "PT1H15M30S", 1.25
   )
   expect_equal(pt_to_hours(test$iso), test$out)
@@ -62,3 +63,12 @@ test_that("decompoase_dtc works", {
 })
 
 
+test_that("trialday_to_day works", {
+  expect_equal(trialday_to_day(-1), -1)
+  expect_equal(trialday_to_day(1), 0)
+  expect_equal(trialday_to_day(
+    c(-3, -1, 1, 3)
+  ), c(-3, -1, 0, 2))
+  expect_error(trialday_to_day(0))
+  expect_equal(trialday_to_day(c(-1, NA, 1)), c(-1, NA, 0))
+})

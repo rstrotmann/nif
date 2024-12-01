@@ -20,7 +20,8 @@ make_observation(
   coding_table = NULL,
   factor = 1,
   NTIME_lookup = NULL,
-  keep = NULL
+  keep = NULL,
+  include_day_in_ntime = FALSE
 )
 }
 \arguments{
@@ -67,6 +68,9 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 to provide the NTIME field.}
 
 \item{keep}{Columns to keep, as character.}
+
+\item{include_day_in_ntime}{Include treatment day in the calculation of
+NTIME, as logical.}
 }
 \value{
 A data frame.

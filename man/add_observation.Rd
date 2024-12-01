@@ -23,6 +23,7 @@ add_observation(
   NTIME_lookup = NULL,
   keep = NULL,
   debug = FALSE,
+  include_day_in_ntime = FALSE,
   silent = deprecated()
 )
 }
@@ -74,6 +75,9 @@ to provide the NTIME field.}
 \item{keep}{Columns to keep, as character.}
 
 \item{debug}{Include debug fields, as logical.}
+
+\item{include_day_in_ntime}{Include treatment day in the calculation of
+NTIME, as logical.}
 
 \item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
 compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
