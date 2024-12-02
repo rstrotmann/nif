@@ -225,24 +225,6 @@ test_that("make_time", {
 })
 
 
-# test_that("make_time_from_TIME", {
-#   test <- tribble(
-#     ~ID, ~TIME, ~EVID, ~CMT,            ~comment,
-#       1,   -10,     0,    2,          "baseline",
-#       1,    -1,     0,    2,           "predose",
-#       1,     0,     1,    1, "admininstration 1",
-#       1,     1,     0,    2,                  "",
-#       1,     4,     0,    2,                  "",
-#       1,    24,     1,    1,  "administration 2",
-#       1,    25,     0,    2,                  "",
-#       1,    28,     0,    2,                  "",
-#       1,    48,     1,    1,  "administration 3",
-#       1,  47.5,     0,    2,                  ""
-#   ) %>% new_nif()
-#
-# })
-
-
 test_that("multiple imputations", {
   ex <- tribble(
     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSEQ, ~EXSTDTC,           ~EXENDTC,
@@ -359,15 +341,6 @@ test_that("make subjects", {
 })
 
 
-# test_that("make baseline", {
-#   sdtm <- make_test_sdtm()
-#   expect_no_error(
-#     test <- make_baseline(sdtm, "lb", "CREAT")
-#   )
-#   expect_equal(dim(test), c(4, 2))
-# })
-
-
 test_that("add_covariate", {
   nif <- tribble(
     ~USUBJID,                  ~DTC, ~NTIME, ~EVID, ~DV,
@@ -419,16 +392,6 @@ test_that("add_administration, add_observation", {
   expect_equal(analytes(nif), "RS2023")
 
 })
-
-
-# test_that("nif_auto works", {
-#   suppressMessages(
-#     testthat::expect_no_error(
-#       nif <- nif_auto(examplinib_poc, bl_creat = FALSE, bl_odwg = FALSE)
-#     )
-#   )
-#   testthat::expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
-# })
 
 
 test_that("import_observation", {

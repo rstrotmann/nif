@@ -26,6 +26,7 @@
   scales = "fixed",
   alpha = 1,
   caption = NULL,
+  ribbon = TRUE,
   group = deprecated(),
   ...
 )
@@ -77,6 +78,8 @@ character.}
 \item{alpha}{The \code{alpha} parameter to \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}, as numeric.}
 
 \item{caption}{The caption line as per \code{\link[ggplot2:labs]{ggplot2::labs()}}.}
+
+\item{ribbon}{Plot ribbon in mean plot, as logical.}
 
 \item{group}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Grouping variable. Use the
 \code{color} or \code{facet} parameters instead.}

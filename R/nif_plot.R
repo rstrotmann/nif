@@ -173,6 +173,7 @@ make_mean_plot_data_set <- function(data_set) {
 #'   `color` or `facet` parameters instead.
 #' @param caption The caption line as per [ggplot2::labs()].
 #' @param ... Further parameters.
+#' @param ribbon Plot ribbon in mean plot, as logical.
 #'
 #' @return A ggplot2 object.
 #' @export
@@ -205,6 +206,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
                      admin = NULL, points = FALSE, lines = TRUE,
                      log = FALSE, mean = FALSE, title = NULL, legend = TRUE,
                      size = 1.5, scales = "fixed", alpha = 1, caption = NULL,
+                     ribbon = TRUE,
                      group = deprecated(), ...) {
   if (lifecycle::is_present(group)) {
     lifecycle::deprecate_warn("0.50.1", "plot(group)", "plot(color)")
@@ -268,7 +270,7 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
       }
     } +
     {
-      if (isTRUE(mean)) {
+      if (isTRUE(mean) & isTRUE(ribbon)) {
         ggplot2::geom_ribbon(
           ggplot2::aes(ymin = pos_diff(DV, sd), ymax = DV + sd, fill = COLOR),
           alpha = 0.3, color = NA, show.legend = FALSE
