@@ -18,9 +18,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, message=F}
+library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(dplyr)
 library(stringr)
 library(nif)
 

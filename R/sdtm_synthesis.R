@@ -271,7 +271,6 @@ synthesize_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5,
 #' @keywords internal
 synthesize_vs <- function(dm) {
   vs <- dm %>%
-    # filter(ACTARMCD!="SCRNFAIL") %>%
     dplyr::select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
     group_by_all() %>%
     tidyr::expand(VSTESTCD = c("HEIGHT", "WEIGHT")) %>%
@@ -295,7 +294,7 @@ synthesize_vs <- function(dm) {
     mutate(VSBLFL = "Y") %>%
     mutate(VSDTC = .data$RFSTDTC) %>%
     select(-c("RFSTDTC")) %>%
-    group_by(USUBJID) %>%
+    group_by(.data$USUBJID) %>%
     mutate(VSSEQ = row_number()) %>%
     as.data.frame()
   return(vs)

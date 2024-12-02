@@ -19,10 +19,12 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @import DT
 #' @import dplyr
+#' @import htmltools
 #' @importFrom shinyjs useShinyjs enable disable
 #' @export
-nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
-                         pctestcd = NULL, usubjid = NULL) {
+nif_debugger <- function(
+    nif_data, sdtm_data,
+    analyte = NULL, extrt = NULL, pctestcd = NULL, usubjid = NULL) {
   if(is.null(usubjid)) usubjid <- unique(nif_data$USUBJID)
 
   if(is.null(analyte)) analyte = guess_analyte(nif_data)
@@ -39,7 +41,6 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
       stop(paste0(pctestcd, " not found in PCTESTCD!"))
   }
 
-
   nif <- nif_data %>%
     ensure_time() %>%
     index_nif() %>%
@@ -50,13 +51,15 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
     mutate(admin_REF = case_when(.data$EVID == 1 ~ .data$REF)) %>%
     mutate(admin_SEQ = .data$SRC_SEQ[REF == admin_REF]) %>%
     group_by(.data$ID, .data$PARENT) %>%
-    tidyr::fill(admin_REF, .direction = "down") %>%
-    tidyr::fill(admin_SEQ, .direction = "down") %>%
+    tidyr::fill(.data$admin_REF, .direction = "down") %>%
+    tidyr::fill(.data$admin_SEQ, .direction = "down") %>%
     ungroup() %>%
-    mutate(admin_id = interaction(USUBJID, PARENT, admin_SEQ)) %>%
-    mutate(obs_id = interaction(USUBJID, ANALYTE, SRC_DOMAIN, SRC_SEQ)) %>%
-    filter(!(is.na(.data$DV) & EVID == 0)) %>%
-    mutate(display_time = TIME) %>%
+    mutate(admin_id = interaction(
+      .data$USUBJID, .data$PARENT, .data$admin_SEQ)) %>%
+    mutate(obs_id = interaction(
+      .data$USUBJID, .data$ANALYTE, .data$SRC_DOMAIN, .data$SRC_SEQ)) %>%
+    filter(!(is.na(.data$DV) & .data$EVID == 0)) %>%
+    mutate(display_time = .data$TIME) %>%
     as.data.frame()
 
   doses <- as.character(sort(unique(nif$DOSE)))
@@ -118,7 +121,7 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
         filter(EVID == 0) %>%
         ggplot2::ggplot(ggplot2::aes(
           x = TAD, y = DV, color = !(REF %in% selection()$REF))) +
-        ggplot2::geom_point(size=4, alpha=.6) +
+        ggplot2::geom_point(size = 4, alpha = .6) +
         ggplot2::scale_y_log10() +
         ggplot2::theme_bw() +
         ggplot2::theme(legend.position = "none")},
@@ -181,21 +184,22 @@ nif_debugger <- function(nif_data, sdtm_data, analyte = NULL, extrt = NULL,
             "DOSE", "ANALYTE", "EVID", "DV", "SRC_DOMAIN", "SRC_SEQ"))) %>%
           filter(
             (REF %in% selection()$REF & EVID == 0) |
-              (REF %in% (filter(nif, REF %in% selection())$admin_REF) & EVID == 1)
+              (REF %in% (filter(nif, .data$REF %in% selection())$admin_REF) & EVID == 1)
           )
       )
 
       ## current pc
       current_pc(
         domain(sdtm_data, "pc") %>%
-          mutate(obs_id = interaction(USUBJID, pctestcd, "PC", PCSEQ)) %>%
+          mutate(obs_id = interaction(.data$USUBJID, pctestcd, "PC", .data$PCSEQ)) %>%
           filter(obs_id %in% selection()$obs_id)
       )
 
       ## current ex
       current_ex(
         domain(sdtm_data, "ex") %>%
-          mutate(admin_id = interaction(USUBJID, EXTRT, EXSEQ)) %>%
+          mutate(admin_id = interaction(
+            .data$USUBJID, .data$EXTRT, .data$EXSEQ)) %>%
           filter(admin_id %in% unique(selection()$admin_id))
       )
     })

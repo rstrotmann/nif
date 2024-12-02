@@ -1,6 +1,6 @@
 
 test_that("pt_to_hours works", {
-  test <- tibble::tribble(
+  test <- tribble(
     ~iso,         ~out,
     "",           NA,
     "3H",         NA,

@@ -35,5 +35,8 @@ utils::globalVariables(c(
   "CLASS", "center", "dispersion", "value", "admin_time", "TAD", "COLOR",
   "ANALYTE1", "LBBLFL", "PCREFID", "RS2023", "RS2023487A", "VSDTC", "admin_REF",
   "evid", "last_obs", "lb", ".", "cmt_name", "LBSTAT", "VSSTAT", "MDV",
-  "rich_start"
+  "rich_start", "admin_id",
+  "auc", "auc_metab", "eta_cl_met", "eta_cl_par", "eta_f", "eta_f_f", "eta_ka",
+  "eta_ke", "eta_q", "obs_id", "t_cl_met", "t_cl_par", "t_d1", "t_d1_f", "t_f",
+  "t_f_f", "t_ka", "t_ka_f", "t_ke", "t_q", "t_v_centr"
 ))

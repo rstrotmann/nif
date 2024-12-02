@@ -15,4 +15,3 @@ A NIF object.
 \description{
 Add time-after-dose (TAD) field
 }
-\keyword{internal}

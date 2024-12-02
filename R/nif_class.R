@@ -1137,7 +1137,6 @@ add_dose_level <- function(obj) {
 #'
 #' @return A NIF object.
 #' @export
-#' @keywords internal
 add_tad <- function(nif) {
   nif %>%
     ensure_parent() %>%

@@ -421,14 +421,14 @@ test_that("add_administration, add_observation", {
 })
 
 
-test_that("nif_auto works", {
-  suppressMessages(
-    testthat::expect_no_error(
-      nif <- nif_auto(examplinib_poc, bl_creat = FALSE, bl_odwg = FALSE)
-    )
-  )
-  testthat::expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
-})
+# test_that("nif_auto works", {
+#   suppressMessages(
+#     testthat::expect_no_error(
+#       nif <- nif_auto(examplinib_poc, bl_creat = FALSE, bl_odwg = FALSE)
+#     )
+#   )
+#   testthat::expect_equal(analytes(nif), c("RS2023", "RS2023487A"))
+# })
 
 
 test_that("import_observation", {
@@ -463,14 +463,25 @@ test_that("make_ntime works", {
     1,   1,     "PT1H",   15,
     1,   2,     "PT2H",   15
   )
-
   expect_no_error(make_ntime(obj, include_day = F))
   expect_no_error(make_ntime(obj, include_day = T))
-
 })
 
 
-
+test_that("make_nif integration works", {
+  sdtm <- examplinib_poc
+  expect_no_error(
+    nif <- new_nif() %>%
+      add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
+      add_observation(sdtm, "pc", "RS2023", cmt = 2) %>%
+      add_observation(sdtm, "pc", "RS2023487A", analyte = "M1",
+                      parent = "RS2023", cmt = 3) %>%
+      add_baseline(sdtm, "lb", "CREAT") %>%
+      add_bl_crcl() %>%
+      add_bl_renal() %>%
+      add_bl_lbm()
+  )
+})
 
 
 

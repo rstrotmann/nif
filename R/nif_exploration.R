@@ -691,7 +691,6 @@ plot_old <- function(
  # plotting
  if(mean == TRUE) {
    # mean plot
-   # temp %>%
    obs_data %>%
      filter(EVID == 0) %>%
 
@@ -710,11 +709,11 @@ plot_old <- function(
 
      {if(.by != "") mutate(., BY = .data[[.by]]) else mutate(., BY = TRUE)} %>%
 
-     group_by(NTIME, DOSE, GROUP, COLOR, BY) %>%
+     group_by(.data$NTIME, .data$DOSE, .data$GROUP, .data$COLOR, .data$BY) %>%
      summarize(n = n(), mean = safe_mean(DV),
                sd = safe_sd(DV), .groups = "drop") %>%
      ungroup() %>%
-     arrange(DOSE, NTIME, GROUP) %>%
+     arrange(DOSE, NTIME, GROUP) #%>%
 
    p <- ggplot2::ggplot(ggplot2::aes(
      x = .data$NTIME,

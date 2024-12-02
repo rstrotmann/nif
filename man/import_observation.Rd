@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{import_observation}
 \alias{import_observation}
-\title{Import observation from non-SDTM data frame}
+\title{Add observation from non-SDTM-formatted data table}
 \usage{
 import_observation(
   nif,

@@ -7,7 +7,7 @@
 trialday_to_day(x)
 }
 \arguments{
-\item{trial_day}{The trial day as numeric.}
+\item{x}{The trial day as numeric.}
 }
 \value{
 The number of elapsed days as numeric.

@@ -34,7 +34,8 @@ Imports:
     utils,
     ggrepel,
     readr,
-    readxl
+    readxl,
+    htmltools
 Suggests: 
     knitr,
     rmarkdown,

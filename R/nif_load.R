@@ -38,6 +38,7 @@ read_nif <- function(filename, format="csv") {
 #' @param format Format as character. Must be 'NONMEM'.
 #'
 #' @return A nif object.
+#' @import readr
 #' @export
 import_nif <- function(filename, format = "NONMEM") {
   if(!format %in% c("NONMEM", "csv"))
@@ -49,7 +50,8 @@ import_nif <- function(filename, format = "NONMEM") {
 
   num_cols <- function(x) {
     x %>%
-      select(-c("USUBJID", "STUDYID")) %>%
+      # select(-c("USUBJID", "STUDYID")) %>%
+      select(-any_of(c("USUBJID", "STUDYID"))) %>%
       select(is_nif_numeric) %>%
       names()
   }
@@ -59,13 +61,15 @@ import_nif <- function(filename, format = "NONMEM") {
     pos <- str_locate_all(header, "[A-Za-z_]+")[[1]][,1]
     widths <- (pos - lag(pos))[-1]
 
-    invisible(capture_output(
-      raw <- readr::read_fwf(
-        filename,
-        col_positions = readr::fwf_widths(widths),
-        show_col_types = FALSE
-      )
-    ))
+    invisible(
+      # capture_output(
+        raw <- readr::read_fwf(
+          filename,
+          col_positions = readr::fwf_widths(widths),
+          show_col_types = FALSE
+        )
+      # )
+    )
 
     nif <- raw[-1,] %>%
       mutate(across(
@@ -82,11 +86,12 @@ import_nif <- function(filename, format = "NONMEM") {
   }
 
   if(format == "csv") {
-    invisible(capture_output(
-      raw <- read_csv(
+    # invisible(capture_output(
+      raw <- readr::read_csv(
         filename,
-        show_col_types = FALSE)
-    ))
+        show_col_types = FALSE
+      )
+    # ))
     return(new_nif(raw))
   }
 }

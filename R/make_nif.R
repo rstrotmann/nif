@@ -1140,11 +1140,11 @@ first_admin_dtc <- function(x) {
     dplyr::group_by(.data$USUBJID) %>%
     dplyr::mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    distinct(USUBJID, FIRSTDTC)
+    distinct(.data$USUBJID, .data$FIRSTDTC)
 }
 
 
-#' Import observation from non-SDTM data frame
+#' Add observation from non-SDTM-formatted data table
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -1195,8 +1195,6 @@ import_observation <- function(
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
       "Compartment was not specified and has been set to ", cmt))}
-
-  # if(is.null(analyte)) analyte <- testcd
 
   imp <- nif %>%
     as.data.frame() %>%
@@ -1252,8 +1250,8 @@ import_observation <- function(
   } else {
     obs <- obs %>%
       left_join(first_admin_dtc(nif), by = "USUBJID") %>%
-      mutate(DTC = FIRSTDTC + duration(hours = NTIME)) %>%
-      select(-FIRSTDTC) %>%
+      mutate(DTC = .data$FIRSTDTC + duration(hours = NTIME)) %>%
+      select(!all_of("FIRSTDTC")) %>%
       mutate(IMPUTATION = paste0("DTC derived from ", NTIME_field))
   }
 
@@ -1488,19 +1486,6 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     "ACTARMCD", "IMPUTATION", "FOOD", "PART", "PERIOD", "COHORT", "FASTED",
     "RICH_N", "DI", "TREATMENT"))
 
-  # obj %>%
-  #   make_time() %>%
-  #   arrange(.data$DTC) %>%
-  #   mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
-  #   index_nif() %>%
-  #   group_by(.data$ID, .data$PARENT) %>%
-  #   tidyr::fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED",
-  #                 starts_with("BL_"))),
-  #        .direction = "downup") %>%
-  #   ungroup() %>%
-  #   nif_cleanup(keep = keep) %>%
-  #   new_nif()
-
   obj %>%
     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     make_time() %>%
@@ -1514,9 +1499,6 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     nif_cleanup(keep = keep) %>%
     new_nif()
 }
-
-
-
 
 
 #' Remove non-essential fields
