@@ -484,7 +484,11 @@ make_subjects <- function(dm, vs = NULL,
 #' @param include_day Include time component of treatment day, as logical.
 #'
 #' @return A data frame.
-#' @keywords intern
+#' @export
+#' @noRd
+#' @examples
+#' make_ntime(examplinib_sad_nif)
+#' make_ntime(examplinib_fe_nif)
 make_ntime <- function(obj, include_day = FALSE) {
   pull_column <- function(col_tail) {
     col_index <- which(col_tail == str_sub(names(obj), 3, -1))

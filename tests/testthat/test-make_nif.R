@@ -428,6 +428,8 @@ test_that("make_ntime works", {
   )
   expect_no_error(make_ntime(obj, include_day = F))
   expect_no_error(make_ntime(obj, include_day = T))
+  expect_no_error(make_ntime(examplinib_sad_nif))
+  expect_no_error(make_ntime(examplinib_fe_nif))
 })
 
 

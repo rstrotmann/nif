@@ -31,7 +31,7 @@ print_debug <- function(obj) {
 }
 
 
-#' Recode SEX field in a data frame
+#' Re-code SEX field in a data frame
 #'
 #' This function recodes the SEX field in a data frame. All numerical values are
 #' kept while "M" is recoded to 0 and "F" to 1. If your downstream analysis
@@ -43,13 +43,29 @@ print_debug <- function(obj) {
 recode_sex <- function(obj) {
   obj %>%
     mutate(SEX = as.numeric(
-      case_match(as.character(.data$SEX),
+      case_match(toupper(as.character(.data$SEX)),
         "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-        # "男" ~ 0, "女" ~ 1,
-        "\u7537" ~ 0, "\u5973" ~ 1,
+        "男" ~ 0, "女" ~ 1,
+        # "\u7537" ~ 0, "\u5973" ~ 1,
         .default = NA
       )
     ))
+}
+
+
+#' Positive value or zero if negative
+#'
+#' @param x Numeric.
+#' @return Numeric.
+#' @export
+#' @keywords internal
+#' @examples
+#' positive_or_zero(2)
+#' positive_or_zero(-2)
+#' positive_or_zero(c(2, 1, 0, -1, -2))
+positive_or_zero <- function(x) {
+  x[which(x < 0 | is.na(x))] <- 0
+  return(x)
 }
 
 
@@ -60,7 +76,7 @@ recode_sex <- function(obj) {
 #' @return A character string
 #' @keywords internal
 indent_string <- function(indent = 0) {
-  paste(replicate(indent, " "), collapse = "")
+  paste(replicate(positive_or_zero(indent), " "), collapse = "")
 }
 
 
@@ -145,22 +161,6 @@ df_to_string <- function(
 }
 
 
-#' Positive value or zero if negative
-#'
-#' @param x Numeric.
-#' @return Numeric.
-#' @export
-#' @keywords internal
-#' @examples
-#' positive_or_zero(2)
-#' positive_or_zero(-2)
-#' positive_or_zero(c(2, 1, 0, -1, -2))
-positive_or_zero <- function(x) {
-  x[which(x < 0 | is.na(x))] <- 0
-  return(x)
-}
-
-
 #' The list of expected date/time formats as per ISO 8601
 #' @keywords internal
 dtc_formats <- c(
@@ -233,7 +233,9 @@ lubrify_dates <- function(obj) {
 #' Convert all DTC fields into ISO 8601 string format
 #'
 #' Change all columns in the input data frame that end with 'DTC' from POSIct to
-#' character using the ISO 8601 format.
+#' character using the ISO 8601 format. Seconds will be ignored, the resolution
+#' is only to minutes.
+#'
 #' @param obj A data frame.
 #' @return A data frame.
 #' @seealso [lubrify_dates()]
@@ -266,7 +268,8 @@ is_iso_date_time <- function(x) {
 #'
 #' The expected format is "dddd-dd-dd" with "d" a digit. This function tests
 #' whether the above is part of the input, i.e., ISO 8601-formatted date-time
-#' objects like "dddd-dd-ddTdd:dd" are also recognized.
+#' objects like "dddd-dd-ddTdd:dd" are also recognized. Dates with missing day
+#' of month are not accepted.
 #' @param x The input as character.
 #' @return Boolean.
 #' @export
@@ -295,16 +298,11 @@ pt_to_hours <- function(iso) {
     group = c(1, 3, 5))
 
   as.data.frame(temp) %>%
-    # mutate(sign = case_match(V1, "-" ~ -1, .default = 1)) %>%
     mutate(sign = case_match(.[[1]], "-" ~ -1, .default = 1)) %>%
-    # mutate(hours = case_when(is.na(V2) ~ 0, .default = as.numeric(V2))) %>%
     mutate(hours = case_when(is.na(.[[2]]) ~ 0, .default = as.numeric(.[[2]]))) %>%
-    # mutate(mins = case_when(is.na(V3) ~ 0, .default = as.numeric(V3))) %>%
     mutate(mins = case_when(is.na(.[[3]]) ~ 0, .default = as.numeric(.[[3]]))) %>%
     mutate(out = case_when(
-      # is.na(V2) & is.na(V3) ~ NA,
       is.na(.[[2]]) & is.na(.[[3]]) ~ NA,
-      # .default = sign * (hours + mins/60))) %>%
       .default = .data$sign * (.data$hours + .data$mins/60))) %>%
     pull(.data$out)
 }
@@ -507,7 +505,7 @@ safe_min <- function(x, ...) {
 }
 
 
-#' Difference, or zero, if difference is negative
+#' Difference, or NA, if difference is negative
 #'
 #' @param a A as numeric.
 #' @param b B as numeric.

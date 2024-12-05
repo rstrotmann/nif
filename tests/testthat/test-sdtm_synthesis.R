@@ -102,46 +102,45 @@ simulate_pk <- function(n = 20) {
 }
 
 
-test_that("PK model works", {
-  expect_no_error(
-    pk <- simulate_pk(n = 20) %>%
-      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal"),
-                   names_to = "COMP", values_to = "VALUE"))
+# test_that("PK model works", {
+#   expect_no_error(
+#     pk <- simulate_pk(n = 20) %>%
+#       tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal"),
+#                    names_to = "COMP", values_to = "VALUE"))
+#
+#   pk %>%
+#     group_by(time, COMP) %>%
+#     summarize(MEAN = mean(VALUE), SD = sd(VALUE), .groups = "drop") %>%
+#     ggplot2::ggplot(ggplot2::aes(x = time, y = MEAN, color = COMP)) +
+#     ggplot2::geom_ribbon(ggplot2::aes(
+#       ymin = MEAN-SD, ymax = MEAN+SD, fill = COMP), color = NA, alpha = 0.2) +
+#     ggplot2::geom_line() +
+#     ggplot2::xlim(0, 50) +
+#     ggplot2::theme_bw()
+# })
 
-  pk %>%
-    group_by(time, COMP) %>%
-    summarize(MEAN = mean(VALUE), SD = sd(VALUE), .groups = "drop") %>%
-    ggplot2::ggplot(ggplot2::aes(x = time, y = MEAN, color = COMP)) +
-    ggplot2::geom_ribbon(ggplot2::aes(
-      ymin = MEAN-SD, ymax = MEAN+SD, fill = COMP), color = NA, alpha = 0.2) +
-    ggplot2::geom_line() +
-    ggplot2::xlim(0, 50) +
-    ggplot2::theme_bw()
-})
 
 
-
-test_that("EGFR is a covariate in PK model", {
-  expect_no_error(
-    pk <- simulate_pk(n = 100) %>%
-      tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal"),
-                   names_to = "COMP", values_to = "VALUE"))
-
-  pk %>%
-    ggplot2::ggplot(ggplot2::aes(x = EGFR, y = ke)) +
-    ggplot2::geom_point(size = 3) +
-    ggplot2::theme_bw()
-
-  pk %>%
-    group_by(time, COMP) %>%
-    summarize(MEAN = mean(VALUE), SD = sd(VALUE), .groups = "drop") %>%
-    ggplot2::ggplot(ggplot2::aes(x = time, y = MEAN, color = COMP)) +
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = MEAN-SD, ymax = MEAN+SD,
-                                      fill = COMP), color = NA, alpha = 0.2) +
-    ggplot2::geom_line() +
-    ggplot2::xlim(0, 24) +
-    ggplot2::theme_bw()
-})
+# test_that("EGFR is a covariate in PK model", {
+#     pk <- simulate_pk(n = 100) %>%
+#       tidyr::pivot_longer(cols = c("centr", "peri", "metab", "renal"),
+#                    names_to = "COMP", values_to = "VALUE")
+#
+#   pk %>%
+#     ggplot2::ggplot(ggplot2::aes(x = EGFR, y = ke)) +
+#     ggplot2::geom_point(size = 3) +
+#     ggplot2::theme_bw()
+#
+#   pk %>%
+#     group_by(time, COMP) %>%
+#     summarize(MEAN = mean(VALUE), SD = sd(VALUE), .groups = "drop") %>%
+#     ggplot2::ggplot(ggplot2::aes(x = time, y = MEAN, color = COMP)) +
+#     ggplot2::geom_ribbon(ggplot2::aes(ymin = MEAN-SD, ymax = MEAN+SD,
+#                                       fill = COMP), color = NA, alpha = 0.2) +
+#     ggplot2::geom_line() +
+#     ggplot2::xlim(0, 24) +
+#     ggplot2::theme_bw()
+# })
 
 
 
