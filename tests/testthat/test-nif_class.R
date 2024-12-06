@@ -416,6 +416,27 @@ test_that("print.nif works", {
 })
 
 
+test_that("add_rtb works", {
+  nif <- tibble::tribble(
+    ~ID, ~TIME, ~EVID, ~CMT, ~DV,
+    1,     0,     1,    1, NA,
+    1,     0,     0,    2, 100,
+    1,     2,     0,    2, 200,
+    1,     4,     0,    2, 300,
+    1,    24,     1,    1, NA,
+    1,    48,     1,    1, NA,
+    1,    72,     1,    1, NA,
+    1,    72,     0,    2, 400,
+    2,     0,     1,    1, NA,
+    2,     0,     0,    2, 10,
+    2,     2,     0,    2, 20,
+    2,     4,     0,    2, 30,
+    2,    72,     0,    2, 40,
+  )
+  temp <- as.data.frame(add_rtb(nif))
+  expect_equal(temp$DVRTB,
+               c(NA, 1, 2, 3, NA, NA, NA, 4, NA, 1, 2, 3, 4))
+})
 
 
 
