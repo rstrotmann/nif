@@ -1464,13 +1464,6 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
     index_dosing_interval() %>%
     add_obs_per_dosing_interval() %>%
     mutate(RICHINT_TEMP = (.data$OPDI >= min_n)) %>%
-    # add last observation before administration to rich interval
-    # group_by(ID, ANALYTE) %>%
-    # mutate(RICHINT = RICHINT_TEMP | (lead(RICHINT_TEMP) & EVID == 0)) %>%
-    # fill(RICHINT, .direction = "down") %>%
-    # ungroup() %>%
-    # select(-c("RICHINT_TEMP")) %>%
-
     group_by(.data$ID, .data$ANALYTE, .data$DI) %>%
     mutate(RICH_START = case_when(
       row_number() == 1 & .data$RICHINT_TEMP == TRUE ~ TRUE,

@@ -1222,6 +1222,7 @@ import_observation <- function(
     filter(EVID == 1) %>%
     select("USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_"),
            any_of(keep)) %>%
+    select(!any_of(c("SRC_DOMAIN", "SRC_SEQ"))) %>%
     mutate(IMPUTATION = "") %>%
     distinct()
 
