@@ -15,7 +15,8 @@ Boolean.
 \description{
 The expected format is "dddd-dd-dd" with "d" a digit. This function tests
 whether the above is part of the input, i.e., ISO 8601-formatted date-time
-objects like "dddd-dd-ddTdd:dd" are also recognized.
+objects like "dddd-dd-ddTdd:dd" are also recognized. Dates with missing day
+of month are not accepted.
 }
 \examples{
 is_iso_date("2023-09-27")

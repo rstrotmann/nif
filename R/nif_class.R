@@ -802,7 +802,8 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
 
   temp <- obj %>%
     as.data.frame() %>%
-    mutate(across(any_of(num_fields), signif, 4)) %>%
+    # mutate(across(any_of(num_fields), signif, 4)) %>%
+    mutate(across(any_of(num_fields), \(x) signif(x, 4))) %>%
     mutate(ADM = case_when(.data$AMT != 0 ~ "1", .default = ".")) %>%
     mutate(YTYPE = case_when(.data$ADM == "1" ~ ".",
       .default = as.character(CMT - 1)
@@ -1483,7 +1484,8 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
     )) %>%
     ungroup() %>%
     group_by(.data$ID, .data$ANALYTE, .data$DI, .data$RICHINT_TEMP) %>%
-    tidyr::fill(.data$RICH_N, .direction = "down") %>%
+    # tidyr::fill(.data$RICH_N, .direction = "down") %>%
+    tidyr::fill("RICH_N", .direction = "down") %>%
     ungroup() %>%
     select(-c("RICHINT_TEMP", "RICH_START")) %>%
     new_nif()

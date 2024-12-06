@@ -111,4 +111,8 @@ plot(examplinib_poc_nif,
   color = "SEX", max_time = 25, time = "TAD", lines = FALSE, size = 3,
   alpha = 0.5, title = "POC study: all analytes and doses"
 )
+plot(examplinib_fe_nif,
+  points = TRUE, color = c("FASTED"), mean = TRUE,
+  max_time = 12, admin = "RS2023"
+)
 }

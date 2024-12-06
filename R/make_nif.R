@@ -946,7 +946,8 @@ make_time_from_TIME <- function(obj) {
     mutate(TAFD = round(.data$TIME - .data$.first_admin, digits = 3)) %>%
     arrange(.data$ID, .data$TIME, -.data$EVID) %>%
     mutate(.admin_time = case_when(.data$EVID == 1 ~ .data$TIME)) %>%
-    tidyr::fill(.data$.admin_time, .direction = "down") %>%
+    # tidyr::fill(.data$.admin_time, .direction = "down") %>%
+    tidyr::fill(".admin_time", .direction = "down") %>%
     mutate(TAD = .data$TIME - .data$.admin_time) %>%
     ungroup() %>%
     select(-c(".first_time", ".first_admin", ".admin_time")) %>%

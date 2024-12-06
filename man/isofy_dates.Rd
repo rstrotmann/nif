@@ -14,7 +14,8 @@ A data frame.
 }
 \description{
 Change all columns in the input data frame that end with 'DTC' from POSIct to
-character using the ISO 8601 format.
+character using the ISO 8601 format. Seconds will be ignored, the resolution
+is only to minutes.
 }
 \seealso{
 \code{\link[=lubrify_dates]{lubrify_dates()}}

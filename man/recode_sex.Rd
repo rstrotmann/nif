@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{recode_sex}
 \alias{recode_sex}
-\title{Recode SEX field in a data frame}
+\title{Re-code SEX field in a data frame}
 \usage{
 recode_sex(obj)
 }

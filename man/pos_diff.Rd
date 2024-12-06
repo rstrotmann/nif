@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{pos_diff}
 \alias{pos_diff}
-\title{Difference, or zero, if difference is negative}
+\title{Difference, or NA, if difference is negative}
 \usage{
 pos_diff(a, b)
 }
@@ -15,6 +15,6 @@ pos_diff(a, b)
 Numeric.
 }
 \description{
-Difference, or zero, if difference is negative
+Difference, or NA, if difference is negative
 }
 \keyword{internal}
