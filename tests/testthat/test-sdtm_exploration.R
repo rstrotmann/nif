@@ -8,5 +8,7 @@ test_that("filter_correct_date_format works", {
     "XX", "2024-12-07T10:38",
     "XX", "2024-12-07T10"
   )
-  expect_no_error(filter_correct_date_format(test))
+  suppressMessages(
+    expect_no_error(filter_correct_date_format(test))
+  )
 })

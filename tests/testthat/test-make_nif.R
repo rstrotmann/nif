@@ -171,13 +171,15 @@ test_that("make_observation works", {
   expect_no_error(
     make_observation(sdtm, "pc", "RS2023")
   )
-  expect_no_error(
-    make_observation(sdtm, "vs", "WEIGHT")
+  suppressMessages(expect_no_error(
+    make_observation(sdtm, "vs", "WEIGHT"))
   )
 
-  expect_no_error(
-    make_observation(sdtm, "vs", "WEIGHT",
-                     observation_filter = "USUBJID == '20230000011010001'")
+  suppressMessages(
+    expect_no_error(
+      make_observation(sdtm, "vs", "WEIGHT",
+                       observation_filter = "USUBJID == '20230000011010001'")
+    )
   )
 })
 
@@ -340,6 +342,13 @@ test_that("make subjects", {
 })
 
 
+# test_that("make_subject works". {
+#   dm <- tribble(
+#     USUBJID, SEX, ACTARMCD, RFXSTDTC
+#   )
+# })
+
+
 test_that("add_covariate", {
   nif <- tribble(
     ~USUBJID,                  ~DTC, ~NTIME, ~EVID, ~DV,
@@ -434,16 +443,18 @@ test_that("make_ntime works", {
 
 test_that("make_nif integration works", {
   sdtm <- examplinib_poc
-  expect_no_error(
-    nif <- new_nif() %>%
-      add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
-      add_observation(sdtm, "pc", "RS2023", cmt = 2) %>%
-      add_observation(sdtm, "pc", "RS2023487A", analyte = "M1",
-                      parent = "RS2023", cmt = 3) %>%
-      add_baseline(sdtm, "lb", "CREAT") %>%
-      add_bl_crcl() %>%
-      add_bl_renal() %>%
-      add_bl_lbm()
+  suppressMessages(
+    expect_no_error(
+      nif <- new_nif() %>%
+        add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
+        add_observation(sdtm, "pc", "RS2023", cmt = 2) %>%
+        add_observation(sdtm, "pc", "RS2023487A", analyte = "M1",
+                        parent = "RS2023", cmt = 3) %>%
+        add_baseline(sdtm, "lb", "CREAT") %>%
+        add_bl_crcl() %>%
+        add_bl_renal() %>%
+        add_bl_lbm()
+    )
   )
 })
 
@@ -465,4 +476,16 @@ test_that("guess_lbspec works", {
     data.frame(LBSPEC = c("plasma", "urine"))), "urine"))
 })
 
+
+test_that("add_time works", {
+  test <- data.frame(
+    USUBJID = c(1, 2, 3, 4),
+    DTC = now(),
+    NTIME = c(0, 1, 2, 4)
+  ) %>%
+    tidyr::expand(USUBJID, NTIME, DTC) %>%
+    mutate(DTC = DTC + hours(NTIME)) %>%
+    add_time()
+  expect_equal(test$NTIME, test$TIME)
+})
 
