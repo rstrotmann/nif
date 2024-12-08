@@ -285,11 +285,10 @@ make_exstdy_exendy <- function(ex, dm) {
 guess_pcspec <- function(pc) {
   pcspecs <- unique(pc$PCSPEC)
   standard_specs <- c(
-    "PLASMA", "Plasma", "plasma", "SERUM", "Serum", "serum",
-    "BLOOD", "Blood", "blood"
+    "PLASMA", "SERUM", "BLOOD"
   )
-
-  spec <- standard_specs[standard_specs %in% pcspecs][1]
+  temp <- match(toupper(pcspecs), standard_specs)
+  spec <- pcspecs[order(temp)][1]
   conditional_message("No specimen specified. Set to ", spec,
                       " as the most likely.", "\n")
   return(spec)
@@ -304,8 +303,9 @@ guess_pcspec <- function(pc) {
 #' @keywords internal
 guess_lbspec <- function(lb) {
   lbspecs <- unique(lb$LBSPEC)
-  standard_specs <- c("SERUM", "serum", "URINE", "urine")
-  spec <- standard_specs[standard_specs %in% lbspecs][1]
+  standard_specs <- c("SERUM", "URINE")
+  temp <- match(toupper(lbspecs), standard_specs)
+  spec <- lbspecs[order(temp)][1]
   conditional_message("No specimen specified. Set to '", spec,
                       "' as the most likely.", "\n")
   return(spec)
