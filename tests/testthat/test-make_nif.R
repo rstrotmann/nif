@@ -342,11 +342,32 @@ test_that("make subjects", {
 })
 
 
-# test_that("make_subject works". {
-#   dm <- tribble(
-#     USUBJID, SEX, ACTARMCD, RFXSTDTC
-#   )
-# })
+test_that("make_subject works with different age definitions", {
+  dm <- tribble(
+    ~USUBJID, ~SEX, ~ACTARMCD,
+    1, 0, "A",
+    2, 1, "A",
+    3, 0, "B",
+    4, 1, "B"
+  )
+
+  make_subjects(dm)
+
+  temp <- make_subjects(
+    dm %>%
+      mutate(RFICDTC = now()) %>%
+      mutate(BRTHDTC = now() - years(50 - as.numeric(USUBJID)))
+  )
+  expect_equal(temp$AGE, 50 - temp$USUBJID)
+
+  temp <- make_subjects(
+    dm %>%
+      mutate(RFICDTC = now()) %>%
+      mutate(BRTHDTC = now() - years(50 - as.numeric(USUBJID))) %>%
+      mutate(AGE = c(30, 20, NA, NA))
+  )
+  expect_equal(temp$AGE, c(30, 20, 47, 46))
+})
 
 
 test_that("add_covariate", {

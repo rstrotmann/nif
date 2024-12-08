@@ -266,10 +266,10 @@ make_exstdy_exendy <- function(ex, dm) {
         distinct(.data$USUBJID, .data$RFSTDTC),
       by = "USUBJID"
     ) %>%
-    mutate(EXSTDY = floor(as.numeric(difftime(.data$EXSTDTC, .data$RFSTDTC),
-                                     units = "days")) + 1) %>%
-    mutate(EXENDY = floor(as.numeric(difftime(.data$EXENDTC, .data$RFSTDTC),
-                                     units = "days")) + 1) %>%
+    mutate(EXSTDY = floor(as.numeric(
+      difftime(.data$EXSTDTC, .data$RFSTDTC), units = "days")) + 1) %>%
+    mutate(EXENDY = floor(as.numeric(
+      difftime(.data$EXENDTC, .data$RFSTDTC), units = "days")) + 1) %>%
     select(-RFSTDTC)
 }
 
@@ -433,10 +433,14 @@ make_subjects <- function(
   if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
     dm <- dm %>%
       lubrify_dates() %>%
-      mutate(age_brthdtc = floor(as.duration(
-        interval(.data$BRTHDTC, .data$RFICDTC)) / as.duration(years(1)))) %>%
-      mutate(AGE = case_when(is.na(.data$AGE) ~ .data$age_brthdtc,
-                             .default = .data$AGE)) %>%
+      mutate(age_brthdtc = round(as.numeric(
+        as.duration(.data$RFICDTC - .data$BRTHDTC), "years"), 0)) %>%
+      {if("AGE" %in% names(dm))
+        mutate(., AGE = case_when(
+          is.na(.data$AGE) ~ .data$age_brthdtc,
+          .default = .data$AGE))
+        else
+            mutate(., AGE = .data$age_brthdtc)} %>%
       select(-"age_brthdtc")
   }
 
@@ -456,6 +460,8 @@ make_subjects <- function(
       baseline_covariates <- baseline_covariates %>%
         mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
     }
+  } else {
+    baseline_covariates <- distinct(dm, USUBJID)
   }
 
   out <- dm %>%
