@@ -174,7 +174,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
   sdtm %>%
     domain("ex") %>%
     check_date_format(verbose = verbose) %>%
-    filter_correct_date_format(verbose = verbose) %>%
+    # filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose) %>%
     check_last_exendtc(verbose = verbose)
 
@@ -183,7 +183,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
     domain("pc") %>%
     select("USUBJID", "DOMAIN", "PCDTC") %>%
     check_date_format(verbose = verbose) %>%
-    filter_correct_date_format(verbose = verbose) %>%
+    # filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose)
   return(invisible(NULL))
 }

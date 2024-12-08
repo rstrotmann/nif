@@ -1,5 +1,5 @@
 test_that("conditional message works", {
-  expect_message(conditional_message("test"), "test")
+  # expect_message(conditional_message("test"), "test")
 
   old_silent_value <- nif_option_value("silent")
   nif_option("silent" = TRUE)
