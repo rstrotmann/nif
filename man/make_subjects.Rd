@@ -2,7 +2,8 @@
 % Please edit documentation in R/make_nif.R
 \name{make_subjects}
 \alias{make_subjects}
-\title{Compile subject information}
+\title{clip_nif(examplinib_poc_nif)
+Compile subject information}
 \usage{
 make_subjects(
   dm,
@@ -24,6 +25,7 @@ make_subjects(
 A data table.
 }
 \description{
+clip_nif(examplinib_poc_nif)
 Compile subject information
 }
 \keyword{internal}

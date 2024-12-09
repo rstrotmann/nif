@@ -233,9 +233,9 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
       nrow(temp),
       " administration episodes had an EXENDTC before the EXSTDTC and were\n",
       "removed from the data set:\n",
-      df_to_string(select(temp, "USUBJID", "EXTRT", "EXSEQ",
-                          "EXSTDTC", "EXENDTC", "RFENDTC"),
-                   indent = 2),
+      df_to_string(select(
+        temp, "USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"),
+        indent = 2),
       "\n"))
   }
   ex %>%
@@ -243,35 +243,35 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
 }
 
 
-#' Make EXSTDY and EXENDY by USUBJID, EXTRT
-#'
-#' Treatment days are calculated relative to RFSTDTC from DM.
-#'
-#' @details
-#' Caution: Currently, the function works only with treatment days after Day 1.
-#'  If this be ever used for days before Day 1, a term must be
-#' implemented to correct for the missing Day 0 in the time nomenclature.
-#'
-#' @param ex The EX domain as data frame.
-#' @param dm The DM domain as data frame.
-#' @return The enhanced EX domain as data frame.
-#' @keywords internal
-make_exstdy_exendy <- function(ex, dm) {
-  ex %>%
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-    assertr::verify(is.POSIXct(c(EXSTDTC, EXENDTC))) %>%
-    left_join(
-      dm %>%
-        distinct(.data$USUBJID, .data$RFSTDTC),
-      by = "USUBJID"
-    ) %>%
-    mutate(EXSTDY = floor(as.numeric(
-      difftime(.data$EXSTDTC, .data$RFSTDTC), units = "days")) + 1) %>%
-    mutate(EXENDY = floor(as.numeric(
-      difftime(.data$EXENDTC, .data$RFSTDTC), units = "days")) + 1) %>%
-    select(-RFSTDTC)
-}
+# Make EXSTDY and EXENDY by USUBJID, EXTRT
+#
+# Treatment days are calculated relative to RFSTDTC from DM.
+#
+# @details
+# Caution: Currently, the function works only with treatment days after Day 1.
+#  If this be ever used for days before Day 1, a term must be
+# implemented to correct for the missing Day 0 in the time nomenclature.
+#
+# @param ex The EX domain as data frame.
+# @param dm The DM domain as data frame.
+# @return The enhanced EX domain as data frame.
+# @keywords internal
+# make_exstdy_exendy <- function(ex, dm) {
+#   ex %>%
+#     assertr::verify(assertr::has_all_names(
+#       "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+#     assertr::verify(is.POSIXct(c(EXSTDTC, EXENDTC))) %>%
+#     left_join(
+#       dm %>%
+#         distinct(.data$USUBJID, .data$RFSTDTC),
+#       by = "USUBJID"
+#     ) %>%
+#     mutate(EXSTDY = floor(as.numeric(
+#       difftime(.data$EXSTDTC, .data$RFSTDTC), units = "days")) + 1) %>%
+#     mutate(EXENDY = floor(as.numeric(
+#       difftime(.data$EXENDTC, .data$RFSTDTC), units = "days")) + 1) %>%
+#     select(-RFSTDTC)
+# }
 
 
 #' Guess the most likely PCSPEC
@@ -388,29 +388,29 @@ add_time <- function(x) {
 }
 
 
-#' Reduce a NIF object on the subject level by excluding all
-#' administrations after the last observation
-#'
-#' @param nif A NIF dataset.
-#' @return A NIF dataset.
-#' @import dplyr
-#' @export
-#' @examples
+# Reduce a NIF object on the subject level by excluding all
+# administrations after the last observation
+#
+# @param nif A NIF dataset.
+# @return A NIF dataset.
+# @import dplyr
+# @export
+# @examples
 #' clip_nif(examplinib_poc_nif)
-clip_nif <- function(nif) {
-  last_obs <- nif %>%
-    as.data.frame() %>%
-    dplyr::filter(EVID == 0) %>%
-    dplyr::group_by(.data$USUBJID) %>%
-    dplyr::mutate(last_obs = max(.data$TIME)) %>%
-    dplyr::ungroup() %>%
-    dplyr::distinct(.data$USUBJID, .data$last_obs)
-
-  ret <- nif %>%
-    dplyr::left_join(last_obs, by = "USUBJID") %>%
-    dplyr::filter(.data$TIME <= .data$last_obs)
-  return(new_nif(ret))
-}
+# clip_nif <- function(nif) {
+#   last_obs <- nif %>%
+#     as.data.frame() %>%
+#     dplyr::filter(EVID == 0) %>%
+#     dplyr::group_by(.data$USUBJID) %>%
+#     dplyr::mutate(last_obs = max(.data$TIME)) %>%
+#     dplyr::ungroup() %>%
+#     dplyr::distinct(.data$USUBJID, .data$last_obs)
+#
+#   ret <- nif %>%
+#     dplyr::left_join(last_obs, by = "USUBJID") %>%
+#     dplyr::filter(.data$TIME <= .data$last_obs)
+#   return(new_nif(ret))
+# }
 
 
 #' Compile subject information
@@ -461,7 +461,7 @@ make_subjects <- function(
         mutate(BMI = .data$WEIGHT / (.data$HEIGHT / 100)^2)
     }
   } else {
-    baseline_covariates <- distinct(dm, USUBJID)
+    baseline_covariates <- distinct(dm, .data$USUBJID)
   }
 
   out <- dm %>%
@@ -484,17 +484,19 @@ make_subjects <- function(
 }
 
 
+
 #' Make nominal time
 #'
 #' Return NTIME lookup table or NULL if the xxELTM field is not included in
 #' the input data frame.
 #'
 #' @param obj The input as data table.
-#' @param include_day Include time component of treatment day, as logical.
+#' @param include_day include_day Include time component of treatment day, as
+#'   logical.
 #'
 #' @return A data frame.
 #' @export
-#' @noRd
+#'
 #' @examples
 #' make_ntime(examplinib_sad_nif)
 #' make_ntime(examplinib_fe_nif)
@@ -616,35 +618,6 @@ make_observation <- function(
     lubrify_dates()
 
   if(is.null(NTIME_lookup)) {
-    # if(str_to_lower(domain) == "pc") {
-    #   if("time_mapping" %in% names(sdtm) & nrow(sdtm$time_mapping) > 0 &
-    #       any(names(sdtm$time_mapping) %in% names(obj))){
-    #     NTIME_lookup <- sdtm$time_mapping
-    #   } else {
-    #     if("PCELTM" %in% names(obj)) {
-    #       if("PCDY" %in% names(obj)){
-    #         NTIME_lookup <- obj %>%
-    #           distinct(.data$PCDY, .data$PCELTM) %>%
-    #         mutate(NTIME = pt_to_hours(.data$PCELTM))
-    #       } else {
-    #         NTIME_lookup <- obj %>%
-    #           distinct(.data$PCELTM) %>%
-    #           mutate(NTIME = as.numeric(stringr::str_extract(
-    #             .data$PCELTM, "PT([.0-9]+)H", group = 1)))
-    #       }
-    #     } else {
-    #       conditional_message(
-    #         "PCELM is not defined. Provide a NTIME lookup",
-    #         "table to define nominal time!")
-    #     }
-    #   }
-    # } else {
-    #   xxdy <- paste0(str_to_upper(domain), "DY")
-    #   if(xxdy %in% names(obj)) {
-    #     NTIME_lookup <- distinct(obj, .data[[xxdy]]) %>%
-    #       mutate(NTIME = (.data[[xxdy]] - 1) * 24)
-    #   }
-    # }
     NTIME_lookup = make_ntime(obj, include_day = include_day_in_ntime)
   }
 

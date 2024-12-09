@@ -145,6 +145,26 @@ test_that("impute_exendtc_to_cutoff works", {
 })
 
 
+test_that("filter_EXSTDTC_after_EXENDTC works", {
+  ex <- tribble(
+    ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    1, 1, "A", 1, 10,
+    1, 2, "A", 15, 20,
+    2, 1, "A", 1, NA,
+    2, 2, "A", 20, 10
+  )
+
+  dm <- tribble(
+    ~USUBJID, ~RFENDTC,
+    1, 20,
+    2, 20
+  )
+
+  expect_message(temp <- filter_EXSTDTC_after_EXENDTC(ex, dm))
+  expect_equal(nrow(temp), 2)
+})
+
+
 test_that("make_subjects works", {
   sdtm <- examplinib_poc
   expect_no_error(
@@ -180,6 +200,25 @@ test_that("make_observation works", {
       make_observation(sdtm, "vs", "WEIGHT",
                        observation_filter = "USUBJID == '20230000011010001'")
     )
+  )
+})
+
+
+test_that("make_observation works with coding table", {
+  sdtm <- examplinib_poc
+  suppressMessages(expect_no_error(
+    make_observation(
+      sdtm, "pp", "LAMZNPT", DTC_field = "PPRFTDTC",
+      observation_filter = "PPSEQ == 7",
+      coding_table = tribble(
+        ~PPSTRESN, ~DV,
+        3, 33,
+        4, 44,
+        5, 55,
+        6, 66
+      )
+    )
+  )
   )
 })
 
@@ -509,4 +548,55 @@ test_that("add_time works", {
     add_time()
   expect_equal(test$NTIME, test$TIME)
 })
+
+
+test_that("limit works", {
+  test <- tribble(
+    ~ID, ~NTIME, ~EVID,
+      1,      0,     1, # admin 1
+      1,      0,     0,
+      1,      1,     0,
+      1,      2,     0,
+      1,      4,     0,
+      1,     24,     1, # admin 2
+      1,     48,     1, # admin 3
+
+      2,      0,     1, # admin 1
+      2,      0,     0,
+      2,      1,     0,
+      2,      2,     0,
+      2,     16,     0,
+      2,     24,     0,
+
+      3,      0,     1, # admin 1
+      3,     24,     1  # admin 2
+  ) %>%
+    mutate(DTC = now() + hours(NTIME)) %>%
+    arrange(ID, DTC, EVID) %>%
+    as.data.frame()
+
+  expect_equal(
+    limit(test) %>%
+      pull(NTIME),
+    c(0, 0, 1, 2, 4, 0, 0, 1, 2, 16, 24)
+  )
+  expect_equal(
+    limit(test, individual = FALSE) %>%
+      pull(NTIME),
+    c(0, 0, 1, 2, 4, 24, 0, 0, 1, 2, 16, 24)
+  )
+  expect_equal(
+    limit(test, keep_no_obs_sbs = TRUE) %>%
+      pull(NTIME),
+    c(0, 0, 1, 2, 4, 0, 0, 1, 2, 16, 24, 0, 24)
+  )
+})
+
+
+
+
+
+
+
+
 
