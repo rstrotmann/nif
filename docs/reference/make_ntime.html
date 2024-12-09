@@ -9,7 +9,7 @@ the input data frame."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,8 @@ the input data frame.</p>
 
 
 <dt id="arg-include-day">include_day<a class="anchor" aria-label="anchor" href="#arg-include-day"></a></dt>
-<dd><p>Include time component of treatment day, as logical.</p></dd>
+<dd><p>include_day Include time component of treatment day, as
+logical.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -68,6 +69,50 @@ the input data frame.</p>
     <p>A data frame.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">make_ntime</span><span class="op">(</span><span class="va">examplinib_sad_nif</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    PCELTM NTIME</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    &lt;NA&gt;    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    PT0H   0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  PT0.5H   0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    PT1H   1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  PT1.5H   1.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    PT2H   2.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    PT3H   3.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    PT4H   4.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    PT6H   6.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   PT8H   8.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  PT10H  10.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  PT12H  12.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  PT24H  24.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  PT48H  48.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  PT72H  72.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  PT96H  96.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 PT144H 144.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 PT168H 168.0</span>
+<span class="r-in"><span><span class="fu">make_ntime</span><span class="op">(</span><span class="va">examplinib_fe_nif</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    PCELTM NTIME</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    &lt;NA&gt;    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    PT0H   0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  PT0.5H   0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    PT1H   1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  PT1.5H   1.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    PT2H   2.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    PT3H   3.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    PT4H   4.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    PT6H   6.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   PT8H   8.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  PT10H  10.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  PT12H  12.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  PT24H  24.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  PT48H  48.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  PT72H  72.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  PT96H  96.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 PT144H 144.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 PT168H 168.0</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
