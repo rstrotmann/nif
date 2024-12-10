@@ -36,6 +36,39 @@ test_that("new_sdtm", {
 test_that("sdtm summary", {
   expect_no_error(summary(examplinib_sad))
   expect_output(print(summary(examplinib_sad)))
+  test <- examplinib_fe
+  test$analyte_mapping <- NULL
+  expect_no_error(summary(test))
+})
+
+
+test_that("sdtm_summary works with metabolite mapping", {
+  test <- examplinib_fe %>%
+    add_time_mapping(
+     "PREDOSE" = 0,
+     "HOUR 0.5" = 0.5,
+     "HOUR 1" = 1,
+     "HOUR 1.5" = 1.5,
+     "HOUR 2" = 2,
+     "HOUR 3" = 3,
+     "HOUR 4" = 4,
+     "HOUR 6" = 6,
+     "HOUR 8" = 8,
+     "HOUR 10" = 10,
+     "HOUR 12" = 12,
+     "HOUR 24" = 24,
+     "HOUR 48" = 48,
+     "HOUR 72" = 72,
+     "HOUR 96" = 96,
+     "HOUR 144" = 144,
+     "HOUR 168" = 168
+    )
+  expect_no_error(summary(test))
+})
+
+
+test_that("suggest works", {
+  expect_message(suggest(examplinib_poc, consider_nif_auto = TRUE))
 })
 
 
