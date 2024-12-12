@@ -63,7 +63,7 @@ summary.sdtm <- function(object, ...) {
   out <- list(
     study = unique(domain(object, "dm")$STUDYID),
     subjects = unique(domain(object, "pc")$USUBJID),
-    pc_timepoints = unique(domain(object, "pc")[c("PCTPT", "PCTPTNUM")]),
+    # pc_timepoints = unique(domain(object, "pc")[c("PCTPT", "PCTPTNUM")]),
     domains = data.frame(
       DOMAIN = names(object$domains),
       N = as.numeric(lapply(
