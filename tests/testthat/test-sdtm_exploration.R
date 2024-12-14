@@ -53,7 +53,7 @@ test_that("disposition_summary works", {
     as.data.frame(tribble(
       ~ACTARMCD, ~ONGOING,  ~N,
       "C1",    FALSE,  3L,
-      "C10",    FALSE, 12L,
+      "C10",   FALSE, 12L,
       "C2",    FALSE,  3L,
       "C3",    FALSE,  3L,
       "C4",    FALSE,  3L,

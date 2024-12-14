@@ -67,20 +67,27 @@ test_that("sdtm_summary works with metabolite mapping", {
 })
 
 
-test_that("suggest works", {
-  expect_message(suggest(examplinib_poc, consider_nif_auto = TRUE))
+test_that("suggest works with consider_nif_auto", {
+  suppressMessages(
+    expect_message(
+      suggest(examplinib_poc, consider_nif_auto = TRUE)
+    )
+  )
 })
+
+
+test_that("suggest_sdtm works", {
+  suppressMessages(
+    expect_message(suggest(examplinib_sad))
+  )
+})
+
 
 
 test_that("subject_info works", {
   expect_type(
     subject_info(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"]),
     "list")
-})
-
-
-test_that("suggest_sdtm works", {
-  suppressMessages(expect_message(suggest(examplinib_sad)))
 })
 
 
