@@ -227,12 +227,8 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
   }
 
   plot_data <- temp$data %>%
-    {
-      if (isTRUE(log)) {
-        mutate(., DV = case_match(DV, 0 ~ NA, .default = DV))
-      } else {
-        .
-      }
+    {if (isTRUE(log)) {
+        mutate(., DV = case_match(DV, 0 ~ NA, .default = DV))} else {.}
     } %>%
     tidyr::unite(GROUP, any_of(c((temp$group), (temp$color), (temp$facet))),
       sep = "-", remove = FALSE
@@ -247,10 +243,16 @@ plot.nif <- function(x, analyte = NULL, dose = NULL,
   p <- plot_data %>%
     filter(EVID == 0) %>%
     filter(!is.na(DV)) %>%
-    dplyr::bind_rows(
-      admin_data %>%
-        dplyr::mutate(DV = NA)
-    ) %>%
+
+###############
+    {if(!is.null(admin)) {
+      dplyr::bind_rows(.,
+        admin_data %>%
+        dplyr::mutate(DV = NA)) #%>%
+      } else .} %>%
+###############
+
+    arrange("GROUP", "active_time", -EVID) %>%
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time, y = DV, group = GROUP, color = COLOR
     )) +

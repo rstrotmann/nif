@@ -38,15 +38,18 @@ test_that("plot.nif" , {
 
   expect_no_error(
     plot(examplinib_fe_nif, points = T, color = c("FASTED", "SEX"),
-              log = T, mean = T, max_time = 24, admin = "RS2023"))
-
-  expect_no_error(
-    plot(analyte = "RS2023", dose = 500, examplinib_poc_nif, points = T,
-              lines = T, log = T, color = "DI", mean = T, time = "TAD"))
+              log = T, mean = T, max_time = 24, admin = "RS2023")
+  )
 
   expect_no_error(
     plot(examplinib_poc_nif, analyte = "RS2023", dose = 500, points = T,
-              admin = "RS2023", max_time = 300))
+              lines = F, log = T, color = "DI", mean = T, time = "TAD")
+  )
+
+  expect_no_error(
+    plot(examplinib_poc_nif, analyte = "RS2023", dose = 500, points = T,
+              admin = "RS2023", max_time = 300)
+  )
 
   expect_no_error(
     plot(examplinib_poc_nif, points = T, facet = "SEX", dose_norm = T,

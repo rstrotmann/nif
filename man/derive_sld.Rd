@@ -21,4 +21,6 @@ A SDTM object.
 Calculate the sum of longest diameters (SLD) and number of lesions by subject
 and time point, and add as rows. If a SDTM.TR domain is not included in the
 input SDTM object, the SDTM object is returned as-is.
+
+literature: https://www.lexjansen.com/phuse/2018/ds/DS03.pdf
 }

@@ -22,7 +22,7 @@ test_that("check_date_format, check_date_time_format works", {
 
 
 test_that("check_last_exendtc works", {
-  check_last_exendtc(domain(examplinib_poc, "ex"))
+  expect_no_error(check_last_exendtc(domain(examplinib_poc, "ex")))
 })
 
 
