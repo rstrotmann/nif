@@ -67,7 +67,8 @@ make_ae <- function(
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days") + 1) %>%
     ungroup() %>%
     new_nif()

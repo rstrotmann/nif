@@ -11,7 +11,7 @@ License: MIT + file LICENSE
 URL: https://github.com/rstrotmann/nif,
     https://rstrotmann.github.io/nif/reference/index.html
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
 Imports:
     assertr,
     assertthat,

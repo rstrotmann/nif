@@ -173,8 +173,10 @@ test_that("make_subjects works", {
   expect_equal(nrow(temp), 80)
   expect_equal(
     names(temp),
+    # c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
+    #   "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))
     c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))
+      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC"))
 })
 
 
@@ -228,6 +230,27 @@ test_that("make_administration works", {
     make_administration(examplinib_poc, "EXAMPLINIB", "RS2023")
   )
 })
+
+
+# minimal mock data for "make_administration"
+dm <- tibble::tribble(
+  ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+         1,    1, "2024-12-16T7:50", "2024-12-31",   "ARM A",
+         2,    1, "2024-12-16T7:50", "2024-12-31",   "ARM A",
+         3,    1, "2024-12-16T7:50", "2024-12-31",   "ARM A"
+)
+
+ex <- tibble::tribble(
+  ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+         1,      1,    "A", "2024-12-16T7:50", "2024-12-31",     100,
+         2,      2,    "A", "2024-12-16T7:50", "2024-12-31",     100,
+         3,      3,    "A", "2024-12-16T7:50", "2024-12-31",     100
+)
+
+test_that("make_administration", {
+  sdtm <- new_sdtm(list(dm = dm, ex = ex, vs = NULL))
+})
+
 
 
 test_that("make_nif", {
@@ -377,7 +400,7 @@ test_that("make subjects", {
   expect_no_error(
     test <- make_subjects(sdtm$dm, sdtm$vs)
   )
-  expect_equal(dim(test), c(4, 8))
+  expect_equal(dim(test), c(4, 9))
 })
 
 

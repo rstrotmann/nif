@@ -425,7 +425,8 @@ add_time <- function(x) {
 #' @export
 #' @keywords internal
 make_subjects <- function(
-    dm, vs = NULL,
+    dm,
+    vs = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     keep = "") {
   # if AGE is not present in DM, calculate age from birthday and informed
@@ -479,7 +480,7 @@ make_subjects <- function(
     arrange("ID") %>%
     select(., any_of(c(
       "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", keep)))
+      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC", keep)))
   return(out)
 }
 
@@ -667,7 +668,8 @@ make_observation <- function(
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days") + 1) %>%
     ungroup() %>%
     filter(!is.na(.data$DTC)) %>%
@@ -840,7 +842,12 @@ make_administration <- function(
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      ## changed from RFXSTDTC to RFSTDTC. The difference between both dates is
+      ## that RFXSTDTC includes any exposure captured in the EX domain, whereas
+      ## RFSTDTC refers to the first exposure to study treatment.
+      ## Reference: https://www.lexjansen.com/phuse-us/2020/ds/DS07.pdf
+      difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days") + 1) %>%
     ungroup() %>%
     new_nif()

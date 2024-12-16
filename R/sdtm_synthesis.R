@@ -914,6 +914,7 @@ synthesize_sdtm_poc_study <- function(
     )) %>%
     mutate(PCTPTNUM = .data$NTIME) %>%
     mutate(PCRFTDTC = .data$RFSTDTC) %>%
+    select(-RFSTDTC) %>%
     mutate(PCELTM = paste0("PT", as.character(.data$NTIME), "H")) %>%
     select(-c("time", "NTIME", "delta_time", "id")) %>%
     arrange(.data$USUBJID, .data$PCDTC) %>%
