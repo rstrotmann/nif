@@ -758,10 +758,7 @@ make_administration <- function(
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cut_off_date = NULL,
     keep = ""
-    # debug = NULL
     ) {
-  # debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
 
@@ -777,11 +774,9 @@ make_administration <- function(
 
   admin <- ex %>%
     mutate(SRC_DOMAIN = "EX") %>%
-    # mutate(SRC_SEQ = EXSEQ) %>%
     {if("EXSEQ" %in% names(ex)) mutate(., SRC_SEQ = EXSEQ) else
       mutate(., SRC_SEQ = NA)} %>%
 
-    # assertr::verify(extrt %in% EXTRT) %>%
     mutate(IMPUTATION = "") %>%
     filter(.data$EXTRT == extrt) %>%
     filter(.data$EXSTDTC <= cut_off_date) %>%
