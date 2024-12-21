@@ -805,12 +805,20 @@ make_administration <- function(
       by = "days"))) %>%
     tidyr::unnest("DTC_date") %>%
 
-    # make time
+    # make time, carry forward time from EXSTDTC
     group_by(.data$USUBJID, .data$ANALYTE, .data$EXENDTC_date) %>%
     mutate(DTC_time = case_when(
       row_number() == n() ~ .data$EXENDTC_time,
       .default = .data$EXSTDTC_time
     )) %>%
+
+    ## TEST
+    mutate(IMPUTATION = case_when(
+      row_number() != 1 & row_number() != n() ~ "time carried forward",
+      .default = IMPUTATION
+    )) %>%
+    ## TEST end
+
     ungroup() %>%
 
     select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",

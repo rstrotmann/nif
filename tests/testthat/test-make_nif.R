@@ -235,20 +235,34 @@ test_that("make_administration works", {
 # minimal mock data for "make_administration"
 dm <- tibble::tribble(
   ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
-         1,    1, "2024-12-16T7:50", "2024-12-31",   "ARM A",
-         2,    1, "2024-12-16T7:50", "2024-12-31",   "ARM A",
-         3,    1, "2024-12-16T7:50", "2024-12-31",   "ARM A"
+         1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
+         2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
+         3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
 )
 
 ex <- tibble::tribble(
   ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
-         1,      1,    "A", "2024-12-16T7:50", "2024-12-31",     100,
-         2,      2,    "A", "2024-12-16T7:50", "2024-12-31",     100,
-         3,      3,    "A", "2024-12-16T7:50", "2024-12-31",     100
+         1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
+         2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
+         3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100
+)
+
+pc <- tibble::tribble(
+  ~USUBJID, ~PCTESTCD,        ~PCRFTDTC,
+         1,       "A", "2024-12-19T8:10"
 )
 
 test_that("make_administration", {
-  sdtm <- new_sdtm(list(dm = dm, ex = ex, vs = NULL))
+  sdtm <- new_sdtm(list(dm = dm, ex = ex, pc = pc, vs = NULL))
+  expect_no_error(
+    test <- make_administration(sdtm, "A")
+  )
+
+  # number of administrations is correct:
+  expect_equal(
+    reframe(test, n = n_distinct(DTC), .by = "USUBJID")$n,
+    c(4, 3, 2)
+  )
 })
 
 
