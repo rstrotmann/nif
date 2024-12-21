@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,13 +107,13 @@ high-level overview:</p>
 <span><span class="co">#&gt; Study 2023000022 with 80 subjects providing PC data.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects per domain:</span></span>
-<span><span class="co">#&gt;  DOMAIN   N    </span></span>
-<span><span class="co">#&gt;  dm       99   </span></span>
-<span><span class="co">#&gt;  vs       99   </span></span>
-<span><span class="co">#&gt;  ex       80   </span></span>
-<span><span class="co">#&gt;  pc       80   </span></span>
-<span><span class="co">#&gt;  lb       99   </span></span>
-<span><span class="co">#&gt;  pp       13   </span></span>
+<span><span class="co">#&gt;  DOMAIN   N     </span></span>
+<span><span class="co">#&gt;  dm       103   </span></span>
+<span><span class="co">#&gt;  vs       103   </span></span>
+<span><span class="co">#&gt;  ex       80    </span></span>
+<span><span class="co">#&gt;  pc       80    </span></span>
+<span><span class="co">#&gt;  lb       103   </span></span>
+<span><span class="co">#&gt;  pp       13    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Arms (DM):</span></span>
 <span><span class="co">#&gt;  ACTARMCD    ACTARM                 </span></span>
@@ -202,34 +202,34 @@ data frame:</p>
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#    REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI</span></span>
-<span><span class="co">#  1   1  1 2023000022 20230000221010001  73   0 WHITE  184.3   79.7 23.4643</span></span>
-<span><span class="co">#  2   2  1 2023000022 20230000221010001  73   0 WHITE  184.3   79.7 23.4643</span></span>
-<span><span class="co">#  3   3  1 2023000022 20230000221010001  73   0 WHITE  184.3   79.7 23.4643</span></span>
-<span><span class="co">#  4   4  1 2023000022 20230000221010001  73   0 WHITE  184.3   79.7 23.4643</span></span>
-<span><span class="co">#  5   5  1 2023000022 20230000221010001  73   0 WHITE  184.3   79.7 23.4643</span></span>
-<span><span class="co">#  6   6  1 2023000022 20230000221010001  73   0 WHITE  184.3   79.7 23.4643</span></span>
+<span><span class="co">#    REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
+<span><span class="co">#  1   1  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span></span>
+<span><span class="co">#  2   2  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span></span>
+<span><span class="co">#  3   3  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span></span>
+<span><span class="co">#  4   4  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span></span>
+<span><span class="co">#  5   5  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span></span>
+<span><span class="co">#  6   6  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span></span>
 <span><span class="co">#                    DTC  TIME NTIME  TAFD   TAD PCELTM EVID AMT ANALYTE CMT</span></span>
-<span><span class="co">#  1 2001-01-05 08:48:00 0.000   0.0 0.000 0.000   &lt;NA&gt;    1 500  RS2023   1</span></span>
-<span><span class="co">#  2 2001-01-05 08:48:00 0.000   0.0 0.000 0.000   PT0H    0   0  RS2023   2</span></span>
-<span><span class="co">#  3 2001-01-05 09:31:00 0.717   0.5 0.717 0.717 PT0.5H    0   0  RS2023   2</span></span>
-<span><span class="co">#  4 2001-01-05 10:01:00 1.217   1.0 1.217 1.217   PT1H    0   0  RS2023   2</span></span>
-<span><span class="co">#  5 2001-01-05 10:28:00 1.667   1.5 1.667 1.667 PT1.5H    0   0  RS2023   2</span></span>
-<span><span class="co">#  6 2001-01-05 11:02:00 2.233   2.0 2.233 2.233   PT2H    0   0  RS2023   2</span></span>
+<span><span class="co">#  1 2001-01-13 10:36:00 0.000   0.0 0.000 0.000   &lt;NA&gt;    1 500  RS2023   1</span></span>
+<span><span class="co">#  2 2001-01-13 10:36:00 0.000   0.0 0.000 0.000   PT0H    0   0  RS2023   2</span></span>
+<span><span class="co">#  3 2001-01-13 11:36:00 1.000   0.5 1.000 1.000 PT0.5H    0   0  RS2023   2</span></span>
+<span><span class="co">#  4 2001-01-13 12:04:00 1.467   1.0 1.467 1.467   PT1H    0   0  RS2023   2</span></span>
+<span><span class="co">#  5 2001-01-13 12:36:00 2.000   1.5 2.000 2.000 PT1.5H    0   0  RS2023   2</span></span>
+<span><span class="co">#  6 2001-01-13 13:04:00 2.467   2.0 2.467 2.467   PT2H    0   0  RS2023   2</span></span>
 <span><span class="co">#    PARENT TRTDY METABOLITE DOSE        DV MDV  ACTARMCD</span></span>
 <span><span class="co">#  1 RS2023     1      FALSE  500        NA   1 TREATMENT</span></span>
 <span><span class="co">#  2 RS2023     1      FALSE  500    0.0000   0 TREATMENT</span></span>
-<span><span class="co">#  3 RS2023     1      FALSE  500  782.4197   0 TREATMENT</span></span>
-<span><span class="co">#  4 RS2023     1      FALSE  500 2641.4010   0 TREATMENT</span></span>
-<span><span class="co">#  5 RS2023     1      FALSE  500 3682.2087   0 TREATMENT</span></span>
-<span><span class="co">#  6 RS2023     1      FALSE  500 3972.2792   0 TREATMENT</span></span>
-<span><span class="co">#                          IMPUTATION BL_CREAT  BL_CRCL</span></span>
-<span><span class="co">#  1 admin time imputed from PCRFTDTC 86.23867 64.62042</span></span>
-<span><span class="co">#  2                                  86.23867 64.62042</span></span>
-<span><span class="co">#  3                                  86.23867 64.62042</span></span>
-<span><span class="co">#  4                                  86.23867 64.62042</span></span>
-<span><span class="co">#  5                                  86.23867 64.62042</span></span>
-<span><span class="co">#  6                                  86.23867 64.62042</span></span></code></pre></div>
+<span><span class="co">#  3 RS2023     1      FALSE  500  636.6833   0 TREATMENT</span></span>
+<span><span class="co">#  4 RS2023     1      FALSE  500 1844.8225   0 TREATMENT</span></span>
+<span><span class="co">#  5 RS2023     1      FALSE  500 2773.3083   0 TREATMENT</span></span>
+<span><span class="co">#  6 RS2023     1      FALSE  500 2539.5401   0 TREATMENT</span></span>
+<span><span class="co">#                         IMPUTATION BL_CREAT  BL_CRCL</span></span>
+<span><span class="co">#  1 admin time copied from PCRFTDTC 72.78062 107.4689</span></span>
+<span><span class="co">#  2                                 72.78062 107.4689</span></span>
+<span><span class="co">#  3                                 72.78062 107.4689</span></span>
+<span><span class="co">#  4                                 72.78062 107.4689</span></span>
+<span><span class="co">#  5                                 72.78062 107.4689</span></span>
+<span><span class="co">#  6                                 72.78062 107.4689</span></span></code></pre></div>
 <p>When the NIF object itself is printed, a summary of the data is shown
 instead:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -237,7 +237,7 @@ instead:</p>
 <span><span class="co">#  ----- NONMEM input file (NIF) object -----</span></span>
 <span><span class="co">#  672 observations from 80 subjects across 1 study </span></span>
 <span><span class="co">#  Analytes: RS2023 </span></span>
-<span><span class="co">#  46 males (57.5%), 34 females (42.5%)</span></span>
+<span><span class="co">#  47 males (58.8%), 33 females (41.2%)</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Columns:</span></span>
 <span><span class="co">#    REF, ID, STUDYID, USUBJID, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, DTC, TIME,</span></span>
@@ -248,15 +248,15 @@ instead:</p>
 <span><span class="co">#    ID   NTIME   TIME    TAD     ANALYTE   EVID   CMT   AMT   DOSE   DV         </span></span>
 <span><span class="co">#    1    0       0       0       RS2023    1      1     500   500    NA         </span></span>
 <span><span class="co">#    1    0       0       0       RS2023    0      2     0     500    0          </span></span>
-<span><span class="co">#    1    0.5     0.717   0.717   RS2023    0      2     0     500    782.42     </span></span>
-<span><span class="co">#    1    1       1.217   1.217   RS2023    0      2     0     500    2641.401   </span></span>
-<span><span class="co">#    1    1.5     1.667   1.667   RS2023    0      2     0     500    3682.209   </span></span>
-<span><span class="co">#    1    2       2.233   2.233   RS2023    0      2     0     500    3972.279   </span></span>
-<span><span class="co">#    1    3       3.25    3.25    RS2023    0      2     0     500    3728.013   </span></span>
-<span><span class="co">#    1    4       4.333   4.333   RS2023    0      2     0     500    3175.338   </span></span>
-<span><span class="co">#    1    6       6.133   6.133   RS2023    0      2     0     500    2168.851   </span></span>
-<span><span class="co">#    1    8       8.017   8.017   RS2023    0      2     0     500    1396.59    </span></span>
-<span><span class="co">#  6609 more rows</span></span></code></pre></div>
+<span><span class="co">#    1    0.5     1       1       RS2023    0      2     0     500    636.683    </span></span>
+<span><span class="co">#    1    1       1.467   1.467   RS2023    0      2     0     500    1844.823   </span></span>
+<span><span class="co">#    1    1.5     2       2       RS2023    0      2     0     500    2773.308   </span></span>
+<span><span class="co">#    1    2       2.467   2.467   RS2023    0      2     0     500    2539.54    </span></span>
+<span><span class="co">#    1    3       3.533   3.533   RS2023    0      2     0     500    2447.598   </span></span>
+<span><span class="co">#    1    4       4.55    4.55    RS2023    0      2     0     500    1868.594   </span></span>
+<span><span class="co">#    1    6       6.5     6.5     RS2023    0      2     0     500    1229.613   </span></span>
+<span><span class="co">#    1    8       8.367   8.367   RS2023    0      2     0     500    750.583    </span></span>
+<span><span class="co">#  6940 more rows</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploration">EXPLORATION<a class="anchor" aria-label="anchor" href="#exploration"></a>
@@ -278,13 +278,13 @@ function:</p>
 <span><span class="co">#   2023000022   80   </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Sex distribution:</span></span>
-<span><span class="co">#   males: 46 (57.5%), females: 34 (42.5%)</span></span>
+<span><span class="co">#   males: 47 (58.8%), females: 33 (41.2%)</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Renal impairment class:</span></span>
 <span><span class="co">#   CLASS      N    </span></span>
-<span><span class="co">#   mild       43   </span></span>
-<span><span class="co">#   moderate   13   </span></span>
-<span><span class="co">#   normal     24   </span></span>
+<span><span class="co">#   mild       34   </span></span>
+<span><span class="co">#   moderate   15   </span></span>
+<span><span class="co">#   normal     31   </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Administered drugs:</span></span>
 <span><span class="co">#   RS2023</span></span>
@@ -302,11 +302,11 @@ function:</p>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Subjects with dose reductions</span></span>
 <span><span class="co">#   RS2023   </span></span>
-<span><span class="co">#   21       </span></span>
+<span><span class="co">#   25       </span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Treatment duration overview:</span></span>
 <span><span class="co">#   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#   RS2023   55    97    74.3   74</span></span></code></pre></div>
+<span><span class="co">#   RS2023   56    99    78.5   79</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the summary:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -349,11 +349,11 @@ summarizing the administered dose:</p>
 <tbody>
 <tr class="odd">
 <td align="right">250</td>
-<td align="right">689</td>
+<td align="right">916</td>
 </tr>
 <tr class="even">
 <td align="right">500</td>
-<td align="right">5258</td>
+<td align="right">5362</td>
 </tr>
 </tbody>
 </table>
@@ -361,7 +361,7 @@ summarizing the administered dose:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#   [1]  1  2 13 16 20 27 29 34 38 45 51 54 56 59 61 62 64 65 67 72 77</span></span></code></pre></div>
+<span><span class="co">#   [1]  1  3  9 10 17 19 20 21 22 29 31 33 38 44 46 56 60 62 63 64 66 70 76 77 80</span></span></code></pre></div>
 <p>Let’s have a plot of the doses over time in these subjects:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -457,7 +457,7 @@ identify those:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs</a></span><span class="op">(</span>analyte <span class="op">=</span> <span class="st">"RS2023"</span>, max_time <span class="op">=</span> <span class="fl">24</span>, n <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">#   [1]  1  5 14 22 23 35 36 37 48 58 59 74</span></span></code></pre></div>
+<span><span class="co">#   [1]  1  4  5 15 28 29 40 50 51 52 63 64</span></span></code></pre></div>
 <p>In this code, the function <code><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs()</a></code> receives
 as input the analyte of interest, the time interval across which the
 number of sanmples is evaluated, and the minimum number of samples to
@@ -523,47 +523,47 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <tr class="odd">
 <td align="left">1</td>
 <td align="right">250</td>
-<td align="right">2</td>
-<td align="left">26816.99 (1)</td>
-<td align="left">24073.64 (0)</td>
-<td align="left">4035.79 (2)</td>
-<td align="left">3.19 (4)</td>
-<td align="left">2.48 (2.23; 2.73)</td>
+<td align="right">4</td>
+<td align="left">16962.71 (18)</td>
+<td align="left">15764.51 (19)</td>
+<td align="left">3050.03 (23)</td>
+<td align="left">2.82 (10)</td>
+<td align="left">2.37 (2; 2.67)</td>
 </tr>
 <tr class="even">
 <td align="left">1</td>
 <td align="right">500</td>
 <td align="right">12</td>
-<td align="left">21339.77 (17)</td>
-<td align="left">19364.95 (18)</td>
-<td align="left">3409.74 (18)</td>
-<td align="left">3.11 (10)</td>
-<td align="left">2.47 (2.23; 2.85)</td>
+<td align="left">21147.25 (37)</td>
+<td align="left">19382.1 (37)</td>
+<td align="left">3530.09 (37)</td>
+<td align="left">3 (14)</td>
+<td align="left">2.53 (2; 2.78)</td>
 </tr>
 <tr class="odd">
 <td align="left">2</td>
 <td align="right">250</td>
-<td align="right">2</td>
-<td align="left">26941 (1)</td>
-<td align="left">24197.61 (1)</td>
-<td align="left">4075.01 (1)</td>
-<td align="left">3.24 (4)</td>
-<td align="left">2.22 (2.2; 2.23)</td>
+<td align="right">4</td>
+<td align="left">17123.2 (17)</td>
+<td align="left">15961.81 (18)</td>
+<td align="left">3051.88 (24)</td>
+<td align="left">2.85 (6)</td>
+<td align="left">2.07 (1.7; 2.75)</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
 <td align="right">500</td>
 <td align="right">12</td>
-<td align="left">21521.9 (17)</td>
-<td align="left">19524.5 (18)</td>
-<td align="left">3468.6 (19)</td>
-<td align="left">3.12 (12)</td>
-<td align="left">2.51 (2.2; 2.78)</td>
+<td align="left">21405.96 (36)</td>
+<td align="left">19592.19 (36)</td>
+<td align="left">3559.39 (36)</td>
+<td align="left">3.05 (12)</td>
+<td align="left">2.51 (1.68; 3.03)</td>
 </tr>
 <tr class="odd">
 <td align="left">NA</td>
 <td align="right">250</td>
-<td align="right">7</td>
+<td align="right">9</td>
 <td align="left">NaN (NA)</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
@@ -573,9 +573,9 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <tr class="even">
 <td align="left">NA</td>
 <td align="right">250</td>
-<td align="right">47</td>
+<td align="right">52</td>
 <td align="left">NA</td>
-<td align="left">6530.58 (169)</td>
+<td align="left">5927.89 (208)</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
@@ -583,29 +583,29 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <tr class="odd">
 <td align="left">NA</td>
 <td align="right">250</td>
+<td align="right">200</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">2441.79 (180)</td>
+<td align="left">NA</td>
+<td align="left">97.81 (1.65; 196.5)</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">500</td>
+<td align="right">33</td>
+<td align="left">NaN (NA)</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NaN (NA)</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">NA</td>
+<td align="right">500</td>
 <td align="right">166</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">2979.28 (94)</td>
-<td align="left">NA</td>
-<td align="left">97.83 (1.65; 194.43)</td>
-</tr>
-<tr class="even">
-<td align="left">NA</td>
-<td align="right">500</td>
-<td align="right">32</td>
-<td align="left">NaN (NA)</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NaN (NA)</td>
-<td align="left">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">NA</td>
-<td align="right">500</td>
-<td align="right">173</td>
-<td align="left">NA</td>
-<td align="left">5905.22 (183)</td>
+<td align="left">6189.37 (177)</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
@@ -613,12 +613,12 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <tr class="even">
 <td align="left">NA</td>
 <td align="right">500</td>
-<td align="right">630</td>
+<td align="right">605</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">2533.37 (151)</td>
+<td align="left">2859.88 (100)</td>
 <td align="left">NA</td>
-<td align="left">97.7 (1.6; 217.85)</td>
+<td align="left">97.67 (1.65; 218.38)</td>
 </tr>
 </tbody>
 </table>
