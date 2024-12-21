@@ -244,24 +244,46 @@ ex <- tibble::tribble(
   ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
          1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
          2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
-         3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100
+         3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
+         3,      4,    "A", "2024-12-20",      "2024-12-22",     100
 )
 
 pc <- tibble::tribble(
   ~USUBJID, ~PCTESTCD,        ~PCRFTDTC,
-         1,       "A", "2024-12-19T8:10"
+         1,       "A", "2024-12-19T8:10",
+         3,       "A", "2024-12-21T10:00",
+         3,       "A", "2024-12-22"
 )
 
 test_that("make_administration", {
   sdtm <- new_sdtm(list(dm = dm, ex = ex, pc = pc, vs = NULL))
   expect_no_error(
-    test <- make_administration(sdtm, "A")
+    test <- as.data.frame(make_administration(sdtm, "A"))
   )
 
   # number of administrations is correct:
   expect_equal(
     reframe(test, n = n_distinct(DTC), .by = "USUBJID")$n,
-    c(4, 3, 2)
+    c(4, 3, 5)
+  )
+
+  # check carry forward
+  expect_equal(
+    test$IMPUTATION,
+    c(
+      "",
+      "time carried forward",
+      "time carried forward",
+      "admin time copied from PCRFTDTC",
+      "",
+      "time carried forward",
+      "time carried forward",
+      "",
+      "time carried forward",
+      "time carried forward",
+      "admin time copied from PCRFTDTC",
+      "time carried forward"
+    )
   )
 })
 

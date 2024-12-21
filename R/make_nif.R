@@ -203,7 +203,7 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
               by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
     mutate(IMPUTATION = case_when(
       !is.na(PCRFTDTC_time) ~
-        "admin time imputed from PCRFTDTC",
+        "admin time copied from PCRFTDTC",
       .default = .data$IMPUTATION)) %>%
     mutate(DTC_time = case_when(!is.na(PCRFTDTC_time) ~ PCRFTDTC_time,
                                 .default = .data$DTC_time)) %>%
@@ -812,12 +812,10 @@ make_administration <- function(
       .default = .data$EXSTDTC_time
     )) %>%
 
-    ## TEST
     mutate(IMPUTATION = case_when(
       row_number() != 1 & row_number() != n() ~ "time carried forward",
       .default = IMPUTATION
     )) %>%
-    ## TEST end
 
     ungroup() %>%
 
