@@ -1,5 +1,5 @@
 #' This ex test fixture has missing EXENDTC in rows 3 and 4.
-ex <- tribble(
+ex <- tibble::tribble(
   ~STUDYID, ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXDOSE, ~EPOCH,
   "1", 1, 1, "x", "2020-02-26T10:00:00", "2020-03-17T11:15:00", 10, "TREATMENT",
   "1", 1, 2, "x", "2020-03-18T11:35:00", "2020-04-07T10:55:00", 10, "TREATMENT",
@@ -12,7 +12,7 @@ ex <- tribble(
 ) %>% lubrify_dates()
 
 
-obs <- tribble(
+obs <- tibble::tribble(
   ~USUBJID, ~PCTESTCD, ~DTC, ~PCRFTDTC, ~DV,
   1, "y", "2020-02-26T09:50:00", "2020-02-26T10:00:00",       NA,
   1, "y", "2020-02-26T10:30:00", "2020-02-26T10:00:00", 0.023600,
@@ -62,7 +62,7 @@ test_that("date conversion works correctly", {
 # a missing EXENDTC on a non-last administration (row 3). This value is not
 # imputed by this function, either.
 test_that("impute_exendtc_to_rfendtc works as intended", {
-  ex <- tribble(
+  ex <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSTDTC,           ~EXENDTC,          ~EXSEQ,
     1,        "EX",    "TEST", "2022-07-11T13:50", "2022-07-24T09:00", 1,
     1,        "EX",    "TEST", "2022-08-02T13:45", "2022-08-15T11:10", 2,
@@ -79,7 +79,7 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
   # The reference end date (RFENDTC, i.e., the last administration time of study
   # drug) for subject 1 in the below DM is before the last EXSTDTC for this
   # subject in the above EX. The latter must be filtered out.
-  dm <- tribble(
+  dm <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~RFSTDTC,           ~RFENDTC,
     1,        "DM",    "2022-07-11T13:50", "2022-11-14T09:00",
     2,        "DM",    "2022-07-18T13:23", "2022-07-31T12:00",
@@ -98,19 +98,78 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
 })
 
 
+test_that("impute_exendtc_to_rfendtc works correctly", {
+  dm = tibble::tribble(
+    ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+           1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A"
+  ) %>%
+    lubrify_dates()
+
+  ex = tibble::tribble(
+    ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC, ~EXENDTC, ~EXDOSE,
+           1,      1,    "A", "2024-12-16T7:50",       "",     100
+  ) %>%
+    lubrify_dates()
+
+  expect_message(
+    temp <- ex %>%
+      mutate(IMPUTATION = "") %>%
+      impute_exendtc_to_rfendtc(dm)
+  )
+
+  expect_equal(
+    temp$IMPUTATION[1],
+    "missing EXENDTC set to RFENDTC")
+
+  expect_equal(
+    temp$EXENDTC[1],
+    as.POSIXct("2024-12-19", tz = "UTC")
+  )
+})
+
+
+# test_that("impute_exendtc_to_rfendtc", {
+#   sdtm <- new_sdtm(list(
+#     dm = tibble::tribble(
+#       ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+#       1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A"#,
+#       # 2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
+#       # 3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
+#     ),
+#     ex = tibble::tribble(
+#       ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+#       1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
+#       # 2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
+#       # 3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
+#       # 3,      4,    "A", "2024-12-20",      "2024-12-22",     100
+#     ),
+#     pc = tibble::tribble(
+#       ~USUBJID, ~PCTESTCD,          ~PCRFTDTC,
+#       1,       "A",  "2024-12-19T8:10",
+#       3,       "A", "2024-12-21T10:00",
+#       3,       "A",       "2024-12-22"
+#     )
+#   ))
+#
+#
+# })
+
+
+
 test_that("impute_missing_exendtc", {
-  ex <- tribble(
-    ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~imputation_expected,
-    1,        1,      "A",    "2022-01-01T08:00",  "2022-01-03T08:00", FALSE,
-    1,        2,      "A",    "2022-01-07T08:00",  "2022-01-09",       FALSE,
-    1,        3,      "A",    "2022-01-14T08:00",  "",                 TRUE,
-    1,        4,      "A",    "2022-01-21T08:00",  "2022-01-23T08:00", FALSE,
+  ex <- tibble::tribble(
+    ~USUBJID, ~EXSEQ, ~EXTRT,           ~EXSTDTC,           ~EXENDTC, ~imputation_expected,
+           1,      1,    "A", "2022-01-01T08:00", "2022-01-03T08:00",                FALSE,
+           1,      2,    "A", "2022-01-07T08:00",       "2022-01-09",                FALSE,
+           1,      3,    "A", "2022-01-14T08:00",                 "",                 TRUE,
+           1,      4,    "A", "2022-01-21T08:00", "2022-01-23T08:00",                FALSE,
   ) %>% lubrify_dates() %>%
     mutate(IMPUTATION = "")
 
   suppressMessages(
     temp <- impute_missing_exendtc(ex)
   )
+
   expect_equal(temp$IMPUTATION != "", temp$imputation_expected)
 })
 
@@ -118,7 +177,7 @@ test_that("impute_missing_exendtc", {
 test_that("impute_exendtc_to_cutoff works", {
   cutoff_date <- lubridate::as_datetime("2022-12-1", format = "%Y-%m-%d")
 
-  ex <- tribble(
+  ex <- tibble::tribble(
     ~USUBJID,           ~EXSTDTC,           ~EXENDTC, ~EXSEQ, ~replace, ~EXTRT,
     1, "2022-07-11T13:50", "2022-07-24T09:00",      1,    FALSE,    "A",
     1, "2022-08-02T13:45", "2022-08-15T11:10",      2,    FALSE,    "A",
@@ -146,7 +205,7 @@ test_that("impute_exendtc_to_cutoff works", {
 
 
 test_that("filter_EXSTDTC_after_EXENDTC works", {
-  ex <- tribble(
+  ex <- tibble::tribble(
     ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC,
     1, 1, "A", 1, 10,
     1, 2, "A", 15, 20,
@@ -154,7 +213,7 @@ test_that("filter_EXSTDTC_after_EXENDTC works", {
     2, 2, "A", 20, 10
   )
 
-  dm <- tribble(
+  dm <- tibble::tribble(
     ~USUBJID, ~RFENDTC,
     1, 20,
     2, 20
@@ -212,7 +271,7 @@ test_that("make_observation works with coding table", {
     make_observation(
       sdtm, "pp", "LAMZNPT", DTC_field = "PPRFTDTC",
       observation_filter = "PPSEQ == 7",
-      coding_table = tribble(
+      coding_table = tibble::tribble(
         ~PPSTRESN, ~DV,
         3, 33,
         4, 44,
@@ -233,30 +292,51 @@ test_that("make_administration works", {
 
 
 # minimal mock data for "make_administration"
-dm <- tibble::tribble(
-  ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
-         1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
-         2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
-         3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
-)
+# dm <- tibble::tribble(
+#   ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+#          1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
+#          2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
+#          3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
+# )
+#
+# ex <- tibble::tribble(
+#   ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+#          1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
+#          2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
+#          3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
+#          3,      4,    "A", "2024-12-20",      "2024-12-22",     100
+# )
+#
+# pc <- tibble::tribble(
+#   ~USUBJID, ~PCTESTCD,        ~PCRFTDTC,
+#          1,       "A", "2024-12-19T8:10",
+#          3,       "A", "2024-12-21T10:00",
+#          3,       "A", "2024-12-22"
+# )
 
-ex <- tibble::tribble(
-  ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
-         1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
-         2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
-         3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
-         3,      4,    "A", "2024-12-20",      "2024-12-22",     100
-)
+test_that("make_administration uses correct time imputations", {
+  sdtm <- new_sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+      1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
+      2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
+      3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
+    ),
+    ex = tibble::tribble(
+      ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+      1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
+      2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
+      3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
+      3,      4,    "A", "2024-12-20",      "2024-12-22",     100
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~PCTESTCD,        ~PCRFTDTC,
+      1,       "A", "2024-12-19T8:10",
+      3,       "A", "2024-12-21T10:00",
+      3,       "A", "2024-12-22"
+    )
+  ))
 
-pc <- tibble::tribble(
-  ~USUBJID, ~PCTESTCD,        ~PCRFTDTC,
-         1,       "A", "2024-12-19T8:10",
-         3,       "A", "2024-12-21T10:00",
-         3,       "A", "2024-12-22"
-)
-
-test_that("make_administration", {
-  sdtm <- new_sdtm(list(dm = dm, ex = ex, pc = pc, vs = NULL))
   expect_no_error(
     test <- as.data.frame(make_administration(sdtm, "A"))
   )
@@ -267,11 +347,10 @@ test_that("make_administration", {
     c(4, 3, 5)
   )
 
-  # check carry forward
+  # check time carry forward
   expect_equal(
     test$IMPUTATION,
-    c(
-      "",
+    c("",
       "time carried forward",
       "time carried forward",
       "admin time copied from PCRFTDTC",
@@ -282,11 +361,80 @@ test_that("make_administration", {
       "time carried forward",
       "time carried forward",
       "admin time copied from PCRFTDTC",
-      "time carried forward"
-    )
+      "time carried forward")
   )
 })
 
+
+test_that("make_administration works without pc", {
+  sdtm <- new_sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+             1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
+             2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
+             3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
+    ),
+    ex = tibble::tribble(
+      ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+             1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
+             2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
+             3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
+             3,      4,    "A", "2024-12-20",      "2024-12-22",     100
+    )
+  ))
+
+  expect_no_error(
+    test <- as.data.frame(make_administration(sdtm, "A"))
+  )
+
+  # number of administrations is correct:
+  expect_equal(
+    reframe(test, n = n_distinct(DTC), .by = "USUBJID")$n,
+    c(4, 3, 5)
+  )
+
+  # check time carry forward
+  expect_equal(
+    test$IMPUTATION,
+    c("",
+      "time carried forward",
+      "time carried forward",
+      "time carried forward",
+      "",
+      "time carried forward",
+      "time carried forward",
+      "",
+      "time carried forward",
+      "time carried forward",
+      "time carried forward",
+      "time carried forward")
+  )
+})
+
+
+test_that("make_administration imputes missing last EXENDTC", {
+  sdtm <- new_sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+             1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
+             2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
+             3,    1, "2024-12-16T7:50", "2024-12-22",   "ARM A"
+    ),
+    ex = tibble::tribble(
+      ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+             1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
+             2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
+             3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
+             3,      4,    "A",      "2024-12-20",           "",     100
+    )
+  ))
+
+  expect_no_error(
+    expect_message(
+      test <- as.data.frame(make_administration(sdtm, "A"))
+    )
+  )
+})
 
 
 test_that("make_nif", {
@@ -301,7 +449,7 @@ test_that("make_nif", {
 
 
 test_that("make_time", {
-  test <- tribble(
+  test <- tibble::tribble(
     ~ID, ~ANALYTE, ~PARENT, ~DTC,               ~EVID,
     1,   "A",      "A",     "2024-03-18T08:00", 0,
     1,   "A",      "A",     "2024-03-18T08:15", 1,
@@ -325,7 +473,7 @@ test_that("make_time", {
 
 
 test_that("multiple imputations", {
-  ex <- tribble(
+  ex <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSEQ, ~EXSTDTC,           ~EXENDTC,
     "1",      "EX",    "A",    1,      "2021-09-10T10:10", "2021-09-13T22:00", #
     "1",      "EX",    "A",    2,      "2021-09-17T10:35", "2021-09-20T22:35", # on the last day the time is not the administration time!
@@ -335,7 +483,7 @@ test_that("multiple imputations", {
     "1",      "EX",    "A",    6,      "2021-10-21T10:00", "2021-10-24T22:00"  #
   ) %>% lubrify_dates()
 
-  pc <- tribble(
+  pc <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCRFTDTC,          ~PCDTC,              ~PCDY,       ~PCTPT,   #
     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T09:59",  1,       "PRE-DOSE",   #
     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T10:40",  1, "0.5H POST-DOSE",   #
@@ -396,7 +544,7 @@ test_that("multiple imputations", {
 
 
 make_test_sdtm <- function() {
-  dm <- tribble(
+  dm <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~SEX,   ~ACTARMCD,          ~RFXSTDTC,
     "20230000221040001", "DM", "M", "TREATMENT", "2001-01-01T10:29",
     "20230000221040002", "DM", "M", "TREATMENT", "2001-01-02T09:09",
@@ -404,7 +552,7 @@ make_test_sdtm <- function() {
     "20230000221060001", "DM", "F", "TREATMENT", "2001-01-06T11:18"
   ) %>%
     mutate(RFSTDTC = RFXSTDTC)
-  vs <- tribble(
+  vs <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
     "20230000221040001", "VS", "HEIGHT",     "Y",     190.8,
     "20230000221040001", "VS", "WEIGHT",     "Y",      79.3,
@@ -415,7 +563,7 @@ make_test_sdtm <- function() {
     "20230000221070001", "VS", "HEIGHT",     "Y",     177.8,
     "20230000221070001", "VS", "WEIGHT",     "Y",      83.3
   )
-  lb <- tribble(
+  lb <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBBLFL, ~LBTESTCD,        ~LBSTRESN,
     "20230000221040001",    "DM", "SERUM",     "Y",   "CREAT", 89.2690855827183,
     "20230000221040002",    "DM", "SERUM",     "Y",   "CREAT", 73.3255705088018,
@@ -441,7 +589,7 @@ test_that("make subjects", {
 
 
 test_that("make_subject works with different age definitions", {
-  dm <- tribble(
+  dm <- tibble::tribble(
     ~USUBJID, ~SEX, ~ACTARMCD,
     1, 0, "A",
     2, 1, "A",
@@ -469,7 +617,7 @@ test_that("make_subject works with different age definitions", {
 
 
 test_that("add_covariate", {
-  nif <- tribble(
+  nif <- tibble::tribble(
     ~USUBJID,                  ~DTC, ~NTIME, ~EVID, ~DV,
     1, "2001-01-15 10:36:00",      0,     1,  NA,
     1, "2001-01-15 10:36:00",      0,     0,   0,
@@ -490,7 +638,7 @@ test_that("add_covariate", {
   ) %>%
     mutate(DTC = as_datetime(DTC))
 
-  lb <- tribble(
+  lb <- tibble::tribble(
     ~USUBJID,                ~LBDTC, ~LBTESTCD, ~LBSTRESN,
     1, "2001-01-15T08:00:00",    "TEST",        1L,
     1, "2001-01-16T08:00:00",    "TEST",        1.1,
@@ -522,7 +670,7 @@ test_that("add_administration, add_observation", {
 
 
 test_that("import_observation", {
-  raw <- tribble(
+  raw <- tibble::tribble(
     ~SUBJ,             ~TIME, ~VAL,
     "20230000011010001", 0,     1,
     "20230000011010001", 1,     2,
@@ -542,7 +690,7 @@ test_that("import_observation", {
 
 
 test_that("make_ntime works", {
-  obj <- tribble(
+  obj <- tibble::tribble(
     ~ID, ~TIME, ~PCELTM,  ~PCDY,
     1,   0,     "PT0H",   1,
     1,   0.5,   "PT0.5H", 1,
@@ -610,7 +758,7 @@ test_that("add_time works", {
 
 
 test_that("limit works", {
-  test <- tribble(
+  test <- tibble::tribble(
     ~ID, ~NTIME, ~EVID,
       1,      0,     1, # admin 1
       1,      0,     0,

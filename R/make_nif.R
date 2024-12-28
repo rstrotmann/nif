@@ -1,8 +1,8 @@
-#' Impute very last EXENDTC for a subject and EXTRT to RFENDTC if absent
+#' Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent
 #'
 #' In EX for multiple-dose studies, the EXENDTC field for the very last
 #' administration epoch may be missing. This is occasionally found when SDTM
-#' data are generated before full cleaning of the clinical data, i.e., in the
+#' data are generated before full cleaning of the clinical data, e.g., in the
 #' case of interim analyses of clinical study data. In some of these cases, the
 #' DM domain is however already completed with the RFENDTC field. This is the
 #' reference end date-time field that specifies the date-time of the last
@@ -15,6 +15,10 @@
 impute_exendtc_to_rfendtc <- function(ex, dm) {
   dm %>%
     assertr::verify(assertr::has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
+
+  if(!"IMPUTATION" %in% names(ex)) {
+    ex <- mutate(ex, IMPUTATION = "")
+  }
 
   temp <- ex %>%
     assertr::verify(
@@ -33,8 +37,9 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
 
   if (replace_n > 0) {
     conditional_message(
-      replace_n,
-      " subjects had a missing EXENDTC in their final administration episode.\n",
+      replace_n, " ",
+      plural("subject", replace_n > 1),
+      " had a missing EXENDTC in their final administration episode.\n",
       "In these cases, EXENDTC was imputed to RFENDTC:\n",
       df_to_string(
         temp %>%
@@ -764,6 +769,8 @@ make_administration <- function(
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
 
+  ex <- impute_exendtc_to_rfendtc(ex, dm)
+
   assertthat::assert_that(
     extrt %in% ex$EXTRT,
     msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
@@ -779,12 +786,13 @@ make_administration <- function(
     {if("EXSEQ" %in% names(ex)) mutate(., SRC_SEQ = EXSEQ) else
       mutate(., SRC_SEQ = NA)} %>%
 
-    mutate(IMPUTATION = "") %>%
+    {if(!"IMPUTATION" %in% names(.))
+      mutate(., IMPUTATION = "") else .} %>%
     filter(.data$EXTRT == extrt) %>%
     filter(.data$EXSTDTC <= cut_off_date) %>%
     decompose_dtc("EXSTDTC") %>%
 
-    impute_exendtc_to_rfendtc(dm) %>%
+    # impute_exendtc_to_rfendtc(dm) %>%
     filter_EXSTDTC_after_EXENDTC(dm) %>%
 
     # time imputations
@@ -814,7 +822,7 @@ make_administration <- function(
 
     mutate(IMPUTATION = case_when(
       row_number() != 1 & row_number() != n() ~ "time carried forward",
-      .default = IMPUTATION
+      .default = .data$IMPUTATION
     )) %>%
 
     ungroup() %>%

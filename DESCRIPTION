@@ -35,10 +35,10 @@ Imports:
     ggrepel,
     readr,
     readxl,
-    htmltools,
-    tibble
+    htmltools
 Suggests: 
     knitr,
+    tibble,
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder:
