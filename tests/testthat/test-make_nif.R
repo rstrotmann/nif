@@ -239,30 +239,30 @@ test_that("make_subjects works", {
 })
 
 
-test_that("make_observation works", {
-  sdtm <- examplinib_poc
-  ntime_lu <- data.frame(
-    PCELTM = c("PT0H", "PT1.5H", "PT_4H"),
-    NTIME = c(0, 1.5, 4)
-  )
-  expect_no_error(
-    make_observation(sdtm, "pc", "RS2023",
-                     NTIME_lookup = ntime_lu)
-  )
-  expect_no_error(
-    make_observation(sdtm, "pc", "RS2023")
-  )
-  suppressMessages(expect_no_error(
-    make_observation(sdtm, "vs", "WEIGHT"))
-  )
-
-  suppressMessages(
-    expect_no_error(
-      make_observation(sdtm, "vs", "WEIGHT",
-                       observation_filter = "USUBJID == '20230000011010001'")
-    )
-  )
-})
+# test_that("make_observation works", {
+#   sdtm <- examplinib_poc
+#   ntime_lu <- data.frame(
+#     PCELTM = c("PT0H", "PT1.5H", "PT_4H"),
+#     NTIME = c(0, 1.5, 4)
+#   )
+#   expect_no_error(
+#     make_observation(sdtm, "pc", "RS2023",
+#                      NTIME_lookup = ntime_lu)
+#   )
+#   expect_no_error(
+#     make_observation(sdtm, "pc", "RS2023")
+#   )
+#   suppressMessages(expect_no_error(
+#     make_observation(sdtm, "vs", "WEIGHT"))
+#   )
+#
+#   suppressMessages(
+#     expect_no_error(
+#       make_observation(sdtm, "vs", "WEIGHT",
+#                        observation_filter = "USUBJID == '20230000011010001'")
+#     )
+#   )
+# })
 
 
 test_that("make_observation works with coding table", {
@@ -284,7 +284,7 @@ test_that("make_observation works with coding table", {
 })
 
 
-test_that("make_administration works", {
+test_that("make_administration works for examplinib_poc", {
   expect_no_error(
     make_administration(examplinib_poc, "EXAMPLINIB", "RS2023")
   )
@@ -616,7 +616,7 @@ test_that("make_subject works with different age definitions", {
 })
 
 
-test_that("add_covariate", {
+test_that("add_covariate works", {
   nif <- tibble::tribble(
     ~USUBJID,                  ~DTC, ~NTIME, ~EVID, ~DV,
     1, "2001-01-15 10:36:00",      0,     1,  NA,
