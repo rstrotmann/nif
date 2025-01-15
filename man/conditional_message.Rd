@@ -4,10 +4,13 @@
 \alias{conditional_message}
 \title{Issue message based on silent flag}
 \usage{
-conditional_message(...)
+conditional_message(..., silent = NULL)
 }
 \arguments{
 \item{...}{Message components.}
+
+\item{silent}{Logical flag to suppress messages. If NULL, will check .nif_env
+environment (defaults to FALSE if not found).}
 }
 \value{
 Nothing.

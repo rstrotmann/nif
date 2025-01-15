@@ -340,3 +340,6 @@ test_that("trialday_to_day works", {
   expect_error(trialday_to_day(0))
   expect_equal(trialday_to_day(c(-1, NA, 1)), c(-1, NA, 0))
 })
+
+
+

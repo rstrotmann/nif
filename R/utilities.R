@@ -1,19 +1,34 @@
 #' Issue message based on silent flag
 #'
 #' @param ... Message components.
-#'
+#' @param silent Logical flag to suppress messages. If NULL, will check .nif_env
+#'              environment (defaults to FALSE if not found).
 #' @return Nothing.
 #' @keywords internal
-conditional_message <- function(...) {
-  args <- lapply(list(...), as.character)
-  if (exists("silent", envir = .nif_env)) {
-    silent <- get("silent", .nif_env)
-  } else {
-    silent <- FALSE
+conditional_message <- function(..., silent = NULL) {
+  # Get silent flag from parameter or environment
+  if (is.null(silent)) {
+    silent <- tryCatch({
+      get("silent", envir = .nif_env)
+    }, error = function(e) {
+      FALSE
+    })
   }
-  if (silent == FALSE) {
+
+  # Safely convert arguments to character
+  args <- tryCatch({
+    lapply(list(...), as.character)
+  }, error = function(e) {
+    warning("Failed to convert some arguments to character")
+    list(...)
+  })
+
+  # Print message if not silent
+  if (!isTRUE(silent)) {
     message(paste(args, collapse = ""))
   }
+
+  invisible(NULL)
 }
 
 
