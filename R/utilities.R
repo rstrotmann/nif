@@ -48,23 +48,43 @@ print_debug <- function(obj) {
 
 #' Re-code SEX field in a data frame
 #'
-#' This function recodes the SEX field in a data frame. All numerical values are
-#' kept while "M" is recoded to 0 and "F" to 1. If your downstream analysis
-#' requires different coding, please manually re-code.
 #' @param obj The data.frame containing a SEX field
-#' @return The output data frame
+#' @return The output data frame with SEX coded as:
+#'   - 0: "M", "男", "0"
+#'   - 1: "F", "女", "1"
+#'   - NA: Any other values (with warning)
 #' @import dplyr
 #' @keywords internal
 recode_sex <- function(obj) {
-  obj %>%
+  # Input validation
+  if (!is.data.frame(obj)) {
+    stop("Input must be a data frame")
+  }
+  if (!"SEX" %in% names(obj)) {
+    stop("Input data frame must contain 'SEX' column")
+  }
+
+  # Store original values for warning message
+  orig_vals <- unique(obj$SEX[!is.na(obj$SEX)])
+
+  result <- obj %>%
     mutate(SEX = as.numeric(
-      case_match(toupper(as.character(.data$SEX)),
+      case_match(str_trim(toupper(as.character(.data$SEX))),
         "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-        # "男" ~ 0, "女" ~ 1,
-        "\u7537" ~ 0, "\u5973" ~ 1,
+        "\u7537" ~ 0, "\u5973" ~ 1,  # 男, 女
         .default = NA
       )
     ))
+
+  # Warn about invalid values that were converted to NA
+  valid_vals <- c("m", "f", "M", "F", "0", "1", "男", "女")
+  invalid_vals <- setdiff(orig_vals, valid_vals)
+  if (length(invalid_vals) > 0) {
+    warning("Invalid sex values converted to NA: ",
+            paste(invalid_vals, collapse = ", "))
+  }
+
+  return(result)
 }
 
 
