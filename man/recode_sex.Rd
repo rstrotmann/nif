@@ -10,11 +10,14 @@ recode_sex(obj)
 \item{obj}{The data.frame containing a SEX field}
 }
 \value{
-The output data frame
+The output data frame with SEX coded as:
+\itemize{
+\item 0: "M", "男", "0"
+\item 1: "F", "女", "1"
+\item NA: Any other values (with warning)
+}
 }
 \description{
-This function recodes the SEX field in a data frame. All numerical values are
-kept while "M" is recoded to 0 and "F" to 1. If your downstream analysis
-requires different coding, please manually re-code.
+Re-code SEX field in a data frame
 }
 \keyword{internal}
