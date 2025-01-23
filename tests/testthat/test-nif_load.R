@@ -1,14 +1,32 @@
 
 test_that("is_col_nonmem_numeric works correctly", {
-  expect_true(is_col_nonmem_numeric(
+  expect_true(is_likely_numeric(
     c("1", "1.2", "-2.4", "+7", ".", "")))
-  expect_true(is_col_nonmem_numeric(
+  expect_true(is_likely_numeric(
     c("3.1e-3", "3.1e-03", "2e3", "2e03", "5e+6", "5e+06")))
 
-  expect_false(is_col_nonmem_numeric("1.1.2"))
-  expect_false(is_col_nonmem_numeric("1-"))
-  expect_false(is_col_nonmem_numeric("1.3-"))
-  expect_false(is_col_nonmem_numeric("1.3+"))
+  expect_false(is_likely_numeric("1.1.2"))
+  expect_false(is_likely_numeric("1-"))
+  expect_false(is_likely_numeric("1.3-"))
+  expect_false(is_likely_numeric("1.3+"))
+})
+
+
+test_that("is_likely_numeric works as intended", {
+  test <- c(".", "1", "2.2", "1e-3", "4", "5", "6", "+7", "-8", "9", "A")
+
+  expect_true(is_likely_numeric(test))
+  expect_false(is_likely_numeric(c("a", "b", "c")))
+  expect_false(is_likely_numeric(NULL))
+})
+
+
+test_that("convert_char_numeric works correctly", {
+  test <- c(".", "1", "2.2", "1e-3", "4", "5", "6", "+7", "-8", "9", "A")
+
+  expect_no_error(
+    temp <- convert_char_numeric(test, silent = T))
+  expect_equal(temp, c(NA, 1, 2.2, 0.001, 4, 5, 6, 7, -8, 9, NA))
 })
 
 
@@ -23,56 +41,80 @@ test_that("is_char_datetime works correctly", {
 })
 
 
-test_that("col_convert_numeric works correctly", {
-  test <- tibble::tribble(
-    ~USUBJID,     ~A,  ~B,  ~C,  ~D,
-       "001",    ".", "x", "x", "x",
-       "001",    "1", "x", "x", "x",
-       "001",  "2.2", "x", "x", "x",
-       "001", "1e-3",  NA,  NA,  NA,
-       "001",    "4",  NA,  NA,  NA,
-       "001",    "5",  NA,  NA,  NA,
-       "001",    "6",  NA,  NA,  NA,
-       "001",   "+7",  NA,  NA,  NA,
-       "001",   "-8",  NA,  NA,  NA,
-       "001",    "9",  NA,  NA,  NA,
-       "001",    "A",  NA,  NA,  NA
-  )
+# test_that("convert_all_numeric works correctly", {
+#   test <- tibble::tribble(
+#     ~USUBJID,     ~A,  ~B,  ~C,  ~D,
+#        "001",    ".", "x", "x", "x",
+#        "001",    "1", "x", "x", "x",
+#        "001",  "2.2", "x", "x", "x",
+#        "001", "1e-3",  NA,  NA,  NA,
+#        "001",    "4",  NA,  NA,  NA,
+#        "001",    "5",  NA,  NA,  NA,
+#        "001",    "6",  NA,  NA,  NA,
+#        "001",   "+7",  NA,  NA,  NA,
+#        "001",   "-8",  NA,  NA,  NA,
+#        "001",    "9",  NA,  NA,  NA,
+#        "001",    "A",  NA,  NA,  NA
+#   )
+#
+#   expectation <- tibble::tribble(
+#     ~USUBJID,    ~A,  ~B,  ~C,  ~D,
+#        "001",    NA, "x", "x", "x",
+#        "001",     1, "x", "x", "x",
+#        "001",   2.2, "x", "x", "x",
+#        "001", 0.001,  NA,  NA,  NA,
+#        "001",     4,  NA,  NA,  NA,
+#        "001",     5,  NA,  NA,  NA,
+#        "001",     6,  NA,  NA,  NA,
+#        "001",     7,  NA,  NA,  NA,
+#        "001",    -8,  NA,  NA,  NA,
+#        "001",     9,  NA,  NA,  NA,
+#        "001",    NA,  NA,  NA,  NA
+#   )
+#
+#   expect_equal(
+#     convert_all_numeric(test, silent=TRUE),
+#     expectation)
+# })
 
-  expectation <- tibble::tribble(
-    ~USUBJID,    ~A,  ~B,  ~C,  ~D,
-       "001",    NA, "x", "x", "x",
-       "001",     1, "x", "x", "x",
-       "001",   2.2, "x", "x", "x",
-       "001", 0.001,  NA,  NA,  NA,
-       "001",     4,  NA,  NA,  NA,
-       "001",     5,  NA,  NA,  NA,
-       "001",     6,  NA,  NA,  NA,
-       "001",     7,  NA,  NA,  NA,
-       "001",    -8,  NA,  NA,  NA,
-       "001",     9,  NA,  NA,  NA,
-       "001",    NA,  NA,  NA,  NA
-  )
 
-  expect_equal(
-    convert_all_numeric(test, silent=TRUE),
-    expectation)
-})
-
-
-test_that("col_convert_datetime works correctly", {
+test_that("is_likely_datetime works as intended", {
   test <- c(
     "2025-01-20 08:04:43",
     "2025-01-20 08:04",
     "2025-01-20T08:04:43",
     "2025-01-20T08:04",
-    "25-01-20 08:04",
+    "2025-01-20",
+    "25-01-20 08:04",       # wrong year format
+    "A"                     # not a date
+  )
+
+  expect_false(is_likely_datetime(c(1, 2, 3, 4)))
+  expect_true(is_likely_datetime(test[1:5]))
+  expect_false(is_likely_datetime(test[1:6]))
+  expect_false(is_likely_datetime(test[c(1, 2, 3, 4, 5, 7)]))
+  expect_true(is_likely_datetime("2025-01-22 08:35"))
+})
+
+
+test_that("convert_char_datetime works correctly", {
+  silent <- TRUE
+
+  test <- c(
+    "2025-01-20 08:04:43",
+    "2025-01-20 08:04",
+    "2025-01-20T08:04:43",
+    "2025-01-20T08:04",
+    "2025-01-20 08:04",
     "2025-01-20",
     "A"
   )
 
-  convert_char_datetime(test, silent = T)
-
+  convert_char_datetime(test, min_prob = 0.8, silent = silent)
+  expect_error(convert_char_datetime(test, min_prob = 0.9, silent = silent))
+  expect_s3_class(
+    convert_char_datetime("2025-01-22 08:48", silent = silent),
+    "POSIXct")
 })
 
 

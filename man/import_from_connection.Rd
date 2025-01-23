@@ -4,7 +4,11 @@
 \alias{import_from_connection}
 \title{Import nif object from connection}
 \usage{
-import_from_connection(connection, format = c("csv", "NONMEM"))
+import_from_connection(
+  connection,
+  format = "NONMEM",
+  no_numeric = c("USUBJID", "STUDYID")
+)
 }
 \arguments{
 \item{connection}{The connectino to read from.}
