@@ -41,43 +41,6 @@ test_that("is_char_datetime works correctly", {
 })
 
 
-# test_that("convert_all_numeric works correctly", {
-#   test <- tibble::tribble(
-#     ~USUBJID,     ~A,  ~B,  ~C,  ~D,
-#        "001",    ".", "x", "x", "x",
-#        "001",    "1", "x", "x", "x",
-#        "001",  "2.2", "x", "x", "x",
-#        "001", "1e-3",  NA,  NA,  NA,
-#        "001",    "4",  NA,  NA,  NA,
-#        "001",    "5",  NA,  NA,  NA,
-#        "001",    "6",  NA,  NA,  NA,
-#        "001",   "+7",  NA,  NA,  NA,
-#        "001",   "-8",  NA,  NA,  NA,
-#        "001",    "9",  NA,  NA,  NA,
-#        "001",    "A",  NA,  NA,  NA
-#   )
-#
-#   expectation <- tibble::tribble(
-#     ~USUBJID,    ~A,  ~B,  ~C,  ~D,
-#        "001",    NA, "x", "x", "x",
-#        "001",     1, "x", "x", "x",
-#        "001",   2.2, "x", "x", "x",
-#        "001", 0.001,  NA,  NA,  NA,
-#        "001",     4,  NA,  NA,  NA,
-#        "001",     5,  NA,  NA,  NA,
-#        "001",     6,  NA,  NA,  NA,
-#        "001",     7,  NA,  NA,  NA,
-#        "001",    -8,  NA,  NA,  NA,
-#        "001",     9,  NA,  NA,  NA,
-#        "001",    NA,  NA,  NA,  NA
-#   )
-#
-#   expect_equal(
-#     convert_all_numeric(test, silent=TRUE),
-#     expectation)
-# })
-
-
 test_that("is_likely_datetime works as intended", {
   test <- c(
     "2025-01-20 08:04:43",
@@ -129,7 +92,7 @@ test_that("import from connection works", {
   )"
 
   connection <- textConnection(test, open="r")
-  temp <- import_from_connection(connection, format = "NONMEM")
+  temp <- import_from_connection(connection)
 })
 
 

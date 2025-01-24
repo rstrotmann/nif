@@ -114,7 +114,6 @@ is_char_nonmem_numeric <- function(x) {
 #'
 #' @return Logical.
 is_likely_numeric <- function(x, min_prob=0.9) {
-  # assert_that(is.character(x))
   if(!is.character(x)) return(FALSE)
   overall_match <- is_char_nonmem_numeric(x)
   overall_prob <- length(overall_match[overall_match == TRUE])/length(overall_match)
@@ -122,16 +121,15 @@ is_likely_numeric <- function(x, min_prob=0.9) {
 }
 
 
-#' Title
+#' Convert character vector to numeric
 #'
-#' @param x
-#' @param min_prob
-#' @param exclude
-#' @param silent
+#' @param x The input as character.
+#' @param min_prob The minimal fraction of values to correctly parse as numeric.
+#' @param silent No message output.
 #'
-#' @return
+#' @return Numeric.
 convert_char_numeric <- function(
-    x, min_prob=0.9, exclude=c("USUBJID", "STUDYID"), silent=NULL) {
+    x, min_prob=0.9, silent=NULL) {
   p <- is_likely_numeric(x, min_prob)
   if(!p) {
     stop("Vector cannot be converted to numeric!")
@@ -154,6 +152,7 @@ convert_char_numeric <- function(
     x[x == "."] <- "NA"
     suppressWarnings(as.numeric(x))
   }))
+  # as.numeric(x)
 }
 
 
@@ -194,11 +193,11 @@ is_likely_datetime <- function(x, min_prob = 0.9) {
 
 #' Convert character vector to DTC
 #'
-#' @param x The input as data frame.
+#' @param x The input as character.
 #' @param min_prob The minimal fraction of values to correctly parse as numeric.
 #' @param silent No message output.
 #'
-#' @return A data frame.
+#' @return POSIXct.
 convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
   p <- is_likely_datetime(x, min_prob)
   if(!p) {
@@ -237,14 +236,6 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
         silent = silent
       )
     }
-
-    # conditional_message(
-    #   "No time information in ", enum, "/", denom,
-    #   " (", round(enum/denom*100,1), "%) ",
-    #   "of the datetime values: ",
-    #   paste0(x[date_only], collapse = ", "),
-    #   silent = silent
-    # )
   }
 
   suppressWarnings(
@@ -262,10 +253,9 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #'
 #' @examples
 import_from_connection <- function(
-    connection, format = "NONMEM",
+    connection, format = NULL,
     no_numeric = c("USUBJID", "STUDYID")) {
-  temp <- match.arg(format, choices = c("csv", "NONMEM"))
-  assert_that(length(format) == 1, msg = "'format' must be a single value!")
+  temp <- match.arg(format, choices = c("csv", "NONMEM", NULL))
 
   # read raw line data from connection
   lines <- readLines(connection, skipNul = TRUE)
@@ -273,6 +263,15 @@ import_from_connection <- function(
   empty_lines <- which(nchar(trimws(lines)) == 0)
   if(length(c(comment_lines, empty_lines)) != 0) {
     lines <- lines[-c(comment_lines, empty_lines)]
+  }
+
+  if(is_null(format)){
+    n_comma <- str_count(lines[1], ",")
+    n_space <- str_count(lines[1], " ")
+    if(n_space == 0 & n_comma == 0)
+      stop("Data format is not specified and can not be autmaticall determined!")
+    if(n_space > 0) format <- "NONMEM"
+    if(n_comma > 0) format <- "csv"
   }
 
   # NONMEN-format, i.e., fixed-width format, white space-separated columns
@@ -297,15 +296,32 @@ import_from_connection <- function(
     colnames(raw) <- str_split(lines[1], ",", simplify = TRUE)
   }
 
+  # raw <- raw %>%
+  #   mutate(across(
+  #     c(where(is_likely_numeric), -any_of(no_numeric)),
+  #     convert_char_numeric
+  #   )) %>%
+  #   mutate(across(
+  #     where(is.character) & where(is_likely_datetime),
+  #     convert_char_datetime
+  #   ))
+
   raw <- raw %>%
+    # type.convert(as.is = TRUE, numerals = "no.loss") %>%
     mutate(across(
-      c(where(is_likely_numeric), -any_of(no_numeric)),
-      convert_char_numeric
+      # everything(),
+     -c(any_of(no_numeric)),
+      ~type.convert(.x, as.is = TRUE, numerals = "no.loss")
     )) %>%
+    # mutate(across(
+    #   c(where(is_likely_numeric), -any_of(no_numeric)),
+    #   convert_char_numeric
+    # )) %>%
     mutate(across(
       where(is.character) & where(is_likely_datetime),
       convert_char_datetime
     ))
+
   return(raw)
 }
 
