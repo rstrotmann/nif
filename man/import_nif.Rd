@@ -2,18 +2,21 @@
 % Please edit documentation in R/nif_load.R
 \name{import_nif}
 \alias{import_nif}
-\title{Read NIF data}
+\title{Import nif file}
 \usage{
-import_nif(filename, format = "NONMEM")
+import_nif(filename, format = NULL, no_numeric = c("USUBJID", "STUDYID"))
 }
 \arguments{
-\item{filename}{File name as character.}
+\item{filename}{Filename as character.}
 
-\item{format}{Format as character. Must be 'NONMEM'.}
+\item{format}{The input data format, can be 'csv' or 'fixed_width', or NULL
+(default) to automatically determine the format.}
+
+\item{no_numeric}{Fields that will not be converted to numeric.}
 }
 \value{
 A nif object.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Import nif file
 }

@@ -1595,21 +1595,21 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
 }
 
 
-#' Title
+#' #' Title
+#' #'
+#' #' reference: https://www.lexjansen.com/pharmasug/2024/ST/PharmaSUG-2024-ST-297.pdf
+#' #'
+#' #' @param nif A nif object.
+#' #' @param analyte The analyte as character. If `NULL` (default), all analytes
+#' #'   are selected.
+#' #'
+#' #' @return
+#' #' @export
+#' #'
+#' #' @examples
+#' rel_dose_intensity <- function(nif, analyte = NULL) {
 #'
-#' reference: https://www.lexjansen.com/pharmasug/2024/ST/PharmaSUG-2024-ST-297.pdf
-#'
-#' @param nif A nif object.
-#' @param analyte The analyte as character. If `NULL` (default), all analytes
-#'   are selected.
-#'
-#' @return
-#' @export
-#'
-#' @examples
-rel_dose_intensity <- function(nif, analyte = NULL) {
-
-}
+#' }
 
 
 

@@ -7,14 +7,14 @@
 convert_char_datetime(x, min_prob = 0.9, silent = NULL)
 }
 \arguments{
-\item{x}{The input as data frame.}
+\item{x}{The input as character.}
 
 \item{min_prob}{The minimal fraction of values to correctly parse as numeric.}
 
 \item{silent}{No message output.}
 }
 \value{
-A data frame.
+POSIXct.
 }
 \description{
 Convert character vector to DTC

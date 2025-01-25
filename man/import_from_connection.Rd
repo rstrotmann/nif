@@ -6,14 +6,20 @@
 \usage{
 import_from_connection(
   connection,
-  format = "NONMEM",
-  no_numeric = c("USUBJID", "STUDYID")
+  format = NULL,
+  no_numeric = c("USUBJID", "STUDYID"),
+  silent = NULL
 )
 }
 \arguments{
-\item{connection}{The connectino to read from.}
+\item{connection}{The connection to read from.}
 
-\item{format}{The input data format.}
+\item{format}{The input data format, can be 'csv' or 'fixed_width', or NULL
+(default) to automatically determine the format.}
+
+\item{no_numeric}{Fields that will not be converted to numeric.}
+
+\item{silent}{Suppress message output, as logical.}
 }
 \value{
 A nif object.

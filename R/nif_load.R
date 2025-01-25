@@ -1,160 +1,3 @@
-#' Load NIF file
-#'
-#' @param filename The filename as character.
-#' @param format The data format, as character. Can be only "csv".
-#'
-#' @return A nif object.
-#' @export
-read_nif <- function(filename, format="csv") {
-  if(!format %in% c("csv"))
-    stop(paste0("Unsupported data format: ", format))
-
-  if(format == "csv") {
-    raw <- read.csv(
-      filename,
-      sep=",",
-      numerals=c("no.loss"))
-  } else {
-    return(NULL)
-  }
-  missing_fields <- minimal_nif_fields[!minimal_nif_fields %in% names(raw)]
-  if(length(missing_fields) != 0)
-    stop("Required fields missing!")
-  out <- new_nif(raw) %>%
-    ensure_analyte() %>%
-    ensure_parent() %>%
-    ensure_time()
-
-  return(out)
-}
-
-
-#' Read NIF data
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#'
-#' @param filename File name as character.
-#' @param format Format as character. Must be 'NONMEM'.
-#'
-#' @return A nif object.
-#' @import readr
-#' @export
-import_nif <- function(filename, format = "NONMEM") {
-  if(!format %in% c("NONMEM", "csv"))
-    stop(paste0("Unsupported data format: ", format))
-
-  is_nif_numeric <- function(col) {
-    all(grepl("^-?[0-9.e-]+$", col))
-  }
-
-  num_cols <- function(x) {
-    x %>%
-      # select(-c("USUBJID", "STUDYID")) %>%
-      select(-any_of(c("USUBJID", "STUDYID"))) %>%
-      select(is_nif_numeric) %>%
-      names()
-  }
-
-  if(format == "NONMEM"){
-    header <- readLines(filename, n = 1)
-    pos <- str_locate_all(header, "[A-Za-z_]+")[[1]][,1]
-    widths <- (pos - lag(pos))[-1]
-
-    invisible(
-      # capture_output(
-        raw <- readr::read_fwf(
-          filename,
-          col_positions = readr::fwf_widths(widths),
-          show_col_types = FALSE
-        )
-      # )
-    )
-
-    nif <- raw[-1,] %>%
-      mutate(across(
-        everything(),
-        ~replace(., . == ".", "0")
-      ))
-    names(nif) <- as.character(raw[1,])
-
-    nif <- nif %>%
-      mutate(across(c(num_cols(.)), ~as.numeric(.x))) %>%
-      new_nif()
-
-    return(nif)
-  }
-
-  if(format == "csv") {
-    # invisible(capture_output(
-      raw <- readr::read_csv(
-        filename,
-        show_col_types = FALSE
-      )
-    # ))
-    return(new_nif(raw))
-  }
-}
-
-
-#' #' Test vector whether consistent with NONMEM numeric format
-#' #'
-#' #' @param x The input, as character.
-#' #'
-#' #' @return Logical.
-#' is_char_nonmem_numeric <- function(x) {
-#'   grepl("^[+-]?[0-9]*\\.?[0-9]*(e[+-]?[0-9]+)?$", x)
-#' }
-
-
-#' #' Test whether character vector likely holds nueric values
-#' #'
-#' #' @param x The input as character.
-#' #' @param min_prob The minimal fraction of values to correctly parse as numeric.
-#' #'
-#' #' @return Logical.
-#' is_likely_numeric <- function(x, min_prob=0.9) {
-#'   if(!is.character(x)) return(FALSE)
-#'   overall_match <- is_char_nonmem_numeric(x)
-#'   overall_prob <- length(overall_match[overall_match == TRUE])/length(overall_match)
-#'   return(overall_prob >= min_prob)
-#' }
-
-
-#' #' Convert character vector to numeric
-#' #'
-#' #' @param x The input as character.
-#' #' @param min_prob The minimal fraction of values to correctly parse as numeric.
-#' #' @param silent No message output.
-#' #'
-#' #' @return Numeric.
-#' convert_char_numeric <- function(
-#'     x, min_prob=0.9, silent=NULL) {
-#'   p <- is_likely_numeric(x, min_prob)
-#'   if(!p) {
-#'     stop("Vector cannot be converted to numeric!")
-#'   }
-#'
-#'   overall_match <- is_char_nonmem_numeric(x)
-#'   not_numeric <- unique(x[overall_match == FALSE])
-#'
-#'   if(length(not_numeric) >0) {
-#'     conditional_message(
-#'       "The following values are not numeric ",
-#'       "and will be represented by 'NA': ",
-#'       paste0(not_numeric, collapse=", "),
-#'       silent = silent)
-#'   }
-#'
-#'   unlist(lapply(
-#'     x,
-#'     function(x) {
-#'     x[x == "."] <- "NA"
-#'     suppressWarnings(as.numeric(x))
-#'   }))
-#' }
-
-
 #' Test vector whether consistent with Datetime as per ISO 8601
 #'
 #' @param x The input, as character.
@@ -244,17 +87,18 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #' Import nif object from connection
 #'
 #' @param connection The connection to read from.
-#' @param format The input data format.
+#' @param format The input data format, can be 'csv' or 'fixed_width', or NULL
+#'   (default) to automatically determine the format.
 #' @param no_numeric Fields that will not be converted to numeric.
+#' @param silent Suppress message output, as logical.
 #'
 #' @return A nif object.
 #' @export
-#'
-#' @examples
 import_from_connection <- function(
     connection, format = NULL,
-    no_numeric = c("USUBJID", "STUDYID")) {
-  temp <- match.arg(format, choices = c("csv", "NONMEM", NULL))
+    no_numeric = c("USUBJID", "STUDYID"),
+    silent= NULL) {
+  temp <- match.arg(format, choices = c("csv", "fixed_width", NULL))
 
   # read raw line data from connection
   lines <- readLines(connection, skipNul = TRUE)
@@ -269,12 +113,12 @@ import_from_connection <- function(
     n_space <- str_count(lines[1], " ")
     if(n_space == 0 & n_comma == 0)
       stop("Data format is not specified and can not be autmaticall determined!")
-    if(n_space > 0) format <- "NONMEM"
+    if(n_space > 0) format <- "fixed_width"
     if(n_comma > 0) format <- "csv"
   }
 
-  # NONMEN-format, i.e., fixed-width format, white space-separated columns
-  if(format == "NONMEM"){
+  # fixed-width format, white space-separated columns
+  if(format == "fixed_width"){
     # column positions
     max_width <- max(nchar(lines))
     col_start <- str_locate_all(lines[1], "[A-Za-z_]+")[[1]][,1]
@@ -306,20 +150,36 @@ import_from_connection <- function(
       convert_char_datetime
     ))
 
-  return(raw)
+  missing_fields <- minimal_nif_fields[!minimal_nif_fields %in% names(raw)]
+
+  if(length(missing_fields) != 0) {
+    conditional_message(
+      "Missing essential fields ",
+      paste(missing_fields, collapse = ", "),
+      " were set to 'NA'!",
+      silent = silent
+    )
+    raw[missing_fields] <- NA
+  }
+
+  out <- new_nif(raw) #%>%
+    # ensure_analyte() %>%
+    # ensure_parent() %>%
+    # ensure_time()
+
+  return(out)
 }
 
 
 #' Import nif file
 #'
 #' @param filename Filename as character.
-#' @param format The input data format.
+#' @param format The input data format, can be 'csv' or 'fixed_width', or NULL
+#'   (default) to automatically determine the format.
 #' @param no_numeric Fields that will not be converted to numeric.
 #'
 #' @return A nif object.
 #' @export
-#'
-#' @examples
 import_nif <- function(
     filename, format = NULL, no_numeric = c("USUBJID", "STUDYID")) {
   if(!file.exists(filename))

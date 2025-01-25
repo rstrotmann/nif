@@ -92,7 +92,7 @@ test_that("import from connection works", {
   )"
 
   connection <- textConnection(test, open="r")
-  expect_no_error(temp <- import_from_connection(connection))
+  expect_no_error(temp <- import_from_connection(connection, silent = TRUE))
 })
 
 

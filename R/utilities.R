@@ -77,7 +77,7 @@ recode_sex <- function(obj) {
     ))
 
   # Warn about invalid values that were converted to NA
-  valid_vals <- c("m", "f", "M", "F", "0", "1", "男", "女")
+  valid_vals <- c("m", "f", "M", "F", "0", "1", "\u7537", "\u5973")
   invalid_vals <- setdiff(orig_vals, valid_vals)
   if (length(invalid_vals) > 0) {
     warning("Invalid sex values converted to NA: ",
