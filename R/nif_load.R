@@ -97,63 +97,62 @@ import_nif <- function(filename, format = "NONMEM") {
 }
 
 
-#' Test vector whether consistent with NONMEM numeric format
+#' #' Test vector whether consistent with NONMEM numeric format
+#' #'
+#' #' @param x The input, as character.
+#' #'
+#' #' @return Logical.
+#' is_char_nonmem_numeric <- function(x) {
+#'   grepl("^[+-]?[0-9]*\\.?[0-9]*(e[+-]?[0-9]+)?$", x)
+#' }
+
+
+#' #' Test whether character vector likely holds nueric values
+#' #'
+#' #' @param x The input as character.
+#' #' @param min_prob The minimal fraction of values to correctly parse as numeric.
+#' #'
+#' #' @return Logical.
+#' is_likely_numeric <- function(x, min_prob=0.9) {
+#'   if(!is.character(x)) return(FALSE)
+#'   overall_match <- is_char_nonmem_numeric(x)
+#'   overall_prob <- length(overall_match[overall_match == TRUE])/length(overall_match)
+#'   return(overall_prob >= min_prob)
+#' }
+
+
+#' #' Convert character vector to numeric
+#' #'
+#' #' @param x The input as character.
+#' #' @param min_prob The minimal fraction of values to correctly parse as numeric.
+#' #' @param silent No message output.
+#' #'
+#' #' @return Numeric.
+#' convert_char_numeric <- function(
+#'     x, min_prob=0.9, silent=NULL) {
+#'   p <- is_likely_numeric(x, min_prob)
+#'   if(!p) {
+#'     stop("Vector cannot be converted to numeric!")
+#'   }
 #'
-#' @param x The input, as character.
+#'   overall_match <- is_char_nonmem_numeric(x)
+#'   not_numeric <- unique(x[overall_match == FALSE])
 #'
-#' @return Logical.
-is_char_nonmem_numeric <- function(x) {
-  grepl("^[+-]?[0-9]*\\.?[0-9]*(e[+-]?[0-9]+)?$", x)
-}
-
-
-#' Test whether character vector likely holds nueric values
+#'   if(length(not_numeric) >0) {
+#'     conditional_message(
+#'       "The following values are not numeric ",
+#'       "and will be represented by 'NA': ",
+#'       paste0(not_numeric, collapse=", "),
+#'       silent = silent)
+#'   }
 #'
-#' @param x The input as character.
-#' @param min_prob The minimal fraction of values to correctly parse as numeric.
-#'
-#' @return Logical.
-is_likely_numeric <- function(x, min_prob=0.9) {
-  if(!is.character(x)) return(FALSE)
-  overall_match <- is_char_nonmem_numeric(x)
-  overall_prob <- length(overall_match[overall_match == TRUE])/length(overall_match)
-  return(overall_prob >= min_prob)
-}
-
-
-#' Convert character vector to numeric
-#'
-#' @param x The input as character.
-#' @param min_prob The minimal fraction of values to correctly parse as numeric.
-#' @param silent No message output.
-#'
-#' @return Numeric.
-convert_char_numeric <- function(
-    x, min_prob=0.9, silent=NULL) {
-  p <- is_likely_numeric(x, min_prob)
-  if(!p) {
-    stop("Vector cannot be converted to numeric!")
-  }
-
-  overall_match <- is_char_nonmem_numeric(x)
-  not_numeric <- unique(x[overall_match == FALSE])
-
-  if(length(not_numeric) >0) {
-    conditional_message(
-      "The following values are not numeric ",
-      "and will be represented by 'NA': ",
-      paste0(not_numeric, collapse=", "),
-      silent = silent)
-  }
-
-  unlist(lapply(
-    x,
-    function(x) {
-    x[x == "."] <- "NA"
-    suppressWarnings(as.numeric(x))
-  }))
-  # as.numeric(x)
-}
+#'   unlist(lapply(
+#'     x,
+#'     function(x) {
+#'     x[x == "."] <- "NA"
+#'     suppressWarnings(as.numeric(x))
+#'   }))
+#' }
 
 
 #' Test vector whether consistent with Datetime as per ISO 8601
@@ -183,7 +182,6 @@ is_char_date <- function(x) {
 #'
 #' @return Logical.
 is_likely_datetime <- function(x, min_prob = 0.9) {
-  # assert_that(is.character(x))
   if(!is.character(x)) return(FALSE)
   overall_match <- is_char_datetime(x) | is_char_date(x)
   overall_prob <- length(overall_match[overall_match == TRUE])/length(overall_match)
@@ -245,8 +243,9 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 
 #' Import nif object from connection
 #'
-#' @param connection The connectino to read from.
+#' @param connection The connection to read from.
 #' @param format The input data format.
+#' @param no_numeric Fields that will not be converted to numeric.
 #'
 #' @return A nif object.
 #' @export
@@ -265,7 +264,7 @@ import_from_connection <- function(
     lines <- lines[-c(comment_lines, empty_lines)]
   }
 
-  if(is_null(format)){
+  if(is.null(format)){
     n_comma <- str_count(lines[1], ",")
     n_space <- str_count(lines[1], " ")
     if(n_space == 0 & n_comma == 0)
@@ -296,27 +295,12 @@ import_from_connection <- function(
     colnames(raw) <- str_split(lines[1], ",", simplify = TRUE)
   }
 
-  # raw <- raw %>%
-  #   mutate(across(
-  #     c(where(is_likely_numeric), -any_of(no_numeric)),
-  #     convert_char_numeric
-  #   )) %>%
-  #   mutate(across(
-  #     where(is.character) & where(is_likely_datetime),
-  #     convert_char_datetime
-  #   ))
-
   raw <- raw %>%
-    # type.convert(as.is = TRUE, numerals = "no.loss") %>%
     mutate(across(
-      # everything(),
      -c(any_of(no_numeric)),
-      ~type.convert(.x, as.is = TRUE, numerals = "no.loss")
+      ~type.convert(.x, as.is = TRUE, numerals = "no.loss",
+                    na.strings = c("NA", "."))
     )) %>%
-    # mutate(across(
-    #   c(where(is_likely_numeric), -any_of(no_numeric)),
-    #   convert_char_numeric
-    # )) %>%
     mutate(across(
       where(is.character) & where(is_likely_datetime),
       convert_char_datetime
@@ -326,6 +310,25 @@ import_from_connection <- function(
 }
 
 
+#' Import nif file
+#'
+#' @param filename Filename as character.
+#' @param format The input data format.
+#' @param no_numeric Fields that will not be converted to numeric.
+#'
+#' @return A nif object.
+#' @export
+#'
+#' @examples
+import_nif <- function(
+    filename, format = NULL, no_numeric = c("USUBJID", "STUDYID")) {
+  if(!file.exists(filename))
+    stop(paste0(
+      "File '", filename, "' not found."
+    ))
+  connection = file(filename)
+  import_from_connection(connection, format, no_numeric)
+}
 
 
 

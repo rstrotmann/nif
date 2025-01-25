@@ -1,33 +1,33 @@
 
-test_that("is_col_nonmem_numeric works correctly", {
-  expect_true(is_likely_numeric(
-    c("1", "1.2", "-2.4", "+7", ".", "")))
-  expect_true(is_likely_numeric(
-    c("3.1e-3", "3.1e-03", "2e3", "2e03", "5e+6", "5e+06")))
-
-  expect_false(is_likely_numeric("1.1.2"))
-  expect_false(is_likely_numeric("1-"))
-  expect_false(is_likely_numeric("1.3-"))
-  expect_false(is_likely_numeric("1.3+"))
-})
-
-
-test_that("is_likely_numeric works as intended", {
-  test <- c(".", "1", "2.2", "1e-3", "4", "5", "6", "+7", "-8", "9", "A")
-
-  expect_true(is_likely_numeric(test))
-  expect_false(is_likely_numeric(c("a", "b", "c")))
-  expect_false(is_likely_numeric(NULL))
-})
+# test_that("is_col_nonmem_numeric works correctly", {
+#   expect_true(is_likely_numeric(
+#     c("1", "1.2", "-2.4", "+7", ".", "")))
+#   expect_true(is_likely_numeric(
+#     c("3.1e-3", "3.1e-03", "2e3", "2e03", "5e+6", "5e+06")))
+#
+#   expect_false(is_likely_numeric("1.1.2"))
+#   expect_false(is_likely_numeric("1-"))
+#   expect_false(is_likely_numeric("1.3-"))
+#   expect_false(is_likely_numeric("1.3+"))
+# })
 
 
-test_that("convert_char_numeric works correctly", {
-  test <- c(".", "1", "2.2", "1e-3", "4", "5", "6", "+7", "-8", "9", "A")
+# test_that("is_likely_numeric works as intended", {
+#   test <- c(".", "1", "2.2", "1e-3", "4", "5", "6", "+7", "-8", "9", "A")
+#
+#   expect_true(is_likely_numeric(test))
+#   expect_false(is_likely_numeric(c("a", "b", "c")))
+#   expect_false(is_likely_numeric(NULL))
+# })
 
-  expect_no_error(
-    temp <- convert_char_numeric(test, silent = T))
-  expect_equal(temp, c(NA, 1, 2.2, 0.001, 4, 5, 6, 7, -8, 9, NA))
-})
+
+# test_that("convert_char_numeric works correctly", {
+#   test <- c(".", "1", "2.2", "1e-3", "4", "5", "6", "+7", "-8", "9", "A")
+#
+#   expect_no_error(
+#     temp <- convert_char_numeric(test, silent = T))
+#   expect_equal(temp, c(NA, 1, 2.2, 0.001, 4, 5, 6, 7, -8, 9, NA))
+# })
 
 
 test_that("is_char_datetime works correctly", {
@@ -92,7 +92,7 @@ test_that("import from connection works", {
   )"
 
   connection <- textConnection(test, open="r")
-  temp <- import_from_connection(connection)
+  expect_no_error(temp <- import_from_connection(connection))
 })
 
 
