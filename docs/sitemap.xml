@@ -70,6 +70,7 @@
 <url><loc>/reference/compress.nif.html</loc></url>
 <url><loc>/reference/compress_nif.html</loc></url>
 <url><loc>/reference/conditional_message.html</loc></url>
+<url><loc>/reference/convert_char_datetime.html</loc></url>
 <url><loc>/reference/covariate_barplot.html</loc></url>
 <url><loc>/reference/covariate_hist.html</loc></url>
 <url><loc>/reference/crea_mdrd.html</loc></url>
@@ -134,6 +135,7 @@
 <url><loc>/reference/head.html</loc></url>
 <url><loc>/reference/head.nif.html</loc></url>
 <url><loc>/reference/ht_by_wt.html</loc></url>
+<url><loc>/reference/import_from_connection.html</loc></url>
 <url><loc>/reference/import_nif.html</loc></url>
 <url><loc>/reference/import_observation.html</loc></url>
 <url><loc>/reference/impute_admin_dtc_to_pcrftdtc.html</loc></url>
@@ -148,8 +150,11 @@
 <url><loc>/reference/index_dosing_interval.html</loc></url>
 <url><loc>/reference/index_nif.html</loc></url>
 <url><loc>/reference/index_rich_sampling_intervals.html</loc></url>
+<url><loc>/reference/is_char_date.html</loc></url>
+<url><loc>/reference/is_char_datetime.html</loc></url>
 <url><loc>/reference/is_iso_date.html</loc></url>
 <url><loc>/reference/is_iso_date_time.html</loc></url>
+<url><loc>/reference/is_likely_datetime.html</loc></url>
 <url><loc>/reference/isofy_date_format.html</loc></url>
 <url><loc>/reference/isofy_dates.html</loc></url>
 <url><loc>/reference/last_ex_dtc.html</loc></url>
