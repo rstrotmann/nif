@@ -788,6 +788,7 @@ make_administration <- function(
 
     {if(!"IMPUTATION" %in% names(.))
       mutate(., IMPUTATION = "") else .} %>%
+
     filter(.data$EXTRT == extrt) %>%
     filter(.data$EXSTDTC <= cut_off_date) %>%
     decompose_dtc("EXSTDTC") %>%
@@ -805,32 +806,34 @@ make_administration <- function(
            METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
            DOSE = EXDOSE, AMT = EXDOSE) %>%
 
-    # expand administration intervals to individual entries per administration
-    rowwise() %>%
-    mutate(DTC_date = list(seq(
-      as.Date(.data$EXSTDTC_date),
-      as.Date(.data$EXENDTC_date),
-      by = "days"))) %>%
-    tidyr::unnest("DTC_date") %>%
+    expand_ex()
 
-    # make time, carry forward time from EXSTDTC
-    group_by(.data$USUBJID, .data$ANALYTE, .data$EXENDTC_date) %>%
-    mutate(DTC_time = case_when(
-      row_number() == n() ~ .data$EXENDTC_time,
-      .default = .data$EXSTDTC_time
-    )) %>%
-
-    mutate(IMPUTATION = case_when(
-      row_number() != 1 & row_number() != n() ~ "time carried forward",
-      .default = .data$IMPUTATION
-    )) %>%
-
-    ungroup() %>%
-
-    select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",
-              "EXENDTC_time")) %>%
-
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
+    # # expand administration intervals to individual entries per administration
+    # rowwise() %>%
+    # mutate(DTC_date = list(seq(
+    #   as.Date(.data$EXSTDTC_date),
+    #   as.Date(.data$EXENDTC_date),
+    #   by = "days"))) %>%
+    # tidyr::unnest("DTC_date") %>%
+    #
+    # # make time, carry forward time from EXSTDTC
+    # group_by(.data$USUBJID, .data$ANALYTE, .data$EXENDTC_date) %>%
+    # mutate(DTC_time = case_when(
+    #   row_number() == n() ~ .data$EXENDTC_time,
+    #   .default = .data$EXSTDTC_time
+    # )) %>%
+    #
+    # mutate(IMPUTATION = case_when(
+    #   row_number() != 1 & row_number() != n() ~ "time carried forward",
+    #   .default = .data$IMPUTATION
+    # )) %>%
+    #
+    # ungroup() %>%
+    #
+    # select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",
+    #           "EXENDTC_time")) %>%
+    #
+    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
 
   # impute missing administration times from PCRFTDTC
   if("pc" %in% names(sdtm$domains)) {
