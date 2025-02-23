@@ -91,14 +91,21 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #'   (default) to automatically determine the format.
 #' @param no_numeric Fields that will not be converted to numeric.
 #' @param silent Suppress message output, as logical.
+#' @param delimiter Delimiter character.
 #'
 #' @return A nif object.
 #' @export
 import_from_connection <- function(
     connection, format = NULL,
+    delimiter = ",",
     no_numeric = c("USUBJID", "STUDYID"),
     silent= NULL) {
   temp <- match.arg(format, choices = c("csv", "fixed_width", NULL))
+
+  # Validate inputs
+  if (!inherits(connection, "connection")) {
+    stop("Input must be a connection object")
+  }
 
   # read raw line data from connection
   lines <- readLines(connection, skipNul = TRUE)
@@ -108,11 +115,22 @@ import_from_connection <- function(
     lines <- lines[-c(comment_lines, empty_lines)]
   }
 
+  if (length(lines) == 0) {
+    stop("No data found after removing comments and empty lines")
+  }
+
+  # Auto-detect format
   if(is.null(format)){
-    n_comma <- str_count(lines[1], ",")
-    n_space <- str_count(lines[1], " ")
+    # n_comma <- str_count(lines[1], ",")
+    # n_space <- str_count(lines[1], " ")
+
+    # Check for quoted fields first
+    first_line <- gsub('"[^"]*"', "", lines[1]) # Remove quoted content
+    n_comma <- str_count(first_line, delimiter)
+    n_space <- str_count(first_line, "\\s+")
+
     if(n_space == 0 & n_comma == 0)
-      stop("Data format is not specified and can not be autmaticall determined!")
+      stop("Data format is not specified and can not be autmatically determined!")
     if(n_space > 0) format <- "fixed_width"
     if(n_comma > 0) format <- "csv"
   }
