@@ -5,15 +5,48 @@
 #'
 #' @return A data frame.
 expand_ex <- function(ex) {
+  validate <- TRUE
+
+  # Input validation
+  if (validate) {
+    if (!is.data.frame(ex)) stop("Input must be a data frame")
+    ex %>%
+      assertr::verify(assertr::has_all_names(
+        "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
+    ))
+  }
+
+  # Helper function for date sequence generation
   date_list <- function(stdtc, endtc) {
+    tryCatch({
+      start_date <- as.Date(stdtc)
+      end_date <- as.Date(endtc)
+    },
+    error = function(e) {
+      warning("Failed to parse dates: ", stdtc, " to ", endtc)
+    })
+
+    if(!is.na(end_date) & end_date < start_date) {
+      stop(paste0(
+        "End date before start date for: ", stdtc, " to ", endtc
+      ))
+    }
+
     if(!is.na(endtc)){
-      return(list(seq(as.Date(stdtc), as.Date(endtc), by = "days")))
+      return(list(seq(start_date, end_date, by = "days")))
     } else {
-      return(list(as.Date(stdtc)))
+      return(list(start_date))
     }
   }
 
+  # Helper function for study day sequence
   exdy_list <- function(stdy, endy) {
+    if(stdy > endy) {
+      stop(paste0(
+        "End day before start day for: ", stdy, " to ", endy
+      ))
+    }
+
     if(!is.na(endy)){
       return(list(seq(stdy, endy)))
     } else {

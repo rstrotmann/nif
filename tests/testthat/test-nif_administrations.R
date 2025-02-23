@@ -65,5 +65,21 @@ test_that("expand_ex works with missing EXENDTC", {
 })
 
 
+test_that("expand_ex errs when end date before start date", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT,           ~EXSTDTC,     ~EXENDTC,
+    "1",         "A", "2025-01-03T07:00", "2025-01-01"
+  ) %>% lubrify_dates()
+
+  expect_error(expand_ex(ex))
+})
 
 
+test_that("expand_ex errs when end day before start day", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT,           ~EXSTDTC,     ~EXENDTC, ~EXSTDY, ~EXENDY,
+    "1",         "A", "2025-01-01T07:00", "2025-01-03",       3,       1
+  ) %>% lubrify_dates()
+
+  expect_error(expand_ex(ex))
+})
