@@ -649,6 +649,8 @@ guess_ntime <- function(sdtm) {
 #'
 #' @param sdtm_obj A SDTM object.
 #' @param observation_filter A filter term, as character.
+#' @param testcd The TRTESTCD to select for SLD calculation, as character.
+#' @param group Grouping variables, as character.
 #'
 #' @return A SDTM object.
 #' @export
@@ -664,10 +666,10 @@ derive_sld <- function(
     stop("Input must be a sdtm object")
   }
 
-  # if (!"tr" %in% names(sdtm_obj$domains)) {
-  #   warning("TR domain not in SDTM object, returning unchanged.")
-  #   return(sdtm_obj)
-  # }
+  if (!"tr" %in% names(sdtm_obj$domains)) {
+    warning("TR domain not in SDTM object, returning unchanged.")
+    return(sdtm_obj)
+  }
 
   # Get TR domain
   tr <- domain(sdtm_obj, "tr")
@@ -699,68 +701,25 @@ derive_sld <- function(
     stop("Test code '", testcd, "' not found in TR domain")
   }
 
-  # tr <- domain(sdtm_obj, "tr") %>%
-  #   assertr::verify(assertr::has_all_names(
-  #     "USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"
-  #   ))
-
-  # tr <- tr %>%
-  #   add_row(tr %>%
-  #     filter(eval(parse(text = observation_filter))) %>%
-  #     filter(.data$TRTESTCD == testcd) %>%
-  #     reframe(
-  #       N_TARGET = n(), SLD = sum(.data$TRSTRESN),
-  #       .by = any_of(c(
-  #         "STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
-  #         "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
-  #         "TRMETHOD", "TRGRPID", "TRREFID"
-  #       ))
-  #     ) %>%
-  #     distinct() %>%
-  #     tidyr::pivot_longer(
-  #       cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
-  #       values_to = "TRSTRESN"
-  #     ) %>%
-  #     mutate(TRSTRESU = case_match(
-  #       .data$TRTESTCD, "SLD" ~ "mm", .default = "")) %>%
-  #
-  #     mutate(TRTEST = case_match(
-  #       .data$TRTESTCD, "SLD" ~ "Sum of longest diameters",
-  #       "N_TARGET" ~ "Number of target lesions"
-  #     )) %>%
-  #     mutate(DOMAIN = "TR") %>%
-  #     as.data.frame()) %>%
-  #   arrange(.data$USUBJID, .data$TRDTC)
-
-
-
   # Group by variables that define a unique assessment
   group_vars <- c(
     "STUDYID",
     "DOMAIN",
     "USUBJID", "SUBJID", "TRDTC", "TRDY",
     "VISITNUM", "VISIT", "EPOCH", "TREVAL",
-    "TRMETHOD",
-    # "TRGRPID",
     "TRREFID",
     "TRSTRESU",
-    "VISITNUM",
     "VISITDY",
-    "EPOCH",
-    "TRDTC", "TRDY",
+    "TRCAT",
     group
   )
 
   # Keep only group variables that exist in the data
   group_vars <- intersect(group_vars, names(tr))
 
-
-
   # Calculate SLD
   diameter_data <- filtered_tr %>%
     filter(.data$TRTESTCD == testcd)
-
-  x <- "DOMAIN"
 
   sld_data <- diameter_data %>%
     reframe(
@@ -773,7 +732,13 @@ derive_sld <- function(
       cols = c("N_TARGET", "SLD"),
       names_to = "TRTESTCD",
       values_to = "TRSTRESN"
-    )
+    ) %>%
+    {if("TRTEST" %in% names(tr))
+        mutate(., TRTEST = case_match(
+          .data$TRTESTCD,
+          "SLD" ~ "Sum of longest diameters",
+          "N_TARGET" ~ "Number of target lesions used for SLD calculation"))
+        else .}
 
   tr <- tr %>%
     add_row(sld_data) %>%

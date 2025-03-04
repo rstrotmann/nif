@@ -4,10 +4,19 @@
 \alias{derive_sld}
 \title{Calculate SLD for SDTM.TR domain}
 \usage{
-derive_sld(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'")
+derive_sld(
+  sdtm_obj,
+  testcd = "DIAMETER",
+  group = c("TRMETHOD", "TRGRPID"),
+  observation_filter = "TRGRPID == 'TARGET'"
+)
 }
 \arguments{
 \item{sdtm_obj}{A SDTM object.}
+
+\item{testcd}{The TRTESTCD to select for SLD calculation, as character.}
+
+\item{group}{Grouping variables, as character.}
 
 \item{observation_filter}{A filter term, as character.}
 }

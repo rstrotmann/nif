@@ -7,6 +7,7 @@
 import_from_connection(
   connection,
   format = NULL,
+  delimiter = ",",
   no_numeric = c("USUBJID", "STUDYID"),
   silent = NULL
 )
@@ -16,6 +17,8 @@ import_from_connection(
 
 \item{format}{The input data format, can be 'csv' or 'fixed_width', or NULL
 (default) to automatically determine the format.}
+
+\item{delimiter}{Delimiter character.}
 
 \item{no_numeric}{Fields that will not be converted to numeric.}
 

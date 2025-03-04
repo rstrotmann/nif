@@ -127,6 +127,22 @@ test_that("derive_sld works", {
 })
 
 
+test_that("derive_sld works with TR containing TRTEST", {
+  tr <- tribble(
+    ~DOMAIN, ~USUBJID, ~TRTEST,            ~TRTESTCD, ~TRSTRESN, ~TRDTC,
+    "TR",    1,        "Longest diameter", "LDIAM",   1,         "2025-02-25T08:00",
+    "TR",    1,        "Longest diameter", "LDIAM",   1.5,       "2025-02-25T08:00",
+    "TR",    1,        "Longest diameter", "LDIAM",   0.5,       "2025-02-25T08:00"
+  )
+
+  sdtm <- new_sdtm(list(tr = tr))
+  expect_no_error(
+    derive_sld(sdtm, testcd = "LDIAM", observation_filter = "TRUE") %>%
+      domain("tr")
+  )
+})
+
+
 test_that("derive_sld works with multiple diagnostic methods", {
   tr <- tribble(
     ~DOMAIN, ~USUBJID, ~TRMETHOD, ~TRTESTCD, ~TRSTRESN, ~TRDTC,
