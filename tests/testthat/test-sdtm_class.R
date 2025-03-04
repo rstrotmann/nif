@@ -111,7 +111,38 @@ test_that("filter_subject works", {
 })
 
 
+test_that("derive_sld works", {
+  tr <- tribble(
+    ~DOMAIN, ~USUBJID, ~TRTESTCD, ~TRSTRESN, ~TRDTC,
+    "TR",    1,        "LDIAM",   1,         "2025-02-25T08:00",
+    "TR",    1,        "LDIAM",   1.5,       "2025-02-25T08:00",
+    "TR",    1,        "LDIAM",   0.5,       "2025-02-25T08:00"
+  )
+
+  sdtm <- new_sdtm(list(tr = tr))
+  expect_no_error(
+    derive_sld(sdtm, testcd = "LDIAM", observation_filter = "TRUE") %>%
+    domain("tr")
+  )
+})
 
 
+test_that("derive_sld works with multiple diagnostic methods", {
+  tr <- tribble(
+    ~DOMAIN, ~USUBJID, ~TRMETHOD, ~TRTESTCD, ~TRSTRESN, ~TRDTC,
+    "TR",    1,        "CT",     "LDIAM",    1,         "2025-02-25T08:00",
+    "TR",    1,        "CT",     "LDIAM",    1.5,       "2025-02-25T08:00",
+    "TR",    1,        "CT",     "LDIAM",    0.5,       "2025-02-25T08:00",
+    "TR",    1,        "MRT",    "LDIAM",    1,         "2025-02-25T08:00",
+    "TR",    1,        "MRT",    "LDIAM",    1.5,       "2025-02-25T08:00",
+    "TR",    1,        "MRT",    "LDIAM",    0.5,       "2025-02-25T08:00"
+  )
+
+  sdtm <- new_sdtm(list(tr = tr))
+  expect_no_error(
+    derive_sld(sdtm, testcd = "LDIAM", observation_filter = "TRUE") %>%
+      domain("tr")
+  )
+})
 
 

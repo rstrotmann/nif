@@ -653,40 +653,130 @@ guess_ntime <- function(sdtm) {
 #' @return A SDTM object.
 #' @export
 #'
-derive_sld <- function(sdtm_obj, observation_filter = "TRGRPID == 'TARGET'") {
-  if (!"tr" %in% names(sdtm_obj$domains)) {
-    return(sdtm_obj)
+derive_sld <- function(
+    sdtm_obj,
+    testcd = "DIAMETER",
+    group = c("TRMETHOD", "TRGRPID"),
+    observation_filter = "TRGRPID == 'TARGET'") {
+
+  # Validate inputs
+  if (!inherits(sdtm_obj, "sdtm")) {
+    stop("Input must be a sdtm object")
   }
 
-  tr <- domain(sdtm_obj, "tr") %>%
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"
-    ))
+  # if (!"tr" %in% names(sdtm_obj$domains)) {
+  #   warning("TR domain not in SDTM object, returning unchanged.")
+  #   return(sdtm_obj)
+  # }
+
+  # Get TR domain
+  tr <- domain(sdtm_obj, "tr")
+
+  # Validate required columns
+  required_cols <- c("USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC")
+  missing_cols <- setdiff(required_cols, names(tr))
+  if (length(missing_cols) > 0) {
+    stop(
+      "Missing required columns in TR domain: ",
+      paste(missing_cols, collapse = ", ")
+    )
+  }
+
+  # Validate filter expression
+  tryCatch(
+    {
+      filter_expr <- rlang::parse_expr(observation_filter)
+      filtered_tr <- filter(tr, !!filter_expr)
+    },
+    error = function(e) {
+      stop("Invalid filter expression: ",
+           observation_filter, "\nError: ", e$message)
+    }
+  )
+
+  # Validate testcd exists
+  if (!testcd %in% tr$TRTESTCD) {
+    stop("Test code '", testcd, "' not found in TR domain")
+  }
+
+  # tr <- domain(sdtm_obj, "tr") %>%
+  #   assertr::verify(assertr::has_all_names(
+  #     "USUBJID", "TRTESTCD", "TRSTRESN", "TRDTC"
+  #   ))
+
+  # tr <- tr %>%
+  #   add_row(tr %>%
+  #     filter(eval(parse(text = observation_filter))) %>%
+  #     filter(.data$TRTESTCD == testcd) %>%
+  #     reframe(
+  #       N_TARGET = n(), SLD = sum(.data$TRSTRESN),
+  #       .by = any_of(c(
+  #         "STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
+  #         "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
+  #         "TRMETHOD", "TRGRPID", "TRREFID"
+  #       ))
+  #     ) %>%
+  #     distinct() %>%
+  #     tidyr::pivot_longer(
+  #       cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
+  #       values_to = "TRSTRESN"
+  #     ) %>%
+  #     mutate(TRSTRESU = case_match(
+  #       .data$TRTESTCD, "SLD" ~ "mm", .default = "")) %>%
+  #
+  #     mutate(TRTEST = case_match(
+  #       .data$TRTESTCD, "SLD" ~ "Sum of longest diameters",
+  #       "N_TARGET" ~ "Number of target lesions"
+  #     )) %>%
+  #     mutate(DOMAIN = "TR") %>%
+  #     as.data.frame()) %>%
+  #   arrange(.data$USUBJID, .data$TRDTC)
+
+
+
+  # Group by variables that define a unique assessment
+  group_vars <- c(
+    "STUDYID",
+    "DOMAIN",
+    "USUBJID", "SUBJID", "TRDTC", "TRDY",
+    "VISITNUM", "VISIT", "EPOCH", "TREVAL",
+    "TRMETHOD",
+    # "TRGRPID",
+    "TRREFID",
+    "TRSTRESU",
+    "VISITNUM",
+    "VISITDY",
+    "EPOCH",
+    "TRDTC", "TRDY",
+    group
+  )
+
+  # Keep only group variables that exist in the data
+  group_vars <- intersect(group_vars, names(tr))
+
+
+
+  # Calculate SLD
+  diameter_data <- filtered_tr %>%
+    filter(.data$TRTESTCD == testcd)
+
+  x <- "DOMAIN"
+
+  sld_data <- diameter_data %>%
+    reframe(
+      N_TARGET = n(),
+      SLD = sum(.data$TRSTRESN, na.rm = TRUE),
+      .by = any_of(group_vars)
+    ) %>%
+    distinct() %>%
+    tidyr::pivot_longer(
+      cols = c("N_TARGET", "SLD"),
+      names_to = "TRTESTCD",
+      values_to = "TRSTRESN"
+    )
 
   tr <- tr %>%
-    add_row(tr %>%
-      filter(eval(parse(text = observation_filter))) %>%
-      filter(.data$TRTESTCD == "DIAMETER") %>%
-      reframe(
-        N_TARGET = n(), SLD = sum(.data$TRSTRESN),
-        .by = any_of(c(
-          "STUDYID", "DOMAIN", "USUBJID", "SUBJID", "TRDTC",
-          "TRDY", "VISITNUM", "VISIT", "EPOCH", "TREVAL",
-          "TRMETHOD", "TRGRPID", "TRREFID"
-        ))
-      ) %>%
-      distinct() %>%
-      tidyr::pivot_longer(
-        cols = c("N_TARGET", "SLD"), names_to = "TRTESTCD",
-        values_to = "TRSTRESN"
-      ) %>%
-      mutate(TRSTRESU = case_match(.data$TRTESTCD, "SLD" ~ "mm", .default = "")) %>%
-      mutate(TRTEST = case_match(
-        .data$TRTESTCD, "SLD" ~ "Sum of longest diameters",
-        "N_TARGET" ~ "Number of target lesions"
-      )) %>%
-      mutate(DOMAIN = "TR") %>%
-      as.data.frame()) %>%
+    add_row(sld_data) %>%
     arrange(.data$USUBJID, .data$TRDTC)
 
   temp <- sdtm_obj
