@@ -2,7 +2,8 @@
 % Please edit documentation in R/make_nif.R
 \name{make_ntime}
 \alias{make_ntime}
-\title{Make nominal time}
+\title{clip_nif(examplinib_poc_nif)
+Make nominal time}
 \usage{
 make_ntime(obj, include_day = FALSE)
 }

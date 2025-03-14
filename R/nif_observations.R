@@ -1,0 +1,300 @@
+#' Compile observation data frame
+#'
+#' @description
+#' Create a data frame of observations from a SDTM domain specified by 'domain'
+#' where the dependent variable comes from the 'DV_field' parameter and the
+#' timing information from the 'DTC_field' parameter.
+#'
+#' The 'TIME' in the output is `NA` throughout and needs to be calculated based
+#' on administration time point information provided separately.
+#'
+#' If the 'NTIME_lookup' parameter is provided, 'NTIME' can be derived from a
+#' field contained in the input data set, e.g., 'PCELTM' (see the code
+#' examples). Otherwise, 'NTIME' will be `NA`.
+#'
+#' @param sdtm A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
+#'   domain the observations come from.
+#' @param domain The domain as character.
+#' @param testcd The observation variable, as character.
+#' @param analyte The name for the analyte. Defaults to the 'testcd', if NULL.
+#' @param parent The name of the parent analyte for the observation as
+#'   character. Defaults to the value of 'analyte' if NULL.
+#' @param metabolite Observation is a metabolite, as logical.
+#' @param cmt The compartment for the observation as numeric.
+#' @param subject_filter The filtering to apply to the DM domain.
+#' @param observation_filter The filtering to apply to the observation source
+#'   data.
+#' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
+#'   name followed by 'TESTCD', if NULL.
+#' @param DTC_field The field to use as the date-time code for the observation.
+#'   Defaults to the two-character domain name followed by 'DTC', if NULL.
+#' @param DV_field the field to use as the dependent variable. Defaults to the
+#'   two-character domain name followed by 'STRESN', if NULL.
+#' @param coding_table Coding table to translate a categorical values into
+#'   numerical values, as data frame. The data frame must have at least one
+#'   column that matches a column in the domain, and a numerical 'DV' column
+#'   that provides the recoding result.
+#' @param factor Multiplier for the DV field, as numeric.
+#' @param NTIME_lookup A data frame with two columns, a column that defines the
+#'   custom nominal time information in the target domain (e.g., 'PCELTM'), and
+#'   'NTIME'. This data frame is left_joined into the observation data frame
+#'   to provide the NTIME field.
+#' @param keep Columns to keep, as character.
+#' @param include_day_in_ntime Include treatment day in the calculation of
+#'   NTIME, as logical.
+#'
+#' @return A data frame.
+#' @keywords internal
+#' @import stringr
+#'
+make_observation <- function(
+    sdtm,
+    domain,
+    testcd,
+    analyte = NULL,
+    parent = NULL,
+    metabolite = FALSE,
+    cmt = NA,
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+    observation_filter = "TRUE",
+    TESTCD_field = NULL,
+    DTC_field = NULL,
+    DV_field = NULL,
+    coding_table = NULL,
+    factor = 1,
+    NTIME_lookup = NULL,
+    keep = NULL,
+    include_day_in_ntime = FALSE
+) {
+  # Validate inputs
+  if (!inherits(sdtm, "sdtm")) {
+    stop("sdtm must be an sdtm object")
+  }
+  
+  domain_name <- str_to_lower(domain)
+  if (!domain_name %in% names(sdtm$domains)) {
+    stop(paste0("Domain '", domain_name, "' not found in sdtm object"))
+  }
+
+  # Create fields
+  if(is.null(DTC_field))
+    DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
+
+  if(is.null(DV_field))
+    DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
+
+  if(is.null(TESTCD_field))
+    TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
+
+  if(is.null(analyte)) analyte <- testcd
+  if(is.null(parent)) parent <- analyte
+
+  # Get subject data
+  tryCatch({
+    sbs <- make_subjects(
+      domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter, keep)
+  }, error = function(e) {
+    stop(paste0("Error getting subject data: ", e$message))
+  })
+
+  obj <- domain(sdtm, str_to_lower(domain)) %>%
+    lubrify_dates()
+
+  # Check if required fields exist
+  required_fields <- c(TESTCD_field, DTC_field)
+  missing_fields <- required_fields[!required_fields %in% names(obj)]
+  if (length(missing_fields) > 0) {
+    stop(paste0("Required field(s) missing in domain '", domain_name, "': ",
+                paste(missing_fields, collapse = ", ")))
+  }
+
+  # Check if DV field exists when no coding table
+  if (!DV_field %in% names(obj) && is.null(coding_table)) {
+    stop(paste0("DV field '", DV_field, "' not found in domain and no coding table provided"))
+  }
+
+  # Create NTIME lookup table if not provided
+  if(is.null(NTIME_lookup)) {
+    NTIME_lookup = make_ntime(obj, include_day = include_day_in_ntime)
+    if(is.null(NTIME_lookup)) {
+      conditional_message("No NTIME_lookup could be created, NTIME will be NA")
+    }
+  }
+
+  # apply coding table, if not NULL
+  if(!is.null(coding_table)) {
+    if(!any(names(coding_table) %in% names(obj))){
+      stop("Coding table cannot be applied to data set!")
+    }
+    if(!is.numeric(coding_table$DV)){
+      stop("DV field in coding table must be numeric!")
+    }
+    # Capture warnings instead of suppressing them
+    join_msgs <- capture.output(type = "message", {
+      obj <- obj %>%
+        left_join(coding_table)
+    })
+    if(length(join_msgs) > 0) {
+      conditional_message("Warnings during coding table join: ", 
+                          paste(join_msgs, collapse = "\n"))
+    }
+  } else {
+    obj <- obj %>%
+      mutate(DV = .data[[DV_field]] * factor)
+  }
+
+  obj %>%
+    mutate(SRC_DOMAIN = .data$DOMAIN) %>%
+    # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
+    {if(paste0(toupper(domain), "SEQ") %in% names(obj))
+      mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
+        mutate(., SRC_SEQ = NA)} %>%
+
+    filter(eval(parse(text = observation_filter))) %>%
+
+    filter(.data[[TESTCD_field]] == testcd) %>%
+    mutate(
+      DTC = .data[[DTC_field]],
+      ANALYTE = analyte,
+      TIME = NA,
+      CMT = cmt,
+      AMT = 0,
+      DOSE = NA,
+      PARENT = parent,
+      METABOLITE = metabolite,
+      EVID = 0,
+      MDV = as.numeric(is.na(DV)),
+      IMPUTATION = "") %>%
+    {if(is.numeric(.$DV)) mutate(., DV = DV * factor) else .} %>%
+
+    {if(!is.null(NTIME_lookup)) suppressMessages(
+      left_join(., NTIME_lookup)) else
+        mutate(., NTIME = NA)} %>%
+
+    inner_join(sbs, by = "USUBJID") %>%
+    group_by(.data$USUBJID) %>%
+    mutate(TRTDY = as.numeric(
+      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+      difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
+      units = "days") + 1) %>%
+    ungroup() %>%
+    filter(!is.na(.data$DTC)) %>%
+    new_nif()
+}
+
+
+#' Append observation events
+#'
+#' Observations can be pharmacokinetic observations (i.e., from the PC domain),
+#' or any other class of observation from any other SDTM domain. The 'testcd'
+#' specifies the value of the respective __TESTCD__ field (e.g., 'PCTESTCD',
+#' 'VSTESTCD' or 'LBTESTCD') that defines the observation. Observation events
+#' can be attached to an administered drug by specifying the 'parent' field.
+#' This is required for, e.g., the time-after-dose ('TAD') and
+#' time-after-first-dose ('TAFD') time calculation.
+#'
+#' Observations can be further specified with the 'observation_filter' term. The
+#' filter term can refer to any field of the respective SDTM domain.
+#'
+#' A PK/PD model compartment can be specified with 'cmt' or will be
+#' automatically assigned if `cmt = NULL`.
+#'
+#' @param nif A nif object.
+#' @inheritParams make_observation
+#' @param debug Include debug fields, as logical.
+#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
+#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
+#' suppress messages.
+#'
+#' @return A nif object.
+#' @seealso [add_administration()]
+#' @export
+#' @examples
+#' add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",
+#'   parent = "RS2023")
+#'
+add_observation <- function(
+    nif, sdtm, domain, testcd,
+    analyte = NULL,
+    parent = NULL,
+    metabolite = FALSE,
+    cmt = NULL,
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+    observation_filter = "TRUE",
+    TESTCD_field = NULL,
+    DTC_field = NULL,
+    DV_field = NULL,
+    coding_table = NULL,
+    factor = 1,
+    NTIME_lookup = NULL,
+    keep = NULL,
+    debug = FALSE,
+    include_day_in_ntime = FALSE,
+    silent = deprecated()
+) {
+  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
+  if(length(parents(nif)) == 0)
+    stop("Please add at least one administration first!")
+  if(is.null(cmt)) {
+    cmt <- max(nif$CMT) + 1
+    conditional_message(paste0(
+      "Compartment for ", testcd,
+      " was not specified and has been set to ", cmt))
+  }
+
+  if(is.null(analyte)) analyte <- testcd
+
+  imp <- nif %>%
+    as.data.frame() %>%
+    filter(EVID == 1) %>%
+    distinct(ANALYTE) %>%
+    pull(ANALYTE)
+
+  if(is.null(parent)) {
+    if(analyte %in% imp) {
+      parent <- analyte
+    } else {
+      parent <- guess_parent(nif)
+      conditional_message(paste0("Parent for ", analyte, " was set to ",
+                                 parent, "!"))
+    }
+  }
+
+  obj <- bind_rows(
+    nif,
+    make_observation(
+      sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
+      observation_filter, TESTCD_field, DTC_field, DV_field,
+      coding_table, factor, NTIME_lookup, keep,
+      include_day_in_ntime = include_day_in_ntime)) %>%
+    arrange(.data$USUBJID, .data$DTC) %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    group_by(.data$USUBJID, .data$PARENT) %>%
+    mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE,
+                                     .default = FALSE)) %>%
+    ungroup()
+
+  n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
+  if(n_no_admin != 0) {
+    conditional_message(paste0("Missing administration information in ",
+                               n_no_admin, " observations (did you set a\n",
+                               "parent for these observations?):\n",
+                               df_to_string(
+                                 obj %>%
+                                   filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+                                   group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
+                                   mutate(N = sum(EVID == 0)) %>%
+                                   ungroup() %>%
+                                   distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+                                 indent = 2), "\n"))
+
+    obj <- obj %>%
+      filter(.data$NO_ADMIN_FLAG == 0)
+  }
+
+  obj %>%
+    select(-c("NO_ADMIN_FLAG")) %>%
+    normalize_nif(keep = keep)
+}
