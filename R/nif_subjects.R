@@ -34,7 +34,6 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
 }
 
 
-
 #' Compile subject information
 #'
 #' @param dm The DM domain as data table.

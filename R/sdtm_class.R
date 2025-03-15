@@ -724,6 +724,19 @@ filter_subject.sdtm <- function(obj, usubjid) {
 }
 
 
+#' Title
+#'
+#' @param sdtm A sdtm object.
+#' @param ... Further arguments.
+#'
+#' @return A data frame.
+#' @export
+make_subjects_sdtm <- function(obj, ...) {
+  make_subjects(domain(obj, "dm"), domain(obj, "vs"), ...)
+}
+
+
+
 #' Guess NTIME from PCTPT
 #'
 #' @param sdtm A sdtm object.
