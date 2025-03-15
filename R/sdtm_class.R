@@ -1,3 +1,101 @@
+#' Check whether fields in domain are compliant with SDTM
+#'
+#' @param domain The SDTM domain as data frame.
+#' @param silent Suppress optional messages, as logical. Defaults to global
+#'   nif_options if NULL.
+#'
+#' @return Invisibly returns TRUE if validation passes, or stops with an error if required columns are missing.
+#' @export
+#'
+#' @examples validate_domain(examplinib_sad$dm)
+validate_domain <- function(domain, silent = NULL) {
+  # Input validation
+  if (!is.data.frame(domain)) {
+    stop("The 'domain' parameter must be a data frame")
+  }
+  
+  if (!"DOMAIN" %in% colnames(domain)) {
+    stop("The data frame must have a 'DOMAIN' column")
+  }
+  
+  # Check if domain$DOMAIN is empty
+  if (length(domain$DOMAIN) == 0) {
+    stop("The 'DOMAIN' column is empty")
+  }
+  
+  # Get unique domain names and handle multiple values
+  domain_names <- unique(domain$DOMAIN)
+  if (length(domain_names) > 1) {
+    warning("Multiple domain values found: ", paste(domain_names, collapse = ", "), 
+            ". Using first value: ", domain_names[1])
+    domain_name <- toupper(domain_names[1])
+  } else {
+    domain_name <- toupper(domain_names)
+  }
+  
+  # Check if domain_model exists
+  if (!exists("domain_model", inherits = TRUE)) {
+    stop("Required variable 'domain_model' not found")
+  }
+  
+  # Check if conditional_message exists
+  if (!exists("conditional_message", mode = "function", inherits = TRUE)) {
+    # Create a simple version if it doesn't exist
+    conditional_message <- function(..., silent = NULL) {
+      if (!isTRUE(silent)) {
+        message(...)
+      }
+    }
+  }
+  
+  if(!domain_name %in% unique(domain_model$DOMAIN)) {
+    warning("Unknown domain '", domain_name, "' cannot be validated!")
+    return(invisible(TRUE))
+  } else {
+    temp <- domain_model %>%
+      dplyr::filter(DOMAIN == domain_name)
+
+    required_names <- temp %>%
+      dplyr::filter(CORE == "Req") %>%
+      dplyr::pull(VARNAM)
+
+    expected_names <- temp %>%
+      dplyr::filter(CORE == "Exp") %>%
+      dplyr::pull(VARNAM)
+
+    permitted_names <- temp %>%
+      dplyr::filter(CORE == "Perm") %>%
+      dplyr::pull(VARNAM)
+
+    missing_req <- setdiff(required_names, colnames(domain))
+    missing_exp <- setdiff(expected_names, colnames(domain))
+    missing_perm <- setdiff(permitted_names, colnames(domain))
+
+    if (length(missing_req) > 0) {
+      stop("The following required columns are missing in ", domain_name, ": ",
+           paste(missing_req, collapse = ", "))
+    }
+
+    if (length(missing_exp) > 0) {
+      conditional_message(
+        "The following expected columns are missing in domain ",
+        domain_name, ": ",
+        paste(missing_exp, collapse = ", "),
+        silent = silent)
+    }
+
+    if (length(missing_perm) > 0) {
+      conditional_message(
+        "The following permitted columns are missing in domain ",
+        domain_name, ": ",
+        paste(missing_perm, collapse = ", "),
+        silent = silent)
+    }
+    
+    return(invisible(TRUE))
+  }
+}
+
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
 #' @param sdtm_data The SDTM domains as list of data frames.
@@ -134,7 +232,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   cat(df_to_string(x$analytes,
     color = color, indent = indent,
     show_none = TRUE
-  ), "\n\n")
+  ), "\n\n"))
 
   if (nrow(x$analyte_mapping) != 0) {
     cat("Treatment-to-analyte mappings:\n")

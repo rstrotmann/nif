@@ -1,29 +1,29 @@
 make_test_sdtm <- function() {
   dm <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~SEX,   ~ACTARMCD,          ~RFXSTDTC,
-    "20230000221040001", "DM", "M", "TREATMENT", "2001-01-01T10:29",
-    "20230000221040002", "DM", "M", "TREATMENT", "2001-01-02T09:09",
-    "20230000221070001", "DM", "M", "TREATMENT", "2000-12-29T09:07",
-    "20230000221060001", "DM", "F", "TREATMENT", "2001-01-06T11:18"
+    "1", "DM", "M", "TREATMENT", "2001-01-01T10:29",
+    "2", "DM", "M", "TREATMENT", "2001-01-02T09:09",
+    "3", "DM", "M", "TREATMENT", "2000-12-29T09:07",
+    "4", "DM", "F", "TREATMENT", "2001-01-06T11:18"
   ) %>%
     mutate(RFSTDTC = RFXSTDTC)
   vs <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
-    "20230000221040001", "VS", "HEIGHT",     "Y",     190.8,
-    "20230000221040001", "VS", "WEIGHT",     "Y",      79.3,
-    "20230000221040002", "VS", "HEIGHT",     "Y",     199.5,
-    "20230000221040002", "VS", "WEIGHT",     "Y",      81.6,
-    "20230000221060001", "VS", "HEIGHT",     "Y",     185.4,
-    "20230000221060001", "VS", "WEIGHT",     "Y",      92.8,
-    "20230000221070001", "VS", "HEIGHT",     "Y",     177.8,
-    "20230000221070001", "VS", "WEIGHT",     "Y",      83.3
+    "1", "VS", "HEIGHT",     "Y",     190.8,
+    "1", "VS", "WEIGHT",     "Y",      79.3,
+    "2", "VS", "HEIGHT",     "Y",     199.5,
+    "2", "VS", "WEIGHT",     "Y",      81.6,
+    "3", "VS", "HEIGHT",     "Y",     185.4,
+    "3", "VS", "WEIGHT",     "Y",      92.8,
+    "4", "VS", "HEIGHT",     "Y",     177.8,
+    "4", "VS", "WEIGHT",     "Y",      83.3
   )
   lb <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBBLFL, ~LBTESTCD,        ~LBSTRESN,
-    "20230000221040001",    "DM", "SERUM",     "Y",   "CREAT", 89.2690855827183,
-    "20230000221040002",    "DM", "SERUM",     "Y",   "CREAT", 73.3255705088018,
-    "20230000221070001",    "DM", "SERUM",     "Y",   "CREAT", 77.8168976104201,
-    "20230000221060001",    "DM", "SERUM",     "Y",   "CREAT", 66.8305453780658
+    "1",    "DM", "SERUM",     "Y",   "CREAT", 89.2690855827183,
+    "2",    "DM", "SERUM",     "Y",   "CREAT", 73.3255705088018,
+    "3",    "DM", "SERUM",     "Y",   "CREAT", 77.8168976104201,
+    "4",    "DM", "SERUM",     "Y",   "CREAT", 66.8305453780658
   )
   temp <- list(
     dm = dm,
@@ -68,4 +68,123 @@ test_that("make_subject works with different age definitions", {
       mutate(AGE = c(30, 20, NA, NA))
   )
   expect_equal(temp$AGE, c(30, 20, 47, 46))
+})
+
+
+test_that("make_subjects validates inputs correctly", {
+  # Test with non-data frame input
+  expect_error(
+    make_subjects(list(a = 1, b = 2)),
+    "The 'dm' parameter must be a data frame",
+    fixed = TRUE
+  )
+
+  # Test with missing required columns in dm
+  incomplete_dm <- tibble::tribble(
+    ~USUBJID, ~ACTARMCD,
+    "001", "TRT"
+  )
+
+  expect_error(
+    make_subjects(incomplete_dm),
+    "The following required columns are missing from the 'dm' data frame: SEX",
+    fixed = TRUE
+  )
+
+  # Test with incomplete vs data
+  valid_dm <- tibble::tribble(
+    ~USUBJID, ~SEX, ~ACTARMCD,
+    "001", "M", "TRT"
+  )
+
+  incomplete_vs <- tibble::tribble(
+    ~USUBJID, ~VSSTRESN,
+    "001", 170
+  )
+
+  expect_error(
+    make_subjects(valid_dm, incomplete_vs),
+    "The following required columns are missing from the 'vs' data frame: VSTESTCD",
+    fixed = TRUE
+  )
+
+  # Test with non-data frame vs
+  expect_error(
+    make_subjects(valid_dm, vs = list(a = 1)),
+    "The 'vs' parameter must be a data frame or NULL",
+    fixed = TRUE
+  )
+
+  # Test with missing RFSTDTC when needed
+  valid_dm_no_rfstdtc <- tibble::tribble(
+    ~USUBJID, ~SEX, ~ACTARMCD,
+    "001", "M", "TRT"
+  )
+
+  vs_no_blfl <- tibble::tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "001", "HEIGHT", 170, "2022-12-20"
+  )
+
+  expect_error(
+    make_subjects(valid_dm_no_rfstdtc, vs_no_blfl),
+    "When 'VSBLFL' is not available in vs, 'RFSTDTC' must be present in dm for baseline determination",
+    fixed = TRUE
+  )
+})
+
+
+test_that("BMI calculation handles edge cases correctly", {
+  # Create test data with various edge cases
+  test_dm <- tibble::tribble(
+    ~USUBJID, ~SEX, ~ACTARMCD, ~RFSTDTC,
+    "001", "M", "TRT", "2023-01-01",
+    "002", "F", "TRT", "2023-01-01",
+    "003", "M", "TRT", "2023-01-01",
+    "004", "F", "TRT", "2023-01-01",
+    "005", "M", "TRT", "2023-01-01",
+    "006", "F", "TRT", "2023-01-01"
+  )
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSDTC,
+    # Normal case - should calculate BMI correctly
+    "001", "HEIGHT", 170, "Y", "2022-12-20",
+    "001", "WEIGHT", 70, "Y", "2022-12-20",
+
+    # Missing HEIGHT - should result in NA BMI
+    "002", "WEIGHT", 65, "Y", "2022-12-20",
+
+    # Missing WEIGHT - should result in NA BMI
+    "003", "HEIGHT", 180, "Y", "2022-12-20",
+
+    # Zero HEIGHT - should result in NA BMI (would cause division by zero)
+    "004", "HEIGHT", 0, "Y", "2022-12-20",
+    "004", "WEIGHT", 75, "Y", "2022-12-20",
+
+    # Negative HEIGHT - should result in NA BMI (physically impossible)
+    "005", "HEIGHT", -10, "Y", "2022-12-20",
+    "005", "WEIGHT", 80, "Y", "2022-12-20",
+
+    # Zero WEIGHT - should result in NA BMI
+    "006", "HEIGHT", 165, "Y", "2022-12-20",
+    "006", "WEIGHT", 0, "Y", "2022-12-20"
+  )
+
+  # Run make_subjects with our test data
+  result <- make_subjects(test_dm, test_vs)
+
+  # Check that the results are as expected
+  expect_equal(nrow(result), 6) # "Should return all 6 subjects")
+
+  # Test normal case - BMI calculation should work
+  normal_bmi <- 70 / (170/100)^2  # Expected BMI for subject 001
+  expect_equal(result$BMI[result$USUBJID == "001"], normal_bmi)
+
+  # Test all edge cases - BMI should be NA
+  expect_true(is.na(result$BMI[result$USUBJID == "002"]), "Missing HEIGHT should result in NA BMI")
+  expect_true(is.na(result$BMI[result$USUBJID == "003"]), "Missing WEIGHT should result in NA BMI")
+  expect_true(is.na(result$BMI[result$USUBJID == "004"]), "Zero HEIGHT should result in NA BMI")
+  expect_true(is.na(result$BMI[result$USUBJID == "005"]), "Negative HEIGHT should result in NA BMI")
+  expect_true(is.na(result$BMI[result$USUBJID == "006"]), "Zero WEIGHT should result in NA BMI")
 })

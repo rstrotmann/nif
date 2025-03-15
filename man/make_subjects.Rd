@@ -8,7 +8,7 @@ make_subjects(
   dm,
   vs = NULL,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
-  keep = ""
+  keep = character(0)
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ make_subjects(
 
 \item{subject_filter}{The filtering to apply to the DM domain.}
 
-\item{keep}{Columns to keep, as character.}
+\item{keep}{Columns to keep, as character vector.}
 }
 \value{
 A data table.

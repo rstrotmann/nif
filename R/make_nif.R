@@ -85,7 +85,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
 #' global cut off date using [impute_exendtc_to_cutoff()].
 #'
 #' As this function conducts rather aggressive imputations, the message output
-#' is not optional, i.e., cannot be suppressed using the blobal 'silent' option,
+#' is not optional, i.e., cannot be suppressed using the global 'silent' option,
 #' but is issued in all cases.
 #'
 #' @param ex The updated EX domain as data frame.

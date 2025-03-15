@@ -29,7 +29,7 @@ global cut off date using \code{\link[=impute_exendtc_to_cutoff]{impute_exendtc_
 }
 \details{
 As this function conducts rather aggressive imputations, the message output
-is not optional, i.e., cannot be suppressed using the blobal 'silent' option,
+is not optional, i.e., cannot be suppressed using the global 'silent' option,
 but is issued in all cases.
 }
 \keyword{internal}

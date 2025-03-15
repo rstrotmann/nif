@@ -1,3 +1,24 @@
+#' Calculate Body Mass Index (BMI)
+#'
+#' This function calculates BMI from height and weight values.
+#' BMI is calculated as weight (kg) / (height (m) / 100)^2.
+#'
+#' @param height Height in centimeters.
+#' @param weight Weight in kilograms.
+#'
+#' @return A numeric vector containing the calculated BMI values. NA values are returned for
+#'   missing height or weight, or when either is less than or equal to zero.
+#' @keywords internal
+calculate_bmi <- function(height, weight) {
+  case_when(
+    is.na(height) | is.na(weight) ~ NA_real_,
+    height <= 0 ~ NA_real_,
+    weight <= 0 ~ NA_real_,
+    TRUE ~ weight / (height / 100)^2
+  )
+}
+
+
 #' Glomerular filtration rate estimation from serum creatinine (Raynaud method)
 #'
 #' Source: Raynaud M, et al., Race-free estimated glomerular
