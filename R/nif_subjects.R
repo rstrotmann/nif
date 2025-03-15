@@ -1,3 +1,40 @@
+#' Calculate age from birthday and reference date
+#'
+#' @param df A data frame containing at least BRTHDTC and reference date columns.
+#' @param ref_date_col The name of the reference date column, default is "RFICDTC".
+#' @param preserve_age Whether to preserve existing AGE values, default is TRUE.
+#'
+#' @return A data frame with AGE column added or updated.
+#' @keywords internal
+calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
+  if (!is.data.frame(df)) {
+    stop("Input must be a data frame")
+  }
+
+  if (!("BRTHDTC" %in% colnames(df) && ref_date_col %in% colnames(df))) {
+    return(df)  # Return unchanged if required columns not present
+  }
+
+  df <- df %>%
+    lubrify_dates() %>%
+    mutate(age_brthdtc = round(as.numeric(
+      lubridate::as.duration(.data[[ref_date_col]] - .data$BRTHDTC), "years"), 0))
+
+  if (preserve_age && "AGE" %in% names(df)) {
+    df <- df %>%
+      mutate(AGE = case_when(
+        is.na(.data$AGE) ~ .data$age_brthdtc,
+        .default = .data$AGE))
+  } else {
+    df <- df %>%
+      mutate(AGE = .data$age_brthdtc)
+  }
+
+  df %>% select(-"age_brthdtc")
+}
+
+
+
 #' Compile subject information
 #'
 #' @param dm The DM domain as data table.
@@ -41,40 +78,15 @@ make_subjects <- function(
       stop("The following required columns are missing from the 'vs' data frame: ",
            paste(vs_missing_cols, collapse = ", "))
     }
-    
+
     # Check for VSDTC when needed for baseline determination
     if (!"VSBLFL" %in% names(vs) && !"VSDTC" %in% names(vs)) {
       stop("When 'VSBLFL' is not available in vs, 'VSDTC' must be present for baseline determination")
     }
   }
 
-  # Check if the required helper functions exist
-  for (func in c("lubrify_dates", "recode_sex")) {
-    if (!exists(func, mode = "function")) {
-      stop(paste0("Required function '", func, "' not found"))
-    }
-  }
-  
-  # Check if calculate_bmi is needed and exists
-  if (!is.null(vs) && !exists("calculate_bmi", mode = "function")) {
-    stop("Required function 'calculate_bmi' not found")
-  }
-
-  # if AGE is not present in DM, calculate age from birthday and informed
-  #   consent signature date
-  if ("RFICDTC" %in% colnames(dm) && "BRTHDTC" %in% colnames(dm)) {
-    dm <- dm %>%
-      lubrify_dates() %>%
-      mutate(age_brthdtc = round(as.numeric(
-        lubridate::as.duration(.data$RFICDTC - .data$BRTHDTC), "years"), 0)) %>%
-      {if("AGE" %in% names(dm))
-        mutate(., AGE = case_when(
-          is.na(.data$AGE) ~ .data$age_brthdtc,
-          .default = .data$AGE))
-        else
-          mutate(., AGE = .data$age_brthdtc)} %>%
-      select(-"age_brthdtc")
-  }
+  # Calculate age if necessary columns are present
+  dm <- calculate_age(dm)
 
   if(!is.null(vs)){
     # Check if RFSTDTC exists in dm when needed for baseline calculations
@@ -115,7 +127,7 @@ make_subjects <- function(
     out <- filtered_dm %>%
       recode_sex()
   }
-  
+
   # Generate sequential IDs instead of NA values
   out <- out %>%
     mutate(ID = row_number()) %>%
@@ -123,6 +135,6 @@ make_subjects <- function(
     select(., any_of(c(
       "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
       "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC", keep)))
-  
+
   return(out)
 }

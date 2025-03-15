@@ -4,7 +4,8 @@
 #' @param silent Suppress optional messages, as logical. Defaults to global
 #'   nif_options if NULL.
 #'
-#' @return Invisibly returns TRUE if validation passes, or stops with an error if required columns are missing.
+#' @return Invisibly returns TRUE if validation passes, or stops with an error
+#'  if required columns are missing.
 #' @export
 #'
 #' @examples validate_domain(examplinib_sad$dm)
@@ -13,41 +14,41 @@ validate_domain <- function(domain, silent = NULL) {
   if (!is.data.frame(domain)) {
     stop("The 'domain' parameter must be a data frame")
   }
-  
+
   if (!"DOMAIN" %in% colnames(domain)) {
     stop("The data frame must have a 'DOMAIN' column")
   }
-  
+
   # Check if domain$DOMAIN is empty
   if (length(domain$DOMAIN) == 0) {
     stop("The 'DOMAIN' column is empty")
   }
-  
+
   # Get unique domain names and handle multiple values
   domain_names <- unique(domain$DOMAIN)
   if (length(domain_names) > 1) {
-    warning("Multiple domain values found: ", paste(domain_names, collapse = ", "), 
+    warning("Multiple domain values found: ", paste(domain_names, collapse = ", "),
             ". Using first value: ", domain_names[1])
     domain_name <- toupper(domain_names[1])
   } else {
     domain_name <- toupper(domain_names)
   }
-  
+
   # Check if domain_model exists
-  if (!exists("domain_model", inherits = TRUE)) {
-    stop("Required variable 'domain_model' not found")
-  }
-  
+  # if (!exists("domain_model", inherits = TRUE)) {
+  #   stop("Required variable 'domain_model' not found")
+  # }
+
   # Check if conditional_message exists
-  if (!exists("conditional_message", mode = "function", inherits = TRUE)) {
-    # Create a simple version if it doesn't exist
-    conditional_message <- function(..., silent = NULL) {
-      if (!isTRUE(silent)) {
-        message(...)
-      }
-    }
-  }
-  
+  # if (!exists("conditional_message", mode = "function", inherits = TRUE)) {
+  #   # Create a simple version if it doesn't exist
+  #   conditional_message <- function(..., silent = NULL) {
+  #     if (!isTRUE(silent)) {
+  #       message(...)
+  #     }
+  #   }
+  # }
+
   if(!domain_name %in% unique(domain_model$DOMAIN)) {
     warning("Unknown domain '", domain_name, "' cannot be validated!")
     return(invisible(TRUE))
@@ -91,10 +92,27 @@ validate_domain <- function(domain, silent = NULL) {
         paste(missing_perm, collapse = ", "),
         silent = silent)
     }
-    
+
     return(invisible(TRUE))
   }
 }
+
+
+#' Check whether sdtm object is compliant with SDTM standard
+#'
+#' @param sdtm SDTM object.
+#' @param silent Suppress optional messages, as logical. Defaults to global
+#'   nif_options if NULL.
+#'
+#' @return Invisibly returns TRUE if validation passes, or stops with an error
+#'  if required columns are missing.
+#' @export
+validate_sdtm <- function(sdtm, silent = NULL) {
+  for(d in sdtm$domains) {
+    validate_domain(d, silent = silent)
+  }
+}
+
 
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
@@ -232,7 +250,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   cat(df_to_string(x$analytes,
     color = color, indent = indent,
     show_none = TRUE
-  ), "\n\n"))
+  ), "\n\n")
 
   if (nrow(x$analyte_mapping) != 0) {
     cat("Treatment-to-analyte mappings:\n")

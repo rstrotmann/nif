@@ -1,3 +1,108 @@
+test_that("calculate_age calculates age correctly", {
+  test_df <- tibble::tribble(
+    ~USUBJID,     ~BRTHDTC,     ~RFICDTC,
+       "001", "1980-01-15", "2020-01-15",
+       "002", "1990-05-20", "2020-05-20",
+       "003", "2000-12-10", "2020-12-10"
+  )
+
+  result <- calculate_age(test_df)
+
+  # Test that ages are calculated correctly (40, 30, 20 years)
+  expect_equal(result$AGE, c(40, 30, 20))
+})
+
+
+test_that("calculate_age preserves existing AGE values when not NA", {
+  test_df <- tibble::tribble(
+    ~USUBJID,     ~BRTHDTC,     ~RFICDTC, ~AGE,
+       "001", "1980-01-15", "2020-01-15",   41,
+       "002", "1990-05-20", "2020-05-20",   NA,
+       "003", "2000-12-10", "2020-12-10",   19
+  )
+
+  result <- calculate_age(test_df, preserve_age = TRUE)
+
+  # Test that existing non-NA values are preserved, but NA are filled
+  expect_equal(result$AGE, c(41, 30, 19))
+})
+
+
+test_that("calculate_age overwrites existing AGE values when preserve_age = FALSE", {
+  test_df <- tibble::tribble(
+    ~USUBJID,     ~BRTHDTC,     ~RFICDTC, ~AGE,
+       "001", "1980-01-15", "2020-01-15",   41,
+       "002", "1990-05-20", "2020-05-20",   NA,
+       "003", "2000-12-10", "2020-12-10",   19
+  )
+
+  result <- calculate_age(test_df, preserve_age = FALSE)
+
+  # Test that all values are calculated, regardless of existing values
+  expect_equal(result$AGE, c(40, 30, 20))
+})
+
+
+test_that("calculate_age uses custom reference date column", {
+  test_df <- tibble::tribble(
+    ~USUBJID,     ~BRTHDTC,  ~CUSTOM_DTC,
+       "001", "1980-01-15", "2030-01-15",
+       "002", "1990-05-20", "2030-05-20"
+  )
+
+  result <- calculate_age(test_df, ref_date_col = "CUSTOM_DTC")
+
+  # Test that ages are calculated correctly using the custom column (50, 40 years)
+  expect_equal(result$AGE, c(50, 40))
+})
+
+
+test_that("calculate_age returns dataframe unchanged when required columns missing", {
+  # Missing BRTHDTC
+  test_df1 <- tibble::tribble(
+    ~USUBJID,     ~RFICDTC,
+       "001", "2020-01-15",
+       "002", "2020-05-20"
+  )
+
+  # Missing RFICDTC
+  test_df2 <- tibble::tribble(
+    ~USUBJID,     ~BRTHDTC,
+       "001", "1980-01-15",
+       "002", "1990-05-20"
+  )
+
+  # Test that dataframe is returned unchanged
+  expect_identical(calculate_age(test_df1), test_df1)
+  expect_identical(calculate_age(test_df2), test_df2)
+})
+
+
+test_that("calculate_age handles non-dataframe input", {
+  expect_error(calculate_age("not a dataframe"), "Input must be a data frame")
+  expect_error(calculate_age(list(a = 1, b = 2)), "Input must be a data frame")
+})
+
+
+test_that("calculate_age rounds age correctly", {
+  # Create test data with exact and partial years
+  test_df <- tibble::tribble(
+    ~USUBJID,     ~BRTHDTC,     ~RFICDTC,
+       "001", "1980-01-15", "2020-01-14",
+       "002", "1990-06-01", "2020-05-31",
+       "003", "2000-01-01", "2020-07-01"
+  )
+
+  result <- calculate_age(test_df)
+
+  # Test that ages are rounded correctly
+  # 40 years minus 1 day = 40 (rounded)
+  # 30 years minus 1 day = 30 (rounded)
+  # 20 years plus 6 months = 20 (rounded)
+  expect_equal(result$AGE, c(40, 30, 20))
+})
+
+
 make_test_sdtm <- function() {
   dm <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~SEX,   ~ACTARMCD,          ~RFXSTDTC,
@@ -188,3 +293,4 @@ test_that("BMI calculation handles edge cases correctly", {
   expect_true(is.na(result$BMI[result$USUBJID == "005"]), "Negative HEIGHT should result in NA BMI")
   expect_true(is.na(result$BMI[result$USUBJID == "006"]), "Zero WEIGHT should result in NA BMI")
 })
+
