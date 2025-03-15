@@ -294,3 +294,186 @@ test_that("BMI calculation handles edge cases correctly", {
   expect_true(is.na(result$BMI[result$USUBJID == "006"]), "Zero WEIGHT should result in NA BMI")
 })
 
+
+# Helper function to create test data
+create_test_dm <- function() {
+  tibble::tribble(
+     ~DOMAIN,   ~USUBJID, ~SEX,  ~ACTARMCD,     ~BRTHDTC,     ~RFICDTC,     ~RFSTDTC,     ~RFENDTC,                       ~RACE,                  ~ETHNIC, ~COUNTRY,
+        "DM", "SUBJ-001",  "M",      "TRT", "1970-01-01", "2020-01-01", "2020-01-15", "2020-03-15",                     "WHITE", "NOT HISPANIC OR LATINO",    "USA",
+        "DM", "SUBJ-002",  "F",      "TRT", "1980-02-15", "2020-01-02", "2020-01-16", "2020-03-16", "BLACK OR AFRICAN AMERICAN",     "HISPANIC OR LATINO",    "CAN",
+        "DM", "SUBJ-003",  "M",   "NOTTRT", "1990-06-30", "2020-01-03", "2020-01-17", "2020-03-17",                     "ASIAN", "NOT HISPANIC OR LATINO",    "GBR",
+        "DM", "SUBJ-004",  "F", "SCRNFAIL", "2000-12-25", "2020-01-04", "2020-01-18", "2020-03-18",                     "OTHER",     "HISPANIC OR LATINO",    "AUS"
+  ) %>%
+    calculate_age()
+}
+
+
+create_test_vs <- function() {
+  tibble::tribble(
+    ~DOMAIN,   ~USUBJID, ~VSTESTCD, ~VSSTRESN,       ~VSDTC,
+       "VS", "SUBJ-001",  "WEIGHT",        70, "2020-01-05",
+       "VS", "SUBJ-001",  "HEIGHT",       175, "2020-01-05",
+       "VS", "SUBJ-001",  "WEIGHT",        71, "2020-01-20",
+       "VS", "SUBJ-001",  "HEIGHT",       175, "2020-01-20",
+       "VS", "SUBJ-002",  "WEIGHT",        65, "2020-01-06",
+       "VS", "SUBJ-002",  "HEIGHT",       160, "2020-01-06",
+       "VS", "SUBJ-002",  "WEIGHT",        64, "2020-01-21",
+       "VS", "SUBJ-002",  "HEIGHT",       160, "2020-01-21",
+       "VS", "SUBJ-003",  "WEIGHT",        80, "2020-01-07",
+       "VS", "SUBJ-003",  "HEIGHT",       180, "2020-01-07",
+       "VS", "SUBJ-003",  "WEIGHT",        79, "2020-01-22",
+       "VS", "SUBJ-003",  "HEIGHT",       180, "2020-01-22",
+       "VS", "SUBJ-004",  "WEIGHT",        55, "2020-01-08",
+       "VS", "SUBJ-004",  "HEIGHT",       155, "2020-01-08",
+       "VS", "SUBJ-004",  "WEIGHT",        56, "2020-01-23",
+       "VS", "SUBJ-004",  "HEIGHT",       155, "2020-01-23"
+  )
+}
+
+create_test_vs_with_blfl <- function() {
+  vs <- create_test_vs()
+  vs$VSBLFL <- ifelse(vs$VSDTC < "2020-01-15", "Y", "N")
+  return(vs)
+}
+
+
+test_that("make_subjects handles basic case correctly", {
+  dm <- create_test_dm()
+  result <- make_subjects(dm)
+
+  # Verify filtering works (default filters out NOTTRT and SCRNFAIL)
+  expect_equal(nrow(result), 2)
+  expect_equal(result$USUBJID, c("SUBJ-001", "SUBJ-002"))
+
+  # Verify columns
+  expect_true("ID" %in% names(result))
+  expect_true("USUBJID" %in% names(result))
+  expect_true("SEX" %in% names(result))
+  expect_true("AGE" %in% names(result))
+
+  # Verify age calculation
+  expect_equal(result$AGE, c(50, 40))
+})
+
+
+test_that("make_subjects handles VS data correctly", {
+  dm <- create_test_dm()
+  vs <- create_test_vs()
+
+  result <- make_subjects(dm, vs)
+
+  # Check baseline covariates were calculated
+  expect_true("HEIGHT" %in% names(result))
+  expect_true("WEIGHT" %in% names(result))
+  expect_true("BMI" %in% names(result))
+
+  # Verify only baseline measurements were used
+  expect_equal(result$WEIGHT[1], 70)  # Only the first measurement before baseline
+  expect_equal(result$HEIGHT[1], 175)
+
+  # Verify BMI calculation
+  expect_equal(result$BMI[1], 70 / (175/100)^2, tolerance = 0.01)
+})
+
+
+test_that("make_subjects respects VSBLFL flag", {
+  dm <- create_test_dm()
+  vs <- create_test_vs_with_blfl()
+
+  result <- make_subjects(dm, vs)
+
+  # Verify baseline flag is respected
+  expect_equal(result$WEIGHT[1], 70)
+  expect_equal(result$HEIGHT[1], 175)
+})
+
+
+test_that("make_subjects respects custom subject filter", {
+  dm <- create_test_dm()
+
+  # Custom filter to include all subjects
+  result <- make_subjects(dm, subject_filter = "USUBJID != ''")
+  expect_equal(nrow(result), 4)
+
+  # Custom filter to include only females
+  result <- make_subjects(dm, subject_filter = "SEX == 'F'")
+  expect_equal(nrow(result), 2)
+  expect_equal(result$SEX, c(1, 1))
+  expect_equal(result$USUBJID, c("SUBJ-002", "SUBJ-004"))
+})
+
+
+test_that("make_subjects keeps specified columns", {
+  dm <- create_test_dm()
+
+  # Add a custom column
+  dm$CUSTOM <- c("A", "B", "C", "D")
+
+  # Keep custom column
+  result <- make_subjects(dm, keep = "CUSTOM")
+  expect_true("CUSTOM" %in% names(result))
+  expect_equal(result$CUSTOM, c("A", "B"))
+})
+
+
+test_that("make_subjects errors on invalid inputs", {
+  dm <- create_test_dm()
+  vs <- create_test_vs()
+
+  # Test with non-dataframe dm
+  expect_error(make_subjects("not a dataframe"))
+
+  # Test with non-dataframe vs
+  expect_error(make_subjects(dm, "not a dataframe"))
+
+  # Test with missing required columns in dm
+  expect_error(make_subjects(dm %>% select(-SEX)))
+
+  # Test with missing required columns in vs
+  expect_error(make_subjects(dm, vs %>% select(-VSTESTCD)))
+})
+
+
+test_that("make_subjects handles missing VS data gracefully", {
+  dm <- create_test_dm()
+
+  # Create VS data with missing measurements
+  vs_missing <- create_test_vs()
+  vs_missing$VSSTRESN[vs_missing$VSTESTCD == "WEIGHT" & vs_missing$USUBJID == "SUBJ-001"] <- NA
+
+  result <- make_subjects(dm, vs_missing)
+
+  # Should still have HEIGHT for SUBJ-001 but not WEIGHT or BMI
+  expect_true(is.na(result$WEIGHT[1]))
+  expect_true(is.na(result$BMI[1]))
+  expect_false(is.na(result$HEIGHT[1]))
+})
+
+
+test_that("make_subjects handles empty data frames", {
+  dm <- create_test_dm()
+
+  # Filter to empty dataframe
+  result <- make_subjects(dm, subject_filter = "USUBJID == 'NON-EXISTENT'")
+  expect_equal(nrow(result), 0)
+
+  # Verify columns still exist
+  expect_true("ID" %in% names(result))
+  expect_true("USUBJID" %in% names(result))
+  expect_true("SEX" %in% names(result))
+})
+
+
+test_that("SEX is properly recoded", {
+  dm <- create_test_dm()
+
+  # Add atypical sex coding
+  dm_alt_sex <- dm
+  dm_alt_sex$SEX <- c("M", "F", "男", "女")
+
+  result <- make_subjects(dm_alt_sex, subject_filter = "USUBJID != ''")
+
+  # Should be properly recoded to 0/1
+  expect_equal(result$SEX, c(0, 1, 0, 1))
+})
+
