@@ -454,7 +454,9 @@ test_that("make_subjects handles empty data frames", {
   dm <- create_test_dm()
 
   # Filter to empty dataframe
-  result <- make_subjects(dm, subject_filter = "USUBJID == 'NON-EXISTENT'")
+  suppressWarnings(
+    result <- make_subjects(dm, subject_filter = "USUBJID == 'non-exisiting'")
+  )
   expect_equal(nrow(result), 0)
 
   # Verify columns still exist
@@ -475,5 +477,22 @@ test_that("SEX is properly recoded", {
 
   # Should be properly recoded to 0/1
   expect_equal(result$SEX, c(0, 1, 0, 1))
+})
+
+
+test_that("make_subjects issues warning for empty subject filter results", {
+  dm <- create_test_dm()
+
+  # Test with a filter that will definitely return no entries
+  expect_warning(
+    make_subjects(dm, subject_filter = "USUBJID == 'NON-EXISTENT-ID'"),
+    "The subject_filter 'USUBJID == 'NON-EXISTENT-ID'' returned no entries.",
+    fixed = TRUE
+  )
+
+  # Test that no warning is issued when filter returns results
+  expect_no_warning(
+    make_subjects(dm, subject_filter = "USUBJID != ''")
+  )
 })
 

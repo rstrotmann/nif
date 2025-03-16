@@ -117,6 +117,11 @@ make_subjects <- function(
     lubrify_dates() %>%
     filter(eval(parse(text = subject_filter)))
 
+  # Add warning if subject_filter returns no entries
+  if (nrow(filtered_dm) == 0) {
+    warning("The subject_filter '", subject_filter, "' returned no entries.")
+  }
+
   # Only join with baseline_covariates if vs is not NULL
   if (!is.null(vs)) {
     out <- filtered_dm %>%
