@@ -22,7 +22,8 @@ make_observation(
   factor = 1,
   NTIME_lookup = NULL,
   keep = NULL,
-  include_day_in_ntime = FALSE
+  include_day_in_ntime = FALSE,
+  silent = NULL
 )
 
 make_observation(
@@ -42,7 +43,8 @@ make_observation(
   factor = 1,
   NTIME_lookup = NULL,
   keep = NULL,
-  include_day_in_ntime = FALSE
+  include_day_in_ntime = FALSE,
+  silent = NULL
 )
 }
 \arguments{
@@ -92,6 +94,9 @@ to provide the NTIME field.}
 
 \item{include_day_in_ntime}{Include treatment day in the calculation of
 NTIME, as logical.}
+
+\item{silent}{Suppress messages, as logical. Defaults to nif_option setting
+if NULL.}
 }
 \value{
 A data frame.

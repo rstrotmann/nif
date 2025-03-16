@@ -24,7 +24,7 @@ add_observation(
   keep = NULL,
   debug = FALSE,
   include_day_in_ntime = FALSE,
-  silent = deprecated()
+  silent = NULL
 )
 
 add_observation(
@@ -47,7 +47,7 @@ add_observation(
   keep = NULL,
   debug = FALSE,
   include_day_in_ntime = FALSE,
-  silent = deprecated()
+  silent = NULL
 )
 }
 \arguments{
@@ -102,9 +102,8 @@ to provide the NTIME field.}
 \item{include_day_in_ntime}{Include treatment day in the calculation of
 NTIME, as logical.}
 
-\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
-compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
-suppress messages.}
+\item{silent}{Suppress messages, as logical. Defaults to nif_option setting
+if NULL.}
 }
 \value{
 A nif object.

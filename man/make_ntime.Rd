@@ -4,13 +4,16 @@
 \alias{make_ntime}
 \title{Make nominal time}
 \usage{
-make_ntime(obj, include_day = FALSE)
+make_ntime(obj, include_day = FALSE, silent = NULL)
 }
 \arguments{
 \item{obj}{The input as data table.}
 
 \item{include_day}{include_day Include time component of treatment day, as
 logical.}
+
+\item{silent}{Suppress messages, as logical. Defaults to nif_option setting
+if NULL.}
 }
 \value{
 A data frame.

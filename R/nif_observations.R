@@ -131,15 +131,12 @@ make_observation <- function(
 
   # Create fields
   if(is.null(DTC_field))
-    # DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
     DTC_field <- paste0(toupper(domain), "DTC")
 
   if(is.null(DV_field))
-    # DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
     DV_field <- paste0(toupper(domain), "STRESN")
 
   if(is.null(TESTCD_field))
-    # TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
     TESTCD_field <- paste0(toupper(domain), "TESTCD")
 
   if(is.null(analyte)) analyte <- testcd
@@ -153,7 +150,6 @@ make_observation <- function(
     stop(paste0("Error getting subject data: ", e$message))
   })
 
-  # obj <- domain(sdtm, str_to_lower(domain)) %>%
   obj <- domain(sdtm, domain_name) %>%
     lubrify_dates()
 
@@ -232,7 +228,7 @@ make_observation <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPUTATION = "") %>%
-    {if(is.numeric(.$DV)) mutate(., DV = DV * factor) else .} %>%
+    # {if(is.numeric(.$DV)) mutate(., DV = DV * factor) else .} %>%
 
     {if(!is.null(NTIME_lookup)) suppressMessages(
       left_join(., NTIME_lookup)) else
@@ -245,8 +241,8 @@ make_observation <- function(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days") + 1) %>%
     ungroup() %>%
-    filter(!is.na(.data$DTC)) %>%
-    new_nif()
+    filter(!is.na(.data$DTC)) #%>%
+    # new_nif()
 }
 
 
