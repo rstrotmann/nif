@@ -6,6 +6,8 @@
 #' @param obj The input as data table.
 #' @param include_day include_day Include time component of treatment day, as
 #'   logical.
+#' @param silent Suppress messages, as logical. Defaults to nif_option setting
+#'   if NULL.
 #'
 #' @return A data frame.
 #' @export
@@ -13,7 +15,7 @@
 #' @examples
 #' make_ntime(examplinib_sad_nif)
 #' make_ntime(examplinib_fe_nif)
-make_ntime <- function(obj, include_day = FALSE) {
+make_ntime <- function(obj, include_day = FALSE, silent = NULL) {
   pull_column <- function(col_tail) {
     col_index <- which(col_tail == str_sub(names(obj), 3, -1))
     if(length(col_index) == 0) return(NULL)
@@ -24,7 +26,8 @@ make_ntime <- function(obj, include_day = FALSE) {
   if(is.null(pull_column("ELTM"))) {
     conditional_message(
       "ELTM is not defined. Provide a NTIME lookup",
-      "table to define nominal time!")
+      "table to define nominal time!",
+      silent = silent)
     return(NULL)
   }
 
@@ -88,6 +91,8 @@ make_ntime <- function(obj, include_day = FALSE) {
 #' @param keep Columns to keep, as character.
 #' @param include_day_in_ntime Include treatment day in the calculation of
 #'   NTIME, as logical.
+#' @param silent Suppress messages, as logical. Defaults to nif_option setting
+#'   if NULL.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -110,27 +115,32 @@ make_observation <- function(
     factor = 1,
     NTIME_lookup = NULL,
     keep = NULL,
-    include_day_in_ntime = FALSE
+    include_day_in_ntime = FALSE,
+    silent = NULL
 ) {
   # Validate inputs
   if (!inherits(sdtm, "sdtm")) {
     stop("sdtm must be an sdtm object")
   }
 
-  domain_name <- str_to_lower(domain)
+  # domain_name <- str_to_lower(domain)
+  domain_name <- tolower(domain)
   if (!domain_name %in% names(sdtm$domains)) {
     stop(paste0("Domain '", domain_name, "' not found in sdtm object"))
   }
 
   # Create fields
   if(is.null(DTC_field))
-    DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
+    # DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
+    DTC_field <- paste0(toupper(domain), "DTC")
 
   if(is.null(DV_field))
-    DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
+    # DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
+    DV_field <- paste0(toupper(domain), "STRESN")
 
   if(is.null(TESTCD_field))
-    TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
+    # TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
+    TESTCD_field <- paste0(toupper(domain), "TESTCD")
 
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
@@ -143,7 +153,8 @@ make_observation <- function(
     stop(paste0("Error getting subject data: ", e$message))
   })
 
-  obj <- domain(sdtm, str_to_lower(domain)) %>%
+  # obj <- domain(sdtm, str_to_lower(domain)) %>%
+  obj <- domain(sdtm, domain_name) %>%
     lubrify_dates()
 
   # Check if required fields exist
@@ -161,9 +172,12 @@ make_observation <- function(
 
   # Create NTIME lookup table if not provided
   if(is.null(NTIME_lookup)) {
-    NTIME_lookup = make_ntime(obj, include_day = include_day_in_ntime)
+    NTIME_lookup = make_ntime(
+      obj, include_day = include_day_in_ntime, silent = silent)
     if(is.null(NTIME_lookup)) {
-      conditional_message("No NTIME_lookup could be created, NTIME will be NA")
+      conditional_message(
+        "No NTIME_lookup could be created, NTIME will be NA",
+        silent = silent)
     }
   }
 
@@ -181,23 +195,30 @@ make_observation <- function(
         left_join(coding_table)
     })
     if(length(join_msgs) > 0) {
-      conditional_message("Warnings during coding table join: ",
-                          paste(join_msgs, collapse = "\n"))
+      conditional_message(
+        "Warnings during coding table join: ",
+        paste(join_msgs, collapse = "\n"),
+        silent = silent)
     }
   } else {
     obj <- obj %>%
       mutate(DV = .data[[DV_field]] * factor)
   }
 
-  obj %>%
+  filtered_obj <- obj %>%
     mutate(SRC_DOMAIN = .data$DOMAIN) %>%
     # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
     {if(paste0(toupper(domain), "SEQ") %in% names(obj))
       mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
         mutate(., SRC_SEQ = NA)} %>%
+    filter(eval(parse(text = observation_filter)))
 
-    filter(eval(parse(text = observation_filter))) %>%
+  # Add warning if subject_filter returns no entries
+  if (nrow(filtered_obj) == 0) {
+    warning("The observation_filter '", observation_filter, "' returned no entries.")
+  }
 
+  filtered_obj %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
       DTC = .data[[DTC_field]],
@@ -248,9 +269,8 @@ make_observation <- function(
 #' @param nif A nif object.
 #' @inheritParams make_observation
 #' @param debug Include debug fields, as logical.
-#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
-#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
-#' suppress messages.
+#' @param silent Suppress messages, as logical. Defaults to nif_option setting
+#'   if NULL.
 #'
 #' @return A nif object.
 #' @seealso [add_administration()]
@@ -276,7 +296,7 @@ add_observation <- function(
     keep = NULL,
     debug = FALSE,
     include_day_in_ntime = FALSE,
-    silent = deprecated()
+    silent = NULL
 ) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -285,9 +305,10 @@ add_observation <- function(
     stop("Please add at least one administration first!")
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
-    conditional_message(paste0(
-      "Compartment for ", testcd,
-      " was not specified and has been set to ", cmt))
+    conditional_message(
+      paste0("Compartment for ", testcd,
+             " was not specified and has been set to ", cmt),
+      silent = silent)
   }
 
   if(is.null(analyte)) analyte <- testcd
@@ -303,8 +324,9 @@ add_observation <- function(
       parent <- analyte
     } else {
       parent <- guess_parent(nif)
-      conditional_message(paste0("Parent for ", analyte, " was set to ",
-                                 parent, "!"))
+      conditional_message(
+        paste0("Parent for ", analyte, " was set to ", parent, "!"),
+        silent = silent)
     }
   }
 
@@ -324,17 +346,19 @@ add_observation <- function(
 
   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
   if(n_no_admin != 0) {
-    conditional_message(paste0("Missing administration information in ",
-                               n_no_admin, " observations (did you set a\n",
-                               "parent for these observations?):\n",
-                               df_to_string(
-                                 obj %>%
-                                   filter(.data$NO_ADMIN_FLAG == TRUE) %>%
-                                   group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
-                                   mutate(N = sum(EVID == 0)) %>%
-                                   ungroup() %>%
-                                   distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-                                 indent = 2), "\n"))
+    conditional_message(
+      paste0("Missing administration information in ",
+             n_no_admin, " observations (did you set a\n",
+             "parent for these observations?):\n",
+             df_to_string(
+               obj %>%
+                 filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+                 group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
+                 mutate(N = sum(EVID == 0)) %>%
+                 ungroup() %>%
+                 distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+               indent = 2), "\n"),
+      silent = silent)
 
     obj <- obj %>%
       filter(.data$NO_ADMIN_FLAG == 0)

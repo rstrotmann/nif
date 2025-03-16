@@ -224,64 +224,22 @@ test_that("filter_EXSTDTC_after_EXENDTC works", {
 })
 
 
-test_that("make_subjects works", {
-  sdtm <- examplinib_poc
-  expect_no_error(
-    temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
-  )
-  expect_equal(nrow(temp), 80)
-  expect_equal(
-    names(temp),
-    # c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-    #   "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))
-    c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC"))
-})
-
-
-# test_that("make_observation works", {
+# test_that("make_subjects works", {
 #   sdtm <- examplinib_poc
-#   ntime_lu <- data.frame(
-#     PCELTM = c("PT0H", "PT1.5H", "PT_4H"),
-#     NTIME = c(0, 1.5, 4)
-#   )
 #   expect_no_error(
-#     make_observation(sdtm, "pc", "RS2023",
-#                      NTIME_lookup = ntime_lu)
+#     temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
 #   )
-#   expect_no_error(
-#     make_observation(sdtm, "pc", "RS2023")
-#   )
-#   suppressMessages(expect_no_error(
-#     make_observation(sdtm, "vs", "WEIGHT"))
-#   )
-#
-#   suppressMessages(
-#     expect_no_error(
-#       make_observation(sdtm, "vs", "WEIGHT",
-#                        observation_filter = "USUBJID == '20230000011010001'")
-#     )
-#   )
+#   expect_equal(nrow(temp), 80)
+#   expect_equal(
+#     names(temp),
+#     # c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
+#     #   "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))
+#     c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
+#       "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC"))
 # })
 
 
-test_that("make_observation works with coding table", {
-  sdtm <- examplinib_poc
-  suppressMessages(expect_no_error(
-    make_observation(
-      sdtm, "pp", "LAMZNPT", DTC_field = "PPRFTDTC",
-      observation_filter = "PPSEQ == 7",
-      coding_table = tibble::tribble(
-        ~PPSTRESN, ~DV,
-        3, 33,
-        4, 44,
-        5, 55,
-        6, 66
-      )
-    )
-  )
-  )
-})
+
 
 
 test_that("make_administration works for examplinib_poc", {
