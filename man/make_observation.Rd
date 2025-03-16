@@ -2,7 +2,8 @@
 % Please edit documentation in R/make_nif.R, R/nif_observations.R
 \name{make_observation}
 \alias{make_observation}
-\title{Compile observation data frame}
+\title{clip_nif(examplinib_poc_nif)
+Compile observation data frame}
 \usage{
 make_observation(
   sdtm,

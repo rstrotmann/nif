@@ -422,50 +422,7 @@ add_time <- function(x) {
 
 
 
-#' Make nominal time
-#'
-#' Return NTIME lookup table or NULL if the xxELTM field is not included in
-#' the input data frame.
-#'
-#' @param obj The input as data table.
-#' @param include_day include_day Include time component of treatment day, as
-#'   logical.
-#'
-#' @return A data frame.
-#' @export
-#'
-#' @examples
-#' make_ntime(examplinib_sad_nif)
-#' make_ntime(examplinib_fe_nif)
-make_ntime <- function(obj, include_day = FALSE) {
-  pull_column <- function(col_tail) {
-    col_index <- which(col_tail == str_sub(names(obj), 3, -1))
-    if(length(col_index) == 0) return(NULL)
-    if(length(col_index) > 1) stop(paste0("Multiple columns ending in ", col_tail))
-    return(pull(obj, col_index))
-  }
 
-  if(is.null(pull_column("ELTM"))) {
-    conditional_message(
-      "ELTM is not defined. Provide a NTIME lookup",
-      "table to define nominal time!")
-    return(NULL)
-  }
-
-  eltn_name <- names(obj)[which(str_sub(names(obj), 3, -1) == "ELTM")]
-
-  tm <- pt_to_hours(pull_column("ELTM"))
-  dy <- trialday_to_day(pull_column("DY")) * 24
-
-  out <- data.frame(
-    pull_column("ELTM"),
-    NTIME = tm
-  ) %>%
-    {if(isTRUE(include_day)) mutate(., NTIME = NTIME + dy) else .} %>%
-    distinct()
-  colnames(out)[1] <- eltn_name
-  return(out)
-}
 
 
 #' Compile observation data frame
