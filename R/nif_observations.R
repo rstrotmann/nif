@@ -241,8 +241,7 @@ make_observation <- function(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days") + 1) %>%
     ungroup() %>%
-    filter(!is.na(.data$DTC)) #%>%
-    # new_nif()
+    filter(!is.na(.data$DTC))
 }
 
 
@@ -299,6 +298,13 @@ add_observation <- function(
 
   if(length(parents(nif)) == 0)
     stop("Please add at least one administration first!")
+
+  # Test if compartment is already assigned
+  if(!is.null(cmt))
+    if(cmt %in% unique(nif$CMT))
+      warning(paste0("Compartment ", cmt, " is already assigned!"))
+
+  # Assign compartment for observation if CMT == NULL
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(
@@ -310,7 +316,7 @@ add_observation <- function(
   if(is.null(analyte)) analyte <- testcd
 
   imp <- nif %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     filter(EVID == 1) %>%
     distinct(ANALYTE) %>%
     pull(ANALYTE)
@@ -320,6 +326,9 @@ add_observation <- function(
       parent <- analyte
     } else {
       parent <- guess_parent(nif)
+      if(is.null(parent)) {
+        stop("No suitable parent could be determined. Please specify a parent value explicitly.")
+      }
       conditional_message(
         paste0("Parent for ", analyte, " was set to ", parent, "!"),
         silent = silent)
