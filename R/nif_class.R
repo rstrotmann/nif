@@ -393,7 +393,7 @@ ensure_analyte <- function(obj) {
   obj %>%
     {
       if (!"ANALYTE" %in% names(obj)) {
-        mutate(., ANALYTE = CMT)
+        mutate(., ANALYTE = as.character(CMT))
       } else {
         .
       }
@@ -1061,28 +1061,62 @@ guess_analyte <- function(obj) {
 #'
 #' @return The parent as character
 #' @keywords internal
+# guess_parent <- function(obj) {
+#   temp <- obj %>%
+#     as.data.frame() %>%
+#     ensure_analyte() %>%
+#     ensure_metabolite() %>%
+#     ensure_parent() %>%
+#     as.data.frame() %>%
+#     filter(.data$EVID == 0)
+#
+#   if (length(analytes(temp)) > 0) {
+#     temp %>%
+#       filter(.data$METABOLITE == FALSE) %>%
+#       group_by(.data$PARENT) %>%
+#       summarize(n = n(), .groups = "drop") %>%
+#       filter(n == max(.data$n)) %>%
+#       arrange(.data$PARENT) %>%
+#       slice(1) %>%
+#       pull("PARENT")
+#   } else {
+#     return(NULL)
+#   }
+# }
 guess_parent <- function(obj) {
-  temp <- obj %>%
-    as.data.frame() %>%
+  imp <- obj %>%
     ensure_analyte() %>%
-    ensure_metabolite() %>%
-    ensure_parent() %>%
-    as.data.frame() %>%
-    filter(.data$EVID == 0)
+    assertr::verify(assertr::has_all_names("EVID", "ANALYTE")) %>%
+    # ensure_analyte() %>%
+    filter(EVID == 1) %>%
+    reframe(n = n(), .by = ANALYTE) %>%
+    arrange(-n, ANALYTE)
 
-  if (length(analytes(temp)) > 0) {
-    temp %>%
-      filter(.data$METABOLITE == FALSE) %>%
-      group_by(.data$PARENT) %>%
-      summarize(n = n(), .groups = "drop") %>%
-      filter(n == max(.data$n)) %>%
-      arrange(.data$PARENT) %>%
-      slice(1) %>%
-      pull("PARENT")
-  } else {
-    return(NULL)
+  # if administrations in data set, return analyte with most observations
+  if(nrow(imp) > 0) {
+    return(imp[1, "ANALYTE"])
   }
+
+  # if no administrations
+  else {
+    obs <- obj %>%
+      ensure_analyte() %>%
+      filter(EVID == 0) %>%
+      {if("METABOLITE" %in% names(obj)) filter(., METABOLITE == FALSE) else .} %>%
+      reframe(n = n(), .by = ANALYTE) %>%
+      arrange(-n, "ANALYTE")
+
+    if(nrow(obs) > 0) {
+      return(obs[1, "ANALYTE"])
+    } else {
+      return(NULL)
+    }
+  }
+
+
 }
+
+
 
 
 #' Add dose level (`DL`) column
