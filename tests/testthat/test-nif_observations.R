@@ -6,7 +6,8 @@ make_test_sdtm1 <- function() {
             "2",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
             "3",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
             "4",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
-    ),
+    ) %>%
+      mutate(RFENDTC = "2024-01-02T08:00:00"),
     vs = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
             "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
@@ -36,7 +37,7 @@ make_test_sdtm1 <- function() {
       "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
       "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
       "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00"
-    ),
+    ) %>% mutate(EXSEQ = row_number()),
     pc = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
             "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
@@ -494,224 +495,153 @@ test_that("add_observation handles include_day_in_ntime parameter", {
 })
 
 
-# test_that("add_observation handles missing NTIME gracefully", {
-#   # Create a test SDTM object without ELTM field
-#   sdtm_test <- make_test_sdtm1()
-#   # Remove PCELTM field
-#   if ("PCELTM" %in% names(sdtm_test$domains$pc)) {
-#     sdtm_test$domains$pc$PCELTM <- NULL
-#   }
-#
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(sdtm_test, "EXAMPLINIB", analyte = "A")
-#
-#   # Should run without error but show a message about NTIME
-#   expect_message(
-#     nif_without_ntime <- base_nif %>% add_observation(sdtm_test, "pc", "A"),
-#     "ELTM is not defined"
-#   )
-#
-#   # NTIME should be NA in the resulting object
-#   obs_rows <- nif_without_ntime %>%
-#     filter(EVID == 0)
-#
-#   if (nrow(obs_rows) > 0) {
-#     expect_true(all(is.na(obs_rows$NTIME)))
-#   }
-# })
+test_that("add_observation handles missing NTIME gracefully", {
+  # Create a test SDTM object without ELTM field
+  sdtm_test <- make_test_sdtm1()
+  # Remove PCELTM field
+  if ("PCELTM" %in% names(sdtm_test$domains$pc)) {
+    sdtm_test$domains$pc$PCELTM <- NULL
+  }
+
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(sdtm_test, "A", analyte = "A")
+
+  # Should run without error but show a message about NTIME
+  expect_message(
+    nif_without_ntime <- base_nif %>%
+      add_observation(sdtm_test, "pc", "A", cmt = 2),
+    "ELTM is not defined"
+  )
+
+  # NTIME should be NA in the resulting object
+  obs_rows <- nif_without_ntime %>%
+    filter(EVID == 0)
+
+  if (nrow(obs_rows) > 0) {
+    expect_true(all(is.na(obs_rows$NTIME)))
+  }
+})
 
 
-# test_that("add_observation handles DV field properly", {
-#   # Create a test SDTM object
-#   sdtm_test <- make_test_sdtm1()
-#
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(sdtm_test, "EXAMPLINIB", analyte = "A")
-#
-#   # Custom DV field
-#   expect_no_error({
-#     nif_custom_dv <- base_nif %>%
-#       add_observation(sdtm_test, "pc", "A", DV_field = "PCSTRESN", silent = TRUE)
-#   })
-#
-#   # Verify the DV values are from the custom field
-#   nif_custom_dv <- base_nif %>%
-#     add_observation(sdtm_test, "pc", "A", DV_field = "PCSTRESN", silent = TRUE)
-#
-#   # Check if values match the source data
-#   dv_values <- nif_custom_dv %>%
-#     filter(EVID == 0) %>%
-#     pull(DV)
-#
-#   source_values <- sdtm_test$domains$pc %>%
-#     filter(PCTESTCD == "A") %>%
-#     pull(PCSTRESN)
-#
-#   # The values should match if the custom DV field is used correctly
-#   if (length(source_values) > 0 && length(dv_values) > 0) {
-#     expect_equal(sort(dv_values), sort(source_values))
-#   }
-# })
-#
-# test_that("add_observation handles subject filtering", {
-#   # Create a test SDTM object
-#   sdtm_test <- make_test_sdtm1()
-#
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(sdtm_test, "EXAMPLINIB", analyte = "A")
-#
-#   # Filter to include only subject "1"
-#   nif_filtered <- base_nif %>%
-#     add_observation(
-#       sdtm_test, "pc", "A",
-#       subject_filter = "USUBJID == '1'",
-#       silent = TRUE
-#     )
-#
-#   # Check that only subject "1" observations are included
-#   obs_subjects <- nif_filtered %>%
-#     filter(EVID == 0) %>%
-#     pull(USUBJID) %>%
-#     unique()
-#
-#   # Should only contain subject "1"
-#   if (length(obs_subjects) > 0) {
-#     expect_equal(obs_subjects, "1")
-#   }
-# })
-#
-# test_that("add_observation handles missing observations gracefully", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Try adding observations for a non-existent test code
-#   expect_warning(
-#     nif_empty_obs <- base_nif %>% add_observation(
-#       examplinib_sad, "pc", "NON_EXISTENT_TEST",
-#       silent = TRUE
-#     )
-#   )
-#
-#   # The result should have no additional observations
-#   expect_equal(
-#     sum(nif_empty_obs$EVID == 0),
-#     sum(base_nif$EVID == 0)
-#   )
-# })
-#
-# test_that("add_observation can handle non-existent domain gracefully", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Try adding observations from non-existent domain
-#   expect_error(
-#     base_nif %>% add_observation(
-#       examplinib_sad, "NON_EXISTENT_DOMAIN", "RS2023",
-#       silent = TRUE
-#     )
-#   )
-# })
-#
-# test_that("add_observation handles observations without matching administrations", {
-#   # Create a base nif with administration data for a different analyte
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Add observation with different parent
-#   nif_with_different_parent <- base_nif %>%
-#     add_observation(
-#       examplinib_sad, "pc", "RS2023",
-#       parent = "DIFFERENT_PARENT",
-#       silent = TRUE
-#     )
-#
-#   # Should give warning about missing administrations
-#   expect_message(
-#     nif_with_no_admin <- base_nif %>% add_observation(
-#       examplinib_sad, "pc", "RS2023",
-#       parent = "DIFFERENT_PARENT"
-#     ),
-#     "Missing administration information"
-#   )
-#
-#   # Observations should be filtered out
-#   expect_equal(
-#     sum(nif_with_no_admin$PARENT == "DIFFERENT_PARENT" & nif_with_no_admin$EVID == 0),
-#     0
-#   )
-# })
-#
-# test_that("add_observation properly handles custom testcd field", {
-#   # Create a test SDTM object
-#   sdtm_test <- make_test_sdtm1()
-#
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(sdtm_test, "EXAMPLINIB", analyte = "A")
-#
-#   # Use custom TESTCD field
-#   expect_no_error({
-#     nif_custom_testcd <- base_nif %>%
-#       add_observation(
-#         sdtm_test, "pc", "Analyte A",
-#         TESTCD_field = "PCTEST",
-#         silent = TRUE
-#       )
-#   })
-# })
-#
-# test_that("guess_parent behavior is consistent", {
-#   # Create a minimal nif with no observations, just administrations
-#   mock_nif <- tribble(
-#     ~ID, ~TIME, ~EVID, ~AMT, ~CMT, ~ANALYTE, ~PARENT, ~MDV, ~DV,
-#     1,   0,      1,     100,  1,    "DRUG1",  "DRUG1",  1,    NA
-#   ) %>%
-#     new_nif()
-#
-#   # Ensure guess_parent returns something for this simple case
-#   expect_equal(guess_parent(mock_nif), "DRUG1")
-#
-#   # Create empty nif with no observations
-#   empty_nif <- tribble(
-#     ~ID, ~TIME, ~EVID, ~AMT, ~CMT, ~ANALYTE, ~PARENT, ~MDV, ~DV
-#   ) %>%
-#     new_nif()
-#
-#   # guess_parent should return NULL for an empty nif
-#   # this needs to be handled in add_observation
-#   expect_null(guess_parent(empty_nif))
-#
-#   # The following line would error in add_observation if there's no check
-#   # for NULL return from guess_parent
-#   # Uncomment to test the fix:
-#   # empty_nif %>% add_observation(examplinib_sad, "pc", "RS2023")
-# })
-#
-# test_that("add_observation handles NULL parent gracefully", {
-#   # This test is designed to detect issues with potential NULL returns from guess_parent
-#
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Set up a test with mocking to simulate a NULL parent
-#   # Mock the guess_parent function to return NULL
-#   with_mock(
-#     `guess_parent` = function(...) NULL,
-#     {
-#       # Should produce an informative error, not crash with NULL parent
-#       expect_error(
-#         base_nif %>% add_observation(
-#           examplinib_sad, "pc", "DIFFERENT_TEST",
-#           analyte = "DIFFERENT_TEST"
-#         ),
-#         "No suitable parent could be determined"
-#       )
-#     }
-#   )
-# })
+test_that("add_observation handles DV field properly", {
+  # Create a test SDTM object
+  sdtm_test <- make_test_sdtm1()
+
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(sdtm_test, "A", analyte = "A")
+
+  # Custom DV field
+  expect_no_error({
+    nif_custom_dv <- base_nif %>%
+      add_observation(sdtm_test, "pc", "A", DV_field = "PCSTRESN", silent = TRUE)
+  })
+
+  # Check if values match the source data
+  dv_values <- nif_custom_dv %>%
+    filter(EVID == 0) %>%
+    pull(DV)
+
+  source_values <- sdtm_test$domains$pc %>%
+    filter(PCTESTCD == "A") %>%
+    pull(PCSTRESN)
+
+  # The values should match if the custom DV field is used correctly
+  expect_equal(dv_values, source_values)
+})
+
+
+test_that("add_observation handles subject filtering", {
+  # Create a test SDTM object
+  sdtm_test <- make_test_sdtm1()
+
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(sdtm_test, "A", analyte = "A")
+
+  # Filter to include only subject "1"
+  nif_filtered <- base_nif %>%
+    add_observation(
+      sdtm_test, "pc", "A",
+      subject_filter = "USUBJID == '1'",
+      silent = TRUE
+    )
+
+  # Check that only subject "1" observations are included
+  obs_subjects <- nif_filtered %>%
+    filter(EVID == 0) %>%
+    pull(USUBJID) %>%
+    unique()
+
+  # Should only contain subject "1"
+    expect_equal(obs_subjects, "1")
+})
+
+
+test_that("add_observation can handle non-existent domain gracefully", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Try adding observations from non-existent domain
+  expect_error(
+    base_nif %>%
+      add_observation(
+        examplinib_sad, "NON_EXISTENT_DOMAIN", "RS2023",
+        silent = TRUE
+    )
+  )
+})
+
+
+test_that("add_observation handles observations without matching administrations", {
+  # Create a base nif with administration data for a different analyte
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Add observation with different parent
+  nif_with_different_parent <- base_nif %>%
+    add_observation(
+      examplinib_sad, "pc", "RS2023",
+      parent = "DIFFERENT_PARENT",
+      silent = TRUE
+    )
+
+  # Should give warning about missing administrations
+  expect_message(
+    nif_with_no_admin <- base_nif %>%
+      add_observation(
+        examplinib_sad, "pc", "RS2023", cmt = 2,
+        parent = "DIFFERENT_PARENT"
+    ),
+    "Missing administration information"
+  )
+
+  # Observations should be filtered out
+  expect_equal(
+    sum(nif_with_no_admin$PARENT == "DIFFERENT_PARENT" & nif_with_no_admin$EVID == 0),
+    0
+  )
+})
+
+
+test_that("add_observation properly handles custom testcd field", {
+  # Create a test SDTM object
+  sdtm_test <- make_test_sdtm1()
+
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(sdtm_test, "A", analyte = "A")
+
+  # Use custom TESTCD field
+  expect_no_error({
+    nif_custom_testcd <- base_nif %>%
+      add_observation(
+        sdtm_test, "pc", "Analyte A",
+        TESTCD_field = "PCTEST",
+        silent = TRUE
+      )
+  })
+})
+
