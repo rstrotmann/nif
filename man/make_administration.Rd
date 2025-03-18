@@ -11,7 +11,8 @@ make_administration(
   cmt = 1,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
-  keep = ""
+  keep = "",
+  silent = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ make_administration(
 \item{cut_off_date}{The data cut-off date as Posix date-time.}
 
 \item{keep}{Columns to keep after cleanup, as character.}
+
+\item{silent}{Suppress messages, defaults to nif_option standard, if NULL.}
 }
 \value{
 A data frame.

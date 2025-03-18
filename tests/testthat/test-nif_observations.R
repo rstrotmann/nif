@@ -21,12 +21,21 @@ make_test_sdtm1 <- function() {
             "3",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
             "4",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00"
     ),
+    # ex = tibble::tribble(
+    #   ~USUBJID, ~DOMAIN,                ~EXDTC, ~EXDOSE, ~EXTRT,
+    #         "1",    "EX", "2024-01-01T08:00:00",       1,    "A",
+    #         "2",    "EX", "2024-01-01T08:00:00",       1,    "A",
+    #         "3",    "EX", "2024-01-01T08:00:00",       1,    "A",
+    #         "4",    "EX", "2024-01-01T08:00:00",       1,    "A"
+    # ) %>%
+    #   mutate(EXSTDTC = EXDTC, EXENDTC = EXDTC) %>%
+    #   select(-EXDTC),
     ex = tibble::tribble(
-      ~USUBJID, ~DOMAIN,                ~EXDTC, ~EXDOSE, ~EXTRT,
-            "1",    "EX", "2024-01-01T08:00:00",       1,    "A",
-            "2",    "EX", "2024-01-01T08:00:00",       1,    "A",
-            "3",    "EX", "2024-01-01T08:00:00",       1,    "A",
-            "4",    "EX", "2024-01-01T08:00:00",       1,    "A"
+      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC,
+      "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
+      "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
+      "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
+      "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00"
     ),
     pc = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
@@ -307,203 +316,184 @@ test_that("add_observation auto-assigns compartment if not specified", {
 })
 
 
-# test_that("add_observation auto-assigns parent if not specified", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Different observation analyte without specifying parent
-#   expect_message(
-#     nif_with_obs <- base_nif %>%
-#       add_observation(
-#         examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT"),
-#     "Parent for DIFFERENT was set to RS2023!"
-#   )
-# })
+test_that("add_observation auto-assigns parent if not specified", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Different observation analyte without specifying parent
+  expect_message(
+    nif_with_obs <- base_nif %>%
+      add_observation(
+        examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT", cmt = 2),
+    "Parent for DIFFERENT was set to RS2023!"
+  )
+})
 
 
-# test_that("add_observation properly uses observation_filter", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Add observation with filter that returns nothing
-#   expect_warning(
-#     nif_with_filtered_obs <- base_nif %>% add_observation(
-#       examplinib_sad, "pc", "RS2023",
-#       observation_filter = "PCTESTCD == 'NON_EXISTENT'",
-#       silent = TRUE
-#     )
-#   )
-#
-#   # Count of observations should be the same as base_nif
-#   expect_equal(
-#     sum(nif_with_filtered_obs$EVID == 0),
-#     sum(base_nif$EVID == 0)
-#   )
-# })
-#
-# test_that("add_observation works with factor parameter", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Add observation with normal factor
-#   nif_normal <- base_nif %>%
-#     add_observation(examplinib_sad, "pc", "RS2023", factor = 1, silent = TRUE)
-#
-#   # Add observation with double factor
-#   nif_doubled <- base_nif %>%
-#     add_observation(examplinib_sad, "pc", "RS2023", factor = 2, silent = TRUE)
-#
-#   # Get DV values for both
-#   dv_normal <- nif_normal %>%
-#     filter(EVID == 0) %>%
-#     pull(DV)
-#
-#   dv_doubled <- nif_doubled %>%
-#     filter(EVID == 0) %>%
-#     pull(DV)
-#
-#   # Verify the doubled values are twice the normal values
-#   if (length(dv_normal) > 0 && !all(is.na(dv_normal))) {
-#     expect_equal(dv_doubled, dv_normal * 2)
-#   }
-# })
-#
-# test_that("add_observation handles metabolites correctly", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Add metabolite observation
-#   nif_with_metabolite <- base_nif %>%
-#     add_observation(
-#       examplinib_sad, "pc", "RS2023487A",
-#       parent = "RS2023",
-#       metabolite = TRUE,
-#       silent = TRUE
-#     )
-#
-#   # Check if metabolite flag is set correctly
-#   metabolite_rows <- nif_with_metabolite %>%
-#     filter(ANALYTE == "RS2023487A") %>%
-#     pull(METABOLITE)
-#
-#   expect_true(all(metabolite_rows))
-# })
-#
-# test_that("add_observation works with custom NTIME_lookup", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Create custom NTIME lookup table
-#   custom_ntime <- data.frame(
-#     PCELTM = c("PT0H", "PT1H", "PT2H"),
-#     NTIME = c(0, 1, 2)
-#   )
-#
-#   # Add observation with custom NTIME lookup
-#   expect_no_error({
-#     nif_with_custom_ntime <- base_nif %>%
-#       add_observation(
-#         examplinib_sad, "pc", "RS2023",
-#         NTIME_lookup = custom_ntime,
-#         silent = TRUE
-#       )
-#   })
-# })
-#
-# test_that("add_observation handles debug mode correctly", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Add observation in debug mode
-#   nif_debug <- base_nif %>%
-#     add_observation(examplinib_sad, "pc", "RS2023", debug = TRUE, silent = TRUE)
-#
-#   # Check if debug columns are present
-#   expect_true("SRC_DOMAIN" %in% names(nif_debug))
-#   expect_true("SRC_SEQ" %in% names(nif_debug))
-# })
-#
-# test_that("add_observation updates columns correctly", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Check columns before adding observation
-#   before_cols <- names(base_nif)
-#
-#   # Add observation with additional columns to keep
-#   nif_with_extra <- base_nif %>%
-#     add_observation(examplinib_sad, "pc", "RS2023", keep = c("PCSPEC"), silent = TRUE)
-#
-#   # Check if the extra column was kept
-#   after_cols <- names(nif_with_extra)
-#
-#   # The difference should contain the kept column
-#   expect_true("PCSPEC" %in% after_cols || any(grepl("SPEC", after_cols)))
-# })
-#
-# test_that("add_observation handles coding_table correctly", {
-#   # Skip if example data doesn't support this test
-#   skip_if_not(exists("examplinib_sad") &&
-#               "pc" %in% names(examplinib_sad$domains) &&
-#               any(examplinib_sad$domains$pc$PCTEST %in% c("Categorical", "Cat")),
-#               "Test data doesn't have categorical observations")
-#
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Create a coding table for categorical values
-#   coding_table <- data.frame(
-#     PCTEST = "Categorical",
-#     PCSTRESN = c("LOW", "MEDIUM", "HIGH"),
-#     DV = c(1, 2, 3)
-#   )
-#
-#   # Add observation with coding table
-#   expect_no_error({
-#     nif_with_coding <- base_nif %>%
-#       add_observation(
-#         examplinib_sad, "pc", "CATEGORICAL",
-#         coding_table = coding_table,
-#         TESTCD_field = "PCTEST",
-#         silent = TRUE
-#       )
-#   })
-# })
-#
-# test_that("add_observation handles include_day_in_ntime parameter", {
-#   # Create a base nif with administration data
-#   base_nif <- new_nif() %>%
-#     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
-#
-#   # Add observation with include_day_in_ntime = TRUE
-#   nif_with_day <- base_nif %>%
-#     add_observation(
-#       examplinib_sad, "pc", "RS2023",
-#       include_day_in_ntime = TRUE,
-#       silent = TRUE
-#     )
-#
-#   # Add observation with include_day_in_ntime = FALSE
-#   nif_without_day <- base_nif %>%
-#     add_observation(
-#       examplinib_sad, "pc", "RS2023",
-#       include_day_in_ntime = FALSE,
-#       silent = TRUE
-#     )
-#
-#   # If NTIME is properly calculated and day inclusion works, this should pass
-#   # (This just tests that the function runs with both values)
-#   expect_true(TRUE)
-# })
-#
+test_that("add_observation properly uses observation_filter", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Add observation with filter that returns nothing
+  expect_warning(
+    nif_with_filtered_obs <- base_nif %>% add_observation(
+      examplinib_sad, "pc", "RS2023", cmt = 2,
+      observation_filter = "PCTESTCD == 'NON_EXISTENT'"
+    )
+  )
+
+  # Count of observations should be the same as base_nif
+  expect_equal(
+    sum(nif_with_filtered_obs$EVID == 0),
+    sum(base_nif$EVID == 0)
+  )
+})
+
+
+test_that("add_observation works with factor parameter", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Add observation with normal factor
+  nif_normal <- base_nif %>%
+    add_observation(examplinib_sad, "pc", "RS2023", factor = 1, silent = TRUE)
+
+  # Add observation with double factor
+  nif_doubled <- base_nif %>%
+    add_observation(examplinib_sad, "pc", "RS2023", factor = 2, silent = TRUE)
+
+  # Get DV values for both
+  dv_normal <- nif_normal %>%
+    filter(EVID == 0) %>%
+    pull(DV)
+
+  dv_doubled <- nif_doubled %>%
+    filter(EVID == 0) %>%
+    pull(DV)
+
+  # Verify the doubled values are twice the normal values
+  if (length(dv_normal) > 0 && !all(is.na(dv_normal))) {
+    expect_equal(dv_doubled, dv_normal * 2)
+  }
+})
+
+
+test_that("add_observation handles metabolites correctly", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Add metabolite observation
+  nif_with_metabolite <- base_nif %>%
+    add_observation(
+      examplinib_sad, "pc", "RS2023487A",
+      parent = "RS2023",
+      metabolite = TRUE,
+      silent = TRUE
+    )
+
+  # Check if metabolite flag is set correctly
+  metabolite_rows <- nif_with_metabolite %>%
+    filter(ANALYTE == "RS2023487A") %>%
+    pull(METABOLITE)
+
+  expect_true(all(metabolite_rows))
+})
+
+
+test_that("add_observation works with custom NTIME_lookup", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Create custom NTIME lookup table
+  custom_ntime <- data.frame(
+    PCELTM = c("PT0H", "PT1H", "PT2H"),
+    NTIME = c(0, 1, 2)
+  )
+
+  # Add observation with custom NTIME lookup
+  expect_no_error({
+    nif_with_custom_ntime <- base_nif %>%
+      add_observation(
+        examplinib_sad, "pc", "RS2023",
+        NTIME_lookup = custom_ntime,
+        silent = TRUE
+      )
+  })
+})
+
+
+test_that("add_observation handles debug mode correctly", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023",
+                       debug = TRUE)
+
+  # Add observation in debug mode
+  nif_debug <- base_nif %>%
+    add_observation(examplinib_sad, "pc", "RS2023", debug = TRUE, silent = TRUE)
+
+  # Check if debug columns are present
+  expect_true("SRC_DOMAIN" %in% names(nif_debug))
+  expect_true("SRC_SEQ" %in% names(nif_debug))
+})
+
+
+test_that("add_observation updates columns correctly", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  # Check columns before adding observation
+  before_cols <- names(base_nif)
+
+  # Add observation with additional columns to keep
+  nif_with_extra <- base_nif %>%
+    add_observation(examplinib_sad, "pc", "RS2023", keep = c("PCSPEC"), silent = TRUE)
+
+  # Check if the extra column was kept
+  after_cols <- names(nif_with_extra)
+
+  # The difference should contain the kept column
+  expect_true("PCSPEC" %in% after_cols)
+})
+
+
+test_that("add_observation handles include_day_in_ntime parameter", {
+  # Create a base nif with administration data
+  base_nif <- new_nif() %>%
+    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+
+  custom_sdtm <- examplinib_sad
+  custom_sdtm$domains$pc$PCDY = 2
+
+  # Add observation with include_day_in_ntime = TRUE
+  nif_with_day <- base_nif %>%
+    add_observation(
+      custom_sdtm, "pc", "RS2023",
+      include_day_in_ntime = TRUE,
+      silent = TRUE
+    )
+
+  # Add observation with include_day_in_ntime = FALSE
+  nif_without_day <- base_nif %>%
+    add_observation(
+      examplinib_sad, "pc", "RS2023",
+      include_day_in_ntime = FALSE,
+      silent = TRUE
+    )
+
+  expect_equal(
+    nif_with_day[nif_with_day$EVID == 0, "NTIME"],
+    nif_without_day[nif_with_day$EVID == 0, "NTIME"] + 24
+    )
+})
+
+
 # test_that("add_observation handles missing NTIME gracefully", {
 #   # Create a test SDTM object without ELTM field
 #   sdtm_test <- make_test_sdtm1()
@@ -530,7 +520,8 @@ test_that("add_observation auto-assigns compartment if not specified", {
 #     expect_true(all(is.na(obs_rows$NTIME)))
 #   }
 # })
-#
+
+
 # test_that("add_observation handles DV field properly", {
 #   # Create a test SDTM object
 #   sdtm_test <- make_test_sdtm1()

@@ -639,6 +639,7 @@ make_observation <- function(
 #' @param cmt The compartment for the administration as numeric.
 #' @param cut_off_date The data cut-off date as Posix date-time.
 #' @param keep Columns to keep after cleanup, as character.
+#' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #'
 #' @return A data frame.
 #' @export
@@ -652,7 +653,8 @@ make_administration <- function(
     cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cut_off_date = NULL,
-    keep = ""
+    keep = "",
+    silent = NULL
     ) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
@@ -875,9 +877,7 @@ index_nif <- function(nif) {
 #' @param nif A nif object.
 #' @inheritParams make_administration
 #' @param debug Include debug fields, as logical.
-#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
-#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
-#' suppress messages.
+#' @param silent Suppress messages, defaults to nif_option standard when NULL.
 #'
 #' @return A nif object.
 #' @export
@@ -894,12 +894,14 @@ add_administration <- function(
     cut_off_date = NULL,
     keep = NULL,
     debug = FALSE,
-    silent = deprecated()) {
+    silent = NULL) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
-  bind_rows(nif,
-            make_administration(sdtm, extrt, analyte, cmt, subject_filter,
-                                     cut_off_date, keep)) %>%
+  bind_rows(
+    nif,
+    make_administration(
+      sdtm, extrt, analyte, cmt, subject_filter, cut_off_date, keep,
+      silent = silent)) %>%
     normalize_nif(keep = keep)
 }
 
@@ -923,9 +925,7 @@ add_administration <- function(
 #' @param nif A nif object.
 #' @inheritParams make_observation
 #' @param debug Include debug fields, as logical.
-#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
-#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
-#' suppress messages.
+#' @param silent Suppress messages, defaults to nif_option standard if NULL.
 #'
 #' @return A nif object.
 #' @seealso [add_administration()]
@@ -951,7 +951,7 @@ add_observation <- function(
     keep = NULL,
     debug = FALSE,
     include_day_in_ntime = FALSE,
-    silent = deprecated()
+    silent = NULL
   ) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -989,7 +989,7 @@ add_observation <- function(
       sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
       observation_filter, TESTCD_field, DTC_field, DV_field,
       coding_table, factor, NTIME_lookup, keep,
-      include_day_in_ntime = include_day_in_ntime)) %>%
+      include_day_in_ntime = include_day_in_ntime, silent = silent)) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%

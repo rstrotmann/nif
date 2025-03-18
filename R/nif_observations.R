@@ -40,7 +40,10 @@ make_ntime <- function(obj, include_day = FALSE, silent = NULL) {
     pull_column("ELTM"),
     NTIME = tm
   ) %>%
-    {if(isTRUE(include_day)) mutate(., NTIME = NTIME + dy) else .} %>%
+    # {if(isTRUE(include_day)) mutate(., NTIME = NTIME + dy) else .} %>%
+    {if(isTRUE(include_day) & length(tm) == length(dy))
+      mutate(., NTIME = NTIME + dy)
+      else .} %>%
     distinct()
   colnames(out)[1] <- eltn_name
   return(out)
@@ -275,7 +278,10 @@ make_observation <- function(
 #'   parent = "RS2023")
 #'
 add_observation <- function(
-    nif, sdtm, domain, testcd,
+    nif,
+    sdtm,
+    domain,
+    testcd,
     analyte = NULL,
     parent = NULL,
     metabolite = FALSE,

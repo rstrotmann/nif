@@ -1,4 +1,57 @@
 
+#' Expand dates
+#'
+#' @param stdtc STDTC as character.
+#' @param endtc ENDTC as character.
+#' @param stdy STDY as numeric.
+#' @param endy ENDY as numeric.
+#'
+#' @return Vector of lists: Dates and Days.
+date_list <- function(stdtc, endtc, stdy=NA, endy=NA) {
+  tryCatch({
+    start_date <- as.Date(stdtc)
+    end_date <- as.Date(endtc)
+  },
+  error = function(e) {
+    warning("Failed to parse dates: ", stdtc, " to ", endtc)
+  })
+
+  if(!is.na(end_date) & end_date < start_date) {
+    stop(paste0(
+      "End date before start date for: ", stdtc, " to ", endtc
+    ))
+  }
+
+  if(!is.na(endy) & !is.na(stdy) & endy < stdy) {
+    stop(paste0(
+      "End day before start day for: ", stdy, " to ", endy
+    ))
+  }
+
+  if(!is.na(endtc)){
+    dtc_list <- seq(start_date, end_date, by = "days")
+  } else {
+    dtc_list <- start_date
+  }
+
+  if(!is.na(stdy)) {
+    if(!is.na(endy)) {
+        dy_list <- seq(stdy, endy)
+      } else {
+        dy_list <- seq(stdy, stdy + length(dtc_list) - 1)
+      }
+  } else {
+    dy_list <- rep(NA, length(dtc_list))
+  }
+
+  if(length(dtc_list) != length(dy_list)) {
+    stop("DTC list and DY list have different lengths!")
+  }
+
+  return(c(list(dtc_list), list(dy_list)))
+}
+
+
 #' Expand administration episodes
 #'
 #' @param ex The EX domain as data frame.
@@ -17,42 +70,44 @@ expand_ex <- function(ex) {
   }
 
   # Helper function for date sequence generation
-  date_list <- function(stdtc, endtc) {
-    tryCatch({
-      start_date <- as.Date(stdtc)
-      end_date <- as.Date(endtc)
-    },
-    error = function(e) {
-      warning("Failed to parse dates: ", stdtc, " to ", endtc)
-    })
+  # date_list <- function(stdtc, endtc) {
+  #   tryCatch({
+  #     start_date <- as.Date(stdtc)
+  #     end_date <- as.Date(endtc)
+  #   },
+  #   error = function(e) {
+  #     warning("Failed to parse dates: ", stdtc, " to ", endtc)
+  #   })
+  #
+  #   if(!is.na(end_date) & end_date < start_date) {
+  #     stop(paste0(
+  #       "End date before start date for: ", stdtc, " to ", endtc
+  #     ))
+  #   }
+  #
+  #   if(!is.na(endtc)){
+  #     return(list(seq(start_date, end_date, by = "days")))
+  #   } else {
+  #     return(list(start_date))
+  #   }
+  # }
 
-    if(!is.na(end_date) & end_date < start_date) {
-      stop(paste0(
-        "End date before start date for: ", stdtc, " to ", endtc
-      ))
-    }
 
-    if(!is.na(endtc)){
-      return(list(seq(start_date, end_date, by = "days")))
-    } else {
-      return(list(start_date))
-    }
-  }
 
   # Helper function for study day sequence
-  exdy_list <- function(stdy, endy) {
-    if(stdy > endy) {
-      stop(paste0(
-        "End day before start day for: ", stdy, " to ", endy
-      ))
-    }
-
-    if(!is.na(endy)){
-      return(list(seq(stdy, endy)))
-    } else {
-      return(list(stdy))
-    }
-  }
+  # exdy_list <- function(stdy, endy) {
+  #   if(stdy > endy) {
+  #     stop(paste0(
+  #       "End day before start day for: ", stdy, " to ", endy
+  #     ))
+  #   }
+  #
+  #   if(!is.na(endy)){
+  #     return(list(seq(stdy, endy)))
+  #   } else {
+  #     return(list(stdy))
+  #   }
+  # }
 
   ex %>%
     assertr::verify(assertr::has_all_names(
@@ -60,15 +115,20 @@ expand_ex <- function(ex) {
       )) %>%
     {if(!"IMPUTATION" %in% names(.))
       mutate(., IMPUTATION = "") else .} %>%
-
     decompose_dtc(c("EXSTDTC", "EXENDTC")) %>%
 
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
     rowwise() %>%
-    mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)) %>%
+    # mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)) %>%
+    mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1]) %>%
+
+    # {if(all(c("EXSTDY", "EXENDY") %in% names(ex)))
+    #   mutate(., EXDY = exdy_list(EXSTDY, EXENDY)) else .} %>%
+
     {if(all(c("EXSTDY", "EXENDY") %in% names(ex)))
-      mutate(., EXDY = exdy_list(EXSTDY, EXENDY)) else .} %>%
+      mutate(., EXDY = date_list(.data$EXSTDTC_date, .data$EXENDTC_date,
+                                 .data$EXSTDY, .data$EXENDY)[2]) else .} %>%
 
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) %>%
 

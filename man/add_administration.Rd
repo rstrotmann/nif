@@ -14,7 +14,7 @@ add_administration(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
-  silent = deprecated()
+  silent = NULL
 )
 }
 \arguments{
@@ -36,9 +36,7 @@ add_administration(
 
 \item{debug}{Include debug fields, as logical.}
 
-\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
-compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
-suppress messages.}
+\item{silent}{Suppress messages, defaults to nif_option standard when NULL.}
 }
 \value{
 A nif object.
