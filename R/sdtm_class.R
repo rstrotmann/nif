@@ -726,7 +726,7 @@ filter_subject.sdtm <- function(obj, usubjid) {
 
 #' Make subject data frame from SDTM object
 #'
-#' @param sdtm A sdtm object.
+#' @param obj A sdtm object.
 #' @param ... Further arguments.
 #'
 #' @return A data frame.

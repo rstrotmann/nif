@@ -7,9 +7,9 @@
 make_subjects_sdtm(obj, ...)
 }
 \arguments{
-\item{...}{Further arguments.}
+\item{obj}{A sdtm object.}
 
-\item{sdtm}{A sdtm object.}
+\item{...}{Further arguments.}
 }
 \value{
 A data frame.
