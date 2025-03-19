@@ -439,51 +439,5 @@ test_that("add_rtb works", {
 })
 
 
-test_that("guess parent works", {
-  # tibble::tribble(
-  #   ~USUBJID, ~ANALYTE, ~METABOLITE, ~EVID, ~CMT,
-  #    1L,      "A",       FALSE,     1,    1,
-  #    1L,      "A",       FALSE,     0,    2,
-  #    2L,      "A",       FALSE,     1,    1,
-  #    2L,      "A",       FALSE,     0,    2,
-  #    3L,      "A",       FALSE,     1,    1,
-  #    3L,      "A",       FALSE,     0,    2,
-  #    4L,      "A",       FALSE,     1,    1,
-  #    4L,      "A",       FALSE,     0,    2,
-  #   1, "B", TRUE, 0, 3,
-  #   2, "B", TRUE, 0, 3,
-  #   3, "B", TRUE, 0, 3,
-  #   4, "B", TRUE, 0, 3
-  # ) %>%
-  #   mutate(USUBJID = as.character(USUBJID)) %>%
-  #   arrange(USUBJID, -EVID, METABOLITE) %>%
-  #   dpasta()
-
-
-  # data.frame(
-  #   USUBJID = rep(seq(1, 4), 3),
-  #   ANALYTE = seq()
-  # )
-
-
-  obj <- tibble::tribble(
-     ~USUBJID, ~ANALYTE, ~METABOLITE, ~EVID, ~CMT,
-          "1",      "A",       FALSE,     1,    1,
-          "1",      "A",       FALSE,     0,    2,
-          "1",      "B",        TRUE,     0,    3,
-          "2",      "A",       FALSE,     1,    1,
-          "2",      "A",       FALSE,     0,    2,
-          "2",      "B",        TRUE,     0,    3,
-          "3",      "A",       FALSE,     1,    1,
-          "3",      "A",       FALSE,     0,    2,
-          "3",      "B",        TRUE,     0,    3,
-          "4",      "A",       FALSE,     1,    1,
-          "4",      "A",       FALSE,     0,    2,
-          "4",      "B",        TRUE,     0,    3
-     )
-
-  guess_parent(obj)
-})
-
 
 
