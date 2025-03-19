@@ -8,6 +8,7 @@ make_test_sdtm1 <- function() {
             "4",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
     ) %>%
       mutate(RFENDTC = "2024-01-02T08:00:00"),
+
     vs = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
             "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
@@ -15,6 +16,7 @@ make_test_sdtm1 <- function() {
             "3",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
             "4",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
     ),
+
     lb = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBTESTCD, ~LBSTRESN,                ~LBDTC,
             "1",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
@@ -22,22 +24,23 @@ make_test_sdtm1 <- function() {
             "3",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
             "4",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00"
     ),
+
     # ex = tibble::tribble(
-    #   ~USUBJID, ~DOMAIN,                ~EXDTC, ~EXDOSE, ~EXTRT,
-    #         "1",    "EX", "2024-01-01T08:00:00",       1,    "A",
-    #         "2",    "EX", "2024-01-01T08:00:00",       1,    "A",
-    #         "3",    "EX", "2024-01-01T08:00:00",       1,    "A",
-    #         "4",    "EX", "2024-01-01T08:00:00",       1,    "A"
-    # ) %>%
-    #   mutate(EXSTDTC = EXDTC, EXENDTC = EXDTC) %>%
-    #   select(-EXDTC),
+    #   ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC,
+    #   "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
+    #   "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
+    #   "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
+    #   "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00"
+    # ) %>% mutate(EXSEQ = row_number()),
+
     ex = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC,
-      "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-      "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-      "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-      "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00"
-    ) %>% mutate(EXSEQ = row_number()),
+      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC, ~EXSEQ,
+          "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     1L,
+          "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     2L,
+          "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     3L,
+          "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     4L
+    ),
+
     pc = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
             "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
@@ -60,7 +63,7 @@ test_that("make_observation works", {
 test_that("make_observation issues warning if observation filter returns no observations", {
   sdtm <- make_test_sdtm1()
   # Should issue warning when silent is FALSE or NULL
-  expect_warning(
+  expect_error(
     make_observation(sdtm, "pc", "A", observation_filter = "FALSE", silent = FALSE),
     "The observation_filter 'FALSE' returned no entries."
   )
@@ -84,6 +87,7 @@ test_that("make_observation works with coding table", {
   )
   )
 })
+
 
 # Additional tests for make_observation function
 test_that("make_observation handles different domains correctly", {
@@ -294,7 +298,8 @@ test_that("add_observation warns about duplicate compartment", {
 
   # Try to add observation with the same compartment
   expect_warning(
-    base_nif %>% add_observation(examplinib_sad, "pc", "RS2023", cmt = 1),
+    base_nif %>%
+      add_observation(examplinib_sad, "pc", "RS2023", cmt = 1),
     "Compartment 1 is already assigned!"
   )
 })
@@ -338,17 +343,11 @@ test_that("add_observation properly uses observation_filter", {
     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
 
   # Add observation with filter that returns nothing
-  expect_warning(
+  expect_error(
     nif_with_filtered_obs <- base_nif %>% add_observation(
       examplinib_sad, "pc", "RS2023", cmt = 2,
       observation_filter = "PCTESTCD == 'NON_EXISTENT'"
     )
-  )
-
-  # Count of observations should be the same as base_nif
-  expect_equal(
-    sum(nif_with_filtered_obs$EVID == 0),
-    sum(base_nif$EVID == 0)
   )
 })
 
@@ -498,6 +497,7 @@ test_that("add_observation handles include_day_in_ntime parameter", {
 test_that("add_observation handles missing NTIME gracefully", {
   # Create a test SDTM object without ELTM field
   sdtm_test <- make_test_sdtm1()
+
   # Remove PCELTM field
   if ("PCELTM" %in% names(sdtm_test$domains$pc)) {
     sdtm_test$domains$pc$PCELTM <- NULL
@@ -509,10 +509,12 @@ test_that("add_observation handles missing NTIME gracefully", {
 
   # Should run without error but show a message about NTIME
   expect_message(
-    nif_without_ntime <- base_nif %>%
-      add_observation(sdtm_test, "pc", "A", cmt = 2),
-    "ELTM is not defined"
-  )
+      expect_message(
+        nif_without_ntime <- base_nif %>%
+          add_observation(sdtm_test, "pc", "A", cmt = 2),
+      "ELTM is not defined"
+    ),
+  "No NTIME_lookup could be created")
 
   # NTIME should be NA in the resulting object
   obs_rows <- nif_without_ntime %>%

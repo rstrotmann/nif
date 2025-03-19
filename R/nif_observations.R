@@ -178,6 +178,17 @@ make_observation <- function(
         "No NTIME_lookup could be created, NTIME will be NA",
         silent = silent)
     }
+  } else {
+    # Validate NTIME_lookup structure
+    if(!is.data.frame(NTIME_lookup)) {
+      stop("NTIME_lookup must be a data frame")
+    }
+    if(!"NTIME" %in% names(NTIME_lookup)) {
+      stop("NTIME_lookup must contain a 'NTIME' column")
+    }
+    if(length(intersect(names(NTIME_lookup), names(obj))) < 1) {
+      stop("NTIME_lookup must contain at least one column that matches a column in the domain data")
+    }
   }
 
   # apply coding table, if not NULL
@@ -214,7 +225,7 @@ make_observation <- function(
 
   # Add warning if subject_filter returns no entries
   if (nrow(filtered_obj) == 0) {
-    warning("The observation_filter '", observation_filter, "' returned no entries.")
+    stop("The observation_filter '", observation_filter, "' returned no entries.")
   }
 
   filtered_obj %>%
@@ -231,11 +242,20 @@ make_observation <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPUTATION = "") %>%
-    # {if(is.numeric(.$DV)) mutate(., DV = DV * factor) else .} %>%
 
-    {if(!is.null(NTIME_lookup)) suppressMessages(
-      left_join(., NTIME_lookup)) else
-        mutate(., NTIME = NA)} %>%
+    {if(!is.null(NTIME_lookup)) {
+      # Capture any join messages/warnings
+      join_msgs <- capture.output(type = "message", {
+        result <- left_join(., NTIME_lookup)
+      })
+      # if(length(join_msgs) > 0) {
+      #   conditional_message(
+      #     "Warnings during NTIME_lookup join: ",
+      #     paste(join_msgs, collapse = "\n"),
+      #     silent = silent)
+      # }
+      result
+    } else mutate(., NTIME = NA)} %>%
 
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
@@ -347,7 +367,7 @@ add_observation <- function(
       sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
       observation_filter, TESTCD_field, DTC_field, DV_field,
       coding_table, factor, NTIME_lookup, keep,
-      include_day_in_ntime = include_day_in_ntime)) %>%
+      include_day_in_ntime = include_day_in_ntime, silent = silent)) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%

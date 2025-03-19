@@ -427,7 +427,7 @@ add_time <- function(x) {
 
 #' Compile observation data frame
 #'
-#' @description
+# @description
 #' Create a data frame of observations from a SDTM domain specified by 'domain'
 #' where the dependent variable comes from the 'DV_field' parameter and the
 #' timing information from the 'DTC_field' parameter.
@@ -439,328 +439,135 @@ add_time <- function(x) {
 #' field contained in the input data set, e.g., 'PCELTM' (see the code
 #' examples). Otherwise, 'NTIME' will be `NA`.
 #'
-#' @param sdtm A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
+# @param sdtm A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
 #'   domain the observations come from.
-#' @param domain The domain as character.
-#' @param DTC_field The field to use as the date-time code for the observation.
+# @param domain The domain as character.
+# @param DTC_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
-#' @param DV_field the field to use as the dependent variable. Defaults to the
+# @param DV_field the field to use as the dependent variable. Defaults to the
 #'   two-character domain name followed by 'STRESN', if NULL.
-#' @param analyte The name for the analyte. Defaults to the 'testcd', if NULL.
-#' @param cmt The compartment for the observation as numeric.
-#' @param parent The name of the parent analyte for the observation as
+# @param analyte The name for the analyte. Defaults to the 'testcd', if NULL.
+# @param cmt The compartment for the observation as numeric.
+# @param parent The name of the parent analyte for the observation as
 #'   character.
-#' @param observation_filter The filtering to apply to the observation source
+# @param observation_filter The filtering to apply to the observation source
 #'   data.
-#' @param subject_filter The filtering to apply to the DM domain.
-#' @param NTIME_lookup A data frame with two columns, a column that defines the
+# @param subject_filter The filtering to apply to the DM domain.
+# @param NTIME_lookup A data frame with two columns, a column that defines the
 #'   custom nominal time information in the target domain (e.g., 'PCELTM'), and
 #'   'NTIME'. This data frame is left_joined into the observation data frame
 #'   to provide the NTIME field.
-#' @param testcd The observation variable, as character.
-#' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
+# @param testcd The observation variable, as character.
+# @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
 #'   name followed by 'TESTCD', if NULL.
-#' @param keep Columns to keep, as character.
-#' @param factor Multiplier for the DV field, as numeric.
-#' @param coding_table Coding table to translate a categorical values into
+# @param keep Columns to keep, as character.
+# @param factor Multiplier for the DV field, as numeric.
+# @param coding_table Coding table to translate a categorical values into
 #'   numerical values, as data frame. The data frame must have at least one
 #'   column that matches a column in the domain, and a numerical 'DV' column
 #'   that provides the recoding result.
-#' @param metabolite Observation is a metabolite, as logical.
-#' @param include_day_in_ntime Include treatment day in the calculation of
+# @param metabolite Observation is a metabolite, as logical.
+# @param include_day_in_ntime Include treatment day in the calculation of
 #'   NTIME, as logical.
 #'
-#' @return A data frame.
-#' @keywords internal
-#' @import stringr
+# @return A data frame.
+# @keywords internal
+# @import stringr
 #'
-make_observation <- function(
-    sdtm,
-    domain,
-    testcd,
-    analyte = NULL,
-    parent = NULL,
-    metabolite = FALSE,
-    cmt = NA,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    observation_filter = "TRUE",
-    TESTCD_field = NULL,
-    DTC_field = NULL,
-    DV_field = NULL,
-    coding_table = NULL,
-    factor = 1,
-    NTIME_lookup = NULL,
-    keep = NULL,
-    include_day_in_ntime = FALSE
-    ) {
-  if(is.null(DTC_field))
-    DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
-
-  if(is.null(DV_field))
-    DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
-
-  if(is.null(TESTCD_field))
-    TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
-
-  if(is.null(analyte)) analyte <- testcd
-  if(is.null(parent)) parent <- analyte
-
-  sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter,
-                       keep)
-
-  obj <- domain(sdtm, str_to_lower(domain)) %>%
-    lubrify_dates()
-
-  if(is.null(NTIME_lookup)) {
-    NTIME_lookup = make_ntime(obj, include_day = include_day_in_ntime)
-  }
-
-  # apply coding table, if not NULL
-  if(!is.null(coding_table)) {
-    if(!any(names(coding_table) %in% names(obj))){
-      stop("Coding table cannot be applied to data set!")
-    }
-    if(!is.numeric(coding_table$DV)){
-      stop("DV field in coding table must be numeric!")
-    }
-    suppressMessages(
-      obj <- obj %>%
-        left_join(coding_table)
-    )
-  } else {
-    obj <- obj %>%
-      mutate(DV = .data[[DV_field]] * factor)
-  }
-
-  obj %>%
-    mutate(SRC_DOMAIN = .data$DOMAIN) %>%
-    # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
-    {if(paste0(toupper(domain), "SEQ") %in% names(obj))
-      mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
-        mutate(., SRC_SEQ = NA)} %>%
-    filter(eval(parse(text = observation_filter))) %>%
-    filter(.data[[TESTCD_field]] == testcd) %>%
-    mutate(
-      DTC = .data[[DTC_field]],
-      ANALYTE = analyte,
-      TIME = NA,
-      CMT = cmt,
-      AMT = 0,
-      DOSE = NA,
-      PARENT = parent,
-      METABOLITE = metabolite,
-      EVID = 0,
-      MDV = as.numeric(is.na(DV)),
-      IMPUTATION = "") %>%
-    {if(is.numeric(.$DV)) mutate(., DV = DV * factor) else .} %>%
-
-    {if(!is.null(NTIME_lookup)) suppressMessages(
-      left_join(., NTIME_lookup)) else
-        mutate(., NTIME = NA)} %>%
-
-    inner_join(sbs, by = "USUBJID") %>%
-    group_by(.data$USUBJID) %>%
-    mutate(TRTDY = as.numeric(
-      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
-      difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
-      units = "days") + 1) %>%
-    ungroup() %>%
-    filter(!is.na(.data$DTC)) %>%
-    new_nif()
-}
-
-
-#' Compile administration data frame
-#'
-#' @details
-#' A discussion on EC vs EX is provided [here](https://www.cdisc.org/kb/ecrf/exposure-collected#:~:text=In%20the%20SDTMIG%2C%20the%20Exposure,data%20collected%20on%20the%20CRF.)
-#'
-#' @details
-#' # Time imputations and filtering
-#'
-#' The following time imputations and filters are applied in the given
-#' order:
-#'
-#' ## 1. [impute_exendtc_to_rfendtc()]
-#'
-#' If EXENDTC is missing in the last administration episode for a given subject,
-#' it is replaced with DM.RFENDTC, if available.
-#'
-#' ## 2. [filter_EXSTDTC_after_EXENDTC()]
-#'
-#' Administration episodes in which EXSTDTC is after EXENDT are deleted from the
-#' data set.
-#'
-#' ## 3. [impute_exendtc_to_cutoff()]
-#'
-#' If in the last administration episode per subject and treatment, EXENDTC is
-#' missing, for example because the treatment is still ongoing at the time of
-#' the SDTM generation, EXENDTC is replaced with the cut-off date.
-#'
-#' ## 4. [impute_missing_exendtc()]
-#'
-#' If in any further episode, EXENDTC is missing, it is replaced with the day
-#' before the subsequent administration episode start (EXSTDTC). It should be
-#' understood that this reflects a rather strong assumption, i.e., that the
-#' treatment was continued into the next administration episode. This imputation
-#' therefore issues a warning that cannot be suppressed.
-#'
-#' ## 5. Expand administration episodes
-#'
-#' All administration episodes, i.e., the intervals between EXSTDTC and EXENDTC
-#' for a given row in EX, are expanded into a sequence of rows with one
-#' administration day per row. The administration times for all rows except for
-#' the last are taken from the time information in EXSTDTD, whereas the time
-#' for the last administration event in the respective episode is taken from the
-#' time information in EXENDTC.
-#'
-#' **Development note:** In the present version of the function, once-daily (QD)
-#' dosing is assumed. Multiple-daily dosings are not supported. In future
-#' versions, the dosing frequency provided in `EXDOSFRQ` may be taken into
-#' account to adequately handle multiple daily administrations.
-#'
-#' ## 6. [impute_admin_times_from_pcrftdtc()]
-#'
-#' For administration days for which PK sampling events are recorded in PC, the
-#' administration time is taken from PC.PCRFTDTC, if this field is available.
-#'
-#' **Development note:** This may be updated in future versions of the function
-#' to work with multiple-daily administrations.
-#'
-#' ## 7. Carry forward time
-#'
-#' For all administration events per subject and treatment, missing time
-#' information is finally carried forward from available time information.
-#'
-#' @param sdtm A sdtm object.
-#' @param subject_filter The filtering to apply to the DM domain, as string,
-#' @param extrt The EXTRT for the administration, as character.
-#' @param analyte The name of the analyte as character.
-#' @param cmt The compartment for the administration as numeric.
-#' @param cut_off_date The data cut-off date as Posix date-time.
-#' @param keep Columns to keep after cleanup, as character.
-#' @param silent Suppress messages, defaults to nif_option standard, if NULL.
-#'
-#' @return A data frame.
-#' @export
-#' @importFrom assertthat assert_that
-#' @keywords internal
-#' @seealso [add_administration()]
-make_administration <- function(
-    sdtm,
-    extrt,
-    analyte = NA,
-    cmt = 1,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cut_off_date = NULL,
-    keep = "",
-    silent = NULL
-    ) {
-  dm <- domain(sdtm, "dm") %>% lubrify_dates()
-  ex <- domain(sdtm, "ex") %>% lubrify_dates()
-
-  ex <- impute_exendtc_to_rfendtc(ex, dm)
-
-  assertthat::assert_that(
-    extrt %in% ex$EXTRT,
-    msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
-  )
-
-  if(is.na(analyte)) {analyte <- extrt}
-  if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
-
-  sbs <- make_subjects(dm, domain(sdtm, "vs"), subject_filter, keep)
-
-  admin <- ex %>%
-    mutate(SRC_DOMAIN = "EX") %>%
-    {if("EXSEQ" %in% names(ex)) mutate(., SRC_SEQ = EXSEQ) else
-      mutate(., SRC_SEQ = NA)} %>%
-
-    {if(!"IMPUTATION" %in% names(.))
-      mutate(., IMPUTATION = "") else .} %>%
-
-    filter(.data$EXTRT == extrt) %>%
-    filter(.data$EXSTDTC <= cut_off_date) %>%
-    decompose_dtc("EXSTDTC") %>%
-
-    # impute_exendtc_to_rfendtc(dm) %>%
-    filter_EXSTDTC_after_EXENDTC(dm) %>%
-
-    # time imputations
-    impute_exendtc_to_cutoff(cut_off_date = cut_off_date) %>%
-    impute_missing_exendtc() %>%
-    decompose_dtc("EXENDTC") %>%
-
-    # make generic fields
-    mutate(TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
-           METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
-           DOSE = EXDOSE, AMT = EXDOSE) %>%
-
-    expand_ex()
-
-    # # expand administration intervals to individual entries per administration
-    # rowwise() %>%
-    # mutate(DTC_date = list(seq(
-    #   as.Date(.data$EXSTDTC_date),
-    #   as.Date(.data$EXENDTC_date),
-    #   by = "days"))) %>%
-    # tidyr::unnest("DTC_date") %>%
-    #
-    # # make time, carry forward time from EXSTDTC
-    # group_by(.data$USUBJID, .data$ANALYTE, .data$EXENDTC_date) %>%
-    # mutate(DTC_time = case_when(
-    #   row_number() == n() ~ .data$EXENDTC_time,
-    #   .default = .data$EXSTDTC_time
-    # )) %>%
-    #
-    # mutate(IMPUTATION = case_when(
-    #   row_number() != 1 & row_number() != n() ~ "time carried forward",
-    #   .default = .data$IMPUTATION
-    # )) %>%
-    #
-    # ungroup() %>%
-    #
-    # select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",
-    #           "EXENDTC_time")) %>%
-    #
-    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
-
-  # impute missing administration times from PCRFTDTC
-  if("pc" %in% names(sdtm$domains)) {
-    pc <- domain(sdtm, "pc") %>% lubrify_dates()
-    admin <- admin %>%
-    {if("PCRFTDTC" %in% names(pc))
-      impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .}
-  }
-
-  admin <- admin %>%
-    # carry forward missing administration times
-    decompose_dtc("DTC") %>%
-    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) %>%
-    mutate(IMPUTATION = case_when(
-      is.na(.data$DTC_time) == TRUE ~ "time carried forward",
-      .default = .data$IMPUTATION)) %>%
-    group_by(.data$USUBJID, .data$ANALYTE) %>%
-    tidyr::fill("DTC_time", .direction = "down") %>%
-    ungroup() %>%
-
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
-    select(-c("DTC_date", "DTC_time")) %>%
-    inner_join(sbs, by = "USUBJID") %>%
-    group_by(.data$USUBJID) %>%
-    mutate(TRTDY = as.numeric(
-      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
-      ## changed from RFXSTDTC to RFSTDTC. The difference between both dates is
-      ## that RFXSTDTC includes any exposure captured in the EX domain, whereas
-      ## RFSTDTC refers to the first exposure to study treatment.
-      ## Reference: https://www.lexjansen.com/phuse-us/2020/ds/DS07.pdf
-      difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
-      units = "days") + 1) %>%
-    ungroup() %>%
-    new_nif()
-
-  return(admin)
-}
+# make_observation <- function(
+#     sdtm,
+#     domain,
+#     testcd,
+#     analyte = NULL,
+#     parent = NULL,
+#     metabolite = FALSE,
+#     cmt = NA,
+#     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+#     observation_filter = "TRUE",
+#     TESTCD_field = NULL,
+#     DTC_field = NULL,
+#     DV_field = NULL,
+#     coding_table = NULL,
+#     factor = 1,
+#     NTIME_lookup = NULL,
+#     keep = NULL,
+#     include_day_in_ntime = FALSE
+#     ) {
+#   if(is.null(DTC_field))
+#     DTC_field <- paste0(stringr::str_to_upper(domain), "DTC")
+#
+#   if(is.null(DV_field))
+#     DV_field <- paste0(stringr::str_to_upper(domain), "STRESN")
+#
+#   if(is.null(TESTCD_field))
+#     TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
+#
+#   if(is.null(analyte)) analyte <- testcd
+#   if(is.null(parent)) parent <- analyte
+#
+#   sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter,
+#                        keep)
+#
+#   obj <- domain(sdtm, str_to_lower(domain)) %>%
+#     lubrify_dates()
+#
+#   if(is.null(NTIME_lookup)) {
+#     NTIME_lookup = make_ntime(obj, include_day = include_day_in_ntime)
+#   }
+#
+#   # apply coding table, if not NULL
+#   if(!is.null(coding_table)) {
+#     if(!any(names(coding_table) %in% names(obj))){
+#       stop("Coding table cannot be applied to data set!")
+#     }
+#     if(!is.numeric(coding_table$DV)){
+#       stop("DV field in coding table must be numeric!")
+#     }
+#     suppressMessages(
+#       obj <- obj %>%
+#         left_join(coding_table)
+#     )
+#   } else {
+#     obj <- obj %>%
+#       mutate(DV = .data[[DV_field]] * factor)
+#   }
+#
+#   obj %>%
+#     mutate(SRC_DOMAIN = .data$DOMAIN) %>%
+#     # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
+#     {if(paste0(toupper(domain), "SEQ") %in% names(obj))
+#       mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
+#         mutate(., SRC_SEQ = NA)} %>%
+#     filter(eval(parse(text = observation_filter))) %>%
+#     filter(.data[[TESTCD_field]] == testcd) %>%
+#     mutate(
+#       DTC = .data[[DTC_field]],
+#       ANALYTE = analyte,
+#       TIME = NA,
+#       CMT = cmt,
+#       AMT = 0,
+#       DOSE = NA,
+#       PARENT = parent,
+#       METABOLITE = metabolite,
+#       EVID = 0,
+#       MDV = as.numeric(is.na(DV)),
+#       IMPUTATION = "") %>%
+#     {if(is.numeric(.$DV)) mutate(., DV = DV * factor) else .} %>%
+#
+#     {if(!is.null(NTIME_lookup)) suppressMessages(
+#       left_join(., NTIME_lookup)) else
+#         mutate(., NTIME = NA)} %>%
+#
+#     inner_join(sbs, by = "USUBJID") %>%
+#     group_by(.data$USUBJID) %>%
+#     mutate(TRTDY = as.numeric(
+#       # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
+#       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
+#       units = "days") + 1) %>%
+#     ungroup() %>%
+#     filter(!is.na(.data$DTC)) %>%
+#     new_nif()
+# }
 
 
 
@@ -867,45 +674,6 @@ index_nif <- function(nif) {
 }
 
 
-#' Append administration events
-#'
-#' Drug administration data is taken from the EX domain of the sdtm object. The
-#' 'extrt' field specifies the drug name as represented in 'EX', however, a
-#' different 'analyte' name can be assigned to match with that of the
-#' pharmacokinetic observations for the parent drug in plasma.
-#'
-#' @param nif A nif object.
-#' @inheritParams make_administration
-#' @param debug Include debug fields, as logical.
-#' @param silent Suppress messages, defaults to nif_option standard when NULL.
-#'
-#' @return A nif object.
-#' @export
-#' @examples
-#' add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
-#'
-add_administration <- function(
-    nif,
-    sdtm,
-    extrt,
-    analyte = NA,
-    cmt = 1,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cut_off_date = NULL,
-    keep = NULL,
-    debug = FALSE,
-    silent = NULL) {
-  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
-  bind_rows(
-    nif,
-    make_administration(
-      sdtm, extrt, analyte, cmt, subject_filter, cut_off_date, keep,
-      silent = silent)) %>%
-    normalize_nif(keep = keep)
-}
-
-
 #' Append observation events
 #'
 #' Observations can be pharmacokinetic observations (i.e., from the PC domain),
@@ -922,103 +690,103 @@ add_administration <- function(
 #' A PK/PD model compartment can be specified with 'cmt' or will be
 #' automatically assigned if `cmt = NULL`.
 #'
-#' @param nif A nif object.
-#' @inheritParams make_observation
-#' @param debug Include debug fields, as logical.
-#' @param silent Suppress messages, defaults to nif_option standard if NULL.
+# @param nif A nif object.
+# @inheritParams make_observation
+# @param debug Include debug fields, as logical.
+# @param silent Suppress messages, defaults to nif_option standard if NULL.
 #'
-#' @return A nif object.
-#' @seealso [add_administration()]
-#' @export
-#' @examples
+# @return A nif object.
+# @seealso [add_administration()]
+# @export
+# @examples
 #' add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",
 #'   parent = "RS2023")
-#'
-add_observation <- function(
-    nif, sdtm, domain, testcd,
-    analyte = NULL,
-    parent = NULL,
-    metabolite = FALSE,
-    cmt = NULL,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    observation_filter = "TRUE",
-    TESTCD_field = NULL,
-    DTC_field = NULL,
-    DV_field = NULL,
-    coding_table = NULL,
-    factor = 1,
-    NTIME_lookup = NULL,
-    keep = NULL,
-    debug = FALSE,
-    include_day_in_ntime = FALSE,
-    silent = NULL
-  ) {
-  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
-  if(length(parents(nif)) == 0)
-    stop("Please add at least one administration first!")
-  if(is.null(cmt)) {
-    cmt <- max(nif$CMT) + 1
-    conditional_message(paste0(
-      "Compartment for ", testcd,
-      " was not specified and has been set to ", cmt))
-  }
-
-  if(is.null(analyte)) analyte <- testcd
-
-  imp <- nif %>%
-    as.data.frame() %>%
-    filter(EVID == 1) %>%
-    distinct(ANALYTE) %>%
-    pull(ANALYTE)
-
-  if(is.null(parent)) {
-    if(analyte %in% imp) {
-      parent <- analyte
-    } else {
-      parent <- guess_parent(nif)
-      conditional_message(paste0("Parent for ", analyte, " was set to ",
-                                 parent, "!"))
-    }
-  }
-
-  obj <- bind_rows(
-    nif,
-    make_observation(
-      sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
-      observation_filter, TESTCD_field, DTC_field, DV_field,
-      coding_table, factor, NTIME_lookup, keep,
-      include_day_in_ntime = include_day_in_ntime, silent = silent)) %>%
-    arrange(.data$USUBJID, .data$DTC) %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
-    group_by(.data$USUBJID, .data$PARENT) %>%
-    mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE,
-                                     .default = FALSE)) %>%
-    ungroup()
-
-  n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
-  if(n_no_admin != 0) {
-    conditional_message(paste0("Missing administration information in ",
-      n_no_admin, " observations (did you set a\n",
-      "parent for these observations?):\n",
-      df_to_string(
-          obj %>%
-            filter(.data$NO_ADMIN_FLAG == TRUE) %>%
-            group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
-            mutate(N = sum(EVID == 0)) %>%
-            ungroup() %>%
-            distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-        indent = 2), "\n"))
-
-    obj <- obj %>%
-      filter(.data$NO_ADMIN_FLAG == 0)
-  }
-
-  obj %>%
-    select(-c("NO_ADMIN_FLAG")) %>%
-    normalize_nif(keep = keep)
-}
+# add_observation <- function(
+#     nif, sdtm, domain, testcd,
+#     analyte = NULL,
+#     parent = NULL,
+#     metabolite = FALSE,
+#     cmt = NULL,
+#     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+#     observation_filter = "TRUE",
+#     TESTCD_field = NULL,
+#     DTC_field = NULL,
+#     DV_field = NULL,
+#     coding_table = NULL,
+#     factor = 1,
+#     NTIME_lookup = NULL,
+#     keep = NULL,
+#     debug = FALSE,
+#     include_day_in_ntime = FALSE,
+#     silent = NULL
+#   ) {
+#   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+#   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+#
+#   if(length(parents(nif)) == 0)
+#     stop("Please add at least one administration first!")
+#   if(is.null(cmt)) {
+#     cmt <- max(nif$CMT) + 1
+#     conditional_message(paste0(
+#       "Compartment for ", testcd,
+#       " was not specified and has been set to ", cmt))
+#   }
+#
+#   if(is.null(analyte)) analyte <- testcd
+#
+#   imp <- nif %>%
+#     as.data.frame() %>%
+#     filter(EVID == 1) %>%
+#     distinct(ANALYTE) %>%
+#     pull(ANALYTE)
+#
+#   if(is.null(parent)) {
+#     if(analyte %in% imp) {
+#       parent <- analyte
+#     } else {
+#       parent <- guess_parent(nif)
+#       conditional_message(paste0("Parent for ", analyte, " was set to ",
+#                                  parent, "!"))
+#     }
+#   }
+#
+#   obj <- bind_rows(
+#     nif,
+#     make_observation(
+#       sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
+#       observation_filter, TESTCD_field, DTC_field, DV_field,
+#       coding_table, factor, NTIME_lookup, keep,
+#       include_day_in_ntime = include_day_in_ntime, silent = silent)) %>%
+#     arrange(.data$USUBJID, .data$DTC) %>%
+#     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+#     group_by(.data$USUBJID, .data$PARENT) %>%
+#     mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE,
+#                                      .default = FALSE)) %>%
+#     ungroup()
+#
+#   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
+#   if(n_no_admin != 0) {
+#     conditional_message(paste0("Missing administration information in ",
+#       n_no_admin, " observations (did you set a\n",
+#       "parent for these observations?):\n",
+#       df_to_string(
+#           obj %>%
+#             filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+#             group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
+#             mutate(N = sum(EVID == 0)) %>%
+#             ungroup() %>%
+#             distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+#         indent = 2), "\n"))
+#
+#     obj <- obj %>%
+#       filter(.data$NO_ADMIN_FLAG == 0)
+#   }
+#
+#   obj %>%
+#     select(-c("NO_ADMIN_FLAG")) %>%
+#     normalize_nif(keep = keep)
+# }
 
 
 #' DTC of first administration by subject
