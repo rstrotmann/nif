@@ -9,7 +9,7 @@ the input data frame."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@ the input data frame."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Make nominal time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/make_nif.R" class="external-link"><code>R/make_nif.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/nif_observations.R" class="external-link"><code>R/nif_observations.R</code></a></small>
       <div class="d-none name"><code>make_ntime.Rd</code></div>
     </div>
 
@@ -48,7 +48,7 @@ the input data frame.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_ntime</span><span class="op">(</span><span class="va">obj</span>, include_day <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_ntime</span><span class="op">(</span><span class="va">obj</span>, include_day <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -62,6 +62,11 @@ the input data frame.</p>
 <dt id="arg-include-day">include_day<a class="anchor" aria-label="anchor" href="#arg-include-day"></a></dt>
 <dd><p>include_day Include time component of treatment day, as
 logical.</p></dd>
+
+
+<dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
+<dd><p>Suppress messages, as logical. Defaults to nif_option setting
+if NULL.</p></dd>
 
 </dl></div>
     <div class="section level2">

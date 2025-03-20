@@ -13,7 +13,7 @@ pharmacokinetic observations for the parent drug in plasma."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@ pharmacokinetic observations for the parent drug in plasma."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Append administration events</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/make_nif.R" class="external-link"><code>R/make_nif.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/nif_administrations.R" class="external-link"><code>R/nif_administrations.R</code></a></small>
       <div class="d-none name"><code>add_administration.Rd</code></div>
     </div>
 
@@ -64,7 +64,7 @@ pharmacokinetic observations for the parent drug in plasma.</p>
 <span>  cut_off_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  debug <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
+<span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -109,9 +109,7 @@ pharmacokinetic observations for the parent drug in plasma.</p>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
-<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Dummy option for
-compatibility, set the global option <code><a href="nif_option.html">nif_option()</a></code> with <code>silent = TRUE</code> to
-suppress messages.</p></dd>
+<dd><p>Suppress messages, defaults to nif_option standard when NULL.</p></dd>
 
 </dl></div>
     <div class="section level2">

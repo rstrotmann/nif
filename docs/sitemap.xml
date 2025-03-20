@@ -55,6 +55,8 @@
 <url><loc>/reference/append_statement.html</loc></url>
 <url><loc>/reference/baseline_covariates.html</loc></url>
 <url><loc>/reference/bmi_by_age.html</loc></url>
+<url><loc>/reference/calculate_age.html</loc></url>
+<url><loc>/reference/calculate_bmi.html</loc></url>
 <url><loc>/reference/carry_forward_dose.html</loc></url>
 <url><loc>/reference/carry_forward_epoch.html</loc></url>
 <url><loc>/reference/check_date_format.html</loc></url>
@@ -75,6 +77,7 @@
 <url><loc>/reference/covariate_hist.html</loc></url>
 <url><loc>/reference/crea_mdrd.html</loc></url>
 <url><loc>/reference/crea_raynaud.html</loc></url>
+<url><loc>/reference/date_list.html</loc></url>
 <url><loc>/reference/decompose_dtc.html</loc></url>
 <url><loc>/reference/derive_sld.html</loc></url>
 <url><loc>/reference/df_to_string.html</loc></url>
@@ -185,6 +188,7 @@
 <url><loc>/reference/make_sd_ex.html</loc></url>
 <url><loc>/reference/make_sd_pc.html</loc></url>
 <url><loc>/reference/make_subjects.html</loc></url>
+<url><loc>/reference/make_subjects_sdtm.html</loc></url>
 <url><loc>/reference/make_subs.html</loc></url>
 <url><loc>/reference/make_time.html</loc></url>
 <url><loc>/reference/make_time_from_TIME.html</loc></url>
@@ -285,6 +289,8 @@
 <url><loc>/reference/treatments.sdtm.html</loc></url>
 <url><loc>/reference/trialday_to_day.html</loc></url>
 <url><loc>/reference/usubjid.html</loc></url>
+<url><loc>/reference/validate_domain.html</loc></url>
+<url><loc>/reference/validate_sdtm.html</loc></url>
 <url><loc>/reference/watermark.html</loc></url>
 <url><loc>/reference/write_csv.nif.html</loc></url>
 <url><loc>/reference/write_monolix.html</loc></url>

@@ -15,7 +15,7 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Attach baseline covariate</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/make_nif.R" class="external-link"><code>R/make_nif.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/nif_covariates.R" class="external-link"><code>R/nif_covariates.R</code></a></small>
       <div class="d-none name"><code>add_baseline.Rd</code></div>
     </div>
 
@@ -65,11 +65,10 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
 <span>  DV_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  TESTCD_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  observation_filter <span class="op">=</span> <span class="st">"TRUE"</span>,</span>
-<span>  subject_filter <span class="op">=</span> <span class="st">"!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')"</span>,</span>
 <span>  baseline_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  coding_table <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  summary_function <span class="op">=</span> <span class="va">mean</span>,</span>
-<span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
+<span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -106,10 +105,6 @@ xx the domain name, as character.</p></dd>
 <dd><p>A filter term for the <code>domain</code>, as character.</p></dd>
 
 
-<dt id="arg-subject-filter">subject_filter<a class="anchor" aria-label="anchor" href="#arg-subject-filter"></a></dt>
-<dd><p>A filter term for the DM domain, as character.</p></dd>
-
-
 <dt id="arg-baseline-filter">baseline_filter<a class="anchor" aria-label="anchor" href="#arg-baseline-filter"></a></dt>
 <dd><p>A filter term to identify the baseline condition.
 within the <code>domain</code>. Defaults to "xxBLFL == 'Y'" (with xx the domain
@@ -128,9 +123,7 @@ values. Defaults to <code>mean</code>.</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
-<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Dummy option for
-compatibility, set the global option <code><a href="nif_option.html">nif_option()</a></code> with <code>silent = TRUE</code> to
-suppress messages.</p></dd>
+<dd><p>Suppress messages, defaults to nif_option settting if NULL.</p></dd>
 
 </dl></div>
     <div class="section level2">

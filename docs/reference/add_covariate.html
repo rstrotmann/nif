@@ -13,7 +13,7 @@ prefix)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@ prefix)."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Attach time-varying covariate</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/make_nif.R" class="external-link"><code>R/make_nif.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/nif_covariates.R" class="external-link"><code>R/nif_covariates.R</code></a></small>
       <div class="d-none name"><code>add_covariate.Rd</code></div>
     </div>
 
@@ -64,7 +64,8 @@ prefix).</p>
 <span>  DV_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  TESTCD_field <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  observation_filter <span class="op">=</span> <span class="st">"TRUE"</span>,</span>
-<span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
+<span>  duplicate_function <span class="op">=</span> <span class="va">mean</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -110,15 +111,22 @@ xx the domain code), as character.</p></dd>
 <dd><p>A filter term for the <code>domain</code>, as character.</p></dd>
 
 
+<dt id="arg-duplicate-function">duplicate_function<a class="anchor" aria-label="anchor" href="#arg-duplicate-function"></a></dt>
+<dd><p>The function to apply if multiple covariate values
+are found by day.</p></dd>
+
+
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
-<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Dummy option for
-compatibility, set the global option <code><a href="nif_option.html">nif_option()</a></code> with <code>silent = TRUE</code> to
-suppress messages.</p></dd>
+<dd><p>Suppress messages, defaults to nif_option setting if NULL.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A nif object.</p>
+    <p>A nif object with a new column added that contains the time-varying covariate values.
+The name of this column is determined by the <code>covariate</code> parameter (or defaults to
+the value of <code>testcd</code> if not specified). The covariate values are matched to the nif
+object by USUBJID and date. For each subject, missing covariate values are filled
+using the last observed value (carrying forward).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

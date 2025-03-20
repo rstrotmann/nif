@@ -19,7 +19,7 @@ time-after-first-dose ('TAFD') time calculation."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@ time-after-first-dose ('TAFD') time calculation."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Append observation events</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/make_nif.R" class="external-link"><code>R/make_nif.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/nif_observations.R" class="external-link"><code>R/nif_observations.R</code></a></small>
       <div class="d-none name"><code>add_observation.Rd</code></div>
     </div>
 
@@ -83,7 +83,7 @@ time-after-first-dose ('TAFD') time calculation.</p>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  debug <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  include_day_in_ntime <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  silent <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
+<span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -114,7 +114,7 @@ domain the observations come from.</p></dd>
 
 <dt id="arg-parent">parent<a class="anchor" aria-label="anchor" href="#arg-parent"></a></dt>
 <dd><p>The name of the parent analyte for the observation as
-character.</p></dd>
+character. Defaults to the value of 'analyte' if NULL.</p></dd>
 
 
 <dt id="arg-metabolite">metabolite<a class="anchor" aria-label="anchor" href="#arg-metabolite"></a></dt>
@@ -181,9 +181,8 @@ NTIME, as logical.</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
-<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Dummy option for
-compatibility, set the global option <code><a href="nif_option.html">nif_option()</a></code> with <code>silent = TRUE</code> to
-suppress messages.</p></dd>
+<dd><p>Suppress messages, as logical. Defaults to nif_option setting
+if NULL.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -207,6 +206,7 @@ automatically assigned if <code>cmt = NULL</code>.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_observation</span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, <span class="va">examplinib_fe</span>, <span class="st">"pc"</span>, <span class="st">"RS2023487A"</span>,</span></span>
 <span class="r-in"><span>  parent <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for RS2023487A was not specified and has been set to 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(PCELTM)`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1360 observations from 20 subjects across 1 study </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes: RS2023 and RS2023487A </span>
