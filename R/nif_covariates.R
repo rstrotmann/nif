@@ -142,7 +142,6 @@ add_covariate <- function(
 #' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD with
 #'   xx the domain name, as character.
 #' @param observation_filter A filter term for the `domain`, as character.
-#' @param subject_filter A filter term for the DM domain, as character.
 #' @param baseline_filter A filter term to identify the baseline condition.
 #'   within the `domain`. Defaults to "xxBLFL == 'Y'" (with xx the domain
 #'   code).
@@ -168,7 +167,6 @@ add_baseline <- function(
     DV_field = NULL,
     TESTCD_field = NULL,
     observation_filter = "TRUE",
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     baseline_filter = NULL,
     coding_table = NULL,
     summary_function = mean,
@@ -195,8 +193,21 @@ add_baseline <- function(
   if(is.null(baseline_filter)) baseline_filter <- paste0(
     ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
 
-  # sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"),
-  #                      subject_filter, "")
+  # Get domain data
+  domain_data <- domain(sdtm, str_to_lower(domain))
+  
+  # Validate required fields exist in domain data
+  required_fields <- c("USUBJID", TESTCD_field, DV_field)
+  missing_fields <- required_fields[!required_fields %in% names(domain_data)]
+  if (length(missing_fields) > 0) {
+    stop(paste0("Required fields missing in domain data: ",
+                paste(missing_fields, collapse = ", ")))
+  }
+  
+  # Validate testcd exists in the domain
+  if (!testcd %in% domain_data[[TESTCD_field]]) {
+    stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
+  }
 
   bl_field <- paste0("BL_", testcd)
 
@@ -234,6 +245,23 @@ add_baseline <- function(
                      ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
     rename_with(~bl_field, .cols = all_of(testcd)) %>%
     ungroup()
+
+  # Check if all baseline values are NA
+  if (all(is.na(baseline[[bl_field]]))) {
+    stop(paste0("No valid baseline values found for test code '", testcd,
+                "'. Data was found but all values are NA after processing."))
+  }
+
+  # Check if any baseline values are NA and warn user
+  if (any(is.na(baseline[[bl_field]]))) {
+    # warning(paste0("Some subjects have missing baseline values for test code '",
+    #                testcd, "'. These will be NA in the output."))
+    conditional_message(
+      "Some subjects have missing baseline values for test code '",
+      testcd, "'. These will be NA in the output.",
+      silent = silent
+    )
+  }
 
   out <- nif %>%
     coalesce_join(baseline, by = "USUBJID", join = 'left_join')

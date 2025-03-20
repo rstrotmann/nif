@@ -148,7 +148,7 @@ test_that("add_baseline validates inputs correctly", {
   # Test invalid testcd
   expect_error(
     add_baseline(test_nif, test_sdtm, "vs", "INVALID_TEST"),
-    "No data found "
+    "Test code 'INVALID_TEST' not found"
   )
 })
 
@@ -259,4 +259,107 @@ test_that("add baseline hepatic function class works", {
   expect_equal(
     as.character(temp$BL_ODWG),
     c("normal", "mild", "mild", "moderate", "severe"))
+})
+
+
+test_that("add_baseline handles all NA baseline values correctly", {
+  test_nif <- data.frame(
+    USUBJID = c("SUBJ-001", "SUBJ-002"),
+    DTC = c("2023-01-01", "2023-01-01")
+  )
+  class(test_nif) <- c("nif", "data.frame")
+
+  test_vs <- tibble::tribble(
+      ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",  "WEIGHT",        NA,     "Y",
+    "SUBJ-002", "2023-01-01",  "WEIGHT",        NA,     "Y"
+  )
+
+  test_dm <- data.frame(
+    USUBJID = c("SUBJ-001", "SUBJ-002"),
+    ACTARMCD = c("TREATMENT", "TREATMENT")
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test when all baseline values are NA
+  expect_error(
+    add_baseline(test_nif, test_sdtm, "vs", "WEIGHT"),
+    "No valid baseline values found for test code 'WEIGHT'. Data was found but all values are NA after processing."
+  )
+})
+
+
+test_that("add_baseline warns when some baseline values are NA", {
+  test_nif <- data.frame(
+    USUBJID = c("SUBJ-001", "SUBJ-002", "SUBJ-003"),
+    DTC = c("2023-01-01", "2023-01-01", "2023-01-01")
+  )
+  class(test_nif) <- c("nif", "data.frame")
+
+  test_vs <- tibble::tribble(
+      ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",  "WEIGHT",        70,     "Y",
+    "SUBJ-002", "2023-01-01",  "WEIGHT",        NA,     "Y",
+    "SUBJ-003", "2023-01-01",  "WEIGHT",        80,     "Y"
+  )
+
+  test_dm <- data.frame(
+    USUBJID = c("SUBJ-001", "SUBJ-002", "SUBJ-003"),
+    ACTARMCD = c("TREATMENT", "TREATMENT", "TREATMENT")
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test when some baseline values are NA - should give warning but complete
+  expect_message(
+    result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT"),
+    "Some subjects have missing baseline values for test code 'WEIGHT'. These will be NA in the output."
+  )
+
+  # Check that function completed and returned correct values
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-001"], 70)
+  expect_true(is.na(result$BL_WEIGHT[result$USUBJID == "SUBJ-002"]))
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-003"], 80)
+})
+
+
+test_that("add_baseline validates required fields correctly", {
+  test_nif <- data.frame(
+    USUBJID = c("SUBJ-001"),
+    DTC = c("2023-01-01")
+  )
+  class(test_nif) <- c("nif", "data.frame")
+  
+  # Create a domain with missing field
+  test_vs_missing_field <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSBLFL,  # Missing VSSTRESN
+    "SUBJ-001", "2023-01-01", "WEIGHT", "Y"
+  )
+  
+  test_dm <- data.frame(
+    USUBJID = c("SUBJ-001"),
+    ACTARMCD = c("TREATMENT")
+  )
+  
+  test_sdtm_missing_field <- new_sdtm(list(vs = test_vs_missing_field, dm = test_dm))
+  
+  # Test missing required field (VSSTRESN)
+  expect_error(
+    add_baseline(test_nif, test_sdtm_missing_field, "vs", "WEIGHT"),
+    "Required fields missing in domain data: VSSTRESN"
+  )
+  
+  # Test with non-existent test code
+  test_vs_valid <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y"
+  )
+  
+  test_sdtm_valid <- new_sdtm(list(vs = test_vs_valid, dm = test_dm))
+  
+  expect_error(
+    add_baseline(test_nif, test_sdtm_valid, "vs", "HEIGHT"),
+    "Test code 'HEIGHT' not found in domain 'vs'"
+  )
 })
