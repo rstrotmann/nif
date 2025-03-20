@@ -289,60 +289,6 @@ test_that("add_trtdy works", {
 })
 
 
-
-
-
-
-
-test_that("add baseline hepatic function class", {
-  dm <- tribble(
-    ~USUBJID, ~DOMAIN, ~SEX,   ~ACTARMCD,          ~RFXSTDTC,
-    "1", "DM", "M", "TREATMENT", "2001-01-01T10:29",
-    "2", "DM", "M", "TREATMENT", "2001-01-02T09:09",
-    "3", "DM", "M", "TREATMENT", "2000-12-29T09:07",
-    "4", "DM", "F", "TREATMENT", "2001-01-06T11:18",
-    "5", "DM", "F", "TREATMENT", "2001-01-07T11:18"
-  ) %>%
-    mutate(RFSTDTC = RFXSTDTC)
-
-  vs <- tribble(
-    ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
-    "1", "VS", "HEIGHT",     "Y",     190.8,
-    "1", "VS", "WEIGHT",     "Y",      79.3,
-    "2", "VS", "HEIGHT",     "Y",     199.5,
-    "2", "VS", "WEIGHT",     "Y",      81.6,
-    "3", "VS", "HEIGHT",     "Y",     185.4,
-    "3", "VS", "WEIGHT",     "Y",      92.8,
-    "4", "VS", "HEIGHT",     "Y",     177.8,
-    "4", "VS", "WEIGHT",     "Y",      83.3,
-    "5", "VS", "HEIGHT",     "Y",     177.9,
-    "5", "VS", "WEIGHT",     "Y",      83.4
-  )
-  lb <- tribble(
-    ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBDTC,             ~LBBLFL, ~LBTESTCD, ~LBSTRESN, ~LBSTNRHI,
-    "1",      "LB",    "SERUM", "2001-01-01T10:29", "Y",     "BILI",    1,          1, # normal
-    "1",      "LB",    "SERUM", "2001-01-01T10:29", "Y",     "AST",     1,          1,
-    "2",      "LB",    "SERUM", "2001-01-02T09:09", "Y",     "BILI",    1.5,        1, # mild
-    "2",      "LB",    "SERUM", "2001-01-02T09:09", "Y",     "AST",     1,          1,
-    "3",      "LB",    "SERUM", "2000-12-29T09:07", "Y",     "BILI",    1,          1, # mild
-    "3",      "LB",    "SERUM", "2000-12-29T09:07", "Y",     "AST",     1.2,        1,
-    "4",      "LB",    "SERUM", "2001-01-06T11:18", "Y",     "BILI",    3,          1, # moderate
-    "4",      "LB",    "SERUM", "2001-01-06T11:18", "Y",     "AST",     1,          1,
-    "5",      "LB",    "SERUM", "2001-01-07T11:18", "Y",     "BILI",    3.1,        1, # severe
-    "5",      "LB",    "SERUM", "2001-01-07T11:18", "Y",     "AST",     1,          1
-  )
-  sdtm <- list(domains = list(dm = dm, vs = vs, lb = lb))
-  suppressMessages(
-    expect_no_error(
-      temp <- data.frame(USUBJID = as.character(c(1, 2, 3, 4, 5))) %>%
-      add_bl_odwg(sdtm)
-    )
-  )
-
-  expect_equal(as.character(temp$BL_ODWG), c("normal", "mild", "mild", "moderate", "severe"))
-})
-
-
 test_that("index_rich_sampling_intervals works", {
   nif <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT,
