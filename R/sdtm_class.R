@@ -34,39 +34,24 @@ validate_domain <- function(domain, silent = NULL) {
     domain_name <- toupper(domain_names)
   }
 
-  # Check if domain_model exists
-  # if (!exists("domain_model", inherits = TRUE)) {
-  #   stop("Required variable 'domain_model' not found")
-  # }
-
-  # Check if conditional_message exists
-  # if (!exists("conditional_message", mode = "function", inherits = TRUE)) {
-  #   # Create a simple version if it doesn't exist
-  #   conditional_message <- function(..., silent = NULL) {
-  #     if (!isTRUE(silent)) {
-  #       message(...)
-  #     }
-  #   }
-  # }
-
   if(!domain_name %in% unique(domain_model$DOMAIN)) {
     warning("Unknown domain '", domain_name, "' cannot be validated!")
     return(invisible(TRUE))
   } else {
     temp <- domain_model %>%
-      dplyr::filter(DOMAIN == domain_name)
+      dplyr::filter(.data$DOMAIN == domain_name)
 
     required_names <- temp %>%
-      dplyr::filter(CORE == "Req") %>%
-      dplyr::pull(VARNAM)
+      dplyr::filter(.data$CORE == "Req") %>%
+      dplyr::pull(.data$VARNAM)
 
     expected_names <- temp %>%
-      dplyr::filter(CORE == "Exp") %>%
-      dplyr::pull(VARNAM)
+      dplyr::filter(.data$CORE == "Exp") %>%
+      dplyr::pull(.data$VARNAM)
 
     permitted_names <- temp %>%
-      dplyr::filter(CORE == "Perm") %>%
-      dplyr::pull(VARNAM)
+      dplyr::filter(.data$CORE == "Perm") %>%
+      dplyr::pull(.data$VARNAM)
 
     missing_req <- setdiff(required_names, colnames(domain))
     missing_exp <- setdiff(expected_names, colnames(domain))

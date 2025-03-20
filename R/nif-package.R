@@ -38,5 +38,6 @@ utils::globalVariables(c(
   "rich_start", "admin_id",
   "auc", "auc_metab", "eta_cl_met", "eta_cl_par", "eta_f", "eta_f_f", "eta_ka",
   "eta_ke", "eta_q", "obs_id", "t_cl_met", "t_cl_par", "t_d1", "t_d1_f", "t_f",
-  "t_f_f", "t_ka", "t_ka_f", "t_ke", "t_q", "t_v_centr"
+  "t_f_f", "t_ka", "t_ka_f", "t_ke", "t_q", "t_v_centr",
+  "domain_model"
 ))
