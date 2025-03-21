@@ -565,14 +565,23 @@ test_that("import_observation", {
     "20230000011010001", 3,     4,
   ) #%>% mutate(COUNTRY = "x")
 
-  suppressMessages(
-    testthat::expect_no_error(
-      temp <- examplinib_sad_nif %>%
-        mutate(COUNTRY = "X") %>%
-        import_observation(
-          raw, "TEST", USUBJID_field = "SUBJ", NTIME_field = "TIME",
-          DV_field = "VAL", keep = "COUNTRY", debug = TRUE)
-    ))
+  nif <- examplinib_sad_nif %>%
+    mutate(COUNTRY = "X")
+
+  test <- import_observation(
+    nif = nif,
+    raw = raw,
+    analyte = "TEST",
+    parent = NULL,
+    cmt = NULL,
+    observation_filter = "TRUE",
+    DTC_field = NULL,
+    USUBJID_field = "SUBJ",
+    NTIME_field = "TIME",
+    DV_field = "VAL",
+    keep = "COUNTRY",
+    debug = TRUE
+    ) %>% unclass()
 })
 
 
