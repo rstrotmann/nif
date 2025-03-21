@@ -581,7 +581,7 @@ test_that("import_observation", {
     DV_field = "VAL",
     keep = "COUNTRY",
     debug = TRUE
-    ) %>% unclass()
+    )
 })
 
 

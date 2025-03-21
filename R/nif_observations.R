@@ -439,10 +439,6 @@ import_observation <- function(
   if (!inherits(nif, "nif")) {
     stop("nif must be an nif object")
   }
-  domain_name <- tolower(domain)
-  if (!domain_name %in% names(sdtm$domains)) {
-    stop(paste0("Domain '", domain_name, "' not found in sdtm object"))
-  }
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
