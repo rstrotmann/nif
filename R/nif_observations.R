@@ -430,7 +430,7 @@ import_observation <- function(
     observation_filter = "TRUE",
     USUBJID_field = "USUBJID",
     DTC_field = NULL,
-    NTIME_field = NA,
+    NTIME_field = NULL,
     DV_field = NULL,
     keep = NULL,
     debug = FALSE
