@@ -1061,29 +1061,6 @@ guess_analyte <- function(obj) {
 #'
 #' @return The parent as character
 #' @keywords internal
-# guess_parent <- function(obj) {
-#   temp <- obj %>%
-#     as.data.frame() %>%
-#     ensure_analyte() %>%
-#     ensure_metabolite() %>%
-#     ensure_parent() %>%
-#     as.data.frame() %>%
-#     filter(.data$EVID == 0)
-#
-#   if (length(analytes(temp)) > 0) {
-#     temp %>%
-#       filter(.data$METABOLITE == FALSE) %>%
-#       group_by(.data$PARENT) %>%
-#       summarize(n = n(), .groups = "drop") %>%
-#       filter(n == max(.data$n)) %>%
-#       arrange(.data$PARENT) %>%
-#       slice(1) %>%
-#       pull("PARENT")
-#   } else {
-#     return(NULL)
-#   }
-# }
-
 guess_parent <- function(obj) {
   imp <- obj %>%
     ensure_analyte() %>%
@@ -1115,8 +1092,6 @@ guess_parent <- function(obj) {
       return(NULL)
     }
   }
-
-
 }
 
 
