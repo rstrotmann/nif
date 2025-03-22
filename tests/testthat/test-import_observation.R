@@ -260,75 +260,78 @@ test_that("import_observation automatically determines parent when parent is NUL
   expect_equal(unique(obs_records2$PARENT), "DRUG") # Should be guessed from nif
 })
 
-#
-# test_that("import_observation correctly joins subject data", {
-#   # Create test nif with additional subject data
-#   test_nif <- create_test_nif() %>%
-#     mutate(
-#       BL_WT = c(70, 85),
-#       BL_HT = c(175, 180)
-#     )
-#
-#   test_raw <- create_test_raw()
-#
-#   result <- import_observation(
-#     test_nif,
-#     test_raw,
-#     analyte = "TEST",
-#     parent = "DRUG",
-#     cmt = 2,
-#     DV_field = "DV_VALUE",
-#     DTC_field = "OBS_DTC",
-#     keep = c("BL_WT", "BL_HT")
-#   )
-#
-#   # Check if subject data was correctly joined
-#   obs_records <- result %>% filter(EVID == 0)
-#
-#   # For each subject, check if baseline values match
-#   for (id in unique(test_raw$USUBJID)) {
-#     obs_subject <- obs_records %>% filter(USUBJID == id)
-#     nif_subject <- test_nif %>% filter(USUBJID == id)
-#
-#     expect_equal(unique(obs_subject$BL_WT), unique(nif_subject$BL_WT))
-#     expect_equal(unique(obs_subject$BL_HT), unique(nif_subject$BL_HT))
-#   }
-# })
-#
-#
-# test_that("import_observation correctly sets debug fields", {
-#   test_nif <- create_test_nif()
-#   test_raw <- create_test_raw()
-#
-#   # Without debug
-#   result1 <- import_observation(
-#     test_nif,
-#     test_raw,
-#     analyte = "TEST",
-#     parent = "DRUG",
-#     cmt = 2,
-#     DV_field = "DV_VALUE",
-#     DTC_field = "OBS_DTC",
-#     debug = FALSE
-#   )
-#
-#   # With debug
-#   result2 <- import_observation(
-#     test_nif,
-#     test_raw,
-#     analyte = "TEST",
-#     parent = "DRUG",
-#     cmt = 2,
-#     DV_field = "DV_VALUE",
-#     DTC_field = "OBS_DTC",
-#     debug = TRUE
-#   )
-#
-#   # Check if debug fields are included when debug = TRUE
-#   expect_true(all(c("SRC_DOMAIN", "SRC_SEQ") %in% names(result2)))
-#
-#   # For observations, check if SRC_DOMAIN is set to "IMPORT"
-#   obs_records <- result2 %>% filter(EVID == 0)
-#   expect_equal(unique(obs_records$SRC_DOMAIN), "IMPORT")
-#   expect_true(all(is.na(obs_records$SRC_SEQ)))
-# })
+
+test_that("import_observation correctly joins subject data", {
+  # Create test nif with additional subject data
+  test_nif <- create_test_nif() %>%
+    mutate(
+      BL_WT = c(70, 85),
+      BL_HT = c(175, 180)
+    )
+
+  test_raw <- create_test_raw()
+
+  result <- import_observation(
+    test_nif,
+    test_raw,
+    analyte = "TEST",
+    parent = "DRUG",
+    cmt = 2,
+    DV_field = "DV_VALUE",
+    DTC_field = "OBS_DTC",
+    NTIME_field = "OBS_NTIME",
+    keep = c("BL_WT", "BL_HT")
+  )
+
+  # Check if subject data was correctly joined
+  obs_records <- result %>% filter(EVID == 0)
+
+  # For each subject, check if baseline values match
+  for (id in unique(test_raw$USUBJID)) {
+    obs_subject <- obs_records %>% filter(USUBJID == id)
+    nif_subject <- test_nif %>% filter(USUBJID == id)
+
+    expect_equal(unique(obs_subject$BL_WT), unique(nif_subject$BL_WT))
+    expect_equal(unique(obs_subject$BL_HT), unique(nif_subject$BL_HT))
+  }
+})
+
+
+test_that("import_observation correctly sets debug fields", {
+  test_nif <- create_test_nif()
+  test_raw <- create_test_raw()
+
+  # Without debug
+  result1 <- import_observation(
+    test_nif,
+    test_raw,
+    analyte = "TEST",
+    parent = "DRUG",
+    cmt = 2,
+    DV_field = "DV_VALUE",
+    DTC_field = "OBS_DTC",
+    NTIME_field = "OBS_NTIME",
+    debug = FALSE
+  )
+
+  # With debug
+  result2 <- import_observation(
+    test_nif,
+    test_raw,
+    analyte = "TEST",
+    parent = "DRUG",
+    cmt = 2,
+    DV_field = "DV_VALUE",
+    DTC_field = "OBS_DTC",
+    NTIME_field = "OBS_NTIME",
+    debug = TRUE
+  )
+
+  # Check if debug fields are included when debug = TRUE
+  expect_true(all(c("SRC_DOMAIN", "SRC_SEQ") %in% names(result2)))
+
+  # For observations, check if SRC_DOMAIN is set to "IMPORT"
+  obs_records <- result2 %>% filter(EVID == 0)
+  expect_equal(unique(obs_records$SRC_DOMAIN), "IMPORT")
+  expect_true(all(is.na(obs_records$SRC_SEQ)))
+})
