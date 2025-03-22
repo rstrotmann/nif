@@ -1,0 +1,350 @@
+---
+title: "Tests and Coverage"
+date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tests and Coverage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+  
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+<!--- Placeholder for tests/README.md Do Not Edit--->
+- [Coverage](#coverage)
+- [Unit Tests](#unit-tests)
+
+This output is created by
+[covrpage](https://github.com/yonicd/covrpage).
+
+## Coverage
+
+Coverage summary is created using the
+[covr](https://github.com/r-lib/covr) package.
+
+    ## ⚠️ Not All Tests Passed
+    ##   Coverage statistics are approximations of the non-failing tests.
+    ##   Use with caution
+    ## 
+    ##  For further investigation check in testthat summary tables.
+
+| Object | Coverage (%) |
+|:---|:--:|
+| nif | 64.02 |
+| [R/nif_ae.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_ae.R) | 0.00 |
+| [R/nif_debugger.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_debugger.R) | 0.00 |
+| [R/nif_viewer.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_viewer.R) | 0.00 |
+| [R/sdtm_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/sdtm_load.R) | 0.00 |
+| [R/nif_nca.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_nca.R) | 5.91 |
+| [R/sdtm_synthesis.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/sdtm_synthesis.R) | 17.51 |
+| [R/ggplot_extension.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/ggplot_extension.R) | 43.24 |
+| [R/physiological_calculations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/physiological_calculations.R) | 67.35 |
+| [R/sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/sdtm_class.R) | 71.25 |
+| [R/sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/sdtm_exploration.R) | 80.46 |
+| [R/nif_covariates.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_covariates.R) | 81.08 |
+| [R/nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_exploration.R) | 82.05 |
+| [R/nif_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_load.R) | 83.16 |
+| [R/nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_observations.R) | 91.27 |
+| [R/nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_class.R) | 91.67 |
+| [R/utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/utilities.R) | 92.39 |
+| [R/make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/make_nif.R) | 92.94 |
+| [R/nif_plot.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_plot.R) | 94.44 |
+| [R/nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_administrations.R) | 96.03 |
+| [R/nif_options.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_options.R) | 96.55 |
+| [R/nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_subjects.R) | 98.55 |
+| [R/nif_imputations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/nif_imputations.R) | 100.00 |
+| [R/sdtm_analytics.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/R/sdtm_analytics.R) | 100.00 |
+
+<br>
+
+## Unit Tests
+
+Unit Test summary is created using the
+[testthat](https://github.com/r-lib/testthat) package.
+
+| file | n | time | error | failed | skipped | warning | icon |
+|:---|---:|---:|---:|---:|---:|---:|:---|
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R) | 3 | 0.125 | 8 | 0 | 0 | 0 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R) | 14 | 0.291 | 6 | 1 | 0 | 1 | 🛑⚠️ |
+| [test-ggplot_extension.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-ggplot_extension.R) | 1 | 0.003 | 0 | 0 | 0 | 0 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R) | 11 | 0.083 | 0 | 0 | 0 | 0 |  |
+| [test-import_observation.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-import_observation.R) | 14 | 0.242 | 1 | 0 | 0 | 0 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R) | 39 | 1.948 | 0 | 0 | 1 | 0 | 🔶 |
+| [test-nif_add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_add_baseline.R) | 1 | 0.003 | 0 | 0 | 0 | 0 |  |
+| [test-nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_administrations.R) | 16 | 0.124 | 0 | 0 | 0 | 0 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R) | 61 | 0.838 | 0 | 0 | 0 | 0 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R) | 24 | 0.623 | 0 | 0 | 0 | 0 |  |
+| [test-nif_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_load.R) | 13 | 0.030 | 0 | 0 | 0 | 0 |  |
+| [test-nif_nca.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_nca.R) | 2 | 0.007 | 0 | 0 | 0 | 0 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R) | 60 | 4.717 | 0 | 2 | 0 | 2 | 🛑⚠️ |
+| [test-nif_options.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_options.R) | 9 | 0.025 | 0 | 0 | 0 | 0 |  |
+| [test-nif_plot.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_plot.R) | 15 | 0.600 | 0 | 0 | 0 | 0 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R) | 60 | 0.351 | 0 | 0 | 0 | 0 |  |
+| [test-physiological_calculations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-physiological_calculations.R) | 7 | 0.022 | 0 | 0 | 0 | 0 |  |
+| [test-sdtm_analytics.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_analytics.R) | 1 | 0.005 | 0 | 0 | 0 | 0 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R) | 18 | 0.084 | 0 | 0 | 0 | 0 |  |
+| [test-sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_exploration.R) | 13 | 0.112 | 0 | 0 | 0 | 0 |  |
+| [test-sdtm_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_load.R) | 1 | 0.002 | 0 | 0 | 0 | 0 |  |
+| [test-sdtm_synthesis.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_synthesis.R) | 2 | 0.623 | 0 | 0 | 0 | 0 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R) | 57 | 0.140 | 0 | 0 | 0 | 0 |  |
+| [test-viewer.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-viewer.R) | 1 | 0.002 | 0 | 0 | 0 | 0 |  |
+
+<details open>
+<summary>
+Show Detailed Test Results
+</summary>
+
+| file | context | test | status | n | time | icon |
+|:---|:---|:---|:---|---:|---:|:---|
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L30) | add_baseline | add_baseline adds baseline covariate correctly | ERROR | 0 | 0.010 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L62_L63) | add_baseline | add_baseline handles custom baseline filter | ERROR | 0 | 0.010 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L98_L100) | add_baseline | add_baseline handles coding table correctly | ERROR | 0 | 0.007 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L131_L134) | add_baseline | add_baseline validates inputs correctly | ERROR | 0 | 0.007 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L177) | add_baseline | add_baseline handles multiple baseline values correctly | ERROR | 0 | 0.008 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L206_L208) | add_baseline | add_baseline handles empty result after filtering | PASS | 1 | 0.008 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L254_L257) | add_baseline | add baseline hepatic function class works | PASS | 2 | 0.054 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L286_L289) | add_baseline | add_baseline handles all NA baseline values correctly | ERROR | 0 | 0.007 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L315_L318) | add_baseline | add_baseline warns when some baseline values are NA | ERROR | 0 | 0.006 |  |
+| [test-add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_baseline.R#L348_L351) | add_baseline | add_baseline validates required fields correctly | ERROR | 0 | 0.008 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L81) | add_covariate | add_covariate works with valid inputs | PASS | 9 | 0.033 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L104_L107) | add_covariate | add_covariate validates nif object | ERROR | 0 | 0.042 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L115_L118) | add_covariate | add_covariate validates sdtm is provided | ERROR | 0 | 0.010 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L127_L130) | add_covariate | add_covariate validates domain exists | ERROR | 0 | 0.010 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L144_L147) | add_covariate | add_covariate validates required fields exist | ERROR | 0 | 0.029 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L156_L159) | add_covariate | add_covariate validates testcd exists | ERROR | 0 | 0.032 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L171_L174) | add_covariate | add_covariate validates matching subjects exist | ERROR | 0 | 0.030 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L184_L188) | add_covariate | add_covariate casts error if no data after filtering | PASS | 1 | 0.024 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L214) | add_covariate | add_covariate works with custom field names | PASS | 1 | 0.021 |  |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L230) | add_covariate | add_covariate handles duplicated observations correctly | WARNING | 2 | 0.038 | ⚠️ |
+| [test-add_covariate.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-add_covariate.R#L248) | add_covariate | add_covariate uses default covariate name if not specified | PASS | 1 | 0.022 |  |
+| [test-ggplot_extension.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-ggplot_extension.R#L2) | ggplot_extension | multiplication works | PASS | 1 | 0.003 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L17) | guess_parent | guess_parent identifies analyte with most administrations | PASS | 1 | 0.006 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L37) | guess_parent | guess_parent falls back to observations when no administrations exist | PASS | 1 | 0.008 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L58) | guess_parent | guess_parent ignores metabolite observations | PASS | 1 | 0.008 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L81) | guess_parent | guess_parent prioritizes administrations over observations | PASS | 1 | 0.006 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L93) | guess_parent | guess_parent returns NULL for empty dataset | PASS | 1 | 0.009 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L108) | guess_parent | guess_parent works with minimal dataset | PASS | 1 | 0.006 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L122) | guess_parent | guess_parent handles tied administration counts | PASS | 1 | 0.006 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L139) | guess_parent | guess_parent works with ensure_analyte | PASS | 1 | 0.008 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L153) | guess_parent | guess_parent returns NULL for dataset with only metabolite observations | PASS | 1 | 0.009 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L169) | guess_parent | guess_parent handles NA values in key columns | PASS | 1 | 0.006 |  |
+| [test-guess_parent.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-guess_parent.R#L186) | guess_parent | guess_parent correctly counts tied observations when no administrations exist | PASS | 1 | 0.011 |  |
+| [test-import_observation.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-import_observation.R#L47_L55) | import_observation | import_observation validates input parameters correctly | ERROR | 0 | 0.040 |  |
+| [test-import_observation.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-import_observation.R#L130) | import_observation | import_observation correctly handles DTC field | PASS | 7 | 0.132 |  |
+| [test-import_observation.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-import_observation.R#L164) | import_observation | import_observation correctly handles NTIME field | PASS | 7 | 0.070 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L52) | make_nif | date conversion works correctly | PASS | 1 | 0.007 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L90_L97) | make_nif | impute_exendtc_to_rfendtc works as intended | PASS | 1 | 0.024 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L114_L118) | make_nif | impute_exendtc_to_rfendtc works correctly | PASS | 3 | 0.027 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L173) | make_nif | impute_missing_exendtc | PASS | 1 | 0.016 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L196_L202) | make_nif | impute_exendtc_to_cutoff works | PASS | 2 | 0.021 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L222) | make_nif | filter_EXSTDTC_after_EXENDTC works | PASS | 2 | 0.013 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L246_L248) | make_nif | make_administration works for examplinib_poc | PASS | 1 | 0.319 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L298_L300) | make_nif | make_administration uses correct time imputations | PASS | 3 | 0.107 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L344_L346) | make_nif | make_administration works without pc | PASS | 3 | 0.066 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L390_L394) | make_nif | make_administration imputes missing last EXENDTC | PASS | 2 | 0.082 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L404_L405) | make_nif | make_nif | PASS | 1 | 0.271 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L429) | make_nif | make_time | PASS | 1 | 0.017 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L498_L500) | make_nif | multiple imputations | PASS | 1 | 0.030 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L547_L553) | make_nif | add_administration, add_observation | PASS | 2 | 0.246 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L559_L585) | make_nif | import_observation | SKIPPED | 1 | 0.048 | 🔶 |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L600) | make_nif | make_ntime works | PASS | 4 | 0.016 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L609_L621) | make_nif | make_nif integration works | PASS | 1 | 0.604 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L626_L627) | make_nif | guess_pcspec works | PASS | 3 | 0.006 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L636_L637) | make_nif | guess_lbspec works | PASS | 2 | 0.004 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L652) | make_nif | add_time works | PASS | 1 | 0.006 |  |
+| [test-make_nif.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-make_nif.R#L681_L685) | make_nif | limit works | PASS | 3 | 0.018 |  |
+| [test-nif_add_baseline.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_add_baseline.R#L2) | nif_add_baseline | multiplication works | PASS | 1 | 0.003 |  |
+| [test-nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_administrations.R#L3) | nif_administrations | date_list works | PASS | 8 | 0.015 |  |
+| [test-nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_administrations.R#L26) | nif_administrations | expand_ex works in general | PASS | 2 | 0.018 |  |
+| [test-nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_administrations.R#L51) | nif_administrations | expand_ex works with TRTDY | PASS | 2 | 0.027 |  |
+| [test-nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_administrations.R#L69) | nif_administrations | expand_ex works with missing EXENDTC | PASS | 2 | 0.022 |  |
+| [test-nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_administrations.R#L90) | nif_administrations | expand_ex errs when end date before start date | PASS | 1 | 0.022 |  |
+| [test-nif_administrations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_administrations.R#L100) | nif_administrations | expand_ex errs when end day before start day | PASS | 1 | 0.020 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L2) | nif_class | new_nif works | PASS | 2 | 0.263 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L8) | nif_class | subject_info works | PASS | 2 | 0.027 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L15) | nif_class | subjects, usubjid works | PASS | 2 | 0.004 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L21) | nif_class | subjects works with minimal NIF | PASS | 4 | 0.014 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L29) | nif_class | parents works | PASS | 1 | 0.004 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L34) | nif_class | dose_red_sbs works | PASS | 1 | 0.012 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L39_L40) | nif_class | rich_sampling_sbs works | PASS | 1 | 0.014 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L45) | nif_class | studies works | PASS | 1 | 0.003 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L50) | nif_class | ensure works | PASS | 8 | 0.069 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L62) | nif_class | doses works | PASS | 1 | 0.003 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L67) | nif_class | doses works with minimal NIF | PASS | 1 | 0.003 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L71) | nif_class | dose_levels works | PASS | 1 | 0.014 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L76) | nif_class | treatments works | PASS | 2 | 0.005 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L82) | nif_class | dose_levels works with minimal NIF | PASS | 1 | 0.017 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L87) | nif_class | analytes works | PASS | 1 | 0.003 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L92) | nif_class | analytes works with minimal NIF and rich NIF | PASS | 2 | 0.006 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L98) | nif_class | analyte_overview works | PASS | 2 | 0.008 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L104) | nif_class | cmt_mapping works | PASS | 2 | 0.008 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L130) | nif_class | index_dosing_interval works with single parent | PASS | 1 | 0.015 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L167) | nif_class | index_dosing_interval works with multiple parents | PASS | 3 | 0.023 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L211) | nif_class | n_administrations, max_admin_time works, max_observation_time | PASS | 4 | 0.049 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L219) | nif_class | guess analyte, guess_parent works | PASS | 2 | 0.011 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L238) | nif_class | add_dose_level works | PASS | 2 | 0.018 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L260_L262) | nif_class | add_tad, add_tafd works | PASS | 2 | 0.022 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L287_L288) | nif_class | add_trtdy works | PASS | 1 | 0.009 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L316) | nif_class | index_rich_sampling_intervals works | PASS | 3 | 0.049 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L335_L340) | nif_class | cfb works | PASS | 2 | 0.006 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L347_L349) | nif_class | analyte_overview | PASS | 2 | 0.004 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L355) | nif_class | write_nif works | PASS | 2 | 0.138 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L361) | nif_class | print.nif works | PASS | 1 | 0.011 |  |
+| [test-nif_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_class.R#L383_L384) | nif_class | add_rtb works | PASS | 1 | 0.006 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L5) | nif_exploration | nif summary works | PASS | 2 | 0.135 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L11_L15) | nif_exploration | nif_summary_plot works | PASS | 1 | 0.138 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L20_L22) | nif_exploration | nif_plot_id | PASS | 5 | 0.148 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L43) | nif_exploration | dose_plot_id works | PASS | 2 | 0.059 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L49_L50) | nif_exploration | covariate_hist works | PASS | 2 | 0.015 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L57_L58) | nif_exploration | covariate_barplot works | PASS | 2 | 0.019 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L65) | nif_exploration | x_by_y works | PASS | 5 | 0.032 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L74) | nif_exploration | time_by_ntime works | PASS | 1 | 0.006 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L79_L82) | nif_exploration | administration_summary works | PASS | 1 | 0.025 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L87_L89) | nif_exploration | mean_dose_plot works | PASS | 1 | 0.013 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L94_L97) | nif_exploration | subs_per_dose_level works | PASS | 1 | 0.017 |  |
+| [test-nif_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_exploration.R#L102_L105) | nif_exploration | obs_per_dose_level works | PASS | 1 | 0.016 |  |
+| [test-nif_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_load.R#L2_L4) | nif_load | is_char_datetime works correctly | PASS | 5 | 0.009 |  |
+| [test-nif_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_load.R#L23) | nif_load | is_likely_datetime works as intended | PASS | 5 | 0.008 |  |
+| [test-nif_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_load.R#L45) | nif_load | convert_char_datetime works correctly | PASS | 2 | 0.008 |  |
+| [test-nif_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_load.R#L63) | nif_load | import from connection works | PASS | 1 | 0.005 |  |
+| [test-nif_nca.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_nca.R#L5_L8) | nif_nca | nca_from_pp | PASS | 2 | 0.007 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L58_L59) | nif_observations | make_observation works | PASS | 1 | 0.028 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L66_L69) | nif_observations | make_observation issues warning if observation filter returns no observations | WARNING | 2 | 0.045 | ⚠️ |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L75_L88) | nif_observations | make_observation works with coding table | PASS | 1 | 0.028 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L98) | nif_observations | make_observation handles different domains correctly | PASS | 2 | 0.060 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L111) | nif_observations | make_observation applies DV factor correctly | PASS | 2 | 0.062 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L126) | nif_observations | make_observation handles custom DV_field correctly | PASS | 1 | 0.029 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L144) | nif_observations | make_observation handles custom TESTCD_field correctly | PASS | 2 | 0.029 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L158) | nif_observations | make_observation handles custom DTC_field correctly | PASS | 1 | 0.029 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L170) | nif_observations | make_observation creates proper output fields | PASS | 13 | 0.054 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L198) | nif_observations | make_observation handles NTIME lookup correctly | PASS | 1 | 0.027 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L206_L209) | nif_observations | make_observation validates inputs correctly | PASS | 2 | 0.012 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L229_L232) | nif_observations | make_observation handles missing DV field with coding table | PASS | 3 | 0.051 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L260) | nif_observations | make_observation sets MDV correctly for missing values | PASS | 2 | 0.030 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L274_L277) | nif_observations | add_observation basic functionality works | PASS | 3 | 0.246 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L287_L290) | nif_observations | add_observation requires administration first | PASS | 1 | 0.008 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L300_L304) | nif_observations | add_observation warns about duplicate compartment | PASS | 1 | 0.256 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L314_L318) | nif_observations | add_observation auto-assigns compartment if not specified | PASS | 2 | 0.256 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L331_L336) | nif_observations | add_observation auto-assigns parent if not specified | PASS | 1 | 0.244 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L346_L351) | nif_observations | add_observation properly uses observation_filter | WARNING | 2 | 0.235 | ⚠️ |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L379) | nif_observations | add_observation works with factor parameter | PASS | 1 | 0.327 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L403) | nif_observations | add_observation handles metabolites correctly | PASS | 1 | 0.258 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L419_L426) | nif_observations | add_observation works with custom NTIME_lookup | PASS | 1 | 0.232 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L441) | nif_observations | add_observation handles debug mode correctly | PASS | 2 | 0.249 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L462) | nif_observations | add_observation updates columns correctly | PASS | 1 | 0.239 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L490_L493) | nif_observations | add_observation handles include_day_in_ntime parameter | PASS | 1 | 0.322 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L511_L517) | nif_observations | add_observation handles missing NTIME gracefully | PASS | 3 | 0.196 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L538_L541) | nif_observations | add_observation handles DV field properly | PASS | 2 | 0.166 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L580) | nif_observations | add_observation handles subject filtering | PASS | 1 | 0.162 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L590_L596) | nif_observations | add_observation can handle non-existent domain gracefully | PASS | 1 | 0.164 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L614_L621) | nif_observations | add_observation handles observations without matching administrations | PASS | 2 | 0.351 |  |
+| [test-nif_observations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_observations.R#L640_L647) | nif_observations | add_observation properly handles custom testcd field | PASS | 1 | 0.322 |  |
+| [test-nif_options.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_options.R#L2) | nif_options | nif_disclaimer works | PASS | 1 | 0.002 |  |
+| [test-nif_options.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_options.R#L7) | nif_options | nif_disclaimer works with custom text | PASS | 1 | 0.002 |  |
+| [test-nif_options.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_options.R#L12) | nif_options | nif_option works | PASS | 5 | 0.016 |  |
+| [test-nif_options.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_options.R#L24) | nif_options | nif_option_value works | PASS | 1 | 0.003 |  |
+| [test-nif_options.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_options.R#L29) | nif_options | nif_option with empty arguments returns list | PASS | 1 | 0.002 |  |
+| [test-nif_plot.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_plot.R#L2_L7) | nif_plot | make_plot_data_set | PASS | 1 | 0.034 |  |
+| [test-nif_plot.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_plot.R#L12_L13) | nif_plot | plot.nif | PASS | 14 | 0.566 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L12) | nif_subjects | calculate_age calculates age correctly | PASS | 1 | 0.006 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L27) | nif_subjects | calculate_age preserves existing AGE values when not NA | PASS | 1 | 0.006 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L42) | nif_subjects | calculate_age overwrites existing AGE values when preserve_age = FALSE | PASS | 1 | 0.005 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L56) | nif_subjects | calculate_age uses custom reference date column | PASS | 1 | 0.005 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L76) | nif_subjects | calculate_age returns dataframe unchanged when required columns missing | PASS | 2 | 0.004 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L82) | nif_subjects | calculate_age handles non-dataframe input | PASS | 2 | 0.010 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L102) | nif_subjects | calculate_age rounds age correctly | PASS | 1 | 0.006 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L144_L146) | nif_subjects | make subjects | PASS | 2 | 0.015 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L167) | nif_subjects | make_subject works with different age definitions | PASS | 2 | 0.024 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L181_L185) | nif_subjects | make_subjects validates inputs correctly | PASS | 5 | 0.032 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L283) | nif_subjects | BMI calculation handles edge cases correctly | PASS | 7 | 0.022 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L345) | nif_subjects | make_subjects handles basic case correctly | PASS | 7 | 0.021 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L366) | nif_subjects | make_subjects handles VS data correctly | PASS | 6 | 0.027 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L386) | nif_subjects | make_subjects respects VSBLFL flag | PASS | 2 | 0.022 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L396) | nif_subjects | make_subjects respects custom subject filter | PASS | 4 | 0.025 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L414) | nif_subjects | make_subjects keeps specified columns | PASS | 2 | 0.014 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L424) | nif_subjects | make_subjects errors on invalid inputs | PASS | 4 | 0.023 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L447) | nif_subjects | make_subjects handles missing VS data gracefully | PASS | 3 | 0.031 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L460) | nif_subjects | make_subjects handles empty data frames | PASS | 4 | 0.017 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L479) | nif_subjects | SEX is properly recoded | PASS | 1 | 0.013 |  |
+| [test-nif_subjects.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-nif_subjects.R#L487_L491) | nif_subjects | make_subjects issues warning for empty subject filter results | PASS | 2 | 0.023 |  |
+| [test-physiological_calculations.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-physiological_calculations.R#L42) | physiological_calculations | BMI calculation handles edge cases correctly | PASS | 7 | 0.022 |  |
+| [test-sdtm_analytics.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_analytics.R#L3) | sdtm_analytics | sdtm_missing_times works | PASS | 1 | 0.005 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L18) | sdtm_class | guess_ntime works | PASS | 1 | 0.005 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L24_L32) | sdtm_class | new_sdtm | PASS | 1 | 0.002 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L37) | sdtm_class | sdtm summary | PASS | 3 | 0.014 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L66) | sdtm_class | sdtm_summary works with metabolite mapping | PASS | 1 | 0.003 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L71_L75) | sdtm_class | suggest works with consider_nif_auto | PASS | 1 | 0.016 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L80_L82) | sdtm_class | suggest_sdtm works | PASS | 1 | 0.012 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L88_L90) | sdtm_class | subject_info works | PASS | 1 | 0.002 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L95) | sdtm_class | subjects, analytes, treatments, doses works for sdtm | PASS | 4 | 0.004 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L104_L106) | sdtm_class | filter_subject works | PASS | 2 | 0.007 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L123_L126) | sdtm_class | derive_sld works | PASS | 1 | 0.006 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L139_L142) | sdtm_class | derive_sld works with TR containing TRTEST | PASS | 1 | 0.007 |  |
+| [test-sdtm_class.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_class.R#L158_L161) | sdtm_class | derive_sld works with multiple diagnostic methods | PASS | 1 | 0.006 |  |
+| [test-sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_exploration.R#L11_L13) | sdtm_exploration | filter_correct_date_format works | PASS | 1 | 0.012 |  |
+| [test-sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_exploration.R#L18) | sdtm_exploration | check_date_format, check_date_time_format works | PASS | 3 | 0.010 |  |
+| [test-sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_exploration.R#L25) | sdtm_exploration | check_last_exendtc works | PASS | 1 | 0.009 |  |
+| [test-sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_exploration.R#L30) | sdtm_exploration | check_sdtm works | PASS | 1 | 0.020 |  |
+| [test-sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_exploration.R#L35) | sdtm_exploration | plot.sdtm works | PASS | 6 | 0.055 |  |
+| [test-sdtm_exploration.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_exploration.R#L51_L67) | sdtm_exploration | disposition_summary works | PASS | 1 | 0.006 |  |
+| [test-sdtm_load.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_load.R#L2) | sdtm_load | multiplication works | PASS | 1 | 0.002 |  |
+| [test-sdtm_synthesis.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_synthesis.R#L21) | sdtm_synthesis | synthesize_crea works | PASS | 1 | 0.312 |  |
+| [test-sdtm_synthesis.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-sdtm_synthesis.R#L76) | sdtm_synthesis | EGFR is age-dependent | PASS | 1 | 0.311 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L6) | utilities | conditional message works | PASS | 2 | 0.008 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L27) | utilities | recode sex works | PASS | 1 | 0.003 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L32) | utilities | positive_or_zero works | PASS | 3 | 0.006 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L39) | utilities | indent_string works | PASS | 3 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L51_L52) | utilities | df_to_string works | PASS | 6 | 0.017 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L79) | utilities | standardize_date_format works | PASS | 2 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L99_L107) | utilities | isofy_date_format works | PASS | 1 | 0.006 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L123) | utilities | lubrify_dates works | PASS | 2 | 0.004 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L143) | utilities | isofy_dates works | PASS | 2 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L159_L160) | utilities | is_iso_datetime works | PASS | 1 | 0.003 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L175_L176) | utilities | is_iso_date works | PASS | 1 | 0.002 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L192) | utilities | pt_to_hours works | PASS | 1 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L197) | utilities | compose_dtc works | PASS | 1 | 0.004 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L212) | utilities | decompose_dtc works | PASS | 1 | 0.006 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L230_L233) | utilities | extract_date works | PASS | 1 | 0.004 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L252_L254) | utilities | extract_time works | PASS | 1 | 0.004 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L264) | utilities | has time works | PASS | 4 | 0.009 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L288) | utilities | nice enumeration works | PASS | 3 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L296) | utilities | plural works | PASS | 4 | 0.007 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L304) | utilities | safe_mean works | PASS | 3 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L311) | utilities | safe_sd works | PASS | 3 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L318) | utilities | safe min works | PASS | 4 | 0.006 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L326) | utilities | pos_diff works | PASS | 2 | 0.005 |  |
+| [test-utilities.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-utilities.R#L335) | utilities | trialday_to_day works | PASS | 5 | 0.011 |  |
+| [test-viewer.R](https://http///192.168.1.109:3000/rainer/nif/blob/coverage/tests/testthat/test-viewer.R#L2) | viewer | multiplication works | PASS | 1 | 0.002 |  |
+
+| Failed | Warning | Skipped |
+|:-------|:--------|:--------|
+| 🛑     | ⚠️      | 🔶      |
+
+</details>
+<details>
+<summary>
+Session Info
+</summary>
+
+| Field    | Value                        |
+|:---------|:-----------------------------|
+| Version  | R version 4.4.2 (2024-10-31) |
+| Platform | aarch64-apple-darwin20       |
+| Running  | macOS Sequoia 15.3.2         |
+| Language | en_US                        |
+| Timezone | Europe/Berlin                |
+
+| Package  | Version |
+|:---------|:--------|
+| testthat | 3.2.1.1 |
+| covr     | 3.6.4   |
+| covrpage | 0.2     |
+
+</details>
+<!--- Final Status : error/failed --->

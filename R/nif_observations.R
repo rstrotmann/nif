@@ -418,6 +418,7 @@ add_observation <- function(
 #' @param DV_field The field specifying the dependent variable, as character.
 #' @param keep Columns to keep, as character.
 #' @param debug Keep debug information.
+#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'
 #' @return A nif object.
 #' @export
@@ -433,7 +434,8 @@ import_observation <- function(
     NTIME_field = NULL,
     DV_field = NULL,
     keep = NULL,
-    debug = FALSE
+    debug = FALSE,
+    silent = NULL
   ) {
   # Validate inputs
   if (!inherits(nif, "nif")) {
@@ -460,7 +462,8 @@ import_observation <- function(
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(
-      "Compartment was not specified and has been set to ", cmt)
+      "Compartment was not specified and has been set to ", cmt,
+      silent = silent)
     }
 
   imp <- nif %>%
@@ -475,7 +478,8 @@ import_observation <- function(
     } else {
       parent <- guess_parent(nif)
       conditional_message(
-        "Parent for ", analyte, " was set to ", parent, "!")
+        "Parent for ", analyte, " was set to ", parent, "!",
+        silent = silent)
     }
   }
 

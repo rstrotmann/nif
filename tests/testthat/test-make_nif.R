@@ -568,7 +568,8 @@ test_that("import_observation", {
   nif <- examplinib_sad_nif %>%
     mutate(COUNTRY = "X")
 
-  test <- import_observation(
+  expect_no_error(
+    test <- import_observation(
     nif = nif,
     raw = raw,
     analyte = "TEST",
@@ -580,8 +581,10 @@ test_that("import_observation", {
     NTIME_field = "TIME",
     DV_field = "VAL",
     keep = "COUNTRY",
-    debug = TRUE
+    debug = TRUE,
+    silent = TRUE
     )
+  )
 })
 
 
