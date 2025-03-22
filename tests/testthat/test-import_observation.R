@@ -192,70 +192,74 @@ test_that("import_observation correctly handles NTIME field", {
 })
 
 
-# test_that("import_observation automatically assigns compartment when cmt is NULL", {
-#   test_nif <- create_test_nif()
-#   test_raw <- create_test_raw()
-#
-#   # Capture messages to verify warnings
-#   expect_message(
-#     result <- import_observation(
-#       test_nif,
-#       test_raw,
-#       analyte = "TEST",
-#       parent = "DRUG",
-#       cmt = NULL,
-#       DV_field = "DV_VALUE",
-#       DTC_field = "OBS_DTC"
-#     ),
-#     "Compartment was not specified and has been set to"
-#   )
-#
-#   # Check if compartment was automatically assigned
-#   obs_records <- result %>% filter(EVID == 0)
-#   max_cmt_in_nif <- max(test_nif$CMT)
-#   expect_equal(unique(obs_records$CMT), max_cmt_in_nif + 1)
-# })
-#
-#
-# test_that("import_observation automatically determines parent when parent is NULL", {
-#   test_nif <- create_test_nif()
-#   test_raw <- create_test_raw()
-#
-#   # Case 1: analyte matches an existing ANALYTE in nif
-#   expect_message(
-#     result1 <- import_observation(
-#       test_nif,
-#       test_raw,
-#       analyte = "DRUG", # Matches existing analyte
-#       parent = NULL,
-#       cmt = 2,
-#       DV_field = "DV_VALUE",
-#       DTC_field = "OBS_DTC"
-#     ),
-#     NA
-#   )
-#
-#   obs_records1 <- result1 %>% filter(EVID == 0)
-#   expect_equal(unique(obs_records1$PARENT), "DRUG")
-#
-#   # Case 2: analyte doesn't match existing ANALYTE
-#   expect_message(
-#     result2 <- import_observation(
-#       test_nif,
-#       test_raw,
-#       analyte = "METABOLITE", # Doesn't match existing analyte
-#       parent = NULL,
-#       cmt = 3,
-#       DV_field = "DV_VALUE",
-#       DTC_field = "OBS_DTC"
-#     ),
-#     "Parent for .* was set to"
-#   )
-#
-#   obs_records2 <- result2 %>% filter(EVID == 0)
-#   expect_equal(unique(obs_records2$PARENT), "DRUG") # Should be guessed from nif
-# })
-#
+test_that("import_observation automatically assigns compartment when cmt is NULL", {
+  test_nif <- create_test_nif()
+  test_raw <- create_test_raw()
+
+  # Capture messages to verify warnings
+  expect_message(
+    result <- import_observation(
+      test_nif,
+      test_raw,
+      analyte = "TEST",
+      parent = "DRUG",
+      cmt = NULL,
+      DV_field = "DV_VALUE",
+      DTC_field = "OBS_DTC",
+      NTIME_field = "OBS_NTIME"
+    ),
+    "Compartment was not specified and has been set to"
+  )
+
+  # Check if compartment was automatically assigned
+  obs_records <- result %>% filter(EVID == 0)
+  max_cmt_in_nif <- max(test_nif$CMT)
+  expect_equal(unique(obs_records$CMT), max_cmt_in_nif + 1)
+})
+
+
+test_that("import_observation automatically determines parent when parent is NULL", {
+  test_nif <- create_test_nif()
+  test_raw <- create_test_raw()
+
+  # Case 1: analyte matches an existing ANALYTE in nif
+  expect_message(
+    result1 <- import_observation(
+      test_nif,
+      test_raw,
+      analyte = "DRUG", # Matches existing analyte
+      parent = NULL,
+      cmt = 2,
+      DV_field = "DV_VALUE",
+      DTC_field = "OBS_DTC",
+      NTIME_field = "OBS_NTIME"
+    ),
+    NA
+  )
+
+  obs_records1 <- result1 %>%
+    filter(EVID == 0)
+  expect_equal(unique(obs_records1$PARENT), "DRUG")
+
+  # Case 2: analyte doesn't match existing ANALYTE
+  expect_message(
+    result2 <- import_observation(
+      test_nif,
+      test_raw,
+      analyte = "METABOLITE", # Doesn't match existing analyte
+      parent = NULL,
+      cmt = 3,
+      DV_field = "DV_VALUE",
+      DTC_field = "OBS_DTC",
+      NTIME_field = "OBS_NTIME"
+    ),
+    "Parent for .* was set to"
+  )
+
+  obs_records2 <- result2 %>% filter(EVID == 0)
+  expect_equal(unique(obs_records2$PARENT), "DRUG") # Should be guessed from nif
+})
+
 #
 # test_that("import_observation correctly joins subject data", {
 #   # Create test nif with additional subject data

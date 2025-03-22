@@ -1095,7 +1095,9 @@ guess_parent <- function(obj) {
 
   # if administrations in data set, return analyte with most observations
   if(nrow(imp) > 0) {
-    return(imp[1, "ANALYTE"])
+    # return(imp[1, "ANALYTE"])
+    imp[1,] %>%
+      pull(ANALYTE)
   }
 
   # if no administrations
