@@ -137,7 +137,8 @@ test_that("add_covariate validates required fields exist", {
   sdtm <- create_test_sdtm()
 
   # Create a broken VS domain without VSSTRESN
-  broken_vs <- sdtm$domains$vs %>% select(-VSSTRESN)
+  # broken_vs <- sdtm$domains$vs %>% select(-VSSTRESN)
+  broken_vs <- domain(sdtm, "vs") %>% select(-VSSTRESN)
   sdtm$domains$vs <- broken_vs
   sdtm$vs <- broken_vs
 
@@ -201,7 +202,7 @@ test_that("add_covariate works with custom field names", {
            CUSTOM_STRESN = VSSTRESN)
 
   sdtm$domains$vs <- vs_custom
-  sdtm$vs <- vs_custom
+  # sdtm$vs <- vs_custom
 
   # Add WEIGHT covariate with custom field names
   result <- add_covariate(nif, sdtm, "vs", "WEIGHT",
@@ -224,7 +225,7 @@ test_that("add_covariate handles duplicated observations correctly", {
   dup_row <- sdtm$domains$vs[1, ]
   dup_row$VSSTRESN <- 75  # Different value
   sdtm$domains$vs <- bind_rows(sdtm$domains$vs, dup_row)
-  sdtm$vs <- sdtm$domains$vs
+  # sdtm$vs <- sdtm$domains$vs
 
   # Should take the last value due to distinct() in the function
   result <- add_covariate(nif, sdtm, "vs", "WEIGHT", covariate = "wt")

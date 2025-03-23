@@ -140,9 +140,9 @@ make_test_sdtm <- function() {
 
 
 test_that("make subjects", {
-  sdtm <- make_test_sdtm()$domains
+  test_sdtm <- make_test_sdtm()$domains
   expect_no_error(
-    test <- make_subjects(sdtm$dm, sdtm$vs)
+    test <- make_subjects(test_sdtm$dm, test_sdtm$vs)
   )
   expect_equal(dim(test), c(4, 9))
 })
