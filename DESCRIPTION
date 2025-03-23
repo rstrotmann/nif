@@ -35,7 +35,8 @@ Imports:
     ggrepel,
     readr,
     readxl,
-    htmltools
+    htmltools,
+    purrr
 Suggests: 
     knitr,
     tibble,

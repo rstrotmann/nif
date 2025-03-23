@@ -119,10 +119,6 @@ new_sdtm <- function(sdtm_data,
 
   temp <- list(
     domains = domains,
-    # pc = domains[["pc"]],
-    # dm = domains[["dm"]],
-    # ex = domains[["ex"]],
-    # vs = domains[["vs"]],
     analyte_mapping = analyte_mapping,
     metabolite_mapping = metabolite_mapping,
     parent_mapping = parent_mapping,
@@ -187,15 +183,37 @@ summary.sdtm <- function(object, ...) {
     time_mapping = object$time_mapping
   )
 
+  # Numbers of subjects and observations by domain
+  out$disposition <- purrr::map(
+    object$domains,
+    function(x){
+      data.frame(
+        SBS = length(unique(x$USUBJID)),
+        OBS = dim(x)[1]
+      )
+    }
+  ) %>% purrr::list_rbind() %>%
+    mutate(DOMAIN = names(object$domains)) %>%
+    select(DOMAIN, SBS, OBS)
+
+
+
+
+
   # Get data for DM domain if it exists
   if(has_domain(object, "dm")) {
     dm <- domain(object, "dm")
-    
+
     # Get study ID if STUDYID exists
     if("STUDYID" %in% colnames(dm)) {
       out$study <- unique(dm$STUDYID)
     }
-    
+
+    # Get subjects if USUBJID exists
+    if("USUBJID" %in% colnames(dm)) {
+      out$subjects <- unique(dm$USUBJID)
+    }
+
     # Get arms if ACTARMCD and ACTARM exist
     if(all(c("ACTARMCD", "ACTARM") %in% colnames(dm))) {
       out$arms <- unique(dm[c("ACTARMCD", "ACTARM")])
@@ -205,37 +223,32 @@ summary.sdtm <- function(object, ...) {
   # Get data for PC domain if it exists
   if(has_domain(object, "pc")) {
     pc <- domain(object, "pc")
-    
-    # Get subjects if USUBJID exists
-    if("USUBJID" %in% colnames(pc)) {
-      out$subjects <- unique(pc$USUBJID)
-    }
-    
+
     # Get specimens if PCSPEC exists
     if("PCSPEC" %in% colnames(pc)) {
       out$specimens <- unique(pc$PCSPEC)
     }
-    
+
     # Get analytes if PCTEST and PCTESTCD exist
     if(all(c("PCTEST", "PCTESTCD") %in% colnames(pc))) {
       out$analytes <- unique(pc[c("PCTEST", "PCTESTCD")])
     }
-    
+
     # Get PC timepoints if PCTPT and PCTPTNUM exist
     if(all(c("PCTPT", "PCTPTNUM") %in% colnames(pc))) {
       out$pc_timepoints <- unique(pc[c("PCTPT", "PCTPTNUM")])
     }
   }
 
-  # Get data for EX domain if it exists
+  # # Get data for EX domain if it exists
   if(has_domain(object, "ex")) {
     ex <- domain(object, "ex")
-    
+
     # Get treatments if EXTRT exists
     if("EXTRT" %in% colnames(ex)) {
       out$treatments <- unique(ex$EXTRT)
     }
-    
+
     # Get doses if EXTRT and EXDOSE exist
     if(all(c("EXTRT", "EXDOSE") %in% colnames(ex))) {
       out$doses <- unique(ex[c("EXTRT", "EXDOSE")])
@@ -876,7 +889,7 @@ guess_ntime <- function(sdtm) {
   if (!has_domain(sdtm, "pc")) {
     stop("PC domain not found in SDTM object")
   }
-  
+
   domain(sdtm, "pc") %>%
     distinct(.data$PCTPT) %>%
     mutate(time = str_extract(tolower(.data$PCTPT),

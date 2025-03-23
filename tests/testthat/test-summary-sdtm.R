@@ -2,36 +2,24 @@
 
 test_that("summary.sdtm handles valid SDTM objects correctly", {
   # Create a simple SDTM object for testing
-  test_dm <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-002"),
-    DOMAIN = "DM",
-    STUDYID = "STUDY-001",
-    ACTARMCD = c("ARM1", "ARM2"),
-    ACTARM = c("Treatment Arm 1", "Treatment Arm 2")
-  )
-
-  test_pc <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-001", "SUBJ-002"),
-    DOMAIN = "PC",
-    PCSPEC = c("PLASMA", "PLASMA", "PLASMA"),
-    PCTEST = c("Drug A", "Drug A", "Drug A"),
-    PCTESTCD = c("DRUGA", "DRUGA", "DRUGA"),
-    PCTPT = c("PRE", "1HR", "2HR"),
-    PCTPTNUM = c(0, 1, 2)
-  )
-
-  test_ex <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-002"),
-    DOMAIN = "EX",
-    EXTRT = c("Drug A", "Drug A"),
-    EXDOSE = c(100, 200)
-  )
-
   test_data <- list(
     domains = list(
-      dm = test_dm,
-      pc = test_pc,
-      ex = test_ex
+      dm = tibble::tribble(
+          ~USUBJID, ~DOMAIN,    ~STUDYID, ~ACTARMCD,           ~ACTARM,
+        "SUBJ-001",    "DM", "STUDY-001",    "ARM1", "Treatment Arm 1",
+        "SUBJ-002",    "DM", "STUDY-001",    "ARM2", "Treatment Arm 2"
+      ),
+      pc = tibble::tribble(
+          ~USUBJID, ~DOMAIN,  ~PCSPEC,  ~PCTEST, ~PCTESTCD, ~PCTPT, ~PCTPTNUM,
+        "SUBJ-001",    "PC", "PLASMA", "Drug A",   "DRUGA",  "PRE",         0,
+        "SUBJ-001",    "PC", "PLASMA", "Drug A",   "DRUGA",  "1HR",         1,
+        "SUBJ-002",    "PC", "PLASMA", "Drug A",   "DRUGA",  "2HR",         2
+      ),
+      ex = tibble::tribble(
+          ~USUBJID, ~DOMAIN,   ~EXTRT, ~EXDOSE,
+        "SUBJ-001",    "EX", "Drug A",     100,
+        "SUBJ-002",    "EX", "Drug A",     200
+      )
     ),
     analyte_mapping = data.frame(
       EXTRT = "Drug A",
