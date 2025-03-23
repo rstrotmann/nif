@@ -396,13 +396,34 @@ print.sdtm <- function(x, ...) {
 #'
 #' @param obj The sdtm object.
 #' @param name The domain to return.
-#' @return The specified domain as data.frame
+#' @return The specified domain as data frame. Issues a warning if the domain
+#'   does not exist and returns NULL.
 #' @export
 #' @examples
 #' head(domain(examplinib_fe, "dm"), 3)
 domain <- function(obj, name) {
-  temp <- obj$domains[name]
-  if (length(temp) == 1) temp <- temp[[1]]
+  # Input validation
+  if (!inherits(obj, "sdtm")) {
+    stop("'obj' must be an SDTM object")
+  }
+
+  if (!is.character(name) || length(name) == 0) {
+    stop("'name' must be a non-empty character vector")
+  }
+
+  # Normalize domain name to lowercase
+  name_lower <- tolower(name)
+
+  # Check if domain exists
+  if (!name_lower %in% names(obj$domains)) {
+    warning("Domain '", name, "' not found in SDTM object")
+    return(NULL)
+  }
+
+  # Extract domain safely
+  temp <- obj$domains[[name_lower]]
+
+  # Return the domain
   return(temp)
 }
 

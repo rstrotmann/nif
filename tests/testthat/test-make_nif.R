@@ -272,13 +272,14 @@ test_that("make_administration works for examplinib_poc", {
 #          3,       "A", "2024-12-22"
 # )
 
+
 test_that("make_administration uses correct time imputations", {
   sdtm <- new_sdtm(list(
     dm = tibble::tribble(
-      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
-      1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
-      2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
-      3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,  ~STUDYID,
+             1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A", "STUDY 1",
+             2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A", "STUDY 1",
+             3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A", "STUDY 1"
     ),
     ex = tibble::tribble(
       ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
@@ -295,8 +296,11 @@ test_that("make_administration uses correct time imputations", {
     )
   ))
 
-  expect_no_error(
-    test <- as.data.frame(make_administration(sdtm, "A"))
+  expect_warning(
+    expect_no_error(
+      test <- as.data.frame(make_administration(sdtm, "A"))
+    ),
+    "Domain 'vs' not found in SDTM object"
   )
 
   # number of administrations is correct:
@@ -341,8 +345,11 @@ test_that("make_administration works without pc", {
     )
   ))
 
-  expect_no_error(
+  expect_warning(
+    expect_no_error(
     test <- as.data.frame(make_administration(sdtm, "A"))
+    ),
+    "Domain 'vs' not found in SDTM object"
   )
 
   # number of administrations is correct:
@@ -387,10 +394,13 @@ test_that("make_administration imputes missing last EXENDTC", {
     )
   ))
 
-  expect_no_error(
-    expect_message(
-      test <- as.data.frame(make_administration(sdtm, "A"))
-    )
+  expect_warning(
+    expect_no_error(
+      expect_message(
+        test <- as.data.frame(make_administration(sdtm, "A"))
+      )
+    ),
+    "Domain 'vs' not found in SDTM object"
   )
 })
 
