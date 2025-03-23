@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a></li>
     <li><a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a></li>
     <li><a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a></li>
+    <li><a class="dropdown-item" href="../articles/tests_and_coverage.html">Tests and Coverage</a></li>
   </ul>
 </li>
       </ul>
@@ -104,40 +105,40 @@ high-level overview:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_poc</span></span>
 <span><span class="co">#&gt; -------- SDTM data set summary -------- </span></span>
-<span><span class="co">#&gt; Study 2023000022 with 80 subjects providing PC data.</span></span>
+<span><span class="co">#&gt; Study 2023000022 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Subjects per domain:</span></span>
-<span><span class="co">#&gt;  DOMAIN   N     </span></span>
-<span><span class="co">#&gt;  dm       103   </span></span>
-<span><span class="co">#&gt;  vs       103   </span></span>
-<span><span class="co">#&gt;  ex       80    </span></span>
-<span><span class="co">#&gt;  pc       80    </span></span>
-<span><span class="co">#&gt;  lb       103   </span></span>
-<span><span class="co">#&gt;  pp       13    </span></span>
+<span><span class="co">#&gt; Data disposition</span></span>
+<span><span class="co">#&gt;   DOMAIN   SUBJECTS   OBSERVATIONS   </span></span>
+<span><span class="co">#&gt;   dm       103        103            </span></span>
+<span><span class="co">#&gt;   vs       103        206            </span></span>
+<span><span class="co">#&gt;   ex       80         468            </span></span>
+<span><span class="co">#&gt;   pc       80         1344           </span></span>
+<span><span class="co">#&gt;   lb       103        103            </span></span>
+<span><span class="co">#&gt;   pp       13         432            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Arms (DM):</span></span>
-<span><span class="co">#&gt;  ACTARMCD    ACTARM                 </span></span>
-<span><span class="co">#&gt;  TREATMENT   Single Arm Treatment   </span></span>
-<span><span class="co">#&gt;  SCRNFAIL    Screen Faillure        </span></span>
+<span><span class="co">#&gt;   ACTARMCD    ACTARM                 </span></span>
+<span><span class="co">#&gt;   TREATMENT   Single Arm Treatment   </span></span>
+<span><span class="co">#&gt;   SCRNFAIL    Screen Faillure        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments (EX):</span></span>
-<span><span class="co">#&gt;  EXAMPLINIB </span></span>
+<span><span class="co">#&gt;   EXAMPLINIB</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; PK sample specimens (PC):</span></span>
-<span><span class="co">#&gt;  (none) </span></span>
+<span><span class="co">#&gt;   PLASMA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; PK analytes (PC):</span></span>
-<span><span class="co">#&gt;  PCTEST       PCTESTCD     </span></span>
-<span><span class="co">#&gt;  RS2023       RS2023       </span></span>
-<span><span class="co">#&gt;  RS2023487A   RS2023487A    </span></span>
+<span><span class="co">#&gt;   PCTEST       PCTESTCD     </span></span>
+<span><span class="co">#&gt;   RS2023       RS2023       </span></span>
+<span><span class="co">#&gt;   RS2023487A   RS2023487A    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment-to-analyte mappings:</span></span>
-<span><span class="co">#&gt;  EXTRT        PCTESTCD   ANALYTE   </span></span>
-<span><span class="co">#&gt;  EXAMPLINIB   RS2023     RS2023     </span></span>
+<span><span class="co">#&gt;   EXTRT        PCTESTCD   ANALYTE   </span></span>
+<span><span class="co">#&gt;   EXAMPLINIB   RS2023     RS2023     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parent-to-metabolite mappings:</span></span>
-<span><span class="co">#&gt;  PCTESTCD_parent   PCTESTCD_metab   </span></span>
-<span><span class="co">#&gt;  RS2023            RS2023487A</span></span></code></pre></div>
+<span><span class="co">#&gt;   PCTESTCD_parent   PCTESTCD_metab   </span></span>
+<span><span class="co">#&gt;   RS2023            RS2023487A</span></span></code></pre></div>
 <p>Note that in the EX domain, the administered drug is given as
 ‘EXAMPLINIB’ while in PC, the corresponding analyte is ‘RS2023’. The
 other analyte, ‘RS2023487A’ is a metabolite.</p>

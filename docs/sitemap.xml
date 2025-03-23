@@ -10,6 +10,7 @@
 <url><loc>/articles/multiple-dose-example.html</loc></url>
 <url><loc>/articles/nif-imputations.html</loc></url>
 <url><loc>/articles/nif-vignette.html</loc></url>
+<url><loc>/articles/tests_and_coverage.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/add_RFENDTC.html</loc></url>
@@ -135,6 +136,7 @@
 <url><loc>/reference/guess_parent.html</loc></url>
 <url><loc>/reference/guess_pcspec.html</loc></url>
 <url><loc>/reference/guess_spec.html</loc></url>
+<url><loc>/reference/has_domain.html</loc></url>
 <url><loc>/reference/has_time.html</loc></url>
 <url><loc>/reference/head.html</loc></url>
 <url><loc>/reference/head.nif.html</loc></url>

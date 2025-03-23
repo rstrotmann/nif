@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a></li>
     <li><a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a></li>
     <li><a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a></li>
+    <li><a class="dropdown-item" href="../articles/tests_and_coverage.html">Tests and Coverage</a></li>
   </ul>
 </li>
       </ul>
@@ -207,37 +208,37 @@ information:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span></span>
 <span><span class="co">#&gt; -------- SDTM data set summary -------- </span></span>
-<span><span class="co">#&gt; Study 2023000400 with 20 subjects providing PC data.</span></span>
+<span><span class="co">#&gt; Study 2023000400 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Subjects per domain:</span></span>
-<span><span class="co">#&gt;  DOMAIN   N    </span></span>
-<span><span class="co">#&gt;  dm       28   </span></span>
-<span><span class="co">#&gt;  vs       28   </span></span>
-<span><span class="co">#&gt;  ex       20   </span></span>
-<span><span class="co">#&gt;  pc       20   </span></span>
-<span><span class="co">#&gt;  lb       28   </span></span>
-<span><span class="co">#&gt;  pp       20   </span></span>
+<span><span class="co">#&gt; Data disposition</span></span>
+<span><span class="co">#&gt;   DOMAIN   SUBJECTS   OBSERVATIONS   </span></span>
+<span><span class="co">#&gt;   dm       28         28             </span></span>
+<span><span class="co">#&gt;   vs       28         56             </span></span>
+<span><span class="co">#&gt;   ex       20         40             </span></span>
+<span><span class="co">#&gt;   pc       20         1360           </span></span>
+<span><span class="co">#&gt;   lb       28         28             </span></span>
+<span><span class="co">#&gt;   pp       20         360            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Arms (DM):</span></span>
-<span><span class="co">#&gt;  ACTARMCD   ACTARM           </span></span>
-<span><span class="co">#&gt;  SCRNFAIL   Screen Failure   </span></span>
-<span><span class="co">#&gt;  BA         Fed - Fasted     </span></span>
-<span><span class="co">#&gt;  AB         Fasted - Fed     </span></span>
+<span><span class="co">#&gt;   ACTARMCD   ACTARM           </span></span>
+<span><span class="co">#&gt;   SCRNFAIL   Screen Failure   </span></span>
+<span><span class="co">#&gt;   BA         Fed - Fasted     </span></span>
+<span><span class="co">#&gt;   AB         Fasted - Fed     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments (EX):</span></span>
-<span><span class="co">#&gt;  EXAMPLINIB </span></span>
+<span><span class="co">#&gt;   EXAMPLINIB</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; PK sample specimens (PC):</span></span>
-<span><span class="co">#&gt;  (none) </span></span>
+<span><span class="co">#&gt;   PLASMA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; PK analytes (PC):</span></span>
-<span><span class="co">#&gt;  PCTEST       PCTESTCD     </span></span>
-<span><span class="co">#&gt;  RS2023       RS2023       </span></span>
-<span><span class="co">#&gt;  RS2023487A   RS2023487A    </span></span>
+<span><span class="co">#&gt;   PCTEST       PCTESTCD     </span></span>
+<span><span class="co">#&gt;   RS2023       RS2023       </span></span>
+<span><span class="co">#&gt;   RS2023487A   RS2023487A    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment-to-analyte mappings:</span></span>
-<span><span class="co">#&gt;  EXTRT        PCTESTCD   ANALYTE   </span></span>
-<span><span class="co">#&gt;  EXAMPLINIB   RS2023     RS2023</span></span></code></pre></div>
+<span><span class="co">#&gt;   EXTRT        PCTESTCD   ANALYTE   </span></span>
+<span><span class="co">#&gt;   EXAMPLINIB   RS2023     RS2023</span></span></code></pre></div>
 <p>Note the ‘Treatment-to-analyte mappings’ table in the output, we may
 get back to this in the context of automatically creating NIF data
 sets.</p>
@@ -299,11 +300,11 @@ suggestions for the creation of analysis data sets:</p>
 <span><span class="co">#&gt;      %&gt;%</span></span>
 <span><span class="co">#&gt;        add_administration(sdtm, 'EXAMPLINIB')</span></span>
 <span><span class="co">#&gt;    ---</span></span>
-<span><span class="co">#&gt; 2. There are 2 different pharmacokinetic observations in 'PC':</span></span>
-<span><span class="co">#&gt;       PCTESTCD     </span></span>
-<span><span class="co">#&gt;       ----------</span></span>
-<span><span class="co">#&gt;       RS2023       </span></span>
-<span><span class="co">#&gt;       RS2023487A</span></span>
+<span><span class="co">#&gt; 2. There are 2 different pharmacokinetic analytes in 'PC':</span></span>
+<span><span class="co">#&gt;       PCTEST       PCTESTCD     </span></span>
+<span><span class="co">#&gt;       ----------   ----------</span></span>
+<span><span class="co">#&gt;       RS2023       RS2023       </span></span>
+<span><span class="co">#&gt;       RS2023487A   RS2023487A</span></span>
 <span><span class="co">#&gt;    Consider adding them to the nif object using `add_observation()`. Replace</span></span>
 <span><span class="co">#&gt;    'sdtm' with the name of your sdtm object and 'y' with therespective treatment</span></span>
 <span><span class="co">#&gt;    code (EXAMPLINIB):</span></span>

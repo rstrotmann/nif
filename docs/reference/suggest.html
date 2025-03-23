@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a></li>
     <li><a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a></li>
     <li><a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a></li>
+    <li><a class="dropdown-item" href="../articles/tests_and_coverage.html">Tests and Coverage</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -75,11 +76,11 @@ mappings to the sdtm object, as logical.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>      %&gt;%</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>        add_administration(sdtm, 'EXAMPLINIB')</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>    ---</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2. There are 2 different pharmacokinetic observations in 'PC':</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       PCTESTCD     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       ----------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023       </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023487A   </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2. There are 2 different pharmacokinetic analytes in 'PC':</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       PCTEST       PCTESTCD     </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       ----------   ----------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023       RS2023       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023487A   RS2023487A   </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>    Consider adding them to the nif object using `add_observation()`. Replace</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>    'sdtm' with the name of your sdtm object and 'y' with therespective treatment</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>    code (EXAMPLINIB):</span>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.51.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/multiple-dose-example.html">NIF data for a multiple-dose study</a></li>
     <li><a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a></li>
     <li><a class="dropdown-item" href="../articles/nif-vignette.html">Creating NIF files from SDTM data</a></li>
+    <li><a class="dropdown-item" href="../articles/tests_and_coverage.html">Tests and Coverage</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -89,40 +90,40 @@ respective unique USUBJID, as data frame,</p></li>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------- SDTM data set summary -------- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Study 2023000022 with 80 subjects providing PC data.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Study 2023000022 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Subjects per domain:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DOMAIN   N     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  dm       103   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  vs       103   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ex       80    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  pc       80    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  lb       103   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  pp       13    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data disposition</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   DOMAIN   SUBJECTS   OBSERVATIONS   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dm       103        103            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vs       103        206            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ex       80         468            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pc       80         1344           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lb       103        103            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pp       13         432            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Arms (DM):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ACTARMCD    ACTARM                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  TREATMENT   Single Arm Treatment   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  SCRNFAIL    Screen Faillure        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ACTARMCD    ACTARM                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   TREATMENT   Single Arm Treatment   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SCRNFAIL    Screen Faillure        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatments (EX):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  EXAMPLINIB </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   EXAMPLINIB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PK sample specimens (PC):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  (none) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PLASMA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PK analytes (PC):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  PCTEST       PCTESTCD     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023       RS2023       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023487A   RS2023487A    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PCTEST       PCTESTCD     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   RS2023       RS2023       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   RS2023487A   RS2023487A    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment-to-analyte mappings:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  EXTRT        PCTESTCD   ANALYTE   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  EXAMPLINIB   RS2023     RS2023     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   EXTRT        PCTESTCD   ANALYTE   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   EXAMPLINIB   RS2023     RS2023     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Parent-to-metabolite mappings:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  PCTESTCD_parent   PCTESTCD_metab   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  RS2023            RS2023487A        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PCTESTCD_parent   PCTESTCD_metab   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   RS2023            RS2023487A        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
