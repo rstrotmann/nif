@@ -800,7 +800,6 @@ make_subjects_sdtm <- function(obj, ...) {
 }
 
 
-
 #' Guess NTIME from PCTPT
 #'
 #' @param sdtm A sdtm object.
@@ -812,7 +811,12 @@ make_subjects_sdtm <- function(obj, ...) {
 #' @examples
 #' guess_ntime(examplinib_poc)
 guess_ntime <- function(sdtm) {
-  sdtm$pc %>%
+  # Use domain() function instead of direct access to sdtm$pc
+  if (!has_domain(sdtm, "pc")) {
+    stop("PC domain not found in SDTM object")
+  }
+  
+  domain(sdtm, "pc") %>%
     distinct(.data$PCTPT) %>%
     mutate(time = str_extract(tolower(.data$PCTPT),
       "([0-9.]+)\\s*(h)",

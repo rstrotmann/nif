@@ -1,6 +1,7 @@
+
 test_that("guess_ntime works", {
-  sdtm = list()
-  sdtm$pc <- tribble(
+  # Create a proper SDTM object for testing
+  pc_data <- tribble(
     ~PCTPT, ~time,
     "0.5h Pre Dose", -0.5,
     "6h Post Dose", 6,
@@ -15,7 +16,18 @@ test_that("guess_ntime works", {
     "PRE DOSE", 0
   )
 
-  expect_equal(sdtm$pc$time, guess_ntime(sdtm)$NTIME)
+  # Create a SDTM object with proper structure
+  test_sdtm <- new_sdtm(list(pc = pc_data))
+
+  # Test with the proper domain() function
+  result <- guess_ntime(test_sdtm)
+
+  # Test that the times are correctly extracted
+  expect_equal(pc_data$time, result$NTIME)
+
+  # Test error handling when PC domain is missing
+  test_sdtm_no_pc <- new_sdtm(list(dm = data.frame(USUBJID = "TEST")))
+  expect_error(guess_ntime(test_sdtm_no_pc), "PC domain not found in SDTM object")
 })
 
 
