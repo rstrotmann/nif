@@ -277,7 +277,6 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   if("ex" %in% tolower(x$disposition$DOMAIN)) {
     cat("Treatments (EX):\n")
     temp <- paste0(
-      # spacer,
       str_trim(x$treatments),
       collapse = ", ")
     temp <- ifelse(temp == "", "none", temp)
