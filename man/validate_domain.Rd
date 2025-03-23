@@ -20,5 +20,5 @@ if required columns are missing.
 Check whether fields in domain are compliant with SDTM
 }
 \examples{
-validate_domain(examplinib_sad$dm)
+validate_domain(domain(examplinib_sad, "dm"))
 }
