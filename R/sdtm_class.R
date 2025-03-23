@@ -491,12 +491,22 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     return(n + 1)
   }
 
+  # Domains
+  dm <- domain(obj, "dm")
+  ex <- domain(obj, "ex")
+  pc <- domain(obj, "pc")
+
   # Function body
   # col <- 34
   n_suggestion <- 1
 
-  treatments <- distinct(obj$ex, EXTRT)
-  analytes <- distinct(obj$pc, PCTEST, PCTESTCD)
+  # treatments <- distinct(obj$ex, EXTRT)
+  treatments <- distinct(ex, EXTRT)
+  n_trt <- length(treatments$EXTRT)
+
+  # analytes <- distinct(obj$pc, PCTEST, PCTESTCD)
+  analytes <- distinct(pc, PCTEST, PCTESTCD)
+  n_analytes <- length(analytes$PCTESTCD)
 
   # 1. Analyte mappings
   if(isTRUE(consider_nif_auto)) {
@@ -519,8 +529,10 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
 
   # 2. Metabolite mappings
   if(isTRUE(consider_nif_auto)){
-    n_trt <- length(unique(obj$ex$EXTRT))
-    n_analytes <- length(unique(obj$pc$PCTESTCD))
+    # n_trt <- length(unique(obj$ex$EXTRT))
+    # n_trt <- length(treatments$EXTRT)
+    # n_analytes <- length(unique(obj$pc$PCTESTCD))
+    # n_analytes <- length(analytes$PCTESTCD)
     if (n_analytes > n_trt) {
       n_suggestion <- suggest_out(n_suggestion, paste0(
         "Only needed if you want to generate nif objects automatically (using ",
@@ -535,10 +547,11 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   }
 
   # 3. Treatments
-  treatments <- distinct(obj$ex, EXTRT)
-  if (nrow(treatments) > 0) {
+  # treatments <- distinct(obj$ex, EXTRT)
+  # if (nrow(treatments) > 0) {
+  if (n_trt > 0) {
     n_suggestion <- suggest_out(n_suggestion,
-      "There are ", nrow(treatments), " different treatments in 'EX' (see ",
+      "There are ", n_trt, " different treatments in 'EX' (see ",
       "below).")
     message_df(treatments)
     message_block(
@@ -552,12 +565,13 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     }
 
   # 4. PK observations
-  obs <- distinct(obj$pc, PCTESTCD)
-  if (nrow(obs) > 0) {
+  # obs <- distinct(obj$pc, PCTESTCD)
+  # if (nrow(obs) > 0) {
+  if(n_analytes > 0) {
     n_suggestion <- suggest_out(n_suggestion,
-      "There are ", nrow(obs), " different pharmacokinetic observations in ",
+      "There are ", n_analytes, " different pharmacokinetic analytes in ",
       "'PC':")
-    message_df(obs)
+    message_df(analytes)
     message_block(
       "Consider adding them to the nif object using `add_observation()`. ",
       "Replace 'sdtm' with the name of your sdtm object and 'y' with the",
@@ -566,11 +580,13 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     message_code(
       function(x) {
         paste0("  add_observation(sdtm, 'pc', '", x, "', parent = 'y')")},
-      obs$PCTESTCD,
+      # obs$PCTESTCD,
+      analytes$PCTESTCD,
       header = "%>%")}
 
   # 5. PK specimems
-  specimems <- filter(obj$pc, PCSPEC != "") %>%
+  # specimems <- filter(obj$pc, PCSPEC != "") %>%
+  specimems <- filter(pc, PCSPEC != "") %>%
     distinct(PCSPEC)
 
   if (nrow(specimems) > 1) {
@@ -584,7 +600,8 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   }
 
   # 6. NTIME
-  if (!("PCELTM" %in% names(obj$pc))) {
+  # if (!("PCELTM" %in% names(obj$pc))) {
+  if (!("PCELTM" %in% names(pc))) {
     temp <- guess_ntime(obj) %>%
       mutate(out = paste0('"', .data$PCTPT, '", ', .data$NTIME, ","))
     n_suggestion <- suggest_out(n_suggestion,
@@ -603,9 +620,11 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   }
 
   # 7. Trial arms
-  arms <- obj$dm %>%
+  # arms <- obj$dm %>%
+  arms <- dm %>%
     filter(ACTARMCD != "") %>%
     distinct(ACTARM, ACTARMCD)
+
   if (nrow(arms) > 1) {
     n_suggestion <- suggest_out(n_suggestion,
       "There are ", nrow(arms), " arms defined in DM (see ",
