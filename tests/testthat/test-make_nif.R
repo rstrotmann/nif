@@ -296,11 +296,8 @@ test_that("make_administration uses correct time imputations", {
     )
   ))
 
-  expect_warning(
-    expect_no_error(
-      test <- as.data.frame(make_administration(sdtm, "A"))
-    ),
-    "Domain 'vs' not found in SDTM object"
+  expect_no_error(
+    test <- as.data.frame(make_administration(sdtm, "A"))
   )
 
   # number of administrations is correct:
@@ -345,11 +342,8 @@ test_that("make_administration works without pc", {
     )
   ))
 
-  expect_warning(
-    expect_no_error(
+  expect_no_error(
     test <- as.data.frame(make_administration(sdtm, "A"))
-    ),
-    "Domain 'vs' not found in SDTM object"
   )
 
   # number of administrations is correct:
@@ -394,13 +388,11 @@ test_that("make_administration imputes missing last EXENDTC", {
     )
   ))
 
-  expect_warning(
-    expect_no_error(
-      expect_message(
-        test <- as.data.frame(make_administration(sdtm, "A"))
-      )
-    ),
-    "Domain 'vs' not found in SDTM object"
+
+  expect_no_error(
+    expect_message(
+      test <- as.data.frame(make_administration(sdtm, "A"))
+    )
   )
 })
 

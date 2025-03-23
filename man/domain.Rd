@@ -9,10 +9,11 @@ domain(obj, name)
 \arguments{
 \item{obj}{The sdtm object.}
 
-\item{name}{The domain to return.}
+\item{name}{The domain to return as a single character string.}
 }
 \value{
-The specified domain as data.frame
+The specified domain as data frame. Issues a warning if the domain
+does not exist and returns NULL.
 }
 \description{
 Return a specific domain from a sdtm object

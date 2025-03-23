@@ -209,6 +209,15 @@ make_administration <- function(
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
 
+  vs <- NULL
+
+  if(has_domain(sdtm, "vs")) {
+    vs <- domain(sdtm, "vs")
+  }
+  # } else {
+  #   vs <- NULL
+  # }
+
   ex <- impute_exendtc_to_rfendtc(ex, dm)
 
   assertthat::assert_that(
@@ -219,7 +228,7 @@ make_administration <- function(
   if(is.na(analyte)) {analyte <- extrt}
   if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
 
-  sbs <- make_subjects(dm, domain(sdtm, "vs"), subject_filter, keep)
+  sbs <- make_subjects(dm, vs, subject_filter, keep)
 
   admin <- ex %>%
     mutate(SRC_DOMAIN = "EX") %>%

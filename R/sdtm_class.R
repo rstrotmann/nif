@@ -395,7 +395,7 @@ print.sdtm <- function(x, ...) {
 #' Return a specific domain from a sdtm object
 #'
 #' @param obj The sdtm object.
-#' @param name The domain to return.
+#' @param name The domain to return as a single character string.
 #' @return The specified domain as data frame. Issues a warning if the domain
 #'   does not exist and returns NULL.
 #' @export
@@ -411,13 +411,17 @@ domain <- function(obj, name) {
     stop("'name' must be a non-empty character vector")
   }
 
+  if (length(name) > 1) {
+    stop("'name' must be a single domain name, not a vector of multiple names")
+  }
+
   # Normalize domain name to lowercase
   name_lower <- tolower(name)
 
   # Check if domain exists
-  if (!name_lower %in% names(obj$domains)) {
-    warning("Domain '", name, "' not found in SDTM object")
-    return(NULL)
+  # if (!name_lower %in% names(obj$domains)) {
+  if(!has_domain(obj, name_lower)) {
+    stop("Domain '", name, "' not found in SDTM object")
   }
 
   # Extract domain safely
@@ -425,6 +429,41 @@ domain <- function(obj, name) {
 
   # Return the domain
   return(temp)
+}
+
+
+#' Check whether a domain is present in an SDTM object
+#'
+#' @param obj The sdtm object.
+#' @param name The domain name to check as a single character string.
+#' @return Logical indicating whether the domain exists in the SDTM object.
+#' @export
+#' @examples
+#' # Check if DM domain exists
+#' has_domain(examplinib_fe, "dm")
+#'
+#' # Check if a non-existent domain exists
+#' has_domain(examplinib_fe, "xyz")
+has_domain <- function(obj, name) {
+  # Input validation
+  if (!inherits(obj, "sdtm")) {
+    stop("'obj' must be an SDTM object")
+  }
+
+  if (!is.character(name) || length(name) == 0) {
+    stop("'name' must be a non-empty character vector")
+  }
+
+  # Ensure name is a single value
+  if (length(name) > 1) {
+    stop("'name' must be a single domain name, not a vector of multiple names")
+  }
+
+  # Normalize domain name to lowercase
+  name_lower <- tolower(name)
+
+  # Check if domain exists
+  return(name_lower %in% names(obj$domains))
 }
 
 
