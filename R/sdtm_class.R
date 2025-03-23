@@ -161,27 +161,87 @@ new_sdtm <- function(sdtm_data,
 #' @examples
 #' summary(examplinib_poc)
 summary.sdtm <- function(object, ...) {
+  # Initialize empty output
   out <- list(
-    study = unique(domain(object, "dm")$STUDYID),
-    subjects = unique(domain(object, "pc")$USUBJID),
-    # pc_timepoints = unique(domain(object, "pc")[c("PCTPT", "PCTPTNUM")]),
+    study = character(0),
+    subjects = character(0),
     domains = data.frame(
       DOMAIN = names(object$domains),
       N = as.numeric(lapply(
         object$domains, function(x) {
-          length(unique(x$USUBJID))
+          if("USUBJID" %in% colnames(x)) {
+            length(unique(x$USUBJID))
+          } else {
+            0
+          }
         }
       ))
     ),
-    treatments = unique(domain(object, "ex")$EXTRT),
-    arms = unique(domain(object, "dm")[c("ACTARMCD", "ACTARM")]),
-    doses = unique(domain(object, "ex")[c("EXTRT", "EXDOSE")]),
-    specimems = unique(domain(object, "pc")$PCSPEC),
-    analytes = unique(domain(object, "pc")[c("PCTEST", "PCTESTCD")]),
+    treatments = character(0),
+    arms = data.frame(ACTARMCD = character(0), ACTARM = character(0)),
+    doses = data.frame(EXTRT = character(0), EXDOSE = numeric(0)),
+    specimens = character(0),
+    analytes = data.frame(PCTEST = character(0), PCTESTCD = character(0)),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
     time_mapping = object$time_mapping
   )
+
+  # Get data for DM domain if it exists
+  if(has_domain(object, "dm")) {
+    dm <- domain(object, "dm")
+    
+    # Get study ID if STUDYID exists
+    if("STUDYID" %in% colnames(dm)) {
+      out$study <- unique(dm$STUDYID)
+    }
+    
+    # Get arms if ACTARMCD and ACTARM exist
+    if(all(c("ACTARMCD", "ACTARM") %in% colnames(dm))) {
+      out$arms <- unique(dm[c("ACTARMCD", "ACTARM")])
+    }
+  }
+
+  # Get data for PC domain if it exists
+  if(has_domain(object, "pc")) {
+    pc <- domain(object, "pc")
+    
+    # Get subjects if USUBJID exists
+    if("USUBJID" %in% colnames(pc)) {
+      out$subjects <- unique(pc$USUBJID)
+    }
+    
+    # Get specimens if PCSPEC exists
+    if("PCSPEC" %in% colnames(pc)) {
+      out$specimens <- unique(pc$PCSPEC)
+    }
+    
+    # Get analytes if PCTEST and PCTESTCD exist
+    if(all(c("PCTEST", "PCTESTCD") %in% colnames(pc))) {
+      out$analytes <- unique(pc[c("PCTEST", "PCTESTCD")])
+    }
+    
+    # Get PC timepoints if PCTPT and PCTPTNUM exist
+    if(all(c("PCTPT", "PCTPTNUM") %in% colnames(pc))) {
+      out$pc_timepoints <- unique(pc[c("PCTPT", "PCTPTNUM")])
+    }
+  }
+
+  # Get data for EX domain if it exists
+  if(has_domain(object, "ex")) {
+    ex <- domain(object, "ex")
+    
+    # Get treatments if EXTRT exists
+    if("EXTRT" %in% colnames(ex)) {
+      out$treatments <- unique(ex$EXTRT)
+    }
+    
+    # Get doses if EXTRT and EXDOSE exist
+    if(all(c("EXTRT", "EXDOSE") %in% colnames(ex))) {
+      out$doses <- unique(ex[c("EXTRT", "EXDOSE")])
+    }
+  }
+
   class(out) <- "summary_sdtm"
   return(out)
 }
@@ -798,6 +858,7 @@ filter_subject.sdtm <- function(obj, usubjid) {
 make_subjects_sdtm <- function(obj, ...) {
   make_subjects(domain(obj, "dm"), domain(obj, "vs"), ...)
 }
+
 
 
 #' Guess NTIME from PCTPT
