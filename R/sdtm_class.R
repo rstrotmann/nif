@@ -161,18 +161,18 @@ summary.sdtm <- function(object, ...) {
   out <- list(
     study = character(0),
     subjects = character(0),
-    domains = data.frame(
-      DOMAIN = names(object$domains),
-      N = as.numeric(lapply(
-        object$domains, function(x) {
-          if("USUBJID" %in% colnames(x)) {
-            length(unique(x$USUBJID))
-          } else {
-            0
-          }
-        }
-      ))
-    ),
+    # domains = data.frame(
+    #   DOMAIN = names(object$domains),
+    #   N = as.numeric(lapply(
+    #     object$domains, function(x) {
+    #       if("USUBJID" %in% colnames(x)) {
+    #         length(unique(x$USUBJID))
+    #       } else {
+    #         0
+    #       }
+    #     }
+    #   ))
+    # ),
     treatments = character(0),
     arms = data.frame(ACTARMCD = character(0), ACTARM = character(0)),
     doses = data.frame(EXTRT = character(0), EXDOSE = numeric(0)),
@@ -188,17 +188,13 @@ summary.sdtm <- function(object, ...) {
     object$domains,
     function(x){
       data.frame(
-        SBS = length(unique(x$USUBJID)),
-        OBS = dim(x)[1]
+        SUBJECTS = length(unique(x$USUBJID)),
+        OBSERVATIONS = dim(x)[1]
       )
     }
   ) %>% purrr::list_rbind() %>%
     mutate(DOMAIN = names(object$domains)) %>%
-    select(DOMAIN, SBS, OBS)
-
-
-
-
+    select(DOMAIN, SUBJECTS, OBSERVATIONS)
 
   # Get data for DM domain if it exists
   if(has_domain(object, "dm")) {
@@ -240,7 +236,7 @@ summary.sdtm <- function(object, ...) {
     }
   }
 
-  # # Get data for EX domain if it exists
+  # Get data for EX domain if it exists
   if(has_domain(object, "ex")) {
     ex <- domain(object, "ex")
 
@@ -271,22 +267,32 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   hline <- paste0(rep("-", 8), collapse = "")
   indent <- 1
 
-  n <- filter(x$domains, DOMAIN == "pc")$N
-  if (length(n) == 0) n <- 0
+  # n <- filter(x$domains, DOMAIN == "pc")$N
+  # if (length(n) == 0) n <- 0
 
   cat(paste(hline, "SDTM data set summary", hline, "\n"))
-  cat(paste("Study", x$study))
+  # cat(paste("Study", x$study))
   cat(paste(
-    " with", n,
-    "subjects providing PC data.\n"
+    plural("Study", length(x$study) > 1),
+    nice_enumeration(x$study),
+    "\n"
   ))
 
-  cat("\nSubjects per domain:\n")
-  temp <- x$domains
-  cat(paste0(df_to_string(x$domains,
-    color = color, indent = indent,
-    show_none = TRUE
-  ), "\n\n"))
+  # cat(paste(
+  #   " with", n,
+  #   "subjects providing PC data.\n"
+  # ))
+
+  # cat("\nSubjects per domain:\n")
+  # temp <- x$domains
+  # cat(paste0(df_to_string(x$domains,
+  #   color = color, indent = indent,
+  #   show_none = TRUE
+  # ), "\n\n"))
+
+  cat("\nData disposition\n")
+  cat(df_to_string(x$disposition))
+  cat("\n\n")
 
   cat("Arms (DM):\n")
   cat(paste0(df_to_string(x$arms,
@@ -294,44 +300,54 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
     show_none = TRUE
   ), "\n\n"))
 
-  cat("Treatments (EX):\n")
-  temp <- paste0(" ", x$treatments, collapse = ", ")
-  temp <- ifelse(temp == "", " (none)", temp)
-  cat(temp, "\n\n")
+  if("ex" %in% tolower(x$disposition$DOMAIN)) {
+    cat("Treatments (EX):\n")
+    temp <- paste0(" ", x$treatments, collapse = ", ")
+    temp <- ifelse(temp == "", " (none)", temp)
+    cat(temp, "\n\n")
+  }
 
-  cat("PK sample specimens (PC):\n")
-  temp <- paste0(x$specimens, collapse = ", ")
-  temp <- ifelse(temp == "", " (none)", temp)
-  cat(temp, "\n\n")
+  if("pc" %in% tolower(x$disposition$DOMAIN)) {
+    cat("PK sample specimens (PC):\n")
+    temp <- paste0(x$specimens, collapse = ", ")
+    temp <- ifelse(temp == "", " (none)", temp)
+    cat(temp, "\n\n")
 
-  cat("PK analytes (PC):\n")
-  cat(df_to_string(x$analytes,
-    color = color, indent = indent,
-    show_none = TRUE
-  ), "\n\n")
-
-  if (nrow(x$analyte_mapping) != 0) {
-    cat("Treatment-to-analyte mappings:\n")
-    cat(df_to_string(x$analyte_mapping,
+    cat("PK analytes (PC):\n")
+    cat(df_to_string(x$analytes,
       color = color, indent = indent,
       show_none = TRUE
     ), "\n\n")
   }
 
-  if (nrow(x$metabolite_mapping) != 0) {
-    cat("Parent-to-metabolite mappings:\n")
-    cat(df_to_string(x$metabolite_mapping,
-      color = color, indent = indent,
-      show_none = TRUE
-    ), "\n\n")
+  if("analyte_mapping" %in% names(x)) {
+    if (nrow(x$analyte_mapping) != 0) {
+      cat("Treatment-to-analyte mappings:\n")
+      cat(df_to_string(x$analyte_mapping,
+        color = color, indent = indent,
+        show_none = TRUE
+      ), "\n\n")
+    }
   }
 
-  if (nrow(x$time_mapping) != 0) {
-    cat("Time mappings:\n")
-    cat(df_to_string(x$time_mapping,
-      color = color, indent = indent,
-      show_none = TRUE
-    ), "\n\n")
+  if("metabolite_mapping" %in% names(x)) {
+    if (nrow(x$metabolite_mapping) != 0) {
+      cat("Parent-to-metabolite mappings:\n")
+      cat(df_to_string(x$metabolite_mapping,
+        color = color, indent = indent,
+        show_none = TRUE
+      ), "\n\n")
+    }
+  }
+
+  if("time_mapping" %in% names(x)) {
+    if (nrow(x$time_mapping) != 0) {
+      cat("Time mappings:\n")
+      cat(df_to_string(x$time_mapping,
+        color = color, indent = indent,
+        show_none = TRUE
+      ), "\n\n")
+    }
   }
 
   invisible(x)

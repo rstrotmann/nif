@@ -474,6 +474,7 @@ plural <- function(word, plural) {
   exceptions = tribble(
     ~singular, ~plural,
     "study", "studies",
+    "Study", "Studies"
   )
   if(plural) {
     if(word %in% exceptions$singular)

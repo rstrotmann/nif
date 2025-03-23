@@ -40,7 +40,7 @@ test_that("summary.sdtm handles valid SDTM objects correctly", {
   # Check key properties
   expect_equal(result$study, "STUDY-001")
   expect_equal(length(result$subjects), 2)
-  expect_equal(nrow(result$domains), 3)
+  expect_equal(nrow(result$disposition), 3)
   expect_equal(length(result$treatments), 1)
   expect_equal(nrow(result$arms), 2)
   expect_equal(nrow(result$doses), 2)
@@ -168,7 +168,7 @@ test_that("summary.sdtm handles empty data frames", {
   expect_s3_class(result, "summary_sdtm")
   expect_equal(length(result$study), 0)
   expect_equal(length(result$subjects), 0)
-  expect_equal(nrow(result$domains), 2)
+  expect_equal(nrow(result$disposition), 2)
 
   # Check print method still works
   expect_output(print(result), "SDTM data set summary")
@@ -289,3 +289,4 @@ test_that("summary.sdtm handles objects with complete mapping data", {
   expect_output(print(result), "Parent-to-metabolite mappings")
   expect_output(print(result), "Time mappings")
 })
+
