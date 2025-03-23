@@ -161,18 +161,6 @@ summary.sdtm <- function(object, ...) {
   out <- list(
     study = character(0),
     subjects = character(0),
-    # domains = data.frame(
-    #   DOMAIN = names(object$domains),
-    #   N = as.numeric(lapply(
-    #     object$domains, function(x) {
-    #       if("USUBJID" %in% colnames(x)) {
-    #         length(unique(x$USUBJID))
-    #       } else {
-    #         0
-    #       }
-    #     }
-    #   ))
-    # ),
     treatments = character(0),
     arms = data.frame(ACTARMCD = character(0), ACTARM = character(0)),
     doses = data.frame(EXTRT = character(0), EXDOSE = numeric(0)),
@@ -264,34 +252,20 @@ summary.sdtm <- function(object, ...) {
 #' @export
 #' @noRd
 print.summary_sdtm <- function(x, color = FALSE, ...) {
+  indent <- 2
   hline <- paste0(rep("-", 8), collapse = "")
-  indent <- 1
-
-  # n <- filter(x$domains, DOMAIN == "pc")$N
-  # if (length(n) == 0) n <- 0
+  spacer <- paste0(rep(" ", indent), collapse = "")
 
   cat(paste(hline, "SDTM data set summary", hline, "\n"))
-  # cat(paste("Study", x$study))
   cat(paste(
     plural("Study", length(x$study) > 1),
     nice_enumeration(x$study),
     "\n"
   ))
 
-  # cat(paste(
-  #   " with", n,
-  #   "subjects providing PC data.\n"
-  # ))
-
-  # cat("\nSubjects per domain:\n")
-  # temp <- x$domains
-  # cat(paste0(df_to_string(x$domains,
-  #   color = color, indent = indent,
-  #   show_none = TRUE
-  # ), "\n\n"))
-
   cat("\nData disposition\n")
-  cat(df_to_string(x$disposition))
+  cat(df_to_string(x$disposition,
+                   color = color, indent = indent))
   cat("\n\n")
 
   cat("Arms (DM):\n")
@@ -302,16 +276,19 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 
   if("ex" %in% tolower(x$disposition$DOMAIN)) {
     cat("Treatments (EX):\n")
-    temp <- paste0(" ", x$treatments, collapse = ", ")
-    temp <- ifelse(temp == "", " (none)", temp)
-    cat(temp, "\n\n")
+    temp <- paste0(
+      # spacer,
+      str_trim(x$treatments),
+      collapse = ", ")
+    temp <- ifelse(temp == "", "none", temp)
+    cat(paste0(spacer, temp, "\n\n"))
   }
 
   if("pc" %in% tolower(x$disposition$DOMAIN)) {
     cat("PK sample specimens (PC):\n")
     temp <- paste0(x$specimens, collapse = ", ")
-    temp <- ifelse(temp == "", " (none)", temp)
-    cat(temp, "\n\n")
+    temp <- ifelse(temp == "", "none", temp)
+    cat(paste0(spacer, temp, "\n\n"))
 
     cat("PK analytes (PC):\n")
     cat(df_to_string(x$analytes,
