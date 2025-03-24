@@ -1,4 +1,3 @@
-
 test_that("guess_ntime works", {
   # Create a proper SDTM object for testing
   pc_data <- tribble(
@@ -94,6 +93,47 @@ test_that("suggest_sdtm works", {
   )
 })
 
+
+test_that("suggest throws error when required domains are missing", {
+  # Create test data with missing PC domain
+  skip_if_not_installed("nif")
+  # Import function if possible
+  if(!exists("suggest", envir = .GlobalEnv)) {
+    tryCatch({
+      # Try to make function available
+      library(nif)
+    }, error = function(e) {
+      skip("Package nif functions not available")
+    })
+  }
+
+  test_data <- list(
+    domains = list(
+      dm = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "DM"),
+      ex = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "EX", EXTRT = "TEST")
+    )
+  )
+  class(test_data) <- c("sdtm", "list")
+
+  expect_error(
+    suggest(test_data),
+    "Domains DM, EX and PC must be present!"
+  )
+
+  # Create test data with missing EX domain
+  test_data <- list(
+    domains = list(
+      dm = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "DM"),
+      pc = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "PC", PCTEST = "TEST", PCTESTCD = "TEST")
+    )
+  )
+  class(test_data) <- c("sdtm", "list")
+
+  expect_error(
+    suggest(test_data),
+    "Domains DM, EX and PC must be present!"
+  )
+})
 
 
 test_that("subject_info works", {
