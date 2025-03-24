@@ -217,7 +217,6 @@ make_observation <- function(
 
   filtered_obj <- obj %>%
     mutate(SRC_DOMAIN = .data$DOMAIN) %>%
-    # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
     {if(paste0(toupper(domain), "SEQ") %in% names(obj))
       mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
         mutate(., SRC_SEQ = NA)} %>%
@@ -228,7 +227,7 @@ make_observation <- function(
     stop("The observation_filter '", observation_filter, "' returned no entries.")
   }
 
-  filtered_obj %>%
+  out <- filtered_obj %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
       DTC = .data[[DTC_field]],
@@ -241,30 +240,26 @@ make_observation <- function(
       METABOLITE = metabolite,
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
-      IMPUTATION = "") %>%
+      IMPUTATION = "")
 
-    {if(!is.null(NTIME_lookup)) {
-      # Capture any join messages/warnings
-      join_msgs <- capture.output(type = "message", {
-        result <- left_join(., NTIME_lookup)
-      })
-      # if(length(join_msgs) > 0) {
-      #   conditional_message(
-      #     "Warnings during NTIME_lookup join: ",
-      #     paste(join_msgs, collapse = "\n"),
-      #     silent = silent)
-      # }
-      result
-    } else mutate(., NTIME = NA)} %>%
+  join_variables <- intersect(names(NTIME_lookup), names(obj))
 
+  if(!is.null(NTIME_lookup)) {
+      out <- left_join(out, NTIME_lookup, by = join_variables)
+  } else {
+    out <- out %>%
+      mutate(NTIME = NA)
+  }
+
+  out <- out %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days") + 1) %>%
     ungroup() %>%
     filter(!is.na(.data$DTC))
+  return(out)
 }
 
 
