@@ -284,7 +284,7 @@ isofy_dates <- function(obj) {
 #' Test whether string represents ISO 8601-formatted date-time
 #'
 #' The expected format is "dddd-dd-ddTdd:dd" with "d" a digit. This function
-#' tests whether the above is part of the input, i.e., dat-time formats that
+#' tests whether the above is part of the input, i.e., date-time formats that
 #' also include seconds information are also recognized.
 #' @param x The input as character.
 #' @return Boolean.
@@ -619,6 +619,170 @@ coalesce_join <- function(
 trialday_to_day <- function(x) {
   if(any(x[which(!is.na(x))] == 0)) stop("Trial day cannot be zero!")
   return(x + (x > 0) * -1)
+}
+
+
+#' Check if a string matches ISO 8601 date-time format
+#'
+#' This function checks whether a character string complies with the ISO 8601
+#' standard for date-time representation (combined date and time). Unlike the more
+#' general `is_iso8601_format()` function, this specifically checks for the
+#' presence of both date and time components.
+#'
+#' Valid formats include:
+#' - Extended format with separators: "2023-10-15T14:30:00"
+#' - Basic format without separators: "20231015T143000"
+#' - With timezone information: "2023-10-15T14:30:00Z" or "2023-10-15T14:30:00+02:00"
+#' - With fractional seconds: "2023-10-15T14:30:00.123"
+#' - Using space instead of T separator: "2023-10-15 14:30:00" (non-strict mode only)
+#'
+#' @param x A character string or vector of strings to check.
+#' @param strict Logical, whether to strictly enforce ISO 8601 specification. Default is FALSE,
+#'   which allows some common variations like space instead of 'T' separator.
+#'
+#' @return Logical value indicating whether the string is in ISO 8601 date-time format.
+#' @export
+#'
+#' @examples
+#' is_iso8601_datetime("2023-10-15T14:30:00")        # TRUE
+#' is_iso8601_datetime("2023-10-15 14:30:00")        # TRUE (with default strict=FALSE)
+#' is_iso8601_datetime("2023-10-15 14:30:00", TRUE)  # FALSE (with strict=TRUE)
+#' is_iso8601_datetime("2023-10-15T14:30:00Z")       # TRUE
+#' is_iso8601_datetime("2023-10-15T14:30:00+02:00")  # TRUE
+#' is_iso8601_datetime("20231015T143000")            # TRUE
+#' is_iso8601_datetime("2023-10-15")                 # FALSE (no time component)
+#' is_iso8601_datetime("14:30:00")                   # FALSE (no date component)
+is_iso8601_datetime <- function(x, strict = FALSE) {
+  if (!is.character(x)) {
+    stop("Input must be a character string")
+  }
+
+  # If x is NA, return NA
+  if (length(x) == 1 && is.na(x)) {
+    return(NA)
+  }
+
+  # Date patterns
+  date_extended <- "\\d{4}-\\d{2}-\\d{2}"  # YYYY-MM-DD
+  date_basic <- "\\d{4}\\d{2}\\d{2}"       # YYYYMMDD
+
+  # Time patterns
+  time_extended <- "\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?"  # HH:MM:SS(.sss)
+  time_basic <- "\\d{2}\\d{2}\\d{2}(?:\\.\\d+)?"       # HHMMSS(.sss)
+
+  # Timezone pattern
+  timezone <- "(?:Z|[+-]\\d{2}(?::\\d{2}|\\d{2}))?"
+
+  # Separators
+  strict_separator <- "T"
+  relaxed_separator <- "[ T]"
+  separator <- if(strict) strict_separator else relaxed_separator
+
+  # Combined patterns
+  # Extended format: YYYY-MM-DDThh:mm:ss(.sss)(Z|±hh:mm)
+  datetime_extended <- paste0(
+    "^", date_extended, separator, time_extended, timezone, "$"
+  )
+
+  # Basic format: YYYYMMDDThhmmss(.sss)(Z|±hhmm)
+  datetime_basic <- paste0(
+    "^", date_basic, strict_separator, time_basic, timezone, "$"
+  )
+
+  # Mix of extended date with basic time: YYYY-MM-DDThhmmss(.sss)(Z|±hhmm)
+  datetime_mixed1 <- paste0(
+    "^", date_extended, separator, time_basic, timezone, "$"
+  )
+
+  # Mix of basic date with extended time: YYYYMMDDThh:mm:ss(.sss)(Z|±hh:mm)
+  datetime_mixed2 <- paste0(
+    "^", date_basic, strict_separator, time_extended, timezone, "$"
+  )
+
+  # For each element in the input vector
+  result <- sapply(x, function(str) {
+    if (is.na(str)) return(NA)
+
+    # Check if the string matches any of the patterns
+    grepl(datetime_extended, str) ||
+    grepl(datetime_basic, str) ||
+    grepl(datetime_mixed1, str) ||
+    grepl(datetime_mixed2, str)
+  })
+
+  return(as.logical(result))
+}
+
+
+#' Check if a string matches ISO 8601 date format
+#'
+#' This function checks whether a character string complies with the ISO 8601
+#' standard for date representation (without time components). Unlike the more
+#' general `is_iso8601_format()` function or the `is_iso8601_datetime()` function,
+#' this specifically validates date-only formats.
+#'
+#' Valid formats include:
+#' - Extended format with separators: "2023-10-15"
+#' - Basic format without separators: "20231015"
+#' - Reduced precision (year-month): "2023-10" or "202310"
+#' - Reduced precision (year only): "2023"
+#'
+#' @param x A character string or vector of strings to check.
+#' @param allow_reduced_precision Logical, whether to allow reduced precision formats
+#'   (year-month or year only). Default is TRUE.
+#'
+#' @return Logical value indicating whether the string is in ISO 8601 date format.
+#' @export
+#'
+#' @examples
+#' is_iso8601_date("2023-10-15")                  # TRUE
+#' is_iso8601_date("20231015")                    # TRUE
+#' is_iso8601_date("2023-10")                     # TRUE (with default allow_reduced_precision=TRUE)
+#' is_iso8601_date("2023")                        # TRUE (with default allow_reduced_precision=TRUE)
+#' is_iso8601_date("2023-10", FALSE)              # FALSE (with allow_reduced_precision=FALSE)
+#' is_iso8601_date("2023/10/15")                  # FALSE (not ISO 8601 format)
+#' is_iso8601_date("2023-10-15T14:30:00")         # FALSE (has time component)
+is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
+  if (!is.character(x)) {
+    stop("Input must be a character string")
+  }
+  
+  # If x is NA, return NA
+  if (length(x) == 1 && is.na(x)) {
+    return(NA)
+  }
+  
+  # Date patterns
+  date_extended <- "^\\d{4}-\\d{2}-\\d{2}$"  # YYYY-MM-DD
+  date_basic <- "^\\d{4}\\d{2}\\d{2}$"       # YYYYMMDD
+  
+  # Reduced precision date patterns (if allowed)
+  year_month_extended <- "^\\d{4}-\\d{2}$"   # YYYY-MM
+  year_month_basic <- "^\\d{4}\\d{2}$"       # YYYYMM
+  year_only <- "^\\d{4}$"                    # YYYY
+  
+  # For each element in the input vector
+  result <- sapply(x, function(str) {
+    if (is.na(str)) return(NA)
+    
+    # Check if the string matches full date patterns
+    is_full_date <- grepl(date_extended, str) || grepl(date_basic, str)
+    
+    # If it's a full date or we don't allow reduced precision, return result
+    if (is_full_date || !allow_reduced_precision) {
+      return(is_full_date)
+    }
+    
+    # Otherwise also check reduced precision formats
+    is_reduced_precision <- grepl(year_month_extended, str) || 
+                            grepl(year_month_basic, str) || 
+                            grepl(year_only, str)
+    
+    return(is_full_date || is_reduced_precision)
+  })
+  
+  # Ensure logical return type
+  return(as.logical(result))
 }
 
 

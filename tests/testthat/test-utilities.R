@@ -342,4 +342,129 @@ test_that("trialday_to_day works", {
 })
 
 
+test_that("is_iso8601_datetime correctly identifies ISO 8601 date-time formats", {
+  # Valid formats
+  expect_true(is_iso8601_datetime("2023-10-15T14:30:00"))
+  expect_true(is_iso8601_datetime("2023-10-15 14:30:00"))
+  expect_true(is_iso8601_datetime("2023-10-15T14:30:00Z"))
+  expect_true(is_iso8601_datetime("2023-10-15T14:30:00+02:00"))
+  expect_true(is_iso8601_datetime("2023-10-15T14:30:00-07:00"))
+  expect_true(is_iso8601_datetime("2023-10-15T14:30:00+0200"))
+  expect_true(is_iso8601_datetime("2023-10-15T14:30:00.123"))
+  expect_true(is_iso8601_datetime("20231015T143000"))
+  expect_true(is_iso8601_datetime("20231015T143000Z"))
+  expect_true(is_iso8601_datetime("20231015T143000.123"))
+
+  # Mixed formats
+  expect_true(is_iso8601_datetime("2023-10-15T143000"))
+  expect_true(is_iso8601_datetime("20231015T14:30:00"))
+
+  # Strict mode tests
+  expect_true(is_iso8601_datetime("2023-10-15T14:30:00", strict = TRUE))
+  expect_false(is_iso8601_datetime("2023-10-15 14:30:00", strict = TRUE))
+
+  # Invalid date-time formats
+  expect_false(is_iso8601_datetime("2023-10-15")) # Date only
+  expect_false(is_iso8601_datetime("14:30:00")) # Time only
+  expect_false(is_iso8601_datetime("2023/10/15T14:30:00")) # Wrong date format
+  expect_false(is_iso8601_datetime("2023-10-15T14.30.00")) # Wrong time format
+  expect_false(is_iso8601_datetime("2023-10-15 at 14:30:00")) # Wrong separator
+  expect_false(is_iso8601_datetime("2023-10-15T14:30")) # Missing seconds
+  expect_false(is_iso8601_datetime("Not a datetime")) # Not a datetime
+  expect_false(is_iso8601_datetime("")) # Empty string
+
+  # Input validation
+  expect_error(is_iso8601_datetime(123), "Input must be a character string")
+  expect_error(is_iso8601_datetime(Sys.time()), "Input must be a character string")
+
+  # NA handling
+  expect_true(is.na(is_iso8601_datetime(NA_character_)))
+})
+
+
+test_that("is_iso8601_datetime works with vectors", {
+  test_datetimes <- c(
+    "2023-10-15T14:30:00",     # Valid ISO format with T separator
+    "2023-10-15 14:30:00",     # Valid ISO format with space separator
+    "20231015T143000",         # Valid ISO basic format
+    "2023-10-15",              # Date only - invalid for date-time
+    "14:30:00",                # Time only - invalid for date-time
+    "2023/10/15T14:30:00",     # Invalid date format
+    NA_character_              # NA
+  )
+
+  expected_results <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, NA)
+
+  # Test vector input
+  results <- is_iso8601_datetime(test_datetimes)
+  expect_equal(results, expected_results)
+})
+
+
+test_that("is_iso8601_date correctly identifies ISO 8601 date formats", {
+  # Valid full date formats
+  expect_true(is_iso8601_date("2023-10-15"))
+  expect_true(is_iso8601_date("20231015"))
+
+  # Valid reduced precision formats (allowed by default)
+  expect_true(is_iso8601_date("2023-10"))
+  expect_true(is_iso8601_date("202310"))
+  expect_true(is_iso8601_date("2023"))
+
+  # Test with allow_reduced_precision = FALSE
+  expect_false(is_iso8601_date("2023-10", allow_reduced_precision = FALSE))
+  expect_false(is_iso8601_date("202310", allow_reduced_precision = FALSE))
+  expect_false(is_iso8601_date("2023", allow_reduced_precision = FALSE))
+
+  # Invalid date formats
+  expect_false(is_iso8601_date("2023/10/15"))
+  expect_false(is_iso8601_date("10/15/2023"))
+  expect_false(is_iso8601_date("15-Oct-2023"))
+  expect_false(is_iso8601_date("23-10-15"))
+  expect_false(is_iso8601_date("2023.10.15"))
+  expect_false(is_iso8601_date("Not a date"))
+  expect_false(is_iso8601_date(""))
+
+  # Date with time component (should be false for date-only function)
+  expect_false(is_iso8601_date("2023-10-15T14:30:00"))
+  expect_false(is_iso8601_date("20231015T143000"))
+  expect_false(is_iso8601_date("2023-10-15 14:30:00"))
+
+  # Input validation
+  expect_error(is_iso8601_date(123), "Input must be a character string")
+  expect_error(is_iso8601_date(Sys.Date()), "Input must be a character string")
+
+  # NA handling
+  expect_true(is.na(is_iso8601_date(NA_character_)))
+})
+
+
+test_that("is_iso8601_date works with vectors", {
+  test_dates <- c(
+    "2023-10-15",        # Valid extended format
+    "20231015",          # Valid basic format
+    "2023-10",           # Valid reduced precision (year-month)
+    "2023",              # Valid reduced precision (year)
+    "2023/10/15",        # Invalid format
+    "2023-10-15T14:30",  # Has time component (invalid for date-only)
+    "",                  # Empty string
+    NA_character_        # NA
+  )
+
+  # With default settings (allow_reduced_precision = TRUE)
+  expected_results <- c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, NA)
+
+  # Test vector input
+  results <- is_iso8601_date(test_dates)
+  expect_equal(results, expected_results)
+
+  # With allow_reduced_precision = FALSE
+  expected_results_strict <- c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NA)
+
+  # Test vector input with strict settings
+  results_strict <- is_iso8601_date(test_dates, allow_reduced_precision = FALSE)
+  expect_equal(results_strict, expected_results_strict)
+})
+
+
 

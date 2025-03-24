@@ -484,7 +484,6 @@ domain <- function(obj, name) {
   name_lower <- tolower(name)
 
   # Check if domain exists
-  # if (!name_lower %in% names(obj$domains)) {
   if(!has_domain(obj, name_lower)) {
     stop("Domain '", name, "' not found in SDTM object")
   }
@@ -865,12 +864,27 @@ make_subjects_sdtm <- function(obj, ...) {
 #' @examples
 #' guess_ntime(examplinib_poc)
 guess_ntime <- function(sdtm) {
-  # Use domain() function instead of direct access to sdtm$pc
   if (!has_domain(sdtm, "pc")) {
     stop("PC domain not found in SDTM object")
   }
+  pc_domain <- domain(sdtm, "pc")
 
-  domain(sdtm, "pc") %>%
+  # Check if PCTPT column exists in the PC domain
+  if (!"PCTPT" %in% colnames(pc_domain)) {
+    stop("PCTPT column not found in PC domain. Cannot extract nominal times.")
+  }
+
+  # Check if any PCTPT entries are in ISO 8601 date format
+  iso_date_entries <- is_iso8601_date(pc_domain$PCTPT)
+  if(any(iso_date_entries, na.rm = TRUE)) {
+    iso_date_values <- unique(pc_domain$PCTPT[iso_date_entries])
+    warning("Some PCTPT entries are in ISO 8601 date format (e.g., ",
+            paste(head(iso_date_values, 3), collapse = ", "),
+            if(length(iso_date_values) > 3) "..." else "",
+            "). These date-only values may not have extractable time information.")
+  }
+
+  pc_domain %>%
     distinct(.data$PCTPT) %>%
     mutate(time = str_extract(tolower(.data$PCTPT),
       "([0-9.]+)\\s*(h)",

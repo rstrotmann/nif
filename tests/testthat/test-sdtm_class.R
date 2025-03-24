@@ -214,3 +214,35 @@ test_that("derive_sld works with multiple diagnostic methods", {
 })
 
 
+test_that("guess_ntime warns about ISO 8601 date formats", {
+  pc_data_with_dates <- tibble::tribble(
+    ~USUBJID,             ~PCTPT, ~PCSTRESN,
+    "SUBJ-001",       "2023-10-15",     120.5, # ISO 8601 date
+    "SUBJ-001",         "20231015",     125.2, # ISO 8601 basic date
+    "SUBJ-001",          "2023-10",     130.1, # ISO 8601 year-month
+    "SUBJ-001",          "PREDOSE",       0.1, # Normal PCTPT
+    "SUBJ-001",     "4H POST-DOSE",     190.5, # Normal PCTPT
+    "SUBJ-001", "8 HOUR POST DOSE",     210.3 # Normal PCTPT
+  )
+
+  # Create a SDTM object with the test data
+  test_sdtm_with_dates <- new_sdtm(list(pc = pc_data_with_dates))
+
+  # Test that the function warns about ISO 8601 dates
+  expect_warning(
+    result <- guess_ntime(test_sdtm_with_dates),
+    "ISO 8601 date format"
+  )
+
+  # Check that the function still produces results for non-date PCTPT values
+  expect_equal(result$NTIME[result$PCTPT == "PREDOSE"], 0)
+  expect_equal(result$NTIME[result$PCTPT == "4H POST-DOSE"], 4)
+  expect_equal(result$NTIME[result$PCTPT == "8 HOUR POST DOSE"], 8)
+
+  # Check that ISO 8601 date values have NA for NTIME (since they don't contain time info)
+  expect_true(is.na(result$NTIME[result$PCTPT == "2023-10-15"]))
+  expect_true(is.na(result$NTIME[result$PCTPT == "20231015"]))
+  expect_true(is.na(result$NTIME[result$PCTPT == "2023-10"]))
+})
+
+
