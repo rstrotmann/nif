@@ -500,8 +500,8 @@ domain <- function(obj, name) {
 #' Check whether a domain is present in an SDTM object
 #'
 #' @param obj The sdtm object.
-#' @param name The domain name to check as a single character string.
-#' @return Logical indicating whether the domain exists in the SDTM object.
+#' @param name The domain name(s) to check as a character string or vector.
+#' @return Logical indicating whether all specified domains exist in the SDTM object.
 #' @export
 #' @examples
 #' # Check if DM domain exists
@@ -509,6 +509,9 @@ domain <- function(obj, name) {
 #'
 #' # Check if a non-existent domain exists
 #' has_domain(examplinib_fe, "xyz")
+#'
+#' # Check if multiple domains exist
+#' has_domain(examplinib_fe, c("dm", "vs"))
 has_domain <- function(obj, name) {
   # Input validation
   if (!inherits(obj, "sdtm")) {
@@ -519,16 +522,11 @@ has_domain <- function(obj, name) {
     stop("'name' must be a non-empty character vector")
   }
 
-  # Ensure name is a single value
-  if (length(name) > 1) {
-    stop("'name' must be a single domain name, not a vector of multiple names")
-  }
-
-  # Normalize domain name to lowercase
-  name_lower <- tolower(name)
-
-  # Check if domain exists
-  return(name_lower %in% names(obj$domains))
+  # Normalize domain names to lowercase
+  names_lower <- tolower(name)
+  
+  # Check if all domains exist
+  all(names_lower %in% names(obj$domains))
 }
 
 
@@ -563,7 +561,7 @@ subject_info.sdtm <- function(obj, id) {
 }
 
 
-#' Suggest data programming steps for a sdtm object
+#' Suggest data programming steps to generate a nif object from an sdtm object
 #'
 #' @param consider_nif_auto Include suggestions regarding parent or metabolite
 #'   mappings to the sdtm object, as logical.

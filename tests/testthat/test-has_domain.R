@@ -63,7 +63,29 @@ test_that("has_domain handles input validation correctly", {
 })
 
 
-test_that("both functions reject vectors with multiple names", {
+test_that("has_domain handles multiple domain names correctly", {
+  # Create a simple SDTM object for testing
+  test_data <- list(
+    domains = list(
+      dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM"),
+      pc = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "PC"),
+      ex = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "EX")
+    )
+  )
+  class(test_data) <- c("sdtm", "list")
+
+  # Test with multiple existing domains
+  expect_true(has_domain(test_data, c("dm", "pc")))
+  expect_true(has_domain(test_data, c("dm", "pc", "ex")))
+  
+  # Test with mixture of existing and non-existing domains
+  expect_false(has_domain(test_data, c("dm", "nonexistent")))
+  expect_false(has_domain(test_data, c("nonexistent", "dm")))
+  expect_false(has_domain(test_data, c("dm", "pc", "nonexistent")))
+})
+
+
+test_that("domain() rejects vectors with multiple names", {
   # Create a simple SDTM object for testing
   test_data <- list(
     domains = list(
@@ -72,12 +94,6 @@ test_that("both functions reject vectors with multiple names", {
     )
   )
   class(test_data) <- c("sdtm", "list")
-
-  # has_domain() rejects vectors with multiple names
-  expect_error(has_domain(test_data, c("dm", "nonexistent")),
-               "'name' must be a single domain name, not a vector of multiple names")
-  expect_error(has_domain(test_data, c("nonexistent", "dm")),
-               "'name' must be a single domain name, not a vector of multiple names")
 
   # domain() rejects vectors with multiple names
   expect_error(domain(test_data, c("dm", "pc")),
