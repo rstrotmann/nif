@@ -14,7 +14,7 @@ Boolean.
 }
 \description{
 The expected format is "dddd-dd-ddTdd:dd" with "d" a digit. This function
-tests whether the above is part of the input, i.e., dat-time formats that
+tests whether the above is part of the input, i.e., date-time formats that
 also include seconds information are also recognized.
 }
 \examples{

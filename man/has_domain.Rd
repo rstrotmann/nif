@@ -9,10 +9,10 @@ has_domain(obj, name)
 \arguments{
 \item{obj}{The sdtm object.}
 
-\item{name}{The domain name to check as a single character string.}
+\item{name}{The domain name(s) to check as a character string or vector.}
 }
 \value{
-Logical indicating whether the domain exists in the SDTM object.
+Logical indicating whether all specified domains exist in the SDTM object.
 }
 \description{
 Check whether a domain is present in an SDTM object
@@ -23,4 +23,7 @@ has_domain(examplinib_fe, "dm")
 
 # Check if a non-existent domain exists
 has_domain(examplinib_fe, "xyz")
+
+# Check if multiple domains exist
+has_domain(examplinib_fe, c("dm", "vs"))
 }

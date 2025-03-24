@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{suggest}
 \alias{suggest}
-\title{Suggest data programming steps for a sdtm object}
+\title{Suggest data programming steps to generate a nif object from an sdtm object}
 \usage{
 suggest(obj, consider_nif_auto = FALSE)
 }
@@ -13,7 +13,7 @@ suggest(obj, consider_nif_auto = FALSE)
 mappings to the sdtm object, as logical.}
 }
 \description{
-Suggest data programming steps for a sdtm object
+Suggest data programming steps to generate a nif object from an sdtm object
 }
 \examples{
 suggest(examplinib_poc)
