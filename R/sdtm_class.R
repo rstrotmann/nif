@@ -886,10 +886,29 @@ guess_ntime <- function(sdtm) {
 
   pc_domain %>%
     distinct(.data$PCTPT) %>%
-    mutate(time = str_extract(tolower(.data$PCTPT),
-      "([0-9.]+)\\s*(h)",
-      group = 1
-    )) %>%
+    mutate(
+      # Extract time using multiple patterns
+      time = case_when(
+        # Pattern 1: Number followed by h, hr, hrs, hour, hours (with optional space)
+        !is.na(str_extract(tolower(.data$PCTPT),
+                           "([0-9.]+)\\s*(?:h|hr|hrs|hour|hours)",
+                           group = 1)) ~
+          str_extract(tolower(.data$PCTPT),
+                     "([0-9.]+)\\s*(?:h|hr|hrs|hour|hours)",
+                     group = 1),
+        
+        # Pattern 2: HOUR(S) followed by number
+        !is.na(str_extract(tolower(.data$PCTPT),
+                           "(?:hour|hours)\\s*([0-9.]+)",
+                           group = 1)) ~
+          str_extract(tolower(.data$PCTPT),
+                     "(?:hour|hours)\\s*([0-9.]+)",
+                     group = 1),
+        
+        # Default: No time found
+        TRUE ~ NA_character_
+      )
+    ) %>%
     mutate(pre = str_match(tolower(.data$PCTPT), "pre") == "pre") %>%
     mutate(NTIME = case_when(
       is.na(.data$time) & pre == TRUE ~ 0,
