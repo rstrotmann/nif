@@ -1,33 +1,61 @@
 #' Filter out any rows containing DTC rows with incomplete data format as per
-#' ISO 8601
+#' ISO 8601.
+#'
+#' NA values and empty strings are preserved.
 #'
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
-#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
-#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
-#' suppress messages.
+#' @param silent Suppress messages, defaults to nif_option settin, if NULL.
 #'
 #' @return The filtered SDTM domain as data frame.
 #' @keywords internal
 #' @export
-filter_correct_date_format <- function(obj, verbose = TRUE,
-                                       silent = deprecated()) {
-  domain <- obj %>% distinct(DOMAIN)
+filter_correct_date_format <- function(
+    obj,
+    verbose = TRUE,
+    silent = NULL
+    ) {
+  # Input validation
+  if (!is.data.frame(obj)) {
+    stop("Input must be a data frame")
+  }
+
+  if (!"DOMAIN" %in% names(obj)) {
+    out <- ""
+  } else {
+    out <- paste0(unique(obj$DOMAIN), ": ")
+  }
+
+  # domain <- obj %>% distinct(DOMAIN)
+
+  # Find rows with invalid date formats
   temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == "")))
+    filter(if_any(ends_with("DTC"), ~ !(is_iso8601_date(.) | is.na(.) | . == "")))
 
   if (nrow(temp) > 0) {
     out <- paste0(
-      domain, ": ", nrow(temp),
-      " rows containing DTC fields with incomplete date format ignored!"
-    )
-    if (verbose && !get("silent", .nif_env)) {
-      out <- paste0(out, "\n")
+     out,
+     nrow(temp),
+     " rows containing DTC fields with incomplete date format were ignored!")
+
+    if (verbose) {
+      out <- paste0(
+        out, "\n",
+        df_to_string(
+          select(
+            temp,
+            any_of(c("USUBJID", "DOMAIN", ends_with("DTC")))),
+            indent = 2
+            )
+        )
     }
-    message(out)
+    conditional_message(out, silent = silent)
+
+    # Filter out invalid rows
     obj <- obj %>%
-      filter(if_all(ends_with("DTC"), ~ (is_iso_date(.) | . == "")))
+      filter(if_all(ends_with("DTC"), ~ (is_iso8601_date(.) | is.na(.) | . == "")))
   }
+
   return(obj)
 }
 
