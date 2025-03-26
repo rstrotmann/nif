@@ -202,3 +202,125 @@ test_that("filter_correct_date_format handles multiple DTC columns correctly", {
   expect_equal(result$USUBJID, "SUBJ-001")
 })
 
+
+test_that("check_missing_time handles valid inputs correctly", {
+  # Create test data with various date formats
+  test_data <- data.frame(
+    USUBJID = c("SUBJ1", "SUBJ2", "SUBJ3"),
+    DOMAIN = "TEST",
+    DTC = c("2024-01-01", "2024-01-01T10:00:00", ""),
+    DTC = c("2024-02-01T15:30:00", "2024-02-01", "2024-02-01T12:00:00")
+  )
+
+  # Test with verbose = TRUE
+  expect_message(
+    result <- check_missing_time(test_data, verbose = TRUE, silent = FALSE),
+    "TEST: Missing time in 1 rows!"
+  )
+
+  # Test with silent = TRUE
+  expect_silent(
+    check_missing_time(test_data, verbose = TRUE, silent = TRUE)
+  )
+})
+
+
+test_that("check_missing_time handles invalid inputs correctly", {
+  # Test with non-dataframe input
+  expect_error(
+    check_missing_time("not a dataframe"),
+    "Input must be a data frame"
+  )
+
+  # Test with dataframe but no DTC columns
+  test_data_no_dtc <- data.frame(
+    USUBJID = c("SUBJ1", "SUBJ2"),
+    DOMAIN = "TEST",
+    OTHER = c("A", "B")
+  )
+  expect_warning(
+    check_missing_time(test_data_no_dtc, silent = FALSE),
+    "No columns ending with 'DTC' found in the input data frame"
+  )
+})
+
+
+test_that("check_missing_time handles empty dataframes correctly", {
+  # Test with empty dataframe
+  empty_df <- data.frame(
+    USUBJID = character(0),
+    DOMAIN = character(0),
+    DTC1 = character(0)
+  )
+
+  expect_warning(
+    check_missing_time(empty_df, silent = FALSE),
+    "No columns ending with 'DTC' found in the input data frame"
+  )
+})
+
+
+test_that("check_missing_time handles different date formats correctly", {
+  # Create test data with various date formats
+  test_data <- data.frame(
+    USUBJID = c("SUBJ1", "SUBJ2", "SUBJ3", "SUBJ4"),
+    DOMAIN = "TEST",
+    DTC = c(
+      "2024-01-01",           # Date only
+      "2024-01-01T10:00:00",  # Full datetime
+      "",                     # Empty string
+      "2024-01-01T"           # Invalid format
+    )
+  )
+
+  # Should only detect missing time in the date-only format
+  expect_message(
+    result <- check_missing_time(test_data, verbose = TRUE, silent = FALSE),
+    "Missing time in 1 rows!"
+  )
+})
+
+
+test_that("check_missing_time preserves input data", {
+  test_data <- data.frame(
+    USUBJID = c("SUBJ1", "SUBJ2"),
+    DOMAIN = "TEST",
+    DTC = c("2024-01-01", "2024-01-01T10:00:00")
+  )
+
+  # Function should return the same data frame
+  result <- check_missing_time(test_data, silent = TRUE)
+  expect_identical(result, test_data)
+})
+
+
+test_that("check_missing_time handles multiple DTC columns correctly", {
+  test_data <- data.frame(
+    USUBJID = c("SUBJ1", "SUBJ2", "SUBJ3"),
+    DOMAIN = "TEST",
+    A_DTC = c("2024-01-01", "2024-01-01T10:00:00", "2024-01-01"),
+    B_DTC = c("2024-02-01", "2024-02-01T15:30:00", "2024-02-01T12:00:00")
+  )
+
+  # Should detect missing time in both DTC columns
+  expect_message(
+    check_missing_time(test_data, verbose = TRUE, silent = FALSE),
+    "Missing time in 2 rows!"
+  )
+})
+
+
+test_that("check_missing_time handles missing DOMAIN column", {
+  test_data <- data.frame(
+    USUBJID = c("SUBJ1", "SUBJ2"),
+    DTC = c("2024-01-01", "2024-01-01T10:00:00")
+  )
+
+  # Should work without DOMAIN column
+  expect_message(
+    check_missing_time(test_data, verbose = TRUE, silent = FALSE),
+    "Missing time in 1 rows!"
+  )
+})
+
+

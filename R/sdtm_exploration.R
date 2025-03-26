@@ -118,24 +118,46 @@ check_date_time_format <- function(obj, verbose = TRUE) {
 #'
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
+#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #' @return The unchanged SDTM domain.
 #' @export
 #' @keywords internal
-check_missing_time <- function(obj, verbose = TRUE) {
-  domain <- obj %>% distinct(DOMAIN)
+check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
+  # Input validation
+  if (!is.data.frame(obj)) {
+    stop("Input must be a data frame")
+  }
+
+  # Check if there are any DTC columns
+  dtc_cols <- names(obj)[endsWith(names(obj), "DTC")]
+
+  if (length(dtc_cols) == 0) {
+    warning("No columns ending with 'DTC' found in the input data frame")
+    return(obj)
+  }
+
+  if (!"DOMAIN" %in% names(obj)) {
+    out <- ""
+  } else {
+    out <- paste0(unique(obj$DOMAIN), ": ")
+  }
+
+  # Find rows with missing time
   temp <- obj %>%
     filter(if_any(
-      ends_with("DTC"),
-      ~ is_iso_date(.) & !(is_iso_date_time(.))
+      all_of(dtc_cols),
+      # ~ (is_iso8601_date(.) | . == "") & !(is_iso8601_datetime(.) | . == "")
+      ~ (is_iso8601_date(.)) & !(is_iso8601_datetime(.))
     )) %>%
-    select(c("USUBJID", "DOMAIN", ends_with("DTC")))
+    select(any_of(c("USUBJID", "DOMAIN", dtc_cols)))
 
   if (nrow(temp) > 0) {
-    out <- paste0(domain, ": Missing time in ", nrow(temp), " rows")
+    out <- paste0(
+      out, "Missing time in ", nrow(temp), " rows!")
     if (verbose) {
-      out <- paste0(out, ":\n", df_to_string(temp), "\n")
+      out <- paste0(out, "\n", df_to_string(temp, indent = 2), "\n")
     }
-    message(out)
+    conditional_message(out, silent = silent)
   }
   return(obj)
 }
