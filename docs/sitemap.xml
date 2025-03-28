@@ -158,6 +158,8 @@
 <url><loc>/reference/index_rich_sampling_intervals.html</loc></url>
 <url><loc>/reference/is_char_date.html</loc></url>
 <url><loc>/reference/is_char_datetime.html</loc></url>
+<url><loc>/reference/is_iso8601_date.html</loc></url>
+<url><loc>/reference/is_iso8601_datetime.html</loc></url>
 <url><loc>/reference/is_iso_date.html</loc></url>
 <url><loc>/reference/is_iso_date_time.html</loc></url>
 <url><loc>/reference/is_likely_datetime.html</loc></url>
