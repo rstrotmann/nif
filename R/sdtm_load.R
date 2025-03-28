@@ -80,7 +80,7 @@ read_sdtm_xpt <- function(data_path, ...) {
 #'   readxl::read_xlsx.
 #' @param delim Deliminator.
 #' @return A `sdtm` object.
-#' @import reads
+#' @import readr
 #' @import haven
 #' @import readxl
 #' @export

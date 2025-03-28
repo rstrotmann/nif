@@ -3,24 +3,21 @@
 \name{filter_correct_date_format}
 \alias{filter_correct_date_format}
 \title{Filter out any rows containing DTC rows with incomplete data format as per
-ISO 8601}
+ISO 8601.}
 \usage{
-filter_correct_date_format(obj, verbose = TRUE, silent = deprecated())
+filter_correct_date_format(obj, verbose = TRUE, silent = NULL)
 }
 \arguments{
 \item{obj}{The SDTM domain as data frame.}
 
 \item{verbose}{Boolean to indicate whether to include details.}
 
-\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
-compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
-suppress messages.}
+\item{silent}{Suppress messages, defaults to nif_option settin, if NULL.}
 }
 \value{
 The filtered SDTM domain as data frame.
 }
 \description{
-Filter out any rows containing DTC rows with incomplete data format as per
-ISO 8601
+NA values and empty strings are preserved.
 }
 \keyword{internal}

@@ -4,12 +4,14 @@
 \alias{check_missing_time}
 \title{Check for missing time in columns ending with "DTC"}
 \usage{
-check_missing_time(obj, verbose = TRUE)
+check_missing_time(obj, verbose = TRUE, silent = NULL)
 }
 \arguments{
 \item{obj}{The SDTM domain as data frame.}
 
 \item{verbose}{Boolean to indicate whether to include details.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting, if NULL.}
 }
 \value{
 The unchanged SDTM domain.
