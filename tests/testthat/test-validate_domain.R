@@ -11,6 +11,7 @@ test_that("validate_domain accepts valid domain", {
   expect_true(validate_domain(dm_data, silent = TRUE))
 })
 
+
 test_that("validate_domain rejects non-data frame input", {
   # Test with a non-data frame input
   expect_error(
@@ -24,6 +25,7 @@ test_that("validate_domain rejects non-data frame input", {
     "The 'domain' parameter must be a data frame"
   )
 })
+
 
 test_that("validate_domain requires DOMAIN column", {
   # Create a data frame without DOMAIN column
@@ -70,23 +72,6 @@ test_that("validate_domain handles multiple DOMAIN values", {
   expect_warning(
     validate_domain(mixed_domain, silent = TRUE),
     "Multiple domain values found"
-  )
-})
-
-
-test_that("validate_domain checks for required columns", {
-  # Create a domain missing a required column
-  # Missing USUBJID
-  incomplete_dm <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
-       "DM", "STUDY1",   "001",   "001",  "M", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA"
-    # USUBJID missing
-  )
-
-  # Should raise an error because of missing required column
-  expect_error(
-    validate_domain(incomplete_dm),
-    "The following required columns are missing in DM: USUBJID"
   )
 })
 

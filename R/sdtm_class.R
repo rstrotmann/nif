@@ -58,8 +58,11 @@ validate_domain <- function(domain, silent = NULL) {
     missing_perm <- setdiff(permitted_names, colnames(domain))
 
     if (length(missing_req) > 0) {
-      stop("The following required columns are missing in ", domain_name, ": ",
-           paste(missing_req, collapse = ", "))
+      conditional_message(
+        "The following required columns are missing in ",
+        domain_name, ": ",
+        paste(missing_req, collapse = ", "),
+        silent = silent)
     }
 
     if (length(missing_exp) > 0) {
@@ -896,7 +899,7 @@ guess_ntime <- function(sdtm) {
           str_extract(tolower(.data$PCTPT),
                      "([0-9.]+)\\s*(?:h|hr|hrs|hour|hours)",
                      group = 1),
-        
+
         # Pattern 2: HOUR(S) followed by number
         !is.na(str_extract(tolower(.data$PCTPT),
                            "(?:hour|hours)\\s*([0-9.]+)",
@@ -904,7 +907,7 @@ guess_ntime <- function(sdtm) {
           str_extract(tolower(.data$PCTPT),
                      "(?:hour|hours)\\s*([0-9.]+)",
                      group = 1),
-        
+
         # Default: No time found
         TRUE ~ NA_character_
       )

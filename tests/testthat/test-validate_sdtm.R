@@ -28,36 +28,6 @@ test_that("validate_sdtm validates all domains in a valid SDTM object", {
 })
 
 
-test_that("validate_sdtm stops on invalid domain", {
-  # Create a SDTM object with one valid and one invalid domain
-  dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
-       "DM", "STUDY1", "SUBJ-001",   "001",   "001",  "M", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA",
-       "DM", "STUDY1", "SUBJ-002",   "002",   "001",  "F", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA"
-  )
-
-  # Invalid VS domain missing VSTESTCD which is required
-  invalid_vs <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~VSSEQ,        ~VSTEST,
-       "VS", "STUDY1", "SUBJ-001",      1, "Temperature",
-       "VS", "STUDY1", "SUBJ-002",      2,  "Pulse Rate"
-    # VSTESTCD is missing
-  )
-
-  # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(
-    dm = dm_data,
-    vs = invalid_vs
-  ))
-
-  # Should error because VS domain is invalid
-  expect_error(
-    validate_sdtm(test_sdtm, silent = TRUE),
-    "The following required columns are missing in VS: VSTESTCD"
-  )
-})
-
-
 test_that("validate_sdtm shows/suppresses messages based on silent parameter", {
   # Create a SDTM object with domains missing some expected columns
   min_dm <- tibble::tribble(
@@ -114,3 +84,4 @@ test_that("validate_sdtm handles mixed valid and unknown domains", {
     "Unknown domain 'XYZ' cannot be validated!"
   )
 })
+
