@@ -793,8 +793,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #'
 #' @param object The NIF object.
 #' @param ... Further arguments.
-# @param egfr_function The function to be used for estimation of the renal
-#   function classes, see [add_bl_crcl()] for reference.
 #' @return A summary_nif object.
 #' @export
 #' @noRd
@@ -803,6 +801,41 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' summary(examplinib_poc_min_nif)
 #' summary(new_nif())
 summary.nif <- function(object, ...) {
+  # Validate input is a NIF object
+  if (!inherits(object, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  # Validate required fields exist
+  required_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
+  missing_fields <- required_fields[!required_fields %in% names(object)]
+  if (length(missing_fields) > 0) {
+    stop(sprintf("NIF object is missing required fields: %s", 
+                 paste(missing_fields, collapse = ", ")))
+  }
+
+  # Validate data is not empty
+  if (nrow(object) == 0) {
+    return(list(
+      nif = object,
+      studies = NULL,
+      subjects = NULL,
+      dose_red_sbs = NULL,
+      n_studies = NULL,
+      n_subj = 0,
+      n_males = 0,
+      n_females = 0,
+      n_obs = NULL,
+      analytes = NULL,
+      n_analytes = 0,
+      drugs = NULL,
+      dose_levels = NULL,
+      renal_function = NULL,
+      odwg = NULL,
+      administration_duration = NULL
+    ))
+  }
+
   subjects <- subjects(object)
   analytes <- analytes(object)
   parents <- parents(object)
@@ -828,6 +861,7 @@ summary.nif <- function(object, ...) {
     group_by(across(any_of(c("STUDYID")))) %>%
     summarize(N = n_distinct(ID), .groups = "drop")
 
+  # Handle sex distribution with safety checks
   n_sex <- object %>%
     as.data.frame() %>%
     {if(!"SEX" %in% names(.)) mutate(., SEX = NA) else .} %>%
@@ -835,8 +869,10 @@ summary.nif <- function(object, ...) {
     distinct(ID, SEX) %>%
     reframe(n = n(), .by = factor("SEX")) %>%
     tidyr::spread(SEX, n, fill = 0, drop = FALSE)
-  n_males <- n_sex[1, "0"]
-  n_females <- n_sex[1, "1"]
+  
+  # Initialize with 0 in case of missing data
+  n_males <- ifelse("0" %in% names(n_sex), n_sex[1, "0"], 0)
+  n_females <- ifelse("1" %in% names(n_sex), n_sex[1, "1"], 0)
 
   if ("BL_CRCL" %in% colnames(object)) {
     renal_function <- object %>%
@@ -859,8 +895,6 @@ summary.nif <- function(object, ...) {
     odwg <- object %>%
       as.data.frame() %>%
       mutate(CLASS = .data$BL_ODWG) %>%
-      # mutate(BL_ODWG = factor(BL_ODWG,
-      #   levels = c("normal", "mild", "moderate", "severe"))) %>%
       distinct(ID, CLASS) %>%
       group_by(CLASS) %>%
       summarize(N = n(), .groups = "drop") %>%
@@ -919,12 +953,22 @@ print.summary_nif <- function(x, color = FALSE, ...) {
 
   cat(paste0(df_to_string(x$n_studies, color=color, indent = indent), "\n\n"))
 
+  # Handle sex distribution with safety checks
+  total_sex <- x$n_males + x$n_females
+  if (total_sex > 0) {
+    male_percent <- round(x$n_males / total_sex * 100, 1)
+    female_percent <- round(x$n_females / total_sex * 100, 1)
+  } else {
+    male_percent <- 0
+    female_percent <- 0
+  }
+
   cat(paste0(
     "Sex distribution:\n",
     " males: ", x$n_males, " (",
-    round(x$n_males / (x$n_males + x$n_females) * 100, 1), "%)",
+    male_percent, "%)",
     ", females: ", x$n_females," (",
-    round(x$n_females / (x$n_males + x$n_females) * 100, 1), "%)\n\n"
+    female_percent, "%)\n\n"
   ))
 
   if (!is.null(x$renal_function)) {
