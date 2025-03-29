@@ -33,19 +33,37 @@
 #'
 #' The PC specimen is selected based on the likelihood in the order of 'plasma'
 #' < 'serum' < 'blood'.
+#'
 #' @param pc A data frame.
+#' @param silent Suppress messages. Defaults to nif_options if NULL.
+#'
 #' @return The imputed spec as character.
-#' @export
 #' @keywords internal
-guess_pcspec <- function(pc) {
+guess_pcspec <- function(pc, silent = NULL) {
+  # Input validation
+  if (!is.data.frame(pc) || !"PCSPEC" %in% names(pc)) {
+    stop("Input must be a data frame with PCSPEC column")
+  }
+
   pcspecs <- unique(pc$PCSPEC)
-  standard_specs <- c(
-    "PLASMA", "SERUM", "BLOOD"
-  )
+  if (length(pcspecs) == 0) {
+    stop("No PCSPEC values found")
+  }
+
+  standard_specs <- c("PLASMA", "SERUM", "BLOOD")
   temp <- match(toupper(pcspecs), standard_specs)
-  spec <- pcspecs[order(temp)][1]
-  conditional_message("No specimen specified. Set to ", spec,
-                      " as the most likely.", "\n")
+
+  # Handle case where no matches found
+  if (all(is.na(temp))) {
+    warning("No standard specimen types found. Using first available specimen.")
+    spec <- pcspecs[1]
+  } else {
+    spec <- pcspecs[order(temp)][1]
+  }
+
+  conditional_message(
+    "Selected specimen type: ", spec, "\n",
+    silent = silent)
   return(spec)
 }
 
