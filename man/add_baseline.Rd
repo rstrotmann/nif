@@ -9,6 +9,7 @@ add_baseline(
   sdtm,
   domain,
   testcd,
+  name = NULL,
   DV_field = NULL,
   TESTCD_field = NULL,
   observation_filter = "TRUE",
@@ -26,6 +27,8 @@ add_baseline(
 \item{domain}{The domain as character.}
 
 \item{testcd}{The covariate variable name as character.}
+
+\item{name}{The column label, as character.}
 
 \item{DV_field}{The name of the DV field as character.}
 

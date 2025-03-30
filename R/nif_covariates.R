@@ -151,6 +151,7 @@ add_covariate <- function(
 #' @param coding_table A recoding table as data frame, or NULL. If present, the
 #'   table needs to have a field that matches a column in the domain, and a
 #'   field 'DV' that provides the re-coded value.
+#' @param name The column label, as character.
 #'
 #' @return A nif object.
 #' @importFrom stats na.omit
@@ -164,6 +165,7 @@ add_baseline <- function(
     sdtm,
     domain,
     testcd,
+    name = NULL,
     DV_field = NULL,
     TESTCD_field = NULL,
     observation_filter = "TRUE",
@@ -195,7 +197,7 @@ add_baseline <- function(
 
   # Get domain data
   domain_data <- domain(sdtm, str_to_lower(domain))
-  
+
   # Validate required fields exist in domain data
   required_fields <- c("USUBJID", TESTCD_field, DV_field)
   missing_fields <- required_fields[!required_fields %in% names(domain_data)]
@@ -203,13 +205,17 @@ add_baseline <- function(
     stop(paste0("Required fields missing in domain data: ",
                 paste(missing_fields, collapse = ", ")))
   }
-  
+
   # Validate testcd exists in the domain
   if (!testcd %in% domain_data[[TESTCD_field]]) {
     stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
   }
 
-  bl_field <- paste0("BL_", testcd)
+  if(is.null(name)) {
+    bl_field <- paste0("BL_", testcd)
+  } else {
+    bl_field <- name
+  }
 
   join_fields <- intersect(names(coding_table),
                            names(domain(sdtm, str_to_lower(domain))))

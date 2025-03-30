@@ -363,3 +363,32 @@ test_that("add_baseline validates required fields correctly", {
     "Test code 'HEIGHT' not found in domain 'vs'"
   )
 })
+
+
+test_that("add_baseline name parameter works correctly", {
+  # Test default name (NULL)
+  result_default <- add_baseline(
+    examplinib_sad_nif,
+    examplinib_sad,
+    "vs",
+    "WEIGHT"
+  )
+  expect_true("BL_WEIGHT" %in% names(result_default))
+  
+  # Test custom name
+  result_custom <- add_baseline(
+    examplinib_sad_nif,
+    examplinib_sad,
+    "vs",
+    "WEIGHT",
+    name = "baseline_weight"
+  )
+  expect_true("baseline_weight" %in% names(result_custom))
+  expect_false("BL_WEIGHT" %in% names(result_custom))
+  
+  # Verify both results have the same values, just different column names
+  expect_equal(
+    result_default$BL_WEIGHT,
+    result_custom$baseline_weight
+  )
+})
