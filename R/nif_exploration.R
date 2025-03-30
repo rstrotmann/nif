@@ -810,7 +810,7 @@ summary.nif <- function(object, ...) {
   required_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
   missing_fields <- required_fields[!required_fields %in% names(object)]
   if (length(missing_fields) > 0) {
-    stop(sprintf("NIF object is missing required fields: %s", 
+    stop(sprintf("NIF object is missing required fields: %s",
                  paste(missing_fields, collapse = ", ")))
   }
 
@@ -869,7 +869,7 @@ summary.nif <- function(object, ...) {
     distinct(ID, SEX) %>%
     reframe(n = n(), .by = factor("SEX")) %>%
     tidyr::spread(SEX, n, fill = 0, drop = FALSE)
-  
+
   # Initialize with 0 in case of missing data
   n_males <- ifelse("0" %in% names(n_sex), n_sex[1, "0"], 0)
   n_females <- ifelse("1" %in% names(n_sex), n_sex[1, "1"], 0)
@@ -938,8 +938,8 @@ summary.nif <- function(object, ...) {
 #' @return Nothing.
 #' @export
 print.summary_nif <- function(x, color = FALSE, ...) {
-  indent = 1
-  # hline <- paste0(rep("\U2500", 8), collapse="")
+  indent = 2
+  spacer = paste(replicate(indent, " "), collapse = "")
   hline <- "-----"
   cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
 
@@ -965,7 +965,8 @@ print.summary_nif <- function(x, color = FALSE, ...) {
 
   cat(paste0(
     "Sex distribution:\n",
-    " males: ", x$n_males, " (",
+    spacer,
+    "males: ", x$n_males, " (",
     male_percent, "%)",
     ", females: ", x$n_females," (",
     female_percent, "%)\n\n"
@@ -982,10 +983,10 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   }
 
   cat(paste0("Administered drugs:\n",
-             paste0(" ", paste(x$drugs,collapse = ", ")), "\n\n"))
+             paste0(spacer, paste(x$drugs,collapse = ", ")), "\n\n"))
 
   cat(paste0("Analytes:\n",
-             paste0(" ", paste0(x$analytes, collapse = ", ")), "\n\n"))
+             paste0(spacer, paste0(x$analytes, collapse = ", ")), "\n\n"))
 
   cat("Subjects per dose level:\n")
   cat(df_to_string(x$dose_levels, color=color, indent = indent))
