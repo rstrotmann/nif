@@ -738,8 +738,9 @@ head.nif <- function(x, ...) {
 #' Write as space-delimited, fixed-width file as required by NONMEM or a
 #' character-separated file
 #'
-#' All numeric fields are reduced to 4 significant places. All fields are
-#' converted to character, and NA-values are converted to '.'.
+#' All numeric fields are reduced to 4 significant places. For this, IEC 60559
+#' is applied, i.e., rounding for a last digit of 5 is to the next even number.
+#' All fields are converted to character, and NA-values are converted to '.'.
 #' @param obj The NIF object.
 #' @param fields The fields to export. If NULL (default), all fields will be
 #' exported.

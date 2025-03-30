@@ -501,17 +501,3 @@ nif_auto <- function(sdtm,
   }
   return(nif)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
