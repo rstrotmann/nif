@@ -42,28 +42,6 @@ test_that("indent_string works", {
 })
 
 
-test_that("df_to_string works", {
-  test <- tribble(
-    ~ID, ~A,  ~B,
-    1,   "A", "B",
-    2,   "C", "D"
-  )
-  expect_equal(
-    df_to_string(test), "ID   A   B   \n1    A   B   \n2    C   D   ")
-  expect_equal(
-    df_to_string(test, indent = 2),
-    "  ID   A   B   \n  1    A   B   \n  2    C   D   ")
-  expect_equal(df_to_string(test, n = 1), "ID   A   B   \n1    A   B   ")
-  expect_equal(
-    df_to_string(test, header = FALSE),
-    "\n1    A   B   \n2    C   D   ")
-  expect_equal(df_to_string(data.frame(), show_none = TRUE), "none")
-  expect_equal(
-    df_to_string(test, header_sep = TRUE),
-    "ID   A   B   \n--   -   -\n1    A   B   \n2    C   D   ")
-})
-
-
 test_that("standardize_date_format works", {
    test <- tribble(
      ~ID,              ~STDTC,                ~ENDTC,

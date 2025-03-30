@@ -187,11 +187,22 @@ df_to_string <- function(
 
   temp <- lapply(as.list(as.data.frame(t(df))), render_line)
 
-  if (show_none & length(temp) == 0) {
-    out <- paste0(indent, "none")
+  # if (show_none & length(temp) == 0) {
+  #   out <- paste0(indent, "none")
+  # } else {
+  #   out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
+  # }
+
+  if (length(temp) == 0) {
+    if(show_none) {
+      out <- paste0(indent, "none\n")
+    } else {
+      out <- ""
+    }
   } else {
     out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
   }
+
   return(out)
 }
 
@@ -746,41 +757,41 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
   if (!is.character(x)) {
     stop("Input must be a character string")
   }
-  
+
   # If x is NA, return NA
   if (length(x) == 1 && is.na(x)) {
     return(NA)
   }
-  
+
   # Date patterns
   date_extended <- "^\\d{4}-\\d{2}-\\d{2}$"  # YYYY-MM-DD
   date_basic <- "^\\d{4}\\d{2}\\d{2}$"       # YYYYMMDD
-  
+
   # Reduced precision date patterns (if allowed)
   year_month_extended <- "^\\d{4}-\\d{2}$"   # YYYY-MM
   year_month_basic <- "^\\d{4}\\d{2}$"       # YYYYMM
   year_only <- "^\\d{4}$"                    # YYYY
-  
+
   # For each element in the input vector
   result <- sapply(x, function(str) {
     if (is.na(str)) return(NA)
-    
+
     # Check if the string matches full date patterns
     is_full_date <- grepl(date_extended, str) || grepl(date_basic, str)
-    
+
     # If it's a full date or we don't allow reduced precision, return result
     if (is_full_date || !allow_reduced_precision) {
       return(is_full_date)
     }
-    
+
     # Otherwise also check reduced precision formats
-    is_reduced_precision <- grepl(year_month_extended, str) || 
-                            grepl(year_month_basic, str) || 
+    is_reduced_precision <- grepl(year_month_extended, str) ||
+                            grepl(year_month_basic, str) ||
                             grepl(year_only, str)
-    
+
     return(is_full_date || is_reduced_precision)
   })
-  
+
   # Ensure logical return type
   return(as.logical(result))
 }
