@@ -127,83 +127,92 @@ indent_string <- function(indent = 0) {
 #' @param n The number of lines to be included, or all if NULL.
 #' @param show_none Show empty data frame as 'none', as logical.
 #' @param header_sep Show separation line after header, as logical.
+#' @param na_string String to use for NA values. Defaults to "NA".
 #'
 #' @return The output as string.
 #' @import utils
 #' @keywords internal
 df_to_string <- function(
     df, indent = 0, n = NULL, header = TRUE, header_sep = FALSE,
-    color = FALSE, show_none = FALSE) {
-  indent = indent_string(indent)
+    color = FALSE, show_none = FALSE, na_string = "NA") {
+  
+  # Input validation
+  if (!is.data.frame(df)) {
+    stop("Input must be a data frame")
+  }
+  if (!is.numeric(indent) || indent < 0) {
+    stop("Indent must be a non-negative number")
+  }
+  
+  # Handle empty data frame early
+  if (nrow(df) == 0) {
+    if (show_none) {
+      return(paste0(indent_string(indent), "none\n"))
+    }
+    return("")
+  }
+  
+  # Convert all columns to character, handling NA values
   df <- as.data.frame(df) %>%
-    mutate(across(everything(), as.character))
-
-  max_widths <- as.numeric(lapply(
-    rbind(df, names(df)),
-    FUN = function(x) max(sapply(as.character(x), nchar), na.rm = TRUE)
-  ))
-
-  header_separator <- paste(
-    lapply(
-      max_widths,
-      function(n) paste(replicate(n, "-"), collapse = "")),
-    collapse = "   ")
-
+    mutate(across(everything(), ~ifelse(is.na(.), na_string, as.character(.))))
+  
+  # Calculate maximum width for each column including headers
+  max_widths <- sapply(
+    seq_along(df),
+    function(i) max(
+      nchar(names(df)[i]),
+      max(nchar(as.character(df[[i]])), na.rm = TRUE)
+    )
+  )
+  
+  # Create the padding function
+  pad_element <- function(element, width) {
+    sprintf(paste0("%-", width, "s   "), element)
+  }
+  
+  # Create line renderer
   render_line <- function(line) {
     paste0(
-      indent,
+      indent_string(indent),
       paste0(
         mapply(
-          function(element, width) {
-            format(element, width = width + 3)
-          },
-          element = as.character(line), width = max_widths
+          pad_element,
+          element = as.character(line),
+          width = max_widths
         ),
         collapse = ""
       )
     )
   }
-
-  if (header == TRUE) {
-    if (color == TRUE) {
-      out <- paste0(
-        "\u001b[38;5;248m",
-        render_line(data.frame(as.list(names(df)))),
-        "\u001b[0m"
+  
+  # Build output starting with header if requested
+  output_parts <- character(0)
+  
+  if (header) {
+    header_line <- render_line(names(df))
+    if (color) {
+      header_line <- paste0("\u001b[38;5;248m", header_line, "\u001b[0m")
+    }
+    output_parts <- c(output_parts, header_line)
+    
+    if (header_sep) {
+      separator <- paste0(
+        indent_string(indent),
+        paste(mapply(function(w) paste(rep("-", w), collapse = ""),
+                    max_widths),
+              collapse = "   ")
       )
-    } else {
-      out <- render_line(data.frame(as.list(names(df))))
+      output_parts <- c(output_parts, separator)
     }
-  } else {
-    out <- ""
   }
-
-  if(isTRUE(header) & isTRUE(header_sep))
-     out <- paste0(out, "\n", indent, header_separator)
-
-  if (!is.null(n)) {
-    df <- utils::head(df, n = n)
-  }
-
-  temp <- lapply(as.list(as.data.frame(t(df))), render_line)
-
-  # if (show_none & length(temp) == 0) {
-  #   out <- paste0(indent, "none")
-  # } else {
-  #   out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
-  # }
-
-  if (length(temp) == 0) {
-    if(show_none) {
-      out <- paste0(indent, "none\n")
-    } else {
-      out <- ""
-    }
-  } else {
-    out <- paste(out, paste(temp, collapse = "\n"), sep = "\n")
-  }
-
-  return(out)
+  
+  # Add data rows
+  data_rows <- if (!is.null(n)) utils::head(df, n = n) else df
+  row_strings <- apply(data_rows, 1, render_line)
+  output_parts <- c(output_parts, row_strings)
+  
+  # Combine all parts with newlines
+  paste(output_parts, collapse = "\n")
 }
 
 

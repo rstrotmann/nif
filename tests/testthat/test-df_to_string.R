@@ -89,3 +89,4 @@ test_that("df_to_string maintains column alignment", {
   line_lengths <- sapply(lines, nchar)
   expect_equal(length(unique(line_lengths)), 1)
 })
+
