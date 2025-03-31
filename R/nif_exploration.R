@@ -1564,14 +1564,50 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
                        shading = TRUE, nominal_time = TRUE, time = NULL,
                        parent = NULL, title = "eDISH plot: All time points",
                        size = 3, alpha = 0.5, ...) {
-  lb <- sdtm %>%
-    domain("lb") %>%
-    filter(eval(parse(text = observation_filter))) %>%
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
+  # Input validation
+  if (!inherits(sdtm, "sdtm")) {
+    stop("sdtm must be an sdtm object")
+  }
 
-  if(!all(c("BILI", enzyme) %in% lb$LBTESTCD))
-    stop("Liver markers values not found in LB")
+  if (!inherits(nif, "nif")) {
+    stop("nif must be a nif object")
+  }
+
+  if (!enzyme %in% c("ALT", "AST")) {
+    stop("enzyme must be either 'ALT' or 'AST'")
+  }
+
+  # lb <- sdtm %>%
+  #   domain("lb") %>%
+  #   filter(eval(parse(text = observation_filter))) %>%
+  #   assertr::verify(assertr::has_all_names(
+  #     "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
+
+  lb <- tryCatch({
+      sdtm %>%
+      domain("lb") %>%
+      filter(eval(parse(text = observation_filter))) %>%
+      # Verify required columns exist
+      assertr::verify(assertr::has_all_names(
+        "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI")) %>%
+      # Verify numeric columns are actually numeric
+      assertr::verify(is.numeric(LBSTRESN)) %>%
+      assertr::verify(is.numeric(LBSTNRHI)) %>%
+      # Verify values are valid
+      assertr::verify(LBSTRESN >= 0) %>%  # No negative lab values
+      assertr::verify(LBSTNRHI > 0)  # No zero or negative ULN values
+  }, error = function(e) {
+    stop("Data validation failed: ") #, e$message)
+  })
+
+
+  # Check if required lab tests exist in data
+  if(!all(c("BILI", enzyme) %in% lb$LBTESTCD)) {
+    stop(sprintf("Required lab tests (%s, BILI) not found in data", enzyme))
+  }
+
+  # if(!all(c("BILI", enzyme) %in% lb$LBTESTCD))
+  #   stop("Liver markers values not found in LB")
 
   lb1 <- lb %>%
     mutate(LB1DTC = .data$LBDTC) %>%
@@ -1597,12 +1633,13 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
 
   # suppressWarnings({
     p <- nif %>%
-      add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent) %>%
-      add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent) %>%
+      add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent, silent = TRUE) %>%
+      add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent, silent = TRUE) %>%
       as.data.frame() %>%
       filter(!is.na(DV)) %>%
       filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
-      select(.data$ID, .data$TIME, .data$ANALYTE, .data$DV) %>%
+      # select(.data$ID, .data$TIME, .data$ANALYTE, .data$DV) %>%
+      select(c("ID", "TIME", "ANALYTE", "DV")) %>%
       group_by(.data$ID, .data$TIME, .data$ANALYTE) %>%
       summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop") %>%
       group_by(.data$ID, .data$TIME) %>%
