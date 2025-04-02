@@ -15,7 +15,7 @@
 #' @param observation_filter A filter term for the `domain`, as character.
 #' @param duplicate_function The function to apply if multiple covariate values
 #'   are found by day.
-#' @param covariate The name of the covariate, defaults to the testcd if 'NULL'.
+#' @param covariate The name of the covariate, defaults to the testcd if NULL.
 #' @param DTC_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
 #' @param silent Suppress messages, defaults to nif_option setting if NULL.
@@ -33,7 +33,10 @@
 #' add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
 #'   covariate = "wt")
 add_covariate <- function(
-    nif, sdtm, domain, testcd,
+    nif,
+    sdtm,
+    domain,
+    testcd,
     covariate = NULL,
     DTC_field = NULL,
     DV_field = NULL,
@@ -53,7 +56,7 @@ add_covariate <- function(
   }
 
   # Validate domain exists in sdtm
-  if (!domain %in% names(sdtm)) {
+  if (!domain %in% names(sdtm$domains)) {
     stop(paste0("Domain '", domain, "' not found in SDTM object"))
   }
 

@@ -1369,8 +1369,11 @@ add_bl_odwg <- function(obj, sdtm,
 #' @examples
 #' head(add_cfb(examplinib_poc_nif))
 #' head(add_cfb(examplinib_poc_min_nif))
-add_cfb <- function(obj, baseline_filter = "TIME <= 0",
-                    summary_function = median) {
+add_cfb <- function(
+    obj,
+    baseline_filter = "TIME <= 0",
+    summary_function = median) {
+
   obj %>%
     ensure_analyte() %>%
     as.data.frame() %>%
