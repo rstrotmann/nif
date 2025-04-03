@@ -1,21 +1,48 @@
 #' Calculate Body Mass Index (BMI)
 #'
 #' This function calculates BMI from height and weight values.
-#' BMI is calculated as weight (kg) / (height (m) / 100)^2.
+#' BMI is calculated as weight (kg) / (height (m))^2.
 #'
-#' @param height Height in centimeters.
-#' @param weight Weight in kilograms.
+#' @param height Height in centimeters. Can be a single value or a vector.
+#' @param weight Weight in kilograms. Can be a single value or a vector.
 #'
-#' @return A numeric vector containing the calculated BMI values. NA values are returned for
-#'   missing height or weight, or when either is less than or equal to zero.
+#' @return A numeric vector containing the calculated BMI values. NA values are returned for:
+#'   - Missing (NA) height or weight values
+#'   - Height or weight less than or equal to zero
+#'   - Length mismatch between height and weight vectors
+#'
+#' @examples
+#' # Single values
+#' calculate_bmi(170, 70)  # Returns 24.22
+#'
+#' # Vectorized inputs
+#' heights <- c(170, 180, 160)
+#' weights <- c(70, 80, 60)
+#' calculate_bmi(heights, weights)
+#'
 #' @keywords internal
 calculate_bmi <- function(height, weight) {
-  case_when(
-    is.na(height) | is.na(weight) ~ NA_real_,
-    height <= 0 ~ NA_real_,
-    weight <= 0 ~ NA_real_,
-    TRUE ~ weight / (height / 100)^2
-  )
+  # Input validation
+  if (!(is.numeric(height) || is.na(height)) ||
+      !(is.numeric(weight) || is.na(weight))) {
+    stop("Height and weight must be numeric values")
+  }
+
+  if (length(height) != length(weight)) {
+    stop("Height and weight vectors must have the same length")
+  }
+
+  # Convert height to meters and calculate BMI
+  # Use vectorized operations for better performance
+  height_m <- height / 100
+  valid_inputs <- !is.na(height) &
+    !is.na(weight) &
+    height > 0 &
+    weight > 0
+
+  result <- rep(NA_real_, length(height))
+  result[valid_inputs] <- weight[valid_inputs] / (height_m[valid_inputs])^2
+  result
 }
 
 
@@ -201,6 +228,45 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 # }
 
 
+#' Validate inputs to lbm functions
+#'
+#' @param weight weight.
+#' @param height height.
+#' @param sex sex.
+#'
+#' @return vector of valid inputs
+validate_lbw_parameters <- function(weight, height, sex) {
+  if (!(is.numeric(height) || is.na(height)) ||
+      !(is.numeric(weight) || is.na(weight))) {
+    stop("Height and weight must be numeric values")
+  }
+
+  if (length(height) != length(weight) ||
+      length(height) != length(sex)) {
+    stop("Height and weight vectors must have the same length")
+  }
+
+  valid_inputs <- !is.na(height) &
+    !is.na(weight) &
+    !is.na(sex) &
+    height > 0 &
+    weight > 0 &
+    sex %in% c(0, 1, "M", "F", "m", "f")
+
+  return(valid_inputs)
+}
+
+
+#' Test whether sex is male
+#'
+#' @param sex Vector of numbers or strings.
+#'
+#' @return logical.
+is_male <- function(sex) {
+  ((sex == 0) | (toupper(sex) == "M")) & !is.na(sex)
+}
+
+
 #' Lean body mass (Boer formula)
 #'
 #' Source: Caruso D, et al., Lean Body Weight-Tailored Iodinated
@@ -209,19 +275,37 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' [doi: 10.1155/2018/8521893](https://doi.org/10.1155/2018/8521893).
 #' PMID: 30186869; PMCID: PMC6110034.
 #'
+#' The Boer formula is one of the most commonly used formulas for estimating
+#' lean body mass. It provides separate equations for males and females based on
+#' height and weight measurements.
+#'
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
 #' @param sex Sex encoded as number (male is 0) or character (male is "M").
 #' @seealso [lbm_hume()]
 #' @seealso [lbm_peters()]
 #'
-#' @return Lean body mass in kg, as numeric.
+#' @return Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 #' @export
 lbm_boer <- function(weight, height, sex) {
-  ifelse((sex == "M") | (sex == 0),
-    (0.407 * weight) + (0.267 * height) - 19.2,
-    (0.252 * weight) + (0.473 * height) - 48.3
-  )
+  # Input validation
+  valid_inputs <- validate_lbw_parameters(weight, height, sex)
+
+  # Convert sex to standard format (0 for male, 1 for female)
+  # is_male <- ((sex == 0) | (toupper(sex) == "M")) & !is.na(sex)
+
+  result <- rep(NA_real_, length(height))
+
+  # Calculate LBM using Boer formula
+  result[valid_inputs & is_male(sex)] <-
+    (0.407 * weight[valid_inputs & is_male(sex)]) +
+    (0.267 * height[valid_inputs & is_male(sex)] ) - 19.2
+
+  result[valid_inputs & !is_male(sex)] <-
+    (0.252 * weight[valid_inputs & !is_male(sex)]) +
+    (0.473 * height[valid_inputs & !is_male(sex)]) - 48.3
+
+  result
 }
 
 
@@ -238,13 +322,23 @@ lbm_boer <- function(weight, height, sex) {
 #' @seealso [lbm_boer()]
 #' @seealso [lbm_peters()]
 #'
-#' @return Lean body mass in kg, as numeric.
+#' @return Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 #' @export
 lbm_hume <- function(weight, height, sex) {
-  ifelse((sex == "M") | (sex == 0),
-    (0.32810 * weight) + (0.33929 * height) - 29.5336,
-    (0.29569 * weight) + (0.41813 * height) - 43.2933
-  )
+  # Input validation
+  valid_inputs <- validate_lbw_parameters(weight, height, sex)
+
+  result <- rep(NA_real_, length(height))
+
+  result[valid_inputs & is_male(sex)] <-
+    (0.32810 * weight[valid_inputs & is_male(sex)]) +
+    (0.33929 * height[valid_inputs & is_male(sex)]) - 29.5336
+
+  result[valid_inputs & !is_male(sex)] <-
+    (0.29569 * weight[valid_inputs & !is_male(sex)]) +
+    (0.41813 * height[valid_inputs & !is_male(sex)]) - 43.2933
+
+  result
 }
 
 
@@ -261,8 +355,19 @@ lbm_hume <- function(weight, height, sex) {
 #' @seealso [lbm_boer()]
 #' @seealso [lbm_hume()]
 #'
-#' @return Lean body mass in kg, as numeric.
+#' @return Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 #' @export
 lbm_peters <- function(weight, height, sex) {
-  3.8 * (0.0215 * weight**0.6469 * height**0.7236)
+  # Input validation
+  valid_inputs <- validate_lbw_parameters(weight, height, sex)
+
+  result <- rep(NA_real_, length(height))
+
+  3.8 * (0.0215 * weight^0.6469 * height^0.7236)
+
+  result[valid_inputs] <-
+    3.8 * (0.0215 * weight[valid_inputs]^0.6469 *
+             height[valid_inputs]^0.7236)
+
+  result
 }
