@@ -260,9 +260,10 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' plot(examplinib_poc, domain = "ex")
 #' plot(examplinib_poc, domain = "pc")
 #' plot(examplinib_poc, domain = "vs", lines = FALSE, points = TRUE)
-plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
-                      points = FALSE, analyte = NULL, log = FALSE,
-                      legend = FALSE, subject_filter = TRUE, ...) {
+plot.sdtm <- function(
+    x, domain = "dm", usubjid = NULL, lines = FALSE,
+    points = TRUE, analyte = NULL, log = FALSE,
+    legend = FALSE, subject_filter = TRUE, ...) {
   obj <- x %>%
     domain(domain) %>%
     filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
@@ -274,21 +275,22 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
     return(
       obj %>%
         filter(if (!is.null(analyte)) .data$PCTESTCD %in% analyte else TRUE) %>%
+        mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
         ggplot2::ggplot(ggplot2::aes(
           x = .data$PCDTC,
-          y = .data$PCSTRESN,
-          group = interaction(.data$USUBJID, .data$PCTESTCD),
+          y = .data$ID,
+          group = interaction(.data$ID, .data$PCTESTCD),
           color = .data$PCTESTCD
         )) +
-        {
-          if (lines == TRUE) ggplot2::geom_line()
-        } +
-        {
-          if (points == TRUE) ggplot2::geom_point()
-        } +
-        {
-          if (log == TRUE) ggplot2::scale_y_log10()
-        } +
+        {if (points == TRUE) {
+            ggplot2::geom_point()
+          }} +
+        ggplot2::scale_y_discrete(
+          labels = NULL, breaks = NULL, name = "USUBJID"
+        ) +
+        ggplot2::scale_x_datetime(
+          name = "PCDTC", date_labels = "%Y-%m-%d"
+        ) +
         ggplot2::theme_bw() +
         ggplot2::theme(legend.position = "bottom") +
         ggplot2::ggtitle(
@@ -312,32 +314,26 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
           y = .data$ID,
           yend = .data$ID
         )) +
-        {
-          if (points == TRUE) {
+        {if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$EXSTDTC, y = .data$ID
             ))
-          }
-        } +
-        {
-          if (points == TRUE) {
+          }} +
+        {if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$EXENDTC, y = .data$ID
             ))
-          }
-        } +
+          }} +
         ggplot2::scale_y_discrete(name = "USUBJID", labels = NULL) +
         ggplot2::scale_x_datetime(
           name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d"
         ) +
         ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
+        {if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }
-        } +
+          }} +
         ggplot2::ggtitle(paste0(
           "Study ", distinct(obj, .data$STUDYID), ", EX"
         )) +
@@ -358,20 +354,16 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
           y = .data$ID,
           yend = .data$ID
         )) +
-        {
-          if (points == TRUE) {
+        {if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$RFSTDTC, y = .data$ID
             ))
-          }
-        } +
-        {
-          if (points == TRUE) {
+          }} +
+        {if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$RFENDTC, y = .data$ID
             ))
-          }
-        } +
+          }} +
         ggplot2::scale_y_discrete(
           labels = NULL, breaks = NULL, name = "USUBJID"
         ) +
@@ -379,13 +371,11 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
           name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d"
         ) +
         ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
+        {if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }
-        } +
+          }} +
         ggplot2::ggtitle(
           paste0("Study ", distinct(obj, .data$STUDYID), ", DM")
         ) +
@@ -397,30 +387,28 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
     return(
       obj %>%
         filter(if (!is.null(analyte)) .data$LBTESTCD %in% analyte else TRUE) %>%
+        mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
         ggplot2::ggplot(ggplot2::aes(
           x = .data$LBDTC,
-          y = .data$LBSTRESN,
-          group = interaction(.data$USUBJID, .data$LBTESTCD),
+          # y = .data$LBSTRESN,
+          y = .data$ID,
+          group = interaction(.data$ID, .data$LBTESTCD),
           color = .data$LBTESTCD
         )) +
-        {
-          if (lines == TRUE) ggplot2::geom_line()
-        } +
-        {
-          if (points == TRUE) ggplot2::geom_point()
-        } +
-        {
-          if (log == TRUE) ggplot2::scale_y_log10()
-        } +
-        ggplot2::scale_x_datetime(name = "LBDY", date_labels = "%Y-%m-%d") +
+        {if (lines == TRUE) ggplot2::geom_line()} +
+        {if (points == TRUE) ggplot2::geom_point()} +
+        ggplot2::scale_y_discrete(
+          labels = NULL, breaks = NULL, name = "USUBJID"
+        ) +
+        ggplot2::scale_x_datetime(
+          name = "LBDTC", date_labels = "%Y-%m-%d"
+        ) +
         ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
+        {if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }
-        } +
+          }} +
         ggplot2::ggtitle(
           paste0("Study ", distinct(obj, .data$STUDYID), ", LB")
         ) +
@@ -438,23 +426,15 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
           group = interaction(.data$USUBJID, .data$VSTESTCD),
           color = .data$VSTESTCD
         )) +
-        {
-          if (lines == TRUE) ggplot2::geom_line()
-        } +
-        {
-          if (points == TRUE) ggplot2::geom_point()
-        } +
-        {
-          if (log == TRUE) ggplot2::scale_y_log10()
-        } +
+        {if (lines == TRUE) ggplot2::geom_line()} +
+        {if (points == TRUE) ggplot2::geom_point()} +
+        {if (log == TRUE) ggplot2::scale_y_log10()} +
         ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
+        {if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }
-        } +
+          }} +
         ggplot2::ggtitle
         (paste0("Study ", distinct(obj, .data$STUDYID), ", PC")) +
         watermark()
@@ -476,9 +456,7 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         ggplot2::ggplot(ggplot2::aes(
           x = .data[[dtc_variable]], y = .data$ID
         )) +
-        {
-          if (points == TRUE) ggplot2::geom_point()
-        } +
+        {if (points == TRUE) ggplot2::geom_point()} +
         ggplot2::geom_segment(ggplot2::aes(
           x = .data$min_time, xend = .data$max_time,
           y = .data$ID, yend = .data$ID
@@ -487,13 +465,11 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
         ggplot2::scale_x_datetime(
           name = dtc_variable, date_labels = "%Y-%m-%d"
         ) +
-        {
-          if (legend == TRUE) {
+        {if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }
-        } +
+          }} +
         ggplot2::theme_bw() +
         ggplot2::ggtitle(paste0(
           "Study ", distinct(obj, .data$STUDYID), ", ",
@@ -532,33 +508,33 @@ ae_summary <- function(sdtm_data, level = "AESOC", show_cd = FALSE,
   if (!inherits(sdtm_data, "sdtm")) {
     stop("Input must be an SDTM object")
   }
-  
+
   if (!"ae" %in% names(sdtm_data$domains)) {
     stop("AE domain not found in SDTM data")
   }
-  
+
   # Validate level parameter
   valid_levels <- c("AETERM", "AELLT", "AEDECOD", "AEHLT", "AEBODSYS", "AESOC")
   level <- toupper(level)
   if (!all(level %in% valid_levels)) {
     stop("Invalid level(s): ", paste(setdiff(level, valid_levels), collapse = ", "))
   }
-  
+
   # Get AE domain
   ae <- sdtm_data$domains$ae
-  
+
   # Validate required columns
   required_cols <- c("USUBJID", level)
   missing_cols <- setdiff(required_cols, names(ae))
   if (length(missing_cols) > 0) {
     stop("Missing required columns in AE domain: ", paste(missing_cols, collapse = ", "))
   }
-  
+
   # Validate group variable if provided
   if (!is.null(group) && !group %in% names(ae)) {
     stop("Group variable '", group, "' not found in AE domain")
   }
-  
+
   # Build grouping vector
   grouping <- c(level, group)
   if (show_cd) {
@@ -569,7 +545,7 @@ ae_summary <- function(sdtm_data, level = "AESOC", show_cd = FALSE,
     }
     grouping <- c(grouping, cd_cols)
   }
-  
+
   # Apply filter safely
   tryCatch({
     filter_expr <- parse(text = ae_filter)
@@ -578,7 +554,7 @@ ae_summary <- function(sdtm_data, level = "AESOC", show_cd = FALSE,
   }, error = function(e) {
     stop("Invalid filter expression: ", e$message)
   })
-  
+
   # Calculate summary
   result <- ae_filtered %>%
     group_by(across(all_of(grouping))) %>%
@@ -591,7 +567,7 @@ ae_summary <- function(sdtm_data, level = "AESOC", show_cd = FALSE,
       }
     } %>%
     as.data.frame()
-  
+
   return(result)
 }
 
