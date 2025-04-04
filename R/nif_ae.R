@@ -28,15 +28,30 @@ make_ae <- function(
     sdtm,
     ae_term,
     ae_field = "AEDECOD",
-    parent = NULL,
-    cmt = NULL,
+    parent = NA,
+    cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
-    keep = "") {
-  sbs <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter,
-                       keep)
-  if(!"ae" %in% names(sdtm$domains))
-    stop("Domain AE not included in sdtm object!")
+    keep = character(0)) {
+  # Input validation
+  if (!inherits(sdtm, "sdtm")) {
+    stop("sdtm must be an sdtm object")
+  }
+
+  expected_domains <- c("DM", "VS", "AE")
+  missing_domains <- setdiff(expected_domains, toupper(names(sdtm$domains)))
+  if(length(missing_domains) > 0)
+    stop(paste0(plural("Domain", length(missing_domains)>1), " ",
+                nice_enumeration(missing_domains)," not found!"))
+
+  if(!all(c("dm", "vs", "ae") %in% names(sdtm$domains)))
+    stop("Not all domains found (DM, VS, AE)")
+
+  sbs <- make_subjects(
+    domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter, keep = keep)
+
+  # if(!"ae" %in% names(sdtm$domains))
+  #   stop("Domain AE not included in sdtm object!")
 
   obj <- domain(sdtm, "ae") %>%
     lubrify_dates()
@@ -52,7 +67,8 @@ make_ae <- function(
     mutate(
       DTC = .data[["AESTDTC"]],
       DV = as.numeric(.data[["AETOXGR"]])) %>%
-    select("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN") %>%
+    # select("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN") %>%
+    select(any_of(c("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN", keep))) %>%
     mutate(
       ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
       TIME = NA,
