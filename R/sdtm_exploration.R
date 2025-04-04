@@ -527,33 +527,72 @@ plot.sdtm <- function(x, domain = "dm", usubjid = NULL, lines = TRUE,
 #' @return A data frame.
 #' @export
 ae_summary <- function(sdtm_data, level = "AESOC", show_cd = FALSE,
-                       group = NULL, order_by_subj = F, ae_filter = "TRUE") {
-  if (!all(level %in% c("AETERM", "AELLT", "AEDECOD", "AEHLT", "AEBODSYS",
-                        "AESOC"))) {
-    stop("unknown level!")
+                       group = NULL, order_by_subj = FALSE, ae_filter = "TRUE") {
+  # Input validation
+  if (!inherits(sdtm_data, "sdtm")) {
+    stop("Input must be an SDTM object")
   }
-
-  # level <- paste0("AE", level)
-  level = toupper(level)
-  ae <- sdtm_data %>% domain("ae")
-
+  
+  if (!"ae" %in% names(sdtm_data$domains)) {
+    stop("AE domain not found in SDTM data")
+  }
+  
+  # Validate level parameter
+  valid_levels <- c("AETERM", "AELLT", "AEDECOD", "AEHLT", "AEBODSYS", "AESOC")
+  level <- toupper(level)
+  if (!all(level %in% valid_levels)) {
+    stop("Invalid level(s): ", paste(setdiff(level, valid_levels), collapse = ", "))
+  }
+  
+  # Get AE domain
+  ae <- sdtm_data$domains$ae
+  
+  # Validate required columns
+  required_cols <- c("USUBJID", level)
+  missing_cols <- setdiff(required_cols, names(ae))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns in AE domain: ", paste(missing_cols, collapse = ", "))
+  }
+  
+  # Validate group variable if provided
+  if (!is.null(group) && !group %in% names(ae)) {
+    stop("Group variable '", group, "' not found in AE domain")
+  }
+  
+  # Build grouping vector
   grouping <- c(level, group)
-  if (show_cd == TRUE) {
-    grouping <- c(grouping, paste0(level, "CD"))
+  if (show_cd) {
+    cd_cols <- paste0(level, "CD")
+    missing_cd <- setdiff(cd_cols, names(ae))
+    if (length(missing_cd) > 0) {
+      stop("Missing code columns: ", paste(missing_cd, collapse = ", "))
+    }
+    grouping <- c(grouping, cd_cols)
   }
-
-  ae %>%
-    filter(eval(parse(text = ae_filter))) %>%
+  
+  # Apply filter safely
+  tryCatch({
+    filter_expr <- parse(text = ae_filter)
+    ae_filtered <- ae %>%
+      filter(eval(filter_expr))
+  }, error = function(e) {
+    stop("Invalid filter expression: ", e$message)
+  })
+  
+  # Calculate summary
+  result <- ae_filtered %>%
     group_by(across(all_of(grouping))) %>%
     summarize(n = n(), n_subj = n_distinct(.data$USUBJID), .groups = "drop") %>%
     {
-      if (order_by_subj == T) {
+      if (order_by_subj) {
         arrange(., desc(.data$n_subj))
       } else {
         arrange(., desc(.data$n))
       }
     } %>%
     as.data.frame()
+  
+  return(result)
 }
 
 
