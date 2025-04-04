@@ -13,8 +13,16 @@
 #' @return The updated EX domain as data frame.
 #' @keywords internal
 impute_exendtc_to_rfendtc <- function(ex, dm) {
-  dm %>%
-    assertr::verify(assertr::has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
+  # dm %>%
+  #   assertr::verify(assertr::has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
+
+  # Validate input
+  expected_dm_cols <- c("USUBJID", "RFSTDTC", "RFENDTC")
+  missing_dm_cols <- setdiff(expected_dm_cols, names(dm))
+  n = length(missing_dm_cols)
+  if(n > 0)
+    stop(paste0("Missing ", plural("colum", n > 1), " in domain DM: ",
+                nice_enumeration(missing_dm_cols)))
 
   if(!"IMPUTATION" %in% names(ex)) {
     ex <- mutate(ex, IMPUTATION = "")
