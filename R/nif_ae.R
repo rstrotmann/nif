@@ -50,9 +50,6 @@ make_ae <- function(
   sbs <- make_subjects(
     domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter, keep = keep)
 
-  # if(!"ae" %in% names(sdtm$domains))
-  #   stop("Domain AE not included in sdtm object!")
-
   obj <- domain(sdtm, "ae") %>%
     lubrify_dates()
 

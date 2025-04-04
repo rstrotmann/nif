@@ -14,7 +14,8 @@ add_ae_observation(
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
   keep = "",
-  debug = FALSE
+  debug = FALSE,
+  silent = NULL
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ or any other field from the 'AE' domain}
 \item{keep}{Columns to keep, as character.}
 
 \item{debug}{Include debug fields, as logical.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting, if NULL.}
 }
 \value{
 A nif object.

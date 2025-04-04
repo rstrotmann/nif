@@ -8,11 +8,11 @@ make_ae(
   sdtm,
   ae_term,
   ae_field = "AEDECOD",
-  parent = NULL,
-  cmt = NULL,
+  parent = NA,
+  cmt = NA,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
-  keep = ""
+  keep = character(0)
 )
 }
 \arguments{

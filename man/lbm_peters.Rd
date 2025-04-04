@@ -14,7 +14,7 @@ lbm_peters(weight, height, sex)
 \item{sex}{Sex encoded as number (male is 0) or character (male is "M").}
 }
 \value{
-Lean body mass in kg, as numeric.
+Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 }
 \description{
 Source: Peters AM, Snelling HL, Glass DM, Bird NJ. Estimation of lean body

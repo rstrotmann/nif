@@ -9,7 +9,7 @@ ae_summary(
   level = "AESOC",
   show_cd = FALSE,
   group = NULL,
-  order_by_subj = F,
+  order_by_subj = FALSE,
   ae_filter = "TRUE"
 )
 }

@@ -20,8 +20,9 @@ exported.}
 output has a space-separated, fixed-width format.}
 }
 \description{
-All numeric fields are reduced to 4 significant places. All fields are
-converted to character, and NA-values are converted to '.'.
+All numeric fields are reduced to 4 significant places. For this, IEC 60559
+is applied, i.e., rounding for a last digit of 5 is to the next even number.
+All fields are converted to character, and NA-values are converted to '.'.
 }
 \examples{
 head(write_nif(examplinib_fe_nif), 5)

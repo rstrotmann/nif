@@ -11,15 +11,6 @@
 #'   - Height or weight less than or equal to zero
 #'   - Length mismatch between height and weight vectors
 #'
-#' @examples
-#' # Single values
-#' calculate_bmi(170, 70)  # Returns 24.22
-#'
-#' # Vectorized inputs
-#' heights <- c(170, 180, 160)
-#' weights <- c(70, 80, 60)
-#' calculate_bmi(heights, weights)
-#'
 #' @keywords internal
 calculate_bmi <- function(height, weight) {
   # Input validation

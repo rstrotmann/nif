@@ -7,16 +7,20 @@
 calculate_bmi(height, weight)
 }
 \arguments{
-\item{height}{Height in centimeters.}
+\item{height}{Height in centimeters. Can be a single value or a vector.}
 
-\item{weight}{Weight in kilograms.}
+\item{weight}{Weight in kilograms. Can be a single value or a vector.}
 }
 \value{
-A numeric vector containing the calculated BMI values. NA values are returned for
-missing height or weight, or when either is less than or equal to zero.
+A numeric vector containing the calculated BMI values. NA values are returned for:
+\itemize{
+\item Missing (NA) height or weight values
+\item Height or weight less than or equal to zero
+\item Length mismatch between height and weight vectors
+}
 }
 \description{
 This function calculates BMI from height and weight values.
-BMI is calculated as weight (kg) / (height (m) / 100)^2.
+BMI is calculated as weight (kg) / (height (m))^2.
 }
 \keyword{internal}

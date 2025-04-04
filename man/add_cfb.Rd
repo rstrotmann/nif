@@ -4,7 +4,12 @@
 \alias{add_cfb}
 \title{Add baseline and change from baseline fields}
 \usage{
-add_cfb(obj, baseline_filter = "TIME <= 0", summary_function = median)
+add_cfb(
+  obj,
+  baseline_filter = "TIME <= 0",
+  summary_function = median,
+  silent = NULL
+)
 }
 \arguments{
 \item{obj}{A NIF object.}
@@ -15,6 +20,8 @@ add_cfb(obj, baseline_filter = "TIME <= 0", summary_function = median)
 applied over the DV values identified by the 'baseline_filter' term. The
 default function is \code{median}. Alternatively, \code{mean}, \code{min} or \code{max} can be
 considered.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting if NULL.}
 }
 \value{
 A NIF object

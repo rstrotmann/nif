@@ -11,7 +11,8 @@ df_to_string(
   header = TRUE,
   header_sep = FALSE,
   color = FALSE,
-  show_none = FALSE
+  show_none = FALSE,
+  na_string = "NA"
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ df_to_string(
 \item{color}{Print headers in grey as logical.}
 
 \item{show_none}{Show empty data frame as 'none', as logical.}
+
+\item{na_string}{String to use for NA values. Defaults to "NA".}
 }
 \value{
 The output as string.

@@ -27,7 +27,7 @@ add_covariate(
 
 \item{testcd}{The xxTESTCD with xx the domain name, as character.}
 
-\item{covariate}{The name of the covariate, defaults to the testcd if 'NULL'.}
+\item{covariate}{The name of the covariate, defaults to the testcd if NULL.}
 
 \item{DTC_field}{The field to use as the date-time code for the observation.
 Defaults to the two-character domain name followed by 'DTC', if NULL.}
