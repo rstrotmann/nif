@@ -347,11 +347,43 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 #' @param analyte The analyte name to be used in the nif object, as character.
 #' @seealso [nif_auto()]
 #' @keywords internal
+#' @import stringr
 #' @export
 #' @examples
 #' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
+  # Input validation
+  if (!inherits(obj, "sdtm")) {
+    stop("'obj' must be an SDTM object")
+  }
+
+  if (!is.character(extrt))
+      stop("'extrt' must be a character string")
+
+  if (!is.character(pctestcd))
+    stop("'pctestcd' must be a character string")
+
+  extrt <- str_trim(extrt)
+  pctestcd <- str_trim(pctestcd)
+
+  if (str_length(extrt) == 0) {
+    stop("'extrt' must be a non-empty character string")
+  }
+
+  if (str_length(pctestcd) == 0) {
+    stop("'pctestcd' must be a non-empty character string")
+  }
+
   if (is.null(analyte)) analyte <- pctestcd
+
+  # Check if EXTRT already exists in the mapping
+  if (!is.null(obj$analyte_mapping) && nrow(obj$analyte_mapping) > 0) {
+    if (extrt %in% obj$analyte_mapping$EXTRT) {
+      stop("EXTRT '", extrt, "' already exists in analyte mapping. EXTRT must be unique.")
+    }
+  }
+
+  # Add the new mapping
   obj$analyte_mapping <- rbind(
     obj$analyte_mapping,
     data.frame("EXTRT" = extrt, "PCTESTCD" = pctestcd, "ANALYTE" = analyte)
