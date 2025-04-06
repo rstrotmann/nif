@@ -135,6 +135,24 @@ import_from_connection <- function(
       stop("Data format is not specified and can not be autmatically determined!")
     if(n_space > 0) format <- "fixed_width"
     if(n_comma > 0) format <- "csv"
+
+    # Validate auto-detected format
+    if (format == "fixed_width") {
+      # Check if we can extract column headers
+      col_headers <- str_extract_all(lines[1], "[A-Za-z_]+")[[1]]
+      if (length(col_headers) < 2) {
+        stop("Auto-detected fixed-width format, but couldn't properly identify column headers. Please specify format explicitly.")
+      }
+    } else if (format == "csv") {
+      # Check if we have a consistent number of fields
+      header_fields <- length(str_split(lines[1], delimiter, simplify = TRUE))
+      if (length(lines) > 1) {
+        first_row_fields <- length(str_split(lines[2], delimiter, simplify = TRUE))
+        if (header_fields != first_row_fields) {
+          stop("Auto-detected CSV format, but the number of fields is inconsistent. Please specify format explicitly or check delimiter setting.")
+        }
+      }
+    }
   }
 
   # fixed-width format, white space-separated columns
@@ -218,9 +236,3 @@ import_nif <- function(
   on.exit(close(connection))
   import_from_connection(connection, format, delimiter, no_numeric, silent)
 }
-
-
-
-
-
-

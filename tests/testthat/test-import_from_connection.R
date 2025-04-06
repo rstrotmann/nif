@@ -239,3 +239,45 @@ test_that("import_from_connection handles errors correctly", {
   expect_error(import_from_connection(con))
   close(con)
 })
+
+
+test_that("import_from_connection detects invalid fixed-width format", {
+  # Create data with numeric headers which don't match the expected pattern
+  invalid_fixed_data <- c(
+    "123  456   789  ABC",
+    "aaa  bbb   ccc  ddd"
+  )
+
+  # Create a connection
+  con <- textConnection(invalid_fixed_data)
+
+  # Import should fail with specific error message
+  expect_error(
+    import_from_connection(con, silent = TRUE),
+    "Auto-detected fixed-width format, but couldn't properly identify column headers"
+  )
+
+  # Close connection
+  close(con)
+})
+
+
+test_that("import_from_connection detects inconsistent CSV format", {
+  # Create CSV data with inconsistent field counts
+  inconsistent_csv_data <- c(
+    "USUBJID,STUDYID,PARENT,ANALYTE,TIME,DV,CMT",
+    "SUBJ-001,STUDY-001,DRUG-A,ANALYTE-X,0,0" # Missing one field
+  )
+
+  # Create a connection
+  con <- textConnection(inconsistent_csv_data)
+
+  # Import should fail with specific error message
+  expect_error(
+    import_from_connection(con, silent = TRUE),
+    "Auto-detected CSV format, but the number of fields is inconsistent"
+  )
+
+  # Close connection
+  close(con)
+})
