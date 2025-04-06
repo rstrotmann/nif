@@ -96,7 +96,8 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #' @return A nif object.
 #' @export
 import_from_connection <- function(
-    connection, format = NULL,
+    connection,
+    format = NULL,
     delimiter = ",",
     no_numeric = c("USUBJID", "STUDYID"),
     silent= NULL) {
@@ -194,18 +195,25 @@ import_from_connection <- function(
 #' @param filename Filename as character.
 #' @param format The input data format, can be 'csv' or 'fixed_width', or NULL
 #'   (default) to automatically determine the format.
+#' @param delimiter Delimiter character.
 #' @param no_numeric Fields that will not be converted to numeric.
+#' @param silent Suppress message output, as logical.
 #'
 #' @return A nif object.
 #' @export
 import_nif <- function(
-    filename, format = NULL, no_numeric = c("USUBJID", "STUDYID")) {
+    filename,
+    format = NULL,
+    delimiter = ",",
+    no_numeric = c("USUBJID", "STUDYID"),
+    silent = NULL) {
   if(!file.exists(filename))
     stop(paste0(
       "File '", filename, "' not found."
     ))
   connection = file(filename)
-  import_from_connection(connection, format, no_numeric)
+  on.exit(close(connection))
+  import_from_connection(connection, format, delimiter, no_numeric, silent)
 }
 
 
