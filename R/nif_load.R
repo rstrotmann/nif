@@ -94,6 +94,7 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #' @param delimiter Delimiter character.
 #'
 #' @return A nif object.
+#' @import stringr
 #' @export
 import_from_connection <- function(
     connection,
@@ -154,8 +155,10 @@ import_from_connection <- function(
   }
 
   if(format == "csv") {
-    raw <- data.frame(str_split(lines[-1], ",", simplify = TRUE))
-    colnames(raw) <- str_split(lines[1], ",", simplify = TRUE)
+    # raw <- data.frame(str_split(lines[-1], ",", simplify = TRUE))
+    raw <- data.frame(str_split(lines[-1], delimiter, simplify = TRUE))
+    # colnames(raw) <- str_split(lines[1], ",", simplify = TRUE)
+    colnames(raw) <- str_split(lines[1], delimiter, simplify = TRUE)
   }
 
   raw <- raw %>%
