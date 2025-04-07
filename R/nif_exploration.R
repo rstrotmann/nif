@@ -214,6 +214,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @param ... Further arguments.
 #' @return A summary_nif object.
 #' @export
+#' @import tidyr
 #' @noRd
 #' @examples
 #' summary(examplinib_poc_nif)
@@ -235,12 +236,12 @@ summary.nif <- function(object, ...) {
 
   # Validate data is not empty
   if (nrow(object) == 0) {
-    return(list(
+    out <- list(
       nif = object,
-      studies = NULL,
+      studies = character(0),
       subjects = NULL,
       dose_red_sbs = NULL,
-      n_studies = NULL,
+      n_studies = data.frame(STUDYID = character(0), N = integer(0)),
       n_subj = 0,
       n_males = 0,
       n_females = 0,
@@ -252,7 +253,9 @@ summary.nif <- function(object, ...) {
       renal_function = NULL,
       odwg = NULL,
       administration_duration = NULL
-    ))
+    )
+    class(out) <- "summary_nif"
+    return(out)
   }
 
   subjects <- subjects(object)
@@ -303,9 +306,13 @@ summary.nif <- function(object, ...) {
         )
       )) %>%
       distinct(ID, CLASS) %>%
-      group_by(CLASS) %>%
-      summarize(N = n()) %>%
-      arrange(ordered("CLASS", c("normal", "mild", "moderate", "severe")))
+      mutate(CLASS = factor(CLASS, levels = c("normal", "mild", "moderate", "severe"))) %>%
+      reframe(
+        N = n(),
+        .by = CLASS) %>%
+      tidyr::complete(CLASS, fill = list(N = 0)) %>%
+      mutate(CLASS = as.character(CLASS))
+
   } else {
     renal_function <- NULL
   }
@@ -315,9 +322,12 @@ summary.nif <- function(object, ...) {
       as.data.frame() %>%
       mutate(CLASS = .data$BL_ODWG) %>%
       distinct(ID, CLASS) %>%
-      group_by(CLASS) %>%
-      summarize(N = n(), .groups = "drop") %>%
-      arrange(factor(CLASS, levels = c("normal", "mild", "moderate", "severe")))
+      mutate(CLASS = factor(CLASS, levels = c("normal", "mild", "moderate", "severe"))) %>%
+      reframe(
+        N = n(),
+        .by = CLASS) %>%
+      tidyr::complete(CLASS, fill = list(N = 0)) %>%
+      mutate(CLASS = as.character(CLASS))
   } else {
     odwg = NULL
   }
@@ -377,19 +387,22 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   if (total_sex > 0) {
     male_percent <- round(x$n_males / total_sex * 100, 1)
     female_percent <- round(x$n_females / total_sex * 100, 1)
-  } else {
-    male_percent <- 0
-    female_percent <- 0
-  }
 
-  cat(paste0(
-    "Sex distribution:\n",
-    spacer,
-    "males: ", x$n_males, " (",
-    male_percent, "%)",
-    ", females: ", x$n_females," (",
-    female_percent, "%)\n\n"
-  ))
+    cat(paste0(
+      "Sex distribution:\n",
+      spacer,
+      "males: ", x$n_males, " (",
+      male_percent, "%)",
+      ", females: ", x$n_females," (",
+      female_percent, "%)\n\n"
+    ))
+  } else {
+    cat(paste0(
+      "Sex distribution:\n",
+      spacer,
+      "males: 0, females: 0 (no sex data available)\n\n"
+    ))
+  }
 
   if (!is.null(x$renal_function)) {
     cat(paste0("Renal impairment class:\n", df_to_string(
@@ -481,9 +494,9 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
         }
       }
     }
-    if("WEIGTH" %in% names(nif) & "SEX" %in% names(nif))
+    if("WEIGHT" %in% names(nif) & "SEX" %in% names(nif))
       out[["WT_SEX"]] <- wt_by_sex(nif)
-    if("WEIGTH" %in% names(nif) & "RACE" %in% names(nif))
+    if("WEIGHT" %in% names(nif) & "RACE" %in% names(nif))
       out[["WT_RACE"]] <- wt_by_race(nif)
   }
 

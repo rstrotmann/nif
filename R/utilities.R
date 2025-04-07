@@ -135,15 +135,20 @@ indent_string <- function(indent = 0) {
 df_to_string <- function(
     df, indent = 0, n = NULL, header = TRUE, header_sep = FALSE,
     color = FALSE, show_none = FALSE, na_string = "NA") {
-  
+
   # Input validation
+  if(is.null(df))
+    return("")
+
   if (!is.data.frame(df)) {
     stop("Input must be a data frame")
   }
+
+
   if (!is.numeric(indent) || indent < 0) {
     stop("Indent must be a non-negative number")
   }
-  
+
   # Handle empty data frame early
   if (nrow(df) == 0) {
     if (show_none) {
@@ -151,11 +156,11 @@ df_to_string <- function(
     }
     return("")
   }
-  
+
   # Convert all columns to character, handling NA values
   df <- as.data.frame(df) %>%
     mutate(across(everything(), ~ifelse(is.na(.), na_string, as.character(.))))
-  
+
   # Calculate maximum width for each column including headers
   max_widths <- sapply(
     seq_along(df),
@@ -164,12 +169,12 @@ df_to_string <- function(
       max(nchar(as.character(df[[i]])), na.rm = TRUE)
     )
   )
-  
+
   # Create the padding function
   pad_element <- function(element, width) {
     sprintf(paste0("%-", width, "s   "), element)
   }
-  
+
   # Create line renderer
   render_line <- function(line) {
     paste0(
@@ -184,17 +189,17 @@ df_to_string <- function(
       )
     )
   }
-  
+
   # Build output starting with header if requested
   output_parts <- character(0)
-  
+
   if (header) {
     header_line <- render_line(names(df))
     if (color) {
       header_line <- paste0("\u001b[38;5;248m", header_line, "\u001b[0m")
     }
     output_parts <- c(output_parts, header_line)
-    
+
     if (header_sep) {
       separator <- paste0(
         indent_string(indent),
@@ -205,12 +210,12 @@ df_to_string <- function(
       output_parts <- c(output_parts, separator)
     }
   }
-  
+
   # Add data rows
   data_rows <- if (!is.null(n)) utils::head(df, n = n) else df
   row_strings <- apply(data_rows, 1, render_line)
   output_parts <- c(output_parts, row_strings)
-  
+
   # Combine all parts with newlines
   paste(output_parts, collapse = "\n")
 }
