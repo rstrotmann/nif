@@ -811,4 +811,74 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
 }
 
 
+#' Find duplicate rows in a data frame
+#'
+#' This function identifies duplicate rows in a data frame based on specified fields.
+#' It returns a data frame containing the duplicate rows and their counts.
+#'
+#' @param df A data frame to check for duplicates
+#' @param fields A character vector of field names to check for duplicates. If NULL,
+#'   defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
+#' @param count_only Logical indicating whether to return only the count of duplicates (default: FALSE)
+#' @param return_all_cols Logical indicating whether to return all columns from the original data frame (default: TRUE)
+#' @param additional_cols Character vector of additional columns to include in the output when return_all_cols is FALSE
+#'
+#' @return A data frame containing the duplicate rows and their counts, or just the count if count_only is TRUE
+#' @export
+#' @examples
+#' # Find duplicates using default fields
+#' find_duplicates(nif_data)
+#'
+#' # Find duplicates using custom fields
+#' find_duplicates(nif_data, fields = c("ID", "TIME"))
+#'
+#' # Get only the count of duplicates
+#' find_duplicates(nif_data, count_only = TRUE)
+#'
+#' # Return only specific columns
+#' find_duplicates(nif_data, return_all_cols = FALSE, additional_cols = c("DOSE", "DV"))
+find_duplicates <- function(df, fields = NULL, count_only = FALSE,
+                            return_all_cols = TRUE, additional_cols = NULL) {
+  if(is.null(fields)) {
+    fields <- c("ID", "TIME", "ANALYTE")
+  }
+
+  # Check if all specified fields exist in the data frame
+  missing_fields <- setdiff(fields, names(df))
+  if (length(missing_fields) > 0) {
+    stop(paste("The following fields do not exist in the data frame:",
+               paste(missing_fields, collapse = ", ")))
+  }
+
+  # Group by specified fields and count occurrences
+  duplicates <- df %>%
+    dplyr::group_by(across(all_of(fields))) %>%
+    dplyr::summarize(count = n(), .groups = "drop") %>%
+    dplyr::filter(count > 1)
+
+  if (count_only) {
+    return(nrow(duplicates))
+  }
+
+  # Join back with original data to get all columns
+  if (nrow(duplicates) > 0) {
+    if (return_all_cols) {
+      result <- duplicates %>%
+        dplyr::left_join(df, by = fields) %>%
+        dplyr::arrange(across(all_of(fields)))
+    } else {
+      # If additional_cols is NULL, use fields
+      cols_to_keep <- unique(c(fields, additional_cols))
+      result <- duplicates %>%
+        dplyr::left_join(
+          df %>% dplyr::select(all_of(cols_to_keep)),
+          by = fields
+        ) %>%
+        dplyr::arrange(across(all_of(fields)))
+    }
+    return(result)
+  } else {
+    return(NULL)
+  }
+}
 

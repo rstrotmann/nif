@@ -265,27 +265,27 @@ nca1 <- function(nif,
 nca_from_pp <- function(
     obj, sdtm_data,
     analyte = NULL, keep = NULL, group = NULL, observation_filter = "TRUE") {
-  
+
   # Input validation
   if (missing(obj) || missing(sdtm_data)) {
     stop("Both 'obj' and 'sdtm_data' must be provided")
   }
-  
+
   if (!"domains" %in% names(sdtm_data)) {
     stop("sdtm_data must contain a 'domains' list")
   }
-  
+
   if (!"pp" %in% names(sdtm_data$domains)) {
     stop("Domain PP is not included in the sdtm object")
   }
-  
+
   # Validate observation filter
   tryCatch({
     parse(text = observation_filter)
   }, error = function(e) {
     stop("Invalid observation_filter: ", e$message)
   })
-  
+
   # Guess analyte if not provided
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
@@ -301,25 +301,25 @@ nca_from_pp <- function(
     as.data.frame() %>%
     filter(ANALYTE == current_analyte) %>%
     filter(.data$EVID == 1) %>%
-    select(c("ID", "USUBJID", any_of(keep), 
-             any_of(c("AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI", 
-                     "PART", "COHORT", "DOSE")), 
+    select(c("ID", "USUBJID", any_of(keep),
+             any_of(c("AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI",
+                     "PART", "COHORT", "DOSE")),
              starts_with("BL_"))) %>%
     distinct()
 
   # Process PP domain data
   result <- sdtm_data$domains[["pp"]] %>%
     filter(eval(parse(text = observation_filter))) %>%
-    select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC", 
+    select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
                     "PPCAT", "PPRFTDTC", group))) %>%
     mutate(ANALYTE = current_analyte) %>%
     left_join(keep_data, by = "USUBJID")
-    
+
   # Validate result
   if (nrow(result) == 0) {
     warning("No data found after applying filters")
   }
-  
+
   return(result)
 }
 
@@ -543,6 +543,111 @@ nca_power_model <- function(nca, parameter = NULL,
   names(out) <- parameter
   return(out)
 }
+
+
+#' Non-compartmental analysis with analyte-based grouping
+#'
+#' This function performs NCA analysis using the PKNCA package for multiple analytes
+#' in a NIF object. It uses analyte-specific grouping in the concentration and dose
+#' formulas.
+#'
+#' @param obj A NIF object containing concentration-time data
+#' @param analytes Optional vector of analytes to analyze. If NULL, all analytes will be analyzed.
+#' @param parameters Optional vector of PK parameters to calculate. If NULL, default parameters will be used.
+#' @param keep Optional vector of additional columns to keep in the output.
+#' @param average_duplicates Boolean to indicate whether duplicate entries should be averaged.
+#'
+#' @return A data frame containing NCA results
+#' @import dplyr
+#' @importFrom PKNCA PKNCAdata PKNCAconc PKNCAdose pk.nca
+#' @export
+#'
+#' @examples
+#' # Analyze all analytes
+#' result <- nca2(nif_object)
+#'
+#' # Analyze specific analytes
+#' result <- nca2(nif_object, analytes = c("PARENT", "METABOLITE"))
+nca2 <- function(obj,
+                 analytes = NULL,
+                 parameters = NULL,
+                 keep = NULL,
+                 average_duplicates = TRUE) {
+
+  # Validate input
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  # Get all analytes if not specified
+  if (is.null(analytes)) {
+    analytes <- unique(obj$ANALYTE)
+  }
+
+  # Default parameters if not specified
+  if (is.null(parameters)) {
+    parameters <- c(
+      "auclast", "aucinf.obs", "cmax", "tmax", "half.life",
+      "cl", "vz", "mrt", "lambda.z"
+    )
+  }
+
+  # Convert NIF object to data frame and prepare data
+  data <- as.data.frame(obj)
+
+  # Prepare concentration data
+  conc_data <- data %>%
+    filter(EVID == 0) %>%
+    select(ID, TIME, DV, ANALYTE)
+
+  # Prepare dosing data
+  dose_data <- data %>%
+    filter(EVID == 1) %>%
+    select(ID, TIME, AMT, ANALYTE) %>%
+    rename(DOSE = AMT)
+
+  # Create PKNCA objects with analyte-specific formulas
+  conc_obj <- PKNCA::PKNCAconc(
+    conc_data,
+    DV ~ TIME | ANALYTE + ID,
+    check.time.sorted = TRUE
+  )
+
+  dose_obj <- PKNCA::PKNCAdose(
+    dose_data,
+    DOSE ~ TIME | ANALYTE + ID
+  )
+
+  # Create intervals for analysis
+  # Using automatic interval detection by PKNCA
+  data_obj <- PKNCA::PKNCAdata(
+    conc_obj,
+    dose_obj,
+    impute = "start_conc0"
+  )
+
+  # Perform NCA
+  results <- PKNCA::pk.nca(data_obj)
+
+  # Extract and format results
+  final_results <- results$result %>%
+    as.data.frame()
+
+  # Add any additional columns to keep
+  if (!is.null(keep)) {
+    keep_data <- data %>%
+      select(any_of(c("ID", "ANALYTE", keep))) %>%
+      distinct()
+
+    final_results <- final_results %>%
+      left_join(keep_data, by = c("ID", "ANALYTE"))
+  }
+
+  return(final_results)
+}
+
+
+
 
 
 
