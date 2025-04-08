@@ -254,17 +254,39 @@ nca1 <- function(nif,
 #' Generate NCA table from the SDTM.PP domain
 #'
 #' @param obj A nif object.
-#' @param sdtm_data A stdm data object.
-#' @param analyte The analyte as character.
-#' @param keep Column names to keep, as character.
-#' @param observation_filter Observation filter term, as character.
-#' @param group Grouping variable as character.
+#' @param sdtm_data A SDTM data object containing a PP domain.
+#' @param analyte The analyte as character. If NULL, will be guessed from the nif object.
+#' @param keep Column names to keep, as character vector.
+#' @param observation_filter Observation filter term as character. Must be valid R code that can be evaluated on the PP domain.
+#' @param group Grouping variable as character vector.
 #'
-#' @return A data frame.
+#' @return A data frame containing the filtered and joined PP domain data.
 #' @export
 nca_from_pp <- function(
     obj, sdtm_data,
     analyte = NULL, keep = NULL, group = NULL, observation_filter = "TRUE") {
+  
+  # Input validation
+  if (missing(obj) || missing(sdtm_data)) {
+    stop("Both 'obj' and 'sdtm_data' must be provided")
+  }
+  
+  if (!"domains" %in% names(sdtm_data)) {
+    stop("sdtm_data must contain a 'domains' list")
+  }
+  
+  if (!"pp" %in% names(sdtm_data$domains)) {
+    stop("Domain PP is not included in the sdtm object")
+  }
+  
+  # Validate observation filter
+  tryCatch({
+    parse(text = observation_filter)
+  }, error = function(e) {
+    stop("Invalid observation_filter: ", e$message)
+  })
+  
+  # Guess analyte if not provided
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
     conditional_message(paste(
@@ -279,20 +301,26 @@ nca_from_pp <- function(
     as.data.frame() %>%
     filter(ANALYTE == current_analyte) %>%
     filter(.data$EVID == 1) %>%
-    select(c("ID", "USUBJID", any_of(keep), any_of(c("AGE", "SEX", "RACE", "WEIGHT",
-      "HEIGHT", "BMI", "PART", "COHORT", "DOSE")), starts_with("BL_"))) %>%
+    select(c("ID", "USUBJID", any_of(keep), 
+             any_of(c("AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI", 
+                     "PART", "COHORT", "DOSE")), 
+             starts_with("BL_"))) %>%
     distinct()
 
-  if(!"pp" %in% names(sdtm_data$domains)) {
-    stop("Domain PP is not included in the sdtm object!")
-  }
-
-  sdtm_data$domains[["pp"]] %>%
-    # filter(.data$PPCAT == current_analyte) %>%
+  # Process PP domain data
+  result <- sdtm_data$domains[["pp"]] %>%
     filter(eval(parse(text = observation_filter))) %>%
-    select(any_of(c("USUBJID", "PPTESTCD", "ANALYTE" = current_analyte,
-                    "PPSTRESN", "PPSPEC", "PPCAT", "PPRFTDTC", group))) %>%
+    select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC", 
+                    "PPCAT", "PPRFTDTC", group))) %>%
+    mutate(ANALYTE = current_analyte) %>%
     left_join(keep_data, by = "USUBJID")
+    
+  # Validate result
+  if (nrow(result) == 0) {
+    warning("No data found after applying filters")
+  }
+  
+  return(result)
 }
 
 

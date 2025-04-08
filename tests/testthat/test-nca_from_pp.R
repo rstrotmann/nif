@@ -1,0 +1,178 @@
+test_that("nca_from_pp works with valid inputs", {
+  # Create test data
+  nif_obj <- new_nif(
+    tibble::tribble(
+    ~ID, ~USUBJID, ~ANALYTE, ~EVID, ~DOSE, ~AGE,
+      1,  "SUBJ1",   "DRUG",     1,   100,   30,
+      1,  "SUBJ1",   "DRUG",     0,    NA,   30,
+      2,  "SUBJ2",   "DRUG",     1,   200,   40,
+      2,  "SUBJ2",   "DRUG",     0,    NA,   40
+  ))
+
+  sdtm_data <- new_sdtm(
+    list(
+      pp = tibble::tribble(
+        ~USUBJID, ~PPTESTCD, ~PPSTRESN,  ~PPSPEC, ~PPCAT,    ~PPRFTDTC, ~DOMAIN,
+        "SUBJ1",     "AUC",       100, "PLASMA", "DRUG", "2023-01-01",    "PP",
+        "SUBJ1",    "CMAX",        50, "PLASMA", "DRUG", "2023-01-01",    "PP",
+        "SUBJ2",     "AUC",       200, "PLASMA", "DRUG", "2023-01-02",    "PP",
+        "SUBJ2",    "CMAX",       100, "PLASMA", "DRUG", "2023-01-02",    "PP"
+      )
+    )
+  )
+
+  # Test basic functionality
+  result <- nca_from_pp(nif_obj, sdtm_data, analyte = "DRUG")
+  expect_s3_class(result, "data.frame")
+  expect_equal(nrow(result), 4)
+  expect_true(all(c("USUBJID", "PPTESTCD", "PPSTRESN", "DOSE", "AGE") %in% names(result)))
+
+  # Test with observation filter
+  result_filtered <- nca_from_pp(
+    nif_obj, sdtm_data,
+    analyte = "DRUG",
+    observation_filter = "PPSPEC == 'PLASMA' & PPTESTCD == 'AUC'"
+  )
+  expect_equal(nrow(result_filtered), 2)
+  expect_true(all(result_filtered$PPTESTCD == "AUC"))
+
+  # Test with grouping
+  result_grouped <- nca_from_pp(
+    nif_obj, sdtm_data,
+    analyte = "DRUG",
+    group = "PPSPEC"
+  )
+  expect_true("PPSPEC" %in% names(result_grouped))
+})
+
+
+
+test_that("nca_from_pp handles missing analyte", {
+  nif_obj <- data.frame(
+    ID = c(1, 1),
+    USUBJID = c("SUBJ1", "SUBJ1"),
+    ANALYTE = c("DRUG", "DRUG"),
+    EVID = c(1, 0),
+    DOSE = c(100, NA)
+  )
+
+  sdtm_data <- list(
+    domains = list(
+      pp = data.frame(
+        USUBJID = "SUBJ1",
+        PPTESTCD = "AUC",
+        PPSTRESN = 100,
+        PPSPEC = "PLASMA",
+        PPCAT = "DRUG",
+        PPRFTDTC = "2023-01-01"
+      )
+    )
+  )
+
+  # Test with NULL analyte
+  result <- nca_from_pp(nif_obj, sdtm_data)
+  expect_s3_class(result, "data.frame")
+  expect_equal(nrow(result), 1)
+})
+
+test_that("nca_from_pp handles errors appropriately", {
+  nif_obj <- data.frame(
+    ID = 1,
+    USUBJID = "SUBJ1",
+    ANALYTE = "DRUG",
+    EVID = 1,
+    DOSE = 100
+  )
+
+  sdtm_data <- list(
+    domains = list(
+      pp = data.frame(
+        USUBJID = "SUBJ1",
+        PPTESTCD = "AUC",
+        PPSTRESN = 100
+      )
+    )
+  )
+
+  # Test missing required parameters
+  expect_error(nca_from_pp(), "Both 'obj' and 'sdtm_data' must be provided")
+
+  # Test invalid sdtm_data structure
+  expect_error(
+    nca_from_pp(nif_obj, list()),
+    "sdtm_data must contain a 'domains' list"
+  )
+
+  # Test missing PP domain
+  expect_error(
+    nca_from_pp(nif_obj, list(domains = list())),
+    "Domain PP is not included in the sdtm object"
+  )
+
+  # Test invalid observation filter
+  expect_error(
+    nca_from_pp(nif_obj, sdtm_data, observation_filter = "invalid filter"),
+    "Invalid observation_filter"
+  )
+})
+
+test_that("nca_from_pp handles empty results", {
+  nif_obj <- data.frame(
+    ID = 1,
+    USUBJID = "SUBJ1",
+    ANALYTE = "DRUG",
+    EVID = 1,
+    DOSE = 100
+  )
+
+  sdtm_data <- list(
+    domains = list(
+      pp = data.frame(
+        USUBJID = "SUBJ1",
+        PPTESTCD = "AUC",
+        PPSTRESN = 100,
+        PPSPEC = "PLASMA",
+        PPCAT = "DRUG"
+      )
+    )
+  )
+
+  # Test with filter that returns no results
+  expect_warning(
+    nca_from_pp(nif_obj, sdtm_data, observation_filter = "PPSPEC == 'URINE'"),
+    "No data found after applying filters"
+  )
+})
+
+test_that("nca_from_pp handles keep parameter correctly", {
+  nif_obj <- data.frame(
+    ID = 1,
+    USUBJID = "SUBJ1",
+    ANALYTE = "DRUG",
+    EVID = 1,
+    DOSE = 100,
+    AGE = 30,
+    SEX = "M"
+  )
+
+  sdtm_data <- list(
+    domains = list(
+      pp = data.frame(
+        USUBJID = "SUBJ1",
+        PPTESTCD = "AUC",
+        PPSTRESN = 100,
+        PPSPEC = "PLASMA",
+        PPCAT = "DRUG"
+      )
+    )
+  )
+
+  # Test with keep parameter
+  result <- nca_from_pp(nif_obj, sdtm_data, keep = c("AGE", "SEX"))
+  expect_true(all(c("AGE", "SEX") %in% names(result)))
+
+  # Test with non-existent keep columns
+  result <- nca_from_pp(nif_obj, sdtm_data, keep = "NONEXISTENT")
+  expect_false("NONEXISTENT" %in% names(result))
+})
+
