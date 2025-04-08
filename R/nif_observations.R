@@ -251,6 +251,18 @@ make_observation <- function(
       mutate(NTIME = NA)
   }
 
+  # dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
+  # n_dupl <- find_duplicates(out, fields = dupl_fields, count_only = TRUE)
+  # if(n_dupl != 0){
+  #   dupl <- find_duplicates(out, fields = dupl_fields) %>%
+  #     relocate(count)
+  #   message(paste0(
+  #     n_dupl, " duplicate observations with respect to ",
+  #     nice_enumeration(dupl_fields), " found:\n",
+  #     df_to_string(dupl, indent = 2)
+  #   ))
+  # }
+
   out <- out %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
@@ -259,6 +271,19 @@ make_observation <- function(
       units = "days") + 1) %>%
     ungroup() %>%
     filter(!is.na(.data$DTC))
+
+  # dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
+  # n_dupl <- find_duplicates(out, fields = dupl_fields, count_only = TRUE)
+  # if(n_dupl != 0){
+  #   dupl <- find_duplicates(out, fields = dupl_fields) %>%
+  #     relocate(count)
+  #   message(paste0(
+  #     n_dupl, " duplicate observations with respect to ",
+  #     nice_enumeration(dupl_fields), " found:\n",
+  #     df_to_string(dupl, indent = 2)
+  #   ))
+  # }
+
   return(out)
 }
 
@@ -312,7 +337,8 @@ add_observation <- function(
     keep = NULL,
     debug = FALSE,
     include_day_in_ntime = FALSE,
-    silent = NULL
+    silent = NULL,
+    return_only_duplicates = FALSE
 ) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -356,13 +382,38 @@ add_observation <- function(
     }
   }
 
+  observation <- make_observation(
+    sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
+    observation_filter, TESTCD_field, DTC_field, DV_field,
+    coding_table, factor, NTIME_lookup, keep,
+    include_day_in_ntime = include_day_in_ntime, silent = silent)
+
+  # Warn about duplicate observations
+  dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
+
+  n_dupl <- find_duplicates(out, fields = dupl_fields, count_only = TRUE)
+  if(n_dupl != 0){
+    if(return_only_duplicates == TRUE) {
+      return(find_duplicates(out, fields = dupl_fields) %>%
+        relocate(count))
+    } else {
+      stop(paste0(
+        n_dupl, " duplicate observations found with respect to ",
+        nice_enumeration(dupl_fields)
+      ))
+    }
+  }
+
+
   obj <- bind_rows(
     nif,
-    make_observation(
-      sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
-      observation_filter, TESTCD_field, DTC_field, DV_field,
-      coding_table, factor, NTIME_lookup, keep,
-      include_day_in_ntime = include_day_in_ntime, silent = silent)) %>%
+    # make_observation(
+    #   sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
+    #   observation_filter, TESTCD_field, DTC_field, DV_field,
+    #   coding_table, factor, NTIME_lookup, keep,
+    #   include_day_in_ntime = include_day_in_ntime, silent = silent)
+    observation
+    ) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%

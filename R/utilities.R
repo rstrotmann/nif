@@ -876,7 +876,7 @@ find_duplicates <- function(df, fields = NULL, count_only = FALSE,
         ) %>%
         dplyr::arrange(across(all_of(fields)))
     }
-    return(result)
+    return(as.data.frame(result))
   } else {
     return(NULL)
   }
