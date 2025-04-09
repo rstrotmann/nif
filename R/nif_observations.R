@@ -416,8 +416,12 @@ add_observation <- function(
     }
 
     if(duplicates == "identify") {
-      message("Only duplicate observations returned!")
-      return(find_duplicates(out, fields = dupl_fields) #%>%
+
+      message(paste0(
+        n_dupl, " duplicate observations found with respect to ",
+        nice_enumeration(dupl_fields), ". ",
+        "Only duplicate observations returned!"))
+      return(find_duplicates(observation, fields = dupl_fields) #%>%
                # relocate(count)
              )
     }
