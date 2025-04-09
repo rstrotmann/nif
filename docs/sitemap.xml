@@ -127,6 +127,7 @@
 <url><loc>/reference/filter_subject.nif.html</loc></url>
 <url><loc>/reference/filter_subject.sdtm.html</loc></url>
 <url><loc>/reference/filter_subjects.html</loc></url>
+<url><loc>/reference/find_duplicates.html</loc></url>
 <url><loc>/reference/first_admin_dtc.html</loc></url>
 <url><loc>/reference/geom_admin.html</loc></url>
 <url><loc>/reference/get_cov_plot_params.html</loc></url>
@@ -208,6 +209,7 @@
 <url><loc>/reference/n_administrations.html</loc></url>
 <url><loc>/reference/nca.html</loc></url>
 <url><loc>/reference/nca1.html</loc></url>
+<url><loc>/reference/nca2.html</loc></url>
 <url><loc>/reference/nca_from_pp.html</loc></url>
 <url><loc>/reference/nca_power_model.html</loc></url>
 <url><loc>/reference/nca_summary.html</loc></url>
@@ -222,6 +224,7 @@
 <url><loc>/reference/nif_disclaimer.html</loc></url>
 <url><loc>/reference/nif_mean_plot.html</loc></url>
 <url><loc>/reference/nif_mean_plot1.html</loc></url>
+<url><loc>/reference/nif_nca_new.html</loc></url>
 <url><loc>/reference/nif_option.html</loc></url>
 <url><loc>/reference/nif_option_value.html</loc></url>
 <url><loc>/reference/nif_plot_id.html</loc></url>
@@ -256,6 +259,7 @@
 <url><loc>/reference/recode_sex.html</loc></url>
 <url><loc>/reference/reformat_date.html</loc></url>
 <url><loc>/reference/rel_dose_intensity.html</loc></url>
+<url><loc>/reference/remove_duplicates.html</loc></url>
 <url><loc>/reference/rich_sampling_sbs.html</loc></url>
 <url><loc>/reference/safe_mean.html</loc></url>
 <url><loc>/reference/safe_min.html</loc></url>
