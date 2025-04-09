@@ -310,6 +310,7 @@ make_observation <- function(
 #' @param duplicates Selection how to deal with duplicate observations with
 #'   respect to the USUBJID, ANALYTE and DTC fields:
 #'   * 'stop': Stop execution and produce error message
+#'.  * 'ignore': Include duplicates in the data set
 #'   * 'identify': Return a list of duplicate entries
 #'   * 'remove': Remove duplicates, applying the `duplicate_function` to the
 #'   duplicate entries.
@@ -426,6 +427,19 @@ add_observation <- function(
         observation,
         fields = dupl_fields,
         duplicate_function = duplicate_function)
+      conditional_message(
+        "In observations for ", testcd, " (analyte '", analyte, "'), ",
+        n_dupl, " duplicates were removed!",
+        silent = silent
+      )
+    }
+
+    if(duplicates == "ignore") {
+      conditional_message(
+        "In observations for ", testcd, " (analyte '", analyte, "'), ",
+        n_dupl, " duplicates were found but kept in the data set!",
+        silent = silent
+      )
     }
   }
 
