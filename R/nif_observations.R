@@ -309,9 +309,9 @@ make_observation <- function(
 #'   if NULL.
 #' @param duplicates Selection how to deal with duplicate observations with
 #'   respect to the USUBJID, ANALYTE and DTC fields:
-#'   * stop: stop execution and produce error message
-#'   * identify: return a list of duplicate entries
-#'   * remove: remove duplicates, applying the `duplicate_function` to the
+#'   * 'stop': Stop execution and produce error message
+#'   * 'identify': Return a list of duplicate entries
+#'   * 'remove': Remove duplicates, applying the `duplicate_function` to the
 #'   duplicate entries.
 #' @param duplicate_function Function to resolve duplicate values, defaults to
 #'   `mean`.
@@ -406,7 +406,11 @@ add_observation <- function(
     if(duplicates == "stop") {
       stop(paste0(
         n_dupl, " duplicate observations found with respect to ",
-        nice_enumeration(dupl_fields)
+        nice_enumeration(dupl_fields), ".\n",
+        "Identify the duplicates using the `duplicates = 'identify'` parameter,\n",
+        "or have duplicates automaticaly resolved using `duplicates = 'resolve'`\n",
+        "where the resolution function is specified by the `duplicate_function`\n",
+        "parameter (default is `mean`)."
       ))
     }
 
