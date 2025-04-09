@@ -14,8 +14,6 @@
 #' @keywords internal
 #' @import stringr
 #' @export
-#' @examples
-#' sdtm_object <- add_analyte_mapping(examplinib_fe, "EXAMPLINIB", "RS2023")
 add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
   # Input validation
   if (!inherits(obj, "sdtm")) {

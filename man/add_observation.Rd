@@ -24,7 +24,9 @@ add_observation(
   keep = NULL,
   debug = FALSE,
   include_day_in_ntime = FALSE,
-  silent = NULL
+  silent = NULL,
+  duplicates = "stop",
+  duplicate_function = mean
 )
 }
 \arguments{
@@ -81,6 +83,18 @@ NTIME, as logical.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}
+
+\item{duplicates}{Selection how to deal with duplicate observations with
+respect to the USUBJID, ANALYTE and DTC fields:
+\itemize{
+\item stop: stop execution and produce error message
+\item identify: return a list of duplicate entries
+\item remove: remove duplicates, applying the \code{duplicate_function} to the
+duplicate entries.
+}}
+
+\item{duplicate_function}{Function to resolve duplicate values, defaults to
+\code{mean}.}
 }
 \value{
 A nif object.

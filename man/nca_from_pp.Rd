@@ -16,18 +16,18 @@ nca_from_pp(
 \arguments{
 \item{obj}{A nif object.}
 
-\item{sdtm_data}{A stdm data object.}
+\item{sdtm_data}{A SDTM data object containing a PP domain.}
 
-\item{analyte}{The analyte as character.}
+\item{analyte}{The analyte as character. If NULL, will be guessed from the nif object.}
 
-\item{keep}{Column names to keep, as character.}
+\item{keep}{Column names to keep, as character vector.}
 
-\item{group}{Grouping variable as character.}
+\item{group}{Grouping variable as character vector.}
 
-\item{observation_filter}{Observation filter term, as character.}
+\item{observation_filter}{Observation filter term as character. Must be valid R code that can be evaluated on the PP domain.}
 }
 \value{
-A data frame.
+A data frame containing the filtered and joined PP domain data.
 }
 \description{
 Generate NCA table from the SDTM.PP domain

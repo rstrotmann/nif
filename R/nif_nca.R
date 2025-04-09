@@ -561,13 +561,6 @@ nca_power_model <- function(nca, parameter = NULL,
 #' @import dplyr
 #' @importFrom PKNCA PKNCAdata PKNCAconc PKNCAdose pk.nca
 #' @export
-#'
-#' @examples
-#' # Analyze all analytes
-#' result <- nca2(nif_object)
-#'
-#' # Analyze specific analytes
-#' result <- nca2(nif_object, analytes = c("PARENT", "METABOLITE"))
 nca2 <- function(obj,
                  analytes = NULL,
                  parameters = NULL,

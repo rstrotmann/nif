@@ -825,18 +825,6 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
 #'
 #' @return A data frame containing the duplicate rows and their counts, or just the count if count_only is TRUE
 #' @export
-#' @examples
-#' # Find duplicates using default fields
-#' find_duplicates(nif_data)
-#'
-#' # Find duplicates using custom fields
-#' find_duplicates(nif_data, fields = c("ID", "TIME"))
-#'
-#' # Get only the count of duplicates
-#' find_duplicates(nif_data, count_only = TRUE)
-#'
-#' # Return only specific columns
-#' find_duplicates(nif_data, return_all_cols = FALSE, additional_cols = c("DOSE", "DV"))
 find_duplicates <- function(df, fields = NULL, count_only = FALSE,
                             return_all_cols = TRUE, additional_cols = NULL) {
   if(is.null(fields)) {
@@ -880,5 +868,56 @@ find_duplicates <- function(df, fields = NULL, count_only = FALSE,
   } else {
     return(NULL)
   }
+}
+
+
+#' Remove duplicate rows from a data frame
+#'
+#' This function removes duplicate rows from a data frame based on specified fields,
+#' applying a function to handle duplicate values in the dependent variable.
+#'
+#' @param df A data frame to remove duplicates from
+#' @param fields A character vector of field names to check for duplicates. If NULL,
+#'   defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
+#' @param duplicate_function A function to apply to duplicate values. Default is mean.
+#'   The function should take a vector and return a single value.
+#' @param dependent_variable The name of the field to apply the duplicate_function to.
+#'   Defaults to "DV".
+#'
+#' @return A data frame with duplicate rows removed
+#' @export
+remove_duplicates <- function(df, fields = NULL, duplicate_function = mean,
+                            dependent_variable = "DV") {
+  if(is.null(fields)) {
+    fields <- c("ID", "TIME", "ANALYTE")
+  }
+
+  # Check if all specified fields exist in the data frame
+  missing_fields <- setdiff(fields, names(df))
+  if (length(missing_fields) > 0) {
+    stop(paste("The following fields do not exist in the data frame:",
+               paste(missing_fields, collapse = ", ")))
+  }
+
+  # Check if dependent_variable exists in the data frame
+  if (!dependent_variable %in% names(df)) {
+    stop(paste("The dependent variable", dependent_variable,
+               "does not exist in the data frame"))
+  }
+
+  # Get all columns that are not in fields
+  other_cols <- setdiff(names(df), fields)
+
+  # Remove duplicates by applying the duplicate_function to the dependent variable
+  # and keeping the first value of other columns
+  result <- df %>%
+    dplyr::group_by(across(all_of(fields))) %>%
+    dplyr::summarize(
+      !!dependent_variable := duplicate_function(.data[[dependent_variable]]),
+      across(all_of(setdiff(other_cols, dependent_variable)), ~ .[1]),
+      .groups = "drop"
+    )
+
+  return(as.data.frame(result))
 }
 

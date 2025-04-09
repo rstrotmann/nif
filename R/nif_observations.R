@@ -119,6 +119,7 @@ make_observation <- function(
     NTIME_lookup = NULL,
     keep = NULL,
     include_day_in_ntime = FALSE,
+    duplicate_function = NULL,
     silent = NULL
 ) {
   # Validate inputs
@@ -251,18 +252,6 @@ make_observation <- function(
       mutate(NTIME = NA)
   }
 
-  # dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
-  # n_dupl <- find_duplicates(out, fields = dupl_fields, count_only = TRUE)
-  # if(n_dupl != 0){
-  #   dupl <- find_duplicates(out, fields = dupl_fields) %>%
-  #     relocate(count)
-  #   message(paste0(
-  #     n_dupl, " duplicate observations with respect to ",
-  #     nice_enumeration(dupl_fields), " found:\n",
-  #     df_to_string(dupl, indent = 2)
-  #   ))
-  # }
-
   out <- out %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
@@ -275,14 +264,23 @@ make_observation <- function(
   # dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
   # n_dupl <- find_duplicates(out, fields = dupl_fields, count_only = TRUE)
   # if(n_dupl != 0){
-  #   dupl <- find_duplicates(out, fields = dupl_fields) %>%
-  #     relocate(count)
-  #   message(paste0(
-  #     n_dupl, " duplicate observations with respect to ",
-  #     nice_enumeration(dupl_fields), " found:\n",
-  #     df_to_string(dupl, indent = 2)
-  #   ))
+  #   if(is.null(duplicate_function)) {
+  #     stop(paste0(
+  #       n_dupl, " duplicate observations found with respect to ",
+  #       nice_enumeration(dupl_fields)))
+  #   } else {
+  #     # out %>%
+  #     #   # group_by_at(dupl_fields) %>%
+  #     #   # summarize(n = n()) %>%
+  #     #   # summarise_at("DV", mean) %>%
+  #     #   mutate(DV = mean(DV), .by = dupl_fields) %>%
+  #     #   # ungroup()
+  #     #   find_duplicates()
+  #
+  #   }
   # }
+
+
 
   return(out)
 }
@@ -309,6 +307,14 @@ make_observation <- function(
 #' @param debug Include debug fields, as logical.
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
+#' @param duplicates Selection how to deal with duplicate observations with
+#'   respect to the USUBJID, ANALYTE and DTC fields:
+#'   * stop: stop execution and produce error message
+#'   * identify: return a list of duplicate entries
+#'   * remove: remove duplicates, applying the `duplicate_function` to the
+#'   duplicate entries.
+#' @param duplicate_function Function to resolve duplicate values, defaults to
+#'   `mean`.
 #'
 #' @return A nif object.
 #' @seealso [add_administration()]
@@ -338,7 +344,8 @@ add_observation <- function(
     debug = FALSE,
     include_day_in_ntime = FALSE,
     silent = NULL,
-    return_only_duplicates = FALSE
+    duplicates = "stop",
+    duplicate_function = mean
 ) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -388,30 +395,38 @@ add_observation <- function(
     coding_table, factor, NTIME_lookup, keep,
     include_day_in_ntime = include_day_in_ntime, silent = silent)
 
-  # Warn about duplicate observations
-  dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
 
-  n_dupl <- find_duplicates(out, fields = dupl_fields, count_only = TRUE)
+
+
+  # Duplicate handling
+  dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
+  n_dupl <- find_duplicates(observation, fields = dupl_fields, count_only = TRUE)
+
   if(n_dupl != 0){
-    if(return_only_duplicates == TRUE) {
-      return(find_duplicates(out, fields = dupl_fields) %>%
-        relocate(count))
-    } else {
+    if(duplicates == "stop") {
       stop(paste0(
         n_dupl, " duplicate observations found with respect to ",
         nice_enumeration(dupl_fields)
       ))
+    }
+
+    if(duplicates == "identify") {
+      message("Only duplicate observations returned!")
+      return(find_duplicates(out, fields = dupl_fields) %>%
+               relocate(count))
+    }
+
+    if(duplicates == "remove") {
+      observation = remove_duplicates(
+        observation,
+        fields = dupl_fields,
+        duplicate_function = duplicate_function)
     }
   }
 
 
   obj <- bind_rows(
     nif,
-    # make_observation(
-    #   sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
-    #   observation_filter, TESTCD_field, DTC_field, DV_field,
-    #   coding_table, factor, NTIME_lookup, keep,
-    #   include_day_in_ntime = include_day_in_ntime, silent = silent)
     observation
     ) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
