@@ -320,10 +320,6 @@ make_observation <- function(
 #' @return A nif object.
 #' @seealso [add_administration()]
 #' @export
-#' @examples
-#' add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",
-#'   parent = "RS2023")
-#'
 add_observation <- function(
     nif,
     sdtm,
@@ -395,9 +391,6 @@ add_observation <- function(
     observation_filter, TESTCD_field, DTC_field, DV_field,
     coding_table, factor, NTIME_lookup, keep,
     include_day_in_ntime = include_day_in_ntime, silent = silent)
-
-
-
 
   # Duplicate handling
   dupl_fields <- c("USUBJID", "ANALYTE", "DTC")

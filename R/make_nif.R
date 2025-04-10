@@ -106,40 +106,6 @@ last_ex_dtc <- function(ex) {
 }
 
 
-# Create the drug mapping data frame for PC observations
-#
-# @param sdtm_data The sdtm data as SDTM object.
-# @return A data frame.
-# @keywords internal
-# make_drug_mapping <- function(sdtm_data) {
-#   drug_mapping <- sdtm_data$analyte_mapping %>%
-#     filter(PCTESTCD %in% unique(sdtm_data$pc$PCTESTCD)) %>%
-#     rbind(
-#       data.frame(EXTRT = intersect(
-#         unique(sdtm_data$ex$EXTRT),
-#         unique(sdtm_data$pc$PCTESTCD)
-#       )) %>%
-#         mutate(PCTESTCD = EXTRT)
-#     ) %>%
-#     mutate(PARENT = PCTESTCD)
-#
-#   # add metabolite mapping, if available
-#   if (nrow(sdtm_data$metabolite_mapping) != 0) {
-#     drug_mapping <- drug_mapping %>%
-#       rbind(
-#         sdtm_data$metabolite_mapping %>%
-#           rename(PARENT = PCTESTCD_parent, PCTESTCD = PCTESTCD_metab) %>%
-#           mutate(EXTRT = "")
-#       )
-#   }
-#
-#   drug_mapping <- drug_mapping %>%
-#     mutate(METABOLITE = (PCTESTCD != PARENT)) %>%
-#     mutate(ANALYTE = PCTESTCD) %>%
-#     distinct()
-# }
-
-
 #' Add TIME field to table
 #'
 #' TIME is created as the difference between the DTC field and the first DTC
