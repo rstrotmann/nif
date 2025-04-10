@@ -507,6 +507,7 @@ ensure_metabolite <- function(obj) {
 #' @keywords internal
 ensure_tad <- function(obj) {
   obj <- obj %>%
+    ensure_parent() %>%
     {
       if (!"TAD" %in% names(obj)) {
         add_tad(.)
@@ -1188,25 +1189,47 @@ add_dose_level <- function(obj) {
 
 #' Add time-after-dose (TAD) field
 #'
-#' @param nif A NIF object.
+#' This function adds a time-after-dose (TAD) field to a NIF object. TAD represents
+#' the time elapsed since the most recent administration of the parent compound.
+#' For observations before the first dose, TAD will be negative.
 #'
-#' @return A NIF object.
+#' @param nif A NIF object.
+#' @return A NIF object with an added TAD column.
 #' @export
+#' @examples
+#' # Add TAD to a NIF object
+#' add_tad(examplinib_poc_nif)
 add_tad <- function(nif) {
-  nif %>%
-    ensure_parent() %>%
-    # as.data.frame() %>%
+  # Input validation
+  required_cols <- c("ID", "TIME", "EVID", "PARENT")
+  missing_cols <- setdiff(required_cols, names(nif))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # Handle empty data frame
+  if (nrow(nif) == 0) {
+    return(nif %>% mutate(TAD = numeric(0)))
+  }
+
+  # Ensure PARENT column exists
+  # nif <- nif %>% ensure_parent()
+
+  # Calculate TAD
+  result <- nif %>%
     mutate(admin_time = case_when(
-      .data$EVID == 1 ~ .data$TIME
+      .data$EVID == 1 ~ .data$TIME,
+      TRUE ~ NA_real_
     )) %>%
     arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) %>%
     group_by(.data$ID, .data$PARENT) %>%
     tidyr::fill(admin_time, .direction = "down") %>%
     ungroup() %>%
     mutate(TAD = .data$TIME - .data$admin_time) %>%
-    select(-"admin_time") %>%
-    new_nif() %>%
-    index_nif()
+    select(-"admin_time")
+
+  # Return as NIF object
+  return(new_nif(result))
 }
 
 

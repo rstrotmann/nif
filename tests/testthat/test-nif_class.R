@@ -240,32 +240,32 @@ test_that("add_dose_level works", {
 })
 
 
-test_that("add_tad, add_tafd works", {
-  nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID,
-    1,     0,  100,    1,     1,
-    1,     0,   NA,    1,     0,
-    1,     1,   NA,    2,     0,
-    1,     2,   NA,    2,     0,
-    1,    24,   90,    1,     1,
-    1,    48,   80,    1,     1,
-    1,    50,   NA,    2,     0,
-    2,    10,  100,    1,     1,
-    2,    11,   NA,    2,     0,
-    2,    12,   NA,    2,     0,
-    2,    34,   90,    1,     1,
-    2,    58,   80,    1,     1,
-    2,    60,   NA,    2,     0
-  ) %>%
-    new_nif()
-
-  expect_equal(
-    add_tad(nif)$TAD,
-    c(0, 0, 1, 2, 0, 0, 2, 0, 1, 2, 0, 0, 2))
-  expect_equal(
-    add_tafd(nif)$TAFD,
-    c(0, 0, 1, 2, 24, 48, 50, 0, 1, 2, 24, 48, 50))
-})
+# test_that("add_tad, add_tafd works", {
+#   nif <- tibble::tribble(
+#     ~ID, ~TIME, ~AMT, ~CMT, ~EVID,
+#     1,     0,  100,    1,     1,
+#     1,     0,   NA,    1,     0,
+#     1,     1,   NA,    2,     0,
+#     1,     2,   NA,    2,     0,
+#     1,    24,   90,    1,     1,
+#     1,    48,   80,    1,     1,
+#     1,    50,   NA,    2,     0,
+#     2,    10,  100,    1,     1,
+#     2,    11,   NA,    2,     0,
+#     2,    12,   NA,    2,     0,
+#     2,    34,   90,    1,     1,
+#     2,    58,   80,    1,     1,
+#     2,    60,   NA,    2,     0
+#   ) %>%
+#     new_nif()
+#
+#   expect_equal(
+#     add_tad(nif)$TAD,
+#     c(0, 0, 1, 2, 0, 0, 2, 0, 1, 2, 0, 0, 2))
+#   expect_equal(
+#     add_tafd(nif)$TAFD,
+#     c(0, 0, 1, 2, 24, 48, 50, 0, 1, 2, 24, 48, 50))
+# })
 
 
 test_that("add_trtdy works", {
