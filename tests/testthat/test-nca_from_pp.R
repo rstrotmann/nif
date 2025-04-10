@@ -48,25 +48,31 @@ test_that("nca_from_pp works with valid inputs", {
 
 
 test_that("nca_from_pp handles missing analyte", {
-  nif_obj <- data.frame(
-    ID = c(1, 1),
-    USUBJID = c("SUBJ1", "SUBJ1"),
-    ANALYTE = c("DRUG", "DRUG"),
-    EVID = c(1, 0),
-    DOSE = c(100, NA)
+  nif_obj <- structure(
+    data.frame(
+      ID = c(1, 1),
+      USUBJID = c("SUBJ1", "SUBJ1"),
+      ANALYTE = c("DRUG", "DRUG"),
+      EVID = c(1, 0),
+      DOSE = c(100, NA)
+    ),
+    class = c("nif", "data.frame")
   )
 
-  sdtm_data <- list(
-    domains = list(
-      pp = data.frame(
-        USUBJID = "SUBJ1",
-        PPTESTCD = "AUC",
-        PPSTRESN = 100,
-        PPSPEC = "PLASMA",
-        PPCAT = "DRUG",
-        PPRFTDTC = "2023-01-01"
+  sdtm_data <- structure(
+    list(
+      domains = list(
+        pp = data.frame(
+          USUBJID = "SUBJ1",
+          PPTESTCD = "AUC",
+          PPSTRESN = 100,
+          PPSPEC = "PLASMA",
+          PPCAT = "DRUG",
+          PPRFTDTC = "2023-01-01"
+        )
       )
-    )
+    ),
+    class = c("sdtm", "list")
   )
 
   # Test with NULL analyte
@@ -82,7 +88,8 @@ test_that("nca_from_pp handles errors appropriately", {
     ANALYTE = "DRUG",
     EVID = 1,
     DOSE = 100
-  )
+  ) %>%
+    new_nif()
 
   sdtm_data <- list(
     domains = list(
@@ -123,7 +130,8 @@ test_that("nca_from_pp handles empty results", {
     ANALYTE = "DRUG",
     EVID = 1,
     DOSE = 100
-  )
+  ) %>%
+    new_nif()
 
   sdtm_data <- list(
     domains = list(
@@ -153,7 +161,8 @@ test_that("nca_from_pp handles keep parameter correctly", {
     DOSE = 100,
     AGE = 30,
     SEX = "M"
-  )
+  ) %>%
+    new_nif()
 
   sdtm_data <- list(
     domains = list(

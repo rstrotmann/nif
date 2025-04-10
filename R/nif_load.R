@@ -204,7 +204,7 @@ import_from_connection <- function(
 
   out <- new_nif(raw) #%>%
     # ensure_analyte() %>%
-    # ensure_parent() %>%
+    # ensure_parent() #%>%
     # ensure_time()
 
   return(out)

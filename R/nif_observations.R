@@ -347,6 +347,9 @@ add_observation <- function(
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
+  nif <- nif %>%
+    ensure_analyte()
+
   if(length(parents(nif)) == 0)
     stop("Please add at least one administration first!")
 
@@ -367,6 +370,7 @@ add_observation <- function(
   if(is.null(analyte)) analyte <- testcd
 
   imp <- nif %>%
+    # ensure_analyte() %>%
     # as.data.frame() %>%
     filter(EVID == 1) %>%
     distinct(ANALYTE) %>%
@@ -522,8 +526,11 @@ import_observation <- function(
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
-  if(length(parents(nif)) == 0)
-    stop("Please add at least one administration first!")
+  nif <- nif %>%
+    ensure_parent()
+
+  # if(length(parents(nif)) == 0)
+  #   stop("Please add at least one administration first!")
 
   if(!all(c(DV_field, USUBJID_field) %in% names(raw)))
     stop(paste0(

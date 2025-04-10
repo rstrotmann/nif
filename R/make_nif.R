@@ -190,7 +190,7 @@ make_time <- function(obj) {
   #   new_nif()
 
   obj %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     assertr::verify(assertr::has_all_names(
       "ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
     assertr::verify(is.POSIXct(.data$DTC)) %>%
@@ -206,8 +206,8 @@ make_time <- function(obj) {
     mutate(TAFD = round(
       as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "h")),
       digits = 3)) %>%
-    add_tad() %>%
-    new_nif()
+    new_nif() %>%
+    add_tad()
 }
 
 

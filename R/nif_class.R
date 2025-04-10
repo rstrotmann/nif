@@ -390,14 +390,28 @@ studies <- function(obj) {
 #' @return A NIF object.
 #' @keywords internal
 ensure_analyte <- function(obj) {
+  # Validate input is a NIF object
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  # If ANALYTE already exists, return as is
+  if ("ANALYTE" %in% names(obj)) {
+    return(obj)
+  }
+
+  # Validate CMT exists when needed
+  if (!"CMT" %in% names(obj)) {
+    stop("CMT column is required when ANALYTE is not present")
+  }
+
+  # Create ANALYTE from CMT with proper NA handling
   obj %>%
-    {
-      if (!"ANALYTE" %in% names(obj)) {
-        mutate(., ANALYTE = as.character(CMT))
-      } else {
-        .
-      }
-    }
+    mutate(ANALYTE = case_when(
+      is.na(CMT) ~ NA_character_,
+      TRUE ~ as.character(CMT)
+    )) %>%
+    new_nif()  # Ensure return value is a NIF object
 }
 
 
@@ -425,20 +439,47 @@ ensure_dose <- function(obj) {
 #' @return A NIF object.
 #' @keywords internal
 ensure_parent <- function(obj) {
+  # Validate input is a NIF object
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  # Validate required columns exist
+  required_cols <- c("EVID", "CMT")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # Get administration CMT values
   admin_cmt <- obj %>%
     as.data.frame() %>%
     filter(.data$EVID == 1) %>%
     distinct(.data$CMT)
 
-  obj <- obj %>%
-    {
-      if (!"PARENT" %in% names(obj)) {
-        mutate(., PARENT = admin_cmt[[1]])
-      } else {
-        .
-      }
-    }
-  return(obj)
+  # Handle case where there are no administrations
+  if (nrow(admin_cmt) == 0) {
+    warning("No administration records found (EVID == 1)")
+    return(obj)
+  }
+
+  # If PARENT column doesn't exist, create it
+  if (!"PARENT" %in% names(obj)) {
+
+    # Use the most common CMT value with EVID == 1 for administrations
+    most_common_cmt <- obj %>%
+      filter(.data$EVID == 1) %>%
+      count(.data$CMT) %>%
+      arrange(desc(n)) %>%
+      slice(1) %>%
+      pull(.data$CMT)
+
+    obj <- obj %>%
+      mutate(PARENT = as.character(most_common_cmt))
+  }
+
+  # Ensure return value is a NIF object
+  return(new_nif(obj))
 }
 
 
@@ -643,7 +684,7 @@ analytes.nif <- function(obj) {
 #' analyte_overview(examplinib_poc_nif)
 analyte_overview <- function(obj) {
   obj %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     ensure_analyte() %>%
     ensure_parent() %>%
     distinct(.data$ANALYTE, .data$PARENT)
@@ -1035,10 +1076,10 @@ max_time <- function(obj, time_field = "TIME", analyte = NULL,
 #' @keywords internal
 guess_analyte <- function(obj) {
   temp <- obj %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     ensure_analyte() %>%
     ensure_metabolite() %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     filter(.data$EVID == 0)
 
   if (length(analytes(temp)) > 0) {
@@ -1154,7 +1195,7 @@ add_dose_level <- function(obj) {
 add_tad <- function(nif) {
   nif %>%
     ensure_parent() %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     mutate(admin_time = case_when(
       .data$EVID == 1 ~ .data$TIME
     )) %>%
@@ -1539,7 +1580,7 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
 
   obj %>%
     ensure_analyte() %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     arrange(.data$ID, .data$TIME, .data$ANALYTE) %>%
     index_dosing_interval() %>%
     add_obs_per_dosing_interval() %>%

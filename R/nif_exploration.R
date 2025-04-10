@@ -502,8 +502,8 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 
   if(analytes == TRUE){
     # put analytes for parents first:
-    analyte_list <- x$nif %>%
-      as.data.frame() %>%
+    analyte_list <- nif %>%
+      # as.data.frame() %>%
       distinct(PARENT, ANALYTE) %>%
       mutate(score = PARENT == ANALYTE) %>%
       arrange(-.data$score, .data$ANALYTE) %>%
@@ -513,7 +513,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
       out[[i]] <- plot(nif,
         analyte = i, log = TRUE, points = TRUE, lines = FALSE, time = "TIME",
         alpha = 0.3, title = paste(i, "by dose"),
-        max_time = max_observation_time(x$nif, i)
+        max_time = max_observation_time(nif, i)
       ) +
         ggplot2::labs(y = "")
     }

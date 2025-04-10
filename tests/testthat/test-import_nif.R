@@ -128,3 +128,14 @@ test_that("import_nif errors on file not found", {
   )
 })
 
+
+# test_that("import_nif works with sample data", {
+#   atorv <- read.csv(test_path("fixtures", "atorv.csv"))
+#
+#   nif <- import_nif(test_path("fixtures", "atorv.csv"))
+# })
+
+
+
+
+

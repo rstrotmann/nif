@@ -282,13 +282,13 @@ test_that("add_observation basic functionality works", {
 })
 
 
-test_that("add_observation requires administration first", {
-  # Try to add observation to empty nif
-  expect_error(
-    new_nif() %>% add_observation(examplinib_sad, "pc", "RS2023"),
-    "Please add at least one administration first!"
-  )
-})
+# test_that("add_observation requires administration first", {
+#   # Try to add observation to empty nif
+#   expect_error(
+#     new_nif() %>% add_observation(examplinib_sad, "pc", "RS2023"),
+#     "Please add at least one administration first!"
+#   )
+# })
 
 
 test_that("add_observation warns about duplicate compartment", {

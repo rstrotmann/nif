@@ -47,7 +47,8 @@ make_plot_data_set <- function(
     filter(ANALYTE %in% analyte) %>%
     pull(PARENT)
 
-  out <- as.data.frame(nif) %>%
+  # out <- as.data.frame(nif) %>%
+  out <- nif %>%
     filter((ANALYTE %in% analyte & EVID == 0) |
       (ANALYTE %in% parent & EVID == 1))
 

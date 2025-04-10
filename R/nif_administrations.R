@@ -208,7 +208,6 @@ make_administration <- function(
 ) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
-
   vs <- NULL
 
   if(has_domain(sdtm, "vs")) {
@@ -251,7 +250,6 @@ make_administration <- function(
     mutate(TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
            METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
            DOSE = EXDOSE, AMT = EXDOSE) %>%
-
     expand_ex()
 
   # impute missing administration times from PCRFTDTC

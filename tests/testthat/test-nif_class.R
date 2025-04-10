@@ -256,7 +256,9 @@ test_that("add_tad, add_tafd works", {
     2,    34,   90,    1,     1,
     2,    58,   80,    1,     1,
     2,    60,   NA,    2,     0
-  )
+  ) %>%
+    new_nif()
+
   expect_equal(
     add_tad(nif)$TAD,
     c(0, 0, 1, 2, 0, 0, 2, 0, 1, 2, 0, 0, 2))
@@ -310,7 +312,8 @@ test_that("index_rich_sampling_intervals works", {
     1,   100,     0,    2,
     1,   102,     0,    2,
     1,   104,     0,    2
-  )
+  ) %>%
+    new_nif()
 
   temp <- as.data.frame(index_rich_sampling_intervals(nif))
   expect_equal(unique(temp$RICH_N), c(NA, 1, 2))
@@ -330,7 +333,8 @@ test_that("cfb works", {
     1,   "A",      0,     3,     3,
     1,   "A",      0,     4,     4,
     1,   "A",      0,     5,     5
-  )
+  ) %>%
+    new_nif()
 
   expect_no_error(
     test <- obj %>%
@@ -378,7 +382,9 @@ test_that("add_rtb works", {
     2,     2,     0,    2, 20,
     2,     4,     0,    2, 30,
     2,    72,     0,    2, 40,
-  )
+  ) %>%
+    new_nif()
+
   temp <- as.data.frame(add_rtb(nif))
   expect_equal(temp$DVRTB,
                c(NA, 1, 2, 3, NA, NA, NA, 4, NA, 1, 2, 3, 4))
