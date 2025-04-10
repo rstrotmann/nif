@@ -9,10 +9,8 @@
 #' @param group The grouping variable as string.
 #' @param nominal_time A boolean to indicate whether nominal time rather than
 #'    actual time should be used for NCA.
-#' @param keep A vector of fields to keep in the output.
-#' @param silent `r lifecycle::badge("deprecated")` Dummy option for
-#' compatibility, set the global option [nif_option()] with `silent = TRUE` to
-#' suppress messages.
+#' @param keep A vector of fields to retain on the subject level in the output.
+#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #' @param average_duplicates Boolean to indicate whether duplicate entries
 #'   should be averaged.
 #' @param parent The parent compound to derive the administration information
@@ -25,18 +23,46 @@
 #' nca(examplinib_fe_nif)
 #' nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 #'
-nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
-                group = NULL,
-                nominal_time = FALSE,
-                average_duplicates = TRUE,
-                silent = deprecated()) {
-  # guess analyte if not defined
+nca <- function(
+    obj,
+    analyte = NULL,
+    parent = NULL,
+    keep = "DOSE",
+    group = NULL,
+    nominal_time = FALSE,
+    average_duplicates = TRUE,
+    silent = NULL) {
+
+  # Input validation
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  required_cols <- unique(c("TIME", "DV", "EVID", "ANALYTE", group, keep, group))
+  if(nominal_time == TRUE)
+    required_cols <- c(required_cols, "NTIME")
+
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # if (!is.null(group)) {
+  #   missing_groups <- setdiff(group, names(obj))
+  #   if (length(missing_groups) > 0) {
+  #     stop("Group columns not found: ", paste(missing_groups, collapse = ", "))
+  #   }
+  # }
+
+  # Analyte handling
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
     conditional_message(paste(
       "NCA: No analyte specified. Selected",
       current_analyte, "as the most likely."
-    ))
+    ),
+    silent = silent
+    )
   } else {
     current_analyte <- analyte
   }
@@ -45,14 +71,20 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
     parent <- current_analyte
   }
 
-  # filter for analyte, set selected TIME
-  obj1 <- obj %>%
-    as.data.frame() %>%
-    dplyr::filter(ANALYTE == current_analyte) %>%
-    dplyr::mutate(TIME = case_when(nominal_time == TRUE ~ NTIME,
-                                   .default = TIME)) %>%
-    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
-    as.data.frame()
+  # Data preparation with error handling
+  obj1 <- tryCatch({
+    obj %>%
+      as.data.frame() %>%
+      dplyr::filter(ANALYTE == current_analyte) %>%
+      dplyr::mutate(TIME = if(nominal_time) NTIME else TIME) %>%
+      dplyr::mutate(DV = if_else(is.na(DV), 0, DV))
+  }, error = function(e) {
+    stop("Error preparing data: ", e$message)
+  })
+
+  if (nrow(obj1) == 0) {
+    stop("No data found for analyte: ", current_analyte)
+  }
 
   # preserve the columns to keep
   keep_columns <- obj1 %>%
@@ -64,21 +96,31 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
   admin <- obj %>%
     as.data.frame() %>%
     dplyr::filter(ANALYTE == parent) %>%
-    dplyr::mutate(TIME = case_when(
-      nominal_time == TRUE ~ NTIME,
-      .default = TIME
-    )) %>%
-    dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
+
+    # dplyr::mutate(TIME = case_when(
+    #   nominal_time == TRUE ~ NTIME,
+    #   .default = TIME
+    # )) %>%
+
+    {if(nominal_time == TRUE) mutate(., TIME = NTIME) else .} %>%
+
+    # dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
+
     dplyr::filter(EVID == 1) %>%
-    mutate(PPRFTDTC = .data$DTC) %>%
+    # mutate(PPRFTDTC = .data$DTC) %>%
     dplyr::select(any_of(
-      c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
+      # c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
+      c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
     as.data.frame()
 
   # concentration data
   conc <- obj1 %>%
     dplyr::filter(EVID == 0) %>%
     dplyr::select(any_of(c("ID", "TIME", "DV", "DOSE", group)))
+
+  ## to do:
+  #  identify duplicates and cast error
+  #
 
   if (average_duplicates == TRUE) {
     conc <- conc %>%
@@ -96,14 +138,23 @@ nca <- function(obj, analyte = NULL, parent = NULL, keep = "DOSE",
   # generate formulae for the conc and admin objects
   conc_formula <- "DV~TIME|ID"
   # dose_formula <- "DOSE~TIME|ID"
-  dose_formula <- "DOSE~TIME|PPRFTDTC+ID"
+  # dose_formula <- "DOSE~TIME|PPRFTDTC+ID"
+  dose_formula <- "DOSE~TIME|ID"
   if (!is.null(group)) {
     group_string <- paste(group, collapse = "+")
-    if(get("silent", .nif_env) == FALSE) {
-      message(paste("NCA: Group by", group_string))
-    }
+
+    # if(get("silent", .nif_env) == FALSE) {
+    #   message(paste("NCA: Group by", group_string))
+    # }
+
+    conditional_message(
+      "NCA: Group by", group_string,
+      silent = silent
+    )
+
     conc_formula <- paste0("DV~TIME|", group_string, "+ID")
-    dose_formula <- paste0("DOSE~TIME|", group_string, "+PPRFTDTC+ID")
+    # dose_formula <- paste0("DOSE~TIME|", group_string, "+PPRFTDTC+ID")
+    dose_formula <- paste0("DOSE~TIME|", group_string, "+ID")
   }
 
   conc_obj <- PKNCA::PKNCAconc(
@@ -591,31 +642,46 @@ nca2 <- function(obj,
   # Prepare concentration data
   conc_data <- data %>%
     filter(EVID == 0) %>%
-    select(ID, TIME, DV, ANALYTE)
+    select(ID, TIME, DV, ANALYTE, RICH_N)
 
   # Prepare dosing data
   dose_data <- data %>%
     filter(EVID == 1) %>%
-    select(ID, TIME, AMT, ANALYTE) %>%
+    select(ID, TIME, AMT, ANALYTE, RICH_N) %>%
     rename(DOSE = AMT)
 
   # Create PKNCA objects with analyte-specific formulas
   conc_obj <- PKNCA::PKNCAconc(
     conc_data,
-    DV ~ TIME | ANALYTE + ID,
+    DV ~ TIME | ANALYTE + ID + RICH_N,
     check.time.sorted = TRUE
   )
 
   dose_obj <- PKNCA::PKNCAdose(
     dose_data,
-    DOSE ~ TIME | ANALYTE + ID
+    DOSE ~ TIME | ANALYTE + ID + RICH_N
   )
 
   # Create intervals for analysis
-  # Using automatic interval detection by PKNCA
+  intervals <- data.frame(
+    start = 0,
+    end = Inf,
+    auclast = TRUE,
+    aucinf.obs = TRUE,
+    cmax = TRUE,
+    tmax = TRUE,
+    half.life = TRUE,
+    cl = TRUE,
+    vz = TRUE,
+    mrt = TRUE,
+    lambda.z = TRUE
+  )
+
+  # Create PKNCAdata object with explicit intervals
   data_obj <- PKNCA::PKNCAdata(
     conc_obj,
     dose_obj,
+    # intervals = intervals,
     impute = "start_conc0"
   )
 

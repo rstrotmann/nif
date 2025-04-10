@@ -87,9 +87,10 @@ if NULL.}
 \item{duplicates}{Selection how to deal with duplicate observations with
 respect to the USUBJID, ANALYTE and DTC fields:
 \itemize{
-\item stop: stop execution and produce error message
-\item identify: return a list of duplicate entries
-\item remove: remove duplicates, applying the \code{duplicate_function} to the
+\item 'stop': Stop execution and produce error message
+.  * 'ignore': Include duplicates in the data set
+\item 'identify': Return a list of duplicate entries
+\item 'remove': Remove duplicates, applying the \code{duplicate_function} to the
 duplicate entries.
 }}
 
@@ -114,11 +115,6 @@ filter term can refer to any field of the respective SDTM domain.
 
 A PK/PD model compartment can be specified with 'cmt' or will be
 automatically assigned if \code{cmt = NULL}.
-}
-\examples{
-add_observation(examplinib_fe_nif, examplinib_fe, "pc", "RS2023487A",
-  parent = "RS2023")
-
 }
 \seealso{
 \code{\link[=add_administration]{add_administration()}}

@@ -12,7 +12,7 @@ nca(
   group = NULL,
   nominal_time = FALSE,
   average_duplicates = TRUE,
-  silent = deprecated()
+  silent = NULL
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ the dataset, defaults to the first analyte.}
 \item{parent}{The parent compound to derive the administration information
 from. By default, equal to the analyte.}
 
-\item{keep}{A vector of fields to keep in the output.}
+\item{keep}{A vector of fields to retain on the subject level in the output.}
 
 \item{group}{The grouping variable as string.}
 
@@ -34,9 +34,7 @@ actual time should be used for NCA.}
 \item{average_duplicates}{Boolean to indicate whether duplicate entries
 should be averaged.}
 
-\item{silent}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Dummy option for
-compatibility, set the global option \code{\link[=nif_option]{nif_option()}} with \code{silent = TRUE} to
-suppress messages.}
+\item{silent}{Suppress messages, defaults to nif_option setting, if NULL.}
 }
 \value{
 A data frame.
