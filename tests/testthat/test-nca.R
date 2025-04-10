@@ -20,15 +20,15 @@ test_that("nca() analyte handling", {
     tibble::tribble(
       ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DOSE,
       1,     0,   0,     1,   "DRUG",   100,
-      1,     1,  10,     0,   "DRUG",   100,
+      1,     0,  10,     0,   "DRUG",   100,
       1,     2,   5,     0,   "DRUG",   100,
       1,     3,   2,     0,   "DRUG",   100,
       2,     0,   0,     1,   "DRUG",   100,
-      2,     1,  12,     0,   "DRUG",   100,
+      2,     0,  12,     0,   "DRUG",   100,
       2,     2,   6,     0,   "DRUG",   100,
       2,     3,   3,     0,   "DRUG",   100,
       3,     0,   0,     1,   "DRUG",   100,
-      3,     1,   8,     0,   "DRUG",   100,
+      3,     0,   8,     0,   "DRUG",   100,
       3,     2,   4,     0,   "DRUG",   100,
       3,     3,   1,     0,   "DRUG",   100
     ),
@@ -41,7 +41,7 @@ test_that("nca() analyte handling", {
 
   # Test explicit analyte selection
   expect_no_error(
-    result <- nca(test_nif, analyte = "DRUG"))
+    result <- nca(test_nif, analyte = "DRUG", silent = TRUE))
 })
 
 
@@ -68,6 +68,7 @@ test_that("nca() grouping functionality", {
 
   # Test grouping
   result <- nca(test_nif, group = "GROUP", silent = TRUE)
+
   expect_true("GROUP" %in% names(result))
   expect_equal(length(unique(result$GROUP)), 2)
 })
@@ -126,7 +127,8 @@ test_that("nca() duplicate handling", {
 
   # Test with and without averaging duplicates
   expect_no_error(
-    result_avg <- nca(test_nif, average_duplicates = TRUE, silent = TRUE))
+    result_avg <- nca(test_nif, average_duplicates = TRUE, silent = TRUE)
+  )
 
   expect_error(
     result_no_avg <- nca(test_nif, average_duplicates = FALSE, silent = TRUE),
@@ -175,8 +177,8 @@ test_that("nca works with the whale data set", {
   expected_nca <- PKNCA::pk.nca(
     PKNCA::PKNCAdata(
       PKNCA::PKNCAconc(conc, concentration ~ time | Animal),
-      PKNCA::PKNCAdose(dose, dose ~ time | Animal),
-      impute = "start_conc0"
+      PKNCA::PKNCAdose(dose, dose ~ time | Animal) #,
+      # impute = "start_conc0"
     )
   )$result %>%
     arrange(Animal, PPTESTCD)

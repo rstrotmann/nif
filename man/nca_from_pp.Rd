@@ -10,7 +10,8 @@ nca_from_pp(
   analyte = NULL,
   keep = NULL,
   group = NULL,
-  observation_filter = "TRUE"
+  observation_filter = "TRUE",
+  silent = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ nca_from_pp(
 \item{group}{Grouping variable as character vector.}
 
 \item{observation_filter}{Observation filter term as character. Must be valid R code that can be evaluated on the PP domain.}
+
+\item{silent}{Suppress message output.}
 }
 \value{
 A data frame containing the filtered and joined PP domain data.

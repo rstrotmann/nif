@@ -22,7 +22,7 @@ test_that("nca_from_pp works with valid inputs", {
   )
 
   # Test basic functionality
-  result <- nca_from_pp(nif_obj, sdtm_data, analyte = "DRUG")
+  result <- nca_from_pp(nif_obj, sdtm_data, analyte = "DRUG", silent = TRUE)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 4)
   expect_true(all(c("USUBJID", "PPTESTCD", "PPSTRESN", "DOSE", "AGE") %in% names(result)))
@@ -70,7 +70,7 @@ test_that("nca_from_pp handles missing analyte", {
   )
 
   # Test with NULL analyte
-  result <- nca_from_pp(nif_obj, sdtm_data)
+  result <- nca_from_pp(nif_obj, sdtm_data, silent = TRUE)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 1)
 })
@@ -99,13 +99,13 @@ test_that("nca_from_pp handles errors appropriately", {
 
   # Test invalid sdtm_data structure
   expect_error(
-    nca_from_pp(nif_obj, list()),
+    nca_from_pp(nif_obj, list(), silent = TRUE),
     "sdtm_data must contain a 'domains' list"
   )
 
   # Test missing PP domain
   expect_error(
-    nca_from_pp(nif_obj, list(domains = list())),
+    nca_from_pp(nif_obj, list(domains = list()), silent = TRUE),
     "Domain PP is not included in the sdtm object"
   )
 
@@ -139,7 +139,7 @@ test_that("nca_from_pp handles empty results", {
 
   # Test with filter that returns no results
   expect_warning(
-    nca_from_pp(nif_obj, sdtm_data, observation_filter = "PPSPEC == 'URINE'"),
+    nca_from_pp(nif_obj, sdtm_data, observation_filter = "PPSPEC == 'URINE'", silent = TRUE),
     "No data found after applying filters"
   )
 })
@@ -168,11 +168,11 @@ test_that("nca_from_pp handles keep parameter correctly", {
   )
 
   # Test with keep parameter
-  result <- nca_from_pp(nif_obj, sdtm_data, keep = c("AGE", "SEX"))
+  result <- nca_from_pp(nif_obj, sdtm_data, keep = c("AGE", "SEX"), silent = TRUE)
   expect_true(all(c("AGE", "SEX") %in% names(result)))
 
   # Test with non-existent keep columns
-  result <- nca_from_pp(nif_obj, sdtm_data, keep = "NONEXISTENT")
+  result <- nca_from_pp(nif_obj, sdtm_data, keep = "NONEXISTENT", silent = TRUE)
   expect_false("NONEXISTENT" %in% names(result))
 })
 

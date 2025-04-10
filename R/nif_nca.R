@@ -169,11 +169,17 @@ nca <- function(
 
   data_obj <- PKNCA::PKNCAdata(
     conc_obj,
-    dose_obj,
-    impute = "start_conc0"
+    dose_obj #,
+    # impute = "start_conc0"
   )
 
-  results_obj <- PKNCA::pk.nca(data_obj)
+  messages = capture_warnings(
+    results_obj <- PKNCA::pk.nca(data_obj, verbose = F)
+  )
+
+  conditional_message(
+    paste0(messages, collapse = "\n"), silent = silent
+  )
 
   temp <- results_obj$result %>%
     as.data.frame() %>%
@@ -310,12 +316,14 @@ nca1 <- function(nif,
 #' @param keep Column names to keep, as character vector.
 #' @param observation_filter Observation filter term as character. Must be valid R code that can be evaluated on the PP domain.
 #' @param group Grouping variable as character vector.
+#' @param silent Suppress message output.
 #'
 #' @return A data frame containing the filtered and joined PP domain data.
 #' @export
 nca_from_pp <- function(
     obj, sdtm_data,
-    analyte = NULL, keep = NULL, group = NULL, observation_filter = "TRUE") {
+    analyte = NULL, keep = NULL, group = NULL, observation_filter = "TRUE",
+    silent = NULL) {
 
   # Input validation
   if (missing(obj) || missing(sdtm_data)) {
@@ -340,9 +348,10 @@ nca_from_pp <- function(
   # Guess analyte if not provided
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
-    conditional_message(paste(
+    conditional_message(
       "NCA: No analyte specified. Selected", current_analyte,
-      "as the most likely."))
+      "as the most likely.",
+      silent = silent)
   } else {
     current_analyte <- analyte
   }
