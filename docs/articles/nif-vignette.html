@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -377,18 +377,18 @@ too.</p>
 <span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5 PT0.5H    0   0  RS2023   2 RS2023</span></span>
 <span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0   PT1H    0   0  RS2023   2 RS2023</span></span>
 <span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5 PT1.5H    0   0  RS2023   2 RS2023</span></span>
-<span><span class="co">#&gt;   TRTDY METABOLITE DOSE       DV MDV ACTARMCD                      IMPUTATION</span></span>
-<span><span class="co">#&gt; 1     1      FALSE  500       NA   1       AB admin time copied from PCRFTDTC</span></span>
-<span><span class="co">#&gt; 2     1      FALSE  500    0.000   0       AB                                </span></span>
-<span><span class="co">#&gt; 3     1      FALSE  500 4697.327   0       AB                                </span></span>
-<span><span class="co">#&gt; 4     1      FALSE  500 6325.101   0       AB                                </span></span>
-<span><span class="co">#&gt; 5     1      FALSE  500 6294.187   0       AB                                </span></span>
-<span><span class="co">#&gt;   PERIOD</span></span>
-<span><span class="co">#&gt; 1     NA</span></span>
-<span><span class="co">#&gt; 2      1</span></span>
-<span><span class="co">#&gt; 3      1</span></span>
-<span><span class="co">#&gt; 4      1</span></span>
-<span><span class="co">#&gt; 5      1</span></span></code></pre></div>
+<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD                      IMPUTATION PERIOD</span></span>
+<span><span class="co">#&gt; 1     1      FALSE  500   1       AB admin time copied from PCRFTDTC     NA</span></span>
+<span><span class="co">#&gt; 2     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt; 3     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt; 4     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt; 5     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt;         DV</span></span>
+<span><span class="co">#&gt; 1       NA</span></span>
+<span><span class="co">#&gt; 2    0.000</span></span>
+<span><span class="co">#&gt; 3 4697.327</span></span>
+<span><span class="co">#&gt; 4 6325.101</span></span>
+<span><span class="co">#&gt; 5 6294.187</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-analytes">Multiple analytes<a class="anchor" aria-label="anchor" href="#multiple-analytes"></a>
@@ -456,18 +456,18 @@ create the ‘FASTED’ covariate.</p>
 <span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5 PT0.5H    0   0  RS2023   2 RS2023</span></span>
 <span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0   PT1H    0   0  RS2023   2 RS2023</span></span>
 <span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5 PT1.5H    0   0  RS2023   2 RS2023</span></span>
-<span><span class="co">#&gt;   TRTDY METABOLITE DOSE       DV MDV ACTARMCD                      IMPUTATION</span></span>
-<span><span class="co">#&gt; 1     1      FALSE  500       NA   1       AB admin time copied from PCRFTDTC</span></span>
-<span><span class="co">#&gt; 2     1      FALSE  500    0.000   0       AB                                </span></span>
-<span><span class="co">#&gt; 3     1      FALSE  500 4697.327   0       AB                                </span></span>
-<span><span class="co">#&gt; 4     1      FALSE  500 6325.101   0       AB                                </span></span>
-<span><span class="co">#&gt; 5     1      FALSE  500 6294.187   0       AB                                </span></span>
-<span><span class="co">#&gt;   PERIOD                  EPOCH TREATMENT FASTED</span></span>
-<span><span class="co">#&gt; 1      1 OPEN LABEL TREATMENT 1         A      1</span></span>
-<span><span class="co">#&gt; 2      1 OPEN LABEL TREATMENT 1         A      1</span></span>
-<span><span class="co">#&gt; 3      1 OPEN LABEL TREATMENT 1         A      1</span></span>
-<span><span class="co">#&gt; 4      1 OPEN LABEL TREATMENT 1         A      1</span></span>
-<span><span class="co">#&gt; 5      1 OPEN LABEL TREATMENT 1         A      1</span></span></code></pre></div>
+<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD                      IMPUTATION PERIOD</span></span>
+<span><span class="co">#&gt; 1     1      FALSE  500   1       AB admin time copied from PCRFTDTC      1</span></span>
+<span><span class="co">#&gt; 2     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt; 3     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt; 4     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt; 5     1      FALSE  500   0       AB                                      1</span></span>
+<span><span class="co">#&gt;         DV                  EPOCH TREATMENT FASTED</span></span>
+<span><span class="co">#&gt; 1       NA OPEN LABEL TREATMENT 1         A      1</span></span>
+<span><span class="co">#&gt; 2    0.000 OPEN LABEL TREATMENT 1         A      1</span></span>
+<span><span class="co">#&gt; 3 4697.327 OPEN LABEL TREATMENT 1         A      1</span></span>
+<span><span class="co">#&gt; 4 6325.101 OPEN LABEL TREATMENT 1         A      1</span></span>
+<span><span class="co">#&gt; 5 6294.187 OPEN LABEL TREATMENT 1         A      1</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
