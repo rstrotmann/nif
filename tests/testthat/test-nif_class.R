@@ -231,7 +231,7 @@ test_that("add_dose_level works", {
     3,     0,  100,    1,     1,
     3,    24,   NA,    1,     1,
     3,    48,  150,    1,     1
-  )
+  ) %>% new_nif()
 
   temp <- add_dose_level(nif) %>%
     distinct(ID, DL)

@@ -36,7 +36,7 @@ order_nif_columns <- function(obj) {
     "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
     "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
     "PCELTM", "EVID", "AMT", "ANALYTE", "CMT", "PARENT", "TRTDY",
-    "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
+    "METABOLITE", "DOSE", "MDV", "ACTARMCD", "IMPUTATION",
     "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
     "TREATMENT", "SRC_DOMAIN", "SRC_SEQ"
   ))
@@ -417,21 +417,59 @@ ensure_analyte <- function(obj) {
 
 #' Ensure that the DOSE field is present
 #'
-#' @param obj A NIF object.
-#' @return A NIF object.
+#' This function ensures that the DOSE field exists in the NIF object. If it doesn't exist,
+#' it creates it by:
+#' 1. Using AMT values for dosing events (EVID == 1)
+#' 2. Filling missing values using forward and backward fill within each subject
+#'
+#' @param obj A NIF object
+#' @return A NIF object with the DOSE field
 #' @keywords internal
+#' @examples
+#' # Create a NIF object without DOSE field
+#' nif_obj <- new_nif()
+#' nif_obj$AMT <- c(100, 0, 0, 200, 0, 0)
+#' nif_obj$EVID <- c(1, 0, 0, 1, 0, 0)
+#' nif_obj$ID <- c(1, 1, 1, 2, 2, 2)
+#' 
+#' # Add DOSE field
+#' nif_obj <- ensure_dose(nif_obj)
 ensure_dose <- function(obj) {
-  obj %>%
-    {
-      if (!"DOSE" %in% names(obj)) {
-        index_nif(.) %>%
-          mutate(DOSE = case_when(.data$EVID == 1 ~ AMT, .default = NA)) %>%
-          tidyr::fill(DOSE, .direction = "downup")
-      } else {
-        .
-      }
-    }
+  # Input validation
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+  
+  # Check for required columns
+  required_cols <- c("ID", "EVID", "AMT")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+  
+  # If DOSE already exists, return as is
+  if ("DOSE" %in% names(obj)) {
+    return(obj)
+  }
+  
+  # Create DOSE field
+  result <- obj %>%
+    # Ensure proper ordering for fill operations
+    arrange(.data$ID, .data$TIME) %>%
+    # Create DOSE from AMT for dosing events
+    mutate(DOSE = case_when(
+      .data$EVID == 1 ~ .data$AMT,
+      TRUE ~ NA_real_
+    )) %>%
+    # Fill DOSE within each subject
+    group_by(.data$ID) %>%
+    tidyr::fill(DOSE, .direction = "downup") %>%
+    ungroup()
+  
+  # Return as NIF object
+  return(new_nif(result))
 }
+
 
 #' Ensure that the PARENT field is present in a NIF file.
 #'
