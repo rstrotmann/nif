@@ -10,8 +10,14 @@ add_tad(nif)
 \item{nif}{A NIF object.}
 }
 \value{
-A NIF object.
+A NIF object with an added TAD column.
 }
 \description{
-Add time-after-dose (TAD) field
+This function adds a time-after-dose (TAD) field to a NIF object. TAD represents
+the time elapsed since the most recent administration of the parent compound.
+For observations before the first dose, TAD will be negative.
+}
+\examples{
+# Add TAD to a NIF object
+add_tad(examplinib_poc_nif)
 }

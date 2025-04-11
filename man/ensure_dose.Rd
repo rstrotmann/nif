@@ -7,12 +7,17 @@
 ensure_dose(obj)
 }
 \arguments{
-\item{obj}{A NIF object.}
+\item{obj}{A NIF object}
 }
 \value{
-A NIF object.
+A NIF object with the DOSE field
 }
 \description{
-Ensure that the DOSE field is present
+This function ensures that the DOSE field exists in the NIF object. If it doesn't exist,
+it creates it by:
+\enumerate{
+\item Using AMT values for dosing events (EVID == 1)
+\item Filling missing values using forward and backward fill within each subject
+}
 }
 \keyword{internal}

@@ -382,227 +382,6 @@ studies <- function(obj) {
 }
 
 
-#' Ensure that the ANALYTE field is present
-#'
-#' If 'ANALYTE' is not in the column names, the field is created based on the
-#' compartment (CMT).
-#' @param obj A NIF object.
-#' @return A NIF object.
-#' @keywords internal
-ensure_analyte <- function(obj) {
-  # Validate input is a NIF object
-  if (!inherits(obj, "nif")) {
-    stop("Input must be a NIF object")
-  }
-
-  # If ANALYTE already exists, return as is
-  if ("ANALYTE" %in% names(obj)) {
-    return(obj)
-  }
-
-  # Validate CMT exists when needed
-  if (!"CMT" %in% names(obj)) {
-    stop("CMT column is required when ANALYTE is not present")
-  }
-
-  # Create ANALYTE from CMT with proper NA handling
-  obj %>%
-    mutate(ANALYTE = case_when(
-      is.na(CMT) ~ NA_character_,
-      TRUE ~ as.character(CMT)
-    )) %>%
-    new_nif()  # Ensure return value is a NIF object
-}
-
-
-#' Ensure that the DOSE field is present
-#'
-#' This function ensures that the DOSE field exists in the NIF object. If it doesn't exist,
-#' it creates it by:
-#' 1. Using AMT values for dosing events (EVID == 1)
-#' 2. Filling missing values using forward and backward fill within each subject
-#'
-#' @param obj A NIF object
-#' @return A NIF object with the DOSE field
-#' @keywords internal
-#' @examples
-#' # Create a NIF object without DOSE field
-#' nif_obj <- new_nif()
-#' nif_obj$AMT <- c(100, 0, 0, 200, 0, 0)
-#' nif_obj$EVID <- c(1, 0, 0, 1, 0, 0)
-#' nif_obj$ID <- c(1, 1, 1, 2, 2, 2)
-#' 
-#' # Add DOSE field
-#' nif_obj <- ensure_dose(nif_obj)
-ensure_dose <- function(obj) {
-  # Input validation
-  if (!inherits(obj, "nif")) {
-    stop("Input must be a NIF object")
-  }
-  
-  # Check for required columns
-  required_cols <- c("ID", "EVID", "AMT")
-  missing_cols <- setdiff(required_cols, names(obj))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-  
-  # If DOSE already exists, return as is
-  if ("DOSE" %in% names(obj)) {
-    return(obj)
-  }
-  
-  # Create DOSE field
-  result <- obj %>%
-    # Ensure proper ordering for fill operations
-    arrange(.data$ID, .data$TIME) %>%
-    # Create DOSE from AMT for dosing events
-    mutate(DOSE = case_when(
-      .data$EVID == 1 ~ .data$AMT,
-      TRUE ~ NA_real_
-    )) %>%
-    # Fill DOSE within each subject
-    group_by(.data$ID) %>%
-    tidyr::fill(DOSE, .direction = "downup") %>%
-    ungroup()
-  
-  # Return as NIF object
-  return(new_nif(result))
-}
-
-
-#' Ensure that the PARENT field is present in a NIF file.
-#'
-#' @param obj A NIF object.
-#' @return A NIF object.
-#' @keywords internal
-ensure_parent <- function(obj) {
-  # Validate input is a NIF object
-  if (!inherits(obj, "nif")) {
-    stop("Input must be a NIF object")
-  }
-
-  # Validate required columns exist
-  required_cols <- c("EVID", "CMT")
-  missing_cols <- setdiff(required_cols, names(obj))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Get administration CMT values
-  admin_cmt <- obj %>%
-    as.data.frame() %>%
-    filter(.data$EVID == 1) %>%
-    distinct(.data$CMT)
-
-  # Handle case where there are no administrations
-  if (nrow(admin_cmt) == 0) {
-    warning("No administration records found (EVID == 1)")
-    return(obj)
-  }
-
-  # If PARENT column doesn't exist, create it
-  if (!"PARENT" %in% names(obj)) {
-
-    # Use the most common CMT value with EVID == 1 for administrations
-    most_common_cmt <- obj %>%
-      filter(.data$EVID == 1) %>%
-      count(.data$CMT) %>%
-      arrange(desc(n)) %>%
-      slice(1) %>%
-      pull(.data$CMT)
-
-    obj <- obj %>%
-      mutate(PARENT = as.character(most_common_cmt))
-  }
-
-  # Ensure return value is a NIF object
-  return(new_nif(obj))
-}
-
-
-#' Ensure that the METABOLITE field is present in a NIF file.
-#'
-#' @param obj A NIF object.
-#' @return A NIF object.
-#' @keywords internal
-ensure_metabolite <- function(obj) {
-  obj %>%
-    {
-      if (!"METABOLITE" %in% names(obj)) {
-        mutate(., METABOLITE = FALSE)
-      } else {
-        .
-      }
-    }
-}
-
-
-#' Ensure that TAD is present in the NIF object
-#'
-#' @param obj A NIF object.
-#' @return A NIF object.
-#' @keywords internal
-ensure_tad <- function(obj) {
-  obj <- obj %>%
-    ensure_parent() %>%
-    {
-      if (!"TAD" %in% names(obj)) {
-        add_tad(.)
-      } else {
-        .
-      }
-    }
-}
-
-
-#' Ensure TAFD is present in the NIF object
-#'
-#' @param obj A nif object.
-#'
-#' @return A nif object.
-#' @keywords internal
-ensure_tafd <- function(obj) {
-  obj <- obj %>%
-    {
-      if (!"TAFD" %in% names(obj)) {
-        add_tafd(.)
-      } else {
-        .
-      }
-    }
-}
-
-
-#' Ensure that all time fields are in the nif object
-#'
-#' @param obj A nif object.
-#'
-#' @return A nif object.
-#' @keywords internal
-ensure_time <- function(obj) {
-  obj <- obj %>%
-    {
-      if (!all(c("TIME", "TAD", "TAFD") %in% names(obj))) {
-        if("DTC" %in% names(obj))
-          make_time(.)
-        else
-          make_time_from_TIME(.)
-      } else {
-        .
-      }
-    }
-}
-
-
-ensure_cfb <- function(obj) {
-  obj <- obj %>%
-    {
-      if (!"DVCFB" %in% names(obj)) add_cfb(.) else .
-    }
-}
-
-
 #' Doses in a nif or sdtm object
 #'
 #' @param obj A nif or sdtm object.
@@ -812,113 +591,6 @@ head.nif <- function(x, ...) {
   x <- x %>%
     as.data.frame()
   NextMethod("head")
-}
-
-
-#' Write as space-delimited, fixed-width file as required by NONMEM or a
-#' character-separated file
-#'
-#' All numeric fields are reduced to 4 significant places. For this, IEC 60559
-#' is applied, i.e., rounding for a last digit of 5 is to the next even number.
-#' All fields are converted to character, and NA-values are converted to '.'.
-#' @param obj The NIF object.
-#' @param fields The fields to export. If NULL (default), all fields will be
-#' exported.
-#' @param filename The filename as string. If not filename is specified, the
-#' file is printed only.
-#' @param sep The separating character, e.g. ',' or ';'. If NULL (default), the
-#' output has a space-separated, fixed-width format.
-#' @importFrom gdata write.fwf
-#' @export
-#' @examples
-#' head(write_nif(examplinib_fe_nif), 5)
-write_nif <- function(obj, filename = NULL, fields = NULL, sep = NULL) {
-  temp <- obj %>%
-    as.data.frame() %>%
-    mutate_if(is.numeric, round, digits = 4) %>%
-    mutate_all(as.character()) %>%
-    mutate_all(function(x) {
-      case_when(is.na(x) ~ ".", .default = as.character(x))
-    })
-
-  if (is.null(filename)) {
-    print(temp, row.names = FALSE, col.names = FALSE)
-  } else {
-    if (is.null(sep)) {
-      temp <- rbind(colnames(temp), temp)
-      write.fwf(temp, file = filename, colnames = FALSE)
-    } else {
-      write.table(temp,
-        file = filename, row.names = FALSE,
-        sep = sep, dec = ".", quote = FALSE
-      )
-    }
-  }
-}
-
-
-#' Write as comma-separated file, complying with the format used by Monolix
-#'
-#' @param obj The NIF object.
-#' @param filename The filename as string. If not filename is specified, the
-#' file is printed only.
-#' @param fields The fields to export. If NULL (default), all fields will be
-#' exported.
-#' @return Nothing.
-#' @export
-#' @examples
-#' write_monolix(examplinib_fe_nif)
-write_monolix <- function(obj, filename = NULL, fields = NULL) {
-  double_fields <- c(
-    "NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
-    "AGE", "HEIGHT", "WEIGHT", "BMI"
-  )
-  bl_fields <- names(obj)[str_detect(names(obj), "^BL_")]
-  int_fields <- c("REF", "ID", "MDV", "CMT", "EVID", "SEX", "TRTDY")
-  num_fields <- c(double_fields, int_fields, bl_fields)
-
-  if (is.null(fields)) {
-    fields <- names(obj)
-  }
-
-  temp <- obj %>%
-    as.data.frame() %>%
-    # mutate(across(any_of(num_fields), signif, 4)) %>%
-    mutate(across(any_of(num_fields), \(x) signif(x, 4))) %>%
-    mutate(ADM = case_when(.data$AMT != 0 ~ "1", .default = ".")) %>%
-    mutate(YTYPE = case_when(.data$ADM == "1" ~ ".",
-      .default = as.character(CMT - 1)
-    ))
-
-  if ("METABOLITE" %in% names(obj)) {
-    temp <- temp %>%
-      mutate(METABOLITE = case_when(
-        is.na(.data$METABOLITE) ~ FALSE,
-        .default = .data$METABOLITE
-      ))
-  }
-
-  temp <- temp %>%
-    mutate(across(
-      any_of(num_fields),
-      function(x) {
-        case_when(
-          is.na(x) ~ ".",
-          .default = as.character(x)
-        )
-      }
-    )) %>%
-    mutate_all(as.character) %>%
-    mutate(Y = .data$DV)
-
-  if (is.null(filename)) {
-    print(temp, row.names = FALSE, col.names = FALSE)
-  } else {
-    write.table(temp,
-      file = filename, row.names = FALSE,
-      sep = ",", dec = ".", quote = FALSE
-    )
-  }
 }
 
 
@@ -1239,6 +911,10 @@ add_dose_level <- function(obj) {
 #' add_tad(examplinib_poc_nif)
 add_tad <- function(nif) {
   # Input validation
+  if (!inherits(nif, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
   required_cols <- c("ID", "TIME", "EVID", "PARENT")
   missing_cols <- setdiff(required_cols, names(nif))
   if (length(missing_cols) > 0) {
@@ -1250,21 +926,35 @@ add_tad <- function(nif) {
     return(nif %>% mutate(TAD = numeric(0)))
   }
 
-  # Ensure PARENT column exists
-  # nif <- nif %>% ensure_parent()
+  # Validate data types
+  if (!is.numeric(nif$TIME)) {
+    stop("TIME column must contain numeric values")
+  }
+  if (!is.numeric(nif$EVID)) {
+    stop("EVID column must contain numeric values")
+  }
+  if (!is.numeric(nif$ID)) {
+    stop("ID column must contain numeric values")
+  }
 
   # Calculate TAD
   result <- nif %>%
+    # Ensure proper ordering for fill operations
+    arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) %>%
+    # Create admin_time column for dosing events
     mutate(admin_time = case_when(
       .data$EVID == 1 ~ .data$TIME,
       TRUE ~ NA_real_
     )) %>%
-    arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) %>%
+    # Group by subject and parent compound
     group_by(.data$ID, .data$PARENT) %>%
+    # Fill admin_time forward within each group
     tidyr::fill(admin_time, .direction = "down") %>%
-    ungroup() %>%
+    # Calculate TAD
     mutate(TAD = .data$TIME - .data$admin_time) %>%
-    select(-"admin_time")
+    # Remove temporary column
+    select(-"admin_time") %>%
+    ungroup()
 
   # Return as NIF object
   return(new_nif(result))
@@ -1280,16 +970,46 @@ add_tad <- function(nif) {
 #' @examples
 #' add_tafd(examplinib_poc_nif)
 add_tafd <- function(nif) {
-  nif %>%
-    assertr::verify(assertr::has_all_names("ID", "TIME", "EVID")) %>%
+  # Input validation
+  if (!inherits(nif, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  required_cols <- c("ID", "TIME", "EVID")
+  missing_cols <- setdiff(required_cols, names(nif))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # Handle empty data frame
+  if (nrow(nif) == 0) {
+    return(nif %>% mutate(TAFD = numeric(0)))
+  }
+
+  # Validate data types
+  if (!is.numeric(nif$TIME)) {
+    stop("TIME column must contain numeric values")
+  }
+  if (!is.numeric(nif$EVID)) {
+    stop("EVID column must contain numeric values")
+  }
+  if (!is.numeric(nif$ID)) {
+    stop("ID column must contain numeric values")
+  }
+  if(nif %>% filter(EVID == 1) %>% nrow() == 0)
+    stop("No dosing event, TAFD cannot be calculated")
+
+  result <- nif %>%
+    # assertr::verify(assertr::has_all_names("ID", "TIME", "EVID")) %>%
     ensure_parent() %>%
     arrange(.data$ID, .data$PARENT, .data$TIME) %>%
     group_by(.data$ID, .data$PARENT) %>%
     mutate(first_admin = min(.data$TIME[.data$EVID == 1])) %>%
     mutate(TAFD = .data$TIME - .data$first_admin) %>%
-    mutate(TAFD = case_when(.data$TAFD < 0 ~ 0, .default = .data$TAFD)) %>%
-    select(-c("first_admin")) %>%
-    new_nif()
+    # mutate(TAFD = case_when(.data$TAFD < 0 ~ 0, .default = .data$TAFD)) %>%
+    select(-c("first_admin"))
+
+    return(new_nif(result))
 }
 
 
@@ -1680,3 +1400,4 @@ filter_subject.nif <- function(obj, usubjid) {
   obj %>%
     filter(.data$USUBJID %in% usubjid)
 }
+
