@@ -502,9 +502,9 @@ analytes.nif <- function(obj) {
 #' analyte_overview(examplinib_poc_nif)
 analyte_overview <- function(obj) {
   obj %>%
-    # as.data.frame() %>%
     ensure_analyte() %>%
     ensure_parent() %>%
+    as.data.frame() %>%
     distinct(.data$ANALYTE, .data$PARENT)
 }
 

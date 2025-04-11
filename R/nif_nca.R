@@ -173,13 +173,13 @@ nca <- function(
     # impute = "start_conc0"
   )
 
-  messages = capture_warnings(
+  messages <- capture.output(
     results_obj <- PKNCA::pk.nca(data_obj, verbose = F)
   )
 
-  conditional_message(
-    paste0(messages, collapse = "\n"), silent = silent
-  )
+conditional_message(
+  paste0(messages, collapse = "\n"), silent = silent
+)
 
   temp <- results_obj$result %>%
     as.data.frame() %>%

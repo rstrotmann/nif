@@ -89,7 +89,7 @@ sdtm <- examplinib_poc
 
 nif_poc <- new_nif() %>% 
   add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023")
+  add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2)
 ```
 
 The 'LB' domain within this sdtm object contains baseline creatinine data which
@@ -149,7 +149,9 @@ summary(nif_poc)
 For a visual overview of the NIF data set `plot()` can be applied to the summary:
 
 ```{r, results='hide', fig.width=3, fig.height=3}
-plot(summary(nif_poc))
+invisible(capture.output(
+  plot(summary(nif_poc))
+))
 ```
 
 ## Exposure
