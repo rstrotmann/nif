@@ -981,6 +981,10 @@ add_tafd <- function(nif) {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
   }
 
+  if(any(is.na(nif$ID))) {
+    stop("ID colum must not contain NA values!")
+  }
+
   # Handle empty data frame
   if (nrow(nif) == 0) {
     return(nif %>% mutate(TAFD = numeric(0)))
@@ -996,20 +1000,28 @@ add_tafd <- function(nif) {
   if (!is.numeric(nif$ID)) {
     stop("ID column must contain numeric values")
   }
-  if(nif %>% filter(EVID == 1) %>% nrow() == 0)
+
+  # Check for dosing events
+  if(nif %>% filter(.data$EVID == 1) %>% nrow() == 0) {
     stop("No dosing event, TAFD cannot be calculated")
+  }
+
+  # Safely ensure parent exists
+  tryCatch({
+    nif <- ensure_parent(nif)
+  }, error = function(e) {
+    stop("Failed to ensure PARENT column: ", e$message)
+  })
 
   result <- nif %>%
-    # assertr::verify(assertr::has_all_names("ID", "TIME", "EVID")) %>%
-    ensure_parent() %>%
     arrange(.data$ID, .data$PARENT, .data$TIME) %>%
     group_by(.data$ID, .data$PARENT) %>%
     mutate(first_admin = min(.data$TIME[.data$EVID == 1])) %>%
     mutate(TAFD = .data$TIME - .data$first_admin) %>%
-    # mutate(TAFD = case_when(.data$TAFD < 0 ~ 0, .default = .data$TAFD)) %>%
-    select(-c("first_admin"))
+    select(-c("first_admin")) %>%
+    ungroup()  # Important to ungroup before returning
 
-    return(new_nif(result))
+  return(new_nif(result))
 }
 
 
