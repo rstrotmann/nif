@@ -143,11 +143,11 @@ test_that("nca() duplicate handling", {
   )
 
   # Test with and without averaging duplicates
-  testthat::capture_warnings(
+  testthat::capture_warnings({
     expect_no_error(
       result_avg <- nca(test_nif, average_duplicates = TRUE, silent = TRUE)
     )
-  )
+  })
 
   expect_error(
     result_no_avg <- nca(test_nif, average_duplicates = FALSE, silent = TRUE),
