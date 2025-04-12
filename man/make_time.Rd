@@ -11,7 +11,7 @@ make_time(obj)
 \item{obj}{A nif object.}
 }
 \value{
-A nif object.
+A nif object with TIME, TAFD, and TAD fields added.
 }
 \description{
 This function generates the following time fields:
@@ -22,4 +22,7 @@ administration or observation event.
 'TAFD' is the time in hours relative to the subject's first administration of
 the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.
+
+'TAD' is the time in hours relative to the most recent administration of the
+parent compound.
 }

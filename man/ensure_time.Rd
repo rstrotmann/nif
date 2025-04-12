@@ -10,9 +10,14 @@ ensure_time(obj)
 \item{obj}{A nif object.}
 }
 \value{
-A nif object.
+A nif object with TIME, TAD, and TAFD fields.
 }
 \description{
-Ensure that all time fields are in the nif object
+This function ensures that the necessary time fields (TIME, TAD, TAFD) exist in the NIF object.
+If any of these fields are missing, it will create them based on available data:
+\itemize{
+\item If DTC (datetime) is available, it uses make_time() to calculate all time fields
+\item If only TIME is available, it uses make_time_from_TIME() to derive TAD and TAFD
+}
 }
 \keyword{internal}
