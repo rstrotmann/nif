@@ -4,12 +4,16 @@
 administration or observation event.
 'TAFD' is the time in hours relative to the subject's first administration of
 the respective parent. Note that if a subject has received multiple drugs
-(parents), the 'TAFD' field refers to the respective first administration."><meta property="og:description" content="This function generates the following time fields:
+(parents), the 'TAFD' field refers to the respective first administration.
+'TAD' is the time in hours relative to the most recent administration of the
+parent compound."><meta property="og:description" content="This function generates the following time fields:
 'TIME' is the time in hours relative to the subject's first record, be it an
 administration or observation event.
 'TAFD' is the time in hours relative to the subject's first administration of
 the respective parent. Note that if a subject has received multiple drugs
-(parents), the 'TAFD' field refers to the respective first administration."></head><body>
+(parents), the 'TAFD' field refers to the respective first administration.
+'TAD' is the time in hours relative to the most recent administration of the
+parent compound."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +21,7 @@ the respective parent. Note that if a subject has received multiple drugs
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +61,8 @@ administration or observation event.</p>
 <p>'TAFD' is the time in hours relative to the subject's first administration of
 the respective parent. Note that if a subject has received multiple drugs
 (parents), the 'TAFD' field refers to the respective first administration.</p>
+<p>'TAD' is the time in hours relative to the most recent administration of the
+parent compound.</p>
     </div>
 
     <div class="section level2">
@@ -74,7 +80,7 @@ the respective parent. Note that if a subject has received multiple drugs
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A nif object.</p>
+    <p>A nif object with TIME, TAFD, and TAD fields added.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
