@@ -1019,7 +1019,7 @@ add_tafd <- function(nif) {
     mutate(first_admin = min(.data$TIME[.data$EVID == 1])) %>%
     mutate(TAFD = .data$TIME - .data$first_admin) %>%
     select(-c("first_admin")) %>%
-    ungroup()  # Important to ungroup before returning
+    ungroup()
 
   return(new_nif(result))
 }

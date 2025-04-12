@@ -188,21 +188,47 @@ ensure_tad <- function(obj) {
 }
 
 
-#' Ensure TAFD is present in the NIF object
+#' Ensure that TAFD is present in the NIF object
 #'
-#' @param obj A nif object.
+#' This function ensures that the time-after-first-dose (TAFD) field exists in the NIF object.
+#' If it doesn't exist, it creates it by calling add_tafd(). TAFD represents the time
+#' elapsed since the first administration of the parent compound.
 #'
-#' @return A nif object.
+#' @param obj A NIF object.
+#' @return A NIF object with the TAFD field.
 #' @keywords internal
 ensure_tafd <- function(obj) {
-  obj <- obj %>%
-    {
-      if (!"TAFD" %in% names(obj)) {
-        add_tafd(.)
-      } else {
-        .
-      }
-    }
+  # Validate input is a NIF object
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  # If TAFD already exists, return as is
+  if ("TAFD" %in% names(obj)) {
+    return(obj)
+  }
+
+  # Check for required columns
+  required_cols <- c("ID", "TIME", "EVID")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns for TAFD calculation: ",
+         paste(missing_cols, collapse = ", "))
+  }
+
+  # Add TAFD field
+  tryCatch({
+    result <- add_tafd(obj)
+  }, error = function(e) {
+    stop("Failed to add TAFD field: ", e$message)
+  })
+
+  # Validate TAFD was added
+  if (!"TAFD" %in% names(result)) {
+    stop("Failed to add TAFD field")
+  }
+
+  return(result)
 }
 
 
