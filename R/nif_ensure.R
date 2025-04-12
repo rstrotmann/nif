@@ -234,22 +234,53 @@ ensure_tafd <- function(obj) {
 
 #' Ensure that all time fields are in the nif object
 #'
+#' This function ensures that the necessary time fields (TIME, TAD, TAFD) exist in the NIF object.
+#' If any of these fields are missing, it will create them based on available data:
+#' - If DTC (datetime) is available, it uses make_time() to calculate all time fields
+#' - If only TIME is available, it uses make_time_from_TIME() to derive TAD and TAFD
+#'
 #' @param obj A nif object.
 #'
-#' @return A nif object.
+#' @return A nif object with TIME, TAD, and TAFD fields.
 #' @keywords internal
 ensure_time <- function(obj) {
-  obj <- obj %>%
-    {
-      if (!all(c("TIME", "TAD", "TAFD") %in% names(obj))) {
-        if("DTC" %in% names(obj))
-          make_time(.)
-        else
-          make_time_from_TIME(.)
-      } else {
-        .
-      }
-    }
+  # Validate input is a NIF object
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+  
+  # If all required time fields already exist, return object unchanged
+  if (all(c("TIME", "TAD", "TAFD") %in% names(obj))) {
+    return(obj)
+  }
+  
+  # Check for required columns based on available data
+  if ("DTC" %in% names(obj)) {
+    # DTC available - use make_time to generate all time fields
+    result <- tryCatch({
+      make_time(obj)
+    }, error = function(e) {
+      stop("Failed to calculate time fields from DTC: ", e$message)
+    })
+  } else if ("TIME" %in% names(obj)) {
+    # TIME available but missing TAD/TAFD - use make_time_from_TIME
+    result <- tryCatch({
+      make_time_from_TIME(obj)
+    }, error = function(e) {
+      stop("Failed to calculate TAD/TAFD from TIME: ", e$message)
+    })
+  } else {
+    stop("Missing required columns: Either DTC or TIME is required to calculate time fields")
+  }
+  
+  # Validate that all time fields are now present
+  missing_time_fields <- setdiff(c("TIME", "TAD", "TAFD"), names(result))
+  if (length(missing_time_fields) > 0) {
+    stop("Failed to generate all required time fields: ", 
+         paste(missing_time_fields, collapse = ", "))
+  }
+  
+  return(result)
 }
 
 

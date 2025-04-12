@@ -175,27 +175,27 @@ make_time <- function(obj) {
   if (!inherits(obj, "nif")) {
     stop("Input must be a NIF object")
   }
-  
+
   required_cols <- c("ID", "DTC", "ANALYTE", "PARENT", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
   if (length(missing_cols) > 0) {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
   }
-  
+
   # Handle empty data frame
   if (nrow(obj) == 0) {
-    return(obj %>% 
-             mutate(TIME = numeric(0), 
-                    TAFD = numeric(0), 
-                    TAD = numeric(0)) %>% 
+    return(obj %>%
+             mutate(TIME = numeric(0),
+                    TAFD = numeric(0),
+                    TAD = numeric(0)) %>%
              new_nif())
   }
-  
+
   # Validate DTC column
   if (!is.POSIXct(obj$DTC)) {
     stop("DTC column must contain POSIXct datetime values")
   }
-  
+
   # Calculate time fields in a single pipeline for efficiency
   result <- obj %>%
     # Group by ID to find first time point for each subject
@@ -234,10 +234,10 @@ make_time <- function(obj) {
     select(-c("FIRSTDTC", "FIRSTADMIN")) %>%
     # Convert to nif object before adding TAD
     new_nif()
-    
+
   # Add the TAD field
   result <- add_tad(result)
-  
+
   return(result)
 }
 
@@ -248,10 +248,12 @@ make_time <- function(obj) {
 #'
 #' @return A nif object.
 make_time_from_TIME <- function(obj) {
-  as.data.frame(obj) %>%
+  # as.data.frame(obj) %>%
+  obj %>%
+    ensure_parent() %>%
     assertr::verify(assertr::has_all_names(
       "ID", "CMT", "EVID")) %>%
-    group_by(.data$ID) %>%
+    group_by(.data$ID, .data$PARENT) %>%
     mutate(.first_time = min(.data$TIME, na.rm = TRUE)) %>%
     mutate(.first_admin = min(.data$TIME[.data$EVID == 1], na.rm = TRUE)) %>%
     mutate(TAFD = round(.data$TIME - .data$.first_admin, digits = 3)) %>%
