@@ -478,6 +478,7 @@ add_observation <- function(
 
   obj %>%
     select(-c("NO_ADMIN_FLAG")) %>%
+    new_nif() %>%
     normalize_nif(keep = keep)
 }
 
@@ -568,7 +569,7 @@ import_observation <- function(
   }
 
   sbs <- nif %>%
-    as.data.frame() %>%
+    # as.data.frame() %>%
     filter(EVID == 1) %>%
     select("USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_"),
            any_of(keep)) %>%
@@ -601,8 +602,8 @@ import_observation <- function(
     inner_join(sbs, by = "USUBJID") %>%
     mutate(
       SRC_DOMAIN = "IMPORT",
-      SRC_SEQ = NA) %>%
-    as.data.frame()
+      SRC_SEQ = NA) #%>%
+    # as.data.frame()
 
   # derive time from DTC, if present, or generate DTC from first administration
   #   time in nif object
@@ -619,7 +620,8 @@ import_observation <- function(
   }
 
   bind_rows(
-    as.data.frame(nif),
+    # as.data.frame(nif),
+    nif,
     obs
   ) %>%
     normalize_nif(keep = keep)

@@ -18,7 +18,8 @@ create_test_nif <- function() {
     IMPUTATION = c("", ""),
     stringsAsFactors = FALSE
   ) %>%
-    structure(class = c("nif", "tbl_df", "tbl", "data.frame"))
+    new_nif()
+    # structure(class = c("nif", "tbl_df", "tbl", "data.frame"))
 }
 
 # Helper function to create test raw observation data

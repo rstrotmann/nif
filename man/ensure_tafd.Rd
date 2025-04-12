@@ -2,17 +2,19 @@
 % Please edit documentation in R/nif_ensure.R
 \name{ensure_tafd}
 \alias{ensure_tafd}
-\title{Ensure TAFD is present in the NIF object}
+\title{Ensure that TAFD is present in the NIF object}
 \usage{
 ensure_tafd(obj)
 }
 \arguments{
-\item{obj}{A nif object.}
+\item{obj}{A NIF object.}
 }
 \value{
-A nif object.
+A NIF object with the TAFD field.
 }
 \description{
-Ensure TAFD is present in the NIF object
+This function ensures that the time-after-first-dose (TAFD) field exists in the NIF object.
+If it doesn't exist, it creates it by calling add_tafd(). TAFD represents the time
+elapsed since the first administration of the parent compound.
 }
 \keyword{internal}

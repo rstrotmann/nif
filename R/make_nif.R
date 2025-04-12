@@ -165,49 +165,80 @@ add_time <- function(x) {
 #' the respective parent. Note that if a subject has received multiple drugs
 #' (parents), the 'TAFD' field refers to the respective first administration.
 #'
-#' @param obj A nif object.
+#' 'TAD' is the time in hours relative to the most recent administration of the
+#' parent compound.
 #'
-#' @return A nif object.
+#' @param obj A nif object.
+#' @return A nif object with TIME, TAFD, and TAD fields added.
 make_time <- function(obj) {
-  # obj %>%
-  #   as.data.frame() %>%
-  #   assertr::verify(assertr::has_all_names(
-  #     "ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
-  #   assertr::verify(is.POSIXct(.data$DTC)) %>%
-  #   group_by(.data$ID) %>%
-  #   mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
-  #   ungroup() %>%
-  #   group_by(.data$ID, .data$PARENT) %>%
-  #   mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1], na.rm = TRUE)) %>%
-  #   ungroup() %>%
-  #   mutate(TIME = round(
-  #     as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
-  #     digits = 3)) %>%
-  #   mutate(TAFD = round(
-  #     as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "h")),
-  #     digits = 3)) %>%
-  #   add_tad() %>%
-  #   new_nif()
-
-  obj %>%
-    # as.data.frame() %>%
-    assertr::verify(assertr::has_all_names(
-      "ID", "DTC", "ANALYTE", "PARENT", "EVID")) %>%
-    assertr::verify(is.POSIXct(.data$DTC)) %>%
+  # Input validation
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+  
+  required_cols <- c("ID", "DTC", "ANALYTE", "PARENT", "EVID")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+  
+  # Handle empty data frame
+  if (nrow(obj) == 0) {
+    return(obj %>% 
+             mutate(TIME = numeric(0), 
+                    TAFD = numeric(0), 
+                    TAD = numeric(0)) %>% 
+             new_nif())
+  }
+  
+  # Validate DTC column
+  if (!is.POSIXct(obj$DTC)) {
+    stop("DTC column must contain POSIXct datetime values")
+  }
+  
+  # Calculate time fields in a single pipeline for efficiency
+  result <- obj %>%
+    # Group by ID to find first time point for each subject
     group_by(.data$ID) %>%
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     ungroup() %>%
+    # Group by ID and PARENT to find first administration for each drug
     group_by(.data$ID, .data$PARENT) %>%
-    mutate(FIRSTADMIN = min(.data$DTC[.data$EVID == 1], na.rm = TRUE)) %>%
+    mutate(
+      # Find first administration time for TAFD
+      FIRSTADMIN = if (any(.data$EVID == 1)) {
+        min(.data$DTC[.data$EVID == 1], na.rm = TRUE)
+      } else {
+        NA_POSIXct_
+      }
+    ) %>%
     ungroup() %>%
-    mutate(TIME = round(
-      as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
-      digits = 3)) %>%
-    mutate(TAFD = round(
-      as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "h")),
-      digits = 3)) %>%
-    new_nif() %>%
-    add_tad()
+    # Calculate TIME and TAFD
+    mutate(
+      # TIME: time since first record (in hours)
+      TIME = round(
+        as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "hours")),
+        digits = 3
+      ),
+      # TAFD: time since first administration of parent (in hours)
+      TAFD = ifelse(
+        is.na(.data$FIRSTADMIN),
+        NA_real_,
+        round(
+          as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "hours")),
+          digits = 3
+        )
+      )
+    ) %>%
+    # Remove temporary columns
+    select(-c("FIRSTDTC", "FIRSTADMIN")) %>%
+    # Convert to nif object before adding TAD
+    new_nif()
+    
+  # Add the TAD field
+  result <- add_tad(result)
+  
+  return(result)
 }
 
 
