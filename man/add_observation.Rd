@@ -90,7 +90,7 @@ respect to the USUBJID, ANALYTE and DTC fields:
 \item 'stop': Stop execution and produce error message
 .  * 'ignore': Include duplicates in the data set
 \item 'identify': Return a list of duplicate entries
-\item 'remove': Remove duplicates, applying the \code{duplicate_function} to the
+\item 'resolve': Resolve duplicates, applying the \code{duplicate_function} to the
 duplicate entries.
 }}
 

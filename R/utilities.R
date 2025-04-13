@@ -886,7 +886,7 @@ find_duplicates <- function(df, fields = NULL, count_only = FALSE,
 #'
 #' @return A data frame with duplicate rows removed
 #' @export
-remove_duplicates <- function(df, fields = NULL, duplicate_function = mean,
+resolve_duplicates <- function(df, fields = NULL, duplicate_function = mean,
                             dependent_variable = "DV") {
   if(is.null(fields)) {
     fields <- c("ID", "TIME", "ANALYTE")

@@ -312,7 +312,7 @@ make_observation <- function(
 #'   * 'stop': Stop execution and produce error message
 #'.  * 'ignore': Include duplicates in the data set
 #'   * 'identify': Return a list of duplicate entries
-#'   * 'remove': Remove duplicates, applying the `duplicate_function` to the
+#'   * 'resolve': Resolve duplicates, applying the `duplicate_function` to the
 #'   duplicate entries.
 #' @param duplicate_function Function to resolve duplicate values, defaults to
 #'   `mean`.
@@ -346,6 +346,11 @@ add_observation <- function(
 ) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
+  valid_duplicate_values <- c("stop", "ignore", "identify", "resolve")
+  if(!duplicates %in% valid_duplicate_values)
+    stop(paste0("Invalid value for 'duplicates' - must be one of ",
+                nice_enumeration(valid_duplicate_values, conjunction = "or")))
 
   nif <- nif %>%
     ensure_analyte()
@@ -413,7 +418,6 @@ add_observation <- function(
     }
 
     if(duplicates == "identify") {
-
       message(paste0(
         n_dupl, " duplicate observations found with respect to ",
         nice_enumeration(dupl_fields), ". ",
@@ -423,14 +427,14 @@ add_observation <- function(
              )
     }
 
-    if(duplicates == "remove") {
-      observation = remove_duplicates(
+    if(duplicates == "resolve") {
+      observation = resolve_duplicates(
         observation,
         fields = dupl_fields,
         duplicate_function = duplicate_function)
       conditional_message(
         "In observations for ", testcd, " (analyte '", analyte, "'), ",
-        n_dupl, " duplicates were removed!",
+        n_dupl, " duplicates were resolved!",
         silent = silent
       )
     }
