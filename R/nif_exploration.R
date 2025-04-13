@@ -885,8 +885,9 @@ mean_dose_plot <- function(obj, analyte = NULL, title = NULL) {
   }
 
   obj %>%
+    ensure_tafd() %>%
     as.data.frame() %>%
-    mutate(DAY = floor(TIME / 24) + 1) %>%
+    mutate(DAY = floor(TAFD / 24) + 1) %>%
     filter(EVID == 1, ANALYTE == analyte) %>%
     group_by(DAY) %>%
     summarize(
