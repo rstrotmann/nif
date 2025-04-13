@@ -13,7 +13,8 @@ dose_red_sbs(obj, analyte = NULL)
 analyte is NULL (default).}
 }
 \value{
-The IDs.
+A data frame with the ID and, if available, the USUBJID of subjects
+with dose reductions.
 }
 \description{
 Subjects with dose reduction

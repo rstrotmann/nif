@@ -144,7 +144,7 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
 #' @keywords internal
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
-#' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
+#' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[1, 1])
 #' dose_plot_id(examplinib_poc_min_nif, 18)
 dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
                          time_field = "TIME", point_size = 2, max_time = NA,
@@ -165,7 +165,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
   if (id %in% x$ID) {
     plot_label <- "ID"
     x <- x %>%
-      filter(ID == id)
+      filter(ID == as.numeric(id))
   } else {
     if("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {

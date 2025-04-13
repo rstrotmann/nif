@@ -46,7 +46,7 @@ vertical lines.
 }
 \examples{
 dose_plot_id(examplinib_poc_nif, 18)
-dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[[1]])
+dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[1, 1])
 dose_plot_id(examplinib_poc_min_nif, 18)
 }
 \keyword{internal}

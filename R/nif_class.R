@@ -299,7 +299,8 @@ parents <- function(obj) {
 #' @param obj A NIF object object.
 #' @param analyte The analyte of interest as string. considers all analytes if
 #'   analyte is NULL (default).
-#' @return The IDs.
+#' @return A data frame with the ID and, if available, the USUBJID of subjects
+#'   with dose reductions.
 #' @export
 #' @examples
 #' dose_red_sbs(examplinib_poc_nif)
@@ -322,8 +323,10 @@ dose_red_sbs <- function(obj, analyte = NULL) {
     mutate(initial_dose = .data$AMT[row_number() == 1]) %>%
     filter(.data$AMT < initial_dose & .data$AMT != 0) %>%
     ungroup() %>%
-    distinct(.data$ID) %>%
-    pull(.data$ID)
+    # distinct(.data$ID) %>%
+    # pull(.data$ID)
+    select(any_of(c("ID", "USUBJID"))) %>%
+    distinct()
 }
 
 
