@@ -120,7 +120,7 @@ indent_string <- function(indent = 0) {
 #' This function renders a data.frame into a string similar to its
 #' representation when printed without line numbers
 #'
-#' @param df The data.frame to be rendered
+#' @param df The data.frame to be rendered.
 #' @param indent Indentation level, as numeric.
 #' @param header Boolean to indicate whether the header row is to be included.
 #' @param color Print headers in grey as logical.
@@ -133,14 +133,22 @@ indent_string <- function(indent = 0) {
 #' @import utils
 #' @keywords internal
 df_to_string <- function(
-    df, indent = 0, n = NULL, header = TRUE, header_sep = FALSE,
-    color = FALSE, show_none = FALSE, na_string = "NA") {
+    df,
+    indent = 0,
+    n = NULL,
+    header = TRUE,
+    header_sep = FALSE,
+    color = FALSE,
+    show_none = FALSE,
+    na_string = "NA"
+    ) {
 
   # Input validation
   if(is.null(df))
     return("")
 
-  if (!is.data.frame(df)) {
+  # if (!is.data.frame(df) & !is_tibble(df)) {
+  if(!inherits(df, "data.frame")){
     stop("Input must be a data frame")
   }
 

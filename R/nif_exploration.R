@@ -243,6 +243,7 @@ summary.nif <- function(object, ...) {
       dose_red_sbs = NULL,
       n_studies = data.frame(STUDYID = character(0), N = integer(0)),
       n_subj = 0,
+      sex = NULL,
       n_males = 0,
       n_females = 0,
       n_obs = NULL,
@@ -284,17 +285,22 @@ summary.nif <- function(object, ...) {
     summarize(N = n_distinct(ID), .groups = "drop")
 
   # Handle sex distribution with safety checks
-  n_sex <- object %>%
+  sex <- object %>%
     as.data.frame() %>%
     {if(!"SEX" %in% names(.)) mutate(., SEX = NA) else .} %>%
-    mutate(SEX = factor(SEX, levels=c(0, 1))) %>%
     distinct(ID, SEX) %>%
-    reframe(n = n(), .by = factor("SEX")) %>%
-    tidyr::spread(SEX, n, fill = 0, drop = FALSE)
+    reframe(N = n(), .by = "SEX") %>%
+    complete(SEX = c(0, 1), fill = list(N = 0))
 
-  # Initialize with 0 in case of missing data
-  n_males <- ifelse("0" %in% names(n_sex), n_sex[1, "0"], 0)
-  n_females <- ifelse("1" %in% names(n_sex), n_sex[1, "1"], 0)
+  # n_sex <- sex %>%
+  #   mutate(SEX = factor(SEX, levels=c(0, 1))) %>%
+  #   tidyr::spread(SEX, N, fill = 0, drop = FALSE)
+  #
+  # # Initialize with 0 in case of missing data
+  # n_males <- ifelse("0" %in% names(n_sex), n_sex[1, "0"], 0)
+  # n_females <- ifelse("1" %in% names(n_sex), n_sex[1, "1"], 0)
+  n_males = as.numeric(sex[which(sex$SEX == 0), "N"])
+  n_females = as.numeric(sex[which(sex$SEX == 1), "N"])
 
   if ("BL_CRCL" %in% colnames(object)) {
     renal_function <- object %>%
@@ -339,6 +345,7 @@ summary.nif <- function(object, ...) {
     dose_red_sbs = dose_red_sbs,
     n_studies = n_studies,
     n_subj = nrow(subjects),
+    sex = sex,
     n_males = n_males,
     n_females = n_females,
     n_obs = observations,
@@ -382,36 +389,60 @@ print.summary_nif <- function(x, color = FALSE, ...) {
 
   cat(paste0(df_to_string(x$n_studies, color=color, indent = indent), "\n\n"))
 
-  # Handle sex distribution with safety checks
-  total_sex <- x$n_males + x$n_females
-  if (total_sex > 0) {
-    male_percent <- round(x$n_males / total_sex * 100, 1)
-    female_percent <- round(x$n_females / total_sex * 100, 1)
+  # # Handle sex distribution with safety checks
+  # total_sex <- x$n_males + x$n_females
+  # if (total_sex > 0) {
+  #   male_percent <- round(x$n_males / total_sex * 100, 1)
+  #   female_percent <- round(x$n_females / total_sex * 100, 1)
+  #
+  #   cat(paste0(
+  #     "Sex distribution:\n",
+  #     spacer,
+  #     "males: ", x$n_males, " (",
+  #     male_percent, "%)",
+  #     ", females: ", x$n_females," (",
+  #     female_percent, "%)\n\n"
+  #   ))
+  # } else {
+  #   cat(paste0(
+  #     "Sex distribution:\n",
+  #     spacer,
+  #     "males: 0, females: 0 (no sex data available)\n\n"
+  #   ))
+  # }
 
+  if (!is.null(x$sex)){
     cat(paste0(
       "Sex distribution:\n",
-      spacer,
-      "males: ", x$n_males, " (",
-      male_percent, "%)",
-      ", females: ", x$n_females," (",
-      female_percent, "%)\n\n"
-    ))
-  } else {
-    cat(paste0(
-      "Sex distribution:\n",
-      spacer,
-      "males: 0, females: 0 (no sex data available)\n\n"
-    ))
+      df_to_string(
+        x$sex %>%
+          mutate(SEX = case_match(
+            SEX,
+            0 ~ "male",
+            1 ~ "female")) %>%
+          mutate(percent = round(N / sum(N) * 100, 1)),
+        indent = indent),
+      "\n\n"
+      ))
   }
 
   if (!is.null(x$renal_function)) {
-    cat(paste0("Renal impairment class:\n", df_to_string(
-      x$renal_function, color=color, indent = indent), "\n\n"))
+    cat(paste0(
+      "Renal impairment class:\n",
+      df_to_string(
+        x$renal_function %>%
+          mutate(percent = round(N / sum(N) * 100, 1)),
+        indent = indent),
+      "\n\n"))
   }
 
   if(!is.null(x$odwg)) {
-    cat(paste0("NCI ODWG hepatic impairment class:\n", df_to_string(
-      x$odwg, color=color, indent = indent), "\n\n"))
+    cat(paste0(
+      "NCI ODWG hepatic impairment class:\n",
+      df_to_string(
+      x$odwg %>%
+        mutate(percent = round(N / sum(N) * 100, 1)),
+      color=color, indent = indent), "\n\n"))
   }
 
   cat(paste0("Administered drugs:\n",

@@ -73,7 +73,8 @@ test_that("summary.nif calculates sex distribution correctly", {
 
   # Check output formatting
   output <- capture.output(print(s))
-  expect_true(any(grepl("males: 6 \\(60%\\), females: 4 \\(40%\\)", output)))
+  expect_true(any(grepl("male     6   60", output)))
+  expect_true(any(grepl("female   4   40", output)))
 })
 
 
@@ -91,7 +92,9 @@ test_that("summary.nif handles missing sex data correctly", {
 
   # Check output formatting
   output <- capture.output(print(s))
-  expect_true(any(grepl("males: 0, females: 0 \\(no sex data available\\)", output)))
+  expect_true(any(grepl("male     0   0", output)))
+  expect_true(any(grepl("female   0   0", output)))
+  expect_true(any(grepl("NA       5   100", output)))
 })
 
 
