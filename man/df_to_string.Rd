@@ -16,7 +16,7 @@ df_to_string(
 )
 }
 \arguments{
-\item{df}{The data.frame to be rendered}
+\item{df}{The data.frame to be rendered.}
 
 \item{indent}{Indentation level, as numeric.}
 

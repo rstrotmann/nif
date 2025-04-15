@@ -1,34 +1,3 @@
-# Make EXSTDY and EXENDY by USUBJID, EXTRT
-#
-# Treatment days are calculated relative to RFSTDTC from DM.
-#
-# @details
-# Caution: Currently, the function works only with treatment days after Day 1.
-#  If this be ever used for days before Day 1, a term must be
-# implemented to correct for the missing Day 0 in the time nomenclature.
-#
-# @param ex The EX domain as data frame.
-# @param dm The DM domain as data frame.
-# @return The enhanced EX domain as data frame.
-# @keywords internal
-# make_exstdy_exendy <- function(ex, dm) {
-#   ex %>%
-#     assertr::verify(assertr::has_all_names(
-#       "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-#     assertr::verify(is.POSIXct(c(EXSTDTC, EXENDTC))) %>%
-#     left_join(
-#       dm %>%
-#         distinct(.data$USUBJID, .data$RFSTDTC),
-#       by = "USUBJID"
-#     ) %>%
-#     mutate(EXSTDY = floor(as.numeric(
-#       difftime(.data$EXSTDTC, .data$RFSTDTC), units = "days")) + 1) %>%
-#     mutate(EXENDY = floor(as.numeric(
-#       difftime(.data$EXENDTC, .data$RFSTDTC), units = "days")) + 1) %>%
-#     select(-RFSTDTC)
-# }
-
-
 #' Guess the most likely PCSPEC
 #'
 #' The PC specimen is selected based on the likelihood in the order of 'plasma'
