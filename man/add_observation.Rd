@@ -26,7 +26,8 @@ add_observation(
   include_day_in_ntime = FALSE,
   silent = NULL,
   duplicates = "stop",
-  duplicate_function = mean
+  duplicate_function = mean,
+  na.rm = TRUE
 )
 }
 \arguments{
@@ -88,7 +89,7 @@ if NULL.}
 respect to the USUBJID, ANALYTE and DTC fields:
 \itemize{
 \item 'stop': Stop execution and produce error message
-.  * 'ignore': Include duplicates in the data set
+\item 'ignore': Include duplicates in the data set
 \item 'identify': Return a list of duplicate entries
 \item 'resolve': Resolve duplicates, applying the \code{duplicate_function} to the
 duplicate entries.
@@ -96,6 +97,9 @@ duplicate entries.
 
 \item{duplicate_function}{Function to resolve duplicate values, defaults to
 \code{mean}.}
+
+\item{na.rm}{Logical indicating whether to remove NA values when applying the
+duplicate_function. Defaults to TRUE.}
 }
 \value{
 A nif object.

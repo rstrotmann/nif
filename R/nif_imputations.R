@@ -31,7 +31,8 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
   temp <- ex %>%
     assertr::verify(
       assertr::has_all_names(
-        "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+        # "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+        "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
@@ -53,7 +54,8 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
         temp %>%
           filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) &
                    .data$LAST_ADMIN == TRUE) %>%
-          select(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")),
+          # select(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")),
+          select(any_of(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
         indent = 2
       ), "\n"
     )

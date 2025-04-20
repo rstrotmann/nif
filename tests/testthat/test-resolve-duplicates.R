@@ -157,3 +157,37 @@ test_that("resolve_duplicates works with different data types", {
   expect_equal(result$DV, c(0.5, 0.5))  # Mean of TRUE/FALSE (1/0)
 
 })
+
+test_that("resolve_duplicates correctly handles NA values with na.rm=TRUE", {
+  # Create test data with NA values
+  test_df <- tibble::tribble(
+    ~ID, ~TIME, ~DV, ~ANALYTE,
+      1,     0, 100,      "A",
+      1,     0,  NA,      "A",
+      2,     1, 200,      "A",
+      2,     1,  NA,      "A"
+  )
+
+  # With na.rm=TRUE, only non-NA values should be used
+  result_na_rm_true <- resolve_duplicates(test_df, na.rm = TRUE)
+  expect_equal(nrow(result_na_rm_true), 2)  # One row for each ID/TIME combo
+  expect_equal(result_na_rm_true$DV[result_na_rm_true$TIME == 0], 100)
+  expect_equal(result_na_rm_true$DV[result_na_rm_true$TIME == 1], 200)
+
+  # With na.rm=FALSE and mean as duplicate_function, NAs should propagate
+  result_na_rm_false <- resolve_duplicates(test_df, na.rm = FALSE)
+  expect_equal(nrow(result_na_rm_false), 2)
+  expect_true(is.na(result_na_rm_false$DV[result_na_rm_false$TIME == 0]))
+  expect_true(is.na(result_na_rm_false$DV[result_na_rm_false$TIME == 1]))
+
+  # Test with a custom function that can handle NAs
+  na_safe_mean <- function(x, na.rm = TRUE) {
+    return(mean(x, na.rm = na.rm))
+  }
+
+  result_custom <- resolve_duplicates(test_df, duplicate_function = na_safe_mean, na.rm = TRUE)
+  expect_equal(nrow(result_custom), 2)
+  expect_equal(result_custom$DV[result_custom$TIME == 0], 100)
+  expect_equal(result_custom$DV[result_custom$TIME == 1], 200)
+})
+

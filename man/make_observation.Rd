@@ -22,7 +22,6 @@ make_observation(
   NTIME_lookup = NULL,
   keep = NULL,
   include_day_in_ntime = FALSE,
-  duplicate_function = NULL,
   silent = NULL
 )
 }

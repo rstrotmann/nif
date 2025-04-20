@@ -2,51 +2,43 @@ make_test_sdtm1 <- function() {
   temp = list(
     dm = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,             ~RFXSTDTC,              ~RFSTDTC, ~ACTARM,  ~STUDYID,
-      "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "2",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "3",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "4",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+          "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+          "2",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+          "3",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+          "4",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
     ) %>%
       mutate(RFENDTC = "2024-01-02T08:00:00"),
 
     vs = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
-      "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-      "2",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-      "3",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-      "4",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
+          "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
+          "2",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
+          "3",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
+          "4",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
     ),
 
     lb = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBTESTCD, ~LBSTRESN,                ~LBDTC,
-      "1",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-      "2",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-      "3",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-      "4",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00"
+          "1",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
+          "2",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
+          "3",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
+          "4",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00"
     ),
-
-    # ex = tibble::tribble(
-    #   ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC,
-    #   "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-    #   "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-    #   "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-    #   "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00"
-    # ) %>% mutate(EXSEQ = row_number()),
 
     ex = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC, ~EXSEQ,
-      "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     1L,
-      "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     2L,
-      "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     3L,
-      "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     4L
+          "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     1L,
+          "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     2L,
+          "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     3L,
+          "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     4L
     ),
 
     pc = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
-      "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-      "2",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-      "3",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-      "4",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H"
+          "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
+          "2",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
+          "3",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
+          "4",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H"
     ))
 
   return(new_sdtm(temp))
@@ -407,5 +399,89 @@ test_that("add_observation properly handles custom testcd field", {
         silent = TRUE
       )
   })
+})
+
+
+test_that("add_observation handles na.rm parameter when resolving duplicates", {
+  # Create SDTM object using new_sdtm function
+  # sdtm_obj <- new_sdtm(list(
+  #   dm = tibble::tribble(
+  #     ~USUBJID, ~SEX, ~AGE,   ~RACE, ~DOMAIN, ~ACTARMCD,              ~RFSTDTC,              ~RFENDTC,
+  #     "1",  "M",   30, "WHITE",    "DM",  "ACTIVE", "2023-01-01 08:00:00", "2023-01-10 08:00:00",
+  #     "2",  "F",   40, "BLACK",    "DM",  "ACTIVE", "2023-01-01 08:00:00", "2023-01-10 08:00:00"
+  #   ),
+  #   vs = tibble::tribble(
+  #     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,
+  #     "1",    "VS",  "WEIGHT",        70,
+  #     "2",    "VS",  "WEIGHT",        80
+  #   ) %>% mutate(VSBLFL = "Y"),
+  #   pc = tibble::tribble(
+  #     ~USUBJID, ~DOMAIN,  ~PCTESTCD,                ~PCDTC, ~PCSTRESN,
+  #     "1",    "PC", "TESTDRUG", "2023-01-01 08:00:00",       100,
+  #     "1",    "PC", "TESTDRUG", "2023-01-01 12:00:00",       200,
+  #     "1",    "PC", "TESTDRUG", "2023-01-01 08:00:00",        NA,
+  #     "1",    "PC", "TESTDRUG", "2023-01-01 12:00:00",       400,
+  #     "2",    "PC", "TESTDRUG", "2023-01-01 08:00:00",       500,
+  #     "2",    "PC", "TESTDRUG", "2023-01-01 12:00:00",        NA,
+  #     "2",    "PC", "TESTDRUG", "2023-01-01 08:00:00",       700,
+  #     "2",    "PC", "TESTDRUG", "2023-01-01 12:00:00",       800
+  #   ),
+  #   ex = tibble::tribble(
+  #     ~USUBJID, ~DOMAIN,     ~EXTRT, ~EXDOSE,              ~EXSTDTC,              ~EXENDTC,
+  #     "1",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00",
+  #     "1",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00",
+  #     "2",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00",
+  #     "2",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00"
+  #   )
+  # ))
+
+  sdtm_obj <- make_test_sdtm1()
+
+  pc = tibble::tribble(
+    ~USUBJID, ~DOMAIN,  ~PCTESTCD,                ~PCDTC, ~PCSTRESN,
+    "1",    "PC", "A", "2023-01-01 08:00:00",       100,
+    "1",    "PC", "A", "2023-01-01 12:00:00",       200,
+    "1",    "PC", "A", "2023-01-01 08:00:00",        NA,
+    "1",    "PC", "A", "2023-01-01 12:00:00",       400,
+    "2",    "PC", "A", "2023-01-01 08:00:00",       500,
+    "2",    "PC", "A", "2023-01-01 12:00:00",        NA,
+    "2",    "PC", "A", "2023-01-01 08:00:00",       700,
+    "2",    "PC", "A", "2023-01-01 12:00:00",       800
+  )
+
+  sdtm_obj$domains$pc <- pc
+
+  # Create administration data
+  base_nif <- new_nif() %>%
+    add_administration(sdtm_obj, "A", analyte = "A")
+
+  # Test with na.rm = TRUE (default)
+  nif_with_na_rm <- base_nif %>%
+    add_observation(
+      sdtm_obj, "pc", "A",
+      duplicates = "resolve",
+      silent = TRUE
+    )
+
+  # The observation at 08:00 for subject 1 should be 100 (NA is removed)
+  obs_1_8am <- nif_with_na_rm %>%
+    filter(USUBJID == "1" & EVID == 0 & format(DTC, "%H:%M") == "08:00") %>%
+    pull(DV)
+  expect_equal(obs_1_8am, 100)
+
+  # Test with na.rm = FALSE
+  nif_without_na_rm <- base_nif %>%
+    add_observation(
+      sdtm_obj, "pc", "A",
+      duplicates = "resolve",
+      na.rm = FALSE,
+      silent = TRUE
+    )
+
+  # The observation at 08:00 for subject 1 should be NA (NA is not removed)
+  obs_1_8am_no_rm <- nif_without_na_rm %>%
+    filter(USUBJID == "1" & EVID == 0 & format(DTC, "%H:%M") == "08:00") %>%
+    pull(DV)
+  expect_true(is.na(obs_1_8am_no_rm))
 })
 

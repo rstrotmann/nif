@@ -8,7 +8,8 @@ resolve_duplicates(
   df,
   fields = NULL,
   duplicate_function = mean,
-  dependent_variable = "DV"
+  dependent_variable = "DV",
+  na.rm = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ The function should take a vector and return a single value.}
 
 \item{dependent_variable}{The name of the field to apply the duplicate_function to.
 Defaults to "DV".}
+
+\item{na.rm}{Logical indicating whether to remove NA values when applying the
+duplicate_function. Defaults to TRUE.}
 }
 \value{
 A data frame with duplicate rows removed

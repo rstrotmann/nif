@@ -119,7 +119,7 @@ make_observation <- function(
     NTIME_lookup = NULL,
     keep = NULL,
     include_day_in_ntime = FALSE,
-    duplicate_function = NULL,
+    # duplicate_function = NULL,
     silent = NULL
 ) {
   # Validate inputs
@@ -261,27 +261,6 @@ make_observation <- function(
     ungroup() %>%
     filter(!is.na(.data$DTC))
 
-  # dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
-  # n_dupl <- find_duplicates(out, fields = dupl_fields, count_only = TRUE)
-  # if(n_dupl != 0){
-  #   if(is.null(duplicate_function)) {
-  #     stop(paste0(
-  #       n_dupl, " duplicate observations found with respect to ",
-  #       nice_enumeration(dupl_fields)))
-  #   } else {
-  #     # out %>%
-  #     #   # group_by_at(dupl_fields) %>%
-  #     #   # summarize(n = n()) %>%
-  #     #   # summarise_at("DV", mean) %>%
-  #     #   mutate(DV = mean(DV), .by = dupl_fields) %>%
-  #     #   # ungroup()
-  #     #   find_duplicates()
-  #
-  #   }
-  # }
-
-
-
   return(out)
 }
 
@@ -310,12 +289,14 @@ make_observation <- function(
 #' @param duplicates Selection how to deal with duplicate observations with
 #'   respect to the USUBJID, ANALYTE and DTC fields:
 #'   * 'stop': Stop execution and produce error message
-#'.  * 'ignore': Include duplicates in the data set
+#'   * 'ignore': Include duplicates in the data set
 #'   * 'identify': Return a list of duplicate entries
 #'   * 'resolve': Resolve duplicates, applying the `duplicate_function` to the
 #'   duplicate entries.
 #' @param duplicate_function Function to resolve duplicate values, defaults to
 #'   `mean`.
+#' @param na.rm Logical indicating whether to remove NA values when applying the
+#'   duplicate_function. Defaults to TRUE.
 #'
 #' @return A nif object.
 #' @seealso [add_administration()]
@@ -342,7 +323,8 @@ add_observation <- function(
     include_day_in_ntime = FALSE,
     silent = NULL,
     duplicates = "stop",
-    duplicate_function = mean
+    duplicate_function = mean,
+    na.rm = TRUE
 ) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -399,7 +381,8 @@ add_observation <- function(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
     observation_filter, TESTCD_field, DTC_field, DV_field,
     coding_table, factor, NTIME_lookup, keep,
-    include_day_in_ntime = include_day_in_ntime, silent = silent)
+    include_day_in_ntime = include_day_in_ntime, silent = silent) %>%
+    select(any_of(c(standard_nif_fields, keep)))
 
   # Duplicate handling
   dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
@@ -411,7 +394,7 @@ add_observation <- function(
         n_dupl, " duplicate observations found with respect to ",
         nice_enumeration(dupl_fields), ".\n",
         "Identify the duplicates using the `duplicates = 'identify'` parameter,\n",
-        "or have duplicates automaticaly resolved using `duplicates = 'resolve'`\n",
+        "or have duplicates automatically resolved using `duplicates = 'resolve'`\n",
         "where the resolution function is specified by the `duplicate_function`\n",
         "parameter (default is `mean`)."
       ))
@@ -431,7 +414,8 @@ add_observation <- function(
       observation = resolve_duplicates(
         observation,
         fields = dupl_fields,
-        duplicate_function = duplicate_function)
+        duplicate_function = duplicate_function,
+        na.rm = na.rm)
       conditional_message(
         "In observations for ", testcd, " (analyte '", analyte, "'), ",
         n_dupl, " duplicates were resolved!",
