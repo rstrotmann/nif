@@ -4,10 +4,12 @@
 \alias{make_ntime}
 \title{Make nominal time}
 \usage{
-make_ntime(obj, include_day = FALSE, silent = NULL)
+make_ntime(obj, domain, include_day = FALSE, silent = NULL)
 }
 \arguments{
 \item{obj}{The input as data table.}
+
+\item{domain}{The domain name as character.}
 
 \item{include_day}{include_day Include time component of treatment day, as
 logical.}
@@ -21,8 +23,4 @@ A data frame.
 \description{
 Return NTIME lookup table or NULL if the xxELTM field is not included in
 the input data frame.
-}
-\examples{
-make_ntime(examplinib_sad_nif)
-make_ntime(examplinib_fe_nif)
 }

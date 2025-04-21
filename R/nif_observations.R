@@ -8,45 +8,56 @@
 #'   logical.
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
+#' @param domain The domain name as character.
 #'
 #' @return A data frame.
 #' @export
-#'
-#' @examples
-#' make_ntime(examplinib_sad_nif)
-#' make_ntime(examplinib_fe_nif)
-make_ntime <- function(obj, include_day = FALSE, silent = NULL) {
+make_ntime <- function(
+    obj,
+    domain,
+    include_day = FALSE,
+    silent = NULL) {
+
   pull_column <- function(col_tail) {
-    col_index <- which(col_tail == str_sub(names(obj), 3, -1))
-    if(length(col_index) == 0) return(NULL)
-    if(length(col_index) > 1) stop(paste0("Multiple columns ending in ", col_tail))
-    return(pull(obj, col_index))
+    temp <- obj %>%
+      select(ends_with(col_tail))
+    if(length(temp) == 0)
+      return(NULL)
+    return(temp)
   }
 
-  if(is.null(pull_column("ELTM"))) {
+  # eltm = pull_column("ELTM")
+  eltm_name <- paste0(toupper(domain), "ELTM")
+  dy_name <- paste0(toupper(domain), "DY")
+
+  eltm <- pull_column(eltm_name)
+  dy <- pull_column(dy_name)
+
+  if(is.null(eltm)) {
     conditional_message(
       "ELTM is not defined. Provide a NTIME lookup",
       "table to define nominal time!",
       silent = silent)
     return(NULL)
   }
+  if(length(eltm) > 1) {
+    stop("Multiple columns ending in ELTM")
+  }
 
-  eltn_name <- names(obj)[which(str_sub(names(obj), 3, -1) == "ELTM")]
+  if(include_day == TRUE) {
+    out <- data.frame(
+      eltm,
+      dy
+    ) %>%
+      mutate(NTIME = pt_to_hours(.[[1]]) + trialday_to_day(.[[2]]) * 24)
+  } else {
+    out <- data.frame(
+      eltm
+    ) %>%
+      mutate(NTIME = pt_to_hours(.[[1]]))
+  }
 
-  tm <- pt_to_hours(pull_column("ELTM"))
-  dy <- trialday_to_day(pull_column("DY")) * 24
-
-  out <- data.frame(
-    pull_column("ELTM"),
-    NTIME = tm
-  ) %>%
-    # {if(isTRUE(include_day)) mutate(., NTIME = NTIME + dy) else .} %>%
-    {if(isTRUE(include_day) & length(tm) == length(dy))
-      mutate(., NTIME = NTIME + dy)
-      else .} %>%
-    distinct()
-  colnames(out)[1] <- eltn_name
-  return(out)
+  return(distinct(out))
 }
 
 
@@ -173,7 +184,7 @@ make_observation <- function(
   # Create NTIME lookup table if not provided
   if(is.null(NTIME_lookup)) {
     NTIME_lookup = make_ntime(
-      obj, include_day = include_day_in_ntime, silent = silent)
+      obj, domain, include_day = include_day_in_ntime, silent = silent)
     if(is.null(NTIME_lookup)) {
       conditional_message(
         "No NTIME_lookup could be created, NTIME will be NA",
