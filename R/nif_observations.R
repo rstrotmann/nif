@@ -26,7 +26,6 @@ make_ntime <- function(
     return(temp)
   }
 
-  # eltm = pull_column("ELTM")
   eltm_name <- paste0(toupper(domain), "ELTM")
   dy_name <- paste0(toupper(domain), "DY")
 
@@ -184,7 +183,7 @@ make_observation <- function(
   # Create NTIME lookup table if not provided
   if(is.null(NTIME_lookup)) {
     NTIME_lookup = make_ntime(
-      obj, domain, include_day = include_day_in_ntime, silent = silent)
+      obj, domain, include_day = FALSE, silent = silent)
     if(is.null(NTIME_lookup)) {
       conditional_message(
         "No NTIME_lookup could be created, NTIME will be NA",
@@ -261,6 +260,16 @@ make_observation <- function(
   } else {
     out <- out %>%
       mutate(NTIME = NA)
+  }
+
+  # Include day into NTIME
+  if(include_day_in_ntime == TRUE) {
+    dy_name <- paste0(toupper(domain), "DY")
+    if(!dy_name %in% names(out)) {
+      stop(paste0(dy_name, " not found in domain, day cannot be included in observation"))
+    }
+    out <- out %>%
+      mutate(NTIME = NTIME + trialday_to_day(out[[dy_name]]) * 24)
   }
 
   out <- out %>%
