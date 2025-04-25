@@ -96,32 +96,6 @@ add_time <- function(x) {
 }
 
 
-# Reduce a NIF object on the subject level by excluding all
-# administrations after the last observation
-#
-# @param nif A NIF dataset.
-# @return A NIF dataset.
-# @import dplyr
-# @export
-# @examples
-#' clip_nif(examplinib_poc_nif)
-# clip_nif <- function(nif) {
-#   last_obs <- nif %>%
-#     as.data.frame() %>%
-#     dplyr::filter(EVID == 0) %>%
-#     dplyr::group_by(.data$USUBJID) %>%
-#     dplyr::mutate(last_obs = max(.data$TIME)) %>%
-#     dplyr::ungroup() %>%
-#     dplyr::distinct(.data$USUBJID, .data$last_obs)
-#
-#   ret <- nif %>%
-#     dplyr::left_join(last_obs, by = "USUBJID") %>%
-#     dplyr::filter(.data$TIME <= .data$last_obs)
-#   return(new_nif(ret))
-# }
-
-
-
 #' Calculate time fields based on DTC
 #'
 #' @description
