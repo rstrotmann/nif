@@ -198,13 +198,14 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
 #'
 #' @param obj A data frame.
 #' @param pc The corresponding PC domain as data frame.
-#' @param analyte The analyte as string.
-#' @param pctestcd The PCTESTCD corresponding to the analyte.
+#' @param analyte The analyte as character.
+#' @param pctestcd The PCTESTCD corresponding to the analyte as character.
 #'
 #' @return A data frame.
 #' @keywords internal
 impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
   pc_ref <- pc %>%
+    lubrify_dates() %>%
     filter(PCTESTCD == pctestcd) %>%
     mutate(ANALYTE = analyte) %>%
     decompose_dtc("PCRFTDTC") %>%
@@ -212,16 +213,31 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
              "PCRFTDTC_time")) %>%
     distinct()
 
-  obj %>%
+  temp <- obj %>%
+    lubrify_dates() %>%
     decompose_dtc("DTC") %>%
     left_join(pc_ref,
-              by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")) %>%
+              by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date"))
+
+  problematic_rows <- temp %>%
+    filter(!is.na(PCRFTDTC_time), !is.na(DTC_time), DTC_time != PCRFTDTC_time)
+
+  if(nrow(problematic_rows) != 0) {
+    message(paste0(
+      "Administration time differs from PCRFTDTC. DTC was prioritized!\n",
+      df_to_string(
+        problematic_rows, indent = 2)))}
+
+  temp %>%
     mutate(IMPUTATION = case_when(
-      !is.na(PCRFTDTC_time) ~
+      # !is.na(PCRFTDTC_time) ~
+      !is.na(PCRFTDTC_time) & is.na(DTC_time) ~
         "admin time copied from PCRFTDTC",
       .default = .data$IMPUTATION)) %>%
-    mutate(DTC_time = case_when(!is.na(PCRFTDTC_time) ~ PCRFTDTC_time,
-                                .default = .data$DTC_time)) %>%
+    mutate(DTC_time = case_when(
+      # !is.na(PCRFTDTC_time) ~ PCRFTDTC_time,
+      !is.na(PCRFTDTC_time) & is.na(DTC_time) ~ PCRFTDTC_time,
+      .default = .data$DTC_time)) %>%
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
     select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
 }
