@@ -8,6 +8,7 @@ nca_from_pp(
   obj,
   sdtm_data,
   analyte = NULL,
+  ppcat = NULL,
   keep = NULL,
   group = NULL,
   observation_filter = "TRUE",
@@ -19,13 +20,18 @@ nca_from_pp(
 
 \item{sdtm_data}{A SDTM data object containing a PP domain.}
 
-\item{analyte}{The analyte as character. If NULL, will be guessed from the nif object.}
+\item{analyte}{The analyte as character. If NULL, will be guessed from the
+nif object.}
+
+\item{ppcat}{The value for PPCAT to filter the PP domain for. Defaults to
+the analyte, if NULL.}
 
 \item{keep}{Column names to keep, as character vector.}
 
 \item{group}{Grouping variable as character vector.}
 
-\item{observation_filter}{Observation filter term as character. Must be valid R code that can be evaluated on the PP domain.}
+\item{observation_filter}{Observation filter term as character. Must be valid
+R code that can be evaluated on the PP domain.}
 
 \item{silent}{Suppress message output.}
 }
