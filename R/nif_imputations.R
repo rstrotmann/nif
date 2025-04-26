@@ -166,13 +166,23 @@ impute_missing_exendtc <- function(ex) {
 #' date, `cut_off_date`.
 #'
 #' @param ex The EX domain as data frame.
+#' @param silent Suppress messages. Defaults to nif_option setting if NULL.
 #' @param cut_off_date The cut-off date.
+#'
 #' @return The updated EX domain as data frame.
 #' @keywords internal
-impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
+impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
+  # input validation
+  expected_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
+  missing_columns <- setdiff(expected_columns, names(ex))
+  n = length(missing_columns)
+  if(n > 0)
+    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
+                nice_enumeration(missing_columns)))
+
   temp <- ex %>%
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    # assertr::verify(assertr::has_all_names(
+    #   "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
     assertr::verify(is.POSIXct(.data$EXSTDTC)) %>%
     assertr::verify(is.POSIXct(.data$EXENDTC)) %>%
@@ -180,31 +190,46 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA) {
     # identify last administration per subject and EXTRT
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
-    mutate(LAST_ADMIN = row_number() == max(row_number()))
+    mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
+    mutate(flag = .data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) %>%
+    ungroup()
 
   to_replace <- temp %>%
-    filter(.data$LAST_ADMIN == TRUE, is.na(.data$EXENDTC))
+    # filter(.data$LAST_ADMIN == TRUE, is.na(.data$EXENDTC))
+    filter(flag == TRUE)
 
   if (nrow(to_replace) > 0) {
-    conditional_message("In ", nrow(to_replace), " subjects, EXENDTC for the ",
-                        "last row is absent and is replaced by the cut off date, ",
-                        format(cut_off_date, format = "%Y-%m-%d %H:%M"), ":\n",
-                        df_to_string(to_replace %>% select(all_of(c("USUBJID", "EXTRT",
-                                                                    "EXSTDTC", "EXENDTC")))), "\n")
+    conditional_message(
+      "In ", nrow(to_replace), " subjects, EXENDTC for the ",
+      "last row is absent and is replaced by the cut off date, ",
+      format(cut_off_date, format = "%Y-%m-%d %H:%M"), ":\n",
+      df_to_string(
+        to_replace %>%
+          select(all_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")))), "\n",
+      silent = silent)
+
+    # temp <- temp %>%
+    #   mutate(EXENDTC = case_when(
+    #     (LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) ~ cut_off_date,
+    #     .default = .data$EXENDTC
+    #   )) %>%
+    #   mutate(IMPUTATION = case_when(
+    #     LAST_ADMIN == TRUE & is.na(.data$EXENDTC) ~
+    #       "missing EXENDTC set to data cutoff",
+    #     .default = .data$IMPUTATION
+    #   )) %>%
+    #   ungroup()
 
     temp <- temp %>%
       mutate(EXENDTC = case_when(
-        (LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) ~ cut_off_date,
-        .default = .data$EXENDTC
-      )) %>%
+        flag == TRUE ~ cut_off_date,
+        .default = EXENDTC)) %>%
       mutate(IMPUTATION = case_when(
-        LAST_ADMIN == TRUE & is.na(.data$EXENDTC) ~
-          "missing EXENDTC set to data cutoff",
-        .default = .data$IMPUTATION
-      )) %>%
-      ungroup()
+        flag == TRUE ~ "missing EXENDTC set to data cutoff",
+        .default = IMPUTATION))
   }
-  return(temp %>% select(-"LAST_ADMIN"))
+
+  return(temp %>% select(-c("LAST_ADMIN", "flag")))
 }
 
 
