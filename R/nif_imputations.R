@@ -181,8 +181,6 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
                 nice_enumeration(missing_columns)))
 
   temp <- ex %>%
-    # assertr::verify(assertr::has_all_names(
-    #   "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
     assertr::verify(is.POSIXct(.data$EXSTDTC)) %>%
     assertr::verify(is.POSIXct(.data$EXENDTC)) %>%
@@ -195,7 +193,6 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
     ungroup()
 
   to_replace <- temp %>%
-    # filter(.data$LAST_ADMIN == TRUE, is.na(.data$EXENDTC))
     filter(flag == TRUE)
 
   if (nrow(to_replace) > 0) {
@@ -207,18 +204,6 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
         to_replace %>%
           select(all_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")))), "\n",
       silent = silent)
-
-    # temp <- temp %>%
-    #   mutate(EXENDTC = case_when(
-    #     (LAST_ADMIN == TRUE & is.na(.data$EXENDTC)) ~ cut_off_date,
-    #     .default = .data$EXENDTC
-    #   )) %>%
-    #   mutate(IMPUTATION = case_when(
-    #     LAST_ADMIN == TRUE & is.na(.data$EXENDTC) ~
-    #       "missing EXENDTC set to data cutoff",
-    #     .default = .data$IMPUTATION
-    #   )) %>%
-    #   ungroup()
 
     temp <- temp %>%
       mutate(EXENDTC = case_when(
