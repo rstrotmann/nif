@@ -106,9 +106,19 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
 #' @return The updated EX domain as data frame.
 #' @keywords internal
 impute_missing_exendtc <- function(ex) {
+  # Input validation
+  expected_columns <- c("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")
+  missing_columns <- setdiff(expected_columns, names(ex))
+  n = length(missing_columns)
+  if(n > 0)
+    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
+                nice_enumeration(missing_columns)))
+
+  if(!"IMPUTATION" %in% names(ex)) {
+    ex <- mutate(ex, IMPUTATION = "")
+  }
+
   temp <- ex %>%
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     lubrify_dates() %>%
     arrange(.data$USUBJID, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
