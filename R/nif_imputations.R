@@ -16,9 +16,6 @@
 #' @return The updated EX domain as data frame.
 #' @keywords internal
 impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
-  # dm %>%
-  #   assertr::verify(assertr::has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
-
   # Validate input
   expected_dm_cols <- c("USUBJID", "RFSTDTC", "RFENDTC")
   missing_dm_cols <- setdiff(expected_dm_cols, names(dm))
@@ -39,9 +36,6 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
   }
 
   temp <- ex %>%
-    # assertr::verify(
-      # assertr::has_all_names(
-      #   "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%

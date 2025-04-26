@@ -11,9 +11,9 @@ impute_admin_times_from_pcrftdtc(obj, pc, analyte, pctestcd)
 
 \item{pc}{The corresponding PC domain as data frame.}
 
-\item{analyte}{The analyte as string.}
+\item{analyte}{The analyte as character.}
 
-\item{pctestcd}{The PCTESTCD corresponding to the analyte.}
+\item{pctestcd}{The PCTESTCD corresponding to the analyte as character.}
 }
 \value{
 A data frame.
