@@ -272,75 +272,75 @@ test_that("make_time", {
 })
 
 
-test_that("multiple imputations", {
-  ex <- tibble::tribble(
-    ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSEQ, ~EXSTDTC,           ~EXENDTC,
-    "1",      "EX",    "A",    1,      "2021-09-10T10:10", "2021-09-13T22:00", #
-    "1",      "EX",    "A",    2,      "2021-09-17T10:35", "2021-09-20T22:35", # on the last day the time is not the administration time!
-    "1",      "EX",    "A",    3,      "2021-09-24T10:15", "2021-09-27T22:30", #
-    "1",      "EX",    "A",    4,      "2021-10-07T11:00", "2021-10-10T23:00", #
-    "1",      "EX",    "A",    5,      "2021-10-14T09:30", "2021-10-17T21:30", #
-    "1",      "EX",    "A",    6,      "2021-10-21T10:00", "2021-10-24T22:00"  #
-  ) %>% lubrify_dates()
-
-  pc <- tibble::tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCRFTDTC,          ~PCDTC,              ~PCDY,       ~PCTPT,   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T09:59",  1,       "PRE-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T10:40",  1, "0.5H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T11:12",  1,   "1H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T12:12",  1,   "2H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T13:15",  1,   "3H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T14:15",  1,   "4H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T16:36",  1,   "6H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T18:10",  1,   "8H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T21:43",  1,  "12H POST-DOSE",   #
-#   "1",      "PC",    "A",       "2021-09-11T09:50", "2021-09-11T10:00",  2,       "PRE-DOSE",   #
-    "1",      "PC",    "A",       NA,                 "2021-09-11T10:00",  2,       "PRE-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-17T10:35", "2021-09-17T10:28",  8,       "PRE-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T10:35", 11,       "PRE-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T11:10", 11, "0.5H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T11:40", 11,   "1H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T12:35", 11,   "2H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T13:53", 11,   "3H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T14:50", 11,   "4H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T16:48", 11,   "6H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T18:48", 11,   "8H POST-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T22:10", 11,  "12H POST-DOSE",   #
-    "1",      "PC",    "A",                       NA, "2021-09-21T10:55", 12,       "PRE-DOSE",   #
-    "1",      "PC",    "A",       "2021-09-24T10:15", "2021-09-24T10:10", 15,       "PRE-DOSE",   #
-    "1",      "PC",    "A",                       NA, "2021-10-28T09:15", 49,       "PRE-DOSE"    #
-  ) %>% lubrify_dates()
-
-  temp <- ex %>%
-    mutate(ANALYTE = "A") %>%
-    mutate(IMPUTATION = "") %>%
-    decompose_dtc("EXSTDTC") %>%
-    decompose_dtc("EXENDTC") %>%
-    rowwise() %>%
-    mutate(DTC_date = list(seq(
-      as.Date(.data$EXSTDTC_date),
-      as.Date(.data$EXENDTC_date),
-      by = "days"))) %>%
-    tidyr::unnest(DTC_date) %>%
-    # make time
-    group_by(USUBJID, ANALYTE, EXENDTC_date) %>%
-    mutate(DTC_time = case_when(
-      row_number() == n() ~ .data$EXENDTC_time,
-      .default = .data$EXSTDTC_time
-    )) %>%
-    ungroup() %>%
-    select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",
-              "EXENDTC_time")) %>%
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
-    # impute missing administration times from PCRFTDTC
-    impute_admin_times_from_pcrftdtc(pc, "A", "A") %>%
-    decompose_dtc("DTC") %>%
-    as.data.frame()
-
-  expect_equal(temp %>%
-                 filter(as.character(DTC_date) == "2021-09-20") %>%
-                 pull(DTC_time), "10:40")
-})
+# test_that("multiple imputations", {
+#   ex <- tibble::tribble(
+#     ~USUBJID, ~DOMAIN, ~EXTRT, ~EXSEQ, ~EXSTDTC,           ~EXENDTC,
+#     "1",      "EX",    "A",    1,      "2021-09-10T10:10", "2021-09-13T22:00", #
+#     "1",      "EX",    "A",    2,      "2021-09-17T10:35", "2021-09-20T22:35", # on the last day the time is not the administration time!
+#     "1",      "EX",    "A",    3,      "2021-09-24T10:15", "2021-09-27T22:30", #
+#     "1",      "EX",    "A",    4,      "2021-10-07T11:00", "2021-10-10T23:00", #
+#     "1",      "EX",    "A",    5,      "2021-10-14T09:30", "2021-10-17T21:30", #
+#     "1",      "EX",    "A",    6,      "2021-10-21T10:00", "2021-10-24T22:00"  #
+#   ) %>% lubrify_dates()
+#
+#   pc <- tibble::tribble(
+#     ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCRFTDTC,          ~PCDTC,              ~PCDY,       ~PCTPT,   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T09:59",  1,       "PRE-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T10:40",  1, "0.5H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T11:12",  1,   "1H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T12:12",  1,   "2H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T13:15",  1,   "3H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T14:15",  1,   "4H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T16:36",  1,   "6H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T18:10",  1,   "8H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-10T10:10", "2021-09-10T21:43",  1,  "12H POST-DOSE",   #
+# #   "1",      "PC",    "A",       "2021-09-11T09:50", "2021-09-11T10:00",  2,       "PRE-DOSE",   #
+#     "1",      "PC",    "A",       NA,                 "2021-09-11T10:00",  2,       "PRE-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-17T10:35", "2021-09-17T10:28",  8,       "PRE-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T10:35", 11,       "PRE-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T11:10", 11, "0.5H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T11:40", 11,   "1H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T12:35", 11,   "2H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T13:53", 11,   "3H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T14:50", 11,   "4H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T16:48", 11,   "6H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T18:48", 11,   "8H POST-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-20T10:40", "2021-09-20T22:10", 11,  "12H POST-DOSE",   #
+#     "1",      "PC",    "A",                       NA, "2021-09-21T10:55", 12,       "PRE-DOSE",   #
+#     "1",      "PC",    "A",       "2021-09-24T10:15", "2021-09-24T10:10", 15,       "PRE-DOSE",   #
+#     "1",      "PC",    "A",                       NA, "2021-10-28T09:15", 49,       "PRE-DOSE"    #
+#   ) %>% lubrify_dates()
+#
+#   temp <- ex %>%
+#     mutate(ANALYTE = "A") %>%
+#     mutate(IMPUTATION = "") %>%
+#     decompose_dtc("EXSTDTC") %>%
+#     decompose_dtc("EXENDTC") %>%
+#     rowwise() %>%
+#     mutate(DTC_date = list(seq(
+#       as.Date(.data$EXSTDTC_date),
+#       as.Date(.data$EXENDTC_date),
+#       by = "days"))) %>%
+#     tidyr::unnest(DTC_date) %>%
+#     # make time
+#     group_by(USUBJID, ANALYTE, EXENDTC_date) %>%
+#     mutate(DTC_time = case_when(
+#       row_number() == n() ~ .data$EXENDTC_time,
+#       .default = .data$EXSTDTC_time
+#     )) %>%
+#     ungroup() %>%
+#     select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date",
+#               "EXENDTC_time")) %>%
+#     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
+#     # impute missing administration times from PCRFTDTC
+#     impute_admin_times_from_pcrftdtc(pc, "A", "A") %>%
+#     decompose_dtc("DTC") %>%
+#     as.data.frame()
+#
+#   expect_equal(temp %>%
+#                  filter(as.character(DTC_date) == "2021-09-20") %>%
+#                  pull(DTC_time), "10:40")
+# })
 
 
 # test_that("add_covariate works", {

@@ -8,11 +8,14 @@
 #' reference end date-time field that specifies the date-time of the last
 #' treatment administration. This function completes EXENDTC for the very last
 #' administration time based on the RFENDTC, if provided in DM.
+#'
 #' @param ex The EX domain as data frame.
+#' @param silent Suppress messages, defaults to nif_options setting if NULL.
 #' @param dm The DM domain as data frame.
+#'
 #' @return The updated EX domain as data frame.
 #' @keywords internal
-impute_exendtc_to_rfendtc <- function(ex, dm) {
+impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
   # dm %>%
   #   assertr::verify(assertr::has_all_names("USUBJID", "RFSTDTC", "RFENDTC"))
 
@@ -24,15 +27,21 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
     stop(paste0("Missing ", plural("colum", n > 1), " in domain DM: ",
                 nice_enumeration(missing_dm_cols)))
 
+  expected_ex_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
+  missing_ex_columns <- setdiff(expected_ex_columns, names(ex))
+  n = length(missing_ex_columns)
+  if(n > 0)
+    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
+                nice_enumeration(missing_ex_columns)))
+
   if(!"IMPUTATION" %in% names(ex)) {
     ex <- mutate(ex, IMPUTATION = "")
   }
 
   temp <- ex %>%
-    assertr::verify(
-      assertr::has_all_names(
-        # "USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
-        "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
+    # assertr::verify(
+      # assertr::has_all_names(
+      #   "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")) %>%
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
     mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
@@ -57,7 +66,8 @@ impute_exendtc_to_rfendtc <- function(ex, dm) {
           # select(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")),
           select(any_of(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
         indent = 2
-      ), "\n"
+      ), "\n",
+      silent = silent
     )
 
     temp %>%
