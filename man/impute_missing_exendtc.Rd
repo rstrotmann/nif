@@ -24,7 +24,7 @@ interval. This function should only be used if no other information is
 available as it takes a worst-case approach, i.e., assumes that IMP was
 administered up to the day before the subsequent administration interval.
 Note that this imputation does not apply to the last administration per
-subject and EXTRT. For these cases, missing EXENDT can be imputed to the
+subject and EXTRT. For these cases, missing EXENDTC can be imputed to the
 global cut off date using \code{\link[=impute_exendtc_to_cutoff]{impute_exendtc_to_cutoff()}}.
 }
 \details{

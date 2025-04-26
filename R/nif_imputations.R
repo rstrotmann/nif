@@ -95,7 +95,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
 #' available as it takes a worst-case approach, i.e., assumes that IMP was
 #' administered up to the day before the subsequent administration interval.
 #' Note that this imputation does not apply to the last administration per
-#' subject and EXTRT. For these cases, missing EXENDT can be imputed to the
+#' subject and EXTRT. For these cases, missing EXENDTC can be imputed to the
 #' global cut off date using [impute_exendtc_to_cutoff()].
 #'
 #' As this function conducts rather aggressive imputations, the message output
@@ -129,7 +129,7 @@ impute_missing_exendtc <- function(ex) {
   to_replace <- temp %>%
     filter(is.na(.data$EXENDTC) & .data$LAST_ADMIN == FALSE)
 
-  if (nrow(to_replace > 0)) {
+  if (nrow(to_replace) > 0) {
     message(
       nrow(to_replace),
       " rows in EX had no EXENDTC. These values are imputed as the day ",
