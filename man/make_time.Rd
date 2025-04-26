@@ -2,8 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{make_time}
 \alias{make_time}
-\title{clip_nif(examplinib_poc_nif)
-Calculate time fields based on DTC}
+\title{Calculate time fields based on DTC}
 \usage{
 make_time(obj)
 }
