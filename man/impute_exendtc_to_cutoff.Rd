@@ -4,12 +4,14 @@
 \alias{impute_exendtc_to_cutoff}
 \title{Impute last EXENDTC per subject and treatment to cutoff date when absent.}
 \usage{
-impute_exendtc_to_cutoff(ex, cut_off_date = NA)
+impute_exendtc_to_cutoff(ex, cut_off_date = NA, silent = NULL)
 }
 \arguments{
 \item{ex}{The EX domain as data frame.}
 
 \item{cut_off_date}{The cut-off date.}
+
+\item{silent}{Suppress messages. Defaults to nif_option setting if NULL.}
 }
 \value{
 The updated EX domain as data frame.

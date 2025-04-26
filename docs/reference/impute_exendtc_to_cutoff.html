@@ -17,7 +17,7 @@ date, cut_off_date."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@ date, <code>cut_off_date</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">impute_exendtc_to_cutoff</span><span class="op">(</span><span class="va">ex</span>, cut_off_date <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">impute_exendtc_to_cutoff</span><span class="op">(</span><span class="va">ex</span>, cut_off_date <span class="op">=</span> <span class="cn">NA</span>, silent <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -74,6 +74,10 @@ date, <code>cut_off_date</code>.</p>
 
 <dt id="arg-cut-off-date">cut_off_date<a class="anchor" aria-label="anchor" href="#arg-cut-off-date"></a></dt>
 <dd><p>The cut-off date.</p></dd>
+
+
+<dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
+<dd><p>Suppress messages. Defaults to nif_option setting if NULL.</p></dd>
 
 </dl></div>
     <div class="section level2">
