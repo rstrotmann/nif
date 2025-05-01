@@ -224,10 +224,13 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
 #' @param pc The corresponding PC domain as data frame.
 #' @param analyte The analyte as character.
 #' @param pctestcd The PCTESTCD corresponding to the analyte as character.
+#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'
 #' @return A data frame.
 #' @keywords internal
-impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
+impute_admin_times_from_pcrftdtc <- function(
+    obj, pc, analyte, pctestcd, silent = NULL) {
+
   pc_ref <- pc %>%
     lubrify_dates() %>%
     filter(PCTESTCD == pctestcd) %>%
@@ -243,25 +246,46 @@ impute_admin_times_from_pcrftdtc <- function(obj, pc, analyte, pctestcd) {
     left_join(pc_ref,
               by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date"))
 
-  problematic_rows <- temp %>%
-    filter(!is.na(PCRFTDTC_time), !is.na(DTC_time), DTC_time != PCRFTDTC_time)
+  if(!"IMPUTATION" %in% names(temp)) {
+    temp <- mutate(temp, IMPUTATION = "")
+  }
 
-  if(nrow(problematic_rows) != 0) {
-    message(paste0(
-      "Administration time differs from PCRFTDTC. DTC was prioritized!\n",
-      df_to_string(
-        problematic_rows, indent = 2)))}
-
-  temp %>%
+  temp <- temp %>%
     mutate(IMPUTATION = case_when(
-      # !is.na(PCRFTDTC_time) ~
       !is.na(PCRFTDTC_time) & is.na(DTC_time) ~
         "admin time copied from PCRFTDTC",
       .default = .data$IMPUTATION)) %>%
+
     mutate(DTC_time = case_when(
-      # !is.na(PCRFTDTC_time) ~ PCRFTDTC_time,
       !is.na(PCRFTDTC_time) & is.na(DTC_time) ~ PCRFTDTC_time,
-      .default = .data$DTC_time)) %>%
+      .default = .data$DTC_time))
+
+  # Rows with conflicting DTC and PCRFTDTC
+  conflicting_rows <- which(
+    !is.na(temp$PCRFTDTC_time) &
+      !is.na(temp$DTC_time) &
+      temp$DTC_time != temp$PCRFTDTC_time)
+
+  if(length(conflicting_rows) != 0) {
+    conditional_message(paste0(
+      "Analyte ", analyte, ": ",
+      "Conflicting administration time and PCRFTDTC. PCRFTDTC. was prioritized!\n",
+      df_to_string(
+        temp[conflicting_rows, c("USUBJID", "ANALYTE", "DTC",
+                                 "PCRFTDTC_time", "IMPUTATION")], indent = 2)),
+      silent = silent)
+
+    temp <- temp %>%
+      mutate(DTC_time = case_when(
+        row_number() %in% conflicting_rows ~ PCRFTDTC_time,
+        .default = DTC_time)) %>%
+      mutate(IMPUTATION = case_when(
+        row_number() %in% conflicting_rows ~
+          "admin time from PCRFTDTC prioritized",
+        .default = IMPUTATION))
+  }
+
+  temp <- temp %>%
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
     select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
 }

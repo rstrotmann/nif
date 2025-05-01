@@ -90,29 +90,30 @@ test_that("impute_admin_times_from_pcrftdtc handles date mismatches", {
 test_that("impute_admin_times_from_pcrftdtc preserves existing times", {
   # Sample input with some existing times
   obj <- tribble(
-    ~USUBJID, ~ANALYTE, ~DTC,                ~IMPUTATION,
+      ~USUBJID, ~ANALYTE, ~DTC,                ~IMPUTATION,
     "SUBJ-001", "Drug A", "2023-01-15",       "",
     "SUBJ-001", "Drug A", "2023-01-16T10:00", "",
     "SUBJ-002", "Drug A", "2023-01-15",       ""
   )
 
   pc <- tribble(
-    ~USUBJID, ~PCTESTCD, ~PCRFTDTC,
+      ~USUBJID, ~PCTESTCD, ~PCRFTDTC,
     "SUBJ-001", "DRUGACONC", "2023-01-15T08:15",
     "SUBJ-001", "DRUGACONC", "2023-01-16T09:30", # Different time than existing
     "SUBJ-002", "DRUGACONC", "2023-01-15T10:45"
   )
 
   # Expected output - the function should preserve the existing time (10:00)
-  expected <- tribble(
-    ~USUBJID, ~ANALYTE, ~DTC,                ~IMPUTATION,
-    "SUBJ-001", "Drug A", "2023-01-15T08:15", "admin time copied from PCRFTDTC",
-    "SUBJ-001", "Drug A", "2023-01-16T10:00", "", # Original time preserved
-    "SUBJ-002", "Drug A", "2023-01-15T10:45", "admin time copied from PCRFTDTC"
+  expected <- tibble::tribble(
+      ~USUBJID, ~ANALYTE,                  ~DTC,                            ~IMPUTATION,
+    "SUBJ-001", "Drug A", "2023-01-15 08:15:00",      "admin time copied from PCRFTDTC",
+    "SUBJ-001", "Drug A", "2023-01-16 09:30:00", "admin time from PCRFTDTC prioritized",
+    "SUBJ-002", "Drug A", "2023-01-15 10:45:00",      "admin time copied from PCRFTDTC"
   ) %>% lubrify_dates()
 
   expect_message(
-    result <- impute_admin_times_from_pcrftdtc(obj, pc, "Drug A", "DRUGACONC"),
-    "Administration time differs from PCRFTDTC")
+    result <- impute_admin_times_from_pcrftdtc(obj, pc, "Drug A", "DRUGACONC",
+                                               silent = FALSE),
+    "Analyte Drug A: Conflicting administration time and PCRFTDTC")
   expect_equal(result, expected)
 })

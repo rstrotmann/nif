@@ -4,7 +4,7 @@
 \alias{impute_admin_times_from_pcrftdtc}
 \title{Derive administration time from PCRFTDTC}
 \usage{
-impute_admin_times_from_pcrftdtc(obj, pc, analyte, pctestcd)
+impute_admin_times_from_pcrftdtc(obj, pc, analyte, pctestcd, silent = NULL)
 }
 \arguments{
 \item{obj}{A data frame.}
@@ -14,6 +14,8 @@ impute_admin_times_from_pcrftdtc(obj, pc, analyte, pctestcd)
 \item{analyte}{The analyte as character.}
 
 \item{pctestcd}{The PCTESTCD corresponding to the analyte as character.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting, if NULL.}
 }
 \value{
 A data frame.
