@@ -402,7 +402,7 @@ add_observation <- function(
     observation_filter, TESTCD_field, DTC_field, DV_field,
     coding_table, factor, NTIME_lookup, keep,
     include_day_in_ntime = include_day_in_ntime, silent = silent) %>%
-    select(any_of(c(standard_nif_fields, keep)))
+    select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
 
   # Duplicate handling
   dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
