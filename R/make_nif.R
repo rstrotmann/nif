@@ -127,11 +127,13 @@ make_time <- function(obj) {
 
   # Handle empty data frame
   if (nrow(obj) == 0) {
-    return(obj %>%
-             mutate(TIME = numeric(0),
-                    TAFD = numeric(0),
-                    TAD = numeric(0)) %>%
-             new_nif())
+    return(
+      obj %>%
+        mutate(
+          TIME = numeric(0),
+          TAFD = numeric(0),
+          TAD = numeric(0)) %>%
+        new_nif())
   }
 
   # Validate DTC column
@@ -443,3 +445,10 @@ nif_auto <- function(sdtm,
   }
   return(nif)
 }
+
+
+
+
+
+
+
