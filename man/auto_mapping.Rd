@@ -9,11 +9,15 @@ auto_mapping(sdtm, mapping = NULL)
 \arguments{
 \item{sdtm}{A sdtm object.}
 
-\item{mapping}{A formla or list of formulae.}
+\item{mapping}{A formula or list of formulae. Each formula should be in the
+format PCTESTCD ~ EXTRT or PCTESTCD1 + PCTESTCD2 ~ EXTRT for multiple
+analytes from the same treatment.}
 }
 \value{
-A data frame.
+A data frame with unique combinations of EXTRT and PCTESTCD.
 }
 \description{
-Create analyte mapping table from mapping formula or list
+Creates a mapping between treatments (EXTRT) and analytes (PCTESTCD). Each
+combination of EXTRT and PCTESTCD must be unique. If duplicate mappings are
+found, an error will be raised.
 }
