@@ -15,5 +15,10 @@ formula_to_mapping(sdtm, f)
 A data frame.
 }
 \description{
-Make analyte mapping table from formula object
+The formula object must be given as PCTESTCD ~ EXTRT or, if there are multiple
+analytes from the same treatment: PCTESTCD1 + PCTESTCD2 ~ EXTRT, etc.
+}
+\details{
+The return object is a data frame with one line for each analyte. The ANALYTE
+field is the PCTESTCD for the respective analyte.
 }
