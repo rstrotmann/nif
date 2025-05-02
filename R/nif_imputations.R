@@ -57,7 +57,6 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
         temp %>%
           filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) &
                    .data$LAST_ADMIN == TRUE) %>%
-          # select(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")),
           select(any_of(c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
         indent = 2
       ), "\n",
@@ -177,8 +176,9 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
   missing_columns <- setdiff(expected_columns, names(ex))
   n = length(missing_columns)
   if(n > 0)
-    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
-                nice_enumeration(missing_columns)))
+    stop(paste0(
+      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      nice_enumeration(missing_columns)))
 
   temp <- ex %>%
     lubrify_dates() %>%
