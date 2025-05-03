@@ -204,7 +204,7 @@ nif_auto <- function(
     }
 
     # baseline hepatic function
-    if(all(c("BILI", "ALT") %in% unique(lb$LBTESTCD))) {
+    if(all(c("BILI", "AST") %in% unique(lb$LBTESTCD))) {
       conditional_message("Adding baseline hepatic function", silent = silent)
       out <- add_bl_odwg(out, sdtm)
     }
