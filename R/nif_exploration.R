@@ -445,7 +445,7 @@ print.summary_nif <- function(x, color = FALSE, ...) {
       color=color, indent = indent), "\n\n"))
   }
 
-  cat(paste0("Administered drugs:\n",
+  cat(paste0("Treatments:\n",
              paste0(spacer, paste(x$drugs,collapse = ", ")), "\n\n"))
 
   cat(paste0("Analytes:\n",

@@ -359,92 +359,92 @@ nif_cleanup <- function(nif, keep = NULL) {
 #' @seealso [add_analyte_mapping()]
 #' @seealso [add_metabolite_mapping()]
 #' @importFrom stats na.omit
-nif_auto <- function(sdtm,
-                     bl_creat = TRUE,
-                     bl_odwg = TRUE,
-                     keep = NULL
-                     ) {
-  ## TO DO:
-  ## try generating analyte mapping automatically
-  ##
-  analyte_mapping <- sdtm$analyte_mapping
-  if(nrow(analyte_mapping) == 0) {
-    stop("Missing analyte mapping in sdtm object.")
-  }
-
-  analyte_mapping <- analyte_mapping %>%
-    assertr::verify(assertr::has_all_names("EXTRT", "PCTESTCD", "ANALYTE")) %>%
-    mutate(PARENT = PCTESTCD, METABOLITE = FALSE) %>%
-    {if(!"ANALYTE" %in% names(.)) mutate(., ANALYTE = PCTESTCD) else .}
-
-  metabolite_mapping <- sdtm$metabolite_mapping
-  if(nrow(metabolite_mapping > 0)){
-    metabolite_mapping <- metabolite_mapping %>%
-      rename(ANALYTE = PCTESTCD_metab, PARENT = PCTESTCD_parent) %>%
-      mutate(EXTRT = NULL, METABOLITE = TRUE, PCTESTCD = ANALYTE)
-  }
-  analytes <- bind_rows(analyte_mapping, metabolite_mapping) %>%
-    distinct()
-
-  nif <- new_nif()
-
-  # Treatments
-  # treatments <- analyte_mapping$EXTRT
-  treatments <- na.omit(unique(analytes$EXTRT))
-
-  conditional_message(
-    paste0("Adding treatment(s): ", nice_enumeration(treatments)))
-
-  for(i in seq(1:nrow(analytes))){
-    if(!is.na(analytes[i, "EXTRT"])) {
-      nif <- add_administration(nif, sdtm, analytes[i, "EXTRT"],
-                                analyte = analytes[i, "ANALYTE"], keep = keep)
-    }
-  }
-
-  # PC observations
-  observations <- unique(analytes$ANALYTE)
-
-  conditional_message(
-    paste0("Adding PC observations(s): ", nice_enumeration(observations)))
-
-  for(i in seq(1:nrow(analytes))) {
-    nif <- add_observation(nif, sdtm, "pc", analytes[i, "PCTESTCD"],
-            analyte = analytes[i, "ANALYTE"], parent = analytes[i, "PARENT"],
-            keep = keep)
-  }
-
-  lb <- domain(sdtm, "lb")
-  if(bl_creat == TRUE | bl_odwg == TRUE){
-    if(is.null(lb)) {
-      conditional_message("LB not found in sdtm object!")
-    } else {
-      # Baseline CREAT, CRCL and renal function class
-      if(bl_creat == TRUE) {
-        if(!"CREAT" %in% unique(lb$LBTESTCD)) {
-          conditional_message("CREAT not found in LB!")
-        } else {
-          conditional_message("Adding baseline renal function")
-          nif <- add_baseline(nif, sdtm, "lb", "CREAT") %>%
-            {if(all(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(.)))
-              add_bl_crcl(.) else .} %>%
-            {if("BL_CRCL" %in% names(.)) add_bl_renal(.) else .}
-        }
-      }
-
-      # Baseline ODWG hepatic function class
-      if(bl_odwg == TRUE) {
-        if(all(c("BILI", "ALT") %in% unique(lb$LBTESTCD))) {
-          conditional_message("Adding baseline hepatic function")
-          nif <- add_bl_odwg(nif, sdtm)
-        } else {
-          conditional_message("Cannot make BL_ODWG: BILI and AST not found in LB!")
-        }
-      }
-    }
-  }
-  return(nif)
-}
+# nif_auto <- function(sdtm,
+#                      bl_creat = TRUE,
+#                      bl_odwg = TRUE,
+#                      keep = NULL
+#                      ) {
+#   ## TO DO:
+#   ## try generating analyte mapping automatically
+#   ##
+#   analyte_mapping <- sdtm$analyte_mapping
+#   if(nrow(analyte_mapping) == 0) {
+#     stop("Missing analyte mapping in sdtm object.")
+#   }
+#
+#   analyte_mapping <- analyte_mapping %>%
+#     assertr::verify(assertr::has_all_names("EXTRT", "PCTESTCD", "ANALYTE")) %>%
+#     mutate(PARENT = PCTESTCD, METABOLITE = FALSE) %>%
+#     {if(!"ANALYTE" %in% names(.)) mutate(., ANALYTE = PCTESTCD) else .}
+#
+#   metabolite_mapping <- sdtm$metabolite_mapping
+#   if(nrow(metabolite_mapping > 0)){
+#     metabolite_mapping <- metabolite_mapping %>%
+#       rename(ANALYTE = PCTESTCD_metab, PARENT = PCTESTCD_parent) %>%
+#       mutate(EXTRT = NULL, METABOLITE = TRUE, PCTESTCD = ANALYTE)
+#   }
+#   analytes <- bind_rows(analyte_mapping, metabolite_mapping) %>%
+#     distinct()
+#
+#   nif <- new_nif()
+#
+#   # Treatments
+#   # treatments <- analyte_mapping$EXTRT
+#   treatments <- na.omit(unique(analytes$EXTRT))
+#
+#   conditional_message(
+#     paste0("Adding treatment(s): ", nice_enumeration(treatments)))
+#
+#   for(i in seq(1:nrow(analytes))){
+#     if(!is.na(analytes[i, "EXTRT"])) {
+#       nif <- add_administration(nif, sdtm, analytes[i, "EXTRT"],
+#                                 analyte = analytes[i, "ANALYTE"], keep = keep)
+#     }
+#   }
+#
+#   # PC observations
+#   observations <- unique(analytes$ANALYTE)
+#
+#   conditional_message(
+#     paste0("Adding PC observations(s): ", nice_enumeration(observations)))
+#
+#   for(i in seq(1:nrow(analytes))) {
+#     nif <- add_observation(nif, sdtm, "pc", analytes[i, "PCTESTCD"],
+#             analyte = analytes[i, "ANALYTE"], parent = analytes[i, "PARENT"],
+#             keep = keep)
+#   }
+#
+#   lb <- domain(sdtm, "lb")
+#   if(bl_creat == TRUE | bl_odwg == TRUE){
+#     if(is.null(lb)) {
+#       conditional_message("LB not found in sdtm object!")
+#     } else {
+#       # Baseline CREAT, CRCL and renal function class
+#       if(bl_creat == TRUE) {
+#         if(!"CREAT" %in% unique(lb$LBTESTCD)) {
+#           conditional_message("CREAT not found in LB!")
+#         } else {
+#           conditional_message("Adding baseline renal function")
+#           nif <- add_baseline(nif, sdtm, "lb", "CREAT") %>%
+#             {if(all(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(.)))
+#               add_bl_crcl(.) else .} %>%
+#             {if("BL_CRCL" %in% names(.)) add_bl_renal(.) else .}
+#         }
+#       }
+#
+#       # Baseline ODWG hepatic function class
+#       if(bl_odwg == TRUE) {
+#         if(all(c("BILI", "ALT") %in% unique(lb$LBTESTCD))) {
+#           conditional_message("Adding baseline hepatic function")
+#           nif <- add_bl_odwg(nif, sdtm)
+#         } else {
+#           conditional_message("Cannot make BL_ODWG: BILI and AST not found in LB!")
+#         }
+#       }
+#     }
+#   }
+#   return(nif)
+# }
 
 
 
