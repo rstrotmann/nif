@@ -299,35 +299,35 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
     ), "\n\n")
   }
 
-  if("analyte_mapping" %in% names(x)) {
-    if (nrow(x$analyte_mapping) != 0) {
-      cat("Treatment-to-analyte mappings:\n")
-      cat(df_to_string(x$analyte_mapping,
-        color = color, indent = indent,
-        show_none = TRUE
-      ), "\n\n")
-    }
-  }
-
-  if("metabolite_mapping" %in% names(x)) {
-    if (nrow(x$metabolite_mapping) != 0) {
-      cat("Parent-to-metabolite mappings:\n")
-      cat(df_to_string(x$metabolite_mapping,
-        color = color, indent = indent,
-        show_none = TRUE
-      ), "\n\n")
-    }
-  }
-
-  if("time_mapping" %in% names(x)) {
-    if (nrow(x$time_mapping) != 0) {
-      cat("Time mappings:\n")
-      cat(df_to_string(x$time_mapping,
-        color = color, indent = indent,
-        show_none = TRUE
-      ), "\n\n")
-    }
-  }
+  # if("analyte_mapping" %in% names(x)) {
+  #   if (nrow(x$analyte_mapping) != 0) {
+  #     cat("Treatment-to-analyte mappings:\n")
+  #     cat(df_to_string(x$analyte_mapping,
+  #       color = color, indent = indent,
+  #       show_none = TRUE
+  #     ), "\n\n")
+  #   }
+  # }
+  #
+  # if("metabolite_mapping" %in% names(x)) {
+  #   if (nrow(x$metabolite_mapping) != 0) {
+  #     cat("Parent-to-metabolite mappings:\n")
+  #     cat(df_to_string(x$metabolite_mapping,
+  #       color = color, indent = indent,
+  #       show_none = TRUE
+  #     ), "\n\n")
+  #   }
+  # }
+  #
+  # if("time_mapping" %in% names(x)) {
+  #   if (nrow(x$time_mapping) != 0) {
+  #     cat("Time mappings:\n")
+  #     cat(df_to_string(x$time_mapping,
+  #       color = color, indent = indent,
+  #       show_none = TRUE
+  #     ), "\n\n")
+  #   }
+  # }
 
   invisible(x)
 }
