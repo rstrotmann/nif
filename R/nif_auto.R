@@ -183,7 +183,8 @@ nif_auto <- function(
         observation_filter = observation_filter,
         duplicates = duplicates,
         duplicate_function = duplicate_function,
-        keep = keep, silent = silent)
+        keep = keep,
+        silent = silent)
   }
 
   # LB-related baseline covariates

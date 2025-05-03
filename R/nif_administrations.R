@@ -214,7 +214,7 @@ make_administration <- function(
     vs <- domain(sdtm, "vs")
   }
 
-  ex <- impute_exendtc_to_rfendtc(ex, dm)
+  ex <- impute_exendtc_to_rfendtc(ex, dm, silent = silent)
 
   assertthat::assert_that(
     extrt %in% ex$EXTRT,
@@ -242,7 +242,7 @@ make_administration <- function(
     filter_EXSTDTC_after_EXENDTC(dm) %>%
 
     # time imputations
-    impute_exendtc_to_cutoff(cut_off_date = cut_off_date) %>%
+    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc() %>%
     decompose_dtc("EXENDTC") %>%
 
@@ -257,7 +257,8 @@ make_administration <- function(
     pc <- domain(sdtm, "pc") %>% lubrify_dates()
     admin <- admin %>%
       {if("PCRFTDTC" %in% names(pc))
-        impute_admin_times_from_pcrftdtc(., pc, analyte, analyte) else .}
+        impute_admin_times_from_pcrftdtc(
+          ., pc, analyte, analyte, silent = silent) else .}
   }
 
   admin <- admin %>%

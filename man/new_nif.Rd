@@ -4,12 +4,15 @@
 \alias{new_nif}
 \title{nif class constructor}
 \usage{
-new_nif(obj = NULL, ...)
+new_nif(obj = NULL, ..., silent = NULL)
 }
 \arguments{
 \item{obj}{A data frame containing the actual NIF data or a sdtm object.}
 
 \item{...}{Further arguments.}
+
+\item{silent}{Suppress messages, as logical. Defaults to nif_option setting
+if NULL.}
 }
 \value{
 A nif object from the input data set.

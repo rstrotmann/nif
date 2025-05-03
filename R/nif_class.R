@@ -2,11 +2,12 @@
 #'
 #' @param ... Further arguments.
 #' @param obj A data frame containing the actual NIF data or a sdtm object.
+#' @inheritParams nif_auto
 #'
 #' @import dplyr
 #' @return A nif object from the input data set.
 #' @export
-new_nif <- function(obj = NULL, ...) {
+new_nif <- function(obj = NULL, ..., silent = NULL) {
   if (is.null(obj)) {
     temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
     colnames(temp) <- minimal_nif_fields
@@ -14,8 +15,9 @@ new_nif <- function(obj = NULL, ...) {
     temp %>%
       order_nif_columns()
   } else {
-    if (class(obj)[1] == "sdtm") {
-      temp <- nif_auto(obj, ...)
+    # if (class(obj)[1] == "sdtm") {
+    if(inherits(obj, "sdtm")) {
+      temp <- nif_auto(obj, ..., silent = silent)
     } else {
       temp <- as.data.frame(obj)
       class(temp) <- c("nif", "data.frame")
