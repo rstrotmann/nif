@@ -79,7 +79,7 @@ test_that("auto_mapping creates correct mapping from list of formulae", {
 
   test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
-  result <- auto_mapping(test_sdtm, list(PK1 ~ DRUG1, PK2 ~ DRUG2))
+  result <- auto_mapping(test_sdtm, PK1 ~ DRUG1, PK2 ~ DRUG2)
 
   expect_equal(nrow(result), 2)
   expect_equal(result$EXTRT, c("DRUG1", "DRUG2"))
@@ -135,7 +135,7 @@ test_that("auto_mapping detects duplicate mappings", {
   test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   expect_error(
-    auto_mapping(test_sdtm, list(PK1 ~ DRUG1, PK1 ~ DRUG1)),
+    auto_mapping(test_sdtm, PK1 ~ DRUG1, PK1 ~ DRUG1),
     "Duplicate mappings found"
   )
 })
@@ -162,13 +162,13 @@ test_that("auto_mapping validates input types", {
   # Test invalid mapping type
   expect_error(
     auto_mapping(test_sdtm, "not a formula"),
-    "mapping must be either NULL, a formula, or a list of formulae"
+    "mappings must be formulae!"
   )
 
   # Test invalid list element
   expect_error(
-    auto_mapping(test_sdtm, list(PK1 ~ DRUG1, "not a formula")),
-    "All elements in mapping list must be formulae"
+    auto_mapping(test_sdtm, PK1 ~ DRUG1, "not a formula"),
+    "mappings must be formulae!"
   )
 })
 
