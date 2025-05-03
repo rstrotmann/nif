@@ -54,6 +54,7 @@
 <url><loc>/reference/analytes.sdtm.html</loc></url>
 <url><loc>/reference/analytes_cmts.html</loc></url>
 <url><loc>/reference/append_statement.html</loc></url>
+<url><loc>/reference/auto_mapping.html</loc></url>
 <url><loc>/reference/baseline_covariates.html</loc></url>
 <url><loc>/reference/bmi_by_age.html</loc></url>
 <url><loc>/reference/calculate_age.html</loc></url>
@@ -129,6 +130,7 @@
 <url><loc>/reference/filter_subjects.html</loc></url>
 <url><loc>/reference/find_duplicates.html</loc></url>
 <url><loc>/reference/first_admin_dtc.html</loc></url>
+<url><loc>/reference/formula_to_mapping.html</loc></url>
 <url><loc>/reference/geom_admin.html</loc></url>
 <url><loc>/reference/get_cov_plot_params.html</loc></url>
 <url><loc>/reference/guess_analyte.html</loc></url>

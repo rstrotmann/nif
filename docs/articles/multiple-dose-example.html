@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -218,11 +218,11 @@ data frame:</p>
 <span><span class="co">#  6 2001-01-13 13:04:00 2.467   2.0 2.467 2.467    0   0  RS2023   2 RS2023     1</span></span>
 <span><span class="co">#    METABOLITE DOSE MDV  ACTARMCD IMPUTATION        DV BL_CREAT  BL_CRCL</span></span>
 <span><span class="co">#  1      FALSE  500   1 TREATMENT                   NA 72.78062 107.4689</span></span>
-<span><span class="co">#  2      FALSE  500   0 TREATMENT       &lt;NA&gt;    0.0000 72.78062 107.4689</span></span>
-<span><span class="co">#  3      FALSE  500   0 TREATMENT       &lt;NA&gt;  636.6833 72.78062 107.4689</span></span>
-<span><span class="co">#  4      FALSE  500   0 TREATMENT       &lt;NA&gt; 1844.8225 72.78062 107.4689</span></span>
-<span><span class="co">#  5      FALSE  500   0 TREATMENT       &lt;NA&gt; 2773.3083 72.78062 107.4689</span></span>
-<span><span class="co">#  6      FALSE  500   0 TREATMENT       &lt;NA&gt; 2539.5401 72.78062 107.4689</span></span></code></pre></div>
+<span><span class="co">#  2      FALSE  500   0 TREATMENT               0.0000 72.78062 107.4689</span></span>
+<span><span class="co">#  3      FALSE  500   0 TREATMENT             636.6833 72.78062 107.4689</span></span>
+<span><span class="co">#  4      FALSE  500   0 TREATMENT            1844.8225 72.78062 107.4689</span></span>
+<span><span class="co">#  5      FALSE  500   0 TREATMENT            2773.3083 72.78062 107.4689</span></span>
+<span><span class="co">#  6      FALSE  500   0 TREATMENT            2539.5401 72.78062 107.4689</span></span></code></pre></div>
 <p>When the NIF object itself is printed, a summary of the data is shown
 instead:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -282,7 +282,7 @@ function:</p>
 <span><span class="co">#    moderate   15   18.8      </span></span>
 <span><span class="co">#    severe     0    0         </span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Administered drugs:</span></span>
+<span><span class="co">#  Treatments:</span></span>
 <span><span class="co">#    RS2023</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Analytes:</span></span>
@@ -376,7 +376,7 @@ summarizing the administered dose:</p>
 <p>Let’s have a plot of the doses over time in these subjects:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">(</span><span class="va">nif_poc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">(</span><span class="fu"><a href="../reference/dose_red_sbs.html">dose_red_sbs</a></span><span class="op">(</span><span class="va">nif_poc</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">ID</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">EVID</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">TIME</span>, y <span class="op">=</span> <span class="va">DOSE</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">ID</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>

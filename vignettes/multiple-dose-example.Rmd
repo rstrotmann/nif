@@ -187,7 +187,7 @@ Let's have a plot of the doses over time in these subjects:
 
 ```{r fig.width=5, fig.height=2}
 nif_poc %>% 
-  filter(ID %in% (nif_poc %>% dose_red_sbs())) %>% 
+  filter(ID %in% (dose_red_sbs(nif_poc))$ID) %>% 
   filter(EVID == 1) %>% 
   ggplot(aes(x = TIME, y = DOSE, color = as.factor(ID))) + 
   geom_point() +
