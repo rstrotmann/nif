@@ -2,16 +2,14 @@
 % Please edit documentation in R/nif_auto.R
 \name{auto_mapping}
 \alias{auto_mapping}
-\title{Create analyte mapping table from mapping formula or list}
+\title{Create analyte mapping table from mapping formulae}
 \usage{
-auto_mapping(sdtm, mapping = NULL)
+auto_mapping(sdtm, ...)
 }
 \arguments{
 \item{sdtm}{A sdtm object.}
 
-\item{mapping}{A formula or list of formulae. Each formula should be in the
-format PCTESTCD ~ EXTRT or PCTESTCD1 + PCTESTCD2 ~ EXTRT for multiple
-analytes from the same treatment.}
+\item{...}{Analyte mappings as formulae.}
 }
 \value{
 A data frame with unique combinations of EXTRT and PCTESTCD.
