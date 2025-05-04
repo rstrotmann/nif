@@ -54,9 +54,6 @@ make_ntime <- function(
   tpt <- pull_column(tpt_name)
   dy <- pull_column(dy_name)
 
-  # if(!is.null(eltm))
-  #   eltm <- pt_to_hours(eltm)
-
   if(is.null(eltm)) {
     conditional_message(
       eltm_name,
@@ -70,15 +67,14 @@ make_ntime <- function(
       eltm,
       dy
     ) %>%
-      rename(!!eltm_name := 1) %>%
-      # mutate(NTIME = pt_to_hours(.[[1]]) + trialday_to_day(.[[2]]) * 24)
-      mutate(NTIME = pt_to_hours(eltm) + trialday_to_day(.[[2]]) * 24)
+      mutate(NTIME = pt_to_hours(eltm) + trialday_to_day(.[[2]]) * 24) %>%
+      rename(!!eltm_name := eltm)
+      # rename(!!eltm_name := 1)
   } else {
     out <- data.frame(
       eltm
     ) %>%
       rename(!!eltm_name := 1) %>%
-      # mutate(NTIME = pt_to_hours(.[[1]]))
       mutate(NTIME = pt_to_hours(eltm))
   }
 
