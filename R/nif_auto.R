@@ -199,7 +199,7 @@ nif_auto <- function(
         out <- add_bl_crcl(out)
         out <- add_bl_renal(out)
         conditional_message(
-          "Adding baseling CRCL and renal function class",
+          "Adding baseline CRCL and renal function class",
           silent = silent)
       }
     }

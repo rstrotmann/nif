@@ -948,11 +948,6 @@ testcd.sdtm <- function(obj) {
     stop("Input must be a sdtm object")
   }
 
-  # if (length(obj$domains) == 0) {
-  #   warning("SDTM object contains no domains")
-  #   return(data.frame(DOMAIN = character(), TESTCD = character()))
-  # }
-
   purrr::reduce(
     obj$domains,
     function(acc, x) {
