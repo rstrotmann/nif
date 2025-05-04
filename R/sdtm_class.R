@@ -933,15 +933,12 @@ testcd <- function(obj) {
 
 #' Extract TESTCD fields by domain from a sdtm object
 #'
-#' @param sdtm A sdtm object.
+#' @param obj A sdtm object.
 #'
 #' @returns A data frame with columns DOMAIN and TESTCD. Returns an empty data frame
 #'   if no TESTCD columns are found.
 #'
 #' @export
-#'
-#' @examples
-#' testcd(examplinib_sad)
 testcd.sdtm <- function(obj) {
   # Validate inputs
   if (!inherits(obj, "sdtm")) {

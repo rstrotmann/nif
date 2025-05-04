@@ -7,7 +7,7 @@
 \method{testcd}{sdtm}(obj)
 }
 \arguments{
-\item{sdtm}{A sdtm object.}
+\item{obj}{A sdtm object.}
 }
 \value{
 A data frame with columns DOMAIN and TESTCD. Returns an empty data frame
@@ -15,7 +15,4 @@ if no TESTCD columns are found.
 }
 \description{
 Extract TESTCD fields by domain from a sdtm object
-}
-\examples{
-testcd(examplinib_sad)
 }
