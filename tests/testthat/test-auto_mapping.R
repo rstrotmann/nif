@@ -25,9 +25,10 @@ test_that("auto_mapping creates correct mapping from NULL input", {
 
   expect_equal(nrow(result), 2)
   expect_equal(result$EXTRT, c("DRUG1", "DRUG2"))
-  expect_equal(result$PCTESTCD, c("DRUG1", "DRUG2"))
+  expect_equal(result$TESTCD, c("DRUG1", "DRUG2"))
   expect_equal(result$ANALYTE, c("DRUG1", "DRUG2"))
 })
+
 
 test_that("auto_mapping creates correct mapping from single formula", {
   # Create test SDTM object with domains
@@ -54,9 +55,10 @@ test_that("auto_mapping creates correct mapping from single formula", {
 
   expect_equal(nrow(result), 1)
   expect_equal(result$EXTRT, "DRUG1")
-  expect_equal(result$PCTESTCD, "PK1")
+  expect_equal(result$TESTCD, "PK1")
   expect_equal(result$ANALYTE, "PK1")
 })
+
 
 test_that("auto_mapping creates correct mapping from list of formulae", {
   # Create test SDTM object with domains
@@ -83,9 +85,10 @@ test_that("auto_mapping creates correct mapping from list of formulae", {
 
   expect_equal(nrow(result), 2)
   expect_equal(result$EXTRT, c("DRUG1", "DRUG2"))
-  expect_equal(result$PCTESTCD, c("PK1", "PK2"))
+  expect_equal(result$TESTCD, c("PK1", "PK2"))
   expect_equal(result$ANALYTE, c("PK1", "PK2"))
 })
+
 
 test_that("auto_mapping handles multiple analytes from same treatment", {
   # Create test SDTM object with domains
@@ -111,9 +114,10 @@ test_that("auto_mapping handles multiple analytes from same treatment", {
 
   expect_equal(nrow(result), 2)
   expect_equal(result$EXTRT, c("DRUG1", "DRUG1"))
-  expect_equal(result$PCTESTCD, c("PK1", "PK2"))
+  expect_equal(result$TESTCD, c("PK1", "PK2"))
   expect_equal(result$ANALYTE, c("PK1", "PK2"))
 })
+
 
 test_that("auto_mapping detects duplicate mappings", {
   # Create test SDTM object with domains
@@ -139,6 +143,7 @@ test_that("auto_mapping detects duplicate mappings", {
     "Duplicate mappings found"
   )
 })
+
 
 test_that("auto_mapping validates input types", {
   # Create test SDTM object with domains
@@ -171,6 +176,7 @@ test_that("auto_mapping validates input types", {
     "mappings must be formulae!"
   )
 })
+
 
 test_that("auto_mapping sets correct METABOLITE flags", {
   # Create test SDTM object with domains

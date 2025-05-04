@@ -8,12 +8,13 @@
 #'
 #' @param sdtm A sdtm object.
 #' @param f A formula.
+#' @param silent Suppress messages.
 #' @importFrom rlang f_rhs
 #' @importFrom rlang f_lhs
 #' @importFrom rlang is_formula
 #'
 #' @returns A data frame.
-formula_to_mapping <- function(sdtm, f) {
+formula_to_mapping <- function(sdtm, f, silent = NULL) {
   # input validation
   if (!inherits(sdtm, "sdtm")) {
     stop("sdtm must be an sdtm object")
@@ -24,20 +25,34 @@ formula_to_mapping <- function(sdtm, f) {
       "argument ", as.character(f), " is not a formula!"))
 
   extrt <- intersect(str_split_1(deparse(f_rhs(f)), " "), treatments(sdtm))
-  pctestcd <- intersect(str_split_1(deparse(f_lhs(f)), " "), analytes(sdtm))
 
   if(length(extrt) == 0)
     stop(paste0("extrt ", as.character(rlang::f_rhs(f)),
                 " not found in EX!"))
-  if(length(pctestcd) == 0)
-    stop(paste0("pctestcd ", as.character(rlang::f_lhs(f)),
-                " not found in PC!"))
 
-  out <- data.frame(
-    PCTESTCD = pctestcd,
-    EXTRT = extrt,
-    ANALYTE = pctestcd
-  )
+  allowed_testcd <- testcd(sdtm)
+
+  # identify analytes from left hand side of f
+  temp <- str_split_1(deparse(f_lhs(f)), " ")
+  temp <- temp[grepl("^[A-Z0-9_]*$", temp)]
+
+  invalid_analytes <- setdiff(temp, allowed_testcd$TESTCD)
+  n_invalid <- length(invalid_analytes)
+  if(n_invalid > 0)
+    conditional_message(
+      plural("analyte", n_invalid > 1), " ",
+      invalid_analytes, " not found in any domain!",
+      silent = silent
+    )
+
+  testcd <- testcd(sdtm) %>%
+    filter(TESTCD %in% temp)
+
+  out <- testcd %>%
+    mutate(PARAM = paste0(DOMAIN, "TESTCD")) %>%
+    mutate(EXTRT = extrt) %>%
+    mutate(ANALYTE = TESTCD)
+
   return(out)
 }
 
@@ -72,17 +87,29 @@ auto_mapping <- function(sdtm, ...) {
 
   # Initialize empty data frame with correct structure
   ex_pc_mapping <- data.frame(
-    PCTESTCD = character(0),
+    DOMAIN = character(0),
+    PARAM = character(0),
+    TESTCD = character(0),
     EXTRT = character(0),
     ANALYTE = character(0),
     stringsAsFactors = FALSE
   )
 
   if(length(mapping) == 0) {
+    # auto mapping: PC analytes
     common <- intersect(analytes(sdtm), treatments(sdtm))
+    if(length(common) == 0)
+      stop(paste0(
+        "Cannot autogenerate mapping, no matching entries between analytes (",
+        analytes(sdtm),
+        ") and treatments (",
+        treatments(sdtm),
+        "). Provide mapping formula!\n"))
     ex_pc_mapping <- data.frame(
+      DOMAIN = "PC",
+      PARAM = "PCTESTCD",
+      TESTCD = common,
       EXTRT = common,
-      PCTESTCD = common,
       ANALYTE = common,
       stringsAsFactors = FALSE
     )
@@ -99,35 +126,70 @@ auto_mapping <- function(sdtm, ...) {
 
   # Check for duplicate mappings
   duplicates <- ex_pc_mapping %>%
-    group_by(EXTRT, PCTESTCD) %>%
+    group_by(EXTRT, TESTCD) %>%
     filter(n() > 1) %>%
-    distinct(EXTRT, PCTESTCD)
+    distinct(EXTRT, TESTCD)
 
   if (nrow(duplicates) > 0) {
-    stop("Duplicate mappings found for the following EXTRT-PCTESTCD combinations:\n",
-         paste(sprintf("%s ~ %s", duplicates$EXTRT, duplicates$PCTESTCD),
+    stop("Duplicate mappings found for the following EXTRT-TESTCD combinations:\n",
+         paste(sprintf("%s ~ %s", duplicates$EXTRT, duplicates$TESTCD),
                collapse = "\n"))
   }
 
-  ex_pc_mapping <- ex_pc_mapping %>%
-    mutate(PARENT = PCTESTCD) %>%
-    mutate(METABOLITE = PCTESTCD != EXTRT) %>%
+  out <- ex_pc_mapping %>%
     group_by(EXTRT) %>%
-    mutate(METABOLITE = row_number() != 1)
+    mutate(PARENT = ANALYTE[row_number() == 1]) %>%
+    mutate(METABOLITE = row_number() != 1) %>%
+    ungroup()
 
-  ex_pc_mapping
+  return(out)
 }
+
+
+
 
 
 
 #' Auto-generate nif from sdtm object
 #'
+#' If no mapping is provided, [nif_auto()] will try to find matching treatment
+#' names in EX and PCTESTCD in PC to create a basic nif object for pharmacokinetic
+#' observations. It will fail if no EXTRT and PCTESTCD with identical names are
+#' found.
 #'
+#' If one or more mappings are provided as additional parameters, [nif_auto()]
+#' will create respective observations. Mappings must be provided in the form:
+#'
+#' `TESTCD ~ EXTRT`
+#'
+#' where TESTCD can be any xxTESTCD from any domain xx included in the sdtm
+#' object. See [testcd()] for an overview
+#' on all analytes in all domains. Formulae can also specify multiple
+#' observations to be associated with one treatment, e.g.,
+#'
+#' `RS2023 + RS2023487A ~ EXAMPLINIB`.
+#'
+#' Multiple mappings can be given, separated by commas. The analyte name in the
+#' nif object is automatically set to the respective TESTCD.
+#'
+#' __IMPORTANT__: If multiple analytes are specified for a treatment, it is
+#' implicitly assumed that the first analyte corresponds to the parent analyte
+#' for the treatment, e.g., in the case above, 'RS2023' is assumed to be the
+#' analyte for the 'EXAMPLINIB' treatment parent compound.
+#'
+#' Note that compartments (CMT) are automatically assigned. If more control over
+#' compartments, analyte names and parent assignment is desired, stepwise
+#' creation of a nif object using [add_administration()] and [add_observation()]
+#' is recommended.
 #'
 #' @inheritParams add_observation
 #' @param ... Formulae to define the relationships between PCTESTCD and EXTRT.
 #'
 #' @returns A nif object
+#'
+#' @seealso [testcd()]
+#' @seealso [add_administration()]
+#' @seealso [add_observation()]
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -137,6 +199,7 @@ auto_mapping <- function(sdtm, ...) {
 #' @examples
 #' nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB)
 #' nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB)
+#' nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB)
 nif_auto <- function(
     sdtm, ...,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
@@ -162,7 +225,11 @@ nif_auto <- function(
   out <- new_nif()
 
   # treatments
-  treatments <- distinct(analyte_mapping, EXTRT, ANALYTE)
+  # treatments <- distinct(analyte_mapping, EXTRT, ANALYTE)
+  treatments <- analyte_mapping %>%
+    filter(METABOLITE == FALSE) %>%
+    distinct(EXTRT, ANALYTE)
+
   for(i in 1:nrow(treatments)) {
     t <- treatments[i,]
     out <- out %>%
@@ -177,7 +244,7 @@ nif_auto <- function(
     o <- analyte_mapping[i,]
     out <- out %>%
       add_observation(
-        sdtm, "pc", o$PCTESTCD, analyte = o$ANALYTE,
+        sdtm, o$DOMAIN, o$TESTCD, analyte = o$ANALYTE,
         parent = o$PARENT, metabolite = o$METABOLITE,
         subject_filter = subject_filter,
         observation_filter = observation_filter,

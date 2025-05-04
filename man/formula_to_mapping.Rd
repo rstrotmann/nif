@@ -4,12 +4,14 @@
 \alias{formula_to_mapping}
 \title{Make analyte mapping table from formula object}
 \usage{
-formula_to_mapping(sdtm, f)
+formula_to_mapping(sdtm, f, silent = NULL)
 }
 \arguments{
 \item{sdtm}{A sdtm object.}
 
 \item{f}{A formula.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 A data frame.
