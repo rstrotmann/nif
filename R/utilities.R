@@ -365,6 +365,9 @@ pt_to_hours <- function(iso) {
     regex("(-)?PT(([0-9.]*)H)?(([0-9.]*)M)?"),
     group = c(1, 3, 5))
 
+  # if(nrow(temp) == 0)
+  #   return(NULL)
+
   as.data.frame(temp) %>%
     mutate(sign = case_match(.[[1]], "-" ~ -1, .default = 1)) %>%
     mutate(hours = case_when(is.na(.[[2]]) ~ 0, .default = as.numeric(.[[2]]))) %>%

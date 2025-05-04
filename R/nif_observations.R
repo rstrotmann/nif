@@ -14,33 +14,55 @@
 #' @export
 make_ntime <- function(
     obj,
-    domain,
+    domain = NULL,
     include_day = FALSE,
     silent = NULL) {
 
   pull_column <- function(col_tail) {
+    temp <- obj %>% select(ends_with(col_tail))
+    if(ncol(temp) == 0)
+      return(NULL)
+
+    if(ncol(temp) > 1)
+      stop(paste0("multiple columns ending with ", col_tail, " found!"))
+
     temp <- obj %>%
-      select(ends_with(col_tail))
+      pull(ends_with(col_tail))
     if(length(temp) == 0)
       return(NULL)
     return(temp)
   }
 
+  # input validation
+  if(!inherits(obj, "data.frame"))
+    stop("object must be a data frame!")
+
+  # determine domain if not provided
+  if(is.null(domain)) {
+    if(!"DOMAIN" %in% names(obj))
+      stop("domain not provided and DOMAIN field not found in object!")
+    domain <- unique(obj$DOMAIN)
+    if(length(domain) != 1)
+      stop("DOMAIN must be a single value!")
+  }
+
   eltm_name <- paste0(toupper(domain), "ELTM")
+  tpt_name <- paste0(toupper(domain), "TPT")
   dy_name <- paste0(toupper(domain), "DY")
 
   eltm <- pull_column(eltm_name)
+  tpt <- pull_column(tpt_name)
   dy <- pull_column(dy_name)
+
+  # if(!is.null(eltm))
+  #   eltm <- pt_to_hours(eltm)
 
   if(is.null(eltm)) {
     conditional_message(
-      "ELTM is not defined. Provide a NTIME lookup",
-      "table to define nominal time!",
+      eltm_name,
+      " is not defined. Provide a NTIME lookup table to define nominal time!",
       silent = silent)
     return(NULL)
-  }
-  if(length(eltm) > 1) {
-    stop("Multiple columns ending in ELTM")
   }
 
   if(include_day == TRUE) {
@@ -48,12 +70,16 @@ make_ntime <- function(
       eltm,
       dy
     ) %>%
-      mutate(NTIME = pt_to_hours(.[[1]]) + trialday_to_day(.[[2]]) * 24)
+      rename(!!eltm_name := 1) %>%
+      # mutate(NTIME = pt_to_hours(.[[1]]) + trialday_to_day(.[[2]]) * 24)
+      mutate(NTIME = pt_to_hours(eltm) + trialday_to_day(.[[2]]) * 24)
   } else {
     out <- data.frame(
       eltm
     ) %>%
-      mutate(NTIME = pt_to_hours(.[[1]]))
+      rename(!!eltm_name := 1) %>%
+      # mutate(NTIME = pt_to_hours(.[[1]]))
+      mutate(NTIME = pt_to_hours(eltm))
   }
 
   return(distinct(out))
@@ -184,6 +210,7 @@ make_observation <- function(
   if(is.null(NTIME_lookup)) {
     NTIME_lookup = make_ntime(
       obj, domain, include_day = FALSE, silent = silent)
+
     if(is.null(NTIME_lookup)) {
       conditional_message(
         "No NTIME_lookup could be created, NTIME will be NA",
