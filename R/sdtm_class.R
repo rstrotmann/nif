@@ -919,3 +919,65 @@ derive_sld <- function(
   temp$domains[["tr"]] <- tr
   return(temp)
 }
+
+
+#' Generic function testcd
+#'
+#' @param obj A sdtm object.
+#'
+#' @returns A data frame.
+testcd <- function(obj) {
+  UseMethod("testcd")
+}
+
+
+#' Extract TESTCD fields by domain from a sdtm object
+#'
+#' @param sdtm A sdtm object.
+#'
+#' @returns A data frame with columns DOMAIN and TESTCD. Returns an empty data frame
+#'   if no TESTCD columns are found.
+#'
+#' @export
+#'
+#' @examples
+#' testcd(examplinib_sad)
+testcd.sdtm <- function(obj) {
+  # Validate inputs
+  if (!inherits(obj, "sdtm")) {
+    stop("Input must be a sdtm object")
+  }
+
+  # if (length(obj$domains) == 0) {
+  #   warning("SDTM object contains no domains")
+  #   return(data.frame(DOMAIN = character(), TESTCD = character()))
+  # }
+
+  purrr::reduce(
+    obj$domains,
+    function(acc, x) {
+      if (!"DOMAIN" %in% names(x)) {
+        warning("Domain data frame missing DOMAIN column")
+        return(acc)
+      }
+
+      domain <- unique(toupper(x$DOMAIN))
+      if (length(domain) == 0) {
+        warning("DOMAIN column is empty")
+        return(acc)
+      }
+
+      testcd_col <- paste0(domain, "TESTCD")
+      out <- NULL
+      if(testcd_col %in% names(x)){
+        out <- data.frame(
+          DOMAIN = domain,
+          TESTCD = unique(x[[testcd_col]])
+        )
+      }
+      return(bind_rows(acc, out))},
+    .init = data.frame(DOMAIN = character(), TESTCD = character())
+  )
+}
+
+

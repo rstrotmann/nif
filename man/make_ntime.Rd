@@ -4,7 +4,7 @@
 \alias{make_ntime}
 \title{Make nominal time}
 \usage{
-make_ntime(obj, domain, include_day = FALSE, silent = NULL)
+make_ntime(obj, domain = NULL, include_day = FALSE, silent = NULL)
 }
 \arguments{
 \item{obj}{The input as data table.}
