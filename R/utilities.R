@@ -986,3 +986,78 @@ resolve_duplicates <- function(
   return(as.data.frame(result))
 }
 
+
+#' Test whether a filter term is valid
+#'
+#' @param data A data frame.
+#' @param filter_string A filter term as character.
+#'
+#' @returns Logical.
+is_valid_filter <- function(data, filter_string) {
+  # Input validation
+  if (!is.data.frame(data)) {
+    stop("data must be a data frame")
+  }
+  if (!is.character(filter_string) || length(filter_string) != 1) {
+    stop("filter_string must be a single character string")
+  }
+
+  # Check for empty filter string
+  if (nchar(trimws(filter_string)) == 0) {
+    return(FALSE)
+  }
+
+  # Parse the filter expression
+  filter_expr <- tryCatch({
+    rlang::parse_expr(filter_string)
+  }, error = function(e) {
+    return(FALSE)
+  })
+
+  if (isFALSE(filter_expr)) {
+    return(FALSE)
+  }
+
+  # Extract column names from the expression
+  col_names <- tryCatch({
+    all.vars(filter_expr)
+  }, error = function(e) {
+    return(FALSE)
+  })
+
+  if (isFALSE(col_names)) {
+    return(FALSE)
+  }
+
+  # Check if all columns exist in the data frame
+  if (!all(col_names %in% names(data))) {
+    return(FALSE)
+  }
+
+  # Try to evaluate the filter expression
+  result <- tryCatch({
+    # Create a test row with NA values for all columns
+    test_row <- data[1, , drop = FALSE]
+    if (nrow(data) == 0) {
+      # For empty data frames, create a row with appropriate types
+      test_row <- data.frame(
+        lapply(data, function(x) {
+          if (is.numeric(x)) 0
+          else if (is.character(x)) ""
+          else if (is.logical(x)) FALSE
+          else if (inherits(x, "Date")) as.Date("2000-01-01")
+          else NA
+        }),
+        stringsAsFactors = FALSE
+      )
+    }
+    
+    # Try to evaluate the filter on the test row
+    eval_result <- dplyr::filter(test_row, !!filter_expr)
+    TRUE
+  }, error = function(e) {
+    FALSE
+  })
+
+  return(result)
+}

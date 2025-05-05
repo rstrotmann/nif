@@ -259,6 +259,13 @@ nif_auto <- function(
   if("lb" %in% names(sdtm$domains)) {
     lb <- domain(sdtm, "lb")
 
+    if(!is_valid_filter(lb, baseline_filter)) {
+      conditional_message(
+        "'", baseline_filter, "' is not a valid baseline filter! ",
+        "Baseline renal and hepatic function markers were not be added!",
+        silent = silent
+      )
+    } else {
       # baseline renal function
       if("CREAT" %in% unique(lb$LBTESTCD)) {
         conditional_message("Adding baseline CREAT", silent = silent)
@@ -282,7 +289,7 @@ nif_auto <- function(
           out, sdtm,
           baseline_filter = baseline_filter)
       }
-    # }
+    }
   }
 
   return(out)
