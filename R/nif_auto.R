@@ -204,6 +204,7 @@ nif_auto <- function(
     sdtm, ...,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
+    baseline_filter = "LBBLFL == 'Y'",
     duplicates = "resolve",
     duplicate_function = mean,
     keep = NULL,
@@ -257,12 +258,14 @@ nif_auto <- function(
   # LB-related baseline covariates
   if("lb" %in% names(sdtm$domains)) {
     lb <- domain(sdtm, "lb")
-    if("LBBLFL" %in% names(lb)) {
 
       # baseline renal function
       if("CREAT" %in% unique(lb$LBTESTCD)) {
         conditional_message("Adding baseline CREAT", silent = silent)
-        out <- add_baseline(out, sdtm, "lb", "CREAT")
+        out <- add_baseline(
+          out, sdtm, "lb", "CREAT",
+          baseline_filter = baseline_filter)
+
         if(all(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out))) {
           out <- add_bl_crcl(out)
           out <- add_bl_renal(out)
@@ -275,9 +278,11 @@ nif_auto <- function(
       # baseline hepatic function
       if(all(c("BILI", "AST") %in% unique(lb$LBTESTCD))) {
         conditional_message("Adding baseline hepatic function", silent = silent)
-        out <- add_bl_odwg(out, sdtm)
+        out <- add_bl_odwg(
+          out, sdtm,
+          baseline_filter = baseline_filter)
       }
-    }
+    # }
   }
 
   return(out)
