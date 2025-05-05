@@ -257,24 +257,26 @@ nif_auto <- function(
   # LB-related baseline covariates
   if("lb" %in% names(sdtm$domains)) {
     lb <- domain(sdtm, "lb")
+    if("LBBLFL" %in% names(lb)) {
 
-    # baseline renal function
-    if("CREAT" %in% unique(lb$LBTESTCD)) {
-      conditional_message("Adding baseline CREAT", silent = silent)
-      out <- add_baseline(out, sdtm, "lb", "CREAT")
-      if(all(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out))) {
-        out <- add_bl_crcl(out)
-        out <- add_bl_renal(out)
-        conditional_message(
-          "Adding baseline CRCL and renal function class",
-          silent = silent)
+      # baseline renal function
+      if("CREAT" %in% unique(lb$LBTESTCD)) {
+        conditional_message("Adding baseline CREAT", silent = silent)
+        out <- add_baseline(out, sdtm, "lb", "CREAT")
+        if(all(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out))) {
+          out <- add_bl_crcl(out)
+          out <- add_bl_renal(out)
+          conditional_message(
+            "Adding baseline CRCL and renal function class",
+            silent = silent)
+        }
       }
-    }
 
-    # baseline hepatic function
-    if(all(c("BILI", "AST") %in% unique(lb$LBTESTCD))) {
-      conditional_message("Adding baseline hepatic function", silent = silent)
-      out <- add_bl_odwg(out, sdtm)
+      # baseline hepatic function
+      if(all(c("BILI", "AST") %in% unique(lb$LBTESTCD))) {
+        conditional_message("Adding baseline hepatic function", silent = silent)
+        out <- add_bl_odwg(out, sdtm)
+      }
     }
   }
 
