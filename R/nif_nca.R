@@ -314,10 +314,10 @@ nca1 <- function(nif,
 #' @param sdtm_data A SDTM data object containing a PP domain.
 #' @param analyte The analyte as character. If NULL, will be guessed from the
 #'   nif object.
-#' @param keep Column names to keep, as character vector.
+#' @param keep Columns to keep from the input nif object, as character.
 #' @param observation_filter Observation filter term as character. Must be valid
 #'   R code that can be evaluated on the PP domain.
-#' @param group Grouping variable as character vector.
+#' @param group Grouping variable from the pp domain, as character.
 #' @param silent Suppress message output.
 #' @param ppcat The value for PPCAT to filter the PP domain for. Defaults to
 #'   the analyte, if NULL.
