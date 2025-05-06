@@ -26,9 +26,9 @@ nif object.}
 \item{ppcat}{The value for PPCAT to filter the PP domain for. Defaults to
 the analyte, if NULL.}
 
-\item{keep}{Column names to keep, as character vector.}
+\item{keep}{Columns to keep from the input nif object, as character.}
 
-\item{group}{Grouping variable as character vector.}
+\item{group}{Grouping variable from the pp domain, as character.}
 
 \item{observation_filter}{Observation filter term as character. Must be valid
 R code that can be evaluated on the PP domain.}

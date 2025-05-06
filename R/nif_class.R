@@ -28,6 +28,21 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 }
 
 
+#' Convert data frame to nif object
+#'
+#' @param obj A data frame.
+#'
+#' @returns A nif object.
+#' @export
+as_nif <- function(obj) {
+ if(!inherits(obj, "data.frame"))
+   stop("obj must be a data frame!")
+  out <- as.data.frame(obj)
+  class(out) <- c("nif", "data.frame")
+  order_nif_columns(out)
+}
+
+
 #' Establish standard order of nif object columns
 #'
 #' @param obj A data frame.
@@ -63,11 +78,10 @@ print.nif <- function(x, color = FALSE, ...) {
       as.data.frame())
   } else {
     hline <- "-----"
-    # hline <- paste0(rep("\U2500", 8), collapse="")
     cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
 
     n_obs <- x %>%
-      filter(.data$EVID == 0) %>%
+      {if("EVID" %in% names(.)) filter(., .data$EVID == 0) else .} %>%
       nrow()
     n_subs <- subjects(x) %>% nrow()
     n_studies <- length(unique(x$STUDYID))

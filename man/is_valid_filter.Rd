@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{is_valid_filter}
 \alias{is_valid_filter}
-\title{Test wheter a filter term is valid}
+\title{Test whether a filter term is valid}
 \usage{
 is_valid_filter(data, filter_string)
 }
@@ -15,5 +15,5 @@ is_valid_filter(data, filter_string)
 Logical.
 }
 \description{
-Test wheter a filter term is valid
+Test whether a filter term is valid
 }
