@@ -248,13 +248,11 @@ plot.nif <- function(
     filter(EVID == 0) %>%
     filter(!is.na(DV)) %>%
 
-###############
     {if(!is.null(admin)) {
       dplyr::bind_rows(.,
         admin_data %>%
         dplyr::mutate(DV = NA)) #%>%
       } else .} %>%
-###############
 
     arrange("GROUP", "active_time", -EVID) %>%
     ggplot2::ggplot(ggplot2::aes(
