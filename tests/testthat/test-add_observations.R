@@ -207,7 +207,8 @@ test_that("add_observation updates columns correctly", {
 
   # Add observation with additional columns to keep
   nif_with_extra <- base_nif %>%
-    add_observation(examplinib_sad, "pc", "RS2023", keep = c("PCSPEC"), silent = TRUE)
+    add_observation(examplinib_sad, "pc", "RS2023",
+                    keep = c("PCSPEC"), silent = TRUE)
 
   # Check if the extra column was kept
   after_cols <- names(nif_with_extra)

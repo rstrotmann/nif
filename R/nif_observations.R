@@ -369,13 +369,29 @@ add_observation <- function(
     duplicate_function = mean,
     na.rm = TRUE
 ) {
-  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+  # Validate inputs
+  if (!inherits(nif, "nif")) {
+    stop("nif must be an nif object")
+  }
 
+  # Validate factor parameter
+  if (!is.numeric(factor) || length(factor) != 1) {
+    stop("factor must be a single numeric value")
+  }
+
+  # Validate metabolite parameter
+  if (!is.logical(metabolite) || length(metabolite) != 1) {
+    stop("metabolite must be a single logical value")
+  }
+
+  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if(isTRUE(debug))
+    keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
   valid_duplicate_values <- c("stop", "ignore", "identify", "resolve")
   if(!duplicates %in% valid_duplicate_values)
-    stop(paste0("Invalid value for 'duplicates' - must be one of ",
-                nice_enumeration(valid_duplicate_values, conjunction = "or")))
+    stop(paste0(
+      "Invalid value for 'duplicates' - must be one of ",
+      nice_enumeration(valid_duplicate_values, conjunction = "or")))
 
   nif <- nif %>%
     ensure_analyte()
@@ -397,17 +413,11 @@ add_observation <- function(
       silent = silent)
   }
 
-  if(is.null(analyte)) analyte <- testcd
-
-  imp <- nif %>%
-    # ensure_analyte() %>%
-    # as.data.frame() %>%
-    filter(EVID == 1) %>%
-    distinct(ANALYTE) %>%
-    pull(ANALYTE)
+  if(is.null(analyte))
+    analyte <- testcd
 
   if(is.null(parent)) {
-    if(analyte %in% imp) {
+    if(analyte %in% treatments(nif)) {
       parent <- analyte
     } else {
       parent <- guess_parent(nif)
@@ -436,11 +446,12 @@ add_observation <- function(
   if(n_dupl != 0){
     if(duplicates == "stop") {
       stop(paste0(
-        n_dupl, " duplicate observations found with respect to ",
-        nice_enumeration(dupl_fields), ".\n",
-        "Identify the duplicates using the `duplicates = 'identify'` parameter,\n",
-        "or have duplicates automatically resolved using `duplicates = 'resolve'`\n",
-        "where the resolution function is specified by the `duplicate_function`\n",
+        n_dupl, " duplicate ",
+        plural("observation", n_dupl > 1), " found with respect to ",
+        nice_enumeration(dupl_fields), ".\n\n",
+        "Identify duplicates using the `duplicates = 'identify'` parameter, ",
+        "or have duplicates automatically resolved with `duplicates = 'resolve'` ",
+        "where the resolution function is specified by the `duplicate_function` ",
         "parameter (default is `mean`)."
       ))
     }
@@ -450,9 +461,7 @@ add_observation <- function(
         n_dupl, " duplicate observations found with respect to ",
         nice_enumeration(dupl_fields), ". ",
         "Only duplicate observations returned!"))
-      return(find_duplicates(observation, fields = dupl_fields) #%>%
-               # relocate(count)
-             )
+      return(find_duplicates(observation, fields = dupl_fields))
     }
 
     if(duplicates == "resolve") {
@@ -478,31 +487,30 @@ add_observation <- function(
   }
 
 
-  obj <- bind_rows(
-    nif,
-    observation
-    ) %>%
+  obj <- bind_rows(nif, observation) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     group_by(.data$USUBJID, .data$PARENT) %>%
-    mutate(NO_ADMIN_FLAG = case_when(sum(EVID == 1) == 0 ~ TRUE,
-                                     .default = FALSE)) %>%
+    mutate(NO_ADMIN_FLAG = case_when(
+      sum(EVID == 1) == 0 ~ TRUE,
+      .default = FALSE)) %>%
     ungroup()
 
   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
   if(n_no_admin != 0) {
     conditional_message(
-      paste0("Missing administration information in ",
-             n_no_admin, " observations (did you set a\n",
-             "parent for these observations?):\n",
-             df_to_string(
-               obj %>%
-                 filter(.data$NO_ADMIN_FLAG == TRUE) %>%
-                 group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
-                 mutate(N = sum(EVID == 0)) %>%
-                 ungroup() %>%
-                 distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-               indent = 2), "\n"),
+      paste0(
+        "Missing administration information in ",
+        n_no_admin, " observations (did you set a ",
+        "parent for these observations?):\n",
+        df_to_string(
+         obj %>%
+           filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+           group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
+           mutate(N = sum(EVID == 0)) %>%
+           ungroup() %>%
+           distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+         indent = 2), "\n"),
       silent = silent)
 
     obj <- obj %>%
