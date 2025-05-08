@@ -412,7 +412,9 @@ add_observation <- function(
     } else {
       parent <- guess_parent(nif)
       if(is.null(parent)) {
-        stop("No suitable parent could be determined. Please specify a parent value explicitly.")
+        stop(paste0(
+          "A parent could not be automatically determined. ",
+          "Please specify a parent value explicitly."))
       }
       conditional_message(
         paste0("Parent for ", analyte, " was set to ", parent, "!"),

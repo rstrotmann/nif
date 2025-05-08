@@ -81,7 +81,6 @@ nif_viewer <- function(nif) {
         ),
         shiny::actionButton("prev.sb", "previous"),
         shiny::actionButton("next.sb", "next") #,
-        # shiny::textInput("search", "", placeholder = "Search subject")
       ),
 
       # Column 2
@@ -96,7 +95,6 @@ nif_viewer <- function(nif) {
             "custom" = "custom"
           )
         ),
-        #checkboxInput(" %>% ", "TAD"),
         shiny::numericInput("maxtime", "max display time", value = 24)
       ),
 
