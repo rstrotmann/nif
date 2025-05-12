@@ -1,19 +1,86 @@
+#' Convert time point text to numeric time values
+#'
+#' @description
+#' Extracts numeric time values (in hours) from time point text descriptions.
+#' This function handles various formats including pre-dose notations, hour and
+#' minute specifications, time ranges, and day information.
+#'
+#' @param obj A data frame containing time point text descriptions.
+#' @param domain The domain code as character (default: "PC" for pharmacokinetic).
+#'   Used to determine the column name containing time point descriptions.
+#'
+#' @details
+#' The function recognizes and processes the following patterns:
+#' * Pre-dose notations (e.g., "PRE-DOSE", "PREDOSE") are converted to 0
+#' * Hour specifications (e.g., "1H POST-DOSE", "2.5 HOURS POST DOSE")
+#' * Minute specifications (e.g., "30 MIN POST DOSE") are converted to hours
+#' * Time ranges (e.g., "0.5H TO 2H POST-DOSE") - the later time is used
+#' * Day information (e.g., "DAY1 - 2 HOURS POST ADMINISTRATION")
+#'
+#' @return A numeric vector of time values in hours.
+#'
+#' @examples
+#' df <- data.frame(PCTPT = c("PRE-DOSE", "1H POST-DOSE", "2.5 HRS POST-DOSE"))
+#' make_ntime_from_tpt(df)  # Returns c(0, 1, 2.5)
+#'
+#' @export
 make_ntime_from_tpt <- function(obj, domain = "PC") {
   if(is.null(domain))
     domain <- unique(obj$DOMAIN)[1]
   tpt_name <- paste0(toupper(domain), "TPT")
-  dy_name <- paste0(toupper(domain), "DY")
 
-  tpt <- obj[[tpt_name]] %>% unique()
-  dy <- obj[[dy_name]]
+  # Extract the TPT values
+  tpt <- obj[[tpt_name]]
 
-  # pattern <- "(?:(PRE)|(?:([0-9.]+).*(?:(H|M)).*(PRE|POST)))"
-  pattern <- "(?:(PRE)|(?:(DAY([0-9.]+)[^0-9.]*)(?:([0-9.]+).*(?:(H|M)).*(PRE|POST))))"
-  out <- str_match(tpt, pattern) %>%
-    as.data.frame() #%>%
-    # select(2, 4, 5, 6, 7)
-  # colnames(out) <- c("all", "pre", "number", "unit", "pre_post")
-  return(out)
+  # Create a function to process each TPT value
+  extract_ntime <- function(x) {
+    if(is.na(x)) return(NA)
+
+    # Handle PRE-DOSE variations
+    if(stringr::str_detect(x, "^PRE[- ]?DOSE$")) {
+      return(0)
+    }
+
+    # Extract day information if present
+    day_value <- 0
+    day_match <- stringr::str_extract(
+      x,
+      "DAY\\s*([0-9]+)", group = 1)
+
+    # Handle ranges like "0.5H TO 2H POST-DOSE" - take the later time
+    if(stringr::str_detect(x, "TO")) {
+      range_match <- stringr::str_extract(
+        x,
+        "TO\\s*([0-9]+\\.?[0-9]*)\\s*(H|HR|HRS|HOUR|HOURS)", group = 1)
+      if(!is.na(range_match)) {
+        return(range_match)
+      }
+    }
+
+    # Extract hour information
+    hour_match <- stringr::str_extract(
+      x,
+      "([0-9]+\\.?[0-9]*)\\s*(H|HR|HRS|HOUR|HOURS)", group = 1)
+    if(!is.na(hour_match)) {
+      return(as.numeric(hour_match))
+    }
+
+    # Extract minute information
+    min_match <- stringr::str_extract(
+      x,
+      "([0-9]+\\.?[0-9]*)\\s*(M|MIN|MINS|MINUTE|MINUTES)", group = 1)
+    if(!is.na(min_match)) {
+      return(as.numeric(min_match)/60)
+    }
+
+    # Default to NA if no pattern matches
+    return(NA)
+  }
+
+  # Apply the function to each TPT value
+  ntime <- sapply(tpt, extract_ntime)
+
+  return(as.numeric(ntime))
 }
 
 
