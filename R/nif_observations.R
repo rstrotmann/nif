@@ -1,3 +1,22 @@
+make_ntime_from_tpt <- function(obj, domain = "PC") {
+  if(is.null(domain))
+    domain <- unique(obj$DOMAIN)[1]
+  tpt_name <- paste0(toupper(domain), "TPT")
+  dy_name <- paste0(toupper(domain), "DY")
+
+  tpt <- obj[[tpt_name]] %>% unique()
+  dy <- obj[[dy_name]]
+
+  # pattern <- "(?:(PRE)|(?:([0-9.]+).*(?:(H|M)).*(PRE|POST)))"
+  pattern <- "(?:(PRE)|(?:(DAY([0-9.]+)[^0-9.]*)(?:([0-9.]+).*(?:(H|M)).*(PRE|POST))))"
+  out <- str_match(tpt, pattern) %>%
+    as.data.frame() #%>%
+    # select(2, 4, 5, 6, 7)
+  # colnames(out) <- c("all", "pre", "number", "unit", "pre_post")
+  return(out)
+}
+
+
 #' Make nominal time
 #'
 #' Return NTIME lookup table or NULL if the xxELTM field is not included in
