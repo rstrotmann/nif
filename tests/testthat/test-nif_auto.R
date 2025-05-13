@@ -191,3 +191,4 @@ test_that("nif_auto handles duplicates correctly", {
   expect_equal(nrow(filter(result_max, EVID == 0)), 1)
   expect_equal(filter(result_max, EVID == 0)$DV, 12)
 })
+

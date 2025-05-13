@@ -16,7 +16,7 @@ test_that("make_ntime_from_tpt works with generic PCTPT", {
   )
 
   expect_equal(
-    make_ntime_from_tpt(test),
+    make_ntime_from_tpt(test)$NTIME,
     test$NTIME
   )
 })
@@ -45,7 +45,7 @@ test_that("make_ntime_from_tpt works with irregular hour unit", {
   )
 
   expect_equal(
-    make_ntime_from_tpt(test),
+    make_ntime_from_tpt(test)$NTIME,
     test$NTIME
   )
 })
@@ -67,7 +67,7 @@ test_that("make_ntime_from_tpt works with minutes", {
   )
 
   expect_equal(
-    make_ntime_from_tpt(test),
+    make_ntime_from_tpt(test)$NTIME,
     test$NTIME
   )
 })
@@ -90,7 +90,7 @@ test_that("make_ntime_from_tpt works with day information", {
   )
 
   expect_equal(
-    make_ntime_from_tpt(test),
+    make_ntime_from_tpt(test)$NTIME,
     test$NTIME
   )
 })

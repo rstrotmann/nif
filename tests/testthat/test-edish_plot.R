@@ -37,7 +37,8 @@ create_edish_nif <- function() {
 
 
 test_that("edish_plot handles valid input correctly", {
-  result <- edish_plot(create_edish_nif(), create_edish_sdtm())
+  result <- edish_plot(create_edish_nif(), create_edish_sdtm(),
+                       ntime_method = "ELTM")
   expect_s3_class(result, "ggplot")
   expect_equal(result$labels$x, "ALT/ULN")
   expect_equal(result$labels$y, "BILI/ULN")

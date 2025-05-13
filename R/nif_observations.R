@@ -30,7 +30,10 @@ make_ntime_from_tpt <- function(obj, domain = "PC") {
   tpt_name <- paste0(toupper(domain), "TPT")
 
   # Extract the TPT values
-  tpt <- obj[[tpt_name]]
+  # tpt <- obj[[tpt_name]]
+  tpt <- unique(obj[[tpt_name]])
+  if(all(is.null(tpt)))
+    return(NULL)
 
   # Create a function to process each TPT value
   extract_ntime <- function(x) {
@@ -78,9 +81,15 @@ make_ntime_from_tpt <- function(obj, domain = "PC") {
   }
 
   # Apply the function to each TPT value
-  ntime <- sapply(tpt, extract_ntime)
+  ntime <- as.numeric(sapply(tpt, extract_ntime))
 
-  return(as.numeric(ntime))
+  out <- data.frame(
+    tpt,
+    as.numeric(sapply(tpt, extract_ntime))
+  )
+  colnames(out) <- c(tpt_name, "NTIME")
+
+  return(out)
 }
 
 
@@ -210,10 +219,10 @@ make_ntime <- function(
 #'   'NTIME'. This data frame is left_joined into the observation data frame
 #'   to provide the NTIME field.
 #' @param keep Columns to keep, as character.
-#' @param include_day_in_ntime Include treatment day in the calculation of
-#'   NTIME, as logical.
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
+#' @param ntime_method the filed to derive the nominal time from. Allowed values
+#'   are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -235,6 +244,8 @@ make_observation <- function(
     coding_table = NULL,
     factor = 1,
     NTIME_lookup = NULL,
+    ntime_method = NULL,
+    # use_ntime_tpt = TRUE,
     keep = NULL,
     include_day_in_ntime = FALSE,
     # duplicate_function = NULL,
@@ -249,6 +260,16 @@ make_observation <- function(
   domain_name <- tolower(domain)
   if (!domain_name %in% names(sdtm$domains)) {
     stop(paste0("Domain '", domain_name, "' not found in sdtm object"))
+  }
+
+  allowed_ntime_method = c("TPT", "ELTM")
+  if(is.null(ntime_method)) {
+    ntime_method = "TPT"
+  } else {
+    if(!ntime_method %in% allowed_ntime_method)
+      stop(paste0(
+        "ntime_method must be one of ",
+        nice_enumeration(allowed_ntime_method, conjunction = "or")))
   }
 
   # Create fields
@@ -290,8 +311,30 @@ make_observation <- function(
 
   # Create NTIME lookup table if not provided
   if(is.null(NTIME_lookup)) {
-    NTIME_lookup = make_ntime(
-      obj, domain, include_day = FALSE, silent = silent)
+    # NTIME_lookup = make_ntime(
+    #   obj, domain, include_day = FALSE, silent = silent)
+    #
+    # if(is.null(NTIME_lookup)) {
+    #   conditional_message(
+    #     "No NTIME_lookup could be created, NTIME will be NA",
+    #     silent = silent)
+    # }
+
+    # if(isTRUE(use_ntime_tpt)) {
+    #   NTIME_lookup = make_ntime_from_tpt(
+    #       obj, domain)
+    # } else {
+    #   NTIME_lookup = make_ntime(
+    #     obj, domain, include_day = FALSE, silent = silent)
+    # }
+
+    if(ntime_method == "TPT") {
+      NTIME_lookup = make_ntime_from_tpt(obj, domain)
+    }
+    if(ntime_method == "ELTM") {
+      NTIME_lookup = make_ntime(
+        obj, domain, include_day = FALSE, silent = silent)
+    }
 
     if(is.null(NTIME_lookup)) {
       conditional_message(
@@ -447,6 +490,7 @@ add_observation <- function(
     coding_table = NULL,
     factor = 1,
     NTIME_lookup = NULL,
+    ntime_method = NULL,
     keep = NULL,
     debug = FALSE,
     include_day_in_ntime = FALSE,
@@ -521,7 +565,7 @@ add_observation <- function(
   observation <- make_observation(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
     observation_filter, TESTCD_field, DTC_field, DV_field,
-    coding_table, factor, NTIME_lookup, keep,
+    coding_table, factor, NTIME_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, silent = silent) %>%
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
 

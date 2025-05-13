@@ -56,7 +56,8 @@ make_test_sdtm1 <- function() {
 test_that("make_observation works", {
   sdtm <- make_test_sdtm1()
   expect_no_error(
-    make_observation(sdtm, "pc", "A", silent = TRUE))
+    make_observation(sdtm, "pc", "A", ntime_method = "ELTM",
+                     silent = TRUE))
 })
 
 
@@ -64,7 +65,8 @@ test_that("make_observation issues warning if observation filter returns no obse
   sdtm <- make_test_sdtm1()
   # Should issue warning when silent is FALSE or NULL
   expect_error(
-    make_observation(sdtm, "pc", "A", observation_filter = "FALSE", silent = FALSE),
+    make_observation(sdtm, "pc", "A", observation_filter = "FALSE",
+                     ntime_method = "ELTM", silent = FALSE),
     "The observation_filter 'FALSE' returned no entries."
   )
 })
@@ -76,6 +78,7 @@ test_that("make_observation works with coding table", {
     make_observation(
       sdtm, "pp", "LAMZNPT", DTC_field = "PPRFTDTC",
       observation_filter = "PPSEQ == 7",
+      ntime_method = "ELTM",
       coding_table = tibble::tribble(
         ~PPSTRESN, ~DV,
         3, 33,
@@ -94,11 +97,13 @@ test_that("make_observation handles different domains correctly", {
   sdtm <- make_test_sdtm1()
 
   # Test with PC domain
-  pc_obs <- make_observation(sdtm, "pc", "A", silent = TRUE)
+  pc_obs <- make_observation(sdtm, "pc", "A", ntime_method = "ELTM",
+                             silent = TRUE)
   expect_equal(unique(pc_obs$ANALYTE), "A")
 
   # Test with LB domain
-  lb_obs <- make_observation(sdtm, "lb", "CREAT", silent = TRUE)
+  lb_obs <- make_observation(sdtm, "lb", "CREAT", ntime_method = "ELTM",
+                             silent = TRUE)
   expect_equal(unique(lb_obs$ANALYTE), "CREAT")
 })
 
@@ -107,11 +112,13 @@ test_that("make_observation applies DV factor correctly", {
   sdtm <- make_test_sdtm1()
 
   # Default factor (1)
-  default_obs <- make_observation(sdtm, "pc", "A", silent = TRUE)
+  default_obs <- make_observation(sdtm, "pc", "A", ntime_method = "ELTM",
+                                  silent = TRUE)
   expect_equal(unique(default_obs$DV), 100)
 
   # Custom factor (2)
-  factor_obs <- make_observation(sdtm, "pc", "A", factor = 2, silent = TRUE)
+  factor_obs <- make_observation(sdtm, "pc", "A", factor = 2,
+                                 ntime_method = "ELTM", silent = TRUE)
   expect_equal(unique(factor_obs$DV), 200)
 })
 
@@ -122,7 +129,8 @@ test_that("make_observation handles custom DV_field correctly", {
   # Create test data with a custom field
   sdtm$domains$pc$PCCUSTOM <- sdtm$domains$pc$PCSTRESN * 2
 
-  custom_obs <- make_observation(sdtm, "pc", "A", DV_field = "PCCUSTOM", silent = TRUE)
+  custom_obs <- make_observation(sdtm, "pc", "A", DV_field = "PCCUSTOM",
+                                 ntime_method = "ELTM", silent = TRUE)
   expect_equal(unique(custom_obs$DV), 200)
 })
 
@@ -139,6 +147,7 @@ test_that("make_observation handles custom TESTCD_field correctly", {
     sdtm, "pc", "A",
     TESTCD_field = "PCCUSTOMCD",
     observation_filter = "USUBJID == 2",
+    ntime_method = "ELTM",
     silent = TRUE)
 
   expect_equal(nrow(custom_obs), 1)
@@ -154,7 +163,8 @@ test_that("make_observation handles custom DTC_field correctly", {
   sdtm$domains$pc$PCCUSTOMDTC <- custom_date
 
   custom_obs <- make_observation(
-    sdtm, "pc", "A", DTC_field = "PCCUSTOMDTC", silent = TRUE)
+    sdtm, "pc", "A", DTC_field = "PCCUSTOMDTC",
+    ntime_method = "ELTM", silent = TRUE)
   expect_equal(unique(as.character(custom_obs$DTC)), custom_date)
 })
 
@@ -164,7 +174,7 @@ test_that("make_observation creates proper output fields", {
 
   result <- make_observation(
     sdtm, "pc", "A", cmt = 5, parent = "PARENT", metabolite = TRUE,
-    silent = TRUE)
+    ntime_method = "ELTM", silent = TRUE)
 
   # Check required fields
   expect_true("ANALYTE" %in% names(result))
@@ -194,7 +204,8 @@ test_that("make_observation handles NTIME lookup correctly", {
     NTIME = c(0, 1, 2)
   )
 
-  result <- make_observation(sdtm, "pc", "A", NTIME_lookup = ntime_lookup, silent = TRUE)
+  result <- make_observation(sdtm, "pc", "A", NTIME_lookup = ntime_lookup,
+                             ntime_method = "ELTM", silent = TRUE)
   expect_equal(unique(result$NTIME), 0) # Should match the PT0H value
 })
 
@@ -204,14 +215,16 @@ test_that("make_observation validates inputs correctly", {
 
   # Test with invalid domain
   expect_error(
-    make_observation(sdtm, "invalid_domain", "A", silent = TRUE),
+    make_observation(sdtm, "invalid_domain", "A",
+                     ntime_method = "ELTM", silent = TRUE),
     "Domain 'invalid_domain' not found in sdtm object"
   )
 
   # Test with non-sdtm object
   not_sdtm <- list(domains = list(pc = data.frame()))
   expect_error(
-    make_observation(not_sdtm, "pc", "A", silent = TRUE),
+    make_observation(not_sdtm, "pc", "A",
+                     ntime_method = "ELTM", silent = TRUE),
     "sdtm must be an sdtm object"
   )
 })
@@ -227,7 +240,8 @@ test_that("make_observation handles missing DV field with coding table", {
 
   # Should error when no coding table is provided
   expect_error(
-    make_observation(sdtm, "pc", "A", silent = TRUE),
+    make_observation(sdtm, "pc", "A",
+                     ntime_method = "ELTM", silent = TRUE),
     "DV field 'PCSTRESN' not found in domain and no coding table provided"
   )
 
@@ -239,7 +253,8 @@ test_that("make_observation handles missing DV field with coding table", {
 
   expect_no_error(
     result <- make_observation(
-      sdtm, "pc", "A", coding_table = coding_table, silent = TRUE)
+      sdtm, "pc", "A", coding_table = coding_table,
+      ntime_method = "ELTM", silent = TRUE)
   )
 
   # Check the coded values
@@ -254,7 +269,7 @@ test_that("make_observation sets MDV correctly for missing values", {
   sdtm$domains$pc$PCSTRESN[1] <- NA
 
   result <- make_observation(
-    sdtm, "pc", "A", silent = TRUE)
+    sdtm, "pc", "A", ntime_method = "ELTM", silent = TRUE)
 
   # MDV should be 1 for the row with NA
   expect_equal(result$MDV[result$USUBJID == "1"], 1)
@@ -273,7 +288,8 @@ test_that("add_observation basic functionality works", {
   # Test basic observation adding
   expect_no_error({
     nif_with_obs <- base_nif %>%
-      add_observation(examplinib_sad, "pc", "RS2023", silent = TRUE)
+      add_observation(examplinib_sad, "pc", "RS2023",
+                      ntime_method = "ELTM", silent = TRUE)
   })
 
   # Verify the observation was added correctly

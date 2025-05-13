@@ -20,6 +20,7 @@ make_observation(
   coding_table = NULL,
   factor = 1,
   NTIME_lookup = NULL,
+  ntime_method = NULL,
   keep = NULL,
   include_day_in_ntime = FALSE,
   silent = NULL
@@ -68,10 +69,10 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_joined into the observation data frame
 to provide the NTIME field.}
 
-\item{keep}{Columns to keep, as character.}
+\item{ntime_method}{the filed to derive the nominal time from. Allowed values
+are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
 
-\item{include_day_in_ntime}{Include treatment day in the calculation of
-NTIME, as logical.}
+\item{keep}{Columns to keep, as character.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}

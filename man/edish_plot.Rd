@@ -13,6 +13,7 @@ edish_plot(
   autoscale = TRUE,
   shading = TRUE,
   nominal_time = TRUE,
+  ntime_method = NULL,
   time = NULL,
   parent = NULL,
   title = "eDISH plot: All time points",

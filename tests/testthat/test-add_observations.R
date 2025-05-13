@@ -266,7 +266,7 @@ test_that("add_observation handles missing NTIME gracefully", {
   expect_message(
       expect_message(
         nif_without_ntime <- base_nif %>%
-          add_observation(sdtm_test, "pc", "A", cmt = 2),
+          add_observation(sdtm_test, "pc", "A", cmt = 2, ntime_method = "ELTM"),
       "ELTM is not defined"
     ),
   "No NTIME_lookup could be created")
@@ -292,7 +292,9 @@ test_that("add_observation handles DV field properly", {
   # Custom DV field
   expect_no_error({
     nif_custom_dv <- base_nif %>%
-      add_observation(sdtm_test, "pc", "A", DV_field = "PCSTRESN", silent = TRUE)
+      add_observation(
+        sdtm_test, "pc", "A", DV_field = "PCSTRESN",
+        , ntime_method = "ELTM", silent = TRUE)
   })
 
   # Check if values match the source data
@@ -322,6 +324,7 @@ test_that("add_observation handles subject filtering", {
     add_observation(
       sdtm_test, "pc", "A",
       subject_filter = "USUBJID == '1'",
+      ntime_method = "ELTM",
       silent = TRUE
     )
 
@@ -397,6 +400,7 @@ test_that("add_observation properly handles custom testcd field", {
       add_observation(
         sdtm_test, "pc", "Analyte A",
         TESTCD_field = "PCTEST",
+        ntime_method = "ELTM",
         silent = TRUE
       )
   })
@@ -404,38 +408,6 @@ test_that("add_observation properly handles custom testcd field", {
 
 
 test_that("add_observation handles na.rm parameter when resolving duplicates", {
-  # Create SDTM object using new_sdtm function
-  # sdtm_obj <- new_sdtm(list(
-  #   dm = tibble::tribble(
-  #     ~USUBJID, ~SEX, ~AGE,   ~RACE, ~DOMAIN, ~ACTARMCD,              ~RFSTDTC,              ~RFENDTC,
-  #     "1",  "M",   30, "WHITE",    "DM",  "ACTIVE", "2023-01-01 08:00:00", "2023-01-10 08:00:00",
-  #     "2",  "F",   40, "BLACK",    "DM",  "ACTIVE", "2023-01-01 08:00:00", "2023-01-10 08:00:00"
-  #   ),
-  #   vs = tibble::tribble(
-  #     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,
-  #     "1",    "VS",  "WEIGHT",        70,
-  #     "2",    "VS",  "WEIGHT",        80
-  #   ) %>% mutate(VSBLFL = "Y"),
-  #   pc = tibble::tribble(
-  #     ~USUBJID, ~DOMAIN,  ~PCTESTCD,                ~PCDTC, ~PCSTRESN,
-  #     "1",    "PC", "TESTDRUG", "2023-01-01 08:00:00",       100,
-  #     "1",    "PC", "TESTDRUG", "2023-01-01 12:00:00",       200,
-  #     "1",    "PC", "TESTDRUG", "2023-01-01 08:00:00",        NA,
-  #     "1",    "PC", "TESTDRUG", "2023-01-01 12:00:00",       400,
-  #     "2",    "PC", "TESTDRUG", "2023-01-01 08:00:00",       500,
-  #     "2",    "PC", "TESTDRUG", "2023-01-01 12:00:00",        NA,
-  #     "2",    "PC", "TESTDRUG", "2023-01-01 08:00:00",       700,
-  #     "2",    "PC", "TESTDRUG", "2023-01-01 12:00:00",       800
-  #   ),
-  #   ex = tibble::tribble(
-  #     ~USUBJID, ~DOMAIN,     ~EXTRT, ~EXDOSE,              ~EXSTDTC,              ~EXENDTC,
-  #     "1",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00",
-  #     "1",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00",
-  #     "2",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00",
-  #     "2",    "EX", "TESTDRUG",     100, "2023-01-01 08:00:00", "2023-01-02 08:00:00"
-  #   )
-  # ))
-
   sdtm_obj <- make_test_sdtm1()
 
   pc = tibble::tribble(
@@ -461,6 +433,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
     add_observation(
       sdtm_obj, "pc", "A",
       duplicates = "resolve",
+      ntime_method = "ELTM",
       silent = TRUE
     )
 
@@ -476,6 +449,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
       sdtm_obj, "pc", "A",
       duplicates = "resolve",
       na.rm = FALSE,
+      ntime_method = "ELTM",
       silent = TRUE
     )
 

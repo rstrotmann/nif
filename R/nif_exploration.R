@@ -1022,12 +1022,21 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
 #' @export
-edish_plot <- function(nif, sdtm, enzyme = "ALT",
-                       observation_filter = "LBSPEC != 'URINE'",
-                       show_labels = FALSE, autoscale = TRUE,
-                       shading = TRUE, nominal_time = TRUE, time = NULL,
-                       parent = NULL, title = "eDISH plot: All time points",
-                       size = 3, alpha = 0.5, ...) {
+edish_plot <- function(
+    nif,
+    sdtm,
+    enzyme = "ALT",
+    observation_filter = "LBSPEC != 'URINE'",
+    show_labels = FALSE,
+    autoscale = TRUE,
+    shading = TRUE,
+    nominal_time = TRUE,
+    ntime_method = NULL,
+    time = NULL,
+    parent = NULL,
+    title = "eDISH plot: All time points",
+    size = 3,
+    alpha = 0.5, ...) {
   # Input validation
   if (!inherits(sdtm, "sdtm")) {
     stop("sdtm must be an sdtm object")
@@ -1097,8 +1106,12 @@ edish_plot <- function(nif, sdtm, enzyme = "ALT",
 
   # suppressWarnings({
     p <- nif %>%
-      add_observation(sdtm, "lb1", "ENZ_X_ULN", parent=parent, silent = TRUE) %>%
-      add_observation(sdtm, "lb1", "BILI_X_ULN", parent=parent, silent = TRUE) %>%
+      add_observation(
+        sdtm, "lb1", "ENZ_X_ULN", parent=parent, ntime_method = ntime_method,
+        silent = TRUE) %>%
+      add_observation(
+        sdtm, "lb1", "BILI_X_ULN", parent=parent, ntime_method = ntime_method,
+        silent = TRUE) %>%
       as.data.frame() %>%
       filter(!is.na(DV)) %>%
       filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
