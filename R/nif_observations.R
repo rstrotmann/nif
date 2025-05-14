@@ -30,7 +30,6 @@ make_ntime_from_tpt <- function(obj, domain = "PC") {
   tpt_name <- paste0(toupper(domain), "TPT")
 
   # Extract the TPT values
-  # tpt <- obj[[tpt_name]]
   tpt <- unique(obj[[tpt_name]])
   if(all(is.null(tpt)))
     return(NULL)
@@ -245,10 +244,8 @@ make_observation <- function(
     factor = 1,
     NTIME_lookup = NULL,
     ntime_method = NULL,
-    # use_ntime_tpt = TRUE,
     keep = NULL,
     include_day_in_ntime = FALSE,
-    # duplicate_function = NULL,
     silent = NULL
 ) {
   # Validate inputs
@@ -311,23 +308,6 @@ make_observation <- function(
 
   # Create NTIME lookup table if not provided
   if(is.null(NTIME_lookup)) {
-    # NTIME_lookup = make_ntime(
-    #   obj, domain, include_day = FALSE, silent = silent)
-    #
-    # if(is.null(NTIME_lookup)) {
-    #   conditional_message(
-    #     "No NTIME_lookup could be created, NTIME will be NA",
-    #     silent = silent)
-    # }
-
-    # if(isTRUE(use_ntime_tpt)) {
-    #   NTIME_lookup = make_ntime_from_tpt(
-    #       obj, domain)
-    # } else {
-    #   NTIME_lookup = make_ntime(
-    #     obj, domain, include_day = FALSE, silent = silent)
-    # }
-
     if(ntime_method == "TPT") {
       NTIME_lookup = make_ntime_from_tpt(obj, domain)
     }
@@ -701,9 +681,6 @@ import_observation <- function(
   nif <- nif %>%
     ensure_parent()
 
-  # if(length(parents(nif)) == 0)
-  #   stop("Please add at least one administration first!")
-
   if(!all(c(DV_field, USUBJID_field) %in% names(raw)))
     stop(paste0(
       "ERROR: DV field (", DV_field, ") and USUBJID field (", USUBJID_field,
@@ -740,7 +717,6 @@ import_observation <- function(
   }
 
   sbs <- nif %>%
-    # as.data.frame() %>%
     filter(EVID == 1) %>%
     select("USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_"),
            any_of(keep)) %>%
@@ -773,8 +749,7 @@ import_observation <- function(
     inner_join(sbs, by = "USUBJID") %>%
     mutate(
       SRC_DOMAIN = "IMPORT",
-      SRC_SEQ = NA) #%>%
-    # as.data.frame()
+      SRC_SEQ = NA)
 
   # derive time from DTC, if present, or generate DTC from first administration
   #   time in nif object
@@ -791,10 +766,8 @@ import_observation <- function(
   }
 
   bind_rows(
-    # as.data.frame(nif),
     nif,
     obs
   ) %>%
     normalize_nif(keep = keep)
-  # return(out)
 }
