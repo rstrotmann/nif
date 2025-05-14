@@ -305,3 +305,140 @@ test_that("add_observation basic functionality works", {
 #     "Please add at least one administration first!"
 #   )
 # })
+
+test_that("make_observation works with ntime_method = 'TPT'", {
+  # Create test data
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT,                              ~PCDTC,              ~PCSTRESN,
+    "SUBJ1",  "PC",    "TEST1",   "PRE-DOSE",                         "2023-01-01T08:00:00", 0,
+    "SUBJ1",  "PC",    "TEST1",   "1H POST-DOSE",                     "2023-01-01T09:00:00", 10,
+    "SUBJ1",  "PC",    "TEST1",   "2.5 HOURS POST DOSE",              "2023-01-01T10:30:00", 20,
+    "SUBJ1",  "PC",    "TEST1",   "30 MIN POST DOSE",                 "2023-01-01T08:30:00", 5,
+    "SUBJ1",  "PC",    "TEST1",   "0.5H TO 2H POST-DOSE",             "2023-01-01T10:00:00", 15,
+    "SUBJ1",  "PC",    "TEST1",   "DAY1 - 2 HOURS POST ADMINISTRATION", "2023-01-02T10:00:00", 25
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01T08:00:00"
+  )
+
+  # Create SDTM object
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test make_observation
+  result <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    ntime_method = "TPT"
+  )
+
+  # Verify results
+  expect_equal(nrow(result), 6)
+  expect_equal(
+    result$NTIME,
+    c(0, 1, 2.5, 0.5, 2, 2)  # Expected NTIME values based on PCTPT
+  )
+  expect_equal(result$DV, c(0, 10, 20, 5, 15, 25))
+  expect_equal(result$ANALYTE, rep("TEST1", 6))
+  expect_equal(result$CMT, rep(NA, 6))
+  expect_equal(result$EVID, rep(0, 6))
+  expect_equal(result$MDV, rep(0, 6))
+})
+
+
+test_that("make_observation handles missing NTIME values", {
+  # Create test data with some invalid time points
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT,          ~PCDTC,              ~PCSTRESN,
+    "SUBJ1",  "PC",    "TEST1",   "PRE-DOSE",      "2023-01-01T08:00:00", 0,
+    "SUBJ1",  "PC",    "TEST1",   "INVALID TIME",  "2023-01-01T09:00:00", 10,
+    "SUBJ1",  "PC",    "TEST1",   "1H POST-DOSE",  "2023-01-01T10:00:00", 20
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE", "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,       "2023-01-01"
+  )
+
+  # Create SDTM object
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test make_observation
+  result <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    ntime_method = "TPT"
+  )
+
+  # Verify results
+  expect_equal(nrow(result), 3)
+  expect_equal(
+    result$NTIME,
+    c(0, NA, 1)  # Middle value should be NA due to invalid time point
+  )
+})
+
+
+test_that("make_observation handles different time point formats", {
+  # Create test data with various time point formats
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT,                          ~PCDTC,              ~PCSTRESN,
+    "SUBJ1",  "PC",    "TEST1",   "PREDOSE",                       "2023-01-01T08:00:00", 0,
+    "SUBJ1",  "PC",    "TEST1",   "1 HR POST-DOSE",                "2023-01-01T09:00:00", 10,
+    "SUBJ1",  "PC",    "TEST1",   "45 MINS POST DOSE",             "2023-01-01T08:45:00", 15,
+    "SUBJ1",  "PC",    "TEST1",   "1.5 HOURS POST ADMINISTRATION", "2023-01-01T09:30:00", 20
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE", "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70, "2023-01-01"
+  )
+
+  # Create SDTM object
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test make_observation
+  result <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    ntime_method = "TPT"
+  )
+
+  # Verify results
+  expect_equal(nrow(result), 4)
+  expect_equal(
+    result$NTIME,
+    c(0, 1, 0.75, 1.5)  # Expected NTIME values based on PCTPT
+  )
+})
