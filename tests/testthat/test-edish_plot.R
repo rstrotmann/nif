@@ -62,7 +62,7 @@ test_that("edish_plot handles missing required lab tests", {
 
   expect_error(
     edish_plot(create_edish_nif(), sdtm),
-    "Required lab tests .* not found in data"
+    "missing lab tests for BILI"
   )
 })
 

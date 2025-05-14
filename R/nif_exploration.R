@@ -1050,15 +1050,11 @@ edish_plot <- function(
     stop("enzyme must be either 'ALT' or 'AST'")
   }
 
-  # lb <- sdtm %>%
-  #   domain("lb") %>%
-  #   filter(eval(parse(text = observation_filter))) %>%
-  #   assertr::verify(assertr::has_all_names(
-  #     "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"))
-
   lb <- tryCatch({
       sdtm %>%
       domain("lb") %>%
+      filter(!is.na(LBSTRESN)) %>%
+      filter(!is.na(LBSTNRHI)) %>%
       filter(eval(parse(text = observation_filter))) %>%
       # Verify required columns exist
       assertr::verify(assertr::has_all_names(
@@ -1075,12 +1071,17 @@ edish_plot <- function(
 
 
   # Check if required lab tests exist in data
-  if(!all(c("BILI", enzyme) %in% lb$LBTESTCD)) {
-    stop(sprintf("Required lab tests (%s, BILI) not found in data", enzyme))
-  }
+  # if(!all(c("BILI", enzyme) %in% lb$LBTESTCD)) {
+  #   stop(sprintf("Required lab tests (%s, BILI) not found in data", enzyme))
+  # }
 
-  # if(!all(c("BILI", enzyme) %in% lb$LBTESTCD))
-  #   stop("Liver markers values not found in LB")
+  expected_tests <- c("BILI", enzyme)
+  missing_tests <- setdiff(expected_tests, unique(lb$LBTESTCD))
+  if(length(missing_tests) > 0)
+    stop(paste0(
+      "missing lab tests for ",
+      nice_enumeration(missing_tests)
+    ))
 
   lb1 <- lb %>%
     mutate(LB1DTC = .data$LBDTC) %>%
@@ -1108,14 +1109,15 @@ edish_plot <- function(
     p <- nif %>%
       add_observation(
         sdtm, "lb1", "ENZ_X_ULN", parent=parent, ntime_method = ntime_method,
+        duplicates = "ignore",
         silent = TRUE) %>%
       add_observation(
         sdtm, "lb1", "BILI_X_ULN", parent=parent, ntime_method = ntime_method,
+        duplicates = "ignore",
         silent = TRUE) %>%
       as.data.frame() %>%
       filter(!is.na(DV)) %>%
       filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
-      # select(.data$ID, .data$TIME, .data$ANALYTE, .data$DV) %>%
       select(c("ID", "TIME", "ANALYTE", "DV")) %>%
       group_by(.data$ID, .data$TIME, .data$ANALYTE) %>%
       summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop") %>%
@@ -1136,9 +1138,7 @@ edish_plot <- function(
                                              fill='grey')} +
       ggplot2::geom_hline(yintercept = 2, linetype="dashed") +
       ggplot2::geom_vline(xintercept = 3, linetype="dashed") +
-      ggplot2::labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +#,
-           # caption = paste0(length(unique(nif$ID)),
-           #   " subjects", "red: predose, grey area: Hy's law.")) +
+      ggplot2::labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = "none") +
       ggplot2::ggtitle(title)
