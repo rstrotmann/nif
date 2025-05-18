@@ -1,3 +1,6 @@
+
+
+
 #' Test vector whether consistent with Datetime as per ISO 8601
 #'
 #' @param x The input, as character.
@@ -84,6 +87,34 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 }
 
 
+#' Rename columns in data frame based on function terms
+#'
+#' @param obj a data frame.
+#' @param f a function.
+#'
+#' @returns a data frame.
+rename_by_formula <- function(obj, f) {
+  # input validation
+  if(!is.data.frame(obj))
+    stop("obj must be a data frame!")
+  if(!is_formula(f))
+    stop("f must be a formula object!")
+
+  to_col = rlang::f_lhs(f)
+  from_term = rlang::f_rhs(f)
+  tryCatch(
+    error = function(e) {
+      stop(paste0(
+        "'", deparse(f), "' is not a valid renaming term, ", e
+      ))
+    },
+    out <- obj %>%
+      mutate(!!to_col := eval(from_term))
+  )
+  return(out)
+}
+
+
 #' Import nif object from connection
 #'
 #' @param connection The connection to read from.
@@ -92,12 +123,14 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #' @param no_numeric Fields that will not be converted to numeric.
 #' @param silent Suppress message output, as logical.
 #' @param delimiter Delimiter character.
+#' @param ... Renaming terms as function.
 #'
 #' @return A nif object.
 #' @import stringr
 #' @export
 import_from_connection <- function(
     connection,
+    ...,
     format = NULL,
     delimiter = ",",
     no_numeric = c("USUBJID", "STUDYID"),
@@ -108,6 +141,10 @@ import_from_connection <- function(
   if (!inherits(connection, "connection")) {
     stop("Input must be a connection object")
   }
+
+  terms <- list(...)
+  valid_terms <- lapply(terms, is_formula)
+  terms <- terms[as.logical(valid_terms)]
 
   # read raw line data from connection
   lines <- readLines(connection, skipNul = TRUE)
@@ -123,9 +160,6 @@ import_from_connection <- function(
 
   # Auto-detect format
   if(is.null(format)){
-    # n_comma <- str_count(lines[1], ",")
-    # n_space <- str_count(lines[1], " ")
-
     # Check for quoted fields first
     first_line <- gsub('"[^"]*"', "", lines[1]) # Remove quoted content
     n_comma <- str_count(first_line, delimiter)
@@ -173,9 +207,7 @@ import_from_connection <- function(
   }
 
   if(format == "csv") {
-    # raw <- data.frame(str_split(lines[-1], ",", simplify = TRUE))
     raw <- data.frame(str_split(lines[-1], delimiter, simplify = TRUE))
-    # colnames(raw) <- str_split(lines[1], ",", simplify = TRUE)
     colnames(raw) <- str_split(lines[1], delimiter, simplify = TRUE)
   }
 
@@ -189,6 +221,11 @@ import_from_connection <- function(
       where(is.character) & where(is_likely_datetime),
       convert_char_datetime
     ))
+
+  # apply renaming
+  for(f in terms) {
+    raw <- rename_by_formula(raw, f)
+  }
 
   missing_fields <- minimal_nif_fields[!minimal_nif_fields %in% names(raw)]
 
@@ -216,6 +253,7 @@ import_from_connection <- function(
 #' @param filename Filename as character.
 #' @param format The input data format, can be 'csv' or 'fixed_width', or NULL
 #'   (default) to automatically determine the format.
+#' @param ... Renaming terms as function.
 #' @param delimiter Delimiter character.
 #' @param no_numeric Fields that will not be converted to numeric.
 #' @param silent Suppress message output, as logical.
@@ -224,6 +262,7 @@ import_from_connection <- function(
 #' @export
 import_nif <- function(
     filename,
+    ...,
     format = NULL,
     delimiter = ",",
     no_numeric = c("USUBJID", "STUDYID"),
@@ -234,5 +273,11 @@ import_nif <- function(
     ))
   connection = file(filename)
   on.exit(close(connection))
-  import_from_connection(connection, format, delimiter, no_numeric, silent)
+  import_from_connection(
+    connection,
+    ...,
+    format = format,
+    delimiter = delimiter,
+    no_numeric = no_numeric,
+    silent = silent)
 }

@@ -220,8 +220,9 @@ make_ntime <- function(
 #' @param keep Columns to keep, as character.
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
-#' @param ntime_method the filed to derive the nominal time from. Allowed values
+#' @param ntime_method the field to derive the nominal time from. Allowed values
 #'   are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.
+#' @param include_day_in_ntime as logical.
 #'
 #' @return A data frame.
 #' @keywords internal

@@ -129,13 +129,28 @@ test_that("import_nif errors on file not found", {
 })
 
 
-# test_that("import_nif works with sample data", {
-#   atorv <- read.csv(test_path("fixtures", "atorv.csv"))
-#
-#   nif <- import_nif(test_path("fixtures", "atorv.csv"))
-# })
 
+test_that("import_nif renames columns correctly", {
+  csv_file <- tempfile(fileext = ".csv")
+  on.exit(unlink(csv_file))
 
+  csv_content <- "USUBJID,TIME,EVID,DV,ANALYTE\n0011001,0,0,10.5,DRUG\n0011001,1,0,8.2,DRUG\n0011001,2,0,6.7,DRUG"
+  writeLines(csv_content, csv_file)
+
+  result <- import_nif(
+    csv_file,
+    X ~ str_sub(USUBJID, -4, -1),
+    Y ~ ANALYTE,
+    Z ~ as.numeric(USUBJID),
+    format = "csv",
+    silent = TRUE)
+
+  expect_s3_class(result, "nif")
+  expect_equal(nrow(result), 3)
+  expect_equal(result$X, c("1001", "1001", "1001"))
+  expect_equal(result$Y, c("DRUG", "DRUG", "DRUG"))
+  expect_equal(is.numeric(result$Z), TRUE)
+})
 
 
 

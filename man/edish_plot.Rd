@@ -41,6 +41,9 @@ character, can be 'AST' or 'ALT' (default).}
 
 \item{nominal_time}{Use NTIME as logical.}
 
+\item{ntime_method}{the field to derive the nominal time from. Allowed values
+are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
+
 \item{time}{time/nominal time filter as numeric.}
 
 \item{parent}{The parent compound as character.}

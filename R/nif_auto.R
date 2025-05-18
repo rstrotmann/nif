@@ -183,6 +183,8 @@ auto_mapping <- function(sdtm, ...) {
 #' is recommended.
 #'
 #' @inheritParams add_observation
+#' @param baseline_filter A filter term to identify the baseline condition, as
+#'   character.
 #' @param ... Formulae to define the relationships between PCTESTCD and EXTRT.
 #'
 #' @returns A nif object

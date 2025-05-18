@@ -6,6 +6,7 @@
 \usage{
 import_from_connection(
   connection,
+  ...,
   format = NULL,
   delimiter = ",",
   no_numeric = c("USUBJID", "STUDYID"),
@@ -14,6 +15,8 @@ import_from_connection(
 }
 \arguments{
 \item{connection}{The connection to read from.}
+
+\item{...}{Renaming terms as function.}
 
 \item{format}{The input data format, can be 'csv' or 'fixed_width', or NULL
 (default) to automatically determine the format.}

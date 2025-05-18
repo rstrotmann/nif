@@ -1018,6 +1018,8 @@ obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' @param observation_filter A filter term as character.
 #' @param autoscale Use automatic axis scaling, as logical. Defaults to
 #'   0.01-1000 for ALT/AST and 0.01-100 for bili.
+#' @param ntime_method the field to derive the nominal time from. Allowed values
+#'   are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel

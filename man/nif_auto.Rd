@@ -27,6 +27,9 @@ domain the observations come from.}
 \item{observation_filter}{The filtering to apply to the observation source
 data.}
 
+\item{baseline_filter}{A filter term to identify the baseline condition, as
+character.}
+
 \item{duplicates}{Selection how to deal with duplicate observations with
 respect to the USUBJID, ANALYTE and DTC fields:
 \itemize{

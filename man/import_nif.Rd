@@ -6,6 +6,7 @@
 \usage{
 import_nif(
   filename,
+  ...,
   format = NULL,
   delimiter = ",",
   no_numeric = c("USUBJID", "STUDYID"),
@@ -14,6 +15,8 @@ import_nif(
 }
 \arguments{
 \item{filename}{Filename as character.}
+
+\item{...}{Renaming terms as function.}
 
 \item{format}{The input data format, can be 'csv' or 'fixed_width', or NULL
 (default) to automatically determine the format.}

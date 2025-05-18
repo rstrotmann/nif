@@ -76,12 +76,14 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_joined into the observation data frame
 to provide the NTIME field.}
 
-\item{ntime_method}{the filed to derive the nominal time from. Allowed values
+\item{ntime_method}{the field to derive the nominal time from. Allowed values
 are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
 
 \item{keep}{Columns to keep, as character.}
 
 \item{debug}{Include debug fields, as logical.}
+
+\item{include_day_in_ntime}{as logical.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}
