@@ -54,6 +54,7 @@
 <url><loc>/reference/analytes.sdtm.html</loc></url>
 <url><loc>/reference/analytes_cmts.html</loc></url>
 <url><loc>/reference/append_statement.html</loc></url>
+<url><loc>/reference/as_nif.html</loc></url>
 <url><loc>/reference/auto_mapping.html</loc></url>
 <url><loc>/reference/baseline_covariates.html</loc></url>
 <url><loc>/reference/bmi_by_age.html</loc></url>
@@ -167,6 +168,7 @@
 <url><loc>/reference/is_iso_date_time.html</loc></url>
 <url><loc>/reference/is_likely_datetime.html</loc></url>
 <url><loc>/reference/is_male.html</loc></url>
+<url><loc>/reference/is_valid_filter.html</loc></url>
 <url><loc>/reference/isofy_date_format.html</loc></url>
 <url><loc>/reference/isofy_dates.html</loc></url>
 <url><loc>/reference/last_ex_dtc.html</loc></url>
@@ -190,6 +192,7 @@
 <url><loc>/reference/make_mean_plot_data_set.html</loc></url>
 <url><loc>/reference/make_nif.html</loc></url>
 <url><loc>/reference/make_ntime.html</loc></url>
+<url><loc>/reference/make_ntime_from_tpt.html</loc></url>
 <url><loc>/reference/make_obs.html</loc></url>
 <url><loc>/reference/make_observation.html</loc></url>
 <url><loc>/reference/make_plot_data_set.html</loc></url>
@@ -262,6 +265,7 @@
 <url><loc>/reference/reformat_date.html</loc></url>
 <url><loc>/reference/rel_dose_intensity.html</loc></url>
 <url><loc>/reference/remove_duplicates.html</loc></url>
+<url><loc>/reference/rename_by_formula.html</loc></url>
 <url><loc>/reference/resolve_duplicates.html</loc></url>
 <url><loc>/reference/rich_sampling_sbs.html</loc></url>
 <url><loc>/reference/safe_mean.html</loc></url>

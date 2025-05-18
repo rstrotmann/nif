@@ -21,7 +21,7 @@ examples). Otherwise, 'NTIME' will be NA."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.53.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.54.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,6 +83,7 @@ examples). Otherwise, 'NTIME' will be <code>NA</code>.</p>
 <span>  coding_table <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  NTIME_lookup <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ntime_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  include_day_in_ntime <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -165,13 +166,17 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 to provide the NTIME field.</p></dd>
 
 
+<dt id="arg-ntime-method">ntime_method<a class="anchor" aria-label="anchor" href="#arg-ntime-method"></a></dt>
+<dd><p>the field to derive the nominal time from. Allowed values
+are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.</p></dd>
+
+
 <dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
 <dd><p>Columns to keep, as character.</p></dd>
 
 
 <dt id="arg-include-day-in-ntime">include_day_in_ntime<a class="anchor" aria-label="anchor" href="#arg-include-day-in-ntime"></a></dt>
-<dd><p>Include treatment day in the calculation of
-NTIME, as logical.</p></dd>
+<dd><p>as logical.</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
