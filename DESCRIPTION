@@ -21,28 +21,28 @@ Imports:
     gdata,
     ggplot2,
     haven,
-    lifecycle,
     lubridate,
     PKNCA,
     pracma,
     rlang,
-    rxode2,
-    shiny,
-    shinyjs,
     stringr,
     tidyr,
     utils,
-    ggrepel,
     readr,
     readxl,
-    writexl,
+    purrr,
+    ggrepel,
+    shiny,
+    shinyjs,
     htmltools,
-    purrr
+    lifecycle
 Suggests: 
     knitr,
     tibble,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    writexl,
+    rxode2
 VignetteBuilder:
     dplyr,
     knitr,

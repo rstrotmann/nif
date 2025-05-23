@@ -373,18 +373,18 @@ nca_from_pp <- function(
     keep_data <- obj %>%
       as.data.frame() %>%
       filter(ANALYTE == current_analyte) %>%
-      # filter(.data$EVID == 1) %>%
-      select(c("ID", "USUBJID", any_of(keep),
-               any_of(c("AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI",
-                        "PART", "COHORT", "DOSE")),
-               starts_with("BL_"))) %>%
+      select(
+        c("ID", "USUBJID", any_of(keep),
+          any_of(c("AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI",
+                   "PART", "COHORT", "DOSE")),
+          starts_with("BL_"))) %>%
       distinct()
 
     # Process PP domain data
     pp <- sdtm_data$domains[["pp"]]
 
     result <- pp %>%
-      {if("PPCAT" %in% names(pp)) filter(., PPCAT == ppcat) else .} %>%
+      {if("PPCAT" %in% names(pp)) filter(., .data$PPCAT == ppcat) else .} %>%
       filter(eval(parse(text = observation_filter))) %>%
       select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
                       "PPCAT", "PPRFTDTC", group))) %>%

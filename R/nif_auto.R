@@ -46,12 +46,12 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
     )
 
   testcd <- testcd(sdtm) %>%
-    filter(TESTCD %in% temp)
+    filter(.data$TESTCD %in% temp)
 
   out <- testcd %>%
-    mutate(PARAM = paste0(DOMAIN, "TESTCD")) %>%
+    mutate(PARAM = paste0(.data$DOMAIN, "TESTCD")) %>%
     mutate(EXTRT = extrt) %>%
-    mutate(ANALYTE = TESTCD)
+    mutate(ANALYTE = .data$TESTCD)
 
   return(out)
 }
@@ -126,9 +126,9 @@ auto_mapping <- function(sdtm, ...) {
 
   # Check for duplicate mappings
   duplicates <- ex_pc_mapping %>%
-    group_by(EXTRT, TESTCD) %>%
+    group_by(.data$EXTRT, .data$TESTCD) %>%
     filter(n() > 1) %>%
-    distinct(EXTRT, TESTCD)
+    distinct(.data$EXTRT, .data$TESTCD)
 
   if (nrow(duplicates) > 0) {
     stop("Duplicate mappings found for the following EXTRT-TESTCD combinations:\n",
@@ -137,8 +137,8 @@ auto_mapping <- function(sdtm, ...) {
   }
 
   out <- ex_pc_mapping %>%
-    group_by(EXTRT) %>%
-    mutate(PARENT = ANALYTE[row_number() == 1]) %>%
+    group_by(.data$EXTRT) %>%
+    mutate(PARENT = .data$ANALYTE[row_number() == 1]) %>%
     mutate(METABOLITE = row_number() != 1) %>%
     ungroup()
 

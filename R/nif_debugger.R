@@ -192,7 +192,7 @@ nif_debugger <- function(
       current_pc(
         domain(sdtm_data, "pc") %>%
           mutate(obs_id = interaction(.data$USUBJID, pctestcd, "PC", .data$PCSEQ)) %>%
-          filter(obs_id %in% selection()$obs_id)
+          filter(.data$obs_id %in% selection()$obs_id)
       )
 
       ## current ex

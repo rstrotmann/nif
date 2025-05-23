@@ -185,7 +185,7 @@ summary.sdtm <- function(object, ...) {
     }
   ) %>% purrr::list_rbind() %>%
     mutate(DOMAIN = names(object$domains)) %>%
-    select(DOMAIN, SUBJECTS, OBSERVATIONS)
+    select(c("DOMAIN", "SUBJECTS", "OBSERVATIONS"))
 
   # Get data for DM domain if it exists
   if(has_domain(object, "dm")) {

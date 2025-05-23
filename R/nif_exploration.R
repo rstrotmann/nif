@@ -918,11 +918,11 @@ mean_dose_plot <- function(obj, analyte = NULL, title = NULL) {
   obj %>%
     ensure_tafd() %>%
     as.data.frame() %>%
-    mutate(DAY = floor(TAFD / 24) + 1) %>%
+    mutate(DAY = floor(.data$TAFD / 24) + 1) %>%
     filter(EVID == 1, ANALYTE == analyte) %>%
     group_by(DAY) %>%
     summarize(
-      "mean dose (mg)" = mean(DOSE, na.rm = TRUE), "N" = n(),
+      "mean dose (mg)" = mean(.data$DOSE, na.rm = TRUE), "N" = n(),
       .groups = "drop"
     ) %>%
     tidyr::pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") %>%
@@ -1055,18 +1055,18 @@ edish_plot <- function(
   lb <- tryCatch({
       sdtm %>%
       domain("lb") %>%
-      filter(!is.na(LBSTRESN)) %>%
-      filter(!is.na(LBSTNRHI)) %>%
+      filter(!is.na(.data$LBSTRESN)) %>%
+      filter(!is.na(.data$LBSTNRHI)) %>%
       filter(eval(parse(text = observation_filter))) %>%
       # Verify required columns exist
       assertr::verify(assertr::has_all_names(
         "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI")) %>%
       # Verify numeric columns are actually numeric
-      assertr::verify(is.numeric(LBSTRESN)) %>%
-      assertr::verify(is.numeric(LBSTNRHI)) %>%
+      assertr::verify(is.numeric(.data$LBSTRESN)) %>%
+      assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
       # Verify values are valid
-      assertr::verify(LBSTRESN >= 0) %>%  # No negative lab values
-      assertr::verify(LBSTNRHI > 0)  # No zero or negative ULN values
+      assertr::verify(.data$LBSTRESN >= 0) %>%  # No negative lab values
+      assertr::verify(.data$LBSTNRHI > 0)  # No zero or negative ULN values
   }, error = function(e) {
     stop("Data validation failed: ") #, e$message)
   })

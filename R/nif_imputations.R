@@ -193,7 +193,7 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
     ungroup()
 
   to_replace <- temp %>%
-    filter(flag == TRUE)
+    filter(.data$flag == TRUE)
 
   if (nrow(to_replace) > 0) {
     conditional_message(
@@ -207,11 +207,11 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
 
     temp <- temp %>%
       mutate(EXENDTC = case_when(
-        flag == TRUE ~ cut_off_date,
-        .default = EXENDTC)) %>%
+        .data$flag == TRUE ~ cut_off_date,
+        .default = .data$EXENDTC)) %>%
       mutate(IMPUTATION = case_when(
-        flag == TRUE ~ "missing EXENDTC set to data cutoff",
-        .default = IMPUTATION))
+        .data$flag == TRUE ~ "missing EXENDTC set to data cutoff",
+        .default = .data$IMPUTATION))
   }
 
   return(temp %>% select(-c("LAST_ADMIN", "flag")))
@@ -252,12 +252,12 @@ impute_admin_times_from_pcrftdtc <- function(
 
   temp <- temp %>%
     mutate(IMPUTATION = case_when(
-      !is.na(PCRFTDTC_time) & is.na(DTC_time) ~
+      !is.na(.data$PCRFTDTC_time) & is.na(.data$DTC_time) ~
         "admin time copied from PCRFTDTC",
       .default = .data$IMPUTATION)) %>%
 
     mutate(DTC_time = case_when(
-      !is.na(PCRFTDTC_time) & is.na(DTC_time) ~ PCRFTDTC_time,
+      !is.na(.data$PCRFTDTC_time) & is.na(.data$DTC_time) ~ .data$PCRFTDTC_time,
       .default = .data$DTC_time))
 
   # Rows with conflicting DTC and PCRFTDTC
@@ -277,12 +277,12 @@ impute_admin_times_from_pcrftdtc <- function(
 
     temp <- temp %>%
       mutate(DTC_time = case_when(
-        row_number() %in% conflicting_rows ~ PCRFTDTC_time,
-        .default = DTC_time)) %>%
+        row_number() %in% conflicting_rows ~ .data$PCRFTDTC_time,
+        .default = .data$DTC_time)) %>%
       mutate(IMPUTATION = case_when(
         row_number() %in% conflicting_rows ~
           "admin time from PCRFTDTC prioritized",
-        .default = IMPUTATION))
+        .default = .data$IMPUTATION))
   }
 
   temp <- temp %>%

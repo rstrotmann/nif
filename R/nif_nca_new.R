@@ -77,7 +77,7 @@ nif_nca_new <- function(obj, analytes = NULL, parameters = NULL, keep = NULL) {
         end = c(doses$TIME[-1], max(conc$TIME)),
         aucinf.obs = TRUE
       ) %>%
-        filter(start < end)
+        filter(.data$start < .data$end)
 
       # Create PKNCA data object
       data_obj <- PKNCAdata(conc_obj, dose_obj, intervals = intervals)
