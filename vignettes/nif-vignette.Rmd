@@ -68,7 +68,7 @@ vignette (`vignette("nif-imputations")`).
 
 This package is intended to facilitate the creation of analysis data sets ('NIF
 data sets') from SDTM-formatted clinical data. It also includes a set of
-functions and tools to support inital exploration of SDTM and NIF data sets.
+functions and tools to support initial exploration of SDTM and NIF data sets.
 
 ## Outline
 

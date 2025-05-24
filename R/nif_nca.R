@@ -403,7 +403,7 @@ nca_from_pp <- function(
 #' PK parameter summary statistics by dose
 #'
 #' @param nca The NCA results as provided by `nca`, as data frame.
-#' @param parameters The NCA paramters to be tabulated as character,
+#' @param parameters The NCA parameters to be tabulated as character,
 #' @param group The grouping variable, defaults to DOSE.
 #'
 #' @return A data frame
@@ -439,7 +439,7 @@ nca_summary <- function(
 #' PK parameter summary statistics table by dose
 #'
 #' @param nca The NCA results as provided by `nca`, as data frame.
-#' @param parameters The NCA paramters to be tabulated as character,
+#' @param parameters The NCA parameters to be tabulated as character,
 #' @param digits The number of significant digits to be displayed.
 #' @param group The grouping variable, defaults to DOSE.
 #' @return A data frame
@@ -555,7 +555,7 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' a linear model of the log-transformed parameter and the log-transformed dose.
 #' The slope is printed in the caption line.
 #'
-#' All zero values for the selected paramter are filtered out before analysis.
+#' All zero values for the selected parameter are filtered out before analysis.
 #'
 #' @param nca PK parameters as data frame.
 #' @param group Grouping parameter as character.

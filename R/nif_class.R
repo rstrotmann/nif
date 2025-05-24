@@ -295,7 +295,7 @@ usubjid <- function(obj, id) {
 #' Parent compounds within a NIF object
 #'
 #' @param obj A NIF object.
-#' @return The parent compunds as character.
+#' @return The parent compounds as character.
 #' @export
 #' @examples
 #' parents(examplinib_poc_nif)
@@ -435,7 +435,7 @@ doses.nif <- function(obj) {
 #' Dose levels within a NIF object
 #'
 #' This function summarizes the doses in the individual first administration by
-#' subject and drug, and the number of subjectes treated at this dose level.
+#' subject and drug, and the number of subjects treated at this dose level.
 #' Subsequent dose modifications are ignored.
 #'
 #' @param obj A rich or minimal NIF object.
@@ -770,7 +770,7 @@ max_observation_time <- function(obj, analyte = NULL) {
 #'
 #' @param obj A nif object.
 #' @param analyte The analyte to filter for, as character.
-#' @param only_observations Maximal ovservation time as logical.
+#' @param only_observations Maximal observation time as logical.
 #' @param time_field The field to use as the time metric, as character.
 #'
 #' @return Numeric.

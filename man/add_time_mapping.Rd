@@ -10,7 +10,7 @@ add_time_mapping(obj, ...)
 \item{obj}{The SDTM object.}
 
 \item{...}{Mappings in the form '"\if{html}{\out{<PCTPT>}}"=\if{html}{\out{<NTIME>}}' with multiple mappings
-separated by commas. \if{html}{\out{<PCTPT>}} corresponds to the value in the PCTPT fiels,
+separated by commas. \if{html}{\out{<PCTPT>}} corresponds to the value in the PCTPT fields,
 and NTIME corresponds to the nominal time in hours.}
 }
 \value{

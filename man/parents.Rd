@@ -10,7 +10,7 @@ parents(obj)
 \item{obj}{A NIF object.}
 }
 \value{
-The parent compunds as character.
+The parent compounds as character.
 }
 \description{
 Parent compounds within a NIF object

@@ -7,7 +7,7 @@
 indent_string(indent = 0)
 }
 \arguments{
-\item{indent}{The indenbt level as numeric.}
+\item{indent}{The indent level as numeric.}
 }
 \value{
 A character string

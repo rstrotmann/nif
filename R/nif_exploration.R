@@ -6,7 +6,7 @@
 #'
 #' @param obj The NIF object
 #' @param id The subject ID to be plotted
-#' @param analyte The analytes to be displayes. Defaults to NULL (all).
+#' @param analyte The analytes to be displayed. Defaults to NULL (all).
 #' @param imp The IMP for which administrations are to be indicated by vertical
 #'   lines. Defaults to NULL.
 #' @param max_time The right limit of the time scale

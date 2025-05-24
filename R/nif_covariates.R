@@ -150,7 +150,7 @@ add_covariate <- function(
 #'   code).
 #' @param summary_function The summary function to summarize multiple baseline
 #'   values. Defaults to `mean`.
-#' @param silent Suppress messages, defaults to nif_option settting if NULL.
+#' @param silent Suppress messages, defaults to nif_option setting if NULL.
 #' @param coding_table A recoding table as data frame, or NULL. If present, the
 #'   table needs to have a field that matches a column in the domain, and a
 #'   field 'DV' that provides the re-coded value.

@@ -82,7 +82,7 @@ Following the NONMEM nomenclature, the former have an 'EVID' of 1, the latter an
 'RS2023'. In a second step, pharmacokinetic concentrations for 'RS2023' are
 added from the 'PC' SDTM domain. To match the administration, the analyte field
 is again 'RS2023'. The compartment is automatically set to 2. Both functions
-have as their first arguemt the 'sdtm' object:
+have as their first argument the 'sdtm' object:
 
 ```{r}
 sdtm <- examplinib_poc
@@ -195,7 +195,7 @@ nif_poc %>%
   theme(legend.position="none") 
 ```
 
-We see that dose reductions happended at different times during treatment. Another
+We see that dose reductions happened at different times during treatment. Another
 way of visualizing this is per the `mean_dose_plot()` function:
 
 ```{r fig.width=5, fig.height=3}
@@ -232,7 +232,7 @@ nif_poc %>%
 ```
 
 In this code, the function `rich_sampling_sbs()` receives as input the analyte
-of interest, the time interval across which the number of sanmples is evaluated,
+of interest, the time interval across which the number of samples is evaluated,
 and the minimum number of samples to qualify the schedule as rich.
 
 ## Plasma concentration data
@@ -246,7 +246,7 @@ temp <- nif_poc %>%
 temp %>% plot(dose = 500, points = TRUE, title = "Rich sampling subjects")
 ```
 
-For single and mutliple dose administrations separately: 
+For single and multiple dose administrations separately: 
 
 ```{r fig.width=5, fig.height=3, warning=F, message=F}
 temp <- temp %>% 

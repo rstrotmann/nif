@@ -11,7 +11,7 @@ crea_mdrd(egfr, age, sex, race = "")
 
 \item{age}{Age in years.}
 
-\item{sex}{Sex encocded as number (female is 1) or character (female is "F").}
+\item{sex}{Sex encoded as number (female is 1) or character (female is "F").}
 
 \item{race}{Race as per CDISC nomenclature. Black race is identified as the
 occurrence of 'black' in the value.}

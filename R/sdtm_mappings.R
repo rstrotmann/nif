@@ -303,7 +303,7 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
 #'
 #' @param obj The SDTM object.
 #' @param ... Mappings in the form '"<PCTPT>"=<NTIME>' with multiple mappings
-#'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fiels,
+#'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fields,
 #'   and NTIME corresponds to the nominal time in hours.
 #' @return The SDTM object
 #' @export

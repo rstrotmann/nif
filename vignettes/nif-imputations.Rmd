@@ -84,7 +84,7 @@ imputations are performed by `add_admininstration()`.
 A first set of imputations (see 1. through 3. below) is performed on the
 non-expanded EX domain with the aim to ensure that each episode has 'EXSTDTC'
 and 'EXENDTC' fields. Imputations 5. and 6. are performed after expansion of the
-administratin episodes:
+administration episodes:
 
 ### 1. Missing last EXENDTC
 

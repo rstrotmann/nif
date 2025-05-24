@@ -23,7 +23,7 @@ nif_plot_id(
 
 \item{id}{The subject ID to be plotted}
 
-\item{analyte}{The analytes to be displayes. Defaults to NULL (all).}
+\item{analyte}{The analytes to be displayed. Defaults to NULL (all).}
 
 \item{cmt}{The compartment to plot as numeric.}
 

@@ -36,7 +36,7 @@ Plot the PK parameter defined by \code{parameter} over \code{DOSE} and overlay w
 a linear model of the log-transformed parameter and the log-transformed dose.
 The slope is printed in the caption line.
 
-All zero values for the selected paramter are filtered out before analysis.
+All zero values for the selected parameter are filtered out before analysis.
 }
 \examples{
 nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")

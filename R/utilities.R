@@ -106,7 +106,7 @@ positive_or_zero <- function(x) {
 
 #' Convert indent level to padding string of spaces
 #'
-#' @param indent The indenbt level as numeric.
+#' @param indent The indent level as numeric.
 #'
 #' @return A character string
 #' @keywords internal
@@ -469,7 +469,7 @@ has_time <- function(obj) {
 #' Nice enumeration of multiple strings
 #'
 #' @param items Items to enumerate as character.
-#' @param conjunction The conjunction between the last and penultmate items.
+#' @param conjunction The conjunction between the last and penultimate items.
 #'
 #' @return Enumeration as character.
 #' @export
@@ -1051,7 +1051,7 @@ is_valid_filter <- function(data, filter_string) {
         stringsAsFactors = FALSE
       )
     }
-    
+
     # Try to evaluate the filter on the test row
     eval_result <- dplyr::filter(test_row, !!filter_expr)
     TRUE

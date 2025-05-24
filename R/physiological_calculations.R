@@ -84,7 +84,7 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #'
 #' @param egfr EGFR in ml/min/1.73 m^2.
 #' @param age Age in years.
-#' @param sex Sex encocded as number (male is 0) or character (male is "M").
+#' @param sex Sex encoded as number (male is 0) or character (male is "M").
 #' @param race Race. Dummy variable for compatibility, race is not used by this
 #'   method.
 #'
@@ -127,7 +127,7 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
 #'
 #' @param crea Serum creatinine in mg/dl.
 #' @param age Age in years.
-#' @param sex Sex encocded as number (female is 1) or character (female is "F").
+#' @param sex Sex encoded as number (female is 1) or character (female is "F").
 #' @param race Race as per CDISC nomenclature. Black race is identified as the
 #'   occurrence of 'black' in the value.
 #' @param molar Switch to select whether the creatinine value is in mg/dl
@@ -160,7 +160,7 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #'
 #' @param egfr EGFR in ml/min/1.73 m^2.
 #' @param age Age in years.
-#' @param sex Sex encocded as number (female is 1) or character (female is "F").
+#' @param sex Sex encoded as number (female is 1) or character (female is "F").
 #' @param race Race as per CDISC nomenclature. Black race is identified as the
 #'   occurrence of 'black' in the value.
 #' @seealso [crea_raynaud()]
@@ -184,7 +184,7 @@ crea_mdrd <- function(egfr, age, sex, race = "") {
 #'
 #' @param crea Serum creatinine in mg/dl.
 #' @param age Age in years.
-#' @param sex Sex encocded as number (female is 1) or character (female is "F").
+#' @param sex Sex encoded as number (female is 1) or character (female is "F").
 #' @param race Race as per CDISC nomenclature. Black race is identified as the
 #'   occurrence of 'black' in the value. For campatibility onla, not used in
 #'   this formula.

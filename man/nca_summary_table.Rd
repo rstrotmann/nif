@@ -15,7 +15,7 @@ nca_summary_table(
 \arguments{
 \item{nca}{The NCA results as provided by \code{nca}, as data frame.}
 
-\item{parameters}{The NCA paramters to be tabulated as character,}
+\item{parameters}{The NCA parameters to be tabulated as character,}
 
 \item{digits}{The number of significant digits to be displayed.}
 

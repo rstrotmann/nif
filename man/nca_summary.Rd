@@ -14,7 +14,7 @@ nca_summary(
 \arguments{
 \item{nca}{The NCA results as provided by \code{nca}, as data frame.}
 
-\item{parameters}{The NCA paramters to be tabulated as character,}
+\item{parameters}{The NCA parameters to be tabulated as character,}
 
 \item{group}{The grouping variable, defaults to DOSE.}
 }

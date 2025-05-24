@@ -60,14 +60,14 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>NIF data for a multiple-dose study</h1>
-            
-      
+
+
       <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/vignettes/multiple-dose-example.Rmd" class="external-link"><code>vignettes/multiple-dose-example.Rmd</code></a></small>
       <div class="d-none name"><code>multiple-dose-example.Rmd</code></div>
     </div>
 
-    
-    
+
+
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
@@ -161,7 +161,7 @@ drug is set to ‘RS2023’. In a second step, pharmacokinetic
 concentrations for ‘RS2023’ are added from the ‘PC’ SDTM domain. To
 match the administration, the analyte field is again ‘RS2023’. The
 compartment is automatically set to 2. Both functions have as their
-first arguemt the ‘sdtm’ object:</p>
+first argument the ‘sdtm’ object:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sdtm</span> <span class="op">&lt;-</span> <span class="va">examplinib_poc</span></span>
 <span></span>
@@ -375,7 +375,7 @@ summarizing the administered dose:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-12-1.png" width="480"></p>
-<p>We see that dose reductions happended at different times during
+<p>We see that dose reductions happened at different times during
 treatment. Another way of visualizing this is per the
 <code><a href="../reference/mean_dose_plot.html">mean_dose_plot()</a></code> function:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -463,7 +463,7 @@ identify those:</p>
 <span><span class="co">#   [1]  1  4  5 15 28 29 40 50 51 52 63 64</span></span></code></pre></div>
 <p>In this code, the function <code><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs()</a></code> receives
 as input the analyte of interest, the time interval across which the
-number of sanmples is evaluated, and the minimum number of samples to
+number of samples is evaluated, and the minimum number of samples to
 qualify the schedule as rich.</p>
 </div>
 <div class="section level3">
@@ -476,7 +476,7 @@ Day 1 for the parent, RS2023, and the metabolite, RS2023487A:</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">(</span><span class="fu"><a href="../reference/rich_sampling_sbs.html">rich_sampling_sbs</a></span><span class="op">(</span><span class="va">nif_poc</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span>, n<span class="op">=</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>dose <span class="op">=</span> <span class="fl">500</span>, points <span class="op">=</span> <span class="cn">TRUE</span>, title <span class="op">=</span> <span class="st">"Rich sampling subjects"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="multiple-dose-example_files/figure-html/unnamed-chunk-16-1.png" width="480"></p>
-<p>For single and mutliple dose administrations separately:</p>
+<p>For single and multiple dose administrations separately:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">temp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/index_rich_sampling_intervals.html">index_rich_sampling_intervals</a></span><span class="op">(</span><span class="op">)</span></span>

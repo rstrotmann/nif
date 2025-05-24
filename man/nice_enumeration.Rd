@@ -9,7 +9,7 @@ nice_enumeration(items, conjunction = "and")
 \arguments{
 \item{items}{Items to enumerate as character.}
 
-\item{conjunction}{The conjunction between the last and penultmate items.}
+\item{conjunction}{The conjunction between the last and penultimate items.}
 }
 \value{
 Enumeration as character.

@@ -19,7 +19,7 @@ A data frame.
 }
 \description{
 This function summarizes the doses in the individual first administration by
-subject and drug, and the number of subjectes treated at this dose level.
+subject and drug, and the number of subjects treated at this dose level.
 Subsequent dose modifications are ignored.
 }
 \examples{

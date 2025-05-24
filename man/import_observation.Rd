@@ -29,7 +29,7 @@ import_observation(
 
 \item{parent}{The parent as character.}
 
-\item{cmt}{The compartment for the analte as numeric.}
+\item{cmt}{The compartment for the analyte as numeric.}
 
 \item{observation_filter}{Filter term, as character.}
 

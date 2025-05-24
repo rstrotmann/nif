@@ -11,7 +11,7 @@ crea_raynaud(egfr, age, sex, race = "")
 
 \item{age}{Age in years.}
 
-\item{sex}{Sex encocded as number (male is 0) or character (male is "M").}
+\item{sex}{Sex encoded as number (male is 0) or character (male is "M").}
 
 \item{race}{Race. Dummy variable for compatibility, race is not used by this
 method.}

@@ -13,7 +13,7 @@ max_time(obj, time_field = "TIME", analyte = NULL, only_observations = TRUE)
 
 \item{analyte}{The analyte to filter for, as character.}
 
-\item{only_observations}{Maximal ovservation time as logical.}
+\item{only_observations}{Maximal observation time as logical.}
 }
 \value{
 Numeric.

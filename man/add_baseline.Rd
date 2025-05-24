@@ -48,7 +48,7 @@ field 'DV' that provides the re-coded value.}
 \item{summary_function}{The summary function to summarize multiple baseline
 values. Defaults to \code{mean}.}
 
-\item{silent}{Suppress messages, defaults to nif_option settting if NULL.}
+\item{silent}{Suppress messages, defaults to nif_option setting if NULL.}
 }
 \value{
 A nif object.

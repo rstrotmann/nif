@@ -644,7 +644,7 @@ add_observation <- function(
 #' @param raw The raw observation data frame.
 #' @param analyte The analyte name as character.
 #' @param parent The parent as character.
-#' @param cmt The compartment for the analte as numeric.
+#' @param cmt The compartment for the analyte as numeric.
 #' @param observation_filter Filter term, as character.
 #' @param USUBJID_field The field specifying the USUBJID, as character.
 #' @param DTC_field The field specifying the DTC, as character.
