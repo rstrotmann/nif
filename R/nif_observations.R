@@ -226,7 +226,7 @@ make_ntime <- function(
 #'
 #' @return A data frame.
 #' @keywords internal
-#' @noRd
+#' @export
 #' @import stringr
 #'
 make_observation <- function(

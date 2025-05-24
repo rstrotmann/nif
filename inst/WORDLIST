@@ -26,11 +26,8 @@ DM
 DS
 DTC
 DV
-Datetime
 EGFR
 ELTM
-ENDTC
-ENDY
 EVID
 EXAMPLINIB
 EXENDT
@@ -40,7 +37,6 @@ EXSTDTC
 EXSTDTD
 EXTRT
 FIH
-FIRSTDTC
 GFR
 Gault
 Glomerular
@@ -60,9 +56,9 @@ NONMEM
 NTIME
 Nephron
 ODWG
+ORCID
 PCELTM
 PCRFTDTC
-PCSPEC
 PCTESTCD
 PCTPT
 PKNCA
@@ -70,9 +66,7 @@ PMC
 PMCID
 PMID
 POC
-POSICct
 POSIXct
-POSIct
 PPCAT
 PPSTRESN
 PPTESTCD
@@ -85,15 +79,12 @@ Posix
 Pre
 QD
 RFENDTC
-RFICDTC
 RFSTDTC
 RStudio
 Raynaud
 Rdnm
 SDTM
 SLD
-STDTC
-STDY
 STRESN
 STUDYIDs
 Snelling
@@ -130,6 +121,7 @@ bmj
 boer
 campatibility
 cd
+cdisc
 cex
 cfb
 cmt
@@ -156,7 +148,6 @@ eDISH
 eGFR
 edish
 egfr
-env
 et
 examplinib
 exendtc
@@ -165,7 +156,6 @@ geom's
 ggplot
 github
 glomerular
-grey
 hepatotoxicity
 https
 hume
@@ -214,7 +204,6 @@ stm
 tafd
 testcd
 testthat
-tibble
 transaminase
 trialday
 trtdy

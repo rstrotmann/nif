@@ -306,7 +306,7 @@ lubrify_dates <- function(obj) {
 
 #' Convert all DTC fields into ISO 8601 string format
 #'
-#' Change all columns in the input data frame that end with 'DTC' from POSIct to
+#' Change all columns in the input data frame that end with 'DTC' from POSIXct to
 #' character using the ISO 8601 format. Seconds will be ignored, the resolution
 #' is only to minutes.
 #'
@@ -393,7 +393,7 @@ pt_to_hours <- function(iso) {
 #' @param date A date in POSIX or character format.
 #' @param time A time in character format.
 #'
-#' @return A POSICct object.
+#' @return A POSIXct object.
 #' @keywords internal
 #' @noRd
 #' @examples
@@ -438,7 +438,7 @@ decompose_dtc <- function(obj, DTC_field) {
 }
 
 
-#' Extract the date component of a POSICct object
+#' Extract the date component of a POSIXct object
 #'
 #' @param dtc The POSIX-formatted datetime.
 #' @return The date as character.
@@ -449,7 +449,7 @@ extract_date <- function(dtc) {
 }
 
 
-#' Extract time component of a POSICct object
+#' Extract time component of a POSIXct object
 #'
 #' @param dtc The POSIX-formatted datetime.
 #' @return The time as character.

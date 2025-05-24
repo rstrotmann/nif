@@ -17,7 +17,15 @@ nif_auto(
 )
 }
 \arguments{
+\item{sdtm}{A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
+domain the observations come from.}
+
 \item{...}{Formulae to define the relationships between PCTESTCD and EXTRT.}
+
+\item{subject_filter}{The filtering to apply to the DM domain.}
+
+\item{observation_filter}{The filtering to apply to the observation source
+data.}
 
 \item{baseline_filter}{A filter term to identify the baseline condition, as
 character.}
@@ -34,6 +42,8 @@ duplicate entries.
 
 \item{duplicate_function}{Function to resolve duplicate values, defaults to
 \code{mean}.}
+
+\item{keep}{Columns to keep, as character.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}
