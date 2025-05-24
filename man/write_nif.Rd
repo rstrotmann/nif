@@ -19,6 +19,9 @@ exported.}
 \item{sep}{The separating character, e.g. ',' or ';'. If NULL (default), the
 output has a space-separated, fixed-width format.}
 }
+\value{
+Nothing.
+}
 \description{
 All numeric fields are reduced to 4 significant places. For this, IEC 60559
 is applied, i.e., rounding for a last digit of 5 is to the next even number.

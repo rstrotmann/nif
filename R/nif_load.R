@@ -3,6 +3,7 @@
 #' @param x The input, as character.
 #'
 #' @return Logical.
+#' @noRd
 is_char_datetime <- function(x) {
   grepl("^\\d{4}-\\d{2}-\\d{2}(T| )\\d{2}:\\d{2}(:\\d{2})?$", x)
 }
@@ -13,6 +14,7 @@ is_char_datetime <- function(x) {
 #' @param x The input, as character.
 #'
 #' @return Logical.
+#' @noRd
 is_char_date <- function(x) {
   grepl("^\\d{4}-\\d{2}-\\d{2}$", x)
 }
@@ -24,6 +26,7 @@ is_char_date <- function(x) {
 #' @param min_prob The minimal fraction of values to correctly parse as numeric.
 #'
 #' @return Logical.
+#' @noRd
 is_likely_datetime <- function(x, min_prob = 0.9) {
   if(!is.character(x)) return(FALSE)
   overall_match <- is_char_datetime(x) | is_char_date(x)
@@ -39,6 +42,7 @@ is_likely_datetime <- function(x, min_prob = 0.9) {
 #' @param silent No message output.
 #'
 #' @return POSIXct.
+#' @noRd
 convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
   p <- is_likely_datetime(x, min_prob)
   if(!p) {
@@ -90,6 +94,7 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #' @param f a function.
 #'
 #' @returns a data frame.
+#' @noRd
 rename_by_formula <- function(obj, f) {
   # input validation
   if(!is.data.frame(obj))

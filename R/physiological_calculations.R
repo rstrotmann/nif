@@ -12,6 +12,7 @@
 #'   - Length mismatch between height and weight vectors
 #'
 #' @keywords internal
+#' @noRd
 calculate_bmi <- function(height, weight) {
   # Input validation
   if (!(is.numeric(height) || is.na(height)) ||
@@ -226,6 +227,7 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' @param sex sex.
 #'
 #' @return vector of valid inputs
+#' @noRd
 validate_lbw_parameters <- function(weight, height, sex) {
   if (!(is.numeric(height) || is.na(height)) ||
       !(is.numeric(weight) || is.na(weight))) {
@@ -253,6 +255,7 @@ validate_lbw_parameters <- function(weight, height, sex) {
 #' @param sex Vector of numbers or strings.
 #'
 #' @return logical.
+#' @noRd
 is_male <- function(sex) {
   ((sex == 0) | (toupper(sex) == "M")) & !is.na(sex)
 }

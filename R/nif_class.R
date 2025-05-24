@@ -32,7 +32,7 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 #'
 #' @param obj A data frame.
 #'
-#' @returns A nif object.
+#' @return A nif object.
 #' @export
 as_nif <- function(obj) {
  if(!inherits(obj, "data.frame"))
@@ -48,6 +48,7 @@ as_nif <- function(obj) {
 #' @param obj A data frame.
 #'
 #' @return A data.frame.
+#' @noRd
 order_nif_columns <- function(obj) {
   selector <- unique(c(
     "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
@@ -804,6 +805,7 @@ max_time <- function(obj, time_field = "TIME", analyte = NULL,
 #' @param obj A NIF object.
 #' @return The analyte as character.
 #' @keywords internal
+#' @noRd
 guess_analyte <- function(obj) {
   temp <- obj %>%
     # as.data.frame() %>%
@@ -833,6 +835,7 @@ guess_analyte <- function(obj) {
 #'
 #' @return The parent as character
 #' @keywords internal
+#' @noRd
 guess_parent <- function(obj) {
   imp <- obj %>%
     ensure_analyte() %>%

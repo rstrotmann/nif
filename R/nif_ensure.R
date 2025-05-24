@@ -5,6 +5,7 @@
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
+#' @noRd
 ensure_analyte <- function(obj) {
   # Validate input is a NIF object
   if (!inherits(obj, "nif")) {
@@ -41,6 +42,7 @@ ensure_analyte <- function(obj) {
 #' @param obj A NIF object
 #' @return A NIF object with the DOSE field
 #' @keywords internal
+#' @noRd
 ensure_dose <- function(obj) {
   # Input validation
   if (!inherits(obj, "nif")) {
@@ -83,6 +85,7 @@ ensure_dose <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
+#' @noRd
 ensure_parent <- function(obj) {
   # Validate input is a NIF object
   if (!inherits(obj, "nif")) {
@@ -133,6 +136,7 @@ ensure_parent <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
+#' @noRd
 ensure_metabolite <- function(obj) {
   obj %>%
     {
@@ -154,6 +158,7 @@ ensure_metabolite <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object with the TAD field.
 #' @keywords internal
+#' @noRd
 ensure_tad <- function(obj) {
   # Validate input is a NIF object
   if (!inherits(obj, "nif")) {
@@ -197,6 +202,7 @@ ensure_tad <- function(obj) {
 #' @param obj A NIF object.
 #' @return A NIF object with the TAFD field.
 #' @keywords internal
+#' @noRd
 ensure_tafd <- function(obj) {
   # Validate input is a NIF object
   if (!inherits(obj, "nif")) {
@@ -243,17 +249,18 @@ ensure_tafd <- function(obj) {
 #'
 #' @return A nif object with TIME, TAD, and TAFD fields.
 #' @keywords internal
+#' @noRd
 ensure_time <- function(obj) {
   # Validate input is a NIF object
   if (!inherits(obj, "nif")) {
     stop("Input must be a NIF object")
   }
-  
+
   # If all required time fields already exist, return object unchanged
   if (all(c("TIME", "TAD", "TAFD") %in% names(obj))) {
     return(obj)
   }
-  
+
   # Check for required columns based on available data
   if ("DTC" %in% names(obj)) {
     # DTC available - use make_time to generate all time fields
@@ -272,14 +279,14 @@ ensure_time <- function(obj) {
   } else {
     stop("Missing required columns: Either DTC or TIME is required to calculate time fields")
   }
-  
+
   # Validate that all time fields are now present
   missing_time_fields <- setdiff(c("TIME", "TAD", "TAFD"), names(result))
   if (length(missing_time_fields) > 0) {
-    stop("Failed to generate all required time fields: ", 
+    stop("Failed to generate all required time fields: ",
          paste(missing_time_fields, collapse = ", "))
   }
-  
+
   return(result)
 }
 

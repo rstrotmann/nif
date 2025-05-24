@@ -112,7 +112,7 @@ validate_sdtm <- function(sdtm, silent = NULL) {
 #' @param time_mapping The time mapping as data frame.
 #'
 #' @import dplyr
-#' @returns A sdtm object.
+#' @return A sdtm object.
 #' @export
 new_sdtm <- function(sdtm_data,
                      analyte_mapping = data.frame(),
@@ -453,7 +453,7 @@ subject_info.sdtm <- function(obj, id) {
 #' @param obj A sdtm object
 #' @param consider_nif_auto Include suggestions regarding parent or metabolite
 #'   mappings to the sdtm object, as logical.
-#'
+#' @return Nothing.
 #' @import dplyr
 #' @export
 #'

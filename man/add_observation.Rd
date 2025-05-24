@@ -34,56 +34,7 @@ add_observation(
 \arguments{
 \item{nif}{A nif object.}
 
-\item{sdtm}{A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
-domain the observations come from.}
-
-\item{domain}{The domain as character.}
-
-\item{testcd}{The observation variable, as character.}
-
-\item{analyte}{The name for the analyte. Defaults to the 'testcd', if NULL.}
-
-\item{parent}{The name of the parent analyte for the observation as
-character. Defaults to the value of 'analyte' if NULL.}
-
-\item{metabolite}{Observation is a metabolite, as logical.}
-
-\item{cmt}{The compartment for the observation as numeric.}
-
-\item{subject_filter}{The filtering to apply to the DM domain.}
-
-\item{observation_filter}{The filtering to apply to the observation source
-data.}
-
-\item{TESTCD_field}{The xxTESTCD field. Defaults to the two-character domain
-name followed by 'TESTCD', if NULL.}
-
-\item{DTC_field}{The field to use as the date-time code for the observation.
-Defaults to the two-character domain name followed by 'DTC', if NULL.}
-
-\item{DV_field}{the field to use as the dependent variable. Defaults to the
-two-character domain name followed by 'STRESN', if NULL.}
-
-\item{coding_table}{Coding table to translate a categorical values into
-numerical values, as data frame. The data frame must have at least one
-column that matches a column in the domain, and a numerical 'DV' column
-that provides the recoding result.}
-
-\item{factor}{Multiplier for the DV field, as numeric.}
-
-\item{NTIME_lookup}{A data frame with two columns, a column that defines the
-custom nominal time information in the target domain (e.g., 'PCELTM'), and
-'NTIME'. This data frame is left_joined into the observation data frame
-to provide the NTIME field.}
-
-\item{ntime_method}{the field to derive the nominal time from. Allowed values
-are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
-
-\item{keep}{Columns to keep, as character.}
-
 \item{debug}{Include debug fields, as logical.}
-
-\item{include_day_in_ntime}{as logical.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}

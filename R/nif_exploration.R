@@ -486,6 +486,7 @@ print.summary_nif <- function(x, color = FALSE, ...) {
 #' @param field The field of the NIF object
 #' @keywords internal
 #' @return A data frame.
+#' @noRd
 get_cov_plot_params <- function(field) {
   params <- tribble(
     ~field, ~binwidth, ~xlabel, ~title, ~limits,

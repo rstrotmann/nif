@@ -14,6 +14,7 @@
 #' @importFrom rlang is_formula
 #'
 #' @returns A data frame.
+#' @noRd
 formula_to_mapping <- function(sdtm, f, silent = NULL) {
   # input validation
   if (!inherits(sdtm, "sdtm")) {
@@ -71,6 +72,7 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
 #' @importFrom dplyr distinct
 #'
 #' @returns A data frame with unique combinations of EXTRT and PCTESTCD.
+#' @noRd
 auto_mapping <- function(sdtm, ...) {
   # input validation
   if (!inherits(sdtm, "sdtm")) {
@@ -187,7 +189,7 @@ auto_mapping <- function(sdtm, ...) {
 #'   character.
 #' @param ... Formulae to define the relationships between PCTESTCD and EXTRT.
 #'
-#' @returns A nif object
+#' @return A nif object.
 #'
 #' @seealso [testcd()]
 #' @seealso [add_administration()]

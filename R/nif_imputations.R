@@ -15,6 +15,7 @@
 #'
 #' @return The updated EX domain as data frame.
 #' @keywords internal
+#' @noRd
 impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
   # Validate input
   expected_dm_cols <- c("USUBJID", "RFSTDTC", "RFENDTC")
@@ -104,6 +105,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
 #' @param ex The updated EX domain as data frame.
 #' @return The updated EX domain as data frame.
 #' @keywords internal
+#' @noRd
 impute_missing_exendtc <- function(ex) {
   # Input validation
   expected_columns <- c("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")
@@ -170,6 +172,7 @@ impute_missing_exendtc <- function(ex) {
 #'
 #' @return The updated EX domain as data frame.
 #' @keywords internal
+#' @noRd
 impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
   # input validation
   expected_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
@@ -228,6 +231,7 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
 #'
 #' @return A data frame.
 #' @keywords internal
+#' @noRd
 impute_admin_times_from_pcrftdtc <- function(
     obj, pc, analyte, pctestcd, silent = NULL) {
 
@@ -298,6 +302,7 @@ impute_admin_times_from_pcrftdtc <- function(
 #'
 #' @return A data frame.
 #' @keywords internal
+#' @noRd
 filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
   temp <- ex %>%
     filter(.data$EXSTDTC > .data$EXENDTC) %>%

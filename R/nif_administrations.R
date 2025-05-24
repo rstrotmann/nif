@@ -6,6 +6,7 @@
 #' @param endy ENDY as numeric.
 #'
 #' @return Vector of lists: Dates and Days.
+#' @noRd
 date_list <- function(stdtc, endtc, stdy=NA, endy=NA) {
   tryCatch({
     start_date <- as.Date(stdtc)
@@ -56,6 +57,7 @@ date_list <- function(stdtc, endtc, stdy=NA, endy=NA) {
 #' @param ex The EX domain as data frame.
 #'
 #' @return A data frame.
+#' @noRd
 expand_ex <- function(ex) {
   validate <- TRUE
 

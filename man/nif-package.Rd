@@ -4,9 +4,9 @@
 \name{nif-package}
 \alias{nif}
 \alias{nif-package}
-\title{nif: Construct NONMEM input files from SDTM data}
+\title{nif: Build and Explore NONMEM Input Files from SDTM Data}
 \description{
-A system to import and explore Study Data Tabulation Model (SDTM) formatted data from clinical studies, and to create and explore NONMEM Input File (NIF) data sets from them that can be used for pharmacometric analyses.
+Import and explore Study Data Tabulation Model (SDTM) data from clinical studies. Create and explore NONMEM input file (NIF)-formatted data sets from [SDTM](https://www.cdisc.org/standards/foundational/sdtm) data.
 }
 \seealso{
 Useful links:
@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Rainer Strotmann \email{rainer.strotmann@mailbox.org}
+\strong{Maintainer}: Rainer Strotmann \email{rainer.strotmann@mailbox.org} (\href{https://orcid.org/0000-0003-0543-7984}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}

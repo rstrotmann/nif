@@ -6,6 +6,7 @@
 #'
 #' @return A data frame with AGE column added or updated.
 #' @keywords internal
+#' @noRd
 calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
   if (!is.data.frame(df)) {
     stop("Input must be a data frame")
@@ -46,6 +47,7 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
 #' @import dplyr
 #' @import lubridate
 #' @keywords internal
+#' @noRd
 make_subjects <- function(
     dm,
     vs = NULL,

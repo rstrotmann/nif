@@ -8,6 +8,7 @@
 #'
 #' @return The imputed spec as character.
 #' @keywords internal
+#' @noRd
 guess_pcspec <- function(pc, silent = NULL) {
   # Input validation
   if (!is.data.frame(pc) || !"PCSPEC" %in% names(pc)) {
@@ -60,6 +61,7 @@ guess_lbspec <- function(lb) {
 #' @return A datetime object representing the last recorded observation time
 #' @import dplyr
 #' @keywords internal
+#' @noRd
 last_obs_dtc <- function(obs) {
   return(max(obs$DTC, na.rm = TRUE))
 }
@@ -70,6 +72,7 @@ last_obs_dtc <- function(obs) {
 #' @param ex The EX domain as data table.
 #' @return The last administration in DTC format.
 #' @keywords internal
+#' @noRd
 last_ex_dtc <- function(ex) {
   return(max(ex$EXENDTC, na.rm = TRUE))
 }
@@ -82,6 +85,7 @@ last_ex_dtc <- function(ex) {
 #' @param x The table as data frame.
 #' @return A data frame with FIRSTDTC and TIME added.
 #' @keywords internal
+#' @noRd
 add_time <- function(x) {
   x %>%
     assertr::verify(assertr::has_all_names("USUBJID", "DTC")) %>%
@@ -113,6 +117,7 @@ add_time <- function(x) {
 #'
 #' @param obj A nif object.
 #' @return A nif object with TIME, TAFD, and TAD fields added.
+#' @export
 make_time <- function(obj) {
   # Input validation
   if (!inherits(obj, "nif")) {
@@ -192,6 +197,7 @@ make_time <- function(obj) {
 #' @param obj A nif object.
 #'
 #' @return A nif object.
+#' @noRd
 make_time_from_TIME <- function(obj) {
   # as.data.frame(obj) %>%
   obj %>%
@@ -224,6 +230,7 @@ make_time_from_TIME <- function(obj) {
 #' @return The updated NIF dataset including an updated REF field.
 #' @import dplyr
 #' @keywords internal
+#' @noRd
 index_nif <- function(nif) {
   nif %>%
     as.data.frame() %>%
@@ -239,6 +246,7 @@ index_nif <- function(nif) {
 #' @param x A nif object.
 #'
 #' @return A data frame.
+#' @noRd
 first_admin_dtc <- function(x) {
   x %>%
     assertr::verify(assertr::has_all_names("USUBJID", "DTC", "EVID")) %>%
@@ -327,6 +335,7 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
 #' @param keep Fields to explicitly keep, as character.
 #'
 #' @return A nif object
+#' @noRd
 nif_cleanup <- function(nif, keep = NULL) {
   selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
     "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",

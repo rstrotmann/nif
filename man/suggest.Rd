@@ -12,6 +12,9 @@ suggest(obj, consider_nif_auto = FALSE)
 \item{consider_nif_auto}{Include suggestions regarding parent or metabolite
 mappings to the sdtm object, as logical.}
 }
+\value{
+Nothing.
+}
 \description{
 Suggest data programming steps to generate a nif object from an sdtm object
 }

@@ -15,6 +15,9 @@ add_analyte_mapping(obj, extrt, pctestcd, analyte = NULL)
 
 \item{analyte}{The analyte name to be used in the nif object, as character.}
 }
+\value{
+A SDTM object.
+}
 \description{
 In some studies, multiple drugs are co-administered, and there may be analyte
 data related to different parent drugs. In order to appropriately correlate

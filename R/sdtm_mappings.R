@@ -10,6 +10,7 @@
 #' @param extrt The treatment as defined in EX.
 #' @param pctestcd The analyte as character (as in 'PCTESTCD' for PK observations
 #' @param analyte The analyte name to be used in the nif object, as character.
+#' @return A SDTM object.
 #' @seealso [nif_auto()]
 #' @keywords internal
 #' @import stringr

@@ -21,32 +21,6 @@ add_ae_observation(
 \arguments{
 \item{nif}{A nif object.}
 
-\item{sdtm}{A sdtm object.}
-
-\item{ae_term}{The AE term as character.}
-
-\item{ae_field}{The field in which the AE term is specified in. Can be:
-\itemize{
-\item AEDECOD:  Dictionary-derived term
-\item AELLT:    Lowest-level term
-\item AEHLT:    High-level term
-\item AEHLGT:   High-level group term
-\item AESOC:    System organ class
-\item AEBODSYS: Body system or organ class
-}
-
-or any other field from the 'AE' domain}
-
-\item{parent}{The parent compound as character.}
-
-\item{cmt}{The compartment as numeric.}
-
-\item{subject_filter}{A subject filter term.}
-
-\item{observation_filter}{An observation filter term.}
-
-\item{keep}{Columns to keep, as character.}
-
 \item{debug}{Include debug fields, as logical.}
 
 \item{silent}{Suppress messages, defaults to nif_option setting, if NULL.}

@@ -12,6 +12,7 @@
 #' file is printed only.
 #' @param sep The separating character, e.g. ',' or ';'. If NULL (default), the
 #' output has a space-separated, fixed-width format.
+#' @return Nothing.
 #' @importFrom gdata write.fwf
 #' @export
 #' @examples

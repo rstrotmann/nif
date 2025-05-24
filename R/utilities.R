@@ -5,6 +5,7 @@
 #'              environment (defaults to FALSE if not found).
 #' @return Nothing.
 #' @keywords internal
+#' @noRd
 conditional_message <- function(..., silent = NULL) {
   # Get silent flag from parameter or environment
   if (is.null(silent)) {
@@ -55,6 +56,7 @@ print_debug <- function(obj) {
 #'   - NA: Any other values (with warning)
 #' @import dplyr
 #' @keywords internal
+#' @noRd
 recode_sex <- function(obj) {
   # Input validation
   if (!is.data.frame(obj)) {
@@ -110,6 +112,7 @@ positive_or_zero <- function(x) {
 #'
 #' @return A character string
 #' @keywords internal
+#' @noRd
 indent_string <- function(indent = 0) {
   paste(replicate(positive_or_zero(indent), " "), collapse = "")
 }
@@ -132,6 +135,7 @@ indent_string <- function(indent = 0) {
 #' @return The output as string.
 #' @import utils
 #' @keywords internal
+#' @noRd
 df_to_string <- function(
     df,
     indent = 0,
@@ -269,6 +273,7 @@ standardize_date_format <- function(obj, fields = NULL) {
 #' @param fields Date variable names as character.
 #' @return A data frame.
 #' @keywords internal
+#' @noRd
 isofy_date_format <- function(obj, fields = NULL) {
   obj %>%
     dplyr::mutate_at(fields, function(x) {
@@ -285,6 +290,7 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' @return A data frame.
 #' @seealso [isofy_dates()]
 #' @keywords internal
+#' @noRd
 lubrify_dates <- function(obj) {
   obj %>% dplyr::mutate_at(
     vars(ends_with("DTC")),
@@ -308,6 +314,7 @@ lubrify_dates <- function(obj) {
 #' @return A data frame.
 #' @seealso [lubrify_dates()]
 #' @keywords internal
+#' @noRd
 isofy_dates <- function(obj) {
   obj %>%
     dplyr::mutate_at(vars(ends_with("DTC")), ~ format(., "%Y-%m-%dT%H:%M"))
@@ -322,7 +329,6 @@ isofy_dates <- function(obj) {
 #' @param x The input as character.
 #' @return Boolean.
 #' @export
-#' @keywords internal
 #' @examples
 #' is_iso_date_time("2023-09-27T15:04")
 #' is_iso_date_time("2023-09-27T15:04:00")
@@ -388,8 +394,8 @@ pt_to_hours <- function(iso) {
 #' @param time A time in character format.
 #'
 #' @return A POSICct object.
-#' @export
 #' @keywords internal
+#' @noRd
 #' @examples
 #' compose_dtc(date = "2022-09-29", time = "09:30")
 compose_dtc <- function(date, time) {
@@ -437,6 +443,7 @@ decompose_dtc <- function(obj, DTC_field) {
 #' @param dtc The POSIX-formatted datetime.
 #' @return The date as character.
 #' @keywords internal
+#' @noRd
 extract_date <- function(dtc) {
   format(dtc, format = "%Y-%m-%d")
 }
@@ -447,6 +454,7 @@ extract_date <- function(dtc) {
 #' @param dtc The POSIX-formatted datetime.
 #' @return The time as character.
 #' @keywords internal
+#' @noRd
 extract_time <- function(dtc) {
   format(dtc, format = "%H:%M")
 }
@@ -458,6 +466,7 @@ extract_time <- function(dtc) {
 #'
 #' @return A Boolean value.
 #' @keywords internal
+#' @noRd
 has_time <- function(obj) {
   if (is.POSIXct(obj)) {
     as.numeric(obj) %% 86400 != 0
@@ -651,6 +660,7 @@ coalesce_join <- function(
 #' @param x The trial day as numeric.
 #'
 #' @return The number of elapsed days as numeric.
+#' @noRd
 #'
 trialday_to_day <- function(x) {
   if(any(x[which(!is.na(x))] == 0)) stop("Trial day cannot be zero!")
@@ -993,6 +1003,7 @@ resolve_duplicates <- function(
 #' @param filter_string A filter term as character.
 #'
 #' @returns Logical.
+#' @noRd
 is_valid_filter <- function(data, filter_string) {
   # Input validation
   if (!is.data.frame(data)) {

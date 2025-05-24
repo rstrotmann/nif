@@ -122,6 +122,7 @@ make_plot_data_set <- function(
 #' @param data_set A list.
 #'
 #' @return A list.
+#' @noRd
 #' @seealso [make_plot_data_set()]
 make_mean_plot_data_set <- function(data_set) {
   out <- data_set$data %>%
