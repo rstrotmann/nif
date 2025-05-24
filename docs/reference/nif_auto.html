@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.54.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.54.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,7 +112,7 @@ if NULL.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A nif object</p>
+    <p>A nif object.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -148,10 +148,7 @@ is recommended.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">nif_auto</span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="va">RS2023</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for RS2023 was not specified and has been set to 2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding baseline CREAT</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding baseline CRCL and renal function class</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">nif_auto</span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="va">RS2023</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 816 observations from 48 subjects across 1 study </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes: RS2023 </span>
@@ -175,11 +172,7 @@ is recommended.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1    NA      6      6     RS2023    0      2     0     5      2.953    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1    NA      8      8     RS2023    0      2     0     5      1.034    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 854 more rows</span>
-<span class="r-in"><span><span class="fu">nif_auto</span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="va">RS2023</span> <span class="op">+</span> <span class="va">RS2023487A</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for RS2023 was not specified and has been set to 2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for RS2023487A was not specified and has been set to 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding baseline CREAT</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding baseline CRCL and renal function class</span>
+<span class="r-in"><span><span class="fu">nif_auto</span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="va">RS2023</span> <span class="op">+</span> <span class="va">RS2023487A</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1632 observations from 48 subjects across 1 study </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes: RS2023 and RS2023487A </span>
@@ -203,12 +196,7 @@ is recommended.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1    NA      1.5    1.5   RS2023487A   0      3     0     5      41.021   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1    NA      2      2     RS2023       0      2     0     5      34.073   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1670 more rows</span>
-<span class="r-in"><span><span class="fu">nif_auto</span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="va">RS2023</span> <span class="op">+</span> <span class="va">WEIGHT</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for WEIGHT was not specified and has been set to 2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No NTIME_lookup could be created, NTIME will be NA</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Compartment for RS2023 was not specified and has been set to 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding baseline CREAT</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding baseline CRCL and renal function class</span>
+<span class="r-in"><span><span class="fu">nif_auto</span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="va">RS2023</span> <span class="op">+</span> <span class="va">WEIGHT</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM input file (NIF) object -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 864 observations from 48 subjects across 1 study </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes: WEIGHT and RS2023 </span>
