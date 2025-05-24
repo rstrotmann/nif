@@ -313,7 +313,7 @@ test_that("add_baseline warns when some baseline values are NA", {
 
   # Test when some baseline values are NA - should give warning but complete
   expect_message(
-    result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT"),
+    result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", silent = FALSE),
     "Some subjects have missing baseline values for test code 'WEIGHT'. These will be NA in the output."
   )
 
@@ -330,34 +330,34 @@ test_that("add_baseline validates required fields correctly", {
     DTC = c("2023-01-01")
   )
   class(test_nif) <- c("nif", "data.frame")
-  
+
   # Create a domain with missing field
   test_vs_missing_field <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSBLFL,  # Missing VSSTRESN
     "SUBJ-001", "2023-01-01", "WEIGHT", "Y"
   )
-  
+
   test_dm <- data.frame(
     USUBJID = c("SUBJ-001"),
     ACTARMCD = c("TREATMENT")
   )
-  
+
   test_sdtm_missing_field <- new_sdtm(list(vs = test_vs_missing_field, dm = test_dm))
-  
+
   # Test missing required field (VSSTRESN)
   expect_error(
     add_baseline(test_nif, test_sdtm_missing_field, "vs", "WEIGHT"),
     "Required fields missing in domain data: VSSTRESN"
   )
-  
+
   # Test with non-existent test code
   test_vs_valid <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
     "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y"
   )
-  
+
   test_sdtm_valid <- new_sdtm(list(vs = test_vs_valid, dm = test_dm))
-  
+
   expect_error(
     add_baseline(test_nif, test_sdtm_valid, "vs", "HEIGHT"),
     "Test code 'HEIGHT' not found in domain 'vs'"
@@ -374,7 +374,7 @@ test_that("add_baseline name parameter works correctly", {
     "WEIGHT"
   )
   expect_true("BL_WEIGHT" %in% names(result_default))
-  
+
   # Test custom name
   result_custom <- add_baseline(
     examplinib_sad_nif,
@@ -385,10 +385,11 @@ test_that("add_baseline name parameter works correctly", {
   )
   expect_true("baseline_weight" %in% names(result_custom))
   expect_false("BL_WEIGHT" %in% names(result_custom))
-  
+
   # Verify both results have the same values, just different column names
   expect_equal(
     result_default$BL_WEIGHT,
     result_custom$baseline_weight
   )
 })
+

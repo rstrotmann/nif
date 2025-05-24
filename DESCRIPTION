@@ -17,7 +17,6 @@ Imports:
     assertthat,
     dplyr,
     tidyselect,
-    DT,
     gdata,
     ggplot2,
     haven,
@@ -34,7 +33,6 @@ Imports:
     ggrepel,
     shiny,
     shinyjs,
-    htmltools,
     lifecycle
 Suggests: 
     knitr,
