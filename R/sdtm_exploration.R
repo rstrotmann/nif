@@ -261,9 +261,16 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' plot(examplinib_poc, domain = "pc")
 #' plot(examplinib_poc, domain = "vs", lines = FALSE, points = TRUE)
 plot.sdtm <- function(
-    x, domain = "dm", usubjid = NULL, lines = FALSE,
-    points = TRUE, analyte = NULL, log = FALSE,
-    legend = FALSE, subject_filter = TRUE, ...) {
+    x,
+    domain = "dm",
+    usubjid = NULL,
+    lines = FALSE,
+    points = TRUE,
+    analyte = NULL,
+    log = FALSE,
+    legend = FALSE,
+    subject_filter = TRUE,
+    ...) {
   obj <- x %>%
     domain(domain) %>%
     filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
@@ -274,6 +281,7 @@ plot.sdtm <- function(
   if (domain == "pc") {
     return(
       obj %>%
+        filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
         filter(if (!is.null(analyte)) .data$PCTESTCD %in% analyte else TRUE) %>%
         mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
         ggplot2::ggplot(ggplot2::aes(
@@ -386,6 +394,7 @@ plot.sdtm <- function(
   if (domain == "lb") {
     return(
       obj %>%
+        filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
         filter(if (!is.null(analyte)) .data$LBTESTCD %in% analyte else TRUE) %>%
         mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
         ggplot2::ggplot(ggplot2::aes(
@@ -419,6 +428,7 @@ plot.sdtm <- function(
   if (domain == "vs") {
     return(
       obj %>%
+        filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
         filter(if (!is.null(analyte)) VSTESTCD %in% analyte else TRUE) %>%
         ggplot2::ggplot(ggplot2::aes(
           x = .data$VSDTC,
@@ -435,8 +445,8 @@ plot.sdtm <- function(
           } else {
             ggplot2::theme(legend.position = "none")
           }} +
-        ggplot2::ggtitle
-        (paste0("Study ", distinct(obj, .data$STUDYID), ", PC")) +
+        ggplot2::ggtitle(
+          paste0("Study ", distinct(obj, .data$STUDYID), ", PC")) +
         watermark()
     )
   }

@@ -86,9 +86,9 @@ creation of a nif object using \code{\link[=add_administration]{add_administrati
 is recommended.
 }
 \examples{
-nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB)
-nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB)
-nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB)
+nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)
+nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
+nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
 }
 \seealso{
 \code{\link[=testcd]{testcd()}}

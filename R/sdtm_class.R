@@ -8,7 +8,8 @@
 #'  if required columns are missing.
 #' @export
 #'
-#' @examples validate_domain(domain(examplinib_sad, "dm"))
+#' @examples
+#' validate_domain(domain(examplinib_sad, "dm"))
 validate_domain <- function(domain, silent = NULL) {
   # Input validation
   if (!is.data.frame(domain)) {

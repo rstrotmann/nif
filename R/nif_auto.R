@@ -199,9 +199,9 @@ auto_mapping <- function(sdtm, ...) {
 #' @export
 #'
 #' @examples
-#' nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB)
-#' nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB)
-#' nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB)
+#' nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)
+#' nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
+#' nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
 nif_auto <- function(
     sdtm, ...,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",

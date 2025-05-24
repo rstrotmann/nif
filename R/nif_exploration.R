@@ -33,12 +33,18 @@
 #' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
 #' nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
 #' nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
-nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
-                        time_field = "TIME", max_time = NA, lines = TRUE,
-                        point_size = 2, log = FALSE,
-                        # tad = FALSE,
-                        imp = NULL,
-                        ...) {
+nif_plot_id <- function(
+    obj,
+    id,
+    analyte = NULL,
+    cmt = NULL,
+    time_field = "TIME",
+    max_time = NA,
+    lines = TRUE,
+    point_size = 2,
+    log = FALSE,
+    imp = NULL,
+    ...) {
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
@@ -78,6 +84,11 @@ nif_plot_id <- function(obj, id, analyte = NULL, cmt = NULL,
              color = interaction(as.factor(ANALYTE), DI))
       else mutate(., group = interaction(ID, as.factor(ANALYTE)),
                   color = as.factor(ANALYTE))}
+
+  # remove zeros or negatives for log plotting
+  if(log == TRUE){
+    obs <- filter(obs, DV > 0)
+  }
 
   admin <- x %>%
     mutate(active_time = .data[[time_field]]) %>%
@@ -870,7 +881,6 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
 #' @export
 #' @examples
 #' administration_summary(examplinib_poc_nif)
-#' administration_summary(new_nif())
 administration_summary <- function(obj) {
   temp <- obj %>%
     ensure_parent() %>%
@@ -1154,24 +1164,6 @@ edish_plot <- function(
   # })
   return(p)
 }
-
-
-#' #' Title
-#' #'
-#' #' reference: https://www.lexjansen.com/pharmasug/2024/ST/PharmaSUG-2024-ST-297.pdf
-#' #'
-#' #' @param nif A nif object.
-#' #' @param analyte The analyte as character. If `NULL` (default), all analytes
-#' #'   are selected.
-#' #'
-#' #' @return
-#' #' @export
-#' #'
-#' #' @examples
-#' rel_dose_intensity <- function(nif, analyte = NULL) {
-#'
-#' }
-
 
 
 

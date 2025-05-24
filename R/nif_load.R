@@ -1,6 +1,3 @@
-
-
-
 #' Test vector whether consistent with Datetime as per ISO 8601
 #'
 #' @param x The input, as character.
