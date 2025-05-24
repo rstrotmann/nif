@@ -79,7 +79,7 @@ test_that("add_cfb handles NA values in grouping columns", {
   # Run add_cfb and expect message
   expect_message(
     expect_message(
-      result <- add_cfb(test_nif),
+      result <- add_cfb(test_nif, silent = FALSE),
       "Found NA values in ID column"),
     "Found NA values in ANALYTE column")
 

@@ -67,7 +67,7 @@ test_that("add_observation auto-assigns compartment if not specified", {
   # Add observation without specifying CMT, capture messages
   expect_message(
     nif_with_obs <- base_nif %>%
-      add_observation(examplinib_sad, "pc", "RS2023"),
+      add_observation(examplinib_sad, "pc", "RS2023", silent = FALSE),
     "Compartment for RS2023 was not specified and has been set to 2"
   )
 
@@ -85,7 +85,8 @@ test_that("add_observation auto-assigns parent if not specified", {
   expect_message(
     nif_with_obs <- base_nif %>%
       add_observation(
-        examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT", cmt = 2),
+        examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT", cmt = 2,
+        silent = FALSE),
     "Parent for DIFFERENT was set to RS2023!"
   )
 })
@@ -266,7 +267,8 @@ test_that("add_observation handles missing NTIME gracefully", {
   expect_message(
       expect_message(
         nif_without_ntime <- base_nif %>%
-          add_observation(sdtm_test, "pc", "A", cmt = 2, ntime_method = "ELTM"),
+          add_observation(sdtm_test, "pc", "A", cmt = 2, ntime_method = "ELTM",
+                          silent = FALSE),
       "ELTM is not defined"
     ),
   "No NTIME_lookup could be created")
@@ -373,7 +375,8 @@ test_that("add_observation handles observations without matching administrations
     nif_with_no_admin <- base_nif %>%
       add_observation(
         examplinib_sad, "pc", "RS2023", cmt = 2,
-        parent = "DIFFERENT_PARENT"
+        parent = "DIFFERENT_PARENT",
+        silent = FALSE
     ),
     "Missing administration information"
   )

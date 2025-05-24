@@ -114,7 +114,7 @@ test_that("impute_exendtc_to_rfendtc works correctly", {
   expect_message(
     temp <- ex %>%
       mutate(IMPUTATION = "") %>%
-      impute_exendtc_to_rfendtc(dm)
+      impute_exendtc_to_rfendtc(dm, silent = FALSE)
   )
 
   expect_equal(

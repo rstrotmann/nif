@@ -123,7 +123,8 @@ test_that("make_administration imputes missing last EXENDTC", {
 
   expect_no_error(
     expect_message(
-      test <- as.data.frame(make_administration(sdtm, "A"))
+      test <- as.data.frame(make_administration(sdtm, "A",
+                                                silent = FALSE))
     )
   )
 })

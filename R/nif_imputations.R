@@ -299,11 +299,12 @@ impute_admin_times_from_pcrftdtc <- function(
 #'
 #' @param ex The ex domain as data frame.
 #' @param dm The dm domain as data frame.
+#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'
 #' @return A data frame.
 #' @keywords internal
 #' @export
-filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
+filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = NULL) {
   temp <- ex %>%
     filter(.data$EXSTDTC > .data$EXENDTC) %>%
     left_join(
@@ -320,7 +321,7 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm) {
       df_to_string(select(
         temp, "USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"),
         indent = 2),
-      "\n"))
+      "\n"), silent = silent)
   }
   ex %>%
     filter(.data$EXSTDTC <= .data$EXENDTC)

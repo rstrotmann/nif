@@ -4,12 +4,14 @@
 \alias{filter_EXSTDTC_after_EXENDTC}
 \title{Remove administrations with EXSTDTC after EXENDTC}
 \usage{
-filter_EXSTDTC_after_EXENDTC(ex, dm)
+filter_EXSTDTC_after_EXENDTC(ex, dm, silent = NULL)
 }
 \arguments{
 \item{ex}{The ex domain as data frame.}
 
 \item{dm}{The dm domain as data frame.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting, if NULL.}
 }
 \value{
 A data frame.

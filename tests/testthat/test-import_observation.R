@@ -207,7 +207,8 @@ test_that("import_observation automatically assigns compartment when cmt is NULL
       cmt = NULL,
       DV_field = "DV_VALUE",
       DTC_field = "OBS_DTC",
-      NTIME_field = "OBS_NTIME"
+      NTIME_field = "OBS_NTIME",
+      silent = FALSE
     ),
     "Compartment was not specified and has been set to"
   )
@@ -252,7 +253,8 @@ test_that("import_observation automatically determines parent when parent is NUL
       cmt = 3,
       DV_field = "DV_VALUE",
       DTC_field = "OBS_DTC",
-      NTIME_field = "OBS_NTIME"
+      NTIME_field = "OBS_NTIME",
+      silent = FALSE
     ),
     "Parent for .* was set to"
   )

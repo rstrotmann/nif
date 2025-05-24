@@ -66,7 +66,8 @@ test_that("formula_to_mapping handles non-matching analytes", {
   f <- NONEXISTENT ~ DRUG1
 
   expect_message(
-    result <- formula_to_mapping(test_sdtm_formula_to_mapping(), f),
+    result <- formula_to_mapping(test_sdtm_formula_to_mapping(), f,
+                                 silent = FALSE),
     "analyte NONEXISTENT not found in any domain!"
   )
   expect_equal(nrow(result), 0)
