@@ -4,17 +4,39 @@
 \alias{watermark}
 \title{Add a watermark annotation layer for a ggplot2 object}
 \usage{
-watermark(watermark_text = NULL, cex = 1.5, fontface = "bold")
+watermark(
+  watermark_text = NULL,
+  cex = 1.5,
+  fontface = "bold",
+  color = "lightgrey",
+  alpha = 0.1,
+  x = 0.5,
+  y = 1,
+  rotation = 0
+)
 }
 \arguments{
-\item{watermark_text}{The watermark as character.}
+\item{watermark_text}{The watermark as character. If NULL, uses the value
+from nif_option("watermark").}
 
-\item{cex}{The cex as numeric.}
+\item{cex}{The text size multiplier as numeric. Must be positive.}
 
-\item{fontface}{Font face ("bold" by default)}
+\item{fontface}{Font face ("bold" by default). Must be one of "plain",
+"bold", "italic", "bold.italic".}
+
+\item{color}{The color of the watermark text (default: "lightgrey").}
+
+\item{alpha}{The transparency of the watermark (default: 0.1).}
+
+\item{x}{The x position of the watermark (default: 0.5, centered).}
+
+\item{y}{The y position of the watermark (default: 1, top).}
+
+\item{rotation}{The rotation angle in degrees (default: 0).}
 }
 \value{
-A grob.
+A ggplot2 annotation layer with the watermark, or NULL if
+watermark_text is empty.
 }
 \description{
 Add a watermark annotation layer for a ggplot2 object
