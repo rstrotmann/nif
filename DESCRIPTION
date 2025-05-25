@@ -1,6 +1,6 @@
 Package: nif
 Title: Build and Explore NONMEM Input Files from SDTM Data
-Version: 0.54.2
+Version: 0.54.3
 Authors@R: 
     person("Rainer", "Strotmann", email = "rainer.strotmann@mailbox.org",
     role = c("aut", "cre", "cph"),
