@@ -39,6 +39,8 @@ EXTRT
 FIH
 GFR
 Gault
+GeomAdmin
+GeomVline
 Glomerular
 HL
 Hy's
@@ -88,6 +90,7 @@ SLD
 STRESN
 STUDYIDs
 Snelling
+StatAdmin
 Syst
 TAFD
 TESTCD
@@ -122,7 +125,6 @@ boer
 campatibility
 cd
 cdisc
-cex
 cfb
 cmt
 cov
@@ -131,6 +133,7 @@ covrpage
 crea
 creatinine
 csv
+customizable
 darwin
 datetime
 ddTdd
@@ -152,10 +155,11 @@ et
 examplinib
 exendtc
 extrt
-geom's
 ggplot
+ggproto
 github
 glomerular
+grey
 hepatotoxicity
 https
 hume
@@ -165,6 +169,7 @@ jcp
 lbm
 lbspec
 lexjansen
+lightgrey
 lin
 ln
 lntheta
@@ -209,9 +214,9 @@ trialday
 trtdy
 umol
 ungroups
-unmapped
 usubjid
 vectorized
+vline
 www
 xlsx
 xpt
