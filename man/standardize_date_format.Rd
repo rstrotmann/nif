@@ -15,7 +15,7 @@ standardize_date_format(obj, fields = NULL)
 A data frame
 }
 \description{
-Convert date-time code (DTC) variables from the \href{https://w.wiki/8Bzr}{ISO 8601} format used in SDTM (i.e., something like
+Convert date-time code (DTC) variables from the \href{https://en.wikipedia.org/w/index.php?title=ISO_8601&oldid=1184993113}{ISO 8601} format used in SDTM (i.e., something like
 "2001-01-02T09:59" where date and time are separated by "T") to standard
 POSIXct format. The names of the variables to be converted need to be
 provided by \code{fields}.
