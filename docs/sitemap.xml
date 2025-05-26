@@ -29,6 +29,7 @@
 <url><loc>/reference/add_cfb.html</loc></url>
 <url><loc>/reference/add_covariate.html</loc></url>
 <url><loc>/reference/add_dose_level.html</loc></url>
+<url><loc>/reference/add_event_observation.html</loc></url>
 <url><loc>/reference/add_generic_observation.html</loc></url>
 <url><loc>/reference/add_lab_covariate.html</loc></url>
 <url><loc>/reference/add_lab_observation.html</loc></url>
@@ -187,6 +188,7 @@
 <url><loc>/reference/make_crea.html</loc></url>
 <url><loc>/reference/make_dm.html</loc></url>
 <url><loc>/reference/make_drug_mapping.html</loc></url>
+<url><loc>/reference/make_event.html</loc></url>
 <url><loc>/reference/make_exstdy_exendy.html</loc></url>
 <url><loc>/reference/make_fe_pc.html</loc></url>
 <url><loc>/reference/make_lb.html</loc></url>
