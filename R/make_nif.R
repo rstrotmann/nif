@@ -146,7 +146,7 @@ make_time <- function(obj) {
     stop("DTC column must contain POSIXct datetime values")
   }
 
-  # Calculate time fields in a single pipeline for efficiency
+  # Calculate time fields
   result <- obj %>%
     # Group by ID to find first time point for each subject
     group_by(.data$ID) %>%

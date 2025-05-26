@@ -27,7 +27,7 @@ Estimated GFR in ml/min/1.73 m^2.
 }
 \description{
 Source:
-\href{https://www.kidney.org/mdrd-study-equation}{National Kidney Foundation}
+\href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
 }
 \details{
 \deqn{

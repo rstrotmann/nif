@@ -28,6 +28,7 @@ DTC
 DV
 EGFR
 ELTM
+EV
 EVID
 EXAMPLINIB
 EXENDT
@@ -208,6 +209,7 @@ sld
 stm
 tafd
 testcd
+testcode
 testthat
 transaminase
 trialday
@@ -221,6 +223,7 @@ www
 xlsx
 xpt
 xxBLFL
+xxDTC
 xxELTM
 xxTESTCD
 xxTPT

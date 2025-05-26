@@ -1,3 +1,31 @@
+#' Make event observation
+#'
+#' @param sdtm A sdtm object.
+#' @param domain The domain code as character.
+#' @param testcd The testcode from xxTESTCD where xx is the domain code, as
+#'   character.
+#' @param event_filter A filter term to characterize the events to extract, as
+#'   character.
+#' @param analyte The name for the analyte. Defaults to the 'EV_testcd', if
+#'   NULL.
+#' @param parent The name of the parent analyte for the observation as
+#'   character. Defaults to the value of 'analyte' if NULL.
+#' @param metabolite observation is a metabolite, as logical.
+#' @param cmt The compartment for the observation, as numeric.
+#' @param subject_filter The filter to be applied to the DM domain, as
+#'   character.
+#' @param observation_filter The filtering to apply to the observation source
+#'   data, as character.
+#' @param DTC_field The field to use as the date-time code for the observation.
+#'   Defaults to 'xxDTC', with xx the domain name, if NULL.
+#' @param keep Columns to keep, as character.
+#' @param silent Suppress messages, as logical. Defaults to nif_option setting
+#'   if NULL.
+#'
+#' @return A data frame.
+#' @importFrom stats as.formula
+#' @export
+#' @keywords internal
 make_event <- function(
     sdtm,
     domain,
@@ -9,14 +37,8 @@ make_event <- function(
     cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
-    # TESTCD_field = NULL,
     DTC_field = NULL,
-    # DV_field = NULL,
-    # coding_table = NULL,
-    # NTIME_lookup = NULL,
-    # ntime_method = NULL,
     keep = NULL,
-    # include_day_in_ntime = FALSE,
     silent = NULL) {
 
   # Validate inputs
@@ -79,14 +101,14 @@ make_event <- function(
   # ev_flag marks the attainment of the condition
   temp <- testcd_obj %>%
     mutate(flag = case_when(
-      as.formula(paste0(event_filter, "~ 1")),
+      stats::as.formula(paste0(event_filter, "~ 1")),
       .default = 0)) %>%
-    mutate(dflag = case_when(flag != lag(flag) ~ 1, .default = 0)) %>%
-    mutate(ev_flag = flag == 1 & dflag == 1)
+    mutate(dflag = case_when(.data$flag != lag(.data$flag) ~ 1, .default = 0)) %>%
+    mutate(ev_flag = .data$flag == 1 & .data$dflag == 1)
 
   out <- temp %>%
     mutate(DTC = .data[[DTC_field]]) %>%
-    filter(ev_flag == TRUE) %>%
+    filter(.data$ev_flag == TRUE) %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
@@ -106,7 +128,111 @@ make_event <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPUTATION = "") %>%
-    select(-c(flag, dflag, ev_flag))
+    select(-c("flag", "dflag", "ev_flag"))
 
   return(out)
+}
+
+
+#' Append event observations
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param nif A nif object.
+#' @inheritParams make_event
+#'
+#' @return A nif object.
+#' @export
+add_event_observation <- function(
+    nif,
+    sdtm,
+    domain,
+    testcd,
+    event_filter,
+    analyte = NULL,
+    parent = NULL,
+    metabolite = FALSE,
+    cmt = NULL,
+    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+    observation_filter = "TRUE",
+    # TESTCD_field = NULL,
+    DTC_field = NULL,
+    keep = NULL,
+    # debug = FALSE,
+    silent = NULL
+) {
+  # Validate inputs
+  if (!inherits(nif, "nif")) {
+    stop("nif must be an nif object")
+  }
+
+  # Validate metabolite parameter
+  if (!is.logical(metabolite) || length(metabolite) != 1) {
+    stop("metabolite must be a single logical value")
+  }
+
+  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if(isTRUE(debug))
+    keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
+  if(is.null(analyte))
+    analyte <- paste0("EV_", testcd)
+
+  nif <- nif %>%
+    ensure_analyte()
+
+  if(length(parents(nif)) == 0)
+    stop("Please add at least one administration first!")
+
+  # Test if compartment is already assigned
+  if(!is.null(cmt))
+    if(cmt %in% unique(nif$CMT))
+      warning(paste0("Compartment ", cmt, " is already assigned!"))
+
+  # Assign compartment for observation if CMT == NULL
+  if(is.null(cmt)) {
+    cmt <- max(nif$CMT) + 1
+    conditional_message(
+      paste0("Compartment for ", analyte,
+             " was not specified and has been set to ", cmt),
+      silent = silent)
+  }
+
+  if(is.null(parent)) {
+    parent <- guess_parent(nif)
+    if(is.null(parent)) {
+      stop(paste0(
+        "A parent could not be automatically determined. ",
+        "Please specify a parent value explicitly."))
+    }
+    conditional_message(
+      paste0("Parent for ", analyte, " was set to ", parent, "!"),
+      silent = silent)
+  }
+
+  event_obs <- make_event(
+    sdtm,
+    domain,
+    testcd,
+    event_filter,
+    analyte = analyte,
+    parent = parent,
+    metabolite = metabolite,
+    cmt = cmt,
+    subject_filter = subject_filter,
+    observation_filter = observation_filter,
+    DTC_field = DTC_field,
+    keep = keep) %>%
+    select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
+
+  obj <- bind_rows(
+    nif,
+    event_obs) %>%
+    arrange(.data$USUBJID, .data$DTC) %>%
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+    make_time() %>%
+    normalize_nif(keep = keep)
+
+  return(obj)
 }
