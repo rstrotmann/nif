@@ -1009,6 +1009,7 @@ is_valid_filter <- function(data, filter_string) {
   if (!is.data.frame(data)) {
     stop("data must be a data frame")
   }
+
   if (!is.character(filter_string) || length(filter_string) != 1) {
     stop("filter_string must be a single character string")
   }

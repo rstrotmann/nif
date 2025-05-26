@@ -367,7 +367,7 @@ make_observation <- function(
         mutate(., SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter)))
 
-  # Add warning if subject_filter returns no entries
+  # Add warning if observation_filter returns no entries
   if (nrow(filtered_obj) == 0) {
     stop("The observation_filter '", observation_filter, "' returned no entries.")
   }
