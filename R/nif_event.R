@@ -3,7 +3,7 @@
 #' @param sdtm A sdtm object.
 #' @param domain The domain code as character.
 #' @param testcd The testcode from xxTESTCD where xx is the domain code, as
-#'   character.
+#'   character. Not used if NULL.
 #' @param event_filter A filter term to characterize the events to extract, as
 #'   character.
 #' @param analyte The name for the analyte. Defaults to the 'EV_testcd', if
@@ -86,20 +86,22 @@ make_event <- function(
   }
 
   # filter for testcd
-  testcd_field <- paste0(toupper(domain), "TESTCD")
-  if(!testcd %in% unique(filtered_obj[[testcd_field]]))
-    stop(paste0("testcd ", testcd, " not found after filtering for obsrvation_filter!"))
+  if(!is.null(testcd)){
+    testcd_field <- paste0(toupper(domain), "TESTCD")
+    if(!testcd %in% unique(filtered_obj[[testcd_field]]))
+      stop(paste0("testcd ", testcd, " not found after filtering for obsrvation_filter!"))
 
-  testcd_obj <- filtered_obj %>%
-    filter(.data[[testcd_field]] == testcd)
+    filtered_obj <- filtered_obj %>%
+      filter(.data[[testcd_field]] == testcd)
+  }
 
   # check and apply event filter
-  if(!is_valid_filter(testcd_obj, event_filter))
+  if(!is_valid_filter(filtered_obj, event_filter))
     stop(paste0("event filter '", event_filter, "' is not a valid filter!"))
 
   # flag marks the event condition, dflag marks a change in the event condition
   # ev_flag marks the attainment of the condition
-  temp <- testcd_obj %>%
+  temp <- filtered_obj %>%
     mutate(flag = case_when(
       stats::as.formula(paste0(event_filter, "~ 1")),
       .default = 0)) %>%
@@ -148,7 +150,7 @@ add_event_observation <- function(
     nif,
     sdtm,
     domain,
-    testcd,
+    testcd = NULL,
     event_filter,
     analyte = NULL,
     parent = NULL,
