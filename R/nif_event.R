@@ -21,6 +21,10 @@
 #' @param keep Columns to keep, as character.
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
+#' @param event_diff Only retain events where there is a change from the event
+#'   filter evaluating to TRUE after being FALSE in the previous observation,
+#'   i.e., apply time differentiation to the observation. As logical. Defaults
+#'   to FALSE.
 #'
 #' @return A data frame.
 #' @importFrom stats as.formula
@@ -31,6 +35,7 @@ make_event <- function(
     domain,
     testcd,
     event_filter,
+    event_diff = FALSE,
     analyte = NULL,
     parent = NULL,
     metabolite = FALSE,
@@ -89,7 +94,9 @@ make_event <- function(
   if(!is.null(testcd)){
     testcd_field <- paste0(toupper(domain), "TESTCD")
     if(!testcd %in% unique(filtered_obj[[testcd_field]]))
-      stop(paste0("testcd ", testcd, " not found after filtering for obsrvation_filter!"))
+      stop(paste0(
+        "testcd ", testcd,
+        " not found after filtering for observation_filter!"))
 
     filtered_obj <- filtered_obj %>%
       filter(.data[[testcd_field]] == testcd)
@@ -104,13 +111,26 @@ make_event <- function(
   temp <- filtered_obj %>%
     mutate(flag = case_when(
       stats::as.formula(paste0(event_filter, "~ 1")),
-      .default = 0)) %>%
-    mutate(dflag = case_when(.data$flag != lag(.data$flag) ~ 1, .default = 0)) %>%
-    mutate(ev_flag = .data$flag == 1 & .data$dflag == 1)
+      .default = 0)) #%>%
+    # mutate(ev_flag = flag)
+
+  # Apply event differentiation, if event_diff == TRUE
+  if(event_diff == TRUE) {
+    temp <- temp %>%
+      mutate(dflag = case_when(
+        .data$flag != lag(.data$flag) ~ 1, .default = 0)) %>%
+      # mutate(ev_flag = .data$flag == 1 & .data$dflag == 1)
+      mutate(flag = case_when(
+        .data$flag == 1 & .data$dflag == 1 ~ 1,
+        .default = 0)) %>%
+      # filter(flag == 1) %>%
+      select(-c("dflag"))
+  }
 
   out <- temp %>%
     mutate(DTC = .data[[DTC_field]]) %>%
-    filter(.data$ev_flag == TRUE) %>%
+    # filter(.data$ev_flag == TRUE) %>%
+    # filter(.data$flag == TRUE) %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
@@ -120,7 +140,8 @@ make_event <- function(
     filter(!is.na(.data$DTC)) %>%
     mutate(
       ANALYTE = analyte,
-      DV = 1,
+      # DV = 1,
+      DV = flag,
       TIME = NA,
       CMT = cmt,
       AMT = 0,
@@ -130,7 +151,8 @@ make_event <- function(
       EVID = 0,
       MDV = as.numeric(is.na(DV)),
       IMPUTATION = "") %>%
-    select(-c("flag", "dflag", "ev_flag"))
+    # select(-c("flag", "dflag", "ev_flag"))
+    select(-c("flag"))
 
   return(out)
 }
@@ -152,6 +174,7 @@ add_event_observation <- function(
     domain,
     testcd = NULL,
     event_filter,
+    event_diff = FALSE,
     analyte = NULL,
     parent = NULL,
     metabolite = FALSE,
@@ -161,7 +184,7 @@ add_event_observation <- function(
     # TESTCD_field = NULL,
     DTC_field = NULL,
     keep = NULL,
-    # debug = FALSE,
+    debug = FALSE,
     silent = NULL
 ) {
   # Validate inputs
@@ -218,6 +241,7 @@ add_event_observation <- function(
     domain,
     testcd,
     event_filter,
+    event_diff,
     analyte = analyte,
     parent = parent,
     metabolite = metabolite,
