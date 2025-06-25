@@ -319,8 +319,8 @@ nca1 <- function(nif,
 #'   R code that can be evaluated on the PP domain.
 #' @param group Grouping variable from the pp domain, as character.
 #' @param silent Suppress message output.
-#' @param ppcat The value for PPCAT to filter the PP domain for. Defaults to
-#'   the analyte, if NULL.
+#' @param ppcat The value for PPCAT to filter the PP domain for. If NULL, no
+#'   filtering is done.
 #'
 #' @return A data frame containing the filtered and joined PP domain data.
 #' @export
@@ -365,9 +365,9 @@ nca_from_pp <- function(
       current_analyte <- analyte
     }
 
-    if(is.null(ppcat)) {
-      ppcat <- analyte
-    }
+    # if(is.null(ppcat)) {
+    #   ppcat <- analyte
+    # }
 
     # preserve the columns to keep from the nif object
     keep_data <- obj %>%
@@ -384,7 +384,9 @@ nca_from_pp <- function(
     pp <- sdtm_data$domains[["pp"]]
 
     result <- pp %>%
-      {if("PPCAT" %in% names(pp)) filter(., .data$PPCAT == ppcat) else .} %>%
+      # {if("PPCAT" %in% names(pp)) filter(., .data$PPCAT == ppcat) else .} %>%
+      {if("PPCAT" %in% names(pp) & !is.null(ppcat))
+        filter(., .data$PPCAT == ppcat) else .} %>%
       filter(eval(parse(text = observation_filter))) %>%
       select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
                       "PPCAT", "PPRFTDTC", group))) %>%

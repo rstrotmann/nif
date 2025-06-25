@@ -23,8 +23,8 @@ nca_from_pp(
 \item{analyte}{The analyte as character. If NULL, will be guessed from the
 nif object.}
 
-\item{ppcat}{The value for PPCAT to filter the PP domain for. Defaults to
-the analyte, if NULL.}
+\item{ppcat}{The value for PPCAT to filter the PP domain for. If NULL, no
+filtering is done.}
 
 \item{keep}{Columns to keep from the input nif object, as character.}
 
