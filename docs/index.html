@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.54.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.54.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,27 +86,27 @@
 <span>  <span class="fu"><a href="reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
-<span><span class="co">#&gt; 1   1  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
-<span><span class="co">#&gt; 2   2  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
-<span><span class="co">#&gt; 3   3  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
-<span><span class="co">#&gt; 4   4  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
-<span><span class="co">#&gt; 5   5  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
-<span><span class="co">#&gt; 6   6  1 2023000001 20230000011010001  54   0 WHITE  178.1     74 23.32942</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD PCELTM EVID AMT ANALYTE CMT PARENT</span></span>
-<span><span class="co">#&gt; 1 2000-12-30 10:20:00  0.0   0.0  0.0 0.0   &lt;NA&gt;    1   5  RS2023   1 RS2023</span></span>
-<span><span class="co">#&gt; 2 2000-12-30 10:20:00  0.0   0.0  0.0 0.0   PT0H    0   0  RS2023   2 RS2023</span></span>
-<span><span class="co">#&gt; 3 2000-12-30 10:50:00  0.5   0.5  0.5 0.5 PT0.5H    0   0  RS2023   2 RS2023</span></span>
-<span><span class="co">#&gt; 4 2000-12-30 11:20:00  1.0   1.0  1.0 1.0   PT1H    0   0  RS2023   2 RS2023</span></span>
-<span><span class="co">#&gt; 5 2000-12-30 11:50:00  1.5   1.5  1.5 1.5 PT1.5H    0   0  RS2023   2 RS2023</span></span>
-<span><span class="co">#&gt; 6 2000-12-30 12:20:00  2.0   2.0  2.0 2.0   PT2H    0   0  RS2023   2 RS2023</span></span>
-<span><span class="co">#&gt;   TRTDY METABOLITE DOSE      DV MDV ACTARMCD                       IMPUTATION</span></span>
-<span><span class="co">#&gt; 1     1      FALSE    5      NA   1       C1 admin time imputed from PCRFTDTC</span></span>
-<span><span class="co">#&gt; 2     1      FALSE    5  0.0000   0       C1                                 </span></span>
-<span><span class="co">#&gt; 3     1      FALSE    5  1.7829   0       C1                                 </span></span>
-<span><span class="co">#&gt; 4     1      FALSE    5  7.1328   0       C1                                 </span></span>
-<span><span class="co">#&gt; 5     1      FALSE    5 13.7709   0       C1                                 </span></span>
-<span><span class="co">#&gt; 6     1      FALSE    5 16.6334   0       C1</span></span></code></pre></div>
+<span><span class="co">#&gt;   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI</span></span>
+<span><span class="co">#&gt; 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 2   2  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 3   3  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 4   4  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 5   5  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt; 6   6  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
+<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
+<span><span class="co">#&gt; 1 2000-12-31 10:18:00  0.0     0  0.0 0.0    1   5  RS2023   1 RS2023     1</span></span>
+<span><span class="co">#&gt; 2 2000-12-31 10:18:00  0.0     0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 3 2000-12-31 10:48:00  0.5    NA  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 4 2000-12-31 11:18:00  1.0    NA  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 5 2000-12-31 11:48:00  1.5    NA  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 6 2000-12-31 12:18:00  2.0    NA  2.0 2.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV</span></span>
+<span><span class="co">#&gt; 1      FALSE    5   1       C1                 NA</span></span>
+<span><span class="co">#&gt; 2      FALSE    5   0       C1             0.0000</span></span>
+<span><span class="co">#&gt; 3      FALSE    5   0       C1            40.7852</span></span>
+<span><span class="co">#&gt; 4      FALSE    5   0       C1            48.5530</span></span>
+<span><span class="co">#&gt; 5      FALSE    5   0       C1            44.0391</span></span>
+<span><span class="co">#&gt; 6      FALSE    5   0       C1            34.0729</span></span></code></pre></div>
 <p>In many cases, you may want to add further covariates, e.g., baseline creatinine from the LB domain:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  </span>
@@ -122,52 +122,57 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ----- NONMEM input file (NIF) object summary -----</span></span>
 <span><span class="co">#&gt; Data from 48 subjects across one study:</span></span>
-<span><span class="co">#&gt;  STUDYID      N    </span></span>
-<span><span class="co">#&gt;  2023000001   48   </span></span>
+<span><span class="co">#&gt;   STUDYID      N    </span></span>
+<span><span class="co">#&gt;   2023000001   48   </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Males: 48, females: 0 (0%)</span></span>
+<span><span class="co">#&gt; Sex distribution:</span></span>
+<span><span class="co">#&gt;   SEX      N    percent   </span></span>
+<span><span class="co">#&gt;   male     48   100       </span></span>
+<span><span class="co">#&gt;   female   0    0         </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Renal impairment class:</span></span>
-<span><span class="co">#&gt;  CLASS    N    </span></span>
-<span><span class="co">#&gt;  mild     4    </span></span>
-<span><span class="co">#&gt;  normal   44   </span></span>
+<span><span class="co">#&gt;   CLASS      N    percent   </span></span>
+<span><span class="co">#&gt;   normal     42   87.5      </span></span>
+<span><span class="co">#&gt;   mild       6    12.5      </span></span>
+<span><span class="co">#&gt;   moderate   0    0         </span></span>
+<span><span class="co">#&gt;   severe     0    0         </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Administered drugs:</span></span>
-<span><span class="co">#&gt;  RS2023</span></span>
+<span><span class="co">#&gt; Treatments:</span></span>
+<span><span class="co">#&gt;   RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Analytes:</span></span>
-<span><span class="co">#&gt;  RS2023</span></span>
+<span><span class="co">#&gt;   RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Subjects per dose levels:</span></span>
-<span><span class="co">#&gt;  COHORT   RS2023   N    </span></span>
-<span><span class="co">#&gt;  C1       5        3    </span></span>
-<span><span class="co">#&gt;  C10      500      12   </span></span>
-<span><span class="co">#&gt;  C2       10       3    </span></span>
-<span><span class="co">#&gt;  C3       20       3    </span></span>
-<span><span class="co">#&gt;  C4       50       3    </span></span>
-<span><span class="co">#&gt;  C5       100      6    </span></span>
-<span><span class="co">#&gt;  C6       200      3    </span></span>
-<span><span class="co">#&gt;  C7       500      6    </span></span>
-<span><span class="co">#&gt;  C8       800      6    </span></span>
-<span><span class="co">#&gt;  C9       1000     3    </span></span>
+<span><span class="co">#&gt; Subjects per dose level:</span></span>
+<span><span class="co">#&gt;   COHORT   RS2023   N    </span></span>
+<span><span class="co">#&gt;   C1       5        3    </span></span>
+<span><span class="co">#&gt;   C10      500      12   </span></span>
+<span><span class="co">#&gt;   C2       10       3    </span></span>
+<span><span class="co">#&gt;   C3       20       3    </span></span>
+<span><span class="co">#&gt;   C4       50       3    </span></span>
+<span><span class="co">#&gt;   C5       100      6    </span></span>
+<span><span class="co">#&gt;   C6       200      3    </span></span>
+<span><span class="co">#&gt;   C7       500      6    </span></span>
+<span><span class="co">#&gt;   C8       800      6    </span></span>
+<span><span class="co">#&gt;   C9       1000     3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 816 observations:</span></span>
-<span><span class="co">#&gt;  CMT   ANALYTE   N     </span></span>
-<span><span class="co">#&gt;  2     RS2023    816   </span></span>
+<span><span class="co">#&gt;   CMT   ANALYTE   N     </span></span>
+<span><span class="co">#&gt;   2     RS2023    816   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions</span></span>
-<span><span class="co">#&gt;  RS2023   </span></span>
-<span><span class="co">#&gt;  0        </span></span>
+<span><span class="co">#&gt;   RS2023   </span></span>
+<span><span class="co">#&gt;   2        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
-<span><span class="co">#&gt;  PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#&gt;  RS2023   1     1     1      1</span></span>
+<span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
+<span><span class="co">#&gt;   RS2023   1     1     1      1</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-2.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-3.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-4.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-5.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-6.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-7.png" width="50%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-2.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-3.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-4.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-5.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-6.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-7.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-8.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-9.png" width="50%"></p>
 </div>
 </div>
 </div>
