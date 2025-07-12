@@ -4,9 +4,9 @@
 \name{nif-package}
 \alias{nif}
 \alias{nif-package}
-\title{nif: Build and Explore NONMEM Input Files from SDTM Data}
+\title{nif: Build and Explore NONMEM Input Format data tables from SDTM Data}
 \description{
-Import and explore Study Data Tabulation Model (SDTM) data from clinical studies. Create and explore NONMEM input file (NIF)-formatted data sets from [SDTM](https://www.cdisc.org/standards/foundational/sdtm) data.
+Import and explore Study Data Tabulation Model (SDTM) data from clinical studies. Create and explore NONMEM Input Format (NIF) data sets from [SDTM](https://www.cdisc.org/standards/foundational/sdtm) data.
 }
 \seealso{
 Useful links:

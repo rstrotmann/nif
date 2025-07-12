@@ -19,8 +19,8 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/nif)](https://CRAN.R-project.org/package=nif)
 <!-- badges: end -->
 
-This is a package to create NONMEM input file (NIF) objects from SDTM-formatted
-clinical study data.
+This is a package to create NONMEM Input Format (NIF) data tables from
+SDTM-formatted clinical study data.
 
 ## Installation
 

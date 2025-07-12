@@ -9,7 +9,7 @@
 status](https://www.r-pkg.org/badges/version/nif)](https://CRAN.R-project.org/package=nif)
 <!-- badges: end -->
 
-This is a package to create NONMEM input file (NIF) objects from
+This is a package to create NONMEM Input Format (NIF) data tables from
 SDTM-formatted clinical study data.
 
 ## Installation
@@ -78,7 +78,7 @@ NIF files:
 
 ``` r
 summary(nif)
-#> ----- NONMEM input file (NIF) object summary -----
+#> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 48 subjects across one study:
 #>   STUDYID      N    
 #>   2023000001   48   

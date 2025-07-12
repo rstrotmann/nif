@@ -388,7 +388,7 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   indent = 2
   spacer = paste(replicate(indent, " "), collapse = "")
   hline <- "-----"
-  cat(paste0(hline, " NONMEM input file (NIF) object summary ", hline, "\n"))
+  cat(paste0(hline, " NONMEM Input Format (NIF) data summary ", hline, "\n"))
 
   cat(paste(
     "Data from", sum(x$n_studies$N), "subjects across "))

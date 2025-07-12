@@ -79,7 +79,7 @@ print.nif <- function(x, color = FALSE, ...) {
       as.data.frame())
   } else {
     hline <- "-----"
-    cat(paste0(hline, " NONMEM input file (NIF) object ", hline, "\n"))
+    cat(paste0(hline, " NONMEM Input Format (NIF) data ", hline, "\n"))
 
     n_obs <- x %>%
       {if("EVID" %in% names(.)) filter(., .data$EVID == 0) else .} %>%
