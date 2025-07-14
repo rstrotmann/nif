@@ -71,7 +71,7 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA, molar = F) {
   male <- ifelse((sex == 0) | (sex == "M"), 1, 0)
   egfr <- exp(4.4275492 - 0.8230475 * log(crea) - 0.0124264 * crea**2 -
     0.0055068 * age + 0.1806494 * male)
-  attr(egfr, "unit") <- "ml/min/1.73 m^2"
+  base::attr(egfr, "unit") <- "ml/min/1.73 m^2"
   return(egfr)
 }
 
@@ -112,7 +112,7 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
   W <- pracma::lambertWp(z)
   # }
   crea <- 0.707107 * sqrt(B) * sqrt(W) / sqrt(C)
-  attr(crea, "unit") <- "mg/dl"
+  base::attr(crea, "unit") <- "mg/dl"
   return(crea)
 }
 
@@ -147,7 +147,7 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
   race_factor <- ifelse(grepl("black", str_to_lower(race)), 1.212, 1)
 
   egfr <- 175 * crea^-1.154 * age^-0.203 * female_factor * race_factor
-  attr(egfr, "unit") <- "ml/min/1.73 m^2"
+  base::attr(egfr, "unit") <- "ml/min/1.73 m^2"
   return(egfr)
 }
 
@@ -173,7 +173,7 @@ crea_mdrd <- function(egfr, age, sex, race = "") {
   race_factor <- ifelse(grepl("black", str_to_lower(race)), 1.212, 1)
 
   crea <- (egfr / (175 * age^-0.203 * female_factor * race_factor))^(1 / -1.154)
-  attr(crea, "unit") <- "mg/dl"
+  base::attr(crea, "unit") <- "mg/dl"
   return(crea)
 }
 
@@ -204,7 +204,7 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
   female_factor <- ifelse((sex <- 1) | (sex == "F"), .85, 1)
 
   egfr <- (140 - age) * weight * female_factor / 72 / crea
-  attr(egfr, "unit") <- "ml/min"
+  base::attr(egfr, "unit") <- "ml/min"
   return(egfr)
 }
 
