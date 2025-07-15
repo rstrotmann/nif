@@ -22,6 +22,22 @@
 #' @export
 #'
 #' @seealso [dplyr::ntile()] for the underlying n-tile calculation
+#'
+#' @examples
+#' library(dplyr)
+#' library(ggplot2)
+#'
+#' examplinib_sad_nif %>%
+#'  add_ntile("WEIGHT") %>%
+#'    plot(dose_norm = TRUE, facet = "WEIGHT_NTILE")
+#'
+#' examplinib_poc_nif %>%
+#' add_ntile("WEIGHT", n = 5) %>%
+#'   distinct(ID, WEIGHT, WEIGHT_NTILE) %>%
+#'   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
+#'   geom_point() +
+#'   labs(title = "Plasma concentrations by WEIGHT quartiles")
+#'   theme_bw()
 add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
 
   # Validate that input is a nif object
