@@ -41,10 +41,18 @@ make_ae <- function(
     observation_filter = "TRUE",
     # DV_field = "AETOXGR",
     coding_table = NULL,
-    keep = character(0)) {
+    keep = NULL) {
   # Input validation
   if (!inherits(sdtm, "sdtm")) {
     stop("sdtm must be an sdtm object")
+  }
+
+  # Validate ae_term parameter
+  if (!is.character(ae_term) || length(ae_term) != 1) {
+    stop("ae_term must be a single character string")
+  }
+  if (is.na(ae_term) || nchar(trimws(ae_term)) == 0) {
+    stop("ae_term cannot be NA or empty")
   }
 
   expected_domains <- c("DM", "VS", "AE")
@@ -53,14 +61,14 @@ make_ae <- function(
     stop(paste0(plural("Domain", length(missing_domains)>1), " ",
                 nice_enumeration(missing_domains)," not found!"))
 
-  if(!all(c("dm", "vs", "ae") %in% names(sdtm$domains)))
-    stop("Not all domains found (DM, VS, AE)")
-
-
   sbs <- make_subjects(
     domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter, keep = keep)
 
   obj <- domain(sdtm, "ae") %>%
+    mutate(SRC_DOMAIN = "AE") %>%
+    {if("AESEQ" %in% names(.))
+      mutate(., SRC_SEQ = .data[["AESEQ"]]) else
+        mutate(., SRC_SEQ = NA)} %>%
     lubrify_dates()
 
   # Validate coding table
@@ -73,12 +81,12 @@ make_ae <- function(
     if(length(unknown_fields) > 0)
       stop(paste0(
         "Fields ", nice_enumeration(unknown_fields),
-        " not found in AE!"
+        " not found in AE domain!"
       ))
     if(!"DV" %in% names(coding_table))
       stop("coding table must include a DV column!")
     if(!is.numeric(coding_table$DV))
-      stop("DV in the coding tablet must be numeric!")
+      stop("DV in the coding table must be numeric!")
     obj <- obj %>%
       left_join(coding_table, by = temp)
   } else {
@@ -88,13 +96,28 @@ make_ae <- function(
       mutate(DV = .data$AETOXGR)
   }
 
+  # Validate required fields exist in AE domain
+  required_fields <- c("AESTDTC", ae_field)
+  missing_fields <- required_fields[!required_fields %in% names(obj)]
+  if(length(missing_fields) > 0)
+    stop(paste0("Required field(s) missing in AE domain: ",
+                nice_enumeration(missing_fields)))
+
+  # Validate keep parameter columns exist in AE domain
+  if(length(keep) > 0) {
+    missing_keep_fields <- keep[!keep %in% names(obj)]
+    if(length(missing_keep_fields) > 0)
+      stop(paste0("Column(s) specified in 'keep' not found in AE domain: ",
+                  nice_enumeration(missing_keep_fields)))
+  }
+
 
   obj %>%
-    mutate(SRC_DOMAIN = "AE") %>%
-    # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
-    {if("AESEQ" %in% names(obj))
-      mutate(., SRC_SEQ = .data[["AESEQ"]]) else
-        mutate(., SRC_SEQ = NA)} %>%
+    # mutate(SRC_DOMAIN = "AE") %>%
+    # # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
+    # {if("AESEQ" %in% names(.))
+    #   mutate(., SRC_SEQ = .data[["AESEQ"]]) else
+    #     mutate(., SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[ae_field]] == ae_term) %>%
     mutate(
@@ -149,7 +172,7 @@ add_ae_observation <- function(
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
     coding_table = NULL,
-    keep = "",
+    keep = NULL,
     debug = FALSE,
     silent = NULL) {
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
