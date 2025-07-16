@@ -3,7 +3,10 @@
 #'
 #' This function adds AE events as observations with the time of the AE onset
 #' as the observation time point and the severity grade as the dependent
-#' variable.
+#' variable if the field AETOXGR is included. If AETOXGR is not included in the
+#' AE domain, a coding table must be provided to translate any other field into
+#' a numeric DV column, e.g.,
+#' `coding_table = data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)`
 #'
 #' @param sdtm A sdtm object.
 #' @param ae_term The AE term as character.
@@ -22,10 +25,7 @@
 #' @param subject_filter A subject filter term.
 #' @param observation_filter An observation filter term.
 #' @param coding_table A DV coding table as data frame. The coding table translates
-#' columns included in the AE domain into a DV field. A typical case is when
-#' AETOXGR is not present but only AESEV. A coding table of
-#' `data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)` can
-#' then be used to convert the AESEV into a numeric DV variable.
+#' columns included in the AE domain into a DV field.
 #' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
@@ -39,7 +39,6 @@ make_ae <- function(
     cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
-    # DV_field = "AETOXGR",
     coding_table = NULL,
     keep = NULL) {
   # Input validation
@@ -113,11 +112,6 @@ make_ae <- function(
 
 
   obj %>%
-    # mutate(SRC_DOMAIN = "AE") %>%
-    # # mutate(SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) %>%
-    # {if("AESEQ" %in% names(.))
-    #   mutate(., SRC_SEQ = .data[["AESEQ"]]) else
-    #     mutate(., SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter))) %>%
     filter(.data[[ae_field]] == ae_term) %>%
     mutate(
@@ -138,7 +132,6 @@ make_ae <- function(
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days") + 1) %>%
     ungroup() %>%
@@ -150,7 +143,11 @@ make_ae <- function(
 #'
 #' This function adds AE events as observations with the time of the AE onset
 #' as the observation time point and the severity grade as the dependent
-#' variable.
+#' variable if the field AETOXGR is included. If AETOXGR is not included in the
+#' AE domain, a coding table must be provided to translate any other field into
+#' a numeric DV column, e.g.,
+#' `coding_table = data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)`
+#'
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
