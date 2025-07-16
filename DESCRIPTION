@@ -1,6 +1,6 @@
 Package: nif
 Title: Build and Explore NONMEM Input Format data tables from SDTM Data
-Version: 0.55.2
+Version: 0.55.3
 Authors@R: 
     person("Rainer", "Strotmann", email = "rainer.strotmann@mailbox.org",
     role = c("aut", "cre", "cph"),
