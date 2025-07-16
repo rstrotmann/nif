@@ -12,6 +12,7 @@ make_ae(
   cmt = NA,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
+  coding_table = NULL,
   keep = character(0)
 )
 }
@@ -39,6 +40,12 @@ or any other field from the 'AE' domain}
 \item{subject_filter}{A subject filter term.}
 
 \item{observation_filter}{An observation filter term.}
+
+\item{coding_table}{A DV coding table as data frame. The coding table translates
+columns included in the AE domain into a DV field. A typical case is when
+AETOXGR is not present but only AESEV. A coding table of
+\verb{data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)} can
+then be used to convert the AESEV into a numeric DV variable.}
 
 \item{keep}{Columns to keep, as character.}
 }

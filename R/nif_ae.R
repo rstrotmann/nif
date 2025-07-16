@@ -21,6 +21,11 @@
 #' @param cmt The compartment as numeric.
 #' @param subject_filter A subject filter term.
 #' @param observation_filter An observation filter term.
+#' @param coding_table A DV coding table as data frame. The coding table translates
+#' columns included in the AE domain into a DV field. A typical case is when
+#' AETOXGR is not present but only AESEV. A coding table of
+#' `data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)` can
+#' then be used to convert the AESEV into a numeric DV variable.
 #' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
@@ -34,6 +39,8 @@ make_ae <- function(
     cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
+    # DV_field = "AETOXGR",
+    coding_table = NULL,
     keep = character(0)) {
   # Input validation
   if (!inherits(sdtm, "sdtm")) {
@@ -49,11 +56,38 @@ make_ae <- function(
   if(!all(c("dm", "vs", "ae") %in% names(sdtm$domains)))
     stop("Not all domains found (DM, VS, AE)")
 
+
   sbs <- make_subjects(
     domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter, keep = keep)
 
   obj <- domain(sdtm, "ae") %>%
     lubrify_dates()
+
+  # Validate coding table
+  if(!is.null(coding_table)) {
+    if(!inherits(coding_table, "data.frame"))
+      stop("coding table must be a data frame!")
+    temp <- names(coding_table)
+    temp <- temp[temp != "DV"]
+    unknown_fields <- setdiff(temp, names(obj))
+    if(length(unknown_fields) > 0)
+      stop(paste0(
+        "Fields ", nice_enumeration(unknown_fields),
+        " not found in AE!"
+      ))
+    if(!"DV" %in% names(coding_table))
+      stop("coding table must include a DV column!")
+    if(!is.numeric(coding_table$DV))
+      stop("DV in the coding tablet must be numeric!")
+    obj <- obj %>%
+      left_join(coding_table, by = temp)
+  } else {
+    if(!"AETOXGR" %in% names(obj))
+      stop("AETOXGR not found in AE. Use a coding table!")
+    obj <- obj %>%
+      mutate(DV = .data$AETOXGR)
+  }
+
 
   obj %>%
     mutate(SRC_DOMAIN = "AE") %>%
@@ -65,8 +99,7 @@ make_ae <- function(
     filter(.data[[ae_field]] == ae_term) %>%
     mutate(
       DTC = .data[["AESTDTC"]],
-      DV = as.numeric(.data[["AETOXGR"]])) %>%
-    # select("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN") %>%
+      ) %>%
     select(any_of(c("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN", keep))) %>%
     mutate(
       ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
@@ -115,6 +148,7 @@ add_ae_observation <- function(
     cmt = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
+    coding_table = NULL,
     keep = "",
     debug = FALSE,
     silent = NULL) {
@@ -133,8 +167,9 @@ add_ae_observation <- function(
       " was not specified and has been set to ", cmt), silent = silent)
   }
 
-  ae <- make_ae(sdtm, ae_term, ae_field, parent, cmt, subject_filter,
-                observation_filter, keep) %>%
+  ae <- make_ae(
+    sdtm, ae_term, ae_field, parent, cmt, subject_filter,
+                observation_filter, coding_table, keep) %>%
     filter(.data$USUBJID %in% subjects(nif)$USUBJID)
 
   bind_rows(
@@ -143,5 +178,4 @@ add_ae_observation <- function(
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     normalize_nif(keep = keep)
 }
-
 
