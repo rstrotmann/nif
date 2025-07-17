@@ -92,7 +92,7 @@ make_ae <- function(
     if(!"AETOXGR" %in% names(obj))
       stop("AETOXGR not found in AE. Use a coding table!")
     obj <- obj %>%
-      mutate(DV = .data$AETOXGR)
+      mutate(DV = as.numeric(.data$AETOXGR))
   }
 
   # Validate required fields exist in AE domain
