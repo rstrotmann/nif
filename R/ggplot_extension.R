@@ -7,6 +7,7 @@
 #' @details This stat requires a data frame with columns 'x' and 'admin', where
 #'   'admin' should be a logical or numeric column indicating administration
 #'   events (1 or TRUE for administrations, 0 or FALSE otherwise).
+#' @import ggplot2
 #' @format NULL
 #' @usage NULL
 StatAdmin <- ggplot2::ggproto(
@@ -95,7 +96,7 @@ StatAdmin <- ggplot2::ggproto(
 #'
 #' @return A ggplot layer object.
 #'
-#' @importFrom ggplot2 layer aes
+#' @importFrom ggplot2 layer aes ggplot
 #' @export
 stat_admin <- function(
     mapping = NULL,
