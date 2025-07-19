@@ -9,6 +9,7 @@ add_ae_observation(
   sdtm,
   ae_term,
   ae_field = "AEDECOD",
+  analyte = NULL,
   parent = NULL,
   cmt = NULL,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
@@ -37,6 +38,9 @@ add_ae_observation(
 }
 
 or any other field from the 'AE' domain}
+
+\item{analyte}{The name for the AE observation, defaults to 'AE_xx' with xx
+the ae_term.}
 
 \item{parent}{The parent compound as character.}
 

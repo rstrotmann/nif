@@ -20,6 +20,8 @@
 #' * AEBODSYS: Body system or organ class
 #'
 #' or any other field from the 'AE' domain
+#' @param analyte The name for the AE observation, defaults to 'AE_xx' with xx
+#' the ae_term.
 #' @param parent The parent compound as character.
 #' @param cmt The compartment as numeric.
 #' @param subject_filter A subject filter term.
@@ -35,7 +37,8 @@ make_ae <- function(
     sdtm,
     ae_term,
     ae_field = "AEDECOD",
-    parent = NA,
+    analyte = NULL,
+    parent = "",
     cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
@@ -47,11 +50,22 @@ make_ae <- function(
   }
 
   # Validate ae_term parameter
-  if (!is.character(ae_term) || length(ae_term) != 1) {
-    stop("ae_term must be a single character string")
-  }
-  if (is.na(ae_term) || nchar(trimws(ae_term)) == 0) {
-    stop("ae_term cannot be NA or empty")
+  # if (!is.character(ae_term) || length(ae_term) != 1) {
+  #   stop("ae_term must be a single character string")
+  # }
+  # if (is.na(ae_term) || nchar(trimws(ae_term)) == 0) {
+  #   stop("ae_term cannot be NA or empty")
+  # }
+  validate_char_param(ae_term, "ae_term")
+  validate_char_param(ae_field, "ae_field")
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_char_param(parent, "parent", allow_empty = TRUE)
+  validate_char_param(subject_filter, "subject_filter")
+  validate_char_param(observation_filter, "observation_filter")
+  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
+
+  if(is.null(analyte)) {
+    analyte <- paste0("AE_", gsub(" ", "_", ae_term))
   }
 
   expected_domains <- c("DM", "VS", "AE")
@@ -119,7 +133,8 @@ make_ae <- function(
       ) %>%
     select(any_of(c("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN", keep))) %>%
     mutate(
-      ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
+      # ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
+      ANALYTE = analyte,
       TIME = NA,
       CMT = cmt,
       AMT = 0,
@@ -164,6 +179,7 @@ add_ae_observation <- function(
     sdtm,
     ae_term,
     ae_field = "AEDECOD",
+    analyte = NULL,
     parent = NULL,
     cmt = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
@@ -175,21 +191,30 @@ add_ae_observation <- function(
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
-  if(is.null(parent)) {
-      parent <- guess_parent(nif)
-      conditional_message(paste0("Parent for ", ae_term, " was set to ",
-                                 parent, "!"), silent = silent)
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  if(is.null(analyte)) {
+    analyte <- paste0("AE_", gsub(" ", "_", ae_term))
   }
+
+  if(is.null(parent)) {
+    parent <- guess_parent(nif)
+    conditional_message(
+      # "Parent for ", ae_term, " was set to ", parent, "!",
+      "Parent for ", analyte, " was set to ", parent, "!",
+      silent = silent)
+  }
+
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
-      "Compartment for AE_", ae_term,
+      # "Compartment for AE_", ae_term,
+      "Compartment for ", analyte,
       " was not specified and has been set to ", cmt), silent = silent)
   }
 
   ae <- make_ae(
-    sdtm, ae_term, ae_field, parent, cmt, subject_filter,
-                observation_filter, coding_table, keep) %>%
+      sdtm, ae_term, ae_field, analyte, parent, cmt, subject_filter,
+      observation_filter, coding_table, keep) %>%
     filter(.data$USUBJID %in% subjects(nif)$USUBJID)
 
   bind_rows(
