@@ -922,32 +922,39 @@ derive_sld <- function(
 }
 
 
-#' Generic function testcd
-#'
-#' @param obj A sdtm object.
-#'
-#' @returns A data frame.
-testcd <- function(obj) {
-  UseMethod("testcd")
-}
-
-
 #' Extract TESTCD fields by domain from a sdtm object
 #'
 #' @param obj A sdtm object.
+#' @param domain Domains to select, as character. Defaults to all domains, if
+#' NULL.
 #'
-#' @returns A data frame with columns DOMAIN and TESTCD. Returns an empty data frame
-#'   if no TESTCD columns are found.
+#' @returns A data frame with columns DOMAIN and TESTCD. Returns an empty data
+#' frame if no TESTCD columns are found.
 #'
 #' @export
-testcd.sdtm <- function(obj) {
+testcd <- function(obj, domain = NULL) {
   # Validate inputs
   if (!inherits(obj, "sdtm")) {
     stop("Input must be a sdtm object")
   }
 
+  validate_char_param(domain, allow_null = TRUE, allow_multiple = TRUE)
+  if(is.null(domain)) {
+    domain <- names(obj$domains)
+  }
+
+  missing_domains <- setdiff(tolower(domain), names(obj$domains))
+  n_missing = length(missing_domains)
+  if(n_missing > 0) {
+    conditional_message(
+      plural("Domain", n_missing > 1), " ", nice_enumeration(missing_domains),
+      " not found in sdtm object!"
+    )
+    domain <- intersect(tolower(domain), names(obj$domains))
+  }
+
   purrr::reduce(
-    obj$domains,
+    obj$domains[domain],
     function(acc, x) {
       if (!"DOMAIN" %in% names(x)) {
         warning("Domain data frame missing DOMAIN column")
