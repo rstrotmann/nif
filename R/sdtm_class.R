@@ -938,21 +938,21 @@ testcd <- function(obj, domain = NULL) {
     stop("Input must be a sdtm object")
   }
 
-  validate_char_param(domain, allow_null = TRUE, allow_multiple = TRUE)
+  validate_char_param(domain, "domain", allow_null = TRUE, allow_multiple = TRUE)
   if(is.null(domain)) {
     domain <- names(obj$domains)
   }
 
   domain <- tolower(domain)
 
-  missing_domains <- setdiff(tolower(domain), names(obj$domains))
+  missing_domains <- setdiff(domain, names(obj$domains))
   n_missing = length(missing_domains)
   if(n_missing > 0) {
     conditional_message(
       plural("Domain", n_missing > 1), " ", nice_enumeration(missing_domains),
       " not found in sdtm object!"
     )
-    domain <- intersect(tolower(domain), names(obj$domains))
+    domain <- intersect(domain, names(obj$domains))
   }
 
   purrr::reduce(
@@ -974,7 +974,7 @@ testcd <- function(obj, domain = NULL) {
       if(testcd_col %in% names(x)){
         out <- data.frame(
           DOMAIN = domain,
-          TESTCD = unique(x[[testcd_col]])
+          TESTCD = as.character(unique(x[[testcd_col]]))
         )
       }
       return(bind_rows(acc, out))},

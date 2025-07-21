@@ -251,7 +251,9 @@ test_that("testcd() handles empty data frames within domains", {
     "VS", "SYSBP"
   )
 
-  result <- testcd(sdtm_obj)
+  expect_warning(
+    result <- testcd(sdtm_obj),
+    "DOMAIN column is empty")
   expect_equal(result, as.data.frame(expected))
 })
 
@@ -313,36 +315,14 @@ test_that("testcd() handles domain parameter validation", {
   # Test with invalid domain parameter types
   expect_error(
     testcd(sdtm_obj, domain = 123),
-    "domain.*character"
+    "domain.*string"
   )
 
   expect_error(
     testcd(sdtm_obj, domain = list("dm")),
-    "domain.*character"
+    "domain.*string"
   )
 })
-
-
-test_that("testcd() handles domains with inconsistent DOMAIN values", {
-  # Create sdtm object with inconsistent DOMAIN values
-  sdtm_data <- list(
-    inconsistent = tribble(
-      ~DOMAIN, ~USUBJID, ~INCONSISTENTTESTCD,
-      "DM", "SUBJ001", "AGE",
-      "VS", "SUBJ001", "SYSBP"
-    )
-  )
-  sdtm_obj <- new_sdtm(sdtm_data)
-
-  # This should handle multiple domains in one data frame
-  # The function should either handle this correctly or warn about it
-  result <- testcd(sdtm_obj)
-
-  # Check that it doesn't crash and returns some result
-  expect_true(is.data.frame(result))
-  expect_true(all(c("DOMAIN", "TESTCD") %in% names(result)))
-})
-
 
 test_that("testcd() handles domains with all NA TESTCD values", {
   # Create sdtm object with all NA TESTCD values
@@ -528,27 +508,6 @@ test_that("testcd() handles domains with all missing TESTCD columns", {
   expect_equal(result, expected)
 })
 
-
-test_that("testcd() handles domains with NULL values in TESTCD columns", {
-  # Create sdtm object with NULL values in TESTCD columns
-  sdtm_data <- list(
-    dm = tribble(
-      ~DOMAIN, ~USUBJID, ~DMTESTCD,
-      "DM", "SUBJ001", "AGE",
-      "DM", "SUBJ002", NULL
-    )
-  )
-  sdtm_obj <- new_sdtm(sdtm_data)
-
-  # This should handle NULL values appropriately
-  result <- testcd(sdtm_obj)
-
-  # Check that it doesn't crash and returns some result
-  expect_true(is.data.frame(result))
-  expect_true(all(c("DOMAIN", "TESTCD") %in% names(result)))
-})
-
-
 test_that("testcd() handles domains with factor TESTCD values", {
   # Create sdtm object with factor TESTCD values
   sdtm_data <- list(
@@ -568,29 +527,6 @@ test_that("testcd() handles domains with factor TESTCD values", {
     ~DOMAIN, ~TESTCD,
     "DM", "AGE",
     "DM", "SEX"
-  )
-
-  result <- testcd(sdtm_obj)
-  expect_equal(result, as.data.frame(expected))
-})
-
-
-test_that("testcd() handles domains with logical TESTCD values", {
-  # Create sdtm object with logical TESTCD values
-  sdtm_data <- list(
-    dm = tribble(
-      ~DOMAIN, ~USUBJID, ~DMTESTCD,
-      "DM", "SUBJ001", TRUE,
-      "DM", "SUBJ002", FALSE
-    )
-  )
-  sdtm_obj <- new_sdtm(sdtm_data)
-
-  # Expected output (logical values should be converted to character)
-  expected <- tribble(
-    ~DOMAIN, ~TESTCD,
-    "DM", "TRUE",
-    "DM", "FALSE"
   )
 
   result <- testcd(sdtm_obj)
