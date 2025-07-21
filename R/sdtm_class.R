@@ -943,6 +943,8 @@ testcd <- function(obj, domain = NULL) {
     domain <- names(obj$domains)
   }
 
+  domain <- tolower(domain)
+
   missing_domains <- setdiff(tolower(domain), names(obj$domains))
   n_missing = length(missing_domains)
   if(n_missing > 0) {
