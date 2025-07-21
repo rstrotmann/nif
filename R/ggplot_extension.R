@@ -70,13 +70,13 @@ StatAdmin <- ggplot2::ggproto(
 
 #' ggplot stat for treatment administrations
 #'
-#' @param mapping Set of aesthetic mappings created by [aes()]. If specified and
+#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. If specified and
 #'   `inherit.aes = TRUE` (the default), it is combined with the default mapping
 #'   at the top level of the plot. You must supply `mapping` if there is no plot
 #'   mapping.
 #' @param data The data to be displayed in this layer. There are three options:
 #'   If `NULL`, the default, the data is inherited from the plot data as specified
-#'   in the call to [ggplot()]. A `data.frame`, or other object, will override the
+#'   in the call to [ggplot2::ggplot()]. A `data.frame`, or other object, will override the
 #'   plot data. A `function` will be called with a single argument, the plot data.
 #'   The return value must be a `data.frame`, and will be used as the layer data.
 #' @param geom The geometric object to use to display the data. Defaults to "vline".
@@ -96,7 +96,7 @@ StatAdmin <- ggplot2::ggproto(
 #'
 #' @return A ggplot layer object.
 #'
-#' @importFrom ggplot2 layer aes ggplot
+#' @import ggplot2
 #' @export
 stat_admin <- function(
     mapping = NULL,
@@ -166,13 +166,13 @@ GeomAdmin <- ggplot2::ggproto(
 
 #' Administration geom layer for ggplot
 #'
-#' @param mapping Set of aesthetic mappings created by [aes()]. If specified and
+#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. If specified and
 #'   `inherit.aes = TRUE` (the default), it is combined with the default mapping
 #'   at the top level of the plot. You must supply `mapping` if there is no plot
 #'   mapping.
 #' @param data The data to be displayed in this layer. There are three options:
 #'   If `NULL`, the default, the data is inherited from the plot data as
-#'   specified in the call to [ggplot()]. A `data.frame`, or other object, will
+#'   specified in the call to [ggplot2::ggplot()]. A `data.frame`, or other object, will
 #'   override the plot data. A `function` will be called with a single argument,
 #'   the plot data. The return value must be a `data.frame`, and will be used as
 #'   the layer data.
@@ -193,7 +193,7 @@ GeomAdmin <- ggplot2::ggproto(
 #'
 #' @return A ggplot layer object.
 #'
-#' @importFrom ggplot2 layer aes
+#' @import ggplot2
 #' @export
 geom_admin <- function(
     mapping = NULL,
