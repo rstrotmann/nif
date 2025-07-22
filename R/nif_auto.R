@@ -210,7 +210,8 @@ nif_auto <- function(
     sdtm, ...,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
-    baseline_filter = "LBBLFL == 'Y'",
+    # baseline_filter = "LBBLFL == 'Y'",
+    baseline_filter = NULL,
     duplicates = "resolve",
     duplicate_function = mean,
     keep = NULL,
@@ -219,6 +220,10 @@ nif_auto <- function(
   if (!inherits(sdtm, "sdtm")) {
     stop("sdtm must be an sdtm object")
   }
+
+  validate_char_param(
+    baseline_filter, "baseline_filter",
+    allow_multiple = FALSE, allow_null = TRUE)
 
   expected_domains <- c("dm", "vs", "ex", "pc")
   missing_domains <- setdiff(expected_domains, names(sdtm$domains))
@@ -251,8 +256,12 @@ nif_auto <- function(
     o <- analyte_mapping[i,]
     out <- out %>%
       add_observation(
-        sdtm, o$DOMAIN, o$TESTCD, analyte = o$ANALYTE,
-        parent = o$PARENT, metabolite = o$METABOLITE,
+        sdtm,
+        domain = o$DOMAIN,
+        testcd = o$TESTCD,
+        analyte = o$ANALYTE,
+        parent = o$PARENT,
+        metabolite = o$METABOLITE,
         subject_filter = subject_filter,
         observation_filter = observation_filter,
         duplicates = duplicates,
@@ -264,6 +273,18 @@ nif_auto <- function(
   # LB-related baseline covariates
   if("lb" %in% names(sdtm$domains)) {
     lb <- domain(sdtm, "lb")
+
+    if(is.null(baseline_filter)){
+      blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))[[1]]
+      if(is.null(blcol)){
+        stop(
+          "No baseline flag column identified. Please provide a baseline_filter"
+        )
+      }
+      baseline_filter = paste0(
+        blcol, " == 'Y'"
+      )
+    }
 
     if(!is_valid_filter(lb, baseline_filter)) {
       conditional_message(
