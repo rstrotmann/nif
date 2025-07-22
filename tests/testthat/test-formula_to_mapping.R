@@ -29,8 +29,8 @@ test_that("formula_to_mapping works with single analyte", {
   f <- ANALYTE1 ~ DRUG1
 
   expected <- tibble::tribble(
-    ~DOMAIN,    ~TESTCD,     ~PARAM,  ~EXTRT,   ~ANALYTE,
-       "PC", "ANALYTE1", "PCTESTCD", "DRUG1", "ANALYTE1"
+    ~DOMAIN,    ~TESTCD,     ~PARAM,  ~EXTRT,   ~ANALYTE,    ~PARENT,
+       "PC", "ANALYTE1", "PCTESTCD", "DRUG1", "ANALYTE1", "ANALYTE1"
   )
 
   result <- formula_to_mapping(test_sdtm_formula_to_mapping(), f)
@@ -42,9 +42,9 @@ test_that("formula_to_mapping works with multiple analytes", {
   f <- ANALYTE1 + LACT ~ DRUG1
 
   expected <- tibble::tribble(
-    ~DOMAIN,    ~TESTCD,     ~PARAM,  ~EXTRT,   ~ANALYTE,
-      "PC", "ANALYTE1", "PCTESTCD", "DRUG1", "ANALYTE1",
-      "LB",     "LACT", "LBTESTCD", "DRUG1",     "LACT"
+    ~DOMAIN,    ~TESTCD,     ~PARAM,  ~EXTRT,   ~ANALYTE,    ~PARENT,
+    "PC", "ANALYTE1", "PCTESTCD", "DRUG1", "ANALYTE1", "ANALYTE1",
+    "LB",     "LACT", "LBTESTCD", "DRUG1",     "LACT", "ANALYTE1"
   )
 
   result <- formula_to_mapping(test_sdtm_formula_to_mapping(), f)

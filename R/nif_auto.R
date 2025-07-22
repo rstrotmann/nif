@@ -35,6 +35,7 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
 
   # identify analytes from left hand side of f
   temp <- str_split_1(deparse(f_lhs(f)), " ")
+  parent <- temp[1]
   temp <- temp[grepl("^[A-Z0-9_]*$", temp)]
 
   invalid_analytes <- setdiff(temp, allowed_testcd$TESTCD)
@@ -52,7 +53,8 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
   out <- testcd %>%
     mutate(PARAM = paste0(.data$DOMAIN, "TESTCD")) %>%
     mutate(EXTRT = extrt) %>%
-    mutate(ANALYTE = .data$TESTCD)
+    mutate(ANALYTE = .data$TESTCD) %>%
+    mutate(PARENT = parent)
 
   return(out)
 }
@@ -140,7 +142,7 @@ auto_mapping <- function(sdtm, ...) {
 
   out <- ex_pc_mapping %>%
     group_by(.data$EXTRT) %>%
-    mutate(PARENT = .data$ANALYTE[row_number() == 1]) %>%
+    # mutate(PARENT = .data$ANALYTE[row_number() == 1]) %>%
     mutate(METABOLITE = row_number() != 1) %>%
     ungroup()
 
