@@ -9,7 +9,7 @@ nif_auto(
   ...,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
-  baseline_filter = "LBBLFL == 'Y'",
+  baseline_filter = NULL,
   duplicates = "resolve",
   duplicate_function = mean,
   keep = NULL,
