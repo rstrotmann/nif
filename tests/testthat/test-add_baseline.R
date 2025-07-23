@@ -27,7 +27,7 @@ test_that("add_baseline adds baseline covariate correctly", {
   sdtm <- new_sdtm(sdtm_data)
 
   # Test basic functionality
-  result <- add_baseline(nif, sdtm, "vs", "WEIGHT")
+  result <- add_baseline(nif, sdtm, "vs", "WEIGHT", silent = TRUE)
 
   expect_true("BL_WEIGHT" %in% names(result))
   expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-001"], rep(70, 2))
@@ -37,23 +37,25 @@ test_that("add_baseline adds baseline covariate correctly", {
 
 
 test_that("add_baseline handles custom baseline filter", {
-  test_nif <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-002"),
-    DTC = c("2023-01-01", "2023-01-01")
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
   )
   class(test_nif) <- c("nif", "data.frame")
 
-  test_vs <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-001", "SUBJ-002", "SUBJ-002"),
-    VSDTC = c("2023-01-01", "2023-01-02", "2023-01-01", "2023-01-02"),
-    VSTESTCD = c("WEIGHT", "WEIGHT", "WEIGHT", "WEIGHT"),
-    VSSTRESN = c(70, 72, 80, 82),
-    VSBLFL = c("N", "Y", "N", "Y")
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",  "WEIGHT",        70,     "",
+    "SUBJ-001", "2023-01-02",  "WEIGHT",        72,     "Y",
+    "SUBJ-002", "2023-01-01",  "WEIGHT",        80,     "",
+    "SUBJ-002", "2023-01-02",  "WEIGHT",        82,     "Y"
   )
 
-  test_dm <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-002"),
-    ACTARMCD = c("TREATMENT", "TREATMENT")
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
   )
 
   test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
@@ -174,11 +176,13 @@ test_that("add_baseline handles multiple baseline values correctly", {
   test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
 
   # Two baseline values should be averaged
-  result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT")
+  result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", silent = TRUE)
   expect_equal(result$BL_WEIGHT, 71)
 
   # Test with a different summary function
-  result_max <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", summary_function = max)
+  result_max <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT", summary_function = max,
+    , silent = TRUE)
   expect_equal(result_max$BL_WEIGHT, 72)
 })
 
@@ -204,7 +208,7 @@ test_that("add_baseline handles empty result after filtering", {
 
   # Test when filtering results in no baseline values
   expect_error(
-    result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT")
+    result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", silent = TRUE)
   )
 })
 
@@ -284,7 +288,7 @@ test_that("add_baseline handles all NA baseline values correctly", {
 
   # Test when all baseline values are NA
   expect_error(
-    add_baseline(test_nif, test_sdtm, "vs", "WEIGHT"),
+    add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", silent = TRUE),
     "No valid baseline values found for test code 'WEIGHT'. Data was found but all values are NA after processing."
   )
 })
@@ -313,9 +317,10 @@ test_that("add_baseline warns when some baseline values are NA", {
 
   # Test when some baseline values are NA - should give warning but complete
   expect_message(
-    result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", silent = FALSE),
-    "Some subjects have missing baseline values for test code 'WEIGHT'. These will be NA in the output."
-  )
+    expect_message(
+      result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", silent = FALSE),
+    "Some subjects have missing baseline values for test code 'WEIGHT'. These will be NA in the output."),
+  "baseline_filter for BL_WEIGHT set to VSBLFL == 'Y'")
 
   # Check that function completed and returned correct values
   expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-001"], 70)
@@ -371,7 +376,8 @@ test_that("add_baseline name parameter works correctly", {
     examplinib_sad_nif,
     examplinib_sad,
     "vs",
-    "WEIGHT"
+    "WEIGHT",
+    silent = TRUE
   )
   expect_true("BL_WEIGHT" %in% names(result_default))
 
@@ -381,7 +387,8 @@ test_that("add_baseline name parameter works correctly", {
     examplinib_sad,
     "vs",
     "WEIGHT",
-    name = "baseline_weight"
+    name = "baseline_weight",
+    silent = TRUE
   )
   expect_true("baseline_weight" %in% names(result_custom))
   expect_false("BL_WEIGHT" %in% names(result_custom))

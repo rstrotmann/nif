@@ -38,8 +38,9 @@ xx the domain name, as character.}
 \item{observation_filter}{A filter term for the \code{domain}, as character.}
 
 \item{baseline_filter}{A filter term to identify the baseline condition.
-within the \code{domain}. Defaults to "xxBLFL == 'Y'" (with xx the domain
-code).}
+within the \code{domain}. Defaults to either "xxBLFL == 'Y'" or
+"xxLOBXFL == 'Y'" (with xx the domain code), whichever is found first in
+the domain data.}
 
 \item{coding_table}{A recoding table as data frame, or NULL. If present, the
 table needs to have a field that matches a column in the domain, and a
