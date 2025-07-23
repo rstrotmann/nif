@@ -1,3 +1,4 @@
+
 test_that("nif_auto works with basic input", {
   # Create minimal SDTM object
   dm <- tibble::tribble(

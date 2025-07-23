@@ -228,7 +228,9 @@ nif_auto <- function(
   expected_domains <- c("dm", "vs", "ex", "pc")
   missing_domains <- setdiff(expected_domains, names(sdtm$domains))
   if(length(missing_domains) > 0)
-    stop(paste0("Missing domains: ", nice_enumeration(missing_domains)))
+    stop(paste0(
+      "Missing expected domains: ",
+      nice_enumeration(missing_domains)))
 
   analyte_mapping <- auto_mapping(sdtm, ...)
   if(nrow(analyte_mapping) == 0)
@@ -237,7 +239,6 @@ nif_auto <- function(
   out <- new_nif()
 
   # treatments
-  # treatments <- distinct(analyte_mapping, EXTRT, ANALYTE)
   treatments <- analyte_mapping %>%
     filter(METABOLITE == FALSE) %>%
     distinct(EXTRT, ANALYTE)
@@ -246,7 +247,9 @@ nif_auto <- function(
     t <- treatments[i,]
     out <- out %>%
       add_administration(
-        sdtm, extrt = t$EXTRT, analyte = t$ANALYTE,
+        sdtm,
+        extrt = t$EXTRT,
+        analyte = t$ANALYTE,
         subject_filter = subject_filter,
         silent = silent)
   }
