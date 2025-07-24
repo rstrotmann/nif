@@ -96,6 +96,7 @@ auto_mapping <- function(sdtm, ...) {
     TESTCD = character(0),
     EXTRT = character(0),
     ANALYTE = character(0),
+    PARENT = character(0),
     stringsAsFactors = FALSE
   )
 
@@ -115,6 +116,7 @@ auto_mapping <- function(sdtm, ...) {
       TESTCD = common,
       EXTRT = common,
       ANALYTE = common,
+      PARENT = common,
       stringsAsFactors = FALSE
     )
   } else {
@@ -254,24 +256,36 @@ nif_auto <- function(
         silent = silent)
   }
 
+  # message(
+  #   "Treatments added:\n",
+  #   df_to_string(treatments),
+  #   "\n"
+  # )
+
   # observations
   for(i in 1:nrow(analyte_mapping)){
     o <- analyte_mapping[i,]
-    out <- out %>%
-      add_observation(
-        sdtm,
-        domain = o$DOMAIN,
-        testcd = o$TESTCD,
-        analyte = o$ANALYTE,
-        parent = o$PARENT,
-        metabolite = o$METABOLITE,
-        subject_filter = subject_filter,
-        observation_filter = observation_filter,
-        duplicates = duplicates,
-        duplicate_function = duplicate_function,
-        keep = keep,
-        silent = silent)
+    out <- add_observation(
+      out,
+      sdtm,
+      domain = o$DOMAIN,
+      testcd = o$TESTCD,
+      analyte = o$ANALYTE,
+      parent = o$PARENT,
+      metabolite = o$METABOLITE,
+      subject_filter = subject_filter,
+      observation_filter = observation_filter,
+      duplicates = duplicates,
+      duplicate_function = duplicate_function,
+      keep = keep,
+      silent = silent)
   }
+
+  # message(
+  #   "Observations added:\n",
+  #   df_to_string(analyte_mapping),
+  #   "\n"
+  # )
 
   # LB-related baseline covariates
   if("lb" %in% names(sdtm$domains)) {
