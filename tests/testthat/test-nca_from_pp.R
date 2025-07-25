@@ -53,17 +53,12 @@ test_that("nca_from_pp handles missing analyte", {
     class = c("nif", "data.frame")
   )
 
-  sdtm_data <- structure(
-    list(
-      domains = list(
-        pp = tibble::tribble(
-          ~USUBJID, ~PPTESTCD, ~PPSTRESN,  ~PPSPEC, ~PPCAT,    ~PPRFTDTC,
-          "SUBJ1",     "AUC",       100, "PLASMA", "DRUG", "2023-01-01"
-        )
-      )
-    ),
-    class = c("sdtm", "list")
-  )
+  sdtm_data <- new_sdtm(list(
+    pp = tibble::tribble(
+      ~USUBJID, ~PPTESTCD, ~PPSTRESN,  ~PPSPEC, ~PPCAT,    ~PPRFTDTC,
+      "SUBJ1",     "AUC",       100, "PLASMA", "DRUG", "2023-01-01"
+    )
+  ))
 
   # Test with NULL analyte
   result <- nca_from_pp(nif_obj, sdtm_data, "DRUG", silent = TRUE)
@@ -80,16 +75,6 @@ test_that("nca_from_pp handles errors appropriately", {
     DOSE = 100
   ) %>%
     new_nif()
-
-  # sdtm_data <- list(
-  #   domains = list(
-  #     pp = data.frame(
-  #       USUBJID = "SUBJ1",
-  #       PPTESTCD = "AUC",
-  #       PPSTRESN = 100
-  #     )
-  #   )
-  # )
 
   sdtm_data <- new_sdtm(
     list(
@@ -127,16 +112,14 @@ test_that("nca_from_pp handles empty results", {
   ) %>%
     new_nif()
 
-  sdtm_data <- new_sdtm(
-    list(
-      pp = data.frame(
-        USUBJID = "SUBJ1",
-        PPTESTCD = "AUC",
-        PPSTRESN = 100,
-        PPSPEC = "PLASMA",
-        PPCAT = "DRUG"
-      )
-    )
+  sdtm_data <- new_sdtm(list(
+    pp = data.frame(
+      USUBJID = "SUBJ1",
+      PPTESTCD = "AUC",
+      PPSTRESN = 100,
+      PPSPEC = "PLASMA",
+      PPCAT = "DRUG"
+    ))
   )
 
   # Test with filter that returns no results
@@ -161,14 +144,13 @@ test_that("nca_from_pp handles keep parameter correctly", {
     new_nif()
 
   sdtm_data <- new_sdtm(list(
-      pp = data.frame(
-        USUBJID = "SUBJ1",
-        PPTESTCD = "AUC",
-        PPSTRESN = 100,
-        PPSPEC = "PLASMA",
-        PPCAT = "DRUG"
-      )
-    )
+    pp = data.frame(
+      USUBJID = "SUBJ1",
+      PPTESTCD = "AUC",
+      PPSTRESN = 100,
+      PPSPEC = "PLASMA",
+      PPCAT = "DRUG"
+    ))
   )
 
   # Test with keep parameter
