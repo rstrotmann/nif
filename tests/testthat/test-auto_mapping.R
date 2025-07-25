@@ -21,7 +21,7 @@ test_that("auto_mapping creates correct mapping from NULL input", {
 
   test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
-  result <- auto_mapping(test_sdtm)
+  result <- auto_mapping(test_sdtm, silent = TRUE)
 
   expect_equal(nrow(result), 2)
   expect_equal(result$EXTRT, c("DRUG1", "DRUG2"))
@@ -204,3 +204,39 @@ test_that("auto_mapping sets correct METABOLITE flags", {
   expect_equal(nrow(result), 3)
   expect_equal(result$METABOLITE, c(FALSE, TRUE, TRUE))
 })
+
+
+test_that("auto_mapping generates automatic mapping for multiple analytes", {
+  # Create test SDTM object with domains
+  test_sdtm <- new_sdtm(list(
+    dm = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,
+      "DM", "STUDY1", "SUBJ-001",
+      "DM", "STUDY1", "SUBJ-002"
+    ),
+
+    ex = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID, ~EXTRT,
+      "EX", "STUDY1", "SUBJ-001", "DRUG1",
+      "EX", "STUDY1", "SUBJ-001", "DRUG2",
+      "EX", "STUDY1", "SUBJ-002", "DRUG1"
+    ),
+
+    pc = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID, ~PCTESTCD,
+      "PC", "STUDY1", "SUBJ-001",   "DRUG1",
+      "PC", "STUDY1", "SUBJ-001",   "DRUG2",
+      "PC", "STUDY1", "SUBJ-002",   "DRUG1"
+
+    )
+  ))
+
+  result <- auto_mapping(test_sdtm, silent = TRUE)
+
+  expect_equal(nrow(result), 2)
+  expect_equal(result$ANALYTE, c("DRUG1", "DRUG2"))
+})
+
+
+
+
