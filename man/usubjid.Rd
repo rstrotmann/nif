@@ -4,12 +4,14 @@
 \alias{usubjid}
 \title{Get the USUBJID of subject}
 \usage{
-usubjid(obj, id)
+usubjid(obj, id, silent = NULL)
 }
 \arguments{
 \item{obj}{A NIF object.}
 
 \item{id}{A subject ID in numeric form.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting.}
 }
 \value{
 The USUBJID as character.
@@ -18,5 +20,5 @@ The USUBJID as character.
 Get the USUBJID of subject
 }
 \examples{
-usubjid(examplinib_fe_nif)
+usubjid(examplinib_fe_nif, 1, silent = FALSE)
 }

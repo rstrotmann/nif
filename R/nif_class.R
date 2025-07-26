@@ -269,11 +269,16 @@ subjects <- function(obj) {
 #' @examples
 #' subjects(examplinib_fe_nif)
 subjects.nif <- function(obj) {
+  # input validation
+  validate_nif(obj)
+
+  if(!"ID" %in% names(obj)){
+    stop("ID column missing!")
+  }
+
   obj %>%
     as.data.frame() %>%
-    {
-      if (!"USUBJID" %in% names(.)) mutate(., USUBJID = NA) else .
-    } %>%
+    {if (!"USUBJID" %in% names(.)) mutate(., USUBJID = NA) else . } %>%
     select(any_of(c("ID", "USUBJID"))) %>%
     distinct()
 }
@@ -283,13 +288,32 @@ subjects.nif <- function(obj) {
 #'
 #' @param obj A NIF object.
 #' @param id A subject ID in numeric form.
+#' @param silent Suppress messages, defaults to nif_option setting.
 #'
 #' @return The USUBJID as character.
 #' @export
 #' @examples
-#' usubjid(examplinib_fe_nif)
-usubjid <- function(obj, id) {
-  return(subjects(obj)[id, "USUBJID"])
+#' usubjid(examplinib_fe_nif, 1, silent = FALSE)
+usubjid <- function(obj, id, silent = NULL) {
+  # input validation
+  validate_nif(obj)
+  validate_numeric_param(id, "id", allow_multiple = TRUE, allow_null = TRUE)
+  if(!"USUBJID" %in% names(obj)) {
+    stop("USUBJID field not found")
+  }
+
+  sbs <- subjects(obj)
+  missing_id <- setdiff(id, unique(sbs$ID))
+  matching_id <- intersect(id, unique(sbs$ID))
+  if(length(missing_id) > 0) {
+    conditional_message(
+      plural("ID", length(missing_id) > 1), " not found: ",
+      nice_enumeration(missing_id),
+      silent = silent
+    )
+  }
+
+  return(sbs[sbs$ID == matching_id, "USUBJID"])
 }
 
 
@@ -302,6 +326,9 @@ usubjid <- function(obj, id) {
 #' parents(examplinib_poc_nif)
 #' parents(examplinib_poc_min_nif)
 parents <- function(obj) {
+  # input validation
+  validate_nif(obj)
+
   obj %>%
     ensure_parent() %>%
     as.data.frame() %>%
@@ -340,8 +367,6 @@ dose_red_sbs <- function(obj, analyte = NULL) {
     mutate(initial_dose = .data$AMT[row_number() == 1]) %>%
     filter(.data$AMT < initial_dose & .data$AMT != 0) %>%
     ungroup() %>%
-    # distinct(.data$ID) %>%
-    # pull(.data$ID)
     select(any_of(c("ID", "USUBJID"))) %>%
     distinct()
 }

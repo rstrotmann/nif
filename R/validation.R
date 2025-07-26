@@ -57,7 +57,11 @@ validate_param <- function(
 
 #' Validate character parameter
 #'
-#' @inheritDotParams validate_param param param_name allow_null allow_empty allow_multiple
+#' @param param The parameter to be tested.
+#' @param param_name The parameter name as character.
+#' @param allow_null Allow NULL values, as logical.
+#' @param allow_empty Allow empty parameter, as logical.
+#' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
 validate_char_param <- function(...) {
@@ -66,7 +70,11 @@ validate_char_param <- function(...) {
 
 #' Validate logical parameter
 #'
-#' @inheritDotParams validate_param param param_name allow_null allow_empty allow_multiple
+#' @param param The parameter to be tested.
+#' @param param_name The parameter name as character.
+#' @param allow_null Allow NULL values, as logical.
+#' @param allow_empty Allow empty parameter, as logical.
+#' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
 validate_logical_param <- function(...) {
@@ -75,12 +83,27 @@ validate_logical_param <- function(...) {
 
 #' Validate numeric parameter
 #'
-#' @inheritDotParams validate_param param param_name allow_null allow_empty allow_multiple
+#' @param param The parameter to be tested.
+#' @param param_name The parameter name as character.
+#' @param allow_null Allow NULL values, as logical.
+#' @param allow_empty Allow empty parameter, as logical.
+#' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
 validate_numeric_param <- function(...) {
   validate_param("numeric", ...)
 }
 
+
+#' Validate nif parameter
+#'
+#' @param obj A nif object.
+#'
+#' @returns Nothin or stop.
+validate_nif <- function(obj) {
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a nif object")
+  }
+}
 
 

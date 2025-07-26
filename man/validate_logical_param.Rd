@@ -7,15 +7,15 @@
 validate_logical_param(...)
 }
 \arguments{
-\item{...}{
-  Arguments passed on to \code{\link[=validate_param]{validate_param}}
-  \describe{
-    \item{\code{param}}{The parameter to be tested.}
-    \item{\code{param_name}}{The parameter name as character.}
-    \item{\code{allow_null}}{Allow NULL values, as logical.}
-    \item{\code{allow_empty}}{Allow empty parameter, as logical.}
-    \item{\code{allow_multiple}}{Allow vector of the specified type, as logical.}
-  }}
+\item{param}{The parameter to be tested.}
+
+\item{param_name}{The parameter name as character.}
+
+\item{allow_null}{Allow NULL values, as logical.}
+
+\item{allow_empty}{Allow empty parameter, as logical.}
+
+\item{allow_multiple}{Allow vector of the specified type, as logical.}
 }
 \value{
 Nothing or stop.

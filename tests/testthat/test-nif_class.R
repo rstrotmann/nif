@@ -11,20 +11,6 @@ test_that("subject_info works", {
 })
 
 
-test_that("subjects, usubjid works", {
-  expect_true(nrow(subjects(examplinib_sad_nif)) > 0)
-  expect_true(length(usubjid(examplinib_sad_nif)) > 0)
-})
-
-
-test_that("subjects works with minimal NIF" , {
-  expect_no_error(subjects(examplinib_poc_nif))
-  expect_no_error(subjects(examplinib_poc_min_nif))
-  expect_equal(ncol(subjects(examplinib_poc_nif)), 2)
-  expect_equal(ncol(subjects(examplinib_poc_min_nif)), 2)
-})
-
-
 test_that("parents works", {
   expect_true(length(parents(examplinib_sad_nif)) > 0)
 })
@@ -389,6 +375,322 @@ test_that("add_rtb works", {
   expect_equal(temp$DVRTB,
                c(NA, 1, 2, 3, NA, NA, NA, 4, NA, 1, 2, 3, 4))
 })
+
+
+test_that("subjects.nif works with standard NIF object", {
+  result <- subjects(examplinib_sad_nif)
+
+  # Check return type
+  expect_s3_class(result, "data.frame")
+  expect_equal(ncol(result), 2)
+  expect_equal(names(result), c("ID", "USUBJID"))
+
+  # Check that we get unique subjects
+  expect_equal(nrow(result), length(unique(examplinib_sad_nif$ID)))
+
+  # Check that all IDs are present
+  expect_equal(sort(result$ID), sort(unique(examplinib_sad_nif$ID)))
+
+  # Check that USUBJID values are character
+  expect_type(result$USUBJID, "character")
+})
+
+
+test_that("subjects.nif works with minimal NIF object", {
+  # Create minimal NIF without USUBJID
+  minimal_nif <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
+    1,   0,     10,   1,    1,     10,    NA,
+    1,   1,     0,    2,    0,     10,    5.2,
+    1,   2,     0,    2,    0,     10,    4.8,
+    2,   0,     10,   1,    1,     10,    NA,
+    2,   1,     0,    2,    0,     10,    6.1,
+    2,   2,     0,    2,    0,     10,    5.9
+  ) %>%
+    new_nif()
+
+  result <- subjects(minimal_nif)
+
+  # Check return type
+  expect_s3_class(result, "data.frame")
+  expect_equal(ncol(result), 2)
+  expect_equal(names(result), c("ID", "USUBJID"))
+
+  # Check that USUBJID column is filled with NA
+  expect_true(all(is.na(result$USUBJID)))
+
+  # Check that we get unique subjects
+  expect_equal(nrow(result), length(unique(minimal_nif$ID)))
+})
+
+
+test_that("subjects.nif works with empty NIF object", {
+  empty_nif <- new_nif()
+  result <- subjects(empty_nif)
+
+  # Check return type
+  expect_s3_class(result, "data.frame")
+  expect_equal(ncol(result), 2)
+  expect_equal(names(result), c("ID", "USUBJID"))
+  expect_equal(nrow(result), 0)
+})
+
+
+test_that("subjects.nif handles NA values in ID correctly", {
+  na_id_nif <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~USUBJID,
+    1,   0,     10,   1,    1,     10,    NA,  "SUBJ001",
+    NA,  1,     0,    2,    0,     10,    5.2, "SUBJ002",  # NA ID
+    2,   0,     10,   1,    1,     10,    NA,  "SUBJ003",
+    2,   1,     0,    2,    0,     10,    6.1, "SUBJ003"
+  ) %>%
+    new_nif()
+
+  result <- subjects(na_id_nif)
+
+  # Should include NA ID as a distinct value
+  expect_equal(nrow(result), 3)
+  expect_true(any(is.na(result$ID)))
+  expect_equal(sort(result$ID, na.last = TRUE), c(1, 2, NA))
+})
+
+
+test_that("subjects.nif works with only ID column", {
+  id_only_nif <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
+    1,   0,     10,   1,    1,     10,    NA,
+    1,   1,     0,    2,    0,     10,    5.2,
+    2,   0,     10,   1,    1,     10,    NA,
+    2,   1,     0,    2,    0,     10,    6.1
+  ) %>%
+    new_nif()
+
+  result <- subjects(id_only_nif)
+
+  # Should create USUBJID column filled with NA
+  expect_equal(ncol(result), 2)
+  expect_equal(names(result), c("ID", "USUBJID"))
+  expect_true(all(is.na(result$USUBJID)))
+  expect_equal(nrow(result), 2)
+})
+
+
+test_that("subjects.nif works with only USUBJID column", {
+  usubjid_only_nif <- tibble::tribble(
+    ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
+    "SUBJ001", 0,     10,   1,    1,     10,    NA,
+    "SUBJ001", 1,     0,    2,    0,     10,    5.2,
+    "SUBJ002", 0,     10,   1,    1,     10,    NA,
+    "SUBJ002", 1,     0,    2,    0,     10,    6.1
+  ) %>%
+    new_nif()
+
+  expect_error(
+    subjects(usubjid_only_nif),
+    "ID column missing!"
+  )
+})
+
+
+test_that("subjects.nif works with neither ID nor USUBJID columns", {
+  no_id_nif <- tibble::tribble(
+    ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
+    0,     10,   1,    1,     10,    NA,
+    1,     0,    2,    0,     10,    5.2,
+    2,     0,    2,    0,     10,    4.8
+  ) %>%
+    new_nif()
+
+  expect_error(
+    result <- subjects(no_id_nif),
+    "ID column missing!"
+  )
+})
+
+
+test_that("subjects.nif preserves data types", {
+  result <- subjects(examplinib_sad_nif)
+
+  # ID should be numeric
+  expect_type(result$ID, "double")
+
+  # USUBJID should be character
+  expect_type(result$USUBJID, "character")
+})
+
+
+test_that("usubjid works with valid single ID", {
+  # Test with a valid single ID
+  result <- usubjid(examplinib_sad_nif, 1)
+  expect_type(result, "character")
+  expect_equal(length(result), 1)
+
+  # Verify it matches the subjects function result
+  subjects_df <- subjects(examplinib_sad_nif)
+  expected <- subjects_df$USUBJID[subjects_df$ID == 1]
+  expect_equal(result, expected)
+})
+
+
+test_that("usubjid works with multiple IDs", {
+  # Test with multiple valid IDs
+  result <- usubjid(examplinib_sad_nif, c(1, 2))
+  expect_type(result, "character")
+  expect_equal(length(result), 2)
+
+  # Verify it matches the subjects function result
+  subjects_df <- subjects(examplinib_sad_nif)
+  expected <- subjects_df$USUBJID[subjects_df$ID %in% c(1, 2)]
+  expect_equal(result, expected)
+})
+
+
+test_that("usubjid works with minimal NIF", {
+  # Create minimal NIF without USUBJID
+  minimal_nif <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
+    1,   0,     10,   1,    1,     10,    NA,
+    1,   1,     0,    2,    0,     10,    5.2,
+    2,   0,     10,   1,    1,     10,    NA,
+    2,   1,     0,    2,    0,     10,    6.1
+  ) %>%
+    new_nif()
+
+  # Should error because USUBJID field is not found
+  expect_error(
+    usubjid(minimal_nif, 1),
+    "USUBJID field not found"
+  )
+})
+
+
+test_that("usubjid handles missing IDs gracefully", {
+  # Test with IDs that don't exist in the data
+  expect_message(
+    result <- usubjid(examplinib_sad_nif, c(999, 1000), silent = FALSE),
+    "IDs not found: 999 and 1000"
+  )
+  expect_type(result, "character")
+  expect_equal(length(result), 0)
+})
+
+
+test_that("usubjid handles mixed valid and invalid IDs", {
+  # Test with mix of valid and invalid IDs
+  subjects_df <- subjects(examplinib_sad_nif)
+  valid_ids <- subjects_df$ID[1:2]  # First two valid IDs
+
+  expect_message(
+    result <- usubjid(examplinib_sad_nif, c(valid_ids, 999, 1000), silent=FALSE),
+    "IDs not found: 999 and 1000"
+  )
+  expect_type(result, "character")
+  expect_equal(length(result), 2)  # Only valid IDs should be returned
+
+  # Verify it matches the subjects function result for valid IDs
+  expected <- subjects_df$USUBJID[subjects_df$ID %in% valid_ids]
+  expect_equal(result, expected)
+})
+
+
+test_that("usubjid validates input parameters", {
+  # Test with non-numeric ID
+  expect_error(
+    usubjid(examplinib_sad_nif, "1"),
+    "must be a numeric value"
+  )
+
+  # Test with logical ID
+  expect_error(
+    usubjid(examplinib_sad_nif, TRUE),
+    "must be a numeric value"
+  )
+})
+
+
+test_that("usubjid works with empty NIF", {
+  empty_nif <- new_nif()
+
+  # Should error because USUBJID field is not found
+  expect_error(
+    usubjid(empty_nif, 1),
+    "USUBJID field not found"
+  )
+})
+
+
+test_that("usubjid works with NIF containing NA USUBJID", {
+  # Create NIF with NA USUBJID values
+  na_usubjid_nif <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~USUBJID,
+    1,   0,     10,   1,    1,     10,    NA,  "SUBJ001",
+    2,   0,     10,   1,    1,     10,    NA,  NA,  # NA USUBJID
+    3,   0,     10,   1,    1,     10,    NA,  "SUBJ003"
+  ) %>%
+    new_nif()
+
+  # Test with ID that has NA USUBJID
+  result <- usubjid(na_usubjid_nif, 2)
+  expect_type(result, "character")
+  expect_true(is.na(result))
+
+  # Test with ID that has valid USUBJID
+  result <- usubjid(na_usubjid_nif, 1)
+  expect_type(result, "character")
+  expect_equal(result, "SUBJ001")
+})
+
+
+test_that("usubjid works with silent parameter", {
+  # Test with silent = TRUE
+  result <- usubjid(examplinib_sad_nif, c(1, 999), silent = TRUE)
+  expect_type(result, "character")
+  expect_equal(length(result), 1)  # Only valid ID returned
+
+  # Test with silent = FALSE (should show message about missing ID)
+  expect_message(
+    usubjid(examplinib_sad_nif, c(1, 999), silent = FALSE),
+    "ID not found"
+  )
+})
+
+
+test_that("usubjid handles edge cases", {
+  # Test with zero ID
+  expect_message(
+    result <- usubjid(examplinib_sad_nif, 0, silent = FALSE),
+    "ID not found"
+  )
+  expect_type(result, "character")
+  expect_equal(length(result), 0)
+
+  # Test with negative ID
+  expect_message(
+    result <- usubjid(examplinib_sad_nif, -1, silent = FALSE),
+    "ID not found"
+  )
+  expect_type(result, "character")
+  expect_equal(length(result), 0)
+
+  # Test with decimal ID
+  expect_message(
+    result <- usubjid(examplinib_sad_nif, 1.5, silent = FALSE),
+    "ID not found"
+  )
+  expect_type(result, "character")
+  expect_equal(length(result), 0)
+})
+
+
+test_that("usubjid validates NIF object", {
+  # Test with non-NIF object
+  non_nif_df <- data.frame(ID = 1, USUBJID = "TEST")
+  expect_error(
+    usubjid(non_nif_df, 1),
+    "Input must be a nif object"
+  )
+})
+
 
 
 

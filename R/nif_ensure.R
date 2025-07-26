@@ -88,9 +88,10 @@ ensure_dose <- function(obj) {
 #' @noRd
 ensure_parent <- function(obj) {
   # Validate input is a NIF object
-  if (!inherits(obj, "nif")) {
-    stop("Input must be a NIF object")
-  }
+  # if (!inherits(obj, "nif")) {
+  #   stop("Input must be a NIF object")
+  # }
+  validate_nif(obj)
 
   # Validate required columns exist
   required_cols <- c("EVID", "CMT")

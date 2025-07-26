@@ -64,6 +64,6 @@ test_that("ensure_parent() works correctly", {
   expect_error(ensure_parent(missing_cmt_nif), "Missing required columns: CMT")
 
   # Not a NIF object
-  expect_error(ensure_parent(as.data.frame(test_nif)), "Input must be a NIF object")
+  expect_error(ensure_parent(as.data.frame(test_nif)), "Input must be a nif object")
 })
 
