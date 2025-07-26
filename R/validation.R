@@ -64,8 +64,19 @@ validate_param <- function(
 #' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
-validate_char_param <- function(...) {
-  validate_param("string", ...)
+validate_char_param <- function(
+    param,
+    param_name,
+    allow_null = FALSE,
+    allow_empty = FALSE,
+    allow_multiple = FALSE) {
+  validate_param(
+    "string",
+     param,
+     param_name,
+     allow_null,
+     allow_empty,
+     allow_multiple)
 }
 
 #' Validate logical parameter
@@ -77,8 +88,19 @@ validate_char_param <- function(...) {
 #' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
-validate_logical_param <- function(...) {
-  validate_param("logical", ...)
+validate_logical_param <- function(
+    param,
+    param_name,
+    allow_null = FALSE,
+    allow_empty = FALSE,
+    allow_multiple = FALSE) {
+  validate_param(
+    "logical",
+    param,
+    param_name,
+    allow_null,
+    allow_empty,
+    allow_multiple)
 }
 
 #' Validate numeric parameter
@@ -90,8 +112,19 @@ validate_logical_param <- function(...) {
 #' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
-validate_numeric_param <- function(...) {
-  validate_param("numeric", ...)
+validate_numeric_param <- function(
+    param,
+    param_name,
+    allow_null = FALSE,
+    allow_empty = FALSE,
+    allow_multiple = FALSE) {
+  validate_param(
+    "numeric",
+    param,
+    param_name,
+    allow_null,
+    allow_empty,
+    allow_multiple)
 }
 
 

@@ -4,7 +4,13 @@
 \alias{validate_numeric_param}
 \title{Validate numeric parameter}
 \usage{
-validate_numeric_param(...)
+validate_numeric_param(
+  param,
+  param_name,
+  allow_null = FALSE,
+  allow_empty = FALSE,
+  allow_multiple = FALSE
+)
 }
 \arguments{
 \item{param}{The parameter to be tested.}

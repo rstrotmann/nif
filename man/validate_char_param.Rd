@@ -4,7 +4,13 @@
 \alias{validate_char_param}
 \title{Validate character parameter}
 \usage{
-validate_char_param(...)
+validate_char_param(
+  param,
+  param_name,
+  allow_null = FALSE,
+  allow_empty = FALSE,
+  allow_multiple = FALSE
+)
 }
 \arguments{
 \item{param}{The parameter to be tested.}

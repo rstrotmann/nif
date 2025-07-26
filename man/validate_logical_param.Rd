@@ -4,7 +4,13 @@
 \alias{validate_logical_param}
 \title{Validate logical parameter}
 \usage{
-validate_logical_param(...)
+validate_logical_param(
+  param,
+  param_name,
+  allow_null = FALSE,
+  allow_empty = FALSE,
+  allow_multiple = FALSE
+)
 }
 \arguments{
 \item{param}{The parameter to be tested.}
