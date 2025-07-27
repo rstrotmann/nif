@@ -677,10 +677,6 @@ import_observation <- function(
     debug = FALSE,
     silent = NULL
   ) {
-  # # Validate inputs
-  # if (!inherits(nif, "nif")) {
-  #   stop("nif must be an nif object")
-  # }
 
   # validate inputs
   validate_min_nif(nif)
