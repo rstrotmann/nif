@@ -18,7 +18,6 @@ create_edish_sdtm <- function() {
     )
   )
 
-  # class(out) <- c("sdtm", "list")
   new_sdtm(out)
 }
 
@@ -26,19 +25,19 @@ create_edish_sdtm <- function() {
 # Helper function to create mock NIF data
 create_edish_nif <- function() {
   out <- tibble::tribble(
-    ~ID, ~TIME, ~NTIME, ~DV, ~ANALYTE, ~EVID, ~CMT, ~PARENT, ~DTC,
-      1,     0,      0,   0,      "A",     1,    1,     "A", "2024-01-01",
-      1,     0,      0,   1,      "A",     0,    2,     "A", "2024-01-01",
-      1,    24,     24,   2,      "A",     0,    2,     "A", "2024-01-02"
-  ) %>% mutate(USUBJID = "SUBJ001") %>% lubrify_dates()
-  # class(out) <- c("nif", "data.frame")
+      ~ID, ~TIME, ~NTIME, ~DV, ~ANALYTE, ~EVID, ~CMT, ~PARENT,         ~DTC,  ~USUBJID, ~AMT, ~DOSE,
+      1,     0,      0,   0,      "A",     1,    1,     "A", "2024-01-01", "SUBJ001",   10,    10,
+      1,     0,      0,   1,      "A",     0,    2,     "A", "2024-01-01", "SUBJ001",   10,    10,
+      1,    24,     24,   2,      "A",     0,    2,     "A", "2024-01-02", "SUBJ001",   10,    10
+    ) %>%
+    lubrify_dates()
   new_nif(out)
 }
 
 
 test_that("edish_plot handles valid input correctly", {
-  result <- edish_plot(create_edish_nif(), create_edish_sdtm(),
-                       ntime_method = "ELTM")
+  result <- edish_plot(
+    create_edish_nif(), create_edish_sdtm(), ntime_method = "ELTM")
   expect_s3_class(result, "ggplot")
   expect_equal(result$labels$x, "ALT/ULN")
   expect_equal(result$labels$y, "BILI/ULN")
@@ -75,9 +74,9 @@ test_that("edish_plot handles zero ULN values", {
 
   invisible(capture.output(
     expect_error(
-    edish_plot(create_edish_nif(), sdtm),
-    "Data validation failed"
-  )
+      edish_plot(create_edish_nif(), sdtm),
+      "Data validation failed"
+    )
   ))
 })
 

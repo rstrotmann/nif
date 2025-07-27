@@ -53,7 +53,7 @@ test_that("add_observation warns about duplicate compartment", {
   # Try to add observation with the same compartment
   expect_warning(
     base_nif %>%
-      add_observation(examplinib_sad, "pc", "RS2023", cmt = 1),
+      add_observation(examplinib_sad, "pc", "RS2023", cmt = 1, silent = TRUE),
     "Compartment 1 is already assigned!"
   )
 })

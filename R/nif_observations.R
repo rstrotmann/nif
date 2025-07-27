@@ -481,20 +481,25 @@ add_observation <- function(
     duplicate_function = mean,
     na.rm = TRUE
 ) {
-  # Validate inputs
-  if (!inherits(nif, "nif")) {
-    stop("nif must be an nif object")
-  }
-
-  # Validate factor parameter
-  if (!is.numeric(factor) || length(factor) != 1) {
-    stop("factor must be a single numeric value")
-  }
-
-  # Validate metabolite parameter
-  if (!is.logical(metabolite) || length(metabolite) != 1) {
-    stop("metabolite must be a single logical value")
-  }
+  # validate inputs
+  validate_min_nif(nif)
+  validate_char_param(domain, "domain")
+  validate_char_param(testcd, "testcd")
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_char_param(parent, "parent", allow_null = TRUE)
+  validate_logical_param(metabolite, "metabolite")
+  validate_numeric_param(cmt, "cmt", allow_null = TRUE)
+  validate_char_param(subject_filter, "subject_filter")
+  validate_char_param(observation_filter, "observation_filter")
+  validate_char_param(TESTCD_field, "TESTCD_field", allow_null = TRUE)
+  validate_char_param(DTC_field, "DTC_field", allow_null = TRUE)
+  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
+  validate_numeric_param(factor, "factor")
+  validate_char_param(ntime_method, "ntime_method", allow_null = TRUE)
+  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
+  validate_logical_param(debug, "debug")
+  validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
+  validate_logical_param(silent, "silent", allow_null = TRUE)
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug))
@@ -672,10 +677,23 @@ import_observation <- function(
     debug = FALSE,
     silent = NULL
   ) {
-  # Validate inputs
-  if (!inherits(nif, "nif")) {
-    stop("nif must be an nif object")
-  }
+  # # Validate inputs
+  # if (!inherits(nif, "nif")) {
+  #   stop("nif must be an nif object")
+  # }
+
+  # validate inputs
+  validate_min_nif(nif)
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_char_param(parent, "parent", allow_null = TRUE)
+  validate_numeric_param(cmt, "cmt", allow_null = TRUE)
+  validate_char_param(observation_filter, "observation_filter")
+  validate_char_param(DTC_field, "DTC_field", allow_null = TRUE)
+  validate_char_param(NTIME_field, "NTIME_field", allow_null = TRUE)
+  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
+  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
+  validate_logical_param(debug, "debug")
+  validate_logical_param(silent, "silent", allow_null = TRUE)
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -736,7 +754,7 @@ import_observation <- function(
 
   obs <- filtered_raw %>%
     mutate(USUBJID = .data[[USUBJID_field]]) %>%
-    {if(!is.na(NTIME_field)) mutate(., NTIME = .data[[NTIME_field]]) else .} %>%
+    {if(!is.null(NTIME_field)) mutate(., NTIME = .data[[NTIME_field]]) else .} %>%
     mutate(DV = .data[[DV_field]]) %>%
     select(any_of(c("USUBJID", "NTIME", "DV", DTC_field))) %>%
     mutate(

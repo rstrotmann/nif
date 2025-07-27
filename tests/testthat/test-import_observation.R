@@ -52,7 +52,7 @@ test_that("import_observation validates input parameters correctly", {
       analyte = "TEST",
       DV_field = "DV_VALUE"
     ),
-    "nif must be an nif object"
+    "Input must be a nif object"
   )
 
   test_nif <- create_test_nif()
@@ -124,7 +124,7 @@ test_that("import_observation correctly handles DTC field", {
     cmt = 2,
     DV_field = "DV_VALUE",
     DTC_field = "OBS_DTC",
-    NTIME_field = NA
+    NTIME_field = NULL
   )
 
   # Check structure
@@ -338,3 +338,4 @@ test_that("import_observation correctly sets debug fields", {
   expect_equal(unique(obs_records$SRC_DOMAIN), "IMPORT")
   expect_true(all(is.na(obs_records$SRC_SEQ)))
 })
+
