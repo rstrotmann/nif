@@ -128,15 +128,33 @@ validate_numeric_param <- function(
 }
 
 
-#' Validate nif parameter
+#' Validate nif object
 #'
 #' @param obj A nif object.
 #'
-#' @returns Nothin or stop.
+#' @returns Nothing or stop.
+#'
 validate_nif <- function(obj) {
   if (!inherits(obj, "nif")) {
     stop("Input must be a nif object")
   }
 }
 
+
+#' Validate nif object with minimally required fields
+#'
+#' @param obj A nif object.
+#'
+#' @returns Nothing or stop.
+#'
+validate_min_nif <- function(obj) {
+  validate_nif(obj)
+  missing_fields <- setdiff(minimal_nif_fields, names(obj))
+  if(length(missing_fields) > 0) {
+    stop(paste0(
+      "missing required ", plural("field", length(missing_fields) > 1), ": ",
+      nice_enumeration(missing_fields)
+    ))
+  }
+}
 

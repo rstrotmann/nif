@@ -552,6 +552,9 @@ analytes <- function(obj) {
 #' analytes(examplinib_poc_nif)
 #' analytes(examplinib_poc_min_nif)
 analytes.nif <- function(obj) {
+  # input validation
+  validate_nif(obj)
+
   ensure_analyte(obj) %>%
     as.data.frame() %>%
     filter(.data$EVID == 0) %>%

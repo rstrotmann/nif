@@ -233,17 +233,18 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' summary(new_nif())
 summary.nif <- function(object, ...) {
   # input validation
-  validate_nif(object)
-
-  # Validate required fields exist
-  required_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
-  missing_fields <- required_fields[!required_fields %in% names(object)]
-  if(length(missing_fields) > 0){
-    stop(paste0(
-      "missing required ", plural("field", length(missing_fields) > 1), ": ",
-      nice_enumeration(missing_fields)
-    ))
-  }
+  # validate_nif(object)
+  #
+  # # Validate required fields exist
+  # required_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
+  # missing_fields <- required_fields[!required_fields %in% names(object)]
+  # if(length(missing_fields) > 0){
+  #   stop(paste0(
+  #     "missing required ", plural("field", length(missing_fields) > 1), ": ",
+  #     nice_enumeration(missing_fields)
+  #   ))
+  # }
+  validate_min_nif(object)
 
   # Validate data is not empty
   if (nrow(object) == 0) {

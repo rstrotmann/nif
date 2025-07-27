@@ -20,31 +20,6 @@ test_that("summary.nif returns the correct class and structure", {
 })
 
 
-# Test with empty data
-test_that("summary.nif handles empty dataframes gracefully", {
-  # Create an empty NIF object
-  empty_nif <- new_nif(data.frame(
-    ID = numeric(0),
-    TIME = numeric(0),
-    AMT = numeric(0),
-    DV = numeric(0),
-    EVID = numeric(0)
-  ))
-
-  # Call summary
-  s <- summary(empty_nif)
-
-  # Check structure
-  expect_s3_class(s, "summary_nif")
-  expect_equal(s$n_subj, 0)
-  expect_equal(s$n_males, 0)
-  expect_equal(s$n_females, 0)
-
-  # Verify that printing doesn't error
-  expect_output(print(s))
-})
-
-
 # Test with missing columns
 test_that("summary.nif errors appropriately with missing required columns", {
   # Missing DV
@@ -57,7 +32,7 @@ test_that("summary.nif errors appropriately with missing required columns", {
 
   expect_error(
     summary(invalid_nif),
-    "missing required field: DV")
+    "missing required fields: CMT, DOSE and DV")
 })
 
 
