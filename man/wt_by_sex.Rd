@@ -10,7 +10,7 @@ wt_by_sex(obj)
 \item{obj}{The NIF file object.}
 }
 \value{
-A plot object.
+A ggplot object.
 }
 \description{
 Weight by sex diagram

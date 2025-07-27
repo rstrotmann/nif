@@ -31,7 +31,7 @@ Defaults to 11.}
 \item{title}{The title as character.}
 }
 \value{
-A plot object.
+A ggplot object.
 }
 \description{
 Generic covariate distribution histogram

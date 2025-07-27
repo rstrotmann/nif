@@ -233,17 +233,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' summary(new_nif())
 summary.nif <- function(object, ...) {
   # input validation
-  # validate_nif(object)
-  #
-  # # Validate required fields exist
-  # required_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
-  # missing_fields <- required_fields[!required_fields %in% names(object)]
-  # if(length(missing_fields) > 0){
-  #   stop(paste0(
-  #     "missing required ", plural("field", length(missing_fields) > 1), ": ",
-  #     nice_enumeration(missing_fields)
-  #   ))
-  # }
   validate_min_nif(object)
 
   # Validate data is not empty
@@ -396,28 +385,6 @@ print.summary_nif <- function(x, color = FALSE, ...) {
 
   cat(paste0(df_to_string(x$n_studies, color=color, indent = indent), "\n\n"))
 
-  # # Handle sex distribution with safety checks
-  # total_sex <- x$n_males + x$n_females
-  # if (total_sex > 0) {
-  #   male_percent <- round(x$n_males / total_sex * 100, 1)
-  #   female_percent <- round(x$n_females / total_sex * 100, 1)
-  #
-  #   cat(paste0(
-  #     "Sex distribution:\n",
-  #     spacer,
-  #     "males: ", x$n_males, " (",
-  #     male_percent, "%)",
-  #     ", females: ", x$n_females," (",
-  #     female_percent, "%)\n\n"
-  #   ))
-  # } else {
-  #   cat(paste0(
-  #     "Sex distribution:\n",
-  #     spacer,
-  #     "males: 0, females: 0 (no sex data available)\n\n"
-  #   ))
-  # }
-
   if (!is.null(x$sex)){
     cat(paste0(
       "Sex distribution:\n",
@@ -484,6 +451,9 @@ print.summary_nif <- function(x, color = FALSE, ...) {
 #' @return A data frame.
 #' @noRd
 get_cov_plot_params <- function(field) {
+  # input validation
+  validate_char_param(field, "field")
+
   params <- tribble(
     ~field, ~binwidth, ~xlabel, ~title, ~limits,
     "AGE", 5, "age (years)", "Age", NULL,
@@ -572,13 +542,23 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 #' @param title The title as character.
 #' @param density Plot density instead of N on the y axis, as logical.
 #'
-#' @return A plot object.
+#' @return A ggplot object.
 #' @export
 #' @examples
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
-covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
-                           density = TRUE, title = NULL) {
+covariate_hist <- function(
+    obj, cov, nbins = 11, group = NULL, alpha = 0.5,
+    density = TRUE, title = NULL) {
+  # input validation
+  validate_min_nif(obj)
+  validate_char_param(cov, "cov")
+  validate_numeric_param(nbins, "nbins")
+  validate_char_param(group, "group", allow_null = TRUE)
+  validate_numeric_param(alpha, "alpha")
+  validate_logical_param(density, "density")
+  validate_char_param(title, "title", allow_null = TRUE)
+
   cov_params <- get_cov_plot_params(cov)
   xlabel <- cov_params$xlabel
   if (is.na(xlabel)) {
@@ -655,7 +635,14 @@ covariate_hist <- function(obj, cov, nbins = 11, group = NULL, alpha = 0.5,
 #'
 #' @examples
 #' covariate_barplot(examplinib_poc_nif, "SEX")
-covariate_barplot <- function(obj, cov, group = NULL, title = NULL) {
+covariate_barplot <- function(
+    obj, cov, group = NULL, title = NULL) {
+  # input validation
+  validate_min_nif(obj)
+  validate_char_param(cov, "cov")
+  validate_char_param(group, "group", allow_null = TRUE)
+  validate_char_param(title, "title", allow_null = TRUE)
+
   if(is.null(title)) {
     title = cov
     if(!is.null(group)) {
@@ -704,12 +691,15 @@ covariate_barplot <- function(obj, cov, group = NULL, title = NULL) {
 #'
 #' @param obj The NIF file object.
 #'
-#' @return A plot object.
+#' @return A ggplot object.
 #' @export
 #' @keywords internal
 #' @examples
 #' wt_by_sex(examplinib_poc_nif)
 wt_by_sex <- function(obj) {
+  # input validation
+  validate_min_nif(obj, c("SEX", "WEIGHT"))
+
   obj %>%
     as.data.frame() %>%
     group_by(ID) %>%
@@ -741,6 +731,9 @@ wt_by_sex <- function(obj) {
 #' @examples
 #' wt_by_race(examplinib_poc_nif)
 wt_by_race <- function(obj) {
+  # input validation
+  validate_min_nif(obj, c("RACE", "WEIGHT"))
+
   obj %>%
     as.data.frame() %>%
     group_by(ID) %>%
@@ -783,6 +776,10 @@ wt_by_race <- function(obj) {
 #' @examples
 #' wt_by_ht(examplinib_poc_nif)
 wt_by_ht <- function(obj, alpha = 0.7) {
+  # input validation
+  validate_min_nif(obj, c("HEIGHT", "WEIGHT"))
+  validate_numeric_param(alpha, "alpha")
+
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
@@ -805,6 +802,10 @@ wt_by_ht <- function(obj, alpha = 0.7) {
 #' @examples
 #' ht_by_wt(examplinib_poc_nif)
 ht_by_wt <- function(obj, alpha = 0.7) {
+  # input validation
+  validate_min_nif(obj, c("HEIGHT", "WEIGHT"))
+  validate_numeric_param(alpha, "alpha")
+
   obj %>%
     as.data.frame() %>%
     distinct(ID, HEIGHT, WEIGHT) %>%
@@ -828,6 +829,10 @@ ht_by_wt <- function(obj, alpha = 0.7) {
 #' @examples
 #' bmi_by_age(examplinib_poc_nif)
 bmi_by_age <- function(obj, alpha = 0.7) {
+  # input validation
+  validate_min_nif(obj, c("AGE", "BMI"))
+  validate_numeric_param(alpha, "alpha")
+
   obj %>%
     as.data.frame() %>%
     distinct(ID, AGE, BMI) %>%
@@ -852,14 +857,16 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 #' @keywords internal
 #' @export
 time_by_ntime <- function(obj, max_time = NULL, ...) {
+  # input validation
+  validate_min_nif(obj, c("NTIME", "ANALYTE"))
+  validate_numeric_param(max_time, "max_time", allow_null = TRUE)
+
   if(is.null(max_time)) {
     max_time <- max_time(obj, only_observations = TRUE)
   }
 
   obj %>%
     ensure_analyte() %>%
-    assertr::verify(assertr::has_all_names(
-      "ID", "TIME", "NTIME", "EVID", "ANALYTE")) %>%
     filter(TIME <= max_time) %>%
     filter(EVID == 0) %>%
     filter(!is.na(TIME)) %>%
@@ -879,6 +886,9 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
 #' @examples
 #' administration_summary(examplinib_poc_nif)
 administration_summary <- function(obj) {
+  # input validation
+  validate_min_nif(obj)
+
   temp <- obj %>%
     ensure_parent() %>%
     n_administrations()
@@ -913,13 +923,25 @@ administration_summary <- function(obj) {
 #' @keywords internal
 #' @examples
 #' mean_dose_plot(examplinib_poc_nif)
-mean_dose_plot <- function(obj, analyte = NULL, title = NULL) {
+mean_dose_plot <- function(
+    obj, analyte = NULL, title = NULL) {
+  # input validation
+  validate_min_nif(obj, c("ANALYTE"))
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_char_param(title, "title", allow_null = TRUE)
+
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
   }
 
+  # make plot title
   if(is.null(title)) {
-    title <- paste0("Mean ", analyte, " dose over time")
+    if("STUDYID" %in% names(obj)) {
+      title <- paste0(nice_enumeration(unique(obj$STUDYID)), ": ")
+    } else {
+      title <- ""
+    }
+    title <- paste0(title, "Mean ", analyte, " dose over time")
   }
 
   obj %>%
@@ -957,7 +979,13 @@ mean_dose_plot <- function(obj, analyte = NULL, title = NULL) {
 #' subs_per_dose_level(examplinib_poc_nif)
 #' subs_per_dose_level(examplinib_sad_nif)
 #' subs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
-subs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
+subs_per_dose_level <- function(
+    obj, analyte = NULL, group = NULL) {
+  # input validation
+  validate_min_nif(obj)
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_char_param(group, "group", allow_null = TRUE)
+
   if(is.null(analyte)) {
     analyte <- analytes(obj)
   }
@@ -987,7 +1015,13 @@ subs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
 #' obs_per_dose_level(examplinib_poc_nif)
 #' obs_per_dose_level(examplinib_sad_nif)
 #' obs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
-obs_per_dose_level <- function(obj, analyte = NULL, group = NULL) {
+obs_per_dose_level <- function(
+    obj, analyte = NULL, group = NULL) {
+  # input validation
+  validate_min_nif(obj)
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_char_param(group, "group", allow_null = TRUE)
+
   if(is.null(analyte)) {
     analyte <- analytes(obj)
   }

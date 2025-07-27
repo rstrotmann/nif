@@ -144,12 +144,17 @@ validate_nif <- function(obj) {
 #' Validate nif object with minimally required fields
 #'
 #' @param obj A nif object.
+#' @param additional_fields Additional required fields as character.
 #'
 #' @returns Nothing or stop.
 #'
-validate_min_nif <- function(obj) {
+validate_min_nif <- function(obj, additional_fields = NULL) {
   validate_nif(obj)
-  missing_fields <- setdiff(minimal_nif_fields, names(obj))
+
+  missing_fields <- setdiff(
+    c(minimal_nif_fields, additional_fields),
+    names(obj))
+
   if(length(missing_fields) > 0) {
     stop(paste0(
       "missing required ", plural("field", length(missing_fields) > 1), ": ",

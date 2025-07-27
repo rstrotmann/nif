@@ -4,10 +4,12 @@
 \alias{validate_min_nif}
 \title{Validate nif object with minimally required fields}
 \usage{
-validate_min_nif(obj)
+validate_min_nif(obj, additional_fields = NULL)
 }
 \arguments{
 \item{obj}{A nif object.}
+
+\item{additional_fields}{Additional required fields as character.}
 }
 \value{
 Nothing or stop.
