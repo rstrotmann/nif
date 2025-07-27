@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,31 +46,37 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">validate_char_param</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">validate_char_param</span><span class="op">(</span></span>
+<span>  <span class="va">param</span>,</span>
+<span>  <span class="va">param_name</span>,</span>
+<span>  allow_null <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  allow_empty <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  allow_multiple <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="validate_param.html">validate_param</a></code></p><dl><dt><code>param</code></dt>
+<dl><dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>The parameter to be tested.</p></dd>
 
-    <dt><code>param_name</code></dt>
+
+<dt id="arg-param-name">param_name<a class="anchor" aria-label="anchor" href="#arg-param-name"></a></dt>
 <dd><p>The parameter name as character.</p></dd>
 
-    <dt><code>allow_null</code></dt>
+
+<dt id="arg-allow-null">allow_null<a class="anchor" aria-label="anchor" href="#arg-allow-null"></a></dt>
 <dd><p>Allow NULL values, as logical.</p></dd>
 
-    <dt><code>allow_empty</code></dt>
+
+<dt id="arg-allow-empty">allow_empty<a class="anchor" aria-label="anchor" href="#arg-allow-empty"></a></dt>
 <dd><p>Allow empty parameter, as logical.</p></dd>
 
-    <dt><code>allow_multiple</code></dt>
+
+<dt id="arg-allow-multiple">allow_multiple<a class="anchor" aria-label="anchor" href="#arg-allow-multiple"></a></dt>
 <dd><p>Allow vector of the specified type, as logical.</p></dd>
-
-
-</dl></dd>
 
 </dl></div>
     <div class="section level2">

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">usubjid</span><span class="op">(</span><span class="va">obj</span>, <span class="va">id</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">usubjid</span><span class="op">(</span><span class="va">obj</span>, <span class="va">id</span>, silent <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -60,6 +60,10 @@
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
 <dd><p>A subject ID in numeric form.</p></dd>
 
+
+<dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
+<dd><p>Suppress messages, defaults to nif_option setting.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -68,14 +72,8 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">usubjid</span><span class="op">(</span><span class="va">examplinib_fe_nif</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "20230004001010002" "20230004001010003" "20230004001010004"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "20230004001010006" "20230004001010007" "20230004001020002"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "20230004001020003" "20230004001020005" "20230004001020006"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "20230004001030001" "20230004001030003" "20230004001030004"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "20230004001030005" "20230004001030006" "20230004001040001"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "20230004001040002" "20230004001040006" "20230004001050001"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "20230004001050002" "20230004001050003"</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">usubjid</span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, <span class="fl">1</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "20230004001010002"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

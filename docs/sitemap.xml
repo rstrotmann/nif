@@ -316,6 +316,8 @@
 <url><loc>/reference/validate_domain.html</loc></url>
 <url><loc>/reference/validate_lbw_parameters.html</loc></url>
 <url><loc>/reference/validate_logical_param.html</loc></url>
+<url><loc>/reference/validate_min_nif.html</loc></url>
+<url><loc>/reference/validate_nif.html</loc></url>
 <url><loc>/reference/validate_numeric_param.html</loc></url>
 <url><loc>/reference/validate_param.html</loc></url>
 <url><loc>/reference/validate_sdtm.html</loc></url>
