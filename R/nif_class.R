@@ -349,6 +349,10 @@ parents <- function(obj) {
 #' @examples
 #' dose_red_sbs(examplinib_poc_nif)
 dose_red_sbs <- function(obj, analyte = NULL) {
+  # input validation
+  validate_nif(obj)
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+
   if (!"ANALYTE" %in% names(obj)) {
     obj <- obj %>%
       mutate(ANALYTE = .data$CMT)
@@ -415,6 +419,9 @@ rich_sampling_sbs <- function(obj,
 #' @examples
 #' studies(examplinib_poc_nif)
 studies <- function(obj) {
+  # input validation
+  validate_nif(obj)
+
   if ("STUDYID" %in% names(obj)) {
     return(
       obj %>%
@@ -450,6 +457,9 @@ doses <- function(obj) {
 #' @examples
 #' doses(examplinib_poc_nif)
 doses.nif <- function(obj) {
+  # input validation
+  validate_nif(obj)
+
   obj %>%
     filter(.data$AMT != 0) %>%
     distinct(.data$AMT) %>%
@@ -477,6 +487,20 @@ doses.nif <- function(obj) {
 #' dose_levels(examplinib_sad_min_nif)
 #' dose_levels(new_nif())
 dose_levels <- function(obj, cmt = 1, group = NULL) {
+  # input validation
+  validate_nif(obj)
+  validate_numeric_param(cmt, "cmt")
+  validate_char_param(group, "group", allow_null = TRUE, allow_multiple = TRUE)
+
+  expected_fields <- c("ID", "AMT", "TIME", group)
+  missing_fields <- setdiff(expected_fields, names(obj))
+  if(length(missing_fields) > 0) {
+    stop(paste0(
+      "Required ", plural("fields", length(missing_fields) > 1),
+      "missing in object: ", nice_enumeration(missing_fields)
+    ))
+  }
+
   temp <- obj %>%
     ensure_analyte() %>%
     filter(.data$AMT != 0) %>%

@@ -55,7 +55,9 @@ test_that("summary.nif errors appropriately with missing required columns", {
     EVID = 1
   ))
 
-  expect_error(summary(invalid_nif), "missing required fields")
+  expect_error(
+    summary(invalid_nif),
+    "missing required field: DV")
 })
 
 
@@ -247,3 +249,4 @@ test_that("plot.summary_nif handles weight correctly", {
   expect_true("WT_SEX" %in% names(p))
   expect_s3_class(p$WT_SEX, "ggplot")
 })
+

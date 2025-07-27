@@ -232,17 +232,17 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' summary(examplinib_poc_min_nif)
 #' summary(new_nif())
 summary.nif <- function(object, ...) {
-  # Validate input is a NIF object
-  if (!inherits(object, "nif")) {
-    stop("Input must be a NIF object")
-  }
+  # input validation
+  validate_nif(object)
 
   # Validate required fields exist
   required_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
   missing_fields <- required_fields[!required_fields %in% names(object)]
-  if (length(missing_fields) > 0) {
-    stop(sprintf("NIF object is missing required fields: %s",
-                 paste(missing_fields, collapse = ", ")))
+  if(length(missing_fields) > 0){
+    stop(paste0(
+      "missing required ", plural("field", length(missing_fields) > 1), ": ",
+      nice_enumeration(missing_fields)
+    ))
   }
 
   # Validate data is not empty
@@ -303,15 +303,12 @@ summary.nif <- function(object, ...) {
     reframe(N = n(), .by = "SEX") %>%
     complete(SEX = c(0, 1), fill = list(N = 0))
 
-  # n_sex <- sex %>%
-  #   mutate(SEX = factor(SEX, levels=c(0, 1))) %>%
-  #   tidyr::spread(SEX, N, fill = 0, drop = FALSE)
-  #
-  # # Initialize with 0 in case of missing data
-  # n_males <- ifelse("0" %in% names(n_sex), n_sex[1, "0"], 0)
-  # n_females <- ifelse("1" %in% names(n_sex), n_sex[1, "1"], 0)
   n_males = as.numeric(sex[which(sex$SEX == 0), "N"])
   n_females = as.numeric(sex[which(sex$SEX == 1), "N"])
+
+  # dose levels
+  dl_groups <- intersect(c("PART", "COHORT", "GROUP"), names(object))
+  dose_levels <- dose_levels(object, group = dl_groups)
 
   if ("BL_CRCL" %in% colnames(object)) {
     renal_function <- object %>%
@@ -363,9 +360,7 @@ summary.nif <- function(object, ...) {
     analytes = analytes,
     n_analytes = length(analytes),
     drugs = parents,
-    dose_levels = dose_levels(object,
-      group = any_of(c("PART", "COHORT", "GROUP"))
-    ),
+    dose_levels = dose_levels,
     renal_function = renal_function,
     odwg = odwg,
     administration_duration = administration_summary(object)
