@@ -292,9 +292,7 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' NULL.
 #'
 #' @return A data frame.
-#' @seealso [isofy_dates()]
-#' @keywords internal
-#' @noRd
+#' @export
 lubrify_dates <- function(obj, col = NULL) {
   if(!is.data.frame(obj)) {
     stop("obj must be a data frame!")
