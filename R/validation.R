@@ -87,7 +87,7 @@ validate_domain <- function(domain, silent = NULL) {
 }
 
 
-#' Check whether sdtm object is compliant with SDTM standard
+#' Check whether domains of sdtm object are compliant with SDTM standard
 #'
 #' @param sdtm SDTM object.
 #' @param silent Suppress optional messages, as logical. Defaults to global
@@ -101,6 +101,38 @@ validate_sdtm_domains <- function(sdtm, silent = NULL) {
     validate_domain(d, silent = silent)
   }
 }
+
+
+#' Validate sdtm object
+#'
+#' @param obj A stdm object.
+#' @param expected_domains Expected domains as character.
+#'
+#' @returns Nothing or stop.
+validate_sdtm <- function(
+    obj,
+    expected_domains = NULL) {
+  validate_char_param(expected_domains, "expected_domains", allow_null = TRUE,
+                      allow_multiple = TRUE)
+
+  if (!inherits(obj, "sdtm")) {
+    stop("Input must be a nif object")
+  }
+
+  if(!is.null(expected_domains)) {
+    expected_domains <- tolower(expected_domains)
+    missing_domains <- setdiff(expected_domains, names(obj$domains))
+    if(length(missing_domains) > 0) {
+      stop(paste0(
+        "Expected ", plural("domain", length(missing_domains) > 1),
+        " missing in sdtm object: ", nice_enumeration(missing_domains)
+      ))
+    }
+  }
+}
+
+
+
 
 
 #' Generic function parameter validation

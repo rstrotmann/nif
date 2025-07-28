@@ -201,7 +201,7 @@ expand_ex <- function(ex) {
 make_administration <- function(
     sdtm,
     extrt,
-    analyte = NA,
+    analyte = NULL,
     cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cut_off_date = NULL,
@@ -223,7 +223,7 @@ make_administration <- function(
     msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
   )
 
-  if(is.na(analyte)) {analyte <- extrt}
+  if(is.null(analyte)) {analyte <- extrt}
   if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
 
   sbs <- make_subjects(dm, vs, subject_filter, keep)
@@ -314,7 +314,7 @@ add_administration <- function(
     nif,
     sdtm,
     extrt,
-    analyte = NA,
+    analyte = NULL,
     cmt = 1,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     cut_off_date = NULL,
@@ -323,10 +323,19 @@ add_administration <- function(
     silent = NULL) {
   # validate input
   validate_min_nif(nif)
-
+  validate_sdtm(sdtm, c("dm", "ex"))
+  validate_char_param(extrt, "extrt")
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_numeric_param(cmt, "cmt")
+  validate_char_param(subject_filter, "subject_filter")
+  validate_char_param(cut_off_date, "cut_off_date", allow_null = TRUE)
+  validate_char_param(keep, "keep", allow_null = TRUE)
+  validate_logical_param(debug, "debug")
+  validate_logical_param(silent, "silent", allow_null = TRUE)
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+  if(isTRUE(debug))
+    keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
   bind_rows(
     nif,
     make_administration(

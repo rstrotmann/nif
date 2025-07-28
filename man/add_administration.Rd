@@ -8,7 +8,7 @@ add_administration(
   nif,
   sdtm,
   extrt,
-  analyte = NA,
+  analyte = NULL,
   cmt = 1,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,

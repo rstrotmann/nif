@@ -2,7 +2,7 @@
 % Please edit documentation in R/validation.R
 \name{validate_sdtm_domains}
 \alias{validate_sdtm_domains}
-\title{Check whether sdtm object is compliant with SDTM standard}
+\title{Check whether domains of sdtm object are compliant with SDTM standard}
 \usage{
 validate_sdtm_domains(sdtm, silent = NULL)
 }
@@ -17,5 +17,5 @@ Invisibly returns TRUE if validation passes, or stops with an error
 if required columns are missing.
 }
 \description{
-Check whether sdtm object is compliant with SDTM standard
+Check whether domains of sdtm object are compliant with SDTM standard
 }
