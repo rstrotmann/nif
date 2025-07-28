@@ -443,8 +443,22 @@ compose_dtc <- function(date, time) {
 #'
 #' @return A data frame.
 #' @export
-#' @keywords internal
 decompose_dtc <- function(obj, DTC_field) {
+  # input validation
+    if(!is.data.frame(obj)) {
+      stop("obj must be a data frame!")
+    }
+  validate_char_param(DTC_field, "DTC_field", allow_multiple = TRUE)
+
+  missing_fields <- setdiff(DTC_field, names(obj))
+  n_missing <- length(missing_fields)
+  if(n_missing > 0) {
+    stop(paste0(
+      plural("Column", n_missing > 1), " not found in obj: ",
+      nice_enumeration(missing_fields)
+    ))
+  }
+
   dec_dtc <- function(fld) {
     DTC_date <- paste0(fld, "_date")
     DTC_time <- paste0(fld, "_time")

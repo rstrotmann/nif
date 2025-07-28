@@ -17,4 +17,3 @@ A data frame.
 \description{
 Decompose DTC field into date and time components
 }
-\keyword{internal}
