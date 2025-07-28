@@ -1,6 +1,6 @@
-# Test file for validate_sdtm function
+# Test file for validate_sdtm_domains function
 
-test_that("validate_sdtm validates all domains in a valid SDTM object", {
+test_that("validate_sdtm_domains validates all domains in a valid SDTM object", {
   # Create a simple valid SDTM object
   dm_data <- tibble::tribble(
     ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
@@ -21,14 +21,14 @@ test_that("validate_sdtm validates all domains in a valid SDTM object", {
     vs = vs_data
   ))
 
-  # The validate_sdtm function should complete without error
-  expect_no_error(result <- validate_sdtm(test_sdtm, silent = TRUE))
+  # The validate_sdtm_domains function should complete without error
+  expect_no_error(result <- validate_sdtm_domains(test_sdtm, silent = TRUE))
   # The current implementation returns NULL
   expect_null(result)
 })
 
 
-test_that("validate_sdtm shows/suppresses messages based on silent parameter", {
+test_that("validate_sdtm_domains shows/suppresses messages based on silent parameter", {
   # Create a SDTM object with domains missing some expected columns
   min_dm <- tibble::tribble(
     ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
@@ -52,12 +52,12 @@ test_that("validate_sdtm shows/suppresses messages based on silent parameter", {
 
   # Should not show messages when silent=TRUE
   expect_no_message(
-    validate_sdtm(test_sdtm, silent = TRUE)
+    validate_sdtm_domains(test_sdtm, silent = TRUE)
   )
 })
 
 
-test_that("validate_sdtm handles mixed valid and unknown domains", {
+test_that("validate_sdtm_domains handles mixed valid and unknown domains", {
   # Create a SDTM object with one valid domain and one unknown domain
   dm_data <- tibble::tribble(
     ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
@@ -80,7 +80,7 @@ test_that("validate_sdtm handles mixed valid and unknown domains", {
 
   # Should warn about unknown domain but not error
   expect_warning(
-    result <- validate_sdtm(test_sdtm, silent = TRUE),
+    result <- validate_sdtm_domains(test_sdtm, silent = TRUE),
     "Unknown domain 'XYZ' cannot be validated!"
   )
 })

@@ -1,3 +1,108 @@
+#' Check whether fields in domain are compliant with SDTM
+#'
+#' @param domain The SDTM domain as data frame.
+#' @param silent Suppress optional messages, as logical. Defaults to global
+#'   nif_options if NULL.
+#'
+#' @return Invisibly returns TRUE if validation passes, or stops with an error
+#'  if required columns are missing.
+#' @export
+#'
+#' @examples
+#' validate_domain(domain(examplinib_sad, "dm"))
+validate_domain <- function(domain, silent = NULL) {
+  # Input validation
+  if (!is.data.frame(domain)) {
+    stop("The 'domain' parameter must be a data frame")
+  }
+
+  if (!"DOMAIN" %in% colnames(domain)) {
+    stop("The data frame must have a 'DOMAIN' column")
+  }
+
+  # Check if domain$DOMAIN is empty
+  if (length(domain$DOMAIN) == 0) {
+    stop("The 'DOMAIN' column is empty")
+  }
+
+  # Get unique domain names and handle multiple values
+  domain_names <- unique(domain$DOMAIN)
+  if (length(domain_names) > 1) {
+    warning("Multiple domain values found: ", paste(domain_names, collapse = ", "),
+            ". Using first value: ", domain_names[1])
+    domain_name <- toupper(domain_names[1])
+  } else {
+    domain_name <- toupper(domain_names)
+  }
+
+  if(!domain_name %in% unique(domain_model$DOMAIN)) {
+    warning("Unknown domain '", domain_name, "' cannot be validated!")
+    return(invisible(TRUE))
+  } else {
+    temp <- domain_model %>%
+      dplyr::filter(.data$DOMAIN == domain_name)
+
+    required_names <- temp %>%
+      dplyr::filter(.data$CORE == "Req") %>%
+      dplyr::pull(.data$VARNAM)
+
+    expected_names <- temp %>%
+      dplyr::filter(.data$CORE == "Exp") %>%
+      dplyr::pull(.data$VARNAM)
+
+    permitted_names <- temp %>%
+      dplyr::filter(.data$CORE == "Perm") %>%
+      dplyr::pull(.data$VARNAM)
+
+    missing_req <- setdiff(required_names, colnames(domain))
+    missing_exp <- setdiff(expected_names, colnames(domain))
+    missing_perm <- setdiff(permitted_names, colnames(domain))
+
+    if (length(missing_req) > 0) {
+      conditional_message(
+        "The following required columns are missing in ",
+        domain_name, ": ",
+        paste(missing_req, collapse = ", "),
+        silent = silent)
+    }
+
+    if (length(missing_exp) > 0) {
+      conditional_message(
+        "The following expected columns are missing in domain ",
+        domain_name, ": ",
+        paste(missing_exp, collapse = ", "),
+        silent = silent)
+    }
+
+    if (length(missing_perm) > 0) {
+      conditional_message(
+        "The following permitted columns are missing in domain ",
+        domain_name, ": ",
+        paste(missing_perm, collapse = ", "),
+        silent = silent)
+    }
+
+    return(invisible(TRUE))
+  }
+}
+
+
+#' Check whether sdtm object is compliant with SDTM standard
+#'
+#' @param sdtm SDTM object.
+#' @param silent Suppress optional messages, as logical. Defaults to global
+#'   nif_options if NULL.
+#'
+#' @return Invisibly returns TRUE if validation passes, or stops with an error
+#'  if required columns are missing.
+#' @export
+validate_sdtm_domains <- function(sdtm, silent = NULL) {
+  for(d in sdtm$domains) {
+    validate_domain(d, silent = silent)
+  }
+}
+
+
 #' Generic function parameter validation
 #'
 #' @param type Parameter type (string, logical or numeric)

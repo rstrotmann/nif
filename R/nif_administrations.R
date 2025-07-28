@@ -321,6 +321,10 @@ add_administration <- function(
     keep = NULL,
     debug = FALSE,
     silent = NULL) {
+  # validate input
+  validate_min_nif(nif)
+
+
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
   bind_rows(
@@ -330,3 +334,7 @@ add_administration <- function(
       silent = silent)) %>%
     normalize_nif(keep = keep)
 }
+
+
+
+
