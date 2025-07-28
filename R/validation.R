@@ -116,7 +116,7 @@ validate_sdtm <- function(
                       allow_multiple = TRUE)
 
   if (!inherits(obj, "sdtm")) {
-    stop("Input must be a nif object")
+    stop("Input must be a sdtm object")
   }
 
   if(!is.null(expected_domains)) {

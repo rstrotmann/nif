@@ -9,11 +9,13 @@
 #' @import dplyr
 #' @return A sdtm object.
 #' @export
-new_sdtm <- function(sdtm_data,
-                     analyte_mapping = data.frame(),
-                     metabolite_mapping = data.frame(),
-                     parent_mapping = data.frame(),
-                     time_mapping = data.frame()) {
+new_sdtm <- function(
+    sdtm_data,
+    analyte_mapping = data.frame(),
+    metabolite_mapping = data.frame(),
+    parent_mapping = data.frame(),
+    time_mapping = data.frame()
+  ) {
   domains <- sdtm_data
 
   temp <- list(
@@ -56,6 +58,9 @@ new_sdtm <- function(sdtm_data,
 #' @examples
 #' summary(examplinib_poc)
 summary.sdtm <- function(object, ...) {
+  # validate input
+  validate_sdtm(object)
+
   # Initialize empty output
   out <- list(
     study = character(0),
@@ -250,29 +255,33 @@ print.sdtm <- function(x, ...) {
 #' @examples
 #' head(domain(examplinib_fe, "dm"), 3)
 domain <- function(obj, name) {
-  # Input validation
-  if (!inherits(obj, "sdtm")) {
-    stop("'obj' must be an SDTM object")
-  }
+  # validate input
+  validate_sdtm(obj)
+  validate_char_param(name, "name")
 
-  if (!is.character(name) || length(name) == 0) {
-    stop("'name' must be a non-empty character vector")
-  }
-
-  if (length(name) > 1) {
-    stop("'name' must be a single domain name, not a vector of multiple names")
-  }
+  # # Input validation
+  # if (!inherits(obj, "sdtm")) {
+  #   stop("'obj' must be an SDTM object")
+  # }
+  #
+  # if (!is.character(name) || length(name) == 0) {
+  #   stop("'name' must be a non-empty character vector")
+  # }
+  #
+  # if (length(name) > 1) {
+  #   stop("'name' must be a single domain name, not a vector of multiple names")
+  # }
 
   # Normalize domain name to lowercase
-  name_lower <- tolower(name)
+  name <- tolower(name)
 
   # Check if domain exists
-  if(!has_domain(obj, name_lower)) {
+  if(!has_domain(obj, name)) {
     stop("Domain '", name, "' not found in SDTM object")
   }
 
   # Extract domain safely
-  temp <- obj$domains[[name_lower]]
+  temp <- obj$domains[[name]]
 
   # Return the domain
   return(temp)
@@ -334,6 +343,9 @@ subject_info <- function(obj, id) {
 #' @examples
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
+  validate_sdtm(obj, "dm")
+  validate_char_param(id, "id", allow_multiple = FALSE)
+
   temp <- obj %>%
     domain("dm") %>%
     dplyr::filter(.data$USUBJID %in% id) %>%
@@ -355,6 +367,8 @@ subject_info.sdtm <- function(obj, id) {
 #' @examples
 #' suggest(examplinib_poc)
 suggest <- function(obj, consider_nif_auto = FALSE) {
+  # input validation
+  validate_sdtm(obj)
 
   ## Helper functions
   message_block <- function(...) {
@@ -541,6 +555,9 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
 #' @examples
 #' subjects(examplinib_poc)
 subjects.sdtm <- function(obj) {
+  # input validation
+  validate_sdtm(obj, "dm")
+
   obj %>%
     domain("dm") %>%
     as.data.frame() %>%
@@ -549,7 +566,7 @@ subjects.sdtm <- function(obj) {
 
 
 #' Analytes in a sdtm object
-#'
+
 #' @param obj The sdtm object.
 #'
 #' @return Character.
@@ -558,6 +575,9 @@ subjects.sdtm <- function(obj) {
 #' @examples
 #' analytes(examplinib_sad)
 analytes.sdtm <- function(obj) {
+  # validate input
+  validate_sdtm(obj, "pc")
+
   unique(domain(obj, "pc")$PCTESTCD)
 }
 
@@ -572,6 +592,9 @@ analytes.sdtm <- function(obj) {
 #' @examples
 #' doses(examplinib_poc)
 doses.sdtm <- function(obj) {
+  # validate input
+  validate_sdtm(obj, "ex")
+
   unique(domain(obj, "ex")$EXDOSE)
 }
 

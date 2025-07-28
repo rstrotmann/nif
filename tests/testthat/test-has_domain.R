@@ -77,7 +77,7 @@ test_that("has_domain handles multiple domain names correctly", {
   # Test with multiple existing domains
   expect_true(has_domain(test_data, c("dm", "pc")))
   expect_true(has_domain(test_data, c("dm", "pc", "ex")))
-  
+
   # Test with mixture of existing and non-existing domains
   expect_false(has_domain(test_data, c("dm", "nonexistent")))
   expect_false(has_domain(test_data, c("nonexistent", "dm")))
@@ -96,8 +96,9 @@ test_that("domain() rejects vectors with multiple names", {
   class(test_data) <- c("sdtm", "list")
 
   # domain() rejects vectors with multiple names
-  expect_error(domain(test_data, c("dm", "pc")),
-               "'name' must be a single domain name, not a vector of multiple names")
+  expect_error(
+    domain(test_data, c("dm", "pc")),
+    "name must be a single value")
 })
 
 

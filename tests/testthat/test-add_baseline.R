@@ -71,6 +71,7 @@ test_that("add_baseline handles custom baseline filter", {
 
 test_that("add_baseline handles coding table correctly", {
   test_nif <- data.frame(
+    ID = c(1, 2),
     USUBJID = c("SUBJ-001", "SUBJ-002"),
     DTC = c("2023-01-01", "2023-01-01")
   )

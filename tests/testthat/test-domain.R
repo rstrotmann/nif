@@ -74,15 +74,25 @@ test_that("domain() handles input validation correctly", {
 
   # Test with invalid object
   invalid_obj <- list(domains = list())
-  expect_error(domain(invalid_obj, "dm"), "'obj' must be an SDTM object")
+  expect_error(
+    domain(invalid_obj, "dm"),
+    "Input must be a sdtm object")
 
   # Test with NULL object
-  expect_error(domain(NULL, "dm"), "'obj' must be an SDTM object")
+  expect_error(
+    domain(NULL, "dm"),
+    "Input must be a sdtm object")
 
   # Test with NULL, numeric, or empty character as name
-  expect_error(domain(test_data, NULL), "'name' must be a non-empty character vector")
-  expect_error(domain(test_data, 123), "'name' must be a non-empty character vector")
-  expect_error(domain(test_data, character(0)), "'name' must be a non-empty character vector")
+  expect_error(
+    domain(test_data, NULL),
+    "name must not be NULL")
+  expect_error(
+    domain(test_data, 123),
+    "name must be a string value")
+  expect_error(
+    domain(test_data, character(0)),
+    "name must be a single value")
 })
 
 
@@ -97,9 +107,8 @@ test_that("domain() rejects vectors with multiple names", {
   class(test_data) <- c("sdtm", "list")
 
   # Test with vector of multiple names
-  expect_error(domain(test_data, c("dm", "pc")),
-               "'name' must be a single domain name, not a vector of multiple names")
-  expect_error(domain(test_data, c("pc", "dm", "vs")),
-               "'name' must be a single domain name, not a vector of multiple names")
+  expect_error(
+    domain(test_data, c("dm", "pc")),
+    "name must be a single value")
 })
 
