@@ -286,21 +286,48 @@ isofy_date_format <- function(obj, fields = NULL) {
 #'
 #' Change all columns in the input data frame that end with 'DTC' to standard
 #' POSIXct format.
+#'
 #' @param obj A data frame.
+#' @param col Columns to convert. Defaults to all columns ending in "DTC", if
+#' NULL.
+#'
 #' @return A data frame.
 #' @seealso [isofy_dates()]
 #' @keywords internal
 #' @noRd
-lubrify_dates <- function(obj) {
-  obj %>% dplyr::mutate_at(
-    vars(ends_with("DTC")),
-    function(x) {
-      if (!is.POSIXct(x)) {
-        x <- lubridate::as_datetime(x, format = dtc_formats)
-      }
-      return(x)
+lubrify_dates <- function(obj, col = NULL) {
+  if(!is.data.frame(obj)) {
+    stop("obj must be a data frame!")
+  }
+  # input validation
+  if(!is.data.frame(obj)) {
+    stop("obj must be a data frame!")
+  }
+  validate_char_param(col, "col", allow_multiple = TRUE, allow_null = TRUE)
+
+  if(!is.null(col)) {
+    missing_columns <- setdiff(col, names(obj))
+    n_missing <- length(missing_columns)
+    if(n_missing > 0) {
+      stop(paste0(
+        plural("Column", n_missing > 1), " not found in data frame: ",
+        nice_enumeration(missing_columns)
+      ))
     }
-  )
+    obj %>%
+      mutate(across(all_of(col), ~ as_datetime(.x, format = dtc_formats)))
+  } else {
+    obj %>%
+      dplyr::mutate_at(
+        vars(ends_with("DTC")),
+        function(x) {
+          if (!is.POSIXct(x)) {
+            x <- lubridate::as_datetime(x, format = dtc_formats)
+          }
+          return(x)
+        }
+      )
+  }
 }
 
 
