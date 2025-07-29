@@ -103,7 +103,7 @@ test_that("add_covariate validates nif object", {
 
   expect_error(
     add_covariate(nif, sdtm, "vs", "WEIGHT", covariate = "wt"),
-    "First argument must be a nif object"
+    "Input must be a nif object"
   )
 })
 
@@ -114,7 +114,7 @@ test_that("add_covariate validates sdtm is provided", {
 
   expect_error(
     add_covariate(nif = nif, domain = "vs", testcd = "WEIGHT", covariate = "wt"),
-    "SDTM object is required"
+    'argument "sdtm" is missing, with no default'
   )
 })
 
@@ -126,7 +126,7 @@ test_that("add_covariate validates domain exists", {
 
   expect_error(
     add_covariate(nif, sdtm, "xx", "WEIGHT", covariate = "wt"),
-    "Domain 'xx' not found in SDTM object"
+    "Domain 'xx' not found in sdtm object"
   )
 })
 
@@ -248,3 +248,4 @@ test_that("add_covariate uses default covariate name if not specified", {
   # Check that the default name (testcd) was used
   expect_true("WEIGHT" %in% names(result))
 })
+

@@ -45,20 +45,22 @@ add_covariate <- function(
     duplicate_function = mean,
     silent = NULL
 ) {
-  # Validate that nif is a nif object
-  if (!inherits(nif, "nif")) {
-    stop("First argument must be a nif object")
-  }
-
-  # Validate that sdtm object exists
-  if (missing(sdtm)) {
-    stop("SDTM object is required")
-  }
+  # input validation
+  validate_nif(nif)
+  validate_sdtm(sdtm)
+  validate_char_param(domain, "domain")
 
   # Validate domain exists in sdtm
   if (!domain %in% names(sdtm$domains)) {
-    stop(paste0("Domain '", domain, "' not found in SDTM object"))
-  }
+    stop(paste0("Domain '", domain, "' not found in sdtm object"))}
+
+  validate_char_param(testcd, "testcd")
+  validate_char_param(covariate, "covariate", allow_null = TRUE)
+  validate_char_param(DTC_field, "DTC_field", allow_null = TRUE)
+  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
+  validate_char_param(TESTCD_field, "TESTCD_field", allow_null = TRUE)
+  validate_char_param(observation_filter, "observation_filter")
+  validate_logical_param(silent, "silent", allow_null = TRUE)
 
   # Set up field names
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
@@ -96,9 +98,9 @@ add_covariate <- function(
 
   # Check if any data remains after filtering
   if (nrow(filtered_cov) == 0) {
-    stop(paste0("No data found for test code '", testcd,
-                   "' after applying observation filter"))
-    # return(nif)
+    stop(paste0(
+      "No data found for test code '", testcd,
+      "' after applying observation filter"))
   }
 
   cov <- filtered_cov %>%

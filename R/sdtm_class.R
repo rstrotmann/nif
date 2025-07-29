@@ -259,19 +259,6 @@ domain <- function(obj, name) {
   validate_sdtm(obj)
   validate_char_param(name, "name")
 
-  # # Input validation
-  # if (!inherits(obj, "sdtm")) {
-  #   stop("'obj' must be an SDTM object")
-  # }
-  #
-  # if (!is.character(name) || length(name) == 0) {
-  #   stop("'name' must be a non-empty character vector")
-  # }
-  #
-  # if (length(name) > 1) {
-  #   stop("'name' must be a single domain name, not a vector of multiple names")
-  # }
-
   # Normalize domain name to lowercase
   name <- tolower(name)
 
