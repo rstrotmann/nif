@@ -107,7 +107,7 @@ test_that("find_duplicates handles missing fields", {
   # Test with missing field
   expect_error(
     find_duplicates(df),
-    "The following fields do not exist in the data frame: ANALYTE"
+    "Field not found in input: ANALYTE"
   )
 })
 

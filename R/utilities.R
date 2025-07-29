@@ -294,9 +294,6 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' @return A data frame.
 #' @export
 lubrify_dates <- function(obj, col = NULL) {
-  if(!is.data.frame(obj)) {
-    stop("obj must be a data frame!")
-  }
   # input validation
   if(!is.data.frame(obj)) {
     stop("obj must be a data frame!")
@@ -873,20 +870,39 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
 
 #' Find duplicate rows in a data frame
 #'
-#' This function identifies duplicate rows in a data frame based on specified fields.
-#' It returns a data frame containing the duplicate rows and their counts.
+#' This function identifies duplicate rows in a data frame based on specified
+#' fields. It returns a data frame containing the duplicate rows and their counts.
 #'
 #' @param df A data frame to check for duplicates
-#' @param fields A character vector of field names to check for duplicates. If NULL,
-#'   defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
-#' @param count_only Logical indicating whether to return only the count of duplicates (default: FALSE)
-#' @param return_all_cols Logical indicating whether to return all columns from the original data frame (default: TRUE)
-#' @param additional_cols Character vector of additional columns to include in the output when return_all_cols is FALSE
+#' @param fields A character vector of field names to check for duplicates. If
+#' NULL, defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
+#' @param count_only Logical indicating whether to return only the count of
+#' duplicates (default: FALSE)
+#' @param return_all_cols Logical indicating whether to return all columns from
+#' the original data frame (default: TRUE)
+#' @param additional_cols Character vector of additional columns to include in
+#' the output when return_all_cols is FALSE
 #'
-#' @return A data frame containing the duplicate rows and their counts, or just the count if count_only is TRUE
+#' @return A data frame containing the duplicate rows and their counts, or just
+#' the count if count_only is TRUE
 #' @export
-find_duplicates <- function(df, fields = NULL, count_only = FALSE,
-                            return_all_cols = TRUE, additional_cols = NULL) {
+find_duplicates <- function(
+    df,
+    fields = NULL,
+    count_only = FALSE,
+    return_all_cols = TRUE,
+    additional_cols = NULL) {
+  # input validation
+  if(!is.data.frame(df)) {
+    stop("df must be a data frame!")
+  }
+  validate_char_param(fields, "fields",
+                      allow_multiple = TRUE, allow_null = TRUE)
+  validate_logical_param(count_only, "count_only")
+  validate_logical_param(return_all_cols, "return_all_cols")
+  validate_char_param(additional_cols, "additional_cols",
+                      allow_multiple = TRUE, allow_null = TRUE)
+
   if(is.null(fields)) {
     fields <- c("ID", "TIME", "ANALYTE")
   }
@@ -894,8 +910,18 @@ find_duplicates <- function(df, fields = NULL, count_only = FALSE,
   # Check if all specified fields exist in the data frame
   missing_fields <- setdiff(fields, names(df))
   if (length(missing_fields) > 0) {
-    stop(paste("The following fields do not exist in the data frame:",
-               paste(missing_fields, collapse = ", ")))
+    stop(paste0(
+      plural("Field", length(missing_fields) > 1),
+      " not found in input: ", nice_enumeration(missing_fields)))
+  }
+
+  # check additional_cols
+  missing_additional <- setdiff(additional_cols, names(df))
+  if(length(missing_additional) > 0) {
+    stop(paste0(
+      plural("Field", length(missing_additional) > 1),
+      "for 'additional_cols' not found in input: ",
+      nice_enumeration(missing_additional)))
   }
 
   # Group by specified fields and count occurrences
