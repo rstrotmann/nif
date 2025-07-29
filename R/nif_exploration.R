@@ -1094,29 +1094,23 @@ edish_plot <- function(
   }
 
   lb <- tryCatch({
-      sdtm %>%
-      domain("lb") %>%
-      filter(!is.na(.data$LBSTRESN)) %>%
-      filter(!is.na(.data$LBSTNRHI)) %>%
-      filter(eval(parse(text = observation_filter))) %>%
-      # Verify required columns exist
-      assertr::verify(assertr::has_all_names(
-        "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI")) %>%
-      # Verify numeric columns are actually numeric
-      assertr::verify(is.numeric(.data$LBSTRESN)) %>%
-      assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
-      # Verify values are valid
-      assertr::verify(.data$LBSTRESN >= 0) %>%  # No negative lab values
-      assertr::verify(.data$LBSTNRHI > 0)  # No zero or negative ULN values
+    sdtm %>%
+    domain("lb") %>%
+    filter(!is.na(.data$LBSTRESN)) %>%
+    filter(!is.na(.data$LBSTNRHI)) %>%
+    filter(eval(parse(text = observation_filter))) %>%
+    # Verify required columns exist
+    assertr::verify(assertr::has_all_names(
+      "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI")) %>%
+    # Verify numeric columns are actually numeric
+    assertr::verify(is.numeric(.data$LBSTRESN)) %>%
+    assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
+    # Verify values are valid
+    assertr::verify(.data$LBSTRESN >= 0) %>%  # No negative lab values
+    assertr::verify(.data$LBSTNRHI > 0)  # No zero or negative ULN values
   }, error = function(e) {
     stop("Data validation failed: ") #, e$message)
   })
-
-
-  # Check if required lab tests exist in data
-  # if(!all(c("BILI", enzyme) %in% lb$LBTESTCD)) {
-  #   stop(sprintf("Required lab tests (%s, BILI) not found in data", enzyme))
-  # }
 
   expected_tests <- c("BILI", enzyme)
   missing_tests <- setdiff(expected_tests, unique(lb$LBTESTCD))
@@ -1148,51 +1142,50 @@ edish_plot <- function(
     parent <- guess_parent(nif)
   }
 
-  # suppressWarnings({
-    p <- nif %>%
-      add_observation(
-        sdtm, "lb1", "ENZ_X_ULN", parent=parent, ntime_method = ntime_method,
-        duplicates = "ignore",
-        silent = TRUE) %>%
-      add_observation(
-        sdtm, "lb1", "BILI_X_ULN", parent=parent, ntime_method = ntime_method,
-        duplicates = "ignore",
-        silent = TRUE) %>%
-      as.data.frame() %>%
-      filter(!is.na(DV)) %>%
-      filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
-      select(c("ID", "TIME", "ANALYTE", "DV")) %>%
-      group_by(.data$ID, .data$TIME, .data$ANALYTE) %>%
-      summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop") %>%
-      group_by(.data$ID, .data$TIME) %>%
-      tidyr::pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
-      ungroup() %>%
-      ggplot2::ggplot(ggplot2::aes(x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
-                                   color = (TIME > 0), label = .data$ID)) +
-      ggplot2::geom_point(size = size, alpha = alpha) +
-      {if(show_labels == TRUE) ggrepel::geom_text_repel()} +
-      {if(!autoscale == TRUE) ggplot2::scale_x_log10(
-        limits = c(0.01, 1000)) else ggplot2::scale_x_log10()} +
-      {if(!autoscale == TRUE) ggplot2::scale_y_log10(limits = c(0.01, 100)) else
-        ggplot2::scale_y_log10()} +
+  p <- nif %>%
+    add_observation(
+      sdtm, "lb1", "ENZ_X_ULN", parent=parent, ntime_method = ntime_method,
+      duplicates = "ignore",
+      silent = TRUE) %>%
+    add_observation(
+      sdtm, "lb1", "BILI_X_ULN", parent=parent, ntime_method = ntime_method,
+      duplicates = "ignore",
+      silent = TRUE) %>%
+    as.data.frame() %>%
+    filter(!is.na(DV)) %>%
+    filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
+    select(c("ID", "TIME", "ANALYTE", "DV")) %>%
+    group_by(.data$ID, .data$TIME, .data$ANALYTE) %>%
+    summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop") %>%
+    group_by(.data$ID, .data$TIME) %>%
+    tidyr::pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
+    ungroup() %>%
+    ggplot2::ggplot(ggplot2::aes(x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
+                                 color = (TIME > 0), label = .data$ID)) +
+    ggplot2::geom_point(size = size, alpha = alpha) +
+    {if(show_labels == TRUE) ggrepel::geom_text_repel()} +
+    {if(!autoscale == TRUE) ggplot2::scale_x_log10(
+      limits = c(0.01, 1000)) else ggplot2::scale_x_log10()} +
+    {if(!autoscale == TRUE) ggplot2::scale_y_log10(limits = c(0.01, 100)) else
+      ggplot2::scale_y_log10()} +
 
-      {if(shading == TRUE) ggplot2::annotate('rect', xmin = 3, xmax = Inf,
-                                             ymin = 2, ymax = Inf, alpha=.15,
-                                             fill='grey')} +
-      ggplot2::geom_hline(yintercept = 2, linetype="dashed") +
-      ggplot2::geom_vline(xintercept = 3, linetype="dashed") +
-      ggplot2::labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "none") +
-      ggplot2::ggtitle(title)
+    {if(shading == TRUE) ggplot2::annotate('rect', xmin = 3, xmax = Inf,
+                                           ymin = 2, ymax = Inf, alpha=.15,
+                                           fill='grey')} +
+    ggplot2::geom_hline(yintercept = 2, linetype="dashed") +
+    ggplot2::geom_vline(xintercept = 3, linetype="dashed") +
+    ggplot2::labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::ggtitle(title)
 
-    caption <- paste0(length(unique(nif$ID)), " subjects, red: predose")
-    caption <- ifelse(shading == TRUE,
-                      paste0(caption, ", grey area: Hy's law."), caption)
-    p <- p +
-      ggplot2::labs(caption = caption) +
-      watermark(cex = 1.5)
-  # })
+  caption <- paste0(length(unique(nif$ID)), " subjects, red: predose")
+  caption <- ifelse(shading == TRUE,
+                    paste0(caption, ", grey area: Hy's law."), caption)
+  p <- p +
+    ggplot2::labs(caption = caption) +
+    watermark(cex = 1.5)
+
   return(p)
 }
 

@@ -179,28 +179,26 @@ add_baseline <- function(
     coding_table = NULL,
     summary_function = mean,
     silent = NULL) {
-
-  # Validate that nif is a nif object
-  if (!inherits(nif, "nif")) {
-    stop("First argument must be a nif object")
-  }
-
-  # Validate that sdtm object exists
-  if (missing(sdtm)) {
-    stop("SDTM object is required")
-  }
+  # input validation
+  validate_nif(nif)
+  validate_sdtm(sdtm)
+  validate_char_param(domain, "domain")
 
   # Validate domain exists in sdtm
   if (!domain %in% names(sdtm$domains)) {
-    stop(paste0("Domain '", domain, "' not found in SDTM object"))
-  }
+    stop(paste0("Domain '", domain, "' not found in sdtm object"))}
+
+  validate_char_param(testcd, "testcd")
+  validate_char_param(name, "name", allow_null = TRUE)
+  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
+  validate_char_param(TESTCD_field, "TESTCD_field", allow_null = TRUE)
+  validate_char_param(observation_filter, "observation_filter")
+  validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
+  validate_logical_param(silent, "silent", allow_null = TRUE)
 
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(
     str_to_upper(domain), "TESTCD")
-
-  # if(is.null(baseline_filter)) baseline_filter <- paste0(
-  #   ".data[['", str_to_upper(domain), "BLFL']] == 'Y'")
 
   # Set domain data
   domain_data <- domain(sdtm, str_to_lower(domain))
@@ -232,7 +230,6 @@ add_baseline <- function(
       paste0(str_to_upper(domain), "LOBXFL")
       ),
       names(domain_data))
-    # if(is.null(blcol)){
     if(length(blcol) == 0) {
       stop(
         "No baseline flag column identified. Please provide a baseline_filter"
@@ -247,11 +244,6 @@ add_baseline <- function(
       silent = silent
     )
   }
-
-
-
-
-
 
   join_fields <- intersect(names(coding_table),
                            names(domain(sdtm, str_to_lower(domain))))
@@ -296,8 +288,6 @@ add_baseline <- function(
 
   # Check if any baseline values are NA and warn user
   if (any(is.na(baseline[[bl_field]]))) {
-    # warning(paste0("Some subjects have missing baseline values for test code '",
-    #                testcd, "'. These will be NA in the output."))
     conditional_message(
       "Some subjects have missing baseline values for test code '",
       testcd, "'. These will be NA in the output.",

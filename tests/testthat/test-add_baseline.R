@@ -133,19 +133,19 @@ test_that("add_baseline validates inputs correctly", {
   fake_nif <- data.frame(USUBJID = "SUBJ-001")
   expect_error(
     add_baseline(fake_nif, test_sdtm, "vs", "WEIGHT"),
-    "First argument must be a nif object"
+    "Input must be a nif object"
   )
 
   # Test missing SDTM object
   expect_error(
     add_baseline(test_nif, domain = "vs", testcd = "WEIGHT"),
-    "SDTM object is required"
+    'argument "sdtm" is missing, with no default'
   )
 
   # Test invalid domain
   expect_error(
     add_baseline(test_nif, test_sdtm, "invalid_domain", "WEIGHT"),
-    "Domain 'invalid_domain' not found in SDTM object"
+    "Domain 'invalid_domain' not found in sdtm object"
   )
 
   # Test invalid testcd
