@@ -329,7 +329,7 @@ add_administration <- function(
   validate_numeric_param(cmt, "cmt")
   validate_char_param(subject_filter, "subject_filter")
   validate_char_param(cut_off_date, "cut_off_date", allow_null = TRUE)
-  validate_char_param(keep, "keep", allow_null = TRUE)
+  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
   validate_logical_param(debug, "debug")
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
