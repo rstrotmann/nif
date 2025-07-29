@@ -15,14 +15,14 @@ resolve_duplicates(
 \arguments{
 \item{df}{A data frame to remove duplicates from}
 
-\item{fields}{A character vector of field names to check for duplicates. If NULL,
-defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.}
+\item{fields}{A character vector of field names to check for duplicates. If
+NULL, defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.}
 
-\item{duplicate_function}{A function to apply to duplicate values. Default is mean.
-The function should take a vector and return a single value.}
+\item{duplicate_function}{A function to apply to duplicate values. Default is
+mean. The function should take a vector and return a single value.}
 
-\item{dependent_variable}{The name of the field to apply the duplicate_function to.
-Defaults to "DV".}
+\item{dependent_variable}{The name of the field to apply the
+duplicate_function to. Defaults to "DV".}
 
 \item{na.rm}{Logical indicating whether to remove NA values when applying the
 duplicate_function. Defaults to TRUE.}
@@ -31,6 +31,7 @@ duplicate_function. Defaults to TRUE.}
 A data frame with duplicate rows removed
 }
 \description{
-This function removes duplicate rows from a data frame based on specified fields,
-applying a function to handle duplicate values in the dependent variable.
+This function removes duplicate rows from a data frame based on specified
+fields, applying a function to handle duplicate values in the dependent
+variable.
 }
