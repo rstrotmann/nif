@@ -959,18 +959,19 @@ find_duplicates <- function(
 
 #' Remove duplicate rows from a data frame
 #'
-#' This function removes duplicate rows from a data frame based on specified fields,
-#' applying a function to handle duplicate values in the dependent variable.
+#' This function removes duplicate rows from a data frame based on specified
+#' fields, applying a function to handle duplicate values in the dependent
+#' variable.
 #'
 #' @param df A data frame to remove duplicates from
-#' @param fields A character vector of field names to check for duplicates. If NULL,
-#'   defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
-#' @param duplicate_function A function to apply to duplicate values. Default is mean.
-#'   The function should take a vector and return a single value.
-#' @param dependent_variable The name of the field to apply the duplicate_function to.
-#'   Defaults to "DV".
+#' @param fields A character vector of field names to check for duplicates. If
+#' NULL, defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
+#' @param duplicate_function A function to apply to duplicate values. Default is
+#' mean. The function should take a vector and return a single value.
+#' @param dependent_variable The name of the field to apply the
+#' duplicate_function to. Defaults to "DV".
 #' @param na.rm Logical indicating whether to remove NA values when applying the
-#'   duplicate_function. Defaults to TRUE.
+#' duplicate_function. Defaults to TRUE.
 #'
 #' @return A data frame with duplicate rows removed
 #' @export
@@ -1005,43 +1006,6 @@ resolve_duplicates <- function(
   # Get all columns that are not in fields
   other_cols <- setdiff(names(df), fields)
 
-  # Remove duplicates by applying the duplicate_function to the dependent variable
-  # and keeping the first value of other columns
-  # Handle NA values based on na.rm parameter
-  # result <- df %>%
-  #   dplyr::group_by(across(all_of(fields))) %>%
-  #   dplyr::summarize(
-  #     !!dependent_variable := {
-  #       dv_values <- .data[[dependent_variable]]
-  #       # Remove NA values if na.rm is TRUE
-  #       if (na.rm) {
-  #         dv_values <- dv_values[!is.na(dv_values)]
-  #       }
-  #       # Return NA if all values are NA or no values left after removing NAs
-  #       if (length(dv_values) == 0) {
-  #         NA
-  #       } else {
-  #         # Try to pass na.rm to duplicate_function if it accepts it
-  #         tryCatch({
-  #           duplicate_function(dv_values, na.rm = na.rm)
-  #         }, error = function(e) {
-  #           # If function doesn't accept na.rm parameter, call without it
-  #           duplicate_function(dv_values)
-  #         })
-  #       }
-  #     },
-  #     across(all_of(setdiff(other_cols, dependent_variable)), ~ .[1]),
-  #     .groups = "drop"
-  #   )
-
-  # df %>%
-  #   dplyr::group_by(across(all_of(fields))) %>%
-  #   dplyr::summarize(
-  #     !!dependent_variable := duplicate_function(.data[[dependent_variable]]),
-  #     across(all_of(setdiff(other_cols, dependent_variable)), ~ .[1]),
-  #     .groups = "drop"
-    # )
-
   f <- function(x) {
     if(na.rm == TRUE)
       duplicate_function(x[!is.na(x)])
@@ -1050,13 +1014,10 @@ resolve_duplicates <- function(
   }
 
   result <- df %>%
-    # dplyr::group_by(across(all_of(fields))) %>%
     reframe(
       !!dependent_variable := f(.data[[dependent_variable]]),
-      # .by = all_of(fields)
       .by = all_of(setdiff(names(df), c(dependent_variable, "MDV")))
     ) %>% as.data.frame()
-
 
   return(as.data.frame(result))
 }
