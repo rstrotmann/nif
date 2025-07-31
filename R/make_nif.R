@@ -324,9 +324,9 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     tidyr::fill(any_of(
       c("STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
         "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT",
-        "DOSE", "EPOCH", "FASTED", "FOOD",
-        starts_with("BL_"))),
+        "DOSE", "EPOCH", "FASTED", "FOOD")),
       .direction = "downup") %>%
+    fill(any_of(c(starts_with("BL_"))), .direction = "downup") %>%
     ungroup() %>%
     nif_cleanup(keep = keep) %>%
     new_nif()
