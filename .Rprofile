@@ -6,3 +6,5 @@ options(
     Version = "0.1"
   )
 )
+
+options(pillar.width = Inf)
