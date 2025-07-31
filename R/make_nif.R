@@ -307,22 +307,26 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @return A nif object.
 #' @export
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
-  selector <- unique(c(
-    "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
-    "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD", "PCELTM", "EVID", "AMT",
-    "ANALYTE", "CMT",  "PARENT", "TRTDY", "METABOLITE", "DOSE", "DV", "MDV",
-    "ACTARMCD", "IMPUTATION", "FOOD", "PART", "PERIOD", "COHORT", "FASTED",
-    "RICH_N", "DI", "TREATMENT"))
+  # selector <- unique(c(
+  #   "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
+  #   "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD", "PCELTM", "EVID", "AMT",
+  #   "ANALYTE", "CMT",  "PARENT", "TRTDY", "METABOLITE", "DOSE", "DV", "MDV",
+  #   "ACTARMCD", "IMPUTATION", "FOOD", "PART", "PERIOD", "COHORT", "FASTED",
+  #   "RICH_N", "DI", "TREATMENT"))
 
   obj %>%
     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     make_time() %>%
     arrange(.data$DTC) %>%
     index_nif() %>%
+    # fill down subject-/parent-level fields
     group_by(.data$ID, .data$PARENT) %>%
-    tidyr::fill(any_of(c("DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED",
-                         starts_with("BL_"))),
-                .direction = "downup") %>%
+    tidyr::fill(any_of(
+      c("STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
+        "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT",
+        "DOSE", "EPOCH", "FASTED", "FOOD",
+        starts_with("BL_"))),
+      .direction = "downup") %>%
     ungroup() %>%
     nif_cleanup(keep = keep) %>%
     new_nif()

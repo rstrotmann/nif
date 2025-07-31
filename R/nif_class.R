@@ -28,6 +28,16 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 }
 
 
+#' Title
+#'
+#' @inheritParams new_nif
+#'
+#' @returns A nif object.
+#' @export
+nif <- function(...) {
+  new_nif(...)
+}
+
 #' Convert data frame to nif object
 #'
 #' @param obj A data frame.
@@ -685,11 +695,12 @@ standard_nif_fields <- c(
 )
 
 
-fillable_nif_fields <- c(
+fillable_nif_fields <- unique(c(
   "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
   "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED",
-  "IMPUTATION"
-)
+  "IMPUTATION",
+  "DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED"
+))
 
 
 #' Index dosing intervals
