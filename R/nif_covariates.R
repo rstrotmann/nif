@@ -210,6 +210,16 @@ add_baseline <- function(
   validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
+  # validate coding table
+  if(!is.null(coding_table)) {
+    if (!inherits(coding_table, "data.frame"))
+      stop("coding table must be a data frame!")
+    if(!"DV" %in% names(coding_table))
+      stop("Coding table must include a numeric 'DV' field!")
+    if(!is.numeric(coding_table$DV))
+      stop("DV field in coding table must be numeric!")
+  }
+
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(
     str_to_upper(domain), "TESTCD")
@@ -260,10 +270,16 @@ add_baseline <- function(
 
   join_fields <- intersect(names(coding_table),
                            names(domain(sdtm, str_to_lower(domain))))
+
   if(!is.null(coding_table) & length(join_fields) == 0) {
     stop("Coding table cannot be applied - no valid data column!")
   } else {
     if(!is.null(coding_table)) {
+      # validate coding table
+      # if(!is.numeric(coding_table$DV)) {
+      #   stop("DV field in coding table must be numeric!")
+      # }
+
       conditional_message(
         "Recoding from ", join_fields,
         silent = silent)}
@@ -288,8 +304,14 @@ add_baseline <- function(
                        values_from = DV) %>%
     select(all_of(c("USUBJID", {{testcd}}))) %>%
     group_by(.data$USUBJID) %>%
-    summarize(across(all_of(testcd),
-                     ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
+    # summarize(across(
+    #   all_of(testcd),
+    #   ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
+
+    summarize(across(
+      all_of(testcd),
+      ~ summary_function(na.omit(.x)))) %>%
+
     rename_with(~bl_field, .cols = all_of(testcd)) %>%
     ungroup()
 
