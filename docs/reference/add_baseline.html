@@ -15,7 +15,7 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,9 @@ xx the domain name, as character.</p></dd>
 
 
 <dt id="arg-observation-filter">observation_filter<a class="anchor" aria-label="anchor" href="#arg-observation-filter"></a></dt>
-<dd><p>A filter term for the <code>domain</code>, as character.</p></dd>
+<dd><p>A filter term for the <code>domain</code>, as character. Note:
+if the filter term includes date comparisons, make sure to represent the
+date as, datetime object e.g.,  <code><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">lubridate::as_datetime()</a></code>.</p></dd>
 
 
 <dt id="arg-baseline-filter">baseline_filter<a class="anchor" aria-label="anchor" href="#arg-baseline-filter"></a></dt>
