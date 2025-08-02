@@ -401,3 +401,502 @@ test_that("add_baseline name parameter works correctly", {
   )
 })
 
+
+test_that("add_baseline coding table validation works correctly", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC,    ~VSTESTCD,   ~VSORRES, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",      "SEX",     "MALE",     "Y",
+    "SUBJ-002", "2023-01-01",   "FEMALE",   "FEMALE",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test invalid coding table (not a data frame)
+  expect_error(
+    add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                 DV_field = "VSORRES", coding_table = "not_a_df"),
+    "coding table must be a data frame!"
+  )
+
+  # Test coding table without DV field
+  invalid_coding <- tibble::tribble(
+    ~VSORRES,
+    "MALE",
+    "FEMALE"
+  )
+
+  expect_error(
+    add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                 DV_field = "VSORRES", coding_table = invalid_coding),
+    "Coding table must include a numeric 'DV' field!"
+  )
+
+  # Test coding table with non-numeric DV field
+  invalid_coding_numeric <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",   "1",
+    "FEMALE", "0"
+  )
+
+  expect_error(
+    add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                 DV_field = "VSORRES", coding_table = invalid_coding_numeric),
+    "DV field in coding table must be numeric!"
+  )
+
+  # Test coding table with no matching join fields
+  no_match_coding <- tibble::tribble(
+    ~NONEXISTENT, ~DV,
+    "MALE",        1,
+    "FEMALE",      0
+  )
+
+  expect_error(
+    add_baseline(test_nif, test_sdtm, "vs", "SEX", DV_field = "VSORRES",
+                 coding_table = no_match_coding, silent = TRUE),
+    "Coding table cannot be applied - no valid data column!"
+  )
+})
+
+
+test_that("add_baseline coding table with multiple join fields works", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,           ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC,   ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE", "DEMO",     "Y",
+    "SUBJ-002", "2023-01-01",     "SEX", "FEMALE", "DEMO",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Coding table with multiple join fields
+  multi_field_coding <- tibble::tribble(
+    ~VSORRES, ~VSCAT, ~DV,
+    "MALE",   "DEMO",   1,
+    "FEMALE", "DEMO",   0
+  )
+
+  result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                        DV_field = "VSORRES", coding_table = multi_field_coding,
+                        silent = TRUE)
+
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-002"], 0)
+})
+
+
+test_that("add_baseline coding table with partial matches works", {
+  test_nif <- tibble::tribble(
+      ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC,   ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE", "DEMO",     "Y",
+    "SUBJ-002", "2023-01-01",     "SEX", "FEMALE", "DEMO",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Coding table with only one join field (should work)
+  single_field_coding <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",     1,
+    "FEMALE",   0
+  )
+
+  result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                        DV_field = "VSORRES", coding_table = single_field_coding,
+                        silent = TRUE)
+
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-002"], 0)
+})
+
+
+test_that("add_baseline coding table with missing values handles correctly", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01",
+    "SUBJ-003", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE",     "Y",
+    "SUBJ-002", "2023-01-01",     "SEX", "FEMALE",     "Y",
+    "SUBJ-003", "2023-01-01",     "SEX", "OTHER",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT",
+    "SUBJ-003", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Coding table missing one value
+  incomplete_coding <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",     1,
+    "FEMALE",   0
+  )
+
+  result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                        DV_field = "VSORRES", coding_table = incomplete_coding,
+                        silent = TRUE)
+
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-002"], 0)
+  expect_true(is.na(result$BL_SEX[result$USUBJID == "SUBJ-003"]))
+})
+
+
+test_that("add_baseline handles different summary functions with coding tables", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  # Need to use different test codes to avoid pivot_wider issues
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  coding_table <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",     1,
+    "FEMALE",   0
+  )
+
+  # Test with mean (default)
+  result_mean <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                             DV_field = "VSORRES", coding_table = coding_table,
+                             summary_function = mean, silent = TRUE)
+  expect_equal(result_mean$BL_SEX, 1)
+
+  # Test with max
+  result_max <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                            DV_field = "VSORRES", coding_table = coding_table,
+                            summary_function = max, silent = TRUE)
+  expect_equal(result_max$BL_SEX, 1)
+
+  # Test with min
+  result_min <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                            DV_field = "VSORRES", coding_table = coding_table,
+                            summary_function = min, silent = TRUE)
+  expect_equal(result_min$BL_SEX, 1)
+})
+
+
+test_that("add_baseline handles complex coding scenarios", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01",
+    "SUBJ-003", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",   "RACE", "WHITE",     "Y",
+    "SUBJ-002", "2023-01-01",   "RACE", "BLACK",     "Y",
+    "SUBJ-003", "2023-01-01",   "RACE", "ASIAN",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT",
+    "SUBJ-003", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Complex coding table with multiple categories
+  race_coding <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "WHITE",    1,
+    "BLACK",    2,
+    "ASIAN",    3,
+    "OTHER",    4
+  )
+
+  result <- add_baseline(test_nif, test_sdtm, "vs", "RACE",
+                        DV_field = "VSORRES", coding_table = race_coding,
+                        silent = TRUE)
+
+  expect_equal(result$BL_RACE[result$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result$BL_RACE[result$USUBJID == "SUBJ-002"], 2)
+  expect_equal(result$BL_RACE[result$USUBJID == "SUBJ-003"], 3)
+})
+
+
+test_that("add_baseline handles baseline filter with LOBXFL", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_lb <- tibble::tribble(
+    ~USUBJID,       ~LBDTC, ~LBTESTCD, ~LBSTRESN, ~LBLOBXFL,
+    "SUBJ-001", "2023-01-01",    "CREA",       1.2,     "Y",
+    "SUBJ-001", "2023-01-02",    "CREA",       1.3,     "N",
+    "SUBJ-002", "2023-01-01",    "CREA",       1.1,     "Y",
+    "SUBJ-002", "2023-01-02",    "CREA",       1.4,     "N"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(lb = test_lb, dm = test_dm))
+
+  # Should automatically detect LOBXFL and use it
+  result <- add_baseline(test_nif, test_sdtm, "lb", "CREA", silent = TRUE)
+
+  expect_equal(result$BL_CREA[result$USUBJID == "SUBJ-001"], 1.2)
+  expect_equal(result$BL_CREA[result$USUBJID == "SUBJ-002"], 1.1)
+})
+
+
+test_that("add_baseline handles custom observation filter with coding tables", {
+  test_nif <- tibble::tribble(
+      ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+      ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE", "DEMO",     "Y",
+    "SUBJ-001", "2023-01-02",     "SEX",   "MALE", "DEMO",     "Y",
+    "SUBJ-002", "2023-01-01",     "SEX", "FEMALE", "DEMO",     "Y",
+    "SUBJ-002", "2023-01-02",     "SEX", "FEMALE", "DEMO",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  coding_table <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",     1,
+    "FEMALE",   0
+  )
+
+  # Filter to only include first day observations
+  result <- add_baseline(
+    test_nif, test_sdtm, "vs", "SEX", DV_field = "VSORRES",
+    coding_table = coding_table,
+    observation_filter = "VSDTC == lubridate::as_datetime('2023-01-01')",
+    silent = TRUE)
+
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result$BL_SEX[result$USUBJID == "SUBJ-002"], 0)
+})
+
+
+test_that("add_baseline handles edge cases with coding tables", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test with empty coding table - should fail because no join fields
+  empty_coding <- tibble::tribble(
+    ~VSORRES, ~DV
+  )
+
+  expect_error(
+    add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                 DV_field = "VSORRES", coding_table = empty_coding),
+    "DV field in coding table must be numeric!"
+  )
+
+  # Test with coding table that has extra columns
+  extra_col_coding <- tibble::tribble(
+    ~VSORRES, ~DV, ~EXTRA_COL,
+    "MALE",     1,        "X",
+    "FEMALE",   0,        "Y"
+  )
+
+  result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                        DV_field = "VSORRES", coding_table = extra_col_coding,
+                        silent = TRUE)
+
+  expect_equal(result$BL_SEX, 1)
+})
+
+
+test_that("add_baseline handles numeric coding with different data types", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE",     "Y",
+    "SUBJ-002", "2023-01-01",     "SEX", "FEMALE",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test with integer DV values
+  int_coding <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",     1L,
+    "FEMALE",   0L
+  )
+
+  result_int <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                            DV_field = "VSORRES", coding_table = int_coding,
+                            silent = TRUE)
+
+  expect_equal(result_int$BL_SEX[result_int$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result_int$BL_SEX[result_int$USUBJID == "SUBJ-002"], 0)
+
+  # Test with double DV values
+  double_coding <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",   1.0,
+    "FEMALE", 0.0
+  )
+
+  result_double <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                               DV_field = "VSORRES", coding_table = double_coding,
+                               silent = TRUE)
+
+  expect_equal(result_double$BL_SEX[result_double$USUBJID == "SUBJ-001"], 1.0)
+  expect_equal(result_double$BL_SEX[result_double$USUBJID == "SUBJ-002"], 0.0)
+})
+
+
+test_that("add_baseline handles multiple test codes with coding tables", {
+  test_nif <- tibble::tribble(
+    ~USUBJID,         ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID,       ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001", "2023-01-01",     "SEX",   "MALE",     "Y",
+    "SUBJ-001", "2023-01-01",   "RACE", "WHITE",     "Y",
+    "SUBJ-002", "2023-01-01",     "SEX", "FEMALE",     "Y",
+    "SUBJ-002", "2023-01-01",   "RACE", "BLACK",     "Y"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT"
+  )
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  coding_table <- tibble::tribble(
+    ~VSORRES, ~DV,
+    "MALE",     1,
+    "FEMALE",   0,
+    "WHITE",    1,
+    "BLACK",    2
+  )
+
+  # Test SEX
+  result_sex <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
+                            DV_field = "VSORRES", coding_table = coding_table,
+                            silent = TRUE)
+
+  expect_equal(result_sex$BL_SEX[result_sex$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result_sex$BL_SEX[result_sex$USUBJID == "SUBJ-002"], 0)
+
+  # Test RACE
+  result_race <- add_baseline(test_nif, test_sdtm, "vs", "RACE",
+                             DV_field = "VSORRES", coding_table = coding_table,
+                             silent = TRUE)
+
+  expect_equal(result_race$BL_RACE[result_race$USUBJID == "SUBJ-001"], 1)
+  expect_equal(result_race$BL_RACE[result_race$USUBJID == "SUBJ-002"], 2)
+})
+

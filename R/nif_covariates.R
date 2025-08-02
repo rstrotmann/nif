@@ -160,7 +160,9 @@ add_covariate <- function(
 #' @param DV_field The name of the DV field as character.
 #' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD with
 #'   xx the domain name, as character.
-#' @param observation_filter A filter term for the `domain`, as character.
+#' @param observation_filter A filter term for the `domain`, as character. Note:
+#'   if the filter term includes date comparisons, make sure to represent the
+#'   date as, datetime object e.g.,  `lubridate::as_datetime()`.
 #' @param baseline_filter A filter term to identify the baseline condition.
 #'   within the `domain`. Defaults to either "xxBLFL == 'Y'" or
 #'   "xxLOBXFL == 'Y'" (with xx the domain code), whichever is found first in
@@ -275,11 +277,6 @@ add_baseline <- function(
     stop("Coding table cannot be applied - no valid data column!")
   } else {
     if(!is.null(coding_table)) {
-      # validate coding table
-      # if(!is.numeric(coding_table$DV)) {
-      #   stop("DV field in coding table must be numeric!")
-      # }
-
       conditional_message(
         "Recoding from ", join_fields,
         silent = silent)}
