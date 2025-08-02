@@ -251,15 +251,14 @@ make_observation <- function(
     silent = NULL
 ) {
   # Validate inputs
-  if (!inherits(sdtm, "sdtm")) {
-    stop("sdtm must be an sdtm object")
-  }
+  validate_char_param(domain, "domain")
+  validate_sdtm(sdtm, domain)
+  validate_char_param(testcd, "testcd")
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_char_param(parent, "parent", allow_null = TRUE)
+  # other validations not implemented - add_observation takes care of that.
 
-  # domain_name <- str_to_lower(domain)
   domain_name <- tolower(domain)
-  if (!domain_name %in% names(sdtm$domains)) {
-    stop(paste0("Domain '", domain_name, "' not found in sdtm object"))
-  }
 
   allowed_ntime_method = c("TPT", "ELTM")
   if(is.null(ntime_method)) {
@@ -292,6 +291,7 @@ make_observation <- function(
     stop(paste0("Error getting subject data: ", e$message))
   })
 
+  # Get observation data
   obj <- domain(sdtm, domain_name) %>%
     lubrify_dates()
 
@@ -299,13 +299,17 @@ make_observation <- function(
   required_fields <- c(TESTCD_field, DTC_field)
   missing_fields <- required_fields[!required_fields %in% names(obj)]
   if (length(missing_fields) > 0) {
-    stop(paste0("Required field(s) missing in domain '", domain_name, "': ",
-                paste(missing_fields, collapse = ", ")))
+    stop(paste0(
+      "Required field(s) missing in domain '", domain_name, "': ",
+      nice_enumeration(missing_fields)
+      ))
   }
 
   # Check if DV field exists when no coding table
   if (!DV_field %in% names(obj) && is.null(coding_table)) {
-    stop(paste0("DV field '", DV_field, "' not found in domain and no coding table provided"))
+    stop(paste0(
+      "DV field '", DV_field,
+      "' not found in domain and no coding table provided"))
   }
 
   # Create NTIME lookup table if not provided
@@ -323,7 +327,7 @@ make_observation <- function(
         "No NTIME_lookup could be created, NTIME will be NA",
         silent = silent)
     }
-  } else {
+  } else { # in case a lookup table is provided
     # Validate NTIME_lookup structure
     if(!is.data.frame(NTIME_lookup)) {
       stop("NTIME_lookup must be a data frame")
@@ -504,11 +508,15 @@ add_observation <- function(
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug))
     keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
   valid_duplicate_values <- c("stop", "ignore", "identify", "resolve")
   if(!duplicates %in% valid_duplicate_values)
     stop(paste0(
       "Invalid value for 'duplicates' - must be one of ",
       nice_enumeration(valid_duplicate_values, conjunction = "or")))
+
+  # ensure that keep includes all fields already present in the nif
+  keep <- unique(c(keep, names(nif)))
 
   nif <- nif %>%
     ensure_analyte()
@@ -560,7 +568,7 @@ add_observation <- function(
   dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
   n_dupl <- find_duplicates(observation, fields = dupl_fields, count_only = TRUE)
 
-  if(n_dupl != 0){
+  if(n_dupl != 0) {
     if(duplicates == "stop") {
       stop(paste0(
         n_dupl, " duplicate ",

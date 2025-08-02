@@ -25,14 +25,6 @@ make_test_sdtm1 <- function() {
       "4",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00"
     ),
 
-    # ex = tibble::tribble(
-    #   ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC,
-    #   "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-    #   "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-    #   "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",
-    #   "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00"
-    # ) %>% mutate(EXSEQ = row_number()),
-
     ex = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC, ~EXSEQ,
       "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     1L,
@@ -217,7 +209,7 @@ test_that("make_observation validates inputs correctly", {
   expect_error(
     make_observation(sdtm, "invalid_domain", "A",
                      ntime_method = "ELTM", silent = TRUE),
-    "Domain 'invalid_domain' not found in sdtm object"
+    "Expected domain missing in sdtm object: invalid_domain"
   )
 
   # Test with non-sdtm object
@@ -225,7 +217,7 @@ test_that("make_observation validates inputs correctly", {
   expect_error(
     make_observation(not_sdtm, "pc", "A",
                      ntime_method = "ELTM", silent = TRUE),
-    "sdtm must be an sdtm object"
+    "Input must be a sdtm object"
   )
 })
 
@@ -297,14 +289,6 @@ test_that("add_observation basic functionality works", {
   expect_equal(unique(nif_with_obs$ANALYTE), "RS2023")
 })
 
-
-# test_that("add_observation requires administration first", {
-#   # Try to add observation to empty nif
-#   expect_error(
-#     new_nif() %>% add_observation(examplinib_sad, "pc", "RS2023"),
-#     "Please add at least one administration first!"
-#   )
-# })
 
 test_that("make_observation works with ntime_method = 'TPT'", {
   # Create test data

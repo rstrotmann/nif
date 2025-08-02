@@ -65,9 +65,18 @@ add_covariate <- function(
   # Set up field names
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-  if(is.null(TESTCD_field)) TESTCD_field <- paste0(str_to_upper(domain),
-                                                   "TESTCD")
+  if(is.null(TESTCD_field))
+    TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
   if(is.null(covariate)) covariate <- str_to_upper(testcd)
+
+  # check whether covariate name is already taken
+  if(covariate %in% names(nif)) {
+    stop(paste0(
+      "Covariate ", covariate, " is already in nif, please provide a ",
+      "unique name in the 'covariate' parameter!"
+    ))
+  }
+
   COV_field <- covariate
 
   # Get domain data
@@ -77,8 +86,10 @@ add_covariate <- function(
   required_fields <- c("USUBJID", DTC_field, DV_field, TESTCD_field)
   missing_fields <- required_fields[!required_fields %in% names(domain_data)]
   if (length(missing_fields) > 0) {
-    stop(paste0("Required fields missing in domain data: ",
-                paste(missing_fields, collapse = ", ")))
+    stop(paste0(
+      "Required fields missing in domain data: ",
+      nice_enumeration(missing_fields)
+    ))
   }
 
   # Validate testcd exists in the domain
@@ -94,7 +105,8 @@ add_covariate <- function(
   filtered_cov <- domain_data %>%
     filter(.data$USUBJID %in% unique(nif$USUBJID)) %>%
     lubrify_dates() %>%
-    filter(eval(parse(text = observation_filter)))
+    filter(eval(parse(text = observation_filter))) %>%
+    filter(.data[[TESTCD_field]] == testcd)
 
   # Check if any data remains after filtering
   if (nrow(filtered_cov) == 0) {
@@ -104,10 +116,12 @@ add_covariate <- function(
   }
 
   cov <- filtered_cov %>%
-    filter(.data[[TESTCD_field]] == testcd) %>%
-    tidyr::pivot_wider(names_from = all_of(TESTCD_field),
-                       values_from = all_of(DV_field),
-                       values_fn = duplicate_function) %>%
+    # filter(.data[[TESTCD_field]] == testcd) %>%
+    tidyr::pivot_wider(
+      names_from = all_of(TESTCD_field),
+      values_from = all_of(DV_field),
+      values_fn = duplicate_function
+    ) %>%
     rename("DTC" = all_of(DTC_field)) %>%
     rename_with(~COV_field, all_of(testcd)) %>%
     decompose_dtc("DTC") %>%
@@ -221,7 +235,6 @@ add_baseline <- function(
   } else {
     bl_field <- name
   }
-
 
   # generate baseline filter
   if(is.null(baseline_filter)){
