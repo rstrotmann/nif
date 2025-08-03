@@ -68,7 +68,7 @@ test_that("add_observation auto-assigns compartment if not specified", {
   expect_message(
     nif_with_obs <- base_nif %>%
       add_observation(examplinib_sad, "pc", "RS2023", silent = FALSE),
-    "Compartment for RS2023 was not specified and has been set to 2"
+    "Compartment for RS2023 not specified and set to 2"
   )
 
   # Verify the compartment was auto-assigned
@@ -87,7 +87,7 @@ test_that("add_observation auto-assigns parent if not specified", {
       add_observation(
         examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT", cmt = 2,
         silent = FALSE),
-    "Parent for DIFFERENT was set to RS2023!"
+    "Parent for DIFFERENT not specified and set to RS2023"
   )
 })
 

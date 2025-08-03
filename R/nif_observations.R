@@ -250,7 +250,7 @@ make_observation <- function(
     include_day_in_ntime = FALSE,
     silent = NULL
 ) {
-  # Validate inputs
+  # validate inputs
   validate_char_param(domain, "domain")
   validate_sdtm(sdtm, domain)
   validate_char_param(testcd, "testcd")
@@ -260,6 +260,7 @@ make_observation <- function(
 
   domain_name <- tolower(domain)
 
+  # validate ntime method
   allowed_ntime_method = c("TPT", "ELTM")
   if(is.null(ntime_method)) {
     ntime_method = "TPT"
@@ -271,15 +272,9 @@ make_observation <- function(
   }
 
   # Create fields
-  if(is.null(DTC_field))
-    DTC_field <- paste0(toupper(domain), "DTC")
-
-  if(is.null(DV_field))
-    DV_field <- paste0(toupper(domain), "STRESN")
-
-  if(is.null(TESTCD_field))
-    TESTCD_field <- paste0(toupper(domain), "TESTCD")
-
+  if(is.null(DTC_field)) DTC_field <- paste0(toupper(domain), "DTC")
+  if(is.null(DV_field)) DV_field <- paste0(toupper(domain), "STRESN")
+  if(is.null(TESTCD_field)) TESTCD_field <- paste0(toupper(domain), "TESTCD")
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
 
@@ -295,7 +290,7 @@ make_observation <- function(
   obj <- domain(sdtm, domain_name) %>%
     lubrify_dates()
 
-  # Check if required fields exist
+  # Check whether required fields exist
   required_fields <- c(TESTCD_field, DTC_field)
   missing_fields <- required_fields[!required_fields %in% names(obj)]
   if (length(missing_fields) > 0) {
@@ -359,11 +354,12 @@ make_observation <- function(
         paste(join_msgs, collapse = "\n"),
         silent = silent)
     }
-  } else {
+  } else { # proceed without coding table
     obj <- obj %>%
       mutate(DV = .data[[DV_field]] * factor)
   }
 
+  # apply observation filter, add debug fields
   filtered_obj <- obj %>%
     mutate(SRC_DOMAIN = .data$DOMAIN) %>%
     {if(paste0(toupper(domain), "SEQ") %in% names(obj))
@@ -376,6 +372,7 @@ make_observation <- function(
     stop("The observation_filter '", observation_filter, "' returned no entries.")
   }
 
+  # create further fields
   out <- filtered_obj %>%
     filter(.data[[TESTCD_field]] == testcd) %>%
     mutate(
@@ -393,6 +390,7 @@ make_observation <- function(
 
   join_variables <- intersect(names(NTIME_lookup), names(obj))
 
+  # apply NTIME lookup table
   if(!is.null(NTIME_lookup)) {
       out <- left_join(out, NTIME_lookup, by = join_variables)
   } else {
@@ -410,6 +408,7 @@ make_observation <- function(
       mutate(NTIME = NTIME + trialday_to_day(out[[dy_name]]) * 24)
   }
 
+  # merge subject-level information
   out <- out %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
@@ -518,6 +517,7 @@ add_observation <- function(
   # ensure that keep includes all fields already present in the nif
   keep <- unique(c(keep, names(nif)))
 
+  # ensure analytes
   nif <- nif %>%
     ensure_analyte()
 
@@ -533,8 +533,7 @@ add_observation <- function(
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(
-      paste0("Compartment for ", testcd,
-             " was not specified and has been set to ", cmt),
+      "Compartment for ", testcd, " not specified and set to ", cmt,
       silent = silent)
   }
 
@@ -552,7 +551,7 @@ add_observation <- function(
           "Please specify a parent value explicitly."))
       }
       conditional_message(
-        paste0("Parent for ", analyte, " was set to ", parent, "!"),
+        "Parent for ", analyte, " not specified and set to ", parent,
         silent = silent)
     }
   }
@@ -611,7 +610,6 @@ add_observation <- function(
     }
   }
 
-
   obj <- bind_rows(nif, observation) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
@@ -624,18 +622,17 @@ add_observation <- function(
   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
   if(n_no_admin != 0) {
     conditional_message(
-      paste0(
-        "Missing administration information in ",
-        n_no_admin, " observations (did you set a ",
-        "parent for these observations?):\n",
-        df_to_string(
-         obj %>%
-           filter(.data$NO_ADMIN_FLAG == TRUE) %>%
-           group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
-           mutate(N = sum(EVID == 0)) %>%
-           ungroup() %>%
-           distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-         indent = 2), "\n"),
+      "Missing administration information in ",
+      n_no_admin, " observations (did you set a ",
+      "parent for these observations?):\n",
+      df_to_string(
+       obj %>%
+         filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+         group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
+         mutate(N = sum(EVID == 0)) %>%
+         ungroup() %>%
+         distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+       indent = 2), "\n",
       silent = silent)
 
     obj <- obj %>%
