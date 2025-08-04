@@ -23,8 +23,8 @@ test_that("domain() returns correct data frames for existing domains", {
   class(test_data) <- c("sdtm", "list")
 
   # Test domain() returns the correct data frames
-  expect_identical(domain(test_data, "dm"), test_dm)
-  expect_identical(domain(test_data, "pc"), test_pc)
+  expect_identical(as.data.frame(domain(test_data, "dm")), test_dm)
+  expect_identical(as.data.frame(domain(test_data, "pc")), test_pc)
 })
 
 
@@ -56,10 +56,10 @@ test_that("domain() is case-insensitive", {
   class(test_data) <- c("sdtm", "list")
 
   # Test with different case variations
-  expect_identical(domain(test_data, "dm"), test_dm)
-  expect_identical(domain(test_data, "DM"), test_dm)
-  expect_identical(domain(test_data, "Dm"), test_dm)
-  expect_identical(domain(test_data, "dM"), test_dm)
+  expect_identical(as.data.frame(domain(test_data, "dm")), test_dm)
+  expect_identical(as.data.frame(domain(test_data, "DM")), test_dm)
+  expect_identical(as.data.frame(domain(test_data, "Dm")), test_dm)
+  expect_identical(as.data.frame(domain(test_data, "dM")), test_dm)
 })
 
 
