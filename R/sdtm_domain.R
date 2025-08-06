@@ -90,6 +90,9 @@ summary.domain <- function(object, ...) {
     epoch <- NULL
   }
 
+  category <- distinct(select(object, ends_with("CAT")))
+  if(ncol(category) == 0) category <- NULL
+
   # output
   out <- list(
     data <- object,
@@ -98,6 +101,7 @@ summary.domain <- function(object, ...) {
     epoch = epoch,
     subjects = distinct(select(object, any_of(c("USUBJID", "SUBJID")))),
     test = test,
+    category = category,
     observations = observations,
     tpt = tpt,
     n_obs = nrow(object),
@@ -130,6 +134,13 @@ print.summary_domain <- function(x, ...) {
   cat(paste(x$n_obs, "observations\n"))
 
   cat("\n")
+
+  if(!is.null(x$test)) {
+    cat("Categories\n")
+    cat(df_to_string(
+      x$category, indent = indent, show_none = TRUE
+    ), "\n\n")
+  }
 
   if(!is.null(x$test)) {
     cat("Testcodes\n")
