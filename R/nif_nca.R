@@ -319,8 +319,10 @@ nca1 <- function(nif,
 #'   R code that can be evaluated on the PP domain.
 #' @param group Grouping variable from the pp domain, as character.
 #' @param silent Suppress message output.
-#' @param ppcat The value for PPCAT to filter the PP domain for. If NULL, no
-#'   filtering is done.
+#' @param ppcat The value for PPCAT (Test category) to filter the PP domain for.
+#'   If NULL, no filtering is done.
+#' @param ppscat The value for PPSCAT (Test subcategory) to filter the PP domain
+#'   for. If NULL, no filtering is done.
 #'
 #' @return A data frame containing the filtered and joined PP domain data.
 #' @export
@@ -329,6 +331,7 @@ nca_from_pp <- function(
     sdtm_data,
     analyte = NULL,
     ppcat = NULL,
+    ppscat = NULL,
     keep = NULL,
     group = NULL,
     observation_filter = "TRUE",
@@ -344,17 +347,10 @@ nca_from_pp <- function(
 
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(ppcat, "ppcat", allow_null = TRUE)
+  validate_char_param(ppscat, "ppscat", allow_null = TRUE)
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
   validate_char_param(group, "group", allow_null = TRUE)
   validate_char_param(observation_filter, "observation_filter")
-
-  # if (missing(obj) || missing(sdtm_data)) {
-  #   stop("Both 'obj' and 'sdtm_data' must be provided")
-  # }
-
-  # if (!"domains" %in% names(sdtm_data)) {
-  #   stop("sdtm_data must contain a 'domains' list")
-  # }
 
   if (!"pp" %in% names(sdtm_data$domains)) {
     stop("Domain PP is not included in the sdtm object")
@@ -396,10 +392,26 @@ nca_from_pp <- function(
 
   pp <- domain(sdtm_data, "pp")
 
+  # validate ppcat and ppscat
+  if(!is.null(ppcat)) {
+    if(!ppcat %in% names(pp)) {
+      stop(paste0("PPCAT of ", ppcat, " not found in PP domain!"))
+    }
+  }
+
+  if(!is.null(ppscat)){
+    if(!ppscat %in% names(pp)) {
+      stop(paste0("PPSCAT of ", ppscat, " not found in PP domain!"))
+     }
+  }
+
   result <- pp %>%
-    # {if("PPCAT" %in% names(pp)) filter(., .data$PPCAT == ppcat) else .} %>%
-    {if("PPCAT" %in% names(pp) & !is.null(ppcat))
-      filter(., .data$PPCAT == ppcat) else .} %>%
+    # {if("PPCAT" %in% names(pp) & !is.null(ppcat))
+    #   filter(., .data$PPCAT == ppcat) else .} %>%
+
+    {if(!is.null(ppcat)) filter(., .data$PPCAT == ppcat) else .} %>%
+    {if(!is.null(ppscat)) filter(., .data$PPCAT == ppscat) else .} %>%
+
     filter(eval(parse(text = observation_filter))) %>%
     select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
                     "PPCAT", "PPRFTDTC", group))) %>%

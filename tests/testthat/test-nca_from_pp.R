@@ -3,18 +3,18 @@ test_that("nca_from_pp works with valid inputs", {
   nif_obj <- new_nif(
     tibble::tribble(
       ~ID, ~USUBJID, ~ANALYTE, ~EVID, ~DOSE, ~AGE,
-      1,  "SUBJ1",   "DRUG",     1,   100,   30,
-      2,  "SUBJ2",   "DRUG",     1,   200,   40
+        1,  "SUBJ1",   "DRUG",     1,   100,   30,
+        2,  "SUBJ2",   "DRUG",     1,   200,   40
     )
   )
 
   sdtm_data <- new_sdtm(list(
     pp = tibble::tribble(
       ~USUBJID, ~PPTESTCD, ~PPSTRESN,  ~PPSPEC, ~PPCAT,    ~PPRFTDTC, ~DOMAIN,
-      "SUBJ1",     "AUC",       100, "PLASMA", "DRUG", "2023-01-01",    "PP",
-      "SUBJ1",    "CMAX",        50, "PLASMA", "DRUG", "2023-01-01",    "PP",
-      "SUBJ2",     "AUC",       200, "PLASMA", "DRUG", "2023-01-02",    "PP",
-      "SUBJ2",    "CMAX",       100, "PLASMA", "DRUG", "2023-01-02",    "PP"
+       "SUBJ1",     "AUC",       100, "PLASMA", "DRUG", "2023-01-01",    "PP",
+       "SUBJ1",    "CMAX",        50, "PLASMA", "DRUG", "2023-01-01",    "PP",
+       "SUBJ2",     "AUC",       200, "PLASMA", "DRUG", "2023-01-02",    "PP",
+       "SUBJ2",    "CMAX",       100, "PLASMA", "DRUG", "2023-01-02",    "PP"
     )
   ))
 

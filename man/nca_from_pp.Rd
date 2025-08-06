@@ -9,6 +9,7 @@ nca_from_pp(
   sdtm_data,
   analyte = NULL,
   ppcat = NULL,
+  ppscat = NULL,
   keep = NULL,
   group = NULL,
   observation_filter = "TRUE",
@@ -23,8 +24,11 @@ nca_from_pp(
 \item{analyte}{The analyte as character. If NULL, will be guessed from the
 nif object.}
 
-\item{ppcat}{The value for PPCAT to filter the PP domain for. If NULL, no
-filtering is done.}
+\item{ppcat}{The value for PPCAT (Test category) to filter the PP domain for.
+If NULL, no filtering is done.}
+
+\item{ppscat}{The value for PPSCAT (Test subcategory) to filter the PP domain
+for. If NULL, no filtering is done.}
 
 \item{keep}{Columns to keep from the input nif object, as character.}
 
