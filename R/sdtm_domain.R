@@ -65,6 +65,8 @@ summary.domain <- function(object, ...) {
   testcd_field <- paste0(current_domain, "TESTCD")
   test_field <- paste0(current_domain, "TEST")
   tpt_field <- paste0(current_domain, "TPT")
+  tptnum_field <- paste0(current_domain, "TPTNUM")
+  eltm_field <- paste0(current_domain, "ELTM")
   cat_field <- paste0(current_domain, "CAT")
   fast_field <- paste0(current_domain, "FAST")
 
@@ -80,7 +82,8 @@ summary.domain <- function(object, ...) {
   }
 
   if(tpt_field %in% names(object)) {
-    tpt <- distinct(select(object, any_of(c(paste0(current_domain, "TPT")))))
+    tpt <- distinct(select(
+      object, any_of(c(tpt_field, tptnum_field, eltm_field))))
   } else {
     tpt <- NULL
   }
