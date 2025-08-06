@@ -15,6 +15,8 @@ add_observation(
   cmt = NULL,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
+  cat = NULL,
+  scat = NULL,
   TESTCD_field = NULL,
   DTC_field = NULL,
   DV_field = NULL,
@@ -54,6 +56,10 @@ character. Defaults to the value of 'analyte' if NULL.}
 
 \item{observation_filter}{The filtering to apply to the observation source
 data.}
+
+\item{cat}{xxCAT filter to apply, as character.}
+
+\item{scat}{xxSCAT filter to apply, as character.}
 
 \item{TESTCD_field}{The xxTESTCD field. Defaults to the two-character domain
 name followed by 'TESTCD', if NULL.}

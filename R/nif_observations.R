@@ -223,6 +223,8 @@ make_ntime <- function(
 #' @param ntime_method the field to derive the nominal time from. Allowed values
 #'   are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.
 #' @param include_day_in_ntime as logical.
+#' @param cat xxCAT filter to apply, as character.
+#' @param scat xxSCAT filter to apply, as character.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -239,6 +241,8 @@ make_observation <- function(
     cmt = NA,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
+    cat = NULL,
+    scat = NULL,
     TESTCD_field = NULL,
     DTC_field = NULL,
     DV_field = NULL,
@@ -256,6 +260,9 @@ make_observation <- function(
   validate_char_param(testcd, "testcd")
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(parent, "parent", allow_null = TRUE)
+
+  validate_char_param(cat, "cat", allow_null = TRUE)
+  validate_char_param(scat, "scat", allow_null = TRUE)
   # other validations not implemented - add_observation takes care of that.
 
   domain_name <- tolower(domain)
@@ -275,6 +282,8 @@ make_observation <- function(
   if(is.null(DTC_field)) DTC_field <- paste0(toupper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(toupper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(toupper(domain), "TESTCD")
+  if(is.null(cat)) cat_field <- paste0(toupper(domain), "CAT")
+  if(is.null(scat)) scat_field <- paste0(toupper(domain), "SCAT")
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
 
@@ -366,6 +375,11 @@ make_observation <- function(
       mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]) else
         mutate(., SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter)))
+
+  # apply cat and scat filter
+  filtered_obj <- filtered_obj %>%
+    {if(!is.null(cat)) filter(., .data[[cat_field]] == cat) else .} %>%
+    {if(!is.null(scat)) filter(., .data[[scat_field]] == scat) else .}
 
   # Add warning if observation_filter returns no entries
   if (nrow(filtered_obj) == 0) {
@@ -469,6 +483,8 @@ add_observation <- function(
     cmt = NULL,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
+    cat = NULL,
+    scat = NULL,
     TESTCD_field = NULL,
     DTC_field = NULL,
     DV_field = NULL,
@@ -558,7 +574,7 @@ add_observation <- function(
 
   observation <- make_observation(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
-    observation_filter, TESTCD_field, DTC_field, DV_field,
+    observation_filter, cat, scat, TESTCD_field, DTC_field, DV_field,
     coding_table, factor, NTIME_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, silent = silent) %>%
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
