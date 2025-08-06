@@ -282,8 +282,8 @@ make_observation <- function(
   if(is.null(DTC_field)) DTC_field <- paste0(toupper(domain), "DTC")
   if(is.null(DV_field)) DV_field <- paste0(toupper(domain), "STRESN")
   if(is.null(TESTCD_field)) TESTCD_field <- paste0(toupper(domain), "TESTCD")
-  if(is.null(cat)) cat_field <- paste0(toupper(domain), "CAT")
-  if(is.null(scat)) scat_field <- paste0(toupper(domain), "SCAT")
+  cat_field <- paste0(toupper(domain), "CAT")
+  scat_field <- paste0(toupper(domain), "SCAT")
   if(is.null(analyte)) analyte <- testcd
   if(is.null(parent)) parent <- analyte
 
@@ -376,14 +376,19 @@ make_observation <- function(
         mutate(., SRC_SEQ = NA)} %>%
     filter(eval(parse(text = observation_filter)))
 
+  # Raise error if observation_filter returns no entries
+  if (nrow(filtered_obj) == 0) {
+    stop("No entries found after applying observation filter!")
+  }
+
   # apply cat and scat filter
   filtered_obj <- filtered_obj %>%
     {if(!is.null(cat)) filter(., .data[[cat_field]] == cat) else .} %>%
     {if(!is.null(scat)) filter(., .data[[scat_field]] == scat) else .}
 
-  # Add warning if observation_filter returns no entries
+  # Raise error if cat and scat filtering returns no entries
   if (nrow(filtered_obj) == 0) {
-    stop("The observation_filter '", observation_filter, "' returned no entries.")
+    stop("No entries found after applying cat and scat filters")
   }
 
   # create further fields

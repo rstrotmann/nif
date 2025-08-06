@@ -59,7 +59,7 @@ test_that("make_observation issues warning if observation filter returns no obse
   expect_error(
     make_observation(sdtm, "pc", "A", observation_filter = "FALSE",
                      ntime_method = "ELTM", silent = FALSE),
-    "The observation_filter 'FALSE' returned no entries."
+    "No entries found after applying observation filter!"
   )
 })
 
@@ -426,3 +426,438 @@ test_that("make_observation handles different time point formats", {
     c(0, 1, 0.75, 1.5)  # Expected NTIME values based on PCTPT
   )
 })
+
+
+# Tests for cat and scat parameters
+test_that("make_observation filters by cat parameter correctly", {
+  # Create test data with PCCAT field
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
+    "SUBJ1",  "PC",    "TEST1",   "PK",   100,       "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1",  "PC",    "TEST1",   "PK",   200,       "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1",  "PC",    "TEST1",   "PD",   300,       "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1",  "PC",    "TEST1",   "PD",   400,       "2023-01-01T11:00:00", "PT3H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test filtering by cat = "PK"
+  result_pk <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    cat = "PK",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_pk), 2)
+  expect_equal(unique(result_pk$DV), c(100, 200))
+  expect_equal(unique(result_pk$NTIME), c(0, 1))
+
+  # Test filtering by cat = "PD"
+  result_pd <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    cat = "PD",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_pd), 2)
+  expect_equal(unique(result_pd$DV), c(300, 400))
+  expect_equal(unique(result_pd$NTIME), c(2, 3))
+})
+
+
+test_that("make_observation filters by scat parameter correctly", {
+  # Create test data with PCSCAT field
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
+    "SUBJ1",  "PC",    "TEST1",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1",  "PC",    "TEST1",   "PLASMA", 200,      "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1",  "PC",    "TEST1",   "URINE",  300,      "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1",  "PC",    "TEST1",   "URINE",  400,      "2023-01-01T11:00:00", "PT3H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test filtering by scat = "PLASMA"
+  result_plasma <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    scat = "PLASMA",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_plasma), 2)
+  expect_equal(unique(result_plasma$DV), c(100, 200))
+  expect_equal(unique(result_plasma$NTIME), c(0, 1))
+
+  # Test filtering by scat = "URINE"
+  result_urine <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    scat = "URINE",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_urine), 2)
+  expect_equal(unique(result_urine$DV), c(300, 400))
+  expect_equal(unique(result_urine$NTIME), c(2, 3))
+})
+
+
+test_that("make_observation filters by both cat and scat parameters correctly", {
+  # Create test data with both PCCAT and PCSCAT fields
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
+    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1",  "PC",    "TEST1",   "PK",   "URINE",  200,      "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1",  "PC",    "TEST1",   "PD",   "PLASMA", 300,      "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1",  "PC",    "TEST1",   "PD",   "URINE",  400,      "2023-01-01T11:00:00", "PT3H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test filtering by both cat = "PK" and scat = "PLASMA"
+  result_pk_plasma <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    cat = "PK",
+    scat = "PLASMA",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_pk_plasma), 1)
+  expect_equal(result_pk_plasma$DV, 100)
+  expect_equal(result_pk_plasma$NTIME, 0)
+
+  # Test filtering by both cat = "PD" and scat = "URINE"
+  result_pd_urine <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    cat = "PD",
+    scat = "URINE",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_pd_urine), 1)
+  expect_equal(result_pd_urine$DV, 400)
+  expect_equal(result_pd_urine$NTIME, 3)
+})
+
+
+test_that("make_observation handles custom cat and scat field names", {
+  # Create test data with custom field names
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
+    "SUBJ1",  "PC",    "TEST1",   "CUSTOM1", "SPEC1", 100,      "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1",  "PC",    "TEST1",   "CUSTOM1", "SPEC2", 200,      "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1",  "PC",    "TEST1",   "CUSTOM2", "SPEC1", 300,      "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1",  "PC",    "TEST1",   "CUSTOM2", "SPEC2", 400,      "2023-01-01T11:00:00", "PT3H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test with custom cat value
+  result_custom_cat <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    cat = "CUSTOM1",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_custom_cat), 2)
+  expect_equal(unique(result_custom_cat$DV), c(100, 200))
+
+  # Test with custom scat value
+  result_custom_scat <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    scat = "SPEC1",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_custom_scat), 2)
+  expect_equal(unique(result_custom_scat$DV), c(100, 300))
+})
+
+
+test_that("make_observation handles missing cat and scat fields gracefully", {
+  # Create test data without PCCAT and PCSCAT fields
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCDTC,              ~PCELTM,
+    "SUBJ1",  "PC",    "TEST1",   100,       "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1",  "PC",    "TEST1",   200,       "2023-01-01T09:00:00", "PT1H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Should work without cat and scat parameters
+  result_no_filters <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_no_filters), 2)
+  expect_equal(unique(result_no_filters$DV), c(100, 200))
+
+  # Should error when trying to filter by non-existent cat field
+  expect_error(
+    make_observation(
+      sdtm = sdtm,
+      domain = "PC",
+      testcd = "TEST1",
+      cat = "NONEXISTENT",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "Column `PCCAT` not found in `.data`"
+  )
+
+  # Should error when trying to filter by non-existent scat field
+  expect_error(
+    make_observation(
+      sdtm = sdtm,
+      domain = "PC",
+      testcd = "TEST1",
+      scat = "NONEXISTENT",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "Column `PCSCAT` not found in `.data`"
+  )
+})
+
+
+test_that("make_observation handles cat and scat with different domains", {
+  # Test with LB domain
+  lb_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~LBTESTCD, ~LBCAT, ~LBSCAT, ~LBSTRESN, ~LBDTC,              ~LBELTM,
+    "SUBJ1",  "LB",    "CREAT",   "CHEM", "SERUM", 1.2,       "2023-01-01T08:00:00", "LT0H",
+    "SUBJ1",  "LB",    "CREAT",   "CHEM", "URINE", 2.1,       "2023-01-01T09:00:00", "LT1H",
+    "SUBJ1",  "LB",    "CREAT",   "HEMA", "SERUM", 1.5,       "2023-01-01T10:00:00", "LT2H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    lb = lb_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test filtering by LBCAT
+  result_lb_cat <- make_observation(
+    sdtm = sdtm,
+    domain = "LB",
+    testcd = "CREAT",
+    cat = "CHEM",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_lb_cat), 2)
+  expect_equal(unique(result_lb_cat$DV), c(1.2, 2.1))
+
+  # Test filtering by LBSCAT
+  result_lb_scat <- make_observation(
+    sdtm = sdtm,
+    domain = "LB",
+    testcd = "CREAT",
+    scat = "SERUM",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_lb_scat), 2)
+  expect_equal(unique(result_lb_scat$DV), c(1.2, 1.5))
+})
+
+
+test_that("make_observation handles cat and scat with no matching values", {
+  # Create test data
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
+    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 200,      "2023-01-01T09:00:00", "PT1H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test with cat value that doesn't exist
+  expect_error(
+    make_observation(
+      sdtm = sdtm,
+      domain = "PC",
+      testcd = "TEST1",
+      cat = "NONEXISTENT",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "No entries found after applying cat and scat filters"
+  )
+
+  # Test with scat value that doesn't exist
+  expect_error(
+    make_observation(
+      sdtm = sdtm,
+      domain = "PC",
+      testcd = "TEST1",
+      scat = "NONEXISTENT",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "No entries found after applying cat and scat filters"
+  )
+})
+
+
+test_that("make_observation handles NULL cat and scat parameters", {
+  # Create test data
+  pc_data <- tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
+    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1",  "PC",    "TEST1",   "PD",   "URINE",  200,      "2023-01-01T09:00:00", "PT1H"
+  )
+
+  dm_data <- tribble(
+    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+  )
+
+  vs_data <- tribble(
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+  )
+
+  sdtm <- new_sdtm(list(
+    pc = pc_data,
+    dm = dm_data,
+    vs = vs_data
+  ))
+
+  # Test with NULL cat and scat (should return all rows)
+  result_null_filters <- make_observation(
+    sdtm = sdtm,
+    domain = "PC",
+    testcd = "TEST1",
+    cat = NULL,
+    scat = NULL,
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result_null_filters), 2)
+  expect_equal(unique(result_null_filters$DV), c(100, 200))
+})
+
