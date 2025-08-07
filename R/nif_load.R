@@ -312,7 +312,7 @@ pin_write.nif <- function(
   if(is.null(board))
     board <- nif_option_value("board")
 
-  if(is.null(board) | is.na(board))
+  if(is.null(board) || is.na(board))
     stop("No pin board provided")
 
   board_obj <- pins::board_folder(board)
@@ -351,7 +351,7 @@ pin_read_nif <- function(name, board = NULL) {
   if(is.null(board))
     board <- nif_option_value("board")
 
-  if(is.null(board) | is.na(board))
+  if(is.null(board) || is.na(board))
     stop("No pin board provided")
 
   board_obj <- pins::board_folder(board)
