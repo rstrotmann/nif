@@ -225,6 +225,7 @@ make_ntime <- function(
 #' @param include_day_in_ntime as logical.
 #' @param cat xxCAT filter to apply, as character.
 #' @param scat xxSCAT filter to apply, as character.
+#' @param omit_not_done Delete rows where xxSTAT is "NOT DONE, as logical.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -252,6 +253,7 @@ make_observation <- function(
     ntime_method = NULL,
     keep = NULL,
     include_day_in_ntime = FALSE,
+    omit_not_done = TRUE,
     silent = NULL
 ) {
   # validate inputs
@@ -263,6 +265,8 @@ make_observation <- function(
 
   validate_char_param(cat, "cat", allow_null = TRUE)
   validate_char_param(scat, "scat", allow_null = TRUE)
+
+  validate_logical_param(omit_not_done, "omit_not_done")
   # other validations not implemented - add_observation takes care of that.
 
   domain_name <- tolower(domain)
@@ -379,6 +383,19 @@ make_observation <- function(
   # Raise error if observation_filter returns no entries
   if (nrow(filtered_obj) == 0) {
     stop("No entries found after applying observation filter!")
+  }
+
+  # filter for NOT DONE
+  stat_field <- paste0(toupper(domain), "STAT")
+  if(omit_not_done == TRUE & stat_field %in% names(filtered_obj)) {
+    not_done <- filtered_obj %>%
+      filter(.data[[stat_field]] == "NOT DONE")
+    if(nrow(not_done) > 0)
+      conditional_message(
+        nrow(not_done), " observations for ", analyte, " with ", stat_field,
+        " of 'NOT DONE' omitted", silent = silent)
+    filtered_obj <- filtered_obj %>%
+      filter(.data[[stat_field]] != "NOT DONE")
   }
 
   # apply cat and scat filter
@@ -503,6 +520,7 @@ add_observation <- function(
     silent = NULL,
     duplicates = "stop",
     duplicate_function = mean,
+    omit_not_done = TRUE,
     na.rm = TRUE
 ) {
   # validate inputs
@@ -581,7 +599,8 @@ add_observation <- function(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
     observation_filter, cat, scat, TESTCD_field, DTC_field, DV_field,
     coding_table, factor, NTIME_lookup, ntime_method, keep,
-    include_day_in_ntime = include_day_in_ntime, silent = silent) %>%
+    include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
+    silent = silent) %>%
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
 
   # Duplicate handling

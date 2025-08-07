@@ -25,6 +25,7 @@ make_observation(
   ntime_method = NULL,
   keep = NULL,
   include_day_in_ntime = FALSE,
+  omit_not_done = TRUE,
   silent = NULL
 )
 }
@@ -81,6 +82,8 @@ are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
 \item{keep}{Columns to keep, as character.}
 
 \item{include_day_in_ntime}{as logical.}
+
+\item{omit_not_done}{Delete rows where xxSTAT is "NOT DONE, as logical.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}

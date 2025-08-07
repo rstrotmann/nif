@@ -30,6 +30,7 @@ add_observation(
   silent = NULL,
   duplicates = "stop",
   duplicate_function = mean,
+  omit_not_done = TRUE,
   na.rm = TRUE
 )
 }
@@ -106,6 +107,8 @@ duplicate entries.
 
 \item{duplicate_function}{Function to resolve duplicate values, defaults to
 \code{mean}.}
+
+\item{omit_not_done}{Delete rows where xxSTAT is "NOT DONE, as logical.}
 
 \item{na.rm}{Logical indicating whether to remove NA values when applying the
 duplicate_function. Defaults to TRUE.}
