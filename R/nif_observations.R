@@ -396,12 +396,17 @@ make_observation <- function(
         " of 'NOT DONE' omitted", silent = silent)
     filtered_obj <- filtered_obj %>%
       filter(.data[[stat_field]] != "NOT DONE")
+
+    if(nrow(filtered_obj) == 0)
+      stop("No entries found after omitting 'NOT DONE' entries")
   }
 
   # apply cat and scat filter
   filtered_obj <- filtered_obj %>%
-    {if(!is.null(cat)) filter(., .data[[cat_field]] == cat) else .} %>%
-    {if(!is.null(scat)) filter(., .data[[scat_field]] == scat) else .}
+    {if(!is.null(cat) & cat_field %in% names(filtered_obj))
+      filter(., .data[[cat_field]] == cat) else .} %>%
+    {if(!is.null(scat) & scat_field %in% names(filtered_obj))
+        filter(., .data[[scat_field]] == scat) else .}
 
   # Raise error if cat and scat filtering returns no entries
   if (nrow(filtered_obj) == 0) {

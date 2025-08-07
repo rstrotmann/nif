@@ -652,71 +652,6 @@ test_that("make_observation handles custom cat and scat field names", {
   expect_equal(unique(result_custom_scat$DV), c(100, 300))
 })
 
-
-test_that("make_observation handles missing cat and scat fields gracefully", {
-  # Create test data without PCCAT and PCSCAT fields
-  pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCDTC,              ~PCELTM,
-    "SUBJ1",  "PC",    "TEST1",   100,       "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1",  "PC",    "TEST1",   200,       "2023-01-01T09:00:00", "PT1H"
-  )
-
-  dm_data <- tribble(
-    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
-    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
-  )
-
-  vs_data <- tribble(
-    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
-  )
-
-  sdtm <- new_sdtm(list(
-    pc = pc_data,
-    dm = dm_data,
-    vs = vs_data
-  ))
-
-  # Should work without cat and scat parameters
-  result_no_filters <- make_observation(
-    sdtm = sdtm,
-    domain = "PC",
-    testcd = "TEST1",
-    ntime_method = "ELTM",
-    silent = TRUE
-  )
-
-  expect_equal(nrow(result_no_filters), 2)
-  expect_equal(unique(result_no_filters$DV), c(100, 200))
-
-  # Should error when trying to filter by non-existent cat field
-  expect_error(
-    make_observation(
-      sdtm = sdtm,
-      domain = "PC",
-      testcd = "TEST1",
-      cat = "NONEXISTENT",
-      ntime_method = "ELTM",
-      silent = TRUE
-    ),
-    "Column `PCCAT` not found in `.data`"
-  )
-
-  # Should error when trying to filter by non-existent scat field
-  expect_error(
-    make_observation(
-      sdtm = sdtm,
-      domain = "PC",
-      testcd = "TEST1",
-      scat = "NONEXISTENT",
-      ntime_method = "ELTM",
-      silent = TRUE
-    ),
-    "Column `PCSCAT` not found in `.data`"
-  )
-})
-
-
 test_that("make_observation handles cat and scat with different domains", {
   # Test with LB domain
   lb_data <- tribble(
@@ -859,5 +794,194 @@ test_that("make_observation handles NULL cat and scat parameters", {
 
   expect_equal(nrow(result_null_filters), 2)
   expect_equal(unique(result_null_filters$DV), c(100, 200))
+})
+
+test_that("make_observation handles omit_not_done parameter correctly", {
+  # Use existing helper function and add STAT field
+  sdtm <- make_test_sdtm1()
+
+  # Add PCSTAT field to the PC domain
+  sdtm$domains$pc$PCSTAT <- ""
+  sdtm$domains$pc$PCSTAT[c(1, 3)] <- "NOT DONE"  # Set 2 rows to "NOT DONE"
+
+  # Test with omit_not_done = TRUE (default)
+  result_omit_true <- make_observation(
+    sdtm, "pc", "A",
+    ntime_method = "ELTM",
+    omit_not_done = TRUE,
+    silent = TRUE
+  )
+
+  # Should exclude 2 rows with PCSTAT = "NOT DONE"
+  expect_equal(nrow(result_omit_true), 2)
+  expect_false(any(result_omit_true$PCSTAT == "NOT DONE", na.rm = TRUE))
+
+  # Test with omit_not_done = FALSE
+  result_omit_false <- make_observation(
+    sdtm, "pc", "A",
+    ntime_method = "ELTM",
+    omit_not_done = FALSE,
+    silent = TRUE
+  )
+
+  # Should include all 4 rows including "NOT DONE"
+  expect_equal(nrow(result_omit_false), 4)
+  expect_equal(sum(result_omit_false$PCSTAT == "NOT DONE", na.rm = TRUE), 2)
+})
+
+test_that("make_observation handles omit_not_done with different domains", {
+  # Use existing helper function and add STAT field to LB domain
+  sdtm <- make_test_sdtm1()
+
+  # Add LBSTAT field to the LB domain
+  sdtm$domains$lb$LBSTAT <- ""
+  sdtm$domains$lb$LBSTAT[2] <- "NOT DONE"  # Set 1 row to "NOT DONE"
+
+  # Test with omit_not_done = TRUE for LB domain
+  result_lb_omit_true <- make_observation(
+    sdtm, "lb", "CREAT",
+    ntime_method = "ELTM",
+    omit_not_done = TRUE,
+    silent = TRUE
+  )
+
+  # Should exclude 1 row with LBSTAT = "NOT DONE"
+  expect_equal(nrow(result_lb_omit_true), 3)
+  expect_false(any(result_lb_omit_true$LBSTAT == "NOT DONE", na.rm = TRUE))
+
+  # Test with omit_not_done = FALSE for LB domain
+  result_lb_omit_false <- make_observation(
+    sdtm, "lb", "CREAT",
+    ntime_method = "ELTM",
+    omit_not_done = FALSE,
+    silent = TRUE
+  )
+
+  # Should include all 4 rows including "NOT DONE"
+  expect_equal(nrow(result_lb_omit_false), 4)
+  expect_equal(sum(result_lb_omit_false$LBSTAT == "NOT DONE", na.rm = TRUE), 1)
+})
+
+test_that("make_observation handles omit_not_done when STAT field is missing", {
+  # Create test SDTM without STAT field
+  test_sdtm_no_stat <- list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,             ~RFXSTDTC,              ~RFSTDTC, ~ACTARM,  ~STUDYID,
+      "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "2",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+    ) %>%
+      mutate(RFENDTC = "2024-01-02T08:00:00"),
+
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
+      "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
+      "2",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
+    ),
+
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
+      "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
+      "1",    "PC",       "A", "2024-01-01T09:00:00",       150,  "Spec", "Analyte A",  "PT1H",
+      "2",    "PC",       "A", "2024-01-01T08:00:00",       110,  "Spec", "Analyte A",  "PT0H",
+      "2",    "PC",       "A", "2024-01-01T09:00:00",       160,  "Spec", "Analyte A",  "PT1H"
+    )
+  ) %>%
+    new_sdtm()
+
+  # Test with omit_not_done = TRUE when no STAT field exists
+  result_no_stat_omit_true <- make_observation(
+    test_sdtm_no_stat, "pc", "A",
+    ntime_method = "ELTM",
+    omit_not_done = TRUE,
+    silent = TRUE
+  )
+
+  # Should include all rows since no STAT field to filter on
+  expect_equal(nrow(result_no_stat_omit_true), 4)
+
+  # Test with omit_not_done = FALSE when no STAT field exists
+  result_no_stat_omit_false <- make_observation(
+    test_sdtm_no_stat, "pc", "A",
+    ntime_method = "ELTM",
+    omit_not_done = FALSE,
+    silent = TRUE
+  )
+
+  # Should include all rows since no STAT field to filter on
+  expect_equal(nrow(result_no_stat_omit_false), 4)
+})
+
+test_that("make_observation shows correct message when omit_not_done filters observations", {
+  # Create test SDTM with STAT field and "NOT DONE" values
+  test_sdtm_message <- list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,             ~RFXSTDTC,              ~RFSTDTC, ~ACTARM,  ~STUDYID,
+      "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+    ) %>%
+      mutate(RFENDTC = "2024-01-02T08:00:00"),
+
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
+      "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
+    ),
+
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM, ~PCSTAT,
+      "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",      "",
+      "1",    "PC",       "A", "2024-01-01T09:00:00",       150,  "Spec", "Analyte A",  "PT1H", "NOT DONE",
+      "1",    "PC",       "A", "2024-01-01T10:00:00",       200,  "Spec", "Analyte A",  "PT2H", "NOT DONE"
+    )
+  ) %>%
+    new_sdtm()
+
+  # Test that message is shown when silent = FALSE
+  expect_message(
+    make_observation(
+      test_sdtm_message, "pc", "A",
+      ntime_method = "ELTM",
+      omit_not_done = TRUE,
+      silent = FALSE
+    ),
+    "2 observations for A with PCSTAT of 'NOT DONE' omitted"
+  )
+
+  # Test that no message is shown when silent = TRUE
+  expect_no_message(
+    make_observation(
+      test_sdtm_message, "pc", "A",
+      ntime_method = "ELTM",
+      omit_not_done = TRUE,
+      silent = TRUE
+    )
+  )
+})
+
+test_that("make_observation validates omit_not_done parameter", {
+  sdtm <- make_test_sdtm1()
+
+  # Test with invalid omit_not_done parameter
+  expect_error(
+    make_observation(sdtm, "pc", "A", omit_not_done = "invalid"),
+    "omit_not_done must be a logical value"
+  )
+
+  expect_error(
+    make_observation(sdtm, "pc", "A", omit_not_done = 123),
+    "omit_not_done must be a logical value"
+  )
+
+  expect_error(
+    make_observation(sdtm, "pc", "A", omit_not_done = NULL),
+    "omit_not_done must not be NULL"
+  )
+
+  # Test with valid omit_not_done parameters
+  expect_no_error(
+    make_observation(sdtm, "pc", "A", omit_not_done = TRUE, silent = TRUE)
+  )
+
+  expect_no_error(
+    make_observation(sdtm, "pc", "A", omit_not_done = FALSE, silent = TRUE)
+  )
 })
 
