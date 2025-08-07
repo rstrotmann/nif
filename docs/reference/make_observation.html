@@ -21,7 +21,7 @@ examples). Otherwise, 'NTIME' will be NA."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.55.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,6 +87,7 @@ examples). Otherwise, 'NTIME' will be <code>NA</code>.</p>
 <span>  ntime_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  include_day_in_ntime <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  omit_not_done <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -186,6 +187,10 @@ are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.</p>
 
 <dt id="arg-include-day-in-ntime">include_day_in_ntime<a class="anchor" aria-label="anchor" href="#arg-include-day-in-ntime"></a></dt>
 <dd><p>as logical.</p></dd>
+
+
+<dt id="arg-omit-not-done">omit_not_done<a class="anchor" aria-label="anchor" href="#arg-omit-not-done"></a></dt>
+<dd><p>Delete rows where xxSTAT is "NOT DONE, as logical.</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
