@@ -1095,19 +1095,19 @@ edish_plot <- function(
 
   lb <- tryCatch({
     sdtm %>%
-    domain("lb") %>%
-    filter(!is.na(.data$LBSTRESN)) %>%
-    filter(!is.na(.data$LBSTNRHI)) %>%
-    filter(eval(parse(text = observation_filter))) %>%
-    # Verify required columns exist
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI")) %>%
-    # Verify numeric columns are actually numeric
-    assertr::verify(is.numeric(.data$LBSTRESN)) %>%
-    assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
-    # Verify values are valid
-    assertr::verify(.data$LBSTRESN >= 0) %>%  # No negative lab values
-    assertr::verify(.data$LBSTNRHI > 0)  # No zero or negative ULN values
+      domain("lb") %>%
+      filter(!is.na(.data$LBSTRESN)) %>%
+      filter(!is.na(.data$LBSTNRHI)) %>%
+      filter(eval(parse(text = observation_filter))) %>%
+      # Verify required columns exist
+      assertr::verify(assertr::has_all_names(
+        "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI")) %>%
+      # Verify numeric columns are actually numeric
+      assertr::verify(is.numeric(.data$LBSTRESN)) %>%
+      assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
+      # Verify values are valid
+      assertr::verify(.data$LBSTRESN >= 0) %>%  # No negative lab values
+      assertr::verify(.data$LBSTNRHI > 0)  # No zero or negative ULN values
   }, error = function(e) {
     stop("Data validation failed: ") #, e$message)
   })

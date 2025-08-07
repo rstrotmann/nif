@@ -96,3 +96,111 @@ read_sdtm <- function(data_path,
   }
   new_sdtm(out)
 }
+
+
+#' Generic function
+#'
+#' @param obj The object to pin.
+#' @param board Path to pin board, as character, defaults to respective
+#'   nif_option setting if NULL.
+#' @param name Name for the pin object, as character. Defaults to
+#'   'xx_sdtm' or 'xx_nif' with xx the study name.
+#' @param title Title for the pin object, as character. Defaults to
+#'   the study name(s).
+#' @param silent Suppress messages. Defaults to nif_option setting if NULL.
+#'
+#' @returns Nothing.
+#' @export
+pin_write <- function(
+    obj, board = NULL, name = NULL, title = NULL, silent = NULL) {
+  UseMethod("pin_write")
+}
+
+
+#' Write to pin board
+#'
+#' @param obj sdtm object.
+#' @param board Path to pin board, as character, defaults to respective
+#'   nif_option setting if NULL.
+#' @param name Name for the sdtm pin object, as character. Defaults to
+#'   'xx_sdtm' with xx the study name.
+#' @param title Title for the sdtm pin object, as character. Defaults to
+#'   the study name.
+#' @param silent Suppress messages. Defaults to nif_option setting if NULL.
+#'
+#' @returns Nothing.
+#' @importFrom pins pin_write board_folder
+#' @export
+pin_write.sdtm <- function(
+    obj, board = NULL, name = NULL, title = NULL, silent = NULL) {
+  # input validation
+  validate_sdtm(obj)
+  validate_char_param(board, "board", allow_null = TRUE)
+  validate_char_param(name, "name", allow_null = TRUE)
+  validate_char_param(title, "title", allow_null = TRUE)
+
+  if(is.null(board))
+    board <- nif_option_value("board")
+
+  if(is.null(board) | is.na(board))
+    stop("No pin board provided")
+
+  board_obj <- pins::board_folder(board)
+
+  if(!dir.exists(board))
+    stop(paste0(
+      "Board ", board, " does not exist"))
+
+  if(is.null(name))
+    name <- paste0(summary(obj)$study, "_sdtm")
+
+  if(is.null(title))
+    title <- summary(obj)$study
+
+  msg <- capture.output(
+    pins::pin_write(board_obj, obj, name = name, title = title, type = "rds"),
+    type = "message")
+  conditional_message(
+    paste(msg, collapse = "\n"), silent = silent)
+}
+
+
+#' Read sdtm object from pinboard
+#'
+#' @param name The pin name, as character.
+#' @param board The board folder, defaults to the respective nif_option setting.
+#'
+#' @returns A sdtm object.
+#' @importFrom pins board_folder pin_read
+#' @export
+pin_read_sdtm <- function(name, board = NULL) {
+  # input validation
+  validate_char_param(board, "board", allow_null = TRUE)
+  validate_char_param(name, "name")
+
+  # get board
+  if(is.null(board))
+    board <- nif_option_value("board")
+
+  if(is.null(board) | is.na(board))
+    stop("No pin board provided")
+
+  board_obj <- pins::board_folder(board)
+
+  if(!dir.exists(board))
+    stop(paste0(
+      "Board ", board, " does not exist"))
+
+  # read pin
+  out <- pin_read(board_obj, name)
+
+  validate_sdtm(out)
+  return(out)
+}
+
+
+
+
+
+
+

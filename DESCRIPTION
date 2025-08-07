@@ -34,7 +34,8 @@ Imports:
     ggrepel,
     shiny,
     shinyjs,
-    lifecycle
+    lifecycle,
+    pins
 Suggests: 
     knitr,
     tibble,

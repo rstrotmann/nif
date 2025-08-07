@@ -27,6 +27,7 @@ nif_option <- function(...) {
   args <- list(...)
   allowed_options <- tribble(
     ~name,        ~type_test,
+    "board",      is.character,
     "silent",     is.logical,
     "watermark",  is.character,
     "debug",      is.logical,

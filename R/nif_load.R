@@ -283,3 +283,86 @@ import_nif <- function(
     no_numeric = no_numeric,
     silent = silent)
 }
+
+
+
+
+#' Write to pin board
+#'
+#' @param obj nif object.
+#' @param board Path to pin board, as character, defaults to respective
+#'   nif_option setting if NULL.
+#' @param name Name for the nif pin object, as character. Defaults to
+#'   'xx_nif' with xx the studies included.
+#' @param title Title for the nif pin object, as character. Defaults to
+#'   the studies included.
+#' @param silent Suppress messages. Defaults to nif_option setting if NULL.
+#'
+#' @returns Nothing.
+#' @importFrom pins pin_write board_folder
+#' @export
+pin_write.nif <- function(
+    obj, board = NULL, name = NULL, title = NULL, silent = NULL) {
+  # input validation
+  validate_nif(obj)
+  validate_char_param(board, "board", allow_null = TRUE)
+  validate_char_param(name, "name", allow_null = TRUE)
+  validate_char_param(title, "title", allow_null = TRUE)
+
+  if(is.null(board))
+    board <- nif_option_value("board")
+
+  if(is.null(board) | is.na(board))
+    stop("No pin board provided")
+
+  board_obj <- pins::board_folder(board)
+
+  if(!dir.exists(board))
+    stop(paste0(
+      "Board ", board, " does not exist"))
+
+  if(is.null(name))
+    name <- paste0(paste(studies(obj), collapse = "_"), "_nif")
+
+  if(is.null(title))
+    title <- paste(studies(obj), collapse = "_")
+
+  msg <- capture.output(
+    pins::pin_write(board_obj, obj, name = name, title = title, type = "rds"),
+    type = "message")
+  conditional_message(
+    paste(msg, collapse = "\n"), silent = silent)
+}
+
+
+#' Read nif object from pinboard
+#'
+#' @param name The pin name, as character.
+#' @param board The board folder, defaults to the respective nif_option setting.
+#'
+#' @returns A nif object.
+#' @export
+pin_read_nif <- function(name, board = NULL) {
+  # input validation
+  validate_char_param(board, "board", allow_null = TRUE)
+  validate_char_param(name, "name")
+
+  # get board
+  if(is.null(board))
+    board <- nif_option_value("board")
+
+  if(is.null(board) | is.na(board))
+    stop("No pin board provided")
+
+  board_obj <- pins::board_folder(board)
+
+  if(!dir.exists(board))
+    stop(paste0(
+      "Board ", board, " does not exist"))
+
+  # read pin
+  out <- pin_read(board_obj, name)
+
+  validate_nif(out)
+  return(out)
+}
