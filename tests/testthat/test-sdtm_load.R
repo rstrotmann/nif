@@ -15,11 +15,11 @@ test_that("read_sdtm validates inputs correctly", {
   # Test invalid domain
   expect_error(
     read_sdtm(tempdir(), domain = character(0)),
-    "domain must be a non-empty character vector"
+    "no domain data found"
   )
   expect_error(
     read_sdtm(tempdir(), domain = 123),
-    "domain must be a non-empty character vector"
+    "domain must be a string value"
   )
 })
 
@@ -33,7 +33,7 @@ test_that("read_sdtm handles missing files correctly", {
   # Test missing files
   expect_error(
     read_sdtm(test_dir),
-    "The following files do not exist"
+    "no domain data found"
   )
 })
 
@@ -424,3 +424,4 @@ test_that("pin_write.sdtm preserves sdtm object structure", {
   expect_equal(read_back_sdtm$parent_mapping, original_sdtm$parent_mapping)
   expect_equal(read_back_sdtm$time_mapping, original_sdtm$time_mapping)
 })
+

@@ -4,19 +4,13 @@
 \alias{read_sdtm}
 \title{Read SDTM data}
 \usage{
-read_sdtm(
-  data_path,
-  domain = c("dm", "vs", "ex", "pc"),
-  format = "sas",
-  delim = ",",
-  ...
-)
+read_sdtm(data_path, domain = NULL, format = "sas", delim = ",", ...)
 }
 \arguments{
 \item{data_path}{The file system path to the source folder as character.}
 
 \item{domain}{The domain name(s) as character, defaults to
-\code{c("dm", "vs", "ex", "pc")}.}
+all domains found in the folder.}
 
 \item{format}{The format of the source files as character, either 'sas'
 (default), 'xpt', 'xlsx', or 'csv'.}

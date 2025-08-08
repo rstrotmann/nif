@@ -5,7 +5,7 @@
 #'
 #' @param data_path The file system path to the source folder as character.
 #' @param domain The domain name(s) as character, defaults to
-#'   `c("dm", "vs", "ex", "pc")`.
+#'   all domains found in the folder.
 #' @param format The format of the source files as character, either 'sas'
 #'   (default), 'xpt', 'xlsx', or 'csv'.
 #' @param ... Further parameters, refer to readr::read_csv and
@@ -17,8 +17,13 @@
 #' @import readxl
 #' @export
 read_sdtm <- function(data_path,
-                      domain = c("dm", "vs", "ex", "pc"),
+                      domain = NULL,
                       format = "sas", delim = ",", ...) {
+  # validate input
+  validate_char_param(data_path, "data_path")
+  validate_char_param(domain, "domain", allow_null = TRUE, allow_multiple = TRUE)
+  validate_char_param(format, "format")
+
   # Validate data_path
   if (!dir.exists(data_path)) {
     stop("data_path does not exist: ", data_path, call. = FALSE)
@@ -31,9 +36,9 @@ read_sdtm <- function(data_path,
   }
 
   # Validate domain
-  if (!is.character(domain) || length(domain) == 0) {
-    stop("domain must be a non-empty character vector", call. = FALSE)
-  }
+  # if (!is.character(domain) || length(domain) == 0) {
+  #   stop("domain must be a non-empty character vector", call. = FALSE)
+  # }
 
   # Get file extension based on format
   file_ext <- switch(format,
@@ -42,6 +47,14 @@ read_sdtm <- function(data_path,
     "csv" = ".csv",
     "xlsx" = ".xlsx"
   )
+
+  # set domains
+  if(is.null(domain)) {
+    temp <- list.files(file.path(data_path), pattern = paste0(".*\\", file_ext))
+    domain <- gsub(paste0("^(.*)\\", file_ext), "\\1", temp)
+    # domain names starting with an underscore are omitted
+    domain <- domain[substring(domain, 1, 1) != "_"]
+  }
 
   # Check if all required files exist
   missing_files <- character()
@@ -94,6 +107,9 @@ read_sdtm <- function(data_path,
       )
     }
   }
+
+  if(length(out) == 0)
+    stop("no domain data found")
   new_sdtm(out)
 }
 

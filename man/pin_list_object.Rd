@@ -7,7 +7,7 @@
 pin_list_object(board = NULL, object_type)
 }
 \arguments{
-\item{board}{The board pathe as character.}
+\item{board}{The board path as character.}
 
 \item{object_type}{The object to filter for (sdtm or nif)}
 }
