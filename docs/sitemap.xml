@@ -141,6 +141,9 @@
 <url><loc>/reference/normalize_nif.html</loc></url>
 <url><loc>/reference/obs_per_dose_level.html</loc></url>
 <url><loc>/reference/parents.html</loc></url>
+<url><loc>/reference/pin_list_nif.html</loc></url>
+<url><loc>/reference/pin_list_object.html</loc></url>
+<url><loc>/reference/pin_list_sdtm.html</loc></url>
 <url><loc>/reference/pin_read_nif.html</loc></url>
 <url><loc>/reference/pin_read_sdtm.html</loc></url>
 <url><loc>/reference/pin_write.html</loc></url>
