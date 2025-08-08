@@ -155,10 +155,17 @@ pin_write.sdtm <- function(
     name <- paste0(summary(obj)$study, "_sdtm")
 
   if(is.null(title))
-    title <- summary(obj)$study
+    title <- paste0("SDTM data from study ", summary(obj)$study)
+
+  description <- capture_output(
+    print(summary(obj))
+  )
 
   msg <- capture.output(
-    pins::pin_write(board_obj, obj, name = name, title = title, type = "rds"),
+    pins::pin_write(
+      board_obj, obj, name = name, title = title, type = "rds",
+      description = description,
+      metadata = list(type = "sdtm")),
     type = "message")
   conditional_message(
     paste(msg, collapse = "\n"), silent = silent)
@@ -200,7 +207,59 @@ pin_read_sdtm <- function(name, board = NULL) {
 
 
 
+#' List contents of pinboard
+#'
+#' @param board
+#'
+#' @returns The board folder, defaults to the respective nif_option setting.
+pin_list_object <- function(board = NULL, object_type) {
+  # input validation
+  validate_char_param(board, "board", allow_null = TRUE)
+
+  # get board
+  if(is.null(board))
+    board <- nif_option_value("board")
+
+  if(is.null(board) || is.na(board))
+    stop("No pin board provided")
+
+  board_obj <- pins::board_folder(board)
+
+  if(!dir.exists(board))
+    stop(paste0(
+      "Board ", board, " does not exist"))
+
+  temp <- pin_search(board_obj)
+
+  sel = as.logical(lapply(
+    temp$meta,
+    function(x) {x$user[["type"]] == object_type}
+  ))
+  sel[is.na(sel)] <- FALSE
+
+  temp[sel, ] %>%
+    select(name, title, created) %>%
+    as.data.frame()
+}
 
 
+#' List sdtm objects in pinboard
+#'
+#' @param board A pinboard path, as character.
+#'
+#' @returns A data frame.
+#' @export
+pin_list_sdtm <- function(board = NULL) {
+  pin_list_object(board, "sdtm")
+}
 
 
+#' List nif objects in pinboard
+#'
+#' @param board A pinboard path, as character.
+#'
+#' @returns A data frame.
+#' @export
+pin_list_nif <- function(board = NULL) {
+  pin_list_object(board, "nif")
+}

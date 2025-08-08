@@ -328,7 +328,9 @@ pin_write.nif <- function(
     title <- paste(studies(obj), collapse = "_")
 
   msg <- capture.output(
-    pins::pin_write(board_obj, obj, name = name, title = title, type = "rds"),
+    pins::pin_write(
+      board_obj, obj, name = name, title = title, type = "rds",
+      metadata = list(type = "nif")),
     type = "message")
   conditional_message(
     paste(msg, collapse = "\n"), silent = silent)
