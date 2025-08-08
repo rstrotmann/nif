@@ -7,11 +7,13 @@
 pin_list_object(board = NULL, object_type)
 }
 \arguments{
-\item{board}{}
+\item{board}{The board pathe as character.}
+
+\item{object_type}{The object to filter for (sdtm or nif)}
 }
 \value{
 The board folder, defaults to the respective nif_option setting.
 }
 \description{
-List contents of pinboard
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }

@@ -5,19 +5,13 @@
 \title{List sdtm objects in pinboard}
 \usage{
 pin_list_sdtm(board = NULL)
-
-pin_list_sdtm(board = NULL)
 }
 \arguments{
 \item{board}{A pinboard path, as character.}
 }
 \value{
 A data frame.
-
-A data frame.
 }
 \description{
-List sdtm objects in pinboard
-
-List nif objects in pinboard
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }

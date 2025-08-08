@@ -15,5 +15,5 @@ pin_read_nif(name, board = NULL)
 A nif object.
 }
 \description{
-Read nif object from pinboard
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }

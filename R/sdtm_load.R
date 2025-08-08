@@ -100,6 +100,9 @@ read_sdtm <- function(data_path,
 
 #' Generic function
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' @param obj The object to pin.
 #' @param board Path to pin board, as character, defaults to respective
 #'   nif_option setting if NULL.
@@ -119,6 +122,9 @@ pin_write <- function(
 
 #' Write to pin board
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' @param obj sdtm object.
 #' @param board Path to pin board, as character, defaults to respective
 #'   nif_option setting if NULL.
@@ -130,6 +136,7 @@ pin_write <- function(
 #'
 #' @returns Nothing.
 #' @importFrom pins pin_write board_folder
+#' @importFrom utils capture.output
 #' @export
 pin_write.sdtm <- function(
     obj, name = NULL, board = NULL, title = NULL, silent = NULL) {
@@ -157,11 +164,11 @@ pin_write.sdtm <- function(
   if(is.null(title))
     title <- paste0("SDTM data from study ", summary(obj)$study)
 
-  description <- capture_output(
+  description <- utils::capture.output(
     print(summary(obj))
   )
 
-  msg <- capture.output(
+  msg <- utils::capture.output(
     pins::pin_write(
       board_obj, obj, name = name, title = title, type = "rds",
       description = description,
@@ -173,6 +180,9 @@ pin_write.sdtm <- function(
 
 
 #' Read sdtm object from pinboard
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
 #'
 #' @param name The pin name, as character.
 #' @param board The board folder, defaults to the respective nif_option setting.
@@ -209,9 +219,14 @@ pin_read_sdtm <- function(name, board = NULL) {
 
 #' List contents of pinboard
 #'
-#' @param board
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param board The board path as character.
+#' @param object_type The object to filter for (sdtm or nif)
 #'
 #' @returns The board folder, defaults to the respective nif_option setting.
+#' @importFrom pins board_folder pin_search
 pin_list_object <- function(board = NULL, object_type) {
   # input validation
   validate_char_param(board, "board", allow_null = TRUE)
@@ -238,12 +253,15 @@ pin_list_object <- function(board = NULL, object_type) {
   sel[is.na(sel)] <- FALSE
 
   temp[sel, ] %>%
-    select(name, title, created) %>%
+    select("name", "title", "created") %>%
     as.data.frame()
 }
 
 
 #' List sdtm objects in pinboard
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
 #'
 #' @param board A pinboard path, as character.
 #'
@@ -255,6 +273,9 @@ pin_list_sdtm <- function(board = NULL) {
 
 
 #' List nif objects in pinboard
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
 #'
 #' @param board A pinboard path, as character.
 #'

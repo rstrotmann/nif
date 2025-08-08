@@ -289,6 +289,9 @@ import_nif <- function(
 
 #' Write to pin board
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' @param obj nif object.
 #' @param board Path to pin board, as character, defaults to respective
 #'   nif_option setting if NULL.
@@ -300,6 +303,7 @@ import_nif <- function(
 #'
 #' @returns Nothing.
 #' @importFrom pins pin_write board_folder
+#' @importFrom utils capture.output
 #' @export
 pin_write.nif <- function(
     obj, name = NULL, board = NULL, title = NULL, silent = NULL) {
@@ -327,7 +331,7 @@ pin_write.nif <- function(
   if(is.null(title))
     title <- paste(studies(obj), collapse = "_")
 
-  msg <- capture.output(
+  msg <- utils::capture.output(
     pins::pin_write(
       board_obj, obj, name = name, title = title, type = "rds",
       metadata = list(type = "nif")),
@@ -338,6 +342,9 @@ pin_write.nif <- function(
 
 
 #' Read nif object from pinboard
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
 #'
 #' @param name The pin name, as character.
 #' @param board The board folder, defaults to the respective nif_option setting.
