@@ -4,16 +4,16 @@
 \alias{pin_write.sdtm}
 \title{Write to pin board}
 \usage{
-\method{pin_write}{sdtm}(obj, board = NULL, name = NULL, title = NULL, silent = NULL)
+\method{pin_write}{sdtm}(obj, name = NULL, board = NULL, title = NULL, silent = NULL)
 }
 \arguments{
 \item{obj}{sdtm object.}
 
-\item{board}{Path to pin board, as character, defaults to respective
-nif_option setting if NULL.}
-
 \item{name}{Name for the sdtm pin object, as character. Defaults to
 'xx_sdtm' with xx the study name.}
+
+\item{board}{Path to pin board, as character, defaults to respective
+nif_option setting if NULL.}
 
 \item{title}{Title for the sdtm pin object, as character. Defaults to
 the study name.}

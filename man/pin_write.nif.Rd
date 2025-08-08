@@ -4,16 +4,16 @@
 \alias{pin_write.nif}
 \title{Write to pin board}
 \usage{
-\method{pin_write}{nif}(obj, board = NULL, name = NULL, title = NULL, silent = NULL)
+\method{pin_write}{nif}(obj, name = NULL, board = NULL, title = NULL, silent = NULL)
 }
 \arguments{
 \item{obj}{nif object.}
 
-\item{board}{Path to pin board, as character, defaults to respective
-nif_option setting if NULL.}
-
 \item{name}{Name for the nif pin object, as character. Defaults to
 'xx_nif' with xx the studies included.}
+
+\item{board}{Path to pin board, as character, defaults to respective
+nif_option setting if NULL.}
 
 \item{title}{Title for the nif pin object, as character. Defaults to
 the studies included.}

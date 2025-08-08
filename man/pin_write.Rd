@@ -4,16 +4,16 @@
 \alias{pin_write}
 \title{Generic function}
 \usage{
-pin_write(obj, board = NULL, name = NULL, title = NULL, silent = NULL)
+pin_write(obj, name = NULL, board = NULL, title = NULL, silent = NULL)
 }
 \arguments{
 \item{obj}{The object to pin.}
 
-\item{board}{Path to pin board, as character, defaults to respective
-nif_option setting if NULL.}
-
 \item{name}{Name for the pin object, as character. Defaults to
 'xx_sdtm' or 'xx_nif' with xx the study name.}
+
+\item{board}{Path to pin board, as character, defaults to respective
+nif_option setting if NULL.}
 
 \item{title}{Title for the pin object, as character. Defaults to
 the study name(s).}

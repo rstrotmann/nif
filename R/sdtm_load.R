@@ -112,7 +112,7 @@ read_sdtm <- function(data_path,
 #' @returns Nothing.
 #' @export
 pin_write <- function(
-    obj, board = NULL, name = NULL, title = NULL, silent = NULL) {
+    obj, name = NULL, board = NULL, title = NULL, silent = NULL) {
   UseMethod("pin_write")
 }
 
@@ -132,7 +132,7 @@ pin_write <- function(
 #' @importFrom pins pin_write board_folder
 #' @export
 pin_write.sdtm <- function(
-    obj, board = NULL, name = NULL, title = NULL, silent = NULL) {
+    obj, name = NULL, board = NULL, title = NULL, silent = NULL) {
   # input validation
   validate_sdtm(obj)
   validate_char_param(board, "board", allow_null = TRUE)

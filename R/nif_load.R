@@ -302,7 +302,7 @@ import_nif <- function(
 #' @importFrom pins pin_write board_folder
 #' @export
 pin_write.nif <- function(
-    obj, board = NULL, name = NULL, title = NULL, silent = NULL) {
+    obj, name = NULL, board = NULL, title = NULL, silent = NULL) {
   # input validation
   validate_nif(obj)
   validate_char_param(board, "board", allow_null = TRUE)
