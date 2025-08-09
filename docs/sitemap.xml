@@ -82,6 +82,7 @@
 <url><loc>/reference/filter_subject.html</loc></url>
 <url><loc>/reference/find_duplicates.html</loc></url>
 <url><loc>/reference/geom_admin.html</loc></url>
+<url><loc>/reference/get_pinboard.html</loc></url>
 <url><loc>/reference/guess_lbspec.html</loc></url>
 <url><loc>/reference/guess_ntime.html</loc></url>
 <url><loc>/reference/has_domain.html</loc></url>
@@ -136,6 +137,7 @@
 <url><loc>/reference/nif_disclaimer.html</loc></url>
 <url><loc>/reference/nif_nca_new.html</loc></url>
 <url><loc>/reference/nif_option.html</loc></url>
+<url><loc>/reference/nif_pinboard.html</loc></url>
 <url><loc>/reference/nif_plot_id.html</loc></url>
 <url><loc>/reference/nif_viewer.html</loc></url>
 <url><loc>/reference/normalize_nif.html</loc></url>
