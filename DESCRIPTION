@@ -41,6 +41,7 @@ Suggests:
     tibble,
     rmarkdown,
     testthat (>= 3.0.0),
+    withr,
     writexl,
     rxode2,
     spelling
