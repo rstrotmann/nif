@@ -21,6 +21,7 @@
 <url><loc>/reference/add_bl_renal.html</loc></url>
 <url><loc>/reference/add_cfb.html</loc></url>
 <url><loc>/reference/add_covariate.html</loc></url>
+<url><loc>/reference/add_dd.html</loc></url>
 <url><loc>/reference/add_dose_level.html</loc></url>
 <url><loc>/reference/add_metabolite_mapping.html</loc></url>
 <url><loc>/reference/add_ntile.html</loc></url>
@@ -159,6 +160,7 @@
 <url><loc>/reference/positive_or_zero.html</loc></url>
 <url><loc>/reference/print_debug.html</loc></url>
 <url><loc>/reference/pt_to_hours.html</loc></url>
+<url><loc>/reference/race_coding.html</loc></url>
 <url><loc>/reference/read_sdtm.html</loc></url>
 <url><loc>/reference/recode_race.html</loc></url>
 <url><loc>/reference/resolve_duplicates.html</loc></url>
