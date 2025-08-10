@@ -52,6 +52,7 @@
 <url><loc>/reference/covariate_hist.html</loc></url>
 <url><loc>/reference/crea_mdrd.html</loc></url>
 <url><loc>/reference/crea_raynaud.html</loc></url>
+<url><loc>/reference/ddt.html</loc></url>
 <url><loc>/reference/decompose_dtc.html</loc></url>
 <url><loc>/reference/derive_sld.html</loc></url>
 <url><loc>/reference/disposition_summary.html</loc></url>
@@ -159,6 +160,7 @@
 <url><loc>/reference/print_debug.html</loc></url>
 <url><loc>/reference/pt_to_hours.html</loc></url>
 <url><loc>/reference/read_sdtm.html</loc></url>
+<url><loc>/reference/recode_race.html</loc></url>
 <url><loc>/reference/resolve_duplicates.html</loc></url>
 <url><loc>/reference/rich_sampling_sbs.html</loc></url>
 <url><loc>/reference/safe_mean.html</loc></url>
