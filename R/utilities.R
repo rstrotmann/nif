@@ -90,6 +90,17 @@ recode_sex <- function(obj) {
 }
 
 
+#' Race coding table
+#'
+#' Standard race coding table with numeric codes and labels
+#'
+#' @format A data frame with 8 rows and 3 columns:
+#' \describe{
+#'   \item{RACEN}{Numeric race code}
+#'   \item{RACE}{Race abbreviation}
+#'   \item{LABEL}{Full race description}
+#' }
+#' @export
 race_coding <- tibble::tribble(
   ~RACEN,                                       ~RACE,         ~LABEL,
        0,                                     "WHITE",        "White",
