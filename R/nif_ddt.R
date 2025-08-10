@@ -59,7 +59,6 @@ ddt <- function(obj) {
 
   # race
   if("RACE" %in% names(obj)) {
-    # if(class(obj$RACE) == "numeric") {
     if(inherits(obj$RACE, "numeric")) {
       temp <- obj %>%
         as.data.frame() %>%
@@ -77,3 +76,48 @@ ddt <- function(obj) {
     as.data.frame()
   return(out)
 }
+
+
+#' Add Field definition to Data Definition Table
+#'
+#' @param obj Data definition Table as data frame.
+#' @param name Field name as character.
+#' @param definition Field definition as character.
+#' @param type Field type as character.
+#' @param description Field description as character.
+#' @param unit Field unit as character.
+#' @param source Field source as character.
+#'
+#' @returns A data frame.
+#' @export
+add_dd <- function(
+    obj, name, definition, type, description, unit = NA_character_, source = "") {
+  # validate input
+  ddt_fields <- c("name", "definition", "type", "description", "unit", "source")
+  if(!inherits(obj, "data.frame"))
+    stop("obj must be a data frame")
+
+  missing_fields <- setdiff(ddt_fields, names(obj))
+  if(length(missing_fields) > 0)
+    stop(paste0(
+      "missing fields in ddt: ", nice_enumeration(missing_fields)
+    ))
+
+  validate_char_param(name, "name")
+  validate_char_param(definition, "definition")
+  validate_char_param(type, "type")
+  validate_char_param(description, "description")
+  if(!is.na(unit))
+    validate_char_param(unit, "unit")
+  validate_char_param(source, "source")
+
+  out <- bind_rows(
+    obj,
+    c(name=name, definition=definition, type=type, description=description,
+      unit=unit, source=source)
+  )
+  return(out)
+}
+
+
+
