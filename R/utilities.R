@@ -89,6 +89,48 @@ recode_sex <- function(obj) {
   return(result)
 }
 
+race_coding <- tibble::tribble(
+  ~RACE, ~RACEN,
+  "WHITE",      0,
+  "ASIAN",      1,
+  "BLACK OR AFRICAN AMERICAN",      2,
+  "AMERICAN INDIAN OR ALASKA NATIVE",      3,
+  "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",      4,
+  "NOT REPORTED",      5,
+  "UNKNOWN",      6,
+  "OTHER",      7
+)
+
+
+#' Recode RACE columns in nif object
+#'
+#' @param obj A nif object with RACE as character field.
+#' @param coding_table A data frame with the columns RACE and RACEN. Uses
+#' default coding, if NULL.
+#'
+#' @returns A nif object with the original RACE replaced by the numerical race
+#' code.
+#' @export
+#'
+#' @examples
+#' recode_race(examplinib_sad_nif)
+recode_race <- function(obj, coding_table = NULL) {
+  # validate inputs
+  validate_nif(obj)
+
+  if(!"RACE" %in% names(obj))
+    stop("RACE field not found")
+
+  if(is.null(coding_table))
+    coding_table <- race_coding
+
+  out <- obj %>%
+    left_join(coding_table, by = "RACE") %>%
+    select(-c("RACE")) %>%
+    rename(RACE = RACEN)
+  return(out)
+}
+
 
 #' Positive value or zero if negative
 #'
