@@ -59,7 +59,8 @@ ddt <- function(obj) {
 
   # race
   if("RACE" %in% names(obj)) {
-    if(class(obj$RACE) == "numeric") {
+    # if(class(obj$RACE) == "numeric") {
+    if(inherits(obj$RACE, "numeric")) {
       temp <- obj %>%
         as.data.frame() %>%
         distinct(RACE) %>%

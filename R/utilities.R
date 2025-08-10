@@ -89,16 +89,17 @@ recode_sex <- function(obj) {
   return(result)
 }
 
+
 race_coding <- tibble::tribble(
-  ~RACE, ~RACEN,
-  "WHITE",      0,
-  "ASIAN",      1,
-  "BLACK OR AFRICAN AMERICAN",      2,
-  "AMERICAN INDIAN OR ALASKA NATIVE",      3,
-  "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",      4,
-  "NOT REPORTED",      5,
-  "UNKNOWN",      6,
-  "OTHER",      7
+  ~RACEN,                                       ~RACE,         ~LABEL,
+       0,                                     "WHITE",        "White",
+       1,                                     "ASIAN",        "Asian",
+       2,                 "BLACK OR AFRICAN AMERICAN",        "Black",
+       3,          "AMERICAN INDIAN OR ALASKA NATIVE",       "Native",
+       4, "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",      "Pacific",
+       5,                              "NOT REPORTED", "Not reported",
+       6,                                   "UNKNOWN",      "Unknown",
+       7,                                     "OTHER",        "Other"
 )
 
 
@@ -125,9 +126,10 @@ recode_race <- function(obj, coding_table = NULL) {
     coding_table <- race_coding
 
   out <- obj %>%
-    left_join(coding_table, by = "RACE") %>%
+    left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") %>%
     select(-c("RACE")) %>%
-    rename(RACE = RACEN)
+    rename(RACE = .data$RACEN) %>%
+    order_nif_columns()
   return(out)
 }
 
