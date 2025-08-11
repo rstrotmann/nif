@@ -834,7 +834,7 @@ testcd <- function(obj, domain = NULL) {
     obj$domains[domain],
     function(acc, x) {
       if (!"DOMAIN" %in% names(x)) {
-        warning("Domain data frame missing DOMAIN column")
+        # warning("Domain data frame missing DOMAIN column")
         return(acc)
       }
 

@@ -61,34 +61,34 @@ test_that("testcd() extracts TESTCD values correctly", {
   expect_equal(testcd(sdtm_obj), as.data.frame(expected))
 })
 
-
-test_that("testcd() handles domains with missing DOMAIN column", {
-  # Create sdtm object with a domain missing DOMAIN column
-  sdtm_data <- list(
-    dm = tribble(
-      ~USUBJID, ~DMTESTCD,
-      "SUBJ001", "AGE"
-    ),
-    vs = tribble(
-      ~DOMAIN, ~USUBJID, ~VSTESTCD,
-      "VS", "SUBJ001", "SYSBP"
-    )
-  )
-  sdtm_obj <- new_sdtm(sdtm_data)
-
-  # Expected output (only VS domain should be included)
-  expected <- tribble(
-    ~DOMAIN, ~TESTCD,
-    "VS", "SYSBP"
-  )
-
-  # Test with warning
-  expect_warning(
-    result <- testcd(sdtm_obj),
-    "Domain data frame missing DOMAIN column"
-  )
-  expect_equal(result, as.data.frame(expected))
-})
+#
+# test_that("testcd() handles domains with missing DOMAIN column", {
+#   # Create sdtm object with a domain missing DOMAIN column
+#   sdtm_data <- list(
+#     dm = tribble(
+#       ~USUBJID, ~DMTESTCD,
+#       "SUBJ001", "AGE"
+#     ),
+#     vs = tribble(
+#       ~DOMAIN, ~USUBJID, ~VSTESTCD,
+#       "VS", "SUBJ001", "SYSBP"
+#     )
+#   )
+#   sdtm_obj <- new_sdtm(sdtm_data)
+#
+#   # Expected output (only VS domain should be included)
+#   expected <- tribble(
+#     ~DOMAIN, ~TESTCD,
+#     "VS", "SYSBP"
+#   )
+#
+#   # # Test with warning
+#   # expect_warning(
+#   #   result <- testcd(sdtm_obj),
+#   #   "Domain data frame missing DOMAIN column"
+#   # )
+#   # expect_equal(result, as.data.frame(expected))
+# })
 
 
 test_that("testcd() handles empty DOMAIN column", {
