@@ -8,7 +8,7 @@
 A data frame with 8 rows and 3 columns:
 \describe{
 \item{RACEN}{Numeric code}
-\item{RACE}{CDISC submission value as per NCI code C74457}
+\item{RACE}{RACE CDISC submission value as per NCI code C74457}
 \item{LABEL}{Abbreviation for labeling purpose}
 }
 }

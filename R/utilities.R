@@ -97,7 +97,7 @@ recode_sex <- function(obj) {
 #' @format A data frame with 8 rows and 3 columns:
 #' \describe{
 #'   \item{RACEN}{Numeric code}
-#'   \item{RACE}{CDISC submission value as per NCI code C74457}
+#'   \item{RACE}{RACE CDISC submission value as per NCI code C74457}
 #'   \item{LABEL}{Abbreviation for labeling purpose}
 #' }
 #' @export
@@ -119,6 +119,7 @@ race_coding <- tibble::tribble(
 #' @param obj A nif object with RACE as character field.
 #' @param coding_table A data frame with the columns RACE and RACEN. Uses
 #' default coding, if NULL.
+#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'
 #' @returns A nif object with the original RACE replaced by the numerical race
 #' code.
@@ -126,9 +127,20 @@ race_coding <- tibble::tribble(
 #'
 #' @examples
 #' recode_race(examplinib_sad_nif)
-recode_race <- function(obj, coding_table = NULL) {
+recode_race <- function(obj, coding_table = NULL, silent = NULL) {
   # validate inputs
   validate_nif(obj)
+  validate_logical_param(silent, "silent", allow_null = TRUE)
+
+  # validate coding table
+  if (!is.null(coding_table)) {
+    if (!all(c("RACE", "RACEN") %in% names(coding_table))) {
+      stop("coding_table must contain RACE and RACEN columns")
+    }
+    if (!is.numeric(coding_table$RACEN)) {
+      stop("RACEN column in coding_table must be numeric")
+    }
+  }
 
   if(!"RACE" %in% names(obj))
     stop("RACE field not found")
@@ -136,11 +148,20 @@ recode_race <- function(obj, coding_table = NULL) {
   if(is.null(coding_table))
     coding_table <- race_coding
 
+  # check coding table before joining
+  unmatched <- setdiff(unique(obj$RACE), coding_table$RACE)
+  if(length(unmatched) > 0) {
+    conditional_message(
+      "The following RACE values could not be matched and will become NA: ",
+      nice_enumeration(unmatched), silent = silent)
+  }
+
   out <- obj %>%
     left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") %>%
     select(-c("RACE")) %>%
     rename(RACE = .data$RACEN) %>%
     order_nif_columns()
+
   return(out)
 }
 

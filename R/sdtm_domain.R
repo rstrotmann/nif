@@ -57,9 +57,9 @@ summary.domain <- function(object, ...) {
   validate_domain(object)
   current_domain <- toupper(unique(object$DOMAIN))
 
-  if(length(domain) > 1)
+  if(length(current_domain) > 1)
     stop(paste0(
-      "multiple domain codes found: ", nice_enumeration(domain)
+      "multiple domain codes found: ", nice_enumeration(current_domain)
     ))
 
   testcd_field <- paste0(current_domain, "TESTCD")
@@ -100,7 +100,7 @@ summary.domain <- function(object, ...) {
 
   # output
   out <- list(
-    data <- object,
+    data = object,
     domain = current_domain,
     study = unique(object$STUDYID),
     epoch = epoch,

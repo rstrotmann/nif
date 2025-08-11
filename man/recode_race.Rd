@@ -4,13 +4,15 @@
 \alias{recode_race}
 \title{Recode RACE columns in nif object}
 \usage{
-recode_race(obj, coding_table = NULL)
+recode_race(obj, coding_table = NULL, silent = NULL)
 }
 \arguments{
 \item{obj}{A nif object with RACE as character field.}
 
 \item{coding_table}{A data frame with the columns RACE and RACEN. Uses
 default coding, if NULL.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting, if NULL.}
 }
 \value{
 A nif object with the original RACE replaced by the numerical race
