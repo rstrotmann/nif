@@ -2,7 +2,7 @@ ddt_standard_fields <- tibble::tribble(
   ~name, ~definition, ~type, ~description, ~unit, ~source,
   "REF", "consecutive record number", "integer", "Unique number for each row", NA, "produced",
   "STUDYID", "Study", "character", "Study identification number", NA, "DM: STUDYID",
-  "ID", "Subject identifyer", "numeric", "Unique subject ID across all studies", NA, "produced",
+  "ID", "Subject identifier", "numeric", "Unique subject ID across all studies", NA, "produced",
   "USUBJID", "USUBJID in source", "character", "Unique subject ID in study", NA, "DM: USUBJID",
   "AGE", "Age", "numeric", "Age of subjec at study start", "years", "DM: AGE or derived from DM: BRTHDTC",
   "SEX", "Sex", "0, 1", "0 = Male, 1 = Female", NA, "derived from DM: SEX",
@@ -25,7 +25,7 @@ ddt_standard_fields <- tibble::tribble(
   "DV", "Dependent variable", "numeric", "Dependent variable, NA for administrations", NA, "Source SDTM domain",
   "MDV", "Missing DV", "numeric", "0 = non-missing DV, 1 = Missing DV", NA, "produced",
   "IMPUTATION", "Imputation", "character", "time imputation applied to record", NA, "produced",
-  "ACTARMCD", "Active arm code", "character", "ACTARMCD as in SDTM source", NA, "DM: ACTARMCD"
+  "ACTARMCD", "Actual arm code", "character", "ACTARMCD as in SDTM source", NA, "DM: ACTARMCD"
 )
 
 #' Data definition table for NIF object

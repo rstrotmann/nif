@@ -14,6 +14,7 @@ assign("version", packageVersion("nif"), envir = .nif_env)
 #'
 #' * `silent` as logical: Suppress messages.
 #' * `watermark` as character: Watermark text on all figures.
+#' * `pinboard` as character: Pin board folder for sharing of nif/sdtm objects.
 #' * `debug` as logical: Print debug information.
 #'
 #' @param ... Options as named values, or nothing.
