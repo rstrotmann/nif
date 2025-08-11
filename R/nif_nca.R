@@ -394,15 +394,25 @@ nca_from_pp <- function(
 
   # validate ppcat and ppscat
   if(!is.null(ppcat)) {
-    if(!ppcat %in% names(pp)) {
-      stop(paste0("PPCAT of ", ppcat, " not found in PP domain!"))
-    }
+    # if(!ppcat %in% names(pp)) {
+    #   stop(paste0("PPCAT of ", ppcat, " not found in PP domain!"))
+    # }
+    if(!"PPCAT" %in% names(pp))
+      stop("PPCAT not found in PP domain")
+    if(!ppcat %in% unique(pp$PPCAT))
+      stop(paste0(
+        "PPCAT of ", ppcat, " not found in PP domain"))
   }
 
   if(!is.null(ppscat)){
-    if(!ppscat %in% names(pp)) {
-      stop(paste0("PPSCAT of ", ppscat, " not found in PP domain!"))
-     }
+    # if(!ppscat %in% names(pp)) {
+    #   stop(paste0("PPSCAT of ", ppscat, " not found in PP domain!"))
+    #  }
+    if(!"PPSCAT" %in% names(pp))
+      stop("PPSCAT not found in PP domain")
+    if(!ppscat %in% unique(pp$PPSCAT))
+      stop(paste0(
+        "PPSCAT of ", ppscat, " not found in PP domain"))
   }
 
   result <- pp %>%
@@ -410,7 +420,7 @@ nca_from_pp <- function(
     #   filter(., .data$PPCAT == ppcat) else .} %>%
 
     {if(!is.null(ppcat)) filter(., .data$PPCAT == ppcat) else .} %>%
-    {if(!is.null(ppscat)) filter(., .data$PPCAT == ppscat) else .} %>%
+    {if(!is.null(ppscat)) filter(., .data$PPSCAT == ppscat) else .} %>%
 
     filter(eval(parse(text = observation_filter))) %>%
     select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
