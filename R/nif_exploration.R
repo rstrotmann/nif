@@ -739,22 +739,13 @@ wt_by_race <- function(obj) {
     group_by(ID) %>%
     mutate(bl_wt = mean(WEIGHT[TIME == 0])) %>%
     ungroup() %>%
-    mutate(rc = as.factor(
-      case_match(as.character(RACE),
-        "WHITE" ~ "White",
-        "BLACK OR AFRICAN AMERICAN" ~ "Black",
-        "ASIAN" ~ "Asian",
-        "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER" ~ "Pacific",
-        "AMERICAN INDIAN OR ALASKA NATIVE" ~ "Native",
-        "OTHER" ~ "Other",
-        .default = RACE
-      )
-    )) %>%
-    distinct(ID, bl_wt, rc) %>%
+    left_join(race_coding, by = "RACE") %>%
+
+    distinct(ID, bl_wt, LABEL) %>%
     mutate(maxwt = max(bl_wt, na.rm = TRUE)) %>%
-    group_by(rc) %>%
+    group_by(LABEL) %>%
     mutate(count = n()) %>%
-    ggplot2::ggplot(ggplot2::aes(x = rc, y = bl_wt, group = rc)) +
+    ggplot2::ggplot(ggplot2::aes(x = LABEL, y = bl_wt, group = LABEL)) +
     ggplot2::geom_boxplot(width = 0.5) +
     ggplot2::geom_label(ggplot2::aes(
       label = paste0("N=", count), y = maxwt + 5), label.size = 0

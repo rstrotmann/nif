@@ -96,9 +96,9 @@ recode_sex <- function(obj) {
 #'
 #' @format A data frame with 8 rows and 3 columns:
 #' \describe{
-#'   \item{RACEN}{Numeric race code}
-#'   \item{RACE}{Race abbreviation}
-#'   \item{LABEL}{Full race description}
+#'   \item{RACEN}{Numeric code}
+#'   \item{RACE}{CDISC submission value as per NCI code C74457}
+#'   \item{LABEL}{Abbreviation for labeling purpose}
 #' }
 #' @export
 race_coding <- tibble::tribble(
@@ -108,7 +108,7 @@ race_coding <- tibble::tribble(
        2,                 "BLACK OR AFRICAN AMERICAN",        "Black",
        3,          "AMERICAN INDIAN OR ALASKA NATIVE",       "Native",
        4, "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",      "Pacific",
-       5,                              "NOT REPORTED", "Not reported",
+       5,                              "NOT REPORTED",           "NR",
        6,                                   "UNKNOWN",      "Unknown",
        7,                                     "OTHER",        "Other"
 )
