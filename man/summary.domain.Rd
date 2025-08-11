@@ -4,12 +4,14 @@
 \alias{summary.domain}
 \title{Summary for domain object}
 \usage{
-\method{summary}{domain}(object, ...)
+\method{summary}{domain}(object, ..., silent = NULL)
 }
 \arguments{
 \item{object}{Domain object.}
 
 \item{...}{Further parameters.}
+
+\item{silent}{Suppress messages, defaults to nif_options, if NULL.}
 }
 \value{
 A summary object

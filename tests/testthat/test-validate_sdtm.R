@@ -79,9 +79,8 @@ test_that("validate_sdtm_domains handles mixed valid and unknown domains", {
   ))
 
   # Should warn about unknown domain but not error
-  expect_warning(
-    result <- validate_sdtm_domains(test_sdtm, silent = TRUE),
-    "Unknown domain 'XYZ' cannot be validated!"
+  expect_no_message(
+    result <- validate_sdtm_domains(test_sdtm, silent = TRUE)
   )
 })
 

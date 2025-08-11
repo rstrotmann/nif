@@ -36,7 +36,7 @@ test_that("validate_domain requires DOMAIN column", {
 
   expect_error(
     validate_domain(invalid_domain),
-    "The data frame must have a 'DOMAIN' column"
+    "The data frame must have a DOMAIN column"
   )
 })
 
@@ -49,7 +49,7 @@ test_that("validate_domain rejects empty DOMAIN column", {
 
   expect_error(
     validate_domain(invalid_domain),
-    "The 'DOMAIN' column is empty"
+    "The DOMAIN column is empty"
   )
 })
 
@@ -69,9 +69,9 @@ test_that("validate_domain handles multiple DOMAIN values", {
   mixed_domain$DOMAIN[2] <- "VS"
 
   # Should warn about multiple domains, but continue
-  expect_warning(
+  expect_error(
     validate_domain(mixed_domain, silent = TRUE),
-    "Multiple domain values found"
+    "Multiple domain values found: DM and VS"
   )
 })
 
@@ -132,8 +132,8 @@ test_that("validate_domain handles unknown domains gracefully", {
   )
 
   # Should warn about unknown domain but not error
-  expect_warning(
-    validate_domain(unknown_domain),
+  expect_message(
+    validate_domain(unknown_domain, silent = FALSE),
     "Unknown domain 'XYZ' cannot be validated!"
   )
 })

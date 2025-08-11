@@ -16,7 +16,7 @@ test_that("recode_race works with default coding table", {
   test_nif <- new_nif(test_data)
 
   # Test recoding
-  result <- recode_race(test_nif)
+  result <- recode_race(test_nif, silent = TRUE)
 
   # Check that RACE is now numeric
   expect_type(result$RACE, "double")
@@ -55,7 +55,7 @@ test_that("recode_race works with custom coding table", {
   test_nif <- new_nif(test_data)
 
   # Test recoding with custom table
-  result <- recode_race(test_nif, coding_table = custom_coding)
+  result <- recode_race(test_nif, coding_table = custom_coding, silent = TRUE)
 
   # Check expected values
   expect_equal(result$RACE, c(1, 2, 3))
@@ -246,7 +246,7 @@ test_that("recode_race works with mixed case and whitespace", {
   test_nif <- new_nif(test_data)
 
   # Test recoding - should handle case sensitivity and whitespace
-  result <- recode_race(test_nif)
+  result <- recode_race(test_nif, silent = TRUE)
 
   # Check that case-sensitive matching works (exact match required)
   expect_equal(result$RACE, c(NA_integer_, NA_integer_, NA_integer_))  # No matches due to case/whitespace differences

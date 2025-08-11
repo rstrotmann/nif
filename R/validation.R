@@ -17,26 +17,32 @@ validate_domain <- function(domain, silent = NULL) {
   }
 
   if (!"DOMAIN" %in% colnames(domain)) {
-    stop("The data frame must have a 'DOMAIN' column")
+    stop("The data frame must have a DOMAIN column")
   }
 
   # Check if domain$DOMAIN is empty
-  if (length(domain$DOMAIN) == 0) {
-    stop("The 'DOMAIN' column is empty")
+  if (length(domain$DOMAIN) == 0 | all(domain$DOMAIN == "")) {
+    stop("The DOMAIN column is empty")
   }
 
   # Get unique domain names and handle multiple values
-  domain_names <- unique(domain$DOMAIN)
-  if (length(domain_names) > 1) {
-    warning("Multiple domain values found: ", paste(domain_names, collapse = ", "),
-            ". Using first value: ", domain_names[1])
-    domain_name <- toupper(domain_names[1])
-  } else {
-    domain_name <- toupper(domain_names)
+  domain_name <- unique(domain$DOMAIN)
+  # if (length(domain_names) > 1) {
+  #   warning("Multiple domain values found: ", paste(domain_names, collapse = ", "),
+  #           ". Using first value: ", domain_names[1])
+  #   domain_name <- toupper(domain_names[1])
+  # } else {
+  #   domain_name <- toupper(domain_names)
+  # }
+  if (length(domain_name) > 1) {
+    stop(paste0(
+      "Multiple domain values found: ", nice_enumeration(domain_name)))
   }
 
   if(!domain_name %in% unique(domain_model$DOMAIN)) {
-    warning("Unknown domain '", domain_name, "' cannot be validated!")
+    # warning("Unknown domain '", domain_name, "' cannot be validated!")
+    conditional_message(
+      "Unknown domain '", domain_name, "' cannot be validated!", silent = silent)
     return(invisible(TRUE))
   } else {
     temp <- domain_model %>%

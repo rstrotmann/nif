@@ -45,22 +45,23 @@ new_domain <- function(
 #'
 #' @param object Domain object.
 #' @param ... Further parameters.
+#' @param silent Suppress messages, defaults to nif_options, if NULL.
 #'
 #' @returns A summary object
 #' @export
-summary.domain <- function(object, ...) {
+summary.domain <- function(object, ..., silent = NULL) {
   # validate input
   if (!inherits(object, "data.frame")) {
     stop("Input must be a data frame")
   }
 
-  validate_domain(object)
+  validate_domain(object, silent = silent)
   current_domain <- toupper(unique(object$DOMAIN))
 
-  if(length(current_domain) > 1)
-    stop(paste0(
-      "multiple domain codes found: ", nice_enumeration(current_domain)
-    ))
+  # if(length(current_domain) > 1)
+  #   stop(paste0(
+  #     "multiple domain codes found: ", nice_enumeration(current_domain)
+  #   ))
 
   testcd_field <- paste0(current_domain, "TESTCD")
   test_field <- paste0(current_domain, "TEST")

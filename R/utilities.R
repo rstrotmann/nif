@@ -159,7 +159,7 @@ recode_race <- function(obj, coding_table = NULL, silent = NULL) {
   out <- obj %>%
     left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") %>%
     select(-c("RACE")) %>%
-    rename(RACE = .data$RACEN) %>%
+    rename(RACE = RACEN) %>%
     order_nif_columns()
 
   return(out)
