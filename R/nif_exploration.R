@@ -741,9 +741,9 @@ wt_by_race <- function(obj) {
     ungroup() %>%
     left_join(race_coding, by = "RACE") %>%
 
-    distinct(ID, bl_wt, LABEL) %>%
+    distinct(across(any_of(c("ID", "bl_wt", "LABEL")))) %>%
     mutate(maxwt = max(bl_wt, na.rm = TRUE)) %>%
-    group_by(LABEL) %>%
+    group_by(.data$LABEL) %>%
     mutate(count = n()) %>%
     ggplot2::ggplot(ggplot2::aes(x = LABEL, y = bl_wt, group = LABEL)) +
     ggplot2::geom_boxplot(width = 0.5) +

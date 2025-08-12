@@ -10,7 +10,7 @@ utils::globalVariables(c(
   "ANALYTE", "CMT", "EVID", "TIME", "NTIME",
   "DV", "AMT", "ID", "DOSE", "AGE",
   "SEX", "RACE", "ACTARMCD", "HEIGHT",
-  "WEIGHT", "BMI", "PCDTC",
+  "WEIGHT", "BMI", "PCDTC", "RACEN", "LABEL",
 
   "dtc", "PCRFTDTC", "PCTESTCD",
   "EXTRT", "admin.time", "REF",

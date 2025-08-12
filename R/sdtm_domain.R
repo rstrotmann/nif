@@ -58,11 +58,6 @@ summary.domain <- function(object, ..., silent = NULL) {
   validate_domain(object, silent = silent)
   current_domain <- toupper(unique(object$DOMAIN))
 
-  # if(length(current_domain) > 1)
-  #   stop(paste0(
-  #     "multiple domain codes found: ", nice_enumeration(current_domain)
-  #   ))
-
   testcd_field <- paste0(current_domain, "TESTCD")
   test_field <- paste0(current_domain, "TEST")
   tpt_field <- paste0(current_domain, "TPT")
@@ -96,6 +91,12 @@ summary.domain <- function(object, ..., silent = NULL) {
     epoch <- NULL
   }
 
+  if("VISIT" %in% names(object)) {
+    visit <- distinct(select(object, any_of(c("VISIT"))))
+  } else {
+    visit <- NULL
+  }
+
   category <- distinct(select(object, ends_with("CAT")))
   if(ncol(category) == 0) category <- NULL
 
@@ -111,7 +112,7 @@ summary.domain <- function(object, ..., silent = NULL) {
     observations = observations,
     tpt = tpt,
     n_obs = nrow(object),
-    visit = distinct(select(object, any_of(c("VISIT"))))
+    visit = visit
   )
 
   class(out) <- "summary_domain"
@@ -141,7 +142,7 @@ print.summary_domain <- function(x, ...) {
 
   cat("\n")
 
-  if(!is.null(x$test)) {
+  if(!is.null(x$category)) {
     cat("Categories\n")
     cat(df_to_string(
       x$category, indent = indent, show_none = TRUE
