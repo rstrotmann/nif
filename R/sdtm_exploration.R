@@ -68,7 +68,7 @@ filter_correct_date_format <- function(
 #' @export
 #' @keywords internal
 #' @examples
-#' ex <- check_date_format(examplinib_poc$ex)
+#' ex <- check_date_format(domain(examplinib_poc, "ex"))
 check_date_format <- function(obj, verbose = TRUE) {
   domain <- obj %>% distinct(.data$DOMAIN)
   temp <- obj %>%

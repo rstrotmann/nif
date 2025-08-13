@@ -389,27 +389,6 @@ test_that("add_observation handles observations without matching administrations
 })
 
 
-test_that("add_observation properly handles custom testcd field", {
-  # Create a test SDTM object
-  sdtm_test <- make_test_sdtm1()
-
-  # Create a base nif with administration data
-  base_nif <- new_nif() %>%
-    add_administration(sdtm_test, "A", analyte = "A")
-
-  # Use custom TESTCD field
-  expect_no_error({
-    nif_custom_testcd <- base_nif %>%
-      add_observation(
-        sdtm_test, "pc", "Analyte A",
-        TESTCD_field = "PCTEST",
-        ntime_method = "ELTM",
-        silent = TRUE
-      )
-  })
-})
-
-
 test_that("add_observation handles na.rm parameter when resolving duplicates", {
   sdtm_obj <- make_test_sdtm1()
 

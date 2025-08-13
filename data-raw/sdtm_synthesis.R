@@ -681,13 +681,34 @@ subject_baseline_data <- function(dm, vs, lb) {
 #' @return A sdtm object.
 #' @keywords internal
 synthesize_sdtm_sad_study <- function() {
-  rich_sampling_scheme <- data.frame(
-    time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
-    PCTPT = c(
-      "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
-      "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
-      "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"
-    )
+  # rich_sampling_scheme <- data.frame(
+  #   time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
+  #   PCTPT = c(
+  #     "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
+  #     "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
+  #     "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"
+  #   )
+  # )
+
+  rich_sampling_scheme <- rich_sampling_scheme <-  tibble::tribble(
+    ~time,     ~PCTPT,
+    0,  "PREDOSE",
+    0.5, "0.5 HOURS POST-DOSE",
+    1,   "1 HOURS POST-DOSE",
+    1.5, "1.5 HOURS POST-DOSE",
+    2,   "2 HOURS POST-DOSE",
+    3,   "3 HOURS POST-DOSE",
+    4,   "4 HOURS POST-DOSE",
+    6,   "6 HOURS POST-DOSE",
+    8,   "8 HOURS POST-DOSE",
+    10,  "10 HOURS POST-DOSE",
+    12,  "12 HOURS POST-DOSE",
+    24,  "24 HOURS POST-DOSE",
+    48,  "48 HOURS POST-DOSE",
+    72,  "72 HOURS POST-DOSE",
+    96,  "96 HOURS POST-DOSE",
+    144, "144 HOURS POST-DOSE",
+    168, "168 HOURS POST-DOSE",
   )
 
   dose_levels <- data.frame(
@@ -789,17 +810,32 @@ synthesize_sdtm_poc_study <- function(
     nsites = 8,
     duration = 100,
     red_prob = 0.3) {
-  rich_sampling_scheme <- data.frame(
-    NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
-    PCTPT = c(
-      "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
-      "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12"
-    )
+  # rich_sampling_scheme <- data.frame(
+  #   NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
+  #   PCTPT = c(
+  #     "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
+  #     "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12"
+  #   )
+  # )
+
+  rich_sampling_scheme <- tibble::tribble(
+    ~NTIME,     ~PCTPT,
+    0,  "PREDOSE",
+    0.5, "0.5 HOURS POST-DOSE",
+    1,   "1 HOURS POST-DOSE",
+    1.5, "1.5 HOURS POST-DOSE",
+    2,   "2 HOURS POST-DOSE",
+    3,   "3 HOURS POST-DOSE",
+    4,   "4 HOURS POST-DOSE",
+    6,   "6 HOURS POST-DOSE",
+    8,   "8 HOURS POST-DOSE",
+    10,  "10 HOURS POST-DOSE",
+    12,  "12 HOURS POST-DOSE",
   )
 
   sparse_sampling_scheme <- data.frame(
     NTIME = c(0, 1.5, 4),
-    PCTPT = c("PRE", "1.5 H POST", "4 H POST")
+    PCTPT = c("PRE", "1.5 H POST-DOSE", "4 H POST-DOSE")
   )
 
   dm <- synthesize_dm(
@@ -953,12 +989,33 @@ synthesize_sdtm_poc_study <- function(
 #' @return The SDTM data as sdtm object.
 #' @keywords internal
 synthesize_sdtm_food_effect_study <- function() {
-  sampling_scheme <- data.frame(
-    time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
-    PCTPT = c(
-      "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
-      "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
-      "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"))
+  # sampling_scheme <- data.frame(
+  #   time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
+  #   PCTPT = c(
+  #     "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
+  #     "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
+  #     "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"))
+
+  sampling_scheme <- rich_sampling_scheme <-  tibble::tribble(
+    ~time,     ~PCTPT,
+    0,  "PREDOSE",
+    0.5, "0.5 HOURS POST-DOSE",
+    1,   "1 HOURS POST-DOSE",
+    1.5, "1.5 HOURS POST-DOSE",
+    2,   "2 HOURS POST-DOSE",
+    3,   "3 HOURS POST-DOSE",
+    4,   "4 HOURS POST-DOSE",
+    6,   "6 HOURS POST-DOSE",
+    8,   "8 HOURS POST-DOSE",
+    10,  "10 HOURS POST-DOSE",
+    12,  "12 HOURS POST-DOSE",
+    24,  "24 HOURS POST-DOSE",
+    48,  "48 HOURS POST-DOSE",
+    72,  "72 HOURS POST-DOSE",
+    96,  "96 HOURS POST-DOSE",
+    144, "144 HOURS POST-DOSE",
+    168, "168 HOURS POST-DOSE",
+  )
 
   dm <- synthesize_dm(studyid = "2023000400", nsubs = 20)
   i_treated <- which(dm$ACTARMCD != "SCRNFAIL")
@@ -1079,7 +1136,7 @@ synthesize_lb <- function(dm) {
     synthesize_crea() %>%
     select(c("STUDYID", "USUBJID", "DOMAIN", "RFSTDTC", "CREA")) %>%
     mutate(
-      DOMAIN = "DM",
+      DOMAIN = "LB",
       LBSEQ = 1,
       LBCAT = "BIOCHEMISTRY",
       LBSPEC = "SERUM",
@@ -1108,7 +1165,7 @@ synthesize_lb <- function(dm) {
 #'
 #' @return The PP domain as data frame.
 #' @keywords internal
-synthesize_pp <- function(nif) {
+synthesize_pp <- function(obj) {
   pp_translation <- tribble(
     ~PKNCAPARAM,        ~PPTESTCD,                         ~PPTEST,    ~PPORRESU,    ~PPSTRESU,
     "aucinf.obs",        "AUCIFP",              "AUC Infinity Pred",    "h*ng/mL",    "h*ng/mL",
@@ -1122,22 +1179,29 @@ synthesize_pp <- function(nif) {
     "tmax",              "TMAX",                     "Time of CMAX",          "h",          "h",
   )
 
-  nif <- nif %>%
+  obj <- obj %>%
     index_rich_sampling_intervals() %>%
-    as.data.frame() %>%
-    filter(!is.na(RICH_N)) %>%
-    new_nif()
+    # as.data.frame() %>%
+    filter(!is.na(RICH_N)) #%>%
+    # new_nif()
 
-  analytes <- nif %>%
+  analytes <- obj %>%
     as.data.frame() %>%
     distinct(ANALYTE, PARENT, METABOLITE)
 
   out = data.frame()
   for(i in 1:nrow(analytes)) {
-    temp <- nca(nif, analyte = analytes[i, "ANALYTE"],
+    times <- obj %>%
+      filter(EVID == 1) %>%
+      as.data.frame() %>%
+      distinct(USUBJID, RICH_N, PPRFTDTC = DTC)
+
+    temp <- nca(obj, analyte = analytes[i, "ANALYTE"],
       parent = analytes[i, "PARENT"],
       keep = c("USUBJID", "STUDYID", "ID", "DOSE"),
-      group = "RICH_N")
+      group = "RICH_N") %>%
+      mutate(RICH_N = as.numeric(as.character(RICH_N))) %>%
+      left_join(times, by = c("USUBJID", "RICH_N"))
 
     out <- bind_rows(out, temp %>%
       mutate(DOMAIN = "PP", PPSTRESN = PPORRES, PPSPEC = "PLASMA") %>%
@@ -1150,10 +1214,10 @@ synthesize_pp <- function(nif) {
       mutate(PPSEQ = row_number()) %>%
       ungroup() %>%
       as.data.frame() %>%
-      select(c(.data$STUDYID, .data$DOMAIN, .data$USUBJID, .data$PPSEQ,
-               .data$PPTESTCD, .data$PPTEST, .data$PPCAT, .data$PPORRES,
-               .data$PPORRESU, .data$PPSTRESN, .data$PPSTRESU, .data$PPSPEC,
-               .data$PPRFTDTC, .data$DOSE))
+      select(c(
+        "STUDYID", "DOMAIN", "USUBJID", "PPSEQ", "PPTESTCD", "PPTEST",
+        "PPCAT", "PPORRES", "PPORRESU", "PPSTRESN", "PPSTRESU", "PPSPEC",
+        "PPRFTDTC", "DOSE"))
     )
   }
   return(out)

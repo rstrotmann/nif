@@ -280,8 +280,8 @@ default, but needs to be added using the 'keep' parameter to
 
 ```{r message = FALSE}
 nif <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(sdtm, "pc", "RS2023", keep = "EPOCH") %>% 
+  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023") %>% 
+  add_observation(examplinib_fe, "pc", "RS2023", keep = "EPOCH") %>% 
   mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>% 
   mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
   mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) 

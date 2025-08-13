@@ -212,6 +212,14 @@ add_baseline <- function(
   validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
+  # ensure testcd is valid
+  if(!testcd %in% testcd(sdtm)$TESTCD) {
+    msg <- paste0("Testcd ", testcd, " not found in sdtm")
+    if(toupper(testcd) %in% testcd(sdtm)$TESTCD)
+      msg <- paste0(msg, " (did you mean ", toupper(testcd), "?)")
+    stop(msg)
+  }
+
   # validate coding table
   if(!is.null(coding_table)) {
     if (!inherits(coding_table, "data.frame"))

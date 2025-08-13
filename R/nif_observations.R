@@ -548,6 +548,14 @@ add_observation <- function(
   validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
+  # ensure testcd is valid
+  if(!testcd %in% testcd(sdtm)$TESTCD) {
+    msg <- paste0("Testcd ", testcd, " not found in sdtm")
+    if(toupper(testcd) %in% testcd(sdtm)$TESTCD)
+      msg <- paste0(msg, " (did you mean ", toupper(testcd), "?)")
+    stop(msg)
+  }
+
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug))
     keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")

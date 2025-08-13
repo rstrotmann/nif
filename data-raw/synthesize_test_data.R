@@ -26,7 +26,7 @@ examplinib_sad_nif <- new_nif() %>%
 
 examplinib_sad$domains[["pp"]] <- examplinib_sad_nif %>%
   index_rich_sampling_intervals() %>%
-  as.data.frame() %>%
+  # as.data.frame() %>%
   filter(!is.na("RICH_N")) %>%
   synthesize_pp()
 
@@ -40,7 +40,7 @@ examplinib_poc_nif <- new_nif() %>%
 
 examplinib_poc$domains[["pp"]] <- examplinib_poc_nif %>%
   index_rich_sampling_intervals() %>%
-  as.data.frame() %>%
+  # as.data.frame() %>%
   filter(!is.na("RICH_N")) %>%
   synthesize_pp()
 
@@ -53,7 +53,7 @@ examplinib_fe_nif <- new_nif() %>%
 
 examplinib_fe$domains[["pp"]] <- examplinib_fe_nif %>%
   index_rich_sampling_intervals() %>%
-  as.data.frame() %>%
+  # as.data.frame() %>%
   filter(!is.na("RICH_N")) %>%
   synthesize_pp()
 

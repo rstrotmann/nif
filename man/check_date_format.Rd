@@ -18,6 +18,6 @@ The (unchanged) SDTM domain.
 Check for incomplete date format as per ISO 8601 in columns ending with 'DTC'
 }
 \examples{
-ex <- check_date_format(examplinib_poc$ex)
+ex <- check_date_format(domain(examplinib_poc, "ex"))
 }
 \keyword{internal}

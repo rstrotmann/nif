@@ -28,8 +28,8 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
   extrt <- intersect(str_split_1(deparse(f_rhs(f)), " "), treatments(sdtm))
 
   if(length(extrt) == 0)
-    stop(paste0("extrt ", as.character(rlang::f_rhs(f)),
-                " not found in EX!"))
+    stop(paste0(
+      "extrt ", as.character(rlang::f_rhs(f)), " not found in EX!"))
 
   allowed_testcd <- testcd(sdtm)
 

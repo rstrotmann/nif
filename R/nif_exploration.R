@@ -1107,19 +1107,18 @@ edish_plot <- function(
   missing_tests <- setdiff(expected_tests, unique(lb$LBTESTCD))
   if(length(missing_tests) > 0)
     stop(paste0(
-      "missing lab tests for ",
-      nice_enumeration(missing_tests)
-    ))
+      "missing lab tests for ", nice_enumeration(missing_tests)))
 
-  lb1 <- lb %>%
-    mutate(LB1DTC = .data$LBDTC) %>%
+  temp <- lb %>%
+    mutate(L_DTC = .data$LBDTC) %>%
     filter(.data$LBTESTCD %in% c(enzyme, "BILI")) %>%
-    mutate(LB1TESTCD = case_match(.data$LBTESTCD, "BILI" ~ "BILI",
-                                 .default = "ENZ")) %>%
-    mutate(LB1TESTCD = paste0(.data$LB1TESTCD, "_X_ULN"),
-           LB1STRESN = .data$LBSTRESN / .data$LBSTNRHI)
+    mutate(L_TESTCD = case_match(.data$LBTESTCD, "BILI" ~ "BILI",
+                                  .default = "ENZ")) %>%
+    mutate(L_TESTCD = paste0(.data$L_TESTCD, "_X_ULN"),
+           L_STRESN = .data$LBSTRESN / .data$LBSTNRHI) %>%
+    mutate(DOMAIN = "L_")
 
-  sdtm$domains[["lb1"]] <- lb1
+  sdtm$domains[["l_"]] <- temp
 
   if(nominal_time == TRUE) {
     nif <- nif %>%
@@ -1135,11 +1134,11 @@ edish_plot <- function(
 
   p <- nif %>%
     add_observation(
-      sdtm, "lb1", "ENZ_X_ULN", parent=parent, ntime_method = ntime_method,
+      sdtm, "l_", "ENZ_X_ULN", parent=parent, ntime_method = ntime_method,
       duplicates = "ignore",
       silent = TRUE) %>%
     add_observation(
-      sdtm, "lb1", "BILI_X_ULN", parent=parent, ntime_method = ntime_method,
+      sdtm, "l_", "BILI_X_ULN", parent=parent, ntime_method = ntime_method,
       duplicates = "ignore",
       silent = TRUE) %>%
     as.data.frame() %>%
