@@ -13,7 +13,7 @@ components."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.56.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.56.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,27 +80,20 @@ components.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC TIME NTIME TAFD TAD PCELTM EVID AMT ANALYTE CMT PARENT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0   &lt;NA&gt;    1   5  RS2023   1 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0   PT0H    0   0  RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5 PT0.5H    0   0  RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0   PT1H    0   0  RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5 PT1.5H    0   0  RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0   PT2H    0   0  RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   TRTDY METABOLITE DOSE      DV MDV ACTARMCD                       IMPUTATION</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE    5      NA   1       C1 admin time imputed from PCRFTDTC</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE    5  0.0000   0       C1                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE    5 40.7852   0       C1                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE    5 48.5530   0       C1                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE    5 44.0391   0       C1                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE    5 34.0729   0       C1                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   BL_CREAT  BL_CRCL DL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  67.4825 115.5074  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  67.4825 115.5074  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  67.4825 115.5074  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  67.4825 115.5074  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  67.4825 115.5074  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  67.4825 115.5074  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5  RS2023   1 RS2023     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0  RS2023   2 RS2023     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV BL_CREAT  BL_CRCL DL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      FALSE    5   1       C1                 NA  67.4825 115.5074  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      FALSE    5   0       C1             0.0000  67.4825 115.5074  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      FALSE    5   0       C1            40.7852  67.4825 115.5074  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      FALSE    5   0       C1            48.5530  67.4825 115.5074  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      FALSE    5   0       C1            44.0391  67.4825 115.5074  5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      FALSE    5   0       C1            34.0729  67.4825 115.5074  5</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">add_dose_level</span><span class="op">(</span><span class="va">examplinib_sad_min_nif</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ID TIME AMT RATE EVID        DV CMT MDV DL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  1  0.0   5    0    1        NA   1   1  5</span>

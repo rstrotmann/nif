@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.56.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.56.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -367,17 +367,17 @@ too.</p>
 <span><span class="co">#&gt; 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt; 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
-<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0     0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0     0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5    NA  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0    NA  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5    NA  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
 <span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV</span></span>
 <span><span class="co">#&gt; 1      FALSE  500   1       AB                  NA</span></span>
 <span><span class="co">#&gt; 2      FALSE  500   0       AB               0.000</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB            4697.327</span></span>
-<span><span class="co">#&gt; 4      FALSE  500   0       AB            6325.101</span></span>
-<span><span class="co">#&gt; 5      FALSE  500   0       AB            6294.187</span></span></code></pre></div>
+<span><span class="co">#&gt; 3      FALSE  500   0       AB            4409.288</span></span>
+<span><span class="co">#&gt; 4      FALSE  500   0       AB            5605.797</span></span>
+<span><span class="co">#&gt; 5      FALSE  500   0       AB            5300.404</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-analytes">Multiple analytes<a class="anchor" aria-label="anchor" href="#multiple-analytes"></a>
@@ -425,8 +425,8 @@ create the ‘FASTED’ covariate.</p>
 ‘keep’ parameter to <code><a href="../reference/add_observation.html">add_observation()</a></code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span>, keep <span class="op">=</span> <span class="st">"EPOCH"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span>, keep <span class="op">=</span> <span class="st">"EPOCH"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PERIOD <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TREATMENT <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">PERIOD</span>, <span class="va">PERIOD</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span> <span class="op">==</span> <span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
@@ -440,17 +440,17 @@ create the ‘FASTED’ covariate.</p>
 <span><span class="co">#&gt; 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt; 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
-<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0     0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0     0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5    NA  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0    NA  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5    NA  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
 <span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV                  EPOCH</span></span>
 <span><span class="co">#&gt; 1      FALSE  500   1       AB                  NA OPEN LABEL TREATMENT 1</span></span>
 <span><span class="co">#&gt; 2      FALSE  500   0       AB               0.000 OPEN LABEL TREATMENT 1</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB            4697.327 OPEN LABEL TREATMENT 1</span></span>
-<span><span class="co">#&gt; 4      FALSE  500   0       AB            6325.101 OPEN LABEL TREATMENT 1</span></span>
-<span><span class="co">#&gt; 5      FALSE  500   0       AB            6294.187 OPEN LABEL TREATMENT 1</span></span>
+<span><span class="co">#&gt; 3      FALSE  500   0       AB            4409.288 OPEN LABEL TREATMENT 1</span></span>
+<span><span class="co">#&gt; 4      FALSE  500   0       AB            5605.797 OPEN LABEL TREATMENT 1</span></span>
+<span><span class="co">#&gt; 5      FALSE  500   0       AB            5300.404 OPEN LABEL TREATMENT 1</span></span>
 <span><span class="co">#&gt;   PERIOD TREATMENT FASTED</span></span>
 <span><span class="co">#&gt; 1      1         A      1</span></span>
 <span><span class="co">#&gt; 2      1         A      1</span></span>
@@ -552,9 +552,7 @@ scale and introduces coloring based on the ‘FASTED’ covariate field:</p>
 <p>The following compares the mean plasma concentration profiles:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>color<span class="op">=</span><span class="st">"FASTED"</span>, max_time<span class="op">=</span><span class="fl">24</span>, mean<span class="op">=</span><span class="cn">TRUE</span>, points<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `geom_line()`: Each group consists of only one observation.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Do you need to adjust the <span style="color: #00BB00;">group</span> aesthetic?</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>color<span class="op">=</span><span class="st">"FASTED"</span>, max_time<span class="op">=</span><span class="fl">24</span>, mean<span class="op">=</span><span class="cn">TRUE</span>, points<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nif-vignette_files/figure-html/unnamed-chunk-19-1.png" width="480"></p>
 <p>Refer to the documentation (<code>?plot.nif()</code>) for further
 options.</p>
