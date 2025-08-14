@@ -35,7 +35,7 @@
 add_covariate <- function(
     nif,
     sdtm,
-    domain = NULL,
+    domain,
     testcd,
     covariate = NULL,
     DTC_field = NULL,
@@ -60,14 +60,6 @@ add_covariate <- function(
         "Testcd ", testcd, " not found in ",
         toupper(domain), "$", TESTCD_field, "!"))
   }
-
-  # validate_char_param(domain, "domain")
-
-  # # Validate domain exists in sdtm
-  # if (!domain %in% names(sdtm$domains)) {
-  #   stop(paste0("Domain '", domain, "' not found in sdtm object"))}
-
-  # validate_char_param(testcd, "testcd")
 
   validate_char_param(covariate, "covariate", allow_null = TRUE)
   validate_char_param(DTC_field, "DTC_field", allow_null = TRUE)
@@ -214,12 +206,6 @@ add_baseline <- function(
   validate_sdtm(sdtm)
   validate_testcd(sdtm, testcd, domain)
 
-  # validate_char_param(domain, "domain")
-
-  # # Validate domain exists in sdtm
-  # if (!domain %in% names(sdtm$domains)) {
-  #   stop(paste0("Domain '", domain, "' not found in sdtm object"))}
-
   # validate_char_param(testcd, "testcd")
   validate_char_param(name, "name", allow_null = TRUE)
   validate_char_param(DV_field, "DV_field", allow_null = TRUE)
@@ -227,14 +213,6 @@ add_baseline <- function(
   validate_char_param(observation_filter, "observation_filter")
   validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
-
-  # # ensure testcd is valid
-  # if(!testcd %in% testcd(sdtm)$TESTCD) {
-  #   msg <- paste0("Testcd ", testcd, " not found in sdtm")
-  #   if(toupper(testcd) %in% testcd(sdtm)$TESTCD)
-  #     msg <- paste0(msg, " (did you mean ", toupper(testcd), "?)")
-  #   stop(msg)
-  # }
 
   # validate coding table
   if(!is.null(coding_table)) {
