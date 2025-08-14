@@ -14,7 +14,7 @@ validate_testcd(sdtm, testcd, domain = NULL)
 \item{domain}{Domain as character}
 }
 \value{
-Validated testcode(s) as haracter.
+Validated testcode(s) as character.
 }
 \description{
 Validate that one or multiple testcd are included in a sdtm object

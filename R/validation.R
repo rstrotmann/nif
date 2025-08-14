@@ -313,7 +313,7 @@ validate_min_nif <- function(obj, additional_fields = NULL) {
 #' @param testcd Testcode to validate as character.
 #' @param domain Domain as character
 #'
-#' @returns Validated testcode(s) as haracter.
+#' @returns Validated testcode(s) as character.
 validate_testcd <- function(sdtm, testcd, domain = NULL) {
   # input validation
   validate_char_param(domain, "domain", allow_null = TRUE)
