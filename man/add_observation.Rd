@@ -7,7 +7,7 @@
 add_observation(
   nif,
   sdtm,
-  domain,
+  domain = NULL,
   testcd,
   analyte = NULL,
   parent = NULL,

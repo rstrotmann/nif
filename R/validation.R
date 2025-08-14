@@ -306,3 +306,46 @@ validate_min_nif <- function(obj, additional_fields = NULL) {
   }
 }
 
+
+#' Validate that one or multiple testcd are included in a sdtm object
+#'
+#' @param sdtm A sdtm object.
+#' @param testcd Testcode to validate as character.
+#' @param domain Domain as character
+#'
+#' @returns Validated testcode(s) as haracter.
+validate_testcd <- function(sdtm, testcd, domain = NULL) {
+  # input validation
+  validate_char_param(domain, "domain", allow_null = TRUE)
+  validate_char_param(testcd, "testcd", allow_multiple = TRUE)
+
+  if(!is.null(domain)) {
+    domain <- tolower(domain)
+    if(!domain %in% names(sdtm$domains))
+      stop(paste0(
+        "Domain ", domain, " not found in sdtm object!"))
+
+    temp <- domain(sdtm, domain)
+    testcd_field <- paste0(toupper(domain), "TESTCD")
+
+    if(!testcd_field %in% names(temp))
+      stop(paste0(
+        toupper(domain), " has no ", testcd_field, " field!"))
+
+    missing_testcd <- testcd[!testcd %in% unique(temp[[testcd_field]])]
+    if(length(missing_testcd) > 0)
+      stop(paste0(
+        "Testcd ", nice_enumeration(missing_testcd),
+        " not found in domain ", toupper(domain), "!"))
+  }
+
+  missing_testcd <- testcd[!testcd %in% testcd(sdtm)$TESTCD]
+  if(length(missing_testcd) > 0)
+    stop(paste0(
+      "Testcd ", nice_enumeration(missing_testcd), " not found in sdtm!"))
+
+  return(testcd)
+}
+
+
+

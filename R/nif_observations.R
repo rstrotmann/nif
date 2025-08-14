@@ -502,7 +502,7 @@ make_observation <- function(
 add_observation <- function(
     nif,
     sdtm,
-    domain,
+    domain = NULL,
     testcd,
     analyte = NULL,
     parent = NULL,
@@ -530,8 +530,12 @@ add_observation <- function(
 ) {
   # validate inputs
   validate_min_nif(nif)
-  validate_char_param(domain, "domain")
-  validate_char_param(testcd, "testcd")
+  validate_sdtm(sdtm)
+  validate_testcd(sdtm, testcd, domain)
+
+  # validate_char_param(domain, "domain", allow_null = TRUE)
+  # validate_char_param(testcd, "testcd")
+
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(parent, "parent", allow_null = TRUE)
   validate_logical_param(metabolite, "metabolite")
@@ -548,13 +552,13 @@ add_observation <- function(
   validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
-  # ensure testcd is valid
-  if(!testcd %in% testcd(sdtm)$TESTCD) {
-    msg <- paste0("Testcd ", testcd, " not found in sdtm")
-    if(toupper(testcd) %in% testcd(sdtm)$TESTCD)
-      msg <- paste0(msg, " (did you mean ", toupper(testcd), "?)")
-    stop(msg)
-  }
+  # # ensure testcd is valid
+  # if(!testcd %in% testcd(sdtm)$TESTCD) {
+  #   msg <- paste0("Testcd ", testcd, " not found in sdtm")
+  #   if(toupper(testcd) %in% testcd(sdtm)$TESTCD)
+  #     msg <- paste0(msg, " (did you mean ", toupper(testcd), "?)")
+  #   stop(msg)
+  # }
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug))

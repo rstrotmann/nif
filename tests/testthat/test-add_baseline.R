@@ -149,13 +149,13 @@ test_that("add_baseline validates inputs correctly", {
   # Test invalid domain
   expect_error(
     add_baseline(test_nif, test_sdtm, "invalid_domain", "WEIGHT"),
-    "Domain 'invalid_domain' not found in sdtm object"
+    "Domain invalid_domain not found in sdtm object!"
   )
 
   # Test invalid testcd
   expect_error(
     add_baseline(test_nif, test_sdtm, "vs", "INVALID_TEST"),
-    "Testcd INVALID_TEST not found in sdtm"
+    "Testcd INVALID_TEST not found in domain VS!"
   )
 })
 
@@ -370,7 +370,7 @@ test_that("add_baseline validates required fields correctly", {
 
   expect_error(
     add_baseline(test_nif, test_sdtm_valid, "vs", "HEIGHT"),
-    "Testcd HEIGHT not found in sdtm"
+    "Testcd HEIGHT not found in domain VS!"
   )
 })
 
