@@ -18,7 +18,7 @@ supported:
 \itemize{
 \item \code{silent} as logical: Suppress messages.
 \item \code{watermark} as character: Watermark text on all figures.
-\item \code{pinboard} as character: Pin board folder for sharing of nif/sdtm objects.
+\item \code{pinboard} as character: Pinboard path for sharing of nif/sdtm objects.
 \item \code{debug} as logical: Print debug information.
 }
 }

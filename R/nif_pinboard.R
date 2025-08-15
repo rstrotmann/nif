@@ -9,7 +9,7 @@
 get_pinboard <- function(board = NULL) {
   if(is.null(board)) {
     board <- nif_option_value("pinboard")
-    if(is.na(board)) {
+    if(is.na(board) | is.null(board) | board == "") {
       board = Sys.getenv("NIF_PINBOARD")
       if(board == "")
         stop("No pinboard found")
@@ -24,11 +24,42 @@ get_pinboard <- function(board = NULL) {
   return(board_obj)
 }
 
-#' Get currently active pinboard path
+
+#' Get or set pinboard path
 #'
-#' @returns A character string.
+#' This function returns the currently active pinboard path, i.e.,
+#' either the respective nif_option setting or the folder set in the .Renviron
+#' variable NIF_PINBOARD. If the 'path' argument is provided, the nif_option
+#' 'pinboard' will be set to that folder. Use an empty string ("") to reset the
+#' pinboard path.
+#'
+#' Overall, the following pinboard paths are used for all pinboard functions (in
+#' the order of their priority):
+#'
+#' * The 'board' parameter in the individual function call (highest)
+#' * The 'pinboard' setting in nif_options
+#' * The .Renviron variable NIF_PINBOARD (lowest)
+#'
+#' You may use the convenience function [usethis::edit_r_environ()] to edit the
+#' .Renviron file and include a user-level setting for the default pinboard path
+#' (e.g., `NIF_PINBOARD=\path\to\pinboard\folder`).
+#'
+#' @param path Pinboard path as character.
+#'
+#' @returns Currently active pinboard path as character.
+#' @seealso [usethis::edit_r_environ()]
+#' @seealso [nif_option()]
 #' @export
-nif_pinboard <- function() {
+nif_pinboard <- function(path = NULL) {
+  # validate_char_param(folder, "folder", allow_null = TRUE)
+
+  if(!is.null(path)) {
+    if(!path == "" & !dir.exists(path))
+      stop(paste0(
+        "Pinboard ", path, " does not exist"))
+    nif_option(pinboard = path)
+  }
+
   temp <- get_pinboard()
   temp$path
 }
@@ -49,6 +80,7 @@ nif_pinboard <- function() {
 #'   the study name(s).
 #' @param dco Data cut off as character.
 #' @param silent Suppress messages. Defaults to nif_option setting if NULL.
+#' @param force Force-write, as logical.
 #'
 #' @returns Nothing.
 #' @export
@@ -73,6 +105,7 @@ pin_write <- function(
 #'   the study name(s).
 #' @param dco Data cut off as character.
 #' @param silent Suppress messages. Defaults to nif_option setting if NULL.
+#' @param force Force-write, as logical.
 #'
 #' @returns Nothing.
 #' @export
@@ -96,6 +129,7 @@ pb_write <- function(
 #'   the study name.
 #' @param dco Data cut off as character.
 #' @param silent Suppress messages. Defaults to nif_option setting if NULL.
+#' @param force Force-write, as logical.
 #'
 #' @returns Nothing.
 #' @importFrom pins pin_write board_folder
@@ -152,6 +186,7 @@ pb_write.sdtm <- function(
 #'   the studies included.
 #' @param dco Data cut off as character.
 #' @param silent Suppress messages. Defaults to nif_option setting if NULL.
+#' @param force Force-write, as logical.
 #'
 #' @returns Nothing.
 #' @importFrom pins pin_write board_folder

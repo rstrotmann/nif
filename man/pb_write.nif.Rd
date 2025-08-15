@@ -29,6 +29,8 @@ the studies included.}
 
 \item{dco}{Data cut off as character.}
 
+\item{force}{Force-write, as logical.}
+
 \item{silent}{Suppress messages. Defaults to nif_option setting if NULL.}
 }
 \value{

@@ -2,13 +2,38 @@
 % Please edit documentation in R/nif_pinboard.R
 \name{nif_pinboard}
 \alias{nif_pinboard}
-\title{Get currently active pinboard path}
+\title{Get or set pinboard path}
 \usage{
-nif_pinboard()
+nif_pinboard(path = NULL)
+}
+\arguments{
+\item{path}{Pinboard path as character.}
 }
 \value{
-A character string.
+Currently active pinboard path as character.
 }
 \description{
-Get currently active pinboard path
+This function returns the currently active pinboard path, i.e.,
+either the respective nif_option setting or the folder set in the .Renviron
+variable NIF_PINBOARD. If the 'path' argument is provided, the nif_option
+'pinboard' will be set to that folder. Use an empty string ("") to reset the
+pinboard path.
+}
+\details{
+Overall, the following pinboard paths are used for all pinboard functions (in
+the order of their priority):
+\itemize{
+\item The 'board' parameter in the individual function call (highest)
+\item The 'pinboard' setting in nif_options
+\item The .Renviron variable NIF_PINBOARD (lowest)
+}
+
+You may use the convenience function \code{\link[usethis:edit]{usethis::edit_r_environ()}} to edit the
+.Renviron file and include a user-level setting for the default pinboard path
+(e.g., \verb{NIF_PINBOARD=\\path\\to\\pinboard\\folder}).
+}
+\seealso{
+\code{\link[usethis:edit]{usethis::edit_r_environ()}}
+
+\code{\link[=nif_option]{nif_option()}}
 }
