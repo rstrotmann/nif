@@ -7,7 +7,7 @@
 add_covariate(
   nif,
   sdtm,
-  domain = NULL,
+  domain,
   testcd,
   covariate = NULL,
   DTC_field = NULL,

@@ -1,4 +1,4 @@
-test_that("pin_write.sdtm validates inputs correctly", {
+test_that("pb_write.sdtm validates inputs correctly", {
   # Create a minimal sdtm object for testing
   test_sdtm <- new_sdtm(
     sdtm_data = list(
@@ -12,31 +12,31 @@ test_that("pin_write.sdtm validates inputs correctly", {
 
   # Test invalid sdtm object
   expect_error(
-    pin_write.sdtm("not_sdtm"),
+    pb_write.sdtm("not_sdtm"),
     "Input must be a sdtm object"
   )
 
   # Test invalid board parameter
   expect_error(
-    pin_write.sdtm(test_sdtm, board = 123),
+    pb_write.sdtm(test_sdtm, board = 123),
     "board must be a string value"
   )
 
   # Test invalid name parameter
   expect_error(
-    pin_write.sdtm(test_sdtm, name = 456),
+    pb_write.sdtm(test_sdtm, name = 456),
     "name must be a string value"
   )
 
   # Test invalid title parameter
   expect_error(
-    pin_write.sdtm(test_sdtm, title = 789),
+    pb_write.sdtm(test_sdtm, title = 789),
     "title must be a string value"
   )
 })
 
 
-test_that("pin_write.sdtm handles missing board correctly", {
+test_that("pb_write.sdtm handles missing board correctly", {
   # Create a minimal sdtm object for testing
   test_sdtm <- new_sdtm(
     sdtm_data = list(
@@ -52,19 +52,19 @@ test_that("pin_write.sdtm handles missing board correctly", {
 
   # Test with NULL board and no nif option set
   expect_error(
-    pin_write.sdtm(test_sdtm, board = NULL),
+    pb_write.sdtm(test_sdtm, board = NULL),
     "No pinboard found"
   )
 
   # Test with NA board
   expect_error(
-    pin_write.sdtm(test_sdtm, board = NA_character_),
+    pb_write.sdtm(test_sdtm, board = NA_character_),
     "board must not contain NA"
   )
 })
 
 
-test_that("pin_write.sdtm uses arbitrary board", {
+test_that("pb_write.sdtm uses arbitrary board", {
   # Create a minimal sdtm object for testing
   test_sdtm <- new_sdtm(
     sdtm_data = list(
@@ -79,12 +79,12 @@ test_that("pin_write.sdtm uses arbitrary board", {
   # Test with arbitrary directory
   test_board <- tempdir(check = TRUE)
   expect_no_error(
-    pin_write.sdtm(test_sdtm, board = test_board, silent = TRUE)
+    pb_write.sdtm(test_sdtm, board = test_board, silent = TRUE)
   )
 })
 
 
-test_that("pin_write.sdtm generates correct default names and titles", {
+test_that("pb_write.sdtm generates correct default names and titles", {
   # Create a temporary board directory
   test_board <- tempfile("test_board")
   dir.create(test_board)
@@ -103,7 +103,7 @@ test_that("pin_write.sdtm generates correct default names and titles", {
 
   # Test with NULL name and title (should use defaults)
   expect_no_error(
-    pin_write.sdtm(test_sdtm, board = test_board, name = NULL, title = NULL,
+    pb_write.sdtm(test_sdtm, board = test_board, name = NULL, title = NULL,
                    silent = TRUE)
   )
 
@@ -114,7 +114,7 @@ test_that("pin_write.sdtm generates correct default names and titles", {
 })
 
 
-test_that("pin_write.sdtm uses custom name and title when provided", {
+test_that("pb_write.sdtm uses custom name and title when provided", {
   # Create a temporary board directory
   test_board <- tempfile("test_board")
   dir.create(test_board)
@@ -136,7 +136,7 @@ test_that("pin_write.sdtm uses custom name and title when provided", {
   custom_title <- "My Custom SDTM Data"
 
   expect_no_error(
-    pin_write.sdtm(test_sdtm, board = test_board,
+    pb_write.sdtm(test_sdtm, board = test_board,
                    name = custom_name, title = custom_title, silent = TRUE)
   )
 
@@ -147,7 +147,7 @@ test_that("pin_write.sdtm uses custom name and title when provided", {
 })
 
 
-test_that("pin_write.sdtm handles silent parameter correctly", {
+test_that("pb_write.sdtm handles silent parameter correctly", {
   # Create a temporary board directory
   test_board <- tempfile("test_board")
   dir.create(test_board)
@@ -166,18 +166,18 @@ test_that("pin_write.sdtm handles silent parameter correctly", {
 
   # Test with silent = TRUE (should not produce messages)
   expect_no_error(
-    pin_write.sdtm(test_sdtm, board = test_board, silent = TRUE)
+    pb_write.sdtm(test_sdtm, board = test_board, silent = TRUE)
   )
 
   # Test with silent = FALSE (should produce messages)
   expect_message(expect_message(
     expect_no_error(
-      pin_write.sdtm(test_sdtm, board = test_board, silent = FALSE)
+      pb_write.sdtm(test_sdtm, board = test_board, silent = FALSE)
     )))
 })
 
 
-test_that("pin_write.sdtm works with complex sdtm objects", {
+test_that("pb_write.sdtm works with complex sdtm objects", {
   # Create a temporary board directory
   test_board <- tempfile("test_board")
   dir.create(test_board)
@@ -223,7 +223,7 @@ test_that("pin_write.sdtm works with complex sdtm objects", {
 
   # Test writing complex sdtm object
   expect_no_error(
-    pin_write.sdtm(complex_sdtm, board = test_board, silent = TRUE,
+    pb_write.sdtm(complex_sdtm, board = test_board, silent = TRUE,
                    name = "complex_test", title = "Complex SDTM Test")
   )
 
@@ -234,7 +234,7 @@ test_that("pin_write.sdtm works with complex sdtm objects", {
 })
 
 
-test_that("pin_write.sdtm preserves sdtm object structure", {
+test_that("pb_write.sdtm preserves sdtm object structure", {
   # Create a temporary board directory
   test_board <- tempfile("test_board")
   dir.create(test_board)
@@ -256,7 +256,7 @@ test_that("pin_write.sdtm preserves sdtm object structure", {
   )
 
   # Write the sdtm object
-  pin_write.sdtm(original_sdtm, board = test_board, name = "test_preserve",
+  pb_write.sdtm(original_sdtm, board = test_board, name = "test_preserve",
                  silent = TRUE)
 
   # Read it back and verify structure is preserved
