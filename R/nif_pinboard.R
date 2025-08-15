@@ -70,7 +70,7 @@ nif_pinboard <- function(path = NULL) {
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This function is deprecated, please use pb_write() instead!
+#' This function is deprecated, please use [pb_write()] instead!
 #'
 #' @param obj The object to pin.
 #' @inheritParams get_pinboard
@@ -226,6 +226,8 @@ pb_write.nif <- function(
 
 #' Read sdtm object from pinboard
 #'
+#' This function is deprecated, please use [pb_read_sdtm()] instead.
+#'
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
@@ -268,6 +270,8 @@ pb_read_sdtm <- function(name, board = NULL) {
 
 
 #' Read nif object from pinboard
+#'
+#' This function is deprecated, please use [pb_read_nif()] instead.
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
@@ -339,6 +343,8 @@ pb_list_object <- function(board = NULL, object_type) {
 
 #' List sdtm objects in pinboard
 #'
+#' This function is deprecated, please use [pb_list_sdtm()] instead.
+#'
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
@@ -368,6 +374,8 @@ pb_list_sdtm <- function(board = NULL) {
 
 
 #' List nif objects in pinboard
+#'
+#' This function is deprecated, please use [pb_list_nif()] instead.
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
