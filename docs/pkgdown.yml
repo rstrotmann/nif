@@ -2,8 +2,8 @@ pandoc: '3.4'
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  creating-multiple-study-nif: creating-multiple-study-nif.html
-  multiple-dose-example: multiple-dose-example.html
-  nif-imputations: nif-imputations.html
-  nif-vignette: nif-vignette.html
-last_built: 2025-08-15T16:19Z
+  A01-nif-vignette: A01-nif-vignette.html
+  A02-multiple-dose-example: A02-multiple-dose-example.html
+  A03-nif-imputations: A03-nif-imputations.html
+  A04-creating-multiple-study-nif: A04-creating-multiple-study-nif.html
+last_built: 2025-08-18T06:34Z
