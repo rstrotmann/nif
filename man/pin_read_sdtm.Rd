@@ -19,3 +19,6 @@ A sdtm object.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
+\details{
+This function is deprecated, please use \code{\link[=pb_read_sdtm]{pb_read_sdtm()}} instead.
+}

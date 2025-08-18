@@ -12,14 +12,15 @@ library(knitr)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
+  # comment = "#>"
   comment = "#>"
 )
 ```
 
 # INTRODUCTION
 
-This is a basic tutorial on using the `nif` package to create NONMEM Input File
-(NIF) data sets from Study Data Tabulation Model- (SDTM) formatted data.
+This is a basic tutorial on using the `nif` package to create NONMEM Input Format
+(NIF) data sets from Study Data Tabulation Model (SDTM) formatted data.
 
 ## Background
 
@@ -41,7 +42,7 @@ NONMEM and other modeling software packages expect the input data provided in
 nomenclature of the variables (see, e.g., [Bauer, CPT Pharmacometrics Syst.
 Pharmacol. (2019)](https://doi.org/10.1002/psp4.12404) for an introduction). The
 input data file for these analyses is sometimes casually referred to as a
-'NONMEM input file' or 'NIF file', hence the name of this package.
+'NONMEM input format' or 'NIF' file, hence the name of this package.
 
 Contingent on the downstream analyses, some of the variables in the analysis
 data set can be easily and automatically derived from the SDTM source data,
@@ -54,21 +55,21 @@ adverse events or concomitant medications, as categorical covariates.
 
 While the latter variables often need manual and study-specific data
 programming, the core NIF data set can in most cases be generated in a quite
-standardized way. Both approaches are substantially made easier by the functions
-that the `nif` package provides. Often, analysis data sets can be created with
-only a handful of lines of code.
+standardized way. But also the manual addition of further analysis-specific
+fields is substantially simplified by the functions that the `nif` package
+provides. Often, analysis data sets can be thus be created with only a handful
+of lines of code.
 
-It should be noted that even for basic NIF files, missing data points or data
-inconsistencies are challenges that need to be resolved by data imputation to
-get to analysis-ready data sets. This is frequently encountered when analyzing
-preliminary data from ongoing clinical studies that have not been fully cleaned
-yet. The `nif` package provides a number of standardized imputation rules to
-resolve these issues. More on this point later as well in a separate
-vignette (`vignette("nif-imputations")`).
+Even for basic NIF data sets, missing data or data inconsistencies, specifically
+those relating to date and time fields, need to be resolved to get to
+analysis-ready data sets. This is frequently encountered when analyzing
+preliminary data from ongoing clinical studies that have not been fully cleaned.
+The `nif` package provides a number of standardized imputation rules to resolve
+these issues. More on this point later as well in a separate vignette
+(`vignette("nif-imputations")`).
 
-This package is intended to facilitate the creation of analysis data sets ('NIF
-data sets') from SDTM-formatted clinical data. It also includes a set of
-functions and tools to support initial exploration of SDTM and NIF data sets.
+Overall, the `nif` package is intended to facilitate the creation of analysis
+data sets ('NIF data sets') from SDTM-formatted clinical data.
 
 ## Outline
 
@@ -95,30 +96,28 @@ library(nif)
 
 ## Importing SDTM data 
     
-In most cases, the source SDTM data are provided as one file per domain, e.g.,
-in SAS binary data base storage format (.sas7bdat) or SAS Transport File (.xpt)
+In many cases, source SDTM data are provided as one file per domain, often in
+SAS binary data base storage format (.sas7bdat) or SAS Transport File (.xpt)
 format.
 
-With `path/to/sdtm/data` the location to the source folder, SDTM data can be
-loaded using `read_sdtm()`:
+The SDTM data can be loaded using `read_sdtm()`:
 
 ```{r, eval=FALSE, echo=T}
 read_sdtm("path/to/sdtm/data")
 ```
 
 Windows users may want to provide the file path as raw string, i.e., in the form
-of
+of:
 
 ```{r, eval=FALSE, echo=T}
 read_sdtm(r"(path\to\sdtm\data)")
 ```
 
-to ensure that the backslashes in the file path are correctly captured. Note the
-inner parentheses around the file path!
+This ensures that the backslashes in the file path are correctly captured. Note
+the inner parentheses around the file path!
 
-If no domains are explicitly specified, the function attempts to load 'DM',
-'VS', 'EX' and 'PC' as a generic set of SDTM domains suitable to create a basic
-pharmacokinetic analysis data set.
+If no domains are explicitly specified, all files with the respective extension
+are loaded (excluding file names that start with an underscore).
 
 The return value of this function is a `sdtm` object.
 
@@ -135,34 +134,36 @@ fictional food effect (FE) study (`examplinib_fe`), and a fictional single-arm
 proof-of-concept (POC) study with multiple-dose administrations
 (`examplinib_poc`).
 
-The original SDTM data can be retrieved from `sdtm` objects by accessing the
-individual SDTM domains like demonstrated below for the DM domain of the
-`examplinib_fe` data object:
-
-```{r}
-domain(examplinib_sad, "dm") %>% 
-  head(3)
-```
-
 Printing an `sdtm` object shows relevant summary information:
 
 ```{r}
 examplinib_fe
 ```
 
-Note the 'Treatment-to-analyte mappings' table in the output, we may get back to
-this in the context of automatically creating NIF data sets.
-
-High-level subject-level disposition data can be extracted using
-`subject_info()`:
+High-level subject-level disposition data for a specific subject can be
+extracted using `subject_info()`:
 
 ```{r}
 examplinib_fe %>%
   subject_info("20230004001050001")
 ```
 
-For a broad-strokes overview on the overall data disposition, it may be
-informative to look at a timeline view of individual domains, e.g. for DM:
+The original SDTM data for specific domains can be retrieved from `sdtm` objects
+with the `domain()` function:
+
+```{r}
+domain(examplinib_sad, "dm") %>% 
+  head(3)
+```
+
+`summary()` generates a high-level data disposition overview on a specific
+domain:
+
+```{r}
+summary(domain(examplinib_sad, "pc"), silent = TRUE)
+```
+
+A graphical timeline overview can be generated for a specific domain by, e.g.:
 
 ```{r fig.width=7, fig.asp = 0.3}
 plot(examplinib_fe, "dm")
@@ -180,19 +181,20 @@ during the creating of the analysis data set. To help deciding which
 study-specific factors need to be addressed, the `nif` package includes
 functions to explore the structure of SDTM data.
 
-As a starting point, `suggest()` can provide useful suggestions for the creation
-of analysis data sets:
+As we will see in [NIF DATA SETS][NIF DATA SETS], nif objects are built sequentially from the
+SDTM data set. Based on the actual data disposition, the `suggest()` function
+provide useful code snippets for the creation of analysis data sets:
 
 ```{r results="asis"}
 suggest(examplinib_fe)
 ```
 
-Suggestions 1 and 2 in the above output include code snippets for the creation
-of a `nif` object from this sdtm data set. We will use this code straight
-out-of-the box in section [Creating NIF data sets].
+In the above example, suggestions 1 and 2 provide code for the creation of
+administration and observation events. We will use this code directly as
+provided in section [Creating NIF data sets].
 
 Suggestion 3 notes that the DM domain defines different treatment arms that
-should probably be included as covariates in the analysis data set because they
+should probably be included as covariates in the analysis data set. They
 specify the sequence of fasted and fed administrations in this study. We will
 deal with this in [Study-specific covariates].
 
@@ -203,11 +205,11 @@ how a `nif` object is created from the `sdtm` data object.
 
 ## Basic NIF file
 
-Based on the analysis needs, `nif` objects are assembled in a stepwise manner,
-starting from an empty `nif` object, adding treatment administrations,
-observations, and covariate fields. The result is a data table with individual
-rows for administrations and observations that follows the naming conventions
-summarized in [Bauer, CPT Pharmacometrics Syst. Pharmacol.
+Depending on the analysis needs, `nif` objects are built in a stepwise manner,
+starting from an empty `nif` object, sequentially adding treatment
+administrations, observations, and covariate fields. The result is a data table
+with individual rows for administrations and observations that follows the
+naming conventions summarized in [Bauer, CPT Pharmacometrics Syst. Pharmacol.
 (2019)](https://doi.org/10.1002/psp4.12404).
 
 The basic `nif` object automatically includes standard demographic parameters as
@@ -223,9 +225,9 @@ nif <- new_nif() %>%
   add_observation(sdtm, "pc", "RS2023")
 ```
 
-Note that in this SDTM data, the name of the treatment, i.e., the value of the
-'EXTRT' field is 'EXAMPLINIB' while the pharmacokinetic analyte name (PCTESTCD)
-is 'RS2023'. To harmonize both, the 'analyte' parameter in
+Note that in the above, the name of the treatment, i.e., the value of the
+'EXTRT' field is 'EXAMPLINIB' while the pharmacokinetic analyte name
+('PCTESTCD') is 'RS2023'. To harmonize both, the 'analyte' parameter in
 `add_administration()` was set to 'RS2023', too.
 
 These are the first rows of the resulting data table:
@@ -240,9 +242,9 @@ To demonstrate how to add multiple analytes to a `nif` object, we will
 temporarily switch to another built-in sample data set, `examplinib_sad`. This
 `sdtm` object includes pharmacokinetic concentration data for the M1 metabolite
 of 'EXAMPLINIB' under the PCTESTCD of 'RS2023487A'. Note how in the below code,
-the respective observations are attached to the data set, setting the name to
-'M1', and how the relation to the parent compound is established using the
-'parent' parameter:
+the two analyte observations are added to the data set, setting the metabolite's
+name to 'M1', and how its relation to the parent compound is established using
+the 'parent' parameter:
 
 ```{r message = FALSE}
 sdtm1 <- examplinib_sad
@@ -261,36 +263,37 @@ modeling.
 
 ## Study-specific covariates
 
-In this study, participants received the test drug, EXAMPLINIB, fasted or fed in
-a randomized sequence (see `ACTARM` and `ACTARMCD` in the output of
-`suggest()`), where the 'EPOCH' field in 'EX' provides information on the
-current treatment period. It should be noted that the way such information is
-encoded in the SDTM data varies considerably. This is therefore only an example
-- the specifics of how covariate information can extracted from a SDTM data set
-will differ. However, `nif` objects are essentially data frame objects and can
-thus be easily manipulated, e.g., using functions from the `dplyr` package.
+In this simulated study, participants had received the test drug, EXAMPLINIB,
+under fasted or fed conditions in a randomized sequence (see 'ACTARM' and
+'ACTARMCD' in the output of `suggest()`), where the 'EPOCH' field in the EX
+domain provides information on the current treatment period. It should be noted
+that the way such information is encoded in the SDTM data varies considerably.
+This is an example, and the specifics of how covariate information can extracted
+from a SDTM data set will differ across studies. However, `nif` objects are
+essentially data frame objects and can thus be easily manipulated, e.g., using
+functions from the `dplyr` package.
 
 The following code shows how in this specific case, covariates relating to the
 current treatment period ('PERIOD') and current treatment ('TREATMENT') are
 sequentially derived and eventually used to create the 'FASTED' covariate.
 
-Note that the 'EPOCH' field is not carried over from 'EX' to the `nif` object by
-default, but needs to be added using the 'keep' parameter to
-`add_observation()`:
+Note that the 'EPOCH' field is not a standard field to be imported from the SDTM
+data but can be included using the `keep` parameter in `add_administration()`:
 
 ```{r message = FALSE}
 nif <- new_nif() %>% 
-  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(examplinib_fe, "pc", "RS2023", keep = "EPOCH") %>% 
+  add_administration(
+    examplinib_fe, "EXAMPLINIB", analyte = "RS2023", keep = "EPOCH") %>% 
+  add_observation(examplinib_fe, "pc", "RS2023") %>% 
   mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>% 
   mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
   mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) 
 ```
 
-These are again the first 5 lines:
+These are again the first 3 lines of the resulting nif object:
 
 ```{r}
-head(nif, 5)
+head(nif, 3)
 ```
 
 # DATA EXPLORATION
@@ -299,7 +302,7 @@ head(nif, 5)
 
 It is generally an excellent idea to explore data sets before proceeding into
 more complex analyses. The `nif` package provides a host of functions to this
-end. The following section provides some basic examples.
+end. The following section shows some basic examples.
 
 The `summary()` function generates a general overview on the data disposition in
 a `nif` data set: 
@@ -316,7 +319,7 @@ and raw plots of the analytes over time. In the following code, ignore the
 `ìnvisible(capture.output())` construct around the `plot()` function. Its sole
 purpose is to omit some non-graphical output:
 
-```{r results='hide', fig.width=3, fig.height=3}
+```{r warning=FALSE, results='hide', fig.width=3, fig.height=3}
 invisible(capture.output(
   nif %>% 
     summary() %>% 
@@ -334,14 +337,14 @@ includes extensive parameters to achieve the desired data visualization.
 In its simplest form, `plot()` includes all analytes, and uses 'time after first
 dose' ('TAFD') as the time metric:
 
-```{r, warning=F, fig.width=5, fig.asp=0.35}
+```{r, warning=FALSE, fig.width=5, fig.asp=0.35}
 plot(nif)
 ```
 
-To check the integrity of the data set, if often helps to plot the analyte
+To check the integrity of the data set, it is often helpful to plot the analyte
 concentrations over time-after-dose (TAD):
 
-```{r warning=F, fig.width=5, fig.asp=0.55}
+```{r warning=FALSE, fig.width=5, fig.asp=0.55}
 nif %>% 
   plot(time="TAD", points=TRUE, lines=FALSE, log=TRUE)
 ```
@@ -350,19 +353,19 @@ To demonstrate the food effect on Cmax and Tmax on the individual level, the
 below figure focuses on the first 24 hours on the linear scale and introduces
 coloring based on the 'FASTED' covariate field:
 
-```{r, warning=F, fig.width=5, fig.asp=.7}
+```{r, warning=FALSE, fig.width=5, fig.asp=.7}
 nif %>% 
   plot(color="FASTED", max_time=24, points=TRUE)
 ```
 
 The following compares the mean plasma concentration profiles:
 
-```{r, warning=F, fig.width=5, fig.asp=.7}
+```{r, warning=FALSE, fig.width=5, fig.asp=.7}
 nif %>% 
   plot(color="FASTED", max_time=24, mean=TRUE, points=TRUE)
 ```
 
-Refer to the documentation (`?plot.nif()`) for further options.
+Refer to the documentation of `plot.nif()` for further options.
 
 ## NIF viewer
 
@@ -371,7 +374,7 @@ explore all analyte profiles on an individual level. As the static nature of a
 vignette does not allow to fully appreciate its potential, you are encouraged to
 test `nif_viewer()` within your RStudio.
 
-```{r, eval=FALSE, echo=T}
+```{r, eval=FALSE, echo=TRUE}
 nif_viewer(nif)
 ```
 

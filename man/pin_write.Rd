@@ -39,5 +39,5 @@ Nothing.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This function is deprecated, please use pb_write() instead!
+This function is deprecated, please use \code{\link[=pb_write]{pb_write()}} instead!
 }

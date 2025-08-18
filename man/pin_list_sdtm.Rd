@@ -17,3 +17,6 @@ A data frame.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
+\details{
+This function is deprecated, please use \code{\link[=pb_list_sdtm]{pb_list_sdtm()}} instead.
+}

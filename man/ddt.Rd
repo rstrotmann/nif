@@ -4,10 +4,12 @@
 \alias{ddt}
 \title{Data definition table for NIF object}
 \usage{
-ddt(obj)
+ddt(obj, silent = NULL)
 }
 \arguments{
 \item{obj}{A nif object.}
+
+\item{silent}{Suppress messages, defaults to nif_option setting if NULL.}
 }
 \value{
 A data table.

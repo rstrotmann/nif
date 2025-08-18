@@ -20,3 +20,6 @@ A nif object.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 This function is deprecated. Please use pb_read_nif() instead!
 }
+\details{
+This function is deprecated, please use \code{\link[=pb_read_nif]{pb_read_nif()}} instead.
+}

@@ -31,13 +31,14 @@ ddt_standard_fields <- tibble::tribble(
 #' Data definition table for NIF object
 #'
 #' @param obj A nif object.
+#' @param silent Suppress messages, defaults to nif_option setting if NULL.
 #'
 #' @returns A data table.
 #' @export
 #'
 #' @examples
 #' ddt(examplinib_sad_nif)
-ddt <- function(obj) {
+ddt <- function(obj, silent = NULL) {
   # validate inputs
   validate_nif(obj)
 
@@ -54,6 +55,7 @@ ddt <- function(obj) {
       0 ~ "observation",
       1 ~ "administration")) %>%
     mutate(DESC = paste(.data$CMT, "=", .data$ANALYTE, .data$TYPE))
+
   out[out$name == "CMT", "description"] <- paste(temp$DESC, collapse = ", ")
   out[out$name == "CMT", "type"] <- paste(temp$CMT, collapse = ", ")
 
@@ -71,9 +73,21 @@ ddt <- function(obj) {
     }
   }
 
-  out <- out %>%
+  # further fields
+  further_name <- setdiff(names(obj), unique(out$name))
+  further_type <- as.character(lapply(obj, class)[further_name])
+  further = data.frame(name = further_name, type = further_type)
+
+  out <- bind_rows(out, further) %>%
     filter(.data$name %in% names(obj)) %>%
     as.data.frame()
+
+  conditional_message(
+    "The following fields in the data definition table could not be ",
+    "automatically generated: ",
+    nice_enumeration(further$name),
+    silent = silent
+  )
   return(out)
 }
 
