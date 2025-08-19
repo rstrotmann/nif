@@ -29,12 +29,12 @@ theme_set(theme_bw())
 
 # OVERVIEW
 
-This vignette walks through the creation of a NONMEM input file (NIF) data set
-for a prototypical multiple dose study (study 'RS2023-0022'), followed by some
-basic exploratory analyses.
+This vignette walks through the creation of a NONMEM Input Format (NIF) data set
+for a multiple dose study (study 'RS2023-0022'), followed by some basic
+exploratory analyses.
 
-The (fictional) raw study data are included as part of the NIF package as
-`examplinib_poc`. Custom SDTM data can be loaded using `read_sdtm()`.
+The fictional SDTM data for this study are included as part of the NIF package
+(`examplinib_poc`). Custom SDTM data can be loaded using `read_sdtm()`.
 
 ## Study design
 
@@ -46,61 +46,42 @@ subset of subjects and sparse in the others.
 
 ## Study SDTM data
 
-The  package provides the 'sdtm' class as a wrapper to keep all
-SDTM domain tables of a clinical study together in one object. The
-`examplinib_poc` sdtm object contains the DM, EX, PC and VS domains. Let's
-print the `examplinib_poc` sdtm object for a high-level overview:
-
+The  package provides the 'sdtm' class as a wrapper to keep all SDTM domain
+tables of a clinical study together in one object. The `examplinib_poc` sdtm
+object contains the DM, EX, PC and VS domains. Let's summarize the
+`examplinib_poc` sdtm object for a high-level overview:
 
 ```{r, echo=T}
-examplinib_poc
+summary(examplinib_poc)
 ```
 
 Note that in the EX domain, the administered drug is given as 'EXAMPLINIB' while
 in PC, the corresponding analyte is 'RS2023'. The other analyte, 'RS2023487A' is
 a metabolite.
 
-To clearly specify these correlations, the SDTM object includes the fields
-`examplinib_poc$analyte_mapping` and `examplinib_poc$metabolite_mapping`. Both
-can be defined when the SDTM data set is created. See the documentation to
-`add_analyte_mapping()` and `add_metabolite_mapping()` for details.
+# NIF DATA SET
 
-For this SDTM object, both mappings have been added already.
-
-# CREATING A NIF DATA SET
-
-To enable more complex analyses and analyses in the time domain, the data from
-different SDTM domains must be integrated into a single data frame in long 
-table format. For modeling analyses, a common format specification is the NONMEM
-input file (NIF) format that is at the core of the `nif` package.
-
-`nif` objects are minimally composed from administrations and observations.
-Following the NONMEM nomenclature, the former have an 'EVID' of 1, the latter an
-'EVID' of 0. In the following code, an empty nif object is created using
-`new_nif()`, to which 'EXAMPLINIB' administrations are then added using
-`add_administration()`. Note that the analyte field for this drug is set to
-'RS2023'. In a second step, pharmacokinetic concentrations for 'RS2023' are
-added from the 'PC' SDTM domain. To match the administration, the analyte field
-is again 'RS2023'. The compartment is automatically set to 2. Both functions
-have as their first argument the 'sdtm' object:
+Following the tutorial given in `vignette("A01-nif-vignette")`, we start with a
+basic pharmacokinetic nif object from `examplinic_poc`:
 
 ```{r}
 sdtm <- examplinib_poc
 
 nif_poc <- new_nif() %>% 
   add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2)
+  add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>% 
+  add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3) 
 ```
 
-The 'LB' domain within this sdtm object contains baseline creatinine data which
-can be used to calculate the individual baseline creatinine clearance as an
-estimate for glomerular filtration rate (eGFR). Baseline covariates are created
-using 'add_baseline()`.
+Let's add some further baseline data to our nif object. The serum creatinine
+concentration can be used to calculate the individual baseline creatinine
+clearance as an estimate for glomerular filtration rate (eGFR).
 
-In the first step, baseline creatinine is added from 'LB', and then the
-creatinine clearance is calculated using further demographic parameters (sex,
-age, race, weight). The standard method is Cockcroft-Gault but other methods can
-be specified:
+We first add baseline creatinine from the 'LB' domain using the generic
+`add_baseline()` function. Then, creatinine clearance is calculated using
+`add_bl_crcl()`. That function uses further covariate data (sex, age, race
+and weight) and the Cockcroft-Gault formula by default. For further options, see
+the documentation for `add_bl_crcl()`.
 
 ```{r}
 nif_poc <- nif_poc %>% 
@@ -108,45 +89,30 @@ nif_poc <- nif_poc %>%
   add_bl_crcl()
 ```
 
-In fact, the nif data set that we have just created, including the baseline
-creatinine clearance data, is already included in the `nif` package as
-`examplinib_poc_nif`.
-
-In case NIF data sets have been generated externally, they can be converted into
-nif objects using `new_nif()`, see the documentation to this function for
-details.
-
-Note that a nif object is essentially a wrapper around a data frame with the set
-of variables expected by NONMEM or other population analysis tools. This becomes
-visible when the object is converted into a data frame:
+The nif data set now includes both baseline creatinine and baseline creatinine
+clearance:
 
 ```{r, comment="# "}
-nif_poc %>% 
-  as.data.frame() %>% 
-  head()
-```
-
-When the NIF object itself is printed, a summary of the data is shown instead:
-
-```{r, comment="# "}
-nif_poc
+head(nif_poc, 3)
 ```
 
 # EXPLORATION
 
 ## Demographics
 
-For an initial overview on the distribution of baseline parameters, the
-administered drugs, analytes, observations, etc., NIF objects can be inspected
-with the `summary()` function. Note that since we have added baseline eGFR to
-the data set, the output also summarizes the number of patients with normal
-renal function or impaired renal function:
+For an initial overview on the distribution of baseline parameters in the study
+population, the administered drugs, analytes, observations, etc., nif objects
+can be inspected with the `summary()` function. After we have added baseline
+creatinine clearance, the output also summarizes the number of patients with
+normal renal function or impaired renal function:
 
 ```{r, comment="# "}
 summary(nif_poc)
 ```
 
-For a visual overview of the NIF data set `plot()` can be applied to the summary:
+For a visual overview of the NIF data set `plot()` can be applied to the nif
+summary object. Ignore the `invisible(capture.output())` construct in the below
+code. Its purpose is to hide non-graphical output.
 
 ```{r, results='hide', fig.width=3, fig.height=3}
 invisible(capture.output(
@@ -156,7 +122,8 @@ invisible(capture.output(
 
 ## Exposure
 
-In this study, all `r nrow(subjects(nif_poc))` subject received the same dose level: 
+In this study, all `r nrow(subjects(nif_poc))` subject received the same dose
+level:
 
 ```{r}
 nif_poc %>%
@@ -165,18 +132,19 @@ nif_poc %>%
 ```
 
 However, there were subjects with dose reductions, as we can see when filtering
-the nif data set for EVID == 1 (administrations) and summarizing the administered
-dose:
+the nif data set for `EVID == 1` (i.e., administrations) and summarizing the
+administered dose:
 
 ```{r}
 nif_poc %>% 
-  filter(EVID==1) %>% 
+  filter(EVID == 1) %>% 
   group_by(DOSE) %>% 
-  summarize(n=n()) %>% 
+  summarize(n = n()) %>% 
   kable()
 ```
 
-To identify the subjects with dose reductions: 
+To identify the subjects with dose reductions, we can use the `dose_red_sbs()`
+function provided by the nif package:
 
 ```{r, comment="# "}
 nif_poc %>%
@@ -219,21 +187,19 @@ nif_poc %>%
   filter(EVID == 0) %>% 
   group_by(NTIME, ANALYTE) %>% 
   summarize(n = n(), .groups = "drop") %>% 
-  tidyr::pivot_wider(names_from = "ANALYTE", values_from = "n") %>% 
+  pivot_wider(names_from = "ANALYTE", values_from = "n") %>% 
   kable(caption = "Observations by time point and analyte")
 ```
 
-From the different numbers of samplings per nominal time point, we see that only
-a subset of subjects had a rich sampling scheme. Let's identify those:
+From the different numbers of samplings per nominal time point, we guess that
+only a subset of subjects had a rich sampling scheme. Let's identify those:
 
 ```{r, comment="# "}
 nif_poc %>% 
   rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 6)
 ```
 
-In this code, the function `rich_sampling_sbs()` receives as input the analyte
-of interest, the time interval across which the number of samples is evaluated,
-and the minimum number of samples to qualify the schedule as rich.
+For details, see the documentation to `rich_sampling_sbs()`.
 
 ## Plasma concentration data
 
@@ -243,7 +209,9 @@ the parent, RS2023, and the metabolite, RS2023487A:
 ```{r fig.width=5, fig.height=3}
 temp <- nif_poc %>% 
   filter(ID %in% (rich_sampling_sbs(nif_poc, analyte = "RS2023", n=4)))
-temp %>% plot(dose = 500, points = TRUE, title = "Rich sampling subjects")
+
+temp %>%
+  plot(dose = 500, points = TRUE, title = "Rich sampling subjects")
 ```
 
 For single and multiple dose administrations separately: 
@@ -259,7 +227,16 @@ temp %>% filter(RICH_N == 2) %>%
   plot(analyte = "RS2023", title = "Multiple-dose PK", time = "NTIME", mean = T)
 ```
 
+The above code made use of the helper function `index_rich_sampling_intervals()`
+that identifies dosing intervals with rich PK sampling. See the documentation 
+for details.
+
 ## Non-compartmental analysis
+
+The nif package includes functions for non-compartmental PK analysis.
+Essentially, `nca()` is a wrapper around `PKNCA::pk.nca()` from the
+popular [PKNCA](https://cran.r-project.org/web/packages/PKNCA/index.html)
+package.
 
 ```{r message = F, warning= F}
 nca <- examplinib_poc_nif %>% 
