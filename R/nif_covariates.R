@@ -19,6 +19,8 @@
 #' @param DTC_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
 #' @param silent Suppress messages, defaults to nif_option setting if NULL.
+#' @param cat xxCAT filter to apply, as character.
+#' @param scat xxSCAT filter to apply, as character.
 #'
 #' @return A nif object with a new column added that contains the time-varying covariate values.
 #'   The name of this column is determined by the `covariate` parameter (or defaults to
@@ -42,6 +44,8 @@ add_covariate <- function(
     DV_field = NULL,
     TESTCD_field = NULL,
     observation_filter = "TRUE",
+    cat = NULL,
+    scat = NULL,
     duplicate_function = mean,
     silent = NULL
 ) {
@@ -67,6 +71,8 @@ add_covariate <- function(
   validate_char_param(TESTCD_field, "TESTCD_field", allow_null = TRUE)
   validate_char_param(observation_filter, "observation_filter")
   validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_char_param(cat, "cat", allow_null = TRUE)
+  validate_char_param(scat, "scat", allow_null = TRUE)
 
   # Set up field names
   if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
@@ -74,6 +80,8 @@ add_covariate <- function(
   if(is.null(TESTCD_field))
     TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
   if(is.null(covariate)) covariate <- str_to_upper(testcd)
+  cat_field <- paste0(toupper(domain), "CAT")
+  scat_field <- paste0(toupper(domain), "SCAT")
 
   # check whether covariate name is already taken
   if(covariate %in% names(nif)) {
@@ -109,6 +117,12 @@ add_covariate <- function(
   }
 
   filtered_cov <- domain_data %>%
+    # apply cat, scat filtering
+    {if(!is.null(cat) & cat_field %in% names(.))
+      filter(., .data[[cat_field]] == cat) else .} %>%
+    {if(!is.null(scat) & scat_field %in% names(.))
+      filter(., .data[[scat_field]] == scat) else .} %>%
+    # apply other filtering
     filter(.data$USUBJID %in% unique(nif$USUBJID)) %>%
     lubrify_dates() %>%
     filter(eval(parse(text = observation_filter))) %>%
@@ -121,8 +135,21 @@ add_covariate <- function(
       "' after applying observation filter"))
   }
 
+  # cov <- filtered_cov %>%
+  #   # filter(.data[[TESTCD_field]] == testcd) %>%
+  #   tidyr::pivot_wider(
+  #     names_from = all_of(TESTCD_field),
+  #     values_from = all_of(DV_field),
+  #     values_fn = duplicate_function
+  #   ) %>%
+  #   rename("DTC" = all_of(DTC_field)) %>%
+  #   rename_with(~COV_field, all_of(testcd)) %>%
+  #   decompose_dtc("DTC") %>%
+  #   select(!all_of(c("DTC", "DTC_time"))) %>%
+  #   select(all_of(c("USUBJID", "DTC_date", COV_field))) %>%
+  #   distinct()
+
   cov <- filtered_cov %>%
-    # filter(.data[[TESTCD_field]] == testcd) %>%
     tidyr::pivot_wider(
       names_from = all_of(TESTCD_field),
       values_from = all_of(DV_field),
@@ -130,21 +157,31 @@ add_covariate <- function(
     ) %>%
     rename("DTC" = all_of(DTC_field)) %>%
     rename_with(~COV_field, all_of(testcd)) %>%
-    decompose_dtc("DTC") %>%
-    select(!all_of(c("DTC", "DTC_time"))) %>%
-    select(all_of(c("USUBJID", "DTC_date", COV_field))) %>%
-    distinct()
+    # decompose_dtc("DTC") %>%
+    # select(!all_of(c("DTC", "DTC_time"))) %>%
+    select(all_of(c("USUBJID", "DTC", COV_field))) %>%
+    distinct() %>%
+    mutate(original = 0)
+
+  # temp <- nif %>%
+  #   mutate(original = TRUE) %>%
+  #   decompose_dtc("DTC") %>%
+  #   full_join(cov, by = c("USUBJID", "DTC_date")) %>%
+  #   arrange(.data$USUBJID, .data$DTC_date) %>%
+  #   group_by(.data$USUBJID) %>%
+  #   tidyr::fill(!!COV_field) %>%
+  #   ungroup() %>%
+  #   filter(.data$original == TRUE) %>%
+  #   select(!any_of(c("original", "DTC_date", "DTC_time"))) %>%
+  #   new_nif()
 
   temp <- nif %>%
-    mutate(original = TRUE) %>%
-    decompose_dtc("DTC") %>%
-    full_join(cov, by = c("USUBJID", "DTC_date")) %>%
-    arrange(.data$USUBJID, .data$DTC_date) %>%
-    group_by(.data$USUBJID) %>%
+    mutate(original = 1) %>%
+    bind_rows(cov) %>%
+    arrange(.data$USUBJID, .data$DTC, .data$original) %>%
     tidyr::fill(!!COV_field) %>%
-    ungroup() %>%
-    filter(.data$original == TRUE) %>%
-    select(!any_of(c("original", "DTC_date", "DTC_time"))) %>%
+    filter(.data$original == 1) %>%
+    select(!any_of(c("original"))) %>%
     new_nif()
 
   return(temp)

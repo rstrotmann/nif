@@ -14,6 +14,8 @@ add_covariate(
   DV_field = NULL,
   TESTCD_field = NULL,
   observation_filter = "TRUE",
+  cat = NULL,
+  scat = NULL,
   duplicate_function = mean,
   silent = NULL
 )
@@ -38,6 +40,10 @@ Defaults to the two-character domain name followed by 'DTC', if NULL.}
 xx the domain code), as character.}
 
 \item{observation_filter}{A filter term for the \code{domain}, as character.}
+
+\item{cat}{xxCAT filter to apply, as character.}
+
+\item{scat}{xxSCAT filter to apply, as character.}
 
 \item{duplicate_function}{The function to apply if multiple covariate values
 are found by day.}
