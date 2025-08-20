@@ -1,5 +1,5 @@
 ---
-title: "Creating-multiple-study-nif"
+title: "Multiple studies in one NIF"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{creating-multiple-study-nif}

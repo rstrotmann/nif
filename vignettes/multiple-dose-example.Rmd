@@ -1,5 +1,5 @@
 ---
-title: "NIF data for a multiple-dose study"
+title: "Example: Multiple-dose study"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{NIF data for a multiple-dose study}
@@ -61,7 +61,7 @@ a metabolite.
 
 # NIF DATA SET
 
-Following the tutorial given in `vignette("A01-nif-vignette")`, we start with a
+Following the tutorial given in `vignette("nif-tutorial")`, we start with a
 basic pharmacokinetic nif object from `examplinic_poc`:
 
 ```{r}

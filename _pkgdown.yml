@@ -2,3 +2,12 @@ url: ~
 template:
   bootstrap: 5
 
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - nif-tutorial
+  - multiple-dose-example
+  - nif-imputations
+  - multiple-study-example
+  - nif-formulas

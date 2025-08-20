@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>NIF data for a multiple-dose study • nif</title>
+<title>Example: Multiple-dose study • nif</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="NIF data for a multiple-dose study">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Example: Multiple-dose study">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -33,10 +33,11 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/A01-nif-vignette.html">Creating NIF files from SDTM data</a></li>
-    <li><a class="dropdown-item" href="../articles/A02-multiple-dose-example.html">NIF data for a multiple-dose study</a></li>
+<li><a class="dropdown-item" href="../articles/nif-tutorial.html">Creating NIF files from SDTM data</a></li>
+    <li><a class="dropdown-item" href="../articles/A02-multiple-dose-example.html">Example: Multiple-dose study</a></li>
     <li><a class="dropdown-item" href="../articles/A03-nif-imputations.html">Imputations and assumptions</a></li>
-    <li><a class="dropdown-item" href="../articles/A04-creating-multiple-study-nif.html">Creating-multiple-study-nif</a></li>
+    <li><a class="dropdown-item" href="../articles/A04-creating-multiple-study-nif.html">Multiple studies in one NIF</a></li>
+    <li><a class="dropdown-item" href="../articles/nif-formulas.html">nif-formulas</a></li>
   </ul>
 </li>
       </ul>
@@ -58,7 +59,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>NIF data for a multiple-dose study</h1>
+      <h1>Example: Multiple-dose study</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/vignettes/A02-multiple-dose-example.Rmd" class="external-link"><code>vignettes/A02-multiple-dose-example.Rmd</code></a></small>
@@ -139,7 +140,7 @@ other analyte, ‘RS2023487A’ is a metabolite.</p>
 <h2 id="nif-data-set">NIF DATA SET<a class="anchor" aria-label="anchor" href="#nif-data-set"></a>
 </h2>
 <p>Following the tutorial given in
-<code><a href="../articles/A01-nif-vignette.html">vignette("A01-nif-vignette")</a></code>, we start with a basic
+<code><a href="../articles/nif-tutorial.html">vignette("nif-tutorial")</a></code>, we start with a basic
 pharmacokinetic nif object from <code>examplinic_poc</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sdtm</span> <span class="op">&lt;-</span> <span class="va">examplinib_poc</span></span>

@@ -135,20 +135,6 @@ add_covariate <- function(
       "' after applying observation filter"))
   }
 
-  # cov <- filtered_cov %>%
-  #   # filter(.data[[TESTCD_field]] == testcd) %>%
-  #   tidyr::pivot_wider(
-  #     names_from = all_of(TESTCD_field),
-  #     values_from = all_of(DV_field),
-  #     values_fn = duplicate_function
-  #   ) %>%
-  #   rename("DTC" = all_of(DTC_field)) %>%
-  #   rename_with(~COV_field, all_of(testcd)) %>%
-  #   decompose_dtc("DTC") %>%
-  #   select(!all_of(c("DTC", "DTC_time"))) %>%
-  #   select(all_of(c("USUBJID", "DTC_date", COV_field))) %>%
-  #   distinct()
-
   cov <- filtered_cov %>%
     tidyr::pivot_wider(
       names_from = all_of(TESTCD_field),
@@ -157,23 +143,9 @@ add_covariate <- function(
     ) %>%
     rename("DTC" = all_of(DTC_field)) %>%
     rename_with(~COV_field, all_of(testcd)) %>%
-    # decompose_dtc("DTC") %>%
-    # select(!all_of(c("DTC", "DTC_time"))) %>%
     select(all_of(c("USUBJID", "DTC", COV_field))) %>%
     distinct() %>%
     mutate(original = 0)
-
-  # temp <- nif %>%
-  #   mutate(original = TRUE) %>%
-  #   decompose_dtc("DTC") %>%
-  #   full_join(cov, by = c("USUBJID", "DTC_date")) %>%
-  #   arrange(.data$USUBJID, .data$DTC_date) %>%
-  #   group_by(.data$USUBJID) %>%
-  #   tidyr::fill(!!COV_field) %>%
-  #   ungroup() %>%
-  #   filter(.data$original == TRUE) %>%
-  #   select(!any_of(c("original", "DTC_date", "DTC_time"))) %>%
-  #   new_nif()
 
   temp <- nif %>%
     mutate(original = 1) %>%
@@ -340,14 +312,9 @@ add_baseline <- function(
                        values_from = DV) %>%
     select(all_of(c("USUBJID", {{testcd}}))) %>%
     group_by(.data$USUBJID) %>%
-    # summarize(across(
-    #   all_of(testcd),
-    #   ~ summary_function(na.omit(.x, na.rm = TRUE)))) %>%
-
     summarize(across(
       all_of(testcd),
       ~ summary_function(na.omit(.x)))) %>%
-
     rename_with(~bl_field, .cols = all_of(testcd)) %>%
     ungroup()
 

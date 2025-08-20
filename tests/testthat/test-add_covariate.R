@@ -249,3 +249,20 @@ test_that("add_covariate uses default covariate name if not specified", {
   expect_true("WEIGHT" %in% names(result))
 })
 
+
+test_that("add_covariate works with actual data set", {
+  sdtm <- examplinib_poc
+  nif <- nif(sdtm, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE) %>%
+    add_covariate(sdtm, "pc", "RS2023", covariate = "TEST")
+
+  temp <- nif %>%
+    filter(ANALYTE == "RS2023", EVID == 0) %>%
+    select(ID, TIME, DV, TEST) %>%
+    as.data.frame()
+
+  expect_equal(temp$DV, temp$TEST)
+})
+
+
+
+
