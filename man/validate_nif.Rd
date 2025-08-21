@@ -2,7 +2,7 @@
 % Please edit documentation in R/validation.R
 \name{validate_nif}
 \alias{validate_nif}
-\title{Validate nif object}
+\title{Validate nif object parameter}
 \usage{
 validate_nif(obj)
 }
@@ -13,5 +13,5 @@ validate_nif(obj)
 Nothing or stop.
 }
 \description{
-Validate nif object
+Validate nif object parameter
 }

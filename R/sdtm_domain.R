@@ -172,7 +172,121 @@ print.summary_domain <- function(x, ...) {
 }
 
 
+#' Plot domain object
+#'
+#' @param x A domain object.
+#' @param testcd Testcd field to filter for, defaults to all if NULL.
+#' @param ... Further parameters.
+#' @param points Plot points, as logical.
+#' @param lines Plot lines, as logical.
+#' @param legend Plot legend, as logical.
+#'
+#' @returns A ggplot2 object.
+#' @export
+#'
+#' @examples
+#' plot(domain(examplinib_sad, "lb"))
+plot.domain <- function(
+    x, testcd = NULL, points = TRUE, lines = FALSE,
+    legend = TRUE, ...) {
+  # input validation
+  validate_domain_param(x)
+  validate_char_param(testcd, "testcd", allow_null = TRUE)
+  validate_logical_param(points, "points")
+  validate_logical_param(lines, "lines")
+  validate_logical_param(legend, "legend")
 
+  # fields
+  domain <- toupper(unique(x$DOMAIN))
+  testcd_field <- paste0(domain, "TESTCD")
+  dv_field <- paste0(domain, "STRESN")
+  time_field <- paste0(domain, "DTC")
+  dy_field <- paste0(domain, "DY")
+  if(dy_field %in% names(x))
+    time_field <- dy_field
+
+  obj <- NULL
+
+  x <- x %>%
+    lubrify_dates()
+
+  # specific plot for DM
+  if (domain == "DM") {
+    missing_fields <- setdiff(c("RFSTDTC", "RFENDTC", "USUBJID"), names(x))
+    if(length(missing_fields) > 0)
+      stop(paste0(
+        "missing ", plural("field", length(missing_fields) > 1), ": ",
+        nice_enumeration(missing_fields)
+      ))
+
+    obj <- x %>%
+      filter(!is.na(.data$RFSTDTC)) %>%
+      arrange(.data$RFSTDTC) %>%
+      mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+      ggplot2::ggplot() +
+      ggplot2::geom_segment(ggplot2::aes(
+        x = .data$RFSTDTC,
+        xend = .data$RFENDTC,
+        y = .data$ID,
+        yend = .data$ID)) +
+      {if(points == TRUE) {ggplot2::geom_point(ggplot2::aes(
+        x = .data$RFSTDTC, y = .data$ID))}} +
+      ggplot2::scale_y_discrete(
+        labels = NULL, breaks = NULL, name = "USUBJID") +
+      ggplot2::scale_x_datetime(
+        name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d")
+  }
+
+  # specific plot for EX
+  if (domain == "EX") {
+    missing_fields <- setdiff(c("EXSTDTC", "EXENDTC", "USUBJID"), names(x))
+    if(length(missing_fields) > 0)
+      stop(paste0(
+        "missing ", plural("field", length(missing_fields) > 1), ": ",
+        nice_enumeration(missing_fields)
+      ))
+
+    obj <- x %>%
+      arrange(.data$EXSTDTC) %>%
+      mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+      ggplot2::ggplot() +
+      ggplot2::geom_segment(ggplot2::aes(
+        x = .data$EXSTDTC,
+        xend = .data$EXENDTC,
+        y = .data$ID,
+        yend = .data$ID)) +
+      {if (points == TRUE) {ggplot2::geom_point(ggplot2::aes(
+        x = .data$EXSTDTC, y = .data$ID))}} +
+      ggplot2::scale_y_discrete(name = "USUBJID", labels = NULL) +
+      ggplot2::scale_x_datetime(
+        name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d")
+  }
+
+  # generic plot
+  if(!domain %in% c("DM", "EX")){
+    if(all(c(testcd_field, time_field, dv_field) %in% names(x))) {
+      obj <- x %>%
+        {if(!is.null(testcd)) filter(., .data[[testcd_field]] == testcd) else .} %>%
+        ggplot(aes(x = !!sym(time_field),
+                   y = !!sym(dv_field),
+                   color = !!sym(testcd_field))) +
+        {if(points == TRUE) geom_point()} +
+        {if(lines == TRUE) geom_line()}
+    }
+  }
+
+  obj <- obj +
+    {if (legend == TRUE) {
+        ggplot2::theme(legend.position = "bottom")
+      } else {
+        ggplot2::theme(legend.position = "none")
+      }} +
+    theme_bw() +
+    ggtitle(paste0("Domain ", domain))
+    watermark()
+
+  return(obj)
+}
 
 
 

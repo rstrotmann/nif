@@ -271,7 +271,7 @@ validate_numeric_param <- function(
 }
 
 
-#' Validate nif object
+#' Validate nif object parameter
 #'
 #' @param obj A nif object.
 #'
@@ -282,6 +282,19 @@ validate_nif <- function(obj) {
     stop("Input must be a nif object")
   }
 }
+
+
+#' Validate domain object parameter
+#'
+#' @param obj A domain object.
+#'
+#' @returns Nothing or stop.
+validate_domain_param <- function(obj) {
+  if(!inherits(obj, "domain")) {
+    stop("Input must be a domain object")
+  }
+}
+
 
 
 #' Validate nif object with minimally required fields
