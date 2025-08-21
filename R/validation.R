@@ -149,6 +149,7 @@ validate_sdtm <- function(
 #' @param allow_null Allow NULL values, as logical.
 #' @param allow_empty Allow empty parameter, as logical.
 #' @param allow_multiple Allow vector of the specified type, as logical.
+#' @param allow_na Allow NA value, as logical.
 #'
 #' @returns Nothing or stop.
 validate_param <- function(
@@ -157,7 +158,8 @@ validate_param <- function(
     param_name,
     allow_null = FALSE,
     allow_empty = FALSE,
-    allow_multiple = FALSE) {
+    allow_multiple = FALSE,
+    allow_na = FALSE) {
 
   # Validate type parameter
   type <- match.arg(type)
@@ -172,7 +174,7 @@ validate_param <- function(
   }
 
   # Check for NA values
-  if(any(is.na(param))) {
+  if(!allow_na && any(is.na(param))) {
     stop(paste0(param_name, " must not contain NA"))
   }
 
@@ -180,6 +182,7 @@ validate_param <- function(
   if(
     (type == "string" && !is.character(param)) ||
     (type == "logical" && !is.logical(param)) ||
+    # (type == "numeric" && !(is.numeric(param) | is.na(param)))) {
     (type == "numeric" && !is.numeric(param))) {
     stop(paste0(param_name, " must be a ", type, " value"))
   }
@@ -253,6 +256,7 @@ validate_logical_param <- function(
 #' @param allow_null Allow NULL values, as logical.
 #' @param allow_empty Allow empty parameter, as logical.
 #' @param allow_multiple Allow vector of the specified type, as logical.
+#' @param allow_na Allow NA values, as logical.
 #'
 #' @returns Nothing or stop.
 validate_numeric_param <- function(
@@ -260,14 +264,16 @@ validate_numeric_param <- function(
     param_name,
     allow_null = FALSE,
     allow_empty = FALSE,
-    allow_multiple = FALSE) {
+    allow_multiple = FALSE,
+    allow_na = FALSE) {
   validate_param(
     "numeric",
     param,
     param_name,
     allow_null,
     allow_empty,
-    allow_multiple)
+    allow_multiple,
+    allow_na)
 }
 
 

@@ -28,6 +28,7 @@
   caption = NULL,
   ribbon = TRUE,
   group = deprecated(),
+  na_value = NA,
   ...
 )
 }
@@ -83,6 +84,8 @@ character.}
 
 \item{group}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Grouping variable. Use the
 \code{color} or \code{facet} parameters instead.}
+
+\item{na_value}{Value to replace NA values with, as numeric.}
 
 \item{...}{Further parameters.}
 }

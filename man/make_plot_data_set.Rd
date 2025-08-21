@@ -14,7 +14,8 @@ make_plot_data_set(
   max_time = NULL,
   cfb = FALSE,
   dose_norm = FALSE,
-  facet = "DOSE"
+  facet = "DOSE",
+  na_value = NA
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ numeric.}
 \item{dose_norm}{Dose-normalized values, as logical.}
 
 \item{facet}{The column(s) to be used for faceting.}
+
+\item{na_value}{Value to replace NA values with, as numeric.}
 }
 \value{
 A list with:

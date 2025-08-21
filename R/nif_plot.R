@@ -25,7 +25,8 @@ make_plot_data_set <- function(
     max_time = NULL,
     cfb = FALSE,
     dose_norm = FALSE,
-    facet = "DOSE") {
+    facet = "DOSE",
+    na_value = NA) {
   # assert time parameter
   if (!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
     stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
@@ -47,10 +48,10 @@ make_plot_data_set <- function(
     filter(ANALYTE %in% analyte) %>%
     pull(PARENT)
 
-  # out <- as.data.frame(nif) %>%
   out <- nif %>%
     filter((ANALYTE %in% analyte & EVID == 0) |
-      (ANALYTE %in% parent & EVID == 1))
+      (ANALYTE %in% parent & EVID == 1)) %>%
+    mutate(DV = case_when(is.na(DV) ~ na_value, .default = DV))
 
   if (is.null(dose)) {
     dose <- unique(filter(out, EVID == 0)$DOSE)
@@ -71,12 +72,8 @@ make_plot_data_set <- function(
   out <- out %>%
     index_dosing_interval() %>%
     mutate(DI = case_match(EVID, 1 ~ NA, .default = DI)) %>%
-    {
-      if (cfb == TRUE) mutate(., DV = DVCFB) else .
-    } %>%
-    {
-      if (dose_norm == TRUE) mutate(., DV = DV / DOSE) else .
-    } %>%
+    {if(cfb == TRUE) mutate(., DV = DVCFB) else .} %>%
+    {if(dose_norm == TRUE) mutate(., DV = DV / DOSE) else .} %>%
     filter(.data$active_time >= min_time) %>%
     filter(.data$active_time <= max_time) %>%
     group_by(ID, ANALYTE) %>%
@@ -90,15 +87,12 @@ make_plot_data_set <- function(
 
   out <- out %>%
     arrange("ID", "DOSE") %>%
-    {
-      if (length(color) != 0) {
+    {if(length(color) != 0) {
         tidyr::unite(., COLOR, all_of(!!color), sep = "-", remove = FALSE)
       } else {
         mutate(., COLOR = TRUE)
-      }
-    } %>%
-    {
-      if (length(facet) > 0) {
+      }} %>%
+    {if(length(facet) > 0) {
         if (length(facet) == 1) {
           mutate(., FACET = .data[[facet]])
         } else {
@@ -109,8 +103,7 @@ make_plot_data_set <- function(
         }
       } else {
         .
-      }
-    } %>%
+      }} %>%
     arrange("ID", "COLOR", "DOSE", "FACET")
 
   return(list(data = out, group = "ID", color = color, facet = facet))
@@ -175,6 +168,7 @@ make_mean_plot_data_set <- function(data_set) {
 #'   `color` or `facet` parameters instead.
 #' @param caption The caption line as per [ggplot2::labs()].
 #' @param ... Further parameters.
+#' @param na_value Value to replace NA values with, as numeric.
 #' @param ribbon Plot ribbon in mean plot, as logical.
 #'
 #' @return A ggplot2 object.
@@ -216,28 +210,34 @@ plot.nif <- function(
     log = FALSE, mean = FALSE, title = NULL, legend = TRUE,
     size = 1.5, scales = "fixed", alpha = 1, caption = NULL,
     ribbon = TRUE,
-    group = deprecated(), ...) {
+    group = deprecated(),
+    na_value = NA,
+    ...) {
   if (lifecycle::is_present(group)) {
     lifecycle::deprecate_warn("0.50.1", "plot(group)", "plot(color)")
     color <- group
   }
 
+  # input validation
+  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_numeric_param(dose, "dose", allow_null = TRUE)
+  # validate_numeric_param(na_value, "na_value", allow_na = TRUE)
+
   temp <- make_plot_data_set(
-    x, analyte, dose, time, color, min_time, max_time, cfb, dose_norm, facet
+    x, analyte, dose, time, color, min_time, max_time, cfb, dose_norm, facet,
+    na_value = na_value
   )
 
   if (isTRUE(mean)) {
     temp <- make_mean_plot_data_set(temp)
-    if (is.null(caption)) caption <- "Mean and SD"
+    if(is.null(caption)) caption <- "Mean and SD"
   }
 
   plot_data <- temp$data %>%
     {if (isTRUE(log)) {
-        mutate(., DV = case_match(DV, 0 ~ NA, .default = DV))} else {.}
-    } %>%
+        mutate(., DV = case_match(DV, 0 ~ NA, .default = DV))} else {.}} %>%
     tidyr::unite(GROUP, any_of(c((temp$group), (temp$color), (temp$facet))),
-      sep = "-", remove = FALSE
-    )
+      sep = "-", remove = FALSE)
 
   analytes <- unique(plot_data$ANALYTE)
   y_label <- ifelse(length(analytes) == 1, analytes, "DV")
@@ -259,47 +259,32 @@ plot.nif <- function(
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time, y = DV, group = GROUP, color = COLOR
     )) +
-    {
-      if (!is.null(admin)) {
+    {if (!is.null(admin)) {
         ggplot2::geom_vline(
           data = admin_data,
           ggplot2::aes(xintercept = .data$active_time), color = "gray"
         )
-      }
-    } +
-    {
-      if (isTRUE(lines)) ggplot2::geom_line(na.rm = TRUE)
-    } +
-    {
-      if (isTRUE(points)) {
+      }} +
+    {if(isTRUE(lines)) ggplot2::geom_line(na.rm = TRUE)} +
+    {if(isTRUE(points)) {
         ggplot2::geom_point(
           size = size, alpha = alpha,
           na.rm = TRUE
         )
-      }
-    } +
-    {
-      if (isTRUE(mean) & isTRUE(ribbon)) {
+      }} +
+    {if(isTRUE(mean) & isTRUE(ribbon)) {
         ggplot2::geom_ribbon(
           ggplot2::aes(ymin = pos_diff(DV, sd), ymax = DV + sd, fill = COLOR),
           alpha = 0.3, color = NA, show.legend = FALSE
-        )
-      }
-    } +
-    {
-      if (!is.null(temp$facet)) {
+        )}} +
+    {if(!is.null(temp$facet)) {
         if (length(unique(plot_data[[temp$facet]])) > 1) {
           ggplot2::facet_wrap(~FACET, scales = scales)
         }
-      }
-    } +
-    {
-      if (isTRUE(log)) ggplot2::scale_y_log10()
-    } +
+      }} +
+    {if(isTRUE(log)) ggplot2::scale_y_log10()} +
     ggplot2::labs(color = nice_enumeration(temp$color)) +
-    {
-      if (!is.null(caption)) ggplot2::labs(caption = caption)
-    } +
+    {if(!is.null(caption)) ggplot2::labs(caption = caption)} +
     ggplot2::theme_bw() +
     ggplot2::theme(
       legend.position = ifelse(
@@ -310,13 +295,6 @@ plot.nif <- function(
     watermark(cex = 1.5) +
     ggplot2::labs(x = time, y = y_label, color = nice_enumeration(temp$color))
 
-  # {if(show_n == TRUE) ggplot2::geom_text(
-  #   ggplot2::aes(
-  #     label = paste0 ("N = ", n)),
-  #   x = -Inf,
-  #   y = Inf, hjust = -0.2, vjust = 1.5, color = "darkgrey", size = 3.5)}
-
-  # suppressWarnings(print(p))
   suppressWarnings(return(p))
 }
 

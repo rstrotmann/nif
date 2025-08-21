@@ -10,7 +10,8 @@ validate_param(
   param_name,
   allow_null = FALSE,
   allow_empty = FALSE,
-  allow_multiple = FALSE
+  allow_multiple = FALSE,
+  allow_na = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ validate_param(
 \item{allow_empty}{Allow empty parameter, as logical.}
 
 \item{allow_multiple}{Allow vector of the specified type, as logical.}
+
+\item{allow_na}{Allow NA value, as logical.}
 }
 \value{
 Nothing or stop.
