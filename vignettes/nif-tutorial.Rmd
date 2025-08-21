@@ -19,8 +19,8 @@ knitr::opts_chunk$set(
 
 # INTRODUCTION
 
-This is a basic tutorial on using the `nif` package to create NONMEM Input Format
-(NIF) data sets from Study Data Tabulation Model (SDTM) formatted data.
+This is a basic tutorial on using the `nif` package to create NONMEM Input
+Format (NIF) data sets from Study Data Tabulation Model (SDTM) formatted data.
 
 ## Background
 
@@ -181,9 +181,10 @@ during the creating of the analysis data set. To help deciding which
 study-specific factors need to be addressed, the `nif` package includes
 functions to explore the structure of SDTM data.
 
-As we will see in [NIF DATA SETS][NIF DATA SETS], nif objects are built sequentially from the
-SDTM data set. Based on the actual data disposition, the `suggest()` function
-provide useful code snippets for the creation of analysis data sets:
+As we will see in [NIF DATA SETS][NIF DATA SETS], nif objects are built
+sequentially from the SDTM data set. Based on the actual data disposition, the
+`suggest()` function provide useful code snippets for the creation of analysis
+data sets:
 
 ```{r results="asis"}
 suggest(examplinib_fe)
@@ -310,9 +311,6 @@ a `nif` data set:
 ```{r}
 summary(nif)
 ```
-
-<!-- Further to the above text output, the `summary` for a `nif` object can also be -->
-<!-- plotted for a quick graphical overview. -->
 
 Plotting the summary yields histograms of the baseline demographic covariates
 and raw plots of the analytes over time. In the following code, ignore the
