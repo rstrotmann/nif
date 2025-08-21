@@ -168,6 +168,7 @@
 <url><loc>/reference/pin_write.html</loc></url>
 <url><loc>/reference/pin_write.nif.html</loc></url>
 <url><loc>/reference/pin_write.sdtm.html</loc></url>
+<url><loc>/reference/plot.domain.html</loc></url>
 <url><loc>/reference/plot.nif.html</loc></url>
 <url><loc>/reference/plot.sdtm.html</loc></url>
 <url><loc>/reference/plural.html</loc></url>
@@ -204,6 +205,7 @@
 <url><loc>/reference/usubjid.html</loc></url>
 <url><loc>/reference/validate_char_param.html</loc></url>
 <url><loc>/reference/validate_domain.html</loc></url>
+<url><loc>/reference/validate_domain_param.html</loc></url>
 <url><loc>/reference/validate_logical_param.html</loc></url>
 <url><loc>/reference/validate_min_nif.html</loc></url>
 <url><loc>/reference/validate_nif.html</loc></url>
