@@ -479,6 +479,12 @@ make_observation <- function(
 #' A PK/PD model compartment can be specified with 'cmt' or will be
 #' automatically assigned if `cmt = NULL`.
 #'
+#' For an overview on the representation of observation events in NONMEM
+#' Input Format compliant data sets, see Bauer, R.J. (2019), NONMEM Tutorial
+#' Part I: Description of Commands and Options, With Simple Examples of
+#' Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537.
+#' [https://doi.org/10.1002/psp4.12404](https://doi.org/10.1002/psp4.12404)
+#'
 #' @param nif A nif object.
 #' @inheritParams make_observation
 #' @param debug Include debug fields, as logical.

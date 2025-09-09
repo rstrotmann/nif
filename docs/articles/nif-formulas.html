@@ -91,13 +91,13 @@ data and covariates. A typical workflow may look like this:</p>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023487A"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/add_baseline.html">add_baseline</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"lb"</span>, <span class="st">"CREAT"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="nif-formulae">NIF FORMULAE<a class="anchor" aria-label="anchor" href="#nif-formulae"></a>
-</h2>
-<p>The <code>examplinib_sad</code> sample SDTM data are somewhat limited
-in the observation events provided We can get an overview on the
-observation events across domains like so:</p>
+<p>The only time-varying data in this NIF data set are now the two
+pharmacokinetic analytes, ‘RS2023’ and ‘RS2023487A’. Real clinical data
+typically include many time-varying observations, and for PK/PD
+analyses, and we might be interested in adding further observation
+events to the nif data set.</p>
+<p>We can get an overview on all observation events included in the SDTM
+data like so:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/testcd.html">testcd</a></span><span class="op">(</span><span class="va">sdtm</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    DOMAIN     TESTCD</span></span>
@@ -115,32 +115,37 @@ observation events across domains like so:</p>
 <span><span class="co">#&gt; 12     PP    LAMZNPT</span></span>
 <span><span class="co">#&gt; 13     PP     LAMZHL</span></span>
 <span><span class="co">#&gt; 14     PP     AUCIFP</span></span></code></pre></div>
-<p>The only time-varying data are the two pharmacokinetic analytes,
-‘RS2023’ and ‘RS2023487A’. Real clinical data typically include many
-more time-varying observation events, and for PK/PD analyses, we might
-be interested in adding further observation events to the nif data
-set.</p>
-<p>While the above code for the creation of the analysis data set
-follows a clear logic with respect to the sequential addition of data
-components to a nif object, it may be sometimes preferable to use more
-compact code. To this end, the ‘nif’ package allows the definition of
-the data sources for an analysis data set using formulae. The below code
-demonstrates this:</p>
+<p>Likewise, we can get an overview on the treatments included in the
+SDTM data with:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/nif_auto.html">nif_auto</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="va">RS2023</span> <span class="op">+</span> <span class="va">RS2023487A</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span><span class="op">)</span></span></code></pre></div>
-<p>The formulae provided as arguments to <code><a href="../reference/nif_auto.html">nif_auto()</a></code> follow
-a consistent notation:</p>
-<p><code>analyte1 + analyte2 ~ treatment</code></p>
-<p>The number of analytes on the left hand side are not limited, but the
-right hand side of the formula must specify a single administration that
-the observations relate to. We can get an overview on the treatments
-included in the SDTM data with:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/treatments.html">treatments</a></span><span class="op">(</span><span class="va">sdtm</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "EXAMPLINIB"</span></span></code></pre></div>
-<p>The above code includes only one formula, but if there are multiple
-drugs administered with associated observations, multiple formulae can
-be provided as arguments to <code><a href="../reference/nif_auto.html">nif_auto()</a></code>.</p>
+</div>
+<div class="section level2">
+<h2 id="nif-formulae">NIF FORMULAE<a class="anchor" aria-label="anchor" href="#nif-formulae"></a>
+</h2>
+<p>While the code for building a NIF data set that is shown above
+follows a clear logic, sequentially addition data components, it may be
+sometimes preferable to use more compact code. To this end, the ‘nif’
+package allows the definition of the data sources for an analysis data
+set using <em>formulae</em>:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/nif_auto.html">nif_auto</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="va">RS2023</span> <span class="op">+</span> <span class="va">RS2023487A</span> <span class="op">~</span> <span class="va">EXAMPLINIB</span><span class="op">)</span></span></code></pre></div>
+<p>The formulae provided as arguments to <code><a href="../reference/nif_auto.html">nif_auto()</a></code> follow
+a consistent notation. Observations are on the left hand side, and
+treatments (drug administrations) are on the right hand side of the
+formula:</p>
+<p><code>analyte1 + analyte2 ~ treatment</code></p>
+<p>The number of analytes on the left hand side is not limited, but the
+right hand side of the formula must specify a single administration that
+the observations relate to.</p>
+<p>We have specified two pharmacokinetic observations (‘RS2023’ and
+‘RS2023487A’). However observations may be of any kind, e.g., from the
+clinical lab (LB), vital sign (VS), ECG (EG), or any other SDTM
+domain.</p>
+<p>Note that the above code includes only one formula, but if there are
+multiple drugs administered with associated observations, multiple
+formulae can be provided as arguments to <code><a href="../reference/nif_auto.html">nif_auto()</a></code>.</p>
 <p>Inspecting the resulting nif object, we can see that
 <code><a href="../reference/nif_auto.html">nif_auto()</a></code> has also added baseline serum creatinine data
 and derived the baseline creatinine clearance and renal function

@@ -12,6 +12,19 @@ status](https://www.r-pkg.org/badges/version/nif)](https://CRAN.R-project.org/pa
 This is a package to create NONMEM Input Format (NIF) data tables from
 SDTM-formatted clinical study data.
 
+The [NONMEM](https://www.iconplc.com/solutions/technologies/nonmem)
+software that is often used for population
+pharmacokinetic/pharmacodynamic (PK/PD) modeling expects the input data
+set to follow specific conventions summarized in *Bauer, R.J. (2019),
+NONMEM Tutorial Part I: Description of Commands and Options, With Simple
+Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol.,
+8: 525-537*. <https://doi.org/10.1002/psp4.12404>.
+
+This package provides functions to sequentially aggregate drug
+administrations, PK/PD observations and covariates into a
+NONMEM-compliant analysis data set (NIF data set), and tools to explore
+and visualize NIF data sets.
+
 ## Installation
 
 You can install the development version of `nif` like this:
@@ -46,12 +59,12 @@ head(nif)
 #> 5   5  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #> 6   6  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
-#> 1 2000-12-31 10:18:00  0.0     0  0.0 0.0    1   5  RS2023   1 RS2023     1
-#> 2 2000-12-31 10:18:00  0.0     0  0.0 0.0    0   0  RS2023   2 RS2023     1
-#> 3 2000-12-31 10:48:00  0.5    NA  0.5 0.5    0   0  RS2023   2 RS2023     1
-#> 4 2000-12-31 11:18:00  1.0    NA  1.0 1.0    0   0  RS2023   2 RS2023     1
-#> 5 2000-12-31 11:48:00  1.5    NA  1.5 1.5    0   0  RS2023   2 RS2023     1
-#> 6 2000-12-31 12:18:00  2.0    NA  2.0 2.0    0   0  RS2023   2 RS2023     1
+#> 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5  RS2023   1 RS2023     1
+#> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1
+#> 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
+#> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1
+#> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1
+#> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0  RS2023   2 RS2023     1
 #>   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV
 #> 1      FALSE    5   1       C1                 NA
 #> 2      FALSE    5   0       C1             0.0000
@@ -69,6 +82,7 @@ nif <- nif %>%
   mutate(COHORT = ACTARMCD) %>% 
   add_baseline(sdtm, "lb", "CREAT") %>% 
   add_bl_crcl()
+#> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 ```
 
 ### Data exploration

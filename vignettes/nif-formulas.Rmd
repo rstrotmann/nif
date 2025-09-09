@@ -41,47 +41,53 @@ nif <- nif() %>%
   add_baseline(sdtm, "lb", "CREAT")
 ```
 
-# NIF FORMULAE
+The only time-varying data in this NIF data set are now the two pharmacokinetic
+analytes, 'RS2023' and 'RS2023487A'. Real clinical data typically include many
+time-varying observations, and for PK/PD analyses, and we might be interested in
+adding further observation events to the nif data set. 
 
-The `examplinib_sad` sample SDTM data are somewhat limited in the observation
-events provided We can get an overview on the observation events across domains
-like so: 
+We can get an overview on all observation events included in the SDTM data like
+so: 
 
 ```{r}
 testcd(sdtm)
 ```
 
-The only time-varying data are the two pharmacokinetic analytes, 'RS2023' and
-'RS2023487A'. Real clinical data typically include many more time-varying
-observation events, and for PK/PD analyses, we might be interested in adding
-further observation events to the nif data set.
-
-While the above code for the creation of the analysis data set follows a clear
-logic with respect to the sequential addition of data components to a nif
-object, it may be sometimes preferable to use more compact code. To this end,
-the 'nif' package allows the definition of the data sources for an analysis data
-set using formulae. The below code demonstrates this:
-
-```{r}
-nif <- nif_auto(sdtm, RS2023 + RS2023487A ~ EXAMPLINIB)
-```
-
-The formulae provided as arguments to `nif_auto()` follow a consistent notation:
-
-`analyte1 + analyte2 ~ treatment`
-
-The number of analytes on the left hand side are not limited, but the right hand
-side of the formula must specify a single administration that the observations 
-relate to. We can get an overview on the treatments included in the SDTM data
+Likewise, we can get an overview on the treatments included in the SDTM data
 with:
 
 ```{r}
 treatments(sdtm)
 ```
 
-The above code includes only one formula, but if there are multiple drugs
-administered with associated observations, multiple formulae can be provided as
-arguments to `nif_auto()`.
+# NIF FORMULAE
+
+While the code for building a NIF data set that is shown above follows a clear
+logic, sequentially addition data components, it may be sometimes preferable to
+use more compact code. To this end, the 'nif' package allows the definition of
+the data sources for an analysis data set using *formulae*:
+
+```{r}
+nif <- nif_auto(sdtm, RS2023 + RS2023487A ~ EXAMPLINIB)
+```
+
+The formulae provided as arguments to `nif_auto()` follow a consistent notation.
+Observations are on the left hand side, and treatments (drug administrations)
+are on the right hand side of the formula:
+
+`analyte1 + analyte2 ~ treatment`
+
+The number of analytes on the left hand side is not limited, but the right hand
+side of the formula must specify a single administration that the observations 
+relate to.
+
+We have specified two pharmacokinetic observations ('RS2023' and 'RS2023487A').
+However observations may be of any kind, e.g., from the clinical lab (LB), vital
+sign (VS), ECG (EG), or any other SDTM domain.
+
+Note that the above code includes only one formula, but if there are multiple
+drugs administered with associated observations, multiple formulae can be
+provided as arguments to `nif_auto()`.
 
 Inspecting the resulting nif object, we can see that `nif_auto()` has also added
 baseline serum creatinine data and derived the baseline creatinine clearance and

@@ -300,6 +300,12 @@ make_administration <- function(
 #' different 'analyte' name can be assigned to match with that of the
 #' pharmacokinetic observations for the parent drug in plasma.
 #'
+#' For an overview on the representation of administration events in NONMEM
+#' Input Format compliant data sets, see Bauer, R.J. (2019), NONMEM Tutorial
+#' Part I: Description of Commands and Options, With Simple Examples of
+#' Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537.
+#' [https://doi.org/10.1002/psp4.12404](https://doi.org/10.1002/psp4.12404)
+#'
 #' @param nif A nif object.
 #' @inheritParams make_administration
 #' @param debug Include debug fields, as logical.

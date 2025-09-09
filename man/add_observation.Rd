@@ -131,6 +131,12 @@ filter term can refer to any field of the respective SDTM domain.
 
 A PK/PD model compartment can be specified with 'cmt' or will be
 automatically assigned if \code{cmt = NULL}.
+
+For an overview on the representation of observation events in NONMEM
+Input Format compliant data sets, see Bauer, R.J. (2019), NONMEM Tutorial
+Part I: Description of Commands and Options, With Simple Examples of
+Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537.
+\url{https://doi.org/10.1002/psp4.12404}
 }
 \seealso{
 \code{\link[=add_administration]{add_administration()}}

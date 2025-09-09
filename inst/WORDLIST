@@ -29,6 +29,7 @@ DM
 DS
 DTC
 DV
+EG
 EGFR
 ELTM
 EVID
@@ -104,6 +105,7 @@ TESTCD
 TPT
 TRTDY
 TRTESTCD
+Testcd
 Testcode
 Tmax
 ULN
@@ -126,7 +128,6 @@ biomarker
 bja
 bmj
 campatibility
-cdisc
 cmt
 cov
 crea
@@ -162,6 +163,7 @@ lntheta
 mdrd
 onla
 pb
+pharmacodynamic
 pharmacokinetic
 pharmacometric
 phuse
