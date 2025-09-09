@@ -1,13 +1,15 @@
 Package: nif
-Title: Build and Explore NONMEM Input Format data tables from SDTM Data
+Title: Build and Explore NONMEM Input Format Data Sets from Clinical Study Data
 Version: 0.57.1
 Authors@R: 
     person("Rainer", "Strotmann", email = "rainer.strotmann@mailbox.org",
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0000-0003-0543-7984"))
-Description: Import and explore Study Data Tabulation Model (SDTM) data from
-    clinical studies. Create and explore NONMEM Input Format (NIF) data
-    sets from [SDTM](https://www.cdisc.org/standards/foundational/sdtm) data.
+Description: A System to Convert Study Data Tabulation Model (SDTM) Formatted
+    Data into Longitudinal Data Tables Suitable for Nonlinear Mixed Effects
+    Modeling (NONMEM). Aggregate Drug Administrations, PK/PD Observations and
+    Covariates in a Stepwise Manner. Explore, Summarize and Visualize SDTM and
+    NONMEM Data Sets.
 License: MIT + file LICENSE
 URL: https://github.com/rstrotmann/nif,
     https://rstrotmann.github.io/nif/reference/index.html

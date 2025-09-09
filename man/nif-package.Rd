@@ -3,9 +3,9 @@
 \docType{package}
 \name{nif-package}
 \alias{nif-package}
-\title{nif: Build and Explore NONMEM Input Format data tables from SDTM Data}
+\title{nif: Build and Explore NONMEM Input Format Data Sets from Clinical Study Data}
 \description{
-Import and explore Study Data Tabulation Model (SDTM) data from clinical studies. Create and explore NONMEM Input Format (NIF) data sets from [SDTM](https://www.cdisc.org/standards/foundational/sdtm) data.
+A System to Convert Study Data Tabulation Model (SDTM) Formatted Data into Longitudinal Data Tables Suitable for Nonlinear Mixed Effects Modeling (NONMEM). Aggregate Drug Administrations, PK/PD Observations and Covariates in a Stepwise Manner. Explore, Summarize and Visualize SDTM and NONMEM Data Sets.
 }
 \seealso{
 Useful links:
