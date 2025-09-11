@@ -8,8 +8,15 @@
 #'
 #' @param obj A nif object.
 #'
-#' @returns A nif object with the 'time_diff' field added
+#' @returns A nif object with the 'TIME_DEV' field added
 #' @export
+#' @examples
+#' library(dplyr)
+#'
+#' examplinib_poc_nif %>%
+#'   add_time_deviation() %>%
+#'   head()
+#'
 add_time_deviation <- function(obj) {
   # input validation
   validate_nif(obj)
@@ -45,14 +52,12 @@ add_time_deviation <- function(obj) {
     ungroup() %>%
 
     # calculate time difference
-    mutate(time_diff = round(
+    mutate(TIME_DEV = round(
       case_when(
         NTIME == 0 ~ .data$TTND,
         .default = .data$TAD - .data$NTIME),
-      3))
-
-    # as.data.frame() %>%
-    # select(USUBJID, EVID, PARENT, ANALYTE, NTIME, TIME, TAD, time_diff)
+      3)) %>%
+    select(-c("TTND", "next_admin"))
 
   return(out)
 }
