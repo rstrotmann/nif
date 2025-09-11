@@ -57,11 +57,20 @@ add_time_deviation <- function(obj) {
         NTIME == 0 ~ .data$TTND,
         .default = .data$TAD - .data$NTIME),
       3)) %>%
-    select(-c("TTND", "next_admin"))
+    select(-c("TTND", "next_admin")) %>%
+    nif()
 
   return(out)
 }
 
 
+# add_time_window_flag <- function(obj, window) {
+#   # validate input
+#   validate_nif(obj)
+#   if(!(inherits(window, "data.frame") | is.numeric(window)))
+#     stop(paste0(
+#       "'window' must be a numerical constant or a data frame with columns ",
+#       "'NTIME', 'BEFORE' and 'AFTER'"))
+# }
 
 
