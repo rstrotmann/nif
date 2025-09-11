@@ -443,7 +443,8 @@ make_observation <- function(
   if(include_day_in_ntime == TRUE) {
     dy_name <- paste0(toupper(domain), "DY")
     if(!dy_name %in% names(out)) {
-      stop(paste0(dy_name, " not found in domain, day cannot be included in observation"))
+      stop(paste0(
+        dy_name, " not found in domain, day cannot be included in observation"))
     }
     out <- out %>%
       mutate(NTIME = NTIME + trialday_to_day(out[[dy_name]]) * 24)
