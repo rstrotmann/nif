@@ -13,10 +13,11 @@ add_time_deviation(obj)
 A nif object with the 'TIME_DEV' field added
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Calculate the time difference in hours between the actual time after dose
 (TAD) and the scheduled time (NTIME) of observations.
-}
-\details{
+
 If NTIME == 0, the data point is considered pre-dose, and instead of TAD, the
 (negative) time difference to the next administration is calculated!
 }
