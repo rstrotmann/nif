@@ -15,7 +15,6 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
     temp %>%
       order_nif_columns()
   } else {
-    # if (class(obj)[1] == "sdtm") {
     if(inherits(obj, "sdtm")) {
       temp <- nif_auto(obj, ..., silent = silent)
     } else {
@@ -28,15 +27,18 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 }
 
 
-#' Title
+#' nif class constructor
 #'
 #' @inheritParams new_nif
 #'
 #' @returns A nif object.
 #' @export
+#' @examples
+#' nif()
 nif <- function(...) {
   new_nif(...)
 }
+
 
 #' Convert data frame to nif object
 #'
@@ -140,11 +142,6 @@ print.nif <- function(x, color = FALSE, ...) {
       if (length(n_females) == 0) {
         n_females <- 0
       }
-
-      # cat(paste0(
-      #   "Males: ", n_males, ", females: ", n_females, " (",
-      #   round(n_females / (n_males + n_females) * 100, 1), "%)\n"
-      # ))
 
       cat(paste0(
         n_males, plural(" male", n_males != 1),

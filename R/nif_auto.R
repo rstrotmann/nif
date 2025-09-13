@@ -107,7 +107,7 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
     common <- intersect(analytes(sdtm), treatments(sdtm))
     if(length(common) == 0)
       stop(paste0(
-        "Cannot autogenerate mapping, no matching entries between analytes (",
+        "Cannot autogenerate mapping: No matching entries between analytes (",
         analytes(sdtm),
         ") and treatments (",
         treatments(sdtm),
@@ -219,7 +219,6 @@ nif_auto <- function(
     sdtm, ...,
     subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
     observation_filter = "TRUE",
-    # baseline_filter = "LBBLFL == 'Y'",
     baseline_filter = NULL,
     duplicates = "resolve",
     duplicate_function = mean,

@@ -465,17 +465,17 @@ test_that("guess_lbspec works", {
 })
 
 
-test_that("add_time works", {
-  test <- data.frame(
-    USUBJID = c(1, 2, 3, 4),
-    DTC = now(),
-    NTIME = c(0, 1, 2, 4)
-  ) %>%
-    tidyr::expand(USUBJID, NTIME, DTC) %>%
-    mutate(DTC = DTC + hours(NTIME)) %>%
-    add_time()
-  expect_equal(test$NTIME, test$TIME)
-})
+# test_that("add_time works", {
+#   test <- data.frame(
+#     USUBJID = c(1, 2, 3, 4),
+#     DTC = now(),
+#     NTIME = c(0, 1, 2, 4)
+#   ) %>%
+#     tidyr::expand(USUBJID, NTIME, DTC) %>%
+#     mutate(DTC = DTC + hours(NTIME)) %>%
+#     add_time()
+#   expect_equal(test$NTIME, test$TIME)
+# })
 
 
 test_that("limit works", {

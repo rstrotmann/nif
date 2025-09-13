@@ -78,26 +78,26 @@ last_ex_dtc <- function(ex) {
 }
 
 
-#' Add TIME field to table
-#'
-#' TIME is created as the difference between the DTC field and the first DTC
-#' field on the USUBJID level. TIME is in hours, rounded by 3 digits.
-#' @param x The table as data frame.
-#' @return A data frame with FIRSTDTC and TIME added.
-#' @keywords internal
-#' @noRd
-add_time <- function(x) {
-  x %>%
-    assertr::verify(assertr::has_all_names("USUBJID", "DTC")) %>%
-    assertr::verify(is.POSIXct(.data$DTC)) %>%
-    dplyr::group_by(.data$USUBJID) %>%
-    dplyr::mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(TIME = round(
-      as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
-      digits = 3
-    ))
-}
+# #' Add TIME field to table
+# #'
+# #' TIME is created as the difference between the DTC field and the first DTC
+# #' field on the USUBJID level. TIME is in hours, rounded by 3 digits.
+# #' @param x The table as data frame.
+# #' @return A data frame with FIRSTDTC and TIME added.
+# #' @keywords internal
+# #' @noRd
+# add_time <- function(x) {
+#   x %>%
+#     assertr::verify(assertr::has_all_names("USUBJID", "DTC")) %>%
+#     assertr::verify(is.POSIXct(.data$DTC)) %>%
+#     dplyr::group_by(.data$USUBJID) %>%
+#     dplyr::mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
+#     dplyr::ungroup() %>%
+#     dplyr::mutate(TIME = round(
+#       as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "h")),
+#       digits = 3
+#     ))
+# }
 
 
 #' Calculate time fields based on DTC
@@ -105,24 +105,22 @@ add_time <- function(x) {
 #' @description
 #' This function generates the following time fields:
 #'
-#' 'TIME' is the time in hours relative to the subject's first record, be it an
-#' administration or observation event.
+#' * 'TIME' is the time in hours relative to the subject's first record, be it
+#' an administration or observation event.
 #'
-#' 'TAFD' is the time in hours relative to the subject's first administration of
-#' the respective parent. Note that if a subject has received multiple drugs
+#' * 'TAFD' is the time in hours relative to the subject's first administration
+#' of the respective parent. Note that if a subject has received multiple drugs
 #' (parents), the 'TAFD' field refers to the respective first administration.
 #'
-#' 'TAD' is the time in hours relative to the most recent administration of the
-#' parent compound.
+#' * 'TAD' is the time in hours relative to the most recent administration of
+#' the parent compound.
 #'
 #' @param obj A nif object.
 #' @return A nif object with TIME, TAFD, and TAD fields added.
 #' @export
 make_time <- function(obj) {
   # Input validation
-  if (!inherits(obj, "nif")) {
-    stop("Input must be a NIF object")
-  }
+  validate_nif(obj)
 
   required_cols <- c("ID", "DTC", "ANALYTE", "PARENT", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
@@ -199,7 +197,9 @@ make_time <- function(obj) {
 #' @return A nif object.
 #' @noRd
 make_time_from_TIME <- function(obj) {
-  # as.data.frame(obj) %>%
+  # input validation
+  validate_nif(obj)
+
   obj %>%
     ensure_parent() %>%
     assertr::verify(assertr::has_all_names(
@@ -210,7 +210,6 @@ make_time_from_TIME <- function(obj) {
     mutate(TAFD = round(.data$TIME - .data$.first_admin, digits = 3)) %>%
     arrange(.data$ID, .data$TIME, -.data$EVID) %>%
     mutate(.admin_time = case_when(.data$EVID == 1 ~ .data$TIME)) %>%
-    # tidyr::fill(.data$.admin_time, .direction = "down") %>%
     tidyr::fill(".admin_time", .direction = "down") %>%
     mutate(TAD = .data$TIME - .data$.admin_time) %>%
     ungroup() %>%
@@ -307,18 +306,17 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @return A nif object.
 #' @export
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
-  # selector <- unique(c(
-  #   "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
-  #   "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD", "PCELTM", "EVID", "AMT",
-  #   "ANALYTE", "CMT",  "PARENT", "TRTDY", "METABOLITE", "DOSE", "DV", "MDV",
-  #   "ACTARMCD", "IMPUTATION", "FOOD", "PART", "PERIOD", "COHORT", "FASTED",
-  #   "RICH_N", "DI", "TREATMENT"))
+  # input validation
+  validate_nif(obj)
+  validate_logical_param(cleanup)
+  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
 
   obj %>%
     mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
     make_time() %>%
     arrange(.data$DTC) %>%
     index_nif() %>%
+
     # fill down subject-/parent-level fields
     group_by(.data$ID, .data$PARENT) %>%
     tidyr::fill(any_of(

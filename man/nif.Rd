@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{nif}
 \alias{nif}
-\title{Title}
+\title{nif class constructor}
 \usage{
 nif(...)
 }
@@ -13,5 +13,8 @@ nif(...)
 A nif object.
 }
 \description{
-Title
+nif class constructor
+}
+\examples{
+nif()
 }
