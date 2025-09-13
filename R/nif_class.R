@@ -15,7 +15,6 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
     temp %>%
       order_nif_columns()
   } else {
-    # if (class(obj)[1] == "sdtm") {
     if(inherits(obj, "sdtm")) {
       temp <- nif_auto(obj, ..., silent = silent)
     } else {
@@ -28,15 +27,18 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 }
 
 
-#' Title
+#' nif class constructor
 #'
 #' @inheritParams new_nif
 #'
 #' @returns A nif object.
 #' @export
+#' @examples
+#' nif()
 nif <- function(...) {
   new_nif(...)
 }
+
 
 #' Convert data frame to nif object
 #'
@@ -140,11 +142,6 @@ print.nif <- function(x, color = FALSE, ...) {
       if (length(n_females) == 0) {
         n_females <- 0
       }
-
-      # cat(paste0(
-      #   "Males: ", n_males, ", females: ", n_females, " (",
-      #   round(n_females / (n_males + n_females) * 100, 1), "%)\n"
-      # ))
 
       cat(paste0(
         n_males, plural(" male", n_males != 1),
@@ -979,162 +976,6 @@ add_dose_level <- function(obj) {
   }
 
   return(obj %>% left_join(temp %>% select(ID, DL), by = "ID"))
-}
-
-
-#' Add time-after-dose (TAD) field
-#'
-#' This function adds a time-after-dose (TAD) field to a NIF object. TAD represents
-#' the time elapsed since the most recent administration of the parent compound.
-#' For observations before the first dose, TAD will be negative.
-#'
-#' @param nif A NIF object.
-#' @return A NIF object with an added TAD column.
-#' @export
-#' @examples
-#' # Add TAD to a NIF object
-#' add_tad(examplinib_poc_nif)
-add_tad <- function(nif) {
-  # Input validation
-  if (!inherits(nif, "nif")) {
-    stop("Input must be a NIF object")
-  }
-
-  required_cols <- c("ID", "TIME", "EVID", "PARENT")
-  missing_cols <- setdiff(required_cols, names(nif))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Handle empty data frame
-  if (nrow(nif) == 0) {
-    return(nif %>% mutate(TAD = numeric(0)))
-  }
-
-  # Validate data types
-  if (!is.numeric(nif$TIME)) {
-    stop("TIME column must contain numeric values")
-  }
-  if (!is.numeric(nif$EVID)) {
-    stop("EVID column must contain numeric values")
-  }
-  if (!is.numeric(nif$ID)) {
-    stop("ID column must contain numeric values")
-  }
-
-  # Calculate TAD
-  result <- nif %>%
-    # Ensure proper ordering for fill operations
-    arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) %>%
-    # Create admin_time column for dosing events
-    mutate(admin_time = case_when(
-      .data$EVID == 1 ~ .data$TIME,
-      TRUE ~ NA_real_
-    )) %>%
-    # Group by subject and parent compound
-    group_by(.data$ID, .data$PARENT) %>%
-    # Fill admin_time forward within each group
-    tidyr::fill(admin_time, .direction = "down") %>%
-    # Calculate TAD
-    mutate(TAD = .data$TIME - .data$admin_time) %>%
-    # Remove temporary column
-    select(-"admin_time") %>%
-    ungroup()
-
-  # Return as NIF object
-  return(new_nif(result))
-}
-
-
-#' Add time after first dose column
-#'
-#' @param nif A NIF object.
-#' @return A NIF object.
-#' @export
-#' @keywords internal
-#' @examples
-#' add_tafd(examplinib_poc_nif)
-add_tafd <- function(nif) {
-  # Input validation
-  if (!inherits(nif, "nif")) {
-    stop("Input must be a NIF object")
-  }
-
-  required_cols <- c("ID", "TIME", "EVID")
-  missing_cols <- setdiff(required_cols, names(nif))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-
-  if(any(is.na(nif$ID))) {
-    stop("ID colum must not contain NA values!")
-  }
-
-  # Handle empty data frame
-  if (nrow(nif) == 0) {
-    return(nif %>% mutate(TAFD = numeric(0)))
-  }
-
-  # Validate data types
-  if (!is.numeric(nif$TIME)) {
-    stop("TIME column must contain numeric values")
-  }
-  if (!is.numeric(nif$EVID)) {
-    stop("EVID column must contain numeric values")
-  }
-  if (!is.numeric(nif$ID)) {
-    stop("ID column must contain numeric values")
-  }
-
-  # Check for dosing events
-  if(nif %>% filter(.data$EVID == 1) %>% nrow() == 0) {
-    stop("No dosing event, TAFD cannot be calculated")
-  }
-
-  # Safely ensure parent exists
-  tryCatch({
-    nif <- ensure_parent(nif)
-  }, error = function(e) {
-    stop("Failed to ensure PARENT column: ", e$message)
-  })
-
-  result <- nif %>%
-    arrange(.data$ID, .data$PARENT, .data$TIME) %>%
-    group_by(.data$ID, .data$PARENT) %>%
-    mutate(first_admin = min(.data$TIME[.data$EVID == 1])) %>%
-    mutate(TAFD = .data$TIME - .data$first_admin) %>%
-    select(-c("first_admin")) %>%
-    ungroup()
-
-  return(new_nif(result))
-}
-
-
-#' Add treatment day ('TRTDY') column
-#'
-#' @param obj The NIF object as data frame.
-#' @return The updated NIF object as data frame.
-#' @export
-#' @examples
-#' head(add_trtdy(examplinib_poc_nif))
-add_trtdy <- function(obj) {
-  obj %>%
-    assertr::verify(assertr::has_all_names("ID", "DTC", "EVID")) %>%
-    assertr::verify(is.POSIXct(.data$DTC)) %>%
-    dplyr::group_by(.data$ID) %>%
-    dplyr::mutate(FIRSTTRTDTC = min(.data$DTC[.data$EVID == 1],
-      na.rm = TRUE
-    )) %>%
-    dplyr::ungroup() %>%
-    mutate(TRTDY = interval(
-      date(.data$FIRSTTRTDTC),
-      date(.data$DTC)
-    ) / days(1)) %>%
-    mutate(TRTDY = case_when(.data$TRTDY < 0 ~ .data$TRTDY,
-      .default = .data$TRTDY + 1
-    )) %>%
-    select(-FIRSTTRTDTC) %>%
-    new_nif()
 }
 
 

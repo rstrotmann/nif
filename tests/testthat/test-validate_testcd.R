@@ -290,3 +290,4 @@ test_that("validate_testcd works with single testcd in multiple domains", {
   expect_equal(validate_testcd(test_sdtm, "AGE", "vs"), "AGE")
 })
 
+
