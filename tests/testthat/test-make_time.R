@@ -135,7 +135,7 @@ test_that("make_time handles observations before first administration", {
   expect_equal(result$TAFD, c(-2, -1, 0, 1, 2))
 
   # Check TAD values (NA for pre-dose observations, then relative to dose)
-  expect_equal(result$TAD, c(NA, NA, 0, 1, 2))
+  expect_equal(result$TAD, c(-2, -1, 0, 1, 2))
 })
 
 

@@ -20,6 +20,7 @@ test_that("ensure_tad works with basic input", {
   expect_equal(result$TAD, c(0, 1, 2, 0, 1, 2))
 })
 
+
 test_that("ensure_tad handles multiple administrations", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
@@ -37,6 +38,7 @@ test_that("ensure_tad handles multiple administrations", {
   expect_equal(result$TAD, c(0, 1, 0, 1, 2))
 })
 
+
 test_that("ensure_tad handles observations before first dose", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
@@ -50,8 +52,9 @@ test_that("ensure_tad handles observations before first dose", {
   result <- ensure_tad(test_data)
 
   # Check that pre-dose observation has negative TAD
-  expect_equal(result$TAD, c(NA, 0, 1, 2))
+  expect_equal(result$TAD, c(-1, 0, 1, 2))
 })
+
 
 test_that("ensure_tad handles multiple parent compounds", {
   test_data <- tibble::tribble(
@@ -71,6 +74,7 @@ test_that("ensure_tad handles multiple parent compounds", {
   expect_equal(result$TAD, c(0, 1, 2, 0, 1, 2))
 })
 
+
 test_that("ensure_tad handles empty data frame", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV
@@ -86,6 +90,7 @@ test_that("ensure_tad handles empty data frame", {
   expect_true("TAD" %in% names(result))
 })
 
+
 test_that("ensure_tad handles missing required columns", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~CMT,
@@ -96,6 +101,7 @@ test_that("ensure_tad handles missing required columns", {
 
   expect_error(ensure_tad(test_data), "Missing required columns for TAD calculation")
 })
+
 
 test_that("ensure_tad preserves original data", {
   test_data <- tibble::tribble(
@@ -113,6 +119,7 @@ test_that("ensure_tad preserves original data", {
   expect_equal(result$EXTRA, test_data$EXTRA)
 })
 
+
 test_that("ensure_tad handles NA values in TIME", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
@@ -128,6 +135,7 @@ test_that("ensure_tad handles NA values in TIME", {
   expect_true(is.na(result$TAD[3]))
 })
 
+
 test_that("ensure_tad returns a nif object", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
@@ -141,6 +149,7 @@ test_that("ensure_tad returns a nif object", {
   expect_s3_class(result, "nif")
 })
 
+
 test_that("ensure_tad handles non-nif input", {
   test_data <- data.frame(
     ID = 1,
@@ -153,6 +162,7 @@ test_that("ensure_tad handles non-nif input", {
 
   expect_error(ensure_tad(test_data), "Input must be a NIF object")
 })
+
 
 test_that("ensure_tad handles existing TAD column", {
   test_data <- tibble::tribble(

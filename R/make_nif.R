@@ -77,24 +77,6 @@ index_nif <- function(nif) {
 }
 
 
-#' DTC of first administration by subject
-#'
-#' @param x A nif object.
-#'
-#' @return A data frame.
-#' @noRd
-first_admin_dtc <- function(x) {
-  x %>%
-    assertr::verify(assertr::has_all_names("USUBJID", "DTC", "EVID")) %>%
-    assertr::verify(is.POSIXct(.data$DTC)) %>%
-    filter(EVID == 1) %>%
-    dplyr::group_by(.data$USUBJID) %>%
-    dplyr::mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
-    dplyr::ungroup() %>%
-    distinct(.data$USUBJID, .data$FIRSTDTC)
-}
-
-
 #' Subset nif to rows with DTC before the last individual or global observation
 #'
 #' @param obj A nif object.
