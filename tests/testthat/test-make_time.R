@@ -371,3 +371,42 @@ test_that("make_time handles missing DTC values gracefully", {
   # The exact behavior depends on how the function handles missing values
   expect_equal(length(result$TIME), 3)
 })
+
+
+
+
+
+
+
+test_that("make_time handles predose values before the first admin correctly", {
+  test_nif <- tibble::tribble(
+    ~ID, ~DTC,                  ~NTIME, ~EVID,  ~ANALYTE, ~PARENT, ~DV,
+    1,   "2023-01-01 08:00:00", 0,      0,      "A",      "A",     1,
+    1,   "2023-01-01 08:30:00", 0,      0,      "A",      "A",     2,
+    1,   "2023-01-01 09:00:00", 0,      1,      "A",      "A",     NA,
+    1,   "2023-01-01 09:30:00", 0.5,    0,      "A",      "A",     3,
+    1,   "2023-01-01 10:00:00", 0,      1,      "A",      "A",     NA,
+    1,   "2023-01-01 10:30:00", 0.5,    0,      "A",      "A",     4
+  ) %>%
+    lubrify_dates() %>%
+    new_nif()
+
+  result <- make_time(test_nif) %>%
+    as.data.frame()
+
+  expect_equal(result$TIME, c(0, 0.5, 1, 1.5, 2, 2.5))
+  expect_equal(result$TAFD, c(-1, -0.5, 0, 0.5, 1, 1.5))
+  expect_equal(result$TAD, c(-1, -0.5, 0, 0.5, 0, 0.5))
+})
+
+
+
+
+
+
+
+
+
+
+
+
