@@ -11,7 +11,8 @@
 #'
 #' @examples
 pivot_analytes <- function(
-    obj, analyte = NULL,
+    obj,
+    analyte = NULL,
     duplicates = "stop",
     duplicate_function = mean,
     silent = NULL) {
@@ -62,17 +63,17 @@ pivot_analytes <- function(
   obs <- filter(obs, !is.na(NTIME))
 
   # duplicate handling
-  duplicates <- find_duplicates(
+  dup <- find_duplicates(
     obs, c("ID", "ANALYTE", "NTIME", "TRTDY"))
 
-  duplicate_overview <- duplicates %>%
+  dup_overview <- dup %>%
     reframe(n = n(), .by = "ANALYTE")
 
-  if(nrow(duplicate_overview) > 0) {
+  if(nrow(dup_overview) > 0) {
     if(duplicates == "stop") {
       stop(paste0(
-        "Multiplicate observations found with respect to NTIME and TRTDY:\n",
-        df_to_string(duplicate_overview, indent = 2), "\n\n",
+        "Duplicate observations found with respect to NTIME and TRTDY:\n",
+        df_to_string(dup_overview, indent = 2), "\n\n",
         "Identify duplicates using the `duplicates = 'identify'` parameter, ",
         "or have duplicates automatically resolved with `duplicates = 'resolve'` ",
         "where the resolution function is specified by the `duplicate_function` ",
@@ -82,16 +83,42 @@ pivot_analytes <- function(
 
     if(duplicates == "identify") {
       message(paste0(
-        "Multiplicate observations found with respect to NTIME and TRTDY:\n",
-        df_to_string(duplicate_overview, indent = 2), "\n\n",
+        "Duplicate observations found with respect to NTIME and TRTDY:\n",
+        df_to_string(dup_overview, indent = 2), "\n\n",
         "Only duplicate observations returned!"))
 
-      return(duplicates)
+      return(dup)
     }
 
     if(duplicates == "resolve") {
+      temp <- obs %>%
+        select(-any_of(c("TIME", "TAD", "DTC", "TAFD", "TIME_DEV")))
+
+      f <- function(x) {
+        if(na.rm == TRUE)
+          duplicate_function(x[!is.na(x)])
+        else
+          duplicate_function(x)
+      }
+
+      # result <- temp %>%
+      #   select(c("ID", "ANALYTE", "NTIME", "TRTDY", "DV")) %>%
+      #   reframe(
+      #     DV = f(DV),
+      #     .by = all_of(setdiff(names(temp), c("DV")))
+      #   )
+
+      result <- temp %>%
+        reframe(
+          DV = f(DV),
+          # .by = all_of(c("ID", "ANALYTE", "NTIME", "TRTDY"))
+          .by = all_of(setdiff(names(.), c("DV", "REF")))
+        )
+
+
+
       observation = resolve_duplicates(
-        obs,
+        temp,
         fields = c("ID", "ANALYTE", "NTIME", "TRTDY"),
         duplicate_function = duplicate_function,
         na.rm = TRUE)

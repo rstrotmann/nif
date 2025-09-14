@@ -1092,7 +1092,7 @@ resolve_duplicates <- function(
   result <- df %>%
     reframe(
       !!dependent_variable := f(.data[[dependent_variable]]),
-      .by = all_of(setdiff(names(df), c(dependent_variable, "MDV")))
+      .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
     ) %>% as.data.frame()
 
   return(as.data.frame(result))
