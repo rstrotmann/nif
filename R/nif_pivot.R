@@ -62,84 +62,75 @@ pivot_analytes <- function(
   }
   obs <- filter(obs, !is.na(NTIME))
 
+  # apply exclusions
+  if("EXCL" %in% names(obs)) {
+    temp <- obs %>%
+      filter(EXCL == TRUE) %>%
+      reframe(n = n(), .by = any_of(c("ANALYTE", "EXCL_REASON")))
+
+    if(nrow(temp) > 0) {
+      conditional_message(
+        sum(temp$n), " observations were excluded:\n\n",
+        df_to_string(temp, indent = 2),
+        silent = silent
+      )
+    }
+    obs <- obs %>%
+      filter(EXCL == FALSE)
+  }
+
+
   # duplicate handling
   dup <- find_duplicates(
     obs, c("ID", "ANALYTE", "NTIME", "TRTDY"))
 
-  dup_overview <- dup %>%
-    reframe(n = n(), .by = "ANALYTE")
+  if(!is.null(dup)) {
+    dup_overview <- dup %>%
+      reframe(n = n(), .by = "ANALYTE")
 
-  if(nrow(dup_overview) > 0) {
-    if(duplicates == "stop") {
-      stop(paste0(
-        "Duplicate observations found with respect to NTIME and TRTDY:\n",
-        df_to_string(dup_overview, indent = 2), "\n\n",
-        "Identify duplicates using the `duplicates = 'identify'` parameter, ",
-        "or have duplicates automatically resolved with `duplicates = 'resolve'` ",
-        "where the resolution function is specified by the `duplicate_function` ",
-        "parameter (default is `mean`)."
-      ))
-    }
-
-    if(duplicates == "identify") {
-      message(paste0(
-        "Duplicate observations found with respect to NTIME and TRTDY:\n",
-        df_to_string(dup_overview, indent = 2), "\n\n",
-        "Only duplicate observations returned!"))
-
-      return(dup)
-    }
-
-    if(duplicates == "resolve") {
-      temp <- obs %>%
-        select(-any_of(c("TIME", "TAD", "DTC", "TAFD", "TIME_DEV")))
-
-      f <- function(x) {
-        if(na.rm == TRUE)
-          duplicate_function(x[!is.na(x)])
-        else
-          duplicate_function(x)
+    if(nrow(dup_overview) > 0) {
+      if(duplicates == "stop") {
+        stop(paste0(
+          "Duplicate observations found with respect to NTIME and TRTDY:\n",
+          df_to_string(dup_overview, indent = 2), "\n\n",
+          "Identify duplicates using the `duplicates = 'identify'` parameter, ",
+          "or have duplicates automatically resolved with `duplicates = 'resolve'` ",
+          "where the resolution function is specified by the `duplicate_function` ",
+          "parameter (default is `mean`)."
+        ))
       }
 
-      # result <- temp %>%
-      #   select(c("ID", "ANALYTE", "NTIME", "TRTDY", "DV")) %>%
-      #   reframe(
-      #     DV = f(DV),
-      #     .by = all_of(setdiff(names(temp), c("DV")))
-      #   )
+      if(duplicates == "identify") {
+        message(paste0(
+          "Duplicate observations found with respect to NTIME and TRTDY:\n",
+          df_to_string(dup_overview, indent = 2), "\n\n",
+          "Only duplicate observations returned!"))
 
-      result <- temp %>%
-        reframe(
-          DV = f(DV),
-          # .by = all_of(c("ID", "ANALYTE", "NTIME", "TRTDY"))
-          .by = all_of(setdiff(names(.), c("DV", "REF")))
-        )
+        return(dup)
+      }
 
+      if(duplicates == "resolve") {
+        temp <- obs %>%
+          select(-any_of(c("TIME", "TAD", "DTC", "TAFD", "TIME_DEV")))
 
+        obs = resolve_duplicates(
+          temp,
+          fields = c("ID", "ANALYTE", "NTIME", "TRTDY"),
+          duplicate_function = duplicate_function,
+          na.rm = TRUE)
 
-      observation = resolve_duplicates(
-        temp,
-        fields = c("ID", "ANALYTE", "NTIME", "TRTDY"),
-        duplicate_function = duplicate_function,
-        na.rm = TRUE)
-      conditional_message(
-        "In observations for ", testcd, " (analyte '", analyte, "'), ",
-        n_dupl, " duplicates were resolved!",
-        silent = silent
-      )
+        conditional_message(
+          "Duplicate observations found with respect to NTIME and TRTDY ",
+          "were resolved:\n",
+          df_to_string(dup_overview, indent = 2),
+          silent = silent)
+      }
     }
   }
 
-
-
-
-
-
-
-
   # convert to wide table
   out <- obs %>%
-    select(ID, NTIME, ANALYTE, DV, TRTDY) %>%
+    # select(ID, NTIME, ANALYTE, DV, TRTDY) %>%
     pivot_wider(names_from = ANALYTE, values_from = DV)
 
 
