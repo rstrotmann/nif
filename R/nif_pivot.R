@@ -55,8 +55,9 @@ pivot_analytes <- function(
   }
   if(sum(na_overview$n_NA) != 0) {
     conditional_message(
-      "Some observations with NTIME of NA were excluded:\n",
-      df_to_string(na_overview, indent = 2),
+      sum(na_overview$n_NA),
+      " observations with NTIME of NA were excluded:\n",
+      df_to_string(na_overview, indent = 2), "\n",
       silent = silent
     )
   }
@@ -70,8 +71,8 @@ pivot_analytes <- function(
 
     if(nrow(temp) > 0) {
       conditional_message(
-        sum(temp$n), " observations were excluded:\n\n",
-        df_to_string(temp, indent = 2),
+        sum(temp$n), " observations were excluded:\n",
+        df_to_string(temp, indent = 2), "\n",
         silent = silent
       )
     }
@@ -120,7 +121,8 @@ pivot_analytes <- function(
           na.rm = TRUE)
 
         conditional_message(
-          "Duplicate observations found with respect to NTIME and TRTDY ",
+          sum(dup_overview$n),
+          " duplicate observations with respect to NTIME and TRTDY ",
           "were resolved:\n",
           df_to_string(dup_overview, indent = 2),
           silent = silent)
@@ -130,8 +132,11 @@ pivot_analytes <- function(
 
   # convert to wide table
   out <- obs %>%
-    # select(ID, NTIME, ANALYTE, DV, TRTDY) %>%
-    pivot_wider(names_from = ANALYTE, values_from = DV)
+    select(-any_of(c("TIME", "TAD", "DTC", "TAFD", "TIME_DEV", "CMT"))) %>%
+    pivot_wider(
+      names_from = ANALYTE, values_from = DV,
+      id_cols = setdiff(names(.), c("ANALYTE", "DV"))
+    )
 
-
+  return(out)
 }
