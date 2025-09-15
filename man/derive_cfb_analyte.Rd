@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_cfb.R
 \name{derive_cfb_analyte}
 \alias{derive_cfb_analyte}
-\title{Derive a new analyte with change from baseline from an exisiting analyte}
+\title{Derive a new analyte with change from baseline from an existing analyte}
 \usage{
 derive_cfb_analyte(
   obj,

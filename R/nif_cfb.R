@@ -101,7 +101,7 @@ add_cfb <- function(
 }
 
 
-#' Derive a new analyte with change from baseline from an exisiting analyte
+#' Derive a new analyte with change from baseline from an existing analyte
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
