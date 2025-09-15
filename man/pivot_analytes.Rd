@@ -4,16 +4,37 @@
 \alias{pivot_analytes}
 \title{Convert nif object to wide data frame by NTIME}
 \usage{
-pivot_analytes(obj, analyte = NULL, silent = NULL)
+pivot_analytes(
+  obj,
+  analyte = NULL,
+  duplicates = "stop",
+  duplicate_function = mean,
+  silent = NULL
+)
 }
 \arguments{
 \item{obj}{A nif object.}
 
 \item{analyte}{Analytes to include, defaults to all, if NULL.}
+
+\item{duplicates}{Selection how to deal with duplicate observations with
+respect to the USUBJID, ANALYTE and DTC fields:
+\itemize{
+\item 'stop': Stop execution and produce error message
+\item 'ignore': Include duplicates in the data set
+\item 'identify': Return a list of duplicate entries
+\item 'resolve': Resolve duplicates, applying the \code{duplicate_function} to the
+duplicate entries.
+}}
+
+\item{duplicate_function}{Function to resolve duplicate values, defaults to
+\code{mean}.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 A data frame.
 }
 \description{
-Convert nif object to wide data frame by NTIME
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }

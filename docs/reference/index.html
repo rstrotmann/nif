@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.57.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.57.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -159,6 +159,18 @@
         <dd>Add time-after-dose (TAD) field</dd>
       </dl><dl><dt>
 
+          <code><a href="add_time_deviation.html">add_time_deviation()</a></code>
+          <span class="badge lifecycle lifecycle-experimental">experimental</span>
+        </dt>
+        <dd>Calculate time deviations for observations</dd>
+      </dl><dl><dt>
+
+          <code><a href="add_time_window_flag.html">add_time_window_flag()</a></code>
+          <span class="badge lifecycle lifecycle-experimental">experimental</span>
+        </dt>
+        <dd>Flag time window violations</dd>
+      </dl><dl><dt>
+
           <code><a href="add_trtdy.html">add_trtdy()</a></code>
 
         </dt>
@@ -264,7 +276,7 @@
           <code><a href="derive_cfb_analyte.html">derive_cfb_analyte()</a></code>
           <span class="badge lifecycle lifecycle-experimental">experimental</span>
         </dt>
-        <dd>Derive a new analyte with change from baseline from an exisiting analyte</dd>
+        <dd>Derive a new analyte with change from baseline from an existing analyte</dd>
       </dl><dl><dt>
 
           <code><a href="derive_sld.html">derive_sld()</a></code>
@@ -757,6 +769,12 @@
           <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
         </dt>
         <dd>Generic pin_write function</dd>
+      </dl><dl><dt>
+
+          <code><a href="pivot_analytes.html">pivot_analytes()</a></code>
+          <span class="badge lifecycle lifecycle-experimental">experimental</span>
+        </dt>
+        <dd>Convert nif object to wide data frame by NTIME</dd>
       </dl><dl><dt>
 
           <code><a href="plot.domain.html">plot(<i>&lt;domain&gt;</i>)</a></code>

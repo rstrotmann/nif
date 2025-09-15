@@ -38,7 +38,9 @@
 <url><loc>/reference/add_rtb.html</loc></url>
 <url><loc>/reference/add_tad.html</loc></url>
 <url><loc>/reference/add_tafd.html</loc></url>
+<url><loc>/reference/add_time_deviation.html</loc></url>
 <url><loc>/reference/add_time_mapping.html</loc></url>
+<url><loc>/reference/add_time_window_flag.html</loc></url>
 <url><loc>/reference/add_trtdy.html</loc></url>
 <url><loc>/reference/administration_summary.html</loc></url>
 <url><loc>/reference/ae_summary.html</loc></url>
@@ -169,6 +171,7 @@
 <url><loc>/reference/pin_write.html</loc></url>
 <url><loc>/reference/pin_write.nif.html</loc></url>
 <url><loc>/reference/pin_write.sdtm.html</loc></url>
+<url><loc>/reference/pivot_analytes.html</loc></url>
 <url><loc>/reference/plot.domain.html</loc></url>
 <url><loc>/reference/plot.nif.html</loc></url>
 <url><loc>/reference/plot.sdtm.html</loc></url>

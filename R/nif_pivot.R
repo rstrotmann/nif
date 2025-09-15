@@ -1,15 +1,23 @@
 #' Convert nif object to wide data frame by NTIME
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' @param obj A nif object.
 #' @param analyte Analytes to include, defaults to all, if NULL.
-#' @param duplicates
-#' @param duplicate_function
-#' @param silent
+#' @param duplicates Selection how to deal with duplicate observations with
+#'   respect to the USUBJID, ANALYTE and DTC fields:
+#'   * 'stop': Stop execution and produce error message
+#'   * 'ignore': Include duplicates in the data set
+#'   * 'identify': Return a list of duplicate entries
+#'   * 'resolve': Resolve duplicates, applying the `duplicate_function` to the
+#'   duplicate entries.
+#' @param duplicate_function Function to resolve duplicate values, defaults to
+#'   `mean`.
+#' @param silent Suppress messages.
 #'
 #' @returns A data frame.
 #' @export
-#'
-#' @examples
 pivot_analytes <- function(
     obj,
     analyte = NULL,
