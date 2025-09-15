@@ -39,7 +39,9 @@ pivot_analytes <- function(
   obs <- obj %>%
     as.data.frame() %>%
     filter(EVID == 0) %>%
-    filter(ANALYTE %in% analyte)
+    filter(ANALYTE %in% analyte) %>%
+    # remove debug fields
+    select(-any_of(c("SRC_DOMAIN", "SRC_SEQ")))
 
   # ensure NTIME
   if(!"NTIME" %in% names(obj)) {
