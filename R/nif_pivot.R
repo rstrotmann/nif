@@ -142,7 +142,9 @@ pivot_analytes <- function(
 
   # convert to wide table
   out <- obs %>%
-    select(-any_of(c("TIME", "TAD", "DTC", "TAFD", "TIME_DEV", "CMT"))) %>%
+    select(-any_of(c(
+      "MDV", "METABOLITE", "PARENT", "REF",
+      "TIME", "TAD", "DTC", "TAFD", "TIME_DEV", "CMT"))) %>%
     pivot_wider(
       names_from = ANALYTE, values_from = DV,
       id_cols = setdiff(names(.), c("ANALYTE", "DV"))

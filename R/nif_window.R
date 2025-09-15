@@ -114,6 +114,9 @@ add_time_window_flag <- function(
   if(!all(as.logical(lapply(window, is.numeric))))
     stop("All fields in 'window' must be numeric!")
 
+  if(any(window$BEFORE < 0 | any(window$AFTER <0 )))
+    stop("BEFORE and AFTER must be postivive numbers!")
+
   # ensure EXCL, EXCL_REASON field are present
   if(!"EXCL" %in% names(obj)) {
     obj <- mutate(obj, EXCL = FALSE)
@@ -138,12 +141,12 @@ add_time_window_flag <- function(
     left_join(temp, by = "NTIME") %>%
     mutate(EXCL = case_when(
       # .data$ANALYTE == analyte &
-        (.data$TIME_DEV < .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ TRUE,
+        (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ TRUE,
       .default = .data$EXCL
     )) %>%
     mutate(EXCL_REASON = case_when(
       # .data$ANALYTE == analyte &
-        (.data$TIME_DEV < .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ "time window violation",
+        (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ "time window violation",
       .default = .data$EXCL_REASON
     )) %>%
     select(-c(".BEFORE", ".AFTER"))
