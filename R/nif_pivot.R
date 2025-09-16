@@ -15,12 +15,15 @@
 #' @param duplicate_function Function to resolve duplicate values, defaults to
 #'   `mean`.
 #' @param silent Suppress messages.
+#' @param keep Fields to keep in pivoted output. Defaults to standard subject-
+#'   level covariates, if NULL.
 #'
 #' @returns A data frame.
 #' @export
 pivot_analytes <- function(
     obj,
     analyte = NULL,
+    keep = NULL,
     duplicates = "stop",
     duplicate_function = mean,
     silent = NULL) {
@@ -29,12 +32,42 @@ pivot_analytes <- function(
   validate_char_param(
     analyte, "analyte", allow_null = TRUE, allow_multiple = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
 
   valid_duplicate_values <- c("stop", "identify", "resolve")
   if(!duplicates %in% valid_duplicate_values)
     stop(paste0(
       "Invalid value for 'duplicates' - must be one of ",
       nice_enumeration(valid_duplicate_values, conjunction = "or")))
+
+  # assemble keep fields
+  missing_keep <- setdiff(keep, names(obj))
+  if(length(missing_keep) > 0)
+    stop(paste0(
+     "Missing keep ", plural("field", length(missing_keep) > 1), ": ",
+     nice_enumeration(missing_keep)))
+
+  if(is.null(keep)) {
+    basic_keep = c(
+      "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
+      "BMI", "ACTARMCD", "PART", "PERIOD", "COHORT")
+    keep <- intersect(
+      names(obj),
+      unique(c(basic_keep, names(obj)[grepl("BL_.*", names(obj))])))
+  }
+
+  # validate keep fields
+  temp <- obj %>%
+    as.data.frame() %>%
+    select(any_of(c(keep))) %>%
+    distinct() %>%
+    reframe(n = n(), .by = "ID") %>%
+    filter(n != 1)
+  if(nrow(temp) > 0) {
+    stop(paste0(
+      "Keep fields (", nice_enumeration(keep), ") are not unique for the ",
+      "following subjects: ", nice_enumeration(temp$ID)))
+  }
 
   # ensure TRTDY
   obj <- obj %>%
@@ -47,17 +80,17 @@ pivot_analytes <- function(
   obs <- obj %>%
     as.data.frame() %>%
     filter(EVID == 0) %>%
-    filter(ANALYTE %in% analyte) %>%
-    # remove debug fields
-    select(-any_of(c("SRC_DOMAIN", "SRC_SEQ")))
+    filter(ANALYTE %in% analyte) #%>%
 
   # ensure NTIME
   if(!"NTIME" %in% names(obj)) {
     stop("'NTIME' not found in nif object!")
   }
+
+  # deal with NTIME of NA
   na_overview <- obs %>%
     reframe(n_obs = n(), n_NA = sum(is.na(NTIME)), .by = c(ANALYTE))
-  temp <- filter(na_overview, n_obs == n_NA)
+  temp <- filter(na_overview, .data$n_obs == .data$n_NA)
   if(nrow(temp) > 0) {
     message(
       "NTIME is all NA for ", plural("analyte", nrow(temp) > 1), " ",
@@ -76,7 +109,7 @@ pivot_analytes <- function(
   # apply exclusions
   if("EXCL" %in% names(obs)) {
     temp <- obs %>%
-      filter(EXCL == TRUE) %>%
+      filter(.data$EXCL == TRUE) %>%
       reframe(n = n(), .by = any_of(c("ANALYTE", "EXCL_REASON")))
 
     if(nrow(temp) > 0) {
@@ -87,8 +120,11 @@ pivot_analytes <- function(
       )
     }
     obs <- obs %>%
-      filter(EXCL == FALSE)
+      filter(.data$EXCL == FALSE)
   }
+
+  obs <- obs %>%
+    select(any_of(c("ID", keep, "TRTDY", "NTIME", "ANALYTE", "DV")))
 
 
   # duplicate handling
@@ -142,9 +178,6 @@ pivot_analytes <- function(
 
   # convert to wide table
   out <- obs %>%
-    select(-any_of(c(
-      "MDV", "METABOLITE", "PARENT", "REF",
-      "TIME", "TAD", "DTC", "TAFD", "TIME_DEV", "CMT"))) %>%
     pivot_wider(
       names_from = ANALYTE, values_from = DV,
       id_cols = setdiff(names(.), c("ANALYTE", "DV"))

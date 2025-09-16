@@ -7,6 +7,7 @@
 pivot_analytes(
   obj,
   analyte = NULL,
+  keep = NULL,
   duplicates = "stop",
   duplicate_function = mean,
   silent = NULL
@@ -16,6 +17,9 @@ pivot_analytes(
 \item{obj}{A nif object.}
 
 \item{analyte}{Analytes to include, defaults to all, if NULL.}
+
+\item{keep}{Fields to keep in pivoted output. Defaults to standard subject-
+level covariates, if NULL.}
 
 \item{duplicates}{Selection how to deal with duplicate observations with
 respect to the USUBJID, ANALYTE and DTC fields:
