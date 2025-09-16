@@ -59,7 +59,7 @@ pivot_analytes <- function(
   # validate keep fields
   temp <- obj %>%
     as.data.frame() %>%
-    select(any_of(c(keep))) %>%
+    select(any_of(c("ID", keep))) %>%
     distinct() %>%
     reframe(n = n(), .by = "ID") %>%
     filter(n != 1)
