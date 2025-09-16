@@ -182,7 +182,7 @@ derive_cfb_analyte <- function(
 
   out <- bind_rows(obj, temp) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
-    new_nif
+    index_nif()
 
   return(out)
 }
