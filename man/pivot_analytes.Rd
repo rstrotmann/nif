@@ -22,7 +22,7 @@ pivot_analytes(
 level covariates, if NULL.}
 
 \item{duplicates}{Selection how to deal with duplicate observations with
-respect to the USUBJID, ANALYTE and DTC fields:
+respect to the ID, ANALYTE, NTIME and TRTDY fields:
 \itemize{
 \item 'stop': Stop execution and produce error message
 \item 'ignore': Include duplicates in the data set

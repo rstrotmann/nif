@@ -6,7 +6,7 @@
 #' @param obj A nif object.
 #' @param analyte Analytes to include, defaults to all, if NULL.
 #' @param duplicates Selection how to deal with duplicate observations with
-#'   respect to the USUBJID, ANALYTE and DTC fields:
+#'   respect to the ID, ANALYTE, NTIME and TRTDY fields:
 #'   * 'stop': Stop execution and produce error message
 #'   * 'ignore': Include duplicates in the data set
 #'   * 'identify': Return a list of duplicate entries
@@ -69,6 +69,11 @@ pivot_analytes <- function(
       "following subjects: ", nice_enumeration(temp$ID)))
   }
 
+  # ensure NTIME
+  if(!"NTIME" %in% names(obj)) {
+    stop("'NTIME' not found in nif object!")
+  }
+
   # ensure TRTDY
   obj <- obj %>%
     add_trtdy()
@@ -82,10 +87,6 @@ pivot_analytes <- function(
     filter(EVID == 0) %>%
     filter(ANALYTE %in% analyte) #%>%
 
-  # ensure NTIME
-  if(!"NTIME" %in% names(obj)) {
-    stop("'NTIME' not found in nif object!")
-  }
 
   # deal with NTIME of NA
   na_overview <- obs %>%
