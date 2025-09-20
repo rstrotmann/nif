@@ -432,6 +432,15 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat(paste(sum(x$n_obs$N), "observations:\n"))
   cat(paste0(df_to_string(x$n_obs, color=color, indent = indent), "\n\n"))
 
+  # sampling overview
+  tryCatch({
+    temp <- sampling_summary(x$nif)
+    cat("Sampling schedule:\n")
+    cat(df_to_string(temp, indent = indent))
+    cat("\n\n")
+  }, error = function(msg){}
+  )
+
   dr_summary <- lapply(x$dose_red_sbs, length) %>%
     data.frame()
   cat("Subjects with dose reductions\n")
@@ -898,6 +907,35 @@ administration_summary <- function(obj) {
       ) %>%
       as.data.frame()
   }
+}
+
+
+#' Sampling scheme overview
+#'
+#' @param obj A nif object.
+#'
+#' @returns A data frame.
+#' @export
+#'
+#' @examples
+#' sampling_summary(examplinib_poc_nif)
+sampling_summary <- function(obj) {
+  # validate input
+  validate_nif(obj)
+
+  if(!"NTIME" %in% names(obj))
+    stop("NTIME not found in input!")
+
+  out <- obj %>%
+    as.data.frame() %>%
+    filter(EVID == 0) %>%
+    distinct(ANALYTE, NTIME) %>%
+    mutate(FLAG = "X") %>%
+    pivot_wider(names_from = ANALYTE, values_from = FLAG, values_fill = "") %>%
+    arrange(NTIME) %>%
+    as.data.frame()
+
+  return(out)
 }
 
 
