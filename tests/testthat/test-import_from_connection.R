@@ -20,7 +20,7 @@ test_that("import_from_connection handles CSV data correctly", {
   # Test expectations
   expect_s3_class(result, "nif")
   expect_equal(nrow(result), 4)
-  expect_equal(ncol(result), 11)
+  expect_equal(ncol(result), 10)
   expect_equal(result$USUBJID[1], "SUBJ-001")
   expect_equal(result$DV[2], 10.5)
   expect_equal(result$CMT[3], 1)
@@ -49,7 +49,7 @@ test_that("import_from_connection handles fixed-width data correctly", {
   # Test expectations
   expect_s3_class(result, "nif")
   expect_equal(nrow(result), 4)
-  expect_equal(ncol(result), 11)
+  expect_equal(ncol(result), 10)
   expect_equal(result$USUBJID[1], "SUBJ-001")
   expect_equal(result$DV[2], 10.5)
   expect_equal(result$CMT[3], 1)

@@ -1,5 +1,5 @@
 test_that("new_nif works", {
-  suppressMessages(expect_equal(dim(new_nif()), c(0,7)))
+  suppressMessages(expect_equal(dim(new_nif()), c(0, 6)))
   suppressMessages(expect_no_error(new_nif(examplinib_sad, RS2023 ~ EXAMPLINIB)))
 })
 

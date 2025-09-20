@@ -677,7 +677,9 @@ head.nif <- function(x, ...) {
 #'
 #' @return A character vector of the minimal NIF fields
 minimal_nif_fields <- c(
-  "ID", "TIME", "AMT", "CMT", "EVID", "DOSE", "DV"
+  "ID", "TIME", "AMT", "CMT", "EVID",
+  # "DOSE",
+  "DV"
 )
 
 

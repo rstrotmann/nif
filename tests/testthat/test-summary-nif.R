@@ -32,7 +32,7 @@ test_that("summary.nif errors appropriately with missing required columns", {
 
   expect_error(
     summary(invalid_nif),
-    "missing required fields: CMT, DOSE and DV")
+    "missing required fields: CMT and DV")
 })
 
 
