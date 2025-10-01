@@ -189,8 +189,57 @@ pivot_analytes <- function(
 
 
 
-pivot_analytes1 <- function(obj, indep_analyte, dep_analyte) {
+pivot_analytes1 <- function(
+    obj,
+    indep_analyte,
+    dep_analyte,
+    window = 10/60,
+    duplicate_function = mean) {
+  # validate input
+  validate_nif(obj)
+  validate_analyte(
+    obj, indep_analyte, allow_multiple = FALSE, allow_null = FALSE)
+  validate_analyte(
+    obj, dep_analyte, allow_multiple = FALSE, allow_null = FALSE)
+  validate_numeric_param(window, "window")
 
+  obs <- obj %>%
+    as.data.frame() %>%
+    filter(EVID == 0) %>%
+    filter(ANALYTE %in% c(indep_analyte, dep_analyte))
+
+  # function definitions
+  time_match <- function(x_ref, y) {
+    target_dtc <- obs[obs$REF == x_ref, "DTC"]
+    dtcs <- y$DTC
+
+    index <- abs(as.numeric(dtcs - target_dtc, units = "hours")) < window
+    y_ref <- y[index, "REF"]
+    if(length(y_ref) == 0) y_ref = NA
+    return(y_ref)
+  }
+
+  pivot_line <- function(x_ref, y) {
+    y_ref <- time_match(x_ref, y)
+    yval <- duplicate_function(filter(obs, REF %in% y_ref)$DV, na.rm = TRUE)
+
+    out <- obs %>%
+      filter(REF == x_ref) %>%
+      rename(.X = DV) %>%
+      mutate(.Y = yval)
+
+    return(out)
+  }
+
+  x <- filter(obs, ANALYTE == x_analyte)
+  y <- filter(obs, ANALYTE == y_analyte)
+
+  temp <- bind_rows(lapply(x$REF, function(x) pivot_line(x, y))) %>%
+    filter(!is.nan(.X) & !is.nan(.Y)) %>%
+    rename(!!indep_analyte := .X) %>%
+    rename(!!dep_analyte := .Y)
+
+  return(temp)
 }
 
 

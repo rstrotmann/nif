@@ -375,10 +375,7 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
 #' @param allow_empty Allow empty parameter, as logical.
 #' @param allow_multiple Allow vector of the specified type, as logical.
 #'
-#' @returns
-#' @export
-#'
-#' @examples
+#' @returns Nothing or stop.
 validate_analyte <- function(
     nif, analyte, allow_multiple = TRUE, allow_null = FALSE,
     allow_empty = FALSE) {
