@@ -367,4 +367,35 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
 }
 
 
+#' Ensure that analytes are present in nif object
+#'
+#' @param nif A nif object.
+#' @param analyte Required analyte(s) as character.
+#' @param allow_null Allow NULL values, as logical.
+#' @param allow_empty Allow empty parameter, as logical.
+#' @param allow_multiple Allow vector of the specified type, as logical.
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+validate_analyte <- function(
+    nif, analyte, allow_multiple = TRUE, allow_null = FALSE,
+    allow_empty = FALSE) {
+  validate_nif(nif)
+  validate_char_param(
+    analyte, "analyte",
+    allow_multiple = allow_multiple, allow_null = allow_null,
+    allow_empty = allow_empty)
+
+  if(!is.null(analyte)){
+    missing_analytes <- setdiff(analyte, analytes(nif))
+    if(length(missing_analytes) > 0)
+      stop(paste0(
+        plural("Analyte", length(missing_analytes) > 1)), " ",
+        nice_enumeration(missing_analytes),
+        " not found in nif object!")
+  }
+}
+
 
