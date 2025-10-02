@@ -172,6 +172,7 @@
 <url><loc>/reference/pin_write.nif.html</loc></url>
 <url><loc>/reference/pin_write.sdtm.html</loc></url>
 <url><loc>/reference/pivot_analytes.html</loc></url>
+<url><loc>/reference/pivot_analytes1.html</loc></url>
 <url><loc>/reference/plot.domain.html</loc></url>
 <url><loc>/reference/plot.nif.html</loc></url>
 <url><loc>/reference/plot.sdtm.html</loc></url>
@@ -208,6 +209,7 @@
 <url><loc>/reference/treatments.nif.html</loc></url>
 <url><loc>/reference/treatments.sdtm.html</loc></url>
 <url><loc>/reference/usubjid.html</loc></url>
+<url><loc>/reference/validate_analyte.html</loc></url>
 <url><loc>/reference/validate_char_param.html</loc></url>
 <url><loc>/reference/validate_domain.html</loc></url>
 <url><loc>/reference/validate_domain_param.html</loc></url>
