@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_pivot.R
 \name{pivot_analytes1}
 \alias{pivot_analytes1}
-\title{correlate observations by their actual observation time}
+\title{Correlate two observations by their actual observation time}
 \usage{
 pivot_analytes1(
   obj,

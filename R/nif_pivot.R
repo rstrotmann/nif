@@ -254,9 +254,9 @@ pivot_analytes1 <- function(
   y <- filter(obs, ANALYTE == dep_analyte)
 
   temp <- bind_rows(lapply(x$REF, function(x) pivot_line(x, y))) %>%
-    filter(!is.nan(.X) & !is.nan(.Y)) %>%
-    rename(!!indep_analyte := .X) %>%
-    rename(!!dep_analyte := .Y)
+    filter(!is.nan(.data$.X) & !is.nan(.data$.Y)) %>%
+    rename(!!indep_analyte := .data$.X) %>%
+    rename(!!dep_analyte := .data$.Y)
 
   return(temp)
 }
