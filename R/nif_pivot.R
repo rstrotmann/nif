@@ -204,7 +204,7 @@ pivot_analytes <- function(
 #'
 #' @returns A data frame.
 #' @export
-pivot_analytes1 <- function(
+correlate_analytes <- function(
     obj,
     indep_analyte,
     dep_analyte,
