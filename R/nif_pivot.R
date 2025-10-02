@@ -189,6 +189,21 @@ pivot_analytes <- function(
 
 
 
+#' Correlate two observations by their actual observation time
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param obj A nif object.
+#' @param indep_analyte The independent analyte as character.
+#' @param dep_analyte The dependent analyte as character.
+#' @param window The allowed time window between the independent and dependent
+#'   analyte observations in hours.
+#' @param duplicate_function A function to resolve duplicate values for
+#'   observations of the dependent analyte. Defaults to `mean`.
+#'
+#' @returns A data frame.
+#' @export
 pivot_analytes1 <- function(
     obj,
     indep_analyte,
@@ -203,10 +218,12 @@ pivot_analytes1 <- function(
     obj, dep_analyte, allow_multiple = FALSE, allow_null = FALSE)
   validate_numeric_param(window, "window")
 
+  # observations
   obs <- obj %>%
     as.data.frame() %>%
     filter(EVID == 0) %>%
-    filter(ANALYTE %in% c(indep_analyte, dep_analyte))
+    filter(ANALYTE %in% c(indep_analyte, dep_analyte)) %>%
+    filter(!is.nan(DV) & !is.na(DV))
 
   # function definitions
   time_match <- function(x_ref, y) {
@@ -221,18 +238,20 @@ pivot_analytes1 <- function(
 
   pivot_line <- function(x_ref, y) {
     y_ref <- time_match(x_ref, y)
-    yval <- duplicate_function(filter(obs, REF %in% y_ref)$DV, na.rm = TRUE)
+    out <- NULL
+    if(!all(is.na(y_ref))) {
+      yval <- duplicate_function(filter(obs, REF %in% y_ref)$DV, na.rm = TRUE)
 
-    out <- obs %>%
-      filter(REF == x_ref) %>%
-      rename(.X = DV) %>%
-      mutate(.Y = yval)
-
+      out <- obs %>%
+        filter(REF == x_ref) %>%
+        rename(.X = DV) %>%
+        mutate(.Y = yval)
+    }
     return(out)
   }
 
-  x <- filter(obs, ANALYTE == x_analyte)
-  y <- filter(obs, ANALYTE == y_analyte)
+  x <- filter(obs, ANALYTE == indep_analyte)
+  y <- filter(obs, ANALYTE == dep_analyte)
 
   temp <- bind_rows(lapply(x$REF, function(x) pivot_line(x, y))) %>%
     filter(!is.nan(.X) & !is.nan(.Y)) %>%
