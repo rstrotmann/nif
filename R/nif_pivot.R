@@ -209,6 +209,7 @@ correlate_analytes <- function(
     indep_analyte,
     dep_analyte,
     window = 10/60,
+    # time = "DTC",
     duplicate_function = mean) {
   # validate input
   validate_nif(obj)
@@ -218,6 +219,8 @@ correlate_analytes <- function(
     obj, dep_analyte, allow_multiple = FALSE, allow_null = FALSE)
   validate_numeric_param(window, "window")
 
+  # validate time parameter
+
   # observations
   obs <- obj %>%
     as.data.frame() %>%
@@ -225,38 +228,50 @@ correlate_analytes <- function(
     filter(ANALYTE %in% c(indep_analyte, dep_analyte)) %>%
     filter(!is.nan(DV) & !is.na(DV))
 
-  # function definitions
-  time_match <- function(x_ref, y) {
-    target_dtc <- obs[obs$REF == x_ref, "DTC"]
-    dtcs <- y$DTC
+  x <- filter(obs, ANALYTE == indep_analyte)
+  y <- filter(obs, ANALYTE == dep_analyte)
 
-    index <- abs(as.numeric(dtcs - target_dtc, units = "hours")) < window
-    y_ref <- y[index, "REF"]
+
+  # function definitions
+  time_match <- function(x_ref) {
+    indep <- obs[obs$REF == x_ref,]
+    indep_dtc <- indep$DTC
+    indep_id <- indep$ID
+
+    target <- y[y$ID == indep_id,]
+    target_dtc <- target$DTC
+    index <- abs(as.numeric(target_dtc - indep_dtc, units = "hours")) < window
+    y_ref <- target[index, "REF"]
+
     if(length(y_ref) == 0) y_ref = NA
     return(y_ref)
   }
 
-  pivot_line <- function(x_ref, y) {
-    y_ref <- time_match(x_ref, y)
+  correlate_line <- function(x_ref) {
+    y_ref <- time_match(x_ref)
     out <- NULL
     if(!all(is.na(y_ref))) {
-      yval <- duplicate_function(filter(obs, REF %in% y_ref)$DV, na.rm = TRUE)
+      match <- filter(obs, REF %in% y_ref)
+      mean_dv <- duplicate_function(match$DV)
+      mean_dtc <- mean(match$DTC)
+      mean_time <- mean(match$TIME)
 
       out <- obs %>%
         filter(REF == x_ref) %>%
         rename(.X = DV) %>%
-        mutate(.Y = yval)
+        mutate(.Y = mean_dv) %>%
+        mutate(.Y_TIME = mean_time) %>%
+        mutate(.Y_DTC = mean_dtc)
     }
     return(out)
   }
 
-  x <- filter(obs, ANALYTE == indep_analyte)
-  y <- filter(obs, ANALYTE == dep_analyte)
-
-  temp <- bind_rows(lapply(x$REF, function(x) pivot_line(x, y))) %>%
+  temp <- bind_rows(lapply(x$REF, function(x) correlate_line(x))) %>%
     filter(!is.nan(.data$.X) & !is.nan(.data$.Y)) %>%
-    rename(!!indep_analyte := .data$.X) %>%
-    rename(!!dep_analyte := .data$.Y)
+    rename(!!indep_analyte := .X) %>%
+    rename(!!dep_analyte := .Y) %>%
+    rename(!!paste0("DTC_", dep_analyte) := .Y_DTC) %>%
+    rename(!!paste0("TIME_", dep_analyte) := .Y_TIME)
 
   return(temp)
 }
