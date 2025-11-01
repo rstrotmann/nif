@@ -21,9 +21,6 @@ In case multiple analytes are measured for a specific administered drug, some
 functions need that information to correlate plasma concentrations with
 administrations.
 }
-\examples{
-add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
-}
 \seealso{
 \code{\link[=nif_auto]{nif_auto()}}
 }

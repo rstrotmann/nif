@@ -443,13 +443,17 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
       "'PC':")
     message_df(analytes)
     message_block(
-      "Consider adding them to the nif object using `add_observation()`. ",
-      "Replace 'sdtm' with the name of your sdtm object and 'y' with the ",
-      "respective treatment code (",
-      nice_enumeration(unique(treatments$EXTRT), conjunction = "or"), "):")
+      # "Consider adding them to the nif object using `add_observation()`. ",
+      # "Replace 'sdtm' with the name of your sdtm object and 'x' with the ",
+      # "treatment code of the relevant treatment (",
+      # nice_enumeration(unique(treatments$EXTRT), conjunction = "or"), "):"
+      "Consider adding them to the nif object using `add_observation()`, ",
+      "see the code snippet below (",
+      "replace 'sdtm' with the name of your sdtm object):"
+      )
     message_code(
       function(x) {
-        paste0("  add_observation(sdtm, 'pc', '", x, "', parent = 'y')")},
+        paste0("  add_observation(sdtm, 'pc', '", x, "', parent = 'x')")},
       analytes$PCTESTCD,
       header = "%>%")}
 
@@ -459,8 +463,9 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
 
   if (nrow(specimens) > 1) {
     n_suggestion <- suggest_out(n_suggestion,
-      "There are data from ", nrow(specimens), " different sample specimen ",
-      "types in 'PC'. ",
+      "Note that there are data from ", nrow(specimens), " different PK sample ",
+      "specimen types in 'PC' (",
+      nice_enumeration(specimens$PCSPEC), "). ",
       "When calling `add_observation()`, consider filtering for a specific ",
       "specimen using the 'observation_filter' parameter.")
     message_block(
@@ -493,7 +498,7 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
 
   if (nrow(arms) > 1) {
     n_suggestion <- suggest_out(n_suggestion,
-      "There are ", nrow(arms), " arms defined in DM (see ",
+      "There are ", nrow(arms), " study arms defined in DM (see ",
       "below). Consider defining a PART or ARM variable in the nif dataset, ",
       "filtering for a particular arm, or defining a covariate based on ",
       "ACTARMCD.")

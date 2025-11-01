@@ -209,8 +209,6 @@ add_parent_mapping <- function(obj, analyte, parent) {
 #' @return The SDTM object.
 #' @keywords internal
 #' @seealso [nif_auto()]
-#' @examples
-#' add_metabolite_mapping(examplinib_fe, "RS2023", "RS2023487A")
 add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
   # Input validation
   if (!inherits(obj, "sdtm")) {
@@ -306,26 +304,6 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
 #' @return The SDTM object
 #' @keywords internal
 #' @seealso [suggest()]
-#' @examples
-#' sdtm_object <- add_time_mapping(examplinib_fe,
-#'   "PREDOSE" = 0,
-#'   "HOUR 0.5" = 0.5,
-#'   "HOUR 1" = 1,
-#'   "HOUR 1.5" = 1.5,
-#'   "HOUR 2" = 2,
-#'   "HOUR 3" = 3,
-#'   "HOUR 4" = 4,
-#'   "HOUR 6" = 6,
-#'   "HOUR 8" = 8,
-#'   "HOUR 10" = 10,
-#'   "HOUR 12" = 12,
-#'   "HOUR 24" = 24,
-#'   "HOUR 48" = 48,
-#'   "HOUR 72" = 72,
-#'   "HOUR 96" = 96,
-#'   "HOUR 144" = 144,
-#'   "HOUR 168" = 168
-#' )
 add_time_mapping <- function(obj, ...) {
   temp <- unlist(c(as.list(environment())[-1], list(...)))
   mapping <- data.frame(PCTPT = names(temp), NTIME = as.numeric(temp))
