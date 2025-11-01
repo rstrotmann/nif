@@ -441,7 +441,7 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   }, error = function(msg){}
   )
 
-  dr_summary <- lapply(x$dose_red_sbs, length) %>%
+  dr_summary <- lapply(x$dose_red_sbs, nrow) %>%
     data.frame()
   cat("Subjects with dose reductions\n")
   cat(df_to_string(dr_summary, color=color, indent = indent))

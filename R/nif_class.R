@@ -370,10 +370,19 @@ dose_red_sbs <- function(obj, analyte = NULL) {
       filter(.data$ANALYTE %in% analyte)
   }
 
-  obj %>%
+  temp <- obj %>%
     as.data.frame() %>%
     index_nif() %>%
-    filter(.data$EVID == 1) %>%
+    filter(.data$EVID == 1)
+
+  treatments <- unique(temp$ANALYTE)
+  if(length(treatments) > 1) {
+    stop("Multiple treatments in data set (",
+         nice_enumeration(treatments),
+         "). Please specify exactly one treatment.")
+  }
+
+  temp %>%
     group_by(.data$ID, .data$CMT) %>%
     mutate(initial_dose = .data$AMT[row_number() == 1]) %>%
     filter(.data$AMT < initial_dose & .data$AMT != 0) %>%
