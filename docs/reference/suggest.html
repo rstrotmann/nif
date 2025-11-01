@@ -85,17 +85,16 @@ mappings to the sdtm object, as logical.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>       ----------   ----------</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023       RS2023       </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023487A   RS2023487A   </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Consider adding them to the nif object using `add_observation()`. Replace</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    'sdtm' with the name of your sdtm object and 'y' with the respective</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    treatment code (EXAMPLINIB):</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>    Consider adding them to the nif object using `add_observation()`, see the</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>    code snippet below (replace 'sdtm' with the name of your sdtm object):</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>    ---</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>      %&gt;%</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>        add_observation(sdtm, 'pc', 'RS2023', parent = 'y') %&gt;%</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>        add_observation(sdtm, 'pc', 'RS2023487A', parent = 'y')</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>        add_observation(sdtm, 'pc', 'RS2023', parent = 'x') %&gt;%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>        add_observation(sdtm, 'pc', 'RS2023487A', parent = 'x')</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>    ---</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3. There are 2 arms defined in DM (see below). Consider defining a PART or ARM</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    variable in the nif dataset, filtering for a particular arm, or defining a</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    covariate based on ACTARMCD.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3. There are 2 study arms defined in DM (see below). Consider defining a PART or</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>    ARM variable in the nif dataset, filtering for a particular arm, or defining</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>    a covariate based on ACTARMCD.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>       ACTARM                 ACTARMCD    </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>       --------------------   ---------</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>       Single Arm Treatment   TREATMENT   </span>

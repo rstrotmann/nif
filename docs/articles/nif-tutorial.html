@@ -333,17 +333,16 @@ useful code snippets for the creation of analysis data sets:</p>
 <span><span class="co">#&gt;       ----------   ----------</span></span>
 <span><span class="co">#&gt;       RS2023       RS2023       </span></span>
 <span><span class="co">#&gt;       RS2023487A   RS2023487A</span></span>
-<span><span class="co">#&gt;    Consider adding them to the nif object using `add_observation()`. Replace</span></span>
-<span><span class="co">#&gt;    'sdtm' with the name of your sdtm object and 'y' with the respective</span></span>
-<span><span class="co">#&gt;    treatment code (EXAMPLINIB):</span></span>
+<span><span class="co">#&gt;    Consider adding them to the nif object using `add_observation()`, see the</span></span>
+<span><span class="co">#&gt;    code snippet below (replace 'sdtm' with the name of your sdtm object):</span></span>
 <span><span class="co">#&gt;    ---</span></span>
 <span><span class="co">#&gt;      %&gt;%</span></span>
-<span><span class="co">#&gt;        add_observation(sdtm, 'pc', 'RS2023', parent = 'y') %&gt;%</span></span>
-<span><span class="co">#&gt;        add_observation(sdtm, 'pc', 'RS2023487A', parent = 'y')</span></span>
+<span><span class="co">#&gt;        add_observation(sdtm, 'pc', 'RS2023', parent = 'x') %&gt;%</span></span>
+<span><span class="co">#&gt;        add_observation(sdtm, 'pc', 'RS2023487A', parent = 'x')</span></span>
 <span><span class="co">#&gt;    ---</span></span>
-<span><span class="co">#&gt; 3. There are 3 arms defined in DM (see below). Consider defining a PART or ARM</span></span>
-<span><span class="co">#&gt;    variable in the nif dataset, filtering for a particular arm, or defining a</span></span>
-<span><span class="co">#&gt;    covariate based on ACTARMCD.</span></span>
+<span><span class="co">#&gt; 3. There are 3 study arms defined in DM (see below). Consider defining a PART or</span></span>
+<span><span class="co">#&gt;    ARM variable in the nif dataset, filtering for a particular arm, or defining</span></span>
+<span><span class="co">#&gt;    a covariate based on ACTARMCD.</span></span>
 <span><span class="co">#&gt;       ACTARM           ACTARMCD   </span></span>
 <span><span class="co">#&gt;       --------------   --------</span></span>
 <span><span class="co">#&gt;       Screen Failure   SCRNFAIL   </span></span>
@@ -544,7 +543,7 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions</span></span>
 <span><span class="co">#&gt;   RS2023   </span></span>
-<span><span class="co">#&gt;   2        </span></span>
+<span><span class="co">#&gt;   0        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>

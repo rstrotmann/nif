@@ -493,6 +493,11 @@ plot.sdtm <- function(
 
 #' AE summary
 #'
+#' @details
+#' To filter for specific toxicity grades only, use the ae_filter argument,
+#' e.g., `ae_filter = "AETOXGR == 3"`.
+#'
+#'
 #' @param sdtm_data An sdtm object.
 #' @param level The level to summarize by, as character. Can be one or multiple
 #' of:
@@ -512,8 +517,9 @@ plot.sdtm <- function(
 #'
 #' @return A data frame.
 #' @export
-ae_summary <- function(sdtm_data, level = "AESOC", show_cd = FALSE,
-                       group = NULL, order_by_subj = FALSE, ae_filter = "TRUE") {
+ae_summary <- function(
+    sdtm_data, level = "AESOC", show_cd = FALSE, group = NULL,
+    order_by_subj = FALSE, ae_filter = "TRUE") {
   # Input validation
   if (!inherits(sdtm_data, "sdtm")) {
     stop("Input must be an SDTM object")

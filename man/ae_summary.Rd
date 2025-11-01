@@ -42,3 +42,7 @@ A data frame.
 \description{
 AE summary
 }
+\details{
+To filter for specific toxicity grades only, use the ae_filter argument,
+e.g., \code{ae_filter = "AETOXGR == 3"}.
+}
