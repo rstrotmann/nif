@@ -383,7 +383,9 @@ dose_red_sbs <- function(obj, analyte = NULL) {
   }
 
   temp %>%
-    group_by(.data$ID, .data$CMT) %>%
+    # group_by(.data$ID, .data$CMT) %>%
+    arrange(TIME) %>%
+    group_by(.data$ID, .data$ANALYTE) %>%
     mutate(initial_dose = .data$AMT[row_number() == 1]) %>%
     filter(.data$AMT < initial_dose & .data$AMT != 0) %>%
     ungroup() %>%

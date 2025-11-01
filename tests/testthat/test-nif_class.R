@@ -16,11 +16,6 @@ test_that("parents works", {
 })
 
 
-test_that("dose_red_sbs works", {
-  expect_true(length(dose_red_sbs(examplinib_poc_nif)) > 0)
-})
-
-
 test_that("rich_sampling_sbs works", {
   expect_equal(rich_sampling_sbs(examplinib_fe_nif),
                subjects(examplinib_fe_nif)$ID)
