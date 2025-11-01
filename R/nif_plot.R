@@ -219,8 +219,8 @@ plot.nif <- function(
   }
 
   # input validation
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_numeric_param(dose, "dose", allow_null = TRUE)
+  validate_char_param(analyte, "analyte", allow_null = TRUE, allow_multiple = TRUE)
+  validate_numeric_param(dose, "dose", allow_null = TRUE, allow_multiple = TRUE)
   # validate_numeric_param(na_value, "na_value", allow_na = TRUE)
 
   temp <- make_plot_data_set(

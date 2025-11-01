@@ -19,7 +19,6 @@
 #'   level covariates, if NULL.
 #'
 #' @returns A data frame.
-#' @export
 pivot_analytes <- function(
     obj,
     analyte = NULL,

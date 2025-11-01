@@ -14,7 +14,6 @@
 #' @seealso [nif_auto()]
 #' @keywords internal
 #' @import stringr
-#' @export
 add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
   # Input validation
   if (!inherits(obj, "sdtm")) {
@@ -131,7 +130,6 @@ add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
 #'
 #' @return A sdtm object.
 #' @keywords internal
-#' @export
 add_parent_mapping <- function(obj, analyte, parent) {
   # Input validation
   if (!inherits(obj, "sdtm")) {
@@ -209,7 +207,6 @@ add_parent_mapping <- function(obj, analyte, parent) {
 #' @param pctestcd_parent The PCTESTCD of the parent compound.
 #' @param pctestcd_metabolite The PCTESTCD of the metabolite.
 #' @return The SDTM object.
-#' @export
 #' @keywords internal
 #' @seealso [nif_auto()]
 #' @examples
@@ -307,7 +304,6 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
 #'   separated by commas. <PCTPT> corresponds to the value in the PCTPT fields,
 #'   and NTIME corresponds to the nominal time in hours.
 #' @return The SDTM object
-#' @export
 #' @keywords internal
 #' @seealso [suggest()]
 #' @examples
