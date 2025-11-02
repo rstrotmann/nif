@@ -1,3 +1,4 @@
+
 test_that("correlate_obs input validation - non-nif objects", {
   # Test that non-nif objects are rejected
   expect_error(correlate_obs(data.frame()), "Input must be a nif object")
