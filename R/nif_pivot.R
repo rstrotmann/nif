@@ -55,7 +55,6 @@ correlate_obs <- function(
 
   # function definitions
   time_match <- function(x_ref) {
-    # indep <- obs[obs$REF == x_ref,]
     indep <- x[x$REF == x_ref,]
     indep_tm <- indep[[time_field]]
     indep_id <- indep$ID
@@ -64,12 +63,9 @@ correlate_obs <- function(
 
     # Handle TIME (numeric) vs DTC (POSIXct) differently
     if(time_field == "TIME") {
-      # TIME is already in hours, so just subtract
       time_matches <- abs(target_tm - indep_tm) < window
     } else {
-      # DTC is POSIXct, need to convert difference to hours
       time_matches <- abs(
-        # as.numeric(target_tm - indep_tm, units = "hours")) < window
         as.numeric(difftime(target_tm, indep_tm, units = "hours"))) < window
     }
 
@@ -88,7 +84,6 @@ correlate_obs <- function(
       return(NULL)
     }
 
-    # match <- filter(obs, REF %in% y_ref)
     match <- filter(y, REF %in% y_ref)
 
     temp <- match %>%
