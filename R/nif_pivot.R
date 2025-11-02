@@ -55,7 +55,8 @@ correlate_obs <- function(
 
   # function definitions
   time_match <- function(x_ref) {
-    indep <- obs[obs$REF == x_ref,]
+    # indep <- obs[obs$REF == x_ref,]
+    indep <- x[x$REF == x_ref,]
     indep_tm <- indep[[time_field]]
     indep_id <- indep$ID
     target <- y[y$ID == indep_id,]
@@ -68,7 +69,8 @@ correlate_obs <- function(
     } else {
       # DTC is POSIXct, need to convert difference to hours
       time_matches <- abs(
-        as.numeric(target_tm - indep_tm, units = "hours")) < window
+        # as.numeric(target_tm - indep_tm, units = "hours")) < window
+        as.numeric(difftime(target_tm, indep_tm, units = "hours"))) < window
     }
 
     y_ref <- target[time_matches, "REF"]
@@ -86,7 +88,9 @@ correlate_obs <- function(
       return(NULL)
     }
 
-    match <- filter(obs, REF %in% y_ref)
+    # match <- filter(obs, REF %in% y_ref)
+    match <- filter(y, REF %in% y_ref)
+
     temp <- match %>%
       reframe(
         DV = duplicate_function(DV),
