@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_pivot.R
 \name{correlate_analytes}
 \alias{correlate_analytes}
-\title{Correlate two observations by their actual observation time}
+\title{Convert nif object to wide data frame by NTIME}
 \usage{
 correlate_analytes(
   obj,
@@ -24,10 +24,25 @@ analyte observations in hours.}
 
 \item{duplicate_function}{A function to resolve duplicate values for
 observations of the dependent analyte. Defaults to \code{mean}.}
+
+\item{analyte}{Analytes to include, defaults to all, if NULL.}
+
+\item{duplicates}{Selection how to deal with duplicate observations with
+respect to the ID, ANALYTE, NTIME and TRTDY fields:
+\itemize{
+\item 'stop': Stop execution and produce error message
+\item 'ignore': Include duplicates in the data set
+\item 'identify': Return a list of duplicate entries
+\item 'resolve': Resolve duplicates, applying the \code{duplicate_function} to the
+duplicate entries.
+Correlate two observations by their actual observation time
+}}
 }
 \value{
 A data frame.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
