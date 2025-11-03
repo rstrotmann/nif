@@ -35,3 +35,7 @@ A data frame.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
+\examples{
+head(correlate_obs(examplinib_poc_nif, "RS2023", "RS2023487A"), 3)
+
+}
