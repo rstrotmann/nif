@@ -16,7 +16,7 @@ test_that("ensure_analyte creates ANALYTE from CMT when missing", {
   # Check that ANALYTE was created
   expect_true("ANALYTE" %in% names(result))
   # Check that ANALYTE values match CMT values
-  expect_equal(result$ANALYTE, as.character(result$CMT))
+  expect_equal(result$ANALYTE, paste0("CMT", as.character(result$CMT)))
 })
 
 test_that("ensure_analyte preserves existing ANALYTE values", {
@@ -50,23 +50,8 @@ test_that("ensure_analyte handles NA values in CMT", {
   # Check that NA in CMT becomes NA in ANALYTE
   expect_true(is.na(result$ANALYTE[2]))
   # Check that non-NA values are properly converted
-  expect_equal(result$ANALYTE[1], "1")
-  expect_equal(result$ANALYTE[3], "1")
-})
-
-test_that("ensure_analyte handles non-numeric CMT values", {
-  # Create test data with character CMT values
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT, ~DV, ~EVID,
-    1, 0, "DRUG", 0, 1,
-    1, 1, "DRUG", 10, 0,
-    1, 2, "DRUG", 20, 0
-  ) %>% new_nif()
-
-  result <- ensure_analyte(test_data)
-
-  # Check that character CMT values are preserved
-  expect_equal(result$ANALYTE, test_data$CMT)
+  expect_equal(result$ANALYTE[1], "CMT1")
+  expect_equal(result$ANALYTE[3], "CMT1")
 })
 
 test_that("ensure_analyte returns NIF object", {

@@ -136,7 +136,7 @@ test_that("guess_parent works with ensure_analyte", {
   result <- guess_parent(missing_analyte_nif)
 
   # Since ANALYTE should be set to "1" for both records, should return "1"
-  expect_equal(result, "1")
+  expect_equal(result, "CMT1")
 })
 
 

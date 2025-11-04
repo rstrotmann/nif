@@ -2,6 +2,7 @@
 #'
 #' If 'ANALYTE' is not in the column names, the field is created based on the
 #' compartment (CMT).
+#'
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal
@@ -26,7 +27,7 @@ ensure_analyte <- function(obj) {
   obj %>%
     mutate(ANALYTE = case_when(
       is.na(CMT) ~ NA_character_,
-      TRUE ~ as.character(CMT)
+      TRUE ~ paste0("CMT", as.character(CMT))
     )) %>%
     new_nif()  # Ensure return value is a NIF object
 }
