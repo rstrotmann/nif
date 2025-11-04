@@ -1,5 +1,14 @@
 #' Correlate observations
 #'
+#' Identify observations of the dependent variables that are timely correlated
+#' to the independent variable, i.e., are within a specified time window to the
+#' observations of the independent variable. If multiple dependent observations
+#' of a given analyte fall into the window, they are summarized using the
+#' 'duplicate_function'. The output data frame is a wide table based on the
+#' independent observations, with the (summarized) dependent observations and
+#' the respective summarized observation times for the dependent obsrvations as
+#' additional columns.
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
@@ -28,8 +37,13 @@ correlate_obs <- function(
     duplicate_function = mean) {
   # validate input
   validate_nif(obj)
+
+  # if(!"REF" %in% names(obj)) {
+  #   stop("Input must contain the 'REF' field!")
+  # }
+
   if(!"REF" %in% names(obj)) {
-    stop("Input must contain the 'REF' field!")
+    obj <- index_nif(obj)
   }
   validate_analyte(
     obj, indep_analyte, allow_multiple = FALSE, allow_null = FALSE)
@@ -50,6 +64,7 @@ correlate_obs <- function(
 
   # get observations
   obs <- obj %>%
+    ensure_analyte() %>%
     as.data.frame() %>%
     filter(EVID == 0) %>%
     filter(ANALYTE %in% c(indep_analyte, dep_analyte)) %>%

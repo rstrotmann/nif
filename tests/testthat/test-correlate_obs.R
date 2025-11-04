@@ -13,27 +13,6 @@ test_that("correlate_obs input validation - non-nif objects", {
 })
 
 
-test_that("correlate_obs validates REF field requirement", {
-  # Create test nif object without REF
-  test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,
-      1,     0,  10,     0,   "DRUG",   "2023-01-01T00:00:00"
-  ) %>%
-    nif() %>%
-    lubrify_dates()
-
-  # Remove REF if it exists
-  if("REF" %in% names(test_nif)) {
-    test_nif <- test_nif %>% select(-REF)
-  }
-
-  expect_error(
-    correlate_obs(test_nif, indep_analyte = "DRUG", dep_analyte = "METAB"),
-    "Input must contain the 'REF' field"
-  )
-})
-
-
 test_that("correlate_obs validates analyte parameters", {
   # Create valid test nif object
   test_nif <- tibble::tribble(

@@ -35,6 +35,16 @@ A data frame.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
+\details{
+Identify observations of the dependent variables that are timely correlated
+to the independent variable, i.e., are within a specified time window to the
+observations of the independent variable. If multiple dependent observations
+of a given analyte fall into the window, they are summarized using the
+'duplicate_function'. The output data frame is a wide table based on the
+independent observations, with the (summarized) dependent observations and
+the respective summarized observation times for the dependent obsrvations as
+additional columns.
+}
 \examples{
 head(correlate_obs(examplinib_poc_nif, "RS2023", "RS2023487A"), 3)
 
