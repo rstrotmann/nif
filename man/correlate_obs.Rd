@@ -42,7 +42,7 @@ observations of the independent variable. If multiple dependent observations
 of a given analyte fall into the window, they are summarized using the
 'duplicate_function'. The output data frame is a wide table based on the
 independent observations, with the (summarized) dependent observations and
-the respective summarized observation times for the dependent obsrvations as
+the respective summarized observation times for the dependent observations as
 additional columns.
 }
 \examples{

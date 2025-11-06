@@ -6,7 +6,7 @@
 #' of a given analyte fall into the window, they are summarized using the
 #' 'duplicate_function'. The output data frame is a wide table based on the
 #' independent observations, with the (summarized) dependent observations and
-#' the respective summarized observation times for the dependent obsrvations as
+#' the respective summarized observation times for the dependent observations as
 #' additional columns.
 #'
 #' @description
@@ -114,7 +114,7 @@ correlate_obs <- function(
       pivot_longer(cols = c("DV", "TIME"),
                    names_to = "param", values_to = "value") %>%
       mutate(param = case_match(
-        param, "DV" ~ ANALYTE,
+        .data$param, "DV" ~ ANALYTE,
         .default = paste(ANALYTE, param, sep = "_"))) %>%
       select(-ANALYTE) %>%
       pivot_wider(names_from = param, values_from = value)

@@ -22,7 +22,7 @@ make_observation(
   coding_table = NULL,
   factor = 1,
   NTIME_lookup = NULL,
-  ntime_method = NULL,
+  ntime_method = "TPT",
   keep = NULL,
   include_day_in_ntime = FALSE,
   omit_not_done = TRUE,

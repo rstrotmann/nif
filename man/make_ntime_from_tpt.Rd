@@ -13,7 +13,8 @@ make_ntime_from_tpt(obj, domain = "PC")
 Used to determine the column name containing time point descriptions.}
 }
 \value{
-A numeric vector of time values in hours.
+A data frame with a column representing the unique values of the
+xxTPT variable and a NTIME column with the time in hours.
 }
 \description{
 Extracts numeric time values (in hours) from time point text descriptions.

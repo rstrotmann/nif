@@ -17,7 +17,8 @@
 #' * Time ranges (e.g., "0.5H TO 2H POST-DOSE") - the later time is used
 #' * Day information (e.g., "DAY1 - 2 HOURS POST ADMINISTRATION")
 #'
-#' @return A numeric vector of time values in hours.
+#' @return A data frame with a column representing the unique values of the
+#'   xxTPT variable and a NTIME column with the time in hours.
 #'
 #' @examples
 #' df <- data.frame(PCTPT = c("PRE-DOSE", "1H POST-DOSE", "2.5 HRS POST-DOSE"))
@@ -86,6 +87,37 @@ make_ntime_from_tpt <- function(obj, domain = "PC") {
     tpt,
     as.numeric(sapply(tpt, extract_ntime))
   )
+  colnames(out) <- c(tpt_name, "NTIME")
+
+  return(out)
+}
+
+
+#' Title
+#'
+#' @param obj A data frame containing time point text descriptions.
+#' @param domain The domain code as character (default: "PC" for pharmacokinetic).
+#'   Used to determine the column name containing time point descriptions.
+#'
+#' @returns A data frame with a column representing the unique values of the
+#'   xxTPT variable and a NTIME column with the time in hours.
+#' @export
+make_ntime_from_tptnum <- function(obj, domain = "PC") {
+  if(is.null(domain))
+    domain <- unique(obj$DOMAIN)[1]
+  tpt_name <- paste0(toupper(domain), "TPTNUM")
+
+  # Extract the TPT values
+  tptnum <- unique(obj[[tpt_name]])
+  if(all(is.null(tptnum)))
+    return(NULL)
+
+  out <- data.frame(
+    tpt_name = tptnum,
+    NTIME = tptnum
+  ) %>%
+    arrange(tpt_name)
+
   colnames(out) <- c(tpt_name, "NTIME")
 
   return(out)
@@ -250,7 +282,7 @@ make_observation <- function(
     coding_table = NULL,
     factor = 1,
     NTIME_lookup = NULL,
-    ntime_method = NULL,
+    ntime_method = "TPT",
     keep = NULL,
     include_day_in_ntime = FALSE,
     omit_not_done = TRUE,
@@ -272,15 +304,15 @@ make_observation <- function(
   domain_name <- tolower(domain)
 
   # validate ntime method
-  allowed_ntime_method = c("TPT", "ELTM")
-  if(is.null(ntime_method)) {
-    ntime_method = "TPT"
-  } else {
+  allowed_ntime_method = c("TPT", "TPTNUM", "ELTM")
+  # if(is.null(ntime_method)) {
+  #   ntime_method = "TPT"
+  # } else {
     if(!ntime_method %in% allowed_ntime_method)
       stop(paste0(
         "ntime_method must be one of ",
         nice_enumeration(allowed_ntime_method, conjunction = "or")))
-  }
+  # }
 
   # Create fields
   if(is.null(DTC_field)) DTC_field <- paste0(toupper(domain), "DTC")
@@ -325,11 +357,13 @@ make_observation <- function(
     if(ntime_method == "TPT") {
       NTIME_lookup = make_ntime_from_tpt(obj, domain)
     }
+    if(ntime_method == "TPTNUM") {
+      NTIME_lookup = make_ntime_from_tptnum(obj, domain)
+    }
     if(ntime_method == "ELTM") {
       NTIME_lookup = make_ntime(
         obj, domain, include_day = FALSE, silent = silent)
     }
-
     if(is.null(NTIME_lookup)) {
       conditional_message(
         "No NTIME_lookup could be created, NTIME will be NA",
@@ -525,7 +559,7 @@ add_observation <- function(
     coding_table = NULL,
     factor = 1,
     NTIME_lookup = NULL,
-    ntime_method = NULL,
+    ntime_method = "TPT",
     keep = NULL,
     debug = FALSE,
     include_day_in_ntime = FALSE,
