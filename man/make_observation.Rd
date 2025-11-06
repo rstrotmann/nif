@@ -77,7 +77,8 @@ custom nominal time information in the target domain (e.g., 'PCELTM'), and
 to provide the NTIME field.}
 
 \item{ntime_method}{the field to derive the nominal time from. Allowed values
-are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
+are 'TPT', 'TPTNUM' and 'ELTM'. Defaults to xxTPT where xx is the domain
+name.}
 
 \item{keep}{Columns to keep, as character.}
 
