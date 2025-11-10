@@ -178,7 +178,162 @@ add_baseline <- function(
 }
 
 
+#' Extract the individual baseline value for an analyte
+#'
+#' @param obj A nif object.
+#' @param analyte The analyte to derive the baseline for, as character. Defaults
+#' to all analytes if NULL.
+#' @param baseline_filter The baseline condition as character, defaults to
+#' `TAFD <= 0`.
+#' @param summary_function A function to reduce multiple baseline values,
+#' defaults to `median`.
+#' @param default_baseline The default value if the baseline filter computes to
+#' NA.
+#' @param silent Suppress messages, as logical.
+#'
+#' @returns A nif object with the DVBL field added for the specified analyte.
+#' @export
+#'
+#' @examples
+#'  head(derive_baseline(examplinib_sad_nif, "RS2023"))
+#'
+derive_baseline <- function(
+    obj,
+    analyte = NULL,
+    baseline_filter = "TAFD <= 0",
+    summary_function = median,
+    default_baseline = NA_real_,
+    silent = NULL) {
+
+  obj <- ensure_analyte(obj)
+
+  # Validate required columns
+  required_cols <- c("ID", "DV", "TIME", "ANALYTE")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # create empty DVBL column if needed
+  if(!"DVBL" %in% names(obj)) {
+    obj <- mutate(obj, DVBL = NA)
+  }
+
+  # validate analyte
+  if(is.null(analyte)) {
+    analyte <- analytes(obj)
+  }
+  validate_analyte(obj, analyte)
+
+  validate_numeric_param(default_baseline, "default_baseline", allow_na = TRUE)
+
+  # Validate data types
+  if (!is.numeric(obj$DV)) {
+    stop("DV column must contain numeric values")
+  }
+  if (!is.numeric(obj$TIME)) {
+    stop("TIME column must contain numeric values")
+  }
+  if (!is.numeric(obj$ID)) {
+    stop("ID column must contain numeric values")
+  }
+
+  # Validate summary function
+  if (!is.function(summary_function)) {
+    stop("summary_function must be a function")
+  }
+
+  # Safe evaluation of filter
+  tryCatch(
+    {
+      filter_expr <- parse(text = baseline_filter)
+      test_eval <- eval(filter_expr, envir = obj)
+      if (!is.logical(test_eval)) {
+        stop("baseline_filter must evaluate to logical values")
+      }
+      if (length(test_eval) != nrow(obj)) {
+        stop("baseline_filter must return a logical vector with length equal to number of rows")
+      }
+    },
+    error = function(e) {
+      stop("Invalid baseline_filter expression: ", e$message)
+    }
+  )
+
+  temp <- obj %>%
+    filter(.data$ANALYTE %in% analyte)
+
+  # Check for NA values in grouping columns
+  na_ids <- temp$ID[is.na(temp$ID)]
+  if (length(na_ids) > 0) {
+    conditional_message(
+      "Found NA values in ID column.",
+      "These rows will be excluded from calculations.",
+      silent = silent)
+  }
+
+  bl <- temp %>%
+    filter(!is.na(.data$ID)) %>%
+    filter(.data$EVID == 0) %>%
+    group_by(.data$ID, .data$ANALYTE) %>%
+    mutate(
+      DVBL = summary_function(
+        na.omit(.data$DV[eval(parse(text = baseline_filter))])
+      )) %>%
+    mutate(DVBL = case_when(
+      is.na(DVBL) | is.nan(DVBL) ~ default_baseline,
+      .default = DVBL)) %>%
+    as.data.frame() %>%
+    distinct(ID, ANALYTE, DVBL)
+
+  obj %>%
+    coalesce_join(
+      bl, by = c("ID", "ANALYTE"), join = "left_join", keep = "right")  %>%
+    as.data.frame()
+}
+
+
+#' Extract the individual baseline value and change from baseline for an analyte
+#'
+#' @param obj A nif object.
+#' @param analyte The analyte to derive the baseline for, as character. Defaults
+#' to all analytes if NULL.
+#' @param baseline_filter The baseline condition as character, defaults to
+#' `TAFD <= 0`.
+#' @param summary_function A function to reduce multiple baseline values,
+#' defaults to `median`.
+#' @param default_baseline The default value if the baseline filter computes to
+#' NA.
+#' @param silent Suppress messages, as logical.
+#'
+#' @returns A nif object with the DVBL field added for the specified analyte.
+#' @export
+#'
+#' @examples
+#' head(derive_cfb(examplinib_sad_nif))
+#'
+derive_cfb <- function(
+    obj,
+    analyte = NULL,
+    baseline_filter = "TAFD <= 0",
+    summary_function = median,
+    default_baseline = NA_real_,
+    silent = NULL) {
+
+  out <- derive_baseline(
+    obj, analyte = analyte, baseline_filter = baseline_filter,
+    summary_function = summary_function, default_baseline = default_baseline,
+    silent = silent) %>%
+    mutate(DVCFB = .data$DV - .data$DVBL)
+
+  return(out)
+}
+
+
 #' Add baseline and change from baseline fields
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
 #'
 #' @details
 #' Output fields:
@@ -206,6 +361,8 @@ add_cfb <- function(
     baseline_filter = "TIME <= 0",
     summary_function = median,
     silent = NULL) {
+
+  lifecycle::deprecate_warn("0.57.8", "add_cfb()", "derive_cfb()")
 
   # Validate required columns
   required_cols <- c("ID", "DV", "TIME")
@@ -281,10 +438,13 @@ add_cfb <- function(
 }
 
 
+
+
+
 #' Derive a new analyte with change from baseline from an existing analyte
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
+#' `r lifecycle::badge("deprecated")`
 #'
 #' @param obj A nif object.
 #' @param source_analyte The original analyte.
@@ -304,6 +464,9 @@ derive_cfb_analyte <- function(
     baseline_filter = "TIME <= 0",
     summary_function = median,
     silent = NULL) {
+
+  lifecycle::deprecate_warn("0.57.8", "derive_cfb_analyte()", "derive_cfb()")
+
   # input validation
   validate_nif(obj)
   validate_char_param(source_analyte, "source_analyte")
@@ -366,8 +529,6 @@ derive_cfb_analyte <- function(
 
   return(out)
 }
-
-
 
 
 #' Add baseline and relative-to-baseline fields

@@ -377,8 +377,13 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
 #'
 #' @returns Nothing or stop.
 validate_analyte <- function(
-    nif, analyte, allow_multiple = TRUE, allow_null = FALSE,
+    nif,
+    analyte,
+    allow_multiple = TRUE,
+    allow_null = FALSE,
     allow_empty = FALSE) {
+
+  # validate inputs
   validate_nif(nif)
   validate_char_param(
     analyte, "analyte",

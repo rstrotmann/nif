@@ -27,7 +27,7 @@ considered.}
 A NIF object
 }
 \description{
-Add baseline and change from baseline fields
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
 \details{
 Output fields:

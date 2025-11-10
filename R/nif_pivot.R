@@ -115,9 +115,9 @@ correlate_obs <- function(
                    names_to = "param", values_to = "value") %>%
       mutate(param = case_match(
         .data$param, "DV" ~ ANALYTE,
-        .default = paste(ANALYTE, param, sep = "_"))) %>%
+        .default = paste(ANALYTE, .data$param, sep = "_"))) %>%
       select(-ANALYTE) %>%
-      pivot_wider(names_from = param, values_from = value)
+      pivot_wider(names_from = "param", values_from = "value")
     out <- bind_cols(indep, dep)
     return(out)
   }
