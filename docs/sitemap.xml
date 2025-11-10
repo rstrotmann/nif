@@ -66,6 +66,8 @@
 <url><loc>/reference/crea_raynaud.html</loc></url>
 <url><loc>/reference/ddt.html</loc></url>
 <url><loc>/reference/decompose_dtc.html</loc></url>
+<url><loc>/reference/derive_baseline.html</loc></url>
+<url><loc>/reference/derive_cfb.html</loc></url>
 <url><loc>/reference/derive_cfb_analyte.html</loc></url>
 <url><loc>/reference/derive_sld.html</loc></url>
 <url><loc>/reference/disposition_summary.html</loc></url>
@@ -118,6 +120,7 @@
 <url><loc>/reference/lbm_boer.html</loc></url>
 <url><loc>/reference/lbm_hume.html</loc></url>
 <url><loc>/reference/lbm_peters.html</loc></url>
+<url><loc>/reference/legacy_add_cfb.html</loc></url>
 <url><loc>/reference/limit.html</loc></url>
 <url><loc>/reference/lubrify_dates.html</loc></url>
 <url><loc>/reference/make_administration.html</loc></url>
