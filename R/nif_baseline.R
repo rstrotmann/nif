@@ -1,4 +1,4 @@
-#' Attach baseline covariate
+#' Attach baseline covariate from SDTM domain
 #'
 #' Baseline covariates, as specified by the 'testcd' field, can come from any
 #' SDTM domain. By default, the baseline value is identified by `xxBLFL == "Y"`
@@ -320,7 +320,6 @@ derive_baseline <- function(
 #' head(derive_cfb(examplinib_sad_nif))
 #'
 derive_cfb <- function(
-# add_cfb <- function(
     obj,
     analyte = NULL,
     baseline_filter = "TAFD <= 0",
@@ -339,6 +338,8 @@ derive_cfb <- function(
 
 
 #' Add baseline and change from baseline fields
+#'
+#' FOR DELETION
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
