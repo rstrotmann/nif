@@ -208,7 +208,7 @@ derive_baseline <- function(
   obj <- ensure_analyte(obj)
 
   # Validate required columns
-  required_cols <- c("ID", "DV", "TIME", "ANALYTE")
+  required_cols <- c("ID", "DV", "TIME", "ANALYTE", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
   if (length(missing_cols) > 0) {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
@@ -272,9 +272,17 @@ derive_baseline <- function(
       silent = silent)
   }
 
+  na_analytes <- obj$ANALYTE[is.na(obj$ANALYTE)]
+  if (length(na_analytes) > 0) {
+    conditional_message(
+      "Found NA values in ANALYTE column.",
+      "These rows will be excluded from calculations.",
+      silent = silent)
+  }
+
   bl <- temp %>%
     filter(!is.na(.data$ID)) %>%
-    filter(.data$EVID == 0) %>%
+    {if("EVID" %in% names(temp)) filter(., .data$EVID == 0) else . } %>%
     group_by(.data$ID, .data$ANALYTE) %>%
     mutate(
       DVBL = summary_function(
@@ -288,8 +296,7 @@ derive_baseline <- function(
 
   obj %>%
     coalesce_join(
-      bl, by = c("ID", "ANALYTE"), join = "left_join", keep = "right")  %>%
-    as.data.frame()
+      bl, by = c("ID", "ANALYTE"), join = "left_join", keep = "right")
 }
 
 
@@ -313,6 +320,7 @@ derive_baseline <- function(
 #' head(derive_cfb(examplinib_sad_nif))
 #'
 derive_cfb <- function(
+# add_cfb <- function(
     obj,
     analyte = NULL,
     baseline_filter = "TAFD <= 0",
@@ -352,11 +360,8 @@ derive_cfb <- function(
 #' @param silent Suppress messages, defaults to nif_option setting if NULL.
 #' @return A NIF object
 #' @importFrom stats na.omit
-#' @export
-#' @examples
-#' head(add_cfb(examplinib_poc_nif))
-#' head(add_cfb(examplinib_poc_min_nif))
-add_cfb <- function(
+#'
+legacy_add_cfb <- function(
     obj,
     baseline_filter = "TIME <= 0",
     summary_function = median,
@@ -438,13 +443,46 @@ add_cfb <- function(
 }
 
 
+#' Add baseline and change from baseline fields
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @details
+#' Output fields:
+#' * `DVBL` Baseline value for the dependent variable DV.
+#' * `DVCFB` Change from baseline for the dependent variable DV.
+#' @details The Baseline is calculated as the median (or the summary function
+#' output) of the DV field for all time points identified by the
+#' baseline_filter' term.
+#'
+#' @param obj A NIF object.
+#' @param baseline_filter A filter term to identify the baseline condition.
+#' @param summary_function The function to derive the baseline. This function is
+#'   applied over the DV values identified by the 'baseline_filter' term. The
+#'   default function is `median`. Alternatively, `mean`, `min` or `max` can be
+#'   considered.
+#' @param silent Suppress messages, defaults to nif_option setting if NULL.
+#' @return A NIF object
+#' @importFrom stats na.omit
+#' @export
+#' @examples
+#' head(add_cfb(examplinib_poc_nif))
+#' head(add_cfb(examplinib_poc_min_nif))
+add_cfb <- function(
+    obj,
+    baseline_filter = "TIME <= 0",
+    summary_function = median,
+    silent = NULL) {
+
+  derive_cfb(obj, baseline_filter = baseline_filter,
+             summary_function = summary_function,
+             silent = silent)
+}
 
 
 
 #' Derive a new analyte with change from baseline from an existing analyte
-#'
-#' @description
-#' `r lifecycle::badge("deprecated")`
 #'
 #' @param obj A nif object.
 #' @param source_analyte The original analyte.
@@ -464,8 +502,6 @@ derive_cfb_analyte <- function(
     baseline_filter = "TIME <= 0",
     summary_function = median,
     silent = NULL) {
-
-  lifecycle::deprecate_warn("0.57.8", "derive_cfb_analyte()", "derive_cfb()")
 
   # input validation
   validate_nif(obj)
@@ -532,6 +568,9 @@ derive_cfb_analyte <- function(
 
 
 #' Add baseline and relative-to-baseline fields
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
 #'
 #' @details
 #' Output fields:
