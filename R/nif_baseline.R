@@ -216,7 +216,7 @@ derive_baseline <- function(
 
   # create empty DVBL column if needed
   if(!"DVBL" %in% names(obj)) {
-    obj <- mutate(obj, DVBL = NA)
+    obj <- mutate(obj, DVBL = NA_real_)
   }
 
   # validate analyte
@@ -272,7 +272,7 @@ derive_baseline <- function(
       silent = silent)
   }
 
-  na_analytes <- obj$ANALYTE[is.na(obj$ANALYTE)]
+  na_analytes <- temp$ANALYTE[is.na(temp$ANALYTE)]
   if (length(na_analytes) > 0) {
     conditional_message(
       "Found NA values in ANALYTE column.",
@@ -280,19 +280,35 @@ derive_baseline <- function(
       silent = silent)
   }
 
+  # Helper function to calculate baseline for a group
+  calc_baseline <- function(group_data, filter_expr, summary_fun, default) {
+    filtered_dv <- na.omit(group_data$DV[eval(filter_expr, envir = group_data)])
+    if (length(filtered_dv) == 0) {
+      return(default)
+    }
+    result <- summary_fun(filtered_dv)
+    if (is.na(result) || is.nan(result)) {
+      return(default)
+    }
+    return(result)
+  }
+
+  filter_expr <- parse(text = baseline_filter)
+
   bl <- temp %>%
     filter(!is.na(.data$ID)) %>%
-    {if("EVID" %in% names(temp)) filter(., .data$EVID == 0) else . } %>%
+    filter(!is.na(.data$ANALYTE)) %>%
+    filter(.data$EVID == 0) %>%
     group_by(.data$ID, .data$ANALYTE) %>%
-    mutate(
-      DVBL = summary_function(
-        na.omit(.data$DV[eval(parse(text = baseline_filter))])
-      )) %>%
-    mutate(DVBL = case_when(
-      is.na(DVBL) | is.nan(DVBL) ~ default_baseline,
-      .default = DVBL)) %>%
-    as.data.frame() %>%
-    distinct(ID, ANALYTE, DVBL)
+    summarize(
+      DVBL = calc_baseline(
+        pick(everything()),
+        filter_expr,
+        summary_function,
+        default_baseline),
+      .groups = "drop"
+    ) %>%
+    as.data.frame()
 
   obj %>%
     coalesce_join(

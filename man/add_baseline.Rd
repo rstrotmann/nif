@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_baseline.R
 \name{add_baseline}
 \alias{add_baseline}
-\title{Attach baseline covariate}
+\title{Attach baseline covariate from SDTM domain}
 \usage{
 add_baseline(
   nif,
