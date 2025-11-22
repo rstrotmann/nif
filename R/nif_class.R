@@ -155,6 +155,9 @@ print.nif <- function(x, color = FALSE, ...) {
     cat(str_wrap(paste(names(x), collapse = ", "),
                  width = 80, indent = 2, exdent = 2), "\n")
 
+    # version hash
+    cat(paste0("\nHash: ", hash(x), "\n"))
+
     temp <- x %>%
       as.data.frame() %>%
       select(any_of(c(
@@ -169,11 +172,13 @@ print.nif <- function(x, color = FALSE, ...) {
     cat(paste0("\nData (selected columns):\n", temp, "\n"))
 
     footer <- paste0(positive_or_zero(nrow(x) - 10), " more rows")
+
     if (color == TRUE) {
       cat(paste0("\u001b[38;5;248m", footer, "\u001b[0m"))
     } else {
       cat(footer)
     }
+
     invisible(x)
   }
 }
@@ -1214,3 +1219,42 @@ filter_subject.nif <- function(obj, usubjid) {
     filter(.data$USUBJID %in% usubjid)
 }
 
+
+#' Generic hash function
+#'
+#' @param obj A nif object.
+#'
+#' @return The XXH128 hash of the nif object as character.
+#' @export
+hash <- function(obj) {
+  UseMethod("hash")
+}
+
+
+#' Generate the XXH128 hash of a nif object
+#'
+#' @param obj A nif object.
+#'
+#' @returns The XXH128 hash of the nif object as character.
+#' @export
+#' @importFrom rlang hash
+#'
+#' @examples
+#' hash(examplinib_sad_nif)
+hash.nif <- function(obj) {
+  rlang::hash(obj)
+}
+
+
+#' Plot hash as QR code
+#'
+#' @param obj A nif object.
+#'
+#' @returns A plot object.
+#' @export
+#' @importFrom qrcode qr_code
+#' @examples
+#' plot_hash(examplinib_sad_nif)
+plot_hash <- function(obj) {
+  plot(qrcode::qr_code(hash(obj)))
+}

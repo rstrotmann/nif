@@ -254,7 +254,8 @@ summary.nif <- function(object, ...) {
       dose_levels = NULL,
       renal_function = NULL,
       odwg = NULL,
-      administration_duration = NULL
+      administration_duration = NULL,
+      hash = NULL
     )
     class(out) <- "summary_nif"
     return(out)
@@ -353,7 +354,8 @@ summary.nif <- function(object, ...) {
     dose_levels = dose_levels,
     renal_function = renal_function,
     odwg = odwg,
-    administration_duration = administration_summary(object)
+    administration_duration = administration_summary(object),
+    hash = hash(object)
   )
   class(out) <- "summary_nif"
   return(out)
