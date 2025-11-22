@@ -102,6 +102,8 @@
 <url><loc>/reference/guess_lbspec.html</loc></url>
 <url><loc>/reference/guess_ntime.html</loc></url>
 <url><loc>/reference/has_domain.html</loc></url>
+<url><loc>/reference/hash.html</loc></url>
+<url><loc>/reference/hash.nif.html</loc></url>
 <url><loc>/reference/ht_by_wt.html</loc></url>
 <url><loc>/reference/import_from_connection.html</loc></url>
 <url><loc>/reference/import_nif.html</loc></url>
@@ -182,6 +184,7 @@
 <url><loc>/reference/plot.domain.html</loc></url>
 <url><loc>/reference/plot.nif.html</loc></url>
 <url><loc>/reference/plot.sdtm.html</loc></url>
+<url><loc>/reference/plot_hash.html</loc></url>
 <url><loc>/reference/plural.html</loc></url>
 <url><loc>/reference/pos_diff.html</loc></url>
 <url><loc>/reference/positive_or_zero.html</loc></url>
