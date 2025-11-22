@@ -1242,6 +1242,7 @@ hash <- function(obj) {
 #' @examples
 #' hash(examplinib_sad_nif)
 hash.nif <- function(obj) {
+  validate_nif(obj)
   rlang::hash(obj)
 }
 
@@ -1256,5 +1257,6 @@ hash.nif <- function(obj) {
 #' @examples
 #' plot_hash(examplinib_sad_nif)
 plot_hash <- function(obj) {
+  validate_nif(obj)
   plot(qrcode::qr_code(hash(obj)))
 }

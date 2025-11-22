@@ -451,6 +451,9 @@ print.summary_nif <- function(x, color = FALSE, ...) {
 
   cat("Treatment duration overview:\n")
   cat(df_to_string(x$administration_duration, color=color, indent = indent))
+
+  cat("\n\nHash:\n")
+  cat(paste0(spacer, x$hash))
   invisible(x)
 }
 
