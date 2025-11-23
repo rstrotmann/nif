@@ -1177,5 +1177,25 @@ is_valid_filter <- function(data, filter_string) {
 }
 
 
+#' Last date in data.frame
+#'
+#' @param obj A data frame.
+#'
+#' @returns A POSIXct scalar.
+last_dtc.data.frame <- function(obj) {
+  if(!inherits(obj, "data.frame"))
+    stop("obj must be a data frame!")
 
+  out <- NULL
+
+  temp <- obj %>%
+    lubrify_dates() %>%
+    select_if(is.POSIXct)
+
+  if(ncol(temp) > 0) {
+    out <- as.POSIXct(max(unlist(lapply(temp, max, na.rm = T))))
+  }
+
+  return(out)
+}
 

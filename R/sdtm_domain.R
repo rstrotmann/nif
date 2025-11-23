@@ -55,7 +55,7 @@ summary.domain <- function(object, ..., silent = NULL) {
     stop("Input must be a data frame")
   }
 
-  validate_domain(object, silent = silent)
+  # validate_domain(object, silent = silent)
   current_domain <- toupper(unique(object$DOMAIN))
 
   testcd_field <- paste0(current_domain, "TESTCD")
@@ -112,7 +112,9 @@ summary.domain <- function(object, ..., silent = NULL) {
     observations = observations,
     tpt = tpt,
     n_obs = nrow(object),
-    visit = visit
+    visit = visit,
+    hash = rlang::hash(object),
+    last = last_dtc(object)
   )
 
   class(out) <- "summary_domain"
@@ -137,6 +139,7 @@ print.summary_domain <- function(x, ...) {
 
   cat(paste("Study", x$study, "\n"))
   cat(paste("Domain", x$domain, "\n"))
+
   cat(paste(nrow(x$subjects), "subjects\n"))
   cat(paste(x$n_obs, "observations\n"))
 
@@ -167,8 +170,11 @@ print.summary_domain <- function(x, ...) {
     cat("Epochs\n")
     cat(df_to_string(
       x$epoch, indent = indent, show_none = TRUE, header = FALSE
-    ), "\n\n")
+    ), "\n")
   }
+
+  cat(paste0("Hash: ", x$hash, "\n"))
+  cat(paste0("Last: ", x$last))
 }
 
 
@@ -289,8 +295,47 @@ plot.domain <- function(
 }
 
 
+#' Generate the XXH128 hash of a SDTM domain object
+#'
+#' @param obj A SDTM domain object.
+#'
+#' @returns The XXH128 hash of the nif object as character.
+#' @export
+#' @importFrom rlang hash
+hash.domain <- function(obj) {
+  # validate input
+  if (!inherits(obj, "domain")) {
+    stop("Input must be a SDTM domain")
+  }
+
+  rlang::hash(obj)
+}
 
 
+#' Last date in SDTM domain object
+#'
+#' @param obj A nif object.
+#'
+#' @returns A POSIXct scalar.
+#' @export
+#'
+#' @examples
+#' last_dtc(examplinib_sad_nif)
+last_dtc.domain <- function(obj) {
+  validate_domain(obj, silent = TRUE)
 
+  # out <- NULL
+  #
+  # temp <- obj %>%
+  #   as.data.frame() %>%
+  #   lubrify_dates() %>%
+  #   select_if(is.POSIXct)
+  # if(ncol(temp) > 0) {
+  #   out <- as.POSIXct(max(unlist(lapply(temp, max, na.rm = T))))
+  # }
+  out <- last_dtc.data.frame(as.data.frame(obj))
+
+  return(out)
+}
 
 

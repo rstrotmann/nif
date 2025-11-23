@@ -255,7 +255,8 @@ summary.nif <- function(object, ...) {
       renal_function = NULL,
       odwg = NULL,
       administration_duration = NULL,
-      hash = NULL
+      hash = NULL,
+      last = NULL,
     )
     class(out) <- "summary_nif"
     return(out)
@@ -355,7 +356,8 @@ summary.nif <- function(object, ...) {
     renal_function = renal_function,
     odwg = odwg,
     administration_duration = administration_summary(object),
-    hash = hash(object)
+    hash = hash(object),
+    last = last_dtc(object)
   )
   class(out) <- "summary_nif"
   return(out)
@@ -452,8 +454,8 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat("Treatment duration overview:\n")
   cat(df_to_string(x$administration_duration, color=color, indent = indent))
 
-  cat("\n\nHash:\n")
-  cat(paste0(spacer, x$hash))
+  cat(paste0("\n\nHash: ", x$hash))
+  cat(paste0("\nLast: ", x$last))
   invisible(x)
 }
 

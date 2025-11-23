@@ -72,7 +72,9 @@ summary.sdtm <- function(object, ...) {
     analytes = data.frame(PCTEST = character(0), PCTESTCD = character(0)),
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
-    time_mapping = object$time_mapping
+    time_mapping = object$time_mapping,
+    hash = hash(object),
+    last = last_dtc(object)
   )
 
   # Numbers of subjects and observations by domain
@@ -229,6 +231,9 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   #     ), "\n\n")
   #   }
   # }
+
+  cat(paste0("Hash: ", x$hash, "\n"))
+  cat(paste0("Last: ", x$last))
 
   invisible(x)
 }
@@ -863,3 +868,36 @@ testcd <- function(obj, domain = NULL) {
 }
 
 
+#' Generate the XXH128 hash of a sdtm object
+#'
+#' @param obj A sdtm object.
+#'
+#' @returns The XXH128 hash of the sdtm object as character.
+#' @export
+#' @importFrom rlang hash
+#'
+#' @examples
+#' hash(examplinib_sad)
+hash.sdtm <- function(obj) {
+  validate_sdtm(obj)
+  rlang::hash(obj$domains)
+}
+
+
+#' Last date in SDTM domain object
+#'
+#' @param obj A nif object.
+#'
+#' @returns A POSIXct scalar.
+#' @export
+#'
+#' @examples
+#' last_dtc(examplinib_sad)
+last_dtc.sdtm <- function(obj) {
+  validate_sdtm(obj)
+
+  temp <- lapply(obj$domains, last_dtc.data.frame)
+  out <- as.POSIXct(max(unlist(lapply(temp, max, na.rm = T))))
+
+  return(out)
+}

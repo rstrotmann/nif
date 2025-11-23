@@ -1247,16 +1247,34 @@ hash.nif <- function(obj) {
 }
 
 
-#' Plot hash as QR code
+#' Last recorded date-time
+#'
+#' @param obj A nif, sdtm or domain domain object.
+#'
+#' @returns A POSIXct scalar.
+#' @export
+last_dtc <- function(obj) {
+  UseMethod("last_dtc")
+}
+
+
+#' Last date in nif object
 #'
 #' @param obj A nif object.
 #'
-#' @returns A plot object.
+#' @returns A POSIXct scalar.
 #' @export
-#' @importFrom qrcode qr_code
+#'
 #' @examples
-#' plot_hash(examplinib_sad_nif)
-plot_hash <- function(obj) {
+#' last_dtc(examplinib_sad_nif)
+last_dtc.nif <- function(obj) {
   validate_nif(obj)
-  plot(qrcode::qr_code(hash(obj)))
+
+  out <- NULL
+  if("DTC" %in% names(obj)) {
+    out <- max(obj$DTC)
+  }
+  return(out)
 }
+
+
