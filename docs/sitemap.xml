@@ -102,8 +102,10 @@
 <url><loc>/reference/guess_lbspec.html</loc></url>
 <url><loc>/reference/guess_ntime.html</loc></url>
 <url><loc>/reference/has_domain.html</loc></url>
+<url><loc>/reference/hash.domain.html</loc></url>
 <url><loc>/reference/hash.html</loc></url>
 <url><loc>/reference/hash.nif.html</loc></url>
+<url><loc>/reference/hash.sdtm.html</loc></url>
 <url><loc>/reference/ht_by_wt.html</loc></url>
 <url><loc>/reference/import_from_connection.html</loc></url>
 <url><loc>/reference/import_nif.html</loc></url>
@@ -119,6 +121,10 @@
 <url><loc>/reference/is_iso8601_datetime.html</loc></url>
 <url><loc>/reference/is_iso_date.html</loc></url>
 <url><loc>/reference/is_iso_date_time.html</loc></url>
+<url><loc>/reference/last_dtc.domain.html</loc></url>
+<url><loc>/reference/last_dtc.html</loc></url>
+<url><loc>/reference/last_dtc.nif.html</loc></url>
+<url><loc>/reference/last_dtc.sdtm.html</loc></url>
 <url><loc>/reference/lbm_boer.html</loc></url>
 <url><loc>/reference/lbm_hume.html</loc></url>
 <url><loc>/reference/lbm_peters.html</loc></url>
