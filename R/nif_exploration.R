@@ -256,7 +256,7 @@ summary.nif <- function(object, ...) {
       odwg = NULL,
       administration_duration = NULL,
       hash = NULL,
-      last = NULL,
+      last = NULL
     )
     class(out) <- "summary_nif"
     return(out)
@@ -455,7 +455,7 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat(df_to_string(x$administration_duration, color=color, indent = indent))
 
   cat(paste0("\n\nHash: ", x$hash))
-  cat(paste0("\nLast: ", x$last))
+  cat(paste0("\nLast DTC: ", x$last))
   invisible(x)
 }
 

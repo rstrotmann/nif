@@ -57,6 +57,9 @@ summary.domain <- function(object, ..., silent = NULL) {
 
   # validate_domain(object, silent = silent)
   current_domain <- toupper(unique(object$DOMAIN))
+  if(length(current_domain) > 1) {
+    stop("Multiple domain values found")
+  }
 
   testcd_field <- paste0(current_domain, "TESTCD")
   test_field <- paste0(current_domain, "TEST")
@@ -174,7 +177,7 @@ print.summary_domain <- function(x, ...) {
   }
 
   cat(paste0("Hash: ", x$hash, "\n"))
-  cat(paste0("Last: ", x$last))
+  cat(paste0("Last DTC: ", x$last))
 }
 
 
@@ -323,17 +326,8 @@ hash.domain <- function(obj) {
 #' last_dtc(examplinib_sad_nif)
 last_dtc.domain <- function(obj) {
   validate_domain(obj, silent = TRUE)
-
-  # out <- NULL
-  #
-  # temp <- obj %>%
-  #   as.data.frame() %>%
-  #   lubrify_dates() %>%
-  #   select_if(is.POSIXct)
-  # if(ncol(temp) > 0) {
-  #   out <- as.POSIXct(max(unlist(lapply(temp, max, na.rm = T))))
-  # }
-  out <- last_dtc.data.frame(as.data.frame(obj))
+  # out <- last_dtc.data.frame(as.data.frame(obj))
+  out <- last_dtc_data_frame(as.data.frame(obj))
 
   return(out)
 }

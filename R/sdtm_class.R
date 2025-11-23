@@ -233,7 +233,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   # }
 
   cat(paste0("Hash: ", x$hash, "\n"))
-  cat(paste0("Last: ", x$last))
+  cat(paste0("Last DTC: ", x$last))
 
   invisible(x)
 }
@@ -896,8 +896,12 @@ hash.sdtm <- function(obj) {
 last_dtc.sdtm <- function(obj) {
   validate_sdtm(obj)
 
-  temp <- lapply(obj$domains, last_dtc.data.frame)
-  out <- as.POSIXct(max(unlist(lapply(temp, max, na.rm = T))))
+  # temp <- lapply(obj$domains, last_dtc.data.frame)
+  temp <- lapply(obj$domains, last_dtc_data_frame)
+  if(is.null(unlist(temp)))
+    return(NULL)
+
+  out <- as.POSIXct(max(unlist(temp), na.rm = TRUE))
 
   return(out)
 }
