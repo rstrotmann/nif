@@ -337,7 +337,7 @@ test_that("analyte_overview", {
 
 
 test_that("write_nif works", {
-  expect_no_error(invisible(capture.output(write_nif(examplinib_sad_nif))))
+  expect_no_error(invisible(capture.output(write_nonmem(examplinib_sad_nif))))
   expect_no_error(invisible(capture.output(write_monolix(examplinib_sad_nif))))
 })
 

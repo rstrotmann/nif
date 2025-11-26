@@ -2,8 +2,7 @@
 % Please edit documentation in R/nif_write.R
 \name{write_nif}
 \alias{write_nif}
-\title{Write as space-delimited, fixed-width file as required by NONMEM or a
-character-separated file}
+\title{Write NONMEM input formatted nif object to file}
 \usage{
 write_nif(obj, filename = NULL, fields = NULL, sep = NULL)
 }
@@ -23,10 +22,5 @@ output has a space-separated, fixed-width format.}
 Nothing.
 }
 \description{
-All numeric fields are reduced to 4 significant places. For this, IEC 60559
-is applied, i.e., rounding for a last digit of 5 is to the next even number.
-All fields are converted to character, and NA-values are converted to '.'.
-}
-\examples{
-head(write_nif(examplinib_fe_nif), 5)
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }

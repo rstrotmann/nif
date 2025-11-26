@@ -12,12 +12,12 @@ test_that("write_nif basic functionality works", {
   class(test_data) <- c("nif", "data.frame")
 
   # Test console output (no filename provided)
-  expect_output(write_nif(test_data), "ID")
-  expect_output(write_nif(test_data), "TIME")
+  expect_output(write_nonmem(test_data), "ID")
+  expect_output(write_nonmem(test_data), "TIME")
 
   # Test file output with comma separator
   temp_file <- tempfile()
-  write_nif(test_data, filename = temp_file, sep = ",")
+  write_nonmem(test_data, filename = temp_file, sep = ",")
 
   # Read back and verify
   result <- read.csv(temp_file, stringsAsFactors = FALSE)
@@ -45,7 +45,7 @@ test_that("write_nif handles fixed-width format", {
 
   # Test fixed-width output
   temp_file <- tempfile()
-  write_nif(test_data, filename = temp_file)
+  write_nonmem(test_data, filename = temp_file)
 
   # Read back the first line to verify it's fixed-width
   lines <- readLines(temp_file)
@@ -70,11 +70,11 @@ test_that("write_nif handles empty dataframe", {
   class(empty_data) <- c("nif", "data.frame")
 
   # Should not error with empty dataframe
-  expect_output(write_nif(empty_data))
+  expect_output(write_nonmem(empty_data))
 
   # Test file output
   temp_file <- tempfile()
-  expect_no_error(write_nif(empty_data, filename = temp_file, sep = ","))
+  expect_no_error(write_nonmem(empty_data, filename = temp_file, sep = ","))
   unlink(temp_file)
 })
 
@@ -92,7 +92,7 @@ test_that("write_nif preserves column order", {
   class(test_data) <- c("nif", "data.frame")
 
   temp_file <- tempfile()
-  write_nif(test_data, filename = temp_file, sep = ",")
+  write_nonmem(test_data, filename = temp_file, sep = ",")
 
   # Read back and verify column order
   result <- read.csv(temp_file, stringsAsFactors = FALSE)
