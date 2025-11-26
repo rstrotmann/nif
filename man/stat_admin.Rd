@@ -55,3 +55,4 @@ A ggplot layer object.
 \description{
 ggplot stat for treatment administrations
 }
+\keyword{internal}

@@ -27,3 +27,4 @@ has_domain(examplinib_fe, "xyz")
 # Check if multiple domains exist
 has_domain(examplinib_fe, c("dm", "vs"))
 }
+\keyword{internal}

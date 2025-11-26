@@ -18,3 +18,4 @@ Last date in SDTM domain object
 \examples{
 last_dtc(examplinib_sad)
 }
+\keyword{internal}

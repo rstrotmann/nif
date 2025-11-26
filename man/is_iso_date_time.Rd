@@ -22,3 +22,4 @@ is_iso_date_time("2023-09-27T15:04")
 is_iso_date_time("2023-09-27T15:04:00")
 is_iso_date_time(c("2023-03-21T11:55", "2023-07-18"))
 }
+\keyword{internal}

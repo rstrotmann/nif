@@ -18,3 +18,4 @@ Last date in nif object
 \examples{
 last_dtc(examplinib_sad_nif)
 }
+\keyword{internal}

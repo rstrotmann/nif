@@ -14,6 +14,7 @@
 #' @return Nothing.
 #'
 #' @export
+#' @keywords internal
 write_nif <- function(
     obj,
     filename = NULL,

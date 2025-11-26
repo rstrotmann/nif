@@ -23,8 +23,6 @@ named either \code{x_NTILE} (default) or the custom name specified in
 \code{ntile_name}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 This function calculates n-tiles for a specified column's values across all
 subjects. The quantiles are calculated across all subjects, and each subject
 gets the same n-tile value across all their rows. The input column must have

@@ -18,3 +18,4 @@ Analytes in a sdtm object
 \examples{
 analytes(examplinib_sad)
 }
+\keyword{internal}

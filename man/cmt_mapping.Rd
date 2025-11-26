@@ -13,9 +13,10 @@ cmt_mapping(obj)
 A data frame
 }
 \description{
-Analyte - compartment mapping
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
 \examples{
 cmt_mapping(examplinib_poc_nif)
 cmt_mapping(examplinib_poc_min_nif)
 }
+\keyword{internal}

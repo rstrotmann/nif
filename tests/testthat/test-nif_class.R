@@ -82,8 +82,8 @@ test_that("analyte_overview works", {
 
 
 test_that("cmt_mapping works", {
-  expect_gt(nrow(cmt_mapping(examplinib_poc_nif)), 0)
-  expect_gt(nrow(cmt_mapping(examplinib_poc_min_nif)), 0)
+  expect_gt(nrow(compartments(examplinib_poc_nif)), 0)
+  expect_gt(nrow(compartments(examplinib_poc_min_nif)), 0)
 })
 
 

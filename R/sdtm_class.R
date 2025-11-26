@@ -1,22 +1,23 @@
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
 #' @param sdtm_data The SDTM domains as list of data frames.
-#' @param analyte_mapping The analyte mapping as data frame.
-#' @param metabolite_mapping The metabolite mapping as data frame.
-#' @param parent_mapping The parent mapping as data frame.
-#' @param time_mapping The time mapping as data frame.
 #'
 #' @import dplyr
 #' @return A sdtm object.
 #' @export
 new_sdtm <- function(
-    sdtm_data,
-    analyte_mapping = data.frame(),
-    metabolite_mapping = data.frame(),
-    parent_mapping = data.frame(),
-    time_mapping = data.frame()
+    sdtm_data#,
+    # analyte_mapping = data.frame(),
+    # metabolite_mapping = data.frame(),
+    # parent_mapping = data.frame(),
+    # time_mapping = data.frame()
   ) {
   domains <- sdtm_data
+
+  analyte_mapping <- data.frame()
+  metabolite_mapping <- data.frame()
+  parent_mapping <- data.frame()
+  time_mapping <- data.frame()
 
   temp <- list(
     domains = domains,
@@ -55,6 +56,7 @@ new_sdtm <- function(
 #' @param ... Further parameters.
 #' @return A sdtm_summary object.
 #' @export
+#' @keywords internal
 #' @examples
 #' summary(examplinib_poc)
 summary.sdtm <- function(object, ...) {
@@ -256,6 +258,7 @@ print.sdtm <- function(x, ...) {
 #' @param name The domain name(s) to check as a character string or vector.
 #' @return Logical indicating whether all specified domains exist in the SDTM object.
 #' @export
+#' @keywords internal
 #' @examples
 #' # Check if DM domain exists
 #' has_domain(examplinib_fe, "dm")
@@ -302,6 +305,7 @@ subject_info <- function(obj, id) {
 #'
 #' @inheritParams subject_info
 #' @export
+#' @keywords internal
 #' @examples
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
@@ -538,6 +542,7 @@ subjects.sdtm <- function(obj) {
 #'
 #' @return Character.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' analytes(examplinib_sad)
@@ -555,6 +560,7 @@ analytes.sdtm <- function(obj) {
 #'
 #' @return Numeric.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' doses(examplinib_poc)
@@ -572,6 +578,7 @@ doses.sdtm <- function(obj) {
 #'
 #' @return Character.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' treatments(examplinib_poc)
@@ -606,9 +613,10 @@ filter_subject <- function(obj, usubjid) {
 filter_subject.sdtm <- function(obj, usubjid) {
   temp <- lapply(obj$domains, function(x) filter(x, .data$USUBJID %in% usubjid))
   new_sdtm(
-    sdtm_data = temp, analyte_mapping = obj$analyte_mapping,
-    metabolite_mapping = obj$metabolite_mapping,
-    time_mapping = obj$time_mapping
+    sdtm_data = temp
+    # analyte_mapping = obj$analyte_mapping,
+    # metabolite_mapping = obj$metabolite_mapping,
+    # time_mapping = obj$time_mapping
   )
 }
 
@@ -875,6 +883,7 @@ testcd <- function(obj, domain = NULL) {
 #' @returns The XXH128 hash of the sdtm object as character.
 #' @export
 #' @importFrom rlang hash
+#' @keywords internal
 #'
 #' @examples
 #' hash(examplinib_sad)
@@ -890,6 +899,7 @@ hash.sdtm <- function(obj) {
 #'
 #' @returns A POSIXct scalar.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' last_dtc(examplinib_sad)

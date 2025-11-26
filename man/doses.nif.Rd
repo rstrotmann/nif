@@ -18,3 +18,4 @@ Doses within a NIF object
 \examples{
 doses(examplinib_poc_nif)
 }
+\keyword{internal}

@@ -19,3 +19,4 @@ A summary object
 \description{
 Summary for domain object
 }
+\keyword{internal}

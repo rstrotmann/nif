@@ -18,3 +18,4 @@ Doses in a sdtm object
 \examples{
 doses(examplinib_poc)
 }
+\keyword{internal}

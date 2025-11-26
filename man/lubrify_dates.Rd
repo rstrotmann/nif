@@ -19,3 +19,4 @@ A data frame.
 Change all columns in the input data frame that end with 'DTC' to standard
 POSIXct format.
 }
+\keyword{internal}

@@ -18,3 +18,4 @@ Treatments in a nif object
 \examples{
 treatments(examplinib_poc_nif)
 }
+\keyword{internal}

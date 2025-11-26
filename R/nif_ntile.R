@@ -1,7 +1,5 @@
 #' Add n-tiles (quantiles) for a specified column across all subjects
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This function calculates n-tiles for a specified column's values across all
 #' subjects. The quantiles are calculated across all subjects, and each subject
 #' gets the same n-tile value across all their rows. The input column must have

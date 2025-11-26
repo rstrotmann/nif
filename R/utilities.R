@@ -369,6 +369,7 @@ isofy_date_format <- function(obj, fields = NULL) {
 #'
 #' @return A data frame.
 #' @export
+#' @keywords internal
 lubrify_dates <- function(obj, col = NULL) {
   # input validation
   if(!is.data.frame(obj)) {
@@ -427,6 +428,7 @@ isofy_dates <- function(obj) {
 #' @param x The input as character.
 #' @return Boolean.
 #' @export
+#' @keywords internal
 #' @examples
 #' is_iso_date_time("2023-09-27T15:04")
 #' is_iso_date_time("2023-09-27T15:04:00")
@@ -514,6 +516,7 @@ compose_dtc <- function(date, time) {
 #'
 #' @return A data frame.
 #' @export
+#' @keywords internal
 decompose_dtc <- function(obj, DTC_field) {
   # input validation
     if(!is.data.frame(obj)) {
@@ -800,6 +803,7 @@ trialday_to_day <- function(x) {
 #'
 #' @return Logical value indicating whether the string is in ISO 8601 date-time format.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' is_iso8601_datetime("2023-10-15T14:30:00")        # TRUE
@@ -891,6 +895,7 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
 #'
 #' @return Logical value indicating whether the string is in ISO 8601 date format.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' is_iso8601_date("2023-10-15")                  # TRUE

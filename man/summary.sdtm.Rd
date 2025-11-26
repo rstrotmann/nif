@@ -39,3 +39,4 @@ respective unique USUBJID, as data frame,
 \examples{
 summary(examplinib_poc)
 }
+\keyword{internal}

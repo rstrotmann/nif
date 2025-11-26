@@ -84,6 +84,7 @@ nif_pinboard <- function(path = NULL) {
 #'
 #' @returns Nothing.
 #' @export
+#' @keywords internal
 pin_write <- function(
     obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
     silent = NULL) {
@@ -237,6 +238,7 @@ pb_write.nif <- function(
 #' @returns A sdtm object.
 #' @importFrom pins board_folder pin_read
 #' @export
+#' @keywords internal
 pin_read_sdtm <- function(name, board = NULL) {
   lifecycle::deprecate_warn("0.56.3", "pin_read_sdtm()", "pb_read_sdtm()")
   pb_read_sdtm(name, board = board)
@@ -282,6 +284,7 @@ pb_read_sdtm <- function(name, board = NULL) {
 #'
 #' @returns A nif object.
 #' @export
+#' @keywords internal
 pin_read_nif <- function(name, board = NULL) {
   lifecycle::deprecate_warn("0.56.3", "pin_read_nif()", "pb_read_nif()")
 
@@ -352,6 +355,7 @@ pb_list_object <- function(board = NULL, object_type) {
 #'
 #' @returns A data frame.
 #' @export
+#' @keywords internal
 pin_list_sdtm <- function(board = NULL) {
   lifecycle::deprecate_warn("0.56.3", "pin_list_sdtm()", "pb_list_sdtm()")
   pb_list_object(board, "sdtm")
@@ -384,6 +388,7 @@ pb_list_sdtm <- function(board = NULL) {
 #'
 #' @returns A data frame.
 #' @export
+#' @keywords internal
 pin_list_nif <- function(board = NULL) {
   lifecycle::deprecate_warn("0.56.3", "pin_list_nif()", "pb_list_nif()")
   pb_list_object(board, "nif")

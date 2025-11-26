@@ -18,3 +18,4 @@ Unique subjects within a NIF object
 \examples{
 subjects(examplinib_fe_nif)
 }
+\keyword{internal}

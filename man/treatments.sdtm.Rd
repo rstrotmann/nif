@@ -18,3 +18,4 @@ Treatments in a sdtm object
 \examples{
 treatments(examplinib_poc)
 }
+\keyword{internal}

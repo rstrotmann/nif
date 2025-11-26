@@ -41,3 +41,4 @@ Nothing.
 
 This function is deprecated, please use \code{\link[=pb_write]{pb_write()}} instead!
 }
+\keyword{internal}

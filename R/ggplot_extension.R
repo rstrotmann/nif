@@ -8,6 +8,7 @@
 #'   'admin' should be a logical or numeric column indicating administration
 #'   events (1 or TRUE for administrations, 0 or FALSE otherwise).
 #' @import ggplot2
+#' @keywords internal
 #' @format NULL
 #' @usage NULL
 StatAdmin <- ggplot2::ggproto(
@@ -98,6 +99,7 @@ StatAdmin <- ggplot2::ggproto(
 #'
 #' @import ggplot2
 #' @export
+#' @keywords internal
 stat_admin <- function(
     mapping = NULL,
     data = NULL,
@@ -152,6 +154,7 @@ stat_admin <- function(
 #'   defaults for administration lines.
 #' @format NULL
 #' @usage NULL
+#' @keywords internal
 GeomAdmin <- ggplot2::ggproto(
   "GeomAdmin", ggplot2::GeomVline,
   default_aes = ggplot2::aes(
@@ -195,6 +198,7 @@ GeomAdmin <- ggplot2::ggproto(
 #'
 #' @import ggplot2
 #' @export
+#' @keywords internal
 geom_admin <- function(
     mapping = NULL,
     data = NULL,

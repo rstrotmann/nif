@@ -20,3 +20,4 @@ A data frame.
 \details{
 This function is deprecated, please use \code{\link[=pb_list_nif]{pb_list_nif()}} instead.
 }
+\keyword{internal}

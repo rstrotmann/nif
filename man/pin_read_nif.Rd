@@ -23,3 +23,4 @@ This function is deprecated. Please use pb_read_nif() instead!
 \details{
 This function is deprecated, please use \code{\link[=pb_read_nif]{pb_read_nif()}} instead.
 }
+\keyword{internal}

@@ -15,3 +15,4 @@ A domain object.
 \description{
 Class constructor for domain objects
 }
+\keyword{internal}

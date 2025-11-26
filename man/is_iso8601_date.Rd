@@ -39,3 +39,4 @@ is_iso8601_date("2023-10", FALSE)              # FALSE (with allow_reduced_preci
 is_iso8601_date("2023/10/15")                  # FALSE (not ISO 8601 format)
 is_iso8601_date("2023-10-15T14:30:00")         # FALSE (has time component)
 }
+\keyword{internal}

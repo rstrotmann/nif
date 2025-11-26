@@ -18,3 +18,4 @@ Generate the XXH128 hash of a nif object
 \examples{
 hash(examplinib_sad_nif)
 }
+\keyword{internal}

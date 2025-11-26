@@ -153,10 +153,10 @@ print.nif <- function(x, color = FALSE, ...) {
 
     cat("\nColumns:\n")
     cat(str_wrap(paste(names(x), collapse = ", "),
-                 width = 80, indent = 2, exdent = 2), "\n")
+                 width = 80, indent = 2, exdent = 2), "\n\n")
 
     # version hash
-    cat(paste0("\nHash: ", hash(x), "\n"))
+    cat(str_glue("\nHash: {hash(x)}\n\n"))
 
     temp <- x %>%
       as.data.frame() %>%
@@ -278,6 +278,7 @@ subjects <- function(obj) {
 #' @import dplyr
 #' @return A data frame of all ID - USUBJID pairs in the data set.
 #' @export
+#' @keywords internal
 #' @examples
 #' subjects(examplinib_fe_nif)
 subjects.nif <- function(obj) {
@@ -477,6 +478,7 @@ doses <- function(obj) {
 #' @import dplyr
 #' @return A number vector of all doses (AMT) in the data set.
 #' @export
+#' @keywords internal
 #' @examples
 #' doses(examplinib_poc_nif)
 doses.nif <- function(obj) {
@@ -570,6 +572,7 @@ analytes <- function(obj) {
 #' @import dplyr
 #' @return Character.
 #' @export
+#' @noRd
 #' @examples
 #' analytes(examplinib_fe_nif)
 #' analytes(examplinib_poc_nif)
@@ -612,6 +615,7 @@ analyte_overview <- function(obj) {
 #' @import dplyr
 #' @return Character.
 #' @export
+#' @keywords internal
 #' @examples
 #' analytes(examplinib_fe_nif)
 #' analytes(examplinib_poc_nif)
@@ -627,13 +631,38 @@ analytes.data.frame <- function(obj) {
 
 #' Analyte - compartment mapping
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
 #' @param obj A NIF object
 #' @return A data frame
 #' @export
+#' @keywords internal
 #' @examples
 #' cmt_mapping(examplinib_poc_nif)
 #' cmt_mapping(examplinib_poc_min_nif)
 cmt_mapping <- function(obj) {
+  lifecycle::deprecate_warn("0.57.11", "cmt_mapping()", "compartments()")
+
+  obj %>%
+    ensure_analyte() %>%
+    filter(.data$EVID == 0) %>%
+    distinct(across(any_of(c("ANALYTE", "CMT")))) %>%
+    as.data.frame()
+}
+
+
+#' Compartments used in a nif object
+#'
+#' @param obj A NIF object
+#' @return A data frame
+#' @export
+#' @examples
+#' compartments(examplinib_poc_nif)
+#' compartments(examplinib_poc_min_nif)
+compartments <- function(obj) {
+  validate_nif(obj)
+
   obj %>%
     ensure_analyte() %>%
     filter(.data$EVID == 0) %>%
@@ -659,6 +688,7 @@ treatments <- function(obj) {
 #'
 #' @return Character.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' treatments(examplinib_poc_nif)
@@ -1150,9 +1180,6 @@ add_obs_per_dosing_interval <- function(obj) {
 
 #' Identify and index rich PK sampling intervals
 #'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#'
 #' Currently experimental. Don't use in production!
 #'
 #' Adds the fields `DI` (dosing interval per analyte), `RICHINT` (rich sampling
@@ -1220,11 +1247,11 @@ filter_subject.nif <- function(obj, usubjid) {
 }
 
 
-#' Generic hash function
+#' Hash function for nif, sdtm or domain objects
 #'
-#' @param obj A nif object.
+#' @param obj A nif, sdtm or domain object.
 #'
-#' @return The XXH128 hash of the nif object as character.
+#' @return The XXH128 hash of the object as character.
 #' @export
 hash <- function(obj) {
   UseMethod("hash")
@@ -1238,6 +1265,7 @@ hash <- function(obj) {
 #' @returns The XXH128 hash of the nif object as character.
 #' @export
 #' @importFrom rlang hash
+#' @keywords internal
 #'
 #' @examples
 #' hash(examplinib_sad_nif)
@@ -1264,6 +1292,7 @@ last_dtc <- function(obj) {
 #'
 #' @returns A POSIXct scalar.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' last_dtc(examplinib_sad_nif)

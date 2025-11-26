@@ -15,3 +15,4 @@ The XXH128 hash of the nif object as character.
 \description{
 Generate the XXH128 hash of a SDTM domain object
 }
+\keyword{internal}

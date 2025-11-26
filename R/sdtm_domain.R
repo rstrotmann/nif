@@ -33,6 +33,7 @@ domain <- function(obj, name) {
 #' @param domain_data A data.frame.
 #'
 #' @returns A domain object.
+#' @keywords internal
 new_domain <- function(
     domain_data
 ) {
@@ -49,6 +50,7 @@ new_domain <- function(
 #'
 #' @returns A summary object
 #' @export
+#' @keywords internal
 summary.domain <- function(object, ..., silent = NULL) {
   # validate input
   if (!inherits(object, "data.frame")) {
@@ -304,6 +306,7 @@ plot.domain <- function(
 #'
 #' @returns The XXH128 hash of the nif object as character.
 #' @export
+#' @keywords internal
 #' @importFrom rlang hash
 hash.domain <- function(obj) {
   # validate input
@@ -321,6 +324,7 @@ hash.domain <- function(obj) {
 #'
 #' @returns A POSIXct scalar.
 #' @export
+#' @keywords internal
 #'
 #' @examples
 #' last_dtc(examplinib_sad_nif)

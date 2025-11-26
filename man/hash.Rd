@@ -2,16 +2,16 @@
 % Please edit documentation in R/nif_class.R
 \name{hash}
 \alias{hash}
-\title{Generic hash function}
+\title{Hash function for nif, sdtm or domain objects}
 \usage{
 hash(obj)
 }
 \arguments{
-\item{obj}{A nif object.}
+\item{obj}{A nif, sdtm or domain object.}
 }
 \value{
-The XXH128 hash of the nif object as character.
+The XXH128 hash of the object as character.
 }
 \description{
-Generic hash function
+Hash function for nif, sdtm or domain objects
 }

@@ -20,3 +20,4 @@ A data frame.
 \details{
 This function is deprecated, please use \code{\link[=pb_list_sdtm]{pb_list_sdtm()}} instead.
 }
+\keyword{internal}

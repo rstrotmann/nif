@@ -22,3 +22,4 @@ A sdtm object.
 \details{
 This function is deprecated, please use \code{\link[=pb_read_sdtm]{pb_read_sdtm()}} instead.
 }
+\keyword{internal}

@@ -4,24 +4,10 @@
 \alias{new_sdtm}
 \title{SDTM class constructor, creating a sdtm object from a set of SDTM domains}
 \usage{
-new_sdtm(
-  sdtm_data,
-  analyte_mapping = data.frame(),
-  metabolite_mapping = data.frame(),
-  parent_mapping = data.frame(),
-  time_mapping = data.frame()
-)
+new_sdtm(sdtm_data)
 }
 \arguments{
 \item{sdtm_data}{The SDTM domains as list of data frames.}
-
-\item{analyte_mapping}{The analyte mapping as data frame.}
-
-\item{metabolite_mapping}{The metabolite mapping as data frame.}
-
-\item{parent_mapping}{The parent mapping as data frame.}
-
-\item{time_mapping}{The time mapping as data frame.}
 }
 \value{
 A sdtm object.
