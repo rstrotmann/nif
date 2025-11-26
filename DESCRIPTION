@@ -1,6 +1,6 @@
 Package: nif
 Title: Build and Explore NONMEM Input Format Data Sets from Clinical Study Data
-Version: 0.57.10
+Version: 0.57.11
 Authors@R: 
     person("Rainer", "Strotmann", email = "rainer.strotmann@mailbox.org",
     role = c("aut", "cre", "cph"),
