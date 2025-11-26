@@ -6,7 +6,7 @@
 #'
 #' @return Invisibly returns TRUE if validation passes, or stops with an error
 #'  if required columns are missing.
-#' @export
+#' @noRd
 #'
 #' @examples
 #' validate_domain(domain(examplinib_sad, "dm"))
@@ -101,7 +101,7 @@ validate_domain <- function(domain, silent = NULL) {
 #'
 #' @return Invisibly returns TRUE if validation passes, or stops with an error
 #'  if required columns are missing.
-#' @export
+#' @noRd
 validate_sdtm_domains <- function(sdtm, silent = NULL) {
   for(d in sdtm$domains) {
     validate_domain(d, silent = silent)
@@ -115,6 +115,7 @@ validate_sdtm_domains <- function(sdtm, silent = NULL) {
 #' @param expected_domains Expected domains as character.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 validate_sdtm <- function(
     obj,
     expected_domains = NULL) {
@@ -152,6 +153,7 @@ validate_sdtm <- function(
 #' @param allow_na Allow NA value, as logical.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 validate_param <- function(
     type = c("string", "logical", "numeric"),
     param,
@@ -210,6 +212,7 @@ validate_param <- function(
 #' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 validate_char_param <- function(
     param,
     param_name,
@@ -234,6 +237,7 @@ validate_char_param <- function(
 #' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 validate_logical_param <- function(
     param,
     param_name,
@@ -259,6 +263,7 @@ validate_logical_param <- function(
 #' @param allow_na Allow NA values, as logical.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 validate_numeric_param <- function(
     param,
     param_name,
@@ -282,6 +287,7 @@ validate_numeric_param <- function(
 #' @param obj A nif object.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 #'
 validate_nif <- function(obj) {
   if (!inherits(obj, "nif")) {
@@ -295,6 +301,7 @@ validate_nif <- function(obj) {
 #' @param obj A domain object.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 validate_domain_param <- function(obj) {
   if(!inherits(obj, "domain")) {
     stop("Input must be a domain object")
@@ -309,6 +316,7 @@ validate_domain_param <- function(obj) {
 #' @param additional_fields Additional required fields as character.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 #'
 validate_min_nif <- function(obj, additional_fields = NULL) {
   validate_nif(obj)
@@ -331,6 +339,7 @@ validate_min_nif <- function(obj, additional_fields = NULL) {
 #' @param sdtm A sdtm object.
 #' @param testcd Testcode to validate as character.
 #' @param domain Domain as character
+#' @noRd
 #'
 #' @returns Validated testcode(s) as character.
 validate_testcd <- function(sdtm, testcd, domain = NULL) {
@@ -376,6 +385,7 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
 #' @param allow_multiple Allow vector of the specified type, as logical.
 #'
 #' @returns Nothing or stop.
+#' @noRd
 validate_analyte <- function(
     nif,
     analyte,

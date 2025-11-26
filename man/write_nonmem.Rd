@@ -22,25 +22,31 @@ file is printed only.}
 \item{fields}{The fields to export. If NULL (default), all fields will be
 exported.}
 
-\item{sep}{The separating character, e.g. ',' or ';'. If NULL (default), the}
+\item{sep}{The separating character, e.g. ',' or ';'. If NULL (default), the
+output has a space-separated, fixed-width format.}
 
 \item{numeric_fields_only}{Include only numerical fields.}
 
-\item{dot_columns}{Fields in which zeros will be replaced with ".".
-output has a space-separated, fixed-width format.}
+\item{dot_columns}{Fields in which zeros will be replaced with ".".}
 }
 \value{
 Nothing.
 }
 \description{
-Write as space-delimited, fixed-width file as required by NONMEM or a
-character-separated file.
+Write as space-delimited, fixed-width or a character-separated file. If the
+'numeric_fields_only' argument is TRUE, only columns that are numeric will be
+exported.
 }
 \details{
 All numeric fields are reduced to 4 significant places. For this, IEC 60559
 is applied, i.e., rounding for a last digit of 5 is to the next even number.
 All fields are converted to character, and NA-values are converted to '.'.
+
+Further, in the columns specified by the 'dot_columns' argument, zero values
+are also converted to '.'.
 }
 \examples{
 head(write_nonmem(examplinib_fe_nif), 5)
+head(write_nonmem(examplinib_fe_nif, numeric_fields_only = TRUE), 5)
+head(write_nonmem(examplinib_fe_nif, dot_columns = c("DV", "AMT")), 5)
 }
