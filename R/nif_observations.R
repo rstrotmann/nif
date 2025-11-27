@@ -228,7 +228,8 @@ make_ntime <- function(
 #' @param testcd The observation variable, as character.
 #' @param analyte The name for the analyte. Defaults to the 'testcd', if NULL.
 #' @param parent The name of the parent analyte for the observation as
-#'   character. Defaults to the value of 'analyte' if NULL.
+#'   character. Defaults to the respective treatment administered before the
+#'   observation, if NULL.
 #' @param metabolite Observation is a metabolite, as logical.
 #' @param cmt The compartment for the observation as numeric.
 #' @param subject_filter The filtering to apply to the DM domain.
@@ -461,7 +462,7 @@ make_observation <- function(
       PARENT = parent,
       METABOLITE = metabolite,
       EVID = 0,
-      MDV = as.numeric(is.na(DV)),
+      MDV = as.numeric(is.na(.data$DV)),
       IMPUTATION = "")
 
   join_variables <- intersect(names(NTIME_lookup), names(obj))
@@ -627,21 +628,29 @@ add_observation <- function(
   if(is.null(analyte))
     analyte <- testcd
 
-  if(is.null(parent)) {
-    if(analyte %in% treatments(nif)) {
-      parent <- analyte
-    } else {
-      parent <- guess_parent(nif)
-      if(is.null(parent)) {
-        stop(paste0(
-          "A parent could not be automatically determined. ",
-          "Please specify a parent value explicitly."))
-      }
-      conditional_message(
-        "Parent for ", analyte, " not specified and set to ", parent,
-        silent = silent)
-    }
-  }
+  # if(is.null(parent)) {
+  #   if(analyte %in% treatments(nif)) {
+  #     parent <- analyte
+  #   } else {
+  #     parent <- guess_parent(nif)
+  #     if(is.null(parent)) {
+  #       stop(paste0(
+  #         "A parent could not be automatically determined. ",
+  #         "Please specify a parent value explicitly."))
+  #     }
+  #     conditional_message(
+  #       "Parent for ", analyte, " not specified and set to ", parent,
+  #       silent = silent)
+  #   }
+  # }
+
+
+  # If null, set parent to placeholder. The parent field will be later completed based on
+  # the last administration before the observation
+  if(is.null(parent))
+    parent <- "."
+
+
 
   observation <- make_observation(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
@@ -701,6 +710,16 @@ add_observation <- function(
   obj <- bind_rows(nif, observation) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+
+    ## now fill the parent placeholders from the last administration above
+    mutate(PARENT = case_when(PARENT == "." ~ NA, .default = PARENT)) %>%
+    mutate(.current_admin = case_when(EVID == 1 ~ ANALYTE, .default = NA)) %>%
+    group_by(.data$USUBJID) %>%
+    fill(.data$.current_admin, .direction = "downup") %>%
+    ungroup() %>%
+    mutate(PARENT = case_when(is.na(PARENT) ~ .current_admin, .default = PARENT)) %>%
+    select(-c(".current_admin")) %>%
+
     group_by(.data$USUBJID, .data$PARENT) %>%
     mutate(NO_ADMIN_FLAG = case_when(
       sum(EVID == 1) == 0 ~ TRUE,

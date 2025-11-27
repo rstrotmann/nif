@@ -82,13 +82,12 @@ test_that("add_observation auto-assigns parent if not specified", {
     add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
 
   # Different observation analyte without specifying parent
-  expect_message(
-    nif_with_obs <- base_nif %>%
-      add_observation(
-        examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT", cmt = 2,
-        silent = FALSE),
-    "Parent for DIFFERENT not specified and set to RS2023"
-  )
+  nif_with_obs <- base_nif %>%
+    add_observation(
+      examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT", cmt = 2,
+      silent = FALSE)
+
+  expect_equal(unique(filter(nif_with_obs, ANALYTE == "DIFFERENT")$PARENT), "RS2023")
 })
 
 

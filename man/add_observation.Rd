@@ -47,7 +47,8 @@ domain the observations come from.}
 \item{analyte}{The name for the analyte. Defaults to the 'testcd', if NULL.}
 
 \item{parent}{The name of the parent analyte for the observation as
-character. Defaults to the value of 'analyte' if NULL.}
+character. Defaults to the respective treatment administered before the
+observation, if NULL.}
 
 \item{metabolite}{Observation is a metabolite, as logical.}
 
