@@ -245,6 +245,10 @@ plot.nif <- function(
 
   admin_data <- filter(plot_data, EVID == 1)
 
+  if(is.null(caption) & nif_option_value("show_hash") == TRUE)
+    caption = paste0("dataset hash: ", hash(x))
+
+
   p <- plot_data %>%
     filter(EVID == 0) %>%
     filter(!is.na(DV)) %>%

@@ -2,6 +2,7 @@
 
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
+assign("show_hash", FALSE, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
 #assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
 
@@ -16,6 +17,7 @@ assign("version", packageVersion("nif"), envir = .nif_env)
 #' * `watermark` as character: Watermark text on all figures.
 #' * `pinboard` as character: Pinboard path for sharing of nif/sdtm objects.
 #' * `debug` as logical: Print debug information.
+#' * `show_hash` as logical: Include dataset hash in figures.
 #'
 #' @param ... Options as named values, or nothing.
 #'
@@ -32,6 +34,7 @@ nif_option <- function(...) {
     "silent",     is.logical,
     "watermark",  is.character,
     "debug",      is.logical,
+    "show_hash",  is.logical,
     "test",       is.character
     # "disclaimer", is.character
   )

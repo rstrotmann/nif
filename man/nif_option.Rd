@@ -20,6 +20,7 @@ supported:
 \item \code{watermark} as character: Watermark text on all figures.
 \item \code{pinboard} as character: Pinboard path for sharing of nif/sdtm objects.
 \item \code{debug} as logical: Print debug information.
+\item \code{show_hash} as logical: Include dataset hash in figures.
 }
 }
 \examples{

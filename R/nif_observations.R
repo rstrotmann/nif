@@ -715,7 +715,7 @@ add_observation <- function(
     mutate(PARENT = case_when(PARENT == "." ~ NA, .default = PARENT)) %>%
     mutate(.current_admin = case_when(EVID == 1 ~ ANALYTE, .default = NA)) %>%
     group_by(.data$USUBJID) %>%
-    fill(.data$.current_admin, .direction = "downup") %>%
+    fill(".current_admin", .direction = "downup") %>%
     ungroup() %>%
     mutate(PARENT = case_when(is.na(PARENT) ~ .current_admin, .default = PARENT)) %>%
     select(-c(".current_admin")) %>%
