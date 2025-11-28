@@ -222,7 +222,9 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' NIF object overview
 #'
 #' @param object The NIF object.
+#' @param sampling Include sampling summary.
 #' @param ... Further arguments.
+#'
 #' @return A summary_nif object.
 #' @export
 #' @import tidyr
@@ -231,9 +233,13 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' summary(examplinib_poc_nif)
 #' summary(examplinib_poc_min_nif)
 #' summary(new_nif())
-summary.nif <- function(object, ...) {
+summary.nif <- function(
+    object,
+    sampling = TRUE,
+    ...) {
   # input validation
   validate_min_nif(object)
+  validate_logical_param(sampling, "sampling")
 
   # Validate data is not empty
   if (nrow(object) == 0) {
@@ -340,9 +346,9 @@ summary.nif <- function(object, ...) {
   }
 
   # sampling overview
-  sampling <- NULL
-  if("NTIME" %in% names(object))
-    sampling <- sampling_summary(object)
+  sampling_table <- NULL
+  if("NTIME" %in% names(object) & sampling == TRUE)
+    sampling_table <- sampling_summary(object)
 
   out <- list(
     nif = object,
@@ -362,7 +368,7 @@ summary.nif <- function(object, ...) {
     renal_function = renal_function,
     odwg = odwg,
     administration_duration = administration_summary(object),
-    sampling = sampling,
+    sampling = sampling_table,
     hash = hash(object),
     last = last_dtc(object)
   )
@@ -380,7 +386,13 @@ summary.nif <- function(object, ...) {
 #' @noRd
 #' @return Nothing.
 #' @export
-print.summary_nif <- function(x, color = FALSE, ...) {
+print.summary_nif <- function(
+    x,
+    color = FALSE,
+    ...) {
+  # input validation
+  validate_logical_param(color, "color")
+
   indent = 2
   spacer = paste(replicate(indent, " "), collapse = "")
   hline <- "-----"
