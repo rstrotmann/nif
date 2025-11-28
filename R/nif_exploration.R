@@ -255,6 +255,7 @@ summary.nif <- function(object, ...) {
       renal_function = NULL,
       odwg = NULL,
       administration_duration = NULL,
+      sampling = NULL,
       hash = NULL,
       last = NULL
     )
@@ -338,6 +339,11 @@ summary.nif <- function(object, ...) {
     odwg = NULL
   }
 
+  # sampling overview
+  sampling <- NULL
+  if("NTIME" %in% names(object))
+    sampling <- sampling_summary(object)
+
   out <- list(
     nif = object,
     studies = studies(object),
@@ -356,6 +362,7 @@ summary.nif <- function(object, ...) {
     renal_function = renal_function,
     odwg = odwg,
     administration_duration = administration_summary(object),
+    sampling = sampling,
     hash = hash(object),
     last = last_dtc(object)
   )
@@ -437,13 +444,18 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat(paste0(df_to_string(x$n_obs, color=color, indent = indent), "\n\n"))
 
   # sampling overview
-  tryCatch({
-    temp <- sampling_summary(x$nif)
+  # tryCatch({
+  #   temp <- sampling_summary(x$nif)
+  #   cat("Sampling schedule:\n")
+  #   cat(df_to_string(temp, indent = indent))
+  #   cat("\n\n")
+  #   }, error = function(msg){}
+  # )
+  if(!is.null(x$sampling)) {
     cat("Sampling schedule:\n")
-    cat(df_to_string(temp, indent = indent))
+    cat(df_to_string(x$sampling, indent = indent))
     cat("\n\n")
-  }, error = function(msg){}
-  )
+  }
 
   dr_summary <- lapply(x$dose_red_sbs, nrow) %>%
     data.frame()
@@ -455,7 +467,8 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat(df_to_string(x$administration_duration, color=color, indent = indent))
 
   cat(paste0("\n\nHash: ", x$hash))
-  cat(paste0("\nLast DTC: ", x$last))
+  if(!is.null(x$last))
+    cat(paste0("\nLast DTC: ", x$last))
   invisible(x)
 }
 
