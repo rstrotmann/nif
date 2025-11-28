@@ -444,13 +444,6 @@ print.summary_nif <- function(x, color = FALSE, ...) {
   cat(paste0(df_to_string(x$n_obs, color=color, indent = indent), "\n\n"))
 
   # sampling overview
-  # tryCatch({
-  #   temp <- sampling_summary(x$nif)
-  #   cat("Sampling schedule:\n")
-  #   cat(df_to_string(temp, indent = indent))
-  #   cat("\n\n")
-  #   }, error = function(msg){}
-  # )
   if(!is.null(x$sampling)) {
     cat("Sampling schedule:\n")
     cat(df_to_string(x$sampling, indent = indent))

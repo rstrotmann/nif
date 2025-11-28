@@ -4,7 +4,15 @@
 \alias{plot.domain}
 \title{Plot domain object}
 \usage{
-\method{plot}{domain}(x, testcd = NULL, points = TRUE, lines = FALSE, legend = TRUE, ...)
+\method{plot}{domain}(
+  x,
+  testcd = NULL,
+  points = TRUE,
+  lines = FALSE,
+  legend = TRUE,
+  color = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A domain object.}
@@ -16,6 +24,8 @@
 \item{lines}{Plot lines, as logical.}
 
 \item{legend}{Plot legend, as logical.}
+
+\item{color}{Field to color points and lines by.}
 
 \item{...}{Further parameters.}
 }

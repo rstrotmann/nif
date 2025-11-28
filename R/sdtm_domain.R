@@ -191,6 +191,7 @@ print.summary_domain <- function(x, ...) {
 #' @param points Plot points, as logical.
 #' @param lines Plot lines, as logical.
 #' @param legend Plot legend, as logical.
+#' @param color Field to color points and lines by.
 #'
 #' @returns A ggplot2 object.
 #' @export
@@ -198,14 +199,25 @@ print.summary_domain <- function(x, ...) {
 #' @examples
 #' plot(domain(examplinib_sad, "lb"))
 plot.domain <- function(
-    x, testcd = NULL, points = TRUE, lines = FALSE,
-    legend = TRUE, ...) {
+    x,
+    testcd = NULL,
+    points = TRUE,
+    lines = FALSE,
+    legend = TRUE,
+    color = NULL,
+    ...) {
   # input validation
   validate_domain_param(x)
   validate_char_param(testcd, "testcd", allow_null = TRUE)
   validate_logical_param(points, "points")
   validate_logical_param(lines, "lines")
   validate_logical_param(legend, "legend")
+  validate_char_param(color, allow_null = TRUE)
+
+  if(!is.null(color)) {
+    if(!color %in% names(x))
+      stop(paste0("Color field ", color, " not in domain!"))
+  }
 
   # fields
   domain <- toupper(unique(x$DOMAIN))
@@ -235,13 +247,27 @@ plot.domain <- function(
       arrange(.data$RFSTDTC) %>%
       mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
       ggplot2::ggplot() +
-      ggplot2::geom_segment(ggplot2::aes(
-        x = .data$RFSTDTC,
-        xend = .data$RFENDTC,
-        y = .data$ID,
-        yend = .data$ID)) +
-      {if(points == TRUE) {ggplot2::geom_point(ggplot2::aes(
-        x = .data$RFSTDTC, y = .data$ID))}} +
+
+      {if(!is.null(color))
+          ggplot2::geom_segment(ggplot2::aes(
+            x = .data$RFSTDTC, xend = .data$RFENDTC,
+            y = .data$ID, yend = .data$ID,
+            color = .data[[color]]))
+        else
+          ggplot2::geom_segment(ggplot2::aes(
+            x = .data$RFSTDTC, xend = .data$RFENDTC,
+            y = .data$ID, yend = .data$ID))
+      } +
+
+      {if(points == TRUE) {
+        if(!is.null(color))
+          ggplot2::geom_point(ggplot2::aes(
+            x = .data$RFSTDTC, y = .data$ID, color = .data[[color]]))
+        else
+          ggplot2::geom_point(ggplot2::aes(
+            x = .data$RFSTDTC, y = .data$ID))
+      }} +
+
       ggplot2::scale_y_discrete(
         labels = NULL, breaks = NULL, name = "USUBJID") +
       ggplot2::scale_x_datetime(
