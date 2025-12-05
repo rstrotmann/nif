@@ -397,6 +397,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
     "1",    "PC", "A", "2023-01-01 12:00:00",       200,
     "1",    "PC", "A", "2023-01-01 08:00:00",        NA,
     "1",    "PC", "A", "2023-01-01 12:00:00",       400,
+
     "2",    "PC", "A", "2023-01-01 08:00:00",       500,
     "2",    "PC", "A", "2023-01-01 12:00:00",        NA,
     "2",    "PC", "A", "2023-01-01 08:00:00",       700,
@@ -438,6 +439,6 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
   obs_1_8am_no_rm <- nif_without_na_rm %>%
     filter(USUBJID == "1" & EVID == 0 & format(DTC, "%H:%M") == "08:00") %>%
     pull(DV)
-  expect_true(is.na(obs_1_8am_no_rm))
+  expect_equal(obs_1_8am_no_rm, 100)
 })
 

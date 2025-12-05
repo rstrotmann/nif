@@ -745,9 +745,15 @@ wt_by_sex <- function(obj) {
     ggplot2::ggplot(ggplot2::aes(x = SEX, y = bl_wt, group = SEX)) +
     ggplot2::scale_x_continuous(breaks = c(0, 1)) +
     ggplot2::geom_boxplot(width = 0.5) +
-    ggplot2::geom_label(ggplot2::aes(
+    # ggplot2::geom_label(ggplot2::aes(
+    #   label = paste0("N=", count), y = maxwt + 5),
+    #   label.size = 0,
+    #   position = ggplot2::position_dodge(width = 0.75)
+    # ) +
+    ggplot2::geom_text(ggplot2::aes(
       label = paste0("N=", count), y = maxwt + 5),
-      label.size = 0, position = ggplot2::position_dodge(width = 0.75)
+      # label.size = 0,
+      position = ggplot2::position_dodge(width = 0.75)
     ) +
     ggplot2::labs(x = "sex", y = "baseline weight (kg)") +
     ggplot2::theme_bw() +
@@ -781,8 +787,11 @@ wt_by_race <- function(obj) {
     mutate(count = n()) %>%
     ggplot2::ggplot(ggplot2::aes(x = LABEL, y = bl_wt, group = LABEL)) +
     ggplot2::geom_boxplot(width = 0.5) +
-    ggplot2::geom_label(ggplot2::aes(
-      label = paste0("N=", count), y = maxwt + 5), label.size = 0
+    # ggplot2::geom_label(ggplot2::aes(
+    #   label = paste0("N=", count), y = maxwt + 5), label.size = 0
+    # ) +
+    ggplot2::geom_text(ggplot2::aes(
+      label = paste0("N=", count), y = maxwt + 5)
     ) +
     ggplot2::labs(x = "", y = "baseline weight (kg)") +
     ggplot2::theme_bw() +

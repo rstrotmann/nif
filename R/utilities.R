@@ -1088,17 +1088,51 @@ resolve_duplicates <- function(
   other_cols <- setdiff(names(df), fields)
 
   f <- function(x) {
-    if(na.rm == TRUE)
+    if(na.rm == TRUE){
       duplicate_function(x[!is.na(x)])
-    else
+    } else {
       duplicate_function(x)
+    }
   }
 
-  result <- df %>%
-    reframe(
-      !!dependent_variable := f(.data[[dependent_variable]]),
-      .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
-    ) %>% as.data.frame()
+  # result <- df %>%
+  #   reframe(
+  #     !!dependent_variable := f(.data[[dependent_variable]]),
+  #     # .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
+  #     .by = all_of(setdiff(names(df), c(dependent_variable, "REF")))
+  #   ) %>% as.data.frame()
+
+
+
+  # if the MDV (missing dependent variable) field is present in the input,
+  # exclude observations with MDV == 1 from the resolution function
+  if("MDV" %in% names(df)) {
+    result <- df %>%
+      reframe(
+        !!dependent_variable := f(
+          .data[[dependent_variable]][.data$MDV != 1]
+          ),
+        .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
+      ) %>%
+      mutate(DV = case_when(is.nan(DV) ~ NA, .default = DV)) %>%
+      mutate(MDV = as.numeric(is.na(.data$DV)))
+
+  } else {
+    result <- df %>%
+      reframe(
+        !!dependent_variable := f(
+          .data[[dependent_variable]]
+        ),
+        .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
+      )
+  }
+
+
+  # result <- result %>%
+  #   mutate(MDV = as.numeric(is.na(.data$DV)))
+  #
+  #
+
 
   return(as.data.frame(result))
 }
