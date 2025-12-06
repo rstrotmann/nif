@@ -621,13 +621,17 @@ filter_subject <- function(obj, usubjid) {
 #' @examples
 #' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 filter_subject.sdtm <- function(obj, usubjid) {
-  temp <- lapply(obj$domains, function(x) filter(x, .data$USUBJID %in% usubjid))
-  new_sdtm(
-    sdtm_data = temp
-    # analyte_mapping = obj$analyte_mapping,
-    # metabolite_mapping = obj$metabolite_mapping,
-    # time_mapping = obj$time_mapping
+  temp <- lapply(
+    obj$domains,
+    function(x) {
+      if("USUBJID" %in% names(x))
+        filter(x, .data$USUBJID %in% usubjid)
+      else
+        x
+    }
   )
+
+  return(new_sdtm(temp))
 }
 
 
