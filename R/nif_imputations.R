@@ -95,7 +95,7 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
 #' administered up to the day before the subsequent administration interval.
 #' Note that this imputation does not apply to the last administration per
 #' subject and EXTRT. For these cases, missing EXENDTC can be imputed to the
-#' global cut off date using [impute_exendtc_to_cutoff()].
+#' global cut off date using [nif::impute_exendtc_to_cutoff()].
 #'
 #' As this function conducts rather aggressive imputations, the message output
 #' is not optional, i.e., cannot be suppressed using the global 'silent' option,

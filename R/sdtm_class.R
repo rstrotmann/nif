@@ -43,14 +43,12 @@ new_sdtm <- function(
 #' * `treatments` The unique `EXTRT` as character.
 #' * `arms` The unique `ACTAMCD` and `ACTARM` as data frame.
 #' * `doses` The unique `EXTRT` and `EXDOSE` as data frame.
-#' * `specimems` The unique `PCSPEC` as character.
+#' * `specimens` The unique `PCSPEC` as character.
 #' * `analytes` The unique `PCTEST` and `PCTESTCD` as data frame.
 #' * `pc_timepoints` The unique `PCTPT` and `PCTPTNUM` as data frame.
-#' * `analyte_mapping` The analyte mapping as data frame (see
-#'   [add_analyte_mapping()]).
-#' * `metabolite_mapping` The metabolite mapping as data frame (see
-#'   [add_metabolite_mapping()]).
-#' * `time_mapping` The time mapping as data frame (see [add_time_mapping()]).
+#' * `analyte_mapping` The analyte mapping as data frame.
+#' * `metabolite_mapping` The metabolite mapping as data frame.
+#' * `time_mapping` The time mapping as data frame.
 #'
 #' @param object A SDTM object.
 #' @param ... Further parameters.

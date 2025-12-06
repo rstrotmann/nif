@@ -165,18 +165,19 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
 
 #' Auto-generate nif from sdtm object
 #'
-#' If no mapping is provided, [nif_auto()] will try to find matching treatment
-#' names in EX and PCTESTCD in PC to create a basic nif object for pharmacokinetic
-#' observations. It will fail if no EXTRT and PCTESTCD with identical names are
-#' found.
+#' If no mapping is provided, [nif::nif_auto()] will try to find matching
+#' treatment names in EX and PCTESTCD in PC to create a basic nif object for
+#' pharmacokinetic observations. It will fail if no EXTRT and PCTESTCD with
+#' identical names are found.
 #'
-#' If one or more mappings are provided as additional parameters, [nif_auto()]
-#' will create respective observations. Mappings must be provided in the form:
+#' If one or more mappings are provided as additional parameters,
+#' [nif::nif_auto()] will create respective observations. Mappings must be
+#' provided in the form:
 #'
 #' `TESTCD ~ EXTRT`
 #'
 #' where TESTCD can be any xxTESTCD from any domain xx included in the sdtm
-#' object. See [testcd()] for an overview
+#' object. See [nif::testcd()] for an overview
 #' on all analytes in all domains. Formulae can also specify multiple
 #' observations to be associated with one treatment, e.g.,
 #'
@@ -192,8 +193,8 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
 #'
 #' Note that compartments (CMT) are automatically assigned. If more control over
 #' compartments, analyte names and parent assignment is desired, stepwise
-#' creation of a nif object using [add_administration()] and [add_observation()]
-#' is recommended.
+#' creation of a nif object using [nif::add_administration()] and
+#' [nif::add_observation()] is recommended.
 #'
 #' @inheritParams add_observation
 #' @param baseline_filter A filter term to identify the baseline condition, as

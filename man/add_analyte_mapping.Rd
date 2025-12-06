@@ -21,7 +21,7 @@ A SDTM object.
 \description{
 In some studies, multiple drugs are co-administered, and there may be analyte
 data related to different parent drugs. In order to appropriately correlate
-observations with administrations, the \code{\link[=nif_auto]{nif_auto()}} function needs to know
+observations with administrations, the nif_auto function needs to know
 which analyte (\code{PCTESTCD}) belongs to which drug (\code{EXTRT}). Multiple mappings
 can be provided.
 }

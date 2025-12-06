@@ -55,13 +55,14 @@ A nif object.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
-If no mapping is provided, \code{\link[=nif_auto]{nif_auto()}} will try to find matching treatment
-names in EX and PCTESTCD in PC to create a basic nif object for pharmacokinetic
-observations. It will fail if no EXTRT and PCTESTCD with identical names are
-found.
+If no mapping is provided, \code{\link[=nif_auto]{nif_auto()}} will try to find matching
+treatment names in EX and PCTESTCD in PC to create a basic nif object for
+pharmacokinetic observations. It will fail if no EXTRT and PCTESTCD with
+identical names are found.
 
-If one or more mappings are provided as additional parameters, \code{\link[=nif_auto]{nif_auto()}}
-will create respective observations. Mappings must be provided in the form:
+If one or more mappings are provided as additional parameters,
+\code{\link[=nif_auto]{nif_auto()}} will create respective observations. Mappings must be
+provided in the form:
 
 \code{TESTCD ~ EXTRT}
 
@@ -82,8 +83,8 @@ analyte for the 'EXAMPLINIB' treatment parent compound.
 
 Note that compartments (CMT) are automatically assigned. If more control over
 compartments, analyte names and parent assignment is desired, stepwise
-creation of a nif object using \code{\link[=add_administration]{add_administration()}} and \code{\link[=add_observation]{add_observation()}}
-is recommended.
+creation of a nif object using \code{\link[=add_administration]{add_administration()}} and
+\code{\link[=add_observation]{add_observation()}} is recommended.
 }
 \examples{
 nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)

@@ -26,14 +26,12 @@ respective unique USUBJID, as data frame,
 \item \code{treatments} The unique \code{EXTRT} as character.
 \item \code{arms} The unique \code{ACTAMCD} and \code{ACTARM} as data frame.
 \item \code{doses} The unique \code{EXTRT} and \code{EXDOSE} as data frame.
-\item \code{specimems} The unique \code{PCSPEC} as character.
+\item \code{specimens} The unique \code{PCSPEC} as character.
 \item \code{analytes} The unique \code{PCTEST} and \code{PCTESTCD} as data frame.
 \item \code{pc_timepoints} The unique \code{PCTPT} and \code{PCTPTNUM} as data frame.
-\item \code{analyte_mapping} The analyte mapping as data frame (see
-\code{\link[=add_analyte_mapping]{add_analyte_mapping()}}).
-\item \code{metabolite_mapping} The metabolite mapping as data frame (see
-\code{\link[=add_metabolite_mapping]{add_metabolite_mapping()}}).
-\item \code{time_mapping} The time mapping as data frame (see \code{\link[=add_time_mapping]{add_time_mapping()}}).
+\item \code{analyte_mapping} The analyte mapping as data frame.
+\item \code{metabolite_mapping} The metabolite mapping as data frame.
+\item \code{time_mapping} The time mapping as data frame.
 }
 }
 \examples{

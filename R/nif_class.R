@@ -1082,8 +1082,8 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' Add baseline lean body mass (LBM)
 #'
 #' @param obj A nif object.
-#' @param method The function to calculate LBM, i.e., [lbm_boer()],
-#' [lbm_hume()] or [lbm_peters()].
+#' @param method The function to calculate LBM, i.e., [nif::lbm_boer()],
+#' [nif::lbm_hume()] or [nif::lbm_peters()].
 #'
 #' @return A nif object.
 #' @seealso [nif::lbm_hume()]
