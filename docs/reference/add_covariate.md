@@ -92,7 +92,7 @@ using the last observed value (carrying forward).
 
 ## See also
 
-add_baseline()
+[`add_baseline()`](add_baseline.md)
 
 ## Examples
 
@@ -109,7 +109,7 @@ add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL, wt 
 #> 
-#> Hash: a52024e94dbafa04ccf7930b47a762b5
+#> Hash: cb42ffa8a0c3b6ec888fbc69c431e581
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV         

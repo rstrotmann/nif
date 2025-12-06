@@ -42,10 +42,10 @@ head(index_dosing_interval(examplinib_fe_nif))
 #>   METABOLITE DOSE MDV ACTARMCD IMPUTATION PERIOD FASTED DI TREATMENT       DV
 #> 1      FALSE  500   1       AB                 1      1  1         A       NA
 #> 2      FALSE  500   0       AB                 1      1  1         A    0.000
-#> 3      FALSE  500   0       AB                 1      1  1         A 4409.288
-#> 4      FALSE  500   0       AB                 1      1  1         A 5605.797
-#> 5      FALSE  500   0       AB                 1      1  1         A 5300.404
-#> 6      FALSE  500   0       AB                 1      1  1         A 4775.587
+#> 3      FALSE  500   0       AB                 1      1  1         A 4697.327
+#> 4      FALSE  500   0       AB                 1      1  1         A 6325.101
+#> 5      FALSE  500   0       AB                 1      1  1         A 6294.187
+#> 6      FALSE  500   0       AB                 1      1  1         A 5932.464
 #>                    EPOCH
 #> 1 OPEN LABEL TREATMENT 1
 #> 2 OPEN LABEL TREATMENT 1

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,14 +76,12 @@ respective unique USUBJID, as data frame,</p></li>
 <li><p><code>treatments</code> The unique <code>EXTRT</code> as character.</p></li>
 <li><p><code>arms</code> The unique <code>ACTAMCD</code> and <code>ACTARM</code> as data frame.</p></li>
 <li><p><code>doses</code> The unique <code>EXTRT</code> and <code>EXDOSE</code> as data frame.</p></li>
-<li><p><code>specimems</code> The unique <code>PCSPEC</code> as character.</p></li>
+<li><p><code>specimens</code> The unique <code>PCSPEC</code> as character.</p></li>
 <li><p><code>analytes</code> The unique <code>PCTEST</code> and <code>PCTESTCD</code> as data frame.</p></li>
 <li><p><code>pc_timepoints</code> The unique <code>PCTPT</code> and <code>PCTPTNUM</code> as data frame.</p></li>
-<li><p><code>analyte_mapping</code> The analyte mapping as data frame (see
-<code><a href="add_analyte_mapping.html">add_analyte_mapping()</a></code>).</p></li>
-<li><p><code>metabolite_mapping</code> The metabolite mapping as data frame (see
-<code><a href="add_metabolite_mapping.html">add_metabolite_mapping()</a></code>).</p></li>
-<li><p><code>time_mapping</code> The time mapping as data frame (see <code><a href="add_time_mapping.html">add_time_mapping()</a></code>).</p></li>
+<li><p><code>analyte_mapping</code> The analyte mapping as data frame.</p></li>
+<li><p><code>metabolite_mapping</code> The metabolite mapping as data frame.</p></li>
+<li><p><code>time_mapping</code> The time mapping as data frame.</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -91,6 +89,7 @@ respective unique USUBJID, as data frame,</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------- SDTM data set summary -------- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Study 2023000022 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An open-label single-arm Phase 2 study of examplinib in patients </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data disposition</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   DOMAIN   SUBJECTS   OBSERVATIONS   </span>
@@ -99,6 +98,7 @@ respective unique USUBJID, as data frame,</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ex       80         468            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   pc       80         1344           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   lb       103        103            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ts       0          0              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   pp       13         432            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Arms (DM):</span>
@@ -117,7 +117,7 @@ respective unique USUBJID, as data frame,</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   RS2023       RS2023       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   RS2023487A   RS2023487A    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Hash: a839c3b7866a6c04a3007b1d7b877345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Hash: 6e3a2050709bc485b93bd185bb28c988</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last DTC: 2001-07-14 10:53:00</span>
 </code></pre></div>
     </div>

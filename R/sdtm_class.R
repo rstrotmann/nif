@@ -226,13 +226,11 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
     "\n"
   ))
 
-  if(!is.null(x$title)) {
-    cat(paste0(x$title), "\n")
-  }
+  if(!is.null(x$title))
+    cat(paste0("\n", str_wrap(x$title, width = 80), "\n"))
 
-  if(!is.null(x$dco)) {
-    cat(paste0("DCO: ", x$dco, "\n"))
-  }
+  if(!is.null(x$dco))
+    cat(paste0("\nDCO: ", x$dco, "\n"))
 
   cat("\nData disposition\n")
   cat(df_to_string(x$disposition,

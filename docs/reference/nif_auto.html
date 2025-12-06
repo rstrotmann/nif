@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,12 +116,13 @@ if NULL.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If no mapping is provided, <code>nif_auto()</code> will try to find matching treatment
-names in EX and PCTESTCD in PC to create a basic nif object for pharmacokinetic
-observations. It will fail if no EXTRT and PCTESTCD with identical names are
-found.</p>
-<p>If one or more mappings are provided as additional parameters, <code>nif_auto()</code>
-will create respective observations. Mappings must be provided in the form:</p>
+    <p>If no mapping is provided, <code>nif_auto()</code> will try to find matching
+treatment names in EX and PCTESTCD in PC to create a basic nif object for
+pharmacokinetic observations. It will fail if no EXTRT and PCTESTCD with
+identical names are found.</p>
+<p>If one or more mappings are provided as additional parameters,
+<code>nif_auto()</code> will create respective observations. Mappings must be
+provided in the form:</p>
 <p><code>TESTCD ~ EXTRT</code></p>
 <p>where TESTCD can be any xxTESTCD from any domain xx included in the sdtm
 object. See <code><a href="testcd.html">testcd()</a></code> for an overview
@@ -136,8 +137,8 @@ for the treatment, e.g., in the case above, 'RS2023' is assumed to be the
 analyte for the 'EXAMPLINIB' treatment parent compound.</p>
 <p>Note that compartments (CMT) are automatically assigned. If more control over
 compartments, analyte names and parent assignment is desired, stepwise
-creation of a nif object using <code><a href="add_administration.html">add_administration()</a></code> and <code><a href="add_observation.html">add_observation()</a></code>
-is recommended.</p>
+creation of a nif object using <code><a href="add_administration.html">add_administration()</a></code> and
+<code><a href="add_observation.html">add_observation()</a></code> is recommended.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

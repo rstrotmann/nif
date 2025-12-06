@@ -133,6 +133,7 @@ Printing an `sdtm` object shows relevant summary information:
 examplinib_fe
 #> -------- SDTM data set summary -------- 
 #> Study 2023000400 
+#> An open-label 2-period crossover study in healthy subjects to investigate the effect of food on the pharmacokinetics of examplinib 
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
@@ -141,6 +142,7 @@ examplinib_fe
 #>   ex       20         40             
 #>   pc       20         1360           
 #>   lb       28         28             
+#>   ts       0          0              
 #>   pp       20         360            
 #> 
 #> Arms (DM):
@@ -160,7 +162,7 @@ examplinib_fe
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A    
 #> 
-#> Hash: 1abaa4c9d07ef805a6208ec497401800
+#> Hash: 295fd51437d90b19b7e4d80e4c7dd51f
 #> Last DTC: 2001-03-10 11:28:00
 ```
 
@@ -381,9 +383,9 @@ head(nif, 5)
 #>   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV
 #> 1      FALSE  500   1       AB                  NA
 #> 2      FALSE  500   0       AB               0.000
-#> 3      FALSE  500   0       AB            4409.288
-#> 4      FALSE  500   0       AB            5605.797
-#> 5      FALSE  500   0       AB            5300.404
+#> 3      FALSE  500   0       AB            4697.327
+#> 4      FALSE  500   0       AB            6325.101
+#> 5      FALSE  500   0       AB            6294.187
 ```
 
 ### Multiple analytes
@@ -461,7 +463,7 @@ head(nif, 3)
 #>   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV                  EPOCH
 #> 1      FALSE  500   1       AB                  NA OPEN LABEL TREATMENT 1
 #> 2      FALSE  500   0       AB               0.000 OPEN LABEL TREATMENT 1
-#> 3      FALSE  500   0       AB            4409.288 OPEN LABEL TREATMENT 1
+#> 3      FALSE  500   0       AB            4697.327 OPEN LABEL TREATMENT 1
 #>   PERIOD TREATMENT FASTED
 #> 1      1         A      1
 #> 2      1         A      1
@@ -534,7 +536,7 @@ summary(nif)
 #>   PARENT   min   max   mean   median   
 #>   RS2023   2     2     2      2        
 #> 
-#> Hash: c9cfc13404e2661c6e8da43631b2dd34
+#> Hash: 18f2357de9faa8fcc64cb06f04f8d3b0
 #> Last DTC: 2001-03-10 10:28:00
 ```
 

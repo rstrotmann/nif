@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -435,6 +435,13 @@
 
         <dt>
 
+          <code><a href="filter_EXSTDTC_after_EXENDTC.html">filter_EXSTDTC_after_EXENDTC()</a></code>
+
+        </dt>
+        <dd>Remove administrations with EXSTDTC after EXENDTC</dd>
+
+        <dt>
+
           <code><a href="filter_subject.html">filter_subject()</a></code>
 
         </dt>
@@ -481,6 +488,27 @@
           <span class="badge lifecycle lifecycle-experimental">experimental</span>
         </dt>
         <dd>Add observation from non-SDTM-formatted data table</dd>
+
+        <dt>
+
+          <code><a href="impute_exendtc_to_cutoff.html">impute_exendtc_to_cutoff()</a></code>
+
+        </dt>
+        <dd>Impute last EXENDTC per subject and treatment to cutoff date when absent.</dd>
+
+        <dt>
+
+          <code><a href="impute_exendtc_to_rfendtc.html">impute_exendtc_to_rfendtc()</a></code>
+
+        </dt>
+        <dd>Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent</dd>
+
+        <dt>
+
+          <code><a href="impute_missing_exendtc.html">impute_missing_exendtc()</a></code>
+
+        </dt>
+        <dd>Impute missing EXENDTC to the day before the next EXSTDTC.</dd>
 
         <dt>
 
@@ -936,6 +964,20 @@
 
         </dt>
         <dd>Treatments in a nif or sdtm object</dd>
+
+        <dt>
+
+          <code><a href="trial_dco.html">trial_dco()</a></code>
+
+        </dt>
+        <dd>Trial data cut-off date as reported in TS domain</dd>
+
+        <dt>
+
+          <code><a href="trial_title.html">trial_title()</a></code>
+
+        </dt>
+        <dd>Trial title as reported in TS domain</dd>
 
         <dt>
 

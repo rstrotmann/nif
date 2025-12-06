@@ -156,6 +156,9 @@
 - [`examplinib_sad_nif`](examplinib_sad_nif.md) : Synthetic NIF data
   from a fictional clinical SAD FIH study with rich PK sampling
 
+- [`filter_EXSTDTC_after_EXENDTC()`](filter_EXSTDTC_after_EXENDTC.md) :
+  Remove administrations with EXSTDTC after EXENDTC
+
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID
   in the data set
 
@@ -173,6 +176,15 @@
 
 - [`import_observation()`](import_observation.md) **\[experimental\]** :
   Add observation from non-SDTM-formatted data table
+
+- [`impute_exendtc_to_cutoff()`](impute_exendtc_to_cutoff.md) : Impute
+  last EXENDTC per subject and treatment to cutoff date when absent.
+
+- [`impute_exendtc_to_rfendtc()`](impute_exendtc_to_rfendtc.md) : Impute
+  very last EXENDTC for a subject and EXTRT to RFENDTC, if absent
+
+- [`impute_missing_exendtc()`](impute_missing_exendtc.md) : Impute
+  missing EXENDTC to the day before the next EXSTDTC.
 
 - [`index_dosing_interval()`](index_dosing_interval.md) : Index dosing
   intervals
@@ -337,6 +349,12 @@
   object
 
 - [`treatments()`](treatments.md) : Treatments in a nif or sdtm object
+
+- [`trial_dco()`](trial_dco.md) : Trial data cut-off date as reported in
+  TS domain
+
+- [`trial_title()`](trial_title.md) : Trial title as reported in TS
+  domain
 
 - [`usubjid()`](usubjid.md) : Get the USUBJID of subject
 

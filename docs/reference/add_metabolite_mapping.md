@@ -27,7 +27,3 @@ add_metabolite_mapping(obj, pctestcd_parent, pctestcd_metabolite)
 ## Value
 
 The SDTM object.
-
-## See also
-
-[`nif_auto()`](nif_auto.md)

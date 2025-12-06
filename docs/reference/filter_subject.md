@@ -28,6 +28,7 @@ The filtered object.
 filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #> -------- SDTM data set summary -------- 
 #> Study 2023000022 
+#> An open-label single-arm Phase 2 study of examplinib in patients 
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
@@ -36,6 +37,7 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   ex       1          7              
 #>   pc       1          44             
 #>   lb       1          1              
+#>   ts       0          0              
 #>   pp       1          18             
 #> 
 #> Arms (DM):
@@ -53,7 +55,7 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A    
 #> 
-#> Hash: 3a6ef69913398b9696c57980b2aa0058
+#> Hash: 3dd48da8041b03cc2f190fee99f6a7e1
 #> Last DTC: 2001-03-14 10:09:00
 filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 #> ----- NONMEM Input Format (NIF) data -----
@@ -66,7 +68,7 @@ filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL 
 #> 
-#> Hash: 3f41890ea1484c28b5397c380bee0a29
+#> Hash: 61a6ceaec997252f60c3b069a151c86c
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV         

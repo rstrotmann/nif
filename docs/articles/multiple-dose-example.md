@@ -40,6 +40,7 @@ overview:
 summary(examplinib_poc)
 #> -------- SDTM data set summary -------- 
 #> Study 2023000022 
+#> An open-label single-arm Phase 2 study of examplinib in patients 
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
@@ -48,6 +49,7 @@ summary(examplinib_poc)
 #>   ex       80         468            
 #>   pc       80         1344           
 #>   lb       103        103            
+#>   ts       0          0              
 #>   pp       13         432            
 #> 
 #> Arms (DM):
@@ -66,7 +68,7 @@ summary(examplinib_poc)
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A    
 #> 
-#> Hash: a839c3b7866a6c04a3007b1d7b877345
+#> Hash: 6e3a2050709bc485b93bd185bb28c988
 #> Last DTC: 2001-07-14 10:53:00
 ```
 
@@ -196,7 +198,7 @@ summary(nif_poc)
 #    PARENT   min   max   mean   median   
 #    RS2023   56    99    78.5   79       
 #  
-#  Hash: 7f4823f1ab95211e7cbf45cf78297804
+#  Hash: 544bf4f8b887dc936a8648dc2162fe64
 #  Last DTC: 2001-07-14 08:53:00
 ```
 

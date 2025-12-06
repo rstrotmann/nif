@@ -2,10 +2,9 @@
 
 In some studies, multiple drugs are co-administered, and there may be
 analyte data related to different parent drugs. In order to
-appropriately correlate observations with administrations, the
-[`nif_auto()`](nif_auto.md) function needs to know which analyte
-(`PCTESTCD`) belongs to which drug (`EXTRT`). Multiple mappings can be
-provided.
+appropriately correlate observations with administrations, the nif_auto
+function needs to know which analyte (`PCTESTCD`) belongs to which drug
+(`EXTRT`). Multiple mappings can be provided.
 
 ## Usage
 
@@ -34,7 +33,3 @@ add_analyte_mapping(obj, extrt, pctestcd, analyte = NULL)
 ## Value
 
 A SDTM object.
-
-## See also
-
-[`nif_auto()`](nif_auto.md)

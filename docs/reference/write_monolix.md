@@ -1476,76 +1476,76 @@ write_monolix(examplinib_fe_nif)
 #>  PARENT TRTDY METABOLITE DOSE MDV ACTARMCD IMPUTATION         DV
 #>  RS2023     1      FALSE  500   1       AB                     .
 #>  RS2023     1      FALSE  500   0       AB                     0
-#>  RS2023     1      FALSE  500   0       AB                  4409
-#>  RS2023     1      FALSE  500   0       AB                  5606
-#>  RS2023     1      FALSE  500   0       AB                  5300
-#>  RS2023     1      FALSE  500   0       AB                  4776
-#>  RS2023     1      FALSE  500   0       AB                  3228
-#>  RS2023     1      FALSE  500   0       AB                  1926
-#>  RS2023     1      FALSE  500   0       AB                 620.2
-#>  RS2023     1      FALSE  500   0       AB                 253.4
-#>  RS2023     1      FALSE  500   0       AB                 127.7
-#>  RS2023     1      FALSE  500   0       AB                 76.41
-#>  RS2023     2      FALSE  500   0       AB                 20.53
-#>  RS2023     3      FALSE  500   0       AB                 2.338
-#>  RS2023     4      FALSE  500   0       AB                0.2696
-#>  RS2023     5      FALSE  500   0       AB               0.02832
-#>  RS2023     7      FALSE  500   0       AB             0.0003678
-#>  RS2023     8      FALSE  500   0       AB             4.151e-05
+#>  RS2023     1      FALSE  500   0       AB                  4697
+#>  RS2023     1      FALSE  500   0       AB                  6325
+#>  RS2023     1      FALSE  500   0       AB                  6294
+#>  RS2023     1      FALSE  500   0       AB                  5932
+#>  RS2023     1      FALSE  500   0       AB                  4317
+#>  RS2023     1      FALSE  500   0       AB                  2720
+#>  RS2023     1      FALSE  500   0       AB                 938.6
+#>  RS2023     1      FALSE  500   0       AB                 398.6
+#>  RS2023     1      FALSE  500   0       AB                 205.9
+#>  RS2023     1      FALSE  500   0       AB                 125.3
+#>  RS2023     2      FALSE  500   0       AB                 34.94
+#>  RS2023     3      FALSE  500   0       AB                 4.195
+#>  RS2023     4      FALSE  500   0       AB                  0.51
+#>  RS2023     5      FALSE  500   0       AB               0.05648
+#>  RS2023     7      FALSE  500   0       AB             0.0008148
+#>  RS2023     8      FALSE  500   0       AB             9.704e-05
 #>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB             9.137e-10
-#>  RS2023    14      FALSE  500   0       AB                 835.1
-#>  RS2023    14      FALSE  500   0       AB                  2570
-#>  RS2023    14      FALSE  500   0       AB                  3711
-#>  RS2023    14      FALSE  500   0       AB                  4208
-#>  RS2023    14      FALSE  500   0       AB                  4002
-#>  RS2023    14      FALSE  500   0       AB                  3250
-#>  RS2023    14      FALSE  500   0       AB                  2057
-#>  RS2023    14      FALSE  500   0       AB                  1324
-#>  RS2023    14      FALSE  500   0       AB                 812.3
-#>  RS2023    14      FALSE  500   0       AB                 546.8
-#>  RS2023    15      FALSE  500   0       AB                 58.01
-#>  RS2023    16      FALSE  500   0       AB                  4.45
-#>  RS2023    17      FALSE  500   0       AB                 0.506
-#>  RS2023    18      FALSE  500   0       AB               0.05589
-#>  RS2023    20      FALSE  500   0       AB             0.0007178
-#>  RS2023    21      FALSE  500   0       AB             7.955e-05
+#>  RS2023    14      FALSE  500   0       AB            -5.507e-11
+#>  RS2023    14      FALSE  500   0       AB                   870
+#>  RS2023    14      FALSE  500   0       AB                  2770
+#>  RS2023    14      FALSE  500   0       AB                  4163
+#>  RS2023    14      FALSE  500   0       AB                  4911
+#>  RS2023    14      FALSE  500   0       AB                  4957
+#>  RS2023    14      FALSE  500   0       AB                  4175
+#>  RS2023    14      FALSE  500   0       AB                  2733
+#>  RS2023    14      FALSE  500   0       AB                  1785
+#>  RS2023    14      FALSE  500   0       AB                  1108
+#>  RS2023    14      FALSE  500   0       AB                 756.2
+#>  RS2023    15      FALSE  500   0       AB                  90.3
+#>  RS2023    16      FALSE  500   0       AB                 7.879
+#>  RS2023    17      FALSE  500   0       AB                0.9472
+#>  RS2023    18      FALSE  500   0       AB                0.1103
+#>  RS2023    20      FALSE  500   0       AB              0.001574
+#>  RS2023    21      FALSE  500   0       AB             0.0001846
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 506.8
-#>  RS2023     1      FALSE  500   0       BA                  1557
-#>  RS2023     1      FALSE  500   0       BA                  1990
-#>  RS2023     1      FALSE  500   0       BA                  2169
-#>  RS2023     1      FALSE  500   0       BA                  1845
-#>  RS2023     1      FALSE  500   0       BA                  1489
-#>  RS2023     1      FALSE  500   0       BA                 942.9
-#>  RS2023     1      FALSE  500   0       BA                 619.3
-#>  RS2023     1      FALSE  500   0       BA                   385
-#>  RS2023     1      FALSE  500   0       BA                 254.9
-#>  RS2023     2      FALSE  500   0       BA                  25.2
-#>  RS2023     3      FALSE  500   0       BA                 1.397
-#>  RS2023     4      FALSE  500   0       BA                0.1432
-#>  RS2023     5      FALSE  500   0       BA               0.01436
-#>  RS2023     7      FALSE  500   0       BA             0.0001673
-#>  RS2023     8      FALSE  500   0       BA             1.751e-05
+#>  RS2023     1      FALSE  500   0       BA                 546.4
+#>  RS2023     1      FALSE  500   0       BA                  1777
+#>  RS2023     1      FALSE  500   0       BA                  2420
+#>  RS2023     1      FALSE  500   0       BA                  2789
+#>  RS2023     1      FALSE  500   0       BA                  2534
+#>  RS2023     1      FALSE  500   0       BA                  2103
+#>  RS2023     1      FALSE  500   0       BA                  1355
+#>  RS2023     1      FALSE  500   0       BA                 897.8
+#>  RS2023     1      FALSE  500   0       BA                 563.7
+#>  RS2023     1      FALSE  500   0       BA                 377.8
+#>  RS2023     2      FALSE  500   0       BA                 42.44
+#>  RS2023     3      FALSE  500   0       BA                 2.849
+#>  RS2023     4      FALSE  500   0       BA                0.3093
+#>  RS2023     5      FALSE  500   0       BA               0.03255
+#>  RS2023     7      FALSE  500   0       BA             0.0004173
+#>  RS2023     8      FALSE  500   0       BA              4.58e-05
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA            -5.095e-12
-#>  RS2023    14      FALSE  500   0       BA                  2606
-#>  RS2023    14      FALSE  500   0       BA                  2784
-#>  RS2023    14      FALSE  500   0       BA                  2490
-#>  RS2023    14      FALSE  500   0       BA                  1970
-#>  RS2023    14      FALSE  500   0       BA                  1178
-#>  RS2023    14      FALSE  500   0       BA                 737.7
-#>  RS2023    14      FALSE  500   0       BA                 253.4
-#>  RS2023    14      FALSE  500   0       BA                 96.58
-#>  RS2023    14      FALSE  500   0       BA                 44.77
-#>  RS2023    14      FALSE  500   0       BA                  25.4
-#>  RS2023    15      FALSE  500   0       BA                 5.772
-#>  RS2023    16      FALSE  500   0       BA                0.6277
-#>  RS2023    17      FALSE  500   0       BA                0.0647
-#>  RS2023    18      FALSE  500   0       BA              0.007001
-#>  RS2023    20      FALSE  500   0       BA             7.425e-05
-#>  RS2023    21      FALSE  500   0       BA             8.308e-06
+#>  RS2023    14      FALSE  500   0       BA             1.517e-10
+#>  RS2023    14      FALSE  500   0       BA                  2925
+#>  RS2023    14      FALSE  500   0       BA                  3432
+#>  RS2023    14      FALSE  500   0       BA                  3300
+#>  RS2023    14      FALSE  500   0       BA                  2756
+#>  RS2023    14      FALSE  500   0       BA                  1766
+#>  RS2023    14      FALSE  500   0       BA                  1146
+#>  RS2023    14      FALSE  500   0       BA                 408.2
+#>  RS2023    14      FALSE  500   0       BA                 161.1
+#>  RS2023    14      FALSE  500   0       BA                 78.26
+#>  RS2023    14      FALSE  500   0       BA                 46.55
+#>  RS2023    15      FALSE  500   0       BA                 11.45
+#>  RS2023    16      FALSE  500   0       BA                 1.307
+#>  RS2023    17      FALSE  500   0       BA                0.1413
+#>  RS2023    18      FALSE  500   0       BA               0.01604
+#>  RS2023    20      FALSE  500   0       BA             0.0001872
+#>  RS2023    21      FALSE  500   0       BA             2.194e-05
 #>  RS2023     1      FALSE  500   1       AB                     .
 #>  RS2023     1      FALSE  500   0       AB                     0
 #>  RS2023     1      FALSE  500   0       AB                  4760
@@ -1580,8 +1580,8 @@ write_monolix(examplinib_fe_nif)
 #>  RS2023    16      FALSE  500   0       AB                 4.105
 #>  RS2023    17      FALSE  500   0       AB                0.3253
 #>  RS2023    18      FALSE  500   0       AB                 0.028
-#>  RS2023    20      FALSE  500   0       AB             0.0001769
-#>  RS2023    21      FALSE  500   0       AB             1.463e-05
+#>  RS2023    20      FALSE  500   0       AB              0.000177
+#>  RS2023    21      FALSE  500   0       AB             1.471e-05
 #>  RS2023     1      FALSE  500   1       AB                     .
 #>  RS2023     1      FALSE  500   0       AB                     0
 #>  RS2023     1      FALSE  500   0       AB                  4276
@@ -1637,7 +1637,7 @@ write_monolix(examplinib_fe_nif)
 #>  RS2023     7      FALSE  500   0       BA             0.0003778
 #>  RS2023     8      FALSE  500   0       BA             3.525e-05
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA             1.207e-10
+#>  RS2023    14      FALSE  500   0       BA             9.584e-11
 #>  RS2023    14      FALSE  500   0       BA                  5533
 #>  RS2023    14      FALSE  500   0       BA                  7048
 #>  RS2023    14      FALSE  500   0       BA                  6713
@@ -1653,79 +1653,79 @@ write_monolix(examplinib_fe_nif)
 #>  RS2023    17      FALSE  500   0       BA                0.2552
 #>  RS2023    18      FALSE  500   0       BA               0.02391
 #>  RS2023    20      FALSE  500   0       BA             0.0001938
-#>  RS2023    21      FALSE  500   0       BA             1.857e-05
+#>  RS2023    21      FALSE  500   0       BA             1.858e-05
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 797.1
-#>  RS2023     1      FALSE  500   0       BA                  2255
-#>  RS2023     1      FALSE  500   0       BA                  3111
-#>  RS2023     1      FALSE  500   0       BA                  3236
-#>  RS2023     1      FALSE  500   0       BA                  2943
-#>  RS2023     1      FALSE  500   0       BA                  2174
-#>  RS2023     1      FALSE  500   0       BA                  1326
-#>  RS2023     1      FALSE  500   0       BA                 840.1
-#>  RS2023     1      FALSE  500   0       BA                   540
-#>  RS2023     1      FALSE  500   0       BA                 301.2
-#>  RS2023     2      FALSE  500   0       BA                    30
-#>  RS2023     3      FALSE  500   0       BA                 2.449
-#>  RS2023     4      FALSE  500   0       BA                0.2942
-#>  RS2023     5      FALSE  500   0       BA               0.04147
-#>  RS2023     7      FALSE  500   0       BA             0.0006589
-#>  RS2023     8      FALSE  500   0       BA             8.553e-05
+#>  RS2023     1      FALSE  500   0       BA                 853.2
+#>  RS2023     1      FALSE  500   0       BA                  2544
+#>  RS2023     1      FALSE  500   0       BA                  3730
+#>  RS2023     1      FALSE  500   0       BA                  4106
+#>  RS2023     1      FALSE  500   0       BA                  4016
+#>  RS2023     1      FALSE  500   0       BA                  3074
+#>  RS2023     1      FALSE  500   0       BA                  1922
+#>  RS2023     1      FALSE  500   0       BA                  1231
+#>  RS2023     1      FALSE  500   0       BA                   800
+#>  RS2023     1      FALSE  500   0       BA                 452.6
+#>  RS2023     2      FALSE  500   0       BA                 52.47
+#>  RS2023     3      FALSE  500   0       BA                 4.989
+#>  RS2023     4      FALSE  500   0       BA                 0.628
+#>  RS2023     5      FALSE  500   0       BA               0.09253
+#>  RS2023     7      FALSE  500   0       BA              0.001605
+#>  RS2023     8      FALSE  500   0       BA             0.0002177
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA             3.281e-09
-#>  RS2023    14      FALSE  500   0       BA                  4079
-#>  RS2023    14      FALSE  500   0       BA                  4725
-#>  RS2023    14      FALSE  500   0       BA                  4256
-#>  RS2023    14      FALSE  500   0       BA                  3290
-#>  RS2023    14      FALSE  500   0       BA                  2053
-#>  RS2023    14      FALSE  500   0       BA                  1105
-#>  RS2023    14      FALSE  500   0       BA                 340.5
-#>  RS2023    14      FALSE  500   0       BA                 126.2
-#>  RS2023    14      FALSE  500   0       BA                 59.55
-#>  RS2023    14      FALSE  500   0       BA                 34.64
-#>  RS2023    15      FALSE  500   0       BA                 9.963
-#>  RS2023    16      FALSE  500   0       BA                 1.216
-#>  RS2023    17      FALSE  500   0       BA                0.1692
-#>  RS2023    18      FALSE  500   0       BA               0.02296
-#>  RS2023    20      FALSE  500   0       BA               0.00038
-#>  RS2023    21      FALSE  500   0       BA             4.544e-05
+#>  RS2023    14      FALSE  500   0       BA             1.771e-09
+#>  RS2023    14      FALSE  500   0       BA                  4531
+#>  RS2023    14      FALSE  500   0       BA                  5740
+#>  RS2023    14      FALSE  500   0       BA                  5567
+#>  RS2023    14      FALSE  500   0       BA                  4569
+#>  RS2023    14      FALSE  500   0       BA                  3103
+#>  RS2023    14      FALSE  500   0       BA                  1759
+#>  RS2023    14      FALSE  500   0       BA                 571.8
+#>  RS2023    14      FALSE  500   0       BA                 219.9
+#>  RS2023    14      FALSE  500   0       BA                 108.1
+#>  RS2023    14      FALSE  500   0       BA                 65.01
+#>  RS2023    15      FALSE  500   0       BA                 19.63
+#>  RS2023    16      FALSE  500   0       BA                 2.504
+#>  RS2023    17      FALSE  500   0       BA                 0.364
+#>  RS2023    18      FALSE  500   0       BA               0.05162
+#>  RS2023    20      FALSE  500   0       BA             0.0009334
+#>  RS2023    21      FALSE  500   0       BA             0.0001166
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 580.9
-#>  RS2023     1      FALSE  500   0       BA                  1754
-#>  RS2023     1      FALSE  500   0       BA                  2480
-#>  RS2023     1      FALSE  500   0       BA                  2387
-#>  RS2023     1      FALSE  500   0       BA                  2175
-#>  RS2023     1      FALSE  500   0       BA                  1768
-#>  RS2023     1      FALSE  500   0       BA                  1129
-#>  RS2023     1      FALSE  500   0       BA                 697.9
-#>  RS2023     1      FALSE  500   0       BA                 448.6
-#>  RS2023     1      FALSE  500   0       BA                 298.5
-#>  RS2023     2      FALSE  500   0       BA                 30.58
-#>  RS2023     3      FALSE  500   0       BA                 1.295
-#>  RS2023     4      FALSE  500   0       BA               0.09935
-#>  RS2023     5      FALSE  500   0       BA                0.0084
-#>  RS2023     7      FALSE  500   0       BA             6.268e-05
-#>  RS2023     8      FALSE  500   0       BA             5.029e-06
+#>  RS2023     1      FALSE  500   0       BA                 652.5
+#>  RS2023     1      FALSE  500   0       BA                  2149
+#>  RS2023     1      FALSE  500   0       BA                  3347
+#>  RS2023     1      FALSE  500   0       BA                  3508
+#>  RS2023     1      FALSE  500   0       BA                  3526
+#>  RS2023     1      FALSE  500   0       BA                  2985
+#>  RS2023     1      FALSE  500   0       BA                  1960
+#>  RS2023     1      FALSE  500   0       BA                  1229
+#>  RS2023     1      FALSE  500   0       BA                 803.2
+#>  RS2023     1      FALSE  500   0       BA                 544.9
+#>  RS2023     2      FALSE  500   0       BA                 67.28
+#>  RS2023     3      FALSE  500   0       BA                 3.901
+#>  RS2023     4      FALSE  500   0       BA                0.3345
+#>  RS2023     5      FALSE  500   0       BA               0.03092
+#>  RS2023     7      FALSE  500   0       BA             0.0002752
+#>  RS2023     8      FALSE  500   0       BA             2.399e-05
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA              1.47e-11
-#>  RS2023    14      FALSE  500   0       BA                  3251
-#>  RS2023    14      FALSE  500   0       BA                  3964
-#>  RS2023    14      FALSE  500   0       BA                  3504
-#>  RS2023    14      FALSE  500   0       BA                  2606
-#>  RS2023    14      FALSE  500   0       BA                  1474
-#>  RS2023    14      FALSE  500   0       BA                 983.3
-#>  RS2023    14      FALSE  500   0       BA                 355.5
-#>  RS2023    14      FALSE  500   0       BA                 131.2
-#>  RS2023    14      FALSE  500   0       BA                 60.96
-#>  RS2023    14      FALSE  500   0       BA                 35.73
-#>  RS2023    15      FALSE  500   0       BA                 7.179
-#>  RS2023    16      FALSE  500   0       BA                0.6113
-#>  RS2023    17      FALSE  500   0       BA                0.0492
-#>  RS2023    18      FALSE  500   0       BA              0.004016
-#>  RS2023    20      FALSE  500   0       BA             3.151e-05
-#>  RS2023    21      FALSE  500   0       BA             2.704e-06
+#>  RS2023    14      FALSE  500   0       BA            -9.784e-08
+#>  RS2023    14      FALSE  500   0       BA                  3886
+#>  RS2023    14      FALSE  500   0       BA                  5464
+#>  RS2023    14      FALSE  500   0       BA                  5383
+#>  RS2023    14      FALSE  500   0       BA                  4338
+#>  RS2023    14      FALSE  500   0       BA                  2712
+#>  RS2023    14      FALSE  500   0       BA                  1907
+#>  RS2023    14      FALSE  500   0       BA                 729.2
+#>  RS2023    14      FALSE  500   0       BA                 284.4
+#>  RS2023    14      FALSE  500   0       BA                 142.3
+#>  RS2023    14      FALSE  500   0       BA                 89.85
+#>  RS2023    15      FALSE  500   0       BA                 20.75
+#>  RS2023    16      FALSE  500   0       BA                  1.93
+#>  RS2023    17      FALSE  500   0       BA                0.1696
+#>  RS2023    18      FALSE  500   0       BA               0.01512
+#>  RS2023    20      FALSE  500   0       BA             0.0001419
+#>  RS2023    21      FALSE  500   0       BA             1.331e-05
 #>  RS2023     1      FALSE  500   1       AB                     .
 #>  RS2023     1      FALSE  500   0       AB                     0
 #>  RS2023     1      FALSE  500   0       AB                  5478
@@ -1745,7 +1745,7 @@ write_monolix(examplinib_fe_nif)
 #>  RS2023     7      FALSE  500   0       AB             0.0006583
 #>  RS2023     8      FALSE  500   0       AB             7.225e-05
 #>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB            -9.627e-10
+#>  RS2023    14      FALSE  500   0       AB             -9.59e-10
 #>  RS2023    14      FALSE  500   0       AB                 937.1
 #>  RS2023    14      FALSE  500   0       AB                  3021
 #>  RS2023    14      FALSE  500   0       AB                  5004
@@ -1761,7 +1761,7 @@ write_monolix(examplinib_fe_nif)
 #>  RS2023    17      FALSE  500   0       AB                0.9385
 #>  RS2023    18      FALSE  500   0       AB                 0.104
 #>  RS2023    20      FALSE  500   0       AB              0.001268
-#>  RS2023    21      FALSE  500   0       AB             0.0001471
+#>  RS2023    21      FALSE  500   0       AB             0.0001472
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
 #>  RS2023     1      FALSE  500   0       BA                 933.7
@@ -1800,364 +1800,364 @@ write_monolix(examplinib_fe_nif)
 #>  RS2023    21      FALSE  500   0       BA             0.0001519
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 681.3
-#>  RS2023     1      FALSE  500   0       BA                  2099
-#>  RS2023     1      FALSE  500   0       BA                  2970
-#>  RS2023     1      FALSE  500   0       BA                  3263
-#>  RS2023     1      FALSE  500   0       BA                  2975
-#>  RS2023     1      FALSE  500   0       BA                  2398
-#>  RS2023     1      FALSE  500   0       BA                  1521
-#>  RS2023     1      FALSE  500   0       BA                  1023
-#>  RS2023     1      FALSE  500   0       BA                 679.6
-#>  RS2023     1      FALSE  500   0       BA                   443
-#>  RS2023     2      FALSE  500   0       BA                 45.37
-#>  RS2023     3      FALSE  500   0       BA                 3.498
-#>  RS2023     4      FALSE  500   0       BA                0.4203
-#>  RS2023     5      FALSE  500   0       BA               0.05474
-#>  RS2023     7      FALSE  500   0       BA             0.0009147
-#>  RS2023     8      FALSE  500   0       BA             0.0001267
+#>  RS2023     1      FALSE  500   0       BA                 713.2
+#>  RS2023     1      FALSE  500   0       BA                  2279
+#>  RS2023     1      FALSE  500   0       BA                  3363
+#>  RS2023     1      FALSE  500   0       BA                  3843
+#>  RS2023     1      FALSE  500   0       BA                  3696
+#>  RS2023     1      FALSE  500   0       BA                  3061
+#>  RS2023     1      FALSE  500   0       BA                  1981
+#>  RS2023     1      FALSE  500   0       BA                  1343
+#>  RS2023     1      FALSE  500   0       BA                 899.1
+#>  RS2023     1      FALSE  500   0       BA                 591.3
+#>  RS2023     2      FALSE  500   0       BA                 66.43
+#>  RS2023     3      FALSE  500   0       BA                 5.854
+#>  RS2023     4      FALSE  500   0       BA                0.7329
+#>  RS2023     5      FALSE  500   0       BA               0.09886
+#>  RS2023     7      FALSE  500   0       BA              0.001772
+#>  RS2023     8      FALSE  500   0       BA              0.000254
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA             9.763e-10
-#>  RS2023    14      FALSE  500   0       BA                  3325
-#>  RS2023    14      FALSE  500   0       BA                  4273
-#>  RS2023    14      FALSE  500   0       BA                  4000
-#>  RS2023    14      FALSE  500   0       BA                  3350
-#>  RS2023    14      FALSE  500   0       BA                  2203
-#>  RS2023    14      FALSE  500   0       BA                  1272
-#>  RS2023    14      FALSE  500   0       BA                 469.7
-#>  RS2023    14      FALSE  500   0       BA                 186.2
-#>  RS2023    14      FALSE  500   0       BA                  82.6
-#>  RS2023    14      FALSE  500   0       BA                 50.53
-#>  RS2023    15      FALSE  500   0       BA                 12.91
-#>  RS2023    16      FALSE  500   0       BA                 1.661
-#>  RS2023    17      FALSE  500   0       BA                0.2084
-#>  RS2023    18      FALSE  500   0       BA               0.02832
-#>  RS2023    20      FALSE  500   0       BA             0.0004738
-#>  RS2023    21      FALSE  500   0       BA             6.121e-05
+#>  RS2023    14      FALSE  500   0       BA              6.73e-09
+#>  RS2023    14      FALSE  500   0       BA                  3567
+#>  RS2023    14      FALSE  500   0       BA                  4871
+#>  RS2023    14      FALSE  500   0       BA                  4797
+#>  RS2023    14      FALSE  500   0       BA                  4188
+#>  RS2023    14      FALSE  500   0       BA                  2925
+#>  RS2023    14      FALSE  500   0       BA                  1754
+#>  RS2023    14      FALSE  500   0       BA                 673.7
+#>  RS2023    14      FALSE  500   0       BA                 273.8
+#>  RS2023    14      FALSE  500   0       BA                 124.9
+#>  RS2023    14      FALSE  500   0       BA                  78.6
+#>  RS2023    15      FALSE  500   0       BA                 21.15
+#>  RS2023    16      FALSE  500   0       BA                 2.819
+#>  RS2023    17      FALSE  500   0       BA                0.3662
+#>  RS2023    18      FALSE  500   0       BA               0.05154
+#>  RS2023    20      FALSE  500   0       BA             0.0009246
+#>  RS2023    21      FALSE  500   0       BA             0.0001236
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 584.7
-#>  RS2023     1      FALSE  500   0       BA                  1631
-#>  RS2023     1      FALSE  500   0       BA                  2263
-#>  RS2023     1      FALSE  500   0       BA                  2302
-#>  RS2023     1      FALSE  500   0       BA                  2036
-#>  RS2023     1      FALSE  500   0       BA                  1593
-#>  RS2023     1      FALSE  500   0       BA                  1014
-#>  RS2023     1      FALSE  500   0       BA                 664.2
-#>  RS2023     1      FALSE  500   0       BA                 421.4
-#>  RS2023     1      FALSE  500   0       BA                 286.6
-#>  RS2023     2      FALSE  500   0       BA                 29.63
-#>  RS2023     3      FALSE  500   0       BA                 1.329
-#>  RS2023     4      FALSE  500   0       BA                0.1283
-#>  RS2023     5      FALSE  500   0       BA               0.01194
-#>  RS2023     7      FALSE  500   0       BA             0.0001056
-#>  RS2023     8      FALSE  500   0       BA             9.495e-06
+#>  RS2023     1      FALSE  500   0       BA                 642.4
+#>  RS2023     1      FALSE  500   0       BA                  1925
+#>  RS2023     1      FALSE  500   0       BA                  2896
+#>  RS2023     1      FALSE  500   0       BA                  3166
+#>  RS2023     1      FALSE  500   0       BA                  3057
+#>  RS2023     1      FALSE  500   0       BA                  2486
+#>  RS2023     1      FALSE  500   0       BA                  1625
+#>  RS2023     1      FALSE  500   0       BA                  1079
+#>  RS2023     1      FALSE  500   0       BA                 694.1
+#>  RS2023     1      FALSE  500   0       BA                 480.4
+#>  RS2023     2      FALSE  500   0       BA                 58.71
+#>  RS2023     3      FALSE  500   0       BA                 3.403
+#>  RS2023     4      FALSE  500   0       BA                0.3589
+#>  RS2023     5      FALSE  500   0       BA               0.03596
+#>  RS2023     7      FALSE  500   0       BA             0.0003681
+#>  RS2023     8      FALSE  500   0       BA             3.574e-05
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA            -8.224e-12
-#>  RS2023    14      FALSE  500   0       BA                  2766
-#>  RS2023    14      FALSE  500   0       BA                  3246
-#>  RS2023    14      FALSE  500   0       BA                  2901
-#>  RS2023    14      FALSE  500   0       BA                  2405
-#>  RS2023    14      FALSE  500   0       BA                  1396
-#>  RS2023    14      FALSE  500   0       BA                 851.9
-#>  RS2023    14      FALSE  500   0       BA                 314.8
-#>  RS2023    14      FALSE  500   0       BA                   110
-#>  RS2023    14      FALSE  500   0       BA                 58.26
-#>  RS2023    14      FALSE  500   0       BA                  29.9
-#>  RS2023    15      FALSE  500   0       BA                 6.917
-#>  RS2023    16      FALSE  500   0       BA                0.6043
-#>  RS2023    17      FALSE  500   0       BA               0.05846
-#>  RS2023    18      FALSE  500   0       BA              0.005414
-#>  RS2023    20      FALSE  500   0       BA             4.749e-05
-#>  RS2023    21      FALSE  500   0       BA             4.355e-06
+#>  RS2023    14      FALSE  500   0       BA             1.084e-10
+#>  RS2023    14      FALSE  500   0       BA                  3197
+#>  RS2023    14      FALSE  500   0       BA                  4223
+#>  RS2023    14      FALSE  500   0       BA                  4142
+#>  RS2023    14      FALSE  500   0       BA                  3686
+#>  RS2023    14      FALSE  500   0       BA                  2348
+#>  RS2023    14      FALSE  500   0       BA                  1508
+#>  RS2023    14      FALSE  500   0       BA                 588.2
+#>  RS2023    14      FALSE  500   0       BA                 215.5
+#>  RS2023    14      FALSE  500   0       BA                 121.3
+#>  RS2023    14      FALSE  500   0       BA                  66.1
+#>  RS2023    15      FALSE  500   0       BA                 17.01
+#>  RS2023    16      FALSE  500   0       BA                 1.599
+#>  RS2023    17      FALSE  500   0       BA                0.1665
+#>  RS2023    18      FALSE  500   0       BA               0.01659
+#>  RS2023    20      FALSE  500   0       BA             0.0001684
+#>  RS2023    21      FALSE  500   0       BA             1.656e-05
 #>  RS2023     1      FALSE  500   1       AB                     .
 #>  RS2023     1      FALSE  500   0       AB                     0
-#>  RS2023     1      FALSE  500   0       AB                  3732
-#>  RS2023     1      FALSE  500   0       AB                  4611
-#>  RS2023     1      FALSE  500   0       AB                  4509
-#>  RS2023     1      FALSE  500   0       AB                  4146
-#>  RS2023     1      FALSE  500   0       AB                  2844
-#>  RS2023     1      FALSE  500   0       AB                  1708
-#>  RS2023     1      FALSE  500   0       AB                 709.9
-#>  RS2023     1      FALSE  500   0       AB                   303
-#>  RS2023     1      FALSE  500   0       AB                 132.4
-#>  RS2023     1      FALSE  500   0       AB                 80.36
-#>  RS2023     2      FALSE  500   0       AB                 19.13
-#>  RS2023     3      FALSE  500   0       AB                 1.886
-#>  RS2023     4      FALSE  500   0       AB                0.1873
-#>  RS2023     5      FALSE  500   0       AB               0.02042
-#>  RS2023     7      FALSE  500   0       AB             0.0002129
-#>  RS2023     8      FALSE  500   0       AB             2.251e-05
+#>  RS2023     1      FALSE  500   0       AB                  4001
+#>  RS2023     1      FALSE  500   0       AB                  5260
+#>  RS2023     1      FALSE  500   0       AB                  5426
+#>  RS2023     1      FALSE  500   0       AB                  5224
+#>  RS2023     1      FALSE  500   0       AB                  3848
+#>  RS2023     1      FALSE  500   0       AB                  2428
+#>  RS2023     1      FALSE  500   0       AB                  1071
+#>  RS2023     1      FALSE  500   0       AB                 473.7
+#>  RS2023     1      FALSE  500   0       AB                 213.7
+#>  RS2023     1      FALSE  500   0       AB                 133.6
+#>  RS2023     2      FALSE  500   0       AB                 34.03
+#>  RS2023     3      FALSE  500   0       AB                 3.563
+#>  RS2023     4      FALSE  500   0       AB                0.3759
+#>  RS2023     5      FALSE  500   0       AB               0.04352
+#>  RS2023     7      FALSE  500   0       AB             0.0005115
+#>  RS2023     8      FALSE  500   0       AB              5.74e-05
 #>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB            -6.873e-10
-#>  RS2023    14      FALSE  500   0       AB                 686.3
-#>  RS2023    14      FALSE  500   0       AB                  2129
-#>  RS2023    14      FALSE  500   0       AB                  3245
-#>  RS2023    14      FALSE  500   0       AB                  3803
-#>  RS2023    14      FALSE  500   0       AB                  3465
-#>  RS2023    14      FALSE  500   0       AB                  2902
-#>  RS2023    14      FALSE  500   0       AB                  1935
-#>  RS2023    14      FALSE  500   0       AB                  1320
-#>  RS2023    14      FALSE  500   0       AB                 881.5
-#>  RS2023    14      FALSE  500   0       AB                 561.8
-#>  RS2023    15      FALSE  500   0       AB                 71.75
-#>  RS2023    16      FALSE  500   0       AB                  4.33
-#>  RS2023    17      FALSE  500   0       AB                  0.44
-#>  RS2023    18      FALSE  500   0       AB               0.04351
-#>  RS2023    20      FALSE  500   0       AB             0.0004563
-#>  RS2023    21      FALSE  500   0       AB             4.748e-05
+#>  RS2023    14      FALSE  500   0       AB             3.883e-09
+#>  RS2023    14      FALSE  500   0       AB                 718.1
+#>  RS2023    14      FALSE  500   0       AB                  2313
+#>  RS2023    14      FALSE  500   0       AB                  3680
+#>  RS2023    14      FALSE  500   0       AB                  4500
+#>  RS2023    14      FALSE  500   0       AB                  4362
+#>  RS2023    14      FALSE  500   0       AB                  3786
+#>  RS2023    14      FALSE  500   0       AB                  2606
+#>  RS2023    14      FALSE  500   0       AB                  1802
+#>  RS2023    14      FALSE  500   0       AB                  1217
+#>  RS2023    14      FALSE  500   0       AB                 784.7
+#>  RS2023    15      FALSE  500   0       AB                 111.4
+#>  RS2023    16      FALSE  500   0       AB                 7.961
+#>  RS2023    17      FALSE  500   0       AB                0.8689
+#>  RS2023    18      FALSE  500   0       AB                0.0913
+#>  RS2023    20      FALSE  500   0       AB               0.00108
+#>  RS2023    21      FALSE  500   0       AB             0.0001193
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 846.5
-#>  RS2023     1      FALSE  500   0       BA                  2362
-#>  RS2023     1      FALSE  500   0       BA                  3362
-#>  RS2023     1      FALSE  500   0       BA                  3521
-#>  RS2023     1      FALSE  500   0       BA                  2874
-#>  RS2023     1      FALSE  500   0       BA                  2162
-#>  RS2023     1      FALSE  500   0       BA                  1212
-#>  RS2023     1      FALSE  500   0       BA                 602.6
-#>  RS2023     1      FALSE  500   0       BA                 335.5
-#>  RS2023     1      FALSE  500   0       BA                   210
-#>  RS2023     2      FALSE  500   0       BA                 19.66
-#>  RS2023     3      FALSE  500   0       BA                 1.634
-#>  RS2023     4      FALSE  500   0       BA                0.1847
-#>  RS2023     5      FALSE  500   0       BA               0.01863
-#>  RS2023     7      FALSE  500   0       BA             0.0002166
-#>  RS2023     8      FALSE  500   0       BA             2.321e-05
+#>  RS2023     1      FALSE  500   0       BA                 922.7
+#>  RS2023     1      FALSE  500   0       BA                  2758
+#>  RS2023     1      FALSE  500   0       BA                  4254
+#>  RS2023     1      FALSE  500   0       BA                  4815
+#>  RS2023     1      FALSE  500   0       BA                  4377
+#>  RS2023     1      FALSE  500   0       BA                  3494
+#>  RS2023     1      FALSE  500   0       BA                  2058
+#>  RS2023     1      FALSE  500   0       BA                  1049
+#>  RS2023     1      FALSE  500   0       BA                   599
+#>  RS2023     1      FALSE  500   0       BA                 387.4
+#>  RS2023     2      FALSE  500   0       BA                 46.62
+#>  RS2023     3      FALSE  500   0       BA                 4.444
+#>  RS2023     4      FALSE  500   0       BA                0.5435
+#>  RS2023     5      FALSE  500   0       BA               0.05928
+#>  RS2023     7      FALSE  500   0       BA             0.0008061
+#>  RS2023     8      FALSE  500   0       BA             9.345e-05
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA             2.247e-10
-#>  RS2023    14      FALSE  500   0       BA                  4101
-#>  RS2023    14      FALSE  500   0       BA                  4476
-#>  RS2023    14      FALSE  500   0       BA                  4025
-#>  RS2023    14      FALSE  500   0       BA                  2901
-#>  RS2023    14      FALSE  500   0       BA                  1564
-#>  RS2023    14      FALSE  500   0       BA                 789.4
-#>  RS2023    14      FALSE  500   0       BA                 202.7
-#>  RS2023    14      FALSE  500   0       BA                 71.68
-#>  RS2023    14      FALSE  500   0       BA                 41.44
-#>  RS2023    14      FALSE  500   0       BA                 30.02
-#>  RS2023    15      FALSE  500   0       BA                 9.132
-#>  RS2023    16      FALSE  500   0       BA                0.9493
-#>  RS2023    17      FALSE  500   0       BA                0.1048
-#>  RS2023    18      FALSE  500   0       BA               0.01091
-#>  RS2023    20      FALSE  500   0       BA             0.0001271
-#>  RS2023    21      FALSE  500   0       BA             1.361e-05
+#>  RS2023    14      FALSE  500   0       BA            -1.985e-10
+#>  RS2023    14      FALSE  500   0       BA                  4692
+#>  RS2023    14      FALSE  500   0       BA                  5777
+#>  RS2023    14      FALSE  500   0       BA                  5773
+#>  RS2023    14      FALSE  500   0       BA                  4558
+#>  RS2023    14      FALSE  500   0       BA                  2838
+#>  RS2023    14      FALSE  500   0       BA                  1588
+#>  RS2023    14      FALSE  500   0       BA                 460.1
+#>  RS2023    14      FALSE  500   0       BA                 171.1
+#>  RS2023    14      FALSE  500   0       BA                 100.6
+#>  RS2023    14      FALSE  500   0       BA                 73.44
+#>  RS2023    15      FALSE  500   0       BA                 23.23
+#>  RS2023    16      FALSE  500   0       BA                 2.612
+#>  RS2023    17      FALSE  500   0       BA                0.3118
+#>  RS2023    18      FALSE  500   0       BA               0.03512
+#>  RS2023    20      FALSE  500   0       BA             0.0004799
+#>  RS2023    21      FALSE  500   0       BA             5.534e-05
 #>  RS2023     1      FALSE  500   1       AB                     .
 #>  RS2023     1      FALSE  500   0       AB                     0
-#>  RS2023     1      FALSE  500   0       AB                  3474
-#>  RS2023     1      FALSE  500   0       AB                  4005
-#>  RS2023     1      FALSE  500   0       AB                  3488
-#>  RS2023     1      FALSE  500   0       AB                  2799
-#>  RS2023     1      FALSE  500   0       AB                  1559
-#>  RS2023     1      FALSE  500   0       AB                 865.6
-#>  RS2023     1      FALSE  500   0       AB                 272.4
-#>  RS2023     1      FALSE  500   0       AB                 96.31
-#>  RS2023     1      FALSE  500   0       AB                 46.29
-#>  RS2023     1      FALSE  500   0       AB                    32
-#>  RS2023     2      FALSE  500   0       AB                 8.773
-#>  RS2023     3      FALSE  500   0       AB                 1.091
-#>  RS2023     4      FALSE  500   0       AB                0.1259
-#>  RS2023     5      FALSE  500   0       AB               0.01538
-#>  RS2023     7      FALSE  500   0       AB             0.0002138
-#>  RS2023     8      FALSE  500   0       AB             2.506e-05
+#>  RS2023     1      FALSE  500   0       AB                  3695
+#>  RS2023     1      FALSE  500   0       AB                  4490
+#>  RS2023     1      FALSE  500   0       AB                  4085
+#>  RS2023     1      FALSE  500   0       AB                  3397
+#>  RS2023     1      FALSE  500   0       AB                  1990
+#>  RS2023     1      FALSE  500   0       AB                  1139
+#>  RS2023     1      FALSE  500   0       AB                 370.3
+#>  RS2023     1      FALSE  500   0       AB                 133.9
+#>  RS2023     1      FALSE  500   0       AB                 65.86
+#>  RS2023     1      FALSE  500   0       AB                 46.33
+#>  RS2023     2      FALSE  500   0       AB                 13.03
+#>  RS2023     3      FALSE  500   0       AB                 1.666
+#>  RS2023     4      FALSE  500   0       AB                0.1976
+#>  RS2023     5      FALSE  500   0       AB               0.02481
+#>  RS2023     7      FALSE  500   0       AB             0.0003646
+#>  RS2023     8      FALSE  500   0       AB             4.392e-05
 #>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB            -3.482e-10
-#>  RS2023    14      FALSE  500   0       AB                 650.1
-#>  RS2023    14      FALSE  500   0       AB                  2108
-#>  RS2023    14      FALSE  500   0       AB                  3054
-#>  RS2023    14      FALSE  500   0       AB                  3157
-#>  RS2023    14      FALSE  500   0       AB                  2530
-#>  RS2023    14      FALSE  500   0       AB                  2041
-#>  RS2023    14      FALSE  500   0       AB                  1242
-#>  RS2023    14      FALSE  500   0       AB                 761.5
-#>  RS2023    14      FALSE  500   0       AB                 468.5
-#>  RS2023    14      FALSE  500   0       AB                 277.6
-#>  RS2023    15      FALSE  500   0       AB                 26.91
-#>  RS2023    16      FALSE  500   0       AB                 2.066
-#>  RS2023    17      FALSE  500   0       AB                0.2541
-#>  RS2023    18      FALSE  500   0       AB               0.03001
-#>  RS2023    20      FALSE  500   0       AB             0.0004402
-#>  RS2023    21      FALSE  500   0       AB             4.999e-05
+#>  RS2023    14      FALSE  500   0       AB            -1.759e-10
+#>  RS2023    14      FALSE  500   0       AB                 676.5
+#>  RS2023    14      FALSE  500   0       AB                  2263
+#>  RS2023    14      FALSE  500   0       AB                  3396
+#>  RS2023    14      FALSE  500   0       AB                  3630
+#>  RS2023    14      FALSE  500   0       AB                  3035
+#>  RS2023    14      FALSE  500   0       AB                  2499
+#>  RS2023    14      FALSE  500   0       AB                  1542
+#>  RS2023    14      FALSE  500   0       AB                 952.2
+#>  RS2023    14      FALSE  500   0       AB                 590.1
+#>  RS2023    14      FALSE  500   0       AB                   353
+#>  RS2023    15      FALSE  500   0       AB                 37.59
+#>  RS2023    16      FALSE  500   0       AB                 3.135
+#>  RS2023    17      FALSE  500   0       AB                0.3968
+#>  RS2023    18      FALSE  500   0       AB               0.04818
+#>  RS2023    20      FALSE  500   0       AB             0.0007468
+#>  RS2023    21      FALSE  500   0       AB             8.699e-05
 #>  RS2023     1      FALSE  500   1       BA                     .
 #>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 969.3
-#>  RS2023     1      FALSE  500   0       BA                  3343
-#>  RS2023     1      FALSE  500   0       BA                  4829
-#>  RS2023     1      FALSE  500   0       BA                  4926
-#>  RS2023     1      FALSE  500   0       BA                  4370
-#>  RS2023     1      FALSE  500   0       BA                  3533
-#>  RS2023     1      FALSE  500   0       BA                  2094
+#>  RS2023     1      FALSE  500   0       BA                  1056
+#>  RS2023     1      FALSE  500   0       BA                  3909
+#>  RS2023     1      FALSE  500   0       BA                  6136
+#>  RS2023     1      FALSE  500   0       BA                  6793
+#>  RS2023     1      FALSE  500   0       BA                  6801
+#>  RS2023     1      FALSE  500   0       BA                  5915
+#>  RS2023     1      FALSE  500   0       BA                  3756
+#>  RS2023     1      FALSE  500   0       BA                  2397
+#>  RS2023     1      FALSE  500   0       BA                  1463
+#>  RS2023     1      FALSE  500   0       BA                   958
+#>  RS2023     2      FALSE  500   0       BA                 126.5
+#>  RS2023     3      FALSE  500   0       BA                 11.59
+#>  RS2023     4      FALSE  500   0       BA                 1.186
+#>  RS2023     5      FALSE  500   0       BA                0.1214
+#>  RS2023     7      FALSE  500   0       BA              0.001461
+#>  RS2023     8      FALSE  500   0       BA             0.0001637
+#>  RS2023    14      FALSE  500   1       BA                     .
+#>  RS2023    14      FALSE  500   0       BA             5.169e-09
+#>  RS2023    14      FALSE  500   0       BA                  6604
+#>  RS2023    14      FALSE  500   0       BA                  8678
+#>  RS2023    14      FALSE  500   0       BA                  9339
+#>  RS2023    14      FALSE  500   0       BA                  8061
+#>  RS2023    14      FALSE  500   0       BA                  5887
+#>  RS2023    14      FALSE  500   0       BA                  3840
+#>  RS2023    14      FALSE  500   0       BA                  1392
+#>  RS2023    14      FALSE  500   0       BA                 578.3
+#>  RS2023    14      FALSE  500   0       BA                 318.8
+#>  RS2023    14      FALSE  500   0       BA                 196.3
+#>  RS2023    15      FALSE  500   0       BA                 57.94
+#>  RS2023    16      FALSE  500   0       BA                 6.046
+#>  RS2023    17      FALSE  500   0       BA                0.6436
+#>  RS2023    18      FALSE  500   0       BA               0.07015
+#>  RS2023    20      FALSE  500   0       BA              0.000778
+#>  RS2023    21      FALSE  500   0       BA             8.557e-05
+#>  RS2023     1      FALSE  500   1       AB                     .
+#>  RS2023     1      FALSE  500   0       AB                     0
+#>  RS2023     1      FALSE  500   0       AB                  4203
+#>  RS2023     1      FALSE  500   0       AB                  5498
+#>  RS2023     1      FALSE  500   0       AB                  5548
+#>  RS2023     1      FALSE  500   0       AB                  4876
+#>  RS2023     1      FALSE  500   0       AB                  3160
+#>  RS2023     1      FALSE  500   0       AB                  1893
+#>  RS2023     1      FALSE  500   0       AB                 666.7
+#>  RS2023     1      FALSE  500   0       AB                   252
+#>  RS2023     1      FALSE  500   0       AB                 136.3
+#>  RS2023     1      FALSE  500   0       AB                 84.15
+#>  RS2023     2      FALSE  500   0       AB                 24.56
+#>  RS2023     3      FALSE  500   0       AB                 2.749
+#>  RS2023     4      FALSE  500   0       AB                0.3298
+#>  RS2023     5      FALSE  500   0       AB               0.03909
+#>  RS2023     7      FALSE  500   0       AB             0.0005335
+#>  RS2023     8      FALSE  500   0       AB             6.348e-05
+#>  RS2023    14      FALSE  500   1       AB                     .
+#>  RS2023    14      FALSE  500   0       AB             6.175e-10
+#>  RS2023    14      FALSE  500   0       AB                 727.4
+#>  RS2023    14      FALSE  500   0       AB                  2459
+#>  RS2023    14      FALSE  500   0       AB                  3576
+#>  RS2023    14      FALSE  500   0       AB                  4092
+#>  RS2023    14      FALSE  500   0       AB                  4161
+#>  RS2023    14      FALSE  500   0       AB                  3319
+#>  RS2023    14      FALSE  500   0       AB                  2045
+#>  RS2023    14      FALSE  500   0       AB                  1353
+#>  RS2023    14      FALSE  500   0       AB                 844.3
+#>  RS2023    14      FALSE  500   0       AB                 512.1
+#>  RS2023    15      FALSE  500   0       AB                 66.53
+#>  RS2023    16      FALSE  500   0       AB                  5.48
+#>  RS2023    17      FALSE  500   0       AB                0.6384
+#>  RS2023    18      FALSE  500   0       AB               0.07406
+#>  RS2023    20      FALSE  500   0       AB             0.0009839
+#>  RS2023    21      FALSE  500   0       AB             0.0001123
+#>  RS2023     1      FALSE  500   1       AB                     .
+#>  RS2023     1      FALSE  500   0       AB                     0
+#>  RS2023     1      FALSE  500   0       AB                  4539
+#>  RS2023     1      FALSE  500   0       AB                  5433
+#>  RS2023     1      FALSE  500   0       AB                  5448
+#>  RS2023     1      FALSE  500   0       AB                  4826
+#>  RS2023     1      FALSE  500   0       AB                  3136
+#>  RS2023     1      FALSE  500   0       AB                  1902
+#>  RS2023     1      FALSE  500   0       AB                 708.1
+#>  RS2023     1      FALSE  500   0       AB                 276.3
+#>  RS2023     1      FALSE  500   0       AB                 145.6
+#>  RS2023     1      FALSE  500   0       AB                 83.38
+#>  RS2023     2      FALSE  500   0       AB                 22.65
+#>  RS2023     3      FALSE  500   0       AB                 2.542
+#>  RS2023     4      FALSE  500   0       AB                0.2769
+#>  RS2023     5      FALSE  500   0       AB               0.03234
+#>  RS2023     7      FALSE  500   0       AB             0.0003498
+#>  RS2023     8      FALSE  500   0       AB             4.084e-05
+#>  RS2023    14      FALSE  500   1       AB                     .
+#>  RS2023    14      FALSE  500   0       AB             5.968e-10
+#>  RS2023    14      FALSE  500   0       AB                 814.4
+#>  RS2023    14      FALSE  500   0       AB                  2712
+#>  RS2023    14      FALSE  500   0       AB                  4111
+#>  RS2023    14      FALSE  500   0       AB                  4650
+#>  RS2023    14      FALSE  500   0       AB                  4130
+#>  RS2023    14      FALSE  500   0       AB                  3368
+#>  RS2023    14      FALSE  500   0       AB                  2137
+#>  RS2023    14      FALSE  500   0       AB                  1364
+#>  RS2023    14      FALSE  500   0       AB                 898.9
+#>  RS2023    14      FALSE  500   0       AB                 567.5
+#>  RS2023    15      FALSE  500   0       AB                 63.06
+#>  RS2023    16      FALSE  500   0       AB                 4.689
+#>  RS2023    17      FALSE  500   0       AB                0.5406
+#>  RS2023    18      FALSE  500   0       AB               0.05975
+#>  RS2023    20      FALSE  500   0       AB             0.0007148
+#>  RS2023    21      FALSE  500   0       AB             7.862e-05
+#>  RS2023     1      FALSE  500   1       AB                     .
+#>  RS2023     1      FALSE  500   0       AB                     0
+#>  RS2023     1      FALSE  500   0       AB                  4683
+#>  RS2023     1      FALSE  500   0       AB                  6098
+#>  RS2023     1      FALSE  500   0       AB                  6407
+#>  RS2023     1      FALSE  500   0       AB                  5865
+#>  RS2023     1      FALSE  500   0       AB                  4032
+#>  RS2023     1      FALSE  500   0       AB                  2815
+#>  RS2023     1      FALSE  500   0       AB                  1238
+#>  RS2023     1      FALSE  500   0       AB                 570.6
+#>  RS2023     1      FALSE  500   0       AB                 308.1
+#>  RS2023     1      FALSE  500   0       AB                   186
+#>  RS2023     2      FALSE  500   0       AB                 34.42
+#>  RS2023     3      FALSE  500   0       AB                 2.633
+#>  RS2023     4      FALSE  500   0       AB                0.1885
+#>  RS2023     5      FALSE  500   0       AB               0.01413
+#>  RS2023     7      FALSE  500   0       AB             8.351e-05
+#>  RS2023     8      FALSE  500   0       AB             6.839e-06
+#>  RS2023    14      FALSE  500   1       AB                     .
+#>  RS2023    14      FALSE  500   0       AB             2.279e-09
+#>  RS2023    14      FALSE  500   0       AB                 770.8
+#>  RS2023    14      FALSE  500   0       AB                  2535
+#>  RS2023    14      FALSE  500   0       AB                  3877
+#>  RS2023    14      FALSE  500   0       AB                  4499
+#>  RS2023    14      FALSE  500   0       AB                  4359
+#>  RS2023    14      FALSE  500   0       AB                  3831
+#>  RS2023    14      FALSE  500   0       AB                  2767
+#>  RS2023    14      FALSE  500   0       AB                  2021
+#>  RS2023    14      FALSE  500   0       AB                  1356
+#>  RS2023    14      FALSE  500   0       AB                 965.5
+#>  RS2023    15      FALSE  500   0       AB                   149
+#>  RS2023    16      FALSE  500   0       AB                 6.907
+#>  RS2023    17      FALSE  500   0       AB                0.4667
+#>  RS2023    18      FALSE  500   0       AB               0.03715
+#>  RS2023    20      FALSE  500   0       AB             0.0002136
+#>  RS2023    21      FALSE  500   0       AB             1.582e-05
+#>  RS2023     1      FALSE  500   1       BA                     .
+#>  RS2023     1      FALSE  500   0       BA                     0
+#>  RS2023     1      FALSE  500   0       BA                 584.4
+#>  RS2023     1      FALSE  500   0       BA                  1859
+#>  RS2023     1      FALSE  500   0       BA                  3307
+#>  RS2023     1      FALSE  500   0       BA                  3388
+#>  RS2023     1      FALSE  500   0       BA                  3517
+#>  RS2023     1      FALSE  500   0       BA                  3085
+#>  RS2023     1      FALSE  500   0       BA                  2019
 #>  RS2023     1      FALSE  500   0       BA                  1293
-#>  RS2023     1      FALSE  500   0       BA                 767.4
-#>  RS2023     1      FALSE  500   0       BA                 486.7
-#>  RS2023     2      FALSE  500   0       BA                 49.43
-#>  RS2023     3      FALSE  500   0       BA                 3.539
-#>  RS2023     4      FALSE  500   0       BA                0.3203
-#>  RS2023     5      FALSE  500   0       BA                0.0291
-#>  RS2023     7      FALSE  500   0       BA             0.0002757
-#>  RS2023     8      FALSE  500   0       BA             2.789e-05
+#>  RS2023     1      FALSE  500   0       BA                 776.4
+#>  RS2023     1      FALSE  500   0       BA                 510.5
+#>  RS2023     2      FALSE  500   0       BA                 62.66
+#>  RS2023     3      FALSE  500   0       BA                 7.067
+#>  RS2023     4      FALSE  500   0       BA                  1.33
+#>  RS2023     5      FALSE  500   0       BA                 0.208
+#>  RS2023     7      FALSE  500   0       BA              0.006452
+#>  RS2023     8      FALSE  500   0       BA              0.001121
 #>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA            -1.044e-09
-#>  RS2023    14      FALSE  500   0       BA                  5781
-#>  RS2023    14      FALSE  500   0       BA                  6733
-#>  RS2023    14      FALSE  500   0       BA                  6513
-#>  RS2023    14      FALSE  500   0       BA                  5118
-#>  RS2023    14      FALSE  500   0       BA                  3208
-#>  RS2023    14      FALSE  500   0       BA                  1867
-#>  RS2023    14      FALSE  500   0       BA                 584.7
-#>  RS2023    14      FALSE  500   0       BA                 223.8
-#>  RS2023    14      FALSE  500   0       BA                 117.8
-#>  RS2023    14      FALSE  500   0       BA                 70.62
-#>  RS2023    15      FALSE  500   0       BA                 19.44
-#>  RS2023    16      FALSE  500   0       BA                   1.8
-#>  RS2023    17      FALSE  500   0       BA                  0.17
-#>  RS2023    18      FALSE  500   0       BA               0.01644
-#>  RS2023    20      FALSE  500   0       BA             0.0001436
-#>  RS2023    21      FALSE  500   0       BA             1.402e-05
-#>  RS2023     1      FALSE  500   1       AB                     .
-#>  RS2023     1      FALSE  500   0       AB                     0
-#>  RS2023     1      FALSE  500   0       AB                  3795
-#>  RS2023     1      FALSE  500   0       AB                  4538
-#>  RS2023     1      FALSE  500   0       AB                  4242
-#>  RS2023     1      FALSE  500   0       AB                  3496
-#>  RS2023     1      FALSE  500   0       AB                  2055
-#>  RS2023     1      FALSE  500   0       AB                  1153
-#>  RS2023     1      FALSE  500   0       AB                 377.2
-#>  RS2023     1      FALSE  500   0       AB                 136.2
-#>  RS2023     1      FALSE  500   0       AB                 70.85
-#>  RS2023     1      FALSE  500   0       AB                 42.49
-#>  RS2023     2      FALSE  500   0       AB                 11.77
-#>  RS2023     3      FALSE  500   0       AB                 1.238
-#>  RS2023     4      FALSE  500   0       AB                0.1396
-#>  RS2023     5      FALSE  500   0       AB               0.01555
-#>  RS2023     7      FALSE  500   0       AB             0.0001875
-#>  RS2023     8      FALSE  500   0       AB             2.099e-05
-#>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB             9.863e-11
-#>  RS2023    14      FALSE  500   0       AB                 680.9
-#>  RS2023    14      FALSE  500   0       AB                  2183
-#>  RS2023    14      FALSE  500   0       AB                  2986
-#>  RS2023    14      FALSE  500   0       AB                  3223
-#>  RS2023    14      FALSE  500   0       AB                  3022
-#>  RS2023    14      FALSE  500   0       AB                  2309
-#>  RS2023    14      FALSE  500   0       AB                  1374
-#>  RS2023    14      FALSE  500   0       AB                 895.2
-#>  RS2023    14      FALSE  500   0       AB                 550.4
-#>  RS2023    14      FALSE  500   0       AB                 327.9
-#>  RS2023    15      FALSE  500   0       AB                 36.01
-#>  RS2023    16      FALSE  500   0       AB                 2.506
-#>  RS2023    17      FALSE  500   0       AB                0.2735
-#>  RS2023    18      FALSE  500   0       AB               0.02982
-#>  RS2023    20      FALSE  500   0       AB             0.0003499
-#>  RS2023    21      FALSE  500   0       AB             3.758e-05
-#>  RS2023     1      FALSE  500   1       AB                     .
-#>  RS2023     1      FALSE  500   0       AB                     0
-#>  RS2023     1      FALSE  500   0       AB                  4137
-#>  RS2023     1      FALSE  500   0       AB                  4573
-#>  RS2023     1      FALSE  500   0       AB                  4293
-#>  RS2023     1      FALSE  500   0       AB                  3604
-#>  RS2023     1      FALSE  500   0       AB                  2169
-#>  RS2023     1      FALSE  500   0       AB                  1255
-#>  RS2023     1      FALSE  500   0       AB                 443.9
-#>  RS2023     1      FALSE  500   0       AB                   167
-#>  RS2023     1      FALSE  500   0       AB                 84.71
-#>  RS2023     1      FALSE  500   0       AB                  46.9
-#>  RS2023     2      FALSE  500   0       AB                 12.05
-#>  RS2023     3      FALSE  500   0       AB                 1.283
-#>  RS2023     4      FALSE  500   0       AB                0.1327
-#>  RS2023     5      FALSE  500   0       AB                0.0147
-#>  RS2023     7      FALSE  500   0       AB             0.0001433
-#>  RS2023     8      FALSE  500   0       AB             1.583e-05
-#>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB             -2.29e-10
-#>  RS2023    14      FALSE  500   0       AB                 766.8
-#>  RS2023    14      FALSE  500   0       AB                  2436
-#>  RS2023    14      FALSE  500   0       AB                  3497
-#>  RS2023    14      FALSE  500   0       AB                  3760
-#>  RS2023    14      FALSE  500   0       AB                  3123
-#>  RS2023    14      FALSE  500   0       AB                  2464
-#>  RS2023    14      FALSE  500   0       AB                  1526
-#>  RS2023    14      FALSE  500   0       AB                 962.5
-#>  RS2023    14      FALSE  500   0       AB                 627.4
-#>  RS2023    14      FALSE  500   0       AB                 390.6
-#>  RS2023    15      FALSE  500   0       AB                 37.96
-#>  RS2023    16      FALSE  500   0       AB                 2.405
-#>  RS2023    17      FALSE  500   0       AB                0.2619
-#>  RS2023    18      FALSE  500   0       AB               0.02746
-#>  RS2023    20      FALSE  500   0       AB              0.000296
-#>  RS2023    21      FALSE  500   0       AB             3.138e-05
-#>  RS2023     1      FALSE  500   1       AB                     .
-#>  RS2023     1      FALSE  500   0       AB                     0
-#>  RS2023     1      FALSE  500   0       AB                  4302
-#>  RS2023     1      FALSE  500   0       AB                  5212
-#>  RS2023     1      FALSE  500   0       AB                  5162
-#>  RS2023     1      FALSE  500   0       AB                  4505
-#>  RS2023     1      FALSE  500   0       AB                  2895
-#>  RS2023     1      FALSE  500   0       AB                  1939
-#>  RS2023     1      FALSE  500   0       AB                 815.3
-#>  RS2023     1      FALSE  500   0       AB                 363.2
-#>  RS2023     1      FALSE  500   0       AB                 188.7
-#>  RS2023     1      FALSE  500   0       AB                 109.3
-#>  RS2023     2      FALSE  500   0       AB                  18.1
-#>  RS2023     3      FALSE  500   0       AB                 1.276
-#>  RS2023     4      FALSE  500   0       AB               0.08428
-#>  RS2023     5      FALSE  500   0       AB              0.005829
-#>  RS2023     7      FALSE  500   0       AB             2.936e-05
-#>  RS2023     8      FALSE  500   0       AB             2.235e-06
-#>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB             1.433e-09
-#>  RS2023    14      FALSE  500   0       AB                 729.3
-#>  RS2023    14      FALSE  500   0       AB                  2295
-#>  RS2023    14      FALSE  500   0       AB                  3337
-#>  RS2023    14      FALSE  500   0       AB                  3693
-#>  RS2023    14      FALSE  500   0       AB                  3358
-#>  RS2023    14      FALSE  500   0       AB                  2856
-#>  RS2023    14      FALSE  500   0       AB                  2010
-#>  RS2023    14      FALSE  500   0       AB                  1450
-#>  RS2023    14      FALSE  500   0       AB                 962.5
-#>  RS2023    14      FALSE  500   0       AB                 676.9
-#>  RS2023    15      FALSE  500   0       AB                 94.77
-#>  RS2023    16      FALSE  500   0       AB                  3.59
-#>  RS2023    17      FALSE  500   0       AB                0.2164
-#>  RS2023    18      FALSE  500   0       AB               0.01581
-#>  RS2023    20      FALSE  500   0       AB             7.735e-05
-#>  RS2023    21      FALSE  500   0       AB             5.334e-06
-#>  RS2023     1      FALSE  500   1       BA                     .
-#>  RS2023     1      FALSE  500   0       BA                     0
-#>  RS2023     1      FALSE  500   0       BA                 551.8
-#>  RS2023     1      FALSE  500   0       BA                  1674
-#>  RS2023     1      FALSE  500   0       BA                  2815
-#>  RS2023     1      FALSE  500   0       BA                  2728
-#>  RS2023     1      FALSE  500   0       BA                  2605
-#>  RS2023     1      FALSE  500   0       BA                  2172
-#>  RS2023     1      FALSE  500   0       BA                  1356
-#>  RS2023     1      FALSE  500   0       BA                 852.6
-#>  RS2023     1      FALSE  500   0       BA                 505.2
-#>  RS2023     1      FALSE  500   0       BA                 327.2
-#>  RS2023     2      FALSE  500   0       BA                 34.41
-#>  RS2023     3      FALSE  500   0       BA                 3.318
-#>  RS2023     4      FALSE  500   0       BA                0.5934
-#>  RS2023     5      FALSE  500   0       BA               0.08846
-#>  RS2023     7      FALSE  500   0       BA              0.002492
-#>  RS2023     8      FALSE  500   0       BA             0.0004125
-#>  RS2023    14      FALSE  500   1       BA                     .
-#>  RS2023    14      FALSE  500   0       BA             1.342e-08
-#>  RS2023    14      FALSE  500   0       BA                  3036
-#>  RS2023    14      FALSE  500   0       BA                  3838
-#>  RS2023    14      FALSE  500   0       BA                  3606
-#>  RS2023    14      FALSE  500   0       BA                  3041
-#>  RS2023    14      FALSE  500   0       BA                  1779
-#>  RS2023    14      FALSE  500   0       BA                  1118
-#>  RS2023    14      FALSE  500   0       BA                 359.5
-#>  RS2023    14      FALSE  500   0       BA                 135.2
-#>  RS2023    14      FALSE  500   0       BA                 59.68
-#>  RS2023    14      FALSE  500   0       BA                 36.06
-#>  RS2023    15      FALSE  500   0       BA                  11.3
-#>  RS2023    16      FALSE  500   0       BA                 1.888
-#>  RS2023    17      FALSE  500   0       BA                 0.292
-#>  RS2023    18      FALSE  500   0       BA               0.04965
-#>  RS2023    20      FALSE  500   0       BA              0.001345
-#>  RS2023    21      FALSE  500   0       BA             0.0002247
+#>  RS2023    14      FALSE  500   0       BA             4.172e-08
+#>  RS2023    14      FALSE  500   0       BA                  3317
+#>  RS2023    14      FALSE  500   0       BA                  4546
+#>  RS2023    14      FALSE  500   0       BA                  4589
+#>  RS2023    14      FALSE  500   0       BA                  4123
+#>  RS2023    14      FALSE  500   0       BA                  2677
+#>  RS2023    14      FALSE  500   0       BA                  1818
+#>  RS2023    14      FALSE  500   0       BA                 644.6
+#>  RS2023    14      FALSE  500   0       BA                 255.5
+#>  RS2023    14      FALSE  500   0       BA                 116.2
+#>  RS2023    14      FALSE  500   0       BA                 71.45
+#>  RS2023    15      FALSE  500   0       BA                 23.19
+#>  RS2023    16      FALSE  500   0       BA                 4.065
+#>  RS2023    17      FALSE  500   0       BA                0.6599
+#>  RS2023    18      FALSE  500   0       BA                0.1177
+#>  RS2023    20      FALSE  500   0       BA              0.003512
+#>  RS2023    21      FALSE  500   0       BA             0.0006157
 #>  RS2023     1      FALSE  500   1       AB                     .
 #>  RS2023     1      FALSE  500   0       AB                     0
 #>  RS2023     1      FALSE  500   0       AB                  3446
@@ -2177,7 +2177,7 @@ write_monolix(examplinib_fe_nif)
 #>  RS2023     7      FALSE  500   0       AB             4.089e-05
 #>  RS2023     8      FALSE  500   0       AB             3.322e-06
 #>  RS2023    14      FALSE  500   1       AB                     .
-#>  RS2023    14      FALSE  500   0       AB             6.565e-13
+#>  RS2023    14      FALSE  500   0       AB             6.552e-13
 #>  RS2023    14      FALSE  500   0       AB                 630.3
 #>  RS2023    14      FALSE  500   0       AB                  1961
 #>  RS2023    14      FALSE  500   0       AB                  2883
@@ -2197,76 +2197,76 @@ write_monolix(examplinib_fe_nif)
 #>                   EPOCH PERIOD TREATMENT FASTED ADM YTYPE          Y
 #>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4409
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5606
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5300
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4776
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3228
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1926
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      620.2
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      253.4
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      127.7
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      76.41
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      20.53
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      2.338
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.2696
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.02832
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0003678
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  4.151e-05
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4697
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       6325
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       6294
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5932
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4317
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2720
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      938.6
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      398.6
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      205.9
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      125.3
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      34.94
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      4.195
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       0.51
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.05648
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0008148
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  9.704e-05
 #>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  9.137e-10
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      835.1
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2570
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3711
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4208
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4002
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3250
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2057
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1324
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      812.3
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      546.8
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      58.01
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4.45
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      0.506
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.05589
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0007178
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  7.955e-05
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1 -5.507e-11
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1        870
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2770
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4163
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4911
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4957
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4175
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2733
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1785
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1108
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      756.2
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       90.3
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      7.879
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.9472
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.1103
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1   0.001574
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0001846
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      506.8
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1557
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1990
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2169
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1845
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1489
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      942.9
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      619.3
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1        385
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      254.9
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       25.2
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      1.397
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.1432
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.01436
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0001673
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  1.751e-05
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      546.4
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1777
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2420
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2789
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2534
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2103
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1355
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      897.8
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      563.7
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      377.8
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      42.44
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      2.849
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.3093
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.03255
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0004173
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   4.58e-05
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1 -5.095e-12
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2606
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2784
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2490
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1970
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1178
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      737.7
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      253.4
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      96.58
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      44.77
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       25.4
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      5.772
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.6277
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.0647
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   0.007001
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  7.425e-05
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  8.308e-06
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.517e-10
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2925
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3432
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3300
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2756
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1766
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1146
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      408.2
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      161.1
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      78.26
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      46.55
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      11.45
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      1.307
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.1413
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.01604
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001872
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  2.194e-05
 #>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4760
@@ -2301,8 +2301,8 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1      4.105
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.3253
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1      0.028
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0001769
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  1.463e-05
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1   0.000177
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  1.471e-05
 #>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4276
@@ -2358,7 +2358,7 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0003778
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1  3.525e-05
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.207e-10
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  9.584e-11
 #>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5533
 #>  OPEN LABEL TREATMENT 2      2         A      1   .     1       7048
 #>  OPEN LABEL TREATMENT 2      2         A      1   .     1       6713
@@ -2374,79 +2374,79 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.2552
 #>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.02391
 #>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001938
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.857e-05
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.858e-05
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      797.1
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2255
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3111
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3236
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2943
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2174
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1326
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      840.1
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1        540
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      301.2
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1         30
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      2.449
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.2942
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.04147
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0006589
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  8.553e-05
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      853.2
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2544
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3730
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4106
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4016
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3074
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1922
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1231
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1        800
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      452.6
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      52.47
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      4.989
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      0.628
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.09253
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   0.001605
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0002177
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  3.281e-09
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4079
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4725
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4256
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3290
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2053
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1105
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      340.5
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      126.2
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      59.55
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      34.64
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      9.963
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      1.216
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.1692
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.02296
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.00038
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  4.544e-05
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.771e-09
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4531
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5740
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5567
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4569
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3103
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1759
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      571.8
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      219.9
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      108.1
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      65.01
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      19.63
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      2.504
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      0.364
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.05162
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0009334
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001166
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      580.9
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1754
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2480
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2387
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2175
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1768
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1129
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      697.9
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      448.6
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      298.5
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      30.58
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      1.295
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.09935
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.0084
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  6.268e-05
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  5.029e-06
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      652.5
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2149
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3347
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3508
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3526
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2985
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1960
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1229
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      803.2
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      544.9
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      67.28
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      3.901
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.3345
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.03092
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0002752
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  2.399e-05
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   1.47e-11
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3251
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3964
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3504
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2606
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1474
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      983.3
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      355.5
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      131.2
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      60.96
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      35.73
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      7.179
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.6113
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.0492
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   0.004016
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  3.151e-05
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  2.704e-06
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1 -9.784e-08
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3886
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5464
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5383
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4338
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2712
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1907
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      729.2
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      284.4
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      142.3
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      89.85
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      20.75
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1.93
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.1696
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.01512
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001419
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.331e-05
 #>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5478
@@ -2466,7 +2466,7 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0006583
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1  7.225e-05
 #>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1 -9.627e-10
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  -9.59e-10
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1      937.1
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3021
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1       5004
@@ -2482,7 +2482,7 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.9385
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1      0.104
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1   0.001268
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0001471
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0001472
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1      933.7
@@ -2521,364 +2521,364 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001519
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      681.3
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2099
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2970
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3263
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2975
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2398
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1521
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1023
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      679.6
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1        443
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      45.37
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      3.498
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.4203
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.05474
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0009147
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0001267
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      713.2
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2279
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3363
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3843
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3696
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3061
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1981
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1343
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      899.1
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      591.3
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      66.43
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      5.854
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.7329
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.09886
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   0.001772
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   0.000254
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  9.763e-10
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3325
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4273
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4000
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3350
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2203
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1272
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      469.7
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      186.2
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       82.6
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      50.53
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      12.91
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      1.661
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.2084
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.02832
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0004738
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  6.121e-05
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   6.73e-09
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3567
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4871
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4797
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4188
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2925
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1754
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      673.7
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      273.8
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      124.9
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       78.6
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      21.15
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      2.819
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.3662
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.05154
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0009246
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001236
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      584.7
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1631
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2263
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2302
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2036
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1593
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1014
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      664.2
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      421.4
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      286.6
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      29.63
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      1.329
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.1283
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.01194
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0001056
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  9.495e-06
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      642.4
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1925
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2896
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3166
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3057
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2486
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1625
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1079
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      694.1
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      480.4
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      58.71
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      3.403
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.3589
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.03596
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0003681
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  3.574e-05
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1 -8.224e-12
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2766
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3246
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2901
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2405
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1396
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      851.9
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      314.8
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1        110
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      58.26
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       29.9
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      6.917
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.6043
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.05846
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   0.005414
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  4.749e-05
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  4.355e-06
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.084e-10
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3197
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4223
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4142
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3686
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2348
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1508
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      588.2
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      215.5
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      121.3
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       66.1
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      17.01
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      1.599
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.1665
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.01659
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001684
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.656e-05
 #>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3732
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4611
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4509
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4146
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2844
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1708
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      709.9
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1        303
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      132.4
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      80.36
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      19.13
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      1.886
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.1873
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.02042
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0002129
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  2.251e-05
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4001
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5260
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5426
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5224
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3848
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2428
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1071
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      473.7
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      213.7
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      133.6
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      34.03
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      3.563
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.3759
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.04352
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0005115
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1   5.74e-05
 #>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1 -6.873e-10
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      686.3
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2129
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3245
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3803
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3465
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2902
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1935
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1320
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      881.5
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      561.8
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      71.75
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4.33
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       0.44
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.04351
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0004563
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  4.748e-05
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  3.883e-09
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      718.1
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2313
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3680
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4500
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4362
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3786
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2606
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1802
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1217
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      784.7
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      111.4
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      7.961
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.8689
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.0913
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.00108
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0001193
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      846.5
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2362
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3362
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3521
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2874
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2162
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1212
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      602.6
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      335.5
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1        210
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      19.66
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      1.634
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.1847
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.01863
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0002166
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  2.321e-05
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      922.7
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2758
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4254
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4815
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4377
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3494
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2058
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1049
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1        599
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      387.4
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      46.62
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      4.444
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.5435
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.05928
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0008061
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  9.345e-05
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  2.247e-10
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4101
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4476
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4025
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2901
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1564
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      789.4
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      202.7
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      71.68
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      41.44
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      30.02
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      9.132
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.9493
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.1048
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.01091
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001271
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.361e-05
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1 -1.985e-10
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4692
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5777
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5773
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4558
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2838
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1588
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      460.1
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      171.1
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      100.6
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      73.44
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      23.23
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      2.612
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.3118
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.03512
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0004799
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  5.534e-05
 #>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3474
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4005
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3488
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2799
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1559
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      865.6
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      272.4
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      96.31
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      46.29
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1         32
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      8.773
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      1.091
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.1259
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.01538
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0002138
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  2.506e-05
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3695
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4490
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4085
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3397
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1990
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1139
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      370.3
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      133.9
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      65.86
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      46.33
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      13.03
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      1.666
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.1976
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.02481
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0003646
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  4.392e-05
 #>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1 -3.482e-10
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      650.1
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2108
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3054
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3157
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2530
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2041
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1242
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      761.5
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      468.5
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      277.6
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      26.91
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      2.066
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.2541
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.03001
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0004402
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  4.999e-05
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1 -1.759e-10
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      676.5
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2263
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3396
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3630
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3035
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2499
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1542
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      952.2
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      590.1
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1        353
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      37.59
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      3.135
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.3968
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.04818
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0007468
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  8.699e-05
 #>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      969.3
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3343
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4829
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4926
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       4370
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3533
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2094
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1056
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3909
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       6136
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       6793
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       6801
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       5915
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3756
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2397
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1463
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1        958
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      126.5
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      11.59
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      1.186
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.1214
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   0.001461
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0001637
+#>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  5.169e-09
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       6604
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       8678
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       9339
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       8061
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5887
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3840
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1392
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      578.3
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      318.8
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      196.3
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      57.94
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      6.046
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.6436
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.07015
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   0.000778
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  8.557e-05
+#>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4203
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5498
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5548
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4876
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3160
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1893
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      666.7
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1        252
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      136.3
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      84.15
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      24.56
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      2.749
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.3298
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.03909
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0005335
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  6.348e-05
+#>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  6.175e-10
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      727.4
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2459
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3576
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4092
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4161
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3319
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2045
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1353
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      844.3
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      512.1
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      66.53
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       5.48
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.6384
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.07406
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0009839
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0001123
+#>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4539
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5433
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5448
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4826
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3136
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1902
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      708.1
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      276.3
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      145.6
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      83.38
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      22.65
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      2.542
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.2769
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.03234
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0003498
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  4.084e-05
+#>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  5.968e-10
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      814.4
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2712
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4111
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4650
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4130
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3368
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2137
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1364
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      898.9
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      567.5
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      63.06
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      4.689
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.5406
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.05975
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0007148
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  7.862e-05
+#>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4683
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       6098
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       6407
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5865
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4032
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2815
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1238
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      570.6
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      308.1
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1        186
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      34.42
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      2.633
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.1885
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.01413
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  8.351e-05
+#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  6.839e-06
+#>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  2.279e-09
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      770.8
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2535
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3877
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4499
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       4359
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3831
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2767
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2021
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1356
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      965.5
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1        149
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      6.907
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.4667
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.03715
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0002136
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  1.582e-05
+#>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      584.4
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1859
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3307
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3388
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3517
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       3085
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2019
 #>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1293
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      767.4
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      486.7
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      49.43
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      3.539
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.3203
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.0291
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0002757
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  2.789e-05
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      776.4
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      510.5
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      62.66
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      7.067
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1.33
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      0.208
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   0.006452
+#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   0.001121
 #>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1 -1.044e-09
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5781
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       6733
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       6513
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       5118
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3208
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1867
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      584.7
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      223.8
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      117.8
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      70.62
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      19.44
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1        1.8
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       0.17
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.01644
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0001436
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.402e-05
-#>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3795
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4538
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4242
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3496
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2055
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1153
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      377.2
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      136.2
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      70.85
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      42.49
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      11.77
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      1.238
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.1396
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.01555
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0001875
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  2.099e-05
-#>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  9.863e-11
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      680.9
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2183
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2986
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3223
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3022
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2309
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1374
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      895.2
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      550.4
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      327.9
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      36.01
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      2.506
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.2735
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.02982
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  0.0003499
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  3.758e-05
-#>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4137
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4573
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4293
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3604
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2169
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1255
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      443.9
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1        167
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      84.71
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       46.9
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      12.05
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      1.283
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.1327
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1     0.0147
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  0.0001433
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  1.583e-05
-#>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  -2.29e-10
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      766.8
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2436
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3497
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3760
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3123
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2464
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1526
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      962.5
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      627.4
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      390.6
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      37.96
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      2.405
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.2619
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.02746
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1   0.000296
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  3.138e-05
-#>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4302
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5212
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       5162
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       4505
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       2895
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       1939
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      815.3
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      363.2
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      188.7
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      109.3
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1       18.1
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1      1.276
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1    0.08428
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1   0.005829
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  2.936e-05
-#>  OPEN LABEL TREATMENT 1      1         A      1   .     1  2.235e-06
-#>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  1.433e-09
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      729.3
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2295
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3337
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3693
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3358
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2856
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2010
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1450
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      962.5
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      676.9
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1      94.77
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1       3.59
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.2164
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1    0.01581
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  7.735e-05
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  5.334e-06
-#>  OPEN LABEL TREATMENT 1      1         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1          0
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      551.8
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1674
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2815
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2728
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2605
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       2172
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1       1356
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      852.6
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      505.2
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      327.2
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      34.41
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1      3.318
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1     0.5934
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1    0.08846
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1   0.002492
-#>  OPEN LABEL TREATMENT 1      1         B      0   .     1  0.0004125
-#>  OPEN LABEL TREATMENT 2      2         A      1   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  1.342e-08
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3036
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3838
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3606
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3041
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1779
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1118
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      359.5
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      135.2
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      59.68
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      36.06
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       11.3
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      1.888
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      0.292
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1    0.04965
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   0.001345
-#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0002247
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  4.172e-08
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       3317
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4546
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4589
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       4123
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       2677
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1       1818
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      644.6
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      255.5
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      116.2
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      71.45
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      23.19
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1      4.065
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.6599
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1     0.1177
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1   0.003512
+#>  OPEN LABEL TREATMENT 2      2         A      1   .     1  0.0006157
 #>  OPEN LABEL TREATMENT 1      1         A      1   1     .          .
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1          0
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1       3446
@@ -2898,7 +2898,7 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1  4.089e-05
 #>  OPEN LABEL TREATMENT 1      1         A      1   .     1  3.322e-06
 #>  OPEN LABEL TREATMENT 2      2         B      0   1     .          .
-#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  6.565e-13
+#>  OPEN LABEL TREATMENT 2      2         B      0   .     1  6.552e-13
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1      630.3
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1       1961
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1       2883

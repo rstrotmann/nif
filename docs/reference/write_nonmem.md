@@ -1508,75 +1508,75 @@ head(write_nonmem(examplinib_fe_nif), 5)
 #>  PARENT TRTDY METABOLITE DOSE MDV ACTARMCD IMPUTATION        DV
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
-#>  RS2023     1      FALSE  500   0       AB            4409.2877
-#>  RS2023     1      FALSE  500   0       AB            5605.7968
-#>  RS2023     1      FALSE  500   0       AB            5300.4045
-#>  RS2023     1      FALSE  500   0       AB            4775.5871
-#>  RS2023     1      FALSE  500   0       AB            3228.1453
-#>  RS2023     1      FALSE  500   0       AB            1926.0367
-#>  RS2023     1      FALSE  500   0       AB             620.1551
-#>  RS2023     1      FALSE  500   0       AB             253.4292
-#>  RS2023     1      FALSE  500   0       AB             127.6732
-#>  RS2023     1      FALSE  500   0       AB              76.4117
-#>  RS2023     2      FALSE  500   0       AB              20.5288
-#>  RS2023     3      FALSE  500   0       AB               2.3377
-#>  RS2023     4      FALSE  500   0       AB               0.2696
-#>  RS2023     5      FALSE  500   0       AB               0.0283
-#>  RS2023     7      FALSE  500   0       AB                4e-04
-#>  RS2023     8      FALSE  500   0       AB                    0
+#>  RS2023     1      FALSE  500   0       AB            4697.3267
+#>  RS2023     1      FALSE  500   0       AB            6325.1011
+#>  RS2023     1      FALSE  500   0       AB            6294.1871
+#>  RS2023     1      FALSE  500   0       AB            5932.4643
+#>  RS2023     1      FALSE  500   0       AB            4316.5247
+#>  RS2023     1      FALSE  500   0       AB            2720.3483
+#>  RS2023     1      FALSE  500   0       AB             938.6269
+#>  RS2023     1      FALSE  500   0       AB             398.6231
+#>  RS2023     1      FALSE  500   0       AB             205.8683
+#>  RS2023     1      FALSE  500   0       AB             125.2948
+#>  RS2023     2      FALSE  500   0       AB              34.9438
+#>  RS2023     3      FALSE  500   0       AB                4.195
+#>  RS2023     4      FALSE  500   0       AB                 0.51
+#>  RS2023     5      FALSE  500   0       AB               0.0565
+#>  RS2023     7      FALSE  500   0       AB                8e-04
+#>  RS2023     8      FALSE  500   0       AB                1e-04
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    0
-#>  RS2023    14      FALSE  500   0       AB             835.0784
-#>  RS2023    14      FALSE  500   0       AB            2570.4025
-#>  RS2023    14      FALSE  500   0       AB            3711.1981
-#>  RS2023    14      FALSE  500   0       AB            4207.6397
-#>  RS2023    14      FALSE  500   0       AB            4001.9576
-#>  RS2023    14      FALSE  500   0       AB             3250.225
-#>  RS2023    14      FALSE  500   0       AB            2057.0487
-#>  RS2023    14      FALSE  500   0       AB            1323.6299
-#>  RS2023    14      FALSE  500   0       AB             812.3098
-#>  RS2023    14      FALSE  500   0       AB             546.8454
-#>  RS2023    15      FALSE  500   0       AB              58.0131
-#>  RS2023    16      FALSE  500   0       AB                 4.45
-#>  RS2023    17      FALSE  500   0       AB                0.506
-#>  RS2023    18      FALSE  500   0       AB               0.0559
-#>  RS2023    20      FALSE  500   0       AB                7e-04
-#>  RS2023    21      FALSE  500   0       AB                1e-04
+#>  RS2023    14      FALSE  500   0       AB             869.9889
+#>  RS2023    14      FALSE  500   0       AB            2770.2331
+#>  RS2023    14      FALSE  500   0       AB            4162.7898
+#>  RS2023    14      FALSE  500   0       AB            4910.6863
+#>  RS2023    14      FALSE  500   0       AB            4956.9022
+#>  RS2023    14      FALSE  500   0       AB            4174.7208
+#>  RS2023    14      FALSE  500   0       AB            2733.1124
+#>  RS2023    14      FALSE  500   0       AB            1784.9134
+#>  RS2023    14      FALSE  500   0       AB            1108.4658
+#>  RS2023    14      FALSE  500   0       AB             756.2012
+#>  RS2023    15      FALSE  500   0       AB              90.3015
+#>  RS2023    16      FALSE  500   0       AB               7.8786
+#>  RS2023    17      FALSE  500   0       AB               0.9472
+#>  RS2023    18      FALSE  500   0       AB               0.1103
+#>  RS2023    20      FALSE  500   0       AB               0.0016
+#>  RS2023    21      FALSE  500   0       AB                2e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             506.8347
-#>  RS2023     1      FALSE  500   0       BA            1557.4147
-#>  RS2023     1      FALSE  500   0       BA            1990.4341
-#>  RS2023     1      FALSE  500   0       BA            2168.6684
-#>  RS2023     1      FALSE  500   0       BA            1844.5494
-#>  RS2023     1      FALSE  500   0       BA             1488.972
-#>  RS2023     1      FALSE  500   0       BA             942.9163
-#>  RS2023     1      FALSE  500   0       BA             619.2675
-#>  RS2023     1      FALSE  500   0       BA             384.9788
-#>  RS2023     1      FALSE  500   0       BA             254.8653
-#>  RS2023     2      FALSE  500   0       BA               25.196
-#>  RS2023     3      FALSE  500   0       BA               1.3969
-#>  RS2023     4      FALSE  500   0       BA               0.1432
-#>  RS2023     5      FALSE  500   0       BA               0.0144
-#>  RS2023     7      FALSE  500   0       BA                2e-04
+#>  RS2023     1      FALSE  500   0       BA             546.4172
+#>  RS2023     1      FALSE  500   0       BA            1776.6202
+#>  RS2023     1      FALSE  500   0       BA             2419.886
+#>  RS2023     1      FALSE  500   0       BA              2789.38
+#>  RS2023     1      FALSE  500   0       BA            2534.2718
+#>  RS2023     1      FALSE  500   0       BA            2102.5438
+#>  RS2023     1      FALSE  500   0       BA            1354.8751
+#>  RS2023     1      FALSE  500   0       BA             897.7777
+#>  RS2023     1      FALSE  500   0       BA             563.7153
+#>  RS2023     1      FALSE  500   0       BA             377.8232
+#>  RS2023     2      FALSE  500   0       BA              42.4378
+#>  RS2023     3      FALSE  500   0       BA               2.8488
+#>  RS2023     4      FALSE  500   0       BA               0.3093
+#>  RS2023     5      FALSE  500   0       BA               0.0325
+#>  RS2023     7      FALSE  500   0       BA                4e-04
 #>  RS2023     8      FALSE  500   0       BA                    0
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA             2605.882
-#>  RS2023    14      FALSE  500   0       BA            2783.7238
-#>  RS2023    14      FALSE  500   0       BA            2489.9878
-#>  RS2023    14      FALSE  500   0       BA             1969.544
-#>  RS2023    14      FALSE  500   0       BA            1177.8603
-#>  RS2023    14      FALSE  500   0       BA             737.7272
-#>  RS2023    14      FALSE  500   0       BA              253.363
-#>  RS2023    14      FALSE  500   0       BA               96.575
-#>  RS2023    14      FALSE  500   0       BA              44.7707
-#>  RS2023    14      FALSE  500   0       BA              25.3991
-#>  RS2023    15      FALSE  500   0       BA               5.7722
-#>  RS2023    16      FALSE  500   0       BA               0.6277
-#>  RS2023    17      FALSE  500   0       BA               0.0647
-#>  RS2023    18      FALSE  500   0       BA                0.007
-#>  RS2023    20      FALSE  500   0       BA                1e-04
+#>  RS2023    14      FALSE  500   0       BA            2925.4997
+#>  RS2023    14      FALSE  500   0       BA            3431.7454
+#>  RS2023    14      FALSE  500   0       BA            3300.1314
+#>  RS2023    14      FALSE  500   0       BA            2756.2566
+#>  RS2023    14      FALSE  500   0       BA            1765.6387
+#>  RS2023    14      FALSE  500   0       BA            1146.3179
+#>  RS2023    14      FALSE  500   0       BA             408.1649
+#>  RS2023    14      FALSE  500   0       BA             161.0631
+#>  RS2023    14      FALSE  500   0       BA              78.2605
+#>  RS2023    14      FALSE  500   0       BA              46.5486
+#>  RS2023    15      FALSE  500   0       BA              11.4532
+#>  RS2023    16      FALSE  500   0       BA               1.3069
+#>  RS2023    17      FALSE  500   0       BA               0.1413
+#>  RS2023    18      FALSE  500   0       BA                0.016
+#>  RS2023    20      FALSE  500   0       BA                2e-04
 #>  RS2023    21      FALSE  500   0       BA                    0
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
@@ -1688,75 +1688,75 @@ head(write_nonmem(examplinib_fe_nif), 5)
 #>  RS2023    21      FALSE  500   0       BA                    0
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             797.1487
-#>  RS2023     1      FALSE  500   0       BA            2254.6319
-#>  RS2023     1      FALSE  500   0       BA            3110.5554
-#>  RS2023     1      FALSE  500   0       BA            3236.2015
-#>  RS2023     1      FALSE  500   0       BA             2942.523
-#>  RS2023     1      FALSE  500   0       BA            2174.4393
-#>  RS2023     1      FALSE  500   0       BA            1326.4401
-#>  RS2023     1      FALSE  500   0       BA             840.1494
-#>  RS2023     1      FALSE  500   0       BA             540.0148
-#>  RS2023     1      FALSE  500   0       BA             301.1778
-#>  RS2023     2      FALSE  500   0       BA              30.0028
-#>  RS2023     3      FALSE  500   0       BA               2.4489
-#>  RS2023     4      FALSE  500   0       BA               0.2942
-#>  RS2023     5      FALSE  500   0       BA               0.0415
-#>  RS2023     7      FALSE  500   0       BA                7e-04
-#>  RS2023     8      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             853.1958
+#>  RS2023     1      FALSE  500   0       BA            2544.2644
+#>  RS2023     1      FALSE  500   0       BA            3730.2827
+#>  RS2023     1      FALSE  500   0       BA            4106.3373
+#>  RS2023     1      FALSE  500   0       BA            4016.1361
+#>  RS2023     1      FALSE  500   0       BA            3073.9393
+#>  RS2023     1      FALSE  500   0       BA            1922.2874
+#>  RS2023     1      FALSE  500   0       BA            1230.7612
+#>  RS2023     1      FALSE  500   0       BA             800.0214
+#>  RS2023     1      FALSE  500   0       BA             452.6179
+#>  RS2023     2      FALSE  500   0       BA              52.4706
+#>  RS2023     3      FALSE  500   0       BA                4.989
+#>  RS2023     4      FALSE  500   0       BA                0.628
+#>  RS2023     5      FALSE  500   0       BA               0.0925
+#>  RS2023     7      FALSE  500   0       BA               0.0016
+#>  RS2023     8      FALSE  500   0       BA                2e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA             4079.406
-#>  RS2023    14      FALSE  500   0       BA            4724.7219
-#>  RS2023    14      FALSE  500   0       BA            4256.1451
-#>  RS2023    14      FALSE  500   0       BA            3290.3609
-#>  RS2023    14      FALSE  500   0       BA            2052.8204
-#>  RS2023    14      FALSE  500   0       BA            1105.0599
-#>  RS2023    14      FALSE  500   0       BA             340.4537
-#>  RS2023    14      FALSE  500   0       BA             126.1812
-#>  RS2023    14      FALSE  500   0       BA              59.5528
-#>  RS2023    14      FALSE  500   0       BA              34.6435
-#>  RS2023    15      FALSE  500   0       BA               9.9632
-#>  RS2023    16      FALSE  500   0       BA               1.2159
-#>  RS2023    17      FALSE  500   0       BA               0.1692
-#>  RS2023    18      FALSE  500   0       BA                0.023
-#>  RS2023    20      FALSE  500   0       BA                4e-04
-#>  RS2023    21      FALSE  500   0       BA                    0
+#>  RS2023    14      FALSE  500   0       BA            4531.3367
+#>  RS2023    14      FALSE  500   0       BA            5739.5984
+#>  RS2023    14      FALSE  500   0       BA            5566.6807
+#>  RS2023    14      FALSE  500   0       BA            4568.5023
+#>  RS2023    14      FALSE  500   0       BA            3102.6607
+#>  RS2023    14      FALSE  500   0       BA            1758.7751
+#>  RS2023    14      FALSE  500   0       BA             571.8265
+#>  RS2023    14      FALSE  500   0       BA             219.9434
+#>  RS2023    14      FALSE  500   0       BA             108.0572
+#>  RS2023    14      FALSE  500   0       BA              65.0118
+#>  RS2023    15      FALSE  500   0       BA              19.6321
+#>  RS2023    16      FALSE  500   0       BA               2.5039
+#>  RS2023    17      FALSE  500   0       BA                0.364
+#>  RS2023    18      FALSE  500   0       BA               0.0516
+#>  RS2023    20      FALSE  500   0       BA                9e-04
+#>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             580.8725
-#>  RS2023     1      FALSE  500   0       BA            1754.3074
-#>  RS2023     1      FALSE  500   0       BA            2479.9964
-#>  RS2023     1      FALSE  500   0       BA            2387.3403
-#>  RS2023     1      FALSE  500   0       BA            2174.9182
-#>  RS2023     1      FALSE  500   0       BA            1767.6584
-#>  RS2023     1      FALSE  500   0       BA            1129.3446
-#>  RS2023     1      FALSE  500   0       BA             697.9385
-#>  RS2023     1      FALSE  500   0       BA             448.6176
-#>  RS2023     1      FALSE  500   0       BA             298.4862
-#>  RS2023     2      FALSE  500   0       BA              30.5753
-#>  RS2023     3      FALSE  500   0       BA               1.2952
-#>  RS2023     4      FALSE  500   0       BA               0.0993
-#>  RS2023     5      FALSE  500   0       BA               0.0084
-#>  RS2023     7      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             652.4699
+#>  RS2023     1      FALSE  500   0       BA            2148.7027
+#>  RS2023     1      FALSE  500   0       BA            3347.3862
+#>  RS2023     1      FALSE  500   0       BA            3508.2385
+#>  RS2023     1      FALSE  500   0       BA            3525.7029
+#>  RS2023     1      FALSE  500   0       BA            2984.7917
+#>  RS2023     1      FALSE  500   0       BA            1960.0221
+#>  RS2023     1      FALSE  500   0       BA             1229.483
+#>  RS2023     1      FALSE  500   0       BA             803.2307
+#>  RS2023     1      FALSE  500   0       BA             544.9192
+#>  RS2023     2      FALSE  500   0       BA              67.2828
+#>  RS2023     3      FALSE  500   0       BA               3.9012
+#>  RS2023     4      FALSE  500   0       BA               0.3345
+#>  RS2023     5      FALSE  500   0       BA               0.0309
+#>  RS2023     7      FALSE  500   0       BA                3e-04
 #>  RS2023     8      FALSE  500   0       BA                    0
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA             3250.883
-#>  RS2023    14      FALSE  500   0       BA            3963.9918
-#>  RS2023    14      FALSE  500   0       BA             3504.033
-#>  RS2023    14      FALSE  500   0       BA            2605.8372
-#>  RS2023    14      FALSE  500   0       BA            1474.0956
-#>  RS2023    14      FALSE  500   0       BA              983.305
-#>  RS2023    14      FALSE  500   0       BA             355.4669
-#>  RS2023    14      FALSE  500   0       BA             131.1528
-#>  RS2023    14      FALSE  500   0       BA               60.959
-#>  RS2023    14      FALSE  500   0       BA              35.7313
-#>  RS2023    15      FALSE  500   0       BA               7.1792
-#>  RS2023    16      FALSE  500   0       BA               0.6113
-#>  RS2023    17      FALSE  500   0       BA               0.0492
-#>  RS2023    18      FALSE  500   0       BA                0.004
-#>  RS2023    20      FALSE  500   0       BA                    0
+#>  RS2023    14      FALSE  500   0       BA            3886.3127
+#>  RS2023    14      FALSE  500   0       BA            5463.9502
+#>  RS2023    14      FALSE  500   0       BA            5383.0692
+#>  RS2023    14      FALSE  500   0       BA             4337.634
+#>  RS2023    14      FALSE  500   0       BA             2711.977
+#>  RS2023    14      FALSE  500   0       BA            1906.7455
+#>  RS2023    14      FALSE  500   0       BA             729.1652
+#>  RS2023    14      FALSE  500   0       BA             284.4167
+#>  RS2023    14      FALSE  500   0       BA             142.2746
+#>  RS2023    14      FALSE  500   0       BA              89.8491
+#>  RS2023    15      FALSE  500   0       BA              20.7469
+#>  RS2023    16      FALSE  500   0       BA               1.9304
+#>  RS2023    17      FALSE  500   0       BA               0.1696
+#>  RS2023    18      FALSE  500   0       BA               0.0151
+#>  RS2023    20      FALSE  500   0       BA                1e-04
 #>  RS2023    21      FALSE  500   0       BA                    0
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
@@ -1832,364 +1832,364 @@ head(write_nonmem(examplinib_fe_nif), 5)
 #>  RS2023    21      FALSE  500   0       BA                2e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             681.2896
-#>  RS2023     1      FALSE  500   0       BA            2099.4321
-#>  RS2023     1      FALSE  500   0       BA            2970.4374
-#>  RS2023     1      FALSE  500   0       BA            3262.7162
-#>  RS2023     1      FALSE  500   0       BA            2974.9193
-#>  RS2023     1      FALSE  500   0       BA            2397.6183
-#>  RS2023     1      FALSE  500   0       BA            1520.7174
-#>  RS2023     1      FALSE  500   0       BA            1022.8868
-#>  RS2023     1      FALSE  500   0       BA              679.596
-#>  RS2023     1      FALSE  500   0       BA              442.994
-#>  RS2023     2      FALSE  500   0       BA               45.371
-#>  RS2023     3      FALSE  500   0       BA               3.4975
-#>  RS2023     4      FALSE  500   0       BA               0.4203
-#>  RS2023     5      FALSE  500   0       BA               0.0547
-#>  RS2023     7      FALSE  500   0       BA                9e-04
-#>  RS2023     8      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             713.1764
+#>  RS2023     1      FALSE  500   0       BA            2279.0324
+#>  RS2023     1      FALSE  500   0       BA            3362.6012
+#>  RS2023     1      FALSE  500   0       BA            3842.7115
+#>  RS2023     1      FALSE  500   0       BA            3695.6439
+#>  RS2023     1      FALSE  500   0       BA            3060.9403
+#>  RS2023     1      FALSE  500   0       BA            1981.1477
+#>  RS2023     1      FALSE  500   0       BA             1343.357
+#>  RS2023     1      FALSE  500   0       BA             899.1425
+#>  RS2023     1      FALSE  500   0       BA              591.338
+#>  RS2023     2      FALSE  500   0       BA               66.425
+#>  RS2023     3      FALSE  500   0       BA               5.8541
+#>  RS2023     4      FALSE  500   0       BA               0.7329
+#>  RS2023     5      FALSE  500   0       BA               0.0989
+#>  RS2023     7      FALSE  500   0       BA               0.0018
+#>  RS2023     8      FALSE  500   0       BA                3e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA            3324.8562
-#>  RS2023    14      FALSE  500   0       BA            4273.1903
-#>  RS2023    14      FALSE  500   0       BA            3999.8693
-#>  RS2023    14      FALSE  500   0       BA            3349.8636
-#>  RS2023    14      FALSE  500   0       BA            2202.5551
-#>  RS2023    14      FALSE  500   0       BA            1272.3288
-#>  RS2023    14      FALSE  500   0       BA             469.6933
-#>  RS2023    14      FALSE  500   0       BA              186.158
-#>  RS2023    14      FALSE  500   0       BA              82.5994
-#>  RS2023    14      FALSE  500   0       BA              50.5308
-#>  RS2023    15      FALSE  500   0       BA              12.9053
-#>  RS2023    16      FALSE  500   0       BA               1.6609
-#>  RS2023    17      FALSE  500   0       BA               0.2084
-#>  RS2023    18      FALSE  500   0       BA               0.0283
-#>  RS2023    20      FALSE  500   0       BA                5e-04
+#>  RS2023    14      FALSE  500   0       BA            3567.3819
+#>  RS2023    14      FALSE  500   0       BA            4871.4474
+#>  RS2023    14      FALSE  500   0       BA            4796.7845
+#>  RS2023    14      FALSE  500   0       BA            4187.7473
+#>  RS2023    14      FALSE  500   0       BA            2924.5217
+#>  RS2023    14      FALSE  500   0       BA            1754.2141
+#>  RS2023    14      FALSE  500   0       BA             673.6567
+#>  RS2023    14      FALSE  500   0       BA             273.8245
+#>  RS2023    14      FALSE  500   0       BA             124.9296
+#>  RS2023    14      FALSE  500   0       BA              78.6046
+#>  RS2023    15      FALSE  500   0       BA              21.1457
+#>  RS2023    16      FALSE  500   0       BA               2.8187
+#>  RS2023    17      FALSE  500   0       BA               0.3662
+#>  RS2023    18      FALSE  500   0       BA               0.0515
+#>  RS2023    20      FALSE  500   0       BA                9e-04
 #>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             584.6899
-#>  RS2023     1      FALSE  500   0       BA             1631.303
-#>  RS2023     1      FALSE  500   0       BA            2263.2351
-#>  RS2023     1      FALSE  500   0       BA            2301.7523
-#>  RS2023     1      FALSE  500   0       BA            2035.6375
-#>  RS2023     1      FALSE  500   0       BA            1592.9127
-#>  RS2023     1      FALSE  500   0       BA            1014.2939
-#>  RS2023     1      FALSE  500   0       BA              664.224
-#>  RS2023     1      FALSE  500   0       BA               421.36
-#>  RS2023     1      FALSE  500   0       BA             286.6313
-#>  RS2023     2      FALSE  500   0       BA              29.6283
-#>  RS2023     3      FALSE  500   0       BA               1.3286
-#>  RS2023     4      FALSE  500   0       BA               0.1283
-#>  RS2023     5      FALSE  500   0       BA               0.0119
-#>  RS2023     7      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             642.3755
+#>  RS2023     1      FALSE  500   0       BA            1924.9653
+#>  RS2023     1      FALSE  500   0       BA            2895.6203
+#>  RS2023     1      FALSE  500   0       BA            3166.3448
+#>  RS2023     1      FALSE  500   0       BA            3056.7505
+#>  RS2023     1      FALSE  500   0       BA            2486.1121
+#>  RS2023     1      FALSE  500   0       BA            1625.4498
+#>  RS2023     1      FALSE  500   0       BA            1078.7192
+#>  RS2023     1      FALSE  500   0       BA             694.1192
+#>  RS2023     1      FALSE  500   0       BA             480.3608
+#>  RS2023     2      FALSE  500   0       BA              58.7066
+#>  RS2023     3      FALSE  500   0       BA               3.4029
+#>  RS2023     4      FALSE  500   0       BA               0.3589
+#>  RS2023     5      FALSE  500   0       BA                0.036
+#>  RS2023     7      FALSE  500   0       BA                4e-04
 #>  RS2023     8      FALSE  500   0       BA                    0
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA            2766.4458
-#>  RS2023    14      FALSE  500   0       BA              3246.43
-#>  RS2023    14      FALSE  500   0       BA            2901.1655
-#>  RS2023    14      FALSE  500   0       BA            2404.7028
-#>  RS2023    14      FALSE  500   0       BA            1395.7167
-#>  RS2023    14      FALSE  500   0       BA             851.9244
-#>  RS2023    14      FALSE  500   0       BA             314.8392
-#>  RS2023    14      FALSE  500   0       BA             109.9698
-#>  RS2023    14      FALSE  500   0       BA              58.2596
-#>  RS2023    14      FALSE  500   0       BA              29.9026
-#>  RS2023    15      FALSE  500   0       BA               6.9174
-#>  RS2023    16      FALSE  500   0       BA               0.6043
-#>  RS2023    17      FALSE  500   0       BA               0.0585
-#>  RS2023    18      FALSE  500   0       BA               0.0054
-#>  RS2023    20      FALSE  500   0       BA                    0
+#>  RS2023    14      FALSE  500   0       BA            3197.2439
+#>  RS2023    14      FALSE  500   0       BA            4223.4415
+#>  RS2023    14      FALSE  500   0       BA            4141.8296
+#>  RS2023    14      FALSE  500   0       BA            3686.0616
+#>  RS2023    14      FALSE  500   0       BA            2347.7296
+#>  RS2023    14      FALSE  500   0       BA            1508.3927
+#>  RS2023    14      FALSE  500   0       BA             588.2037
+#>  RS2023    14      FALSE  500   0       BA             215.5115
+#>  RS2023    14      FALSE  500   0       BA             121.3221
+#>  RS2023    14      FALSE  500   0       BA              66.1008
+#>  RS2023    15      FALSE  500   0       BA               17.009
+#>  RS2023    16      FALSE  500   0       BA               1.5995
+#>  RS2023    17      FALSE  500   0       BA               0.1665
+#>  RS2023    18      FALSE  500   0       BA               0.0166
+#>  RS2023    20      FALSE  500   0       BA                2e-04
 #>  RS2023    21      FALSE  500   0       BA                    0
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
-#>  RS2023     1      FALSE  500   0       AB            3732.0223
-#>  RS2023     1      FALSE  500   0       AB            4611.4935
-#>  RS2023     1      FALSE  500   0       AB            4509.2845
-#>  RS2023     1      FALSE  500   0       AB            4146.3684
-#>  RS2023     1      FALSE  500   0       AB            2843.5482
-#>  RS2023     1      FALSE  500   0       AB             1707.507
-#>  RS2023     1      FALSE  500   0       AB             709.9212
-#>  RS2023     1      FALSE  500   0       AB             303.0275
-#>  RS2023     1      FALSE  500   0       AB             132.3574
-#>  RS2023     1      FALSE  500   0       AB              80.3553
-#>  RS2023     2      FALSE  500   0       AB              19.1268
-#>  RS2023     3      FALSE  500   0       AB               1.8855
-#>  RS2023     4      FALSE  500   0       AB               0.1873
-#>  RS2023     5      FALSE  500   0       AB               0.0204
-#>  RS2023     7      FALSE  500   0       AB                2e-04
-#>  RS2023     8      FALSE  500   0       AB                    0
+#>  RS2023     1      FALSE  500   0       AB            4001.3269
+#>  RS2023     1      FALSE  500   0       AB            5259.6775
+#>  RS2023     1      FALSE  500   0       AB            5426.2831
+#>  RS2023     1      FALSE  500   0       AB             5223.814
+#>  RS2023     1      FALSE  500   0       AB            3847.5905
+#>  RS2023     1      FALSE  500   0       AB            2427.9397
+#>  RS2023     1      FALSE  500   0       AB            1070.5654
+#>  RS2023     1      FALSE  500   0       AB             473.6845
+#>  RS2023     1      FALSE  500   0       AB             213.6555
+#>  RS2023     1      FALSE  500   0       AB             133.6428
+#>  RS2023     2      FALSE  500   0       AB              34.0296
+#>  RS2023     3      FALSE  500   0       AB               3.5634
+#>  RS2023     4      FALSE  500   0       AB               0.3759
+#>  RS2023     5      FALSE  500   0       AB               0.0435
+#>  RS2023     7      FALSE  500   0       AB                5e-04
+#>  RS2023     8      FALSE  500   0       AB                1e-04
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    0
-#>  RS2023    14      FALSE  500   0       AB             686.3014
-#>  RS2023    14      FALSE  500   0       AB            2129.3242
-#>  RS2023    14      FALSE  500   0       AB            3244.5527
-#>  RS2023    14      FALSE  500   0       AB            3802.7894
-#>  RS2023    14      FALSE  500   0       AB            3465.3205
-#>  RS2023    14      FALSE  500   0       AB            2901.6971
-#>  RS2023    14      FALSE  500   0       AB            1935.0931
-#>  RS2023    14      FALSE  500   0       AB            1320.0984
-#>  RS2023    14      FALSE  500   0       AB             881.4866
-#>  RS2023    14      FALSE  500   0       AB             561.7965
-#>  RS2023    15      FALSE  500   0       AB              71.7474
-#>  RS2023    16      FALSE  500   0       AB               4.3302
-#>  RS2023    17      FALSE  500   0       AB                 0.44
-#>  RS2023    18      FALSE  500   0       AB               0.0435
-#>  RS2023    20      FALSE  500   0       AB                5e-04
-#>  RS2023    21      FALSE  500   0       AB                    0
+#>  RS2023    14      FALSE  500   0       AB             718.1328
+#>  RS2023    14      FALSE  500   0       AB            2312.5122
+#>  RS2023    14      FALSE  500   0       AB            3680.0463
+#>  RS2023    14      FALSE  500   0       AB            4500.2647
+#>  RS2023    14      FALSE  500   0       AB            4362.1304
+#>  RS2023    14      FALSE  500   0       AB            3786.4529
+#>  RS2023    14      FALSE  500   0       AB            2606.3573
+#>  RS2023    14      FALSE  500   0       AB             1802.205
+#>  RS2023    14      FALSE  500   0       AB            1216.5792
+#>  RS2023    14      FALSE  500   0       AB              784.668
+#>  RS2023    15      FALSE  500   0       AB             111.4098
+#>  RS2023    16      FALSE  500   0       AB                7.961
+#>  RS2023    17      FALSE  500   0       AB               0.8689
+#>  RS2023    18      FALSE  500   0       AB               0.0913
+#>  RS2023    20      FALSE  500   0       AB               0.0011
+#>  RS2023    21      FALSE  500   0       AB                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             846.4674
-#>  RS2023     1      FALSE  500   0       BA            2362.1571
-#>  RS2023     1      FALSE  500   0       BA            3361.8507
-#>  RS2023     1      FALSE  500   0       BA            3521.4316
-#>  RS2023     1      FALSE  500   0       BA            2873.8261
-#>  RS2023     1      FALSE  500   0       BA            2162.3467
-#>  RS2023     1      FALSE  500   0       BA            1211.6444
-#>  RS2023     1      FALSE  500   0       BA             602.5836
-#>  RS2023     1      FALSE  500   0       BA             335.4545
-#>  RS2023     1      FALSE  500   0       BA             210.0041
-#>  RS2023     2      FALSE  500   0       BA              19.6602
-#>  RS2023     3      FALSE  500   0       BA               1.6339
-#>  RS2023     4      FALSE  500   0       BA               0.1847
-#>  RS2023     5      FALSE  500   0       BA               0.0186
-#>  RS2023     7      FALSE  500   0       BA                2e-04
-#>  RS2023     8      FALSE  500   0       BA                    0
+#>  RS2023     1      FALSE  500   0       BA             922.7324
+#>  RS2023     1      FALSE  500   0       BA            2757.9517
+#>  RS2023     1      FALSE  500   0       BA            4254.2283
+#>  RS2023     1      FALSE  500   0       BA            4815.0763
+#>  RS2023     1      FALSE  500   0       BA            4376.9781
+#>  RS2023     1      FALSE  500   0       BA            3493.6885
+#>  RS2023     1      FALSE  500   0       BA            2057.9304
+#>  RS2023     1      FALSE  500   0       BA            1048.9242
+#>  RS2023     1      FALSE  500   0       BA             598.9625
+#>  RS2023     1      FALSE  500   0       BA             387.3544
+#>  RS2023     2      FALSE  500   0       BA              46.6211
+#>  RS2023     3      FALSE  500   0       BA               4.4441
+#>  RS2023     4      FALSE  500   0       BA               0.5435
+#>  RS2023     5      FALSE  500   0       BA               0.0593
+#>  RS2023     7      FALSE  500   0       BA                8e-04
+#>  RS2023     8      FALSE  500   0       BA                1e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA            4100.5066
-#>  RS2023    14      FALSE  500   0       BA            4475.6827
-#>  RS2023    14      FALSE  500   0       BA            4025.1703
-#>  RS2023    14      FALSE  500   0       BA             2901.309
-#>  RS2023    14      FALSE  500   0       BA            1563.6377
-#>  RS2023    14      FALSE  500   0       BA             789.3701
-#>  RS2023    14      FALSE  500   0       BA             202.6665
-#>  RS2023    14      FALSE  500   0       BA              71.6791
-#>  RS2023    14      FALSE  500   0       BA              41.4423
-#>  RS2023    14      FALSE  500   0       BA              30.0243
-#>  RS2023    15      FALSE  500   0       BA               9.1323
-#>  RS2023    16      FALSE  500   0       BA               0.9493
-#>  RS2023    17      FALSE  500   0       BA               0.1048
-#>  RS2023    18      FALSE  500   0       BA               0.0109
-#>  RS2023    20      FALSE  500   0       BA                1e-04
-#>  RS2023    21      FALSE  500   0       BA                    0
+#>  RS2023    14      FALSE  500   0       BA            4692.1844
+#>  RS2023    14      FALSE  500   0       BA            5777.1915
+#>  RS2023    14      FALSE  500   0       BA            5772.7542
+#>  RS2023    14      FALSE  500   0       BA            4557.8855
+#>  RS2023    14      FALSE  500   0       BA             2838.252
+#>  RS2023    14      FALSE  500   0       BA            1588.4459
+#>  RS2023    14      FALSE  500   0       BA             460.0952
+#>  RS2023    14      FALSE  500   0       BA             171.1389
+#>  RS2023    14      FALSE  500   0       BA             100.6014
+#>  RS2023    14      FALSE  500   0       BA              73.4372
+#>  RS2023    15      FALSE  500   0       BA              23.2309
+#>  RS2023    16      FALSE  500   0       BA               2.6115
+#>  RS2023    17      FALSE  500   0       BA               0.3118
+#>  RS2023    18      FALSE  500   0       BA               0.0351
+#>  RS2023    20      FALSE  500   0       BA                5e-04
+#>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
-#>  RS2023     1      FALSE  500   0       AB            3473.8637
-#>  RS2023     1      FALSE  500   0       AB              4004.57
-#>  RS2023     1      FALSE  500   0       AB            3488.1713
-#>  RS2023     1      FALSE  500   0       AB            2799.4394
-#>  RS2023     1      FALSE  500   0       AB            1559.2928
-#>  RS2023     1      FALSE  500   0       AB             865.5877
-#>  RS2023     1      FALSE  500   0       AB             272.4131
-#>  RS2023     1      FALSE  500   0       AB              96.3054
-#>  RS2023     1      FALSE  500   0       AB              46.2874
-#>  RS2023     1      FALSE  500   0       AB              31.9994
-#>  RS2023     2      FALSE  500   0       AB               8.7733
-#>  RS2023     3      FALSE  500   0       AB               1.0911
-#>  RS2023     4      FALSE  500   0       AB               0.1259
-#>  RS2023     5      FALSE  500   0       AB               0.0154
-#>  RS2023     7      FALSE  500   0       AB                2e-04
+#>  RS2023     1      FALSE  500   0       AB            3694.7445
+#>  RS2023     1      FALSE  500   0       AB            4489.7367
+#>  RS2023     1      FALSE  500   0       AB            4085.3346
+#>  RS2023     1      FALSE  500   0       AB            3397.0683
+#>  RS2023     1      FALSE  500   0       AB            1990.3294
+#>  RS2023     1      FALSE  500   0       AB            1139.4731
+#>  RS2023     1      FALSE  500   0       AB             370.3225
+#>  RS2023     1      FALSE  500   0       AB             133.8957
+#>  RS2023     1      FALSE  500   0       AB              65.8612
+#>  RS2023     1      FALSE  500   0       AB              46.3314
+#>  RS2023     2      FALSE  500   0       AB              13.0277
+#>  RS2023     3      FALSE  500   0       AB               1.6656
+#>  RS2023     4      FALSE  500   0       AB               0.1976
+#>  RS2023     5      FALSE  500   0       AB               0.0248
+#>  RS2023     7      FALSE  500   0       AB                4e-04
 #>  RS2023     8      FALSE  500   0       AB                    0
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    0
-#>  RS2023    14      FALSE  500   0       AB              650.097
-#>  RS2023    14      FALSE  500   0       AB            2108.3782
-#>  RS2023    14      FALSE  500   0       AB            3053.6376
-#>  RS2023    14      FALSE  500   0       AB            3157.3139
-#>  RS2023    14      FALSE  500   0       AB            2529.9603
-#>  RS2023    14      FALSE  500   0       AB             2041.111
-#>  RS2023    14      FALSE  500   0       AB            1241.6748
-#>  RS2023    14      FALSE  500   0       AB             761.5059
-#>  RS2023    14      FALSE  500   0       AB             468.5367
-#>  RS2023    14      FALSE  500   0       AB             277.6182
-#>  RS2023    15      FALSE  500   0       AB              26.9072
-#>  RS2023    16      FALSE  500   0       AB                2.066
-#>  RS2023    17      FALSE  500   0       AB               0.2541
-#>  RS2023    18      FALSE  500   0       AB                 0.03
-#>  RS2023    20      FALSE  500   0       AB                4e-04
-#>  RS2023    21      FALSE  500   0       AB                    0
+#>  RS2023    14      FALSE  500   0       AB              676.485
+#>  RS2023    14      FALSE  500   0       AB            2262.9172
+#>  RS2023    14      FALSE  500   0       AB            3396.3503
+#>  RS2023    14      FALSE  500   0       AB            3629.7737
+#>  RS2023    14      FALSE  500   0       AB            3035.2347
+#>  RS2023    14      FALSE  500   0       AB            2499.1868
+#>  RS2023    14      FALSE  500   0       AB            1542.2965
+#>  RS2023    14      FALSE  500   0       AB             952.1703
+#>  RS2023    14      FALSE  500   0       AB             590.1245
+#>  RS2023    14      FALSE  500   0       AB             352.9518
+#>  RS2023    15      FALSE  500   0       AB              37.5896
+#>  RS2023    16      FALSE  500   0       AB               3.1352
+#>  RS2023    17      FALSE  500   0       AB               0.3968
+#>  RS2023    18      FALSE  500   0       AB               0.0482
+#>  RS2023    20      FALSE  500   0       AB                7e-04
+#>  RS2023    21      FALSE  500   0       AB                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             969.2628
-#>  RS2023     1      FALSE  500   0       BA            3342.7577
-#>  RS2023     1      FALSE  500   0       BA            4829.0396
-#>  RS2023     1      FALSE  500   0       BA            4926.1046
-#>  RS2023     1      FALSE  500   0       BA            4369.9304
-#>  RS2023     1      FALSE  500   0       BA            3533.3133
-#>  RS2023     1      FALSE  500   0       BA             2093.747
-#>  RS2023     1      FALSE  500   0       BA            1292.6022
-#>  RS2023     1      FALSE  500   0       BA             767.4496
-#>  RS2023     1      FALSE  500   0       BA             486.7132
-#>  RS2023     2      FALSE  500   0       BA              49.4301
-#>  RS2023     3      FALSE  500   0       BA               3.5394
-#>  RS2023     4      FALSE  500   0       BA               0.3203
-#>  RS2023     5      FALSE  500   0       BA               0.0291
-#>  RS2023     7      FALSE  500   0       BA                3e-04
-#>  RS2023     8      FALSE  500   0       BA                    0
+#>  RS2023     1      FALSE  500   0       BA            1056.2836
+#>  RS2023     1      FALSE  500   0       BA            3909.0023
+#>  RS2023     1      FALSE  500   0       BA            6135.7839
+#>  RS2023     1      FALSE  500   0       BA            6792.9451
+#>  RS2023     1      FALSE  500   0       BA            6801.0356
+#>  RS2023     1      FALSE  500   0       BA            5915.4071
+#>  RS2023     1      FALSE  500   0       BA            3756.3743
+#>  RS2023     1      FALSE  500   0       BA            2396.7857
+#>  RS2023     1      FALSE  500   0       BA             1463.464
+#>  RS2023     1      FALSE  500   0       BA             958.0215
+#>  RS2023     2      FALSE  500   0       BA             126.5009
+#>  RS2023     3      FALSE  500   0       BA                11.59
+#>  RS2023     4      FALSE  500   0       BA                1.186
+#>  RS2023     5      FALSE  500   0       BA               0.1214
+#>  RS2023     7      FALSE  500   0       BA               0.0015
+#>  RS2023     8      FALSE  500   0       BA                2e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA            5780.5393
-#>  RS2023    14      FALSE  500   0       BA            6733.3665
-#>  RS2023    14      FALSE  500   0       BA            6512.7703
-#>  RS2023    14      FALSE  500   0       BA            5117.9974
-#>  RS2023    14      FALSE  500   0       BA            3207.6903
-#>  RS2023    14      FALSE  500   0       BA            1867.0097
-#>  RS2023    14      FALSE  500   0       BA             584.7344
-#>  RS2023    14      FALSE  500   0       BA             223.8373
-#>  RS2023    14      FALSE  500   0       BA             117.8123
-#>  RS2023    14      FALSE  500   0       BA              70.6245
-#>  RS2023    15      FALSE  500   0       BA              19.4372
-#>  RS2023    16      FALSE  500   0       BA               1.7997
-#>  RS2023    17      FALSE  500   0       BA                 0.17
-#>  RS2023    18      FALSE  500   0       BA               0.0164
-#>  RS2023    20      FALSE  500   0       BA                1e-04
-#>  RS2023    21      FALSE  500   0       BA                    0
+#>  RS2023    14      FALSE  500   0       BA            6604.2472
+#>  RS2023    14      FALSE  500   0       BA            8677.7432
+#>  RS2023    14      FALSE  500   0       BA            9339.3738
+#>  RS2023    14      FALSE  500   0       BA            8061.4162
+#>  RS2023    14      FALSE  500   0       BA            5886.9387
+#>  RS2023    14      FALSE  500   0       BA            3840.0929
+#>  RS2023    14      FALSE  500   0       BA            1392.3327
+#>  RS2023    14      FALSE  500   0       BA             578.2722
+#>  RS2023    14      FALSE  500   0       BA             318.8449
+#>  RS2023    14      FALSE  500   0       BA             196.2636
+#>  RS2023    15      FALSE  500   0       BA              57.9437
+#>  RS2023    16      FALSE  500   0       BA               6.0464
+#>  RS2023    17      FALSE  500   0       BA               0.6436
+#>  RS2023    18      FALSE  500   0       BA               0.0702
+#>  RS2023    20      FALSE  500   0       BA                8e-04
+#>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
-#>  RS2023     1      FALSE  500   0       AB            3794.6093
-#>  RS2023     1      FALSE  500   0       AB            4537.8218
-#>  RS2023     1      FALSE  500   0       AB            4241.8028
-#>  RS2023     1      FALSE  500   0       AB            3496.0471
-#>  RS2023     1      FALSE  500   0       AB            2055.2882
-#>  RS2023     1      FALSE  500   0       AB            1153.4726
-#>  RS2023     1      FALSE  500   0       AB             377.1598
-#>  RS2023     1      FALSE  500   0       AB             136.2353
-#>  RS2023     1      FALSE  500   0       AB              70.8547
-#>  RS2023     1      FALSE  500   0       AB              42.4885
-#>  RS2023     2      FALSE  500   0       AB              11.7741
-#>  RS2023     3      FALSE  500   0       AB               1.2383
-#>  RS2023     4      FALSE  500   0       AB               0.1396
-#>  RS2023     5      FALSE  500   0       AB               0.0156
-#>  RS2023     7      FALSE  500   0       AB                2e-04
+#>  RS2023     1      FALSE  500   0       AB            4203.2575
+#>  RS2023     1      FALSE  500   0       AB            5497.7734
+#>  RS2023     1      FALSE  500   0       AB            5547.7065
+#>  RS2023     1      FALSE  500   0       AB            4876.3907
+#>  RS2023     1      FALSE  500   0       AB            3160.3947
+#>  RS2023     1      FALSE  500   0       AB            1893.2311
+#>  RS2023     1      FALSE  500   0       AB             666.7228
+#>  RS2023     1      FALSE  500   0       AB             251.9895
+#>  RS2023     1      FALSE  500   0       AB             136.2558
+#>  RS2023     1      FALSE  500   0       AB              84.1483
+#>  RS2023     2      FALSE  500   0       AB              24.5593
+#>  RS2023     3      FALSE  500   0       AB               2.7486
+#>  RS2023     4      FALSE  500   0       AB               0.3298
+#>  RS2023     5      FALSE  500   0       AB               0.0391
+#>  RS2023     7      FALSE  500   0       AB                5e-04
+#>  RS2023     8      FALSE  500   0       AB                1e-04
+#>  RS2023    14      FALSE  500   1       AB                    .
+#>  RS2023    14      FALSE  500   0       AB                    0
+#>  RS2023    14      FALSE  500   0       AB             727.4409
+#>  RS2023    14      FALSE  500   0       AB            2458.8503
+#>  RS2023    14      FALSE  500   0       AB            3575.9348
+#>  RS2023    14      FALSE  500   0       AB            4092.2332
+#>  RS2023    14      FALSE  500   0       AB             4161.112
+#>  RS2023    14      FALSE  500   0       AB              3319.26
+#>  RS2023    14      FALSE  500   0       AB            2044.8115
+#>  RS2023    14      FALSE  500   0       AB            1353.4045
+#>  RS2023    14      FALSE  500   0       AB             844.3332
+#>  RS2023    14      FALSE  500   0       AB             512.0935
+#>  RS2023    15      FALSE  500   0       AB               66.532
+#>  RS2023    16      FALSE  500   0       AB               5.4801
+#>  RS2023    17      FALSE  500   0       AB               0.6384
+#>  RS2023    18      FALSE  500   0       AB               0.0741
+#>  RS2023    20      FALSE  500   0       AB                0.001
+#>  RS2023    21      FALSE  500   0       AB                1e-04
+#>  RS2023     1      FALSE  500   1       AB                    .
+#>  RS2023     1      FALSE  500   0       AB                    0
+#>  RS2023     1      FALSE  500   0       AB             4539.445
+#>  RS2023     1      FALSE  500   0       AB            5433.0385
+#>  RS2023     1      FALSE  500   0       AB            5447.7777
+#>  RS2023     1      FALSE  500   0       AB            4825.6839
+#>  RS2023     1      FALSE  500   0       AB             3136.009
+#>  RS2023     1      FALSE  500   0       AB            1902.4366
+#>  RS2023     1      FALSE  500   0       AB             708.1486
+#>  RS2023     1      FALSE  500   0       AB             276.2505
+#>  RS2023     1      FALSE  500   0       AB             145.6165
+#>  RS2023     1      FALSE  500   0       AB               83.376
+#>  RS2023     2      FALSE  500   0       AB               22.652
+#>  RS2023     3      FALSE  500   0       AB               2.5424
+#>  RS2023     4      FALSE  500   0       AB               0.2769
+#>  RS2023     5      FALSE  500   0       AB               0.0323
+#>  RS2023     7      FALSE  500   0       AB                3e-04
 #>  RS2023     8      FALSE  500   0       AB                    0
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    0
-#>  RS2023    14      FALSE  500   0       AB             680.9002
-#>  RS2023    14      FALSE  500   0       AB            2183.1664
-#>  RS2023    14      FALSE  500   0       AB            2986.0357
-#>  RS2023    14      FALSE  500   0       AB            3222.5281
-#>  RS2023    14      FALSE  500   0       AB            3022.3411
-#>  RS2023    14      FALSE  500   0       AB            2308.7087
-#>  RS2023    14      FALSE  500   0       AB            1373.5649
-#>  RS2023    14      FALSE  500   0       AB               895.19
-#>  RS2023    14      FALSE  500   0       AB             550.3503
-#>  RS2023    14      FALSE  500   0       AB             327.9094
-#>  RS2023    15      FALSE  500   0       AB              36.0072
-#>  RS2023    16      FALSE  500   0       AB               2.5059
-#>  RS2023    17      FALSE  500   0       AB               0.2735
-#>  RS2023    18      FALSE  500   0       AB               0.0298
-#>  RS2023    20      FALSE  500   0       AB                3e-04
-#>  RS2023    21      FALSE  500   0       AB                    0
+#>  RS2023    14      FALSE  500   0       AB             814.3635
+#>  RS2023    14      FALSE  500   0       AB             2712.497
+#>  RS2023    14      FALSE  500   0       AB            4111.1276
+#>  RS2023    14      FALSE  500   0       AB            4650.2346
+#>  RS2023    14      FALSE  500   0       AB            4129.9533
+#>  RS2023    14      FALSE  500   0       AB            3368.3975
+#>  RS2023    14      FALSE  500   0       AB            2137.4651
+#>  RS2023    14      FALSE  500   0       AB            1363.6372
+#>  RS2023    14      FALSE  500   0       AB             898.9289
+#>  RS2023    14      FALSE  500   0       AB             567.4925
+#>  RS2023    15      FALSE  500   0       AB              63.0551
+#>  RS2023    16      FALSE  500   0       AB               4.6895
+#>  RS2023    17      FALSE  500   0       AB               0.5406
+#>  RS2023    18      FALSE  500   0       AB               0.0597
+#>  RS2023    20      FALSE  500   0       AB                7e-04
+#>  RS2023    21      FALSE  500   0       AB                1e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
-#>  RS2023     1      FALSE  500   0       AB            4136.7493
-#>  RS2023     1      FALSE  500   0       AB            4572.9243
-#>  RS2023     1      FALSE  500   0       AB             4293.076
-#>  RS2023     1      FALSE  500   0       AB            3604.4802
-#>  RS2023     1      FALSE  500   0       AB            2169.3195
-#>  RS2023     1      FALSE  500   0       AB            1255.0071
-#>  RS2023     1      FALSE  500   0       AB               443.94
-#>  RS2023     1      FALSE  500   0       AB             167.0377
-#>  RS2023     1      FALSE  500   0       AB              84.7053
-#>  RS2023     1      FALSE  500   0       AB               46.902
-#>  RS2023     2      FALSE  500   0       AB              12.0489
-#>  RS2023     3      FALSE  500   0       AB               1.2833
-#>  RS2023     4      FALSE  500   0       AB               0.1327
-#>  RS2023     5      FALSE  500   0       AB               0.0147
+#>  RS2023     1      FALSE  500   0       AB             4682.935
+#>  RS2023     1      FALSE  500   0       AB            6097.5415
+#>  RS2023     1      FALSE  500   0       AB            6407.3309
+#>  RS2023     1      FALSE  500   0       AB            5865.4311
+#>  RS2023     1      FALSE  500   0       AB            4032.4953
+#>  RS2023     1      FALSE  500   0       AB            2814.8939
+#>  RS2023     1      FALSE  500   0       AB            1238.3698
+#>  RS2023     1      FALSE  500   0       AB             570.6423
+#>  RS2023     1      FALSE  500   0       AB             308.1478
+#>  RS2023     1      FALSE  500   0       AB             185.9872
+#>  RS2023     2      FALSE  500   0       AB              34.4191
+#>  RS2023     3      FALSE  500   0       AB               2.6326
+#>  RS2023     4      FALSE  500   0       AB               0.1885
+#>  RS2023     5      FALSE  500   0       AB               0.0141
 #>  RS2023     7      FALSE  500   0       AB                1e-04
 #>  RS2023     8      FALSE  500   0       AB                    0
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    0
-#>  RS2023    14      FALSE  500   0       AB             766.7925
-#>  RS2023    14      FALSE  500   0       AB            2436.2003
-#>  RS2023    14      FALSE  500   0       AB            3496.9508
-#>  RS2023    14      FALSE  500   0       AB            3759.5095
-#>  RS2023    14      FALSE  500   0       AB            3123.1706
-#>  RS2023    14      FALSE  500   0       AB            2464.2177
-#>  RS2023    14      FALSE  500   0       AB            1525.7265
-#>  RS2023    14      FALSE  500   0       AB             962.5222
-#>  RS2023    14      FALSE  500   0       AB             627.3619
-#>  RS2023    14      FALSE  500   0       AB             390.6196
-#>  RS2023    15      FALSE  500   0       AB              37.9577
-#>  RS2023    16      FALSE  500   0       AB               2.4048
-#>  RS2023    17      FALSE  500   0       AB               0.2619
-#>  RS2023    18      FALSE  500   0       AB               0.0275
-#>  RS2023    20      FALSE  500   0       AB                3e-04
-#>  RS2023    21      FALSE  500   0       AB                    0
-#>  RS2023     1      FALSE  500   1       AB                    .
-#>  RS2023     1      FALSE  500   0       AB                    0
-#>  RS2023     1      FALSE  500   0       AB             4302.166
-#>  RS2023     1      FALSE  500   0       AB            5212.4289
-#>  RS2023     1      FALSE  500   0       AB             5162.315
-#>  RS2023     1      FALSE  500   0       AB            4505.4403
-#>  RS2023     1      FALSE  500   0       AB            2895.2139
-#>  RS2023     1      FALSE  500   0       AB            1939.2018
-#>  RS2023     1      FALSE  500   0       AB             815.2986
-#>  RS2023     1      FALSE  500   0       AB             363.1888
-#>  RS2023     1      FALSE  500   0       AB             188.7131
-#>  RS2023     1      FALSE  500   0       AB              109.337
-#>  RS2023     2      FALSE  500   0       AB              18.1039
-#>  RS2023     3      FALSE  500   0       AB               1.2757
-#>  RS2023     4      FALSE  500   0       AB               0.0843
-#>  RS2023     5      FALSE  500   0       AB               0.0058
-#>  RS2023     7      FALSE  500   0       AB                    0
-#>  RS2023     8      FALSE  500   0       AB                    0
-#>  RS2023    14      FALSE  500   1       AB                    .
-#>  RS2023    14      FALSE  500   0       AB                    0
-#>  RS2023    14      FALSE  500   0       AB             729.2635
-#>  RS2023    14      FALSE  500   0       AB             2295.115
-#>  RS2023    14      FALSE  500   0       AB            3336.8932
-#>  RS2023    14      FALSE  500   0       AB            3693.2718
-#>  RS2023    14      FALSE  500   0       AB            3358.0879
-#>  RS2023    14      FALSE  500   0       AB            2855.7982
-#>  RS2023    14      FALSE  500   0       AB            2010.0584
-#>  RS2023    14      FALSE  500   0       AB            1450.2482
-#>  RS2023    14      FALSE  500   0       AB             962.4649
-#>  RS2023    14      FALSE  500   0       AB             676.9437
-#>  RS2023    15      FALSE  500   0       AB                94.77
-#>  RS2023    16      FALSE  500   0       AB               3.5897
-#>  RS2023    17      FALSE  500   0       AB               0.2164
-#>  RS2023    18      FALSE  500   0       AB               0.0158
-#>  RS2023    20      FALSE  500   0       AB                1e-04
+#>  RS2023    14      FALSE  500   0       AB             770.8054
+#>  RS2023    14      FALSE  500   0       AB            2535.0089
+#>  RS2023    14      FALSE  500   0       AB            3876.5486
+#>  RS2023    14      FALSE  500   0       AB            4499.1003
+#>  RS2023    14      FALSE  500   0       AB            4359.3787
+#>  RS2023    14      FALSE  500   0       AB            3830.7715
+#>  RS2023    14      FALSE  500   0       AB            2767.1415
+#>  RS2023    14      FALSE  500   0       AB            2020.9318
+#>  RS2023    14      FALSE  500   0       AB            1356.2016
+#>  RS2023    14      FALSE  500   0       AB             965.5179
+#>  RS2023    15      FALSE  500   0       AB              149.021
+#>  RS2023    16      FALSE  500   0       AB               6.9072
+#>  RS2023    17      FALSE  500   0       AB               0.4667
+#>  RS2023    18      FALSE  500   0       AB               0.0372
+#>  RS2023    20      FALSE  500   0       AB                2e-04
 #>  RS2023    21      FALSE  500   0       AB                    0
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    0
-#>  RS2023     1      FALSE  500   0       BA             551.8388
-#>  RS2023     1      FALSE  500   0       BA            1673.7134
-#>  RS2023     1      FALSE  500   0       BA            2815.3181
-#>  RS2023     1      FALSE  500   0       BA            2728.0847
-#>  RS2023     1      FALSE  500   0       BA            2604.9231
-#>  RS2023     1      FALSE  500   0       BA            2171.6551
-#>  RS2023     1      FALSE  500   0       BA            1356.4542
-#>  RS2023     1      FALSE  500   0       BA               852.64
-#>  RS2023     1      FALSE  500   0       BA             505.1516
-#>  RS2023     1      FALSE  500   0       BA             327.2099
-#>  RS2023     2      FALSE  500   0       BA              34.4092
-#>  RS2023     3      FALSE  500   0       BA               3.3184
-#>  RS2023     4      FALSE  500   0       BA               0.5934
-#>  RS2023     5      FALSE  500   0       BA               0.0885
-#>  RS2023     7      FALSE  500   0       BA               0.0025
-#>  RS2023     8      FALSE  500   0       BA                4e-04
+#>  RS2023     1      FALSE  500   0       BA             584.4329
+#>  RS2023     1      FALSE  500   0       BA            1858.8496
+#>  RS2023     1      FALSE  500   0       BA            3306.9091
+#>  RS2023     1      FALSE  500   0       BA            3387.8598
+#>  RS2023     1      FALSE  500   0       BA            3516.6459
+#>  RS2023     1      FALSE  500   0       BA            3085.0912
+#>  RS2023     1      FALSE  500   0       BA            2019.2366
+#>  RS2023     1      FALSE  500   0       BA            1293.0998
+#>  RS2023     1      FALSE  500   0       BA             776.4329
+#>  RS2023     1      FALSE  500   0       BA             510.5021
+#>  RS2023     2      FALSE  500   0       BA              62.6584
+#>  RS2023     3      FALSE  500   0       BA               7.0673
+#>  RS2023     4      FALSE  500   0       BA               1.3297
+#>  RS2023     5      FALSE  500   0       BA                0.208
+#>  RS2023     7      FALSE  500   0       BA               0.0065
+#>  RS2023     8      FALSE  500   0       BA               0.0011
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    0
-#>  RS2023    14      FALSE  500   0       BA            3035.8285
-#>  RS2023    14      FALSE  500   0       BA            3838.0872
-#>  RS2023    14      FALSE  500   0       BA            3605.7104
-#>  RS2023    14      FALSE  500   0       BA            3040.9375
-#>  RS2023    14      FALSE  500   0       BA            1779.3811
-#>  RS2023    14      FALSE  500   0       BA             1118.122
-#>  RS2023    14      FALSE  500   0       BA             359.4601
-#>  RS2023    14      FALSE  500   0       BA             135.2236
-#>  RS2023    14      FALSE  500   0       BA              59.6819
-#>  RS2023    14      FALSE  500   0       BA              36.0564
-#>  RS2023    15      FALSE  500   0       BA              11.2964
-#>  RS2023    16      FALSE  500   0       BA               1.8875
-#>  RS2023    17      FALSE  500   0       BA                0.292
-#>  RS2023    18      FALSE  500   0       BA               0.0497
-#>  RS2023    20      FALSE  500   0       BA               0.0013
-#>  RS2023    21      FALSE  500   0       BA                2e-04
+#>  RS2023    14      FALSE  500   0       BA            3317.4089
+#>  RS2023    14      FALSE  500   0       BA            4546.1044
+#>  RS2023    14      FALSE  500   0       BA            4588.8251
+#>  RS2023    14      FALSE  500   0       BA             4123.459
+#>  RS2023    14      FALSE  500   0       BA            2676.9051
+#>  RS2023    14      FALSE  500   0       BA            1817.8192
+#>  RS2023    14      FALSE  500   0       BA             644.6133
+#>  RS2023    14      FALSE  500   0       BA             255.4908
+#>  RS2023    14      FALSE  500   0       BA             116.1755
+#>  RS2023    14      FALSE  500   0       BA              71.4526
+#>  RS2023    15      FALSE  500   0       BA              23.1856
+#>  RS2023    16      FALSE  500   0       BA               4.0653
+#>  RS2023    17      FALSE  500   0       BA               0.6599
+#>  RS2023    18      FALSE  500   0       BA               0.1177
+#>  RS2023    20      FALSE  500   0       BA               0.0035
+#>  RS2023    21      FALSE  500   0       BA                6e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    0
 #>  RS2023     1      FALSE  500   0       AB            3446.2618
@@ -2962,9 +2962,9 @@ head(write_nonmem(examplinib_fe_nif), 5)
 #>   METABOLITE DOSE MDV ACTARMCD IMPUTATION        DV                  EPOCH
 #> 1      FALSE  500   1       AB                    . OPEN LABEL TREATMENT 1
 #> 2      FALSE  500   0       AB                    0 OPEN LABEL TREATMENT 1
-#> 3      FALSE  500   0       AB            4409.2877 OPEN LABEL TREATMENT 1
-#> 4      FALSE  500   0       AB            5605.7968 OPEN LABEL TREATMENT 1
-#> 5      FALSE  500   0       AB            5300.4045 OPEN LABEL TREATMENT 1
+#> 3      FALSE  500   0       AB            4697.3267 OPEN LABEL TREATMENT 1
+#> 4      FALSE  500   0       AB            6325.1011 OPEN LABEL TREATMENT 1
+#> 5      FALSE  500   0       AB            6294.1871 OPEN LABEL TREATMENT 1
 #>   PERIOD TREATMENT FASTED
 #> 1      1         A      1
 #> 2      1         A      1
@@ -3696,75 +3696,75 @@ head(write_nonmem(examplinib_fe_nif, numeric_fields_only = TRUE), 5)
 #>  DOSE MDV        DV PERIOD FASTED
 #>   500   1         .      1      1
 #>   500   0         0      1      1
-#>   500   0 4409.2877      1      1
-#>   500   0 5605.7968      1      1
-#>   500   0 5300.4045      1      1
-#>   500   0 4775.5871      1      1
-#>   500   0 3228.1453      1      1
-#>   500   0 1926.0367      1      1
-#>   500   0  620.1551      1      1
-#>   500   0  253.4292      1      1
-#>   500   0  127.6732      1      1
-#>   500   0   76.4117      1      1
-#>   500   0   20.5288      1      1
-#>   500   0    2.3377      1      1
-#>   500   0    0.2696      1      1
-#>   500   0    0.0283      1      1
-#>   500   0     4e-04      1      1
-#>   500   0         0      1      1
+#>   500   0 4697.3267      1      1
+#>   500   0 6325.1011      1      1
+#>   500   0 6294.1871      1      1
+#>   500   0 5932.4643      1      1
+#>   500   0 4316.5247      1      1
+#>   500   0 2720.3483      1      1
+#>   500   0  938.6269      1      1
+#>   500   0  398.6231      1      1
+#>   500   0  205.8683      1      1
+#>   500   0  125.2948      1      1
+#>   500   0   34.9438      1      1
+#>   500   0     4.195      1      1
+#>   500   0      0.51      1      1
+#>   500   0    0.0565      1      1
+#>   500   0     8e-04      1      1
+#>   500   0     1e-04      1      1
 #>   500   1         .      2      0
 #>   500   0         0      2      0
-#>   500   0  835.0784      2      0
-#>   500   0 2570.4025      2      0
-#>   500   0 3711.1981      2      0
-#>   500   0 4207.6397      2      0
-#>   500   0 4001.9576      2      0
-#>   500   0  3250.225      2      0
-#>   500   0 2057.0487      2      0
-#>   500   0 1323.6299      2      0
-#>   500   0  812.3098      2      0
-#>   500   0  546.8454      2      0
-#>   500   0   58.0131      2      0
-#>   500   0      4.45      2      0
-#>   500   0     0.506      2      0
-#>   500   0    0.0559      2      0
-#>   500   0     7e-04      2      0
-#>   500   0     1e-04      2      0
+#>   500   0  869.9889      2      0
+#>   500   0 2770.2331      2      0
+#>   500   0 4162.7898      2      0
+#>   500   0 4910.6863      2      0
+#>   500   0 4956.9022      2      0
+#>   500   0 4174.7208      2      0
+#>   500   0 2733.1124      2      0
+#>   500   0 1784.9134      2      0
+#>   500   0 1108.4658      2      0
+#>   500   0  756.2012      2      0
+#>   500   0   90.3015      2      0
+#>   500   0    7.8786      2      0
+#>   500   0    0.9472      2      0
+#>   500   0    0.1103      2      0
+#>   500   0    0.0016      2      0
+#>   500   0     2e-04      2      0
 #>   500   1         .      1      0
 #>   500   0         0      1      0
-#>   500   0  506.8347      1      0
-#>   500   0 1557.4147      1      0
-#>   500   0 1990.4341      1      0
-#>   500   0 2168.6684      1      0
-#>   500   0 1844.5494      1      0
-#>   500   0  1488.972      1      0
-#>   500   0  942.9163      1      0
-#>   500   0  619.2675      1      0
-#>   500   0  384.9788      1      0
-#>   500   0  254.8653      1      0
-#>   500   0    25.196      1      0
-#>   500   0    1.3969      1      0
-#>   500   0    0.1432      1      0
-#>   500   0    0.0144      1      0
-#>   500   0     2e-04      1      0
+#>   500   0  546.4172      1      0
+#>   500   0 1776.6202      1      0
+#>   500   0  2419.886      1      0
+#>   500   0   2789.38      1      0
+#>   500   0 2534.2718      1      0
+#>   500   0 2102.5438      1      0
+#>   500   0 1354.8751      1      0
+#>   500   0  897.7777      1      0
+#>   500   0  563.7153      1      0
+#>   500   0  377.8232      1      0
+#>   500   0   42.4378      1      0
+#>   500   0    2.8488      1      0
+#>   500   0    0.3093      1      0
+#>   500   0    0.0325      1      0
+#>   500   0     4e-04      1      0
 #>   500   0         0      1      0
 #>   500   1         .      2      1
 #>   500   0         0      2      1
-#>   500   0  2605.882      2      1
-#>   500   0 2783.7238      2      1
-#>   500   0 2489.9878      2      1
-#>   500   0  1969.544      2      1
-#>   500   0 1177.8603      2      1
-#>   500   0  737.7272      2      1
-#>   500   0   253.363      2      1
-#>   500   0    96.575      2      1
-#>   500   0   44.7707      2      1
-#>   500   0   25.3991      2      1
-#>   500   0    5.7722      2      1
-#>   500   0    0.6277      2      1
-#>   500   0    0.0647      2      1
-#>   500   0     0.007      2      1
-#>   500   0     1e-04      2      1
+#>   500   0 2925.4997      2      1
+#>   500   0 3431.7454      2      1
+#>   500   0 3300.1314      2      1
+#>   500   0 2756.2566      2      1
+#>   500   0 1765.6387      2      1
+#>   500   0 1146.3179      2      1
+#>   500   0  408.1649      2      1
+#>   500   0  161.0631      2      1
+#>   500   0   78.2605      2      1
+#>   500   0   46.5486      2      1
+#>   500   0   11.4532      2      1
+#>   500   0    1.3069      2      1
+#>   500   0    0.1413      2      1
+#>   500   0     0.016      2      1
+#>   500   0     2e-04      2      1
 #>   500   0         0      2      1
 #>   500   1         .      1      1
 #>   500   0         0      1      1
@@ -3876,75 +3876,75 @@ head(write_nonmem(examplinib_fe_nif, numeric_fields_only = TRUE), 5)
 #>   500   0         0      2      1
 #>   500   1         .      1      0
 #>   500   0         0      1      0
-#>   500   0  797.1487      1      0
-#>   500   0 2254.6319      1      0
-#>   500   0 3110.5554      1      0
-#>   500   0 3236.2015      1      0
-#>   500   0  2942.523      1      0
-#>   500   0 2174.4393      1      0
-#>   500   0 1326.4401      1      0
-#>   500   0  840.1494      1      0
-#>   500   0  540.0148      1      0
-#>   500   0  301.1778      1      0
-#>   500   0   30.0028      1      0
-#>   500   0    2.4489      1      0
-#>   500   0    0.2942      1      0
-#>   500   0    0.0415      1      0
-#>   500   0     7e-04      1      0
-#>   500   0     1e-04      1      0
+#>   500   0  853.1958      1      0
+#>   500   0 2544.2644      1      0
+#>   500   0 3730.2827      1      0
+#>   500   0 4106.3373      1      0
+#>   500   0 4016.1361      1      0
+#>   500   0 3073.9393      1      0
+#>   500   0 1922.2874      1      0
+#>   500   0 1230.7612      1      0
+#>   500   0  800.0214      1      0
+#>   500   0  452.6179      1      0
+#>   500   0   52.4706      1      0
+#>   500   0     4.989      1      0
+#>   500   0     0.628      1      0
+#>   500   0    0.0925      1      0
+#>   500   0    0.0016      1      0
+#>   500   0     2e-04      1      0
 #>   500   1         .      2      1
 #>   500   0         0      2      1
-#>   500   0  4079.406      2      1
-#>   500   0 4724.7219      2      1
-#>   500   0 4256.1451      2      1
-#>   500   0 3290.3609      2      1
-#>   500   0 2052.8204      2      1
-#>   500   0 1105.0599      2      1
-#>   500   0  340.4537      2      1
-#>   500   0  126.1812      2      1
-#>   500   0   59.5528      2      1
-#>   500   0   34.6435      2      1
-#>   500   0    9.9632      2      1
-#>   500   0    1.2159      2      1
-#>   500   0    0.1692      2      1
-#>   500   0     0.023      2      1
-#>   500   0     4e-04      2      1
-#>   500   0         0      2      1
+#>   500   0 4531.3367      2      1
+#>   500   0 5739.5984      2      1
+#>   500   0 5566.6807      2      1
+#>   500   0 4568.5023      2      1
+#>   500   0 3102.6607      2      1
+#>   500   0 1758.7751      2      1
+#>   500   0  571.8265      2      1
+#>   500   0  219.9434      2      1
+#>   500   0  108.0572      2      1
+#>   500   0   65.0118      2      1
+#>   500   0   19.6321      2      1
+#>   500   0    2.5039      2      1
+#>   500   0     0.364      2      1
+#>   500   0    0.0516      2      1
+#>   500   0     9e-04      2      1
+#>   500   0     1e-04      2      1
 #>   500   1         .      1      0
 #>   500   0         0      1      0
-#>   500   0  580.8725      1      0
-#>   500   0 1754.3074      1      0
-#>   500   0 2479.9964      1      0
-#>   500   0 2387.3403      1      0
-#>   500   0 2174.9182      1      0
-#>   500   0 1767.6584      1      0
-#>   500   0 1129.3446      1      0
-#>   500   0  697.9385      1      0
-#>   500   0  448.6176      1      0
-#>   500   0  298.4862      1      0
-#>   500   0   30.5753      1      0
-#>   500   0    1.2952      1      0
-#>   500   0    0.0993      1      0
-#>   500   0    0.0084      1      0
-#>   500   0     1e-04      1      0
+#>   500   0  652.4699      1      0
+#>   500   0 2148.7027      1      0
+#>   500   0 3347.3862      1      0
+#>   500   0 3508.2385      1      0
+#>   500   0 3525.7029      1      0
+#>   500   0 2984.7917      1      0
+#>   500   0 1960.0221      1      0
+#>   500   0  1229.483      1      0
+#>   500   0  803.2307      1      0
+#>   500   0  544.9192      1      0
+#>   500   0   67.2828      1      0
+#>   500   0    3.9012      1      0
+#>   500   0    0.3345      1      0
+#>   500   0    0.0309      1      0
+#>   500   0     3e-04      1      0
 #>   500   0         0      1      0
 #>   500   1         .      2      1
 #>   500   0         0      2      1
-#>   500   0  3250.883      2      1
-#>   500   0 3963.9918      2      1
-#>   500   0  3504.033      2      1
-#>   500   0 2605.8372      2      1
-#>   500   0 1474.0956      2      1
-#>   500   0   983.305      2      1
-#>   500   0  355.4669      2      1
-#>   500   0  131.1528      2      1
-#>   500   0    60.959      2      1
-#>   500   0   35.7313      2      1
-#>   500   0    7.1792      2      1
-#>   500   0    0.6113      2      1
-#>   500   0    0.0492      2      1
-#>   500   0     0.004      2      1
-#>   500   0         0      2      1
+#>   500   0 3886.3127      2      1
+#>   500   0 5463.9502      2      1
+#>   500   0 5383.0692      2      1
+#>   500   0  4337.634      2      1
+#>   500   0  2711.977      2      1
+#>   500   0 1906.7455      2      1
+#>   500   0  729.1652      2      1
+#>   500   0  284.4167      2      1
+#>   500   0  142.2746      2      1
+#>   500   0   89.8491      2      1
+#>   500   0   20.7469      2      1
+#>   500   0    1.9304      2      1
+#>   500   0    0.1696      2      1
+#>   500   0    0.0151      2      1
+#>   500   0     1e-04      2      1
 #>   500   0         0      2      1
 #>   500   1         .      1      1
 #>   500   0         0      1      1
@@ -4020,364 +4020,364 @@ head(write_nonmem(examplinib_fe_nif, numeric_fields_only = TRUE), 5)
 #>   500   0     2e-04      2      1
 #>   500   1         .      1      0
 #>   500   0         0      1      0
-#>   500   0  681.2896      1      0
-#>   500   0 2099.4321      1      0
-#>   500   0 2970.4374      1      0
-#>   500   0 3262.7162      1      0
-#>   500   0 2974.9193      1      0
-#>   500   0 2397.6183      1      0
-#>   500   0 1520.7174      1      0
-#>   500   0 1022.8868      1      0
-#>   500   0   679.596      1      0
-#>   500   0   442.994      1      0
-#>   500   0    45.371      1      0
-#>   500   0    3.4975      1      0
-#>   500   0    0.4203      1      0
-#>   500   0    0.0547      1      0
-#>   500   0     9e-04      1      0
+#>   500   0  713.1764      1      0
+#>   500   0 2279.0324      1      0
+#>   500   0 3362.6012      1      0
+#>   500   0 3842.7115      1      0
+#>   500   0 3695.6439      1      0
+#>   500   0 3060.9403      1      0
+#>   500   0 1981.1477      1      0
+#>   500   0  1343.357      1      0
+#>   500   0  899.1425      1      0
+#>   500   0   591.338      1      0
+#>   500   0    66.425      1      0
+#>   500   0    5.8541      1      0
+#>   500   0    0.7329      1      0
+#>   500   0    0.0989      1      0
+#>   500   0    0.0018      1      0
+#>   500   0     3e-04      1      0
+#>   500   1         .      2      1
+#>   500   0         0      2      1
+#>   500   0 3567.3819      2      1
+#>   500   0 4871.4474      2      1
+#>   500   0 4796.7845      2      1
+#>   500   0 4187.7473      2      1
+#>   500   0 2924.5217      2      1
+#>   500   0 1754.2141      2      1
+#>   500   0  673.6567      2      1
+#>   500   0  273.8245      2      1
+#>   500   0  124.9296      2      1
+#>   500   0   78.6046      2      1
+#>   500   0   21.1457      2      1
+#>   500   0    2.8187      2      1
+#>   500   0    0.3662      2      1
+#>   500   0    0.0515      2      1
+#>   500   0     9e-04      2      1
+#>   500   0     1e-04      2      1
+#>   500   1         .      1      0
+#>   500   0         0      1      0
+#>   500   0  642.3755      1      0
+#>   500   0 1924.9653      1      0
+#>   500   0 2895.6203      1      0
+#>   500   0 3166.3448      1      0
+#>   500   0 3056.7505      1      0
+#>   500   0 2486.1121      1      0
+#>   500   0 1625.4498      1      0
+#>   500   0 1078.7192      1      0
+#>   500   0  694.1192      1      0
+#>   500   0  480.3608      1      0
+#>   500   0   58.7066      1      0
+#>   500   0    3.4029      1      0
+#>   500   0    0.3589      1      0
+#>   500   0     0.036      1      0
+#>   500   0     4e-04      1      0
+#>   500   0         0      1      0
+#>   500   1         .      2      1
+#>   500   0         0      2      1
+#>   500   0 3197.2439      2      1
+#>   500   0 4223.4415      2      1
+#>   500   0 4141.8296      2      1
+#>   500   0 3686.0616      2      1
+#>   500   0 2347.7296      2      1
+#>   500   0 1508.3927      2      1
+#>   500   0  588.2037      2      1
+#>   500   0  215.5115      2      1
+#>   500   0  121.3221      2      1
+#>   500   0   66.1008      2      1
+#>   500   0    17.009      2      1
+#>   500   0    1.5995      2      1
+#>   500   0    0.1665      2      1
+#>   500   0    0.0166      2      1
+#>   500   0     2e-04      2      1
+#>   500   0         0      2      1
+#>   500   1         .      1      1
+#>   500   0         0      1      1
+#>   500   0 4001.3269      1      1
+#>   500   0 5259.6775      1      1
+#>   500   0 5426.2831      1      1
+#>   500   0  5223.814      1      1
+#>   500   0 3847.5905      1      1
+#>   500   0 2427.9397      1      1
+#>   500   0 1070.5654      1      1
+#>   500   0  473.6845      1      1
+#>   500   0  213.6555      1      1
+#>   500   0  133.6428      1      1
+#>   500   0   34.0296      1      1
+#>   500   0    3.5634      1      1
+#>   500   0    0.3759      1      1
+#>   500   0    0.0435      1      1
+#>   500   0     5e-04      1      1
+#>   500   0     1e-04      1      1
+#>   500   1         .      2      0
+#>   500   0         0      2      0
+#>   500   0  718.1328      2      0
+#>   500   0 2312.5122      2      0
+#>   500   0 3680.0463      2      0
+#>   500   0 4500.2647      2      0
+#>   500   0 4362.1304      2      0
+#>   500   0 3786.4529      2      0
+#>   500   0 2606.3573      2      0
+#>   500   0  1802.205      2      0
+#>   500   0 1216.5792      2      0
+#>   500   0   784.668      2      0
+#>   500   0  111.4098      2      0
+#>   500   0     7.961      2      0
+#>   500   0    0.8689      2      0
+#>   500   0    0.0913      2      0
+#>   500   0    0.0011      2      0
+#>   500   0     1e-04      2      0
+#>   500   1         .      1      0
+#>   500   0         0      1      0
+#>   500   0  922.7324      1      0
+#>   500   0 2757.9517      1      0
+#>   500   0 4254.2283      1      0
+#>   500   0 4815.0763      1      0
+#>   500   0 4376.9781      1      0
+#>   500   0 3493.6885      1      0
+#>   500   0 2057.9304      1      0
+#>   500   0 1048.9242      1      0
+#>   500   0  598.9625      1      0
+#>   500   0  387.3544      1      0
+#>   500   0   46.6211      1      0
+#>   500   0    4.4441      1      0
+#>   500   0    0.5435      1      0
+#>   500   0    0.0593      1      0
+#>   500   0     8e-04      1      0
 #>   500   0     1e-04      1      0
 #>   500   1         .      2      1
 #>   500   0         0      2      1
-#>   500   0 3324.8562      2      1
-#>   500   0 4273.1903      2      1
-#>   500   0 3999.8693      2      1
-#>   500   0 3349.8636      2      1
-#>   500   0 2202.5551      2      1
-#>   500   0 1272.3288      2      1
-#>   500   0  469.6933      2      1
-#>   500   0   186.158      2      1
-#>   500   0   82.5994      2      1
-#>   500   0   50.5308      2      1
-#>   500   0   12.9053      2      1
-#>   500   0    1.6609      2      1
-#>   500   0    0.2084      2      1
-#>   500   0    0.0283      2      1
+#>   500   0 4692.1844      2      1
+#>   500   0 5777.1915      2      1
+#>   500   0 5772.7542      2      1
+#>   500   0 4557.8855      2      1
+#>   500   0  2838.252      2      1
+#>   500   0 1588.4459      2      1
+#>   500   0  460.0952      2      1
+#>   500   0  171.1389      2      1
+#>   500   0  100.6014      2      1
+#>   500   0   73.4372      2      1
+#>   500   0   23.2309      2      1
+#>   500   0    2.6115      2      1
+#>   500   0    0.3118      2      1
+#>   500   0    0.0351      2      1
 #>   500   0     5e-04      2      1
 #>   500   0     1e-04      2      1
-#>   500   1         .      1      0
-#>   500   0         0      1      0
-#>   500   0  584.6899      1      0
-#>   500   0  1631.303      1      0
-#>   500   0 2263.2351      1      0
-#>   500   0 2301.7523      1      0
-#>   500   0 2035.6375      1      0
-#>   500   0 1592.9127      1      0
-#>   500   0 1014.2939      1      0
-#>   500   0   664.224      1      0
-#>   500   0    421.36      1      0
-#>   500   0  286.6313      1      0
-#>   500   0   29.6283      1      0
-#>   500   0    1.3286      1      0
-#>   500   0    0.1283      1      0
-#>   500   0    0.0119      1      0
-#>   500   0     1e-04      1      0
-#>   500   0         0      1      0
-#>   500   1         .      2      1
-#>   500   0         0      2      1
-#>   500   0 2766.4458      2      1
-#>   500   0   3246.43      2      1
-#>   500   0 2901.1655      2      1
-#>   500   0 2404.7028      2      1
-#>   500   0 1395.7167      2      1
-#>   500   0  851.9244      2      1
-#>   500   0  314.8392      2      1
-#>   500   0  109.9698      2      1
-#>   500   0   58.2596      2      1
-#>   500   0   29.9026      2      1
-#>   500   0    6.9174      2      1
-#>   500   0    0.6043      2      1
-#>   500   0    0.0585      2      1
-#>   500   0    0.0054      2      1
-#>   500   0         0      2      1
-#>   500   0         0      2      1
 #>   500   1         .      1      1
 #>   500   0         0      1      1
-#>   500   0 3732.0223      1      1
-#>   500   0 4611.4935      1      1
-#>   500   0 4509.2845      1      1
-#>   500   0 4146.3684      1      1
-#>   500   0 2843.5482      1      1
-#>   500   0  1707.507      1      1
-#>   500   0  709.9212      1      1
-#>   500   0  303.0275      1      1
-#>   500   0  132.3574      1      1
-#>   500   0   80.3553      1      1
-#>   500   0   19.1268      1      1
-#>   500   0    1.8855      1      1
-#>   500   0    0.1873      1      1
-#>   500   0    0.0204      1      1
-#>   500   0     2e-04      1      1
+#>   500   0 3694.7445      1      1
+#>   500   0 4489.7367      1      1
+#>   500   0 4085.3346      1      1
+#>   500   0 3397.0683      1      1
+#>   500   0 1990.3294      1      1
+#>   500   0 1139.4731      1      1
+#>   500   0  370.3225      1      1
+#>   500   0  133.8957      1      1
+#>   500   0   65.8612      1      1
+#>   500   0   46.3314      1      1
+#>   500   0   13.0277      1      1
+#>   500   0    1.6656      1      1
+#>   500   0    0.1976      1      1
+#>   500   0    0.0248      1      1
+#>   500   0     4e-04      1      1
 #>   500   0         0      1      1
 #>   500   1         .      2      0
 #>   500   0         0      2      0
-#>   500   0  686.3014      2      0
-#>   500   0 2129.3242      2      0
-#>   500   0 3244.5527      2      0
-#>   500   0 3802.7894      2      0
-#>   500   0 3465.3205      2      0
-#>   500   0 2901.6971      2      0
-#>   500   0 1935.0931      2      0
-#>   500   0 1320.0984      2      0
-#>   500   0  881.4866      2      0
-#>   500   0  561.7965      2      0
-#>   500   0   71.7474      2      0
-#>   500   0    4.3302      2      0
-#>   500   0      0.44      2      0
-#>   500   0    0.0435      2      0
-#>   500   0     5e-04      2      0
-#>   500   0         0      2      0
+#>   500   0   676.485      2      0
+#>   500   0 2262.9172      2      0
+#>   500   0 3396.3503      2      0
+#>   500   0 3629.7737      2      0
+#>   500   0 3035.2347      2      0
+#>   500   0 2499.1868      2      0
+#>   500   0 1542.2965      2      0
+#>   500   0  952.1703      2      0
+#>   500   0  590.1245      2      0
+#>   500   0  352.9518      2      0
+#>   500   0   37.5896      2      0
+#>   500   0    3.1352      2      0
+#>   500   0    0.3968      2      0
+#>   500   0    0.0482      2      0
+#>   500   0     7e-04      2      0
+#>   500   0     1e-04      2      0
 #>   500   1         .      1      0
 #>   500   0         0      1      0
-#>   500   0  846.4674      1      0
-#>   500   0 2362.1571      1      0
-#>   500   0 3361.8507      1      0
-#>   500   0 3521.4316      1      0
-#>   500   0 2873.8261      1      0
-#>   500   0 2162.3467      1      0
-#>   500   0 1211.6444      1      0
-#>   500   0  602.5836      1      0
-#>   500   0  335.4545      1      0
-#>   500   0  210.0041      1      0
-#>   500   0   19.6602      1      0
-#>   500   0    1.6339      1      0
-#>   500   0    0.1847      1      0
-#>   500   0    0.0186      1      0
+#>   500   0 1056.2836      1      0
+#>   500   0 3909.0023      1      0
+#>   500   0 6135.7839      1      0
+#>   500   0 6792.9451      1      0
+#>   500   0 6801.0356      1      0
+#>   500   0 5915.4071      1      0
+#>   500   0 3756.3743      1      0
+#>   500   0 2396.7857      1      0
+#>   500   0  1463.464      1      0
+#>   500   0  958.0215      1      0
+#>   500   0  126.5009      1      0
+#>   500   0     11.59      1      0
+#>   500   0     1.186      1      0
+#>   500   0    0.1214      1      0
+#>   500   0    0.0015      1      0
 #>   500   0     2e-04      1      0
-#>   500   0         0      1      0
 #>   500   1         .      2      1
 #>   500   0         0      2      1
-#>   500   0 4100.5066      2      1
-#>   500   0 4475.6827      2      1
-#>   500   0 4025.1703      2      1
-#>   500   0  2901.309      2      1
-#>   500   0 1563.6377      2      1
-#>   500   0  789.3701      2      1
-#>   500   0  202.6665      2      1
-#>   500   0   71.6791      2      1
-#>   500   0   41.4423      2      1
-#>   500   0   30.0243      2      1
-#>   500   0    9.1323      2      1
-#>   500   0    0.9493      2      1
-#>   500   0    0.1048      2      1
-#>   500   0    0.0109      2      1
+#>   500   0 6604.2472      2      1
+#>   500   0 8677.7432      2      1
+#>   500   0 9339.3738      2      1
+#>   500   0 8061.4162      2      1
+#>   500   0 5886.9387      2      1
+#>   500   0 3840.0929      2      1
+#>   500   0 1392.3327      2      1
+#>   500   0  578.2722      2      1
+#>   500   0  318.8449      2      1
+#>   500   0  196.2636      2      1
+#>   500   0   57.9437      2      1
+#>   500   0    6.0464      2      1
+#>   500   0    0.6436      2      1
+#>   500   0    0.0702      2      1
+#>   500   0     8e-04      2      1
 #>   500   0     1e-04      2      1
-#>   500   0         0      2      1
 #>   500   1         .      1      1
 #>   500   0         0      1      1
-#>   500   0 3473.8637      1      1
-#>   500   0   4004.57      1      1
-#>   500   0 3488.1713      1      1
-#>   500   0 2799.4394      1      1
-#>   500   0 1559.2928      1      1
-#>   500   0  865.5877      1      1
-#>   500   0  272.4131      1      1
-#>   500   0   96.3054      1      1
-#>   500   0   46.2874      1      1
-#>   500   0   31.9994      1      1
-#>   500   0    8.7733      1      1
-#>   500   0    1.0911      1      1
-#>   500   0    0.1259      1      1
-#>   500   0    0.0154      1      1
-#>   500   0     2e-04      1      1
+#>   500   0 4203.2575      1      1
+#>   500   0 5497.7734      1      1
+#>   500   0 5547.7065      1      1
+#>   500   0 4876.3907      1      1
+#>   500   0 3160.3947      1      1
+#>   500   0 1893.2311      1      1
+#>   500   0  666.7228      1      1
+#>   500   0  251.9895      1      1
+#>   500   0  136.2558      1      1
+#>   500   0   84.1483      1      1
+#>   500   0   24.5593      1      1
+#>   500   0    2.7486      1      1
+#>   500   0    0.3298      1      1
+#>   500   0    0.0391      1      1
+#>   500   0     5e-04      1      1
+#>   500   0     1e-04      1      1
+#>   500   1         .      2      0
+#>   500   0         0      2      0
+#>   500   0  727.4409      2      0
+#>   500   0 2458.8503      2      0
+#>   500   0 3575.9348      2      0
+#>   500   0 4092.2332      2      0
+#>   500   0  4161.112      2      0
+#>   500   0   3319.26      2      0
+#>   500   0 2044.8115      2      0
+#>   500   0 1353.4045      2      0
+#>   500   0  844.3332      2      0
+#>   500   0  512.0935      2      0
+#>   500   0    66.532      2      0
+#>   500   0    5.4801      2      0
+#>   500   0    0.6384      2      0
+#>   500   0    0.0741      2      0
+#>   500   0     0.001      2      0
+#>   500   0     1e-04      2      0
+#>   500   1         .      1      1
+#>   500   0         0      1      1
+#>   500   0  4539.445      1      1
+#>   500   0 5433.0385      1      1
+#>   500   0 5447.7777      1      1
+#>   500   0 4825.6839      1      1
+#>   500   0  3136.009      1      1
+#>   500   0 1902.4366      1      1
+#>   500   0  708.1486      1      1
+#>   500   0  276.2505      1      1
+#>   500   0  145.6165      1      1
+#>   500   0    83.376      1      1
+#>   500   0    22.652      1      1
+#>   500   0    2.5424      1      1
+#>   500   0    0.2769      1      1
+#>   500   0    0.0323      1      1
+#>   500   0     3e-04      1      1
 #>   500   0         0      1      1
 #>   500   1         .      2      0
 #>   500   0         0      2      0
-#>   500   0   650.097      2      0
-#>   500   0 2108.3782      2      0
-#>   500   0 3053.6376      2      0
-#>   500   0 3157.3139      2      0
-#>   500   0 2529.9603      2      0
-#>   500   0  2041.111      2      0
-#>   500   0 1241.6748      2      0
-#>   500   0  761.5059      2      0
-#>   500   0  468.5367      2      0
-#>   500   0  277.6182      2      0
-#>   500   0   26.9072      2      0
-#>   500   0     2.066      2      0
-#>   500   0    0.2541      2      0
-#>   500   0      0.03      2      0
-#>   500   0     4e-04      2      0
-#>   500   0         0      2      0
-#>   500   1         .      1      0
-#>   500   0         0      1      0
-#>   500   0  969.2628      1      0
-#>   500   0 3342.7577      1      0
-#>   500   0 4829.0396      1      0
-#>   500   0 4926.1046      1      0
-#>   500   0 4369.9304      1      0
-#>   500   0 3533.3133      1      0
-#>   500   0  2093.747      1      0
-#>   500   0 1292.6022      1      0
-#>   500   0  767.4496      1      0
-#>   500   0  486.7132      1      0
-#>   500   0   49.4301      1      0
-#>   500   0    3.5394      1      0
-#>   500   0    0.3203      1      0
-#>   500   0    0.0291      1      0
-#>   500   0     3e-04      1      0
-#>   500   0         0      1      0
-#>   500   1         .      2      1
-#>   500   0         0      2      1
-#>   500   0 5780.5393      2      1
-#>   500   0 6733.3665      2      1
-#>   500   0 6512.7703      2      1
-#>   500   0 5117.9974      2      1
-#>   500   0 3207.6903      2      1
-#>   500   0 1867.0097      2      1
-#>   500   0  584.7344      2      1
-#>   500   0  223.8373      2      1
-#>   500   0  117.8123      2      1
-#>   500   0   70.6245      2      1
-#>   500   0   19.4372      2      1
-#>   500   0    1.7997      2      1
-#>   500   0      0.17      2      1
-#>   500   0    0.0164      2      1
-#>   500   0     1e-04      2      1
-#>   500   0         0      2      1
+#>   500   0  814.3635      2      0
+#>   500   0  2712.497      2      0
+#>   500   0 4111.1276      2      0
+#>   500   0 4650.2346      2      0
+#>   500   0 4129.9533      2      0
+#>   500   0 3368.3975      2      0
+#>   500   0 2137.4651      2      0
+#>   500   0 1363.6372      2      0
+#>   500   0  898.9289      2      0
+#>   500   0  567.4925      2      0
+#>   500   0   63.0551      2      0
+#>   500   0    4.6895      2      0
+#>   500   0    0.5406      2      0
+#>   500   0    0.0597      2      0
+#>   500   0     7e-04      2      0
+#>   500   0     1e-04      2      0
 #>   500   1         .      1      1
 #>   500   0         0      1      1
-#>   500   0 3794.6093      1      1
-#>   500   0 4537.8218      1      1
-#>   500   0 4241.8028      1      1
-#>   500   0 3496.0471      1      1
-#>   500   0 2055.2882      1      1
-#>   500   0 1153.4726      1      1
-#>   500   0  377.1598      1      1
-#>   500   0  136.2353      1      1
-#>   500   0   70.8547      1      1
-#>   500   0   42.4885      1      1
-#>   500   0   11.7741      1      1
-#>   500   0    1.2383      1      1
-#>   500   0    0.1396      1      1
-#>   500   0    0.0156      1      1
-#>   500   0     2e-04      1      1
-#>   500   0         0      1      1
-#>   500   1         .      2      0
-#>   500   0         0      2      0
-#>   500   0  680.9002      2      0
-#>   500   0 2183.1664      2      0
-#>   500   0 2986.0357      2      0
-#>   500   0 3222.5281      2      0
-#>   500   0 3022.3411      2      0
-#>   500   0 2308.7087      2      0
-#>   500   0 1373.5649      2      0
-#>   500   0    895.19      2      0
-#>   500   0  550.3503      2      0
-#>   500   0  327.9094      2      0
-#>   500   0   36.0072      2      0
-#>   500   0    2.5059      2      0
-#>   500   0    0.2735      2      0
-#>   500   0    0.0298      2      0
-#>   500   0     3e-04      2      0
-#>   500   0         0      2      0
-#>   500   1         .      1      1
-#>   500   0         0      1      1
-#>   500   0 4136.7493      1      1
-#>   500   0 4572.9243      1      1
-#>   500   0  4293.076      1      1
-#>   500   0 3604.4802      1      1
-#>   500   0 2169.3195      1      1
-#>   500   0 1255.0071      1      1
-#>   500   0    443.94      1      1
-#>   500   0  167.0377      1      1
-#>   500   0   84.7053      1      1
-#>   500   0    46.902      1      1
-#>   500   0   12.0489      1      1
-#>   500   0    1.2833      1      1
-#>   500   0    0.1327      1      1
-#>   500   0    0.0147      1      1
+#>   500   0  4682.935      1      1
+#>   500   0 6097.5415      1      1
+#>   500   0 6407.3309      1      1
+#>   500   0 5865.4311      1      1
+#>   500   0 4032.4953      1      1
+#>   500   0 2814.8939      1      1
+#>   500   0 1238.3698      1      1
+#>   500   0  570.6423      1      1
+#>   500   0  308.1478      1      1
+#>   500   0  185.9872      1      1
+#>   500   0   34.4191      1      1
+#>   500   0    2.6326      1      1
+#>   500   0    0.1885      1      1
+#>   500   0    0.0141      1      1
 #>   500   0     1e-04      1      1
 #>   500   0         0      1      1
 #>   500   1         .      2      0
 #>   500   0         0      2      0
-#>   500   0  766.7925      2      0
-#>   500   0 2436.2003      2      0
-#>   500   0 3496.9508      2      0
-#>   500   0 3759.5095      2      0
-#>   500   0 3123.1706      2      0
-#>   500   0 2464.2177      2      0
-#>   500   0 1525.7265      2      0
-#>   500   0  962.5222      2      0
-#>   500   0  627.3619      2      0
-#>   500   0  390.6196      2      0
-#>   500   0   37.9577      2      0
-#>   500   0    2.4048      2      0
-#>   500   0    0.2619      2      0
-#>   500   0    0.0275      2      0
-#>   500   0     3e-04      2      0
-#>   500   0         0      2      0
-#>   500   1         .      1      1
-#>   500   0         0      1      1
-#>   500   0  4302.166      1      1
-#>   500   0 5212.4289      1      1
-#>   500   0  5162.315      1      1
-#>   500   0 4505.4403      1      1
-#>   500   0 2895.2139      1      1
-#>   500   0 1939.2018      1      1
-#>   500   0  815.2986      1      1
-#>   500   0  363.1888      1      1
-#>   500   0  188.7131      1      1
-#>   500   0   109.337      1      1
-#>   500   0   18.1039      1      1
-#>   500   0    1.2757      1      1
-#>   500   0    0.0843      1      1
-#>   500   0    0.0058      1      1
-#>   500   0         0      1      1
-#>   500   0         0      1      1
-#>   500   1         .      2      0
-#>   500   0         0      2      0
-#>   500   0  729.2635      2      0
-#>   500   0  2295.115      2      0
-#>   500   0 3336.8932      2      0
-#>   500   0 3693.2718      2      0
-#>   500   0 3358.0879      2      0
-#>   500   0 2855.7982      2      0
-#>   500   0 2010.0584      2      0
-#>   500   0 1450.2482      2      0
-#>   500   0  962.4649      2      0
-#>   500   0  676.9437      2      0
-#>   500   0     94.77      2      0
-#>   500   0    3.5897      2      0
-#>   500   0    0.2164      2      0
-#>   500   0    0.0158      2      0
-#>   500   0     1e-04      2      0
+#>   500   0  770.8054      2      0
+#>   500   0 2535.0089      2      0
+#>   500   0 3876.5486      2      0
+#>   500   0 4499.1003      2      0
+#>   500   0 4359.3787      2      0
+#>   500   0 3830.7715      2      0
+#>   500   0 2767.1415      2      0
+#>   500   0 2020.9318      2      0
+#>   500   0 1356.2016      2      0
+#>   500   0  965.5179      2      0
+#>   500   0   149.021      2      0
+#>   500   0    6.9072      2      0
+#>   500   0    0.4667      2      0
+#>   500   0    0.0372      2      0
+#>   500   0     2e-04      2      0
 #>   500   0         0      2      0
 #>   500   1         .      1      0
 #>   500   0         0      1      0
-#>   500   0  551.8388      1      0
-#>   500   0 1673.7134      1      0
-#>   500   0 2815.3181      1      0
-#>   500   0 2728.0847      1      0
-#>   500   0 2604.9231      1      0
-#>   500   0 2171.6551      1      0
-#>   500   0 1356.4542      1      0
-#>   500   0    852.64      1      0
-#>   500   0  505.1516      1      0
-#>   500   0  327.2099      1      0
-#>   500   0   34.4092      1      0
-#>   500   0    3.3184      1      0
-#>   500   0    0.5934      1      0
-#>   500   0    0.0885      1      0
-#>   500   0    0.0025      1      0
-#>   500   0     4e-04      1      0
+#>   500   0  584.4329      1      0
+#>   500   0 1858.8496      1      0
+#>   500   0 3306.9091      1      0
+#>   500   0 3387.8598      1      0
+#>   500   0 3516.6459      1      0
+#>   500   0 3085.0912      1      0
+#>   500   0 2019.2366      1      0
+#>   500   0 1293.0998      1      0
+#>   500   0  776.4329      1      0
+#>   500   0  510.5021      1      0
+#>   500   0   62.6584      1      0
+#>   500   0    7.0673      1      0
+#>   500   0    1.3297      1      0
+#>   500   0     0.208      1      0
+#>   500   0    0.0065      1      0
+#>   500   0    0.0011      1      0
 #>   500   1         .      2      1
 #>   500   0         0      2      1
-#>   500   0 3035.8285      2      1
-#>   500   0 3838.0872      2      1
-#>   500   0 3605.7104      2      1
-#>   500   0 3040.9375      2      1
-#>   500   0 1779.3811      2      1
-#>   500   0  1118.122      2      1
-#>   500   0  359.4601      2      1
-#>   500   0  135.2236      2      1
-#>   500   0   59.6819      2      1
-#>   500   0   36.0564      2      1
-#>   500   0   11.2964      2      1
-#>   500   0    1.8875      2      1
-#>   500   0     0.292      2      1
-#>   500   0    0.0497      2      1
-#>   500   0    0.0013      2      1
-#>   500   0     2e-04      2      1
+#>   500   0 3317.4089      2      1
+#>   500   0 4546.1044      2      1
+#>   500   0 4588.8251      2      1
+#>   500   0  4123.459      2      1
+#>   500   0 2676.9051      2      1
+#>   500   0 1817.8192      2      1
+#>   500   0  644.6133      2      1
+#>   500   0  255.4908      2      1
+#>   500   0  116.1755      2      1
+#>   500   0   71.4526      2      1
+#>   500   0   23.1856      2      1
+#>   500   0    4.0653      2      1
+#>   500   0    0.6599      2      1
+#>   500   0    0.1177      2      1
+#>   500   0    0.0035      2      1
+#>   500   0     6e-04      2      1
 #>   500   1         .      1      1
 #>   500   0         0      1      1
 #>   500   0 3446.2618      1      1
@@ -4423,9 +4423,9 @@ head(write_nonmem(examplinib_fe_nif, numeric_fields_only = TRUE), 5)
 #>   DOSE MDV        DV PERIOD FASTED
 #> 1  500   1         .      1      1
 #> 2  500   0         0      1      1
-#> 3  500   0 4409.2877      1      1
-#> 4  500   0 5605.7968      1      1
-#> 5  500   0 5300.4045      1      1
+#> 3  500   0 4697.3267      1      1
+#> 4  500   0 6325.1011      1      1
+#> 5  500   0 6294.1871      1      1
 head(write_nonmem(examplinib_fe_nif, dot_columns = c("DV", "AMT")), 5)
 #>  REF ID    STUDYID           USUBJID AGE SEX                      RACE HEIGHT
 #>    1  1 2023000400 20230004001010002  53   1                     WHITE  180.4
@@ -5872,75 +5872,75 @@ head(write_nonmem(examplinib_fe_nif, dot_columns = c("DV", "AMT")), 5)
 #>  PARENT TRTDY METABOLITE DOSE MDV ACTARMCD IMPUTATION        DV
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
-#>  RS2023     1      FALSE  500   0       AB            4409.2877
-#>  RS2023     1      FALSE  500   0       AB            5605.7968
-#>  RS2023     1      FALSE  500   0       AB            5300.4045
-#>  RS2023     1      FALSE  500   0       AB            4775.5871
-#>  RS2023     1      FALSE  500   0       AB            3228.1453
-#>  RS2023     1      FALSE  500   0       AB            1926.0367
-#>  RS2023     1      FALSE  500   0       AB             620.1551
-#>  RS2023     1      FALSE  500   0       AB             253.4292
-#>  RS2023     1      FALSE  500   0       AB             127.6732
-#>  RS2023     1      FALSE  500   0       AB              76.4117
-#>  RS2023     2      FALSE  500   0       AB              20.5288
-#>  RS2023     3      FALSE  500   0       AB               2.3377
-#>  RS2023     4      FALSE  500   0       AB               0.2696
-#>  RS2023     5      FALSE  500   0       AB               0.0283
-#>  RS2023     7      FALSE  500   0       AB                4e-04
-#>  RS2023     8      FALSE  500   0       AB                    .
+#>  RS2023     1      FALSE  500   0       AB            4697.3267
+#>  RS2023     1      FALSE  500   0       AB            6325.1011
+#>  RS2023     1      FALSE  500   0       AB            6294.1871
+#>  RS2023     1      FALSE  500   0       AB            5932.4643
+#>  RS2023     1      FALSE  500   0       AB            4316.5247
+#>  RS2023     1      FALSE  500   0       AB            2720.3483
+#>  RS2023     1      FALSE  500   0       AB             938.6269
+#>  RS2023     1      FALSE  500   0       AB             398.6231
+#>  RS2023     1      FALSE  500   0       AB             205.8683
+#>  RS2023     1      FALSE  500   0       AB             125.2948
+#>  RS2023     2      FALSE  500   0       AB              34.9438
+#>  RS2023     3      FALSE  500   0       AB                4.195
+#>  RS2023     4      FALSE  500   0       AB                 0.51
+#>  RS2023     5      FALSE  500   0       AB               0.0565
+#>  RS2023     7      FALSE  500   0       AB                8e-04
+#>  RS2023     8      FALSE  500   0       AB                1e-04
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    .
-#>  RS2023    14      FALSE  500   0       AB             835.0784
-#>  RS2023    14      FALSE  500   0       AB            2570.4025
-#>  RS2023    14      FALSE  500   0       AB            3711.1981
-#>  RS2023    14      FALSE  500   0       AB            4207.6397
-#>  RS2023    14      FALSE  500   0       AB            4001.9576
-#>  RS2023    14      FALSE  500   0       AB             3250.225
-#>  RS2023    14      FALSE  500   0       AB            2057.0487
-#>  RS2023    14      FALSE  500   0       AB            1323.6299
-#>  RS2023    14      FALSE  500   0       AB             812.3098
-#>  RS2023    14      FALSE  500   0       AB             546.8454
-#>  RS2023    15      FALSE  500   0       AB              58.0131
-#>  RS2023    16      FALSE  500   0       AB                 4.45
-#>  RS2023    17      FALSE  500   0       AB                0.506
-#>  RS2023    18      FALSE  500   0       AB               0.0559
-#>  RS2023    20      FALSE  500   0       AB                7e-04
-#>  RS2023    21      FALSE  500   0       AB                1e-04
+#>  RS2023    14      FALSE  500   0       AB             869.9889
+#>  RS2023    14      FALSE  500   0       AB            2770.2331
+#>  RS2023    14      FALSE  500   0       AB            4162.7898
+#>  RS2023    14      FALSE  500   0       AB            4910.6863
+#>  RS2023    14      FALSE  500   0       AB            4956.9022
+#>  RS2023    14      FALSE  500   0       AB            4174.7208
+#>  RS2023    14      FALSE  500   0       AB            2733.1124
+#>  RS2023    14      FALSE  500   0       AB            1784.9134
+#>  RS2023    14      FALSE  500   0       AB            1108.4658
+#>  RS2023    14      FALSE  500   0       AB             756.2012
+#>  RS2023    15      FALSE  500   0       AB              90.3015
+#>  RS2023    16      FALSE  500   0       AB               7.8786
+#>  RS2023    17      FALSE  500   0       AB               0.9472
+#>  RS2023    18      FALSE  500   0       AB               0.1103
+#>  RS2023    20      FALSE  500   0       AB               0.0016
+#>  RS2023    21      FALSE  500   0       AB                2e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             506.8347
-#>  RS2023     1      FALSE  500   0       BA            1557.4147
-#>  RS2023     1      FALSE  500   0       BA            1990.4341
-#>  RS2023     1      FALSE  500   0       BA            2168.6684
-#>  RS2023     1      FALSE  500   0       BA            1844.5494
-#>  RS2023     1      FALSE  500   0       BA             1488.972
-#>  RS2023     1      FALSE  500   0       BA             942.9163
-#>  RS2023     1      FALSE  500   0       BA             619.2675
-#>  RS2023     1      FALSE  500   0       BA             384.9788
-#>  RS2023     1      FALSE  500   0       BA             254.8653
-#>  RS2023     2      FALSE  500   0       BA               25.196
-#>  RS2023     3      FALSE  500   0       BA               1.3969
-#>  RS2023     4      FALSE  500   0       BA               0.1432
-#>  RS2023     5      FALSE  500   0       BA               0.0144
-#>  RS2023     7      FALSE  500   0       BA                2e-04
+#>  RS2023     1      FALSE  500   0       BA             546.4172
+#>  RS2023     1      FALSE  500   0       BA            1776.6202
+#>  RS2023     1      FALSE  500   0       BA             2419.886
+#>  RS2023     1      FALSE  500   0       BA              2789.38
+#>  RS2023     1      FALSE  500   0       BA            2534.2718
+#>  RS2023     1      FALSE  500   0       BA            2102.5438
+#>  RS2023     1      FALSE  500   0       BA            1354.8751
+#>  RS2023     1      FALSE  500   0       BA             897.7777
+#>  RS2023     1      FALSE  500   0       BA             563.7153
+#>  RS2023     1      FALSE  500   0       BA             377.8232
+#>  RS2023     2      FALSE  500   0       BA              42.4378
+#>  RS2023     3      FALSE  500   0       BA               2.8488
+#>  RS2023     4      FALSE  500   0       BA               0.3093
+#>  RS2023     5      FALSE  500   0       BA               0.0325
+#>  RS2023     7      FALSE  500   0       BA                4e-04
 #>  RS2023     8      FALSE  500   0       BA                    .
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA             2605.882
-#>  RS2023    14      FALSE  500   0       BA            2783.7238
-#>  RS2023    14      FALSE  500   0       BA            2489.9878
-#>  RS2023    14      FALSE  500   0       BA             1969.544
-#>  RS2023    14      FALSE  500   0       BA            1177.8603
-#>  RS2023    14      FALSE  500   0       BA             737.7272
-#>  RS2023    14      FALSE  500   0       BA              253.363
-#>  RS2023    14      FALSE  500   0       BA               96.575
-#>  RS2023    14      FALSE  500   0       BA              44.7707
-#>  RS2023    14      FALSE  500   0       BA              25.3991
-#>  RS2023    15      FALSE  500   0       BA               5.7722
-#>  RS2023    16      FALSE  500   0       BA               0.6277
-#>  RS2023    17      FALSE  500   0       BA               0.0647
-#>  RS2023    18      FALSE  500   0       BA                0.007
-#>  RS2023    20      FALSE  500   0       BA                1e-04
+#>  RS2023    14      FALSE  500   0       BA            2925.4997
+#>  RS2023    14      FALSE  500   0       BA            3431.7454
+#>  RS2023    14      FALSE  500   0       BA            3300.1314
+#>  RS2023    14      FALSE  500   0       BA            2756.2566
+#>  RS2023    14      FALSE  500   0       BA            1765.6387
+#>  RS2023    14      FALSE  500   0       BA            1146.3179
+#>  RS2023    14      FALSE  500   0       BA             408.1649
+#>  RS2023    14      FALSE  500   0       BA             161.0631
+#>  RS2023    14      FALSE  500   0       BA              78.2605
+#>  RS2023    14      FALSE  500   0       BA              46.5486
+#>  RS2023    15      FALSE  500   0       BA              11.4532
+#>  RS2023    16      FALSE  500   0       BA               1.3069
+#>  RS2023    17      FALSE  500   0       BA               0.1413
+#>  RS2023    18      FALSE  500   0       BA                0.016
+#>  RS2023    20      FALSE  500   0       BA                2e-04
 #>  RS2023    21      FALSE  500   0       BA                    .
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
@@ -6052,75 +6052,75 @@ head(write_nonmem(examplinib_fe_nif, dot_columns = c("DV", "AMT")), 5)
 #>  RS2023    21      FALSE  500   0       BA                    .
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             797.1487
-#>  RS2023     1      FALSE  500   0       BA            2254.6319
-#>  RS2023     1      FALSE  500   0       BA            3110.5554
-#>  RS2023     1      FALSE  500   0       BA            3236.2015
-#>  RS2023     1      FALSE  500   0       BA             2942.523
-#>  RS2023     1      FALSE  500   0       BA            2174.4393
-#>  RS2023     1      FALSE  500   0       BA            1326.4401
-#>  RS2023     1      FALSE  500   0       BA             840.1494
-#>  RS2023     1      FALSE  500   0       BA             540.0148
-#>  RS2023     1      FALSE  500   0       BA             301.1778
-#>  RS2023     2      FALSE  500   0       BA              30.0028
-#>  RS2023     3      FALSE  500   0       BA               2.4489
-#>  RS2023     4      FALSE  500   0       BA               0.2942
-#>  RS2023     5      FALSE  500   0       BA               0.0415
-#>  RS2023     7      FALSE  500   0       BA                7e-04
-#>  RS2023     8      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             853.1958
+#>  RS2023     1      FALSE  500   0       BA            2544.2644
+#>  RS2023     1      FALSE  500   0       BA            3730.2827
+#>  RS2023     1      FALSE  500   0       BA            4106.3373
+#>  RS2023     1      FALSE  500   0       BA            4016.1361
+#>  RS2023     1      FALSE  500   0       BA            3073.9393
+#>  RS2023     1      FALSE  500   0       BA            1922.2874
+#>  RS2023     1      FALSE  500   0       BA            1230.7612
+#>  RS2023     1      FALSE  500   0       BA             800.0214
+#>  RS2023     1      FALSE  500   0       BA             452.6179
+#>  RS2023     2      FALSE  500   0       BA              52.4706
+#>  RS2023     3      FALSE  500   0       BA                4.989
+#>  RS2023     4      FALSE  500   0       BA                0.628
+#>  RS2023     5      FALSE  500   0       BA               0.0925
+#>  RS2023     7      FALSE  500   0       BA               0.0016
+#>  RS2023     8      FALSE  500   0       BA                2e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA             4079.406
-#>  RS2023    14      FALSE  500   0       BA            4724.7219
-#>  RS2023    14      FALSE  500   0       BA            4256.1451
-#>  RS2023    14      FALSE  500   0       BA            3290.3609
-#>  RS2023    14      FALSE  500   0       BA            2052.8204
-#>  RS2023    14      FALSE  500   0       BA            1105.0599
-#>  RS2023    14      FALSE  500   0       BA             340.4537
-#>  RS2023    14      FALSE  500   0       BA             126.1812
-#>  RS2023    14      FALSE  500   0       BA              59.5528
-#>  RS2023    14      FALSE  500   0       BA              34.6435
-#>  RS2023    15      FALSE  500   0       BA               9.9632
-#>  RS2023    16      FALSE  500   0       BA               1.2159
-#>  RS2023    17      FALSE  500   0       BA               0.1692
-#>  RS2023    18      FALSE  500   0       BA                0.023
-#>  RS2023    20      FALSE  500   0       BA                4e-04
-#>  RS2023    21      FALSE  500   0       BA                    .
+#>  RS2023    14      FALSE  500   0       BA            4531.3367
+#>  RS2023    14      FALSE  500   0       BA            5739.5984
+#>  RS2023    14      FALSE  500   0       BA            5566.6807
+#>  RS2023    14      FALSE  500   0       BA            4568.5023
+#>  RS2023    14      FALSE  500   0       BA            3102.6607
+#>  RS2023    14      FALSE  500   0       BA            1758.7751
+#>  RS2023    14      FALSE  500   0       BA             571.8265
+#>  RS2023    14      FALSE  500   0       BA             219.9434
+#>  RS2023    14      FALSE  500   0       BA             108.0572
+#>  RS2023    14      FALSE  500   0       BA              65.0118
+#>  RS2023    15      FALSE  500   0       BA              19.6321
+#>  RS2023    16      FALSE  500   0       BA               2.5039
+#>  RS2023    17      FALSE  500   0       BA                0.364
+#>  RS2023    18      FALSE  500   0       BA               0.0516
+#>  RS2023    20      FALSE  500   0       BA                9e-04
+#>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             580.8725
-#>  RS2023     1      FALSE  500   0       BA            1754.3074
-#>  RS2023     1      FALSE  500   0       BA            2479.9964
-#>  RS2023     1      FALSE  500   0       BA            2387.3403
-#>  RS2023     1      FALSE  500   0       BA            2174.9182
-#>  RS2023     1      FALSE  500   0       BA            1767.6584
-#>  RS2023     1      FALSE  500   0       BA            1129.3446
-#>  RS2023     1      FALSE  500   0       BA             697.9385
-#>  RS2023     1      FALSE  500   0       BA             448.6176
-#>  RS2023     1      FALSE  500   0       BA             298.4862
-#>  RS2023     2      FALSE  500   0       BA              30.5753
-#>  RS2023     3      FALSE  500   0       BA               1.2952
-#>  RS2023     4      FALSE  500   0       BA               0.0993
-#>  RS2023     5      FALSE  500   0       BA               0.0084
-#>  RS2023     7      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             652.4699
+#>  RS2023     1      FALSE  500   0       BA            2148.7027
+#>  RS2023     1      FALSE  500   0       BA            3347.3862
+#>  RS2023     1      FALSE  500   0       BA            3508.2385
+#>  RS2023     1      FALSE  500   0       BA            3525.7029
+#>  RS2023     1      FALSE  500   0       BA            2984.7917
+#>  RS2023     1      FALSE  500   0       BA            1960.0221
+#>  RS2023     1      FALSE  500   0       BA             1229.483
+#>  RS2023     1      FALSE  500   0       BA             803.2307
+#>  RS2023     1      FALSE  500   0       BA             544.9192
+#>  RS2023     2      FALSE  500   0       BA              67.2828
+#>  RS2023     3      FALSE  500   0       BA               3.9012
+#>  RS2023     4      FALSE  500   0       BA               0.3345
+#>  RS2023     5      FALSE  500   0       BA               0.0309
+#>  RS2023     7      FALSE  500   0       BA                3e-04
 #>  RS2023     8      FALSE  500   0       BA                    .
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA             3250.883
-#>  RS2023    14      FALSE  500   0       BA            3963.9918
-#>  RS2023    14      FALSE  500   0       BA             3504.033
-#>  RS2023    14      FALSE  500   0       BA            2605.8372
-#>  RS2023    14      FALSE  500   0       BA            1474.0956
-#>  RS2023    14      FALSE  500   0       BA              983.305
-#>  RS2023    14      FALSE  500   0       BA             355.4669
-#>  RS2023    14      FALSE  500   0       BA             131.1528
-#>  RS2023    14      FALSE  500   0       BA               60.959
-#>  RS2023    14      FALSE  500   0       BA              35.7313
-#>  RS2023    15      FALSE  500   0       BA               7.1792
-#>  RS2023    16      FALSE  500   0       BA               0.6113
-#>  RS2023    17      FALSE  500   0       BA               0.0492
-#>  RS2023    18      FALSE  500   0       BA                0.004
-#>  RS2023    20      FALSE  500   0       BA                    .
+#>  RS2023    14      FALSE  500   0       BA            3886.3127
+#>  RS2023    14      FALSE  500   0       BA            5463.9502
+#>  RS2023    14      FALSE  500   0       BA            5383.0692
+#>  RS2023    14      FALSE  500   0       BA             4337.634
+#>  RS2023    14      FALSE  500   0       BA             2711.977
+#>  RS2023    14      FALSE  500   0       BA            1906.7455
+#>  RS2023    14      FALSE  500   0       BA             729.1652
+#>  RS2023    14      FALSE  500   0       BA             284.4167
+#>  RS2023    14      FALSE  500   0       BA             142.2746
+#>  RS2023    14      FALSE  500   0       BA              89.8491
+#>  RS2023    15      FALSE  500   0       BA              20.7469
+#>  RS2023    16      FALSE  500   0       BA               1.9304
+#>  RS2023    17      FALSE  500   0       BA               0.1696
+#>  RS2023    18      FALSE  500   0       BA               0.0151
+#>  RS2023    20      FALSE  500   0       BA                1e-04
 #>  RS2023    21      FALSE  500   0       BA                    .
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
@@ -6196,364 +6196,364 @@ head(write_nonmem(examplinib_fe_nif, dot_columns = c("DV", "AMT")), 5)
 #>  RS2023    21      FALSE  500   0       BA                2e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             681.2896
-#>  RS2023     1      FALSE  500   0       BA            2099.4321
-#>  RS2023     1      FALSE  500   0       BA            2970.4374
-#>  RS2023     1      FALSE  500   0       BA            3262.7162
-#>  RS2023     1      FALSE  500   0       BA            2974.9193
-#>  RS2023     1      FALSE  500   0       BA            2397.6183
-#>  RS2023     1      FALSE  500   0       BA            1520.7174
-#>  RS2023     1      FALSE  500   0       BA            1022.8868
-#>  RS2023     1      FALSE  500   0       BA              679.596
-#>  RS2023     1      FALSE  500   0       BA              442.994
-#>  RS2023     2      FALSE  500   0       BA               45.371
-#>  RS2023     3      FALSE  500   0       BA               3.4975
-#>  RS2023     4      FALSE  500   0       BA               0.4203
-#>  RS2023     5      FALSE  500   0       BA               0.0547
-#>  RS2023     7      FALSE  500   0       BA                9e-04
-#>  RS2023     8      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             713.1764
+#>  RS2023     1      FALSE  500   0       BA            2279.0324
+#>  RS2023     1      FALSE  500   0       BA            3362.6012
+#>  RS2023     1      FALSE  500   0       BA            3842.7115
+#>  RS2023     1      FALSE  500   0       BA            3695.6439
+#>  RS2023     1      FALSE  500   0       BA            3060.9403
+#>  RS2023     1      FALSE  500   0       BA            1981.1477
+#>  RS2023     1      FALSE  500   0       BA             1343.357
+#>  RS2023     1      FALSE  500   0       BA             899.1425
+#>  RS2023     1      FALSE  500   0       BA              591.338
+#>  RS2023     2      FALSE  500   0       BA               66.425
+#>  RS2023     3      FALSE  500   0       BA               5.8541
+#>  RS2023     4      FALSE  500   0       BA               0.7329
+#>  RS2023     5      FALSE  500   0       BA               0.0989
+#>  RS2023     7      FALSE  500   0       BA               0.0018
+#>  RS2023     8      FALSE  500   0       BA                3e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA            3324.8562
-#>  RS2023    14      FALSE  500   0       BA            4273.1903
-#>  RS2023    14      FALSE  500   0       BA            3999.8693
-#>  RS2023    14      FALSE  500   0       BA            3349.8636
-#>  RS2023    14      FALSE  500   0       BA            2202.5551
-#>  RS2023    14      FALSE  500   0       BA            1272.3288
-#>  RS2023    14      FALSE  500   0       BA             469.6933
-#>  RS2023    14      FALSE  500   0       BA              186.158
-#>  RS2023    14      FALSE  500   0       BA              82.5994
-#>  RS2023    14      FALSE  500   0       BA              50.5308
-#>  RS2023    15      FALSE  500   0       BA              12.9053
-#>  RS2023    16      FALSE  500   0       BA               1.6609
-#>  RS2023    17      FALSE  500   0       BA               0.2084
-#>  RS2023    18      FALSE  500   0       BA               0.0283
-#>  RS2023    20      FALSE  500   0       BA                5e-04
+#>  RS2023    14      FALSE  500   0       BA            3567.3819
+#>  RS2023    14      FALSE  500   0       BA            4871.4474
+#>  RS2023    14      FALSE  500   0       BA            4796.7845
+#>  RS2023    14      FALSE  500   0       BA            4187.7473
+#>  RS2023    14      FALSE  500   0       BA            2924.5217
+#>  RS2023    14      FALSE  500   0       BA            1754.2141
+#>  RS2023    14      FALSE  500   0       BA             673.6567
+#>  RS2023    14      FALSE  500   0       BA             273.8245
+#>  RS2023    14      FALSE  500   0       BA             124.9296
+#>  RS2023    14      FALSE  500   0       BA              78.6046
+#>  RS2023    15      FALSE  500   0       BA              21.1457
+#>  RS2023    16      FALSE  500   0       BA               2.8187
+#>  RS2023    17      FALSE  500   0       BA               0.3662
+#>  RS2023    18      FALSE  500   0       BA               0.0515
+#>  RS2023    20      FALSE  500   0       BA                9e-04
 #>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             584.6899
-#>  RS2023     1      FALSE  500   0       BA             1631.303
-#>  RS2023     1      FALSE  500   0       BA            2263.2351
-#>  RS2023     1      FALSE  500   0       BA            2301.7523
-#>  RS2023     1      FALSE  500   0       BA            2035.6375
-#>  RS2023     1      FALSE  500   0       BA            1592.9127
-#>  RS2023     1      FALSE  500   0       BA            1014.2939
-#>  RS2023     1      FALSE  500   0       BA              664.224
-#>  RS2023     1      FALSE  500   0       BA               421.36
-#>  RS2023     1      FALSE  500   0       BA             286.6313
-#>  RS2023     2      FALSE  500   0       BA              29.6283
-#>  RS2023     3      FALSE  500   0       BA               1.3286
-#>  RS2023     4      FALSE  500   0       BA               0.1283
-#>  RS2023     5      FALSE  500   0       BA               0.0119
-#>  RS2023     7      FALSE  500   0       BA                1e-04
+#>  RS2023     1      FALSE  500   0       BA             642.3755
+#>  RS2023     1      FALSE  500   0       BA            1924.9653
+#>  RS2023     1      FALSE  500   0       BA            2895.6203
+#>  RS2023     1      FALSE  500   0       BA            3166.3448
+#>  RS2023     1      FALSE  500   0       BA            3056.7505
+#>  RS2023     1      FALSE  500   0       BA            2486.1121
+#>  RS2023     1      FALSE  500   0       BA            1625.4498
+#>  RS2023     1      FALSE  500   0       BA            1078.7192
+#>  RS2023     1      FALSE  500   0       BA             694.1192
+#>  RS2023     1      FALSE  500   0       BA             480.3608
+#>  RS2023     2      FALSE  500   0       BA              58.7066
+#>  RS2023     3      FALSE  500   0       BA               3.4029
+#>  RS2023     4      FALSE  500   0       BA               0.3589
+#>  RS2023     5      FALSE  500   0       BA                0.036
+#>  RS2023     7      FALSE  500   0       BA                4e-04
 #>  RS2023     8      FALSE  500   0       BA                    .
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA            2766.4458
-#>  RS2023    14      FALSE  500   0       BA              3246.43
-#>  RS2023    14      FALSE  500   0       BA            2901.1655
-#>  RS2023    14      FALSE  500   0       BA            2404.7028
-#>  RS2023    14      FALSE  500   0       BA            1395.7167
-#>  RS2023    14      FALSE  500   0       BA             851.9244
-#>  RS2023    14      FALSE  500   0       BA             314.8392
-#>  RS2023    14      FALSE  500   0       BA             109.9698
-#>  RS2023    14      FALSE  500   0       BA              58.2596
-#>  RS2023    14      FALSE  500   0       BA              29.9026
-#>  RS2023    15      FALSE  500   0       BA               6.9174
-#>  RS2023    16      FALSE  500   0       BA               0.6043
-#>  RS2023    17      FALSE  500   0       BA               0.0585
-#>  RS2023    18      FALSE  500   0       BA               0.0054
-#>  RS2023    20      FALSE  500   0       BA                    .
+#>  RS2023    14      FALSE  500   0       BA            3197.2439
+#>  RS2023    14      FALSE  500   0       BA            4223.4415
+#>  RS2023    14      FALSE  500   0       BA            4141.8296
+#>  RS2023    14      FALSE  500   0       BA            3686.0616
+#>  RS2023    14      FALSE  500   0       BA            2347.7296
+#>  RS2023    14      FALSE  500   0       BA            1508.3927
+#>  RS2023    14      FALSE  500   0       BA             588.2037
+#>  RS2023    14      FALSE  500   0       BA             215.5115
+#>  RS2023    14      FALSE  500   0       BA             121.3221
+#>  RS2023    14      FALSE  500   0       BA              66.1008
+#>  RS2023    15      FALSE  500   0       BA               17.009
+#>  RS2023    16      FALSE  500   0       BA               1.5995
+#>  RS2023    17      FALSE  500   0       BA               0.1665
+#>  RS2023    18      FALSE  500   0       BA               0.0166
+#>  RS2023    20      FALSE  500   0       BA                2e-04
 #>  RS2023    21      FALSE  500   0       BA                    .
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
-#>  RS2023     1      FALSE  500   0       AB            3732.0223
-#>  RS2023     1      FALSE  500   0       AB            4611.4935
-#>  RS2023     1      FALSE  500   0       AB            4509.2845
-#>  RS2023     1      FALSE  500   0       AB            4146.3684
-#>  RS2023     1      FALSE  500   0       AB            2843.5482
-#>  RS2023     1      FALSE  500   0       AB             1707.507
-#>  RS2023     1      FALSE  500   0       AB             709.9212
-#>  RS2023     1      FALSE  500   0       AB             303.0275
-#>  RS2023     1      FALSE  500   0       AB             132.3574
-#>  RS2023     1      FALSE  500   0       AB              80.3553
-#>  RS2023     2      FALSE  500   0       AB              19.1268
-#>  RS2023     3      FALSE  500   0       AB               1.8855
-#>  RS2023     4      FALSE  500   0       AB               0.1873
-#>  RS2023     5      FALSE  500   0       AB               0.0204
-#>  RS2023     7      FALSE  500   0       AB                2e-04
-#>  RS2023     8      FALSE  500   0       AB                    .
+#>  RS2023     1      FALSE  500   0       AB            4001.3269
+#>  RS2023     1      FALSE  500   0       AB            5259.6775
+#>  RS2023     1      FALSE  500   0       AB            5426.2831
+#>  RS2023     1      FALSE  500   0       AB             5223.814
+#>  RS2023     1      FALSE  500   0       AB            3847.5905
+#>  RS2023     1      FALSE  500   0       AB            2427.9397
+#>  RS2023     1      FALSE  500   0       AB            1070.5654
+#>  RS2023     1      FALSE  500   0       AB             473.6845
+#>  RS2023     1      FALSE  500   0       AB             213.6555
+#>  RS2023     1      FALSE  500   0       AB             133.6428
+#>  RS2023     2      FALSE  500   0       AB              34.0296
+#>  RS2023     3      FALSE  500   0       AB               3.5634
+#>  RS2023     4      FALSE  500   0       AB               0.3759
+#>  RS2023     5      FALSE  500   0       AB               0.0435
+#>  RS2023     7      FALSE  500   0       AB                5e-04
+#>  RS2023     8      FALSE  500   0       AB                1e-04
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    .
-#>  RS2023    14      FALSE  500   0       AB             686.3014
-#>  RS2023    14      FALSE  500   0       AB            2129.3242
-#>  RS2023    14      FALSE  500   0       AB            3244.5527
-#>  RS2023    14      FALSE  500   0       AB            3802.7894
-#>  RS2023    14      FALSE  500   0       AB            3465.3205
-#>  RS2023    14      FALSE  500   0       AB            2901.6971
-#>  RS2023    14      FALSE  500   0       AB            1935.0931
-#>  RS2023    14      FALSE  500   0       AB            1320.0984
-#>  RS2023    14      FALSE  500   0       AB             881.4866
-#>  RS2023    14      FALSE  500   0       AB             561.7965
-#>  RS2023    15      FALSE  500   0       AB              71.7474
-#>  RS2023    16      FALSE  500   0       AB               4.3302
-#>  RS2023    17      FALSE  500   0       AB                 0.44
-#>  RS2023    18      FALSE  500   0       AB               0.0435
-#>  RS2023    20      FALSE  500   0       AB                5e-04
-#>  RS2023    21      FALSE  500   0       AB                    .
+#>  RS2023    14      FALSE  500   0       AB             718.1328
+#>  RS2023    14      FALSE  500   0       AB            2312.5122
+#>  RS2023    14      FALSE  500   0       AB            3680.0463
+#>  RS2023    14      FALSE  500   0       AB            4500.2647
+#>  RS2023    14      FALSE  500   0       AB            4362.1304
+#>  RS2023    14      FALSE  500   0       AB            3786.4529
+#>  RS2023    14      FALSE  500   0       AB            2606.3573
+#>  RS2023    14      FALSE  500   0       AB             1802.205
+#>  RS2023    14      FALSE  500   0       AB            1216.5792
+#>  RS2023    14      FALSE  500   0       AB              784.668
+#>  RS2023    15      FALSE  500   0       AB             111.4098
+#>  RS2023    16      FALSE  500   0       AB                7.961
+#>  RS2023    17      FALSE  500   0       AB               0.8689
+#>  RS2023    18      FALSE  500   0       AB               0.0913
+#>  RS2023    20      FALSE  500   0       AB               0.0011
+#>  RS2023    21      FALSE  500   0       AB                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             846.4674
-#>  RS2023     1      FALSE  500   0       BA            2362.1571
-#>  RS2023     1      FALSE  500   0       BA            3361.8507
-#>  RS2023     1      FALSE  500   0       BA            3521.4316
-#>  RS2023     1      FALSE  500   0       BA            2873.8261
-#>  RS2023     1      FALSE  500   0       BA            2162.3467
-#>  RS2023     1      FALSE  500   0       BA            1211.6444
-#>  RS2023     1      FALSE  500   0       BA             602.5836
-#>  RS2023     1      FALSE  500   0       BA             335.4545
-#>  RS2023     1      FALSE  500   0       BA             210.0041
-#>  RS2023     2      FALSE  500   0       BA              19.6602
-#>  RS2023     3      FALSE  500   0       BA               1.6339
-#>  RS2023     4      FALSE  500   0       BA               0.1847
-#>  RS2023     5      FALSE  500   0       BA               0.0186
-#>  RS2023     7      FALSE  500   0       BA                2e-04
-#>  RS2023     8      FALSE  500   0       BA                    .
+#>  RS2023     1      FALSE  500   0       BA             922.7324
+#>  RS2023     1      FALSE  500   0       BA            2757.9517
+#>  RS2023     1      FALSE  500   0       BA            4254.2283
+#>  RS2023     1      FALSE  500   0       BA            4815.0763
+#>  RS2023     1      FALSE  500   0       BA            4376.9781
+#>  RS2023     1      FALSE  500   0       BA            3493.6885
+#>  RS2023     1      FALSE  500   0       BA            2057.9304
+#>  RS2023     1      FALSE  500   0       BA            1048.9242
+#>  RS2023     1      FALSE  500   0       BA             598.9625
+#>  RS2023     1      FALSE  500   0       BA             387.3544
+#>  RS2023     2      FALSE  500   0       BA              46.6211
+#>  RS2023     3      FALSE  500   0       BA               4.4441
+#>  RS2023     4      FALSE  500   0       BA               0.5435
+#>  RS2023     5      FALSE  500   0       BA               0.0593
+#>  RS2023     7      FALSE  500   0       BA                8e-04
+#>  RS2023     8      FALSE  500   0       BA                1e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA            4100.5066
-#>  RS2023    14      FALSE  500   0       BA            4475.6827
-#>  RS2023    14      FALSE  500   0       BA            4025.1703
-#>  RS2023    14      FALSE  500   0       BA             2901.309
-#>  RS2023    14      FALSE  500   0       BA            1563.6377
-#>  RS2023    14      FALSE  500   0       BA             789.3701
-#>  RS2023    14      FALSE  500   0       BA             202.6665
-#>  RS2023    14      FALSE  500   0       BA              71.6791
-#>  RS2023    14      FALSE  500   0       BA              41.4423
-#>  RS2023    14      FALSE  500   0       BA              30.0243
-#>  RS2023    15      FALSE  500   0       BA               9.1323
-#>  RS2023    16      FALSE  500   0       BA               0.9493
-#>  RS2023    17      FALSE  500   0       BA               0.1048
-#>  RS2023    18      FALSE  500   0       BA               0.0109
-#>  RS2023    20      FALSE  500   0       BA                1e-04
-#>  RS2023    21      FALSE  500   0       BA                    .
+#>  RS2023    14      FALSE  500   0       BA            4692.1844
+#>  RS2023    14      FALSE  500   0       BA            5777.1915
+#>  RS2023    14      FALSE  500   0       BA            5772.7542
+#>  RS2023    14      FALSE  500   0       BA            4557.8855
+#>  RS2023    14      FALSE  500   0       BA             2838.252
+#>  RS2023    14      FALSE  500   0       BA            1588.4459
+#>  RS2023    14      FALSE  500   0       BA             460.0952
+#>  RS2023    14      FALSE  500   0       BA             171.1389
+#>  RS2023    14      FALSE  500   0       BA             100.6014
+#>  RS2023    14      FALSE  500   0       BA              73.4372
+#>  RS2023    15      FALSE  500   0       BA              23.2309
+#>  RS2023    16      FALSE  500   0       BA               2.6115
+#>  RS2023    17      FALSE  500   0       BA               0.3118
+#>  RS2023    18      FALSE  500   0       BA               0.0351
+#>  RS2023    20      FALSE  500   0       BA                5e-04
+#>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
-#>  RS2023     1      FALSE  500   0       AB            3473.8637
-#>  RS2023     1      FALSE  500   0       AB              4004.57
-#>  RS2023     1      FALSE  500   0       AB            3488.1713
-#>  RS2023     1      FALSE  500   0       AB            2799.4394
-#>  RS2023     1      FALSE  500   0       AB            1559.2928
-#>  RS2023     1      FALSE  500   0       AB             865.5877
-#>  RS2023     1      FALSE  500   0       AB             272.4131
-#>  RS2023     1      FALSE  500   0       AB              96.3054
-#>  RS2023     1      FALSE  500   0       AB              46.2874
-#>  RS2023     1      FALSE  500   0       AB              31.9994
-#>  RS2023     2      FALSE  500   0       AB               8.7733
-#>  RS2023     3      FALSE  500   0       AB               1.0911
-#>  RS2023     4      FALSE  500   0       AB               0.1259
-#>  RS2023     5      FALSE  500   0       AB               0.0154
-#>  RS2023     7      FALSE  500   0       AB                2e-04
+#>  RS2023     1      FALSE  500   0       AB            3694.7445
+#>  RS2023     1      FALSE  500   0       AB            4489.7367
+#>  RS2023     1      FALSE  500   0       AB            4085.3346
+#>  RS2023     1      FALSE  500   0       AB            3397.0683
+#>  RS2023     1      FALSE  500   0       AB            1990.3294
+#>  RS2023     1      FALSE  500   0       AB            1139.4731
+#>  RS2023     1      FALSE  500   0       AB             370.3225
+#>  RS2023     1      FALSE  500   0       AB             133.8957
+#>  RS2023     1      FALSE  500   0       AB              65.8612
+#>  RS2023     1      FALSE  500   0       AB              46.3314
+#>  RS2023     2      FALSE  500   0       AB              13.0277
+#>  RS2023     3      FALSE  500   0       AB               1.6656
+#>  RS2023     4      FALSE  500   0       AB               0.1976
+#>  RS2023     5      FALSE  500   0       AB               0.0248
+#>  RS2023     7      FALSE  500   0       AB                4e-04
 #>  RS2023     8      FALSE  500   0       AB                    .
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    .
-#>  RS2023    14      FALSE  500   0       AB              650.097
-#>  RS2023    14      FALSE  500   0       AB            2108.3782
-#>  RS2023    14      FALSE  500   0       AB            3053.6376
-#>  RS2023    14      FALSE  500   0       AB            3157.3139
-#>  RS2023    14      FALSE  500   0       AB            2529.9603
-#>  RS2023    14      FALSE  500   0       AB             2041.111
-#>  RS2023    14      FALSE  500   0       AB            1241.6748
-#>  RS2023    14      FALSE  500   0       AB             761.5059
-#>  RS2023    14      FALSE  500   0       AB             468.5367
-#>  RS2023    14      FALSE  500   0       AB             277.6182
-#>  RS2023    15      FALSE  500   0       AB              26.9072
-#>  RS2023    16      FALSE  500   0       AB                2.066
-#>  RS2023    17      FALSE  500   0       AB               0.2541
-#>  RS2023    18      FALSE  500   0       AB                 0.03
-#>  RS2023    20      FALSE  500   0       AB                4e-04
-#>  RS2023    21      FALSE  500   0       AB                    .
+#>  RS2023    14      FALSE  500   0       AB              676.485
+#>  RS2023    14      FALSE  500   0       AB            2262.9172
+#>  RS2023    14      FALSE  500   0       AB            3396.3503
+#>  RS2023    14      FALSE  500   0       AB            3629.7737
+#>  RS2023    14      FALSE  500   0       AB            3035.2347
+#>  RS2023    14      FALSE  500   0       AB            2499.1868
+#>  RS2023    14      FALSE  500   0       AB            1542.2965
+#>  RS2023    14      FALSE  500   0       AB             952.1703
+#>  RS2023    14      FALSE  500   0       AB             590.1245
+#>  RS2023    14      FALSE  500   0       AB             352.9518
+#>  RS2023    15      FALSE  500   0       AB              37.5896
+#>  RS2023    16      FALSE  500   0       AB               3.1352
+#>  RS2023    17      FALSE  500   0       AB               0.3968
+#>  RS2023    18      FALSE  500   0       AB               0.0482
+#>  RS2023    20      FALSE  500   0       AB                7e-04
+#>  RS2023    21      FALSE  500   0       AB                1e-04
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             969.2628
-#>  RS2023     1      FALSE  500   0       BA            3342.7577
-#>  RS2023     1      FALSE  500   0       BA            4829.0396
-#>  RS2023     1      FALSE  500   0       BA            4926.1046
-#>  RS2023     1      FALSE  500   0       BA            4369.9304
-#>  RS2023     1      FALSE  500   0       BA            3533.3133
-#>  RS2023     1      FALSE  500   0       BA             2093.747
-#>  RS2023     1      FALSE  500   0       BA            1292.6022
-#>  RS2023     1      FALSE  500   0       BA             767.4496
-#>  RS2023     1      FALSE  500   0       BA             486.7132
-#>  RS2023     2      FALSE  500   0       BA              49.4301
-#>  RS2023     3      FALSE  500   0       BA               3.5394
-#>  RS2023     4      FALSE  500   0       BA               0.3203
-#>  RS2023     5      FALSE  500   0       BA               0.0291
-#>  RS2023     7      FALSE  500   0       BA                3e-04
-#>  RS2023     8      FALSE  500   0       BA                    .
+#>  RS2023     1      FALSE  500   0       BA            1056.2836
+#>  RS2023     1      FALSE  500   0       BA            3909.0023
+#>  RS2023     1      FALSE  500   0       BA            6135.7839
+#>  RS2023     1      FALSE  500   0       BA            6792.9451
+#>  RS2023     1      FALSE  500   0       BA            6801.0356
+#>  RS2023     1      FALSE  500   0       BA            5915.4071
+#>  RS2023     1      FALSE  500   0       BA            3756.3743
+#>  RS2023     1      FALSE  500   0       BA            2396.7857
+#>  RS2023     1      FALSE  500   0       BA             1463.464
+#>  RS2023     1      FALSE  500   0       BA             958.0215
+#>  RS2023     2      FALSE  500   0       BA             126.5009
+#>  RS2023     3      FALSE  500   0       BA                11.59
+#>  RS2023     4      FALSE  500   0       BA                1.186
+#>  RS2023     5      FALSE  500   0       BA               0.1214
+#>  RS2023     7      FALSE  500   0       BA               0.0015
+#>  RS2023     8      FALSE  500   0       BA                2e-04
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA            5780.5393
-#>  RS2023    14      FALSE  500   0       BA            6733.3665
-#>  RS2023    14      FALSE  500   0       BA            6512.7703
-#>  RS2023    14      FALSE  500   0       BA            5117.9974
-#>  RS2023    14      FALSE  500   0       BA            3207.6903
-#>  RS2023    14      FALSE  500   0       BA            1867.0097
-#>  RS2023    14      FALSE  500   0       BA             584.7344
-#>  RS2023    14      FALSE  500   0       BA             223.8373
-#>  RS2023    14      FALSE  500   0       BA             117.8123
-#>  RS2023    14      FALSE  500   0       BA              70.6245
-#>  RS2023    15      FALSE  500   0       BA              19.4372
-#>  RS2023    16      FALSE  500   0       BA               1.7997
-#>  RS2023    17      FALSE  500   0       BA                 0.17
-#>  RS2023    18      FALSE  500   0       BA               0.0164
-#>  RS2023    20      FALSE  500   0       BA                1e-04
-#>  RS2023    21      FALSE  500   0       BA                    .
+#>  RS2023    14      FALSE  500   0       BA            6604.2472
+#>  RS2023    14      FALSE  500   0       BA            8677.7432
+#>  RS2023    14      FALSE  500   0       BA            9339.3738
+#>  RS2023    14      FALSE  500   0       BA            8061.4162
+#>  RS2023    14      FALSE  500   0       BA            5886.9387
+#>  RS2023    14      FALSE  500   0       BA            3840.0929
+#>  RS2023    14      FALSE  500   0       BA            1392.3327
+#>  RS2023    14      FALSE  500   0       BA             578.2722
+#>  RS2023    14      FALSE  500   0       BA             318.8449
+#>  RS2023    14      FALSE  500   0       BA             196.2636
+#>  RS2023    15      FALSE  500   0       BA              57.9437
+#>  RS2023    16      FALSE  500   0       BA               6.0464
+#>  RS2023    17      FALSE  500   0       BA               0.6436
+#>  RS2023    18      FALSE  500   0       BA               0.0702
+#>  RS2023    20      FALSE  500   0       BA                8e-04
+#>  RS2023    21      FALSE  500   0       BA                1e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
-#>  RS2023     1      FALSE  500   0       AB            3794.6093
-#>  RS2023     1      FALSE  500   0       AB            4537.8218
-#>  RS2023     1      FALSE  500   0       AB            4241.8028
-#>  RS2023     1      FALSE  500   0       AB            3496.0471
-#>  RS2023     1      FALSE  500   0       AB            2055.2882
-#>  RS2023     1      FALSE  500   0       AB            1153.4726
-#>  RS2023     1      FALSE  500   0       AB             377.1598
-#>  RS2023     1      FALSE  500   0       AB             136.2353
-#>  RS2023     1      FALSE  500   0       AB              70.8547
-#>  RS2023     1      FALSE  500   0       AB              42.4885
-#>  RS2023     2      FALSE  500   0       AB              11.7741
-#>  RS2023     3      FALSE  500   0       AB               1.2383
-#>  RS2023     4      FALSE  500   0       AB               0.1396
-#>  RS2023     5      FALSE  500   0       AB               0.0156
-#>  RS2023     7      FALSE  500   0       AB                2e-04
+#>  RS2023     1      FALSE  500   0       AB            4203.2575
+#>  RS2023     1      FALSE  500   0       AB            5497.7734
+#>  RS2023     1      FALSE  500   0       AB            5547.7065
+#>  RS2023     1      FALSE  500   0       AB            4876.3907
+#>  RS2023     1      FALSE  500   0       AB            3160.3947
+#>  RS2023     1      FALSE  500   0       AB            1893.2311
+#>  RS2023     1      FALSE  500   0       AB             666.7228
+#>  RS2023     1      FALSE  500   0       AB             251.9895
+#>  RS2023     1      FALSE  500   0       AB             136.2558
+#>  RS2023     1      FALSE  500   0       AB              84.1483
+#>  RS2023     2      FALSE  500   0       AB              24.5593
+#>  RS2023     3      FALSE  500   0       AB               2.7486
+#>  RS2023     4      FALSE  500   0       AB               0.3298
+#>  RS2023     5      FALSE  500   0       AB               0.0391
+#>  RS2023     7      FALSE  500   0       AB                5e-04
+#>  RS2023     8      FALSE  500   0       AB                1e-04
+#>  RS2023    14      FALSE  500   1       AB                    .
+#>  RS2023    14      FALSE  500   0       AB                    .
+#>  RS2023    14      FALSE  500   0       AB             727.4409
+#>  RS2023    14      FALSE  500   0       AB            2458.8503
+#>  RS2023    14      FALSE  500   0       AB            3575.9348
+#>  RS2023    14      FALSE  500   0       AB            4092.2332
+#>  RS2023    14      FALSE  500   0       AB             4161.112
+#>  RS2023    14      FALSE  500   0       AB              3319.26
+#>  RS2023    14      FALSE  500   0       AB            2044.8115
+#>  RS2023    14      FALSE  500   0       AB            1353.4045
+#>  RS2023    14      FALSE  500   0       AB             844.3332
+#>  RS2023    14      FALSE  500   0       AB             512.0935
+#>  RS2023    15      FALSE  500   0       AB               66.532
+#>  RS2023    16      FALSE  500   0       AB               5.4801
+#>  RS2023    17      FALSE  500   0       AB               0.6384
+#>  RS2023    18      FALSE  500   0       AB               0.0741
+#>  RS2023    20      FALSE  500   0       AB                0.001
+#>  RS2023    21      FALSE  500   0       AB                1e-04
+#>  RS2023     1      FALSE  500   1       AB                    .
+#>  RS2023     1      FALSE  500   0       AB                    .
+#>  RS2023     1      FALSE  500   0       AB             4539.445
+#>  RS2023     1      FALSE  500   0       AB            5433.0385
+#>  RS2023     1      FALSE  500   0       AB            5447.7777
+#>  RS2023     1      FALSE  500   0       AB            4825.6839
+#>  RS2023     1      FALSE  500   0       AB             3136.009
+#>  RS2023     1      FALSE  500   0       AB            1902.4366
+#>  RS2023     1      FALSE  500   0       AB             708.1486
+#>  RS2023     1      FALSE  500   0       AB             276.2505
+#>  RS2023     1      FALSE  500   0       AB             145.6165
+#>  RS2023     1      FALSE  500   0       AB               83.376
+#>  RS2023     2      FALSE  500   0       AB               22.652
+#>  RS2023     3      FALSE  500   0       AB               2.5424
+#>  RS2023     4      FALSE  500   0       AB               0.2769
+#>  RS2023     5      FALSE  500   0       AB               0.0323
+#>  RS2023     7      FALSE  500   0       AB                3e-04
 #>  RS2023     8      FALSE  500   0       AB                    .
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    .
-#>  RS2023    14      FALSE  500   0       AB             680.9002
-#>  RS2023    14      FALSE  500   0       AB            2183.1664
-#>  RS2023    14      FALSE  500   0       AB            2986.0357
-#>  RS2023    14      FALSE  500   0       AB            3222.5281
-#>  RS2023    14      FALSE  500   0       AB            3022.3411
-#>  RS2023    14      FALSE  500   0       AB            2308.7087
-#>  RS2023    14      FALSE  500   0       AB            1373.5649
-#>  RS2023    14      FALSE  500   0       AB               895.19
-#>  RS2023    14      FALSE  500   0       AB             550.3503
-#>  RS2023    14      FALSE  500   0       AB             327.9094
-#>  RS2023    15      FALSE  500   0       AB              36.0072
-#>  RS2023    16      FALSE  500   0       AB               2.5059
-#>  RS2023    17      FALSE  500   0       AB               0.2735
-#>  RS2023    18      FALSE  500   0       AB               0.0298
-#>  RS2023    20      FALSE  500   0       AB                3e-04
-#>  RS2023    21      FALSE  500   0       AB                    .
+#>  RS2023    14      FALSE  500   0       AB             814.3635
+#>  RS2023    14      FALSE  500   0       AB             2712.497
+#>  RS2023    14      FALSE  500   0       AB            4111.1276
+#>  RS2023    14      FALSE  500   0       AB            4650.2346
+#>  RS2023    14      FALSE  500   0       AB            4129.9533
+#>  RS2023    14      FALSE  500   0       AB            3368.3975
+#>  RS2023    14      FALSE  500   0       AB            2137.4651
+#>  RS2023    14      FALSE  500   0       AB            1363.6372
+#>  RS2023    14      FALSE  500   0       AB             898.9289
+#>  RS2023    14      FALSE  500   0       AB             567.4925
+#>  RS2023    15      FALSE  500   0       AB              63.0551
+#>  RS2023    16      FALSE  500   0       AB               4.6895
+#>  RS2023    17      FALSE  500   0       AB               0.5406
+#>  RS2023    18      FALSE  500   0       AB               0.0597
+#>  RS2023    20      FALSE  500   0       AB                7e-04
+#>  RS2023    21      FALSE  500   0       AB                1e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
-#>  RS2023     1      FALSE  500   0       AB            4136.7493
-#>  RS2023     1      FALSE  500   0       AB            4572.9243
-#>  RS2023     1      FALSE  500   0       AB             4293.076
-#>  RS2023     1      FALSE  500   0       AB            3604.4802
-#>  RS2023     1      FALSE  500   0       AB            2169.3195
-#>  RS2023     1      FALSE  500   0       AB            1255.0071
-#>  RS2023     1      FALSE  500   0       AB               443.94
-#>  RS2023     1      FALSE  500   0       AB             167.0377
-#>  RS2023     1      FALSE  500   0       AB              84.7053
-#>  RS2023     1      FALSE  500   0       AB               46.902
-#>  RS2023     2      FALSE  500   0       AB              12.0489
-#>  RS2023     3      FALSE  500   0       AB               1.2833
-#>  RS2023     4      FALSE  500   0       AB               0.1327
-#>  RS2023     5      FALSE  500   0       AB               0.0147
+#>  RS2023     1      FALSE  500   0       AB             4682.935
+#>  RS2023     1      FALSE  500   0       AB            6097.5415
+#>  RS2023     1      FALSE  500   0       AB            6407.3309
+#>  RS2023     1      FALSE  500   0       AB            5865.4311
+#>  RS2023     1      FALSE  500   0       AB            4032.4953
+#>  RS2023     1      FALSE  500   0       AB            2814.8939
+#>  RS2023     1      FALSE  500   0       AB            1238.3698
+#>  RS2023     1      FALSE  500   0       AB             570.6423
+#>  RS2023     1      FALSE  500   0       AB             308.1478
+#>  RS2023     1      FALSE  500   0       AB             185.9872
+#>  RS2023     2      FALSE  500   0       AB              34.4191
+#>  RS2023     3      FALSE  500   0       AB               2.6326
+#>  RS2023     4      FALSE  500   0       AB               0.1885
+#>  RS2023     5      FALSE  500   0       AB               0.0141
 #>  RS2023     7      FALSE  500   0       AB                1e-04
 #>  RS2023     8      FALSE  500   0       AB                    .
 #>  RS2023    14      FALSE  500   1       AB                    .
 #>  RS2023    14      FALSE  500   0       AB                    .
-#>  RS2023    14      FALSE  500   0       AB             766.7925
-#>  RS2023    14      FALSE  500   0       AB            2436.2003
-#>  RS2023    14      FALSE  500   0       AB            3496.9508
-#>  RS2023    14      FALSE  500   0       AB            3759.5095
-#>  RS2023    14      FALSE  500   0       AB            3123.1706
-#>  RS2023    14      FALSE  500   0       AB            2464.2177
-#>  RS2023    14      FALSE  500   0       AB            1525.7265
-#>  RS2023    14      FALSE  500   0       AB             962.5222
-#>  RS2023    14      FALSE  500   0       AB             627.3619
-#>  RS2023    14      FALSE  500   0       AB             390.6196
-#>  RS2023    15      FALSE  500   0       AB              37.9577
-#>  RS2023    16      FALSE  500   0       AB               2.4048
-#>  RS2023    17      FALSE  500   0       AB               0.2619
-#>  RS2023    18      FALSE  500   0       AB               0.0275
-#>  RS2023    20      FALSE  500   0       AB                3e-04
-#>  RS2023    21      FALSE  500   0       AB                    .
-#>  RS2023     1      FALSE  500   1       AB                    .
-#>  RS2023     1      FALSE  500   0       AB                    .
-#>  RS2023     1      FALSE  500   0       AB             4302.166
-#>  RS2023     1      FALSE  500   0       AB            5212.4289
-#>  RS2023     1      FALSE  500   0       AB             5162.315
-#>  RS2023     1      FALSE  500   0       AB            4505.4403
-#>  RS2023     1      FALSE  500   0       AB            2895.2139
-#>  RS2023     1      FALSE  500   0       AB            1939.2018
-#>  RS2023     1      FALSE  500   0       AB             815.2986
-#>  RS2023     1      FALSE  500   0       AB             363.1888
-#>  RS2023     1      FALSE  500   0       AB             188.7131
-#>  RS2023     1      FALSE  500   0       AB              109.337
-#>  RS2023     2      FALSE  500   0       AB              18.1039
-#>  RS2023     3      FALSE  500   0       AB               1.2757
-#>  RS2023     4      FALSE  500   0       AB               0.0843
-#>  RS2023     5      FALSE  500   0       AB               0.0058
-#>  RS2023     7      FALSE  500   0       AB                    .
-#>  RS2023     8      FALSE  500   0       AB                    .
-#>  RS2023    14      FALSE  500   1       AB                    .
-#>  RS2023    14      FALSE  500   0       AB                    .
-#>  RS2023    14      FALSE  500   0       AB             729.2635
-#>  RS2023    14      FALSE  500   0       AB             2295.115
-#>  RS2023    14      FALSE  500   0       AB            3336.8932
-#>  RS2023    14      FALSE  500   0       AB            3693.2718
-#>  RS2023    14      FALSE  500   0       AB            3358.0879
-#>  RS2023    14      FALSE  500   0       AB            2855.7982
-#>  RS2023    14      FALSE  500   0       AB            2010.0584
-#>  RS2023    14      FALSE  500   0       AB            1450.2482
-#>  RS2023    14      FALSE  500   0       AB             962.4649
-#>  RS2023    14      FALSE  500   0       AB             676.9437
-#>  RS2023    15      FALSE  500   0       AB                94.77
-#>  RS2023    16      FALSE  500   0       AB               3.5897
-#>  RS2023    17      FALSE  500   0       AB               0.2164
-#>  RS2023    18      FALSE  500   0       AB               0.0158
-#>  RS2023    20      FALSE  500   0       AB                1e-04
+#>  RS2023    14      FALSE  500   0       AB             770.8054
+#>  RS2023    14      FALSE  500   0       AB            2535.0089
+#>  RS2023    14      FALSE  500   0       AB            3876.5486
+#>  RS2023    14      FALSE  500   0       AB            4499.1003
+#>  RS2023    14      FALSE  500   0       AB            4359.3787
+#>  RS2023    14      FALSE  500   0       AB            3830.7715
+#>  RS2023    14      FALSE  500   0       AB            2767.1415
+#>  RS2023    14      FALSE  500   0       AB            2020.9318
+#>  RS2023    14      FALSE  500   0       AB            1356.2016
+#>  RS2023    14      FALSE  500   0       AB             965.5179
+#>  RS2023    15      FALSE  500   0       AB              149.021
+#>  RS2023    16      FALSE  500   0       AB               6.9072
+#>  RS2023    17      FALSE  500   0       AB               0.4667
+#>  RS2023    18      FALSE  500   0       AB               0.0372
+#>  RS2023    20      FALSE  500   0       AB                2e-04
 #>  RS2023    21      FALSE  500   0       AB                    .
 #>  RS2023     1      FALSE  500   1       BA                    .
 #>  RS2023     1      FALSE  500   0       BA                    .
-#>  RS2023     1      FALSE  500   0       BA             551.8388
-#>  RS2023     1      FALSE  500   0       BA            1673.7134
-#>  RS2023     1      FALSE  500   0       BA            2815.3181
-#>  RS2023     1      FALSE  500   0       BA            2728.0847
-#>  RS2023     1      FALSE  500   0       BA            2604.9231
-#>  RS2023     1      FALSE  500   0       BA            2171.6551
-#>  RS2023     1      FALSE  500   0       BA            1356.4542
-#>  RS2023     1      FALSE  500   0       BA               852.64
-#>  RS2023     1      FALSE  500   0       BA             505.1516
-#>  RS2023     1      FALSE  500   0       BA             327.2099
-#>  RS2023     2      FALSE  500   0       BA              34.4092
-#>  RS2023     3      FALSE  500   0       BA               3.3184
-#>  RS2023     4      FALSE  500   0       BA               0.5934
-#>  RS2023     5      FALSE  500   0       BA               0.0885
-#>  RS2023     7      FALSE  500   0       BA               0.0025
-#>  RS2023     8      FALSE  500   0       BA                4e-04
+#>  RS2023     1      FALSE  500   0       BA             584.4329
+#>  RS2023     1      FALSE  500   0       BA            1858.8496
+#>  RS2023     1      FALSE  500   0       BA            3306.9091
+#>  RS2023     1      FALSE  500   0       BA            3387.8598
+#>  RS2023     1      FALSE  500   0       BA            3516.6459
+#>  RS2023     1      FALSE  500   0       BA            3085.0912
+#>  RS2023     1      FALSE  500   0       BA            2019.2366
+#>  RS2023     1      FALSE  500   0       BA            1293.0998
+#>  RS2023     1      FALSE  500   0       BA             776.4329
+#>  RS2023     1      FALSE  500   0       BA             510.5021
+#>  RS2023     2      FALSE  500   0       BA              62.6584
+#>  RS2023     3      FALSE  500   0       BA               7.0673
+#>  RS2023     4      FALSE  500   0       BA               1.3297
+#>  RS2023     5      FALSE  500   0       BA                0.208
+#>  RS2023     7      FALSE  500   0       BA               0.0065
+#>  RS2023     8      FALSE  500   0       BA               0.0011
 #>  RS2023    14      FALSE  500   1       BA                    .
 #>  RS2023    14      FALSE  500   0       BA                    .
-#>  RS2023    14      FALSE  500   0       BA            3035.8285
-#>  RS2023    14      FALSE  500   0       BA            3838.0872
-#>  RS2023    14      FALSE  500   0       BA            3605.7104
-#>  RS2023    14      FALSE  500   0       BA            3040.9375
-#>  RS2023    14      FALSE  500   0       BA            1779.3811
-#>  RS2023    14      FALSE  500   0       BA             1118.122
-#>  RS2023    14      FALSE  500   0       BA             359.4601
-#>  RS2023    14      FALSE  500   0       BA             135.2236
-#>  RS2023    14      FALSE  500   0       BA              59.6819
-#>  RS2023    14      FALSE  500   0       BA              36.0564
-#>  RS2023    15      FALSE  500   0       BA              11.2964
-#>  RS2023    16      FALSE  500   0       BA               1.8875
-#>  RS2023    17      FALSE  500   0       BA                0.292
-#>  RS2023    18      FALSE  500   0       BA               0.0497
-#>  RS2023    20      FALSE  500   0       BA               0.0013
-#>  RS2023    21      FALSE  500   0       BA                2e-04
+#>  RS2023    14      FALSE  500   0       BA            3317.4089
+#>  RS2023    14      FALSE  500   0       BA            4546.1044
+#>  RS2023    14      FALSE  500   0       BA            4588.8251
+#>  RS2023    14      FALSE  500   0       BA             4123.459
+#>  RS2023    14      FALSE  500   0       BA            2676.9051
+#>  RS2023    14      FALSE  500   0       BA            1817.8192
+#>  RS2023    14      FALSE  500   0       BA             644.6133
+#>  RS2023    14      FALSE  500   0       BA             255.4908
+#>  RS2023    14      FALSE  500   0       BA             116.1755
+#>  RS2023    14      FALSE  500   0       BA              71.4526
+#>  RS2023    15      FALSE  500   0       BA              23.1856
+#>  RS2023    16      FALSE  500   0       BA               4.0653
+#>  RS2023    17      FALSE  500   0       BA               0.6599
+#>  RS2023    18      FALSE  500   0       BA               0.1177
+#>  RS2023    20      FALSE  500   0       BA               0.0035
+#>  RS2023    21      FALSE  500   0       BA                6e-04
 #>  RS2023     1      FALSE  500   1       AB                    .
 #>  RS2023     1      FALSE  500   0       AB                    .
 #>  RS2023     1      FALSE  500   0       AB            3446.2618
@@ -7326,9 +7326,9 @@ head(write_nonmem(examplinib_fe_nif, dot_columns = c("DV", "AMT")), 5)
 #>   METABOLITE DOSE MDV ACTARMCD IMPUTATION        DV                  EPOCH
 #> 1      FALSE  500   1       AB                    . OPEN LABEL TREATMENT 1
 #> 2      FALSE  500   0       AB                    . OPEN LABEL TREATMENT 1
-#> 3      FALSE  500   0       AB            4409.2877 OPEN LABEL TREATMENT 1
-#> 4      FALSE  500   0       AB            5605.7968 OPEN LABEL TREATMENT 1
-#> 5      FALSE  500   0       AB            5300.4045 OPEN LABEL TREATMENT 1
+#> 3      FALSE  500   0       AB            4697.3267 OPEN LABEL TREATMENT 1
+#> 4      FALSE  500   0       AB            6325.1011 OPEN LABEL TREATMENT 1
+#> 5      FALSE  500   0       AB            6294.1871 OPEN LABEL TREATMENT 1
 #>   PERIOD TREATMENT FASTED
 #> 1      1         A      1
 #> 2      1         A      1

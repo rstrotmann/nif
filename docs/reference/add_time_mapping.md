@@ -26,7 +26,3 @@ add_time_mapping(obj, ...)
 ## Value
 
 The SDTM object
-
-## See also
-
-[`suggest()`](suggest.md)

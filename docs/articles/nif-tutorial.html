@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -185,6 +185,7 @@ information:</p>
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span></span>
 <span><span class="co">#&gt; -------- SDTM data set summary -------- </span></span>
 <span><span class="co">#&gt; Study 2023000400 </span></span>
+<span><span class="co">#&gt; An open-label 2-period crossover study in healthy subjects to investigate the effect of food on the pharmacokinetics of examplinib </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Data disposition</span></span>
 <span><span class="co">#&gt;   DOMAIN   SUBJECTS   OBSERVATIONS   </span></span>
@@ -193,6 +194,7 @@ information:</p>
 <span><span class="co">#&gt;   ex       20         40             </span></span>
 <span><span class="co">#&gt;   pc       20         1360           </span></span>
 <span><span class="co">#&gt;   lb       28         28             </span></span>
+<span><span class="co">#&gt;   ts       0          0              </span></span>
 <span><span class="co">#&gt;   pp       20         360            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Arms (DM):</span></span>
@@ -212,7 +214,7 @@ information:</p>
 <span><span class="co">#&gt;   RS2023       RS2023       </span></span>
 <span><span class="co">#&gt;   RS2023487A   RS2023487A    </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 1abaa4c9d07ef805a6208ec497401800</span></span>
+<span><span class="co">#&gt; Hash: 295fd51437d90b19b7e4d80e4c7dd51f</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 11:28:00</span></span></code></pre></div>
 <p>High-level subject-level disposition data for a specific subject can
 be extracted using <code><a href="../reference/subject_info.html">subject_info()</a></code>:</p>
@@ -411,9 +413,9 @@ the ‘EXTRT’ field is ‘EXAMPLINIB’ while the pharmacokinetic analyte name
 <span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV</span></span>
 <span><span class="co">#&gt; 1      FALSE  500   1       AB                  NA</span></span>
 <span><span class="co">#&gt; 2      FALSE  500   0       AB               0.000</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB            4409.288</span></span>
-<span><span class="co">#&gt; 4      FALSE  500   0       AB            5605.797</span></span>
-<span><span class="co">#&gt; 5      FALSE  500   0       AB            5300.404</span></span></code></pre></div>
+<span><span class="co">#&gt; 3      FALSE  500   0       AB            4697.327</span></span>
+<span><span class="co">#&gt; 4      FALSE  500   0       AB            6325.101</span></span>
+<span><span class="co">#&gt; 5      FALSE  500   0       AB            6294.187</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-analytes">Multiple analytes<a class="anchor" aria-label="anchor" href="#multiple-analytes"></a>
@@ -481,7 +483,7 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 <span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV                  EPOCH</span></span>
 <span><span class="co">#&gt; 1      FALSE  500   1       AB                  NA OPEN LABEL TREATMENT 1</span></span>
 <span><span class="co">#&gt; 2      FALSE  500   0       AB               0.000 OPEN LABEL TREATMENT 1</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB            4409.288 OPEN LABEL TREATMENT 1</span></span>
+<span><span class="co">#&gt; 3      FALSE  500   0       AB            4697.327 OPEN LABEL TREATMENT 1</span></span>
 <span><span class="co">#&gt;   PERIOD TREATMENT FASTED</span></span>
 <span><span class="co">#&gt; 1      1         A      1</span></span>
 <span><span class="co">#&gt; 2      1         A      1</span></span>
@@ -554,7 +556,7 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#&gt;   RS2023   2     2     2      2        </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: c9cfc13404e2661c6e8da43631b2dd34</span></span>
+<span><span class="co">#&gt; Hash: 18f2357de9faa8fcc64cb06f04f8d3b0</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 10:28:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
 covariates and raw plots of the analytes over time. In the following

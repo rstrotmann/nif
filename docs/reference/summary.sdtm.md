@@ -38,20 +38,17 @@ A sdtm_summary object.
 
 - `doses` The unique `EXTRT` and `EXDOSE` as data frame.
 
-- `specimems` The unique `PCSPEC` as character.
+- `specimens` The unique `PCSPEC` as character.
 
 - `analytes` The unique `PCTEST` and `PCTESTCD` as data frame.
 
 - `pc_timepoints` The unique `PCTPT` and `PCTPTNUM` as data frame.
 
-- `analyte_mapping` The analyte mapping as data frame (see
-  [`add_analyte_mapping()`](add_analyte_mapping.md)).
+- `analyte_mapping` The analyte mapping as data frame.
 
-- `metabolite_mapping` The metabolite mapping as data frame (see
-  [`add_metabolite_mapping()`](add_metabolite_mapping.md)).
+- `metabolite_mapping` The metabolite mapping as data frame.
 
-- `time_mapping` The time mapping as data frame (see
-  [`add_time_mapping()`](add_time_mapping.md)).
+- `time_mapping` The time mapping as data frame.
 
 ## Examples
 
@@ -59,6 +56,7 @@ A sdtm_summary object.
 summary(examplinib_poc)
 #> -------- SDTM data set summary -------- 
 #> Study 2023000022 
+#> An open-label single-arm Phase 2 study of examplinib in patients 
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
@@ -67,6 +65,7 @@ summary(examplinib_poc)
 #>   ex       80         468            
 #>   pc       80         1344           
 #>   lb       103        103            
+#>   ts       0          0              
 #>   pp       13         432            
 #> 
 #> Arms (DM):
@@ -85,6 +84,6 @@ summary(examplinib_poc)
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A    
 #> 
-#> Hash: a839c3b7866a6c04a3007b1d7b877345
+#> Hash: 6e3a2050709bc485b93bd185bb28c988
 #> Last DTC: 2001-07-14 10:53:00
 ```
