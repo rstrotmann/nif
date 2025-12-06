@@ -7,7 +7,7 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @import dplyr
 #' @importFrom shinyjs useShinyjs enable disable
-#' @seealso [plot()]
+#' @seealso [nif::plot()]
 #' @export
 #'
 nif_viewer <- function(nif) {

@@ -68,5 +68,5 @@ add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
   covariate = "wt")
 }
 \seealso{
-add_baseline()
+\code{\link[=add_baseline]{add_baseline()}}
 }

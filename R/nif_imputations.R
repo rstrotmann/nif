@@ -14,7 +14,6 @@
 #' @param dm The DM domain as data frame.
 #'
 #' @return The updated EX domain as data frame.
-#' @keywords internal
 #' @export
 impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
   # Validate input
@@ -104,7 +103,6 @@ impute_exendtc_to_rfendtc <- function(ex, dm, silent = NULL) {
 #'
 #' @param ex The updated EX domain as data frame.
 #' @return The updated EX domain as data frame.
-#' @keywords internal
 #' @export
 impute_missing_exendtc <- function(ex) {
   # Input validation
@@ -171,7 +169,6 @@ impute_missing_exendtc <- function(ex) {
 #' @param cut_off_date The cut-off date.
 #'
 #' @return The updated EX domain as data frame.
-#' @keywords internal
 #' @export
 impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
   # input validation
@@ -302,7 +299,6 @@ impute_admin_times_from_pcrftdtc <- function(
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'
 #' @return A data frame.
-#' @keywords internal
 #' @export
 filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = NULL) {
   temp <- ex %>%

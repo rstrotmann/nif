@@ -11,7 +11,6 @@
 #' @param pctestcd The analyte as character (as in 'PCTESTCD' for PK observations
 #' @param analyte The analyte name to be used in the nif object, as character.
 #' @return A SDTM object.
-#' @seealso [nif_auto()]
 #' @keywords internal
 #' @import stringr
 add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
@@ -208,7 +207,6 @@ add_parent_mapping <- function(obj, analyte, parent) {
 #' @param pctestcd_metabolite The PCTESTCD of the metabolite.
 #' @return The SDTM object.
 #' @keywords internal
-#' @seealso [nif_auto()]
 add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
   # Input validation
   if (!inherits(obj, "sdtm")) {
@@ -303,7 +301,6 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
 #'   and NTIME corresponds to the nominal time in hours.
 #' @return The SDTM object
 #' @keywords internal
-#' @seealso [suggest()]
 add_time_mapping <- function(obj, ...) {
   temp <- unlist(c(as.list(environment())[-1], list(...)))
   mapping <- data.frame(PCTPT = names(temp), NTIME = as.numeric(temp))

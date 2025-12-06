@@ -32,4 +32,3 @@ As this function conducts rather aggressive imputations, the message output
 is not optional, i.e., cannot be suppressed using the global 'silent' option,
 but is issued in all cases.
 }
-\keyword{internal}

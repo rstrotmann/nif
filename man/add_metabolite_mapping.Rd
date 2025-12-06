@@ -21,7 +21,4 @@ In case multiple analytes are measured for a specific administered drug, some
 functions need that information to correlate plasma concentrations with
 administrations.
 }
-\seealso{
-\code{\link[=nif_auto]{nif_auto()}}
-}
 \keyword{internal}

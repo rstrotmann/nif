@@ -540,7 +540,7 @@ make_observation <- function(
 #'   duplicate_function. Defaults to TRUE.
 #'
 #' @return A nif object.
-#' @seealso [add_administration()]
+#' @seealso [nif::add_administration()]
 #' @export
 add_observation <- function(
     nif,

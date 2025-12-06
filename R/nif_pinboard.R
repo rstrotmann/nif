@@ -48,7 +48,7 @@ get_pinboard <- function(board = NULL) {
 #'
 #' @returns Currently active pinboard path as character.
 #' @seealso [usethis::edit_r_environ()]
-#' @seealso [nif_option()]
+#' @seealso [nif::nif_option()]
 #' @export
 nif_pinboard <- function(path = NULL) {
   # validate_char_param(folder, "folder", allow_null = TRUE)

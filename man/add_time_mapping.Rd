@@ -22,7 +22,4 @@ to follow a strict format and is in most cases provided as a composite
 string. This function can be used to explicitly define the nominal
 observation times (in hours) for the values of, e.g., \code{PCTPT}.
 }
-\seealso{
-\code{\link[=suggest]{suggest()}}
-}
 \keyword{internal}

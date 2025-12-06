@@ -301,6 +301,91 @@ synthesize_vs <- function(dm) {
 }
 
 
+#' Syntesize TS domain for fictional study
+#'
+#' @param studyid The studyid as character.
+#' @param title The study title as character.
+#' @param type The study type as character. Multiple values allowed.
+#' @param phase The study phase as character.
+#' @param hv Healthy Volunteer flag as logical.
+#'
+#' @returns A data frame.
+#' @keywords internal
+synthesize_ts <- function(studyid, title, type, phase, hv=TRUE) {
+  ttype <- tibble::tribble(
+    ~TSVALCD, ~TSVAL, ~typeval,
+    "C98729", "FOOD EFFECT", "fe",
+    "C49666", "EFFICACY", "eff",
+    "C49664", "BIO-AVAILABILITY", "ba",
+    "C49665", "BIO-EQUIVALENCE", "be",
+    "C158289", "DOSE FINDING", "df",
+    "C158286", "DRUG-DRUG INTERACTION", "ddi",
+    "C178057", "ECG", "ecg",
+    "C49663", "PHARMACOKINETIC", "pk",
+    "C49667", "SAFETY", "saf",
+    "C98791", "TOLERABILITY", "tol"
+  )
+
+  tphase <- tibble::tribble(
+    ~NCI, ~TPHASE, ~phase,
+    "C15600", "PHASE I TRIAL", "1",
+    "C49686", "PHASE IIA TRIAL", "2a"
+  )
+
+  yesno_valcd <- function(val) {
+    ifelse(val == TRUE, "C49488", "C49487")
+  }
+
+  yesno_val <- function(val) {
+    ifelse(val == TRUE, "Y", "N")
+  }
+
+  out <- tibble::tribble(
+    ~TSPARMCD, ~TSPARM, ~TSVAL, ~TSVALCD, ~TSVCDREF,
+    "TITLE", "Trial Title",
+      title, "C49802", "CDISC",
+    "SDTMVER", "SDTM Version",
+      "1.4", "C161428", "CDISC",
+    "SSTDTC", "Study Start Date",
+      NA, "C69208", "ISO 8601",
+    "SENDTC", "Study End Date",
+      NA, "C90462", "ISO 8601",
+    "TPHASE", "Trial Phase Classification",
+      as.character(tphase[tphase$phase == phase, "TPHASE"]),
+    as.character(tphase[tphase$phase == phase, "NCI"]), "CDISC",
+    "HLTSUBJI", "Healthy Subject Indicator",
+      yesno_val(hv), yesno_valcd(hv), "CDISC"
+  ) %>%
+    rbind(
+      ttype %>% filter(typeval %in% type) %>%
+        mutate(TSPARMCD = "TTYPE", TSPARM = "Trial Type") %>%
+        mutate(TSVCDREF = "CDISC") %>%
+        select(-typeval)
+    ) %>%
+    mutate(TSVCDVER = case_when(
+      TSVCDREF == "CDISC" ~ "2019-06-28", .default = "")) %>%
+    mutate(STUDYID = studyid) %>%
+    mutate(DOMAIN = "TS") %>%
+    mutate(TSSEQ = row_number(), .by = TSPARMCD) %>%
+    select(STUDYID, DOMAIN, TSSEQ, TSPARMCD, TSPARM, TSVAL, TSVALCD, TSVCDREF, TSVCDVER)
+
+  return(out)
+}
+
+
+## type
+# C98729 FOOD EFFECT
+# C49666 EFFICACY
+# C49664 BIO-AVAILABILITY
+# C49665 BIO-EQUIVALENCE
+# C158289 DOSE FINDING
+# C158286 DRUG-DRUG INTERACTION
+# C178057 ECG
+# C49663 PHARMACOKINETIC
+# C49667 SAFETY
+# C98791 TOLERABILITY
+
+
 # Required: USUBJID, STUDYID, DOMAIN, EXSEEQ, EXTRT
 # expected: EXDOSE, EXDOSEU, EXDOSEFRM, EXSTDTC, EXENDTC
 
@@ -690,6 +775,9 @@ synthesize_sdtm_sad_study <- function() {
   #   )
   # )
 
+  studyid <- "2023000001"
+  studytitle <- "An open label dose escalation study of RS2023 in healthy subjects"
+
   rich_sampling_scheme <- rich_sampling_scheme <-  tibble::tribble(
     ~time,     ~PCTPT,
     0,  "PREDOSE",
@@ -722,7 +810,7 @@ synthesize_sdtm_sad_study <- function() {
     ungroup()
 
   dm <- synthesize_dm(
-    studyid = "2023000001", nsubs = nrow(dose_levels), nsites = 1,
+    studyid = studyid, nsubs = nrow(dose_levels), nsites = 1,
     female_fraction = 0, duration = 10, min_age = 18, max_age = 55
   )
 
@@ -765,6 +853,9 @@ synthesize_sdtm_sad_study <- function() {
 
   pc <- make_sd_pc(dm, ex, vs, lb, rich_sampling_scheme)
   # pp <- synthesize_pp()
+
+  ts <- synthesize_ts(studyid, studytitle)
+
 
   out <- list()
   out[["dm"]] <- dm %>%

@@ -41,7 +41,7 @@ conditional_message <- function(..., silent = NULL) {
 #'
 #' @return Nothing
 #' @export
-#' @seealso [nif_option()]
+#' @seealso [nif::nif_option()]
 print_debug <- function(obj) {
   if (rlang::is_true(nif_option_value("debug"))) print(obj)
 }
@@ -411,7 +411,6 @@ lubrify_dates <- function(obj, col = NULL) {
 #'
 #' @param obj A data frame.
 #' @return A data frame.
-#' @seealso [lubrify_dates()]
 #' @keywords internal
 #' @noRd
 isofy_dates <- function(obj) {

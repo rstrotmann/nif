@@ -202,9 +202,9 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
 #'
 #' @return A nif object.
 #'
-#' @seealso [testcd()]
-#' @seealso [add_administration()]
-#' @seealso [add_observation()]
+#' @seealso [nif::testcd()]
+#' @seealso [nif::add_administration()]
+#' @seealso [nif::add_observation()]
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`

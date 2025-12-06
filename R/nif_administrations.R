@@ -197,7 +197,7 @@ expand_ex <- function(ex) {
 #' @export
 #' @importFrom assertthat assert_that
 #' @keywords internal
-#' @seealso [add_administration()]
+#' @seealso [nif::add_administration()]
 make_administration <- function(
     sdtm,
     extrt,

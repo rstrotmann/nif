@@ -26,4 +26,3 @@ reference end date-time field that specifies the date-time of the last
 treatment administration. This function completes EXENDTC for the very last
 administration time based on the RFENDTC, if provided in DM.
 }
-\keyword{internal}

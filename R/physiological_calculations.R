@@ -59,8 +59,8 @@ calculate_bmi <- function(height, weight) {
 #' compatibility.
 #' @param molar Switch to select whether the creatinine value is in mg/dl
 #' (default) or umol/l units.
-#' @seealso [egfr_mdrd()]
-#' @seealso [egfr_cg()]
+#' @seealso [nif::egfr_mdrd()]
+#' @seealso [nif::egfr_cg()]
 #'
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
@@ -91,7 +91,7 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #'
 #' @importFrom pracma lambertWn
 #' @importFrom pracma lambertWp
-#' @seealso [crea_mdrd()]
+#' @seealso [nif::crea_mdrd()]
 #'
 #' @return Serum creatinine in mg/dl.
 #' @export
@@ -135,8 +135,8 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
 #' (default) or umol/l units.
 #' @param weight Body weight. Not used in this formula but included for
 #' compatibility.
-#' @seealso [egfr_raynaud()]
-#' @seealso [egfr_cg()]
+#' @seealso [nif::egfr_raynaud()]
+#' @seealso [nif::egfr_cg()]
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
 egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
@@ -164,7 +164,7 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' @param sex Sex encoded as number (female is 1) or character (female is "F").
 #' @param race Race as per CDISC nomenclature. Black race is identified as the
 #'   occurrence of 'black' in the value.
-#' @seealso [crea_raynaud()]
+#' @seealso [nif::crea_raynaud()]
 #'
 #' @return Serum creatinine in mg/dl.
 #' @export
@@ -194,8 +194,8 @@ crea_mdrd <- function(egfr, age, sex, race = "") {
 #'   (default) or umol/l units.
 #' @return Estimated GFR in ml/min (as body size is accounted for by the weight
 #'   in the input).
-#' @seealso [egfr_raynaud]
-#' @seealso [egfr_mdrd()]
+#' @seealso [nif::egfr_raynaud]
+#' @seealso [nif::egfr_mdrd()]
 #' @export
 egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
   if (molar) {
@@ -276,8 +276,8 @@ is_male <- function(sex) {
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
 #' @param sex Sex encoded as number (male is 0) or character (male is "M").
-#' @seealso [lbm_hume()]
-#' @seealso [lbm_peters()]
+#' @seealso [nif::lbm_hume()]
+#' @seealso [nif::lbm_peters()]
 #'
 #' @return Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 #' @export
@@ -313,8 +313,8 @@ lbm_boer <- function(weight, height, sex) {
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
 #' @param sex Sex encoded as number (male is 0) or character (male is "M").
-#' @seealso [lbm_boer()]
-#' @seealso [lbm_peters()]
+#' @seealso [nif::lbm_boer()]
+#' @seealso [nif::lbm_peters()]
 #'
 #' @return Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 #' @export
@@ -346,8 +346,8 @@ lbm_hume <- function(weight, height, sex) {
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
 #' @param sex Sex encoded as number (male is 0) or character (male is "M").
-#' @seealso [lbm_boer()]
-#' @seealso [lbm_hume()]
+#' @seealso [nif::lbm_boer()]
+#' @seealso [nif::lbm_hume()]
 #'
 #' @return Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 #' @export

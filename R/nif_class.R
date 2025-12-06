@@ -1033,9 +1033,9 @@ add_dose_level <- function(obj) {
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
 #'   Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
 #' @return A NIF object.
-#' @seealso [egfr_mdrd()]
-#' @seealso [egfr_cg()]
-#' @seealso [egfr_raynaud()]
+#' @seealso [nif::egfr_mdrd()]
+#' @seealso [nif::egfr_cg()]
+#' @seealso [nif::egfr_raynaud()]
 #' @export
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
@@ -1086,9 +1086,9 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' [lbm_hume()] or [lbm_peters()].
 #'
 #' @return A nif object.
-#' @seealso [lbm_hume()]
-#' @seealso [lbm_boer()]
-#' @seealso [lbm_peters()]
+#' @seealso [nif::lbm_hume()]
+#' @seealso [nif::lbm_boer()]
+#' @seealso [nif::lbm_peters()]
 #' @export
 add_bl_lbm <- function(obj, method = lbm_boer) {
   obj %>%

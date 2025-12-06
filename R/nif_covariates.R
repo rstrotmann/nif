@@ -28,7 +28,7 @@
 #'   object by USUBJID and date. For each subject, missing covariate values are filled
 #'   using the last observed value (carrying forward).
 #'
-#' @seealso add_baseline()
+#' @seealso [nif::add_baseline()]
 #' @export
 #'
 #' @examples

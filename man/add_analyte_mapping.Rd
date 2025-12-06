@@ -25,7 +25,4 @@ observations with administrations, the \code{\link[=nif_auto]{nif_auto()}} funct
 which analyte (\code{PCTESTCD}) belongs to which drug (\code{EXTRT}). Multiple mappings
 can be provided.
 }
-\seealso{
-\code{\link[=nif_auto]{nif_auto()}}
-}
 \keyword{internal}
