@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{trial_title}
 \alias{trial_title}
-\title{Extract trial title from SDTM data, if possible.}
+\title{Trial title as reported in TS domain}
 \usage{
 trial_title(obj)
 }
@@ -13,7 +13,7 @@ trial_title(obj)
 The title or NULL.
 }
 \description{
-Extract trial title from SDTM data, if possible.
+Trial title as reported in TS domain
 }
 \examples{
 trial_title(examplinib_sad)

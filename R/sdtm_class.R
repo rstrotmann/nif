@@ -32,7 +32,7 @@ new_sdtm <- function(
 }
 
 
-#' Extract trial title from SDTM data, if possible.
+#' Trial title as reported in TS domain
 #'
 #' @param obj A sdtm object.
 #'
@@ -52,6 +52,26 @@ trial_title <- function(obj) {
   title <- ts$TSVAL[ts$TSPARMCD == "TITLE"]
   if(length(title) > 1) warning("TS domain inclucdes multiple study titles!")
   return(title)
+}
+
+
+#' Trial data cut-off date as reported in TS domain
+#'
+#' @param obj A sdtm object.
+#'
+#' @returns A POSIXct object or NULL.
+#' @export
+trial_dco <- function(obj) {
+  validate_sdtm(obj)
+
+  domains <- toupper(names(obj$domains))
+  if(!"TS" %in% domains) return(NULL)
+  ts <- domain(obj, "ts")
+  if(!"TSPARMCD" %in% names(ts)) return(NULL)
+  if(!"DCUTDTC" %in% unique(ts$TSPARMCD)) return(NULL)
+  dco <- ts$TSVAL[ts$TSPARMCD == "DCUTDTC"]
+  if(length(dco) > 1) warning("TS domain inclucdes multiple data cut-off dates!")
+  return(lubridate::as_datetime(dco, format = dtc_formats))
 }
 
 
@@ -98,7 +118,8 @@ summary.sdtm <- function(object, ...) {
     time_mapping = object$time_mapping,
     hash = hash(object),
     last = last_dtc(object),
-    title = trial_title(object)
+    title = trial_title(object),
+    dco = trial_dco(object)
   )
 
   # Numbers of subjects and observations by domain
@@ -207,6 +228,10 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 
   if(!is.null(x$title)) {
     cat(paste0(x$title), "\n")
+  }
+
+  if(!is.null(x$dco)) {
+    cat(paste0("DCO: ", x$dco, "\n"))
   }
 
   cat("\nData disposition\n")
