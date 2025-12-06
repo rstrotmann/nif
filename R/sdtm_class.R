@@ -32,6 +32,29 @@ new_sdtm <- function(
 }
 
 
+#' Extract trial title from SDTM data, if possible.
+#'
+#' @param obj A sdtm object.
+#'
+#' @returns The title or NULL.
+#' @export
+#'
+#' @examples
+#' trial_title(examplinib_sad)
+trial_title <- function(obj) {
+  validate_sdtm(obj)
+
+  domains <- toupper(names(obj$domains))
+  if(!"TS" %in% domains) return(NULL)
+  ts <- domain(obj, "ts")
+  if(!"TSPARMCD" %in% names(ts)) return(NULL)
+  if(!"TITLE" %in% unique(ts$TSPARMCD)) return(NULL)
+  title <- ts$TSVAL[ts$TSPARMCD == "TITLE"]
+  if(length(title) > 1) warning("TS domain inclucdes multiple study titles!")
+  return(title)
+}
+
+
 #' SDTM summary
 #'
 #' This function returns a named list of properties of the SDTM object:
@@ -74,7 +97,8 @@ summary.sdtm <- function(object, ...) {
     metabolite_mapping = object$metabolite_mapping,
     time_mapping = object$time_mapping,
     hash = hash(object),
-    last = last_dtc(object)
+    last = last_dtc(object),
+    title = trial_title(object)
   )
 
   # Numbers of subjects and observations by domain
@@ -180,6 +204,10 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
     nice_enumeration(x$study),
     "\n"
   ))
+
+  if(!is.null(x$title)) {
+    cat(paste0(x$title), "\n")
+  }
 
   cat("\nData disposition\n")
   cat(df_to_string(x$disposition,
