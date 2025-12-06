@@ -308,10 +308,15 @@ synthesize_vs <- function(dm) {
 #' @param type The study type as character. Multiple values allowed.
 #' @param phase The study phase as character.
 #' @param hv Healthy Volunteer flag as logical.
+#' @param startdate Study start date as character.
+#' @param enddate Study end date as character.
 #'
 #' @returns A data frame.
 #' @keywords internal
-synthesize_ts <- function(studyid, title, type, phase, hv=TRUE) {
+synthesize_ts <- function(
+    studyid, title, type, phase,
+    startdate = "", enddate = "",
+    hv=TRUE) {
   ttype <- tibble::tribble(
     ~TSVALCD, ~TSVAL, ~typeval,
     "C98729", "FOOD EFFECT", "fe",
@@ -347,9 +352,9 @@ synthesize_ts <- function(studyid, title, type, phase, hv=TRUE) {
     "SDTMVER", "SDTM Version",
       "1.4", "C161428", "CDISC",
     "SSTDTC", "Study Start Date",
-      NA, "C69208", "ISO 8601",
+      startdate, "C69208", "ISO 8601",
     "SENDTC", "Study End Date",
-      NA, "C90462", "ISO 8601",
+      enddate, "C90462", "ISO 8601",
     "TPHASE", "Trial Phase Classification",
       as.character(tphase[tphase$phase == phase, "TPHASE"]),
     as.character(tphase[tphase$phase == phase, "NCI"]), "CDISC",
@@ -766,15 +771,6 @@ subject_baseline_data <- function(dm, vs, lb) {
 #' @return A sdtm object.
 #' @keywords internal
 synthesize_sdtm_sad_study <- function() {
-  # rich_sampling_scheme <- data.frame(
-  #   time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
-  #   PCTPT = c(
-  #     "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
-  #     "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
-  #     "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"
-  #   )
-  # )
-
   studyid <- "2023000001"
   studytitle <- "An open label dose escalation study of RS2023 in healthy subjects"
 
@@ -844,39 +840,51 @@ synthesize_sdtm_sad_study <- function() {
       by = "USUBJID"
     )
 
-  # ex <- ex %>%
-  #   group_by(USUBJID) %>%
-  #   mutate(RFENDTC=max(EXENDTC))
-
   dm <- dm %>%
     add_RFENDTC(ex)
 
   pc <- make_sd_pc(dm, ex, vs, lb, rich_sampling_scheme)
-  # pp <- synthesize_pp()
 
-  ts <- synthesize_ts(studyid, studytitle)
+  ts <- synthesize_ts(studyid, studytitle, c("saf", "tol", "pk"), "1",
+                      startdate = format(min(dm$RFICDTC, na.rm = T)),
+                      enddate = format(last_dtc_data_frame(pc)),
+                      hv = TRUE)
 
 
-  out <- list()
-  out[["dm"]] <- dm %>%
-    select(-c("cohort", "dose")) %>%
-    isofy_dates()
+  # out <- list()
+  # out[["dm"]] <- dm %>%
+  #   select(-c("cohort", "dose")) %>%
+  #   isofy_dates()
+  #
+  # out[["vs"]] <- vs %>%
+  #   isofy_dates()
+  #
+  # out[["ex"]] <- ex %>%
+  #   mutate(EXTRT = "EXAMPLINIB") %>%
+  #   isofy_dates()
+  #
+  # out[["pc"]] <- pc %>%
+  #   isofy_dates()
+  #
+  # out[["lb"]] <- lb %>%
+  #   isofy_dates()
+  #
+  # out[["ts"]] <- ts %>%
+  #   isofy_dates()
 
-  out[["vs"]] <- vs %>%
-    isofy_dates()
+  out <- list(
+    dm = select(dm, -c("cohort", "dose")),
+    vs = vs,
+    ex = mutate(ex, EXTRT = "EXAMPLINIB"),
+    pc = pc,
+    lb = lb,
+    ts = ts
+  )
 
-  out[["ex"]] <- ex %>%
-    mutate(EXTRT = "EXAMPLINIB") %>%
-    isofy_dates()
+  lapply(out, isofy_dates)
 
-  out[["pc"]] <- pc %>%
-    isofy_dates()
-
-  out[["lb"]] <- lb %>%
-    isofy_dates()
-
-  temp <- new_sdtm(out) %>%
-    add_analyte_mapping("EXAMPLINIB", "RS2023")
+  temp <- new_sdtm(out) #%>%
+    # add_analyte_mapping("EXAMPLINIB", "RS2023")
   return(temp)
 }
 

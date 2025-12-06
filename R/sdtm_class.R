@@ -80,12 +80,24 @@ summary.sdtm <- function(object, ...) {
   # Numbers of subjects and observations by domain
   out$disposition <- purrr::map(
     object$domains,
+    # function(x){
+    #   data.frame(
+    #     SUBJECTS = length(unique(x$USUBJID)),
+    #     OBSERVATIONS = dim(x)[1]
+    #   )
+    # }
+
     function(x){
-      data.frame(
-        SUBJECTS = length(unique(x$USUBJID)),
-        OBSERVATIONS = dim(x)[1]
-      )
+      if("USUBJID" %in% names(x)){
+        data.frame(
+          SUBJECTS = length(unique(x$USUBJID)),
+          OBSERVATIONS = dim(x)[1]
+        )
+      } else {
+        data.frame(SUBJECTS = 0, OBSERVATIONS = 0)
+      }
     }
+
   ) %>% purrr::list_rbind() %>%
     mutate(DOMAIN = names(object$domains)) %>%
     select(c("DOMAIN", "SUBJECTS", "OBSERVATIONS"))
