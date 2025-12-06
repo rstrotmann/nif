@@ -1321,7 +1321,9 @@ last_dtc_data_frame <- function(obj) {
 
   temp <- obj %>%
     lubrify_dates() %>%
-    select_if(is.POSIXct)
+    select(where(
+      function(x) {is.POSIXct(x) & !all(is.na(x))}
+    ))
 
   if(ncol(temp) > 0) {
     out <- as.POSIXct(max(unlist(lapply(temp, max, na.rm = T))))
