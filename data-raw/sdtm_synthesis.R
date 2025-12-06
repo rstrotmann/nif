@@ -753,9 +753,7 @@ synthesize_sdtm_sad_study <- function() {
     ts = ts
   )
 
-  lapply(out, isofy_dates)
-
-  return(new_sdtm(out))
+  new_sdtm(lapply(out, isofy_dates))
 }
 
 
@@ -938,7 +936,7 @@ synthesize_sdtm_poc_study <- function(
     ts = ts
   )
 
-  return(new_sdtm(out))
+  new_sdtm(lapply(out, isofy_dates))
 }
 
 
@@ -1008,7 +1006,7 @@ synthesize_sdtm_food_effect_study <- function() {
     ts = ts
   )
 
-  return(new_sdtm(out))
+  new_sdtm(lapply(out, isofy_dates))
 }
 
 
