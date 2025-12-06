@@ -909,13 +909,8 @@ synthesize_sdtm_poc_study <- function(
     nsites = 8,
     duration = 100,
     red_prob = 0.3) {
-  # rich_sampling_scheme <- data.frame(
-  #   NTIME = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12),
-  #   PCTPT = c(
-  #     "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
-  #     "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12"
-  #   )
-  # )
+
+  studytitle = "An open-label single-arm Phase 2 study of examplinib in patients"
 
   rich_sampling_scheme <- tibble::tribble(
     ~NTIME,     ~PCTPT,
@@ -1058,28 +1053,44 @@ synthesize_sdtm_poc_study <- function(
     ungroup() %>%
     as.data.frame()
 
-  out <- list()
-  out[["dm"]] <- dm %>%
-    isofy_dates()
+  ts <- synthesize_ts(
+    studyid, studytitle, c("saf", "tol", "pk", "eff"), "2a",
+    startdate = format(min(dm$RFICDTC, na.rm = T)),
+    enddate = format(last_dtc_data_frame(pc)),
+    hv = FALSE)
 
-  out[["vs"]] <- vs %>%
-    isofy_dates()
+  # out <- list()
+  # out[["dm"]] <- dm %>%
+  #   isofy_dates()
+  #
+  # out[["vs"]] <- vs %>%
+  #   isofy_dates()
+  #
+  # out[["ex"]] <- ex %>%
+  #   mutate(EXTRT = "EXAMPLINIB") %>%
+  #   isofy_dates()
+  #
+  # out[["pc"]] <- pc %>%
+  #   isofy_dates()
+  #
+  # out[["lb"]] <- lb %>%
+  #   isofy_dates()
+  #
+  # out <- new_sdtm(out) %>%
+  #   add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
+  #   add_metabolite_mapping("RS2023", "RS2023487A")
 
-  out[["ex"]] <- ex %>%
-    mutate(EXTRT = "EXAMPLINIB") %>%
-    isofy_dates()
+  out <- list(
+    dm = dm,
+    vs = vs,
+    ex = mutate(ex, EXTRT = "EXAMPLINIB"),
+    pc = pc,
+    lb = lb,
+    ts = ts
+  )
 
-  out[["pc"]] <- pc %>%
-    isofy_dates()
 
-  out[["lb"]] <- lb %>%
-    isofy_dates()
-
-  out <- new_sdtm(out) %>%
-    add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
-    add_metabolite_mapping("RS2023", "RS2023487A")
-
-  return(out)
+  return(new_sdtm(out))
 }
 
 
@@ -1088,12 +1099,8 @@ synthesize_sdtm_poc_study <- function(
 #' @return The SDTM data as sdtm object.
 #' @keywords internal
 synthesize_sdtm_food_effect_study <- function() {
-  # sampling_scheme <- data.frame(
-  #   time = c(0, 0.5, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 24, 48, 72, 96, 144, 168),
-  #   PCTPT = c(
-  #     "PREDOSE", "HOUR 0.5", "HOUR 1", "HOUR 1.5", "HOUR 2", "HOUR 3",
-  #     "HOUR 4", "HOUR 6", "HOUR 8", "HOUR 10", "HOUR 12", "HOUR 24",
-  #     "HOUR 48", "HOUR 72", "HOUR 96", "HOUR 144", "HOUR 168"))
+  studyid <- "2023000400"
+  studytitle <- "An open-label 2-period crossover study in healthy subjects to investigate the effect of food on the pharmacokinetics of examplinib"
 
   sampling_scheme <- rich_sampling_scheme <-  tibble::tribble(
     ~time,     ~PCTPT,
@@ -1116,7 +1123,7 @@ synthesize_sdtm_food_effect_study <- function() {
     168, "168 HOURS POST-DOSE",
   )
 
-  dm <- synthesize_dm(studyid = "2023000400", nsubs = 20)
+  dm <- synthesize_dm(studyid = studyid, nsubs = 20)
   i_treated <- which(dm$ACTARMCD != "SCRNFAIL")
   i_seq1 <- sample(i_treated, length(i_treated)/2)
 
@@ -1139,16 +1146,30 @@ synthesize_sdtm_food_effect_study <- function() {
 
   pc <- make_fe_pc(ex, dm, vs, sampling_scheme)
 
-  out <- list()
-  out[["dm"]] <- dm %>% isofy_dates()
-  out[["vs"]] <- vs %>% isofy_dates()
-  out[["ex"]] <- ex %>% mutate(EXTRT = "EXAMPLINIB") %>% isofy_dates()
-  out[["pc"]] <- pc %>% isofy_dates()
-  out[["lb"]] <- lb %>% isofy_dates()
+  ts <- synthesize_ts(studyid, studytitle, c("fe", "pk"), "1",
+                      startdate = format(min(dm$RFICDTC, na.rm = T)),
+                      enddate = format(last_dtc_data_frame(pc)),
+                      hv = TRUE)
 
-  temp <- new_sdtm(out) %>%
-    add_analyte_mapping("EXAMPLINIB", "RS2023")
-  return(temp)
+  # out <- list()
+  # out[["dm"]] <- dm %>% isofy_dates()
+  # out[["vs"]] <- vs %>% isofy_dates()
+  # out[["ex"]] <- ex %>% mutate(EXTRT = "EXAMPLINIB") %>% isofy_dates()
+  # out[["pc"]] <- pc %>% isofy_dates()
+  # out[["lb"]] <- lb %>% isofy_dates()
+
+  out <- list(
+    dm = dm,
+    vs = vs,
+    ex = mutate(ex, EXTRT = "EXAMPLINIB"),
+    pc = pc,
+    lb = lb,
+    ts = ts
+  )
+
+  # temp <- new_sdtm(out) %>%
+  #   add_analyte_mapping("EXAMPLINIB", "RS2023")
+  return(new_sdtm(out))
 }
 
 
