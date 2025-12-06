@@ -28,7 +28,8 @@ The filtered object.
 filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #> -------- SDTM data set summary -------- 
 #> Study 2023000022 
-#> An open-label single-arm Phase 2 study of examplinib in patients 
+#> 
+#> An open-label single-arm Phase 2 study of examplinib in patients
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   

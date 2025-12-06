@@ -56,7 +56,8 @@ A sdtm_summary object.
 summary(examplinib_poc)
 #> -------- SDTM data set summary -------- 
 #> Study 2023000022 
-#> An open-label single-arm Phase 2 study of examplinib in patients 
+#> 
+#> An open-label single-arm Phase 2 study of examplinib in patients
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   

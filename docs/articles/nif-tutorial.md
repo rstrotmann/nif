@@ -133,7 +133,9 @@ Printing an `sdtm` object shows relevant summary information:
 examplinib_fe
 #> -------- SDTM data set summary -------- 
 #> Study 2023000400 
-#> An open-label 2-period crossover study in healthy subjects to investigate the effect of food on the pharmacokinetics of examplinib 
+#> 
+#> An open-label 2-period crossover study in healthy subjects to investigate the
+#> effect of food on the pharmacokinetics of examplinib
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
