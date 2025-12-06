@@ -3,80 +3,6 @@
 #' @param event_table The event table as required by RxODE.
 #' @return PK simulation as data frame
 #' @keywords internal
-# pk_sim <- function(event_table) {
-#   if (!("EGFR" %in% colnames(event_table))) {
-#     event_table <- event_table %>%
-#       mutate(EGFR = 1)
-#   }
-#
-#   keep_columns <- event_table %>%
-#     mutate(time = as.numeric(time)) %>%
-#     mutate(NTIME = as.numeric(NTIME)) %>%
-#     select(any_of(c("id", "time", "NTIME", "PERIOD"))) %>%
-#     distinct()
-#
-#   mod <- rxode2::rxode2({
-#     c_centr <- centr / v_centr * (1 + centr.err)
-#     c_peri <- peri / v_peri
-#     c_metab <- metab / v_metab
-#
-#     ke <- t.ke * exp(eta.ke) * (EGFR / 100)^0.9 # renal elimination constant
-#     ka <- t.ka * exp(eta.ka) + FOOD * t.ka1
-#     d1 <- t.d1 * exp(eta.d1)
-#     fm <- t.fm * exp(eta.fm) # fraction metabolized
-#
-#     cl <- t.cl * exp(eta.cl) # metabolic clearance
-#
-#     kem <- t.kem * exp(eta.kem) # elimination constant for metabolite
-#     fpar <- 1 * exp(eta.fpar) + FOOD * t.fpar1
-#     q <- t.q * exp(eta.q)
-#
-#     d / dt(depot) <- -ka * depot * fpar
-#     dur(depot) <- d1
-#     d / dt(centr) <- ka * depot * fpar - ke * c_centr - q * c_centr + q * c_peri - cl * c_centr
-#     d / dt(peri) <- q * c_centr - q * c_peri
-#     d / dt(renal) <- ke * c_centr * (1 - fm)
-#
-#     d / dt(metab) <- cl * c_centr * fm - kem * c_metab
-#     d / dt(metab_excr) <- kem * c_metab
-#   })
-#
-#   theta <- c(
-#     t.ka = 0.8,
-#     t.ka1 = 0.8, # food effect on Ka
-#     t.d1 = 1.8,
-#     t.fpar1 = 2, # food effect on F
-#     t.ke = 30,
-#     t.q = 5,
-#     t.cl = 20,
-#     # t.kem = 10,
-#     t.kem = 2,
-#     t.fm = 0.8,
-#     v_centr = 100,
-#     v_peri = 100,
-#     v_metab = 10
-#   )
-#
-#   omega <- rxode2::lotri(
-#     eta.ke + eta.ka + eta.d1 + eta.fpar + eta.q + eta.cl + eta.kem + eta.fm ~ c(
-#       0.3^2,
-#       0, 0.1^2,
-#       0, 0, 0.2^2,
-#       0, 0, 0, 0.3^2,
-#       0, 0, 0, 0, 0.3^2,
-#       0, 0, 0, 0, 0, 0.4^2,
-#       0, 0, 0, 0, 0, 0, 0.3^2,
-#       0, 0, 0, 0, 0, 0, 0, 0.03^2
-#     )
-#   )
-#
-#   sigma <- rxode2::lotri(centr.err ~ .1^2)
-#
-#   sim <- mod$solve(theta, event_table, omega = omega, sigma = sigma) %>%
-#     as.data.frame() %>%
-#     left_join(keep_columns, by = c("id", "time"))
-#   return(sim)
-# }
 pk_sim <- function(event_table) {
   if (!("EGFR" %in% colnames(event_table))) {
     event_table <- event_table %>%
@@ -318,23 +244,23 @@ synthesize_ts <- function(
     startdate = "", enddate = "",
     hv=TRUE) {
   ttype <- tibble::tribble(
-    ~TSVALCD, ~TSVAL, ~typeval,
-    "C98729", "FOOD EFFECT", "fe",
-    "C49666", "EFFICACY", "eff",
-    "C49664", "BIO-AVAILABILITY", "ba",
-    "C49665", "BIO-EQUIVALENCE", "be",
-    "C158289", "DOSE FINDING", "df",
-    "C158286", "DRUG-DRUG INTERACTION", "ddi",
-    "C178057", "ECG", "ecg",
-    "C49663", "PHARMACOKINETIC", "pk",
-    "C49667", "SAFETY", "saf",
-    "C98791", "TOLERABILITY", "tol"
+    ~TSVALCD,                  ~TSVAL, ~typeval,
+    "C98729",           "FOOD EFFECT",     "fe",
+    "C49666",              "EFFICACY",    "eff",
+    "C49664",      "BIO-AVAILABILITY",     "ba",
+    "C49665",       "BIO-EQUIVALENCE",     "be",
+    "C158289",          "DOSE FINDING",     "df",
+    "C158286", "DRUG-DRUG INTERACTION",    "ddi",
+    "C178057",                   "ECG",    "ecg",
+    "C49663",       "PHARMACOKINETIC",     "pk",
+    "C49667",                "SAFETY",    "saf",
+    "C98791",          "TOLERABILITY",    "tol"
   )
 
   tphase <- tibble::tribble(
-    ~NCI, ~TPHASE, ~phase,
-    "C15600", "PHASE I TRIAL", "1",
-    "C49686", "PHASE IIA TRIAL", "2a"
+    ~NCI,           ~TPHASE, ~phase,
+    "C15600",   "PHASE I TRIAL",    "1",
+    "C49686", "PHASE IIA TRIAL",   "2a"
   )
 
   yesno_valcd <- function(val) {
@@ -376,23 +302,6 @@ synthesize_ts <- function(
 
   return(out)
 }
-
-
-## type
-# C98729 FOOD EFFECT
-# C49666 EFFICACY
-# C49664 BIO-AVAILABILITY
-# C49665 BIO-EQUIVALENCE
-# C158289 DOSE FINDING
-# C158286 DRUG-DRUG INTERACTION
-# C178057 ECG
-# C49663 PHARMACOKINETIC
-# C49667 SAFETY
-# C98791 TOLERABILITY
-
-
-# Required: USUBJID, STUDYID, DOMAIN, EXSEEQ, EXTRT
-# expected: EXDOSE, EXDOSEU, EXDOSEFRM, EXSTDTC, EXENDTC
 
 
 #' Synthesize a fictional EX domain for single dose administration
@@ -547,16 +456,6 @@ make_md_ex <- function(dm,
 }
 
 
-# required: STUDYID, DOMAIN, USUBJID, PCSEQ, PCTESTCD, PCTEST
-# expected: PCORRES, PCORRESU, PCSTRESC, PCSTRESN, PCSTRESU, PCNAM,
-#     PCSPEC, PCLLOQ, VISITNUM, PCDTC
-
-# make PCRFTDTC:  reference time
-# make PCELTM:    NTIME!
-# make PCTPT:
-# make PCSEQ:
-
-
 #' Create PC based on single-dose administration
 #'
 #' @param ex The EX domain as data frame.
@@ -665,7 +564,6 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
       by = c("id", "PERIOD")) %>%
     as.data.frame() %>%
     mutate(amt = case_when(!is.na(.data$amt) ~ .data$EXDOSE, .default = NA)) %>%
-    # mutate(NTIME = time) %>%
     arrange(.data$id, .data$time, .data$evid)
 
   sim <- pk_sim(ev)
@@ -684,13 +582,9 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     left_join(temp %>% distinct(.data$ID, .data$USUBJID, .data$RFSTDTC),
               by = c("id" = "ID")) %>%
     mutate(STUDYID = unique(dm$STUDYID), DOMAIN = "PC") %>%
-    # mutate(PCELTM = paste0("PT", as.character(time), "H")) %>%
     mutate(PCELTM = paste0("PT", as.character(.data$NTIME), "H")) %>%
-    # mutate(PCTPTNUM = time) %>%
     mutate(PCTPTNUM = .data$NTIME) %>%
-    # left_join(sampling_scheme, by = "time") %>%
     left_join(sampling_scheme, by = c("NTIME"="time")) %>%
-    # mutate(PCDTC = RFSTDTC + (PERIOD - 1) * 14 * 24 * 60 * 60 + time * 60 * 60) %>%
     mutate(PCDTC = .data$RFSTDTC + time * 60 * 60) %>%
     arrange(.data$id, .data$PCDTC, .data$PCTESTCD) %>%
     group_by(id) %>%
@@ -850,28 +744,6 @@ synthesize_sdtm_sad_study <- function() {
                       enddate = format(last_dtc_data_frame(pc)),
                       hv = TRUE)
 
-
-  # out <- list()
-  # out[["dm"]] <- dm %>%
-  #   select(-c("cohort", "dose")) %>%
-  #   isofy_dates()
-  #
-  # out[["vs"]] <- vs %>%
-  #   isofy_dates()
-  #
-  # out[["ex"]] <- ex %>%
-  #   mutate(EXTRT = "EXAMPLINIB") %>%
-  #   isofy_dates()
-  #
-  # out[["pc"]] <- pc %>%
-  #   isofy_dates()
-  #
-  # out[["lb"]] <- lb %>%
-  #   isofy_dates()
-  #
-  # out[["ts"]] <- ts %>%
-  #   isofy_dates()
-
   out <- list(
     dm = select(dm, -c("cohort", "dose")),
     vs = vs,
@@ -883,9 +755,7 @@ synthesize_sdtm_sad_study <- function() {
 
   lapply(out, isofy_dates)
 
-  temp <- new_sdtm(out) #%>%
-    # add_analyte_mapping("EXAMPLINIB", "RS2023")
-  return(temp)
+  return(new_sdtm(out))
 }
 
 
@@ -1059,27 +929,6 @@ synthesize_sdtm_poc_study <- function(
     enddate = format(last_dtc_data_frame(pc)),
     hv = FALSE)
 
-  # out <- list()
-  # out[["dm"]] <- dm %>%
-  #   isofy_dates()
-  #
-  # out[["vs"]] <- vs %>%
-  #   isofy_dates()
-  #
-  # out[["ex"]] <- ex %>%
-  #   mutate(EXTRT = "EXAMPLINIB") %>%
-  #   isofy_dates()
-  #
-  # out[["pc"]] <- pc %>%
-  #   isofy_dates()
-  #
-  # out[["lb"]] <- lb %>%
-  #   isofy_dates()
-  #
-  # out <- new_sdtm(out) %>%
-  #   add_analyte_mapping("EXAMPLINIB", "RS2023") %>%
-  #   add_metabolite_mapping("RS2023", "RS2023487A")
-
   out <- list(
     dm = dm,
     vs = vs,
@@ -1088,7 +937,6 @@ synthesize_sdtm_poc_study <- function(
     lb = lb,
     ts = ts
   )
-
 
   return(new_sdtm(out))
 }
@@ -1151,13 +999,6 @@ synthesize_sdtm_food_effect_study <- function() {
                       enddate = format(last_dtc_data_frame(pc)),
                       hv = TRUE)
 
-  # out <- list()
-  # out[["dm"]] <- dm %>% isofy_dates()
-  # out[["vs"]] <- vs %>% isofy_dates()
-  # out[["ex"]] <- ex %>% mutate(EXTRT = "EXAMPLINIB") %>% isofy_dates()
-  # out[["pc"]] <- pc %>% isofy_dates()
-  # out[["lb"]] <- lb %>% isofy_dates()
-
   out <- list(
     dm = dm,
     vs = vs,
@@ -1167,8 +1008,6 @@ synthesize_sdtm_food_effect_study <- function() {
     ts = ts
   )
 
-  # temp <- new_sdtm(out) %>%
-  #   add_analyte_mapping("EXAMPLINIB", "RS2023")
   return(new_sdtm(out))
 }
 
