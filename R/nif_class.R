@@ -1057,6 +1057,9 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
 
 #' Add baseline renal function class
 #'
+#' If baseline creatinine clearance (BL_CRCL) is not included in the input, it
+#' will be calculated first.
+#'
 #' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
 #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
@@ -1066,7 +1069,8 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
 #' as.data.frame(add_bl_renal(examplinib_poc_nif))
 add_bl_renal <- function(obj, method = egfr_cg) {
   obj %>%
-    add_bl_crcl(method = method) %>%
+    {if(!"BL_CRCL" %in% names(obj))
+        add_bl_crcl(., method = method) else .}%>%
     mutate(BL_RENAL = as.character(
       cut(.data$BL_CRCL,
         breaks = c(0, 30, 60, 90, Inf),

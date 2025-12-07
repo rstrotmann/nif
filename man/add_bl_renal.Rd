@@ -16,7 +16,8 @@ Currently either: egfr_mdrd, egfr_cg or egfr_raynaud}
 A NIF object.
 }
 \description{
-Add baseline renal function class
+If baseline creatinine clearance (BL_CRCL) is not included in the input, it
+will be calculated first.
 }
 \examples{
 as.data.frame(add_bl_renal(examplinib_poc_nif))
