@@ -36,7 +36,8 @@ make_observation(
   keep = NULL,
   include_day_in_ntime = FALSE,
   omit_not_done = TRUE,
-  silent = NULL
+  silent = NULL,
+  na_to_zero = FALSE
 )
 ```
 
@@ -142,6 +143,10 @@ make_observation(
 - silent:
 
   Suppress messages, as logical. Defaults to nif_option setting if NULL.
+
+- na_to_zero:
+
+  Set all NA values of DV to 0, as logical.
 
 ## Value
 

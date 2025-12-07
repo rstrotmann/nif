@@ -39,7 +39,8 @@ add_observation(
   duplicates = "stop",
   duplicate_function = mean,
   omit_not_done = TRUE,
-  na.rm = TRUE
+  na.rm = TRUE,
+  na_to_zero = FALSE
 )
 ```
 
@@ -176,6 +177,10 @@ add_observation(
 
   Logical indicating whether to remove NA values when applying the
   duplicate_function. Defaults to TRUE.
+
+- na_to_zero:
+
+  Set all NA values of DV to 0, as logical.
 
 ## Value
 

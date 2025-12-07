@@ -1,6 +1,7 @@
 # Add baseline renal function class
 
-Add baseline renal function class
+If baseline creatinine clearance (BL_CRCL) is not included in the input,
+it will be calculated first.
 
 ## Usage
 

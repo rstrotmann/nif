@@ -19,7 +19,7 @@ time-after-first-dose ('TAFD') time calculation."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,7 +91,8 @@ time-after-first-dose ('TAFD') time calculation.</p>
 <span>  duplicates <span class="op">=</span> <span class="st">"stop"</span>,</span>
 <span>  duplicate_function <span class="op">=</span> <span class="va">mean</span>,</span>
 <span>  omit_not_done <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  na_to_zero <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -229,6 +230,10 @@ duplicate entries.</p></li>
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p>Logical indicating whether to remove NA values when applying the
 duplicate_function. Defaults to TRUE.</p></dd>
+
+
+<dt id="arg-na-to-zero">na_to_zero<a class="anchor" aria-label="anchor" href="#arg-na-to-zero"></a></dt>
+<dd><p>Set all NA values of DV to 0, as logical.</p></dd>
 
 </dl></div>
     <div class="section level2">
