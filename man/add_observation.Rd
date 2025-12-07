@@ -31,7 +31,8 @@ add_observation(
   duplicates = "stop",
   duplicate_function = mean,
   omit_not_done = TRUE,
-  na.rm = TRUE
+  na.rm = TRUE,
+  na_to_zero = FALSE
 )
 }
 \arguments{
@@ -114,6 +115,8 @@ duplicate entries.
 
 \item{na.rm}{Logical indicating whether to remove NA values when applying the
 duplicate_function. Defaults to TRUE.}
+
+\item{na_to_zero}{Set all NA values of DV to 0, as logical.}
 }
 \value{
 A nif object.

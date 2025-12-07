@@ -260,6 +260,7 @@ make_ntime <- function(
 #' @param cat xxCAT filter to apply, as character.
 #' @param scat xxSCAT filter to apply, as character.
 #' @param omit_not_done Delete rows where xxSTAT is "NOT DONE, as logical.
+#' @param na_to_zero Set all NA values of DV to 0, as logical.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -288,7 +289,8 @@ make_observation <- function(
     keep = NULL,
     include_day_in_ntime = FALSE,
     omit_not_done = TRUE,
-    silent = NULL
+    silent = NULL,
+    na_to_zero = FALSE
 ) {
   # validate inputs
   validate_char_param(domain, "domain")
@@ -302,6 +304,7 @@ make_observation <- function(
 
   validate_logical_param(omit_not_done, "omit_not_done")
   # other validations not implemented - add_observation takes care of that.
+  validate_logical_param(na_to_zero, "na_to_zero")
 
   domain_name <- tolower(domain)
 
@@ -406,6 +409,12 @@ make_observation <- function(
   } else { # proceed without coding table
     obj <- obj %>%
       mutate(DV = .data[[DV_field]] * factor)
+  }
+
+  # set NA values to zero, if flag is set
+  if(na_to_zero == TRUE) {
+    obj <- obj %>%
+      mutate(DV = case_when(is.na(DV) ~ 0, .default = DV))
   }
 
   # apply observation filter, add debug fields
@@ -569,7 +578,8 @@ add_observation <- function(
     duplicates = "stop",
     duplicate_function = mean,
     omit_not_done = TRUE,
-    na.rm = TRUE
+    na.rm = TRUE,
+    na_to_zero = FALSE
 ) {
   # validate inputs
   validate_min_nif(nif)
@@ -591,6 +601,7 @@ add_observation <- function(
   validate_logical_param(debug, "debug")
   validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
   validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_logical_param(na_to_zero, "na_to_zero")
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug))
@@ -657,7 +668,7 @@ add_observation <- function(
     observation_filter, cat, scat, TESTCD_field, DTC_field, DV_field,
     coding_table, factor, NTIME_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
-    silent = silent) %>%
+    silent = silent, na_to_zero= na_to_zero) %>%
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
 
   # Duplicate handling
