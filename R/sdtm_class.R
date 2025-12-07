@@ -49,8 +49,14 @@ trial_title <- function(obj) {
   ts <- domain(obj, "ts")
   if(!"TSPARMCD" %in% names(ts)) return(NULL)
   if(!"TITLE" %in% unique(ts$TSPARMCD)) return(NULL)
-  title <- ts$TSVAL[ts$TSPARMCD == "TITLE"]
-  if(length(title) > 1) warning("TS domain inclucdes multiple study titles!")
+
+  title <- ts %>%
+    filter(TSPARMCD == "TITLE") %>%
+    select(matches("^TSVAL[1-8]?$")) %>%
+    as.character() %>%
+    paste(collapse = " ") %>%
+    str_trim()
+
   return(title)
 }
 
