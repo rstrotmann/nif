@@ -51,7 +51,7 @@ trial_title <- function(obj) {
   if(!"TITLE" %in% unique(ts$TSPARMCD)) return(NULL)
 
   title <- ts %>%
-    filter(TSPARMCD == "TITLE") %>%
+    filter(.data$TSPARMCD == "TITLE") %>%
     select(matches("^TSVAL[1-8]?$")) %>%
     as.character() %>%
     paste(collapse = " ") %>%
