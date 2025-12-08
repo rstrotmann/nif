@@ -1,11 +1,11 @@
-# Title
+# Make ntime lookup table from TPTNUM field
 
-Title
+Make ntime lookup table from TPTNUM field
 
 ## Usage
 
 ``` r
-make_ntime_from_tptnum(obj, domain = "PC")
+make_ntime_from_tptnum(obj, domain = NULL)
 ```
 
 ## Arguments

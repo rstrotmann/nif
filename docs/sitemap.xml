@@ -82,6 +82,7 @@
 <url><loc>/reference/doses.nif.html</loc></url>
 <url><loc>/reference/doses.sdtm.html</loc></url>
 <url><loc>/reference/dtc_formats.html</loc></url>
+<url><loc>/reference/dv_na_to_zero.html</loc></url>
 <url><loc>/reference/edish_plot.html</loc></url>
 <url><loc>/reference/egfr_cg.html</loc></url>
 <url><loc>/reference/egfr_mdrd.html</loc></url>
@@ -135,6 +136,7 @@
 <url><loc>/reference/make_administration.html</loc></url>
 <url><loc>/reference/make_ae.html</loc></url>
 <url><loc>/reference/make_ntime.html</loc></url>
+<url><loc>/reference/make_ntime_from_dy.html</loc></url>
 <url><loc>/reference/make_ntime_from_tpt.html</loc></url>
 <url><loc>/reference/make_ntime_from_tptnum.html</loc></url>
 <url><loc>/reference/make_observation.html</loc></url>

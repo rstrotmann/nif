@@ -117,6 +117,9 @@
 
 - [`doses()`](doses.md) : Doses in a nif or sdtm object
 
+- [`dv_na_to_zero()`](dv_na_to_zero.md) : Set all NA values in DV to
+  zero
+
 - [`edish_plot()`](edish_plot.md) : Drug-induced serious hepatotoxicity
   (eDISH) plot
 
@@ -208,10 +211,14 @@
 
 - [`make_ntime()`](make_ntime.md) : Make nominal time
 
+- [`make_ntime_from_dy()`](make_ntime_from_dy.md) : Make ntime lookup
+  table from DY field
+
 - [`make_ntime_from_tpt()`](make_ntime_from_tpt.md) : Convert time point
   text to numeric time values
 
-- [`make_ntime_from_tptnum()`](make_ntime_from_tptnum.md) : Title
+- [`make_ntime_from_tptnum()`](make_ntime_from_tptnum.md) : Make ntime
+  lookup table from TPTNUM field
 
 - [`make_subjects_sdtm()`](make_subjects_sdtm.md) : Make subject data
   frame from SDTM object

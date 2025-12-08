@@ -278,8 +278,8 @@ make_ntime <- function(
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
 #' @param ntime_method the field to derive the nominal time from. Allowed values
-#'   are 'TPT', 'TPTNUM' and 'ELTM'. Defaults to xxTPT where xx is the domain
-#'   name.
+#'   are 'TPT', 'TPTNUM', 'ELTM' and 'DY'. Defaults to xxTPT where xx is the
+#'   domain name.
 #' @param include_day_in_ntime as logical.
 #' @param cat xxCAT filter to apply, as character.
 #' @param scat xxSCAT filter to apply, as character.

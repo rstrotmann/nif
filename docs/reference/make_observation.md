@@ -126,7 +126,8 @@ make_observation(
 - ntime_method:
 
   the field to derive the nominal time from. Allowed values are 'TPT',
-  'TPTNUM' and 'ELTM'. Defaults to xxTPT where xx is the domain name.
+  'TPTNUM', 'ELTM' and 'DY'. Defaults to xxTPT where xx is the domain
+  name.
 
 - keep:
 

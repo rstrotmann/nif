@@ -8,7 +8,7 @@ information.
 ## Usage
 
 ``` r
-make_ntime_from_tpt(obj, domain = "PC")
+make_ntime_from_tpt(obj, domain = NULL)
 ```
 
 ## Arguments
@@ -47,8 +47,5 @@ The function recognizes and processes the following patterns:
 ``` r
 df <- data.frame(PCTPT = c("PRE-DOSE", "1H POST-DOSE", "2.5 HRS POST-DOSE"))
 make_ntime_from_tpt(df)  # Returns c(0, 1, 2.5)
-#>               PCTPT NTIME
-#> 1          PRE-DOSE   0.0
-#> 2      1H POST-DOSE   1.0
-#> 3 2.5 HRS POST-DOSE   2.5
+#> NULL
 ```
