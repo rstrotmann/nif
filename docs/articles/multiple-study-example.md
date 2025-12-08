@@ -84,18 +84,7 @@ nif %>%
 #>   1       X        
 #>   1.5     X        
 #>   2       X        
-#>   3       X        
-#>   4       X        
-#>   6       X        
-#>   8       X        
-#>   10      X        
-#>   12      X        
-#>   24      X        
-#>   48      X        
-#>   72      X        
-#>   96      X        
-#>   144     X        
-#>   168     X        
+#> 12 more rows
 #> 
 #> Subjects with dose reductions
 #>   RS2023   

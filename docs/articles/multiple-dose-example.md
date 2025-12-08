@@ -184,12 +184,7 @@ summary(nif_poc)
 #    1       X        X            
 #    1.5     X        X            
 #    2       X        X            
-#    3       X        X            
-#    4       X        X            
-#    6       X        X            
-#    8       X        X            
-#    10      X        X            
-#    12      X        X            
+#  6 more rows
 #  
 #  Subjects with dose reductions
 #    RS2023   

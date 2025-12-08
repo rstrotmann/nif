@@ -220,6 +220,9 @@
 - [`make_ntime_from_tptnum()`](make_ntime_from_tptnum.md) : Make ntime
   lookup table from TPTNUM field
 
+- [`make_ntime_from_visitdy()`](make_ntime_from_visitdy.md) : Make ntime
+  lookup table from VISITDY field
+
 - [`make_subjects_sdtm()`](make_subjects_sdtm.md) : Make subject data
   frame from SDTM object
 

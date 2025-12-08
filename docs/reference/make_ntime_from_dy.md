@@ -16,7 +16,7 @@ make_ntime_from_dy(obj, domain = "PC")
 
 - domain:
 
-  the domain as
+  the domain as character.
 
 ## Value
 
