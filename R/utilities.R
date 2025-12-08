@@ -1215,3 +1215,18 @@ is_valid_filter <- function(data, filter_string) {
 }
 
 
+#' Set all NA values in DV to zero
+#'
+#' @param obj A nif object.
+#'
+#' @returns A nif object.
+#' @export
+#'
+#' @examples
+#' dv_na_to_zero(examplinib_sad_min_nif)
+dv_na_to_zero <- function(obj) {
+  validate_nif(obj)
+
+  mutate(obj, DV = case_when(is.na(DV) ~ 0, .default = DV))
+}
+
