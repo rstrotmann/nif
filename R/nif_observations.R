@@ -127,7 +127,7 @@ make_ntime_from_tptnum <- function(obj, domain = NULL) {
 #' Make ntime lookup table from DY field
 #'
 #' @param obj A data frame.
-#' @param domain the domain as
+#' @param domain the domain as character.
 #'
 #' @returns A data frame.
 make_ntime_from_dy <- function(obj, domain = "PC") {
@@ -135,6 +135,36 @@ make_ntime_from_dy <- function(obj, domain = "PC") {
     domain <- unique(obj$DOMAIN)[1]
 
   tpt_name <- paste0(toupper(domain), "DY")
+  if(!tpt_name %in% names(obj))
+    stop(paste0(tpt_name, " not found in input data!"))
+
+  tpt <- unique(obj[[tpt_name]])
+
+  out <- data.frame(
+    x = tpt,
+    NTIME = (tpt - 1) * 24
+  ) %>%
+    arrange(tpt_name)
+
+  colnames(out) <- c(tpt_name, "NTIME")
+  return(out)
+}
+
+
+#' Make ntime lookup table from VISITDY field
+#'
+#' @param obj A data frame.
+#' @param domain the domain as character.
+#'
+#' @returns A data frame.
+make_ntime_from_visitdy <- function(obj, domain = "PC") {
+  if(is.null(domain))
+    domain <- unique(obj$DOMAIN)[1]
+
+  tpt_name <- "VISITDY"
+  if(!tpt_name %in% names(obj))
+    stop(paste0(tpt_name, " not found in input data!"))
+
   tpt <- unique(obj[[tpt_name]])
 
   out <- data.frame(
@@ -278,8 +308,8 @@ make_ntime <- function(
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
 #' @param ntime_method the field to derive the nominal time from. Allowed values
-#'   are 'TPT', 'TPTNUM', 'ELTM' and 'DY'. Defaults to xxTPT where xx is the
-#'   domain name.
+#'   are 'TPT', 'TPTNUM', 'ELTM', 'VISITDY' and 'DY'. Defaults to xxTPT where xx
+#'   is the domain name.
 #' @param include_day_in_ntime as logical.
 #' @param cat xxCAT filter to apply, as character.
 #' @param scat xxSCAT filter to apply, as character.
@@ -333,7 +363,7 @@ make_observation <- function(
   domain_name <- tolower(domain)
 
   # validate ntime method
-  allowed_ntime_method = c("TPT", "TPTNUM", "ELTM", "DY")
+  allowed_ntime_method = c("TPT", "TPTNUM", "ELTM", "VISITDY", "DY")
   if(!ntime_method %in% allowed_ntime_method)
     stop(paste0(
       "ntime_method must be one of ",
@@ -388,6 +418,9 @@ make_observation <- function(
     if(ntime_method == "ELTM") {
       NTIME_lookup = make_ntime(
         obj, domain, include_day = FALSE, silent = silent)
+    }
+    if(ntime_method == "VISITDY") {
+      NTIME_lookup = make_ntime_from_visitdy(obj, domain)
     }
     if(ntime_method == "DY") {
       NTIME_lookup = make_ntime_from_dy(obj, domain)
