@@ -1,19 +1,19 @@
 test_that("make_ntime_from_tpt works with generic PCTPT", {
   test <- tibble::tribble(
-    ~PCTPT, ~NTIME,
-    NA,     NA,
-    "PRE-DOSE",     0,
-    "0.5H POST-DOSE",     0.5,
-    "1H POST-DOSE",     1,
-    "2H POST-DOSE",     2,
-    "3H POST-DOSE",     3,
-    "12H POST-DOSE",     12,
-    "10H POST-DOSE",     10,
-    "0.5H TO 2H POST-DOSE",     2,
-    "END OF VISIT",     NA,
-    "0 TO 4H POST-DOSE",     4,
-    "8H TO 24H POST-DOSE",     24
-  )
+                  ~PCTPT, ~NTIME,
+                      NA,     NA,
+              "PRE-DOSE",      0,
+        "0.5H POST-DOSE",    0.5,
+          "1H POST-DOSE",      1,
+          "2H POST-DOSE",      2,
+          "3H POST-DOSE",      3,
+         "12H POST-DOSE",     12,
+         "10H POST-DOSE",     10,
+  "0.5H TO 2H POST-DOSE",      2,
+          "END OF VISIT",     NA,
+     "0 TO 4H POST-DOSE",      4,
+   "8H TO 24H POST-DOSE",     24
+  ) %>% mutate(DOMAIN = "PC")
 
   expect_equal(
     make_ntime_from_tpt(test)$NTIME,
@@ -42,7 +42,7 @@ test_that("make_ntime_from_tpt works with irregular hour unit", {
     "6 HOUR POST DOSE",     6,
     "8 HOUR POST DOSE",     8,
     "2-4 HOUR POST DOSE",   4
-  )
+  ) %>% mutate(DOMAIN = "PC")
 
   expect_equal(
     make_ntime_from_tpt(test)$NTIME,
@@ -64,7 +64,7 @@ test_that("make_ntime_from_tpt works with minutes", {
     "3.0 HRS POST DOSE",    3,
     "8.0 HRS POST DOSE",    8,
     "24.0 HRS POST DOSE",   24
-  )
+  ) %>% mutate(DOMAIN = "PC")
 
   expect_equal(
     make_ntime_from_tpt(test)$NTIME,
@@ -87,7 +87,7 @@ test_that("make_ntime_from_tpt works with day information", {
     "DAY44 - 1032 HOURS POST ADMINISTRATION",  1032,
     "DAY1 - 0.5 HOUR POST ADMINISTRATION",     0.5,
     "DAY1 - 1.5 HOURS POST ADMINISTRATION",    1.5,
-  )
+  ) %>% mutate(DOMAIN = "PC")
 
   expect_equal(
     make_ntime_from_tpt(test)$NTIME,

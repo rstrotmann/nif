@@ -25,7 +25,7 @@
 #' make_ntime_from_tpt(df)  # Returns c(0, 1, 2.5)
 #'
 #' @export
-make_ntime_from_tpt <- function(obj, domain = "PC") {
+make_ntime_from_tpt <- function(obj, domain = NULL) {
   if(is.null(domain))
     domain <- unique(obj$DOMAIN)[1]
   tpt_name <- paste0(toupper(domain), "TPT")
@@ -93,7 +93,7 @@ make_ntime_from_tpt <- function(obj, domain = "PC") {
 }
 
 
-#' Title
+#' Make ntime lookup table from TPTNUM field
 #'
 #' @param obj A data frame containing time point text descriptions.
 #' @param domain The domain code as character (default: "PC" for pharmacokinetic).
@@ -102,7 +102,7 @@ make_ntime_from_tpt <- function(obj, domain = "PC") {
 #' @returns A data frame with a column representing the unique values of the
 #'   xxTPT variable and a NTIME column with the time in hours.
 #' @export
-make_ntime_from_tptnum <- function(obj, domain = "PC") {
+make_ntime_from_tptnum <- function(obj, domain = NULL) {
   if(is.null(domain))
     domain <- unique(obj$DOMAIN)[1]
   tpt_name <- paste0(toupper(domain), "TPTNUM")
@@ -120,6 +120,30 @@ make_ntime_from_tptnum <- function(obj, domain = "PC") {
 
   colnames(out) <- c(tpt_name, "NTIME")
 
+  return(out)
+}
+
+
+#' Make ntime lookup table from DY field
+#'
+#' @param obj A data frame.
+#' @param domain the domain as
+#'
+#' @returns A data frame.
+make_ntime_from_dy <- function(obj, domain = "PC") {
+  if(is.null(domain))
+    domain <- unique(obj$DOMAIN)[1]
+
+  tpt_name <- paste0(toupper(domain), "DY")
+  tpt <- unique(obj[[tpt_name]])
+
+  out <- data.frame(
+    x = tpt,
+    NTIME = (tpt - 1) * 24
+  ) %>%
+    arrange(tpt_name)
+
+  colnames(out) <- c(tpt_name, "NTIME")
   return(out)
 }
 
@@ -309,15 +333,11 @@ make_observation <- function(
   domain_name <- tolower(domain)
 
   # validate ntime method
-  allowed_ntime_method = c("TPT", "TPTNUM", "ELTM")
-  # if(is.null(ntime_method)) {
-  #   ntime_method = "TPT"
-  # } else {
-    if(!ntime_method %in% allowed_ntime_method)
-      stop(paste0(
-        "ntime_method must be one of ",
-        nice_enumeration(allowed_ntime_method, conjunction = "or")))
-  # }
+  allowed_ntime_method = c("TPT", "TPTNUM", "ELTM", "DY")
+  if(!ntime_method %in% allowed_ntime_method)
+    stop(paste0(
+      "ntime_method must be one of ",
+      nice_enumeration(allowed_ntime_method, conjunction = "or")))
 
   # Create fields
   if(is.null(DTC_field)) DTC_field <- paste0(toupper(domain), "DTC")
@@ -368,6 +388,9 @@ make_observation <- function(
     if(ntime_method == "ELTM") {
       NTIME_lookup = make_ntime(
         obj, domain, include_day = FALSE, silent = silent)
+    }
+    if(ntime_method == "DY") {
+      NTIME_lookup = make_ntime_from_dy(obj, domain)
     }
     if(is.null(NTIME_lookup)) {
       conditional_message(

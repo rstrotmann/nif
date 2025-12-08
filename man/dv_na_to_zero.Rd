@@ -16,5 +16,5 @@ A nif object.
 Set all NA values in DV to zero
 }
 \examples{
-dv_na_to_zero(nif::examplinib_sad_min_nif)
+dv_na_to_zero(examplinib_sad_min_nif)
 }

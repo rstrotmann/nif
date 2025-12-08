@@ -2,9 +2,9 @@
 % Please edit documentation in R/nif_observations.R
 \name{make_ntime_from_tptnum}
 \alias{make_ntime_from_tptnum}
-\title{Title}
+\title{Make ntime lookup table from TPTNUM field}
 \usage{
-make_ntime_from_tptnum(obj, domain = "PC")
+make_ntime_from_tptnum(obj, domain = NULL)
 }
 \arguments{
 \item{obj}{A data frame containing time point text descriptions.}
@@ -17,5 +17,5 @@ A data frame with a column representing the unique values of the
 xxTPT variable and a NTIME column with the time in hours.
 }
 \description{
-Title
+Make ntime lookup table from TPTNUM field
 }

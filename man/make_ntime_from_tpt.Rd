@@ -4,7 +4,7 @@
 \alias{make_ntime_from_tpt}
 \title{Convert time point text to numeric time values}
 \usage{
-make_ntime_from_tpt(obj, domain = "PC")
+make_ntime_from_tpt(obj, domain = NULL)
 }
 \arguments{
 \item{obj}{A data frame containing time point text descriptions.}
