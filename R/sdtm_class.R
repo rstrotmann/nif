@@ -585,7 +585,7 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
                          "pharmacokinetic analytes: "))
   }
   cli::cli_text()
-  cli::cli_verbatim(df_to_string(sdtm_summary$analytes))
+  cli::cli_verbatim(df_to_string(sdtm_summary$analytes, indent = 2))
   cli::cli_text()
   cli::cli_text(paste0(
     "Consider adding them to the nif object using `add_observation()`, see the ",
@@ -596,21 +596,39 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     function(x) {paste0( "  add_observation(sdtm, 'pc', ", x, "') %>%")},
     sdtm_summary$analytes$PCTESTCD
   )
-  cli::cli_text()
+  # cli::cli_text()
+
+  # PK category
+  if("PCCAT" %in% names(pc)){
+    cats <- filter(pc, PCCAT != "") %>%
+      distinct(PCCAT)
+    if(nrow(cats) > 1){
+      cli::cli_h2("Pharmacokinetic categories")
+      cli::cli_alert_warning(paste0(
+        "Note that there are different analytical categories (PCCAT) defined in ",
+        "PC: "))
+      cli::cli_text()
+      cli::cli_verbatim(df_to_string(pc %>% distinct(PCCAT), indent = 2))
+      cli::cli_text()
+      cli::cli_text(paste0(
+        "Consider filtering for specific PCCAT (and PCSCAT, if applicable) ",
+        "using the 'cat' and 'scat' arguments to 'add_observation()'!"
+      ))
+    }
+  }
 
   # PK specimens
   specimens <- filter(pc, PCSPEC != "") %>%
     distinct(PCSPEC)
-
   if (nrow(specimens) > 1) {
     # cli::cli_alert_warning("Multiple specimens!")
-    cli::cli_text(paste0(
+    cli::cli_h2("Pharmacokinetic specimens")
+    cli::cli_alert_warning(paste0(
       "Note that there are data from {nrow(specimens)} different PK sample ",
       "specimen types in 'PC' ({nice_enumeration(specimens$PCSPEC)}). ",
       "When calling `add_observation()`, consider filtering for a specific ",
-      "specimen using the 'observation_filter' parameter."))
-    # cli::cli_text(
-    #   "For further information see the documentation to `add_observation()`")
+      "specimen using the 'observation_filter' argument to ",
+      "'add_observation()'!"))
   }
 
   # # 6. NTIME
@@ -653,7 +671,7 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     cli::cli_text(paste0(
       "There are {nrow(sdtm_summary$arms)} study arms defined in DM:"))
     cli::cli_text()
-    cli::cli_verbatim(df_to_string(arrange(sdtm_summary$arms, ACTARMCD)))
+    cli::cli_verbatim(df_to_string(arrange(sdtm_summary$arms, ACTARMCD), indent = 2))
     cli::cli_text()
     cli::cli_text(paste0(
       "Consider defining a PART or ARM variable, filtering for a particular ",
