@@ -166,6 +166,7 @@ test_that("impute_exendtc_to_cutoff works", {
   ) %>%
     mutate(DOMAIN = "EX", IMPUTATION = NA) %>%
     lubrify_dates()
+
   expect_no_error(
     suppressMessages(
       temp <- impute_exendtc_to_cutoff(

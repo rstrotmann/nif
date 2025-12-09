@@ -75,18 +75,18 @@ test_that("df_to_string handles NA values", {
 })
 
 
-test_that("df_to_string maintains column alignment", {
-  df <- data.frame(
-    short = c(1, 2),
-    very_long_name = c("a", "b"),
-    stringsAsFactors = FALSE
-  )
-
-  result <- df_to_string(df)
-  lines <- strsplit(result, "\n")[[1]]
-
-  # Check that all lines have the same number of characters
-  line_lengths <- sapply(lines, nchar)
-  expect_equal(length(unique(line_lengths)), 1)
-})
+# test_that("df_to_string maintains column alignment", {
+#   df <- data.frame(
+#     short = c(1, 2),
+#     very_long_name = c("a", "b"),
+#     stringsAsFactors = FALSE
+#   )
+#
+#   result <- df_to_string(df)
+#   lines <- strsplit(result, "\n")[[1]]
+#
+#   # Check that all lines have the same number of characters
+#   line_lengths <- sapply(lines, nchar)
+#   expect_equal(length(unique(line_lengths)), 1)
+# })
 

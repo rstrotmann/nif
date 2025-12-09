@@ -220,7 +220,9 @@ df_to_string <- function(
     header_sep = FALSE,
     color = FALSE,
     show_none = FALSE,
-    na_string = "NA"
+    na_string = "NA",
+    abbr_lines = NULL,
+    abbr_threshold = 10
     ) {
 
   # Input validation
@@ -231,7 +233,6 @@ df_to_string <- function(
   if(!inherits(df, "data.frame")){
     stop("Input must be a data frame")
   }
-
 
   if (!is.numeric(indent) || indent < 0) {
     stop("Indent must be a non-negative number")
@@ -245,23 +246,39 @@ df_to_string <- function(
     return("")
   }
 
-  # Convert all columns to character, handling NA values
-  df <- as.data.frame(df) %>%
-    mutate(across(everything(), ~ifelse(is.na(.), na_string, as.character(.))))
-
   # Calculate maximum width for each column including headers
-  max_widths <- sapply(
-    seq_along(df),
-    function(i) max(
-      nchar(names(df)[i]),
-      max(nchar(as.character(df[[i]])), na.rm = TRUE)
-    )
-  )
+  # max_widths <- sapply(
+  #   seq_along(df),
+  #   function(i) max(
+  #     nchar(names(df)[i]),
+  #     max(nchar(as.character(df[[i]])), na.rm = TRUE),
+  #     na.rm = TRUE
+  #   )
+  # )
+
+  max_widths <-  as.numeric(lapply(
+    rbind(mutate(df, across(everything(), as.character)), names(df)),
+    function(x) max(nchar(x), na.rm = TRUE)))
 
   # Create the padding function
   pad_element <- function(element, width) {
     sprintf(paste0("%-", width, "s   "), element)
   }
+
+  footer <- ""
+  nr <- nrow(df)
+  if(nr > abbr_threshold) {
+    if(!is.null(abbr_lines)) {
+      df <- head(df, abbr_lines)
+      if(nr - abbr_lines > 0)
+        footer <- paste0(
+          "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)")
+    }
+  }
+
+  # Convert all columns to character, handling NA values
+  df <- as.data.frame(df) %>%
+    mutate(across(everything(), ~ifelse(is.na(.), na_string, as.character(.))))
 
   # Create line renderer
   render_line <- function(line) {
@@ -300,12 +317,12 @@ df_to_string <- function(
   }
 
   # Add data rows
-  data_rows <- if (!is.null(n)) utils::head(df, n = n) else df
+  data_rows <- if(!is.null(n)) utils::head(df, n = n) else df
   row_strings <- apply(data_rows, 1, render_line)
   output_parts <- c(output_parts, row_strings)
 
   # Combine all parts with newlines
-  paste(output_parts, collapse = "\n")
+  paste(paste(output_parts, collapse = "\n"), footer)
 }
 
 
