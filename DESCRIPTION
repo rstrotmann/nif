@@ -37,7 +37,8 @@ Imports:
     shiny,
     shinyjs,
     lifecycle,
-    pins
+    pins,
+    cli
 Suggests: 
     knitr,
     tibble,

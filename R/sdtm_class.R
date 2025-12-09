@@ -395,6 +395,7 @@ subject_info.sdtm <- function(obj, id) {
 #'   mappings to the sdtm object, as logical.
 #' @return Nothing.
 #' @import dplyr
+#' @import cli
 #' @export
 #'
 #' @examples
@@ -404,183 +405,263 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   validate_sdtm(obj)
 
   ## Helper functions
-  message_block <- function(...) {
-    args <- lapply(list(...), as.character)
-    message(paste0(
-      str_wrap(paste0(args, collapse = ""),
-               width = 80, indent = 3, exdent = 3)), "\n")
+  # message_block <- function(...) {
+  #   args <- lapply(list(...), as.character)
+  #   message(paste0(
+  #     str_wrap(paste0(args, collapse = ""),
+  #              width = 80, indent = 3, exdent = 3)), "\n")
+  # }
+
+  # message_df <- function(df) {
+  #   message(paste0(
+  #     df_to_string(df, indent = 6, header_sep = TRUE), "\n"))
+  # }
+  #
+  # message_code <- function(fct, data, header = "", footer = "", indent = 3,
+  #                          collapse = " %>%") {
+  #   if(header != "") header <- paste0(indent_string(indent + 2), header, "\n")
+  #   if(footer != "") footer <- paste0("\n", indent_string(indent + 2), footer)
+  #
+  #   lines <- paste0(indent_string(indent + 2), sapply(data, fct))
+  #
+  #   message(paste0(
+  #     indent_string(indent), "---\n",
+  #     header,
+  #     paste0(lines, collapse = paste0(collapse, "\n")),
+  #     footer,
+  #     "\n",
+  #     indent_string(indent), "---\n"))
+  # }
+  #
+  message_code <- function(fct, data, header="", footer="", collapse = "%>%") {
+    # if(header != "") header <- paste0(indent_string(indent + 2), header, "\n")
+    # if(footer != "") footer <- paste0("\n", indent_string(indent + 2), footer)
+
+    lines <- sapply(data, fct)
+    cli::cli_code(lines)
   }
+  #
+  #
+  #
+  # suggest_out <- function(n, ..., table = NULL) {
+  #   args <- lapply(list(...), as.character)
+  #   text <- paste0(args, collapse = "")
+  #   out <- paste0(str_wrap(paste0(n, ". ", text),
+  #     width = 80, indent = 0, exdent = 3), "\n")
+  #   if (!is.null(table)) {
+  #     out <- paste0(out, "\n", df_to_string(table, indent = 7), "\n")}
+  #   message(out)
+  #   return(n + 1)
+  # }
 
-  message_df <- function(df) {
-    message(paste0(
-      df_to_string(df, indent = 6, header_sep = TRUE), "\n"))
-  }
-
-  message_code <- function(fct, data, header = "", footer = "", indent = 3,
-                           collapse = " %>%") {
-    if(header != "") header <- paste0(indent_string(indent + 2), header, "\n")
-    if(footer != "") footer <- paste0("\n", indent_string(indent + 2), footer)
-
-    lines <- paste0(indent_string(indent + 2), sapply(data, fct))
-
-    message(paste0(
-      indent_string(indent), "---\n",
-      header,
-      paste0(lines, collapse = paste0(collapse, "\n")),
-      footer,
-      "\n",
-      indent_string(indent), "---\n"))
-  }
-
-  suggest_out <- function(n, ..., table = NULL) {
-    args <- lapply(list(...), as.character)
-    text <- paste0(args, collapse = "")
-    out <- paste0(str_wrap(paste0(n, ". ", text),
-      width = 80, indent = 0, exdent = 3), "\n")
-    if (!is.null(table)) {
-      out <- paste0(out, "\n", df_to_string(table, indent = 7), "\n")}
-    message(out)
-    return(n + 1)
-  }
+  # cli_text <- function(n, ..., table = NULL) {
+  #   args <- lapply(list(...), as.character)
+  #   text <- paste0(args, collapse = "")
+  #   out <- paste0(str_wrap(paste0(n, ". ", text),
+  #                          width = 80, indent = 0, exdent = 3), "\n")
+  #   if (!is.null(table)) {
+  #     out <- paste0(out, "\n", df_to_string(table, indent = 7), "\n")}
+  #   cli::cli_text(out)
+  #   return(n + 1)
+  # }
 
   if(!has_domain(obj, c("dm", "ex", "pc")))
     stop("Domains DM, EX and PC must be present!")
 
-  # Domains
-  dm <- domain(obj, "dm")
-  ex <- domain(obj, "ex")
+  # # Domains
+  # dm <- domain(obj, "dm")
+  # ex <- domain(obj, "ex")
   pc <- domain(obj, "pc")
 
   # Function body
   n_suggestion <- 1
 
-  # treatments <- distinct(obj$ex, EXTRT)
-  treatments <- distinct(ex, EXTRT)
-  n_trt <- length(treatments$EXTRT)
+  # # treatments <- distinct(obj$ex, EXTRT)
+  # treatments <- distinct(ex, EXTRT)
+  # n_trt <- length(treatments$EXTRT)
+  #
+  # # analytes <- distinct(obj$pc, PCTEST, PCTESTCD)
+  # analytes <- distinct(pc, PCTEST, PCTESTCD)
+  # n_analytes <- length(analytes$PCTESTCD)
 
-  # analytes <- distinct(obj$pc, PCTEST, PCTESTCD)
-  analytes <- distinct(pc, PCTEST, PCTESTCD)
-  n_analytes <- length(analytes$PCTESTCD)
+  sdtm_summary <- summary(obj)
+
 
   # 1. Analyte mappings
-  if(isTRUE(consider_nif_auto)) {
-    n_suggestion <- suggest_out(n_suggestion,
-      "There are ", nrow(treatments), " treatments (EXTRT) in 'EX':")
-    message_df(treatments)
-    message_block("There are ", nrow(analytes),
-                  " pharmacokinetic analytes (PCTESTCD) in 'PC':")
-    message_df(analytes)
-    message_block(
-      "To associate treatments with their respective parent analyte, consider ",
-      "adding analyte mapping(s) to the sdtm object using the below code ",
-      "snippet (replace 'x' with the corresponding PCTESTCD):")
-    message_code(function(x) {
-      paste0("add_analyte_mapping('", x, "', 'x')")}, treatments$EXTRT)
-    message_block(
-      "For further information see the documentation to 'add_analyte_mapping ",
-      "('?add_analyte_mapping').")
-  }
+  # if(isTRUE(consider_nif_auto)) {
+  #   n_suggestion <- suggest_out(n_suggestion,
+  #     "There are ", nrow(treatments), " treatments (EXTRT) in 'EX':")
+  #   message_df(treatments)
+  #   message_block("There are ", nrow(analytes),
+  #                 " pharmacokinetic analytes (PCTESTCD) in 'PC':")
+  #   message_df(analytes)
+  #   message_block(
+  #     "To associate treatments with their respective parent analyte, consider ",
+  #     "adding analyte mapping(s) to the sdtm object using the below code ",
+  #     "snippet (replace 'x' with the corresponding PCTESTCD):")
+  #   message_code(function(x) {
+  #     paste0("add_analyte_mapping('", x, "', 'x')")}, treatments$EXTRT)
+  #   message_block(
+  #     "For further information see the documentation to 'add_analyte_mapping ",
+  #     "('?add_analyte_mapping').")
+  # }
+
+  # Treatments
+  cli::cli_h1(paste0("{n_suggestion}. Treatments"))
+  n_suggestion <- n_suggestion + 1
+  cli::cli_text(paste0("There are {length(sdtm_summary$treatments)} treatments ",
+    "(EXTRT) in EX: {nice_enumeration(sdtm_summary$treatments)}. ",
+    "Consider adding them to the nif object using `add_administration()`, ",
+    "see the code snippet below (replace 'sdtm' with the name of your sdtm ",
+    "object):"))
+  cli::cli_text()
+
+  message_code(
+    function(x) {paste0( "  add_administration(sdtm, '", x, "') %>%")},
+    sdtm_summary$treatments
+  )
+
 
   # 2. Metabolite mappings
-  if(isTRUE(consider_nif_auto)){
-    if (n_analytes > n_trt) {
-      n_suggestion <- suggest_out(n_suggestion, paste0(
-        "Only needed if you want to generate nif objects automatically (using ",
-        "'nif_auto()'): ",
-        "There are more pharmacokinetic analytes in 'PC' than treatments in ",
-        "'EX'. If you want to include pharmacokinetic observations of ",
-        "metabolites, you can add metabolite mapping(s) to the sdtm object ",
-        "using 'add_metabolite_mapping' (see ?add_metabolite_mapping for ",
-        "further information)."
-      ))
-    }
-  }
+  # if(isTRUE(consider_nif_auto)){
+  #   if (n_analytes > n_trt) {
+  #     n_suggestion <- suggest_out(n_suggestion, paste0(
+  #       "Only needed if you want to generate nif objects automatically (using ",
+  #       "'nif_auto()'): ",
+  #       "There are more pharmacokinetic analytes in 'PC' than treatments in ",
+  #       "'EX'. If you want to include pharmacokinetic observations of ",
+  #       "metabolites, you can add metabolite mapping(s) to the sdtm object ",
+  #       "using 'add_metabolite_mapping' (see ?add_metabolite_mapping for ",
+  #       "further information)."
+  #     ))
+  #   }
+  # }
 
   # 3. Treatments
-  if (n_trt > 0) {
-    n_suggestion <- suggest_out(n_suggestion,
-      "There are ", n_trt, " different treatments in 'EX' (see ",
-      "below).")
-    message_df(treatments)
-    message_block(
-      "Consider adding them to the nif object using `add_administration()`, ",
-      "see the code snippet below (replace 'sdtm' with the name of your sdtm ",
-      "object):")
-    message_code(
-      function(x) {paste0( "  add_administration(sdtm, '", x, "')")},
-      treatments$EXTRT,
-      header = "%>%")
-    }
+  # if (n_trt > 0) {
+  #   n_suggestion <- suggest_out(n_suggestion,
+  #     "There are ", n_trt, " different treatments in 'EX' (see ",
+  #     "below).")
+  #   message_df(treatments)
+  #   message_block(
+  #     "Consider adding them to the nif object using `add_administration()`, ",
+  #     "see the code snippet below (replace 'sdtm' with the name of your sdtm ",
+  #     "object):")
+  #   message_code(
+  #     function(x) {paste0( "  add_administration(sdtm, '", x, "')")},
+  #     treatments$EXTRT,
+  #     header = "%>%")
+  #   }
 
   # 4. PK observations
-  if(n_analytes > 0) {
-    n_suggestion <- suggest_out(n_suggestion,
-      "There are ", n_analytes, " different pharmacokinetic analytes in ",
-      "'PC':")
-    message_df(analytes)
-    message_block(
-      # "Consider adding them to the nif object using `add_observation()`. ",
-      # "Replace 'sdtm' with the name of your sdtm object and 'x' with the ",
-      # "treatment code of the relevant treatment (",
-      # nice_enumeration(unique(treatments$EXTRT), conjunction = "or"), "):"
-      "Consider adding them to the nif object using `add_observation()`, ",
-      "see the code snippet below (",
-      "replace 'sdtm' with the name of your sdtm object):"
-      )
-    message_code(
-      function(x) {
-        paste0("  add_observation(sdtm, 'pc', '", x, "', parent = 'x')")},
-      analytes$PCTESTCD,
-      header = "%>%")}
+  # if(n_analytes > 0) {
+  #   n_suggestion <- suggest_out(n_suggestion,
+  #     "There are ", n_analytes, " different pharmacokinetic analytes in ",
+  #     "'PC':")
+  #   message_df(analytes)
+  #   message_block(
+  #     # "Consider adding them to the nif object using `add_observation()`. ",
+  #     # "Replace 'sdtm' with the name of your sdtm object and 'x' with the ",
+  #     # "treatment code of the relevant treatment (",
+  #     # nice_enumeration(unique(treatments$EXTRT), conjunction = "or"), "):"
+  #     "Consider adding them to the nif object using `add_observation()`, ",
+  #     "see the code snippet below (",
+  #     "replace 'sdtm' with the name of your sdtm object):"
+  #     )
+  #   message_code(
+  #     function(x) {
+  #       paste0("  add_observation(sdtm, 'pc', '", x, "', parent = 'x')")},
+  #     analytes$PCTESTCD,
+  #     header = "%>%")}
+  # }
 
-  # 5. PK specimens
+  # PK observations
+  cli::cli_h1("{n_suggestion}. Pharmacokinetic observations")
+  n_suggestion <- n_suggestion +1
+  if(nrow(sdtm_summary$analytes) == 1) {
+    cli::cli_text(paste0("There is one pharmacokinetic analyte: "))
+  } else {
+    cli::cli_text(paste0("There are {nrow(sdtm_summary$analytes)} ",
+                         "pharmacokinetic analytes: "))
+  }
+  cli::cli_text()
+  cli::cli_verbatim(df_to_string(sdtm_summary$analytes))
+  cli::cli_text()
+  cli::cli_text(paste0(
+    "Consider adding them to the nif object using `add_observation()`, see the ",
+    "code snippet below (replace 'sdtm' with the name of your sdtm object):"
+  ))
+  cli::cli_text()
+  message_code(
+    function(x) {paste0( "  add_observation(sdtm, 'pc', ", x, "') %>%")},
+    sdtm_summary$analytes$PCTESTCD
+  )
+  cli::cli_text()
+
+  # PK specimens
   specimens <- filter(pc, PCSPEC != "") %>%
     distinct(PCSPEC)
 
   if (nrow(specimens) > 1) {
-    n_suggestion <- suggest_out(n_suggestion,
-      "Note that there are data from ", nrow(specimens), " different PK sample ",
-      "specimen types in 'PC' (",
-      nice_enumeration(specimens$PCSPEC), "). ",
+    # cli::cli_alert_warning("Multiple specimens!")
+    cli::cli_text(paste0(
+      "Note that there are data from {nrow(specimens)} different PK sample ",
+      "specimen types in 'PC' ({nice_enumeration(specimens$PCSPEC)}). ",
       "When calling `add_observation()`, consider filtering for a specific ",
-      "specimen using the 'observation_filter' parameter.")
-    message_block(
-      "For further information see the documentation to `add_observation()`")
+      "specimen using the 'observation_filter' parameter."))
+    # cli::cli_text(
+    #   "For further information see the documentation to `add_observation()`")
   }
 
-  # 6. NTIME
-  if (!("PCELTM" %in% names(pc))) {
-    temp <- guess_ntime(obj) %>%
-      mutate(out = paste0('"', .data$PCTPT, '", ', .data$NTIME, ","))
-    n_suggestion <- suggest_out(n_suggestion,
-      "By default, `add_observation()` takes the nominal sampling time from ",
-      "the (permissible) field PCELTM. However, in this data set, PCELTM ",
-      "is not defined, and the nominal time must be manually derived from, e.g., ",
-      "PCTPT. Consider providing the NTIME_lookup parameter to ",
-      "`add_observation()` as the below data frame (make sure to review the ",
-      "suggested NTIME values):")
-    message_code(function(x) {
-      paste0("  ", x)},
-    temp$out,
-    header = "NTIME_lookup <- tribble(\n       ~PCTPT, ~NTIME,",
-    footer = ")",
-    collapse = "")
-  }
+  # # 6. NTIME
+  # if (!("PCELTM" %in% names(pc))) {
+  #   temp <- guess_ntime(obj) %>%
+  #     mutate(out = paste0('"', .data$PCTPT, '", ', .data$NTIME, ","))
+  #   n_suggestion <- suggest_out(n_suggestion,
+  #     "By default, `add_observation()` takes the nominal sampling time from ",
+  #     "the (permissible) field PCELTM. However, in this data set, PCELTM ",
+  #     "is not defined, and the nominal time must be manually derived from, e.g., ",
+  #     "PCTPT. Consider providing the NTIME_lookup parameter to ",
+  #     "`add_observation()` as the below data frame (make sure to review the ",
+  #     "suggested NTIME values):")
+  #   message_code(function(x) {
+  #     paste0("  ", x)},
+  #   temp$out,
+  #   header = "NTIME_lookup <- tribble(\n       ~PCTPT, ~NTIME,",
+  #   footer = ")",
+  #   collapse = "")
+  # }
 
-  # 7. Trial arms
-  arms <- dm %>%
-    filter(ACTARMCD != "") %>%
-    distinct(ACTARM, ACTARMCD)
+  # # 7. Trial arms
+  # arms <- dm %>%
+  #   filter(ACTARMCD != "") %>%
+  #   distinct(ACTARM, ACTARMCD)
+  #
+  # if (nrow(arms) > 1) {
+  #   n_suggestion <- suggest_out(n_suggestion,
+  #     "There are ", nrow(arms), " study arms defined in DM (see ",
+  #     "below). Consider defining a PART or ARM variable in the nif dataset, ",
+  #     "filtering for a particular arm, or defining a covariate based on ",
+  #     "ACTARMCD.")
+  #   message_df(arms)
+  # }
 
-  if (nrow(arms) > 1) {
-    n_suggestion <- suggest_out(n_suggestion,
-      "There are ", nrow(arms), " study arms defined in DM (see ",
-      "below). Consider defining a PART or ARM variable in the nif dataset, ",
-      "filtering for a particular arm, or defining a covariate based on ",
-      "ACTARMCD.")
-    message_df(arms)
+  # Trial arms
+  if(nrow(sdtm_summary$arms) > 1) {
+    cli::cli_h1("{n_suggestion}. Study arms")
+    n_suggestion <- n_suggestion + 1
+    cli::cli_text(paste0(
+      "There are {nrow(sdtm_summary$arms)} study arms defined in DM:"))
+    cli::cli_text()
+    cli::cli_verbatim(df_to_string(arrange(sdtm_summary$arms, ACTARMCD)))
+    cli::cli_text()
+    cli::cli_text(paste0(
+      "Consider defining a PART or ARM variable, filtering for a particular ",
+      "arm, or defining a covariate based on ACTARMCD."))
   }
 }
+
+
 
 
 #' Unique subjects within a sdtm object
