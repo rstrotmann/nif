@@ -600,8 +600,8 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
 
   # PK category
   if("PCCAT" %in% names(pc)){
-    cats <- filter(pc, PCCAT != "") %>%
-      distinct(PCCAT)
+    cats <- filter(pc, .data$PCCAT != "") %>%
+      distinct(.data$PCCAT)
     if(nrow(cats) > 1){
       cli::cli_h2("Pharmacokinetic categories")
       cli::cli_alert_warning(paste0(
