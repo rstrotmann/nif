@@ -458,16 +458,17 @@ print.summary_nif <- function(
   # sampling overview
   if(!is.null(x$sampling)) {
     sampling_schedule <- x$sampling
-    # out <- "Sampling schedule:\n"
-    footer <- ""
-    if(nrow(sampling_schedule) > 10) {
-      sampling_schedule <- head(sampling_schedule, 5)
-      footer <- paste0("\n", nrow(x$sampling) - 5, " more rows")
-    }
+    # footer <- ""
+    # if(nrow(sampling_schedule) > 10) {
+    #   sampling_schedule <- head(sampling_schedule, 5)
+    #   footer <- paste0("\n", nrow(x$sampling) - 5, " more rows")
+    # }
 
     cat("Sampling schedule:\n")
-    cat(df_to_string(sampling_schedule, indent = indent))
-    cat(footer)
+    # cat(df_to_string(sampling_schedule, indent = indent))
+    cat(df_to_string(
+      sampling_schedule, indent = indent, abbr_lines = 5, abbr_threshold=10))
+    # cat(footer)
     cat("\n\n")
 
   }

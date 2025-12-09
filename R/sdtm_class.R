@@ -239,12 +239,14 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
     cat(paste0("\nDCO: ", x$dco, "\n"))
 
   cat("\nData disposition\n")
-  cat(df_to_string(x$disposition,
-                   color = color, indent = indent))
+  cat(df_to_string(
+    x$disposition, color = color, indent = indent))
   cat("\n\n")
 
   cat("Arms (DM):\n")
-  cat(paste0(df_to_string(x$arms,
+  cat(paste0(df_to_string(
+    x$arms %>%
+      arrange(.data$ACTARMCD),
     color = color, indent = indent,
     show_none = TRUE
   ), "\n\n"))
