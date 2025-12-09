@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,35 +70,37 @@ mappings to the sdtm object, as logical.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">suggest</span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1. There are 1 different treatments in 'EX' (see below).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       EXTRT        </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       ----------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       EXAMPLINIB   </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Consider adding them to the nif object using `add_administration()`, see the</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    code snippet below (replace 'sdtm' with the name of your sdtm object):</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    ---</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      %&gt;%</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>        add_administration(sdtm, 'EXAMPLINIB')</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    ---</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2. There are 2 different pharmacokinetic analytes in 'PC':</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       PCTEST       PCTESTCD     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       ----------   ----------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023       RS2023       </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       RS2023487A   RS2023487A   </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Consider adding them to the nif object using `add_observation()`, see the</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    code snippet below (replace 'sdtm' with the name of your sdtm object):</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    ---</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      %&gt;%</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>        add_observation(sdtm, 'pc', 'RS2023', parent = 'x') %&gt;%</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>        add_observation(sdtm, 'pc', 'RS2023487A', parent = 'x')</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    ---</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3. There are 2 study arms defined in DM (see below). Consider defining a PART or</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    ARM variable in the nif dataset, filtering for a particular arm, or defining</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    a covariate based on ACTARMCD.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       ACTARM                 ACTARMCD    </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       --------------------   ---------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       Single Arm Treatment   TREATMENT   </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       Screen Faillure        SCRNFAIL    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1. Treatments</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> There are 1 treatments (EXTRT) in EX: EXAMPLINIB. Consider adding them to the</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> nif object using `add_administration()`, see the code snippet below (replace</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 'sdtm' with the name of your sdtm object):</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   add_administration(sdtm, 'EXAMPLINIB') %&gt;%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">2. Pharmacokinetic observations</span> <span style="color: #00BBBB;">─────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> There are 2 pharmacokinetic analytes:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> PCTEST       PCTESTCD     </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> RS2023       RS2023       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> RS2023487A   RS2023487A   </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Consider adding them to the nif object using `add_observation()`, see the code</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> snippet below (replace 'sdtm' with the name of your sdtm object):</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   add_observation(sdtm, 'pc', RS2023') %&gt;%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   add_observation(sdtm, 'pc', RS2023487A') %&gt;%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">3. Study arms</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> There are 2 study arms defined in DM:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ACTARMCD    ACTARM                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> SCRNFAIL    Screen Faillure        </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> TREATMENT   Single Arm Treatment   </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Consider defining a PART or ARM variable, filtering for a particular arm, or</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> defining a covariate based on ACTARMCD.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

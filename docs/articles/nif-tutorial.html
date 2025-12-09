@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -327,36 +327,37 @@ actual data disposition, the <code><a href="../reference/suggest.html">suggest()
 useful code snippets for the creation of analysis data sets:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/suggest.html">suggest</a></span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 1. There are 1 different treatments in 'EX' (see below).</span></span>
-<span><span class="co">#&gt;       EXTRT        </span></span>
-<span><span class="co">#&gt;       ----------</span></span>
-<span><span class="co">#&gt;       EXAMPLINIB</span></span>
-<span><span class="co">#&gt;    Consider adding them to the nif object using `add_administration()`, see the</span></span>
-<span><span class="co">#&gt;    code snippet below (replace 'sdtm' with the name of your sdtm object):</span></span>
-<span><span class="co">#&gt;    ---</span></span>
-<span><span class="co">#&gt;      %&gt;%</span></span>
-<span><span class="co">#&gt;        add_administration(sdtm, 'EXAMPLINIB')</span></span>
-<span><span class="co">#&gt;    ---</span></span>
-<span><span class="co">#&gt; 2. There are 2 different pharmacokinetic analytes in 'PC':</span></span>
-<span><span class="co">#&gt;       PCTEST       PCTESTCD     </span></span>
-<span><span class="co">#&gt;       ----------   ----------</span></span>
-<span><span class="co">#&gt;       RS2023       RS2023       </span></span>
-<span><span class="co">#&gt;       RS2023487A   RS2023487A</span></span>
-<span><span class="co">#&gt;    Consider adding them to the nif object using `add_observation()`, see the</span></span>
-<span><span class="co">#&gt;    code snippet below (replace 'sdtm' with the name of your sdtm object):</span></span>
-<span><span class="co">#&gt;    ---</span></span>
-<span><span class="co">#&gt;      %&gt;%</span></span>
-<span><span class="co">#&gt;        add_observation(sdtm, 'pc', 'RS2023', parent = 'x') %&gt;%</span></span>
-<span><span class="co">#&gt;        add_observation(sdtm, 'pc', 'RS2023487A', parent = 'x')</span></span>
-<span><span class="co">#&gt;    ---</span></span>
-<span><span class="co">#&gt; 3. There are 3 study arms defined in DM (see below). Consider defining a PART or</span></span>
-<span><span class="co">#&gt;    ARM variable in the nif dataset, filtering for a particular arm, or defining</span></span>
-<span><span class="co">#&gt;    a covariate based on ACTARMCD.</span></span>
-<span><span class="co">#&gt;       ACTARM           ACTARMCD   </span></span>
-<span><span class="co">#&gt;       --------------   --------</span></span>
-<span><span class="co">#&gt;       Screen Failure   SCRNFAIL   </span></span>
-<span><span class="co">#&gt;       Fed - Fasted     BA         </span></span>
-<span><span class="co">#&gt;       Fasted - Fed     AB</span></span></code></pre></div>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1. Treatments</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; There are 1 treatments (EXTRT) in EX: EXAMPLINIB. Consider adding them to the</span></span>
+<span><span class="co">#&gt; nif object using `add_administration()`, see the code snippet below (replace</span></span>
+<span><span class="co">#&gt; 'sdtm' with the name of your sdtm object):</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   add_administration(sdtm, 'EXAMPLINIB') %&gt;%</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">2. Pharmacokinetic observations</span> <span style="color: #00BBBB;">─────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; There are 2 pharmacokinetic analytes:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; PCTEST       PCTESTCD     </span></span>
+<span><span class="co">#&gt; RS2023       RS2023       </span></span>
+<span><span class="co">#&gt; RS2023487A   RS2023487A</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Consider adding them to the nif object using `add_observation()`, see the code</span></span>
+<span><span class="co">#&gt; snippet below (replace 'sdtm' with the name of your sdtm object):</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   add_observation(sdtm, 'pc', RS2023') %&gt;%</span></span>
+<span><span class="co">#&gt;   add_observation(sdtm, 'pc', RS2023487A') %&gt;%</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">3. Study arms</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; There are 3 study arms defined in DM:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ACTARMCD   ACTARM           </span></span>
+<span><span class="co">#&gt; AB         Fasted - Fed     </span></span>
+<span><span class="co">#&gt; BA         Fed - Fasted     </span></span>
+<span><span class="co">#&gt; SCRNFAIL   Screen Failure</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Consider defining a PART or ARM variable, filtering for a particular arm, or</span></span>
+<span><span class="co">#&gt; defining a covariate based on ACTARMCD.</span></span></code></pre></div>
 <p>In the above example, suggestions 1 and 2 provide code for the
 creation of administration and observation events. We will use this code
 directly as provided in section [Creating NIF data sets].</p>
