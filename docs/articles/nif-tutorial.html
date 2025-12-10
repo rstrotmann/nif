@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -197,13 +197,13 @@ information:</p>
 <span><span class="co">#&gt;   pc       20         1360           </span></span>
 <span><span class="co">#&gt;   lb       28         28             </span></span>
 <span><span class="co">#&gt;   ts       0          0              </span></span>
-<span><span class="co">#&gt;   pp       20         360            </span></span>
+<span><span class="co">#&gt;   pp       20         360             </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Arms (DM):</span></span>
 <span><span class="co">#&gt;   ACTARMCD   ACTARM           </span></span>
-<span><span class="co">#&gt;   SCRNFAIL   Screen Failure   </span></span>
-<span><span class="co">#&gt;   BA         Fed - Fasted     </span></span>
 <span><span class="co">#&gt;   AB         Fasted - Fed     </span></span>
+<span><span class="co">#&gt;   BA         Fed - Fasted     </span></span>
+<span><span class="co">#&gt;   SCRNFAIL   Screen Failure    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments (EX):</span></span>
 <span><span class="co">#&gt;   EXAMPLINIB</span></span>
@@ -214,7 +214,7 @@ information:</p>
 <span><span class="co">#&gt; PK analytes (PC):</span></span>
 <span><span class="co">#&gt;   PCTEST       PCTESTCD     </span></span>
 <span><span class="co">#&gt;   RS2023       RS2023       </span></span>
-<span><span class="co">#&gt;   RS2023487A   RS2023487A    </span></span>
+<span><span class="co">#&gt;   RS2023487A   RS2023487A     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Hash: 295fd51437d90b19b7e4d80e4c7dd51f</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 11:28:00</span></span></code></pre></div>
@@ -277,7 +277,7 @@ overview on a specific domain:</p>
 <span><span class="co">#&gt; Testcodes</span></span>
 <span><span class="co">#&gt;   PCTEST       PCTESTCD     PCSPEC   </span></span>
 <span><span class="co">#&gt;   RS2023       RS2023       PLASMA   </span></span>
-<span><span class="co">#&gt;   RS2023487A   RS2023487A   PLASMA    </span></span>
+<span><span class="co">#&gt;   RS2023487A   RS2023487A   PLASMA     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Observation time points</span></span>
 <span><span class="co">#&gt;   PCTPT                 PCTPTNUM   PCELTM   </span></span>
@@ -297,10 +297,10 @@ overview on a specific domain:</p>
 <span><span class="co">#&gt;   72 HOURS POST-DOSE    72         PT72H    </span></span>
 <span><span class="co">#&gt;   96 HOURS POST-DOSE    96         PT96H    </span></span>
 <span><span class="co">#&gt;   144 HOURS POST-DOSE   144        PT144H   </span></span>
-<span><span class="co">#&gt;   168 HOURS POST-DOSE   168        PT168H    </span></span>
+<span><span class="co">#&gt;   168 HOURS POST-DOSE   168        PT168H     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Epochs</span></span>
-<span><span class="co">#&gt;   OPEN LABEL TREATMENT    </span></span>
+<span><span class="co">#&gt;   OPEN LABEL TREATMENT     </span></span>
 <span><span class="co">#&gt; Hash: d29adb9ffafcfd308f6b38947fefecde</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-02 12:31:00</span></span></code></pre></div>
 <p>A graphical timeline overview can be generated for a specific domain
@@ -333,31 +333,57 @@ useful code snippets for the creation of analysis data sets:</p>
 <span><span class="co">#&gt; nif object using `add_administration()`, see the code snippet below (replace</span></span>
 <span><span class="co">#&gt; 'sdtm' with the name of your sdtm object):</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   add_administration(sdtm, 'EXAMPLINIB') %&gt;%</span></span>
+<span><span class="co">#&gt;   <span style="font-weight: bold;">add_administration</span><span style="color: #D7AF00;">(</span>sdtm, <span style="color: #00AFAF;">'EXAMPLINIB'</span><span style="color: #D7AF00;">)</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">2. Pharmacokinetic observations</span> <span style="color: #00BBBB;">─────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; There are 2 pharmacokinetic analytes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; PCTEST       PCTESTCD     </span></span>
-<span><span class="co">#&gt; RS2023       RS2023       </span></span>
-<span><span class="co">#&gt; RS2023487A   RS2023487A</span></span>
+<span><span class="co">#&gt;   PCTEST       PCTESTCD     </span></span>
+<span><span class="co">#&gt;   RS2023       RS2023       </span></span>
+<span><span class="co">#&gt;   RS2023487A   RS2023487A</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Consider adding them to the nif object using `add_observation()`, see the code</span></span>
 <span><span class="co">#&gt; snippet below (replace 'sdtm' with the name of your sdtm object):</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   add_observation(sdtm, 'pc', RS2023') %&gt;%</span></span>
-<span><span class="co">#&gt;   add_observation(sdtm, 'pc', RS2023487A') %&gt;%</span></span>
+<span><span class="co">#&gt;   <span style="font-weight: bold;">add_observation</span><span style="color: #D7AF00;">(</span>sdtm, <span style="color: #00AFAF;">'pc'</span>, <span style="color: #00AFAF;">'RS2023'</span><span style="color: #D7AF00;">)</span></span></span>
+<span><span class="co">#&gt;   <span style="font-weight: bold;">add_observation</span><span style="color: #D7AF00;">(</span>sdtm, <span style="color: #00AFAF;">'pc'</span>, <span style="color: #00AFAF;">'RS2023487A'</span><span style="color: #D7AF00;">)</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">NTIME definition</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The PC domain contains multiple fields that the nominal sampling time can be</span></span>
+<span><span class="co">#&gt; derived from:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   PCTPT                 PCTPTNUM   PCELTM   </span></span>
+<span><span class="co">#&gt;   PREDOSE               0          PT0H     </span></span>
+<span><span class="co">#&gt;   0.5 HOURS POST-DOSE   0.5        PT0.5H   </span></span>
+<span><span class="co">#&gt;   1 HOURS POST-DOSE     1          PT1H     </span></span>
+<span><span class="co">#&gt;   1.5 HOURS POST-DOSE   1.5        PT1.5H   </span></span>
+<span><span class="co">#&gt;   2 HOURS POST-DOSE     2          PT2H      </span></span>
+<span><span class="co">#&gt;   (12 more rows)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Consider specifying a suitabe 'ntime_method' argument to 'add_observation()'.</span></span>
+<span><span class="co">#&gt; By default, the function will attempt to extract time information from the</span></span>
+<span><span class="co">#&gt; PCTPT field.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">3. Study arms</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; There are 3 study arms defined in DM:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ACTARMCD   ACTARM           </span></span>
-<span><span class="co">#&gt; AB         Fasted - Fed     </span></span>
-<span><span class="co">#&gt; BA         Fed - Fasted     </span></span>
-<span><span class="co">#&gt; SCRNFAIL   Screen Failure</span></span>
+<span><span class="co">#&gt;   ACTARMCD   ACTARM           </span></span>
+<span><span class="co">#&gt;   AB         Fasted - Fed     </span></span>
+<span><span class="co">#&gt;   BA         Fed - Fasted     </span></span>
+<span><span class="co">#&gt;   SCRNFAIL   Screen Failure</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Consider defining a PART or ARM variable, filtering for a particular arm, or</span></span>
-<span><span class="co">#&gt; defining a covariate based on ACTARMCD.</span></span></code></pre></div>
+<span><span class="co">#&gt; defining a covariate based on ACTARMCD.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">4. Baseline covariates</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; The LB domains contains creatinine (CREAT) observations. Consider adding a</span></span>
+<span><span class="co">#&gt; baseline creatinine covariate, baseline creatinine clearance (BL_CRCL) and</span></span>
+<span><span class="co">#&gt; baseline renal function category:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   <span style="font-weight: bold;">add_observation</span><span style="color: #D7AF00;">(</span>sdtm, <span style="color: #00AFAF;">'lb'</span>, <span style="color: #00AFAF;">'CREAT'</span><span style="color: #D7AF00;">)</span></span></span>
+<span><span class="co">#&gt;   <span style="font-weight: bold;">add_bl_crcl</span><span style="color: #D7AF00;">()</span></span></span>
+<span><span class="co">#&gt;   <span style="font-weight: bold;">add_bl_renal</span><span style="color: #D7AF00;">()</span></span></span></code></pre></div>
 <p>In the above example, suggestions 1 and 2 provide code for the
 creation of administration and observation events. We will use this code
 directly as provided in section [Creating NIF data sets].</p>
@@ -510,12 +536,12 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
 <span><span class="co">#&gt; Data from 20 subjects across one study:</span></span>
 <span><span class="co">#&gt;   STUDYID      N    </span></span>
-<span><span class="co">#&gt;   2023000400   20   </span></span>
+<span><span class="co">#&gt;   2023000400   20    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
 <span><span class="co">#&gt;   SEX      N    percent   </span></span>
 <span><span class="co">#&gt;   male     13   65        </span></span>
-<span><span class="co">#&gt;   female   7    35        </span></span>
+<span><span class="co">#&gt;   female   7    35         </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments:</span></span>
 <span><span class="co">#&gt;   RS2023</span></span>
@@ -525,11 +551,11 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects per dose level:</span></span>
 <span><span class="co">#&gt;   RS2023   N    </span></span>
-<span><span class="co">#&gt;   500      20   </span></span>
+<span><span class="co">#&gt;   500      20    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 680 observations:</span></span>
 <span><span class="co">#&gt;   CMT   ANALYTE   N     </span></span>
-<span><span class="co">#&gt;   2     RS2023    680   </span></span>
+<span><span class="co">#&gt;   2     RS2023    680    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sampling schedule:</span></span>
 <span><span class="co">#&gt;   NTIME   RS2023   </span></span>
@@ -537,16 +563,16 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   0.5     X        </span></span>
 <span><span class="co">#&gt;   1       X        </span></span>
 <span><span class="co">#&gt;   1.5     X        </span></span>
-<span><span class="co">#&gt;   2       X        </span></span>
-<span><span class="co">#&gt; 12 more rows</span></span>
+<span><span class="co">#&gt;   2       X         </span></span>
+<span><span class="co">#&gt;   (12 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions</span></span>
 <span><span class="co">#&gt;   RS2023   </span></span>
-<span><span class="co">#&gt;   0        </span></span>
+<span><span class="co">#&gt;   0         </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#&gt;   RS2023   2     2     2      2        </span></span>
+<span><span class="co">#&gt;   RS2023   2     2     2      2         </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Hash: 18f2357de9faa8fcc64cb06f04f8d3b0</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 10:28:00</span></span></code></pre></div>

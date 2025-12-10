@@ -140,7 +140,7 @@ nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)
 #>   1    3       3      3     RS2023    0      2     0     5      19.399   
 #>   1    4       4      4     RS2023    0      2     0     5      10.533   
 #>   1    6       6      6     RS2023    0      2     0     5      2.953    
-#>   1    8       8      8     RS2023    0      2     0     5      1.034    
+#>   1    8       8      8     RS2023    0      2     0     5      1.034     
 #> 854 more rows
 nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
 #> ----- NONMEM Input Format (NIF) data -----
@@ -166,7 +166,7 @@ nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
 #>   1    1       1      1     RS2023487A   0      3     0     5      31.645   
 #>   1    1.5     1.5    1.5   RS2023       0      2     0     5      44.039   
 #>   1    1.5     1.5    1.5   RS2023487A   0      3     0     5      41.021   
-#>   1    2       2      2     RS2023       0      2     0     5      34.073   
+#>   1    2       2      2     RS2023       0      2     0     5      34.073    
 #> 1670 more rows
 nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
 #> ----- NONMEM Input Format (NIF) data -----
@@ -192,6 +192,6 @@ nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
 #>   7    0       0      0     WEIGHT    1      1     20    20     NA   
 #>   8    0       0      0     WEIGHT    1      1     20    20     NA   
 #>   9    0       0      0     WEIGHT    1      1     20    20     NA   
-#>   10   0       0      0     WEIGHT    1      1     50    50     NA   
+#>   10   0       0      0     WEIGHT    1      1     50    50     NA    
 #> 38 more rows
 ```

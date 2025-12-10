@@ -145,13 +145,13 @@ examplinib_fe
 #>   pc       20         1360           
 #>   lb       28         28             
 #>   ts       0          0              
-#>   pp       20         360            
+#>   pp       20         360             
 #> 
 #> Arms (DM):
 #>   ACTARMCD   ACTARM           
-#>   SCRNFAIL   Screen Failure   
-#>   BA         Fed - Fasted     
 #>   AB         Fasted - Fed     
+#>   BA         Fed - Fasted     
+#>   SCRNFAIL   Screen Failure    
 #> 
 #> Treatments (EX):
 #>   EXAMPLINIB
@@ -162,7 +162,7 @@ examplinib_fe
 #> PK analytes (PC):
 #>   PCTEST       PCTESTCD     
 #>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A    
+#>   RS2023487A   RS2023487A     
 #> 
 #> Hash: 295fd51437d90b19b7e4d80e4c7dd51f
 #> Last DTC: 2001-03-10 11:28:00
@@ -234,7 +234,7 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #> Testcodes
 #>   PCTEST       PCTESTCD     PCSPEC   
 #>   RS2023       RS2023       PLASMA   
-#>   RS2023487A   RS2023487A   PLASMA    
+#>   RS2023487A   RS2023487A   PLASMA     
 #> 
 #> Observation time points
 #>   PCTPT                 PCTPTNUM   PCELTM   
@@ -254,10 +254,10 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #>   72 HOURS POST-DOSE    72         PT72H    
 #>   96 HOURS POST-DOSE    96         PT96H    
 #>   144 HOURS POST-DOSE   144        PT144H   
-#>   168 HOURS POST-DOSE   168        PT168H    
+#>   168 HOURS POST-DOSE   168        PT168H     
 #> 
 #> Epochs
-#>   OPEN LABEL TREATMENT    
+#>   OPEN LABEL TREATMENT     
 #> Hash: d29adb9ffafcfd308f6b38947fefecde
 #> Last DTC: 2001-03-02 12:31:00
 ```
@@ -296,31 +296,57 @@ suggest(examplinib_fe)
 #> nif object using `add_administration()`, see the code snippet below (replace
 #> 'sdtm' with the name of your sdtm object):
 #> 
-#>   add_administration(sdtm, 'EXAMPLINIB') %>%
+#>   add_administration(sdtm, 'EXAMPLINIB')
 #> 
 #> ── 2. Pharmacokinetic observations ─────────────────────────────────────────────
 #> There are 2 pharmacokinetic analytes:
 #> 
-#> PCTEST       PCTESTCD     
-#> RS2023       RS2023       
-#> RS2023487A   RS2023487A
+#>   PCTEST       PCTESTCD     
+#>   RS2023       RS2023       
+#>   RS2023487A   RS2023487A
 #> 
 #> Consider adding them to the nif object using `add_observation()`, see the code
 #> snippet below (replace 'sdtm' with the name of your sdtm object):
 #> 
-#>   add_observation(sdtm, 'pc', RS2023') %>%
-#>   add_observation(sdtm, 'pc', RS2023487A') %>%
+#>   add_observation(sdtm, 'pc', 'RS2023')
+#>   add_observation(sdtm, 'pc', 'RS2023487A')
+#> 
+#> ── NTIME definition ──
+#> 
+#> The PC domain contains multiple fields that the nominal sampling time can be
+#> derived from:
+#> 
+#>   PCTPT                 PCTPTNUM   PCELTM   
+#>   PREDOSE               0          PT0H     
+#>   0.5 HOURS POST-DOSE   0.5        PT0.5H   
+#>   1 HOURS POST-DOSE     1          PT1H     
+#>   1.5 HOURS POST-DOSE   1.5        PT1.5H   
+#>   2 HOURS POST-DOSE     2          PT2H      
+#>   (12 more rows)
+#> 
+#> Consider specifying a suitabe 'ntime_method' argument to 'add_observation()'.
+#> By default, the function will attempt to extract time information from the
+#> PCTPT field.
 #> 
 #> ── 3. Study arms ───────────────────────────────────────────────────────────────
 #> There are 3 study arms defined in DM:
 #> 
-#> ACTARMCD   ACTARM           
-#> AB         Fasted - Fed     
-#> BA         Fed - Fasted     
-#> SCRNFAIL   Screen Failure
+#>   ACTARMCD   ACTARM           
+#>   AB         Fasted - Fed     
+#>   BA         Fed - Fasted     
+#>   SCRNFAIL   Screen Failure
 #> 
 #> Consider defining a PART or ARM variable, filtering for a particular arm, or
 #> defining a covariate based on ACTARMCD.
+#> 
+#> ── 4. Baseline covariates ──────────────────────────────────────────────────────
+#> The LB domains contains creatinine (CREAT) observations. Consider adding a
+#> baseline creatinine covariate, baseline creatinine clearance (BL_CRCL) and
+#> baseline renal function category:
+#> 
+#>   add_observation(sdtm, 'lb', 'CREAT')
+#>   add_bl_crcl()
+#>   add_bl_renal()
 ```
 
 In the above example, suggestions 1 and 2 provide code for the creation
@@ -490,12 +516,12 @@ summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 20 subjects across one study:
 #>   STUDYID      N    
-#>   2023000400   20   
+#>   2023000400   20    
 #> 
 #> Sex distribution:
 #>   SEX      N    percent   
 #>   male     13   65        
-#>   female   7    35        
+#>   female   7    35         
 #> 
 #> Treatments:
 #>   RS2023
@@ -505,11 +531,11 @@ summary(nif)
 #> 
 #> Subjects per dose level:
 #>   RS2023   N    
-#>   500      20   
+#>   500      20    
 #> 
 #> 680 observations:
 #>   CMT   ANALYTE   N     
-#>   2     RS2023    680   
+#>   2     RS2023    680    
 #> 
 #> Sampling schedule:
 #>   NTIME   RS2023   
@@ -517,16 +543,16 @@ summary(nif)
 #>   0.5     X        
 #>   1       X        
 #>   1.5     X        
-#>   2       X        
-#> 12 more rows
+#>   2       X         
+#>   (12 more rows)
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
-#>   0        
+#>   0         
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   RS2023   2     2     2      2        
+#>   RS2023   2     2     2      2         
 #> 
 #> Hash: 18f2357de9faa8fcc64cb06f04f8d3b0
 #> Last DTC: 2001-03-10 10:28:00

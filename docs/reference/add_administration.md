@@ -103,6 +103,6 @@ add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
 #>   7    0       0      0     EXAMPLINIB   1      1     20    20     NA   
 #>   8    0       0      0     EXAMPLINIB   1      1     20    20     NA   
 #>   9    0       0      0     EXAMPLINIB   1      1     20    20     NA   
-#>   10   0       0      0     EXAMPLINIB   1      1     50    50     NA   
+#>   10   0       0      0     EXAMPLINIB   1      1     50    50     NA    
 #> 38 more rows
 ```

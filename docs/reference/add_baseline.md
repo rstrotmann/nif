@@ -116,7 +116,7 @@ add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
 #>   1    3       3      3     RS2023    0      2     0     5      19.399   
 #>   1    4       4      4     RS2023    0      2     0     5      10.533   
 #>   1    6       6      6     RS2023    0      2     0     5      2.953    
-#>   1    8       8      8     RS2023    0      2     0     5      1.034    
+#>   1    8       8      8     RS2023    0      2     0     5      1.034     
 #> 854 more rows
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
   baseline_filter = "VSBLFL == 'Y'")
@@ -143,6 +143,6 @@ add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
 #>   1    3       3      3     RS2023    0      2     0     5      19.399   
 #>   1    4       4      4     RS2023    0      2     0     5      10.533   
 #>   1    6       6      6     RS2023    0      2     0     5      2.953    
-#>   1    8       8      8     RS2023    0      2     0     5      1.034    
+#>   1    8       8      8     RS2023    0      2     0     5      1.034     
 #> 854 more rows
 ```

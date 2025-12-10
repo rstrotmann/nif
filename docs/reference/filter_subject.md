@@ -39,11 +39,11 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   pc       1          44             
 #>   lb       1          1              
 #>   ts       0          0              
-#>   pp       1          18             
+#>   pp       1          18              
 #> 
 #> Arms (DM):
 #>   ACTARMCD    ACTARM                 
-#>   TREATMENT   Single Arm Treatment   
+#>   TREATMENT   Single Arm Treatment    
 #> 
 #> Treatments (EX):
 #>   EXAMPLINIB
@@ -54,7 +54,7 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #> PK analytes (PC):
 #>   PCTEST       PCTESTCD     
 #>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A    
+#>   RS2023487A   RS2023487A     
 #> 
 #> Hash: 3dd48da8041b03cc2f190fee99f6a7e1
 #> Last DTC: 2001-03-14 10:09:00
@@ -82,6 +82,6 @@ filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 #>   1    1       1.467   1.467   RS2023487A   0      3     0     500    677.321    
 #>   1    1.5     2       2       RS2023       0      2     0     500    2773.308   
 #>   1    1.5     2       2       RS2023487A   0      3     0     500    1547.253   
-#>   1    2       2.467   2.467   RS2023       0      2     0     500    2539.54    
+#>   1    2       2.467   2.467   RS2023       0      2     0     500    2539.54     
 #> 125 more rows
 ```

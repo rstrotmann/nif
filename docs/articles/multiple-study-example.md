@@ -41,19 +41,19 @@ nif %>%
 #>   STUDYID      N    
 #>   2023000001   48   
 #>   2023000022   80   
-#>   2023000400   20   
+#>   2023000400   20    
 #> 
 #> Sex distribution:
 #>   SEX      N     percent   
 #>   male     108   73        
-#>   female   40    27        
+#>   female   40    27         
 #> 
 #> Renal impairment class:
 #>   CLASS      N    percent   
 #>   normal     89   60.1      
 #>   mild       44   29.7      
 #>   moderate   15   10.1      
-#>   severe     0    0         
+#>   severe     0    0          
 #> 
 #> Treatments:
 #>   RS2023
@@ -71,11 +71,11 @@ nif %>%
 #>   200      3     
 #>   500      118   
 #>   800      6     
-#>   1000     3     
+#>   1000     3      
 #> 
 #> 2168 observations:
 #>   CMT   ANALYTE   N      
-#>   2     RS2023    2168   
+#>   2     RS2023    2168    
 #> 
 #> Sampling schedule:
 #>   NTIME   RS2023   
@@ -83,16 +83,16 @@ nif %>%
 #>   0.5     X        
 #>   1       X        
 #>   1.5     X        
-#>   2       X        
-#> 12 more rows
+#>   2       X         
+#>   (12 more rows)
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
-#>   25       
+#>   25        
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   RS2023   1     99    43     58.5     
+#>   RS2023   1     99    43     58.5      
 #> 
 #> Hash: 90d003896ba9b5241af52ea84559e2ff
 #> Last DTC: 2001-07-14 08:53:00

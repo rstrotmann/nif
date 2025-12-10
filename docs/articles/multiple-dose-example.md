@@ -51,12 +51,12 @@ summary(examplinib_poc)
 #>   pc       80         1344           
 #>   lb       103        103            
 #>   ts       0          0              
-#>   pp       13         432            
+#>   pp       13         432             
 #> 
 #> Arms (DM):
 #>   ACTARMCD    ACTARM                 
-#>   TREATMENT   Single Arm Treatment   
 #>   SCRNFAIL    Screen Faillure        
+#>   TREATMENT   Single Arm Treatment    
 #> 
 #> Treatments (EX):
 #>   EXAMPLINIB
@@ -67,7 +67,7 @@ summary(examplinib_poc)
 #> PK analytes (PC):
 #>   PCTEST       PCTESTCD     
 #>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A    
+#>   RS2023487A   RS2023487A     
 #> 
 #> Hash: 6e3a2050709bc485b93bd185bb28c988
 #> Last DTC: 2001-07-14 10:53:00
@@ -148,19 +148,19 @@ summary(nif_poc)
 #  ----- NONMEM Input Format (NIF) data summary -----
 #  Data from 80 subjects across one study:
 #    STUDYID      N    
-#    2023000022   80   
+#    2023000022   80    
 #  
 #  Sex distribution:
 #    SEX      N    percent   
 #    male     47   58.8      
-#    female   33   41.2      
+#    female   33   41.2       
 #  
 #  Renal impairment class:
 #    CLASS      N    percent   
 #    normal     31   38.8      
 #    mild       34   42.5      
 #    moderate   15   18.8      
-#    severe     0    0         
+#    severe     0    0          
 #  
 #  Treatments:
 #    RS2023
@@ -170,12 +170,12 @@ summary(nif_poc)
 #  
 #  Subjects per dose level:
 #    RS2023   N    
-#    500      80   
+#    500      80    
 #  
 #  1344 observations:
 #    CMT   ANALYTE      N     
 #    2     RS2023       672   
-#    3     RS2023487A   672   
+#    3     RS2023487A   672    
 #  
 #  Sampling schedule:
 #    NTIME   RS2023   RS2023487A   
@@ -183,16 +183,16 @@ summary(nif_poc)
 #    0.5     X        X            
 #    1       X        X            
 #    1.5     X        X            
-#    2       X        X            
-#  6 more rows
+#    2       X        X             
+#    (6 more rows)
 #  
 #  Subjects with dose reductions
 #    RS2023   
-#    25       
+#    25        
 #  
 #  Treatment duration overview:
 #    PARENT   min   max   mean   median   
-#    RS2023   56    99    78.5   79       
+#    RS2023   56    99    78.5   79        
 #  
 #  Hash: 544bf4f8b887dc936a8648dc2162fe64
 #  Last DTC: 2001-07-14 08:53:00
@@ -386,8 +386,8 @@ documentation for details.
 
 The nif package includes functions for non-compartmental PK analysis.
 Essentially, [`nca()`](../reference/nca.md) is a wrapper around
-[`PKNCA::pk.nca()`](http://humanpred.github.io/pknca/reference/pk.nca.md)
-from the popular
+[`PKNCA::pk.nca()`](https://rdrr.io/pkg/PKNCA/man/pk.nca.html) from the
+popular
 [PKNCA](https://cran.r-project.org/web/packages/PKNCA/index.html)
 package.
 
