@@ -75,8 +75,8 @@ summary.domain <- function(object, ..., silent = NULL) {
   if(testcd_field %in% names(object)) {
     test <- distinct(select(
       object,
-      # any_of(c(test_field, testcd_field, cat_field, scat_field, fast_field, "PCSPEC"))))
-      any_of(c(test_field, testcd_field, cat_field, scat_field, "PCSPEC"))))
+      any_of(c(test_field, testcd_field, cat_field, scat_field, fast_field, "PCSPEC"))))
+      # any_of(c(test_field, testcd_field, cat_field, scat_field, "PCSPEC"))))
     observations <- object %>%
       reframe(n = n(), .by = paste0(current_domain, "TESTCD"))
   } else {

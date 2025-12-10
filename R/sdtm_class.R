@@ -473,7 +473,7 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
         "Note that there are different analytical categories (PCCAT) defined in ",
         "PC: "))
       cli::cli_text()
-      cli::cli_verbatim(df_to_string(pc %>% distinct(PCCAT), indent = 2))
+      cli::cli_verbatim(df_to_string(pc %>% distinct(.data$PCCAT), indent = 2))
       cli::cli_text()
       cli::cli_text(paste0(
         "Consider filtering for specific PCCAT (and PCSCAT, if applicable) ",
@@ -505,7 +505,7 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     "can be derived from: ")
   cli::cli_text()
   cli::cli_verbatim(df_to_string(
-    time_fields, indent = 2, abbr = 5, abbr_threshold = 10))
+    time_fields, indent = 2, abbr_lines = 5, abbr_threshold = 10))
   cli::cli_text()
   cli::cli_text(paste0(
     "Consider specifying a suitabe 'ntime_method' argument to ",
