@@ -22,6 +22,7 @@ CDISC
 CFB
 CMT
 CPT
+CRCL
 Clin
 Cmax
 Cockcroft
@@ -110,11 +111,11 @@ TPTNUM
 TRTDY
 TRTESTCD
 Testcd
-Testcode
 Tmax
 ULN
 USUBJID
 USUBJIDs
+VISITDY
 VSBLFL
 VSTESTCD
 XPT
@@ -166,6 +167,7 @@ lin
 ln
 lntheta
 mdrd
+ntime
 onla
 pb
 pharmacodynamic
@@ -182,10 +184,8 @@ requiredness
 sas
 sdtm
 settin
-stdm
 stm
 testcd
-testcode
 transaminase
 umol
 vline
