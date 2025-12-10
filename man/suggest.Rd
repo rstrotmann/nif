@@ -4,7 +4,7 @@
 \alias{suggest}
 \title{Suggest data programming steps to generate a nif object from an sdtm object}
 \usage{
-suggest(obj, consider_nif_auto = FALSE)
+suggest(obj, consider_nif_auto = FALSE, show_all = FALSE)
 }
 \arguments{
 \item{obj}{A sdtm object}

@@ -402,22 +402,24 @@ subject_info.sdtm <- function(obj, id) {
 #'
 #' @examples
 #' suggest(examplinib_poc)
-suggest <- function(obj, consider_nif_auto = FALSE) {
+suggest <- function(obj, consider_nif_auto = FALSE, show_all = FALSE) {
   # input validation
   validate_sdtm(obj)
+  validate_logical_param(show_all, "show_all")
 
   message_code <- function(fct, data, header="", footer="", collapse = "%>%") {
-    # if(header != "") header <- paste0(indent_string(indent + 2), header, "\n")
-    # if(footer != "") footer <- paste0("\n", indent_string(indent + 2), footer)
-
     lines <- sapply(data, fct)
     cli::cli_code(lines)
+  }
+
+  code_lines <- function(fct, data) {
+    sapply(data, fct)
   }
 
   if(!has_domain(obj, c("dm", "ex", "pc")))
     stop("Domains DM, EX and PC must be present!")
 
-  # # Domains
+  # Domains
   pc <- domain(obj, "pc")
 
   # Function body
@@ -436,7 +438,7 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   cli::cli_text()
 
   message_code(
-    function(x) {paste0( "  add_administration(sdtm, '", x, "') %>%")},
+    function(x) {paste0( "  add_administration(sdtm, '", x, "')")},
     sdtm_summary$treatments
   )
 
@@ -458,10 +460,10 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   ))
   cli::cli_text()
   message_code(
-    function(x) {paste0( "  add_observation(sdtm, 'pc', ", x, "') %>%")},
+    function(x) {paste0( "  add_observation(sdtm, 'pc', '", x, "')")},
     sdtm_summary$analytes$PCTESTCD
   )
-  # cli::cli_text()
+
 
   # PK category
   if("PCCAT" %in% names(pc)){
@@ -486,26 +488,28 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
   specimens <- filter(pc, PCSPEC != "") %>%
     distinct(PCSPEC)
   if (nrow(specimens) > 1) {
-    # cli::cli_alert_warning("Multiple specimens!")
     cli::cli_h2("Pharmacokinetic specimens")
     cli::cli_alert_warning(paste0(
       "Note that there are data from {nrow(specimens)} different PK sample ",
       "specimen types in 'PC' ({nice_enumeration(specimens$PCSPEC)}). ",
       "When calling `add_observation()`, consider filtering for a specific ",
-      "specimen using the 'observation_filter' argument to ",
-      "'add_observation()'!"))
+      "specimen using the 'observation_filter' argument!"))
   }
 
   # NTIME
   time_fields <- distinct(pc, across(any_of(
-    c("PCTPT", "PCTPTNUM", "PCELTM"))))
+    c("PCTPT", "PCTPTNUM", "PCELTM")))) %>%
+    {if("PCTPTNUM" %in% names(pc)) arrange(., .data$PCTPTNUM) else .}
+
   cli::cli_h2("NTIME definition")
   cli::cli_text(
     "The PC domain contains multiple fields that the nominal sampling time ",
     "can be derived from: ")
   cli::cli_text()
+
+  nlines = ifelse(show_all == TRUE, Inf, 5)
   cli::cli_verbatim(df_to_string(
-    time_fields, indent = 2, abbr_lines = 5, abbr_threshold = 10))
+    time_fields, indent = 2, abbr_lines = nlines, abbr_threshold = 10))
   cli::cli_text()
   cli::cli_text(paste0(
     "Consider specifying a suitabe 'ntime_method' argument to ",
@@ -525,6 +529,36 @@ suggest <- function(obj, consider_nif_auto = FALSE) {
     cli::cli_text(paste0(
       "Consider defining a PART or ARM variable, filtering for a particular ",
       "arm, or defining a covariate based on ACTARMCD."))
+  }
+
+  # Baseline covariates
+  if("lb" %in% names(obj$domains)) {
+    lb <- domain(obj, "lb")
+    if("CREAT" %in% lb$LBTESTCD) {
+      cli::cli_h1("{n_suggestion}. Baseline covariates")
+      has_bl_flag <- any(c("LBBLFL", "LBLOBXFL") %in% names(lb))
+      n_suggestion <- n_suggestion + 1
+      cli::cli_text(paste0(
+        "The LB domains contains creatinine (CREAT) observations. ",
+        "Consider adding a baseline creatinine covariate, baseline ",
+        "creatinine clearance (BL_CRCL) and baseline renal function category:"))
+
+      if(!has_bl_flag) {
+        cli::cli_text(
+          "There is no baseline flag (LBBLFL) in the LB data, so a custom ",
+          "baseline filter must be defined!"
+        )
+      }
+
+      cli::cli_text()
+      if(has_bl_flag)
+        message_code(function(x){"  add_observation(sdtm, 'lb', 'CREAT')"}, "")
+      else
+        message_code(function(x){
+          "  add_observation(sdtm, 'lb', 'CREAT', baseline_filter = 'xxx')"}, "")
+      message_code(function(x){"  add_bl_crcl()"}, "")
+      message_code(function(x){"  add_bl_renal()"}, "")
+    }
   }
 }
 
