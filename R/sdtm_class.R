@@ -393,8 +393,8 @@ subject_info.sdtm <- function(obj, id) {
 #' Suggest data programming steps to generate a nif object from an sdtm object
 #'
 #' @param obj A sdtm object
-#' @param consider_nif_auto Include suggestions regarding parent or metabolite
-#'   mappings to the sdtm object, as logical.
+#' @param show_all Show all lines in longer data frames, as logical.
+#'
 #' @return Nothing.
 #' @import dplyr
 #' @import cli
@@ -402,7 +402,7 @@ subject_info.sdtm <- function(obj, id) {
 #'
 #' @examples
 #' suggest(examplinib_poc)
-suggest <- function(obj, consider_nif_auto = FALSE, show_all = FALSE) {
+suggest <- function(obj, show_all = FALSE) {
   # input validation
   validate_sdtm(obj)
   validate_logical_param(show_all, "show_all")

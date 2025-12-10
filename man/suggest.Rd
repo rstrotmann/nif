@@ -4,13 +4,12 @@
 \alias{suggest}
 \title{Suggest data programming steps to generate a nif object from an sdtm object}
 \usage{
-suggest(obj, consider_nif_auto = FALSE, show_all = FALSE)
+suggest(obj, show_all = FALSE)
 }
 \arguments{
 \item{obj}{A sdtm object}
 
-\item{consider_nif_auto}{Include suggestions regarding parent or metabolite
-mappings to the sdtm object, as logical.}
+\item{show_all}{Show all lines in longer data frames, as logical.}
 }
 \value{
 Nothing.
