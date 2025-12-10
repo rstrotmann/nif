@@ -1251,15 +1251,15 @@ filter_subject.nif <- function(obj, usubjid) {
 }
 
 
-#' Hash function for nif, sdtm or domain objects
-#'
-#' @param obj A nif, sdtm or domain object.
-#'
-#' @return The XXH128 hash of the object as character.
-#' @export
-hash <- function(obj) {
-  UseMethod("hash")
-}
+# Hash function for nif, sdtm or domain objects
+#
+# @param obj A nif, sdtm or domain object.
+#
+# @return The XXH128 hash of the object as character.
+# @export
+# hash <- function(obj) {
+#   UseMethod("hash")
+# }
 
 
 #' Generate the XXH128 hash of a nif object
@@ -1269,10 +1269,6 @@ hash <- function(obj) {
 #' @returns The XXH128 hash of the nif object as character.
 #' @export
 #' @importFrom rlang hash
-#' @keywords internal
-#'
-#' @examples
-#' hash(examplinib_sad_nif)
 hash.nif <- function(obj) {
   validate_nif(obj)
   rlang::hash(obj)

@@ -4,7 +4,7 @@
 \alias{hash.sdtm}
 \title{Generate the XXH128 hash of a sdtm object}
 \usage{
-\method{hash}{sdtm}(obj)
+hash.sdtm(obj)
 }
 \arguments{
 \item{obj}{A sdtm object.}
@@ -15,7 +15,3 @@ The XXH128 hash of the sdtm object as character.
 \description{
 Generate the XXH128 hash of a sdtm object
 }
-\examples{
-hash(examplinib_sad)
-}
-\keyword{internal}

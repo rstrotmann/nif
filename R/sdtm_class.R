@@ -936,10 +936,6 @@ testcd <- function(obj, domain = NULL) {
 #' @returns The XXH128 hash of the sdtm object as character.
 #' @export
 #' @importFrom rlang hash
-#' @keywords internal
-#'
-#' @examples
-#' hash(examplinib_sad)
 hash.sdtm <- function(obj) {
   validate_sdtm(obj)
   rlang::hash(obj$domains)

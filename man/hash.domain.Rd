@@ -4,7 +4,7 @@
 \alias{hash.domain}
 \title{Generate the XXH128 hash of a SDTM domain object}
 \usage{
-\method{hash}{domain}(obj)
+hash.domain(obj)
 }
 \arguments{
 \item{obj}{A SDTM domain object.}

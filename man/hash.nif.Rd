@@ -4,7 +4,7 @@
 \alias{hash.nif}
 \title{Generate the XXH128 hash of a nif object}
 \usage{
-\method{hash}{nif}(obj)
+hash.nif(obj)
 }
 \arguments{
 \item{obj}{A nif object.}
@@ -15,7 +15,3 @@ The XXH128 hash of the nif object as character.
 \description{
 Generate the XXH128 hash of a nif object
 }
-\examples{
-hash(examplinib_sad_nif)
-}
-\keyword{internal}
