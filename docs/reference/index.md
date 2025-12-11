@@ -170,7 +170,10 @@
 
 - [`get_pinboard()`](get_pinboard.md) : Get pinboard object
 
-- [`hash()`](hash.md) : Hash function for nif, sdtm or domain objects
+- [`hash.nif()`](hash.nif.md) : Generate the XXH128 hash of a nif object
+
+- [`hash.sdtm()`](hash.sdtm.md) : Generate the XXH128 hash of a sdtm
+  object
 
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection

@@ -56,7 +56,7 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A     
 #> 
-#> Hash: 3dd48da8041b03cc2f190fee99f6a7e1
+#> Hash: 7f32ff5cab2a87b488437be440c464cb
 #> Last DTC: 2001-03-14 10:09:00
 filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
 #> ----- NONMEM Input Format (NIF) data -----

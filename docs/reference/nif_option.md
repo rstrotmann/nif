@@ -14,6 +14,8 @@ supported:
 
 - `show_hash` as logical: Include dataset hash in figures.
 
+- `abbreviate` as logical: Abbreviate long lists in summary output.
+
 ## Usage
 
 ``` r

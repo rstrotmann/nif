@@ -5,8 +5,7 @@ Generate the XXH128 hash of a SDTM domain object
 ## Usage
 
 ``` r
-# S3 method for class 'domain'
-hash(obj)
+hash.domain(obj)
 ```
 
 ## Arguments

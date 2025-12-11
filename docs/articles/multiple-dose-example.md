@@ -69,7 +69,7 @@ summary(examplinib_poc)
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A     
 #> 
-#> Hash: 6e3a2050709bc485b93bd185bb28c988
+#> Hash: d95b1f82cd5c3ee539ac05c62347ba18
 #> Last DTC: 2001-07-14 10:53:00
 ```
 
@@ -386,8 +386,8 @@ documentation for details.
 
 The nif package includes functions for non-compartmental PK analysis.
 Essentially, [`nca()`](../reference/nca.md) is a wrapper around
-[`PKNCA::pk.nca()`](https://rdrr.io/pkg/PKNCA/man/pk.nca.html) from the
-popular
+[`PKNCA::pk.nca()`](http://humanpred.github.io/pknca/reference/pk.nca.md)
+from the popular
 [PKNCA](https://cran.r-project.org/web/packages/PKNCA/index.html)
 package.
 
