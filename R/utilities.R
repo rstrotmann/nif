@@ -266,13 +266,15 @@ df_to_string <- function(
   }
 
   footer <- ""
-  nr <- nrow(df)
-  if(nr > abbr_threshold) {
-    if(!is.null(abbr_lines)) {
-      df <- head(df, abbr_lines)
-      if(nr - abbr_lines > 0)
-        footer <- paste0(
-          "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)")
+  if(nif_option_value("abbreviate") == TRUE) {
+    nr <- nrow(df)
+    if(nr > abbr_threshold) {
+      if(!is.null(abbr_lines)) {
+        df <- head(df, abbr_lines)
+        if(nr - abbr_lines > 0)
+          footer <- paste0(
+            "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)")
+      }
     }
   }
 

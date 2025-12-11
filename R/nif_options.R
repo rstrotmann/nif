@@ -3,6 +3,7 @@
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
 assign("show_hash", FALSE, envir = .nif_env)
+assign("abbreviate", TRUE, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
 #assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
 
@@ -18,6 +19,7 @@ assign("version", packageVersion("nif"), envir = .nif_env)
 #' * `pinboard` as character: Pinboard path for sharing of nif/sdtm objects.
 #' * `debug` as logical: Print debug information.
 #' * `show_hash` as logical: Include dataset hash in figures.
+#' * `abbreviate` as logical: Abbreviate long lists in summary output.
 #'
 #' @param ... Options as named values, or nothing.
 #'
@@ -35,7 +37,8 @@ nif_option <- function(...) {
     "watermark",  is.character,
     "debug",      is.logical,
     "show_hash",  is.logical,
-    "test",       is.character
+    "test",       is.character,
+    "abbreviate", is.logical,
     # "disclaimer", is.character
   )
 

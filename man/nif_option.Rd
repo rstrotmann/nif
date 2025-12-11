@@ -21,6 +21,7 @@ supported:
 \item \code{pinboard} as character: Pinboard path for sharing of nif/sdtm objects.
 \item \code{debug} as logical: Print debug information.
 \item \code{show_hash} as logical: Include dataset hash in figures.
+\item \code{abbreviate} as logical: Abbreviate long lists in summary output.
 }
 }
 \examples{
