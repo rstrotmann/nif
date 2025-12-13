@@ -1,11 +1,31 @@
-#' Issue message based on silent flag
+#' Issue cli message based on silent flag
 #'
-#' @param ... Message components.
+#' @param cli_expression Message components as cli calls.
 #' @param silent Logical flag to suppress messages. If NULL, will check .nif_env
 #'              environment (defaults to FALSE if not found).
 #' @return Nothing.
+#' @import cli
 #' @keywords internal
 #' @noRd
+conditional_cli <- function(cli_expression, silent = NULL) {
+  # Get silent flag from parameter or environment
+  if (is.null(silent)) {
+    silent <- tryCatch({
+      get("silent", envir = .nif_env)
+    }, error = function(e) {
+      FALSE
+    })
+  }
+
+  # issue cli message if not silent
+  if (!isTRUE(silent)) {
+    cli::cli(cli_expression)
+  }
+
+  invisible(NULL)
+}
+
+
 conditional_message <- function(..., silent = NULL) {
   # Get silent flag from parameter or environment
   if (is.null(silent)) {
@@ -31,6 +51,7 @@ conditional_message <- function(..., silent = NULL) {
 
   invisible(NULL)
 }
+
 
 
 #' Debug output
@@ -652,7 +673,9 @@ plural <- function(word, plural) {
   exceptions = tribble(
     ~singular, ~plural,
     "study", "studies",
-    "Study", "Studies"
+    "Study", "Studies",
+    "was", "were",
+    "is", "are"
   )
   if(plural) {
     if(word %in% exceptions$singular)

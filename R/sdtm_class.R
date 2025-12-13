@@ -168,8 +168,9 @@ summary.sdtm <- function(object, ...) {
     }
 
     # Get arms if ACTARMCD and ACTARM exist
-    if(all(c("ACTARMCD", "ACTARM") %in% colnames(dm))) {
-      out$arms <- unique(dm[c("ACTARMCD", "ACTARM")])
+    if(any(c("ACTARMCD", "ACTARM") %in% colnames(dm))) {
+      # out$arms <- unique(dm[c("ACTARMCD", "ACTARM")])
+      out$arms <- dm %>% distinct(across(any_of(c("ACTARMCD", "ACTARM") )))
     }
   }
 
@@ -183,8 +184,9 @@ summary.sdtm <- function(object, ...) {
     }
 
     # Get analytes if PCTEST and PCTESTCD exist
-    if(all(c("PCTEST", "PCTESTCD") %in% colnames(pc))) {
-      out$analytes <- unique(pc[c("PCTEST", "PCTESTCD")])
+    if(any(c("PCTEST", "PCTESTCD") %in% colnames(pc))) {
+      # out$analytes <- unique(pc[c("PCTEST", "PCTESTCD")])
+      out$analytes <- pc %>% distinct(across(any_of(c("PCTEST", "PCTESTCD"))))
     }
 
     # Get PC timepoints if PCTPT and PCTPTNUM exist
@@ -485,15 +487,17 @@ suggest <- function(obj, show_all = FALSE) {
   }
 
   # PK specimens
-  specimens <- filter(pc, PCSPEC != "") %>%
-    distinct(PCSPEC)
-  if (nrow(specimens) > 1) {
-    cli::cli_h2("Pharmacokinetic specimens")
-    cli::cli_alert_warning(paste0(
-      "Note that there are data from {nrow(specimens)} different PK sample ",
-      "specimen types in 'PC' ({nice_enumeration(specimens$PCSPEC)}). ",
-      "When calling `add_observation()`, consider filtering for a specific ",
-      "specimen using the 'observation_filter' argument!"))
+  if("PCSPEC" %in% names(pc)) {
+    specimens <- filter(pc, PCSPEC != "") %>%
+      distinct(PCSPEC)
+    if (nrow(specimens) > 1) {
+      cli::cli_h2("Pharmacokinetic specimens")
+      cli::cli_alert_warning(paste0(
+        "Note that there are data from {nrow(specimens)} different PK sample ",
+        "specimen types in 'PC' ({nice_enumeration(specimens$PCSPEC)}). ",
+        "When calling `add_observation()`, consider filtering for a specific ",
+        "specimen using the 'observation_filter' argument!"))
+    }
   }
 
   # NTIME
@@ -501,21 +505,23 @@ suggest <- function(obj, show_all = FALSE) {
     c("PCTPT", "PCTPTNUM", "PCELTM")))) %>%
     {if("PCTPTNUM" %in% names(pc)) arrange(., .data$PCTPTNUM) else .}
 
-  cli::cli_h2("NTIME definition")
-  cli::cli_text(
-    "The PC domain contains multiple fields that the nominal sampling time ",
-    "can be derived from: ")
-  cli::cli_text()
+  if(nrow(time_fields) > 0 & ncol(time_fields) > 0) {
+    cli::cli_h2("NTIME definition")
+    cli::cli_text(
+      "The PC domain contains multiple fields that the nominal sampling time ",
+      "can be derived from: ")
+    cli::cli_text()
 
-  nlines = ifelse(show_all == TRUE, Inf, 5)
-  cli::cli_verbatim(df_to_string(
-    time_fields, indent = 2, abbr_lines = nlines, abbr_threshold = 10))
-  cli::cli_text()
-  cli::cli_text(paste0(
-    "Consider specifying a suitabe 'ntime_method' argument to ",
-    "'add_observation()'. By default, the function will attempt to extract ",
-    "time information from the PCTPT field."
-  ))
+    nlines = ifelse(show_all == TRUE, Inf, 5)
+    cli::cli_verbatim(df_to_string(
+      time_fields, indent = 2, abbr_lines = nlines, abbr_threshold = 10))
+    cli::cli_text()
+    cli::cli_text(paste0(
+      "Consider specifying a suitabe 'ntime_method' argument to ",
+      "'add_observation()'. By default, the function will attempt to extract ",
+      "time information from the PCTPT field."
+    ))
+  }
 
   # Trial arms
   if(nrow(sdtm_summary$arms) > 1) {

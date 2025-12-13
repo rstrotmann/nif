@@ -9,9 +9,9 @@ test_that("impute_exendtc_to_rfendtc validates input correctly", {
     "SUBJ-002", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          NA
   ) %>% lubrify_dates()
 
-  expect_error(
+  expect_message(
     impute_exendtc_to_rfendtc(ex_valid, dm_missing_cols),
-    "Missing colums in domain DM: RFSTDTC and RFENDTC"
+    "Cannot impute missing EXENDTC in final administration episode"
   )
 
   # Test missing columns in EX
@@ -184,3 +184,4 @@ test_that("impute_exendtc_to_rfendtc handles case with no RFENDTC in DM", {
   expect_true(is.na(result$EXENDTC[2]))
   expect_equal(result$IMPUTATION[2], "")
 })
+

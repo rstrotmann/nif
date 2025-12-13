@@ -4,10 +4,12 @@
 \alias{impute_missing_exendtc}
 \title{Impute missing EXENDTC to the day before the next EXSTDTC.}
 \usage{
-impute_missing_exendtc(ex)
+impute_missing_exendtc(ex, silent = NULL)
 }
 \arguments{
 \item{ex}{The updated EX domain as data frame.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 The updated EX domain as data frame.

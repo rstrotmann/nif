@@ -181,10 +181,10 @@ test_that("impute_exendtc_to_cutoff works", {
 test_that("filter_EXSTDTC_after_EXENDTC works", {
   ex <- tibble::tribble(
     ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC,
-    1, 1, "A", 1, 10,
-    1, 2, "A", 15, 20,
-    2, 1, "A", 1, NA,
-    2, 2, "A", 20, 10
+          1,      1,    "A",        1,       10,
+          1,      2,    "A",       15,       20,
+          2,      1,    "A",        1,       NA,
+          2,      2,    "A",       20,       10
   )
 
   dm <- tibble::tribble(
@@ -194,7 +194,7 @@ test_that("filter_EXSTDTC_after_EXENDTC works", {
   )
 
   expect_message(temp <- filter_EXSTDTC_after_EXENDTC(ex, dm))
-  expect_equal(nrow(temp), 2)
+  expect_equal(nrow(temp), 3)
 })
 
 

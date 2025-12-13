@@ -7,7 +7,7 @@ test_that("impute_missing_exendtc validates input correctly", {
 
   expect_error(
     impute_missing_exendtc(ex_missing_cols),
-    "Missing colums in domain EX: EXSEQ, EXSTDTC and EXENDTC"
+    "Missing colums in domain EX: EXSTDTC and EXENDTC"
   )
 })
 
@@ -156,3 +156,4 @@ test_that("impute_missing_exendtc preserves existing data and columns", {
   expect_equal(out$EXENDTC[1], ex$EXENDTC[1])
   expect_equal(out$EXENDTC[3], ex$EXENDTC[3])
 })
+

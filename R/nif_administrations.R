@@ -241,17 +241,18 @@ make_administration <- function(
     decompose_dtc("EXSTDTC") %>%
 
     # impute_exendtc_to_rfendtc(dm) %>%
-    filter_EXSTDTC_after_EXENDTC(dm) %>%
+    filter_EXSTDTC_after_EXENDTC(dm, silent = silent) %>%
 
     # time imputations
     impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
-    impute_missing_exendtc() %>%
+    impute_missing_exendtc(silent = silent) %>%
     decompose_dtc("EXENDTC") %>%
 
     # make generic fields
-    mutate(TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
-           METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
-           DOSE = EXDOSE, AMT = EXDOSE) %>%
+    mutate(
+      TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
+      METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
+      DOSE = EXDOSE, AMT = EXDOSE) %>%
     expand_ex()
 
   # impute missing administration times from PCRFTDTC
