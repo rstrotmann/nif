@@ -341,7 +341,7 @@ impute_exendtc_to_cutoff <- function(
   conditional_cli({
     cli::cli_alert_warning("Last end date imputation!")
     cli::cli_text(paste0(
-      "In ", nrow(to_replace), nif:::plural(" subject", nrow(to_replace) > 1),
+      "In ", nrow(to_replace), plural(" subject", nrow(to_replace) > 1),
       " EXENDTC for the last administration episode was missing and was",
       " replaced by the cut off date (",
       format(cut_off_date, format = "%Y-%m-%d %H:%M"), "):"
