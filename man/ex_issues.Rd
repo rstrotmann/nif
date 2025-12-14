@@ -15,3 +15,7 @@ A list.
 \description{
 Identifies data inconsistencies and potential issues in the EX domain
 }
+\examples{
+ex_issues(domain(examplinib_poc_messy, "ex"))
+
+}

@@ -106,6 +106,14 @@ summary.domain <- function(object, ..., silent = NULL) {
   category <- distinct(select(object, ends_with("CAT")))
   if(ncol(category) == 0) category <- NULL
 
+  issues = NULL
+
+  if(current_domain == "EX") {
+    temp = ex_issues(object)
+    if(any(lapply(temp, nrow) > 0))
+      issues = temp
+  }
+
   # output
   out <- list(
     data = object,
@@ -120,7 +128,8 @@ summary.domain <- function(object, ..., silent = NULL) {
     n_obs = nrow(object),
     visit = visit,
     hash = rlang::hash(object),
-    last = last_dtc(object)
+    last = last_dtc(object),
+    issues = issues
   )
 
   class(out) <- "summary_domain"
@@ -176,11 +185,42 @@ print.summary_domain <- function(x, ...) {
     cat("Epochs\n")
     cat(df_to_string(
       x$epoch, indent = indent, show_none = TRUE, header = FALSE
-    ), "\n")
+    ), "\n\n")
   }
 
   cat(paste0("Hash: ", x$hash, "\n"))
-  cat(paste0("Last DTC: ", x$last))
+  cat(paste0("Last DTC: ", x$last, "\n"))
+
+  # if(!is.null(x$issues)) {
+  #   cat(paste0(
+  #   "\n", hline, " Data issues ", hline, "\n"))
+  #   if(!is.null(x$issues$missing_last_exendtc)) {
+  #     cat("Missing EXENDTC in final administration episode:\n")
+  #     cat(paste0(df_to_string(
+  #       select(
+  #         x$issues$missing_last_exendtc,
+  #         any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
+  #       indent = 2)), "\n\n")
+  #   }
+  #
+  #   if(!is.null(x$issues$missing_non_last_exendtc)) {
+  #     cat("Missing EXENDTC in other administration episodes:\n")
+  #     cat(paste0(df_to_string(
+  #       select(
+  #         x$issues$missing_non_last_exendtc,
+  #         any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
+  #       indent = 2)), "\n\n")
+  #   }
+  #
+  #   if(!is.null(x$issues$exstdtc_after_exendtc)) {
+  #     cat("EXENDTC before EXSTDTC:\n")
+  #     cat(paste0(df_to_string(
+  #       select(
+  #         x$issues$exstdtc_after_exendtc,
+  #         any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
+  #       indent = 2)), "\n")
+  #   }
+  # }
 }
 
 

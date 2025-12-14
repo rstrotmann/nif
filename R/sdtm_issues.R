@@ -23,6 +23,9 @@
 #'
 #' @returns A list.
 #' @export
+#' @examples
+#' ex_issues(domain(examplinib_poc_messy, "ex"))
+#'
 ex_issues <- function(ex) {
   # validate ex domain
   expected_ex_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
@@ -56,7 +59,8 @@ ex_issues <- function(ex) {
       filter(
         as.Date(.data$EXENDTC_date) < as.Date(.data$EXSTDTC_date) |
         !is.na(EXSTDTC_time) & !is.na(EXENDTC_time) & EXENDTC < EXSTDTC
-      )
+      ) %>%
+      as_tibble()
   )
 
   return(out)
