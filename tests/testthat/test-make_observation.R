@@ -48,8 +48,7 @@ make_test_sdtm1 <- function() {
 test_that("make_observation works", {
   sdtm <- make_test_sdtm1()
   expect_no_error(
-    make_observation(sdtm, "pc", "A", ntime_method = "ELTM",
-                     silent = TRUE))
+    make_observation(sdtm, "pc", "A", ntime_method = "ELTM", silent = TRUE))
 })
 
 
@@ -275,13 +274,14 @@ test_that("make_observation sets MDV correctly for missing values", {
 test_that("add_observation basic functionality works", {
   # Create a base nif object with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Test basic observation adding
   expect_no_error({
     nif_with_obs <- base_nif %>%
-      add_observation(examplinib_sad, "pc", "RS2023",
-                      ntime_method = "ELTM", silent = TRUE)
+      add_observation(
+        examplinib_sad, "pc", "RS2023", ntime_method = "ELTM", silent = TRUE)
   })
 
   # Verify the observation was added correctly

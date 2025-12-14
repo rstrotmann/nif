@@ -4,12 +4,14 @@
 \alias{impute_exendtc_to_rfendtc}
 \title{Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent}
 \usage{
-impute_exendtc_to_rfendtc(ex, dm, silent = NULL)
+impute_exendtc_to_rfendtc(ex, dm, cut_off_date = NULL, silent = NULL)
 }
 \arguments{
 \item{ex}{The EX domain as data frame.}
 
 \item{dm}{The DM domain as data frame.}
+
+\item{cut_off_date}{The cut-off date as POSIXct.}
 
 \item{silent}{Suppress messages, defaults to nif_options setting if NULL.}
 }

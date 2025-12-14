@@ -12,12 +12,15 @@
 #' @param ex The EX domain as data frame.
 #' @param silent Suppress messages, defaults to nif_options setting if NULL.
 #' @param dm The DM domain as data frame.
+#' @param cut_off_date The cut-off date as POSIXct.
 #'
 #' @return The updated EX domain as data frame.
 #' @export
 #' @import cli
 impute_exendtc_to_rfendtc <- function(
-    ex, dm, silent = NULL) {
+    ex, dm,
+    cut_off_date = NULL,
+    silent = NULL) {
   # Validate ex domain
   expected_ex_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
   missing_ex_columns <- setdiff(expected_ex_columns, names(ex))
@@ -43,7 +46,6 @@ impute_exendtc_to_rfendtc <- function(
   to_be_imputed <- temp %>%
     filter(LAST_ADMIN == TRUE & is.na(EXENDTC))
 
-
   n_sbs_to_be_imputed <- to_be_imputed %>%
     distinct(.data$USUBJID) %>%
     nrow()
@@ -58,8 +60,7 @@ impute_exendtc_to_rfendtc <- function(
         cli::cli_text(paste0(
           "Cannot impute missing EXENDTC in final administration episode of ",
           n_sbs_to_be_imputed, plural(" subject", n_sbs_to_be_imputed > 1),
-          " because RFXENDTC is missing in DM. The respective administrations",
-          " were omitted from the nif data set:"))
+          " because RFXENDTC is missing in DM:"))
 
         cli::cli_verbatim(
           df_to_string(to_be_imputed, indent = 2)
@@ -255,11 +256,10 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
     # )
 
     cli::cli({
-      cli::cli_alert_warning("Significant imputation!")
+      cli::cli_alert_warning("End date imputation!")
       cli::cli_text(paste0(
-        nrow(to_replace), plural(" row", nrow(to_replace) > 1),
-        " in EX had no EXENDTC, and EXENDTC was imputed as ",
-        "the day before the next EXSTDTC:"
+        "In ", nrow(to_replace), plural(" row", nrow(to_replace) > 1),
+        " EXENDTC was missing and was imputed as the day before the next EXSTDTC:"
       ))
       cli::cli_verbatim(
         df_to_string(select(to_replace, any_of(
@@ -300,7 +300,10 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
 #'
 #' @return The updated EX domain as data frame.
 #' @export
-impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
+impute_exendtc_to_cutoff <- function(
+    ex,
+    cut_off_date = NA,
+    silent = NULL) {
   # input validation
   expected_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
   missing_columns <- setdiff(expected_columns, names(ex))
@@ -336,10 +339,11 @@ impute_exendtc_to_cutoff <- function(ex, cut_off_date = NA, silent = NULL) {
   #     silent = silent)
 
   conditional_cli({
-    cli::cli_alert_warning("Potentially relevant imputation!")
+    cli::cli_alert_warning("Last end date imputation!")
     cli::cli_text(paste0(
-      "In ", nrow(to_replace), " subjects, EXENDTC for the last administration",
-      " episode is absent and was replaced by the cut off date (",
+      "In ", nrow(to_replace), nif:::plural(" subject", nrow(to_replace) > 1),
+      " EXENDTC for the last administration episode was missing and was",
+      " replaced by the cut off date (",
       format(cut_off_date, format = "%Y-%m-%d %H:%M"), "):"
     ))
     cli::cli_verbatim(
@@ -468,7 +472,7 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = NULL) {
     #   "\n"), silent = silent)
 
     conditional_cli({
-      cli::cli_alert_info("Inconsistent EXSTDTC and EXENDTC!")
+      cli::cli_alert_warning("Inconsistent EXSTDTC and EXENDTC!")
 
       cli::cli_text(paste0(
         nrow(temp), " administration ", plural("episode", nrow(temp) > 1),

@@ -1,6 +1,7 @@
 test_that("make_administration works for examplinib_poc", {
   expect_no_error(
-    make_administration(examplinib_poc, "EXAMPLINIB", "RS2023")
+    make_administration(
+      examplinib_poc, "EXAMPLINIB", "RS2023", silent = TRUE)
   )
 })
 
@@ -75,7 +76,7 @@ test_that("make_administration works without pc", {
   ))
 
   expect_no_error(
-    test <- as.data.frame(make_administration(sdtm, "A"))
+    test <- as.data.frame(make_administration(sdtm, "A", silent = TRUE))
   )
 
   # number of administrations is correct:
@@ -123,9 +124,11 @@ test_that("make_administration imputes missing last EXENDTC", {
 
   expect_no_error(
     expect_message(
-      test <- as.data.frame(make_administration(sdtm, "A",
-                                                silent = FALSE))
-    )
+    expect_message(
+      test <- as.data.frame(
+        make_administration(sdtm, "A", silent = FALSE))
+    ),
+    "A global cut-off-date of 2024-12-22 was automatically assigned!")
   )
 })
 

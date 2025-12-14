@@ -37,7 +37,7 @@ test_that("add_ae_observation handles basic case correctly", {
 
   # Create base nif object
   base_nif <- new_nif() %>%
-    add_administration(test_sdtm, "DRUG", analyte = "DRUG")
+    add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test adding AE observation
   result <- add_ae_observation(
@@ -60,6 +60,7 @@ test_that("add_ae_observation handles basic case correctly", {
   expect_equal(unique(ae_rows$PARENT), "DRUG")
   expect_equal(unique(ae_rows$CMT), 2)
 })
+
 
 test_that("add_ae_observation handles different ae_fields correctly", {
   test_ae <- tibble::tribble(
@@ -89,7 +90,8 @@ test_that("add_ae_observation handles different ae_fields correctly", {
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>% add_administration(test_sdtm, "DRUG", analyte = "DRUG")
+  base_nif <- new_nif() %>%
+    add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test with AELLT field
   result_llt <- add_ae_observation(
@@ -113,6 +115,7 @@ test_that("add_ae_observation handles different ae_fields correctly", {
   )
   expect_equal(nrow(result_hlt %>% filter(ANALYTE == "AE_HLT1")), 1)
 })
+
 
 test_that("add_ae_observation handles filters correctly", {
   test_ae <- tibble::tribble(
@@ -142,7 +145,8 @@ test_that("add_ae_observation handles filters correctly", {
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>% add_administration(test_sdtm, "DRUG", analyte = "DRUG")
+  base_nif <- new_nif() %>%
+    add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test subject filter
   result <- add_ae_observation(
@@ -167,6 +171,7 @@ test_that("add_ae_observation handles filters correctly", {
   expect_equal(nrow(result_filtered %>% filter(ANALYTE == "AE_Headache")), 0)  # No events with AETOXGR > 1 for non-SCRNFAIL subjects
 })
 
+
 test_that("add_ae_observation handles debug mode correctly", {
   test_ae <- tibble::tribble(
     ~USUBJID,    ~AEDECOD,  ~AESTDTC,            ~AETOXGR,  ~AESEQ,
@@ -190,7 +195,8 @@ test_that("add_ae_observation handles debug mode correctly", {
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>% add_administration(test_sdtm, "DRUG", analyte = "DRUG")
+  base_nif <- new_nif() %>%
+    add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test with debug = TRUE
   result_debug <- add_ae_observation(
@@ -207,6 +213,7 @@ test_that("add_ae_observation handles debug mode correctly", {
   expect_true("SRC_SEQ" %in% names(result_debug))
   expect_equal(unique(result_debug$SRC_DOMAIN[result_debug$ANALYTE == "AE_Headache"]), "AE")
 })
+
 
 test_that("add_ae_observation handles keep parameter correctly", {
   test_ae <- tibble::tribble(
@@ -231,7 +238,8 @@ test_that("add_ae_observation handles keep parameter correctly", {
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>% add_administration(test_sdtm, "DRUG", analyte = "DRUG")
+  base_nif <- new_nif() %>%
+    add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   result <- add_ae_observation(
     base_nif,
@@ -271,7 +279,7 @@ test_that("add_ae_observation handles automatic parent and cmt assignment", {
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
   base_nif <- new_nif() %>%
-    add_administration(test_sdtm, "DRUG", analyte = "DRUG")
+    add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test with NULL parent and cmt
   result <- add_ae_observation(

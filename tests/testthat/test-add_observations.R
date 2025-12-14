@@ -48,7 +48,8 @@ make_test_sdtm1 <- function() {
 test_that("add_observation warns about duplicate compartment", {
   # Create a base nif object with administration data where CMT=1
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Try to add observation with the same compartment
   expect_warning(
@@ -62,7 +63,8 @@ test_that("add_observation warns about duplicate compartment", {
 test_that("add_observation auto-assigns compartment if not specified", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Add observation without specifying CMT, capture messages
   expect_message(
@@ -79,7 +81,8 @@ test_that("add_observation auto-assigns compartment if not specified", {
 test_that("add_observation auto-assigns parent if not specified", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Different observation analyte without specifying parent
   nif_with_obs <- base_nif %>%
@@ -94,7 +97,8 @@ test_that("add_observation auto-assigns parent if not specified", {
 test_that("add_observation properly uses observation_filter", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Add observation with filter that returns nothing
   expect_error(
@@ -109,7 +113,8 @@ test_that("add_observation properly uses observation_filter", {
 test_that("add_observation works with factor parameter", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Add observation with normal factor
   nif_normal <- base_nif %>%
@@ -138,7 +143,8 @@ test_that("add_observation works with factor parameter", {
 test_that("add_observation handles metabolites correctly", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Add metabolite observation
   nif_with_metabolite <- base_nif %>%
@@ -161,7 +167,8 @@ test_that("add_observation handles metabolites correctly", {
 test_that("add_observation works with custom NTIME_lookup", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Create custom NTIME lookup table
   custom_ntime <- data.frame(
@@ -184,8 +191,9 @@ test_that("add_observation works with custom NTIME_lookup", {
 test_that("add_observation handles debug mode correctly", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023",
-                       debug = TRUE)
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023",
+      debug = TRUE, silent = TRUE)
 
   # Add observation in debug mode
   nif_debug <- base_nif %>%
@@ -200,7 +208,8 @@ test_that("add_observation handles debug mode correctly", {
 test_that("add_observation updates columns correctly", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Check columns before adding observation
   before_cols <- names(base_nif)
@@ -221,7 +230,8 @@ test_that("add_observation updates columns correctly", {
 test_that("add_observation handles include_day_in_ntime parameter", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   custom_sdtm <- examplinib_sad
   custom_sdtm$domains$pc$PCDY = 2
@@ -260,7 +270,7 @@ test_that("add_observation handles missing NTIME gracefully", {
 
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(sdtm_test, "A", analyte = "A")
+    add_administration(sdtm_test, "A", analyte = "A", silent = TRUE)
 
   # Should run without error but show a message about NTIME
   expect_message(
@@ -288,7 +298,7 @@ test_that("add_observation handles DV field properly", {
 
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(sdtm_test, "A", analyte = "A")
+    add_administration(sdtm_test, "A", analyte = "A", silent = TRUE)
 
   # Custom DV field
   expect_no_error({
@@ -318,7 +328,7 @@ test_that("add_observation handles subject filtering", {
 
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(sdtm_test, "A", analyte = "A")
+    add_administration(sdtm_test, "A", analyte = "A", silent = TRUE)
 
   # Filter to include only subject "1"
   nif_filtered <- base_nif %>%
@@ -343,7 +353,8 @@ test_that("add_observation handles subject filtering", {
 test_that("add_observation can handle non-existent domain gracefully", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Try adding observations from non-existent domain
   expect_error(
@@ -359,7 +370,8 @@ test_that("add_observation can handle non-existent domain gracefully", {
 test_that("add_observation handles observations without matching administrations", {
   # Create a base nif with administration data for a different analyte
   base_nif <- new_nif() %>%
-    add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023")
+    add_administration(
+      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
 
   # Add observation with different parent
   nif_with_different_parent <- base_nif %>%
@@ -408,7 +420,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
 
   # Create administration data
   base_nif <- new_nif() %>%
-    add_administration(sdtm_obj, "A", analyte = "A")
+    add_administration(sdtm_obj, "A", analyte = "A", silent = TRUE)
 
   # Test with na.rm = TRUE (default)
   nif_with_na_rm <- base_nif %>%

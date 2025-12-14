@@ -196,6 +196,7 @@ expand_ex <- function(ex) {
 #' @return A data frame.
 #' @export
 #' @importFrom assertthat assert_that
+#' @import cli
 #' @keywords internal
 #' @seealso [nif::add_administration()]
 make_administration <- function(
@@ -216,15 +217,32 @@ make_administration <- function(
     vs <- domain(sdtm, "vs")
   }
 
-  ex <- impute_exendtc_to_rfendtc(ex, dm, silent = silent)
-
+  ## to do: Should this be a stop()?
   assertthat::assert_that(
     extrt %in% ex$EXTRT,
     msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
   )
+  ## end to do
+
+  ex <- impute_exendtc_to_rfendtc(ex, dm, cut_off_date, silent = silent)
 
   if(is.null(analyte)) {analyte <- extrt}
-  if(is.null(cut_off_date)) cut_off_date <- last_ex_dtc(ex)
+
+  if(is.null(cut_off_date)){
+    cut_off_date <- last_ex_dtc(ex)
+
+    conditional_cli({
+      cli::cli_alert_info("Cut-off date")
+      cli::cli_text(paste0(
+        "A global cut-off-date of ",
+        format(cut_off_date),
+        " was automatically assigned!"
+      ))
+      cli::cli_text()
+    }, silent = silent)
+  } else {
+    cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)
+  }
 
   sbs <- make_subjects(dm, vs, subject_filter, keep)
 
@@ -232,13 +250,35 @@ make_administration <- function(
     mutate(SRC_DOMAIN = "EX") %>%
     {if("EXSEQ" %in% names(ex)) mutate(., SRC_SEQ = EXSEQ) else
       mutate(., SRC_SEQ = NA)} %>%
-
     {if(!"IMPUTATION" %in% names(.))
       mutate(., IMPUTATION = "") else .} %>%
-
     filter(.data$EXTRT == extrt) %>%
-    filter(.data$EXSTDTC <= cut_off_date) %>%
-    decompose_dtc("EXSTDTC") %>%
+    decompose_dtc("EXSTDTC")
+
+  # apply cut-off date
+  cut_off_rows <- admin %>%
+    filter(.data$EXSTDTC > cut_off_date) %>%
+    select(any_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "EXSEQ")))
+
+  if(nrow(cut_off_rows) > 0) {
+    conditional_cli({
+      cli::cli_alert_warning("Cut off date applied!")
+      cli::cli_text(paste0(
+        "Some administrations episodes begin after the cut-off date (",
+        format(cut_off_date), ") and were deleted from the data set:"
+      ))
+      cli::cli_verbatim(
+        df_to_string(cut_off_rows, indent = 2)
+      )
+      cli::cli_text()
+    }, silent = silent)
+  }
+
+  admin <- admin %>%
+    filter(.data$EXSTDTC <= cut_off_date)
+
+  admin <- admin %>%
+    # decompose_dtc("EXSTDTC") %>%
 
     # impute_exendtc_to_rfendtc(dm) %>%
     filter_EXSTDTC_after_EXENDTC(dm, silent = silent) %>%

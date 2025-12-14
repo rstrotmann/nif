@@ -1,4 +1,4 @@
-test_that("full nif generation workflow works as intended", {
+test_that("full nif generation workflow works with imputations", {
   sdtm <- list(
     dm = tibble::tribble(
       ~DOMAIN, ~STUDYID, ~USUBJID, ~SEX, ~ACTARMCD, ~RFSTDTC,
@@ -28,6 +28,7 @@ test_that("full nif generation workflow works as intended", {
       "1002",    "EX",       2,    "A", "2025-01-04T08:30:00",                 "",
 
       "1003",    "EX",       3,    "A",    "2025-01-03T08:00", "2025-01-01T09:00",
+      "1003",    "EX",       3,    "A",    "2025-01-07T08:00", "2025-01-10T09:00",
 
       "1004",    "EX",       4,    "A",          "2025-01-01", "",
       "1004",    "EX",       4,    "A",          "2025-01-04", "2025-01-06T08:00",
@@ -60,7 +61,51 @@ test_that("full nif generation workflow works as intended", {
 
   expect_message(
     nif <- new_nif() %>%
-      add_administration(sdtm, "A", silent = T),
-    "Significant imputation!"
+    add_administration(sdtm, "A",  silent = TRUE)
   )
 })
+
+
+test_that("add_administration imputes missing time to PCRFTDTC", {
+  sdtm <- list(
+    dm = tibble::tribble(
+      ~DOMAIN, ~STUDYID, ~USUBJID, ~SEX, ~ACTARMCD, ~RFSTDTC,
+      "DM",   "test01",  "1004",    1,   "ACT",     "2025-01-01T08:00:00"
+    ),
+
+    vs = tibble::tribble(
+      ~DOMAIN, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+      "VS",    "1004",   "HEIGHT",  173,       "2025-01-01T08:00:00",
+      "VS",    "1004",   "WEIGHT",  73,        "2025-01-01T08:00:00"
+    ),
+
+    ex = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,            ~EXSTDTC,           ~EXENDTC,
+      "1004",    "EX",       4,    "A",          "2025-01-01", "",
+      "1004",    "EX",       4,    "A",          "2025-01-04", "2025-01-06T08:00",
+    ) %>%
+      mutate(EXSEQ = row_number()),
+
+    pc = tibble::tribble(
+      ~DOMAIN, ~USUBJID, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCRFTDTC,
+      "PC",   "1004",       "A", "2025-01-01T07:00:00",         5, "2025-01-01T08:00:00",
+      "PC",   "1004",       "A",    "2025-01-01T08:30",        12, "2025-01-01T08:00:00",
+      "PC",   "1004",       "A", "2025-01-01T09:00:00",       102, "2025-01-01T08:00:00",
+      "PC",   "1004",       "A", "2025-01-01T10:00:00",       202, "2025-01-01T08:00:00",
+      "PC",   "1004",       "A", "2025-01-01T12:00:00",       102, "2025-01-01T08:00:00",
+      "PC",   "1004",       "A", "2025-01-01T16:00:00",        82, "2025-01-01T08:00:00"
+    )
+  ) %>%
+    new_sdtm()
+
+  expect_message(
+    result <- new_nif() %>%
+    add_administration(sdtm, "A",  silent = TRUE)
+  )
+
+  expect_equal(
+    result[1, "IMPUTATION"], "admin time copied from PCRFTDTC"
+  )
+})
+
+
