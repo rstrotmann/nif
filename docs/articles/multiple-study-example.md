@@ -26,10 +26,16 @@ nif <- new_nif() %>%
   add_baseline(examplinib_poc, "lb", "CREAT") %>% 
   add_bl_crcl() %>% 
   add_bl_renal()
+#> ℹ Cut-off date
+#> A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
+#> ℹ Cut-off date
+#> A global cut-off-date of 2001-03-03 10:28:00 was automatically assigned!
 #> Warning in add_observation(., examplinib_fe, "pc", "RS2023", cmt = 2):
 #> Compartment 2 is already assigned!
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
+#> ℹ Cut-off date
+#> A global cut-off-date of 2001-07-14 08:53:00 was automatically assigned!
 #> Warning in add_observation(., examplinib_poc, "pc", "RS2023", cmt = 2):
 #> Compartment 2 is already assigned!
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'

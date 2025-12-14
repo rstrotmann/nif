@@ -80,6 +80,8 @@ Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol.,
 
 ``` r
 add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
+#> ℹ Cut-off date
+#> A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
 #> ----- NONMEM Input Format (NIF) data -----
 #> 0 observations from 48 subjects across 1 study 
 #> Analytes: EXAMPLINIB 

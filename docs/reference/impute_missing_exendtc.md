@@ -18,7 +18,7 @@ missing EXENDTC can be imputed to the global cut off date using
 ## Usage
 
 ``` r
-impute_missing_exendtc(ex)
+impute_missing_exendtc(ex, silent = NULL)
 ```
 
 ## Arguments
@@ -26,6 +26,10 @@ impute_missing_exendtc(ex)
 - ex:
 
   The updated EX domain as data frame.
+
+- silent:
+
+  Suppress messages.
 
 ## Value
 

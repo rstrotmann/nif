@@ -13,7 +13,7 @@ provided in DM.
 ## Usage
 
 ``` r
-impute_exendtc_to_rfendtc(ex, dm, silent = NULL)
+impute_exendtc_to_rfendtc(ex, dm, cut_off_date = NULL, silent = NULL)
 ```
 
 ## Arguments
@@ -25,6 +25,10 @@ impute_exendtc_to_rfendtc(ex, dm, silent = NULL)
 - dm:
 
   The DM domain as data frame.
+
+- cut_off_date:
+
+  The cut-off date as POSIXct.
 
 - silent:
 
