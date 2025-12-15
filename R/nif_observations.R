@@ -662,7 +662,7 @@ add_observation <- function(
   validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
   validate_logical_param(silent, "silent", allow_null = TRUE)
   validate_char_param(duplicates, "duplicates")
-  validate_char_param(duplicate_identifier, "duplicate_identifier")
+  validate_char_param(duplicate_identifier, "duplicate_identifier", allow_multiple = TRUE)
 
   validate_logical_param(na_to_zero, "na_to_zero")
 
