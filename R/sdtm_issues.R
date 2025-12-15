@@ -60,62 +60,64 @@ ex_issues <- function(
   # Reporting
   if(silent == FALSE) {
     if(!is.null(out)) {
-      cli::cli_h1(paste0("Data issues in EX for treatment ", extrt))
+      if(any(lapply(out, nrow) > 0)) {
+        cli::cli_h1(paste0("Data issues in EX for treatment ", extrt))
 
-      if(!is.null(out$missing_last_exendtc)) {
-        n_missing_final_exendtc <- nrow(out$missing_last_exendtc)
-        cli::cli({
-          cli::cli_h2("Missing EXENDTC in final administration episode")
-          # cli::cli_alert_danger("Missing EXENDTC in final administration episode")
-          cli_text(
-            "The following ", plural("subject", n_missing_final_exendtc > 1),
-            " had a missing EXENDTC in the final administration episode. ",
-            "This may indicate ongoing treatment at the data cut off, ",
-            "and the EXENDTC will be imputed to be the cut-off date.")
-          cli::cli_text()
-          cli::cli_verbatim(df_to_string(
-            select(
-              out$missing_last_exendtc,
-              any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
-            indent = 2))
-        })
-      }
+        if(nrow(out$missing_last_exendtc) > 0) {
+          n_missing_final_exendtc <- nrow(out$missing_last_exendtc)
+          cli::cli({
+            cli::cli_h2("Missing EXENDTC in final administration episode")
+            # cli::cli_alert_danger("Missing EXENDTC in final administration episode")
+            cli_text(
+              "The following ", plural("subject", n_missing_final_exendtc > 1),
+              " had a missing EXENDTC in the final administration episode. ",
+              "This may indicate ongoing treatment at the data cut off, ",
+              "and the EXENDTC will be imputed to be the cut-off date.")
+            cli::cli_text()
+            cli::cli_verbatim(df_to_string(
+              select(
+                out$missing_last_exendtc,
+                any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
+              indent = 2))
+          })
+        }
 
-      if(!is.null(out$missing_non_last_exendtc)) {
-        n_missing_exendtc <- nrow(out$missing_non_last_exendtc)
-        cli::cli({
-          cli::cli_h2("Missing EXENDTC in other administration episode")
-          cli_text(
-            "The following non-final administration ",
-            plural("episode", n_missing_exendtc > 1),
-            " had a missing EXENDTC. This usually implies incomplete data ",
-            "cleaning. The EXENDTC will be imputed to the day before the next ",
-            "administration episode.")
-          cli::cli_text()
-          cli::cli_verbatim(df_to_string(
-            select(
-              out$missing_non_last_exendtc,
-              any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
-            indent = 2))
-        })
-      }
+        if(nrow(out$missing_non_last_exendtc) >0) {
+          n_missing_exendtc <- nrow(out$missing_non_last_exendtc)
+          cli::cli({
+            cli::cli_h2("Missing EXENDTC in other administration episode")
+            cli_text(
+              "The following non-final administration ",
+              plural("episode", n_missing_exendtc > 1),
+              " had a missing EXENDTC. This usually implies incomplete data ",
+              "cleaning. The EXENDTC will be imputed to the day before the next ",
+              "administration episode.")
+            cli::cli_text()
+            cli::cli_verbatim(df_to_string(
+              select(
+                out$missing_non_last_exendtc,
+                any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
+              indent = 2))
+          })
+        }
 
-      if(!is.null(out$exstdtc_after_exendtc)) {
-        n_exstdtc_after_exendtc <- nrow(out$exstdtc_after_exendtc)
-        cli::cli({
-          cli::cli_h2("EXENDTC before EXSTDTC")
-          cli_text(
-            "The following administration ",
-            plural("episode", n_exstdtc_after_exendtc > 1),
-            " had an EXSTDTC after the EXENDTC. These administration episodes ",
-            "will be removed from the data set:")
-          cli::cli_text()
-          cli::cli_verbatim(df_to_string(
-            select(
-              out$exstdtc_after_exendtc,
-              any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
-            indent = 2))
-        })
+        if(nrow(out$exstdtc_after_exendtc) > 0) {
+          n_exstdtc_after_exendtc <- nrow(out$exstdtc_after_exendtc)
+          cli::cli({
+            cli::cli_h2("EXENDTC before EXSTDTC")
+            cli_text(
+              "The following administration ",
+              plural("episode", n_exstdtc_after_exendtc > 1),
+              " had an EXSTDTC after the EXENDTC. These administration episodes ",
+              "will be removed from the data set:")
+            cli::cli_text()
+            cli::cli_verbatim(df_to_string(
+              select(
+                out$exstdtc_after_exendtc,
+                any_of(c("USUBJID", "EPOCHm", "EXTRT", "EXDOSE", "EXSEQ", "EXSTDTC", "EXENDTC"))),
+              indent = 2))
+          })
+        }
       }
     }
   }
