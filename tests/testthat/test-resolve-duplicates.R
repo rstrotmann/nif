@@ -24,6 +24,7 @@ test_that("resolve_duplicates works with default fields and mean function", {
   expect_equal(names(result), names(test_df))
 })
 
+
 test_that("resolve_duplicates works with custom fields and sum function", {
   # Create test data with duplicates
   test_df <- tribble(
@@ -49,6 +50,7 @@ test_that("resolve_duplicates works with custom fields and sum function", {
   expect_equal(result$VALUE, c(30, 70, 180))
 })
 
+
 test_that("resolve_duplicates works with custom function to keep first value", {
   test_df <- tribble(
     ~ID, ~TIME, ~DV,
@@ -62,6 +64,7 @@ test_that("resolve_duplicates works with custom function to keep first value", {
     test_df, fields = c("ID", "TIME"), duplicate_function = function(x) x[1])
   expect_equal(result$DV, c(10, 30))
 })
+
 
 test_that("resolve_duplicates works with custom function to keep last value", {
   test_df <- tribble(
@@ -106,6 +109,7 @@ test_that("resolve_duplicates handles non-existent fields", {
   )
 })
 
+
 test_that("resolve_duplicates handles empty data frame", {
   empty_df <- tribble(
     ~ID, ~TIME, ~ANALYTE, ~DV
@@ -115,6 +119,7 @@ test_that("resolve_duplicates handles empty data frame", {
   expect_equal(nrow(result), 0)
   expect_equal(names(result), names(empty_df))
 })
+
 
 test_that("resolve_duplicates handles data frame with no duplicates", {
   no_dups_df <- tribble(
@@ -128,6 +133,7 @@ test_that("resolve_duplicates handles data frame with no duplicates", {
   expect_equal(nrow(result), 3)
   expect_equal(result, as.data.frame(no_dups_df))
 })
+
 
 test_that("resolve_duplicates handles NA values", {
   na_df <- tribble(
@@ -194,32 +200,31 @@ test_that("resolve_duplicates correctly handles NA values with na.rm=TRUE", {
 
 test_that("resolve_duplicates works with custom duplicate_identifiers", {
   # Create test data with duplicates
-  test_df <- tribble(
+  test_df <- tibble::tribble(
     ~ID, ~TIME, ~ANALYTE, ~DV, ~NTIME, ~TRTDY,
-    1,   0,     "A",      10, 0, 0,
-    1,   0,     "A",      20, 0, 0,
-    2,   1,     "B",      30, 1, 0,
-    2,   1,     "B",      40, 1, 0,
-    3,   2,     "C",      50, 2, 0,
-    3,   2,     "C",      60, 2, 0,
-    3,   2,     "C",      70, 2, 0,
-
-    1,   0,     "A",      12, 0, 1,
-    1,   0,     "A",      22, 0, 1,
-    2,   1,     "B",      32, 1, 1,
-    2,   1,     "B",      42, 1, 1,
-    3,   2,     "C",      52, 2, 1,
-    3,   2,     "C",      62, 2, 1,
-    3,   2,     "C",      72, 2, 1
+    1,     0,      "A",  10,      0,      0,
+    1,     0,      "A",  20,      0,      0,
+    1,     0,      "A",  12,      0,      1,
+    1,     0,      "A",  22,      0,      1,
+    2,     1,      "B",  30,      1,      0,
+    2,     1,      "B",  40,      1,      0,
+    2,     1,      "B",  32,      1,      1,
+    2,     1,      "B",  42,      1,      1,
+    3,     2,      "C",  50,      2,      0,
+    3,     2,      "C",  60,      2,      0,
+    3,     2,      "C",  70,      2,      0,
+    3,     2,      "C",  52,      2,      1,
+    3,     2,      "C",  62,      2,      1,
+    3,     2,      "C",  72,      2,      1
   )
 
   # Test with default fields and mean function
   result <- resolve_duplicates(test_df)
-  expect_equal(nrow(result), 6)
+  expect_equal(nrow(result), 3)
 
   # Test with custom duplicate identification fields
   result <- resolve_duplicates(
-    test_df, fields = c("ID", "ANALYTE", "NTIME", "TRTDY"))
+    test_df, fields = c("NTIME", "TRTDY"))
   expect_equal(nrow(result), 6)
 
 })

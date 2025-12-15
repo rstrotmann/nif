@@ -1099,84 +1099,142 @@ find_duplicates <- function(
 #' @export
 resolve_duplicates <- function(
     df,
-    fields = NULL,
+    fields = "TIME",
     duplicate_function = mean,
     dependent_variable = "DV",
     na.rm = TRUE) {
-  if(is.null(fields)) {
-    fields <- c("ID", "TIME", "ANALYTE")
-  }
+      if(is.null(fields))
+        fields <- c("ID", "TIME", "ANALYTE")
 
-  # Check if all specified fields exist in the data frame
-  missing_fields <- setdiff(fields, names(df))
-  if (length(missing_fields) > 0) {
-    stop(paste("The following fields do not exist in the data frame:",
-               paste(missing_fields, collapse = ", ")))
-  }
+    # Check if all specified fields exist in the data frame
+    missing_fields <- setdiff(fields, names(df))
+    if (length(missing_fields) > 0)
+      stop(paste("The following fields do not exist in the data frame:",
+                 paste(missing_fields, collapse = ", ")))
 
-  # Check if dependent_variable exists in the data frame
-  if (!dependent_variable %in% names(df)) {
-    stop(paste("The dependent variable", dependent_variable,
-               "does not exist in the data frame"))
-  }
-
-  # Validate that duplicate_function is a function
-  if (!is.function(duplicate_function)) {
-    stop("duplicate_function must be a function")
-  }
-
-  # Get all columns that are not in fields
-  other_cols <- setdiff(names(df), fields)
-
-  f <- function(x) {
-    if(na.rm == TRUE){
-      duplicate_function(x[!is.na(x)])
-    } else {
-      duplicate_function(x)
+    # Check if dependent_variable exists in the data frame
+    if (!dependent_variable %in% names(df)) {
+      stop(paste("The dependent variable", dependent_variable,
+                 "does not exist in the data frame"))
     }
-  }
 
-  # result <- df %>%
-  #   reframe(
-  #     !!dependent_variable := f(.data[[dependent_variable]]),
-  #     # .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
-  #     .by = all_of(setdiff(names(df), c(dependent_variable, "REF")))
-  #   ) %>% as.data.frame()
+    # Validate that duplicate_function is a function
+    if (!is.function(duplicate_function)) {
+      stop("duplicate_function must be a function")
+    }
 
+    # preserve baseline fields
+    baseline_fields <- identify_baseline_columns(df)
+    index_fields <- setdiff(c(fields, "ID", "ANALYTE"), baseline_fields)
 
+    baseline <- df %>%
+      select(all_of(setdiff(c("ID", baseline_fields), "DV"))) %>%
+      distinct()
 
-  # if the MDV (missing dependent variable) field is present in the input,
-  # exclude observations with MDV == 1 from the resolution function
-  if("MDV" %in% names(df)) {
+    f <- function(x) {
+      if(na.rm == TRUE){
+        duplicate_function(x[!is.na(x)])
+      } else {
+        duplicate_function(x)
+      }
+    }
+
+    # if MDV is present, delete observations with MDV == 1
+    if("MDV" %in% names(df))
+      df <- df %>%
+      filter(.data$MDV != 1)
+
     result <- df %>%
       reframe(
-        !!dependent_variable := f(
-          .data[[dependent_variable]][.data$MDV != 1]
-        ),
-        .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
-      ) %>%
-      mutate(DV = case_when(is.nan(DV) ~ NA, .default = DV)) %>%
-      mutate(MDV = as.numeric(is.na(.data$DV)))
+        !!dependent_variable := f(.data[[dependent_variable]]),
+        .by = any_of(index_fields)) %>%
+      left_join(baseline, by = "ID") %>%
+      relocate(any_of(names(df)))
 
-  } else {
-    result <- df %>%
-      reframe(
-        !!dependent_variable := f(
-          .data[[dependent_variable]]
-        ),
-        .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
-      )
+    return(as.data.frame(result))
   }
 
 
-  # result <- result %>%
-  #   mutate(MDV = as.numeric(is.na(.data$DV)))
-  #
-  #
-
-
-  return(as.data.frame(result))
-}
+# resolve_duplicates <- function(
+#     df,
+#     fields = NULL,
+#     duplicate_function = mean,
+#     dependent_variable = "DV",
+#     na.rm = TRUE) {
+#   if(is.null(fields)) {
+#     fields <- c("ID", "TIME", "ANALYTE")
+#   }
+#
+#   # Check if all specified fields exist in the data frame
+#   missing_fields <- setdiff(fields, names(df))
+#   if (length(missing_fields) > 0) {
+#     stop(paste("The following fields do not exist in the data frame:",
+#                paste(missing_fields, collapse = ", ")))
+#   }
+#
+#   # Check if dependent_variable exists in the data frame
+#   if (!dependent_variable %in% names(df)) {
+#     stop(paste("The dependent variable", dependent_variable,
+#                "does not exist in the data frame"))
+#   }
+#
+#   # Validate that duplicate_function is a function
+#   if (!is.function(duplicate_function)) {
+#     stop("duplicate_function must be a function")
+#   }
+#
+#   # Get all columns that are not in fields
+#   other_cols <- setdiff(names(df), fields)
+#
+#   f <- function(x) {
+#     if(na.rm == TRUE){
+#       duplicate_function(x[!is.na(x)])
+#     } else {
+#       duplicate_function(x)
+#     }
+#   }
+#
+#   # result <- df %>%
+#   #   reframe(
+#   #     !!dependent_variable := f(.data[[dependent_variable]]),
+#   #     # .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
+#   #     .by = all_of(setdiff(names(df), c(dependent_variable, "REF")))
+#   #   ) %>% as.data.frame()
+#
+#
+#
+#   # if the MDV (missing dependent variable) field is present in the input,
+#   # exclude observations with MDV == 1 from the resolution function
+#   if("MDV" %in% names(df)) {
+#     result <- df %>%
+#       reframe(
+#         !!dependent_variable := f(
+#           .data[[dependent_variable]][.data$MDV != 1]
+#         ),
+#         .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
+#       ) %>%
+#       mutate(DV = case_when(is.nan(DV) ~ NA, .default = DV)) %>%
+#       mutate(MDV = as.numeric(is.na(.data$DV)))
+#
+#   } else {
+#     result <- df %>%
+#       reframe(
+#         !!dependent_variable := f(
+#           .data[[dependent_variable]]
+#         ),
+#         .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
+#       )
+#   }
+#
+#
+#   # result <- result %>%
+#   #   mutate(MDV = as.numeric(is.na(.data$DV)))
+#   #
+#   #
+#
+#
+#   return(as.data.frame(result))
+# }
 
 
 #' Test whether a filter term is valid

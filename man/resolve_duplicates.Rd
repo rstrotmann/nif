@@ -6,7 +6,7 @@
 \usage{
 resolve_duplicates(
   df,
-  fields = NULL,
+  fields = "TIME",
   duplicate_function = mean,
   dependent_variable = "DV",
   na.rm = TRUE
