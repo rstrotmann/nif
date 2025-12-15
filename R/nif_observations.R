@@ -731,8 +731,6 @@ add_observation <- function(
   if(is.null(parent))
     parent <- "."
 
-
-
   observation <- make_observation(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
     observation_filter, cat, scat, TESTCD_field, DTC_field, DV_field,

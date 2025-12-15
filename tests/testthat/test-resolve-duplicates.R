@@ -191,3 +191,35 @@ test_that("resolve_duplicates correctly handles NA values with na.rm=TRUE", {
   expect_equal(result_custom$DV[result_custom$TIME == 1], 200)
 })
 
+
+test_that("resolve_duplicates works with custom duplicate_identifiers", {
+  # Create test data with duplicates
+  test_df <- tribble(
+    ~ID, ~TIME, ~ANALYTE, ~DV, ~NTIME, ~TRTDY,
+    1,   0,     "A",      10, 0, 0,
+    1,   0,     "A",      20, 0, 0,
+    2,   1,     "B",      30, 1, 0,
+    2,   1,     "B",      40, 1, 0,
+    3,   2,     "C",      50, 2, 0,
+    3,   2,     "C",      60, 2, 0,
+    3,   2,     "C",      70, 2, 0,
+
+    1,   0,     "A",      12, 0, 1,
+    1,   0,     "A",      22, 0, 1,
+    2,   1,     "B",      32, 1, 1,
+    2,   1,     "B",      42, 1, 1,
+    3,   2,     "C",      52, 2, 1,
+    3,   2,     "C",      62, 2, 1,
+    3,   2,     "C",      72, 2, 1
+  )
+
+  # Test with default fields and mean function
+  result <- resolve_duplicates(test_df)
+  expect_equal(nrow(result), 6)
+
+  # Test with custom duplicate identification fields
+  result <- resolve_duplicates(
+    test_df, fields = c("ID", "ANALYTE", "NTIME", "TRTDY"))
+  expect_equal(nrow(result), 6)
+
+})

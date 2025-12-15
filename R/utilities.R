@@ -1152,7 +1152,7 @@ resolve_duplicates <- function(
       reframe(
         !!dependent_variable := f(
           .data[[dependent_variable]][.data$MDV != 1]
-          ),
+        ),
         .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
       ) %>%
       mutate(DV = case_when(is.nan(DV) ~ NA, .default = DV)) %>%
@@ -1270,5 +1270,81 @@ dv_na_to_zero <- function(obj) {
   validate_nif(obj)
 
   mutate(obj, DV = case_when(is.na(DV) ~ 0, .default = DV))
+}
+
+
+#' Identify baseline columns in a data frame
+#'
+#' Identifies columns that are constant (baseline) for each ID value. A baseline
+#' column is one where all rows with the same ID have the same value.
+#'
+#' @param df A data frame.
+#' @param id_col Character string specifying the ID column name. Defaults to "ID".
+#'
+#' @return A character vector of column names that are baseline columns (constant
+#'   per ID). Returns an empty character vector if no baseline columns are found.
+#'
+#' @import dplyr
+#' @export
+#'
+#' @examples
+#' # Create example data frame
+#' df <- tibble::tribble(
+#'   ~ID, ~SEX, ~AGE, ~TIME, ~DV,
+#'   1,   "M",  25,   0,     10,
+#'   1,   "M",  25,   1,     12,
+#'   1,   "M",  25,   2,     15,
+#'   2,   "F",  30,   0,     8,
+#'   2,   "F",  30,   1,     9,
+#'   2,   "F",  30,   2,     11
+#' )
+#' identify_baseline_columns(df, id_col = "ID")
+#' # Returns: c("SEX", "AGE")
+identify_baseline_columns <- function(df, id_col = "ID") {
+  # Input validation
+  if (!is.data.frame(df)) {
+    stop("Input must be a data frame")
+  }
+
+  if (nrow(df) == 0) {
+    return(character(0))
+  }
+
+  if (!is.character(id_col) || length(id_col) != 1) {
+    stop("id_col must be a single character string")
+  }
+
+  if (!id_col %in% names(df)) {
+    stop("ID column '", id_col, "' not found in data frame")
+  }
+
+  # Get all column names except the ID column
+  all_cols <- names(df)
+  cols_to_check <- setdiff(all_cols, id_col)
+
+  if (length(cols_to_check) == 0) {
+    return(character(0))
+  }
+
+  # Check each column to see if it's constant per ID
+  baseline_cols <- character(0)
+
+  for (col in cols_to_check) {
+    # Count distinct values per ID for this column
+    distinct_counts <- df %>%
+      group_by(.data[[id_col]]) %>%
+      summarize(
+        n_distinct = n_distinct(.data[[col]], na.rm = TRUE),
+        .groups = "drop"
+      )
+
+    # Column is baseline if all IDs have at most 1 distinct value
+    # (allowing for NA values - if all values are NA for an ID, that's still baseline)
+    if (all(distinct_counts$n_distinct <= 1)) {
+      baseline_cols <- c(baseline_cols, col)
+    }
+  }
+
+  return(baseline_cols)
 }
 
