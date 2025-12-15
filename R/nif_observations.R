@@ -601,6 +601,9 @@ make_observation <- function(
 #'   duplicate entries.
 #' @param duplicate_function Function to resolve duplicate values, defaults to
 #'   `mean`.
+#' @param duplicate_identifier Fields by which duplicates are identified (after
+#'   addition of the observations to the nif object), defaults to "DTC".
+#'   Consider also "NTIME", or any other custom field.
 #' @param na.rm Logical indicating whether to remove NA values when applying the
 #'   duplicate_function. Defaults to TRUE.
 #'
@@ -633,6 +636,7 @@ add_observation <- function(
     silent = NULL,
     duplicates = "stop",
     duplicate_function = mean,
+    duplicate_identifier = "DTC",
     omit_not_done = TRUE,
     na.rm = TRUE,
     na_to_zero = FALSE
@@ -657,20 +661,30 @@ add_observation <- function(
   validate_logical_param(debug, "debug")
   validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
   validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_char_param(duplicates, "duplicates")
+  validate_char_param(duplicate_identifier, "duplicate_identifier")
+
   validate_logical_param(na_to_zero, "na_to_zero")
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if(isTRUE(debug))
     keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
+  # validate duplicate handler arguments
   valid_duplicate_values <- c("stop", "ignore", "identify", "resolve")
   if(!duplicates %in% valid_duplicate_values)
     stop(paste0(
       "Invalid value for 'duplicates' - must be one of ",
       nice_enumeration(valid_duplicate_values, conjunction = "or")))
 
+  missing_dupl_id <- setdiff(duplicate_identifier, names(nif))
+  if(length(missing_dupl_id) > 0)
+    stop(paste0(
+      "Missing ", plural("field", length(missing_dupl_id) > 1),
+      " in input: ", nice_enumeration(missing_dupl_id)))
+
   # ensure that keep includes all fields already present in the nif
-  keep <- unique(c(keep, names(nif)))
+  keep <- unique(c(keep, names(nif), duplicate_identifier))
 
   # ensure analytes
   nif <- nif %>%
@@ -728,7 +742,9 @@ add_observation <- function(
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
 
   # Duplicate handling
-  dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
+  # dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
+  dupl_fields <- c("USUBJID", "ANALYTE", duplicate_identifier)
+
   n_dupl <- find_duplicates(observation, fields = dupl_fields, count_only = TRUE)
 
   if(n_dupl != 0) {

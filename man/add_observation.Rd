@@ -30,6 +30,7 @@ add_observation(
   silent = NULL,
   duplicates = "stop",
   duplicate_function = mean,
+  duplicate_identifier = "DTC",
   omit_not_done = TRUE,
   na.rm = TRUE,
   na_to_zero = FALSE
@@ -110,6 +111,10 @@ duplicate entries.
 
 \item{duplicate_function}{Function to resolve duplicate values, defaults to
 \code{mean}.}
+
+\item{duplicate_identifier}{Fields by which duplicates are identified (after
+addition of the observations to the nif object), defaults to "DTC".
+Consider also "NTIME", or any other custom field.}
 
 \item{omit_not_done}{Delete rows where xxSTAT is "NOT DONE, as logical.}
 
