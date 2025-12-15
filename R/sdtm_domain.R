@@ -106,13 +106,13 @@ summary.domain <- function(object, ..., silent = NULL) {
   category <- distinct(select(object, ends_with("CAT")))
   if(ncol(category) == 0) category <- NULL
 
-  issues = NULL
+  # issues = NULL
 
-  if(current_domain == "EX") {
-    temp = ex_issues(object)
-    if(any(lapply(temp, nrow) > 0))
-      issues = temp
-  }
+  # if(current_domain == "EX") {
+  #   temp = ex_issues(object)
+  #   if(any(lapply(temp, nrow) > 0))
+  #     issues = temp
+  # }
 
   # output
   out <- list(
@@ -128,8 +128,8 @@ summary.domain <- function(object, ..., silent = NULL) {
     n_obs = nrow(object),
     visit = visit,
     hash = rlang::hash(object),
-    last = last_dtc(object),
-    issues = issues
+    last = last_dtc(object)
+    # issues = issues
   )
 
   class(out) <- "summary_domain"

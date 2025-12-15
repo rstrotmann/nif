@@ -9,6 +9,12 @@
 #' @format  A sdtm object
 "examplinib_poc"
 
+#' Synthetic SDTM data from a fictional clinical single-arm study with rich and
+#' sparse pk sampling. The ex domain contains some typical data inconsistencies
+#' that need imputations.
+#' @format  A sdtm object
+"examplinib_poc_messy"
+
 #' Synthetic SDTM data from a fictional clinical food effect study for
 #' 'examplinib'.
 #' @format A sdtm object

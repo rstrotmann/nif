@@ -4,10 +4,14 @@
 \alias{ex_issues}
 \title{Identifies data inconsistencies and potential issues in the EX domain}
 \usage{
-ex_issues(ex)
+ex_issues(ex, extrt, silent = TRUE)
 }
 \arguments{
 \item{ex}{The EX domain as domain.}
+
+\item{extrt}{The treatment, as character.}
+
+\item{silent}{Suppress reporting, as logical.}
 }
 \value{
 A list.
@@ -16,6 +20,6 @@ A list.
 Identifies data inconsistencies and potential issues in the EX domain
 }
 \examples{
-ex_issues(domain(examplinib_poc_messy, "ex"))
+dummy <- ex_issues(domain(examplinib_poc_messy, "ex"), "EXAMPLINIB", silent = FALSE)
 
 }
