@@ -277,7 +277,7 @@ impute_exendtc_to_cutoff <- function(
         df_to_string(
         to_replace %>%
           select(all_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"))),
-        indent = 2)
+        indent = 2, abbr_lines = 5, abbr_threshold = 10)
       )
       cli::cli_text()
     }, silent = silent)
@@ -375,7 +375,7 @@ impute_admin_times_from_pcrftdtc <- function(
 
   if(length(conflicting_rows) != 0) {
     conditional_cli({
-      cli_alert_info(paste0(
+      cli_alert_warning(paste0(
         "Inconsistent PCRFTDTC and EXSTDTC/EXENDTC"))
       cli_text(paste0(
         "For ", length(conflicting_rows), " administrations of ", analyte,
@@ -387,6 +387,7 @@ impute_admin_times_from_pcrftdtc <- function(
           temp[conflicting_rows,
                c("USUBJID", "ANALYTE", "DTC", "PCRFTDTC_time")],
           abbr_lines = 5, abbr_threshold = 10))
+      cli_text()
     }, silent = silent)
 
     temp <- temp %>%

@@ -813,19 +813,38 @@ add_observation <- function(
 
   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
   if(n_no_admin != 0) {
-    conditional_message(
-      "Missing administration information in ",
-      n_no_admin, " observations (did you set a ",
-      "parent for these observations?):\n",
-      df_to_string(
-       obj %>%
-         filter(.data$NO_ADMIN_FLAG == TRUE) %>%
-         group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
-         mutate(N = sum(EVID == 0)) %>%
-         ungroup() %>%
-         distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
-       indent = 2), "\n",
-      silent = silent)
+
+    # conditional_message(
+    #   "Missing administration information in ",
+    #   n_no_admin, " observations (did you set a ",
+    #   "parent for these observations?):\n",
+    #   df_to_string(
+    #    obj %>%
+    #      filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+    #      group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
+    #      mutate(N = sum(EVID == 0)) %>%
+    #      ungroup() %>%
+    #      distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+    #    indent = 2), "\n",
+    #   silent = silent)
+
+    conditional_cli({
+      cli_alert_warning("Missing parent!")
+      cli_text(paste0(
+        "Missing administration information in ",
+        n_no_admin, " observations (did you set a ",
+        "parent for these observations?)"
+      ))
+      cli_verbatim(df_to_string(
+        obj %>%
+          filter(.data$NO_ADMIN_FLAG == TRUE) %>%
+          group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
+          mutate(N = sum(EVID == 0)) %>%
+          ungroup() %>%
+          distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+        indent = 2, abbr_lines = 5, abbr_threshold = 10))
+      cli_text()
+    }, silent = silent)
 
     obj <- obj %>%
       filter(.data$NO_ADMIN_FLAG == 0)
