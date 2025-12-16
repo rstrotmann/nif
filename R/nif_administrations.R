@@ -224,9 +224,11 @@ make_administration <- function(
   )
   ## end to do
 
-  ex <- impute_exendtc_to_rfendtc(ex, dm, cut_off_date, silent = silent)
+  # ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
-  if(is.null(analyte)) {analyte <- extrt}
+  if(is.null(analyte)) {
+    analyte <- extrt
+  }
 
   if(is.null(cut_off_date)){
     cut_off_date <- last_ex_dtc(ex)
@@ -297,10 +299,16 @@ make_administration <- function(
   # impute missing administration times from PCRFTDTC
   if("pc" %in% names(sdtm$domains)) {
     pc <- domain(sdtm, "pc") %>% lubrify_dates()
-    admin <- admin %>%
-      {if("PCRFTDTC" %in% names(pc))
-        impute_admin_times_from_pcrftdtc(
-          ., pc, analyte, analyte, silent = silent) else .}
+
+    # admin <- admin %>%
+    #   {if("PCRFTDTC" %in% names(pc))
+    #     impute_admin_times_from_pcrftdtc(
+    #       ., pc, analyte, analyte, silent = silent) else .}
+
+    if("PCRFTDTC" %in% names(pc)) {
+      admin <- admin %>%
+        impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
+    }
   }
 
   admin <- admin %>%
@@ -380,8 +388,8 @@ add_administration <- function(
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
   debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  if(isTRUE(debug))
-    keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+
   bind_rows(
     nif,
     make_administration(

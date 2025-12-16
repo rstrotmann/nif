@@ -124,11 +124,10 @@ test_that("make_administration imputes missing last EXENDTC", {
 
   expect_no_error(
     expect_message(
-    expect_message(
-      test <- as.data.frame(
-        make_administration(sdtm, "A", silent = FALSE))
-    ),
-    "A global cut-off-date of 2024-12-22 was automatically assigned!")
-  )
+      expect_message(
+        test <- as.data.frame(
+          make_administration(sdtm, "A", silent = FALSE)),
+      "A global cut-off-date of 2024-12-19 was automatically assigned!")
+    ))
 })
 

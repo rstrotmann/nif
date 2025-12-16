@@ -87,14 +87,13 @@ test_that("impute_exendtc_to_rfendtc works as intended", {
     4,        "DM",    "2022-07-18T13:54", "") %>%
     lubrify_dates()
 
-  suppressMessages(
-    ex %>%
-      mutate(IMPUTATION = "") %>%
-      impute_exendtc_to_rfendtc(dm) %>%
-      summarize(sum = sum(is.na(EXENDTC))) %>%
-      as.numeric() %>%
-      expect_equal(2)
-  )
+  ex %>%
+    mutate(IMPUTATION = "") %>%
+    impute_exendtc_to_rfendtc(dm, "TEST", silent = TRUE) %>%
+    summarize(sum = sum(is.na(EXENDTC))) %>%
+    as.numeric() %>%
+    expect_equal(2)
+
 })
 
 
@@ -114,7 +113,7 @@ test_that("impute_exendtc_to_rfendtc works correctly", {
   expect_message(
     temp <- ex %>%
       mutate(IMPUTATION = "") %>%
-      impute_exendtc_to_rfendtc(dm, silent = FALSE)
+      impute_exendtc_to_rfendtc(dm, "A", silent = FALSE)
   )
 
   expect_equal(
