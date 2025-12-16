@@ -493,20 +493,12 @@ make_observation <- function(
     not_done <- filtered_obj %>%
       filter(.data[[stat_field]] == "NOT DONE")
     if(nrow(not_done) > 0) {
-
-      # conditional_message(
-      #   nrow(not_done), " observations for ", analyte, " with ", stat_field,
-      #   " of 'NOT DONE' omitted", silent = silent)
-
       conditional_cli(
         cli({
-          # cli_alert_info("Observations omitted")
-          # cli_alert_info(paste0(nrow(not_done), " observations omitted"))
           cli_alert_info(paste0(
             nrow(not_done), " observations for ", analyte, " with ", stat_field,
             " of 'NOT DONE' omitted"
           ))
-          # cli_text()
         }),
         silent = silent
       )
@@ -719,11 +711,6 @@ add_observation <- function(
   # Assign compartment for observation if CMT == NULL
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
-
-    # conditional_message(
-    #   "Compartment for ", testcd, " not specified and set to ", cmt,
-    #   silent = silent)
-
     conditional_cli(
       cli_alert_info(paste0(
         "Compartment for ", testcd, " not specified and set to ", cmt
@@ -733,23 +720,6 @@ add_observation <- function(
 
   if(is.null(analyte))
     analyte <- testcd
-
-  # if(is.null(parent)) {
-  #   if(analyte %in% treatments(nif)) {
-  #     parent <- analyte
-  #   } else {
-  #     parent <- guess_parent(nif)
-  #     if(is.null(parent)) {
-  #       stop(paste0(
-  #         "A parent could not be automatically determined. ",
-  #         "Please specify a parent value explicitly."))
-  #     }
-  #     conditional_message(
-  #       "Parent for ", analyte, " not specified and set to ", parent,
-  #       silent = silent)
-  #   }
-  # }
-
 
   # If null, set parent to placeholder. The parent field will be later completed based on
   # the last administration before the observation
@@ -784,12 +754,6 @@ add_observation <- function(
     }
 
     if(duplicates == "identify") {
-
-      # message(paste0(
-      #   n_dupl, " duplicate observations found with respect to ",
-      #   nice_enumeration(dupl_fields), ". ",
-      #   "Only duplicate observations returned!"))
-
       cli::cli({
         cli::cli_alert_danger("Only duplicate observations returned")
         cli::cli_text(paste0(
@@ -808,21 +772,12 @@ add_observation <- function(
         fields = dupl_fields,
         duplicate_function = duplicate_function,
         na.rm = na.rm)
-
-      # conditional_message(
-      #   "In observations for ", testcd, " (analyte '", analyte, "'), ",
-      #   n_dupl, " duplicates were resolved!",
-      #   silent = silent
-      # )
-
       conditional_cli(
         cli::cli({
-          # cli_alert_warning("Duplicates resolved")
           cli_alert_warning(paste0(
             n_dupl, " duplicate observations for ", testcd,
             " (analyte ", analyte, ") resolved!"
           ))
-          # cli_text()
         }),
         silent = silent
       )

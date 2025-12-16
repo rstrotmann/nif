@@ -232,13 +232,12 @@ make_administration <- function(
     cut_off_date <- last_ex_dtc(ex)
 
     conditional_cli({
-      cli::cli_alert_info("Cut-off date")
-      cli::cli_text(paste0(
+      cli_alert_info(paste0(
         "A global cut-off-date of ",
-        format(cut_off_date),
-        " was automatically assigned!"
+          format(cut_off_date),
+          " was automatically assigned!"
       ))
-      cli::cli_text()
+
     }, silent = silent)
   } else {
     cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)

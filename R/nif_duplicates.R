@@ -197,11 +197,6 @@ resolve_duplicates <- function(
       " not found in input: ", nice_enumeration(missing_fields)))
   }
 
-  # # Check if DV field exists
-  # if (!"DV" %in% names(df)) {
-  #   stop("DV field not found in input data frame")
-  # }
-
   # Check if dependent_variable exists in the data frame
   if (!dependent_variable %in% names(df)) {
     stop(paste("The dependent variable", dependent_variable,
@@ -209,7 +204,6 @@ resolve_duplicates <- function(
   }
 
   # Remove DV from fields if present (it will be handled separately)
-  # fields <- setdiff(fields, "DV")
   fields <- setdiff(fields, dependent_variable)
 
   # Check that we still have at least one field to group by
@@ -226,7 +220,6 @@ resolve_duplicates <- function(
   }
 
   # Get all columns except the grouping fields and DV
-  # other_cols <- setdiff(names(df), c(fields, "DV"))
   other_cols <- setdiff(names(df), c(fields, dependent_variable))
 
   # Helper function to check if all values in a vector are the same
@@ -258,8 +251,6 @@ resolve_duplicates <- function(
   result <- df %>%
     group_by(across(all_of(fields))) %>%
     reframe(
-      # DV = mean(.data$DV, na.rm = TRUE),
-      # DV = f(.data$DV),
       !!dependent_variable := f(.data[[dependent_variable]]),
       across(all_of(other_cols), ~ all_same(.x))
     ) %>%
