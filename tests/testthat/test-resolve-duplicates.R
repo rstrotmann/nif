@@ -95,6 +95,7 @@ test_that("resolve_duplicates works with custom function to keep max value", {
   expect_equal(result$DV, c(20, 40))
 })
 
+
 test_that("resolve_duplicates handles non-existent fields", {
   test_df <- tribble(
     ~ID, ~TIME,
@@ -105,7 +106,7 @@ test_that("resolve_duplicates handles non-existent fields", {
   # Should error when field doesn't exist
   expect_error(
     resolve_duplicates(test_df, fields = c("NONEXISTENT")),
-    "The following fields do not exist in the data frame: NONEXISTENT"
+    "Field not found in input: NONEXISTENT"
   )
 })
 
@@ -226,5 +227,35 @@ test_that("resolve_duplicates works with custom duplicate_identifiers", {
   result <- resolve_duplicates(
     test_df, fields = c("NTIME", "TRTDY"))
   expect_equal(nrow(result), 6)
-
 })
+
+
+
+# test_that("resolve_duplicates workds with duplicats that have different NTIME", {
+#   df <- tibble::tribble(
+#     ~ID, ~TIME, ~ANALYTE, ~DV, ~NTIME, ~TRTDY, ~BL_WT,
+#     1,     0,      "A",  10,      0,      0, 80,
+#     1,     0,      "A",  20,      0.5,    0, 80,
+#
+#     1,     1,      "B",  30,      0,      0, 80,
+#     1,     1,      "B",  40,      0,      0, 80,
+#     1,     1,      "B",  32,      1,      0, 80,
+#     1,     1,      "B",  42,      1.5,    0, 80,
+#
+#     3,     2,      "C",  50,      2,      0, 70,
+#     3,     2,      "C",  60,      2,      0, 70,
+#     3,     2,      "C",  70,      2,      0, 70,
+#     3,     2,      "C",  52,      2,      1, 70,
+#     3,     2,      "C",  62,      2,      1, 70,
+#     3,     2,      "C",  72,      2,      1, 70
+#   )
+#
+#   resolve_duplicates(df, fields = "TIME")
+#   result <- resolve_duplicates(df, fields = c("TIME"))
+#
+#   resolve_duplicates(df, c("TIME"))
+#   resolve_duplicates(df, c("TIME", "NTIME"))
+# })
+
+
+

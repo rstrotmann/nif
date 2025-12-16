@@ -320,6 +320,7 @@ make_ntime <- function(
 #' @keywords internal
 #' @export
 #' @import stringr
+#' @import cli
 #'
 make_observation <- function(
     sdtm,
@@ -491,10 +492,26 @@ make_observation <- function(
   if(omit_not_done == TRUE & stat_field %in% names(filtered_obj)) {
     not_done <- filtered_obj %>%
       filter(.data[[stat_field]] == "NOT DONE")
-    if(nrow(not_done) > 0)
-      conditional_message(
-        nrow(not_done), " observations for ", analyte, " with ", stat_field,
-        " of 'NOT DONE' omitted", silent = silent)
+    if(nrow(not_done) > 0) {
+
+      # conditional_message(
+      #   nrow(not_done), " observations for ", analyte, " with ", stat_field,
+      #   " of 'NOT DONE' omitted", silent = silent)
+
+      conditional_cli(
+        cli({
+          # cli_alert_info("Observations omitted")
+          # cli_alert_info(paste0(nrow(not_done), " observations omitted"))
+          cli_alert_info(paste0(
+            nrow(not_done), " observations for ", analyte, " with ", stat_field,
+            " of 'NOT DONE' omitted"
+          ))
+          # cli_text()
+        }),
+        silent = silent
+      )
+
+    }
     filtered_obj <- filtered_obj %>%
       filter(.data[[stat_field]] != "NOT DONE")
 
@@ -610,6 +627,7 @@ make_observation <- function(
 #' @return A nif object.
 #' @seealso [nif::add_administration()]
 #' @export
+#' @import cli
 add_observation <- function(
     nif,
     sdtm,
@@ -701,9 +719,16 @@ add_observation <- function(
   # Assign compartment for observation if CMT == NULL
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
-    conditional_message(
-      "Compartment for ", testcd, " not specified and set to ", cmt,
-      silent = silent)
+
+    # conditional_message(
+    #   "Compartment for ", testcd, " not specified and set to ", cmt,
+    #   silent = silent)
+
+    conditional_cli(
+      cli_alert_info(paste0(
+        "Compartment for ", testcd, " not specified and set to ", cmt
+      )), silent = silent
+    )
   }
 
   if(is.null(analyte))
@@ -759,10 +784,21 @@ add_observation <- function(
     }
 
     if(duplicates == "identify") {
-      message(paste0(
-        n_dupl, " duplicate observations found with respect to ",
-        nice_enumeration(dupl_fields), ". ",
-        "Only duplicate observations returned!"))
+
+      # message(paste0(
+      #   n_dupl, " duplicate observations found with respect to ",
+      #   nice_enumeration(dupl_fields), ". ",
+      #   "Only duplicate observations returned!"))
+
+      cli::cli({
+        cli::cli_alert_danger("Only duplicate observations returned")
+        cli::cli_text(paste0(
+          n_dupl, " duplicate observations found with respect to ",
+          nice_enumeration(dupl_fields), "."
+        ))
+        cli_text()
+      })
+
       return(find_duplicates(observation, fields = dupl_fields))
     }
 
@@ -772,9 +808,22 @@ add_observation <- function(
         fields = dupl_fields,
         duplicate_function = duplicate_function,
         na.rm = na.rm)
-      conditional_message(
-        "In observations for ", testcd, " (analyte '", analyte, "'), ",
-        n_dupl, " duplicates were resolved!",
+
+      # conditional_message(
+      #   "In observations for ", testcd, " (analyte '", analyte, "'), ",
+      #   n_dupl, " duplicates were resolved!",
+      #   silent = silent
+      # )
+
+      conditional_cli(
+        cli::cli({
+          # cli_alert_warning("Duplicates resolved")
+          cli_alert_warning(paste0(
+            n_dupl, " duplicate observations for ", testcd,
+            " (analyte ", analyte, ") resolved!"
+          ))
+          # cli_text()
+        }),
         silent = silent
       )
     }

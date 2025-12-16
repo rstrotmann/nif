@@ -2,36 +2,42 @@
 % Please edit documentation in R/nif_duplicates.R
 \name{resolve_duplicates}
 \alias{resolve_duplicates}
-\title{Remove duplicate rows from a data frame}
+\title{Resolve duplicate rows by averaging DV and setting conflicting fields to NA}
 \usage{
 resolve_duplicates(
   df,
   fields = "TIME",
-  duplicate_function = mean,
   dependent_variable = "DV",
+  duplicate_function = mean,
   na.rm = TRUE
 )
 }
 \arguments{
-\item{df}{A data frame to remove duplicates from}
+\item{df}{A data frame to resolve duplicates from}
 
-\item{fields}{A character vector of field names to check for duplicates. If
-NULL, defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.}
-
-\item{duplicate_function}{A function to apply to duplicate values. Default is
-mean. The function should take a vector and return a single value.}
+\item{fields}{A character vector of field names to identify duplicates. These
+fields are used to group rows that are considered duplicates.}
 
 \item{dependent_variable}{The name of the field to apply the
 duplicate_function to. Defaults to "DV".}
+
+\item{duplicate_function}{A function to apply to duplicate values. Default is
+mean. The function should take a vector and return a single value.}
 
 \item{na.rm}{Logical indicating whether to remove NA values when applying the
 duplicate_function. Defaults to TRUE.}
 }
 \value{
-A data frame with duplicate rows removed
+A data frame with duplicate rows resolved. The DV field contains the
+average of duplicate values, and other fields are kept as-is if consistent
+or set to NA if inconsistent within duplicate groups.
 }
 \description{
-This function removes duplicate rows from a data frame based on specified
-fields, applying a function to handle duplicate values in the dependent
-variable.
+This function identifies duplicate rows based on specified identifier fields
+and resolves them by:
+\itemize{
+\item Averaging the DV field across duplicates
+\item Keeping other fields as-is if they have the same value across duplicates
+\item Setting fields to NA if they have multiple different values within duplicates
+}
 }

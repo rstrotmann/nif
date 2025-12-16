@@ -255,8 +255,9 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
     #   "\n"
     # )
 
+    conditional_cli(
     cli::cli({
-      cli::cli_alert_warning("End date imputation!")
+      cli::cli_alert_warning("End date imputation:")
       cli::cli_text(paste0(
         "In ", nrow(to_replace), plural(" row", nrow(to_replace) > 1),
         " EXENDTC was missing and was imputed as the day before the next EXSTDTC:"
@@ -266,7 +267,9 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
           c("USUBJID", "EXSEQ", "EXTRT",  "EXSTDTC", "EXENDTC"))), indent = 2)
       )
       cli::cli_text()
-    })
+    }),
+    silent = silent
+    )
 
     temp <- temp %>%
       mutate(imputation_flag = (is.na(.data$EXENDTC) &

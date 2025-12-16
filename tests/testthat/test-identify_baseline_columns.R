@@ -457,3 +457,4 @@ test_that("identify_baseline_columns handles data.frame input", {
   expect_equal(sort(result), c("AGE", "SEX"))
 })
 
+
