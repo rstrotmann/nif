@@ -90,8 +90,7 @@ nif_poc <- new_nif() %>%
   add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>% 
   add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>% 
   add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3) 
-#> ℹ Cut-off date
-#> A global cut-off-date of 2001-07-14 08:53:00 was automatically assigned!
+#> ℹ A global cut-off-date of 2001-07-14 08:53:00 was automatically assigned!
 ```
 
 Let’s add some further baseline data to our nif object. The serum

@@ -109,6 +109,7 @@
 <url><loc>/reference/hash.nif.html</loc></url>
 <url><loc>/reference/hash.sdtm.html</loc></url>
 <url><loc>/reference/ht_by_wt.html</loc></url>
+<url><loc>/reference/identify_baseline_columns.html</loc></url>
 <url><loc>/reference/import_from_connection.html</loc></url>
 <url><loc>/reference/import_nif.html</loc></url>
 <url><loc>/reference/import_observation.html</loc></url>
@@ -204,6 +205,7 @@
 <url><loc>/reference/read_sdtm.html</loc></url>
 <url><loc>/reference/recode_race.html</loc></url>
 <url><loc>/reference/resolve_duplicates.html</loc></url>
+<url><loc>/reference/resolve_duplicates_old.html</loc></url>
 <url><loc>/reference/rich_sampling_sbs.html</loc></url>
 <url><loc>/reference/safe_mean.html</loc></url>
 <url><loc>/reference/safe_min.html</loc></url>

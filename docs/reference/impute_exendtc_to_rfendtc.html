@@ -21,7 +21,7 @@ administration time based on the RFENDTC, if provided in DM."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.59.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@ administration time based on the RFENDTC, if provided in DM.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">impute_exendtc_to_rfendtc</span><span class="op">(</span><span class="va">ex</span>, <span class="va">dm</span>, cut_off_date <span class="op">=</span> <span class="cn">NULL</span>, silent <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">impute_exendtc_to_rfendtc</span><span class="op">(</span><span class="va">ex</span>, <span class="va">dm</span>, <span class="va">extrt</span>, cut_off_date <span class="op">=</span> <span class="cn">NULL</span>, silent <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,6 +80,10 @@ administration time based on the RFENDTC, if provided in DM.</p>
 
 <dt id="arg-dm">dm<a class="anchor" aria-label="anchor" href="#arg-dm"></a></dt>
 <dd><p>The DM domain as data frame.</p></dd>
+
+
+<dt id="arg-extrt">extrt<a class="anchor" aria-label="anchor" href="#arg-extrt"></a></dt>
+<dd><p>The treatment.</p></dd>
 
 
 <dt id="arg-cut-off-date">cut_off_date<a class="anchor" aria-label="anchor" href="#arg-cut-off-date"></a></dt>

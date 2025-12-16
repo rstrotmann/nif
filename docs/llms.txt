@@ -321,6 +321,9 @@ For further guidance see the help for individual functions and the
 - [`hash.sdtm()`](hash.sdtm.md) : Generate the XXH128 hash of a sdtm
   object
 
+- [`identify_baseline_columns()`](identify_baseline_columns.md) :
+  Identify baseline columns in a data frame
+
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection
 
@@ -475,8 +478,11 @@ For further guidance see the help for individual functions and the
 
 - [`recode_race()`](recode_race.md) : Recode RACE columns in nif object
 
-- [`resolve_duplicates()`](resolve_duplicates.md) : Remove duplicate
-  rows from a data frame
+- [`resolve_duplicates()`](resolve_duplicates.md) : Resolve duplicate
+  rows by averaging DV and setting conflicting fields to NA
+
+- [`resolve_duplicates_old()`](resolve_duplicates_old.md) : Remove
+  duplicate rows from a data frame
 
 - [`rich_sampling_sbs()`](rich_sampling_sbs.md) : Identify subjects with
   rich sampling

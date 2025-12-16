@@ -38,6 +38,7 @@ add_observation(
   silent = NULL,
   duplicates = "stop",
   duplicate_function = mean,
+  duplicate_identifier = "DTC",
   omit_not_done = TRUE,
   na.rm = TRUE,
   na_to_zero = FALSE
@@ -169,6 +170,12 @@ add_observation(
 - duplicate_function:
 
   Function to resolve duplicate values, defaults to `mean`.
+
+- duplicate_identifier:
+
+  Fields by which duplicates are identified (after addition of the
+  observations to the nif object), defaults to "DTC". Consider also
+  "NTIME", or any other custom field.
 
 - omit_not_done:
 

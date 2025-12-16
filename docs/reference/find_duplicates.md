@@ -2,18 +2,12 @@
 
 This function identifies duplicate rows in a data frame based on
 specified fields. It returns a data frame containing the duplicate rows
-and their counts.
+and their counts. The 'ID' field must always be present.
 
 ## Usage
 
 ``` r
-find_duplicates(
-  df,
-  fields = NULL,
-  count_only = FALSE,
-  return_all_cols = TRUE,
-  additional_cols = NULL
-)
+find_duplicates(df, fields = NULL, count_only = FALSE)
 ```
 
 ## Arguments
@@ -31,16 +25,6 @@ find_duplicates(
 
   Logical indicating whether to return only the count of duplicates
   (default: FALSE)
-
-- return_all_cols:
-
-  Logical indicating whether to return all columns from the original
-  data frame (default: TRUE)
-
-- additional_cols:
-
-  Character vector of additional columns to include in the output when
-  return_all_cols is FALSE
 
 ## Value
 

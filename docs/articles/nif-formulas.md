@@ -26,6 +26,7 @@ nif <- nif() %>%
   add_observation(sdtm, "pc", "RS2023") %>% 
   add_observation(sdtm, "pc", "RS2023487A") %>% 
   add_baseline(sdtm, "lb", "CREAT")
+#> ✖ Analyte EXAMPLINIB not found in PCTESTCD. Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!
 ```
 
 The only time-varying data in this NIF data set are now the two
