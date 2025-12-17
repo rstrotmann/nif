@@ -159,7 +159,7 @@
 - [`examplinib_sad_nif`](examplinib_sad_nif.md) : Synthetic NIF data
   from a fictional clinical SAD FIH study with rich PK sampling
 
-- [`filter_EXSTDTC_after_EXENDTC()`](filter_EXSTDTC_after_EXENDTC.md) :
+- [`filter_EXENDTC_after_EXSTDTC()`](filter_EXENDTC_after_EXSTDTC.md) :
   Remove administrations with EXSTDTC after EXENDTC
 
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID

@@ -19,7 +19,7 @@ find_duplicates(df, fields = NULL, count_only = FALSE)
 - fields:
 
   A character vector of field names to check for duplicates. If NULL,
-  defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
+  defaults to c("ID", "TIME", "ANALYTE") for NIF data.
 
 - count_only:
 

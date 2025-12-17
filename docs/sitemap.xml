@@ -95,10 +95,12 @@
 <url><loc>/reference/examplinib_sad.html</loc></url>
 <url><loc>/reference/examplinib_sad_min_nif.html</loc></url>
 <url><loc>/reference/examplinib_sad_nif.html</loc></url>
+<url><loc>/reference/filter_EXENDTC_after_EXSTDTC.html</loc></url>
 <url><loc>/reference/filter_EXSTDTC_after_EXENDTC.html</loc></url>
 <url><loc>/reference/filter_correct_date_format.html</loc></url>
 <url><loc>/reference/filter_subject.html</loc></url>
 <url><loc>/reference/find_duplicates.html</loc></url>
+<url><loc>/reference/function_name.html</loc></url>
 <url><loc>/reference/geom_admin.html</loc></url>
 <url><loc>/reference/get_pinboard.html</loc></url>
 <url><loc>/reference/guess_lbspec.html</loc></url>
