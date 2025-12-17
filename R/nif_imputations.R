@@ -68,7 +68,7 @@ impute_exendtc_to_rfendtc <- function(
         cli::cli_text(paste0(
           "Cannot impute missing EXENDTC in final administration episode of ",
           n_sbs_to_be_imputed, plural(" subject", n_sbs_to_be_imputed > 1),
-          " because RFXENDTC is missing in DM:"))
+          " because RFENDTC is missing in DM:"))
 
         cli::cli_verbatim(
           df_to_string(to_be_imputed, indent = 2)
@@ -84,11 +84,48 @@ impute_exendtc_to_rfendtc <- function(
         select(dm, c("USUBJID", "RFENDTC")),
         by = "USUBJID")
 
-    replace_n <- temp %>%
-      filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) & LAST_ADMIN == TRUE) %>%
-      nrow()
+    # Capture rows to be imputed for message (before imputation)
+    rows_for_message <- temp %>%
+      filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) & LAST_ADMIN == TRUE)
 
-    temp %>%
+    replace_n <- nrow(rows_for_message)
+
+    if (replace_n > 0) {
+
+      # conditional_message(
+      #   replace_n, " ",
+      #   plural("subject", replace_n > 1),
+      #   " had a missing EXENDTC in their final administration episode.\n",
+      #   "In these cases, EXENDTC was imputed to RFENDTC:\n",
+      #   df_to_string(
+      #     rows_for_message %>%
+      #       select(any_of(
+      #         c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
+      #     indent = 2
+      #   ), "\n",
+      #   silent = silent
+      # )
+
+      conditional_cli({
+        cli_alert_info("Missing EXENDTC")
+        cli_text(paste0(
+          replace_n, " ",
+          plural("subject", replace_n > 1),
+          " had a missing EXENDTC in their final administration episode.\n",
+          "In these cases, EXENDTC was imputed to RFENDTC."
+        ))
+        cli_verbatim(df_to_string(
+          rows_for_message %>%
+            select(any_of(
+              c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
+          indent = 2,
+          abbr_lines = 5, abbr_threshold = 10
+        ))
+        cli_text()
+      }, silent = silent)
+    }
+
+    temp <- temp %>%
       mutate(IMPUTATION = case_when(
         (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
            !is.na(.data$RFENDTC)) ~ "missing EXENDTC set to RFENDTC",
@@ -99,40 +136,21 @@ impute_exendtc_to_rfendtc <- function(
            !is.na(.data$RFENDTC)) ~ .data$RFENDTC,
         .default = .data$EXENDTC
       )) %>%
-      select(-any_of(c("LAST_ADMIN", "RFENDTC", "RFSTDTC")))
-  }
+      select(-any_of(c("LAST_ADMIN", "RFENDTC")))
 
-  if (replace_n > 0) {
-    conditional_message(
-      replace_n, " ",
-      plural("subject", replace_n > 1),
-      " had a missing EXENDTC in their final administration episode.\n",
-      "In these cases, EXENDTC was imputed to RFENDTC:\n",
-      df_to_string(
-        temp %>%
-          filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) &
-                   .data$LAST_ADMIN == TRUE) %>%
-          select(any_of(
-            c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
-        indent = 2
-      ), "\n",
-      silent = silent
-    )
+    # Merge temp back with original ex to preserve all rows (including non-matching EXTRT)
+    # Get rows that were not filtered (non-matching EXTRT)
+    other_rows <- ex %>%
+      lubrify_dates() %>%
+      filter(.data$EXTRT != extrt)
 
-    temp %>%
-      mutate(IMPUTATION = case_when(
-        (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
-           !is.na(.data$RFENDTC)) ~ "missing EXENDTC set to RFENDTC",
-        .default = .data$IMPUTATION
-      )) %>%
-      mutate(EXENDTC = case_when(
-        (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
-           !is.na(.data$RFENDTC)) ~ .data$RFENDTC,
-        .default = .data$EXENDTC
-      )) %>%
-      select(-any_of(c("LAST_ADMIN", "RFENDTC", "RFSTDTC")))
+    # Combine filtered and imputed rows with other rows
+    result <- bind_rows(temp, other_rows) %>%
+      arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC)
+
+    return(result)
   } else {
-    ex
+    return(ex)
   }
 }
 

@@ -224,7 +224,7 @@ make_administration <- function(
   )
   ## end to do
 
-  # ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
+  ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
   if(is.null(analyte)) {
     analyte <- extrt
