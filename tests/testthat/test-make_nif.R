@@ -180,20 +180,20 @@ test_that("impute_exendtc_to_cutoff works", {
 test_that("filter_EXSTDTC_after_EXENDTC works", {
   ex <- tibble::tribble(
     ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC,
-          1,      1,    "A",        1,       10,
-          1,      2,    "A",       15,       20,
-          2,      1,    "A",        1,       NA,
-          2,      2,    "A",       20,       10
+          1,      1,    "A",  "2025-01-01", "2025-01-10",
+          1,      2,    "A",  "2025-01-15", "2025-01-20",
+          2,      1,    "A",  "2025-01-01", NA,
+          2,      2,    "A",  "2025-01-20", "2025-01-10"
   )
 
   dm <- tibble::tribble(
     ~USUBJID, ~RFENDTC,
-    1, 20,
-    2, 20
+    1, "2025-01-20",
+    2, "2025-01-20"
   )
 
-  expect_message(temp <- filter_EXSTDTC_after_EXENDTC(ex, dm))
-  expect_equal(nrow(temp), 3)
+  expect_message(temp <- filter_EXSTDTC_after_EXENDTC(ex, dm, "A"))
+  expect_equal(nrow(temp), 2)
 })
 
 

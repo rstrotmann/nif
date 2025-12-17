@@ -265,7 +265,8 @@ make_administration <- function(
     conditional_cli({
       cli::cli_alert_warning("Cut off date applied!")
       cli::cli_text(paste0(
-        "Some administrations episodes begin after the cut-off date (",
+        nrow(cut_off_rows),
+        " administrations episodes for ", extrt, " begin after the cut-off date (",
         format(cut_off_date), ") and were deleted from the data set:"
       ))
       cli::cli_verbatim(
@@ -281,12 +282,12 @@ make_administration <- function(
   admin <- admin %>%
     # decompose_dtc("EXSTDTC") %>%
 
-    # impute_exendtc_to_rfendtc(dm) %>%
-    filter_EXSTDTC_after_EXENDTC(dm, silent = silent) %>%
 
     # time imputations
     impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
+    # impute_exendtc_to_rfendtc(dm) %>%
+    filter_EXSTDTC_after_EXENDTC(dm, extrt, silent = silent) %>%
     decompose_dtc("EXENDTC") %>%
 
     # make generic fields

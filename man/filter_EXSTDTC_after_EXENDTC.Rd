@@ -4,7 +4,7 @@
 \alias{filter_EXSTDTC_after_EXENDTC}
 \title{Remove administrations with EXSTDTC after EXENDTC}
 \usage{
-filter_EXSTDTC_after_EXENDTC(ex, dm, silent = NULL)
+filter_EXSTDTC_after_EXENDTC(ex, dm, extrt, silent = NULL)
 }
 \arguments{
 \item{ex}{The ex domain as data frame.}

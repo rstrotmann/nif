@@ -404,10 +404,32 @@ impute_admin_times_from_pcrftdtc <- function(
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'
 #' @return A data frame.
-#' @export
-filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = NULL) {
+filter_EXSTDTC_after_EXENDTC <- function(ex, dm, extrt, silent = NULL) {
+  # Input validation
+  expected_ex_columns <- c("USUBJID", "EXSTDTC", "EXENDTC")
+  missing_ex_columns <- setdiff(expected_ex_columns, names(ex))
+  n = length(missing_ex_columns)
+  if(n > 0)
+    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
+                nice_enumeration(missing_ex_columns)))
+
+  # Convert dates to POSIXct for proper comparison
+  ex <- lubrify_dates(ex)
+  dm <- lubrify_dates(dm)
+
   temp <- ex %>%
-    filter(.data$EXSTDTC > .data$EXENDTC) %>%
+    filter(.data$EXTRT == extrt) %>%
+    decompose_dtc(c("EXSTDTC", "EXENDTC")) %>%
+    # filter(.data$EXSTDTC > .data$EXENDTC) %>%
+    filter(
+      # either the start date is after the end date
+      (as.Date(.data$EXSTDTC_date) > as.Date(.data$EXENDTC_date)) |
+        # or the start and end dates are the same, both times are not NA, and the
+        # start datetime is still after the end datetime
+      (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
+         !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
+         .data$EXSTDTC > .data$EXENDTC)
+    ) %>%
     left_join(
       dm %>%
         select(any_of(c("USUBJID", "RFSTDTC", "RFENDTC"))),
@@ -416,10 +438,11 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = NULL) {
 
   if(nrow(temp) > 0) {
     conditional_cli({
-      cli::cli_alert_warning("Inconsistent EXSTDTC and EXENDTC!")
+      cli::cli_alert_warning("EXSTDTC after EXENDTC!")
 
       cli::cli_text(paste0(
         nrow(temp), " administration ", plural("episode", nrow(temp) > 1),
+        " for ", extrt,
         " had an EXENDTC before the EXSTDTC and ",
         plural("was", nrow(temp) > 1),
         " removed from the data set:\n"))
@@ -431,7 +454,20 @@ filter_EXSTDTC_after_EXENDTC <- function(ex, dm, silent = NULL) {
       cli::cli_text()
       }, silent = silent)
   }
-  ex %>%
-    filter(is.na(.data$EXSTDTC) | is.na(.data$EXENDTC) |
-             .data$EXSTDTC <= .data$EXENDTC)
+
+  out <- ex %>%
+    filter(.data$EXTRT == extrt) %>%
+    decompose_dtc(c("EXSTDTC", "EXENDTC")) %>%
+    filter(!(
+    # either the start date is after the end date
+    (as.Date(.data$EXSTDTC_date) > as.Date(.data$EXENDTC_date)) |
+      # or the start and end dates are the same, both times are not NA, and the
+      # start datetime is still after the end datetime
+      (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
+         !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
+         .data$EXSTDTC > .data$EXENDTC))) %>%
+    select(-any_of(
+      c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time")))
+
+  return(out)
 }
