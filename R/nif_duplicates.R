@@ -6,13 +6,12 @@
 #'
 #' @param df A data frame to check for duplicates
 #' @param fields A character vector of field names to check for duplicates. If
-#' NULL, defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
+#' NULL, defaults to c("ID", "TIME", "ANALYTE") for NIF data.
 #' @param count_only Logical indicating whether to return only the count of
 #' duplicates (default: FALSE)
 #'
 #' @return A data frame containing the duplicate rows and their counts, or just
 #' the count if count_only is TRUE
-#' @export
 find_duplicates <- function(
     df,
     fields = NULL,
@@ -42,10 +41,6 @@ find_duplicates <- function(
   baseline_fields <- identify_baseline_columns(df)
   index_fields <- unique(c(setdiff(fields, baseline_fields), "ID", "USUBJID"))
   index_fields <- intersect(names(df), index_fields)
-
-  baseline <- df %>%
-    select(any_of(setdiff(c("ID", "USUBJID", baseline_fields), "DV"))) %>%
-    distinct()
 
   # if MDV is present, delete observations with MDV == 1
   if("MDV" %in% names(df))
@@ -86,7 +81,6 @@ find_duplicates <- function(
 #' duplicate_function. Defaults to TRUE.
 #'
 #' @return A data frame with duplicate rows removed
-#' @export
 resolve_duplicates_old <- function(
     df,
     fields = "TIME",
@@ -175,7 +169,6 @@ resolve_duplicates_old <- function(
 #' @return A data frame with duplicate rows resolved. The DV field contains the
 #'   average of duplicate values, and other fields are kept as-is if consistent
 #'   or set to NA if inconsistent within duplicate groups.
-#' @export
 resolve_duplicates <- function(
     df,
     fields = "TIME",
@@ -203,6 +196,11 @@ resolve_duplicates <- function(
                "does not exist in the data frame"))
   }
 
+  # Validate that duplicate_function is a function
+  if (!is.function(duplicate_function)) {
+    stop("duplicate_function must be a function")
+  }
+
   # Remove DV from fields if present (it will be handled separately)
   fields <- setdiff(fields, dependent_variable)
 
@@ -224,24 +222,50 @@ resolve_duplicates <- function(
 
   # Helper function to check if all values in a vector are the same
   # Returns the unique value if all are the same, NA otherwise
+  # Preserves the original type of the vector when returning NA
   all_same <- function(x) {
     # Remove NAs
     x_clean <- x[!is.na(x)]
     if (length(x_clean) == 0) {
-      # All NAs - return NA
-      return(NA)
+      # All NAs - return NA of the same type as the original vector
+      if (is.character(x)) {
+        return(NA_character_)
+      } else if (is.numeric(x)) {
+        return(NA_real_)
+      } else if (is.integer(x)) {
+        return(NA_integer_)
+      } else if (is.logical(x)) {
+        return(NA)
+      } else {
+        return(NA)
+      }
     }
     if (length(unique(x_clean)) == 1) {
       # All non-NA values are the same - return that value
       return(x_clean[1])
     }
-    # Multiple different values - return NA
-    return(NA)
+    # Multiple different values - return NA of the same type
+    if (is.character(x)) {
+      return(NA_character_)
+    } else if (is.numeric(x)) {
+      return(NA_real_)
+    } else if (is.integer(x)) {
+      return(NA_integer_)
+    } else if (is.logical(x)) {
+      return(NA)
+    } else {
+      return(NA)
+    }
   }
 
   f <- function(x) {
     if(na.rm == TRUE){
-      duplicate_function(x[!is.na(x)])
+      x_filtered <- x[!is.na(x)]
+      if (length(x_filtered) == 0) {
+        # All values are NA - return NA instead of NaN
+        return(NA)
+      }
+      duplicate_function(x_filtered)
     } else {
       duplicate_function(x)
     }

@@ -10,7 +10,7 @@ find_duplicates(df, fields = NULL, count_only = FALSE)
 \item{df}{A data frame to check for duplicates}
 
 \item{fields}{A character vector of field names to check for duplicates. If
-NULL, defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.}
+NULL, defaults to c("ID", "TIME", "ANALYTE") for NIF data.}
 
 \item{count_only}{Logical indicating whether to return only the count of
 duplicates (default: FALSE)}
