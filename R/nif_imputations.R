@@ -91,21 +91,6 @@ impute_exendtc_to_rfendtc <- function(
     replace_n <- nrow(rows_for_message)
 
     if (replace_n > 0) {
-
-      # conditional_message(
-      #   replace_n, " ",
-      #   plural("subject", replace_n > 1),
-      #   " had a missing EXENDTC in their final administration episode.\n",
-      #   "In these cases, EXENDTC was imputed to RFENDTC:\n",
-      #   df_to_string(
-      #     rows_for_message %>%
-      #       select(any_of(
-      #         c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
-      #     indent = 2
-      #   ), "\n",
-      #   silent = silent
-      # )
-
       conditional_cli({
         cli_alert_info("Missing EXENDTC")
         cli_text(paste0(
@@ -181,7 +166,6 @@ impute_exendtc_to_rfendtc <- function(
 #' @export
 impute_missing_exendtc <- function(ex, silent = NULL) {
   # Input validation
-  # expected_columns <- c("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")
   expected_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
 
   missing_columns <- setdiff(expected_columns, names(ex))
@@ -225,12 +209,14 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
     temp <- temp %>%
       mutate(imputation_flag = (is.na(.data$EXENDTC) &
                                   .data$LAST_ADMIN == FALSE)) %>%
-      mutate(EXENDTC = case_match(.data$imputation_flag,
-                                  TRUE ~ .data$next_start - days(1),
-                                  FALSE ~ .data$EXENDTC)) %>%
-      mutate(IMPUTATION = case_match(.data$imputation_flag,
-                                     TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
-                                     FALSE ~ .data$IMPUTATION)) %>%
+      mutate(EXENDTC = case_match(
+        .data$imputation_flag,
+        TRUE ~ .data$next_start - days(1),
+        FALSE ~ .data$EXENDTC)) %>%
+      mutate(IMPUTATION = case_match(
+        .data$imputation_flag,
+        TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
+        FALSE ~ .data$IMPUTATION)) %>%
       select(-"imputation_flag")
   }
 
@@ -402,9 +388,10 @@ impute_admin_times_from_pcrftdtc <- function(
 #' @param ex The ex domain as data frame.
 #' @param dm The dm domain as data frame.
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
+#' @param extrt The treatment as character.
 #'
 #' @return A data frame.
-filter_EXSTDTC_after_EXENDTC <- function(ex, dm, extrt, silent = NULL) {
+filter_EXENDTC_after_EXSTDTC <- function(ex, dm, extrt, silent = NULL) {
   # Input validation
   expected_ex_columns <- c("USUBJID", "EXSTDTC", "EXENDTC")
   missing_ex_columns <- setdiff(expected_ex_columns, names(ex))

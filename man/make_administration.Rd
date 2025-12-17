@@ -50,7 +50,7 @@ If EXENDTC is missing in the last administration episode for a given subject,
 it is replaced with DM.RFENDTC, if available.
 }
 
-\subsection{2. \code{\link[=filter_EXSTDTC_after_EXENDTC]{filter_EXSTDTC_after_EXENDTC()}}}{
+\subsection{2. \code{\link[=filter_EXENDTC_after_EXSTDTC]{filter_EXENDTC_after_EXSTDTC()}}}{
 
 Administration episodes in which EXSTDTC is after EXENDT are deleted from the
 data set.

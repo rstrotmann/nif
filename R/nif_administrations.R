@@ -138,7 +138,7 @@ expand_ex <- function(ex) {
 #' If EXENDTC is missing in the last administration episode for a given subject,
 #' it is replaced with DM.RFENDTC, if available.
 #'
-#' ## 2. [nif::filter_EXSTDTC_after_EXENDTC()]
+#' ## 2. [nif::filter_EXENDTC_after_EXSTDTC()]
 #'
 #' Administration episodes in which EXSTDTC is after EXENDT are deleted from the
 #' data set.
@@ -287,7 +287,7 @@ make_administration <- function(
     impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
     # impute_exendtc_to_rfendtc(dm) %>%
-    filter_EXSTDTC_after_EXENDTC(dm, extrt, silent = silent) %>%
+    filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) %>%
     decompose_dtc("EXENDTC") %>%
 
     # make generic fields

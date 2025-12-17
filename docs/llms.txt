@@ -37,8 +37,8 @@ library(tidyverse)
 
 sdtm <- examplinib_sad
 
-nif <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
+nif <- new_nif() %>%
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023", analyte = "RS2023")
 
 head(nif)
@@ -69,9 +69,9 @@ In many cases, you may want to add further covariates, e.g., baseline
 creatinine from the LB domain:
 
 ``` r
-nif <- nif %>%  
-  mutate(COHORT = ACTARMCD) %>% 
-  add_baseline(sdtm, "lb", "CREAT") %>% 
+nif <- nif %>%
+  mutate(COHORT = ACTARMCD) %>%
+  add_baseline(sdtm, "lb", "CREAT") %>%
   add_bl_crcl()
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 ```
@@ -85,50 +85,50 @@ NIF files:
 summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 48 subjects across one study:
-#>   STUDYID      N    
-#>   2023000001   48   
-#> 
+#>   STUDYID      N
+#>   2023000001   48
+#>
 #> Sex distribution:
-#>   SEX      N    percent   
-#>   male     48   100       
-#>   female   0    0         
-#> 
+#>   SEX      N    percent
+#>   male     48   100
+#>   female   0    0
+#>
 #> Renal impairment class:
-#>   CLASS      N    percent   
-#>   normal     42   87.5      
-#>   mild       6    12.5      
-#>   moderate   0    0         
-#>   severe     0    0         
-#> 
+#>   CLASS      N    percent
+#>   normal     42   87.5
+#>   mild       6    12.5
+#>   moderate   0    0
+#>   severe     0    0
+#>
 #> Treatments:
 #>   RS2023
-#> 
+#>
 #> Analytes:
 #>   RS2023
-#> 
+#>
 #> Subjects per dose level:
-#>   COHORT   RS2023   N    
-#>   C1       5        3    
-#>   C10      500      12   
-#>   C2       10       3    
-#>   C3       20       3    
-#>   C4       50       3    
-#>   C5       100      6    
-#>   C6       200      3    
-#>   C7       500      6    
-#>   C8       800      6    
-#>   C9       1000     3    
-#> 
+#>   COHORT   RS2023   N
+#>   C1       5        3
+#>   C10      500      12
+#>   C2       10       3
+#>   C3       20       3
+#>   C4       50       3
+#>   C5       100      6
+#>   C6       200      3
+#>   C7       500      6
+#>   C8       800      6
+#>   C9       1000     3
+#>
 #> 816 observations:
-#>   CMT   ANALYTE   N     
-#>   2     RS2023    816   
-#> 
+#>   CMT   ANALYTE   N
+#>   2     RS2023    816
+#>
 #> Subjects with dose reductions
-#>   RS2023   
-#>   2        
-#> 
+#>   RS2023
+#>   2
+#>
 #> Treatment duration overview:
-#>   PARENT   min   max   mean   median   
+#>   PARENT   min   max   mean   median
 #>   RS2023   1     1     1      1
 
 invisible(capture.output(
@@ -305,7 +305,7 @@ For further guidance see the help for individual functions and the
 - [`examplinib_sad_nif`](examplinib_sad_nif.md) : Synthetic NIF data
   from a fictional clinical SAD FIH study with rich PK sampling
 
-- [`filter_EXSTDTC_after_EXENDTC()`](filter_EXSTDTC_after_EXENDTC.md) :
+- [`filter_EXENDTC_after_EXSTDTC()`](filter_EXENDTC_after_EXSTDTC.md) :
   Remove administrations with EXSTDTC after EXENDTC
 
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID

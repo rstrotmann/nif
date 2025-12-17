@@ -177,7 +177,7 @@ test_that("impute_exendtc_to_cutoff works", {
 })
 
 
-test_that("filter_EXSTDTC_after_EXENDTC works", {
+test_that("filter_EXENDTC_after_EXSTDTC works", {
   ex <- tibble::tribble(
     ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC,
           1,      1,    "A",  "2025-01-01", "2025-01-10",
@@ -192,7 +192,7 @@ test_that("filter_EXSTDTC_after_EXENDTC works", {
     2, "2025-01-20"
   )
 
-  expect_message(temp <- filter_EXSTDTC_after_EXENDTC(ex, dm, "A"))
+  expect_message(temp <- filter_EXENDTC_after_EXSTDTC(ex, dm, "A"))
   expect_equal(nrow(temp), 2)
 })
 
