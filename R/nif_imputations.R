@@ -338,40 +338,11 @@ impute_admin_times_from_pcrftdtc <- function(
     temp <- mutate(temp, IMPUTATION = "")
   }
 
-  # temp <- temp %>%
-  #   # mutate(IMPUTATION = case_when(
-  #   #   # !is.na(.data$PCRFTDTC_time) & is.na(.data$DTC_time) &
-  #   #     .data$PCRFTDTC_time != .data$DTC_time ~ "admin time copied from PCRFTDTC",
-  #   #   .default = .data$IMPUTATION)) %>%
-  #   #
-  #   # mutate(DTC_time = case_when(
-  #   #   # !is.na(.data$PCRFTDTC_time) & is.na(.data$DTC_time) &
-  #   #   .data$PCRFTDTC_time != .data$DTC_time  ~ .data$PCRFTDTC_time,
-  #   #   .default = .data$DTC_time))
-  #
-  #   mutate(IMPUTATION = case_when(
-  #     .data$PCRFTDTC_time == .data$DTC_time ~ .data$IMPUTATION,
-  #     .default = "admin time copied from PCRFTDTC"
-  #   )) %>%
-  #   mutate(DTC_time = case_when(
-  #     .data$PCRFTDTC_time == .data$DTC_time ~ .data$DTC_time,
-  #     .default = .data$PCRFTDTC_time
-  #   ))
-
-
   conflicting_rows <- which(
     (!is.na(temp$PCRFTDTC_time) & !is.na(temp$DTC_time) &
        temp$DTC_time != temp$PCRFTDTC_time) |
     (is.na(temp$DTC_time) & !is.na(temp$PCRFTDTC_time))
   )
-
-
-  # # Rows with conflicting DTC and PCRFTDTC
-  # conflicting_rows <- which(
-  #   !is.na(temp$PCRFTDTC_time) &
-  #     !is.na(temp$DTC_time) &
-  #     temp$DTC_time != temp$PCRFTDTC_time)
-  #
 
   if(length(conflicting_rows) != 0) {
     conditional_cli({
