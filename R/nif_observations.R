@@ -789,11 +789,11 @@ add_observation <- function(
     }
 
     if(duplicates == "ignore") {
-      conditional_message(
-        "In observations for ", testcd, " (analyte '", analyte, "'), ",
-        n_dupl, " duplicates were found but kept in the data set!",
-        silent = silent
-      )
+      # conditional_message(
+      #   "In observations for ", testcd, " (analyte '", analyte, "'), ",
+      #   n_dupl, " duplicates were found but kept in the data set!",
+      #   silent = silent
+      # )
       conditional_cli({
         cli_alert_warning("Duplicates in the data set!")
         cli_text(paste0(
@@ -945,9 +945,8 @@ import_observation <- function(
 
     conditional_cli({
       cli_alert_info(paste0(
-        "Compartment for ", analyte, " set to ", cmt
-      ))
-    }, silent = silent)
+        "Compartment for ", analyte, " set to ", cmt))
+      }, silent = silent)
     }
 
   imp <- nif %>%
@@ -961,9 +960,15 @@ import_observation <- function(
       parent <- analyte
     } else {
       parent <- guess_parent(nif)
-      conditional_message(
-        "Parent for ", analyte, " was set to ", parent, "!",
-        silent = silent)
+
+      # conditional_message(
+      #   "Parent for ", analyte, " was set to ", parent, "!",
+      #   silent = silent)
+
+      conditional_cli(
+        cli_inform(paste0("Parent for ", analyte, " set to ", parent)),
+        silent = silent
+      )
     }
   }
 
