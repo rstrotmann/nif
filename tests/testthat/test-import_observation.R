@@ -210,7 +210,7 @@ test_that("import_observation automatically assigns compartment when cmt is NULL
       NTIME_field = "OBS_NTIME",
       silent = FALSE
     ),
-    "Compartment was not specified and has been set to"
+    "Compartment for TEST set to"
   )
 
   # Check if compartment was automatically assigned

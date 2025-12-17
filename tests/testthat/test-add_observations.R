@@ -70,7 +70,7 @@ test_that("add_observation auto-assigns compartment if not specified", {
   expect_message(
     nif_with_obs <- base_nif %>%
       add_observation(examplinib_sad, "pc", "RS2023", silent = FALSE),
-    "Compartment for RS2023 not specified and set to 2"
+    "Compartment for RS2023 set to 2"
   )
 
   # Verify the compartment was auto-assigned

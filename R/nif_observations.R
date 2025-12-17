@@ -427,9 +427,13 @@ make_observation <- function(
       NTIME_lookup = make_ntime_from_dy(obj, domain)
     }
     if(is.null(NTIME_lookup)) {
-      conditional_message(
-        "No NTIME_lookup could be created, NTIME will be NA",
-        silent = silent)
+      # conditional_message(
+      #   "No NTIME_lookup could be created, NTIME will be NA",
+      #   silent = silent)
+      conditional_cli(
+        cli_alert_warning("No NTIME_lookup could be created, NTIME will be NA"),
+        silent = silent
+      )
     }
   } else { # in case a lookup table is provided
     # Validate NTIME_lookup structure
@@ -713,7 +717,7 @@ add_observation <- function(
     cmt <- max(nif$CMT) + 1
     conditional_cli(
       cli_alert_info(paste0(
-        "Compartment for ", testcd, " not specified and set to ", cmt
+        "Compartment for ", testcd, " set to ", cmt
       )), silent = silent
     )
   }
@@ -776,7 +780,8 @@ add_observation <- function(
         cli::cli({
           cli_alert_warning(paste0(
             n_dupl, " duplicate observations for ", testcd,
-            " (analyte ", analyte, ") resolved!"
+            " (analyte ", analyte, ") resolved, applying ",
+            function_name(duplicate_function)
           ))
         }),
         silent = silent
@@ -789,6 +794,13 @@ add_observation <- function(
         n_dupl, " duplicates were found but kept in the data set!",
         silent = silent
       )
+      conditional_cli({
+        cli_alert_warning("Duplicates in the data set!")
+        cli_text(paste0(
+          n_dupl, " duplicates in ", testcd, " (", analyte, ") observations ",
+          "and kept in the data set as duplicates!)"
+        ))
+      }, silent = silent)
     }
   }
 
@@ -926,9 +938,16 @@ import_observation <- function(
 
   if(is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
-    conditional_message(
-      "Compartment was not specified and has been set to ", cmt,
-      silent = silent)
+
+    # conditional_message(
+    #   "Compartment was not specified and has been set to ", cmt,
+    #   silent = silent)
+
+    conditional_cli({
+      cli_alert_info(paste0(
+        "Compartment for ", analyte, " set to ", cmt
+      ))
+    }, silent = silent)
     }
 
   imp <- nif %>%

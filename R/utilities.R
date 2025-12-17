@@ -68,6 +68,22 @@ print_debug <- function(obj) {
 }
 
 
+#' Get the name of a function
+#'
+#' Returns the name of a function that is supplied as an argument.
+#'
+#' @param fun A function.
+#' @return The name of the function as a character string.
+#' @export
+#' @keywords internal
+#' @examples
+#' function_name(mean)
+#' function_name(sum)
+function_name <- function(fun) {
+  deparse(substitute(fun))
+}
+
+
 #' Re-code SEX field in a data frame
 #'
 #' @param obj The data.frame containing a SEX field
