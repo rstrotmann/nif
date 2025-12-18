@@ -767,7 +767,20 @@ add_observation <- function(
         cli_text()
       })
 
-      return(find_duplicates(observation, fields = dupl_fields))
+      ## TEST
+      d <- find_duplicates(observation, fields = dupl_fields)
+      original_domain <- domain(sdtm, domain)
+
+      temp <- original_domain %>%
+        mutate(DTC = .data[[paste0(toupper(domain), "DTC")]]) %>%
+        mutate(ANALYTE = .data[[paste0(toupper(domain), "TESTCD")]]) %>%
+        lubrify_dates() %>%
+        inner_join(d[, dupl_fields], by = dupl_fields) %>%
+        distinct()
+      ## TEST END
+
+      # return(find_duplicates(observation, fields = dupl_fields))
+      return(temp)
     }
 
     if(duplicates == "resolve") {
