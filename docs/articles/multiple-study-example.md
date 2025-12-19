@@ -14,17 +14,17 @@ library(nif)
 ```
 
 ``` r
-nif <- new_nif() %>% 
-  add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) %>% 
-  add_baseline(examplinib_sad, "lb", "CREAT") %>% 
-  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023") %>% 
+nif <- new_nif() %>%
+  add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) %>%
+  add_baseline(examplinib_sad, "lb", "CREAT") %>%
+  add_administration(examplinib_fe, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(examplinib_fe, "pc", "RS2023", cmt = 2) %>%
-  add_baseline(examplinib_fe, "lb", "CREAT") %>% 
-  add_administration(examplinib_poc, "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(examplinib_poc, "pc", "RS2023", cmt = 2) %>% 
-  add_baseline(examplinib_poc, "lb", "CREAT") %>% 
-  add_bl_crcl() %>% 
+  add_baseline(examplinib_fe, "lb", "CREAT") %>%
+  add_administration(examplinib_poc, "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(examplinib_poc, "pc", "RS2023", cmt = 2) %>%
+  add_baseline(examplinib_poc, "lb", "CREAT") %>%
+  add_bl_crcl() %>%
   add_bl_renal()
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
@@ -37,7 +37,7 @@ nif <- new_nif() %>%
 #> Compartment 2 is already assigned!
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 
-nif %>%   
+nif %>%
   summary()
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 148 subjects across 3 studies:
@@ -86,8 +86,19 @@ nif %>%
 #>   0.5     X        
 #>   1       X        
 #>   1.5     X        
-#>   2       X         
-#>   (12 more rows)
+#>   2       X        
+#>   3       X        
+#>   4       X        
+#>   6       X        
+#>   8       X        
+#>   10      X        
+#>   12      X        
+#>   24      X        
+#>   48      X        
+#>   72      X        
+#>   96      X        
+#>   144     X        
+#>   168     X         
 #> 
 #> Subjects with dose reductions
 #>   RS2023   

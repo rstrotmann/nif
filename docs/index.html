@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,8 +83,8 @@
 <span></span>
 <span><span class="va">sdtm</span> <span class="op">&lt;-</span> <span class="va">examplinib_sad</span></span>
 <span></span>
-<span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"EXAMPLINIB"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span>, analyte <span class="op">=</span> <span class="st">"RS2023"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
@@ -111,9 +111,9 @@
 <span><span class="co">#&gt; 6      FALSE    5   0       C1            34.0729</span></span></code></pre></div>
 <p>In many cases, you may want to add further covariates, e.g., baseline creatinine from the LB domain:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>COHORT <span class="op">=</span> <span class="va">ACTARMCD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="reference/add_baseline.html">add_baseline</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"lb"</span>, <span class="st">"CREAT"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>COHORT <span class="op">=</span> <span class="va">ACTARMCD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="reference/add_baseline.html">add_baseline</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"lb"</span>, <span class="st">"CREAT"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="reference/add_bl_crcl.html">add_bl_crcl</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; baseline_filter for BL_CREAT set to LBBLFL == 'Y'</span></span></code></pre></div>
 </div>
@@ -126,19 +126,19 @@
 <span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
 <span><span class="co">#&gt; Data from 48 subjects across one study:</span></span>
 <span><span class="co">#&gt;   STUDYID      N    </span></span>
-<span><span class="co">#&gt;   2023000001   48   </span></span>
+<span><span class="co">#&gt;   2023000001   48    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
 <span><span class="co">#&gt;   SEX      N    percent   </span></span>
 <span><span class="co">#&gt;   male     48   100       </span></span>
-<span><span class="co">#&gt;   female   0    0         </span></span>
+<span><span class="co">#&gt;   female   0    0          </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Renal impairment class:</span></span>
 <span><span class="co">#&gt;   CLASS      N    percent   </span></span>
 <span><span class="co">#&gt;   normal     42   87.5      </span></span>
 <span><span class="co">#&gt;   mild       6    12.5      </span></span>
 <span><span class="co">#&gt;   moderate   0    0         </span></span>
-<span><span class="co">#&gt;   severe     0    0         </span></span>
+<span><span class="co">#&gt;   severe     0    0          </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments:</span></span>
 <span><span class="co">#&gt;   RS2023</span></span>
@@ -157,19 +157,42 @@
 <span><span class="co">#&gt;   C6       200      3    </span></span>
 <span><span class="co">#&gt;   C7       500      6    </span></span>
 <span><span class="co">#&gt;   C8       800      6    </span></span>
-<span><span class="co">#&gt;   C9       1000     3    </span></span>
+<span><span class="co">#&gt;   C9       1000     3     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 816 observations:</span></span>
 <span><span class="co">#&gt;   CMT   ANALYTE   N     </span></span>
-<span><span class="co">#&gt;   2     RS2023    816   </span></span>
+<span><span class="co">#&gt;   2     RS2023    816    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sampling schedule:</span></span>
+<span><span class="co">#&gt;   NTIME   RS2023   </span></span>
+<span><span class="co">#&gt;   0       X        </span></span>
+<span><span class="co">#&gt;   0.5     X        </span></span>
+<span><span class="co">#&gt;   1       X        </span></span>
+<span><span class="co">#&gt;   1.5     X        </span></span>
+<span><span class="co">#&gt;   2       X        </span></span>
+<span><span class="co">#&gt;   3       X        </span></span>
+<span><span class="co">#&gt;   4       X        </span></span>
+<span><span class="co">#&gt;   6       X        </span></span>
+<span><span class="co">#&gt;   8       X        </span></span>
+<span><span class="co">#&gt;   10      X        </span></span>
+<span><span class="co">#&gt;   12      X        </span></span>
+<span><span class="co">#&gt;   24      X        </span></span>
+<span><span class="co">#&gt;   48      X        </span></span>
+<span><span class="co">#&gt;   72      X        </span></span>
+<span><span class="co">#&gt;   96      X        </span></span>
+<span><span class="co">#&gt;   144     X        </span></span>
+<span><span class="co">#&gt;   168     X         </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions</span></span>
 <span><span class="co">#&gt;   RS2023   </span></span>
-<span><span class="co">#&gt;   2        </span></span>
+<span><span class="co">#&gt;   0         </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#&gt;   RS2023   1     1     1      1</span></span>
+<span><span class="co">#&gt;   RS2023   1     1     1      1         </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Hash: 1ffeca348395517147567cedfdd41e68</span></span>
+<span><span class="co">#&gt; Last DTC: 2001-03-02 11:31:00</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>

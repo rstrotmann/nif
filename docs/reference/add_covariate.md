@@ -98,7 +98,8 @@ using the last observed value (carrying forward).
 
 ``` r
 add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
-  covariate = "wt")
+  covariate = "wt"
+)
 #> ----- NONMEM Input Format (NIF) data -----
 #> 1344 observations from 80 subjects across 1 study 
 #> Analytes: RS2023 and RS2023487A 

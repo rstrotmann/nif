@@ -86,10 +86,10 @@ a basic pharmacokinetic nif object from `examplinic_poc`:
 ``` r
 sdtm <- examplinib_poc
 
-nif_poc <- new_nif() %>% 
-  add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>% 
-  add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3) 
+nif_poc <- new_nif() %>%
+  add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>%
+  add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3)
 #> ℹ A global cut-off-date of 2001-07-14 08:53:00 was automatically assigned!
 ```
 
@@ -107,8 +107,8 @@ Cockcroft-Gault formula by default. For further options, see the
 documentation for [`add_bl_crcl()`](../reference/add_bl_crcl.md).
 
 ``` r
-nif_poc <- nif_poc %>% 
-  add_baseline(sdtm, domain = "lb", testcd = "CREAT") %>% 
+nif_poc <- nif_poc %>%
+  add_baseline(sdtm, domain = "lb", testcd = "CREAT") %>%
   add_bl_crcl()
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 ```
@@ -184,8 +184,13 @@ summary(nif_poc)
 #    0.5     X        X            
 #    1       X        X            
 #    1.5     X        X            
-#    2       X        X             
-#    (6 more rows)
+#    2       X        X            
+#    3       X        X            
+#    4       X        X            
+#    6       X        X            
+#    8       X        X            
+#    10      X        X            
+#    12      X        X             
 #  
 #  Subjects with dose reductions
 #    RS2023   
@@ -219,8 +224,8 @@ In this study, all 80 subject received the same dose level:
 
 ``` r
 nif_poc %>%
-  dose_levels() %>% 
-  kable(caption="Dose levels")
+  dose_levels() %>%
+  kable(caption = "Dose levels")
 ```
 
 | RS2023 |   N |
@@ -234,10 +239,10 @@ filtering the nif data set for `EVID == 1` (i.e., administrations) and
 summarizing the administered dose:
 
 ``` r
-nif_poc %>% 
-  filter(EVID == 1) %>% 
-  group_by(DOSE) %>% 
-  summarize(n = n()) %>% 
+nif_poc %>%
+  filter(EVID == 1) %>%
+  group_by(DOSE) %>%
+  summarize(n = n()) %>%
   kable()
 ```
 
@@ -272,13 +277,13 @@ nif_poc %>%
 Let’s have a plot of the doses over time in these subjects:
 
 ``` r
-nif_poc %>% 
-  filter(ID %in% (dose_red_sbs(nif_poc))$ID) %>% 
-  filter(EVID == 1) %>% 
-  ggplot(aes(x = TIME, y = DOSE, color = as.factor(ID))) + 
+nif_poc %>%
+  filter(ID %in% (dose_red_sbs(nif_poc))$ID) %>%
+  filter(EVID == 1) %>%
+  ggplot(aes(x = TIME, y = DOSE, color = as.factor(ID))) +
   geom_point() +
   geom_line() +
-  theme(legend.position="none") 
+  theme(legend.position = "none")
 ```
 
 ![](multiple-dose-example_files/figure-html/unnamed-chunk-11-1.png)
@@ -306,11 +311,11 @@ fluctuations that indicate single missed doses in individual subjects!
 The PK sampling time points in this study were:
 
 ``` r
-nif_poc %>% 
-  filter(EVID == 0) %>% 
-  group_by(NTIME, ANALYTE) %>% 
-  summarize(n = n(), .groups = "drop") %>% 
-  pivot_wider(names_from = "ANALYTE", values_from = "n") %>% 
+nif_poc %>%
+  filter(EVID == 0) %>%
+  group_by(NTIME, ANALYTE) %>%
+  summarize(n = n(), .groups = "drop") %>%
+  pivot_wider(names_from = "ANALYTE", values_from = "n") %>%
   kable(caption = "Observations by time point and analyte")
 ```
 
@@ -335,7 +340,7 @@ that only a subset of subjects had a rich sampling scheme. Let’s
 identify those:
 
 ``` r
-nif_poc %>% 
+nif_poc %>%
   rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 6)
 #   [1]  1  4  5 15 28 29 40 50 51 52 63 64
 ```
@@ -349,8 +354,8 @@ Let’s plot the individual and mean plasma concentration profiles on Day
 1 for the parent, RS2023, and the metabolite, RS2023487A:
 
 ``` r
-temp <- nif_poc %>% 
-  filter(ID %in% (rich_sampling_sbs(nif_poc, analyte = "RS2023", n=4)))
+temp <- nif_poc %>%
+  filter(ID %in% (rich_sampling_sbs(nif_poc, analyte = "RS2023", n = 4)))
 
 temp %>%
   plot(dose = 500, points = TRUE, title = "Rich sampling subjects")
@@ -361,10 +366,11 @@ temp %>%
 For single and multiple dose administrations separately:
 
 ``` r
-temp <- temp %>% 
+temp <- temp %>%
   index_rich_sampling_intervals()
 
-temp %>% filter(RICH_N == 1) %>% 
+temp %>%
+  filter(RICH_N == 1) %>%
   plot(analyte = "RS2023", mean = TRUE, title = "Single-dose PK")
 ```
 
@@ -372,7 +378,8 @@ temp %>% filter(RICH_N == 1) %>%
 
 ``` r
 
-temp %>% filter(RICH_N == 2) %>% 
+temp %>%
+  filter(RICH_N == 2) %>%
   plot(analyte = "RS2023", title = "Multiple-dose PK", time = "NTIME", mean = T)
 ```
 
@@ -393,12 +400,12 @@ from the popular
 package.
 
 ``` r
-nca <- examplinib_poc_nif %>% 
-  index_rich_sampling_intervals(analyte = "RS2023", min_n = 4) %>% 
+nca <- examplinib_poc_nif %>%
+  index_rich_sampling_intervals(analyte = "RS2023", min_n = 4) %>%
   nca("RS2023", group = "RICH_N")
 
-nca %>% 
-  nca_summary_table(group = "RICH_N") %>% 
+nca %>%
+  nca_summary_table(group = "RICH_N") %>%
   kable()
 ```
 

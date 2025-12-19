@@ -6,7 +6,10 @@ watermark as character: Watermark text on all figures.
 pinboard as character: Pinboard path for sharing of nif/sdtm objects.
 debug as logical: Print debug information.
 show_hash as logical: Include dataset hash in figures.
-abbreviate as logical: Abbreviate long lists in summary output.
+abbreviation_threshold as numeric: Allowed line count in message output
+without abbreviation. Set to Inf to always show all lines.
+abbrevation_maxlines as numeric: Line number to that lists in message
+output will be abbreviated if the line count threshold is exceeded.
 
 "><meta property="og:description" content="Set global behavior options for all nif package functions. Currently
 supported:
@@ -15,7 +18,10 @@ watermark as character: Watermark text on all figures.
 pinboard as character: Pinboard path for sharing of nif/sdtm objects.
 debug as logical: Print debug information.
 show_hash as logical: Include dataset hash in figures.
-abbreviate as logical: Abbreviate long lists in summary output.
+abbreviation_threshold as numeric: Allowed line count in message output
+without abbreviation. Set to Inf to always show all lines.
+abbrevation_maxlines as numeric: Line number to that lists in message
+output will be abbreviated if the line count threshold is exceeded.
 
 "></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +31,7 @@ abbreviate as logical: Abbreviate long lists in summary output.
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +71,10 @@ supported:</p><ul><li><p><code>silent</code> as logical: Suppress messages.</p><
 <li><p><code>pinboard</code> as character: Pinboard path for sharing of nif/sdtm objects.</p></li>
 <li><p><code>debug</code> as logical: Print debug information.</p></li>
 <li><p><code>show_hash</code> as logical: Include dataset hash in figures.</p></li>
-<li><p><code>abbreviate</code> as logical: Abbreviate long lists in summary output.</p></li>
+<li><p><code>abbreviation_threshold</code> as numeric: Allowed line count in message output
+without abbreviation. Set to Inf to always show all lines.</p></li>
+<li><p><code>abbrevation_maxlines</code> as numeric: Line number to that lists in message
+output will be abbreviated if the line count threshold is exceeded.</p></li>
 </ul></div>
 
     <div class="section level2">

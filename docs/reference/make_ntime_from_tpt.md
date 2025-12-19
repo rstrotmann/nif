@@ -46,6 +46,6 @@ The function recognizes and processes the following patterns:
 
 ``` r
 df <- data.frame(PCTPT = c("PRE-DOSE", "1H POST-DOSE", "2.5 HRS POST-DOSE"))
-make_ntime_from_tpt(df)  # Returns c(0, 1, 2.5)
+make_ntime_from_tpt(df) # Returns c(0, 1, 2.5)
 #> NULL
 ```

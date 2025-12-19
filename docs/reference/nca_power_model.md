@@ -60,8 +60,10 @@ nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")
 #> $aucinf.obs
 
 #> 
-nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
-  c("cmax", "aucinf.obs"))
+nca_power_model(
+  nca(examplinib_sad_nif, analyte = "RS2023"),
+  c("cmax", "aucinf.obs")
+)
 #> 
 #> $cmax
 

@@ -58,8 +58,13 @@ suggest(examplinib_poc)
 #>   POSTDOSE 0.5 H   0.5        PT0.5H   
 #>   POSTDOSE 1 H     1          PT1H     
 #>   POSTDOSE 1.5 H   1.5        PT1.5H   
-#>   POSTDOSE 2 H     2          PT2H      
-#>   (6 more rows)
+#>   POSTDOSE 2 H     2          PT2H     
+#>   POSTDOSE 3 H     3          PT3H     
+#>   POSTDOSE 4 H     4          PT4H     
+#>   POSTDOSE 6 H     6          PT6H     
+#>   POSTDOSE 8 H     8          PT8H     
+#>   POSTDOSE 10 H    10         PT10H    
+#>   POSTDOSE 12 H    12         PT12H     
 #> 
 #> Consider specifying a suitabe 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the

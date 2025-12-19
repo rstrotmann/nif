@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,10 +86,10 @@ data and covariates. A typical workflow may look like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sdtm</span> <span class="op">&lt;-</span> <span class="va">examplinib_sad</span></span>
 <span></span>
-<span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/nif.html">nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"EXAMPLINIB"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023487A"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/nif.html">nif</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/add_administration.html">add_administration</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"EXAMPLINIB"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"pc"</span>, <span class="st">"RS2023487A"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_baseline.html">add_baseline</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"lb"</span>, <span class="st">"CREAT"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Analyte EXAMPLINIB not found in PCTESTCD. Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!</span></span></code></pre></div>
 <p>The only time-varying data in this NIF data set are now the two

@@ -49,7 +49,7 @@ A nif object with the DVBL field added for the specified analyte.
 ## Examples
 
 ``` r
- head(derive_baseline(examplinib_sad_nif, "RS2023"))
+head(derive_baseline(examplinib_sad_nif, "RS2023"))
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI
 #> 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #> 2   2  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256

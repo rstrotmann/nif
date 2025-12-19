@@ -200,7 +200,7 @@ The original SDTM data for specific domains can be retrieved from `sdtm`
 objects with the [`domain()`](../reference/domain.md) function:
 
 ``` r
-domain(examplinib_sad, "dm") %>% 
+domain(examplinib_sad, "dm") %>%
   head(3)
 #>   SITEID  SUBJID                              ACTARM ACTARMCD          RFICDTC
 #> 1    101 1010001 Treatment cohort 1, 5 mg examplinib       C1 2000-12-21T10:18
@@ -321,8 +321,19 @@ suggest(examplinib_fe)
 #>   0.5 HOURS POST-DOSE   0.5        PT0.5H   
 #>   1 HOURS POST-DOSE     1          PT1H     
 #>   1.5 HOURS POST-DOSE   1.5        PT1.5H   
-#>   2 HOURS POST-DOSE     2          PT2H      
-#>   (12 more rows)
+#>   2 HOURS POST-DOSE     2          PT2H     
+#>   3 HOURS POST-DOSE     3          PT3H     
+#>   4 HOURS POST-DOSE     4          PT4H     
+#>   6 HOURS POST-DOSE     6          PT6H     
+#>   8 HOURS POST-DOSE     8          PT8H     
+#>   10 HOURS POST-DOSE    10         PT10H    
+#>   12 HOURS POST-DOSE    12         PT12H    
+#>   24 HOURS POST-DOSE    24         PT24H    
+#>   48 HOURS POST-DOSE    48         PT48H    
+#>   72 HOURS POST-DOSE    72         PT72H    
+#>   96 HOURS POST-DOSE    96         PT96H    
+#>   144 HOURS POST-DOSE   144        PT144H   
+#>   168 HOURS POST-DOSE   168        PT168H
 #> 
 #> Consider specifying a suitabe 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the
@@ -382,8 +393,8 @@ and merged into the data set as columns of those names:
 ``` r
 sdtm <- examplinib_fe
 
-nif <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
+nif <- new_nif() %>%
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023")
 ```
 
@@ -431,9 +442,9 @@ the ‘parent’ parameter:
 ``` r
 sdtm1 <- examplinib_sad
 
-nif1 <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(sdtm, "pc", "RS2023") %>% 
+nif1 <- new_nif() %>%
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(sdtm, "pc", "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023487A", analyte = "M1", parent = "RS2023")
 ```
 
@@ -468,13 +479,15 @@ the SDTM data but can be included using the `keep` parameter in
 [`add_administration()`](../reference/add_administration.md):
 
 ``` r
-nif <- new_nif() %>% 
+nif <- new_nif() %>%
   add_administration(
-    examplinib_fe, "EXAMPLINIB", analyte = "RS2023", keep = "EPOCH") %>% 
-  add_observation(examplinib_fe, "pc", "RS2023") %>% 
-  mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>% 
-  mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
-  mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) 
+    examplinib_fe, "EXAMPLINIB",
+    analyte = "RS2023", keep = "EPOCH"
+  ) %>%
+  add_observation(examplinib_fe, "pc", "RS2023") %>%
+  mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>%
+  mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
+  mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0))
 ```
 
 These are again the first 3 lines of the resulting nif object:
@@ -543,8 +556,19 @@ summary(nif)
 #>   0.5     X        
 #>   1       X        
 #>   1.5     X        
-#>   2       X         
-#>   (12 more rows)
+#>   2       X        
+#>   3       X        
+#>   4       X        
+#>   6       X        
+#>   8       X        
+#>   10      X        
+#>   12      X        
+#>   24      X        
+#>   48      X        
+#>   72      X        
+#>   96      X        
+#>   144     X        
+#>   168     X         
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
@@ -566,8 +590,8 @@ sole purpose is to omit some non-graphical output:
 
 ``` r
 invisible(capture.output(
-  nif %>% 
-    summary() %>% 
+  nif %>%
+    summary() %>%
     plot()
 ))
 ```
@@ -597,8 +621,8 @@ To check the integrity of the data set, it is often helpful to plot the
 analyte concentrations over time-after-dose (TAD):
 
 ``` r
-nif %>% 
-  plot(time="TAD", points=TRUE, lines=FALSE, log=TRUE)
+nif %>%
+  plot(time = "TAD", points = TRUE, lines = FALSE, log = TRUE)
 ```
 
 ![](nif-tutorial_files/figure-html/unnamed-chunk-18-1.png)
@@ -608,8 +632,8 @@ the below figure focuses on the first 24 hours on the linear scale and
 introduces coloring based on the ‘FASTED’ covariate field:
 
 ``` r
-nif %>% 
-  plot(color="FASTED", max_time=24, points=TRUE)
+nif %>%
+  plot(color = "FASTED", max_time = 24, points = TRUE)
 ```
 
 ![](nif-tutorial_files/figure-html/unnamed-chunk-19-1.png)
@@ -617,8 +641,8 @@ nif %>%
 The following compares the mean plasma concentration profiles:
 
 ``` r
-nif %>% 
-  plot(color="FASTED", max_time=24, mean=TRUE, points=TRUE)
+nif %>%
+  plot(color = "FASTED", max_time = 24, mean = TRUE, points = TRUE)
 ```
 
 ![](nif-tutorial_files/figure-html/unnamed-chunk-20-1.png)

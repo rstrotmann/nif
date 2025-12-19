@@ -21,10 +21,10 @@ data and covariates. A typical workflow may look like this:
 ``` r
 sdtm <- examplinib_sad
 
-nif <- nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB") %>% 
-  add_observation(sdtm, "pc", "RS2023") %>% 
-  add_observation(sdtm, "pc", "RS2023487A") %>% 
+nif <- nif() %>%
+  add_administration(sdtm, "EXAMPLINIB") %>%
+  add_observation(sdtm, "pc", "RS2023") %>%
+  add_observation(sdtm, "pc", "RS2023487A") %>%
   add_baseline(sdtm, "lb", "CREAT")
 #> ✖ Analyte EXAMPLINIB not found in PCTESTCD. Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!
 ```

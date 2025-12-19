@@ -119,7 +119,8 @@ add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
 #>   1    8       8      8     RS2023    0      2     0     5      1.034     
 #> 854 more rows
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
-  baseline_filter = "VSBLFL == 'Y'")
+  baseline_filter = "VSBLFL == 'Y'"
+)
 #> ----- NONMEM Input Format (NIF) data -----
 #> 816 observations from 48 subjects across 1 study 
 #> Analytes: RS2023 
