@@ -65,7 +65,8 @@ prefix).
 }
 \examples{
 add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
-  covariate = "wt")
+  covariate = "wt"
+)
 }
 \seealso{
 \code{\link[=add_baseline]{add_baseline()}}

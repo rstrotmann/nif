@@ -1,4 +1,3 @@
-
 #' Write NONMEM input formatted nif object to file
 #'
 #' @description
@@ -16,19 +15,20 @@
 #' @export
 #' @keywords internal
 write_nif <- function(
-    obj,
-    filename = NULL,
-    fields = NULL,
-    sep = NULL) {
+  obj,
+  filename = NULL,
+  fields = NULL,
+  sep = NULL
+) {
   # superseded
   lifecycle::deprecate_warn("0.57.10", "write_nif()", "write_nonmem()")
 
   write_nonmem(
     obj, filename, fields, sep,
     numeric_fields_only = FALSE,
-    dot_columns = NULL)
+    dot_columns = NULL
+  )
 }
-
 
 
 #' Write NONMEM input formatted nif object to file
@@ -62,26 +62,32 @@ write_nif <- function(
 #' head(write_nonmem(examplinib_fe_nif, numeric_fields_only = TRUE), 5)
 #' head(write_nonmem(examplinib_fe_nif, dot_columns = c("DV", "AMT")), 5)
 write_nonmem <- function(
-    obj,
-    filename = NULL,
-    fields = NULL,
-    sep = NULL,
-    numeric_fields_only = FALSE,
-    dot_columns = NULL) {
+  obj,
+  filename = NULL,
+  fields = NULL,
+  sep = NULL,
+  numeric_fields_only = FALSE,
+  dot_columns = NULL
+) {
   temp <- obj %>%
     as.data.frame() %>%
-    {if(isTRUE(numeric_fields_only)) select(., where(is.numeric)) else .} %>%
+    {
+      if (isTRUE(numeric_fields_only)) select(., where(is.numeric)) else .
+    } %>%
     mutate_if(is.numeric, round, digits = 4) %>%
     mutate_all(as.character()) %>%
     mutate_all(function(x) {
       case_when(
         is.na(x) ~ ".",
-        .default = as.character(x))
+        .default = as.character(x)
+      )
     }) %>%
     mutate(across(.cols = all_of(dot_columns), .fns = function(x) {
       case_when(
         x == 0 ~ ".",
-        .default = as.character(x))}))
+        .default = as.character(x)
+      )
+    }))
 
   if (is.null(filename)) {
     print(temp, row.names = FALSE, col.names = FALSE)
@@ -130,7 +136,7 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
     mutate(across(any_of(num_fields), \(x) signif(x, 4))) %>%
     mutate(ADM = case_when(.data$AMT != 0 ~ "1", .default = ".")) %>%
     mutate(YTYPE = case_when(.data$ADM == "1" ~ ".",
-                             .default = as.character(CMT - 1)
+      .default = as.character(CMT - 1)
     ))
 
   if ("METABOLITE" %in% names(obj)) {
@@ -158,8 +164,8 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
     print(temp, row.names = FALSE, col.names = FALSE)
   } else {
     write.table(temp,
-                file = filename, row.names = FALSE,
-                sep = ",", dec = ".", quote = FALSE
+      file = filename, row.names = FALSE,
+      sep = ",", dec = ".", quote = FALSE
     )
   }
 }

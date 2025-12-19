@@ -15,11 +15,9 @@ StatAdmin <- ggplot2::ggproto(
   "StatAdmin",
   ggplot2::Stat,
   required_aes = c("x", "admin"),
-
   default_aes = ggplot2::aes(
     xintercept = after_stat(xintercept)
   ),
-
   compute_group = function(data, scales) {
     # Input validation
     if (!is.data.frame(data)) {
@@ -49,22 +47,25 @@ StatAdmin <- ggplot2::ggproto(
     }
 
     # Get administration points
-    tryCatch({
-      admin_data <- data[data$admin, ]
+    tryCatch(
+      {
+        admin_data <- data[data$admin, ]
 
-      # Return empty data frame if no administrations
-      if (nrow(admin_data) == 0) {
-        return(data.frame(xintercept = numeric(0)))
+        # Return empty data frame if no administrations
+        if (nrow(admin_data) == 0) {
+          return(data.frame(xintercept = numeric(0)))
+        }
+
+        # Create result
+        result <- data.frame(
+          xintercept = admin_data$x
+        )
+        return(result)
+      },
+      error = function(e) {
+        stop("Error in compute_group: ", e$message)
       }
-
-      # Create result
-      result <- data.frame(
-        xintercept = admin_data$x
-      )
-      return(result)
-    }, error = function(e) {
-      stop("Error in compute_group: ", e$message)
-    })
+    )
   }
 )
 
@@ -101,16 +102,16 @@ StatAdmin <- ggplot2::ggproto(
 #' @export
 #' @keywords internal
 stat_admin <- function(
-    mapping = NULL,
-    data = NULL,
-    geom = "vline",
-    position = "identity",
-    na.rm = FALSE,
-    show.legend = NA,
-    inherit.aes = TRUE,
-    color = "grey",
-    ...) {
-
+  mapping = NULL,
+  data = NULL,
+  geom = "vline",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  color = "grey",
+  ...
+) {
   # Validate parameters
   if (!is.null(mapping) && !inherits(mapping, "uneval")) {
     stop("mapping must be created using aes()")
@@ -200,17 +201,17 @@ GeomAdmin <- ggplot2::ggproto(
 #' @export
 #' @keywords internal
 geom_admin <- function(
-    mapping = NULL,
-    data = NULL,
-    na.rm = FALSE,
-    show.legend = NA,
-    inherit.aes = TRUE,
-    color = "grey",
-    linewidth = 0.5,
-    linetype = 1,
-    alpha = NA,
-    ...) {
-
+  mapping = NULL,
+  data = NULL,
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  color = "grey",
+  linewidth = 0.5,
+  linetype = 1,
+  alpha = NA,
+  ...
+) {
   # Validate parameters
   if (!is.null(mapping) && !inherits(mapping, "uneval")) {
     stop("mapping must be created using aes()")
@@ -237,12 +238,12 @@ geom_admin <- function(
   }
 
   if (!is.numeric(linetype) && !is.character(linetype) ||
-      length(linetype) != 1) {
+    length(linetype) != 1) {
     stop("linetype must be a single numeric or character value")
   }
 
   if (!is.na(alpha) &&
-      (!is.numeric(alpha) || length(alpha) != 1 || alpha < 0 || alpha > 1)) {
+    (!is.numeric(alpha) || length(alpha) != 1 || alpha < 0 || alpha > 1)) {
     stop("alpha must be NA or a numeric value between 0 and 1")
   }
 
@@ -288,14 +289,14 @@ geom_admin <- function(
 #' @importFrom ggplot2 annotation_custom
 #' @export
 watermark <- function(
-    watermark_text = NULL,
-    cex = 1.5,
-    fontface = "bold",
-    color = "lightgrey",
-    alpha = 0.1,
-    x = 0.5,
-    y = 1,
-    rotation = 0
+  watermark_text = NULL,
+  cex = 1.5,
+  fontface = "bold",
+  color = "lightgrey",
+  alpha = 0.1,
+  x = 0.5,
+  y = 1,
+  rotation = 0
 ) {
   # Input validation
   if (!is.null(cex) && (!is.numeric(cex) || length(cex) != 1 || cex <= 0)) {
@@ -303,7 +304,7 @@ watermark <- function(
   }
 
   if (!is.character(fontface) || length(fontface) != 1 ||
-      !fontface %in% c("plain", "bold", "italic", "bold.italic")) {
+    !fontface %in% c("plain", "bold", "italic", "bold.italic")) {
     stop("fontface must be one of: 'plain', 'bold', 'italic', 'bold.italic'")
   }
 
@@ -342,7 +343,7 @@ watermark <- function(
   # Adjust text size based on length
   l <- str_length(watermark_text)
   if (l > 20) {
-    cex <- cex * 20/l
+    cex <- cex * 20 / l
   }
 
   # Create watermark grob
@@ -373,4 +374,3 @@ watermark <- function(
   # Return annotation layer
   ggplot2::annotation_custom(grob = watermark_grob)
 }
-

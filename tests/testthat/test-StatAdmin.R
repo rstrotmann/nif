@@ -123,5 +123,5 @@ test_that("StatAdmin works with different numeric admin values", {
   )
 
   result <- StatAdmin$compute_group(test_data, NULL)
-  expect_equal(result$xintercept, c(1, 3, 5))  # Only 1s should be treated as TRUE
+  expect_equal(result$xintercept, c(1, 3, 5)) # Only 1s should be treated as TRUE
 })

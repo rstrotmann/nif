@@ -49,7 +49,7 @@ read_sdtm <- function(data_path,
   )
 
   # set domains
-  if(is.null(domain)) {
+  if (is.null(domain)) {
     temp <- list.files(file.path(data_path), pattern = paste0(".*\\", file_ext))
     domain <- gsub(paste0("^(.*)\\", file_ext), "\\1", temp)
     # domain names starting with an underscore are omitted
@@ -67,7 +67,9 @@ read_sdtm <- function(data_path,
 
   if (length(missing_files) > 0) {
     stop("The following files do not exist:\n",
-         paste(missing_files, collapse = "\n"), call. = FALSE)
+      paste(missing_files, collapse = "\n"),
+      call. = FALSE
+    )
   }
 
   out <- list()
@@ -108,10 +110,8 @@ read_sdtm <- function(data_path,
     }
   }
 
-  if(length(out) == 0)
+  if (length(out) == 0) {
     stop("no domain data found")
+  }
   new_sdtm(out)
 }
-
-
-

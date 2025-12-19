@@ -172,4 +172,3 @@ test_that("validate_param provides informative error messages", {
   expect_error(validate_param("string", "", "my_param"), "my_param must be a non-empty string")
   expect_error(validate_param("string", c("a", "b"), "my_param"), "my_param must be a single value")
 })
-

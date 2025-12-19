@@ -3,17 +3,17 @@ test_that("add_ntile works with basic input", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE,
     1,   0,     10,  "A",
-    1,   1,     10,  "A",  # Same value for ID 1
-    1,   2,     10,  "A",  # Same value for ID 1
+    1,   1,     10,  "A", # Same value for ID 1
+    1,   2,     10,  "A", # Same value for ID 1
     2,   0,     25,  "A",
-    2,   1,     25,  "A",  # Same value for ID 2
-    2,   2,     25,  "A",  # Same value for ID 2
+    2,   1,     25,  "A", # Same value for ID 2
+    2,   2,     25,  "A", # Same value for ID 2
     3,   0,     5,   "A",
-    3,   1,     5,   "A",  # Same value for ID 3
-    3,   2,     5,   "A",  # Same value for ID 3
+    3,   1,     5,   "A", # Same value for ID 3
+    3,   2,     5,   "A", # Same value for ID 3
     4,   0,     40,  "A",
-    4,   1,     40,  "A",  # Same value for ID 4
-    4,   2,     40,  "A"   # Same value for ID 4
+    4,   1,     40,  "A", # Same value for ID 4
+    4,   2,     40,  "A" # Same value for ID 4
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -128,8 +128,8 @@ test_that("add_ntile handles NA values in input column", {
     ~ID, ~TIME, ~DV, ~ANALYTE,
     1,   0,     10,  "A",
     1,   1,     10,  "A",
-    2,   0,     NA,  "A",  # NA value
-    2,   1,     NA,  "A",  # NA value
+    2,   0,     NA,  "A", # NA value
+    2,   1,     NA,  "A", # NA value
     3,   0,     25,  "A",
     3,   1,     25,  "A",
     4,   0,     40,  "A",
@@ -370,13 +370,13 @@ test_that("add_ntile works with different input columns", {
   # Use different values that will produce different n-tile assignments
   test_data2 <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE, ~WEIGHT,
-    1,   0,     10,  "A",      100,  # Different values
+    1,   0,     10,  "A",      100, # Different values
     1,   1,     10,  "A",      100,
-    2,   0,     25,  "A",      50,   # Different values
+    2,   0,     25,  "A",      50, # Different values
     2,   1,     25,  "A",      50,
-    3,   0,     5,   "A",      75,   # Different values
+    3,   0,     5,   "A",      75, # Different values
     3,   1,     5,   "A",      75,
-    4,   0,     40,  "A",      25,   # Different values
+    4,   0,     40,  "A",      25, # Different values
     4,   1,     40,  "A",      25
   )
 
@@ -412,7 +412,7 @@ test_that("add_ntile handles all subjects having the same value", {
   # Check that all subjects get different NTILE values
   # Note: dplyr::ntile assigns different n-tiles even for identical values
   # based on the order of the data, so we expect different n-tiles
-  expect_equal(length(unique(result$DV_NTILE)), 4)  # All 4 n-tiles should be used
+  expect_equal(length(unique(result$DV_NTILE)), 4) # All 4 n-tiles should be used
   expect_true(all(result$DV_NTILE >= 1 & result$DV_NTILE <= 4))
 })
 
@@ -421,7 +421,7 @@ test_that("add_ntile handles subjects with multiple distinct values", {
     ~ID, ~TIME, ~DV, ~ANALYTE,
     1,   0,     10,  "A",
     1,   1,     10,  "A",
-    1,   2,     10,  "A",  # Multiple rows for ID 1, but same value
+    1,   2,     10,  "A", # Multiple rows for ID 1, but same value
     2,   0,     25,  "A",
     2,   1,     25,  "A",
     3,   0,     5,   "A",

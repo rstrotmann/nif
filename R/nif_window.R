@@ -27,7 +27,7 @@ add_time_deviation <- function(obj) {
   # ensure that TAD and NTIME fields are present and not NA
   required_fields <- c("TAD", "NTIME")
   missing_fields <- setdiff(required_fields, names(obj))
-  if(length(missing_fields) > 0) {
+  if (length(missing_fields) > 0) {
     stop(paste0(
       "Missing ", plural("field", length(missing_fields) > 1),
       " in nif object: ", nice_enumeration(missing_fields)
@@ -44,22 +44,20 @@ add_time_deviation <- function(obj) {
   out <- obj %>%
     arrange(.data$USUBJID, .data$DTC, -.data$EVID) %>%
     group_by(.data$PARENT) %>%
-
     # identify DTC of next administration
     mutate(next_admin = case_when(.data$EVID == 1 ~ .data$DTC)) %>%
     tidyr::fill("next_admin", .direction = "up") %>%
-
     # calculate time to next dose
     mutate(TTND = as.numeric(.data$DTC - .data$next_admin, units = "hours")) %>%
-
     ungroup() %>%
-
     # calculate time difference
     mutate(TIME_DEV = round(
       case_when(
         .data$NTIME == 0 ~ .data$TTND,
-        .default = .data$TAD - .data$NTIME),
-      3)) %>%
+        .default = .data$TAD - .data$NTIME
+      ),
+      3
+    )) %>%
     select(-c("TTND", "next_admin")) %>%
     nif()
 
@@ -84,44 +82,50 @@ add_time_deviation <- function(obj) {
 #' @returns A nif object with TIME_DEV, EXCL, EXCL_REASON fields added.
 #' @export
 add_time_window_flag <- function(
-    obj, window, analyte = NULL, use_minutes = TRUE, silent = NULL) {
+  obj, window, analyte = NULL, use_minutes = TRUE, silent = NULL
+) {
   # validate input
   validate_nif(obj)
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
-  if(!inherits(window, "data.frame"))
+  if (!inherits(window, "data.frame")) {
     stop("'window' must be a data frame!")
-
-  if(is.null(analyte)) {
-    analyte <- guess_analyte(obj)
-    conditional_message(
-      "No analyte specified, using ", analyte, silent = silent)
   }
 
-  if(!analyte %in% analytes(obj)) {
+  if (is.null(analyte)) {
+    analyte <- guess_analyte(obj)
+    conditional_message(
+      "No analyte specified, using ", analyte,
+      silent = silent
+    )
+  }
+
+  if (!analyte %in% analytes(obj)) {
     stop("analyte ", analyte, " not found in nif object!")
   }
 
   missing_fields <- setdiff(c("NTIME", "BEFORE", "AFTER"), names(window))
-  if(length(missing_fields) > 0) {
+  if (length(missing_fields) > 0) {
     stop(paste0(
       "Missing ", plural("field", length(missing_fields) > 1),
       " in 'window': ", nice_enumeration(missing_fields)
     ))
   }
 
-  if(!all(as.logical(lapply(window, is.numeric))))
+  if (!all(as.logical(lapply(window, is.numeric)))) {
     stop("All fields in 'window' must be numeric!")
+  }
 
-  if(any(window$BEFORE < 0 | any(window$AFTER <0 )))
+  if (any(window$BEFORE < 0 | any(window$AFTER < 0))) {
     stop("BEFORE and AFTER must be postivive numbers!")
+  }
 
   # ensure EXCL, EXCL_REASON field are present
-  if(!"EXCL" %in% names(obj)) {
+  if (!"EXCL" %in% names(obj)) {
     obj <- mutate(obj, EXCL = FALSE)
   }
-  if(!"EXCL_REASON" %in% names(obj)) {
+  if (!"EXCL_REASON" %in% names(obj)) {
     obj <- mutate(obj, EXCL_REASON = "")
   }
 
@@ -130,7 +134,7 @@ add_time_window_flag <- function(
     select(NTIME, .BEFORE = .data$BEFORE, .AFTER = .data$AFTER)
 
   # ensure that window is in hours
-  if(use_minutes == TRUE) {
+  if (use_minutes == TRUE) {
     temp <- temp %>%
       mutate(across(c(".BEFORE", ".AFTER"), ~ .x / 60))
   }
@@ -141,12 +145,12 @@ add_time_window_flag <- function(
     left_join(temp, by = "NTIME") %>%
     mutate(EXCL = case_when(
       # .data$ANALYTE == analyte &
-        (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ TRUE,
+      (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ TRUE,
       .default = .data$EXCL
     )) %>%
     mutate(EXCL_REASON = case_when(
       # .data$ANALYTE == analyte &
-        (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ "time window violation",
+      (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ "time window violation",
       .default = .data$EXCL_REASON
     )) %>%
     select(-c(".BEFORE", ".AFTER"))
@@ -156,4 +160,3 @@ add_time_window_flag <- function(
 
 ## to do
 # simplify to only accept a data frame for window!
-

@@ -3,8 +3,8 @@
 test_that("add_parent_mapping adds correct parent mapping", {
   # Create a basic SDTM object
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object
@@ -26,8 +26,8 @@ test_that("add_parent_mapping adds correct parent mapping", {
 test_that("add_parent_mapping can add multiple mappings", {
   # Create a basic SDTM object
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object
@@ -53,14 +53,14 @@ test_that("add_parent_mapping can add multiple mappings", {
 test_that("add_parent_mapping preserves existing mappings", {
   # Create a basic SDTM object with existing parent mapping
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object with existing parent mapping
   test_sdtm <- new_sdtm(list(dm = dm_data))
   test_sdtm$parent_mapping <- tibble::tribble(
-    ~ANALYTE,  ~PARENT,
+    ~ANALYTE, ~PARENT,
     "EXISTING", "EXISTING_PARENT"
   )
 
@@ -147,8 +147,8 @@ test_that("add_parent_mapping rejects NA values", {
 test_that("add_parent_mapping initializes parent_mapping when NULL", {
   # Create a basic SDTM object
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object
@@ -177,4 +177,3 @@ test_that("add_parent_mapping properly trims whitespace", {
   expect_equal(result$parent_mapping$ANALYTE, "METABOLITE")
   expect_equal(result$parent_mapping$PARENT, "PARENT")
 })
-

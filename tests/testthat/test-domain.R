@@ -44,7 +44,6 @@ test_that("domain() errors for non-existent domains", {
 })
 
 
-
 test_that("domain() is case-insensitive", {
   # Create a simple SDTM object for testing
   test_dm <- data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM")
@@ -76,23 +75,28 @@ test_that("domain() handles input validation correctly", {
   invalid_obj <- list(domains = list())
   expect_error(
     domain(invalid_obj, "dm"),
-    "Input must be a sdtm object")
+    "Input must be a sdtm object"
+  )
 
   # Test with NULL object
   expect_error(
     domain(NULL, "dm"),
-    "Input must be a sdtm object")
+    "Input must be a sdtm object"
+  )
 
   # Test with NULL, numeric, or empty character as name
   expect_error(
     domain(test_data, NULL),
-    "name must not be NULL")
+    "name must not be NULL"
+  )
   expect_error(
     domain(test_data, 123),
-    "name must be a string value")
+    "name must be a string value"
+  )
   expect_error(
     domain(test_data, character(0)),
-    "name must be a single value")
+    "name must be a single value"
+  )
 })
 
 
@@ -109,6 +113,6 @@ test_that("domain() rejects vectors with multiple names", {
   # Test with vector of multiple names
   expect_error(
     domain(test_data, c("dm", "pc")),
-    "name must be a single value")
+    "name must be a single value"
+  )
 })
-

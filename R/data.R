@@ -1,4 +1,3 @@
-
 #' Synthetic SDTM data from a fictional clinical SAD FIH study with rich PK
 #' sampling
 #' @format A sdtm object
@@ -77,5 +76,3 @@
 #'     ...
 #' }
 "domain_model"
-
-

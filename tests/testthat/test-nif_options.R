@@ -28,4 +28,3 @@ test_that("nif_option_value works", {
 test_that("nif_option with empty arguments returns list", {
   expect_type(nif_option(), "list")
 })
-

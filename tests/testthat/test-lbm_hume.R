@@ -82,4 +82,3 @@ test_that("lbm_hume maintains consistency with other LBM formulas", {
   expect_true(abs(hume_lbm - boer_lbm) / boer_lbm < 0.2)
   expect_true(abs(hume_lbm - peters_lbm) / peters_lbm < 0.2)
 })
-

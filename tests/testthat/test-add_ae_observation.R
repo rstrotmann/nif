@@ -3,34 +3,34 @@
 test_that("add_ae_observation handles basic case correctly", {
   # Create test SDTM data
   test_ae <- tibble::tribble(
-    ~USUBJID,    ~AEDECOD,  ~AESTDTC,            ~AETOXGR,  ~AESEQ,
-    "SUBJ-001", "Headache", "2023-01-01T08:00",  2,         1,
-    "SUBJ-002", "Headache", "2023-01-02T09:00",  1,         1,
-    "SUBJ-003", "Nausea",   "2023-01-01T10:00",  3,         1
+    ~USUBJID, ~AEDECOD, ~AESTDTC, ~AETOXGR, ~AESEQ,
+    "SUBJ-001", "Headache", "2023-01-01T08:00", 2, 1,
+    "SUBJ-002", "Headache", "2023-01-02T09:00", 1, 1,
+    "SUBJ-003", "Nausea", "2023-01-01T10:00", 3, 1
   )
 
   test_dm <- tibble::tribble(
-    ~USUBJID,           ~RFSTDTC,  ~ACTARMCD, ~SEX,  ~RFENDTC,
-    "SUBJ-001", "2023-01-01T00:00",    "TRT1",  "F", "2023-01-02T00:00",
-    "SUBJ-002", "2023-01-01T00:00",    "TRT1",  "F", "2023-01-02T00:00",
-    "SUBJ-003", "2023-01-01T00:00",    "TRT1",  "F", "2023-01-02T00:00"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX, ~RFENDTC,
+    "SUBJ-001", "2023-01-01T00:00", "TRT1", "F", "2023-01-02T00:00",
+    "SUBJ-002", "2023-01-01T00:00", "TRT1", "F", "2023-01-02T00:00",
+    "SUBJ-003", "2023-01-01T00:00", "TRT1", "F", "2023-01-02T00:00"
   )
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001",  "HEIGHT",       170,     "Y",
-    "SUBJ-001",  "WEIGHT",        70,     "Y",
-    "SUBJ-002",  "HEIGHT",       165,     "Y",
-    "SUBJ-002",  "WEIGHT",        65,     "Y",
-    "SUBJ-003",  "HEIGHT",       175,     "Y",
-    "SUBJ-003",  "WEIGHT",        75,     "Y"
+    "SUBJ-001", "HEIGHT", 170, "Y",
+    "SUBJ-001", "WEIGHT", 70, "Y",
+    "SUBJ-002", "HEIGHT", 165, "Y",
+    "SUBJ-002", "WEIGHT", 65, "Y",
+    "SUBJ-003", "HEIGHT", 175, "Y",
+    "SUBJ-003", "WEIGHT", 75, "Y"
   )
 
   test_ex <- tibble::tribble(
-    ~USUBJID,    ~EXTRT,     ~EXDOSE, ~EXSTDTC,            ~EXENDTC,            ~EXSEQ,
-    "SUBJ-001", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1,
-    "SUBJ-002", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1,
-    "SUBJ-003", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1
+    ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+    "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1,
+    "SUBJ-002", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1,
+    "SUBJ-003", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
@@ -50,13 +50,15 @@ test_that("add_ae_observation handles basic case correctly", {
 
   # Check structure
   expect_s3_class(result, "nif")
-  expect_true(all(c("USUBJID", "DTC", "DV", "ANALYTE", "TIME", "CMT",
-                    "AMT", "PARENT", "EVID", "MDV") %in% names(result)))
+  expect_true(all(c(
+    "USUBJID", "DTC", "DV", "ANALYTE", "TIME", "CMT",
+    "AMT", "PARENT", "EVID", "MDV"
+  ) %in% names(result)))
 
   # Check content
   ae_rows <- result %>% filter(ANALYTE == "AE_Headache")
-  expect_equal(nrow(ae_rows), 2)  # Should have 2 Headache events
-  expect_equal(ae_rows$DV, c(2, 1))  # Toxicity grades
+  expect_equal(nrow(ae_rows), 2) # Should have 2 Headache events
+  expect_equal(ae_rows$DV, c(2, 1)) # Toxicity grades
   expect_equal(unique(ae_rows$PARENT), "DRUG")
   expect_equal(unique(ae_rows$CMT), 2)
 })
@@ -64,29 +66,29 @@ test_that("add_ae_observation handles basic case correctly", {
 
 test_that("add_ae_observation handles different ae_fields correctly", {
   test_ae <- tibble::tribble(
-    ~USUBJID,    ~AEDECOD,  ~AELLT,     ~AEHLT,     ~AESTDTC,            ~AETOXGR,
-    "SUBJ-001", "Term1",    "LLT1",     "HLT1",     "2023-01-01T08:00",  2,
-    "SUBJ-002", "Term2",    "LLT1",     "HLT2",     "2023-01-02T09:00",  1
+    ~USUBJID, ~AEDECOD, ~AELLT, ~AEHLT, ~AESTDTC, ~AETOXGR,
+    "SUBJ-001", "Term1", "LLT1", "HLT1", "2023-01-01T08:00", 2,
+    "SUBJ-002", "Term2", "LLT1", "HLT2", "2023-01-02T09:00", 1
   )
 
   test_dm <- tibble::tribble(
-    ~USUBJID,           ~RFSTDTC, ~ACTARMCD, ~SEX,  ~RFENDTC,
-    "SUBJ-001", "2023-01-01T00:00",    "TRT1",  "M", "2023-01-02T00:00",
-    "SUBJ-002", "2023-01-01T00:00",    "TRT1",  "M", "2023-01-02T00:00"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX, ~RFENDTC,
+    "SUBJ-001", "2023-01-01T00:00", "TRT1", "M", "2023-01-02T00:00",
+    "SUBJ-002", "2023-01-01T00:00", "TRT1", "M", "2023-01-02T00:00"
   )
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001",  "HEIGHT",       170,     "Y",
-    "SUBJ-001",  "WEIGHT",        70,     "Y",
-    "SUBJ-002",  "HEIGHT",       165,     "Y",
-    "SUBJ-002",  "WEIGHT",        65,     "Y"
+    "SUBJ-001", "HEIGHT", 170, "Y",
+    "SUBJ-001", "WEIGHT", 70, "Y",
+    "SUBJ-002", "HEIGHT", 165, "Y",
+    "SUBJ-002", "WEIGHT", 65, "Y"
   )
 
   test_ex <- tibble::tribble(
-    ~USUBJID,    ~EXTRT,     ~EXDOSE, ~EXSTDTC,            ~EXENDTC,            ~EXSEQ,
-    "SUBJ-001", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1,
-    "SUBJ-002", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1
+    ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+    "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1,
+    "SUBJ-002", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
@@ -119,29 +121,29 @@ test_that("add_ae_observation handles different ae_fields correctly", {
 
 test_that("add_ae_observation handles filters correctly", {
   test_ae <- tibble::tribble(
-    ~USUBJID,    ~AEDECOD,  ~AESTDTC,            ~AETOXGR,  ~AESEQ,
-    "SUBJ-001", "Headache", "2023-01-01T08:00",  2,         1,
-    "SUBJ-002", "Headache", "2023-01-02T09:00",  1,         1
+    ~USUBJID, ~AEDECOD, ~AESTDTC, ~AETOXGR, ~AESEQ,
+    "SUBJ-001", "Headache", "2023-01-01T08:00", 2, 1,
+    "SUBJ-002", "Headache", "2023-01-02T09:00", 1, 1
   )
 
   test_dm <- tibble::tribble(
-    ~USUBJID,    ~RFSTDTC,            ~ACTARMCD, ~SEX,  ~RFENDTC,
-    "SUBJ-001", "2023-01-01T00:00",  "SCRNFAIL",  "M", "2023-01-02T00:00",
-    "SUBJ-002", "2023-01-01T00:00",  "TRT1",      "M", "2023-01-02T00:00"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX, ~RFENDTC,
+    "SUBJ-001", "2023-01-01T00:00", "SCRNFAIL", "M", "2023-01-02T00:00",
+    "SUBJ-002", "2023-01-01T00:00", "TRT1", "M", "2023-01-02T00:00"
   )
 
   test_vs <- tibble::tribble(
-    ~USUBJID,    ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001", "HEIGHT",   170,       "Y",
-    "SUBJ-001", "WEIGHT",   70,        "Y",
-    "SUBJ-002", "HEIGHT",   165,       "Y",
-    "SUBJ-002", "WEIGHT",   65,        "Y"
+    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001", "HEIGHT", 170, "Y",
+    "SUBJ-001", "WEIGHT", 70, "Y",
+    "SUBJ-002", "HEIGHT", 165, "Y",
+    "SUBJ-002", "WEIGHT", 65, "Y"
   )
 
   test_ex <- tibble::tribble(
-    ~USUBJID,    ~EXTRT,     ~EXDOSE, ~EXSTDTC,            ~EXENDTC,            ~EXSEQ,
-    "SUBJ-001", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1,
-    "SUBJ-002", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1
+    ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+    "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1,
+    "SUBJ-002", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
@@ -156,7 +158,7 @@ test_that("add_ae_observation handles filters correctly", {
     parent = "DRUG",
     cmt = 2
   )
-  expect_equal(nrow(result %>% filter(ANALYTE == "AE_Headache")), 1)  # Should exclude SCRNFAIL subject
+  expect_equal(nrow(result %>% filter(ANALYTE == "AE_Headache")), 1) # Should exclude SCRNFAIL subject
   expect_equal(unique(result$USUBJID[result$ANALYTE == "AE_Headache"]), "SUBJ-002")
 
   # Test custom observation filter
@@ -168,30 +170,30 @@ test_that("add_ae_observation handles filters correctly", {
     cmt = 2,
     observation_filter = "AETOXGR > 1"
   )
-  expect_equal(nrow(result_filtered %>% filter(ANALYTE == "AE_Headache")), 0)  # No events with AETOXGR > 1 for non-SCRNFAIL subjects
+  expect_equal(nrow(result_filtered %>% filter(ANALYTE == "AE_Headache")), 0) # No events with AETOXGR > 1 for non-SCRNFAIL subjects
 })
 
 
 test_that("add_ae_observation handles debug mode correctly", {
   test_ae <- tibble::tribble(
-    ~USUBJID,    ~AEDECOD,  ~AESTDTC,            ~AETOXGR,  ~AESEQ,
-    "SUBJ-001", "Headache", "2023-01-01T08:00",  2,         1
+    ~USUBJID, ~AEDECOD, ~AESTDTC, ~AETOXGR, ~AESEQ,
+    "SUBJ-001", "Headache", "2023-01-01T08:00", 2, 1
   )
 
   test_dm <- tibble::tribble(
-    ~USUBJID,           ~RFSTDTC, ~ACTARMCD, ~SEX,  ~RFENDTC,
-    "SUBJ-001", "2023-01-01T00:00",    "TRT1",  "F", "2023-01-02T00:00"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX, ~RFENDTC,
+    "SUBJ-001", "2023-01-01T00:00", "TRT1", "F", "2023-01-02T00:00"
   )
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001",  "HEIGHT",       170,     "Y",
-    "SUBJ-001",  "WEIGHT",        70,     "Y"
+    "SUBJ-001", "HEIGHT", 170, "Y",
+    "SUBJ-001", "WEIGHT", 70, "Y"
   )
 
   test_ex <- tibble::tribble(
-    ~USUBJID,    ~EXTRT,     ~EXDOSE, ~EXSTDTC,            ~EXENDTC,            ~EXSEQ,
-    "SUBJ-001", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1
+    ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+    "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
@@ -217,24 +219,24 @@ test_that("add_ae_observation handles debug mode correctly", {
 
 test_that("add_ae_observation handles keep parameter correctly", {
   test_ae <- tibble::tribble(
-    ~USUBJID,    ~AEDECOD,  ~AESTDTC,            ~AETOXGR,  ~AESEQ, ~CUSTOM_COL,
-    "SUBJ-001", "Headache", "2023-01-01T08:00",  2,         1,      "Value1"
+    ~USUBJID, ~AEDECOD, ~AESTDTC, ~AETOXGR, ~AESEQ, ~CUSTOM_COL,
+    "SUBJ-001", "Headache", "2023-01-01T08:00", 2, 1, "Value1"
   )
 
   test_dm <- tibble::tribble(
-    ~USUBJID,           ~RFSTDTC, ~ACTARMCD, ~SEX,  ~RFENDTC,
-    "SUBJ-001", "2023-01-01T00:00",    "TRT1",  "F", "2023-01-02T00:00"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX, ~RFENDTC,
+    "SUBJ-001", "2023-01-01T00:00", "TRT1", "F", "2023-01-02T00:00"
   )
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001",  "HEIGHT",       170,     "Y",
-    "SUBJ-001",  "WEIGHT",        70,     "Y"
+    "SUBJ-001", "HEIGHT", 170, "Y",
+    "SUBJ-001", "WEIGHT", 70, "Y"
   )
 
   test_ex <- tibble::tribble(
-    ~USUBJID,    ~EXTRT,     ~EXDOSE, ~EXSTDTC,            ~EXENDTC,            ~EXSEQ,
-    "SUBJ-001", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1
+    ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+    "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
@@ -257,24 +259,24 @@ test_that("add_ae_observation handles keep parameter correctly", {
 
 test_that("add_ae_observation handles automatic parent and cmt assignment", {
   test_ae <- tibble::tribble(
-    ~USUBJID,    ~AEDECOD,  ~AESTDTC,            ~AETOXGR,  ~AESEQ,
-    "SUBJ-001", "Headache", "2023-01-01T08:00",  2,         1
+    ~USUBJID, ~AEDECOD, ~AESTDTC, ~AETOXGR, ~AESEQ,
+    "SUBJ-001", "Headache", "2023-01-01T08:00", 2, 1
   )
 
   test_dm <- tibble::tribble(
-    ~USUBJID,           ~RFSTDTC, ~ACTARMCD, ~SEX,  ~RFENDTC,
-    "SUBJ-001", "2023-01-01T00:00",    "TRT1",  "F", "2023-01-02T00:00"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX, ~RFENDTC,
+    "SUBJ-001", "2023-01-01T00:00", "TRT1", "F", "2023-01-02T00:00"
   )
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001",  "HEIGHT",       170,     "Y",
-    "SUBJ-001",  "WEIGHT",        70,     "Y"
+    "SUBJ-001", "HEIGHT", 170, "Y",
+    "SUBJ-001", "WEIGHT", 70, "Y"
   )
 
   test_ex <- tibble::tribble(
-    ~USUBJID,    ~EXTRT,     ~EXDOSE, ~EXSTDTC,            ~EXENDTC,            ~EXSEQ,
-    "SUBJ-001", "DRUG",      100,     "2023-01-01T00:00",  "2023-01-01T01:00",  1
+    ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+    "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
   test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))

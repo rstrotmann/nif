@@ -42,7 +42,7 @@ test_that("BMI calculation handles edge cases correctly", {
   expect_equal(nrow(result), 6) # "Should return all 6 subjects")
 
   # Test normal case - BMI calculation should work
-  normal_bmi <- 70 / (170/100)^2  # Expected BMI for subject 001
+  normal_bmi <- 70 / (170 / 100)^2 # Expected BMI for subject 001
   expect_equal(result$BMI[result$USUBJID == "001"], normal_bmi)
 
   # Test all edge cases - BMI should be NA
@@ -180,4 +180,3 @@ test_that("is_male handles invalid sex values correctly", {
   # Test with vector containing invalid values
   expect_false(any(is_male(c("X", 2, "male", "female"))))
 })
-

@@ -79,5 +79,3 @@ test_that("lbm_peters handles vectorized inputs correctly", {
     tolerance = 1e-10
   )
 })
-
-

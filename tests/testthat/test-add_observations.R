@@ -1,45 +1,42 @@
 make_test_sdtm1 <- function() {
-  temp = list(
+  temp <- list(
     dm = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,             ~RFXSTDTC,              ~RFSTDTC, ~ACTARM,  ~STUDYID,
-          "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-          "2",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-          "3",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-          "4",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC, ~RFSTDTC, ~ACTARM, ~STUDYID,
+      "1", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "2", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "3", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "4", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
     ) %>%
       mutate(RFENDTC = "2024-01-02T08:00:00"),
-
     vs = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
-          "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-          "2",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-          "3",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-          "4",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+      "1", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
+      "2", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
+      "3", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
+      "4", "VS", "HEIGHT", 100, "2024-01-01T08:00:00"
     ),
-
     lb = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBTESTCD, ~LBSTRESN,                ~LBDTC,
-          "1",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-          "2",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-          "3",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-          "4",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00"
+      ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBTESTCD, ~LBSTRESN, ~LBDTC,
+      "1", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
+      "2", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
+      "3", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
+      "4", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00"
     ),
-
     ex = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC, ~EXSEQ,
-          "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     1L,
-          "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     2L,
-          "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     3L,
-          "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     4L
+      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+      "1", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 1L,
+      "2", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 2L,
+      "3", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 3L,
+      "4", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 4L
     ),
-
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
-          "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-          "2",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-          "3",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-          "4",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H"
-    ))
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN, ~PCSPEC, ~PCTEST, ~PCELTM,
+      "1", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
+      "2", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
+      "3", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
+      "4", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H"
+    )
+  )
 
   return(new_sdtm(temp))
 }
@@ -49,7 +46,9 @@ test_that("add_observation warns about duplicate compartment", {
   # Create a base nif object with administration data where CMT=1
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Try to add observation with the same compartment
   expect_warning(
@@ -64,7 +63,9 @@ test_that("add_observation auto-assigns compartment if not specified", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Add observation without specifying CMT, capture messages
   expect_message(
@@ -82,13 +83,17 @@ test_that("add_observation auto-assigns parent if not specified", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Different observation analyte without specifying parent
   nif_with_obs <- base_nif %>%
     add_observation(
-      examplinib_sad, "pc", "RS2023", analyte = "DIFFERENT", cmt = 2,
-      silent = FALSE)
+      examplinib_sad, "pc", "RS2023",
+      analyte = "DIFFERENT", cmt = 2,
+      silent = FALSE
+    )
 
   expect_equal(unique(filter(nif_with_obs, ANALYTE == "DIFFERENT")$PARENT), "RS2023")
 })
@@ -98,12 +103,15 @@ test_that("add_observation properly uses observation_filter", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Add observation with filter that returns nothing
   expect_error(
     nif_with_filtered_obs <- base_nif %>% add_observation(
-      examplinib_sad, "pc", "RS2023", cmt = 2,
+      examplinib_sad, "pc", "RS2023",
+      cmt = 2,
       observation_filter = "PCTESTCD == 'NON_EXISTENT'"
     )
   )
@@ -114,7 +122,9 @@ test_that("add_observation works with factor parameter", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Add observation with normal factor
   nif_normal <- base_nif %>%
@@ -144,7 +154,9 @@ test_that("add_observation handles metabolites correctly", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Add metabolite observation
   nif_with_metabolite <- base_nif %>%
@@ -168,7 +180,9 @@ test_that("add_observation works with custom NTIME_lookup", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Create custom NTIME lookup table
   custom_ntime <- data.frame(
@@ -192,8 +206,10 @@ test_that("add_observation handles debug mode correctly", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023",
-      debug = TRUE, silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023",
+      debug = TRUE, silent = TRUE
+    )
 
   # Add observation in debug mode
   nif_debug <- base_nif %>%
@@ -209,7 +225,9 @@ test_that("add_observation updates columns correctly", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Check columns before adding observation
   before_cols <- names(base_nif)
@@ -217,7 +235,8 @@ test_that("add_observation updates columns correctly", {
   # Add observation with additional columns to keep
   nif_with_extra <- base_nif %>%
     add_observation(examplinib_sad, "pc", "RS2023",
-                    keep = c("PCSPEC"), silent = TRUE)
+      keep = c("PCSPEC"), silent = TRUE
+    )
 
   # Check if the extra column was kept
   after_cols <- names(nif_with_extra)
@@ -231,10 +250,12 @@ test_that("add_observation handles include_day_in_ntime parameter", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   custom_sdtm <- examplinib_sad
-  custom_sdtm$domains$pc$PCDY = 2
+  custom_sdtm$domains$pc$PCDY <- 2
 
   # Add observation with include_day_in_ntime = TRUE
   nif_with_day <- base_nif %>%
@@ -255,7 +276,7 @@ test_that("add_observation handles include_day_in_ntime parameter", {
   expect_equal(
     nif_with_day[nif_with_day$EVID == 0, "NTIME"],
     nif_without_day[nif_with_day$EVID == 0, "NTIME"] + 24
-    )
+  )
 })
 
 
@@ -274,13 +295,16 @@ test_that("add_observation handles missing NTIME gracefully", {
 
   # Should run without error but show a message about NTIME
   expect_message(
-      expect_message(
-        nif_without_ntime <- base_nif %>%
-          add_observation(sdtm_test, "pc", "A", cmt = 2, ntime_method = "ELTM",
-                          silent = FALSE),
+    expect_message(
+      nif_without_ntime <- base_nif %>%
+        add_observation(sdtm_test, "pc", "A",
+          cmt = 2, ntime_method = "ELTM",
+          silent = FALSE
+        ),
       "ELTM is not defined"
     ),
-  "No NTIME_lookup could be created")
+    "No NTIME_lookup could be created"
+  )
 
   # NTIME should be NA in the resulting object
   obs_rows <- nif_without_ntime %>%
@@ -304,8 +328,10 @@ test_that("add_observation handles DV field properly", {
   expect_no_error({
     nif_custom_dv <- base_nif %>%
       add_observation(
-        sdtm_test, "pc", "A", DV_field = "PCSTRESN",
-        , ntime_method = "ELTM", silent = TRUE)
+        sdtm_test, "pc", "A",
+        DV_field = "PCSTRESN", ,
+        ntime_method = "ELTM", silent = TRUE
+      )
   })
 
   # Check if values match the source data
@@ -346,7 +372,7 @@ test_that("add_observation handles subject filtering", {
     unique()
 
   # Should only contain subject "1"
-    expect_equal(obs_subjects, "1")
+  expect_equal(obs_subjects, "1")
 })
 
 
@@ -354,7 +380,9 @@ test_that("add_observation can handle non-existent domain gracefully", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Try adding observations from non-existent domain
   expect_error(
@@ -362,7 +390,7 @@ test_that("add_observation can handle non-existent domain gracefully", {
       add_observation(
         examplinib_sad, "NON_EXISTENT_DOMAIN", "RS2023",
         silent = TRUE
-    )
+      )
   )
 })
 
@@ -371,7 +399,9 @@ test_that("add_observation handles observations without matching administrations
   # Create a base nif with administration data for a different analyte
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Add observation with different parent
   nif_with_different_parent <- base_nif %>%
@@ -385,10 +415,11 @@ test_that("add_observation handles observations without matching administrations
   expect_message(
     nif_with_no_admin <- base_nif %>%
       add_observation(
-        examplinib_sad, "pc", "RS2023", cmt = 2,
+        examplinib_sad, "pc", "RS2023",
+        cmt = 2,
         parent = "DIFFERENT_PARENT",
         silent = FALSE
-    ),
+      ),
     "Missing administration information"
   )
 
@@ -403,17 +434,16 @@ test_that("add_observation handles observations without matching administrations
 test_that("add_observation handles na.rm parameter when resolving duplicates", {
   sdtm_obj <- make_test_sdtm1()
 
-  pc = tibble::tribble(
-    ~USUBJID, ~DOMAIN,  ~PCTESTCD,                ~PCDTC, ~PCSTRESN,
-    "1",    "PC", "A", "2023-01-01 08:00:00",       100,
-    "1",    "PC", "A", "2023-01-01 12:00:00",       200,
-    "1",    "PC", "A", "2023-01-01 08:00:00",        NA,
-    "1",    "PC", "A", "2023-01-01 12:00:00",       400,
-
-    "2",    "PC", "A", "2023-01-01 08:00:00",       500,
-    "2",    "PC", "A", "2023-01-01 12:00:00",        NA,
-    "2",    "PC", "A", "2023-01-01 08:00:00",       700,
-    "2",    "PC", "A", "2023-01-01 12:00:00",       800
+  pc <- tibble::tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN,
+    "1", "PC", "A", "2023-01-01 08:00:00", 100,
+    "1", "PC", "A", "2023-01-01 12:00:00", 200,
+    "1", "PC", "A", "2023-01-01 08:00:00", NA,
+    "1", "PC", "A", "2023-01-01 12:00:00", 400,
+    "2", "PC", "A", "2023-01-01 08:00:00", 500,
+    "2", "PC", "A", "2023-01-01 12:00:00", NA,
+    "2", "PC", "A", "2023-01-01 08:00:00", 700,
+    "2", "PC", "A", "2023-01-01 12:00:00", 800
   )
 
   sdtm_obj$domains$pc <- pc
@@ -453,4 +483,3 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
     pull(DV)
   expect_equal(obs_1_8am_no_rm, 100)
 })
-

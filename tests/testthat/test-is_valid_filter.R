@@ -16,9 +16,9 @@ test_that("is_valid_filter works with basic filters", {
   expect_true(is_valid_filter(df, "category %in% c('A', 'B')"))
 
   # Invalid filters
-  expect_false(is_valid_filter(df, "value >"))  # Incomplete expression
-  expect_false(is_valid_filter(df, "nonexistent_column > 20"))  # Non-existent column
-  expect_false(is_valid_filter(df, "category == A"))  # Missing quotes
+  expect_false(is_valid_filter(df, "value >")) # Incomplete expression
+  expect_false(is_valid_filter(df, "nonexistent_column > 20")) # Non-existent column
+  expect_false(is_valid_filter(df, "category == A")) # Missing quotes
 })
 
 
@@ -39,18 +39,18 @@ test_that("is_valid_filter works with NA values", {
   expect_true(is_valid_filter(df, "is.na(category) & value > 20"))
 
   # Invalid NA filters
-  expect_false(is_valid_filter(df, "is.na()"))      # Missing column
+  expect_false(is_valid_filter(df, "is.na()")) # Missing column
 })
 
 
 test_that("is_valid_filter works with date columns", {
   # Test data frame with date column
   df <- tibble::tribble(
-    ~id, ~date,       ~value,
-    1,   "2023-01-01", 10,
-    2,   "2023-02-01", 20,
-    3,   "2023-03-01", 30,
-    4,   "2023-04-01", 40
+    ~id, ~date, ~value,
+    1, "2023-01-01", 10,
+    2, "2023-02-01", 20,
+    3, "2023-03-01", 30,
+    4, "2023-04-01", 40
   )
 
   # Convert date column to Date type
@@ -82,9 +82,9 @@ test_that("is_valid_filter works with complex expressions", {
   expect_true(is_valid_filter(df, "status == 'active' & value > 20 | category == 'B'"))
 
   # Invalid complex filters
-  expect_false(is_valid_filter(df, "value > 20 & (category == 'A'"))  # Unclosed parenthesis
-  expect_false(is_valid_filter(df, "value > 20 & category == 'A' |"))  # Incomplete expression
-  expect_false(is_valid_filter(df, "value > 20 & nonexistent == 'A'"))  # Invalid column
+  expect_false(is_valid_filter(df, "value > 20 & (category == 'A'")) # Unclosed parenthesis
+  expect_false(is_valid_filter(df, "value > 20 & category == 'A' |")) # Incomplete expression
+  expect_false(is_valid_filter(df, "value > 20 & nonexistent == 'A'")) # Invalid column
 })
 
 

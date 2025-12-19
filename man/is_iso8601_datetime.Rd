@@ -32,13 +32,13 @@ Valid formats include:
 }
 }
 \examples{
-is_iso8601_datetime("2023-10-15T14:30:00")        # TRUE
-is_iso8601_datetime("2023-10-15 14:30:00")        # TRUE (with default strict=FALSE)
-is_iso8601_datetime("2023-10-15 14:30:00", TRUE)  # FALSE (with strict=TRUE)
-is_iso8601_datetime("2023-10-15T14:30:00Z")       # TRUE
-is_iso8601_datetime("2023-10-15T14:30:00+02:00")  # TRUE
-is_iso8601_datetime("20231015T143000")            # TRUE
-is_iso8601_datetime("2023-10-15")                 # FALSE (no time component)
-is_iso8601_datetime("14:30:00")                   # FALSE (no date component)
+is_iso8601_datetime("2023-10-15T14:30:00") # TRUE
+is_iso8601_datetime("2023-10-15 14:30:00") # TRUE (with default strict=FALSE)
+is_iso8601_datetime("2023-10-15 14:30:00", TRUE) # FALSE (with strict=TRUE)
+is_iso8601_datetime("2023-10-15T14:30:00Z") # TRUE
+is_iso8601_datetime("2023-10-15T14:30:00+02:00") # TRUE
+is_iso8601_datetime("20231015T143000") # TRUE
+is_iso8601_datetime("2023-10-15") # FALSE (no time component)
+is_iso8601_datetime("14:30:00") # FALSE (no date component)
 }
 \keyword{internal}

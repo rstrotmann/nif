@@ -9,7 +9,8 @@ test_that("nca_from_pp", {
 
   expect_equal(
     length(unique(temp$USUBJID)),
-    length(unique(nif$USUBJID)))
+    length(unique(nif$USUBJID))
+  )
 })
 
 

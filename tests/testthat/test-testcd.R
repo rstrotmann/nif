@@ -31,19 +31,19 @@ test_that("testcd() extracts TESTCD values correctly", {
   sdtm_data <- list(
     dm = tribble(
       ~DOMAIN, ~USUBJID, ~DMTESTCD,
-          "DM", "SUBJ001", "AGE",
-          "DM", "SUBJ002", "AGE"
+      "DM", "SUBJ001", "AGE",
+      "DM", "SUBJ002", "AGE"
     ),
     vs = tribble(
       ~DOMAIN, ~USUBJID, ~VSTESTCD,
-        "VS", "SUBJ001", "SYSBP",
-        "VS", "SUBJ001", "DIABP",
-        "VS", "SUBJ002", "SYSBP"
+      "VS", "SUBJ001", "SYSBP",
+      "VS", "SUBJ001", "DIABP",
+      "VS", "SUBJ002", "SYSBP"
     ),
     pc = tribble(
       ~DOMAIN, ~USUBJID, ~PCTESTCD,
-        "PC", "SUBJ001", "CONC",
-        "PC", "SUBJ002", "CONC"
+      "PC", "SUBJ001", "CONC",
+      "PC", "SUBJ002", "CONC"
     )
   )
   sdtm_obj <- new_sdtm(sdtm_data)
@@ -108,7 +108,7 @@ test_that("testcd() handles empty DOMAIN column", {
   # Expected output (only VS domain should be included)
   expected <- tribble(
     ~DOMAIN, ~TESTCD,
-       "VS", "SYSBP"
+    "VS", "SYSBP"
   )
 
   result <- testcd(sdtm_obj)
@@ -253,7 +253,8 @@ test_that("testcd() handles empty data frames within domains", {
 
   expect_warning(
     result <- testcd(sdtm_obj),
-    "DOMAIN column is empty")
+    "DOMAIN column is empty"
+  )
   expect_equal(result, as.data.frame(expected))
 })
 
@@ -592,4 +593,3 @@ test_that("testcd() handles domains with complex TESTCD values", {
   result <- testcd(sdtm_obj)
   expect_equal(result, as.data.frame(expected))
 })
-

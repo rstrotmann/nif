@@ -129,7 +129,6 @@ test_that("import_nif errors on file not found", {
 })
 
 
-
 test_that("import_nif renames columns correctly", {
   csv_file <- tempfile(fileext = ".csv")
   on.exit(unlink(csv_file))
@@ -143,7 +142,8 @@ test_that("import_nif renames columns correctly", {
     Y ~ ANALYTE,
     Z ~ as.numeric(USUBJID),
     format = "csv",
-    silent = TRUE)
+    silent = TRUE
+  )
 
   expect_s3_class(result, "nif")
   expect_equal(nrow(result), 3)
@@ -151,6 +151,3 @@ test_that("import_nif renames columns correctly", {
   expect_equal(result$Y, c("DRUG", "DRUG", "DRUG"))
   expect_equal(is.numeric(result$Z), TRUE)
 })
-
-
-

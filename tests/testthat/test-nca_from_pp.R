@@ -3,18 +3,18 @@ test_that("nca_from_pp works with valid inputs", {
   nif_obj <- new_nif(
     tibble::tribble(
       ~ID, ~USUBJID, ~ANALYTE, ~EVID, ~DOSE, ~AGE,
-        1,  "SUBJ1",   "DRUG",     1,   100,   30,
-        2,  "SUBJ2",   "DRUG",     1,   200,   40
+      1, "SUBJ1", "DRUG", 1, 100, 30,
+      2, "SUBJ2", "DRUG", 1, 200, 40
     )
   )
 
   sdtm_data <- new_sdtm(list(
     pp = tibble::tribble(
-      ~USUBJID, ~PPTESTCD, ~PPSTRESN,  ~PPSPEC, ~PPCAT,    ~PPRFTDTC, ~DOMAIN,
-       "SUBJ1",     "AUC",       100, "PLASMA", "DRUG", "2023-01-01",    "PP",
-       "SUBJ1",    "CMAX",        50, "PLASMA", "DRUG", "2023-01-01",    "PP",
-       "SUBJ2",     "AUC",       200, "PLASMA", "DRUG", "2023-01-02",    "PP",
-       "SUBJ2",    "CMAX",       100, "PLASMA", "DRUG", "2023-01-02",    "PP"
+      ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPSPEC, ~PPCAT, ~PPRFTDTC, ~DOMAIN,
+      "SUBJ1", "AUC", 100, "PLASMA", "DRUG", "2023-01-01", "PP",
+      "SUBJ1", "CMAX", 50, "PLASMA", "DRUG", "2023-01-01", "PP",
+      "SUBJ2", "AUC", 200, "PLASMA", "DRUG", "2023-01-02", "PP",
+      "SUBJ2", "CMAX", 100, "PLASMA", "DRUG", "2023-01-02", "PP"
     )
   ))
 
@@ -24,7 +24,7 @@ test_that("nca_from_pp works with valid inputs", {
   expect_equal(nrow(result), 4)
   expect_true(all(c(
     "USUBJID", "PPTESTCD", "PPSTRESN", "DOSE", "AGE"
-    ) %in% names(result)))
+  ) %in% names(result)))
 
   # Test with observation filter
   result_filtered <- nca_from_pp(
@@ -48,15 +48,15 @@ test_that("nca_from_pp handles missing analyte", {
   nif_obj <- structure(
     tibble::tribble(
       ~ID, ~USUBJID, ~ANALYTE, ~EVID, ~DOSE,
-      1,  "SUBJ1",   "DRUG",     1,   100,
+      1, "SUBJ1", "DRUG", 1, 100,
     ),
     class = c("nif", "data.frame")
   )
 
   sdtm_data <- new_sdtm(list(
     pp = tibble::tribble(
-      ~USUBJID, ~PPTESTCD, ~PPSTRESN,  ~PPSPEC, ~PPCAT,    ~PPRFTDTC,
-      "SUBJ1",     "AUC",       100, "PLASMA", "DRUG", "2023-01-01"
+      ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPSPEC, ~PPCAT, ~PPRFTDTC,
+      "SUBJ1", "AUC", 100, "PLASMA", "DRUG", "2023-01-01"
     )
   ))
 
@@ -119,14 +119,16 @@ test_that("nca_from_pp handles empty results", {
       PPSTRESN = 100,
       PPSPEC = "PLASMA",
       PPCAT = "DRUG"
-    ))
-  )
+    )
+  ))
 
   # Test with filter that returns no results
   expect_warning(
     nca_from_pp(
-      nif_obj, sdtm_data, "DRUG", observation_filter = "PPSPEC == 'URINE'",
-      silent = TRUE),
+      nif_obj, sdtm_data, "DRUG",
+      observation_filter = "PPSPEC == 'URINE'",
+      silent = TRUE
+    ),
     "No data found after applying filters"
   )
 })
@@ -150,16 +152,17 @@ test_that("nca_from_pp handles keep parameter correctly", {
       PPSTRESN = 100,
       PPSPEC = "PLASMA",
       PPCAT = "DRUG"
-    ))
-  )
+    )
+  ))
 
   # Test with keep parameter
   result <- nca_from_pp(
-    nif_obj, sdtm_data, "DRUG", keep = c("AGE", "SEX"), silent = TRUE)
+    nif_obj, sdtm_data, "DRUG",
+    keep = c("AGE", "SEX"), silent = TRUE
+  )
   expect_true(all(c("AGE", "SEX") %in% names(result)))
 
   # Test with non-existent keep columns
   result <- nca_from_pp(nif_obj, sdtm_data, "DRUG", keep = "NONEXISTENT", silent = TRUE)
   expect_false("NONEXISTENT" %in% names(result))
 })
-

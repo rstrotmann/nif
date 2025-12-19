@@ -103,8 +103,10 @@ test_that("pb_write.sdtm generates correct default names and titles", {
 
   # Test with NULL name and title (should use defaults)
   expect_no_error(
-    pb_write.sdtm(test_sdtm, board = test_board, name = NULL, title = NULL,
-                   silent = TRUE)
+    pb_write.sdtm(test_sdtm,
+      board = test_board, name = NULL, title = NULL,
+      silent = TRUE
+    )
   )
 
   # Check that the pin was created with expected name
@@ -136,8 +138,10 @@ test_that("pb_write.sdtm uses custom name and title when provided", {
   custom_title <- "My Custom SDTM Data"
 
   expect_no_error(
-    pb_write.sdtm(test_sdtm, board = test_board,
-                   name = custom_name, title = custom_title, silent = TRUE)
+    pb_write.sdtm(test_sdtm,
+      board = test_board,
+      name = custom_name, title = custom_title, silent = TRUE
+    )
   )
 
   # Check that the pin was created with custom name
@@ -173,7 +177,8 @@ test_that("pb_write.sdtm handles silent parameter correctly", {
   expect_message(expect_message(
     expect_no_error(
       pb_write.sdtm(test_sdtm, board = test_board, silent = FALSE)
-    )))
+    )
+  ))
 })
 
 
@@ -198,8 +203,8 @@ test_that("pb_write.sdtm works with complex sdtm objects", {
       ),
       pc = tribble(
         ~USUBJID, ~PCTEST, ~PCSTRESN, ~PCDTC,
-        "001",    "CONC",  10.5,     "2023-01-01T08:00",
-        "002",    "CONC",  15.2,     "2023-01-02T09:00"
+        "001", "CONC", 10.5, "2023-01-01T08:00",
+        "002", "CONC", 15.2, "2023-01-02T09:00"
       )
     )
     # analyte_mapping = tribble(
@@ -223,8 +228,10 @@ test_that("pb_write.sdtm works with complex sdtm objects", {
 
   # Test writing complex sdtm object
   expect_no_error(
-    pb_write.sdtm(complex_sdtm, board = test_board, silent = TRUE,
-                   name = "complex_test", title = "Complex SDTM Test")
+    pb_write.sdtm(complex_sdtm,
+      board = test_board, silent = TRUE,
+      name = "complex_test", title = "Complex SDTM Test"
+    )
   )
 
   # Verify the pin was created and can be read back
@@ -256,8 +263,10 @@ test_that("pb_write.sdtm preserves sdtm object structure", {
   )
 
   # Write the sdtm object
-  pb_write.sdtm(original_sdtm, board = test_board, name = "test_preserve",
-                 silent = TRUE)
+  pb_write.sdtm(original_sdtm,
+    board = test_board, name = "test_preserve",
+    silent = TRUE
+  )
 
   # Read it back and verify structure is preserved
   board_obj <- pins::board_folder(test_board)
@@ -276,4 +285,3 @@ test_that("pb_write.sdtm preserves sdtm object structure", {
   # expect_equal(read_back_sdtm$parent_mapping, original_sdtm$parent_mapping)
   # expect_equal(read_back_sdtm$time_mapping, original_sdtm$time_mapping)
 })
-

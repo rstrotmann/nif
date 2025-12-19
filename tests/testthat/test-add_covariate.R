@@ -1,15 +1,15 @@
 # Create test fixtures
 create_test_nif <- function() {
   nif_df <- tibble::tribble(
-    ~ID, ~USUBJID, ~DTC,          ~EVID, ~AMT, ~DV, ~CMT,
-    1,  "SUBJ-001", "2020-01-15", 1,     100,  NA,  1,
-    1,  "SUBJ-001", "2020-01-16", 0,     0,    10,  2,
-    1,  "SUBJ-001", "2020-01-17", 0,     0,    20,  2,
-    1,  "SUBJ-001", "2020-01-20", 0,     0,    30,  2,
-    2,  "SUBJ-002", "2020-01-15", 1,     200,  NA,  1,
-    2,  "SUBJ-002", "2020-01-16", 0,     0,    15,  2,
-    2,  "SUBJ-002", "2020-01-17", 0,     0,    25,  2,
-    2,  "SUBJ-002", "2020-01-20", 0,     0,    35,  2
+    ~ID, ~USUBJID, ~DTC, ~EVID, ~AMT, ~DV, ~CMT,
+    1, "SUBJ-001", "2020-01-15", 1, 100, NA, 1,
+    1, "SUBJ-001", "2020-01-16", 0, 0, 10, 2,
+    1, "SUBJ-001", "2020-01-17", 0, 0, 20, 2,
+    1, "SUBJ-001", "2020-01-20", 0, 0, 30, 2,
+    2, "SUBJ-002", "2020-01-15", 1, 200, NA, 1,
+    2, "SUBJ-002", "2020-01-16", 0, 0, 15, 2,
+    2, "SUBJ-002", "2020-01-17", 0, 0, 25, 2,
+    2, "SUBJ-002", "2020-01-20", 0, 0, 35, 2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     new_nif()
@@ -21,10 +21,10 @@ create_test_nif <- function() {
 create_test_sdtm <- function() {
   # Create DM domain
   dm <- tibble::tribble(
-    ~USUBJID,   ~DOMAIN, ~SEX, ~RFSTDTC,    ~RFENDTC,
-    "SUBJ-001", "DM",    "M",  "2020-01-15", "2020-02-15",
-    "SUBJ-002", "DM",    "F",  "2020-01-15", "2020-02-15",
-    "SUBJ-003", "DM",    "M",  "2020-01-15", "2020-02-15"
+    ~USUBJID, ~DOMAIN, ~SEX, ~RFSTDTC, ~RFENDTC,
+    "SUBJ-001", "DM", "M", "2020-01-15", "2020-02-15",
+    "SUBJ-002", "DM", "F", "2020-01-15", "2020-02-15",
+    "SUBJ-003", "DM", "M", "2020-01-15", "2020-02-15"
   )
 
   # Create VS domain
@@ -82,24 +82,24 @@ test_that("add_covariate works with valid inputs", {
 
   # Check that values were properly carried forward for subject 1
   subj1 <- result %>% filter(USUBJID == "SUBJ-001")
-  expect_equal(subj1$wt[1], 70)  # From 2020-01-15
-  expect_equal(subj1$wt[2], 70)  # Carried forward
-  expect_equal(subj1$wt[3], 71)  # From 2020-01-17
-  expect_equal(subj1$wt[4], 72)  # From 2020-01-19 (carried forward to 2020-01-20)
+  expect_equal(subj1$wt[1], 70) # From 2020-01-15
+  expect_equal(subj1$wt[2], 70) # Carried forward
+  expect_equal(subj1$wt[3], 71) # From 2020-01-17
+  expect_equal(subj1$wt[4], 72) # From 2020-01-19 (carried forward to 2020-01-20)
 
   # Check that values were properly carried forward for subject 2
   subj2 <- result %>% filter(USUBJID == "SUBJ-002")
-  expect_equal(subj2$wt[1], 65)  # From 2020-01-15
-  expect_equal(subj2$wt[2], 65)  # Carried forward
-  expect_equal(subj2$wt[3], 66)  # From 2020-01-17
-  expect_equal(subj2$wt[4], 67)  # From 2020-01-19 (carried forward to 2020-01-20)
+  expect_equal(subj2$wt[1], 65) # From 2020-01-15
+  expect_equal(subj2$wt[2], 65) # Carried forward
+  expect_equal(subj2$wt[3], 66) # From 2020-01-17
+  expect_equal(subj2$wt[4], 67) # From 2020-01-19 (carried forward to 2020-01-20)
 })
 
 
 # Test for validation of nif object
 test_that("add_covariate validates nif object", {
   sdtm <- create_test_sdtm()
-  nif <- data.frame(ID = 1, USUBJID = "SUBJ-001")  # Not a nif object
+  nif <- data.frame(ID = 1, USUBJID = "SUBJ-001") # Not a nif object
 
   expect_error(
     add_covariate(nif, sdtm, "vs", "WEIGHT", covariate = "wt"),
@@ -184,8 +184,9 @@ test_that("add_covariate casts error if no data after filtering", {
   # Use a filter that eliminates all rows
   expect_error(
     add_covariate(nif, sdtm, "vs", "WEIGHT",
-                  observation_filter = "VSSTRESN > 1000",
-                  covariate = "wt")
+      observation_filter = "VSSTRESN > 1000",
+      covariate = "wt"
+    )
   )
 })
 
@@ -197,19 +198,22 @@ test_that("add_covariate works with custom field names", {
 
   # Rename fields in VS domain
   vs_custom <- sdtm$domains$vs %>%
-    rename(CUSTOM_DTC = VSDTC,
-           CUSTOM_TESTCD = VSTESTCD,
-           CUSTOM_STRESN = VSSTRESN)
+    rename(
+      CUSTOM_DTC = VSDTC,
+      CUSTOM_TESTCD = VSTESTCD,
+      CUSTOM_STRESN = VSSTRESN
+    )
 
   sdtm$domains$vs <- vs_custom
   # sdtm$vs <- vs_custom
 
   # Add WEIGHT covariate with custom field names
   result <- add_covariate(nif, sdtm, "vs", "WEIGHT",
-                         DTC_field = "CUSTOM_DTC",
-                         TESTCD_field = "CUSTOM_TESTCD",
-                         DV_field = "CUSTOM_STRESN",
-                         covariate = "wt")
+    DTC_field = "CUSTOM_DTC",
+    TESTCD_field = "CUSTOM_TESTCD",
+    DV_field = "CUSTOM_STRESN",
+    covariate = "wt"
+  )
 
   # Check that the covariate was added
   expect_true("wt" %in% names(result))
@@ -223,7 +227,7 @@ test_that("add_covariate handles duplicated observations correctly", {
 
   # Add duplicate observation on same date with different values
   dup_row <- sdtm$domains$vs[1, ]
-  dup_row$VSSTRESN <- 75  # Different value
+  dup_row$VSSTRESN <- 75 # Different value
   sdtm$domains$vs <- bind_rows(sdtm$domains$vs, dup_row)
   # sdtm$vs <- sdtm$domains$vs
 
@@ -234,7 +238,6 @@ test_that("add_covariate handles duplicated observations correctly", {
   subj1 <- result %>% filter(USUBJID == "SUBJ-001")
   expect_equal(subj1$wt[1], 72.5)
 })
-
 
 
 # Test with default covariate name
@@ -262,7 +265,3 @@ test_that("add_covariate works with actual data set", {
 
   expect_equal(temp$DV, temp$TEST)
 })
-
-
-
-

@@ -19,12 +19,12 @@ test_that("ensure_time works with TIME, TAD, and TAFD already present", {
 test_that("ensure_time calculates TIME, TAD, and TAFD from DTC", {
   # Create test data with DTC but no TIME, TAD, or TAFD
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                  ~EVID, ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   "DRUG",   NA,
-    1,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG",   "DRUG",   10,
-    1,   as.POSIXct("2023-01-01 10:00:00"), 0,     "DRUG",   "DRUG",   20,
-    2,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   "DRUG",   NA,
-    2,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG",   "DRUG",   30
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", "DRUG", NA,
+    1, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG", "DRUG", 10,
+    1, as.POSIXct("2023-01-01 10:00:00"), 0, "DRUG", "DRUG", 20,
+    2, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", "DRUG", NA,
+    2, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG", "DRUG", 30
   ) %>%
     new_nif()
 
@@ -73,7 +73,7 @@ test_that("ensure_time handles multiple dosing events", {
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,
     1,   0,     1,     1,    NA,
     1,   1,     0,     2,    10,
-    1,   2,     1,     1,    NA,  # Second dose
+    1,   2,     1,     1,    NA, # Second dose
     1,   3,     0,     2,    20,
     1,   4,     0,     2,    15
   ) %>%
@@ -95,12 +95,12 @@ test_that("ensure_time handles multiple parent compounds", {
   # Create test data with multiple parent compounds
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
-      1,   0,     1,     1,    "DRUG1", NA,
-      1,   1,     0,     2,    "DRUG1", 10,
-      1,   2,     0,     2,    "DRUG1", 20,
-      1,   3,     1,     3,    "DRUG2", NA,  # Different parent compound
-      1,   4,     0,     4,    "DRUG2", 30,
-      1,   5,     0,     4,    "DRUG2", 25
+    1, 0, 1, 1, "DRUG1", NA,
+    1, 1, 0, 2, "DRUG1", 10,
+    1, 2, 0, 2, "DRUG1", 20,
+    1, 3, 1, 3, "DRUG2", NA, # Different parent compound
+    1, 4, 0, 4, "DRUG2", 30,
+    1, 5, 0, 4, "DRUG2", 25
   ) %>%
     new_nif()
 
@@ -120,9 +120,9 @@ test_that("ensure_time handles observations before first dose", {
   # Create test data with observations before dosing
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,
-    1,   -2,    0,     2,    5,   # Pre-dose observation
-    1,   -1,    0,     2,    8,   # Pre-dose observation
-    1,   0,     1,     1,    NA,  # Dose
+    1,   -2,    0,     2,    5, # Pre-dose observation
+    1,   -1,    0,     2,    8, # Pre-dose observation
+    1,   0,     1,     1,    NA, # Dose
     1,   1,     0,     2,    10,
     1,   2,     0,     2,    20
   ) %>%
@@ -152,7 +152,8 @@ test_that("ensure_time handles missing required columns", {
 
   expect_error(
     result <- ensure_time(test_data),
-    "Either DTC or TIME is required to calculate time fields")
+    "Either DTC or TIME is required to calculate time fields"
+  )
 })
 
 test_that("ensure_time preserves original data", {
@@ -185,4 +186,3 @@ test_that("ensure_time returns a nif object", {
 
   expect_s3_class(result, "nif")
 })
-

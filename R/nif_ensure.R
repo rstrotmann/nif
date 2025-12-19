@@ -29,7 +29,7 @@ ensure_analyte <- function(obj) {
       is.na(CMT) ~ NA_character_,
       TRUE ~ paste0("CMT", as.character(CMT))
     )) %>%
-    new_nif()  # Ensure return value is a NIF object
+    new_nif() # Ensure return value is a NIF object
 }
 
 
@@ -112,7 +112,6 @@ ensure_parent <- function(obj) {
 
   # If PARENT column doesn't exist, create it
   if (!"PARENT" %in% names(obj)) {
-
     # Use the most common CMT value with EVID == 1 for administrations
     most_common_cmt <- obj %>%
       filter(.data$EVID == 1) %>%
@@ -173,8 +172,10 @@ ensure_tad <- function(obj) {
   required_cols <- c("ID", "TIME", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
   if (length(missing_cols) > 0) {
-    stop("Missing required columns for TAD calculation: ",
-         paste(missing_cols, collapse = ", "))
+    stop(
+      "Missing required columns for TAD calculation: ",
+      paste(missing_cols, collapse = ", ")
+    )
   }
 
   # Ensure PARENT field exists
@@ -217,16 +218,21 @@ ensure_tafd <- function(obj) {
   required_cols <- c("ID", "TIME", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
   if (length(missing_cols) > 0) {
-    stop("Missing required columns for TAFD calculation: ",
-         paste(missing_cols, collapse = ", "))
+    stop(
+      "Missing required columns for TAFD calculation: ",
+      paste(missing_cols, collapse = ", ")
+    )
   }
 
   # Add TAFD field
-  tryCatch({
-    result <- add_tafd(obj)
-  }, error = function(e) {
-    stop("Failed to add TAFD field: ", e$message)
-  })
+  tryCatch(
+    {
+      result <- add_tafd(obj)
+    },
+    error = function(e) {
+      stop("Failed to add TAFD field: ", e$message)
+    }
+  )
 
   # Validate TAFD was added
   if (!"TAFD" %in% names(result)) {
@@ -263,18 +269,24 @@ ensure_time <- function(obj) {
   # Check for required columns based on available data
   if ("DTC" %in% names(obj)) {
     # DTC available - use make_time to generate all time fields
-    result <- tryCatch({
-      make_time(obj)
-    }, error = function(e) {
-      stop("Failed to calculate time fields from DTC: ", e$message)
-    })
+    result <- tryCatch(
+      {
+        make_time(obj)
+      },
+      error = function(e) {
+        stop("Failed to calculate time fields from DTC: ", e$message)
+      }
+    )
   } else if ("TIME" %in% names(obj)) {
     # TIME available but missing TAD/TAFD - use make_time_from_TIME
-    result <- tryCatch({
-      make_time_from_TIME(obj)
-    }, error = function(e) {
-      stop("Failed to calculate TAD/TAFD from TIME: ", e$message)
-    })
+    result <- tryCatch(
+      {
+        make_time_from_TIME(obj)
+      },
+      error = function(e) {
+        stop("Failed to calculate TAD/TAFD from TIME: ", e$message)
+      }
+    )
   } else {
     stop("Missing required columns: Either DTC or TIME is required to calculate time fields")
   }
@@ -282,8 +294,10 @@ ensure_time <- function(obj) {
   # Validate that all time fields are now present
   missing_time_fields <- setdiff(c("TIME", "TAD", "TAFD"), names(result))
   if (length(missing_time_fields) > 0) {
-    stop("Failed to generate all required time fields: ",
-         paste(missing_time_fields, collapse = ", "))
+    stop(
+      "Failed to generate all required time fields: ",
+      paste(missing_time_fields, collapse = ", ")
+    )
   }
 
   return(result)

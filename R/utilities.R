@@ -10,11 +10,14 @@
 conditional_cli <- function(cli_expression, silent = NULL) {
   # Get silent flag from parameter or environment
   if (is.null(silent)) {
-    silent <- tryCatch({
-      get("silent", envir = .nif_env)
-    }, error = function(e) {
-      FALSE
-    })
+    silent <- tryCatch(
+      {
+        get("silent", envir = .nif_env)
+      },
+      error = function(e) {
+        FALSE
+      }
+    )
   }
 
   # issue cli message if not silent
@@ -29,20 +32,26 @@ conditional_cli <- function(cli_expression, silent = NULL) {
 conditional_message <- function(..., silent = NULL) {
   # Get silent flag from parameter or environment
   if (is.null(silent)) {
-    silent <- tryCatch({
-      get("silent", envir = .nif_env)
-    }, error = function(e) {
-      FALSE
-    })
+    silent <- tryCatch(
+      {
+        get("silent", envir = .nif_env)
+      },
+      error = function(e) {
+        FALSE
+      }
+    )
   }
 
   # Safely convert arguments to character
-  args <- tryCatch({
-    lapply(list(...), as.character)
-  }, error = function(e) {
-    warning("Failed to convert some arguments to character")
-    list(...)
-  })
+  args <- tryCatch(
+    {
+      lapply(list(...), as.character)
+    },
+    error = function(e) {
+      warning("Failed to convert some arguments to character")
+      list(...)
+    }
+  )
 
   # Print message if not silent
   if (!isTRUE(silent)) {
@@ -51,7 +60,6 @@ conditional_message <- function(..., silent = NULL) {
 
   invisible(NULL)
 }
-
 
 
 #' Debug output
@@ -110,7 +118,7 @@ recode_sex <- function(obj) {
     mutate(SEX = as.numeric(
       case_match(str_trim(toupper(as.character(.data$SEX))),
         "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-        "\u7537" ~ 0, "\u5973" ~ 1,  # 男, 女
+        "\u7537" ~ 0, "\u5973" ~ 1, # 男, 女
         .default = NA
       )
     ))
@@ -119,8 +127,10 @@ recode_sex <- function(obj) {
   valid_vals <- c("m", "f", "M", "F", "0", "1", "\u7537", "\u5973")
   invalid_vals <- setdiff(orig_vals, valid_vals)
   if (length(invalid_vals) > 0) {
-    warning("Invalid sex values converted to NA: ",
-            paste(invalid_vals, collapse = ", "))
+    warning(
+      "Invalid sex values converted to NA: ",
+      paste(invalid_vals, collapse = ", ")
+    )
   }
 
   return(result)
@@ -139,15 +149,15 @@ recode_sex <- function(obj) {
 #' }
 #' @export
 race_coding <- tibble::tribble(
-  ~RACEN,                                       ~RACE,         ~LABEL,
-       0,                                     "WHITE",        "White",
-       1,                                     "ASIAN",        "Asian",
-       2,                 "BLACK OR AFRICAN AMERICAN",        "Black",
-       3,          "AMERICAN INDIAN OR ALASKA NATIVE",       "Native",
-       4, "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",      "Pacific",
-       5,                              "NOT REPORTED",           "NR",
-       6,                                   "UNKNOWN",      "Unknown",
-       7,                                     "OTHER",        "Other"
+  ~RACEN, ~RACE, ~LABEL,
+  0, "WHITE", "White",
+  1, "ASIAN", "Asian",
+  2, "BLACK OR AFRICAN AMERICAN", "Black",
+  3, "AMERICAN INDIAN OR ALASKA NATIVE", "Native",
+  4, "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER", "Pacific",
+  5, "NOT REPORTED", "NR",
+  6, "UNKNOWN", "Unknown",
+  7, "OTHER", "Other"
 )
 
 
@@ -179,18 +189,22 @@ recode_race <- function(obj, coding_table = NULL, silent = NULL) {
     }
   }
 
-  if(!"RACE" %in% names(obj))
+  if (!"RACE" %in% names(obj)) {
     stop("RACE field not found")
+  }
 
-  if(is.null(coding_table))
+  if (is.null(coding_table)) {
     coding_table <- race_coding
+  }
 
   # check coding table before joining
   unmatched <- setdiff(unique(obj$RACE), coding_table$RACE)
-  if(length(unmatched) > 0) {
+  if (length(unmatched) > 0) {
     conditional_message(
       "The following RACE values could not be matched and will become NA: ",
-      nice_enumeration(unmatched), silent = silent)
+      nice_enumeration(unmatched),
+      silent = silent
+    )
   }
 
   out <- obj %>%
@@ -244,30 +258,35 @@ indent_string <- function(indent = 0) {
 #' @param show_none Show empty data frame as 'none', as logical.
 #' @param header_sep Show separation line after header, as logical.
 #' @param na_string String to use for NA values. Defaults to "NA".
+#' @param abbr_lines The row number to which long data frames are abbreviated
+#' in the ouput if the threshold is exceeded. Defaults to nif_option settings if
+#' NULL.
+#' @param abbr_threshold The row number threshold beyond which long data frames
+#' are abbreviated. Defaults to nif_option settings if NULL.
 #'
 #' @return The output as string.
 #' @import utils
 #' @keywords internal
 #' @noRd
 df_to_string <- function(
-    df,
-    indent = 0,
-    n = NULL,
-    header = TRUE,
-    header_sep = FALSE,
-    color = FALSE,
-    show_none = FALSE,
-    na_string = "NA",
-    abbr_lines = NULL,
-    abbr_threshold = 10
-    ) {
-
+  df,
+  indent = 0,
+  n = NULL,
+  header = TRUE,
+  header_sep = FALSE,
+  color = FALSE,
+  show_none = FALSE,
+  na_string = "NA",
+  abbr_lines = NULL,
+  abbr_threshold = NULL
+) {
   # Input validation
-  if(is.null(df))
+  if (is.null(df)) {
     return("")
+  }
 
   # if (!is.data.frame(df) & !is_tibble(df)) {
-  if(!inherits(df, "data.frame")){
+  if (!inherits(df, "data.frame")) {
     stop("Input must be a data frame")
   }
 
@@ -283,19 +302,10 @@ df_to_string <- function(
     return("")
   }
 
-  # Calculate maximum width for each column including headers
-  # max_widths <- sapply(
-  #   seq_along(df),
-  #   function(i) max(
-  #     nchar(names(df)[i]),
-  #     max(nchar(as.character(df[[i]])), na.rm = TRUE),
-  #     na.rm = TRUE
-  #   )
-  # )
-
-  max_widths <-  as.numeric(lapply(
+  max_widths <- as.numeric(lapply(
     rbind(mutate(df, across(everything(), as.character)), names(df)),
-    function(x) max(nchar(x), na.rm = TRUE)))
+    function(x) max(nchar(x), na.rm = TRUE)
+  ))
 
   # Create the padding function
   pad_element <- function(element, width) {
@@ -303,21 +313,43 @@ df_to_string <- function(
   }
 
   footer <- ""
-  if(nif_option_value("abbreviate") == TRUE) {
-    nr <- nrow(df)
-    if(nr > abbr_threshold) {
-      if(!is.null(abbr_lines)) {
-        df <- head(df, abbr_lines)
-        if(nr - abbr_lines > 0)
-          footer <- paste0(
-            "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)")
+
+  # abbreviation handler
+  if (is.null(abbr_lines))
+    abbr_lines <- nif_option_value("abbreviation_maxlines")
+
+  if (is.null(abbr_threshold))
+    abbr_threshold <- nif_option_value("abbreviation_threshold")
+
+  nr <- nrow(df)
+  if (nr > abbr_threshold) {
+    if (!is.null(abbr_lines)) {
+      df <- head(df, abbr_lines)
+      if (nr - abbr_lines > 0) {
+        footer <- paste0(
+          "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)"
+        )
       }
     }
   }
 
+  # if (nif_option_value("abbreviate") == TRUE) {
+  #   nr <- nrow(df)
+  #   if (nr > abbr_threshold) {
+  #     if (!is.null(abbr_lines)) {
+  #       df <- head(df, abbr_lines)
+  #       if (nr - abbr_lines > 0) {
+  #         footer <- paste0(
+  #           "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)"
+  #         )
+  #       }
+  #     }
+  #   }
+  # }
+
   # Convert all columns to character, handling NA values
   df <- as.data.frame(df) %>%
-    mutate(across(everything(), ~ifelse(is.na(.), na_string, as.character(.))))
+    mutate(across(everything(), ~ ifelse(is.na(.), na_string, as.character(.))))
 
   # Create line renderer
   render_line <- function(line) {
@@ -347,16 +379,20 @@ df_to_string <- function(
     if (header_sep) {
       separator <- paste0(
         indent_string(indent),
-        paste(mapply(function(w) paste(rep("-", w), collapse = ""),
-                    max_widths),
-              collapse = "   ")
+        paste(
+          mapply(
+            function(w) paste(rep("-", w), collapse = ""),
+            max_widths
+          ),
+          collapse = "   "
+        )
       )
       output_parts <- c(output_parts, separator)
     }
   }
 
   # Add data rows
-  data_rows <- if(!is.null(n)) utils::head(df, n = n) else df
+  data_rows <- if (!is.null(n)) utils::head(df, n = n) else df
   row_strings <- apply(data_rows, 1, render_line)
   output_parts <- c(output_parts, row_strings)
 
@@ -428,15 +464,15 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' @keywords internal
 lubrify_dates <- function(obj, col = NULL) {
   # input validation
-  if(!is.data.frame(obj)) {
+  if (!is.data.frame(obj)) {
     stop("obj must be a data frame!")
   }
   validate_char_param(col, "col", allow_multiple = TRUE, allow_null = TRUE)
 
-  if(!is.null(col)) {
+  if (!is.null(col)) {
     missing_columns <- setdiff(col, names(obj))
     n_missing <- length(missing_columns)
-    if(n_missing > 0) {
+    if (n_missing > 0) {
       stop(paste0(
         plural("Column", n_missing > 1), " not found in data frame: ",
         nice_enumeration(missing_columns)
@@ -524,7 +560,8 @@ pt_to_hours <- function(iso) {
   temp <- str_extract(
     iso,
     regex("(-)?PT(([0-9.]*)H)?(([0-9.]*)M)?"),
-    group = c(1, 3, 5))
+    group = c(1, 3, 5)
+  )
 
   # if(nrow(temp) == 0)
   #   return(NULL)
@@ -535,7 +572,8 @@ pt_to_hours <- function(iso) {
     mutate(mins = case_when(is.na(.[[3]]) ~ 0, .default = as.numeric(.[[3]]))) %>%
     mutate(out = case_when(
       is.na(.[[2]]) & is.na(.[[3]]) ~ NA,
-      .default = .data$sign * (.data$hours + .data$mins/60))) %>%
+      .default = .data$sign * (.data$hours + .data$mins / 60)
+    )) %>%
     pull(.data$out)
 }
 
@@ -574,14 +612,14 @@ compose_dtc <- function(date, time) {
 #' @keywords internal
 decompose_dtc <- function(obj, DTC_field) {
   # input validation
-    if(!is.data.frame(obj)) {
-      stop("obj must be a data frame!")
-    }
+  if (!is.data.frame(obj)) {
+    stop("obj must be a data frame!")
+  }
   validate_char_param(DTC_field, "DTC_field", allow_multiple = TRUE)
 
   missing_fields <- setdiff(DTC_field, names(obj))
   n_missing <- length(missing_fields)
-  if(n_missing > 0) {
+  if (n_missing > 0) {
     stop(paste0(
       plural("Column", n_missing > 1), " not found in obj: ",
       nice_enumeration(missing_fields)
@@ -686,18 +724,19 @@ nice_enumeration <- function(items, conjunction = "and") {
 #' plural("study", FALSE)
 #' plural("study", TRUE)
 plural <- function(word, plural) {
-  exceptions = tribble(
+  exceptions <- tribble(
     ~singular, ~plural,
     "study", "studies",
     "Study", "Studies",
     "was", "were",
     "is", "are"
   )
-  if(plural) {
-    if(word %in% exceptions$singular)
+  if (plural) {
+    if (word %in% exceptions$singular) {
       return(as.character(exceptions[exceptions$singular == word, "plural"]))
-    else
+    } else {
       return(paste0(word, "s"))
+    }
   } else {
     return(word)
   }
@@ -776,7 +815,6 @@ pos_diff <- function(a, b) {
 }
 
 
-
 #' Coalescing join
 #'
 #' Source: https://www.r-bloggers.com/2023/05/replace-missing-value-from-other-columns-using-coalesce-join-in-dplyr/
@@ -792,10 +830,11 @@ pos_diff <- function(a, b) {
 #' @return A data frame.
 #' @export
 coalesce_join <- function(
-    x, y, by = NULL,
-    keep = c("left", "right"),
-    suffix = c(".x", ".y"),
-    join = c("full_join", "left_join", "right_join", "inner_join")) {
+  x, y, by = NULL,
+  keep = c("left", "right"),
+  suffix = c(".x", ".y"),
+  join = c("full_join", "left_join", "right_join", "inner_join")
+) {
   keep <- match.arg(keep)
 
   # Confirm the join argument is in the list and matches the string to the
@@ -835,7 +874,7 @@ coalesce_join <- function(
 #' @noRd
 #'
 trialday_to_day <- function(x) {
-  if(any(x[which(!is.na(x))] == 0)) stop("Trial day cannot be zero!")
+  if (any(x[which(!is.na(x))] == 0)) stop("Trial day cannot be zero!")
   return(x + (x > 0) * -1)
 }
 
@@ -863,14 +902,14 @@ trialday_to_day <- function(x) {
 #' @keywords internal
 #'
 #' @examples
-#' is_iso8601_datetime("2023-10-15T14:30:00")        # TRUE
-#' is_iso8601_datetime("2023-10-15 14:30:00")        # TRUE (with default strict=FALSE)
-#' is_iso8601_datetime("2023-10-15 14:30:00", TRUE)  # FALSE (with strict=TRUE)
-#' is_iso8601_datetime("2023-10-15T14:30:00Z")       # TRUE
-#' is_iso8601_datetime("2023-10-15T14:30:00+02:00")  # TRUE
-#' is_iso8601_datetime("20231015T143000")            # TRUE
-#' is_iso8601_datetime("2023-10-15")                 # FALSE (no time component)
-#' is_iso8601_datetime("14:30:00")                   # FALSE (no date component)
+#' is_iso8601_datetime("2023-10-15T14:30:00") # TRUE
+#' is_iso8601_datetime("2023-10-15 14:30:00") # TRUE (with default strict=FALSE)
+#' is_iso8601_datetime("2023-10-15 14:30:00", TRUE) # FALSE (with strict=TRUE)
+#' is_iso8601_datetime("2023-10-15T14:30:00Z") # TRUE
+#' is_iso8601_datetime("2023-10-15T14:30:00+02:00") # TRUE
+#' is_iso8601_datetime("20231015T143000") # TRUE
+#' is_iso8601_datetime("2023-10-15") # FALSE (no time component)
+#' is_iso8601_datetime("14:30:00") # FALSE (no date component)
 is_iso8601_datetime <- function(x, strict = FALSE) {
   if (!is.character(x)) {
     stop("Input must be a character string")
@@ -882,12 +921,12 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
   }
 
   # Date patterns
-  date_extended <- "\\d{4}-\\d{2}-\\d{2}"  # YYYY-MM-DD
-  date_basic <- "\\d{4}\\d{2}\\d{2}"       # YYYYMMDD
+  date_extended <- "\\d{4}-\\d{2}-\\d{2}" # YYYY-MM-DD
+  date_basic <- "\\d{4}\\d{2}\\d{2}" # YYYYMMDD
 
   # Time patterns
-  time_extended <- "\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?"  # HH:MM:SS(.sss)
-  time_basic <- "\\d{2}\\d{2}\\d{2}(?:\\.\\d+)?"       # HHMMSS(.sss)
+  time_extended <- "\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?" # HH:MM:SS(.sss)
+  time_basic <- "\\d{2}\\d{2}\\d{2}(?:\\.\\d+)?" # HHMMSS(.sss)
 
   # Timezone pattern
   timezone <- "(?:Z|[+-]\\d{2}(?::\\d{2}|\\d{2}))?"
@@ -895,7 +934,7 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
   # Separators
   strict_separator <- "T"
   relaxed_separator <- "[ T]"
-  separator <- if(strict) strict_separator else relaxed_separator
+  separator <- if (strict) strict_separator else relaxed_separator
 
   # Combined patterns
   # Extended format: YYYY-MM-DDThh:mm:ss(.sss)(Z|±hh:mm)
@@ -920,13 +959,15 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
 
   # For each element in the input vector
   result <- sapply(x, function(str) {
-    if (is.na(str)) return(NA)
+    if (is.na(str)) {
+      return(NA)
+    }
 
     # Check if the string matches any of the patterns
     grepl(datetime_extended, str) ||
-    grepl(datetime_basic, str) ||
-    grepl(datetime_mixed1, str) ||
-    grepl(datetime_mixed2, str)
+      grepl(datetime_basic, str) ||
+      grepl(datetime_mixed1, str) ||
+      grepl(datetime_mixed2, str)
   })
 
   return(as.logical(result))
@@ -955,13 +996,13 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
 #' @keywords internal
 #'
 #' @examples
-#' is_iso8601_date("2023-10-15")                  # TRUE
-#' is_iso8601_date("20231015")                    # TRUE
-#' is_iso8601_date("2023-10")                     # TRUE (with default allow_reduced_precision=TRUE)
-#' is_iso8601_date("2023")                        # TRUE (with default allow_reduced_precision=TRUE)
-#' is_iso8601_date("2023-10", FALSE)              # FALSE (with allow_reduced_precision=FALSE)
-#' is_iso8601_date("2023/10/15")                  # FALSE (not ISO 8601 format)
-#' is_iso8601_date("2023-10-15T14:30:00")         # FALSE (has time component)
+#' is_iso8601_date("2023-10-15") # TRUE
+#' is_iso8601_date("20231015") # TRUE
+#' is_iso8601_date("2023-10") # TRUE (with default allow_reduced_precision=TRUE)
+#' is_iso8601_date("2023") # TRUE (with default allow_reduced_precision=TRUE)
+#' is_iso8601_date("2023-10", FALSE) # FALSE (with allow_reduced_precision=FALSE)
+#' is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
+#' is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time component)
 is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
   if (!is.character(x)) {
     stop("Input must be a character string")
@@ -973,17 +1014,19 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
   }
 
   # Date patterns
-  date_extended <- "^\\d{4}-\\d{2}-\\d{2}$"  # YYYY-MM-DD
-  date_basic <- "^\\d{4}\\d{2}\\d{2}$"       # YYYYMMDD
+  date_extended <- "^\\d{4}-\\d{2}-\\d{2}$" # YYYY-MM-DD
+  date_basic <- "^\\d{4}\\d{2}\\d{2}$" # YYYYMMDD
 
   # Reduced precision date patterns (if allowed)
-  year_month_extended <- "^\\d{4}-\\d{2}$"   # YYYY-MM
-  year_month_basic <- "^\\d{4}\\d{2}$"       # YYYYMM
-  year_only <- "^\\d{4}$"                    # YYYY
+  year_month_extended <- "^\\d{4}-\\d{2}$" # YYYY-MM
+  year_month_basic <- "^\\d{4}\\d{2}$" # YYYYMM
+  year_only <- "^\\d{4}$" # YYYY
 
   # For each element in the input vector
   result <- sapply(x, function(str) {
-    if (is.na(str)) return(NA)
+    if (is.na(str)) {
+      return(NA)
+    }
 
     # Check if the string matches full date patterns
     is_full_date <- grepl(date_extended, str) || grepl(date_basic, str)
@@ -995,8 +1038,8 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
 
     # Otherwise also check reduced precision formats
     is_reduced_precision <- grepl(year_month_extended, str) ||
-                            grepl(year_month_basic, str) ||
-                            grepl(year_only, str)
+      grepl(year_month_basic, str) ||
+      grepl(year_only, str)
 
     return(is_full_date || is_reduced_precision)
   })
@@ -1004,8 +1047,6 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
   # Ensure logical return type
   return(as.logical(result))
 }
-
-
 
 
 # find_duplicates <- function(
@@ -1077,9 +1118,6 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
 #     return(NULL)
 #   }
 # }
-
-
-
 
 
 # resolve_duplicates <- function(
@@ -1187,22 +1225,28 @@ is_valid_filter <- function(data, filter_string) {
   }
 
   # Parse the filter expression
-  filter_expr <- tryCatch({
-    rlang::parse_expr(filter_string)
-  }, error = function(e) {
-    return(FALSE)
-  })
+  filter_expr <- tryCatch(
+    {
+      rlang::parse_expr(filter_string)
+    },
+    error = function(e) {
+      return(FALSE)
+    }
+  )
 
   if (isFALSE(filter_expr)) {
     return(FALSE)
   }
 
   # Extract column names from the expression
-  col_names <- tryCatch({
-    all.vars(filter_expr)
-  }, error = function(e) {
-    return(FALSE)
-  })
+  col_names <- tryCatch(
+    {
+      all.vars(filter_expr)
+    },
+    error = function(e) {
+      return(FALSE)
+    }
+  )
 
   if (isFALSE(col_names)) {
     return(FALSE)
@@ -1214,29 +1258,38 @@ is_valid_filter <- function(data, filter_string) {
   }
 
   # Try to evaluate the filter expression
-  result <- tryCatch({
-    # Create a test row with NA values for all columns
-    test_row <- data[1, , drop = FALSE]
-    if (nrow(data) == 0) {
-      # For empty data frames, create a row with appropriate types
-      test_row <- data.frame(
-        lapply(data, function(x) {
-          if (is.numeric(x)) 0
-          else if (is.character(x)) ""
-          else if (is.logical(x)) FALSE
-          else if (inherits(x, "Date")) as.Date("2000-01-01")
-          else NA
-        }),
-        stringsAsFactors = FALSE
-      )
-    }
+  result <- tryCatch(
+    {
+      # Create a test row with NA values for all columns
+      test_row <- data[1, , drop = FALSE]
+      if (nrow(data) == 0) {
+        # For empty data frames, create a row with appropriate types
+        test_row <- data.frame(
+          lapply(data, function(x) {
+            if (is.numeric(x)) {
+              0
+            } else if (is.character(x)) {
+              ""
+            } else if (is.logical(x)) {
+              FALSE
+            } else if (inherits(x, "Date")) {
+              as.Date("2000-01-01")
+            } else {
+              NA
+            }
+          }),
+          stringsAsFactors = FALSE
+        )
+      }
 
-    # Try to evaluate the filter on the test row
-    eval_result <- dplyr::filter(test_row, !!filter_expr)
-    TRUE
-  }, error = function(e) {
-    FALSE
-  })
+      # Try to evaluate the filter on the test row
+      eval_result <- dplyr::filter(test_row, !!filter_expr)
+      TRUE
+    },
+    error = function(e) {
+      FALSE
+    }
+  )
 
   return(result)
 }
@@ -1332,4 +1385,3 @@ identify_baseline_columns <- function(df, id_col = "ID") {
 
   return(baseline_cols)
 }
-

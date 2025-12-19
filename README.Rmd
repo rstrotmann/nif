@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width="50%"
+  out.width = "50%"
 )
 ```
 
@@ -55,8 +55,8 @@ library(tidyverse)
 
 sdtm <- examplinib_sad
 
-nif <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
+nif <- new_nif() %>%
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023", analyte = "RS2023")
 
 head(nif)
@@ -66,9 +66,9 @@ In many cases, you may want to add further covariates, e.g., baseline creatinine
 from the LB domain:
 
 ```{r}
-nif <- nif %>%  
-  mutate(COHORT = ACTARMCD) %>% 
-  add_baseline(sdtm, "lb", "CREAT") %>% 
+nif <- nif %>%
+  mutate(COHORT = ACTARMCD) %>%
+  add_baseline(sdtm, "lb", "CREAT") %>%
   add_bl_crcl()
 ```
 

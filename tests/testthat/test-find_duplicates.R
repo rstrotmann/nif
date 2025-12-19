@@ -1,12 +1,12 @@
 test_that("find_duplicates works with default fields", {
   # Create test data
   df <- tibble::tribble(
-    ~ID,  ~TIME, ~ANALYTE, ~DV,
-    "001", 0,     "A",      10,
-    "001", 0,     "A",      10,
-    "002", 24,    "B",      20,
-    "002", 24,    "B",      20,
-    "003", 48,    "C",      30
+    ~ID, ~TIME, ~ANALYTE, ~DV,
+    "001", 0, "A", 10,
+    "001", 0, "A", 10,
+    "002", 24, "B", 20,
+    "002", 24, "B", 20,
+    "003", 48, "C", 30
   )
 
   # Test finding duplicates
@@ -14,9 +14,10 @@ test_that("find_duplicates works with default fields", {
 
   # Check structure of result
   expect_s3_class(result, "data.frame")
-  expect_equal(nrow(result), 4)  # 2 duplicate pairs
+  expect_equal(nrow(result), 4) # 2 duplicate pairs
   expect_true(all(
-    c("ID", "TIME", "ANALYTE", "DV", "count") %in% names(result)))
+    c("ID", "TIME", "ANALYTE", "DV", "count") %in% names(result)
+  ))
 
   # Check specific values
   expect_equal(result$count, c(2, 2, 2, 2))
@@ -39,7 +40,7 @@ test_that("find_duplicates works with custom fields", {
 
   # Check structure of result
   expect_s3_class(result, "data.frame")
-  expect_equal(nrow(result), 4)  # 2 duplicate pairs
+  expect_equal(nrow(result), 4) # 2 duplicate pairs
   expect_true(all(c("ID", "TIME", "count", "DV") %in% names(result)))
 })
 
@@ -64,10 +65,10 @@ test_that("find_duplicates works with custom fields", {
 test_that("find_duplicates returns NULL when no duplicates exist", {
   # Create test data with no duplicates
   df <- tibble::tribble(
-    ~ID,  ~TIME, ~ANALYTE,
-    "001", 0,     "A",
-    "002", 24,    "B",
-    "003", 48,    "C"
+    ~ID, ~TIME, ~ANALYTE,
+    "001", 0, "A",
+    "002", 24, "B",
+    "003", 48, "C"
   )
 
   # Test no duplicates
@@ -101,7 +102,7 @@ test_that("find_duplicates returns NULL when no duplicates exist", {
 test_that("find_duplicates handles missing fields", {
   # Create test data
   df <- tibble::tribble(
-    ~ID,  ~TIME,
+    ~ID, ~TIME,
     "001", 0,
     "001", 0,
     "002", 24,
@@ -120,12 +121,12 @@ test_that("find_duplicates handles missing fields", {
 test_that("find_duplicates handles NA values", {
   # Create test data with NA values
   df <- tibble::tribble(
-    ~ID,  ~TIME, ~ANALYTE,
-    "001", 0,     "A",
-    "001", 0,     "A",
-    "002", 24,    "B",
-    "002", 24,    "B",
-    "003", NA,    "C"
+    ~ID, ~TIME, ~ANALYTE,
+    "001", 0, "A",
+    "001", 0, "A",
+    "002", 24, "B",
+    "002", 24, "B",
+    "003", NA, "C"
   )
 
   # Test with NA values
@@ -133,7 +134,7 @@ test_that("find_duplicates handles NA values", {
 
   # Check structure of result
   expect_s3_class(result, "data.frame")
-  expect_equal(nrow(result), 4)  # 2 duplicate pairs
+  expect_equal(nrow(result), 4) # 2 duplicate pairs
   expect_true(all(c("ID", "TIME", "ANALYTE", "count") %in% names(result)))
 })
 
@@ -141,11 +142,10 @@ test_that("find_duplicates handles NA values", {
 test_that("find_duplicates handles empty data frame", {
   # Create empty data frame
   df <- tibble::tribble(
-    ~ID,  ~TIME, ~ANALYTE
+    ~ID, ~TIME, ~ANALYTE
   )
 
   # Test empty data frame
   result <- find_duplicates(df)
   expect_null(result)
 })
-

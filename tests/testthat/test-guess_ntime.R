@@ -1,16 +1,16 @@
 test_that("guess_ntime correctly parses various time formats", {
   mock_pc <- tibble::tribble(
-      ~USUBJID, ~DOMAIN,        ~PCTPT,
-    "SUBJ-001",    "PC",      "HOUR 2",
-    "SUBJ-001",    "PC",     "2 HOURS",
-    "SUBJ-001",    "PC",          "2h",
-    "SUBJ-001",    "PC",        "2 hr",
-    "SUBJ-001",    "PC",        "2hrs",
-    "SUBJ-001",    "PC",     "PREDOSE",
-    "SUBJ-001",    "PC",    "PRE DOSE",
-    "SUBJ-001",    "PC", "PRE-DOSE 2h",
-    "SUBJ-001",    "PC",   "2.5 HOURS",
-    "SUBJ-001",    "PC",    "BASELINE"
+    ~USUBJID, ~DOMAIN, ~PCTPT,
+    "SUBJ-001", "PC", "HOUR 2",
+    "SUBJ-001", "PC", "2 HOURS",
+    "SUBJ-001", "PC", "2h",
+    "SUBJ-001", "PC", "2 hr",
+    "SUBJ-001", "PC", "2hrs",
+    "SUBJ-001", "PC", "PREDOSE",
+    "SUBJ-001", "PC", "PRE DOSE",
+    "SUBJ-001", "PC", "PRE-DOSE 2h",
+    "SUBJ-001", "PC", "2.5 HOURS",
+    "SUBJ-001", "PC", "BASELINE"
   )
 
   mock_sdtm <- list(
@@ -35,9 +35,9 @@ test_that("guess_ntime handles ISO 8601 dates with a warning", {
     USUBJID = rep("SUBJ-001", 3),
     DOMAIN = rep("PC", 3),
     PCTPT = c(
-      "2022-01-01",        # ISO date
-      "2022-01-01T12:00",  # ISO datetime
-      "HOUR 3"             # Regular time
+      "2022-01-01", # ISO date
+      "2022-01-01T12:00", # ISO datetime
+      "HOUR 3" # Regular time
     )
   )
 
@@ -102,10 +102,10 @@ test_that("guess_ntime handles additional predose variations", {
     USUBJID = rep("SUBJ-001", 4),
     DOMAIN = rep("PC", 4),
     PCTPT = c(
-      "Pre",               # Just "Pre"
-      "Pre-dose",          # Pre with hyphen
-      "Pre-dose 1hr",      # Pre-dose with time
-      "Pre-dose 1.5 hour"  # Pre-dose with decimal time
+      "Pre", # Just "Pre"
+      "Pre-dose", # Pre with hyphen
+      "Pre-dose 1hr", # Pre-dose with time
+      "Pre-dose 1.5 hour" # Pre-dose with decimal time
     )
   )
 

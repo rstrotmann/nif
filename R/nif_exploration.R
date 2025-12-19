@@ -25,35 +25,41 @@
 #' nif_plot_id(examplinib_poc_nif, 1)
 #' nif_plot_id(examplinib_poc_min_nif, 1, log = TRUE)
 #' nif_plot_id(examplinib_poc_nif, 1, log = TRUE)
-#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
-#' nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023", tad = TRUE)
-#' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
-#' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
-#' nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
-#' nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
-#' nif_plot_id(examplinib_poc_min_nif, 1, analyte="CMT3")
-#' nif_plot_id(examplinib_poc_min_nif, 1, tad=TRUE)
+#' nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023")
+#' nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023", tad = TRUE)
+#' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte = "RS2023")
+#' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte = "RS2023")
+#' nif_plot_id(examplinib_poc_nif, 8, analyte = "RS2023", imp = "RS2023")
+#' nif_plot_id(examplinib_poc_nif, 8, analyte = c("RS2023", "RS2023487A"))
+#' nif_plot_id(examplinib_poc_min_nif, 1, analyte = "CMT3")
+#' nif_plot_id(examplinib_poc_min_nif, 1, tad = TRUE)
 nif_plot_id <- function(
-    obj,
-    id,
-    analyte = NULL,
-    cmt = NULL,
-    time_field = "TIME",
-    max_time = NA,
-    lines = TRUE,
-    point_size = 2,
-    log = FALSE,
-    imp = NULL,
-    ...) {
+  obj,
+  id,
+  analyte = NULL,
+  cmt = NULL,
+  time_field = "TIME",
+  max_time = NA,
+  lines = TRUE,
+  point_size = 2,
+  log = FALSE,
+  imp = NULL,
+  ...
+) {
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     index_dosing_interval() %>%
     as.data.frame() %>%
     assertr::verify(assertr::has_all_names(
-      "ID", "TIME", "AMT", "DV", "EVID")) %>%
-    {if(!is.null(cmt)) filter(., .$CMT == cmt) else .} %>%
-    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
+      "ID", "TIME", "AMT", "DV", "EVID"
+    )) %>%
+    {
+      if (!is.null(cmt)) filter(., .$CMT == cmt) else .
+    } %>%
+    {
+      if (!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .
+    }
 
   id_label <- ""
   plot_label <- ""
@@ -64,7 +70,7 @@ nif_plot_id <- function(
     x <- x %>%
       filter(ID == id)
   } else {
-    if("USUBJID" %in% names(x)) {
+    if ("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {
         x <- x %>%
           filter(.data$USUBJID == id)
@@ -79,21 +85,31 @@ nif_plot_id <- function(
   obs <- x %>%
     mutate(active_time = .data[[time_field]]) %>%
     filter(EVID == 0, !is.na(DV)) %>%
-    {if(time_field == "TAD")
-      mutate(., group = interaction(ID, as.factor(ANALYTE), DI),
-             color = interaction(as.factor(ANALYTE), DI))
-      else mutate(., group = interaction(ID, as.factor(ANALYTE)),
-                  color = as.factor(ANALYTE))}
+    {
+      if (time_field == "TAD") {
+        mutate(.,
+          group = interaction(ID, as.factor(ANALYTE), DI),
+          color = interaction(as.factor(ANALYTE), DI)
+        )
+      } else {
+        mutate(.,
+          group = interaction(ID, as.factor(ANALYTE)),
+          color = as.factor(ANALYTE)
+        )
+      }
+    }
 
   # remove zeros or negatives for log plotting
-  if(log == TRUE){
+  if (log == TRUE) {
     obs <- filter(obs, DV > 0)
   }
 
   admin <- x %>%
     mutate(active_time = .data[[time_field]]) %>%
     dplyr::filter(EVID == 1) %>%
-    {if(!is.null(imp)) filter(., PARENT == imp) else NULL}
+    {
+      if (!is.null(imp)) filter(., PARENT == imp) else NULL
+    }
 
   p <- obs %>%
     ggplot2::ggplot(ggplot2::aes(
@@ -102,11 +118,18 @@ nif_plot_id <- function(
       group = .data$group,
       color = .data$color
     )) +
-    {if(!is.null(admin) > 0)
-      ggplot2::geom_vline(data = admin,
-                 ggplot2::aes(xintercept = .data$active_time),
-                 color = "gray")} +
-    {if (lines == TRUE) ggplot2::geom_line() } +
+    {
+      if (!is.null(admin) > 0) {
+        ggplot2::geom_vline(
+          data = admin,
+          ggplot2::aes(xintercept = .data$active_time),
+          color = "gray"
+        )
+      }
+    } +
+    {
+      if (lines == TRUE) ggplot2::geom_line()
+    } +
     ggplot2::geom_point(size = point_size) +
     ggplot2::xlim(0, max_time) +
     ggplot2::labs(
@@ -117,10 +140,12 @@ nif_plot_id <- function(
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 
-  if(!is.null(imp)) {
+  if (!is.null(imp)) {
     p <- p +
-      ggplot2::labs(caption = paste("vertical lines indicate",
-                                    imp, "administrations"))
+      ggplot2::labs(caption = paste(
+        "vertical lines indicate",
+        imp, "administrations"
+      ))
   }
 
   if (log == TRUE) {
@@ -160,14 +185,16 @@ nif_plot_id <- function(
 dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
                          time_field = "TIME", point_size = 2, max_time = NA,
                          analyte = NULL, ...) {
-
   x <- obj %>%
     ensure_parent() %>%
     ensure_analyte() %>%
     index_dosing_interval() %>%
     assertr::verify(assertr::has_all_names(
-      "ID", "TIME", "AMT", "DV", "EVID")) %>%
-    {if(!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .}
+      "ID", "TIME", "AMT", "DV", "EVID"
+    )) %>%
+    {
+      if (!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .
+    }
 
   id_label <- ""
   plot_label <- ""
@@ -178,14 +205,15 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     x <- x %>%
       filter(ID == as.numeric(id))
   } else {
-    if("USUBJID" %in% names(x)) {
+    if ("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {
         x <- x %>%
           filter(.data$USUBJID == id)
         id_label <- paste0(
           " (ID ",
           x %>% distinct(.data$ID) %>% pull(.data$ID),
-          ")")
+          ")"
+        )
         plot_label <- "USUBJID"
       } else {
         stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
@@ -234,9 +262,10 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' summary(examplinib_poc_min_nif)
 #' summary(new_nif())
 summary.nif <- function(
-    object,
-    sampling = TRUE,
-    ...) {
+  object,
+  sampling = TRUE,
+  ...
+) {
   # input validation
   validate_min_nif(object)
   validate_logical_param(sampling, "sampling")
@@ -297,13 +326,15 @@ summary.nif <- function(
   # Handle sex distribution with safety checks
   sex <- object %>%
     as.data.frame() %>%
-    {if(!"SEX" %in% names(.)) mutate(., SEX = NA) else .} %>%
+    {
+      if (!"SEX" %in% names(.)) mutate(., SEX = NA) else .
+    } %>%
     distinct(ID, SEX) %>%
     reframe(N = n(), .by = "SEX") %>%
     complete(SEX = c(0, 1), fill = list(N = 0))
 
-  n_males = as.numeric(sex[which(sex$SEX == 0), "N"])
-  n_females = as.numeric(sex[which(sex$SEX == 1), "N"])
+  n_males <- as.numeric(sex[which(sex$SEX == 0), "N"])
+  n_females <- as.numeric(sex[which(sex$SEX == 1), "N"])
 
   # dose levels
   dl_groups <- intersect(c("PART", "COHORT", "GROUP"), names(object))
@@ -322,15 +353,15 @@ summary.nif <- function(
       mutate(CLASS = factor(CLASS, levels = c("normal", "mild", "moderate", "severe"))) %>%
       reframe(
         N = n(),
-        .by = CLASS) %>%
+        .by = CLASS
+      ) %>%
       tidyr::complete(CLASS, fill = list(N = 0)) %>%
       mutate(CLASS = as.character(CLASS))
-
   } else {
     renal_function <- NULL
   }
 
-  if("BL_ODWG" %in% colnames(object)) {
+  if ("BL_ODWG" %in% colnames(object)) {
     odwg <- object %>%
       as.data.frame() %>%
       mutate(CLASS = .data$BL_ODWG) %>%
@@ -338,17 +369,19 @@ summary.nif <- function(
       mutate(CLASS = factor(CLASS, levels = c("normal", "mild", "moderate", "severe"))) %>%
       reframe(
         N = n(),
-        .by = CLASS) %>%
+        .by = CLASS
+      ) %>%
       tidyr::complete(CLASS, fill = list(N = 0)) %>%
       mutate(CLASS = as.character(CLASS))
   } else {
-    odwg = NULL
+    odwg <- NULL
   }
 
   # sampling overview
   sampling_table <- NULL
-  if("NTIME" %in% names(object) & sampling == TRUE)
+  if ("NTIME" %in% names(object) & sampling == TRUE) {
     sampling_table <- sampling_summary(object)
+  }
 
   out <- list(
     nif = object,
@@ -387,28 +420,30 @@ summary.nif <- function(
 #' @return Nothing.
 #' @export
 print.summary_nif <- function(
-    x,
-    color = FALSE,
-    ...) {
+  x,
+  color = FALSE,
+  ...
+) {
   # input validation
   validate_logical_param(color, "color")
 
-  indent = 2
-  spacer = paste(replicate(indent, " "), collapse = "")
+  indent <- 2
+  spacer <- paste(replicate(indent, " "), collapse = "")
   hline <- "-----"
   cat(paste0(hline, " NONMEM Input Format (NIF) data summary ", hline, "\n"))
 
   cat(paste(
-    "Data from", sum(x$n_studies$N), "subjects across "))
-  if(length(x$studies) == 1) {
+    "Data from", sum(x$n_studies$N), "subjects across "
+  ))
+  if (length(x$studies) == 1) {
     cat("one study:\n")
   } else {
     cat(paste0(length(x$studies), " studies:\n"))
   }
 
-  cat(paste0(df_to_string(x$n_studies, color=color, indent = indent), "\n\n"))
+  cat(paste0(df_to_string(x$n_studies, color = color, indent = indent), "\n\n"))
 
-  if (!is.null(x$sex)){
+  if (!is.null(x$sex)) {
     cat(paste0(
       "Sex distribution:\n",
       df_to_string(
@@ -416,11 +451,13 @@ print.summary_nif <- function(
           mutate(SEX = case_match(
             SEX,
             0 ~ "male",
-            1 ~ "female")) %>%
+            1 ~ "female"
+          )) %>%
           mutate(percent = round(N / sum(N) * 100, 1)),
-        indent = indent),
+        indent = indent
+      ),
       "\n\n"
-      ))
+    ))
   }
 
   if (!is.null(x$renal_function)) {
@@ -429,62 +466,66 @@ print.summary_nif <- function(
       df_to_string(
         x$renal_function %>%
           mutate(percent = round(N / sum(N) * 100, 1)),
-        indent = indent),
-      "\n\n"))
+        indent = indent
+      ),
+      "\n\n"
+    ))
   }
 
-  if(!is.null(x$odwg)) {
+  if (!is.null(x$odwg)) {
     cat(paste0(
       "NCI ODWG hepatic impairment class:\n",
       df_to_string(
-      x$odwg %>%
-        mutate(percent = round(N / sum(N) * 100, 1)),
-      color=color, indent = indent), "\n\n"))
+        x$odwg %>%
+          mutate(percent = round(N / sum(N) * 100, 1)),
+        color = color, indent = indent
+      ), "\n\n"
+    ))
   }
 
-  cat(paste0("Treatments:\n",
-             paste0(spacer, paste(x$drugs,collapse = ", ")), "\n\n"))
+  cat(paste0(
+    "Treatments:\n",
+    paste0(spacer, paste(x$drugs, collapse = ", ")), "\n\n"
+  ))
 
-  cat(paste0("Analytes:\n",
-             paste0(spacer, paste0(x$analytes, collapse = ", ")), "\n\n"))
+  cat(paste0(
+    "Analytes:\n",
+    paste0(spacer, paste0(x$analytes, collapse = ", ")), "\n\n"
+  ))
 
   cat("Subjects per dose level:\n")
-  cat(df_to_string(x$dose_levels, color=color, indent = indent))
+  cat(df_to_string(x$dose_levels, color = color, indent = indent))
   cat("\n\n")
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
-  cat(paste0(df_to_string(x$n_obs, color=color, indent = indent), "\n\n"))
+  cat(paste0(df_to_string(x$n_obs, color = color, indent = indent), "\n\n"))
 
   # sampling overview
-  if(!is.null(x$sampling)) {
+  if (!is.null(x$sampling)) {
     sampling_schedule <- x$sampling
-    # footer <- ""
-    # if(nrow(sampling_schedule) > 10) {
-    #   sampling_schedule <- head(sampling_schedule, 5)
-    #   footer <- paste0("\n", nrow(x$sampling) - 5, " more rows")
-    # }
-
     cat("Sampling schedule:\n")
-    # cat(df_to_string(sampling_schedule, indent = indent))
     cat(df_to_string(
-      sampling_schedule, indent = indent, abbr_lines = 5, abbr_threshold=10))
+      sampling_schedule,
+      indent = indent
+      # abbr_lines = 5, abbr_threshold = 20
+    ))
     # cat(footer)
     cat("\n\n")
-
   }
 
   dr_summary <- lapply(x$dose_red_sbs, nrow) %>%
     data.frame()
   cat("Subjects with dose reductions\n")
-  cat(df_to_string(dr_summary, color=color, indent = indent))
+  cat(df_to_string(dr_summary, color = color, indent = indent))
   cat("\n\n")
 
   cat("Treatment duration overview:\n")
-  cat(df_to_string(x$administration_duration, color=color, indent = indent))
+  cat(df_to_string(x$administration_duration, color = color, indent = indent))
 
   cat(paste0("\n\nHash: ", x$hash))
-  if(!is.null(x$last))
+  if (!is.null(x$last)) {
     cat(paste0("\nLast DTC: ", x$last))
+  }
   invisible(x)
 }
 
@@ -536,25 +577,29 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
   nif <- x$nif
   out <- list()
 
-  if(baseline == TRUE){
-    for (i in c("AGE", "WEIGHT", "HEIGHT", "BMI",
-                str_subset(names(nif), "BL_.*"))) {
+  if (baseline == TRUE) {
+    for (i in c(
+      "AGE", "WEIGHT", "HEIGHT", "BMI",
+      str_subset(names(nif), "BL_.*")
+    )) {
       if (i %in% colnames(nif)) {
-        if(is.numeric(nif[[i]])) {
+        if (is.numeric(nif[[i]])) {
           out[[i]] <- covariate_hist(nif, i)
         }
-        if(is.factor(nif[[i]])) {
+        if (is.factor(nif[[i]])) {
           out[[i]] <- covariate_barplot(nif, i)
         }
       }
     }
-    if("WEIGHT" %in% names(nif) & "SEX" %in% names(nif))
+    if ("WEIGHT" %in% names(nif) & "SEX" %in% names(nif)) {
       out[["WT_SEX"]] <- wt_by_sex(nif)
-    if("WEIGHT" %in% names(nif) & "RACE" %in% names(nif))
+    }
+    if ("WEIGHT" %in% names(nif) & "RACE" %in% names(nif)) {
       out[["WT_RACE"]] <- wt_by_race(nif)
+    }
   }
 
-  if(analytes == TRUE){
+  if (analytes == TRUE) {
     # put analytes for parents first:
     analyte_list <- nif %>%
       # as.data.frame() %>%
@@ -593,8 +638,9 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
 covariate_hist <- function(
-    obj, cov, nbins = 11, group = NULL, alpha = 0.5,
-    density = TRUE, title = NULL) {
+  obj, cov, nbins = 11, group = NULL, alpha = 0.5,
+  density = TRUE, title = NULL
+) {
   # input validation
   validate_min_nif(obj)
   validate_char_param(cov, "cov")
@@ -609,60 +655,84 @@ covariate_hist <- function(
   if (is.na(xlabel)) {
     xlabel <- cov_params$field
   }
-  if(is.null(title)){
+  if (is.null(title)) {
     title <- cov_params$title
     if (is.na(title)) {
       title <- paste(cov_params$field, "distribution")
     }
-    if(!is.null(group)) {
+    if (!is.null(group)) {
       title <- paste0(title, " grouped by ", nice_enumeration(group))
     }
   }
   limits <- unlist(cov_params$limits)
 
-  binwidth = NULL
-  if(is.na(cov_params$binwidth)) {
-    binwidth = NULL
-    bins = nbins
+  binwidth <- NULL
+  if (is.na(cov_params$binwidth)) {
+    binwidth <- NULL
+    bins <- nbins
   } else {
-    binwidth = cov_params$binwidth
-    bins = NULL
+    binwidth <- cov_params$binwidth
+    bins <- NULL
   }
 
-  if(!is.null(group)) {
+  if (!is.null(group)) {
     p <- obj %>%
       as.data.frame() %>%
       mutate_at(group, factor) %>%
       tidyr::unite(GROUP, all_of(group), remove = FALSE) %>%
       distinct_at(c("ID", cov_params$field, "GROUP")) %>%
-      ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]], group = GROUP,
-                 fill = GROUP)) +
-      {if(density == FALSE) ggplot2::geom_histogram(
-        bins = bins, binwidth = binwidth, position = "identity",
-        alpha = alpha) else
-          ggplot2::geom_histogram(ggplot2::aes(
-            y = ggplot2::after_stat(density)),
+      ggplot2::ggplot(ggplot2::aes(
+        x = .data[[cov_params$field]], group = GROUP,
+        fill = GROUP
+      )) + {
+        if (density == FALSE) {
+          ggplot2::geom_histogram(
+            bins = bins, binwidth = binwidth, position = "identity",
+            alpha = alpha
+          )
+        } else {
+          ggplot2::geom_histogram(
+            ggplot2::aes(
+              y = ggplot2::after_stat(density)
+            ),
             bins = bins, binwidth = binwidth,
-            position = "identity", alpha = alpha)}
+            position = "identity", alpha = alpha
+          )
+        }
+      }
   } else {
     p <- obj %>%
       as.data.frame() %>%
       distinct_at(c("ID", cov_params$field)) %>%
-      ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]])) +
-      {if(density == FALSE) ggplot2::geom_histogram(
-        bins = bins, binwidth = binwidth,
-        position = "identity", fill = "grey") else
-          ggplot2::geom_histogram(ggplot2::aes(
-            y = ggplot2::after_stat(density)),
+      ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]])) + {
+        if (density == FALSE) {
+          ggplot2::geom_histogram(
+            bins = bins, binwidth = binwidth,
+            position = "identity", fill = "grey"
+          )
+        } else {
+          ggplot2::geom_histogram(
+            ggplot2::aes(
+              y = ggplot2::after_stat(density)
+            ),
             bins = bins,
-            binwidth = binwidth, position = "identity", fill = "grey")}
+            binwidth = binwidth, position = "identity", fill = "grey"
+          )
+        }
+      }
   }
   p +
     ggplot2::geom_vline(xintercept = limits, color = "red") +
     ggplot2::theme_bw() +
-    {if(density == FALSE) ggplot2::labs(
-      x = xlabel, y = "number of subjects") else
-        ggplot2::labs(x = xlabel, y = "density")} +
+    {
+      if (density == FALSE) {
+        ggplot2::labs(
+          x = xlabel, y = "number of subjects"
+        )
+      } else {
+        ggplot2::labs(x = xlabel, y = "density")
+      }
+    } +
     ggplot2::ggtitle(title) +
     watermark(cex = 1.5)
 }
@@ -681,21 +751,22 @@ covariate_hist <- function(
 #' @examples
 #' covariate_barplot(examplinib_poc_nif, "SEX")
 covariate_barplot <- function(
-    obj, cov, group = NULL, title = NULL) {
+  obj, cov, group = NULL, title = NULL
+) {
   # input validation
   validate_min_nif(obj)
   validate_char_param(cov, "cov")
   validate_char_param(group, "group", allow_null = TRUE)
   validate_char_param(title, "title", allow_null = TRUE)
 
-  if(is.null(title)) {
-    title = cov
-    if(!is.null(group)) {
+  if (is.null(title)) {
+    title <- cov
+    if (!is.null(group)) {
       title <- paste0(title, " grouped by ", nice_enumeration(group))
     }
   }
 
-  if(!is.null(group)) {
+  if (!is.null(group)) {
     out <- obj %>%
       as.data.frame() %>%
       mutate_at(group, factor) %>%
@@ -705,11 +776,14 @@ covariate_barplot <- function(
       group_by(CLASS, GROUP) %>%
       summarize(n = n(), .groups = "drop") %>%
       ggplot2::ggplot(ggplot2::aes(
-        x = CLASS, y = n, group = GROUP, fill = GROUP)) +
+        x = CLASS, y = n, group = GROUP, fill = GROUP
+      )) +
       ggplot2::scale_x_discrete(drop = FALSE, name = cov) +
-      ggplot2::geom_bar(stat = "identity",
-               position = ggplot2::position_dodge(preserve = "single"),
-               width = 0.5, alpha = 0.8) +
+      ggplot2::geom_bar(
+        stat = "identity",
+        position = ggplot2::position_dodge(preserve = "single"),
+        width = 0.5, alpha = 0.8
+      ) +
       ggplot2::labs(fill = group)
   } else {
     out <- obj %>%
@@ -721,7 +795,8 @@ covariate_barplot <- function(
       ggplot2::ggplot(ggplot2::aes(x = CLASS, y = n)) +
       ggplot2::scale_x_discrete(drop = FALSE, name = cov) +
       ggplot2::geom_bar(
-        stat = "identity", fill = "white", color = "black", width = 0.5)
+        stat = "identity", fill = "white", color = "black", width = 0.5
+      )
   }
 
   out +
@@ -761,8 +836,10 @@ wt_by_sex <- function(obj) {
     #   label.size = 0,
     #   position = ggplot2::position_dodge(width = 0.75)
     # ) +
-    ggplot2::geom_text(ggplot2::aes(
-      label = paste0("N=", count), y = maxwt + 5),
+    ggplot2::geom_text(
+      ggplot2::aes(
+        label = paste0("N=", count), y = maxwt + 5
+      ),
       # label.size = 0,
       position = ggplot2::position_dodge(width = 0.75)
     ) +
@@ -791,7 +868,6 @@ wt_by_race <- function(obj) {
     mutate(bl_wt = mean(WEIGHT[TIME == 0])) %>%
     ungroup() %>%
     left_join(race_coding, by = "RACE") %>%
-
     distinct(across(any_of(c("ID", "bl_wt", "LABEL")))) %>%
     mutate(maxwt = max(bl_wt, na.rm = TRUE)) %>%
     group_by(.data$LABEL) %>%
@@ -802,8 +878,8 @@ wt_by_race <- function(obj) {
     #   label = paste0("N=", count), y = maxwt + 5), label.size = 0
     # ) +
     ggplot2::geom_text(ggplot2::aes(
-      label = paste0("N=", count), y = maxwt + 5)
-    ) +
+      label = paste0("N=", count), y = maxwt + 5
+    )) +
     ggplot2::labs(x = "", y = "baseline weight (kg)") +
     ggplot2::theme_bw() +
     ggplot2::ggtitle("Body weight by race") +
@@ -906,7 +982,7 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
   validate_min_nif(obj, c("NTIME", "ANALYTE"))
   validate_numeric_param(max_time, "max_time", allow_null = TRUE)
 
-  if(is.null(max_time)) {
+  if (is.null(max_time)) {
     max_time <- max_time(obj, only_observations = TRUE)
   }
 
@@ -938,9 +1014,11 @@ administration_summary <- function(obj) {
     ensure_parent() %>%
     n_administrations()
 
-  if(nrow(temp) == 0) {
-    data.frame(PARENT = character(), min = numeric(), max = numeric(),
-               mean = numeric(), median = numeric())
+  if (nrow(temp) == 0) {
+    data.frame(
+      PARENT = character(), min = numeric(), max = numeric(),
+      mean = numeric(), median = numeric()
+    )
   } else {
     temp %>%
       filter(PARENT != "") %>%
@@ -968,8 +1046,9 @@ sampling_summary <- function(obj) {
   # validate input
   validate_nif(obj)
 
-  if(!"NTIME" %in% names(obj))
+  if (!"NTIME" %in% names(obj)) {
     stop("NTIME not found in input!")
+  }
 
   out <- obj %>%
     as.data.frame() %>%
@@ -998,7 +1077,8 @@ sampling_summary <- function(obj) {
 #' @examples
 #' mean_dose_plot(examplinib_poc_nif)
 mean_dose_plot <- function(
-    obj, analyte = NULL, title = NULL) {
+  obj, analyte = NULL, title = NULL
+) {
   # input validation
   validate_min_nif(obj, c("ANALYTE"))
   validate_char_param(analyte, "analyte", allow_null = TRUE)
@@ -1009,8 +1089,8 @@ mean_dose_plot <- function(
   }
 
   # make plot title
-  if(is.null(title)) {
-    if("STUDYID" %in% names(obj)) {
+  if (is.null(title)) {
+    if ("STUDYID" %in% names(obj)) {
       title <- paste0(nice_enumeration(unique(obj$STUDYID)), ": ")
     } else {
       title <- ""
@@ -1054,13 +1134,14 @@ mean_dose_plot <- function(
 #' subs_per_dose_level(examplinib_sad_nif)
 #' subs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
 subs_per_dose_level <- function(
-    obj, analyte = NULL, group = NULL) {
+  obj, analyte = NULL, group = NULL
+) {
   # input validation
   validate_min_nif(obj)
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(group, "group", allow_null = TRUE)
 
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
   obj %>%
@@ -1070,7 +1151,7 @@ subs_per_dose_level <- function(
     filter(ANALYTE %in% analyte) %>%
     filter(EVID == 0) %>%
     distinct(across(any_of(c("ID", "DL", "ANALYTE", group)))) %>%
-    reframe(N = n(), .by=any_of(c("DL", "ANALYTE", "SEX"))) %>%
+    reframe(N = n(), .by = any_of(c("DL", "ANALYTE", "SEX"))) %>%
     arrange(DL, ANALYTE)
 }
 
@@ -1090,13 +1171,14 @@ subs_per_dose_level <- function(
 #' obs_per_dose_level(examplinib_sad_nif)
 #' obs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
 obs_per_dose_level <- function(
-    obj, analyte = NULL, group = NULL) {
+  obj, analyte = NULL, group = NULL
+) {
   # input validation
   validate_min_nif(obj)
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(group, "group", allow_null = TRUE)
 
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
   obj %>%
@@ -1105,7 +1187,7 @@ obs_per_dose_level <- function(
     as.data.frame() %>%
     filter(ANALYTE %in% analyte) %>%
     filter(EVID == 0) %>%
-    reframe(N = n(), .by=any_of(c("DL", "ANALYTE", group))) %>%
+    reframe(N = n(), .by = any_of(c("DL", "ANALYTE", group))) %>%
     arrange(DL, ANALYTE)
 }
 
@@ -1140,20 +1222,21 @@ obs_per_dose_level <- function(
 #' @importFrom ggrepel geom_text_repel
 #' @export
 edish_plot <- function(
-    nif,
-    sdtm,
-    enzyme = "ALT",
-    observation_filter = "LBSPEC != 'URINE'",
-    show_labels = FALSE,
-    autoscale = TRUE,
-    shading = TRUE,
-    nominal_time = TRUE,
-    ntime_method = NULL,
-    time = NULL,
-    parent = NULL,
-    title = "eDISH plot: All time points",
-    size = 3,
-    alpha = 0.5, ...) {
+  nif,
+  sdtm,
+  enzyme = "ALT",
+  observation_filter = "LBSPEC != 'URINE'",
+  show_labels = FALSE,
+  autoscale = TRUE,
+  shading = TRUE,
+  nominal_time = TRUE,
+  ntime_method = NULL,
+  time = NULL,
+  parent = NULL,
+  title = "eDISH plot: All time points",
+  size = 3,
+  alpha = 0.5, ...
+) {
   # Input validation
   if (!inherits(sdtm, "sdtm")) {
     stop("sdtm must be an sdtm object")
@@ -1167,63 +1250,76 @@ edish_plot <- function(
     stop("enzyme must be either 'ALT' or 'AST'")
   }
 
-  lb <- tryCatch({
-    sdtm %>%
-      domain("lb") %>%
-      filter(!is.na(.data$LBSTRESN)) %>%
-      filter(!is.na(.data$LBSTNRHI)) %>%
-      filter(eval(parse(text = observation_filter))) %>%
-      # Verify required columns exist
-      assertr::verify(assertr::has_all_names(
-        "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI")) %>%
-      # Verify numeric columns are actually numeric
-      assertr::verify(is.numeric(.data$LBSTRESN)) %>%
-      assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
-      # Verify values are valid
-      assertr::verify(.data$LBSTRESN >= 0) %>%  # No negative lab values
-      assertr::verify(.data$LBSTNRHI > 0)  # No zero or negative ULN values
-  }, error = function(e) {
-    stop("Data validation failed: ") #, e$message)
-  })
+  lb <- tryCatch(
+    {
+      sdtm %>%
+        domain("lb") %>%
+        filter(!is.na(.data$LBSTRESN)) %>%
+        filter(!is.na(.data$LBSTNRHI)) %>%
+        filter(eval(parse(text = observation_filter))) %>%
+        # Verify required columns exist
+        assertr::verify(assertr::has_all_names(
+          "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"
+        )) %>%
+        # Verify numeric columns are actually numeric
+        assertr::verify(is.numeric(.data$LBSTRESN)) %>%
+        assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
+        # Verify values are valid
+        assertr::verify(.data$LBSTRESN >= 0) %>% # No negative lab values
+        assertr::verify(.data$LBSTNRHI > 0) # No zero or negative ULN values
+    },
+    error = function(e) {
+      stop("Data validation failed: ") # , e$message)
+    }
+  )
 
   expected_tests <- c("BILI", enzyme)
   missing_tests <- setdiff(expected_tests, unique(lb$LBTESTCD))
-  if(length(missing_tests) > 0)
+  if (length(missing_tests) > 0) {
     stop(paste0(
-      "missing lab tests for ", nice_enumeration(missing_tests)))
+      "missing lab tests for ", nice_enumeration(missing_tests)
+    ))
+  }
 
   temp <- lb %>%
     mutate(L_DTC = .data$LBDTC) %>%
     filter(.data$LBTESTCD %in% c(enzyme, "BILI")) %>%
     mutate(L_TESTCD = case_match(.data$LBTESTCD, "BILI" ~ "BILI",
-                                  .default = "ENZ")) %>%
-    mutate(L_TESTCD = paste0(.data$L_TESTCD, "_X_ULN"),
-           L_STRESN = .data$LBSTRESN / .data$LBSTNRHI) %>%
+      .default = "ENZ"
+    )) %>%
+    mutate(
+      L_TESTCD = paste0(.data$L_TESTCD, "_X_ULN"),
+      L_STRESN = .data$LBSTRESN / .data$LBSTNRHI
+    ) %>%
     mutate(DOMAIN = "L_")
 
   sdtm$domains[["l_"]] <- temp
 
-  if(nominal_time == TRUE) {
+  if (nominal_time == TRUE) {
     nif <- nif %>%
       mutate(TIME = .data$NTIME)
   }
-  if(!is.null(time)) {
+  if (!is.null(time)) {
     nif <- nif %>%
       filter(.data$TIME %in% time)
   }
-  if(is.null(parent)) {
+  if (is.null(parent)) {
     parent <- guess_parent(nif)
   }
 
   p <- nif %>%
     add_observation(
-      sdtm, "l_", "ENZ_X_ULN", parent=parent, ntime_method = ntime_method,
+      sdtm, "l_", "ENZ_X_ULN",
+      parent = parent, ntime_method = ntime_method,
       duplicates = "ignore",
-      silent = TRUE) %>%
+      silent = TRUE
+    ) %>%
     add_observation(
-      sdtm, "l_", "BILI_X_ULN", parent=parent, ntime_method = ntime_method,
+      sdtm, "l_", "BILI_X_ULN",
+      parent = parent, ntime_method = ntime_method,
       duplicates = "ignore",
-      silent = TRUE) %>%
+      silent = TRUE
+    ) %>%
     as.data.frame() %>%
     filter(!is.na(DV)) %>%
     filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
@@ -1233,20 +1329,41 @@ edish_plot <- function(
     group_by(.data$ID, .data$TIME) %>%
     tidyr::pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
     ungroup() %>%
-    ggplot2::ggplot(ggplot2::aes(x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
-                                 color = (TIME > 0), label = .data$ID)) +
+    ggplot2::ggplot(ggplot2::aes(
+      x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
+      color = (TIME > 0), label = .data$ID
+    )) +
     ggplot2::geom_point(size = size, alpha = alpha) +
-    {if(show_labels == TRUE) ggrepel::geom_text_repel()} +
-    {if(!autoscale == TRUE) ggplot2::scale_x_log10(
-      limits = c(0.01, 1000)) else ggplot2::scale_x_log10()} +
-    {if(!autoscale == TRUE) ggplot2::scale_y_log10(limits = c(0.01, 100)) else
-      ggplot2::scale_y_log10()} +
-
-    {if(shading == TRUE) ggplot2::annotate('rect', xmin = 3, xmax = Inf,
-                                           ymin = 2, ymax = Inf, alpha=.15,
-                                           fill='grey')} +
-    ggplot2::geom_hline(yintercept = 2, linetype="dashed") +
-    ggplot2::geom_vline(xintercept = 3, linetype="dashed") +
+    {
+      if (show_labels == TRUE) ggrepel::geom_text_repel()
+    } +
+    {
+      if (!autoscale == TRUE) {
+        ggplot2::scale_x_log10(
+          limits = c(0.01, 1000)
+        )
+      } else {
+        ggplot2::scale_x_log10()
+      }
+    } +
+    {
+      if (!autoscale == TRUE) {
+        ggplot2::scale_y_log10(limits = c(0.01, 100))
+      } else {
+        ggplot2::scale_y_log10()
+      }
+    } +
+    {
+      if (shading == TRUE) {
+        ggplot2::annotate("rect",
+          xmin = 3, xmax = Inf,
+          ymin = 2, ymax = Inf, alpha = .15,
+          fill = "grey"
+        )
+      }
+    } +
+    ggplot2::geom_hline(yintercept = 2, linetype = "dashed") +
+    ggplot2::geom_vline(xintercept = 3, linetype = "dashed") +
     ggplot2::labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "none") +
@@ -1254,15 +1371,11 @@ edish_plot <- function(
 
   caption <- paste0(length(unique(nif$ID)), " subjects, red: predose")
   caption <- ifelse(shading == TRUE,
-                    paste0(caption, ", grey area: Hy's law."), caption)
+    paste0(caption, ", grey area: Hy's law."), caption
+  )
   p <- p +
     ggplot2::labs(caption = caption) +
     watermark(cex = 1.5)
 
   return(p)
 }
-
-
-
-
-

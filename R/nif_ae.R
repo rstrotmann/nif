@@ -1,4 +1,3 @@
-
 #' Make AE observation
 #'
 #' This function adds AE events as observations with the time of the AE onset
@@ -34,16 +33,17 @@
 #' @keywords internal
 #' @export
 make_ae <- function(
-    sdtm,
-    ae_term,
-    ae_field = "AEDECOD",
-    analyte = NULL,
-    parent = "",
-    cmt = NA,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    observation_filter = "TRUE",
-    coding_table = NULL,
-    keep = NULL) {
+  sdtm,
+  ae_term,
+  ae_field = "AEDECOD",
+  analyte = NULL,
+  parent = "",
+  cmt = NA,
+  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+  observation_filter = "TRUE",
+  coding_table = NULL,
+  keep = NULL
+) {
   # Input validation
   if (!inherits(sdtm, "sdtm")) {
     stop("sdtm must be an sdtm object")
@@ -64,47 +64,61 @@ make_ae <- function(
   validate_char_param(observation_filter, "observation_filter")
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
 
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     analyte <- paste0("AE_", gsub(" ", "_", ae_term))
   }
 
   expected_domains <- c("DM", "VS", "AE")
   missing_domains <- setdiff(expected_domains, toupper(names(sdtm$domains)))
-  if(length(missing_domains) > 0)
-    stop(paste0(plural("Domain", length(missing_domains)>1), " ",
-                nice_enumeration(missing_domains)," not found!"))
+  if (length(missing_domains) > 0) {
+    stop(paste0(
+      plural("Domain", length(missing_domains) > 1), " ",
+      nice_enumeration(missing_domains), " not found!"
+    ))
+  }
 
   sbs <- make_subjects(
-    domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter, keep = keep)
+    domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter,
+    keep = keep
+  )
 
   obj <- domain(sdtm, "ae") %>%
     mutate(SRC_DOMAIN = "AE") %>%
-    {if("AESEQ" %in% names(.))
-      mutate(., SRC_SEQ = .data[["AESEQ"]]) else
-        mutate(., SRC_SEQ = NA)} %>%
+    {
+      if ("AESEQ" %in% names(.)) {
+        mutate(., SRC_SEQ = .data[["AESEQ"]])
+      } else {
+        mutate(., SRC_SEQ = NA)
+      }
+    } %>%
     lubrify_dates()
 
   # Validate coding table
-  if(!is.null(coding_table)) {
-    if(!inherits(coding_table, "data.frame"))
+  if (!is.null(coding_table)) {
+    if (!inherits(coding_table, "data.frame")) {
       stop("coding table must be a data frame!")
+    }
     temp <- names(coding_table)
     temp <- temp[temp != "DV"]
     unknown_fields <- setdiff(temp, names(obj))
-    if(length(unknown_fields) > 0)
+    if (length(unknown_fields) > 0) {
       stop(paste0(
         "Fields ", nice_enumeration(unknown_fields),
         " not found in AE domain!"
       ))
-    if(!"DV" %in% names(coding_table))
+    }
+    if (!"DV" %in% names(coding_table)) {
       stop("coding table must include a DV column!")
-    if(!is.numeric(coding_table$DV))
+    }
+    if (!is.numeric(coding_table$DV)) {
       stop("DV in the coding table must be numeric!")
+    }
     obj <- obj %>%
       left_join(coding_table, by = temp)
   } else {
-    if(!"AETOXGR" %in% names(obj))
+    if (!"AETOXGR" %in% names(obj)) {
       stop("AETOXGR not found in AE. Use a coding table!")
+    }
     obj <- obj %>%
       mutate(DV = as.numeric(.data$AETOXGR))
   }
@@ -112,16 +126,22 @@ make_ae <- function(
   # Validate required fields exist in AE domain
   required_fields <- c("AESTDTC", ae_field)
   missing_fields <- required_fields[!required_fields %in% names(obj)]
-  if(length(missing_fields) > 0)
-    stop(paste0("Required field(s) missing in AE domain: ",
-                nice_enumeration(missing_fields)))
+  if (length(missing_fields) > 0) {
+    stop(paste0(
+      "Required field(s) missing in AE domain: ",
+      nice_enumeration(missing_fields)
+    ))
+  }
 
   # Validate keep parameter columns exist in AE domain
-  if(length(keep) > 0) {
+  if (length(keep) > 0) {
     missing_keep_fields <- keep[!keep %in% names(obj)]
-    if(length(missing_keep_fields) > 0)
-      stop(paste0("Column(s) specified in 'keep' not found in AE domain: ",
-                  nice_enumeration(missing_keep_fields)))
+    if (length(missing_keep_fields) > 0) {
+      stop(paste0(
+        "Column(s) specified in 'keep' not found in AE domain: ",
+        nice_enumeration(missing_keep_fields)
+      ))
+    }
   }
 
 
@@ -130,7 +150,7 @@ make_ae <- function(
     filter(.data[[ae_field]] == ae_term) %>%
     mutate(
       DTC = .data[["AESTDTC"]],
-      ) %>%
+    ) %>%
     select(any_of(c("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN", keep))) %>%
     mutate(
       # ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
@@ -143,12 +163,14 @@ make_ae <- function(
       METABOLITE = FALSE,
       EVID = 0,
       MDV = 0,
-      IMPUTATION = "") %>%
+      IMPUTATION = ""
+    ) %>%
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
-      units = "days") + 1) %>%
+      units = "days"
+    ) + 1) %>%
     ungroup() %>%
     new_nif()
 }
@@ -175,52 +197,56 @@ make_ae <- function(
 #' @return A nif object.
 #' @export
 add_ae_observation <- function(
-    nif,
-    sdtm,
-    ae_term,
-    ae_field = "AEDECOD",
-    analyte = NULL,
-    parent = NULL,
-    cmt = NULL,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    observation_filter = "TRUE",
-    coding_table = NULL,
-    keep = NULL,
-    debug = FALSE,
-    silent = NULL) {
-  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+  nif,
+  sdtm,
+  ae_term,
+  ae_field = "AEDECOD",
+  analyte = NULL,
+  parent = NULL,
+  cmt = NULL,
+  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+  observation_filter = "TRUE",
+  coding_table = NULL,
+  keep = NULL,
+  debug = FALSE,
+  silent = NULL
+) {
+  debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
   validate_char_param(analyte, "analyte", allow_null = TRUE)
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     analyte <- paste0("AE_", gsub(" ", "_", ae_term))
   }
 
-  if(is.null(parent)) {
+  if (is.null(parent)) {
     parent <- guess_parent(nif)
     conditional_message(
       # "Parent for ", ae_term, " was set to ", parent, "!",
       "Parent for ", analyte, " was set to ", parent, "!",
-      silent = silent)
+      silent = silent
+    )
   }
 
-  if(is.null(cmt)) {
+  if (is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
       # "Compartment for AE_", ae_term,
       "Compartment for ", analyte,
-      " was not specified and has been set to ", cmt), silent = silent)
+      " was not specified and has been set to ", cmt
+    ), silent = silent)
   }
 
   ae <- make_ae(
-      sdtm, ae_term, ae_field, analyte, parent, cmt, subject_filter,
-      observation_filter, coding_table, keep) %>%
+    sdtm, ae_term, ae_field, analyte, parent, cmt, subject_filter,
+    observation_filter, coding_table, keep
+  ) %>%
     filter(.data$USUBJID %in% subjects(nif)$USUBJID)
 
   bind_rows(
-    nif, ae) %>%
+    nif, ae
+  ) %>%
     arrange(.data$USUBJID, .data$DTC) %>%
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
     normalize_nif(keep = keep)
 }
-

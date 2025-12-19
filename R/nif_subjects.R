@@ -13,19 +13,21 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
   }
 
   if (!("BRTHDTC" %in% colnames(df) && ref_date_col %in% colnames(df))) {
-    return(df)  # Return unchanged if required columns not present
+    return(df) # Return unchanged if required columns not present
   }
 
   df <- df %>%
     lubrify_dates() %>%
     mutate(age_brthdtc = round(as.numeric(
-      lubridate::as.duration(.data[[ref_date_col]] - .data$BRTHDTC), "years"), 0))
+      lubridate::as.duration(.data[[ref_date_col]] - .data$BRTHDTC), "years"
+    ), 0))
 
   if (preserve_age && "AGE" %in% names(df)) {
     df <- df %>%
       mutate(AGE = case_when(
         is.na(.data$AGE) ~ .data$age_brthdtc,
-        .default = .data$AGE))
+        .default = .data$AGE
+      ))
   } else {
     df <- df %>%
       mutate(AGE = .data$age_brthdtc)
@@ -49,11 +51,11 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
 #' @keywords internal
 #' @noRd
 make_subjects <- function(
-    dm,
-    vs = NULL,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    keep = character(0)) {
-
+  dm,
+  vs = NULL,
+  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+  keep = character(0)
+) {
   # Input validation
   if (!is.data.frame(dm)) {
     stop("The 'dm' parameter must be a data frame")
@@ -62,8 +64,10 @@ make_subjects <- function(
   required_cols <- c("USUBJID", "SEX", "ACTARMCD")
   missing_cols <- setdiff(required_cols, colnames(dm))
   if (length(missing_cols) > 0) {
-    stop("The following required columns are missing from the 'dm' data frame: ",
-         paste(missing_cols, collapse = ", "))
+    stop(
+      "The following required columns are missing from the 'dm' data frame: ",
+      paste(missing_cols, collapse = ", ")
+    )
   }
 
   # If vs is provided, validate it's a data frame
@@ -76,8 +80,10 @@ make_subjects <- function(
     vs_required_cols <- c("USUBJID", "VSTESTCD", "VSSTRESN")
     vs_missing_cols <- setdiff(vs_required_cols, colnames(vs))
     if (length(vs_missing_cols) > 0) {
-      stop("The following required columns are missing from the 'vs' data frame: ",
-           paste(vs_missing_cols, collapse = ", "))
+      stop(
+        "The following required columns are missing from the 'vs' data frame: ",
+        paste(vs_missing_cols, collapse = ", ")
+      )
     }
 
     # Check for VSDTC when needed for baseline determination
@@ -89,7 +95,7 @@ make_subjects <- function(
   # Calculate age if necessary columns are present
   dm <- calculate_age(dm)
 
-  if(!is.null(vs)){
+  if (!is.null(vs)) {
     # Check if RFSTDTC exists in dm when needed for baseline calculations
     if (!"VSBLFL" %in% names(vs) && !"RFSTDTC" %in% colnames(dm)) {
       stop("When 'VSBLFL' is not available in vs, 'RFSTDTC' must be present in dm for baseline determination")
@@ -98,15 +104,20 @@ make_subjects <- function(
     baseline_covariates <- vs %>%
       lubrify_dates() %>%
       left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID") %>%
-      {if("VSBLFL" %in% names(vs)) filter(., VSBLFL == "Y") else
-        filter(., VSDTC < RFSTDTC)} %>%
+      {
+        if ("VSBLFL" %in% names(vs)) {
+          filter(., VSBLFL == "Y")
+        } else {
+          filter(., VSDTC < RFSTDTC)
+        }
+      } %>%
       filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) %>%
       group_by(.data$USUBJID, .data$VSTESTCD) %>%
       summarize(mean = mean(.data$VSSTRESN), .groups = "drop") %>%
       tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "mean")
 
     if ("HEIGHT" %in% colnames(baseline_covariates) &&
-        "WEIGHT" %in% colnames(baseline_covariates)) {
+      "WEIGHT" %in% colnames(baseline_covariates)) {
       baseline_covariates <- baseline_covariates %>%
         mutate(BMI = calculate_bmi(.data$HEIGHT, .data$WEIGHT))
     }
@@ -140,7 +151,8 @@ make_subjects <- function(
     relocate("ID") %>%
     select(., any_of(c(
       "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC", keep)))
+      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC", keep
+    )))
 
   return(out)
 }

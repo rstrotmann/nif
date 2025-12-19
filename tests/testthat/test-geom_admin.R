@@ -204,4 +204,3 @@ test_that("geom_admin works with empty data", {
     geom_admin(ggplot2::aes(x = x, admin = admin))
   expect_s3_class(p_empty, "ggplot")
 })
-

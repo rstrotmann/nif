@@ -3,18 +3,18 @@
 test_that("make_subjects_sdtm creates a proper subject data frame", {
   # Create test DM domain
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~AGE,                      ~RACE,                     ~ETHNIC, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY, ~RFSTDTC,
-       "DM", "STUDY1", "SUBJ-001",   "001",   "001",  "M",   45,                    "WHITE", "NOT HISPANIC OR LATINO", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA", "2023-01-01",
-       "DM", "STUDY1", "SUBJ-002",   "002",   "001",  "F",   38, "BLACK OR AFRICAN AMERICAN", "NOT HISPANIC OR LATINO", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA", "2023-01-01"
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~AGE, ~RACE, ~ETHNIC, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY, ~RFSTDTC,
+    "DM", "STUDY1", "SUBJ-001", "001", "001", "M", 45, "WHITE", "NOT HISPANIC OR LATINO", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA", "2023-01-01",
+    "DM", "STUDY1", "SUBJ-002", "002", "001", "F", 38, "BLACK OR AFRICAN AMERICAN", "NOT HISPANIC OR LATINO", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA", "2023-01-01"
   )
 
   # Create test VS domain with height/weight
   vs_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,  ~VSTESTCD, ~VSSTRESN, ~VSSTRESU, ~VSBLFL,
-       "VS", "STUDY1", "SUBJ-001",   "HEIGHT",       180,      "cm",     "Y",
-       "VS", "STUDY1", "SUBJ-001",   "WEIGHT",        85,      "kg",     "Y",
-       "VS", "STUDY1", "SUBJ-002",   "HEIGHT",       165,      "cm",     "Y",
-       "VS", "STUDY1", "SUBJ-002",   "WEIGHT",        70,      "kg",     "Y"
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSSTRESU, ~VSBLFL,
+    "VS", "STUDY1", "SUBJ-001", "HEIGHT", 180, "cm", "Y",
+    "VS", "STUDY1", "SUBJ-001", "WEIGHT", 85, "kg", "Y",
+    "VS", "STUDY1", "SUBJ-002", "HEIGHT", 165, "cm", "Y",
+    "VS", "STUDY1", "SUBJ-002", "WEIGHT", 70, "kg", "Y"
   )
 
   # Create a new SDTM object
@@ -28,7 +28,7 @@ test_that("make_subjects_sdtm creates a proper subject data frame", {
 
   # Check the output structure
   expect_s3_class(result, "data.frame")
-  expect_equal(nrow(result), 2)  # Should have 2 subjects
+  expect_equal(nrow(result), 2) # Should have 2 subjects
 
   # Check that required columns are present
   expect_true(all(c("ID", "USUBJID", "SEX", "AGE", "HEIGHT", "WEIGHT", "BMI") %in% names(result)))
@@ -46,16 +46,16 @@ test_that("make_subjects_sdtm creates a proper subject data frame", {
 test_that("make_subjects_sdtm works with missing height/weight", {
   # Create test DM domain with all required columns
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SEX, ~AGE, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY, ~RFSTDTC, ~SITEID,
-       "DM", "STUDY1", "SUBJ-001", "001",   "M",   45, "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA", "2023-01-01", "001",
-       "DM", "STUDY1", "SUBJ-002", "002",   "F",   38, "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA", "2023-01-01", "001"
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~SUBJID, ~SEX, ~AGE, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY, ~RFSTDTC, ~SITEID,
+    "DM", "STUDY1", "SUBJ-001", "001", "M", 45, "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA", "2023-01-01", "001",
+    "DM", "STUDY1", "SUBJ-002", "002", "F", 38, "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA", "2023-01-01", "001"
   )
 
   # Create test VS domain with incomplete data
   vs_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,  ~VSTESTCD, ~VSSTRESN, ~VSSTRESU, ~VSBLFL,
-       "VS", "STUDY1", "SUBJ-001",   "HEIGHT",       180,      "cm",     "Y",
-       "VS", "STUDY1", "SUBJ-002",    "PULSE",        72,     "bpm",     "Y"  # Missing weight for both subjects
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSSTRESU, ~VSBLFL,
+    "VS", "STUDY1", "SUBJ-001", "HEIGHT", 180, "cm", "Y",
+    "VS", "STUDY1", "SUBJ-002", "PULSE", 72, "bpm", "Y" # Missing weight for both subjects
   )
 
   # Create a new SDTM object
@@ -69,7 +69,7 @@ test_that("make_subjects_sdtm works with missing height/weight", {
 
   # Check the structure of the results
   expect_s3_class(result, "data.frame")
-  expect_equal(nrow(result), 2)  # Should have 2 subjects
+  expect_equal(nrow(result), 2) # Should have 2 subjects
 
   # Check that we have the height column and the value is correct
   expect_true("HEIGHT" %in% names(result))

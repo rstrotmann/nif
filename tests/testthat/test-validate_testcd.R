@@ -78,7 +78,7 @@ test_that("validate_testcd handles NULL domain parameter", {
 
   # Test with NULL domain (should validate across all domains)
   expect_equal(validate_testcd(test_sdtm, "RS2023", NULL), "RS2023")
-  expect_equal(validate_testcd(test_sdtm, "RS2023"), "RS2023")  # NULL is default
+  expect_equal(validate_testcd(test_sdtm, "RS2023"), "RS2023") # NULL is default
 })
 
 test_that("validate_testcd handles multiple testcd values", {
@@ -98,10 +98,14 @@ test_that("validate_testcd handles multiple testcd values", {
   class(test_sdtm) <- c("sdtm", "list")
 
   # Test with multiple testcd values
-  expect_equal(validate_testcd(test_sdtm, c("RS2023", "RS2024", "RS2025")),
-               c("RS2023", "RS2024", "RS2025"))
-  expect_equal(validate_testcd(test_sdtm, c("RS2023", "RS2024", "RS2025"), "pc"),
-               c("RS2023", "RS2024", "RS2025"))
+  expect_equal(
+    validate_testcd(test_sdtm, c("RS2023", "RS2024", "RS2025")),
+    c("RS2023", "RS2024", "RS2025")
+  )
+  expect_equal(
+    validate_testcd(test_sdtm, c("RS2023", "RS2024", "RS2025"), "pc"),
+    c("RS2023", "RS2024", "RS2025")
+  )
 })
 
 test_that("validate_testcd errors for non-existent domain", {
@@ -119,10 +123,14 @@ test_that("validate_testcd errors for non-existent domain", {
   class(test_sdtm) <- c("sdtm", "list")
 
   # Test with non-existent domain
-  expect_error(validate_testcd(test_sdtm, "RS2023", "lb"),
-               "Domain lb not found in sdtm object!")
-  expect_error(validate_testcd(test_sdtm, "RS2023", "ae"),
-               "Domain ae not found in sdtm object!")
+  expect_error(
+    validate_testcd(test_sdtm, "RS2023", "lb"),
+    "Domain lb not found in sdtm object!"
+  )
+  expect_error(
+    validate_testcd(test_sdtm, "RS2023", "ae"),
+    "Domain ae not found in sdtm object!"
+  )
 })
 
 test_that("validate_testcd errors for domain without TESTCD field", {
@@ -141,8 +149,10 @@ test_that("validate_testcd errors for domain without TESTCD field", {
   class(test_sdtm) <- c("sdtm", "list")
 
   # Test with domain that has no TESTCD field
-  expect_error(validate_testcd(test_sdtm, "AGE", "dm"),
-               "DM has no DMTESTCD field!")
+  expect_error(
+    validate_testcd(test_sdtm, "AGE", "dm"),
+    "DM has no DMTESTCD field!"
+  )
 })
 
 test_that("validate_testcd errors for missing testcd in specified domain", {
@@ -161,10 +171,14 @@ test_that("validate_testcd errors for missing testcd in specified domain", {
   class(test_sdtm) <- c("sdtm", "list")
 
   # Test with testcd that doesn't exist in the specified domain
-  expect_error(validate_testcd(test_sdtm, "RS2025", "pc"),
-               "Testcd RS2025 not found in domain PC!")
-  expect_error(validate_testcd(test_sdtm, c("RS2023", "RS2025"), "pc"),
-               "Testcd RS2025 not found in domain PC!")
+  expect_error(
+    validate_testcd(test_sdtm, "RS2025", "pc"),
+    "Testcd RS2025 not found in domain PC!"
+  )
+  expect_error(
+    validate_testcd(test_sdtm, c("RS2023", "RS2025"), "pc"),
+    "Testcd RS2025 not found in domain PC!"
+  )
 })
 
 test_that("validate_testcd errors for missing testcd across all domains", {
@@ -182,10 +196,14 @@ test_that("validate_testcd errors for missing testcd across all domains", {
   class(test_sdtm) <- c("sdtm", "list")
 
   # Test with testcd that doesn't exist in any domain
-  expect_error(validate_testcd(test_sdtm, "NONEXISTENT"),
-               "Testcd NONEXISTENT not found in sdtm!")
-  expect_error(validate_testcd(test_sdtm, c("RS2023", "NONEXISTENT")),
-               "Testcd NONEXISTENT not found in sdtm!")
+  expect_error(
+    validate_testcd(test_sdtm, "NONEXISTENT"),
+    "Testcd NONEXISTENT not found in sdtm!"
+  )
+  expect_error(
+    validate_testcd(test_sdtm, c("RS2023", "NONEXISTENT")),
+    "Testcd NONEXISTENT not found in sdtm!"
+  )
 })
 
 test_that("validate_testcd handles input validation correctly", {
@@ -203,26 +221,42 @@ test_that("validate_testcd handles input validation correctly", {
   class(test_sdtm) <- c("sdtm", "list")
 
   # Test with invalid sdtm object
-  expect_error(validate_testcd("not_sdtm", "RS2023"),
-               "Input must be a sdtm object")
-  expect_error(validate_testcd(NULL, "RS2023"),
-               "Input must be a sdtm object")
+  expect_error(
+    validate_testcd("not_sdtm", "RS2023"),
+    "Input must be a sdtm object"
+  )
+  expect_error(
+    validate_testcd(NULL, "RS2023"),
+    "Input must be a sdtm object"
+  )
 
   # Test with invalid testcd parameter
-  expect_error(validate_testcd(test_sdtm, 123),
-               "must be a string value")
-  expect_error(validate_testcd(test_sdtm, TRUE),
-               "must be a string value")
-  expect_error(validate_testcd(test_sdtm, NULL),
-               "must not be NULL")
+  expect_error(
+    validate_testcd(test_sdtm, 123),
+    "must be a string value"
+  )
+  expect_error(
+    validate_testcd(test_sdtm, TRUE),
+    "must be a string value"
+  )
+  expect_error(
+    validate_testcd(test_sdtm, NULL),
+    "must not be NULL"
+  )
 
   # Test with invalid domain parameter
-  expect_error(validate_testcd(test_sdtm, "RS2023", 123),
-               "must be a string value")
-  expect_error(validate_testcd(test_sdtm, "RS2023", TRUE),
-               "must be a string value")
-  expect_error(validate_testcd(test_sdtm, "RS2023", c("pc", "dm")),
-               "must be a single value")
+  expect_error(
+    validate_testcd(test_sdtm, "RS2023", 123),
+    "must be a string value"
+  )
+  expect_error(
+    validate_testcd(test_sdtm, "RS2023", TRUE),
+    "must be a string value"
+  )
+  expect_error(
+    validate_testcd(test_sdtm, "RS2023", c("pc", "dm")),
+    "must be a single value"
+  )
 })
 
 test_that("validate_testcd works with empty domains", {
@@ -239,8 +273,10 @@ test_that("validate_testcd works with empty domains", {
   class(test_sdtm) <- c("sdtm", "list")
 
   # Test with empty domain - should error since no testcd values exist
-  expect_error(validate_testcd(test_sdtm, "RS2023", "pc"),
-               "Testcd RS2023 not found in domain PC!")
+  expect_error(
+    validate_testcd(test_sdtm, "RS2023", "pc"),
+    "Testcd RS2023 not found in domain PC!"
+  )
 })
 
 test_that("validate_testcd handles mixed case testcd values", {
@@ -289,5 +325,3 @@ test_that("validate_testcd works with single testcd in multiple domains", {
   expect_equal(validate_testcd(test_sdtm, "AGE", "dm"), "AGE")
   expect_equal(validate_testcd(test_sdtm, "AGE", "vs"), "AGE")
 })
-
-

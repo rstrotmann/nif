@@ -7,18 +7,21 @@
 #' @returns A pinboard object.
 #' @importFrom pins board_folder
 get_pinboard <- function(board = NULL) {
-  if(is.null(board)) {
+  if (is.null(board)) {
     board <- nif_option_value("pinboard")
-    if(is.na(board) | is.null(board) | board == "") {
-      board = Sys.getenv("NIF_PINBOARD")
-      if(board == "")
+    if (is.na(board) | is.null(board) | board == "") {
+      board <- Sys.getenv("NIF_PINBOARD")
+      if (board == "") {
         stop("No pinboard found")
+      }
     }
   }
 
-  if(!dir.exists(board))
+  if (!dir.exists(board)) {
     stop(paste0(
-      "Pinboard ", board, " does not exist"))
+      "Pinboard ", board, " does not exist"
+    ))
+  }
 
   board_obj <- pins::board_folder(board)
   return(board_obj)
@@ -53,10 +56,12 @@ get_pinboard <- function(board = NULL) {
 nif_pinboard <- function(path = NULL) {
   # validate_char_param(folder, "folder", allow_null = TRUE)
 
-  if(!is.null(path)) {
-    if(!path == "" & !dir.exists(path))
+  if (!is.null(path)) {
+    if (!path == "" & !dir.exists(path)) {
       stop(paste0(
-        "Pinboard ", path, " does not exist"))
+        "Pinboard ", path, " does not exist"
+      ))
+    }
     nif_option(pinboard = path)
   }
 
@@ -86,8 +91,9 @@ nif_pinboard <- function(path = NULL) {
 #' @export
 #' @keywords internal
 pin_write <- function(
-    obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
-    silent = NULL) {
+  obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
+  silent = NULL
+) {
   lifecycle::deprecate_warn("0.56.3", "pin_write()", "pb_write()")
   UseMethod("pb_write")
 }
@@ -111,8 +117,9 @@ pin_write <- function(
 #' @returns Nothing.
 #' @export
 pb_write <- function(
-    obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
-    silent = NULL) {
+  obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
+  silent = NULL
+) {
   UseMethod("pb_write")
 }
 
@@ -137,8 +144,9 @@ pb_write <- function(
 #' @importFrom utils capture.output
 #' @export
 pb_write.sdtm <- function(
-    obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
-    silent = NULL) {
+  obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
+  silent = NULL
+) {
   # input validation
   validate_sdtm(obj)
   validate_char_param(board, "board", allow_null = TRUE)
@@ -149,13 +157,15 @@ pb_write.sdtm <- function(
 
   board_obj <- get_pinboard(board)
 
-  if(is.null(name))
+  if (is.null(name)) {
     name <- paste0(summary(obj)$study, "_sdtm")
+  }
 
-  if(is.null(title))
+  if (is.null(title)) {
     title <- paste0("SDTM data from study ", summary(obj)$study)
+  }
 
-  if(is.null(dco)) {
+  if (is.null(dco)) {
     dco <- ""
   }
 
@@ -165,12 +175,17 @@ pb_write.sdtm <- function(
 
   msg <- utils::capture.output(
     pins::pin_write(
-      board_obj, obj, name = name, title = title, type = "rds",
+      board_obj, obj,
+      name = name, title = title, type = "rds",
       description = description, force_identical_write = force,
-      metadata = list(type = "sdtm", dco = dco)),
-    type = "message")
+      metadata = list(type = "sdtm", dco = dco)
+    ),
+    type = "message"
+  )
   conditional_message(
-    paste(msg, collapse = "\n"), silent = silent)
+    paste(msg, collapse = "\n"),
+    silent = silent
+  )
 }
 
 
@@ -194,8 +209,9 @@ pb_write.sdtm <- function(
 #' @importFrom utils capture.output
 #' @export
 pb_write.nif <- function(
-    obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
-    silent = NULL) {
+  obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
+  silent = NULL
+) {
   # input validation
   validate_nif(obj)
   validate_char_param(board, "board", allow_null = TRUE)
@@ -205,23 +221,31 @@ pb_write.nif <- function(
 
   board_obj <- get_pinboard(board)
 
-  if(is.null(name))
+  if (is.null(name)) {
     name <- paste0(paste(studies(obj), collapse = "_"), "_nif")
+  }
 
-  if(is.null(title))
+  if (is.null(title)) {
     title <- paste(studies(obj), collapse = "_")
+  }
 
-  if(is.null(dco))
+  if (is.null(dco)) {
     dco <- ""
+  }
 
   msg <- utils::capture.output(
     pins::pin_write(
-      board_obj, obj, name = name, title = title, type = "rds",
+      board_obj, obj,
+      name = name, title = title, type = "rds",
       force_identical_write = force,
-      metadata = list(type = "nif", dco = dco)),
-    type = "message")
+      metadata = list(type = "nif", dco = dco)
+    ),
+    type = "message"
+  )
   conditional_message(
-    paste(msg, collapse = "\n"), silent = silent)
+    paste(msg, collapse = "\n"),
+    silent = silent
+  )
 }
 
 
@@ -376,7 +400,6 @@ pb_list_sdtm <- function(board = NULL) {
 }
 
 
-
 #' List nif objects in pinboard
 #'
 #' This function is deprecated, please use [nif::pb_list_nif()] instead.
@@ -407,6 +430,3 @@ pin_list_nif <- function(board = NULL) {
 pb_list_nif <- function(board = NULL) {
   pb_list_object(board, "nif")
 }
-
-
-

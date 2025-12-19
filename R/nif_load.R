@@ -28,9 +28,11 @@ is_char_date <- function(x) {
 #' @return Logical.
 #' @noRd
 is_likely_datetime <- function(x, min_prob = 0.9) {
-  if(!is.character(x)) return(FALSE)
+  if (!is.character(x)) {
+    return(FALSE)
+  }
   overall_match <- is_char_datetime(x) | is_char_date(x)
-  overall_prob <- length(overall_match[overall_match == TRUE])/length(overall_match)
+  overall_prob <- length(overall_match[overall_match == TRUE]) / length(overall_match)
   return(overall_prob >= min_prob)
 }
 
@@ -43,33 +45,35 @@ is_likely_datetime <- function(x, min_prob = 0.9) {
 #'
 #' @return POSIXct.
 #' @noRd
-convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
+convert_char_datetime <- function(x, min_prob = 0.9, silent = NULL) {
   p <- is_likely_datetime(x, min_prob)
-  if(!p) {
+  if (!p) {
     stop("Not a date/time vector!")
   }
 
   overall_match <- is_char_datetime(x) | is_char_date(x)
   no_datetime <- unique(x[overall_match == FALSE])
 
-  if(length(which(overall_match == FALSE)) > 0) {
-  conditional_message(
-    "The following values are not valid date/times ",
-    "and will be represented by 'NA': ",
-    paste0(no_datetime, collapse=", "),
-    silent = silent)
+  if (length(which(overall_match == FALSE)) > 0) {
+    conditional_message(
+      "The following values are not valid date/times ",
+      "and will be represented by 'NA': ",
+      paste0(no_datetime, collapse = ", "),
+      silent = silent
+    )
   }
 
   date_only <- is_char_date(x) & overall_match
 
-  enum = length(which(date_only == TRUE))
-  if(enum > 0) {
+  enum <- length(which(date_only == TRUE))
+  if (enum > 0) {
     denom <- length(x[overall_match])
     temp <- paste0(
       "No time information in ", enum, "/", denom,
-      " (", round(enum/denom*100,1), "%) of the datetime values")
+      " (", round(enum / denom * 100, 1), "%) of the datetime values"
+    )
     sample_values <- unique(x[date_only])
-    if(length(sample_values) < 20) {
+    if (length(sample_values) < 20) {
       conditional_message(
         temp, "; ",
         paste0(sample_values, collapse = ", "),
@@ -84,7 +88,8 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
   }
 
   suppressWarnings(
-    lubridate::as_datetime(x, format = dtc_formats))
+    lubridate::as_datetime(x, format = dtc_formats)
+  )
 }
 
 
@@ -97,13 +102,15 @@ convert_char_datetime <- function(x, min_prob=0.9, silent=NULL) {
 #' @noRd
 rename_by_formula <- function(obj, f) {
   # input validation
-  if(!is.data.frame(obj))
+  if (!is.data.frame(obj)) {
     stop("obj must be a data frame!")
-  if(!is_formula(f))
+  }
+  if (!is_formula(f)) {
     stop("f must be a formula object!")
+  }
 
-  to_col = rlang::f_lhs(f)
-  from_term = rlang::f_rhs(f)
+  to_col <- rlang::f_lhs(f)
+  from_term <- rlang::f_rhs(f)
   tryCatch(
     error = function(e) {
       stop(paste0(
@@ -131,12 +138,13 @@ rename_by_formula <- function(obj, f) {
 #' @import stringr
 #' @export
 import_from_connection <- function(
-    connection,
-    ...,
-    format = NULL,
-    delimiter = ",",
-    no_numeric = c("USUBJID", "STUDYID"),
-    silent= NULL) {
+  connection,
+  ...,
+  format = NULL,
+  delimiter = ",",
+  no_numeric = c("USUBJID", "STUDYID"),
+  silent = NULL
+) {
   temp <- match.arg(format, choices = c("csv", "fixed_width", NULL))
 
   # Validate inputs
@@ -152,7 +160,7 @@ import_from_connection <- function(
   lines <- readLines(connection, skipNul = TRUE)
   comment_lines <- which(substr(trimws(lines), 1, 1) == "#")
   empty_lines <- which(nchar(trimws(lines)) == 0)
-  if(length(c(comment_lines, empty_lines)) != 0) {
+  if (length(c(comment_lines, empty_lines)) != 0) {
     lines <- lines[-c(comment_lines, empty_lines)]
   }
 
@@ -161,16 +169,17 @@ import_from_connection <- function(
   }
 
   # Auto-detect format
-  if(is.null(format)){
+  if (is.null(format)) {
     # Check for quoted fields first
     first_line <- gsub('"[^"]*"', "", lines[1]) # Remove quoted content
     n_comma <- str_count(first_line, delimiter)
     n_space <- str_count(first_line, "\\s+")
 
-    if(n_space == 0 & n_comma == 0)
+    if (n_space == 0 & n_comma == 0) {
       stop("Data format is not specified and can not be autmatically determined!")
-    if(n_space > 0) format <- "fixed_width"
-    if(n_comma > 0) format <- "csv"
+    }
+    if (n_space > 0) format <- "fixed_width"
+    if (n_comma > 0) format <- "csv"
 
     # Validate auto-detected format
     if (format == "fixed_width") {
@@ -192,11 +201,11 @@ import_from_connection <- function(
   }
 
   # fixed-width format, white space-separated columns
-  if(format == "fixed_width"){
+  if (format == "fixed_width") {
     # column positions
     max_width <- max(nchar(lines))
-    col_start <- str_locate_all(lines[1], "[A-Za-z_]+")[[1]][,1]
-    col_pos <- cbind(col_start, c(head(lead(col_start)-1, -1), max_width))
+    col_start <- str_locate_all(lines[1], "[A-Za-z_]+")[[1]][, 1]
+    col_pos <- cbind(col_start, c(head(lead(col_start) - 1, -1), max_width))
 
     row_vector <- function(line) {
       trimws(apply(col_pos, 1, function(x) substr(line, x[1], x[2])))
@@ -208,16 +217,18 @@ import_from_connection <- function(
     names(raw) <- row_vector(lines[1])
   }
 
-  if(format == "csv") {
+  if (format == "csv") {
     raw <- data.frame(str_split(lines[-1], delimiter, simplify = TRUE))
     colnames(raw) <- str_split(lines[1], delimiter, simplify = TRUE)
   }
 
   raw <- raw %>%
     mutate(across(
-     -c(any_of(no_numeric)),
-      ~type.convert(.x, as.is = TRUE, numerals = "no.loss",
-                    na.strings = c("NA", "."))
+      -c(any_of(no_numeric)),
+      ~ type.convert(.x,
+        as.is = TRUE, numerals = "no.loss",
+        na.strings = c("NA", ".")
+      )
     )) %>%
     mutate(across(
       where(is.character) & where(is_likely_datetime),
@@ -225,13 +236,13 @@ import_from_connection <- function(
     ))
 
   # apply renaming
-  for(f in terms) {
+  for (f in terms) {
     raw <- rename_by_formula(raw, f)
   }
 
   missing_fields <- minimal_nif_fields[!minimal_nif_fields %in% names(raw)]
 
-  if(length(missing_fields) != 0) {
+  if (length(missing_fields) != 0) {
     conditional_message(
       "Missing essential fields ",
       paste(missing_fields, collapse = ", "),
@@ -241,10 +252,10 @@ import_from_connection <- function(
     raw[missing_fields] <- NA
   }
 
-  out <- new_nif(raw) #%>%
-    # ensure_analyte() %>%
-    # ensure_parent() #%>%
-    # ensure_time()
+  out <- new_nif(raw) # %>%
+  # ensure_analyte() %>%
+  # ensure_parent() #%>%
+  # ensure_time()
 
   return(out)
 }
@@ -263,17 +274,19 @@ import_from_connection <- function(
 #' @return A nif object.
 #' @export
 import_nif <- function(
-    filename,
-    ...,
-    format = NULL,
-    delimiter = ",",
-    no_numeric = c("USUBJID", "STUDYID"),
-    silent = NULL) {
-  if(!file.exists(filename))
+  filename,
+  ...,
+  format = NULL,
+  delimiter = ",",
+  no_numeric = c("USUBJID", "STUDYID"),
+  silent = NULL
+) {
+  if (!file.exists(filename)) {
     stop(paste0(
       "File '", filename, "' not found."
     ))
-  connection = file(filename)
+  }
+  connection <- file(filename)
   on.exit(close(connection))
   import_from_connection(
     connection,
@@ -281,10 +294,6 @@ import_nif <- function(
     format = format,
     delimiter = delimiter,
     no_numeric = no_numeric,
-    silent = silent)
+    silent = silent
+  )
 }
-
-
-
-
-

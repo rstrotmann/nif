@@ -16,7 +16,7 @@
 calculate_bmi <- function(height, weight) {
   # Input validation
   if (!(is.numeric(height) || is.na(height)) ||
-      !(is.numeric(weight) || is.na(weight))) {
+    !(is.numeric(weight) || is.na(weight))) {
     stop("Height and weight must be numeric values")
   }
 
@@ -230,12 +230,12 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' @noRd
 validate_lbw_parameters <- function(weight, height, sex) {
   if (!(is.numeric(height) || is.na(height)) ||
-      !(is.numeric(weight) || is.na(weight))) {
+    !(is.numeric(weight) || is.na(weight))) {
     stop("Height and weight must be numeric values")
   }
 
   if (length(height) != length(weight) ||
-      length(height) != length(sex)) {
+    length(height) != length(sex)) {
     stop("Height and weight vectors must have the same length")
   }
 
@@ -293,7 +293,7 @@ lbm_boer <- function(weight, height, sex) {
   # Calculate LBM using Boer formula
   result[valid_inputs & is_male(sex)] <-
     (0.407 * weight[valid_inputs & is_male(sex)]) +
-    (0.267 * height[valid_inputs & is_male(sex)] ) - 19.2
+    (0.267 * height[valid_inputs & is_male(sex)]) - 19.2
 
   result[valid_inputs & !is_male(sex)] <-
     (0.252 * weight[valid_inputs & !is_male(sex)]) +
@@ -361,7 +361,7 @@ lbm_peters <- function(weight, height, sex) {
 
   result[valid_inputs] <-
     3.8 * (0.0215 * weight[valid_inputs]^0.6469 *
-             height[valid_inputs]^0.7236)
+      height[valid_inputs]^0.7236)
 
   result
 }

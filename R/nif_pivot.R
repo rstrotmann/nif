@@ -29,12 +29,13 @@
 #' head(correlate_obs(examplinib_poc_nif, "RS2023", "RS2023487A"), 3)
 #'
 correlate_obs <- function(
-    obj,
-    indep_analyte,
-    dep_analyte,
-    window = 10/60,
-    time_field = "TIME",
-    duplicate_function = mean) {
+  obj,
+  indep_analyte,
+  dep_analyte,
+  window = 10 / 60,
+  time_field = "TIME",
+  duplicate_function = mean
+) {
   # validate input
   validate_nif(obj)
 
@@ -42,23 +43,29 @@ correlate_obs <- function(
   #   stop("Input must contain the 'REF' field!")
   # }
 
-  if(!"REF" %in% names(obj)) {
+  if (!"REF" %in% names(obj)) {
     obj <- index_nif(obj)
   }
   validate_analyte(
-    obj, indep_analyte, allow_multiple = FALSE, allow_null = FALSE)
+    obj, indep_analyte,
+    allow_multiple = FALSE, allow_null = FALSE
+  )
   validate_analyte(
-    obj, dep_analyte, allow_multiple = TRUE, allow_null = FALSE)
+    obj, dep_analyte,
+    allow_multiple = TRUE, allow_null = FALSE
+  )
   validate_numeric_param(window, "window")
 
   # validate time parameter
   validate_char_param(time_field, "time_field")
   allowed_time_fields <- c("DTC", "TIME")
-  if(!time_field %in% allowed_time_fields) {
-    stop("'time_field' must be one of: ",
-         nice_enumeration(allowed_time_fields, conjunction = "or"))
+  if (!time_field %in% allowed_time_fields) {
+    stop(
+      "'time_field' must be one of: ",
+      nice_enumeration(allowed_time_fields, conjunction = "or")
+    )
   }
-  if(!time_field %in% names(obj)) {
+  if (!time_field %in% names(obj)) {
     stop("Time field '", time_field, "' not found in input!")
   }
 
@@ -75,22 +82,23 @@ correlate_obs <- function(
 
   # function definitions
   time_match <- function(x_ref) {
-    indep <- x[x$REF == x_ref,]
+    indep <- x[x$REF == x_ref, ]
     indep_tm <- indep[[time_field]]
     indep_id <- indep$ID
-    target <- y[y$ID == indep_id,]
+    target <- y[y$ID == indep_id, ]
     target_tm <- target[[time_field]]
 
     # Handle TIME (numeric) vs DTC (POSIXct) differently
-    if(time_field == "TIME") {
+    if (time_field == "TIME") {
       time_matches <- abs(target_tm - indep_tm) < window
     } else {
       time_matches <- abs(
-        as.numeric(difftime(target_tm, indep_tm, units = "hours"))) < window
+        as.numeric(difftime(target_tm, indep_tm, units = "hours"))
+      ) < window
     }
 
     y_ref <- target[time_matches, "REF"]
-    if(length(y_ref) == 0) y_ref = NA
+    if (length(y_ref) == 0) y_ref <- NA
     return(y_ref)
   }
 
@@ -100,7 +108,7 @@ correlate_obs <- function(
     y_ref <- time_match(x_ref)
 
     # Return NULL if no match
-    if(all(is.na(y_ref))) {
+    if (all(is.na(y_ref))) {
       return(NULL)
     }
 
@@ -109,13 +117,17 @@ correlate_obs <- function(
     temp <- match %>%
       reframe(
         DV = duplicate_function(DV),
-        TIME = duplicate_function(TIME), .by = ANALYTE)
+        TIME = duplicate_function(TIME), .by = ANALYTE
+      )
     dep <- temp %>%
-      pivot_longer(cols = c("DV", "TIME"),
-                   names_to = "param", values_to = "value") %>%
+      pivot_longer(
+        cols = c("DV", "TIME"),
+        names_to = "param", values_to = "value"
+      ) %>%
       mutate(param = case_match(
         .data$param, "DV" ~ ANALYTE,
-        .default = paste(ANALYTE, .data$param, sep = "_"))) %>%
+        .default = paste(ANALYTE, .data$param, sep = "_")
+      )) %>%
       select(-ANALYTE) %>%
       pivot_wider(names_from = "param", values_from = "value")
     out <- bind_cols(indep, dep)
@@ -125,7 +137,3 @@ correlate_obs <- function(
   temp <- bind_rows(lapply(x$REF, function(x) correlate_line(x)))
   return(temp)
 }
-
-
-
-

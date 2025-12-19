@@ -40,8 +40,10 @@ test_that("resolve_duplicates works with custom fields and sum function", {
 
   # Test with custom fields and sum function
   result <- resolve_duplicates(
-    test_df, fields = c("ID", "TIME"), duplicate_function = sum,
-    dependent_variable = "VALUE")
+    test_df,
+    fields = c("ID", "TIME"), duplicate_function = sum,
+    dependent_variable = "VALUE"
+  )
 
   # Should have one row per unique ID/TIME combination
   expect_equal(nrow(result), 3)
@@ -61,7 +63,9 @@ test_that("resolve_duplicates works with custom function to keep first value", {
   )
 
   result <- resolve_duplicates(
-    test_df, fields = c("ID", "TIME"), duplicate_function = function(x) x[1])
+    test_df,
+    fields = c("ID", "TIME"), duplicate_function = function(x) x[1]
+  )
   expect_equal(result$DV, c(10, 30))
 })
 
@@ -76,8 +80,10 @@ test_that("resolve_duplicates works with custom function to keep last value", {
   )
 
   result <- resolve_duplicates(
-    test_df, fields = c("ID", "TIME"),
-    duplicate_function = function(x) x[length(x)])
+    test_df,
+    fields = c("ID", "TIME"),
+    duplicate_function = function(x) x[length(x)]
+  )
   expect_equal(result$DV, c(20, 40))
 })
 
@@ -90,8 +96,10 @@ test_that("resolve_duplicates works with custom function to keep max value", {
     2,   1,     40
   )
 
-  result <- resolve_duplicates(test_df, fields = c("ID", "TIME"),
-                              duplicate_function = max)
+  result <- resolve_duplicates(test_df,
+    fields = c("ID", "TIME"),
+    duplicate_function = max
+  )
   expect_equal(result$DV, c(20, 40))
 })
 
@@ -125,9 +133,9 @@ test_that("resolve_duplicates handles empty data frame", {
 test_that("resolve_duplicates handles data frame with no duplicates", {
   no_dups_df <- tribble(
     ~ID, ~TIME, ~ANALYTE, ~DV,
-    1,   1,     "A", 10,
-    2,   2,     "B", 20,
-    3,   3,     "C", 30
+    1, 1, "A", 10,
+    2, 2, "B", 20,
+    3, 3, "C", 30
   )
 
   result <- resolve_duplicates(no_dups_df)
@@ -146,8 +154,8 @@ test_that("resolve_duplicates handles NA values", {
   )
 
   result <- resolve_duplicates(na_df)
-  expect_equal(nrow(result), 2)  # NA values should be treated as a unique value
-  expect_equal(result$DV, c(15, 35))  # Mean of values for each group
+  expect_equal(nrow(result), 2) # NA values should be treated as a unique value
+  expect_equal(result$DV, c(15, 35)) # Mean of values for each group
 })
 
 test_that("resolve_duplicates works with different data types", {
@@ -161,23 +169,22 @@ test_that("resolve_duplicates works with different data types", {
 
   result <- resolve_duplicates(test_df, fields = c("ID", "TIME"))
   expect_equal(nrow(result), 2)
-  expect_equal(result$DV, c(0.5, 0.5))  # Mean of TRUE/FALSE (1/0)
-
+  expect_equal(result$DV, c(0.5, 0.5)) # Mean of TRUE/FALSE (1/0)
 })
 
 test_that("resolve_duplicates correctly handles NA values with na.rm=TRUE", {
   # Create test data with NA values
   test_df <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE,
-      1,     0, 100,      "A",
-      1,     0,  NA,      "A",
-      2,     1, 200,      "A",
-      2,     1,  NA,      "A"
+    1, 0, 100, "A",
+    1, 0, NA, "A",
+    2, 1, 200, "A",
+    2, 1, NA, "A"
   )
 
   # With na.rm=TRUE, only non-NA values should be used
   result_na_rm_true <- resolve_duplicates(test_df, na.rm = TRUE)
-  expect_equal(nrow(result_na_rm_true), 2)  # One row for each ID/TIME combo
+  expect_equal(nrow(result_na_rm_true), 2) # One row for each ID/TIME combo
   expect_equal(result_na_rm_true$DV[result_na_rm_true$TIME == 0], 100)
   expect_equal(result_na_rm_true$DV[result_na_rm_true$TIME == 1], 200)
 
@@ -203,20 +210,20 @@ test_that("resolve_duplicates works with custom duplicate_identifiers", {
   # Create test data with duplicates
   test_df <- tibble::tribble(
     ~ID, ~TIME, ~ANALYTE, ~DV, ~NTIME, ~TRTDY,
-    1,     0,      "A",  10,      0,      0,
-    1,     0,      "A",  20,      0,      0,
-    1,     0,      "A",  12,      0,      1,
-    1,     0,      "A",  22,      0,      1,
-    2,     1,      "B",  30,      1,      0,
-    2,     1,      "B",  40,      1,      0,
-    2,     1,      "B",  32,      1,      1,
-    2,     1,      "B",  42,      1,      1,
-    3,     2,      "C",  50,      2,      0,
-    3,     2,      "C",  60,      2,      0,
-    3,     2,      "C",  70,      2,      0,
-    3,     2,      "C",  52,      2,      1,
-    3,     2,      "C",  62,      2,      1,
-    3,     2,      "C",  72,      2,      1
+    1, 0, "A", 10, 0, 0,
+    1, 0, "A", 20, 0, 0,
+    1, 0, "A", 12, 0, 1,
+    1, 0, "A", 22, 0, 1,
+    2, 1, "B", 30, 1, 0,
+    2, 1, "B", 40, 1, 0,
+    2, 1, "B", 32, 1, 1,
+    2, 1, "B", 42, 1, 1,
+    3, 2, "C", 50, 2, 0,
+    3, 2, "C", 60, 2, 0,
+    3, 2, "C", 70, 2, 0,
+    3, 2, "C", 52, 2, 1,
+    3, 2, "C", 62, 2, 1,
+    3, 2, "C", 72, 2, 1
   )
 
   # Test with default fields and mean function
@@ -225,10 +232,11 @@ test_that("resolve_duplicates works with custom duplicate_identifiers", {
 
   # Test with custom duplicate identification fields
   result <- resolve_duplicates(
-    test_df, fields = c("NTIME", "TRTDY"))
+    test_df,
+    fields = c("NTIME", "TRTDY")
+  )
   expect_equal(nrow(result), 6)
 })
-
 
 
 # test_that("resolve_duplicates workds with duplicats that have different NTIME", {
@@ -335,15 +343,15 @@ test_that("resolve_duplicates handles MDV column correctly", {
     ~ID, ~TIME, ~DV, ~MDV,
     1,   0,     10,  0,
     1,   0,     20,  0,
-    1,   0,     30,  1,  # Should be excluded
+    1,   0,     30,  1, # Should be excluded
     2,   1,     40,  0,
-    2,   1,     50,  1   # Should be excluded
+    2,   1,     50,  1 # Should be excluded
   )
 
   result <- resolve_duplicates(test_df, fields = "TIME")
   expect_equal(nrow(result), 2)
-  expect_equal(result$DV[result$TIME == 0], 15)  # Mean of 10 and 20
-  expect_equal(result$DV[result$TIME == 1], 40)  # Only 40 remains
+  expect_equal(result$DV[result$TIME == 0], 15) # Mean of 10 and 20
+  expect_equal(result$DV[result$TIME == 1], 40) # Only 40 remains
 })
 
 test_that("resolve_duplicates handles other columns with consistent values", {
@@ -370,8 +378,8 @@ test_that("resolve_duplicates handles other columns with all NA values", {
   # but our function attempts to preserve the original type
   test_df <- tribble(
     ~ID, ~TIME, ~DV, ~NUM_NA, ~CHAR_NA, ~INT_NA,
-    1,   0,     10,  NA_real_, NA_character_, NA_integer_,
-    1,   0,     20,  NA_real_, NA_character_, NA_integer_
+    1, 0, 10, NA_real_, NA_character_, NA_integer_,
+    1, 0, 20, NA_real_, NA_character_, NA_integer_
   )
 
   result <- resolve_duplicates(test_df, fields = "TIME")
@@ -428,8 +436,8 @@ test_that("resolve_duplicates handles single field grouping", {
   )
 
   result <- resolve_duplicates(test_df, fields = "TIME")
-  expect_equal(nrow(result), 2)  # Two unique TIME values
-  expect_equal(result$DV[result$TIME == 0], 30)  # Mean of 10, 20, 40, 50
+  expect_equal(nrow(result), 2) # Two unique TIME values
+  expect_equal(result$DV[result$TIME == 0], 30) # Mean of 10, 20, 40, 50
   expect_equal(result$DV[result$TIME == 1], 30)
 })
 
@@ -693,7 +701,7 @@ test_that("resolve_duplicates handles numeric grouping fields", {
 
   result <- resolve_duplicates(test_df, fields = "TIME")
   expect_equal(nrow(result), 2)
-  expect_equal(result$DV[result$TIME == 0.5], (10 + 20 + 40) / 3)  # Mean of 10, 20, 40
+  expect_equal(result$DV[result$TIME == 0.5], (10 + 20 + 40) / 3) # Mean of 10, 20, 40
   expect_equal(result$DV[result$TIME == 1.0], 30)
 })
 
@@ -709,7 +717,6 @@ test_that("resolve_duplicates handles character grouping fields", {
 
   result <- resolve_duplicates(test_df, fields = "TIME")
   expect_equal(nrow(result), 2)
-  expect_equal(result$DV[result$TIME == "A"], (10 + 20 + 40) / 3)  # Mean of 10, 20, 40
+  expect_equal(result$DV[result$TIME == "A"], (10 + 20 + 40) / 3) # Mean of 10, 20, 40
   expect_equal(result$DV[result$TIME == "B"], 30)
 })
-

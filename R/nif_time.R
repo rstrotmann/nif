@@ -68,14 +68,16 @@ make_time <- function(obj) {
   }
 
   # Handle empty data frame
-  if(nrow(obj) == 0) {
+  if (nrow(obj) == 0) {
     return(
       obj %>%
         mutate(
           TIME = numeric(0),
           TAFD = numeric(0),
-          TAD = numeric(0)) %>%
-        new_nif())
+          TAD = numeric(0)
+        ) %>%
+        new_nif()
+    )
   }
 
   # Validate DTC column
@@ -86,12 +88,10 @@ make_time <- function(obj) {
   # Calculate reference time fields
   result <- obj %>%
     as.data.frame() %>%
-
     # Group by ID to find first time point for each subject
     group_by(.data$ID) %>%
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) %>%
     ungroup() %>%
-
     # Group by ID and PARENT to find first administration for each drug
     group_by(.data$ID, .data$PARENT) %>%
     mutate(
@@ -110,9 +110,9 @@ make_time <- function(obj) {
     mutate(
       TIME = round(
         as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "hours")),
-        digits = 3)
+        digits = 3
+      )
     ) %>%
-
     # TAFD: time since first administration of parent (in hours)
     mutate(
       TAFD = ifelse(
@@ -120,10 +120,10 @@ make_time <- function(obj) {
         NA_real_,
         round(
           as.numeric(difftime(.data$DTC, .data$FIRSTADMIN, units = "hours")),
-          digits = 3)
+          digits = 3
+        )
       )
     ) %>%
-
     # Remove temporary columns
     select(-c("FIRSTDTC", "FIRSTADMIN")) %>%
     # Convert to nif object before adding TAD
@@ -149,7 +149,8 @@ make_time_from_TIME <- function(obj) {
   obj %>%
     ensure_parent() %>%
     assertr::verify(assertr::has_all_names(
-      "ID", "CMT", "EVID")) %>%
+      "ID", "CMT", "EVID"
+    )) %>%
     group_by(.data$ID, .data$PARENT) %>%
     mutate(.first_time = min(.data$TIME, na.rm = TRUE)) %>%
     mutate(.first_admin = min(.data$TIME[.data$EVID == 1], na.rm = TRUE)) %>%
@@ -247,7 +248,7 @@ add_tafd <- function(nif) {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
   }
 
-  if(any(is.na(nif$ID))) {
+  if (any(is.na(nif$ID))) {
     stop("ID colum must not contain NA values!")
   }
 
@@ -268,16 +269,19 @@ add_tafd <- function(nif) {
   }
 
   # Check for dosing events
-  if(nif %>% filter(.data$EVID == 1) %>% nrow() == 0) {
+  if (nif %>% filter(.data$EVID == 1) %>% nrow() == 0) {
     stop("No dosing event, TAFD cannot be calculated")
   }
 
   # Safely ensure parent exists
-  tryCatch({
-    nif <- ensure_parent(nif)
-  }, error = function(e) {
-    stop("Failed to ensure PARENT column: ", e$message)
-  })
+  tryCatch(
+    {
+      nif <- ensure_parent(nif)
+    },
+    error = function(e) {
+      stop("Failed to ensure PARENT column: ", e$message)
+    }
+  )
 
   result <- nif %>%
     arrange(.data$ID, .data$PARENT, .data$TIME) %>%
@@ -304,7 +308,7 @@ add_trtdy <- function(obj) {
     assertr::verify(is.POSIXct(.data$DTC)) %>%
     dplyr::group_by(.data$ID) %>%
     dplyr::mutate(FIRSTTRTDTC = min(.data$DTC[.data$EVID == 1],
-                                    na.rm = TRUE
+      na.rm = TRUE
     )) %>%
     dplyr::ungroup() %>%
     mutate(TRTDY = interval(
@@ -312,7 +316,7 @@ add_trtdy <- function(obj) {
       date(.data$DTC)
     ) / days(1)) %>%
     mutate(TRTDY = case_when(.data$TRTDY < 0 ~ .data$TRTDY,
-                             .default = .data$TRTDY + 1
+      .default = .data$TRTDY + 1
     )) %>%
     select(-FIRSTTRTDTC) %>%
     new_nif()

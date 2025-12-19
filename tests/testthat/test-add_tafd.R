@@ -183,7 +183,8 @@ test_that("add_tafd handles data with no dosing events", {
   # Should throw an error since there are no dosing events
   expect_error(
     result <- add_tafd(test_data),
-    "No dosing event, TAFD cannot be calculated")
+    "No dosing event, TAFD cannot be calculated"
+  )
 })
 
 test_that("add_tafd returns a nif object", {
@@ -265,7 +266,8 @@ test_that("add_tafd correctly handles NA values in ID column", {
   # Should handle NA in ID column without error
   expect_error(
     result <- add_tafd(test_data),
-    "ID colum must not contain NA values!")
+    "ID colum must not contain NA values!"
+  )
 })
 
 test_that("add_tafd respects parent grouping with mixed dosing times", {
@@ -273,7 +275,7 @@ test_that("add_tafd respects parent grouping with mixed dosing times", {
     ~ID, ~TIME, ~EVID, ~PARENT, ~CMT,
     1,   0,     1,     "DRUG1", 1,
     1,   1,     0,     "DRUG1", 2,
-    1,   3,     1,     "DRUG2", 3,  # Later first dose for DRUG2
+    1,   3,     1,     "DRUG2", 3, # Later first dose for DRUG2
     1,   4,     0,     "DRUG2", 4
   ) %>%
     new_nif()
@@ -302,4 +304,3 @@ test_that("add_tafd works with CMT column but no PARENT column", {
   # Check PARENT was generated
   expect_true("PARENT" %in% names(result))
 })
-

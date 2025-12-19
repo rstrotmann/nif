@@ -53,15 +53,16 @@ ddt <- function(obj, silent = NULL) {
     mutate(TYPE = case_match(
       EVID,
       0 ~ "observation",
-      1 ~ "administration")) %>%
+      1 ~ "administration"
+    )) %>%
     mutate(DESC = paste(.data$CMT, "=", .data$ANALYTE, .data$TYPE))
 
   out[out$name == "CMT", "description"] <- paste(temp$DESC, collapse = ", ")
   out[out$name == "CMT", "type"] <- paste(temp$CMT, collapse = ", ")
 
   # race
-  if("RACE" %in% names(obj)) {
-    if(inherits(obj$RACE, "numeric")) {
+  if ("RACE" %in% names(obj)) {
+    if (inherits(obj$RACE, "numeric")) {
       temp <- obj %>%
         as.data.frame() %>%
         distinct(RACE) %>%
@@ -76,7 +77,7 @@ ddt <- function(obj, silent = NULL) {
   # further fields
   further_name <- setdiff(names(obj), unique(out$name))
   further_type <- as.character(lapply(obj, class)[further_name])
-  further = data.frame(name = further_name, type = further_type)
+  further <- data.frame(name = further_name, type = further_type)
 
   out <- bind_rows(out, further) %>%
     filter(.data$name %in% names(obj)) %>%
@@ -105,33 +106,36 @@ ddt <- function(obj, silent = NULL) {
 #' @returns A data frame.
 #' @export
 add_dd <- function(
-    obj, name, definition, type, description, unit = NA_character_, source = "") {
+  obj, name, definition, type, description, unit = NA_character_, source = ""
+) {
   # validate input
   ddt_fields <- c("name", "definition", "type", "description", "unit", "source")
-  if(!inherits(obj, "data.frame"))
+  if (!inherits(obj, "data.frame")) {
     stop("obj must be a data frame")
+  }
 
   missing_fields <- setdiff(ddt_fields, names(obj))
-  if(length(missing_fields) > 0)
+  if (length(missing_fields) > 0) {
     stop(paste0(
       "missing fields in ddt: ", nice_enumeration(missing_fields)
     ))
+  }
 
   validate_char_param(name, "name")
   validate_char_param(definition, "definition")
   validate_char_param(type, "type")
   validate_char_param(description, "description")
-  if(!is.na(unit))
+  if (!is.na(unit)) {
     validate_char_param(unit, "unit")
+  }
   validate_char_param(source, "source")
 
   out <- bind_rows(
     obj,
-    c(name=name, definition=definition, type=type, description=description,
-      unit=unit, source=source)
+    c(
+      name = name, definition = definition, type = type, description = description,
+      unit = unit, source = source
+    )
   )
   return(out)
 }
-
-
-

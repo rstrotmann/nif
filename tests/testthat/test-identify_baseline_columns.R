@@ -212,10 +212,10 @@ test_that("identify_baseline_columns handles factor baseline columns", {
 test_that("identify_baseline_columns handles date baseline columns", {
   df <- tibble::tribble(
     ~ID, ~BIRTHDATE, ~START_DATE, ~TIME, ~DV,
-    1,   "2000-01-01", "2023-01-01", 0,   10,
-    1,   "2000-01-01", "2023-01-01", 1,   12,
-    2,   "1995-05-15", "2023-02-01", 0,   8,
-    2,   "1995-05-15", "2023-02-01", 1,   9
+    1, "2000-01-01", "2023-01-01", 0, 10,
+    1, "2000-01-01", "2023-01-01", 1, 12,
+    2, "1995-05-15", "2023-02-01", 0, 8,
+    2, "1995-05-15", "2023-02-01", 1, 9
   ) %>%
     mutate(
       BIRTHDATE = as.Date(BIRTHDATE),
@@ -230,10 +230,10 @@ test_that("identify_baseline_columns handles date baseline columns", {
 test_that("identify_baseline_columns handles mixed data types", {
   df <- tibble::tribble(
     ~ID, ~SEX, ~AGE, ~TREATED, ~START_DATE, ~TIME, ~DV,
-    1,   "M",  25,   TRUE,     "2023-01-01", 0,     10,
-    1,   "M",  25,   TRUE,     "2023-01-01", 1,     12,
-    2,   "F",  30,   FALSE,    "2023-02-01", 0,     8,
-    2,   "F",  30,   FALSE,    "2023-02-01", 1,     9
+    1, "M", 25, TRUE, "2023-01-01", 0, 10,
+    1, "M", 25, TRUE, "2023-01-01", 1, 12,
+    2, "F", 30, FALSE, "2023-02-01", 0, 8,
+    2, "F", 30, FALSE, "2023-02-01", 1, 9
   ) %>%
     mutate(START_DATE = as.Date(START_DATE))
 
@@ -342,8 +342,8 @@ test_that("identify_baseline_columns handles large number of IDs", {
     df <- df %>%
       bind_rows(tibble::tribble(
         ~ID, ~SEX, ~AGE, ~TIME, ~DV,
-        i,   ifelse(i %% 2 == 0, "F", "M"), 20 + (i %% 50), 0, 10 + i,
-        i,   ifelse(i %% 2 == 0, "F", "M"), 20 + (i %% 50), 1, 12 + i
+        i, ifelse(i %% 2 == 0, "F", "M"), 20 + (i %% 50), 0, 10 + i,
+        i, ifelse(i %% 2 == 0, "F", "M"), 20 + (i %% 50), 1, 12 + i
       ))
   }
 
@@ -456,5 +456,3 @@ test_that("identify_baseline_columns handles data.frame input", {
   result <- identify_baseline_columns(df, id_col = "ID")
   expect_equal(sort(result), c("AGE", "SEX"))
 })
-
-

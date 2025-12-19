@@ -11,10 +11,10 @@
 #' @keywords internal
 #' @export
 filter_correct_date_format <- function(
-    obj,
-    verbose = TRUE,
-    silent = NULL
-    ) {
+  obj,
+  verbose = TRUE,
+  silent = NULL
+) {
   # Input validation
   if (!is.data.frame(obj)) {
     stop("Input must be a data frame")
@@ -34,9 +34,10 @@ filter_correct_date_format <- function(
 
   if (nrow(temp) > 0) {
     out <- paste0(
-     out,
-     nrow(temp),
-     " rows containing DTC fields with incomplete date format were ignored!")
+      out,
+      nrow(temp),
+      " rows containing DTC fields with incomplete date format were ignored!"
+    )
 
     if (verbose) {
       out <- paste0(
@@ -44,10 +45,11 @@ filter_correct_date_format <- function(
         df_to_string(
           select(
             temp,
-            any_of(c("USUBJID", "DOMAIN", ends_with("DTC")))),
-            indent = 2
-            )
+            any_of(c("USUBJID", "DOMAIN", ends_with("DTC")))
+          ),
+          indent = 2
         )
+      )
     }
     conditional_message(out, silent = silent)
 
@@ -153,7 +155,8 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
 
   if (nrow(temp) > 0) {
     out <- paste0(
-      out, "Missing time in ", nrow(temp), " rows!")
+      out, "Missing time in ", nrow(temp), " rows!"
+    )
     if (verbose) {
       out <- paste0(out, "\n", df_to_string(temp, indent = 2), "\n")
     }
@@ -261,16 +264,17 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' plot(examplinib_poc, domain = "pc")
 #' plot(examplinib_poc, domain = "vs", lines = FALSE, points = TRUE)
 plot.sdtm <- function(
-    x,
-    domain = "dm",
-    usubjid = NULL,
-    lines = FALSE,
-    points = TRUE,
-    analyte = NULL,
-    log = FALSE,
-    legend = FALSE,
-    subject_filter = TRUE,
-    ...) {
+  x,
+  domain = "dm",
+  usubjid = NULL,
+  lines = FALSE,
+  points = TRUE,
+  analyte = NULL,
+  log = FALSE,
+  legend = FALSE,
+  subject_filter = TRUE,
+  ...
+) {
   obj <- x %>%
     domain(domain) %>%
     filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
@@ -290,9 +294,11 @@ plot.sdtm <- function(
           group = interaction(.data$ID, .data$PCTESTCD),
           color = .data$PCTESTCD
         )) +
-        {if (points == TRUE) {
+        {
+          if (points == TRUE) {
             ggplot2::geom_point()
-          }} +
+          }
+        } +
         ggplot2::scale_y_discrete(
           labels = NULL, breaks = NULL, name = "USUBJID"
         ) +
@@ -322,26 +328,32 @@ plot.sdtm <- function(
           y = .data$ID,
           yend = .data$ID
         )) +
-        {if (points == TRUE) {
+        {
+          if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$EXSTDTC, y = .data$ID
             ))
-          }} +
-        {if (points == TRUE) {
+          }
+        } +
+        {
+          if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$EXENDTC, y = .data$ID
             ))
-          }} +
+          }
+        } +
         ggplot2::scale_y_discrete(name = "USUBJID", labels = NULL) +
         ggplot2::scale_x_datetime(
           name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d"
         ) +
         ggplot2::theme_bw() +
-        {if (legend == TRUE) {
+        {
+          if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }} +
+          }
+        } +
         ggplot2::ggtitle(paste0(
           "Study ", distinct(obj, .data$STUDYID), ", EX"
         )) +
@@ -362,16 +374,20 @@ plot.sdtm <- function(
           y = .data$ID,
           yend = .data$ID
         )) +
-        {if (points == TRUE) {
+        {
+          if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$RFSTDTC, y = .data$ID
             ))
-          }} +
-        {if (points == TRUE) {
+          }
+        } +
+        {
+          if (points == TRUE) {
             ggplot2::geom_point(ggplot2::aes(
               x = .data$RFENDTC, y = .data$ID
             ))
-          }} +
+          }
+        } +
         ggplot2::scale_y_discrete(
           labels = NULL, breaks = NULL, name = "USUBJID"
         ) +
@@ -379,11 +395,13 @@ plot.sdtm <- function(
           name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d"
         ) +
         ggplot2::theme_bw() +
-        {if (legend == TRUE) {
+        {
+          if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }} +
+          }
+        } +
         ggplot2::ggtitle(
           paste0("Study ", distinct(obj, .data$STUDYID), ", DM")
         ) +
@@ -404,8 +422,12 @@ plot.sdtm <- function(
           group = interaction(.data$ID, .data$LBTESTCD),
           color = .data$LBTESTCD
         )) +
-        {if (lines == TRUE) ggplot2::geom_line()} +
-        {if (points == TRUE) ggplot2::geom_point()} +
+        {
+          if (lines == TRUE) ggplot2::geom_line()
+        } +
+        {
+          if (points == TRUE) ggplot2::geom_point()
+        } +
         ggplot2::scale_y_discrete(
           labels = NULL, breaks = NULL, name = "USUBJID"
         ) +
@@ -413,11 +435,13 @@ plot.sdtm <- function(
           name = "LBDTC", date_labels = "%Y-%m-%d"
         ) +
         ggplot2::theme_bw() +
-        {if (legend == TRUE) {
+        {
+          if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }} +
+          }
+        } +
         ggplot2::ggtitle(
           paste0("Study ", distinct(obj, .data$STUDYID), ", LB")
         ) +
@@ -436,17 +460,26 @@ plot.sdtm <- function(
           group = interaction(.data$USUBJID, .data$VSTESTCD),
           color = .data$VSTESTCD
         )) +
-        {if (lines == TRUE) ggplot2::geom_line()} +
-        {if (points == TRUE) ggplot2::geom_point()} +
-        {if (log == TRUE) ggplot2::scale_y_log10()} +
+        {
+          if (lines == TRUE) ggplot2::geom_line()
+        } +
+        {
+          if (points == TRUE) ggplot2::geom_point()
+        } +
+        {
+          if (log == TRUE) ggplot2::scale_y_log10()
+        } +
         ggplot2::theme_bw() +
-        {if (legend == TRUE) {
+        {
+          if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }} +
+          }
+        } +
         ggplot2::ggtitle(
-          paste0("Study ", distinct(obj, .data$STUDYID), ", PC")) +
+          paste0("Study ", distinct(obj, .data$STUDYID), ", PC")
+        ) +
         watermark()
     )
   }
@@ -466,7 +499,9 @@ plot.sdtm <- function(
         ggplot2::ggplot(ggplot2::aes(
           x = .data[[dtc_variable]], y = .data$ID
         )) +
-        {if (points == TRUE) ggplot2::geom_point()} +
+        {
+          if (points == TRUE) ggplot2::geom_point()
+        } +
         ggplot2::geom_segment(ggplot2::aes(
           x = .data$min_time, xend = .data$max_time,
           y = .data$ID, yend = .data$ID
@@ -475,11 +510,13 @@ plot.sdtm <- function(
         ggplot2::scale_x_datetime(
           name = dtc_variable, date_labels = "%Y-%m-%d"
         ) +
-        {if (legend == TRUE) {
+        {
+          if (legend == TRUE) {
             ggplot2::theme(legend.position = "bottom")
           } else {
             ggplot2::theme(legend.position = "none")
-          }} +
+          }
+        } +
         ggplot2::theme_bw() +
         ggplot2::ggtitle(paste0(
           "Study ", distinct(obj, .data$STUDYID), ", ",
@@ -518,8 +555,9 @@ plot.sdtm <- function(
 #' @return A data frame.
 #' @export
 ae_summary <- function(
-    sdtm_data, level = "AESOC", show_cd = FALSE, group = NULL,
-    order_by_subj = FALSE, ae_filter = "TRUE") {
+  sdtm_data, level = "AESOC", show_cd = FALSE, group = NULL,
+  order_by_subj = FALSE, ae_filter = "TRUE"
+) {
   # Input validation
   if (!inherits(sdtm_data, "sdtm")) {
     stop("Input must be an SDTM object")
@@ -563,13 +601,16 @@ ae_summary <- function(
   }
 
   # Apply filter safely
-  tryCatch({
-    filter_expr <- parse(text = ae_filter)
-    ae_filtered <- ae %>%
-      filter(eval(filter_expr))
-  }, error = function(e) {
-    stop("Invalid filter expression: ", e$message)
-  })
+  tryCatch(
+    {
+      filter_expr <- parse(text = ae_filter)
+      ae_filtered <- ae %>%
+        filter(eval(filter_expr))
+    },
+    error = function(e) {
+      stop("Invalid filter expression: ", e$message)
+    }
+  )
 
   # Calculate summary
   result <- ae_filtered %>%

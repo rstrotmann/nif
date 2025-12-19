@@ -33,8 +33,10 @@ examplinib_sad$domains[["pp"]] <- examplinib_sad_nif %>%
 examplinib_poc_nif <- new_nif() %>%
   add_administration(examplinib_poc, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(examplinib_poc, "pc", "RS2023", cmt = 2) %>%
-  add_observation(examplinib_poc, "pc", "RS2023487A", parent = "RS2023",
-                  cmt = 3) %>%
+  add_observation(examplinib_poc, "pc", "RS2023487A",
+    parent = "RS2023",
+    cmt = 3
+  ) %>%
   add_baseline(examplinib_poc, "lb", "CREAT") %>%
   add_bl_crcl()
 

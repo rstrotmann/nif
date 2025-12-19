@@ -22,8 +22,10 @@ sdtm_missing_times <- function(sdtm, fields) {
       nrow()
   }
 
-  data.frame(field = fields,
-             missing = as.numeric(lapply(fields, n_missing_time)),
-             total = as.numeric(lapply(fields, n_total))) %>%
-    mutate(percent_missing = round(.data$missing/.data$total*100, 1))
+  data.frame(
+    field = fields,
+    missing = as.numeric(lapply(fields, n_missing_time)),
+    total = as.numeric(lapply(fields, n_total))
+  ) %>%
+    mutate(percent_missing = round(.data$missing / .data$total * 100, 1))
 }

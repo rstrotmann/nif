@@ -80,7 +80,7 @@ nif_viewer <- function(nif) {
           selected = sbs[1]
         ),
         shiny::actionButton("prev.sb", "previous"),
-        shiny::actionButton("next.sb", "next") #,
+        shiny::actionButton("next.sb", "next") # ,
       ),
 
       # Column 2
@@ -143,175 +143,200 @@ nif_viewer <- function(nif) {
   )
 
 
-
   nif_viewer.server <- function(input, output, session) {
     current_nif <- reactiveVal(nif)
     current_sbs <- reactiveVal(sbs)
     current_analytes <- reactiveVal(analytes)
 
     max_time <- function() {
-      tryCatch({
-        if (input$timeselect == "indiv") {
-          return(nif %>%
-            dplyr::filter(.data$USUBJID == input$subject) %>%
-            dplyr::pull(.data$TIME) %>%
-            max())
-        } else if (input$timeselect == "global") {
-          return(max(nif$TIME))
-        } else if (input$timeselect == "custom") {
-          if (is.na(input$maxtime) || input$maxtime <= 0) {
-            stop("Custom max time must be a positive number")
+      tryCatch(
+        {
+          if (input$timeselect == "indiv") {
+            return(nif %>%
+              dplyr::filter(.data$USUBJID == input$subject) %>%
+              dplyr::pull(.data$TIME) %>%
+              max())
+          } else if (input$timeselect == "global") {
+            return(max(nif$TIME))
+          } else if (input$timeselect == "custom") {
+            if (is.na(input$maxtime) || input$maxtime <= 0) {
+              stop("Custom max time must be a positive number")
+            }
+            return(input$maxtime)
           }
-          return(input$maxtime)
+        },
+        error = function(e) {
+          shiny::showNotification(
+            paste("Error calculating max time:", e$message),
+            type = "error"
+          )
+          return(NA)
         }
-      }, error = function(e) {
-        shiny::showNotification(
-          paste("Error calculating max time:", e$message),
-          type = "error"
-        )
-        return(NA)
-      })
+      )
     }
 
     output$plot.pc <- shiny::renderPlot(
       {
-        tryCatch({
-          y_scale_type <- ifelse(input$log_yscale, "log", "lin")
-          suppressWarnings(print(
-            nif::nif_plot_id(
-              current_nif(),
-              time_field = input$time,
-              input$subject,
-              analyte = input$analytes,
-              max_time = max_time(),
-              log = input$log_yscale,
-              point_size = 3,
-              imp = input$admin
+        tryCatch(
+          {
+            y_scale_type <- ifelse(input$log_yscale, "log", "lin")
+            suppressWarnings(print(
+              nif::nif_plot_id(
+                current_nif(),
+                time_field = input$time,
+                input$subject,
+                analyte = input$analytes,
+                max_time = max_time(),
+                log = input$log_yscale,
+                point_size = 3,
+                imp = input$admin
+              )
+            ))
+          },
+          error = function(e) {
+            shiny::showNotification(
+              paste("Error creating concentration plot:", e$message),
+              type = "error"
             )
-          ))
-        }, error = function(e) {
-          shiny::showNotification(
-            paste("Error creating concentration plot:", e$message),
-            type = "error"
-          )
-          # Return empty plot with error message
-          ggplot2::ggplot() +
-            ggplot2::annotate("text", x = 0, y = 0,
-                            label = paste("Error:", e$message)) +
-            ggplot2::theme_void()
-        })
+            # Return empty plot with error message
+            ggplot2::ggplot() +
+              ggplot2::annotate("text",
+                x = 0, y = 0,
+                label = paste("Error:", e$message)
+              ) +
+              ggplot2::theme_void()
+          }
+        )
       },
       height = 350
     )
 
     output$plot.dose <- shiny::renderPlot(
       {
-        tryCatch({
-          suppressWarnings(print(
-            nif::dose_plot_id(current_nif(),
-                            input$subject,
-                            time_field = input$time,
-                            point_size = 3,
-                            max_dose = max_dose,
-                            max_time = max_time())
-          ))
-        }, error = function(e) {
-          shiny::showNotification(
-            paste("Error creating dose plot:", e$message),
-            type = "error"
-          )
-          # Return empty plot with error message
-          ggplot2::ggplot() +
-            ggplot2::annotate("text", x = 0, y = 0,
-                            label = paste("Error:", e$message)) +
-            ggplot2::theme_void()
-        })
+        tryCatch(
+          {
+            suppressWarnings(print(
+              nif::dose_plot_id(current_nif(),
+                input$subject,
+                time_field = input$time,
+                point_size = 3,
+                max_dose = max_dose,
+                max_time = max_time()
+              )
+            ))
+          },
+          error = function(e) {
+            shiny::showNotification(
+              paste("Error creating dose plot:", e$message),
+              type = "error"
+            )
+            # Return empty plot with error message
+            ggplot2::ggplot() +
+              ggplot2::annotate("text",
+                x = 0, y = 0,
+                label = paste("Error:", e$message)
+              ) +
+              ggplot2::theme_void()
+          }
+        )
       },
       height = 250
     )
 
     shiny::observeEvent(input$prev.sb, {
-      tryCatch({
-        current <- which(current_sbs() == input$subject)
-        if (current > 0) {
-          shiny::updateSelectInput(session, "subject",
-            choices = current_sbs(),
-            selected = current_sbs()[current - 1]
+      tryCatch(
+        {
+          current <- which(current_sbs() == input$subject)
+          if (current > 0) {
+            shiny::updateSelectInput(session, "subject",
+              choices = current_sbs(),
+              selected = current_sbs()[current - 1]
+            )
+          }
+        },
+        error = function(e) {
+          shiny::showNotification(
+            paste("Error navigating to previous subject:", e$message),
+            type = "error"
           )
         }
-      }, error = function(e) {
-        shiny::showNotification(
-          paste("Error navigating to previous subject:", e$message),
-          type = "error"
-        )
-      })
+      )
     })
 
     shiny::observeEvent(input$next.sb, {
-      tryCatch({
-        current <- which(current_sbs() == input$subject)
-        if (current < length(current_sbs())) {
-          shiny::updateSelectInput(session, "subject",
-            choices = current_sbs(),
-            selected = current_sbs()[current + 1]
+      tryCatch(
+        {
+          current <- which(current_sbs() == input$subject)
+          if (current < length(current_sbs())) {
+            shiny::updateSelectInput(session, "subject",
+              choices = current_sbs(),
+              selected = current_sbs()[current + 1]
+            )
+          }
+        },
+        error = function(e) {
+          shiny::showNotification(
+            paste("Error navigating to next subject:", e$message),
+            type = "error"
           )
         }
-      }, error = function(e) {
-        shiny::showNotification(
-          paste("Error navigating to next subject:", e$message),
-          type = "error"
-        )
-      })
+      )
     })
 
     shiny::observeEvent(input$timeselect, {
-      tryCatch({
-        if (input$timeselect != "custom") {
-          shinyjs::disable("maxtime")
-        } else {
-          shinyjs::enable("maxtime")
+      tryCatch(
+        {
+          if (input$timeselect != "custom") {
+            shinyjs::disable("maxtime")
+          } else {
+            shinyjs::enable("maxtime")
+          }
+        },
+        error = function(e) {
+          shiny::showNotification(
+            paste("Error updating time selection:", e$message),
+            type = "error"
+          )
         }
-      }, error = function(e) {
-        shiny::showNotification(
-          paste("Error updating time selection:", e$message),
-          type = "error"
-        )
-      })
+      )
     })
 
     shiny::observeEvent(input$dose, {
-      tryCatch({
-        if (input$dose != "all") {
-          filtered_nif <- nif %>%
-            filter(DOSE == as.numeric(input$dose))
+      tryCatch(
+        {
+          if (input$dose != "all") {
+            filtered_nif <- nif %>%
+              filter(DOSE == as.numeric(input$dose))
 
-          if (nrow(filtered_nif) == 0) {
-            stop("No data available for selected dose")
+            if (nrow(filtered_nif) == 0) {
+              stop("No data available for selected dose")
+            }
+
+            current_nif(filtered_nif)
+          } else {
+            current_nif(nif)
           }
 
-          current_nif(filtered_nif)
-        } else {
-          current_nif(nif)
+          current_sbs(current_nif() %>%
+            distinct(.data$USUBJID) %>%
+            pull(.data$USUBJID))
+
+          if (length(current_sbs()) == 0) {
+            stop("No subjects available for selected dose")
+          }
+
+          updateSelectInput(
+            session, "subject",
+            choices = current_sbs(), selected = current_sbs()[1]
+          )
+        },
+        error = function(e) {
+          shiny::showNotification(
+            paste("Error updating dose filter:", e$message),
+            type = "error"
+          )
         }
-
-        current_sbs(current_nif() %>%
-          distinct(.data$USUBJID) %>%
-          pull(.data$USUBJID))
-
-        if (length(current_sbs()) == 0) {
-          stop("No subjects available for selected dose")
-        }
-
-        updateSelectInput(
-          session, "subject",
-          choices = current_sbs(), selected = current_sbs()[1]
-        )
-      }, error = function(e) {
-        shiny::showNotification(
-          paste("Error updating dose filter:", e$message),
-          type = "error"
-        )
-      })
+      )
     })
 
     # shiny::observeEvent(input$search, {

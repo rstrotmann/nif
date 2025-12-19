@@ -49,5 +49,3 @@ test_that("calculate_bmi handles length mismatch correctly", {
     "Height and weight vectors must have the same length"
   )
 })
-
-

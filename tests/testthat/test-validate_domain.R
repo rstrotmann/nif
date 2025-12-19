@@ -3,8 +3,8 @@
 test_that("validate_domain accepts valid domain", {
   # Create a valid domain with all required columns for DM
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
-       "DM", "STUDY1", "SUBJ-001",   "001",   "001",  "M", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA"
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY,
+    "DM", "STUDY1", "SUBJ-001", "001", "001", "M", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA"
   )
 
   # Should run without error
@@ -57,9 +57,9 @@ test_that("validate_domain rejects empty DOMAIN column", {
 test_that("validate_domain handles multiple DOMAIN values", {
   # Create a data frame with multiple DOMAIN values and all required columns for DM
   mixed_domain <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
-       "DM", "STUDY1", "SUBJ-001",   "001",   "001",  "M", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA",
-       "DM", "STUDY1", "SUBJ-002",   "002",   "001",  "F", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA"
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY,
+    "DM", "STUDY1", "SUBJ-001", "001", "001", "M", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA",
+    "DM", "STUDY1", "SUBJ-002", "002", "001", "F", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA"
   )
 
   # Should not warn about multiple domains since they're the same
@@ -79,8 +79,8 @@ test_that("validate_domain handles multiple DOMAIN values", {
 test_that("validate_domain warns about missing expected columns", {
   # Create a domain with only required columns for DM
   minimal_dm <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
-       "DM", "STUDY1", "SUBJ-001",   "001",   "001",  "M", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA"
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY,
+    "DM", "STUDY1", "SUBJ-001", "001", "001", "M", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA"
     # Missing expected columns like RFSTDTC, AGE
   )
 
@@ -103,19 +103,19 @@ test_that("validate_domain warns about missing expected columns", {
 test_that("validate_domain warns about missing permitted columns", {
   # Create a domain with required columns for DM
   basic_dm <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY, ~AGE,
-       "DM", "STUDY1", "SUBJ-001",   "001",   "001",  "M", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA",   35
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY, ~AGE,
+    "DM", "STUDY1", "SUBJ-001", "001", "001", "M", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA", 35
     # Missing permitted columns like RACE, ETHNIC, etc.
   )
 
   # Should warn about missing permitted columns when silent=FALSE
+  expect_message(
     expect_message(
-      expect_message(
-        validate_domain(basic_dm, silent = FALSE),
-        "The following permitted columns are missing in domain DM"
-      ),
-      "The following expected columns are missing in domain DM"
-    )
+      validate_domain(basic_dm, silent = FALSE),
+      "The following permitted columns are missing in domain DM"
+    ),
+    "The following expected columns are missing in domain DM"
+  )
 
   # Should not show message if silent=TRUE
   expect_no_message(
@@ -127,8 +127,8 @@ test_that("validate_domain warns about missing permitted columns", {
 test_that("validate_domain handles unknown domains gracefully", {
   # Create a data frame with an unknown domain
   unknown_domain <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-      "XYZ", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "XYZ", "STUDY1", "SUBJ-001"
   )
 
   # Should warn about unknown domain but not error
@@ -142,8 +142,8 @@ test_that("validate_domain handles unknown domains gracefully", {
 test_that("validate_domain handles correctly case sensitivity", {
   # Create a domain with lowercase domain name but with all required fields
   lowercase_domain <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD,              ~ARM, ~ACTARMCD,           ~ACTARM, ~COUNTRY,
-       "dm", "STUDY1", "SUBJ-001",   "001",   "001",  "M", "ARM1", "Treatment arm 1",    "ARM1", "Treatment arm 1",    "USA"
+    ~DOMAIN, ~STUDYID, ~USUBJID, ~SUBJID, ~SITEID, ~SEX, ~ARMCD, ~ARM, ~ACTARMCD, ~ACTARM, ~COUNTRY,
+    "dm", "STUDY1", "SUBJ-001", "001", "001", "M", "ARM1", "Treatment arm 1", "ARM1", "Treatment arm 1", "USA"
   )
 
   # Should run without error (case insensitive)
@@ -164,4 +164,3 @@ test_that("validate_domain works with example data", {
     expect_true(validate_domain(dm_domain, silent = TRUE))
   }
 })
-

@@ -1,4 +1,3 @@
-
 test_that("nif_auto works with basic input", {
   # Create minimal SDTM object
   dm <- tibble::tribble(
@@ -146,7 +145,8 @@ test_that("nif_auto handles subject filtering correctly", {
   result_custom <- nif_auto(
     sdtm, DRUG1 ~ DRUG1,
     subject_filter = "ACTARMCD == 'TRT'",
-    silent = TRUE)
+    silent = TRUE
+  )
   expect_equal(length(unique(result_custom$USUBJID)), 1)
 })
 
@@ -180,7 +180,8 @@ test_that("nif_auto handles duplicates correctly", {
   result_mean <- nif_auto(
     sdtm, DRUG1 ~ DRUG1,
     duplicates = "resolve", duplicate_function = mean,
-    silent = TRUE)
+    silent = TRUE
+  )
   expect_equal(nrow(filter(result_mean, EVID == 0)), 1)
   expect_equal(filter(result_mean, EVID == 0)$DV, 11)
 
@@ -188,8 +189,8 @@ test_that("nif_auto handles duplicates correctly", {
   result_max <- nif_auto(
     sdtm, DRUG1 ~ DRUG1,
     duplicates = "resolve", duplicate_function = max,
-    silent = TRUE)
+    silent = TRUE
+  )
   expect_equal(nrow(filter(result_max, EVID == 0)), 1)
   expect_equal(filter(result_max, EVID == 0)$DV, 12)
 })
-

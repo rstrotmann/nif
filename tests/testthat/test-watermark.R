@@ -51,8 +51,10 @@ test_that("watermark validates fontface parameter", {
   expect_silent(watermark("test", fontface = "bold.italic"))
 
   # Test invalid fontface
-  expect_error(watermark("test", fontface = "invalid"),
-               "fontface must be one of: 'plain', 'bold', 'italic', 'bold.italic'")
+  expect_error(
+    watermark("test", fontface = "invalid"),
+    "fontface must be one of: 'plain', 'bold', 'italic', 'bold.italic'"
+  )
 })
 
 

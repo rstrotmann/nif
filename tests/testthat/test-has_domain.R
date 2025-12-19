@@ -98,7 +98,8 @@ test_that("domain() rejects vectors with multiple names", {
   # domain() rejects vectors with multiple names
   expect_error(
     domain(test_data, c("dm", "pc")),
-    "name must be a single value")
+    "name must be a single value"
+  )
 })
 
 
@@ -131,4 +132,3 @@ test_that("domain function behaviors", {
   expect_s3_class(domain(test_data, "DM"), "data.frame")
   expect_s3_class(domain(test_data, "Dm"), "data.frame")
 })
-

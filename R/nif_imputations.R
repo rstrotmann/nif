@@ -19,24 +19,28 @@
 #' @export
 #' @import cli
 impute_exendtc_to_rfendtc <- function(
-    ex,
-    dm,
-    extrt,
-    cut_off_date = NULL,
-    silent = NULL
-    ) {
+  ex,
+  dm,
+  extrt,
+  cut_off_date = NULL,
+  silent = NULL
+) {
   # Validate ex domain
   expected_ex_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
   missing_ex_columns <- setdiff(expected_ex_columns, names(ex))
-  n = length(missing_ex_columns)
-  if(n > 0)
-    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
-                nice_enumeration(missing_ex_columns)))
+  n <- length(missing_ex_columns)
+  if (n > 0) {
+    stop(paste0(
+      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      nice_enumeration(missing_ex_columns)
+    ))
+  }
 
-  if(!extrt %in% unique(ex$EXTRT))
+  if (!extrt %in% unique(ex$EXTRT)) {
     stop(paste0("EXTRT ", extrt, " not found in EX domain!"))
+  }
 
-  if(!"IMPUTATION" %in% names(ex)) {
+  if (!"IMPUTATION" %in% names(ex)) {
     ex <- mutate(ex, IMPUTATION = "")
   }
 
@@ -60,21 +64,25 @@ impute_exendtc_to_rfendtc <- function(
 
   replace_n <- 0
 
-  if(nrow(to_be_imputed) > 0) {
+  if (nrow(to_be_imputed) > 0) {
     # check whether RFENDTC is available
-    if(!"RFENDTC" %in% names(dm)) {
-      conditional_cli({
-        cli::cli_alert_warning("Imputation warning!")
-        cli::cli_text(paste0(
-          "Cannot impute missing EXENDTC in final administration episode of ",
-          n_sbs_to_be_imputed, plural(" subject", n_sbs_to_be_imputed > 1),
-          " because RFENDTC is missing in DM:"))
+    if (!"RFENDTC" %in% names(dm)) {
+      conditional_cli(
+        {
+          cli::cli_alert_warning("Imputation warning!")
+          cli::cli_text(paste0(
+            "Cannot impute missing EXENDTC in final administration episode of ",
+            n_sbs_to_be_imputed, plural(" subject", n_sbs_to_be_imputed > 1),
+            " because RFENDTC is missing in DM:"
+          ))
 
-        cli::cli_verbatim(
-          df_to_string(to_be_imputed, indent = 2)
-        )
-        cli::cli_text()
-      }, silent = silent)
+          cli::cli_verbatim(
+            df_to_string(to_be_imputed, indent = 2)
+          )
+          cli::cli_text()
+        },
+        silent = silent
+      )
       return(ex)
     }
 
@@ -82,7 +90,8 @@ impute_exendtc_to_rfendtc <- function(
     temp <- temp %>%
       left_join(
         select(dm, c("USUBJID", "RFENDTC")),
-        by = "USUBJID")
+        by = "USUBJID"
+      )
 
     # Capture rows to be imputed for message (before imputation)
     rows_for_message <- temp %>%
@@ -91,34 +100,38 @@ impute_exendtc_to_rfendtc <- function(
     replace_n <- nrow(rows_for_message)
 
     if (replace_n > 0) {
-      conditional_cli({
-        cli_alert_info("Missing EXENDTC")
-        cli_text(paste0(
-          replace_n, " ",
-          plural("subject", replace_n > 1),
-          " had a missing EXENDTC in their final administration episode.\n",
-          "In these cases, EXENDTC was imputed to RFENDTC."
-        ))
-        cli_verbatim(df_to_string(
-          rows_for_message %>%
-            select(any_of(
-              c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
-          indent = 2,
-          abbr_lines = 5, abbr_threshold = 10
-        ))
-        cli_text()
-      }, silent = silent)
+      conditional_cli(
+        {
+          cli_alert_info("Missing EXENDTC")
+          cli_text(paste0(
+            replace_n, " ",
+            plural("subject", replace_n > 1),
+            " had a missing EXENDTC in their final administration episode.\n",
+            "In these cases, EXENDTC was imputed to RFENDTC."
+          ))
+          cli_verbatim(df_to_string(
+            rows_for_message %>%
+              select(any_of(
+                c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")
+              )),
+            indent = 2
+            # abbr_lines = 5, abbr_threshold = 20
+          ))
+          cli_text()
+        },
+        silent = silent
+      )
     }
 
     temp <- temp %>%
       mutate(IMPUTATION = case_when(
         (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
-           !is.na(.data$RFENDTC)) ~ "missing EXENDTC set to RFENDTC",
+          !is.na(.data$RFENDTC)) ~ "missing EXENDTC set to RFENDTC",
         .default = .data$IMPUTATION
       )) %>%
       mutate(EXENDTC = case_when(
         (.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC) &
-           !is.na(.data$RFENDTC)) ~ .data$RFENDTC,
+          !is.na(.data$RFENDTC)) ~ .data$RFENDTC,
         .default = .data$EXENDTC
       )) %>%
       select(-any_of(c("LAST_ADMIN", "RFENDTC")))
@@ -169,12 +182,15 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
   expected_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
 
   missing_columns <- setdiff(expected_columns, names(ex))
-  n = length(missing_columns)
-  if(n > 0)
-    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
-                nice_enumeration(missing_columns)))
+  n <- length(missing_columns)
+  if (n > 0) {
+    stop(paste0(
+      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      nice_enumeration(missing_columns)
+    ))
+  }
 
-  if(!"IMPUTATION" %in% names(ex)) {
+  if (!"IMPUTATION" %in% names(ex)) {
     ex <- mutate(ex, IMPUTATION = "")
   }
 
@@ -191,32 +207,35 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
 
   if (nrow(to_replace) > 0) {
     conditional_cli(
-    cli::cli({
-      cli::cli_alert_warning("EXENDTC imputation:")
-      cli::cli_text(paste0(
-        "In ", nrow(to_replace), plural(" row", nrow(to_replace) > 1),
-        " EXENDTC was missing and was imputed as the day before the next EXSTDTC:"
-      ))
-      cli::cli_verbatim(
-        df_to_string(select(to_replace, any_of(
-          c("USUBJID", "EXSEQ", "EXTRT",  "EXSTDTC", "EXENDTC"))), indent = 2)
-      )
-      cli::cli_text()
-    }),
-    silent = silent
+      cli::cli({
+        cli::cli_alert_warning("EXENDTC imputation:")
+        cli::cli_text(paste0(
+          "In ", nrow(to_replace), plural(" row", nrow(to_replace) > 1),
+          " EXENDTC was missing and was imputed as the day before the next EXSTDTC:"
+        ))
+        cli::cli_verbatim(
+          df_to_string(select(to_replace, any_of(
+            c("USUBJID", "EXSEQ", "EXTRT", "EXSTDTC", "EXENDTC")
+          )), indent = 2)
+        )
+        cli::cli_text()
+      }),
+      silent = silent
     )
 
     temp <- temp %>%
       mutate(imputation_flag = (is.na(.data$EXENDTC) &
-                                  .data$LAST_ADMIN == FALSE)) %>%
+        .data$LAST_ADMIN == FALSE)) %>%
       mutate(EXENDTC = case_match(
         .data$imputation_flag,
         TRUE ~ .data$next_start - days(1),
-        FALSE ~ .data$EXENDTC)) %>%
+        FALSE ~ .data$EXENDTC
+      )) %>%
       mutate(IMPUTATION = case_match(
         .data$imputation_flag,
         TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
-        FALSE ~ .data$IMPUTATION)) %>%
+        FALSE ~ .data$IMPUTATION
+      )) %>%
       select(-"imputation_flag")
   }
 
@@ -241,23 +260,25 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
 #' @return The updated EX domain as data frame.
 #' @export
 impute_exendtc_to_cutoff <- function(
-    ex,
-    cut_off_date = NA,
-    silent = NULL) {
+  ex,
+  cut_off_date = NA,
+  silent = NULL
+) {
   # input validation
   expected_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
   missing_columns <- setdiff(expected_columns, names(ex))
-  n = length(missing_columns)
-  if(n > 0)
+  n <- length(missing_columns)
+  if (n > 0) {
     stop(paste0(
       "Missing ", plural("colum", n > 1), " in domain EX: ",
-      nice_enumeration(missing_columns)))
+      nice_enumeration(missing_columns)
+    ))
+  }
 
   temp <- ex %>%
     lubrify_dates() %>%
     assertr::verify(is.POSIXct(.data$EXSTDTC)) %>%
     assertr::verify(is.POSIXct(.data$EXENDTC)) %>%
-
     # identify last administration per subject and EXTRT
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
     group_by(.data$USUBJID, .data$EXTRT) %>%
@@ -269,30 +290,37 @@ impute_exendtc_to_cutoff <- function(
     filter(.data$flag == TRUE)
 
   if (nrow(to_replace) > 0) {
-    conditional_cli({
-      cli::cli_alert_warning("Final EXENDTC imputation!")
-      cli::cli_text(paste0(
-        "In ", nrow(to_replace), plural(" subject", nrow(to_replace) > 1),
-        " a missing EXENDTC for the last administration episode was",
-        " replaced by the cut off date (",
-        format(cut_off_date, format = "%Y-%m-%d %H:%M"), "):"
-      ))
-      cli::cli_verbatim(
-        df_to_string(
-        to_replace %>%
-          select(all_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"))),
-        indent = 2, abbr_lines = 5, abbr_threshold = 10)
-      )
-      cli::cli_text()
-    }, silent = silent)
+    conditional_cli(
+      {
+        cli::cli_alert_warning("Final EXENDTC imputation!")
+        cli::cli_text(paste0(
+          "In ", nrow(to_replace), plural(" subject", nrow(to_replace) > 1),
+          " a missing EXENDTC for the last administration episode was",
+          " replaced by the cut off date (",
+          format(cut_off_date, format = "%Y-%m-%d %H:%M"), "):"
+        ))
+        cli::cli_verbatim(
+          df_to_string(
+            to_replace %>%
+              select(all_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"))),
+            indent = 2
+            # abbr_lines = 5, abbr_threshold = 20
+          )
+        )
+        cli::cli_text()
+      },
+      silent = silent
+    )
 
     temp <- temp %>%
       mutate(EXENDTC = case_when(
         .data$flag == TRUE ~ cut_off_date,
-        .default = .data$EXENDTC)) %>%
+        .default = .data$EXENDTC
+      )) %>%
       mutate(IMPUTATION = case_when(
         .data$flag == TRUE ~ "missing EXENDTC set to data cutoff",
-        .default = .data$IMPUTATION))
+        .default = .data$IMPUTATION
+      ))
   }
 
   return(temp %>% select(-c("LAST_ADMIN", "flag")))
@@ -312,10 +340,10 @@ impute_exendtc_to_cutoff <- function(
 #' @export
 #' @import cli
 impute_admin_times_from_pcrftdtc <- function(
-    obj, pc, analyte, pctestcd, silent = NULL) {
-
+  obj, pc, analyte, pctestcd, silent = NULL
+) {
   # validate inputs
-  if(!pctestcd %in% pc$PCTESTCD) {
+  if (!pctestcd %in% pc$PCTESTCD) {
     cli_alert_danger(paste0(
       "Analyte ", pctestcd, " not found in PCTESTCD. Administrations times for ",
       analyte, " cannot be derived from PCRFDTC and will be taken from ",
@@ -328,51 +356,64 @@ impute_admin_times_from_pcrftdtc <- function(
     filter(PCTESTCD == pctestcd) %>%
     mutate(ANALYTE = analyte) %>%
     decompose_dtc("PCRFTDTC") %>%
-    select(c("USUBJID", "ANALYTE", "PCRFTDTC_date",
-             "PCRFTDTC_time")) %>%
+    select(c(
+      "USUBJID", "ANALYTE", "PCRFTDTC_date",
+      "PCRFTDTC_time"
+    )) %>%
     distinct()
 
   temp <- obj %>%
     lubrify_dates() %>%
     decompose_dtc("DTC") %>%
     left_join(pc_ref,
-              by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date"))
+      by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")
+    )
 
-  if(!"IMPUTATION" %in% names(temp)) {
+  if (!"IMPUTATION" %in% names(temp)) {
     temp <- mutate(temp, IMPUTATION = "")
   }
 
   conflicting_rows <- which(
     (!is.na(temp$PCRFTDTC_time) & !is.na(temp$DTC_time) &
-       temp$DTC_time != temp$PCRFTDTC_time) |
-    (is.na(temp$DTC_time) & !is.na(temp$PCRFTDTC_time))
+      temp$DTC_time != temp$PCRFTDTC_time) |
+      (is.na(temp$DTC_time) & !is.na(temp$PCRFTDTC_time))
   )
 
-  if(length(conflicting_rows) != 0) {
-    conditional_cli({
-      cli_alert_warning(paste0(
-        "Inconsistent PCRFTDTC and EXSTDTC/EXENDTC"))
-      cli_text(paste0(
-        "For ", length(conflicting_rows), " administrations of ", analyte,
-        ", administration times were different between PCRFDTC and ",
-        "EXSTDTC/EXENDTC. In these cases, PCRFTDTC was prioritized: "
-      ))
-      cli_verbatim(
-        df_to_string(
-          temp[conflicting_rows,
-               c("USUBJID", "ANALYTE", "DTC", "PCRFTDTC_time")],
-          abbr_lines = 5, abbr_threshold = 10))
-      cli_text()
-    }, silent = silent)
+  if (length(conflicting_rows) != 0) {
+    conditional_cli(
+      {
+        cli_alert_warning(paste0(
+          "Inconsistent PCRFTDTC and EXSTDTC/EXENDTC"
+        ))
+        cli_text(paste0(
+          "For ", length(conflicting_rows), " administrations of ", analyte,
+          ", administration times were different between PCRFDTC and ",
+          "EXSTDTC/EXENDTC. In these cases, PCRFTDTC was prioritized: "
+        ))
+        cli_verbatim(
+          df_to_string(
+            temp[
+              conflicting_rows,
+              c("USUBJID", "ANALYTE", "DTC", "PCRFTDTC_time")
+            ]
+            # abbr_lines = 5, abbr_threshold = 20
+          )
+        )
+        cli_text()
+      },
+      silent = silent
+    )
 
     temp <- temp %>%
       mutate(DTC_time = case_when(
         row_number() %in% conflicting_rows ~ .data$PCRFTDTC_time,
-        .default = .data$DTC_time)) %>%
+        .default = .data$DTC_time
+      )) %>%
       mutate(IMPUTATION = case_when(
         row_number() %in% conflicting_rows ~
           "admin time from PCRFTDTC",
-        .default = .data$IMPUTATION))
+        .default = .data$IMPUTATION
+      ))
   }
 
   temp <- temp %>%
@@ -395,10 +436,13 @@ filter_EXENDTC_after_EXSTDTC <- function(ex, dm, extrt, silent = NULL) {
   # Input validation
   expected_ex_columns <- c("USUBJID", "EXSTDTC", "EXENDTC")
   missing_ex_columns <- setdiff(expected_ex_columns, names(ex))
-  n = length(missing_ex_columns)
-  if(n > 0)
-    stop(paste0("Missing ", plural("colum", n > 1), " in domain EX: ",
-                nice_enumeration(missing_ex_columns)))
+  n <- length(missing_ex_columns)
+  if (n > 0) {
+    stop(paste0(
+      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      nice_enumeration(missing_ex_columns)
+    ))
+  }
 
   # Convert dates to POSIXct for proper comparison
   ex <- lubrify_dates(ex)
@@ -413,9 +457,9 @@ filter_EXENDTC_after_EXSTDTC <- function(ex, dm, extrt, silent = NULL) {
       (as.Date(.data$EXSTDTC_date) > as.Date(.data$EXENDTC_date)) |
         # or the start and end dates are the same, both times are not NA, and the
         # start datetime is still after the end datetime
-      (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
-         !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
-         .data$EXSTDTC > .data$EXENDTC)
+        (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
+          !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
+          .data$EXSTDTC > .data$EXENDTC)
     ) %>%
     left_join(
       dm %>%
@@ -423,38 +467,47 @@ filter_EXENDTC_after_EXSTDTC <- function(ex, dm, extrt, silent = NULL) {
       by = "USUBJID"
     )
 
-  if(nrow(temp) > 0) {
-    conditional_cli({
-      cli::cli_alert_warning("EXSTDTC after EXENDTC!")
+  if (nrow(temp) > 0) {
+    conditional_cli(
+      {
+        cli::cli_alert_warning("EXSTDTC after EXENDTC!")
 
-      cli::cli_text(paste0(
-        nrow(temp), " administration ", plural("episode", nrow(temp) > 1),
-        " for ", extrt,
-        " had an EXENDTC before the EXSTDTC and ",
-        plural("was", nrow(temp) > 1),
-        " removed from the data set:\n"))
+        cli::cli_text(paste0(
+          nrow(temp), " administration ", plural("episode", nrow(temp) > 1),
+          " for ", extrt,
+          " had an EXENDTC before the EXSTDTC and ",
+          plural("was", nrow(temp) > 1),
+          " removed from the data set:\n"
+        ))
 
-      cli::cli_verbatim(
-        df_to_string(select(temp, any_of(
-          c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC"))),
-          indent = 2))
-      cli::cli_text()
-      }, silent = silent)
+        cli::cli_verbatim(
+          df_to_string(
+            select(temp, any_of(
+              c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")
+            )),
+            indent = 2
+          )
+        )
+        cli::cli_text()
+      },
+      silent = silent
+    )
   }
 
   out <- ex %>%
     filter(.data$EXTRT == extrt) %>%
     decompose_dtc(c("EXSTDTC", "EXENDTC")) %>%
     filter(!(
-    # either the start date is after the end date
-    (as.Date(.data$EXSTDTC_date) > as.Date(.data$EXENDTC_date)) |
-      # or the start and end dates are the same, both times are not NA, and the
-      # start datetime is still after the end datetime
-      (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
-         !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
-         .data$EXSTDTC > .data$EXENDTC))) %>%
+      # either the start date is after the end date
+      (as.Date(.data$EXSTDTC_date) > as.Date(.data$EXENDTC_date)) |
+        # or the start and end dates are the same, both times are not NA, and the
+        # start datetime is still after the end datetime
+        (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
+          !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
+          .data$EXSTDTC > .data$EXENDTC))) %>%
     select(-any_of(
-      c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time")))
+      c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time")
+    ))
 
   return(out)
 }

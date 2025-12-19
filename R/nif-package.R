@@ -11,20 +11,16 @@ utils::globalVariables(c(
   "DV", "AMT", "ID", "DOSE", "AGE",
   "SEX", "RACE", "ACTARMCD", "HEIGHT",
   "WEIGHT", "BMI", "PCDTC", "RACEN", "LABEL",
-
   "dtc", "PCRFTDTC", "PCTESTCD",
   "EXTRT", "admin.time", "REF",
   "EXENDTC", "EXSEQ", "EXSTDTC",
   "EXDOSE", "EXSTDY", "EXENDY", "EPOCH",
   "SUBJID",
   "runif", "ACTARM", "VSTESTCD", "VSSTRESN", "ut", "RFICDTC", "BRTHDTC",
-
   "brthyr", "refdtc",
-
   "ETHNIC", "COUNTRY", "ARM", "PCSPEC", "PCSTAT", "PCELTM",
   "PCSTRESN", "PERIOD", "RFSTDTC",
   "VSORRES", "VSORRESU",
-
   "dur<-", "renal",
   "metab_excr", "sd", "GROUP", "first_admin_time", "regimen", "PCTEST",
   "no.analyte", "bl_wt", "rc", "maxwt", "DOMAIN", "no_admin", "PARENT",
@@ -33,7 +29,6 @@ utils::globalVariables(c(
   "RICHINT_TEMP", "LEAD", "RICHINT", "FLAG", "RICH_N", "initial_dose",
   "RATE", "LNDV", "use_data", "first_dtc", "rich", "ref_time", "delta",
   "time1", "delta_time", "cohort", "dose", "DL",
-
   "FIRSTADMINDTC", "FIRSTTRTDTC", "DVBL", "DVCFB",
   "OPDI", "BL_CRCL", "age_lo", "age_hi", "Mean", "EGFR", "CREA", "LBORRES",
   "BL_CREAT", "LAST_ADMIN", "RFENDTC", "TRTDY", "BL_RENAL", "EXENDTC_has_time",

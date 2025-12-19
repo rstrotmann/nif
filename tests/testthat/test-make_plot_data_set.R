@@ -94,7 +94,7 @@ test_that("make_plot_data_set handles min_time and max_time parameters", {
 
   # Test time filtering
   result_filtered <- make_plot_data_set(test_nif, min_time = 1, max_time = 2)
-  expect_equal(nrow(result_filtered$data), 2)  # Only rows with time 1 and 2
+  expect_equal(nrow(result_filtered$data), 2) # Only rows with time 1 and 2
   expect_equal(result_filtered$data$active_time, c(1, 2))
 })
 

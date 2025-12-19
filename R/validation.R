@@ -36,13 +36,16 @@ validate_domain <- function(domain, silent = NULL) {
   # }
   if (length(domain_name) > 1) {
     stop(paste0(
-      "Multiple domain values found: ", nice_enumeration(domain_name)))
+      "Multiple domain values found: ", nice_enumeration(domain_name)
+    ))
   }
 
-  if(!domain_name %in% unique(domain_model$DOMAIN)) {
+  if (!domain_name %in% unique(domain_model$DOMAIN)) {
     # warning("Unknown domain '", domain_name, "' cannot be validated!")
     conditional_message(
-      "Unknown domain '", domain_name, "' cannot be validated!", silent = silent)
+      "Unknown domain '", domain_name, "' cannot be validated!",
+      silent = silent
+    )
     return(invisible(TRUE))
   } else {
     temp <- domain_model %>%
@@ -69,7 +72,8 @@ validate_domain <- function(domain, silent = NULL) {
         "The following required columns are missing in ",
         domain_name, ": ",
         paste(missing_req, collapse = ", "),
-        silent = silent)
+        silent = silent
+      )
     }
 
     if (length(missing_exp) > 0) {
@@ -77,7 +81,8 @@ validate_domain <- function(domain, silent = NULL) {
         "The following expected columns are missing in domain ",
         domain_name, ": ",
         paste(missing_exp, collapse = ", "),
-        silent = silent)
+        silent = silent
+      )
     }
 
     if (length(missing_perm) > 0) {
@@ -85,7 +90,8 @@ validate_domain <- function(domain, silent = NULL) {
         "The following permitted columns are missing in domain ",
         domain_name, ": ",
         paste(missing_perm, collapse = ", "),
-        silent = silent)
+        silent = silent
+      )
     }
 
     return(invisible(TRUE))
@@ -103,7 +109,7 @@ validate_domain <- function(domain, silent = NULL) {
 #'  if required columns are missing.
 #' @noRd
 validate_sdtm_domains <- function(sdtm, silent = NULL) {
-  for(d in sdtm$domains) {
+  for (d in sdtm$domains) {
     validate_domain(d, silent = silent)
   }
 }
@@ -117,19 +123,22 @@ validate_sdtm_domains <- function(sdtm, silent = NULL) {
 #' @returns Nothing or stop.
 #' @noRd
 validate_sdtm <- function(
-    obj,
-    expected_domains = NULL) {
-  validate_char_param(expected_domains, "expected_domains", allow_null = TRUE,
-                      allow_multiple = TRUE)
+  obj,
+  expected_domains = NULL
+) {
+  validate_char_param(expected_domains, "expected_domains",
+    allow_null = TRUE,
+    allow_multiple = TRUE
+  )
 
   if (!inherits(obj, "sdtm")) {
     stop("Input must be a sdtm object")
   }
 
-  if(!is.null(expected_domains)) {
+  if (!is.null(expected_domains)) {
     expected_domains <- tolower(expected_domains)
     missing_domains <- setdiff(expected_domains, names(obj$domains))
-    if(length(missing_domains) > 0) {
+    if (length(missing_domains) > 0) {
       stop(paste0(
         "Expected ", plural("domain", length(missing_domains) > 1),
         " missing in sdtm object: ", nice_enumeration(missing_domains)
@@ -137,9 +146,6 @@ validate_sdtm <- function(
     }
   }
 }
-
-
-
 
 
 #' Generic function parameter validation
@@ -155,14 +161,14 @@ validate_sdtm <- function(
 #' @returns Nothing or stop.
 #' @noRd
 validate_param <- function(
-    type = c("string", "logical", "numeric"),
-    param,
-    param_name,
-    allow_null = FALSE,
-    allow_empty = FALSE,
-    allow_multiple = FALSE,
-    allow_na = FALSE) {
-
+  type = c("string", "logical", "numeric"),
+  param,
+  param_name,
+  allow_null = FALSE,
+  allow_empty = FALSE,
+  allow_multiple = FALSE,
+  allow_na = FALSE
+) {
   # Validate type parameter
   type <- match.arg(type)
 
@@ -176,21 +182,21 @@ validate_param <- function(
   }
 
   # Check for NA values
-  if(!allow_na && any(is.na(param))) {
+  if (!allow_na && any(is.na(param))) {
     stop(paste0(param_name, " must not contain NA"))
   }
 
   # Type checking
-  if(
+  if (
     (type == "string" && !is.character(param)) ||
-    (type == "logical" && !is.logical(param)) ||
-    # (type == "numeric" && !(is.numeric(param) | is.na(param)))) {
-    (type == "numeric" && !is.numeric(param))) {
+      (type == "logical" && !is.logical(param)) ||
+      # (type == "numeric" && !(is.numeric(param) | is.na(param)))) {
+      (type == "numeric" && !is.numeric(param))) {
     stop(paste0(param_name, " must be a ", type, " value"))
   }
 
   # Length checking
-  if(length(param) != 1 && !allow_multiple) {
+  if (length(param) != 1 && !allow_multiple) {
     stop(paste0(param_name, " must be a single value"))
   }
 
@@ -214,18 +220,20 @@ validate_param <- function(
 #' @returns Nothing or stop.
 #' @noRd
 validate_char_param <- function(
-    param,
-    param_name,
-    allow_null = FALSE,
-    allow_empty = FALSE,
-    allow_multiple = FALSE) {
+  param,
+  param_name,
+  allow_null = FALSE,
+  allow_empty = FALSE,
+  allow_multiple = FALSE
+) {
   validate_param(
     "string",
-     param,
-     param_name,
-     allow_null,
-     allow_empty,
-     allow_multiple)
+    param,
+    param_name,
+    allow_null,
+    allow_empty,
+    allow_multiple
+  )
 }
 
 #' Validate logical parameter
@@ -239,18 +247,20 @@ validate_char_param <- function(
 #' @returns Nothing or stop.
 #' @noRd
 validate_logical_param <- function(
-    param,
-    param_name,
-    allow_null = FALSE,
-    allow_empty = FALSE,
-    allow_multiple = FALSE) {
+  param,
+  param_name,
+  allow_null = FALSE,
+  allow_empty = FALSE,
+  allow_multiple = FALSE
+) {
   validate_param(
     "logical",
     param,
     param_name,
     allow_null,
     allow_empty,
-    allow_multiple)
+    allow_multiple
+  )
 }
 
 #' Validate numeric parameter
@@ -265,12 +275,13 @@ validate_logical_param <- function(
 #' @returns Nothing or stop.
 #' @noRd
 validate_numeric_param <- function(
-    param,
-    param_name,
-    allow_null = FALSE,
-    allow_empty = FALSE,
-    allow_multiple = FALSE,
-    allow_na = FALSE) {
+  param,
+  param_name,
+  allow_null = FALSE,
+  allow_empty = FALSE,
+  allow_multiple = FALSE,
+  allow_na = FALSE
+) {
   validate_param(
     "numeric",
     param,
@@ -278,7 +289,8 @@ validate_numeric_param <- function(
     allow_null,
     allow_empty,
     allow_multiple,
-    allow_na)
+    allow_na
+  )
 }
 
 
@@ -303,11 +315,10 @@ validate_nif <- function(obj) {
 #' @returns Nothing or stop.
 #' @noRd
 validate_domain_param <- function(obj) {
-  if(!inherits(obj, "domain")) {
+  if (!inherits(obj, "domain")) {
     stop("Input must be a domain object")
   }
 }
-
 
 
 #' Validate nif object with minimally required fields
@@ -323,9 +334,10 @@ validate_min_nif <- function(obj, additional_fields = NULL) {
 
   missing_fields <- setdiff(
     c(minimal_nif_fields, additional_fields),
-    names(obj))
+    names(obj)
+  )
 
-  if(length(missing_fields) > 0) {
+  if (length(missing_fields) > 0) {
     stop(paste0(
       "missing required ", plural("field", length(missing_fields) > 1), ": ",
       nice_enumeration(missing_fields)
@@ -347,30 +359,38 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
   validate_char_param(domain, "domain", allow_null = TRUE)
   validate_char_param(testcd, "testcd", allow_multiple = TRUE)
 
-  if(!is.null(domain)) {
+  if (!is.null(domain)) {
     domain <- tolower(domain)
-    if(!domain %in% names(sdtm$domains))
+    if (!domain %in% names(sdtm$domains)) {
       stop(paste0(
-        "Domain ", domain, " not found in sdtm object!"))
+        "Domain ", domain, " not found in sdtm object!"
+      ))
+    }
 
     temp <- domain(sdtm, domain)
     testcd_field <- paste0(toupper(domain), "TESTCD")
 
-    if(!testcd_field %in% names(temp))
+    if (!testcd_field %in% names(temp)) {
       stop(paste0(
-        toupper(domain), " has no ", testcd_field, " field!"))
+        toupper(domain), " has no ", testcd_field, " field!"
+      ))
+    }
 
     missing_testcd <- testcd[!testcd %in% unique(temp[[testcd_field]])]
-    if(length(missing_testcd) > 0)
+    if (length(missing_testcd) > 0) {
       stop(paste0(
         "Testcd ", nice_enumeration(missing_testcd),
-        " not found in domain ", toupper(domain), "!"))
+        " not found in domain ", toupper(domain), "!"
+      ))
+    }
   }
 
   missing_testcd <- testcd[!testcd %in% testcd(sdtm)$TESTCD]
-  if(length(missing_testcd) > 0)
+  if (length(missing_testcd) > 0) {
     stop(paste0(
-      "Testcd ", nice_enumeration(missing_testcd), " not found in sdtm!"))
+      "Testcd ", nice_enumeration(missing_testcd), " not found in sdtm!"
+    ))
+  }
 
   return(testcd)
 }
@@ -387,27 +407,30 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
 #' @returns Nothing or stop.
 #' @noRd
 validate_analyte <- function(
-    nif,
-    analyte,
-    allow_multiple = TRUE,
-    allow_null = FALSE,
-    allow_empty = FALSE) {
-
+  nif,
+  analyte,
+  allow_multiple = TRUE,
+  allow_null = FALSE,
+  allow_empty = FALSE
+) {
   # validate inputs
   validate_nif(nif)
   validate_char_param(
     analyte, "analyte",
     allow_multiple = allow_multiple, allow_null = allow_null,
-    allow_empty = allow_empty)
+    allow_empty = allow_empty
+  )
 
-  if(!is.null(analyte)){
+  if (!is.null(analyte)) {
     missing_analytes <- setdiff(analyte, analytes(nif))
-    if(length(missing_analytes) > 0)
-      stop(paste0(
-        plural("Analyte", length(missing_analytes) > 1)), " ",
+    if (length(missing_analytes) > 0) {
+      stop(
+        paste0(
+          plural("Analyte", length(missing_analytes) > 1)
+        ), " ",
         nice_enumeration(missing_analytes),
-        " not found in nif object!")
+        " not found in nif object!"
+      )
+    }
   }
 }
-
-

@@ -66,5 +66,6 @@ be defined. The name of the baseline covariate is the 'testcd', prefixed with
 \examples{
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
-  baseline_filter = "VSBLFL == 'Y'")
+  baseline_filter = "VSBLFL == 'Y'"
+)
 }

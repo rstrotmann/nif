@@ -7,9 +7,11 @@ test_that("summary.nif returns the correct class and structure", {
   expect_s3_class(s, "summary_nif")
 
   # Check structure - essential components
-  expect_true(all(c("nif", "subjects", "n_subj", "n_males", "n_females",
-                    "n_obs", "analytes", "drugs", "dose_levels",
-                    "administration_duration") %in% names(s)))
+  expect_true(all(c(
+    "nif", "subjects", "n_subj", "n_males", "n_females",
+    "n_obs", "analytes", "drugs", "dose_levels",
+    "administration_duration"
+  ) %in% names(s)))
 
   # Check that original NIF is preserved
   expect_identical(s$nif, examplinib_poc_nif)
@@ -32,7 +34,8 @@ test_that("summary.nif errors appropriately with missing required columns", {
 
   expect_error(
     summary(invalid_nif),
-    "missing required fields: CMT and DV")
+    "missing required fields: CMT and DV"
+  )
 })
 
 
@@ -41,7 +44,7 @@ test_that("summary.nif calculates sex distribution correctly", {
   # Create a NIF with known sex distribution
   test_nif <- examplinib_poc_nif %>%
     filter(ID %in% 1:10) %>%
-    mutate(SEX = ifelse(ID <= 6, 0, 1))  # 6 males, 4 females
+    mutate(SEX = ifelse(ID <= 6, 0, 1)) # 6 males, 4 females
 
   s <- summary(test_nif)
 
@@ -81,10 +84,10 @@ test_that("summary.nif handles renal function classification correctly", {
   test_nif <- examplinib_poc_nif %>%
     filter(ID %in% 1:4) %>%
     mutate(BL_CRCL = case_when(
-      ID == 1 ~ 95,  # normal
-      ID == 2 ~ 75,  # mild
-      ID == 3 ~ 45,  # moderate
-      ID == 4 ~ 20   # severe
+      ID == 1 ~ 95, # normal
+      ID == 2 ~ 75, # mild
+      ID == 3 ~ 45, # moderate
+      ID == 4 ~ 20 # severe
     ))
 
   s <- summary(test_nif)
@@ -180,7 +183,7 @@ test_that("summary.nif correctly calculates administration duration", {
 
   # Check that it has the correct columns
   expect_true(all(c("PARENT", "min", "max", "mean", "median") %in%
-                 names(s$administration_duration)))
+    names(s$administration_duration)))
 
   # Check that the direct calculation matches
   direct_calc <- administration_summary(examplinib_poc_nif)
@@ -224,4 +227,3 @@ test_that("plot.summary_nif handles weight correctly", {
   expect_true("WT_SEX" %in% names(p))
   expect_s3_class(p$WT_SEX, "ggplot")
 })
-

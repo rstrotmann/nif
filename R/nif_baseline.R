@@ -34,20 +34,22 @@
 #' @examples
 #' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
 #' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
-#'   baseline_filter = "VSBLFL == 'Y'")
+#'   baseline_filter = "VSBLFL == 'Y'"
+#' )
 add_baseline <- function(
-    nif,
-    sdtm,
-    domain,
-    testcd,
-    name = NULL,
-    DV_field = NULL,
-    TESTCD_field = NULL,
-    observation_filter = "TRUE",
-    baseline_filter = NULL,
-    coding_table = NULL,
-    summary_function = mean,
-    silent = NULL) {
+  nif,
+  sdtm,
+  domain,
+  testcd,
+  name = NULL,
+  DV_field = NULL,
+  TESTCD_field = NULL,
+  observation_filter = "TRUE",
+  baseline_filter = NULL,
+  coding_table = NULL,
+  summary_function = mean,
+  silent = NULL
+) {
   # input validation
   validate_nif(nif)
   validate_sdtm(sdtm)
@@ -62,18 +64,24 @@ add_baseline <- function(
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
   # validate coding table
-  if(!is.null(coding_table)) {
-    if (!inherits(coding_table, "data.frame"))
+  if (!is.null(coding_table)) {
+    if (!inherits(coding_table, "data.frame")) {
       stop("coding table must be a data frame!")
-    if(!"DV" %in% names(coding_table))
+    }
+    if (!"DV" %in% names(coding_table)) {
       stop("Coding table must include a numeric 'DV' field!")
-    if(!is.numeric(coding_table$DV))
+    }
+    if (!is.numeric(coding_table$DV)) {
       stop("DV field in coding table must be numeric!")
+    }
   }
 
-  if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-  if(is.null(TESTCD_field)) TESTCD_field <- paste0(
-    str_to_upper(domain), "TESTCD")
+  if (is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
+  if (is.null(TESTCD_field)) {
+    TESTCD_field <- paste0(
+      str_to_upper(domain), "TESTCD"
+    )
+  }
 
   # Set domain data
   domain_data <- domain(sdtm, str_to_lower(domain))
@@ -82,8 +90,10 @@ add_baseline <- function(
   required_fields <- c("USUBJID", TESTCD_field, DV_field)
   missing_fields <- required_fields[!required_fields %in% names(domain_data)]
   if (length(missing_fields) > 0) {
-    stop(paste0("Required fields missing in domain data: ",
-                paste(missing_fields, collapse = ", ")))
+    stop(paste0(
+      "Required fields missing in domain data: ",
+      paste(missing_fields, collapse = ", ")
+    ))
   }
 
   # Validate testcd exists in the domain
@@ -91,25 +101,27 @@ add_baseline <- function(
     stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
   }
 
-  if(is.null(name)) {
+  if (is.null(name)) {
     bl_field <- paste0("BL_", testcd)
   } else {
     bl_field <- name
   }
 
   # generate baseline filter
-  if(is.null(baseline_filter)){
-    blcol <- intersect(c(
-      paste0(str_to_upper(domain), "BLFL"),
-      paste0(str_to_upper(domain), "LOBXFL")
-    ),
-    names(domain_data))
-    if(length(blcol) == 0) {
+  if (is.null(baseline_filter)) {
+    blcol <- intersect(
+      c(
+        paste0(str_to_upper(domain), "BLFL"),
+        paste0(str_to_upper(domain), "LOBXFL")
+      ),
+      names(domain_data)
+    )
+    if (length(blcol) == 0) {
       stop(
         "No baseline flag column identified. Please provide a baseline_filter"
       )
     }
-    baseline_filter = paste0(
+    baseline_filter <- paste0(
       blcol, " == 'Y'"
     )
     conditional_message(
@@ -119,16 +131,20 @@ add_baseline <- function(
     )
   }
 
-  join_fields <- intersect(names(coding_table),
-                           names(domain(sdtm, str_to_lower(domain))))
+  join_fields <- intersect(
+    names(coding_table),
+    names(domain(sdtm, str_to_lower(domain)))
+  )
 
-  if(!is.null(coding_table) & length(join_fields) == 0) {
+  if (!is.null(coding_table) & length(join_fields) == 0) {
     stop("Coding table cannot be applied - no valid data column!")
   } else {
-    if(!is.null(coding_table)) {
+    if (!is.null(coding_table)) {
       conditional_message(
         "Recoding from ", join_fields,
-        silent = silent)}
+        silent = silent
+      )
+    }
   }
 
   filtered_domain <- domain(sdtm, str_to_lower(domain)) %>%
@@ -139,27 +155,39 @@ add_baseline <- function(
 
   # Check if any data remains after filtering
   if (nrow(filtered_domain) == 0) {
-    stop(paste0("No data found for test code '", testcd,
-                "' after applying baseline filter"))
+    stop(paste0(
+      "No data found for test code '", testcd,
+      "' after applying baseline filter"
+    ))
   }
 
   baseline <- filtered_domain %>%
-    {if(is.null(coding_table)) mutate(., DV = .data[[DV_field]]) else
-      left_join(., coding_table, by = join_fields)} %>%
-    tidyr::pivot_wider(names_from = all_of(TESTCD_field),
-                       values_from = DV) %>%
-    select(all_of(c("USUBJID", {{testcd}}))) %>%
+    {
+      if (is.null(coding_table)) {
+        mutate(., DV = .data[[DV_field]])
+      } else {
+        left_join(., coding_table, by = join_fields)
+      }
+    } %>%
+    tidyr::pivot_wider(
+      names_from = all_of(TESTCD_field),
+      values_from = DV
+    ) %>%
+    select(all_of(c("USUBJID", {{ testcd }}))) %>%
     group_by(.data$USUBJID) %>%
     summarize(across(
       all_of(testcd),
-      ~ summary_function(na.omit(.x)))) %>%
+      ~ summary_function(na.omit(.x))
+    )) %>%
     rename_with(~bl_field, .cols = all_of(testcd)) %>%
     ungroup()
 
   # Check if all baseline values are NA
   if (all(is.na(baseline[[bl_field]]))) {
-    stop(paste0("No valid baseline values found for test code '", testcd,
-                "'. Data was found but all values are NA after processing."))
+    stop(paste0(
+      "No valid baseline values found for test code '", testcd,
+      "'. Data was found but all values are NA after processing."
+    ))
   }
 
   # Check if any baseline values are NA and warn user
@@ -172,7 +200,7 @@ add_baseline <- function(
   }
 
   out <- nif %>%
-    coalesce_join(baseline, by = "USUBJID", join = 'left_join')
+    coalesce_join(baseline, by = "USUBJID", join = "left_join")
 
   return(out)
 }
@@ -195,16 +223,16 @@ add_baseline <- function(
 #' @export
 #'
 #' @examples
-#'  head(derive_baseline(examplinib_sad_nif, "RS2023"))
+#' head(derive_baseline(examplinib_sad_nif, "RS2023"))
 #'
 derive_baseline <- function(
-    obj,
-    analyte = NULL,
-    baseline_filter = "TAFD <= 0",
-    summary_function = median,
-    default_baseline = NA_real_,
-    silent = NULL) {
-
+  obj,
+  analyte = NULL,
+  baseline_filter = "TAFD <= 0",
+  summary_function = median,
+  default_baseline = NA_real_,
+  silent = NULL
+) {
   obj <- ensure_analyte(obj)
 
   # Validate required columns
@@ -215,12 +243,12 @@ derive_baseline <- function(
   }
 
   # create empty DVBL column if needed
-  if(!"DVBL" %in% names(obj)) {
+  if (!"DVBL" %in% names(obj)) {
     obj <- mutate(obj, DVBL = NA_real_)
   }
 
   # validate analyte
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
   validate_analyte(obj, analyte)
@@ -269,7 +297,8 @@ derive_baseline <- function(
     conditional_message(
       "Found NA values in ID column.",
       "These rows will be excluded from calculations.",
-      silent = silent)
+      silent = silent
+    )
   }
 
   na_analytes <- temp$ANALYTE[is.na(temp$ANALYTE)]
@@ -277,7 +306,8 @@ derive_baseline <- function(
     conditional_message(
       "Found NA values in ANALYTE column.",
       "These rows will be excluded from calculations.",
-      silent = silent)
+      silent = silent
+    )
   }
 
   # Helper function to calculate baseline for a group
@@ -305,14 +335,17 @@ derive_baseline <- function(
         pick(everything()),
         filter_expr,
         summary_function,
-        default_baseline),
+        default_baseline
+      ),
       .groups = "drop"
     ) %>%
     as.data.frame()
 
   obj %>%
     coalesce_join(
-      bl, by = c("ID", "ANALYTE"), join = "left_join", keep = "right")
+      bl,
+      by = c("ID", "ANALYTE"), join = "left_join", keep = "right"
+    )
 }
 
 
@@ -336,17 +369,19 @@ derive_baseline <- function(
 #' head(derive_cfb(examplinib_sad_nif))
 #'
 derive_cfb <- function(
-    obj,
-    analyte = NULL,
-    baseline_filter = "TAFD <= 0",
-    summary_function = median,
-    default_baseline = NA_real_,
-    silent = NULL) {
-
+  obj,
+  analyte = NULL,
+  baseline_filter = "TAFD <= 0",
+  summary_function = median,
+  default_baseline = NA_real_,
+  silent = NULL
+) {
   out <- derive_baseline(
-    obj, analyte = analyte, baseline_filter = baseline_filter,
+    obj,
+    analyte = analyte, baseline_filter = baseline_filter,
     summary_function = summary_function, default_baseline = default_baseline,
-    silent = silent) %>%
+    silent = silent
+  ) %>%
     mutate(DVCFB = .data$DV - .data$DVBL)
 
   return(out)
@@ -379,11 +414,11 @@ derive_cfb <- function(
 #' @importFrom stats na.omit
 #'
 legacy_add_cfb <- function(
-    obj,
-    baseline_filter = "TIME <= 0",
-    summary_function = median,
-    silent = NULL) {
-
+  obj,
+  baseline_filter = "TIME <= 0",
+  summary_function = median,
+  silent = NULL
+) {
   lifecycle::deprecate_warn("0.57.8", "add_cfb()", "derive_cfb()")
 
   # Validate required columns
@@ -437,7 +472,8 @@ legacy_add_cfb <- function(
     conditional_message(
       "Found NA values in ID column.",
       "These rows will be excluded from calculations.",
-      silent = silent)
+      silent = silent
+    )
   }
 
   na_analytes <- obj$ANALYTE[is.na(obj$ANALYTE)]
@@ -445,7 +481,8 @@ legacy_add_cfb <- function(
     conditional_message(
       "Found NA values in ANALYTE column.",
       "These rows will be excluded from calculations.",
-      silent = silent)
+      silent = silent
+    )
   }
 
   # Filter out NA values in grouping columns before calculations
@@ -487,16 +524,17 @@ legacy_add_cfb <- function(
 #' head(add_cfb(examplinib_poc_nif))
 #' head(add_cfb(examplinib_poc_min_nif))
 add_cfb <- function(
-    obj,
-    baseline_filter = "TIME <= 0",
-    summary_function = median,
-    silent = NULL) {
-
-  derive_cfb(obj, baseline_filter = baseline_filter,
-             summary_function = summary_function,
-             silent = silent)
+  obj,
+  baseline_filter = "TIME <= 0",
+  summary_function = median,
+  silent = NULL
+) {
+  derive_cfb(obj,
+    baseline_filter = baseline_filter,
+    summary_function = summary_function,
+    silent = silent
+  )
 }
-
 
 
 #' Derive a new analyte with change from baseline from an existing analyte
@@ -515,25 +553,28 @@ add_cfb <- function(
 #' @returns A nif object.
 #' @export
 derive_cfb_analyte <- function(
-    obj, source_analyte, analyte = NULL,
-    baseline_filter = "TIME <= 0",
-    summary_function = median,
-    silent = NULL) {
-
+  obj, source_analyte, analyte = NULL,
+  baseline_filter = "TIME <= 0",
+  summary_function = median,
+  silent = NULL
+) {
   # input validation
   validate_nif(obj)
   validate_char_param(source_analyte, "source_analyte")
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
-  if(!source_analyte %in% analytes(obj))
+  if (!source_analyte %in% analytes(obj)) {
     stop(paste0("Analyte ", source_analyte, " not found in analytes!"))
+  }
 
-  if(is.null(analyte))
+  if (is.null(analyte)) {
     analyte <- paste0("CFB_", source_analyte)
+  }
 
-  if(analyte %in% analytes(obj))
+  if (analyte %in% analytes(obj)) {
     stop(paste0("Analyte ", analyte, " already in data set!"))
+  }
 
   # Validate summary function
   if (!is.function(summary_function)) {
@@ -541,26 +582,28 @@ derive_cfb_analyte <- function(
   }
 
   # Safe evaluation of filter
-  tryCatch({
-    filter_expr <- parse(text = baseline_filter)
-    test_eval <- eval(filter_expr, envir = obj)
-    if (!is.logical(test_eval)) {
-      stop("baseline_filter must evaluate to logical values")
+  tryCatch(
+    {
+      filter_expr <- parse(text = baseline_filter)
+      test_eval <- eval(filter_expr, envir = obj)
+      if (!is.logical(test_eval)) {
+        stop("baseline_filter must evaluate to logical values")
+      }
+      if (length(test_eval) != nrow(obj)) {
+        stop("baseline_filter must return a logical vector with length equal to number of rows")
+      }
+    },
+    error = function(e) {
+      stop("Invalid baseline_filter expression: ", e$message)
     }
-    if (length(test_eval) != nrow(obj)) {
-      stop("baseline_filter must return a logical vector with length equal to number of rows")
-    }
-  },
-  error = function(e) {
-    stop("Invalid baseline_filter expression: ", e$message)
-  }
   )
 
   # cmt
   cmt <- max(obj$CMT) + 1
   conditional_message(
     "Compartment for ", analyte, " set to ", cmt,
-    silent = silent)
+    silent = silent
+  )
 
   # make new analyte
   temp <- obj %>%

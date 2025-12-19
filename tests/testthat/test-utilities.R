@@ -13,16 +13,16 @@ test_that("conditional message works", {
 test_that("recode sex works", {
   test <- tribble(
     ~ID, ~SEX, ~EXPECTATION,
-    1,   "0",  0,
-    2,   "1",  1,
-    3,   "M",  0,
-    4,   "F",  1,
-    5,   "m",  0,
-    6,   "f",  1,
-    7,   "男", 0,
-    8,   "女", 1,
-    9,   "\u7537", 0,
-    10,  "\u5973", 1
+    1, "0", 0,
+    2, "1", 1,
+    3, "M", 0,
+    4, "F", 1,
+    5, "m", 0,
+    6, "f", 1,
+    7, "男", 0,
+    8, "女", 1,
+    9, "\u7537", 0,
+    10, "\u5973", 1
   )
   expect_equal(recode_sex(test)$SEX, test$EXPECTATION)
 })
@@ -43,19 +43,19 @@ test_that("indent_string works", {
 
 
 test_that("standardize_date_format works", {
-   test <- tribble(
-     ~ID,              ~STDTC,                ~ENDTC,
-     1,    "2024-12-05T08:12",          "2024-12-05",
-     2,          "2024-12-05",             "2024-12",
-     3,             "2024-12", "2024-12-05T08:12:30",
-     4, "2024-12-05T08:12:30",                "2024",
-     5,                "2024",    "2024-12-05 08:12",
-     6,    "2024-12-05 08:12", "2024-12-05 08:12:30",
-     7, "2024-12-05 08:12:30",    "2024-12-05T08:12"
-   )
-   temp <- standardize_date_format(test, fields = c("STDTC", "ENDTC"))
-   expect_s3_class(temp$STDTC, "POSIXct")
-   expect_s3_class(temp$ENDTC, "POSIXct")
+  test <- tribble(
+    ~ID,              ~STDTC,                ~ENDTC,
+    1,    "2024-12-05T08:12",          "2024-12-05",
+    2,          "2024-12-05",             "2024-12",
+    3,             "2024-12", "2024-12-05T08:12:30",
+    4, "2024-12-05T08:12:30",                "2024",
+    5,                "2024",    "2024-12-05 08:12",
+    6,    "2024-12-05 08:12", "2024-12-05 08:12:30",
+    7, "2024-12-05 08:12:30",    "2024-12-05T08:12"
+  )
+  temp <- standardize_date_format(test, fields = c("STDTC", "ENDTC"))
+  expect_s3_class(temp$STDTC, "POSIXct")
+  expect_s3_class(temp$ENDTC, "POSIXct")
 })
 
 
@@ -73,16 +73,19 @@ test_that("isofy_date_format works", {
     mutate(STDTC = lubridate::as_datetime(STDTC, format = dtc_formats)) %>%
     mutate(ENDTC = lubridate::as_datetime(ENDTC, format = dtc_formats))
 
-  temp <- isofy_date_format(test,  fields = c("STDTC", "ENDTC"))
+  temp <- isofy_date_format(test, fields = c("STDTC", "ENDTC"))
   expect_equal(
     temp$STDTC,
-    c("2024-12-05T08:12",
+    c(
+      "2024-12-05T08:12",
       "2024-12-05T00:00",
       "2024-12-01T00:00",
       "2024-12-05T08:12",
       "2024-01-01T00:00",
       "2024-12-05T08:12",
-      "2024-12-05T08:12"))
+      "2024-12-05T08:12"
+    )
+  )
 })
 
 
@@ -132,10 +135,12 @@ test_that("is_iso_datetime works", {
     "2024-12-05T08:12:30",
     "2024",
     "2024-12-05 08:12",
-    "2024-12-05 08:12:30")
+    "2024-12-05 08:12:30"
+  )
   temp <- as.logical(lapply(test, is_iso_date_time))
   expect_equal(
-    temp, c(TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE))
+    temp, c(TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)
+  )
 })
 
 
@@ -148,10 +153,12 @@ test_that("is_iso_date works", {
     "2024-12-05T08:12:30",
     "2024",
     "2024-12-05 08:12",
-    "2024-12-05 08:12:30")
+    "2024-12-05 08:12:30"
+  )
   temp <- as.logical(lapply(test, is_iso_date))
   expect_equal(
-    temp, c(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE))
+    temp, c(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE)
+  )
 })
 
 
@@ -176,28 +183,27 @@ test_that("compose_dtc works", {
 })
 
 
-
-
-
 test_that("extract_date works", {
-    test <- tribble(
-      ~ID,              ~STDTC,                ~ENDTC,
-      1, "2024-12-05 08:12:00",          "2024-12-05",
-      2,          "2024-12-05",          "2024-12-01",
-      3,          "2024-12-01", "2024-12-05 08:12:30",
-      4, "2024-12-05 08:12:30",          "2024-01-01",
-      5,          "2024-01-01", "2024-12-05 08:12:00",
-      6, "2024-12-05 08:12:00", "2024-12-05 08:12:30",
-      7, "2024-12-05 08:12:30", "2024-12-05 08:12:00"
-    ) %>%
-      mutate(STDTC = lubridate::as_datetime(STDTC, format = dtc_formats)) %>%
-      mutate(ENDTC = lubridate::as_datetime(ENDTC, format = dtc_formats))
+  test <- tribble(
+    ~ID,              ~STDTC,                ~ENDTC,
+    1, "2024-12-05 08:12:00",          "2024-12-05",
+    2,          "2024-12-05",          "2024-12-01",
+    3,          "2024-12-01", "2024-12-05 08:12:30",
+    4, "2024-12-05 08:12:30",          "2024-01-01",
+    5,          "2024-01-01", "2024-12-05 08:12:00",
+    6, "2024-12-05 08:12:00", "2024-12-05 08:12:30",
+    7, "2024-12-05 08:12:30", "2024-12-05 08:12:00"
+  ) %>%
+    mutate(STDTC = lubridate::as_datetime(STDTC, format = dtc_formats)) %>%
+    mutate(ENDTC = lubridate::as_datetime(ENDTC, format = dtc_formats))
 
   expect_equal(
     extract_date(test$STDTC),
-    c("2024-12-05", "2024-12-05", "2024-12-01", "2024-12-05", "2024-01-01",
-      "2024-12-05", "2024-12-05"))
-
+    c(
+      "2024-12-05", "2024-12-05", "2024-12-01", "2024-12-05", "2024-01-01",
+      "2024-12-05", "2024-12-05"
+    )
+  )
 })
 
 
@@ -217,8 +223,8 @@ test_that("extract_time works", {
 
   expect_equal(
     extract_time(test$STDTC),
-    c("08:12", "00:00", "00:00", "08:12", "00:00", "08:12", "08:12"))
-
+    c("08:12", "00:00", "00:00", "08:12", "00:00", "08:12", "08:12")
+  )
 })
 
 
@@ -246,15 +252,18 @@ test_that("has time works", {
 
   expect_equal(
     has_time(test$STDTC),
-    c(TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE))
+    c(TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE)
+  )
 })
 
 
 test_that("nice enumeration works", {
   expect_equal(nice_enumeration("A"), "A")
   expect_equal(nice_enumeration(c("A", "B", "C")), "A, B and C")
-  expect_equal(nice_enumeration(c("A", "B", "C"), conjunction = "or"),
-               "A, B or C")
+  expect_equal(
+    nice_enumeration(c("A", "B", "C"), conjunction = "or"),
+    "A, B or C"
+  )
 })
 
 
@@ -290,10 +299,13 @@ test_that("safe min works", {
 
 test_that("pos_diff works", {
   expect_equal(pos_diff(3, 2), 1)
-  expect_equal(pos_diff(
-    c(1, 2, 3, 4),
-    c(2, 2, 2, 2)),
-    c(NA, 0, 1, 2))
+  expect_equal(
+    pos_diff(
+      c(1, 2, 3, 4),
+      c(2, 2, 2, 2)
+    ),
+    c(NA, 0, 1, 2)
+  )
 })
 
 
@@ -350,13 +362,13 @@ test_that("is_iso8601_datetime correctly identifies ISO 8601 date-time formats",
 
 test_that("is_iso8601_datetime works with vectors", {
   test_datetimes <- c(
-    "2023-10-15T14:30:00",     # Valid ISO format with T separator
-    "2023-10-15 14:30:00",     # Valid ISO format with space separator
-    "20231015T143000",         # Valid ISO basic format
-    "2023-10-15",              # Date only - invalid for date-time
-    "14:30:00",                # Time only - invalid for date-time
-    "2023/10/15T14:30:00",     # Invalid date format
-    NA_character_              # NA
+    "2023-10-15T14:30:00", # Valid ISO format with T separator
+    "2023-10-15 14:30:00", # Valid ISO format with space separator
+    "20231015T143000", # Valid ISO basic format
+    "2023-10-15", # Date only - invalid for date-time
+    "14:30:00", # Time only - invalid for date-time
+    "2023/10/15T14:30:00", # Invalid date format
+    NA_character_ # NA
   )
 
   expected_results <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, NA)
@@ -407,14 +419,14 @@ test_that("is_iso8601_date correctly identifies ISO 8601 date formats", {
 
 test_that("is_iso8601_date works with vectors", {
   test_dates <- c(
-    "2023-10-15",        # Valid extended format
-    "20231015",          # Valid basic format
-    "2023-10",           # Valid reduced precision (year-month)
-    "2023",              # Valid reduced precision (year)
-    "2023/10/15",        # Invalid format
-    "2023-10-15T14:30",  # Has time component (invalid for date-only)
-    "",                  # Empty string
-    NA_character_        # NA
+    "2023-10-15", # Valid extended format
+    "20231015", # Valid basic format
+    "2023-10", # Valid reduced precision (year-month)
+    "2023", # Valid reduced precision (year)
+    "2023/10/15", # Invalid format
+    "2023-10-15T14:30", # Has time component (invalid for date-only)
+    "", # Empty string
+    NA_character_ # NA
   )
 
   # With default settings (allow_reduced_precision = TRUE)
@@ -431,6 +443,3 @@ test_that("is_iso8601_date works with vectors", {
   results_strict <- is_iso8601_date(test_dates, allow_reduced_precision = FALSE)
   expect_equal(results_strict, expected_results_strict)
 })
-
-
-

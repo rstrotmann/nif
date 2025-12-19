@@ -37,6 +37,6 @@ A nif object with the DVBL field added for the specified analyte.
 Extract the individual baseline value for an analyte
 }
 \examples{
- head(derive_baseline(examplinib_sad_nif, "RS2023"))
+head(derive_baseline(examplinib_sad_nif, "RS2023"))
 
 }

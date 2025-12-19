@@ -13,19 +13,21 @@
 #' @return A data frame containing the duplicate rows and their counts, or just
 #' the count if count_only is TRUE
 find_duplicates <- function(
-    df,
-    fields = NULL,
-    count_only = FALSE
-    ) {
+  df,
+  fields = NULL,
+  count_only = FALSE
+) {
   ## input validation
-  if(!is.data.frame(df)) {
+  if (!is.data.frame(df)) {
     stop("df must be a data frame!")
   }
   validate_char_param(
-    fields, "fields", allow_multiple = TRUE, allow_null = TRUE)
+    fields, "fields",
+    allow_multiple = TRUE, allow_null = TRUE
+  )
   validate_logical_param(count_only, "count_only")
 
-  if(is.null(fields)) {
+  if (is.null(fields)) {
     fields <- c("ID", "TIME", "ANALYTE")
   }
 
@@ -34,7 +36,8 @@ find_duplicates <- function(
   if (length(missing_fields) > 0) {
     stop(paste0(
       plural("Field", length(missing_fields) > 1),
-      " not found in input: ", nice_enumeration(missing_fields)))
+      " not found in input: ", nice_enumeration(missing_fields)
+    ))
   }
 
   # preserve baseline fields
@@ -43,9 +46,10 @@ find_duplicates <- function(
   index_fields <- intersect(names(df), index_fields)
 
   # if MDV is present, delete observations with MDV == 1
-  if("MDV" %in% names(df))
+  if ("MDV" %in% names(df)) {
     df <- df %>%
-    filter(.data$MDV != 1)
+      filter(.data$MDV != 1)
+  }
 
   duplicates <- df %>%
     group_by(across(all_of(index_fields))) %>%
@@ -57,8 +61,9 @@ find_duplicates <- function(
     return(nrow(duplicates))
   }
 
-  if(nrow(duplicates) == 0)
+  if (nrow(duplicates) == 0) {
     return(NULL)
+  }
 
   return(as.data.frame(duplicates))
 }
@@ -82,26 +87,33 @@ find_duplicates <- function(
 #'
 #' @return A data frame with duplicate rows removed
 resolve_duplicates_old <- function(
-    df,
-    fields = "TIME",
-    duplicate_function = mean,
-    dependent_variable = "DV",
-    na.rm = TRUE) {
+  df,
+  fields = "TIME",
+  duplicate_function = mean,
+  dependent_variable = "DV",
+  na.rm = TRUE
+) {
   ## input validation
 
-  if(is.null(fields))
+  if (is.null(fields)) {
     fields <- c("ID", "TIME", "ANALYTE")
+  }
 
   # Check if all specified fields exist in the data frame
   missing_fields <- setdiff(fields, names(df))
-  if (length(missing_fields) > 0)
-    stop(paste("The following fields do not exist in the data frame:",
-               paste(missing_fields, collapse = ", ")))
+  if (length(missing_fields) > 0) {
+    stop(paste(
+      "The following fields do not exist in the data frame:",
+      paste(missing_fields, collapse = ", ")
+    ))
+  }
 
   # Check if dependent_variable exists in the data frame
   if (!dependent_variable %in% names(df)) {
-    stop(paste("The dependent variable", dependent_variable,
-               "does not exist in the data frame"))
+    stop(paste(
+      "The dependent variable", dependent_variable,
+      "does not exist in the data frame"
+    ))
   }
 
   # Validate that duplicate_function is a function
@@ -121,7 +133,7 @@ resolve_duplicates_old <- function(
     distinct()
 
   f <- function(x) {
-    if(na.rm == TRUE){
+    if (na.rm == TRUE) {
       duplicate_function(x[!is.na(x)])
     } else {
       duplicate_function(x)
@@ -130,17 +142,19 @@ resolve_duplicates_old <- function(
 
   other <- df %>%
     select(setdiff(c(index_fields, other_fields), "DV")) %>%
-    distinct
+    distinct()
 
   # if MDV is present, delete observations with MDV == 1
-  if("MDV" %in% names(df))
+  if ("MDV" %in% names(df)) {
     df <- df %>%
-    filter(.data$MDV != 1)
+      filter(.data$MDV != 1)
+  }
 
   result <- df %>%
     reframe(
       !!dependent_variable := f(.data[[dependent_variable]]),
-      .by = any_of(index_fields)) %>%
+      .by = any_of(index_fields)
+    ) %>%
     left_join(baseline, by = "ID") %>%
     relocate(any_of(names(df)))
 
@@ -170,13 +184,14 @@ resolve_duplicates_old <- function(
 #'   average of duplicate values, and other fields are kept as-is if consistent
 #'   or set to NA if inconsistent within duplicate groups.
 resolve_duplicates <- function(
-    df,
-    fields = "TIME",
-    dependent_variable = "DV",
-    duplicate_function = mean,
-    na.rm = TRUE) {
+  df,
+  fields = "TIME",
+  dependent_variable = "DV",
+  duplicate_function = mean,
+  na.rm = TRUE
+) {
   ## input validation
-  if(!is.data.frame(df)) {
+  if (!is.data.frame(df)) {
     stop("df must be a data frame!")
   }
 
@@ -187,13 +202,16 @@ resolve_duplicates <- function(
   if (length(missing_fields) > 0) {
     stop(paste0(
       plural("Field", length(missing_fields) > 1),
-      " not found in input: ", nice_enumeration(missing_fields)))
+      " not found in input: ", nice_enumeration(missing_fields)
+    ))
   }
 
   # Check if dependent_variable exists in the data frame
   if (!dependent_variable %in% names(df)) {
-    stop(paste("The dependent variable", dependent_variable,
-               "does not exist in the data frame"))
+    stop(paste(
+      "The dependent variable", dependent_variable,
+      "does not exist in the data frame"
+    ))
   }
 
   # Validate that duplicate_function is a function
@@ -212,7 +230,7 @@ resolve_duplicates <- function(
   ## business logic
 
   # if MDV is present, delete observations with MDV == 1
-  if("MDV" %in% names(df)) {
+  if ("MDV" %in% names(df)) {
     df <- df %>%
       filter(.data$MDV != 1)
   }
@@ -259,7 +277,7 @@ resolve_duplicates <- function(
   }
 
   f <- function(x) {
-    if(na.rm == TRUE){
+    if (na.rm == TRUE) {
       x_filtered <- x[!is.na(x)]
       if (length(x_filtered) == 0) {
         # All values are NA - return NA instead of NaN
@@ -282,4 +300,3 @@ resolve_duplicates <- function(
 
   return(as.data.frame(result))
 }
-

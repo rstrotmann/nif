@@ -1,45 +1,42 @@
 make_test_sdtm1 <- function() {
-  temp = list(
+  temp <- list(
     dm = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,             ~RFXSTDTC,              ~RFSTDTC, ~ACTARM,  ~STUDYID,
-      "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "2",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "3",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "4",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC, ~RFSTDTC, ~ACTARM, ~STUDYID,
+      "1", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "2", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "3", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "4", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
     ) %>%
       mutate(RFENDTC = "2024-01-02T08:00:00"),
-
     vs = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
-      "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-      "2",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-      "3",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-      "4",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+      "1", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
+      "2", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
+      "3", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
+      "4", "VS", "HEIGHT", 100, "2024-01-01T08:00:00"
     ),
-
     lb = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBTESTCD, ~LBSTRESN,                ~LBDTC,
-      "1",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-      "2",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-      "3",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00",
-      "4",    "LB", "SERUM",   "CREAT",       100, "2024-01-01T08:00:00"
+      ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBTESTCD, ~LBSTRESN, ~LBDTC,
+      "1", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
+      "2", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
+      "3", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
+      "4", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00"
     ),
-
     ex = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT,              ~EXSTDTC,              ~EXENDTC, ~EXSEQ,
-      "1",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     1L,
-      "2",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     2L,
-      "3",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     3L,
-      "4",    "EX",       1,    "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00",     4L
+      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
+      "1", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 1L,
+      "2", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 2L,
+      "3", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 3L,
+      "4", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 4L
     ),
-
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
-      "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-      "2",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-      "3",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-      "4",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H"
-    ))
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN, ~PCSPEC, ~PCTEST, ~PCELTM,
+      "1", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
+      "2", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
+      "3", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
+      "4", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H"
+    )
+  )
 
   return(new_sdtm(temp))
 }
@@ -48,7 +45,8 @@ make_test_sdtm1 <- function() {
 test_that("make_observation works", {
   sdtm <- make_test_sdtm1()
   expect_no_error(
-    make_observation(sdtm, "pc", "A", ntime_method = "ELTM", silent = TRUE))
+    make_observation(sdtm, "pc", "A", ntime_method = "ELTM", silent = TRUE)
+  )
 })
 
 
@@ -56,8 +54,10 @@ test_that("make_observation issues warning if observation filter returns no obse
   sdtm <- make_test_sdtm1()
   # Should issue warning when silent is FALSE or NULL
   expect_error(
-    make_observation(sdtm, "pc", "A", observation_filter = "FALSE",
-                     ntime_method = "ELTM", silent = FALSE),
+    make_observation(sdtm, "pc", "A",
+      observation_filter = "FALSE",
+      ntime_method = "ELTM", silent = FALSE
+    ),
     "No entries found after applying observation filter!"
   )
 })
@@ -67,7 +67,8 @@ test_that("make_observation works with coding table", {
   sdtm <- examplinib_poc
   suppressMessages(expect_no_error(
     make_observation(
-      sdtm, "pp", "LAMZNPT", DTC_field = "PPRFTDTC",
+      sdtm, "pp", "LAMZNPT",
+      DTC_field = "PPRFTDTC",
       observation_filter = "PPSEQ == 7",
       ntime_method = "ELTM",
       coding_table = tibble::tribble(
@@ -78,8 +79,7 @@ test_that("make_observation works with coding table", {
         6, 66
       )
     )
-  )
-  )
+  ))
 })
 
 
@@ -88,13 +88,17 @@ test_that("make_observation handles different domains correctly", {
   sdtm <- make_test_sdtm1()
 
   # Test with PC domain
-  pc_obs <- make_observation(sdtm, "pc", "A", ntime_method = "ELTM",
-                             silent = TRUE)
+  pc_obs <- make_observation(sdtm, "pc", "A",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
   expect_equal(unique(pc_obs$ANALYTE), "A")
 
   # Test with LB domain
-  lb_obs <- make_observation(sdtm, "lb", "CREAT", ntime_method = "ELTM",
-                             silent = TRUE)
+  lb_obs <- make_observation(sdtm, "lb", "CREAT",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
   expect_equal(unique(lb_obs$ANALYTE), "CREAT")
 })
 
@@ -103,13 +107,17 @@ test_that("make_observation applies DV factor correctly", {
   sdtm <- make_test_sdtm1()
 
   # Default factor (1)
-  default_obs <- make_observation(sdtm, "pc", "A", ntime_method = "ELTM",
-                                  silent = TRUE)
+  default_obs <- make_observation(sdtm, "pc", "A",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
   expect_equal(unique(default_obs$DV), 100)
 
   # Custom factor (2)
-  factor_obs <- make_observation(sdtm, "pc", "A", factor = 2,
-                                 ntime_method = "ELTM", silent = TRUE)
+  factor_obs <- make_observation(sdtm, "pc", "A",
+    factor = 2,
+    ntime_method = "ELTM", silent = TRUE
+  )
   expect_equal(unique(factor_obs$DV), 200)
 })
 
@@ -120,8 +128,10 @@ test_that("make_observation handles custom DV_field correctly", {
   # Create test data with a custom field
   sdtm$domains$pc$PCCUSTOM <- sdtm$domains$pc$PCSTRESN * 2
 
-  custom_obs <- make_observation(sdtm, "pc", "A", DV_field = "PCCUSTOM",
-                                 ntime_method = "ELTM", silent = TRUE)
+  custom_obs <- make_observation(sdtm, "pc", "A",
+    DV_field = "PCCUSTOM",
+    ntime_method = "ELTM", silent = TRUE
+  )
   expect_equal(unique(custom_obs$DV), 200)
 })
 
@@ -139,7 +149,8 @@ test_that("make_observation handles custom TESTCD_field correctly", {
     TESTCD_field = "PCCUSTOMCD",
     observation_filter = "USUBJID == 2",
     ntime_method = "ELTM",
-    silent = TRUE)
+    silent = TRUE
+  )
 
   expect_equal(nrow(custom_obs), 1)
   expect_equal(custom_obs$USUBJID, "2")
@@ -154,8 +165,10 @@ test_that("make_observation handles custom DTC_field correctly", {
   sdtm$domains$pc$PCCUSTOMDTC <- custom_date
 
   custom_obs <- make_observation(
-    sdtm, "pc", "A", DTC_field = "PCCUSTOMDTC",
-    ntime_method = "ELTM", silent = TRUE)
+    sdtm, "pc", "A",
+    DTC_field = "PCCUSTOMDTC",
+    ntime_method = "ELTM", silent = TRUE
+  )
   expect_equal(unique(as.character(custom_obs$DTC)), custom_date)
 })
 
@@ -164,8 +177,10 @@ test_that("make_observation creates proper output fields", {
   sdtm <- make_test_sdtm1()
 
   result <- make_observation(
-    sdtm, "pc", "A", cmt = 5, parent = "PARENT", metabolite = TRUE,
-    ntime_method = "ELTM", silent = TRUE)
+    sdtm, "pc", "A",
+    cmt = 5, parent = "PARENT", metabolite = TRUE,
+    ntime_method = "ELTM", silent = TRUE
+  )
 
   # Check required fields
   expect_true("ANALYTE" %in% names(result))
@@ -195,8 +210,10 @@ test_that("make_observation handles NTIME lookup correctly", {
     NTIME = c(0, 1, 2)
   )
 
-  result <- make_observation(sdtm, "pc", "A", NTIME_lookup = ntime_lookup,
-                             ntime_method = "ELTM", silent = TRUE)
+  result <- make_observation(sdtm, "pc", "A",
+    NTIME_lookup = ntime_lookup,
+    ntime_method = "ELTM", silent = TRUE
+  )
   expect_equal(unique(result$NTIME), 0) # Should match the PT0H value
 })
 
@@ -207,7 +224,8 @@ test_that("make_observation validates inputs correctly", {
   # Test with invalid domain
   expect_error(
     make_observation(sdtm, "invalid_domain", "A",
-                     ntime_method = "ELTM", silent = TRUE),
+      ntime_method = "ELTM", silent = TRUE
+    ),
     "Expected domain missing in sdtm object: invalid_domain"
   )
 
@@ -215,7 +233,8 @@ test_that("make_observation validates inputs correctly", {
   not_sdtm <- list(domains = list(pc = data.frame()))
   expect_error(
     make_observation(not_sdtm, "pc", "A",
-                     ntime_method = "ELTM", silent = TRUE),
+      ntime_method = "ELTM", silent = TRUE
+    ),
     "Input must be a sdtm object"
   )
 })
@@ -232,7 +251,8 @@ test_that("make_observation handles missing DV field with coding table", {
   # Should error when no coding table is provided
   expect_error(
     make_observation(sdtm, "pc", "A",
-                     ntime_method = "ELTM", silent = TRUE),
+      ntime_method = "ELTM", silent = TRUE
+    ),
     "DV field 'PCSTRESN' not found in domain and no coding table provided"
   )
 
@@ -244,8 +264,10 @@ test_that("make_observation handles missing DV field with coding table", {
 
   expect_no_error(
     result <- make_observation(
-      sdtm, "pc", "A", coding_table = coding_table,
-      ntime_method = "ELTM", silent = TRUE)
+      sdtm, "pc", "A",
+      coding_table = coding_table,
+      ntime_method = "ELTM", silent = TRUE
+    )
   )
 
   # Check the coded values
@@ -260,7 +282,9 @@ test_that("make_observation sets MDV correctly for missing values", {
   sdtm$domains$pc$PCSTRESN[1] <- NA
 
   result <- make_observation(
-    sdtm, "pc", "A", ntime_method = "ELTM", silent = TRUE)
+    sdtm, "pc", "A",
+    ntime_method = "ELTM", silent = TRUE
+  )
 
   # MDV should be 1 for the row with NA
   expect_equal(result$MDV[result$USUBJID == "1"], 1)
@@ -275,13 +299,17 @@ test_that("add_observation basic functionality works", {
   # Create a base nif object with administration data
   base_nif <- new_nif() %>%
     add_administration(
-      examplinib_sad, "EXAMPLINIB", analyte = "RS2023", silent = TRUE)
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
 
   # Test basic observation adding
   expect_no_error({
     nif_with_obs <- base_nif %>%
       add_observation(
-        examplinib_sad, "pc", "RS2023", ntime_method = "ELTM", silent = TRUE)
+        examplinib_sad, "pc", "RS2023",
+        ntime_method = "ELTM", silent = TRUE
+      )
   })
 
   # Verify the observation was added correctly
@@ -293,13 +321,13 @@ test_that("add_observation basic functionality works", {
 test_that("make_observation works with ntime_method = 'TPT'", {
   # Create test data
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT,                              ~PCDTC,              ~PCSTRESN,
-    "SUBJ1",  "PC",    "TEST1",   "PRE-DOSE",                         "2023-01-01T08:00:00", 0,
-    "SUBJ1",  "PC",    "TEST1",   "1H POST-DOSE",                     "2023-01-01T09:00:00", 10,
-    "SUBJ1",  "PC",    "TEST1",   "2.5 HOURS POST DOSE",              "2023-01-01T10:30:00", 20,
-    "SUBJ1",  "PC",    "TEST1",   "30 MIN POST DOSE",                 "2023-01-01T08:30:00", 5,
-    "SUBJ1",  "PC",    "TEST1",   "0.5H TO 2H POST-DOSE",             "2023-01-01T10:00:00", 15,
-    "SUBJ1",  "PC",    "TEST1",   "DAY1 - 2 HOURS POST ADMINISTRATION", "2023-01-02T10:00:00", 25
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT, ~PCDTC, ~PCSTRESN,
+    "SUBJ1", "PC", "TEST1", "PRE-DOSE", "2023-01-01T08:00:00", 0,
+    "SUBJ1", "PC", "TEST1", "1H POST-DOSE", "2023-01-01T09:00:00", 10,
+    "SUBJ1", "PC", "TEST1", "2.5 HOURS POST DOSE", "2023-01-01T10:30:00", 20,
+    "SUBJ1", "PC", "TEST1", "30 MIN POST DOSE", "2023-01-01T08:30:00", 5,
+    "SUBJ1", "PC", "TEST1", "0.5H TO 2H POST-DOSE", "2023-01-01T10:00:00", 15,
+    "SUBJ1", "PC", "TEST1", "DAY1 - 2 HOURS POST ADMINISTRATION", "2023-01-02T10:00:00", 25
   )
 
   dm_data <- tribble(
@@ -309,7 +337,7 @@ test_that("make_observation works with ntime_method = 'TPT'", {
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01T08:00:00"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01T08:00:00"
   )
 
   # Create SDTM object
@@ -331,7 +359,7 @@ test_that("make_observation works with ntime_method = 'TPT'", {
   expect_equal(nrow(result), 6)
   expect_equal(
     result$NTIME,
-    c(0, 1, 2.5, 0.5, 2, 2)  # Expected NTIME values based on PCTPT
+    c(0, 1, 2.5, 0.5, 2, 2) # Expected NTIME values based on PCTPT
   )
   expect_equal(result$DV, c(0, 10, 20, 5, 15, 25))
   expect_equal(result$ANALYTE, rep("TEST1", 6))
@@ -344,20 +372,20 @@ test_that("make_observation works with ntime_method = 'TPT'", {
 test_that("make_observation handles missing NTIME values", {
   # Create test data with some invalid time points
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT,          ~PCDTC,              ~PCSTRESN,
-    "SUBJ1",  "PC",    "TEST1",   "PRE-DOSE",      "2023-01-01T08:00:00", 0,
-    "SUBJ1",  "PC",    "TEST1",   "INVALID TIME",  "2023-01-01T09:00:00", 10,
-    "SUBJ1",  "PC",    "TEST1",   "1H POST-DOSE",  "2023-01-01T10:00:00", 20
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT, ~PCDTC, ~PCSTRESN,
+    "SUBJ1", "PC", "TEST1", "PRE-DOSE", "2023-01-01T08:00:00", 0,
+    "SUBJ1", "PC", "TEST1", "INVALID TIME", "2023-01-01T09:00:00", 10,
+    "SUBJ1", "PC", "TEST1", "1H POST-DOSE", "2023-01-01T10:00:00", 20
   )
 
   dm_data <- tribble(
-    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
-    "SUBJ1",  "2023-01-01", "ACTIVE", "M"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX,
+    "SUBJ1", "2023-01-01", "ACTIVE", "M"
   )
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,       "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   # Create SDTM object
@@ -379,7 +407,7 @@ test_that("make_observation handles missing NTIME values", {
   expect_equal(nrow(result), 3)
   expect_equal(
     result$NTIME,
-    c(0, NA, 1)  # Middle value should be NA due to invalid time point
+    c(0, NA, 1) # Middle value should be NA due to invalid time point
   )
 })
 
@@ -387,21 +415,21 @@ test_that("make_observation handles missing NTIME values", {
 test_that("make_observation handles different time point formats", {
   # Create test data with various time point formats
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT,                          ~PCDTC,              ~PCSTRESN,
-    "SUBJ1",  "PC",    "TEST1",   "PREDOSE",                       "2023-01-01T08:00:00", 0,
-    "SUBJ1",  "PC",    "TEST1",   "1 HR POST-DOSE",                "2023-01-01T09:00:00", 10,
-    "SUBJ1",  "PC",    "TEST1",   "45 MINS POST DOSE",             "2023-01-01T08:45:00", 15,
-    "SUBJ1",  "PC",    "TEST1",   "1.5 HOURS POST ADMINISTRATION", "2023-01-01T09:30:00", 20
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPT, ~PCDTC, ~PCSTRESN,
+    "SUBJ1", "PC", "TEST1", "PREDOSE", "2023-01-01T08:00:00", 0,
+    "SUBJ1", "PC", "TEST1", "1 HR POST-DOSE", "2023-01-01T09:00:00", 10,
+    "SUBJ1", "PC", "TEST1", "45 MINS POST DOSE", "2023-01-01T08:45:00", 15,
+    "SUBJ1", "PC", "TEST1", "1.5 HOURS POST ADMINISTRATION", "2023-01-01T09:30:00", 20
   )
 
   dm_data <- tribble(
-    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
-    "SUBJ1",  "2023-01-01", "ACTIVE", "M"
+    ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX,
+    "SUBJ1", "2023-01-01", "ACTIVE", "M"
   )
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70, "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   # Create SDTM object
@@ -423,7 +451,7 @@ test_that("make_observation handles different time point formats", {
   expect_equal(nrow(result), 4)
   expect_equal(
     result$NTIME,
-    c(0, 1, 0.75, 1.5)  # Expected NTIME values based on PCTPT
+    c(0, 1, 0.75, 1.5) # Expected NTIME values based on PCTPT
   )
 })
 
@@ -432,11 +460,11 @@ test_that("make_observation handles different time point formats", {
 test_that("make_observation filters by cat parameter correctly", {
   # Create test data with PCCAT field
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
-    "SUBJ1",  "PC",    "TEST1",   "PK",   100,       "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1",  "PC",    "TEST1",   "PK",   200,       "2023-01-01T09:00:00", "PT1H",
-    "SUBJ1",  "PC",    "TEST1",   "PD",   300,       "2023-01-01T10:00:00", "PT2H",
-    "SUBJ1",  "PC",    "TEST1",   "PD",   400,       "2023-01-01T11:00:00", "PT3H"
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
+    "SUBJ1", "PC", "TEST1", "PK", 100, "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1", "PC", "TEST1", "PK", 200, "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1", "PC", "TEST1", "PD", 300, "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1", "PC", "TEST1", "PD", 400, "2023-01-01T11:00:00", "PT3H"
   )
 
   dm_data <- tribble(
@@ -446,7 +474,7 @@ test_that("make_observation filters by cat parameter correctly", {
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   sdtm <- new_sdtm(list(
@@ -488,11 +516,11 @@ test_that("make_observation filters by cat parameter correctly", {
 test_that("make_observation filters by scat parameter correctly", {
   # Create test data with PCSCAT field
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
-    "SUBJ1",  "PC",    "TEST1",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1",  "PC",    "TEST1",   "PLASMA", 200,      "2023-01-01T09:00:00", "PT1H",
-    "SUBJ1",  "PC",    "TEST1",   "URINE",  300,      "2023-01-01T10:00:00", "PT2H",
-    "SUBJ1",  "PC",    "TEST1",   "URINE",  400,      "2023-01-01T11:00:00", "PT3H"
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
+    "SUBJ1", "PC", "TEST1", "PLASMA", 100, "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1", "PC", "TEST1", "PLASMA", 200, "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1", "PC", "TEST1", "URINE", 300, "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1", "PC", "TEST1", "URINE", 400, "2023-01-01T11:00:00", "PT3H"
   )
 
   dm_data <- tribble(
@@ -502,7 +530,7 @@ test_that("make_observation filters by scat parameter correctly", {
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   sdtm <- new_sdtm(list(
@@ -544,11 +572,11 @@ test_that("make_observation filters by scat parameter correctly", {
 test_that("make_observation filters by both cat and scat parameters correctly", {
   # Create test data with both PCCAT and PCSCAT fields
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
-    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1",  "PC",    "TEST1",   "PK",   "URINE",  200,      "2023-01-01T09:00:00", "PT1H",
-    "SUBJ1",  "PC",    "TEST1",   "PD",   "PLASMA", 300,      "2023-01-01T10:00:00", "PT2H",
-    "SUBJ1",  "PC",    "TEST1",   "PD",   "URINE",  400,      "2023-01-01T11:00:00", "PT3H"
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
+    "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 100, "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1", "PC", "TEST1", "PK", "URINE", 200, "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1", "PC", "TEST1", "PD", "PLASMA", 300, "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1", "PC", "TEST1", "PD", "URINE", 400, "2023-01-01T11:00:00", "PT3H"
   )
 
   dm_data <- tribble(
@@ -558,7 +586,7 @@ test_that("make_observation filters by both cat and scat parameters correctly", 
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   sdtm <- new_sdtm(list(
@@ -602,11 +630,11 @@ test_that("make_observation filters by both cat and scat parameters correctly", 
 test_that("make_observation handles custom cat and scat field names", {
   # Create test data with custom field names
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
-    "SUBJ1",  "PC",    "TEST1",   "CUSTOM1", "SPEC1", 100,      "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1",  "PC",    "TEST1",   "CUSTOM1", "SPEC2", 200,      "2023-01-01T09:00:00", "PT1H",
-    "SUBJ1",  "PC",    "TEST1",   "CUSTOM2", "SPEC1", 300,      "2023-01-01T10:00:00", "PT2H",
-    "SUBJ1",  "PC",    "TEST1",   "CUSTOM2", "SPEC2", 400,      "2023-01-01T11:00:00", "PT3H"
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
+    "SUBJ1", "PC", "TEST1", "CUSTOM1", "SPEC1", 100, "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1", "PC", "TEST1", "CUSTOM1", "SPEC2", 200, "2023-01-01T09:00:00", "PT1H",
+    "SUBJ1", "PC", "TEST1", "CUSTOM2", "SPEC1", 300, "2023-01-01T10:00:00", "PT2H",
+    "SUBJ1", "PC", "TEST1", "CUSTOM2", "SPEC2", 400, "2023-01-01T11:00:00", "PT3H"
   )
 
   dm_data <- tribble(
@@ -616,7 +644,7 @@ test_that("make_observation handles custom cat and scat field names", {
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   sdtm <- new_sdtm(list(
@@ -655,10 +683,10 @@ test_that("make_observation handles custom cat and scat field names", {
 test_that("make_observation handles cat and scat with different domains", {
   # Test with LB domain
   lb_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~LBTESTCD, ~LBCAT, ~LBSCAT, ~LBSTRESN, ~LBDTC,              ~LBELTM,
-    "SUBJ1",  "LB",    "CREAT",   "CHEM", "SERUM", 1.2,       "2023-01-01T08:00:00", "LT0H",
-    "SUBJ1",  "LB",    "CREAT",   "CHEM", "URINE", 2.1,       "2023-01-01T09:00:00", "LT1H",
-    "SUBJ1",  "LB",    "CREAT",   "HEMA", "SERUM", 1.5,       "2023-01-01T10:00:00", "LT2H"
+    ~USUBJID, ~DOMAIN, ~LBTESTCD, ~LBCAT, ~LBSCAT, ~LBSTRESN, ~LBDTC, ~LBELTM,
+    "SUBJ1", "LB", "CREAT", "CHEM", "SERUM", 1.2, "2023-01-01T08:00:00", "LT0H",
+    "SUBJ1", "LB", "CREAT", "CHEM", "URINE", 2.1, "2023-01-01T09:00:00", "LT1H",
+    "SUBJ1", "LB", "CREAT", "HEMA", "SERUM", 1.5, "2023-01-01T10:00:00", "LT2H"
   )
 
   dm_data <- tribble(
@@ -668,7 +696,7 @@ test_that("make_observation handles cat and scat with different domains", {
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   sdtm <- new_sdtm(list(
@@ -708,9 +736,9 @@ test_that("make_observation handles cat and scat with different domains", {
 test_that("make_observation handles cat and scat with no matching values", {
   # Create test data
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
-    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 200,      "2023-01-01T09:00:00", "PT1H"
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
+    "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 100, "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 200, "2023-01-01T09:00:00", "PT1H"
   )
 
   dm_data <- tribble(
@@ -720,7 +748,7 @@ test_that("make_observation handles cat and scat with no matching values", {
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   sdtm <- new_sdtm(list(
@@ -760,9 +788,9 @@ test_that("make_observation handles cat and scat with no matching values", {
 test_that("make_observation handles NULL cat and scat parameters", {
   # Create test data
   pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC,              ~PCELTM,
-    "SUBJ1",  "PC",    "TEST1",   "PK",   "PLASMA", 100,      "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1",  "PC",    "TEST1",   "PD",   "URINE",  200,      "2023-01-01T09:00:00", "PT1H"
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
+    "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 100, "2023-01-01T08:00:00", "PT0H",
+    "SUBJ1", "PC", "TEST1", "PD", "URINE", 200, "2023-01-01T09:00:00", "PT1H"
   )
 
   dm_data <- tribble(
@@ -772,7 +800,7 @@ test_that("make_observation handles NULL cat and scat parameters", {
 
   vs_data <- tribble(
     ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1",  "WEIGHT",   70,        "2023-01-01"
+    "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
   sdtm <- new_sdtm(list(
@@ -802,7 +830,7 @@ test_that("make_observation handles omit_not_done parameter correctly", {
 
   # Add PCSTAT field to the PC domain
   sdtm$domains$pc$PCSTAT <- ""
-  sdtm$domains$pc$PCSTAT[c(1, 3)] <- "NOT DONE"  # Set 2 rows to "NOT DONE"
+  sdtm$domains$pc$PCSTAT[c(1, 3)] <- "NOT DONE" # Set 2 rows to "NOT DONE"
 
   # Test with omit_not_done = TRUE (default)
   result_omit_true <- make_observation(
@@ -835,7 +863,7 @@ test_that("make_observation handles omit_not_done with different domains", {
 
   # Add LBSTAT field to the LB domain
   sdtm$domains$lb$LBSTAT <- ""
-  sdtm$domains$lb$LBSTAT[2] <- "NOT DONE"  # Set 1 row to "NOT DONE"
+  sdtm$domains$lb$LBSTAT[2] <- "NOT DONE" # Set 1 row to "NOT DONE"
 
   # Test with omit_not_done = TRUE for LB domain
   result_lb_omit_true <- make_observation(
@@ -866,24 +894,22 @@ test_that("make_observation handles omit_not_done when STAT field is missing", {
   # Create test SDTM without STAT field
   test_sdtm_no_stat <- list(
     dm = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,             ~RFXSTDTC,              ~RFSTDTC, ~ACTARM,  ~STUDYID,
-      "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "2",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC, ~RFSTDTC, ~ACTARM, ~STUDYID,
+      "1", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "2", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
     ) %>%
       mutate(RFENDTC = "2024-01-02T08:00:00"),
-
     vs = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
-      "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00",
-      "2",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+      "1", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
+      "2", "VS", "HEIGHT", 100, "2024-01-01T08:00:00"
     ),
-
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM,
-      "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",
-      "1",    "PC",       "A", "2024-01-01T09:00:00",       150,  "Spec", "Analyte A",  "PT1H",
-      "2",    "PC",       "A", "2024-01-01T08:00:00",       110,  "Spec", "Analyte A",  "PT0H",
-      "2",    "PC",       "A", "2024-01-01T09:00:00",       160,  "Spec", "Analyte A",  "PT1H"
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN, ~PCSPEC, ~PCTEST, ~PCELTM,
+      "1", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
+      "1", "PC", "A", "2024-01-01T09:00:00", 150, "Spec", "Analyte A", "PT1H",
+      "2", "PC", "A", "2024-01-01T08:00:00", 110, "Spec", "Analyte A", "PT0H",
+      "2", "PC", "A", "2024-01-01T09:00:00", 160, "Spec", "Analyte A", "PT1H"
     )
   ) %>%
     new_sdtm()
@@ -915,21 +941,19 @@ test_that("make_observation shows correct message when omit_not_done filters obs
   # Create test SDTM with STAT field and "NOT DONE" values
   test_sdtm_message <- list(
     dm = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,             ~RFXSTDTC,              ~RFSTDTC, ~ACTARM,  ~STUDYID,
-      "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC, ~RFSTDTC, ~ACTARM, ~STUDYID,
+      "1", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
     ) %>%
       mutate(RFENDTC = "2024-01-02T08:00:00"),
-
     vs = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN,                ~VSDTC,
-      "1",    "VS",  "HEIGHT",       100, "2024-01-01T08:00:00"
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+      "1", "VS", "HEIGHT", 100, "2024-01-01T08:00:00"
     ),
-
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD,                ~PCDTC, ~PCSTRESN, ~PCSPEC,     ~PCTEST, ~PCELTM, ~PCSTAT,
-      "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "Spec", "Analyte A",  "PT0H",      "",
-      "1",    "PC",       "A", "2024-01-01T09:00:00",       150,  "Spec", "Analyte A",  "PT1H", "NOT DONE",
-      "1",    "PC",       "A", "2024-01-01T10:00:00",       200,  "Spec", "Analyte A",  "PT2H", "NOT DONE"
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN, ~PCSPEC, ~PCTEST, ~PCELTM, ~PCSTAT,
+      "1", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H", "",
+      "1", "PC", "A", "2024-01-01T09:00:00", 150, "Spec", "Analyte A", "PT1H", "NOT DONE",
+      "1", "PC", "A", "2024-01-01T10:00:00", 200, "Spec", "Analyte A", "PT2H", "NOT DONE"
     )
   ) %>%
     new_sdtm()
@@ -984,4 +1008,3 @@ test_that("make_observation validates omit_not_done parameter", {
     make_observation(sdtm, "pc", "A", omit_not_done = FALSE, silent = TRUE)
   )
 })
-

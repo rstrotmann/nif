@@ -145,4 +145,3 @@ test_that("add_tad returns a nif object", {
 
   expect_s3_class(result, "nif")
 })
-

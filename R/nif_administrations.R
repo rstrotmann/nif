@@ -7,44 +7,46 @@
 #'
 #' @return Vector of lists: Dates and Days.
 #' @noRd
-date_list <- function(stdtc, endtc, stdy=NA, endy=NA) {
-  tryCatch({
-    start_date <- as.Date(stdtc)
-    end_date <- as.Date(endtc)
-  },
-  error = function(e) {
-    warning("Failed to parse dates: ", stdtc, " to ", endtc)
-  })
+date_list <- function(stdtc, endtc, stdy = NA, endy = NA) {
+  tryCatch(
+    {
+      start_date <- as.Date(stdtc)
+      end_date <- as.Date(endtc)
+    },
+    error = function(e) {
+      warning("Failed to parse dates: ", stdtc, " to ", endtc)
+    }
+  )
 
-  if(!is.na(end_date) & end_date < start_date) {
+  if (!is.na(end_date) & end_date < start_date) {
     stop(paste0(
       "End date before start date for: ", stdtc, " to ", endtc
     ))
   }
 
-  if(!is.na(endy) & !is.na(stdy) & endy < stdy) {
+  if (!is.na(endy) & !is.na(stdy) & endy < stdy) {
     stop(paste0(
       "End day before start day for: ", stdy, " to ", endy
     ))
   }
 
-  if(!is.na(endtc)){
+  if (!is.na(endtc)) {
     dtc_list <- seq(start_date, end_date, by = "days")
   } else {
     dtc_list <- start_date
   }
 
-  if(!is.na(stdy)) {
-    if(!is.na(endy)) {
-        dy_list <- seq(stdy, endy)
-      } else {
-        dy_list <- seq(stdy, stdy + length(dtc_list) - 1)
-      }
+  if (!is.na(stdy)) {
+    if (!is.na(endy)) {
+      dy_list <- seq(stdy, endy)
+    } else {
+      dy_list <- seq(stdy, stdy + length(dtc_list) - 1)
+    }
   } else {
     dy_list <- rep(NA, length(dtc_list))
   }
 
-  if(length(dtc_list) != length(dy_list)) {
+  if (length(dtc_list) != length(dy_list)) {
     stop("DTC list and DY list have different lengths!")
   }
 
@@ -67,7 +69,7 @@ expand_ex <- function(ex) {
     ex %>%
       assertr::verify(assertr::has_all_names(
         "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
-    ))
+      ))
   }
 
   # Convert EXSTDY and EXENDY to numeric if they exist
@@ -81,30 +83,36 @@ expand_ex <- function(ex) {
   ex %>%
     assertr::verify(assertr::has_all_names(
       "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
-      )) %>%
-    {if(!"IMPUTATION" %in% names(.))
-      mutate(., IMPUTATION = "") else .} %>%
+    )) %>%
+    {
+      if (!"IMPUTATION" %in% names(.)) {
+        mutate(., IMPUTATION = "")
+      } else {
+        .
+      }
+    } %>%
     decompose_dtc(c("EXSTDTC", "EXENDTC")) %>%
-
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
     rowwise() %>%
     # mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)) %>%
     mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1]) %>%
-
-    {if(all(c("EXSTDY", "EXENDY") %in% names(ex)))
-      mutate(., EXDY = date_list(.data$EXSTDTC_date, .data$EXENDTC_date,
-                                 .data$EXSTDY, .data$EXENDY)[2]) else .} %>%
-
+    {
+      if (all(c("EXSTDY", "EXENDY") %in% names(ex))) {
+        mutate(., EXDY = date_list(
+          .data$EXSTDTC_date, .data$EXENDTC_date,
+          .data$EXSTDY, .data$EXENDY
+        )[2])
+      } else {
+        .
+      }
+    } %>%
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) %>%
-
     group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) %>%
-
     mutate(DTC_time = case_when(
       row_number() == n() & !is.na(EXENDTC_time) ~ .data$EXENDTC_time,
       .default = .data$EXSTDTC_time
     )) %>%
-
     # make imputation field
     mutate(IMPUTATION = case_when(
       row_number() == n() & !is.na(EXENDTC_time) ~ .data$IMPUTATION, # no comment
@@ -114,11 +122,12 @@ expand_ex <- function(ex) {
       !is.na(EXSTDTC_time) ~ "time carried forward",
       .default = "no time information"
     )) %>%
-
     ungroup() %>%
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
-    select(-c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time",
-              "DTC_date", "DTC_time"))
+    select(-c(
+      "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time",
+      "DTC_date", "DTC_time"
+    ))
 }
 
 
@@ -200,20 +209,20 @@ expand_ex <- function(ex) {
 #' @keywords internal
 #' @seealso [nif::add_administration()]
 make_administration <- function(
-    sdtm,
-    extrt,
-    analyte = NULL,
-    cmt = 1,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cut_off_date = NULL,
-    keep = "",
-    silent = NULL
+  sdtm,
+  extrt,
+  analyte = NULL,
+  cmt = 1,
+  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+  cut_off_date = NULL,
+  keep = "",
+  silent = NULL
 ) {
   dm <- domain(sdtm, "dm") %>% lubrify_dates()
   ex <- domain(sdtm, "ex") %>% lubrify_dates()
   vs <- NULL
 
-  if(has_domain(sdtm, "vs")) {
+  if (has_domain(sdtm, "vs")) {
     vs <- domain(sdtm, "vs")
   }
 
@@ -226,21 +235,23 @@ make_administration <- function(
 
   ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     analyte <- extrt
   }
 
-  if(is.null(cut_off_date)){
+  if (is.null(cut_off_date)) {
     cut_off_date <- last_ex_dtc(ex)
 
-    conditional_cli({
-      cli_alert_info(paste0(
-        "A global cut-off-date of ",
+    conditional_cli(
+      {
+        cli_alert_info(paste0(
+          "A global cut-off-date of ",
           format(cut_off_date),
           " was automatically assigned!"
-      ))
-
-    }, silent = silent)
+        ))
+      },
+      silent = silent
+    )
   } else {
     cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)
   }
@@ -249,10 +260,20 @@ make_administration <- function(
 
   admin <- ex %>%
     mutate(SRC_DOMAIN = "EX") %>%
-    {if("EXSEQ" %in% names(ex)) mutate(., SRC_SEQ = EXSEQ) else
-      mutate(., SRC_SEQ = NA)} %>%
-    {if(!"IMPUTATION" %in% names(.))
-      mutate(., IMPUTATION = "") else .} %>%
+    {
+      if ("EXSEQ" %in% names(ex)) {
+        mutate(., SRC_SEQ = EXSEQ)
+      } else {
+        mutate(., SRC_SEQ = NA)
+      }
+    } %>%
+    {
+      if (!"IMPUTATION" %in% names(.)) {
+        mutate(., IMPUTATION = "")
+      } else {
+        .
+      }
+    } %>%
     filter(.data$EXTRT == extrt) %>%
     decompose_dtc("EXSTDTC")
 
@@ -261,44 +282,44 @@ make_administration <- function(
     filter(.data$EXSTDTC > cut_off_date) %>%
     select(any_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "EXSEQ")))
 
-  if(nrow(cut_off_rows) > 0) {
-    conditional_cli({
-      cli::cli_alert_warning("Cut off date applied!")
-      cli::cli_text(paste0(
-        nrow(cut_off_rows),
-        " administrations episodes for ", extrt, " begin after the cut-off date (",
-        format(cut_off_date), ") and were deleted from the data set:"
-      ))
-      cli::cli_verbatim(
-        df_to_string(cut_off_rows, indent = 2)
-      )
-      cli::cli_text()
-    }, silent = silent)
+  if (nrow(cut_off_rows) > 0) {
+    conditional_cli(
+      {
+        cli::cli_alert_warning("Cut off date applied!")
+        cli::cli_text(paste0(
+          nrow(cut_off_rows),
+          " administrations episodes for ", extrt, " begin after the cut-off date (",
+          format(cut_off_date), ") and were deleted from the data set:"
+        ))
+        cli::cli_verbatim(
+          df_to_string(cut_off_rows, indent = 2)
+        )
+        cli::cli_text()
+      },
+      silent = silent
+    )
   }
 
   admin <- admin %>%
     filter(.data$EXSTDTC <= cut_off_date)
 
   admin <- admin %>%
-    # decompose_dtc("EXSTDTC") %>%
-
-
     # time imputations
     impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
     # impute_exendtc_to_rfendtc(dm) %>%
     filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) %>%
     decompose_dtc("EXENDTC") %>%
-
     # make generic fields
     mutate(
       TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
       METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
-      DOSE = EXDOSE, AMT = EXDOSE) %>%
+      DOSE = EXDOSE, AMT = EXDOSE
+    ) %>%
     expand_ex()
 
   # impute missing administration times from PCRFTDTC
-  if("pc" %in% names(sdtm$domains)) {
+  if ("pc" %in% names(sdtm$domains)) {
     pc <- domain(sdtm, "pc") %>% lubrify_dates()
 
     # admin <- admin %>%
@@ -306,7 +327,7 @@ make_administration <- function(
     #     impute_admin_times_from_pcrftdtc(
     #       ., pc, analyte, analyte, silent = silent) else .}
 
-    if("PCRFTDTC" %in% names(pc)) {
+    if ("PCRFTDTC" %in% names(pc)) {
       admin <- admin %>%
         impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
     }
@@ -318,11 +339,11 @@ make_administration <- function(
     arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) %>%
     mutate(IMPUTATION = case_when(
       is.na(.data$DTC_time) == TRUE ~ "time carried forward",
-      .default = .data$IMPUTATION)) %>%
+      .default = .data$IMPUTATION
+    )) %>%
     group_by(.data$USUBJID, .data$ANALYTE) %>%
     tidyr::fill("DTC_time", .direction = "down") %>%
     ungroup() %>%
-
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
     select(-c("DTC_date", "DTC_time")) %>%
     inner_join(sbs, by = "USUBJID") %>%
@@ -334,7 +355,8 @@ make_administration <- function(
       ## RFSTDTC refers to the first exposure to study treatment.
       ## Reference: https://www.lexjansen.com/phuse-us/2020/ds/DS07.pdf
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
-      units = "days") + 1) %>%
+      units = "days"
+    ) + 1) %>%
     ungroup() %>%
     new_nif()
 
@@ -366,16 +388,17 @@ make_administration <- function(
 #' add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
 #'
 add_administration <- function(
-    nif,
-    sdtm,
-    extrt,
-    analyte = NULL,
-    cmt = 1,
-    subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-    cut_off_date = NULL,
-    keep = NULL,
-    debug = FALSE,
-    silent = NULL) {
+  nif,
+  sdtm,
+  extrt,
+  analyte = NULL,
+  cmt = 1,
+  subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+  cut_off_date = NULL,
+  keep = NULL,
+  debug = FALSE,
+  silent = NULL
+) {
   # validate input
   validate_min_nif(nif)
   validate_sdtm(sdtm, c("dm", "ex"))
@@ -388,17 +411,15 @@ add_administration <- function(
   validate_logical_param(debug, "debug")
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
-  debug = isTRUE(debug) | isTRUE(nif_option_value("debug"))
-  if(isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+  debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
+  if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
   bind_rows(
     nif,
     make_administration(
       sdtm, extrt, analyte, cmt, subject_filter, cut_off_date, keep,
-      silent = silent)) %>%
+      silent = silent
+    )
+  ) %>%
     normalize_nif(keep = keep)
 }
-
-
-
-

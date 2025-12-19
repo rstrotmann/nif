@@ -1,12 +1,12 @@
 test_that("impute_admin_times_from_pcrftdtc works", {
   # Sample input data frames
   obj <- tribble(
-    ~USUBJID,   ~ANALYTE, ~DTC,              ~IMPUTATION,
-    "SUBJ-001", "Drug A", "2023-01-15",      "",
-    "SUBJ-001", "Drug A", "2023-01-16",      "",
-    "SUBJ-002", "Drug A", "2023-01-15",      "",
+    ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
+    "SUBJ-001", "Drug A", "2023-01-15", "",
+    "SUBJ-001", "Drug A", "2023-01-16", "",
+    "SUBJ-002", "Drug A", "2023-01-15", "",
     "SUBJ-003", "Drug B", "2023-01-15T12:30", "",
-    "SUBJ-003", "Drug B", "2023-01-16",      ""
+    "SUBJ-003", "Drug B", "2023-01-16", ""
   )
 
   pc <- tribble(
@@ -30,7 +30,9 @@ test_that("impute_admin_times_from_pcrftdtc works", {
 
   # Test for Drug A
   result_a <- impute_admin_times_from_pcrftdtc(
-    obj, pc, "Drug A", "DRUGACONC", silent = TRUE)
+    obj, pc, "Drug A", "DRUGACONC",
+    silent = TRUE
+  )
   expect_equal(result_a, expected)
 })
 
@@ -38,7 +40,7 @@ test_that("impute_admin_times_from_pcrftdtc works", {
 test_that("impute_admin_times_from_pcrftdtc handles missing data", {
   # Sample input with missing reference times
   obj <- tribble(
-    ~USUBJID, ~ANALYTE, ~DTC,          ~IMPUTATION,
+    ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
     "SUBJ-001", "Drug A", "2023-01-15", "",
     "SUBJ-002", "Drug A", "2023-01-15", ""
   )
@@ -52,13 +54,15 @@ test_that("impute_admin_times_from_pcrftdtc handles missing data", {
 
   # Expected output
   expected <- tribble(
-    ~USUBJID, ~ANALYTE, ~DTC,                ~IMPUTATION,
+    ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
     "SUBJ-001", "Drug A", "2023-01-15T08:15", "admin time from PCRFTDTC",
-    "SUBJ-002", "Drug A", "2023-01-15",       ""
+    "SUBJ-002", "Drug A", "2023-01-15", ""
   ) %>% lubrify_dates()
 
   result <- impute_admin_times_from_pcrftdtc(
-    obj, pc, "Drug A", "DRUGACONC", silent = TRUE)
+    obj, pc, "Drug A", "DRUGACONC",
+    silent = TRUE
+  )
   expect_equal(result, expected)
 })
 
@@ -66,7 +70,7 @@ test_that("impute_admin_times_from_pcrftdtc handles missing data", {
 test_that("impute_admin_times_from_pcrftdtc handles date mismatches", {
   # Sample input with date mismatches
   obj <- tribble(
-    ~USUBJID, ~ANALYTE, ~DTC,          ~IMPUTATION,
+    ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
     "SUBJ-001", "Drug A", "2023-01-15", "",
     "SUBJ-001", "Drug A", "2023-01-16", ""
   )
@@ -79,13 +83,15 @@ test_that("impute_admin_times_from_pcrftdtc handles date mismatches", {
 
   # Expected output
   expected <- tribble(
-    ~USUBJID, ~ANALYTE, ~DTC,                ~IMPUTATION,
+    ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
     "SUBJ-001", "Drug A", "2023-01-15T08:15", "admin time from PCRFTDTC",
-    "SUBJ-001", "Drug A", "2023-01-16",       ""
+    "SUBJ-001", "Drug A", "2023-01-16", ""
   ) %>% lubrify_dates()
 
   result <- impute_admin_times_from_pcrftdtc(
-    obj, pc, "Drug A", "DRUGACONC", silent = TRUE)
+    obj, pc, "Drug A", "DRUGACONC",
+    silent = TRUE
+  )
   expect_equal(result, expected)
 })
 
@@ -108,14 +114,17 @@ test_that("impute_admin_times_from_pcrftdtc preserves existing times", {
 
   # Expected output - the function should preserve the existing time (10:00)
   expected <- tibble::tribble(
-      ~USUBJID, ~ANALYTE,                  ~DTC,                            ~IMPUTATION,
-    "SUBJ-001", "Drug A", "2023-01-15 08:15:00",      "admin time from PCRFTDTC",
-    "SUBJ-001", "Drug A", "2023-01-16 09:30:00",      "admin time from PCRFTDTC",
-    "SUBJ-002", "Drug A", "2023-01-15 10:45:00",      "admin time from PCRFTDTC"
+    ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
+    "SUBJ-001", "Drug A", "2023-01-15 08:15:00", "admin time from PCRFTDTC",
+    "SUBJ-001", "Drug A", "2023-01-16 09:30:00", "admin time from PCRFTDTC",
+    "SUBJ-002", "Drug A", "2023-01-15 10:45:00", "admin time from PCRFTDTC"
   ) %>% lubrify_dates()
 
   expect_message(
     result <- impute_admin_times_from_pcrftdtc(
-      obj, pc, "Drug A", "DRUGACONC", silent = FALSE))
+      obj, pc, "Drug A", "DRUGACONC",
+      silent = FALSE
+    )
+  )
   expect_equal(result, expected)
 })

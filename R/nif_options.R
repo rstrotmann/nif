@@ -3,9 +3,11 @@
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
 assign("show_hash", FALSE, envir = .nif_env)
-assign("abbreviate", TRUE, envir = .nif_env)
+# assign("abbreviate", TRUE, envir = .nif_env)
+assign("abbreviation_threshold", 20, envir = .nif_env)
+assign("abbreviation_maxlines", 10, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
-#assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
+# assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
 
 
 #' Set or get global options
@@ -19,7 +21,10 @@ assign("version", packageVersion("nif"), envir = .nif_env)
 #' * `pinboard` as character: Pinboard path for sharing of nif/sdtm objects.
 #' * `debug` as logical: Print debug information.
 #' * `show_hash` as logical: Include dataset hash in figures.
-#' * `abbreviate` as logical: Abbreviate long lists in summary output.
+#' * `abbreviation_threshold` as numeric: Allowed line count in message output
+#' without abbreviation. Set to Inf to always show all lines.
+#' * `abbrevation_maxlines` as numeric: Line number to that lists in message
+#' output will be abbreviated if the line count threshold is exceeded.
 #'
 #' @param ... Options as named values, or nothing.
 #'
@@ -38,21 +43,23 @@ nif_option <- function(...) {
     "debug",      is.logical,
     "show_hash",  is.logical,
     "test",       is.character,
-    "abbreviate", is.logical,
+    # "abbreviate", is.logical,
+    "abbreviation_threshold", is.numeric,
+    "abbreviation_maxlines", is.numeric
     # "disclaimer", is.character
   )
 
-  if(length(args) == 0) {
+  if (length(args) == 0) {
     as.list(.nif_env)
   } else {
-    for(i in 1:length(args)) {
+    for (i in 1:length(args)) {
       option_name <- names(args)[[i]]
       option_value <- args[[i]]
       temp <- filter(allowed_options, .data$name == option_name)
-      if(nrow(temp) == 0){
+      if (nrow(temp) == 0) {
         message(paste0("Unknown option '", option_name, "'!"))
-      } else if(nrow(temp) == 1) {
-        if(!temp$type_test[[1]](option_value)) {
+      } else if (nrow(temp) == 1) {
+        if (!temp$type_test[[1]](option_value)) {
           message(paste0("option '", option_name, "' has the wrong type!"))
         } else {
           assign(option_name, option_value, envir = .nif_env)
@@ -71,8 +78,10 @@ nif_option <- function(...) {
 #' @keywords internal
 #' @noRd
 nif_option_value <- function(option) {
-  if(!exists(".nif_env")) return(NA)
-  if(!exists(option, envir = .nif_env)){
+  if (!exists(".nif_env")) {
+    return(NA)
+  }
+  if (!exists(option, envir = .nif_env)) {
     return(NA)
   } else {
     return(get(option, .nif_env))
@@ -91,8 +100,8 @@ nif_option_value <- function(option) {
 #' nif_disclaimer()
 nif_disclaimer <- function(disclaimer_text = NA) {
   temp <- paste0("Data set created with `nif`, version ", packageVersion("nif"))
-  disc = disclaimer_text
-  if(!is.na(disc)) {
+  disc <- disclaimer_text
+  if (!is.na(disc)) {
     temp <- paste0(temp, "\n", disc)
   }
   return(temp)

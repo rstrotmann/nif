@@ -1,14 +1,13 @@
-
 test_that("ensure_parent() works correctly", {
   # Create test data
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,
-    1,     0,     1,    1, 100,
-    1,     1,     0,    1,  50,
-    1,     2,     0,    1,  25,
-    2,     0,     1,    1, 100,
-    2,     1,     0,    1,  50,
-    2,     2,     0,    1,  25
+    1, 0, 1, 1, 100,
+    1, 1, 0, 1, 50,
+    1, 2, 0, 1, 25,
+    2, 0, 1, 1, 100,
+    2, 1, 0, 1, 50,
+    2, 2, 0, 1, 25
   )
   test_nif <- test_data %>%
     new_nif()
@@ -22,12 +21,12 @@ test_that("ensure_parent() works correctly", {
   # Test with multiple CMT values
   multi_cmt_nif <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,
-    1,     0,     1,    1, 100,
-    1,     1,     0,    1,  50,
-    1,     2,     0,    1,  25,
-    2,     0,     1,    2, 100,
-    2,     1,     0,    2,  50,
-    2,     2,     0,    2,  25
+    1, 0, 1, 1, 100,
+    1, 1, 0, 1, 50,
+    1, 2, 0, 1, 25,
+    2, 0, 1, 2, 100,
+    2, 1, 0, 2, 50,
+    2, 2, 0, 2, 25
   ) %>% new_nif()
 
   result <- ensure_parent(multi_cmt_nif)
@@ -44,9 +43,9 @@ test_that("ensure_parent() works correctly", {
   # Test with no administrations
   no_admin_nif <- new_nif(tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,
-    1,     0,     0,    1,  50,
-    1,     1,     0,    1,  25,
-    1,     2,     0,    1,  12
+    1, 0, 0, 1, 50,
+    1, 1, 0, 1, 25,
+    1, 2, 0, 1, 12
   ))
 
   expect_warning(result <- ensure_parent(no_admin_nif))
@@ -66,4 +65,3 @@ test_that("ensure_parent() works correctly", {
   # Not a NIF object
   expect_error(ensure_parent(as.data.frame(test_nif)), "Input must be a nif object")
 })
-

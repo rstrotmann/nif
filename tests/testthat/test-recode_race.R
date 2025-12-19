@@ -2,14 +2,14 @@ test_that("recode_race works with default coding table", {
   # Create test data with RACE field
   test_data <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "WHITE",
-    2,   0,     0,    0,    0,     100,   0,  "ASIAN",
-    3,   0,     0,    0,    0,     100,   0,  "BLACK OR AFRICAN AMERICAN",
-    4,   0,     0,    0,    0,     100,   0,  "AMERICAN INDIAN OR ALASKA NATIVE",
-    5,   0,     0,    0,    0,     100,   0,  "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",
-    6,   0,     0,    0,    0,     100,   0,  "NOT REPORTED",
-    7,   0,     0,    0,    0,     100,   0,  "UNKNOWN",
-    8,   0,     0,    0,    0,     100,   0,  "OTHER"
+    1, 0, 0, 0, 0, 100, 0, "WHITE",
+    2, 0, 0, 0, 0, 100, 0, "ASIAN",
+    3, 0, 0, 0, 0, 100, 0, "BLACK OR AFRICAN AMERICAN",
+    4, 0, 0, 0, 0, 100, 0, "AMERICAN INDIAN OR ALASKA NATIVE",
+    5, 0, 0, 0, 0, 100, 0, "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER",
+    6, 0, 0, 0, 0, 100, 0, "NOT REPORTED",
+    7, 0, 0, 0, 0, 100, 0, "UNKNOWN",
+    8, 0, 0, 0, 0, 100, 0, "OTHER"
   )
 
   # Convert to nif object
@@ -38,9 +38,9 @@ test_that("recode_race works with custom coding table", {
   # Create test data
   test_data <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "Caucasian",
-    2,   0,     0,    0,    0,     100,   0,  "Asian",
-    3,   0,     0,    0,    0,     100,   0,  "African"
+    1, 0, 0, 0, 0, 100, 0, "Caucasian",
+    2, 0, 0, 0, 0, 100, 0, "Asian",
+    3, 0, 0, 0, 0, 100, 0, "African"
   )
 
   # Create custom coding table
@@ -65,9 +65,9 @@ test_that("recode_race handles unmatched values correctly", {
   # Create test data with some unmatched RACE values
   test_data <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "WHITE",
-    2,   0,     0,    0,    0,     100,   0,  "UNMATCHED_RACE",
-    3,   0,     0,    0,    0,     100,   0,  "ASIAN"
+    1, 0, 0, 0, 0, 100, 0, "WHITE",
+    2, 0, 0, 0, 0, 100, 0, "UNMATCHED_RACE",
+    3, 0, 0, 0, 0, 100, 0, "ASIAN"
   )
 
   # Convert to nif object
@@ -87,8 +87,8 @@ test_that("recode_race handles silent parameter", {
   # Create test data with unmatched RACE values
   test_data <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "WHITE",
-    2,   0,     0,    0,    0,     100,   0,  "UNMATCHED_RACE"
+    1, 0, 0, 0, 0, 100, 0, "WHITE",
+    2, 0, 0, 0, 0, 100, 0, "UNMATCHED_RACE"
   )
 
   # Convert to nif object
@@ -137,7 +137,7 @@ test_that("recode_race validates input correctly", {
   # Test with invalid coding table (missing RACE column)
   test_data <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "WHITE"
+    1, 0, 0, 0, 0, 100, 0, "WHITE"
   )
   test_nif <- new_nif(test_data)
 
@@ -183,7 +183,7 @@ test_that("recode_race handles edge cases", {
   # Test with single row
   single_row <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "WHITE"
+    1, 0, 0, 0, 0, 100, 0, "WHITE"
   )
   single_nif <- new_nif(single_row)
 
@@ -194,8 +194,8 @@ test_that("recode_race handles edge cases", {
   # Test with all unmatched values
   all_unmatched <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "UNMATCHED1",
-    2,   0,     0,    0,    0,     100,   0,  "UNMATCHED2"
+    1, 0, 0, 0, 0, 100, 0, "UNMATCHED1",
+    2, 0, 0, 0, 0, 100, 0, "UNMATCHED2"
   )
   unmatched_nif <- new_nif(all_unmatched)
 
@@ -211,8 +211,8 @@ test_that("recode_race preserves nif object structure", {
   # Create test data with all standard nif fields
   test_data <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE, ~SEX, ~AGE, ~WEIGHT,
-    1,   0,     0,    0,    0,     100,   0,  "WHITE", "M",  25,   70,
-    2,   0,     0,    0,    0,     100,   0,  "ASIAN", "F",  30,   60
+    1, 0, 0, 0, 0, 100, 0, "WHITE", "M", 25, 70,
+    2, 0, 0, 0, 0, 100, 0, "ASIAN", "F", 30, 60
   )
 
   # Convert to nif object
@@ -237,9 +237,9 @@ test_that("recode_race works with mixed case and whitespace", {
   # Create test data with mixed case and whitespace
   test_data <- tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
-    1,   0,     0,    0,    0,     100,   0,  "white",
-    2,   0,     0,    0,    0,     100,   0,  "  ASIAN  ",
-    3,   0,     0,    0,    0,     100,   0,  "Black or African American"
+    1, 0, 0, 0, 0, 100, 0, "white",
+    2, 0, 0, 0, 0, 100, 0, "  ASIAN  ",
+    3, 0, 0, 0, 0, 100, 0, "Black or African American"
   )
 
   # Convert to nif object
@@ -249,5 +249,5 @@ test_that("recode_race works with mixed case and whitespace", {
   result <- recode_race(test_nif, silent = TRUE)
 
   # Check that case-sensitive matching works (exact match required)
-  expect_equal(result$RACE, c(NA_integer_, NA_integer_, NA_integer_))  # No matches due to case/whitespace differences
+  expect_equal(result$RACE, c(NA_integer_, NA_integer_, NA_integer_)) # No matches due to case/whitespace differences
 })

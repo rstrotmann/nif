@@ -46,8 +46,8 @@ library(tidyverse)
 
 sdtm <- examplinib_sad
 
-nif <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
+nif <- new_nif() %>%
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023", analyte = "RS2023")
 
 head(nif)
@@ -78,9 +78,9 @@ In many cases, you may want to add further covariates, e.g., baseline
 creatinine from the LB domain:
 
 ``` r
-nif <- nif %>%  
-  mutate(COHORT = ACTARMCD) %>% 
-  add_baseline(sdtm, "lb", "CREAT") %>% 
+nif <- nif %>%
+  mutate(COHORT = ACTARMCD) %>%
+  add_baseline(sdtm, "lb", "CREAT") %>%
   add_bl_crcl()
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 ```
@@ -95,19 +95,19 @@ summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 48 subjects across one study:
 #>   STUDYID      N    
-#>   2023000001   48   
+#>   2023000001   48    
 #> 
 #> Sex distribution:
 #>   SEX      N    percent   
 #>   male     48   100       
-#>   female   0    0         
+#>   female   0    0          
 #> 
 #> Renal impairment class:
 #>   CLASS      N    percent   
 #>   normal     42   87.5      
 #>   mild       6    12.5      
 #>   moderate   0    0         
-#>   severe     0    0         
+#>   severe     0    0          
 #> 
 #> Treatments:
 #>   RS2023
@@ -126,19 +126,42 @@ summary(nif)
 #>   C6       200      3    
 #>   C7       500      6    
 #>   C8       800      6    
-#>   C9       1000     3    
+#>   C9       1000     3     
 #> 
 #> 816 observations:
 #>   CMT   ANALYTE   N     
-#>   2     RS2023    816   
+#>   2     RS2023    816    
+#> 
+#> Sampling schedule:
+#>   NTIME   RS2023   
+#>   0       X        
+#>   0.5     X        
+#>   1       X        
+#>   1.5     X        
+#>   2       X        
+#>   3       X        
+#>   4       X        
+#>   6       X        
+#>   8       X        
+#>   10      X        
+#>   12      X        
+#>   24      X        
+#>   48      X        
+#>   72      X        
+#>   96      X        
+#>   144     X        
+#>   168     X         
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
-#>   2        
+#>   0         
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   RS2023   1     1     1      1
+#>   RS2023   1     1     1      1         
+#> 
+#> Hash: 1ffeca348395517147567cedfdd41e68
+#> Last DTC: 2001-03-02 11:31:00
 
 invisible(capture.output(
   summary(nif) %>%

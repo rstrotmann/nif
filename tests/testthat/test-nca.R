@@ -19,18 +19,18 @@ test_that("nca() analyte handling", {
   test_nif <- structure(
     tibble::tribble(
       ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DOSE,
-      1,     0,   0,     1,   "DRUG",   100,
-      1,     0,  10,     0,   "DRUG",   100,
-      1,     2,   5,     0,   "DRUG",   100,
-      1,     3,   2,     0,   "DRUG",   100,
-      2,     0,   0,     1,   "DRUG",   100,
-      2,     0,  12,     0,   "DRUG",   100,
-      2,     2,   6,     0,   "DRUG",   100,
-      2,     3,   3,     0,   "DRUG",   100,
-      3,     0,   0,     1,   "DRUG",   100,
-      3,     0,   8,     0,   "DRUG",   100,
-      3,     2,   4,     0,   "DRUG",   100,
-      3,     3,   1,     0,   "DRUG",   100
+      1, 0, 0, 1, "DRUG", 100,
+      1, 0, 10, 0, "DRUG", 100,
+      1, 2, 5, 0, "DRUG", 100,
+      1, 3, 2, 0, "DRUG", 100,
+      2, 0, 0, 1, "DRUG", 100,
+      2, 0, 12, 0, "DRUG", 100,
+      2, 2, 6, 0, "DRUG", 100,
+      2, 3, 3, 0, "DRUG", 100,
+      3, 0, 0, 1, "DRUG", 100,
+      3, 0, 8, 0, "DRUG", 100,
+      3, 2, 4, 0, "DRUG", 100,
+      3, 3, 1, 0, "DRUG", 100
     ),
     class = c("nif", "data.frame")
   )
@@ -38,12 +38,16 @@ test_that("nca() analyte handling", {
   # Test automatic analyte selection
   expect_no_error(
     capture_warning(
-      result <- nca(test_nif, silent = TRUE)))
+      result <- nca(test_nif, silent = TRUE)
+    )
+  )
 
   # Test explicit analyte selection
   expect_no_error(
     capture_warning(
-    result <- nca(test_nif, analyte = "DRUG", silent = TRUE)))
+      result <- nca(test_nif, analyte = "DRUG", silent = TRUE)
+    )
+  )
 })
 
 
@@ -52,21 +56,21 @@ test_that("nca() grouping functionality", {
   test_nif <- structure(
     tibble::tribble(
       ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DOSE, ~GROUP,
-      1,     0,   0,     1,   "DRUG",   100,    "A",
-      1,     0,   0,     0,   "DRUG",   100,    "A",
-      1,     1,  10,     0,   "DRUG",   100,    "A",
-      1,     2,   5,     0,   "DRUG",   100,    "A",
-      1,     3,   2,     0,   "DRUG",   100,    "A",
-      2,     0,   0,     1,   "DRUG",   100,    "B",
-      2,     0,   0,     0,   "DRUG",   100,    "B",
-      2,     1,  12,     0,   "DRUG",   100,    "B",
-      2,     2,   6,     0,   "DRUG",   100,    "B",
-      2,     3,   3,     0,   "DRUG",   100,    "B",
-      3,     0,   0,     1,   "DRUG",   100,    "A",
-      3,     0,   0,     0,   "DRUG",   100,    "A",
-      3,     1,   8,     0,   "DRUG",   100,    "A",
-      3,     2,   4,     0,   "DRUG",   100,    "A",
-      3,     3,   1,     0,   "DRUG",   100,    "A"
+      1, 0, 0, 1, "DRUG", 100, "A",
+      1, 0, 0, 0, "DRUG", 100, "A",
+      1, 1, 10, 0, "DRUG", 100, "A",
+      1, 2, 5, 0, "DRUG", 100, "A",
+      1, 3, 2, 0, "DRUG", 100, "A",
+      2, 0, 0, 1, "DRUG", 100, "B",
+      2, 0, 0, 0, "DRUG", 100, "B",
+      2, 1, 12, 0, "DRUG", 100, "B",
+      2, 2, 6, 0, "DRUG", 100, "B",
+      2, 3, 3, 0, "DRUG", 100, "B",
+      3, 0, 0, 1, "DRUG", 100, "A",
+      3, 0, 0, 0, "DRUG", 100, "A",
+      3, 1, 8, 0, "DRUG", 100, "A",
+      3, 2, 4, 0, "DRUG", 100, "A",
+      3, 3, 1, 0, "DRUG", 100, "A"
     ),
     class = c("nif", "data.frame")
   )
@@ -74,8 +78,9 @@ test_that("nca() grouping functionality", {
   # Test grouping
   expect_no_error(
     expect_warning(expect_warning(expect_warning(
-      result <- nca(test_nif, group = "GROUP", silent = TRUE))
-  )))
+      result <- nca(test_nif, group = "GROUP", silent = TRUE)
+    )))
+  )
 
   expect_true("GROUP" %in% names(result))
   expect_equal(length(unique(result$GROUP)), 2)
@@ -87,18 +92,18 @@ test_that("nca() time handling", {
   test_nif <- structure(
     tibble::tribble(
       ~ID, ~TIME, ~NTIME, ~DV, ~EVID, ~ANALYTE, ~DOSE,
-      1,     0,      0,   0,     1,   "DRUG",   100,
-      1,     1,    1.1,  10,     0,   "DRUG",   100,
-      1,     2,    2.2,   5,     0,   "DRUG",   100,
-      1,     3,    3.3,   2,     0,   "DRUG",   100,
-      2,     0,      0,   0,     1,   "DRUG",   100,
-      2,     1,    1.1,  12,     0,   "DRUG",   100,
-      2,     2,    2.2,   6,     0,   "DRUG",   100,
-      2,     3,    3.3,   3,     0,   "DRUG",   100,
-      3,     0,      0,   0,     1,   "DRUG",   100,
-      3,     1,    1.1,   8,     0,   "DRUG",   100,
-      3,     2,    2.2,   4,     0,   "DRUG",   100,
-      3,     3,    3.3,   1,     0,   "DRUG",   100
+      1, 0, 0, 0, 1, "DRUG", 100,
+      1, 1, 1.1, 10, 0, "DRUG", 100,
+      1, 2, 2.2, 5, 0, "DRUG", 100,
+      1, 3, 3.3, 2, 0, "DRUG", 100,
+      2, 0, 0, 0, 1, "DRUG", 100,
+      2, 1, 1.1, 12, 0, "DRUG", 100,
+      2, 2, 2.2, 6, 0, "DRUG", 100,
+      2, 3, 3.3, 3, 0, "DRUG", 100,
+      3, 0, 0, 0, 1, "DRUG", 100,
+      3, 1, 1.1, 8, 0, "DRUG", 100,
+      3, 2, 2.2, 4, 0, "DRUG", 100,
+      3, 3, 3.3, 1, 0, "DRUG", 100
     ),
     class = c("nif", "data.frame")
   )
@@ -126,18 +131,18 @@ test_that("nca() duplicate handling", {
   test_nif <- structure(
     tibble::tribble(
       ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DOSE,
-      1,     0,   0,     1,   "DRUG",   100,
-      1,     1,  10,     0,   "DRUG",   100,
-      1,     1,  11,     0,   "DRUG",   100,
-      1,     2,   5,     0,   "DRUG",   100,
-      1,     2,   6,     0,   "DRUG",   100,
-      1,     3,   2,     0,   "DRUG",   100,
-      2,     0,   0,     1,   "DRUG",   100,
-      2,     1,  12,     0,   "DRUG",   100,
-      2,     1,  13,     0,   "DRUG",   100,
-      2,     2,   6,     0,   "DRUG",   100,
-      2,     2,   7,     0,   "DRUG",   100,
-      2,     3,   3,     0,   "DRUG",   100
+      1, 0, 0, 1, "DRUG", 100,
+      1, 1, 10, 0, "DRUG", 100,
+      1, 1, 11, 0, "DRUG", 100,
+      1, 2, 5, 0, "DRUG", 100,
+      1, 2, 6, 0, "DRUG", 100,
+      1, 3, 2, 0, "DRUG", 100,
+      2, 0, 0, 1, "DRUG", 100,
+      2, 1, 12, 0, "DRUG", 100,
+      2, 1, 13, 0, "DRUG", 100,
+      2, 2, 6, 0, "DRUG", 100,
+      2, 2, 7, 0, "DRUG", 100,
+      2, 3, 3, 0, "DRUG", 100
     ),
     class = c("nif", "data.frame")
   )
@@ -151,10 +156,9 @@ test_that("nca() duplicate handling", {
 
   expect_error(
     result_no_avg <- nca(test_nif, average_duplicates = FALSE, silent = TRUE),
-    "Rows that are not unique per group and time")
+    "Rows that are not unique per group and time"
+  )
 })
-
-
 
 
 # test_that("nca() basic calculations", {
@@ -196,7 +200,7 @@ test_that("nca works with the whale data set", {
   expected_nca <- PKNCA::pk.nca(
     PKNCA::PKNCAdata(
       PKNCA::PKNCAconc(conc, concentration ~ time | Animal),
-      PKNCA::PKNCAdose(dose, dose ~ time | Animal) #,
+      PKNCA::PKNCAdose(dose, dose ~ time | Animal) # ,
       # impute = "start_conc0"
     )
   )$result %>%
@@ -207,7 +211,6 @@ test_that("nca works with the whale data set", {
       select(conc, ID = Animal, TIME = time, DV = concentration) %>%
         mutate(EVID = 0, ANALYTE = "amikacin", PARENT = "amikacin") %>%
         mutate(CMT = 0),
-
       select(dose, ID = Animal, TIME = time, DOSE = dose) %>%
         mutate(EVID = 1, ANALYTE = "amikacin", PARENT = "amikacin") %>%
         mutate(AMT = DOSE, CMT = 1)
@@ -221,6 +224,4 @@ test_that("nca works with the whale data set", {
     arrange(ID, PPTESTCD)
 
   expect_equal(nca$PPORRES, expected_nca$PPORRES)
-
 })
-

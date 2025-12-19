@@ -3,8 +3,8 @@
 test_that("add_metabolite_mapping adds correct mapping", {
   # Create a basic SDTM object
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object
@@ -26,8 +26,8 @@ test_that("add_metabolite_mapping adds correct mapping", {
 test_that("add_metabolite_mapping can add multiple mappings", {
   # Create a basic SDTM object
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object
@@ -52,8 +52,8 @@ test_that("add_metabolite_mapping can add multiple mappings", {
 test_that("add_metabolite_mapping prevents duplicate mappings", {
   # Create a basic SDTM object
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object
@@ -143,8 +143,8 @@ test_that("add_metabolite_mapping rejects NA values", {
 test_that("add_metabolite_mapping initializes metabolite_mapping when NULL", {
   # Create a basic SDTM object
   dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID,   ~USUBJID,
-       "DM", "STUDY1", "SUBJ-001"
+    ~DOMAIN, ~STUDYID, ~USUBJID,
+    "DM", "STUDY1", "SUBJ-001"
   )
 
   # Create a new SDTM object
@@ -173,4 +173,3 @@ test_that("add_metabolite_mapping properly trims whitespace", {
   expect_equal(result$metabolite_mapping$PCTESTCD_parent, "PARENT")
   expect_equal(result$metabolite_mapping$PCTESTCD_metab, "METABOLITE")
 })
-

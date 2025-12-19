@@ -1,25 +1,25 @@
 test_that("TAFD is correctly calculated for different treatments", {
-  temp = list(
+  temp <- list(
     dm = tibble::tribble(
-      ~USUBJID, ~ACTARMCD, ~RFXSTDTC,             ~RFSTDTC,
-            "1", "A",      "2025-11-27T08:00:00", "2025-11-27T08:00:00",
-            "2", "B",      "2025-11-27T08:00:00", "2025-11-27T08:00:00"
+      ~USUBJID, ~ACTARMCD, ~RFXSTDTC, ~RFSTDTC,
+      "1", "A", "2025-11-27T08:00:00", "2025-11-27T08:00:00",
+      "2", "B", "2025-11-27T08:00:00", "2025-11-27T08:00:00"
     ) %>%
       mutate(
         DOMAIN = "DM",
         RFENDTC = "2025-12-27T08:00:00",
         STUDYID = "Study 1",
         DOMAIN = "DM",
-        SEX = "M"),
-
+        SEX = "M"
+      ),
     vs = tibble::tribble(
       ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-      "1",      "HEIGHT",       100,  "2025-11-26T08:00:00",
-      "2",      "HEIGHT",       100,  "2025-11-26T08:00:00",
+      "1", "HEIGHT", 100, "2025-11-26T08:00:00",
+      "2", "HEIGHT", 100, "2025-11-26T08:00:00",
     ) %>%
       mutate(
-        DOMAIN = "VS"),
-
+        DOMAIN = "VS"
+      ),
     ex = tibble::tribble(
       ~USUBJID, ~EXDOSE, ~EXTRT,    ~EXSTDTC,              ~EXENDTC,
       "1",      1,       "ACTIVE",  "2025-11-27T08:00:00", "2025-11-30T08:00:00",
@@ -27,8 +27,8 @@ test_that("TAFD is correctly calculated for different treatments", {
     ) %>%
       mutate(
         DOMAIN = "EX",
-        EXSEQ = row_number()),
-
+        EXSEQ = row_number()
+      ),
     lb = tibble::tribble(
       ~USUBJID, ~LBTESTCD, ~LBSPEC, ~LBDTC,                ~LBSTRESN,
       "1",      "AST",     "SERUM", "2025-11-25T08:00:00", 1,

@@ -30,12 +30,18 @@ test_that("guess_pcspec works correctly", {
 
 test_that("guess_pcspec handles errors correctly", {
   # Test invalid input
-  expect_error(guess_pcspec(NULL, silent = TRUE),
-               "Input must be a data frame")
-  expect_error(guess_pcspec(data.frame(), silent = TRUE),
-               "Input must be a data frame with PCSPEC column")
-  expect_error(guess_pcspec(data.frame(OTHER = "BLOOD", silent = TRUE)),
-               "Input must be a data frame with PCSPEC column")
+  expect_error(
+    guess_pcspec(NULL, silent = TRUE),
+    "Input must be a data frame"
+  )
+  expect_error(
+    guess_pcspec(data.frame(), silent = TRUE),
+    "Input must be a data frame with PCSPEC column"
+  )
+  expect_error(
+    guess_pcspec(data.frame(OTHER = "BLOOD", silent = TRUE)),
+    "Input must be a data frame with PCSPEC column"
+  )
 
   # Test empty PCSPEC column
   df_empty <- data.frame(PCSPEC = character(0))
@@ -51,7 +57,8 @@ test_that("guess_pcspec maintains data frame attributes", {
   # Test that the function doesn't modify the input data frame
   df_original <- data.frame(
     PCSPEC = c("PLASMA", "SERUM"),
-    OtherCol = c("A", "B"))
+    OtherCol = c("A", "B")
+  )
 
   df_copy <- df_original
   result <- guess_pcspec(df_original, silent = TRUE)

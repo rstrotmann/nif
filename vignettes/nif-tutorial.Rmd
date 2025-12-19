@@ -152,7 +152,7 @@ The original SDTM data for specific domains can be retrieved from `sdtm` objects
 with the `domain()` function:
 
 ```{r}
-domain(examplinib_sad, "dm") %>% 
+domain(examplinib_sad, "dm") %>%
   head(3)
 ```
 
@@ -221,8 +221,8 @@ columns of those names:
 ```{r message = FALSE}
 sdtm <- examplinib_fe
 
-nif <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
+nif <- new_nif() %>%
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023")
 ```
 
@@ -250,9 +250,9 @@ the 'parent' parameter:
 ```{r message = FALSE}
 sdtm1 <- examplinib_sad
 
-nif1 <- new_nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>% 
-  add_observation(sdtm, "pc", "RS2023") %>% 
+nif1 <- new_nif() %>%
+  add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
+  add_observation(sdtm, "pc", "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023487A", analyte = "M1", parent = "RS2023")
 ```
 
@@ -282,13 +282,15 @@ Note that the 'EPOCH' field is not a standard field to be imported from the SDTM
 data but can be included using the `keep` parameter in `add_administration()`:
 
 ```{r message = FALSE}
-nif <- new_nif() %>% 
+nif <- new_nif() %>%
   add_administration(
-    examplinib_fe, "EXAMPLINIB", analyte = "RS2023", keep = "EPOCH") %>% 
-  add_observation(examplinib_fe, "pc", "RS2023") %>% 
-  mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>% 
-  mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>% 
-  mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0)) 
+    examplinib_fe, "EXAMPLINIB",
+    analyte = "RS2023", keep = "EPOCH"
+  ) %>%
+  add_observation(examplinib_fe, "pc", "RS2023") %>%
+  mutate(PERIOD = str_sub(EPOCH, -1, -1)) %>%
+  mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
+  mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0))
 ```
 
 These are again the first 3 lines of the resulting nif object:
@@ -319,8 +321,8 @@ purpose is to omit some non-graphical output:
 
 ```{r warning=FALSE, results='hide', fig.width=3, fig.height=3}
 invisible(capture.output(
-  nif %>% 
-    summary() %>% 
+  nif %>%
+    summary() %>%
     plot()
 ))
 ```
@@ -343,8 +345,8 @@ To check the integrity of the data set, it is often helpful to plot the analyte
 concentrations over time-after-dose (TAD):
 
 ```{r warning=FALSE, fig.width=5, fig.asp=0.55}
-nif %>% 
-  plot(time="TAD", points=TRUE, lines=FALSE, log=TRUE)
+nif %>%
+  plot(time = "TAD", points = TRUE, lines = FALSE, log = TRUE)
 ```
 
 To demonstrate the food effect on Cmax and Tmax on the individual level, the
@@ -352,15 +354,15 @@ below figure focuses on the first 24 hours on the linear scale and introduces
 coloring based on the 'FASTED' covariate field:
 
 ```{r, warning=FALSE, fig.width=5, fig.asp=.7}
-nif %>% 
-  plot(color="FASTED", max_time=24, points=TRUE)
+nif %>%
+  plot(color = "FASTED", max_time = 24, points = TRUE)
 ```
 
 The following compares the mean plasma concentration profiles:
 
 ```{r, warning=FALSE, fig.width=5, fig.asp=.7}
-nif %>% 
-  plot(color="FASTED", max_time=24, mean=TRUE, points=TRUE)
+nif %>%
+  plot(color = "FASTED", max_time = 24, mean = TRUE, points = TRUE)
 ```
 
 Refer to the documentation of `plot.nif()` for further options.

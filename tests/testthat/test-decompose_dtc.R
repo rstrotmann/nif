@@ -1,11 +1,11 @@
 test_that("decompose_dtc works comprehensively", {
   # Test data with various date-time formats
   test_data <- tibble::tribble(
-    ~ID,             ~STDTC,             ~ENDTC,             ~EXDTC,
-    1, "2024-12-05T08:12",       "2024-12-05", "2024-12-05T14:30",
-    2,       "2024-12-06", "2024-12-06T00:00", "2024-12-06T09:15",
-    3, "2024-12-07T00:00",       "2024-12-07", "2024-12-07T16:45",
-    4, "2024-12-08T12:00", "2024-12-08T12:00",       "2024-12-08"
+    ~ID, ~STDTC, ~ENDTC, ~EXDTC,
+    1, "2024-12-05T08:12", "2024-12-05", "2024-12-05T14:30",
+    2, "2024-12-06", "2024-12-06T00:00", "2024-12-06T09:15",
+    3, "2024-12-07T00:00", "2024-12-07", "2024-12-07T16:45",
+    4, "2024-12-08T12:00", "2024-12-08T12:00", "2024-12-08"
   ) %>%
     lubrify_dates()
 
@@ -15,37 +15,49 @@ test_that("decompose_dtc works comprehensively", {
   # Check that new columns are created
   expect_true("STDTC_date" %in% names(result_single))
   expect_true("STDTC_time" %in% names(result_single))
-  expect_false("has_time" %in% names(result_single))  # Should be removed
+  expect_false("has_time" %in% names(result_single)) # Should be removed
 
   # Check date extraction
-  expect_equal(result_single$STDTC_date,
-               c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08"))
+  expect_equal(
+    result_single$STDTC_date,
+    c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08")
+  )
 
   # Check time extraction (midnight times are considered as no time by has_time function)
-  expect_equal(result_single$STDTC_time,
-               c("08:12", NA, NA, "12:00"))
+  expect_equal(
+    result_single$STDTC_time,
+    c("08:12", NA, NA, "12:00")
+  )
 
   # Test multiple field decomposition
   result_multiple <- decompose_dtc(test_data, c("STDTC", "ENDTC"))
 
   # Check that all expected columns are created
   expect_true(all(c("STDTC_date", "STDTC_time", "ENDTC_date", "ENDTC_time") %in%
-                  names(result_multiple)))
+    names(result_multiple)))
 
   # Check ENDTC decomposition
-  expect_equal(result_multiple$ENDTC_date,
-               c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08"))
-  expect_equal(result_multiple$ENDTC_time,
-               c(NA, NA, NA, "12:00"))
+  expect_equal(
+    result_multiple$ENDTC_date,
+    c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08")
+  )
+  expect_equal(
+    result_multiple$ENDTC_time,
+    c(NA, NA, NA, "12:00")
+  )
 
   # Test with all three fields
   result_three <- decompose_dtc(test_data, c("STDTC", "ENDTC", "EXDTC"))
 
   # Check EXDTC decomposition
-  expect_equal(result_three$EXDTC_date,
-               c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08"))
-  expect_equal(result_three$EXDTC_time,
-               c("14:30", "09:15", "16:45", NA))
+  expect_equal(
+    result_three$EXDTC_date,
+    c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08")
+  )
+  expect_equal(
+    result_three$EXDTC_time,
+    c("14:30", "09:15", "16:45", NA)
+  )
 })
 
 
@@ -107,30 +119,34 @@ test_that("decompose_dtc preserves original data", {
 test_that("decompose_dtc handles different time formats correctly", {
   test_data <- tribble(
     ~ID, ~STDTC,
-    1, "2024-12-05T08:12",      # Has time
-    2, "2024-12-06",             # Date only
-    3, "2024-12-07T00:00",       # Midnight (considered no time)
-    4, "2024-12-08T12:30",       # Has time
-    5, "2024-12-09T23:59"        # Late time
+    1, "2024-12-05T08:12", # Has time
+    2, "2024-12-06", # Date only
+    3, "2024-12-07T00:00", # Midnight (considered no time)
+    4, "2024-12-08T12:30", # Has time
+    5, "2024-12-09T23:59" # Late time
   ) %>%
     mutate(STDTC = lubridate::as_datetime(STDTC, format = dtc_formats))
 
   result <- decompose_dtc(test_data, "STDTC")
 
   # Check time detection (midnight is considered as no time)
-  expect_equal(result$STDTC_time,
-               c("08:12", NA, NA, "12:30", "23:59"))
+  expect_equal(
+    result$STDTC_time,
+    c("08:12", NA, NA, "12:30", "23:59")
+  )
 
   # Check date extraction
-  expect_equal(result$STDTC_date,
-               c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08", "2024-12-09"))
+  expect_equal(
+    result$STDTC_date,
+    c("2024-12-05", "2024-12-06", "2024-12-07", "2024-12-08", "2024-12-09")
+  )
 })
 
 
 test_that("decompose_dtc validates input parameters", {
   test_data <- tribble(
     ~ID, ~STDTC,
-      1, "2024-12-05T08:12"
+    1, "2024-12-05T08:12"
   ) %>%
     mutate(STDTC = lubridate::as_datetime(STDTC, format = dtc_formats))
 
@@ -144,12 +160,12 @@ test_that("decompose_dtc validates input parameters", {
   expect_error(decompose_dtc(test_data, 123), "DTC_field must be a string value")
   expect_error(
     decompose_dtc(test_data, c("STDTC", 123)),
-    "Column not found in obj: 123")
+    "Column not found in obj: 123"
+  )
 
   # Test missing field
   expect_error(
     decompose_dtc(test_data, "NONEXISTENT"),
-    "Column not found in obj: NONEXISTENT")
+    "Column not found in obj: NONEXISTENT"
+  )
 })
-
-

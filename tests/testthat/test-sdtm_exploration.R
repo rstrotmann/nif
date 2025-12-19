@@ -52,22 +52,20 @@ test_that("disposition_summary works", {
     disposition_summary(examplinib_sad) %>%
       filter(ACTARMCD != "SCRNFAIL"),
     as.data.frame(tribble(
-      ~ACTARMCD, ~ONGOING,  ~N,
-      "C1",    FALSE,  3L,
-      "C10",   FALSE, 12L,
-      "C2",    FALSE,  3L,
-      "C3",    FALSE,  3L,
-      "C4",    FALSE,  3L,
-      "C5",    FALSE,  6L,
-      "C6",    FALSE,  3L,
-      "C7",    FALSE,  6L,
-      "C8",    FALSE,  6L,
-      "C9",    FALSE,  3L
+      ~ACTARMCD, ~ONGOING, ~N,
+      "C1", FALSE, 3L,
+      "C10", FALSE, 12L,
+      "C2", FALSE, 3L,
+      "C3", FALSE, 3L,
+      "C4", FALSE, 3L,
+      "C5", FALSE, 6L,
+      "C6", FALSE, 3L,
+      "C7", FALSE, 6L,
+      "C8", FALSE, 6L,
+      "C9", FALSE, 3L
     ))
   )
-
 })
-
 
 
 # Test file for filter_correct_date_format function
@@ -92,18 +90,21 @@ test_that("filter_correct_date_format filters out invalid date formats", {
   # Create test data with mixed valid and invalid dates
   test_data <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STDTC, ~ENDTC,
-    "SUBJ-001", "DM", "2023-10-15", "2023-10-16",    # Valid
-    "SUBJ-002", "DM", "2023/10/15", "2023-10-16",    # Invalid STDTC
-    "SUBJ-003", "DM", "2023-10-15", "2023/10/16",    # Invalid ENDTC
-    "SUBJ-004", "DM", "2023-10-15", "2023-10-16"     # Valid
+    "SUBJ-001", "DM", "2023-10-15", "2023-10-16", # Valid
+    "SUBJ-002", "DM", "2023/10/15", "2023-10-16", # Invalid STDTC
+    "SUBJ-003", "DM", "2023-10-15", "2023/10/16", # Invalid ENDTC
+    "SUBJ-004", "DM", "2023-10-15", "2023-10-16" # Valid
   )
 
   # Test that invalid dates are filtered out
-  expect_message({
-    result <- filter_correct_date_format(
-      test_data, verbose = FALSE, silent = FALSE)
-  },
-  "DM: 2 rows containing DTC fields with incomplete date format were ignored!"
+  expect_message(
+    {
+      result <- filter_correct_date_format(
+        test_data,
+        verbose = FALSE, silent = FALSE
+      )
+    },
+    "DM: 2 rows containing DTC fields with incomplete date format were ignored!"
   )
   expect_equal(nrow(result), 2)
   expect_equal(unique(result$USUBJID), c("SUBJ-001", "SUBJ-004"))
@@ -114,10 +115,10 @@ test_that("filter_correct_date_format handles empty strings and NA values", {
   # Create test data with empty strings and NA values
   test_data <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STDTC, ~ENDTC,
-    "SUBJ-001", "DM", "2023-10-15", "",           # Valid with empty string
+    "SUBJ-001", "DM", "2023-10-15", "", # Valid with empty string
     "SUBJ-002", "DM", "2023-10-15", NA_character_, # Valid with NA
-    "SUBJ-003", "DM", "", "2023-10-16",           # Valid with empty string
-    "SUBJ-004", "DM", NA_character_, "2023-10-16"  # Valid with NA
+    "SUBJ-003", "DM", "", "2023-10-16", # Valid with empty string
+    "SUBJ-004", "DM", NA_character_, "2023-10-16" # Valid with NA
   )
 
   # Test that empty strings and NA values are preserved
@@ -133,8 +134,8 @@ test_that("filter_correct_date_format provides correct verbose output", {
   # Create test data with invalid dates
   test_data <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STDTC, ~ENDTC,
-    "SUBJ-001", "DM", "2023-10-15", "2023/10/16",    # Invalid ENDTC
-    "SUBJ-002", "DM", "2023/10/15", "2023-10-16"     # Invalid STDTC
+    "SUBJ-001", "DM", "2023-10-15", "2023/10/16", # Invalid ENDTC
+    "SUBJ-002", "DM", "2023/10/15", "2023-10-16" # Invalid STDTC
   )
 
   # Test verbose output
@@ -149,7 +150,7 @@ test_that("filter_correct_date_format handles silent parameter correctly", {
   # Create test data with invalid dates
   test_data <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STDTC, ~ENDTC,
-    "SUBJ-001", "DM", "2023-10-15", "2023/10/16"    # Invalid ENDTC
+    "SUBJ-001", "DM", "2023-10-15", "2023/10/16" # Invalid ENDTC
   )
 
   # Test with silent = TRUE
@@ -188,16 +189,19 @@ test_that("filter_correct_date_format handles multiple DTC columns correctly", {
   # Create test data with multiple DTC columns
   test_data <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STDTC, ~ENDTC, ~MIDTC,
-    "SUBJ-001", "DM", "2023-10-15", "2023-10-16", "2023-10-15",  # All valid
-    "SUBJ-002", "DM", "2023/10/15", "2023-10-16", "2023-10-15",  # Invalid STDTC
-    "SUBJ-003", "DM", "2023-10-15", "2023-10-16", "2023/10/15"   # Invalid MIDTC
+    "SUBJ-001", "DM", "2023-10-15", "2023-10-16", "2023-10-15", # All valid
+    "SUBJ-002", "DM", "2023/10/15", "2023-10-16", "2023-10-15", # Invalid STDTC
+    "SUBJ-003", "DM", "2023-10-15", "2023-10-16", "2023/10/15" # Invalid MIDTC
   )
 
   # Test that all DTC columns are checked
   expect_message(
     result <- filter_correct_date_format(
-      test_data, verbose = FALSE, silent = FALSE),
-    "DM: 2 rows containing DTC fields with incomplete date format were ignored!")
+      test_data,
+      verbose = FALSE, silent = FALSE
+    ),
+    "DM: 2 rows containing DTC fields with incomplete date format were ignored!"
+  )
   expect_equal(nrow(result), 1)
   expect_equal(result$USUBJID, "SUBJ-001")
 })
@@ -266,10 +270,10 @@ test_that("check_missing_time handles different date formats correctly", {
     USUBJID = c("SUBJ1", "SUBJ2", "SUBJ3", "SUBJ4"),
     DOMAIN = "TEST",
     DTC = c(
-      "2024-01-01",           # Date only
-      "2024-01-01T10:00:00",  # Full datetime
-      "",                     # Empty string
-      "2024-01-01T"           # Invalid format
+      "2024-01-01", # Date only
+      "2024-01-01T10:00:00", # Full datetime
+      "", # Empty string
+      "2024-01-01T" # Invalid format
     )
   )
 
@@ -322,5 +326,3 @@ test_that("check_missing_time handles missing DOMAIN column", {
     "Missing time in 1 rows!"
   )
 })
-
-

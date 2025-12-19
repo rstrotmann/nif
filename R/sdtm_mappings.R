@@ -19,11 +19,13 @@ add_analyte_mapping <- function(obj, extrt, pctestcd, analyte = NULL) {
     stop("'obj' must be an SDTM object")
   }
 
-  if (!is.character(extrt))
+  if (!is.character(extrt)) {
     stop("'extrt' must be a character string")
+  }
 
-  if (!is.character(pctestcd))
+  if (!is.character(pctestcd)) {
     stop("'pctestcd' must be a character string")
+  }
 
   # Handle vector inputs
   if (length(extrt) > 1) {
@@ -135,11 +137,13 @@ add_parent_mapping <- function(obj, analyte, parent) {
     stop("'obj' must be an SDTM object")
   }
 
-  if (!is.character(analyte))
+  if (!is.character(analyte)) {
     stop("'analyte' must be a character string")
+  }
 
-  if (!is.character(parent))
+  if (!is.character(parent)) {
     stop("'parent' must be a character string")
+  }
 
   # Handle vector inputs
   if (length(analyte) > 1) {
@@ -213,11 +217,13 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
     stop("'obj' must be an SDTM object")
   }
 
-  if (!is.character(pctestcd_parent))
+  if (!is.character(pctestcd_parent)) {
     stop("'pctestcd_parent' must be a character string")
+  }
 
-  if (!is.character(pctestcd_metabolite))
+  if (!is.character(pctestcd_metabolite)) {
     stop("'pctestcd_metabolite' must be a character string")
+  }
 
   # Handle vector inputs
   if (length(pctestcd_parent) > 1) {
@@ -261,7 +267,7 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
   if (is.null(obj$metabolite_mapping) | length(obj$metabolite_mapping) == 0) {
     obj$metabolite_mapping <- data.frame(
       PCTESTCD_parent = character(0),
-      PCTESTCD_metab = character(0)#,
+      PCTESTCD_metab = character(0) # ,
       # stringsAsFactors = FALSE
     )
   }
@@ -269,18 +275,20 @@ add_metabolite_mapping <- function(obj, pctestcd_parent, pctestcd_metabolite) {
   # Check if mapping already exists
   existing_mapping <- obj$metabolite_mapping %>%
     dplyr::filter(.data$PCTESTCD_parent == pctestcd_parent &
-                  .data$PCTESTCD_metab == pctestcd_metabolite)
+      .data$PCTESTCD_metab == pctestcd_metabolite)
 
   if (nrow(existing_mapping) > 0) {
-    stop("Metabolite mapping for parent '", pctestcd_parent,
-         "' to metabolite '", pctestcd_metabolite, "' already exists.")
+    stop(
+      "Metabolite mapping for parent '", pctestcd_parent,
+      "' to metabolite '", pctestcd_metabolite, "' already exists."
+    )
   }
 
   obj$metabolite_mapping <- rbind(
     obj$metabolite_mapping,
     data.frame(
       PCTESTCD_parent = pctestcd_parent,
-      PCTESTCD_metab = pctestcd_metabolite#,
+      PCTESTCD_metab = pctestcd_metabolite # ,
       # stringsAsFactors = FALSE
     )
   )

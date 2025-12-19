@@ -16,7 +16,7 @@ pk_sim <- function(event_table) {
     distinct()
 
   mod <- rxode2::rxode2({
-    v_centr <- t_v_centr * (WEIGHT/70)^1
+    v_centr <- t_v_centr * (WEIGHT / 70)^1
 
     c_centr <- centr / v_centr * (1 + centr.err)
     c_peri <- peri / v_peri
@@ -24,33 +24,33 @@ pk_sim <- function(event_table) {
 
     ka <- (t_ka + FOOD * t_ka_f) * exp(eta_ka)
     d1 <- t_d1 + FOOD * t_d1_f
-    f <- t_f  * exp(eta_f) + FOOD * t_f_f * exp(eta_f_f)
-    ke <- t_ke * exp(eta_ke) * (EGFR/120)^1.2               # renal clearance
-    cl_par <- t_cl_par * (WEIGHT/70)^0.75 * exp(eta_cl_par) # clearance of parent to metabolite
-    cl_met <- t_cl_met * (WEIGHT/70)^0.75 * exp(eta_cl_met) # clearance of metabolite
+    f <- t_f * exp(eta_f) + FOOD * t_f_f * exp(eta_f_f)
+    ke <- t_ke * exp(eta_ke) * (EGFR / 120)^1.2 # renal clearance
+    cl_par <- t_cl_par * (WEIGHT / 70)^0.75 * exp(eta_cl_par) # clearance of parent to metabolite
+    cl_met <- t_cl_met * (WEIGHT / 70)^0.75 * exp(eta_cl_met) # clearance of metabolite
     q <- t_q * exp(eta_q)
 
-    d/dt(depot) <- -ka * depot
+    d / dt(depot) <- -ka * depot
     dur(depot) <- d1
-    d/dt(centr) <- ka * depot * f - ke * centr - q * centr + q * peri - cl_par * centr
-    d/dt(peri) <- q * centr - q * peri
-    d/dt(metab) <- cl_par * centr - cl_met * metab
-    d/dt(renal) <- ke * centr
-    d/dt(auc) <- centr
-    d/dt(auc_metab) <- metab
+    d / dt(centr) <- ka * depot * f - ke * centr - q * centr + q * peri - cl_par * centr
+    d / dt(peri) <- q * centr - q * peri
+    d / dt(metab) <- cl_par * centr - cl_met * metab
+    d / dt(renal) <- ke * centr
+    d / dt(auc) <- centr
+    d / dt(auc_metab) <- metab
   })
 
   theta <- c(
     t_d1 = 0.01,
-    t_d1_f = 1,   # food effect on D1
+    t_d1_f = 1, # food effect on D1
     t_f = 0.5,
-    t_f_f = 0.2,    # food effect on F
+    t_f_f = 0.2, # food effect on F
     t_ka = 0.6,
     t_ka_f = -0.35, # food effect on Ka
-    t_ke = 5/10,
-    t_cl_par = 10/10,
-    t_q = 10/100,
-    t_cl_met = 10/10,
+    t_ke = 5 / 10,
+    t_cl_par = 10 / 10,
+    t_q = 10 / 100,
+    t_cl_met = 10 / 10,
     t_v_centr = 10,
 
     # v_centr = 10,
@@ -71,13 +71,16 @@ pk_sim <- function(event_table) {
 
   sigma <- rxode2::lotri(centr.err ~ .03^2)
 
-  mod$solve(theta, event_table, omega = omega, sigma = sigma,
-            keep = c("NTIME", "EGFR", "WEIGHT", "AGE")) %>%
+  mod$solve(theta, event_table,
+    omega = omega, sigma = sigma,
+    keep = c("NTIME", "EGFR", "WEIGHT", "AGE")
+  ) %>%
     as.data.frame()
 
-  mod$solve(theta, event_table, omega = omega, sigma = sigma#,
-                   # keep = c("NTIME", "EGFR", "WEIGHT", "AGE", "PERIOD")
-            ) %>%
+  mod$solve(theta, event_table,
+    omega = omega, sigma = sigma # ,
+    # keep = c("NTIME", "EGFR", "WEIGHT", "AGE", "PERIOD")
+  ) %>%
     as.data.frame() %>%
     left_join(keep_columns, by = c("id", "time"))
 }
@@ -99,8 +102,8 @@ pk_sim <- function(event_table) {
 #' @return The disposition data for the simulated subjects as data frame.
 #' @keywords internal
 synthesize_subjects <- function(studyid = "2023001", nsubs = 10, nsites = 4,
-                      screenfailure_rate = 0.25,
-                      start_date = "2000-12-20 10:00") {
+                                screenfailure_rate = 0.25,
+                                start_date = "2000-12-20 10:00") {
   current_date <- lubridate::as_datetime(start_date, format = "%Y-%m-%d %H:%M")
   site_names <- 100 + seq(1:nsites)
   sbs <- data.frame(
@@ -174,8 +177,8 @@ synthesize_dm <- function(studyid = "2023001", nsubs = 10, nsites = 5,
       ARM = .data$ACTARM,
       ARMCD = .data$ACTARMCD,
       RACE = cut(runif(1),
-                 breaks = c(0, .05, .2, 1),
-                 labels = c("ASIAN", "BLACK OR AFRICAN AMERICAN", "WHITE")
+        breaks = c(0, .05, .2, 1),
+        labels = c("ASIAN", "BLACK OR AFRICAN AMERICAN", "WHITE")
       ),
       ETHNIC = ""
     ) %>%
@@ -213,8 +216,10 @@ synthesize_vs <- function(dm) {
       .data$VSTESTCD == "WEIGHT" ~ "kg"
     )) %>%
     mutate(VSSTRESN = round(.data$VSORRES, digits = 1)) %>%
-    mutate(VSSTRESU = .data$VSORRESU, EPOCH = "SCREENING", DOMAIN = "VS",
-           VSBLFL = "") %>%
+    mutate(
+      VSSTRESU = .data$VSORRESU, EPOCH = "SCREENING", DOMAIN = "VS",
+      VSBLFL = ""
+    ) %>%
     ungroup() %>%
     mutate(VISIT = "SCREENING") %>%
     mutate(VSBLFL = "Y") %>%
@@ -240,27 +245,28 @@ synthesize_vs <- function(dm) {
 #' @returns A data frame.
 #' @keywords internal
 synthesize_ts <- function(
-    studyid, title, type, phase,
-    startdate = "", enddate = "",
-    hv=TRUE) {
+  studyid, title, type, phase,
+  startdate = "", enddate = "",
+  hv = TRUE
+) {
   ttype <- tibble::tribble(
-    ~TSVALCD,                  ~TSVAL, ~typeval,
-    "C98729",           "FOOD EFFECT",     "fe",
-    "C49666",              "EFFICACY",    "eff",
-    "C49664",      "BIO-AVAILABILITY",     "ba",
-    "C49665",       "BIO-EQUIVALENCE",     "be",
-    "C158289",          "DOSE FINDING",     "df",
-    "C158286", "DRUG-DRUG INTERACTION",    "ddi",
-    "C178057",                   "ECG",    "ecg",
-    "C49663",       "PHARMACOKINETIC",     "pk",
-    "C49667",                "SAFETY",    "saf",
-    "C98791",          "TOLERABILITY",    "tol"
+    ~TSVALCD, ~TSVAL, ~typeval,
+    "C98729", "FOOD EFFECT", "fe",
+    "C49666", "EFFICACY", "eff",
+    "C49664", "BIO-AVAILABILITY", "ba",
+    "C49665", "BIO-EQUIVALENCE", "be",
+    "C158289", "DOSE FINDING", "df",
+    "C158286", "DRUG-DRUG INTERACTION", "ddi",
+    "C178057", "ECG", "ecg",
+    "C49663", "PHARMACOKINETIC", "pk",
+    "C49667", "SAFETY", "saf",
+    "C98791", "TOLERABILITY", "tol"
   )
 
   tphase <- tibble::tribble(
-    ~NCI,           ~TPHASE, ~phase,
-    "C15600",   "PHASE I TRIAL",    "1",
-    "C49686", "PHASE IIA TRIAL",   "2a"
+    ~NCI, ~TPHASE, ~phase,
+    "C15600", "PHASE I TRIAL", "1",
+    "C49686", "PHASE IIA TRIAL", "2a"
   )
 
   yesno_valcd <- function(val) {
@@ -274,18 +280,18 @@ synthesize_ts <- function(
   out <- tibble::tribble(
     ~TSPARMCD, ~TSPARM, ~TSVAL, ~TSVALCD, ~TSVCDREF,
     "TITLE", "Trial Title",
-      title, "C49802", "CDISC",
+    title, "C49802", "CDISC",
     "SDTMVER", "SDTM Version",
-      "1.4", "C161428", "CDISC",
+    "1.4", "C161428", "CDISC",
     "SSTDTC", "Study Start Date",
-      startdate, "C69208", "ISO 8601",
+    startdate, "C69208", "ISO 8601",
     "SENDTC", "Study End Date",
-      enddate, "C90462", "ISO 8601",
+    enddate, "C90462", "ISO 8601",
     "TPHASE", "Trial Phase Classification",
-      as.character(tphase[tphase$phase == phase, "TPHASE"]),
+    as.character(tphase[tphase$phase == phase, "TPHASE"]),
     as.character(tphase[tphase$phase == phase, "NCI"]), "CDISC",
     "HLTSUBJI", "Healthy Subject Indicator",
-      yesno_val(hv), yesno_valcd(hv), "CDISC"
+    yesno_val(hv), yesno_valcd(hv), "CDISC"
   ) %>%
     rbind(
       ttype %>% filter(typeval %in% type) %>%
@@ -294,7 +300,9 @@ synthesize_ts <- function(
         select(-typeval)
     ) %>%
     mutate(TSVCDVER = case_when(
-      TSVCDREF == "CDISC" ~ "2019-06-28", .default = "")) %>%
+      TSVCDREF == "CDISC" ~ "2019-06-28",
+      .default = ""
+    )) %>%
     mutate(STUDYID = studyid) %>%
     mutate(DOMAIN = "TS") %>%
     mutate(TSSEQ = row_number(), .by = TSPARMCD) %>%
@@ -384,7 +392,7 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
     mutate(block = dose_red_start == T | dose_restart == T | row_number() == 1) %>%
     group_by(block) %>%
     mutate(block_id = case_when(block == 1 ~ row_number(),
-                                .default = NA
+      .default = NA
     )) %>%
     ungroup() %>%
     as.data.frame() %>%
@@ -415,7 +423,7 @@ make_md_ex <- function(dm,
                        treatment_duration = 50,
                        missed_prob = 0.15,
                        missed_doses = T,
-                       red_prob = 0.3){
+                       red_prob = 0.3) {
   ex <- dm %>%
     filter(.data$ACTARMCD != "SCRNFAIL") %>%
     select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
@@ -468,8 +476,8 @@ make_md_ex <- function(dm,
 make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
   sbs <- subject_baseline_data(dm, vs, lb) %>%
     left_join(ex %>%
-                distinct(.data$USUBJID, .data$EXDOSE) %>%
-                select(c("USUBJID", "EXDOSE")), by = "USUBJID") %>%
+      distinct(.data$USUBJID, .data$EXDOSE) %>%
+      select(c("USUBJID", "EXDOSE")), by = "USUBJID") %>%
     mutate(FOOD = 0, PERIOD = 1)
 
   ev <- rxode2::et(amountUnits = "mg", timeUnits = "hours") %>%
@@ -482,9 +490,12 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
     mutate(NTIME = .data$time) %>%
     left_join(
       sbs %>%
-        dplyr::select(c("id" = "ID", "USUBJID", "SEX", "AGE", "HEIGHT",
-                        "WEIGHT", "FOOD", "PERIOD", "EGFR", "EXDOSE")),
-      by = "id") %>%
+        dplyr::select(c(
+          "id" = "ID", "USUBJID", "SEX", "AGE", "HEIGHT",
+          "WEIGHT", "FOOD", "PERIOD", "EGFR", "EXDOSE"
+        )),
+      by = "id"
+    ) %>%
     mutate(amt = case_when(!is.na(.data$amt) ~ .data$EXDOSE, .default = NA)) %>%
     mutate(NTIME = .data$time)
 
@@ -495,8 +506,8 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
     dplyr::select(c("USUBJID", "id", "time", "c_centr", "c_metab")) %>%
     mutate(RS2023 = .data$c_centr * 1000, RS2023487A = .data$c_metab * 1000) %>%
     tidyr::pivot_longer(c("RS2023", "RS2023487A"),
-                 names_to = "PCTESTCD",
-                 values_to = "PCSTRESN"
+      names_to = "PCTESTCD",
+      values_to = "PCSTRESN"
     ) %>%
     mutate(PCTEST = case_when(
       .data$PCTESTCD == "RS2023" ~ "RS2023",
@@ -561,7 +572,8 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     left_join(
       temp %>%
         select(id = ID, PERIOD, FOOD, EXDOSE, AGE, WEIGHT, SEX, EGFR),
-      by = c("id", "PERIOD")) %>%
+      by = c("id", "PERIOD")
+    ) %>%
     as.data.frame() %>%
     mutate(amt = case_when(!is.na(.data$amt) ~ .data$EXDOSE, .default = NA)) %>%
     arrange(.data$id, .data$time, .data$evid)
@@ -572,19 +584,20 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     dplyr::select(id, time, c_centr, c_metab, PERIOD, NTIME) %>%
     mutate(RS2023 = c_centr * 1000, RS2023487A = c_metab * 1000) %>%
     tidyr::pivot_longer(c("RS2023", "RS2023487A"),
-                 names_to = "PCTESTCD",
-                 values_to = "PCSTRESN"
+      names_to = "PCTESTCD",
+      values_to = "PCSTRESN"
     ) %>%
     mutate(PCTEST = case_when(
       PCTESTCD == "RS2023" ~ "RS2023",
       PCTESTCD == "RS2023487A" ~ "RS2023487A"
     )) %>%
     left_join(temp %>% distinct(.data$ID, .data$USUBJID, .data$RFSTDTC),
-              by = c("id" = "ID")) %>%
+      by = c("id" = "ID")
+    ) %>%
     mutate(STUDYID = unique(dm$STUDYID), DOMAIN = "PC") %>%
     mutate(PCELTM = paste0("PT", as.character(.data$NTIME), "H")) %>%
     mutate(PCTPTNUM = .data$NTIME) %>%
-    left_join(sampling_scheme, by = c("NTIME"="time")) %>%
+    left_join(sampling_scheme, by = c("NTIME" = "time")) %>%
     mutate(PCDTC = .data$RFSTDTC + time * 60 * 60) %>%
     arrange(.data$id, .data$PCDTC, .data$PCTESTCD) %>%
     group_by(id) %>%
@@ -596,8 +609,10 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
       .data$PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
       2 ~ "OPEN LABEL TREATMENT 2"
     )) %>%
-    dplyr::select(-c("id", "time", "c_centr", "c_metab", "RFSTDTC",
-                     "NTIME")) %>%
+    dplyr::select(-c(
+      "id", "time", "c_centr", "c_metab", "RFSTDTC",
+      "NTIME"
+    )) %>%
     as.data.frame()
   return(pc)
 }
@@ -653,9 +668,13 @@ subject_baseline_data <- function(dm, vs, lb) {
     left_join(baseline_vs, by = "USUBJID") %>%
     left_join(baseline_lb, by = "USUBJID") %>%
     mutate(EGFR = egfr_cg(.data$BL_CREAT, .data$AGE, .data$SEX, .data$RACE,
-                          .data$WEIGHT, molar = T)) %>%
-    select(c("USUBJID", "RFSTDTC", "SEX", "AGE", "HEIGHT", "WEIGHT", "EGFR",
-             "ACTARMCD")) %>%
+      .data$WEIGHT,
+      molar = T
+    )) %>%
+    select(c(
+      "USUBJID", "RFSTDTC", "SEX", "AGE", "HEIGHT", "WEIGHT", "EGFR",
+      "ACTARMCD"
+    )) %>%
     mutate(ID = row_number())
 }
 
@@ -668,23 +687,23 @@ synthesize_sdtm_sad_study <- function() {
   studyid <- "2023000001"
   studytitle <- "An open label dose escalation study of RS2023 in healthy subjects"
 
-  rich_sampling_scheme <- rich_sampling_scheme <-  tibble::tribble(
-    ~time,     ~PCTPT,
-    0,  "PREDOSE",
+  rich_sampling_scheme <- rich_sampling_scheme <- tibble::tribble(
+    ~time, ~PCTPT,
+    0, "PREDOSE",
     0.5, "0.5 HOURS POST-DOSE",
-    1,   "1 HOURS POST-DOSE",
+    1, "1 HOURS POST-DOSE",
     1.5, "1.5 HOURS POST-DOSE",
-    2,   "2 HOURS POST-DOSE",
-    3,   "3 HOURS POST-DOSE",
-    4,   "4 HOURS POST-DOSE",
-    6,   "6 HOURS POST-DOSE",
-    8,   "8 HOURS POST-DOSE",
-    10,  "10 HOURS POST-DOSE",
-    12,  "12 HOURS POST-DOSE",
-    24,  "24 HOURS POST-DOSE",
-    48,  "48 HOURS POST-DOSE",
-    72,  "72 HOURS POST-DOSE",
-    96,  "96 HOURS POST-DOSE",
+    2, "2 HOURS POST-DOSE",
+    3, "3 HOURS POST-DOSE",
+    4, "4 HOURS POST-DOSE",
+    6, "6 HOURS POST-DOSE",
+    8, "8 HOURS POST-DOSE",
+    10, "10 HOURS POST-DOSE",
+    12, "12 HOURS POST-DOSE",
+    24, "24 HOURS POST-DOSE",
+    48, "48 HOURS POST-DOSE",
+    72, "72 HOURS POST-DOSE",
+    96, "96 HOURS POST-DOSE",
     144, "144 HOURS POST-DOSE",
     168, "168 HOURS POST-DOSE",
   )
@@ -706,20 +725,20 @@ synthesize_sdtm_sad_study <- function() {
 
   sb_assignment <- dose_levels %>%
     mutate(USUBJID = dm %>%
-             filter(.data$ACTARMCD != "SCRNFAIL") %>%
-             arrange(.data$USUBJID) %>%
-             pull(.data$USUBJID))
+      filter(.data$ACTARMCD != "SCRNFAIL") %>%
+      arrange(.data$USUBJID) %>%
+      pull(.data$USUBJID))
 
   dm <- dm %>%
     left_join(sb_assignment, by = "USUBJID") %>%
     mutate(ACTARMCD = case_match(.data$ACTARMCD, "" ~ paste0("C", cohort),
-                                 .default = "SCRNFAIL"
+      .default = "SCRNFAIL"
     )) %>%
     mutate(ACTARM = case_match(.data$ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
-                               .default = paste0(
-                                 "Treatment cohort ", cohort, ", ",
-                                 dose, " mg examplinib"
-                               )
+      .default = paste0(
+        "Treatment cohort ", cohort, ", ",
+        dose, " mg examplinib"
+      )
     )) %>%
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
 
@@ -740,9 +759,10 @@ synthesize_sdtm_sad_study <- function() {
   pc <- make_sd_pc(dm, ex, vs, lb, rich_sampling_scheme)
 
   ts <- synthesize_ts(studyid, studytitle, c("saf", "tol", "pk"), "1",
-                      startdate = format(min(dm$RFICDTC, na.rm = T)),
-                      enddate = format(last_dtc_data_frame(pc)),
-                      hv = TRUE)
+    startdate = format(min(dm$RFICDTC, na.rm = T)),
+    enddate = format(last_dtc_data_frame(pc)),
+    hv = TRUE
+  )
 
   out <- list(
     dm = select(dm, -c("cohort", "dose")),
@@ -770,29 +790,29 @@ synthesize_sdtm_sad_study <- function() {
 #' @return A stdm object.
 #' @keywords internal
 synthesize_sdtm_poc_study <- function(
-    studyid = "2023000022",
-    dose = 500,
-    nrich = 12,
-    nsubs = 80,
-    nsites = 8,
-    duration = 100,
-    red_prob = 0.3) {
-
-  studytitle = "An open-label single-arm Phase 2 study of examplinib in patients"
+  studyid = "2023000022",
+  dose = 500,
+  nrich = 12,
+  nsubs = 80,
+  nsites = 8,
+  duration = 100,
+  red_prob = 0.3
+) {
+  studytitle <- "An open-label single-arm Phase 2 study of examplinib in patients"
 
   rich_sampling_scheme <- tibble::tribble(
-    ~NTIME,     ~PCTPT,
-    0,  "PREDOSE",
+    ~NTIME, ~PCTPT,
+    0, "PREDOSE",
     0.5, "0.5 HOURS POST-DOSE",
-    1,   "1 HOURS POST-DOSE",
+    1, "1 HOURS POST-DOSE",
     1.5, "1.5 HOURS POST-DOSE",
-    2,   "2 HOURS POST-DOSE",
-    3,   "3 HOURS POST-DOSE",
-    4,   "4 HOURS POST-DOSE",
-    6,   "6 HOURS POST-DOSE",
-    8,   "8 HOURS POST-DOSE",
-    10,  "10 HOURS POST-DOSE",
-    12,  "12 HOURS POST-DOSE",
+    2, "2 HOURS POST-DOSE",
+    3, "3 HOURS POST-DOSE",
+    4, "4 HOURS POST-DOSE",
+    6, "6 HOURS POST-DOSE",
+    8, "8 HOURS POST-DOSE",
+    10, "10 HOURS POST-DOSE",
+    12, "12 HOURS POST-DOSE",
   )
 
   sparse_sampling_scheme <- data.frame(
@@ -805,7 +825,7 @@ synthesize_sdtm_poc_study <- function(
     female_fraction = 0.4, duration = duration, min_age = 47, max_age = 86
   ) %>%
     mutate(ACTARMCD = case_match(.data$ACTARMCD, "" ~ "TREATMENT",
-                                 .default = .data$ACTARMCD
+      .default = .data$ACTARMCD
     )) %>%
     mutate(ACTARM = case_match(
       .data$ACTARMCD,
@@ -816,8 +836,10 @@ synthesize_sdtm_poc_study <- function(
 
   vs <- synthesize_vs(dm)
   lb <- synthesize_lb(dm)
-  ex <- make_md_ex(dm, drug = "RS2023", dose = 500, missed_doses = T,
-                   treatment_duration = duration, red_prob = red_prob)
+  ex <- make_md_ex(dm,
+    drug = "RS2023", dose = 500, missed_doses = T,
+    treatment_duration = duration, red_prob = red_prob
+  )
 
   dm <- dm %>%
     add_RFENDTC(ex)
@@ -834,8 +856,10 @@ synthesize_sdtm_poc_study <- function(
     ungroup() %>%
     mutate(TIME = as.numeric(.data$dtc - .data$first_dtc) / 3600) %>%
     left_join(sbs, by = "USUBJID") %>%
-    select(c("id" = "ID", "USUBJID", "time" = "TIME", "SEX", "AGE", "HEIGHT",
-             "WEIGHT", "EGFR")) %>%
+    select(c(
+      "id" = "ID", "USUBJID", "time" = "TIME", "SEX", "AGE", "HEIGHT",
+      "WEIGHT", "EGFR"
+    )) %>%
     mutate(cmt = 0, amt = dose, rate = -2, evid = 1, NTIME = 0)
 
   temp <- admin %>%
@@ -845,8 +869,8 @@ synthesize_sdtm_poc_study <- function(
     summarize(ref_time = min(.data$time), .groups = "drop") %>%
     # day 1
     add_row(admin %>%
-              distinct(.data$USUBJID) %>%
-              mutate(ref_time = 0)) %>%
+      distinct(.data$USUBJID) %>%
+      mutate(ref_time = 0)) %>%
     left_join(sbs %>% distinct(.data$USUBJID, rich), by = "USUBJID")
 
   sampling <- rbind(
@@ -867,13 +891,15 @@ synthesize_sdtm_poc_study <- function(
     #   time points:
     group_by(NTIME == 0) %>%
     mutate(delta = case_when(.data$NTIME == 0 ~ runif(n(), -1, -0.1),
-                             .default = rnorm(n(), 0, .02) * .data$NTIME
+      .default = rnorm(n(), 0, .02) * .data$NTIME
     )) %>%
     ungroup() %>%
     mutate(time1 = .data$time + .data$delta) %>%
     left_join(sbs, by = "USUBJID") %>%
-    select(c("id" = "ID", "USUBJID", "time" = "time1", "SEX", "AGE", "HEIGHT",
-             "WEIGHT", "EGFR", "NTIME")) %>%
+    select(c(
+      "id" = "ID", "USUBJID", "time" = "time1", "SEX", "AGE", "HEIGHT",
+      "WEIGHT", "EGFR", "NTIME"
+    )) %>%
     mutate(cmt = 1, amt = 0, rate = 0, evid = 0)
 
   ev <- rbind(admin, sampling) %>%
@@ -882,20 +908,25 @@ synthesize_sdtm_poc_study <- function(
     as.data.frame()
 
   pc <- pk_sim(ev) %>%
-    select(c("id", "time", "RS2023" = "c_centr", "RS2023487A" = "c_metab",
-             "NTIME")) %>%
-    mutate(RS2023 = .data$RS2023 * 1000,
-           RS2023487A = .data$RS2023487A * 1000) %>%
+    select(c("id", "time",
+      "RS2023" = "c_centr", "RS2023487A" = "c_metab",
+      "NTIME"
+    )) %>%
+    mutate(
+      RS2023 = .data$RS2023 * 1000,
+      RS2023487A = .data$RS2023487A * 1000
+    ) %>%
     tidyr::pivot_longer(c("RS2023", "RS2023487A"),
-                 names_to = "PCTESTCD",
-                 values_to = "PCSTRESN"
+      names_to = "PCTESTCD",
+      values_to = "PCSTRESN"
     ) %>%
     mutate(PCTEST = case_when(
       .data$PCTESTCD == "RS2023" ~ "RS2023",
       .data$PCTESTCD == "RS2023487A" ~ "RS2023487A"
     )) %>%
     left_join(sbs %>% distinct(.data$ID, .data$USUBJID),
-              by = c("id" = "ID")) %>%
+      by = c("id" = "ID")
+    ) %>%
     arrange(.data$USUBJID, .data$time) %>%
     group_by(.data$USUBJID) %>%
     mutate(delta_time = .data$time - .data$time[row_number() == 1]) %>%
@@ -908,7 +939,7 @@ synthesize_sdtm_poc_study <- function(
     mutate(PCDTC = .data$RFSTDTC + .data$delta_time * 3600) %>%
     mutate(DOMAIN = "PC", PCSPEC = "PLASMA", EPOCH = "TREATMENT") %>%
     mutate(PCTPT = case_when(.data$NTIME == 0 ~ "PREDOSE",
-                             .default = paste0("POSTDOSE ", .data$NTIME, " H")
+      .default = paste0("POSTDOSE ", .data$NTIME, " H")
     )) %>%
     mutate(PCTPTNUM = .data$NTIME) %>%
     mutate(PCRFTDTC = .data$RFSTDTC) %>%
@@ -925,7 +956,8 @@ synthesize_sdtm_poc_study <- function(
     studyid, studytitle, c("saf", "tol", "pk", "eff"), "2a",
     startdate = format(min(dm$RFICDTC, na.rm = T)),
     enddate = format(last_dtc_data_frame(pc)),
-    hv = FALSE)
+    hv = FALSE
+  )
 
   out <- list(
     dm = dm,
@@ -948,39 +980,41 @@ synthesize_sdtm_food_effect_study <- function() {
   studyid <- "2023000400"
   studytitle <- "An open-label 2-period crossover study in healthy subjects to investigate the effect of food on the pharmacokinetics of examplinib"
 
-  sampling_scheme <- rich_sampling_scheme <-  tibble::tribble(
-    ~time,     ~PCTPT,
-    0,  "PREDOSE",
+  sampling_scheme <- rich_sampling_scheme <- tibble::tribble(
+    ~time, ~PCTPT,
+    0, "PREDOSE",
     0.5, "0.5 HOURS POST-DOSE",
-    1,   "1 HOURS POST-DOSE",
+    1, "1 HOURS POST-DOSE",
     1.5, "1.5 HOURS POST-DOSE",
-    2,   "2 HOURS POST-DOSE",
-    3,   "3 HOURS POST-DOSE",
-    4,   "4 HOURS POST-DOSE",
-    6,   "6 HOURS POST-DOSE",
-    8,   "8 HOURS POST-DOSE",
-    10,  "10 HOURS POST-DOSE",
-    12,  "12 HOURS POST-DOSE",
-    24,  "24 HOURS POST-DOSE",
-    48,  "48 HOURS POST-DOSE",
-    72,  "72 HOURS POST-DOSE",
-    96,  "96 HOURS POST-DOSE",
+    2, "2 HOURS POST-DOSE",
+    3, "3 HOURS POST-DOSE",
+    4, "4 HOURS POST-DOSE",
+    6, "6 HOURS POST-DOSE",
+    8, "8 HOURS POST-DOSE",
+    10, "10 HOURS POST-DOSE",
+    12, "12 HOURS POST-DOSE",
+    24, "24 HOURS POST-DOSE",
+    48, "48 HOURS POST-DOSE",
+    72, "72 HOURS POST-DOSE",
+    96, "96 HOURS POST-DOSE",
     144, "144 HOURS POST-DOSE",
     168, "168 HOURS POST-DOSE",
   )
 
   dm <- synthesize_dm(studyid = studyid, nsubs = 20)
   i_treated <- which(dm$ACTARMCD != "SCRNFAIL")
-  i_seq1 <- sample(i_treated, length(i_treated)/2)
+  i_seq1 <- sample(i_treated, length(i_treated) / 2)
 
   dm <- dm %>%
     mutate(ACTARMCD = case_when(
       row_number() %in% i_seq1 ~ "AB",
       row_number() %in% i_treated & !(row_number() %in% i_seq1) ~ "BA",
-      .default = "SCRNFAIL")) %>%
+      .default = "SCRNFAIL"
+    )) %>%
     mutate(ACTARM = case_match(ACTARMCD,
-                               "AB" ~ "Fasted - Fed", "BA" ~ "Fed - Fasted",
-                               .default = "Screen Failure")) %>%
+      "AB" ~ "Fasted - Fed", "BA" ~ "Fed - Fasted",
+      .default = "Screen Failure"
+    )) %>%
     mutate(ARM = ACTARM, ARMCD = ACTARMCD)
 
   vs <- synthesize_vs(dm)
@@ -993,9 +1027,10 @@ synthesize_sdtm_food_effect_study <- function() {
   pc <- make_fe_pc(ex, dm, vs, sampling_scheme)
 
   ts <- synthesize_ts(studyid, studytitle, c("fe", "pk"), "1",
-                      startdate = format(min(dm$RFICDTC, na.rm = T)),
-                      enddate = format(last_dtc_data_frame(pc)),
-                      hv = TRUE)
+    startdate = format(min(dm$RFICDTC, na.rm = T)),
+    enddate = format(last_dtc_data_frame(pc)),
+    hv = TRUE
+  )
 
   out <- list(
     dm = dm,
@@ -1070,12 +1105,12 @@ synthesize_crea <- function(dm, crea_method = crea_mdrd) {
     mutate(EGFR = Mean)
 
   m <- stats::glm(EGFR ~ AGE + female,
-                  family = "gaussian",
-                  data = empirical_egfr
+    family = "gaussian",
+    data = empirical_egfr
   )
   dm <- dm %>%
     mutate(target_egfr = stats::predict(m, dm %>%
-                                          mutate(female = case_when(SEX == "F" ~ 1, .default = 0))))
+      mutate(female = case_when(SEX == "F" ~ 1, .default = 0))))
   renal <- rnorm(nrow(dm), dm$target_egfr, 13)
   dm %>%
     mutate(EGFR = renal) %>%
@@ -1124,39 +1159,41 @@ synthesize_lb <- function(dm) {
 #' @keywords internal
 synthesize_pp <- function(obj) {
   pp_translation <- tribble(
-    ~PKNCAPARAM,        ~PPTESTCD,                         ~PPTEST,    ~PPORRESU,    ~PPSTRESU,
-    "aucinf.obs",        "AUCIFP",              "AUC Infinity Pred",    "h*ng/mL",    "h*ng/mL",
-    "auclast",           "AUCLST",       "AUC to Last Nonzero Conc",    "h*ng/mL",    "h*ng/mL",
-    "cmax",              "CMAX",                         "Max Conc",      "ng/mL",      "ng/mL",
-    "lambda.z",          "LAMZ",                         "Lambda z",        "1/h",        "1/h",
-    "half.life",         "LAMZHL",             "Half-Life Lambda z",          "h",          "h",
-    "lambda.z.n.points", "LAMZNPT", "Number of Points for Lambda z",           NA,           NA,
-    "adj.r.squared",     "R2ADJ",              "R Squared Adjusted",           NA,           NA,
-    "tlast",             "TLST",        "Time of Last Nonzero Conc",          "h",          "h",
-    "tmax",              "TMAX",                     "Time of CMAX",          "h",          "h",
+    ~PKNCAPARAM, ~PPTESTCD, ~PPTEST, ~PPORRESU, ~PPSTRESU,
+    "aucinf.obs", "AUCIFP", "AUC Infinity Pred", "h*ng/mL", "h*ng/mL",
+    "auclast", "AUCLST", "AUC to Last Nonzero Conc", "h*ng/mL", "h*ng/mL",
+    "cmax", "CMAX", "Max Conc", "ng/mL", "ng/mL",
+    "lambda.z", "LAMZ", "Lambda z", "1/h", "1/h",
+    "half.life", "LAMZHL", "Half-Life Lambda z", "h", "h",
+    "lambda.z.n.points", "LAMZNPT", "Number of Points for Lambda z", NA, NA,
+    "adj.r.squared", "R2ADJ", "R Squared Adjusted", NA, NA,
+    "tlast", "TLST", "Time of Last Nonzero Conc", "h", "h",
+    "tmax", "TMAX", "Time of CMAX", "h", "h",
   )
 
   obj <- obj %>%
     index_rich_sampling_intervals() %>%
     # as.data.frame() %>%
-    filter(!is.na(RICH_N)) #%>%
-    # new_nif()
+    filter(!is.na(RICH_N)) # %>%
+  # new_nif()
 
   analytes <- obj %>%
     as.data.frame() %>%
     distinct(ANALYTE, PARENT, METABOLITE)
 
-  out = data.frame()
-  for(i in 1:nrow(analytes)) {
+  out <- data.frame()
+  for (i in 1:nrow(analytes)) {
     times <- obj %>%
       filter(EVID == 1) %>%
       as.data.frame() %>%
       distinct(USUBJID, RICH_N, PPRFTDTC = DTC)
 
-    temp <- nca(obj, analyte = analytes[i, "ANALYTE"],
+    temp <- nca(obj,
+      analyte = analytes[i, "ANALYTE"],
       parent = analytes[i, "PARENT"],
       keep = c("USUBJID", "STUDYID", "ID", "DOSE"),
-      group = "RICH_N") %>%
+      group = "RICH_N"
+    ) %>%
       mutate(RICH_N = as.numeric(as.character(RICH_N))) %>%
       left_join(times, by = c("USUBJID", "RICH_N"))
 
@@ -1174,8 +1211,8 @@ synthesize_pp <- function(obj) {
       select(c(
         "STUDYID", "DOMAIN", "USUBJID", "PPSEQ", "PPTESTCD", "PPTEST",
         "PPCAT", "PPORRES", "PPORRESU", "PPSTRESN", "PPSTRESU", "PPSPEC",
-        "PPRFTDTC", "DOSE"))
-    )
+        "PPRFTDTC", "DOSE"
+      )))
   }
   return(out)
 }

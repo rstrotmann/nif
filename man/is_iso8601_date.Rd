@@ -31,12 +31,12 @@ Valid formats include:
 }
 }
 \examples{
-is_iso8601_date("2023-10-15")                  # TRUE
-is_iso8601_date("20231015")                    # TRUE
-is_iso8601_date("2023-10")                     # TRUE (with default allow_reduced_precision=TRUE)
-is_iso8601_date("2023")                        # TRUE (with default allow_reduced_precision=TRUE)
-is_iso8601_date("2023-10", FALSE)              # FALSE (with allow_reduced_precision=FALSE)
-is_iso8601_date("2023/10/15")                  # FALSE (not ISO 8601 format)
-is_iso8601_date("2023-10-15T14:30:00")         # FALSE (has time component)
+is_iso8601_date("2023-10-15") # TRUE
+is_iso8601_date("20231015") # TRUE
+is_iso8601_date("2023-10") # TRUE (with default allow_reduced_precision=TRUE)
+is_iso8601_date("2023") # TRUE (with default allow_reduced_precision=TRUE)
+is_iso8601_date("2023-10", FALSE) # FALSE (with allow_reduced_precision=FALSE)
+is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
+is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time component)
 }
 \keyword{internal}

@@ -3,10 +3,10 @@ test_that("impute_exendtc_to_rfendtc validates input correctly", {
   dm_missing_cols <- data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"))
 
   ex_valid <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          NA,
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          NA,
-    "SUBJ-002", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          NA
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", NA,
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, NA,
+    "SUBJ-002", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", NA
   ) %>% lubrify_dates()
 
   expect_message(
@@ -16,13 +16,13 @@ test_that("impute_exendtc_to_rfendtc validates input correctly", {
 
   # Test missing columns in EX
   dm_valid <- tibble::tribble(
-      ~USUBJID,           ~RFSTDTC,           ~RFENDTC,
+    ~USUBJID, ~RFSTDTC, ~RFENDTC,
     "SUBJ-001", "2023-01-01T08:00", "2023-01-31T08:00",
     "SUBJ-002", "2023-01-01T08:00", "2023-01-31T08:00"
   ) %>% lubrify_dates()
 
   ex_missing_cols <- tibble::tribble(
-      ~USUBJID,   ~EXTRT,
+    ~USUBJID, ~EXTRT,
     "SUBJ-001", "DRUG A",
     "SUBJ-002", "DRUG A"
   )
@@ -36,19 +36,19 @@ test_that("impute_exendtc_to_rfendtc validates input correctly", {
 
 test_that("impute_exendtc_to_rfendtc adds IMPUTATION column if not present", {
   dm <- tibble::tribble(
-    ~USUBJID,           ~RFSTDTC,           ~RFENDTC,
+    ~USUBJID, ~RFSTDTC, ~RFENDTC,
     "SUBJ-001", "2023-01-01T08:00", "2023-01-31T08:00",
     "SUBJ-002", "2023-01-01T08:00", "2023-01-31T08:00"
   )
 
   ex <- tibble::tribble(
-    ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,
-    "SUBJ-002", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00"
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA,
+    "SUBJ-002", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00"
   )
 
-  result <- impute_exendtc_to_rfendtc(ex, dm, "DRUG A",silent = TRUE)
+  result <- impute_exendtc_to_rfendtc(ex, dm, "DRUG A", silent = TRUE)
 
   expect_true("IMPUTATION" %in% names(result))
 })
@@ -57,19 +57,19 @@ test_that("impute_exendtc_to_rfendtc adds IMPUTATION column if not present", {
 test_that("impute_exendtc_to_rfendtc performs imputations correctly", {
   # Create test data with two subjects, one with missing final EXENDTC
   dm <- tibble::tribble(
-      ~USUBJID,           ~RFSTDTC,           ~RFENDTC,
+    ~USUBJID, ~RFSTDTC, ~RFENDTC,
     "SUBJ-001", "2023-01-01T08:00", "2023-01-31T08:00",
     "SUBJ-002", "2023-01-01T08:00", "2023-01-31T08:00",
     "SUBJ-003", "2023-01-01T08:00", "2023-01-31T08:00"
   ) %>% lubrify_dates()
 
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          NA,
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          NA,
-    "SUBJ-002", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          NA,
-    "SUBJ-003", "DRUG B",      1, "2023-01-01T08:00", "2023-01-14T08:00",          NA,
-    "SUBJ-003", "DRUG B",      2, "2023-01-15T08:00",                 NA,          NA
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", NA,
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, NA,
+    "SUBJ-002", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", NA,
+    "SUBJ-003", "DRUG B", 1, "2023-01-01T08:00", "2023-01-14T08:00", NA,
+    "SUBJ-003", "DRUG B", 2, "2023-01-15T08:00", NA, NA
   ) %>% lubrify_dates()
 
   result <- impute_exendtc_to_rfendtc(ex, dm, "DRUG A", silent = TRUE)
@@ -83,15 +83,15 @@ test_that("impute_exendtc_to_rfendtc performs imputations correctly", {
 
 test_that("impute_exendtc_to_rfendtc does not impute non-last administrations", {
   dm <- tibble::tribble(
-      ~USUBJID,           ~RFSTDTC,           ~RFENDTC,
+    ~USUBJID, ~RFSTDTC, ~RFENDTC,
     "SUBJ-001", "2023-01-01T08:00", "2023-01-31T08:00"
   ) %>% lubrify_dates()
 
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          "",
-    "SUBJ-001", "DRUG A",      3, "2023-01-29T08:00",                 NA,          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, "",
+    "SUBJ-001", "DRUG A", 3, "2023-01-29T08:00", NA, ""
   ) %>% lubrify_dates()
 
   result <- impute_exendtc_to_rfendtc(ex, dm, "DRUG A", silent = TRUE)
@@ -110,16 +110,16 @@ test_that("impute_exendtc_to_rfendtc does not impute non-last administrations", 
 
 test_that("impute_exendtc_to_rfendtc handles multiple treatments per subject correctly", {
   dm <- tibble::tribble(
-      ~USUBJID,           ~RFSTDTC,           ~RFENDTC,
+    ~USUBJID, ~RFSTDTC, ~RFENDTC,
     "SUBJ-001", "2023-01-01T08:00", "2023-01-31T08:00"
   ) %>% lubrify_dates()
 
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          "",
-    "SUBJ-001", "DRUG B",      1, "2023-01-05T08:00", "2023-01-19T08:00",          "",
-    "SUBJ-001", "DRUG B",      2, "2023-01-20T08:00",                 NA,          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, "",
+    "SUBJ-001", "DRUG B", 1, "2023-01-05T08:00", "2023-01-19T08:00", "",
+    "SUBJ-001", "DRUG B", 2, "2023-01-20T08:00", NA, ""
   ) %>% lubrify_dates()
 
   result <- impute_exendtc_to_rfendtc(ex, dm, "DRUG A", silent = TRUE)
@@ -133,17 +133,17 @@ test_that("impute_exendtc_to_rfendtc handles multiple treatments per subject cor
 
 test_that("impute_exendtc_to_rfendtc returns unmodified data when no imputations needed", {
   dm <- tibble::tribble(
-      ~USUBJID,           ~RFSTDTC,           ~RFENDTC,
+    ~USUBJID, ~RFSTDTC, ~RFENDTC,
     "SUBJ-001", "2023-01-01T08:00", "2023-01-31T08:00",
     "SUBJ-002", "2023-01-01T08:00", "2023-01-31T08:00"
   ) %>% lubrify_dates()
 
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00", "2023-01-30T08:00",          "",
-    "SUBJ-002", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-002", "DRUG A",      2, "2023-01-15T08:00", "2023-01-30T08:00",          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", "2023-01-30T08:00", "",
+    "SUBJ-002", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-002", "DRUG A", 2, "2023-01-15T08:00", "2023-01-30T08:00", ""
   ) %>% lubrify_dates()
 
   result <- impute_exendtc_to_rfendtc(ex, dm, "DRUG A")
@@ -156,16 +156,16 @@ test_that("impute_exendtc_to_rfendtc returns unmodified data when no imputations
 
 test_that("impute_exendtc_to_rfendtc handles case with no RFENDTC in DM", {
   dm <- tibble::tribble(
-      ~USUBJID,           ~RFSTDTC, ~RFENDTC,
-    "SUBJ-001", "2023-01-01T08:00",       "",
-    "SUBJ-002", "2023-01-01T08:00",       ""
+    ~USUBJID, ~RFSTDTC, ~RFENDTC,
+    "SUBJ-001", "2023-01-01T08:00", "",
+    "SUBJ-002", "2023-01-01T08:00", ""
   ) %>% lubrify_dates()
 
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          "",
-    "SUBJ-002", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, "",
+    "SUBJ-002", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", ""
   ) %>% lubrify_dates()
 
   result <- impute_exendtc_to_rfendtc(ex, dm, "DRUG A")
@@ -174,4 +174,3 @@ test_that("impute_exendtc_to_rfendtc handles case with no RFENDTC in DM", {
   expect_true(is.na(result$EXENDTC[2]))
   expect_equal(result$IMPUTATION[2], "")
 })
-

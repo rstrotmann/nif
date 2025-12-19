@@ -33,36 +33,41 @@
 #'
 #' @examples
 #' add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
-#'   covariate = "wt")
+#'   covariate = "wt"
+#' )
 add_covariate <- function(
-    nif,
-    sdtm,
-    domain,
-    testcd,
-    covariate = NULL,
-    DTC_field = NULL,
-    DV_field = NULL,
-    TESTCD_field = NULL,
-    observation_filter = "TRUE",
-    cat = NULL,
-    scat = NULL,
-    duplicate_function = mean,
-    silent = NULL
+  nif,
+  sdtm,
+  domain,
+  testcd,
+  covariate = NULL,
+  DTC_field = NULL,
+  DV_field = NULL,
+  TESTCD_field = NULL,
+  observation_filter = "TRUE",
+  cat = NULL,
+  scat = NULL,
+  duplicate_function = mean,
+  silent = NULL
 ) {
   # input validation
   validate_nif(nif)
   validate_sdtm(sdtm)
-  if(is.null(TESTCD_field)) {
+  if (is.null(TESTCD_field)) {
     validate_testcd(sdtm, testcd, domain)
   } else {
     validate_char_param(domain, "domain")
-    if(!TESTCD_field %in% names(domain(sdtm, domain)))
+    if (!TESTCD_field %in% names(domain(sdtm, domain))) {
       stop(paste0(
-        "Testcode field ", TESTCD_field, " not found in domain ", domain, "!"))
-    if(!testcd %in% unique(domain(sdtm, domain)[[TESTCD_field]]))
+        "Testcode field ", TESTCD_field, " not found in domain ", domain, "!"
+      ))
+    }
+    if (!testcd %in% unique(domain(sdtm, domain)[[TESTCD_field]])) {
       stop(paste0(
         "Testcd ", testcd, " not found in ",
-        toupper(domain), "$", TESTCD_field, "!"))
+        toupper(domain), "$", TESTCD_field, "!"
+      ))
+    }
   }
 
   validate_char_param(covariate, "covariate", allow_null = TRUE)
@@ -75,16 +80,17 @@ add_covariate <- function(
   validate_char_param(scat, "scat", allow_null = TRUE)
 
   # Set up field names
-  if(is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
-  if(is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-  if(is.null(TESTCD_field))
+  if (is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
+  if (is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
+  if (is.null(TESTCD_field)) {
     TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
-  if(is.null(covariate)) covariate <- str_to_upper(testcd)
+  }
+  if (is.null(covariate)) covariate <- str_to_upper(testcd)
   cat_field <- paste0(toupper(domain), "CAT")
   scat_field <- paste0(toupper(domain), "SCAT")
 
   # check whether covariate name is already taken
-  if(covariate %in% names(nif)) {
+  if (covariate %in% names(nif)) {
     stop(paste0(
       "Covariate ", covariate, " is already in nif, please provide a ",
       "unique name in the 'covariate' parameter!"
@@ -118,10 +124,20 @@ add_covariate <- function(
 
   filtered_cov <- domain_data %>%
     # apply cat, scat filtering
-    {if(!is.null(cat) & cat_field %in% names(.))
-      filter(., .data[[cat_field]] == cat) else .} %>%
-    {if(!is.null(scat) & scat_field %in% names(.))
-      filter(., .data[[scat_field]] == scat) else .} %>%
+    {
+      if (!is.null(cat) & cat_field %in% names(.)) {
+        filter(., .data[[cat_field]] == cat)
+      } else {
+        .
+      }
+    } %>%
+    {
+      if (!is.null(scat) & scat_field %in% names(.)) {
+        filter(., .data[[scat_field]] == scat)
+      } else {
+        .
+      }
+    } %>%
     # apply other filtering
     filter(.data$USUBJID %in% unique(nif$USUBJID)) %>%
     lubrify_dates() %>%
@@ -132,7 +148,8 @@ add_covariate <- function(
   if (nrow(filtered_cov) == 0) {
     stop(paste0(
       "No data found for test code '", testcd,
-      "' after applying observation filter"))
+      "' after applying observation filter"
+    ))
   }
 
   cov <- filtered_cov %>%
@@ -158,6 +175,3 @@ add_covariate <- function(
 
   return(temp)
 }
-
-
-

@@ -2,13 +2,13 @@ test_that("make_ntime returns lookup table for valid input", {
   # Create a test data frame with ELTM and DY fields
   test_data <- tibble::tribble(
     ~USUBJID, ~PCELTM, ~PCDY,
-           1,  "PT0H",     1,
-           1,  "PT1H",     1,
-           1,  "PT2H",     1,
-           1,  "PT4H",     1,
-           2,  "PT0H",     2,
-           2,  "PT2H",     2,
-           2,  "PT8H",     2
+    1, "PT0H", 1,
+    1, "PT1H", 1,
+    1, "PT2H", 1,
+    1, "PT4H", 1,
+    2, "PT0H", 2,
+    2, "PT2H", 2,
+    2, "PT8H", 2
   )
 
   # Test basic functionality
@@ -23,12 +23,12 @@ test_that("make_ntime handles include_day parameter correctly", {
   # Create a test data frame with ELTM and DY fields
   test_data <- tibble::tribble(
     ~USUBJID, ~PCELTM, ~PCDY,
-           1,  "PT0H",     1,
-           1,  "PT1H",     1,
-           1,  "PT2H",     1,
-           2,  "PT0H",     2,
-           2,  "PT1H",     2,
-           2,  "PT2H",     2
+    1, "PT0H", 1,
+    1, "PT1H", 1,
+    1, "PT2H", 1,
+    2, "PT0H", 2,
+    2, "PT1H", 2,
+    2, "PT2H", 2
   )
 
   # Test with include_day = FALSE (default)
@@ -46,9 +46,9 @@ test_that("make_ntime returns NULL when no ELTM field is present", {
   # Create a test data frame without ELTM field
   test_data <- tibble::tribble(
     ~USUBJID, ~XXTIME, ~XXDY,
-           1,  "PT0H",     1,
-           2,  "PT1H",     2,
-           3,  "PT2H",     3
+    1, "PT0H", 1,
+    2, "PT1H", 2,
+    3, "PT2H", 3
   )
 
   # Test with silent = TRUE
@@ -65,9 +65,9 @@ test_that("make_ntime handles missing DY column correctly", {
   # Create a test data frame with ELTM but no DY field
   test_data <- tibble::tribble(
     ~USUBJID, ~PCELTM,
-           1,  "PT0H",
-           2,  "PT1H",
-           3,  "PT2H"
+    1, "PT0H",
+    2, "PT1H",
+    3, "PT2H"
   )
 
   # Should work with include_day = FALSE
@@ -82,11 +82,11 @@ test_that("make_ntime handles NA values correctly", {
   # Create a test data frame with NA values
   test_data <- tibble::tribble(
     ~USUBJID, ~PCELTM, ~PCDY,
-           1,  "PT0H",     1,
-           1,  "PT1H",     1,
-           1,     NA,      1,
-           2,  "PT0H",     2,
-           2,  "PT2H",     2
+    1, "PT0H", 1,
+    1, "PT1H", 1,
+    1, NA, 1,
+    2, "PT0H", 2,
+    2, "PT2H", 2
   )
 
   # Test with include_day = FALSE
@@ -103,16 +103,15 @@ test_that("make_ntime handles NA values correctly", {
 test_that("make_ntime correctly converts ISO 8601 formatted durations", {
   # Create a test data frame with various ISO 8601 duration formats
   test_data <- tibble::tribble(
-    ~USUBJID,   ~PCELTM, ~PCDY,
-           1,    "PT0H",     1,
-           1,  "PT1.5H",     1,
-           1, "PT2H30M",     1,
-           1,   "PT15M",     1,
-           1,   "-PT1H",     1
+    ~USUBJID, ~PCELTM, ~PCDY,
+    1, "PT0H", 1,
+    1, "PT1.5H", 1,
+    1, "PT2H30M", 1,
+    1, "PT15M", 1,
+    1, "-PT1H", 1
   )
 
   # Test conversion
   result <- make_ntime(test_data, "pc")
   expect_equal(result$NTIME, c(0, 1.5, 2.5, 0.25, -1))
 })
-

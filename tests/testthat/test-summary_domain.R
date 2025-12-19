@@ -408,8 +408,8 @@ test_that("summary.domain handles domains with duplicate values correctly", {
   expect_s3_class(result, "summary_domain")
   expect_equal(result$domain, "PC")
   expect_equal(result$n_obs, 3)
-  expect_equal(nrow(result$test), 1)  # Should deduplicate test info
-  expect_equal(nrow(result$tpt), 1)   # Should deduplicate time points
+  expect_equal(nrow(result$test), 1) # Should deduplicate test info
+  expect_equal(nrow(result$tpt), 1) # Should deduplicate time points
   expect_equal(nrow(result$category), 1) # Should deduplicate categories
   expect_equal(result$observations$n, 3) # But keep count of observations
 })
@@ -751,4 +751,3 @@ test_that("print.summary_domain handles domains with missing values gracefully",
   expect_true(any(grepl("Categories", output)))
   expect_true(any(grepl("Testcodes", output)))
 })
-

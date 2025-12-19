@@ -1,4 +1,3 @@
-
 test_that("nif summary works", {
   temp <- examplinib_sad_nif %>%
     summary()
@@ -22,19 +21,19 @@ test_that("nif_plot_id", {
   )
 
   expect_no_error(
-    nif_plot_id(examplinib_poc_nif, 1, analyte="RS2023")
+    nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023")
   )
 
   expect_no_error(
-    nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte="RS2023")
+    nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte = "RS2023")
   )
 
   expect_no_error(
-    nif_plot_id(examplinib_poc_nif, 8, analyte="RS2023", imp="RS2023")
+    nif_plot_id(examplinib_poc_nif, 8, analyte = "RS2023", imp = "RS2023")
   )
 
   expect_no_error(
-    nif_plot_id(examplinib_poc_nif, 8, analyte=c("RS2023", "RS2023487A"))
+    nif_plot_id(examplinib_poc_nif, 8, analyte = c("RS2023", "RS2023487A"))
   )
 })
 
@@ -49,15 +48,15 @@ test_that("covariate_hist works", {
   expect_no_error(examplinib_poc_nif %>%
     covariate_hist("AGE"))
   expect_no_error(examplinib_poc_nif %>%
-                    covariate_hist("AGE", group = "SEX"))
+    covariate_hist("AGE", group = "SEX"))
 })
 
 
 test_that("covariate_barplot works", {
   expect_no_error(examplinib_poc_nif %>%
-                    covariate_barplot("RACE"))
+    covariate_barplot("RACE"))
   expect_no_error(examplinib_poc_nif %>%
-                    covariate_barplot("RACE", group = "SEX"))
+    covariate_barplot("RACE", group = "SEX"))
 })
 
 
@@ -110,7 +109,3 @@ test_that("obs_per_dose_level works", {
 #   expect_no_error(p <- plot_old(examplinib_sad_nif, "RS2023"))
 #   expect_no_error(p <- plot_old(examplinib_sad_nif, "RS2023", mean = TRUE))
 # })
-
-
-
-

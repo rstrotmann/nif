@@ -1,4 +1,3 @@
-
 test_that("date_list works", {
   expect_no_error(date_list("2025-1-1", "2025-1-3"))
   expect_no_error(date_list("2025-1-1", "2025-1-3", 1, 3))
@@ -12,30 +11,29 @@ test_that("date_list works", {
 })
 
 
-
-
-
 test_that("expand_ex works in general", {
   ex <- tribble(
-    ~USUBJID , ~EXTRT , ~EXSTDTC           , ~EXENDTC,
-    "A"      , "DRUG" , "2025-01-01T07:00" , "2025-01-03",
-    "A"      , "DRUG" , "2025-01-04T08:00" , "2025-01-06",
-    "A"      , "DRUG" , "2025-01-09T09:00" , "2025-01-11T10:00"
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-01T07:00", "2025-01-03",
+    "A", "DRUG", "2025-01-04T08:00", "2025-01-06",
+    "A", "DRUG", "2025-01-09T09:00", "2025-01-11T10:00"
   ) %>% lubrify_dates()
 
   expect_no_error(temp <- expand_ex(ex))
 
   expect_equal(
     temp$IMPUTATION,
-    c("",
-      "time carried forward",
-      "time carried forward",
+    c(
       "",
       "time carried forward",
       "time carried forward",
       "",
       "time carried forward",
-      "")
+      "time carried forward",
+      "",
+      "time carried forward",
+      ""
+    )
   )
 })
 
@@ -59,25 +57,27 @@ test_that("expand_ex works with TRTDY", {
 
 test_that("expand_ex works with missing EXENDTC", {
   ex <- tribble(
-    ~USUBJID, ~EXTRT,           ~EXSTDTC,     ~EXENDTC,
-    "1",         "A", "2025-01-01T07:00", "2025-01-03",
-    "1",         "A", "2025-01-04T08:00",           NA,
-    "2",         "A", "2025-01-01",       "2025-01-03",
-    "2",         "A", "2025-01-04T10:00",           NA
-    ) %>% lubrify_dates()
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "1", "A", "2025-01-01T07:00", "2025-01-03",
+    "1", "A", "2025-01-04T08:00", NA,
+    "2", "A", "2025-01-01", "2025-01-03",
+    "2", "A", "2025-01-04T10:00", NA
+  ) %>% lubrify_dates()
 
   expect_no_error(temp <- expand_ex(ex))
   expect_equal(
     temp$IMPUTATION,
-    c("",
+    c(
+      "",
       "time carried forward",
       "time carried forward",
       "",
       "no time information",
       "no time information",
       "no time information",
-      "")
+      ""
     )
+  )
 })
 
 

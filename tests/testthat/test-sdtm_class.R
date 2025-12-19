@@ -56,23 +56,23 @@ test_that("sdtm summary", {
 test_that("sdtm_summary works with metabolite mapping", {
   test <- examplinib_fe %>%
     add_time_mapping(
-     "PREDOSE" = 0,
-     "HOUR 0.5" = 0.5,
-     "HOUR 1" = 1,
-     "HOUR 1.5" = 1.5,
-     "HOUR 2" = 2,
-     "HOUR 3" = 3,
-     "HOUR 4" = 4,
-     "HOUR 6" = 6,
-     "HOUR 8" = 8,
-     "HOUR 10" = 10,
-     "HOUR 12" = 12,
-     "HOUR 24" = 24,
-     "HOUR 48" = 48,
-     "HOUR 72" = 72,
-     "HOUR 96" = 96,
-     "HOUR 144" = 144,
-     "HOUR 168" = 168
+      "PREDOSE" = 0,
+      "HOUR 0.5" = 0.5,
+      "HOUR 1" = 1,
+      "HOUR 1.5" = 1.5,
+      "HOUR 2" = 2,
+      "HOUR 3" = 3,
+      "HOUR 4" = 4,
+      "HOUR 6" = 6,
+      "HOUR 8" = 8,
+      "HOUR 10" = 10,
+      "HOUR 12" = 12,
+      "HOUR 24" = 24,
+      "HOUR 48" = 48,
+      "HOUR 72" = 72,
+      "HOUR 96" = 96,
+      "HOUR 144" = 144,
+      "HOUR 168" = 168
     )
   expect_no_error(summary(test))
 })
@@ -89,13 +89,16 @@ test_that("suggest throws error when required domains are missing", {
   # Create test data with missing PC domain
   skip_if_not_installed("nif")
   # Import function if possible
-  if(!exists("suggest", envir = .GlobalEnv)) {
-    tryCatch({
-      # Try to make function available
-      library(nif)
-    }, error = function(e) {
-      skip("Package nif functions not available")
-    })
+  if (!exists("suggest", envir = .GlobalEnv)) {
+    tryCatch(
+      {
+        # Try to make function available
+        library(nif)
+      },
+      error = function(e) {
+        skip("Package nif functions not available")
+      }
+    )
   }
 
   test_data <- list(
@@ -130,7 +133,8 @@ test_that("suggest throws error when required domains are missing", {
 test_that("subject_info works", {
   expect_type(
     subject_info(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"]),
-    "list")
+    "list"
+  )
 })
 
 
@@ -139,18 +143,19 @@ test_that("subjects, analytes, treatments, doses works for sdtm", {
   expect_type(analytes(examplinib_poc), "character")
   expect_type(treatments(examplinib_poc), "character")
   expect_type(doses(examplinib_poc), "double")
-
 })
 
 
 test_that("filter_subject works", {
   expect_s3_class(
     filter_subject(examplinib_poc, subjects(examplinib_poc)[1, 1]),
-    "sdtm")
+    "sdtm"
+  )
 
   expect_s3_class(
     filter_subject(examplinib_poc, subjects(examplinib_poc)[1:3, 1]),
-    "sdtm")
+    "sdtm"
+  )
 })
 
 
@@ -165,7 +170,7 @@ test_that("derive_sld works", {
   sdtm <- new_sdtm(list(tr = tr))
   expect_no_error(
     derive_sld(sdtm, testcd = "LDIAM", observation_filter = "TRUE") %>%
-    domain("tr")
+      domain("tr")
   )
 })
 
@@ -189,12 +194,12 @@ test_that("derive_sld works with TR containing TRTEST", {
 test_that("derive_sld works with multiple diagnostic methods", {
   tr <- tribble(
     ~DOMAIN, ~USUBJID, ~TRMETHOD, ~TRTESTCD, ~TRSTRESN, ~TRDTC,
-    "TR",    1,        "CT",     "LDIAM",    1,         "2025-02-25T08:00",
-    "TR",    1,        "CT",     "LDIAM",    1.5,       "2025-02-25T08:00",
-    "TR",    1,        "CT",     "LDIAM",    0.5,       "2025-02-25T08:00",
-    "TR",    1,        "MRT",    "LDIAM",    1,         "2025-02-25T08:00",
-    "TR",    1,        "MRT",    "LDIAM",    1.5,       "2025-02-25T08:00",
-    "TR",    1,        "MRT",    "LDIAM",    0.5,       "2025-02-25T08:00"
+    "TR", 1, "CT", "LDIAM", 1, "2025-02-25T08:00",
+    "TR", 1, "CT", "LDIAM", 1.5, "2025-02-25T08:00",
+    "TR", 1, "CT", "LDIAM", 0.5, "2025-02-25T08:00",
+    "TR", 1, "MRT", "LDIAM", 1, "2025-02-25T08:00",
+    "TR", 1, "MRT", "LDIAM", 1.5, "2025-02-25T08:00",
+    "TR", 1, "MRT", "LDIAM", 0.5, "2025-02-25T08:00"
   )
 
   sdtm <- new_sdtm(list(tr = tr))
@@ -207,13 +212,13 @@ test_that("derive_sld works with multiple diagnostic methods", {
 
 test_that("guess_ntime warns about ISO 8601 date formats", {
   pc_data_with_dates <- tibble::tribble(
-    ~USUBJID,             ~PCTPT, ~PCSTRESN,
-    "SUBJ-001",       "2023-10-15",     120.5, # ISO 8601 date
-    "SUBJ-001",         "20231015",     125.2, # ISO 8601 basic date
-    "SUBJ-001",          "2023-10",     130.1, # ISO 8601 year-month
-    "SUBJ-001",          "PREDOSE",       0.1, # Normal PCTPT
-    "SUBJ-001",     "4H POST-DOSE",     190.5, # Normal PCTPT
-    "SUBJ-001", "8 HOUR POST DOSE",     210.3 # Normal PCTPT
+    ~USUBJID, ~PCTPT, ~PCSTRESN,
+    "SUBJ-001", "2023-10-15", 120.5, # ISO 8601 date
+    "SUBJ-001", "20231015", 125.2, # ISO 8601 basic date
+    "SUBJ-001", "2023-10", 130.1, # ISO 8601 year-month
+    "SUBJ-001", "PREDOSE", 0.1, # Normal PCTPT
+    "SUBJ-001", "4H POST-DOSE", 190.5, # Normal PCTPT
+    "SUBJ-001", "8 HOUR POST DOSE", 210.3 # Normal PCTPT
   )
 
   # Create a SDTM object with the test data
@@ -235,5 +240,3 @@ test_that("guess_ntime warns about ISO 8601 date formats", {
   expect_true(is.na(result$NTIME[result$PCTPT == "20231015"]))
   expect_true(is.na(result$NTIME[result$PCTPT == "2023-10"]))
 })
-
-

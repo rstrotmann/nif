@@ -26,18 +26,17 @@
 #' library(ggplot2)
 #'
 #' examplinib_sad_nif %>%
-#'  add_ntile("WEIGHT") %>%
-#'    plot(dose_norm = TRUE, facet = "WEIGHT_NTILE")
+#'   add_ntile("WEIGHT") %>%
+#'   plot(dose_norm = TRUE, facet = "WEIGHT_NTILE")
 #'
 #' examplinib_poc_nif %>%
-#' add_ntile("WEIGHT", n = 5) %>%
+#'   add_ntile("WEIGHT", n = 5) %>%
 #'   distinct(ID, WEIGHT, WEIGHT_NTILE) %>%
 #'   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
 #'   geom_point() +
 #'   labs(title = "Plasma concentrations by WEIGHT quartiles")
-#'   theme_bw()
+#' theme_bw()
 add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
-
   # Validate that input is a nif object
   if (!inherits(nif, "nif")) {
     stop("Input must be a nif object")
@@ -50,7 +49,7 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
 
   # Validate that n is a positive integer between 2 and 100
   if (!is.numeric(n) || length(n) != 1 || n < 2 || n > 100 ||
-      n != as.integer(n)) {
+    n != as.integer(n)) {
     stop("n must be a positive integer between 2 and 100")
   }
 
@@ -68,7 +67,7 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
     stop(
       "Missing required columns: ",
       nice_enumeration(missing_cols)
-      )
+    )
   }
 
   # Validate data types (input_col should be numeric)
@@ -90,11 +89,12 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
     filter(.data$n_distinct_values > 1)
 
   if (nrow(subjects_with_multiple) > 0) {
-    stop("Column '", input_col, "' must have exactly one distinct value per ",
-         "subject. Found multiple values for subjects: ",
-         nice_enumeration(subjects_with_multiple$ID)
-         # paste(subjects_with_multiple$ID, collapse = ", ")
-         )
+    stop(
+      "Column '", input_col, "' must have exactly one distinct value per ",
+      "subject. Found multiple values for subjects: ",
+      nice_enumeration(subjects_with_multiple$ID)
+      # paste(subjects_with_multiple$ID, collapse = ", ")
+    )
   }
 
   # Extract unique subject-level values for n-tile calculation
@@ -108,8 +108,10 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
 
   # Handle cases where there are insufficient observations for n-tile calculation
   if (nrow(subject_level_data) < n) {
-    stop("Insufficient subjects (", nrow(subject_level_data),
-         ") for calculating ", n, " n-tiles. Need at least ", n, " subjects.")
+    stop(
+      "Insufficient subjects (", nrow(subject_level_data),
+      ") for calculating ", n, " n-tiles. Need at least ", n, " subjects."
+    )
   }
 
   # Calculate n-tiles across all subjects (not within each subject)

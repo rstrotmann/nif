@@ -5,20 +5,20 @@ test_that("summary.sdtm handles valid SDTM objects correctly", {
   test_data <- list(
     domains = list(
       dm = tibble::tribble(
-          ~USUBJID, ~DOMAIN,    ~STUDYID, ~ACTARMCD,           ~ACTARM,
-        "SUBJ-001",    "DM", "STUDY-001",    "ARM1", "Treatment Arm 1",
-        "SUBJ-002",    "DM", "STUDY-001",    "ARM2", "Treatment Arm 2"
+        ~USUBJID, ~DOMAIN, ~STUDYID, ~ACTARMCD, ~ACTARM,
+        "SUBJ-001", "DM", "STUDY-001", "ARM1", "Treatment Arm 1",
+        "SUBJ-002", "DM", "STUDY-001", "ARM2", "Treatment Arm 2"
       ),
       pc = tibble::tribble(
-          ~USUBJID, ~DOMAIN,  ~PCSPEC,  ~PCTEST, ~PCTESTCD, ~PCTPT, ~PCTPTNUM,
-        "SUBJ-001",    "PC", "PLASMA", "Drug A",   "DRUGA",  "PRE",         0,
-        "SUBJ-001",    "PC", "PLASMA", "Drug A",   "DRUGA",  "1HR",         1,
-        "SUBJ-002",    "PC", "PLASMA", "Drug A",   "DRUGA",  "2HR",         2
+        ~USUBJID, ~DOMAIN, ~PCSPEC, ~PCTEST, ~PCTESTCD, ~PCTPT, ~PCTPTNUM,
+        "SUBJ-001", "PC", "PLASMA", "Drug A", "DRUGA", "PRE", 0,
+        "SUBJ-001", "PC", "PLASMA", "Drug A", "DRUGA", "1HR", 1,
+        "SUBJ-002", "PC", "PLASMA", "Drug A", "DRUGA", "2HR", 2
       ),
       ex = tibble::tribble(
-          ~USUBJID, ~DOMAIN,   ~EXTRT, ~EXDOSE,
-        "SUBJ-001",    "EX", "Drug A",     100,
-        "SUBJ-002",    "EX", "Drug A",     200
+        ~USUBJID, ~DOMAIN, ~EXTRT, ~EXDOSE,
+        "SUBJ-001", "EX", "Drug A", 100,
+        "SUBJ-002", "EX", "Drug A", 200
       )
     ),
     analyte_mapping = data.frame(
@@ -123,10 +123,10 @@ test_that("summary.sdtm correctly processes pc_timepoints", {
   test_data <- list(
     domains = list(
       pc = tibble::tribble(
-          ~USUBJID, ~DOMAIN, ~PCTPT, ~PCTPTNUM,
-        "SUBJ-001",    "PC",  "PRE",         0,
-        "SUBJ-001",    "PC",  "1HR",         1,
-        "SUBJ-002",    "PC",  "2HR",         2
+        ~USUBJID, ~DOMAIN, ~PCTPT, ~PCTPTNUM,
+        "SUBJ-001", "PC", "PRE", 0,
+        "SUBJ-001", "PC", "1HR", 1,
+        "SUBJ-002", "PC", "2HR", 2
       )
     )
   )
@@ -180,14 +180,14 @@ test_that("summary.sdtm handles NA values in fields", {
   test_data <- list(
     domains = list(
       dm = tibble::tribble(
-          ~USUBJID, ~DOMAIN,    ~STUDYID, ~ACTARMCD,           ~ACTARM,
-        "SUBJ-001",    "DM", "STUDY-001",    "ARM1",                NA,
-        "SUBJ-002",    "DM",          NA,        NA, "Treatment Arm 2"
+        ~USUBJID, ~DOMAIN, ~STUDYID, ~ACTARMCD, ~ACTARM,
+        "SUBJ-001", "DM", "STUDY-001", "ARM1", NA,
+        "SUBJ-002", "DM", NA, NA, "Treatment Arm 2"
       ),
       pc = tibble::tribble(
-          ~USUBJID, ~DOMAIN,  ~PCSPEC,  ~PCTEST, ~PCTESTCD,
-        "SUBJ-001",    "PC", "PLASMA",       NA,   "DRUGA",
-        "SUBJ-002",    "PC",       NA, "Drug A",        NA
+        ~USUBJID, ~DOMAIN, ~PCSPEC, ~PCTEST, ~PCTESTCD,
+        "SUBJ-001", "PC", "PLASMA", NA, "DRUGA",
+        "SUBJ-002", "PC", NA, "Drug A", NA
       )
     )
   )
@@ -214,7 +214,7 @@ test_that("summary.sdtm handles multiple unique values appropriately", {
   test_dm <- data.frame(
     USUBJID = c("SUBJ-001", "SUBJ-002", "SUBJ-003"),
     DOMAIN = c("DM", "DM", "DM"),
-    STUDYID = c("STUDY-001", "STUDY-001", "STUDY-002"),  # Multiple study IDs
+    STUDYID = c("STUDY-001", "STUDY-001", "STUDY-002"), # Multiple study IDs
     ACTARMCD = c("ARM1", "ARM2", "ARM3"),
     ACTARM = c("Treatment Arm 1", "Treatment Arm 2", "Treatment Arm 3")
   )
@@ -222,7 +222,7 @@ test_that("summary.sdtm handles multiple unique values appropriately", {
   test_pc <- data.frame(
     USUBJID = c("SUBJ-001", "SUBJ-002", "SUBJ-003"),
     DOMAIN = c("PC", "PC", "PC"),
-    PCSPEC = c("PLASMA", "SERUM", "URINE"),  # Multiple specimen types
+    PCSPEC = c("PLASMA", "SERUM", "URINE"), # Multiple specimen types
     PCTEST = c("Drug A", "Drug B", "Drug C"), # Multiple tests
     PCTESTCD = c("DRUGA", "DRUGB", "DRUGC")
   )
@@ -243,12 +243,11 @@ test_that("summary.sdtm handles multiple unique values appropriately", {
 
   # Check that result correctly processes multiple unique values
   expect_s3_class(result, "summary_sdtm")
-  expect_equal(length(result$study), 2)  # Both study IDs should be included
+  expect_equal(length(result$study), 2) # Both study IDs should be included
   expect_equal(length(result$specimens), 3) # All specimen types should be included
-  expect_equal(nrow(result$analytes), 3)   # All analytes should be included
-  expect_equal(nrow(result$arms), 3)      # All arms should be included
+  expect_equal(nrow(result$analytes), 3) # All analytes should be included
+  expect_equal(nrow(result$arms), 3) # All arms should be included
 
   # Check print method still works
   expect_output(print(result), "SDTM data set summary")
 })
-

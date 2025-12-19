@@ -1,7 +1,7 @@
 test_that("impute_missing_exendtc validates input correctly", {
   # Test missing required columns
   ex_missing_cols <- tibble::tribble(
-      ~USUBJID,   ~EXTRT,
+    ~USUBJID, ~EXTRT,
     "SUBJ-001", "DRUG A"
   )
 
@@ -15,10 +15,10 @@ test_that("impute_missing_exendtc validates input correctly", {
 test_that("impute_missing_exendtc handles basic imputation correctly", {
   # Create test data with missing EXENDTC in middle row
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          "",
-    "SUBJ-001", "DRUG A",      3, "2023-01-29T08:00", "2023-02-10T08:00",          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, "",
+    "SUBJ-001", "DRUG A", 3, "2023-01-29T08:00", "2023-02-10T08:00", ""
   ) %>% lubrify_dates()
 
   # Capture output to avoid message cluttering test results
@@ -37,10 +37,10 @@ test_that("impute_missing_exendtc handles basic imputation correctly", {
 test_that("impute_missing_exendtc does not modify data when no imputations needed", {
   # Create test data with no missing EXENDTC values
   ex <- tibble::tribble(
-    ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00", "2023-01-28T08:00",          "",
-    "SUBJ-001", "DRUG A",      3, "2023-01-29T08:00", "2023-02-10T08:00",          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", "2023-01-28T08:00", "",
+    "SUBJ-001", "DRUG A", 3, "2023-01-29T08:00", "2023-02-10T08:00", ""
   ) %>% lubrify_dates()
 
   result <- impute_missing_exendtc(ex)
@@ -53,10 +53,10 @@ test_that("impute_missing_exendtc does not modify data when no imputations neede
 test_that("impute_missing_exendtc creates IMPUTATION column if missing", {
   # Create test data without IMPUTATION column
   ex <- tibble::tribble(
-    ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,
-    "SUBJ-001", "DRUG A",      3, "2023-01-29T08:00", "2023-02-10T08:00"
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA,
+    "SUBJ-001", "DRUG A", 3, "2023-01-29T08:00", "2023-02-10T08:00"
   ) %>% lubrify_dates()
 
   # Capture output to avoid message cluttering test results
@@ -76,10 +76,10 @@ test_that("impute_missing_exendtc creates IMPUTATION column if missing", {
 test_that("impute_missing_exendtc does not impute last administrations", {
   # Create test data with missing EXENDTC in last row
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          "",
-    "SUBJ-001", "DRUG A",      3, "2023-01-29T08:00",                 NA,          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, "",
+    "SUBJ-001", "DRUG A", 3, "2023-01-29T08:00", NA, ""
   ) %>% lubrify_dates()
 
   # Capture output to avoid message cluttering test results
@@ -101,16 +101,16 @@ test_that("impute_missing_exendtc does not impute last administrations", {
 test_that("impute_missing_exendtc handles multiple subjects and treatments", {
   # Create test data with multiple subjects and treatments
   ex <- tibble::tribble(
-      ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          "",
-    "SUBJ-001", "DRUG A",      3, "2023-01-29T08:00", "2023-02-10T08:00",          "",
-    "SUBJ-001", "DRUG B",      1, "2023-01-01T10:00", "2023-01-14T10:00",          "",
-    "SUBJ-001", "DRUG B",      2, "2023-01-15T10:00",                 NA,          "",
-    "SUBJ-001", "DRUG B",      3, "2023-01-29T10:00", "2023-02-10T10:00",          "",
-    "SUBJ-002", "DRUG A",      1, "2023-01-01T09:00", "2023-01-14T09:00",          "",
-    "SUBJ-002", "DRUG A",      2, "2023-01-15T09:00",                 NA,          "",
-    "SUBJ-002", "DRUG A",      3, "2023-01-29T09:00", "2023-02-10T09:00",          ""
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, "",
+    "SUBJ-001", "DRUG A", 3, "2023-01-29T08:00", "2023-02-10T08:00", "",
+    "SUBJ-001", "DRUG B", 1, "2023-01-01T10:00", "2023-01-14T10:00", "",
+    "SUBJ-001", "DRUG B", 2, "2023-01-15T10:00", NA, "",
+    "SUBJ-001", "DRUG B", 3, "2023-01-29T10:00", "2023-02-10T10:00", "",
+    "SUBJ-002", "DRUG A", 1, "2023-01-01T09:00", "2023-01-14T09:00", "",
+    "SUBJ-002", "DRUG A", 2, "2023-01-15T09:00", NA, "",
+    "SUBJ-002", "DRUG A", 3, "2023-01-29T09:00", "2023-02-10T09:00", ""
   ) %>% lubrify_dates()
 
   # Capture output to avoid message cluttering test results
@@ -135,10 +135,10 @@ test_that("impute_missing_exendtc handles multiple subjects and treatments", {
 test_that("impute_missing_exendtc preserves existing data and columns", {
   # Create test data with additional columns
   ex <- tibble::tribble(
-    ~USUBJID,   ~EXTRT, ~EXSEQ,           ~EXSTDTC,           ~EXENDTC, ~IMPUTATION, ~EXTRA_COL,
-    "SUBJ-001", "DRUG A",      1, "2023-01-01T08:00", "2023-01-14T08:00",          "",      "A",
-    "SUBJ-001", "DRUG A",      2, "2023-01-15T08:00",                 NA,          "",      "B",
-    "SUBJ-001", "DRUG A",      3, "2023-01-29T08:00", "2023-02-10T08:00",          "",      "C"
+    ~USUBJID, ~EXTRT, ~EXSEQ, ~EXSTDTC, ~EXENDTC, ~IMPUTATION, ~EXTRA_COL,
+    "SUBJ-001", "DRUG A", 1, "2023-01-01T08:00", "2023-01-14T08:00", "", "A",
+    "SUBJ-001", "DRUG A", 2, "2023-01-15T08:00", NA, "", "B",
+    "SUBJ-001", "DRUG A", 3, "2023-01-29T08:00", "2023-02-10T08:00", "", "C"
   ) %>% lubrify_dates()
 
   # Capture output to avoid message cluttering test results
@@ -156,4 +156,3 @@ test_that("impute_missing_exendtc preserves existing data and columns", {
   expect_equal(out$EXENDTC[1], ex$EXENDTC[1])
   expect_equal(out$EXENDTC[3], ex$EXENDTC[3])
 })
-

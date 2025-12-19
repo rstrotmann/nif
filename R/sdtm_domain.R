@@ -16,7 +16,7 @@ domain <- function(obj, name) {
   name <- tolower(name)
 
   # Check if domain exists
-  if(!has_domain(obj, name)) {
+  if (!has_domain(obj, name)) {
     stop("Domain '", name, "' not found in SDTM object")
   }
 
@@ -35,7 +35,7 @@ domain <- function(obj, name) {
 #' @returns A domain object.
 #' @keywords internal
 new_domain <- function(
-    domain_data
+  domain_data
 ) {
   class(domain_data) <- c("domain", "data.frame")
   domain_data
@@ -59,7 +59,7 @@ summary.domain <- function(object, ..., silent = NULL) {
 
   # validate_domain(object, silent = silent)
   current_domain <- toupper(unique(object$DOMAIN))
-  if(length(current_domain) > 1) {
+  if (length(current_domain) > 1) {
     stop("Multiple domain values found")
   }
 
@@ -72,11 +72,12 @@ summary.domain <- function(object, ..., silent = NULL) {
   scat_field <- paste0(current_domain, "SCAT")
   fast_field <- paste0(current_domain, "FAST")
 
-  if(testcd_field %in% names(object)) {
+  if (testcd_field %in% names(object)) {
     test <- distinct(select(
       object,
-      any_of(c(test_field, testcd_field, cat_field, scat_field, fast_field, "PCSPEC"))))
-      # any_of(c(test_field, testcd_field, cat_field, scat_field, "PCSPEC"))))
+      any_of(c(test_field, testcd_field, cat_field, scat_field, fast_field, "PCSPEC"))
+    ))
+    # any_of(c(test_field, testcd_field, cat_field, scat_field, "PCSPEC"))))
     observations <- object %>%
       reframe(n = n(), .by = paste0(current_domain, "TESTCD"))
   } else {
@@ -84,27 +85,28 @@ summary.domain <- function(object, ..., silent = NULL) {
     observations <- NULL
   }
 
-  if(tpt_field %in% names(object)) {
+  if (tpt_field %in% names(object)) {
     tpt <- distinct(select(
-      object, any_of(c(tpt_field, tptnum_field, eltm_field))))
+      object, any_of(c(tpt_field, tptnum_field, eltm_field))
+    ))
   } else {
     tpt <- NULL
   }
 
-  if("EPOCH" %in% names(object)) {
+  if ("EPOCH" %in% names(object)) {
     epoch <- distinct(object, EPOCH)
   } else {
     epoch <- NULL
   }
 
-  if("VISIT" %in% names(object)) {
+  if ("VISIT" %in% names(object)) {
     visit <- distinct(select(object, any_of(c("VISIT"))))
   } else {
     visit <- NULL
   }
 
   category <- distinct(select(object, ends_with("CAT")))
-  if(ncol(category) == 0) category <- NULL
+  if (ncol(category) == 0) category <- NULL
 
   # output
   out <- list(
@@ -151,31 +153,35 @@ print.summary_domain <- function(x, ...) {
 
   cat("\n")
 
-  if(!is.null(x$category)) {
+  if (!is.null(x$category)) {
     cat("Categories\n")
     cat(df_to_string(
-      x$category, indent = indent, show_none = TRUE
+      x$category,
+      indent = indent, show_none = TRUE
     ), "\n\n")
   }
 
-  if(!is.null(x$test)) {
+  if (!is.null(x$test)) {
     cat("Testcodes\n")
     cat(df_to_string(
-      x$test, indent = indent, show_none = TRUE
+      x$test,
+      indent = indent, show_none = TRUE
     ), "\n\n")
   }
 
-  if(!is.null(x$tpt)) {
+  if (!is.null(x$tpt)) {
     cat("Observation time points\n")
     cat(df_to_string(
-      x$tpt, indent = indent, show_none = TRUE
+      x$tpt,
+      indent = indent, show_none = TRUE
     ), "\n\n")
   }
 
-  if(!is.null(x$epoch)) {
+  if (!is.null(x$epoch)) {
     cat("Epochs\n")
     cat(df_to_string(
-      x$epoch, indent = indent, show_none = TRUE, header = FALSE
+      x$epoch,
+      indent = indent, show_none = TRUE, header = FALSE
     ), "\n")
   }
 
@@ -200,13 +206,14 @@ print.summary_domain <- function(x, ...) {
 #' @examples
 #' plot(domain(examplinib_sad, "lb"))
 plot.domain <- function(
-    x,
-    testcd = NULL,
-    points = TRUE,
-    lines = FALSE,
-    legend = TRUE,
-    color = NULL,
-    ...) {
+  x,
+  testcd = NULL,
+  points = TRUE,
+  lines = FALSE,
+  legend = TRUE,
+  color = NULL,
+  ...
+) {
   # input validation
   validate_domain_param(x)
   validate_char_param(testcd, "testcd", allow_null = TRUE)
@@ -215,9 +222,10 @@ plot.domain <- function(
   validate_logical_param(legend, "legend")
   validate_char_param(color, allow_null = TRUE)
 
-  if(!is.null(color)) {
-    if(!color %in% names(x))
+  if (!is.null(color)) {
+    if (!color %in% names(x)) {
       stop(paste0("Color field ", color, " not in domain!"))
+    }
   }
 
   # fields
@@ -226,8 +234,9 @@ plot.domain <- function(
   dv_field <- paste0(domain, "STRESN")
   time_field <- paste0(domain, "DTC")
   dy_field <- paste0(domain, "DY")
-  if(dy_field %in% names(x))
+  if (dy_field %in% names(x)) {
     time_field <- dy_field
+  }
 
   obj <- NULL
 
@@ -237,52 +246,62 @@ plot.domain <- function(
   # specific plot for DM
   if (domain == "DM") {
     missing_fields <- setdiff(c("RFSTDTC", "RFENDTC", "USUBJID"), names(x))
-    if(length(missing_fields) > 0)
+    if (length(missing_fields) > 0) {
       stop(paste0(
         "missing ", plural("field", length(missing_fields) > 1), ": ",
         nice_enumeration(missing_fields)
       ))
+    }
 
     obj <- x %>%
       filter(!is.na(.data$RFSTDTC)) %>%
       arrange(.data$RFSTDTC) %>%
       mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
       ggplot2::ggplot() +
-
-      {if(!is.null(color))
+      {
+        if (!is.null(color)) {
           ggplot2::geom_segment(ggplot2::aes(
             x = .data$RFSTDTC, xend = .data$RFENDTC,
             y = .data$ID, yend = .data$ID,
-            color = .data[[color]]))
-        else
+            color = .data[[color]]
+          ))
+        } else {
           ggplot2::geom_segment(ggplot2::aes(
             x = .data$RFSTDTC, xend = .data$RFENDTC,
-            y = .data$ID, yend = .data$ID))
+            y = .data$ID, yend = .data$ID
+          ))
+        }
       } +
-
-      {if(points == TRUE) {
-        if(!is.null(color))
-          ggplot2::geom_point(ggplot2::aes(
-            x = .data$RFSTDTC, y = .data$ID, color = .data[[color]]))
-        else
-          ggplot2::geom_point(ggplot2::aes(
-            x = .data$RFSTDTC, y = .data$ID))
-      }} +
-
+      {
+        if (points == TRUE) {
+          if (!is.null(color)) {
+            ggplot2::geom_point(ggplot2::aes(
+              x = .data$RFSTDTC, y = .data$ID, color = .data[[color]]
+            ))
+          } else {
+            ggplot2::geom_point(ggplot2::aes(
+              x = .data$RFSTDTC, y = .data$ID
+            ))
+          }
+        }
+      } +
       ggplot2::scale_y_discrete(
-        labels = NULL, breaks = NULL, name = "USUBJID") +
+        labels = NULL, breaks = NULL, name = "USUBJID"
+      ) +
       ggplot2::scale_x_datetime(
-        name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d")
+        name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d"
+      )
   }
 
   # specific plot for EX
   if (domain == "EX") {
     missing_fields <- setdiff(c("EXSTDTC", "EXENDTC", "USUBJID"), names(x))
-    if(length(missing_fields) > 0)
+    if (length(missing_fields) > 0) {
       stop(paste0(
         "missing ", plural("field", length(missing_fields) > 1), ": ",
         nice_enumeration(missing_fields)
       ))
+    }
 
     obj <- x %>%
       arrange(.data$EXSTDTC) %>%
@@ -292,36 +311,53 @@ plot.domain <- function(
         x = .data$EXSTDTC,
         xend = .data$EXENDTC,
         y = .data$ID,
-        yend = .data$ID)) +
-      {if (points == TRUE) {ggplot2::geom_point(ggplot2::aes(
-        x = .data$EXSTDTC, y = .data$ID))}} +
+        yend = .data$ID
+      )) +
+      {
+        if (points == TRUE) {
+          ggplot2::geom_point(ggplot2::aes(
+            x = .data$EXSTDTC, y = .data$ID
+          ))
+        }
+      } +
       ggplot2::scale_y_discrete(name = "USUBJID", labels = NULL) +
       ggplot2::scale_x_datetime(
-        name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d")
+        name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d"
+      )
   }
 
   # generic plot
-  if(!domain %in% c("DM", "EX")){
-    if(all(c(testcd_field, time_field, dv_field) %in% names(x))) {
+  if (!domain %in% c("DM", "EX")) {
+    if (all(c(testcd_field, time_field, dv_field) %in% names(x))) {
       obj <- x %>%
-        {if(!is.null(testcd)) filter(., .data[[testcd_field]] == testcd) else .} %>%
-        ggplot(aes(x = !!sym(time_field),
-                   y = !!sym(dv_field),
-                   color = !!sym(testcd_field))) +
-        {if(points == TRUE) geom_point()} +
-        {if(lines == TRUE) geom_line()}
+        {
+          if (!is.null(testcd)) filter(., .data[[testcd_field]] == testcd) else .
+        } %>%
+        ggplot(aes(
+          x = !!sym(time_field),
+          y = !!sym(dv_field),
+          color = !!sym(testcd_field)
+        )) +
+        {
+          if (points == TRUE) geom_point()
+        } +
+        {
+          if (lines == TRUE) geom_line()
+        }
     }
   }
 
   obj <- obj +
-    {if (legend == TRUE) {
+    {
+      if (legend == TRUE) {
         ggplot2::theme(legend.position = "bottom")
       } else {
         ggplot2::theme(legend.position = "none")
-      }} +
+      }
+    } +
     theme_bw() +
     ggtitle(paste0("Domain ", domain))
-    watermark()
+  watermark()
 
   return(obj)
 }
@@ -362,5 +398,3 @@ last_dtc.domain <- function(obj) {
 
   return(out)
 }
-
-

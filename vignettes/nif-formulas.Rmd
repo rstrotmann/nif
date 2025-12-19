@@ -34,10 +34,10 @@ A typical workflow may look like this:
 ```{r}
 sdtm <- examplinib_sad
 
-nif <- nif() %>% 
-  add_administration(sdtm, "EXAMPLINIB") %>% 
-  add_observation(sdtm, "pc", "RS2023") %>% 
-  add_observation(sdtm, "pc", "RS2023487A") %>% 
+nif <- nif() %>%
+  add_administration(sdtm, "EXAMPLINIB") %>%
+  add_observation(sdtm, "pc", "RS2023") %>%
+  add_observation(sdtm, "pc", "RS2023487A") %>%
   add_baseline(sdtm, "lb", "CREAT")
 ```
 

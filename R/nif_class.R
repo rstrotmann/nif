@@ -15,7 +15,7 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
     temp %>%
       order_nif_columns()
   } else {
-    if(inherits(obj, "sdtm")) {
+    if (inherits(obj, "sdtm")) {
       temp <- nif_auto(obj, ..., silent = silent)
     } else {
       temp <- as.data.frame(obj)
@@ -47,8 +47,9 @@ nif <- function(...) {
 #' @return A nif object.
 #' @export
 as_nif <- function(obj) {
- if(!inherits(obj, "data.frame"))
-   stop("obj must be a data frame!")
+  if (!inherits(obj, "data.frame")) {
+    stop("obj must be a data frame!")
+  }
   out <- as.data.frame(obj)
   class(out) <- c("nif", "data.frame")
   order_nif_columns(out)
@@ -94,7 +95,9 @@ print.nif <- function(x, color = FALSE, ...) {
     cat(paste0(hline, " NONMEM Input Format (NIF) data ", hline, "\n"))
 
     n_obs <- x %>%
-      {if("EVID" %in% names(.)) filter(., .data$EVID == 0) else .} %>%
+      {
+        if ("EVID" %in% names(.)) filter(., .data$EVID == 0) else .
+      } %>%
       nrow()
     n_subs <- subjects(x) %>% nrow()
     n_studies <- length(unique(x$STUDYID))
@@ -104,18 +107,21 @@ print.nif <- function(x, color = FALSE, ...) {
       plural("observation", n_obs != 1), "from",
       n_subs, plural("subject", n_subs != 1),
       ifelse("STUDYID" %in% names(x),
-             paste("across", n_studies, plural("study", n_studies > 1)),
-             ""),
-      "\n")
-    )
+        paste("across", n_studies, plural("study", n_studies > 1)),
+        ""
+      ),
+      "\n"
+    ))
 
-    if("ANALYTE" %in% names(x)) {
+    if ("ANALYTE" %in% names(x)) {
       cat(paste(
         "Analytes:", nice_enumeration(unique(x$ANALYTE)), "\n"
       ))
     } else {
-      obs_cmt <- sapply(unique(x[x$EVID == 0, "CMT"]),
-                        function(x) paste0("'", x, "'"))
+      obs_cmt <- sapply(
+        unique(x[x$EVID == 0, "CMT"]),
+        function(x) paste0("'", x, "'")
+      )
       cat(paste(
         length(obs_cmt),
         plural("compartment", length(obs_cmt) != 1),
@@ -153,7 +159,8 @@ print.nif <- function(x, color = FALSE, ...) {
 
     cat("\nColumns:\n")
     cat(str_wrap(paste(names(x), collapse = ", "),
-                 width = 80, indent = 2, exdent = 2), "\n\n")
+      width = 80, indent = 2, exdent = 2
+    ), "\n\n")
 
     # version hash
     cat(str_glue("\nHash: {hash(x)}\n\n"))
@@ -285,13 +292,15 @@ subjects.nif <- function(obj) {
   # input validation
   validate_nif(obj)
 
-  if(!"ID" %in% names(obj)){
+  if (!"ID" %in% names(obj)) {
     stop("ID column missing!")
   }
 
   obj %>%
     as.data.frame() %>%
-    {if (!"USUBJID" %in% names(.)) mutate(., USUBJID = NA) else . } %>%
+    {
+      if (!"USUBJID" %in% names(.)) mutate(., USUBJID = NA) else .
+    } %>%
     select(any_of(c("ID", "USUBJID"))) %>%
     distinct()
 }
@@ -311,14 +320,14 @@ usubjid <- function(obj, id, silent = NULL) {
   # input validation
   validate_nif(obj)
   validate_numeric_param(id, "id", allow_multiple = TRUE, allow_null = TRUE)
-  if(!"USUBJID" %in% names(obj)) {
+  if (!"USUBJID" %in% names(obj)) {
     stop("USUBJID field not found")
   }
 
   sbs <- subjects(obj)
   missing_id <- setdiff(id, unique(sbs$ID))
   matching_id <- intersect(id, unique(sbs$ID))
-  if(length(missing_id) > 0) {
+  if (length(missing_id) > 0) {
     conditional_message(
       plural("ID", length(missing_id) > 1), " not found: ",
       nice_enumeration(missing_id),
@@ -382,10 +391,12 @@ dose_red_sbs <- function(obj, analyte = NULL) {
     filter(.data$EVID == 1)
 
   treatments <- unique(temp$ANALYTE)
-  if(length(treatments) > 1) {
-    stop("Multiple treatments in data set (",
-         nice_enumeration(treatments),
-         "). Please specify exactly one treatment.")
+  if (length(treatments) > 1) {
+    stop(
+      "Multiple treatments in data set (",
+      nice_enumeration(treatments),
+      "). Please specify exactly one treatment."
+    )
   }
 
   temp %>%
@@ -519,7 +530,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 
   expected_fields <- c("ID", "AMT", "TIME", group)
   missing_fields <- setdiff(expected_fields, names(obj))
-  if(length(missing_fields) > 0) {
+  if (length(missing_fields) > 0) {
     stop(paste0(
       "Required ", plural("fields", length(missing_fields) > 1),
       "missing in object: ", nice_enumeration(missing_fields)
@@ -954,9 +965,9 @@ guess_parent <- function(obj) {
     arrange(-n, ANALYTE)
 
   # if administrations in data set, return analyte with most observations
-  if(nrow(imp) > 0) {
+  if (nrow(imp) > 0) {
     # return(imp[1, "ANALYTE"])
-    imp[1,] %>%
+    imp[1, ] %>%
       pull(ANALYTE)
   }
 
@@ -965,19 +976,19 @@ guess_parent <- function(obj) {
     obs <- obj %>%
       ensure_analyte() %>%
       filter(EVID == 0) %>%
-      {if("METABOLITE" %in% names(obj)) filter(., METABOLITE == FALSE) else .} %>%
+      {
+        if ("METABOLITE" %in% names(obj)) filter(., METABOLITE == FALSE) else .
+      } %>%
       reframe(n = n(), .by = ANALYTE) %>%
       arrange(-n, "ANALYTE")
 
-    if(nrow(obs) > 0) {
+    if (nrow(obs) > 0) {
       return(obs[1, "ANALYTE"])
     } else {
       return(NULL)
     }
   }
 }
-
-
 
 
 #' Add dose level (`DL`) column
@@ -1069,8 +1080,13 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
 #' as.data.frame(add_bl_renal(examplinib_poc_nif))
 add_bl_renal <- function(obj, method = egfr_cg) {
   obj %>%
-    {if(!"BL_CRCL" %in% names(obj))
-        add_bl_crcl(., method = method) else .}%>%
+    {
+      if (!"BL_CRCL" %in% names(obj)) {
+        add_bl_crcl(., method = method)
+      } else {
+        .
+      }
+    } %>%
     mutate(BL_RENAL = as.character(
       cut(.data$BL_CRCL,
         breaks = c(0, 30, 60, 90, Inf),
@@ -1157,7 +1173,6 @@ add_bl_odwg <- function(obj, sdtm,
       levels = c("normal", "mild", "moderate", "severe")
     ))
 }
-
 
 
 #' Add the number of observations per dosing interval
@@ -1300,7 +1315,7 @@ last_dtc.nif <- function(obj) {
   validate_nif(obj)
 
   out <- NULL
-  if("DTC" %in% names(obj)) {
+  if ("DTC" %in% names(obj)) {
     out <- max(obj$DTC)
   }
   return(out)
@@ -1314,18 +1329,21 @@ last_dtc.nif <- function(obj) {
 #' @returns A POSIXct scalar.
 #' @noRd
 last_dtc_data_frame <- function(obj) {
-  if(!inherits(obj, "data.frame"))
+  if (!inherits(obj, "data.frame")) {
     stop("obj must be a data frame!")
+  }
 
   out <- NULL
 
   temp <- obj %>%
     lubrify_dates() %>%
     select(where(
-      function(x) {is.POSIXct(x) & !all(is.na(x))}
+      function(x) {
+        is.POSIXct(x) & !all(is.na(x))
+      }
     ))
 
-  if(ncol(temp) > 0) {
+  if (ncol(temp) > 0) {
     out <- as.POSIXct(max(unlist(lapply(temp, max, na.rm = T))))
   }
 

@@ -7,7 +7,8 @@ test_that("new_nif works", {
 test_that("subject_info works", {
   expect_no_error(invisible(capture.output(subject_info(examplinib_sad_nif, 1))))
   expect_no_error(invisible(capture.output(
-    print(subject_info(examplinib_sad_nif, 1)))))
+    print(subject_info(examplinib_sad_nif, 1))
+  )))
 })
 
 
@@ -17,8 +18,10 @@ test_that("parents works", {
 
 
 test_that("rich_sampling_sbs works", {
-  expect_equal(rich_sampling_sbs(examplinib_fe_nif),
-               subjects(examplinib_fe_nif)$ID)
+  expect_equal(
+    rich_sampling_sbs(examplinib_fe_nif),
+    subjects(examplinib_fe_nif)$ID
+  )
 })
 
 
@@ -87,7 +90,7 @@ test_that("cmt_mapping works", {
 })
 
 
-test_that("index_dosing_interval works with single parent" , {
+test_that("index_dosing_interval works with single parent", {
   nif <- tribble(
     ~ID, ~TIME, ~AMT, ~RATE, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT,
     1,   0.00,  0,    0,     0,     0,   2,    0,    "A",
@@ -112,7 +115,7 @@ test_that("index_dosing_interval works with single parent" , {
 })
 
 
-test_that("index_dosing_interval works with multiple parents" , {
+test_that("index_dosing_interval works with multiple parents", {
   nif <- tribble(
     ~ID, ~TIME,  ~AMT, ~RATE, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT,
     1,   0.00,   0,    0,     0,     0,   2,    0,    "A",
@@ -205,13 +208,13 @@ test_that("guess analyte, guess_parent works", {
 test_that("add_dose_level works", {
   nif <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID,
-    1,     0,  100,    1,     1,
-    1,    24,   90,    1,     1,
-    1,    48,   80,    1,     1,
-    2,     0,  100,    1,     1,
-    3,     0,  100,    1,     1,
-    3,    24,   NA,    1,     1,
-    3,    48,  150,    1,     1
+    1, 0, 100, 1, 1,
+    1, 24, 90, 1, 1,
+    1, 48, 80, 1, 1,
+    2, 0, 100, 1, 1,
+    3, 0, 100, 1, 1,
+    3, 24, NA, 1, 1,
+    3, 48, 150, 1, 1
   ) %>% new_nif()
 
   temp <- add_dose_level(nif) %>%
@@ -251,48 +254,50 @@ test_that("add_dose_level works", {
 
 test_that("add_trtdy works", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID,                        ~DTC,
-    1,     0,  100,    1,     1, "2024-12-06 07:31:35.14839",
-    1,     0,   NA,    1,     0, "2024-12-06 07:31:35.14839",
-    1,     1,   NA,    2,     0, "2024-12-06 08:31:35.14839",
-    1,     2,   NA,    2,     0, "2024-12-06 09:31:35.14839",
-    1,    24,   90,    1,     1, "2024-12-07 07:31:35.14839",
-    1,    48,   80,    1,     1, "2024-12-08 07:31:35.14839",
-    1,    50,   NA,    2,     0, "2024-12-08 09:31:35.14839",
-    2,    10,  100,    1,     1, "2024-12-06 17:31:35.14839",
-    2,    11,   NA,    2,     0, "2024-12-06 18:31:35.14839",
-    2,    12,   NA,    2,     0, "2024-12-06 19:31:35.14839",
-    2,    34,   90,    1,     1, "2024-12-07 17:31:35.14839",
-    2,    58,   80,    1,     1, "2024-12-08 17:31:35.14839",
-    2,    60,   NA,    2,     0, "2024-12-08 19:31:35.14839"
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DTC,
+    1, 0, 100, 1, 1, "2024-12-06 07:31:35.14839",
+    1, 0, NA, 1, 0, "2024-12-06 07:31:35.14839",
+    1, 1, NA, 2, 0, "2024-12-06 08:31:35.14839",
+    1, 2, NA, 2, 0, "2024-12-06 09:31:35.14839",
+    1, 24, 90, 1, 1, "2024-12-07 07:31:35.14839",
+    1, 48, 80, 1, 1, "2024-12-08 07:31:35.14839",
+    1, 50, NA, 2, 0, "2024-12-08 09:31:35.14839",
+    2, 10, 100, 1, 1, "2024-12-06 17:31:35.14839",
+    2, 11, NA, 2, 0, "2024-12-06 18:31:35.14839",
+    2, 12, NA, 2, 0, "2024-12-06 19:31:35.14839",
+    2, 34, 90, 1, 1, "2024-12-07 17:31:35.14839",
+    2, 58, 80, 1, 1, "2024-12-08 17:31:35.14839",
+    2, 60, NA, 2, 0, "2024-12-08 19:31:35.14839"
   ) %>%
     mutate(DTC = as.POSIXct(DTC))
-  expect_equal(add_trtdy(nif)$TRTDY,
-               c(1, 1, 1, 1, 2, 3, 3, 1, 1, 1, 2, 3, 3))
+  expect_equal(
+    add_trtdy(nif)$TRTDY,
+    c(1, 1, 1, 1, 2, 3, 3, 1, 1, 1, 2, 3, 3)
+  )
 })
 
 
 test_that("index_rich_sampling_intervals works", {
   nif <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT,
-    1,     0,     1,    1,
-    1,     0,     0,    2,
-    1,     2,     0,    2,
-    1,     4,     0,    2,
-    1,     6,     0,    2,
-    1,     8,     0,    2,
-    1,    24,     1,    1,
-    1,    48,     1,    1,
-    1,    72,     1,    1,
-    1,    72,     0,    2,
-    1,    72,     1,    1,
-    1,    96,     1,    1,
-    1,    96,     0,    2,
-    1,    97,     0,    2,
-    1,    98,     0,    2,
-    1,   100,     0,    2,
-    1,   102,     0,    2,
-    1,   104,     0,    2
+    1, 0, 1, 1,
+    1, 0, 0, 2,
+    1, 2, 0, 2,
+    1, 4, 0, 2,
+    1, 6, 0, 2,
+    1, 8, 0, 2,
+    1, 24, 1, 1,
+    1, 48, 1, 1,
+    1, 72, 1, 1,
+    1, 72, 0, 2,
+    1, 72, 1, 1,
+    1, 96, 1, 1,
+    1, 96, 0, 2,
+    1, 97, 0, 2,
+    1, 98, 0, 2,
+    1, 100, 0, 2,
+    1, 102, 0, 2,
+    1, 104, 0, 2
   ) %>%
     new_nif()
 
@@ -302,7 +307,6 @@ test_that("index_rich_sampling_intervals works", {
   expect_equal(temp1[which(temp1$OPDI == 5), "RICH_N"], 1)
   expect_equal(temp1[which(temp1$OPDI == 6), "RICH_N"], 2)
 })
-
 
 
 test_that("cfb works", {
@@ -350,25 +354,27 @@ test_that("print.nif works", {
 test_that("add_rtb works", {
   nif <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,
-    1,     0,     1,    1, NA,
-    1,     0,     0,    2, 100,
-    1,     2,     0,    2, 200,
-    1,     4,     0,    2, 300,
-    1,    24,     1,    1, NA,
-    1,    48,     1,    1, NA,
-    1,    72,     1,    1, NA,
-    1,    72,     0,    2, 400,
-    2,     0,     1,    1, NA,
-    2,     0,     0,    2, 10,
-    2,     2,     0,    2, 20,
-    2,     4,     0,    2, 30,
-    2,    72,     0,    2, 40,
+    1, 0, 1, 1, NA,
+    1, 0, 0, 2, 100,
+    1, 2, 0, 2, 200,
+    1, 4, 0, 2, 300,
+    1, 24, 1, 1, NA,
+    1, 48, 1, 1, NA,
+    1, 72, 1, 1, NA,
+    1, 72, 0, 2, 400,
+    2, 0, 1, 1, NA,
+    2, 0, 0, 2, 10,
+    2, 2, 0, 2, 20,
+    2, 4, 0, 2, 30,
+    2, 72, 0, 2, 40,
   ) %>%
     new_nif()
 
   temp <- as.data.frame(add_rtb(nif))
-  expect_equal(temp$DVRTB,
-               c(NA, 1, 2, 3, NA, NA, NA, 4, NA, 1, 2, 3, 4))
+  expect_equal(
+    temp$DVRTB,
+    c(NA, 1, 2, 3, NA, NA, NA, 4, NA, 1, 2, 3, 4)
+  )
 })
 
 
@@ -435,7 +441,7 @@ test_that("subjects.nif handles NA values in ID correctly", {
   na_id_nif <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~USUBJID,
     1,   0,     10,   1,    1,     10,    NA,  "SUBJ001",
-    NA,  1,     0,    2,    0,     10,    5.2, "SUBJ002",  # NA ID
+    NA,  1,     0,    2,    0,     10,    5.2, "SUBJ002", # NA ID
     2,   0,     10,   1,    1,     10,    NA,  "SUBJ003",
     2,   1,     0,    2,    0,     10,    6.1, "SUBJ003"
   ) %>%
@@ -473,10 +479,10 @@ test_that("subjects.nif works with only ID column", {
 test_that("subjects.nif works with only USUBJID column", {
   usubjid_only_nif <- tibble::tribble(
     ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
-    "SUBJ001", 0,     10,   1,    1,     10,    NA,
-    "SUBJ001", 1,     0,    2,    0,     10,    5.2,
-    "SUBJ002", 0,     10,   1,    1,     10,    NA,
-    "SUBJ002", 1,     0,    2,    0,     10,    6.1
+    "SUBJ001", 0, 10, 1, 1, 10, NA,
+    "SUBJ001", 1, 0, 2, 0, 10, 5.2,
+    "SUBJ002", 0, 10, 1, 1, 10, NA,
+    "SUBJ002", 1, 0, 2, 0, 10, 6.1
   ) %>%
     new_nif()
 
@@ -573,14 +579,14 @@ test_that("usubjid handles missing IDs gracefully", {
 test_that("usubjid handles mixed valid and invalid IDs", {
   # Test with mix of valid and invalid IDs
   subjects_df <- subjects(examplinib_sad_nif)
-  valid_ids <- subjects_df$ID[1:2]  # First two valid IDs
+  valid_ids <- subjects_df$ID[1:2] # First two valid IDs
 
   expect_message(
-    result <- usubjid(examplinib_sad_nif, c(valid_ids, 999, 1000), silent=FALSE),
+    result <- usubjid(examplinib_sad_nif, c(valid_ids, 999, 1000), silent = FALSE),
     "IDs not found: 999 and 1000"
   )
   expect_type(result, "character")
-  expect_equal(length(result), 2)  # Only valid IDs should be returned
+  expect_equal(length(result), 2) # Only valid IDs should be returned
 
   # Verify it matches the subjects function result for valid IDs
   expected <- subjects_df$USUBJID[subjects_df$ID %in% valid_ids]
@@ -619,7 +625,7 @@ test_that("usubjid works with NIF containing NA USUBJID", {
   na_usubjid_nif <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~USUBJID,
     1,   0,     10,   1,    1,     10,    NA,  "SUBJ001",
-    2,   0,     10,   1,    1,     10,    NA,  NA,  # NA USUBJID
+    2,   0,     10,   1,    1,     10,    NA,  NA, # NA USUBJID
     3,   0,     10,   1,    1,     10,    NA,  "SUBJ003"
   ) %>%
     new_nif()
@@ -640,7 +646,7 @@ test_that("usubjid works with silent parameter", {
   # Test with silent = TRUE
   result <- usubjid(examplinib_sad_nif, c(1, 999), silent = TRUE)
   expect_type(result, "character")
-  expect_equal(length(result), 1)  # Only valid ID returned
+  expect_equal(length(result), 1) # Only valid ID returned
 
   # Test with silent = FALSE (should show message about missing ID)
   expect_message(
@@ -685,8 +691,3 @@ test_that("usubjid validates NIF object", {
     "Input must be a nif object"
   )
 })
-
-
-
-
-

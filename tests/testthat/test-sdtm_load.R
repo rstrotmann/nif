@@ -1,4 +1,3 @@
-
 test_that("read_sdtm validates inputs correctly", {
   # Test invalid data_path
   expect_error(
@@ -141,12 +140,10 @@ test_that("read_sdtm passes additional parameters to read functions", {
   write.csv(test_data, file.path(test_dir, "dm.csv"), row.names = FALSE)
 
   # Test reading with specific encoding
-  result <- read_sdtm(test_dir, domain = "dm", format = "csv",
-                      locale = readr::locale(encoding = "UTF-8"))
+  result <- read_sdtm(test_dir,
+    domain = "dm", format = "csv",
+    locale = readr::locale(encoding = "UTF-8")
+  )
   expect_s3_class(result, "sdtm")
   expect_equal(nrow(result$domains$dm), 2)
 })
-
-
-
-

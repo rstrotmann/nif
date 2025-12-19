@@ -1,9 +1,9 @@
 test_that("calculate_age calculates age correctly", {
   test_df <- tibble::tribble(
-    ~USUBJID,     ~BRTHDTC,     ~RFICDTC,
-       "001", "1980-01-15", "2020-01-15",
-       "002", "1990-05-20", "2020-05-20",
-       "003", "2000-12-10", "2020-12-10"
+    ~USUBJID, ~BRTHDTC, ~RFICDTC,
+    "001", "1980-01-15", "2020-01-15",
+    "002", "1990-05-20", "2020-05-20",
+    "003", "2000-12-10", "2020-12-10"
   )
 
   result <- calculate_age(test_df)
@@ -15,10 +15,10 @@ test_that("calculate_age calculates age correctly", {
 
 test_that("calculate_age preserves existing AGE values when not NA", {
   test_df <- tibble::tribble(
-    ~USUBJID,     ~BRTHDTC,     ~RFICDTC, ~AGE,
-       "001", "1980-01-15", "2020-01-15",   41,
-       "002", "1990-05-20", "2020-05-20",   NA,
-       "003", "2000-12-10", "2020-12-10",   19
+    ~USUBJID, ~BRTHDTC, ~RFICDTC, ~AGE,
+    "001", "1980-01-15", "2020-01-15", 41,
+    "002", "1990-05-20", "2020-05-20", NA,
+    "003", "2000-12-10", "2020-12-10", 19
   )
 
   result <- calculate_age(test_df, preserve_age = TRUE)
@@ -30,10 +30,10 @@ test_that("calculate_age preserves existing AGE values when not NA", {
 
 test_that("calculate_age overwrites existing AGE values when preserve_age = FALSE", {
   test_df <- tibble::tribble(
-    ~USUBJID,     ~BRTHDTC,     ~RFICDTC, ~AGE,
-       "001", "1980-01-15", "2020-01-15",   41,
-       "002", "1990-05-20", "2020-05-20",   NA,
-       "003", "2000-12-10", "2020-12-10",   19
+    ~USUBJID, ~BRTHDTC, ~RFICDTC, ~AGE,
+    "001", "1980-01-15", "2020-01-15", 41,
+    "002", "1990-05-20", "2020-05-20", NA,
+    "003", "2000-12-10", "2020-12-10", 19
   )
 
   result <- calculate_age(test_df, preserve_age = FALSE)
@@ -45,9 +45,9 @@ test_that("calculate_age overwrites existing AGE values when preserve_age = FALS
 
 test_that("calculate_age uses custom reference date column", {
   test_df <- tibble::tribble(
-    ~USUBJID,     ~BRTHDTC,  ~CUSTOM_DTC,
-       "001", "1980-01-15", "2030-01-15",
-       "002", "1990-05-20", "2030-05-20"
+    ~USUBJID, ~BRTHDTC, ~CUSTOM_DTC,
+    "001", "1980-01-15", "2030-01-15",
+    "002", "1990-05-20", "2030-05-20"
   )
 
   result <- calculate_age(test_df, ref_date_col = "CUSTOM_DTC")
@@ -60,16 +60,16 @@ test_that("calculate_age uses custom reference date column", {
 test_that("calculate_age returns dataframe unchanged when required columns missing", {
   # Missing BRTHDTC
   test_df1 <- tibble::tribble(
-    ~USUBJID,     ~RFICDTC,
-       "001", "2020-01-15",
-       "002", "2020-05-20"
+    ~USUBJID, ~RFICDTC,
+    "001", "2020-01-15",
+    "002", "2020-05-20"
   )
 
   # Missing RFICDTC
   test_df2 <- tibble::tribble(
-    ~USUBJID,     ~BRTHDTC,
-       "001", "1980-01-15",
-       "002", "1990-05-20"
+    ~USUBJID, ~BRTHDTC,
+    "001", "1980-01-15",
+    "002", "1990-05-20"
   )
 
   # Test that dataframe is returned unchanged
@@ -87,10 +87,10 @@ test_that("calculate_age handles non-dataframe input", {
 test_that("calculate_age rounds age correctly", {
   # Create test data with exact and partial years
   test_df <- tibble::tribble(
-    ~USUBJID,     ~BRTHDTC,     ~RFICDTC,
-       "001", "1980-01-15", "2020-01-14",
-       "002", "1990-06-01", "2020-05-31",
-       "003", "2000-01-01", "2020-07-01"
+    ~USUBJID, ~BRTHDTC, ~RFICDTC,
+    "001", "1980-01-15", "2020-01-14",
+    "002", "1990-06-01", "2020-05-31",
+    "003", "2000-01-01", "2020-07-01"
   )
 
   result <- calculate_age(test_df)
@@ -105,7 +105,7 @@ test_that("calculate_age rounds age correctly", {
 
 make_test_sdtm <- function() {
   dm <- tibble::tribble(
-    ~USUBJID, ~DOMAIN, ~SEX,   ~ACTARMCD,          ~RFXSTDTC,
+    ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC,
     "1", "DM", "M", "TREATMENT", "2001-01-01T10:29",
     "2", "DM", "M", "TREATMENT", "2001-01-02T09:09",
     "3", "DM", "M", "TREATMENT", "2000-12-29T09:07",
@@ -114,21 +114,21 @@ make_test_sdtm <- function() {
     mutate(RFSTDTC = RFXSTDTC)
   vs <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
-    "1", "VS", "HEIGHT",     "Y",     190.8,
-    "1", "VS", "WEIGHT",     "Y",      79.3,
-    "2", "VS", "HEIGHT",     "Y",     199.5,
-    "2", "VS", "WEIGHT",     "Y",      81.6,
-    "3", "VS", "HEIGHT",     "Y",     185.4,
-    "3", "VS", "WEIGHT",     "Y",      92.8,
-    "4", "VS", "HEIGHT",     "Y",     177.8,
-    "4", "VS", "WEIGHT",     "Y",      83.3
+    "1", "VS", "HEIGHT", "Y", 190.8,
+    "1", "VS", "WEIGHT", "Y", 79.3,
+    "2", "VS", "HEIGHT", "Y", 199.5,
+    "2", "VS", "WEIGHT", "Y", 81.6,
+    "3", "VS", "HEIGHT", "Y", 185.4,
+    "3", "VS", "WEIGHT", "Y", 92.8,
+    "4", "VS", "HEIGHT", "Y", 177.8,
+    "4", "VS", "WEIGHT", "Y", 83.3
   )
   lb <- tibble::tribble(
-    ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBBLFL, ~LBTESTCD,        ~LBSTRESN,
-    "1",    "DM", "SERUM",     "Y",   "CREAT", 89.2690855827183,
-    "2",    "DM", "SERUM",     "Y",   "CREAT", 73.3255705088018,
-    "3",    "DM", "SERUM",     "Y",   "CREAT", 77.8168976104201,
-    "4",    "DM", "SERUM",     "Y",   "CREAT", 66.8305453780658
+    ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBBLFL, ~LBTESTCD, ~LBSTRESN,
+    "1", "DM", "SERUM", "Y", "CREAT", 89.2690855827183,
+    "2", "DM", "SERUM", "Y", "CREAT", 73.3255705088018,
+    "3", "DM", "SERUM", "Y", "CREAT", 77.8168976104201,
+    "4", "DM", "SERUM", "Y", "CREAT", 66.8305453780658
   )
   temp <- list(
     dm = dm,
@@ -283,7 +283,7 @@ test_that("BMI calculation handles edge cases correctly", {
   expect_equal(nrow(result), 6) # "Should return all 6 subjects")
 
   # Test normal case - BMI calculation should work
-  normal_bmi <- 70 / (170/100)^2  # Expected BMI for subject 001
+  normal_bmi <- 70 / (170 / 100)^2 # Expected BMI for subject 001
   expect_equal(result$BMI[result$USUBJID == "001"], normal_bmi)
 
   # Test all edge cases - BMI should be NA
@@ -298,11 +298,11 @@ test_that("BMI calculation handles edge cases correctly", {
 # Helper function to create test data
 create_test_dm <- function() {
   tibble::tribble(
-     ~DOMAIN,   ~USUBJID, ~SEX,  ~ACTARMCD,     ~BRTHDTC,     ~RFICDTC,     ~RFSTDTC,     ~RFENDTC,                       ~RACE,                  ~ETHNIC, ~COUNTRY,
-        "DM", "SUBJ-001",  "M",      "TRT", "1970-01-01", "2020-01-01", "2020-01-15", "2020-03-15",                     "WHITE", "NOT HISPANIC OR LATINO",    "USA",
-        "DM", "SUBJ-002",  "F",      "TRT", "1980-02-15", "2020-01-02", "2020-01-16", "2020-03-16", "BLACK OR AFRICAN AMERICAN",     "HISPANIC OR LATINO",    "CAN",
-        "DM", "SUBJ-003",  "M",   "NOTTRT", "1990-06-30", "2020-01-03", "2020-01-17", "2020-03-17",                     "ASIAN", "NOT HISPANIC OR LATINO",    "GBR",
-        "DM", "SUBJ-004",  "F", "SCRNFAIL", "2000-12-25", "2020-01-04", "2020-01-18", "2020-03-18",                     "OTHER",     "HISPANIC OR LATINO",    "AUS"
+    ~DOMAIN, ~USUBJID, ~SEX, ~ACTARMCD, ~BRTHDTC, ~RFICDTC, ~RFSTDTC, ~RFENDTC, ~RACE, ~ETHNIC, ~COUNTRY,
+    "DM", "SUBJ-001", "M", "TRT", "1970-01-01", "2020-01-01", "2020-01-15", "2020-03-15", "WHITE", "NOT HISPANIC OR LATINO", "USA",
+    "DM", "SUBJ-002", "F", "TRT", "1980-02-15", "2020-01-02", "2020-01-16", "2020-03-16", "BLACK OR AFRICAN AMERICAN", "HISPANIC OR LATINO", "CAN",
+    "DM", "SUBJ-003", "M", "NOTTRT", "1990-06-30", "2020-01-03", "2020-01-17", "2020-03-17", "ASIAN", "NOT HISPANIC OR LATINO", "GBR",
+    "DM", "SUBJ-004", "F", "SCRNFAIL", "2000-12-25", "2020-01-04", "2020-01-18", "2020-03-18", "OTHER", "HISPANIC OR LATINO", "AUS"
   ) %>%
     calculate_age()
 }
@@ -310,23 +310,23 @@ create_test_dm <- function() {
 
 create_test_vs <- function() {
   tibble::tribble(
-    ~DOMAIN,   ~USUBJID, ~VSTESTCD, ~VSSTRESN,       ~VSDTC,
-       "VS", "SUBJ-001",  "WEIGHT",        70, "2020-01-05",
-       "VS", "SUBJ-001",  "HEIGHT",       175, "2020-01-05",
-       "VS", "SUBJ-001",  "WEIGHT",        71, "2020-01-20",
-       "VS", "SUBJ-001",  "HEIGHT",       175, "2020-01-20",
-       "VS", "SUBJ-002",  "WEIGHT",        65, "2020-01-06",
-       "VS", "SUBJ-002",  "HEIGHT",       160, "2020-01-06",
-       "VS", "SUBJ-002",  "WEIGHT",        64, "2020-01-21",
-       "VS", "SUBJ-002",  "HEIGHT",       160, "2020-01-21",
-       "VS", "SUBJ-003",  "WEIGHT",        80, "2020-01-07",
-       "VS", "SUBJ-003",  "HEIGHT",       180, "2020-01-07",
-       "VS", "SUBJ-003",  "WEIGHT",        79, "2020-01-22",
-       "VS", "SUBJ-003",  "HEIGHT",       180, "2020-01-22",
-       "VS", "SUBJ-004",  "WEIGHT",        55, "2020-01-08",
-       "VS", "SUBJ-004",  "HEIGHT",       155, "2020-01-08",
-       "VS", "SUBJ-004",  "WEIGHT",        56, "2020-01-23",
-       "VS", "SUBJ-004",  "HEIGHT",       155, "2020-01-23"
+    ~DOMAIN, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "VS", "SUBJ-001", "WEIGHT", 70, "2020-01-05",
+    "VS", "SUBJ-001", "HEIGHT", 175, "2020-01-05",
+    "VS", "SUBJ-001", "WEIGHT", 71, "2020-01-20",
+    "VS", "SUBJ-001", "HEIGHT", 175, "2020-01-20",
+    "VS", "SUBJ-002", "WEIGHT", 65, "2020-01-06",
+    "VS", "SUBJ-002", "HEIGHT", 160, "2020-01-06",
+    "VS", "SUBJ-002", "WEIGHT", 64, "2020-01-21",
+    "VS", "SUBJ-002", "HEIGHT", 160, "2020-01-21",
+    "VS", "SUBJ-003", "WEIGHT", 80, "2020-01-07",
+    "VS", "SUBJ-003", "HEIGHT", 180, "2020-01-07",
+    "VS", "SUBJ-003", "WEIGHT", 79, "2020-01-22",
+    "VS", "SUBJ-003", "HEIGHT", 180, "2020-01-22",
+    "VS", "SUBJ-004", "WEIGHT", 55, "2020-01-08",
+    "VS", "SUBJ-004", "HEIGHT", 155, "2020-01-08",
+    "VS", "SUBJ-004", "WEIGHT", 56, "2020-01-23",
+    "VS", "SUBJ-004", "HEIGHT", 155, "2020-01-23"
   )
 }
 
@@ -368,11 +368,11 @@ test_that("make_subjects handles VS data correctly", {
   expect_true("BMI" %in% names(result))
 
   # Verify only baseline measurements were used
-  expect_equal(result$WEIGHT[1], 70)  # Only the first measurement before baseline
+  expect_equal(result$WEIGHT[1], 70) # Only the first measurement before baseline
   expect_equal(result$HEIGHT[1], 175)
 
   # Verify BMI calculation
-  expect_equal(result$BMI[1], 70 / (175/100)^2, tolerance = 0.01)
+  expect_equal(result$BMI[1], 70 / (175 / 100)^2, tolerance = 0.01)
 })
 
 
@@ -495,4 +495,3 @@ test_that("make_subjects issues warning for empty subject filter results", {
     make_subjects(dm, subject_filter = "USUBJID != ''")
   )
 })
-

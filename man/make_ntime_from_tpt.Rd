@@ -9,8 +9,9 @@ make_ntime_from_tpt(obj, domain = NULL)
 \arguments{
 \item{obj}{A data frame containing time point text descriptions.}
 
-\item{domain}{The domain code as character (default: "PC" for pharmacokinetic).
-Used to determine the column name containing time point descriptions.}
+\item{domain}{The domain code as character (default: "PC" for
+pharmacokinetic). Used to determine the column name containing time point
+descriptions.}
 }
 \value{
 A data frame with a column representing the unique values of the
@@ -33,6 +34,6 @@ The function recognizes and processes the following patterns:
 }
 \examples{
 df <- data.frame(PCTPT = c("PRE-DOSE", "1H POST-DOSE", "2.5 HRS POST-DOSE"))
-make_ntime_from_tpt(df)  # Returns c(0, 1, 2.5)
+make_ntime_from_tpt(df) # Returns c(0, 1, 2.5)
 
 }

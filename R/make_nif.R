@@ -33,7 +33,8 @@ guess_pcspec <- function(pc, silent = NULL) {
 
   conditional_message(
     "Selected specimen type: ", spec, "\n",
-    silent = silent)
+    silent = silent
+  )
   return(spec)
 }
 
@@ -49,8 +50,10 @@ guess_lbspec <- function(lb) {
   standard_specs <- c("SERUM", "URINE")
   temp <- match(toupper(lbspecs), standard_specs)
   spec <- lbspecs[order(temp)][1]
-  conditional_message("No specimen specified. Set to '", spec,
-                      "' as the most likely.", "\n")
+  conditional_message(
+    "No specimen specified. Set to '", spec,
+    "' as the most likely.", "\n"
+  )
   return(spec)
 }
 
@@ -87,17 +90,19 @@ index_nif <- function(nif) {
 #' @export
 limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   max_or_inf <- function(x) {
-    if(length(x) == 0) return(max(obj$DTC, na.rm = TRUE))
+    if (length(x) == 0) {
+      return(max(obj$DTC, na.rm = TRUE))
+    }
     return(max(x, na.rm = TRUE))
   }
 
-  if(keep_no_obs_sbs == FALSE) {
+  if (keep_no_obs_sbs == FALSE) {
     obj <- obj %>%
       group_by(.data$ID) %>%
       filter(sum(EVID == 0) > 0) %>%
       ungroup()
   }
-  if(individual == TRUE) {
+  if (individual == TRUE) {
     obj %>%
       group_by(.data$ID) %>%
       mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[EVID == 0])) %>%
@@ -135,14 +140,18 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     make_time() %>%
     arrange(.data$DTC) %>%
     index_nif() %>%
-
     # fill down subject-/parent-level fields
     group_by(.data$ID, .data$PARENT) %>%
-    tidyr::fill(any_of(
-      c("STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
-        "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT",
-        "DOSE", "EPOCH", "FASTED", "FOOD")),
-      .direction = "downup") %>%
+    tidyr::fill(
+      any_of(
+        c(
+          "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
+          "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT",
+          "DOSE", "EPOCH", "FASTED", "FOOD"
+        )
+      ),
+      .direction = "downup"
+    ) %>%
     fill(any_of(c(starts_with("BL_"))), .direction = "downup") %>%
     ungroup() %>%
     nif_cleanup(keep = keep) %>%
@@ -158,17 +167,15 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
 #' @return A nif object
 #' @noRd
 nif_cleanup <- function(nif, keep = NULL) {
-  selector <- unique(c("REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
+  selector <- unique(c(
+    "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
     "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
-    "PCELTM", "EVID", "AMT", "ANALYTE", "CMT",  "PARENT", "TRTDY",
+    "PCELTM", "EVID", "AMT", "ANALYTE", "CMT", "PARENT", "TRTDY",
     "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
     "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
-    "TREATMENT", keep))
+    "TREATMENT", keep
+  ))
   selector <- selector[selector %in% names(nif)]
   nif %>%
     select(all_of(selector), starts_with("BL_"))
 }
-
-
-
-

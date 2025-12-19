@@ -6,7 +6,8 @@ test_that("nif_viewer handles invalid inputs", {
   empty_nif <- new_nif(data.frame())
   expect_error(
     nif_viewer(empty_nif),
-    "Missing required columns: ID, TIME, AMT, DV, EVID, USUBJID, ANALYTE, PARENT")
+    "Missing required columns: ID, TIME, AMT, DV, EVID, USUBJID, ANALYTE, PARENT"
+  )
 })
 
 
@@ -23,7 +24,8 @@ test_that("nif_viewer handles missing required columns", {
   # Test missing USUBJID
   expect_error(
     nif_viewer(minimal_nif),
-    "Missing required columns: USUBJID, ANALYTE, PARENT")
+    "Missing required columns: USUBJID, ANALYTE, PARENT"
+  )
 })
 
 
@@ -31,10 +33,10 @@ test_that("nif_viewer handles invalid data types", {
   # Create nif object with invalid data types
   invalid_nif <- new_nif(data.frame(
     ID = 1,
-    TIME = "0",  # Should be numeric
-    AMT = "0",   # Should be numeric
-    DV = "0",    # Should be numeric
-    EVID = "0",  # Should be numeric
+    TIME = "0", # Should be numeric
+    AMT = "0", # Should be numeric
+    DV = "0", # Should be numeric
+    EVID = "0", # Should be numeric
     USUBJID = "1",
     ANALYTE = "TEST",
     PARENT = "TEST"
@@ -42,7 +44,8 @@ test_that("nif_viewer handles invalid data types", {
 
   expect_error(
     nif_viewer(invalid_nif),
-    "TIME, AMT, and DV columns must be numeric")
+    "TIME, AMT, and DV columns must be numeric"
+  )
 })
 
 
@@ -60,7 +63,8 @@ test_that("nif_viewer handles missing values", {
   ))
 
   # Should show warning but not error
-  expect_warning(nif_viewer(missing_nif),
-    "Dataset contains missing values in ID, TIME, or EVID columns")
+  expect_warning(
+    nif_viewer(missing_nif),
+    "Dataset contains missing values in ID, TIME, or EVID columns"
+  )
 })
-

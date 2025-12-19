@@ -9,8 +9,8 @@ test_that("df_to_string basic functionality works", {
   # Test basic output with default parameters
   result <- df_to_string(df)
   expect_type(result, "character")
-  expect_true(grepl("a   b", result))  # Check header exists
-  expect_true(grepl("1   x", result))  # Check data exists
+  expect_true(grepl("a   b", result)) # Check header exists
+  expect_true(grepl("1   x", result)) # Check data exists
 
   # Test without header
   result_no_header <- df_to_string(df, header = FALSE)
@@ -45,7 +45,7 @@ test_that("df_to_string respects n parameter", {
 
   # Test limiting rows
   result_limited <- df_to_string(df, n = 2)
-  expect_equal(length(strsplit(result_limited, "\n")[[1]]), 3)  # header + 2 rows
+  expect_equal(length(strsplit(result_limited, "\n")[[1]]), 3) # header + 2 rows
 })
 
 
@@ -58,8 +58,8 @@ test_that("df_to_string handles color formatting", {
 
   # Test with color
   result_color <- df_to_string(df, color = TRUE)
-  expect_true(grepl("\u001b\\[38;5;248m", result_color))  # Check for color code
-  expect_true(grepl("\u001b\\[0m", result_color))  # Check for color reset
+  expect_true(grepl("\u001b\\[38;5;248m", result_color)) # Check for color code
+  expect_true(grepl("\u001b\\[0m", result_color)) # Check for color reset
 })
 
 
@@ -89,4 +89,3 @@ test_that("df_to_string handles NA values", {
 #   line_lengths <- sapply(lines, nchar)
 #   expect_equal(length(unique(line_lengths)), 1)
 # })
-

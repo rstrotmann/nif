@@ -60,13 +60,13 @@ test_that("make_time works with multiple subjects", {
 test_that("make_time works with multiple parent compounds", {
   # Create test data with two parent compounds for same subject
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                             ~EVID,  ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG1",  "DRUG1",  NA,
-    1,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG1",  "DRUG1",  10,
-    1,   as.POSIXct("2023-01-01 10:00:00"), 1,     "DRUG2",  "DRUG2",  NA,
-    1,   as.POSIXct("2023-01-01 11:00:00"), 0,     "DRUG2",  "DRUG2",  20,
-    1,   as.POSIXct("2023-01-01 12:00:00"), 0,     "DRUG1",  "DRUG1",  15,
-    1,   as.POSIXct("2023-01-01 13:00:00"), 0,     "DRUG2",  "DRUG2",  25
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG1", "DRUG1", NA,
+    1, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG1", "DRUG1", 10,
+    1, as.POSIXct("2023-01-01 10:00:00"), 1, "DRUG2", "DRUG2", NA,
+    1, as.POSIXct("2023-01-01 11:00:00"), 0, "DRUG2", "DRUG2", 20,
+    1, as.POSIXct("2023-01-01 12:00:00"), 0, "DRUG1", "DRUG1", 15,
+    1, as.POSIXct("2023-01-01 13:00:00"), 0, "DRUG2", "DRUG2", 25
   ) %>%
     new_nif()
 
@@ -91,13 +91,13 @@ test_that("make_time works with multiple parent compounds", {
 test_that("make_time works with multiple administrations of same parent", {
   # Create test data with multiple doses of same parent compound
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                             ~EVID,  ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   "DRUG",   NA,
-    1,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG",   "DRUG",   10,
-    1,   as.POSIXct("2023-01-01 10:00:00"), 0,     "DRUG",   "DRUG",   20,
-    1,   as.POSIXct("2023-01-01 11:00:00"), 1,     "DRUG",   "DRUG",   NA,  # Second dose
-    1,   as.POSIXct("2023-01-01 12:00:00"), 0,     "DRUG",   "DRUG",   15,
-    1,   as.POSIXct("2023-01-01 13:00:00"), 0,     "DRUG",   "DRUG",   25
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", "DRUG", NA,
+    1, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG", "DRUG", 10,
+    1, as.POSIXct("2023-01-01 10:00:00"), 0, "DRUG", "DRUG", 20,
+    1, as.POSIXct("2023-01-01 11:00:00"), 1, "DRUG", "DRUG", NA, # Second dose
+    1, as.POSIXct("2023-01-01 12:00:00"), 0, "DRUG", "DRUG", 15,
+    1, as.POSIXct("2023-01-01 13:00:00"), 0, "DRUG", "DRUG", 25
   ) %>%
     new_nif()
 
@@ -117,12 +117,12 @@ test_that("make_time works with multiple administrations of same parent", {
 test_that("make_time handles observations before first administration", {
   # Create test data with observations before dosing
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                             ~EVID,  ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 07:00:00"), 0,     "DRUG",   "DRUG",   5,   # Pre-dose
-    1,   as.POSIXct("2023-01-01 08:00:00"), 0,     "DRUG",   "DRUG",   8,   # Pre-dose
-    1,   as.POSIXct("2023-01-01 09:00:00"), 1,     "DRUG",   "DRUG",   NA,  # First dose
-    1,   as.POSIXct("2023-01-01 10:00:00"), 0,     "DRUG",   "DRUG",   10,
-    1,   as.POSIXct("2023-01-01 11:00:00"), 0,     "DRUG",   "DRUG",   20
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 07:00:00"), 0, "DRUG", "DRUG", 5, # Pre-dose
+    1, as.POSIXct("2023-01-01 08:00:00"), 0, "DRUG", "DRUG", 8, # Pre-dose
+    1, as.POSIXct("2023-01-01 09:00:00"), 1, "DRUG", "DRUG", NA, # First dose
+    1, as.POSIXct("2023-01-01 10:00:00"), 0, "DRUG", "DRUG", 10,
+    1, as.POSIXct("2023-01-01 11:00:00"), 0, "DRUG", "DRUG", 20
   ) %>%
     new_nif()
 
@@ -160,8 +160,8 @@ test_that("make_time handles empty data frame", {
 test_that("make_time validates required columns", {
   # Test missing ID column
   test_data <- tibble::tribble(
-    ~DTC,                           ~EVID, ~ANALYTE, ~PARENT, ~DV,
-    as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   "DRUG",   NA
+    ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", "DRUG", NA
   ) %>%
     new_nif()
 
@@ -184,8 +184,8 @@ test_that("make_time validates required columns", {
 
   # Test missing ANALYTE column
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                           ~EVID, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   NA
+    ~ID, ~DTC, ~EVID, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", NA
   ) %>%
     new_nif()
 
@@ -196,8 +196,8 @@ test_that("make_time validates required columns", {
 
   # Test missing PARENT column
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                           ~EVID, ~ANALYTE, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   NA
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", NA
   ) %>%
     new_nif()
 
@@ -208,8 +208,8 @@ test_that("make_time validates required columns", {
 
   # Test missing EVID column
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                           ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), "DRUG",   "DRUG",   NA
+    ~ID, ~DTC, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), "DRUG", "DRUG", NA
   ) %>%
     new_nif()
 
@@ -223,8 +223,8 @@ test_that("make_time validates required columns", {
 test_that("make_time validates DTC column type", {
   # Test with character DTC instead of POSIXct
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                ~EVID, ~ANALYTE, ~PARENT, ~DV,
-    1,   "2023-01-01 08:00:00", 1,     "DRUG",   "DRUG",   NA
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, "2023-01-01 08:00:00", 1, "DRUG", "DRUG", NA
   ) %>%
     new_nif()
 
@@ -256,9 +256,9 @@ test_that("make_time validates input is nif object", {
 test_that("make_time preserves original data columns", {
   # Create test data with extra columns
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                             ~EVID,  ~ANALYTE, ~PARENT, ~DV, ~EXTRA1, ~EXTRA2,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   "DRUG",   NA,  "A",     123,
-    1,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG",   "DRUG",   10,  "B",     456
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV, ~EXTRA1, ~EXTRA2,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", "DRUG", NA, "A", 123,
+    1, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG", "DRUG", 10, "B", 456
   ) %>%
     new_nif()
 
@@ -274,10 +274,10 @@ test_that("make_time preserves original data columns", {
 test_that("make_time calculates time with correct precision", {
   # Create test data with precise timing
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                                    ~EVID, ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00.000"),     1,     "DRUG",   "DRUG",   NA,
-    1,   as.POSIXct("2023-01-01 08:30:00.000"),     0,     "DRUG",   "DRUG",   10,
-    1,   as.POSIXct("2023-01-01 09:15:30.000"),     0,     "DRUG",   "DRUG",   20
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00.000"), 1, "DRUG", "DRUG", NA,
+    1, as.POSIXct("2023-01-01 08:30:00.000"), 0, "DRUG", "DRUG", 10,
+    1, as.POSIXct("2023-01-01 09:15:30.000"), 0, "DRUG", "DRUG", 20
   ) %>%
     new_nif()
 
@@ -297,10 +297,10 @@ test_that("make_time calculates time with correct precision", {
 test_that("make_time handles subjects with no administrations", {
   # Create test data with subject having only observations (no EVID=1)
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                             ~EVID,  ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 0,     "DRUG",   "DRUG",   5,
-    1,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG",   "DRUG",   10,
-    1,   as.POSIXct("2023-01-01 10:00:00"), 0,     "DRUG",   "DRUG",   15
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 0, "DRUG", "DRUG", 5,
+    1, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG", "DRUG", 10,
+    1, as.POSIXct("2023-01-01 10:00:00"), 0, "DRUG", "DRUG", 15
   ) %>%
     new_nif()
 
@@ -320,16 +320,16 @@ test_that("make_time handles subjects with no administrations", {
 test_that("make_time handles complex multi-subject, multi-parent scenario", {
   # Create complex test data with multiple subjects and parent compounds
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                             ~EVID,  ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG1",  "DRUG1",  NA,
-    1,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG1",  "DRUG1",  10,
-    1,   as.POSIXct("2023-01-01 10:00:00"), 1,     "DRUG2",  "DRUG2",  NA,
-    1,   as.POSIXct("2023-01-01 11:00:00"), 0,     "DRUG2",  "DRUG2",  20,
-    1,   as.POSIXct("2023-01-01 12:00:00"), 1,     "DRUG1",  "DRUG1",  NA,  # Second dose of DRUG1
-    1,   as.POSIXct("2023-01-01 13:00:00"), 0,     "DRUG1",  "DRUG1",  15,
-    2,   as.POSIXct("2023-01-01 14:00:00"), 1,     "DRUG1",  "DRUG1",  NA,
-    2,   as.POSIXct("2023-01-01 15:00:00"), 0,     "DRUG1",  "DRUG1",  30,
-    2,   as.POSIXct("2023-01-01 16:00:00"), 0,     "DRUG1",  "DRUG1",  40
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG1", "DRUG1", NA,
+    1, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG1", "DRUG1", 10,
+    1, as.POSIXct("2023-01-01 10:00:00"), 1, "DRUG2", "DRUG2", NA,
+    1, as.POSIXct("2023-01-01 11:00:00"), 0, "DRUG2", "DRUG2", 20,
+    1, as.POSIXct("2023-01-01 12:00:00"), 1, "DRUG1", "DRUG1", NA, # Second dose of DRUG1
+    1, as.POSIXct("2023-01-01 13:00:00"), 0, "DRUG1", "DRUG1", 15,
+    2, as.POSIXct("2023-01-01 14:00:00"), 1, "DRUG1", "DRUG1", NA,
+    2, as.POSIXct("2023-01-01 15:00:00"), 0, "DRUG1", "DRUG1", 30,
+    2, as.POSIXct("2023-01-01 16:00:00"), 0, "DRUG1", "DRUG1", 40
   ) %>%
     new_nif()
 
@@ -354,10 +354,10 @@ test_that("make_time handles complex multi-subject, multi-parent scenario", {
 test_that("make_time handles missing DTC values gracefully", {
   # Create test data with some missing DTC values
   test_data <- tibble::tribble(
-    ~ID, ~DTC,                             ~EVID,  ~ANALYTE, ~PARENT, ~DV,
-    1,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   "DRUG",   NA,
-    1,   as.POSIXct(NA),                    0,     "DRUG",   "DRUG",   10,
-    1,   as.POSIXct("2023-01-01 10:00:00"), 0,     "DRUG",   "DRUG",   20
+    ~ID, ~DTC, ~EVID, ~ANALYTE, ~PARENT, ~DV,
+    1, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", "DRUG", NA,
+    1, as.POSIXct(NA), 0, "DRUG", "DRUG", 10,
+    1, as.POSIXct("2023-01-01 10:00:00"), 0, "DRUG", "DRUG", 20
   ) %>%
     new_nif()
 
@@ -371,11 +371,6 @@ test_that("make_time handles missing DTC values gracefully", {
   # The exact behavior depends on how the function handles missing values
   expect_equal(length(result$TIME), 3)
 })
-
-
-
-
-
 
 
 test_that("make_time handles predose values before the first admin correctly", {
@@ -398,15 +393,3 @@ test_that("make_time handles predose values before the first admin correctly", {
   expect_equal(result$TAFD, c(-1, -0.5, 0, 0.5, 1, 1.5))
   expect_equal(result$TAD, c(-1, -0.5, 0, 0.5, 0, 0.5))
 })
-
-
-
-
-
-
-
-
-
-
-
-

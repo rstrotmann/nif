@@ -212,7 +212,9 @@ test_that("import_from_connection respects no_numeric parameter", {
 
   # Import data with NUMERIC_ID kept as character
   result <- import_from_connection(
-    con, no_numeric = c("USUBJID", "STUDYID", "NUMERIC_ID"), silent = TRUE)
+    con,
+    no_numeric = c("USUBJID", "STUDYID", "NUMERIC_ID"), silent = TRUE
+  )
 
   # Close connection
   close(con)

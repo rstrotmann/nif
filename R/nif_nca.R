@@ -24,23 +24,24 @@
 #' nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
 #'
 nca <- function(
-    obj,
-    analyte = NULL,
-    parent = NULL,
-    keep = "DOSE",
-    group = NULL,
-    nominal_time = FALSE,
-    average_duplicates = TRUE,
-    silent = NULL) {
-
+  obj,
+  analyte = NULL,
+  parent = NULL,
+  keep = "DOSE",
+  group = NULL,
+  nominal_time = FALSE,
+  average_duplicates = TRUE,
+  silent = NULL
+) {
   # Input validation
   if (!inherits(obj, "nif")) {
     stop("Input must be a NIF object")
   }
 
   required_cols <- unique(c("TIME", "DV", "EVID", "ANALYTE", group, keep, group))
-  if(nominal_time == TRUE)
+  if (nominal_time == TRUE) {
     required_cols <- c(required_cols, "NTIME")
+  }
 
   missing_cols <- setdiff(required_cols, names(obj))
   if (length(missing_cols) > 0) {
@@ -57,11 +58,12 @@ nca <- function(
   # Analyte handling
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
-    conditional_message(paste(
-      "NCA: No analyte specified. Selected",
-      current_analyte, "as the most likely."
-    ),
-    silent = silent
+    conditional_message(
+      paste(
+        "NCA: No analyte specified. Selected",
+        current_analyte, "as the most likely."
+      ),
+      silent = silent
     )
   } else {
     current_analyte <- analyte
@@ -72,15 +74,18 @@ nca <- function(
   }
 
   # Data preparation with error handling
-  obj1 <- tryCatch({
-    obj %>%
-      as.data.frame() %>%
-      dplyr::filter(ANALYTE == current_analyte) %>%
-      dplyr::mutate(TIME = if(nominal_time) NTIME else TIME) %>%
-      dplyr::mutate(DV = if_else(is.na(DV), 0, DV))
-  }, error = function(e) {
-    stop("Error preparing data: ", e$message)
-  })
+  obj1 <- tryCatch(
+    {
+      obj %>%
+        as.data.frame() %>%
+        dplyr::filter(ANALYTE == current_analyte) %>%
+        dplyr::mutate(TIME = if (nominal_time) NTIME else TIME) %>%
+        dplyr::mutate(DV = if_else(is.na(DV), 0, DV))
+    },
+    error = function(e) {
+      stop("Error preparing data: ", e$message)
+    }
+  )
 
   if (nrow(obj1) == 0) {
     stop("No data found for analyte: ", current_analyte)
@@ -96,21 +101,22 @@ nca <- function(
   admin <- obj %>%
     as.data.frame() %>%
     dplyr::filter(ANALYTE == parent) %>%
-
     # dplyr::mutate(TIME = case_when(
     #   nominal_time == TRUE ~ NTIME,
     #   .default = TIME
     # )) %>%
 
-    {if(nominal_time == TRUE) mutate(., TIME = NTIME) else .} %>%
-
+    {
+      if (nominal_time == TRUE) mutate(., TIME = NTIME) else .
+    } %>%
     # dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
 
     dplyr::filter(EVID == 1) %>%
     # mutate(PPRFTDTC = .data$DTC) %>%
     dplyr::select(any_of(
       # c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
-      c("REF", "ID", "TIME", "DOSE", "DV", group))) %>%
+      c("REF", "ID", "TIME", "DOSE", "DV", group)
+    )) %>%
     as.data.frame()
 
   # concentration data
@@ -169,7 +175,7 @@ nca <- function(
 
   data_obj <- PKNCA::PKNCAdata(
     conc_obj,
-    dose_obj #,
+    dose_obj # ,
     # impute = "start_conc0"
   )
 
@@ -177,9 +183,10 @@ nca <- function(
     results_obj <- PKNCA::pk.nca(data_obj, verbose = F)
   )
 
-conditional_message(
-  paste0(messages, collapse = "\n"), silent = silent
-)
+  conditional_message(
+    paste0(messages, collapse = "\n"),
+    silent = silent
+  )
 
   temp <- results_obj$result %>%
     as.data.frame() %>%
@@ -221,17 +228,18 @@ nca1 <- function(nif,
                  keep = NULL, group = NULL,
                  time = "TIME",
                  average_duplicates = TRUE) {
-
   allowed_times <- c("TIME", "NTIME", "TAFD", "TAD")
-  if(!time %in% allowed_times) {
-    stop(paste0("'time' parameter must be one of ",
-                nice_enumeration(allowed_times, conjunction = "or")))
+  if (!time %in% allowed_times) {
+    stop(paste0(
+      "'time' parameter must be one of ",
+      nice_enumeration(allowed_times, conjunction = "or")
+    ))
   }
 
   ## check that analyte and parent are scalars!
 
   # guess analyte if not defined
-  if(is.null(analyte)) {
+  if (is.null(analyte)) {
     current_analyte <- guess_analyte(nif)
     conditional_message(
       "NCA: No analyte specified. Selected ",
@@ -244,8 +252,10 @@ nca1 <- function(nif,
   # assign parent if not defined
   if (is.null(parent)) {
     analytes_parents <- analyte_overview(nif)
-    parent <- analytes_parents[analytes_parents$ANALYTE == current_analyte,
-                               "PARENT"]
+    parent <- analytes_parents[
+      analytes_parents$ANALYTE == current_analyte,
+      "PARENT"
+    ]
   }
 
   # make observation and administration data sets
@@ -254,9 +264,9 @@ nca1 <- function(nif,
     index_dosing_interval() %>%
     as.data.frame() %>%
     mutate(TIME = .data[[time]]) %>%
-    mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) #%>%
-    # select(any_of(
-    #   c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
+    mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) # %>%
+  # select(any_of(
+  #   c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
 
   # preserve the columns to keep
   keep_columns <- obj %>%
@@ -270,14 +280,16 @@ nca1 <- function(nif,
     filter(.data$ANALYTE == parent) %>%
     filter(.data$EVID == 1) %>%
     select(any_of(
-      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
+      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)
+    ))
 
   # concentration data
   conc <- obj %>%
     filter(.data$ANALYTE == current_analyte) %>%
     filter(.data$EVID == 0) %>%
     select(any_of(
-      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
+      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)
+    ))
 
   if (average_duplicates == TRUE) {
     conc <- conc %>%
@@ -286,7 +298,7 @@ nca1 <- function(nif,
   }
 
   group_string <- paste(group, collapse = "+")
-  if(group_string != ""){
+  if (group_string != "") {
     conditional_message(paste("NCA: Group by", group_string))
     group_string <- paste0(group_string, "+")
   }
@@ -298,8 +310,9 @@ nca1 <- function(nif,
     PKNCA::PKNCAdata(
       PKNCA::PKNCAconc(conc, stats::as.formula(conc_formula)),
       PKNCA::PKNCAdose(admin, stats::as.formula(dose_formula)),
-      impute = "start_conc0")
+      impute = "start_conc0"
     )
+  )
 
   nca$result %>%
     left_join(keep_columns, by = c("ID", "DI")) %>%
@@ -327,15 +340,16 @@ nca1 <- function(nif,
 #' @return A data frame containing the filtered and joined PP domain data.
 #' @export
 nca_from_pp <- function(
-    obj,
-    sdtm_data,
-    analyte = NULL,
-    ppcat = NULL,
-    ppscat = NULL,
-    keep = NULL,
-    group = NULL,
-    observation_filter = "TRUE",
-    silent = NULL) {
+  obj,
+  sdtm_data,
+  analyte = NULL,
+  ppcat = NULL,
+  ppscat = NULL,
+  keep = NULL,
+  group = NULL,
+  observation_filter = "TRUE",
+  silent = NULL
+) {
   # Input validation
   if (!inherits(obj, "nif")) {
     stop("nif must be an nif object")
@@ -357,12 +371,15 @@ nca_from_pp <- function(
   }
 
   # Validate observation filter
-  tryCatch({
-    parse(text = observation_filter)
-  }, error = function(e) {
-    # stop("Invalid observation_filter: ", e$message)
-    stop("Invalid observation_filter")
-  })
+  tryCatch(
+    {
+      parse(text = observation_filter)
+    },
+    error = function(e) {
+      # stop("Invalid observation_filter: ", e$message)
+      stop("Invalid observation_filter")
+    }
+  )
 
   # Guess analyte if not provided
   if (is.null(analyte)) {
@@ -370,7 +387,8 @@ nca_from_pp <- function(
     conditional_message(
       "NCA: No analyte specified. Selected", current_analyte,
       "as the most likely.",
-      silent = silent)
+      silent = silent
+    )
   } else {
     current_analyte <- analyte
   }
@@ -384,47 +402,63 @@ nca_from_pp <- function(
     as.data.frame() %>%
     filter(ANALYTE == current_analyte) %>%
     select(
-      c("ID", "USUBJID", any_of(keep),
-        any_of(c("AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI",
-                 "PART", "COHORT", "DOSE")),
-        starts_with("BL_"))) %>%
+      c(
+        "ID", "USUBJID", any_of(keep),
+        any_of(c(
+          "AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI",
+          "PART", "COHORT", "DOSE"
+        )),
+        starts_with("BL_")
+      )
+    ) %>%
     distinct()
 
   pp <- domain(sdtm_data, "pp")
 
   # validate ppcat and ppscat
-  if(!is.null(ppcat)) {
+  if (!is.null(ppcat)) {
     # if(!ppcat %in% names(pp)) {
     #   stop(paste0("PPCAT of ", ppcat, " not found in PP domain!"))
     # }
-    if(!"PPCAT" %in% names(pp))
+    if (!"PPCAT" %in% names(pp)) {
       stop("PPCAT not found in PP domain")
-    if(!ppcat %in% unique(pp$PPCAT))
+    }
+    if (!ppcat %in% unique(pp$PPCAT)) {
       stop(paste0(
-        "PPCAT of ", ppcat, " not found in PP domain"))
+        "PPCAT of ", ppcat, " not found in PP domain"
+      ))
+    }
   }
 
-  if(!is.null(ppscat)){
+  if (!is.null(ppscat)) {
     # if(!ppscat %in% names(pp)) {
     #   stop(paste0("PPSCAT of ", ppscat, " not found in PP domain!"))
     #  }
-    if(!"PPSCAT" %in% names(pp))
+    if (!"PPSCAT" %in% names(pp)) {
       stop("PPSCAT not found in PP domain")
-    if(!ppscat %in% unique(pp$PPSCAT))
+    }
+    if (!ppscat %in% unique(pp$PPSCAT)) {
       stop(paste0(
-        "PPSCAT of ", ppscat, " not found in PP domain"))
+        "PPSCAT of ", ppscat, " not found in PP domain"
+      ))
+    }
   }
 
   result <- pp %>%
     # {if("PPCAT" %in% names(pp) & !is.null(ppcat))
     #   filter(., .data$PPCAT == ppcat) else .} %>%
 
-    {if(!is.null(ppcat)) filter(., .data$PPCAT == ppcat) else .} %>%
-    {if(!is.null(ppscat)) filter(., .data$PPSCAT == ppscat) else .} %>%
-
+    {
+      if (!is.null(ppcat)) filter(., .data$PPCAT == ppcat) else .
+    } %>%
+    {
+      if (!is.null(ppscat)) filter(., .data$PPSCAT == ppscat) else .
+    } %>%
     filter(eval(parse(text = observation_filter))) %>%
-    select(any_of(c("USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
-                    "PPCAT", "PPRFTDTC", group))) %>%
+    select(any_of(c(
+      "USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
+      "PPCAT", "PPRFTDTC", group
+    ))) %>%
     mutate(ANALYTE = current_analyte) %>%
     left_join(keep_data, by = "USUBJID")
 
@@ -433,11 +467,12 @@ nca_from_pp <- function(
     warning("No data found after applying filters")
   }
 
-  if("PPCAT" %in% names(result)){
+  if ("PPCAT" %in% names(result)) {
     ppcats <- unique(result$PPCAT)
-    if(length(ppcats) > 1){
+    if (length(ppcats) > 1) {
       stop(paste0(
-        "Multiple PPCAT in result:\n", nice_enumeration(ppcats)))
+        "Multiple PPCAT in result:\n", nice_enumeration(ppcats)
+      ))
     }
   }
 
@@ -460,15 +495,25 @@ nca_from_pp <- function(
 #' @examples
 #' nca_summary(nca(examplinib_sad_nif, analyte = "RS2023"))
 nca_summary <- function(
-    nca,
-    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs",
-                   "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"),
-    group = NULL) {
+  nca,
+  parameters = c(
+    "auclast", "cmax", "tmax", "half.life", "aucinf.obs",
+    "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"
+  ),
+  group = NULL
+) {
   nca %>%
     filter(PPTESTCD %in% parameters) %>%
-    {if("exclude" %in% names(.)) filter(., is.na(.data$exclude)) else .} %>%
-    {if(!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.))
-        mutate(., PPORRES = .data$PPSTRESN) else .} %>%
+    {
+      if ("exclude" %in% names(.)) filter(., is.na(.data$exclude)) else .
+    } %>%
+    {
+      if (!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.)) {
+        mutate(., PPORRES = .data$PPSTRESN)
+      } else {
+        .
+      }
+    } %>%
     group_by_at(c(group, "DOSE", "PPTESTCD")) %>%
     summarize(
       geomean = PKNCA::geomean(PPORRES, na.rm = TRUE),
@@ -496,15 +541,20 @@ nca_summary <- function(
 #' @examples
 #' nca_summary_table(nca(examplinib_sad_nif, analyte = "RS2023"))
 nca_summary_table <- function(
-    nca,
-    parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs",
-                   "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"),
-    digits = 2,
-    group = NULL) {
+  nca,
+  parameters = c(
+    "auclast", "cmax", "tmax", "half.life", "aucinf.obs",
+    "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"
+  ),
+  digits = 2,
+  group = NULL
+) {
   s <- nca_summary(nca, parameters, group = group)
 
-  median_parameters <- c("tlast", "tmax", "lambda.z.n.points", "TMAX",
-                         "LAMZNPT")
+  median_parameters <- c(
+    "tlast", "tmax", "lambda.z.n.points", "TMAX",
+    "LAMZNPT"
+  )
   s %>%
     mutate(
       center = case_when(
@@ -614,21 +664,29 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #' @export
 #' @examples
 #' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"), "aucinf.obs")
-#' nca_power_model(nca(examplinib_sad_nif, analyte = "RS2023"),
-#'   c("cmax", "aucinf.obs"))
-nca_power_model <- function(nca, parameter = NULL,
-    group = NULL, title = NULL, size = 2, alpha = 1) {
-
-  if(is.null(parameter)) {
-    std_parameters = c("cmax", "aucinf.obs", "CMAX", "AUCIFP")
+#' nca_power_model(
+#'   nca(examplinib_sad_nif, analyte = "RS2023"),
+#'   c("cmax", "aucinf.obs")
+#' )
+nca_power_model <- function(
+  nca, parameter = NULL,
+  group = NULL, title = NULL, size = 2, alpha = 1
+) {
+  if (is.null(parameter)) {
+    std_parameters <- c("cmax", "aucinf.obs", "CMAX", "AUCIFP")
     parameter <- std_parameters[which(std_parameters %in% unique(nca$PPTESTCD))]
   }
 
   pm_plot <- function(param) {
     pp <- nca %>%
       filter(PPTESTCD == param) %>%
-      {if(!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.))
-        mutate(., PPORRES = .data$PPSTRESN) else .} %>%
+      {
+        if (!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.)) {
+          mutate(., PPORRES = .data$PPSTRESN)
+        } else {
+          .
+        }
+      } %>%
       filter(PPORRES != 0)
 
     pm <- pp %>%
@@ -637,27 +695,53 @@ nca_power_model <- function(nca, parameter = NULL,
     color_label <- nice_enumeration(unique(group))
 
     pp %>%
-      {if(!is.null(group))
-        tidyr::unite(., COLOR, all_of(group), sep = "-", remove = FALSE) else .} %>%
-      bind_cols(predict.lm(pm, pp, interval = 'prediction', se.fit = T,
-                           level = 0.9)$fit) %>%
+      {
+        if (!is.null(group)) {
+          tidyr::unite(., COLOR, all_of(group), sep = "-", remove = FALSE)
+        } else {
+          .
+        }
+      } %>%
+      bind_cols(predict.lm(pm, pp,
+        interval = "prediction", se.fit = T,
+        level = 0.9
+      )$fit) %>%
       ggplot2::ggplot(ggplot2::aes(x = DOSE, y = exp(.data$fit))) +
       ggplot2::geom_line() +
-      ggplot2::geom_ribbon(ggplot2::aes(x = DOSE, ymin = exp(.data$lwr),
-                                        ymax = exp(.data$upr)),
-                           fill = 'lightgrey', alpha = 0.5) +
-      {if(!is.null(group)) ggplot2::geom_point(
-        ggplot2::aes(x = DOSE, y = PPORRES, color = COLOR), size = size, alpha = alpha)
-          else
-            ggplot2::geom_point(ggplot2::aes(x = DOSE, y = PPORRES),
-                                size = size, alpha = alpha)} +
+      ggplot2::geom_ribbon(
+        ggplot2::aes(
+          x = DOSE, ymin = exp(.data$lwr),
+          ymax = exp(.data$upr)
+        ),
+        fill = "lightgrey", alpha = 0.5
+      ) +
+      {
+        if (!is.null(group)) {
+          ggplot2::geom_point(
+            ggplot2::aes(x = DOSE, y = PPORRES, color = COLOR),
+            size = size, alpha = alpha
+          )
+        } else {
+          ggplot2::geom_point(ggplot2::aes(x = DOSE, y = PPORRES),
+            size = size, alpha = alpha
+          )
+        }
+      } +
       ggplot2::theme_bw() +
       ggplot2::expand_limits(x = 0) +
-      ggplot2::labs(x = "dose (mg)", y = param,
-           caption = paste0("mean and 90% PI, slope = ",
-                            round(pm$coefficients[2], 3))) +
-      {if(!is.null(group)) ggplot2::labs(color = color_label)} +
-      {if(!is.null(title)) ggplot2::ggtitle(title)} +
+      ggplot2::labs(
+        x = "dose (mg)", y = param,
+        caption = paste0(
+          "mean and 90% PI, slope = ",
+          round(pm$coefficients[2], 3)
+        )
+      ) +
+      {
+        if (!is.null(group)) ggplot2::labs(color = color_label)
+      } +
+      {
+        if (!is.null(title)) ggplot2::ggtitle(title)
+      } +
       watermark(cex = 1.5)
   }
   out <- lapply(parameter, pm_plot)
@@ -687,7 +771,6 @@ nca2 <- function(obj,
                  parameters = NULL,
                  keep = NULL,
                  average_duplicates = TRUE) {
-
   # Validate input
   if (!inherits(obj, "nif")) {
     stop("Input must be a NIF object")
@@ -774,17 +857,3 @@ nca2 <- function(obj,
 
   return(final_results)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

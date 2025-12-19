@@ -19,16 +19,16 @@ create_test_nif <- function() {
     stringsAsFactors = FALSE
   ) %>%
     new_nif()
-    # structure(class = c("nif", "tbl_df", "tbl", "data.frame"))
+  # structure(class = c("nif", "tbl_df", "tbl", "data.frame"))
 }
 
 # Helper function to create test raw observation data
 create_test_raw <- function(with_dtc = TRUE, with_ntime = TRUE) {
   df <- tibble::tribble(
-      ~USUBJID, ~DV_VALUE,
-    "SUBJ-001",      10.5,
-    "SUBJ-001",       5.2,
-    "SUBJ-002",       8.7
+    ~USUBJID, ~DV_VALUE,
+    "SUBJ-001", 10.5,
+    "SUBJ-001", 5.2,
+    "SUBJ-002", 8.7
   )
 
   if (with_dtc) {
@@ -246,18 +246,18 @@ test_that("import_observation automatically determines parent when parent is NUL
 
   # Case 2: analyte doesn't match existing ANALYTE
   # expect_message(
-    result2 <- import_observation(
-      test_nif,
-      test_raw,
-      analyte = "METABOLITE", # Doesn't match existing analyte
-      parent = NULL,
-      cmt = 3,
-      DV_field = "DV_VALUE",
-      DTC_field = "OBS_DTC",
-      NTIME_field = "OBS_NTIME",
-      silent = TRUE
-    )#,
-    # "Parent for .* set to"
+  result2 <- import_observation(
+    test_nif,
+    test_raw,
+    analyte = "METABOLITE", # Doesn't match existing analyte
+    parent = NULL,
+    cmt = 3,
+    DV_field = "DV_VALUE",
+    DTC_field = "OBS_DTC",
+    NTIME_field = "OBS_NTIME",
+    silent = TRUE
+  ) # ,
+  # "Parent for .* set to"
   # )
 
   obs_records2 <- result2 %>% filter(EVID == 0)
@@ -339,4 +339,3 @@ test_that("import_observation correctly sets debug fields", {
   expect_equal(unique(obs_records$SRC_DOMAIN), "IMPORT")
   expect_true(all(is.na(obs_records$SRC_SEQ)))
 })
-
