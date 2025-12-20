@@ -3,11 +3,9 @@
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
 assign("show_hash", FALSE, envir = .nif_env)
-# assign("abbreviate", TRUE, envir = .nif_env)
 assign("abbreviation_threshold", 20, envir = .nif_env)
 assign("abbreviation_maxlines", 10, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
-# assign("disclaimer", "Not QCed, do not share further!", envir = .nif_env)
 
 
 #' Set or get global options
@@ -52,7 +50,8 @@ nif_option <- function(...) {
   if (length(args) == 0) {
     as.list(.nif_env)
   } else {
-    for (i in 1:length(args)) {
+    # for (i in 1:length(args)) {
+    for (i in seq_along(args)) {
       option_name <- names(args)[[i]]
       option_value <- args[[i]]
       temp <- filter(allowed_options, .data$name == option_name)
@@ -82,9 +81,9 @@ nif_option_value <- function(option) {
     return(NA)
   }
   if (!exists(option, envir = .nif_env)) {
-    return(NA)
+    NA
   } else {
-    return(get(option, .nif_env))
+    get(option, .nif_env)
   }
 }
 
@@ -104,5 +103,5 @@ nif_disclaimer <- function(disclaimer_text = NA) {
   if (!is.na(disc)) {
     temp <- paste0(temp, "\n", disc)
   }
-  return(temp)
+  temp
 }

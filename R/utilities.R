@@ -133,7 +133,7 @@ recode_sex <- function(obj) {
     )
   }
 
-  return(result)
+  result
 }
 
 
@@ -207,13 +207,11 @@ recode_race <- function(obj, coding_table = NULL, silent = NULL) {
     )
   }
 
-  out <- obj %>%
+  obj %>%
     left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") %>%
     select(-c("RACE")) %>%
     rename(RACE = RACEN) %>%
     order_nif_columns()
-
-  return(out)
 }
 
 
@@ -229,7 +227,7 @@ recode_race <- function(obj, coding_table = NULL, silent = NULL) {
 #' positive_or_zero(c(2, 1, 0, -1, -2))
 positive_or_zero <- function(x) {
   x[which(x < 0 | is.na(x))] <- 0
-  return(x)
+  x
 }
 
 
@@ -332,20 +330,6 @@ df_to_string <- function(
       }
     }
   }
-
-  # if (nif_option_value("abbreviate") == TRUE) {
-  #   nr <- nrow(df)
-  #   if (nr > abbr_threshold) {
-  #     if (!is.null(abbr_lines)) {
-  #       df <- head(df, abbr_lines)
-  #       if (nr - abbr_lines > 0) {
-  #         footer <- paste0(
-  #           "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)"
-  #         )
-  #       }
-  #     }
-  #   }
-  # }
 
   # Convert all columns to character, handling NA values
   df <- as.data.frame(df) %>%
@@ -488,7 +472,7 @@ lubrify_dates <- function(obj, col = NULL) {
           if (!is.POSIXct(x)) {
             x <- lubridate::as_datetime(x, format = dtc_formats)
           }
-          return(x)
+          x
         }
       )
   }
@@ -497,9 +481,9 @@ lubrify_dates <- function(obj, col = NULL) {
 
 #' Convert all DTC fields into ISO 8601 string format
 #'
-#' Change all columns in the input data frame that end with 'DTC' from POSIXct to
-#' character using the ISO 8601 format. Seconds will be ignored, the resolution
-#' is only to minutes.
+#' Change all columns in the input data frame that end with 'DTC' from POSIXct
+#' to character using the ISO 8601 format. Seconds will be ignored, the
+#' resolution is only to minutes.
 #'
 #' @param obj A data frame.
 #' @return A data frame.
@@ -563,13 +547,20 @@ pt_to_hours <- function(iso) {
     group = c(1, 3, 5)
   )
 
-  # if(nrow(temp) == 0)
-  #   return(NULL)
-
   as.data.frame(temp) %>%
-    mutate(sign = case_match(.[[1]], "-" ~ -1, .default = 1)) %>%
-    mutate(hours = case_when(is.na(.[[2]]) ~ 0, .default = as.numeric(.[[2]]))) %>%
-    mutate(mins = case_when(is.na(.[[3]]) ~ 0, .default = as.numeric(.[[3]]))) %>%
+    mutate(sign = case_match(
+      .[[1]],
+      "-" ~ -1,
+      .default = 1
+    )) %>%
+    mutate(hours = case_when(
+      is.na(.[[2]]) ~ 0,
+      .default = as.numeric(.[[2]])
+    )) %>%
+    mutate(mins = case_when(
+      is.na(.[[3]]) ~ 0,
+      .default = as.numeric(.[[3]])
+    )) %>%
     mutate(out = case_when(
       is.na(.[[2]]) & is.na(.[[3]]) ~ NA,
       .default = .data$sign * (.data$hours + .data$mins / 60)
@@ -610,14 +601,14 @@ compose_dtc <- function(date, time) {
 #' @return A data frame.
 #' @export
 #' @keywords internal
-decompose_dtc <- function(obj, DTC_field) {
+decompose_dtc <- function(obj, dtc_field) {
   # input validation
   if (!is.data.frame(obj)) {
     stop("obj must be a data frame!")
   }
-  validate_char_param(DTC_field, "DTC_field", allow_multiple = TRUE)
+  validate_char_param(dtc_field, "dtc_field", allow_multiple = TRUE)
 
-  missing_fields <- setdiff(DTC_field, names(obj))
+  missing_fields <- setdiff(dtc_field, names(obj))
   n_missing <- length(missing_fields)
   if (n_missing > 0) {
     stop(paste0(
@@ -627,22 +618,22 @@ decompose_dtc <- function(obj, DTC_field) {
   }
 
   dec_dtc <- function(fld) {
-    DTC_date <- paste0(fld, "_date")
-    DTC_time <- paste0(fld, "_time")
+    dtc_date <- paste0(fld, "_date")
+    dtc_time <- paste0(fld, "_time")
     obj %>%
       mutate(has_time = has_time(.data[[fld]])) %>%
-      mutate({{ DTC_date }} := extract_date(.data[[fld]])) %>%
-      mutate({{ DTC_time }} := case_when(
+      mutate({{ dtc_date }} := extract_date(.data[[fld]])) %>%
+      mutate({{ dtc_time }} := case_when(
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
         .default = NA
       )) %>%
       select(-c("has_time"))
   }
 
-  for (i in DTC_field) {
+  for (i in dtc_field) {
     obj <- dec_dtc(i)
   }
-  return(obj)
+  obj
 }
 
 
@@ -702,10 +693,11 @@ nice_enumeration <- function(items, conjunction = "and") {
     return(items[[1]])
   }
   if (length(items) > 1) {
-    return(paste(
-      paste(items[1:length(items) - 1], collapse = ", "), conjunction,
+    paste(
+      paste(items[seq_along(items[-1])], collapse = ", "),
+      conjunction,
       items[length(items)]
-    ))
+    )
   }
 }
 
@@ -733,12 +725,12 @@ plural <- function(word, plural) {
   )
   if (plural) {
     if (word %in% exceptions$singular) {
-      return(as.character(exceptions[exceptions$singular == word, "plural"]))
+      as.character(exceptions[exceptions$singular == word, "plural"])
     } else {
-      return(paste0(word, "s"))
+      paste0(word, "s")
     }
   } else {
-    return(word)
+    word
   }
 }
 
@@ -755,9 +747,9 @@ safe_mean <- function(x, ...) {
   if (length(temp) == 0) {
     return(NA)
   }
-  out <- mean(temp, na.rm = T)
+  out <- mean(temp, na.rm = TRUE)
   attributes(out)$N <- length(temp[!is.na(temp)])
-  return(out)
+  out
 }
 
 
@@ -773,9 +765,9 @@ safe_sd <- function(x, ...) {
   if (length(temp) == 0) {
     return(NA)
   }
-  out <- sd(temp, na.rm = T)
+  out <- sd(temp, na.rm = TRUE)
   attributes(out)$N <- length(temp[!is.na(temp)])
-  return(out)
+  out
 }
 
 
@@ -791,9 +783,9 @@ safe_min <- function(x, ...) {
   if (length(temp) == 0) {
     return(NA)
   }
-  out <- min(temp, na.rm = T)
+  out <- min(temp, na.rm = TRUE)
   attributes(out)$N <- length(temp[!is.na(temp)])
-  return(out)
+  out
 }
 
 
@@ -817,7 +809,9 @@ pos_diff <- function(a, b) {
 
 #' Coalescing join
 #'
-#' Source: https://www.r-bloggers.com/2023/05/replace-missing-value-from-other-columns-using-coalesce-join-in-dplyr/
+#' Source:
+#' https://www.r-bloggers.com/2023/05/
+#' replace-missing-value-from-other-columns-using-coalesce-join-in-dplyr/
 #'
 #' @param x Left, as data frame.
 #' @param y Right, as data frame.
@@ -875,29 +869,33 @@ coalesce_join <- function(
 #'
 trialday_to_day <- function(x) {
   if (any(x[which(!is.na(x))] == 0)) stop("Trial day cannot be zero!")
-  return(x + (x > 0) * -1)
+  x + (x > 0) * -1
 }
 
 
 #' Check if a string matches ISO 8601 date-time format
 #'
 #' This function checks whether a character string complies with the ISO 8601
-#' standard for date-time representation (combined date and time). Unlike the more
-#' general `is_iso8601_format()` function, this specifically checks for the
+#' standard for date-time representation (combined date and time). Unlike the
+#' more general `is_iso8601_format()` function, this specifically checks for the
 #' presence of both date and time components.
 #'
 #' Valid formats include:
 #' - Extended format with separators: "2023-10-15T14:30:00"
 #' - Basic format without separators: "20231015T143000"
-#' - With timezone information: "2023-10-15T14:30:00Z" or "2023-10-15T14:30:00+02:00"
+#' - With timezone information: "2023-10-15T14:30:00Z" or
+#' "2023-10-15T14:30:00+02:00"
 #' - With fractional seconds: "2023-10-15T14:30:00.123"
-#' - Using space instead of T separator: "2023-10-15 14:30:00" (non-strict mode only)
+#' - Using space instead of T separator: "2023-10-15 14:30:00" (non-strict mode
+#' only)
 #'
 #' @param x A character string or vector of strings to check.
-#' @param strict Logical, whether to strictly enforce ISO 8601 specification. Default is FALSE,
-#'   which allows some common variations like space instead of 'T' separator.
+#' @param strict Logical, whether to strictly enforce ISO 8601 specification.
+#'   Default is FALSE, which allows some common variations like space instead of
+#'   'T' separator.
 #'
-#' @return Logical value indicating whether the string is in ISO 8601 date-time format.
+#' @return Logical value indicating whether the string is in ISO 8601 date-time
+#'   format.
 #' @export
 #' @keywords internal
 #'
@@ -925,8 +923,8 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
   date_basic <- "\\d{4}\\d{2}\\d{2}" # YYYYMMDD
 
   # Time patterns
-  time_extended <- "\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?" # HH:MM:SS(.sss)
-  time_basic <- "\\d{2}\\d{2}\\d{2}(?:\\.\\d+)?" # HHMMSS(.sss)
+  time_extended <- "\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?"
+  time_basic <- "\\d{2}\\d{2}\\d{2}(?:\\.\\d+)?"
 
   # Timezone pattern
   timezone <- "(?:Z|[+-]\\d{2}(?::\\d{2}|\\d{2}))?"
@@ -970,7 +968,7 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
       grepl(datetime_mixed2, str)
   })
 
-  return(as.logical(result))
+  as.logical(result)
 }
 
 
@@ -978,8 +976,8 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
 #'
 #' This function checks whether a character string complies with the ISO 8601
 #' standard for date representation (without time components). Unlike the more
-#' general `is_iso8601_format()` function or the `is_iso8601_datetime()` function,
-#' this specifically validates date-only formats.
+#' general `is_iso8601_format()` function or the `is_iso8601_datetime()`
+#' function, this specifically validates date-only formats.
 #'
 #' Valid formats include:
 #' - Extended format with separators: "2023-10-15"
@@ -988,21 +986,22 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
 #' - Reduced precision (year only): "2023"
 #'
 #' @param x A character string or vector of strings to check.
-#' @param allow_reduced_precision Logical, whether to allow reduced precision formats
-#'   (year-month or year only). Default is TRUE.
+#' @param allow_reduced_precision Logical, whether to allow reduced precision
+#'   formats (year-month or year only). Default is TRUE.
 #'
-#' @return Logical value indicating whether the string is in ISO 8601 date format.
+#' @return Logical value indicating whether the string is in ISO 8601 date
+#'   format.
 #' @export
 #' @keywords internal
 #'
 #' @examples
-#' is_iso8601_date("2023-10-15") # TRUE
-#' is_iso8601_date("20231015") # TRUE
+#' is_iso8601_date("2023-10-15") # TRUE is_iso8601_date("20231015") # TRUE
 #' is_iso8601_date("2023-10") # TRUE (with default allow_reduced_precision=TRUE)
 #' is_iso8601_date("2023") # TRUE (with default allow_reduced_precision=TRUE)
-#' is_iso8601_date("2023-10", FALSE) # FALSE (with allow_reduced_precision=FALSE)
-#' is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
-#' is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time component)
+#' is_iso8601_date("2023-10", FALSE) # FALSE (with
+#' allow_reduced_precision=FALSE) is_iso8601_date("2023/10/15") # FALSE (not ISO
+#' 8601 format) is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time
+#' component)
 is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
   if (!is.character(x)) {
     stop("Input must be a character string")
@@ -1041,165 +1040,12 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
       grepl(year_month_basic, str) ||
       grepl(year_only, str)
 
-    return(is_full_date || is_reduced_precision)
+    is_full_date || is_reduced_precision
   })
 
   # Ensure logical return type
-  return(as.logical(result))
+  as.logical(result)
 }
-
-
-# find_duplicates <- function(
-#     df,
-#     fields = NULL,
-#     count_only = FALSE,
-#     return_all_cols = TRUE,
-#     additional_cols = NULL) {
-#   # input validation
-#   if(!is.data.frame(df)) {
-#     stop("df must be a data frame!")
-#   }
-#   validate_char_param(fields, "fields",
-#                       allow_multiple = TRUE, allow_null = TRUE)
-#   validate_logical_param(count_only, "count_only")
-#   validate_logical_param(return_all_cols, "return_all_cols")
-#   validate_char_param(additional_cols, "additional_cols",
-#                       allow_multiple = TRUE, allow_null = TRUE)
-#
-#   if(is.null(fields)) {
-#     fields <- c("ID", "TIME", "ANALYTE")
-#   }
-#
-#   # Check if all specified fields exist in the data frame
-#   missing_fields <- setdiff(fields, names(df))
-#   if (length(missing_fields) > 0) {
-#     stop(paste0(
-#       plural("Field", length(missing_fields) > 1),
-#       " not found in input: ", nice_enumeration(missing_fields)))
-#   }
-#
-#   # check additional_cols
-#   missing_additional <- setdiff(additional_cols, names(df))
-#   if(length(missing_additional) > 0) {
-#     stop(paste0(
-#       plural("Field", length(missing_additional) > 1),
-#       "for 'additional_cols' not found in input: ",
-#       nice_enumeration(missing_additional)))
-#   }
-#
-#   # Group by specified fields and count occurrences
-#   duplicates <- df %>%
-#     dplyr::group_by(across(all_of(fields))) %>%
-#     dplyr::summarize(count = n(), .groups = "drop") %>%
-#     dplyr::filter(count > 1)
-#
-#   if (count_only) {
-#     return(nrow(duplicates))
-#   }
-#
-#   # Join back with original data to get all columns
-#   if (nrow(duplicates) > 0) {
-#     if (return_all_cols) {
-#       result <- duplicates %>%
-#         dplyr::left_join(df, by = fields) %>%
-#         dplyr::arrange(across(all_of(fields)))
-#     } else {
-#       # If additional_cols is NULL, use fields
-#       cols_to_keep <- unique(c(fields, additional_cols))
-#       result <- duplicates %>%
-#         dplyr::left_join(
-#           df %>% dplyr::select(all_of(cols_to_keep)),
-#           by = fields
-#         ) %>%
-#         dplyr::arrange(across(all_of(fields)))
-#     }
-#     return(as.data.frame(result))
-#   } else {
-#     return(NULL)
-#   }
-# }
-
-
-# resolve_duplicates <- function(
-#     df,
-#     fields = NULL,
-#     duplicate_function = mean,
-#     dependent_variable = "DV",
-#     na.rm = TRUE) {
-#   if(is.null(fields)) {
-#     fields <- c("ID", "TIME", "ANALYTE")
-#   }
-#
-#   # Check if all specified fields exist in the data frame
-#   missing_fields <- setdiff(fields, names(df))
-#   if (length(missing_fields) > 0) {
-#     stop(paste("The following fields do not exist in the data frame:",
-#                paste(missing_fields, collapse = ", ")))
-#   }
-#
-#   # Check if dependent_variable exists in the data frame
-#   if (!dependent_variable %in% names(df)) {
-#     stop(paste("The dependent variable", dependent_variable,
-#                "does not exist in the data frame"))
-#   }
-#
-#   # Validate that duplicate_function is a function
-#   if (!is.function(duplicate_function)) {
-#     stop("duplicate_function must be a function")
-#   }
-#
-#   # Get all columns that are not in fields
-#   other_cols <- setdiff(names(df), fields)
-#
-#   f <- function(x) {
-#     if(na.rm == TRUE){
-#       duplicate_function(x[!is.na(x)])
-#     } else {
-#       duplicate_function(x)
-#     }
-#   }
-#
-#   # result <- df %>%
-#   #   reframe(
-#   #     !!dependent_variable := f(.data[[dependent_variable]]),
-#   #     # .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
-#   #     .by = all_of(setdiff(names(df), c(dependent_variable, "REF")))
-#   #   ) %>% as.data.frame()
-#
-#
-#
-#   # if the MDV (missing dependent variable) field is present in the input,
-#   # exclude observations with MDV == 1 from the resolution function
-#   if("MDV" %in% names(df)) {
-#     result <- df %>%
-#       reframe(
-#         !!dependent_variable := f(
-#           .data[[dependent_variable]][.data$MDV != 1]
-#         ),
-#         .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
-#       ) %>%
-#       mutate(DV = case_when(is.nan(DV) ~ NA, .default = DV)) %>%
-#       mutate(MDV = as.numeric(is.na(.data$DV)))
-#
-#   } else {
-#     result <- df %>%
-#       reframe(
-#         !!dependent_variable := f(
-#           .data[[dependent_variable]]
-#         ),
-#         .by = all_of(setdiff(names(df), c(dependent_variable, "MDV", "REF")))
-#       )
-#   }
-#
-#
-#   # result <- result %>%
-#   #   mutate(MDV = as.numeric(is.na(.data$DV)))
-#   #
-#   #
-#
-#
-#   return(as.data.frame(result))
-# }
 
 
 #' Test whether a filter term is valid
@@ -1220,42 +1066,34 @@ is_valid_filter <- function(data, filter_string) {
   }
 
   # Check for empty filter string
-  if (nchar(trimws(filter_string)) == 0) {
+  if (nchar(trimws(filter_string)) == 0)
     return(FALSE)
-  }
 
   # Parse the filter expression
   filter_expr <- tryCatch(
     {
       rlang::parse_expr(filter_string)
     },
-    error = function(e) {
-      return(FALSE)
-    }
+    error = function(e) FALSE
   )
 
-  if (isFALSE(filter_expr)) {
+  if (isFALSE(filter_expr))
     return(FALSE)
-  }
 
   # Extract column names from the expression
   col_names <- tryCatch(
     {
       all.vars(filter_expr)
     },
-    error = function(e) {
-      return(FALSE)
-    }
+    error = function(e) FALSE
   )
 
-  if (isFALSE(col_names)) {
+  if (isFALSE(col_names))
     return(FALSE)
-  }
 
   # Check if all columns exist in the data frame
-  if (!all(col_names %in% names(data))) {
+  if (!all(col_names %in% names(data)))
     return(FALSE)
-  }
 
   # Try to evaluate the filter expression
   result <- tryCatch(
@@ -1284,14 +1122,14 @@ is_valid_filter <- function(data, filter_string) {
 
       # Try to evaluate the filter on the test row
       eval_result <- dplyr::filter(test_row, !!filter_expr)
-      TRUE
+      return(TRUE)
     },
     error = function(e) {
       FALSE
     }
   )
 
-  return(result)
+  result
 }
 
 
@@ -1317,10 +1155,12 @@ dv_na_to_zero <- function(obj) {
 #' column is one where all rows with the same ID have the same value.
 #'
 #' @param df A data frame.
-#' @param id_col Character string specifying the ID column name. Defaults to "ID".
+#' @param id_col Character string specifying the ID column name. Defaults to
+#'   "ID".
 #'
-#' @return A character vector of column names that are baseline columns (constant
-#'   per ID). Returns an empty character vector if no baseline columns are found.
+#' @return A character vector of column names that are baseline columns
+#'   (constant per ID). Returns an empty character vector if no baseline columns
+#'   are found.
 #'
 #' @import dplyr
 #' @export
@@ -1376,12 +1216,12 @@ identify_baseline_columns <- function(df, id_col = "ID") {
         .groups = "drop"
       )
 
-    # Column is baseline if all IDs have at most 1 distinct value
-    # (allowing for NA values - if all values are NA for an ID, that's still baseline)
+    # Column is baseline if all IDs have at most 1 distinct value (allowing for
+    # NA values - if all values are NA for an ID, that's still baseline)
     if (all(distinct_counts$n_distinct <= 1)) {
       baseline_cols <- c(baseline_cols, col)
     }
   }
 
-  return(baseline_cols)
+  baseline_cols
 }
