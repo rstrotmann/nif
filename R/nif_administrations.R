@@ -223,13 +223,6 @@ make_administration <- function(
     vs <- domain(sdtm, "vs")
   }
 
-  # ## to do: Should this be a stop()?
-  # assertthat::assert_that(
-  #   extrt %in% ex$EXTRT,
-  #   msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
-  # )
-  # ## end to do
-
   if (!extrt %in% ex$EXTRT)
     stop(paste0("Treatment '", extrt, "' not found in EXTRT!"))
 
