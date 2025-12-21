@@ -449,3 +449,4 @@ test_that("expand_ex handles multiple subjects with different episode lengths", 
   expect_equal(sum(result$USUBJID == "B"), 5)
 })
 
+

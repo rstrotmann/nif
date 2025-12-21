@@ -865,11 +865,12 @@ max_admin_time <- function(obj, analyte = NULL) {
 max_observation_time <- function(obj, analyte = NULL) {
   times <- obj |>
     ensure_analyte() |>
-    {\(.) if (!is.null(analyte)) filter(., ANALYTE %in% analyte) else .}() |>
+    # {\(.) if (!is.null(analyte)) filter(., ANALYTE %in% analyte) else .}() |>
+    filter(is.null(analyte) | ANALYTE %in% analyte) |>
     filter(.data$EVID == 0) |>
     pull(.data$TIME)
 
-  if (length(times) == 0) {
+  if (length(times) == 0 || all(is.na(times))) {
     NA
   } else {
     max(times, na.rm = TRUE)
@@ -891,15 +892,21 @@ max_observation_time <- function(obj, analyte = NULL) {
 #' max_time(examplinib_poc_nif)
 #' max_time(examplinib_poc_nif, analyte = "RS2023")
 #' max_time(examplinib_poc_nif, only_observations = TRUE)
-max_time <- function(obj, time_field = "TIME", analyte = NULL,
-                     only_observations = TRUE) {
+max_time <- function(
+    obj,
+    time_field = "TIME",
+    analyte = NULL,
+    only_observations = TRUE) {
   times <- obj |>
     ensure_analyte() |>
-    {\(.) if (!is.null(analyte))
-       filter(., .data$ANALYTE %in% analyte) else .}() |>
-    {\(.) if (only_observations == TRUE)
-       filter(., .data$EVID == 0 & !is.na(.data$DV)) else .}() |>
-    pull(.data[[time_field]])
+    # {\(.) if (!is.null(analyte))
+    #    filter(., .data$ANALYTE %in% analyte) else .}() |>
+    filter(is.null(analyte) | ANALYTE %in% analyte) %>%
+
+    # {\(.) if (only_observations == TRUE)
+    #    filter(., .data$EVID == 0 & !is.na(.data$DV)) else .}() |>
+    filter(only_observations == FALSE | (.data$EVID == 0 & !is.na(.data$DV))) |>
+        pull(.data[[time_field]])
 
   if (length(times) == 0) {
     return(NA)
