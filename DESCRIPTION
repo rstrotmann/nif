@@ -38,7 +38,8 @@ Imports:
     shinyjs,
     lifecycle,
     pins,
-    cli
+    cli,
+    magrittr
 Suggests: 
     knitr,
     tibble,

@@ -18,13 +18,13 @@ date_list <- function(stdtc, endtc, stdy = NA, endy = NA) {
     }
   )
 
-  if (!is.na(end_date) & end_date < start_date) {
+  if (!is.na(end_date) && end_date < start_date) {
     stop(paste0(
       "End date before start date for: ", stdtc, " to ", endtc
     ))
   }
 
-  if (!is.na(endy) & !is.na(stdy) & endy < stdy) {
+  if (!is.na(endy) && !is.na(stdy) && endy < stdy) {
     stop(paste0(
       "End day before start day for: ", stdy, " to ", endy
     ))
@@ -50,7 +50,7 @@ date_list <- function(stdtc, endtc, stdy = NA, endy = NA) {
     stop("DTC list and DY list have different lengths!")
   }
 
-  return(c(list(dtc_list), list(dy_list)))
+  c(list(dtc_list), list(dy_list))
 }
 
 
@@ -66,7 +66,7 @@ expand_ex <- function(ex) {
   # Input validation
   if (validate) {
     if (!is.data.frame(ex)) stop("Input must be a data frame")
-    ex %>%
+    ex |>
       assertr::verify(assertr::has_all_names(
         "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
       ))
@@ -95,7 +95,6 @@ expand_ex <- function(ex) {
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
     rowwise() %>%
-    # mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)) %>%
     mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1]) %>%
     {
       if (all(c("EXSTDY", "EXENDY") %in% names(ex))) {
@@ -115,10 +114,10 @@ expand_ex <- function(ex) {
     )) %>%
     # make imputation field
     mutate(IMPUTATION = case_when(
-      row_number() == n() & !is.na(EXENDTC_time) ~ .data$IMPUTATION, # no comment
+      row_number() == n() & !is.na(EXENDTC_time) ~ .data$IMPUTATION,
       row_number() == n() & row_number() != 1 & is.na(EXENDTC_time) &
         !is.na(EXSTDTC_time) ~ "time carried forward",
-      row_number() == 1 & !is.na(EXSTDTC_time) ~ .data$IMPUTATION, # no comment
+      row_number() == 1 & !is.na(EXSTDTC_time) ~ .data$IMPUTATION,
       !is.na(EXSTDTC_time) ~ "time carried forward",
       .default = "no time information"
     )) %>%
@@ -134,7 +133,8 @@ expand_ex <- function(ex) {
 #' Compile administration data frame
 #'
 #' @details
-#' A discussion on EC vs EX is provided [here](https://www.cdisc.org/kb/ecrf/exposure-collected#:~:text=In%20the%20SDTMIG%2C%20the%20Exposure,data%20collected%20on%20the%20CRF.)
+#' A discussion on EC vs EX is provided
+#' [here](https://www.cdisc.org/kb/ecrf/exposure-collected)
 #'
 #' @details
 #' # Time imputations and filtering
@@ -288,7 +288,8 @@ make_administration <- function(
         cli::cli_alert_warning("Cut off date applied!")
         cli::cli_text(paste0(
           nrow(cut_off_rows),
-          " administrations episodes for ", extrt, " begin after the cut-off date (",
+          " administrations episodes for ", extrt,
+          " begin after the cut-off date (",
           format(cut_off_date), ") and were deleted from the data set:"
         ))
         cli::cli_verbatim(
@@ -307,7 +308,6 @@ make_administration <- function(
     # time imputations
     impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
     impute_missing_exendtc(silent = silent) %>%
-    # impute_exendtc_to_rfendtc(dm) %>%
     filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) %>%
     decompose_dtc("EXENDTC") %>%
     # make generic fields
@@ -322,18 +322,13 @@ make_administration <- function(
   if ("pc" %in% names(sdtm$domains)) {
     pc <- domain(sdtm, "pc") %>% lubrify_dates()
 
-    # admin <- admin %>%
-    #   {if("PCRFTDTC" %in% names(pc))
-    #     impute_admin_times_from_pcrftdtc(
-    #       ., pc, analyte, analyte, silent = silent) else .}
-
     if ("PCRFTDTC" %in% names(pc)) {
       admin <- admin %>%
         impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
     }
   }
 
-  admin <- admin %>%
+  admin %>%
     # carry forward missing administration times
     decompose_dtc("DTC") %>%
     arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) %>%
@@ -349,7 +344,6 @@ make_administration <- function(
     inner_join(sbs, by = "USUBJID") %>%
     group_by(.data$USUBJID) %>%
     mutate(TRTDY = as.numeric(
-      # difftime(date(.data$DTC), date(safe_min(.data$RFXSTDTC))),
       ## changed from RFXSTDTC to RFSTDTC. The difference between both dates is
       ## that RFXSTDTC includes any exposure captured in the EX domain, whereas
       ## RFSTDTC refers to the first exposure to study treatment.
@@ -359,8 +353,6 @@ make_administration <- function(
     ) + 1) %>%
     ungroup() %>%
     new_nif()
-
-  return(admin)
 }
 
 
