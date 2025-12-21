@@ -20,5 +20,5 @@ If baseline creatinine clearance (BL_CRCL) is not included in the input, it
 will be calculated first.
 }
 \examples{
-as.data.frame(add_bl_renal(examplinib_poc_nif))
+head(add_bl_renal(examplinib_poc_nif), 5)
 }

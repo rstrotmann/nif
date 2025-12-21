@@ -2,7 +2,18 @@
 % Please edit documentation in R/nif_class.R
 \name{last_dtc}
 \alias{last_dtc}
-\title{Last recorded date-time}
+\title{#' Generate the XXH128 hash of a nif object
+#'
+#' @param obj A nif object.
+#'
+#' @returns The XXH128 hash of the nif object as character.
+#' @export
+#' @importFrom rlang hash
+hash.nif <- function(obj) {
+validate_nif(obj)
+NextMethod(obj)
+}
+Last recorded date-time}
 \usage{
 last_dtc(obj)
 }
@@ -13,5 +24,16 @@ last_dtc(obj)
 A POSIXct scalar.
 }
 \description{
+#' Generate the XXH128 hash of a nif object
+#'
+#' @param obj A nif object.
+#'
+#' @returns The XXH128 hash of the nif object as character.
+#' @export
+#' @importFrom rlang hash
+hash.nif <- function(obj) {
+validate_nif(obj)
+NextMethod(obj)
+}
 Last recorded date-time
 }

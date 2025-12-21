@@ -22,5 +22,5 @@ the data set.
 max_admin_time(examplinib_fe_nif)
 max_admin_time(examplinib_poc_nif)
 max_admin_time(examplinib_poc_min_nif)
-max_admin_time(examplinib_poc_min_nif, analyte = "CMT2")
+max_admin_time(examplinib_poc_min_nif, analyte = "CMT1")
 }

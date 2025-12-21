@@ -94,7 +94,7 @@ print.nif <- function(x, color = FALSE, ...) {
     cat(paste0(hline, " NONMEM Input Format (NIF) data ", hline, "\n"))
 
     n_obs <- x |>
-      {\(.) if ("EVID" %in% names(.)) filter(., .data$EVID == 0) else .}() |>
+      filter(!"EVID" %in% names(x) | .data$EVID == 0) |>
       nrow()
     n_subs <- subjects(x) |>
       nrow()
@@ -293,9 +293,11 @@ subjects.nif <- function(obj) {
     stop("ID column missing!")
   }
 
+  if (!"USUBJID" %in% names(obj))
+    obj <- mutate(obj, USUBJID = NA)
+
   obj |>
     as.data.frame() |>
-    {\(.) if (!"USUBJID" %in% names(.)) mutate(., USUBJID = NA) else .}() |>
     select(any_of(c("ID", "USUBJID"))) |>
     distinct()
 }
@@ -831,15 +833,16 @@ n_administrations <- function(obj) {
 #' max_admin_time(examplinib_fe_nif)
 #' max_admin_time(examplinib_poc_nif)
 #' max_admin_time(examplinib_poc_min_nif)
-#' max_admin_time(examplinib_poc_min_nif, analyte = "CMT2")
+#' max_admin_time(examplinib_poc_min_nif, analyte = "CMT1")
 max_admin_time <- function(obj, analyte = NULL) {
   times <- obj |>
     ensure_analyte() |>
-    {\(.) if (!is.null(analyte)) filter(., ANALYTE %in% analyte) else .}() |>
+    as.data.frame() |>
+    filter(is.null(analyte) | .data$ANALYTE %in% analyte) |>
     filter(.data$EVID == 1) |>
     pull(.data$TIME)
 
-  if (length(times) == 0) {
+  if (length(times) == 0 || all(is.na(times))) {
     NA
   } else {
     max(times, na.rm = TRUE)
@@ -865,7 +868,6 @@ max_admin_time <- function(obj, analyte = NULL) {
 max_observation_time <- function(obj, analyte = NULL) {
   times <- obj |>
     ensure_analyte() |>
-    # {\(.) if (!is.null(analyte)) filter(., ANALYTE %in% analyte) else .}() |>
     filter(is.null(analyte) | ANALYTE %in% analyte) |>
     filter(.data$EVID == 0) |>
     pull(.data$TIME)
@@ -899,16 +901,11 @@ max_time <- function(
     only_observations = TRUE) {
   times <- obj |>
     ensure_analyte() |>
-    # {\(.) if (!is.null(analyte))
-    #    filter(., .data$ANALYTE %in% analyte) else .}() |>
-    filter(is.null(analyte) | ANALYTE %in% analyte) %>%
-
-    # {\(.) if (only_observations == TRUE)
-    #    filter(., .data$EVID == 0 & !is.na(.data$DV)) else .}() |>
+    filter(is.null(analyte) | ANALYTE %in% analyte) |>
     filter(only_observations == FALSE | (.data$EVID == 0 & !is.na(.data$DV))) |>
-        pull(.data[[time_field]])
+    pull(.data[[time_field]])
 
-  if (length(times) == 0) {
+  if (length(times) == 0 || all(is.na(times))) {
     return(NA)
   }
   max(times, na.rm = TRUE)
@@ -964,9 +961,7 @@ guess_parent <- function(obj) {
   } else {
     obs <- obj |>
       ensure_analyte() |>
-      filter(EVID == 0) |>
-      {\(.) if ("METABOLITE" %in% names(obj))
-         filter(., METABOLITE == FALSE) else .}() |>
+      filter(!"METABOLITE" %in% names(obj) | .data$METABOLITE == FALSE) |>
       reframe(n = n(), .by = ANALYTE) |>
       arrange(-n, "ANALYTE")
 
@@ -1009,9 +1004,7 @@ add_dose_level <- function(obj) {
     select("ID", "ANALYTE", "DOSE") |>
     group_by(.data$ID)
 
-  if (ungroup(temp) |>
-      distinct(.data$ANALYTE) |>
-      nrow() == 1) {
+  if (ungroup(temp) |> distinct(.data$ANALYTE) |> nrow() == 1) {
     temp <- temp |>
       mutate(DL = .data$DOSE)
   } else {
@@ -1022,10 +1015,7 @@ add_dose_level <- function(obj) {
       summarize(DL = paste0(.data$DL, collapse = "+"))
   }
 
-  left_join(
-    obj,
-    select(temp, ID, DL),
-    by = "ID")
+  left_join(obj, select(temp, ID, DL), by = "ID")
 }
 
 
@@ -1068,11 +1058,12 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
 #' @return A NIF object.
 #' @export
 #' @examples
-#' as.data.frame(add_bl_renal(examplinib_poc_nif))
+#' head(add_bl_renal(examplinib_poc_nif), 5)
 add_bl_renal <- function(obj, method = egfr_cg) {
+  if (!"BL_CRCL" %in% names(obj))
+    obj <- add_bl_crcl(obj, method = method)
+
   obj |>
-    {\(.) if (!"BL_CRCL" %in% names(obj))
-       add_bl_crcl(., method = method) else .}() |>
     mutate(BL_RENAL = as.character(
       cut(.data$BL_CRCL,
         breaks = c(0, 30, 60, 90, Inf),
@@ -1248,19 +1239,6 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
 #' subjects(examplinib_poc_nif)[1, "USUBJID"])
 filter_subject.nif <- function(obj, usubjid) {
   filter(obj, .data$USUBJID %in% usubjid)
-}
-
-
-#' Generate the XXH128 hash of a nif object
-#'
-#' @param obj A nif object.
-#'
-#' @returns The XXH128 hash of the nif object as character.
-#' @export
-#' @importFrom rlang hash
-hash.nif <- function(obj) {
-  validate_nif(obj)
-  NextMethod(obj)
 }
 
 
