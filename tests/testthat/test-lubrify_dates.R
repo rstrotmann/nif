@@ -217,3 +217,13 @@ test_that("lubrify_dates works with tibble input", {
   expect_s3_class(result$ENDTC, "POSIXct")
   expect_s3_class(result, "tbl_df")
 })
+
+test_that("lubrify_dats works with only NA values", {
+  test_data <- tibble::tribble(
+    ~ID, ~EXSTDTC, ~EXENDTC,
+    "1", "2025-12-21T08:00", NA
+  )
+
+  result = lubrify_dates(test_data)
+  expect_s3_class(result$EXENDTC, "POSIXct")
+})

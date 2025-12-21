@@ -469,6 +469,9 @@ lubrify_dates <- function(obj, col = NULL) {
       dplyr::mutate_at(
         vars(ends_with("DTC")),
         function(x) {
+          if (all(is.na(x)))
+            return(as_datetime(x))
+
           if (!is.POSIXct(x)) {
             x <- lubridate::as_datetime(x, format = dtc_formats)
           }

@@ -30,7 +30,7 @@ add_administration(
 
 \item{subject_filter}{The filtering to apply to the DM domain, as string,}
 
-\item{cut_off_date}{The data cut-off date as Posix date-time.}
+\item{cut_off_date}{The data cut-off date as Posix date-time or character.}
 
 \item{keep}{Columns to keep after cleanup, as character.}
 

@@ -26,7 +26,7 @@ make_administration(
 
 \item{subject_filter}{The filtering to apply to the DM domain, as string,}
 
-\item{cut_off_date}{The data cut-off date as Posix date-time.}
+\item{cut_off_date}{The data cut-off date as Posix date-time or character.}
 
 \item{keep}{Columns to keep after cleanup, as character.}
 
@@ -39,7 +39,8 @@ A data frame.
 Compile administration data frame
 }
 \details{
-A discussion on EC vs EX is provided \href{https://www.cdisc.org/kb/ecrf/exposure-collected#:~:text=In\%20the\%20SDTMIG\%2C\%20the\%20Exposure,data\%20collected\%20on\%20the\%20CRF.}{here}
+A discussion on EC vs EX is provided
+\href{https://www.cdisc.org/kb/ecrf/exposure-collected}{here}
 }
 \section{Time imputations and filtering}{
 The following time imputations and filters are applied in the given

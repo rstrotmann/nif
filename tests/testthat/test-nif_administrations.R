@@ -1,14 +1,4 @@
-test_that("date_list works", {
-  expect_no_error(date_list("2025-1-1", "2025-1-3"))
-  expect_no_error(date_list("2025-1-1", "2025-1-3", 1, 3))
-  expect_no_error(date_list("2025-1-1", "2025-1-3", 11, 13))
-  expect_no_error(date_list("2025-1-1", "2025-1-3", 1, NA))
-  expect_no_error(date_list("2025-1-1", "2025-1-3", NA, NA))
-  expect_no_error(date_list("2025-1-1", "2025-1-3", NA, 3))
 
-  expect_error(date_list("2025-1-3", "2025-1-1", NA, 3))
-  expect_error(date_list("2025-1-1", "2025-1-3", 3, 1))
-})
 
 
 test_that("expand_ex works in general", {

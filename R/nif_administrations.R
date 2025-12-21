@@ -43,7 +43,7 @@ date_list <- function(stdtc, endtc, stdy = NA, endy = NA) {
       dy_list <- seq(stdy, stdy + length(dtc_list) - 1)
     }
   } else {
-    dy_list <- rep(NA, length(dtc_list))
+    dy_list <- rep(NA_integer_, length(dtc_list))
   }
 
   if (length(dtc_list) != length(dy_list)) {
@@ -61,15 +61,20 @@ date_list <- function(stdtc, endtc, stdy = NA, endy = NA) {
 #' @return A data frame.
 #' @noRd
 expand_ex <- function(ex) {
-  validate <- TRUE
-
   # Input validation
-  if (validate) {
-    if (!is.data.frame(ex)) stop("Input must be a data frame")
-    ex |>
-      assertr::verify(assertr::has_all_names(
-        "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
-      ))
+  if (!is.data.frame(ex)) {
+    stop("Input must be a data frame")
+  }
+
+  missing_ex_fields <- setdiff(
+    c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"),
+    names(ex)
+  )
+
+  if (length(missing_ex_fields) > 0) {
+    stop(paste0(
+      "Missing fields: ", nice_enumeration(missing_ex_fields), "!"
+    ))
   }
 
   # Convert EXSTDY and EXENDY to numeric if they exist
@@ -80,24 +85,14 @@ expand_ex <- function(ex) {
     ex$EXENDY <- as.numeric(ex$EXENDY)
   }
 
-  ex %>%
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
-    )) %>%
-    {
-      if (!"IMPUTATION" %in% names(.)) {
-        mutate(., IMPUTATION = "")
-      } else {
-        .
-      }
-    } %>%
-    decompose_dtc(c("EXSTDTC", "EXENDTC")) %>%
+  ex |>
+    {\(.) if ("IMPUTATION" %in% names(.)) . else mutate(., IMPUTATION = "") }() |>
+    decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
-    rowwise() %>%
-    mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1]) %>%
-    {
-      if (all(c("EXSTDY", "EXENDY") %in% names(ex))) {
+    rowwise() |>
+    mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1]) |>
+    {\(.) if (all(c("EXSTDY", "EXENDY") %in% names(.))) {
         mutate(., EXDY = date_list(
           .data$EXSTDTC_date, .data$EXENDTC_date,
           .data$EXSTDY, .data$EXENDY
@@ -105,13 +100,13 @@ expand_ex <- function(ex) {
       } else {
         .
       }
-    } %>%
-    tidyr::unnest(any_of(c("DTC_date", "EXDY"))) %>%
-    group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) %>%
+    }() |>
+    tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
+    group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
     mutate(DTC_time = case_when(
       row_number() == n() & !is.na(EXENDTC_time) ~ .data$EXENDTC_time,
       .default = .data$EXSTDTC_time
-    )) %>%
+    )) |>
     # make imputation field
     mutate(IMPUTATION = case_when(
       row_number() == n() & !is.na(EXENDTC_time) ~ .data$IMPUTATION,
@@ -120,9 +115,9 @@ expand_ex <- function(ex) {
       row_number() == 1 & !is.na(EXSTDTC_time) ~ .data$IMPUTATION,
       !is.na(EXSTDTC_time) ~ "time carried forward",
       .default = "no time information"
-    )) %>%
-    ungroup() %>%
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
+    )) |>
+    ungroup() |>
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
     select(-c(
       "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time",
       "DTC_date", "DTC_time"
@@ -198,7 +193,7 @@ expand_ex <- function(ex) {
 #' @param extrt The EXTRT for the administration, as character.
 #' @param analyte The name of the analyte as character.
 #' @param cmt The compartment for the administration as numeric.
-#' @param cut_off_date The data cut-off date as Posix date-time.
+#' @param cut_off_date The data cut-off date as Posix date-time or character.
 #' @param keep Columns to keep after cleanup, as character.
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #'
@@ -218,20 +213,25 @@ make_administration <- function(
   keep = "",
   silent = NULL
 ) {
-  dm <- domain(sdtm, "dm") %>% lubrify_dates()
-  ex <- domain(sdtm, "ex") %>% lubrify_dates()
+  dm <- domain(sdtm, "dm") |>
+    lubrify_dates()
+  ex <- domain(sdtm, "ex") |>
+    lubrify_dates()
   vs <- NULL
 
   if (has_domain(sdtm, "vs")) {
     vs <- domain(sdtm, "vs")
   }
 
-  ## to do: Should this be a stop()?
-  assertthat::assert_that(
-    extrt %in% ex$EXTRT,
-    msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
-  )
-  ## end to do
+  # ## to do: Should this be a stop()?
+  # assertthat::assert_that(
+  #   extrt %in% ex$EXTRT,
+  #   msg = paste0("Treatment '", extrt, "' not found in EXTRT!")
+  # )
+  # ## end to do
+
+  if (!extrt %in% ex$EXTRT)
+    stop(paste0("Treatment '", extrt, "' not found in EXTRT!"))
 
   ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
@@ -253,33 +253,24 @@ make_administration <- function(
       silent = silent
     )
   } else {
-    cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)
+    if (!is.POSIXct(cut_off_date))
+      cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)
   }
 
   sbs <- make_subjects(dm, vs, subject_filter, keep)
 
-  admin <- ex %>%
-    mutate(SRC_DOMAIN = "EX") %>%
-    {
-      if ("EXSEQ" %in% names(ex)) {
-        mutate(., SRC_SEQ = EXSEQ)
-      } else {
-        mutate(., SRC_SEQ = NA)
-      }
-    } %>%
-    {
-      if (!"IMPUTATION" %in% names(.)) {
-        mutate(., IMPUTATION = "")
-      } else {
-        .
-      }
-    } %>%
-    filter(.data$EXTRT == extrt) %>%
+  admin <- ex |>
+    mutate(SRC_DOMAIN = "EX") |>
+    {\(.) if ("EXSEQ" %in% names(ex))
+      mutate(., SRC_SEQ = EXSEQ) else mutate(., SRC_SEQ = NA)}() |>
+    {\(.) if (!"IMPUTATION" %in% names(.))
+      mutate(., IMPUTATION = "") else . }() |>
+    filter(.data$EXTRT == extrt) |>
     decompose_dtc("EXSTDTC")
 
   # apply cut-off date
-  cut_off_rows <- admin %>%
-    filter(.data$EXSTDTC > cut_off_date) %>%
+  cut_off_rows <- admin |>
+    filter(.data$EXSTDTC > cut_off_date) |>
     select(any_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "EXSEQ")))
 
   if (nrow(cut_off_rows) > 0) {
@@ -301,48 +292,49 @@ make_administration <- function(
     )
   }
 
-  admin <- admin %>%
+  admin <- admin |>
     filter(.data$EXSTDTC <= cut_off_date)
 
-  admin <- admin %>%
+  admin <- admin |>
     # time imputations
-    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) %>%
-    impute_missing_exendtc(silent = silent) %>%
-    filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) %>%
-    decompose_dtc("EXENDTC") %>%
+    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent)|>
+    impute_missing_exendtc(silent = silent) |>
+    filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) |>
+    decompose_dtc("EXENDTC") |>
     # make generic fields
     mutate(
       TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
       METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
       DOSE = EXDOSE, AMT = EXDOSE
-    ) %>%
+    ) |>
     expand_ex()
 
   # impute missing administration times from PCRFTDTC
   if ("pc" %in% names(sdtm$domains)) {
-    pc <- domain(sdtm, "pc") %>% lubrify_dates()
+    pc <- domain(sdtm, "pc") |>
+      lubrify_dates()
 
     if ("PCRFTDTC" %in% names(pc)) {
-      admin <- admin %>%
+      admin <- admin |>
         impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
     }
   }
 
-  admin %>%
+  admin |>
     # carry forward missing administration times
-    decompose_dtc("DTC") %>%
-    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) %>%
+    decompose_dtc("DTC") |>
+    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) |>
     mutate(IMPUTATION = case_when(
       is.na(.data$DTC_time) == TRUE ~ "time carried forward",
       .default = .data$IMPUTATION
-    )) %>%
-    group_by(.data$USUBJID, .data$ANALYTE) %>%
-    tidyr::fill("DTC_time", .direction = "down") %>%
-    ungroup() %>%
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) %>%
-    select(-c("DTC_date", "DTC_time")) %>%
-    inner_join(sbs, by = "USUBJID") %>%
-    group_by(.data$USUBJID) %>%
+    )) |>
+    group_by(.data$USUBJID, .data$ANALYTE) |>
+    tidyr::fill("DTC_time", .direction = "down") |>
+    ungroup() |>
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
+    select(-c("DTC_date", "DTC_time")) |>
+    inner_join(sbs, by = "USUBJID") |>
+    group_by(.data$USUBJID) |>
     mutate(TRTDY = as.numeric(
       ## changed from RFXSTDTC to RFSTDTC. The difference between both dates is
       ## that RFXSTDTC includes any exposure captured in the EX domain, whereas
@@ -350,8 +342,8 @@ make_administration <- function(
       ## Reference: https://www.lexjansen.com/phuse-us/2020/ds/DS07.pdf
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days"
-    ) + 1) %>%
-    ungroup() %>%
+    ) + 1) |>
+    ungroup() |>
     new_nif()
 }
 
@@ -412,6 +404,6 @@ add_administration <- function(
       sdtm, extrt, analyte, cmt, subject_filter, cut_off_date, keep,
       silent = silent
     )
-  ) %>%
+  ) |>
     normalize_nif(keep = keep)
 }
