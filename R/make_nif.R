@@ -35,7 +35,7 @@ guess_pcspec <- function(pc, silent = NULL) {
     "Selected specimen type: ", spec, "\n",
     silent = silent
   )
-  return(spec)
+  spec
 }
 
 
@@ -54,7 +54,7 @@ guess_lbspec <- function(lb) {
     "No specimen specified. Set to '", spec,
     "' as the most likely.", "\n"
   )
-  return(spec)
+  spec
 }
 
 
@@ -71,11 +71,11 @@ guess_lbspec <- function(lb) {
 #' @keywords internal
 #' @noRd
 index_nif <- function(nif) {
-  nif %>%
-    as.data.frame() %>%
-    dplyr::arrange(ID, TIME, -EVID) %>%
-    dplyr::mutate(REF = row_number()) %>%
-    dplyr::relocate(REF) %>%
+  nif |>
+    as.data.frame() |>
+    dplyr::arrange(ID, TIME, -EVID) |>
+    dplyr::mutate(REF = row_number()) |>
+    dplyr::relocate(REF) |>
     new_nif()
 }
 
@@ -93,27 +93,27 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
     if (length(x) == 0) {
       return(max(obj$DTC, na.rm = TRUE))
     }
-    return(max(x, na.rm = TRUE))
+    max(x, na.rm = TRUE)
   }
 
   if (keep_no_obs_sbs == FALSE) {
-    obj <- obj %>%
-      group_by(.data$ID) %>%
-      filter(sum(EVID == 0) > 0) %>%
+    obj <- obj |>
+      group_by(.data$ID) |>
+      filter(sum(EVID == 0) > 0) |>
       ungroup()
   }
   if (individual == TRUE) {
-    obj %>%
-      group_by(.data$ID) %>%
-      mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[EVID == 0])) %>%
-      ungroup() %>%
-      filter(.data$DTC <= .data$LAST_OBS_DTC) %>%
-      select(-c("LAST_OBS_DTC")) %>%
+    obj |>
+      group_by(.data$ID) |>
+      mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[EVID == 0])) |>
+      ungroup() |>
+      filter(.data$DTC <= .data$LAST_OBS_DTC) |>
+      select(-c("LAST_OBS_DTC")) |>
       new_nif()
   } else {
     last_obs_dtc <- max(obj$DTC[obj$EVID == 0])
-    obj %>%
-      filter(.data$DTC <= last_obs_dtc) %>%
+    obj |>
+      filter(.data$DTC <= last_obs_dtc) |>
       new_nif()
   }
 }
@@ -135,13 +135,13 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   validate_logical_param(cleanup)
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
 
-  obj %>%
-    mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
-    make_time() %>%
-    arrange(.data$DTC) %>%
-    index_nif() %>%
+  obj |>
+    mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) |>
+    make_time() |>
+    arrange(.data$DTC) |>
+    index_nif() |>
     # fill down subject-/parent-level fields
-    group_by(.data$ID, .data$PARENT) %>%
+    group_by(.data$ID, .data$PARENT) |>
     tidyr::fill(
       any_of(
         c(
@@ -151,10 +151,10 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
         )
       ),
       .direction = "downup"
-    ) %>%
-    fill(any_of(c(starts_with("BL_"))), .direction = "downup") %>%
-    ungroup() %>%
-    nif_cleanup(keep = keep) %>%
+    ) |>
+    fill(any_of(c(starts_with("BL_"))), .direction = "downup") |>
+    ungroup() |>
+    nif_cleanup(keep = keep) |>
     new_nif()
 }
 
@@ -176,6 +176,6 @@ nif_cleanup <- function(nif, keep = NULL) {
     "TREATMENT", keep
   ))
   selector <- selector[selector %in% names(nif)]
-  nif %>%
+  nif |>
     select(all_of(selector), starts_with("BL_"))
 }
