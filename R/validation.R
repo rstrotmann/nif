@@ -21,19 +21,12 @@ validate_domain <- function(domain, silent = NULL) {
   }
 
   # Check if domain$DOMAIN is empty
-  if (length(domain$DOMAIN) == 0 | all(domain$DOMAIN == "")) {
+  if (length(domain$DOMAIN) == 0 || all(domain$DOMAIN == "")) {
     stop("The DOMAIN column is empty")
   }
 
   # Get unique domain names and handle multiple values
   domain_name <- unique(domain$DOMAIN)
-  # if (length(domain_names) > 1) {
-  #   warning("Multiple domain values found: ", paste(domain_names, collapse = ", "),
-  #           ". Using first value: ", domain_names[1])
-  #   domain_name <- toupper(domain_names[1])
-  # } else {
-  #   domain_name <- toupper(domain_names)
-  # }
   if (length(domain_name) > 1) {
     stop(paste0(
       "Multiple domain values found: ", nice_enumeration(domain_name)
@@ -41,26 +34,25 @@ validate_domain <- function(domain, silent = NULL) {
   }
 
   if (!domain_name %in% unique(domain_model$DOMAIN)) {
-    # warning("Unknown domain '", domain_name, "' cannot be validated!")
     conditional_message(
       "Unknown domain '", domain_name, "' cannot be validated!",
       silent = silent
     )
-    return(invisible(TRUE))
+    invisible(TRUE)
   } else {
-    temp <- domain_model %>%
+    temp <- domain_model |>
       dplyr::filter(.data$DOMAIN == domain_name)
 
-    required_names <- temp %>%
-      dplyr::filter(.data$CORE == "Req") %>%
+    required_names <- temp |>
+      dplyr::filter(.data$CORE == "Req") |>
       dplyr::pull(.data$VARNAM)
 
-    expected_names <- temp %>%
-      dplyr::filter(.data$CORE == "Exp") %>%
+    expected_names <- temp |>
+      dplyr::filter(.data$CORE == "Exp") |>
       dplyr::pull(.data$VARNAM)
 
-    permitted_names <- temp %>%
-      dplyr::filter(.data$CORE == "Perm") %>%
+    permitted_names <- temp |>
+      dplyr::filter(.data$CORE == "Perm") |>
       dplyr::pull(.data$VARNAM)
 
     missing_req <- setdiff(required_names, colnames(domain))
@@ -94,7 +86,7 @@ validate_domain <- function(domain, silent = NULL) {
       )
     }
 
-    return(invisible(TRUE))
+    invisible(TRUE)
   }
 }
 
@@ -187,11 +179,9 @@ validate_param <- function(
   }
 
   # Type checking
-  if (
-    (type == "string" && !is.character(param)) ||
-      (type == "logical" && !is.logical(param)) ||
-      # (type == "numeric" && !(is.numeric(param) | is.na(param)))) {
-      (type == "numeric" && !is.numeric(param))) {
+  if ((type == "string" && !is.character(param)) ||
+        (type == "logical" && !is.logical(param)) ||
+        (type == "numeric" && !is.numeric(param))) {
     stop(paste0(param_name, " must be a ", type, " value"))
   }
 
@@ -201,11 +191,15 @@ validate_param <- function(
   }
 
   # Empty string check (only for character types)
-  if (type == "string" && !allow_empty && length(param) > 0 && any(nchar(param) == 0)) {
+  if (
+    type == "string" &&
+      !allow_empty && length(param) > 0 &&
+      any(nchar(param) == 0)
+  ) {
     stop(paste0(param_name, " must be a non-empty string"))
   }
 
-  return(invisible(NULL))
+  invisible(NULL)
 }
 
 
@@ -392,7 +386,7 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
     ))
   }
 
-  return(testcd)
+  testcd
 }
 
 
