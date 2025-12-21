@@ -114,7 +114,7 @@ recode_sex <- function(obj) {
   # Store original values for warning message
   orig_vals <- unique(obj$SEX[!is.na(obj$SEX)])
 
-  result <- obj %>%
+  result <- obj |>
     mutate(SEX = as.numeric(
       case_match(str_trim(toupper(as.character(.data$SEX))),
         "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
@@ -207,10 +207,10 @@ recode_race <- function(obj, coding_table = NULL, silent = NULL) {
     )
   }
 
-  obj %>%
-    left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") %>%
-    select(-c("RACE")) %>%
-    rename(RACE = RACEN) %>%
+  obj |>
+    left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") |>
+    select(-c("RACE")) |>
+    rename(RACE = RACEN) |>
     order_nif_columns()
 }
 
@@ -332,7 +332,7 @@ df_to_string <- function(
   }
 
   # Convert all columns to character, handling NA values
-  df <- as.data.frame(df) %>%
+  df <- as.data.frame(df) |>
     mutate(across(everything(), ~ ifelse(is.na(.), na_string, as.character(.))))
 
   # Create line renderer
@@ -410,7 +410,7 @@ dtc_formats <- c(
 #' @return A data frame
 #' @export
 standardize_date_format <- function(obj, fields = NULL) {
-  obj %>%
+  obj |>
     dplyr::mutate_at(fields, function(x) {
       lubridate::as_datetime(x, format = dtc_formats)
     })
@@ -427,7 +427,7 @@ standardize_date_format <- function(obj, fields = NULL) {
 #' @keywords internal
 #' @noRd
 isofy_date_format <- function(obj, fields = NULL) {
-  obj %>%
+  obj |>
     dplyr::mutate_at(fields, function(x) {
       format(x, "%Y-%m-%dT%H:%M")
     })
@@ -462,10 +462,10 @@ lubrify_dates <- function(obj, col = NULL) {
         nice_enumeration(missing_columns)
       ))
     }
-    obj %>%
+    obj |>
       mutate(across(all_of(col), ~ as_datetime(.x, format = dtc_formats)))
   } else {
-    obj %>%
+    obj |>
       dplyr::mutate_at(
         vars(ends_with("DTC")),
         function(x) {
@@ -490,7 +490,7 @@ lubrify_dates <- function(obj, col = NULL) {
 #' @keywords internal
 #' @noRd
 isofy_dates <- function(obj) {
-  obj %>%
+  obj |>
     dplyr::mutate_at(vars(ends_with("DTC")), ~ format(., "%Y-%m-%dT%H:%M"))
 }
 
@@ -546,25 +546,26 @@ pt_to_hours <- function(iso) {
     regex("(-)?PT(([0-9.]*)H)?(([0-9.]*)M)?"),
     group = c(1, 3, 5)
   )
+  colnames(temp) <- c("SIGN", "H", "MIN")
 
-  as.data.frame(temp) %>%
+  as.data.frame(temp) |>
     mutate(sign = case_match(
-      .[[1]],
+      .data$SIGN,
       "-" ~ -1,
       .default = 1
-    )) %>%
+    )) |>
     mutate(hours = case_when(
-      is.na(.[[2]]) ~ 0,
-      .default = as.numeric(.[[2]])
-    )) %>%
+      is.na(.data$H) ~ 0,
+      .default = as.numeric(.data$H)
+    )) |>
     mutate(mins = case_when(
-      is.na(.[[3]]) ~ 0,
-      .default = as.numeric(.[[3]])
-    )) %>%
+      is.na(.data$MIN) ~ 0,
+      .default = as.numeric(.data$MIN)
+    )) |>
     mutate(out = case_when(
-      is.na(.[[2]]) & is.na(.[[3]]) ~ NA,
+      is.na(.data$H) & is.na(.data$MIN) ~ NA,
       .default = .data$sign * (.data$hours + .data$mins / 60)
-    )) %>%
+    )) |>
     pull(.data$out)
 }
 
@@ -583,12 +584,12 @@ pt_to_hours <- function(iso) {
 #' @examples
 #' compose_dtc(date = "2022-09-29", time = "09:30")
 compose_dtc <- function(date, time) {
-  data.frame(date = as.character(date), time = as.character(time)) %>%
-    mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) %>%
-    mutate(DTC = str_trim(paste(as.character(.data$date), .data$time))) %>%
+  data.frame(date = as.character(date), time = as.character(time)) |>
+    mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) |>
+    mutate(DTC = str_trim(paste(as.character(.data$date), .data$time))) |>
     mutate(DTC = lubridate::as_datetime(.data$DTC,
       format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
-    )) %>%
+    )) |>
     pull(.data$DTC)
 }
 
@@ -596,7 +597,7 @@ compose_dtc <- function(date, time) {
 #' Decompose DTC field into date and time components
 #'
 #' @param obj A data frame.
-#' @param DTC_field The field to decompose as character.
+#' @param dtc_field The field to decompose as character.
 #'
 #' @return A data frame.
 #' @export
@@ -620,13 +621,13 @@ decompose_dtc <- function(obj, dtc_field) {
   dec_dtc <- function(fld) {
     dtc_date <- paste0(fld, "_date")
     dtc_time <- paste0(fld, "_time")
-    obj %>%
-      mutate(has_time = has_time(.data[[fld]])) %>%
-      mutate({{ dtc_date }} := extract_date(.data[[fld]])) %>%
+    obj |>
+      mutate(has_time = has_time(.data[[fld]])) |>
+      mutate({{ dtc_date }} := extract_date(.data[[fld]])) |>
       mutate({{ dtc_time }} := case_when(
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
         .default = NA
-      )) %>%
+      )) |>
       select(-c("has_time"))
   }
 
@@ -801,8 +802,8 @@ pos_diff <- function(a, b) {
   data.frame(
     a = a,
     b = b
-  ) %>%
-    mutate(diff = case_when(a - b < 0 ~ NA, .default = a - b)) %>%
+  ) |>
+    mutate(diff = case_when(a - b < 0 ~ NA, .default = a - b)) |>
     pull(diff)
 }
 
@@ -840,7 +841,7 @@ coalesce_join <- function(
   # If keep = "left", the value from the left table will be kept, vice versa.
   if (keep == "left") suffix_ <- suffix else suffix_ <- rev(suffix)
 
-  join(x, y, by = by, suffix = suffix) %>%
+  join(x, y, by = by, suffix = suffix) |>
     mutate(
       across( # Apply the coalesce function to all overlapped columns
         # Select columns ended with .x if keep = "left"; or .y if keep = "right"
@@ -995,13 +996,13 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
 #' @keywords internal
 #'
 #' @examples
-#' is_iso8601_date("2023-10-15") # TRUE is_iso8601_date("20231015") # TRUE
-#' is_iso8601_date("2023-10") # TRUE (with default allow_reduced_precision=TRUE)
-#' is_iso8601_date("2023") # TRUE (with default allow_reduced_precision=TRUE)
-#' is_iso8601_date("2023-10", FALSE) # FALSE (with
-#' allow_reduced_precision=FALSE) is_iso8601_date("2023/10/15") # FALSE (not ISO
-#' 8601 format) is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time
-#' component)
+#' is_iso8601_date("2023-10-15") # TRUE
+#' is_iso8601_date("20231015") # TRUE
+#' is_iso8601_date("2023-10") # TRUE
+#' is_iso8601_date("2023") # TRUE
+#' is_iso8601_date("2023-10", FALSE) # FALSE
+#' is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
+#' is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time component)
 is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
   if (!is.character(x)) {
     stop("Input must be a character string")
@@ -1052,10 +1053,11 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
 #'
 #' @param data A data frame.
 #' @param filter_string A filter term as character.
+#' @param silent Suppress messages.
 #'
 #' @returns Logical.
 #' @noRd
-is_valid_filter <- function(data, filter_string) {
+is_valid_filter <- function(data, filter_string, silent = TRUE) {
   # Input validation
   if (!is.data.frame(data)) {
     stop("data must be a data frame")
@@ -1098,30 +1100,16 @@ is_valid_filter <- function(data, filter_string) {
   # Try to evaluate the filter expression
   result <- tryCatch(
     {
-      # Create a test row with NA values for all columns
-      test_row <- data[1, , drop = FALSE]
-      if (nrow(data) == 0) {
-        # For empty data frames, create a row with appropriate types
-        test_row <- data.frame(
-          lapply(data, function(x) {
-            if (is.numeric(x)) {
-              0
-            } else if (is.character(x)) {
-              ""
-            } else if (is.logical(x)) {
-              FALSE
-            } else if (inherits(x, "Date")) {
-              as.Date("2000-01-01")
-            } else {
-              NA
-            }
-          }),
-          stringsAsFactors = FALSE
+      # Try to evaluate the filter on the test row
+      eval_result <- dplyr::filter(data, !!filter_expr)
+      if (nrow(eval_result) == 0) {
+        conditional_message(
+          "filter '",
+          filter_string,
+          "' does not give any results!",
+          silent = silent
         )
       }
-
-      # Try to evaluate the filter on the test row
-      eval_result <- dplyr::filter(test_row, !!filter_expr)
       return(TRUE)
     },
     error = function(e) {
@@ -1209,8 +1197,8 @@ identify_baseline_columns <- function(df, id_col = "ID") {
 
   for (col in cols_to_check) {
     # Count distinct values per ID for this column
-    distinct_counts <- df %>%
-      group_by(.data[[id_col]]) %>%
+    distinct_counts <- df |>
+      group_by(.data[[id_col]]) |>
       summarize(
         n_distinct = n_distinct(.data[[col]], na.rm = TRUE),
         .groups = "drop"

@@ -103,3 +103,4 @@ test_that("is_valid_filter handles empty data frames", {
   expect_false(is_valid_filter(df, "nonexistent > 20"))
   expect_false(is_valid_filter(df, "value >"))
 })
+

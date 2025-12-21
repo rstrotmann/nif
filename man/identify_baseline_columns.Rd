@@ -9,11 +9,13 @@ identify_baseline_columns(df, id_col = "ID")
 \arguments{
 \item{df}{A data frame.}
 
-\item{id_col}{Character string specifying the ID column name. Defaults to "ID".}
+\item{id_col}{Character string specifying the ID column name. Defaults to
+"ID".}
 }
 \value{
-A character vector of column names that are baseline columns (constant
-per ID). Returns an empty character vector if no baseline columns are found.
+A character vector of column names that are baseline columns
+(constant per ID). Returns an empty character vector if no baseline columns
+are found.
 }
 \description{
 Identifies columns that are constant (baseline) for each ID value. A baseline

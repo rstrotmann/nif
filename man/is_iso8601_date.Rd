@@ -9,17 +9,18 @@ is_iso8601_date(x, allow_reduced_precision = TRUE)
 \arguments{
 \item{x}{A character string or vector of strings to check.}
 
-\item{allow_reduced_precision}{Logical, whether to allow reduced precision formats
-(year-month or year only). Default is TRUE.}
+\item{allow_reduced_precision}{Logical, whether to allow reduced precision
+formats (year-month or year only). Default is TRUE.}
 }
 \value{
-Logical value indicating whether the string is in ISO 8601 date format.
+Logical value indicating whether the string is in ISO 8601 date
+format.
 }
 \description{
 This function checks whether a character string complies with the ISO 8601
 standard for date representation (without time components). Unlike the more
-general \code{is_iso8601_format()} function or the \code{is_iso8601_datetime()} function,
-this specifically validates date-only formats.
+general \code{is_iso8601_format()} function or the \code{is_iso8601_datetime()}
+function, this specifically validates date-only formats.
 }
 \details{
 Valid formats include:
@@ -33,9 +34,9 @@ Valid formats include:
 \examples{
 is_iso8601_date("2023-10-15") # TRUE
 is_iso8601_date("20231015") # TRUE
-is_iso8601_date("2023-10") # TRUE (with default allow_reduced_precision=TRUE)
-is_iso8601_date("2023") # TRUE (with default allow_reduced_precision=TRUE)
-is_iso8601_date("2023-10", FALSE) # FALSE (with allow_reduced_precision=FALSE)
+is_iso8601_date("2023-10") # TRUE
+is_iso8601_date("2023") # TRUE
+is_iso8601_date("2023-10", FALSE) # FALSE
 is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
 is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time component)
 }

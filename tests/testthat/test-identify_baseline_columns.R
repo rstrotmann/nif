@@ -456,3 +456,5 @@ test_that("identify_baseline_columns handles data.frame input", {
   result <- identify_baseline_columns(df, id_col = "ID")
   expect_equal(sort(result), c("AGE", "SEX"))
 })
+
+

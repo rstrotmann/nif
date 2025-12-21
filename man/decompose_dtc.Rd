@@ -4,12 +4,12 @@
 \alias{decompose_dtc}
 \title{Decompose DTC field into date and time components}
 \usage{
-decompose_dtc(obj, DTC_field)
+decompose_dtc(obj, dtc_field)
 }
 \arguments{
 \item{obj}{A data frame.}
 
-\item{DTC_field}{The field to decompose as character.}
+\item{dtc_field}{The field to decompose as character.}
 }
 \value{
 A data frame.
