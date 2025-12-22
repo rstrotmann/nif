@@ -504,10 +504,10 @@ filter_EXENDTC_after_EXSTDTC <- function(ex, dm, extrt, silent = NULL) {
         # start datetime is still after the end datetime
         (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
           !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
-          .data$EXSTDTC > .data$EXENDTC))) %>%
-    select(-any_of(
-      c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time")
-    ))
+          .data$EXSTDTC > .data$EXENDTC))) #%>%
+    # select(-any_of(
+    #   c("EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time")
+    # ))
 
   return(out)
 }

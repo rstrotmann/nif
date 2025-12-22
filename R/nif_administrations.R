@@ -85,22 +85,37 @@ expand_ex <- function(ex) {
     ex$EXENDY <- as.numeric(ex$EXENDY)
   }
 
-  ex |>
-    {\(.) if ("IMPUTATION" %in% names(.)) . else mutate(., IMPUTATION = "") }() |>
+  if (!"IMPUTATION" %in% names(ex)) {
+    ex <- mutate(ex, IMPUTATION = "")
+  }
+
+  ex <- ex |>
     decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
+
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
+
     rowwise() |>
-    mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1]) |>
-    {\(.) if (all(c("EXSTDY", "EXENDY") %in% names(.))) {
-        mutate(., EXDY = date_list(
-          .data$EXSTDTC_date, .data$EXENDTC_date,
-          .data$EXSTDY, .data$EXENDY
-        )[2])
-      } else {
-        .
-      }
-    }() |>
+    mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1])
+
+  if (all(c("EXSTDY", "EXENDY") %in% names(ex))) {
+    ex <- ex |>
+      mutate(EXDY = date_list(
+        .data$EXSTDTC_date, .data$EXENDTC_date,
+        .data$EXSTDY, .data$EXENDY
+      )[2])
+  }
+
+  ex <- ex |>
+    # {\(.) if (all(c("EXSTDY", "EXENDY") %in% names(.))) {
+    #     mutate(., EXDY = date_list(
+    #       .data$EXSTDTC_date, .data$EXENDTC_date,
+    #       .data$EXSTDY, .data$EXENDY
+    #     )[2])
+    #   } else {
+    #     .
+    #   }
+    # }() |>
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
     group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
     mutate(DTC_time = case_when(
@@ -252,12 +267,20 @@ make_administration <- function(
 
   sbs <- make_subjects(dm, vs, subject_filter, keep)
 
-  admin <- ex |>
+  admin <- ex
+
+  if ("EXSEQ" %in% names(ex)) {
+    admin <- mutate(admin, SRC_SEQ = EXSEQ)
+  } else {
+    admin <- mutate(admin, SRC_SEQ = NA)
+  }
+
+  if (!"IMPUTATION" %in% names(admin)) {
+    admin <- mutate(admin, IMPUTATION = "")
+  }
+
+  admin <- admin |>
     mutate(SRC_DOMAIN = "EX") |>
-    {\(.) if ("EXSEQ" %in% names(ex))
-      mutate(., SRC_SEQ = EXSEQ) else mutate(., SRC_SEQ = NA)}() |>
-    {\(.) if (!"IMPUTATION" %in% names(.))
-      mutate(., IMPUTATION = "") else . }() |>
     filter(.data$EXTRT == extrt) |>
     decompose_dtc("EXSTDTC")
 
@@ -290,7 +313,7 @@ make_administration <- function(
 
   admin <- admin |>
     # time imputations
-    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent)|>
+    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
     impute_missing_exendtc(silent = silent) |>
     filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) |>
     decompose_dtc("EXENDTC") |>
