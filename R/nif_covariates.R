@@ -9,24 +9,25 @@
 #' @param sdtm The corresponding sdtm object.
 #' @param domain The domain as character.
 #' @param testcd The xxTESTCD with xx the domain name, as character.
-#' @param DV_field The name of the DV field as character.
-#' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD (with
+#' @param dv_field The name of the DV field as character.
+#' @param testcd_field The name of the TESTCD field. defaults to xxTESTCD (with
 #'   xx the domain code), as character.
 #' @param observation_filter A filter term for the `domain`, as character.
 #' @param duplicate_function The function to apply if multiple covariate values
 #'   are found by day.
 #' @param covariate The name of the covariate, defaults to the testcd if NULL.
-#' @param DTC_field The field to use as the date-time code for the observation.
+#' @param dtc_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
 #' @param silent Suppress messages, defaults to nif_option setting if NULL.
 #' @param cat xxCAT filter to apply, as character.
 #' @param scat xxSCAT filter to apply, as character.
 #'
-#' @return A nif object with a new column added that contains the time-varying covariate values.
-#'   The name of this column is determined by the `covariate` parameter (or defaults to
-#'   the value of `testcd` if not specified). The covariate values are matched to the nif
-#'   object by USUBJID and date. For each subject, missing covariate values are filled
-#'   using the last observed value (carrying forward).
+#' @return A nif object with a new column added that contains the time-varying
+#'   covariate values. The name of this column is determined by the `covariate`
+#'   parameter (or defaults to the value of `testcd` if not specified). The
+#'   covariate values are matched to the nif object by USUBJID and date. For
+#'   each subject, missing covariate values are filled using the last observed
+#'   value (carrying forward).
 #'
 #' @seealso [nif::add_baseline()]
 #' @export
@@ -41,9 +42,9 @@ add_covariate <- function(
   domain,
   testcd,
   covariate = NULL,
-  DTC_field = NULL,
-  DV_field = NULL,
-  TESTCD_field = NULL,
+  dtc_field = NULL,
+  dv_field = NULL,
+  testcd_field = NULL,
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
@@ -53,37 +54,37 @@ add_covariate <- function(
   # input validation
   validate_nif(nif)
   validate_sdtm(sdtm)
-  if (is.null(TESTCD_field)) {
+  if (is.null(testcd_field)) {
     validate_testcd(sdtm, testcd, domain)
   } else {
     validate_char_param(domain, "domain")
-    if (!TESTCD_field %in% names(domain(sdtm, domain))) {
+    if (!testcd_field %in% names(domain(sdtm, domain))) {
       stop(paste0(
-        "Testcode field ", TESTCD_field, " not found in domain ", domain, "!"
+        "Testcode field ", testcd_field, " not found in domain ", domain, "!"
       ))
     }
-    if (!testcd %in% unique(domain(sdtm, domain)[[TESTCD_field]])) {
+    if (!testcd %in% unique(domain(sdtm, domain)[[testcd_field]])) {
       stop(paste0(
         "Testcd ", testcd, " not found in ",
-        toupper(domain), "$", TESTCD_field, "!"
+        toupper(domain), "$", testcd_field, "!"
       ))
     }
   }
 
   validate_char_param(covariate, "covariate", allow_null = TRUE)
-  validate_char_param(DTC_field, "DTC_field", allow_null = TRUE)
-  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
-  validate_char_param(TESTCD_field, "TESTCD_field", allow_null = TRUE)
+  validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
+  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
+  validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
   validate_char_param(observation_filter, "observation_filter")
   validate_logical_param(silent, "silent", allow_null = TRUE)
   validate_char_param(cat, "cat", allow_null = TRUE)
   validate_char_param(scat, "scat", allow_null = TRUE)
 
   # Set up field names
-  if (is.null(DTC_field)) DTC_field <- paste0(str_to_upper(domain), "DTC")
-  if (is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-  if (is.null(TESTCD_field)) {
-    TESTCD_field <- paste0(str_to_upper(domain), "TESTCD")
+  if (is.null(dtc_field)) dtc_field <- paste0(str_to_upper(domain), "DTC")
+  if (is.null(dv_field)) dv_field <- paste0(str_to_upper(domain), "STRESN")
+  if (is.null(testcd_field)) {
+    testcd_field <- paste0(str_to_upper(domain), "TESTCD")
   }
   if (is.null(covariate)) covariate <- str_to_upper(testcd)
   cat_field <- paste0(toupper(domain), "CAT")
@@ -97,13 +98,13 @@ add_covariate <- function(
     ))
   }
 
-  COV_field <- covariate
+  cov_field <- covariate
 
   # Get domain data
   domain_data <- domain(sdtm, str_to_lower(domain))
 
   # Validate required fields exist in domain data
-  required_fields <- c("USUBJID", DTC_field, DV_field, TESTCD_field)
+  required_fields <- c("USUBJID", dtc_field, dv_field, testcd_field)
   missing_fields <- required_fields[!required_fields %in% names(domain_data)]
   if (length(missing_fields) > 0) {
     stop(paste0(
@@ -113,7 +114,7 @@ add_covariate <- function(
   }
 
   # Validate testcd exists in the domain
-  if (!testcd %in% domain_data[[TESTCD_field]]) {
+  if (!testcd %in% domain_data[[testcd_field]]) {
     stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
   }
 
@@ -122,27 +123,23 @@ add_covariate <- function(
     stop("No matching subjects found between SDTM domain and NIF object")
   }
 
-  filtered_cov <- domain_data %>%
-    # apply cat, scat filtering
-    {
-      if (!is.null(cat) & cat_field %in% names(.)) {
-        filter(., .data[[cat_field]] == cat)
-      } else {
-        .
-      }
-    } %>%
-    {
-      if (!is.null(scat) & scat_field %in% names(.)) {
-        filter(., .data[[scat_field]] == scat)
-      } else {
-        .
-      }
-    } %>%
-    # apply other filtering
-    filter(.data$USUBJID %in% unique(nif$USUBJID)) %>%
-    lubrify_dates() %>%
-    filter(eval(parse(text = observation_filter))) %>%
-    filter(.data[[TESTCD_field]] == testcd)
+  filtered_cov <- domain_data
+
+  # Filter by CAT and SCAT
+  if (!is.null(cat) && cat_field %in% names(filtered_cov)) {
+    filtered_cov <- filter(filtered_cov, .data[[cat_field]] == cat)
+  }
+
+  if (!is.null(scat) && scat_field %in% names(filtered_cov)) {
+    filtered_cov <- filter(filtered_cov, .data[[scat_field]] == scat)
+  }
+
+  # apply other filtering
+  filtered_cov <- filtered_cov |>
+    filter(.data$USUBJID %in% unique(nif$USUBJID)) |>
+    lubrify_dates() |>
+    filter(eval(parse(text = observation_filter))) |>
+    filter(.data[[testcd_field]] == testcd)
 
   # Check if any data remains after filtering
   if (nrow(filtered_cov) == 0) {
@@ -152,26 +149,24 @@ add_covariate <- function(
     ))
   }
 
-  cov <- filtered_cov %>%
+  cov <- filtered_cov |>
     tidyr::pivot_wider(
-      names_from = all_of(TESTCD_field),
-      values_from = all_of(DV_field),
+      names_from = all_of(testcd_field),
+      values_from = all_of(dv_field),
       values_fn = duplicate_function
-    ) %>%
-    rename("DTC" = all_of(DTC_field)) %>%
-    rename_with(~COV_field, all_of(testcd)) %>%
-    select(all_of(c("USUBJID", "DTC", COV_field))) %>%
-    distinct() %>%
+    ) |>
+    rename("DTC" = all_of(dtc_field)) |>
+    rename_with(~cov_field, all_of(testcd)) |>
+    select(all_of(c("USUBJID", "DTC", cov_field))) |>
+    distinct() |>
     mutate(original = 0)
 
-  temp <- nif %>%
-    mutate(original = 1) %>%
-    bind_rows(cov) %>%
-    arrange(.data$USUBJID, .data$DTC, .data$original) %>%
-    tidyr::fill(!!COV_field) %>%
-    filter(.data$original == 1) %>%
-    select(!any_of(c("original"))) %>%
+  nif |>
+    mutate(original = 1) |>
+    bind_rows(cov) |>
+    arrange(.data$USUBJID, .data$DTC, .data$original) |>
+    tidyr::fill(!!cov_field) |>
+    filter(.data$original == 1) |>
+    select(!any_of(c("original"))) |>
     new_nif()
-
-  return(temp)
 }

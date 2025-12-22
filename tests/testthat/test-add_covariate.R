@@ -209,9 +209,9 @@ test_that("add_covariate works with custom field names", {
 
   # Add WEIGHT covariate with custom field names
   result <- add_covariate(nif, sdtm, "vs", "WEIGHT",
-    DTC_field = "CUSTOM_DTC",
-    TESTCD_field = "CUSTOM_TESTCD",
-    DV_field = "CUSTOM_STRESN",
+    dtc_field = "CUSTOM_DTC",
+    testcd_field = "CUSTOM_TESTCD",
+    dv_field = "CUSTOM_STRESN",
     covariate = "wt"
   )
 
