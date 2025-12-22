@@ -21,6 +21,6 @@ the count if count_only is TRUE
 }
 \description{
 This function identifies duplicate rows in a data frame based on specified
-fields. It returns a data frame containing the duplicate rows and their counts.
-The 'ID' field must always be present.
+fields. It returns a data frame containing the duplicate rows and their
+counts. The 'ID' field must always be present.
 }

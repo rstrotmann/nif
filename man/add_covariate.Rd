@@ -10,9 +10,9 @@ add_covariate(
   domain,
   testcd,
   covariate = NULL,
-  DTC_field = NULL,
-  DV_field = NULL,
-  TESTCD_field = NULL,
+  dtc_field = NULL,
+  dv_field = NULL,
+  testcd_field = NULL,
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
@@ -31,12 +31,12 @@ add_covariate(
 
 \item{covariate}{The name of the covariate, defaults to the testcd if NULL.}
 
-\item{DTC_field}{The field to use as the date-time code for the observation.
+\item{dtc_field}{The field to use as the date-time code for the observation.
 Defaults to the two-character domain name followed by 'DTC', if NULL.}
 
-\item{DV_field}{The name of the DV field as character.}
+\item{dv_field}{The name of the DV field as character.}
 
-\item{TESTCD_field}{The name of the TESTCD field. defaults to xxTESTCD (with
+\item{testcd_field}{The name of the TESTCD field. defaults to xxTESTCD (with
 xx the domain code), as character.}
 
 \item{observation_filter}{A filter term for the \code{domain}, as character.}
@@ -51,11 +51,12 @@ are found by day.}
 \item{silent}{Suppress messages, defaults to nif_option setting if NULL.}
 }
 \value{
-A nif object with a new column added that contains the time-varying covariate values.
-The name of this column is determined by the \code{covariate} parameter (or defaults to
-the value of \code{testcd} if not specified). The covariate values are matched to the nif
-object by USUBJID and date. For each subject, missing covariate values are filled
-using the last observed value (carrying forward).
+A nif object with a new column added that contains the time-varying
+covariate values. The name of this column is determined by the \code{covariate}
+parameter (or defaults to the value of \code{testcd} if not specified). The
+covariate values are matched to the nif object by USUBJID and date. For
+each subject, missing covariate values are filled using the last observed
+value (carrying forward).
 }
 \description{
 A time-varying covariate is added as a new field with daily time granularity

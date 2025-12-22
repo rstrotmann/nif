@@ -38,6 +38,7 @@ and resolves them by:
 \itemize{
 \item Averaging the DV field across duplicates
 \item Keeping other fields as-is if they have the same value across duplicates
-\item Setting fields to NA if they have multiple different values within duplicates
+\item Setting fields to NA if they have multiple different values within
+duplicates
 }
 }

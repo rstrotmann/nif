@@ -318,6 +318,7 @@ make_administration <- function(
     impute_missing_exendtc(silent = silent) |>
     filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) |>
     decompose_dtc("EXENDTC") |>
+
     # make generic fields
     mutate(
       TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
@@ -328,13 +329,15 @@ make_administration <- function(
 
   # impute missing administration times from PCRFTDTC
   if ("pc" %in% names(sdtm$domains)) {
-    pc <- domain(sdtm, "pc") |>
-      lubrify_dates()
+    # if (analyte %in% names(domain(sdtm, "pc"))) {
+      pc <- domain(sdtm, "pc") |>
+        lubrify_dates()
 
-    if ("PCRFTDTC" %in% names(pc)) {
-      admin <- admin |>
-        impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
-    }
+      if ("PCRFTDTC" %in% names(pc)) {
+        admin <- admin |>
+          impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
+      }
+    # }
   }
 
   admin |>

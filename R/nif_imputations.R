@@ -344,11 +344,20 @@ impute_admin_times_from_pcrftdtc <- function(
 ) {
   # validate inputs
   if (!pctestcd %in% pc$PCTESTCD) {
-    cli_alert_danger(paste0(
-      "Analyte ", pctestcd, " not found in PCTESTCD. Administrations times for ",
-      analyte, " cannot be derived from PCRFDTC and will be taken from ",
-      "EXSTDTC/EXENDTC!"
-    ))
+
+    # cli_alert_info(paste0(
+    #   "Analyte ", pctestcd, " not found in PCTESTCD. Administrations times for ",
+    #   analyte, " cannot be derived from PCRFDTC and will be taken from ",
+    #   "EXSTDTC/EXENDTC!"
+    # ))
+
+    conditional_cli({
+      cli_alert_info(paste0("Analyte ", pctestcd, " not found in PCTESTCD"))
+      cli_text(paste0(
+        "Administrations times for ", analyte, " ",
+        "cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!"
+      ))
+    }, silent = silent)
   }
 
   pc_ref <- pc %>%
