@@ -91,7 +91,6 @@ expand_ex <- function(ex) {
 
   ex <- ex |>
     decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
-
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
 
@@ -238,8 +237,9 @@ make_administration <- function(
     vs <- domain(sdtm, "vs")
   }
 
-  if (!extrt %in% ex$EXTRT)
+  if (!extrt %in% ex$EXTRT) {
     stop(paste0("Treatment '", extrt, "' not found in EXTRT!"))
+  }
 
   ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
@@ -261,8 +261,9 @@ make_administration <- function(
       silent = silent
     )
   } else {
-    if (!is.POSIXct(cut_off_date))
+    if (!is.POSIXct(cut_off_date)) {
       cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)
+    }
   }
 
   sbs <- make_subjects(dm, vs, subject_filter, keep)

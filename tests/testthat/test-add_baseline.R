@@ -102,7 +102,7 @@ test_that("add_baseline handles coding table correctly", {
   # Test with coding table
   result <- add_baseline(
     test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES",
+    dv_field = "VSORRES",
     coding_table = test_coding, silent = TRUE
   )
 
@@ -438,7 +438,7 @@ test_that("add_baseline coding table validation works correctly", {
   # Test invalid coding table (not a data frame)
   expect_error(
     add_baseline(test_nif, test_sdtm, "vs", "SEX",
-      DV_field = "VSORRES", coding_table = "not_a_df"
+      dv_field = "VSORRES", coding_table = "not_a_df"
     ),
     "coding table must be a data frame!"
   )
@@ -452,7 +452,7 @@ test_that("add_baseline coding table validation works correctly", {
 
   expect_error(
     add_baseline(test_nif, test_sdtm, "vs", "SEX",
-      DV_field = "VSORRES", coding_table = invalid_coding
+      dv_field = "VSORRES", coding_table = invalid_coding
     ),
     "Coding table must include a numeric 'DV' field!"
   )
@@ -466,7 +466,7 @@ test_that("add_baseline coding table validation works correctly", {
 
   expect_error(
     add_baseline(test_nif, test_sdtm, "vs", "SEX",
-      DV_field = "VSORRES", coding_table = invalid_coding_numeric
+      dv_field = "VSORRES", coding_table = invalid_coding_numeric
     ),
     "DV field in coding table must be numeric!"
   )
@@ -480,7 +480,7 @@ test_that("add_baseline coding table validation works correctly", {
 
   expect_error(
     add_baseline(test_nif, test_sdtm, "vs", "SEX",
-      DV_field = "VSORRES",
+      dv_field = "VSORRES",
       coding_table = no_match_coding, silent = TRUE
     ),
     "Coding table cannot be applied - no valid data column!"
@@ -518,7 +518,7 @@ test_that("add_baseline coding table with multiple join fields works", {
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = multi_field_coding,
+    dv_field = "VSORRES", coding_table = multi_field_coding,
     silent = TRUE
   )
 
@@ -557,7 +557,7 @@ test_that("add_baseline coding table with partial matches works", {
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = single_field_coding,
+    dv_field = "VSORRES", coding_table = single_field_coding,
     silent = TRUE
   )
 
@@ -599,7 +599,7 @@ test_that("add_baseline coding table with missing values handles correctly", {
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = incomplete_coding,
+    dv_field = "VSORRES", coding_table = incomplete_coding,
     silent = TRUE
   )
 
@@ -637,21 +637,21 @@ test_that("add_baseline handles different summary functions with coding tables",
 
   # Test with mean (default)
   result_mean <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = coding_table,
+    dv_field = "VSORRES", coding_table = coding_table,
     summary_function = mean, silent = TRUE
   )
   expect_equal(result_mean$BL_SEX, 1)
 
   # Test with max
   result_max <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = coding_table,
+    dv_field = "VSORRES", coding_table = coding_table,
     summary_function = max, silent = TRUE
   )
   expect_equal(result_max$BL_SEX, 1)
 
   # Test with min
   result_min <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = coding_table,
+    dv_field = "VSORRES", coding_table = coding_table,
     summary_function = min, silent = TRUE
   )
   expect_equal(result_min$BL_SEX, 1)
@@ -693,7 +693,7 @@ test_that("add_baseline handles complex coding scenarios", {
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "RACE",
-    DV_field = "VSORRES", coding_table = race_coding,
+    dv_field = "VSORRES", coding_table = race_coding,
     silent = TRUE
   )
 
@@ -768,7 +768,7 @@ test_that("add_baseline handles custom observation filter with coding tables", {
   # Filter to only include first day observations
   result <- add_baseline(
     test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES",
+    dv_field = "VSORRES",
     coding_table = coding_table,
     observation_filter = "VSDTC == lubridate::as_datetime('2023-01-01')",
     silent = TRUE
@@ -805,7 +805,7 @@ test_that("add_baseline handles edge cases with coding tables", {
 
   expect_error(
     add_baseline(test_nif, test_sdtm, "vs", "SEX",
-      DV_field = "VSORRES", coding_table = empty_coding
+      dv_field = "VSORRES", coding_table = empty_coding
     ),
     "DV field in coding table must be numeric!"
   )
@@ -818,7 +818,7 @@ test_that("add_baseline handles edge cases with coding tables", {
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = extra_col_coding,
+    dv_field = "VSORRES", coding_table = extra_col_coding,
     silent = TRUE
   )
 
@@ -856,7 +856,7 @@ test_that("add_baseline handles numeric coding with different data types", {
   )
 
   result_int <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = int_coding,
+    dv_field = "VSORRES", coding_table = int_coding,
     silent = TRUE
   )
 
@@ -871,7 +871,7 @@ test_that("add_baseline handles numeric coding with different data types", {
   )
 
   result_double <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = double_coding,
+    dv_field = "VSORRES", coding_table = double_coding,
     silent = TRUE
   )
 
@@ -914,7 +914,7 @@ test_that("add_baseline handles multiple test codes with coding tables", {
 
   # Test SEX
   result_sex <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
-    DV_field = "VSORRES", coding_table = coding_table,
+    dv_field = "VSORRES", coding_table = coding_table,
     silent = TRUE
   )
 
@@ -923,7 +923,7 @@ test_that("add_baseline handles multiple test codes with coding tables", {
 
   # Test RACE
   result_race <- add_baseline(test_nif, test_sdtm, "vs", "RACE",
-    DV_field = "VSORRES", coding_table = coding_table,
+    dv_field = "VSORRES", coding_table = coding_table,
     silent = TRUE
   )
 

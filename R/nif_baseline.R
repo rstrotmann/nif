@@ -10,8 +10,8 @@
 #' @param sdtm A sdtm object.
 #' @param domain The domain as character.
 #' @param testcd The covariate variable name as character.
-#' @param DV_field The name of the DV field as character.
-#' @param TESTCD_field The name of the TESTCD field. defaults to xxTESTCD with
+#' @param dv_field The name of the DV field as character.
+#' @param testcd_field The name of the TESTCD field. defaults to xxTESTCD with
 #'   xx the domain name, as character.
 #' @param observation_filter A filter term for the `domain`, as character. Note:
 #'   if the filter term includes date comparisons, make sure to represent the
@@ -42,8 +42,8 @@ add_baseline <- function(
   domain,
   testcd,
   name = NULL,
-  DV_field = NULL,
-  TESTCD_field = NULL,
+  dv_field = NULL,
+  testcd_field = NULL,
   observation_filter = "TRUE",
   baseline_filter = NULL,
   coding_table = NULL,
@@ -54,11 +54,9 @@ add_baseline <- function(
   validate_nif(nif)
   validate_sdtm(sdtm)
   validate_testcd(sdtm, testcd, domain)
-
-  # validate_char_param(testcd, "testcd")
   validate_char_param(name, "name", allow_null = TRUE)
-  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
-  validate_char_param(TESTCD_field, "TESTCD_field", allow_null = TRUE)
+  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
+  validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
   validate_char_param(observation_filter, "observation_filter")
   validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
@@ -76,9 +74,9 @@ add_baseline <- function(
     }
   }
 
-  if (is.null(DV_field)) DV_field <- paste0(str_to_upper(domain), "STRESN")
-  if (is.null(TESTCD_field)) {
-    TESTCD_field <- paste0(
+  if (is.null(dv_field)) dv_field <- paste0(str_to_upper(domain), "STRESN")
+  if (is.null(testcd_field)) {
+    testcd_field <- paste0(
       str_to_upper(domain), "TESTCD"
     )
   }
@@ -87,7 +85,7 @@ add_baseline <- function(
   domain_data <- domain(sdtm, str_to_lower(domain))
 
   # Validate required fields exist in domain data
-  required_fields <- c("USUBJID", TESTCD_field, DV_field)
+  required_fields <- c("USUBJID", testcd_field, dv_field)
   missing_fields <- required_fields[!required_fields %in% names(domain_data)]
   if (length(missing_fields) > 0) {
     stop(paste0(
@@ -97,7 +95,7 @@ add_baseline <- function(
   }
 
   # Validate testcd exists in the domain
-  if (!testcd %in% domain_data[[TESTCD_field]]) {
+  if (!testcd %in% domain_data[[testcd_field]]) {
     stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
   }
 
@@ -136,7 +134,7 @@ add_baseline <- function(
     names(domain(sdtm, str_to_lower(domain)))
   )
 
-  if (!is.null(coding_table) & length(join_fields) == 0) {
+  if (!is.null(coding_table) && length(join_fields) == 0) {
     stop("Coding table cannot be applied - no valid data column!")
   } else {
     if (!is.null(coding_table)) {
@@ -147,10 +145,10 @@ add_baseline <- function(
     }
   }
 
-  filtered_domain <- domain(sdtm, str_to_lower(domain)) %>%
-    lubrify_dates() %>%
-    filter(eval(parse(text = observation_filter))) %>%
-    filter(.data[[TESTCD_field]] %in% testcd) %>%
+  filtered_domain <- domain(sdtm, str_to_lower(domain)) |>
+    lubrify_dates() |>
+    filter(eval(parse(text = observation_filter))) |>
+    filter(.data[[testcd_field]] %in% testcd) |>
     filter(eval(parse(text = baseline_filter)))
 
   # Check if any data remains after filtering
@@ -161,25 +159,25 @@ add_baseline <- function(
     ))
   }
 
-  baseline <- filtered_domain %>%
-    {
-      if (is.null(coding_table)) {
-        mutate(., DV = .data[[DV_field]])
-      } else {
-        left_join(., coding_table, by = join_fields)
-      }
-    } %>%
+  # apply coding table, if available
+  if (is.null(coding_table)) {
+    baseline <- mutate(filtered_domain, DV = .data[[dv_field]])
+  } else {
+    baseline <- left_join(filtered_domain, coding_table, by = join_fields)
+  }
+
+  baseline <- baseline |>
     tidyr::pivot_wider(
-      names_from = all_of(TESTCD_field),
+      names_from = all_of(testcd_field),
       values_from = DV
-    ) %>%
-    select(all_of(c("USUBJID", {{ testcd }}))) %>%
-    group_by(.data$USUBJID) %>%
+    ) |>
+    select(all_of(c("USUBJID", {{ testcd }}))) |>
+    group_by(.data$USUBJID) |>
     summarize(across(
       all_of(testcd),
       ~ summary_function(na.omit(.x))
-    )) %>%
-    rename_with(~bl_field, .cols = all_of(testcd)) %>%
+    )) |>
+    rename_with(~bl_field, .cols = all_of(testcd)) |>
     ungroup()
 
   # Check if all baseline values are NA
@@ -199,10 +197,10 @@ add_baseline <- function(
     )
   }
 
-  out <- nif %>%
+  out <- nif |>
     coalesce_join(baseline, by = "USUBJID", join = "left_join")
 
-  return(out)
+  out
 }
 
 
@@ -280,7 +278,8 @@ derive_baseline <- function(
         stop("baseline_filter must evaluate to logical values")
       }
       if (length(test_eval) != nrow(obj)) {
-        stop("baseline_filter must return a logical vector with length equal to number of rows")
+        stop(paste("baseline_filter must return a logical vector with length",
+                   "equal to number of rows"))
       }
     },
     error = function(e) {
@@ -288,7 +287,7 @@ derive_baseline <- function(
     }
   )
 
-  temp <- obj %>%
+  temp <- obj |>
     filter(.data$ANALYTE %in% analyte)
 
   # Check for NA values in grouping columns
@@ -320,16 +319,16 @@ derive_baseline <- function(
     if (is.na(result) || is.nan(result)) {
       return(default)
     }
-    return(result)
+    result
   }
 
   filter_expr <- parse(text = baseline_filter)
 
-  bl <- temp %>%
-    filter(!is.na(.data$ID)) %>%
-    filter(!is.na(.data$ANALYTE)) %>%
-    filter(.data$EVID == 0) %>%
-    group_by(.data$ID, .data$ANALYTE) %>%
+  bl <- temp |>
+    filter(!is.na(.data$ID)) |>
+    filter(!is.na(.data$ANALYTE)) |>
+    filter(.data$EVID == 0) |>
+    group_by(.data$ID, .data$ANALYTE) |>
     summarize(
       DVBL = calc_baseline(
         pick(everything()),
@@ -338,10 +337,10 @@ derive_baseline <- function(
         default_baseline
       ),
       .groups = "drop"
-    ) %>%
+    ) |>
     as.data.frame()
 
-  obj %>%
+  obj |>
     coalesce_join(
       bl,
       by = c("ID", "ANALYTE"), join = "left_join", keep = "right"
@@ -381,10 +380,10 @@ derive_cfb <- function(
     analyte = analyte, baseline_filter = baseline_filter,
     summary_function = summary_function, default_baseline = default_baseline,
     silent = silent
-  ) %>%
+  ) |>
     mutate(DVCFB = .data$DV - .data$DVBL)
 
-  return(out)
+  out
 }
 
 
@@ -453,7 +452,8 @@ legacy_add_cfb <- function(
         stop("baseline_filter must evaluate to logical values")
       }
       if (length(test_eval) != nrow(obj)) {
-        stop("baseline_filter must return a logical vector with length equal to number of rows")
+        stop(paste("baseline_filter must return a logical vector with length",
+                   "equal to number of rows"))
       }
     },
     error = function(e) {
@@ -462,8 +462,8 @@ legacy_add_cfb <- function(
   )
 
   # Ensure ANALYTE column exists and handle NA values
-  obj <- obj %>%
-    ensure_analyte() %>%
+  obj <- obj |>
+    ensure_analyte() |>
     as.data.frame()
 
   # Check for NA values in grouping columns
@@ -486,13 +486,13 @@ legacy_add_cfb <- function(
   }
 
   # Filter out NA values in grouping columns before calculations
-  obj %>%
-    filter(!is.na(.data$ID), !is.na(.data$ANALYTE)) %>%
-    group_by(.data$ID, .data$ANALYTE) %>%
+  obj |>
+    filter(!is.na(.data$ID), !is.na(.data$ANALYTE)) |>
+    group_by(.data$ID, .data$ANALYTE) |>
     mutate(DVBL = summary_function(
       na.omit(.data$DV[eval(parse(text = baseline_filter))])
-    )) %>%
-    mutate(DVCFB = .data$DV - .data$DVBL) %>%
+    )) |>
+    mutate(DVCFB = .data$DV - .data$DVBL) |>
     new_nif()
 }
 
@@ -590,7 +590,8 @@ derive_cfb_analyte <- function(
         stop("baseline_filter must evaluate to logical values")
       }
       if (length(test_eval) != nrow(obj)) {
-        stop("baseline_filter must return a logical vector with length equal to number of rows")
+        stop(paste("baseline_filter must return a logical vector with length",
+                   "equal to number of rows"))
       }
     },
     error = function(e) {
@@ -606,24 +607,24 @@ derive_cfb_analyte <- function(
   )
 
   # make new analyte
-  temp <- obj %>%
-    filter(.data$EVID == 0) %>%
-    filter(.data$ANALYTE == source_analyte) %>%
-    group_by(.data$ID) %>%
+  temp <- obj |>
+    filter(.data$EVID == 0) |>
+    filter(.data$ANALYTE == source_analyte) |>
+    group_by(.data$ID) |>
     mutate(.BL = summary_function(
       na.omit(.data$DV[eval(parse(text = baseline_filter))])
-    )) %>%
-    ungroup() %>%
-    mutate(DV = .data$DV - .data$.BL) %>%
-    select(-all_of(c(".BL", "REF"))) %>%
-    mutate(ANALYTE = analyte) %>%
+    )) |>
+    ungroup() |>
+    mutate(DV = .data$DV - .data$.BL) |>
+    select(-all_of(c(".BL", "REF"))) |>
+    mutate(ANALYTE = analyte) |>
     mutate(CMT = cmt)
 
-  out <- bind_rows(obj, temp) %>%
-    arrange(.data$USUBJID, .data$DTC) %>%
+  out <- bind_rows(obj, temp) |>
+    arrange(.data$USUBJID, .data$DTC) |>
     index_nif()
 
-  return(out)
+  out
 }
 
 
@@ -654,13 +655,13 @@ derive_cfb_analyte <- function(
 #' head(add_rtb(examplinib_poc_min_nif))
 add_rtb <- function(obj, baseline_filter = "TIME <= 0",
                     summary_function = median) {
-  obj %>%
-    ensure_analyte() %>%
-    as.data.frame() %>%
-    group_by(.data$ID, .data$ANALYTE) %>%
+  obj |>
+    ensure_analyte() |>
+    as.data.frame() |>
+    group_by(.data$ID, .data$ANALYTE) |>
     mutate(DVBL = summary_function(
       na.omit(.data$DV[eval(parse(text = baseline_filter))])
-    )) %>%
-    mutate(DVRTB = .data$DV / .data$DVBL) %>%
+    )) |>
+    mutate(DVRTB = .data$DV / .data$DVBL) |>
     new_nif()
 }

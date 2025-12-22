@@ -10,8 +10,8 @@ add_baseline(
   domain,
   testcd,
   name = NULL,
-  DV_field = NULL,
-  TESTCD_field = NULL,
+  dv_field = NULL,
+  testcd_field = NULL,
   observation_filter = "TRUE",
   baseline_filter = NULL,
   coding_table = NULL,
@@ -30,9 +30,9 @@ add_baseline(
 
 \item{name}{The column label, as character.}
 
-\item{DV_field}{The name of the DV field as character.}
+\item{dv_field}{The name of the DV field as character.}
 
-\item{TESTCD_field}{The name of the TESTCD field. defaults to xxTESTCD with
+\item{testcd_field}{The name of the TESTCD field. defaults to xxTESTCD with
 xx the domain name, as character.}
 
 \item{observation_filter}{A filter term for the \code{domain}, as character. Note:
