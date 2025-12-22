@@ -1,8 +1,8 @@
 #' Find duplicate rows in a data frame
 #'
 #' This function identifies duplicate rows in a data frame based on specified
-#' fields. It returns a data frame containing the duplicate rows and their counts.
-#' The 'ID' field must always be present.
+#' fields. It returns a data frame containing the duplicate rows and their
+#' counts. The 'ID' field must always be present.
 #'
 #' @param df A data frame to check for duplicates
 #' @param fields A character vector of field names to check for duplicates. If
@@ -47,14 +47,14 @@ find_duplicates <- function(
 
   # if MDV is present, delete observations with MDV == 1
   if ("MDV" %in% names(df)) {
-    df <- df %>%
+    df <- df |>
       filter(.data$MDV != 1)
   }
 
-  duplicates <- df %>%
-    group_by(across(all_of(index_fields))) %>%
-    mutate(count = n()) %>%
-    ungroup() %>%
+  duplicates <- df |>
+    group_by(across(all_of(index_fields))) |>
+    mutate(count = n()) |>
+    ungroup() |>
     dplyr::filter(count > 1)
 
   if (count_only) {
@@ -65,100 +65,7 @@ find_duplicates <- function(
     return(NULL)
   }
 
-  return(as.data.frame(duplicates))
-}
-
-
-#' Remove duplicate rows from a data frame
-#'
-#' This function removes duplicate rows from a data frame based on specified
-#' fields, applying a function to handle duplicate values in the dependent
-#' variable.
-#'
-#' @param df A data frame to remove duplicates from
-#' @param fields A character vector of field names to check for duplicates. If
-#' NULL, defaults to c("USUBJID", "TIME", "ANALYTE") for NIF data.
-#' @param duplicate_function A function to apply to duplicate values. Default is
-#' mean. The function should take a vector and return a single value.
-#' @param dependent_variable The name of the field to apply the
-#' duplicate_function to. Defaults to "DV".
-#' @param na.rm Logical indicating whether to remove NA values when applying the
-#' duplicate_function. Defaults to TRUE.
-#'
-#' @return A data frame with duplicate rows removed
-resolve_duplicates_old <- function(
-  df,
-  fields = "TIME",
-  duplicate_function = mean,
-  dependent_variable = "DV",
-  na.rm = TRUE
-) {
-  ## input validation
-
-  if (is.null(fields)) {
-    fields <- c("ID", "TIME", "ANALYTE")
-  }
-
-  # Check if all specified fields exist in the data frame
-  missing_fields <- setdiff(fields, names(df))
-  if (length(missing_fields) > 0) {
-    stop(paste(
-      "The following fields do not exist in the data frame:",
-      paste(missing_fields, collapse = ", ")
-    ))
-  }
-
-  # Check if dependent_variable exists in the data frame
-  if (!dependent_variable %in% names(df)) {
-    stop(paste(
-      "The dependent variable", dependent_variable,
-      "does not exist in the data frame"
-    ))
-  }
-
-  # Validate that duplicate_function is a function
-  if (!is.function(duplicate_function)) {
-    stop("duplicate_function must be a function")
-  }
-
-  ## business logic
-
-  # preserve baseline fields
-  baseline_fields <- identify_baseline_columns(df)
-  index_fields <- setdiff(c(fields, "ID", "ANALYTE"), baseline_fields)
-  other_fields <- setdiff(names(df), c(baseline_fields, index_fields))
-
-  baseline <- df %>%
-    select(all_of(setdiff(c("ID", baseline_fields), "DV"))) %>%
-    distinct()
-
-  f <- function(x) {
-    if (na.rm == TRUE) {
-      duplicate_function(x[!is.na(x)])
-    } else {
-      duplicate_function(x)
-    }
-  }
-
-  other <- df %>%
-    select(setdiff(c(index_fields, other_fields), "DV")) %>%
-    distinct()
-
-  # if MDV is present, delete observations with MDV == 1
-  if ("MDV" %in% names(df)) {
-    df <- df %>%
-      filter(.data$MDV != 1)
-  }
-
-  result <- df %>%
-    reframe(
-      !!dependent_variable := f(.data[[dependent_variable]]),
-      .by = any_of(index_fields)
-    ) %>%
-    left_join(baseline, by = "ID") %>%
-    relocate(any_of(names(df)))
-
-  return(as.data.frame(result))
+  as.data.frame(duplicates)
 }
 
 
@@ -168,7 +75,8 @@ resolve_duplicates_old <- function(
 #' and resolves them by:
 #' - Averaging the DV field across duplicates
 #' - Keeping other fields as-is if they have the same value across duplicates
-#' - Setting fields to NA if they have multiple different values within duplicates
+#' - Setting fields to NA if they have multiple different values within
+#' duplicates
 #'
 #' @param df A data frame to resolve duplicates from
 #' @param fields A character vector of field names to identify duplicates. These
@@ -195,7 +103,8 @@ resolve_duplicates <- function(
     stop("df must be a data frame!")
   }
 
-  validate_char_param(fields, "fields", allow_multiple = TRUE, allow_null = FALSE)
+  validate_char_param(fields, "fields", allow_multiple = TRUE,
+                      allow_null = FALSE)
 
   # Check if all specified fields exist in the data frame
   missing_fields <- setdiff(fields, names(df))
@@ -224,14 +133,15 @@ resolve_duplicates <- function(
 
   # Check that we still have at least one field to group by
   if (length(fields) == 0) {
-    stop("At least one field (other than DV) must be provided to identify duplicates")
+    stop(paste("At least one field (other than DV) must be provided to",
+               "identify duplicates"))
   }
 
   ## business logic
 
   # if MDV is present, delete observations with MDV == 1
   if ("MDV" %in% names(df)) {
-    df <- df %>%
+    df <- df |>
       filter(.data$MDV != 1)
   }
 
@@ -262,6 +172,7 @@ resolve_duplicates <- function(
       # All non-NA values are the same - return that value
       return(x_clean[1])
     }
+
     # Multiple different values - return NA of the same type
     if (is.character(x)) {
       return(NA_character_)
@@ -298,5 +209,5 @@ resolve_duplicates <- function(
     ) %>%
     relocate(any_of(names(df)))
 
-  return(as.data.frame(result))
+  as.data.frame(result)
 }
