@@ -1054,7 +1054,8 @@ import_observation <- function(
       if (!is.null(NTIME_field)) mutate(., NTIME = .data[[NTIME_field]]) else .
     } %>%
     mutate(DV = .data[[DV_field]]) %>%
-    select(any_of(c("USUBJID", "NTIME", "DV", DTC_field))) %>%
+    # select(any_of(c("USUBJID", "NTIME", "DV", DTC_field))) %>%
+    select(any_of(c("USUBJID", "NTIME", "DV", DTC_field, keep))) %>%
     mutate(
       ANALYTE = analyte,
       CMT = cmt,
