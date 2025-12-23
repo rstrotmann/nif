@@ -329,7 +329,7 @@ test_that("add_observation handles DV field properly", {
     nif_custom_dv <- base_nif %>%
       add_observation(
         sdtm_test, "pc", "A",
-        DV_field = "PCSTRESN", ,
+        dv_field = "PCSTRESN", ,
         ntime_method = "ELTM", silent = TRUE
       )
   })

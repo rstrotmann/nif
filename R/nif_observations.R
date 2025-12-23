@@ -283,7 +283,7 @@ make_ntime <- function(
 #'
 #' @description
 #' Create a data frame of observations from a SDTM domain specified by 'domain'
-#' where the dependent variable comes from the 'DV_field' parameter and the
+#' where the dependent variable comes from the 'dv_field' parameter and the
 #' timing information from the 'dtc_field' parameter.
 #'
 #' The 'TIME' in the output is `NA` throughout and needs to be calculated based
@@ -310,7 +310,7 @@ make_ntime <- function(
 #'   name followed by 'TESTCD', if NULL.
 #' @param dtc_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
-#' @param DV_field the field to use as the dependent variable. Defaults to the
+#' @param dv_field the field to use as the dependent variable. Defaults to the
 #'   two-character domain name followed by 'STRESN', if NULL.
 #' @param coding_table Coding table to translate a categorical values into
 #'   numerical values, as data frame. The data frame must have at least one
@@ -353,7 +353,7 @@ make_observation <- function(
   scat = NULL,
   testcd_field = NULL,
   dtc_field = NULL,
-  DV_field = NULL,
+  dv_field = NULL,
   coding_table = NULL,
   factor = 1,
   NTIME_lookup = NULL,
@@ -391,7 +391,7 @@ make_observation <- function(
 
   # Create fields
   if (is.null(dtc_field)) dtc_field <- paste0(toupper(domain), "DTC")
-  if (is.null(DV_field)) DV_field <- paste0(toupper(domain), "STRESN")
+  if (is.null(dv_field)) dv_field <- paste0(toupper(domain), "STRESN")
   if (is.null(testcd_field)) testcd_field <- paste0(toupper(domain), "TESTCD")
 
   cat_field <- paste0(toupper(domain), "CAT")
@@ -427,9 +427,9 @@ make_observation <- function(
   }
 
   # Check if DV field exists when no coding table
-  if (!DV_field %in% names(obj) && is.null(coding_table)) {
+  if (!dv_field %in% names(obj) && is.null(coding_table)) {
     stop(paste0(
-      "DV field '", DV_field,
+      "DV field '", dv_field,
       "' not found in domain and no coding table provided"
     ))
   }
@@ -504,7 +504,7 @@ make_observation <- function(
     }
   } else { # proceed without coding table
     obj <- obj |>
-      mutate(DV = .data[[DV_field]] * factor)
+      mutate(DV = .data[[dv_field]] * factor)
   }
 
   # set NA values to zero, if flag is set
@@ -676,7 +676,7 @@ add_observation <- function(
   scat = NULL,
   testcd_field = NULL,
   dtc_field = NULL,
-  DV_field = NULL,
+  dv_field = NULL,
   coding_table = NULL,
   factor = 1,
   NTIME_lookup = NULL,
@@ -705,7 +705,7 @@ add_observation <- function(
   validate_char_param(observation_filter, "observation_filter")
   validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
   validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
-  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
+  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
   validate_numeric_param(factor, "factor")
   validate_char_param(ntime_method, "ntime_method", allow_null = TRUE)
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
@@ -781,7 +781,7 @@ add_observation <- function(
 
   observation <- make_observation(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
-    observation_filter, cat, scat, testcd_field, dtc_field, DV_field,
+    observation_filter, cat, scat, testcd_field, dtc_field, dv_field,
     coding_table, factor, NTIME_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
     silent = silent, na_to_zero = na_to_zero
@@ -934,7 +934,7 @@ add_observation <- function(
 #' @param USUBJID_field The field specifying the USUBJID, as character.
 #' @param dtc_field The field specifying the DTC, as character.
 #' @param NTIME_field The field specifying the NTIME, as character.
-#' @param DV_field The field specifying the dependent variable, as character.
+#' @param dv_field The field specifying the dependent variable, as character.
 #' @param keep Columns to keep, as character.
 #' @param debug Keep debug information.
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
@@ -951,7 +951,7 @@ import_observation <- function(
   USUBJID_field = "USUBJID",
   dtc_field = NULL,
   NTIME_field = NULL,
-  DV_field = NULL,
+  dv_field = NULL,
   keep = NULL,
   debug = FALSE,
   silent = NULL
@@ -964,7 +964,7 @@ import_observation <- function(
   validate_char_param(observation_filter, "observation_filter")
   validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
   validate_char_param(NTIME_field, "NTIME_field", allow_null = TRUE)
-  validate_char_param(DV_field, "DV_field", allow_null = TRUE)
+  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
   validate_logical_param(debug, "debug")
   validate_logical_param(silent, "silent", allow_null = TRUE)
@@ -975,9 +975,9 @@ import_observation <- function(
   nif <- nif |>
     ensure_parent()
 
-  if (!all(c(DV_field, USUBJID_field) %in% names(raw))) {
+  if (!all(c(dv_field, USUBJID_field) %in% names(raw))) {
     stop(paste0(
-      "ERROR: DV field (", DV_field, ") and USUBJID field (", USUBJID_field,
+      "ERROR: DV field (", dv_field, ") and USUBJID field (", USUBJID_field,
       ") must both be present in the input data frame!"
     ))
   }
@@ -1046,7 +1046,7 @@ import_observation <- function(
     obs <- mutate(obs, NTIME = .data[[NTIME_field]])
 
   obs <- obs |>
-    mutate(DV = .data[[DV_field]]) |>
+    mutate(DV = .data[[dv_field]]) |>
     select(any_of(c("USUBJID", "NTIME", "DV", dtc_field, keep))) |>
     mutate(
       ANALYTE = analyte,

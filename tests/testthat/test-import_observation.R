@@ -50,7 +50,7 @@ test_that("import_observation validates input parameters correctly", {
       data.frame(),
       create_test_raw(),
       analyte = "TEST",
-      DV_field = "DV_VALUE"
+      dv_field = "DV_VALUE"
     ),
     "Input must be a nif object"
   )
@@ -72,7 +72,7 @@ test_that("import_observation validates input parameters correctly", {
       test_nif,
       create_test_raw(with_dtc = FALSE, with_ntime = FALSE),
       analyte = "TEST",
-      DV_field = "DV_VALUE"
+      dv_field = "DV_VALUE"
     ),
     "ERROR: One of the time fields .* must be present"
   )
@@ -85,7 +85,7 @@ test_that("import_observation validates input parameters correctly", {
       analyte = "TEST",
       parent = "DRUG",
       cmt = 2,
-      DV_field = "DV_VALUE",
+      dv_field = "DV_VALUE",
       dtc_field = "OBS_DTC",
       observation_filter = "USUBJID == 'NON-EXISTENT'"
     ),
@@ -104,7 +104,7 @@ test_that("import_observation correctly handles DTC field", {
     analyte = "TEST",
     parent = "DRUG",
     cmt = 2,
-    DV_field = "DV_VALUE",
+    dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
     NTIME_field = NULL
   )
@@ -137,7 +137,7 @@ test_that("import_observation correctly handles NTIME field", {
     analyte = "TEST",
     parent = "DRUG",
     cmt = 2,
-    DV_field = "DV_VALUE",
+    dv_field = "DV_VALUE",
     dtc_field = NULL,
     NTIME_field = "OBS_NTIME"
   )
@@ -187,7 +187,7 @@ test_that("import_observation automatically assigns compartment when cmt is NULL
       analyte = "TEST",
       parent = "DRUG",
       cmt = NULL,
-      DV_field = "DV_VALUE",
+      dv_field = "DV_VALUE",
       dtc_field = "OBS_DTC",
       NTIME_field = "OBS_NTIME",
       silent = FALSE
@@ -214,7 +214,7 @@ test_that("import_observation automatically determines parent when parent is NUL
       analyte = "DRUG", # Matches existing analyte
       parent = NULL,
       cmt = 2,
-      DV_field = "DV_VALUE",
+      dv_field = "DV_VALUE",
       dtc_field = "OBS_DTC",
       NTIME_field = "OBS_NTIME",
       silent = FALSE
@@ -234,7 +234,7 @@ test_that("import_observation automatically determines parent when parent is NUL
     analyte = "METABOLITE", # Doesn't match existing analyte
     parent = NULL,
     cmt = 3,
-    DV_field = "DV_VALUE",
+    dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     silent = TRUE
@@ -263,7 +263,7 @@ test_that("import_observation correctly joins subject data", {
     analyte = "TEST",
     parent = "DRUG",
     cmt = 2,
-    DV_field = "DV_VALUE",
+    dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     keep = c("BL_WT", "BL_HT")
@@ -294,7 +294,7 @@ test_that("import_observation correctly sets debug fields", {
     analyte = "TEST",
     parent = "DRUG",
     cmt = 2,
-    DV_field = "DV_VALUE",
+    dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     debug = FALSE
@@ -307,7 +307,7 @@ test_that("import_observation correctly sets debug fields", {
     analyte = "TEST",
     parent = "DRUG",
     cmt = 2,
-    DV_field = "DV_VALUE",
+    dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     debug = TRUE

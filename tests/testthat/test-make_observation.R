@@ -129,7 +129,7 @@ test_that("make_observation handles custom DV_field correctly", {
   sdtm$domains$pc$PCCUSTOM <- sdtm$domains$pc$PCSTRESN * 2
 
   custom_obs <- make_observation(sdtm, "pc", "A",
-    DV_field = "PCCUSTOM",
+    dv_field = "PCCUSTOM",
     ntime_method = "ELTM", silent = TRUE
   )
   expect_equal(unique(custom_obs$DV), 200)
