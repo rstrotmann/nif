@@ -18,10 +18,10 @@ make_observation(
   scat = NULL,
   testcd_field = NULL,
   dtc_field = NULL,
-  DV_field = NULL,
+  dv_field = NULL,
   coding_table = NULL,
   factor = 1,
-  NTIME_lookup = NULL,
+  ntime_lookup = NULL,
   ntime_method = "TPT",
   keep = NULL,
   include_day_in_ntime = FALSE,
@@ -63,7 +63,7 @@ name followed by 'TESTCD', if NULL.}
 \item{dtc_field}{The field to use as the date-time code for the observation.
 Defaults to the two-character domain name followed by 'DTC', if NULL.}
 
-\item{DV_field}{the field to use as the dependent variable. Defaults to the
+\item{dv_field}{the field to use as the dependent variable. Defaults to the
 two-character domain name followed by 'STRESN', if NULL.}
 
 \item{coding_table}{Coding table to translate a categorical values into
@@ -73,7 +73,7 @@ that provides the recoding result.}
 
 \item{factor}{Multiplier for the DV field, as numeric.}
 
-\item{NTIME_lookup}{A data frame with two columns, a column that defines the
+\item{ntime_lookup}{A data frame with two columns, a column that defines the
 custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_joined into the observation data frame
 to provide the NTIME field.}
@@ -98,13 +98,13 @@ A data frame.
 }
 \description{
 Create a data frame of observations from a SDTM domain specified by 'domain'
-where the dependent variable comes from the 'DV_field' parameter and the
+where the dependent variable comes from the 'dv_field' parameter and the
 timing information from the 'dtc_field' parameter.
 
 The 'TIME' in the output is \code{NA} throughout and needs to be calculated based
 on administration time point information provided separately.
 
-If the 'NTIME_lookup' parameter is provided, 'NTIME' can be derived from a
+If the 'ntime_lookup' parameter is provided, 'NTIME' can be derived from a
 field contained in the input data set, e.g., 'PCELTM' (see the code
 examples). Otherwise, 'NTIME' will be \code{NA}.
 }

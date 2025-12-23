@@ -176,7 +176,7 @@ test_that("add_observation handles metabolites correctly", {
 })
 
 
-test_that("add_observation works with custom NTIME_lookup", {
+test_that("add_observation works with custom ntime_lookup", {
   # Create a base nif with administration data
   base_nif <- new_nif() %>%
     add_administration(
@@ -195,7 +195,7 @@ test_that("add_observation works with custom NTIME_lookup", {
     nif_with_custom_ntime <- base_nif %>%
       add_observation(
         examplinib_sad, "pc", "RS2023",
-        NTIME_lookup = custom_ntime,
+        ntime_lookup = custom_ntime,
         silent = TRUE
       )
   })
@@ -303,7 +303,7 @@ test_that("add_observation handles missing NTIME gracefully", {
         ),
       "ELTM is not defined"
     ),
-    "No NTIME_lookup could be created"
+    "No ntime_lookup could be created"
   )
 
   # NTIME should be NA in the resulting object

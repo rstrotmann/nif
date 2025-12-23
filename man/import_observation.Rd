@@ -14,7 +14,7 @@ import_observation(
   USUBJID_field = "USUBJID",
   dtc_field = NULL,
   NTIME_field = NULL,
-  DV_field = NULL,
+  dv_field = NULL,
   keep = NULL,
   debug = FALSE,
   silent = NULL
@@ -39,7 +39,7 @@ import_observation(
 
 \item{NTIME_field}{The field specifying the NTIME, as character.}
 
-\item{DV_field}{The field specifying the dependent variable, as character.}
+\item{dv_field}{The field specifying the dependent variable, as character.}
 
 \item{keep}{Columns to keep, as character.}
 

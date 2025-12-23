@@ -19,10 +19,10 @@ add_observation(
   scat = NULL,
   testcd_field = NULL,
   dtc_field = NULL,
-  DV_field = NULL,
+  dv_field = NULL,
   coding_table = NULL,
   factor = 1,
-  NTIME_lookup = NULL,
+  ntime_lookup = NULL,
   ntime_method = "TPT",
   keep = NULL,
   debug = FALSE,
@@ -71,7 +71,7 @@ name followed by 'TESTCD', if NULL.}
 \item{dtc_field}{The field to use as the date-time code for the observation.
 Defaults to the two-character domain name followed by 'DTC', if NULL.}
 
-\item{DV_field}{the field to use as the dependent variable. Defaults to the
+\item{dv_field}{the field to use as the dependent variable. Defaults to the
 two-character domain name followed by 'STRESN', if NULL.}
 
 \item{coding_table}{Coding table to translate a categorical values into
@@ -81,7 +81,7 @@ that provides the recoding result.}
 
 \item{factor}{Multiplier for the DV field, as numeric.}
 
-\item{NTIME_lookup}{A data frame with two columns, a column that defines the
+\item{ntime_lookup}{A data frame with two columns, a column that defines the
 custom nominal time information in the target domain (e.g., 'PCELTM'), and
 'NTIME'. This data frame is left_joined into the observation data frame
 to provide the NTIME field.}

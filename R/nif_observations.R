@@ -289,7 +289,7 @@ make_ntime <- function(
 #' The 'TIME' in the output is `NA` throughout and needs to be calculated based
 #' on administration time point information provided separately.
 #'
-#' If the 'NTIME_lookup' parameter is provided, 'NTIME' can be derived from a
+#' If the 'ntime_lookup' parameter is provided, 'NTIME' can be derived from a
 #' field contained in the input data set, e.g., 'PCELTM' (see the code
 #' examples). Otherwise, 'NTIME' will be `NA`.
 #'
@@ -317,7 +317,7 @@ make_ntime <- function(
 #'   column that matches a column in the domain, and a numerical 'DV' column
 #'   that provides the recoding result.
 #' @param factor Multiplier for the DV field, as numeric.
-#' @param NTIME_lookup A data frame with two columns, a column that defines the
+#' @param ntime_lookup A data frame with two columns, a column that defines the
 #'   custom nominal time information in the target domain (e.g., 'PCELTM'), and
 #'   'NTIME'. This data frame is left_joined into the observation data frame
 #'   to provide the NTIME field.
@@ -356,7 +356,7 @@ make_observation <- function(
   dv_field = NULL,
   coding_table = NULL,
   factor = 1,
-  NTIME_lookup = NULL,
+  ntime_lookup = NULL,
   ntime_method = "TPT",
   keep = NULL,
   include_day_in_ntime = FALSE,
@@ -435,48 +435,48 @@ make_observation <- function(
   }
 
   # Create NTIME lookup table if not provided
-  if (is.null(NTIME_lookup)) {
+  if (is.null(ntime_lookup)) {
     if (ntime_method == "TPT") {
-      NTIME_lookup <- make_ntime_from_tpt(obj, domain)
+      ntime_lookup <- make_ntime_from_tpt(obj, domain)
     }
     if (ntime_method == "TPTNUM") {
-      NTIME_lookup <- make_ntime_from_tptnum(obj, domain)
+      ntime_lookup <- make_ntime_from_tptnum(obj, domain)
     }
     if (ntime_method == "ELTM") {
-      NTIME_lookup <- make_ntime(
+      ntime_lookup <- make_ntime(
         obj, domain,
         include_day = FALSE, silent = silent
       )
     }
     if (ntime_method == "VISITDY") {
-      NTIME_lookup <- make_ntime_from_visitdy(obj, domain)
+      ntime_lookup <- make_ntime_from_visitdy(obj, domain)
     }
     if (ntime_method == "DY") {
-      NTIME_lookup <- make_ntime_from_dy(obj, domain)
+      ntime_lookup <- make_ntime_from_dy(obj, domain)
     }
-    if (is.null(NTIME_lookup)) {
+    if (is.null(ntime_lookup)) {
       conditional_cli(
-        cli_alert_warning("No NTIME_lookup could be created, NTIME will be NA"),
+        cli_alert_warning("No ntime_lookup could be created, NTIME will be NA"),
         silent = silent
       )
     }
   } else { # in case a lookup table is provided
-    # Validate NTIME_lookup structure
-    if (!is.data.frame(NTIME_lookup)) {
-      stop("NTIME_lookup must be a data frame")
+    # Validate ntime_lookup structure
+    if (!is.data.frame(ntime_lookup)) {
+      stop("ntime_lookup must be a data frame")
     }
-    if (!"NTIME" %in% names(NTIME_lookup)) {
-      stop("NTIME_lookup must contain a 'NTIME' column")
+    if (!"NTIME" %in% names(ntime_lookup)) {
+      stop("ntime_lookup must contain a 'NTIME' column")
     }
     if (length(
       intersect(
-        names(NTIME_lookup),
+        names(ntime_lookup),
         names(obj)
       )
     ) < 1
     ) {
       stop(paste(
-        "NTIME_lookup must contain at least one column that matches",
+        "ntime_lookup must contain at least one column that matches",
         "a column in the domain data"
       ))
     }
@@ -580,11 +580,11 @@ make_observation <- function(
       IMPUTATION = ""
     )
 
-  join_variables <- intersect(names(NTIME_lookup), names(obj))
+  join_variables <- intersect(names(ntime_lookup), names(obj))
 
   # apply NTIME lookup table
-  if (!is.null(NTIME_lookup)) {
-    out <- left_join(out, NTIME_lookup, by = join_variables)
+  if (!is.null(ntime_lookup)) {
+    out <- left_join(out, ntime_lookup, by = join_variables)
   } else {
     out <- out |>
       mutate(NTIME = NA)
@@ -679,7 +679,7 @@ add_observation <- function(
   dv_field = NULL,
   coding_table = NULL,
   factor = 1,
-  NTIME_lookup = NULL,
+  ntime_lookup = NULL,
   ntime_method = "TPT",
   keep = NULL,
   debug = FALSE,
@@ -782,7 +782,7 @@ add_observation <- function(
   observation <- make_observation(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
     observation_filter, cat, scat, testcd_field, dtc_field, dv_field,
-    coding_table, factor, NTIME_lookup, ntime_method, keep,
+    coding_table, factor, ntime_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
     silent = silent, na_to_zero = na_to_zero
   ) |>

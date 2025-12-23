@@ -205,13 +205,13 @@ test_that("make_observation handles NTIME lookup correctly", {
   sdtm <- make_test_sdtm1()
 
   # Create a custom NTIME lookup
-  ntime_lookup <- data.frame(
+  ntl <- data.frame(
     PCELTM = c("PT0H", "PT1H", "PT2H"),
     NTIME = c(0, 1, 2)
   )
 
   result <- make_observation(sdtm, "pc", "A",
-    NTIME_lookup = ntime_lookup,
+    ntime_lookup = ntl,
     ntime_method = "ELTM", silent = TRUE
   )
   expect_equal(unique(result$NTIME), 0) # Should match the PT0H value
