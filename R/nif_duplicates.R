@@ -85,7 +85,7 @@ find_duplicates <- function(
 #' mean. The function should take a vector and return a single value.
 #' @param dependent_variable The name of the field to apply the
 #' duplicate_function to. Defaults to "DV".
-#' @param na.rm Logical indicating whether to remove NA values when applying the
+#' @param na_rm Logical indicating whether to remove NA values when applying the
 #' duplicate_function. Defaults to TRUE.
 #'
 #' @return A data frame with duplicate rows resolved. The DV field contains the
@@ -96,7 +96,7 @@ resolve_duplicates <- function(
   fields = "TIME",
   dependent_variable = "DV",
   duplicate_function = mean,
-  na.rm = TRUE
+  na_rm = TRUE
 ) {
   ## input validation
   if (!is.data.frame(df)) {
@@ -188,7 +188,7 @@ resolve_duplicates <- function(
   }
 
   f <- function(x) {
-    if (na.rm == TRUE) {
+    if (na_rm == TRUE) {
       x_filtered <- x[!is.na(x)]
       if (length(x_filtered) == 0) {
         # All values are NA - return NA instead of NaN

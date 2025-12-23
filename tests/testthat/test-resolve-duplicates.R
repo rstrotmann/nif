@@ -183,13 +183,13 @@ test_that("resolve_duplicates correctly handles NA values with na.rm=TRUE", {
   )
 
   # With na.rm=TRUE, only non-NA values should be used
-  result_na_rm_true <- resolve_duplicates(test_df, na.rm = TRUE)
+  result_na_rm_true <- resolve_duplicates(test_df, na_rm = TRUE)
   expect_equal(nrow(result_na_rm_true), 2) # One row for each ID/TIME combo
   expect_equal(result_na_rm_true$DV[result_na_rm_true$TIME == 0], 100)
   expect_equal(result_na_rm_true$DV[result_na_rm_true$TIME == 1], 200)
 
   # With na.rm=FALSE and mean as duplicate_function, NAs should propagate
-  result_na_rm_false <- resolve_duplicates(test_df, na.rm = FALSE)
+  result_na_rm_false <- resolve_duplicates(test_df, na_rm = FALSE)
   expect_equal(nrow(result_na_rm_false), 2)
   expect_true(is.na(result_na_rm_false$DV[result_na_rm_false$TIME == 0]))
   expect_true(is.na(result_na_rm_false$DV[result_na_rm_false$TIME == 1]))
@@ -199,7 +199,7 @@ test_that("resolve_duplicates correctly handles NA values with na.rm=TRUE", {
     return(mean(x, na.rm = na.rm))
   }
 
-  result_custom <- resolve_duplicates(test_df, duplicate_function = na_safe_mean, na.rm = TRUE)
+  result_custom <- resolve_duplicates(test_df, duplicate_function = na_safe_mean, na_rm = TRUE)
   expect_equal(nrow(result_custom), 2)
   expect_equal(result_custom$DV[result_custom$TIME == 0], 100)
   expect_equal(result_custom$DV[result_custom$TIME == 1], 200)
@@ -276,7 +276,7 @@ test_that("resolve_duplicates returns NA (not NaN) when all DV values are NA wit
     2,   1,     NA
   )
 
-  result <- resolve_duplicates(test_df, fields = "TIME", na.rm = TRUE)
+  result <- resolve_duplicates(test_df, fields = "TIME", na_rm = TRUE)
   expect_equal(nrow(result), 2)
   expect_true(is.na(result$DV[result$TIME == 0]))
   expect_true(is.na(result$DV[result$TIME == 1]))
@@ -527,7 +527,7 @@ test_that("resolve_duplicates handles na.rm=FALSE with all NA values", {
     1,   0,     NA
   )
 
-  result <- resolve_duplicates(test_df, fields = "TIME", na.rm = FALSE)
+  result <- resolve_duplicates(test_df, fields = "TIME", na_rm = FALSE)
   expect_equal(nrow(result), 1)
   expect_true(is.na(result$DV))
 })

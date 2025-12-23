@@ -11,7 +11,7 @@ import_observation(
   parent = NULL,
   cmt = NULL,
   observation_filter = "TRUE",
-  USUBJID_field = "USUBJID",
+  usubjid_field = "USUBJID",
   dtc_field = NULL,
   ntime_field = NULL,
   dv_field = NULL,
@@ -33,7 +33,7 @@ import_observation(
 
 \item{observation_filter}{Filter term, as character.}
 
-\item{USUBJID_field}{The field specifying the USUBJID, as character.}
+\item{usubjid_field}{The field specifying the USUBJID, as character.}
 
 \item{dtc_field}{The field specifying the DTC, as character.}
 

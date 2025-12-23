@@ -472,7 +472,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
     add_observation(
       sdtm_obj, "pc", "A",
       duplicates = "resolve",
-      na.rm = FALSE,
+      na_rm = FALSE,
       ntime_method = "ELTM",
       silent = TRUE
     )

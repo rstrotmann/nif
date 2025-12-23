@@ -653,7 +653,7 @@ make_observation <- function(
 #' @param duplicate_identifier Fields by which duplicates are identified (after
 #'   addition of the observations to the nif object), defaults to "DTC".
 #'   Consider also "NTIME", or any other custom field.
-#' @param na.rm Logical indicating whether to remove NA values when applying the
+#' @param na_rm Logical indicating whether to remove NA values when applying the
 #'   duplicate_function. Defaults to TRUE.
 #'
 #' @return A nif object.
@@ -688,7 +688,7 @@ add_observation <- function(
   duplicate_function = mean,
   duplicate_identifier = "DTC",
   omit_not_done = TRUE,
-  na.rm = TRUE,
+  na_rm = TRUE,
   na_to_zero = FALSE
 ) {
   # validate inputs
@@ -834,7 +834,7 @@ add_observation <- function(
         observation,
         fields = dupl_fields,
         duplicate_function = duplicate_function,
-        na.rm = na.rm
+        na_rm = na_rm
       )
       conditional_cli(
         cli::cli({
@@ -930,7 +930,7 @@ add_observation <- function(
 #' @param parent The parent as character.
 #' @param cmt The compartment for the analyte as numeric.
 #' @param observation_filter Filter term, as character.
-#' @param USUBJID_field The field specifying the USUBJID, as character.
+#' @param usubjid_field The field specifying the USUBJID, as character.
 #' @param dtc_field The field specifying the DTC, as character.
 #' @param ntime_field The field specifying the NTIME, as character.
 #' @param dv_field The field specifying the dependent variable, as character.
@@ -947,7 +947,7 @@ import_observation <- function(
   parent = NULL,
   cmt = NULL,
   observation_filter = "TRUE",
-  USUBJID_field = "USUBJID",
+  usubjid_field = "USUBJID",
   dtc_field = NULL,
   ntime_field = NULL,
   dv_field = NULL,
@@ -974,9 +974,9 @@ import_observation <- function(
   nif <- nif |>
     ensure_parent()
 
-  if (!all(c(dv_field, USUBJID_field) %in% names(raw))) {
+  if (!all(c(dv_field, usubjid_field) %in% names(raw))) {
     stop(paste0(
-      "ERROR: DV field (", dv_field, ") and USUBJID field (", USUBJID_field,
+      "ERROR: DV field (", dv_field, ") and USUBJID field (", usubjid_field,
       ") must both be present in the input data frame!"
     ))
   }
@@ -1039,7 +1039,7 @@ import_observation <- function(
   }
 
   obs <- filtered_raw |>
-    mutate(USUBJID = .data[[USUBJID_field]])
+    mutate(USUBJID = .data[[usubjid_field]])
 
   if (!is.null(ntime_field))
     obs <- mutate(obs, NTIME = .data[[ntime_field]])
