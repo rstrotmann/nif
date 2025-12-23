@@ -24,19 +24,19 @@ ensure_analyte <- function(obj) {
   }
 
   # Create ANALYTE from CMT with proper NA handling
-  obj %>%
+  obj |>
     mutate(ANALYTE = case_when(
       is.na(CMT) ~ NA_character_,
       TRUE ~ paste0("CMT", as.character(CMT))
-    )) %>%
+    )) |>
     new_nif() # Ensure return value is a NIF object
 }
 
 
 #' Ensure that the DOSE field is present
 #'
-#' This function ensures that the DOSE field exists in the NIF object. If it doesn't exist,
-#' it creates it by:
+#' This function ensures that the DOSE field exists in the NIF object. If it
+#' doesn't exist, it creates it by:
 #' 1. Using AMT values for dosing events (EVID == 1)
 #' 2. Filling missing values using forward and backward fill within each subject
 #'
@@ -63,21 +63,21 @@ ensure_dose <- function(obj) {
   }
 
   # Create DOSE field
-  result <- obj %>%
+  result <- obj |>
     # Ensure proper ordering for fill operations
-    arrange(.data$ID, .data$TIME) %>%
+    arrange(.data$ID, .data$TIME) |>
     # Create DOSE from AMT for dosing events
     mutate(DOSE = case_when(
       .data$EVID == 1 ~ .data$AMT,
       TRUE ~ NA_real_
-    )) %>%
+    )) |>
     # Fill DOSE within each subject
-    group_by(.data$ID) %>%
-    tidyr::fill(DOSE, .direction = "downup") %>%
+    group_by(.data$ID) |>
+    tidyr::fill(DOSE, .direction = "downup") |>
     ungroup()
 
   # Return as NIF object
-  return(new_nif(result))
+  new_nif(result)
 }
 
 
@@ -99,9 +99,9 @@ ensure_parent <- function(obj) {
   }
 
   # Get administration CMT values
-  admin_cmt <- obj %>%
-    as.data.frame() %>%
-    filter(.data$EVID == 1) %>%
+  admin_cmt <- obj |>
+    as.data.frame() |>
+    filter(.data$EVID == 1) |>
     distinct(.data$CMT)
 
   # Handle case where there are no administrations
@@ -113,19 +113,19 @@ ensure_parent <- function(obj) {
   # If PARENT column doesn't exist, create it
   if (!"PARENT" %in% names(obj)) {
     # Use the most common CMT value with EVID == 1 for administrations
-    most_common_cmt <- obj %>%
-      filter(.data$EVID == 1) %>%
-      count(.data$CMT) %>%
-      arrange(desc(n)) %>%
-      slice(1) %>%
+    most_common_cmt <- obj |>
+      filter(.data$EVID == 1) |>
+      count(.data$CMT) |>
+      arrange(desc(n)) |>
+      slice(1) |>
       pull(.data$CMT)
 
-    obj <- obj %>%
+    obj <- obj |>
       mutate(PARENT = as.character(most_common_cmt))
   }
 
   # Ensure return value is a NIF object
-  return(new_nif(obj))
+  new_nif(obj)
 }
 
 
@@ -136,22 +136,19 @@ ensure_parent <- function(obj) {
 #' @keywords internal
 #' @noRd
 ensure_metabolite <- function(obj) {
-  obj %>%
-    {
-      if (!"METABOLITE" %in% names(obj)) {
-        mutate(., METABOLITE = FALSE)
-      } else {
-        .
-      }
-    }
+  if (!"METABOLITE" %in% names(obj))
+    mutate(obj, METABOLITE = FALSE)
+  else
+    obj
 }
 
 
 #' Ensure that TAD is present in the NIF object
 #'
-#' This function ensures that the time-after-dose (TAD) field exists in the NIF object.
-#' If it doesn't exist, it creates it by calling add_tad(). TAD represents the time
-#' elapsed since the most recent administration of the parent compound.
+#' This function ensures that the time-after-dose (TAD) field exists in the NIF
+#' object. If it doesn't exist, it creates it by calling add_tad(). TAD
+#' represents the time elapsed since the most recent administration of the
+#' parent compound.
 #'
 #' @param obj A NIF object.
 #' @return A NIF object with the TAD field.
@@ -189,15 +186,16 @@ ensure_tad <- function(obj) {
     stop("Failed to add TAD field")
   }
 
-  return(result)
+  result
 }
 
 
 #' Ensure that TAFD is present in the NIF object
 #'
-#' This function ensures that the time-after-first-dose (TAFD) field exists in the NIF object.
-#' If it doesn't exist, it creates it by calling add_tafd(). TAFD represents the time
-#' elapsed since the first administration of the parent compound.
+#' This function ensures that the time-after-first-dose (TAFD) field exists in
+#' the NIF object. If it doesn't exist, it creates it by calling add_tafd().
+#' TAFD represents the time elapsed since the first administration of the parent
+#' compound.
 #'
 #' @param obj A NIF object.
 #' @return A NIF object with the TAFD field.
@@ -239,16 +237,20 @@ ensure_tafd <- function(obj) {
     stop("Failed to add TAFD field")
   }
 
-  return(result)
+  result
 }
 
 
 #' Ensure that all time fields are in the nif object
 #'
-#' This function ensures that the necessary time fields (TIME, TAD, TAFD) exist in the NIF object.
-#' If any of these fields are missing, it will create them based on available data:
-#' - If DTC (datetime) is available, it uses make_time() to calculate all time fields
-#' - If only TIME is available, it uses make_time_from_TIME() to derive TAD and TAFD
+#' This function ensures that the necessary time fields (TIME, TAD, TAFD) exist
+#' in the NIF object. If any of these fields are missing, it will create them
+#' based on available data:
+#'
+#' - If DTC (datetime) is available, it uses make_time() to calculate all time
+#' fields
+#' - If only TIME is available, it uses make_time_from_TIME() to derive TAD and
+#' TAFD
 #'
 #' @param obj A nif object.
 #'
@@ -288,7 +290,10 @@ ensure_time <- function(obj) {
       }
     )
   } else {
-    stop("Missing required columns: Either DTC or TIME is required to calculate time fields")
+    stop(paste(
+      "Missing required columns: Either DTC or TIME is required to calculate",
+      "time fields"
+    ))
   }
 
   # Validate that all time fields are now present
@@ -300,13 +305,13 @@ ensure_time <- function(obj) {
     )
   }
 
-  return(result)
+  result
 }
 
 
 ensure_cfb <- function(obj) {
-  obj <- obj %>%
-    {
-      if (!"DVCFB" %in% names(obj)) add_cfb(.) else .
-    }
+  if (!"DVCFB" %in% names(obj))
+    add_cfb(obj)
+  else
+    obj
 }
