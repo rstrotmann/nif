@@ -17,7 +17,7 @@ add_observation(
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
-  TESTCD_field = NULL,
+  testcd_field = NULL,
   DTC_field = NULL,
   DV_field = NULL,
   coding_table = NULL,
@@ -65,7 +65,7 @@ data.}
 
 \item{scat}{xxSCAT filter to apply, as character.}
 
-\item{TESTCD_field}{The xxTESTCD field. Defaults to the two-character domain
+\item{testcd_field}{The xxTESTCD field. Defaults to the two-character domain
 name followed by 'TESTCD', if NULL.}
 
 \item{DTC_field}{The field to use as the date-time code for the observation.

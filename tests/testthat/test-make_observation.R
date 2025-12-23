@@ -146,7 +146,7 @@ test_that("make_observation handles custom TESTCD_field correctly", {
   # Should only select rows where PCCUSTOMCD equals "A"
   custom_obs <- make_observation(
     sdtm, "pc", "A",
-    TESTCD_field = "PCCUSTOMCD",
+    testcd_field = "PCCUSTOMCD",
     observation_filter = "USUBJID == 2",
     ntime_method = "ELTM",
     silent = TRUE

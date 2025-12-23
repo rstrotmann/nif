@@ -306,7 +306,7 @@ make_ntime <- function(
 #' @param subject_filter The filtering to apply to the DM domain.
 #' @param observation_filter The filtering to apply to the observation source
 #'   data.
-#' @param TESTCD_field The xxTESTCD field. Defaults to the two-character domain
+#' @param testcd_field The xxTESTCD field. Defaults to the two-character domain
 #'   name followed by 'TESTCD', if NULL.
 #' @param DTC_field The field to use as the date-time code for the observation.
 #'   Defaults to the two-character domain name followed by 'DTC', if NULL.
@@ -351,7 +351,7 @@ make_observation <- function(
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
-  TESTCD_field = NULL,
+  testcd_field = NULL,
   DTC_field = NULL,
   DV_field = NULL,
   coding_table = NULL,
@@ -392,7 +392,7 @@ make_observation <- function(
   # Create fields
   if (is.null(DTC_field)) DTC_field <- paste0(toupper(domain), "DTC")
   if (is.null(DV_field)) DV_field <- paste0(toupper(domain), "STRESN")
-  if (is.null(TESTCD_field)) TESTCD_field <- paste0(toupper(domain), "TESTCD")
+  if (is.null(testcd_field)) testcd_field <- paste0(toupper(domain), "TESTCD")
 
   cat_field <- paste0(toupper(domain), "CAT")
   scat_field <- paste0(toupper(domain), "SCAT")
@@ -417,7 +417,7 @@ make_observation <- function(
     lubrify_dates()
 
   # Check whether required fields exist
-  required_fields <- c(TESTCD_field, DTC_field)
+  required_fields <- c(testcd_field, DTC_field)
   missing_fields <- required_fields[!required_fields %in% names(obj)]
   if (length(missing_fields) > 0) {
     stop(paste0(
@@ -565,7 +565,7 @@ make_observation <- function(
 
   # create further fields
   out <- filtered_obj |>
-    filter(.data[[TESTCD_field]] == testcd) |>
+    filter(.data[[testcd_field]] == testcd) |>
     mutate(
       DTC = .data[[DTC_field]],
       ANALYTE = analyte,
@@ -674,7 +674,7 @@ add_observation <- function(
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
-  TESTCD_field = NULL,
+  testcd_field = NULL,
   DTC_field = NULL,
   DV_field = NULL,
   coding_table = NULL,
@@ -703,7 +703,7 @@ add_observation <- function(
   validate_numeric_param(cmt, "cmt", allow_null = TRUE)
   validate_char_param(subject_filter, "subject_filter")
   validate_char_param(observation_filter, "observation_filter")
-  validate_char_param(TESTCD_field, "TESTCD_field", allow_null = TRUE)
+  validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
   validate_char_param(DTC_field, "DTC_field", allow_null = TRUE)
   validate_char_param(DV_field, "DV_field", allow_null = TRUE)
   validate_numeric_param(factor, "factor")
@@ -781,7 +781,7 @@ add_observation <- function(
 
   observation <- make_observation(
     sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
-    observation_filter, cat, scat, TESTCD_field, DTC_field, DV_field,
+    observation_filter, cat, scat, testcd_field, DTC_field, DV_field,
     coding_table, factor, NTIME_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
     silent = silent, na_to_zero = na_to_zero
