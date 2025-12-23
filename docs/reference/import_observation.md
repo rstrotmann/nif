@@ -12,10 +12,10 @@ import_observation(
   parent = NULL,
   cmt = NULL,
   observation_filter = "TRUE",
-  USUBJID_field = "USUBJID",
-  DTC_field = NULL,
-  NTIME_field = NULL,
-  DV_field = NULL,
+  usubjid_field = "USUBJID",
+  dtc_field = NULL,
+  ntime_field = NULL,
+  dv_field = NULL,
   keep = NULL,
   debug = FALSE,
   silent = NULL
@@ -48,19 +48,19 @@ import_observation(
 
   Filter term, as character.
 
-- USUBJID_field:
+- usubjid_field:
 
   The field specifying the USUBJID, as character.
 
-- DTC_field:
+- dtc_field:
 
   The field specifying the DTC, as character.
 
-- NTIME_field:
+- ntime_field:
 
   The field specifying the NTIME, as character.
 
-- DV_field:
+- dv_field:
 
   The field specifying the dependent variable, as character.
 

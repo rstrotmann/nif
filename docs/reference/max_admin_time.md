@@ -32,6 +32,6 @@ max_admin_time(examplinib_poc_nif)
 #> [1] 2400
 max_admin_time(examplinib_poc_min_nif)
 #> [1] 2376
-max_admin_time(examplinib_poc_min_nif, analyte = "CMT2")
-#> [1] NA
+max_admin_time(examplinib_poc_min_nif, analyte = "CMT1")
+#> [1] 2376
 ```

@@ -46,11 +46,11 @@ is_iso8601_date("2023-10-15") # TRUE
 #> [1] TRUE
 is_iso8601_date("20231015") # TRUE
 #> [1] TRUE
-is_iso8601_date("2023-10") # TRUE (with default allow_reduced_precision=TRUE)
+is_iso8601_date("2023-10") # TRUE
 #> [1] TRUE
-is_iso8601_date("2023") # TRUE (with default allow_reduced_precision=TRUE)
+is_iso8601_date("2023") # TRUE
 #> [1] TRUE
-is_iso8601_date("2023-10", FALSE) # FALSE (with allow_reduced_precision=FALSE)
+is_iso8601_date("2023-10", FALSE) # FALSE
 #> [1] FALSE
 is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
 #> [1] FALSE

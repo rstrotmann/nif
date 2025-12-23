@@ -1,13 +1,13 @@
 # Compile observation data frame
 
 Create a data frame of observations from a SDTM domain specified by
-'domain' where the dependent variable comes from the 'DV_field'
-parameter and the timing information from the 'DTC_field' parameter.
+'domain' where the dependent variable comes from the 'dv_field'
+parameter and the timing information from the 'dtc_field' parameter.
 
 The 'TIME' in the output is `NA` throughout and needs to be calculated
 based on administration time point information provided separately.
 
-If the 'NTIME_lookup' parameter is provided, 'NTIME' can be derived from
+If the 'ntime_lookup' parameter is provided, 'NTIME' can be derived from
 a field contained in the input data set, e.g., 'PCELTM' (see the code
 examples). Otherwise, 'NTIME' will be `NA`.
 
@@ -26,12 +26,12 @@ make_observation(
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
-  TESTCD_field = NULL,
-  DTC_field = NULL,
-  DV_field = NULL,
+  testcd_field = NULL,
+  dtc_field = NULL,
+  dv_field = NULL,
   coding_table = NULL,
   factor = 1,
-  NTIME_lookup = NULL,
+  ntime_lookup = NULL,
   ntime_method = "TPT",
   keep = NULL,
   include_day_in_ntime = FALSE,
@@ -90,17 +90,17 @@ make_observation(
 
   xxSCAT filter to apply, as character.
 
-- TESTCD_field:
+- testcd_field:
 
   The xxTESTCD field. Defaults to the two-character domain name followed
   by 'TESTCD', if NULL.
 
-- DTC_field:
+- dtc_field:
 
   The field to use as the date-time code for the observation. Defaults
   to the two-character domain name followed by 'DTC', if NULL.
 
-- DV_field:
+- dv_field:
 
   the field to use as the dependent variable. Defaults to the
   two-character domain name followed by 'STRESN', if NULL.
@@ -116,7 +116,7 @@ make_observation(
 
   Multiplier for the DV field, as numeric.
 
-- NTIME_lookup:
+- ntime_lookup:
 
   A data frame with two columns, a column that defines the custom
   nominal time information in the target domain (e.g., 'PCELTM'), and

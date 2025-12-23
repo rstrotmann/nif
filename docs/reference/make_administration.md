@@ -41,7 +41,7 @@ make_administration(
 
 - cut_off_date:
 
-  The data cut-off date as Posix date-time.
+  The data cut-off date as Posix date-time or character.
 
 - keep:
 
@@ -58,7 +58,7 @@ A data frame.
 ## Details
 
 A discussion on EC vs EX is provided
-[here](https://www.cdisc.org/kb/ecrf/exposure-collected#:~:text=In%20the%20SDTMIG%2C%20the%20Exposure,data%20collected%20on%20the%20CRF.)
+[here](https://www.cdisc.org/kb/ecrf/exposure-collected)
 
 ## Time imputations and filtering
 

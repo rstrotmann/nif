@@ -49,6 +49,7 @@
 <url><loc>/reference/analytes.html</loc></url>
 <url><loc>/reference/analytes.nif.html</loc></url>
 <url><loc>/reference/analytes.sdtm.html</loc></url>
+<url><loc>/reference/apply_cat_filter.html</loc></url>
 <url><loc>/reference/as_nif.html</loc></url>
 <url><loc>/reference/bmi_by_age.html</loc></url>
 <url><loc>/reference/check_date_format.html</loc></url>
@@ -192,6 +193,7 @@
 <url><loc>/reference/pin_write.html</loc></url>
 <url><loc>/reference/pin_write.nif.html</loc></url>
 <url><loc>/reference/pin_write.sdtm.html</loc></url>
+<url><loc>/reference/pipe.html</loc></url>
 <url><loc>/reference/pivot_analytes.html</loc></url>
 <url><loc>/reference/pivot_analytes1.html</loc></url>
 <url><loc>/reference/plot.domain.html</loc></url>

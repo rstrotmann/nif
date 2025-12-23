@@ -25,12 +25,12 @@ add_observation(
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
-  TESTCD_field = NULL,
-  DTC_field = NULL,
-  DV_field = NULL,
+  testcd_field = NULL,
+  dtc_field = NULL,
+  dv_field = NULL,
   coding_table = NULL,
   factor = 1,
-  NTIME_lookup = NULL,
+  ntime_lookup = NULL,
   ntime_method = "TPT",
   keep = NULL,
   debug = FALSE,
@@ -40,7 +40,7 @@ add_observation(
   duplicate_function = mean,
   duplicate_identifier = "DTC",
   omit_not_done = TRUE,
-  na.rm = TRUE,
+  na_rm = TRUE,
   na_to_zero = FALSE
 )
 ```
@@ -98,17 +98,17 @@ add_observation(
 
   xxSCAT filter to apply, as character.
 
-- TESTCD_field:
+- testcd_field:
 
   The xxTESTCD field. Defaults to the two-character domain name followed
   by 'TESTCD', if NULL.
 
-- DTC_field:
+- dtc_field:
 
   The field to use as the date-time code for the observation. Defaults
   to the two-character domain name followed by 'DTC', if NULL.
 
-- DV_field:
+- dv_field:
 
   the field to use as the dependent variable. Defaults to the
   two-character domain name followed by 'STRESN', if NULL.
@@ -124,7 +124,7 @@ add_observation(
 
   Multiplier for the DV field, as numeric.
 
-- NTIME_lookup:
+- ntime_lookup:
 
   A data frame with two columns, a column that defines the custom
   nominal time information in the target domain (e.g., 'PCELTM'), and
@@ -181,7 +181,7 @@ add_observation(
 
   Delete rows where xxSTAT is "NOT DONE, as logical.
 
-- na.rm:
+- na_rm:
 
   Logical indicating whether to remove NA values when applying the
   duplicate_function. Defaults to TRUE.

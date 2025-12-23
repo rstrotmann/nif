@@ -5,7 +5,7 @@ Decompose DTC field into date and time components
 ## Usage
 
 ``` r
-decompose_dtc(obj, DTC_field)
+decompose_dtc(obj, dtc_field)
 ```
 
 ## Arguments
@@ -14,7 +14,7 @@ decompose_dtc(obj, DTC_field)
 
   A data frame.
 
-- DTC_field:
+- dtc_field:
 
   The field to decompose as character.
 

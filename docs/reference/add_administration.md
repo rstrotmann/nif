@@ -50,7 +50,7 @@ add_administration(
 
 - cut_off_date:
 
-  The data cut-off date as Posix date-time.
+  The data cut-off date as Posix date-time or character.
 
 - keep:
 
@@ -81,7 +81,9 @@ Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol.,
 ``` r
 add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
-#> ✖ Analyte EXAMPLINIB not found in PCTESTCD. Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!
+#> ℹ Analyte EXAMPLINIB not found in PCTESTCD
+#> Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be
+#> taken from EXSTDTC/EXENDTC!
 #> ----- NONMEM Input Format (NIF) data -----
 #> 0 observations from 48 subjects across 1 study 
 #> Analytes: EXAMPLINIB 

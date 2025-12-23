@@ -19,7 +19,7 @@ resolve_duplicates(
   fields = "TIME",
   dependent_variable = "DV",
   duplicate_function = mean,
-  na.rm = TRUE
+  na_rm = TRUE
 )
 ```
 
@@ -44,7 +44,7 @@ resolve_duplicates(
   A function to apply to duplicate values. Default is mean. The function
   should take a vector and return a single value.
 
-- na.rm:
+- na_rm:
 
   Logical indicating whether to remove NA values when applying the
   duplicate_function. Defaults to TRUE.

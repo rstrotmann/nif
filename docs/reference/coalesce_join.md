@@ -1,7 +1,7 @@
 # Coalescing join
 
-Source:
-https://www.r-bloggers.com/2023/05/replace-missing-value-from-other-columns-using-coalesce-join-in-dplyr/
+Source: https://www.r-bloggers.com/2023/05/
+replace-missing-value-from-other-columns-using-coalesce-join-in-dplyr/
 
 ## Usage
 

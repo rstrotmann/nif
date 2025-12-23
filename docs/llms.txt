@@ -234,6 +234,9 @@ For further guidance see the help for individual functions and the
 
 - [`analytes()`](analytes.md) : Analytes within a NIF or SDTM object
 
+- [`apply_cat_filter()`](apply_cat_filter.md) : Apply CAT and SCAT
+  filter
+
 - [`as_nif()`](as_nif.md) : Convert data frame to nif object
 
 - [`coalesce_join()`](coalesce_join.md) : Coalescing join
@@ -338,8 +341,6 @@ For further guidance see the help for individual functions and the
   data frame
 
 - [`get_pinboard()`](get_pinboard.md) : Get pinboard object
-
-- [`hash.nif()`](hash.nif.md) : Generate the XXH128 hash of a nif object
 
 - [`hash.sdtm()`](hash.sdtm.md) : Generate the XXH128 hash of a sdtm
   object
@@ -503,9 +504,6 @@ For further guidance see the help for individual functions and the
 
 - [`resolve_duplicates()`](resolve_duplicates.md) : Resolve duplicate
   rows by averaging DV and setting conflicting fields to NA
-
-- [`resolve_duplicates_old()`](resolve_duplicates_old.md) : Remove
-  duplicate rows from a data frame
 
 - [`rich_sampling_sbs()`](rich_sampling_sbs.md) : Identify subjects with
   rich sampling

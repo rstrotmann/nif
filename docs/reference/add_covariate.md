@@ -14,9 +14,9 @@ add_covariate(
   domain,
   testcd,
   covariate = NULL,
-  DTC_field = NULL,
-  DV_field = NULL,
-  TESTCD_field = NULL,
+  dtc_field = NULL,
+  dv_field = NULL,
+  testcd_field = NULL,
   observation_filter = "TRUE",
   cat = NULL,
   scat = NULL,
@@ -47,16 +47,16 @@ add_covariate(
 
   The name of the covariate, defaults to the testcd if NULL.
 
-- DTC_field:
+- dtc_field:
 
   The field to use as the date-time code for the observation. Defaults
   to the two-character domain name followed by 'DTC', if NULL.
 
-- DV_field:
+- dv_field:
 
   The name of the DV field as character.
 
-- TESTCD_field:
+- testcd_field:
 
   The name of the TESTCD field. defaults to xxTESTCD (with xx the domain
   code), as character.

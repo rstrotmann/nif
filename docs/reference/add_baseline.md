@@ -15,9 +15,11 @@ add_baseline(
   domain,
   testcd,
   name = NULL,
-  DV_field = NULL,
-  TESTCD_field = NULL,
+  dv_field = NULL,
+  testcd_field = NULL,
   observation_filter = "TRUE",
+  cat = NULL,
+  scat = NULL,
   baseline_filter = NULL,
   coding_table = NULL,
   summary_function = mean,
@@ -47,11 +49,11 @@ add_baseline(
 
   The column label, as character.
 
-- DV_field:
+- dv_field:
 
   The name of the DV field as character.
 
-- TESTCD_field:
+- testcd_field:
 
   The name of the TESTCD field. defaults to xxTESTCD with xx the domain
   name, as character.
@@ -62,6 +64,14 @@ add_baseline(
   includes date comparisons, make sure to represent the date as,
   datetime object e.g.,
   [`lubridate::as_datetime()`](https://lubridate.tidyverse.org/reference/as_date.html).
+
+- cat:
+
+  xxCAT filter to apply, as character.
+
+- scat:
+
+  xxSCAT filter to apply, as character.
 
 - baseline_filter:
 

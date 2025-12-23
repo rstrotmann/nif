@@ -13,7 +13,7 @@ pharmacokinetic observations for the parent drug in plasma."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.61.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,7 @@ pharmacokinetic observations for the parent drug in plasma.</p>
 
 
 <dt id="arg-cut-off-date">cut_off_date<a class="anchor" aria-label="anchor" href="#arg-cut-off-date"></a></dt>
-<dd><p>The data cut-off date as Posix date-time.</p></dd>
+<dd><p>The data cut-off date as Posix date-time or character.</p></dd>
 
 
 <dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
@@ -130,7 +130,9 @@ Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537.
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_administration</span><span class="op">(</span><span class="fu"><a href="new_nif.html">new_nif</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">examplinib_sad</span>, <span class="st">"EXAMPLINIB"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Analyte EXAMPLINIB not found in PCTESTCD. Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Analyte EXAMPLINIB not found in PCTESTCD</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> taken from EXSTDTC/EXENDTC!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM Input Format (NIF) data -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0 observations from 48 subjects across 1 study </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes: EXAMPLINIB </span>

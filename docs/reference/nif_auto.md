@@ -169,7 +169,6 @@ nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
 #>   1    2       2      2     RS2023       0      2     0     5      34.073    
 #> 1670 more rows
 nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
-#> ✖ Analyte WEIGHT not found in PCTESTCD. Administrations times for WEIGHT cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!
 #> ----- NONMEM Input Format (NIF) data -----
 #> 0 observations from 48 subjects across 1 study 
 #> Analytes: WEIGHT 
