@@ -1015,7 +1015,10 @@ import_observation <- function(
   sbs <- nif |>
     filter(EVID == 1) |>
     select(
-      "USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_"),
+      # "USUBJID", "ID", any_of(fillable_nif_fields),
+      any_of(c("ID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
+               "BMI")),
+      starts_with("BL_"),
       any_of(keep)
     ) |>
     select(!any_of(c("SRC_DOMAIN", "SRC_SEQ"))) |>
