@@ -9,8 +9,9 @@ make_ntime_from_tptnum(obj, domain = NULL)
 \arguments{
 \item{obj}{A data frame containing time point text descriptions.}
 
-\item{domain}{The domain code as character (default: "PC" for pharmacokinetic).
-Used to determine the column name containing time point descriptions.}
+\item{domain}{The domain code as character (default: "PC" for
+pharmacokinetic). Used to determine the column name containing time point
+descriptions.}
 }
 \value{
 A data frame with a column representing the unique values of the

@@ -735,27 +735,29 @@ test_that("make_observation handles cat and scat with different domains", {
 
 test_that("make_observation handles cat and scat with no matching values", {
   # Create test data
-  pc_data <- tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
-    "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 100, "2023-01-01T08:00:00", "PT0H",
-    "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 200, "2023-01-01T09:00:00", "PT1H"
-  )
-
-  dm_data <- tribble(
-    ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
-    "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
-  )
-
-  vs_data <- tribble(
-    ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ1", "WEIGHT", 70, "2023-01-01"
-  )
-
   sdtm <- new_sdtm(list(
-    pc = pc_data,
-    dm = dm_data,
-    vs = vs_data
+    pc = tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
+      "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 100, "2023-01-01T08:00:00", "PT0H",
+      "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 200, "2023-01-01T09:00:00", "PT1H"
+    ),
+
+    dm = tribble(
+      ~USUBJID, ~RFSTDTC,     ~ACTARMCD, ~SEX,
+      "SUBJ1",  "2023-01-01", "ACTIVE",  "M"
+    ),
+
+    vs = tribble(
+      ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+      "SUBJ1", "WEIGHT", 70, "2023-01-01"
+    )
   ))
+
+  # sdtm <- new_sdtm(list(
+  #   pc = pc_data,
+  #   dm = dm_data,
+  #   vs = vs_data
+  # ))
 
   # Test with cat value that doesn't exist
   expect_error(
@@ -767,7 +769,7 @@ test_that("make_observation handles cat and scat with no matching values", {
       ntime_method = "ELTM",
       silent = TRUE
     ),
-    "No entries found after applying cat and scat filters"
+    "NONEXISTENT not found in the PCCAT field!"
   )
 
   # Test with scat value that doesn't exist
@@ -780,7 +782,7 @@ test_that("make_observation handles cat and scat with no matching values", {
       ntime_method = "ELTM",
       silent = TRUE
     ),
-    "No entries found after applying cat and scat filters"
+    "NONEXISTENT not found in the PCSCAT field!"
   )
 })
 

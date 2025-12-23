@@ -1098,7 +1098,7 @@ test_that("add_baseline cat and scat filters work together", {
 })
 
 
-test_that("add_baseline cat filter handles missing field gracefully", {
+test_that("add_baseline cat filter handles missing field", {
   test_nif <- tibble::tribble(
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
@@ -1118,17 +1118,17 @@ test_that("add_baseline cat filter handles missing field gracefully", {
 
   test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
 
-  # Should work fine even if cat is specified but field doesn't exist
-  result <- add_baseline(
-    test_nif, test_sdtm, "vs", "WEIGHT",
-    cat = "VITAL SIGNS", silent = TRUE
+  expect_error(
+    result <- add_baseline(
+      test_nif, test_sdtm, "vs", "WEIGHT",
+      cat = "VITAL SIGNS", silent = TRUE
+    ),
+    "The input does not have a VSCAT field!"
   )
-
-  expect_equal(result$BL_WEIGHT, 70)
 })
 
 
-test_that("add_baseline scat filter handles missing field gracefully", {
+test_that("add_baseline scat filter handles missing field", {
   test_nif <- tibble::tribble(
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
@@ -1148,17 +1148,17 @@ test_that("add_baseline scat filter handles missing field gracefully", {
 
   test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
 
-  # Should work fine even if scat is specified but field doesn't exist
-  result <- add_baseline(
-    test_nif, test_sdtm, "vs", "WEIGHT",
-    scat = "STANDING", silent = TRUE
+  expect_error(
+    result <- add_baseline(
+      test_nif, test_sdtm, "vs", "WEIGHT",
+      scat = "STANDING", silent = TRUE
+    ),
+    "The input does not have a VSSCAT field!"
   )
-
-  expect_equal(result$BL_WEIGHT, 70)
 })
 
 
-test_that("add_baseline cat filter error when no data after filtering", {
+test_that("add_baseline cat filter error when cat category not available", {
   test_nif <- tibble::tribble(
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
@@ -1177,18 +1177,18 @@ test_that("add_baseline cat filter error when no data after filtering", {
 
   test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
 
-  # Should error when cat filter results in no data
+  # Should error when cat filter addressess missing field
   expect_error(
     add_baseline(
       test_nif, test_sdtm, "vs", "WEIGHT",
       cat = "PHYSICAL EXAM", silent = TRUE
     ),
-    "No data after applying cat and scat filters!"
+    "PHYSICAL EXAM not found in the VSCAT field!"
   )
 })
 
 
-test_that("add_baseline scat filter error when no data after filtering", {
+test_that("add_baseline scat filter error when scat category not available", {
   test_nif <- tibble::tribble(
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
@@ -1213,37 +1213,7 @@ test_that("add_baseline scat filter error when no data after filtering", {
       test_nif, test_sdtm, "vs", "WEIGHT",
       scat = "SUPINE", silent = TRUE
     ),
-    "No data after applying cat and scat filters!"
-  )
-})
-
-
-test_that("add_baseline cat and scat filters error when no data after filtering", {
-  test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
-  ) %>%
-    new_nif()
-
-  test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT, ~VSSCAT,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS", "STANDING"
-  ) %>% mutate(DOMAIN = "VS")
-
-  test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
-  ) %>% mutate(DOMAIN = "DM")
-
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
-
-  # Should error when both cat and scat filters result in no data
-  expect_error(
-    add_baseline(
-      test_nif, test_sdtm, "vs", "WEIGHT",
-      cat = "PHYSICAL EXAM", scat = "SUPINE", silent = TRUE
-    ),
-    "No data after applying cat and scat filters!"
+    "SUPINE not found in the VSSCAT field!"
   )
 })
 

@@ -90,7 +90,7 @@ make_ntime_from_tpt <- function(obj, domain = NULL) {
     }
 
     # Default to NA if no pattern matches
-    return(NA)
+    NA
   }
 
   # Apply the function to each TPT value
@@ -102,15 +102,16 @@ make_ntime_from_tpt <- function(obj, domain = NULL) {
   )
   colnames(out) <- c(tpt_name, "NTIME")
 
-  return(out)
+  out
 }
 
 
 #' Make ntime lookup table from TPTNUM field
 #'
 #' @param obj A data frame containing time point text descriptions.
-#' @param domain The domain code as character (default: "PC" for pharmacokinetic).
-#'   Used to determine the column name containing time point descriptions.
+#' @param domain The domain code as character (default: "PC" for
+#'   pharmacokinetic). Used to determine the column name containing time point
+#'   descriptions.
 #'
 #' @returns A data frame with a column representing the unique values of the
 #'   xxTPT variable and a NTIME column with the time in hours.
@@ -130,12 +131,12 @@ make_ntime_from_tptnum <- function(obj, domain = NULL) {
   out <- data.frame(
     tpt_name = tptnum,
     NTIME = tptnum
-  ) %>%
+  ) |>
     arrange(tpt_name)
 
   colnames(out) <- c(tpt_name, "NTIME")
 
-  return(out)
+  out
 }
 
 
@@ -160,11 +161,11 @@ make_ntime_from_dy <- function(obj, domain = "PC") {
   out <- data.frame(
     x = tpt,
     NTIME = (tpt - 1) * 24
-  ) %>%
+  ) |>
     arrange(tpt_name)
 
   colnames(out) <- c(tpt_name, "NTIME")
-  return(out)
+  out
 }
 
 
@@ -189,11 +190,11 @@ make_ntime_from_visitdy <- function(obj, domain = "PC") {
   out <- data.frame(
     x = tpt,
     NTIME = (tpt - 1) * 24
-  ) %>%
+  ) |>
     arrange(tpt_name)
 
   colnames(out) <- c(tpt_name, "NTIME")
-  return(out)
+  out
 }
 
 
@@ -218,7 +219,9 @@ make_ntime <- function(
   silent = NULL
 ) {
   pull_column <- function(col_tail) {
-    temp <- obj %>% select(ends_with(col_tail))
+    temp <- obj |>
+      select(ends_with(col_tail))
+
     if (ncol(temp) == 0) {
       return(NULL)
     }
@@ -227,7 +230,7 @@ make_ntime <- function(
       stop(paste0("multiple columns ending with ", col_tail, " found!"))
     }
 
-    temp <- obj %>%
+    temp <- obj |>
       pull(ends_with(col_tail))
     if (length(temp) == 0) {
       return(NULL)
@@ -278,12 +281,12 @@ make_ntime <- function(
   } else {
     out <- data.frame(
       eltm
-    ) %>%
-      rename(!!eltm_name := 1) %>%
+    ) |>
+      rename(!!eltm_name := 1) |>
       mutate(NTIME = pt_to_hours(eltm))
   }
 
-  return(distinct(out))
+  distinct(out)
 }
 
 
@@ -401,8 +404,12 @@ make_observation <- function(
   if (is.null(DTC_field)) DTC_field <- paste0(toupper(domain), "DTC")
   if (is.null(DV_field)) DV_field <- paste0(toupper(domain), "STRESN")
   if (is.null(TESTCD_field)) TESTCD_field <- paste0(toupper(domain), "TESTCD")
+
   cat_field <- paste0(toupper(domain), "CAT")
   scat_field <- paste0(toupper(domain), "SCAT")
+  # cat_field <- ifelse(is.null(cat), NULL, paste0(toupper(domain), "CAT"))
+  # scat_field <- ifelse(is.null(scat), NULL, paste0(toupper(domain), "SCAT"))
+
   if (is.null(analyte)) analyte <- testcd
   if (is.null(parent)) parent <- analyte
 
@@ -419,7 +426,7 @@ make_observation <- function(
   )
 
   # Get observation data
-  obj <- domain(sdtm, domain_name) %>%
+  obj <- domain(sdtm, domain_name) |>
     lubrify_dates()
 
   # Check whether required fields exist
@@ -475,7 +482,8 @@ make_observation <- function(
       stop("NTIME_lookup must contain a 'NTIME' column")
     }
     if (length(intersect(names(NTIME_lookup), names(obj))) < 1) {
-      stop("NTIME_lookup must contain at least one column that matches a column in the domain data")
+      stop(paste("NTIME_lookup must contain at least one column that matches a",
+      "column in the domain data"))
     }
   }
 
@@ -489,7 +497,7 @@ make_observation <- function(
     }
     # Capture warnings instead of suppressing them
     join_msgs <- capture.output(type = "message", {
-      obj <- obj %>%
+      obj <- obj |>
         left_join(coding_table)
     })
     if (length(join_msgs) > 0) {
@@ -500,27 +508,37 @@ make_observation <- function(
       )
     }
   } else { # proceed without coding table
-    obj <- obj %>%
+    obj <- obj |>
       mutate(DV = .data[[DV_field]] * factor)
   }
 
   # set NA values to zero, if flag is set
   if (na_to_zero == TRUE) {
-    obj <- obj %>%
+    obj <- obj |>
       mutate(DV = case_when(is.na(DV) ~ 0, .default = DV))
   }
 
   # apply observation filter, add debug fields
-  filtered_obj <- obj %>%
-    mutate(SRC_DOMAIN = .data$DOMAIN) %>%
-    {
-      if (paste0(toupper(domain), "SEQ") %in% names(obj)) {
-        mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]])
-      } else {
-        mutate(., SRC_SEQ = NA)
-      }
-    } %>%
+  filtered_obj <- obj |>
+    mutate(SRC_DOMAIN = .data$DOMAIN) |>
     filter(eval(parse(text = observation_filter)))
+
+  if(paste0(toupper(domain), "SEQ") %in% names(obj)) {
+    filtered_obj <- mutate(
+      filtered_obj, SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]])
+  } else {
+    filtered_obj <- mutate(filtered_obj, SRC_SEQ = NA)
+  }
+    # ))
+    #
+    # {
+    #   if (paste0(toupper(domain), "SEQ") %in% names(obj)) {
+    #     mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]])
+    #   } else {
+    #     mutate(., SRC_SEQ = NA)
+    #   }
+    # } %>%
+    # filter(eval(parse(text = observation_filter)))
 
   # Raise error if observation_filter returns no entries
   if (nrow(filtered_obj) == 0) {
@@ -529,8 +547,8 @@ make_observation <- function(
 
   # filter for NOT DONE
   stat_field <- paste0(toupper(domain), "STAT")
-  if (omit_not_done == TRUE & stat_field %in% names(filtered_obj)) {
-    not_done <- filtered_obj %>%
+  if (omit_not_done == TRUE && stat_field %in% names(filtered_obj)) {
+    not_done <- filtered_obj |>
       filter(.data[[stat_field]] == "NOT DONE")
     if (nrow(not_done) > 0) {
       conditional_cli(
@@ -543,7 +561,7 @@ make_observation <- function(
         silent = silent
       )
     }
-    filtered_obj <- filtered_obj %>%
+    filtered_obj <- filtered_obj |>
       filter(.data[[stat_field]] != "NOT DONE")
 
     if (nrow(filtered_obj) == 0) {
@@ -552,30 +570,49 @@ make_observation <- function(
   }
 
   # apply cat and scat filter
-  filtered_obj <- filtered_obj %>%
-    {
-      if (!is.null(cat) & cat_field %in% names(filtered_obj)) {
-        filter(., .data[[cat_field]] == cat)
-      } else {
-        .
-      }
-    } %>%
-    {
-      if (!is.null(scat) & scat_field %in% names(filtered_obj)) {
-        filter(., .data[[scat_field]] == scat)
-      } else {
-        .
-      }
-    }
+  # if (!is.null(cat)) {
+  #   if (!cat_field %in% names(filtered_obj))
+  #     stop(paste0(
+  #       "Cat field ", cat_field, " not found in input!"))
+  #   if (!cat %in% unique(filtered_obj[[cat_field]]))
+  #     stop(paste0(
+  #       cat, " not found in the ", cat_field, " field!"))
+  #   filtered_obj <- filter(filtered_obj, .data[[cat_field]] == cat)
+  # }
 
-  # Raise error if cat and scat filtering returns no entries
-  if (nrow(filtered_obj) == 0) {
+  filtered_obj <- filtered_obj |>
+    apply_cat_filter(cat, cat_field) |>
+    apply_cat_filter(scat, scat_field)
+
+  # if (!is.null(scat)) {
+  #   if (!scat_field %in% names(filtered_obj))
+  #     stop(paste0(
+  #       "Scat field ", scat_field, " not found in input!"))
+  #   filtered_obj <- filter(filtered_obj, .data[[scat_field]] == cat)
+  # }
+
+  # filtered_obj <- filtered_obj %>%
+  #   {
+  #     if (!is.null(cat) && cat_field %in% names(filtered_obj)) {
+  #       filter(., .data[[cat_field]] == cat)
+  #     } else {
+  #       .
+  #     }
+  #   } %>%
+  #   {
+  #     if (!is.null(scat) && scat_field %in% names(filtered_obj)) {
+  #       filter(., .data[[scat_field]] == scat)
+  #     } else {
+  #       .
+  #     }
+  #   }
+
+  if (nrow(filtered_obj) == 0)
     stop("No entries found after applying cat and scat filters")
-  }
 
   # create further fields
-  out <- filtered_obj %>%
-    filter(.data[[TESTCD_field]] == testcd) %>%
+  out <- filtered_obj |>
+    filter(.data[[TESTCD_field]] == testcd) |>
     mutate(
       DTC = .data[[DTC_field]],
       ANALYTE = analyte,
@@ -596,7 +633,7 @@ make_observation <- function(
   if (!is.null(NTIME_lookup)) {
     out <- left_join(out, NTIME_lookup, by = join_variables)
   } else {
-    out <- out %>%
+    out <- out |>
       mutate(NTIME = NA)
   }
 
@@ -608,22 +645,20 @@ make_observation <- function(
         dy_name, " not found in domain, day cannot be included in observation"
       ))
     }
-    out <- out %>%
+    out <- out |>
       mutate(NTIME = NTIME + trialday_to_day(out[[dy_name]]) * 24)
   }
 
   # merge subject-level information
-  out <- out %>%
-    inner_join(sbs, by = "USUBJID") %>%
-    group_by(.data$USUBJID) %>%
+  out |>
+    inner_join(sbs, by = "USUBJID") |>
+    group_by(.data$USUBJID) |>
     mutate(TRTDY = as.numeric(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days"
-    ) + 1) %>%
-    ungroup() %>%
+    ) + 1) |>
+    ungroup() |>
     filter(!is.na(.data$DTC))
-
-  return(out)
 }
 
 
@@ -725,7 +760,8 @@ add_observation <- function(
   validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
   validate_logical_param(silent, "silent", allow_null = TRUE)
   validate_char_param(duplicates, "duplicates")
-  validate_char_param(duplicate_identifier, "duplicate_identifier", allow_multiple = TRUE)
+  validate_char_param(duplicate_identifier, "duplicate_identifier",
+                      allow_multiple = TRUE)
 
   validate_logical_param(na_to_zero, "na_to_zero")
 
@@ -755,7 +791,7 @@ add_observation <- function(
   keep <- unique(c(keep, names(nif), duplicate_identifier))
 
   # ensure analytes
-  nif <- nif %>%
+  nif <- nif |>
     ensure_analyte()
 
   if (length(parents(nif)) == 0) {
@@ -784,8 +820,8 @@ add_observation <- function(
     analyte <- testcd
   }
 
-  # If null, set parent to placeholder. The parent field will be later completed based on
-  # the last administration before the observation
+  # If null, set parent to placeholder. The parent field will be later completed
+  # based on the last administration before the observation
   if (is.null(parent)) {
     parent <- "."
   }
@@ -796,14 +832,14 @@ add_observation <- function(
     coding_table, factor, NTIME_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
     silent = silent, na_to_zero = na_to_zero
-  ) %>%
+  ) |>
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
 
   # Duplicate handling
-  # dupl_fields <- c("USUBJID", "ANALYTE", "DTC")
   dupl_fields <- c("USUBJID", "ANALYTE", duplicate_identifier)
 
-  n_dupl <- find_duplicates(observation, fields = dupl_fields, count_only = TRUE)
+  n_dupl <- find_duplicates(observation, fields = dupl_fields,
+                            count_only = TRUE)
 
   if (n_dupl != 0) {
     if (duplicates == "stop") {
@@ -812,9 +848,9 @@ add_observation <- function(
         plural("observation", n_dupl > 1), " found with respect to ",
         nice_enumeration(dupl_fields), ".\n\n",
         "Identify duplicates using the `duplicates = 'identify'` parameter, ",
-        "or have duplicates automatically resolved with `duplicates = 'resolve'` ",
-        "where the resolution function is specified by the `duplicate_function` ",
-        "parameter (default is `mean`)."
+        "or have duplicates automatically resolved with ",
+        "`duplicates = 'resolve'` where the resolution function is specified ",
+        "by the `duplicate_function` parameter (default is `mean`)."
       ))
     }
 
@@ -828,19 +864,16 @@ add_observation <- function(
         cli_text()
       })
 
-      ## TEST
       d <- find_duplicates(observation, fields = dupl_fields)
       original_domain <- domain(sdtm, domain)
 
-      temp <- original_domain %>%
-        mutate(DTC = .data[[paste0(toupper(domain), "DTC")]]) %>%
-        mutate(ANALYTE = .data[[paste0(toupper(domain), "TESTCD")]]) %>%
-        lubrify_dates() %>%
-        inner_join(d[, dupl_fields], by = dupl_fields) %>%
+      temp <- original_domain |>
+        mutate(DTC = .data[[paste0(toupper(domain), "DTC")]]) |>
+        mutate(ANALYTE = .data[[paste0(toupper(domain), "TESTCD")]]) |>
+        lubrify_dates() |>
+        inner_join(d[, dupl_fields], by = dupl_fields) |>
         distinct()
-      ## TEST END
 
-      # return(find_duplicates(observation, fields = dupl_fields))
       return(temp)
     }
 
@@ -877,22 +910,23 @@ add_observation <- function(
     }
   }
 
-  obj <- bind_rows(nif, observation) %>%
-    arrange(.data$USUBJID, .data$DTC) %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
-    ## now fill the parent placeholders from the last administration above
-    mutate(PARENT = case_when(PARENT == "." ~ NA, .default = PARENT)) %>%
-    mutate(.current_admin = case_when(EVID == 1 ~ ANALYTE, .default = NA)) %>%
-    group_by(.data$USUBJID) %>%
-    fill(".current_admin", .direction = "downup") %>%
-    ungroup() %>%
-    mutate(PARENT = case_when(is.na(PARENT) ~ .current_admin, .default = PARENT)) %>%
-    select(-c(".current_admin")) %>%
-    group_by(.data$USUBJID, .data$PARENT) %>%
+  obj <- bind_rows(nif, observation) |>
+    arrange(.data$USUBJID, .data$DTC) |>
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) |>
+    mutate(PARENT = case_when(PARENT == "." ~ NA, .default = PARENT)) |>
+    mutate(.current_admin = case_when(EVID == 1 ~ ANALYTE, .default = NA)) |>
+    group_by(.data$USUBJID) |>
+    fill(".current_admin", .direction = "downup") |>
+    ungroup() |>
+    mutate(PARENT = case_when(
+      is.na(PARENT) ~ .current_admin,
+      .default = PARENT)) |>
+    select(-c(".current_admin")) |>
+    group_by(.data$USUBJID, .data$PARENT) |>
     mutate(NO_ADMIN_FLAG = case_when(
       sum(EVID == 1) == 0 ~ TRUE,
       .default = FALSE
-    )) %>%
+    )) |>
     ungroup()
 
   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
@@ -906,11 +940,11 @@ add_observation <- function(
           "parent for these observations?)"
         ))
         cli_verbatim(df_to_string(
-          obj %>%
-            filter(.data$NO_ADMIN_FLAG == TRUE) %>%
-            group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) %>%
-            mutate(N = sum(EVID == 0)) %>%
-            ungroup() %>%
+          obj |>
+            filter(.data$NO_ADMIN_FLAG == TRUE) |>
+            group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) |>
+            mutate(N = sum(EVID == 0)) |>
+            ungroup() |>
             distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
           indent = 2, abbr_lines = 5, abbr_threshold = 20
         ))
@@ -919,13 +953,13 @@ add_observation <- function(
       silent = silent
     )
 
-    obj <- obj %>%
+    obj <- obj |>
       filter(.data$NO_ADMIN_FLAG == 0)
   }
 
-  obj %>%
-    select(-c("NO_ADMIN_FLAG")) %>%
-    new_nif() %>%
+  obj |>
+    select(-c("NO_ADMIN_FLAG")) |>
+    new_nif() |>
     normalize_nif(keep = keep)
 }
 
@@ -982,7 +1016,7 @@ import_observation <- function(
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
-  nif <- nif %>%
+  nif <- nif |>
     ensure_parent()
 
   if (!all(c(DV_field, USUBJID_field) %in% names(raw))) {
@@ -1012,10 +1046,10 @@ import_observation <- function(
     )
   }
 
-  imp <- nif %>%
-    as.data.frame() %>%
-    filter(EVID == 1) %>%
-    distinct(ANALYTE) %>%
+  imp <- nif |>
+    as.data.frame() |>
+    filter(EVID == 1) |>
+    distinct(ANALYTE) |>
     pull(ANALYTE)
 
   if (is.null(parent)) {
@@ -1030,32 +1064,34 @@ import_observation <- function(
     }
   }
 
-  sbs <- nif %>%
-    filter(EVID == 1) %>%
+  sbs <- nif |>
+    filter(EVID == 1) |>
     select(
       "USUBJID", "ID", any_of(fillable_nif_fields), starts_with("BL_"),
       any_of(keep)
-    ) %>%
-    select(!any_of(c("SRC_DOMAIN", "SRC_SEQ"))) %>%
-    mutate(IMPUTATION = "") %>%
+    ) |>
+    select(!any_of(c("SRC_DOMAIN", "SRC_SEQ"))) |>
+    mutate(IMPUTATION = "") |>
     distinct()
 
-  filtered_raw <- raw %>%
+  filtered_raw <- raw |>
     filter(eval(parse(text = observation_filter)))
 
   # Add warning if subject_filter returns no entries
   if (nrow(filtered_raw) == 0) {
-    stop("The observation_filter '", observation_filter, "' returned no entries.")
+    stop("The observation_filter '", observation_filter,
+         "' returned no entries.")
   }
 
   obs <- filtered_raw %>%
-    mutate(USUBJID = .data[[USUBJID_field]]) %>%
-    {
-      if (!is.null(NTIME_field)) mutate(., NTIME = .data[[NTIME_field]]) else .
-    } %>%
-    mutate(DV = .data[[DV_field]]) %>%
-    # select(any_of(c("USUBJID", "NTIME", "DV", DTC_field))) %>%
-    select(any_of(c("USUBJID", "NTIME", "DV", DTC_field, keep))) %>%
+    mutate(USUBJID = .data[[USUBJID_field]])
+
+  if (!is.null(NTIME_field))
+    obs <- mutate(obs, NTIME = .data[[NTIME_field]])
+
+  obs <- obs |>
+    mutate(DV = .data[[DV_field]]) |>
+    select(any_of(c("USUBJID", "NTIME", "DV", DTC_field, keep))) |>
     mutate(
       ANALYTE = analyte,
       CMT = cmt,
@@ -1065,8 +1101,8 @@ import_observation <- function(
       METABOLITE = FALSE,
       EVID = 0,
       MDV = as.numeric(is.na(DV))
-    ) %>%
-    inner_join(sbs, by = "USUBJID") %>%
+    ) |>
+    inner_join(sbs, by = "USUBJID") |>
     mutate(
       SRC_DOMAIN = "IMPORT",
       SRC_SEQ = NA
@@ -1075,20 +1111,20 @@ import_observation <- function(
   # derive time from DTC, if present, or generate DTC from first administration
   #   time in nif object
   if (!is.null(DTC_field)) {
-    obs <- obs %>%
-      mutate(DTC = .data[[DTC_field]]) %>%
+    obs <- obs |>
+      mutate(DTC = .data[[DTC_field]]) |>
       lubrify_dates()
   } else {
-    obs <- obs %>%
-      left_join(first_admin_dtc(nif), by = "USUBJID") %>%
-      mutate(DTC = .data$FIRSTDTC + duration(hours = NTIME)) %>%
-      select(!all_of("FIRSTDTC")) %>%
+    obs <- obs |>
+      left_join(first_admin_dtc(nif), by = "USUBJID") |>
+      mutate(DTC = .data$FIRSTDTC + duration(hours = NTIME)) |>
+      select(!all_of("FIRSTDTC")) |>
       mutate(IMPUTATION = paste0("DTC derived from ", NTIME_field))
   }
 
   bind_rows(
     nif,
     obs
-  ) %>%
+  ) |>
     normalize_nif(keep = keep)
 }
