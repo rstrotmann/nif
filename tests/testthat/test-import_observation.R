@@ -106,7 +106,7 @@ test_that("import_observation correctly handles DTC field", {
     cmt = 2,
     dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
-    NTIME_field = NULL
+    ntime_field = NULL
   )
 
   # Check structure
@@ -139,7 +139,7 @@ test_that("import_observation correctly handles NTIME field", {
     cmt = 2,
     dv_field = "DV_VALUE",
     dtc_field = NULL,
-    NTIME_field = "OBS_NTIME"
+    ntime_field = "OBS_NTIME"
   )
 
   # Check observation records
@@ -189,7 +189,7 @@ test_that("import_observation automatically assigns compartment when cmt is NULL
       cmt = NULL,
       dv_field = "DV_VALUE",
       dtc_field = "OBS_DTC",
-      NTIME_field = "OBS_NTIME",
+      ntime_field = "OBS_NTIME",
       silent = FALSE
     ),
     "Compartment for TEST set to"
@@ -216,7 +216,7 @@ test_that("import_observation automatically determines parent when parent is NUL
       cmt = 2,
       dv_field = "DV_VALUE",
       dtc_field = "OBS_DTC",
-      NTIME_field = "OBS_NTIME",
+      ntime_field = "OBS_NTIME",
       silent = FALSE
     ),
     NA
@@ -236,7 +236,7 @@ test_that("import_observation automatically determines parent when parent is NUL
     cmt = 3,
     dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
-    NTIME_field = "OBS_NTIME",
+    ntime_field = "OBS_NTIME",
     silent = TRUE
   ) # ,
   # "Parent for .* set to"
@@ -265,7 +265,7 @@ test_that("import_observation correctly joins subject data", {
     cmt = 2,
     dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
-    NTIME_field = "OBS_NTIME",
+    ntime_field = "OBS_NTIME",
     keep = c("BL_WT", "BL_HT")
   )
 
@@ -296,7 +296,7 @@ test_that("import_observation correctly sets debug fields", {
     cmt = 2,
     dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
-    NTIME_field = "OBS_NTIME",
+    ntime_field = "OBS_NTIME",
     debug = FALSE
   )
 
@@ -309,7 +309,7 @@ test_that("import_observation correctly sets debug fields", {
     cmt = 2,
     dv_field = "DV_VALUE",
     dtc_field = "OBS_DTC",
-    NTIME_field = "OBS_NTIME",
+    ntime_field = "OBS_NTIME",
     debug = TRUE
   )
 

@@ -13,7 +13,7 @@ import_observation(
   observation_filter = "TRUE",
   USUBJID_field = "USUBJID",
   dtc_field = NULL,
-  NTIME_field = NULL,
+  ntime_field = NULL,
   dv_field = NULL,
   keep = NULL,
   debug = FALSE,
@@ -37,7 +37,7 @@ import_observation(
 
 \item{dtc_field}{The field specifying the DTC, as character.}
 
-\item{NTIME_field}{The field specifying the NTIME, as character.}
+\item{ntime_field}{The field specifying the NTIME, as character.}
 
 \item{dv_field}{The field specifying the dependent variable, as character.}
 

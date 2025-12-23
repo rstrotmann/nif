@@ -248,7 +248,6 @@ make_ntime <- function(
   dy_name <- paste0(toupper(domain), "DY")
 
   eltm <- pull_column(eltm_name)
-  # tpt <- pull_column(tpt_name)
   dy <- pull_column(dy_name)
 
   if (is.null(eltm)) {
@@ -933,7 +932,7 @@ add_observation <- function(
 #' @param observation_filter Filter term, as character.
 #' @param USUBJID_field The field specifying the USUBJID, as character.
 #' @param dtc_field The field specifying the DTC, as character.
-#' @param NTIME_field The field specifying the NTIME, as character.
+#' @param ntime_field The field specifying the NTIME, as character.
 #' @param dv_field The field specifying the dependent variable, as character.
 #' @param keep Columns to keep, as character.
 #' @param debug Keep debug information.
@@ -950,7 +949,7 @@ import_observation <- function(
   observation_filter = "TRUE",
   USUBJID_field = "USUBJID",
   dtc_field = NULL,
-  NTIME_field = NULL,
+  ntime_field = NULL,
   dv_field = NULL,
   keep = NULL,
   debug = FALSE,
@@ -963,7 +962,7 @@ import_observation <- function(
   validate_numeric_param(cmt, "cmt", allow_null = TRUE)
   validate_char_param(observation_filter, "observation_filter")
   validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
-  validate_char_param(NTIME_field, "NTIME_field", allow_null = TRUE)
+  validate_char_param(ntime_field, "ntime_field", allow_null = TRUE)
   validate_char_param(dv_field, "dv_field", allow_null = TRUE)
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
   validate_logical_param(debug, "debug")
@@ -982,10 +981,10 @@ import_observation <- function(
     ))
   }
 
-  if (!any(c(NTIME_field, dtc_field) %in% names(raw))) {
+  if (!any(c(ntime_field, dtc_field) %in% names(raw))) {
     stop(paste0(
       "ERROR: One of the time fields (",
-      nice_enumeration(c(NTIME_field, dtc_field), conjunction = "or"),
+      nice_enumeration(c(ntime_field, dtc_field), conjunction = "or"),
       ") must be present in the input data frame!"
     ))
   }
@@ -1042,8 +1041,8 @@ import_observation <- function(
   obs <- filtered_raw |>
     mutate(USUBJID = .data[[USUBJID_field]])
 
-  if (!is.null(NTIME_field))
-    obs <- mutate(obs, NTIME = .data[[NTIME_field]])
+  if (!is.null(ntime_field))
+    obs <- mutate(obs, NTIME = .data[[ntime_field]])
 
   obs <- obs |>
     mutate(DV = .data[[dv_field]]) |>
@@ -1075,7 +1074,7 @@ import_observation <- function(
       left_join(first_admin_dtc(nif), by = "USUBJID") |>
       mutate(DTC = .data$FIRSTDTC + duration(hours = NTIME)) |>
       select(!all_of("FIRSTDTC")) |>
-      mutate(IMPUTATION = paste0("DTC derived from ", NTIME_field))
+      mutate(IMPUTATION = paste0("DTC derived from ", ntime_field))
   }
 
   bind_rows(

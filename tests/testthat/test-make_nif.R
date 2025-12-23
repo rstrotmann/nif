@@ -287,7 +287,7 @@ test_that("import_observation", {
       observation_filter = "TRUE",
       dtc_field = NULL,
       USUBJID_field = "SUBJ",
-      NTIME_field = "TIME",
+      ntime_field = "TIME",
       dv_field = "VAL",
       keep = "COUNTRY",
       debug = TRUE,
