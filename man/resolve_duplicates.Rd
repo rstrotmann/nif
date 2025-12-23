@@ -9,7 +9,7 @@ resolve_duplicates(
   fields = "TIME",
   dependent_variable = "DV",
   duplicate_function = mean,
-  na.rm = TRUE
+  na_rm = TRUE
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ duplicate_function to. Defaults to "DV".}
 \item{duplicate_function}{A function to apply to duplicate values. Default is
 mean. The function should take a vector and return a single value.}
 
-\item{na.rm}{Logical indicating whether to remove NA values when applying the
+\item{na_rm}{Logical indicating whether to remove NA values when applying the
 duplicate_function. Defaults to TRUE.}
 }
 \value{

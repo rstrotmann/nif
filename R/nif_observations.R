@@ -244,7 +244,7 @@ make_ntime <- function(
   }
 
   eltm_name <- paste0(toupper(domain), "ELTM")
-  tpt_name <- paste0(toupper(domain), "TPT")
+  # tpt_name <- paste0(toupper(domain), "TPT")
   dy_name <- paste0(toupper(domain), "DY")
 
   eltm <- pull_column(eltm_name)
