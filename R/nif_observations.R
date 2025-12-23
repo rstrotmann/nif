@@ -49,14 +49,6 @@ make_ntime_from_tpt <- function(obj, domain = NULL) {
       return(0)
     }
 
-    # Extract day information if present
-    day_value <- 0
-    day_match <- stringr::str_extract(
-      x,
-      "DAY\\s*([0-9]+)",
-      group = 1
-    )
-
     # Handle ranges like "0.5H TO 2H POST-DOSE" - take the later time
     if (stringr::str_detect(x, "TO")) {
       range_match <- stringr::str_extract(
@@ -92,9 +84,6 @@ make_ntime_from_tpt <- function(obj, domain = NULL) {
     # Default to NA if no pattern matches
     NA
   }
-
-  # Apply the function to each TPT value
-  ntime <- as.numeric(sapply(tpt, extract_ntime))
 
   out <- data.frame(
     tpt,
@@ -259,7 +248,7 @@ make_ntime <- function(
   dy_name <- paste0(toupper(domain), "DY")
 
   eltm <- pull_column(eltm_name)
-  tpt <- pull_column(tpt_name)
+  # tpt <- pull_column(tpt_name)
   dy <- pull_column(dy_name)
 
   if (is.null(eltm)) {
@@ -407,8 +396,6 @@ make_observation <- function(
 
   cat_field <- paste0(toupper(domain), "CAT")
   scat_field <- paste0(toupper(domain), "SCAT")
-  # cat_field <- ifelse(is.null(cat), NULL, paste0(toupper(domain), "CAT"))
-  # scat_field <- ifelse(is.null(scat), NULL, paste0(toupper(domain), "SCAT"))
 
   if (is.null(analyte)) analyte <- testcd
   if (is.null(parent)) parent <- analyte
@@ -481,9 +468,17 @@ make_observation <- function(
     if (!"NTIME" %in% names(NTIME_lookup)) {
       stop("NTIME_lookup must contain a 'NTIME' column")
     }
-    if (length(intersect(names(NTIME_lookup), names(obj))) < 1) {
-      stop(paste("NTIME_lookup must contain at least one column that matches a",
-      "column in the domain data"))
+    if (length(
+      intersect(
+        names(NTIME_lookup),
+        names(obj)
+      )
+    ) < 1
+    ) {
+      stop(paste(
+        "NTIME_lookup must contain at least one column that matches",
+        "a column in the domain data"
+      ))
     }
   }
 
@@ -523,22 +518,14 @@ make_observation <- function(
     mutate(SRC_DOMAIN = .data$DOMAIN) |>
     filter(eval(parse(text = observation_filter)))
 
-  if(paste0(toupper(domain), "SEQ") %in% names(obj)) {
+  if (paste0(toupper(domain), "SEQ") %in% names(obj)) {
     filtered_obj <- mutate(
-      filtered_obj, SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]])
+      filtered_obj,
+      SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]]
+    )
   } else {
     filtered_obj <- mutate(filtered_obj, SRC_SEQ = NA)
   }
-    # ))
-    #
-    # {
-    #   if (paste0(toupper(domain), "SEQ") %in% names(obj)) {
-    #     mutate(., SRC_SEQ = .data[[paste0(toupper(domain), "SEQ")]])
-    #   } else {
-    #     mutate(., SRC_SEQ = NA)
-    #   }
-    # } %>%
-    # filter(eval(parse(text = observation_filter)))
 
   # Raise error if observation_filter returns no entries
   if (nrow(filtered_obj) == 0) {
@@ -569,43 +556,9 @@ make_observation <- function(
     }
   }
 
-  # apply cat and scat filter
-  # if (!is.null(cat)) {
-  #   if (!cat_field %in% names(filtered_obj))
-  #     stop(paste0(
-  #       "Cat field ", cat_field, " not found in input!"))
-  #   if (!cat %in% unique(filtered_obj[[cat_field]]))
-  #     stop(paste0(
-  #       cat, " not found in the ", cat_field, " field!"))
-  #   filtered_obj <- filter(filtered_obj, .data[[cat_field]] == cat)
-  # }
-
   filtered_obj <- filtered_obj |>
     apply_cat_filter(cat, cat_field) |>
     apply_cat_filter(scat, scat_field)
-
-  # if (!is.null(scat)) {
-  #   if (!scat_field %in% names(filtered_obj))
-  #     stop(paste0(
-  #       "Scat field ", scat_field, " not found in input!"))
-  #   filtered_obj <- filter(filtered_obj, .data[[scat_field]] == cat)
-  # }
-
-  # filtered_obj <- filtered_obj %>%
-  #   {
-  #     if (!is.null(cat) && cat_field %in% names(filtered_obj)) {
-  #       filter(., .data[[cat_field]] == cat)
-  #     } else {
-  #       .
-  #     }
-  #   } %>%
-  #   {
-  #     if (!is.null(scat) && scat_field %in% names(filtered_obj)) {
-  #       filter(., .data[[scat_field]] == scat)
-  #     } else {
-  #       .
-  #     }
-  #   }
 
   if (nrow(filtered_obj) == 0)
     stop("No entries found after applying cat and scat filters")
@@ -918,9 +871,12 @@ add_observation <- function(
     group_by(.data$USUBJID) |>
     fill(".current_admin", .direction = "downup") |>
     ungroup() |>
-    mutate(PARENT = case_when(
-      is.na(PARENT) ~ .current_admin,
-      .default = PARENT)) |>
+    mutate(
+      PARENT = case_when(
+        is.na(PARENT) ~ .current_admin,
+        .default = PARENT
+        )
+      ) |>
     select(-c(".current_admin")) |>
     group_by(.data$USUBJID, .data$PARENT) |>
     mutate(NO_ADMIN_FLAG = case_when(
@@ -1083,7 +1039,7 @@ import_observation <- function(
          "' returned no entries.")
   }
 
-  obs <- filtered_raw %>%
+  obs <- filtered_raw |>
     mutate(USUBJID = .data[[USUBJID_field]])
 
   if (!is.null(NTIME_field))
