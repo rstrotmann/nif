@@ -32,8 +32,9 @@ is_likely_datetime <- function(x, min_prob = 0.9) {
     return(FALSE)
   }
   overall_match <- is_char_datetime(x) | is_char_date(x)
-  overall_prob <- length(overall_match[overall_match == TRUE]) / length(overall_match)
-  return(overall_prob >= min_prob)
+  overall_prob <- length(overall_match[overall_match == TRUE]) /
+    length(overall_match)
+  overall_prob >= min_prob
 }
 
 
@@ -117,10 +118,10 @@ rename_by_formula <- function(obj, f) {
         "'", deparse(f), "' is not a valid renaming term, ", e
       ))
     },
-    out <- obj %>%
+    out <- obj |>
       mutate(!!to_col := eval(from_term))
   )
-  return(out)
+  out
 }
 
 
@@ -175,8 +176,8 @@ import_from_connection <- function(
     n_comma <- str_count(first_line, delimiter)
     n_space <- str_count(first_line, "\\s+")
 
-    if (n_space == 0 & n_comma == 0) {
-      stop("Data format is not specified and can not be autmatically determined!")
+    if (n_space == 0 && n_comma == 0) {
+      stop("Data format cannot be autmatically determined!")
     }
     if (n_space > 0) format <- "fixed_width"
     if (n_comma > 0) format <- "csv"
@@ -186,15 +187,25 @@ import_from_connection <- function(
       # Check if we can extract column headers
       col_headers <- str_extract_all(lines[1], "[A-Za-z_]+")[[1]]
       if (length(col_headers) < 2) {
-        stop("Auto-detected fixed-width format, but couldn't properly identify column headers. Please specify format explicitly.")
+        stop(
+          paste(
+            "Auto-detected fixed-width format, but couldn't properly",
+            "identify column headers. Please specify format explicitly."
+          ))
       }
     } else if (format == "csv") {
       # Check if we have a consistent number of fields
       header_fields <- length(str_split(lines[1], delimiter, simplify = TRUE))
       if (length(lines) > 1) {
-        first_row_fields <- length(str_split(lines[2], delimiter, simplify = TRUE))
+        first_row_fields <- length(str_split(lines[2], delimiter,
+                                             simplify = TRUE))
         if (header_fields != first_row_fields) {
-          stop("Auto-detected CSV format, but the number of fields is inconsistent. Please specify format explicitly or check delimiter setting.")
+          stop(
+            paste(
+              "Auto-detected CSV format, but the number of fields is",
+              "inconsistent. Please specify format explicitly or check",
+              "delimiter setting."
+            ))
         }
       }
     }
@@ -222,14 +233,14 @@ import_from_connection <- function(
     colnames(raw) <- str_split(lines[1], delimiter, simplify = TRUE)
   }
 
-  raw <- raw %>%
+  raw <- raw |>
     mutate(across(
       -c(any_of(no_numeric)),
       ~ type.convert(.x,
         as.is = TRUE, numerals = "no.loss",
         na.strings = c("NA", ".")
       )
-    )) %>%
+    )) |>
     mutate(across(
       where(is.character) & where(is_likely_datetime),
       convert_char_datetime
@@ -252,12 +263,7 @@ import_from_connection <- function(
     raw[missing_fields] <- NA
   }
 
-  out <- new_nif(raw) # %>%
-  # ensure_analyte() %>%
-  # ensure_parent() #%>%
-  # ensure_time()
-
-  return(out)
+  new_nif(raw)
 }
 
 
