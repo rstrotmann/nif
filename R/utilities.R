@@ -1228,21 +1228,10 @@ identify_baseline_columns <- function(df, id_col = "ID") {
 apply_cat_filter <- function(obj, param, param_field) {
   if (!is.null(param)) {
     if (!param_field %in% names(obj))
-      stop(paste0(
-        "The input does not have a ", param_field, " field!"))
+      stop(paste0("The input does not have a ", param_field, " field!"))
     if (!param %in% unique(obj[[param_field]]))
-      stop(paste0(
-        param, " not found in the ", param_field, " field!"))
+      stop(paste0(param, " not found in the ", param_field, " field!"))
     return(filter(obj, .data[[param_field]] == param))
   }
-  return(obj)
+  obj
 }
-
-
-
-
-
-
-
-
-

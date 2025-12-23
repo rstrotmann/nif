@@ -160,16 +160,6 @@ add_baseline <- function(
     apply_cat_filter(cat, cat_field) |>
     apply_cat_filter(scat, scat_field)
 
-  # apply cat and scat filters
-  # if (!is.null(cat)) {
-  #   if (cat_field %in% names(filtered_domain))
-  #     filtered_domain <- filter(filtered_domain, .data[[cat_field]] == cat)
-  # }
-  # if (!is.null(scat)) {
-  #   if (scat_field %in% names(filtered_domain))
-  #     filtered_domain <- filter(filtered_domain, .data[[scat_field]] == scat)
-  # }
-
   if (nrow(filtered_domain) == 0)
     stop(paste0("No data after applying cat and scat filters!"))
 
