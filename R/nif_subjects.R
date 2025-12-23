@@ -1,7 +1,9 @@
 #' Calculate age from birthday and reference date
 #'
-#' @param df A data frame containing at least BRTHDTC and reference date columns.
-#' @param ref_date_col The name of the reference date column, default is "RFICDTC".
+#' @param df A data frame containing at least BRTHDTC and reference date
+#'   columns.
+#' @param ref_date_col The name of the reference date column, default is
+#'   "RFICDTC".
 #' @param preserve_age Whether to preserve existing AGE values, default is TRUE.
 #'
 #' @return A data frame with AGE column added or updated.
@@ -16,24 +18,25 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
     return(df) # Return unchanged if required columns not present
   }
 
-  df <- df %>%
-    lubrify_dates() %>%
+  df <- df |>
+    lubrify_dates() |>
     mutate(age_brthdtc = round(as.numeric(
       lubridate::as.duration(.data[[ref_date_col]] - .data$BRTHDTC), "years"
     ), 0))
 
   if (preserve_age && "AGE" %in% names(df)) {
-    df <- df %>%
+    df <- df |>
       mutate(AGE = case_when(
         is.na(.data$AGE) ~ .data$age_brthdtc,
         .default = .data$AGE
       ))
   } else {
-    df <- df %>%
+    df <- df |>
       mutate(AGE = .data$age_brthdtc)
   }
 
-  df %>% select(-"age_brthdtc")
+  df |>
+    select(-"age_brthdtc")
 }
 
 
@@ -88,7 +91,12 @@ make_subjects <- function(
 
     # Check for VSDTC when needed for baseline determination
     if (!"VSBLFL" %in% names(vs) && !"VSDTC" %in% names(vs)) {
-      stop("When 'VSBLFL' is not available in vs, 'VSDTC' must be present for baseline determination")
+      stop(
+        paste(
+          "When 'VSBLFL' is not available in vs, 'VSDTC' must be present",
+          "for baseline determination"
+        )
+      )
     }
   }
 
@@ -98,27 +106,31 @@ make_subjects <- function(
   if (!is.null(vs)) {
     # Check if RFSTDTC exists in dm when needed for baseline calculations
     if (!"VSBLFL" %in% names(vs) && !"RFSTDTC" %in% colnames(dm)) {
-      stop("When 'VSBLFL' is not available in vs, 'RFSTDTC' must be present in dm for baseline determination")
+      stop(paste(
+        "When 'VSBLFL' is not available in vs, 'RFSTDTC' must be",
+        "present in dm for baseline determination"
+      ))
     }
 
-    baseline_covariates <- vs %>%
-      lubrify_dates() %>%
-      left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID") %>%
-      {
-        if ("VSBLFL" %in% names(vs)) {
-          filter(., VSBLFL == "Y")
-        } else {
-          filter(., VSDTC < RFSTDTC)
-        }
-      } %>%
-      filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) %>%
-      group_by(.data$USUBJID, .data$VSTESTCD) %>%
-      summarize(mean = mean(.data$VSSTRESN), .groups = "drop") %>%
+    baseline_covariates <- vs |>
+      lubrify_dates() |>
+      left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID")
+
+    if ("VSBLFL" %in% names(vs)) {
+      baseline_covariates <- filter(baseline_covariates, VSBLFL == "Y")
+    } else {
+      baseline_covariates <- filter(baseline_covariates, VSDTC < RFSTDTC)
+    }
+
+    baseline_covariates <- baseline_covariates |>
+      filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) |>
+      group_by(.data$USUBJID, .data$VSTESTCD) |>
+      summarize(mean = mean(.data$VSSTRESN), .groups = "drop") |>
       tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "mean")
 
     if ("HEIGHT" %in% colnames(baseline_covariates) &&
-      "WEIGHT" %in% colnames(baseline_covariates)) {
-      baseline_covariates <- baseline_covariates %>%
+          "WEIGHT" %in% colnames(baseline_covariates)) {
+      baseline_covariates <- baseline_covariates |>
         mutate(BMI = calculate_bmi(.data$HEIGHT, .data$WEIGHT))
     }
   } else {
@@ -126,8 +138,8 @@ make_subjects <- function(
   }
 
   # Apply filter to dm and prepare output
-  filtered_dm <- dm %>%
-    lubrify_dates() %>%
+  filtered_dm <- dm |>
+    lubrify_dates() |>
     filter(eval(parse(text = subject_filter)))
 
   # Add warning if subject_filter returns no entries
@@ -137,22 +149,20 @@ make_subjects <- function(
 
   # Only join with baseline_covariates if vs is not NULL
   if (!is.null(vs)) {
-    out <- filtered_dm %>%
-      left_join(baseline_covariates, by = "USUBJID") %>%
+    out <- filtered_dm |>
+      left_join(baseline_covariates, by = "USUBJID") |>
       recode_sex()
   } else {
-    out <- filtered_dm %>%
+    out <- filtered_dm |>
       recode_sex()
   }
 
   # Generate sequential IDs instead of NA values
-  out <- out %>%
-    mutate(ID = row_number()) %>%
-    relocate("ID") %>%
-    select(., any_of(c(
+  out |>
+    mutate(ID = row_number()) |>
+    relocate("ID") |>
+    select(any_of(c(
       "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
       "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC", keep
     )))
-
-  return(out)
 }
