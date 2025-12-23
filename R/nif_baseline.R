@@ -16,6 +16,8 @@
 #' @param observation_filter A filter term for the `domain`, as character. Note:
 #'   if the filter term includes date comparisons, make sure to represent the
 #'   date as, datetime object e.g.,  `lubridate::as_datetime()`.
+#' @param cat xxCAT filter to apply, as character.
+#' @param scat xxSCAT filter to apply, as character.
 #' @param baseline_filter A filter term to identify the baseline condition.
 #'   within the `domain`. Defaults to either "xxBLFL == 'Y'" or
 #'   "xxLOBXFL == 'Y'" (with xx the domain code), whichever is found first in
@@ -45,6 +47,8 @@ add_baseline <- function(
   dv_field = NULL,
   testcd_field = NULL,
   observation_filter = "TRUE",
+  cat = NULL,
+  scat = NULL,
   baseline_filter = NULL,
   coding_table = NULL,
   summary_function = mean,
@@ -58,8 +62,14 @@ add_baseline <- function(
   validate_char_param(dv_field, "dv_field", allow_null = TRUE)
   validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
   validate_char_param(observation_filter, "observation_filter")
+  validate_char_param(cat, "cat", allow_null = TRUE)
+  validate_char_param(scat, "scat", allow_null = TRUE)
   validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
   validate_logical_param(silent, "silent", allow_null = TRUE)
+
+  # create fields
+  cat_field <- paste0(toupper(domain), "CAT")
+  scat_field <- paste0(toupper(domain), "SCAT")
 
   # validate coding table
   if (!is.null(coding_table)) {
@@ -146,7 +156,22 @@ add_baseline <- function(
   }
 
   filtered_domain <- domain(sdtm, str_to_lower(domain)) |>
-    lubrify_dates() |>
+    lubrify_dates()
+
+  # apply cat and scat filters
+  if (!is.null(cat)) {
+    if(cat_field %in% names(filtered_domain))
+      filtered_domain <- filter(filtered_domain, .data[[cat_field]] == cat)
+  }
+  if (!is.null(scat)) {
+    if(scat_field %in% names(filtered_domain))
+      filtered_domain <- filter(filtered_domain, .data[[scat_field]] == scat)
+  }
+  if (nrow(filtered_domain) == 0)
+    stop(paste0("No data after applying cat and scat filters!"))
+
+  # apply observation and baseline filters
+  filtered_domain <- filtered_domain |>
     filter(eval(parse(text = observation_filter))) |>
     filter(.data[[testcd_field]] %in% testcd) |>
     filter(eval(parse(text = baseline_filter)))

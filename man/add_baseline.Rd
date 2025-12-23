@@ -13,6 +13,8 @@ add_baseline(
   dv_field = NULL,
   testcd_field = NULL,
   observation_filter = "TRUE",
+  cat = NULL,
+  scat = NULL,
   baseline_filter = NULL,
   coding_table = NULL,
   summary_function = mean,
@@ -38,6 +40,10 @@ xx the domain name, as character.}
 \item{observation_filter}{A filter term for the \code{domain}, as character. Note:
 if the filter term includes date comparisons, make sure to represent the
 date as, datetime object e.g.,  \code{lubridate::as_datetime()}.}
+
+\item{cat}{xxCAT filter to apply, as character.}
+
+\item{scat}{xxSCAT filter to apply, as character.}
 
 \item{baseline_filter}{A filter term to identify the baseline condition.
 within the \code{domain}. Defaults to either "xxBLFL == 'Y'" or

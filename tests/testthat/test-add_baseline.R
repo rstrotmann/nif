@@ -930,3 +930,350 @@ test_that("add_baseline handles multiple test codes with coding tables", {
   expect_equal(result_race$BL_RACE[result_race$USUBJID == "SUBJ-001"], 1)
   expect_equal(result_race$BL_RACE[result_race$USUBJID == "SUBJ-002"], 2)
 })
+
+
+test_that("add_baseline cat filter works correctly", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01",
+    "SUBJ-003", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS",
+    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "PHYSICAL EXAM",
+    "SUBJ-002", "2023-01-01", "WEIGHT", 80, "Y", "VITAL SIGNS",
+    "SUBJ-002", "2023-01-01", "WEIGHT", 85, "Y", "PHYSICAL EXAM",
+    "SUBJ-003", "2023-01-01", "WEIGHT", 90, "Y", "VITAL SIGNS"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT",
+    "SUBJ-003", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test with cat filter - should only include "VITAL SIGNS"
+  result <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    cat = "VITAL SIGNS", silent = TRUE
+  )
+
+  # SUBJ-001 should have baseline from VITAL SIGNS (70), not PHYSICAL EXAM (75)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-001"], 70)
+  # SUBJ-002 should have baseline from VITAL SIGNS (80), not PHYSICAL EXAM (85)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-002"], 80)
+  # SUBJ-003 should have baseline from VITAL SIGNS (90)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-003"], 90)
+
+  # Test with different cat filter - should only include "PHYSICAL EXAM"
+  result_pe <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    cat = "PHYSICAL EXAM", silent = TRUE
+  )
+
+  # SUBJ-001 should have baseline from PHYSICAL EXAM (75)
+  expect_equal(result_pe$BL_WEIGHT[result_pe$USUBJID == "SUBJ-001"], 75)
+  # SUBJ-002 should have baseline from PHYSICAL EXAM (85)
+  expect_equal(result_pe$BL_WEIGHT[result_pe$USUBJID == "SUBJ-002"], 85)
+  # SUBJ-003 should have NA (no PHYSICAL EXAM data)
+  expect_true(is.na(result_pe$BL_WEIGHT[result_pe$USUBJID == "SUBJ-003"]))
+})
+
+
+test_that("add_baseline scat filter works correctly", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01",
+    "SUBJ-003", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "STANDING",
+    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "SUPINE",
+    "SUBJ-002", "2023-01-01", "WEIGHT", 80, "Y", "STANDING",
+    "SUBJ-002", "2023-01-01", "WEIGHT", 85, "Y", "SUPINE",
+    "SUBJ-003", "2023-01-01", "WEIGHT", 90, "Y", "STANDING"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT",
+    "SUBJ-003", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test with scat filter - should only include "STANDING"
+  result <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    scat = "STANDING", silent = TRUE
+  )
+
+  # SUBJ-001 should have baseline from STANDING (70), not SUPINE (75)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-001"], 70)
+  # SUBJ-002 should have baseline from STANDING (80), not SUPINE (85)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-002"], 80)
+  # SUBJ-003 should have baseline from STANDING (90)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-003"], 90)
+
+  # Test with different scat filter - should only include "SUPINE"
+  result_supine <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    scat = "SUPINE", silent = TRUE
+  )
+
+  # SUBJ-001 should have baseline from SUPINE (75)
+  expect_equal(result_supine$BL_WEIGHT[result_supine$USUBJID == "SUBJ-001"], 75)
+  # SUBJ-002 should have baseline from SUPINE (85)
+  expect_equal(result_supine$BL_WEIGHT[result_supine$USUBJID == "SUBJ-002"], 85)
+  # SUBJ-003 should have NA (no SUPINE data)
+  expect_true(is.na(result_supine$BL_WEIGHT[result_supine$USUBJID == "SUBJ-003"]))
+})
+
+
+test_that("add_baseline cat and scat filters work together", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01",
+    "SUBJ-002", "2023-01-01",
+    "SUBJ-003", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT, ~VSSCAT,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS", "STANDING",
+    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "VITAL SIGNS", "SUPINE",
+    "SUBJ-001", "2023-01-01", "WEIGHT", 80, "Y", "PHYSICAL EXAM", "STANDING",
+    "SUBJ-002", "2023-01-01", "WEIGHT", 85, "Y", "VITAL SIGNS", "STANDING",
+    "SUBJ-002", "2023-01-01", "WEIGHT", 90, "Y", "VITAL SIGNS", "SUPINE",
+    "SUBJ-003", "2023-01-01", "WEIGHT", 95, "Y", "VITAL SIGNS", "STANDING"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT",
+    "SUBJ-002", "TREATMENT",
+    "SUBJ-003", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Test with both cat and scat filters - should only include "VITAL SIGNS" and "STANDING"
+  result <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    cat = "VITAL SIGNS", scat = "STANDING", silent = TRUE
+  )
+
+  # SUBJ-001 should have baseline from VITAL SIGNS/STANDING (70)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-001"], 70)
+  # SUBJ-002 should have baseline from VITAL SIGNS/STANDING (85)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-002"], 85)
+  # SUBJ-003 should have baseline from VITAL SIGNS/STANDING (95)
+  expect_equal(result$BL_WEIGHT[result$USUBJID == "SUBJ-003"], 95)
+
+  # Test with different combination - "VITAL SIGNS" and "SUPINE"
+  result_supine <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    cat = "VITAL SIGNS", scat = "SUPINE", silent = TRUE
+  )
+
+  # SUBJ-001 should have baseline from VITAL SIGNS/SUPINE (75)
+  expect_equal(result_supine$BL_WEIGHT[result_supine$USUBJID == "SUBJ-001"], 75)
+  # SUBJ-002 should have baseline from VITAL SIGNS/SUPINE (90)
+  expect_equal(result_supine$BL_WEIGHT[result_supine$USUBJID == "SUBJ-002"], 90)
+  # SUBJ-003 should have NA (no VITAL SIGNS/SUPINE data)
+  expect_true(is.na(result_supine$BL_WEIGHT[result_supine$USUBJID == "SUBJ-003"]))
+})
+
+
+test_that("add_baseline cat filter handles missing field gracefully", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  # Domain without VSCAT field
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Should work fine even if cat is specified but field doesn't exist
+  result <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    cat = "VITAL SIGNS", silent = TRUE
+  )
+
+  expect_equal(result$BL_WEIGHT, 70)
+})
+
+
+test_that("add_baseline scat filter handles missing field gracefully", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  # Domain without VSSCAT field
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Should work fine even if scat is specified but field doesn't exist
+  result <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    scat = "STANDING", silent = TRUE
+  )
+
+  expect_equal(result$BL_WEIGHT, 70)
+})
+
+
+test_that("add_baseline cat filter error when no data after filtering", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Should error when cat filter results in no data
+  expect_error(
+    add_baseline(
+      test_nif, test_sdtm, "vs", "WEIGHT",
+      cat = "PHYSICAL EXAM", silent = TRUE
+    ),
+    "No data after applying cat and scat filters!"
+  )
+})
+
+
+test_that("add_baseline scat filter error when no data after filtering", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "STANDING"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Should error when scat filter results in no data
+  expect_error(
+    add_baseline(
+      test_nif, test_sdtm, "vs", "WEIGHT",
+      scat = "SUPINE", silent = TRUE
+    ),
+    "No data after applying cat and scat filters!"
+  )
+})
+
+
+test_that("add_baseline cat and scat filters error when no data after filtering", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT, ~VSSCAT,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS", "STANDING"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # Should error when both cat and scat filters result in no data
+  expect_error(
+    add_baseline(
+      test_nif, test_sdtm, "vs", "WEIGHT",
+      cat = "PHYSICAL EXAM", scat = "SUPINE", silent = TRUE
+    ),
+    "No data after applying cat and scat filters!"
+  )
+})
+
+
+test_that("add_baseline cat filter with multiple baseline values", {
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~DTC,
+    "SUBJ-001", "2023-01-01"
+  ) %>%
+    new_nif()
+
+  test_vs <- tibble::tribble(
+    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
+    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS",
+    "SUBJ-001", "2023-01-01", "WEIGHT", 72, "Y", "VITAL SIGNS",
+    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "PHYSICAL EXAM"
+  ) %>% mutate(DOMAIN = "VS")
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,   ~ACTARMCD,
+    "SUBJ-001", "TREATMENT"
+  ) %>% mutate(DOMAIN = "DM")
+
+  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+
+  # With cat filter, should only include VITAL SIGNS values (70, 72) and average them
+  result <- add_baseline(
+    test_nif, test_sdtm, "vs", "WEIGHT",
+    cat = "VITAL SIGNS", silent = TRUE
+  )
+
+  expect_equal(result$BL_WEIGHT, 71)  # mean of 70 and 72
+})
