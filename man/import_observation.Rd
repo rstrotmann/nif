@@ -12,7 +12,7 @@ import_observation(
   cmt = NULL,
   observation_filter = "TRUE",
   USUBJID_field = "USUBJID",
-  DTC_field = NULL,
+  dtc_field = NULL,
   NTIME_field = NULL,
   DV_field = NULL,
   keep = NULL,
@@ -35,7 +35,7 @@ import_observation(
 
 \item{USUBJID_field}{The field specifying the USUBJID, as character.}
 
-\item{DTC_field}{The field specifying the DTC, as character.}
+\item{dtc_field}{The field specifying the DTC, as character.}
 
 \item{NTIME_field}{The field specifying the NTIME, as character.}
 

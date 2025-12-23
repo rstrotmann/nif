@@ -68,7 +68,7 @@ test_that("make_observation works with coding table", {
   suppressMessages(expect_no_error(
     make_observation(
       sdtm, "pp", "LAMZNPT",
-      DTC_field = "PPRFTDTC",
+      dtc_field = "PPRFTDTC",
       observation_filter = "PPSEQ == 7",
       ntime_method = "ELTM",
       coding_table = tibble::tribble(
@@ -166,7 +166,7 @@ test_that("make_observation handles custom DTC_field correctly", {
 
   custom_obs <- make_observation(
     sdtm, "pc", "A",
-    DTC_field = "PCCUSTOMDTC",
+    dtc_field = "PCCUSTOMDTC",
     ntime_method = "ELTM", silent = TRUE
   )
   expect_equal(unique(as.character(custom_obs$DTC)), custom_date)

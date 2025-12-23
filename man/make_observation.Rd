@@ -17,7 +17,7 @@ make_observation(
   cat = NULL,
   scat = NULL,
   testcd_field = NULL,
-  DTC_field = NULL,
+  dtc_field = NULL,
   DV_field = NULL,
   coding_table = NULL,
   factor = 1,
@@ -60,7 +60,7 @@ data.}
 \item{testcd_field}{The xxTESTCD field. Defaults to the two-character domain
 name followed by 'TESTCD', if NULL.}
 
-\item{DTC_field}{The field to use as the date-time code for the observation.
+\item{dtc_field}{The field to use as the date-time code for the observation.
 Defaults to the two-character domain name followed by 'DTC', if NULL.}
 
 \item{DV_field}{the field to use as the dependent variable. Defaults to the
@@ -99,7 +99,7 @@ A data frame.
 \description{
 Create a data frame of observations from a SDTM domain specified by 'domain'
 where the dependent variable comes from the 'DV_field' parameter and the
-timing information from the 'DTC_field' parameter.
+timing information from the 'dtc_field' parameter.
 
 The 'TIME' in the output is \code{NA} throughout and needs to be calculated based
 on administration time point information provided separately.

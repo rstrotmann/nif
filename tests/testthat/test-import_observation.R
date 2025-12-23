@@ -86,29 +86,11 @@ test_that("import_observation validates input parameters correctly", {
       parent = "DRUG",
       cmt = 2,
       DV_field = "DV_VALUE",
-      DTC_field = "OBS_DTC",
+      dtc_field = "OBS_DTC",
       observation_filter = "USUBJID == 'NON-EXISTENT'"
     ),
     "The observation_filter .* returned no entries"
   )
-
-
-  # Test missing parent and no administrations
-  # empty_nif <- structure(
-  #   data.frame(),
-  #   class = c("nif", "tbl_df", "tbl", "data.frame")
-  # )
-  # empty_nif <- new_nif()
-  #
-  # expect_error(
-  #   import_observation(
-  #     empty_nif,
-  #     create_test_raw(),
-  #     analyte = "TEST",
-  #     DV_field = "DV_VALUE"
-  #   ),
-  #   "Please add at least one administration first!"
-  # )
 })
 
 
@@ -123,7 +105,7 @@ test_that("import_observation correctly handles DTC field", {
     parent = "DRUG",
     cmt = 2,
     DV_field = "DV_VALUE",
-    DTC_field = "OBS_DTC",
+    dtc_field = "OBS_DTC",
     NTIME_field = NULL
   )
 
@@ -156,7 +138,7 @@ test_that("import_observation correctly handles NTIME field", {
     parent = "DRUG",
     cmt = 2,
     DV_field = "DV_VALUE",
-    DTC_field = NULL,
+    dtc_field = NULL,
     NTIME_field = "OBS_NTIME"
   )
 
@@ -206,7 +188,7 @@ test_that("import_observation automatically assigns compartment when cmt is NULL
       parent = "DRUG",
       cmt = NULL,
       DV_field = "DV_VALUE",
-      DTC_field = "OBS_DTC",
+      dtc_field = "OBS_DTC",
       NTIME_field = "OBS_NTIME",
       silent = FALSE
     ),
@@ -233,7 +215,7 @@ test_that("import_observation automatically determines parent when parent is NUL
       parent = NULL,
       cmt = 2,
       DV_field = "DV_VALUE",
-      DTC_field = "OBS_DTC",
+      dtc_field = "OBS_DTC",
       NTIME_field = "OBS_NTIME",
       silent = FALSE
     ),
@@ -253,7 +235,7 @@ test_that("import_observation automatically determines parent when parent is NUL
     parent = NULL,
     cmt = 3,
     DV_field = "DV_VALUE",
-    DTC_field = "OBS_DTC",
+    dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     silent = TRUE
   ) # ,
@@ -282,7 +264,7 @@ test_that("import_observation correctly joins subject data", {
     parent = "DRUG",
     cmt = 2,
     DV_field = "DV_VALUE",
-    DTC_field = "OBS_DTC",
+    dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     keep = c("BL_WT", "BL_HT")
   )
@@ -313,7 +295,7 @@ test_that("import_observation correctly sets debug fields", {
     parent = "DRUG",
     cmt = 2,
     DV_field = "DV_VALUE",
-    DTC_field = "OBS_DTC",
+    dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     debug = FALSE
   )
@@ -326,7 +308,7 @@ test_that("import_observation correctly sets debug fields", {
     parent = "DRUG",
     cmt = 2,
     DV_field = "DV_VALUE",
-    DTC_field = "OBS_DTC",
+    dtc_field = "OBS_DTC",
     NTIME_field = "OBS_NTIME",
     debug = TRUE
   )

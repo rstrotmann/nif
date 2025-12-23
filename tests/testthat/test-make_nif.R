@@ -285,7 +285,7 @@ test_that("import_observation", {
       parent = NULL,
       cmt = NULL,
       observation_filter = "TRUE",
-      DTC_field = NULL,
+      dtc_field = NULL,
       USUBJID_field = "SUBJ",
       NTIME_field = "TIME",
       DV_field = "VAL",

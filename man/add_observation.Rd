@@ -18,7 +18,7 @@ add_observation(
   cat = NULL,
   scat = NULL,
   testcd_field = NULL,
-  DTC_field = NULL,
+  dtc_field = NULL,
   DV_field = NULL,
   coding_table = NULL,
   factor = 1,
@@ -68,7 +68,7 @@ data.}
 \item{testcd_field}{The xxTESTCD field. Defaults to the two-character domain
 name followed by 'TESTCD', if NULL.}
 
-\item{DTC_field}{The field to use as the date-time code for the observation.
+\item{dtc_field}{The field to use as the date-time code for the observation.
 Defaults to the two-character domain name followed by 'DTC', if NULL.}
 
 \item{DV_field}{the field to use as the dependent variable. Defaults to the
