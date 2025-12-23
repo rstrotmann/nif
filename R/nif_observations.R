@@ -224,7 +224,7 @@ make_ntime <- function(
     if (length(temp) == 0) {
       return(NULL)
     }
-    return(temp)
+    temp
   }
 
   # input validation
@@ -244,7 +244,6 @@ make_ntime <- function(
   }
 
   eltm_name <- paste0(toupper(domain), "ELTM")
-  # tpt_name <- paste0(toupper(domain), "TPT")
   dy_name <- paste0(toupper(domain), "DY")
 
   eltm <- pull_column(eltm_name)
@@ -263,15 +262,13 @@ make_ntime <- function(
     out <- data.frame(
       eltm,
       dy
-    ) %>%
-      mutate(NTIME = pt_to_hours(eltm) + trialday_to_day(.[[2]]) * 24) %>%
-      rename(!!eltm_name := eltm)
-  } else {
-    out <- data.frame(
-      eltm
     ) |>
-      rename(!!eltm_name := 1) |>
+      mutate(NTIME = pt_to_hours(eltm) + trialday_to_day(.data$dy) * 24)
+    names(out) <- c(eltm_name, dy_name, "NTIME")
+  } else {
+    out <- data.frame(eltm) |>
       mutate(NTIME = pt_to_hours(eltm))
+    names(out) <- c(eltm_name, "NTIME")
   }
 
   distinct(out)
@@ -870,12 +867,8 @@ add_observation <- function(
     group_by(.data$USUBJID) |>
     fill(".current_admin", .direction = "downup") |>
     ungroup() |>
-    mutate(
-      PARENT = case_when(
-        is.na(PARENT) ~ .current_admin,
-        .default = PARENT
-        )
-      ) |>
+    mutate(PARENT = case_when(is.na(PARENT) ~ .current_admin,
+                              .default = PARENT)) |>
     select(-c(".current_admin")) |>
     group_by(.data$USUBJID, .data$PARENT) |>
     mutate(NO_ADMIN_FLAG = case_when(
