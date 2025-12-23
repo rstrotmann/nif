@@ -1054,7 +1054,8 @@ import_observation <- function(
     mutate(
       SRC_DOMAIN = "IMPORT",
       SRC_SEQ = NA
-    )
+    ) |>
+    distinct()
 
   # derive time from DTC, if present, or generate DTC from first administration
   #   time in nif object
