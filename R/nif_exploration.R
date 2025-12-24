@@ -256,6 +256,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @return A summary_nif object.
 #' @export
 #' @import tidyr
+#' @importFrom rlang hash
 #' @noRd
 #' @examples
 #' summary(examplinib_poc_nif)
@@ -402,7 +403,7 @@ summary.nif <- function(
     odwg = odwg,
     administration_duration = administration_summary(object),
     sampling = sampling_table,
-    hash = hash(object),
+    hash = rlang::hash(object),
     last = last_dtc(object)
   )
   class(out) <- "summary_nif"

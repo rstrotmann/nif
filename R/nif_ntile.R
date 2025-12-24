@@ -25,13 +25,13 @@
 #' library(dplyr)
 #' library(ggplot2)
 #'
-#' examplinib_sad_nif %>%
-#'   add_ntile("WEIGHT") %>%
+#' examplinib_sad_nif |>
+#'   add_ntile("WEIGHT") |>
 #'   plot(dose_norm = TRUE, facet = "WEIGHT_NTILE")
 #'
-#' examplinib_poc_nif %>%
-#'   add_ntile("WEIGHT", n = 5) %>%
-#'   distinct(ID, WEIGHT, WEIGHT_NTILE) %>%
+#' examplinib_poc_nif |>
+#'   add_ntile("WEIGHT", n = 5) |>
+#'   distinct(ID, WEIGHT, WEIGHT_NTILE) |>
 #'   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
 #'   geom_point() +
 #'   labs(title = "Plasma concentrations by WEIGHT quartiles")
@@ -48,10 +48,12 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   }
 
   # Validate that n is a positive integer between 2 and 100
-  if (!is.numeric(n) || length(n) != 1 || n < 2 || n > 100 ||
-    n != as.integer(n)) {
+  if (!is.numeric(n) ||
+      length(n) != 1 ||
+      n < 2 || n > 100 ||
+      n != as.integer(n)
+    )
     stop("n must be a positive integer between 2 and 100")
-  }
 
   # Validate that ntile_name is either NULL or a valid character string
   if (!is.null(ntile_name)) {
@@ -76,16 +78,16 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   }
 
   # Validate that input_col has exactly one distinct value per subject (ID)
-  subject_values <- nif %>%
-    as.data.frame() %>%
-    group_by(.data$ID) %>%
+  subject_values <- nif |>
+    as.data.frame() |>
+    group_by(.data$ID) |>
     summarise(
       n_distinct_values = n_distinct(.data[[input_col]], na.rm = TRUE),
       .groups = "drop"
     )
 
   # Check if any subject has multiple distinct values
-  subjects_with_multiple <- subject_values %>%
+  subjects_with_multiple <- subject_values |>
     filter(.data$n_distinct_values > 1)
 
   if (nrow(subjects_with_multiple) > 0) {
@@ -93,20 +95,20 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
       "Column '", input_col, "' must have exactly one distinct value per ",
       "subject. Found multiple values for subjects: ",
       nice_enumeration(subjects_with_multiple$ID)
-      # paste(subjects_with_multiple$ID, collapse = ", ")
     )
   }
 
   # Extract unique subject-level values for n-tile calculation
-  subject_level_data <- nif %>%
-    as.data.frame() %>%
-    group_by(.data$ID) %>%
+  subject_level_data <- nif |>
+    as.data.frame() |>
+    group_by(.data$ID) |>
     summarise(
       value = first(.data[[input_col]]),
       .groups = "drop"
     )
 
-  # Handle cases where there are insufficient observations for n-tile calculation
+  # Handle cases where there are insufficient observations for n-tile
+  # calculation
   if (nrow(subject_level_data) < n) {
     stop(
       "Insufficient subjects (", nrow(subject_level_data),
@@ -115,7 +117,7 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   }
 
   # Calculate n-tiles across all subjects (not within each subject)
-  subject_level_data <- subject_level_data %>%
+  subject_level_data <- subject_level_data |>
     mutate(ntile_value = ntile(.data$value, n = n))
 
   # Dynamic column naming logic
@@ -126,14 +128,12 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   }
 
   # Add the new column with the determined name to the nif object
-  result <- nif %>%
-    as.data.frame() %>%
+  nif |>
+    as.data.frame() |>
     left_join(
-      subject_level_data %>% select("ID", "ntile_value"),
+      select(subject_level_data, "ID", "ntile_value"),
       by = "ID"
-    ) %>%
-    rename(!!column_name := "ntile_value")
-
-  # Ensure the result is a proper nif object using new_nif()
-  return(new_nif(result))
+    ) |>
+    rename_with(~ column_name, "ntile_value") |>
+    new_nif()
 }

@@ -12,7 +12,8 @@ has_domain(obj, name)
 \item{name}{The domain name(s) to check as a character string or vector.}
 }
 \value{
-Logical indicating whether all specified domains exist in the SDTM object.
+Logical indicating whether all specified domains exist in the SDTM
+object.
 }
 \description{
 Check whether a domain is present in an SDTM object

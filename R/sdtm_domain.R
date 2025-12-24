@@ -20,11 +20,8 @@ domain <- function(obj, name) {
     stop("Domain '", name, "' not found in SDTM object")
   }
 
-  # Extract domain safely
-  temp <- obj$domains[[name]]
-
-  # Return the domain
-  return(new_domain(temp))
+  obj$domains[[name]] |>
+    new_domain()
 }
 
 
@@ -57,7 +54,6 @@ summary.domain <- function(object, ..., silent = NULL) {
     stop("Input must be a data frame")
   }
 
-  # validate_domain(object, silent = silent)
   current_domain <- toupper(unique(object$DOMAIN))
   if (length(current_domain) > 1) {
     stop("Multiple domain values found")
@@ -75,11 +71,11 @@ summary.domain <- function(object, ..., silent = NULL) {
   if (testcd_field %in% names(object)) {
     test <- distinct(select(
       object,
-      any_of(c(test_field, testcd_field, cat_field, scat_field, fast_field, "PCSPEC"))
+      any_of(c(test_field, testcd_field, cat_field, scat_field, fast_field,
+               "PCSPEC"))
     ))
-    # any_of(c(test_field, testcd_field, cat_field, scat_field, "PCSPEC"))))
-    observations <- object %>%
-      reframe(n = n(), .by = paste0(current_domain, "TESTCD"))
+    observations <- reframe(object, n = n(),
+                            .by = paste0(current_domain, "TESTCD"))
   } else {
     test <- NULL
     observations <- NULL
@@ -126,7 +122,7 @@ summary.domain <- function(object, ..., silent = NULL) {
   )
 
   class(out) <- "summary_domain"
-  return(out)
+  out
 }
 
 
@@ -141,7 +137,6 @@ summary.domain <- function(object, ..., silent = NULL) {
 print.summary_domain <- function(x, ...) {
   indent <- 2
   hline <- paste0(rep("-", 8), collapse = "")
-  spacer <- paste0(rep(" ", indent), collapse = "")
 
   cat(paste(hline, "SDTM domain summary", hline, "\n"))
 
@@ -238,10 +233,15 @@ plot.domain <- function(
     time_field <- dy_field
   }
 
-  obj <- NULL
+  out <- NULL
 
-  x <- x %>%
-    lubrify_dates()
+  x <- lubrify_dates(x)
+
+  if (dv_field %in% names(x))
+    x <- filter(x, !is.na(.data[[dv_field]]))
+
+  if (time_field %in% names(x))
+    x <- filter(x, !is.na(.data[[time_field]]))
 
   # specific plot for DM
   if (domain == "DM") {
@@ -253,38 +253,46 @@ plot.domain <- function(
       ))
     }
 
-    obj <- x %>%
-      filter(!is.na(.data$RFSTDTC)) %>%
-      arrange(.data$RFSTDTC) %>%
-      mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
-      ggplot2::ggplot() +
-      {
-        if (!is.null(color)) {
-          ggplot2::geom_segment(ggplot2::aes(
-            x = .data$RFSTDTC, xend = .data$RFENDTC,
-            y = .data$ID, yend = .data$ID,
-            color = .data[[color]]
-          ))
-        } else {
-          ggplot2::geom_segment(ggplot2::aes(
+    out <- x |>
+      filter(!is.na(.data$RFSTDTC)) |>
+      arrange(.data$RFSTDTC) |>
+      mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) |>
+      ggplot2::ggplot()
+
+
+    # color
+    if (!is.null(color)) {
+      out <- out +
+        ggplot2::geom_segment(
+          ggplot2::aes(x = .data$RFSTDTC, xend = .data$RFENDTC, y = .data$ID,
+                       yend = .data$ID, color = .data[[color]])
+        )
+    } else {
+      out <- out +
+        ggplot2::geom_segment(
+          ggplot2::aes(
             x = .data$RFSTDTC, xend = .data$RFENDTC,
             y = .data$ID, yend = .data$ID
-          ))
-        }
-      } +
-      {
-        if (points == TRUE) {
-          if (!is.null(color)) {
-            ggplot2::geom_point(ggplot2::aes(
-              x = .data$RFSTDTC, y = .data$ID, color = .data[[color]]
-            ))
-          } else {
-            ggplot2::geom_point(ggplot2::aes(
-              x = .data$RFSTDTC, y = .data$ID
-            ))
-          }
-        }
-      } +
+          )
+        )
+    }
+
+    if (points == TRUE) {
+      if (!is.null(color)) {
+        out <- out +
+          ggplot2::geom_point(
+            ggplot2::aes(x = .data$RFSTDTC, y = .data$ID,
+                         color = .data[[color]])
+          )
+      } else {
+        out <- out +
+          ggplot2::geom_point(
+            ggplot2::aes(x = .data$RFSTDTC, y = .data$ID)
+          )
+      }
+    }
+
+    out <- out +
       ggplot2::scale_y_discrete(
         labels = NULL, breaks = NULL, name = "USUBJID"
       ) +
@@ -303,81 +311,63 @@ plot.domain <- function(
       ))
     }
 
-    obj <- x %>%
-      arrange(.data$EXSTDTC) %>%
-      mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+    out <- x |>
+      arrange(.data$EXSTDTC) |>
+      mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) |>
       ggplot2::ggplot() +
       ggplot2::geom_segment(ggplot2::aes(
         x = .data$EXSTDTC,
         xend = .data$EXENDTC,
         y = .data$ID,
         yend = .data$ID
-      )) +
-      {
-        if (points == TRUE) {
-          ggplot2::geom_point(ggplot2::aes(
-            x = .data$EXSTDTC, y = .data$ID
-          ))
-        }
-      } +
+      ))
+
+    if (points == TRUE) {
+      out <- out +
+        ggplot2::geom_point(ggplot2::aes(x = .data$EXSTDTC, y = .data$ID))
+    }
+
+    out <- out +
       ggplot2::scale_y_discrete(name = "USUBJID", labels = NULL) +
-      ggplot2::scale_x_datetime(
-        name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d"
-      )
+      ggplot2::scale_x_datetime(name = "EXSTDTC - EXENDTC",
+                                date_labels = "%Y-%m-%d")
   }
 
   # generic plot
   if (!domain %in% c("DM", "EX")) {
     if (all(c(testcd_field, time_field, dv_field) %in% names(x))) {
-      obj <- x %>%
-        {
-          if (!is.null(testcd)) filter(., .data[[testcd_field]] == testcd) else .
-        } %>%
-        ggplot(aes(
-          x = !!sym(time_field),
-          y = !!sym(dv_field),
-          color = !!sym(testcd_field)
-        )) +
-        {
-          if (points == TRUE) geom_point()
-        } +
-        {
-          if (lines == TRUE) geom_line()
-        }
+      if (!is.null(testcd))
+        x <- filter(x, .data[[testcd_field]] == testcd)
+
+      out <- x |>
+        ggplot(
+          aes(x = .data[[time_field]], y = .data[[dv_field]],
+              color = .data[[testcd_field]])
+        ) +
+        ggplot2::scale_x_datetime(date_labels = "%Y-%m-%d")
+
+      if (points == TRUE)
+        out <- out + geom_point()
+
+      if (lines == TRUE)
+        out <- out + geom_line()
     }
   }
 
-  obj <- obj +
-    {
-      if (legend == TRUE) {
-        ggplot2::theme(legend.position = "bottom")
-      } else {
-        ggplot2::theme(legend.position = "none")
-      }
-    } +
+  out <- out +
     theme_bw() +
-    ggtitle(paste0("Domain ", domain))
-  watermark()
+    ggtitle(paste0("Domain ", domain)) +
+    watermark()
 
-  return(obj)
-}
-
-
-#' Generate the XXH128 hash of a SDTM domain object
-#'
-#' @param obj A SDTM domain object.
-#'
-#' @returns The XXH128 hash of the nif object as character.
-#' @export
-#' @keywords internal
-#' @importFrom rlang hash
-hash.domain <- function(obj) {
-  # validate input
-  if (!inherits(obj, "domain")) {
-    stop("Input must be a SDTM domain")
+  if (legend == TRUE) {
+    out <- out +
+      ggplot2::theme(legend.position = "bottom")
+  } else {
+    out <- out +
+      ggplot2::theme(legend.position = "none")
   }
 
-  rlang::hash(obj)
+  out
 }
 
 
@@ -393,8 +383,5 @@ hash.domain <- function(obj) {
 #' last_dtc(examplinib_sad_nif)
 last_dtc.domain <- function(obj) {
   validate_domain(obj, silent = TRUE)
-  # out <- last_dtc.data.frame(as.data.frame(obj))
-  out <- last_dtc_data_frame(as.data.frame(obj))
-
-  return(out)
+  last_dtc_data_frame(as.data.frame(obj))
 }

@@ -5,13 +5,7 @@
 #' @import dplyr
 #' @return A sdtm object.
 #' @export
-new_sdtm <- function(
-  sdtm_data # ,
-  # analyte_mapping = data.frame(),
-  # metabolite_mapping = data.frame(),
-  # parent_mapping = data.frame(),
-  # time_mapping = data.frame()
-) {
+new_sdtm <- function(sdtm_data) {
   domains <- sdtm_data
 
   analyte_mapping <- data.frame()
@@ -56,14 +50,12 @@ trial_title <- function(obj) {
     return(NULL)
   }
 
-  title <- ts %>%
-    filter(.data$TSPARMCD == "TITLE") %>%
-    select(matches("^TSVAL[1-8]?$")) %>%
-    as.character() %>%
-    paste(collapse = " ") %>%
+  ts |>
+    filter(.data$TSPARMCD == "TITLE") |>
+    select(matches("^TSVAL[1-8]?$")) |>
+    as.character() |>
+    paste(collapse = " ") |>
     str_trim()
-
-  return(title)
 }
 
 
@@ -88,8 +80,9 @@ trial_dco <- function(obj) {
     return(NULL)
   }
   dco <- ts$TSVAL[ts$TSPARMCD == "DCUTDTC"]
-  if (length(dco) > 1) warning("TS domain inclucdes multiple data cut-off dates!")
-  return(lubridate::as_datetime(dco, format = dtc_formats))
+  if (length(dco) > 1)
+    warning("TS domain inclucdes multiple data cut-off dates!")
+  lubridate::as_datetime(dco, format = dtc_formats)
 }
 
 
@@ -115,6 +108,7 @@ trial_dco <- function(obj) {
 #' @param ... Further parameters.
 #' @return A sdtm_summary object.
 #' @export
+#' @importFrom rlang hash
 #' @keywords internal
 #' @examples
 #' summary(examplinib_poc)
@@ -134,7 +128,7 @@ summary.sdtm <- function(object, ...) {
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
     time_mapping = object$time_mapping,
-    hash = hash(object),
+    hash = rlang::hash(object),
     last = last_dtc(object),
     title = trial_title(object),
     dco = trial_dco(object)
@@ -143,12 +137,6 @@ summary.sdtm <- function(object, ...) {
   # Numbers of subjects and observations by domain
   out$disposition <- purrr::map(
     object$domains,
-    # function(x){
-    #   data.frame(
-    #     SUBJECTS = length(unique(x$USUBJID)),
-    #     OBSERVATIONS = dim(x)[1]
-    #   )
-    # }
 
     function(x) {
       if ("USUBJID" %in% names(x)) {
@@ -160,9 +148,9 @@ summary.sdtm <- function(object, ...) {
         data.frame(SUBJECTS = 0, OBSERVATIONS = 0)
       }
     }
-  ) %>%
-    purrr::list_rbind() %>%
-    mutate(DOMAIN = names(object$domains)) %>%
+  ) |>
+    purrr::list_rbind() |>
+    mutate(DOMAIN = names(object$domains)) |>
     select(c("DOMAIN", "SUBJECTS", "OBSERVATIONS"))
 
   # Get data for DM domain if it exists
@@ -181,8 +169,7 @@ summary.sdtm <- function(object, ...) {
 
     # Get arms if ACTARMCD and ACTARM exist
     if (any(c("ACTARMCD", "ACTARM") %in% colnames(dm))) {
-      # out$arms <- unique(dm[c("ACTARMCD", "ACTARM")])
-      out$arms <- dm %>% distinct(across(any_of(c("ACTARMCD", "ACTARM"))))
+      out$arms <- distinct(dm, across(any_of(c("ACTARMCD", "ACTARM"))))
     }
   }
 
@@ -197,8 +184,7 @@ summary.sdtm <- function(object, ...) {
 
     # Get analytes if PCTEST and PCTESTCD exist
     if (any(c("PCTEST", "PCTESTCD") %in% colnames(pc))) {
-      # out$analytes <- unique(pc[c("PCTEST", "PCTESTCD")])
-      out$analytes <- pc %>% distinct(across(any_of(c("PCTEST", "PCTESTCD"))))
+      out$analytes <- distinct(pc, across(any_of(c("PCTEST", "PCTESTCD"))))
     }
 
     # Get PC timepoints if PCTPT and PCTPTNUM exist
@@ -223,7 +209,7 @@ summary.sdtm <- function(object, ...) {
   }
 
   class(out) <- "summary_sdtm"
-  return(out)
+  out
 }
 
 
@@ -263,7 +249,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 
   cat("Arms (DM):\n")
   cat(paste0(df_to_string(
-    x$arms %>%
+    x$arms |>
       arrange(.data$ACTARMCD),
     color = color, indent = indent,
     show_none = TRUE
@@ -286,41 +272,16 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
     cat(paste0(spacer, temp, "\n\n"))
 
     cat("PK analytes (PC):\n")
-    cat(df_to_string(x$analytes,
-      color = color, indent = indent,
-      show_none = TRUE
-    ), "\n\n")
+    cat(
+      df_to_string(
+        x$analytes,
+        color = color,
+        indent = indent,
+        show_none = TRUE
+      ),
+      "\n\n"
+    )
   }
-
-  # if("analyte_mapping" %in% names(x)) {
-  #   if (nrow(x$analyte_mapping) != 0) {
-  #     cat("Treatment-to-analyte mappings:\n")
-  #     cat(df_to_string(x$analyte_mapping,
-  #       color = color, indent = indent,
-  #       show_none = TRUE
-  #     ), "\n\n")
-  #   }
-  # }
-  #
-  # if("metabolite_mapping" %in% names(x)) {
-  #   if (nrow(x$metabolite_mapping) != 0) {
-  #     cat("Parent-to-metabolite mappings:\n")
-  #     cat(df_to_string(x$metabolite_mapping,
-  #       color = color, indent = indent,
-  #       show_none = TRUE
-  #     ), "\n\n")
-  #   }
-  # }
-  #
-  # if("time_mapping" %in% names(x)) {
-  #   if (nrow(x$time_mapping) != 0) {
-  #     cat("Time mappings:\n")
-  #     cat(df_to_string(x$time_mapping,
-  #       color = color, indent = indent,
-  #       show_none = TRUE
-  #     ), "\n\n")
-  #   }
-  # }
 
   cat(paste0("Hash: ", x$hash, "\n"))
   cat(paste0("Last DTC: ", x$last))
@@ -344,7 +305,8 @@ print.sdtm <- function(x, ...) {
 #'
 #' @param obj The sdtm object.
 #' @param name The domain name(s) to check as a character string or vector.
-#' @return Logical indicating whether all specified domains exist in the SDTM object.
+#' @return Logical indicating whether all specified domains exist in the SDTM
+#'   object.
 #' @export
 #' @keywords internal
 #' @examples
@@ -400,12 +362,12 @@ subject_info.sdtm <- function(obj, id) {
   validate_sdtm(obj, "dm")
   validate_char_param(id, "id", allow_multiple = FALSE)
 
-  temp <- obj %>%
-    domain("dm") %>%
-    dplyr::filter(.data$USUBJID %in% id) %>%
+  temp <- obj |>
+    domain("dm") |>
+    dplyr::filter(.data$USUBJID %in% id) |>
     as.list()
   class(temp) <- c("subject_info", "data.frame")
-  return(temp)
+  temp
 }
 
 
@@ -426,13 +388,14 @@ suggest <- function(obj, show_all = FALSE) {
   validate_sdtm(obj)
   validate_logical_param(show_all, "show_all")
 
-  message_code <- function(fct, data, header = "", footer = "", collapse = "%>%") {
+  message_code <- function(
+    fct, data,
+    header = "",
+    footer = "",
+    collapse = "|>"
+  ) {
     lines <- sapply(data, fct)
     cli::cli_code(lines)
-  }
-
-  code_lines <- function(fct, data) {
-    sapply(data, fct)
   }
 
   if (!has_domain(obj, c("dm", "ex", "pc"))) {
@@ -480,8 +443,8 @@ suggest <- function(obj, show_all = FALSE) {
   cli::cli_text()
   cli::cli_verbatim(df_to_string(sdtm_summary$analytes, indent = 2))
   cli::cli_text()
-  cli::cli_text(paste0(
-    "Consider adding them to the nif object using `add_observation()`, see the ",
+  cli::cli_text(paste(
+    "Consider adding them to the nif object using `add_observation()`, see the",
     "code snippet below (replace 'sdtm' with the name of your sdtm object):"
   ))
   cli::cli_text()
@@ -495,16 +458,16 @@ suggest <- function(obj, show_all = FALSE) {
 
   # PK category
   if ("PCCAT" %in% names(pc)) {
-    cats <- filter(pc, .data$PCCAT != "") %>%
+    cats <- filter(pc, .data$PCCAT != "") |>
       distinct(.data$PCCAT)
     if (nrow(cats) > 1) {
       cli::cli_h2("Pharmacokinetic categories")
-      cli::cli_alert_warning(paste0(
-        "Note that there are different analytical categories (PCCAT) defined in ",
-        "PC: "
+      cli::cli_alert_warning(paste(
+        "Note that there are different analytical categories (PCCAT) defined",
+        "in PC: "
       ))
       cli::cli_text()
-      cli::cli_verbatim(df_to_string(pc %>% distinct(.data$PCCAT), indent = 2))
+      cli::cli_verbatim(df_to_string(distinct(pc, .data$PCCAT), indent = 2))
       cli::cli_text()
       cli::cli_text(paste0(
         "Consider filtering for specific PCCAT (and PCSCAT, if applicable) ",
@@ -515,7 +478,7 @@ suggest <- function(obj, show_all = FALSE) {
 
   # PK specimens
   if ("PCSPEC" %in% names(pc)) {
-    specimens <- filter(pc, PCSPEC != "") %>%
+    specimens <- filter(pc, PCSPEC != "") |>
       distinct(PCSPEC)
     if (nrow(specimens) > 1) {
       cli::cli_h2("Pharmacokinetic specimens")
@@ -529,14 +492,13 @@ suggest <- function(obj, show_all = FALSE) {
   }
 
   # NTIME
-  time_fields <- distinct(pc, across(any_of(
-    c("PCTPT", "PCTPTNUM", "PCELTM")
-  ))) %>%
-    {
-      if ("PCTPTNUM" %in% names(pc)) arrange(., .data$PCTPTNUM) else .
-    }
+  time_fields <- pc |>
+    distinct(across(any_of(c("PCTPT", "PCTPTNUM", "PCELTM"))))
 
-  if (nrow(time_fields) > 0 & ncol(time_fields) > 0) {
+  if ("PCTPTNUM" %in% names(pc))
+    time_fields <- arrange(time_fields, .data$PCTPTNUM)
+
+  if (nrow(time_fields) > 0 && ncol(time_fields) > 0) {
     cli::cli_h2("NTIME definition")
     cli::cli_text(
       "The PC domain contains multiple fields that the nominal sampling time ",
@@ -565,7 +527,8 @@ suggest <- function(obj, show_all = FALSE) {
       "There are {nrow(sdtm_summary$arms)} study arms defined in DM:"
     ))
     cli::cli_text()
-    cli::cli_verbatim(df_to_string(arrange(sdtm_summary$arms, ACTARMCD), indent = 2))
+    cli::cli_verbatim(df_to_string(arrange(sdtm_summary$arms, ACTARMCD),
+                                   indent = 2))
     cli::cli_text()
     cli::cli_text(paste0(
       "Consider defining a PART or ARM variable, filtering for a particular ",
@@ -627,9 +590,9 @@ subjects.sdtm <- function(obj) {
   # input validation
   validate_sdtm(obj, "dm")
 
-  obj %>%
-    domain("dm") %>%
-    as.data.frame() %>%
+  obj |>
+    domain("dm") |>
+    as.data.frame() |>
     distinct(.data$USUBJID)
 }
 
@@ -693,7 +656,8 @@ treatments.sdtm <- function(obj) {
 #' @export
 #' @examples
 #' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
-#' filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
+#' filter_subject(examplinib_poc_nif,
+#' subjects(examplinib_poc_nif)[1, "USUBJID"])
 filter_subject <- function(obj, usubjid) {
   UseMethod("filter_subject")
 }
@@ -709,7 +673,7 @@ filter_subject <- function(obj, usubjid) {
 #' @examples
 #' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 filter_subject.sdtm <- function(obj, usubjid) {
-  temp <- lapply(
+  lapply(
     obj$domains,
     function(x) {
       if ("USUBJID" %in% names(x)) {
@@ -718,9 +682,8 @@ filter_subject.sdtm <- function(obj, usubjid) {
         x
       }
     }
-  )
-
-  return(new_sdtm(temp))
+  ) |>
+    new_sdtm()
 }
 
 
@@ -769,12 +732,13 @@ guess_ntime <- function(sdtm) {
     )
   }
 
-  pc_domain %>%
-    distinct(.data$PCTPT) %>%
+  pc_domain |>
+    distinct(.data$PCTPT) |>
     mutate(
       # Extract time using multiple patterns
       time = case_when(
-        # Pattern 1: Number followed by h, hr, hrs, hour, hours (with optional space)
+        # Pattern 1: Number followed by h, hr, hrs, hour, hours (with optional
+        # space)
         !is.na(str_extract(tolower(.data$PCTPT),
           "([0-9.]+)\\s*(?:h|hr|hrs|hour|hours)",
           group = 1
@@ -797,14 +761,14 @@ guess_ntime <- function(sdtm) {
         # Default: No time found
         TRUE ~ NA_character_
       )
-    ) %>%
-    mutate(pre = str_match(tolower(.data$PCTPT), "pre") == "pre") %>%
+    ) |>
+    mutate(pre = str_match(tolower(.data$PCTPT), "pre") == "pre") |>
     mutate(NTIME = case_when(
       is.na(.data$time) & pre == TRUE ~ 0,
       !is.na(.data$time) & pre == TRUE ~ -as.numeric(.data$time),
       is.na(.data$time) & is.na(.data$pre) ~ NA,
       .default = as.numeric(.data$time)
-    )) %>%
+    )) |>
     select(-c("time", "pre"))
 }
 
@@ -893,40 +857,40 @@ derive_sld <- function(
   group_vars <- intersect(group_vars, names(tr))
 
   # Calculate SLD
-  diameter_data <- filtered_tr %>%
+  diameter_data <- filtered_tr |>
     filter(.data$TRTESTCD == testcd)
 
-  sld_data <- diameter_data %>%
+  sld_data <- diameter_data |>
     reframe(
       N_TARGET = n(),
       SLD = sum(.data$TRSTRESN, na.rm = TRUE),
       .by = any_of(group_vars)
-    ) %>%
-    distinct() %>%
+    ) |>
+    distinct() |>
     tidyr::pivot_longer(
       cols = c("N_TARGET", "SLD"),
       names_to = "TRTESTCD",
       values_to = "TRSTRESN"
-    ) %>%
-    {
-      if ("TRTEST" %in% names(tr)) {
-        mutate(., TRTEST = case_match(
-          .data$TRTESTCD,
-          "SLD" ~ "Sum of longest diameters",
-          "N_TARGET" ~ "Number of target lesions used for SLD calculation"
-        ))
-      } else {
-        .
-      }
-    }
+    )
 
-  tr <- tr %>%
-    add_row(sld_data) %>%
+  if ("TRTEST" %in% names(tr)) {
+    sld_data <- mutate(
+      sld_data,
+      TRTEST = case_match(
+        .data$TRTESTCD,
+        "SLD" ~ "Sum of longest diameters",
+        "N_TARGET" ~ "Number of target lesions used for SLD calculation"
+      )
+    )
+  }
+
+  tr <- tr |>
+    add_row(sld_data) |>
     arrange(.data$USUBJID, .data$TRDTC)
 
   temp <- sdtm_obj
   temp$domains[["tr"]] <- tr
-  return(temp)
+  temp
 }
 
 
@@ -946,7 +910,8 @@ testcd <- function(obj, domain = NULL) {
     stop("Input must be a sdtm object")
   }
 
-  validate_char_param(domain, "domain", allow_null = TRUE, allow_multiple = TRUE)
+  validate_char_param(domain, "domain", allow_null = TRUE,
+                      allow_multiple = TRUE)
   if (is.null(domain)) {
     domain <- names(obj$domains)
   }
@@ -967,7 +932,6 @@ testcd <- function(obj, domain = NULL) {
     obj$domains[domain],
     function(acc, x) {
       if (!"DOMAIN" %in% names(x)) {
-        # warning("Domain data frame missing DOMAIN column")
         return(acc)
       }
 
@@ -985,23 +949,10 @@ testcd <- function(obj, domain = NULL) {
           TESTCD = as.character(unique(x[[testcd_col]]))
         )
       }
-      return(bind_rows(acc, out))
+      bind_rows(acc, out)
     },
     .init = data.frame(DOMAIN = character(), TESTCD = character())
   )
-}
-
-
-#' Generate the XXH128 hash of a sdtm object
-#'
-#' @param obj A sdtm object.
-#'
-#' @returns The XXH128 hash of the sdtm object as character.
-#' @export
-#' @importFrom rlang hash
-hash.sdtm <- function(obj) {
-  validate_sdtm(obj)
-  rlang::hash(obj$domains)
 }
 
 
@@ -1018,13 +969,10 @@ hash.sdtm <- function(obj) {
 last_dtc.sdtm <- function(obj) {
   validate_sdtm(obj)
 
-  # temp <- lapply(obj$domains, last_dtc.data.frame)
   temp <- lapply(obj$domains, last_dtc_data_frame)
   if (is.null(unlist(temp))) {
     return(NULL)
   }
 
-  out <- as.POSIXct(max(unlist(temp), na.rm = TRUE))
-
-  return(out)
+  as.POSIXct(max(unlist(temp), na.rm = TRUE))
 }
