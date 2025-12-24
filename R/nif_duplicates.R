@@ -138,7 +138,6 @@ resolve_duplicates <- function(
   }
 
   ## business logic
-
   # if MDV is present, delete observations with MDV == 1
   if ("MDV" %in% names(df)) {
     df <- df |>
@@ -173,17 +172,16 @@ resolve_duplicates <- function(
       return(x_clean[1])
     }
 
-    # Multiple different values - return NA of the same type
     if (is.character(x)) {
-      return(NA_character_)
+      NA_character_
     } else if (is.numeric(x)) {
-      return(NA_real_)
+      NA_real_
     } else if (is.integer(x)) {
-      return(NA_integer_)
+      NA_integer_
     } else if (is.logical(x)) {
-      return(NA)
+      NA
     } else {
-      return(NA)
+      NA
     }
   }
 
@@ -201,13 +199,13 @@ resolve_duplicates <- function(
   }
 
   # Group by fields and summarize
-  result <- df %>%
-    group_by(across(all_of(fields))) %>%
+  df |>
+    group_by(across(all_of(fields))) |>
     reframe(
-      !!dependent_variable := f(.data[[dependent_variable]]),
+      .dependent_variable = f(.data[[dependent_variable]]),
       across(all_of(other_cols), ~ all_same(.x))
-    ) %>%
-    relocate(any_of(names(df)))
-
-  as.data.frame(result)
+    ) |>
+    rename_with(~dependent_variable, ".dependent_variable") |>
+    relocate(any_of(names(df))) |>
+    as.data.frame()
 }

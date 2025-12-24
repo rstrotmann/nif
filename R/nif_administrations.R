@@ -329,15 +329,13 @@ make_administration <- function(
 
   # impute missing administration times from PCRFTDTC
   if ("pc" %in% names(sdtm$domains)) {
-    # if (analyte %in% names(domain(sdtm, "pc"))) {
-      pc <- domain(sdtm, "pc") |>
-        lubrify_dates()
+    pc <- domain(sdtm, "pc") |>
+      lubrify_dates()
 
-      if ("PCRFTDTC" %in% names(pc)) {
-        admin <- admin |>
-          impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
-      }
-    # }
+    if ("PCRFTDTC" %in% names(pc)) {
+      admin <- admin |>
+        impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
+    }
   }
 
   admin |>

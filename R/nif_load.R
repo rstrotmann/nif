@@ -191,7 +191,8 @@ import_from_connection <- function(
           paste(
             "Auto-detected fixed-width format, but couldn't properly",
             "identify column headers. Please specify format explicitly."
-          ))
+          )
+        )
       }
     } else if (format == "csv") {
       # Check if we have a consistent number of fields
@@ -205,7 +206,8 @@ import_from_connection <- function(
               "Auto-detected CSV format, but the number of fields is",
               "inconsistent. Please specify format explicitly or check",
               "delimiter setting."
-            ))
+            )
+          )
         }
       }
     }
