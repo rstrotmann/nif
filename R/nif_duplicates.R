@@ -151,38 +151,28 @@ resolve_duplicates <- function(
   # Returns the unique value if all are the same, NA otherwise
   # Preserves the original type of the vector when returning NA
   all_same <- function(x) {
-    # Remove NAs
     x_clean <- x[!is.na(x)]
     if (length(x_clean) == 0) {
       # All NAs - return NA of the same type as the original vector
-      if (is.character(x)) {
-        return(NA_character_)
-      } else if (is.numeric(x)) {
-        return(NA_real_)
-      } else if (is.integer(x)) {
-        return(NA_integer_)
-      } else if (is.logical(x)) {
-        return(NA)
-      } else {
-        return(NA)
-      }
+      return(switch(class(x)[1],
+        character = NA_character_,
+        numeric = NA_real_,
+        integer = NA_integer_,
+        logical = NA,
+        NA
+      ))
     }
     if (length(unique(x_clean)) == 1) {
-      # All non-NA values are the same - return that value
       return(x_clean[1])
     }
-
-    if (is.character(x)) {
-      NA_character_
-    } else if (is.numeric(x)) {
-      NA_real_
-    } else if (is.integer(x)) {
-      NA_integer_
-    } else if (is.logical(x)) {
+    # Multiple different values - return NA of the same type
+    switch(class(x)[1],
+      character = NA_character_,
+      numeric = NA_real_,
+      integer = NA_integer_,
+      logical = NA,
       NA
-    } else {
-      NA
-    }
+    )
   }
 
   f <- function(x) {
@@ -203,7 +193,7 @@ resolve_duplicates <- function(
     group_by(across(all_of(fields))) |>
     reframe(
       .dependent_variable = f(.data[[dependent_variable]]),
-      across(all_of(other_cols), ~ all_same(.x))
+      across(all_of(other_cols), function(.x) all_same(.x))
     ) |>
     rename_with(~dependent_variable, ".dependent_variable") |>
     relocate(any_of(names(df))) |>
