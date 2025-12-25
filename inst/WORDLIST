@@ -19,6 +19,7 @@ BMJ
 BRTHDTC
 Biomed
 CDISC
+CDISCPILOT
 CFB
 CMT
 CPT
@@ -86,6 +87,7 @@ PPTESTCD
 PRE
 PREDOSE
 Pathol
+Pharmacokinetics
 Pharmacol
 Pharmacometrics
 Pinboard
@@ -121,7 +123,6 @@ VISITDY
 VSBLFL
 VSTESTCD
 XPT
-XXH
 ae
 aer
 al
@@ -178,6 +179,7 @@ pb
 pharmacodynamic
 pharmacokinetic
 pharmacometric
+pharmaverse
 phuse
 pinboard
 pknca

@@ -48,6 +48,7 @@ Suggests:
     withr,
     writexl,
     rxode2,
+    pharmaversesdtm,
     spelling
 VignetteBuilder:
     dplyr,
