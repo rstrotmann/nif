@@ -58,14 +58,14 @@ library(dplyr)
 library(ggplot2)
 #> Warning: package ‘ggplot2’ was built under R version 4.5.2
 
-examplinib_sad_nif %>%
-  add_ntile("WEIGHT") %>%
+examplinib_sad_nif |>
+  add_ntile("WEIGHT") |>
   plot(dose_norm = TRUE, facet = "WEIGHT_NTILE")
 
 
-examplinib_poc_nif %>%
-  add_ntile("WEIGHT", n = 5) %>%
-  distinct(ID, WEIGHT, WEIGHT_NTILE) %>%
+examplinib_poc_nif |>
+  add_ntile("WEIGHT", n = 5) |>
+  distinct(ID, WEIGHT, WEIGHT_NTILE) |>
   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
   geom_point() +
   labs(title = "Plasma concentrations by WEIGHT quartiles")

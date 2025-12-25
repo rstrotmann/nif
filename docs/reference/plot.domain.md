@@ -55,6 +55,4 @@ A ggplot2 object.
 
 ``` r
 plot(domain(examplinib_sad, "lb"))
-#> Warning: Removed 15 rows containing missing values or values outside the scale range
-#> (`geom_point()`).
 ```

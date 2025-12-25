@@ -342,9 +342,6 @@ For further guidance see the help for individual functions and the
 
 - [`get_pinboard()`](get_pinboard.md) : Get pinboard object
 
-- [`hash.sdtm()`](hash.sdtm.md) : Generate the XXH128 hash of a sdtm
-  object
-
 - [`identify_baseline_columns()`](identify_baseline_columns.md) :
   Identify baseline columns in a data frame
 
@@ -562,3 +559,4 @@ For further guidance see the help for individual functions and the
 - [Imputations and assumptions](nif-imputations.md):
 - [Multiple studies in one NIF](multiple-study-example.md):
 - [NIF data definition using formulae](nif-formulas.md):
+- [pharmaverse-example](pharmaverse-example.md):

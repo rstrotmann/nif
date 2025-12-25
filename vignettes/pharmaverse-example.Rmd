@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 This tutorial contains live code that depends on the following R packages:
 
-```{r setup}
+```{r setup, warning=FALSE, message=FALSE}
 library(dplyr)
 library(ggplot2)
 library(nif)
@@ -90,4 +90,12 @@ mean_dose_plot(nif)
 ```{r}
 plot(nif, "XAN")
 ```
+
+## Safety
+
+```{r}
+nif |> 
+  edish_plot(sdtm)
+```
+
 

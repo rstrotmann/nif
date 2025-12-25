@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.61.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.61.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,7 @@
     <li><a class="dropdown-item" href="../articles/nif-imputations.html">Imputations and assumptions</a></li>
     <li><a class="dropdown-item" href="../articles/multiple-study-example.html">Multiple studies in one NIF</a></li>
     <li><a class="dropdown-item" href="../articles/nif-formulas.html">NIF data definition using formulae</a></li>
+    <li><a class="dropdown-item" href="../articles/pharmaverse-example.html">pharmaverse-example</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -101,7 +102,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Hash: 7f32ff5cab2a87b488437be440c464cb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last DTC: 2001-03-14 10:09:00</span>
-<span class="r-in"><span><span class="fu">filter_subject</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>, <span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">filter_subject</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>,</span></span>
+<span class="r-in"><span><span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM Input Format (NIF) data -----</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 44 observations from 1 subject across 1 study </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Analytes: RS2023 and RS2023487A </span>

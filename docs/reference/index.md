@@ -173,9 +173,6 @@
 
 - [`get_pinboard()`](get_pinboard.md) : Get pinboard object
 
-- [`hash.sdtm()`](hash.sdtm.md) : Generate the XXH128 hash of a sdtm
-  object
-
 - [`identify_baseline_columns()`](identify_baseline_columns.md) :
   Identify baseline columns in a data frame
 

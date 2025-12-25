@@ -603,11 +603,13 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
   if (analytes == TRUE) {
     # put analytes for parents first:
     analyte_list <- nif %>%
-      # as.data.frame() %>%
+      as.data.frame() %>%
+      filter(EVID == 0) |>
       distinct(PARENT, ANALYTE) %>%
       mutate(score = PARENT == ANALYTE) %>%
       arrange(-.data$score, .data$ANALYTE) %>%
-      pull(ANALYTE)
+      pull(ANALYTE) |>
+      unique()
 
     for (i in analyte_list) {
       out[[i]] <- plot(nif,
@@ -808,6 +810,58 @@ covariate_barplot <- function(
 }
 
 
+#' boxplot over categories
+#'
+#' @param obj The nif object.
+#' @param cat_field The category field.
+#' @param val_field The calue field.
+#' @param title The figure title.
+#'
+#' @returns A ggplot2 object.
+#'
+#' @examples
+#' cat_boxplot(examplinib_poc_nif, "SEX", "WEIGHT")
+#' cat_boxplot(examplinib_sad_nif, "RACE", "WEIGHT")
+cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
+  temp <- obj |>
+    as.data.frame() |>
+    mutate(.cat = as.factor(.data[[cat_field]])) |>
+    filter(!is.na(.data[[val_field]])) |>
+    group_by(ID) |>
+    mutate(.bl = mean(.data[[val_field]][TIME == 0])) |>
+    ungroup() |>
+    distinct(ID, .cat, .bl)
+
+  n <- temp |>
+    reframe(n = n(), max_bl = max(.data$.bl), .by = ".cat")
+
+  out <- ggplot2::ggplot(
+    temp,
+    ggplot2::aes(
+      x = .data$.cat,
+      y = .data$.bl,
+      group = .data$.cat
+      )
+    ) +
+    ggplot2::geom_boxplot(width = 0.5) +
+    ggplot2::geom_text(
+      data = n,
+      ggplot2::aes(
+        label = paste0("N=", n), y = max_bl + 5
+      ),
+      position = ggplot2::position_dodge(width = 0.75)
+    ) +
+    ggplot2::labs(x = cat_field, y = paste0("baseline ", val_field)) +
+    ggplot2::theme_bw() +
+    watermark()
+
+  if (!is.null(title))
+    out <- out + ggtitle(title)
+
+  out
+}
+
+
 #' Weight by sex diagram
 #'
 #' @param obj The NIF file object.
@@ -818,36 +872,8 @@ covariate_barplot <- function(
 #' @examples
 #' wt_by_sex(examplinib_poc_nif)
 wt_by_sex <- function(obj) {
-  # input validation
   validate_min_nif(obj, c("SEX", "WEIGHT"))
-
-  obj %>%
-    as.data.frame() %>%
-    group_by(ID) %>%
-    mutate(bl_wt = mean(WEIGHT[TIME == 0])) %>%
-    ungroup() %>%
-    distinct(ID, SEX, bl_wt) %>%
-    group_by(SEX) %>%
-    mutate(count = n(), maxwt = max(bl_wt)) %>%
-    ggplot2::ggplot(ggplot2::aes(x = SEX, y = bl_wt, group = SEX)) +
-    ggplot2::scale_x_continuous(breaks = c(0, 1)) +
-    ggplot2::geom_boxplot(width = 0.5) +
-    # ggplot2::geom_label(ggplot2::aes(
-    #   label = paste0("N=", count), y = maxwt + 5),
-    #   label.size = 0,
-    #   position = ggplot2::position_dodge(width = 0.75)
-    # ) +
-    ggplot2::geom_text(
-      ggplot2::aes(
-        label = paste0("N=", count), y = maxwt + 5
-      ),
-      # label.size = 0,
-      position = ggplot2::position_dodge(width = 0.75)
-    ) +
-    ggplot2::labs(x = "sex", y = "baseline weight (kg)") +
-    ggplot2::theme_bw() +
-    ggplot2::ggtitle("Body weight by sex") +
-    watermark()
+  cat_boxplot(obj, "SEX", "WEIGHT", "Body weight by sex")
 }
 
 
@@ -860,31 +886,8 @@ wt_by_sex <- function(obj) {
 #' @examples
 #' wt_by_race(examplinib_poc_nif)
 wt_by_race <- function(obj) {
-  # input validation
   validate_min_nif(obj, c("RACE", "WEIGHT"))
-
-  obj %>%
-    as.data.frame() %>%
-    group_by(ID) %>%
-    mutate(bl_wt = mean(WEIGHT[TIME == 0])) %>%
-    ungroup() %>%
-    left_join(race_coding, by = "RACE") %>%
-    distinct(across(any_of(c("ID", "bl_wt", "LABEL")))) %>%
-    mutate(maxwt = max(bl_wt, na.rm = TRUE)) %>%
-    group_by(.data$LABEL) %>%
-    mutate(count = n()) %>%
-    ggplot2::ggplot(ggplot2::aes(x = LABEL, y = bl_wt, group = LABEL)) +
-    ggplot2::geom_boxplot(width = 0.5) +
-    # ggplot2::geom_label(ggplot2::aes(
-    #   label = paste0("N=", count), y = maxwt + 5), label.size = 0
-    # ) +
-    ggplot2::geom_text(ggplot2::aes(
-      label = paste0("N=", count), y = maxwt + 5
-    )) +
-    ggplot2::labs(x = "", y = "baseline weight (kg)") +
-    ggplot2::theme_bw() +
-    ggplot2::ggtitle("Body weight by race") +
-    watermark()
+  cat_boxplot(obj, "RACE", "WEIGHT", "Body weight by race")
 }
 
 

@@ -58,7 +58,8 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #> 
 #> Hash: 7f32ff5cab2a87b488437be440c464cb
 #> Last DTC: 2001-03-14 10:09:00
-filter_subject(examplinib_poc_nif, subjects(examplinib_poc_nif)[1, "USUBJID"])
+filter_subject(examplinib_poc_nif,
+subjects(examplinib_poc_nif)[1, "USUBJID"])
 #> ----- NONMEM Input Format (NIF) data -----
 #> 44 observations from 1 subject across 1 study 
 #> Analytes: RS2023 and RS2023487A 
