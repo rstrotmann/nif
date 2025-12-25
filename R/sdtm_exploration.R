@@ -26,11 +26,10 @@ filter_correct_date_format <- function(
     out <- paste0(unique(obj$DOMAIN), ": ")
   }
 
-  # domain <- obj %>% distinct(DOMAIN)
-
   # Find rows with invalid date formats
-  temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ !(is_iso8601_date(.) | is.na(.) | . == "")))
+  temp <- obj |>
+    filter(if_any(ends_with("DTC"),
+                  ~ !(is_iso8601_date(.) | is.na(.) | . == "")))
 
   if (nrow(temp) > 0) {
     out <- paste0(
@@ -54,11 +53,12 @@ filter_correct_date_format <- function(
     conditional_message(out, silent = silent)
 
     # Filter out invalid rows
-    obj <- obj %>%
-      filter(if_all(ends_with("DTC"), ~ (is_iso8601_date(.) | is.na(.) | . == "")))
+    obj <- obj |>
+      filter(if_all(ends_with("DTC"),
+                    ~ (is_iso8601_date(.) | is.na(.) | . == "")))
   }
 
-  return(obj)
+  obj
 }
 
 
@@ -72,9 +72,10 @@ filter_correct_date_format <- function(
 #' @examples
 #' ex <- check_date_format(domain(examplinib_poc, "ex"))
 check_date_format <- function(obj, verbose = TRUE) {
-  domain <- obj %>% distinct(.data$DOMAIN)
-  temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == ""))) %>%
+  domain <- obj |>
+    distinct(.data$DOMAIN)
+  temp <- obj |>
+    filter(if_any(ends_with("DTC"), ~ !(is_iso_date(.) | . == ""))) |>
     select(c("USUBJID", "DOMAIN", ends_with("DTC")))
 
   if (nrow(temp) > 0) {
@@ -84,7 +85,7 @@ check_date_format <- function(obj, verbose = TRUE) {
     }
     message(out)
   }
-  return(obj)
+  obj
 }
 
 
@@ -112,7 +113,7 @@ check_date_time_format <- function(obj, verbose = TRUE) {
     }
     message(out)
   }
-  return(obj)
+  obj
 }
 
 
@@ -148,7 +149,6 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
   temp <- obj %>%
     filter(if_any(
       all_of(dtc_cols),
-      # ~ (is_iso8601_date(.) | . == "") & !(is_iso8601_datetime(.) | . == "")
       ~ (is_iso8601_date(.)) & !(is_iso8601_datetime(.))
     )) %>%
     select(any_of(c("USUBJID", "DOMAIN", dtc_cols)))
@@ -162,7 +162,7 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
     }
     conditional_message(out, silent = silent)
   }
-  return(obj)
+  obj
 }
 
 
@@ -200,7 +200,7 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
     }
     message(out)
   }
-  return(ex)
+  ex
 }
 
 
@@ -227,7 +227,6 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
   sdtm %>%
     domain("ex") %>%
     check_date_format(verbose = verbose) %>%
-    # filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose) %>%
     check_last_exendtc(verbose = verbose)
 
@@ -236,9 +235,8 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
     domain("pc") %>%
     select("USUBJID", "DOMAIN", "PCDTC") %>%
     check_date_format(verbose = verbose) %>%
-    # filter_correct_date_format(verbose = verbose) %>%
     check_missing_time(verbose = verbose)
-  return(invisible(NULL))
+  invisible(NULL)
 }
 
 
@@ -287,7 +285,8 @@ plot.sdtm <- function(
       obj %>%
         filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
         filter(if (!is.null(analyte)) .data$PCTESTCD %in% analyte else TRUE) %>%
-        mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+        mutate(ID = as.numeric(factor(.data$USUBJID,
+                                      unique(.data$USUBJID)))) %>%
         ggplot2::ggplot(ggplot2::aes(
           x = .data$PCDTC,
           y = .data$ID,
@@ -366,7 +365,8 @@ plot.sdtm <- function(
       obj %>%
         filter(!is.na(.data$RFSTDTC)) %>%
         arrange(.data$RFSTDTC) %>%
-        mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+        mutate(ID = as.numeric(factor(.data$USUBJID,
+                                      unique(.data$USUBJID)))) %>%
         ggplot2::ggplot() +
         ggplot2::geom_segment(ggplot2::aes(
           x = .data$RFSTDTC,
@@ -414,10 +414,10 @@ plot.sdtm <- function(
       obj %>%
         filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
         filter(if (!is.null(analyte)) .data$LBTESTCD %in% analyte else TRUE) %>%
-        mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) %>%
+        mutate(ID = as.numeric(factor(.data$USUBJID,
+                                      unique(.data$USUBJID)))) %>%
         ggplot2::ggplot(ggplot2::aes(
           x = .data$LBDTC,
-          # y = .data$LBSTRESN,
           y = .data$ID,
           group = interaction(.data$ID, .data$LBTESTCD),
           color = .data$LBTESTCD
@@ -486,44 +486,42 @@ plot.sdtm <- function(
 
   if (!domain %in% c("pc", "dm", "lb", "vs", "ex")) {
     dtc_variable <- paste0(toupper(domain), "DTC")
-    return(
-      obj %>%
-        group_by(.data$USUBJID) %>%
-        filter(sum(!is.na({{ dtc_variable }})) > 0) %>%
-        mutate(ID = cur_group_id()) %>%
-        mutate(
-          min_time = min(.data[[dtc_variable]], na.rm = TRUE),
-          max_time = max(.data[[dtc_variable]], na.rm = TRUE)
-        ) %>%
-        arrange(.data$ID) %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = .data[[dtc_variable]], y = .data$ID
-        )) +
-        {
-          if (points == TRUE) ggplot2::geom_point()
-        } +
-        ggplot2::geom_segment(ggplot2::aes(
-          x = .data$min_time, xend = .data$max_time,
-          y = .data$ID, yend = .data$ID
-        )) +
-        ggplot2::scale_y_discrete(labels = NULL, name = "USUBJID") +
-        ggplot2::scale_x_datetime(
-          name = dtc_variable, date_labels = "%Y-%m-%d"
-        ) +
-        {
-          if (legend == TRUE) {
-            ggplot2::theme(legend.position = "bottom")
-          } else {
-            ggplot2::theme(legend.position = "none")
-          }
-        } +
-        ggplot2::theme_bw() +
-        ggplot2::ggtitle(paste0(
-          "Study ", distinct(obj, .data$STUDYID), ", ",
-          toupper(domain)
-        )) +
-        watermark()
-    )
+    obj %>%
+      group_by(.data$USUBJID) %>%
+      filter(sum(!is.na({{ dtc_variable }})) > 0) %>%
+      mutate(ID = cur_group_id()) %>%
+      mutate(
+        min_time = min(.data[[dtc_variable]], na.rm = TRUE),
+        max_time = max(.data[[dtc_variable]], na.rm = TRUE)
+      ) %>%
+      arrange(.data$ID) %>%
+      ggplot2::ggplot(ggplot2::aes(
+        x = .data[[dtc_variable]], y = .data$ID
+      )) +
+      {
+        if (points == TRUE) ggplot2::geom_point()
+      } +
+      ggplot2::geom_segment(ggplot2::aes(
+        x = .data$min_time, xend = .data$max_time,
+        y = .data$ID, yend = .data$ID
+      )) +
+      ggplot2::scale_y_discrete(labels = NULL, name = "USUBJID") +
+      ggplot2::scale_x_datetime(
+        name = dtc_variable, date_labels = "%Y-%m-%d"
+      ) +
+      {
+        if (legend == TRUE) {
+          ggplot2::theme(legend.position = "bottom")
+        } else {
+          ggplot2::theme(legend.position = "none")
+        }
+      } +
+      ggplot2::theme_bw() +
+      ggplot2::ggtitle(paste0(
+        "Study ", distinct(obj, .data$STUDYID), ", ",
+        toupper(domain)
+      )) +
+      watermark()
   }
 }
 
@@ -571,7 +569,8 @@ ae_summary <- function(
   valid_levels <- c("AETERM", "AELLT", "AEDECOD", "AEHLT", "AEBODSYS", "AESOC")
   level <- toupper(level)
   if (!all(level %in% valid_levels)) {
-    stop("Invalid level(s): ", paste(setdiff(level, valid_levels), collapse = ", "))
+    stop("Invalid level(s): ",
+         paste(setdiff(level, valid_levels), collapse = ", "))
   }
 
   # Get AE domain
@@ -581,7 +580,8 @@ ae_summary <- function(
   required_cols <- c("USUBJID", level)
   missing_cols <- setdiff(required_cols, names(ae))
   if (length(missing_cols) > 0) {
-    stop("Missing required columns in AE domain: ", paste(missing_cols, collapse = ", "))
+    stop("Missing required columns in AE domain: ",
+         paste(missing_cols, collapse = ", "))
   }
 
   # Validate group variable if provided
@@ -613,7 +613,7 @@ ae_summary <- function(
   )
 
   # Calculate summary
-  result <- ae_filtered %>%
+  ae_filtered %>%
     group_by(across(all_of(grouping))) %>%
     summarize(n = n(), n_subj = n_distinct(.data$USUBJID), .groups = "drop") %>%
     {
@@ -624,8 +624,6 @@ ae_summary <- function(
       }
     } %>%
     as.data.frame()
-
-  return(result)
 }
 
 

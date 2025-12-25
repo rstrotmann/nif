@@ -233,7 +233,17 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   ))
 
   if (!is.null(x$title)) {
-    cat(paste0("\n", str_wrap(x$title, width = 80), "\n"))
+    temp <- iconv(x$title, from = "UTF-8", sub = "")
+    cat(
+      paste0(
+        "\n",
+        str_wrap(
+          iconv(x$title, from = "UTF-8", sub = ""),
+          width = 80
+        ),
+        "\n"
+      )
+    )
   }
 
   if (!is.null(x$dco)) {
