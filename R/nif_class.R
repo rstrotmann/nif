@@ -537,7 +537,8 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 
   temp <- obj |>
     ensure_analyte() |>
-    filter(.data$AMT != 0) |>
+    # filter(.data$AMT != 0) |>
+    filter(.data$EVID == 1) |>
     group_by(.data$ID, .data$ANALYTE, across(any_of(group))) |>
     arrange(.data$ID, .data$TIME)
 

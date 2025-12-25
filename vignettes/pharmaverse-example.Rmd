@@ -1,0 +1,93 @@
+---
+title: "pharmaverse-example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{pharmaverse-example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# INTRODUCTION
+
+
+This tutorial contains live code that depends on the following R packages:
+
+```{r setup}
+library(dplyr)
+library(ggplot2)
+library(nif)
+library(pharmaversesdtm)
+```
+
+# SDTM DATA
+
+CDISCPILOT01 
+
+```{r}
+# source: https://github.com/pharmaverse/pharmaversesdtm.git
+
+sdtm <- new_sdtm(
+  list(
+    dm = pharmaversesdtm::dm,
+    ex = pharmaversesdtm::ex,
+    vs = pharmaversesdtm::vs,
+    pc = pharmaversesdtm::pc,
+    lb = pharmaversesdtm::lb,
+    ts = pharmaversesdtm::ts,
+    eg = pharmaversesdtm::eg,
+    ae  = pharmaversesdtm::ae
+  )
+)
+```
+
+```{r}
+summary(sdtm)
+
+plot(sdtm, domain = "dm", points = F)
+```
+
+# NONMEM INPUT FORMAT DATA
+
+```{r}
+nif_option(silent = TRUE, debug = TRUE)
+
+nif <- new_nif() |> 
+  add_administration(sdtm, 'XANOMELINE', analyte = "XAN") |> 
+  add_administration(sdtm, 'PLACEBO') |> 
+  add_observation(sdtm, 'pc', 'XAN', observation_filter = "PCSPEC == 'PLASMA'") |> 
+  add_observation(sdtm, 'lb', 'ALT', ntime_method = "DY") |> 
+  add_baseline(sdtm, "lb", "CREAT") |> 
+  add_bl_renal() |> 
+  add_cfb() |> 
+  add_dose_level()
+```
+
+```{r fig.width=3, fig.height=3}
+summary(nif)
+
+invisible(capture.output(
+  plot(summary(nif))
+))
+```
+
+# DATA EXPLORATION
+
+## Exposure
+
+```{r}
+mean_dose_plot(nif)
+```
+
+## Pharmacokinetics
+
+```{r}
+plot(nif, "XAN")
+```
+
