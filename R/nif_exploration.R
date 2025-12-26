@@ -119,19 +119,22 @@ nif_plot_id <- function(
       y = .data$DV,
       group = .data$group,
       color = .data$color
-    )) +
-    {
-      if (!is.null(imp) > 0) {
-        ggplot2::geom_vline(
-          data = admin,
-          ggplot2::aes(xintercept = .data$active_time),
-          color = "gray"
-        )
-      }
-    } +
-    {
-      if (lines == TRUE) ggplot2::geom_line()
-    } +
+    ))
+
+  if (!is.null(imp) > 0) {
+    p <- p +
+      ggplot2::geom_vline(
+        data = admin,
+        ggplot2::aes(xintercept = .data$active_time),
+        color = "gray"
+      )
+  }
+
+  if (lines == TRUE)
+    p <- p +
+      ggplot2::geom_line()
+
+  p <- p +
     ggplot2::geom_point(size = point_size) +
     ggplot2::xlim(0, max_time) +
     ggplot2::labs(
@@ -200,8 +203,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
   if (!is.null(analyte))
     x <- filter(x, .$ANALYTE %in% analyte)
 
-
-  id_label <- ""
   plot_label <- ""
 
   # filter for subject of interest
@@ -214,11 +215,6 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
       if (id %in% x$USUBJID) {
         x <- x |>
           filter(.data$USUBJID == id)
-        id_label <- paste0(
-          " (ID ",
-          x |> distinct(.data$ID) |> pull(.data$ID),
-          ")"
-        )
         plot_label <- "USUBJID"
       } else {
         stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
@@ -377,9 +373,12 @@ summary.nif <- function(
       as.data.frame() |>
       mutate(CLASS = .data$BL_ODWG) |>
       distinct(ID, CLASS) |>
-      mutate(CLASS = factor(
-        CLASS,
-        levels = c("normal", "mild", "moderate", "severe"))) |>
+      mutate(
+        CLASS = factor(
+          CLASS,
+          levels = c("normal", "mild", "moderate", "severe")
+        )
+      ) |>
       reframe(
         N = n(),
         .by = CLASS
@@ -703,22 +702,24 @@ covariate_hist <- function(
       ggplot2::ggplot(ggplot2::aes(
         x = .data[[cov_params$field]], group = GROUP,
         fill = GROUP
-      )) + {
-        if (density == FALSE) {
-          ggplot2::geom_histogram(
-            bins = bins, binwidth = binwidth, position = "identity",
-            alpha = alpha
-          )
-        } else {
-          ggplot2::geom_histogram(
-            ggplot2::aes(
-              y = ggplot2::after_stat(density)
-            ),
-            bins = bins, binwidth = binwidth,
-            position = "identity", alpha = alpha
-          )
-        }
-      }
+      ))
+
+    if (density == FALSE) {
+      p <- p +
+        ggplot2::geom_histogram(
+          bins = bins, binwidth = binwidth, position = "identity",
+          alpha = alpha
+        )
+    } else {
+      p <- p +
+        ggplot2::geom_histogram(
+          ggplot2::aes(y = ggplot2::after_stat(density)),
+          bins = bins,
+          binwidth = binwidth,
+          position = "identity",
+          alpha = alpha
+        )
+    }
   } else {
     p <- obj |>
       as.data.frame() |>
@@ -726,35 +727,35 @@ covariate_hist <- function(
       filter(!is.na(.data[[cov_params$field]])) |>
       ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]]))
 
-      if (density == FALSE) {
-        p <- p +
-          ggplot2::geom_histogram(
-            bins = bins, binwidth = binwidth,
-            position = "identity", fill = "grey"
-          )
-      } else {
-        p <- p +
-          ggplot2::geom_histogram(
-            ggplot2::aes(
-              y = ggplot2::after_stat(density)
-            ),
-            bins = bins,
-            binwidth = binwidth, position = "identity", fill = "grey"
-          )
-      }
-  }
-  p +
-    ggplot2::geom_vline(xintercept = limits, color = "red") +
-    ggplot2::theme_bw() +
-    {
-      if (density == FALSE) {
-        ggplot2::labs(
-          x = xlabel, y = "number of subjects"
+    if (density == FALSE) {
+      p <- p +
+        ggplot2::geom_histogram(
+          bins = bins, binwidth = binwidth,
+          position = "identity", fill = "grey"
         )
-      } else {
-        ggplot2::labs(x = xlabel, y = "density")
-      }
-    } +
+    } else {
+      p <- p +
+        ggplot2::geom_histogram(
+          ggplot2::aes(
+            y = ggplot2::after_stat(density)
+          ),
+          bins = bins,
+          binwidth = binwidth, position = "identity", fill = "grey"
+        )
+    }
+  }
+
+  p <- p +
+    ggplot2::geom_vline(xintercept = limits, color = "red") +
+    ggplot2::theme_bw()
+
+  if (density == FALSE) {
+    p <- p + ggplot2::labs(x = xlabel, y = "number of subjects")
+  } else {
+    p <- p + ggplot2::labs(x = xlabel, y = "density")
+  }
+
+  p +
     ggplot2::ggtitle(title) +
     watermark(cex = 1.5)
 }
@@ -850,20 +851,11 @@ cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
   n <- temp |>
     reframe(n = n(), max_bl = max(.data$.bl), .by = ".cat")
 
-  out <- ggplot2::ggplot(
-    temp,
-    ggplot2::aes(
-      x = .data$.cat,
-      y = .data$.bl,
-      group = .data$.cat
-      )
-    ) +
+  out <- ggplot(temp, aes(x = .data$.cat, y = .data$.bl, group = .data$.cat)) +
     ggplot2::geom_boxplot(width = 0.5) +
     ggplot2::geom_text(
       data = n,
-      ggplot2::aes(
-        label = paste0("N=", n), y = .data$max_bl + 5
-      ),
+      aes(label = paste0("N=", n), y = .data$max_bl + 5),
       position = ggplot2::position_dodge(width = 0.75)
     ) +
     ggplot2::labs(x = cat_field, y = paste0("baseline ", val_field)) +
@@ -1236,6 +1228,7 @@ obs_per_dose_level <- function(
 #' @param ntime_method the field to derive the nominal time from. Allowed values
 #'   are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if
 #'   NULL.
+#' @param silent Suppress messages.
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
@@ -1244,17 +1237,19 @@ edish_plot <- function(
   nif,
   sdtm,
   enzyme = "ALT",
-  observation_filter = "LBSPEC != 'URINE'",
+  observation_filter = NULL,
   show_labels = FALSE,
   autoscale = TRUE,
   shading = TRUE,
   nominal_time = TRUE,
-  ntime_method = NULL,
+  ntime_method = "DY",
   time = NULL,
   parent = NULL,
   title = "eDISH plot: All time points",
   size = 3,
-  alpha = 0.5, ...
+  alpha = 0.5,
+  silent = NULL,
+  ...
 ) {
   # Input validation
   if (!inherits(sdtm, "sdtm")) {
@@ -1269,10 +1264,28 @@ edish_plot <- function(
     stop("enzyme must be either 'ALT' or 'AST'")
   }
 
+  lb <- domain(sdtm, "lb")
+
+  if (is.null(observation_filter)) {
+    if ("LBSPEC" %in% names(lb)) {
+      observation_filter = "LBSPEC != 'URINE'"
+      conditional_cli(
+        cli_alert_info(
+          paste0("Observation filter set to ", observation_filter)
+        ),
+        silent = silent
+      )
+    } else {
+      observation_filter = "TRUE"
+    }
+  }
+
+  if (!is_valid_filter(nif, observation_filter))
+    stop(paste0("Invalid observation filter: ", observation_filter))
+
   lb <- tryCatch(
     {
-      sdtm |>
-        domain("lb") |>
+      lb |>
         filter(!is.na(.data$LBSTRESN)) |>
         filter(!is.na(.data$LBSTNRHI)) |>
         filter(eval(parse(text = observation_filter))) |>
@@ -1302,6 +1315,7 @@ edish_plot <- function(
 
   temp <- lb |>
     mutate(L_DTC = .data$LBDTC) |>
+    mutate(L_DY = .data$LBDY) |>
     filter(.data$LBTESTCD %in% c(enzyme, "BILI")) |>
     mutate(L_TESTCD = case_match(.data$LBTESTCD, "BILI" ~ "BILI",
       .default = "ENZ"
@@ -1352,36 +1366,35 @@ edish_plot <- function(
       x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
       color = (TIME > 0), label = .data$ID
     )) +
-    ggplot2::geom_point(size = size, alpha = alpha) +
-    {
-      if (show_labels == TRUE) ggrepel::geom_text_repel()
-    } +
-    {
-      if (!autoscale == TRUE) {
-        ggplot2::scale_x_log10(
-          limits = c(0.01, 1000)
-        )
-      } else {
-        ggplot2::scale_x_log10()
-      }
-    } +
-    {
-      if (!autoscale == TRUE) {
-        ggplot2::scale_y_log10(limits = c(0.01, 100))
-      } else {
-        ggplot2::scale_y_log10()
-      }
-    } +
-    {
-      if (shading == TRUE) {
-        ggplot2::annotate("rect",
-          xmin = 3, xmax = Inf,
-          ymin = 2, ymax = Inf, alpha = .15,
-          fill = "grey"
-        )
-      }
-    } +
-    ggplot2::geom_hline(yintercept = 2, linetype = "dashed") +
+    ggplot2::geom_point(size = size, alpha = alpha)
+
+  if (show_labels == TRUE)
+    p <- p + ggrepel::geom_text_repel()
+
+  if (!autoscale == TRUE) {
+    p <- p +
+      ggplot2::scale_x_log10(limits = c(0.01, 1000)) +
+      ggplot2::scale_y_log10(limits = c(0.01, 100))
+  } else {
+    p <- p +
+      ggplot2::scale_x_log10() +
+      ggplot2::scale_y_log10()
+  }
+
+  if (shading == TRUE) {
+    p <- p +
+      ggplot2::annotate(
+        "rect",
+        xmin = 3,
+        xmax = Inf,
+        ymin = 2,
+        ymax = Inf,
+        alpha = .15,
+        fill = "grey"
+      )
+  }
+
+  p <- p + ggplot2::geom_hline(yintercept = 2, linetype = "dashed") +
     ggplot2::geom_vline(xintercept = 3, linetype = "dashed") +
     ggplot2::labs(x = paste0(enzyme, "/ULN"), y = "BILI/ULN") +
     ggplot2::theme_bw() +
@@ -1392,6 +1405,7 @@ edish_plot <- function(
   caption <- ifelse(shading == TRUE,
     paste0(caption, ", grey area: Hy's law."), caption
   )
+
   p +
     ggplot2::labs(caption = caption) +
     watermark(cex = 1.5)
