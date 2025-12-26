@@ -26,13 +26,13 @@
 #' nif_plot_id(examplinib_poc_min_nif, 1, log = TRUE)
 #' nif_plot_id(examplinib_poc_nif, 1, log = TRUE)
 #' nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023")
-#' nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023", tad = TRUE)
+#' nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023", time_field = "TAD")
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte = "RS2023")
 #' nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte = "RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte = "RS2023", imp = "RS2023")
 #' nif_plot_id(examplinib_poc_nif, 8, analyte = c("RS2023", "RS2023487A"))
 #' nif_plot_id(examplinib_poc_min_nif, 1, analyte = "CMT3")
-#' nif_plot_id(examplinib_poc_min_nif, 1, tad = TRUE)
+#' nif_plot_id(examplinib_poc_min_nif, 1)
 nif_plot_id <- function(
   obj,
   id,
@@ -46,20 +46,21 @@ nif_plot_id <- function(
   imp = NULL,
   ...
 ) {
-  x <- obj %>%
-    ensure_parent() %>%
-    ensure_analyte() %>%
-    index_dosing_interval() %>%
-    as.data.frame() %>%
+  x <- obj |>
+    ensure_parent() |>
+    ensure_analyte() |>
+    index_dosing_interval() |>
+    as.data.frame() |>
     assertr::verify(assertr::has_all_names(
       "ID", "TIME", "AMT", "DV", "EVID"
-    )) %>%
-    {
-      if (!is.null(cmt)) filter(., .$CMT == cmt) else .
-    } %>%
-    {
-      if (!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .
-    }
+    ))
+
+  if (!is.null(cmt))
+    x <- filter(x, .data$CMT == cmt)
+
+  if (!is.null(analyte))
+    x <- filter(x, .data$ANALYTE %in% analyte)
+
 
   id_label <- ""
   plot_label <- ""
@@ -67,14 +68,14 @@ nif_plot_id <- function(
   # filter for subject of interest
   if (id %in% x$ID) {
     plot_label <- "ID"
-    x <- x %>%
+    x <- x |>
       filter(ID == id)
   } else {
     if ("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {
-        x <- x %>%
+        x <- x |>
           filter(.data$USUBJID == id)
-        id_label <- paste0(" (ID ", x %>% distinct(ID) %>% pull(ID), ")")
+        id_label <- paste0(" (ID ", x |> distinct(ID) |> pull(ID), ")")
         plot_label <- "USUBJID"
       } else {
         stop(paste(id, "is not an ID or USUBJID contained in the NIF object"))
@@ -82,36 +83,37 @@ nif_plot_id <- function(
     }
   }
 
-  obs <- x %>%
-    mutate(active_time = .data[[time_field]]) %>%
-    filter(EVID == 0, !is.na(DV)) %>%
-    {
-      if (time_field == "TAD") {
-        mutate(.,
-          group = interaction(ID, as.factor(ANALYTE), DI),
-          color = interaction(as.factor(ANALYTE), DI)
-        )
-      } else {
-        mutate(.,
-          group = interaction(ID, as.factor(ANALYTE)),
-          color = as.factor(ANALYTE)
-        )
-      }
-    }
+  obs <- x |>
+    mutate(active_time = .data[[time_field]]) |>
+    filter(EVID == 0, !is.na(DV))
+
+  if (time_field == "TAD") {
+    obs <- mutate(
+      obs,
+      group = interaction(ID, as.factor(ANALYTE), DI),
+      color = interaction(as.factor(ANALYTE), DI)
+    )
+  } else {
+    obs <- mutate(
+      obs,
+      group = interaction(ID, as.factor(ANALYTE)),
+      color = as.factor(ANALYTE)
+    )
+  }
 
   # remove zeros or negatives for log plotting
   if (log == TRUE) {
     obs <- filter(obs, DV > 0)
   }
 
-  admin <- x %>%
-    mutate(active_time = .data[[time_field]]) %>%
-    dplyr::filter(EVID == 1) %>%
-    {
-      if (!is.null(imp)) filter(., PARENT == imp) else NULL
-    }
+  admin <- x |>
+    mutate(active_time = .data[[time_field]]) |>
+    dplyr::filter(EVID == 1)
 
-  p <- obs %>%
+  if (!is.null(imp))
+    admin <- filter(admin, ANALYTE == imp)
+
+  p <- obs |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time,
       y = .data$DV,
@@ -119,7 +121,7 @@ nif_plot_id <- function(
       color = .data$color
     )) +
     {
-      if (!is.null(admin) > 0) {
+      if (!is.null(imp) > 0) {
         ggplot2::geom_vline(
           data = admin,
           ggplot2::aes(xintercept = .data$active_time),
@@ -153,7 +155,7 @@ nif_plot_id <- function(
   } else {
     p <- p + ggplot2::scale_y_continuous(limits = c(0, NA))
   }
-  return(p)
+  p
 }
 
 
@@ -185,16 +187,19 @@ nif_plot_id <- function(
 dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
                          time_field = "TIME", point_size = 2, max_time = NA,
                          analyte = NULL, ...) {
-  x <- obj %>%
-    ensure_parent() %>%
-    ensure_analyte() %>%
-    index_dosing_interval() %>%
-    assertr::verify(assertr::has_all_names(
-      "ID", "TIME", "AMT", "DV", "EVID"
-    )) %>%
-    {
-      if (!is.null(analyte)) filter(., .$ANALYTE %in% analyte) else .
-    }
+  x <- obj |>
+    ensure_parent() |>
+    ensure_analyte() |>
+    index_dosing_interval() |>
+    assertr::verify(
+      assertr::has_all_names(
+        "ID", "TIME", "AMT", "DV", "EVID"
+      )
+    )
+
+  if (!is.null(analyte))
+    x <- filter(x, .$ANALYTE %in% analyte)
+
 
   id_label <- ""
   plot_label <- ""
@@ -202,16 +207,16 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
   # filter for subject of interest
   if (id %in% x$ID) {
     plot_label <- "ID"
-    x <- x %>%
+    x <- x |>
       filter(ID == as.numeric(id))
   } else {
     if ("USUBJID" %in% names(x)) {
       if (id %in% x$USUBJID) {
-        x <- x %>%
+        x <- x |>
           filter(.data$USUBJID == id)
         id_label <- paste0(
           " (ID ",
-          x %>% distinct(.data$ID) %>% pull(.data$ID),
+          x |> distinct(.data$ID) |> pull(.data$ID),
           ")"
         )
         plot_label <- "USUBJID"
@@ -221,11 +226,11 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     }
   }
 
-  admin <- x %>%
-    dplyr::filter(EVID == 1) %>%
+  admin <- x |>
+    dplyr::filter(EVID == 1) |>
     mutate(active_time = .data[[time_field]])
 
-  p <- admin %>%
+  p <- admin |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time,
       y = .data$AMT,
@@ -243,7 +248,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
   if (y_scale == "log") {
     p <- p + ggplot2::scale_y_log10()
   }
-  return(p)
+  p
 }
 
 
@@ -311,27 +316,29 @@ summary.nif <- function(
   )
   names(dose_red_sbs) <- parents
 
-  observations <- object %>%
-    as.data.frame() %>%
-    filter(EVID == 0) %>%
-    group_by(across(any_of(c("CMT", "ANALYTE")))) %>%
-    summarize(N = n(), .groups = "drop") %>%
+  observations <- object |>
+    as.data.frame() |>
+    filter(EVID == 0) |>
+    group_by(across(any_of(c("CMT", "ANALYTE")))) |>
+    summarize(N = n(), .groups = "drop") |>
     as.data.frame()
 
-  n_studies <- object %>%
-    as.data.frame() %>%
-    filter(EVID == 1) %>%
-    group_by(across(any_of(c("STUDYID")))) %>%
+  n_studies <- object |>
+    as.data.frame() |>
+    filter(EVID == 1) |>
+    group_by(across(any_of(c("STUDYID")))) |>
     summarize(N = n_distinct(ID), .groups = "drop")
 
   # Handle sex distribution with safety checks
-  sex <- object %>%
-    as.data.frame() %>%
-    {
-      if (!"SEX" %in% names(.)) mutate(., SEX = NA) else .
-    } %>%
-    distinct(ID, SEX) %>%
-    reframe(N = n(), .by = "SEX") %>%
+  sex <- object |>
+    as.data.frame()
+
+  if (!"SEX" %in% names(sex))
+    sex <- mutate(sex, SEX = NA)
+
+  sex <- sex |>
+    distinct(ID, SEX) |>
+    reframe(N = n(), .by = "SEX") |>
     complete(SEX = c(0, 1), fill = list(N = 0))
 
   n_males <- as.numeric(sex[which(sex$SEX == 0), "N"])
@@ -342,37 +349,42 @@ summary.nif <- function(
   dose_levels <- dose_levels(object, group = dl_groups)
 
   if ("BL_CRCL" %in% colnames(object)) {
-    renal_function <- object %>%
-      as.data.frame() %>%
+    renal_function <- object |>
+      as.data.frame() |>
       mutate(CLASS = as.character(
         cut(BL_CRCL,
           breaks = c(0, 30, 60, 90, Inf),
           labels = c("severe", "moderate", "mild", "normal")
         )
-      )) %>%
-      distinct(ID, CLASS) %>%
-      mutate(CLASS = factor(CLASS, levels = c("normal", "mild", "moderate", "severe"))) %>%
+      )) |>
+      distinct(ID, CLASS) |>
+      mutate(CLASS = factor(
+        CLASS,
+        levels = c("normal", "mild", "moderate", "severe")
+      )) |>
       reframe(
         N = n(),
         .by = CLASS
-      ) %>%
-      tidyr::complete(CLASS, fill = list(N = 0)) %>%
+      ) |>
+      tidyr::complete(CLASS, fill = list(N = 0)) |>
       mutate(CLASS = as.character(CLASS))
   } else {
     renal_function <- NULL
   }
 
   if ("BL_ODWG" %in% colnames(object)) {
-    odwg <- object %>%
-      as.data.frame() %>%
-      mutate(CLASS = .data$BL_ODWG) %>%
-      distinct(ID, CLASS) %>%
-      mutate(CLASS = factor(CLASS, levels = c("normal", "mild", "moderate", "severe"))) %>%
+    odwg <- object |>
+      as.data.frame() |>
+      mutate(CLASS = .data$BL_ODWG) |>
+      distinct(ID, CLASS) |>
+      mutate(CLASS = factor(
+        CLASS,
+        levels = c("normal", "mild", "moderate", "severe"))) |>
       reframe(
         N = n(),
         .by = CLASS
-      ) %>%
-      tidyr::complete(CLASS, fill = list(N = 0)) %>%
+      ) |>
+      tidyr::complete(CLASS, fill = list(N = 0)) |>
       mutate(CLASS = as.character(CLASS))
   } else {
     odwg <- NULL
@@ -380,7 +392,7 @@ summary.nif <- function(
 
   # sampling overview
   sampling_table <- NULL
-  if ("NTIME" %in% names(object) & sampling == TRUE) {
+  if ("NTIME" %in% names(object) && sampling == TRUE) {
     sampling_table <- sampling_summary(object)
   }
 
@@ -407,7 +419,7 @@ summary.nif <- function(
     last = last_dtc(object)
   )
   class(out) <- "summary_nif"
-  return(out)
+  out
 }
 
 
@@ -448,12 +460,12 @@ print.summary_nif <- function(
     cat(paste0(
       "Sex distribution:\n",
       df_to_string(
-        x$sex %>%
+        x$sex |>
           mutate(SEX = case_match(
             SEX,
             0 ~ "male",
             1 ~ "female"
-          )) %>%
+          )) |>
           mutate(percent = round(N / sum(N) * 100, 1)),
         indent = indent
       ),
@@ -465,7 +477,7 @@ print.summary_nif <- function(
     cat(paste0(
       "Renal impairment class:\n",
       df_to_string(
-        x$renal_function %>%
+        x$renal_function |>
           mutate(percent = round(N / sum(N) * 100, 1)),
         indent = indent
       ),
@@ -477,7 +489,7 @@ print.summary_nif <- function(
     cat(paste0(
       "NCI ODWG hepatic impairment class:\n",
       df_to_string(
-        x$odwg %>%
+        x$odwg |>
           mutate(percent = round(N / sum(N) * 100, 1)),
         color = color, indent = indent
       ), "\n\n"
@@ -510,11 +522,10 @@ print.summary_nif <- function(
       indent = indent
       # abbr_lines = 5, abbr_threshold = 20
     ))
-    # cat(footer)
     cat("\n\n")
   }
 
-  dr_summary <- lapply(x$dose_red_sbs, nrow) %>%
+  dr_summary <- lapply(x$dose_red_sbs, nrow) |>
     data.frame()
   cat("Subjects with dose reductions\n")
   cat(df_to_string(dr_summary, color = color, indent = indent))
@@ -552,12 +563,12 @@ get_cov_plot_params <- function(field) {
   )
 
   if (field %in% params$field) {
-    return(params[which(params$field == field), ])
+    params[which(params$field == field), ]
   } else {
-    return(data.frame(
+    data.frame(
       field = field, binwidth = NA, xlabel = field,
       title = field
-    ))
+    )
   }
 }
 
@@ -592,22 +603,22 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
         }
       }
     }
-    if ("WEIGHT" %in% names(nif) & "SEX" %in% names(nif)) {
+    if ("WEIGHT" %in% names(nif) && "SEX" %in% names(nif)) {
       out[["WT_SEX"]] <- wt_by_sex(nif)
     }
-    if ("WEIGHT" %in% names(nif) & "RACE" %in% names(nif)) {
+    if ("WEIGHT" %in% names(nif) && "RACE" %in% names(nif)) {
       out[["WT_RACE"]] <- wt_by_race(nif)
     }
   }
 
   if (analytes == TRUE) {
     # put analytes for parents first:
-    analyte_list <- nif %>%
-      as.data.frame() %>%
+    analyte_list <- nif |>
+      as.data.frame() |>
       filter(EVID == 0) |>
-      distinct(PARENT, ANALYTE) %>%
-      mutate(score = PARENT == ANALYTE) %>%
-      arrange(-.data$score, .data$ANALYTE) %>%
+      distinct(PARENT, ANALYTE) |>
+      mutate(score = PARENT == ANALYTE) |>
+      arrange(-.data$score, .data$ANALYTE) |>
       pull(ANALYTE) |>
       unique()
 
@@ -620,7 +631,7 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
         ggplot2::labs(y = "")
     }
   }
-  return(out)
+  out
 }
 
 
@@ -641,8 +652,13 @@ plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
 #' covariate_hist(examplinib_sad_nif, "AGE")
 #' covariate_hist(examplinib_sad_nif, "BL_CRCL")
 covariate_hist <- function(
-  obj, cov, nbins = 11, group = NULL, alpha = 0.5,
-  density = TRUE, title = NULL
+  obj,
+  cov,
+  nbins = 11,
+  group = NULL,
+  alpha = 0.5,
+  density = TRUE,
+  title = NULL
 ) {
   # input validation
   validate_min_nif(obj)
@@ -679,11 +695,11 @@ covariate_hist <- function(
   }
 
   if (!is.null(group)) {
-    p <- obj %>%
-      as.data.frame() %>%
-      mutate_at(group, factor) %>%
-      tidyr::unite(GROUP, all_of(group), remove = FALSE) %>%
-      distinct_at(c("ID", cov_params$field, "GROUP")) %>%
+    p <- obj |>
+      as.data.frame() |>
+      mutate_at(group, factor) |>
+      tidyr::unite(GROUP, all_of(group), remove = FALSE) |>
+      distinct_at(c("ID", cov_params$field, "GROUP")) |>
       ggplot2::ggplot(ggplot2::aes(
         x = .data[[cov_params$field]], group = GROUP,
         fill = GROUP
@@ -704,16 +720,20 @@ covariate_hist <- function(
         }
       }
   } else {
-    p <- obj %>%
-      as.data.frame() %>%
-      distinct_at(c("ID", cov_params$field)) %>%
-      ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]])) + {
-        if (density == FALSE) {
+    p <- obj |>
+      as.data.frame() |>
+      distinct_at(c("ID", cov_params$field)) |>
+      filter(!is.na(.data[[cov_params$field]])) |>
+      ggplot2::ggplot(ggplot2::aes(x = .data[[cov_params$field]]))
+
+      if (density == FALSE) {
+        p <- p +
           ggplot2::geom_histogram(
             bins = bins, binwidth = binwidth,
             position = "identity", fill = "grey"
           )
-        } else {
+      } else {
+        p <- p +
           ggplot2::geom_histogram(
             ggplot2::aes(
               y = ggplot2::after_stat(density)
@@ -721,7 +741,6 @@ covariate_hist <- function(
             bins = bins,
             binwidth = binwidth, position = "identity", fill = "grey"
           )
-        }
       }
   }
   p +
@@ -770,14 +789,14 @@ covariate_barplot <- function(
   }
 
   if (!is.null(group)) {
-    out <- obj %>%
-      as.data.frame() %>%
-      mutate_at(group, factor) %>%
-      tidyr::unite(GROUP, all_of(group), remove = FALSE) %>%
-      mutate(CLASS = as.factor(.data[[cov]])) %>%
-      distinct_at(c("ID", "CLASS", "GROUP")) %>%
-      group_by(CLASS, GROUP) %>%
-      summarize(n = n(), .groups = "drop") %>%
+    out <- obj |>
+      as.data.frame() |>
+      mutate_at(group, factor) |>
+      tidyr::unite(GROUP, all_of(group), remove = FALSE) |>
+      mutate(CLASS = as.factor(.data[[cov]])) |>
+      distinct_at(c("ID", "CLASS", "GROUP")) |>
+      group_by(CLASS, GROUP) |>
+      summarize(n = n(), .groups = "drop") |>
       ggplot2::ggplot(ggplot2::aes(
         x = CLASS, y = n, group = GROUP, fill = GROUP
       )) +
@@ -789,12 +808,12 @@ covariate_barplot <- function(
       ) +
       ggplot2::labs(fill = group)
   } else {
-    out <- obj %>%
-      as.data.frame() %>%
-      mutate(CLASS = as.factor(.data[[cov]])) %>%
-      distinct(ID, CLASS) %>%
-      group_by(CLASS) %>%
-      summarize(n = n()) %>%
+    out <- obj |>
+      as.data.frame() |>
+      mutate(CLASS = as.factor(.data[[cov]])) |>
+      distinct(ID, CLASS) |>
+      group_by(CLASS) |>
+      summarize(n = n()) |>
       ggplot2::ggplot(ggplot2::aes(x = CLASS, y = n)) +
       ggplot2::scale_x_discrete(drop = FALSE, name = cov) +
       ggplot2::geom_bar(
@@ -814,14 +833,10 @@ covariate_barplot <- function(
 #'
 #' @param obj The nif object.
 #' @param cat_field The category field.
-#' @param val_field The calue field.
+#' @param val_field The value field.
 #' @param title The figure title.
 #'
 #' @returns A ggplot2 object.
-#'
-#' @examples
-#' cat_boxplot(examplinib_poc_nif, "SEX", "WEIGHT")
-#' cat_boxplot(examplinib_sad_nif, "RACE", "WEIGHT")
 cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
   temp <- obj |>
     as.data.frame() |>
@@ -830,7 +845,7 @@ cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
     group_by(ID) |>
     mutate(.bl = mean(.data[[val_field]][TIME == 0])) |>
     ungroup() |>
-    distinct(ID, .cat, .bl)
+    distinct(.data$ID, .data$.cat, .data$.bl)
 
   n <- temp |>
     reframe(n = n(), max_bl = max(.data$.bl), .by = ".cat")
@@ -847,7 +862,7 @@ cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
     ggplot2::geom_text(
       data = n,
       ggplot2::aes(
-        label = paste0("N=", n), y = max_bl + 5
+        label = paste0("N=", n), y = .data$max_bl + 5
       ),
       position = ggplot2::position_dodge(width = 0.75)
     ) +
@@ -905,9 +920,9 @@ wt_by_ht <- function(obj, alpha = 0.7) {
   validate_min_nif(obj, c("HEIGHT", "WEIGHT"))
   validate_numeric_param(alpha, "alpha")
 
-  obj %>%
-    as.data.frame() %>%
-    distinct(ID, HEIGHT, WEIGHT) %>%
+  obj |>
+    as.data.frame() |>
+    distinct(ID, HEIGHT, WEIGHT) |>
     ggplot2::ggplot(ggplot2::aes(x = HEIGHT, y = WEIGHT)) +
     ggplot2::geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
     ggplot2::geom_point(size = 3, alpha = alpha) +
@@ -931,9 +946,9 @@ ht_by_wt <- function(obj, alpha = 0.7) {
   validate_min_nif(obj, c("HEIGHT", "WEIGHT"))
   validate_numeric_param(alpha, "alpha")
 
-  obj %>%
-    as.data.frame() %>%
-    distinct(ID, HEIGHT, WEIGHT) %>%
+  obj |>
+    as.data.frame() |>
+    distinct(ID, HEIGHT, WEIGHT) |>
     ggplot2::ggplot(ggplot2::aes(x = WEIGHT, y = HEIGHT)) +
     ggplot2::geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
     ggplot2::geom_point(size = 3, alpha = alpha) +
@@ -958,9 +973,9 @@ bmi_by_age <- function(obj, alpha = 0.7) {
   validate_min_nif(obj, c("AGE", "BMI"))
   validate_numeric_param(alpha, "alpha")
 
-  obj %>%
-    as.data.frame() %>%
-    distinct(ID, AGE, BMI) %>%
+  obj |>
+    as.data.frame() |>
+    distinct(ID, AGE, BMI) |>
     ggplot2::ggplot(ggplot2::aes(x = AGE, y = BMI)) +
     ggplot2::geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.3) +
     ggplot2::geom_point(size = 3, alpha = alpha) +
@@ -990,11 +1005,11 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
     max_time <- max_time(obj, only_observations = TRUE)
   }
 
-  obj %>%
-    ensure_analyte() %>%
-    filter(TIME <= max_time) %>%
-    filter(EVID == 0) %>%
-    filter(!is.na(TIME)) %>%
+  obj |>
+    ensure_analyte() |>
+    filter(TIME <= max_time) |>
+    filter(EVID == 0) |>
+    filter(!is.na(TIME)) |>
     ggplot2::ggplot(ggplot2::aes(x = NTIME, y = TIME, group = ID)) +
     ggplot2::geom_point(...) +
     ggplot2::theme_bw() +
@@ -1014,8 +1029,8 @@ administration_summary <- function(obj) {
   # input validation
   validate_min_nif(obj)
 
-  temp <- obj %>%
-    ensure_parent() %>%
+  temp <- obj |>
+    ensure_parent() |>
     n_administrations()
 
   if (nrow(temp) == 0) {
@@ -1024,14 +1039,14 @@ administration_summary <- function(obj) {
       mean = numeric(), median = numeric()
     )
   } else {
-    temp %>%
-      filter(PARENT != "") %>%
-      group_by(across(any_of(c("PARENT")))) %>%
+    temp |>
+      filter(PARENT != "") |>
+      group_by(across(any_of(c("PARENT")))) |>
       summarize(
         min = min(N, na.rm = TRUE), max = max(N, na.rm = TRUE),
         mean = round(mean(N, na.rm = TRUE), 1),
         median = stats::median(N, na.rm = TRUE)
-      ) %>%
+      ) |>
       as.data.frame()
   }
 }
@@ -1054,16 +1069,14 @@ sampling_summary <- function(obj) {
     stop("NTIME not found in input!")
   }
 
-  out <- obj %>%
-    as.data.frame() %>%
-    filter(EVID == 0) %>%
-    distinct(ANALYTE, NTIME) %>%
-    mutate(FLAG = "X") %>%
-    pivot_wider(names_from = ANALYTE, values_from = FLAG, values_fill = "") %>%
-    arrange(NTIME) %>%
+  obj |>
+    as.data.frame() |>
+    filter(EVID == 0) |>
+    distinct(ANALYTE, NTIME) |>
+    mutate(FLAG = "X") |>
+    pivot_wider(names_from = ANALYTE, values_from = FLAG, values_fill = "") |>
+    arrange(NTIME) |>
     as.data.frame()
-
-  return(out)
 }
 
 
@@ -1102,17 +1115,17 @@ mean_dose_plot <- function(
     title <- paste0(title, "Mean ", analyte, " dose over time")
   }
 
-  obj %>%
-    ensure_tafd() %>%
-    as.data.frame() %>%
-    mutate(DAY = floor(.data$TAFD / 24) + 1) %>%
-    filter(EVID == 1, ANALYTE == analyte) %>%
-    group_by(DAY) %>%
+  obj |>
+    ensure_tafd() |>
+    as.data.frame() |>
+    mutate(DAY = floor(.data$TAFD / 24) + 1) |>
+    filter(EVID == 1, ANALYTE == analyte) |>
+    group_by(DAY) |>
     summarize(
       "mean dose (mg)" = mean(.data$DOSE, na.rm = TRUE), "N" = n(),
       .groups = "drop"
-    ) %>%
-    tidyr::pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") %>%
+    ) |>
+    tidyr::pivot_longer(cols = -DAY, names_to = "PARAM", values_to = "VAL") |>
     ggplot2::ggplot(ggplot2::aes(x = DAY, y = VAL)) +
     ggplot2::geom_line() +
     ggplot2::facet_grid(PARAM ~ ., scales = "free_y") +
@@ -1148,14 +1161,14 @@ subs_per_dose_level <- function(
   if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
-  obj %>%
-    ensure_analyte() %>%
-    add_dose_level() %>%
-    as.data.frame() %>%
-    filter(ANALYTE %in% analyte) %>%
-    filter(EVID == 0) %>%
-    distinct(across(any_of(c("ID", "DL", "ANALYTE", group)))) %>%
-    reframe(N = n(), .by = any_of(c("DL", "ANALYTE", "SEX"))) %>%
+  obj |>
+    ensure_analyte() |>
+    add_dose_level() |>
+    as.data.frame() |>
+    filter(ANALYTE %in% analyte) |>
+    filter(EVID == 0) |>
+    distinct(across(any_of(c("ID", "DL", "ANALYTE", group)))) |>
+    reframe(N = n(), .by = any_of(c("DL", "ANALYTE", "SEX"))) |>
     arrange(DL, ANALYTE)
 }
 
@@ -1185,13 +1198,13 @@ obs_per_dose_level <- function(
   if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
-  obj %>%
-    ensure_analyte() %>%
-    add_dose_level() %>%
-    as.data.frame() %>%
-    filter(ANALYTE %in% analyte) %>%
-    filter(EVID == 0) %>%
-    reframe(N = n(), .by = any_of(c("DL", "ANALYTE", group))) %>%
+  obj |>
+    ensure_analyte() |>
+    add_dose_level() |>
+    as.data.frame() |>
+    filter(ANALYTE %in% analyte) |>
+    filter(EVID == 0) |>
+    reframe(N = n(), .by = any_of(c("DL", "ANALYTE", group))) |>
     arrange(DL, ANALYTE)
 }
 
@@ -1200,8 +1213,9 @@ obs_per_dose_level <- function(
 #'
 #' @description
 #'
-#' Refer to the [FDA guidance on Drug-induced liver injury](https://www.fda.gov/media/116737/download)
-#' and [Watkins 2011](https://doi.org/10.2165/11586600-000000000-00000).
+#' Refer to the
+#' [FDA guidance on DILI](https://www.fda.gov/media/116737/download) and
+#' [Watkins 2011](https://doi.org/10.2165/11586600-000000000-00000).
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.
@@ -1220,7 +1234,8 @@ obs_per_dose_level <- function(
 #' @param autoscale Use automatic axis scaling, as logical. Defaults to
 #'   0.01-1000 for ALT/AST and 0.01-100 for bili.
 #' @param ntime_method the field to derive the nominal time from. Allowed values
-#'   are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.
+#'   are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if
+#'   NULL.
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel
@@ -1256,20 +1271,20 @@ edish_plot <- function(
 
   lb <- tryCatch(
     {
-      sdtm %>%
-        domain("lb") %>%
-        filter(!is.na(.data$LBSTRESN)) %>%
-        filter(!is.na(.data$LBSTNRHI)) %>%
-        filter(eval(parse(text = observation_filter))) %>%
+      sdtm |>
+        domain("lb") |>
+        filter(!is.na(.data$LBSTRESN)) |>
+        filter(!is.na(.data$LBSTNRHI)) |>
+        filter(eval(parse(text = observation_filter))) |>
         # Verify required columns exist
         assertr::verify(assertr::has_all_names(
           "USUBJID", "LBTESTCD", "LBSTRESN", "LBSTNRHI"
-        )) %>%
+        )) |>
         # Verify numeric columns are actually numeric
-        assertr::verify(is.numeric(.data$LBSTRESN)) %>%
-        assertr::verify(is.numeric(.data$LBSTNRHI)) %>%
+        assertr::verify(is.numeric(.data$LBSTRESN)) |>
+        assertr::verify(is.numeric(.data$LBSTNRHI)) |>
         # Verify values are valid
-        assertr::verify(.data$LBSTRESN >= 0) %>% # No negative lab values
+        assertr::verify(.data$LBSTRESN >= 0) |> # No negative lab values
         assertr::verify(.data$LBSTNRHI > 0) # No zero or negative ULN values
     },
     error = function(e) {
@@ -1285,54 +1300,54 @@ edish_plot <- function(
     ))
   }
 
-  temp <- lb %>%
-    mutate(L_DTC = .data$LBDTC) %>%
-    filter(.data$LBTESTCD %in% c(enzyme, "BILI")) %>%
+  temp <- lb |>
+    mutate(L_DTC = .data$LBDTC) |>
+    filter(.data$LBTESTCD %in% c(enzyme, "BILI")) |>
     mutate(L_TESTCD = case_match(.data$LBTESTCD, "BILI" ~ "BILI",
       .default = "ENZ"
-    )) %>%
+    )) |>
     mutate(
       L_TESTCD = paste0(.data$L_TESTCD, "_X_ULN"),
       L_STRESN = .data$LBSTRESN / .data$LBSTNRHI
-    ) %>%
+    ) |>
     mutate(DOMAIN = "L_")
 
   sdtm$domains[["l_"]] <- temp
 
   if (nominal_time == TRUE) {
-    nif <- nif %>%
+    nif <- nif |>
       mutate(TIME = .data$NTIME)
   }
   if (!is.null(time)) {
-    nif <- nif %>%
+    nif <- nif |>
       filter(.data$TIME %in% time)
   }
   if (is.null(parent)) {
     parent <- guess_parent(nif)
   }
 
-  p <- nif %>%
+  p <- nif |>
     add_observation(
       sdtm, "l_", "ENZ_X_ULN",
       parent = parent, ntime_method = ntime_method,
       duplicates = "ignore",
       silent = TRUE
-    ) %>%
+    ) |>
     add_observation(
       sdtm, "l_", "BILI_X_ULN",
       parent = parent, ntime_method = ntime_method,
       duplicates = "ignore",
       silent = TRUE
-    ) %>%
-    as.data.frame() %>%
-    filter(!is.na(DV)) %>%
-    filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) %>%
-    select(c("ID", "TIME", "ANALYTE", "DV")) %>%
-    group_by(.data$ID, .data$TIME, .data$ANALYTE) %>%
-    summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop") %>%
-    group_by(.data$ID, .data$TIME) %>%
-    tidyr::pivot_wider(names_from = "ANALYTE", values_from = "DV") %>%
-    ungroup() %>%
+    ) |>
+    as.data.frame() |>
+    filter(!is.na(DV)) |>
+    filter(.data$ANALYTE %in% c("ENZ_X_ULN", "BILI_X_ULN")) |>
+    select(c("ID", "TIME", "ANALYTE", "DV")) |>
+    group_by(.data$ID, .data$TIME, .data$ANALYTE) |>
+    summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop") |>
+    group_by(.data$ID, .data$TIME) |>
+    tidyr::pivot_wider(names_from = "ANALYTE", values_from = "DV") |>
+    ungroup() |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data$ENZ_X_ULN, y = .data$BILI_X_ULN,
       color = (TIME > 0), label = .data$ID
@@ -1377,9 +1392,7 @@ edish_plot <- function(
   caption <- ifelse(shading == TRUE,
     paste0(caption, ", grey area: Hy's law."), caption
   )
-  p <- p +
+  p +
     ggplot2::labs(caption = caption) +
     watermark(cex = 1.5)
-
-  return(p)
 }

@@ -11,7 +11,7 @@ cat_boxplot(obj, cat_field, val_field, title = NULL)
 
 \item{cat_field}{The category field.}
 
-\item{val_field}{The calue field.}
+\item{val_field}{The value field.}
 
 \item{title}{The figure title.}
 }
@@ -20,8 +20,4 @@ A ggplot2 object.
 }
 \description{
 boxplot over categories
-}
-\examples{
-cat_boxplot(examplinib_poc_nif, "SEX", "WEIGHT")
-cat_boxplot(examplinib_sad_nif, "RACE", "WEIGHT")
 }

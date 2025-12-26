@@ -91,11 +91,5 @@ mean_dose_plot(nif)
 plot(nif, "XAN")
 ```
 
-## Safety
-
-```{r}
-nif |> 
-  edish_plot(sdtm)
-```
 
 
