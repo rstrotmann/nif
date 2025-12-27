@@ -1,6 +1,8 @@
 # Recode RACE columns in nif object
 
-Recode RACE columns in nif object
+For some purposes, e.g., NONMEM-based modeling, numerical values are
+expected in the RACE field. This function recodes RACE based on the
+following associations:
 
 ## Usage
 
@@ -30,6 +32,18 @@ A nif object with the original RACE replaced by the numerical race code.
 ## Examples
 
 ``` r
+nif::race_coding
+#> # A tibble: 8 × 3
+#>   RACEN RACE                                      LABEL  
+#>   <dbl> <chr>                                     <chr>  
+#> 1     0 WHITE                                     White  
+#> 2     1 ASIAN                                     Asian  
+#> 3     2 BLACK OR AFRICAN AMERICAN                 Black  
+#> 4     3 AMERICAN INDIAN OR ALASKA NATIVE          Native 
+#> 5     4 NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER Pacific
+#> 6     5 NOT REPORTED                              NR     
+#> 7     6 UNKNOWN                                   Unknown
+#> 8     7 OTHER                                     Other  
 recode_race(examplinib_sad_nif)
 #> ----- NONMEM Input Format (NIF) data -----
 #> 816 observations from 48 subjects across 1 study 

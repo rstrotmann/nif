@@ -8,17 +8,14 @@ edish_plot(
   nif,
   sdtm,
   enzyme = "ALT",
-  observation_filter = "LBSPEC != 'URINE'",
+  observation_filter = NULL,
+  baseline_filter = "LBBLFL == 'Y'",
   show_labels = FALSE,
-  autoscale = TRUE,
   shading = TRUE,
-  nominal_time = TRUE,
-  ntime_method = NULL,
-  time = NULL,
-  parent = NULL,
-  title = "eDISH plot: All time points",
+  title = "eDISH plot",
   size = 3,
   alpha = 0.5,
+  silent = NULL,
   ...
 )
 }
@@ -34,19 +31,7 @@ character, can be 'AST' or 'ALT' (default).}
 
 \item{show_labels}{Show ID labels per point.}
 
-\item{autoscale}{Use automatic axis scaling, as logical. Defaults to
-0.01-1000 for ALT/AST and 0.01-100 for bili.}
-
 \item{shading}{Highlight Hy's law area, as logical.}
-
-\item{nominal_time}{Use NTIME as logical.}
-
-\item{ntime_method}{the field to derive the nominal time from. Allowed values
-are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
-
-\item{time}{time/nominal time filter as numeric.}
-
-\item{parent}{The parent compound as character.}
 
 \item{title}{The plot title as character.}
 
@@ -54,12 +39,15 @@ are "TPT" and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.}
 
 \item{alpha}{The alpha value as numeric.}
 
+\item{silent}{Suppress messages.}
+
 \item{...}{Further graphical parameters.}
 }
 \value{
 A ggplot object.
 }
 \description{
-Refer to the \href{https://www.fda.gov/media/116737/download}{FDA guidance on Drug-induced liver injury}
-and \href{https://doi.org/10.2165/11586600-000000000-00000}{Watkins 2011}.
+Refer to the
+\href{https://www.fda.gov/media/116737/download}{FDA guidance on DILI} and
+\href{https://doi.org/10.2165/11586600-000000000-00000}{Watkins 2011}.
 }

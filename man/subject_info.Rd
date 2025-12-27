@@ -17,6 +17,5 @@ Baseline details for specific subjects
 \examples{
 subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 subject_info(examplinib_poc_nif, 1)
-unclass(subject_info(examplinib_poc_nif, 1))
-subject_info(examplinib_poc_nif, 1)$administrations
+head(subject_info(examplinib_poc_nif, 1)$administrations)
 }

@@ -5,6 +5,7 @@
 #' @import dplyr
 #' @return A sdtm object.
 #' @export
+#' @noRd
 new_sdtm <- function(sdtm_data) {
   domains <- sdtm_data
 
@@ -26,11 +27,26 @@ new_sdtm <- function(sdtm_data) {
 }
 
 
-#' Trial title as reported in TS domain
+#' SDTM class constructor
+#'
+#' @param sdtm_data The SDTM domains as list of data frames.
+#'
+#' @import dplyr
+#' @return A sdtm object.
+#' @export
+sdtm <- function(sdtm_data) {
+  new_sdtm(sdtm_data)
+}
+
+
+#' Trial title
+#'
+#' Extract trial title from the TS domain, if available. Non-ASCII characters
+#' are removed from the output to ensure compatibility.
 #'
 #' @param obj A sdtm object.
 #'
-#' @returns The title or NULL.
+#' @returns The title as ASCII character, or NULL.
 #' @export
 #'
 #' @examples
@@ -50,16 +66,20 @@ trial_title <- function(obj) {
     return(NULL)
   }
 
-  ts |>
+  raw <- ts |>
     filter(.data$TSPARMCD == "TITLE") |>
     select(matches("^TSVAL[1-8]?$")) |>
     as.character() |>
     paste(collapse = " ") |>
     str_trim()
+
+  iconv(raw, from = "UTF-8", sub = "")
 }
 
 
-#' Trial data cut-off date as reported in TS domain
+#' Cut-off date
+#'
+#' Data cut-off date as reported in TS domain, if available.
 #'
 #' @param obj A sdtm object.
 #'
@@ -233,17 +253,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
   ))
 
   if (!is.null(x$title)) {
-    temp <- iconv(x$title, from = "UTF-8", sub = "")
-    cat(
-      paste0(
-        "\n",
-        str_wrap(
-          iconv(x$title, from = "UTF-8", sub = ""),
-          width = 80
-        ),
-        "\n"
-      )
-    )
+    cat(paste0("\n", str_wrap(x$title, width = 80), "\n"))
   }
 
   if (!is.null(x$dco)) {
@@ -354,8 +364,7 @@ has_domain <- function(obj, name) {
 #' @examples
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 #' subject_info(examplinib_poc_nif, 1)
-#' unclass(subject_info(examplinib_poc_nif, 1))
-#' subject_info(examplinib_poc_nif, 1)$administrations
+#' head(subject_info(examplinib_poc_nif, 1)$administrations)
 subject_info <- function(obj, id) {
   UseMethod("subject_info")
 }
@@ -704,6 +713,7 @@ filter_subject.sdtm <- function(obj, usubjid) {
 #'
 #' @return A data frame.
 #' @export
+#' @noRd
 make_subjects_sdtm <- function(obj, ...) {
   make_subjects(domain(obj, "dm"), domain(obj, "vs"), ...)
 }

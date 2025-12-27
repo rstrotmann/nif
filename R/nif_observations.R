@@ -26,6 +26,7 @@
 #' make_ntime_from_tpt(df) # Returns c(0, 1, 2.5)
 #'
 #' @export
+#' @noRd
 make_ntime_from_tpt <- function(obj, domain = NULL) {
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
@@ -105,6 +106,7 @@ make_ntime_from_tpt <- function(obj, domain = NULL) {
 #' @returns A data frame with a column representing the unique values of the
 #'   xxTPT variable and a NTIME column with the time in hours.
 #' @export
+#' @noRd
 make_ntime_from_tptnum <- function(obj, domain = NULL) {
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
@@ -135,6 +137,8 @@ make_ntime_from_tptnum <- function(obj, domain = NULL) {
 #' @param domain the domain as character.
 #'
 #' @returns A data frame.
+#' @export
+#' @noRd
 make_ntime_from_dy <- function(obj, domain = "PC") {
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
@@ -164,6 +168,8 @@ make_ntime_from_dy <- function(obj, domain = "PC") {
 #' @param domain the domain as character.
 #'
 #' @returns A data frame.
+#' @export
+#' @noRd
 make_ntime_from_visitdy <- function(obj, domain = "PC") {
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
@@ -201,6 +207,7 @@ make_ntime_from_visitdy <- function(obj, domain = "PC") {
 #'
 #' @return A data frame.
 #' @export
+#' @noRd
 make_ntime <- function(
   obj,
   domain = NULL,

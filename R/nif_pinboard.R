@@ -73,35 +73,6 @@ nif_pinboard <- function(path = NULL) {
 #' Generic pin_write function
 #'
 #' @description
-#' `r lifecycle::badge("deprecated")`
-#'
-#' This function is deprecated, please use [nif::pb_write()] instead!
-#'
-#' @param obj The object to pin.
-#' @inheritParams get_pinboard
-#' @param name Name for the pin object, as character. Defaults to
-#'   'xx_sdtm' or 'xx_nif' with xx the study name.
-#' @param title Title for the pin object, as character. Defaults to
-#'   the study name(s).
-#' @param dco Data cut off as character.
-#' @param silent Suppress messages. Defaults to nif_option setting if NULL.
-#' @param force Force-write, as logical.
-#'
-#' @returns Nothing.
-#' @export
-#' @keywords internal
-pin_write <- function(
-  obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
-  silent = NULL
-) {
-  lifecycle::deprecate_warn("0.56.3", "pin_write()", "pb_write()")
-  UseMethod("pb_write")
-}
-
-
-#' Generic pin_write function
-#'
-#' @description
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param obj The object to pin.
@@ -143,6 +114,7 @@ pb_write <- function(
 #' @importFrom pins pin_write board_folder
 #' @importFrom utils capture.output
 #' @export
+#' @noRd
 pb_write.sdtm <- function(
   obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
   silent = NULL
@@ -208,6 +180,7 @@ pb_write.sdtm <- function(
 #' @importFrom pins pin_write board_folder
 #' @importFrom utils capture.output
 #' @export
+#' @noRd
 pb_write.nif <- function(
   obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
   silent = NULL
@@ -249,25 +222,6 @@ pb_write.nif <- function(
 }
 
 
-#' Read sdtm object from pinboard
-#'
-#' This function is deprecated, please use [nif::pb_read_sdtm()] instead.
-#'
-#' @description
-#' `r lifecycle::badge("deprecated")`
-#'
-#' @param name The pin name, as character.
-#' @inheritParams get_pinboard
-#'
-#' @returns A sdtm object.
-#' @importFrom pins board_folder pin_read
-#' @export
-#' @keywords internal
-pin_read_sdtm <- function(name, board = NULL) {
-  lifecycle::deprecate_warn("0.56.3", "pin_read_sdtm()", "pb_read_sdtm()")
-  pb_read_sdtm(name, board = board)
-}
-
 
 #' Read sdtm object from pinboard
 #'
@@ -292,27 +246,6 @@ pb_read_sdtm <- function(name, board = NULL) {
 
   validate_sdtm(out)
   return(out)
-}
-
-
-#' Read nif object from pinboard
-#'
-#' This function is deprecated, please use [nif::pb_read_nif()] instead.
-#'
-#' @description
-#' `r lifecycle::badge("deprecated")`
-#' This function is deprecated. Please use pb_read_nif() instead!
-#'
-#' @param name The pin name, as character.
-#' @inheritParams get_pinboard
-#'
-#' @returns A nif object.
-#' @export
-#' @keywords internal
-pin_read_nif <- function(name, board = NULL) {
-  lifecycle::deprecate_warn("0.56.3", "pin_read_nif()", "pb_read_nif()")
-
-  pb_read_nif(name, board = board)
 }
 
 
@@ -351,6 +284,8 @@ pb_read_nif <- function(name, board = NULL) {
 #'
 #' @returns The board folder, defaults to the respective nif_option setting.
 #' @importFrom pins board_folder pin_search
+#' @keywords internal
+#' @noRd
 pb_list_object <- function(board = NULL, object_type) {
   # input validation
   validate_char_param(board, "board", allow_null = TRUE)
@@ -370,24 +305,6 @@ pb_list_object <- function(board = NULL, object_type) {
 
 #' List sdtm objects in pinboard
 #'
-#' This function is deprecated, please use [nif::pb_list_sdtm()] instead.
-#'
-#' @description
-#' `r lifecycle::badge("deprecated")`
-#'
-#' @inheritParams get_pinboard
-#'
-#' @returns A data frame.
-#' @export
-#' @keywords internal
-pin_list_sdtm <- function(board = NULL) {
-  lifecycle::deprecate_warn("0.56.3", "pin_list_sdtm()", "pb_list_sdtm()")
-  pb_list_object(board, "sdtm")
-}
-
-
-#' List sdtm objects in pinboard
-#'
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
@@ -397,24 +314,6 @@ pin_list_sdtm <- function(board = NULL) {
 #' @export
 pb_list_sdtm <- function(board = NULL) {
   pb_list_object(board, "sdtm")
-}
-
-
-#' List nif objects in pinboard
-#'
-#' This function is deprecated, please use [nif::pb_list_nif()] instead.
-#'
-#' @description
-#' `r lifecycle::badge("deprecated")`
-#'
-#' @inheritParams get_pinboard
-#'
-#' @returns A data frame.
-#' @export
-#' @keywords internal
-pin_list_nif <- function(board = NULL) {
-  lifecycle::deprecate_warn("0.56.3", "pin_list_nif()", "pb_list_nif()")
-  pb_list_object(board, "nif")
 }
 
 

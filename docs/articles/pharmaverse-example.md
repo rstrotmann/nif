@@ -7,16 +7,7 @@ packages:
 
 ``` r
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(ggplot2)
-#> Warning: package 'ggplot2' was built under R version 4.5.2
 library(nif)
 library(pharmaversesdtm)
 ```
@@ -167,39 +158,9 @@ summary(nif)
 invisible(capture.output(
   plot(summary(nif))
 ))
-#> Warning in min(out$active_time, na.rm = TRUE): no non-missing arguments to min;
-#> returning Inf
-#> Warning in ensure_parent(obj): No administration records found (EVID == 1)
 ```
 
-![](pharmaverse-example_files/figure-html/unnamed-chunk-5-1.png)
-
-    #> Warning: Removed 1 row containing non-finite outside the scale range
-    #> (`stat_bin()`).
-
-![](pharmaverse-example_files/figure-html/unnamed-chunk-5-2.png)
-
-    #> Warning: Removed 2 rows containing non-finite outside the scale range
-    #> (`stat_bin()`).
-
-![](pharmaverse-example_files/figure-html/unnamed-chunk-5-3.png)
-
-    #> Warning: Removed 3 rows containing non-finite outside the scale range
-    #> (`stat_bin()`).
-
-![](pharmaverse-example_files/figure-html/unnamed-chunk-5-4.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-5.png)
-
-    #> Warning: Removed 1 row containing non-finite outside the scale range
-    #> (`stat_boxplot()`).
-    #> Warning: Removed 143 rows containing missing values or values outside the scale range
-    #> (`geom_text()`).
-
-![](pharmaverse-example_files/figure-html/unnamed-chunk-5-6.png)
-
-    #> Warning: Removed 1 row containing non-finite outside the scale range
-    #> (`stat_boxplot()`).
-
-![](pharmaverse-example_files/figure-html/unnamed-chunk-5-7.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-8.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-9.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-10.png)
+![](pharmaverse-example_files/figure-html/unnamed-chunk-5-1.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-2.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-3.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-4.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-5.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-6.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-7.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-8.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-9.png)
 
 ## DATA EXPLORATION
 

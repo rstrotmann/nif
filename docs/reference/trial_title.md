@@ -1,6 +1,7 @@
-# Trial title as reported in TS domain
+# Trial title
 
-Trial title as reported in TS domain
+Extract trial title from the TS domain, if available. Non-ASCII
+characters are removed from the output to ensure compatibility.
 
 ## Usage
 
@@ -16,7 +17,7 @@ trial_title(obj)
 
 ## Value
 
-The title or NULL.
+The title as ASCII character, or NULL.
 
 ## Examples
 

@@ -84,7 +84,7 @@ nif_plot_id(examplinib_poc_nif, 1, log = TRUE)
 
 nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023")
 
-nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023", tad = TRUE)
+nif_plot_id(examplinib_poc_nif, 1, analyte = "RS2023", time_field = "TAD")
 
 nif_plot_id(examplinib_poc_nif, "20230000221010001", analyte = "RS2023")
 
@@ -96,5 +96,5 @@ nif_plot_id(examplinib_poc_nif, 8, analyte = c("RS2023", "RS2023487A"))
 
 nif_plot_id(examplinib_poc_min_nif, 1, analyte = "CMT3")
 
-nif_plot_id(examplinib_poc_min_nif, 1, tad = TRUE)
+nif_plot_id(examplinib_poc_min_nif, 1)
 ```

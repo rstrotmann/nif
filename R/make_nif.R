@@ -129,6 +129,7 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @param cleanup Remove non-essential fields, as logical.
 #' @return A nif object.
 #' @export
+#' @noRd
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   # input validation
   validate_nif(obj)

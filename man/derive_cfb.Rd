@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_baseline.R
 \name{derive_cfb}
 \alias{derive_cfb}
-\title{Extract the individual baseline value and change from baseline for an analyte}
+\title{Calculate change from baseline}
 \usage{
 derive_cfb(
   obj,

@@ -57,6 +57,7 @@ last_ex_dtc <- function(ex) {
 #' @param obj A nif object.
 #' @return A nif object with TIME, TAFD, and TAD fields added.
 #' @export
+#' @noRd
 make_time <- function(obj) {
   # Input validation
   validate_nif(obj)

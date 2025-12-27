@@ -76,8 +76,7 @@ If the last administration episode for a subject (and a treatment) has
 an empty ‘EXENDTC’, it is replaced with the date/time provided by
 ‘DM.RFENDTC’, if available, i.e., the subject’s reference end date. See
 the documentation for the (internal) function
-[`impute_exendtc_to_rfendtc()`](../reference/impute_exendtc_to_rfendtc.md)
-for further details.
+`impute_exendtc_to_rfendtc()` for further details.
 
 #### 2. Ongoing treatment
 
@@ -88,8 +87,7 @@ still on treatment. The `cut_off_date` parameter can be specified in the
 call to [`add_administration()`](../reference/add_administration.md),
 or, if not specified, is set to the last administration event found in
 the whole dataset (refer to the documentation of
-[`impute_exendtc_to_cutoff()`](../reference/impute_exendtc_to_cutoff.md)
-for details).
+`impute_exendtc_to_cutoff()` for details).
 
 #### 3. Missing EXENDTC in other administration episodes
 
@@ -101,8 +99,7 @@ i.e., that the treatment was continued into the next administration
 episode. Consider this a last-resort imputation that should be avoided
 by prior data cleaning, if ever possible. This imputation, if conducted,
 therefore issues a warning that cannot be suppressed with
-`silent = TRUE` (see the documentation to
-[`impute_missing_exendtc()`](../reference/impute_missing_exendtc.md) for
+`silent = TRUE` (see the documentation to `impute_missing_exendtc()` for
 details).
 
 #### 4. Expansion of treatment administration episodes
@@ -120,8 +117,7 @@ For administration days for which PK sampling events are recorded in PC,
 the administration time is taken from PC.PCRFTDTC, if this field is
 available. Time information derived during expansion (see 4.) is
 overwritten during this process. See the documentation to
-[`impute_admin_times_from_pcrftdtc()`](../reference/impute_admin_times_from_pcrftdtc.md)
-for details.
+`impute_admin_times_from_pcrftdtc()` for details.
 
 #### 6. Carry forward administration time
 

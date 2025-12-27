@@ -45,26 +45,26 @@ A discussion on EC vs EX is provided
 \section{Time imputations and filtering}{
 The following time imputations and filters are applied in the given
 order:
-\subsection{1. \code{\link[=impute_exendtc_to_rfendtc]{impute_exendtc_to_rfendtc()}}}{
+\subsection{1. nif::impute_exendtc_to_rfendtc()}{
 
 If EXENDTC is missing in the last administration episode for a given subject,
 it is replaced with DM.RFENDTC, if available.
 }
 
-\subsection{2. \code{\link[=filter_EXENDTC_after_EXSTDTC]{filter_EXENDTC_after_EXSTDTC()}}}{
+\subsection{2. nif::filter_EXENDTC_after_EXSTDTC()}{
 
 Administration episodes in which EXSTDTC is after EXENDT are deleted from the
 data set.
 }
 
-\subsection{3. \code{\link[=impute_exendtc_to_cutoff]{impute_exendtc_to_cutoff()}}}{
+\subsection{3. nif::impute_exendtc_to_cutoff()}{
 
 If in the last administration episode per subject and treatment, EXENDTC is
 missing, for example because the treatment is still ongoing at the time of
 the SDTM generation, EXENDTC is replaced with the cut-off date.
 }
 
-\subsection{4. \code{\link[=impute_missing_exendtc]{impute_missing_exendtc()}}}{
+\subsection{4. nif::impute_missing_exendtc()}{
 
 If in any further episode, EXENDTC is missing, it is replaced with the day
 before the subsequent administration episode start (EXSTDTC). It should be
@@ -88,7 +88,7 @@ versions, the dosing frequency provided in \code{EXDOSFRQ} may be taken into
 account to adequately handle multiple daily administrations.
 }
 
-\subsection{6. \code{\link[=impute_admin_times_from_pcrftdtc]{impute_admin_times_from_pcrftdtc()}}}{
+\subsection{6. nif::impute_admin_times_from_pcrftdtc()}{
 
 For administration days for which PK sampling events are recorded in PC, the
 administration time is taken from PC.PCRFTDTC, if this field is available.

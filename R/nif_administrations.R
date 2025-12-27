@@ -151,23 +151,23 @@ expand_ex <- function(ex) {
 #' The following time imputations and filters are applied in the given
 #' order:
 #'
-#' ## 1. [nif::impute_exendtc_to_rfendtc()]
+#' ## 1. nif::impute_exendtc_to_rfendtc()
 #'
 #' If EXENDTC is missing in the last administration episode for a given subject,
 #' it is replaced with DM.RFENDTC, if available.
 #'
-#' ## 2. [nif::filter_EXENDTC_after_EXSTDTC()]
+#' ## 2. nif::filter_EXENDTC_after_EXSTDTC()
 #'
 #' Administration episodes in which EXSTDTC is after EXENDT are deleted from the
 #' data set.
 #'
-#' ## 3. [nif::impute_exendtc_to_cutoff()]
+#' ## 3. nif::impute_exendtc_to_cutoff()
 #'
 #' If in the last administration episode per subject and treatment, EXENDTC is
 #' missing, for example because the treatment is still ongoing at the time of
 #' the SDTM generation, EXENDTC is replaced with the cut-off date.
 #'
-#' ## 4. [nif::impute_missing_exendtc()]
+#' ## 4. nif::impute_missing_exendtc()
 #'
 #' If in any further episode, EXENDTC is missing, it is replaced with the day
 #' before the subsequent administration episode start (EXSTDTC). It should be
@@ -189,7 +189,7 @@ expand_ex <- function(ex) {
 #' versions, the dosing frequency provided in `EXDOSFRQ` may be taken into
 #' account to adequately handle multiple daily administrations.
 #'
-#' ## 6. [nif::impute_admin_times_from_pcrftdtc()]
+#' ## 6. nif::impute_admin_times_from_pcrftdtc()
 #'
 #' For administration days for which PK sampling events are recorded in PC, the
 #' administration time is taken from PC.PCRFTDTC, if this field is available.

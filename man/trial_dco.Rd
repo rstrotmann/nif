@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{trial_dco}
 \alias{trial_dco}
-\title{Trial data cut-off date as reported in TS domain}
+\title{Cut-off date}
 \usage{
 trial_dco(obj)
 }
@@ -13,5 +13,5 @@ trial_dco(obj)
 A POSIXct object or NULL.
 }
 \description{
-Trial data cut-off date as reported in TS domain
+Data cut-off date as reported in TS domain, if available.
 }

@@ -139,7 +139,7 @@ after expansion of the administration episodes:</p>
 has an empty ‘EXENDTC’, it is replaced with the date/time provided by
 ‘DM.RFENDTC’, if available, i.e., the subject’s reference end date. See
 the documentation for the (internal) function
-<code><a href="../reference/impute_exendtc_to_rfendtc.html">impute_exendtc_to_rfendtc()</a></code> for further details.</p>
+<code>impute_exendtc_to_rfendtc()</code> for further details.</p>
 </div>
 <div class="section level4">
 <h4 id="ongoing-treatment">2. Ongoing treatment<a class="anchor" aria-label="anchor" href="#ongoing-treatment"></a>
@@ -151,7 +151,7 @@ analyses where some subjects are still on treatment. The
 <code>cut_off_date</code> parameter can be specified in the call to
 <code><a href="../reference/add_administration.html">add_administration()</a></code>, or, if not specified, is set to the
 last administration event found in the whole dataset (refer to the
-documentation of <code><a href="../reference/impute_exendtc_to_cutoff.html">impute_exendtc_to_cutoff()</a></code> for
+documentation of <code>impute_exendtc_to_cutoff()</code> for
 details).</p>
 </div>
 <div class="section level4">
@@ -166,7 +166,7 @@ administration episode. Consider this a last-resort imputation that
 should be avoided by prior data cleaning, if ever possible. This
 imputation, if conducted, therefore issues a warning that cannot be
 suppressed with <code>silent = TRUE</code> (see the documentation to
-<code><a href="../reference/impute_missing_exendtc.html">impute_missing_exendtc()</a></code> for details).</p>
+<code>impute_missing_exendtc()</code> for details).</p>
 </div>
 <div class="section level4">
 <h4 id="expansion-of-treatment-administration-episodes">4. Expansion of treatment administration episodes<a class="anchor" aria-label="anchor" href="#expansion-of-treatment-administration-episodes"></a>
@@ -185,7 +185,7 @@ respective episode is taken from the time information in EXENDTC.</p>
 PC, the administration time is taken from PC.PCRFTDTC, if this field is
 available. Time information derived during expansion (see 4.) is
 overwritten during this process. See the documentation to
-<code><a href="../reference/impute_admin_times_from_pcrftdtc.html">impute_admin_times_from_pcrftdtc()</a></code> for details.</p>
+<code>impute_admin_times_from_pcrftdtc()</code> for details.</p>
 </div>
 <div class="section level4">
 <h4 id="carry-forward-administration-time">6. Carry forward administration time<a class="anchor" aria-label="anchor" href="#carry-forward-administration-time"></a>

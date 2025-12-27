@@ -366,6 +366,8 @@ derive_baseline <- function(
 }
 
 
+#' Calculate change from baseline
+#'
 #' Extract the individual baseline value and change from baseline for an analyte
 #'
 #' @param obj A nif object.
@@ -393,15 +395,13 @@ derive_cfb <- function(
   default_baseline = NA_real_,
   silent = NULL
 ) {
-  out <- derive_baseline(
+  derive_baseline(
     obj,
     analyte = analyte, baseline_filter = baseline_filter,
     summary_function = summary_function, default_baseline = default_baseline,
     silent = silent
   ) |>
     mutate(DVCFB = .data$DV - .data$DVBL)
-
-  out
 }
 
 
@@ -429,6 +429,8 @@ derive_cfb <- function(
 #' @param silent Suppress messages, defaults to nif_option setting if NULL.
 #' @return A NIF object
 #' @importFrom stats na.omit
+#' @export
+#' @noRd
 #'
 legacy_add_cfb <- function(
   obj,
@@ -538,9 +540,7 @@ legacy_add_cfb <- function(
 #' @return A NIF object
 #' @importFrom stats na.omit
 #' @export
-#' @examples
-#' head(add_cfb(examplinib_poc_nif))
-#' head(add_cfb(examplinib_poc_min_nif))
+#' @noRd
 add_cfb <- function(
   obj,
   baseline_filter = "TIME <= 0",
@@ -668,9 +668,7 @@ derive_cfb_analyte <- function(
 #' @return A NIF object
 #' @importFrom stats na.omit
 #' @export
-#' @examples
-#' head(add_rtb(examplinib_poc_nif))
-#' head(add_rtb(examplinib_poc_min_nif))
+#' @noRd
 add_rtb <- function(obj, baseline_filter = "TIME <= 0",
                     summary_function = median) {
   obj |>

@@ -2,11 +2,11 @@
 create_edish_sdtm <- function() {
   out <- list(
     lb = tibble::tribble(
-      ~USUBJID, ~LBTESTCD, ~LBSTRESN, ~LBSTNRHI, ~LBSPEC, ~LBDTC, ~DOMAIN,
-      "SUBJ001", "ALT", 30, 40, "BLOOD", "2024-01-01", "LB",
-      "SUBJ001", "ALT", 60, 40, "BLOOD", "2024-01-02", "LB",
-      "SUBJ001", "BILI", 1.2, 1, "BLOOD", "2024-01-01", "LB",
-      "SUBJ001", "BILI", 2.4, 1, "BLOOD", "2024-01-02", "LB"
+       ~USUBJID, ~LBTESTCD, ~LBSTRESN, ~LBSTNRHI, ~LBSPEC,       ~LBDTC, ~DOMAIN,
+      "SUBJ001",     "ALT",        30,        40, "BLOOD", "2024-01-01",    "LB",
+      "SUBJ001",     "ALT",        60,        40, "BLOOD", "2024-01-02",    "LB",
+      "SUBJ001",    "BILI",       1.2,         1, "BLOOD", "2024-01-01",    "LB",
+      "SUBJ001",    "BILI",       2.4,         1, "BLOOD", "2024-01-02",    "LB"
     ),
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~ACTARMCD, ~RFSTDTC, ~DOMAIN,
@@ -25,10 +25,10 @@ create_edish_sdtm <- function() {
 # Helper function to create mock NIF data
 create_edish_nif <- function() {
   out <- tibble::tribble(
-    ~ID, ~TIME, ~NTIME, ~DV, ~ANALYTE, ~EVID, ~CMT, ~PARENT, ~DTC, ~USUBJID, ~AMT, ~DOSE,
-    1, 0, 0, 0, "A", 1, 1, "A", "2024-01-01", "SUBJ001", 10, 10,
-    1, 0, 0, 1, "A", 0, 2, "A", "2024-01-01", "SUBJ001", 10, 10,
-    1, 24, 24, 2, "A", 0, 2, "A", "2024-01-02", "SUBJ001", 10, 10
+    ~ID, ~TIME, ~NTIME, ~DV, ~ANALYTE, ~EVID, ~CMT, ~PARENT,         ~DTC,  ~USUBJID, ~AMT, ~DOSE,
+    1,     0,      0,   0,      "A",     1,    1,     "A", "2024-01-01", "SUBJ001",   10,    10,
+    1,     0,      0,   1,      "A",     0,    2,     "A", "2024-01-01", "SUBJ001",   10,    10,
+    1,    24,     24,   2,      "A",     0,    2,     "A", "2024-01-02", "SUBJ001",   10,    10
   ) %>%
     lubrify_dates()
   new_nif(out)
@@ -36,10 +36,7 @@ create_edish_nif <- function() {
 
 
 test_that("edish_plot handles valid input correctly", {
-  result <- edish_plot(
-    create_edish_nif(), create_edish_sdtm(),
-    ntime_method = "ELTM"
-  )
+  result <- edish_plot(create_edish_nif(), create_edish_sdtm(), silent = TRUE)
   expect_s3_class(result, "ggplot")
   expect_equal(result$labels$x, "ALT/ULN")
   expect_equal(result$labels$y, "BILI/ULN")
@@ -48,7 +45,7 @@ test_that("edish_plot handles valid input correctly", {
 
 test_that("edish_plot validates enzyme parameter", {
   expect_error(
-    edish_plot(create_edish_nif(), create_edish_sdtm(), enzyme = "INVALID"),
+    edish_plot(create_edish_nif(), create_edish_sdtm(), enzyme = "INVALID", silent = TRUE),
     "enzyme must be either 'ALT' or 'AST'"
   )
 })
@@ -61,22 +58,7 @@ test_that("edish_plot handles missing required lab tests", {
   sdtm$domains$lb <- invalid_lb
 
   expect_error(
-    edish_plot(create_edish_nif(), sdtm),
+    edish_plot(create_edish_nif(), sdtm, silent = TRUE),
     "missing lab tests for BILI"
   )
-})
-
-
-test_that("edish_plot handles zero ULN values", {
-  sdtm <- create_edish_sdtm()
-  invalid_lb <- domain(sdtm, "lb")
-  invalid_lb$LBSTNRHI[1] <- 0
-  sdtm$domains$lb <- invalid_lb
-
-  invisible(capture.output(
-    expect_error(
-      edish_plot(create_edish_nif(), sdtm),
-      "Data validation failed"
-    )
-  ))
 })

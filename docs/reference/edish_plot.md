@@ -1,7 +1,7 @@
 # Drug-induced serious hepatotoxicity (eDISH) plot
 
-Refer to the [FDA guidance on Drug-induced liver
-injury](https://www.fda.gov/media/116737/download) and [Watkins
+Refer to the [FDA guidance on
+DILI](https://www.fda.gov/media/116737/download) and [Watkins
 2011](https://doi.org/10.2165/11586600-000000000-00000).
 
 ## Usage
@@ -11,17 +11,18 @@ edish_plot(
   nif,
   sdtm,
   enzyme = "ALT",
-  observation_filter = "LBSPEC != 'URINE'",
+  observation_filter = NULL,
   show_labels = FALSE,
   autoscale = TRUE,
   shading = TRUE,
   nominal_time = TRUE,
-  ntime_method = NULL,
+  ntime_method = "DY",
   time = NULL,
   parent = NULL,
   title = "eDISH plot: All time points",
   size = 3,
   alpha = 0.5,
+  silent = NULL,
   ...
 )
 ```
@@ -86,6 +87,10 @@ edish_plot(
 - alpha:
 
   The alpha value as numeric.
+
+- silent:
+
+  Suppress messages.
 
 - ...:
 

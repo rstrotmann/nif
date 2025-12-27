@@ -19,8 +19,11 @@ A nif object with the original RACE replaced by the numerical race
 code.
 }
 \description{
-Recode RACE columns in nif object
+For some purposes, e.g., NONMEM-based modeling, numerical values are expected
+in the RACE field. This function recodes RACE based on the following
+associations:
 }
 \examples{
+nif::race_coding
 recode_race(examplinib_sad_nif)
 }

@@ -22,9 +22,6 @@
 - [`add_bl_renal()`](add_bl_renal.md) : Add baseline renal function
   class
 
-- [`add_cfb()`](add_cfb.md) **\[deprecated\]** : Add baseline and change
-  from baseline fields
-
 - [`add_covariate()`](add_covariate.md) : Attach time-varying covariate
 
 - [`add_dd()`](add_dd.md) : Add Field definition to Data Definition
@@ -41,9 +38,6 @@
   Add the number of observations per dosing interval
 
 - [`add_observation()`](add_observation.md) : Append observation events
-
-- [`add_rtb()`](add_rtb.md) **\[deprecated\]** : Add baseline and
-  relative-to-baseline fields
 
 - [`add_tad()`](add_tad.md) : Add time-after-dose (TAD) field
 
@@ -65,12 +59,7 @@
 
 - [`analytes()`](analytes.md) : Analytes within a NIF or SDTM object
 
-- [`apply_cat_filter()`](apply_cat_filter.md) : Apply CAT and SCAT
-  filter
-
-- [`as_nif()`](as_nif.md) : Convert data frame to nif object
-
-- [`coalesce_join()`](coalesce_join.md) : Coalescing join
+- [`cat_boxplot()`](cat_boxplot.md) : boxplot over categories
 
 - [`compartments()`](compartments.md) : Compartments used in a nif
   object
@@ -95,8 +84,7 @@
 - [`derive_baseline()`](derive_baseline.md) : Extract the individual
   baseline value for an analyte
 
-- [`derive_cfb()`](derive_cfb.md) : Extract the individual baseline
-  value and change from baseline for an analyte
+- [`derive_cfb()`](derive_cfb.md) : Calculate change from baseline
 
 - [`derive_cfb_analyte()`](derive_cfb_analyte.md) : Derive a new analyte
   with change from baseline from an existing analyte
@@ -135,36 +123,6 @@
 - [`egfr_raynaud()`](egfr_raynaud.md) : Glomerular filtration rate
   estimation from serum creatinine (Raynaud method)
 
-- [`examplinib_fe`](examplinib_fe.md) : Synthetic SDTM data from a
-  fictional clinical food effect study for 'examplinib'.
-
-- [`examplinib_fe_nif`](examplinib_fe_nif.md) : Synthetic NIF data from
-  a fictional clinical food effect study for 'examplinib'.
-
-- [`examplinib_poc`](examplinib_poc.md) : Synthetic SDTM data from a
-  fictional clinical single-arm study with rich and sparse pk sampling.
-
-- [`examplinib_poc_min_nif`](examplinib_poc_min_nif.md) : Synthetic NIF
-  data from a fictional clinical single-arm study with rich and sparse
-  pk sampling. Reduced to the minimally required fields.
-
-- [`examplinib_poc_nif`](examplinib_poc_nif.md) : Synthetic NIF data
-  from a fictional clinical single-arm study with rich and sparse pk
-  sampling.
-
-- [`examplinib_sad`](examplinib_sad.md) : Synthetic SDTM data from a
-  fictional clinical SAD FIH study with rich PK sampling
-
-- [`examplinib_sad_min_nif`](examplinib_sad_min_nif.md) : Synthetic NIF
-  data from a fictional clinical SAD FIH study with rich PK sampling.
-  Reduced to the minimally required fields.
-
-- [`examplinib_sad_nif`](examplinib_sad_nif.md) : Synthetic NIF data
-  from a fictional clinical SAD FIH study with rich PK sampling
-
-- [`filter_EXENDTC_after_EXSTDTC()`](filter_EXENDTC_after_EXSTDTC.md) :
-  Remove administrations with EXSTDTC after EXENDTC
-
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID
   in the data set
 
@@ -173,9 +131,6 @@
 
 - [`get_pinboard()`](get_pinboard.md) : Get pinboard object
 
-- [`identify_baseline_columns()`](identify_baseline_columns.md) :
-  Identify baseline columns in a data frame
-
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection
 
@@ -183,15 +138,6 @@
 
 - [`import_observation()`](import_observation.md) **\[experimental\]** :
   Add observation from non-SDTM-formatted data table
-
-- [`impute_exendtc_to_cutoff()`](impute_exendtc_to_cutoff.md) : Impute
-  last EXENDTC per subject and treatment to cutoff date when absent.
-
-- [`impute_exendtc_to_rfendtc()`](impute_exendtc_to_rfendtc.md) : Impute
-  very last EXENDTC for a subject and EXTRT to RFENDTC, if absent
-
-- [`impute_missing_exendtc()`](impute_missing_exendtc.md) : Impute
-  missing EXENDTC to the day before the next EXSTDTC.
 
 - [`index_dosing_interval()`](index_dosing_interval.md) : Index dosing
   intervals
@@ -213,33 +159,12 @@
 - [`limit()`](limit.md) : Subset nif to rows with DTC before the last
   individual or global observation
 
-- [`make_ntime()`](make_ntime.md) : Make nominal time
-
-- [`make_ntime_from_dy()`](make_ntime_from_dy.md) : Make ntime lookup
-  table from DY field
-
-- [`make_ntime_from_tpt()`](make_ntime_from_tpt.md) : Convert time point
-  text to numeric time values
-
-- [`make_ntime_from_tptnum()`](make_ntime_from_tptnum.md) : Make ntime
-  lookup table from TPTNUM field
-
-- [`make_ntime_from_visitdy()`](make_ntime_from_visitdy.md) : Make ntime
-  lookup table from VISITDY field
-
-- [`make_subjects_sdtm()`](make_subjects_sdtm.md) : Make subject data
-  frame from SDTM object
-
-- [`make_time()`](make_time.md) : Calculate time fields based on DTC
-
 - [`max_admin_time()`](max_admin_time.md) : Maximal administration time
 
 - [`max_observation_time()`](max_observation_time.md) : Maximal
   observation time
 
 - [`max_time()`](max_time.md) : Maximal time in nif object
-
-- [`minimal_nif_fields`](minimal_nif_fields.md) : Minimal nif fields
 
 - [`n_administrations()`](n_administrations.md) : Number of
   administrations per subject
@@ -285,18 +210,11 @@
 
 - [`nif_viewer()`](nif_viewer.md) : NIF viewer
 
-- [`normalize_nif()`](normalize_nif.md) : Normalize nif object
-
 - [`obs_per_dose_level()`](obs_per_dose_level.md) : Observations per
   dose level
 
-- [`parents()`](parents.md) : Parent compounds within a NIF object
-
 - [`pb_list_nif()`](pb_list_nif.md) **\[experimental\]** : List nif
   objects in pinboard
-
-- [`pb_list_object()`](pb_list_object.md) **\[experimental\]** : List
-  contents of pinboard
 
 - [`pb_list_sdtm()`](pb_list_sdtm.md) **\[experimental\]** : List sdtm
   objects in pinboard
@@ -310,21 +228,11 @@
 - [`pb_write()`](pb_write.md) **\[experimental\]** : Generic pin_write
   function
 
-- [`pb_write(`*`<nif>`*`)`](pb_write.nif.md) **\[experimental\]** :
-  Write to pin board
-
-- [`pb_write(`*`<sdtm>`*`)`](pb_write.sdtm.md) **\[experimental\]** :
-  Write to pin board
-
 - [`plot(`*`<domain>`*`)`](plot.domain.md) : Plot domain object
 
 - [`plot(`*`<nif>`*`)`](plot.nif.md) : Plot NIF object.
 
 - [`plot(`*`<sdtm>`*`)`](plot.sdtm.md) : Plot SDTM object
-
-- [`print_debug()`](print_debug.md) : Debug output
-
-- [`race_coding`](race_coding.md) : Race coding table
 
 - [`read_sdtm()`](read_sdtm.md) : Read SDTM data
 
@@ -335,8 +243,6 @@
 
 - [`rich_sampling_sbs()`](rich_sampling_sbs.md) : Identify subjects with
   rich sampling
-
-- [`sampling_summary()`](sampling_summary.md) : Sampling scheme overview
 
 - [`sdtm_missing_times()`](sdtm_missing_times.md) : Number of DTC
   entries with missing time information
@@ -364,11 +270,9 @@
 
 - [`treatments()`](treatments.md) : Treatments in a nif or sdtm object
 
-- [`trial_dco()`](trial_dco.md) : Trial data cut-off date as reported in
-  TS domain
+- [`trial_dco()`](trial_dco.md) : Cut-off date
 
-- [`trial_title()`](trial_title.md) : Trial title as reported in TS
-  domain
+- [`trial_title()`](trial_title.md) : Trial title
 
 - [`usubjid()`](usubjid.md) : Get the USUBJID of subject
 

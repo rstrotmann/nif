@@ -100,13 +100,6 @@
 
         <dt>
 
-          <code><a href="add_cfb.html">add_cfb()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
-        </dt>
-        <dd>Add baseline and change from baseline fields</dd>
-
-        <dt>
-
           <code><a href="add_covariate.html">add_covariate()</a></code>
 
         </dt>
@@ -146,13 +139,6 @@
 
         </dt>
         <dd>Append observation events</dd>
-
-        <dt>
-
-          <code><a href="add_rtb.html">add_rtb()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
-        </dt>
-        <dd>Add baseline and relative-to-baseline fields</dd>
 
         <dt>
 
@@ -212,24 +198,10 @@
 
         <dt>
 
-          <code><a href="apply_cat_filter.html">apply_cat_filter()</a></code>
+          <code><a href="cat_boxplot.html">cat_boxplot()</a></code>
 
         </dt>
-        <dd>Apply CAT and SCAT filter</dd>
-
-        <dt>
-
-          <code><a href="as_nif.html">as_nif()</a></code>
-
-        </dt>
-        <dd>Convert data frame to nif object</dd>
-
-        <dt>
-
-          <code><a href="coalesce_join.html">coalesce_join()</a></code>
-
-        </dt>
-        <dd>Coalescing join</dd>
+        <dd>boxplot over categories</dd>
 
         <dt>
 
@@ -292,7 +264,7 @@
           <code><a href="derive_cfb.html">derive_cfb()</a></code>
 
         </dt>
-        <dd>Extract the individual baseline value and change from baseline for an analyte</dd>
+        <dd>Calculate change from baseline</dd>
 
         <dt>
 
@@ -394,69 +366,6 @@
 
         <dt>
 
-          <code><a href="examplinib_fe.html">examplinib_fe</a></code>
-
-        </dt>
-        <dd>Synthetic SDTM data from a fictional clinical food effect study for 'examplinib'.</dd>
-
-        <dt>
-
-          <code><a href="examplinib_fe_nif.html">examplinib_fe_nif</a></code>
-
-        </dt>
-        <dd>Synthetic NIF data from a fictional clinical food effect study for 'examplinib'.</dd>
-
-        <dt>
-
-          <code><a href="examplinib_poc.html">examplinib_poc</a></code>
-
-        </dt>
-        <dd>Synthetic SDTM data from a fictional clinical single-arm study with rich and sparse pk sampling.</dd>
-
-        <dt>
-
-          <code><a href="examplinib_poc_min_nif.html">examplinib_poc_min_nif</a></code>
-
-        </dt>
-        <dd>Synthetic NIF data from a fictional clinical single-arm study with rich and sparse pk sampling. Reduced to the minimally required fields.</dd>
-
-        <dt>
-
-          <code><a href="examplinib_poc_nif.html">examplinib_poc_nif</a></code>
-
-        </dt>
-        <dd>Synthetic NIF data from a fictional clinical single-arm study with rich and sparse pk sampling.</dd>
-
-        <dt>
-
-          <code><a href="examplinib_sad.html">examplinib_sad</a></code>
-
-        </dt>
-        <dd>Synthetic SDTM data from a fictional clinical SAD FIH study with rich PK sampling</dd>
-
-        <dt>
-
-          <code><a href="examplinib_sad_min_nif.html">examplinib_sad_min_nif</a></code>
-
-        </dt>
-        <dd>Synthetic NIF data from a fictional clinical SAD FIH study with rich PK sampling. Reduced to the minimally required fields.</dd>
-
-        <dt>
-
-          <code><a href="examplinib_sad_nif.html">examplinib_sad_nif</a></code>
-
-        </dt>
-        <dd>Synthetic NIF data from a fictional clinical SAD FIH study with rich PK sampling</dd>
-
-        <dt>
-
-          <code><a href="filter_EXENDTC_after_EXSTDTC.html">filter_EXENDTC_after_EXSTDTC()</a></code>
-
-        </dt>
-        <dd>Remove administrations with EXSTDTC after EXENDTC</dd>
-
-        <dt>
-
           <code><a href="filter_subject.html">filter_subject()</a></code>
 
         </dt>
@@ -478,13 +387,6 @@
 
         <dt>
 
-          <code><a href="identify_baseline_columns.html">identify_baseline_columns()</a></code>
-
-        </dt>
-        <dd>Identify baseline columns in a data frame</dd>
-
-        <dt>
-
           <code><a href="import_from_connection.html">import_from_connection()</a></code>
 
         </dt>
@@ -503,27 +405,6 @@
           <span class="badge lifecycle lifecycle-experimental">experimental</span>
         </dt>
         <dd>Add observation from non-SDTM-formatted data table</dd>
-
-        <dt>
-
-          <code><a href="impute_exendtc_to_cutoff.html">impute_exendtc_to_cutoff()</a></code>
-
-        </dt>
-        <dd>Impute last EXENDTC per subject and treatment to cutoff date when absent.</dd>
-
-        <dt>
-
-          <code><a href="impute_exendtc_to_rfendtc.html">impute_exendtc_to_rfendtc()</a></code>
-
-        </dt>
-        <dd>Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent</dd>
-
-        <dt>
-
-          <code><a href="impute_missing_exendtc.html">impute_missing_exendtc()</a></code>
-
-        </dt>
-        <dd>Impute missing EXENDTC to the day before the next EXSTDTC.</dd>
 
         <dt>
 
@@ -583,55 +464,6 @@
 
         <dt>
 
-          <code><a href="make_ntime.html">make_ntime()</a></code>
-
-        </dt>
-        <dd>Make nominal time</dd>
-
-        <dt>
-
-          <code><a href="make_ntime_from_dy.html">make_ntime_from_dy()</a></code>
-
-        </dt>
-        <dd>Make ntime lookup table from DY field</dd>
-
-        <dt>
-
-          <code><a href="make_ntime_from_tpt.html">make_ntime_from_tpt()</a></code>
-
-        </dt>
-        <dd>Convert time point text to numeric time values</dd>
-
-        <dt>
-
-          <code><a href="make_ntime_from_tptnum.html">make_ntime_from_tptnum()</a></code>
-
-        </dt>
-        <dd>Make ntime lookup table from TPTNUM field</dd>
-
-        <dt>
-
-          <code><a href="make_ntime_from_visitdy.html">make_ntime_from_visitdy()</a></code>
-
-        </dt>
-        <dd>Make ntime lookup table from VISITDY field</dd>
-
-        <dt>
-
-          <code><a href="make_subjects_sdtm.html">make_subjects_sdtm()</a></code>
-
-        </dt>
-        <dd>Make subject data frame from SDTM object</dd>
-
-        <dt>
-
-          <code><a href="make_time.html">make_time()</a></code>
-
-        </dt>
-        <dd>Calculate time fields based on DTC</dd>
-
-        <dt>
-
           <code><a href="max_admin_time.html">max_admin_time()</a></code>
 
         </dt>
@@ -650,13 +482,6 @@
 
         </dt>
         <dd>Maximal time in nif object</dd>
-
-        <dt>
-
-          <code><a href="minimal_nif_fields.html">minimal_nif_fields</a></code>
-
-        </dt>
-        <dd>Minimal nif fields</dd>
 
         <dt>
 
@@ -779,13 +604,6 @@
 
         <dt>
 
-          <code><a href="normalize_nif.html">normalize_nif()</a></code>
-
-        </dt>
-        <dd>Normalize nif object</dd>
-
-        <dt>
-
           <code><a href="obs_per_dose_level.html">obs_per_dose_level()</a></code>
 
         </dt>
@@ -793,24 +611,10 @@
 
         <dt>
 
-          <code><a href="parents.html">parents()</a></code>
-
-        </dt>
-        <dd>Parent compounds within a NIF object</dd>
-
-        <dt>
-
           <code><a href="pb_list_nif.html">pb_list_nif()</a></code>
           <span class="badge lifecycle lifecycle-experimental">experimental</span>
         </dt>
         <dd>List nif objects in pinboard</dd>
-
-        <dt>
-
-          <code><a href="pb_list_object.html">pb_list_object()</a></code>
-          <span class="badge lifecycle lifecycle-experimental">experimental</span>
-        </dt>
-        <dd>List contents of pinboard</dd>
 
         <dt>
 
@@ -842,20 +646,6 @@
 
         <dt>
 
-          <code><a href="pb_write.nif.html">pb_write(<i>&lt;nif&gt;</i>)</a></code>
-          <span class="badge lifecycle lifecycle-experimental">experimental</span>
-        </dt>
-        <dd>Write to pin board</dd>
-
-        <dt>
-
-          <code><a href="pb_write.sdtm.html">pb_write(<i>&lt;sdtm&gt;</i>)</a></code>
-          <span class="badge lifecycle lifecycle-experimental">experimental</span>
-        </dt>
-        <dd>Write to pin board</dd>
-
-        <dt>
-
           <code><a href="plot.domain.html">plot(<i>&lt;domain&gt;</i>)</a></code>
 
         </dt>
@@ -874,20 +664,6 @@
 
         </dt>
         <dd>Plot SDTM object</dd>
-
-        <dt>
-
-          <code><a href="print_debug.html">print_debug()</a></code>
-
-        </dt>
-        <dd>Debug output</dd>
-
-        <dt>
-
-          <code><a href="race_coding.html">race_coding</a></code>
-
-        </dt>
-        <dd>Race coding table</dd>
 
         <dt>
 
@@ -916,13 +692,6 @@
 
         </dt>
         <dd>Identify subjects with rich sampling</dd>
-
-        <dt>
-
-          <code><a href="sampling_summary.html">sampling_summary()</a></code>
-
-        </dt>
-        <dd>Sampling scheme overview</dd>
 
         <dt>
 
@@ -999,14 +768,14 @@
           <code><a href="trial_dco.html">trial_dco()</a></code>
 
         </dt>
-        <dd>Trial data cut-off date as reported in TS domain</dd>
+        <dd>Cut-off date</dd>
 
         <dt>
 
           <code><a href="trial_title.html">trial_title()</a></code>
 
         </dt>
-        <dd>Trial title as reported in TS domain</dd>
+        <dd>Trial title</dd>
 
         <dt>
 

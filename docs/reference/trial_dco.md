@@ -1,6 +1,6 @@
-# Trial data cut-off date as reported in TS domain
+# Cut-off date
 
-Trial data cut-off date as reported in TS domain
+Data cut-off date as reported in TS domain, if available.
 
 ## Usage
 

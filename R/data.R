@@ -8,7 +8,7 @@
 #' sparse pk sampling.
 #' @format  A sdtm object
 #' @noRd
-#' "examplinib_poc"
+"examplinib_poc"
 
 #' Synthetic SDTM data from a fictional clinical food effect study for
 #' 'examplinib'.

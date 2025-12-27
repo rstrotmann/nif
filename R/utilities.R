@@ -70,6 +70,7 @@ conditional_message <- function(..., silent = NULL) {
 #'
 #' @return Nothing
 #' @export
+#' @noRd
 #' @seealso [nif::nif_option()]
 print_debug <- function(obj) {
   if (rlang::is_true(nif_option_value("debug"))) print(obj)
@@ -148,6 +149,7 @@ recode_sex <- function(obj) {
 #'   \item{LABEL}{Abbreviation for labeling purpose}
 #' }
 #' @export
+#' @noRd
 race_coding <- tibble::tribble(
   ~RACEN, ~RACE, ~LABEL,
   0, "WHITE", "White",
@@ -163,6 +165,10 @@ race_coding <- tibble::tribble(
 
 #' Recode RACE columns in nif object
 #'
+#' For some purposes, e.g., NONMEM-based modeling, numerical values are expected
+#' in the RACE field. This function recodes RACE based on the following
+#' associations:
+#'
 #' @param obj A nif object with RACE as character field.
 #' @param coding_table A data frame with the columns RACE and RACEN. Uses
 #' default coding, if NULL.
@@ -173,6 +179,7 @@ race_coding <- tibble::tribble(
 #' @export
 #'
 #' @examples
+#' nif::race_coding
 #' recode_race(examplinib_sad_nif)
 recode_race <- function(obj, coding_table = NULL, silent = NULL) {
   # validate inputs
@@ -827,6 +834,7 @@ pos_diff <- function(a, b) {
 #'
 #' @return A data frame.
 #' @export
+#' @noRd
 coalesce_join <- function(
   x, y, by = NULL,
   keep = c("left", "right"),
@@ -1155,20 +1163,7 @@ dv_na_to_zero <- function(obj) {
 #'
 #' @import dplyr
 #' @export
-#'
-#' @examples
-#' # Create example data frame
-#' df <- tibble::tribble(
-#'   ~ID, ~SEX, ~AGE, ~TIME, ~DV,
-#'   1,   "M",  25,   0,     10,
-#'   1,   "M",  25,   1,     12,
-#'   1,   "M",  25,   2,     15,
-#'   2,   "F",  30,   0,     8,
-#'   2,   "F",  30,   1,     9,
-#'   2,   "F",  30,   2,     11
-#' )
-#' identify_baseline_columns(df, id_col = "ID")
-#' # Returns: c("SEX", "AGE")
+#' @noRd
 identify_baseline_columns <- function(df, id_col = "ID") {
   # Input validation
   if (!is.data.frame(df)) {
@@ -1225,6 +1220,7 @@ identify_baseline_columns <- function(df, id_col = "ID") {
 #' @param param_field The field in the data frame (e.g., PCCAT, PCSCAT).
 #'
 #' @returns A data frame.
+#' @noRd
 apply_cat_filter <- function(obj, param, param_field) {
   if (!is.null(param)) {
     if (!param_field %in% names(obj))

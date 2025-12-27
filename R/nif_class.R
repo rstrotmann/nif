@@ -2,11 +2,12 @@
 #'
 #' @param ... Further arguments.
 #' @param obj A data frame containing the actual NIF data or a sdtm object.
-#' @inheritParams nif_auto
+#' @param silent Suppress messages.
 #'
 #' @import dplyr
 #' @return A nif object from the input data set.
 #' @export
+#' @noRd
 new_nif <- function(obj = NULL, ..., silent = NULL) {
   if (is.null(obj)) {
     temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
@@ -29,14 +30,16 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 
 #' nif class constructor
 #'
-#' @inheritParams new_nif
+#' @param obj A data frame containing the actual NIF data or a sdtm object.
+#' @param silent suppress messages.
+#' @param ... Further arguments.
 #'
 #' @returns A nif object.
 #' @export
 #' @examples
 #' nif()
-nif <- function(...) {
-  new_nif(...)
+nif <- function(obj = NULL, ..., silent = NULL) {
+  new_nif(obj = obj, silent = silent, ...)
 }
 
 
@@ -46,6 +49,7 @@ nif <- function(...) {
 #'
 #' @return A nif object.
 #' @export
+#' @noRd
 as_nif <- function(obj) {
   if (!inherits(obj, "data.frame")) {
     stop("obj must be a data frame!")
@@ -88,7 +92,8 @@ order_nif_columns <- function(obj) {
 #' @noRd
 print.nif <- function(x, color = FALSE, ...) {
   debug <- rlang::is_true(nif_option_value("debug"))
-  if (debug == TRUE) {
+
+  if (debug == TRUE || !all(minimal_nif_fields %in% names(x))) {
     print(as.data.frame(x))
   } else {
     hline <- "-----"
@@ -342,9 +347,7 @@ usubjid <- function(obj, id, silent = NULL) {
 #' @param obj A NIF object.
 #' @return The parent compounds as character.
 #' @export
-#' @examples
-#' parents(examplinib_poc_nif)
-#' parents(examplinib_poc_min_nif)
+#' @noRd
 parents <- function(obj) {
   # input validation
   validate_nif(obj)
@@ -732,6 +735,8 @@ head.nif <- function(x, ...) {
 #' Minimal nif fields
 #'
 #' @return A character vector of the minimal NIF fields
+#' @export
+#' @noRd
 minimal_nif_fields <- c(
   "ID", "TIME", "AMT", "CMT", "EVID",
   # "DOSE",

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sdtm_class.R
 \name{trial_title}
 \alias{trial_title}
-\title{Trial title as reported in TS domain}
+\title{Trial title}
 \usage{
 trial_title(obj)
 }
@@ -10,10 +10,11 @@ trial_title(obj)
 \item{obj}{A sdtm object.}
 }
 \value{
-The title or NULL.
+The title as ASCII character, or NULL.
 }
 \description{
-Trial title as reported in TS domain
+Extract trial title from the TS domain, if available. Non-ASCII characters
+are removed from the output to ensure compatibility.
 }
 \examples{
 trial_title(examplinib_sad)

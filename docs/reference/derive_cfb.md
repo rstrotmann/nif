@@ -1,4 +1,4 @@
-# Extract the individual baseline value and change from baseline for an analyte
+# Calculate change from baseline
 
 Extract the individual baseline value and change from baseline for an
 analyte
