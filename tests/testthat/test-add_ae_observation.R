@@ -33,10 +33,10 @@ test_that("add_ae_observation handles basic case correctly", {
     "SUBJ-003", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
 
   # Create base nif object
-  base_nif <- new_nif() %>%
+  base_nif <- nif() %>%
     add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test adding AE observation
@@ -91,8 +91,8 @@ test_that("add_ae_observation handles different ae_fields correctly", {
     "SUBJ-002", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>%
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
+  base_nif <- nif() %>%
     add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test with AELLT field
@@ -146,8 +146,8 @@ test_that("add_ae_observation handles filters correctly", {
     "SUBJ-002", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>%
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
+  base_nif <- nif() %>%
     add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test subject filter
@@ -196,8 +196,8 @@ test_that("add_ae_observation handles debug mode correctly", {
     "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>%
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
+  base_nif <- nif() %>%
     add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test with debug = TRUE
@@ -239,8 +239,8 @@ test_that("add_ae_observation handles keep parameter correctly", {
     "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>%
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
+  base_nif <- nif() %>%
     add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   result <- add_ae_observation(
@@ -279,8 +279,8 @@ test_that("add_ae_observation handles automatic parent and cmt assignment", {
     "SUBJ-001", "DRUG", 100, "2023-01-01T00:00", "2023-01-01T01:00", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
-  base_nif <- new_nif() %>%
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs, ex = test_ex))
+  base_nif <- nif() %>%
     add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = T)
 
   # Test with NULL parent and cmt

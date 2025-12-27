@@ -18,7 +18,7 @@ test_that("make_subjects_sdtm creates a proper subject data frame", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(
+  test_sdtm <- sdtm(list(
     dm = dm_data,
     vs = vs_data
   ))
@@ -59,7 +59,7 @@ test_that("make_subjects_sdtm works with missing height/weight", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(
+  test_sdtm <- sdtm(list(
     dm = dm_data,
     vs = vs_data
   ))

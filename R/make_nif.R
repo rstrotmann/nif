@@ -76,7 +76,7 @@ index_nif <- function(nif) {
     dplyr::arrange(ID, TIME, -EVID) |>
     dplyr::mutate(REF = row_number()) |>
     dplyr::relocate(REF) |>
-    new_nif()
+    nif()
 }
 
 
@@ -109,12 +109,12 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       ungroup() |>
       filter(.data$DTC <= .data$LAST_OBS_DTC) |>
       select(-c("LAST_OBS_DTC")) |>
-      new_nif()
+      nif()
   } else {
     last_obs_dtc <- max(obj$DTC[obj$EVID == 0])
     obj |>
       filter(.data$DTC <= last_obs_dtc) |>
-      new_nif()
+      nif()
   }
 }
 
@@ -128,7 +128,6 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 #' @param keep Fields to explicitly keep, as character.
 #' @param cleanup Remove non-essential fields, as logical.
 #' @return A nif object.
-#' @export
 #' @noRd
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   # input validation
@@ -156,7 +155,7 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     fill(any_of(c(starts_with("BL_"))), .direction = "downup") |>
     ungroup() |>
     nif_cleanup(keep = keep) |>
-    new_nif()
+    nif()
 }
 
 

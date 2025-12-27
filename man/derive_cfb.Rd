@@ -7,7 +7,7 @@
 derive_cfb(
   obj,
   analyte = NULL,
-  baseline_filter = "TAFD <= 0",
+  baseline_filter = "TIME <= 0",
   summary_function = median,
   default_baseline = NA_real_,
   silent = NULL

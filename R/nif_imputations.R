@@ -16,7 +16,6 @@
 #' @param extrt The treatment.
 #'
 #' @return The updated EX domain as data frame.
-#' @export
 #' @noRd
 #' @import cli
 impute_exendtc_to_rfendtc <- function(
@@ -177,7 +176,6 @@ impute_exendtc_to_rfendtc <- function(
 #' @param ex The updated EX domain as data frame.
 #' @param silent Suppress messages.
 #' @return The updated EX domain as data frame.
-#' @export
 #' @noRd
 impute_missing_exendtc <- function(ex, silent = NULL) {
   # Input validation
@@ -260,7 +258,6 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
 #' @param cut_off_date The cut-off date.
 #'
 #' @return The updated EX domain as data frame.
-#' @export
 #' @noRd
 impute_exendtc_to_cutoff <- function(
   ex,
@@ -341,7 +338,6 @@ impute_exendtc_to_cutoff <- function(
 #' @return A data frame.
 #' @keywords internal
 #' @import cli
-#' @export
 #' @noRd
 impute_admin_times_from_pcrftdtc <- function(
   obj, pc, analyte, pctestcd, silent = NULL
@@ -445,7 +441,6 @@ impute_admin_times_from_pcrftdtc <- function(
 #' @param extrt The treatment as character.
 #'
 #' @return A data frame.
-#' @export
 #' @noRd
 filter_EXENDTC_after_EXSTDTC <- function(ex, dm, extrt, silent = NULL) {
   # Input validation

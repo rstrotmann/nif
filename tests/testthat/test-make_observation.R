@@ -38,7 +38,7 @@ make_test_sdtm1 <- function() {
     )
   )
 
-  return(new_sdtm(temp))
+  return(sdtm(temp))
 }
 
 
@@ -297,7 +297,7 @@ test_that("make_observation sets MDV correctly for missing values", {
 # Tests for add_observation function
 test_that("add_observation basic functionality works", {
   # Create a base nif object with administration data
-  base_nif <- new_nif() %>%
+  base_nif <- nif() %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -341,7 +341,7 @@ test_that("make_observation works with ntime_method = 'TPT'", {
   )
 
   # Create SDTM object
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -389,7 +389,7 @@ test_that("make_observation handles missing NTIME values", {
   )
 
   # Create SDTM object
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -433,7 +433,7 @@ test_that("make_observation handles different time point formats", {
   )
 
   # Create SDTM object
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -477,7 +477,7 @@ test_that("make_observation filters by cat parameter correctly", {
     "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -533,7 +533,7 @@ test_that("make_observation filters by scat parameter correctly", {
     "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -589,7 +589,7 @@ test_that("make_observation filters by both cat and scat parameters correctly", 
     "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -647,7 +647,7 @@ test_that("make_observation handles custom cat and scat field names", {
     "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -699,7 +699,7 @@ test_that("make_observation handles cat and scat with different domains", {
     "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     lb = lb_data,
     dm = dm_data,
     vs = vs_data
@@ -735,7 +735,7 @@ test_that("make_observation handles cat and scat with different domains", {
 
 test_that("make_observation handles cat and scat with no matching values", {
   # Create test data
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = tribble(
       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCCAT, ~PCSCAT, ~PCSTRESN, ~PCDTC, ~PCELTM,
       "SUBJ1", "PC", "TEST1", "PK", "PLASMA", 100, "2023-01-01T08:00:00", "PT0H",
@@ -753,7 +753,7 @@ test_that("make_observation handles cat and scat with no matching values", {
     )
   ))
 
-  # sdtm <- new_sdtm(list(
+  # sdtm <- sdtm(list(
   #   pc = pc_data,
   #   dm = dm_data,
   #   vs = vs_data
@@ -805,7 +805,7 @@ test_that("make_observation handles NULL cat and scat parameters", {
     "SUBJ1", "WEIGHT", 70, "2023-01-01"
   )
 
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     pc = pc_data,
     dm = dm_data,
     vs = vs_data
@@ -914,7 +914,7 @@ test_that("make_observation handles omit_not_done when STAT field is missing", {
       "2", "PC", "A", "2024-01-01T09:00:00", 160, "Spec", "Analyte A", "PT1H"
     )
   ) %>%
-    new_sdtm()
+    sdtm()
 
   # Test with omit_not_done = TRUE when no STAT field exists
   result_no_stat_omit_true <- make_observation(
@@ -958,7 +958,7 @@ test_that("make_observation shows correct message when omit_not_done filters obs
       "1", "PC", "A", "2024-01-01T10:00:00", 200, "Spec", "Analyte A", "PT2H", "NOT DONE"
     )
   ) %>%
-    new_sdtm()
+    sdtm()
 
   # Test that message is shown when silent = FALSE
   expect_message(

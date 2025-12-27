@@ -1,6 +1,6 @@
 # Create test sdtm object
 test_sdtm_formula_to_mapping <- function() {
-  new_sdtm(list(
+  sdtm(list(
     pc = tibble::tribble(
       ~USUBJID, ~PCTESTCD, ~PCSTRESN, ~DOMAIN,
       "001", "ANALYTE1", 1, "PC",

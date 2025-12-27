@@ -6,7 +6,7 @@ test_that("add_baseline adds baseline covariate correctly", {
     "SUBJ-001", "2023-01-02", 100,
     "SUBJ-002", "2023-01-01", 200
   ) %>%
-    new_nif()
+    nif()
 
   sdtm_data <- list(
     dm = tibble::tribble(
@@ -23,7 +23,7 @@ test_that("add_baseline adds baseline covariate correctly", {
     )
   )
 
-  sdtm <- new_sdtm(sdtm_data)
+  sdtm <- sdtm(sdtm_data)
 
   # Test basic functionality
   result <- add_baseline(nif, sdtm, "vs", "WEIGHT", silent = TRUE)
@@ -57,7 +57,7 @@ test_that("add_baseline handles custom baseline filter", {
     "SUBJ-002", "TREATMENT", "DM"
   )
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test custom baseline filter (use day 2 as baseline)
   result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT",
@@ -97,7 +97,7 @@ test_that("add_baseline handles coding table correctly", {
     DV = c(1, 0)
   )
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test with coding table
   result <- add_baseline(
@@ -133,7 +133,7 @@ test_that("add_baseline validates inputs correctly", {
     DOMAIN = c("DM")
   )
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test missing nif object
   fake_nif <- data.frame(USUBJID = "SUBJ-001")
@@ -180,7 +180,7 @@ test_that("add_baseline handles multiple baseline values correctly", {
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Two baseline values should be averaged
   result <- add_baseline(test_nif, test_sdtm, "vs", "WEIGHT", silent = TRUE)
@@ -213,7 +213,7 @@ test_that("add_baseline handles empty result after filtering", {
     ACTARMCD = c("TREATMENT")
   )
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test when filtering results in no baseline values
   expect_error(
@@ -259,7 +259,7 @@ test_that("add baseline hepatic function class works", {
     "5", "LB", "SERUM", "2001-01-07T11:18", "Y", "BILI", 3.1, 1, # severe
     "5", "LB", "SERUM", "2001-01-07T11:18", "Y", "AST", 1, 1
   )
-  sdtm <- new_sdtm(list(dm = dm, vs = vs, lb = lb))
+  sdtm <- sdtm(list(dm = dm, vs = vs, lb = lb))
 
   test_nif <- data.frame(USUBJID = as.character(c(1, 2, 3, 4, 5)))
   class(test_nif) <- c("nif", "data.frame")
@@ -294,7 +294,7 @@ test_that("add_baseline handles all NA baseline values correctly", {
     ACTARMCD = c("TREATMENT", "TREATMENT")
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test when all baseline values are NA
   expect_error(
@@ -323,7 +323,7 @@ test_that("add_baseline warns when some baseline values are NA", {
     ACTARMCD = c("TREATMENT", "TREATMENT", "TREATMENT")
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test when some baseline values are NA - should give warning but complete
   expect_message(
@@ -359,7 +359,7 @@ test_that("add_baseline validates required fields correctly", {
     ACTARMCD = c("TREATMENT")
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm_missing_field <- new_sdtm(list(vs = test_vs_missing_field, dm = test_dm))
+  test_sdtm_missing_field <- sdtm(list(vs = test_vs_missing_field, dm = test_dm))
 
   # Test missing required field (VSSTRESN)
   expect_error(
@@ -373,7 +373,7 @@ test_that("add_baseline validates required fields correctly", {
     "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y"
   )
 
-  test_sdtm_valid <- new_sdtm(list(vs = test_vs_valid, dm = test_dm))
+  test_sdtm_valid <- sdtm(list(vs = test_vs_valid, dm = test_dm))
 
   expect_error(
     add_baseline(test_nif, test_sdtm_valid, "vs", "HEIGHT"),
@@ -419,7 +419,7 @@ test_that("add_baseline coding table validation works correctly", {
     "SUBJ-001", "2023-01-01",
     "SUBJ-002", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -433,7 +433,7 @@ test_that("add_baseline coding table validation works correctly", {
     "SUBJ-002", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test invalid coding table (not a data frame)
   expect_error(
@@ -494,7 +494,7 @@ test_that("add_baseline coding table with multiple join fields works", {
     "SUBJ-001", "2023-01-01",
     "SUBJ-002", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
@@ -508,7 +508,7 @@ test_that("add_baseline coding table with multiple join fields works", {
     "SUBJ-002", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Coding table with multiple join fields
   multi_field_coding <- tibble::tribble(
@@ -533,7 +533,7 @@ test_that("add_baseline coding table with partial matches works", {
     "SUBJ-001", "2023-01-01",
     "SUBJ-002", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
@@ -547,7 +547,7 @@ test_that("add_baseline coding table with partial matches works", {
     "SUBJ-002", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Coding table with only one join field (should work)
   single_field_coding <- tibble::tribble(
@@ -573,7 +573,7 @@ test_that("add_baseline coding table with missing values handles correctly", {
     "SUBJ-002", "2023-01-01",
     "SUBJ-003", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -589,7 +589,7 @@ test_that("add_baseline coding table with missing values handles correctly", {
     "SUBJ-003", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Coding table missing one value
   incomplete_coding <- tibble::tribble(
@@ -614,7 +614,7 @@ test_that("add_baseline handles different summary functions with coding tables",
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   # Need to use different test codes to avoid pivot_wider issues
   test_vs <- tibble::tribble(
@@ -627,7 +627,7 @@ test_that("add_baseline handles different summary functions with coding tables",
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   coding_table <- tibble::tribble(
     ~VSORRES, ~DV,
@@ -665,7 +665,7 @@ test_that("add_baseline handles complex coding scenarios", {
     "SUBJ-002", "2023-01-01",
     "SUBJ-003", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -681,7 +681,7 @@ test_that("add_baseline handles complex coding scenarios", {
     "SUBJ-003", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Complex coding table with multiple categories
   race_coding <- tibble::tribble(
@@ -709,7 +709,7 @@ test_that("add_baseline handles baseline filter with LOBXFL", {
     "SUBJ-001", "2023-01-01",
     "SUBJ-002", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_lb <- tibble::tribble(
     ~USUBJID, ~LBDTC, ~LBTESTCD, ~LBSTRESN, ~LBLOBXFL,
@@ -725,7 +725,7 @@ test_that("add_baseline handles baseline filter with LOBXFL", {
     "SUBJ-002", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(lb = test_lb, dm = test_dm))
+  test_sdtm <- sdtm(list(lb = test_lb, dm = test_dm))
 
   # Should automatically detect LOBXFL and use it
   result <- add_baseline(test_nif, test_sdtm, "lb", "CREA", silent = TRUE)
@@ -741,7 +741,7 @@ test_that("add_baseline handles custom observation filter with coding tables", {
     "SUBJ-001", "2023-01-01",
     "SUBJ-002", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
@@ -757,7 +757,7 @@ test_that("add_baseline handles custom observation filter with coding tables", {
     "SUBJ-002", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   coding_table <- tibble::tribble(
     ~VSORRES, ~DV,
@@ -784,7 +784,7 @@ test_that("add_baseline handles edge cases with coding tables", {
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -796,7 +796,7 @@ test_that("add_baseline handles edge cases with coding tables", {
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test with empty coding table - should fail because no join fields
   empty_coding <- tibble::tribble(
@@ -832,7 +832,7 @@ test_that("add_baseline handles numeric coding with different data types", {
     "SUBJ-001", "2023-01-01",
     "SUBJ-002", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -846,7 +846,7 @@ test_that("add_baseline handles numeric coding with different data types", {
     "SUBJ-002", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test with integer DV values
   int_coding <- tibble::tribble(
@@ -886,7 +886,7 @@ test_that("add_baseline handles multiple test codes with coding tables", {
     "SUBJ-001", "2023-01-01",
     "SUBJ-002", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -902,7 +902,7 @@ test_that("add_baseline handles multiple test codes with coding tables", {
     "SUBJ-002", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   coding_table <- tibble::tribble(
     ~VSORRES, ~DV,
@@ -939,7 +939,7 @@ test_that("add_baseline cat filter works correctly", {
     "SUBJ-002", "2023-01-01",
     "SUBJ-003", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
@@ -957,7 +957,7 @@ test_that("add_baseline cat filter works correctly", {
     "SUBJ-003", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test with cat filter - should only include "VITAL SIGNS"
   result <- add_baseline(
@@ -994,7 +994,7 @@ test_that("add_baseline scat filter works correctly", {
     "SUBJ-002", "2023-01-01",
     "SUBJ-003", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
@@ -1012,7 +1012,7 @@ test_that("add_baseline scat filter works correctly", {
     "SUBJ-003", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test with scat filter - should only include "STANDING"
   result <- add_baseline(
@@ -1049,7 +1049,7 @@ test_that("add_baseline cat and scat filters work together", {
     "SUBJ-002", "2023-01-01",
     "SUBJ-003", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT, ~VSSCAT,
@@ -1068,7 +1068,7 @@ test_that("add_baseline cat and scat filters work together", {
     "SUBJ-003", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Test with both cat and scat filters - should only include "VITAL SIGNS" and "STANDING"
   result <- add_baseline(
@@ -1103,7 +1103,7 @@ test_that("add_baseline cat filter handles missing field", {
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   # Domain without VSCAT field
   test_vs <- tibble::tribble(
@@ -1116,7 +1116,7 @@ test_that("add_baseline cat filter handles missing field", {
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   expect_error(
     result <- add_baseline(
@@ -1133,7 +1133,7 @@ test_that("add_baseline scat filter handles missing field", {
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   # Domain without VSSCAT field
   test_vs <- tibble::tribble(
@@ -1146,7 +1146,7 @@ test_that("add_baseline scat filter handles missing field", {
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   expect_error(
     result <- add_baseline(
@@ -1163,7 +1163,7 @@ test_that("add_baseline cat filter error when cat category not available", {
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
@@ -1175,7 +1175,7 @@ test_that("add_baseline cat filter error when cat category not available", {
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Should error when cat filter addressess missing field
   expect_error(
@@ -1193,7 +1193,7 @@ test_that("add_baseline scat filter error when scat category not available", {
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
@@ -1205,7 +1205,7 @@ test_that("add_baseline scat filter error when scat category not available", {
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # Should error when scat filter results in no data
   expect_error(
@@ -1223,7 +1223,7 @@ test_that("add_baseline cat filter with multiple baseline values", {
     ~USUBJID, ~DTC,
     "SUBJ-001", "2023-01-01"
   ) %>%
-    new_nif()
+    nif()
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
@@ -1237,7 +1237,7 @@ test_that("add_baseline cat filter with multiple baseline values", {
     "SUBJ-001", "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
-  test_sdtm <- new_sdtm(list(vs = test_vs, dm = test_dm))
+  test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   # With cat filter, should only include VITAL SIGNS values (70, 72) and average them
   result <- add_baseline(

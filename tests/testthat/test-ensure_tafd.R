@@ -9,7 +9,7 @@ test_that("ensure_tafd works with basic input", {
     2,   1,     0,     2,    "DRUG",  30,
     2,   2,     0,     2,    "DRUG",  40
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 
@@ -29,7 +29,7 @@ test_that("ensure_tafd handles multiple administrations", {
     1,   3,     0,     2,    "DRUG",  20,
     1,   4,     0,     2,    "DRUG",  30
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 
@@ -45,7 +45,7 @@ test_that("ensure_tafd handles observations before first dose", {
     1,   1,     0,     2,    "DRUG",  10,
     1,   2,     0,     2,    "DRUG",  20
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 
@@ -63,7 +63,7 @@ test_that("ensure_tafd handles multiple parent compounds", {
     1,   1,     0,     4,    "DRUG2", 30,
     1,   2,     0,     4,    "DRUG2", 40
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 
@@ -77,7 +77,7 @@ test_that("ensure_tafd handles missing required columns", {
     1,   0,     1,
     1,   1,     2
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(ensure_tafd(test_data), "Missing required columns for TAFD calculation")
 })
@@ -89,7 +89,7 @@ test_that("ensure_tafd preserves original data", {
     1,   1,     0,     2,    "DRUG",  10,  "B",
     1,   2,     0,     2,    "DRUG",  20,  "C"
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 
@@ -105,7 +105,7 @@ test_that("ensure_tafd handles NA values in TIME", {
     1,   1,     0,     2,    "DRUG",  10,
     1,   NA,    0,     2,    "DRUG",  20
   ) %>%
-    new_nif()
+    nif()
 
   expect_no_error(result <- ensure_tafd(test_data))
   expect_equal(result$TIME, result$TAFD)
@@ -117,7 +117,7 @@ test_that("ensure_tafd returns a nif object", {
     1,   0,     1,     1,    "DRUG",  NA,
     1,   1,     0,     2,    "DRUG",  10
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 
@@ -143,7 +143,7 @@ test_that("ensure_tafd handles existing TAFD column", {
     1,   0,     1,     1,    "DRUG",  NA,  0,
     1,   1,     0,     2,    "DRUG",  10,  1
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 
@@ -157,7 +157,7 @@ test_that("ensure_tafd handles non-numeric ID values", {
     "A",    0,     1,     1,    "DRUG",  NA,
     "A",    1,     0,     2,    "DRUG",  10
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(ensure_tafd(test_data), "ID column must contain numeric values")
 })
@@ -168,7 +168,7 @@ test_that("ensure_tafd handles non-numeric EVID values", {
     1,   0,     "1",    1,    "DRUG",  NA,
     1,   1,     "0",    2,    "DRUG",  10
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(ensure_tafd(test_data), "EVID column must contain numeric values")
 })
@@ -179,7 +179,7 @@ test_that("ensure_tafd handles NA values in ID", {
     1,    0,     1,     1,    "DRUG",  NA,
     NA,   1,     0,     2,    "DRUG",  10
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(ensure_tafd(test_data), "ID colum must not contain NA values!")
 })
@@ -191,7 +191,7 @@ test_that("ensure_tafd handles no dosing events", {
     1,   1,     0,     2,    "DRUG",  10,
     1,   2,     0,     2,    "DRUG",  20
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(
     ensure_tafd(test_data),
@@ -209,7 +209,7 @@ test_that("ensure_tafd handles different first dose times", {
     2,   3,     0,     2,    "DRUG",  30,
     2,   4,     0,     2,    "DRUG",  40
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tafd(test_data)
 

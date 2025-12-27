@@ -18,7 +18,7 @@ test_that("dose_red_sbs identifies subjects with dose reductions", {
     2, 24, 100, 1, 1, NA, # Same dose
     2, 1, 0, 0, 2, 10 # Observation
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -37,7 +37,7 @@ test_that("dose_red_sbs returns USUBJID when available", {
     2, "SUBJ002", 0, 100, 1, 1, NA,
     2, "SUBJ002", 24, 90, 1, 1, NA
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -55,7 +55,7 @@ test_that("dose_red_sbs works without USUBJID", {
     1, 0, 100, 1, 1, NA,
     1, 24, 80, 1, 1, NA
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -75,7 +75,7 @@ test_that("dose_red_sbs handles no dose reductions", {
     2, 0, 50, 1, 1, NA,
     2, 24, 50, 1, 1, NA # Same dose
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -91,7 +91,7 @@ test_that("dose_red_sbs excludes zero doses from reduction detection", {
     1, 24, 0, 1, 1, NA, # Zero dose (should be excluded)
     1, 48, 50, 1, 1, NA # Reduced to 50 (should be detected)
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -109,7 +109,7 @@ test_that("dose_red_sbs handles subjects with dose increases", {
     2, 0, 100, 1, 1, NA, # Initial dose 100
     2, 24, 80, 1, 1, NA # Reduced (should be detected)
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -125,7 +125,7 @@ test_that("dose_red_sbs works with ANALYTE column", {
     1, 0, 100, 1, 1, "DRUG1", NA,
     1, 24, 80, 1, 1, "DRUG1", NA
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -142,7 +142,7 @@ test_that("dose_red_sbs creates ANALYTE from CMT when missing", {
     2, 0, 100, 1, 1, NA,
     2, 24, 100, 1, 1, NA
   ) %>%
-    new_nif()
+    nif()
 
   # Should not error even without ANALYTE column
   result <- dose_red_sbs(nif)
@@ -160,7 +160,7 @@ test_that("dose_red_sbs filters by analyte parameter", {
     2, 0, 200, 1, 2, "DRUG2", NA,
     2, 24, 200, 1, 2, "DRUG2", NA # No reduction
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif, analyte = "DRUG1")
 
@@ -179,7 +179,7 @@ test_that("dose_red_sbs errors on multiple treatments without analyte specificat
     1, 0, 200, 1, 2, "DRUG2", NA,
     1, 24, 150, 1, 2, "DRUG2", NA
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(
     dose_red_sbs(nif),
@@ -197,7 +197,7 @@ test_that("dose_red_sbs errors on multiple treatments without analyte specificat
 #     1,   24,   50,   1,     2,    "DRUG1",  NA,   # CMT 2, same dose (same analyte)
 #     1,   1,    0,    0,     3,    "DRUG1",  5     # Observation
 #   ) %>%
-#     new_nif()
+#     nif()
 #
 #   result <- dose_red_sbs(nif)
 #
@@ -215,7 +215,7 @@ test_that("dose_red_sbs handles sequential dose reductions correctly", {
     1, 48, 60, 1, 1, NA, # Second reduction to 60
     1, 72, 60, 1, 1, NA # Same as previous
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -234,7 +234,7 @@ test_that("dose_red_sbs returns distinct subjects", {
     2, 0, 100, 1, 1, NA,
     2, 24, 90, 1, 1, NA # Reduction (different subject)
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 
@@ -263,7 +263,7 @@ test_that("dose_red_sbs validates analyte parameter", {
     1, 0, 100, 1, 1, NA,
     1, 24, 80, 1, 1, NA
   ) %>%
-    new_nif()
+    nif()
 
   # Should handle NULL analyte
   expect_no_error(dose_red_sbs(nif, analyte = NULL))
@@ -274,7 +274,7 @@ test_that("dose_red_sbs validates analyte parameter", {
 
 
 test_that("dose_red_sbs handles empty NIF object", {
-  empty_nif <- new_nif()
+  empty_nif <- nif()
 
   result <- dose_red_sbs(empty_nif)
 
@@ -291,7 +291,7 @@ test_that("dose_red_sbs handles subjects with only single dose", {
     2, 0, 100, 1, 1, NA,
     2, 24, 80, 1, 1, NA # Has reduction
   ) %>%
-    new_nif()
+    nif()
 
   result <- dose_red_sbs(nif)
 

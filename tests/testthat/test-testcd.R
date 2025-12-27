@@ -1,6 +1,6 @@
 test_that("testcd() returns empty data frame for empty sdtm object", {
   # Create empty sdtm object
-  empty_sdtm <- new_sdtm(list())
+  empty_sdtm <- sdtm(list())
 
   # Test
   expect_equal(nrow(testcd(empty_sdtm)), 0)
@@ -19,7 +19,7 @@ test_that("testcd() handles domains without TESTCD columns", {
       "VS", "SUBJ001"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Test
   expect_equal(nrow(testcd(sdtm_obj)), 0)
@@ -46,7 +46,7 @@ test_that("testcd() extracts TESTCD values correctly", {
       "PC", "SUBJ002", "CONC"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output
   expected <- tribble(
@@ -74,7 +74,7 @@ test_that("testcd() extracts TESTCD values correctly", {
 #       "VS", "SUBJ001", "SYSBP"
 #     )
 #   )
-#   sdtm_obj <- new_sdtm(sdtm_data)
+#   sdtm_obj <- sdtm(sdtm_data)
 #
 #   # Expected output (only VS domain should be included)
 #   expected <- tribble(
@@ -103,7 +103,7 @@ test_that("testcd() handles empty DOMAIN column", {
       "VS", "SUBJ001", "SYSBP"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (only VS domain should be included)
   expected <- tribble(
@@ -130,7 +130,7 @@ test_that("testcd() handles mixed case domain names", {
       "VS", "SUBJ002", "SYSBP"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (domains should be uppercase)
   expected <- tribble(
@@ -160,7 +160,7 @@ test_that("testcd() handles NA values in TESTCD columns", {
       "VS", "SUBJ002", NA_character_
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (NA values should be included)
   expected <- tribble(
@@ -193,7 +193,7 @@ test_that("testcd() handles domain parameter correctly", {
       "PC", "SUBJ001", "CONC"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Test with specific domain
   result_dm <- testcd(sdtm_obj, domain = "dm")
@@ -220,7 +220,7 @@ test_that("testcd() handles case sensitivity in domain parameter", {
       "VS", "SUBJ001", "HR"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Test with lowercase domain name
   result_lower <- testcd(sdtm_obj, domain = "vs")
@@ -243,7 +243,7 @@ test_that("testcd() handles empty data frames within domains", {
       "VS", "SUBJ001", "SYSBP"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (only VS domain should be included)
   expected <- tribble(
@@ -269,7 +269,7 @@ test_that("testcd() handles duplicate TESTCD values correctly", {
       "VS", "SUBJ003", "SYSBP"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (duplicates should be removed)
   expected <- tribble(
@@ -311,7 +311,7 @@ test_that("testcd() handles domain parameter validation", {
       "DM", "SUBJ001", "AGE"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Test with invalid domain parameter types
   expect_error(
@@ -334,7 +334,7 @@ test_that("testcd() handles domains with all NA TESTCD values", {
       "DM", "SUBJ002", NA_character_
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (should include NA values)
   expected <- tribble(
@@ -356,7 +356,7 @@ test_that("testcd() handles domains with empty TESTCD values", {
       "DM", "SUBJ002", "AGE"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (should include empty string)
   expected <- tribble(
@@ -379,7 +379,7 @@ test_that("testcd() handles domains with whitespace in TESTCD values", {
       "DM", "SUBJ002", "AGE"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (whitespace should be preserved)
   expected <- tribble(
@@ -403,7 +403,7 @@ test_that("testcd() handles domains with special characters in TESTCD values", {
       "DM", "SUBJ003", "AGE.789"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (special characters should be preserved)
   expected <- tribble(
@@ -427,7 +427,7 @@ test_that("testcd() handles domains with numeric TESTCD values", {
       "DM", "SUBJ002", "456"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (numeric strings should be preserved)
   expected <- tribble(
@@ -450,7 +450,7 @@ test_that("testcd() handles domains with very long TESTCD values", {
       "DM", "SUBJ001", long_testcd
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (long strings should be preserved)
   expected <- tribble(
@@ -473,7 +473,7 @@ test_that("testcd() handles domains with unicode characters in TESTCD values", {
       "DM", "SUBJ003", "AGE_🎉"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (unicode characters should be preserved)
   expected <- tribble(
@@ -500,7 +500,7 @@ test_that("testcd() handles domains with all missing TESTCD columns", {
       "VS", "SUBJ001", "VALUE2"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (empty data frame)
   expected <- data.frame(DOMAIN = character(), TESTCD = character())
@@ -518,7 +518,7 @@ test_that("testcd() handles domains with factor TESTCD values", {
       "DM", "SUBJ002", "SEX"
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Convert TESTCD to factor
   sdtm_obj$domains$dm$DMTESTCD <- factor(sdtm_obj$domains$dm$DMTESTCD)
@@ -544,7 +544,7 @@ test_that("testcd() handles domains with numeric TESTCD values (actual numeric)"
       "DM", "SUBJ002", 456
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (numeric values should be converted to character)
   expected <- tribble(
@@ -574,7 +574,7 @@ test_that("testcd() handles domains with complex TESTCD values", {
       "DM", "SUBJ009", NA_character_
     )
   )
-  sdtm_obj <- new_sdtm(sdtm_data)
+  sdtm_obj <- sdtm(sdtm_data)
 
   # Expected output (all values should be preserved)
   expected <- tribble(

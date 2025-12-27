@@ -80,7 +80,7 @@
 #
 # test_that("nif_nca_new handles empty input", {
 #   # Create empty NIF object
-#   empty_nif <- new_nif()
+#   empty_nif <- nif()
 #
 #   # Run NCA
 #   results <- nif_nca_new(empty_nif)

@@ -113,5 +113,5 @@ read_sdtm <- function(data_path,
   if (length(out) == 0) {
     stop("no domain data found")
   }
-  new_sdtm(out)
+  sdtm(out)
 }

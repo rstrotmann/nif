@@ -12,7 +12,7 @@ create_test_nif <- function() {
     2, "SUBJ-002", "2020-01-20", 0, 0, 35, 2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    new_nif()
+    nif()
 
   # class(nif_df) <- c("nif", "data.frame")
   return(nif_df)

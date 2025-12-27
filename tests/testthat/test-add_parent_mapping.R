@@ -8,7 +8,7 @@ test_that("add_parent_mapping adds correct parent mapping", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Initial parent_mapping should be empty
   expect_equal(nrow(test_sdtm$parent_mapping), 0)
@@ -31,7 +31,7 @@ test_that("add_parent_mapping can add multiple mappings", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Add multiple parent mappings
   test_sdtm <- add_parent_mapping(test_sdtm, "METABOLITE1", "PARENT1")
@@ -58,7 +58,7 @@ test_that("add_parent_mapping preserves existing mappings", {
   )
 
   # Create a new SDTM object with existing parent mapping
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
   test_sdtm$parent_mapping <- tibble::tribble(
     ~ANALYTE, ~PARENT,
     "EXISTING", "EXISTING_PARENT"
@@ -81,7 +81,7 @@ test_that("add_parent_mapping validates input correctly", {
   )
 
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test empty analyte
   expect_error(
@@ -110,7 +110,7 @@ test_that("add_parent_mapping validates input correctly", {
 
 test_that("add_parent_mapping handles vector inputs with warnings", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test vector for analyte
   expect_warning(
@@ -129,7 +129,7 @@ test_that("add_parent_mapping handles vector inputs with warnings", {
 
 test_that("add_parent_mapping rejects NA values", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test NA for analyte
   expect_error(
@@ -152,7 +152,7 @@ test_that("add_parent_mapping initializes parent_mapping when NULL", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Explicitly set parent_mapping to NULL
   test_sdtm$parent_mapping <- NULL
@@ -168,7 +168,7 @@ test_that("add_parent_mapping initializes parent_mapping when NULL", {
 
 test_that("add_parent_mapping properly trims whitespace", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Add a parent mapping with spaces
   result <- add_parent_mapping(test_sdtm, "  METABOLITE  ", "  PARENT  ")

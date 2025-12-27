@@ -262,7 +262,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @examples
 #' summary(examplinib_poc_nif)
 #' summary(examplinib_poc_min_nif)
-#' summary(new_nif())
+#' summary(nif())
 summary.nif <- function(
   object,
   sampling = TRUE,
@@ -1049,7 +1049,6 @@ administration_summary <- function(obj) {
 #' @param obj A nif object.
 #'
 #' @returns A data frame.
-#' @export
 #' @noRd
 sampling_summary <- function(obj) {
   # validate input
@@ -1219,6 +1218,7 @@ obs_per_dose_level <- function(
 #' @param shading Highlight Hy's law area, as logical.
 #' @param observation_filter A filter term as character.
 #' @param silent Suppress messages.
+#' @param baseline_filter A filter term to identify baseline conditions.
 #'
 #' @return A ggplot object.
 #' @importFrom ggrepel geom_text_repel

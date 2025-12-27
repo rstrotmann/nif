@@ -1,5 +1,8 @@
 #' nif class constructor
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
 #' @param ... Further arguments.
 #' @param obj A data frame containing the actual NIF data or a sdtm object.
 #' @param silent Suppress messages.
@@ -7,8 +10,9 @@
 #' @import dplyr
 #' @return A nif object from the input data set.
 #' @export
-#' @noRd
 new_nif <- function(obj = NULL, ..., silent = NULL) {
+  lifecycle::deprecate_warn("0.61.1", "new_nif()", "nif()")
+
   if (is.null(obj)) {
     temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
     colnames(temp) <- minimal_nif_fields
@@ -39,7 +43,22 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 #' @examples
 #' nif()
 nif <- function(obj = NULL, ..., silent = NULL) {
-  new_nif(obj = obj, silent = silent, ...)
+  if (is.null(obj)) {
+    temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
+    colnames(temp) <- minimal_nif_fields
+    class(temp) <- c("nif", "data.frame")
+    temp |>
+      order_nif_columns()
+  } else {
+    if (inherits(obj, "sdtm")) {
+      temp <- nif_auto(obj, ..., silent = silent)
+    } else {
+      temp <- as.data.frame(obj)
+      class(temp) <- c("nif", "data.frame")
+    }
+    class(temp) <- c("nif", "data.frame")
+    order_nif_columns(temp)
+  }
 }
 
 
@@ -48,7 +67,6 @@ nif <- function(obj = NULL, ..., silent = NULL) {
 #' @param obj A data frame.
 #'
 #' @return A nif object.
-#' @export
 #' @noRd
 as_nif <- function(obj) {
   if (!inherits(obj, "data.frame")) {
@@ -346,7 +364,6 @@ usubjid <- function(obj, id, silent = NULL) {
 #'
 #' @param obj A NIF object.
 #' @return The parent compounds as character.
-#' @export
 #' @noRd
 parents <- function(obj) {
   # input validation
@@ -522,7 +539,7 @@ doses.nif <- function(obj) {
 #' dose_levels(examplinib_fe_nif, group = "SEX")
 #' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
 #' dose_levels(examplinib_sad_min_nif)
-#' dose_levels(new_nif())
+#' dose_levels(nif())
 dose_levels <- function(obj, cmt = 1, group = NULL) {
   # input validation
   validate_nif(obj)
@@ -735,7 +752,6 @@ head.nif <- function(x, ...) {
 #' Minimal nif fields
 #'
 #' @return A character vector of the minimal NIF fields
-#' @export
 #' @noRd
 minimal_nif_fields <- c(
   "ID", "TIME", "AMT", "CMT", "EVID",
@@ -797,7 +813,7 @@ index_dosing_interval <- function(obj) {
     arrange(.data$REF) |>
     tidyr::fill(DI, .direction = "downup") |>
     ungroup() |>
-    new_nif()
+    nif()
 }
 
 
@@ -812,7 +828,7 @@ index_dosing_interval <- function(obj) {
 #' @examples
 #' n_administrations(examplinib_poc_nif)
 #' n_administrations(examplinib_poc_min_nif)
-#' n_administrations(new_nif())
+#' n_administrations(nif())
 n_administrations <- function(obj) {
   if (nrow(obj) == 0) {
     mutate(obj, N = NA)
@@ -1229,7 +1245,7 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
     tidyr::fill("RICH_N", .direction = "down") |>
     ungroup() |>
     select(-c("RICHINT_TEMP", "RICH_START")) |>
-    new_nif()
+    nif()
 }
 
 

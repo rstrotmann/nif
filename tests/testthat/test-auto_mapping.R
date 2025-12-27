@@ -19,7 +19,7 @@ test_that("auto_mapping creates correct mapping from NULL input", {
     "PC", "STUDY1", "SUBJ-001", "DRUG2"
   )
 
-  test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   result <- auto_mapping(test_sdtm, silent = TRUE)
 
@@ -49,7 +49,7 @@ test_that("auto_mapping creates correct mapping from single formula", {
     "PC", "STUDY1", "SUBJ-001", "PK2"
   )
 
-  test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   result <- auto_mapping(test_sdtm, PK1 ~ DRUG1)
 
@@ -79,7 +79,7 @@ test_that("auto_mapping creates correct mapping from list of formulae", {
     "PC", "STUDY1", "SUBJ-001", "PK2"
   )
 
-  test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   result <- auto_mapping(test_sdtm, PK1 ~ DRUG1, PK2 ~ DRUG2)
 
@@ -108,7 +108,7 @@ test_that("auto_mapping handles multiple analytes from same treatment", {
     "PC", "STUDY1", "SUBJ-001", "PK2"
   )
 
-  test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   result <- auto_mapping(test_sdtm, PK1 + PK2 ~ DRUG1)
 
@@ -136,7 +136,7 @@ test_that("auto_mapping detects duplicate mappings", {
     "PC", "STUDY1", "SUBJ-001", "PK1"
   )
 
-  test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   expect_error(
     auto_mapping(test_sdtm, PK1 ~ DRUG1, PK1 ~ DRUG1),
@@ -162,7 +162,7 @@ test_that("auto_mapping validates input types", {
     "PC", "STUDY1", "SUBJ-001", "PK1"
   )
 
-  test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   # Test invalid mapping type
   expect_error(
@@ -197,7 +197,7 @@ test_that("auto_mapping sets correct METABOLITE flags", {
     "PC", "STUDY1", "SUBJ-001", "M2"
   )
 
-  test_sdtm <- new_sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
 
   result <- auto_mapping(test_sdtm, DRUG1 + M1 + M2 ~ DRUG1)
 
@@ -208,7 +208,7 @@ test_that("auto_mapping sets correct METABOLITE flags", {
 
 test_that("auto_mapping generates automatic mapping for multiple analytes", {
   # Create test SDTM object with domains
-  test_sdtm <- new_sdtm(list(
+  test_sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~DOMAIN, ~STUDYID, ~USUBJID,
       "DM", "STUDY1", "SUBJ-001",

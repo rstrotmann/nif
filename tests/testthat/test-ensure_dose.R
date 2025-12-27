@@ -8,7 +8,7 @@ test_that("ensure_dose creates DOSE field correctly", {
     2,   0,     200,  1,
     2,   1,     0,    0,
     2,   2,     0,    0
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Apply ensure_dose
   result <- ensure_dose(test_nif)
@@ -25,7 +25,7 @@ test_that("ensure_dose handles existing DOSE field", {
     ~ID, ~TIME, ~AMT, ~EVID, ~DOSE,
     1,   0,     100,  1,     50,
     1,   1,     0,    0,     50
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Apply ensure_dose
   result <- ensure_dose(test_nif)
@@ -42,7 +42,7 @@ test_that("ensure_dose handles multiple doses per subject", {
     1,   1,     0,    0,
     1,   2,     200,  1,
     1,   3,     0,    0
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Apply ensure_dose
   result <- ensure_dose(test_nif)
@@ -58,7 +58,7 @@ test_that("ensure_dose handles NA values correctly", {
     1,   0,     100,  1,
     1,   1,     NA,   0,
     1,   2,     0,    0
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Apply ensure_dose
   result <- ensure_dose(test_nif)
@@ -69,7 +69,7 @@ test_that("ensure_dose handles NA values correctly", {
 
 test_that("ensure_dose handles empty data frame", {
   # Create empty NIF object
-  test_nif <- new_nif()
+  test_nif <- nif()
 
   # Apply ensure_dose
   result <- ensure_dose(test_nif)
@@ -85,7 +85,7 @@ test_that("ensure_dose handles missing required columns", {
     ~ID, ~TIME,
     1,   0,
     1,   1
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Check error message
   expect_error(
@@ -119,7 +119,7 @@ test_that("ensure_dose handles unsorted data correctly", {
     2,   1,     0,    0,
     2,   0,     200,  1,
     2,   2,     0,    0
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Apply ensure_dose
   result <- ensure_dose(test_nif)
@@ -135,7 +135,7 @@ test_that("ensure_dose handles zero doses correctly", {
     1,   0,     0,    1,
     1,   1,     0,    0,
     1,   2,     0,    0
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Apply ensure_dose
   result <- ensure_dose(test_nif)

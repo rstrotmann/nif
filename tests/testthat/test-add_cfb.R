@@ -1,4 +1,4 @@
-test_that("add_cfb works with valid input", {
+test_that("derive_cfb works with valid input", {
   # Create a simple test dataset
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE,
@@ -12,10 +12,10 @@ test_that("add_cfb works with valid input", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
-  # Run add_cfb
-  result <- add_cfb(test_nif)
+  # Run derive_cfb
+  result <- derive_cfb(test_nif)
 
   # Check if new columns are created
   expect_true("DVBL" %in% names(result))
@@ -30,7 +30,7 @@ test_that("add_cfb works with valid input", {
 })
 
 
-test_that("add_cfb correctly handles baseline calculation with time ≤ 0", {
+test_that("derive_cfb correctly handles baseline calculation with time ≤ 0", {
   # Create test data with multiple pre-dose values
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE,
@@ -46,8 +46,8 @@ test_that("add_cfb correctly handles baseline calculation with time ≤ 0", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
-  result <- add_cfb(test_nif, baseline_filter = "TIME <= 0")
+  test_nif <- nif(test_data)
+  result <- derive_cfb(test_nif, baseline_filter = "TIME <= 0")
 
   # Check baseline values (should be mean of all values with time ≤ 0)
   expect_equal(result$DVBL[1], 10) # ID 1 baseline (mean of 8, 10, and 12)
@@ -65,7 +65,7 @@ test_that("add_cfb correctly handles baseline calculation with time ≤ 0", {
 })
 
 
-# test_that("add_cfb handles NA values in grouping columns", {
+# test_that("derive_cfb handles NA values in grouping columns", {
 #   # Create test data with NA values
 #   test_data <- tibble::tribble(
 #     ~ID, ~TIME, ~DV, ~ANALYTE,
@@ -81,12 +81,12 @@ test_that("add_cfb correctly handles baseline calculation with time ≤ 0", {
 #     mutate(EVID = 0) %>%
 #     mutate(TAFD = TIME)
 #
-#   test_nif <- new_nif(test_data)
+#   test_nif <- nif(test_data)
 #
-#   # Run add_cfb and expect message
+#   # Run derive_cfb and expect message
 #   expect_message(
 #     expect_message(
-#       result <- add_cfb(test_nif, silent = FALSE),
+#       result <- derive_cfb(test_nif, silent = FALSE),
 #       "Found NA values in ID column"),
 #     "Found NA values in ANALYTE column")
 #
@@ -95,7 +95,7 @@ test_that("add_cfb correctly handles baseline calculation with time ≤ 0", {
 # })
 
 
-test_that("add_cfb works with different summary functions", {
+test_that("derive_cfb works with different summary functions", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE,
     1, -1, 10, "A",
@@ -105,23 +105,23 @@ test_that("add_cfb works with different summary functions", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with mean
-  result_mean <- add_cfb(test_nif, summary_function = mean)
+  result_mean <- derive_cfb(test_nif, summary_function = mean)
   expect_equal(result_mean$DVBL[1], 11) # Mean of pre-dose values
 
   # Test with min
-  result_min <- add_cfb(test_nif, summary_function = min)
+  result_min <- derive_cfb(test_nif, summary_function = min)
   expect_equal(result_min$DVBL[1], 10) # Min of pre-dose values
 
   # Test with max
-  result_max <- add_cfb(test_nif, summary_function = max)
+  result_max <- derive_cfb(test_nif, summary_function = max)
   expect_equal(result_max$DVBL[1], 12) # Max of pre-dose values
 })
 
 
-test_that("add_cfb works with custom baseline filter", {
+test_that("derive_cfb works with custom baseline filter", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE,
     1, -1, 10, "A",
@@ -132,23 +132,23 @@ test_that("add_cfb works with custom baseline filter", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with custom baseline filter
-  result <- add_cfb(test_nif, baseline_filter = "TIME == 1")
+  result <- derive_cfb(test_nif, baseline_filter = "TIME == 1")
   expect_equal(result$DVBL[1], 15) # Median of values at TIME <= 1
 })
 
 
-test_that("add_cfb handles missing required columns", {
+test_that("derive_cfb handles missing required columns", {
   # Test with missing DV column
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~ANALYTE,
     1, -1, "A",
     1, 0, "A"
   )
-  test_nif <- new_nif(test_data)
-  expect_error(add_cfb(test_nif), "Missing required columns: DV")
+  test_nif <- nif(test_data)
+  expect_error(derive_cfb(test_nif), "Missing required columns: DV")
 
   # Test with missing TIME column
   test_data <- data.frame(
@@ -156,12 +156,12 @@ test_that("add_cfb handles missing required columns", {
     DV = c(10, 12),
     ANALYTE = c("A", "A")
   )
-  test_nif <- new_nif(test_data)
-  expect_error(add_cfb(test_nif), "Missing required columns: TIME")
+  test_nif <- nif(test_data)
+  expect_error(derive_cfb(test_nif), "Missing required columns: TIME")
 })
 
 
-test_that("add_cfb handles non-numeric columns", {
+test_that("derive_cfb handles non-numeric columns", {
   # Test with non-numeric DV
   test_data <- data.frame(
     ID = c(1, 1),
@@ -172,8 +172,8 @@ test_that("add_cfb handles non-numeric columns", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
-  expect_error(add_cfb(test_nif), "DV column must contain numeric values")
+  test_nif <- nif(test_data)
+  expect_error(derive_cfb(test_nif), "DV column must contain numeric values")
 
   # Test with non-numeric TIME
   test_data <- data.frame(
@@ -185,12 +185,12 @@ test_that("add_cfb handles non-numeric columns", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
-  expect_error(add_cfb(test_nif), "TIME column must contain numeric values")
+  test_nif <- nif(test_data)
+  expect_error(derive_cfb(test_nif), "TIME column must contain numeric values")
 })
 
 
-test_that("add_cfb correctly handles complex baseline filters", {
+test_that("derive_cfb correctly handles complex baseline filters", {
   # Create test data with multiple conditions
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
@@ -204,10 +204,10 @@ test_that("add_cfb correctly handles complex baseline filters", {
     2, 1, 25, "A", 0
   )
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test filter combining multiple conditions
-  result <- add_cfb(test_nif, baseline_filter = "TIME <= 0 & EVID == 0")
+  result <- derive_cfb(test_nif, baseline_filter = "TIME <= 0 & EVID == 0")
 
   # Check baseline values (should only use pre-dose values, excluding EVID=1)
   expect_equal(result$DVBL[1], 9) # ID 1 baseline (mean of 8 and 10)
@@ -225,7 +225,7 @@ test_that("add_cfb correctly handles complex baseline filters", {
 })
 
 
-test_that("add_cfb correctly handles empty baseline sets", {
+test_that("derive_cfb correctly handles empty baseline sets", {
   # Create test data where baseline filter matches no rows
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE,
@@ -239,10 +239,10 @@ test_that("add_cfb correctly handles empty baseline sets", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with filter that matches no rows
-  result <- add_cfb(test_nif, baseline_filter = "TIME < 0")
+  result <- derive_cfb(test_nif, baseline_filter = "TIME < 0")
 
   # Check that DVBL is NA for all rows
   expect_true(all(is.na(result$DVBL)))
@@ -251,7 +251,7 @@ test_that("add_cfb correctly handles empty baseline sets", {
 })
 
 
-test_that("add_cfb correctly handles baseline filter with missing values", {
+test_that("derive_cfb correctly handles baseline filter with missing values", {
   # Create test data with missing values in filter columns
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
@@ -265,10 +265,10 @@ test_that("add_cfb correctly handles baseline filter with missing values", {
     mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with filter that includes NA values
-  result <- add_cfb(test_nif, baseline_filter = "TIME <= 0 | is.na(TIME)")
+  result <- derive_cfb(test_nif, baseline_filter = "TIME <= 0 | is.na(TIME)")
 
   # Check baseline values (should include NA values)
   expect_equal(result$DVBL[1], 11) # ID 1 baseline (mean of 10 and 12)
@@ -284,7 +284,7 @@ test_that("add_cfb correctly handles baseline filter with missing values", {
 })
 
 
-test_that("add_cfb correctly handles baseline filter with character columns", {
+test_that("derive_cfb correctly handles baseline filter with character columns", {
   # Create test data with character columns and multiple conditions
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE, ~FOOD, ~EVID,
@@ -299,24 +299,24 @@ test_that("add_cfb correctly handles baseline filter with character columns", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test 1: Filter using character column with single condition
-  result1 <- add_cfb(test_nif, baseline_filter = "FOOD == 'FED'")
+  result1 <- derive_cfb(test_nif, baseline_filter = "FOOD == 'FED'")
 
   # Check baseline values (should use all FED values)
   expect_equal(result1$DVBL[1], 11) # ID 1 baseline (mean of 10 and 12)
   expect_equal(result1$DVBL[5], 26.5) # ID 2 baseline (mean of 25 and 28)
 
   # Test 2: Filter using character column with multiple conditions
-  result2 <- add_cfb(test_nif, baseline_filter = "TIME <= 0 & FOOD == 'FED'")
+  result2 <- derive_cfb(test_nif, baseline_filter = "TIME <= 0 & FOOD == 'FED'")
 
   # Check baseline values (should only use pre-dose FED values)
   expect_equal(result2$DVBL[1], 11) # ID 1 baseline (only pre-dose FED value)
   expect_true(is.na(result2$DVBL[5])) # ID 2 baseline (only post-dose FED value)
 
   # Test 3: Filter using character column with case sensitivity
-  result3 <- add_cfb(test_nif, baseline_filter = "FOOD == 'fed'")
+  result3 <- derive_cfb(test_nif, baseline_filter = "FOOD == 'fed'")
 
   # Should return NA for baseline since case-sensitive comparison fails
   expect_true(all(is.na(result3$DVBL)))
@@ -324,9 +324,9 @@ test_that("add_cfb correctly handles baseline filter with character columns", {
   # Test 4: Filter using character column with NA values
   test_data_na <- test_data
   test_data_na$FOOD[1] <- NA
-  test_nif_na <- new_nif(test_data_na)
+  test_nif_na <- nif(test_data_na)
 
-  result4 <- add_cfb(test_nif_na, baseline_filter = "FOOD == 'FED'")
+  result4 <- derive_cfb(test_nif_na, baseline_filter = "FOOD == 'FED'")
 
   # Should exclude NA values from baseline calculation
   expect_equal(result4$DVBL[2], 12) # ID 1 baseline (only non-NA FED value)

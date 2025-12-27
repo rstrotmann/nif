@@ -46,7 +46,7 @@ test_that("TAFD is correctly calculated for different treatments", {
       mutate(LBSEQ = row_number())
   )
 
-  sdtm <- new_sdtm(temp)
+  sdtm <- sdtm(temp)
 
   nif <- nif() %>%
     add_administration(sdtm, "ACTIVE", silent = TRUE) %>%

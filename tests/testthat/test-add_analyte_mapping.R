@@ -8,7 +8,7 @@ test_that("add_analyte_mapping adds correct mapping", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Initial analyte_mapping should be empty
   expect_equal(nrow(test_sdtm$analyte_mapping), 0)
@@ -31,7 +31,7 @@ test_that("add_analyte_mapping uses custom analyte name when provided", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Add a mapping with custom analyte name
   result <- add_analyte_mapping(test_sdtm, "DRUG", "PK_MEASURE", "CUSTOM_NAME")
@@ -48,7 +48,7 @@ test_that("add_analyte_mapping enforces unique EXTRT", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Add first mapping
   test_sdtm <- add_analyte_mapping(test_sdtm, "DRUG1", "PK_MEASURE1")
@@ -71,7 +71,7 @@ test_that("add_analyte_mapping can add multiple mappings with different EXTRT", 
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Add multiple analyte mappings with different EXTRT
   test_sdtm <- add_analyte_mapping(test_sdtm, "DRUG1", "PK_MEASURE1")
@@ -99,7 +99,7 @@ test_that("add_analyte_mapping prevents updating existing EXTRT mappings", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Add an initial mapping
   test_sdtm <- add_analyte_mapping(test_sdtm, "DRUG", "PK_MEASURE", "INITIAL_NAME")
@@ -120,7 +120,7 @@ test_that("add_analyte_mapping validates input correctly", {
   )
 
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test empty extrt
   expect_error(
@@ -149,7 +149,7 @@ test_that("add_analyte_mapping validates input correctly", {
 
 test_that("add_analyte_mapping handles vector inputs with warnings", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test vector for extrt
   expect_warning(
@@ -175,7 +175,7 @@ test_that("add_analyte_mapping handles vector inputs with warnings", {
 
 test_that("add_analyte_mapping rejects NA values", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test NA for extrt
   expect_error(
@@ -198,7 +198,7 @@ test_that("add_analyte_mapping rejects NA values", {
 
 test_that("add_analyte_mapping validates analyte parameter", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test non-character analyte
   expect_error(
@@ -221,7 +221,7 @@ test_that("add_analyte_mapping initializes analyte_mapping when NULL", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Explicitly set analyte_mapping to NULL
   test_sdtm$analyte_mapping <- NULL
@@ -238,7 +238,7 @@ test_that("add_analyte_mapping initializes analyte_mapping when NULL", {
 
 test_that("add_analyte_mapping properly trims whitespace", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Add an analyte mapping with spaces
   result <- add_analyte_mapping(test_sdtm, "  DRUG  ", "  PK_MEASURE  ", "  CUSTOM_NAME  ")

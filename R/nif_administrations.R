@@ -362,7 +362,7 @@ make_administration <- function(
       units = "days"
     ) + 1) |>
     ungroup() |>
-    new_nif()
+    nif()
 }
 
 
@@ -387,7 +387,7 @@ make_administration <- function(
 #' @return A nif object.
 #' @export
 #' @examples
-#' add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
+#' add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 #'
 add_administration <- function(
   nif,

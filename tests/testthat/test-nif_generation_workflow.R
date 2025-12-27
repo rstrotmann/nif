@@ -51,10 +51,10 @@ test_that("full nif generation workflow works with imputations", {
       "PC", "1003", "A", "2025-01-01T16:00:00", 82
     )
   ) %>%
-    new_sdtm()
+    sdtm()
 
   expect_no_message(
-    nif <- new_nif() %>%
+    nif <- nif() %>%
       add_administration(sdtm, "A", silent = TRUE)
   )
 })
@@ -87,10 +87,10 @@ test_that("add_administration imputes missing time to PCRFTDTC", {
       "PC", "1004", "A", "2025-01-01T16:00:00", 82, "2025-01-01T08:00:00"
     )
   ) %>%
-    new_sdtm()
+    sdtm()
 
   expect_no_message(
-    result <- new_nif() %>%
+    result <- nif() %>%
       add_administration(sdtm, "A", silent = TRUE)
   )
 

@@ -16,7 +16,7 @@ test_that("guess_ntime works", {
   )
 
   # Create a SDTM object with proper structure
-  test_sdtm <- new_sdtm(list(pc = pc_data))
+  test_sdtm <- sdtm(list(pc = pc_data))
 
   # Test with the proper domain() function
   result <- guess_ntime(test_sdtm)
@@ -25,15 +25,15 @@ test_that("guess_ntime works", {
   expect_equal(pc_data$time, result$NTIME)
 
   # Test error handling when PC domain is missing
-  test_sdtm_no_pc <- new_sdtm(list(dm = data.frame(USUBJID = "TEST")))
+  test_sdtm_no_pc <- sdtm(list(dm = data.frame(USUBJID = "TEST")))
   expect_error(guess_ntime(test_sdtm_no_pc), "PC domain not found in SDTM object")
 })
 
 
-test_that("new_sdtm", {
+test_that("sdtm", {
   temp <- examplinib_sad
   expect_no_error(
-    new_sdtm(list(
+    sdtm(list(
       dm = domain(temp, "dm"),
       vs = domain(temp, "vs"),
       lb = domain(temp, "lb"),
@@ -167,7 +167,7 @@ test_that("derive_sld works", {
     "TR",    1,        "LDIAM",   0.5,       "2025-02-25T08:00"
   )
 
-  sdtm <- new_sdtm(list(tr = tr))
+  sdtm <- sdtm(list(tr = tr))
   expect_no_error(
     derive_sld(sdtm, testcd = "LDIAM", observation_filter = "TRUE") %>%
       domain("tr")
@@ -183,7 +183,7 @@ test_that("derive_sld works with TR containing TRTEST", {
     "TR",    1,        "Longest diameter", "LDIAM",   0.5,       "2025-02-25T08:00"
   )
 
-  sdtm <- new_sdtm(list(tr = tr))
+  sdtm <- sdtm(list(tr = tr))
   expect_no_error(
     derive_sld(sdtm, testcd = "LDIAM", observation_filter = "TRUE") %>%
       domain("tr")
@@ -202,7 +202,7 @@ test_that("derive_sld works with multiple diagnostic methods", {
     "TR", 1, "MRT", "LDIAM", 0.5, "2025-02-25T08:00"
   )
 
-  sdtm <- new_sdtm(list(tr = tr))
+  sdtm <- sdtm(list(tr = tr))
   expect_no_error(
     derive_sld(sdtm, testcd = "LDIAM", observation_filter = "TRUE") %>%
       domain("tr")
@@ -222,7 +222,7 @@ test_that("guess_ntime warns about ISO 8601 date formats", {
   )
 
   # Create a SDTM object with the test data
-  test_sdtm_with_dates <- new_sdtm(list(pc = pc_data_with_dates))
+  test_sdtm_with_dates <- sdtm(list(pc = pc_data_with_dates))
 
   # Test that the function warns about ISO 8601 dates
   expect_warning(

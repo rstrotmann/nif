@@ -9,7 +9,7 @@ test_that("make_administration works for examplinib_poc", {
 
 
 test_that("make_administration works without pc", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       1, 1, "2024-12-16T7:50", "2024-12-19", "ARM A",
@@ -57,7 +57,7 @@ test_that("make_administration works without pc", {
 
 
 test_that("make_administration imputes missing last EXENDTC", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       1, 1, "2024-12-16T7:50", "2024-12-19", "ARM A",
@@ -90,7 +90,7 @@ test_that("make_administration imputes missing last EXENDTC", {
 # Input validation tests
 
 test_that("make_administration errors when extrt not found in EX", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-19", "ARM A"
@@ -109,7 +109,7 @@ test_that("make_administration errors when extrt not found in EX", {
 
 
 test_that("make_administration works with custom analyte parameter", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-19", "ARM A"
@@ -128,7 +128,7 @@ test_that("make_administration works with custom analyte parameter", {
 
 
 test_that("make_administration uses extrt as analyte when analyte is NULL", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-19", "ARM A"
@@ -147,7 +147,7 @@ test_that("make_administration uses extrt as analyte when analyte is NULL", {
 
 
 test_that("make_administration works with custom cmt parameter", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-19", "ARM A"
@@ -165,7 +165,7 @@ test_that("make_administration works with custom cmt parameter", {
 
 
 test_that("make_administration respects subject_filter parameter", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-19", "ARM A",
@@ -193,7 +193,7 @@ test_that("make_administration respects subject_filter parameter", {
 
 
 test_that("make_administration handles cut_off_date parameter", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-25", "ARM A"
@@ -215,7 +215,7 @@ test_that("make_administration handles cut_off_date parameter", {
 
 
 test_that("make_administration auto-assigns cut_off_date when NULL", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-25", "ARM A"
@@ -237,7 +237,7 @@ test_that("make_administration auto-assigns cut_off_date when NULL", {
 
 
 test_that("make_administration expands administration episodes correctly", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20", "ARM A"
@@ -257,7 +257,7 @@ test_that("make_administration expands administration episodes correctly", {
 
 
 test_that("make_administration handles EXSTDY and EXENDY correctly", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20", "ARM A"
@@ -276,7 +276,7 @@ test_that("make_administration handles EXSTDY and EXENDY correctly", {
 
 
 test_that("make_administration imputes EXENDTC to RFENDTC for last episode", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -297,7 +297,7 @@ test_that("make_administration imputes EXENDTC to RFENDTC for last episode", {
 
 
 test_that("make_administration imputes missing EXENDTC to cut-off date", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -318,7 +318,7 @@ test_that("make_administration imputes missing EXENDTC to cut-off date", {
 
 
 test_that("make_administration imputes missing middle EXENDTC", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-25T7:50", "ARM A"
@@ -346,7 +346,7 @@ test_that("make_administration imputes missing middle EXENDTC", {
 
 
 test_that("make_administration filters EXENDTC after EXSTDTC", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-25T7:50", "ARM A"
@@ -366,7 +366,7 @@ test_that("make_administration filters EXENDTC after EXSTDTC", {
 
 
 test_that("make_administration integrates with PC domain for time imputation", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -391,7 +391,7 @@ test_that("make_administration integrates with PC domain for time imputation", {
 
 
 test_that("make_administration carries forward missing times", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -410,7 +410,7 @@ test_that("make_administration carries forward missing times", {
 
 
 test_that("make_administration calculates TRTDY correctly", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -432,7 +432,7 @@ test_that("make_administration calculates TRTDY correctly", {
 
 
 test_that("make_administration sets correct event indicators", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -452,7 +452,7 @@ test_that("make_administration sets correct event indicators", {
 
 
 test_that("make_administration sets DOSE and AMT correctly", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -471,7 +471,7 @@ test_that("make_administration sets DOSE and AMT correctly", {
 
 
 test_that("make_administration handles EXSEQ when present", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -490,7 +490,7 @@ test_that("make_administration handles EXSEQ when present", {
 
 
 test_that("make_administration handles missing EXSEQ", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -509,7 +509,7 @@ test_that("make_administration handles missing EXSEQ", {
 
 
 test_that("make_administration handles VS domain when present", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -531,7 +531,7 @@ test_that("make_administration handles VS domain when present", {
 
 
 test_that("make_administration handles multiple subjects correctly", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A",
@@ -552,7 +552,7 @@ test_that("make_administration handles multiple subjects correctly", {
 
 
 test_that("make_administration handles single-day administrations", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -571,7 +571,7 @@ test_that("make_administration handles single-day administrations", {
 
 
 test_that("make_administration returns nif object", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
@@ -589,7 +589,7 @@ test_that("make_administration returns nif object", {
 
 
 test_that("make_administration handles silent parameter", {
-  sdtm <- new_sdtm(list(
+  sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"

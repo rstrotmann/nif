@@ -168,5 +168,5 @@ add_covariate <- function(
     tidyr::fill(!!cov_field) |>
     filter(.data$original == 1) |>
     select(!any_of(c("original"))) |>
-    new_nif()
+    nif()
 }

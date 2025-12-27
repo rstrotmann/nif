@@ -9,7 +9,7 @@ test_that("ensure_analyte creates ANALYTE from CMT when missing", {
     1, 2, 1, 20, 0,
     2, 0, 2, 0, 1,
     2, 1, 2, 15, 0
-  ) %>% new_nif()
+  ) %>% nif()
 
   result <- ensure_analyte(test_data)
 
@@ -28,7 +28,7 @@ test_that("ensure_analyte preserves existing ANALYTE values", {
     1, 2, 1, "DRUG", 20, 0,
     2, 0, 2, "METABOLITE", 0, 1,
     2, 1, 2, "METABOLITE", 15, 0
-  ) %>% new_nif()
+  ) %>% nif()
 
   result <- ensure_analyte(test_data)
 
@@ -43,7 +43,7 @@ test_that("ensure_analyte handles NA values in CMT", {
     1, 0, 1, 0, 1,
     1, 1, NA, 10, 0,
     1, 2, 1, 20, 0
-  ) %>% new_nif()
+  ) %>% nif()
 
   result <- ensure_analyte(test_data)
 
@@ -60,7 +60,7 @@ test_that("ensure_analyte returns NIF object", {
     ~ID, ~TIME, ~CMT, ~DV, ~EVID,
     1, 0, 1, 0, 1,
     1, 1, 1, 10, 0
-  ) %>% new_nif()
+  ) %>% nif()
 
   result <- ensure_analyte(test_data)
 
@@ -87,7 +87,7 @@ test_that("ensure_analyte errors when CMT is missing", {
     ~ID, ~TIME, ~DV, ~EVID,
     1, 0, 0, 1,
     1, 1, 10, 0
-  ) %>% new_nif()
+  ) %>% nif()
 
   # Check that error is thrown when CMT is missing
   expect_error(ensure_analyte(test_data), "CMT column is required when ANALYTE is not present")
@@ -95,7 +95,7 @@ test_that("ensure_analyte errors when CMT is missing", {
 
 test_that("ensure_analyte handles empty data frame", {
   # Create empty NIF object
-  test_data <- new_nif()
+  test_data <- nif()
 
   result <- ensure_analyte(test_data)
 
@@ -113,7 +113,7 @@ test_that("ensure_analyte preserves other columns", {
     ~ID, ~TIME, ~CMT, ~DV, ~EVID, ~DOSE, ~WEIGHT,
     1, 0, 1, 0, 1, 100, 70,
     1, 1, 1, 10, 0, 100, 70
-  ) %>% new_nif()
+  ) %>% nif()
 
   result <- ensure_analyte(test_data)
 

@@ -9,7 +9,7 @@ test_that("ensure_tad works with basic input", {
     2,   1,     0,     2,    "DRUG",  30,
     2,   2,     0,     2,    "DRUG",  40
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 
@@ -30,7 +30,7 @@ test_that("ensure_tad handles multiple administrations", {
     1,   3,     0,     2,    "DRUG",  20,
     1,   4,     0,     2,    "DRUG",  30
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 
@@ -47,7 +47,7 @@ test_that("ensure_tad handles observations before first dose", {
     1,   1,     0,     2,    "DRUG",  10,
     1,   2,     0,     2,    "DRUG",  20
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 
@@ -66,7 +66,7 @@ test_that("ensure_tad handles multiple parent compounds", {
     1,   1,     0,     4,    "DRUG2", 30,
     1,   2,     0,     4,    "DRUG2", 40
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 
@@ -79,7 +79,7 @@ test_that("ensure_tad handles empty data frame", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV
   ) %>%
-    new_nif()
+    nif()
 
   expect_warning(
     result <- ensure_tad(test_data),
@@ -97,7 +97,7 @@ test_that("ensure_tad handles missing required columns", {
     1,   0,     1,
     1,   1,     2
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(ensure_tad(test_data), "Missing required columns for TAD calculation")
 })
@@ -110,7 +110,7 @@ test_that("ensure_tad preserves original data", {
     1,   1,     0,     2,    "DRUG",  10,  "B",
     1,   2,     0,     2,    "DRUG",  20,  "C"
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 
@@ -127,7 +127,7 @@ test_that("ensure_tad handles NA values in TIME", {
     1,   NA,    0,     2,    "DRUG",  10,
     1,   2,     0,     2,    "DRUG",  20
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 
@@ -142,7 +142,7 @@ test_that("ensure_tad returns a nif object", {
     1,   0,     1,     1,    "DRUG",  NA,
     1,   1,     0,     2,    "DRUG",  10
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 
@@ -170,7 +170,7 @@ test_that("ensure_tad handles existing TAD column", {
     1,   0,     1,     1,    "DRUG",  NA,  0,
     1,   1,     0,     2,    "DRUG",  10,  1
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_tad(test_data)
 

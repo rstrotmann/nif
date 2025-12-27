@@ -11,7 +11,7 @@ test_that("guess_parent identifies analyte with most administrations", {
 
   # Convert to nif object
   obj <- nif_data %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent correctly identifies DRUG1 (has 2 administrations vs 1 for DRUG2)
   expect_equal(guess_parent(obj), "DRUG1")
@@ -31,7 +31,7 @@ test_that("guess_parent falls back to observations when no administrations exist
 
   # Convert to nif object
   obj <- nif_data %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent correctly identifies DRUG1 (has 3 observations vs 2 for DRUG2)
   expect_equal(guess_parent(obj), "DRUG1")
@@ -51,7 +51,7 @@ test_that("guess_parent ignores metabolite observations", {
 
   # Convert to nif object
   obj <- nif_data %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent correctly identifies DRUG2 (has 2 parent observations vs 1 for DRUG1)
   # It should ignore the metabolite observations for META1
@@ -73,7 +73,7 @@ test_that("guess_parent prioritizes administrations over observations", {
 
   # Convert to nif object
   obj <- nif_data %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent prioritizes administrations over observations
   # Even though DRUG1 has 3 observations and DRUG2 has 0 observations,
@@ -87,7 +87,7 @@ test_that("guess_parent returns NULL for empty dataset", {
   empty_nif <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV
   ) %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent returns NULL for empty dataset
   expect_null(guess_parent(empty_nif))
@@ -102,7 +102,7 @@ test_that("guess_parent works with minimal dataset", {
     1,   24,    1,     "DRUG1",
     2,   0,     1,     "DRUG2"
   ) %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent works with minimal data
   expect_equal(guess_parent(minimal_nif), "DRUG1")
@@ -116,7 +116,7 @@ test_that("guess_parent handles tied administration counts", {
     1,   0,     1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1, # Administration
     2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1 # Administration
   ) %>%
-    new_nif()
+    nif()
 
   # The function should return DRUG1 for ties (alphabetical sorting)
   expect_equal(guess_parent(tied_nif), "DRUG1")
@@ -130,7 +130,7 @@ test_that("guess_parent works with ensure_analyte", {
     1,   0,     1,     1,    NA,  1, # Administration
     2,   0,     1,     1,    NA,  1 # Administration
   ) %>%
-    new_nif()
+    nif()
 
   # The function should add ANALYTE based on CMT
   result <- guess_parent(missing_analyte_nif)
@@ -147,7 +147,7 @@ test_that("guess_parent returns NULL for dataset with only metabolite observatio
     1,   1,     0,     "META1",  "DRUG1", TRUE,        2,   3,    0, # Metabolite observation
     1,   2,     0,     "META1",  "DRUG1", TRUE,        3,   3,    0 # Metabolite observation
   ) %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent returns NULL when it can't determine parent
   expect_null(guess_parent(metabolite_only_nif))
@@ -162,7 +162,7 @@ test_that("guess_parent handles NA values in key columns", {
     1,   24,    1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1, # Administration
     2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1 # Administration
   ) %>%
-    new_nif()
+    nif()
 
   # Test how guess_parent handles NA values in ANALYTE
   # Should ignore records with NA ANALYTE
@@ -179,7 +179,7 @@ test_that("guess_parent correctly counts tied observations when no administratio
     2,   1,     0,     "DRUG2",  "DRUG2", FALSE,       15,  2,    0, # Observation
     2,   2,     0,     "DRUG2",  "DRUG2", FALSE,       12,  2,    0 # Observation
   ) %>%
-    new_nif()
+    nif()
 
   # Test that guess_parent handles tied observation counts correctly
   # Should alphabetically sort when tied, returning DRUG1

@@ -1,6 +1,6 @@
-test_that("new_nif works", {
-  suppressMessages(expect_equal(dim(new_nif()), c(0, 6)))
-  suppressMessages(expect_no_error(new_nif(examplinib_sad, RS2023 ~ EXAMPLINIB)))
+test_that("nif works", {
+  suppressMessages(expect_equal(dim(nif()), c(0, 6)))
+  suppressMessages(expect_no_error(nif(examplinib_sad, RS2023 ~ EXAMPLINIB)))
 })
 
 
@@ -105,7 +105,7 @@ test_that("index_dosing_interval works with single parent", {
     1,   74.00, 0,    0,     0,     2,   2,    0,    "A",
     1,   76.00, 0,    0,     0,     3,   2,    0,    "A"
   ) %>%
-    new_nif()
+    nif()
 
   temp <- nif %>%
     index_dosing_interval() %>%
@@ -140,7 +140,7 @@ test_that("index_dosing_interval works with multiple parents", {
     1,   98.00,  0,    0,     0,     2,   2,    0,    "B",
     1,   100.00, 0,    0,     0,     3,   2,    0,    "B"
   ) %>%
-    new_nif() %>%
+    nif() %>%
     index_nif() %>%
     index_dosing_interval()
 
@@ -188,7 +188,7 @@ test_that("n_administrations, max_admin_time works, max_observation_time", {
     1,   98.00,  0,    0,     0,     2,   2,    0,    "B",
     1,   100.00, 0,    0,     0,     3,   2,    0,    "B"
   ) %>%
-    new_nif() %>%
+    nif() %>%
     index_nif() %>%
     index_dosing_interval()
 
@@ -215,7 +215,7 @@ test_that("add_dose_level works", {
     3, 0, 100, 1, 1,
     3, 24, NA, 1, 1,
     3, 48, 150, 1, 1
-  ) %>% new_nif()
+  ) %>% nif()
 
   temp <- add_dose_level(nif) %>%
     distinct(ID, DL)
@@ -241,7 +241,7 @@ test_that("add_dose_level works", {
 #     2,    58,   80,    1,     1,
 #     2,    60,   NA,    2,     0
 #   ) %>%
-#     new_nif()
+#     nif()
 #
 #   expect_equal(
 #     add_tad(nif)$TAD,
@@ -299,7 +299,7 @@ test_that("index_rich_sampling_intervals works", {
     1, 102, 0, 2,
     1, 104, 0, 2
   ) %>%
-    new_nif()
+    nif()
 
   temp <- as.data.frame(index_rich_sampling_intervals(nif))
   expect_equal(unique(temp$RICH_N), c(NA, 1, 2))
@@ -319,11 +319,12 @@ test_that("cfb works", {
     1,   "A",      0,     4,     4,
     1,   "A",      0,     5,     5
   ) %>%
-    new_nif()
+    nif()
 
   expect_no_error(
     test <- obj %>%
-      add_cfb(baseline_filter = "TIME < 4", summary_function = last) %>%
+      # derive_cfb(baseline_filter = "TIME < 4", summary_function = last) %>%
+      derive_cfb(baseline_filter = "TIME < 4", summary_function = last) %>%
       as.data.frame() %>%
       pull(DVBL)
   )
@@ -368,7 +369,7 @@ test_that("add_rtb works", {
     2, 4, 0, 2, 30,
     2, 72, 0, 2, 40,
   ) %>%
-    new_nif()
+    nif()
 
   temp <- as.data.frame(add_rtb(nif))
   expect_equal(
@@ -408,7 +409,7 @@ test_that("subjects.nif works with minimal NIF object", {
     2,   1,     0,    2,    0,     10,    6.1,
     2,   2,     0,    2,    0,     10,    5.9
   ) %>%
-    new_nif()
+    nif()
 
   result <- subjects(minimal_nif)
 
@@ -426,7 +427,7 @@ test_that("subjects.nif works with minimal NIF object", {
 
 
 test_that("subjects.nif works with empty NIF object", {
-  empty_nif <- new_nif()
+  empty_nif <- nif()
   result <- subjects(empty_nif)
 
   # Check return type
@@ -445,7 +446,7 @@ test_that("subjects.nif handles NA values in ID correctly", {
     2,   0,     10,   1,    1,     10,    NA,  "SUBJ003",
     2,   1,     0,    2,    0,     10,    6.1, "SUBJ003"
   ) %>%
-    new_nif()
+    nif()
 
   result <- subjects(na_id_nif)
 
@@ -464,7 +465,7 @@ test_that("subjects.nif works with only ID column", {
     2,   0,     10,   1,    1,     10,    NA,
     2,   1,     0,    2,    0,     10,    6.1
   ) %>%
-    new_nif()
+    nif()
 
   result <- subjects(id_only_nif)
 
@@ -484,7 +485,7 @@ test_that("subjects.nif works with only USUBJID column", {
     "SUBJ002", 0, 10, 1, 1, 10, NA,
     "SUBJ002", 1, 0, 2, 0, 10, 6.1
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(
     subjects(usubjid_only_nif),
@@ -500,7 +501,7 @@ test_that("subjects.nif works with neither ID nor USUBJID columns", {
     1,     0,    2,    0,     10,    5.2,
     2,     0,    2,    0,     10,    4.8
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(
     result <- subjects(no_id_nif),
@@ -555,7 +556,7 @@ test_that("usubjid works with minimal NIF", {
     2,   0,     10,   1,    1,     10,    NA,
     2,   1,     0,    2,    0,     10,    6.1
   ) %>%
-    new_nif()
+    nif()
 
   # Should error because USUBJID field is not found
   expect_error(
@@ -610,7 +611,7 @@ test_that("usubjid validates input parameters", {
 
 
 test_that("usubjid works with empty NIF", {
-  empty_nif <- new_nif()
+  empty_nif <- nif()
 
   # Should error because USUBJID field is not found
   expect_error(
@@ -628,7 +629,7 @@ test_that("usubjid works with NIF containing NA USUBJID", {
     2,   0,     10,   1,    1,     10,    NA,  NA, # NA USUBJID
     3,   0,     10,   1,    1,     10,    NA,  "SUBJ003"
   ) %>%
-    new_nif()
+    nif()
 
   # Test with ID that has NA USUBJID
   result <- usubjid(na_usubjid_nif, 2)

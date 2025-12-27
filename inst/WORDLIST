@@ -29,6 +29,7 @@ Cmax
 Cockcroft
 CrCL
 DEV
+DILI
 DM
 DS
 DTC
@@ -67,10 +68,8 @@ NTIME
 Nephron
 ODWG
 ORCID
-PCCAT
 PCELTM
 PCRFTDTC
-PCSCAT
 PCTESTCD
 PCTPT
 PINBOARD
@@ -84,15 +83,12 @@ PPCAT
 PPSCAT
 PPSTRESN
 PPTESTCD
-PRE
-PREDOSE
 Pathol
 Pharmacokinetics
 Pharmacol
 Pharmacometrics
 Pinboard
 Posix
-Pre
 QD
 RACEN
 RFENDTC
@@ -131,7 +127,6 @@ analyte
 analytes
 aspartate
 bdat
-bili
 binwidth
 biomarker
 bja
@@ -148,7 +143,6 @@ dl
 dm
 doi
 dosings
-dplyr
 ds
 dtc
 dv
@@ -157,6 +151,7 @@ eGFR
 egfr
 et
 examplinib
+exendtc
 extrt
 ggplot
 ggproto
@@ -175,7 +170,7 @@ magrittr
 mdrd
 ntime
 onla
-pb
+pcrftdtc
 pharmacodynamic
 pharmacokinetic
 pharmacometric
@@ -188,6 +183,7 @@ raynaud
 readr
 readxl
 requiredness
+rfendtc
 sas
 sdtm
 settin
@@ -201,7 +197,6 @@ xlsx
 xpt
 xxBLFL
 xxCAT
-xxELTM
 xxLOBXFL
 xxSCAT
 xxSTAT

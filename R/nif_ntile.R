@@ -135,5 +135,5 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
       by = "ID"
     ) |>
     rename_with(~ column_name, "ntile_value") |>
-    new_nif()
+    nif()
 }

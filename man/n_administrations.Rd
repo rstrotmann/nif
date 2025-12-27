@@ -18,5 +18,5 @@ This function returns the number of administrations per \code{ID} and \code{PARE
 \examples{
 n_administrations(examplinib_poc_nif)
 n_administrations(examplinib_poc_min_nif)
-n_administrations(new_nif())
+n_administrations(nif())
 }

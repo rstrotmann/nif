@@ -1,12 +1,16 @@
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
 #' @param sdtm_data The SDTM domains as list of data frames.
 #'
 #' @import dplyr
 #' @return A sdtm object.
 #' @export
-#' @noRd
 new_sdtm <- function(sdtm_data) {
+  lifecycle::deprecate_warn("0.61.1", "new_sdtm()", "sdtm()")
+
   domains <- sdtm_data
 
   analyte_mapping <- data.frame()
@@ -35,7 +39,23 @@ new_sdtm <- function(sdtm_data) {
 #' @return A sdtm object.
 #' @export
 sdtm <- function(sdtm_data) {
-  new_sdtm(sdtm_data)
+  domains <- sdtm_data
+
+  analyte_mapping <- data.frame()
+  metabolite_mapping <- data.frame()
+  parent_mapping <- data.frame()
+  time_mapping <- data.frame()
+
+  temp <- list(
+    domains = domains,
+    analyte_mapping = analyte_mapping,
+    metabolite_mapping = metabolite_mapping,
+    parent_mapping = parent_mapping,
+    time_mapping = time_mapping
+  )
+
+  class(temp) <- c("sdtm", "list")
+  temp
 }
 
 
@@ -702,7 +722,7 @@ filter_subject.sdtm <- function(obj, usubjid) {
       }
     }
   ) |>
-    new_sdtm()
+    sdtm()
 }
 
 
@@ -712,7 +732,6 @@ filter_subject.sdtm <- function(obj, usubjid) {
 #' @param ... Further arguments.
 #'
 #' @return A data frame.
-#' @export
 #' @noRd
 make_subjects_sdtm <- function(obj, ...) {
   make_subjects(domain(obj, "dm"), domain(obj, "vs"), ...)

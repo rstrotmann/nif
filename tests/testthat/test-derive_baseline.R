@@ -10,7 +10,7 @@ test_that("derive_baseline works with valid input", {
     2, 1, 25, "A", 0, 1
   )
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Run derive_baseline
   result <- derive_baseline(test_nif)
@@ -36,7 +36,7 @@ test_that("derive_baseline handles empty baseline sets correctly", {
     2, 3, 25, "A", 0, 3
   )
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with filter that matches no rows (all times are positive)
   result <- derive_baseline(test_nif, baseline_filter = "TAFD < 0")
@@ -55,7 +55,7 @@ test_that("derive_baseline handles empty baseline sets with custom default_basel
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with filter that matches no rows and custom default
   result <- derive_baseline(
@@ -82,7 +82,7 @@ test_that("derive_baseline handles all NA values in filtered baseline", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with filter that matches rows but all values are NA
   result <- derive_baseline(test_nif, baseline_filter = "TAFD <= 0")
@@ -102,7 +102,7 @@ test_that("derive_baseline handles empty vector from summary function", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with filter that matches rows but all non-NA values are filtered out
   result <- derive_baseline(
@@ -126,7 +126,7 @@ test_that("derive_baseline works with different summary functions", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with mean
   result_mean <- derive_baseline(test_nif, summary_function = mean)
@@ -154,7 +154,7 @@ test_that("derive_baseline handles multiple analytes", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   result <- derive_baseline(test_nif)
 
@@ -182,7 +182,7 @@ test_that("derive_baseline handles specific analyte selection", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with specific analyte
   result <- derive_baseline(test_nif, analyte = "A")
@@ -204,7 +204,7 @@ test_that("derive_baseline handles custom baseline filter", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with custom baseline filter
   result <- derive_baseline(test_nif, baseline_filter = "TAFD == 1")
@@ -219,7 +219,7 @@ test_that("derive_baseline handles missing required columns", {
     1, -1, "A", 0,
     1, 0, "A", 0
   )
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
   expect_error(derive_baseline(test_nif), "Missing required columns: DV")
 
   # Test with missing TIME column
@@ -229,7 +229,7 @@ test_that("derive_baseline handles missing required columns", {
     ANALYTE = c("A", "A"),
     EVID = c(0, 0)
   )
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
   expect_error(derive_baseline(test_nif), "Missing required columns: TIME")
 })
 
@@ -245,7 +245,7 @@ test_that("derive_baseline handles non-numeric columns", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
   expect_error(derive_baseline(test_nif), "DV column must contain numeric values")
 
   # Test with non-numeric TIME
@@ -258,7 +258,7 @@ test_that("derive_baseline handles non-numeric columns", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
   expect_error(derive_baseline(test_nif), "TIME column must contain numeric values")
 })
 
@@ -276,7 +276,7 @@ test_that("derive_baseline handles EVID filtering correctly", {
   ) %>%
     mutate(TAFD = TIME)
 
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Baseline should only use EVID == 0 rows
   result <- derive_baseline(test_nif, baseline_filter = "TAFD <= 0")

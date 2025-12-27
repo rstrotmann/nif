@@ -1,6 +1,6 @@
 test_that("nca_from_pp works with valid inputs", {
   # Create test data
-  nif_obj <- new_nif(
+  nif_obj <- nif(
     tibble::tribble(
       ~ID, ~USUBJID, ~ANALYTE, ~EVID, ~DOSE, ~AGE,
       1, "SUBJ1", "DRUG", 1, 100, 30,
@@ -8,7 +8,7 @@ test_that("nca_from_pp works with valid inputs", {
     )
   )
 
-  sdtm_data <- new_sdtm(list(
+  sdtm_data <- sdtm(list(
     pp = tibble::tribble(
       ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPSPEC, ~PPCAT, ~PPRFTDTC, ~DOMAIN,
       "SUBJ1", "AUC", 100, "PLASMA", "DRUG", "2023-01-01", "PP",
@@ -53,7 +53,7 @@ test_that("nca_from_pp handles missing analyte", {
     class = c("nif", "data.frame")
   )
 
-  sdtm_data <- new_sdtm(list(
+  sdtm_data <- sdtm(list(
     pp = tibble::tribble(
       ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPSPEC, ~PPCAT, ~PPRFTDTC,
       "SUBJ1", "AUC", 100, "PLASMA", "DRUG", "2023-01-01"
@@ -74,9 +74,9 @@ test_that("nca_from_pp handles errors appropriately", {
     EVID = 1,
     DOSE = 100
   ) %>%
-    new_nif()
+    nif()
 
-  sdtm_data <- new_sdtm(
+  sdtm_data <- sdtm(
     list(
       pp = data.frame(
         USUBJID = "SUBJ1",
@@ -110,9 +110,9 @@ test_that("nca_from_pp handles empty results", {
     EVID = 1,
     DOSE = 100
   ) %>%
-    new_nif()
+    nif()
 
-  sdtm_data <- new_sdtm(list(
+  sdtm_data <- sdtm(list(
     pp = data.frame(
       USUBJID = "SUBJ1",
       PPTESTCD = "AUC",
@@ -143,9 +143,9 @@ test_that("nca_from_pp handles keep parameter correctly", {
     AGE = 30,
     SEX = "M"
   ) %>%
-    new_nif()
+    nif()
 
-  sdtm_data <- new_sdtm(list(
+  sdtm_data <- sdtm(list(
     pp = data.frame(
       USUBJID = "SUBJ1",
       PPTESTCD = "AUC",

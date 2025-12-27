@@ -69,7 +69,6 @@ conditional_message <- function(..., silent = NULL) {
 #' @param obj An object.
 #'
 #' @return Nothing
-#' @export
 #' @noRd
 #' @seealso [nif::nif_option()]
 print_debug <- function(obj) {
@@ -149,7 +148,6 @@ recode_sex <- function(obj) {
 #'   \item{LABEL}{Abbreviation for labeling purpose}
 #' }
 #' @export
-#' @noRd
 race_coding <- tibble::tribble(
   ~RACEN, ~RACE, ~LABEL,
   0, "WHITE", "White",
@@ -833,7 +831,6 @@ pos_diff <- function(a, b) {
 #' @param join Choose a join type from the list. The default is full_join.
 #'
 #' @return A data frame.
-#' @export
 #' @noRd
 coalesce_join <- function(
   x, y, by = NULL,
@@ -1162,7 +1159,6 @@ dv_na_to_zero <- function(obj) {
 #'   are found.
 #'
 #' @import dplyr
-#' @export
 #' @noRd
 identify_baseline_columns <- function(df, id_col = "ID") {
   # Input validation

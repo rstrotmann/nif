@@ -18,7 +18,7 @@ create_test_nif <- function() {
     IMPUTATION = c("", ""),
     stringsAsFactors = FALSE
   ) %>%
-    new_nif()
+    nif()
   # structure(class = c("nif", "tbl_df", "tbl", "data.frame"))
 }
 

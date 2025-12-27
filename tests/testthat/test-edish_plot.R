@@ -18,7 +18,7 @@ create_edish_sdtm <- function() {
     )
   )
 
-  new_sdtm(out)
+  sdtm(out)
 }
 
 
@@ -31,7 +31,7 @@ create_edish_nif <- function() {
     1,    24,     24,   2,      "A",     0,    2,     "A", "2024-01-02", "SUBJ001",   10,    10
   ) %>%
     lubrify_dates()
-  new_nif(out)
+  nif(out)
 }
 
 

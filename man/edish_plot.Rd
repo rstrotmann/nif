@@ -29,6 +29,8 @@ character, can be 'AST' or 'ALT' (default).}
 
 \item{observation_filter}{A filter term as character.}
 
+\item{baseline_filter}{A filter term to identify baseline conditions.}
+
 \item{show_labels}{Show ID labels per point.}
 
 \item{shading}{Highlight Hy's law area, as logical.}

@@ -8,7 +8,7 @@ test_that("add_metabolite_mapping adds correct mapping", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Initial metabolite_mapping should be empty
   expect_equal(nrow(test_sdtm$metabolite_mapping), 0)
@@ -31,7 +31,7 @@ test_that("add_metabolite_mapping can add multiple mappings", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Add multiple metabolite mappings
   test_sdtm <- add_metabolite_mapping(test_sdtm, "PARENT1", "METABOLITE1")
@@ -57,7 +57,7 @@ test_that("add_metabolite_mapping prevents duplicate mappings", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Add an initial mapping
   test_sdtm <- add_metabolite_mapping(test_sdtm, "PARENT", "METABOLITE")
@@ -77,7 +77,7 @@ test_that("add_metabolite_mapping validates input correctly", {
   )
 
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test empty parent
   expect_error(
@@ -106,7 +106,7 @@ test_that("add_metabolite_mapping validates input correctly", {
 
 test_that("add_metabolite_mapping handles vector inputs with warnings", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test vector for parent
   expect_warning(
@@ -125,7 +125,7 @@ test_that("add_metabolite_mapping handles vector inputs with warnings", {
 
 test_that("add_metabolite_mapping rejects NA values", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Test NA for parent
   expect_error(
@@ -148,7 +148,7 @@ test_that("add_metabolite_mapping initializes metabolite_mapping when NULL", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(dm = dm_data))
+  test_sdtm <- sdtm(list(dm = dm_data))
 
   # Explicitly set metabolite_mapping to NULL
   test_sdtm$metabolite_mapping <- NULL
@@ -164,7 +164,7 @@ test_that("add_metabolite_mapping initializes metabolite_mapping when NULL", {
 
 test_that("add_metabolite_mapping properly trims whitespace", {
   # Create a valid SDTM object
-  test_sdtm <- new_sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
+  test_sdtm <- sdtm(list(dm = data.frame(DOMAIN = "DM", USUBJID = "SUBJ-001")))
 
   # Add a metabolite mapping with spaces
   result <- add_metabolite_mapping(test_sdtm, "  PARENT  ", "  METABOLITE  ")

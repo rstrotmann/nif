@@ -773,7 +773,7 @@ synthesize_sdtm_sad_study <- function() {
     ts = ts
   )
 
-  new_sdtm(lapply(out, isofy_dates))
+  sdtm(lapply(out, isofy_dates))
 }
 
 
@@ -968,7 +968,7 @@ synthesize_sdtm_poc_study <- function(
     ts = ts
   )
 
-  new_sdtm(lapply(out, isofy_dates))
+  sdtm(lapply(out, isofy_dates))
 }
 
 
@@ -1041,7 +1041,7 @@ synthesize_sdtm_food_effect_study <- function() {
     ts = ts
   )
 
-  new_sdtm(lapply(out, isofy_dates))
+  sdtm(lapply(out, isofy_dates))
 }
 
 
@@ -1175,7 +1175,7 @@ synthesize_pp <- function(obj) {
     index_rich_sampling_intervals() %>%
     # as.data.frame() %>%
     filter(!is.na(RICH_N)) # %>%
-  # new_nif()
+  # nif()
 
   analytes <- obj %>%
     as.data.frame() %>%

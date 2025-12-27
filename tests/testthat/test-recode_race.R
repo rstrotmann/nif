@@ -13,7 +13,7 @@ test_that("recode_race works with default coding table", {
   )
 
   # Convert to nif object
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test recoding
   result <- recode_race(test_nif, silent = TRUE)
@@ -52,7 +52,7 @@ test_that("recode_race works with custom coding table", {
   )
 
   # Convert to nif object
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test recoding with custom table
   result <- recode_race(test_nif, coding_table = custom_coding, silent = TRUE)
@@ -71,7 +71,7 @@ test_that("recode_race handles unmatched values correctly", {
   )
 
   # Convert to nif object
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test recoding - should warn about unmatched values
   expect_message(
@@ -92,7 +92,7 @@ test_that("recode_race handles silent parameter", {
   )
 
   # Convert to nif object
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test with silent = TRUE - should not show message
   expect_no_message(
@@ -119,7 +119,7 @@ test_that("recode_race validates input correctly", {
   )
 
   # Test with missing RACE field
-  test_nif <- new_nif(data.frame(
+  test_nif <- nif(data.frame(
     ID = 1,
     TIME = 0,
     AMT = 0,
@@ -139,7 +139,7 @@ test_that("recode_race validates input correctly", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
     1, 0, 0, 0, 0, 100, 0, "WHITE"
   )
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   invalid_coding <- data.frame(
     RACEN = 1
@@ -174,7 +174,7 @@ test_that("recode_race validates input correctly", {
 
 test_that("recode_race handles edge cases", {
   # Test with empty nif object
-  empty_nif <- new_nif()
+  empty_nif <- nif()
   expect_error(
     recode_race(empty_nif),
     "RACE field not found"
@@ -185,7 +185,7 @@ test_that("recode_race handles edge cases", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~RACE,
     1, 0, 0, 0, 0, 100, 0, "WHITE"
   )
-  single_nif <- new_nif(single_row)
+  single_nif <- nif(single_row)
 
   result <- recode_race(single_nif)
   expect_equal(result$RACE, 0)
@@ -197,7 +197,7 @@ test_that("recode_race handles edge cases", {
     1, 0, 0, 0, 0, 100, 0, "UNMATCHED1",
     2, 0, 0, 0, 0, 100, 0, "UNMATCHED2"
   )
-  unmatched_nif <- new_nif(all_unmatched)
+  unmatched_nif <- nif(all_unmatched)
 
   expect_message(
     result <- recode_race(unmatched_nif, silent = FALSE),
@@ -216,7 +216,7 @@ test_that("recode_race preserves nif object structure", {
   )
 
   # Convert to nif object
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test recoding
   result <- recode_race(test_nif)
@@ -243,7 +243,7 @@ test_that("recode_race works with mixed case and whitespace", {
   )
 
   # Convert to nif object
-  test_nif <- new_nif(test_data)
+  test_nif <- nif(test_data)
 
   # Test recoding - should handle case sensitivity and whitespace
   result <- recode_race(test_nif, silent = TRUE)

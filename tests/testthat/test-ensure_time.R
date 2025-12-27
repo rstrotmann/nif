@@ -8,7 +8,7 @@ test_that("ensure_time works with TIME, TAD, and TAFD already present", {
     2,   0,     0,     0,    1,     NA,
     2,   1,     1,     1,    0,     30
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 
@@ -26,7 +26,7 @@ test_that("ensure_time calculates TIME, TAD, and TAFD from DTC", {
     2, as.POSIXct("2023-01-01 08:00:00"), 1, "DRUG", "DRUG", NA,
     2, as.POSIXct("2023-01-01 09:00:00"), 0, "DRUG", "DRUG", 30
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 
@@ -53,7 +53,7 @@ test_that("ensure_time calculates TIME, TAD, and TAFD from TIME", {
     2,   0,     1,     1,    NA,
     2,   1,     0,     2,    30
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 
@@ -77,7 +77,7 @@ test_that("ensure_time handles multiple dosing events", {
     1,   3,     0,     2,    20,
     1,   4,     0,     2,    15
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 
@@ -102,7 +102,7 @@ test_that("ensure_time handles multiple parent compounds", {
     1, 4, 0, 4, "DRUG2", 30,
     1, 5, 0, 4, "DRUG2", 25
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 
@@ -126,7 +126,7 @@ test_that("ensure_time handles observations before first dose", {
     1,   1,     0,     2,    10,
     1,   2,     0,     2,    20
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 
@@ -148,7 +148,7 @@ test_that("ensure_time handles missing required columns", {
     1,   10,
     1,   20
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(
     result <- ensure_time(test_data),
@@ -164,7 +164,7 @@ test_that("ensure_time preserves original data", {
     1,   1,     0,     2,    10,  "B",     456,
     1,   2,     0,     2,    20,  "C",     789
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 
@@ -180,7 +180,7 @@ test_that("ensure_time returns a nif object", {
     1,   0,     1,     1,    NA,
     1,   1,     0,     2,    10
   ) %>%
-    new_nif()
+    nif()
 
   result <- ensure_time(test_data)
 

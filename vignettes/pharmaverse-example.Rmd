@@ -58,7 +58,7 @@ plot(sdtm, domain = "dm", points = F)
 ```{r}
 nif_option(silent = TRUE, debug = TRUE)
 
-nif <- new_nif() |> 
+nif <- nif() |> 
   add_administration(sdtm, 'XANOMELINE', analyte = "XAN") |> 
   add_administration(sdtm, 'PLACEBO') |> 
   add_observation(sdtm, 'pc', 'XAN', observation_filter = "PCSPEC == 'PLASMA'") |> 

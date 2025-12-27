@@ -1,6 +1,6 @@
 test_that("pb_write.sdtm validates inputs correctly", {
   # Create a minimal sdtm object for testing
-  test_sdtm <- new_sdtm(
+  test_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX,
@@ -38,7 +38,7 @@ test_that("pb_write.sdtm validates inputs correctly", {
 
 test_that("pb_write.sdtm handles missing board correctly", {
   # Create a minimal sdtm object for testing
-  test_sdtm <- new_sdtm(
+  test_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX,
@@ -66,7 +66,7 @@ test_that("pb_write.sdtm handles missing board correctly", {
 
 test_that("pb_write.sdtm uses arbitrary board", {
   # Create a minimal sdtm object for testing
-  test_sdtm <- new_sdtm(
+  test_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX,
@@ -91,7 +91,7 @@ test_that("pb_write.sdtm generates correct default names and titles", {
   on.exit(unlink(test_board, recursive = TRUE))
 
   # Create a minimal sdtm object for testing
-  test_sdtm <- new_sdtm(
+  test_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX,
@@ -123,7 +123,7 @@ test_that("pb_write.sdtm uses custom name and title when provided", {
   on.exit(unlink(test_board, recursive = TRUE))
 
   # Create a minimal sdtm object for testing
-  test_sdtm <- new_sdtm(
+  test_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX,
@@ -158,7 +158,7 @@ test_that("pb_write.sdtm handles silent parameter correctly", {
   on.exit(unlink(test_board, recursive = TRUE))
 
   # Create a minimal sdtm object for testing
-  test_sdtm <- new_sdtm(
+  test_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX,
@@ -189,7 +189,7 @@ test_that("pb_write.sdtm works with complex sdtm objects", {
   on.exit(unlink(test_board, recursive = TRUE))
 
   # Create a more complex sdtm object with multiple domains
-  complex_sdtm <- new_sdtm(
+  complex_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX, ~AGE,
@@ -248,7 +248,7 @@ test_that("pb_write.sdtm preserves sdtm object structure", {
   on.exit(unlink(test_board, recursive = TRUE))
 
   # Create a test sdtm object
-  original_sdtm <- new_sdtm(
+  original_sdtm <- sdtm(
     sdtm_data = list(
       dm = tribble(
         ~USUBJID, ~STUDYID, ~SEX,

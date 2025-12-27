@@ -265,7 +265,7 @@ import_from_connection <- function(
     raw[missing_fields] <- NA
   }
 
-  new_nif(raw)
+  nif(raw)
 }
 
 

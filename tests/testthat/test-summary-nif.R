@@ -25,7 +25,7 @@ test_that("summary.nif returns the correct class and structure", {
 # Test with missing columns
 test_that("summary.nif errors appropriately with missing required columns", {
   # Missing DV
-  invalid_nif <- new_nif(data.frame(
+  invalid_nif <- nif(data.frame(
     ID = 1,
     TIME = 0,
     AMT = 100,

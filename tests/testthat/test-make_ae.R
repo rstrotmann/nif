@@ -26,7 +26,7 @@ test_that("make_ae handles basic case correctly", {
     "SUBJ-003", "WEIGHT", 75, "Y"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
 
   # Test basic functionality
   result <- make_ae(test_sdtm, "Headache")
@@ -66,7 +66,7 @@ test_that("make_ae handles different ae_fields correctly", {
     "SUBJ-002", "WEIGHT", 65, "Y"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
 
   # Test with AELLT field
   result_llt <- make_ae(test_sdtm, "LLT1", ae_field = "AELLT")
@@ -101,7 +101,7 @@ test_that("make_ae handles filters correctly", {
     "SUBJ-002", "WEIGHT", 65
   ) %>% mutate(VSBLFL = "Y")
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
 
   # Test subject filter
   result <- make_ae(test_sdtm, "Headache")
@@ -137,7 +137,7 @@ test_that("make_ae handles missing data correctly", {
     "SUBJ-002", "WEIGHT", 65
   ) %>% mutate(VSBLFL = "Y")
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
 
   result <- make_ae(test_sdtm, "Headache")
   expect_true(is.na(result$DV[result$USUBJID == "SUBJ-001"]))
@@ -146,7 +146,7 @@ test_that("make_ae handles missing data correctly", {
 
 test_that("make_ae handles errors appropriately", {
   # Test missing AE domain
-  test_sdtm_no_ae <- new_sdtm(list(
+  test_sdtm_no_ae <- sdtm(list(
     dm = tibble::tibble(),
     vs = tibble::tibble()
   ))
@@ -161,7 +161,7 @@ test_that("make_ae handles errors appropriately", {
     "SUBJ-001", "Headache", "2023-01-01T08:00", 2
   )
 
-  test_sdtm <- new_sdtm(list(
+  test_sdtm <- sdtm(list(
     ae = test_ae,
     dm = tibble::tribble(
       ~USUBJID, ~RFSTDTC, ~ACTARMCD, ~SEX,
@@ -196,7 +196,7 @@ test_that("make_ae handles compartment and parent parameters correctly", {
     "SUBJ-001", "WEIGHT", 70, "Y"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
 
   # Test with specific compartment and parent
   result <- make_ae(test_sdtm, "Headache", cmt = 2, parent = "DRUG")
@@ -222,7 +222,7 @@ test_that("make_ae preserves specified columns with keep parameter", {
     "SUBJ-001", "WEIGHT", 70, "Y"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
+  test_sdtm <- sdtm(list(ae = test_ae, dm = test_dm, vs = test_vs))
 
   result <- make_ae(test_sdtm, "Headache", keep = "CUSTOM_COL")
   expect_true("CUSTOM_COL" %in% names(result))

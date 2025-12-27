@@ -9,7 +9,7 @@ test_that("add_tafd works with basic input", {
     2,   1,     0,     "DRUG",  30,  2,
     2,   2,     0,     "DRUG",  40,  2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -29,7 +29,7 @@ test_that("add_tafd handles observations before first dose", {
     1,   1,     0,     "DRUG",  10,  2,
     1,   2,     0,     "DRUG",  20,  2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -46,7 +46,7 @@ test_that("add_tafd handles multiple administrations", {
     1,   3,     0,     "DRUG",  20,  2,
     1,   4,     0,     "DRUG",  30,  2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -64,7 +64,7 @@ test_that("add_tafd handles multiple parent compounds", {
     1,   2,     0,     "DRUG2", 30,  4,
     1,   3,     0,     "DRUG2", 40,  4
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -82,7 +82,7 @@ test_that("add_tafd handles different first dose times", {
     2,   6,     0,     "DRUG",  30,  2,
     2,   7,     0,     "DRUG",  40,  2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -94,7 +94,7 @@ test_that("add_tafd handles empty data frame", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -108,7 +108,7 @@ test_that("add_tafd handles missing required columns", {
     1,   0,
     1,   1
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(add_tafd(test_data), "Missing required columns")
 })
@@ -130,7 +130,7 @@ test_that("add_tafd preserves original data", {
     1,   1,     0,     "DRUG",  10,  "B",    2,
     1,   2,     0,     "DRUG",  20,  "C",    2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -146,7 +146,7 @@ test_that("add_tafd validates numeric data types", {
     1,   "0",   1,     "DRUG",  1,
     1,   "1",   0,     "DRUG",  2
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(add_tafd(test_data), "TIME column must contain numeric values")
 
@@ -156,7 +156,7 @@ test_that("add_tafd validates numeric data types", {
     1,   0,     "1",   "DRUG",  1,
     1,   1,     "0",   "DRUG",  2
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(add_tafd(test_data), "EVID column must contain numeric values")
 
@@ -166,7 +166,7 @@ test_that("add_tafd validates numeric data types", {
     "1",  0,     1,     "DRUG",  1,
     "1",  1,     0,     "DRUG",  2
   ) %>%
-    new_nif()
+    nif()
 
   expect_error(add_tafd(test_data), "ID column must contain numeric values")
 })
@@ -178,7 +178,7 @@ test_that("add_tafd handles data with no dosing events", {
     1,   1,     0,     "DRUG",  10,  2,
     1,   2,     0,     "DRUG",  20,  2
   ) %>%
-    new_nif()
+    nif()
 
   # Should throw an error since there are no dosing events
   expect_error(
@@ -193,7 +193,7 @@ test_that("add_tafd returns a nif object", {
     1,   0,     1,     "DRUG",  NA,  1,
     1,   1,     0,     "DRUG",  10,  2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -210,7 +210,7 @@ test_that("add_tafd handles missing PARENT column by creating it", {
     1,   1,     0,     2,    10,
     1,   2,     0,     2,    20
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -227,7 +227,7 @@ test_that("add_tafd properly ungroups the result", {
     2,   0,     1,     "DRUG",  NA,  1,
     2,   1,     0,     "DRUG",  20,  2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -245,7 +245,7 @@ test_that("add_tafd handles NA values in TIME correctly", {
     1,   1,     0,     "DRUG",  2,
     1,   NA,    0,     "DRUG",  2
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -261,7 +261,7 @@ test_that("add_tafd correctly handles NA values in ID column", {
     1,   1,     0,     "DRUG",  2,
     NA,  2,     0,     "DRUG",  2
   ) %>%
-    new_nif()
+    nif()
 
   # Should handle NA in ID column without error
   expect_error(
@@ -278,7 +278,7 @@ test_that("add_tafd respects parent grouping with mixed dosing times", {
     1,   3,     1,     "DRUG2", 3, # Later first dose for DRUG2
     1,   4,     0,     "DRUG2", 4
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 
@@ -295,7 +295,7 @@ test_that("add_tafd works with CMT column but no PARENT column", {
     2,   0,     1,     1,    NA,
     2,   1,     0,     2,    30
   ) %>%
-    new_nif()
+    nif()
 
   result <- add_tafd(test_data)
 

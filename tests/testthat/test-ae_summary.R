@@ -10,7 +10,7 @@ test_that("ae_summary handles basic case correctly", {
     "SUBJ-002", "Fatigue", "General disorders", "Fatigue", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test default parameters (AESOC level)
   result <- ae_summary(test_sdtm)
@@ -35,7 +35,7 @@ test_that("ae_summary works with different levels", {
     "SUBJ-002", "Headache", "Nervous system disorders", "Headache", 1
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test AETERM level
   result_term <- ae_summary(test_sdtm, level = "AETERM")
@@ -56,7 +56,7 @@ test_that("ae_summary handles show_cd parameter", {
     "SUBJ-002", "Headache", "Nervous system disorders", "10029147", "Headache", "10019211"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test with show_cd = TRUE
   result <- ae_summary(test_sdtm, level = "AESOC", show_cd = TRUE)
@@ -74,7 +74,7 @@ test_that("ae_summary handles grouping", {
     "SUBJ-002", "Headache", "Nervous system disorders", "F"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test with grouping
   result <- ae_summary(test_sdtm, group = "SEX")
@@ -93,7 +93,7 @@ test_that("ae_summary handles ordering", {
     "SUBJ-003", "Headache", "Nervous system disorders"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test order_by_subj = TRUE
   result <- ae_summary(test_sdtm, order_by_subj = TRUE)
@@ -110,7 +110,7 @@ test_that("ae_summary handles filtering", {
     "SUBJ-002", "Headache", "Nervous system disorders", 3
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test with filter for severe AEs (AETOXGR > 1)
   result <- ae_summary(test_sdtm, ae_filter = "AETOXGR > 1")
@@ -126,7 +126,7 @@ test_that("ae_summary handles invalid inputs", {
     "SUBJ-001", "Headache", "Nervous system disorders"
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test with invalid level
   expect_error(
@@ -148,7 +148,7 @@ test_that("ae_summary handles empty data", {
     ~USUBJID, ~AETERM, ~AESOC
   )
 
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
 
   # Test with empty data
   result <- ae_summary(test_sdtm)
@@ -159,7 +159,7 @@ test_that("ae_summary handles empty data", {
 
 test_that("ae_summary validates SDTM object structure", {
   # Test with missing AE domain
-  test_sdtm <- new_sdtm(list(dm = data.frame()))
+  test_sdtm <- sdtm(list(dm = data.frame()))
   expect_error(
     ae_summary(test_sdtm),
     "AE domain not found in SDTM data"
@@ -169,7 +169,7 @@ test_that("ae_summary validates SDTM object structure", {
   test_ae <- tibble::tribble(
     ~USUBJID, ~AETERM # Missing AESOC
   )
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
   expect_error(
     ae_summary(test_sdtm),
     "Missing required columns in AE domain: AESOC"
@@ -179,7 +179,7 @@ test_that("ae_summary validates SDTM object structure", {
   test_ae <- tibble::tribble(
     ~USUBJID, ~AETERM, ~AESOC
   )
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
   expect_error(
     ae_summary(test_sdtm, group = "INVALID_COL"),
     "Group variable 'INVALID_COL' not found in AE domain"
@@ -189,7 +189,7 @@ test_that("ae_summary validates SDTM object structure", {
   test_ae <- tibble::tribble(
     ~USUBJID, ~AETERM, ~AESOC # Missing AESOCCD
   )
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
   expect_error(
     ae_summary(test_sdtm, show_cd = TRUE),
     "Missing code columns: AESOCCD"
@@ -199,7 +199,7 @@ test_that("ae_summary validates SDTM object structure", {
   test_ae <- tibble::tribble(
     ~USUBJID, ~AETERM, ~AESOC
   )
-  test_sdtm <- new_sdtm(list(ae = test_ae))
+  test_sdtm <- sdtm(list(ae = test_ae))
   expect_error(
     ae_summary(test_sdtm, ae_filter = "invalid syntax"),
     "Invalid filter expression"

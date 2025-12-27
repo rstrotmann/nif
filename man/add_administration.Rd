@@ -55,6 +55,6 @@ Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537.
 \url{https://doi.org/10.1002/psp4.12404}
 }
 \examples{
-add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
+add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 
 }

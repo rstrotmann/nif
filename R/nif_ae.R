@@ -172,7 +172,7 @@ make_ae <- function(
       units = "days"
     ) + 1) %>%
     ungroup() %>%
-    new_nif()
+    nif()
 }
 
 

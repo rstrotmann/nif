@@ -56,7 +56,6 @@ last_ex_dtc <- function(ex) {
 #'
 #' @param obj A nif object.
 #' @return A nif object with TIME, TAFD, and TAD fields added.
-#' @export
 #' @noRd
 make_time <- function(obj) {
   # Input validation
@@ -77,7 +76,7 @@ make_time <- function(obj) {
           TAFD = numeric(0),
           TAD = numeric(0)
         ) |>
-        new_nif()
+        nif()
     )
   }
 
@@ -128,7 +127,7 @@ make_time <- function(obj) {
     # Remove temporary columns
     select(-c("FIRSTDTC", "FIRSTADMIN")) |>
     # Convert to nif object before adding TAD
-    new_nif()
+    nif()
 
   # Add the TAD field
   add_tad(result)
@@ -160,7 +159,7 @@ make_time_from_TIME <- function(obj) {
     mutate(TAD = .data$TIME - .data$.admin_time) |>
     ungroup() |>
     select(-c(".first_time", ".first_admin", ".admin_time")) |>
-    new_nif()
+    nif()
 }
 
 
@@ -224,7 +223,7 @@ add_tad <- function(nif) {
     ungroup()
 
   # Return as NIF object
-  new_nif(result)
+  nif(result)
 }
 
 
@@ -290,7 +289,7 @@ add_tafd <- function(nif) {
     mutate(TAFD = .data$TIME - .data$first_admin) |>
     select(-c("first_admin")) |>
     ungroup() |>
-    new_nif()
+    nif()
 }
 
 
@@ -318,5 +317,5 @@ add_trtdy <- function(obj) {
       .default = .data$TRTDY + 1
     )) |>
     select(-FIRSTTRTDTC) |>
-    new_nif()
+    nif()
 }

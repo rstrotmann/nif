@@ -29,7 +29,7 @@ ensure_analyte <- function(obj) {
       is.na(CMT) ~ NA_character_,
       TRUE ~ paste0("CMT", as.character(CMT))
     )) |>
-    new_nif() # Ensure return value is a NIF object
+    nif() # Ensure return value is a NIF object
 }
 
 
@@ -77,7 +77,7 @@ ensure_dose <- function(obj) {
     ungroup()
 
   # Return as NIF object
-  new_nif(result)
+  nif(result)
 }
 
 
@@ -125,7 +125,7 @@ ensure_parent <- function(obj) {
   }
 
   # Ensure return value is a NIF object
-  new_nif(obj)
+  nif(obj)
 }
 
 
@@ -311,7 +311,8 @@ ensure_time <- function(obj) {
 
 ensure_cfb <- function(obj) {
   if (!"DVCFB" %in% names(obj))
-    add_cfb(obj)
+    # derive_cfb(obj)
+    derive_cfb(obj)
   else
     obj
 }

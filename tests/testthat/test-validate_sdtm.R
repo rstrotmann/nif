@@ -16,7 +16,7 @@ test_that("validate_sdtm_domains validates all domains in a valid SDTM object", 
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(
+  test_sdtm <- sdtm(list(
     dm = dm_data,
     vs = vs_data
   ))
@@ -45,7 +45,7 @@ test_that("validate_sdtm_domains shows/suppresses messages based on silent param
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(
+  test_sdtm <- sdtm(list(
     dm = min_dm,
     vs = min_vs
   ))
@@ -73,7 +73,7 @@ test_that("validate_sdtm_domains handles mixed valid and unknown domains", {
   )
 
   # Create a new SDTM object
-  test_sdtm <- new_sdtm(list(
+  test_sdtm <- sdtm(list(
     dm = dm_data,
     xyz = xyz_data
   ))
