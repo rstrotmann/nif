@@ -48,6 +48,7 @@ Plot SDTM object
 plot(examplinib_poc)
 plot(examplinib_poc, "dm")
 plot(examplinib_poc, domain = "ex")
+plot(examplinib_poc, domain = "ex", points = FALSE)
 plot(examplinib_poc, domain = "pc")
 plot(examplinib_poc, domain = "vs", lines = FALSE, points = TRUE)
 }

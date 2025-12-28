@@ -98,9 +98,9 @@ check_date_format <- function(obj, verbose = TRUE) {
 #' @export
 #' @keywords internal
 check_date_time_format <- function(obj, verbose = TRUE) {
-  domain <- obj %>% distinct(DOMAIN)
-  temp <- obj %>%
-    filter(if_any(ends_with("DTC"), ~ !(is_iso_date_time(.) | . == ""))) %>%
+  domain <- obj |> distinct(DOMAIN)
+  temp <- obj |>
+    filter(if_any(ends_with("DTC"), ~ !(is_iso_date_time(.) | . == ""))) |>
     select(c("USUBJID", "DOMAIN", ends_with("DTC")))
 
   if (nrow(temp) > 0) {
@@ -146,11 +146,11 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
   }
 
   # Find rows with missing time
-  temp <- obj %>%
+  temp <- obj |>
     filter(if_any(
       all_of(dtc_cols),
       ~ (is_iso8601_date(.)) & !(is_iso8601_datetime(.))
-    )) %>%
+    )) |>
     select(any_of(c("USUBJID", "DOMAIN", dtc_cols)))
 
   if (nrow(temp) > 0) {
@@ -177,17 +177,17 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
 #' @export
 #' @keywords internal
 check_last_exendtc <- function(ex, verbose = TRUE) {
-  domain <- ex %>% distinct(DOMAIN)
+  domain <- ex |> distinct(DOMAIN)
 
-  temp <- ex %>%
+  temp <- ex |>
     assertr::verify(assertr::has_all_names(
       "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
-    )) %>%
-    lubrify_dates() %>%
-    group_by(.data$USUBJID, .data$EXTRT) %>%
-    arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) %>%
-    mutate(LAST_ADMIN = row_number() == max(row_number())) %>%
-    filter(LAST_ADMIN == TRUE, is.na(.data$EXENDTC)) %>%
+    )) |>
+    lubrify_dates() |>
+    group_by(.data$USUBJID, .data$EXTRT) |>
+    arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) |>
+    mutate(LAST_ADMIN = row_number() == max(row_number())) |>
+    filter(LAST_ADMIN == TRUE, is.na(.data$EXENDTC)) |>
     select("USUBJID", "DOMAIN", "EXTRT", "EXSTDTC", "EXENDTC")
 
   if (nrow(temp) > 0) {
@@ -216,25 +216,25 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
 #' check_sdtm(examplinib_poc)
 check_sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in DM
-  sdtm %>%
-    domain("dm") %>%
-    filter(.data$ACTARMCD != "SCRNFAIL") %>%
-    select("USUBJID", "DOMAIN", "RFENDTC") %>%
-    check_date_format(verbose = verbose) %>%
+  sdtm |>
+    domain("dm") |>
+    filter(.data$ACTARMCD != "SCRNFAIL") |>
+    select("USUBJID", "DOMAIN", "RFENDTC") |>
+    check_date_format(verbose = verbose) |>
     check_missing_time(verbose = verbose)
 
   ## Date-times in EX
-  sdtm %>%
-    domain("ex") %>%
-    check_date_format(verbose = verbose) %>%
-    check_missing_time(verbose = verbose) %>%
+  sdtm |>
+    domain("ex") |>
+    check_date_format(verbose = verbose) |>
+    check_missing_time(verbose = verbose) |>
     check_last_exendtc(verbose = verbose)
 
   ## Date-times in PC
-  sdtm %>%
-    domain("pc") %>%
-    select("USUBJID", "DOMAIN", "PCDTC") %>%
-    check_date_format(verbose = verbose) %>%
+  sdtm |>
+    domain("pc") |>
+    select("USUBJID", "DOMAIN", "PCDTC") |>
+    check_date_format(verbose = verbose) |>
     check_missing_time(verbose = verbose)
   invisible(NULL)
 }
@@ -259,6 +259,7 @@ check_sdtm <- function(sdtm, verbose = TRUE) {
 #' plot(examplinib_poc)
 #' plot(examplinib_poc, "dm")
 #' plot(examplinib_poc, domain = "ex")
+#' plot(examplinib_poc, domain = "ex", points = FALSE)
 #' plot(examplinib_poc, domain = "pc")
 #' plot(examplinib_poc, domain = "vs", lines = FALSE, points = TRUE)
 plot.sdtm <- function(
@@ -273,234 +274,223 @@ plot.sdtm <- function(
   subject_filter = TRUE,
   ...
 ) {
-  obj <- x %>%
-    domain(domain) %>%
-    filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) %>%
-    lubrify_dates() %>%
-    filter(eval(parse(text = subject_filter))) %>%
+  obj <- x |>
+    domain(domain) |>
+    filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) |>
+    lubrify_dates() |>
+    filter(eval(parse(text = subject_filter))) |>
     as.data.frame()
 
   if (domain == "pc") {
-    return(
-      obj %>%
-        filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
-        filter(if (!is.null(analyte)) .data$PCTESTCD %in% analyte else TRUE) %>%
-        mutate(ID = as.numeric(factor(.data$USUBJID,
-                                      unique(.data$USUBJID)))) %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = .data$PCDTC,
-          y = .data$ID,
-          group = interaction(.data$ID, .data$PCTESTCD),
-          color = .data$PCTESTCD
-        )) +
-        {
-          if (points == TRUE) {
-            ggplot2::geom_point()
-          }
-        } +
-        ggplot2::scale_y_discrete(
-          labels = NULL, breaks = NULL, name = "USUBJID"
-        ) +
-        ggplot2::scale_x_datetime(
-          name = "PCDTC", date_labels = "%Y-%m-%d"
-        ) +
-        ggplot2::theme_bw() +
-        ggplot2::theme(legend.position = "bottom") +
-        ggplot2::ggtitle(
-          paste0("Study ", distinct(obj, .data$STUDYID), ", PC")
-        ) +
-        watermark()
-    )
+    out <- obj |>
+      filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) |>
+      filter(if (!is.null(analyte)) .data$PCTESTCD %in% analyte else TRUE) |>
+      mutate(ID = as.numeric(factor(.data$USUBJID,
+                                    unique(.data$USUBJID)))) |>
+      ggplot2::ggplot(ggplot2::aes(
+        x = .data$PCDTC,
+        y = .data$ID,
+        group = interaction(.data$ID, .data$PCTESTCD),
+        color = .data$PCTESTCD
+      ))
+
+    if (points == TRUE)
+      out <- out + ggplot2::geom_point()
+
+    out <- out +
+      scale_y_discrete(labels = NULL, breaks = NULL, name = "USUBJID") +
+      scale_x_datetime(name = "PCDTC", date_labels = "%Y-%m-%d") +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position = "bottom") +
+      ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", PC")) +
+      watermark()
+
+    return(out)
   }
 
   if (domain == "ex") {
-    return(
-      obj %>%
-        arrange(.data$EXSTDTC) %>%
-        mutate(ID = as.numeric(
-          factor(.data$USUBJID, unique(.data$USUBJID))
-        )) %>%
-        ggplot2::ggplot() +
-        ggplot2::geom_segment(ggplot2::aes(
-          x = .data$EXSTDTC,
-          xend = .data$EXENDTC,
-          y = .data$ID,
-          yend = .data$ID
-        )) +
-        {
-          if (points == TRUE) {
-            ggplot2::geom_point(ggplot2::aes(
-              x = .data$EXSTDTC, y = .data$ID
-            ))
-          }
-        } +
-        {
-          if (points == TRUE) {
-            ggplot2::geom_point(ggplot2::aes(
-              x = .data$EXENDTC, y = .data$ID
-            ))
-          }
-        } +
-        ggplot2::scale_y_discrete(name = "USUBJID", labels = NULL) +
-        ggplot2::scale_x_datetime(
-          name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d"
-        ) +
-        ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
-            ggplot2::theme(legend.position = "bottom")
-          } else {
-            ggplot2::theme(legend.position = "none")
-          }
-        } +
-        ggplot2::ggtitle(paste0(
-          "Study ", distinct(obj, .data$STUDYID), ", EX"
-        )) +
-        watermark()
-    )
+    out <- obj |>
+      arrange(.data$EXSTDTC) |>
+      mutate(ID = as.numeric(
+        factor(.data$USUBJID, unique(.data$USUBJID))
+      )) |>
+      ggplot2::ggplot() +
+      ggplot2::geom_segment(ggplot2::aes(
+        x = .data$EXSTDTC,
+        xend = .data$EXENDTC,
+        y = .data$ID,
+        yend = .data$ID
+      ))
+
+    if (points == TRUE) {
+      out <- out +
+        ggplot2::geom_point(ggplot2::aes(x = .data$EXSTDTC, y = .data$ID)) +
+        ggplot2::geom_point(ggplot2::aes(x = .data$EXENDTC, y = .data$ID))
+    }
+
+    out <- out +
+      ggplot2::scale_y_discrete(name = "USUBJID", labels = NULL) +
+      ggplot2::scale_x_datetime(
+        name = "EXSTDTC - EXENDTC", date_labels = "%Y-%m-%d"
+      ) +
+      ggplot2::theme_bw()
+
+    if (legend == TRUE) {
+      out <- out +
+        ggplot2::theme(legend.position = "bottom")
+    } else {
+      out <- out +
+        ggplot2::theme(legend.position = "none")
+    }
+
+    out <- out +
+      ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", EX")) +
+      watermark()
+
+    return(out)
   }
 
   if (domain == "dm") {
-    return(
-      obj %>%
-        filter(!is.na(.data$RFSTDTC)) %>%
-        arrange(.data$RFSTDTC) %>%
-        mutate(ID = as.numeric(factor(.data$USUBJID,
-                                      unique(.data$USUBJID)))) %>%
-        ggplot2::ggplot() +
-        ggplot2::geom_segment(ggplot2::aes(
-          x = .data$RFSTDTC,
-          xend = .data$RFENDTC,
-          y = .data$ID,
-          yend = .data$ID
-        )) +
-        {
-          if (points == TRUE) {
-            ggplot2::geom_point(ggplot2::aes(
-              x = .data$RFSTDTC, y = .data$ID
-            ))
-          }
-        } +
-        {
-          if (points == TRUE) {
-            ggplot2::geom_point(ggplot2::aes(
-              x = .data$RFENDTC, y = .data$ID
-            ))
-          }
-        } +
-        ggplot2::scale_y_discrete(
-          labels = NULL, breaks = NULL, name = "USUBJID"
-        ) +
-        ggplot2::scale_x_datetime(
-          name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d"
-        ) +
-        ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
-            ggplot2::theme(legend.position = "bottom")
-          } else {
-            ggplot2::theme(legend.position = "none")
-          }
-        } +
-        ggplot2::ggtitle(
-          paste0("Study ", distinct(obj, .data$STUDYID), ", DM")
-        ) +
-        watermark()
-    )
+    out <- obj |>
+      filter(!is.na(.data$RFSTDTC)) |>
+      arrange(.data$RFSTDTC) |>
+      mutate(ID = as.numeric(factor(.data$USUBJID,
+                                    unique(.data$USUBJID)))) |>
+      ggplot2::ggplot() +
+      ggplot2::geom_segment(ggplot2::aes(
+        x = .data$RFSTDTC,
+        xend = .data$RFENDTC,
+        y = .data$ID,
+        yend = .data$ID
+      ))
+
+    if (points == TRUE)
+      out <- out +
+        ggplot2::geom_point(ggplot2::aes(x = .data$RFSTDTC, y = .data$ID))
+
+    if (points == TRUE)
+      out <- out +
+        ggplot2::geom_point(ggplot2::aes(x = .data$RFENDTC, y = .data$ID))
+
+    out <- out +
+      scale_y_discrete(labels = NULL, breaks = NULL, name = "USUBJID") +
+      scale_x_datetime(name = "RFSTDTC - RFENDTC", date_labels = "%Y-%m-%d") +
+      ggplot2::theme_bw()
+
+    if (legend == TRUE) {
+      out <- out +
+        ggplot2::theme(legend.position = "bottom")
+    } else {
+      out <- out +
+        ggplot2::theme(legend.position = "none")
+    }
+
+    out +
+      ggplot2::ggtitle(paste0("Study ", distinct(obj, .data$STUDYID), ", DM")) +
+      watermark()
   }
 
   if (domain == "lb") {
-    return(
-      obj %>%
-        filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
-        filter(if (!is.null(analyte)) .data$LBTESTCD %in% analyte else TRUE) %>%
-        mutate(ID = as.numeric(factor(.data$USUBJID,
-                                      unique(.data$USUBJID)))) %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = .data$LBDTC,
-          y = .data$ID,
-          group = interaction(.data$ID, .data$LBTESTCD),
-          color = .data$LBTESTCD
-        )) +
-        {
-          if (lines == TRUE) ggplot2::geom_line()
-        } +
-        {
-          if (points == TRUE) ggplot2::geom_point()
-        } +
-        ggplot2::scale_y_discrete(
-          labels = NULL, breaks = NULL, name = "USUBJID"
-        ) +
-        ggplot2::scale_x_datetime(
-          name = "LBDTC", date_labels = "%Y-%m-%d"
-        ) +
-        ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
-            ggplot2::theme(legend.position = "bottom")
-          } else {
-            ggplot2::theme(legend.position = "none")
-          }
-        } +
-        ggplot2::ggtitle(
-          paste0("Study ", distinct(obj, .data$STUDYID), ", LB")
-        ) +
-        watermark()
-    )
+    out <- obj |>
+      filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) |>
+      filter(if (!is.null(analyte)) .data$LBTESTCD %in% analyte else TRUE) |>
+      mutate(ID = as.numeric(factor(.data$USUBJID,
+                                    unique(.data$USUBJID)))) |>
+      ggplot2::ggplot(ggplot2::aes(
+        x = .data$LBDTC,
+        y = .data$ID,
+        group = interaction(.data$ID, .data$LBTESTCD),
+        color = .data$LBTESTCD
+      ))
+
+    if (lines == TRUE)
+      out <- out +
+        ggplot2::geom_line()
+
+    if (points == TRUE)
+      out <- out +
+        ggplot2::geom_point()
+
+    out <- out +
+      scale_y_discrete(labels = NULL, breaks = NULL, name = "USUBJID") +
+      ggplot2::scale_x_datetime(name = "LBDTC", date_labels = "%Y-%m-%d") +
+      ggplot2::theme_bw()
+
+    if (legend == TRUE) {
+      out <- out +
+        ggplot2::theme(legend.position = "bottom")
+    } else {
+      out <- out +
+        ggplot2::theme(legend.position = "none")
+    }
+
+    out <- out +
+      ggplot2::ggtitle(
+        paste0("Study ", distinct(obj, .data$STUDYID), ", LB")
+      ) +
+      watermark()
+
+    return(out)
   }
 
   if (domain == "vs") {
-    return(
-      obj %>%
-        filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) %>%
-        filter(if (!is.null(analyte)) VSTESTCD %in% analyte else TRUE) %>%
-        ggplot2::ggplot(ggplot2::aes(
-          x = .data$VSDTC,
-          y = .data$VSSTRESN,
-          group = interaction(.data$USUBJID, .data$VSTESTCD),
-          color = .data$VSTESTCD
-        )) +
-        {
-          if (lines == TRUE) ggplot2::geom_line()
-        } +
-        {
-          if (points == TRUE) ggplot2::geom_point()
-        } +
-        {
-          if (log == TRUE) ggplot2::scale_y_log10()
-        } +
-        ggplot2::theme_bw() +
-        {
-          if (legend == TRUE) {
-            ggplot2::theme(legend.position = "bottom")
-          } else {
-            ggplot2::theme(legend.position = "none")
-          }
-        } +
-        ggplot2::ggtitle(
-          paste0("Study ", distinct(obj, .data$STUDYID), ", PC")
-        ) +
-        watermark()
-    )
+    out <- obj |>
+      filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) |>
+      filter(if (!is.null(analyte)) VSTESTCD %in% analyte else TRUE) |>
+      ggplot2::ggplot(ggplot2::aes(
+        x = .data$VSDTC,
+        y = .data$VSSTRESN,
+        group = interaction(.data$USUBJID, .data$VSTESTCD),
+        color = .data$VSTESTCD
+      )) +
+      ggplot2::theme_bw()
+
+    if (lines == TRUE)
+      out <- out + ggplot2::geom_line()
+
+    if (points == TRUE)
+      out <- out + ggplot2::geom_point()
+
+    if (log == TRUE)
+      out <- out + ggplot2::scale_y_log10()
+
+    if (legend == TRUE) {
+      out <- out +
+        ggplot2::theme(legend.position = "bottom")
+    } else {
+      out <- out +
+        ggplot2::theme(legend.position = "none")
+    }
+
+    out <- out +
+      ggplot2::ggtitle(
+        paste0("Study ", distinct(obj, .data$STUDYID), ", PC")
+      ) +
+      watermark()
+
+    return(out)
   }
 
   if (!domain %in% c("pc", "dm", "lb", "vs", "ex")) {
     dtc_variable <- paste0(toupper(domain), "DTC")
-    obj %>%
-      group_by(.data$USUBJID) %>%
-      filter(sum(!is.na({{ dtc_variable }})) > 0) %>%
-      mutate(ID = cur_group_id()) %>%
+
+    out <- obj |>
+      group_by(.data$USUBJID) |>
+      filter(sum(!is.na({{ dtc_variable }})) > 0) |>
+      mutate(ID = cur_group_id()) |>
       mutate(
         min_time = min(.data[[dtc_variable]], na.rm = TRUE),
         max_time = max(.data[[dtc_variable]], na.rm = TRUE)
-      ) %>%
-      arrange(.data$ID) %>%
+      ) |>
+      arrange(.data$ID) |>
       ggplot2::ggplot(ggplot2::aes(
         x = .data[[dtc_variable]], y = .data$ID
-      )) +
-      {
-        if (points == TRUE) ggplot2::geom_point()
-      } +
+      ))
+
+    if (points == TRUE)
+      out <- out + ggplot2::geom_point()
+
+    out <- out +
       ggplot2::geom_segment(ggplot2::aes(
         x = .data$min_time, xend = .data$max_time,
         y = .data$ID, yend = .data$ID
@@ -509,19 +499,22 @@ plot.sdtm <- function(
       ggplot2::scale_x_datetime(
         name = dtc_variable, date_labels = "%Y-%m-%d"
       ) +
-      {
-        if (legend == TRUE) {
-          ggplot2::theme(legend.position = "bottom")
-        } else {
-          ggplot2::theme(legend.position = "none")
-        }
-      } +
-      ggplot2::theme_bw() +
+      ggplot2::theme_bw()
+
+    if (legend == TRUE) {
+      out <- out + ggplot2::theme(legend.position = "bottom")
+    } else {
+      out <- out + ggplot2::theme(legend.position = "none")
+    }
+
+    out <- out +
       ggplot2::ggtitle(paste0(
         "Study ", distinct(obj, .data$STUDYID), ", ",
         toupper(domain)
       )) +
       watermark()
+
+    out
   }
 }
 
@@ -604,7 +597,7 @@ ae_summary <- function(
   tryCatch(
     {
       filter_expr <- parse(text = ae_filter)
-      ae_filtered <- ae %>%
+      ae_filtered <- ae |>
         filter(eval(filter_expr))
     },
     error = function(e) {
@@ -613,17 +606,17 @@ ae_summary <- function(
   )
 
   # Calculate summary
-  ae_filtered %>%
-    group_by(across(all_of(grouping))) %>%
-    summarize(n = n(), n_subj = n_distinct(.data$USUBJID), .groups = "drop") %>%
-    {
-      if (order_by_subj) {
-        arrange(., desc(.data$n_subj))
-      } else {
-        arrange(., desc(.data$n))
-      }
-    } %>%
-    as.data.frame()
+  out <- ae_filtered |>
+    group_by(across(all_of(grouping))) |>
+    summarize(n = n(), n_subj = n_distinct(.data$USUBJID), .groups = "drop")
+
+  if (order_by_subj) {
+    out <- arrange(out, desc(.data$n_subj))
+  } else {
+    out <- arrange(out, desc(.data$n))
+  }
+
+  as.data.frame(out)
 }
 
 
@@ -639,16 +632,16 @@ disposition_summary <- function(sdtm_data) {
   dm <- domain(sdtm_data, "dm")
   if (is.null(dm)) stop("DM not found in SDTM data!")
 
-  dm %>%
+  dm |>
     assertr::verify(assertr::has_all_names(
       "USUBJID", "ACTARMCD", "RFSTDTC", "RFENDTC"
-    )) %>%
-    distinct(.data$USUBJID, .data$ACTARMCD, .data$RFSTDTC, .data$RFENDTC) %>%
+    )) |>
+    distinct(.data$USUBJID, .data$ACTARMCD, .data$RFSTDTC, .data$RFENDTC) |>
     mutate(ONGOING = case_when(
       .data$RFSTDTC != "" & .data$RFENDTC == "" ~ TRUE,
       .data$RFSTDTC != "" & .data$RFENDTC != "" ~ FALSE
-    )) %>%
-    select(-all_of(c("RFSTDTC", "RFENDTC"))) %>%
-    reframe(N = n(), .by = c("ACTARMCD", "ONGOING")) %>%
+    )) |>
+    select(-all_of(c("RFSTDTC", "RFENDTC"))) |>
+    reframe(N = n(), .by = c("ACTARMCD", "ONGOING")) |>
     arrange(.data$ACTARMCD, -.data$ONGOING)
 }
