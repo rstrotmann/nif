@@ -37,7 +37,7 @@ library(tidyverse)
 
 sdtm <- examplinib_sad
 
-nif <- new_nif() %>%
+nif <- nif() %>%
   add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023", analyte = "RS2023")
 

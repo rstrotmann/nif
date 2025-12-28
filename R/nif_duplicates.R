@@ -91,6 +91,7 @@ find_duplicates <- function(
 #' @return A data frame with duplicate rows resolved. The DV field contains the
 #'   average of duplicate values, and other fields are kept as-is if consistent
 #'   or set to NA if inconsistent within duplicate groups.
+#' @keywords internal
 resolve_duplicates <- function(
   df,
   fields = "TIME",

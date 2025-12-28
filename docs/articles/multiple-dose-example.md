@@ -86,7 +86,7 @@ a basic pharmacokinetic nif object from `examplinic_poc`:
 ``` r
 sdtm <- examplinib_poc
 
-nif_poc <- new_nif() %>%
+nif_poc <- nif() %>%
   add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3)

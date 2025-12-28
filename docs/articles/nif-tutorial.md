@@ -393,7 +393,7 @@ and merged into the data set as columns of those names:
 ``` r
 sdtm <- examplinib_fe
 
-nif <- new_nif() %>%
+nif <- nif() %>%
   add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023")
 ```
@@ -442,7 +442,7 @@ the ‘parent’ parameter:
 ``` r
 sdtm1 <- examplinib_sad
 
-nif1 <- new_nif() %>%
+nif1 <- nif() %>%
   add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023") %>%
   add_observation(sdtm, "pc", "RS2023487A", analyte = "M1", parent = "RS2023")
@@ -479,7 +479,7 @@ the SDTM data but can be included using the `keep` parameter in
 [`add_administration()`](../reference/add_administration.md):
 
 ``` r
-nif <- new_nif() %>%
+nif <- nif() %>%
   add_administration(
     examplinib_fe, "EXAMPLINIB",
     analyte = "RS2023", keep = "EPOCH"

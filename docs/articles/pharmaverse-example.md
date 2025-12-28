@@ -31,6 +31,11 @@ sdtm <- new_sdtm(
     ae  = pharmaversesdtm::ae
   )
 )
+#> Warning: `new_sdtm()` was deprecated in nif 0.61.1.
+#> ℹ Please use `sdtm()` instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 ```
 
 ``` r
@@ -82,7 +87,7 @@ plot(sdtm, domain = "dm", points = F)
 ``` r
 nif_option(silent = TRUE, debug = TRUE)
 
-nif <- new_nif() |> 
+nif <- nif() |> 
   add_administration(sdtm, 'XANOMELINE', analyte = "XAN") |> 
   add_administration(sdtm, 'PLACEBO') |> 
   add_observation(sdtm, 'pc', 'XAN', observation_filter = "PCSPEC == 'PLASMA'") |> 
@@ -91,6 +96,11 @@ nif <- new_nif() |>
   add_bl_renal() |> 
   add_cfb() |> 
   add_dose_level()
+#> Warning: `derive_cfb()` was deprecated in nif 0.61.1.
+#> ℹ Please use `derive_cfb()` instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 ```
 
 ``` r

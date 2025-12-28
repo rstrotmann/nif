@@ -5,14 +5,22 @@ nif class constructor
 ## Usage
 
 ``` r
-nif(...)
+nif(obj = NULL, ..., silent = NULL)
 ```
 
 ## Arguments
 
+- obj:
+
+  A data frame containing the actual NIF data or a sdtm object.
+
 - ...:
 
   Further arguments.
+
+- silent:
+
+  suppress messages.
 
 ## Value
 

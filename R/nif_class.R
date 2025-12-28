@@ -761,8 +761,6 @@ minimal_nif_fields <- c(
 
 
 #' Standard nif fields
-#'
-#' @return A character vector of the standard NIF fields
 standard_nif_fields <- c(
   "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "TAFD", "ANALYTE",
   "AMT", "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX",

@@ -1,6 +1,6 @@
 # nif class constructor
 
-nif class constructor
+**\[deprecated\]**
 
 ## Usage
 
@@ -20,7 +20,7 @@ new_nif(obj = NULL, ..., silent = NULL)
 
 - silent:
 
-  Suppress messages, as logical. Defaults to nif_option setting if NULL.
+  Suppress messages.
 
 ## Value
 

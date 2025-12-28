@@ -186,7 +186,7 @@ n_administrations(examplinib_poc_min_nif)
 #> 78 78      1 30
 #> 79 79      1 73
 #> 80 80      1 57
-n_administrations(new_nif())
+n_administrations(nif())
 #> ----- NONMEM Input Format (NIF) data -----
 #> 0 observations from 0 subjects  
 #> 0 compartments with observations:  

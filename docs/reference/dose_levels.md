@@ -55,6 +55,6 @@ dose_levels(examplinib_sad_min_nif)
 #> 7  500 18
 #> 8  800  6
 #> 9 1000  3
-dose_levels(new_nif())
+dose_levels(nif())
 #> NULL
 ```

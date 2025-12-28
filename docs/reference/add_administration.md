@@ -79,7 +79,7 @@ Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol.,
 ## Examples
 
 ``` r
-add_administration(new_nif(), examplinib_sad, "EXAMPLINIB")
+add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
 #> ℹ Analyte EXAMPLINIB not found in PCTESTCD
 #> Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be

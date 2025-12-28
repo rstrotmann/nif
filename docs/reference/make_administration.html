@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.61.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.61.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,7 +108,7 @@
     <h2 id="time-imputations-and-filtering">Time imputations and filtering<a class="anchor" aria-label="anchor" href="#time-imputations-and-filtering"></a></h2>
     <p>The following time imputations and filters are applied in the given
 order:</p><div class="section">
-<h3 id="-impute-exendtc-to-rfendtc-">1. <code>impute_exendtc_to_rfendtc()</code><a class="anchor" aria-label="anchor" href="#-impute-exendtc-to-rfendtc-"></a></h3>
+<h3 id="-nif-impute-exendtc-to-rfendtc-">1. nif::impute_exendtc_to_rfendtc()<a class="anchor" aria-label="anchor" href="#-nif-impute-exendtc-to-rfendtc-"></a></h3>
 
 
 <p>If EXENDTC is missing in the last administration episode for a given subject,
@@ -116,7 +116,7 @@ it is replaced with DM.RFENDTC, if available.</p>
 </div>
 
 <div class="section">
-<h3 id="-filter-exendtc-after-exstdtc-">2. <code>filter_EXENDTC_after_EXSTDTC()</code><a class="anchor" aria-label="anchor" href="#-filter-exendtc-after-exstdtc-"></a></h3>
+<h3 id="-nif-filter-exendtc-after-exstdtc-">2. nif::filter_EXENDTC_after_EXSTDTC()<a class="anchor" aria-label="anchor" href="#-nif-filter-exendtc-after-exstdtc-"></a></h3>
 
 
 <p>Administration episodes in which EXSTDTC is after EXENDT are deleted from the
@@ -124,7 +124,7 @@ data set.</p>
 </div>
 
 <div class="section">
-<h3 id="-impute-exendtc-to-cutoff-">3. <code>impute_exendtc_to_cutoff()</code><a class="anchor" aria-label="anchor" href="#-impute-exendtc-to-cutoff-"></a></h3>
+<h3 id="-nif-impute-exendtc-to-cutoff-">3. nif::impute_exendtc_to_cutoff()<a class="anchor" aria-label="anchor" href="#-nif-impute-exendtc-to-cutoff-"></a></h3>
 
 
 <p>If in the last administration episode per subject and treatment, EXENDTC is
@@ -133,7 +133,7 @@ the SDTM generation, EXENDTC is replaced with the cut-off date.</p>
 </div>
 
 <div class="section">
-<h3 id="-impute-missing-exendtc-">4. <code>impute_missing_exendtc()</code><a class="anchor" aria-label="anchor" href="#-impute-missing-exendtc-"></a></h3>
+<h3 id="-nif-impute-missing-exendtc-">4. nif::impute_missing_exendtc()<a class="anchor" aria-label="anchor" href="#-nif-impute-missing-exendtc-"></a></h3>
 
 
 <p>If in any further episode, EXENDTC is missing, it is replaced with the day
@@ -160,7 +160,7 @@ account to adequately handle multiple daily administrations.</p>
 </div>
 
 <div class="section">
-<h3 id="-impute-admin-times-from-pcrftdtc-">6. <code>impute_admin_times_from_pcrftdtc()</code><a class="anchor" aria-label="anchor" href="#-impute-admin-times-from-pcrftdtc-"></a></h3>
+<h3 id="-nif-impute-admin-times-from-pcrftdtc-">6. nif::impute_admin_times_from_pcrftdtc()<a class="anchor" aria-label="anchor" href="#-nif-impute-admin-times-from-pcrftdtc-"></a></h3>
 
 
 <p>For administration days for which PK sampling events are recorded in PC, the

@@ -10,9 +10,6 @@ An object of class \code{character} of length 34.
 \usage{
 standard_nif_fields
 }
-\value{
-A character vector of the standard NIF fields
-}
 \description{
 Standard nif fields
 }

@@ -22,6 +22,9 @@
 - [`add_bl_renal()`](add_bl_renal.md) : Add baseline renal function
   class
 
+- [`add_cfb()`](add_cfb.md) **\[deprecated\]** : Add baseline and change
+  from baseline fields
+
 - [`add_covariate()`](add_covariate.md) : Attach time-varying covariate
 
 - [`add_dd()`](add_dd.md) : Add Field definition to Data Definition
@@ -58,8 +61,6 @@
   parents
 
 - [`analytes()`](analytes.md) : Analytes within a NIF or SDTM object
-
-- [`cat_boxplot()`](cat_boxplot.md) : boxplot over categories
 
 - [`compartments()`](compartments.md) : Compartments used in a nif
   object
@@ -123,6 +124,33 @@
 - [`egfr_raynaud()`](egfr_raynaud.md) : Glomerular filtration rate
   estimation from serum creatinine (Raynaud method)
 
+- [`examplinib_fe`](examplinib_fe.md) : Synthetic SDTM data from a
+  fictional clinical food effect study for 'examplinib'.
+
+- [`examplinib_fe_nif`](examplinib_fe_nif.md) : Synthetic NIF data from
+  a fictional clinical food effect study for 'examplinib'.
+
+- [`examplinib_poc`](examplinib_poc.md) : Synthetic SDTM data from a
+  fictional clinical single-arm study with rich and sparse pk sampling.
+
+- [`examplinib_poc_min_nif`](examplinib_poc_min_nif.md) : Synthetic NIF
+  data from a fictional clinical single-arm study with rich and sparse
+  pk sampling. Reduced to the minimally required fields.
+
+- [`examplinib_poc_nif`](examplinib_poc_nif.md) : Synthetic NIF data
+  from a fictional clinical single-arm study with rich and sparse pk
+  sampling.
+
+- [`examplinib_sad`](examplinib_sad.md) : Synthetic SDTM data from a
+  fictional clinical SAD FIH study with rich PK sampling
+
+- [`examplinib_sad_min_nif`](examplinib_sad_min_nif.md) : Synthetic NIF
+  data from a fictional clinical SAD FIH study with rich PK sampling.
+  Reduced to the minimally required fields.
+
+- [`examplinib_sad_nif`](examplinib_sad_nif.md) : Synthetic NIF data
+  from a fictional clinical SAD FIH study with rich PK sampling
+
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID
   in the data set
 
@@ -152,9 +180,6 @@
 - [`lbm_hume()`](lbm_hume.md) : Lean body mass (Hume formula)
 
 - [`lbm_peters()`](lbm_peters.md) : Lean body mass (Peters formula)
-
-- [`legacy_add_cfb()`](legacy_add_cfb.md) **\[deprecated\]** : Add
-  baseline and change from baseline fields
 
 - [`limit()`](limit.md) : Subset nif to rows with DTC before the last
   individual or global observation
@@ -189,10 +214,10 @@
 - [`nca_summary_table()`](nca_summary_table.md) : PK parameter summary
   statistics table by dose
 
-- [`new_nif()`](new_nif.md) : nif class constructor
+- [`new_nif()`](new_nif.md) **\[deprecated\]** : nif class constructor
 
-- [`new_sdtm()`](new_sdtm.md) : SDTM class constructor, creating a sdtm
-  object from a set of SDTM domains
+- [`new_sdtm()`](new_sdtm.md) **\[deprecated\]** : SDTM class
+  constructor, creating a sdtm object from a set of SDTM domains
 
 - [`nif()`](nif.md) : nif class constructor
 
@@ -234,15 +259,16 @@
 
 - [`plot(`*`<sdtm>`*`)`](plot.sdtm.md) : Plot SDTM object
 
+- [`race_coding`](race_coding.md) : Race coding table
+
 - [`read_sdtm()`](read_sdtm.md) : Read SDTM data
 
 - [`recode_race()`](recode_race.md) : Recode RACE columns in nif object
 
-- [`resolve_duplicates()`](resolve_duplicates.md) : Resolve duplicate
-  rows by averaging DV and setting conflicting fields to NA
-
 - [`rich_sampling_sbs()`](rich_sampling_sbs.md) : Identify subjects with
   rich sampling
+
+- [`sdtm()`](sdtm.md) : SDTM class constructor
 
 - [`sdtm_missing_times()`](sdtm_missing_times.md) : Number of DTC
   entries with missing time information

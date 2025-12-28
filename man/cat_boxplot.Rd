@@ -21,3 +21,4 @@ A ggplot2 object.
 \description{
 boxplot over categories
 }
+\keyword{internal}

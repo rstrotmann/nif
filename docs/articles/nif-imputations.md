@@ -28,7 +28,7 @@ following way:
 library(dplyr)
 library(nif)
 
-my_nif <- new_nif() %>%
+my_nif <- nif() %>%
   add_administration(examplinib_sad, extrt = "EXAMPLINIB", analyte = "RS2023")
 ```
 

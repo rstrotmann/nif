@@ -12,14 +12,10 @@ edish_plot(
   sdtm,
   enzyme = "ALT",
   observation_filter = NULL,
+  baseline_filter = "LBBLFL == 'Y'",
   show_labels = FALSE,
-  autoscale = TRUE,
   shading = TRUE,
-  nominal_time = TRUE,
-  ntime_method = "DY",
-  time = NULL,
-  parent = NULL,
-  title = "eDISH plot: All time points",
+  title = "eDISH plot",
   size = 3,
   alpha = 0.5,
   silent = NULL,
@@ -46,35 +42,17 @@ edish_plot(
 
   A filter term as character.
 
+- baseline_filter:
+
+  A filter term to identify baseline conditions.
+
 - show_labels:
 
   Show ID labels per point.
 
-- autoscale:
-
-  Use automatic axis scaling, as logical. Defaults to 0.01-1000 for
-  ALT/AST and 0.01-100 for bili.
-
 - shading:
 
   Highlight Hy's law area, as logical.
-
-- nominal_time:
-
-  Use NTIME as logical.
-
-- ntime_method:
-
-  the field to derive the nominal time from. Allowed values are "TPT"
-  and "ELTM".Defaults to xxTPT where xx is the domain name, if NULL.
-
-- time:
-
-  time/nominal time filter as numeric.
-
-- parent:
-
-  The parent compound as character.
 
 - title:
 

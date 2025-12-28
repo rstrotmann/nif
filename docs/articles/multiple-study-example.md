@@ -14,7 +14,7 @@ library(nif)
 ```
 
 ``` r
-nif <- new_nif() %>%
+nif <- nif() %>%
   add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) %>%
   add_baseline(examplinib_sad, "lb", "CREAT") %>%

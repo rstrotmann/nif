@@ -1,11 +1,11 @@
-# SDTM class constructor, creating a sdtm object from a set of SDTM domains
+# SDTM class constructor
 
-**\[deprecated\]**
+SDTM class constructor
 
 ## Usage
 
 ``` r
-new_sdtm(sdtm_data)
+sdtm(sdtm_data)
 ```
 
 ## Arguments
