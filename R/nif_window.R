@@ -10,6 +10,7 @@
 #' (negative) time difference to the next administration is calculated!
 #'
 #' @param obj A nif object.
+#' @param silent Suppress messages.
 #'
 #' @returns A nif object with the 'TIME_DEV' field added
 #' @export
@@ -20,7 +21,7 @@
 #'   add_time_deviation() |>
 #'   head()
 #'
-add_time_deviation <- function(obj) {
+add_time_deviation <- function(obj, silent = NULL) {
   # input validation
   validate_nif(obj)
 
@@ -40,10 +41,21 @@ add_time_deviation <- function(obj) {
     filter(EVID == 0) |>
     reframe(n_obs = n(), n_missing_ntime = sum(is.na(NTIME)), .by = "ANALYTE")
 
+  n_missing <- sum(temp$n_missing_ntime)
+
+  if (n_missing > 0) {
+    conditional_cli({
+      cli_alert_info(paste0("Missing NTIME information in ", nrow(temp),
+                            " observations. Time deviations will be NA."))
+    },
+    silent = silent
+    )
+  }
+
   # calculate time deviation
   obj |>
     arrange(.data$USUBJID, .data$DTC, -.data$EVID) |>
-    group_by(.data$PARENT) |>
+    group_by(.data$PARENT, .data$USUBJID) |>
     # identify DTC of next administration
     mutate(next_admin = case_when(.data$EVID == 1 ~ .data$DTC)) |>
     tidyr::fill("next_admin", .direction = "up") |>
@@ -93,8 +105,9 @@ add_time_window_flag <- function(
 
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
-    conditional_message(
-      "No analyte specified, using ", analyte,
+
+    conditional_cli(
+      cli_alert_info(paste0("No analyte specified, using ", analyte)),
       silent = silent
     )
   }

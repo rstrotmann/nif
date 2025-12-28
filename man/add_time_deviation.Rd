@@ -4,10 +4,12 @@
 \alias{add_time_deviation}
 \title{Calculate time deviations for observations}
 \usage{
-add_time_deviation(obj)
+add_time_deviation(obj, silent = NULL)
 }
 \arguments{
 \item{obj}{A nif object.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 A nif object with the 'TIME_DEV' field added
@@ -24,8 +26,8 @@ If NTIME == 0, the data point is considered pre-dose, and instead of TAD, the
 \examples{
 library(dplyr)
 
-examplinib_poc_nif \%>\%
-  add_time_deviation() \%>\%
+examplinib_poc_nif |>
+  add_time_deviation() |>
   head()
 
 }
