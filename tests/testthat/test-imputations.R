@@ -1,4 +1,4 @@
-test_that("impute_admin_times_from_pcrftdtc works", {
+test_that("impute_admin_from_pcrftdtc works", {
   # Sample input data frames
   obj <- tribble(
     ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
@@ -29,7 +29,7 @@ test_that("impute_admin_times_from_pcrftdtc works", {
   ) %>% lubrify_dates()
 
   # Test for Drug A
-  result_a <- impute_admin_times_from_pcrftdtc(
+  result_a <- impute_admin_from_pcrftdtc(
     obj, pc, "Drug A", "DRUGACONC",
     silent = TRUE
   )
@@ -37,7 +37,7 @@ test_that("impute_admin_times_from_pcrftdtc works", {
 })
 
 
-test_that("impute_admin_times_from_pcrftdtc handles missing data", {
+test_that("impute_admin_from_pcrftdtc handles missing data", {
   # Sample input with missing reference times
   obj <- tribble(
     ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
@@ -59,7 +59,7 @@ test_that("impute_admin_times_from_pcrftdtc handles missing data", {
     "SUBJ-002", "Drug A", "2023-01-15", ""
   ) %>% lubrify_dates()
 
-  result <- impute_admin_times_from_pcrftdtc(
+  result <- impute_admin_from_pcrftdtc(
     obj, pc, "Drug A", "DRUGACONC",
     silent = TRUE
   )
@@ -67,7 +67,7 @@ test_that("impute_admin_times_from_pcrftdtc handles missing data", {
 })
 
 
-test_that("impute_admin_times_from_pcrftdtc handles date mismatches", {
+test_that("impute_admin_from_pcrftdtc handles date mismatches", {
   # Sample input with date mismatches
   obj <- tribble(
     ~USUBJID, ~ANALYTE, ~DTC, ~IMPUTATION,
@@ -88,7 +88,7 @@ test_that("impute_admin_times_from_pcrftdtc handles date mismatches", {
     "SUBJ-001", "Drug A", "2023-01-16", ""
   ) %>% lubrify_dates()
 
-  result <- impute_admin_times_from_pcrftdtc(
+  result <- impute_admin_from_pcrftdtc(
     obj, pc, "Drug A", "DRUGACONC",
     silent = TRUE
   )
@@ -96,7 +96,7 @@ test_that("impute_admin_times_from_pcrftdtc handles date mismatches", {
 })
 
 
-test_that("impute_admin_times_from_pcrftdtc preserves existing times", {
+test_that("impute_admin_from_pcrftdtc preserves existing times", {
   # Sample input with some existing times
   obj <- tribble(
     ~USUBJID,   ~ANALYTE, ~DTC,               ~IMPUTATION,
@@ -121,7 +121,7 @@ test_that("impute_admin_times_from_pcrftdtc preserves existing times", {
   ) %>% lubrify_dates()
 
   expect_message(
-    result <- impute_admin_times_from_pcrftdtc(
+    result <- impute_admin_from_pcrftdtc(
       obj, pc, "Drug A", "DRUGACONC",
       silent = FALSE
     )

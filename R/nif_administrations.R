@@ -189,7 +189,7 @@ expand_ex <- function(ex) {
 #' versions, the dosing frequency provided in `EXDOSFRQ` may be taken into
 #' account to adequately handle multiple daily administrations.
 #'
-#' ## 6. nif::impute_admin_times_from_pcrftdtc()
+#' ## 6. nif::impute_admin_from_pcrftdtc()
 #'
 #' For administration days for which PK sampling events are recorded in PC, the
 #' administration time is taken from PC.PCRFTDTC, if this field is available.
@@ -316,7 +316,7 @@ make_administration <- function(
     # time imputations
     impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
     impute_missing_exendtc(silent = silent) |>
-    filter_EXENDTC_after_EXSTDTC(dm, extrt, silent = silent) |>
+    filter_exendtc_after_exstdtc(dm, extrt, silent = silent) |>
     decompose_dtc("EXENDTC") |>
 
     # make generic fields
@@ -334,7 +334,7 @@ make_administration <- function(
 
     if ("PCRFTDTC" %in% names(pc)) {
       admin <- admin |>
-        impute_admin_times_from_pcrftdtc(pc, analyte, analyte, silent = silent)
+        impute_admin_from_pcrftdtc(pc, analyte, analyte, silent = silent)
     }
   }
 

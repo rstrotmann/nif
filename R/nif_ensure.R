@@ -311,7 +311,6 @@ ensure_time <- function(obj) {
 
 ensure_cfb <- function(obj) {
   if (!"DVCFB" %in% names(obj))
-    # derive_cfb(obj)
     derive_cfb(obj)
   else
     obj

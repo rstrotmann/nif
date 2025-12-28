@@ -1231,12 +1231,7 @@ edish_plot <- function(
   observation_filter = NULL,
   baseline_filter = "LBBLFL == 'Y'",
   show_labels = FALSE,
-  # autoscale = TRUE,
   shading = TRUE,
-  # nominal_time = TRUE,
-  # ntime_method = "DY",
-  # time = NULL,
-  # parent = NULL,
   title = "eDISH plot",
   size = 3,
   alpha = 0.5,
@@ -1296,7 +1291,6 @@ edish_plot <- function(
     )
     baseline_filter = "FALSE"
   }
-    # stop(paste0("Invalid baseline filter: ", baseline_filter))
 
   xuln <- lb |>
     filter(!is.na(.data$LBSTRESN)) |>

@@ -4,7 +4,7 @@
 \alias{egfr_raynaud}
 \title{Glomerular filtration rate estimation from serum creatinine (Raynaud method)}
 \usage{
-egfr_raynaud(crea, age, sex, race = "", weight = NA, molar = F)
+egfr_raynaud(crea, age, sex, race = "", weight = NA, molar = FALSE)
 }
 \arguments{
 \item{crea}{Serum creatinine in mg/dl or umol/l (if molar=TRUE).}
@@ -34,7 +34,8 @@ PMID: 37257905; PMCID: PMC10231444.
 }
 \details{
 \deqn{
- eGFR = e^{4.43 - 0.82 * ln(crea) - 0.012 * crea^2 - 0.006 * age + 0.18 * male}
+ eGFR = e^{4.43 - 0.82 * ln(crea) - 0.012 * crea^2 - 0.006 * age + 0.18 *
+ male}
 }
 }
 \seealso{

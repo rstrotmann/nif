@@ -88,7 +88,7 @@ versions, the dosing frequency provided in \code{EXDOSFRQ} may be taken into
 account to adequately handle multiple daily administrations.
 }
 
-\subsection{6. nif::impute_admin_times_from_pcrftdtc()}{
+\subsection{6. nif::impute_admin_from_pcrftdtc()}{
 
 For administration days for which PK sampling events are recorded in PC, the
 administration time is taken from PC.PCRFTDTC, if this field is available.

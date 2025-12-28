@@ -1,7 +1,8 @@
 #' Make analyte mapping table from formula object
 #'
-#' The formula object must be given as PCTESTCD ~ EXTRT or, if there are multiple
-#' analytes from the same treatment: PCTESTCD1 + PCTESTCD2 ~ EXTRT, etc.
+#' The formula object must be given as PCTESTCD ~ EXTRT or, if there are
+#' multiple analytes from the same treatment: PCTESTCD1 + PCTESTCD2 ~ EXTRT,
+#' etc.
 #'
 #' The return object is a data frame with one line for each analyte. The ANALYTE
 #' field is the PCTESTCD for the respective analyte.
@@ -52,16 +53,14 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
     )
   }
 
-  testcd <- testcd(sdtm) %>%
+  testcd <- testcd(sdtm) |>
     filter(.data$TESTCD %in% temp)
 
-  out <- testcd %>%
-    mutate(PARAM = paste0(.data$DOMAIN, "TESTCD")) %>%
-    mutate(EXTRT = extrt) %>%
-    mutate(ANALYTE = .data$TESTCD) %>%
+  testcd |>
+    mutate(PARAM = paste0(.data$DOMAIN, "TESTCD")) |>
+    mutate(EXTRT = extrt) |>
+    mutate(ANALYTE = .data$TESTCD) |>
     mutate(PARENT = parent)
-
-  return(out)
 }
 
 
@@ -142,7 +141,8 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
   }
 
   # make analyte list from mapping
-  for (i in 1:length(mapping)) {
+  # for (i in 1:length(mapping)) {
+  for (i in seq_along(mapping)) {
     f <- mapping[[i]]
     if (rlang::is_formula(f)) {
       ex_pc_mapping <- bind_rows(
@@ -152,9 +152,9 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
   }
 
   # Check for duplicate mappings
-  duplicates <- ex_pc_mapping %>%
-    group_by(.data$EXTRT, .data$TESTCD) %>%
-    filter(n() > 1) %>%
+  duplicates <- ex_pc_mapping |>
+    group_by(.data$EXTRT, .data$TESTCD) |>
+    filter(n() > 1) |>
     distinct(.data$EXTRT, .data$TESTCD)
 
   if (nrow(duplicates) > 0) {
@@ -166,13 +166,10 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
     )
   }
 
-  out <- ex_pc_mapping %>%
-    group_by(.data$EXTRT) %>%
-    # mutate(PARENT = .data$ANALYTE[row_number() == 1]) %>%
-    mutate(METABOLITE = row_number() != 1) %>%
+  ex_pc_mapping |>
+    group_by(.data$EXTRT) |>
+    mutate(METABOLITE = row_number() != 1) |>
     ungroup()
-
-  return(out)
 }
 
 
@@ -230,7 +227,8 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
 #' nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
 #' nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
 nif_auto <- function(
-  sdtm, ...,
+  sdtm,
+  ...,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
   baseline_filter = NULL,
@@ -266,13 +264,13 @@ nif_auto <- function(
   out <- nif()
 
   # treatments
-  treatments <- analyte_mapping %>%
-    filter(METABOLITE == FALSE) %>%
+  treatments <- analyte_mapping |>
+    filter(METABOLITE == FALSE) |>
     distinct(EXTRT, ANALYTE)
 
-  for (i in 1:nrow(treatments)) {
+  for (i in seq_len(nrow(treatments))) {
     t <- treatments[i, ]
-    out <- out %>%
+    out <- out |>
       add_administration(
         sdtm,
         extrt = t$EXTRT,
@@ -283,7 +281,7 @@ nif_auto <- function(
   }
 
   # observations
-  for (i in 1:nrow(analyte_mapping)) {
+  for (i in seq_len(nrow(analyte_mapping))) {
     o <- analyte_mapping[i, ]
     out <- add_observation(
       out,
@@ -328,12 +326,12 @@ nif_auto <- function(
       # baseline renal function
       if ("CREAT" %in% unique(lb$LBTESTCD)) {
         conditional_message("Adding baseline CREAT", silent = silent)
-        out <- add_baseline(
-          out, sdtm, "lb", "CREAT",
+        out <- add_baseline(out, sdtm, "lb", "CREAT",
           baseline_filter = baseline_filter
         )
-
-        if (all(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out))) {
+        if (all(
+          c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out)
+        )) {
           out <- add_bl_crcl(out)
           out <- add_bl_renal(out)
           conditional_message(
@@ -354,5 +352,5 @@ nif_auto <- function(
     }
   }
 
-  return(out)
+  out
 }

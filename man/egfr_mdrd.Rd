@@ -4,7 +4,7 @@
 \alias{egfr_mdrd}
 \title{Glomerular filtration rate estimation from serum creatinine (MDRD)}
 \usage{
-egfr_mdrd(crea, age, sex, race = "", weight = NA, molar = F)
+egfr_mdrd(crea, age, sex, race = "", weight = NA, molar = FALSE)
 }
 \arguments{
 \item{crea}{Serum creatinine in mg/dl.}
@@ -27,7 +27,7 @@ Estimated GFR in ml/min/1.73 m^2.
 }
 \description{
 Source:
-\href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
+\href{https://doi.org/10.7326/0003-4819-130-6-199903160-00002}{doi: 10.7326/0003-4819-150-9-200905050-00006 }
 }
 \details{
 \deqn{

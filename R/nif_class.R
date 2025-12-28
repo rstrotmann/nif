@@ -111,6 +111,7 @@ order_nif_columns <- function(obj) {
 print.nif <- function(x, color = FALSE, ...) {
   debug <- rlang::is_true(nif_option_value("debug"))
 
+  # print as normal data frame if minimal fields not present
   if (debug == TRUE || !all(minimal_nif_fields %in% names(x))) {
     print(as.data.frame(x))
   } else {
@@ -557,7 +558,6 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
 
   temp <- obj |>
     ensure_analyte() |>
-    # filter(.data$AMT != 0) |>
     filter(.data$EVID == 1) |>
     group_by(.data$ID, .data$ANALYTE, across(any_of(group))) |>
     arrange(.data$ID, .data$TIME)
@@ -754,13 +754,14 @@ head.nif <- function(x, ...) {
 #' @return A character vector of the minimal NIF fields
 #' @noRd
 minimal_nif_fields <- c(
-  "ID", "TIME", "AMT", "CMT", "EVID",
-  # "DOSE",
-  "DV"
+  "ID", "TIME", "AMT", "CMT", "EVID", "DV"
 )
 
 
 #' Standard nif fields
+#'
+#' @return A character vector of the standard NIF fields
+#' @noRd
 standard_nif_fields <- c(
   "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "TAFD", "ANALYTE",
   "AMT", "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX",
@@ -769,6 +770,10 @@ standard_nif_fields <- c(
 )
 
 
+#' Fillable nif fields
+#'
+#' @return A character vector of the fillable NIF fields
+#' @noRd
 fillable_nif_fields <- unique(c(
   "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
   "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED",

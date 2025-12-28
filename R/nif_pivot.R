@@ -39,10 +39,6 @@ correlate_obs <- function(
   # validate input
   validate_nif(obj)
 
-  # if(!"REF" %in% names(obj)) {
-  #   stop("Input must contain the 'REF' field!")
-  # }
-
   if (!"REF" %in% names(obj)) {
     obj <- index_nif(obj)
   }
@@ -70,11 +66,11 @@ correlate_obs <- function(
   }
 
   # get observations
-  obs <- obj %>%
-    ensure_analyte() %>%
-    as.data.frame() %>%
-    filter(EVID == 0) %>%
-    filter(ANALYTE %in% c(indep_analyte, dep_analyte)) %>%
+  obs <- obj |>
+    ensure_analyte() |>
+    as.data.frame() |>
+    filter(EVID == 0) |>
+    filter(ANALYTE %in% c(indep_analyte, dep_analyte)) |>
     filter(!is.nan(DV) & !is.na(DV))
 
   x <- filter(obs, ANALYTE == indep_analyte)
@@ -99,11 +95,12 @@ correlate_obs <- function(
 
     y_ref <- target[time_matches, "REF"]
     if (length(y_ref) == 0) y_ref <- NA
-    return(y_ref)
+
+    y_ref
   }
 
   correlate_line <- function(x_ref) {
-    indep <- filter(x, REF == x_ref) %>%
+    indep <- filter(x, REF == x_ref) |>
       mutate(!!indep_analyte := DV)
     y_ref <- time_match(x_ref)
 
@@ -114,26 +111,24 @@ correlate_obs <- function(
 
     match <- filter(y, REF %in% y_ref)
 
-    temp <- match %>%
+    temp <- match |>
       reframe(
         DV = duplicate_function(DV),
         TIME = duplicate_function(TIME), .by = ANALYTE
       )
-    dep <- temp %>%
+    dep <- temp |>
       pivot_longer(
         cols = c("DV", "TIME"),
         names_to = "param", values_to = "value"
-      ) %>%
+      ) |>
       mutate(param = case_match(
         .data$param, "DV" ~ ANALYTE,
         .default = paste(ANALYTE, .data$param, sep = "_")
-      )) %>%
-      select(-ANALYTE) %>%
+      )) |>
+      select(-ANALYTE) |>
       pivot_wider(names_from = "param", values_from = "value")
-    out <- bind_cols(indep, dep)
-    return(out)
+    bind_cols(indep, dep)
   }
 
-  temp <- bind_rows(lapply(x$REF, function(x) correlate_line(x)))
-  return(temp)
+  bind_rows(lapply(x$REF, function(x) correlate_line(x)))
 }

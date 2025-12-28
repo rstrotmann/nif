@@ -6,7 +6,8 @@
 #' @param height Height in centimeters. Can be a single value or a vector.
 #' @param weight Weight in kilograms. Can be a single value or a vector.
 #'
-#' @return A numeric vector containing the calculated BMI values. NA values are returned for:
+#' @return A numeric vector containing the calculated BMI values. NA values are
+#'   returned for:
 #'   - Missing (NA) height or weight values
 #'   - Height or weight less than or equal to zero
 #'   - Length mismatch between height and weight vectors
@@ -16,7 +17,7 @@
 calculate_bmi <- function(height, weight) {
   # Input validation
   if (!(is.numeric(height) || is.na(height)) ||
-    !(is.numeric(weight) || is.na(weight))) {
+        !(is.numeric(weight) || is.na(weight))) {
     stop("Height and weight must be numeric values")
   }
 
@@ -47,7 +48,8 @@ calculate_bmi <- function(height, weight) {
 #' PMID: 37257905; PMCID: PMC10231444.
 #'
 #' \deqn{
-#'  eGFR = e^{4.43 - 0.82 * ln(crea) - 0.012 * crea^2 - 0.006 * age + 0.18 * male}
+#'  eGFR = e^{4.43 - 0.82 * ln(crea) - 0.012 * crea^2 - 0.006 * age + 0.18 *
+#'  male}
 #' }
 #'
 #' @param crea Serum creatinine in mg/dl or umol/l (if molar=TRUE).
@@ -64,15 +66,17 @@ calculate_bmi <- function(height, weight) {
 #'
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
-egfr_raynaud <- function(crea, age, sex, race = "", weight = NA, molar = F) {
-  if (molar) {
+egfr_raynaud <- function(crea, age, sex, race = "", weight = NA,
+                         molar = FALSE) {
+  if (molar)
     crea <- crea / 88.4
-  }
+
   male <- ifelse((sex == 0) | (sex == "M"), 1, 0)
   egfr <- exp(4.4275492 - 0.8230475 * log(crea) - 0.0124264 * crea**2 -
-    0.0055068 * age + 0.1806494 * male)
+                0.0055068 * age + 0.1806494 * male)
   base::attr(egfr, "unit") <- "ml/min/1.73 m^2"
-  return(egfr)
+
+  egfr
 }
 
 
@@ -97,30 +101,23 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' @export
 crea_raynaud <- function(egfr, age, sex, race = "") {
   male <- ifelse((sex == 0) | (sex == "M"), 1, 0)
-  A <- 4.4275492 - 0.0055068 * age + 0.1806494 * male
-  B <- 0.8230475
-  C <- 0.0124264
+  a <- 4.4275492 - 0.0055068 * age + 0.1806494 * male
+  b <- 0.8230475
+  c <- 0.0124264
 
-  z <- 2 * exp(2 * A / B) * C * egfr^(-2 / B) / B
-  # if(z < -1/exp(1)) {
-  #   stop("z is < -1/e")
-  # }
-
-  # if(z < 0) {
-  #   W <- pracma::lambertWn(z)
-  # } else {
-  W <- pracma::lambertWp(z)
-  # }
-  crea <- 0.707107 * sqrt(B) * sqrt(W) / sqrt(C)
+  z <- 2 * exp(2 * a / b) * c * egfr^(-2 / b) / b
+  w <- pracma::lambertWp(z)
+  crea <- 0.707107 * sqrt(b) * sqrt(w) / sqrt(c)
   base::attr(crea, "unit") <- "mg/dl"
-  return(crea)
+  crea
 }
 
 
 #' Glomerular filtration rate estimation from serum creatinine (MDRD)
 #'
 #' Source:
-#' [National Kidney Foundation](https://www.kidney.org/content/mdrd-study-equation)
+#' [doi: 10.7326/0003-4819-150-9-200905050-00006
+#' ](https://doi.org/10.7326/0003-4819-130-6-199903160-00002)
 #'
 #' \deqn{
 #'  eGFR = 175 * crea^{1.154} * age^{0.203} * 0.742 (female) * 1.212 (black)
@@ -139,7 +136,7 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
 #' @seealso [nif::egfr_cg()]
 #' @return Estimated GFR in ml/min/1.73 m^2.
 #' @export
-egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
+egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
   if (molar) {
     crea <- crea / 88.4
   }
@@ -148,14 +145,15 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 
   egfr <- 175 * crea^-1.154 * age^-0.203 * female_factor * race_factor
   base::attr(egfr, "unit") <- "ml/min/1.73 m^2"
-  return(egfr)
+  egfr
 }
 
 
 #' Serum creatinine estimation from eGFR (MDRD)
 #'
 #' Inverse of the function published in
-#' \href{https://www.kidney.org/content/mdrd-study-equation}{National Kidney Foundation}
+#' [doi: 10.7326/0003-4819-150-9-200905050-00006
+#' ](https://doi.org/10.7326/0003-4819-130-6-199903160-00002)
 #'
 #' To convert crea from mg/dl to umol/l, multiply by 88.4.
 #'
@@ -174,7 +172,7 @@ crea_mdrd <- function(egfr, age, sex, race = "") {
 
   crea <- (egfr / (175 * age^-0.203 * female_factor * race_factor))^(1 / -1.154)
   base::attr(crea, "unit") <- "mg/dl"
-  return(crea)
+  crea
 }
 
 
@@ -197,7 +195,7 @@ crea_mdrd <- function(egfr, age, sex, race = "") {
 #' @seealso [nif::egfr_raynaud]
 #' @seealso [nif::egfr_mdrd()]
 #' @export
-egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
+egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
   if (molar) {
     crea <- crea / 88.4
   }
@@ -205,19 +203,8 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 
   egfr <- (140 - age) * weight * female_factor / 72 / crea
   base::attr(egfr, "unit") <- "ml/min"
-  return(egfr)
+  egfr
 }
-
-
-# egfr_ckd_epi <- function(crea, age, sex, race="", weight=NA, molar=F) {
-#   black <- ifelse(grepl("black", str_to_lower(race)), T, F)
-#   female <- ifelse((sex=1) | (sex=="F"), T, F)
-#   age_factor <- 0.993^age
-#
-#   if(male & !black) {
-#
-#   }
-# }
 
 
 #' Validate inputs to lbm functions
@@ -230,23 +217,21 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = F) {
 #' @noRd
 validate_lbw_parameters <- function(weight, height, sex) {
   if (!(is.numeric(height) || is.na(height)) ||
-    !(is.numeric(weight) || is.na(weight))) {
+        !(is.numeric(weight) || is.na(weight))) {
     stop("Height and weight must be numeric values")
   }
 
   if (length(height) != length(weight) ||
-    length(height) != length(sex)) {
+        length(height) != length(sex)) {
     stop("Height and weight vectors must have the same length")
   }
 
-  valid_inputs <- !is.na(height) &
+  !is.na(height) &
     !is.na(weight) &
     !is.na(sex) &
     height > 0 &
     weight > 0 &
     sex %in% c(0, 1, "M", "F", "m", "f")
-
-  return(valid_inputs)
 }
 
 
@@ -284,9 +269,6 @@ is_male <- function(sex) {
 lbm_boer <- function(weight, height, sex) {
   # Input validation
   valid_inputs <- validate_lbw_parameters(weight, height, sex)
-
-  # Convert sex to standard format (0 for male, 1 for female)
-  # is_male <- ((sex == 0) | (toupper(sex) == "M")) & !is.na(sex)
 
   result <- rep(NA_real_, length(height))
 
@@ -359,9 +341,8 @@ lbm_peters <- function(weight, height, sex) {
 
   3.8 * (0.0215 * weight^0.6469 * height^0.7236)
 
-  result[valid_inputs] <-
-    3.8 * (0.0215 * weight[valid_inputs]^0.6469 *
-      height[valid_inputs]^0.7236)
+  result[valid_inputs] <- 3.8 * (0.0215 * weight[valid_inputs]^0.6469 *
+                                   height[valid_inputs]^0.7236)
 
   result
 }

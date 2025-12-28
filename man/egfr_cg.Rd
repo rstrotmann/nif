@@ -4,7 +4,7 @@
 \alias{egfr_cg}
 \title{Glomerular filtration rate estimation from serum creatinine (Cockcroft-Gault)}
 \usage{
-egfr_cg(crea, age, sex, race = "", weight = NA, molar = F)
+egfr_cg(crea, age, sex, race = "", weight = NA, molar = FALSE)
 }
 \arguments{
 \item{crea}{Serum creatinine in mg/dl.}
