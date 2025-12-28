@@ -16,8 +16,8 @@
 #' @examples
 #' library(dplyr)
 #'
-#' examplinib_poc_nif %>%
-#'   add_time_deviation() %>%
+#' examplinib_poc_nif |>
+#'   add_time_deviation() |>
 #'   head()
 #'
 add_time_deviation <- function(obj) {
@@ -35,21 +35,21 @@ add_time_deviation <- function(obj) {
   }
 
   # identify observations without NTIME
-  temp <- obj %>%
-    as.data.frame() %>%
-    filter(EVID == 0) %>%
+  temp <- obj |>
+    as.data.frame() |>
+    filter(EVID == 0) |>
     reframe(n_obs = n(), n_missing_ntime = sum(is.na(NTIME)), .by = "ANALYTE")
 
   # calculate time deviation
-  out <- obj %>%
-    arrange(.data$USUBJID, .data$DTC, -.data$EVID) %>%
-    group_by(.data$PARENT) %>%
+  obj |>
+    arrange(.data$USUBJID, .data$DTC, -.data$EVID) |>
+    group_by(.data$PARENT) |>
     # identify DTC of next administration
-    mutate(next_admin = case_when(.data$EVID == 1 ~ .data$DTC)) %>%
-    tidyr::fill("next_admin", .direction = "up") %>%
+    mutate(next_admin = case_when(.data$EVID == 1 ~ .data$DTC)) |>
+    tidyr::fill("next_admin", .direction = "up") |>
     # calculate time to next dose
-    mutate(TTND = as.numeric(.data$DTC - .data$next_admin, units = "hours")) %>%
-    ungroup() %>%
+    mutate(TTND = as.numeric(.data$DTC - .data$next_admin, units = "hours")) |>
+    ungroup() |>
     # calculate time difference
     mutate(TIME_DEV = round(
       case_when(
@@ -57,11 +57,9 @@ add_time_deviation <- function(obj) {
         .default = .data$TAD - .data$NTIME
       ),
       3
-    )) %>%
-    select(-c("TTND", "next_admin")) %>%
+    )) |>
+    select(-c("TTND", "next_admin")) |>
     nif()
-
-  return(out)
 }
 
 
@@ -130,32 +128,32 @@ add_time_window_flag <- function(
   }
 
   # rename columns to avoid any name collisions, delete any other columns
-  temp <- window %>%
+  temp <- window |>
     select(NTIME, .BEFORE = .data$BEFORE, .AFTER = .data$AFTER)
 
   # ensure that window is in hours
   if (use_minutes == TRUE) {
-    temp <- temp %>%
+    temp <- temp |>
       mutate(across(c(".BEFORE", ".AFTER"), ~ .x / 60))
   }
 
   # flag time window violations
-  out <- obj %>%
-    add_time_deviation() %>%
-    left_join(temp, by = "NTIME") %>%
+  obj |>
+    add_time_deviation() |>
+    left_join(temp, by = "NTIME") |>
     mutate(EXCL = case_when(
       # .data$ANALYTE == analyte &
-      (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ TRUE,
+      (.data$TIME_DEV < -1 * .data$.BEFORE |
+         .data$TIME_DEV > .data$.AFTER) ~ TRUE,
       .default = .data$EXCL
-    )) %>%
+    )) |>
     mutate(EXCL_REASON = case_when(
       # .data$ANALYTE == analyte &
-      (.data$TIME_DEV < -1 * .data$.BEFORE | .data$TIME_DEV > .data$.AFTER) ~ "time window violation",
+      (.data$TIME_DEV < -1 * .data$.BEFORE |
+         .data$TIME_DEV > .data$.AFTER) ~ "time window violation",
       .default = .data$EXCL_REASON
-    )) %>%
+    )) |>
     select(-c(".BEFORE", ".AFTER"))
-
-  return(out)
 }
 
 ## to do

@@ -21,7 +21,8 @@ read_sdtm <- function(data_path,
                       format = "sas", delim = ",", ...) {
   # validate input
   validate_char_param(data_path, "data_path")
-  validate_char_param(domain, "domain", allow_null = TRUE, allow_multiple = TRUE)
+  validate_char_param(domain, "domain", allow_null = TRUE,
+                      allow_multiple = TRUE)
   validate_char_param(format, "format")
 
   # Validate data_path
@@ -32,13 +33,9 @@ read_sdtm <- function(data_path,
   # Validate format
   valid_formats <- c("sas", "xpt", "csv", "xlsx")
   if (!format %in% valid_formats) {
-    stop("format must be one of: ", paste(valid_formats, collapse = ", "), call. = FALSE)
+    stop("format must be one of: ", paste(valid_formats, collapse = ", "),
+         call. = FALSE)
   }
-
-  # Validate domain
-  # if (!is.character(domain) || length(domain) == 0) {
-  #   stop("domain must be a non-empty character vector", call. = FALSE)
-  # }
 
   # Get file extension based on format
   file_ext <- switch(format,
