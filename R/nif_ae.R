@@ -5,7 +5,8 @@
 #' variable if the field AETOXGR is included. If AETOXGR is not included in the
 #' AE domain, a coding table must be provided to translate any other field into
 #' a numeric DV column, e.g.,
-#' `coding_table = data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)`
+#' `coding_table = data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"),
+#' DV = c(1, 2, 3)`
 #'
 #' @param sdtm A sdtm object.
 #' @param ae_term The AE term as character.
@@ -25,13 +26,12 @@
 #' @param cmt The compartment as numeric.
 #' @param subject_filter A subject filter term.
 #' @param observation_filter An observation filter term.
-#' @param coding_table A DV coding table as data frame. The coding table translates
-#' columns included in the AE domain into a DV field.
+#' @param coding_table A DV coding table as data frame. The coding table
+#'   translates columns included in the AE domain into a DV field.
 #' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
 #' @keywords internal
-#' @export
 make_ae <- function(
   sdtm,
   ae_term,
@@ -49,13 +49,6 @@ make_ae <- function(
     stop("sdtm must be an sdtm object")
   }
 
-  # Validate ae_term parameter
-  # if (!is.character(ae_term) || length(ae_term) != 1) {
-  #   stop("ae_term must be a single character string")
-  # }
-  # if (is.na(ae_term) || nchar(trimws(ae_term)) == 0) {
-  #   stop("ae_term cannot be NA or empty")
-  # }
   validate_char_param(ae_term, "ae_term")
   validate_char_param(ae_field, "ae_field")
   validate_char_param(analyte, "analyte", allow_null = TRUE)
@@ -82,16 +75,15 @@ make_ae <- function(
     keep = keep
   )
 
-  obj <- domain(sdtm, "ae") %>%
-    mutate(SRC_DOMAIN = "AE") %>%
-    {
-      if ("AESEQ" %in% names(.)) {
-        mutate(., SRC_SEQ = .data[["AESEQ"]])
-      } else {
-        mutate(., SRC_SEQ = NA)
-      }
-    } %>%
+  obj <- domain(sdtm, "ae") |>
+    mutate(SRC_DOMAIN = "AE") |>
     lubrify_dates()
+
+  if ("AESEQ" %in% names(obj)) {
+    obj <-  mutate(obj, SRC_SEQ = .data[["AESEQ"]])
+  } else {
+    obj <- mutate(obj, SRC_SEQ = NA)
+  }
 
   # Validate coding table
   if (!is.null(coding_table)) {
@@ -113,13 +105,13 @@ make_ae <- function(
     if (!is.numeric(coding_table$DV)) {
       stop("DV in the coding table must be numeric!")
     }
-    obj <- obj %>%
+    obj <- obj |>
       left_join(coding_table, by = temp)
   } else {
     if (!"AETOXGR" %in% names(obj)) {
       stop("AETOXGR not found in AE. Use a coding table!")
     }
-    obj <- obj %>%
+    obj <- obj |>
       mutate(DV = as.numeric(.data$AETOXGR))
   }
 
@@ -145,15 +137,14 @@ make_ae <- function(
   }
 
 
-  obj %>%
-    filter(eval(parse(text = observation_filter))) %>%
-    filter(.data[[ae_field]] == ae_term) %>%
+  obj |>
+    filter(eval(parse(text = observation_filter))) |>
+    filter(.data[[ae_field]] == ae_term) |>
     mutate(
       DTC = .data[["AESTDTC"]],
-    ) %>%
-    select(any_of(c("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN", keep))) %>%
+    ) |>
+    select(any_of(c("USUBJID", "DTC", "DV", "SRC_SEQ", "SRC_DOMAIN", keep))) |>
     mutate(
-      # ANALYTE = paste0("AE_", gsub(" ", "_", ae_term)),
       ANALYTE = analyte,
       TIME = NA,
       CMT = cmt,
@@ -164,14 +155,14 @@ make_ae <- function(
       EVID = 0,
       MDV = 0,
       IMPUTATION = ""
-    ) %>%
-    inner_join(sbs, by = "USUBJID") %>%
-    group_by(.data$USUBJID) %>%
+    ) |>
+    inner_join(sbs, by = "USUBJID") |>
+    group_by(.data$USUBJID) |>
     mutate(TRTDY = as.numeric(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
       units = "days"
-    ) + 1) %>%
-    ungroup() %>%
+    ) + 1) |>
+    ungroup() |>
     nif()
 }
 
@@ -183,7 +174,8 @@ make_ae <- function(
 #' variable if the field AETOXGR is included. If AETOXGR is not included in the
 #' AE domain, a coding table must be provided to translate any other field into
 #' a numeric DV column, e.g.,
-#' `coding_table = data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)`
+#' `coding_table = data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"),
+#' DV = c(1, 2, 3)`
 #'
 #'
 #' @description
@@ -240,13 +232,13 @@ add_ae_observation <- function(
   ae <- make_ae(
     sdtm, ae_term, ae_field, analyte, parent, cmt, subject_filter,
     observation_filter, coding_table, keep
-  ) %>%
+  ) |>
     filter(.data$USUBJID %in% subjects(nif)$USUBJID)
 
   bind_rows(
     nif, ae
-  ) %>%
-    arrange(.data$USUBJID, .data$DTC) %>%
-    mutate(ID = as.numeric(as.factor(.data$USUBJID))) %>%
+  ) |>
+    arrange(.data$USUBJID, .data$DTC) |>
+    mutate(ID = as.numeric(as.factor(.data$USUBJID))) |>
     normalize_nif(keep = keep)
 }

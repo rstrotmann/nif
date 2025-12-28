@@ -100,3 +100,4 @@ test_that("write_nif preserves column order", {
 
   unlink(temp_file)
 })
+

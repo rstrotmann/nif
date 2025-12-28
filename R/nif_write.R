@@ -69,19 +69,20 @@ write_nonmem <- function(
   numeric_fields_only = FALSE,
   dot_columns = NULL
 ) {
-  temp <- obj %>%
-    as.data.frame() %>%
-    {
-      if (isTRUE(numeric_fields_only)) select(., where(is.numeric)) else .
-    } %>%
-    mutate_if(is.numeric, round, digits = 4) %>%
-    mutate_all(as.character()) %>%
+  temp <- as.data.frame(obj)
+
+  if (isTRUE(numeric_fields_only))
+    temp <- select(temp, where(is.numeric))
+
+  temp <- temp |>
+    mutate_if(is.numeric, round, digits = 4) |>
+    mutate_all(as.character()) |>
     mutate_all(function(x) {
       case_when(
         is.na(x) ~ ".",
         .default = as.character(x)
       )
-    }) %>%
+    }) |>
     mutate(across(.cols = all_of(dot_columns), .fns = function(x) {
       case_when(
         x == 0 ~ ".",
@@ -130,24 +131,23 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
     fields <- names(obj)
   }
 
-  temp <- obj %>%
-    as.data.frame() %>%
-    # mutate(across(any_of(num_fields), signif, 4)) %>%
-    mutate(across(any_of(num_fields), \(x) signif(x, 4))) %>%
-    mutate(ADM = case_when(.data$AMT != 0 ~ "1", .default = ".")) %>%
+  temp <- obj |>
+    as.data.frame() |>
+    mutate(across(any_of(num_fields), \(x) signif(x, 4))) |>
+    mutate(ADM = case_when(.data$AMT != 0 ~ "1", .default = ".")) |>
     mutate(YTYPE = case_when(.data$ADM == "1" ~ ".",
       .default = as.character(CMT - 1)
     ))
 
   if ("METABOLITE" %in% names(obj)) {
-    temp <- temp %>%
+    temp <- temp |>
       mutate(METABOLITE = case_when(
         is.na(.data$METABOLITE) ~ FALSE,
         .default = .data$METABOLITE
       ))
   }
 
-  temp <- temp %>%
+  temp <- temp |>
     mutate(across(
       any_of(num_fields),
       function(x) {
@@ -156,8 +156,8 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
           .default = as.character(x)
         )
       }
-    )) %>%
-    mutate_all(as.character) %>%
+    )) |>
+    mutate_all(as.character) |>
     mutate(Y = .data$DV)
 
   if (is.null(filename)) {

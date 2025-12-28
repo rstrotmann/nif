@@ -45,8 +45,8 @@ the ae_term.}
 
 \item{observation_filter}{An observation filter term.}
 
-\item{coding_table}{A DV coding table as data frame. The coding table translates
-columns included in the AE domain into a DV field.}
+\item{coding_table}{A DV coding table as data frame. The coding table
+translates columns included in the AE domain into a DV field.}
 
 \item{keep}{Columns to keep, as character.}
 }
