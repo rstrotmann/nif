@@ -72,20 +72,22 @@ StatAdmin <- ggplot2::ggproto(
 
 #' ggplot stat for treatment administrations
 #'
-#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. If specified and
-#'   `inherit.aes = TRUE` (the default), it is combined with the default mapping
-#'   at the top level of the plot. You must supply `mapping` if there is no plot
-#'   mapping.
+#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. If
+#'   specified and `inherit.aes = TRUE` (the default), it is combined with the
+#'   default mapping at the top level of the plot. You must supply `mapping` if
+#'   there is no plot mapping.
 #' @param data The data to be displayed in this layer. There are three options:
-#'   If `NULL`, the default, the data is inherited from the plot data as specified
-#'   in the call to [ggplot2::ggplot()]. A `data.frame`, or other object, will override the
-#'   plot data. A `function` will be called with a single argument, the plot data.
-#'   The return value must be a `data.frame`, and will be used as the layer data.
-#' @param geom The geometric object to use to display the data. Defaults to "vline".
+#'   If `NULL`, the default, the data is inherited from the plot data as
+#'   specified in the call to [ggplot2::ggplot()]. A `data.frame`, or other
+#'   object, will override the plot data. A `function` will be called with a
+#'   single argument, the plot data. The return value must be a `data.frame`,
+#'   and will be used as the layer data.
+#' @param geom The geometric object to use to display the data. Defaults to
+#'   "vline".
 #' @param position Position adjustment, either as a string, or the result of a
 #'   call to a position adjustment function. Defaults to "identity".
-#' @param na.rm If `FALSE`, the default, missing values are removed with a warning.
-#'   If `TRUE`, missing values are silently removed.
+#' @param na.rm If `FALSE`, the default, missing values are removed with a
+#'   warning. If `TRUE`, missing values are silently removed.
 #' @param show.legend logical. Should this layer be included in the legends?
 #'   `NA`, the default, includes if any aesthetics are mapped. `FALSE` never
 #'   includes, and `TRUE` always includes.
@@ -213,39 +215,31 @@ geom_admin <- function(
   ...
 ) {
   # Validate parameters
-  if (!is.null(mapping) && !inherits(mapping, "uneval")) {
+  if (!is.null(mapping) && !inherits(mapping, "uneval"))
     stop("mapping must be created using aes()")
-  }
 
-  if (!is.logical(na.rm) || length(na.rm) != 1) {
+  if (!is.logical(na.rm) || length(na.rm) != 1)
     stop("na.rm must be a single logical value")
-  }
 
-  if (!is.logical(show.legend) || length(show.legend) != 1) {
+  if (!is.logical(show.legend) || length(show.legend) != 1)
     stop("show.legend must be a single logical value")
-  }
 
-  if (!is.logical(inherit.aes) || length(inherit.aes) != 1) {
+  if (!is.logical(inherit.aes) || length(inherit.aes) != 1)
     stop("inherit.aes must be a single logical value")
-  }
 
-  if (!is.character(color) || length(color) != 1) {
+  if (!is.character(color) || length(color) != 1)
     stop("color must be a single character value")
-  }
 
-  if (!is.numeric(linewidth) || length(linewidth) != 1 || linewidth < 0) {
+  if (!is.numeric(linewidth) || length(linewidth) != 1 || linewidth < 0)
     stop("linewidth must be a non-negative numeric value")
-  }
 
   if (!is.numeric(linetype) && !is.character(linetype) ||
-    length(linetype) != 1) {
+        length(linetype) != 1)
     stop("linetype must be a single numeric or character value")
-  }
 
   if (!is.na(alpha) &&
-    (!is.numeric(alpha) || length(alpha) != 1 || alpha < 0 || alpha > 1)) {
+        (!is.numeric(alpha) || length(alpha) != 1 || alpha < 0 || alpha > 1))
     stop("alpha must be NA or a numeric value between 0 and 1")
-  }
 
   # Create layer
   layer(
@@ -304,7 +298,7 @@ watermark <- function(
   }
 
   if (!is.character(fontface) || length(fontface) != 1 ||
-    !fontface %in% c("plain", "bold", "italic", "bold.italic")) {
+        !fontface %in% c("plain", "bold", "italic", "bold.italic")) {
     stop("fontface must be one of: 'plain', 'bold', 'italic', 'bold.italic'")
   }
 
@@ -363,7 +357,7 @@ watermark <- function(
     ),
     error = function(e) {
       warning("Failed to create watermark: ", e$message)
-      return(NULL)
+      NULL
     }
   )
 
