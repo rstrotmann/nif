@@ -70,10 +70,10 @@ Nothing.
 
 ``` r
 plot(examplinib_poc)
-
 plot(examplinib_poc, "dm")
-
 plot(examplinib_poc, domain = "ex")
+
+plot(examplinib_poc, domain = "ex", points = FALSE)
 
 plot(examplinib_poc, domain = "pc")
 

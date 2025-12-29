@@ -12,7 +12,7 @@ calculated!
 ## Usage
 
 ``` r
-add_time_deviation(obj)
+add_time_deviation(obj, silent = NULL)
 ```
 
 ## Arguments
@@ -20,6 +20,10 @@ add_time_deviation(obj)
 - obj:
 
   A nif object.
+
+- silent:
+
+  Suppress messages.
 
 ## Value
 
@@ -30,8 +34,8 @@ A nif object with the 'TIME_DEV' field added
 ``` r
 library(dplyr)
 
-examplinib_poc_nif %>%
-  add_time_deviation() %>%
+examplinib_poc_nif |>
+  add_time_deviation() |>
   head()
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
 #> 1   1  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922

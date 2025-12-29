@@ -6,7 +6,7 @@ Reference: [Cockcroft and Gault, Nephron
 ## Usage
 
 ``` r
-egfr_cg(crea, age, sex, race = "", weight = NA, molar = F)
+egfr_cg(crea, age, sex, race = "", weight = NA, molar = FALSE)
 ```
 
 ## Arguments

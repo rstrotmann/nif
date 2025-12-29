@@ -269,8 +269,6 @@ e.g.:
 plot(examplinib_fe, "dm")
 ```
 
-![](nif-tutorial_files/figure-html/unnamed-chunk-8-1.png)
-
 ### SDTM suggestions
 
 SDTM data may be incomplete, e.g., when emerging data that have not yet

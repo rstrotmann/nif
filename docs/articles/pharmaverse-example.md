@@ -80,8 +80,6 @@ summary(sdtm)
 plot(sdtm, domain = "dm", points = F)
 ```
 
-![](pharmaverse-example_files/figure-html/unnamed-chunk-3-1.png)
-
 ## NONMEM INPUT FORMAT DATA
 
 ``` r

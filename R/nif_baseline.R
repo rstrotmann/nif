@@ -1,10 +1,22 @@
-#' Attach baseline covariate from SDTM domain
+#' Add a baseline covariate
 #'
-#' Baseline covariates, as specified by the 'testcd' field, can come from any
-#' SDTM domain. By default, the baseline value is identified by `xxBLFL == "Y"`
-#' in the respective SDTM domain. Alternatively, a custom observation filter can
-#' be defined. The name of the baseline covariate is the 'testcd', prefixed with
-#' 'BL_'.
+#' Add a column to a [nif::nif] object that represents the baseline value for a
+#' subject-level covariate.
+#'
+#' The source of the baseline covariate is specified by the `domain` and
+#' `testcd` arguments. The baseline condition is defined by the
+#' `baseline_filter` argument. If none is provided, the baseline filter defaults
+#' to `xxBLFL == "Y"` where 'xx' is the domain code. In addition, a custom
+#' `observation_filter` can be defined to further specify the observation. This
+#' may be necessary, when observations defined by the `testcd` alone are
+#' ambiguous, e.g., when for pharmacokinetic baseline observations, both BLOOD
+#' and URINE observations are included in the PC domain data.
+#'
+#' The name of the baseline column defaults to the 'testcd', prefixed with
+#' 'BL_', e.g., BL_WEIGHT. A specific name can be defined by the `name`
+#' argument. Note that baseline WEIGHT, HEIGHT and BMI (if applicable) are
+#' automatically inclucded during the generation of a nif object.
+#'
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.

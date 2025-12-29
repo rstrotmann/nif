@@ -1,13 +1,9 @@
-# Append observation events
+# Add observation events
 
-Observations can be pharmacokinetic observations (i.e., from the PC
-domain), or any other class of observation from any other SDTM domain.
-The 'testcd' specifies the value of the respective **TESTCD** field
-(e.g., 'PCTESTCD', 'VSTESTCD' or 'LBTESTCD') that defines the
-observation. Observation events can be attached to an administered drug
-by specifying the 'parent' field. This is required for, e.g., the
-time-after-dose ('TAD') and time-after-first-dose ('TAFD') time
-calculation.
+Add rows to a [nif](nif.md) object that represent observation events,
+i.e., with EVID values of 0. This is usually the second step in the
+creation of NIF data tables, after
+[`add_administration()`](add_administration.md).
 
 ## Usage
 
@@ -196,18 +192,92 @@ A nif object.
 
 ## Details
 
-Observations can be further specified with the 'observation_filter'
-term. The filter term can refer to any field of the respective SDTM
-domain.
+Observations can be pharmacokinetic observations (i.e., from the PC
+domain), or any other type of observation from any other SDTM domain.
+The `domain` and `testcd` arguments specify the source of the
+observation events.
 
-A PK/PD model compartment can be specified with 'cmt' or will be
-automatically assigned if `cmt = NULL`.
+In general, the dependent variable and the observation time stamp are
+taken from the 'xxSTRESN' and 'xxDTC' fields of the source domiain
+(where xx refers to the domain code). Differing fields can be specified
+by the `dv_field` and `dtc_field` arguments
+
+Observation events can be attached to an administered drug by the
+`parent` argument. Specifying the respective parent ANALYTE code links
+these observations to the respective drug administration event. This is
+required for the calculation of time-after-dose ('TAD') and
+time-after-first-dose ('TAFD') for observations. If no `parent` is
+specified, the most likely parent is automatically selected. This
+usually works well for studies where only one treatment is administered.
+In other cases, it may be beneficial to explicitly define a parent for
+all observations.
+
+Observations can be further specified with `cat` and `scat` arguments
+that refer to the 'xxCAT' and 'xxSCAT' fields of the source domain (xx),
+and the `observation_filter` argument. This may be necessary, when
+observations defined by the `testcd` alone are ambiguous, e.g., when for
+pharmacokinetic observations, both BLOOD and URINE observations are
+included in the PC domain data.
+
+A model compartment can be specified by the `cmt` argument, or will be
+automatically assigned otherwise.
+
+### Nominal time
+
+While the actual time fields (i.e., TIME, TAFD, TAD) for the observation
+events are automatically derived from the date-time stamp (the xxDTC
+field), the nominal time of the observation is often not unambiguously
+represented in the source SDTM data. Different methods are provided to
+derive the nominal time (NTIME) field and can be selected using the
+`ntime_method` argument.
+
+- 'TPT' atttempts to extract the nominal time from the 'xxTPT' field of
+  the SDTM data
+
+- 'TPTNUM' interprets the 'xxTPTNUM' field as the numerical
+  representation of the nominal observation time in hours. Note that
+  depending on the SDTM generation method, this may or may not be
+  correct
+
+- 'ELTM' uses the xxELTM (elapsed time) column, if available
+
+- 'VISITDY' uses the VISIDY column to derive the nominal time. Note that
+  the (planned) visit day may differ from the actual day of the
+  observation. As this column has not time information, the granularity
+  of the observation is full days.
+
+- 'DY' uses the 'xxDY' columns of the original SDTM data. As this column
+  has not time information, the granularity of the observation is full
+  days.
+
+Alternatively, a lookup table data frame can be provided by the
+`ntime_lookup` argument that associates any column in the source SDTM
+data with the respective NTIME.
+
+### Recoding
+
+For some observation types, the source SDTM data may not include a
+dependent variable in numerical form (i.e., for AE observations when
+AETOXGR is provided in text form). In such cases, a `coding_table` can
+be provided that links the values of an arbitrary columns to the
+expected 'DV' value.
+
+### Duplicate observations
+
+SDTM data may contain duplicate observations, most often because of
+incomplete data cleaning. `add_observation()` provides methods to deal
+with duplicates, see the description of the `duplicates` argument.
+
+### Further information
 
 For an overview on the representation of observation events in NONMEM
 Input Format compliant data sets, see Bauer, R.J. (2019), NONMEM
 Tutorial Part I: Description of Commands and Options, With Simple
 Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol.,
 8: 525-537. <https://doi.org/10.1002/psp4.12404>
+
+To add administration events to the [nif](nif.md) object, see
+[`add_administration()`](add_administration.md).
 
 ## See also
 

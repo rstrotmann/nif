@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_baseline.R
 \name{add_baseline}
 \alias{add_baseline}
-\title{Attach baseline covariate from SDTM domain}
+\title{Add a baseline covariate}
 \usage{
 add_baseline(
   nif,
@@ -63,11 +63,23 @@ values. Defaults to \code{mean}.}
 A nif object.
 }
 \description{
-Baseline covariates, as specified by the 'testcd' field, can come from any
-SDTM domain. By default, the baseline value is identified by \code{xxBLFL == "Y"}
-in the respective SDTM domain. Alternatively, a custom observation filter can
-be defined. The name of the baseline covariate is the 'testcd', prefixed with
-'BL_'.
+Add a column to a \link{nif} object that represents the baseline value for a
+subject-level covariate.
+}
+\details{
+The source of the baseline covariate is specified by the \code{domain} and
+\code{testcd} arguments. The baseline condition is defined by the
+\code{baseline_filter} argument. If none is provided, the baseline filter defaults
+to \code{xxBLFL == "Y"} where 'xx' is the domain code. In addition, a custom
+\code{observation_filter} can be defined to further specify the observation. This
+may be necessary, when observations defined by the \code{testcd} alone are
+ambiguous, e.g., when for pharmacokinetic baseline observations, both BLOOD
+and URINE observations are included in the PC domain data.
+
+The name of the baseline column defaults to the 'testcd', prefixed with
+'BL_', e.g., BL_WEIGHT. A specific name can be defined by the \code{name}
+argument. Note that baseline WEIGHT, HEIGHT and BMI (if applicable) are
+automatically inclucded during the generation of a nif object.
 }
 \examples{
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")

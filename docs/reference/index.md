@@ -2,14 +2,13 @@
 
 ## All functions
 
-- [`add_administration()`](add_administration.md) : Append
-  administration events
+- [`add_administration()`](add_administration.md) : Add administration
+  events
 
 - [`add_ae_observation()`](add_ae_observation.md) **\[experimental\]** :
   Add AE observation
 
-- [`add_baseline()`](add_baseline.md) : Attach baseline covariate from
-  SDTM domain
+- [`add_baseline()`](add_baseline.md) : Add a baseline covariate
 
 - [`add_bl_crcl()`](add_bl_crcl.md) : Add baseline creatinine clearance
   field.
@@ -40,7 +39,7 @@
 - [`add_obs_per_dosing_interval()`](add_obs_per_dosing_interval.md) :
   Add the number of observations per dosing interval
 
-- [`add_observation()`](add_observation.md) : Append observation events
+- [`add_observation()`](add_observation.md) : Add observation events
 
 - [`add_tad()`](add_tad.md) : Add time-after-dose (TAD) field
 
@@ -272,8 +271,6 @@
 
 - [`sdtm_missing_times()`](sdtm_missing_times.md) : Number of DTC
   entries with missing time information
-
-- [`standard_nif_fields`](standard_nif_fields.md) : Standard nif fields
 
 - [`standardize_date_format()`](standardize_date_format.md) : Convert
   date fields to POSIX format

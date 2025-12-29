@@ -1,9 +1,8 @@
-# Append administration events
+# Add administration events
 
-Drug administration data is taken from the EX domain of the sdtm object.
-The 'extrt' field specifies the drug name as represented in 'EX',
-however, a different 'analyte' name can be assigned to match with that
-of the pharmacokinetic observations for the parent drug in plasma.
+Add rows to a [nif](nif.md) object that represent drug administration
+events, i.e., with EVID values of 1. This is usually the first step in
+the stepwise creation of NIF data tables.
 
 ## Usage
 
@@ -70,11 +69,24 @@ A nif object.
 
 ## Details
 
+Drug administration data is taken from the EX domain of the source
+[sdtm](sdtm.md) object. The `extrt` argument specifies the drug name as
+represented in EX. Note that an `analyte` name can be explicitly
+provided. This is typically used to match with that of the
+pharmacokinetic observations for the parent drug in plasma.
+
+For administrations, a model compartment (i.e., the CMT columns in the
+output) of 1 is selected by default. A different compartment can be
+specified with the `cmt` argument.
+
 For an overview on the representation of administration events in NONMEM
-Input Format compliant data sets, see Bauer, R.J. (2019), NONMEM
+Input Format compliant data sets, see: Bauer, R.J. (2019), NONMEM
 Tutorial Part I: Description of Commands and Options, With Simple
 Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol.,
-8: 525-537. <https://doi.org/10.1002/psp4.12404>
+8: 525-537. <https://doi.org/10.1002/psp4.12404>.
+
+To add observation events to the [nif](nif.md) object, see
+[`add_observation()`](add_observation.md).
 
 ## Examples
 

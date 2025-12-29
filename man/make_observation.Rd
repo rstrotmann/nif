@@ -97,9 +97,9 @@ if NULL.}
 A data frame.
 }
 \description{
-Create a data frame of observations from a SDTM domain specified by 'domain'
-where the dependent variable comes from the 'dv_field' parameter and the
-timing information from the 'dtc_field' parameter.
+Create a data frame of observations from a SDTM domain specified by the \code{domain} argument
+where the dependent variable comes from the \code{dv_field} argument and the
+timing information from the \code{dtc_field} argument.
 
 The 'TIME' in the output is \code{NA} throughout and needs to be calculated based
 on administration time point information provided separately.

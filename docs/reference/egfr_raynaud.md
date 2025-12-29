@@ -9,7 +9,7 @@ validation study. BMJ. 2023 May 31;381:e073654. [doi:
 ## Usage
 
 ``` r
-egfr_raynaud(crea, age, sex, race = "", weight = NA, molar = F)
+egfr_raynaud(crea, age, sex, race = "", weight = NA, molar = FALSE)
 ```
 
 ## Arguments
