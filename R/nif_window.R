@@ -142,7 +142,7 @@ add_time_window_flag <- function(
 
   # rename columns to avoid any name collisions, delete any other columns
   temp <- window |>
-    select(NTIME, .BEFORE = .data$BEFORE, .AFTER = .data$AFTER)
+    select(NTIME, .BEFORE = "BEFORE", .AFTER = "AFTER")
 
   # ensure that window is in hours
   if (use_minutes == TRUE) {

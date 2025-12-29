@@ -1,4 +1,4 @@
-test_that("StatAdmin works with valid inputs", {
+test_that("stat_admin_proto works with valid inputs", {
   # Create test data
   test_data <- tibble::tribble(
     ~x, ~admin,
@@ -10,7 +10,7 @@ test_that("StatAdmin works with valid inputs", {
   )
 
   # Test with logical admin column
-  result <- StatAdmin$compute_group(test_data, NULL)
+  result <- stat_admin_proto$compute_group(test_data, NULL)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 3)
   expect_equal(result$xintercept, c(1, 3, 5))
@@ -18,25 +18,25 @@ test_that("StatAdmin works with valid inputs", {
   # Test with numeric admin column (0/1)
   test_data_numeric <- test_data
   test_data_numeric$admin <- as.numeric(test_data$admin)
-  result_numeric <- StatAdmin$compute_group(test_data_numeric, NULL)
+  result_numeric <- stat_admin_proto$compute_group(test_data_numeric, NULL)
   expect_equal(result_numeric$xintercept, c(1, 3, 5))
 })
 
 
-test_that("StatAdmin handles empty data correctly", {
+test_that("stat_admin_proto handles empty data correctly", {
   # Empty data frame with correct columns
   empty_data <- tibble::tribble(
     ~x, ~admin
   )
 
-  result <- StatAdmin$compute_group(empty_data, NULL)
+  result <- stat_admin_proto$compute_group(empty_data, NULL)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 0)
   expect_equal(names(result), "xintercept")
 })
 
 
-test_that("StatAdmin handles NA values correctly", {
+test_that("stat_admin_proto handles NA values correctly", {
   # Data with NA values
   test_data <- tibble::tribble(
     ~x, ~admin,
@@ -49,7 +49,7 @@ test_that("StatAdmin handles NA values correctly", {
 
   # Should warn about NA values
   expect_warning(
-    result <- StatAdmin$compute_group(test_data, NULL),
+    result <- stat_admin_proto$compute_group(test_data, NULL),
     "NA values found in admin column"
   )
 
@@ -57,7 +57,7 @@ test_that("StatAdmin handles NA values correctly", {
 })
 
 
-test_that("StatAdmin handles no administration points", {
+test_that("stat_admin_proto handles no administration points", {
   # Data with no TRUE values
   test_data <- tibble::tribble(
     ~x, ~admin,
@@ -66,17 +66,17 @@ test_that("StatAdmin handles no administration points", {
     3,  FALSE
   )
 
-  result <- StatAdmin$compute_group(test_data, NULL)
+  result <- stat_admin_proto$compute_group(test_data, NULL)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 0)
   expect_equal(names(result), "xintercept")
 })
 
 
-test_that("StatAdmin throws appropriate errors", {
+test_that("stat_admin_proto throws appropriate errors", {
   # Test with non-data.frame input
   expect_error(
-    StatAdmin$compute_group(list(x = 1, admin = TRUE), NULL),
+    stat_admin_proto$compute_group(list(x = 1, admin = TRUE), NULL),
     "data must be a data frame"
   )
 
@@ -86,7 +86,7 @@ test_that("StatAdmin throws appropriate errors", {
     TRUE
   )
   expect_error(
-    StatAdmin$compute_group(test_data_missing_x, NULL),
+    stat_admin_proto$compute_group(test_data_missing_x, NULL),
     "Missing required columns: x"
   )
 
@@ -95,7 +95,7 @@ test_that("StatAdmin throws appropriate errors", {
     1
   )
   expect_error(
-    StatAdmin$compute_group(test_data_missing_admin, NULL),
+    stat_admin_proto$compute_group(test_data_missing_admin, NULL),
     "Missing required columns: admin"
   )
 
@@ -105,13 +105,13 @@ test_that("StatAdmin throws appropriate errors", {
     1,  "TRUE"
   )
   expect_error(
-    StatAdmin$compute_group(test_data_invalid_admin, NULL),
+    stat_admin_proto$compute_group(test_data_invalid_admin, NULL),
     "admin column must be logical or numeric"
   )
 })
 
 
-test_that("StatAdmin works with different numeric admin values", {
+test_that("stat_admin_proto works with different numeric admin values", {
   # Test with various numeric values
   test_data <- tibble::tribble(
     ~x, ~admin,
@@ -122,6 +122,6 @@ test_that("StatAdmin works with different numeric admin values", {
     5,  1
   )
 
-  result <- StatAdmin$compute_group(test_data, NULL)
-  expect_equal(result$xintercept, c(1, 3, 5)) # Only 1s should be treated as TRUE
+  result <- stat_admin_proto$compute_group(test_data, NULL)
+  expect_equal(result$xintercept, c(1, 3, 5)) # Only 1s to be treated as TRUE
 })

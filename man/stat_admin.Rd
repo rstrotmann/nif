@@ -17,24 +17,26 @@ stat_admin(
 )
 }
 \arguments{
-\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}. If specified and
-\code{inherit.aes = TRUE} (the default), it is combined with the default mapping
-at the top level of the plot. You must supply \code{mapping} if there is no plot
-mapping.}
+\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}. If
+specified and \code{inherit.aes = TRUE} (the default), it is combined with the
+default mapping at the top level of the plot. You must supply \code{mapping} if
+there is no plot mapping.}
 
 \item{data}{The data to be displayed in this layer. There are three options:
-If \code{NULL}, the default, the data is inherited from the plot data as specified
-in the call to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}. A \code{data.frame}, or other object, will override the
-plot data. A \code{function} will be called with a single argument, the plot data.
-The return value must be a \code{data.frame}, and will be used as the layer data.}
+If \code{NULL}, the default, the data is inherited from the plot data as
+specified in the call to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}. A \code{data.frame}, or other
+object, will override the plot data. A \code{function} will be called with a
+single argument, the plot data. The return value must be a \code{data.frame},
+and will be used as the layer data.}
 
-\item{geom}{The geometric object to use to display the data. Defaults to "vline".}
+\item{geom}{The geometric object to use to display the data. Defaults to
+"vline".}
 
 \item{position}{Position adjustment, either as a string, or the result of a
 call to a position adjustment function. Defaults to "identity".}
 
-\item{na.rm}{If \code{FALSE}, the default, missing values are removed with a warning.
-If \code{TRUE}, missing values are silently removed.}
+\item{na.rm}{If \code{FALSE}, the default, missing values are removed with a
+warning. If \code{TRUE}, missing values are silently removed.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
 \code{NA}, the default, includes if any aesthetics are mapped. \code{FALSE} never

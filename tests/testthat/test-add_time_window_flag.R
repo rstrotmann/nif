@@ -44,7 +44,7 @@ test_that("add_time_window_flag flags early observations", {
     2, 30, 30
   )
 
-  result <- add_time_window_flag(test_data, window)
+  result <- add_time_window_flag(test_data, window, silent = TRUE)
 
   # Early observation should be flagged
   expect_true(result$EXCL[result$NTIME == 2])

@@ -1,7 +1,7 @@
 # source: https://ggplot2-book.org/extensions#sec-modifying-geom-defaults
 
 
-#' @title StatAdmin ggproto object
+#' @title stat_admin_proto ggproto object
 #' @description A ggplot2 stat for treatment administrations that creates
 #'   vertical lines at administration times.
 #' @details This stat requires a data frame with columns 'x' and 'admin', where
@@ -11,8 +11,8 @@
 #' @keywords internal
 #' @format NULL
 #' @usage NULL
-StatAdmin <- ggplot2::ggproto(
-  "StatAdmin",
+stat_admin_proto <- ggplot2::ggproto(
+  "stat_admin_proto",
   ggplot2::Stat,
   required_aes = c("x", "admin"),
   default_aes = ggplot2::aes(
@@ -137,7 +137,7 @@ stat_admin <- function(
 
   # Create layer
   layer(
-    stat = StatAdmin,
+    stat = stat_admin_proto,
     data = data,
     mapping = mapping,
     geom = geom,
@@ -246,7 +246,7 @@ geom_admin <- function(
     geom = GeomAdmin,
     data = data,
     mapping = mapping,
-    stat = StatAdmin,
+    stat = stat_admin_proto,
     position = "identity",
     show.legend = show.legend,
     inherit.aes = inherit.aes,
