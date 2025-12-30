@@ -1,11 +1,12 @@
 # Add time-varying covariate
 
 Add a column to a [nif](nif.md) object representing a time-varying
-covariate. In contrast to observations (see `add_observagtion()`),
-covariates are not captured as rows of observation events but are
-attached to the existing observations in a nif object reflecting the
-status of the covariate at the time of the observations. The covariate
-value is carried forward as needed.
+covariate. In contrast to observations (see
+[`add_observation()`](add_observation.md)), covariates are not captured
+as rows of observation events but are attached as a separate column to
+the observations in a nif object. The values reflect the status of the
+covariate at the time of the existing observations and are carried
+forward as needed.
 
 ## Usage
 
@@ -98,12 +99,12 @@ Covariate data may come from any domain, and like for observations,
 their source is defined by the `domain` and `testcd` arguments.
 Covariate observations can be further specified with the `cat` and
 `scat` arguments that refer to the 'xxCAT' and 'xxSCAT' fields of the
-source domain (xx), and the `observation_filter` argument. This may be
+source domain, and the `observation_filter` argument. This may be
 necessary, when observations defined by the `testcd` alone are
 ambiguous.
 
 In general, the covariate value and the respective observation time
-stamp are taken from the 'xxSTRESN' and 'xxDTC' fields of thesource
+stamp are taken from the 'xxSTRESN' and 'xxDTC' fields of the source
 (where xx refers to the domain code). Other fields can be specified by
 the `dv_field` and `dtc_field` arguments.
 

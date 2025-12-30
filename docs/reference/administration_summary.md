@@ -1,6 +1,8 @@
-# Overview on the number of administrations in the subjects by parent
+# Administration summary
 
-Overview on the number of administrations in the subjects by parent
+Summary statistics on the number of administrations per subject, by
+parent. This may useful to characterized the population exposure to a
+treatment.
 
 ## Usage
 

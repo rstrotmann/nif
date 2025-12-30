@@ -1,7 +1,7 @@
 # Add quantiles for a subject-level covariate
 
-Calculate quantiles for a specified column's values across all subjects.
-Each subject gets the same n-tile value across all their rows. The input
+Calculate quantiles for a column's values across all subjects. Each
+subject gets the same n-tile value across all their rows. The input
 column must have exactly one distinct value per subject (e.g., age,
 weight, baseline values).
 

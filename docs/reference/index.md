@@ -51,13 +51,12 @@
 
 - [`add_trtdy()`](add_trtdy.md) : Add treatment day ('TRTDY') column
 
-- [`administration_summary()`](administration_summary.md) : Overview on
-  the number of administrations in the subjects by parent
+- [`administration_summary()`](administration_summary.md) :
+  Administration summary
 
 - [`ae_summary()`](ae_summary.md) : AE summary
 
-- [`analyte_overview()`](analyte_overview.md) : Overview on analytes and
-  parents
+- [`analyte_overview()`](analyte_overview.md) : Analyte overview
 
 - [`analytes()`](analytes.md) : Analytes within a NIF or SDTM object
 

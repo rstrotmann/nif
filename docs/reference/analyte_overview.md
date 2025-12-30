@@ -1,6 +1,7 @@
-# Overview on analytes and parents
+# Analyte overview
 
-Overview on analytes and parents
+Overview on the analytes included in a nif object and their respective
+parent analytes.
 
 ## Usage
 
