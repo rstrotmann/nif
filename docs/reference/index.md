@@ -2,6 +2,8 @@
 
 ## All functions
 
+- [`adam()`](adam.md) : adam object class constructor
+
 - [`add_administration()`](add_administration.md) : Add administration
   events
 
@@ -78,6 +80,8 @@
 
 - [`crea_raynaud()`](crea_raynaud.md) : Serum creatinine estimation from
   eGFR (Raynaud method)
+
+- [`dataset()`](dataset.md) : Retrieve dataset from adam object
 
 - [`ddt()`](ddt.md) : Data definition table for NIF object
 
@@ -287,6 +291,9 @@
 
 - [`suggest()`](suggest.md) : Suggest data programming steps to generate
   a nif object from an sdtm object
+
+- [`summary(`*`<adam>`*`)`](summary.adam.md) : Summary method for adam
+  objects
 
 - [`testcd()`](testcd.md) : Extract TESTCD fields by domain from a sdtm
   object

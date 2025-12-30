@@ -110,7 +110,7 @@ domain data.
 The name of the baseline column defaults to the 'testcd', prefixed with
 'BL\_', e.g., BL_WEIGHT. A specific name can be defined by the `name`
 argument. Note that baseline WEIGHT, HEIGHT and BMI (if applicable) are
-automatically inclucded during the generation of a nif object.
+automatically included during the generation of a nif object.
 
 ## Examples
 

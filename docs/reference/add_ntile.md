@@ -56,7 +56,6 @@ library(dplyr)
 #> 
 #>     intersect, setdiff, setequal, union
 library(ggplot2)
-#> Warning: package ‘ggplot2’ was built under R version 4.5.2
 
 examplinib_sad_nif |>
   add_ntile("WEIGHT") |>

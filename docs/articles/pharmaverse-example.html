@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.61.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.61.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,7 @@ packages:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># source: https://github.com/pharmaverse/pharmaversesdtm.git</span></span>
 <span></span>
-<span><span class="va">sdtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_sdtm.html">new_sdtm</a></span><span class="op">(</span></span>
+<span><span class="va">sdtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdtm.html">sdtm</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    dm <span class="op">=</span> <span class="fu">pharmaversesdtm</span><span class="fu">::</span><span class="va"><a href="https://pharmaverse.github.io/pharmaversesdtm/reference/dm.html" class="external-link">dm</a></span>,</span>
 <span>    ex <span class="op">=</span> <span class="fu">pharmaversesdtm</span><span class="fu">::</span><span class="va"><a href="https://pharmaverse.github.io/pharmaversesdtm/reference/ex.html" class="external-link">ex</a></span>,</span>
@@ -98,12 +98,7 @@ packages:</p>
 <span>    eg <span class="op">=</span> <span class="fu">pharmaversesdtm</span><span class="fu">::</span><span class="va"><a href="https://pharmaverse.github.io/pharmaversesdtm/reference/eg.html" class="external-link">eg</a></span>,</span>
 <span>    ae  <span class="op">=</span> <span class="fu">pharmaversesdtm</span><span class="fu">::</span><span class="va"><a href="https://pharmaverse.github.io/pharmaversesdtm/reference/ae.html" class="external-link">ae</a></span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: `new_sdtm()` was deprecated in nif 0.61.1.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `sdtm()` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sdtm</span><span class="op">)</span></span>
 <span><span class="co">#&gt; -------- SDTM data set summary -------- </span></span>
@@ -158,13 +153,8 @@ packages:</p>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">'lb'</span>, <span class="st">'ALT'</span>, ntime_method <span class="op">=</span> <span class="st">"DY"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/add_baseline.html">add_baseline</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"lb"</span>, <span class="st">"CREAT"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/add_bl_renal.html">add_bl_renal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/add_cfb.html">add_cfb</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/add_dose_level.html">add_dose_level</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: `derive_cfb()` was deprecated in nif 0.61.1.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `derive_cfb()` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/derive_cfb.html">derive_cfb</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/add_dose_level.html">add_dose_level</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
@@ -230,7 +220,7 @@ packages:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-2.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-3.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-4.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-5.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-6.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-7.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-8.png" class="r-plt" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-9.png" class="r-plt" width="288"></p>
+<p><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-2.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-3.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-4.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-5.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-6.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-7.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-8.png" class="r-plt" alt="" width="288"><img src="pharmaverse-example_files/figure-html/unnamed-chunk-5-9.png" class="r-plt" alt="" width="288"></p>
 </div>
 <div class="section level2">
 <h2 id="data-exploration">DATA EXPLORATION<a class="anchor" aria-label="anchor" href="#data-exploration"></a>
@@ -240,7 +230,7 @@ packages:</p>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mean_dose_plot.html">mean_dose_plot</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span></code></pre></div>
-<p><img src="pharmaverse-example_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="700"></p>
+<p><img src="pharmaverse-example_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="pharmacokinetics">Pharmacokinetics<a class="anchor" aria-label="anchor" href="#pharmacokinetics"></a>
@@ -249,7 +239,7 @@ packages:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif</span>, <span class="st">"XAN"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_line()`: Each group consists of only one observation.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Do you need to adjust the <span style="color: #00BB00;">group</span> aesthetic?</span></span></code></pre></div>
-<p><img src="pharmaverse-example_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="700"></p>
+<p><img src="pharmaverse-example_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

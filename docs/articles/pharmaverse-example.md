@@ -19,7 +19,7 @@ CDISCPILOT01
 ``` r
 # source: https://github.com/pharmaverse/pharmaversesdtm.git
 
-sdtm <- new_sdtm(
+sdtm <- sdtm(
   list(
     dm = pharmaversesdtm::dm,
     ex = pharmaversesdtm::ex,
@@ -31,11 +31,6 @@ sdtm <- new_sdtm(
     ae  = pharmaversesdtm::ae
   )
 )
-#> Warning: `new_sdtm()` was deprecated in nif 0.61.1.
-#> ℹ Please use `sdtm()` instead.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 ```
 
 ``` r
@@ -92,13 +87,8 @@ nif <- nif() |>
   add_observation(sdtm, 'lb', 'ALT', ntime_method = "DY") |> 
   add_baseline(sdtm, "lb", "CREAT") |> 
   add_bl_renal() |> 
-  add_cfb() |> 
+  derive_cfb() |> 
   add_dose_level()
-#> Warning: `derive_cfb()` was deprecated in nif 0.61.1.
-#> ℹ Please use `derive_cfb()` instead.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 ```
 
 ``` r

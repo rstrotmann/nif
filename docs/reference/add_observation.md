@@ -198,9 +198,9 @@ The `domain` and `testcd` arguments specify the source of the
 observation events.
 
 In general, the dependent variable and the observation time stamp are
-taken from the 'xxSTRESN' and 'xxDTC' fields of the source domiain
-(where xx refers to the domain code). Differing fields can be specified
-by the `dv_field` and `dtc_field` arguments
+taken from the 'xxSTRESN' and 'xxDTC' fields of the source domain (where
+xx refers to the domain code). Differing fields can be specified by the
+`dv_field` and `dtc_field` arguments
 
 Observation events can be attached to an administered drug by the
 `parent` argument. Specifying the respective parent ANALYTE code links
@@ -231,7 +231,7 @@ represented in the source SDTM data. Different methods are provided to
 derive the nominal time (NTIME) field and can be selected using the
 `ntime_method` argument.
 
-- 'TPT' atttempts to extract the nominal time from the 'xxTPT' field of
+- 'TPT' attempts to extract the nominal time from the 'xxTPT' field of
   the SDTM data
 
 - 'TPTNUM' interprets the 'xxTPTNUM' field as the numerical

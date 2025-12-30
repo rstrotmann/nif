@@ -19,6 +19,7 @@
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/GeomAdmin.html</loc></url>
 <url><loc>/reference/StatAdmin.html</loc></url>
+<url><loc>/reference/adam.html</loc></url>
 <url><loc>/reference/add_administration.html</loc></url>
 <url><loc>/reference/add_ae_observation.html</loc></url>
 <url><loc>/reference/add_analyte_mapping.html</loc></url>
@@ -68,6 +69,7 @@
 <url><loc>/reference/covariate_hist.html</loc></url>
 <url><loc>/reference/crea_mdrd.html</loc></url>
 <url><loc>/reference/crea_raynaud.html</loc></url>
+<url><loc>/reference/dataset.html</loc></url>
 <url><loc>/reference/ddt.html</loc></url>
 <url><loc>/reference/decompose_dtc.html</loc></url>
 <url><loc>/reference/derive_baseline.html</loc></url>
@@ -230,6 +232,7 @@
 <url><loc>/reference/subjects.nif.html</loc></url>
 <url><loc>/reference/subs_per_dose_level.html</loc></url>
 <url><loc>/reference/suggest.html</loc></url>
+<url><loc>/reference/summary.adam.html</loc></url>
 <url><loc>/reference/summary.domain.html</loc></url>
 <url><loc>/reference/summary.sdtm.html</loc></url>
 <url><loc>/reference/testcd.html</loc></url>
