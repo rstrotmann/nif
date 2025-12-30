@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_ntile.R
 \name{add_ntile}
 \alias{add_ntile}
-\title{Add n-tiles (quantiles) for a specified column across all subjects}
+\title{Add quantiles for a subject-level covariate}
 \usage{
 add_ntile(nif, input_col, n = 4, ntile_name = NULL)
 }
@@ -23,8 +23,7 @@ named either \code{x_NTILE} (default) or the custom name specified in
 \code{ntile_name}
 }
 \description{
-This function calculates n-tiles for a specified column's values across all
-subjects. The quantiles are calculated across all subjects, and each subject
+Calculate quantiles for a column's values across all subjects. Each subject
 gets the same n-tile value across all their rows. The input column must have
 exactly one distinct value per subject (e.g., age, weight, baseline values).
 }
@@ -41,8 +40,8 @@ examplinib_poc_nif |>
   distinct(ID, WEIGHT, WEIGHT_NTILE) |>
   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
   geom_point() +
-  labs(title = "Plasma concentrations by WEIGHT quartiles")
-theme_bw()
+  labs(title = "Plasma concentrations by WEIGHT quartiles") +
+  theme_bw()
 }
 \seealso{
 \code{\link[dplyr:ntile]{dplyr::ntile()}} for the underlying n-tile calculation

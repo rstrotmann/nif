@@ -1022,7 +1022,10 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
 }
 
 
-#' Overview on the number of administrations in the subjects by parent
+#' Administration summary
+#'
+#' Summary statistics on the number of administrations per subject, by parent.
+#' This may useful to characterized the population exposure to a treatment.
 #'
 #' @param obj A NIF object.
 #' @return A data frame.

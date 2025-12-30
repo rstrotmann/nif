@@ -172,7 +172,7 @@ make_time_from_TIME <- function(obj) {
 #'
 #' @param nif A NIF object.
 #' @return A NIF object with an added TAD column.
-#' @export
+#' @noRd
 #' @examples
 #' # Add TAD to a NIF object
 #' add_tad(examplinib_poc_nif)

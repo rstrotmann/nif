@@ -1,9 +1,26 @@
-#' Attach time-varying covariate
+#' Add time-varying covariate
 #'
-#' A time-varying covariate is added as a new field with daily time granularity
-#' and carried forward for missing entries. The name of the covariate can be
-#' specified by 'covariate'. By default, it is set to the 'testcd' (without any
-#' prefix).
+#' Add a column to a [nif::nif] object representing a time-varying covariate. In
+#' contrast to observations (see `add_observation()`), covariates are not
+#' captured as rows of observation events but are attached as a separate column
+#' to the observations in a nif object. The values reflect the status of the
+#' covariate at the time of the existing observations and are carried forward as
+#' needed.
+#'
+#' Covariate data may come from any domain, and like for observations, their
+#' source is defined by the `domain` and `testcd` arguments. Covariate
+#' observations can be further specified with the `cat` and `scat` arguments
+#' that refer to the 'xxCAT' and 'xxSCAT' fields of the source domain, and the
+#' `observation_filter` argument. This may be necessary, when observations
+#' defined by the `testcd` alone are ambiguous.
+#'
+#' In general, the covariate value and the respective observation time stamp are
+#' taken from the 'xxSTRESN' and 'xxDTC' fields of the source (where xx refers
+#' to the domain code). Other fields can be specified by the `dv_field` and
+#' `dtc_field` arguments.
+#'
+#' The name of the covariate columns can be specified by the `covariate`
+#' argument. By default, it is set to the 'testcd' (without any prefix).
 #'
 #' @param nif A nif object.
 #' @param sdtm The corresponding sdtm object.

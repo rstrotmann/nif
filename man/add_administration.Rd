@@ -42,20 +42,22 @@ add_administration(
 A nif object.
 }
 \description{
-Add rows to a \link{nif} object that represent drug administration events,
-i.e., with EVID values of 1. This is usually the first step in the stepwise
-creation of NIF data tables.
+Add rows to a \link{nif} object that represent drug administration events
+(EVID of 1) This is usually the first step in the stepwise creation of NIF
+data tables.
 }
 \details{
 Drug administration data is taken from the EX domain of the source
 \link{sdtm} object. The \code{extrt} argument specifies the drug name as
-represented in EX. Note that an \code{analyte} name can be explicitly provided.
-This is typically used to match with that of the pharmacokinetic observations
-for the parent drug in plasma.
+represented in EX. By default, this will also be the value of the 'ANALYTE'
+column for the respective rows in the resulting \link{nif} object.
+Alternatively, a custom \code{analyte} name can be explicitly provided, e.g., to
+match with the 'ANALYTE' name of the corresponding pharmacokinetic
+observations.
 
-For administrations, a model compartment (i.e., the CMT columns in the
-output) of 1 is selected by default. A different compartment can be specified
-with the \code{cmt} argument.
+For administrations, a model compartment of 1 is selected by default and will
+be the corresponding value of the 'CMT' column. A different compartment can
+be explicitly specified by the \code{cmt} argument.
 
 For an overview on the representation of administration events in NONMEM
 Input Format compliant data sets, see: Bauer, R.J. (2019), NONMEM Tutorial

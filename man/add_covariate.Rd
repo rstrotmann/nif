@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_covariates.R
 \name{add_covariate}
 \alias{add_covariate}
-\title{Attach time-varying covariate}
+\title{Add time-varying covariate}
 \usage{
 add_covariate(
   nif,
@@ -59,10 +59,28 @@ each subject, missing covariate values are filled using the last observed
 value (carrying forward).
 }
 \description{
-A time-varying covariate is added as a new field with daily time granularity
-and carried forward for missing entries. The name of the covariate can be
-specified by 'covariate'. By default, it is set to the 'testcd' (without any
-prefix).
+Add a column to a \link{nif} object representing a time-varying covariate. In
+contrast to observations (see \code{add_observation()}), covariates are not
+captured as rows of observation events but are attached as a separate column
+to the observations in a nif object. The values reflect the status of the
+covariate at the time of the existing observations and are carried forward as
+needed.
+}
+\details{
+Covariate data may come from any domain, and like for observations, their
+source is defined by the \code{domain} and \code{testcd} arguments. Covariate
+observations can be further specified with the \code{cat} and \code{scat} arguments
+that refer to the 'xxCAT' and 'xxSCAT' fields of the source domain, and the
+\code{observation_filter} argument. This may be necessary, when observations
+defined by the \code{testcd} alone are ambiguous.
+
+In general, the covariate value and the respective observation time stamp are
+taken from the 'xxSTRESN' and 'xxDTC' fields of the source (where xx refers
+to the domain code). Other fields can be specified by the \code{dv_field} and
+\code{dtc_field} arguments.
+
+The name of the covariate columns can be specified by the \code{covariate}
+argument. By default, it is set to the 'testcd' (without any prefix).
 }
 \examples{
 add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",

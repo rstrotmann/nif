@@ -2,10 +2,11 @@ pandoc: 3.6.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  importing-nif-data: importing-nif-data.html
   multiple-dose-example: multiple-dose-example.html
   multiple-study-example: multiple-study-example.html
   nif-formulas: nif-formulas.html
   nif-imputations: nif-imputations.html
   nif-tutorial: nif-tutorial.html
   pharmaverse-example: pharmaverse-example.html
-last_built: 2025-12-30T10:11Z
+last_built: 2025-12-30T21:07Z

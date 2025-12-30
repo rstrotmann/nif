@@ -26,7 +26,7 @@
 - [`add_cfb()`](add_cfb.md) **\[deprecated\]** : Add baseline and change
   from baseline fields
 
-- [`add_covariate()`](add_covariate.md) : Attach time-varying covariate
+- [`add_covariate()`](add_covariate.md) : Add time-varying covariate
 
 - [`add_dd()`](add_dd.md) : Add Field definition to Data Definition
   Table
@@ -35,15 +35,13 @@
 
   Add dose level (`DL`) column
 
-- [`add_ntile()`](add_ntile.md) : Add n-tiles (quantiles) for a
-  specified column across all subjects
+- [`add_ntile()`](add_ntile.md) : Add quantiles for a subject-level
+  covariate
 
 - [`add_obs_per_dosing_interval()`](add_obs_per_dosing_interval.md) :
   Add the number of observations per dosing interval
 
 - [`add_observation()`](add_observation.md) : Add observation events
-
-- [`add_tad()`](add_tad.md) : Add time-after-dose (TAD) field
 
 - [`add_time_deviation()`](add_time_deviation.md) **\[experimental\]** :
   Calculate time deviations for observations

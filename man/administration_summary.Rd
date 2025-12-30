@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_exploration.R
 \name{administration_summary}
 \alias{administration_summary}
-\title{Overview on the number of administrations in the subjects by parent}
+\title{Administration summary}
 \usage{
 administration_summary(obj)
 }
@@ -13,7 +13,8 @@ administration_summary(obj)
 A data frame.
 }
 \description{
-Overview on the number of administrations in the subjects by parent
+Summary statistics on the number of administrations per subject, by parent.
+This may useful to characterized the population exposure to a treatment.
 }
 \examples{
 administration_summary(examplinib_poc_nif)

@@ -1,9 +1,11 @@
-# Attach time-varying covariate
+# Add time-varying covariate
 
-A time-varying covariate is added as a new field with daily time
-granularity and carried forward for missing entries. The name of the
-covariate can be specified by 'covariate'. By default, it is set to the
-'testcd' (without any prefix).
+Add a column to a [nif](nif.md) object representing a time-varying
+covariate. In contrast to observations (see `add_observagtion()`),
+covariates are not captured as rows of observation events but are
+attached to the existing observations in a nif object reflecting the
+status of the covariate at the time of the observations. The covariate
+value is carried forward as needed.
 
 ## Usage
 
@@ -89,6 +91,24 @@ covariate values. The name of this column is determined by the
 specified). The covariate values are matched to the nif object by
 USUBJID and date. For each subject, missing covariate values are filled
 using the last observed value (carrying forward).
+
+## Details
+
+Covariate data may come from any domain, and like for observations,
+their source is defined by the `domain` and `testcd` arguments.
+Covariate observations can be further specified with the `cat` and
+`scat` arguments that refer to the 'xxCAT' and 'xxSCAT' fields of the
+source domain (xx), and the `observation_filter` argument. This may be
+necessary, when observations defined by the `testcd` alone are
+ambiguous.
+
+In general, the covariate value and the respective observation time
+stamp are taken from the 'xxSTRESN' and 'xxDTC' fields of thesource
+(where xx refers to the domain code). Other fields can be specified by
+the `dv_field` and `dtc_field` arguments.
+
+The name of the covariate columns can be specified by the `covariate`
+argument. By default, it is set to the 'testcd' (without any prefix).
 
 ## See also
 

@@ -1,7 +1,6 @@
-#' Add n-tiles (quantiles) for a specified column across all subjects
+#' Add quantiles for a subject-level covariate
 #'
-#' This function calculates n-tiles for a specified column's values across all
-#' subjects. The quantiles are calculated across all subjects, and each subject
+#' Calculate quantiles for a column's values across all subjects. Each subject
 #' gets the same n-tile value across all their rows. The input column must have
 #' exactly one distinct value per subject (e.g., age, weight, baseline values).
 #'
@@ -34,8 +33,8 @@
 #'   distinct(ID, WEIGHT, WEIGHT_NTILE) |>
 #'   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
 #'   geom_point() +
-#'   labs(title = "Plasma concentrations by WEIGHT quartiles")
-#' theme_bw()
+#'   labs(title = "Plasma concentrations by WEIGHT quartiles") +
+#'   theme_bw()
 add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   # Validate that input is a nif object
   if (!inherits(nif, "nif")) {

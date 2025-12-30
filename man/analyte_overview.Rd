@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_class.R
 \name{analyte_overview}
 \alias{analyte_overview}
-\title{Overview on analytes and parents}
+\title{Analyte overview}
 \usage{
 analyte_overview(obj)
 }
@@ -13,7 +13,8 @@ analyte_overview(obj)
 A data frame.
 }
 \description{
-Overview on analytes and parents
+Overview on the analytes included in a nif object and their respective parent
+analytes.
 }
 \examples{
 analyte_overview(examplinib_poc_nif)
