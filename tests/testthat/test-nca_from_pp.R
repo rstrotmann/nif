@@ -166,3 +166,4 @@ test_that("nca_from_pp handles keep parameter correctly", {
   result <- nca_from_pp(nif_obj, sdtm_data, "DRUG", keep = "NONEXISTENT", silent = TRUE)
   expect_false("NONEXISTENT" %in% names(result))
 })
+

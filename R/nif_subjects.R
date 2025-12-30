@@ -117,7 +117,7 @@ make_subjects <- function(
       left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID")
 
     if ("VSBLFL" %in% names(vs)) {
-      baseline_covariates <- filter(baseline_covariates, VSBLFL == "Y")
+      baseline_covariates <- filter(baseline_covariates, .data$VSBLFL == "Y")
     } else {
       baseline_covariates <- filter(baseline_covariates,
                                     .data$VSDTC < .data$RFSTDTC)

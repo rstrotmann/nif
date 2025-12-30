@@ -650,19 +650,6 @@ decompose_dtc <- function(obj, dtc_field) {
     out
   }
 
-  # dec_dtc <- function(fld) {
-  #   dtc_date <- paste0(fld, "_date")
-  #   dtc_time <- paste0(fld, "_time")
-  #   obj |>
-  #     mutate(has_time = has_time(.data[[fld]])) |>
-  #     mutate({{ dtc_date }} := extract_date(.data[[fld]])) |>
-  #     mutate({{ dtc_time }} := case_when(
-  #       .data$has_time == TRUE ~ extract_time(.data[[fld]]),
-  #       .default = NA
-  #     )) |>
-  #     select(-c("has_time"))
-  # }
-
   for (i in dtc_field) {
     obj <- dec_dtc(i)
   }

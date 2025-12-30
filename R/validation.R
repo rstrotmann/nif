@@ -33,14 +33,14 @@ validate_domain <- function(domain, silent = NULL) {
     ))
   }
 
-  if (!domain_name %in% unique(domain_model$DOMAIN)) {
+  if (!domain_name %in% unique(nif::domain_model$DOMAIN)) {
     conditional_message(
       "Unknown domain '", domain_name, "' cannot be validated!",
       silent = silent
     )
     invisible(TRUE)
   } else {
-    temp <- domain_model |>
+    temp <- nif::domain_model |>
       dplyr::filter(.data$DOMAIN == domain_name)
 
     required_names <- temp |>

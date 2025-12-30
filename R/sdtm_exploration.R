@@ -187,7 +187,7 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
     group_by(.data$USUBJID, .data$EXTRT) |>
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) |>
     mutate(LAST_ADMIN = row_number() == max(row_number())) |>
-    filter(LAST_ADMIN == TRUE, is.na(.data$EXENDTC)) |>
+    filter(.data$LAST_ADMIN == TRUE, is.na(.data$EXENDTC)) |>
     select("USUBJID", "DOMAIN", "EXTRT", "EXSTDTC", "EXENDTC")
 
   if (nrow(temp) > 0) {

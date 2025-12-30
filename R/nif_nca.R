@@ -48,13 +48,6 @@ nca <- function(
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
   }
 
-  # if (!is.null(group)) {
-  #   missing_groups <- setdiff(group, names(obj))
-  #   if (length(missing_groups) > 0) {
-  #     stop("Group columns not found: ", paste(missing_groups, collapse = ", "))
-  #   }
-  # }
-
   # Analyte handling
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
@@ -100,17 +93,16 @@ nca <- function(
 
   admin <- obj %>%
     as.data.frame() %>%
-    dplyr::filter(.data$ANALYTE == parent) %>%
+    dplyr::filter(.data$ANALYTE == parent) #%>%
     # dplyr::mutate(TIME = case_when(
     #   nominal_time == TRUE ~ NTIME,
     #   .default = TIME
     # )) %>%
 
-    {
-      if (nominal_time == TRUE) mutate(., TIME = .data$NTIME) else .
-    } %>%
-    # dplyr::mutate(DV = case_when(is.na(DV) ~ 0, .default = DV)) %>%
+  if (nominal_time == TRUE)
+    admin <- mutate(admin, TIME = .data$NTIME)
 
+  admin <- admin |>
     dplyr::filter(.data$EVID == 1) %>%
     # mutate(PPRFTDTC = .data$DTC) %>%
     dplyr::select(any_of(
@@ -393,10 +385,6 @@ nca_from_pp <- function(
     current_analyte <- analyte
   }
 
-  # if(is.null(ppcat)) {
-  #   ppcat <- analyte
-  # }
-
   # preserve the columns to keep from the nif object
   keep_data <- obj %>%
     as.data.frame() %>%
@@ -417,9 +405,6 @@ nca_from_pp <- function(
 
   # validate ppcat and ppscat
   if (!is.null(ppcat)) {
-    # if(!ppcat %in% names(pp)) {
-    #   stop(paste0("PPCAT of ", ppcat, " not found in PP domain!"))
-    # }
     if (!"PPCAT" %in% names(pp)) {
       stop("PPCAT not found in PP domain")
     }
@@ -431,9 +416,6 @@ nca_from_pp <- function(
   }
 
   if (!is.null(ppscat)) {
-    # if(!ppscat %in% names(pp)) {
-    #   stop(paste0("PPSCAT of ", ppscat, " not found in PP domain!"))
-    #  }
     if (!"PPSCAT" %in% names(pp)) {
       stop("PPSCAT not found in PP domain")
     }
@@ -444,16 +426,15 @@ nca_from_pp <- function(
     }
   }
 
-  result <- pp %>%
-    # {if("PPCAT" %in% names(pp) & !is.null(ppcat))
-    #   filter(., .data$PPCAT == ppcat) else .} %>%
+  result <- pp
 
-    {
-      if (!is.null(ppcat)) filter(., .data$PPCAT == ppcat) else .
-    } %>%
-    {
-      if (!is.null(ppscat)) filter(., .data$PPSCAT == ppscat) else .
-    } %>%
+  if (!is.null(ppcat))
+    result <- filter(result, .data$PPCAT == ppcat)
+
+  if (!is.null(ppscat))
+    result <- filter(result, .data$PPSCAT == ppscat)
+
+  result <- result |>
     filter(eval(parse(text = observation_filter))) %>%
     select(any_of(c(
       "USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
@@ -475,8 +456,7 @@ nca_from_pp <- function(
       ))
     }
   }
-
-  return(result)
+  result
 }
 
 
@@ -502,19 +482,17 @@ nca_summary <- function(
   ),
   group = NULL
 ) {
-  nca %>%
-    filter(.data$PPTESTCD %in% parameters) %>%
-    {
-      if ("exclude" %in% names(.)) filter(., is.na(.data$exclude)) else .
-    } %>%
-    {
-      if (!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.)) {
-        mutate(., PPORRES = .data$PPSTRESN)
-      } else {
-        .
-      }
-    } %>%
-    group_by_at(c(group, "DOSE", "PPTESTCD")) %>%
+  out <- nca %>%
+    filter(.data$PPTESTCD %in% parameters) #%>%
+
+  if ("exclude" %in% names(out))
+    out <- filter(out, is.na(.data$exclude))
+
+  if (!"PPORRES" %in% names(out) & "PPSTRESN" %in% names(out))
+    out <- mutate(out, PPORRES = .data$PPSTRESN)
+
+  out |>
+    group_by_at(c(group, "DOSE", "PPTESTCD")) |>
     summarize(
       geomean = PKNCA::geomean(.data$PPORRES, na.rm = TRUE),
       geocv = PKNCA::geocv(.data$PPORRES, na.rm = TRUE),
@@ -559,23 +537,23 @@ nca_summary_table <- function(
   s %>%
     mutate(
       center = case_when(
-        .data$PPTESTCD %in% median_parameters ~ as.character(round(median,
+        .data$PPTESTCD %in% median_parameters ~ as.character(round(.data$median,
           digits = digits
         )),
-        .default = as.character(round(geomean, digits = digits))
+        .default = as.character(round(.data$geomean, digits = digits))
       ),
       dispersion = case_when(
         .data$PPTESTCD %in% median_parameters ~ paste0(
-          as.character(round(min, digits = digits)), "; ",
-          as.character(round(max, digits = digits))
+          as.character(round(.data$min, digits = digits)), "; ",
+          as.character(round(.data$max, digits = digits))
         ),
-        .default = as.character(round(geocv))
+        .default = as.character(round(.data$geocv))
       )
     ) %>%
-    mutate(value = paste0(center, " (", dispersion, ")")) %>%
+    mutate(value = paste0(.data$center, " (", .data$dispersion, ")")) %>%
     tidyr::pivot_wider(
       id_cols = c(any_of(c(group, "DOSE")), "n"),
-      names_from = "PPTESTCD", values_from = value
+      names_from = "PPTESTCD", values_from = "value"
     )
 }
 
@@ -680,29 +658,24 @@ nca_power_model <- function(
 
   pm_plot <- function(param) {
     pp <- nca %>%
-      filter(.data$PPTESTCD == param) %>%
-      {
-        if (!"PPORRES" %in% names(.) & "PPSTRESN" %in% names(.)) {
-          mutate(., PPORRES = .data$PPSTRESN)
-        } else {
-          .
-        }
-      } %>%
-      filter(.data$PPORRES != 0)
+      filter(.data$PPTESTCD == param)
 
-    pm <- pp %>%
-      lm(log(PPORRES) ~ log(DOSE), data = .)
+    if (!"PPORRES" %in% names(pp) & "PPSTRESN" %in% names(pp))
+      pp <- mutate(pp, PPORRES = .data$PPSTRESN)
+
+    pp <- filter(pp, .data$PPORRES != 0)
+
+    # pm <- pp %>%
+    #   lm(log(PPORRES) ~ log(DOSE), data = pp)
+
+    pm <- lm(log(PPORRES) ~ log(DOSE), data = pp)
 
     color_label <- nice_enumeration(unique(group))
 
-    pp %>%
-      {
-        if (!is.null(group)) {
-          tidyr::unite(., "COLOR", all_of(group), sep = "-", remove = FALSE)
-        } else {
-          .
-        }
-      } %>%
+    if (!is.null(group))
+      pp <- tidyr::unite(pp, "COLOR", all_of(group), sep = "-", remove = FALSE)
+
+    out <- pp |>
       bind_cols(predict.lm(pm, pp,
         interval = "prediction", se.fit = T,
         level = 0.9
@@ -715,20 +688,25 @@ nca_power_model <- function(
           ymax = exp(.data$upr)
         ),
         fill = "lightgrey", alpha = 0.5
-      ) +
-      {
-        if (!is.null(group)) {
-          ggplot2::geom_point(
-            ggplot2::aes(x = .data$DOSE, y = .data$PPORRES,
-                         color = .data$COLOR),
-            size = size, alpha = alpha
-          )
-        } else {
-          ggplot2::geom_point(ggplot2::aes(x = .data$DOSE, y = .data$PPORRES),
-            size = size, alpha = alpha
-          )
-        }
-      } +
+      )
+
+    if (!is.null(group)) {
+      out <- out +
+        ggplot2::geom_point(
+        ggplot2::aes(
+          x = .data$DOSE,
+          y = .data$PPORRES,
+          color = .data$COLOR
+        ),
+        size = size, alpha = alpha
+      )
+    } else {
+      out <- out +
+        ggplot2::geom_point(ggplot2::aes(x = .data$DOSE, y = .data$PPORRES),
+                            size = size, alpha = alpha)
+    }
+
+    out <- out +
       ggplot2::theme_bw() +
       ggplot2::expand_limits(x = 0) +
       ggplot2::labs(
@@ -737,15 +715,20 @@ nca_power_model <- function(
           "mean and 90% PI, slope = ",
           round(pm$coefficients[2], 3)
         )
-      ) +
-      {
-        if (!is.null(group)) ggplot2::labs(color = color_label)
-      } +
-      {
-        if (!is.null(title)) ggplot2::ggtitle(title)
-      } +
-      watermark(cex = 1.5)
+      )
+
+    if (!is.null(group))
+      out <- out +
+        ggplot2::labs(color = color_label)
+
+    if (!is.null(title))
+      out <- out +
+        ggplot2::ggtitle(title)
+
+      out +
+        watermark(cex = 1.5)
   }
+
   out <- lapply(parameter, pm_plot)
   names(out) <- parameter
   return(out)

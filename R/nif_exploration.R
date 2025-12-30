@@ -207,7 +207,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
     )
 
   if (!is.null(analyte))
-    x <- filter(x, .$ANALYTE %in% analyte)
+    x <- filter(x, .data$ANALYTE %in% analyte)
 
   plot_label <- ""
 
@@ -354,22 +354,22 @@ summary.nif <- function(
     renal_function <- object |>
       as.data.frame() |>
       mutate(CLASS = as.character(
-        cut(BL_CRCL,
+        cut(.data$BL_CRCL,
           breaks = c(0, 30, 60, 90, Inf),
           labels = c("severe", "moderate", "mild", "normal")
         )
       )) |>
       distinct(.data$ID, .data$CLASS) |>
       mutate(CLASS = factor(
-        CLASS,
+        .data$CLASS,
         levels = c("normal", "mild", "moderate", "severe")
       )) |>
       reframe(
         N = n(),
         .by = "CLASS"
       ) |>
-      tidyr::complete(CLASS, fill = list(N = 0)) |>
-      mutate(CLASS = as.character(CLASS))
+      tidyr::complete(.data$CLASS, fill = list(N = 0)) |>
+      mutate(CLASS = as.character(.data$CLASS))
   } else {
     renal_function <- NULL
   }
@@ -381,7 +381,7 @@ summary.nif <- function(
       distinct(.data$ID, .data$CLASS) |>
       mutate(
         CLASS = factor(
-          CLASS,
+          .data$CLASS,
           levels = c("normal", "mild", "moderate", "severe")
         )
       ) |>
@@ -389,8 +389,8 @@ summary.nif <- function(
         N = n(),
         .by = "CLASS"
       ) |>
-      tidyr::complete(CLASS, fill = list(N = 0)) |>
-      mutate(CLASS = as.character(CLASS))
+      tidyr::complete(.data$CLASS, fill = list(N = 0)) |>
+      mutate(CLASS = as.character(.data$CLASS))
   } else {
     odwg <- NULL
   }
@@ -819,9 +819,9 @@ covariate_barplot <- function(
       as.data.frame() |>
       mutate(CLASS = as.factor(.data[[cov]])) |>
       distinct(.data$ID, .data$CLASS) |>
-      group_by(CLASS) |>
+      group_by(.data$CLASS) |>
       summarize(n = n()) |>
-      ggplot2::ggplot(ggplot2::aes(x = CLASS, y = n)) +
+      ggplot2::ggplot(ggplot2::aes(x = .data$CLASS, y = .data$n)) +
       ggplot2::scale_x_discrete(drop = FALSE, name = cov) +
       ggplot2::geom_bar(
         stat = "identity", fill = "white", color = "black", width = 0.5

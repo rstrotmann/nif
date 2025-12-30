@@ -422,7 +422,7 @@ dose_red_sbs <- function(obj, analyte = NULL) {
     arrange(.data$TIME) |>
     group_by(.data$ID, .data$ANALYTE) |>
     mutate(initial_dose = .data$AMT[row_number() == 1]) |>
-    filter(.data$AMT < initial_dose & .data$AMT != 0) |>
+    filter(.data$AMT < .data$initial_dose & .data$AMT != 0) |>
     ungroup() |>
     select(any_of(c("ID", "USUBJID"))) |>
     distinct()

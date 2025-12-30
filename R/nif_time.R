@@ -316,6 +316,6 @@ add_trtdy <- function(obj) {
     mutate(TRTDY = case_when(.data$TRTDY < 0 ~ .data$TRTDY,
       .default = .data$TRTDY + 1
     )) |>
-    select(-FIRSTTRTDTC) |>
+    select(-c("FIRSTTRTDTC")) |>
     nif()
 }
