@@ -8,7 +8,7 @@ first_admin_dtc <- function(x) {
   x |>
     assertr::verify(assertr::has_all_names("USUBJID", "DTC", "EVID")) |>
     assertr::verify(is.POSIXct(.data$DTC)) |>
-    filter(EVID == 1) |>
+    filter(.data$EVID == 1) |>
     dplyr::group_by(.data$USUBJID) |>
     dplyr::mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) |>
     dplyr::ungroup() |>
@@ -215,7 +215,7 @@ add_tad <- function(nif) {
     # Group by subject and parent compound
     group_by(.data$ID, .data$PARENT) |>
     # Fill admin_time forward within each group
-    tidyr::fill(admin_time, .direction = "downup") |>
+    tidyr::fill("admin_time", .direction = "downup") |>
     # Calculate TAD
     mutate(TAD = .data$TIME - .data$admin_time) |>
     # Remove temporary column

@@ -90,7 +90,7 @@ summary.domain <- function(object, ..., silent = NULL) {
   }
 
   if ("EPOCH" %in% names(object)) {
-    epoch <- distinct(object, EPOCH)
+    epoch <- distinct(object, .data$EPOCH)
   } else {
     epoch <- NULL
   }

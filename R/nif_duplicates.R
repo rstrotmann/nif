@@ -55,7 +55,7 @@ find_duplicates <- function(
     group_by(across(all_of(index_fields))) |>
     mutate(count = n()) |>
     ungroup() |>
-    dplyr::filter(count > 1)
+    dplyr::filter(.data$count > 1)
 
   if (count_only) {
     return(nrow(duplicates))

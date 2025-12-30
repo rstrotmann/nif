@@ -507,7 +507,7 @@ make_observation <- function(
   # set NA values to zero, if flag is set
   if (na_to_zero == TRUE) {
     obj <- obj |>
-      mutate(DV = case_when(is.na(DV) ~ 0, .default = DV))
+      mutate(DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
   }
 
   # apply observation filter, add debug fields
@@ -596,7 +596,7 @@ make_observation <- function(
       ))
     }
     out <- out |>
-      mutate(NTIME = NTIME + trialday_to_day(out[[dy_name]]) * 24)
+      mutate(NTIME = .data$NTIME + trialday_to_day(out[[dy_name]]) * 24)
   }
 
   # merge subject-level information
@@ -623,7 +623,7 @@ make_observation <- function(
 #' `testcd` arguments specify the source of the observation events.
 #'
 #' In general, the dependent variable and the observation time stamp are taken
-#' from the 'xxSTRESN' and 'xxDTC' fields of the source domiain (where xx refers
+#' from the 'xxSTRESN' and 'xxDTC' fields of the source domain (where xx refers
 #' to the domain code). Differing fields can be specified by the `dv_field` and
 #' `dtc_field` arguments
 #'
@@ -654,7 +654,7 @@ make_observation <- function(
 #' the source SDTM data. Different methods are provided to derive the nominal
 #' time (NTIME) field and can be selected using the `ntime_method` argument.
 #'
-#' * 'TPT' atttempts to extract the nominal time from the 'xxTPT' field of the
+#' * 'TPT' attempts to extract the nominal time from the 'xxTPT' field of the
 #' SDTM data
 #' * 'TPTNUM' interprets the 'xxTPTNUM' field as the numerical representation of
 #' the
@@ -926,17 +926,19 @@ add_observation <- function(
   obj <- bind_rows(nif, observation) |>
     arrange(.data$USUBJID, .data$DTC) |>
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) |>
-    mutate(PARENT = case_when(PARENT == "." ~ NA, .default = PARENT)) |>
-    mutate(.current_admin = case_when(EVID == 1 ~ ANALYTE, .default = NA)) |>
+    mutate(PARENT = case_when(.data$PARENT == "." ~ NA,
+                              .default = .data$PARENT)) |>
+    mutate(.current_admin = case_when(.data$EVID == 1 ~ .data$ANALYTE,
+                                      .default = NA)) |>
     group_by(.data$USUBJID) |>
     fill(".current_admin", .direction = "downup") |>
     ungroup() |>
-    mutate(PARENT = case_when(is.na(PARENT) ~ .current_admin,
-                              .default = PARENT)) |>
+    mutate(PARENT = case_when(is.na(.data$PARENT) ~ .current_admin,
+                              .default = .data$PARENT)) |>
     select(-c(".current_admin")) |>
     group_by(.data$USUBJID, .data$PARENT) |>
     mutate(NO_ADMIN_FLAG = case_when(
-      sum(EVID == 1) == 0 ~ TRUE,
+      sum(.data$EVID == 1) == 0 ~ TRUE,
       .default = FALSE
     )) |>
     ungroup()
@@ -955,9 +957,9 @@ add_observation <- function(
           obj |>
             filter(.data$NO_ADMIN_FLAG == TRUE) |>
             group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) |>
-            mutate(N = sum(EVID == 0)) |>
+            mutate(N = sum(.data$EVID == 0)) |>
             ungroup() |>
-            distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, N),
+            distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, .data$N),
           indent = 2, abbr_lines = 5, abbr_threshold = 20
         ))
         cli_text()
@@ -1060,9 +1062,9 @@ import_observation <- function(
 
   imp <- nif |>
     as.data.frame() |>
-    filter(EVID == 1) |>
-    distinct(ANALYTE) |>
-    pull(ANALYTE)
+    filter(.data$EVID == 1) |>
+    distinct(.data$ANALYTE) |>
+    pull(.data$ANALYTE)
 
   if (is.null(parent)) {
     if (analyte %in% imp) {
@@ -1077,7 +1079,7 @@ import_observation <- function(
   }
 
   sbs <- nif |>
-    filter(EVID == 1) |>
+    filter(.data$EVID == 1) |>
     select(
       # "USUBJID", "ID", any_of(fillable_nif_fields),
       any_of(c("ID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
@@ -1115,7 +1117,7 @@ import_observation <- function(
       PARENT = parent,
       METABOLITE = FALSE,
       EVID = 0,
-      MDV = as.numeric(is.na(DV))
+      MDV = as.numeric(is.na(.data$DV))
     ) |>
     inner_join(sbs, by = "USUBJID") |>
     mutate(
@@ -1133,7 +1135,7 @@ import_observation <- function(
   } else {
     obs <- obs |>
       left_join(first_admin_dtc(nif), by = "USUBJID") |>
-      mutate(DTC = .data$FIRSTDTC + duration(hours = NTIME)) |>
+      mutate(DTC = .data$FIRSTDTC + duration(hours = .data$NTIME)) |>
       select(!all_of("FIRSTDTC")) |>
       mutate(IMPUTATION = paste0("DTC derived from ", ntime_field))
   }

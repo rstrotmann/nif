@@ -45,25 +45,25 @@ make_plot_data_set <- function(
   }
 
   parent <- as.data.frame(nif) |>
-    distinct(ANALYTE, PARENT) |>
-    filter(ANALYTE %in% analyte) |>
-    pull(PARENT)
+    distinct(.data$ANALYTE, .data$PARENT) |>
+    filter(.data$ANALYTE %in% analyte) |>
+    pull(.data$PARENT)
 
   out <- nif |>
-    filter((ANALYTE %in% analyte & EVID == 0) |
-             (ANALYTE %in% parent & EVID == 1)) |>
-    mutate(DV = case_when(is.na(DV) ~ na_value, .default = DV))
+    filter((.data$ANALYTE %in% analyte & .data$EVID == 0) |
+             (.data$ANALYTE %in% parent & .data$EVID == 1)) |>
+    mutate(DV = case_when(is.na(.data$DV) ~ na_value, .default = .data$DV))
 
   if (is.null(dose)) {
-    dose <- unique(filter(out, EVID == 0)$DOSE)
+    dose <- unique(filter(out, .data$EVID == 0)$DOSE)
   }
 
   out <- out |>
-    filter(DOSE %in% dose) |>
+    filter(.data$DOSE %in% dose) |>
     mutate(active_time = .data[[time]])
 
   if (is.null(max_time)) {
-    max_time <- max(filter(out, EVID == 0)$active_time, na.rm = TRUE)
+    max_time <- max(filter(out, .data$EVID == 0)$active_time, na.rm = TRUE)
   }
 
   if (is.null(min_time)) {
@@ -72,19 +72,19 @@ make_plot_data_set <- function(
 
   out <- out |>
     index_dosing_interval() |>
-    mutate(DI = case_match(EVID, 1 ~ NA, .default = DI))
+    mutate(DI = case_match(.data$EVID, 1 ~ NA, .default = .data$DI))
 
   if (cfb == TRUE)
-    out <- mutate(out, DV = DVCFB)
+    out <- mutate(out, DV = .data$DVCFB)
 
   if (dose_norm == TRUE)
-    out <- mutate(out, DV = DV / DOSE)
+    out <- mutate(out, DV = .data$DV / .data$DOSE)
 
   out <- out |>
     filter(.data$active_time >= min_time) |>
     filter(.data$active_time <= max_time) |>
-    group_by(ID, ANALYTE) |>
-    mutate(n_obs = sum(EVID == 0)) |>
+    group_by("ID", "ANALYTE") |>
+    mutate(n_obs = sum(.data$EVID == 0)) |>
     ungroup() |>
     as.data.frame()
 
@@ -96,7 +96,7 @@ make_plot_data_set <- function(
     arrange("ID", "DOSE")
 
   if (length(color) != 0) {
-    out <- tidyr::unite(out, COLOR, all_of(!!color), sep = "-", remove = FALSE)
+    out <- tidyr::unite(out, "COLOR", all_of(!!color), sep = "-", remove = FALSE)
   } else {
     out <- mutate(out, COLOR = TRUE)
   }
@@ -105,7 +105,7 @@ make_plot_data_set <- function(
     if (length(facet) == 1) {
       out <- mutate(out, FACET = .data[[facet]])
     } else {
-      out <- tidyr::unite(out, .data$FACET,
+      out <- tidyr::unite(out, "FACET",
         all_of(facet),
         sep = "-", remove = FALSE
       )
@@ -128,16 +128,16 @@ make_plot_data_set <- function(
 #' @seealso [nif::make_plot_data_set()]
 make_mean_plot_data_set <- function(data_set) {
   out <- data_set$data |>
-    mutate(active_time = NTIME) |>
-    select(-c(NTIME)) |>
+    mutate(active_time = .data$NTIME) |>
+    select(-c("NTIME")) |>
     reframe(
-      ID = 1, n = n(), mean = safe_mean(DV), sd = safe_sd(DV),
+      ID = 1, n = n(), mean = safe_mean(.data$DV), sd = safe_sd(.data$DV),
       .by = any_of(c(
         "active_time", data_set$color, data_set$facet, "EVID",
         "COLOR", "FACET", "ANALYTE"
       ))
     ) |>
-    rename(DV = mean)
+    rename(DV = "mean")
 
   list(
     data = out, group = "ID", color = data_set$color, facet = data_set$facet
@@ -248,11 +248,12 @@ plot.nif <- function(
   plot_data <- temp$data
 
   if (isTRUE(log)) {
-    plot_data <- mutate(plot_data, DV = case_match(DV, 0 ~ NA, .default = DV))
+    plot_data <- mutate(plot_data, DV = case_match(.data$DV, 0 ~ NA,
+                                                   .default = .data$DV))
   }
 
   plot_data <- plot_data |>
-    tidyr::unite(GROUP, any_of(c((temp$group), (temp$color), (temp$facet))),
+    tidyr::unite("GROUP", any_of(c((temp$group), (temp$color), (temp$facet))),
       sep = "-", remove = FALSE
     )
 
@@ -260,7 +261,7 @@ plot.nif <- function(
   y_label <- ifelse(length(analytes) == 1, analytes, "DV")
   if (isTRUE(dose_norm)) y_label <- paste0(y_label, " / DOSE")
 
-  admin_data <- filter(plot_data, EVID == 1)
+  admin_data <- filter(plot_data, .data$EVID == 1)
 
   if (is.null(caption) && nif_option_value("show_hash") == TRUE) {
     caption <- paste0("dataset hash: ", hash(x))
@@ -268,14 +269,14 @@ plot.nif <- function(
 
 
   p <- plot_data |>
-    filter(EVID == 0) |>
-    filter(!is.na(DV))
+    filter(.data$EVID == 0) |>
+    filter(!is.na(.data$DV))
 
   if (!is.null(admin))
     p <- dplyr::bind_rows(p, dplyr::mutate(admin_data, DV = NA))
 
   p <- p |>
-    arrange("GROUP", "active_time", -EVID) |>
+    arrange("GROUP", "active_time", -.data$EVID) |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time,
       y = .data$DV,
@@ -300,7 +301,9 @@ plot.nif <- function(
   if (isTRUE(mean) && isTRUE(ribbon)) {
     p <- p +
       ggplot2::geom_ribbon(
-        ggplot2::aes(ymin = pos_diff(DV, sd), ymax = DV + sd, fill = COLOR),
+        ggplot2::aes(ymin = pos_diff(.data$DV, .data$sd),
+                     ymax = .data$DV + .data$sd,
+                     fill = .data$COLOR),
         alpha = 0.3, color = NA, show.legend = FALSE
       )
   }

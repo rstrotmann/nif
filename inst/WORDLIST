@@ -1,5 +1,6 @@
 ACTARM
 ACTARMCD
+ADaM
 AE
 AEBODSYS
 AEDECOD
@@ -58,7 +59,6 @@ IEC
 Iodinated
 LBM
 LBSPEC
-LBTESTCD
 MDRD
 Monolix
 NCA
@@ -114,10 +114,11 @@ Tmax
 ULN
 USUBJID
 USUBJIDs
+VISIDY
 VISITDY
 VSBLFL
-VSTESTCD
 XPT
+adam
 ae
 aer
 al
@@ -131,7 +132,6 @@ biomarker
 bja
 bmj
 campatibility
-cmt
 cov
 crea
 creatinine
@@ -143,8 +143,6 @@ dm
 doi
 dosings
 ds
-dtc
-dv
 eDISH
 eGFR
 egfr
@@ -197,8 +195,13 @@ xlsx
 xpt
 xxBLFL
 xxCAT
+xxDTC
+xxDY
+xxELTM
 xxLOBXFL
 xxSCAT
 xxSTAT
+xxSTRESN
 xxTESTCD
 xxTPT
+xxTPTNUM

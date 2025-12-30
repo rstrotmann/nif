@@ -119,11 +119,12 @@ make_subjects <- function(
     if ("VSBLFL" %in% names(vs)) {
       baseline_covariates <- filter(baseline_covariates, VSBLFL == "Y")
     } else {
-      baseline_covariates <- filter(baseline_covariates, VSDTC < RFSTDTC)
+      baseline_covariates <- filter(baseline_covariates,
+                                    .data$VSDTC < .data$RFSTDTC)
     }
 
     baseline_covariates <- baseline_covariates |>
-      filter(VSTESTCD %in% c("WEIGHT", "HEIGHT")) |>
+      filter(.data$VSTESTCD %in% c("WEIGHT", "HEIGHT")) |>
       group_by(.data$USUBJID, .data$VSTESTCD) |>
       summarize(mean = mean(.data$VSSTRESN), .groups = "drop") |>
       tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "mean")

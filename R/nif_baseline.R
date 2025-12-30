@@ -15,7 +15,7 @@
 #' The name of the baseline column defaults to the 'testcd', prefixed with
 #' 'BL_', e.g., BL_WEIGHT. A specific name can be defined by the `name`
 #' argument. Note that baseline WEIGHT, HEIGHT and BMI (if applicable) are
-#' automatically inclucded during the generation of a nif object.
+#' automatically included during the generation of a nif object.
 #'
 #'
 #' @param nif A nif object.
@@ -199,7 +199,7 @@ add_baseline <- function(
   baseline <- baseline |>
     tidyr::pivot_wider(
       names_from = all_of(testcd_field),
-      values_from = DV
+      values_from = "DV"
     ) |>
     select(all_of(c("USUBJID", {{ testcd }}))) |>
     group_by(.data$USUBJID) |>

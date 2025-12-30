@@ -73,7 +73,7 @@ ensure_dose <- function(obj) {
     )) |>
     # Fill DOSE within each subject
     group_by(.data$ID) |>
-    tidyr::fill(DOSE, .direction = "downup") |>
+    tidyr::fill("DOSE", .direction = "downup") |>
     ungroup()
 
   # Return as NIF object

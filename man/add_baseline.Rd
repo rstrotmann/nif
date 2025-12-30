@@ -79,7 +79,7 @@ and URINE observations are included in the PC domain data.
 The name of the baseline column defaults to the 'testcd', prefixed with
 'BL_', e.g., BL_WEIGHT. A specific name can be defined by the \code{name}
 argument. Note that baseline WEIGHT, HEIGHT and BMI (if applicable) are
-automatically inclucded during the generation of a nif object.
+automatically included during the generation of a nif object.
 }
 \examples{
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")

@@ -137,7 +137,7 @@ or any other type of observation from any other SDTM domain. The \code{domain} a
 \code{testcd} arguments specify the source of the observation events.
 
 In general, the dependent variable and the observation time stamp are taken
-from the 'xxSTRESN' and 'xxDTC' fields of the source domiain (where xx refers
+from the 'xxSTRESN' and 'xxDTC' fields of the source domain (where xx refers
 to the domain code). Differing fields can be specified by the \code{dv_field} and
 \code{dtc_field} arguments
 
@@ -167,7 +167,7 @@ the nominal time of the observation is often not unambiguously represented in
 the source SDTM data. Different methods are provided to derive the nominal
 time (NTIME) field and can be selected using the \code{ntime_method} argument.
 \itemize{
-\item 'TPT' atttempts to extract the nominal time from the 'xxTPT' field of the
+\item 'TPT' attempts to extract the nominal time from the 'xxTPT' field of the
 SDTM data
 \item 'TPTNUM' interprets the 'xxTPTNUM' field as the numerical representation of
 the

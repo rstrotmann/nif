@@ -271,7 +271,7 @@ make_administration <- function(
   admin <- ex
 
   if ("EXSEQ" %in% names(ex)) {
-    admin <- mutate(admin, SRC_SEQ = EXSEQ)
+    admin <- mutate(admin, SRC_SEQ = .data$EXSEQ)
   } else {
     admin <- mutate(admin, SRC_SEQ = NA)
   }
@@ -323,7 +323,7 @@ make_administration <- function(
     mutate(
       TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
       METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
-      DOSE = EXDOSE, AMT = EXDOSE
+      DOSE = .data$EXDOSE, AMT = .data$EXDOSE
     ) |>
     expand_ex()
 

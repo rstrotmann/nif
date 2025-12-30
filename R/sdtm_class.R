@@ -517,8 +517,8 @@ suggest <- function(obj, show_all = FALSE) {
 
   # PK specimens
   if ("PCSPEC" %in% names(pc)) {
-    specimens <- filter(pc, PCSPEC != "") |>
-      distinct(PCSPEC)
+    specimens <- filter(pc, .data$PCSPEC != "") |>
+      distinct(.data$PCSPEC)
     if (nrow(specimens) > 1) {
       cli::cli_h2("Pharmacokinetic specimens")
       cli::cli_alert_warning(paste0(
@@ -566,7 +566,7 @@ suggest <- function(obj, show_all = FALSE) {
       "There are {nrow(sdtm_summary$arms)} study arms defined in DM:"
     ))
     cli::cli_text()
-    cli::cli_verbatim(df_to_string(arrange(sdtm_summary$arms, ACTARMCD),
+    cli::cli_verbatim(df_to_string(arrange(sdtm_summary$arms, .data$ACTARMCD),
                                    indent = 2))
     cli::cli_text()
     cli::cli_text(paste0(

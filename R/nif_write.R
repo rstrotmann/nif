@@ -136,7 +136,7 @@ write_monolix <- function(obj, filename = NULL, fields = NULL) {
     mutate(across(any_of(num_fields), \(x) signif(x, 4))) |>
     mutate(ADM = case_when(.data$AMT != 0 ~ "1", .default = ".")) |>
     mutate(YTYPE = case_when(.data$ADM == "1" ~ ".",
-      .default = as.character(CMT - 1)
+      .default = as.character(.data$CMT - 1)
     ))
 
   if ("METABOLITE" %in% names(obj)) {

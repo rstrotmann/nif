@@ -419,7 +419,7 @@ dose_red_sbs <- function(obj, analyte = NULL) {
   }
 
   temp |>
-    arrange(TIME) |>
+    arrange(.data$TIME) |>
     group_by(.data$ID, .data$ANALYTE) |>
     mutate(initial_dose = .data$AMT[row_number() == 1]) |>
     filter(.data$AMT < initial_dose & .data$AMT != 0) |>
@@ -572,7 +572,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
         names_from = "ANALYTE",
         values_from = "AMT", values_fill = 0
       ) |>
-      group_by(across(c(-ID))) |>
+      group_by(across(c(-c("ID")))) |>
       summarize(N = n()) |>
       as.data.frame()
   }
@@ -814,7 +814,7 @@ index_dosing_interval <- function(obj) {
     left_join(di, by = "REF") |>
     group_by(.data$ID, .data$PARENT) |>
     arrange(.data$REF) |>
-    tidyr::fill(DI, .direction = "downup") |>
+    tidyr::fill("DI", .direction = "downup") |>
     ungroup() |>
     nif()
 }
@@ -894,7 +894,7 @@ max_admin_time <- function(obj, analyte = NULL) {
 max_observation_time <- function(obj, analyte = NULL) {
   times <- obj |>
     ensure_analyte() |>
-    filter(is.null(analyte) | ANALYTE %in% analyte) |>
+    filter(is.null(analyte) | .data$ANALYTE %in% analyte) |>
     filter(.data$EVID == 0) |>
     pull(.data$TIME)
 
@@ -927,7 +927,7 @@ max_time <- function(
     only_observations = TRUE) {
   times <- obj |>
     ensure_analyte() |>
-    filter(is.null(analyte) | ANALYTE %in% analyte) |>
+    filter(is.null(analyte) | .data$ANALYTE %in% analyte) |>
     filter(only_observations == FALSE | (.data$EVID == 0 & !is.na(.data$DV))) |>
     pull(.data[[time_field]])
 
@@ -976,19 +976,19 @@ guess_parent <- function(obj) {
   imp <- obj |>
     ensure_analyte() |>
     assertr::verify(assertr::has_all_names("EVID", "ANALYTE")) |>
-    filter(EVID == 1) |>
-    reframe(n = n(), .by = ANALYTE) |>
-    arrange(-n, ANALYTE)
+    filter(.data$EVID == 1) |>
+    reframe(n = n(), .by = "ANALYTE") |>
+    arrange(-.data$n, .data$ANALYTE)
 
   # if administrations in data set, return analyte with most observations
   if (nrow(imp) > 0) {
     imp[1, ] |>
-      pull(ANALYTE)
+      pull(.data$ANALYTE)
   } else {
     obs <- obj |>
       ensure_analyte() |>
       filter(!"METABOLITE" %in% names(obj) | .data$METABOLITE == FALSE) |>
-      reframe(n = n(), .by = ANALYTE) |>
+      reframe(n = n(), .by = "ANALYTE") |>
       arrange(-n, "ANALYTE")
 
     if (nrow(obs) > 0) {
@@ -1041,7 +1041,7 @@ add_dose_level <- function(obj) {
       summarize(DL = paste0(.data$DL, collapse = "+"))
   }
 
-  left_join(obj, select(temp, ID, DL), by = "ID")
+  left_join(obj, select(temp, c("ID", "DL")), by = "ID")
 }
 
 
@@ -1063,7 +1063,8 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
       assertr::verify(assertr::has_all_names(
         "BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"
       )) |>
-      mutate(BL_CRCL = method(BL_CREAT, AGE, SEX, RACE, WEIGHT,
+      mutate(BL_CRCL = method(
+        .data$BL_CREAT, .data$AGE, .data$SEX, .data$RACE, .data$WEIGHT,
         molar = TRUE
       ))
   } else {

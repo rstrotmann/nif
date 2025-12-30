@@ -73,9 +73,9 @@ guess_lbspec <- function(lb) {
 index_nif <- function(nif) {
   nif |>
     as.data.frame() |>
-    dplyr::arrange(ID, TIME, -EVID) |>
+    dplyr::arrange(.data$ID, .data$TIME, -.data$EVID) |>
     dplyr::mutate(REF = row_number()) |>
-    dplyr::relocate(REF) |>
+    dplyr::relocate("REF") |>
     nif()
 }
 
@@ -99,13 +99,13 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   if (keep_no_obs_sbs == FALSE) {
     obj <- obj |>
       group_by(.data$ID) |>
-      filter(sum(EVID == 0) > 0) |>
+      filter(sum(.data$EVID == 0) > 0) |>
       ungroup()
   }
   if (individual == TRUE) {
     obj |>
       group_by(.data$ID) |>
-      mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[EVID == 0])) |>
+      mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[.data$EVID == 0])) |>
       ungroup() |>
       filter(.data$DTC <= .data$LAST_OBS_DTC) |>
       select(-c("LAST_OBS_DTC")) |>

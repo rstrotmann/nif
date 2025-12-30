@@ -396,7 +396,7 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
     )) %>%
     ungroup() %>%
     as.data.frame() %>%
-    tidyr::fill(block_id, .direction = "down") %>%
+    tidyr::fill("block_id", .direction = "down") %>%
     group_by(block_id) %>%
     mutate(EXSTDTC = dtc[1], EXENDTC = dtc[n()]) %>%
     ungroup() %>%
@@ -1201,7 +1201,7 @@ synthesize_pp <- function(obj) {
       mutate(DOMAIN = "PP", PPSTRESN = PPORRES, PPSPEC = "PLASMA") %>%
       mutate(PPSCAT = "NON-COMPARTMENTAL") %>%
       mutate(PPCAT = analytes[i, "ANALYTE"]) %>%
-      rename(PKNCAPARAM = PPTESTCD) %>%
+      rename(PKNCAPARAM = "PPTESTCD") %>%
       right_join(pp_translation, by = "PKNCAPARAM") %>%
       select(-c("PKNCAPARAM", "start", "end", "exclude", "ID")) %>%
       group_by(.data$USUBJID) %>%

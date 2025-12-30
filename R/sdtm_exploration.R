@@ -98,7 +98,7 @@ check_date_format <- function(obj, verbose = TRUE) {
 #' @export
 #' @keywords internal
 check_date_time_format <- function(obj, verbose = TRUE) {
-  domain <- obj |> distinct(DOMAIN)
+  domain <- obj |> distinct(.data$DOMAIN)
   temp <- obj |>
     filter(if_any(ends_with("DTC"), ~ !(is_iso_date_time(.) | . == ""))) |>
     select(c("USUBJID", "DOMAIN", ends_with("DTC")))
@@ -177,7 +177,7 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
 #' @export
 #' @keywords internal
 check_last_exendtc <- function(ex, verbose = TRUE) {
-  domain <- ex |> distinct(DOMAIN)
+  domain <- ex |> distinct(.data$DOMAIN)
 
   temp <- ex |>
     assertr::verify(assertr::has_all_names(
@@ -436,7 +436,7 @@ plot.sdtm <- function(
   if (domain == "vs") {
     out <- obj |>
       filter(!is.na(.data[[paste0(toupper(domain), "DTC")]])) |>
-      filter(if (!is.null(analyte)) VSTESTCD %in% analyte else TRUE) |>
+      filter(if (!is.null(analyte)) .data$VSTESTCD %in% analyte else TRUE) |>
       ggplot2::ggplot(ggplot2::aes(
         x = .data$VSDTC,
         y = .data$VSSTRESN,

@@ -215,7 +215,7 @@ recode_race <- function(obj, coding_table = NULL, silent = NULL) {
   obj |>
     left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") |>
     select(-c("RACE")) |>
-    rename(RACE = RACEN) |>
+    rename(RACE = "RACEN") |>
     order_nif_columns()
 }
 
@@ -768,13 +768,14 @@ safe_mean <- function(x, ...) {
 #'
 #' @return The mean as numeric.
 #' @export
+#' @importFrom stats sd
 #' @keywords internal
 safe_sd <- function(x, ...) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if (length(temp) == 0) {
     return(NA)
   }
-  out <- sd(temp, na.rm = TRUE)
+  out <- stats::sd(temp, na.rm = TRUE)
   attributes(out)$N <- length(temp[!is.na(temp)])
   out
 }
@@ -811,8 +812,9 @@ pos_diff <- function(a, b) {
     a = a,
     b = b
   ) |>
-    mutate(diff = case_when(a - b < 0 ~ NA, .default = a - b)) |>
-    pull(diff)
+    mutate(diff = case_when(.data$a - .data$b < 0 ~ NA,
+                            .default = .data$a - .data$b)) |>
+    pull(.data$diff)
 }
 
 
@@ -1141,7 +1143,7 @@ is_valid_filter <- function(data, filter_string, silent = TRUE) {
 dv_na_to_zero <- function(obj) {
   validate_nif(obj)
 
-  mutate(obj, DV = case_when(is.na(DV) ~ 0, .default = DV))
+  mutate(obj, DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
 }
 
 

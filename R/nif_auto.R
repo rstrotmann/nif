@@ -265,8 +265,8 @@ nif_auto <- function(
 
   # treatments
   treatments <- analyte_mapping |>
-    filter(METABOLITE == FALSE) |>
-    distinct(EXTRT, ANALYTE)
+    filter(.data$METABOLITE == FALSE) |>
+    distinct(.data$EXTRT, .data$ANALYTE)
 
   for (i in seq_len(nrow(treatments))) {
     t <- treatments[i, ]

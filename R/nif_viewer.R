@@ -306,7 +306,7 @@ nif_viewer <- function(nif) {
         {
           if (input$dose != "all") {
             filtered_nif <- nif %>%
-              filter(DOSE == as.numeric(input$dose))
+              filter(.data$DOSE == as.numeric(input$dose))
 
             if (nrow(filtered_nif) == 0) {
               stop("No data available for selected dose")

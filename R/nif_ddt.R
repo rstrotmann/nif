@@ -48,10 +48,10 @@ ddt <- function(obj, silent = NULL) {
   temp <- obj %>%
     ensure_analyte() %>%
     as.data.frame() %>%
-    distinct(ANALYTE, CMT, EVID) %>%
-    arrange(CMT) %>%
+    distinct(.data$ANALYTE, .data$CMT, .data$EVID) %>%
+    arrange(.data$CMT) %>%
     mutate(TYPE = case_match(
-      EVID,
+      .data$EVID,
       0 ~ "observation",
       1 ~ "administration"
     )) %>%
@@ -65,8 +65,8 @@ ddt <- function(obj, silent = NULL) {
     if (inherits(obj$RACE, "numeric")) {
       temp <- obj %>%
         as.data.frame() %>%
-        distinct(RACE) %>%
-        arrange(RACE) %>%
+        distinct(.data$RACE) %>%
+        arrange(.data$RACE) %>%
         left_join(race_coding, by = c("RACE" = "RACEN")) %>%
         mutate(DESC = paste(.data$RACE, "=", .data$RACE.y))
       out[out$name == "RACE", "type"] <- "numeric"

@@ -38,8 +38,9 @@ add_time_deviation <- function(obj, silent = NULL) {
   # identify observations without NTIME
   temp <- obj |>
     as.data.frame() |>
-    filter(EVID == 0) |>
-    reframe(n_obs = n(), n_missing_ntime = sum(is.na(NTIME)), .by = "ANALYTE")
+    filter(.data$EVID == 0) |>
+    reframe(n_obs = n(), n_missing_ntime = sum(is.na(.data$NTIME)),
+            .by = "ANALYTE")
 
   n_missing <- sum(temp$n_missing_ntime)
 
@@ -142,7 +143,7 @@ add_time_window_flag <- function(
 
   # rename columns to avoid any name collisions, delete any other columns
   temp <- window |>
-    select(NTIME, .BEFORE = "BEFORE", .AFTER = "AFTER")
+    select("NTIME", .BEFORE = "BEFORE", .AFTER = "AFTER")
 
   # ensure that window is in hours
   if (use_minutes == TRUE) {

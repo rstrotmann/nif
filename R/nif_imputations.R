@@ -56,7 +56,7 @@ impute_exendtc_to_rfendtc <- function(
     filter(.data$EXTRT == extrt)
 
   to_be_imputed <- temp |>
-    filter(LAST_ADMIN == TRUE & is.na(EXENDTC))
+    filter(.data$LAST_ADMIN == TRUE & is.na(.data$EXENDTC))
 
   n_sbs_to_be_imputed <- to_be_imputed |>
     distinct(.data$USUBJID) |>
@@ -95,7 +95,8 @@ impute_exendtc_to_rfendtc <- function(
 
     # Capture rows to be imputed for message (before imputation)
     rows_for_message <- temp |>
-      filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) & LAST_ADMIN == TRUE)
+      filter(is.na(.data$EXENDTC) & !is.na(.data$RFENDTC) &
+               .data$LAST_ADMIN == TRUE)
 
     replace_n <- nrow(rows_for_message)
 
@@ -355,7 +356,7 @@ impute_admin_from_pcrftdtc <- function(
 
   pc_ref <- pc |>
     lubrify_dates() |>
-    filter(PCTESTCD == pctestcd) |>
+    filter(.data$PCTESTCD == pctestcd) |>
     mutate(ANALYTE = analyte) |>
     decompose_dtc("PCRFTDTC") |>
     select(c(

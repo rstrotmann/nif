@@ -69,12 +69,12 @@ correlate_obs <- function(
   obs <- obj |>
     ensure_analyte() |>
     as.data.frame() |>
-    filter(EVID == 0) |>
-    filter(ANALYTE %in% c(indep_analyte, dep_analyte)) |>
-    filter(!is.nan(DV) & !is.na(DV))
+    filter(.data$EVID == 0) |>
+    filter(.data$ANALYTE %in% c(indep_analyte, dep_analyte)) |>
+    filter(!is.nan(.data$DV) & !is.na(.data$DV))
 
-  x <- filter(obs, ANALYTE == indep_analyte)
-  y <- filter(obs, ANALYTE %in% dep_analyte)
+  x <- filter(obs, .data$ANALYTE == indep_analyte)
+  y <- filter(obs, .data$ANALYTE %in% dep_analyte)
 
   # function definitions
   time_match <- function(x_ref) {
@@ -100,8 +100,8 @@ correlate_obs <- function(
   }
 
   correlate_line <- function(x_ref) {
-    indep <- filter(x, REF == x_ref) |>
-      mutate(!!indep_analyte := DV)
+    indep <- filter(x, .data$REF == x_ref) |>
+      mutate(!!indep_analyte := .data$DV)
     y_ref <- time_match(x_ref)
 
     # Return NULL if no match
@@ -109,12 +109,12 @@ correlate_obs <- function(
       return(NULL)
     }
 
-    match <- filter(y, REF %in% y_ref)
+    match <- filter(y, .data$REF %in% y_ref)
 
     temp <- match |>
       reframe(
-        DV = duplicate_function(DV),
-        TIME = duplicate_function(TIME), .by = ANALYTE
+        DV = duplicate_function(.data$DV),
+        TIME = duplicate_function(.data$TIME), .by = "ANALYTE"
       )
     dep <- temp |>
       pivot_longer(
@@ -122,10 +122,10 @@ correlate_obs <- function(
         names_to = "param", values_to = "value"
       ) |>
       mutate(param = case_match(
-        .data$param, "DV" ~ ANALYTE,
-        .default = paste(ANALYTE, .data$param, sep = "_")
+        .data$param, "DV" ~ .data$ANALYTE,
+        .default = paste(.data$ANALYTE, .data$param, sep = "_")
       )) |>
-      select(-ANALYTE) |>
+      select(-c("ANALYTE")) |>
       pivot_wider(names_from = "param", values_from = "value")
     bind_cols(indep, dep)
   }
