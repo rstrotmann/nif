@@ -76,10 +76,10 @@ test_that("correlate_obs validates window parameter", {
 test_that("correlate_obs validates time_field parameter", {
   # Create valid test nif object
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE,                  ~DTC, ~REF,
+    1,     0,   0,     1,   "DRUG", "2023-01-01T00:00:00",    1,
+    1,     0,  10,     0,   "DRUG", "2023-01-01T00:00:00",    2,
+    1,     0,   5,     0,  "METAB", "2023-01-01T00:00:00",    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -109,10 +109,10 @@ test_that("correlate_obs validates time_field parameter", {
 test_that("correlate_obs basic functionality works with single dependent analyte", {
   # Create test nif object with two analytes at same time
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE,                  ~DTC, ~REF,
+    1,     0,   0,     1,   "DRUG", "2023-01-01T00:00:00",    1,
+    1,     0,  10,     0,   "DRUG", "2023-01-01T00:00:00",    2,
+    1,     0,   5,     0,  "METAB", "2023-01-01T00:00:00",    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -171,10 +171,10 @@ test_that("correlate_obs matches observations within time window using TIME", {
   # Create test nif object with two analytes at slightly different times
   # TIME is in hours, so 5 minutes = 5/60 = 0.083 hours
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 5 / 60, 5, 0, "METAB", "2023-01-01T00:05:00", 3 # 5 minutes later
+    ~ID,  ~TIME, ~DV, ~EVID, ~ANALYTE,                   ~DTC, ~REF,
+    1,        0,   0,     1,   "DRUG",  "2023-01-01T00:00:00",    1,
+    1,        0,  10,     0,   "DRUG",  "2023-01-01T00:00:00",    2,
+    1,     5/60,   5,     0,   "METAB", "2023-01-01T00:05:00",    3
   ) %>%
     nif() %>%
     lubrify_dates()

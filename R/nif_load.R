@@ -112,16 +112,20 @@ rename_by_formula <- function(obj, f) {
 
   to_col <- rlang::f_lhs(f)
   from_term <- rlang::f_rhs(f)
+  to_col_name <- as.character(to_col)
+
   tryCatch(
     error = function(e) {
       stop(paste0(
         "'", deparse(f), "' is not a valid renaming term, ", e
       ))
     },
-    out <- obj |>
-      mutate(!!to_col := eval(from_term))
+    {
+      new_values <- eval(from_term, envir = obj, enclos = parent.frame())
+      obj[[to_col_name]] <- new_values
+    }
   )
-  out
+  obj
 }
 
 

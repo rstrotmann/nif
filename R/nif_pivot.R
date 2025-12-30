@@ -101,7 +101,10 @@ correlate_obs <- function(
 
   correlate_line <- function(x_ref) {
     indep <- filter(x, .data$REF == x_ref) |>
-      mutate(!!indep_analyte := .data$DV)
+      mutate(.temp_dv = .data$DV)
+
+    names(indep)[names(indep) == ".temp_dv"] <- indep_analyte
+
     y_ref <- time_match(x_ref)
 
     # Return NULL if no match

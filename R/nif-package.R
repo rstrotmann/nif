@@ -13,6 +13,7 @@ utils::globalVariables(c(
   "RATE", "LNDV", "use_data", "first_dtc", "rich", "ref_time", "delta",
   "time1", "delta_time", "cohort", "dose", "DL",
   "FIRSTADMINDTC", "FIRSTTRTDTC", "DVBL", "DVCFB",
+
   "OPDI", "BL_CRCL", "age_lo", "age_hi", "Mean", "EGFR", "CREA", "LBORRES",
   "BL_CREAT", "LAST_ADMIN", "RFENDTC", "TRTDY", "BL_RENAL", "EXENDTC_has_time",
   "EXENDTC1", "VISIT", "VSBLFL", "EXENDTC_new", "impute_exendtc_time",

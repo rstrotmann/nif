@@ -283,3 +283,282 @@ test_that("import_from_connection detects inconsistent CSV format", {
   # Close connection
   close(con)
 })
+
+
+test_that("import_from_connection handles simple column renaming", {
+  # Create CSV data with a column to rename
+  csv_data <- c(
+    "USUBJID,STUDYID,OLD_COL,TIME,DV",
+    "SUBJ-001,STUDY-001,value1,0,10.5",
+    "SUBJ-002,STUDY-001,value2,1,15.3"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with renaming term
+  result <- import_from_connection(
+    con,
+    NEW_COL ~ OLD_COL,
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations
+  expect_s3_class(result, "nif")
+  expect_true("NEW_COL" %in% names(result))
+  expect_true("OLD_COL" %in% names(result))
+  expect_equal(result$NEW_COL[1], "value1")
+  expect_equal(result$NEW_COL[2], "value2")
+})
+
+
+test_that("import_from_connection handles renaming with expressions", {
+  # Create CSV data
+  csv_data <- c(
+    "USUBJID,STUDYID,TIME,DV",
+    "SUBJ-001,STUDY-001,0,10.5",
+    "SUBJ-002,STUDY-001,1,15.3"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with renaming term that includes an expression
+  result <- import_from_connection(
+    con,
+    DV_DOUBLED ~ DV * 2,
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations
+  expect_s3_class(result, "nif")
+  expect_true("DV_DOUBLED" %in% names(result))
+  expect_equal(result$DV_DOUBLED[1], 21.0)
+  expect_equal(result$DV_DOUBLED[2], 30.6)
+})
+
+
+test_that("import_from_connection handles multiple renaming terms", {
+  # Create CSV data
+  csv_data <- c(
+    "USUBJID,STUDYID,OLD_COL1,OLD_COL2,TIME,DV",
+    "SUBJ-001,STUDY-001,val1,val2,0,10.5",
+    "SUBJ-002,STUDY-001,val3,val4,1,15.3"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with multiple renaming terms
+  result <- import_from_connection(
+    con,
+    NEW_COL1 ~ OLD_COL1,
+    NEW_COL2 ~ OLD_COL2,
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations
+  expect_s3_class(result, "nif")
+  expect_true("NEW_COL1" %in% names(result))
+  expect_true("NEW_COL2" %in% names(result))
+  expect_equal(result$NEW_COL1[1], "val1")
+  expect_equal(result$NEW_COL2[1], "val2")
+  expect_equal(result$NEW_COL1[2], "val3")
+  expect_equal(result$NEW_COL2[2], "val4")
+})
+
+
+test_that("import_from_connection handles complex renaming expressions", {
+  # Create CSV data
+  csv_data <- c(
+    "USUBJID,STUDYID,TIME,DV,CMT",
+    "SUBJ-001,STUDY-001,0,10.5,1",
+    "SUBJ-002,STUDY-001,1,15.3,2"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with complex expression using multiple columns
+  result <- import_from_connection(
+    con,
+    DV_TIMES_CMT ~ DV * CMT,
+    DV_PLUS_TIME ~ DV + TIME,
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations
+  expect_s3_class(result, "nif")
+  expect_true("DV_TIMES_CMT" %in% names(result))
+  expect_true("DV_PLUS_TIME" %in% names(result))
+  expect_equal(result$DV_TIMES_CMT[1], 10.5)
+  expect_equal(result$DV_TIMES_CMT[2], 30.6)
+  expect_equal(result$DV_PLUS_TIME[1], 10.5)
+  expect_equal(result$DV_PLUS_TIME[2], 16.3)
+})
+
+
+test_that("import_from_connection filters out non-formula arguments", {
+  # Create CSV data
+  csv_data <- c(
+    "USUBJID,STUDYID,TIME,DV",
+    "SUBJ-001,STUDY-001,0,10.5"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with both formula and non-formula arguments
+  result <- import_from_connection(
+    con,
+    NEW_COL ~ DV * 2,
+    "not a formula",
+    123,
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations - should only apply the formula, ignore non-formulas
+  expect_s3_class(result, "nif")
+  expect_true("NEW_COL" %in% names(result))
+  expect_equal(result$NEW_COL[1], 21.0)
+})
+
+
+test_that("import_from_connection handles renaming with fixed-width format", {
+  # Create fixed-width data
+  fixed_data <- c(
+    "USUBJID  STUDYID   OLD_COL  TIME  DV",
+    "SUBJ-001 STUDY-001 value1   0     10.5",
+    "SUBJ-002 STUDY-001 value2   1     15.3"
+  )
+
+  # Create a connection
+  con <- textConnection(fixed_data)
+
+  # Import data with renaming term
+  result <- import_from_connection(
+    con,
+    NEW_COL ~ OLD_COL,
+    format = "fixed_width",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations
+  expect_s3_class(result, "nif")
+  expect_true("NEW_COL" %in% names(result))
+  expect_true("OLD_COL" %in% names(result))
+  expect_equal(result$NEW_COL[1], "value1")
+  expect_equal(result$NEW_COL[2], "value2")
+})
+
+
+test_that("import_from_connection handles renaming with character expressions", {
+  # Create CSV data
+  csv_data <- c(
+    "USUBJID,STUDYID,TIME,DV",
+    "SUBJ-001,STUDY-001,0,10.5",
+    "SUBJ-002,STUDY-001,1,15.3"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with renaming term that creates character values
+  result <- import_from_connection(
+    con,
+    SUBJECT_LABEL ~ paste0("Subject-", USUBJID),
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations
+  expect_s3_class(result, "nif")
+  expect_true("SUBJECT_LABEL" %in% names(result))
+  expect_equal(result$SUBJECT_LABEL[1], "Subject-SUBJ-001")
+  expect_equal(result$SUBJECT_LABEL[2], "Subject-SUBJ-002")
+})
+
+
+test_that("import_from_connection handles renaming with conditional expressions", {
+  # Create CSV data
+  csv_data <- c(
+    "USUBJID,STUDYID,TIME,DV",
+    "SUBJ-001,STUDY-001,0,10.5",
+    "SUBJ-002,STUDY-001,1,15.3"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with renaming term that includes conditional logic
+  result <- import_from_connection(
+    con,
+    HIGH_DV ~ ifelse(DV > 12, "High", "Low"),
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations
+  expect_s3_class(result, "nif")
+  expect_true("HIGH_DV" %in% names(result))
+  expect_equal(result$HIGH_DV[1], "Low")
+  expect_equal(result$HIGH_DV[2], "High")
+})
+
+
+test_that("import_from_connection handles renaming that overwrites existing column", {
+  # Create CSV data
+  csv_data <- c(
+    "USUBJID,STUDYID,TIME,DV",
+    "SUBJ-001,STUDY-001,0,10.5",
+    "SUBJ-002,STUDY-001,1,15.3"
+  )
+
+  # Create a connection
+  con <- textConnection(csv_data)
+
+  # Import data with renaming term that overwrites DV
+  result <- import_from_connection(
+    con,
+    DV ~ DV * 2,
+    format = "csv",
+    silent = TRUE
+  )
+
+  # Close connection
+  close(con)
+
+  # Test expectations - DV should be doubled
+  expect_s3_class(result, "nif")
+  expect_equal(result$DV[1], 21.0)
+  expect_equal(result$DV[2], 30.6)
+})

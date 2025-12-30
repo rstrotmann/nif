@@ -627,17 +627,41 @@ decompose_dtc <- function(obj, dtc_field) {
   }
 
   dec_dtc <- function(fld) {
+    if (length(fld) > 1)
+      stop(paste0("fld has a length > 1: ", fld))
+
     dtc_date <- paste0(fld, "_date")
     dtc_time <- paste0(fld, "_time")
-    obj |>
+
+    # delete fields if already existing
+    if (dtc_date %in% names(obj) || dtc_time %in% names(obj))
+      obj <- select(obj, -any_of(c(dtc_date, dtc_time)))
+
+    out <- obj |>
       mutate(has_time = has_time(.data[[fld]])) |>
-      mutate({{ dtc_date }} := extract_date(.data[[fld]])) |>
-      mutate({{ dtc_time }} := case_when(
+      mutate(.temp_date = extract_date(.data[[fld]])) |>
+      mutate(.temp_time = case_when(
         .data$has_time == TRUE ~ extract_time(.data[[fld]]),
         .default = NA
       )) |>
       select(-c("has_time"))
+    names(out)[names(out) == ".temp_date"] <- dtc_date
+    names(out)[names(out) == ".temp_time"] <- dtc_time
+    out
   }
+
+  # dec_dtc <- function(fld) {
+  #   dtc_date <- paste0(fld, "_date")
+  #   dtc_time <- paste0(fld, "_time")
+  #   obj |>
+  #     mutate(has_time = has_time(.data[[fld]])) |>
+  #     mutate({{ dtc_date }} := extract_date(.data[[fld]])) |>
+  #     mutate({{ dtc_time }} := case_when(
+  #       .data$has_time == TRUE ~ extract_time(.data[[fld]]),
+  #       .default = NA
+  #     )) |>
+  #     select(-c("has_time"))
+  # }
 
   for (i in dtc_field) {
     obj <- dec_dtc(i)

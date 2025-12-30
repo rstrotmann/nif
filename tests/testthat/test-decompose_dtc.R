@@ -169,3 +169,4 @@ test_that("decompose_dtc validates input parameters", {
     "Column not found in obj: NONEXISTENT"
   )
 })
+
