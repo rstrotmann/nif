@@ -76,11 +76,11 @@ head(index_dosing_interval(examplinib_poc_nif))
 #> 5     1      FALSE  500   0 TREATMENT             1  135.1259 72.78062 107.4689
 #> 6     1      FALSE  500   0 TREATMENT             1 1844.8225 72.78062 107.4689
 head(index_dosing_interval(examplinib_poc_min_nif))
-#>   REF ID  TIME EVID AMT CMT PARENT MDV DI RATE       DV
-#> 1   1  1 0.000    1 500   1      1   1  1    0       NA
-#> 2   2  1 0.000    0   0   2      1   0  1    0 0.000000
-#> 3   3  1 0.000    0   0   3      1   0  1    0 0.000000
-#> 4   4  1 2.167    0   0   2      1   0  1    0 3.380265
-#> 5   5  1 2.167    0   0   3      1   0  1    0 3.453869
-#> 6   6  1 4.633    0   0   2      1   0  1    0 1.477397
+#>   REF ID  TIME EVID AMT ANALYTE CMT PARENT MDV DI RATE       DV
+#> 1   1  1 0.000    1 500    CMT1   1   CMT1   1  1    0       NA
+#> 2   2  1 0.000    0   0    CMT2   2   CMT1   0  1    0 0.000000
+#> 3   3  1 0.000    0   0    CMT3   3   CMT1   0  1    0 0.000000
+#> 4   4  1 2.167    0   0    CMT2   2   CMT1   0  1    0 3.380265
+#> 5   5  1 2.167    0   0    CMT3   3   CMT1   0  1    0 3.453869
+#> 6   6  1 4.633    0   0    CMT2   2   CMT1   0  1    0 1.477397
 ```

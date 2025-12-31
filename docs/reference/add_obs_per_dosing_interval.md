@@ -77,19 +77,31 @@ add_obs_per_dosing_interval(examplinib_poc_nif)
 #> 10     72.8    107.    11
 #> # ℹ 7,612 more rows
 add_obs_per_dosing_interval(examplinib_poc_min_nif)
-#> # A tibble: 6,578 × 12
-#> # Groups:   ID, PARENT, DI [5,234]
-#>      REF    ID  TIME  EVID   AMT   CMT PARENT   MDV    DI  RATE    DV  OPDI
-#>    <int> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  <dbl> <int> <dbl> <dbl> <int>
-#>  1     1     1  0        1   500     1 1          1     1     0 NA        6
-#>  2     2     1  0        0     0     2 1          0     1     0  0        6
-#>  3     3     1  0        0     0     3 1          0     1     0  0        6
-#>  4     4     1  2.17     0     0     2 1          0     1     0  3.38     6
-#>  5     5     1  2.17     0     0     3 1          0     1     0  3.45     6
-#>  6     6     1  4.63     0     0     2 1          0     1     0  1.48     6
-#>  7     7     1  4.63     0     0     3 1          0     1     0 10.8      6
-#>  8     8     1 24        1   500     1 1          1     2     0 NA        0
-#>  9     9     1 48        1   500     1 1          1     3     0 NA        0
-#> 10    10     1 72        1   500     1 1          1     4     0 NA        0
+#> # A tibble: 6,578 × 13
+#> # Groups:   ID, ANALYTE, PARENT, DI [5,620]
+#>      REF    ID  TIME  EVID   AMT ANALYTE   CMT PARENT   MDV    DI  RATE    DV
+#>    <int> <dbl> <dbl> <dbl> <dbl> <chr>   <dbl> <chr>  <dbl> <int> <dbl> <dbl>
+#>  1     1     1  0        1   500 CMT1        1 CMT1       1     1     0 NA   
+#>  2     2     1  0        0     0 CMT2        2 CMT1       0     1     0  0   
+#>  3     3     1  0        0     0 CMT3        3 CMT1       0     1     0  0   
+#>  4     4     1  2.17     0     0 CMT2        2 CMT1       0     1     0  3.38
+#>  5     5     1  2.17     0     0 CMT3        3 CMT1       0     1     0  3.45
+#>  6     6     1  4.63     0     0 CMT2        2 CMT1       0     1     0  1.48
+#>  7     7     1  4.63     0     0 CMT3        3 CMT1       0     1     0 10.8 
+#>  8     8     1 24        1   500 CMT1        1 CMT1       1     2     0 NA   
+#>  9     9     1 48        1   500 CMT1        1 CMT1       1     3     0 NA   
+#> 10    10     1 72        1   500 CMT1        1 CMT1       1     4     0 NA   
+#>     OPDI
+#>    <int>
+#>  1     0
+#>  2     3
+#>  3     3
+#>  4     3
+#>  5     3
+#>  6     3
+#>  7     3
+#>  8     0
+#>  9     0
+#> 10     0
 #> # ℹ 6,568 more rows
 ```
