@@ -60,6 +60,7 @@ Iodinated
 LBM
 LBSPEC
 MDRD
+MDV
 Monolix
 NCA
 NCI
@@ -165,6 +166,9 @@ ln
 lntheta
 magrittr
 mdrd
+micromolar
+mol
+ng
 ntime
 onla
 pcrftdtc

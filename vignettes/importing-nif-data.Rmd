@@ -14,33 +14,87 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+# INTRODUCTION
+
+* NIF data can be imported
+* nif objects by default contain more information than minimally required by
+the NONMEM specification
+* ANALYTE, PARENT, DOSE and TAFD fields are automatically generated
+* other fields may be derived by renaming terms
+
+The code in this vignette depends on the following packages:
+
 ```{r  setup, message=F, warning=F}
 library(dplyr)
 library(nif)
-
-nif_option(silent = TRUE)
 ```
 
 ```{r echo=FALSE}
-csv_file <- tempfile(fileext = ".csv")
-on.exit(unlink(csv_file))
+csv_file_name <- tempfile(fileext = ".csv")
+on.exit(unlink(csv_file_name))
 
 csv_content <- examplinib_sad_min_nif |>
-write_nonmem(sep = ",")
+  filter(ID < 3) |> 
+  filter(TIME < 8) |> 
+  write_nonmem(sep = ",")
 
-writeLines(csv_content, csv_file)
+writeLines(csv_content, csv_file_name)
 ```
+
+For this demonstration, we use a minimal nif dataset that contains data from 2
+subjects with single administrations into compartment 1, and observations up to
+6 hours from compartment 2:
+
+```{r echo = FALSE, comment = ""}
+cat(csv_content)
+```
+
+The dataset contains the minimally expected columns, ID, TIME, AMT, RATE, EVID,
+DV, CMT, MDV, and is provided as a csv file (`csv_file_name`).
+
+# IMPORTING NIF DATA
+
+The external data can be imported as a nif object using `import_nif()`:
+
+```{r}
+nif <- import_nif(csv_file_name, format = "csv")
+head(nif)
+```
+
+The resulting object behaves as a regular `nif` object, for example, it can be 
+summarized or plotted or otherwise explored (see `vignette("nif-tutorial")` for
+more information):
+
+```{r}
+summary(nif)
+plot(nif, log = T, points = T)
+```
+
+## Transformations
+
+In some cases, the data to be imported include columns that should be renamed or
+transformed to match the desired naming conventions, or to otherwise support
+downstream analyses. 
+
+For this demonstration, let's assume that the 'TIME' field in the csv file is 
+also the nominal time, and we want to include it in the nif object as 'NTIME'.
+in addition, the values in DV should be transformed from ng/ml to micromolar
+concentrations (assuming a MW of 400 g/mol). `import_nif()` allows these
+transformations to be executed during the data import. Transformation terms 
+need to be provided in the form of `new_field ~ transformation_term`:
 
 ```{r}
 nif <- import_nif(
-  csv_file,
-  # DOSE ~ AMT,
-  # ANALYTE ~ "TEST",
-  # PARENT ~ "TEST",
-  # TAFD ~ TIME,
-  format = "csv", silent = F)
+  csv_file_name,
+  format = "csv",
+  NTIME ~ TIME,
+  DV ~ DV/400
+)
 
-plot(nif)
-make_plot_data_set(nif)
+head(nif)
 ```
+
+
+
 
