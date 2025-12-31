@@ -110,18 +110,28 @@ ensure_parent <- function(obj) {
     return(obj)
   }
 
-  # If PARENT column doesn't exist, create it
+  obj <- obj |>
+    ensure_analyte()
+
+  analytes <- analytes(obj)
+  treatments <- treatments(obj)
+
   if (!"PARENT" %in% names(obj)) {
-    # Use the most common CMT value with EVID == 1 for administrations
-    most_common_cmt <- obj |>
-      filter(.data$EVID == 1) |>
-      count(.data$CMT) |>
-      arrange(desc(n)) |>
-      slice(1) |>
-      pull(.data$CMT)
+    cmt_heuristics <- filter(obj, .data$EVID == 1) |>
+      reframe(.data$ANALYTE, n = n(), .by = "CMT") |>
+      distinct() |>
+      arrange(desc(n))
+
+    most_likely_parent <- cmt_heuristics[1, "ANALYTE"]
 
     obj <- obj |>
-      mutate(PARENT = as.character(most_common_cmt))
+      mutate(
+        PARENT = case_when(
+          EVID == 1 ~ .data$ANALYTE,
+          EVID == 0 & .data$ANALYTE %in% treatments ~ .data$ANALYTE,
+          .default = most_likely_parent
+        )
+      )
   }
 
   # Ensure return value is a NIF object

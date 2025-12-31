@@ -14,6 +14,33 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r  setup, message=F, warning=F}
+library(dplyr)
 library(nif)
+
+nif_option(silent = TRUE)
 ```
+
+```{r echo=FALSE}
+csv_file <- tempfile(fileext = ".csv")
+on.exit(unlink(csv_file))
+
+csv_content <- examplinib_sad_min_nif |>
+write_nonmem(sep = ",")
+
+writeLines(csv_content, csv_file)
+```
+
+```{r}
+nif <- import_nif(
+  csv_file,
+  # DOSE ~ AMT,
+  # ANALYTE ~ "TEST",
+  # PARENT ~ "TEST",
+  # TAFD ~ TIME,
+  format = "csv", silent = F)
+
+plot(nif)
+make_plot_data_set(nif)
+```
+

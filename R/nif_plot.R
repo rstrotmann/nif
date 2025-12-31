@@ -33,6 +33,13 @@ make_plot_data_set <- function(
     stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
   }
 
+  nif <- nif |>
+    ensure_analyte() |>
+    ensure_parent() |>
+    ensure_dose() |>
+    ensure_tafd() |>
+    ensure_tad()
+
   # assert facet parameter
   if (!is.null(facet)) {
     if (!facet %in% names(nif)) {
@@ -44,10 +51,7 @@ make_plot_data_set <- function(
     analyte <- analytes(nif)
   }
 
-  parent <- as.data.frame(nif) |>
-    distinct(.data$ANALYTE, .data$PARENT) |>
-    filter(.data$ANALYTE %in% analyte) |>
-    pull(.data$PARENT)
+  parent <- parents(nif)
 
   out <- nif |>
     filter((.data$ANALYTE %in% analyte & .data$EVID == 0) |
@@ -96,7 +100,8 @@ make_plot_data_set <- function(
     arrange("ID", "DOSE")
 
   if (length(color) != 0) {
-    out <- tidyr::unite(out, "COLOR", all_of(!!color), sep = "-", remove = FALSE)
+    out <- tidyr::unite(out, "COLOR", all_of(!!color), sep = "-",
+                        remove = FALSE)
   } else {
     out <- mutate(out, COLOR = TRUE)
   }
@@ -214,11 +219,21 @@ plot.nif <- function(
   time = "TAFD",
   color = NULL,
   facet = "DOSE",
-  min_time = NULL, max_time = NULL,
-  cfb = FALSE, dose_norm = FALSE,
-  admin = NULL, points = FALSE, lines = TRUE,
-  log = FALSE, mean = FALSE, title = NULL, legend = TRUE,
-  size = 1.5, scales = "fixed", alpha = 1, caption = NULL,
+  min_time = NULL,
+  max_time = NULL,
+  cfb = FALSE,
+  dose_norm = FALSE,
+  admin = NULL,
+  points = FALSE,
+  lines = TRUE,
+  log = FALSE,
+  mean = FALSE,
+  title = NULL,
+  legend = TRUE,
+  size = 1.5,
+  scales = "fixed",
+  alpha = 1,
+  caption = NULL,
   ribbon = TRUE,
   group = deprecated(),
   na_value = NA,

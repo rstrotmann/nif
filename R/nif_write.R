@@ -91,7 +91,14 @@ write_nonmem <- function(
     }))
 
   if (is.null(filename)) {
-    print(temp, row.names = FALSE, col.names = FALSE)
+    # print(temp, row.names = FALSE, col.names = FALSE)
+    # temp
+    paste0(
+      paste(names(temp), collapse = sep),
+      "\n",
+      paste(apply(
+        temp, 1, function(x) paste(x, collapse = sep)), collapse = "\n")
+    )
   } else {
     if (is.null(sep)) {
       temp <- rbind(colnames(temp), temp)

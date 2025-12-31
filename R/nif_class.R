@@ -726,12 +726,18 @@ treatments <- function(obj) {
 #' @examples
 #' treatments(examplinib_poc_nif)
 treatments.nif <- function(obj) {
+  # obj |>
+  #   ensure_parent() |>
+  #   as.data.frame() |>
+  #   distinct(.data$PARENT) |>
+  #   filter(.data$PARENT != "") |>
+  #   pull(.data$PARENT)
+
   obj |>
-    ensure_parent() |>
-    as.data.frame() |>
-    distinct(.data$PARENT) |>
-    filter(.data$PARENT != "") |>
-    pull(.data$PARENT)
+    ensure_analyte() |>
+    filter(.data$EVID == 1) |>
+    distinct(.data$ANALYTE) |>
+    pull(.data$ANALYTE)
 }
 
 
