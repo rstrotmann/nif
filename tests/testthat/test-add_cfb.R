@@ -1,15 +1,14 @@
 test_that("derive_cfb works with valid input", {
   # Create a simple test dataset
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1, -1, 10, "A",
-    1, 0, 12, "A",
-    1, 1, 15, "A",
-    2, -1, 20, "A",
-    2, 0, 22, "A",
-    2, 1, 25, "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   -1,    10,  "A",      0,    1,    0,
+    1,   0,     12,  "A",      0,    1,    0,
+    1,   1,     15,  "A",      0,    1,    0,
+    2,   -1,    20,  "A",      0,    1,    0,
+    2,   0,     22,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
@@ -33,17 +32,16 @@ test_that("derive_cfb works with valid input", {
 test_that("derive_cfb correctly handles baseline calculation with time ≤ 0", {
   # Create test data with multiple pre-dose values
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1, -2, 8, "A",
-    1, -1, 10, "A",
-    1, 0, 12, "A",
-    1, 1, 15, "A",
-    2, -2, 18, "A",
-    2, -1, 20, "A",
-    2, 0, 22, "A",
-    2, 1, 25, "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   -2,    8,   "A",      0,    1,    0,
+    1,   -1,    10,  "A",      0,    1,    0,
+    1,   0,     12,  "A",      0,    1,    0,
+    1,   1,     15,  "A",      0,    1,    0,
+    2,   -2,    18,  "A",      0,    1,    0,
+    2,   -1,    20,  "A",      0,    1,    0,
+    2,   0,     22,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
@@ -97,12 +95,11 @@ test_that("derive_cfb correctly handles baseline calculation with time ≤ 0", {
 
 test_that("derive_cfb works with different summary functions", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1, -1, 10, "A",
-    1, 0, 12, "A",
-    1, 1, 15, "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   -1,    10,  "A",      0,    1,    0,
+    1,   0,     12,  "A",      0,    1,    0,
+    1,   1,     15,  "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
@@ -123,13 +120,12 @@ test_that("derive_cfb works with different summary functions", {
 
 test_that("derive_cfb works with custom baseline filter", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1, -1, 10, "A",
-    1, 0, 12, "A",
-    1, 1, 15, "A",
-    1, 2, 18, "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   -1,    10,  "A",      0,    1,    0,
+    1,   0,     12,  "A",      0,    1,    0,
+    1,   1,     15,  "A",      0,    1,    0,
+    1,   2,     18,  "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
@@ -143,46 +139,39 @@ test_that("derive_cfb works with custom baseline filter", {
 test_that("derive_cfb handles missing required columns", {
   # Test with missing DV column
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~ANALYTE,
-    1, -1, "A",
-    1, 0, "A"
+    ~ID, ~TIME, ~ANALYTE, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   -1,    "A",      0,    1,    0,     NA,
+    1,   0,     "A",      0,    1,    0,     NA
   )
   test_nif <- nif(test_data)
+  test_nif <- select(test_nif, -DV)
   expect_error(derive_cfb(test_nif), "Missing required columns: DV")
 
-  # Test with missing TIME column
-  test_data <- data.frame(
-    ID = c(1, 1),
-    DV = c(10, 12),
-    ANALYTE = c("A", "A")
-  )
+
   test_nif <- nif(test_data)
+  test_nif <- select(test_nif, -TIME)
   expect_error(derive_cfb(test_nif), "Missing required columns: TIME")
 })
 
 
 test_that("derive_cfb handles non-numeric columns", {
   # Test with non-numeric DV
-  test_data <- data.frame(
-    ID = c(1, 1),
-    TIME = c(-1, 0),
-    DV = c("A", "B"),
-    ANALYTE = c("A", "A")
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   -1,    "A", "A",      0,    1,    0,
+    1,   0,     "B", "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
   expect_error(derive_cfb(test_nif), "DV column must contain numeric values")
 
   # Test with non-numeric TIME
-  test_data <- data.frame(
-    ID = c(1, 1),
-    TIME = c("A", "B"),
-    DV = c(10, 12),
-    ANALYTE = c("A", "A")
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   "A",   10,  "A",      0,    1,    0,
+    1,   "B",   12,  "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
@@ -193,15 +182,15 @@ test_that("derive_cfb handles non-numeric columns", {
 test_that("derive_cfb correctly handles complex baseline filters", {
   # Create test data with multiple conditions
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -2, 8, "A", 0,
-    1, -1, 10, "A", 0,
-    1, 0, 12, "A", 1,
-    1, 1, 15, "A", 0,
-    2, -2, 18, "A", 0,
-    2, -1, 20, "A", 0,
-    2, 0, 22, "A", 1,
-    2, 1, 25, "A", 0
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   -2,    8,   "A",      0,    1,    0,
+    1,   -1,    10,  "A",      0,    1,    0,
+    1,   0,     12,  "A",      0,    1,    1,
+    1,   1,     15,  "A",      0,    1,    0,
+    2,   -2,    18,  "A",      0,    1,    0,
+    2,   -1,    20,  "A",      0,    1,    0,
+    2,   0,     22,  "A",      0,    1,    1,
+    2,   1,     25,  "A",      0,    1,    0
   )
 
   test_nif <- nif(test_data)
@@ -228,15 +217,14 @@ test_that("derive_cfb correctly handles complex baseline filters", {
 test_that("derive_cfb correctly handles empty baseline sets", {
   # Create test data where baseline filter matches no rows
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1, 1, 10, "A",
-    1, 2, 12, "A",
-    1, 3, 15, "A",
-    2, 1, 20, "A",
-    2, 2, 22, "A",
-    2, 3, 25, "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   1,     10,  "A",      0,    1,    0,
+    1,   2,     12,  "A",      0,    1,    0,
+    1,   3,     15,  "A",      0,    1,    0,
+    2,   1,     20,  "A",      0,    1,    0,
+    2,   2,     22,  "A",      0,    1,    0,
+    2,   3,     25,  "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
@@ -254,15 +242,14 @@ test_that("derive_cfb correctly handles empty baseline sets", {
 test_that("derive_cfb correctly handles baseline filter with missing values", {
   # Create test data with missing values in filter columns
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, 10, "A", 0,
-    1, NA, 12, "A", 0,
-    1, 1, 15, "A", 0,
-    2, -1, 20, "A", 0,
-    2, NA, 22, "A", 0,
-    2, 1, 25, "A", 0
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   -1,    10,  "A",      0,    1,    0,
+    1,   NA,    12,  "A",      0,    1,    0,
+    1,   1,     15,  "A",      0,    1,    0,
+    2,   -1,    20,  "A",      0,    1,    0,
+    2,   NA,    22,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0
   ) %>%
-    mutate(EVID = 0) %>%
     mutate(TAFD = TIME)
 
   test_nif <- nif(test_data)
@@ -287,15 +274,15 @@ test_that("derive_cfb correctly handles baseline filter with missing values", {
 test_that("derive_cfb correctly handles baseline filter with character columns", {
   # Create test data with character columns and multiple conditions
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~FOOD, ~EVID,
-    1, -1, 10, "A", "FED", 0,
-    1, 0, 12, "A", "FED", 0,
-    1, 1, 15, "A", "FASTED", 0,
-    1, 2, 18, "A", "FASTED", 0,
-    2, -1, 20, "A", "FASTED", 0,
-    2, 0, 22, "A", "FASTED", 0,
-    2, 1, 25, "A", "FED", 0,
-    2, 2, 28, "A", "FED", 0
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~FOOD,    ~AMT, ~CMT, ~EVID,
+    1,   -1,    10,  "A",      "FED",    0,    1,    0,
+    1,   0,     12,  "A",      "FED",    0,    1,    0,
+    1,   1,     15,  "A",      "FASTED", 0,    1,    0,
+    1,   2,     18,  "A",      "FASTED", 0,    1,    0,
+    2,   -1,    20,  "A",      "FASTED", 0,    1,    0,
+    2,   0,     22,  "A",      "FASTED", 0,    1,    0,
+    2,   1,     25,  "A",      "FED",    0,    1,    0,
+    2,   2,     28,  "A",      "FED",    0,    1,    0
   ) %>%
     mutate(TAFD = TIME)
 

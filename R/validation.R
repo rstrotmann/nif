@@ -299,6 +299,14 @@ validate_nif <- function(obj) {
   if (!inherits(obj, "nif")) {
     stop("Input must be a nif object")
   }
+
+  missing_minimal_fields <- setdiff(minimal_nif_fields, names(obj))
+  if (length(missing_minimal_fields) > 0) {
+    stop(paste0(
+      "Missing essential fields in nif object: ",
+      nice_enumeration(missing_minimal_fields)
+    ))
+  }
 }
 
 

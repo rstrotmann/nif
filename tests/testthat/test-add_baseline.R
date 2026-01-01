@@ -1,25 +1,25 @@
 test_that("add_baseline adds baseline covariate correctly", {
   # Create a minimal test dataset
   nif <- tibble::tribble(
-    ~USUBJID, ~DTC, ~DOSE,
-    "SUBJ-001", "2023-01-01", 100,
-    "SUBJ-001", "2023-01-02", 100,
-    "SUBJ-002", "2023-01-01", 200
+    ~USUBJID,    ~DTC,         ~DOSE, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 100,   1,   0,     0,    1,    0,     NA,
+    "SUBJ-001",  "2023-01-02", 100,   1,   24,    0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 200,   2,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   sdtm_data <- list(
     dm = tibble::tribble(
-      ~USUBJID, ~ACTARMCD, ~DOMAIN,
-      "SUBJ-001", "TREATMENT", "DM",
-      "SUBJ-002", "TREATMENT", "DM"
+      ~USUBJID,    ~ACTARMCD,   ~DOMAIN,
+      "SUBJ-001",  "TREATMENT", "DM",
+      "SUBJ-002",  "TREATMENT", "DM"
     ),
     vs = tibble::tribble(
-      ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~DOMAIN,
-      "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VS",
-      "SUBJ-001", "2023-01-02", "WEIGHT", 71, "N", "VS",
-      "SUBJ-002", "2023-01-01", "WEIGHT", 80, "Y", "VS",
-      "SUBJ-002", "2023-01-02", "HEIGHT", 180, "Y", "VS"
+      ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~DOMAIN,
+      "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",     "VS",
+      "SUBJ-001",  "2023-01-02", "WEIGHT",  71,        "N",     "VS",
+      "SUBJ-002",  "2023-01-01", "WEIGHT",  80,        "Y",     "VS",
+      "SUBJ-002",  "2023-01-02", "HEIGHT",  180,       "Y",     "VS"
     )
   )
 
@@ -37,24 +37,24 @@ test_that("add_baseline adds baseline covariate correctly", {
 
 test_that("add_baseline handles custom baseline filter", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~DOMAIN,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "", "VS",
-    "SUBJ-001", "2023-01-02", "WEIGHT", 72, "Y", "VS",
-    "SUBJ-002", "2023-01-01", "WEIGHT", 80, "", "VS",
-    "SUBJ-002", "2023-01-02", "WEIGHT", 82, "Y", "VS"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~DOMAIN,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "",      "VS",
+    "SUBJ-001",  "2023-01-02", "WEIGHT",  72,        "Y",     "VS",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  80,        "",      "VS",
+    "SUBJ-002",  "2023-01-02", "WEIGHT",  82,        "Y",     "VS"
   )
 
   test_dm <- tibble::tribble(
-    ~USUBJID, ~ACTARMCD, ~DOMAIN,
-    "SUBJ-001", "TREATMENT", "DM",
-    "SUBJ-002", "TREATMENT", "DM"
+    ~USUBJID,    ~ACTARMCD,   ~DOMAIN,
+    "SUBJ-001",  "TREATMENT", "DM",
+    "SUBJ-002",  "TREATMENT", "DM"
   )
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -70,10 +70,10 @@ test_that("add_baseline handles custom baseline filter", {
 
 
 test_that("add_baseline handles coding table correctly", {
-  test_nif <- data.frame(
-    ID = c(1, 2),
-    USUBJID = c("SUBJ-001", "SUBJ-002"),
-    DTC = c("2023-01-01", "2023-01-01")
+  test_nif <- tibble::tribble(
+    ~ID, ~USUBJID,    ~DTC,         ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   "SUBJ-001",  "2023-01-01", 0,     0,    1,    0,     NA,
+    2,   "SUBJ-002",  "2023-01-01", 0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
@@ -112,9 +112,9 @@ test_that("add_baseline handles coding table correctly", {
 
 
 test_that("add_baseline validates inputs correctly", {
-  test_nif <- data.frame(
-    USUBJID = c("SUBJ-001"),
-    DTC = c("2023-01-01")
+  test_nif <- tibble::tribble(
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
@@ -164,20 +164,20 @@ test_that("add_baseline validates inputs correctly", {
 
 test_that("add_baseline handles multiple baseline values correctly", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y",
-    "SUBJ-001", "2023-01-01", "WEIGHT", 72, "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  72,        "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID, ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -197,15 +197,15 @@ test_that("add_baseline handles multiple baseline values correctly", {
 
 
 test_that("add_baseline handles empty result after filtering", {
-  test_nif <- data.frame(
-    USUBJID = c("SUBJ-001"),
-    DTC = c("2023-01-01")
+  test_nif <- tibble::tribble(
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "N"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "N"
   )
 
   test_dm <- data.frame(
@@ -224,44 +224,51 @@ test_that("add_baseline handles empty result after filtering", {
 
 test_that("add baseline hepatic function class works", {
   dm <- tribble(
-    ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC,
-    "1", "DM", "M", "TREATMENT", "2001-01-01T10:29",
-    "2", "DM", "M", "TREATMENT", "2001-01-02T09:09",
-    "3", "DM", "M", "TREATMENT", "2000-12-29T09:07",
-    "4", "DM", "F", "TREATMENT", "2001-01-06T11:18",
-    "5", "DM", "F", "TREATMENT", "2001-01-07T11:18"
+    ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD,   ~RFXSTDTC,
+    "1",      "DM",    "M",  "TREATMENT", "2001-01-01T10:29",
+    "2",      "DM",    "M",  "TREATMENT", "2001-01-02T09:09",
+    "3",      "DM",    "M",  "TREATMENT", "2000-12-29T09:07",
+    "4",      "DM",    "F",  "TREATMENT", "2001-01-06T11:18",
+    "5",      "DM",    "F",  "TREATMENT", "2001-01-07T11:18"
   ) %>%
     mutate(RFSTDTC = RFXSTDTC)
 
   vs <- tribble(
     ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSBLFL, ~VSSTRESN,
-    "1", "VS", "HEIGHT", "Y", 190.8,
-    "1", "VS", "WEIGHT", "Y", 79.3,
-    "2", "VS", "HEIGHT", "Y", 199.5,
-    "2", "VS", "WEIGHT", "Y", 81.6,
-    "3", "VS", "HEIGHT", "Y", 185.4,
-    "3", "VS", "WEIGHT", "Y", 92.8,
-    "4", "VS", "HEIGHT", "Y", 177.8,
-    "4", "VS", "WEIGHT", "Y", 83.3,
-    "5", "VS", "HEIGHT", "Y", 177.9,
-    "5", "VS", "WEIGHT", "Y", 83.4
+    "1",      "VS",    "HEIGHT",  "Y",     190.8,
+    "1",      "VS",    "WEIGHT",  "Y",     79.3,
+    "2",      "VS",    "HEIGHT",  "Y",     199.5,
+    "2",      "VS",    "WEIGHT",  "Y",     81.6,
+    "3",      "VS",    "HEIGHT",  "Y",     185.4,
+    "3",      "VS",    "WEIGHT",  "Y",     92.8,
+    "4",      "VS",    "HEIGHT",  "Y",     177.8,
+    "4",      "VS",    "WEIGHT",  "Y",     83.3,
+    "5",      "VS",    "HEIGHT",  "Y",     177.9,
+    "5",      "VS",    "WEIGHT",  "Y",     83.4
   )
   lb <- tribble(
-    ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBDTC, ~LBBLFL, ~LBTESTCD, ~LBSTRESN, ~LBSTNRHI,
-    "1", "LB", "SERUM", "2001-01-01T10:29", "Y", "BILI", 1, 1, # normal
-    "1", "LB", "SERUM", "2001-01-01T10:29", "Y", "AST", 1, 1,
-    "2", "LB", "SERUM", "2001-01-02T09:09", "Y", "BILI", 1.5, 1, # mild
-    "2", "LB", "SERUM", "2001-01-02T09:09", "Y", "AST", 1, 1,
-    "3", "LB", "SERUM", "2000-12-29T09:07", "Y", "BILI", 1, 1, # mild
-    "3", "LB", "SERUM", "2000-12-29T09:07", "Y", "AST", 1.2, 1,
-    "4", "LB", "SERUM", "2001-01-06T11:18", "Y", "BILI", 3, 1, # moderate
-    "4", "LB", "SERUM", "2001-01-06T11:18", "Y", "AST", 1, 1,
-    "5", "LB", "SERUM", "2001-01-07T11:18", "Y", "BILI", 3.1, 1, # severe
-    "5", "LB", "SERUM", "2001-01-07T11:18", "Y", "AST", 1, 1
+    ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBDTC,           ~LBBLFL, ~LBTESTCD, ~LBSTRESN, ~LBSTNRHI,
+    "1",      "LB",    "SERUM", "2001-01-01T10:29", "Y",    "BILI",    1,         1,        # normal
+    "1",      "LB",    "SERUM", "2001-01-01T10:29", "Y",    "AST",     1,         1,
+    "2",      "LB",    "SERUM", "2001-01-02T09:09", "Y",    "BILI",    1.5,       1,        # mild
+    "2",      "LB",    "SERUM", "2001-01-02T09:09", "Y",    "AST",     1,         1,
+    "3",      "LB",    "SERUM", "2000-12-29T09:07", "Y",    "BILI",    1,         1,        # mild
+    "3",      "LB",    "SERUM", "2000-12-29T09:07", "Y",    "AST",     1.2,       1,
+    "4",      "LB",    "SERUM", "2001-01-06T11:18", "Y",    "BILI",    3,         1,        # moderate
+    "4",      "LB",    "SERUM", "2001-01-06T11:18", "Y",    "AST",     1,         1,
+    "5",      "LB",    "SERUM", "2001-01-07T11:18", "Y",    "BILI",    3.1,       1,        # severe
+    "5",      "LB",    "SERUM", "2001-01-07T11:18", "Y",    "AST",     1,         1
   )
   sdtm <- sdtm(list(dm = dm, vs = vs, lb = lb))
 
-  test_nif <- data.frame(USUBJID = as.character(c(1, 2, 3, 4, 5)))
+  test_nif <- tibble::tribble(
+    ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "1",      1,   0,     0,    1,    0,     NA,
+    "2",      2,   0,     0,    1,    0,     NA,
+    "3",      3,   0,     0,    1,    0,     NA,
+    "4",      4,   0,     0,    1,    0,     NA,
+    "5",      5,   0,     0,    1,    0,     NA
+  )
   class(test_nif) <- c("nif", "data.frame")
 
   expect_no_error(
@@ -277,16 +284,17 @@ test_that("add baseline hepatic function class works", {
 
 
 test_that("add_baseline handles all NA baseline values correctly", {
-  test_nif <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-002"),
-    DTC = c("2023-01-01", "2023-01-01")
+  test_nif <- tibble::tribble(
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "WEIGHT", NA, "Y",
-    "SUBJ-002", "2023-01-01", "WEIGHT", NA, "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  NA,        "Y",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  NA,        "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- data.frame(
@@ -305,17 +313,19 @@ test_that("add_baseline handles all NA baseline values correctly", {
 
 
 test_that("add_baseline warns when some baseline values are NA", {
-  test_nif <- data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-002", "SUBJ-003"),
-    DTC = c("2023-01-01", "2023-01-01", "2023-01-01")
+  test_nif <- tibble::tribble(
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA,
+    "SUBJ-003",  "2023-01-01", 3,   0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y",
-    "SUBJ-002", "2023-01-01", "WEIGHT", NA, "Y",
-    "SUBJ-003", "2023-01-01", "WEIGHT", 80, "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  NA,        "Y",
+    "SUBJ-003",  "2023-01-01", "WEIGHT",  80,        "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- data.frame(
@@ -342,16 +352,16 @@ test_that("add_baseline warns when some baseline values are NA", {
 
 
 test_that("add_baseline validates required fields correctly", {
-  test_nif <- data.frame(
-    USUBJID = c("SUBJ-001"),
-    DTC = c("2023-01-01")
+  test_nif <- tibble::tribble(
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
   class(test_nif) <- c("nif", "data.frame")
 
   # Create a domain with missing field
   test_vs_missing_field <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSBLFL, # Missing VSSTRESN
-    "SUBJ-001", "2023-01-01", "WEIGHT", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSBLFL, # Missing VSSTRESN
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- data.frame(
@@ -369,8 +379,8 @@ test_that("add_baseline validates required fields correctly", {
 
   # Test with non-existent test code
   test_vs_valid <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y"
   )
 
   test_sdtm_valid <- sdtm(list(vs = test_vs_valid, dm = test_dm))
@@ -415,22 +425,22 @@ test_that("add_baseline name parameter works correctly", {
 
 test_that("add_baseline coding table validation works correctly", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "Y",
-    "SUBJ-002", "2023-01-01", "FEMALE", "FEMALE", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "Y",
+    "SUBJ-002",  "2023-01-01", "FEMALE",  "FEMALE", "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -474,8 +484,8 @@ test_that("add_baseline coding table validation works correctly", {
   # Test coding table with no matching join fields
   no_match_coding <- tibble::tribble(
     ~NONEXISTENT, ~DV,
-    "MALE", 1,
-    "FEMALE", 0
+    "MALE",       1,
+    "FEMALE",    0
   )
 
   expect_error(
@@ -490,22 +500,22 @@ test_that("add_baseline coding table validation works correctly", {
 
 test_that("add_baseline coding table with multiple join fields works", {
   test_nif <- tibble::tribble(
-    ~USUBJID,           ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "DEMO", "Y",
-    "SUBJ-002", "2023-01-01", "SEX", "FEMALE", "DEMO", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "DEMO", "Y",
+    "SUBJ-002",  "2023-01-01", "SEX",     "FEMALE", "DEMO", "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -513,8 +523,8 @@ test_that("add_baseline coding table with multiple join fields works", {
   # Coding table with multiple join fields
   multi_field_coding <- tibble::tribble(
     ~VSORRES, ~VSCAT, ~DV,
-    "MALE",   "DEMO",   1,
-    "FEMALE", "DEMO",   0
+    "MALE",   "DEMO", 1,
+    "FEMALE", "DEMO", 0
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
@@ -529,22 +539,22 @@ test_that("add_baseline coding table with multiple join fields works", {
 
 test_that("add_baseline coding table with partial matches works", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "DEMO", "Y",
-    "SUBJ-002", "2023-01-01", "SEX", "FEMALE", "DEMO", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "DEMO", "Y",
+    "SUBJ-002",  "2023-01-01", "SEX",     "FEMALE", "DEMO", "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -552,8 +562,8 @@ test_that("add_baseline coding table with partial matches works", {
   # Coding table with only one join field (should work)
   single_field_coding <- tibble::tribble(
     ~VSORRES, ~DV,
-    "MALE",     1,
-    "FEMALE",   0
+    "MALE",   1,
+    "FEMALE", 0
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
@@ -568,25 +578,25 @@ test_that("add_baseline coding table with partial matches works", {
 
 test_that("add_baseline coding table with missing values handles correctly", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01",
-    "SUBJ-003", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA,
+    "SUBJ-003",  "2023-01-01", 3,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "Y",
-    "SUBJ-002", "2023-01-01", "SEX", "FEMALE", "Y",
-    "SUBJ-003", "2023-01-01", "SEX", "OTHER", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "Y",
+    "SUBJ-002",  "2023-01-01", "SEX",     "FEMALE", "Y",
+    "SUBJ-003",  "2023-01-01", "SEX",     "OTHER",  "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT",
-    "SUBJ-003", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT",
+    "SUBJ-003",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -594,8 +604,8 @@ test_that("add_baseline coding table with missing values handles correctly", {
   # Coding table missing one value
   incomplete_coding <- tibble::tribble(
     ~VSORRES, ~DV,
-    "MALE",     1,
-    "FEMALE",   0
+    "MALE",   1,
+    "FEMALE", 0
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
@@ -611,28 +621,28 @@ test_that("add_baseline coding table with missing values handles correctly", {
 
 test_that("add_baseline handles different summary functions with coding tables", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   # Need to use different test codes to avoid pivot_wider issues
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   coding_table <- tibble::tribble(
     ~VSORRES, ~DV,
-    "MALE",     1,
-    "FEMALE",   0
+    "MALE",   1,
+    "FEMALE", 0
   )
 
   # Test with mean (default)
@@ -660,25 +670,25 @@ test_that("add_baseline handles different summary functions with coding tables",
 
 test_that("add_baseline handles complex coding scenarios", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01",
-    "SUBJ-003", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA,
+    "SUBJ-003",  "2023-01-01", 3,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "RACE", "WHITE", "Y",
-    "SUBJ-002", "2023-01-01", "RACE", "BLACK", "Y",
-    "SUBJ-003", "2023-01-01", "RACE", "ASIAN", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "RACE",    "WHITE",  "Y",
+    "SUBJ-002",  "2023-01-01", "RACE",    "BLACK",  "Y",
+    "SUBJ-003",  "2023-01-01", "RACE",    "ASIAN",  "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT",
-    "SUBJ-003", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT",
+    "SUBJ-003",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -686,10 +696,10 @@ test_that("add_baseline handles complex coding scenarios", {
   # Complex coding table with multiple categories
   race_coding <- tibble::tribble(
     ~VSORRES, ~DV,
-    "WHITE",    1,
-    "BLACK",    2,
-    "ASIAN",    3,
-    "OTHER",    4
+    "WHITE",  1,
+    "BLACK",  2,
+    "ASIAN",  3,
+    "OTHER",  4
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "RACE",
@@ -705,24 +715,24 @@ test_that("add_baseline handles complex coding scenarios", {
 
 test_that("add_baseline handles baseline filter with LOBXFL", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
+    "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
   test_lb <- tibble::tribble(
-    ~USUBJID, ~LBDTC, ~LBTESTCD, ~LBSTRESN, ~LBLOBXFL,
-    "SUBJ-001", "2023-01-01", "CREA", 1.2, "Y",
-    "SUBJ-001", "2023-01-02", "CREA", 1.3, "N",
-    "SUBJ-002", "2023-01-01", "CREA", 1.1, "Y",
-    "SUBJ-002", "2023-01-02", "CREA", 1.4, "N"
+    ~USUBJID,    ~LBDTC,       ~LBTESTCD, ~LBSTRESN, ~LBLOBXFL,
+    "SUBJ-001",  "2023-01-01", "CREA",    1.2,       "Y",
+    "SUBJ-001",  "2023-01-02", "CREA",    1.3,       "N",
+    "SUBJ-002",  "2023-01-01", "CREA",    1.1,       "Y",
+    "SUBJ-002",  "2023-01-02", "CREA",    1.4,       "N"
   ) %>% mutate(DOMAIN = "LB")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(lb = test_lb, dm = test_dm))
@@ -737,32 +747,32 @@ test_that("add_baseline handles baseline filter with LOBXFL", {
 
 test_that("add_baseline handles custom observation filter with coding tables", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
+    "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "DEMO", "Y",
-    "SUBJ-001", "2023-01-02", "SEX", "MALE", "DEMO", "Y",
-    "SUBJ-002", "2023-01-01", "SEX", "FEMALE", "DEMO", "Y",
-    "SUBJ-002", "2023-01-02", "SEX", "FEMALE", "DEMO", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "DEMO", "Y",
+    "SUBJ-001",  "2023-01-02", "SEX",     "MALE",   "DEMO", "Y",
+    "SUBJ-002",  "2023-01-01", "SEX",     "FEMALE", "DEMO", "Y",
+    "SUBJ-002",  "2023-01-02", "SEX",     "FEMALE", "DEMO", "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   coding_table <- tibble::tribble(
     ~VSORRES, ~DV,
-    "MALE",     1,
-    "FEMALE",   0
+    "MALE",   1,
+    "FEMALE", 0
   )
 
   # Filter to only include first day observations
@@ -781,8 +791,8 @@ test_that("add_baseline handles custom observation filter with coding tables", {
 
 test_that("add_baseline handles edge cases with coding tables", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
@@ -792,8 +802,8 @@ test_that("add_baseline handles edge cases with coding tables", {
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -813,8 +823,8 @@ test_that("add_baseline handles edge cases with coding tables", {
   # Test with coding table that has extra columns
   extra_col_coding <- tibble::tribble(
     ~VSORRES, ~DV, ~EXTRA_COL,
-    "MALE",     1,        "X",
-    "FEMALE",   0,        "Y"
+    "MALE",   1,   "X",
+    "FEMALE", 0,   "Y"
   )
 
   result <- add_baseline(test_nif, test_sdtm, "vs", "SEX",
@@ -828,22 +838,22 @@ test_that("add_baseline handles edge cases with coding tables", {
 
 test_that("add_baseline handles numeric coding with different data types", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
+    "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "Y",
-    "SUBJ-002", "2023-01-01", "SEX", "FEMALE", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "Y",
+    "SUBJ-002",  "2023-01-01", "SEX",     "FEMALE", "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -851,7 +861,7 @@ test_that("add_baseline handles numeric coding with different data types", {
   # Test with integer DV values
   int_coding <- tibble::tribble(
     ~VSORRES, ~DV,
-    "MALE", 1L,
+    "MALE",   1L,
     "FEMALE", 0L
   )
 
@@ -882,34 +892,34 @@ test_that("add_baseline handles numeric coding with different data types", {
 
 test_that("add_baseline handles multiple test codes with coding tables", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
+    "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
-    "SUBJ-001", "2023-01-01", "SEX", "MALE", "Y",
-    "SUBJ-001", "2023-01-01", "RACE", "WHITE", "Y",
-    "SUBJ-002", "2023-01-01", "SEX", "FEMALE", "Y",
-    "SUBJ-002", "2023-01-01", "RACE", "BLACK", "Y"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
+    "SUBJ-001",  "2023-01-01", "SEX",     "MALE",   "Y",
+    "SUBJ-001",  "2023-01-01", "RACE",    "WHITE",  "Y",
+    "SUBJ-002",  "2023-01-01", "SEX",     "FEMALE", "Y",
+    "SUBJ-002",  "2023-01-01", "RACE",    "BLACK",  "Y"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
 
   coding_table <- tibble::tribble(
     ~VSORRES, ~DV,
-    "MALE",     1,
-    "FEMALE",   0,
-    "WHITE",    1,
-    "BLACK",    2
+    "MALE",   1,
+    "FEMALE", 0,
+    "WHITE",  1,
+    "BLACK",  2
   )
 
   # Test SEX
@@ -934,27 +944,27 @@ test_that("add_baseline handles multiple test codes with coding tables", {
 
 test_that("add_baseline cat filter works correctly", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01",
-    "SUBJ-003", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
+    "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA,
+    "SUBJ-003", "2023-01-01", 3, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS",
-    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "PHYSICAL EXAM",
-    "SUBJ-002", "2023-01-01", "WEIGHT", 80, "Y", "VITAL SIGNS",
-    "SUBJ-002", "2023-01-01", "WEIGHT", 85, "Y", "PHYSICAL EXAM",
-    "SUBJ-003", "2023-01-01", "WEIGHT", 90, "Y", "VITAL SIGNS"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",     "VITAL SIGNS",
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  75,        "Y",     "PHYSICAL EXAM",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  80,        "Y",     "VITAL SIGNS",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  85,        "Y",     "PHYSICAL EXAM",
+    "SUBJ-003",  "2023-01-01", "WEIGHT",  90,        "Y",     "VITAL SIGNS"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT",
-    "SUBJ-003", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT",
+    "SUBJ-003",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -989,27 +999,27 @@ test_that("add_baseline cat filter works correctly", {
 
 test_that("add_baseline scat filter works correctly", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01",
-    "SUBJ-003", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
+    "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA,
+    "SUBJ-003", "2023-01-01", 3, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "STANDING",
-    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "SUPINE",
-    "SUBJ-002", "2023-01-01", "WEIGHT", 80, "Y", "STANDING",
-    "SUBJ-002", "2023-01-01", "WEIGHT", 85, "Y", "SUPINE",
-    "SUBJ-003", "2023-01-01", "WEIGHT", 90, "Y", "STANDING"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",     "STANDING",
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  75,        "Y",     "SUPINE",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  80,        "Y",     "STANDING",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  85,        "Y",     "SUPINE",
+    "SUBJ-003",  "2023-01-01", "WEIGHT",  90,        "Y",     "STANDING"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT",
-    "SUBJ-003", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT",
+    "SUBJ-003",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -1044,28 +1054,28 @@ test_that("add_baseline scat filter works correctly", {
 
 test_that("add_baseline cat and scat filters work together", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01",
-    "SUBJ-002", "2023-01-01",
-    "SUBJ-003", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
+    "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA,
+    "SUBJ-003", "2023-01-01", 3, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT, ~VSSCAT,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS", "STANDING",
-    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "VITAL SIGNS", "SUPINE",
-    "SUBJ-001", "2023-01-01", "WEIGHT", 80, "Y", "PHYSICAL EXAM", "STANDING",
-    "SUBJ-002", "2023-01-01", "WEIGHT", 85, "Y", "VITAL SIGNS", "STANDING",
-    "SUBJ-002", "2023-01-01", "WEIGHT", 90, "Y", "VITAL SIGNS", "SUPINE",
-    "SUBJ-003", "2023-01-01", "WEIGHT", 95, "Y", "VITAL SIGNS", "STANDING"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,        ~VSSCAT,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",     "VITAL SIGNS", "STANDING",
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  75,        "Y",     "VITAL SIGNS", "SUPINE",
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  80,        "Y",     "PHYSICAL EXAM", "STANDING",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  85,        "Y",     "VITAL SIGNS", "STANDING",
+    "SUBJ-002",  "2023-01-01", "WEIGHT",  90,        "Y",     "VITAL SIGNS", "SUPINE",
+    "SUBJ-003",  "2023-01-01", "WEIGHT",  95,        "Y",     "VITAL SIGNS", "STANDING"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT",
-    "SUBJ-002", "TREATMENT",
-    "SUBJ-003", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT",
+    "SUBJ-002",  "TREATMENT",
+    "SUBJ-003",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -1100,8 +1110,8 @@ test_that("add_baseline cat and scat filters work together", {
 
 test_that("add_baseline cat filter handles missing field", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
@@ -1112,8 +1122,8 @@ test_that("add_baseline cat filter handles missing field", {
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -1130,8 +1140,8 @@ test_that("add_baseline cat filter handles missing field", {
 
 test_that("add_baseline scat filter handles missing field", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
@@ -1142,8 +1152,8 @@ test_that("add_baseline scat filter handles missing field", {
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -1160,8 +1170,8 @@ test_that("add_baseline scat filter handles missing field", {
 
 test_that("add_baseline cat filter error when cat category not available", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
@@ -1171,8 +1181,8 @@ test_that("add_baseline cat filter error when cat category not available", {
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -1190,8 +1200,8 @@ test_that("add_baseline cat filter error when cat category not available", {
 
 test_that("add_baseline scat filter error when scat category not available", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
     nif()
 
@@ -1201,8 +1211,8 @@ test_that("add_baseline scat filter error when scat category not available", {
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))
@@ -1220,21 +1230,21 @@ test_that("add_baseline scat filter error when scat category not available", {
 
 test_that("add_baseline cat filter with multiple baseline values", {
   test_nif <- tibble::tribble(
-    ~USUBJID, ~DTC,
-    "SUBJ-001", "2023-01-01"
+    ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   ) %>%
     nif()
 
   test_vs <- tibble::tribble(
-    ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
-    "SUBJ-001", "2023-01-01", "WEIGHT", 70, "Y", "VITAL SIGNS",
-    "SUBJ-001", "2023-01-01", "WEIGHT", 72, "Y", "VITAL SIGNS",
-    "SUBJ-001", "2023-01-01", "WEIGHT", 75, "Y", "PHYSICAL EXAM"
+    ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",     "VITAL SIGNS",
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  72,        "Y",     "VITAL SIGNS",
+    "SUBJ-001",  "2023-01-01", "WEIGHT",  75,        "Y",     "PHYSICAL EXAM"
   ) %>% mutate(DOMAIN = "VS")
 
   test_dm <- tibble::tribble(
-    ~USUBJID,   ~ACTARMCD,
-    "SUBJ-001", "TREATMENT"
+    ~USUBJID,    ~ACTARMCD,
+    "SUBJ-001",  "TREATMENT"
   ) %>% mutate(DOMAIN = "DM")
 
   test_sdtm <- sdtm(list(vs = test_vs, dm = test_dm))

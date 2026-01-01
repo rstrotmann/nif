@@ -1,15 +1,15 @@
 # Create test fixtures
 create_test_nif <- function() {
   nif_df <- tibble::tribble(
-    ~ID, ~USUBJID, ~DTC, ~EVID, ~AMT, ~DV, ~CMT,
-    1, "SUBJ-001", "2020-01-15", 1, 100, NA, 1,
-    1, "SUBJ-001", "2020-01-16", 0, 0, 10, 2,
-    1, "SUBJ-001", "2020-01-17", 0, 0, 20, 2,
-    1, "SUBJ-001", "2020-01-20", 0, 0, 30, 2,
-    2, "SUBJ-002", "2020-01-15", 1, 200, NA, 1,
-    2, "SUBJ-002", "2020-01-16", 0, 0, 15, 2,
-    2, "SUBJ-002", "2020-01-17", 0, 0, 25, 2,
-    2, "SUBJ-002", "2020-01-20", 0, 0, 35, 2
+    ~ID, ~USUBJID,    ~DTC,         ~TIME, ~EVID, ~AMT, ~DV, ~CMT,
+    1,   "SUBJ-001",  "2020-01-15", 0,     1,     100,  NA,  1,
+    1,   "SUBJ-001",  "2020-01-16", 24,    0,     0,    10,  2,
+    1,   "SUBJ-001",  "2020-01-17", 48,    0,     0,    20,  2,
+    1,   "SUBJ-001",  "2020-01-20", 120,   0,     0,    30,  2,
+    2,   "SUBJ-002",  "2020-01-15", 0,     1,     200,  NA,  1,
+    2,   "SUBJ-002",  "2020-01-16", 24,    0,     0,    15,  2,
+    2,   "SUBJ-002",  "2020-01-17", 48,    0,     0,    25,  2,
+    2,   "SUBJ-002",  "2020-01-20", 120,   0,     0,    35,  2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -21,35 +21,35 @@ create_test_nif <- function() {
 create_test_sdtm <- function() {
   # Create DM domain
   dm <- tibble::tribble(
-    ~USUBJID, ~DOMAIN, ~SEX, ~RFSTDTC, ~RFENDTC,
-    "SUBJ-001", "DM", "M", "2020-01-15", "2020-02-15",
-    "SUBJ-002", "DM", "F", "2020-01-15", "2020-02-15",
-    "SUBJ-003", "DM", "M", "2020-01-15", "2020-02-15"
+    ~USUBJID,    ~DOMAIN, ~SEX, ~RFSTDTC,     ~RFENDTC,
+    "SUBJ-001",  "DM",    "M",  "2020-01-15", "2020-02-15",
+    "SUBJ-002",  "DM",    "F",  "2020-01-15", "2020-02-15",
+    "SUBJ-003",  "DM",    "M",  "2020-01-15", "2020-02-15"
   )
 
   # Create VS domain
   vs <- tibble::tribble(
-    ~USUBJID,   ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-    "SUBJ-001", "VS",    "WEIGHT",  70,        "2020-01-15",
-    "SUBJ-001", "VS",    "HEIGHT",  175,       "2020-01-15",
-    "SUBJ-001", "VS",    "WEIGHT",  71,        "2020-01-17",
-    "SUBJ-001", "VS",    "WEIGHT",  72,        "2020-01-19",
-    "SUBJ-002", "VS",    "WEIGHT",  65,        "2020-01-15",
-    "SUBJ-002", "VS",    "HEIGHT",  160,       "2020-01-15",
-    "SUBJ-002", "VS",    "WEIGHT",  66,        "2020-01-17",
-    "SUBJ-002", "VS",    "WEIGHT",  67,        "2020-01-19",
-    "SUBJ-003", "VS",    "WEIGHT",  80,        "2020-01-15",
-    "SUBJ-003", "VS",    "HEIGHT",  180,       "2020-01-15"
+    ~USUBJID,    ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+    "SUBJ-001",  "VS",    "WEIGHT",  70,        "2020-01-15",
+    "SUBJ-001",  "VS",    "HEIGHT",  175,       "2020-01-15",
+    "SUBJ-001",  "VS",    "WEIGHT",  71,        "2020-01-17",
+    "SUBJ-001",  "VS",    "WEIGHT",  72,        "2020-01-19",
+    "SUBJ-002",  "VS",    "WEIGHT",  65,        "2020-01-15",
+    "SUBJ-002",  "VS",    "HEIGHT",  160,       "2020-01-15",
+    "SUBJ-002",  "VS",    "WEIGHT",  66,        "2020-01-17",
+    "SUBJ-002",  "VS",    "WEIGHT",  67,        "2020-01-19",
+    "SUBJ-003",  "VS",    "WEIGHT",  80,        "2020-01-15",
+    "SUBJ-003",  "VS",    "HEIGHT",  180,       "2020-01-15"
   )
 
   # Create LB domain
   lb <- tibble::tribble(
-    ~USUBJID,   ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBDTC,
-    "SUBJ-001", "LB",    "CREAT",   0.8,       "2020-01-15",
-    "SUBJ-001", "LB",    "CREAT",   0.9,       "2020-01-18",
-    "SUBJ-002", "LB",    "CREAT",   0.7,       "2020-01-15",
-    "SUBJ-002", "LB",    "CREAT",   0.7,       "2020-01-18",
-    "SUBJ-003", "LB",    "CREAT",   1.0,       "2020-01-15"
+    ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBDTC,
+    "SUBJ-001",  "LB",    "CREAT",   0.8,       "2020-01-15",
+    "SUBJ-001",  "LB",    "CREAT",   0.9,       "2020-01-18",
+    "SUBJ-002",  "LB",    "CREAT",   0.7,       "2020-01-15",
+    "SUBJ-002",  "LB",    "CREAT",   0.7,       "2020-01-18",
+    "SUBJ-003",  "LB",    "CREAT",   1.0,       "2020-01-15"
   )
 
   # Create sdtm object
@@ -99,7 +99,10 @@ test_that("add_covariate works with valid inputs", {
 # Test for validation of nif object
 test_that("add_covariate validates nif object", {
   sdtm <- create_test_sdtm()
-  nif <- data.frame(ID = 1, USUBJID = "SUBJ-001") # Not a nif object
+  nif <- tibble::tribble(
+    ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   "SUBJ-001",  0,     0,    1,    0,     NA
+  ) # Not a nif object
 
   expect_error(
     add_covariate(nif, sdtm, "vs", "WEIGHT", covariate = "wt"),
