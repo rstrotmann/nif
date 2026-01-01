@@ -3,10 +3,10 @@
 test_that("guess_parent identifies analyte with most administrations", {
   # Create a sample nif dataset with administrations
   nif_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   0,     1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1, # Administration
-    1,   24,    1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1, # Another administration
-    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1 # Administration of different drug
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV,  ~CMT, ~MDV, ~AMT,
+    1,   0,     1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1,    100,   # Administration
+    1,   24,    1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1,    100,   # Another administration
+    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1,    100    # Administration of different drug
   )
 
   # Convert to nif object
@@ -21,12 +21,12 @@ test_that("guess_parent identifies analyte with most administrations", {
 test_that("guess_parent falls back to observations when no administrations exist", {
   # Create a sample nif dataset with only observations (no administrations)
   nif_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0, # Observation
-    1,   2,     0,     "DRUG1",  "DRUG1", FALSE,       8,   2,    0, # Observation
-    1,   3,     0,     "DRUG1",  "DRUG1", FALSE,       6,   2,    0, # Observation
-    2,   1,     0,     "DRUG2",  "DRUG2", FALSE,       15,  2,    0, # Observation
-    2,   2,     0,     "DRUG2",  "DRUG2", FALSE,       12,  2,    0 # Observation
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV,  ~CMT, ~MDV, ~AMT,
+    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0,    0,    # Observation
+    1,   2,     0,     "DRUG1",  "DRUG1", FALSE,       8,   2,    0,    0,    # Observation
+    1,   3,     0,     "DRUG1",  "DRUG1", FALSE,       6,   2,    0,    0,    # Observation
+    2,   1,     0,     "DRUG2",  "DRUG2", FALSE,       15,  2,    0,    0,    # Observation
+    2,   2,     0,     "DRUG2",  "DRUG2", FALSE,       12,  2,    0,    0    # Observation
   )
 
   # Convert to nif object
@@ -41,12 +41,12 @@ test_that("guess_parent falls back to observations when no administrations exist
 test_that("guess_parent ignores metabolite observations", {
   # Create a sample nif dataset with mixed metabolite and parent observations
   nif_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0, # Parent observation
-    1,   2,     0,     "META1",  "DRUG1", TRUE,        8,   3,    0, # Metabolite observation
-    1,   3,     0,     "META1",  "DRUG1", TRUE,        6,   3,    0, # Metabolite observation
-    2,   1,     0,     "DRUG2",  "DRUG2", FALSE,       15,  2,    0, # Parent observation
-    2,   2,     0,     "DRUG2",  "DRUG2", FALSE,       12,  2,    0 # Parent observation
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV,  ~CMT, ~MDV, ~AMT,
+    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0,    0,    # Parent observation
+    1,   2,     0,     "META1",  "DRUG1", TRUE,        8,   3,    0,    0,    # Metabolite observation
+    1,   3,     0,     "META1",  "DRUG1", TRUE,        6,   3,    0,    0,    # Metabolite observation
+    2,   1,     0,     "DRUG2",  "DRUG2", FALSE,       15,  2,    0,    0,    # Parent observation
+    2,   2,     0,     "DRUG2",  "DRUG2", FALSE,       12,  2,    0,    0    # Parent observation
   )
 
   # Convert to nif object
@@ -62,13 +62,13 @@ test_that("guess_parent ignores metabolite observations", {
 test_that("guess_parent prioritizes administrations over observations", {
   # Create a sample nif dataset with both administrations and observations
   nif_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   0,     1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1, # Administration
-    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1, # Administration
-    2,   24,    1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1, # Administration
-    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0, # Observation
-    1,   2,     0,     "DRUG1",  "DRUG1", FALSE,       8,   2,    0, # Observation
-    1,   3,     0,     "DRUG1",  "DRUG1", FALSE,       6,   2,    0 # Observation
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV,  ~CMT, ~MDV, ~AMT,
+    1,   0,     1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1,    100,  # Administration
+    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1,    100,  # Administration
+    2,   24,    1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1,    100,  # Administration
+    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0,    0,    # Observation
+    1,   2,     0,     "DRUG1",  "DRUG1", FALSE,       8,   2,    0,    0,    # Observation
+    1,   3,     0,     "DRUG1",  "DRUG1", FALSE,       6,   2,    0,    0    # Observation
   )
 
   # Convert to nif object
@@ -85,7 +85,7 @@ test_that("guess_parent prioritizes administrations over observations", {
 test_that("guess_parent returns NULL for empty dataset", {
   # Create an empty nif object
   empty_nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV, ~AMT
   ) %>%
     nif()
 
@@ -97,10 +97,10 @@ test_that("guess_parent returns NULL for empty dataset", {
 test_that("guess_parent works with minimal dataset", {
   # Create a minimal dataset with only required fields
   minimal_nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE,
-    1,   0,     1,     "DRUG1",
-    1,   24,    1,     "DRUG1",
-    2,   0,     1,     "DRUG2"
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~AMT, ~CMT, ~DV,
+    1,   0,     1,     "DRUG1",  100,  1,    NA,
+    1,   24,    1,     "DRUG1", 100,  1,    NA,
+    2,   0,     1,     "DRUG2", 100,  1,    NA
   ) %>%
     nif()
 
@@ -112,9 +112,9 @@ test_that("guess_parent works with minimal dataset", {
 test_that("guess_parent handles tied administration counts", {
   # Create a dataset with tied administration counts
   tied_nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   0,     1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1, # Administration
-    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1 # Administration
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV,  ~CMT, ~MDV, ~AMT,
+    1,   0,     1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1,    100,  # Administration
+    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1,    100   # Administration
   ) %>%
     nif()
 
@@ -126,9 +126,9 @@ test_that("guess_parent handles tied administration counts", {
 test_that("guess_parent works with ensure_analyte", {
   # Create a dataset missing ANALYTE field (should be added by ensure_analyte)
   missing_analyte_nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~DV, ~MDV,
-    1,   0,     1,     1,    NA,  1, # Administration
-    2,   0,     1,     1,    NA,  1 # Administration
+    ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~MDV, ~AMT,
+    1,   0,     1,     1,    NA,  1,    100,  # Administration
+    2,   0,     1,     1,    NA,  1,    100   # Administration
   ) %>%
     nif()
 
@@ -143,9 +143,9 @@ test_that("guess_parent works with ensure_analyte", {
 test_that("guess_parent returns NULL for dataset with only metabolite observations", {
   # Create a dataset with only metabolite observations
   metabolite_only_nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   1,     0,     "META1",  "DRUG1", TRUE,        2,   3,    0, # Metabolite observation
-    1,   2,     0,     "META1",  "DRUG1", TRUE,        3,   3,    0 # Metabolite observation
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV, ~AMT,
+    1,   1,     0,     "META1",  "DRUG1", TRUE,        2,   3,    0,    0,    # Metabolite observation
+    1,   2,     0,     "META1",  "DRUG1", TRUE,        3,   3,    0,    0    # Metabolite observation
   ) %>%
     nif()
 
@@ -157,10 +157,10 @@ test_that("guess_parent returns NULL for dataset with only metabolite observatio
 test_that("guess_parent handles NA values in key columns", {
   # Create a dataset with NA values in key columns
   na_values_nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   0,     1,     NA,       "DRUG1", FALSE,       NA,  1,    1, # Administration with NA analyte
-    1,   24,    1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1, # Administration
-    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1 # Administration
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV,  ~CMT, ~MDV, ~AMT,
+    1,   0,     1,     NA,       "DRUG1", FALSE,       NA,  1,    1,    100,  # Administration with NA analyte
+    1,   24,    1,     "DRUG1",  "DRUG1", FALSE,       NA,  1,    1,    100,  # Administration
+    2,   0,     1,     "DRUG2",  "DRUG2", FALSE,       NA,  1,    1,    100   # Administration
   ) %>%
     nif()
 
@@ -173,11 +173,11 @@ test_that("guess_parent handles NA values in key columns", {
 test_that("guess_parent correctly counts tied observations when no administrations exist", {
   # Create a dataset with no administrations and tied observation counts
   tied_obs_nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV, ~CMT, ~MDV,
-    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0, # Observation
-    1,   2,     0,     "DRUG1",  "DRUG1", FALSE,       8,   2,    0, # Observation
-    2,   1,     0,     "DRUG2",  "DRUG2", FALSE,       15,  2,    0, # Observation
-    2,   2,     0,     "DRUG2",  "DRUG2", FALSE,       12,  2,    0 # Observation
+    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~METABOLITE, ~DV,  ~CMT, ~MDV, ~AMT,
+    1,   1,     0,     "DRUG1",  "DRUG1", FALSE,       10,  2,    0,    0,    # Observation
+    1,   2,     0,     "DRUG1",  "DRUG1", FALSE,       8,   2,    0,    0,    # Observation
+    2,   1,     0,     "DRUG2",  "DRUG2", FALSE,       15,  2,    0,    0,    # Observation
+    2,   2,     0,     "DRUG2",  "DRUG2", FALSE,       12,  2,    0,    0    # Observation
   ) %>%
     nif()
 

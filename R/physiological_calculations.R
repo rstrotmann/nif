@@ -199,7 +199,7 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
   if (molar) {
     crea <- crea / 88.4
   }
-  female_factor <- ifelse((sex <- 1) | (sex == "F"), .85, 1)
+  female_factor <- ifelse((sex == 1) | (sex == "F"), .85, 1)
 
   egfr <- (140 - age) * weight * female_factor / 72 / crea
   base::attr(egfr, "unit") <- "ml/min"

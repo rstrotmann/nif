@@ -975,9 +975,10 @@ guess_analyte <- function(obj) {
 #' @keywords internal
 #' @noRd
 guess_parent <- function(obj) {
+  validate_nif(obj)
+
   imp <- obj |>
     ensure_analyte() |>
-    assertr::verify(assertr::has_all_names("EVID", "ANALYTE")) |>
     filter(.data$EVID == 1) |>
     reframe(n = n(), .by = "ANALYTE") |>
     arrange(-.data$n, .data$ANALYTE)
@@ -1060,11 +1061,15 @@ add_dose_level <- function(obj) {
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
 add_bl_crcl <- function(obj, method = egfr_cg) {
+  missing_columns <- setdiff(c( "BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
+                            names(obj))
+  if (length(missing_columns) > 0)
+    stop(paste0(
+      "Missing coluns: ", nice_enumeration(missing_columns), "!"
+    ))
+
   if ("BL_CREAT" %in% colnames(obj)) {
     obj |>
-      assertr::verify(assertr::has_all_names(
-        "BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"
-      )) |>
       mutate(BL_CRCL = method(
         .data$BL_CREAT, .data$AGE, .data$SEX, .data$RACE, .data$WEIGHT,
         molar = TRUE
@@ -1117,8 +1122,14 @@ add_bl_renal <- function(obj, method = egfr_cg) {
 #' @seealso [nif::lbm_peters()]
 #' @export
 add_bl_lbm <- function(obj, method = lbm_boer) {
+  # input validation
+  validate_nif(obj)
+  missing_fields <- setdiff(c("WEIGHT", "HEIGHT", "SEX"), names(obj))
+  if (length(missing_fields) > 0)
+    stop(paste0("Missing fields: ", nice_enumeration(missing_fields)))
+
   obj |>
-    assertr::verify(assertr::has_all_names("WEIGHT", "HEIGHT", "SEX")) |>
+    # assertr::verify(assertr::has_all_names("WEIGHT", "HEIGHT", "SEX")) |>
     mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
 }
 
