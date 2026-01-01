@@ -23,6 +23,7 @@ This tutorial contains live code that depends on the following R packages:
 library(dplyr)
 library(ggplot2)
 library(nif)
+library(knitr)
 library(pharmaversesdtm)
 ```
 
@@ -56,7 +57,7 @@ plot(sdtm, domain = "dm", points = F)
 # NONMEM INPUT FORMAT DATA
 
 ```{r}
-nif_option(silent = TRUE, debug = TRUE)
+nif_option(silent = TRUE)
 
 nif <- nif() |> 
   add_administration(sdtm, 'XANOMELINE', analyte = "XAN") |> 
@@ -76,6 +77,14 @@ invisible(capture.output(
   plot(summary(nif))
 ))
 ```
+
+## Data definition table
+
+```{r}
+ddt(nif) |> 
+  kable()
+```
+
 
 # DATA EXPLORATION
 
