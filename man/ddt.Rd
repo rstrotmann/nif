@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_ddt.R
 \name{ddt}
 \alias{ddt}
-\title{Data definition table for NIF object}
+\title{Data definition table for nif object}
 \usage{
 ddt(obj, silent = NULL)
 }
@@ -15,7 +15,9 @@ ddt(obj, silent = NULL)
 A data table.
 }
 \description{
-Data definition table for NIF object
+Generate a data definition table from a nif object. Known nif columns are
+annotated automatically, for unknown fields, NA values are produced. Further
+specifications can be added manually using \code{add_dd()}.
 }
 \examples{
 ddt(examplinib_sad_nif)
