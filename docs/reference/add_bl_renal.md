@@ -6,7 +6,7 @@ it will be calculated first.
 ## Usage
 
 ``` r
-add_bl_renal(obj, method = egfr_cg)
+add_bl_renal(obj, method = egfr_cg, molar = FALSE)
 ```
 
 ## Arguments
@@ -17,8 +17,12 @@ add_bl_renal(obj, method = egfr_cg)
 
 - method:
 
-  The function to calculate eGFR (CrCL) from serum creatinine. Currently
-  either: egfr_mdrd, egfr_cg or egfr_raynaud
+  The function to calculate eGFR (CrCL) from serum creatinine.
+
+- molar:
+
+  Use molar concentrations. Currently either: egfr_mdrd, egfr_cg or
+  egfr_raynaud
 
 ## Value
 

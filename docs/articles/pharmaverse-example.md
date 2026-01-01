@@ -87,7 +87,7 @@ nif <- nif() |>
   add_observation(sdtm, 'pc', 'XAN', observation_filter = "PCSPEC == 'PLASMA'") |> 
   add_observation(sdtm, 'lb', 'ALT', ntime_method = "DY") |> 
   add_baseline(sdtm, "lb", "CREAT") |> 
-  add_bl_renal() |> 
+  add_bl_renal(molar = TRUE) |> 
   derive_cfb() |> 
   add_dose_level()
 ```
@@ -106,10 +106,10 @@ summary(nif)
 #> 
 #> Renal impairment class:
 #>   CLASS      N     percent   
-#>   normal     0     0         
-#>   mild       0     0         
-#>   moderate   0     0         
-#>   severe     251   98.8      
+#>   normal     4     1.6       
+#>   mild       58    22.8      
+#>   moderate   173   68.1      
+#>   severe     16    6.3       
 #>   NA         3     1.2        
 #> 
 #> Treatments:
@@ -151,7 +151,7 @@ summary(nif)
 #>   PLACEBO   7     210   149.1   182      
 #>   XAN       1     212   99.2    81        
 #> 
-#> Hash: b172039bcd6fb663b1c60d2a8d73551f
+#> Hash: 943b0f31774848c656fe5a8cfe35172c
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(
