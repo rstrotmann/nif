@@ -1,13 +1,10 @@
 test_that("write_nif basic functionality works", {
   # Create a minimal test NIF object
-  test_data <- data.frame(
-    ID = c(1, 1, 2),
-    TIME = c(0, 1, 0),
-    AMT = c(100, 0, 100),
-    CMT = c(1, 1, 1),
-    EVID = c(1, 0, 1),
-    DOSE = c(100, 100, 100),
-    DV = c(NA, 10.12345, NA)
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
+    1,   0,     100,  1,    1,     100,   NA,
+    1,   1,     0,    1,    0,     100,   10.12345,
+    2,   0,     100,  1,    1,     100,   NA
   )
   class(test_data) <- c("nif", "data.frame")
 
@@ -34,14 +31,10 @@ test_that("write_nif basic functionality works", {
 
 
 test_that("write_nif handles fixed-width format", {
-  test_data <- data.frame(
-    ID = c(1, 1),
-    TIME = c(0, 1),
-    AMT = c(100, 0),
-    CMT = c(1, 1),
-    EVID = c(1, 0),
-    DOSE = c(100, 100),
-    DV = c(NA, 10.12345)
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
+    1,   0,     100,  1,    1,     100,   NA,
+    1,   1,     0,    1,    0,     100,   10.12345
   )
   class(test_data) <- c("nif", "data.frame")
 
@@ -83,14 +76,10 @@ test_that("write_nif handles empty dataframe", {
 
 
 test_that("write_nif preserves column order", {
-  test_data <- data.frame(
-    DV = c(NA, 10.12345),
-    ID = c(1, 1),
-    TIME = c(0, 1),
-    AMT = c(100, 0),
-    CMT = c(1, 1),
-    EVID = c(1, 0),
-    DOSE = c(100, 100)
+  test_data <- tibble::tribble(
+    ~DV,       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE,
+    NA,        1,   0,     100,  1,    1,     100,
+    10.12345,  1,   1,     0,    1,    0,     100
   )
   class(test_data) <- c("nif", "data.frame")
 

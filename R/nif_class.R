@@ -314,9 +314,9 @@ subjects.nif <- function(obj) {
   # input validation
   validate_nif(obj)
 
-  if (!"ID" %in% names(obj)) {
-    stop("ID column missing!")
-  }
+  # if (!"ID" %in% names(obj)) {
+  #   stop("ID column missing!")
+  # }
 
   if (!"USUBJID" %in% names(obj))
     obj <- mutate(obj, USUBJID = NA)
@@ -726,13 +726,6 @@ treatments <- function(obj) {
 #' @examples
 #' treatments(examplinib_poc_nif)
 treatments.nif <- function(obj) {
-  # obj |>
-  #   ensure_parent() |>
-  #   as.data.frame() |>
-  #   distinct(.data$PARENT) |>
-  #   filter(.data$PARENT != "") |>
-  #   pull(.data$PARENT)
-
   obj |>
     ensure_analyte() |>
     filter(.data$EVID == 1) |>

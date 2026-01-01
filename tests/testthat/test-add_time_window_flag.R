@@ -1,10 +1,10 @@
 test_that("add_time_window_flag works with basic input", {
   # Create test data with observations
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -31,9 +31,9 @@ test_that("add_time_window_flag works with basic input", {
 test_that("add_time_window_flag flags early observations", {
   # Create test data with early observation
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 09:00:00", 0, "DRUG", "DRUG", 1, 2, 10  # 1 hour early
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 09:00:00", 0,  "DRUG",  "DRUG",   1,   2,     10,   1,   1,     0,    2   # 1 hour early
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -55,9 +55,9 @@ test_that("add_time_window_flag flags early observations", {
 test_that("add_time_window_flag flags late observations", {
   # Create test data with late observation
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 11:00:00", 0, "DRUG", "DRUG", 3, 2, 10  # 1 hour late
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 11:00:00", 0,  "DRUG",  "DRUG",   3,   2,     10,   1,   3,     0,    2   # 1 hour late
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -79,10 +79,10 @@ test_that("add_time_window_flag flags late observations", {
 test_that("add_time_window_flag respects inclusive boundaries", {
   # Create test data with observations exactly at boundaries
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 09:30:00", 0, "DRUG", "DRUG", 1.5, 2, 10,  # Exactly 30 min early (boundary)
-    "SUBJ-001", "2020-01-01 10:30:00", 0, "DRUG", "DRUG", 2.5, 2, 20   # Exactly 30 min late (boundary)
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD,  ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,    0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 09:30:00", 0,  "DRUG",  "DRUG",   1.5,  2,     10,   1,   1.5,   0,    2,   # Exactly 30 min early (boundary)
+    "SUBJ-001",  "2020-01-01 10:30:00", 0,  "DRUG",  "DRUG",   2.5,  2,     20,   1,   2.5,   0,    2   # Exactly 30 min late (boundary)
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -103,9 +103,9 @@ test_that("add_time_window_flag respects inclusive boundaries", {
 test_that("add_time_window_flag handles window in hours when use_minutes=FALSE", {
   # Create test data
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 09:00:00", 0, "DRUG", "DRUG", 1, 2, 10  # 1 hour early
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 09:00:00", 0,  "DRUG",  "DRUG",   1,   2,     10,   1,   1,     0,    2   # 1 hour early
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -127,11 +127,11 @@ test_that("add_time_window_flag handles window in hours when use_minutes=FALSE",
 test_that("add_time_window_flag handles multiple NTIME values", {
   # Create test data with multiple scheduled times
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20,
-    "SUBJ-001", "2020-01-01 16:00:00", 0, "DRUG", "DRUG", 8, 8, 30
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2,
+    "SUBJ-001",  "2020-01-01 16:00:00", 0,  "DRUG",  "DRUG",   8,   8,     30,   1,   8,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -154,9 +154,9 @@ test_that("add_time_window_flag handles multiple NTIME values", {
 test_that("add_time_window_flag guesses analyte when not specified", {
   # Create test data
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -177,11 +177,11 @@ test_that("add_time_window_flag guesses analyte when not specified", {
 test_that("add_time_window_flag handles specified analyte", {
   # Create test data with multiple analytes
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG1", "DRUG1", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG1", "DRUG1", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG2", "DRUG2", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG2", "DRUG2", 2, 2, 20
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG1", "DRUG1",  0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG1", "DRUG1",  2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG2", "DRUG2",  0,   0,     NA,   1,   0,     100,  3,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG2", "DRUG2",  2,   2,     20,   1,   2,     0,    4
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -201,9 +201,9 @@ test_that("add_time_window_flag handles specified analyte", {
 
 test_that("add_time_window_flag handles missing window fields", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 08:00:00", 0, "DRUG", "DRUG", 0, 0, NA
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 08:00:00", 0,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -223,9 +223,9 @@ test_that("add_time_window_flag handles missing window fields", {
 
 test_that("add_time_window_flag handles non-numeric window fields", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 08:00:00", 0, "DRUG", "DRUG", 0, 0, NA
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 08:00:00", 0,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -245,9 +245,9 @@ test_that("add_time_window_flag handles non-numeric window fields", {
 
 test_that("add_time_window_flag handles negative window values", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 08:00:00", 0, "DRUG", "DRUG", 0, 0, NA
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 08:00:00", 0,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -267,8 +267,8 @@ test_that("add_time_window_flag handles negative window values", {
 
 test_that("add_time_window_flag handles invalid analyte", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -287,8 +287,8 @@ test_that("add_time_window_flag handles invalid analyte", {
 
 test_that("add_time_window_flag handles non-data.frame window", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -302,9 +302,9 @@ test_that("add_time_window_flag handles non-data.frame window", {
 
 test_that("add_time_window_flag creates EXCL and EXCL_REASON if missing", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -326,10 +326,10 @@ test_that("add_time_window_flag creates EXCL and EXCL_REASON if missing", {
 test_that("add_time_window_flag preserves existing EXCL values", {
   # Create test data with existing EXCL field
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~EXCL,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA, FALSE,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10, TRUE,  # Already excluded
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20, FALSE
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~EXCL,   ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   FALSE,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   TRUE,    1,   2,     0,    2,   # Already excluded
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   FALSE,   1,   4,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -350,10 +350,10 @@ test_that("add_time_window_flag preserves existing EXCL values", {
 test_that("add_time_window_flag preserves existing EXCL_REASON values", {
   # Create test data with existing EXCL_REASON field
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~EXCL_REASON,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA, "",
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10, "other reason",
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20, ""
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~EXCL_REASON,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   "",           1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   "other reason", 1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   "",           1,   4,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -374,9 +374,9 @@ test_that("add_time_window_flag preserves existing EXCL_REASON values", {
 test_that("add_time_window_flag updates EXCL_REASON for violations", {
   # Create test data with early observation
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 09:00:00", 0, "DRUG", "DRUG", 1, 2, 10  # 1 hour early
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 09:00:00", 0,  "DRUG",  "DRUG",   1,   2,     10,   1,   1,     0,    2   # 1 hour early
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -395,9 +395,9 @@ test_that("add_time_window_flag updates EXCL_REASON for violations", {
 
 test_that("add_time_window_flag handles silent parameter", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -437,10 +437,10 @@ test_that("add_time_window_flag handles silent parameter", {
 test_that("add_time_window_flag handles observations just outside boundary", {
   # Create test data with observations just outside the boundary
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 09:29:00", 0, "DRUG", "DRUG", 1.483, 2, 10,  # 31 min early (outside)
-    "SUBJ-001", "2020-01-01 10:31:00", 0, "DRUG", "DRUG", 2.517, 2, 20   # 31 min late (outside)
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD,   ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,     0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 09:29:00", 0,  "DRUG",  "DRUG",   1.483, 2,     10,   1,   1.483, 0,    2,   # 31 min early (outside)
+    "SUBJ-001",  "2020-01-01 10:31:00", 0,  "DRUG",  "DRUG",   2.517, 2,     20,   1,   2.517, 0,    2   # 31 min late (outside)
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -461,11 +461,11 @@ test_that("add_time_window_flag handles observations just outside boundary", {
 test_that("add_time_window_flag handles multiple subjects", {
   # Create test data with multiple subjects
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 09:00:00", 0, "DRUG", "DRUG", 1, 2, 10,  # Early
-    "SUBJ-002", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-002", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 20   # On time
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 09:00:00", 0,  "DRUG",  "DRUG",   1,   2,     10,   1,   1,     0,    2,   # Early
+    "SUBJ-002",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   2,   0,     100,  1,
+    "SUBJ-002",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     20,   2,   2,     0,    2   # On time
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -486,10 +486,10 @@ test_that("add_time_window_flag handles multiple subjects", {
 test_that("add_time_window_flag handles NTIME not in window", {
   # Create test data with NTIME value not in window definition
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20  # NTIME=4 not in window
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2   # NTIME=4 not in window
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -509,9 +509,9 @@ test_that("add_time_window_flag handles NTIME not in window", {
 
 test_that("add_time_window_flag returns a nif object", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -529,9 +529,9 @@ test_that("add_time_window_flag returns a nif object", {
 
 test_that("add_time_window_flag removes temporary columns", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -552,10 +552,10 @@ test_that("add_time_window_flag removes temporary columns", {
 test_that("add_time_window_flag handles zero window values", {
   # Create test data
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 10:01:00", 0, "DRUG", "DRUG", 2.017, 2, 20  # 1 min late
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD,    ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,      0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,      2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 10:01:00", 0,  "DRUG",  "DRUG",   2.017,  2,     20,   1,   2.017, 0,    2   # 1 min late
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()

@@ -1,31 +1,31 @@
 test_that("nif_auto works with basic input", {
   # Create minimal SDTM object
   dm <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~SEX, ~RACE, ~AGE, ~ACTARMCD, ~RFSTDTC, ~RFENDTC,
-    "DM", "001", "M", "WHITE", 30, "TRT", "2023-01-01", "2023-01-15",
-    "DM", "002", "F", "BLACK", 25, "TRT", "2023-01-01", "2023-01-15",
-    "DM", "003", "M", "ASIAN", 35, "SCRNFAIL", "2023-01-01", "2023-01-15"
+    ~DOMAIN, ~USUBJID, ~SEX, ~RACE,   ~AGE, ~ACTARMCD, ~RFSTDTC,     ~RFENDTC,
+    "DM",    "001",    "M",  "WHITE", 30,   "TRT",     "2023-01-01", "2023-01-15",
+    "DM",    "002",    "F",  "BLACK", 25,   "TRT",     "2023-01-01", "2023-01-15",
+    "DM",    "003",    "M",  "ASIAN", 35,   "SCRNFAIL", "2023-01-01", "2023-01-15"
   )
 
   vs <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VISIT, ~VSDTC, ~VSBLFL,
-    "VS", "001", "WEIGHT", 70, "SCREENING", "2022-12-30", "Y",
-    "VS", "002", "WEIGHT", 65, "SCREENING", "2022-12-30", "Y",
-    "VS", "003", "WEIGHT", 80, "SCREENING", "2022-12-30", "Y"
+    ~DOMAIN, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VISIT,     ~VSDTC,      ~VSBLFL,
+    "VS",    "001",    "WEIGHT",  70,        "SCREENING", "2022-12-30", "Y",
+    "VS",    "002",    "WEIGHT",  65,        "SCREENING", "2022-12-30", "Y",
+    "VS",    "003",    "WEIGHT",  80,        "SCREENING", "2022-12-30", "Y"
   )
 
   ex <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
-    "EX", "001", "DRUG1", 100, "2023-01-01", "2023-01-01", 1,
-    "EX", "002", "DRUG1", 100, "2023-01-01", "2023-01-01", 1
+    ~DOMAIN, ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC,     ~EXENDTC,     ~EXSEQ,
+    "EX",    "001",    "DRUG1", 100,     "2023-01-01", "2023-01-01", 1,
+    "EX",    "002",    "DRUG1", 100,     "2023-01-01", "2023-01-01", 1
   )
 
   pc <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~PCTESTCD, ~PCSTRESN, ~PCDTC, ~VISIT,
-    "PC", "001", "DRUG1", 10, "2023-01-01 08:00", "DAY 1",
-    "PC", "001", "DRUG1", 8, "2023-01-01 12:00", "DAY 1",
-    "PC", "002", "DRUG1", 12, "2023-01-01 08:00", "DAY 1",
-    "PC", "002", "DRUG1", 9, "2023-01-01 12:00", "DAY 1"
+    ~DOMAIN, ~USUBJID, ~PCTESTCD, ~PCSTRESN, ~PCDTC,            ~VISIT,
+    "PC",    "001",    "DRUG1",   10,        "2023-01-01 08:00", "DAY 1",
+    "PC",    "001",    "DRUG1",   8,         "2023-01-01 12:00", "DAY 1",
+    "PC",    "002",    "DRUG1",   12,        "2023-01-01 08:00", "DAY 1",
+    "PC",    "002",    "DRUG1",   9,         "2023-01-01 12:00", "DAY 1"
   )
 
   sdtm <- list(domains = list(dm = dm, vs = vs, ex = ex, pc = pc))
@@ -40,23 +40,23 @@ test_that("nif_auto works with basic input", {
 test_that("nif_auto handles metabolites correctly", {
   # Create SDTM object with parent and metabolite
   dm <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~SEX, ~RACE, ~AGE, ~ACTARMCD, ~RFSTDTC, ~RFENDTC,
-    "DM", "001", "M", "WHITE", 30, "TRT", "2023-01-01", "2023-01-15"
+    ~DOMAIN, ~USUBJID, ~SEX, ~RACE,   ~AGE, ~ACTARMCD, ~RFSTDTC,     ~RFENDTC,
+    "DM",    "001",    "M",  "WHITE", 30,   "TRT",     "2023-01-01", "2023-01-15"
   )
 
   vs <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VISIT, ~VSDTC, ~VSBLFL,
-    "VS", "001", "WEIGHT", 70, "SCREENING", "2022-12-30", "Y"
+    ~DOMAIN, ~USUBJID, ~VSTESTCD, ~VSSTRESN, ~VISIT,     ~VSDTC,      ~VSBLFL,
+    "VS",    "001",    "WEIGHT",  70,        "SCREENING", "2022-12-30", "Y"
   )
 
   ex <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
-    "EX", "001", "DRUG1", 100, "2023-01-01", "2023-01-01", 1
+    ~DOMAIN, ~USUBJID, ~EXTRT, ~EXDOSE, ~EXSTDTC,     ~EXENDTC,     ~EXSEQ,
+    "EX",    "001",    "DRUG1", 100,     "2023-01-01", "2023-01-01", 1
   )
 
   pc <- tibble::tribble(
-    ~DOMAIN, ~USUBJID, ~PCTESTCD, ~PCSTRESN, ~PCDTC, ~VISIT,
-    "PC", "001", "DRUG1", 10, "2023-01-01 08:00", "DAY 1",
+    ~DOMAIN, ~USUBJID, ~PCTESTCD, ~PCSTRESN, ~PCDTC,            ~VISIT,
+    "PC",    "001",    "DRUG1",   10,        "2023-01-01 08:00", "DAY 1",
     "PC", "001", "M1", 5, "2023-01-01 08:00", "DAY 1"
   )
 

@@ -1,11 +1,11 @@
 test_that("add_time_deviation works with basic input", {
   # Create a simple test data frame with scheduled observations
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20,
-    "SUBJ-001", "2020-01-01 16:00:00", 0, "DRUG", "DRUG", 8, 8, 30
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2,
+    "SUBJ-001",  "2020-01-01 16:00:00", 0,  "DRUG",  "DRUG",   8,   8,     30,   1,   8,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -23,11 +23,11 @@ test_that("add_time_deviation works with basic input", {
 test_that("add_time_deviation calculates deviations for early/late observations", {
   # Create test data with observations that are early or late
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 09:30:00", 0, "DRUG", "DRUG", 1.5, 2, 10,  # 30 min early
-    "SUBJ-001", "2020-01-01 12:30:00", 0, "DRUG", "DRUG", 4.5, 4, 20,  # 30 min late
-    "SUBJ-001", "2020-01-01 15:00:00", 0, "DRUG", "DRUG", 7, 8, 30      # 1 hour early
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD,  ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,    0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 09:30:00", 0,  "DRUG",  "DRUG",   1.5,  2,     10,   1,   1.5,   0,    2,    # 30 min early
+    "SUBJ-001",  "2020-01-01 12:30:00", 0,  "DRUG",  "DRUG",   4.5,  4,     20,   1,   4.5,   0,    2,    # 30 min late
+    "SUBJ-001",  "2020-01-01 15:00:00", 0,  "DRUG",  "DRUG",   7,    8,     30,   1,   7,      0,    2     # 1 hour early
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -42,10 +42,10 @@ test_that("add_time_deviation calculates deviations for early/late observations"
 test_that("add_time_deviation handles pre-dose observations (NTIME == 0)", {
   # Create test data with pre-dose observation
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 07:00:00", 0, "DRUG", "DRUG", -1, 0, 5,   # Pre-dose, 1 hour before
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 07:00:00", 0,  "DRUG",  "DRUG",   -1,   0,     5,   1,   -1,    0,    2,   # Pre-dose, 1 hour before
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,    0,     NA,  1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,    2,     10,  1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -64,11 +64,11 @@ test_that("add_time_deviation handles pre-dose observations (NTIME == 0)", {
 test_that("add_time_deviation handles multiple administrations", {
   # Create test data with multiple doses
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 24:00:00", 1, "DRUG", "DRUG", 0, 0, NA,  # Second dose
-    "SUBJ-001", "2020-01-02 02:00:00", 0, "DRUG", "DRUG", 2, 2, 20
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 24:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   16,    100,  1,    # Second dose
+    "SUBJ-001",  "2020-01-02 02:00:00", 0,  "DRUG",  "DRUG",   2,   2,     20,   1,   18,    0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -83,11 +83,11 @@ test_that("add_time_deviation handles multiple administrations", {
 test_that("add_time_deviation handles multiple subjects", {
   # Create test data with multiple subjects
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-002", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-002", "2020-01-01 11:00:00", 0, "DRUG", "DRUG", 3, 2, 20  # 1 hour late
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-002",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   2,   0,     100,  1,
+    "SUBJ-002",  "2020-01-01 11:00:00", 0,  "DRUG",  "DRUG",   3,   2,     20,   2,   3,     0,    2   # 1 hour late
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -103,11 +103,11 @@ test_that("add_time_deviation handles multiple subjects", {
 test_that("add_time_deviation handles multiple parent compounds", {
   # Create test data with multiple parent compounds
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG1", "DRUG1", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG1", "DRUG1", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG2", "DRUG2", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG2", "DRUG2", 2, 2, 20
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG1", "DRUG1",  0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG1", "DRUG1",  2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG2", "DRUG2",  0,   0,     NA,   1,   0,     100,  3,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG2", "DRUG2",  2,   2,     20,   1,   2,     0,    4
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -123,10 +123,10 @@ test_that("add_time_deviation handles multiple parent compounds", {
 test_that("add_time_deviation handles observations without next administration", {
   # Create test data where last observation has no next administration
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", -2, 0, 5   # Pre-dose, but no next admin
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,  1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,  1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   -2,  0,     5,   1,   -2,    0,    2   # Pre-dose, but no next admin
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -142,10 +142,10 @@ test_that("add_time_deviation handles observations without next administration",
 test_that("add_time_deviation handles NA values in TAD", {
   # Create test data with NA in TAD
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", NA, 2, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   NA,  2,     10,   1,   NA,    0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -161,10 +161,10 @@ test_that("add_time_deviation handles NA values in TAD", {
 test_that("add_time_deviation handles NA values in NTIME", {
   # Create test data with NA in NTIME (but not 0)
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, NA, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   NA,    10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -183,9 +183,9 @@ test_that("add_time_deviation handles NA values in NTIME", {
 test_that("add_time_deviation rounds TIME_DEV to 3 decimal places", {
   # Create test data with precise timing
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00.123", 0, "DRUG", "DRUG", 2.0003417, 2, 10  # Very precise
+    ~USUBJID,    ~DTC,                 ~EVID, ~PARENT, ~ANALYTE, ~TAD,      ~NTIME, ~DV,  ~ID, ~TIME,      ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,    "DRUG",  "DRUG",   0,         0,     NA,   1,   0,          100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00.123", 0, "DRUG",  "DRUG",   2.0003417, 2,     10,   1,   2.0003417,  0,    2   # Very precise
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -200,7 +200,7 @@ test_that("add_time_deviation rounds TIME_DEV to 3 decimal places", {
 
 test_that("add_time_deviation handles empty data frame", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV
+    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~ID, ~TIME, ~AMT, ~CMT
   ) %>%
     mutate(DTC = lubridate::as_datetime(character(0))) %>%
     nif()
@@ -214,8 +214,8 @@ test_that("add_time_deviation handles empty data frame", {
 
 test_that("add_time_deviation handles missing TAD field", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", 0, NA
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  0,     NA,   1,   0,     100,  1
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -229,8 +229,8 @@ test_that("add_time_deviation handles missing TAD field", {
 
 test_that("add_time_deviation handles missing NTIME field", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~TAD, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", 0, NA
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~TAD, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  0,   NA,   1,   0,     100,  1
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -244,9 +244,9 @@ test_that("add_time_deviation handles missing NTIME field", {
 
 test_that("add_time_deviation preserves original data columns", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~EXTRA_COL,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA, "A",
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10, "B"
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~EXTRA_COL, ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   "A",        1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   "B",        1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -261,9 +261,9 @@ test_that("add_time_deviation preserves original data columns", {
 
 test_that("add_time_deviation removes temporary columns", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -278,9 +278,9 @@ test_that("add_time_deviation removes temporary columns", {
 
 test_that("add_time_deviation returns a nif object", {
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -294,13 +294,13 @@ test_that("add_time_deviation returns a nif object", {
 test_that("add_time_deviation handles complex scenario with multiple pre-dose observations", {
   # Create test data with multiple pre-dose observations before different administrations
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 07:00:00", 0, "DRUG", "DRUG", -1, 0, 5,   # Pre-dose before first
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 23:00:00", 0, "DRUG", "DRUG", -1, 0, 6,   # Pre-dose before second
-    "SUBJ-001", "2020-01-02 00:00:00", 1, "DRUG", "DRUG", 0, 0, NA,   # Second dose
-    "SUBJ-001", "2020-01-02 02:00:00", 0, "DRUG", "DRUG", 2, 2, 20
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 07:00:00", 0,  "DRUG",  "DRUG",   -1,   0,     5,   1,   -1,    0,    2,   # Pre-dose before first
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,    0,     NA,  1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,    2,     10,  1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 23:00:00", 0,  "DRUG",  "DRUG",   -1,   0,     6,   1,   -1,    0,    2,   # Pre-dose before second
+    "SUBJ-001",  "2020-01-02 00:00:00", 1,  "DRUG",  "DRUG",   0,    0,     NA,  1,   16,    100,  1,   # Second dose
+    "SUBJ-001",  "2020-01-02 02:00:00", 0,  "DRUG",  "DRUG",   2,    2,     20,  1,   18,    0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -321,11 +321,11 @@ test_that("add_time_deviation handles complex scenario with multiple pre-dose ob
 test_that("add_time_deviation handles observations exactly at scheduled time", {
   # Create test data with observations exactly on time
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, 2, 10,
-    "SUBJ-001", "2020-01-01 12:00:00", 0, "DRUG", "DRUG", 4, 4, 20,
-    "SUBJ-001", "2020-01-01 16:00:00", 0, "DRUG", "DRUG", 8, 8, 30
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2,
+    "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2,
+    "SUBJ-001",  "2020-01-01 16:00:00", 0,  "DRUG",  "DRUG",   8,   8,     30,   1,   8,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -340,10 +340,10 @@ test_that("add_time_deviation handles observations exactly at scheduled time", {
 test_that("add_time_deviation handles very large time deviations", {
   # Create test data with very early/late observations
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 05:00:00", 0, "DRUG", "DRUG", -3, 2, 10,  # 5 hours early
-    "SUBJ-001", "2020-01-01 20:00:00", 0, "DRUG", "DRUG", 12, 4, 20   # 8 hours late
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 05:00:00", 0,  "DRUG",  "DRUG",   -3,  2,     10,   1,   -3,    0,    2,   # 5 hours early
+    "SUBJ-001",  "2020-01-01 20:00:00", 0,  "DRUG",  "DRUG",   12,  4,     20,   1,   12,    0,    2    # 8 hours late
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
@@ -359,9 +359,9 @@ test_that("add_time_deviation handles very large time deviations", {
 test_that("add_time_deviation handles negative NTIME values", {
   # Create test data with negative NTIME (if such exists)
   test_data <- tibble::tribble(
-    ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,
-    "SUBJ-001", "2020-01-01 08:00:00", 1, "DRUG", "DRUG", 0, 0, NA,
-    "SUBJ-001", "2020-01-01 10:00:00", 0, "DRUG", "DRUG", 2, -1, 10  # Negative NTIME
+    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
+    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
+    "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   -1,    10,   1,   2,     0,    2   # Negative NTIME
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()

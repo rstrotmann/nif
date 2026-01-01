@@ -1,40 +1,40 @@
 make_test_sdtm1 <- function() {
   temp <- list(
     dm = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC, ~RFSTDTC, ~ACTARM, ~STUDYID,
-      "1", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "2", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "3", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
-      "4", "DM", "M", "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFXSTDTC,           ~RFSTDTC,                ~ACTARM, ~STUDYID,
+      "1",      "DM",    "M",  "A",       "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "2",      "DM",    "M",  "A",       "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "3",      "DM",    "M",  "A",       "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1",
+      "4",      "DM",    "M",  "A",       "2024-01-01T08:00:00", "2024-01-01T08:00:00", "Arm A", "Study 1"
     ) %>%
       mutate(RFENDTC = "2024-01-02T08:00:00"),
     vs = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
-      "1", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
-      "2", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
-      "3", "VS", "HEIGHT", 100, "2024-01-01T08:00:00",
-      "4", "VS", "HEIGHT", 100, "2024-01-01T08:00:00"
+      "1",      "VS",    "HEIGHT",  100,       "2024-01-01T08:00:00",
+      "2",      "VS",    "HEIGHT",  100,       "2024-01-01T08:00:00",
+      "3",      "VS",    "HEIGHT",  100,       "2024-01-01T08:00:00",
+      "4",      "VS",    "HEIGHT",  100,       "2024-01-01T08:00:00"
     ),
     lb = tibble::tribble(
       ~USUBJID, ~DOMAIN, ~LBSPEC, ~LBTESTCD, ~LBSTRESN, ~LBDTC,
-      "1", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
-      "2", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
-      "3", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00",
-      "4", "LB", "SERUM", "CREAT", 100, "2024-01-01T08:00:00"
+      "1",      "LB",    "SERUM", "CREAT",    100,       "2024-01-01T08:00:00",
+      "2",      "LB",    "SERUM", "CREAT",    100,       "2024-01-01T08:00:00",
+      "3",      "LB",    "SERUM", "CREAT",    100,       "2024-01-01T08:00:00",
+      "4",      "LB",    "SERUM", "CREAT",    100,       "2024-01-01T08:00:00"
     ),
     ex = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXSEQ,
-      "1", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 1L,
-      "2", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 2L,
-      "3", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 3L,
-      "4", "EX", 1, "A", "2024-01-01T08:00:00", "2024-01-01T08:00:00", 4L
+      ~USUBJID, ~DOMAIN, ~EXDOSE, ~EXTRT, ~EXSTDTC,           ~EXENDTC,           ~EXSEQ,
+      "1",      "EX",    1,       "A",    "2024-01-01T08:00:00", "2024-01-01T08:00:00", 1L,
+      "2",      "EX",    1,       "A",    "2024-01-01T08:00:00", "2024-01-01T08:00:00", 2L,
+      "3",      "EX",    1,       "A",    "2024-01-01T08:00:00", "2024-01-01T08:00:00", 3L,
+      "4",      "EX",    1,       "A",    "2024-01-01T08:00:00", "2024-01-01T08:00:00", 4L
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN, ~PCSPEC, ~PCTEST, ~PCELTM,
-      "1", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
-      "2", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
-      "3", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H",
-      "4", "PC", "A", "2024-01-01T08:00:00", 100, "Spec", "Analyte A", "PT0H"
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC,           ~PCSTRESN, ~PCSPEC,     ~PCTEST,    ~PCELTM,
+      "1",      "PC",    "A",       "2024-01-01T08:00:00", 100,      "Spec",  "Analyte A", "PT0H",
+      "2",      "PC",    "A",       "2024-01-01T08:00:00", 100,      "Spec",  "Analyte A", "PT0H",
+      "3",      "PC",    "A",       "2024-01-01T08:00:00", 100,      "Spec",  "Analyte A", "PT0H",
+      "4",      "PC",    "A",       "2024-01-01T08:00:00", 100,      "Spec",  "Analyte A", "PT0H"
     )
   )
 
@@ -435,15 +435,15 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
   sdtm_obj <- make_test_sdtm1()
 
   pc <- tibble::tribble(
-    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN,
-    "1", "PC", "A", "2023-01-01 08:00:00", 100,
-    "1", "PC", "A", "2023-01-01 12:00:00", 200,
-    "1", "PC", "A", "2023-01-01 08:00:00", NA,
-    "1", "PC", "A", "2023-01-01 12:00:00", 400,
-    "2", "PC", "A", "2023-01-01 08:00:00", 500,
-    "2", "PC", "A", "2023-01-01 12:00:00", NA,
-    "2", "PC", "A", "2023-01-01 08:00:00", 700,
-    "2", "PC", "A", "2023-01-01 12:00:00", 800
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC,              ~PCSTRESN,
+    "1",      "PC",    "A",       "2023-01-01 08:00:00", 100,
+    "1",      "PC",    "A",       "2023-01-01 12:00:00", 200,
+    "1",      "PC",    "A",       "2023-01-01 08:00:00", NA,
+    "1",      "PC",    "A",       "2023-01-01 12:00:00", 400,
+    "2",      "PC",    "A",       "2023-01-01 08:00:00", 500,
+    "2",      "PC",    "A",       "2023-01-01 12:00:00", NA,
+    "2",      "PC",    "A",       "2023-01-01 08:00:00", 700,
+    "2",      "PC",    "A",       "2023-01-01 12:00:00", 800
   )
 
   sdtm_obj$domains$pc <- pc

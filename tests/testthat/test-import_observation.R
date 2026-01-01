@@ -1,22 +1,9 @@
 # Helper function to create a minimal nif object for testing
 create_test_nif <- function() {
-  data.frame(
-    USUBJID = c("SUBJ-001", "SUBJ-002"),
-    ID = c(1, 2),
-    ANALYTE = c("DRUG", "DRUG"),
-    CMT = c(1, 1),
-    AMT = c(100, 150),
-    DOSE = c(100, 150),
-    DTC = ymd_hms(c("2023-01-01 08:00:00", "2023-01-01 08:00:00")),
-    NTIME = c(0, 0),
-    TIME = c(0, 0),
-    PARENT = c("DRUG", "DRUG"),
-    METABOLITE = c(FALSE, FALSE),
-    EVID = c(1, 1),
-    MDV = c(1, 1),
-    DV = c(NA, NA),
-    IMPUTATION = c("", ""),
-    stringsAsFactors = FALSE
+  tibble::tribble(
+    ~USUBJID,    ~ID, ~ANALYTE, ~CMT, ~AMT, ~DOSE, ~DTC,                        ~NTIME, ~TIME, ~PARENT, ~METABOLITE, ~EVID, ~MDV, ~DV, ~IMPUTATION,
+    "SUBJ-001",  1,   "DRUG",   1,   100,  100,   ymd_hms("2023-01-01 08:00:00"), 0,      0,     "DRUG",  FALSE,       1,     1,    NA,  "",
+    "SUBJ-002",  2,   "DRUG",   1,   150,  150,   ymd_hms("2023-01-01 08:00:00"), 0,      0,     "DRUG",  FALSE,       1,     1,    NA,  ""
   ) %>%
     nif()
   # structure(class = c("nif", "tbl_df", "tbl", "data.frame"))
@@ -25,10 +12,10 @@ create_test_nif <- function() {
 # Helper function to create test raw observation data
 create_test_raw <- function(with_dtc = TRUE, with_ntime = TRUE) {
   df <- tibble::tribble(
-    ~USUBJID, ~DV_VALUE,
-    "SUBJ-001", 10.5,
-    "SUBJ-001", 5.2,
-    "SUBJ-002", 8.7
+    ~USUBJID,    ~DV_VALUE,
+    "SUBJ-001",  10.5,
+    "SUBJ-001",  5.2,
+    "SUBJ-002",  8.7
   )
 
   if (with_dtc) {

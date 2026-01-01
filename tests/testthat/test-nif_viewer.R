@@ -13,12 +13,9 @@ test_that("nif_viewer handles invalid inputs", {
 
 test_that("nif_viewer handles missing required columns", {
   # Create minimal nif object missing required columns
-  minimal_nif <- nif(data.frame(
-    ID = 1,
-    TIME = 0,
-    AMT = 0,
-    DV = 0,
-    EVID = 0
+  minimal_nif <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     0,    1,    0,     0
   ))
 
   # Test missing USUBJID
@@ -31,15 +28,9 @@ test_that("nif_viewer handles missing required columns", {
 
 test_that("nif_viewer handles invalid data types", {
   # Create nif object with invalid data types
-  invalid_nif <- nif(data.frame(
-    ID = 1,
-    TIME = "0", # Should be numeric
-    AMT = "0", # Should be numeric
-    DV = "0", # Should be numeric
-    EVID = "0", # Should be numeric
-    USUBJID = "1",
-    ANALYTE = "TEST",
-    PARENT = "TEST"
+  invalid_nif <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,  ~USUBJID, ~ANALYTE, ~PARENT,
+    1,   "0",   "0",  1,    "0",   "0",  "1",      "TEST",   "TEST"  # Should be numeric
   ))
 
   expect_error(
@@ -51,15 +42,10 @@ test_that("nif_viewer handles invalid data types", {
 
 test_that("nif_viewer handles missing values", {
   # Create nif object with missing values
-  missing_nif <- nif(data.frame(
-    ID = c(1, NA),
-    TIME = c(0, 1),
-    AMT = c(0, 0),
-    DV = c(0, 0),
-    EVID = c(0, NA),
-    USUBJID = c("1", "2"),
-    ANALYTE = c("TEST", "TEST"),
-    PARENT = c("TEST", "TEST")
+  missing_nif <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~USUBJID, ~ANALYTE, ~PARENT,
+    1,   0,     0,    1,    0,     0,   "1",      "TEST",   "TEST",
+    NA,  1,     0,    1,    NA,    0,   "2",      "TEST",   "TEST"
   ))
 
   # Should show warning but not error

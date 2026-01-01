@@ -1,13 +1,13 @@
 test_that("add_tafd works with basic input", {
   # Create a simple test data frame
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  1,
-    1,   1,     0,     "DRUG",  10,  2,
-    1,   2,     0,     "DRUG",  20,  2,
-    2,   0,     1,     "DRUG",  NA,  1,
-    2,   1,     0,     "DRUG",  30,  2,
-    2,   2,     0,     "DRUG",  40,  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2,
+    1,   2,     0,     "DRUG",  20,   0,    2,
+    2,   0,     1,     "DRUG",  NA,   100,  1,
+    2,   1,     0,     "DRUG",  30,   0,    2,
+    2,   2,     0,     "DRUG",  40,   0,    2
   ) %>%
     nif()
 
@@ -22,12 +22,12 @@ test_that("add_tafd works with basic input", {
 
 test_that("add_tafd handles observations before first dose", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   -2,    0,     "DRUG",  5,   2,
-    1,   -1,    0,     "DRUG",  8,   2,
-    1,   0,     1,     "DRUG",  NA,  1,
-    1,   1,     0,     "DRUG",  10,  2,
-    1,   2,     0,     "DRUG",  20,  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
+    1,   -2,    0,     "DRUG",  5,   0,    2,
+    1,   -1,    0,     "DRUG",  8,   0,    2,
+    1,   0,     1,     "DRUG",  NA,  100,  1,
+    1,   1,     0,     "DRUG",  10,  0,    2,
+    1,   2,     0,     "DRUG",  20,  0,    2
   ) %>%
     nif()
 
@@ -39,12 +39,12 @@ test_that("add_tafd handles observations before first dose", {
 
 test_that("add_tafd handles multiple administrations", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  1,
-    1,   1,     0,     "DRUG",  10,  2,
-    1,   2,     1,     "DRUG",  NA,  1,
-    1,   3,     0,     "DRUG",  20,  2,
-    1,   4,     0,     "DRUG",  30,  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2,
+    1,   2,     1,     "DRUG",  NA,   100,  1,
+    1,   3,     0,     "DRUG",  20,   0,    2,
+    1,   4,     0,     "DRUG",  30,   0,    2
   ) %>%
     nif()
 
@@ -56,13 +56,13 @@ test_that("add_tafd handles multiple administrations", {
 
 test_that("add_tafd handles multiple parent compounds", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   0,     1,     "DRUG1", NA,  1,
-    1,   1,     0,     "DRUG1", 10,  2,
-    1,   2,     0,     "DRUG1", 20,  2,
-    1,   1,     1,     "DRUG2", NA,  3,
-    1,   2,     0,     "DRUG2", 30,  4,
-    1,   3,     0,     "DRUG2", 40,  4
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG1", NA,   100,  1,
+    1,   1,     0,     "DRUG1", 10,   0,    2,
+    1,   2,     0,     "DRUG1", 20,   0,    2,
+    1,   1,     1,     "DRUG2", NA,   100,  3,
+    1,   2,     0,     "DRUG2", 30,   0,    4,
+    1,   3,     0,     "DRUG2", 40,   0,    4
   ) %>%
     nif()
 
@@ -74,13 +74,13 @@ test_that("add_tafd handles multiple parent compounds", {
 
 test_that("add_tafd handles different first dose times", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  1,
-    1,   1,     0,     "DRUG",  10,  2,
-    1,   2,     0,     "DRUG",  20,  2,
-    2,   5,     1,     "DRUG",  NA,  1,
-    2,   6,     0,     "DRUG",  30,  2,
-    2,   7,     0,     "DRUG",  40,  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2,
+    1,   2,     0,     "DRUG",  20,   0,    2,
+    2,   5,     1,     "DRUG",  NA,   100,  1,
+    2,   6,     0,     "DRUG",  30,   0,    2,
+    2,   7,     0,     "DRUG",  40,   0,    2
   ) %>%
     nif()
 
@@ -92,7 +92,7 @@ test_that("add_tafd handles different first dose times", {
 
 test_that("add_tafd handles empty data frame", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT
   ) %>%
     nif()
 
@@ -104,20 +104,20 @@ test_that("add_tafd handles empty data frame", {
 
 test_that("add_tafd handles missing required columns", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME,
-    1,   0,
-    1,   1
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     0,    1,    0,     NA,
+    1,   1,     0,    1,    0,     NA
   ) %>%
     nif()
 
-  expect_error(add_tafd(test_data), "Missing required columns")
+  expect_error(add_tafd(select(test_data, -TIME)), "Missing required columns")
 })
 
 test_that("add_tafd validates input is a nif object", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~CMT,
-    1,   0,     1,     "DRUG",  1,
-    1,   1,     0,     "DRUG",  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2
   )
 
   expect_error(add_tafd(test_data), "Input must be a NIF object")
@@ -125,10 +125,10 @@ test_that("add_tafd validates input is a nif object", {
 
 test_that("add_tafd preserves original data", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~EXTRA, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  "A",    1,
-    1,   1,     0,     "DRUG",  10,  "B",    2,
-    1,   2,     0,     "DRUG",  20,  "C",    2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~EXTRA, ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   "A",    100,  1,
+    1,   1,     0,     "DRUG",  10,   "B",    0,    2,
+    1,   2,     0,     "DRUG",  20,   "C",    0,    2
   ) %>%
     nif()
 
@@ -142,9 +142,9 @@ test_that("add_tafd preserves original data", {
 test_that("add_tafd validates numeric data types", {
   # Test with non-numeric TIME
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~CMT,
-    1,   "0",   1,     "DRUG",  1,
-    1,   "1",   0,     "DRUG",  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   "0",   1,     "DRUG",  NA,   100,  1,
+    1,   "1",   0,     "DRUG",  10,   0,    2
   ) %>%
     nif()
 
@@ -152,9 +152,9 @@ test_that("add_tafd validates numeric data types", {
 
   # Test with non-numeric EVID
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~CMT,
-    1,   0,     "1",   "DRUG",  1,
-    1,   1,     "0",   "DRUG",  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     "1",   "DRUG",  NA,   100,  1,
+    1,   1,     "0",   "DRUG",  10,   0,    2
   ) %>%
     nif()
 
@@ -162,9 +162,9 @@ test_that("add_tafd validates numeric data types", {
 
   # Test with non-numeric ID
   test_data <- tibble::tribble(
-    ~ID,  ~TIME, ~EVID, ~PARENT, ~CMT,
-    "1",  0,     1,     "DRUG",  1,
-    "1",  1,     0,     "DRUG",  2
+    ~ID,  ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    "1",  0,     1,     "DRUG",  NA,   100,  1,
+    "1",  1,     0,     "DRUG",  10,   0,    2
   ) %>%
     nif()
 
@@ -173,10 +173,10 @@ test_that("add_tafd validates numeric data types", {
 
 test_that("add_tafd handles data with no dosing events", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   0,     0,     "DRUG",  5,   2,
-    1,   1,     0,     "DRUG",  10,  2,
-    1,   2,     0,     "DRUG",  20,  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
+    1,   0,     0,     "DRUG",  5,   0,    2,
+    1,   1,     0,     "DRUG",  10,  0,    2,
+    1,   2,     0,     "DRUG",  20,  0,    2
   ) %>%
     nif()
 
@@ -189,9 +189,9 @@ test_that("add_tafd handles data with no dosing events", {
 
 test_that("add_tafd returns a nif object", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  1,
-    1,   1,     0,     "DRUG",  10,  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2
   ) %>%
     nif()
 
@@ -200,15 +200,14 @@ test_that("add_tafd returns a nif object", {
   expect_s3_class(result, "nif")
 })
 
-# NEW TESTS
 
 test_that("add_tafd handles missing PARENT column by creating it", {
   # Create a test data frame without PARENT column
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~DV,
-    1,   0,     1,     1,    NA,
-    1,   1,     0,     2,    10,
-    1,   2,     0,     2,    20
+    ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT,
+    1,   0,     1,     1,    NA,   100,
+    1,   1,     0,     2,    10,   0,
+    1,   2,     0,     2,    20,   0
   ) %>%
     nif()
 
@@ -221,11 +220,11 @@ test_that("add_tafd handles missing PARENT column by creating it", {
 
 test_that("add_tafd properly ungroups the result", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  1,
-    1,   1,     0,     "DRUG",  10,  2,
-    2,   0,     1,     "DRUG",  NA,  1,
-    2,   1,     0,     "DRUG",  20,  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2,
+    2,   0,     1,     "DRUG",  NA,   100,  1,
+    2,   1,     0,     "DRUG",  20,   0,    2
   ) %>%
     nif()
 
@@ -240,10 +239,10 @@ test_that("add_tafd properly ungroups the result", {
 
 test_that("add_tafd handles NA values in TIME correctly", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~CMT,
-    1,   0,     1,     "DRUG",  1,
-    1,   1,     0,     "DRUG",  2,
-    1,   NA,    0,     "DRUG",  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2,
+    1,   NA,    0,     "DRUG",  20,   0,    2
   ) %>%
     nif()
 
@@ -256,10 +255,10 @@ test_that("add_tafd handles NA values in TIME correctly", {
 
 test_that("add_tafd correctly handles NA values in ID column", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~CMT,
-    1,   0,     1,     "DRUG",  1,
-    1,   1,     0,     "DRUG",  2,
-    NA,  2,     0,     "DRUG",  2
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG",  NA,   100,  1,
+    1,   1,     0,     "DRUG",  10,   0,    2,
+    NA,  2,     0,     "DRUG",  20,   0,    2
   ) %>%
     nif()
 
@@ -272,11 +271,11 @@ test_that("add_tafd correctly handles NA values in ID column", {
 
 test_that("add_tafd respects parent grouping with mixed dosing times", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~CMT,
-    1,   0,     1,     "DRUG1", 1,
-    1,   1,     0,     "DRUG1", 2,
-    1,   3,     1,     "DRUG2", 3, # Later first dose for DRUG2
-    1,   4,     0,     "DRUG2", 4
+    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
+    1,   0,     1,     "DRUG1", NA,   100,  1,
+    1,   1,     0,     "DRUG1", 10,   0,    2,
+    1,   3,     1,     "DRUG2", NA,   100,  3,    # Later first dose for DRUG2
+    1,   4,     0,     "DRUG2", 20,   0,    4
   ) %>%
     nif()
 
@@ -288,12 +287,12 @@ test_that("add_tafd respects parent grouping with mixed dosing times", {
 
 test_that("add_tafd works with CMT column but no PARENT column", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~DV,
-    1,   0,     1,     1,    NA,
-    1,   1,     0,     2,    10,
-    1,   2,     0,     2,    20,
-    2,   0,     1,     1,    NA,
-    2,   1,     0,     2,    30
+    ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT,
+    1,   0,     1,     1,    NA,  100,
+    1,   1,     0,     2,    10,  0,
+    1,   2,     0,     2,    20,  0,
+    2,   0,     1,     1,    NA,  100,
+    2,   1,     0,     2,    30,  0
   ) %>%
     nif()
 
@@ -304,3 +303,4 @@ test_that("add_tafd works with CMT column but no PARENT column", {
   # Check PARENT was generated
   expect_true("PARENT" %in% names(result))
 })
+

@@ -1,19 +1,19 @@
 test_that("add_ntile works with basic input", {
   # Create a simple test data frame with one value per subject
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A", # Same value for ID 1
-    1,   2,     10,  "A", # Same value for ID 1
-    2,   0,     25,  "A",
-    2,   1,     25,  "A", # Same value for ID 2
-    2,   2,     25,  "A", # Same value for ID 2
-    3,   0,     5,   "A",
-    3,   1,     5,   "A", # Same value for ID 3
-    3,   2,     5,   "A", # Same value for ID 3
-    4,   0,     40,  "A",
-    4,   1,     40,  "A", # Same value for ID 4
-    4,   2,     40,  "A" # Same value for ID 4
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,    # Same value for ID 1
+    1,   1,     10,  "A",      0,    1,    0,    # Same value for ID 1
+    1,   2,     10,  "A",      0,    1,    0,    # Same value for ID 1
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0,    # Same value for ID 2
+    2,   2,     25,  "A",      0,    1,    0,    # Same value for ID 2
+    3,   0,     5,   "A",      0,    1,    0,
+    3,   1,     5,   "A",      0,    1,    0,    # Same value for ID 3
+    3,   2,     5,   "A",      0,    1,    0,    # Same value for ID 3
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0,    # Same value for ID 4
+    4,   2,     40,  "A",      0,    1,    0    # Same value for ID 4
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -35,17 +35,17 @@ test_that("add_ntile works with basic input", {
 
 test_that("add_ntile works with custom n value", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     25,  "A",
-    2,   1,     25,  "A",
-    3,   0,     5,   "A",
-    3,   1,     5,   "A",
-    4,   0,     40,  "A",
-    4,   1,     40,  "A",
-    5,   0,     60,  "A",
-    5,   1,     60,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0,
+    3,   0,     5,   "A",      0,    1,    0,
+    3,   1,     5,   "A",      0,    1,    0,
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0,
+    5,   0,     60,  "A",      0,    1,    0,
+    5,   1,     60,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -67,15 +67,15 @@ test_that("add_ntile works with custom n value", {
 
 test_that("add_ntile works with custom column name", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     25,  "A",
-    2,   1,     25,  "A",
-    3,   0,     5,   "A",
-    3,   1,     5,   "A",
-    4,   0,     40,  "A",
-    4,   1,     40,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0,
+    3,   0,     5,   "A",      0,    1,    0,
+    3,   1,     5,   "A",      0,    1,    0,
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -125,15 +125,15 @@ test_that("add_ntile works with custom column name", {
 
 test_that("add_ntile handles NA values in input column", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     NA,  "A", # NA value
-    2,   1,     NA,  "A", # NA value
-    3,   0,     25,  "A",
-    3,   1,     25,  "A",
-    4,   0,     40,  "A",
-    4,   1,     40,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     NA,  "A",      0,    1,    0,    # NA value
+    2,   1,     NA,  "A",      0,    1,    0,    # NA value
+    3,   0,     25,  "A",      0,    1,    0,
+    3,   1,     25,  "A",      0,    1,    0,
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -151,11 +151,11 @@ test_that("add_ntile handles NA values in input column", {
 
 test_that("add_ntile handles non-numeric input column", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     "A", "A",
-    1,   1,     "A", "A",
-    2,   0,     "B", "A",
-    2,   1,     "B", "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     "A", "A",      0,    1,    0,
+    1,   1,     "A", "A",      0,    1,    0,
+    2,   0,     "B", "A",      0,    1,    0,
+    2,   1,     "B", "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -168,28 +168,30 @@ test_that("add_ntile handles non-numeric input column", {
 
 test_that("add_ntile handles missing input column", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~ANALYTE,
-    1,   0,     "A",
-    1,   1,     "A",
-    2,   0,     "A",
-    2,   1,     "A"
+    ~ID, ~TIME, ~ANALYTE, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     "A",      0,    1,    0,     NA,
+    1,   1,     "A",      0,    1,    0,     NA,
+    2,   0,     "A",      0,    1,    0,     NA,
+    2,   1,     "A",      0,    1,    0,     NA
   )
 
   class(test_data) <- c("nif", "data.frame")
 
   expect_error(
-    add_ntile(test_data, input_col = "DV"),
+    add_ntile(
+      select(test_data, -DV),
+      input_col = "DV"),
     "Missing required columns: DV"
   )
 })
 
 test_that("add_ntile handles invalid n value", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     25,  "A",
-    2,   1,     25,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -227,7 +229,7 @@ test_that("add_ntile handles invalid n value", {
 
 test_that("add_ntile handles empty data frame", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -303,15 +305,15 @@ test_that("add_ntile handles empty data frame", {
 
 test_that("add_ntile preserves original data", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EXTRA,
-    1,   0,     10,  "A",      "X",
-    1,   1,     10,  "A",      "Y",
-    2,   0,     25,  "A",      "Z",
-    2,   1,     25,  "A",      "W",
-    3,   0,     5,   "A",      "V",
-    3,   1,     5,   "A",      "U",
-    4,   0,     40,  "A",      "T",
-    4,   1,     40,  "A",      "S"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~EXTRA, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      "X",    0,    1,    0,
+    1,   1,     10,  "A",      "Y",    0,    1,    0,
+    2,   0,     25,  "A",      "Z",    0,    1,    0,
+    2,   1,     25,  "A",      "W",    0,    1,    0,
+    3,   0,     5,   "A",      "V",    0,    1,    0,
+    3,   1,     5,   "A",      "U",    0,    1,    0,
+    4,   0,     40,  "A",      "T",    0,    1,    0,
+    4,   1,     40,  "A",      "S",    0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -325,15 +327,15 @@ test_that("add_ntile preserves original data", {
 
 test_that("add_ntile returns a nif object", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     25,  "A",
-    2,   1,     25,  "A",
-    3,   0,     5,   "A",
-    3,   1,     5,   "A",
-    4,   0,     40,  "A",
-    4,   1,     40,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0,
+    3,   0,     5,   "A",      0,    1,    0,
+    3,   1,     5,   "A",      0,    1,    0,
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -345,15 +347,15 @@ test_that("add_ntile returns a nif object", {
 
 test_that("add_ntile works with different input columns", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~WEIGHT,
-    1,   0,     10,  "A",      70,
-    1,   1,     10,  "A",      70,
-    2,   0,     25,  "A",      80,
-    2,   1,     25,  "A",      80,
-    3,   0,     5,   "A",      60,
-    3,   1,     5,   "A",      60,
-    4,   0,     40,  "A",      90,
-    4,   1,     40,  "A",      90
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~WEIGHT, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      70,      0,    1,    0,
+    1,   1,     10,  "A",      70,      0,    1,    0,
+    2,   0,     25,  "A",      80,      0,    1,    0,
+    2,   1,     25,  "A",      80,      0,    1,    0,
+    3,   0,     5,   "A",      60,      0,    1,    0,
+    3,   1,     5,   "A",      60,      0,    1,    0,
+    4,   0,     40,  "A",      90,      0,    1,    0,
+    4,   1,     40,  "A",      90,      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -369,15 +371,15 @@ test_that("add_ntile works with different input columns", {
   # Check that NTILE values are different for different columns
   # Use different values that will produce different n-tile assignments
   test_data2 <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~WEIGHT,
-    1,   0,     10,  "A",      100, # Different values
-    1,   1,     10,  "A",      100,
-    2,   0,     25,  "A",      50, # Different values
-    2,   1,     25,  "A",      50,
-    3,   0,     5,   "A",      75, # Different values
-    3,   1,     5,   "A",      75,
-    4,   0,     40,  "A",      25, # Different values
-    4,   1,     40,  "A",      25
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~WEIGHT, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      100,     0,    1,    0,    # Different values
+    1,   1,     10,  "A",      100,     0,    1,    0,
+    2,   0,     25,  "A",      50,      0,    1,    0,    # Different values
+    2,   1,     25,  "A",      50,      0,    1,    0,
+    3,   0,     5,   "A",      75,      0,    1,    0,    # Different values
+    3,   1,     5,   "A",      75,      0,    1,    0,
+    4,   0,     40,  "A",      25,      0,    1,    0,    # Different values
+    4,   1,     40,  "A",      25,      0,    1,    0
   )
 
   class(test_data2) <- c("nif", "data.frame")
@@ -391,15 +393,15 @@ test_that("add_ntile works with different input columns", {
 
 test_that("add_ntile handles all subjects having the same value", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     10,  "A",
-    2,   1,     10,  "A",
-    3,   0,     10,  "A",
-    3,   1,     10,  "A",
-    4,   0,     10,  "A",
-    4,   1,     10,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     10,  "A",      0,    1,    0,
+    2,   1,     10,  "A",      0,    1,    0,
+    3,   0,     10,  "A",      0,    1,    0,
+    3,   1,     10,  "A",      0,    1,    0,
+    4,   0,     10,  "A",      0,    1,    0,
+    4,   1,     10,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -418,16 +420,16 @@ test_that("add_ntile handles all subjects having the same value", {
 
 test_that("add_ntile handles subjects with multiple distinct values", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    1,   2,     10,  "A", # Multiple rows for ID 1, but same value
-    2,   0,     25,  "A",
-    2,   1,     25,  "A",
-    3,   0,     5,   "A",
-    3,   1,     5,   "A",
-    4,   0,     40,  "A",
-    4,   1,     40,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    1,   2,     10,  "A",      0,    1,    0,    # Multiple rows for ID 1, but same value
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0,
+    3,   0,     5,   "A",      0,    1,    0,
+    3,   1,     5,   "A",      0,    1,    0,
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -447,11 +449,11 @@ test_that("add_ntile handles subjects with multiple distinct values", {
 test_that("add_ntile handles invalid input object", {
   # Test with non-nif object
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     25,  "A",
-    2,   1,     25,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0
   )
 
   expect_error(
@@ -462,15 +464,15 @@ test_that("add_ntile handles invalid input object", {
 
 test_that("add_ntile handles invalid input_col parameter", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     25,  "A",
-    2,   1,     25,  "A",
-    3,   0,     5,   "A",
-    3,   1,     5,   "A",
-    4,   0,     40,  "A",
-    4,   1,     40,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0,
+    3,   0,     5,   "A",      0,    1,    0,
+    3,   1,     5,   "A",      0,    1,    0,
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")
@@ -496,15 +498,15 @@ test_that("add_ntile handles invalid input_col parameter", {
 
 test_that("add_ntile handles invalid ntile_name parameter", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE,
-    1,   0,     10,  "A",
-    1,   1,     10,  "A",
-    2,   0,     25,  "A",
-    2,   1,     25,  "A",
-    3,   0,     5,   "A",
-    3,   1,     5,   "A",
-    4,   0,     40,  "A",
-    4,   1,     40,  "A"
+    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+    1,   0,     10,  "A",      0,    1,    0,
+    1,   1,     10,  "A",      0,    1,    0,
+    2,   0,     25,  "A",      0,    1,    0,
+    2,   1,     25,  "A",      0,    1,    0,
+    3,   0,     5,   "A",      0,    1,    0,
+    3,   1,     5,   "A",      0,    1,    0,
+    4,   0,     40,  "A",      0,    1,    0,
+    4,   1,     40,  "A",      0,    1,    0
   )
 
   class(test_data) <- c("nif", "data.frame")

@@ -3,12 +3,12 @@
 test_that("ensure_analyte creates ANALYTE from CMT when missing", {
   # Create test data with CMT but no ANALYTE
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT, ~DV, ~EVID,
-    1, 0, 1, 0, 1,
-    1, 1, 1, 10, 0,
-    1, 2, 1, 20, 0,
-    2, 0, 2, 0, 1,
-    2, 1, 2, 15, 0
+    ~ID, ~TIME, ~CMT, ~DV, ~EVID, ~AMT,
+    1,   0,     1,    0,   1,     100,
+    1,   1,     1,    10,  0,     0,
+    1,   2,     1,    20,  0,     0,
+    2,   0,     2,    0,   1,     100,
+    2,   1,     2,    15,  0,     0
   ) %>% nif()
 
   result <- ensure_analyte(test_data)
@@ -22,12 +22,12 @@ test_that("ensure_analyte creates ANALYTE from CMT when missing", {
 test_that("ensure_analyte preserves existing ANALYTE values", {
   # Create test data with both CMT and ANALYTE
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT, ~ANALYTE, ~DV, ~EVID,
-    1, 0, 1, "DRUG", 0, 1,
-    1, 1, 1, "DRUG", 10, 0,
-    1, 2, 1, "DRUG", 20, 0,
-    2, 0, 2, "METABOLITE", 0, 1,
-    2, 1, 2, "METABOLITE", 15, 0
+    ~ID, ~TIME, ~CMT, ~ANALYTE,    ~DV, ~EVID, ~AMT,
+    1,   0,     1,    "DRUG",      0,   1,     100,
+    1,   1,     1,    "DRUG",      10,  0,     0,
+    1,   2,     1,    "DRUG",      20,  0,     0,
+    2,   0,     2,    "METABOLITE", 0,   1,     100,
+    2,   1,     2,    "METABOLITE", 15,  0,     0
   ) %>% nif()
 
   result <- ensure_analyte(test_data)
@@ -39,10 +39,10 @@ test_that("ensure_analyte preserves existing ANALYTE values", {
 test_that("ensure_analyte handles NA values in CMT", {
   # Create test data with NA in CMT
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT, ~DV, ~EVID,
-    1, 0, 1, 0, 1,
-    1, 1, NA, 10, 0,
-    1, 2, 1, 20, 0
+    ~ID, ~TIME, ~CMT, ~DV, ~EVID, ~AMT,
+    1,   0,     1,    0,   1,     100,
+    1,   1,     NA,   10,  0,     0,
+    1,   2,     1,    20,  0,     0
   ) %>% nif()
 
   result <- ensure_analyte(test_data)
@@ -57,9 +57,9 @@ test_that("ensure_analyte handles NA values in CMT", {
 test_that("ensure_analyte returns NIF object", {
   # Create test data
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT, ~DV, ~EVID,
-    1, 0, 1, 0, 1,
-    1, 1, 1, 10, 0
+    ~ID, ~TIME, ~CMT, ~DV, ~EVID, ~AMT,
+    1,   0,     1,    0,   1,     100,
+    1,   1,     1,    10,  0,     0
   ) %>% nif()
 
   result <- ensure_analyte(test_data)
@@ -72,9 +72,9 @@ test_that("ensure_analyte returns NIF object", {
 test_that("ensure_analyte errors on non-NIF input", {
   # Create regular data.frame
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT, ~DV, ~EVID,
-    1, 0, 1, 0, 1,
-    1, 1, 1, 10, 0
+    ~ID, ~TIME, ~CMT, ~DV, ~EVID, ~AMT,
+    1,   0,     1,    0,   1,     100,
+    1,   1,     1,    10,  0,     0
   )
 
   # Check that error is thrown for non-NIF input
@@ -84,10 +84,11 @@ test_that("ensure_analyte errors on non-NIF input", {
 test_that("ensure_analyte errors when CMT is missing", {
   # Create test data without CMT
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID,
-    1, 0, 0, 1,
-    1, 1, 10, 0
-  ) %>% nif()
+    ~ID, ~TIME, ~DV, ~EVID, ~AMT, ~CMT,
+    1,   0,     0,   1,     100,  1,
+    1,   1,     10,  0,     0,    1
+  ) %>% nif() |>
+    select(-CMT)
 
   # Check that error is thrown when CMT is missing
   expect_error(ensure_analyte(test_data), "CMT column is required when ANALYTE is not present")
@@ -110,9 +111,9 @@ test_that("ensure_analyte handles empty data frame", {
 test_that("ensure_analyte preserves other columns", {
   # Create test data with additional columns
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT, ~DV, ~EVID, ~DOSE, ~WEIGHT,
-    1, 0, 1, 0, 1, 100, 70,
-    1, 1, 1, 10, 0, 100, 70
+    ~ID, ~TIME, ~CMT, ~DV, ~EVID, ~DOSE, ~WEIGHT, ~AMT,
+    1,   0,     1,    0,   1,     100,   70,      100,
+    1,   1,     1,    10,  0,     100,   70,      0
   ) %>% nif()
 
   result <- ensure_analyte(test_data)

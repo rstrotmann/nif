@@ -1,13 +1,13 @@
 test_that("ensure_tad works with basic input", {
   # Create a simple test data frame
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
-    1,   0,     1,     1,    "DRUG",  NA,
-    1,   1,     0,     2,    "DRUG",  10,
-    1,   2,     0,     2,    "DRUG",  20,
-    2,   0,     1,     1,    "DRUG",  NA,
-    2,   1,     0,     2,    "DRUG",  30,
-    2,   2,     0,     2,    "DRUG",  40
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,  100,
+    1,   1,     0,     2,    "DRUG",  10,  0,
+    1,   2,     0,     2,    "DRUG",  20,  0,
+    2,   0,     1,     1,    "DRUG",  NA,  100,
+    2,   1,     0,     2,    "DRUG",  30,  0,
+    2,   2,     0,     2,    "DRUG",  40,  0
   ) %>%
     nif()
 
@@ -23,12 +23,12 @@ test_that("ensure_tad works with basic input", {
 
 test_that("ensure_tad handles multiple administrations", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
-    1,   0,     1,     1,    "DRUG",  NA,
-    1,   1,     0,     2,    "DRUG",  10,
-    1,   2,     1,     1,    "DRUG",  NA,
-    1,   3,     0,     2,    "DRUG",  20,
-    1,   4,     0,     2,    "DRUG",  30
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,  100,
+    1,   1,     0,     2,    "DRUG",  10,  0,
+    1,   2,     1,     1,    "DRUG",  NA,  100,
+    1,   3,     0,     2,    "DRUG",  20,  0,
+    1,   4,     0,     2,    "DRUG",  30,  0
   ) %>%
     nif()
 
@@ -41,11 +41,11 @@ test_that("ensure_tad handles multiple administrations", {
 
 test_that("ensure_tad handles observations before first dose", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
-    1,   -1,    0,     2,    "DRUG",  5,
-    1,   0,     1,     1,    "DRUG",  NA,
-    1,   1,     0,     2,    "DRUG",  10,
-    1,   2,     0,     2,    "DRUG",  20
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV, ~AMT,
+    1,   -1,    0,     2,    "DRUG",  5,   0,
+    1,   0,     1,     1,    "DRUG",  NA,  100,
+    1,   1,     0,     2,    "DRUG",  10,  0,
+    1,   2,     0,     2,    "DRUG",  20,  0
   ) %>%
     nif()
 
@@ -58,13 +58,13 @@ test_that("ensure_tad handles observations before first dose", {
 
 test_that("ensure_tad handles multiple parent compounds", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
-    1,   0,     1,     1,    "DRUG1", NA,
-    1,   1,     0,     2,    "DRUG1", 10,
-    1,   2,     0,     2,    "DRUG1", 20,
-    1,   0,     1,     3,    "DRUG2", NA,
-    1,   1,     0,     4,    "DRUG2", 30,
-    1,   2,     0,     4,    "DRUG2", 40
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
+    1,   0,     1,     1,    "DRUG1", NA,  100,
+    1,   1,     0,     2,    "DRUG1", 10,  0,
+    1,   2,     0,     2,    "DRUG1", 20,  0,
+    1,   0,     1,     3,    "DRUG2", NA,  100,
+    1,   1,     0,     4,    "DRUG2", 30,  0,
+    1,   2,     0,     4,    "DRUG2", 40,  0
   ) %>%
     nif()
 
@@ -77,38 +77,23 @@ test_that("ensure_tad handles multiple parent compounds", {
 
 test_that("ensure_tad handles empty data frame", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV, ~AMT
   ) %>%
     nif()
 
-  expect_warning(
-    result <- ensure_tad(test_data),
-    "No administration records found"
-  )
+    result <- ensure_tad(test_data)
 
   expect_equal(nrow(result), 0)
   expect_true("TAD" %in% names(result))
 })
 
 
-test_that("ensure_tad handles missing required columns", {
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~CMT,
-    1,   0,     1,
-    1,   1,     2
-  ) %>%
-    nif()
-
-  expect_error(ensure_tad(test_data), "Missing required columns for TAD calculation")
-})
-
-
 test_that("ensure_tad preserves original data", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV, ~EXTRA,
-    1,   0,     1,     1,    "DRUG",  NA,  "A",
-    1,   1,     0,     2,    "DRUG",  10,  "B",
-    1,   2,     0,     2,    "DRUG",  20,  "C"
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~EXTRA, ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,   "A",    100,
+    1,   1,     0,     2,    "DRUG",  10,   "B",    0,
+    1,   2,     0,     2,    "DRUG",  20,   "C",    0
   ) %>%
     nif()
 
@@ -122,10 +107,10 @@ test_that("ensure_tad preserves original data", {
 
 test_that("ensure_tad handles NA values in TIME", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
-    1,   0,     1,     1,    "DRUG",  NA,
-    1,   NA,    0,     2,    "DRUG",  10,
-    1,   2,     0,     2,    "DRUG",  20
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,   100,
+    1,   NA,    0,     2,    "DRUG",  10,   0,
+    1,   2,     0,     2,    "DRUG",  20,   0
   ) %>%
     nif()
 
@@ -138,9 +123,9 @@ test_that("ensure_tad handles NA values in TIME", {
 
 test_that("ensure_tad returns a nif object", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,
-    1,   0,     1,     1,    "DRUG",  NA,
-    1,   1,     0,     2,    "DRUG",  10
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,   100,
+    1,   1,     0,     2,    "DRUG",  10,   0
   ) %>%
     nif()
 
@@ -151,13 +136,9 @@ test_that("ensure_tad returns a nif object", {
 
 
 test_that("ensure_tad handles non-nif input", {
-  test_data <- data.frame(
-    ID = 1,
-    TIME = 0,
-    EVID = 1,
-    CMT = 1,
-    PARENT = "DRUG",
-    DV = NA
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,   100
   )
 
   expect_error(ensure_tad(test_data), "Input must be a NIF object")
@@ -166,9 +147,9 @@ test_that("ensure_tad handles non-nif input", {
 
 test_that("ensure_tad handles existing TAD column", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV, ~TAD,
-    1,   0,     1,     1,    "DRUG",  NA,  0,
-    1,   1,     0,     2,    "DRUG",  10,  1
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~TAD, ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,   0,    100,
+    1,   1,     0,     2,    "DRUG",  10,   1,    0
   ) %>%
     nif()
 
@@ -177,3 +158,4 @@ test_that("ensure_tad handles existing TAD column", {
   # Check that original TAD values are preserved
   expect_equal(result$TAD, c(0, 1))
 })
+

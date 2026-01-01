@@ -1,13 +1,13 @@
 test_that("derive_baseline works with valid input", {
   # Create a simple test dataset
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~TAFD,
-    1, -1, 10, "A", 0, -1,
-    1, 0, 12, "A", 0, 0,
-    1, 1, 15, "A", 0, 1,
-    2, -1, 20, "A", 0, -1,
-    2, 0, 22, "A", 0, 0,
-    2, 1, 25, "A", 0, 1
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~TAFD, ~AMT, ~CMT,
+    1,   -1,    10,   "A",      0,     -1,   0,    2,
+    1,   0,     12,   "A",      0,     0,    0,    2,
+    1,   1,     15,   "A",      0,     1,    0,    2,
+    2,   -1,    20,   "A",      0,     -1,   0,    2,
+    2,   0,     22,   "A",      0,     0,    0,    2,
+    2,   1,     25,   "A",      0,     1,    0,    2
   )
 
   test_nif <- nif(test_data)
@@ -27,13 +27,13 @@ test_that("derive_baseline works with valid input", {
 test_that("derive_baseline handles empty baseline sets correctly", {
   # Create test data where baseline filter matches no rows
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~TAFD,
-    1, 1, 10, "A", 0, 1,
-    1, 2, 12, "A", 0, 2,
-    1, 3, 15, "A", 0, 3,
-    2, 1, 20, "A", 0, 1,
-    2, 2, 22, "A", 0, 2,
-    2, 3, 25, "A", 0, 3
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~TAFD, ~AMT, ~CMT,
+    1,   1,     10,   "A",      0,     1,    0,    2,
+    1,   2,     12,   "A",      0,     2,    0,    2,
+    1,   3,     15,   "A",      0,     3,    0,    2,
+    2,   1,     20,   "A",      0,     1,    0,    2,
+    2,   2,     22,   "A",      0,     2,    0,    2,
+    2,   3,     25,   "A",      0,     3,    0,    2
   )
 
   test_nif <- nif(test_data)
@@ -49,9 +49,9 @@ test_that("derive_baseline handles empty baseline sets correctly", {
 test_that("derive_baseline handles empty baseline sets with custom default_baseline", {
   # Create test data where baseline filter matches no rows
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, 1, 10, "A", 0,
-    1, 2, 12, "A", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   1,     10,   "A",      0,     0,    2,
+    1,   2,     12,   "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -72,13 +72,13 @@ test_that("derive_baseline handles empty baseline sets with custom default_basel
 test_that("derive_baseline handles all NA values in filtered baseline", {
   # Create test data where baseline filter matches rows but all DV values are NA
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, NA, "A", 0,
-    1, 0, NA, "A", 0,
-    1, 1, 15, "A", 0,
-    2, -1, NA, "A", 0,
-    2, 0, NA, "A", 0,
-    2, 1, 25, "A", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    NA,   "A",      0,     0,    2,
+    1,   0,     NA,   "A",      0,     0,    2,
+    1,   1,     15,   "A",      0,     0,    2,
+    2,   -1,    NA,   "A",      0,     0,    2,
+    2,   0,     NA,   "A",      0,     0,    2,
+    2,   1,     25,   "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -95,10 +95,10 @@ test_that("derive_baseline handles all NA values in filtered baseline", {
 test_that("derive_baseline handles empty vector from summary function", {
   # Create test data where baseline filter matches rows but after na.omit, vector is empty
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, NA, "A", 0,
-    1, 0, NA, "A", 0,
-    1, 1, 15, "A", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    NA,   "A",      0,     0,    2,
+    1,   0,     NA,   "A",      0,     0,    2,
+    1,   1,     15,   "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -119,10 +119,10 @@ test_that("derive_baseline handles empty vector from summary function", {
 
 test_that("derive_baseline works with different summary functions", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, 10, "A", 0,
-    1, 0, 12, "A", 0,
-    1, 1, 15, "A", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    10,   "A",      0,     0,    2,
+    1,   0,     12,   "A",      0,     0,    2,
+    1,   1,     15,   "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -144,13 +144,13 @@ test_that("derive_baseline works with different summary functions", {
 
 test_that("derive_baseline handles multiple analytes", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, 10, "A", 0,
-    1, 0, 12, "A", 0,
-    1, 1, 15, "A", 0,
-    1, -1, 20, "B", 0,
-    1, 0, 22, "B", 0,
-    1, 1, 25, "B", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    10,   "A",      0,     0,    2,
+    1,   0,     12,   "A",      0,     0,    2,
+    1,   1,     15,   "A",      0,     0,    2,
+    1,   -1,    20,   "B",      0,     0,    3,
+    1,   0,     22,   "B",      0,     0,    3,
+    1,   1,     25,   "B",      0,     0,    3
   ) %>%
     mutate(TAFD = TIME)
 
@@ -172,13 +172,13 @@ test_that("derive_baseline handles multiple analytes", {
 
 test_that("derive_baseline handles specific analyte selection", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, 10, "A", 0,
-    1, 0, 12, "A", 0,
-    1, 1, 15, "A", 0,
-    1, -1, 20, "B", 0,
-    1, 0, 22, "B", 0,
-    1, 1, 25, "B", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    10,   "A",      0,     0,    2,
+    1,   0,     12,   "A",      0,     0,    2,
+    1,   1,     15,   "A",      0,     0,    2,
+    1,   -1,    20,   "B",      0,     0,    3,
+    1,   0,     22,   "B",      0,     0,    3,
+    1,   1,     25,   "B",      0,     0,    3
   ) %>%
     mutate(TAFD = TIME)
 
@@ -196,11 +196,11 @@ test_that("derive_baseline handles specific analyte selection", {
 
 test_that("derive_baseline handles custom baseline filter", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, 10, "A", 0,
-    1, 0, 12, "A", 0,
-    1, 1, 15, "A", 0,
-    1, 2, 18, "A", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    10,   "A",      0,     0,    2,
+    1,   0,     12,   "A",      0,     0,    2,
+    1,   1,     15,   "A",      0,     0,    2,
+    1,   2,     18,   "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -215,19 +215,18 @@ test_that("derive_baseline handles custom baseline filter", {
 test_that("derive_baseline handles missing required columns", {
   # Test with missing DV column
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~ANALYTE, ~EVID,
-    1, -1, "A", 0,
-    1, 0, "A", 0
+    ~ID, ~TIME, ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    "A",      0,     0,    2,
+    1,   0,     "A",      0,     0,    2
   )
   test_nif <- nif(test_data)
   expect_error(derive_baseline(test_nif), "Missing required columns: DV")
 
   # Test with missing TIME column
-  test_data <- data.frame(
-    ID = c(1, 1),
-    DV = c(10, 12),
-    ANALYTE = c("A", "A"),
-    EVID = c(0, 0)
+  test_data <- tibble::tribble(
+    ~ID, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   10,   "A",      0,     0,    2,
+    1,   12,   "A",      0,     0,    2
   )
   test_nif <- nif(test_data)
   expect_error(derive_baseline(test_nif), "Missing required columns: TIME")
@@ -236,12 +235,10 @@ test_that("derive_baseline handles missing required columns", {
 
 test_that("derive_baseline handles non-numeric columns", {
   # Test with non-numeric DV
-  test_data <- data.frame(
-    ID = c(1, 1),
-    TIME = c(-1, 0),
-    DV = c("A", "B"),
-    ANALYTE = c("A", "A"),
-    EVID = c(0, 0)
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    "A",  "A",      0,     0,    2,
+    1,   0,     "B",  "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -249,12 +246,10 @@ test_that("derive_baseline handles non-numeric columns", {
   expect_error(derive_baseline(test_nif), "DV column must contain numeric values")
 
   # Test with non-numeric TIME
-  test_data <- data.frame(
-    ID = c(1, 1),
-    TIME = c("A", "B"),
-    DV = c(10, 12),
-    ANALYTE = c("A", "A"),
-    EVID = c(0, 0)
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   "A",   10,   "A",      0,     0,    2,
+    1,   "B",   12,   "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -266,13 +261,13 @@ test_that("derive_baseline handles non-numeric columns", {
 test_that("derive_baseline handles EVID filtering correctly", {
   # Create test data with both EVID 0 and 1
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID,
-    1, -1, 8, "A", 0,
-    1, 0, 10, "A", 1, # Dosing event
-    1, 1, 12, "A", 0,
-    2, -1, 18, "A", 0,
-    2, 0, 20, "A", 1, # Dosing event
-    2, 1, 22, "A", 0
+    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
+    1,   -1,    8,    "A",      0,     0,    2,
+    1,   0,     10,   "A",      1,     100,  1,   # Dosing event
+    1,   1,     12,   "A",      0,     0,    2,
+    2,   -1,    18,   "A",      0,     0,    2,
+    2,   0,     20,   "A",      1,     100,  1,   # Dosing event
+    2,   1,     22,   "A",      0,     0,    2
   ) %>%
     mutate(TAFD = TIME)
 
@@ -285,3 +280,4 @@ test_that("derive_baseline handles EVID filtering correctly", {
   expect_equal(result$DVBL[result$ID == 1 & result$TAFD <= 0 & result$EVID == 0][1], 8)
   expect_equal(result$DVBL[result$ID == 2 & result$TAFD <= 0 & result$EVID == 0][1], 18)
 })
+

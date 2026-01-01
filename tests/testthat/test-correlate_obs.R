@@ -4,8 +4,8 @@ test_that("correlate_obs input validation - non-nif objects", {
 
   # Test that regular data.frame is rejected
   test_df <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 10, 0, "A", "2023-01-01T00:00:00", 1
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     10,  0,     "A",      "2023-01-01T00:00:00", 1,   0,    2
   )
 
   expect_error(correlate_obs(test_df), "Input must be a nif object")
@@ -15,9 +15,9 @@ test_that("correlate_obs input validation - non-nif objects", {
 test_that("correlate_obs validates analyte parameters", {
   # Create valid test nif object
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -51,10 +51,10 @@ test_that("correlate_obs validates analyte parameters", {
 test_that("correlate_obs validates window parameter", {
   # Create valid test nif object with both analytes
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -76,10 +76,10 @@ test_that("correlate_obs validates window parameter", {
 test_that("correlate_obs validates time_field parameter", {
   # Create valid test nif object
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE,                  ~DTC, ~REF,
-    1,     0,   0,     1,   "DRUG", "2023-01-01T00:00:00",    1,
-    1,     0,  10,     0,   "DRUG", "2023-01-01T00:00:00",    2,
-    1,     0,   5,     0,  "METAB", "2023-01-01T00:00:00",    3
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -94,7 +94,7 @@ test_that("correlate_obs validates time_field parameter", {
   test_nif_no_time <- test_nif %>% select(-TIME)
   expect_error(
     correlate_obs(test_nif_no_time, "DRUG", "METAB", time_field = "TIME"),
-    "Time field 'TIME' not found in input"
+    "Missing essential fields in nif object: TIME"
   )
 
   # Test missing DTC field
@@ -109,10 +109,10 @@ test_that("correlate_obs validates time_field parameter", {
 test_that("correlate_obs basic functionality works with single dependent analyte", {
   # Create test nif object with two analytes at same time
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE,                  ~DTC, ~REF,
-    1,     0,   0,     1,   "DRUG", "2023-01-01T00:00:00",    1,
-    1,     0,  10,     0,   "DRUG", "2023-01-01T00:00:00",    2,
-    1,     0,   5,     0,  "METAB", "2023-01-01T00:00:00",    3
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -138,11 +138,11 @@ test_that("correlate_obs basic functionality works with single dependent analyte
 test_that("correlate_obs works with multiple dependent analytes", {
   # Create test nif object with one independent and multiple dependent analytes
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3,
-    1, 0, 3, 0, "BIOMARKER", "2023-01-01T00:00:00", 4
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE,    ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",      "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",      "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0,     5,   0,     "METAB",     "2023-01-01T00:00:00", 3,   0,    3,
+    1,   0,     3,   0,     "BIOMARKER", "2023-01-01T00:00:00", 4,   0,    4
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -171,10 +171,10 @@ test_that("correlate_obs matches observations within time window using TIME", {
   # Create test nif object with two analytes at slightly different times
   # TIME is in hours, so 5 minutes = 5/60 = 0.083 hours
   test_nif <- tibble::tribble(
-    ~ID,  ~TIME, ~DV, ~EVID, ~ANALYTE,                   ~DTC, ~REF,
-    1,        0,   0,     1,   "DRUG",  "2023-01-01T00:00:00",    1,
-    1,        0,  10,     0,   "DRUG",  "2023-01-01T00:00:00",    2,
-    1,     5/60,   5,     0,   "METAB", "2023-01-01T00:05:00",    3
+    ~ID, ~TIME,  ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,      0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,      10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   5/60,   5,   0,     "METAB",  "2023-01-01T00:05:00", 3,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -206,10 +206,10 @@ test_that("correlate_obs matches observations within time window using TIME", {
 test_that("correlate_obs matches observations within time window using DTC", {
   # Create test nif object with two analytes at slightly different DTC times
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 5, 5, 0, "METAB", "2023-01-01T00:05:00", 3 # 5 minutes later
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   5,     5,   0,     "METAB",  "2023-01-01T00:05:00", 3,   0,    3   # 5 minutes later
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -230,11 +230,11 @@ test_that("correlate_obs handles multiple matches within window", {
   # Create test nif object with multiple dependent analyte observations within window
   # TIME is in hours, so 2 minutes = 2/60, 3 minutes = 3/60
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 2 / 60, 5, 0, "METAB", "2023-01-01T00:02:00", 3, # 2 minutes later
-    1, 3 / 60, 7, 0, "METAB", "2023-01-01T00:03:00", 4 # 3 minutes later
+    ~ID, ~TIME,    ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,        0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,        10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   2 / 60,   5,   0,     "METAB",  "2023-01-01T00:02:00", 3,   0,    3,   # 2 minutes later
+    1,   3 / 60,   7,   0,     "METAB",  "2023-01-01T00:03:00", 4,   0,    3   # 3 minutes later
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -256,11 +256,11 @@ test_that("correlate_obs handles custom duplicate function", {
   # Create test nif object with multiple dependent analyte observations
   # TIME is in hours, so 2 minutes = 2/60, 3 minutes = 3/60
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 2 / 60, 5, 0, "METAB", "2023-01-01T00:02:00", 3,
-    1, 3 / 60, 7, 0, "METAB", "2023-01-01T00:03:00", 4
+    ~ID, ~TIME,    ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,        0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,        10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   2 / 60,   5,   0,     "METAB",  "2023-01-01T00:02:00", 3,   0,    3,
+    1,   3 / 60,   7,   0,     "METAB",  "2023-01-01T00:03:00", 4,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -302,10 +302,10 @@ test_that("correlate_obs handles no matches", {
   # Create test nif object with two analytes far apart in time
   # 2 hours = 120 minutes > default window of 10 minutes
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 120, 5, 0, "METAB", "2023-01-01T02:00:00", 3 # 2 hours later
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   120,   5,   0,     "METAB",  "2023-01-01T02:00:00", 3,   0,    3   # 2 hours later
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -323,12 +323,12 @@ test_that("correlate_obs handles no matches", {
 test_that("correlate_obs filters NA and NaN values", {
   # Create test nif object with NA and NaN values
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0, NA, 0, "DRUG", "2023-01-01T00:00:00", 3, # NA value
-    1, 0, NaN, 0, "DRUG", "2023-01-01T00:00:00", 4, # NaN value
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 5
+    ~ID, ~TIME, ~DV,  ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,    1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,   0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0,     NA,   0,     "DRUG",   "2023-01-01T00:00:00", 3,   0,    2,   # NA value
+    1,   0,     NaN,  0,     "DRUG",   "2023-01-01T00:00:00", 4,   0,    2,   # NaN value
+    1,   0,     5,    0,     "METAB",  "2023-01-01T00:00:00", 5,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -348,13 +348,13 @@ test_that("correlate_obs filters NA and NaN values", {
 test_that("correlate_obs handles multiple subjects", {
   # Create test nif object with multiple subjects
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3,
-    2, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 4,
-    2, 0, 15, 0, "DRUG", "2023-01-01T00:00:00", 5,
-    2, 0, 8, 0, "METAB", "2023-01-01T00:00:00", 6
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3,
+    2,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 4,   100,  1,
+    2,   0,     15,  0,     "DRUG",   "2023-01-01T00:00:00", 5,   0,    2,
+    2,   0,     8,   0,     "METAB",  "2023-01-01T00:00:00", 6,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -384,12 +384,12 @@ test_that("correlate_obs handles multiple independent analyte observations", {
   # Use a smaller window so each DRUG observation only matches its corresponding METAB
   # TIME is in hours, so 2 minutes = 2/60
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 2 / 60, 20, 0, "DRUG", "2023-01-01T00:02:00", 3,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 4,
-    1, 2 / 60, 15, 0, "METAB", "2023-01-01T00:02:00", 5
+    ~ID, ~TIME,    ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,        0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,        10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   2 / 60,   20,  0,     "DRUG",   "2023-01-01T00:02:00", 3,   0,    2,
+    1,   0,        5,   0,     "METAB",  "2023-01-01T00:00:00", 4,   0,    3,
+    1,   2 / 60,   15,  0,     "METAB",  "2023-01-01T00:02:00", 5,   0,    3
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -422,10 +422,10 @@ test_that("correlate_obs handles multiple independent analyte observations", {
 test_that("correlate_obs only matches observations from same subject", {
   # Create test nif object where times overlap but subjects differ
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    2, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3 # Different subject
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    2,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3   # Different subject
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -444,10 +444,10 @@ test_that("correlate_obs only matches observations from same subject", {
 test_that("correlate_obs handles observations only with EVID == 0", {
   # Create test nif object with both EVID == 0 and EVID == 1
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1, # EVID == 1 (dose)
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2, # EVID == 0 (observation)
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3 # EVID == 0 (observation)
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,   # EVID == 1 (dose)
+    1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,   # EVID == 0 (observation)
+    1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3   # EVID == 0 (observation)
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -467,11 +467,11 @@ test_that("correlate_obs handles observations only with EVID == 0", {
 test_that("correlate_obs handles multiple dependent analytes with different matches", {
   # Create test nif object where one dependent analyte matches but another doesn't
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3, # Matches
-    1, 120, 3, 0, "BIOMARKER", "2023-01-01T02:00:00", 4 # Doesn't match (too far)
+    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE,    ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,     0,   1,     "DRUG",      "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,     10,  0,     "DRUG",      "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0,     5,   0,     "METAB",     "2023-01-01T00:00:00", 3,   0,    3,   # Matches
+    1,   120,   3,   0,     "BIOMARKER", "2023-01-01T02:00:00", 4,   0,    4   # Doesn't match (too far)
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -493,10 +493,10 @@ test_that("correlate_obs handles multiple dependent analytes with different matc
 test_that("correlate_obs handles very small time window", {
   # Create test nif object with observations very close in time
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 0.000278, 5, 0, "METAB", "2023-01-01T00:00:01", 3 # 1 second later (0.000278 hours)
+    ~ID, ~TIME,     ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,         0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,         10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   0.000278,  5,   0,     "METAB",  "2023-01-01T00:00:01", 3,   0,    3   # 1 second later (0.000278 hours)
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -526,10 +526,10 @@ test_that("correlate_obs handles backward time differences", {
   # Create test nif object where dependent is before independent
   # TIME is in hours, so 5 minutes = 5/60
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 5 / 60, 0, 1, "DRUG", "2023-01-01T00:05:00", 1,
-    1, 5 / 60, 10, 0, "DRUG", "2023-01-01T00:05:00", 2,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 3 # 5 minutes before
+    ~ID, ~TIME,    ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   5 / 60,   0,   1,     "DRUG",   "2023-01-01T00:05:00", 1,   100,  1,
+    1,   5 / 60,   10,  0,     "DRUG",   "2023-01-01T00:05:00", 2,   0,    2,
+    1,   0,        5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3   # 5 minutes before
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -550,10 +550,10 @@ test_that("correlate_obs handles TIME vs DTC field differences", {
   # Create test nif where TIME and DTC give different matching results
   # TIME is in hours, so 5 minutes = 5/60
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 5 / 60, 5, 0, "METAB", "2023-01-01T00:05:00", 3 # 5 minutes later
+    ~ID, ~TIME,    ~DV, ~EVID, ~ANALYTE, ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,        0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,        10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
+    1,   5 / 60,   5,   0,     "METAB",  "2023-01-01T00:05:00", 3,   0,    3   # 5 minutes later
   ) %>%
     nif() %>%
     lubrify_dates()
@@ -586,14 +586,14 @@ test_that("correlate_obs handles multiple independent observations with multiple
   # Complex scenario: multiple independent observations, each matching different dependent analytes
   # TIME is in hours, so 2 minutes = 2/60
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~EVID, ~ANALYTE, ~DTC, ~REF,
-    1, 0, 0, 1, "DRUG", "2023-01-01T00:00:00", 1,
-    1, 0, 10, 0, "DRUG", "2023-01-01T00:00:00", 2,
-    1, 2 / 60, 20, 0, "DRUG", "2023-01-01T00:02:00", 3,
-    1, 0, 5, 0, "METAB", "2023-01-01T00:00:00", 4,
-    1, 2 / 60, 15, 0, "METAB", "2023-01-01T00:02:00", 5,
-    1, 0, 7, 0, "BIOMARKER", "2023-01-01T00:00:00", 6,
-    1, 2 / 60, 12, 0, "BIOMARKER", "2023-01-01T00:02:00", 7
+    ~ID, ~TIME,    ~DV, ~EVID, ~ANALYTE,    ~DTC,              ~REF, ~AMT, ~CMT,
+    1,   0,        0,   1,     "DRUG",      "2023-01-01T00:00:00", 1,   100,  1,
+    1,   0,        10,  0,     "DRUG",      "2023-01-01T00:00:00", 2,   0,    2,
+    1,   2 / 60,   20,  0,     "DRUG",      "2023-01-01T00:02:00", 3,   0,    2,
+    1,   0,        5,   0,     "METAB",     "2023-01-01T00:00:00", 4,   0,    3,
+    1,   2 / 60,   15,  0,     "METAB",     "2023-01-01T00:02:00", 5,   0,    3,
+    1,   0,        7,   0,     "BIOMARKER", "2023-01-01T00:00:00", 6,   0,    4,
+    1,   2 / 60,   12,  0,     "BIOMARKER", "2023-01-01T00:02:00", 7,   0,    4
   ) %>%
     nif() %>%
     lubrify_dates()

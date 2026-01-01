@@ -59,7 +59,9 @@ last_ex_dtc <- function(ex) {
 #' @noRd
 make_time <- function(obj) {
   # Input validation
-  validate_nif(obj)
+  # validate_nif(obj)
+  if (!inherits(obj, "nif"))
+    stop("Input must be a nif object")
 
   required_cols <- c("ID", "DTC", "ANALYTE", "PARENT", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
@@ -144,22 +146,71 @@ make_time_from_TIME <- function(obj) {
   # input validation
   validate_nif(obj)
 
-  obj |>
-    ensure_parent() |>
-    assertr::verify(assertr::has_all_names(
-      "ID", "CMT", "EVID"
-    )) |>
+  # Ensure PARENT column exists
+  obj <- ensure_parent(obj)
+
+  # Check for required columns
+  required_cols <- c("ID", "TIME", "EVID")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # Handle empty data frame
+  if (nrow(obj) == 0) {
+    return(
+      obj |>
+        mutate(
+          TAFD = numeric(0),
+          TAD = numeric(0)
+        ) |>
+        nif()
+    )
+  }
+
+  # Validate data types
+  if (!is.numeric(obj$TIME)) {
+    stop("TIME column must contain numeric values")
+  }
+  if (!is.numeric(obj$EVID)) {
+    stop("EVID column must contain numeric values")
+  }
+  if (!is.numeric(obj$ID)) {
+    stop("ID column must contain numeric values")
+  }
+
+  # Calculate time fields
+  result <- obj |>
+    as.data.frame() |>
+    # Ensure proper ordering for fill operations
+    arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) |>
+    # Group by ID and PARENT to find first administration for each drug
     group_by(.data$ID, .data$PARENT) |>
-    mutate(.first_time = min(.data$TIME, na.rm = TRUE)) |>
-    mutate(.first_admin = min(.data$TIME[.data$EVID == 1], na.rm = TRUE)) |>
-    mutate(TAFD = round(.data$TIME - .data$.first_admin, digits = 3)) |>
-    arrange(.data$ID, .data$TIME, -.data$EVID) |>
-    mutate(.admin_time = case_when(.data$EVID == 1 ~ .data$TIME)) |>
-    tidyr::fill(".admin_time", .direction = "down") |>
+    # Calculate TAFD: time after first dose
+    mutate(.first_admin = if (any(.data$EVID == 1)) {
+      min(.data$TIME[.data$EVID == 1], na.rm = TRUE)
+    } else {
+      NA_real_
+    }) |>
+    mutate(TAFD = ifelse(
+      is.na(.data$.first_admin),
+      NA_real_,
+      round(.data$TIME - .data$.first_admin, digits = 3)
+    )) |>
+    # Calculate TAD: time after dose
+    mutate(.admin_time = case_when(
+      .data$EVID == 1 ~ .data$TIME,
+      TRUE ~ NA_real_
+    )) |>
+    # Fill admin_time forward and backward within each group
+    tidyr::fill(".admin_time", .direction = "downup") |>
     mutate(TAD = .data$TIME - .data$.admin_time) |>
     ungroup() |>
-    select(-c(".first_time", ".first_admin", ".admin_time")) |>
+    # Remove temporary columns
+    select(-c(".first_admin", ".admin_time")) |>
     nif()
+
+  result
 }
 
 

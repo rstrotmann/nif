@@ -98,6 +98,15 @@ ensure_parent <- function(obj) {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
   }
 
+  # Handle empty data frame
+  if (nrow(obj) == 0) {
+    return(
+      obj |>
+        mutate(PARENT = numeric(0)) |>
+        nif()
+    )
+  }
+
   # Get administration CMT values
   admin_cmt <- obj |>
     as.data.frame() |>
@@ -106,8 +115,8 @@ ensure_parent <- function(obj) {
 
   # Handle case where there are no administrations
   if (nrow(admin_cmt) == 0) {
-    warning("No administration records found (EVID == 1)")
-    return(obj)
+    stop("No administration records found (EVID == 1)")
+    # return(obj)
   }
 
   obj <- obj |>

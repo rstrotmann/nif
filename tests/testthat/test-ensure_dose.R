@@ -1,13 +1,13 @@
 test_that("ensure_dose creates DOSE field correctly", {
   # Create test data
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID,
-    1,   0,     100,  1,
-    1,   1,     0,    0,
-    1,   2,     0,    0,
-    2,   0,     200,  1,
-    2,   1,     0,    0,
-    2,   2,     0,    0
+    ~ID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
+    1,   0,     100,  1,     1,    NA,
+    1,   1,     0,    0,     1,    10,
+    1,   2,     0,    0,     1,    20,
+    2,   0,     200,  1,     1,    NA,
+    2,   1,     0,    0,     1,    30,
+    2,   2,     0,    0,     1,    40
   ) %>% nif()
 
   # Apply ensure_dose
@@ -22,9 +22,9 @@ test_that("ensure_dose creates DOSE field correctly", {
 test_that("ensure_dose handles existing DOSE field", {
   # Create test data with existing DOSE
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID, ~DOSE,
-    1,   0,     100,  1,     50,
-    1,   1,     0,    0,     50
+    ~ID, ~TIME, ~AMT, ~EVID, ~DOSE, ~CMT, ~DV,
+    1,   0,     100,  1,     50,    1,    NA,
+    1,   1,     0,    0,     50,    1,    10
   ) %>% nif()
 
   # Apply ensure_dose
@@ -37,11 +37,11 @@ test_that("ensure_dose handles existing DOSE field", {
 test_that("ensure_dose handles multiple doses per subject", {
   # Create test data with multiple doses
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID,
-    1,   0,     100,  1,
-    1,   1,     0,    0,
-    1,   2,     200,  1,
-    1,   3,     0,    0
+    ~ID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
+    1,   0,     100,  1,     1,    NA,
+    1,   1,     0,    0,     1,    10,
+    1,   2,     200,  1,     1,    NA,
+    1,   3,     0,    0,     1,    20
   ) %>% nif()
 
   # Apply ensure_dose
@@ -54,10 +54,10 @@ test_that("ensure_dose handles multiple doses per subject", {
 test_that("ensure_dose handles NA values correctly", {
   # Create test data with NAs
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID,
-    1,   0,     100,  1,
-    1,   1,     NA,   0,
-    1,   2,     0,    0
+    ~ID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
+    1,   0,     100,  1,     1,    NA,
+    1,   1,     NA,   0,     1,    10,
+    1,   2,     0,    0,     1,    20
   ) %>% nif()
 
   # Apply ensure_dose
@@ -82,14 +82,16 @@ test_that("ensure_dose handles empty data frame", {
 test_that("ensure_dose handles missing required columns", {
   # Create test data missing required columns
   test_nif <- tibble::tribble(
-    ~ID, ~TIME,
-    1,   0,
-    1,   1
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     0,    1,    0,     NA,
+    1,   1,     0,    1,    0,     NA
   ) %>% nif()
 
   # Check error message
   expect_error(
-    ensure_dose(test_nif),
+    ensure_dose(
+      select(test_nif, -c("EVID", "AMT"))
+    ),
     "Missing required columns: EVID, AMT"
   )
 })
@@ -97,9 +99,9 @@ test_that("ensure_dose handles missing required columns", {
 test_that("ensure_dose handles non-NIF input", {
   # Create regular data frame
   test_df <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID,
-    1,   0,     100,  1,
-    1,   1,     0,    0
+    ~ID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
+    1,   0,     100,  1,     1,    NA,
+    1,   1,     0,    0,     1,    10
   )
 
   # Check error message
@@ -112,13 +114,13 @@ test_that("ensure_dose handles non-NIF input", {
 test_that("ensure_dose handles unsorted data correctly", {
   # Create unsorted test data
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID,
-    1,   2,     0,    0,
-    1,   0,     100,  1,
-    1,   1,     0,    0,
-    2,   1,     0,    0,
-    2,   0,     200,  1,
-    2,   2,     0,    0
+    ~ID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
+    1,   2,     0,    0,     1,    20,
+    1,   0,     100,  1,     1,    NA,
+    1,   1,     0,    0,     1,    10,
+    2,   1,     0,    0,     1,    30,
+    2,   0,     200,  1,     1,    NA,
+    2,   2,     0,    0,     1,    40
   ) %>% nif()
 
   # Apply ensure_dose
@@ -131,10 +133,10 @@ test_that("ensure_dose handles unsorted data correctly", {
 test_that("ensure_dose handles zero doses correctly", {
   # Create test data with zero doses
   test_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID,
-    1,   0,     0,    1,
-    1,   1,     0,    0,
-    1,   2,     0,    0
+    ~ID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
+    1,   0,     0,    1,     1,    NA,
+    1,   1,     0,    0,     1,    10,
+    1,   2,     0,    0,     1,    20
   ) %>% nif()
 
   # Apply ensure_dose

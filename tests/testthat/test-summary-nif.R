@@ -25,16 +25,15 @@ test_that("summary.nif returns the correct class and structure", {
 # Test with missing columns
 test_that("summary.nif errors appropriately with missing required columns", {
   # Missing DV
-  invalid_nif <- nif(data.frame(
-    ID = 1,
-    TIME = 0,
-    AMT = 100,
-    EVID = 1
-  ))
+  invalid_nif <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     100,  1,    1,     NA
+  )) |>
+    select(-c("CMT", "DV"))
 
   expect_error(
     summary(invalid_nif),
-    "missing required fields: CMT and DV"
+    "Missing essential fields in nif object: CMT and DV"
   )
 })
 
