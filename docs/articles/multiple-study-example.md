@@ -1,4 +1,4 @@
-# Multiple studies in one NIF
+# More than one study in a NIF dataset
 
 ``` r
 library(dplyr)

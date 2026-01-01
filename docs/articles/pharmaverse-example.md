@@ -1,4 +1,4 @@
-# pharmaverse-example
+# Example: Pharmaverse SDTM data
 
 ## INTRODUCTION
 

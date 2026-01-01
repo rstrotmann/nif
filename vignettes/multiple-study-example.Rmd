@@ -1,8 +1,8 @@
 ---
-title: "Multiple studies in one nif dataset"
+title: "More than one study in a NIF dataset"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{creating-multiple-study-nif}
+  %\VignetteIndexEntry{More than one study in a NIF dataset}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

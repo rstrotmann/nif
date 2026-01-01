@@ -1,0 +1,15 @@
+url: ~
+template:
+  bootstrap: 5
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - nif-tutorial
+  - Example: Multiple-dose study
+  - nif-imputations
+  - Multiple studies in one nif dataset
+  - Nif data definition using formulas
+  - importing-nif-data
+  - pharmaverse-example

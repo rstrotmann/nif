@@ -6,10 +6,11 @@ articles:
 - title: Articles
   navbar: ~
   contents:
-  - nif-tutorial
-  - Example: Multiple-dose study
+  - nif
+  - multiple-dose-example
+  - nif-formulas
   - nif-imputations
-  - Multiple studies in one nif dataset
-  - Nif data definition using formulas
   - importing-nif-data
   - pharmaverse-example
+  - multiple-study-example
+

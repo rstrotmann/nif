@@ -79,9 +79,8 @@ other analyte, ‘RS2023487A’ is a metabolite.
 
 ## NIF DATA SET
 
-Following the tutorial given in
-[`vignette("nif-tutorial")`](../articles/nif-tutorial.md), we start with
-a basic pharmacokinetic nif object from `examplinic_poc`:
+Following the tutorial given in `vignette("nif-tutorial")`, we start
+with a basic pharmacokinetic nif object from `examplinic_poc`:
 
 ``` r
 sdtm <- examplinib_poc

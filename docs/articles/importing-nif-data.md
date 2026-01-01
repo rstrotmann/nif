@@ -1,4 +1,4 @@
-# importing-nif-data
+# Importing NIF data sets
 
 ## INTRODUCTION
 
@@ -62,8 +62,7 @@ head(nif)
 
 The resulting object behaves as a regular `nif` object, for example, it
 can be summarized or plotted or otherwise explored (see
-[`vignette("nif-tutorial")`](../articles/nif-tutorial.md) for more
-information):
+`vignette("nif-tutorial")` for more information):
 
 ``` r
 summary(nif)

@@ -1,8 +1,8 @@
 ---
-title: "Nif data definition using formulas"
+title: "Data definition using formulas"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{nif-formulas}
+  %\VignetteIndexEntry{Data definition using formulas}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

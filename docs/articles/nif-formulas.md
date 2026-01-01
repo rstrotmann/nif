@@ -1,4 +1,4 @@
-# NIF data definition using formulae
+# Data definition using formulas
 
 ``` r
 library(dplyr)
@@ -12,7 +12,7 @@ nif_option(silent = TRUE)
 The ‘nif’ package is mean to facilitate the creation of NONMEM Input
 Format (NIF)- compliant data files for the analysis of longitudinal
 (time-varying) clinical data. For a gentle introduction, see
-[`vignette("nif-tutorial")`](../articles/nif-tutorial.md).
+`vignette("nif-tutorial")`.
 
 The overarching concept of the ‘nif’ package is to gradually build a
 data set, sequentially adding administrations, observations, baseline
