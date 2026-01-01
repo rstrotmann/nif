@@ -233,7 +233,6 @@ print.nif <- function(x, color = FALSE, ...) {
 #' subject_info(examplinib_poc_nif, 1)$administrations
 subject_info.nif <- function(obj, id) {
   temp <- obj |>
-    # as.data.frame() |>
     filter(.data$ID %in% id | .data$USUBJID %in% id) |>
     filter(!is.na(.data$DOSE))
 
@@ -313,10 +312,6 @@ subjects <- function(obj) {
 subjects.nif <- function(obj) {
   # input validation
   validate_nif(obj)
-
-  # if (!"ID" %in% names(obj)) {
-  #   stop("ID column missing!")
-  # }
 
   if (!"USUBJID" %in% names(obj))
     obj <- mutate(obj, USUBJID = NA)
@@ -1063,8 +1058,8 @@ add_dose_level <- function(obj) {
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
 add_bl_crcl <- function(obj, method = egfr_cg, molar = FALSE) {
-  missing_columns <- setdiff(c( "BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
-                            names(obj))
+  missing_columns <- setdiff(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
+                             names(obj))
   if (length(missing_columns) > 0)
     stop(paste0(
       "Missing coluns: ", nice_enumeration(missing_columns), "!"
