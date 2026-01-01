@@ -68,12 +68,6 @@ test_that("read_sdtm reads different formats correctly", {
   result_csv <- read_sdtm(test_dir, domain = "dm", format = "csv")
   expect_s3_class(result_csv, "sdtm")
   expect_equal(nrow(result_csv$domains$dm), 2)
-
-  # Test XLSX format
-  writexl::write_xlsx(test_data, file.path(test_dir, "dm.xlsx"))
-  result_xlsx <- read_sdtm(test_dir, domain = "dm", format = "xlsx")
-  expect_s3_class(result_xlsx, "sdtm")
-  expect_equal(nrow(result_xlsx$domains$dm), 2)
 })
 
 

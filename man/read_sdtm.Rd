@@ -13,12 +13,11 @@ read_sdtm(data_path, domain = NULL, format = "sas", delim = ",", ...)
 all domains found in the folder.}
 
 \item{format}{The format of the source files as character, either 'sas'
-(default), 'xpt', 'xlsx', or 'csv'.}
+(default), 'xpt', or 'csv'.}
 
 \item{delim}{Deliminator.}
 
-\item{...}{Further parameters, refer to readr::read_csv and
-readxl::read_xlsx.}
+\item{...}{Further parameters, refer to readr::read_csv}
 }
 \value{
 A \code{sdtm} object.

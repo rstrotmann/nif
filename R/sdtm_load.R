@@ -7,14 +7,12 @@
 #' @param domain The domain name(s) as character, defaults to
 #'   all domains found in the folder.
 #' @param format The format of the source files as character, either 'sas'
-#'   (default), 'xpt', 'xlsx', or 'csv'.
-#' @param ... Further parameters, refer to readr::read_csv and
-#'   readxl::read_xlsx.
+#'   (default), 'xpt', or 'csv'.
+#' @param ... Further parameters, refer to readr::read_csv
 #' @param delim Deliminator.
 #' @return A `sdtm` object.
 #' @import readr
 #' @import haven
-#' @import readxl
 #' @export
 read_sdtm <- function(data_path,
                       domain = NULL,
@@ -41,8 +39,8 @@ read_sdtm <- function(data_path,
   file_ext <- switch(format,
     "sas" = ".sas7bdat",
     "xpt" = ".xpt",
-    "csv" = ".csv",
-    "xlsx" = ".xlsx"
+    "csv" = ".csv"
+    # "xlsx" = ".xlsx"
   )
 
   # set domains
@@ -96,16 +94,17 @@ read_sdtm <- function(data_path,
       )
     }
   }
-  if (format == "xlsx") {
-    for (x in domain) {
-      out[[x]] <- as.data.frame(
-        readxl::read_xlsx(
-          file.path(data_path, paste0(x, ".xlsx")),
-          ...
-        )
-      )
-    }
-  }
+
+  # if (format == "xlsx") {
+  #   for (x in domain) {
+  #     out[[x]] <- as.data.frame(
+  #       readxl::read_xlsx(
+  #         file.path(data_path, paste0(x, ".xlsx")),
+  #         ...
+  #       )
+  #     )
+  #   }
+  # }
 
   if (length(out) == 0) {
     stop("no domain data found")

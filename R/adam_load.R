@@ -24,8 +24,8 @@ read_adam <- function(
   file_ext <- switch(format,
                      "sas" = ".sas7bdat",
                      "xpt" = ".xpt",
-                     "csv" = ".csv",
-                     "xlsx" = ".xlsx"
+                     "csv" = ".csv"
+                     # "xlsx" = ".xlsx"
   )
 
   # set domains

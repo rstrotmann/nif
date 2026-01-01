@@ -29,7 +29,6 @@ Imports:
     tidyr,
     utils,
     readr,
-    readxl,
     purrr,
     ggrepel,
     shiny,
