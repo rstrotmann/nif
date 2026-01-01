@@ -4,16 +4,19 @@
 \alias{add_bl_crcl}
 \title{Add baseline creatinine clearance field.}
 \usage{
-add_bl_crcl(obj, method = egfr_cg)
+add_bl_crcl(obj, method = egfr_cg, molar = FALSE)
 }
 \arguments{
 \item{obj}{A NIF object.}
 
-\item{method}{The function to calculate eGFR (CrCL) from serum creatinine.
+\item{method}{The function to calculate eGFR (CrCL) from serum creatinine.}
+
+\item{molar}{Convert to molar units, as logical.
 Currently either: egfr_mdrd, egfr_cg or egfr_raynaud}
 }
 \value{
-A NIF object.
+A NIF object with the baseline creatinine clearance (BL_EGFR) field
+added,
 }
 \description{
 Add baseline creatinine clearance field.

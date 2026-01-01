@@ -1052,15 +1052,17 @@ add_dose_level <- function(obj) {
 #'
 #' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
+#' @param molar Convert to molar units, as logical.
 #'   Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
-#' @return A NIF object.
+#' @return A NIF object with the baseline creatinine clearance (BL_EGFR) field
+#' added,
 #' @seealso [nif::egfr_mdrd()]
 #' @seealso [nif::egfr_cg()]
 #' @seealso [nif::egfr_raynaud()]
 #' @export
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
-add_bl_crcl <- function(obj, method = egfr_cg) {
+add_bl_crcl <- function(obj, method = egfr_cg, molar = FALSE) {
   missing_columns <- setdiff(c( "BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
                             names(obj))
   if (length(missing_columns) > 0)
@@ -1072,7 +1074,7 @@ add_bl_crcl <- function(obj, method = egfr_cg) {
     obj |>
       mutate(BL_CRCL = method(
         .data$BL_CREAT, .data$AGE, .data$SEX, .data$RACE, .data$WEIGHT,
-        molar = TRUE
+        molar = molar
       ))
   } else {
     obj |>
