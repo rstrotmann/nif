@@ -140,8 +140,8 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
   if (molar) {
     crea <- crea / 88.4
   }
-  female_factor <- ifelse((sex <- 1) | (sex == "F"), .742, 1)
-  race_factor <- ifelse(grepl("black", str_to_lower(race)), 1.212, 1)
+  female_factor <- ifelse((sex == 1) | (sex == "F"), .742, 1)
+  race_factor <- ifelse(grepl("BLACK", toupper(race)), 1.212, 1)
 
   egfr <- 175 * crea^-1.154 * age^-0.203 * female_factor * race_factor
   base::attr(egfr, "unit") <- "ml/min/1.73 m^2"
@@ -167,8 +167,8 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
 #' @return Serum creatinine in mg/dl.
 #' @export
 crea_mdrd <- function(egfr, age, sex, race = "") {
-  female_factor <- ifelse((sex <- 1) | (sex == "F"), .742, 1)
-  race_factor <- ifelse(grepl("black", str_to_lower(race)), 1.212, 1)
+  female_factor <- ifelse((sex == 1) | (sex == "F"), .742, 1)
+  race_factor <- ifelse(grepl("BLACK", toupper(race)), 1.212, 1)
 
   crea <- (egfr / (175 * age^-0.203 * female_factor * race_factor))^(1 / -1.154)
   base::attr(crea, "unit") <- "mg/dl"
