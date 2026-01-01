@@ -213,7 +213,6 @@ expand_ex <- function(ex) {
 #'
 #' @return A data frame.
 #' @export
-#' @importFrom assertthat assert_that
 #' @import cli
 #' @keywords internal
 #' @seealso [nif::add_administration()]

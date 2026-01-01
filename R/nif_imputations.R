@@ -277,8 +277,6 @@ impute_exendtc_to_cutoff <- function(
 
   temp <- ex |>
     lubrify_dates() |>
-    assertr::verify(is.POSIXct(.data$EXSTDTC)) |>
-    assertr::verify(is.POSIXct(.data$EXENDTC)) |>
     # identify last administration per subject and EXTRT
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) |>
     group_by(.data$USUBJID, .data$EXTRT) |>

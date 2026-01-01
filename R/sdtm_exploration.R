@@ -179,10 +179,14 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
 check_last_exendtc <- function(ex, verbose = TRUE) {
   domain <- ex |> distinct(.data$DOMAIN)
 
+  expected_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
+  missing_columns <- setdiff(expected_columns, names(ex))
+  if (length(missing_columns) > 0)
+    stop(paste0(
+      "Missing fields: ", nice_enumeration(missing_columns)
+    ))
+
   temp <- ex |>
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"
-    )) |>
     lubrify_dates() |>
     group_by(.data$USUBJID, .data$EXTRT) |>
     arrange(.data$USUBJID, .data$EXTRT, .data$EXSTDTC) |>
@@ -632,10 +636,12 @@ disposition_summary <- function(sdtm_data) {
   dm <- domain(sdtm_data, "dm")
   if (is.null(dm)) stop("DM not found in SDTM data!")
 
+  expected_columns <- c("USUBJID", "ACTARMCD", "RFSTDTC", "RFENDTC")
+  missing_columns <- setdiff(expected_columns, names(dm))
+  if (length(missing_columns) > 0)
+    stop(paste0("Missing columns: ", nice_enumeration(missing_columns)))
+
   dm |>
-    assertr::verify(assertr::has_all_names(
-      "USUBJID", "ACTARMCD", "RFSTDTC", "RFENDTC"
-    )) |>
     distinct(.data$USUBJID, .data$ACTARMCD, .data$RFSTDTC, .data$RFENDTC) |>
     mutate(ONGOING = case_when(
       .data$RFSTDTC != "" & .data$RFENDTC == "" ~ TRUE,

@@ -274,7 +274,9 @@ test_that("add_trtdy works", {
     2,   58,    80,   1,    1,     "2024-12-08 17:31:35.14839", NA,
     2,   60,    NA,   2,    0,     "2024-12-08 19:31:35.14839", 70
   ) %>%
-    mutate(DTC = as.POSIXct(DTC))
+    mutate(DTC = as.POSIXct(DTC)) |>
+    nif()
+
   expect_equal(
     add_trtdy(nif)$TRTDY,
     c(1, 1, 1, 1, 2, 3, 3, 1, 1, 1, 2, 3, 3)

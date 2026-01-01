@@ -28,7 +28,7 @@ make_plot_data_set <- function(
   facet = "DOSE",
   na_value = NA
 ) {
-  # assert time parameter
+  # validate time parameter
   if (!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
     stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
   }
@@ -40,7 +40,7 @@ make_plot_data_set <- function(
     ensure_tafd() |>
     ensure_tad()
 
-  # assert facet parameter
+  # validate facet parameter
   if (!is.null(facet)) {
     if (!facet %in% names(nif)) {
       stop(paste0("Facetting variable ", facet, " not found in data set!"))

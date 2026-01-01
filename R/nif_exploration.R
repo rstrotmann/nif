@@ -46,14 +46,13 @@ nif_plot_id <- function(
   imp = NULL,
   ...
 ) {
+  validate_nif(obj)
+
   x <- obj |>
     ensure_parent() |>
     ensure_analyte() |>
     index_dosing_interval() |>
-    as.data.frame() |>
-    assertr::verify(assertr::has_all_names(
-      "ID", "TIME", "AMT", "DV", "EVID"
-    ))
+    as.data.frame()
 
   if (!is.null(cmt))
     x <- filter(x, .data$CMT == cmt)
@@ -196,15 +195,12 @@ nif_plot_id <- function(
 dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
                          time_field = "TIME", point_size = 2, max_time = NA,
                          analyte = NULL, ...) {
+  validate_nif(obj)
+
   x <- obj |>
     ensure_parent() |>
     ensure_analyte() |>
-    index_dosing_interval() |>
-    assertr::verify(
-      assertr::has_all_names(
-        "ID", "TIME", "AMT", "DV", "EVID"
-      )
-    )
+    index_dosing_interval()
 
   if (!is.null(analyte))
     x <- filter(x, .data$ANALYTE %in% analyte)

@@ -6,8 +6,6 @@
 #' @noRd
 first_admin_dtc <- function(x) {
   x |>
-    assertr::verify(assertr::has_all_names("USUBJID", "DTC", "EVID")) |>
-    assertr::verify(is.POSIXct(.data$DTC)) |>
     filter(.data$EVID == 1) |>
     dplyr::group_by(.data$USUBJID) |>
     dplyr::mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) |>
@@ -352,9 +350,9 @@ add_tafd <- function(nif) {
 #' @examples
 #' head(add_trtdy(examplinib_poc_nif))
 add_trtdy <- function(obj) {
+  validate_nif(obj)
+
   obj |>
-    assertr::verify(assertr::has_all_names("ID", "DTC", "EVID")) |>
-    assertr::verify(is.POSIXct(.data$DTC)) |>
     dplyr::group_by(.data$ID) |>
     dplyr::mutate(FIRSTTRTDTC = min(.data$DTC[.data$EVID == 1],
       na.rm = TRUE

@@ -233,7 +233,7 @@ print.nif <- function(x, color = FALSE, ...) {
 #' subject_info(examplinib_poc_nif, 1)$administrations
 subject_info.nif <- function(obj, id) {
   temp <- obj |>
-    as.data.frame() |>
+    # as.data.frame() |>
     filter(.data$ID %in% id | .data$USUBJID %in% id) |>
     filter(!is.na(.data$DOSE))
 
@@ -1131,7 +1131,6 @@ add_bl_lbm <- function(obj, method = lbm_boer) {
     stop(paste0("Missing fields: ", nice_enumeration(missing_fields)))
 
   obj |>
-    # assertr::verify(assertr::has_all_names("WEIGHT", "HEIGHT", "SEX")) |>
     mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
 }
 
@@ -1142,11 +1141,8 @@ add_bl_lbm <- function(obj, method = lbm_boer) {
 #' bilirubin, and AST aspartate aminotransferase.
 #'
 #' * normal: TB & AST ≤ upper limit of normal (ULN)
-#'
 #' * mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
-#'
 #' * moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
-#'
 #' * severe hepatic dysfunction: TB >3 - 10 x ULN, any AST
 #'
 #' @param obj A nif object.
