@@ -23,7 +23,7 @@ read_sdtm(data_path, domain = NULL, format = "sas", delim = ",", ...)
 - format:
 
   The format of the source files as character, either 'sas' (default),
-  'xpt', 'xlsx', or 'csv'.
+  'xpt', or 'csv'.
 
 - delim:
 
@@ -31,7 +31,7 @@ read_sdtm(data_path, domain = NULL, format = "sas", delim = ",", ...)
 
 - ...:
 
-  Further parameters, refer to readr::read_csv and readxl::read_xlsx.
+  Further parameters, refer to readr::read_csv
 
 ## Value
 

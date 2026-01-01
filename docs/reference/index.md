@@ -80,7 +80,7 @@
 
 - [`dataset()`](dataset.md) : Retrieve dataset from adam object
 
-- [`ddt()`](ddt.md) : Data definition table for NIF object
+- [`ddt()`](ddt.md) : Data definition table for nif object
 
 - [`derive_baseline()`](derive_baseline.md) : Extract the individual
   baseline value for an analyte

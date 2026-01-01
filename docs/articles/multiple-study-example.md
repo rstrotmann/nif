@@ -52,11 +52,11 @@ nif %>%
 #>   female   40    27         
 #> 
 #> Renal impairment class:
-#>   CLASS      N    percent   
-#>   normal     89   60.1      
-#>   mild       44   29.7      
-#>   moderate   15   10.1      
-#>   severe     0    0          
+#>   CLASS      N     percent   
+#>   normal     0     0         
+#>   mild       0     0         
+#>   moderate   0     0         
+#>   severe     148   100        
 #> 
 #> Treatments:
 #>   RS2023
@@ -108,6 +108,6 @@ nif %>%
 #>   PARENT   min   max   mean   median   
 #>   RS2023   1     99    43     58.5      
 #> 
-#> Hash: 90d003896ba9b5241af52ea84559e2ff
+#> Hash: 2f8b5e291124d3929b74a89761816be1
 #> Last DTC: 2001-07-14 08:53:00
 ```

@@ -5,7 +5,7 @@ Add baseline creatinine clearance field.
 ## Usage
 
 ``` r
-add_bl_crcl(obj, method = egfr_cg)
+add_bl_crcl(obj, method = egfr_cg, molar = FALSE)
 ```
 
 ## Arguments
@@ -16,12 +16,17 @@ add_bl_crcl(obj, method = egfr_cg)
 
 - method:
 
-  The function to calculate eGFR (CrCL) from serum creatinine. Currently
-  either: egfr_mdrd, egfr_cg or egfr_raynaud
+  The function to calculate eGFR (CrCL) from serum creatinine.
+
+- molar:
+
+  Convert to molar units, as logical. Currently either: egfr_mdrd,
+  egfr_cg or egfr_raynaud
 
 ## Value
 
-A NIF object.
+A NIF object with the baseline creatinine clearance (BL_EGFR) field
+added,
 
 ## See also
 
@@ -50,10 +55,10 @@ head(add_bl_crcl(examplinib_poc_nif))
 #> 5 2001-01-13 11:36:00 1.000   0.5 1.000 1.000    0   0 RS2023487A   3 RS2023
 #> 6 2001-01-13 12:04:00 1.467   1.0 1.467 1.467    0   0     RS2023   2 RS2023
 #>   TRTDY METABOLITE DOSE MDV  ACTARMCD IMPUTATION        DV BL_CREAT  BL_CRCL
-#> 1     1      FALSE  500   1 TREATMENT                   NA 72.78062 107.4689
-#> 2     1      FALSE  500   0 TREATMENT               0.0000 72.78062 107.4689
-#> 3     1      FALSE  500   0 TREATMENT               0.0000 72.78062 107.4689
-#> 4     1      FALSE  500   0 TREATMENT             636.6833 72.78062 107.4689
-#> 5     1      FALSE  500   0 TREATMENT             135.1259 72.78062 107.4689
-#> 6     1      FALSE  500   0 TREATMENT            1844.8225 72.78062 107.4689
+#> 1     1      FALSE  500   1 TREATMENT                   NA 72.78062 1.215712
+#> 2     1      FALSE  500   0 TREATMENT               0.0000 72.78062 1.215712
+#> 3     1      FALSE  500   0 TREATMENT               0.0000 72.78062 1.215712
+#> 4     1      FALSE  500   0 TREATMENT             636.6833 72.78062 1.215712
+#> 5     1      FALSE  500   0 TREATMENT             135.1259 72.78062 1.215712
+#> 6     1      FALSE  500   0 TREATMENT            1844.8225 72.78062 1.215712
 ```

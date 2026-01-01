@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.62.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.63.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_bl_crcl</span><span class="op">(</span><span class="va">obj</span>, method <span class="op">=</span> <span class="va">egfr_cg</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_bl_crcl</span><span class="op">(</span><span class="va">obj</span>, method <span class="op">=</span> <span class="va">egfr_cg</span>, molar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -60,13 +60,18 @@
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>The function to calculate eGFR (CrCL) from serum creatinine.
+<dd><p>The function to calculate eGFR (CrCL) from serum creatinine.</p></dd>
+
+
+<dt id="arg-molar">molar<a class="anchor" aria-label="anchor" href="#arg-molar"></a></dt>
+<dd><p>Convert to molar units, as logical.
 Currently either: egfr_mdrd, egfr_cg or egfr_raynaud</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A NIF object.</p>
+    <p>A NIF object with the baseline creatinine clearance (BL_EGFR) field
+added,</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -93,12 +98,12 @@ Currently either: egfr_mdrd, egfr_cg or egfr_raynaud</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-13 11:36:00 1.000   0.5 1.000 1.000    0   0 RS2023487A   3 RS2023</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-13 12:04:00 1.467   1.0 1.467 1.467    0   0     RS2023   2 RS2023</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   TRTDY METABOLITE DOSE MDV  ACTARMCD IMPUTATION        DV BL_CREAT  BL_CRCL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE  500   1 TREATMENT                   NA 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE  500   0 TREATMENT               0.0000 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE  500   0 TREATMENT               0.0000 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE  500   0 TREATMENT             636.6833 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE  500   0 TREATMENT             135.1259 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE  500   0 TREATMENT            1844.8225 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE  500   1 TREATMENT                   NA 72.78062 1.215712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE  500   0 TREATMENT               0.0000 72.78062 1.215712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE  500   0 TREATMENT               0.0000 72.78062 1.215712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE  500   0 TREATMENT             636.6833 72.78062 1.215712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE  500   0 TREATMENT             135.1259 72.78062 1.215712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE  500   0 TREATMENT            1844.8225 72.78062 1.215712</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

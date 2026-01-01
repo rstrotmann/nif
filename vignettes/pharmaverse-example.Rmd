@@ -65,7 +65,7 @@ nif <- nif() |>
   add_observation(sdtm, 'pc', 'XAN', observation_filter = "PCSPEC == 'PLASMA'") |> 
   add_observation(sdtm, 'lb', 'ALT', ntime_method = "DY") |> 
   add_baseline(sdtm, "lb", "CREAT") |> 
-  add_bl_renal() |> 
+  add_bl_renal(molar = TRUE) |> 
   derive_cfb() |> 
   add_dose_level()
 ```

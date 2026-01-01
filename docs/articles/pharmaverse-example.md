@@ -9,6 +9,7 @@ packages:
 library(dplyr)
 library(ggplot2)
 library(nif)
+library(knitr)
 library(pharmaversesdtm)
 ```
 
@@ -78,7 +79,7 @@ plot(sdtm, domain = "dm", points = F)
 ## NONMEM INPUT FORMAT DATA
 
 ``` r
-nif_option(silent = TRUE, debug = TRUE)
+nif_option(silent = TRUE)
 
 nif <- nif() |> 
   add_administration(sdtm, 'XANOMELINE', analyte = "XAN") |> 
@@ -105,10 +106,10 @@ summary(nif)
 #> 
 #> Renal impairment class:
 #>   CLASS      N     percent   
-#>   normal     2     0.8       
-#>   mild       31    12.2      
-#>   moderate   196   77.2      
-#>   severe     22    8.7       
+#>   normal     0     0         
+#>   mild       0     0         
+#>   moderate   0     0         
+#>   severe     251   98.8      
 #>   NA         3     1.2        
 #> 
 #> Treatments:
@@ -150,7 +151,7 @@ summary(nif)
 #>   PLACEBO   7     210   149.1   182      
 #>   XAN       1     212   99.2    81        
 #> 
-#> Hash: 3fd0f9c6cf19183574a4837a42e500cc
+#> Hash: b172039bcd6fb663b1c60d2a8d73551f
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(
@@ -160,6 +161,47 @@ invisible(capture.output(
 
 ![](pharmaverse-example_files/figure-html/unnamed-chunk-5-1.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-2.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-3.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-4.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-5.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-6.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-7.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-8.png)![](pharmaverse-example_files/figure-html/unnamed-chunk-5-9.png)
 
+### Data definition table
+
+``` r
+ddt(nif) |> 
+  kable()
+```
+
+| name | definition | type | description | unit | source |
+|:---|:---|:---|:---|:---|:---|
+| REF | Consecutive record number | integer | Unique number for each row | NA | Produced |
+| STUDYID | Study | character | Study identification number | NA | DM: STUDYID |
+| ID | Subject identifier | numeric | Unique subject ID across all studies | NA | Produced |
+| USUBJID | USUBJID in source | character | Unique subject ID in study | NA | DM: USUBJID |
+| AGE | Age | numeric | Age of subjec at study start | years | DM: AGE or derived from DM: BRTHDTC |
+| SEX | Sex | 0, 1 | 0 = Male, 1 = Female | NA | Derived from DM: SEX |
+| RACE | Race | character | Race category | NA | DM: RACE |
+| WEIGHT | Body weight | numeric | Baseline body weight | kg | VS: VSTESTCD = WEIGHT |
+| DTC | Datetime | datetime | Date and time of event | Datetime | SDTM domain |
+| TIME | Time since start of treatment | numeric | Individual time since individual start of treatment | hours | DTC |
+| NTIME | Nominal time | numeric | Nominal time of event | hours | SDTM domain |
+| TAFD | Time after first dose | numeric | Actual time after individual first dose | hours | TIME |
+| TAD | Time after last dose | numeric | Time after individual last dose | hours | TIME |
+| EVID | Event ID | 0, 1 | 0 = Observation, 1 = Administration | NA | Produced |
+| AMT | Amount | numeric | Dose administered | mg | EX: EXDOSE |
+| ANALYTE | Analyte | character | Assigned name to observation substrate | NA | EXTRT, xxTESTCD or assigned |
+| CMT | Compartment | 1, 1, 2, 3 | 1 = PLACEBO administration, 1 = XAN administration, 2 = XAN observation, 3 = ALT observation | NA | Produced or assigned |
+| PARENT | Parent analyte | character | Reference drug name for observations | NA | Automatically or manually assigned |
+| METABOLITE | Metabolite | logical | Metabolite flag | NA | Automatically or manually assigned |
+| DOSE | Dose | numeric | Last administerd dose | mg | EX: EXDOSE |
+| DV | Dependent variable | numeric | Dependent variable, NA for administrations | NA | SDTM domain |
+| MDV | Missing DV | numeric | 0 = non-missing DV, 1 = Missing DV | NA | Produced |
+| IMPUTATION | Imputation | character | time imputation applied to record | NA | Produced |
+| ACTARMCD | Actual arm code | character | ACTARMCD as in SDTM source | NA | DM: ACTARMCD |
+| TRTDY | Treatment day | numeric | Day after treatment start | NA | SDTM domain |
+| BL_CREAT | Baseline creatinine | numeric | Serum creatinine value at baseline | umol/l | LB |
+| BL_CRCL | Baseline creatinnine clearance | numeric | Creatinine clearance based on baseline serum creatinine | ml/min | LB, DM |
+| BL_RENAL | Baseline renal function class | normal, mild, moderate, severe | Renal function category at baseline, based on BL_CRCL | NA | Derived from BL_CRCL |
+| DVBL | Baseline value for dependent variable | numeric | DV value at baseline | NA | SDTM domain |
+| DVCFB | Change from baseline of dependent variable | numeric | DV difference to DVBL | NA | Derived from DV, DVBL |
+| DL | Dose level | numeric | Dose at treatment start | mg | Derived from DOSE |
+
 ## DATA EXPLORATION
 
 ### Exposure
@@ -168,7 +210,7 @@ invisible(capture.output(
 mean_dose_plot(nif)
 ```
 
-![](pharmaverse-example_files/figure-html/unnamed-chunk-6-1.png)
+![](pharmaverse-example_files/figure-html/unnamed-chunk-7-1.png)
 
 ### Pharmacokinetics
 
@@ -178,4 +220,4 @@ plot(nif, "XAN")
 #> ℹ Do you need to adjust the group aesthetic?
 ```
 
-![](pharmaverse-example_files/figure-html/unnamed-chunk-7-1.png)
+![](pharmaverse-example_files/figure-html/unnamed-chunk-8-1.png)

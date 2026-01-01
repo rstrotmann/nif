@@ -1085,14 +1085,15 @@ add_bl_crcl <- function(obj, method = egfr_cg, molar = FALSE) {
 #'
 #' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
+#' @param molar Use molar concentrations.
 #' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
 #' @return A NIF object.
 #' @export
 #' @examples
 #' head(add_bl_renal(examplinib_poc_nif), 5)
-add_bl_renal <- function(obj, method = egfr_cg) {
+add_bl_renal <- function(obj, method = egfr_cg, molar = FALSE) {
   if (!"BL_CRCL" %in% names(obj))
-    obj <- add_bl_crcl(obj, method = method)
+    obj <- add_bl_crcl(obj, method = method, molar = molar)
 
   obj |>
     mutate(BL_RENAL = as.character(
