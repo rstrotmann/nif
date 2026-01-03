@@ -13,22 +13,23 @@
 new_nif <- function(obj = NULL, ..., silent = NULL) {
   lifecycle::deprecate_warn("0.61.1", "new_nif()", "nif()")
 
-  if (is.null(obj)) {
-    temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
-    colnames(temp) <- minimal_nif_fields
-    class(temp) <- c("nif", "data.frame")
-    temp |>
-      order_nif_columns()
-  } else {
-    if (inherits(obj, "sdtm")) {
-      temp <- nif_auto(obj, ..., silent = silent)
-    } else {
-      temp <- as.data.frame(obj)
-      class(temp) <- c("nif", "data.frame")
-    }
-    class(temp) <- c("nif", "data.frame")
-    order_nif_columns(temp)
-  }
+  # if (is.null(obj)) {
+  #   temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
+  #   colnames(temp) <- minimal_nif_fields
+  #   class(temp) <- c("nif", "data.frame")
+  #   temp |>
+  #     order_nif_columns()
+  # } else {
+  #   if (inherits(obj, "sdtm")) {
+  #     temp <- nif_auto(obj, ..., silent = silent)
+  #   } else {
+  #     temp <- as.data.frame(obj)
+  #     class(temp) <- c("nif", "data.frame")
+  #   }
+  #   class(temp) <- c("nif", "data.frame")
+  #   order_nif_columns(temp)
+  # }
+  nif(obj = obj, ..., silent = silent)
 }
 
 

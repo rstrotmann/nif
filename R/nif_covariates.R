@@ -71,6 +71,21 @@ add_covariate <- function(
   # input validation
   validate_nif(nif)
   validate_sdtm(sdtm)
+
+  # validate_char_param(domain, "domain")
+  # if (!has_domain(sdtm, domain))
+  #   stop(paste0("Domain not found in sdtm object: ", domain))
+
+  # # Get domain data
+  # domain_data <- domain(sdtm, str_to_lower(domain))
+  #
+  # validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
+  # if (is.null(testcd_field))
+  #
+  # if (is.null(testcd_field))
+  #   validate_testcd(sdtm, testcd, domain)
+
+
   if (is.null(testcd_field)) {
     validate_testcd(sdtm, testcd, domain)
   } else {
@@ -87,6 +102,8 @@ add_covariate <- function(
       ))
     }
   }
+
+
 
   validate_char_param(covariate, "covariate", allow_null = TRUE)
   validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)

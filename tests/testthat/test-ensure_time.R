@@ -67,6 +67,7 @@ test_that("ensure_time calculates TIME, TAD, and TAFD from TIME", {
   expect_equal(result$TAD, c(0, 1, 2, 0, 1))
 })
 
+
 test_that("ensure_time handles multiple dosing events", {
   # Create test data with multiple doses
   test_data <- tibble::tribble(
@@ -90,6 +91,7 @@ test_that("ensure_time handles multiple dosing events", {
   # Check TAD values (hours since most recent dose)
   expect_equal(result$TAD, c(0, 1, 0, 1, 2))
 })
+
 
 test_that("ensure_time handles multiple parent compounds", {
   # Create test data with multiple parent compounds
@@ -116,6 +118,7 @@ test_that("ensure_time handles multiple parent compounds", {
   expect_equal(result$TAD, c(0, 1, 2, 0, 1, 2))
 })
 
+
 test_that("ensure_time handles observations before first dose", {
   # Create test data with observations before dosing
   test_data <- tibble::tribble(
@@ -141,6 +144,7 @@ test_that("ensure_time handles observations before first dose", {
   expect_equal(result$TAD, c(-2, -1, 0, 1, 2))
 })
 
+
 test_that("ensure_time handles missing required columns", {
   # Create test data without required columns
   test_data <- tibble::tribble(
@@ -155,6 +159,27 @@ test_that("ensure_time handles missing required columns", {
     "No administration records"
   )
 })
+
+
+test_that("ensure_time handles missing required columns", {
+  # Create test data without required columns
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~TAFD, ~TAD, ~EVID, ~DV,  ~AMT, ~CMT,
+    1,   0,     0,     0,    1,     NA,  100,  1,
+    1,   1,     1,     1,    0,     10,  0,    2,
+    1,   2,     2,     2,    0,     20,  0,    2,
+    2,   0,     0,     0,    1,     NA,  100,  1,
+    2,   1,     1,     1,    0,     30,  0,    2
+  ) %>%
+    nif() |>
+    select(-TIME)
+
+  expect_error(
+    result <- ensure_time(test_data),
+    "Missing required columns: Either DTC or TIME is required"
+  )
+})
+
 
 test_that("ensure_time preserves original data", {
   # Create test data with extra columns

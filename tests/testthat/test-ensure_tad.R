@@ -1,3 +1,23 @@
+test_that("ensure_tad handles missing input columns", {
+  test_data <- tibble::tribble(
+    ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
+    1,   0,     1,     1,    "DRUG",  NA,  100,
+    1,   1,     0,     2,    "DRUG",  10,  0,
+    1,   2,     0,     2,    "DRUG",  20,  0,
+    2,   0,     1,     1,    "DRUG",  NA,  100,
+    2,   1,     0,     2,    "DRUG",  30,  0,
+    2,   2,     0,     2,    "DRUG",  40,  0
+  ) %>%
+    nif() |>
+    select(-TIME)
+
+  expect_error(
+    result <- ensure_tad(test_data),
+    "Missing required columns"
+  )
+})
+
+
 test_that("ensure_tad works with basic input", {
   # Create a simple test data frame
   test_data <- tibble::tribble(

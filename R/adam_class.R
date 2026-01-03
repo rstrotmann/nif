@@ -37,18 +37,6 @@ summary.adam <- function(object, ...) {
     subjects = character(0),
     adam = object,
     n_observations = NULL
-    # treatments = character(0),
-    # arms = data.frame(ACTARMCD = character(0), ACTARM = character(0)),
-    # doses = data.frame(EXTRT = character(0), EXDOSE = numeric(0)),
-    # specimens = character(0),
-    # analytes = data.frame(PCTEST = character(0), PCTESTCD = character(0)),
-    # analyte_mapping = object$analyte_mapping,
-    # metabolite_mapping = object$metabolite_mapping,
-    # time_mapping = object$time_mapping,
-    # hash = rlang::hash(object),
-    # last = last_dtc(object),
-    # title = trial_title(object),
-    # dco = trial_dco(object)
   )
 
   out$study <- purrr::map(

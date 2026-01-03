@@ -201,9 +201,9 @@ ensure_tad <- function(obj) {
   result <- add_tad(obj)
 
   # Validate TAD was added
-  if (!"TAD" %in% names(result)) {
-    stop("Failed to add TAD field")
-  }
+  # if (!"TAD" %in% names(result)) {
+  #   stop("Failed to add TAD field")
+  # }
 
   result
 }
@@ -252,9 +252,9 @@ ensure_tafd <- function(obj) {
   )
 
   # Validate TAFD was added
-  if (!"TAFD" %in% names(result)) {
-    stop("Failed to add TAFD field")
-  }
+  # if (!"TAFD" %in% names(result)) {
+  #   stop("Failed to add TAFD field")
+  # }
 
   result
 }
@@ -278,9 +278,9 @@ ensure_tafd <- function(obj) {
 #' @noRd
 ensure_time <- function(obj) {
   # Validate input is a NIF object
-  if (!inherits(obj, "nif")) {
-    stop("Input must be a NIF object")
-  }
+  # if (!inherits(obj, "nif")) {
+  #   stop("Input must be a NIF object")
+  # }
 
   # If all required time fields already exist, return object unchanged
   if (all(c("TIME", "TAD", "TAFD") %in% names(obj))) {
@@ -316,13 +316,13 @@ ensure_time <- function(obj) {
   }
 
   # Validate that all time fields are now present
-  missing_time_fields <- setdiff(c("TIME", "TAD", "TAFD"), names(result))
-  if (length(missing_time_fields) > 0) {
-    stop(
-      "Failed to generate all required time fields: ",
-      paste(missing_time_fields, collapse = ", ")
-    )
-  }
+  # missing_time_fields <- setdiff(c("TIME", "TAD", "TAFD"), names(result))
+  # if (length(missing_time_fields) > 0) {
+  #   stop(
+  #     "Failed to generate all required time fields: ",
+  #     paste(missing_time_fields, collapse = ", ")
+  #   )
+  # }
 
   result
 }

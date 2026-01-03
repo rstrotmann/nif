@@ -215,7 +215,7 @@ plot.domain <- function(
   validate_logical_param(points, "points")
   validate_logical_param(lines, "lines")
   validate_logical_param(legend, "legend")
-  validate_char_param(color, allow_null = TRUE)
+  validate_char_param(color, "color", allow_null = TRUE)
 
   if (!is.null(color)) {
     if (!color %in% names(x)) {
@@ -229,8 +229,17 @@ plot.domain <- function(
   dv_field <- paste0(domain, "STRESN")
   time_field <- paste0(domain, "DTC")
   dy_field <- paste0(domain, "DY")
+
+  x_scale_type = "datetime"
   if (dy_field %in% names(x)) {
     time_field <- dy_field
+    x_scale_type = "continuous"
+  }
+
+  if (nrow(x) == 0) {
+    out <- ggplot()
+    warning("Empty domain data")
+    return(out)
   }
 
   out <- NULL
@@ -343,8 +352,15 @@ plot.domain <- function(
         ggplot(
           aes(x = .data[[time_field]], y = .data[[dv_field]],
               color = .data[[testcd_field]])
-        ) +
-        ggplot2::scale_x_datetime(date_labels = "%Y-%m-%d")
+        )
+
+      # +
+      #   ggplot2::scale_x_datetime(date_labels = "%Y-%m-%d")
+
+      if (x_scale_type == "datetime")
+        out <- out + ggplot2::scale_x_datetime(date_labels = "%Y-%m-%d")
+      else
+        out <- out + scale_x_continuous()
 
       if (points == TRUE)
         out <- out + geom_point()
@@ -352,6 +368,12 @@ plot.domain <- function(
       if (lines == TRUE)
         out <- out + geom_line()
     }
+  }
+
+  # guard for empty out
+  if (is.null(out)) {
+    out <- ggplot()
+    warn("No domain data found")
   }
 
   out <- out +

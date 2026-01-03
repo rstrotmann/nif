@@ -11,23 +11,7 @@
 new_sdtm <- function(sdtm_data) {
   lifecycle::deprecate_warn("0.61.1", "new_sdtm()", "sdtm()")
 
-  domains <- sdtm_data
-
-  analyte_mapping <- data.frame()
-  metabolite_mapping <- data.frame()
-  parent_mapping <- data.frame()
-  time_mapping <- data.frame()
-
-  temp <- list(
-    domains = domains,
-    analyte_mapping = analyte_mapping,
-    metabolite_mapping = metabolite_mapping,
-    parent_mapping = parent_mapping,
-    time_mapping = time_mapping
-  )
-
-  class(temp) <- c("sdtm", "list")
-  temp
+  sdtm(sdtm_data)
 }
 
 
@@ -493,7 +477,6 @@ suggest <- function(obj, show_all = FALSE) {
     },
     sdtm_summary$analytes$PCTESTCD
   )
-
 
   # PK category
   if ("PCCAT" %in% names(pc)) {
