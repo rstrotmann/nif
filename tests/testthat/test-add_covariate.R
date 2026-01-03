@@ -269,3 +269,15 @@ test_that("add_covariate works with actual data set", {
   expect_equal(temp$DV, temp$TEST)
 })
 
+
+test_that("add_covariate handles pre-exisiting covariate name", {
+  nif <- create_test_nif() |>
+    mutate(WEIGHT = 80)
+  sdtm <- create_test_sdtm()
+
+  # Add covariate without specifying name
+  expect_error(
+    result <- add_covariate(nif, sdtm, "vs", "WEIGHT"),
+    "Covariate WEIGHT is already in nif"
+  )
+})

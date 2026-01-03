@@ -99,36 +99,9 @@ add_covariate <- function(
     ))
   }
 
-  #
-  # validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
-  # if (is.null(testcd_field))
-  #
-  # if (is.null(testcd_field))
-  #   validate_testcd(sdtm, testcd, domain)
-
-
-  # if (is.null(testcd_field)) {
-  #   validate_testcd(sdtm, testcd, domain)
-  # } else {
-  #   validate_char_param(domain, "domain")
-  #   if (!testcd_field %in% names(domain(sdtm, domain))) {
-  #     stop(paste0(
-  #       "Testcode field ", testcd_field, " not found in domain ", domain, "!"
-  #     ))
-  #   }
-  #   if (!testcd %in% unique(domain(sdtm, domain)[[testcd_field]])) {
-  #     stop(paste0(
-  #       "Testcd ", testcd, " not found in ",
-  #       toupper(domain), "$", testcd_field, "!"
-  #     ))
-  #   }
-  # }
-
-
   validate_char_param(covariate, "covariate", allow_null = TRUE)
   validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
   validate_char_param(dv_field, "dv_field", allow_null = TRUE)
-  # validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
   validate_char_param(observation_filter, "observation_filter")
   validate_logical_param(silent, "silent", allow_null = TRUE)
   validate_char_param(cat, "cat", allow_null = TRUE)
@@ -137,9 +110,6 @@ add_covariate <- function(
   # Set up field names
   if (is.null(dtc_field)) dtc_field <- paste0(str_to_upper(domain), "DTC")
   if (is.null(dv_field)) dv_field <- paste0(str_to_upper(domain), "STRESN")
-  # if (is.null(testcd_field)) {
-  #   testcd_field <- paste0(str_to_upper(domain), "TESTCD")
-  # }
   if (is.null(covariate)) covariate <- str_to_upper(testcd)
   cat_field <- paste0(toupper(domain), "CAT")
   scat_field <- paste0(toupper(domain), "SCAT")
@@ -165,11 +135,6 @@ add_covariate <- function(
       "Required fields missing in domain data: ",
       nice_enumeration(missing_fields)
     ))
-  }
-
-  # Validate testcd exists in the domain
-  if (!testcd %in% domain_data[[testcd_field]]) {
-    stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
   }
 
   # Validate subjects exist in both datasets
