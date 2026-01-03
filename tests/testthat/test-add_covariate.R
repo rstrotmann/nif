@@ -129,7 +129,7 @@ test_that("add_covariate validates domain exists", {
 
   expect_error(
     add_covariate(nif, sdtm, "xx", "WEIGHT", covariate = "wt"),
-    "Domain xx not found in sdtm object!"
+    "Domain not found in sdtm object: xx"
   )
 })
 
@@ -159,7 +159,7 @@ test_that("add_covariate validates testcd exists", {
 
   expect_error(
     add_covariate(nif, sdtm, "vs", "NONEXISTENT", covariate = "wt"),
-    "Testcd NONEXISTENT not found in domain VS!"
+    "Testcd NONEXISTENT not found"
   )
 })
 
@@ -268,3 +268,4 @@ test_that("add_covariate works with actual data set", {
 
   expect_equal(temp$DV, temp$TEST)
 })
+
