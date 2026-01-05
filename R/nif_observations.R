@@ -279,9 +279,9 @@ make_ntime <- function(
 #' Compile observation data frame
 #'
 #' @description
-#' Create a data frame of observations from a SDTM domain specified by the `domain` argument
-#' where the dependent variable comes from the `dv_field` argument and the
-#' timing information from the `dtc_field` argument.
+#' Create a data frame of observations from a SDTM domain specified by the
+#' `domain` argument where the dependent variable comes from the `dv_field`
+#' argument and the timing information from the `dtc_field` argument.
 #'
 #' The 'TIME' in the output is `NA` throughout and needs to be calculated based
 #' on administration time point information provided separately.

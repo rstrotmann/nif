@@ -108,7 +108,7 @@ add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV 
 #> 
-#> Hash: cfcb899c225389f5de3fb2a91b381eaa
+#> Hash: 687e4ae8560e10caa32da596dcf1bb24
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME   TAD   ANALYTE      EVID   CMT   AMT   DOSE   DV   

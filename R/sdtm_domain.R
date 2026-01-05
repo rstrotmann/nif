@@ -230,7 +230,7 @@ plot.domain <- function(
   time_field <- paste0(domain, "DTC")
   dy_field <- paste0(domain, "DY")
 
-  x_scale_type = "datetime"
+  x_scale_type <- "datetime"
   if (dy_field %in% names(x)) {
     time_field <- dy_field
     x_scale_type = "continuous"
@@ -354,9 +354,6 @@ plot.domain <- function(
               color = .data[[testcd_field]])
         )
 
-      # +
-      #   ggplot2::scale_x_datetime(date_labels = "%Y-%m-%d")
-
       if (x_scale_type == "datetime")
         out <- out + ggplot2::scale_x_datetime(date_labels = "%Y-%m-%d")
       else
@@ -368,7 +365,6 @@ plot.domain <- function(
       if (lines == TRUE)
         out <- out + geom_line()
     } else {
-      # out <- NULL
       missing_fields <- setdiff(c(testcd_field, time_field, dv_field), names(x))
       stop(paste0("Missing domain fields: ", nice_enumeration(missing_fields)))
     }

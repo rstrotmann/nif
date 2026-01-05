@@ -192,9 +192,9 @@ n_administrations(nif())
 #> 0 compartments with observations:  
 #> 
 #> Columns:
-#>   ID, TIME, EVID, AMT, CMT, DV, N 
+#>   REF, ID, TIME, EVID, AMT, CMT, DV, N 
 #> 
-#> Hash: bf68797c34cb9c42cf34f518ff8e62d7
+#> Hash: 701df85f5d36a9da680278a70d1f4cf0
 #> 
 #> Data (selected columns):
 #> 

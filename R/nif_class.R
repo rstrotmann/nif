@@ -12,23 +12,6 @@
 #' @export
 new_nif <- function(obj = NULL, ..., silent = NULL) {
   lifecycle::deprecate_warn("0.61.1", "new_nif()", "nif()")
-
-  # if (is.null(obj)) {
-  #   temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
-  #   colnames(temp) <- minimal_nif_fields
-  #   class(temp) <- c("nif", "data.frame")
-  #   temp |>
-  #     order_nif_columns()
-  # } else {
-  #   if (inherits(obj, "sdtm")) {
-  #     temp <- nif_auto(obj, ..., silent = silent)
-  #   } else {
-  #     temp <- as.data.frame(obj)
-  #     class(temp) <- c("nif", "data.frame")
-  #   }
-  #   class(temp) <- c("nif", "data.frame")
-  #   order_nif_columns(temp)
-  # }
   nif(obj = obj, ..., silent = silent)
 }
 
@@ -114,21 +97,14 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       all(is.na(x) | is.numeric(x))
     }
 
-    # non_num_fields <- unlist(lapply(min_obj, class))
-    # non_num_fields <- names(min_obj)[
-    #   !unlist(lapply(min_obj, class)) %in% c("numeric", "integer")]
-
-    non_num_fields <- names(min_obj)[
-      !unlist(lapply(min_obj, numeric_or_na))]
+    non_num_fields <- names(min_obj)[!unlist(lapply(min_obj, numeric_or_na))]
 
     if (length(non_num_fields) > 0)
       stop(paste0("Non-numeric essential fields: ",
                   nice_enumeration(non_num_fields)))
     temp <- obj
   }
-  # temp <- as.data.frame(obj)
   temp <- temp |>
-    # as.data.frame() |>
     arrange_and_add_ref()
   class(temp) <- c("nif", "data.frame")
   order_nif_columns(temp)

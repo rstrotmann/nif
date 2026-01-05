@@ -76,18 +76,10 @@ index_nif <- function(nif) {
   if (length(missing_fields) > 0)
     stop(paste0("Missing expected fields in nif: ", missing_fields))
 
-  # if (!all(c("ID", "TIME", "EVID")) %in% names(nif))
-  #   stop("Missing essential fields in nif")
-
   nif |>
-    # as.data.frame() |>
-    # dplyr::arrange(.data$ID, .data$TIME, -.data$EVID) |>
-    # dplyr::arrange(c("ID", "TIME")) |>
-    # arrange(-c("EVID")) |>
     dplyr::arrange(.data$ID, .data$TIME, desc(.data$EVID)) |>
     dplyr::mutate(REF = row_number()) |>
-    dplyr::relocate("REF") #|>
-    # nif()
+    dplyr::relocate("REF")
 }
 
 

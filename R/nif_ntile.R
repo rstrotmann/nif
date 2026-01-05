@@ -50,8 +50,7 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   if (!is.numeric(n) ||
       length(n) != 1 ||
       n < 2 || n > 100 ||
-      n != as.integer(n)
-    )
+      n != as.integer(n))
     stop("n must be a positive integer between 2 and 100")
 
   # Validate that ntile_name is either NULL or a valid character string

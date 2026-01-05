@@ -51,13 +51,13 @@ The external data can be imported as a nif object using
 ``` r
 nif <- import_nif(csv_file_name, format = "csv")
 head(nif)
-#>   ID TIME EVID AMT CMT MDV RATE     DV
-#> 1  1  0.0    1   5   1   1    0     NA
-#> 2  1  0.0    0   0   2   0    0 0.0000
-#> 3  1  0.5    0   0   2   0    0 0.0024
-#> 4  1  1.0    0   0   2   0    0 0.0072
-#> 5  1  1.5    0   0   2   0    0 0.0157
-#> 6  1  2.0    0   0   2   0    0 0.0209
+#>   REF ID TIME EVID AMT CMT MDV RATE     DV
+#> 1   1  1  0.0    1   5   1   1    0     NA
+#> 2   2  1  0.0    0   0   2   0    0 0.0000
+#> 3   3  1  0.5    0   0   2   0    0 0.0024
+#> 4   4  1  1.0    0   0   2   0    0 0.0072
+#> 5   5  1  1.5    0   0   2   0    0 0.0157
+#> 6   6  1  2.0    0   0   2   0    0 0.0209
 ```
 
 The resulting object behaves as a regular `nif` object, for example, it
@@ -99,7 +99,7 @@ summary(nif)
 #>   PARENT   min   max   mean   median   
 #>   CMT1     1     1     1      1         
 #> 
-#> Hash: cdd030cc138dc65c68205170cb355caa
+#> Hash: 52c6868ef8c1c50b1c68b84ab4952714
 plot(nif, log = T, points = T)
 ```
 
@@ -129,11 +129,11 @@ nif <- import_nif(
 )
 
 head(nif)
-#>   ID TIME NTIME EVID AMT CMT MDV RATE        DV
-#> 1  1  0.0   0.0    1   5   1   1    0        NA
-#> 2  1  0.0   0.0    0   0   2   0    0 0.000e+00
-#> 3  1  0.5   0.5    0   0   2   0    0 6.000e-06
-#> 4  1  1.0   1.0    0   0   2   0    0 1.800e-05
-#> 5  1  1.5   1.5    0   0   2   0    0 3.925e-05
-#> 6  1  2.0   2.0    0   0   2   0    0 5.225e-05
+#>   REF ID TIME NTIME EVID AMT CMT MDV RATE        DV
+#> 1   1  1  0.0   0.0    1   5   1   1    0        NA
+#> 2   2  1  0.0   0.0    0   0   2   0    0 0.000e+00
+#> 3   3  1  0.5   0.5    0   0   2   0    0 6.000e-06
+#> 4   4  1  1.0   1.0    0   0   2   0    0 1.800e-05
+#> 5   5  1  1.5   1.5    0   0   2   0    0 3.925e-05
+#> 6   6  1  2.0   2.0    0   0   2   0    0 5.225e-05
 ```

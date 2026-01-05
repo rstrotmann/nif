@@ -57,7 +57,6 @@ last_ex_dtc <- function(ex) {
 #' @noRd
 make_time <- function(obj) {
   # Input validation
-  # validate_nif(obj)
   if (!inherits(obj, "nif"))
     stop("Input must be a nif object")
 
