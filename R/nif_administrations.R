@@ -320,8 +320,8 @@ make_administration <- function(
 
     # make generic fields
     mutate(
-      TIME = NA, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
-      METABOLITE = FALSE, DV = NA, CMT = cmt, EVID = 1, MDV = 1,
+      TIME = NA_integer_, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
+      METABOLITE = FALSE, DV = NA_real_, CMT = cmt, EVID = 1, MDV = 1,
       DOSE = .data$EXDOSE, AMT = .data$EXDOSE
     ) |>
     expand_ex()

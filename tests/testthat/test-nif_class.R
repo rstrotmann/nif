@@ -1,7 +1,7 @@
 test_that("nif works", {
   suppressMessages(expect_equal(
     dim(nif()),
-    c(0, 6)))
+    c(0, 7)))
 
   suppressMessages(expect_no_error(
     nif(examplinib_sad, RS2023 ~ EXAMPLINIB)

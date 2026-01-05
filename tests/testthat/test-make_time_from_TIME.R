@@ -158,45 +158,6 @@ test_that("make_time_from_TIME handles empty data frame", {
 })
 
 
-test_that("make_time_from_TIME validates data types", {
-  # Test with character TIME instead of numeric
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
-    1,   "0",   1,     "DRUG",   "DRUG",  NA,  100,  1
-  ) %>%
-    nif()
-
-  expect_error(
-    make_time_from_TIME(test_data),
-    "TIME column must contain numeric values"
-  )
-
-  # Test with character EVID instead of numeric
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
-    1,   0,     "1",   "DRUG",   "DRUG",  NA,  100,  1
-  ) %>%
-    nif()
-
-  expect_error(
-    make_time_from_TIME(test_data),
-    "EVID column must contain numeric values"
-  )
-
-  # Test with character ID instead of numeric
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
-    "1", 0,     1,     "DRUG",   "DRUG",  NA,  100,  1
-  ) %>%
-    nif()
-
-  expect_error(
-    make_time_from_TIME(test_data),
-    "ID column must contain numeric values"
-  )
-})
-
-
 test_that("make_time_from_TIME validates input is nif object", {
   # Test with regular data frame
   test_data <- data.frame(
@@ -291,12 +252,12 @@ test_that("make_time_from_TIME handles complex multi-subject, multi-parent scena
   result <- make_time_from_TIME(test_data)
 
   # Check TIME values (preserved as-is, but reordered by function)
-  expect_equal(result$TIME, c(0, 1, 4, 5, 2, 3, 0, 1, 2))
+  expect_equal(result$TIME, c(0, 1, 2, 3, 4, 5, 0, 1, 2))
 
   # Check TAFD values (relative to first dose of each parent per subject)
   # Subject 1: DRUG1 first at TIME=0, DRUG2 first at TIME=2
   # Subject 2: DRUG1 first at TIME=0
-  expect_equal(result$TAFD, c(0, 1, 4, 5, 0, 1, 0, 1, 2))
+  expect_equal(result$TAFD, c(0, 1, 0, 1, 4, 5, 0, 1, 2))
 
   # Check TAD values (relative to most recent dose of each parent per subject)
   # Subject 1: DRUG1 doses at TIME=0 and 4, DRUG2 dose at TIME=2

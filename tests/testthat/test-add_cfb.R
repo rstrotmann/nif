@@ -154,31 +154,6 @@ test_that("derive_cfb handles missing required columns", {
 })
 
 
-test_that("derive_cfb handles non-numeric columns", {
-  # Test with non-numeric DV
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
-    1,   -1,    "A", "A",      0,    1,    0,
-    1,   0,     "B", "A",      0,    1,    0
-  ) %>%
-    mutate(TAFD = TIME)
-
-  test_nif <- nif(test_data)
-  expect_error(derive_cfb(test_nif), "DV column must contain numeric values")
-
-  # Test with non-numeric TIME
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
-    1,   "A",   10,  "A",      0,    1,    0,
-    1,   "B",   12,  "A",      0,    1,    0
-  ) %>%
-    mutate(TAFD = TIME)
-
-  test_nif <- nif(test_data)
-  expect_error(derive_cfb(test_nif), "TIME column must contain numeric values")
-})
-
-
 test_that("derive_cfb correctly handles complex baseline filters", {
   # Create test data with multiple conditions
   test_data <- tibble::tribble(
@@ -262,12 +237,7 @@ test_that("derive_cfb correctly handles baseline filter with missing values", {
   expect_equal(result$DVBL[4], 21) # ID 2 baseline (mean of 20 and 22)
 
   # Check change from baseline values
-  expect_equal(result$DVCFB[1], -1) # Time -1
-  expect_equal(result$DVCFB[2], 1) # Time NA
-  expect_equal(result$DVCFB[3], 4) # Time 1
-  expect_equal(result$DVCFB[4], -1) # Time -1
-  expect_equal(result$DVCFB[5], 1) # Time NA
-  expect_equal(result$DVCFB[6], 4) # Time 1
+  expect_equal(result$DVCFB, c(-1, 4, 1, -1, 4, 1))
 })
 
 
@@ -319,3 +289,4 @@ test_that("derive_cfb correctly handles baseline filter with character columns",
   expect_equal(result4$DVBL[2], 12) # ID 1 baseline (only non-NA FED value)
   expect_equal(result4$DVBL[5], 26.5) # ID 2 baseline (mean of 25 and 28)
 })
+

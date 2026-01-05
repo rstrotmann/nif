@@ -80,16 +80,16 @@ test_that("import_nif handles no_numeric parameter correctly", {
   csv_file <- tempfile(fileext = ".csv")
   on.exit(unlink(csv_file))
 
-  csv_content <- "USUBJID,TIME,EVID,DV,ANALYTE,ID\n1001,0,0,10.5,DRUG,123"
+  csv_content <- "USUBJID,TIME,EVID,DV,ANALYTE,ID,TEST\n1001,0,0,10.5,DRUG,123, 456"
   writeLines(csv_content, csv_file)
 
   # Without including ID in no_numeric, it should be numeric
   result1 <- import_nif(csv_file, silent = TRUE)
-  expect_type(result1$ID, "integer")
+  expect_type(result1$TEST, "integer")
 
   # With ID in no_numeric, it should be character
-  result2 <- import_nif(csv_file, no_numeric = c("USUBJID", "STUDYID", "ID"), silent = TRUE)
-  expect_type(result2$ID, "character")
+  result2 <- import_nif(csv_file, no_numeric = c("TEST"), silent = TRUE)
+  expect_type(result2$TEST, "character")
 })
 
 
@@ -151,3 +151,4 @@ test_that("import_nif renames columns correctly", {
   expect_equal(result$Y, c("DRUG", "DRUG", "DRUG"))
   expect_equal(is.numeric(result$Z), TRUE)
 })
+

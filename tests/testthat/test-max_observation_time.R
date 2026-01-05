@@ -1,12 +1,12 @@
 test_that("max_observation_time returns max time for observations only", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   0,     1,     NA,  1,    # dosing event
-    1,   1,     0,     10,  2,    # observation
-    1,   5,     0,     20,  2,    # observation
-    1,   10,    0,     15,  2,    # observation
-    1,   12,    1,     NA,  1     # dosing event
-  ) %>%
+  ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,     0,     1,  NA,    1,   10,
+    1,     1,     0,  10,    2,   10,
+    1,     5,     0,  20,    2,   10,
+    1,    10,     0,  15,    2,   10,
+    1,    12,     1,  NA,    1,   10
+  ) |>
     nif()
 
   expect_equal(max_observation_time(nif), 10)
@@ -14,11 +14,11 @@ test_that("max_observation_time returns max time for observations only", {
 
 test_that("max_observation_time ignores dosing events (EVID == 1)", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   0,     1,     NA,  1,    # dosing event
-    1,   1,     0,     10,  2,    # observation
-    1,   50,    1,     NA,  1,    # dosing event (should be ignored)
-    1,   5,     0,     20,  2     # observation
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,     0,     1,  NA,    1,   10,
+    1,     1,     0,  10,    2,   10,
+    1,    50,     1,  NA,    1,   10,
+    1,     5,     0,  20,    2,   10
   ) %>%
     nif()
 
@@ -27,11 +27,11 @@ test_that("max_observation_time ignores dosing events (EVID == 1)", {
 
 test_that("max_observation_time filters by analyte when specified", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE,
-    1,   1,     0,     10,  2,    "CMT2",
-    1,   5,     0,     20,  2,    "CMT2",
-    1,   10,    0,     15,  3,    "CMT3",
-    1,   20,    0,     25,  3,    "CMT3"
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE, ~AMT,
+    1,     1,     0,  10,    2,   "CMT2",   10,
+    1,     5,     0,  20,    2,   "CMT2",   10,
+    1,    10,     0,  15,    3,   "CMT3",   10,
+    1,    20,     0,  25,    3,   "CMT3",   10
   ) %>%
     nif()
 
@@ -41,11 +41,11 @@ test_that("max_observation_time filters by analyte when specified", {
 
 test_that("max_observation_time returns max across all analytes when analyte is NULL", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE,
-    1,   1,     0,     10,  2,    "CMT2",
-    1,   5,     0,     20,  2,    "CMT2",
-    1,   10,    0,     15,  3,    "CMT3",
-    1,   20,    0,     25,  3,    "CMT3"
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE, ~AMT,
+    1,     1,     0,  10,    2,   "CMT2",   10,
+    1,     5,     0,  20,    2,   "CMT2",   10,
+    1,    10,     0,  15,    3,   "CMT3",   10,
+    1,    20,     0,  25,    3,   "CMT3",   10
   ) %>%
     nif()
 
@@ -55,10 +55,10 @@ test_that("max_observation_time returns max across all analytes when analyte is 
 
 test_that("max_observation_time returns NA when no observations exist", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   0,     1,     NA,  1,    # only dosing events
-    1,   24,    1,     NA,  1,
-    1,   48,    1,     NA,  1
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,     0,     1,  NA,    1,   10,
+    1,    24,     1,  NA,    1,   10,
+    1,    48,     1,  NA,    1,   10
   ) %>%
     nif()
 

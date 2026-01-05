@@ -258,7 +258,6 @@ import_from_connection <- function(
   }
 
   missing_fields <- minimal_nif_fields[!minimal_nif_fields %in% names(raw)]
-
   if (length(missing_fields) != 0) {
     conditional_message(
       "Missing essential fields ",

@@ -33,6 +33,28 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 }
 
 
+arrange_and_add_ref <- function(obj) {
+  # Create temporary column for descending EVID sort
+  if ("EVID" %in% names(obj)) {
+    obj <- obj |>
+      dplyr::mutate(.EVID_sort = -.data$EVID)
+  }
+
+  obj <- obj |>
+    dplyr::arrange(across(any_of(c("ID", "TIME", "DTC", ".EVID_sort"))))
+
+  # Remove temporary column
+  if (".EVID_sort" %in% names(obj)) {
+    obj <- obj |>
+      dplyr::select(-".EVID_sort")
+  }
+
+  obj |>
+    dplyr::mutate(REF = row_number()) |>
+    dplyr::relocate("REF")
+}
+
+
 #' nif class constructor
 #'
 #' @param obj A data frame containing the actual NIF data or a sdtm object.
@@ -44,22 +66,58 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 #' @examples
 #' nif()
 nif <- function(obj = NULL, ..., silent = NULL) {
+
   if (is.null(obj)) {
-    temp <- data.frame(matrix(nrow = 0, ncol = length(minimal_nif_fields)))
-    colnames(temp) <- minimal_nif_fields
+    # empty nif object
+    fields <- c("REF", minimal_nif_fields)
+    temp <- data.frame(matrix(nrow = 0, ncol = length(fields)))
+    colnames(temp) <- fields
     class(temp) <- c("nif", "data.frame")
-    temp |>
-      order_nif_columns()
-  } else {
-    if (inherits(obj, "sdtm")) {
-      temp <- nif_auto(obj, ..., silent = silent)
-    } else {
-      temp <- as.data.frame(obj)
-      class(temp) <- c("nif", "data.frame")
-    }
-    class(temp) <- c("nif", "data.frame")
-    order_nif_columns(temp)
+    return(order_nif_columns(temp))
   }
+
+  temp <- NULL
+  # SDTM data as input
+  if (inherits(obj, "sdtm")) {
+    temp <- nif_auto(obj, ..., silent = silent)
+  } else {
+
+    # other input
+    if (!is.data.frame(obj)) {
+      stop("obj must be a data frame or sdtm object")
+    }
+
+    missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
+    if (length(missing_min_fields) > 0)
+      stop(paste0("Missing essential fields: ",
+                  nice_enumeration(missing_min_fields)))
+
+    min_obj <- obj |>
+      select(all_of(minimal_nif_fields))
+
+    # helper function
+    numeric_or_na <- function(x) {
+      all(is.na(x) | is.numeric(x))
+    }
+
+    # non_num_fields <- unlist(lapply(min_obj, class))
+    # non_num_fields <- names(min_obj)[
+    #   !unlist(lapply(min_obj, class)) %in% c("numeric", "integer")]
+
+    non_num_fields <- names(min_obj)[
+      !unlist(lapply(min_obj, numeric_or_na))]
+
+    if (length(non_num_fields) > 0)
+      stop(paste0("Non-numeric essential fields: ",
+                  nice_enumeration(non_num_fields)))
+    temp <- obj
+  }
+  # temp <- as.data.frame(obj)
+  temp <- temp |>
+    # as.data.frame() |>
+    arrange_and_add_ref()
+  class(temp) <- c("nif", "data.frame")
+  order_nif_columns(temp)
 }
 
 

@@ -91,7 +91,7 @@ test_that("ensure_tad handles multiple parent compounds", {
   result <- ensure_tad(test_data)
 
   # Check TAD values for each parent
-  expect_equal(result$TAD, c(0, 1, 2, 0, 1, 2))
+  expect_equal(result$TAD,c(0, 0, 1, 1, 2, 2))
 })
 
 

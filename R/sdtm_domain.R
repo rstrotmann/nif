@@ -373,7 +373,7 @@ plot.domain <- function(
   # guard for empty out
   if (is.null(out)) {
     out <- ggplot()
-    warn("No domain data found")
+    warning("No domain data found")
   }
 
   out <- out +

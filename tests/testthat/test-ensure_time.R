@@ -25,8 +25,8 @@ test_that("ensure_time calculates TIME, TAD, and TAFD from DTC", {
     1,   as.POSIXct("2023-01-01 10:00:00"), 0,     "DRUG",   "DRUG",  20,  0,    2,
     2,   as.POSIXct("2023-01-01 08:00:00"), 1,     "DRUG",   "DRUG",  NA,  100,  1,
     2,   as.POSIXct("2023-01-01 09:00:00"), 0,     "DRUG",   "DRUG",  30,  0,    2
-  ) %>%
-    nif()
+  )
+  class(test_data) <- c("nif", "data.frame")
 
   result <- ensure_time(test_data)
 

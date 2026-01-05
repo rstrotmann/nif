@@ -212,52 +212,6 @@ test_that("derive_baseline handles custom baseline filter", {
 })
 
 
-test_that("derive_baseline handles missing required columns", {
-  # Test with missing DV column
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~ANALYTE, ~EVID, ~AMT, ~CMT,
-    1,   -1,    "A",      0,     0,    2,
-    1,   0,     "A",      0,     0,    2
-  )
-  test_nif <- nif(test_data)
-  expect_error(derive_baseline(test_nif), "Missing required columns: DV")
-
-  # Test with missing TIME column
-  test_data <- tibble::tribble(
-    ~ID, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
-    1,   10,   "A",      0,     0,    2,
-    1,   12,   "A",      0,     0,    2
-  )
-  test_nif <- nif(test_data)
-  expect_error(derive_baseline(test_nif), "Missing required columns: TIME")
-})
-
-
-test_that("derive_baseline handles non-numeric columns", {
-  # Test with non-numeric DV
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
-    1,   -1,    "A",  "A",      0,     0,    2,
-    1,   0,     "B",  "A",      0,     0,    2
-  ) %>%
-    mutate(TAFD = TIME)
-
-  test_nif <- nif(test_data)
-  expect_error(derive_baseline(test_nif), "DV column must contain numeric values")
-
-  # Test with non-numeric TIME
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~AMT, ~CMT,
-    1,   "A",   10,   "A",      0,     0,    2,
-    1,   "B",   12,   "A",      0,     0,    2
-  ) %>%
-    mutate(TAFD = TIME)
-
-  test_nif <- nif(test_data)
-  expect_error(derive_baseline(test_nif), "TIME column must contain numeric values")
-})
-
-
 test_that("derive_baseline handles EVID filtering correctly", {
   # Create test data with both EVID 0 and 1
   test_data <- tibble::tribble(

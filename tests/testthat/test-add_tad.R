@@ -65,13 +65,13 @@ test_that("add_tad handles multiple parent compounds", {
     1,   0,     1,     "DRUG2", NA,   100,  1,
     1,   1,     0,     "DRUG2", 30,   0,    1,
     1,   2,     0,     "DRUG2", 40,   0,    1
-  )
-  class(test_data) <- c("nif", "data.frame")
+  ) |>
+    nif()
 
   result <- add_tad(test_data)
 
   # Check TAD values for each parent
-  expect_equal(result$TAD, c(0, 1, 2, 0, 1, 2))
+  expect_equal(result$TAD, c(0, 0, 1, 1, 2, 2))
 })
 
 
@@ -145,3 +145,4 @@ test_that("add_tad returns a nif object", {
 
   expect_s3_class(result, "nif")
 })
+

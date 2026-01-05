@@ -70,18 +70,13 @@ test_that("make_time works with multiple parent compounds", {
   result <- make_time(test_data)
 
   # Check TIME values (all relative to first record at 08:00)
-  # Data gets reordered by the function, so we need to check the actual order
-  expect_equal(result$TIME, c(0, 1, 4, 2, 3, 5))
+  expect_equal(result$TIME, c(0, 1, 2, 3, 4, 5))
 
   # Check TAFD values (relative to first dose of each parent)
-  # DRUG1: first dose at 08:00, so TAFD = 0, 1, 4 for DRUG1 records
-  # DRUG2: first dose at 10:00, so TAFD = 0, 1, 3 for DRUG2 records
-  expect_equal(result$TAFD, c(0, 1, 4, 0, 1, 3))
+  expect_equal(result$TAFD, c(0, 1, 0, 1, 4, 3))
 
   # Check TAD values (relative to most recent dose of each parent)
-  # DRUG1: dose at 08:00, so TAD = 0, 1, 4 for DRUG1 records
-  # DRUG2: dose at 10:00, so TAD = 0, 1, 3 for DRUG2 records
-  expect_equal(result$TAD, c(0, 1, 4, 0, 1, 3))
+  expect_equal(result$TAD, c(0, 1, 0, 1, 4, 3))
 })
 
 
@@ -159,8 +154,8 @@ test_that("make_time validates required columns", {
   test_data <- tibble::tribble(
     ~DTC,                              ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
     as.POSIXct("2023-01-01 08:00:00"), 0,    1,     "DRUG",   "DRUG",  NA,  100,  1
-  ) %>%
-    nif()
+  )
+  class(test_data) <- c("nif", "data.frame")
 
   expect_error(
     make_time(test_data),
@@ -207,8 +202,8 @@ test_that("make_time validates required columns", {
   test_data <- tibble::tribble(
     ~ID, ~DTC,                              ~TIME, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
     1,   as.POSIXct("2023-01-01 08:00:00"), 0,     "DRUG",   "DRUG",  NA,  100,  1
-  ) %>%
-    nif()
+  )
+  class(test_data) <- c("nif", "data.frame")
 
   expect_error(
     make_time(test_data),
@@ -333,17 +328,12 @@ test_that("make_time handles complex multi-subject, multi-parent scenario", {
   result <- make_time(test_data)
 
   # Check TIME values (all relative to first record at 08:00)
-  # Data gets reordered by the function
-  expect_equal(result$TIME, c(0, 1, 4, 5, 2, 3, 0, 1, 2))
+  expect_equal(result$TIME, c(0, 1, 2, 3, 4, 5, 0, 1, 2))
 
   # Check TAFD values (relative to first dose of each parent per subject)
-  # Subject 1: DRUG1 first at 08:00, DRUG2 first at 10:00
-  # Subject 2: DRUG1 first at 14:00
-  expect_equal(result$TAFD, c(0, 1, 4, 5, 0, 1, 0, 1, 2))
+  expect_equal(result$TAFD, c(0, 1, 0, 1, 4, 5, 0, 1, 2))
 
   # Check TAD values (relative to most recent dose of each parent per subject)
-  # Subject 1: DRUG1 doses at 08:00 and 12:00, DRUG2 dose at 10:00
-  # Subject 2: DRUG1 dose at 14:00
   expect_equal(result$TAD, c(0, 1, 0, 1, 0, 1, 0, 1, 2))
 })
 
@@ -390,3 +380,4 @@ test_that("make_time handles predose values before the first admin correctly", {
   expect_equal(result$TAFD, c(-1, -0.5, 0, 0.5, 1, 1.5))
   expect_equal(result$TAD, c(-1, -0.5, 0, 0.5, 0, 0.5))
 })
+

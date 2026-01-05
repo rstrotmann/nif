@@ -31,11 +31,11 @@ test_that("dose_red_sbs identifies subjects with dose reductions", {
 
 test_that("dose_red_sbs returns USUBJID when available", {
   nif <- tibble::tribble(
-    ~ID, ~USUBJID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
-    1, "SUBJ001", 0, 100, 1, 1, NA,
-    1, "SUBJ001", 24, 80, 1, 1, NA,
-    2, "SUBJ002", 0, 100, 1, 1, NA,
-    2, "SUBJ002", 24, 90, 1, 1, NA
+    ~ID,  ~USUBJID, ~TIME, ~AMT, ~EVID, ~CMT, ~DV,
+      1, "SUBJ001",     0,  100,     1,    1,  NA,
+      1, "SUBJ001",    24,   80,     1,    1,  NA,
+      2, "SUBJ002",     0,  100,     1,    1,  NA,
+      2, "SUBJ002",    24,   90,     1,    1,  NA
   ) %>%
     nif()
 

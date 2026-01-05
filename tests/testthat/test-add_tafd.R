@@ -69,7 +69,7 @@ test_that("add_tafd handles multiple parent compounds", {
   result <- add_tafd(test_data)
 
   # Check TAFD values for each parent
-  expect_equal(result$TAFD, c(0, 1, 2, 0, 1, 2))
+  expect_equal(result$TAFD, c(0, 0, 1, 2, 1, 2))
 })
 
 test_that("add_tafd handles different first dose times", {
@@ -137,38 +137,6 @@ test_that("add_tafd preserves original data", {
   # Check that original columns are preserved
   expect_true(all(names(test_data) %in% names(result)))
   expect_equal(result$EXTRA, test_data$EXTRA)
-})
-
-test_that("add_tafd validates numeric data types", {
-  # Test with non-numeric TIME
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
-    1,   "0",   1,     "DRUG",  NA,   100,  1,
-    1,   "1",   0,     "DRUG",  10,   0,    2
-  ) %>%
-    nif()
-
-  expect_error(add_tafd(test_data), "TIME column must contain numeric values")
-
-  # Test with non-numeric EVID
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
-    1,   0,     "1",   "DRUG",  NA,   100,  1,
-    1,   1,     "0",   "DRUG",  10,   0,    2
-  ) %>%
-    nif()
-
-  expect_error(add_tafd(test_data), "EVID column must contain numeric values")
-
-  # Test with non-numeric ID
-  test_data <- tibble::tribble(
-    ~ID,  ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
-    "1",  0,     1,     "DRUG",  NA,   100,  1,
-    "1",  1,     0,     "DRUG",  10,   0,    2
-  ) %>%
-    nif()
-
-  expect_error(add_tafd(test_data), "ID column must contain numeric values")
 })
 
 test_that("add_tafd handles data with no dosing events", {
