@@ -1,12 +1,11 @@
 test_that("nca_from_pp works with valid inputs", {
   # Create test data
-  nif_obj <- nif(
-    tibble::tribble(
-      ~ID, ~USUBJID, ~ANALYTE, ~EVID, ~DOSE, ~AGE,
-      1, "SUBJ1", "DRUG", 1, 100, 30,
-      2, "SUBJ2", "DRUG", 1, 200, 40
-    )
+  nif_obj <- tibble::tribble(
+    ~ID, ~USUBJID, ~ANALYTE, ~EVID, ~DOSE, ~AGE,
+    1, "SUBJ1", "DRUG", 1, 100, 30,
+    2, "SUBJ2", "DRUG", 1, 200, 40
   )
+  class(nif_obj) <- c("nif", "data.frame")
 
   sdtm_data <- sdtm(list(
     pp = tibble::tribble(
@@ -73,8 +72,8 @@ test_that("nca_from_pp handles errors appropriately", {
     ANALYTE = "DRUG",
     EVID = 1,
     DOSE = 100
-  ) %>%
-    nif()
+  )
+  class(nif_obj) <- c("nif", "data.frame")
 
   sdtm_data <- sdtm(
     list(
@@ -109,8 +108,8 @@ test_that("nca_from_pp handles empty results", {
     ANALYTE = "DRUG",
     EVID = 1,
     DOSE = 100
-  ) %>%
-    nif()
+  )
+  class(nif_obj) <- c("nif", "data.frame")
 
   sdtm_data <- sdtm(list(
     pp = data.frame(
@@ -142,8 +141,8 @@ test_that("nca_from_pp handles keep parameter correctly", {
     DOSE = 100,
     AGE = 30,
     SEX = "M"
-  ) %>%
-    nif()
+  )
+  class(nif_obj) <- c("nif", "data.frame")
 
   sdtm_data <- sdtm(list(
     pp = data.frame(

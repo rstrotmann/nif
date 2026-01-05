@@ -127,7 +127,7 @@ test_that("nif() with missing minimal fields handles gracefully", {
 
   # Should not error, just creates nif with available columns
   expect_error(result2 <- nif(test_data2),
-               "Missing essential fields: ID, TIME, AMT, CMT, EVID and DV")
+               "Missing essential fields: TIME, AMT, CMT, EVID and DV")
 })
 
 

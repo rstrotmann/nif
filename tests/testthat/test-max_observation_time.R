@@ -67,9 +67,9 @@ test_that("max_observation_time returns NA when no observations exist", {
 
 test_that("max_observation_time returns NA when analyte has no observations", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE,
-    1,   1,     0,     10,  2,    "CMT2",
-    1,   5,     0,     20,  2,    "CMT2"
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE, ~AMT,
+    1,   1,     0,     10,  2,    "CMT2",   10,
+    1,   5,     0,     20,  2,    "CMT2",   10
   ) %>%
     nif()
 
@@ -85,8 +85,8 @@ test_that("max_observation_time handles empty nif object", {
 
 test_that("max_observation_time handles single observation", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   5,     0,     10,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   5,     0,     10,  2,    10
   ) %>%
     nif()
 
@@ -95,10 +95,10 @@ test_that("max_observation_time handles single observation", {
 
 test_that("max_observation_time handles NA values in TIME", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   1,     0,     10,  2,
-    1,   NA,    0,     20,  2,    # NA time should be ignored
-    1,   5,     0,     15,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   1,     0,     10,  2,    10,
+    1,   NA,    0,     20,  2,    10,    # NA time should be ignored
+    1,   5,     0,     15,  2,    10
   ) %>%
     nif()
 
@@ -107,10 +107,10 @@ test_that("max_observation_time handles NA values in TIME", {
 
 test_that("max_observation_time creates ANALYTE from CMT when missing", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   1,     0,     10,  2,
-    1,   5,     0,     20,  2,
-    1,   10,    0,     15,  3
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   1,     0,     10,  2,    10,
+    1,   5,     0,     20,  2,    10,
+    1,   10,    0,     15,  3,    10
   ) %>%
     nif()
 
@@ -122,13 +122,13 @@ test_that("max_observation_time creates ANALYTE from CMT when missing", {
 
 test_that("max_observation_time works with multiple subjects", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   1,     0,     10,  2,
-    1,   5,     0,     20,  2,
-    2,   2,     0,     15,  2,
-    2,   8,     0,     25,  2,
-    3,   3,     0,     12,  2,
-    3,   12,    0,     30,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   1,     0,     10,  2,    10,
+    1,   5,     0,     20,  2,    10,
+    2,   2,     0,     15,  2,    10,
+    2,   8,     0,     25,  2,    10,
+    3,   3,     0,     12,  2,    10,
+    3,   12,    0,     30,  2,    10
   ) %>%
     nif()
 
@@ -137,10 +137,10 @@ test_that("max_observation_time works with multiple subjects", {
 
 test_that("max_observation_time handles zero time observations", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   0,     0,     0,   2,    # zero time observation
-    1,   1,     0,     10,  2,
-    1,   5,     0,     20,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   0,     0,     0,   2,    10,    # zero time observation
+    1,   1,     0,     10,  2,    10,
+    1,   5,     0,     20,  2,    10
   ) %>%
     nif()
 
@@ -149,10 +149,10 @@ test_that("max_observation_time handles zero time observations", {
 
 test_that("max_observation_time handles negative time observations", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   -1,    0,     5,   2,    # negative time observation
-    1,   0,     0,     0,   2,
-    1,   5,     0,     20,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   -1,    0,     5,   2,    10,    # negative time observation
+    1,   0,     0,     0,   2,    10,
+    1,   5,     0,     20,  2,    10
   ) %>%
     nif()
 
@@ -161,12 +161,12 @@ test_that("max_observation_time handles negative time observations", {
 
 test_that("max_observation_time works with multiple analytes and filters correctly", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE,
-    1,   1,     0,     10,  2,    "DRUG",
-    1,   5,     0,     20,  2,    "DRUG",
-    1,   10,    0,     15,  3,    "METABOLITE",
-    1,   20,    0,     25,  3,    "METABOLITE",
-    1,   30,    0,     30,  4,    "METABOLITE2"
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE, ~AMT,
+    1,   1,     0,     10,  2,    "DRUG",   10,
+    1,   5,     0,     20,  2,    "DRUG",   10,
+    1,   10,    0,     15,  3,    "METABOLITE",   10,
+    1,   20,    0,     25,  3,    "METABOLITE",   10,
+    1,   30,    0,     30,  4,    "METABOLITE2",   10
   ) %>%
     nif()
 
@@ -178,12 +178,12 @@ test_that("max_observation_time works with multiple analytes and filters correct
 
 test_that("max_observation_time handles vector of analytes", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE,
-    1,   1,     0,     10,  2,    "CMT2",
-    1,   5,     0,     20,  2,    "CMT2",
-    1,   10,    0,     15,  3,    "CMT3",
-    1,   20,    0,     25,  3,    "CMT3",
-    1,   30,    0,     30,  4,    "CMT4"
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE, ~AMT,
+    1,   1,     0,     10,  2,    "CMT2",   10,
+    1,   5,     0,     20,  2,    "CMT2",   10,
+    1,   10,    0,     15,  3,    "CMT3",   10,
+    1,   20,    0,     25,  3,    "CMT3",   10,
+    1,   30,    0,     30,  4,    "CMT4",   10
   ) %>%
     nif()
 
@@ -194,9 +194,9 @@ test_that("max_observation_time handles vector of analytes", {
 
 test_that("max_observation_time handles all NA times in observations", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   NA,    0,     10,  2,
-    1,   NA,    0,     20,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   NA,    0,     10,  2,    10,
+    1,   NA,    0,     20,  2,    10
   ) %>%
     nif()
 
@@ -207,11 +207,11 @@ test_that("max_observation_time handles all NA times in observations", {
 
 test_that("max_observation_time works with decimal time values", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   0.5,   0,     10,  2,
-    1,   1.25,  0,     20,  2,
-    1,   2.75,  0,     15,  2,
-    1,   10.5,  0,     25,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   0.5,   0,     10,  2,    10,
+    1,   1.25,  0,     20,  2,    10,
+    1,   2.75,  0,     15,  2,    10,
+    1,   10.5,  0,     25,  2,    10
   ) %>%
     nif()
 
@@ -220,10 +220,10 @@ test_that("max_observation_time works with decimal time values", {
 
 test_that("max_observation_time handles very large time values", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   1,     0,     10,  2,
-    1,   1000,  0,     20,  2,
-    1,   500,   0,     15,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   1,     0,     10,  2,    10,
+    1,   1000,  0,     20,  2,    10,
+    1,   500,   0,     15,  2,    10
   ) %>%
     nif()
 
@@ -232,10 +232,10 @@ test_that("max_observation_time handles very large time values", {
 
 test_that("max_observation_time correctly filters when analyte column exists", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE,
-    1,   1,     0,     10,  2,    "ANALYTE1",
-    1,   5,     0,     20,  2,    "ANALYTE1",
-    1,   10,    0,     15,  2,    "ANALYTE2"
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~ANALYTE, ~AMT,
+    1,   1,     0,     10,  2,    "ANALYTE1",   10,
+    1,   5,     0,     20,  2,    "ANALYTE1",   10,
+    1,   10,    0,     15,  2,    "ANALYTE2",   10
   ) %>%
     nif()
 
@@ -245,10 +245,10 @@ test_that("max_observation_time correctly filters when analyte column exists", {
 
 test_that("max_observation_time returns correct value when all observations have same time", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~DV, ~CMT,
-    1,   5,     0,     10,  2,
-    1,   5,     0,     20,  2,
-    1,   5,     0,     15,  2
+    ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
+    1,   5,     0,     10,  2,    10,
+    1,   5,     0,     20,  2,    10,
+    1,   5,     0,     15,  2,    10
   ) %>%
     nif()
 

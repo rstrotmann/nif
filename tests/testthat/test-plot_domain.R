@@ -284,20 +284,10 @@ test_that("plot.domain handles domains without required fields gracefully", {
   )
   class(test_minimal) <- c("domain", "data.frame")
 
-  # For generic domains without required fields (testcd, time, dv),
-  # the function may error when trying to add layers to NULL
-  # This tests the actual behavior
-  # Note: This might reveal a potential bug if out is NULL
-  result <- tryCatch(
-    plot.domain(test_minimal),
-    error = function(e) e
+  expect_error(
+    result <- plot.domain(test_minimal),
+    "Missing domain fields: XXTESTCD, XXDTC and XXSTRESN"
   )
-  # Either returns a plot or errors - both are acceptable behaviors to document
-  if (inherits(result, "error")) {
-    expect_true(TRUE) # Document that this case may error
-  } else {
-    expect_s3_class(result, "ggplot")
-  }
 })
 
 

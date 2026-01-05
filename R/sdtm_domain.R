@@ -367,6 +367,10 @@ plot.domain <- function(
 
       if (lines == TRUE)
         out <- out + geom_line()
+    } else {
+      # out <- NULL
+      missing_fields <- setdiff(c(testcd_field, time_field, dv_field), names(x))
+      stop(paste0("Missing domain fields: ", nice_enumeration(missing_fields)))
     }
   }
 

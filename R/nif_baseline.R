@@ -583,5 +583,6 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
       na.omit(.data$DV[eval(parse(text = baseline_filter))])
     )) |>
     mutate(DVRTB = .data$DV / .data$DVBL) |>
+    ungroup() |>
     nif()
 }

@@ -484,39 +484,6 @@ test_that("subjects.nif works with only ID column", {
 })
 
 
-test_that("subjects.nif works with only USUBJID column", {
-  usubjid_only_nif <- tibble::tribble(
-    ~USUBJID,  ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
-    "SUBJ001", 0,     10,   1,    1,     10,    NA,
-    "SUBJ001", 1,     0,    2,    0,     10,    5.2,
-    "SUBJ002", 0,     10,   1,    1,     10,    NA,
-    "SUBJ002", 1,     0,    2,    0,     10,    6.1
-  ) %>%
-    nif()
-
-  expect_error(
-    subjects(usubjid_only_nif),
-    "Missing essential fields in nif object: ID"
-  )
-})
-
-
-test_that("subjects.nif works with neither ID nor USUBJID columns", {
-  no_id_nif <- tibble::tribble(
-    ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
-    0,     10,   1,    1,     10,    NA,
-    1,     0,    2,    0,     10,    5.2,
-    2,     0,    2,    0,     10,    4.8
-  ) %>%
-    nif()
-
-  expect_error(
-    result <- subjects(no_id_nif),
-    "Missing essential fields in nif object: ID"
-  )
-})
-
-
 test_that("subjects.nif preserves data types", {
   result <- subjects(examplinib_sad_nif)
 

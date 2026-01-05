@@ -57,9 +57,19 @@ arrange_and_add_ref <- function(obj) {
 
 #' nif class constructor
 #'
+#' If no obj argument is provided, an empty, minimal nif object will be
+#' generated. If a data frame is provided for obj, it is converted into a nif
+#' object. Minimally expected fields are ID, TIME, AMT, CMT, EVID and DV. If ID
+#' is missing but USUBJID is available, ID will be derived.
+#'
+#' If the input is a sdtm object, a pharmacokinetic nif object is automatically
+#' generated. Analyte mapping formulae can be supplied as the ... argument. For
+#' details, see `nif_auto()`.
+#'
 #' @param obj A data frame containing the actual NIF data or a sdtm object.
 #' @param silent suppress messages.
 #' @param ... Further arguments.
+#' @seealso [nif::nif_auto()]
 #'
 #' @returns A nif object.
 #' @export
@@ -86,6 +96,10 @@ nif <- function(obj = NULL, ..., silent = NULL) {
     if (!is.data.frame(obj)) {
       stop("obj must be a data frame or sdtm object")
     }
+
+    # generate ID field if missing
+    if (!"ID" %in% names(obj) && "USUBJID" %in% names(obj))
+      obj <- mutate(obj, ID = as.numeric(as.factor(.data$USUBJID)))
 
     missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
     if (length(missing_min_fields) > 0)
