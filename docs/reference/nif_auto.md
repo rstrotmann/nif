@@ -14,6 +14,8 @@ nif_auto(
   duplicates = "resolve",
   duplicate_function = mean,
   keep = NULL,
+  include_renal = TRUE,
+  include_hepatic = TRUE,
   silent = NULL
 )
 ```
@@ -62,6 +64,16 @@ nif_auto(
 - keep:
 
   Columns to keep, as character.
+
+- include_renal:
+
+  Add baseline creatinine, CRCL and renal function category, if
+  possible.
+
+- include_hepatic:
+
+  Add baseline hepatic function category per ODWG classification, if
+  possible.
 
 - silent:
 
@@ -127,7 +139,7 @@ nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL, BL_RENAL 
 #> 
-#> Hash: 9206d0d956ff703dd3e3ab2480cb5ecb
+#> Hash: 4e534157b5ae51413f5f5e471f69c29e
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME   TAD   ANALYTE   EVID   CMT   AMT   DOSE   DV       
@@ -153,7 +165,7 @@ nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL, BL_RENAL 
 #> 
-#> Hash: 56c47c84e08287df41274a8b723da7d3
+#> Hash: dce9484f4583a6b63aa9597bbf7bad76
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME   TAD   ANALYTE      EVID   CMT   AMT   DOSE   DV       
@@ -179,7 +191,7 @@ nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL, BL_RENAL 
 #> 
-#> Hash: fb45e79bc9d27f28694aa03874bbf72f
+#> Hash: cf1f1846670054e10a566c7ccdd5b7ed
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME   TAD   ANALYTE   EVID   CMT   AMT   DOSE   DV   

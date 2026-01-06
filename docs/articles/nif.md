@@ -247,14 +247,8 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #>   4 HOURS POST-DOSE     4          PT4H     
 #>   6 HOURS POST-DOSE     6          PT6H     
 #>   8 HOURS POST-DOSE     8          PT8H     
-#>   10 HOURS POST-DOSE    10         PT10H    
-#>   12 HOURS POST-DOSE    12         PT12H    
-#>   24 HOURS POST-DOSE    24         PT24H    
-#>   48 HOURS POST-DOSE    48         PT48H    
-#>   72 HOURS POST-DOSE    72         PT72H    
-#>   96 HOURS POST-DOSE    96         PT96H    
-#>   144 HOURS POST-DOSE   144        PT144H   
-#>   168 HOURS POST-DOSE   168        PT168H     
+#>   10 HOURS POST-DOSE    10         PT10H     
+#>   (7 more rows) 
 #> 
 #> Epochs
 #>   OPEN LABEL TREATMENT     
@@ -353,7 +347,7 @@ suggest(examplinib_fe)
 #> baseline creatinine covariate, baseline creatinine clearance (BL_CRCL) and
 #> baseline renal function category:
 #> 
-#>   add_observation(sdtm, 'lb', 'CREAT')
+#>   add_baseline(sdtm, 'lb', 'CREAT')
 #>   add_bl_crcl()
 #>   add_bl_renal()
 ```
@@ -559,14 +553,8 @@ summary(nif)
 #>   4       X        
 #>   6       X        
 #>   8       X        
-#>   10      X        
-#>   12      X        
-#>   24      X        
-#>   48      X        
-#>   72      X        
-#>   96      X        
-#>   144     X        
-#>   168     X         
+#>   10      X         
+#>   (7 more rows)
 #> 
 #> Subjects with dose reductions
 #>   RS2023   

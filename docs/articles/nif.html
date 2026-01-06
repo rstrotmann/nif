@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -292,14 +292,8 @@ overview on a specific domain:</p>
 <span><span class="co">#&gt;   4 HOURS POST-DOSE     4          PT4H     </span></span>
 <span><span class="co">#&gt;   6 HOURS POST-DOSE     6          PT6H     </span></span>
 <span><span class="co">#&gt;   8 HOURS POST-DOSE     8          PT8H     </span></span>
-<span><span class="co">#&gt;   10 HOURS POST-DOSE    10         PT10H    </span></span>
-<span><span class="co">#&gt;   12 HOURS POST-DOSE    12         PT12H    </span></span>
-<span><span class="co">#&gt;   24 HOURS POST-DOSE    24         PT24H    </span></span>
-<span><span class="co">#&gt;   48 HOURS POST-DOSE    48         PT48H    </span></span>
-<span><span class="co">#&gt;   72 HOURS POST-DOSE    72         PT72H    </span></span>
-<span><span class="co">#&gt;   96 HOURS POST-DOSE    96         PT96H    </span></span>
-<span><span class="co">#&gt;   144 HOURS POST-DOSE   144        PT144H   </span></span>
-<span><span class="co">#&gt;   168 HOURS POST-DOSE   168        PT168H     </span></span>
+<span><span class="co">#&gt;   10 HOURS POST-DOSE    10         PT10H     </span></span>
+<span><span class="co">#&gt;   (7 more rows) </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Epochs</span></span>
 <span><span class="co">#&gt;   OPEN LABEL TREATMENT     </span></span>
@@ -393,7 +387,7 @@ useful code snippets for the creation of analysis data sets:</p>
 <span><span class="co">#&gt; baseline creatinine covariate, baseline creatinine clearance (BL_CRCL) and</span></span>
 <span><span class="co">#&gt; baseline renal function category:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   <span style="font-weight: bold;">add_observation</span><span style="color: #D7AF00;">(</span>sdtm, <span style="color: #00AFAF;">'lb'</span>, <span style="color: #00AFAF;">'CREAT'</span><span style="color: #D7AF00;">)</span></span></span>
+<span><span class="co">#&gt;   <span style="font-weight: bold;">add_baseline</span><span style="color: #D7AF00;">(</span>sdtm, <span style="color: #00AFAF;">'lb'</span>, <span style="color: #00AFAF;">'CREAT'</span><span style="color: #D7AF00;">)</span></span></span>
 <span><span class="co">#&gt;   <span style="font-weight: bold;">add_bl_crcl</span><span style="color: #D7AF00;">()</span></span></span>
 <span><span class="co">#&gt;   <span style="font-weight: bold;">add_bl_renal</span><span style="color: #D7AF00;">()</span></span></span></code></pre></div>
 <p>In the above example, suggestions 1 and 2 provide code for the
@@ -582,14 +576,8 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   4       X        </span></span>
 <span><span class="co">#&gt;   6       X        </span></span>
 <span><span class="co">#&gt;   8       X        </span></span>
-<span><span class="co">#&gt;   10      X        </span></span>
-<span><span class="co">#&gt;   12      X        </span></span>
-<span><span class="co">#&gt;   24      X        </span></span>
-<span><span class="co">#&gt;   48      X        </span></span>
-<span><span class="co">#&gt;   72      X        </span></span>
-<span><span class="co">#&gt;   96      X        </span></span>
-<span><span class="co">#&gt;   144     X        </span></span>
-<span><span class="co">#&gt;   168     X         </span></span>
+<span><span class="co">#&gt;   10      X         </span></span>
+<span><span class="co">#&gt;   (7 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions</span></span>
 <span><span class="co">#&gt;   RS2023   </span></span>

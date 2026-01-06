@@ -53,10 +53,10 @@ nif %>%
 #> 
 #> Renal impairment class:
 #>   CLASS      N     percent   
-#>   normal     0     0         
-#>   mild       0     0         
-#>   moderate   0     0         
-#>   severe     148   100        
+#>   normal     103   69.6      
+#>   mild       33    22.3      
+#>   moderate   12    8.1       
+#>   severe     0     0          
 #> 
 #> Treatments:
 #>   RS2023
@@ -91,14 +91,8 @@ nif %>%
 #>   4       X        
 #>   6       X        
 #>   8       X        
-#>   10      X        
-#>   12      X        
-#>   24      X        
-#>   48      X        
-#>   72      X        
-#>   96      X        
-#>   144     X        
-#>   168     X         
+#>   10      X         
+#>   (7 more rows)
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
@@ -108,6 +102,6 @@ nif %>%
 #>   PARENT   min   max   mean   median   
 #>   RS2023   1     99    43     58.5      
 #> 
-#> Hash: 2f8b5e291124d3929b74a89761816be1
+#> Hash: 40680c14d55779eb649defbea4096cb9
 #> Last DTC: 2001-07-14 08:53:00
 ```

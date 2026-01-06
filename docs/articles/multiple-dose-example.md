@@ -126,9 +126,9 @@ head(nif_poc, 3)
 #  2 2001-01-13 10:36:00    0     0    0   0    0   0     RS2023   2 RS2023     1
 #  3 2001-01-13 10:36:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1
 #    METABOLITE DOSE MDV  ACTARMCD IMPUTATION DV BL_CREAT  BL_CRCL
-#  1      FALSE  500   1 TREATMENT            NA 72.78062 1.215712
-#  2      FALSE  500   0 TREATMENT             0 72.78062 1.215712
-#  3      FALSE  500   0 TREATMENT             0 72.78062 1.215712
+#  1      FALSE  500   1 TREATMENT            NA 72.78062 107.4689
+#  2      FALSE  500   0 TREATMENT             0 72.78062 107.4689
+#  3      FALSE  500   0 TREATMENT             0 72.78062 107.4689
 ```
 
 ## EXPLORATION
@@ -157,10 +157,10 @@ summary(nif_poc)
 #  
 #  Renal impairment class:
 #    CLASS      N    percent   
-#    normal     0    0         
-#    mild       0    0         
-#    moderate   0    0         
-#    severe     80   100        
+#    normal     40   50        
+#    mild       28   35        
+#    moderate   12   15        
+#    severe     0    0          
 #  
 #  Treatments:
 #    RS2023
@@ -199,7 +199,7 @@ summary(nif_poc)
 #    PARENT   min   max   mean   median   
 #    RS2023   56    99    78.5   79        
 #  
-#  Hash: 369865e29dadb330dbcf4b6a132d0ae6
+#  Hash: dcc42d79173632bab45d63031770b507
 #  Last DTC: 2001-07-14 08:53:00
 ```
 

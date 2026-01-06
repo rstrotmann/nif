@@ -85,7 +85,7 @@ suggest(examplinib_poc)
 #> baseline creatinine covariate, baseline creatinine clearance (BL_CRCL) and
 #> baseline renal function category:
 #> 
-#>   add_observation(sdtm, 'lb', 'CREAT')
+#>   add_baseline(sdtm, 'lb', 'CREAT')
 #>   add_bl_crcl()
 #>   add_bl_renal()
 ```

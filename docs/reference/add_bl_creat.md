@@ -5,7 +5,13 @@ Add baseline creatinine
 ## Usage
 
 ``` r
-add_bl_creat(obj, sdtm, baseline_filter = NULL, molar = NULL, silent = NULL)
+add_bl_creat(
+  obj,
+  sdtm,
+  baseline_filter = NULL,
+  observation_filter = "TRUE",
+  silent = NULL
+)
 ```
 
 ## Arguments
@@ -22,9 +28,9 @@ add_bl_creat(obj, sdtm, baseline_filter = NULL, molar = NULL, silent = NULL)
 
   The filter term to identify baseline conditions.
 
-- molar:
+- observation_filter:
 
-  Use molar units.
+  An observation filter term as character.
 
 - silent:
 
@@ -32,4 +38,5 @@ add_bl_creat(obj, sdtm, baseline_filter = NULL, molar = NULL, silent = NULL)
 
 ## Value
 
-A nif object with the BL_CREAT column added, if possible.
+A nif object with the BL_CREAT column added, if possible. Otherwise the
+unchanged input.
