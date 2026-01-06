@@ -260,7 +260,7 @@ test_that("add_bl_crcl calculates correct values for known inputs (egfr_cg)", {
   ) %>%
     nif()
 
-  result <- add_bl_crcl(test_nif, method = egfr_cg)
+  result <- add_bl_crcl(test_nif, method = egfr_cg, molar = FALSE)
 
   expected_crcl <- (140 - 45) * 70 * 1 / 72 / 0.8
   expect_equal(result$BL_CRCL[1], expected_crcl, tolerance = 0.01)

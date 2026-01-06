@@ -4,7 +4,7 @@
 \alias{add_bl_crcl}
 \title{Add baseline creatinine clearance field.}
 \usage{
-add_bl_crcl(obj, method = egfr_cg, molar = FALSE)
+add_bl_crcl(obj, method = egfr_cg, molar = TRUE)
 }
 \arguments{
 \item{obj}{A NIF object.}
@@ -19,7 +19,7 @@ A NIF object with the baseline creatinine clearance (BL_EGFR) field
 added,
 }
 \description{
-Add baseline creatinine clearance field.
+The function expects BL_CREAT to be in umol/L units.
 }
 \examples{
 head(add_bl_crcl(examplinib_poc_nif))

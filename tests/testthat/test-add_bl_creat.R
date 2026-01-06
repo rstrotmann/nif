@@ -28,8 +28,8 @@ test_that("add_bl_creat adds BL_CREAT column with mg/dl units", {
   result <- add_bl_creat(test_nif, test_sdtm, silent = TRUE)
 
   expect_true("BL_CREAT" %in% names(result))
-  expect_equal(result$BL_CREAT[result$USUBJID == "SUBJ-001"], rep(0.8, 2))
-  expect_equal(result$BL_CREAT[result$USUBJID == "SUBJ-002"], 0.9)
+  expect_equal(result$BL_CREAT[result$USUBJID == "SUBJ-001"], rep(70.72, 2))
+  expect_equal(result$BL_CREAT[result$USUBJID == "SUBJ-002"], 79.56)
   expect_s3_class(result, "nif")
 })
 
@@ -55,14 +55,11 @@ test_that("add_bl_creat converts umol/L to mg/dl automatically", {
   test_sdtm <- sdtm(list(lb = test_lb, dm = test_dm))
 
   # Should automatically convert and warn
-  expect_message(
-    result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE),
-    "automatically converted from umol/l to mg/dl"
-  )
+  result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE)
 
   expect_true("BL_CREAT" %in% names(result))
   # 70.72 umol/L / 88.4 = 0.8 mg/dl
-  expect_equal(result$BL_CREAT[1], 70.72 / 88.4, tolerance = 0.01)
+  expect_equal(result$BL_CREAT[1], 70.72)
 })
 
 
@@ -130,7 +127,7 @@ test_that("add_bl_creat errors when multiple units are found", {
 
   expect_message(
     result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE),
-    "Multiple units for CREAT"
+    "BL_CREAT values converted to umol/L"
   )
 })
 
@@ -158,12 +155,13 @@ test_that("add_bl_creat handles missing unit information", {
 
   # Should warn and default to mg/dl
   expect_message(
-    result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE),
-    "No unit information found for CREAT, assuming mg/dl"
+    expect_message(
+      result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE),
+      "Some CREAT values had no unit and were deleted!"),
+    "No baseline CREAT data after filtering!"
   )
 
-  expect_true("BL_CREAT" %in% names(result))
-  expect_equal(result$BL_CREAT[1], 0.8)
+  expect_false("BL_CREAT" %in% names(result))
 })
 
 
@@ -187,11 +185,14 @@ test_that("add_bl_creat handles missing LBSTRESU column", {
 
   test_sdtm <- sdtm(list(lb = test_lb, dm = test_dm))
 
-  # Should assume mg/dl when LBSTRESU is missing
-  result <- add_bl_creat(test_nif, test_sdtm, silent = TRUE)
+  expect_message(
+    expect_message(
+      result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE),
+      "LBSTESU field not found. Values assumed in mg/dL"),
+    "BL_CREAT values converted to umol/L!")
 
   expect_true("BL_CREAT" %in% names(result))
-  expect_equal(result$BL_CREAT[1], 0.8)
+  expect_equal(result$BL_CREAT[1], 70.72)
 })
 
 
@@ -271,7 +272,7 @@ test_that("add_bl_creat handles custom baseline filter", {
   )
 
   expect_true("BL_CREAT" %in% names(result))
-  expect_equal(result$BL_CREAT[1], 0.9)  # Should use LBLOBXFL == 'Y' value
+  expect_equal(result$BL_CREAT[1], 79.56)  # Should use LBLOBXFL == 'Y' value
 })
 
 
@@ -298,7 +299,7 @@ test_that("add_bl_creat uses LBBLFL when available", {
   result <- add_bl_creat(test_nif, test_sdtm, silent = TRUE)
 
   expect_true("BL_CREAT" %in% names(result))
-  expect_equal(result$BL_CREAT[1], 0.8)  # Should use LBBLFL == 'Y' value
+  expect_equal(result$BL_CREAT[1], 70.72)  # Should use LBBLFL == 'Y' value
 })
 
 
@@ -326,7 +327,7 @@ test_that("add_bl_creat uses LBLOBXFL when LBBLFL is missing", {
   result <- add_bl_creat(test_nif, test_sdtm, silent = TRUE)
 
   expect_true("BL_CREAT" %in% names(result))
-  expect_equal(result$BL_CREAT[1], 0.8)  # Should use LBLOBXFL == 'Y' value
+  expect_equal(result$BL_CREAT[1], 70.72)  # Should use LBLOBXFL == 'Y' value
 })
 
 
@@ -392,64 +393,6 @@ test_that("add_bl_creat handles invalid baseline filter gracefully", {
 })
 
 
-test_that("add_bl_creat respects molar parameter when TRUE", {
-  test_nif <- tibble::tribble(
-    ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    1,   "SUBJ-001",  0,     0,    1,    0,     NA
-  ) %>%
-    nif()
-
-  # CREAT in mg/dl but force molar conversion
-  test_lb <- tibble::tribble(
-    ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBSTRESU, ~LBBLFL, ~LBDTC,
-    "SUBJ-001",  "LB",    "CREAT",    0.8,       "mg/dl",   "Y",     "2023-01-01"
-  )
-
-  test_dm <- tibble::tribble(
-    ~USUBJID,    ~DOMAIN, ~ACTARMCD,
-    "SUBJ-001",  "DM",    "TREATMENT"
-  )
-
-  test_sdtm <- sdtm(list(lb = test_lb, dm = test_dm))
-
-  # Force molar=TRUE (should convert mg/dl to mg/dl, so no change)
-  result <- add_bl_creat(test_nif, test_sdtm, molar = TRUE, silent = TRUE)
-
-  expect_true("BL_CREAT" %in% names(result))
-  # With molar=TRUE, factor is 1/88.4, so 0.8 * (1/88.4) = 0.00905
-  expect_equal(result$BL_CREAT[1], 0.8 / 88.4, tolerance = 0.0001)
-})
-
-
-test_that("add_bl_creat respects molar parameter when FALSE", {
-  test_nif <- tibble::tribble(
-    ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    1,   "SUBJ-001",  0,     0,    1,    0,     NA
-  ) %>%
-    nif()
-
-  # CREAT in umol/L but force molar=FALSE (no conversion)
-  test_lb <- tibble::tribble(
-    ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBSTRESU, ~LBBLFL, ~LBDTC,
-    "SUBJ-001",  "LB",    "CREAT",    70.72,     "umol/L",  "Y",     "2023-01-01"
-  )
-
-  test_dm <- tibble::tribble(
-    ~USUBJID,    ~DOMAIN, ~ACTARMCD,
-    "SUBJ-001",  "DM",    "TREATMENT"
-  )
-
-  test_sdtm <- sdtm(list(lb = test_lb, dm = test_dm))
-
-  # Force molar=FALSE (should not convert)
-  result <- add_bl_creat(test_nif, test_sdtm, molar = FALSE, silent = TRUE)
-
-  expect_true("BL_CREAT" %in% names(result))
-  # With molar=FALSE, factor is 1, so value should be 70.72 (not converted)
-  expect_equal(result$BL_CREAT[1], 70.72, tolerance = 0.01)
-})
-
-
 test_that("add_bl_creat handles silent parameter", {
   test_nif <- tibble::tribble(
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
@@ -510,9 +453,9 @@ test_that("add_bl_creat handles multiple subjects correctly", {
 
   expect_true("BL_CREAT" %in% names(result))
   # Check that values are consistent within each subject
-  expect_equal(unique(result$BL_CREAT[result$USUBJID == "SUBJ-001"]), 0.8)
-  expect_equal(unique(result$BL_CREAT[result$USUBJID == "SUBJ-002"]), 0.9)
-  expect_equal(unique(result$BL_CREAT[result$USUBJID == "SUBJ-003"]), 1.0)
+  expect_equal(unique(result$BL_CREAT[result$USUBJID == "SUBJ-001"]), 70.72)
+  expect_equal(unique(result$BL_CREAT[result$USUBJID == "SUBJ-002"]), 79.56)
+  expect_equal(unique(result$BL_CREAT[result$USUBJID == "SUBJ-003"]), 88.4)
 })
 
 
@@ -596,7 +539,36 @@ test_that("add_bl_creat handles multiple baseline values (uses mean by default)"
   result <- add_bl_creat(test_nif, test_sdtm, silent = TRUE)
 
   expect_true("BL_CREAT" %in% names(result))
-  # Should use mean of 0.8 and 0.9 = 0.85 (default summary function in add_baseline)
-  expect_equal(result$BL_CREAT[1], 0.85, tolerance = 0.01)
+  expect_equal(result$BL_CREAT[1], 75.14)
 })
 
+
+test_that("add_bl_creat handles multiple units", {
+  test_nif <- tibble::tribble(
+    ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   "SUBJ-001",  0,     0,    1,    0,     NA,
+    2,   "SUBJ-002",  0,     0,    1,    0,     NA
+  ) %>%
+    nif()
+
+  # Multiple units for CREAT
+  test_lb <- tibble::tribble(
+    ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBSTRESU, ~LBBLFL, ~LBDTC,
+    "SUBJ-001",  "LB",    "CREAT",    0.8,       "mg/dl",   "Y",     "2023-01-01",
+    "SUBJ-002",  "LB",    "CREAT",    70.72,     "umol/L",  "Y",     "2023-01-02"
+  )
+
+  test_dm <- tibble::tribble(
+    ~USUBJID,    ~DOMAIN, ~ACTARMCD,
+    "SUBJ-001",  "DM",    "TREATMENT",
+    "SUBJ-002",  "DM",    "TREATMENT"
+  )
+
+  test_sdtm <- sdtm(list(lb = test_lb, dm = test_dm))
+
+  expect_message(
+    result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE),
+    "BL_CREAT values converted to umol/L!"
+    )
+  expect_equal(result$BL_CREAT, c(70.72, 70.72))
+})

@@ -600,7 +600,6 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
 #' @param obj A nif data set.
 #' @param sdtm Source sdtm data object.
 #' @param baseline_filter The filter term to identify baseline conditions.
-#' @param molar Use molar units.
 #' @param silent Suppress messages.
 #'
 #' @returns A nif object with the BL_CREAT column added, if possible. Otherwise
@@ -610,7 +609,7 @@ add_bl_creat <- function(
   obj,
   sdtm,
   baseline_filter = NULL,
-  molar = NULL,
+  observation_filter = "TRUE",
   silent = NULL
 ) {
   # input validation
@@ -619,60 +618,13 @@ add_bl_creat <- function(
   }
 
   lb <- domain(sdtm, "lb")
+
   if (!"CREAT" %in% unique(lb$LBTESTCD)) {
     stop("No CREAT data found!")
   }
 
   micromolar_units <- c("umol/L", "umol/l", "micromol/l", "micromol/L")
   mg_units <- c("mg/dl", "mg/dL")
-
-  # CREAT units
-  if ("LBSTRESU" %in% names(lb)) {
-    unit <- lb |>
-      filter(.data$LBTESTCD == "CREAT") |>
-      distinct(.data$LBSTRESU) |>
-      pull(.data$LBSTRESU)
-
-    if (length(unit) == 0 || all(is.na(unit))) {
-      # No unit information found for CREAT records
-      if (is.null(molar)) {
-        molar <- FALSE
-        conditional_cli(cli_alert_warning(
-          "No unit information found for CREAT, assuming mg/dl"),
-          silent = silent
-        )
-      }
-    } else if (length(unit) > 1) {
-
-      conditional_cli({
-        cli_alert_danger(paste0(
-          "Multiple units for CREAT: ", nice_enumeration(unit)))
-        cli_text("BL_CRCL could not be added. Consider providing a baseline filter")
-        },
-        silent = silent)
-
-      return(obj)
-
-    } else {
-      # Single unit found
-      if (is.null(molar)) {
-        molar <- FALSE
-        if (unit %in% c("umol/L", "umol/l", "micromol/l", "micromol/L")) {
-          molar <- TRUE
-          conditional_cli(
-            cli_alert_warning(
-              "BL_CREAT automatically converted from umol/l to mg/dl!"),
-            silent = silent
-          )
-        }
-      }
-    }
-  } else {
-    if (is.null(molar)) {
-      # assume that CREAT is in mg/dl
-      molar <- FALSE
-    }
-  }
 
   # baseline filter
   if (is.null(baseline_filter)) {
@@ -695,17 +647,68 @@ add_bl_creat <- function(
     return(obj)
   }
 
-  factor <- ifelse(molar, 1 / 88.4, 1)
+  # convert all CREAT values to micromolar concentrations
+  temp_lb <- lb |>
+    filter(LBTESTCD == "CREAT")
+
+  if (!"LBSTRESU" %in% names(lb)) {
+    median_creat <- median(temp_lb$LBSTRESN, na.rm = TRUE)
+    creat_unit <- ifelse(median_creat > 10, "umol/L", "mg/dL")
+    temp_lb <- mutate(temp_lb, LBSTRESU = creat_unit)
+    conditional_cli(
+      cli_alert_warning(paste0("LBSTESU field not found. Values assumed in ",
+                               creat_unit)),
+      silent = silent
+    )
+  }
+
+  temp_lb <- temp_lb|>
+    mutate(.to_convert = .data$LBSTRESU %in% mg_units) |>
+    mutate(.no_unit = !.data$LBSTRESU %in% c(mg_units, micromolar_units)) |>
+    mutate(LBSTRESN = case_when(
+      .data$.to_convert == TRUE ~ .data$LBSTRESN * 88.4,
+      .default = .data$LBSTRESN
+    )) |>
+    mutate(LBSTRESU = case_when(
+      .data$.to_convert == TRUE ~ "umol/L",
+      .default = .data$LBSTRESU))
+
+  if (any(temp_lb$.to_convert == TRUE))
+    conditional_cli(
+      cli_alert_info("BL_CREAT values converted to umol/L!"),
+      silent = silent
+    )
+
+  if (any(temp_lb$.no_unit == TRUE))
+    conditional_cli(
+      cli_alert_warning("Some CREAT values had no unit and were deleted!"),
+      silent = silent
+    )
+
+  temp_lb <- temp_lb |>
+    filter(.data$.no_unit == FALSE)
+
+  if (nrow(temp_lb) == 0) {
+    conditional_cli(
+      cli_alert_danger("No baseline CREAT data after filtering!")
+    )
+    return(obj)
+  }
+
+  temp_sdtm <- sdtm
+  temp_sdtm$domains[["lb"]] <- temp_lb
 
   obj |>
-    add_baseline(sdtm, "lb", "CREAT",
+    add_baseline(temp_sdtm, "lb", "CREAT",
       baseline_filter = baseline_filter,
-      factor = factor
+      observation_filter = observation_filter
     )
 }
 
 
 #' Add baseline creatinine clearance field.
+#'
+#' The function expects BL_CREAT to be in umol/L units.
 #'
 #' @param obj A NIF object.
 #' @param method The function to calculate eGFR (CrCL) from serum creatinine.
@@ -719,7 +722,7 @@ add_bl_creat <- function(
 #' @export
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
-add_bl_crcl <- function(obj, method = egfr_cg, molar = FALSE) {
+add_bl_crcl <- function(obj, method = egfr_cg, molar = TRUE) {
   missing_columns <- setdiff(
     c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
     names(obj)

@@ -4,7 +4,13 @@
 \alias{add_bl_creat}
 \title{Add baseline creatinine}
 \usage{
-add_bl_creat(obj, sdtm, baseline_filter = NULL, molar = NULL, silent = NULL)
+add_bl_creat(
+  obj,
+  sdtm,
+  baseline_filter = NULL,
+  observation_filter = "TRUE",
+  silent = NULL
+)
 }
 \arguments{
 \item{obj}{A nif data set.}
@@ -12,8 +18,6 @@ add_bl_creat(obj, sdtm, baseline_filter = NULL, molar = NULL, silent = NULL)
 \item{sdtm}{Source sdtm data object.}
 
 \item{baseline_filter}{The filter term to identify baseline conditions.}
-
-\item{molar}{Use molar units.}
 
 \item{silent}{Suppress messages.}
 }
