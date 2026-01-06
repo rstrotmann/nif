@@ -200,7 +200,7 @@ add_baseline <- function(
   }
 
   baseline <- baseline |>
-    mutate(DV = DV * factor) |>
+    mutate(DV = .data$DV * factor) |>
     tidyr::pivot_wider(
       names_from = all_of(testcd_field),
       values_from = "DV"
@@ -590,3 +590,319 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
     ungroup() |>
     nif()
 }
+
+
+
+#' Add baseline creatinine
+#'
+#' @param obj A nif data set.
+#' @param sdtm Source sdtm data object.
+#' @param baseline_filter The filter term to identify baseline conditions.
+#' @param molar Use molar units.
+#' @param silent Suppress messages.
+#'
+#' @returns A nif object with the BL_CREAT column added, if possible.
+#' @export
+add_bl_creat <- function(
+    obj,
+    sdtm,
+    baseline_filter = NULL,
+    molar = NULL,
+    silent = NULL
+) {
+  if (!"lb" %in% names(sdtm$domains))
+    stop("LB domain not found!")
+
+  lb <- domain(sdtm, "lb")
+  if (!"CREAT" %in% unique(lb$LBTESTCD))
+    stop("No CREAT data found!")
+
+  # CREAT units
+  if ("LBSTRESU" %in% names(lb)) {
+    unit <- lb |>
+      filter(.data$LBTESTCD == "CREAT") |>
+      distinct(.data$LBSTRESU) |>
+      pull(.data$LBSTRESU)
+
+    if (length(unit) == 0) {
+      # No unit information found for CREAT records
+      if (is.null(molar)) {
+        molar <- FALSE
+        conditional_cli(
+          cli_alert_warning("No unit information found for CREAT, assuming mg/dl"),
+          silent = silent
+        )
+      }
+    } else if (length(unit) > 1) {
+      stop(paste0("Baseline CREAT could not be added: Multiple units (",
+                  nice_enumeration(unit), ")"))
+    } else {
+      # Single unit found
+      if (is.null(molar)) {
+        molar <- FALSE
+        if (unit %in% c("umol/L", "umol/l", "micromol/l", "micromol/L")) {
+          molar <- TRUE
+          conditional_cli( {
+            cli_alert_warning("BL_CREAT automatically converted from umol/l to mg/dl!")
+          },
+          silent = silent
+          )
+        }
+      }
+    }
+  } else {
+    if (is.null(molar))
+      # assume that CREAT is in mg/dl
+      molar = FALSE
+  }
+
+  # baseline filter
+  if (is.null(baseline_filter)) {
+    blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))[[1]]
+    if (is.null(blcol)) {
+      stop(
+        "No baseline flag column identified. Please provide a baseline_filter"
+      )
+    }
+    baseline_filter <- paste0(
+      blcol, " == 'Y'"
+    )
+  }
+
+  if (!is_valid_filter(lb, baseline_filter)) {
+    conditional_cli(
+      cli_alert_warning("Invalid baseline filter, baseline CREAT not added"),
+      silent = silent
+    )
+    return(obj)
+  }
+
+  factor <- ifelse(molar, 1/88.4, 1)
+
+  obj |>
+    add_baseline(sdtm, "lb", "CREAT", baseline_filter = baseline_filter,
+                 factor = factor)
+}
+
+
+#' Add baseline creatinine clearance field.
+#'
+#' @param obj A NIF object.
+#' @param method The function to calculate eGFR (CrCL) from serum creatinine.
+#' @param molar Convert to molar units, as logical.
+#'   Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
+#' @return A NIF object with the baseline creatinine clearance (BL_EGFR) field
+#' added,
+#' @seealso [nif::egfr_mdrd()]
+#' @seealso [nif::egfr_cg()]
+#' @seealso [nif::egfr_raynaud()]
+#' @export
+#' @examples
+#' head(add_bl_crcl(examplinib_poc_nif))
+add_bl_crcl <- function(obj, method = egfr_cg, molar = FALSE) {
+  missing_columns <- setdiff(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
+                             names(obj))
+  if (length(missing_columns) > 0)
+    stop(paste0(
+      "Missing coluns: ", nice_enumeration(missing_columns), "!"
+    ))
+
+  if ("BL_CREAT" %in% colnames(obj)) {
+    obj |>
+      mutate(BL_CRCL = method(
+        .data$BL_CREAT, .data$AGE, .data$SEX, .data$RACE, .data$WEIGHT,
+        molar = molar
+      ))
+  } else {
+    obj |>
+      mutate(BL_CRCL = as.numeric(NA))
+  }
+}
+
+
+#' Add baseline renal function class
+#'
+#' If baseline creatinine clearance (BL_CRCL) is not included in the input, it
+#' will be calculated first.
+#'
+#' @param obj A NIF object.
+#' @param method The function to calculate eGFR (CrCL) from serum creatinine.
+#' @param molar Use molar concentrations.
+#' Currently either: egfr_mdrd, egfr_cg or egfr_raynaud
+#' @return A NIF object.
+#' @export
+#' @examples
+#' head(add_bl_renal(examplinib_poc_nif), 5)
+add_bl_renal <- function(obj, method = egfr_cg, molar = FALSE) {
+  if (!"BL_CRCL" %in% names(obj))
+    obj <- add_bl_crcl(obj, method = method, molar = molar)
+
+  obj |>
+    mutate(BL_RENAL = as.character(
+      cut(.data$BL_CRCL,
+          breaks = c(0, 30, 60, 90, Inf),
+          labels = c("severe", "moderate", "mild", "normal")
+      )
+    )) |>
+    mutate(BL_RENAL = factor(.data$BL_RENAL,
+                             levels = c("normal", "mild", "moderate", "severe")
+    ))
+}
+
+
+#' Add baseline lean body mass (LBM)
+#'
+#' @param obj A nif object.
+#' @param method The function to calculate LBM, i.e., [nif::lbm_boer()],
+#' [nif::lbm_hume()] or [nif::lbm_peters()].
+#'
+#' @return A nif object.
+#' @seealso [nif::lbm_hume()]
+#' @seealso [nif::lbm_boer()]
+#' @seealso [nif::lbm_peters()]
+#' @export
+add_bl_lbm <- function(obj, method = lbm_boer) {
+  # input validation
+  validate_nif(obj)
+  missing_fields <- setdiff(c("WEIGHT", "HEIGHT", "SEX"), names(obj))
+  if (length(missing_fields) > 0)
+    stop(paste0("Missing fields: ", nice_enumeration(missing_fields)))
+
+  obj |>
+    mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
+}
+
+
+#' Add baseline hepatic function class
+#'
+#' Based on the NCI ODWG criteria with TB the total (direct and indirect) serum
+#' bilirubin, and AST aspartate aminotransferase.
+#'
+#' * normal: TB & AST ≤ upper limit of normal (ULN)
+#' * mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
+#' * moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
+#' * severe hepatic dysfunction: TB >3 - 10 x ULN, any AST
+#'
+#' @param obj A nif object.
+#' @param sdtm The corresponding sdtm object.
+#' @param baseline_filter A filter term to identify the baseline condition, as
+#'   character.
+#' @param summary_function The summary function to summarize multiple baseline
+#'   values. Defaults to `mean`
+#' @param observation_filter The filter term for the observation source data, as
+#'   character.
+#' @param silent Suppress messages.
+#'
+#' @return A nif object.
+#' @export
+add_bl_odwg <- function(
+    obj,
+    sdtm,
+    observation_filter = NULL,
+    baseline_filter = NULL,
+    summary_function = mean,
+    silent = NULL
+) {
+
+  # input validation
+  validate_char_param(observation_filter, "observation_filter", allow_null = TRUE)
+  validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
+
+  if (!"lb" %in% names(sdtm$domains)) {
+    conditional_cli(
+      cli_alert_warning("LB domain not found, BL_ODWG could not be added!"),
+      silent = silent
+    )
+    return(obj)
+  }
+
+  lb <- sdtm |>
+    domain("lb")
+
+  # hepatic function markers
+  missing_params <- setdiff(c("BILI", "AST"), unique(lb$LBTESTCD))
+  if (length(missing_params) > 0) {
+    conditional_cli(
+      cli_alert_warning("Missing hepatic function markers: ",
+                        nice_enumeration(missing_params)),
+      silent = silent
+    )
+    return(obj)
+  }
+
+  # baseline filter
+  if (is.null(baseline_filter)) {
+    blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))[[1]]
+    if (is.null(blcol)) {
+      conditional_cli({
+        cli_alert_warning("No baseline flag column found!")
+        cli_text("Please provide an explicit baseline filter to calculate BL_ODWG!")
+        cli_text()
+      }, silent = silent)
+      return(obj)
+    }
+    baseline_filter <- paste0(
+      blcol, " == 'Y'"
+    )
+  }
+
+  # observation filter
+  if (is.null(observation_filter)) {
+    observation_filter <- "TRUE"
+    if ("LBSPEC" %in% names(lb)) {
+      if ("URINE" %in% unique(lb$LBSPEC))
+        observation_filter <- "LBSPEC != 'URINE'"
+    }
+  }
+
+  # required fields
+  missing_fields <- setdiff(c("LBSTRESN", "LBSTNRHI"), names(lb))
+  if (length(missing_fields) > 0) {
+    conditional_cli(
+      cli_alert_warning(paste0(
+        "Missing required field: ", nice_enumeration(missing_fields)
+      )),
+      silent = silent
+    )
+    return(obj)
+  }
+
+  # apply filters
+  lb1 <- lb |>
+    filter(eval(parse(text = baseline_filter))) |>
+    filter(eval(parse(text = observation_filter))) |>
+    filter(.data$LBTESTCD %in% c("AST", "BILI"))
+
+  if (nrow(lb1) == 0) {
+    conditional_cli({
+      cli_alert_warning("No hepatic function markers after baseline and observation filtering!")
+      cli_text("BL_ODWG could not be derived!")
+    }, silent = silent)
+    return(obj)
+  }
+
+  lb1 <- lb1 |>
+    mutate(
+      LBTESTCD = paste0(.data$LBTESTCD, "_X_ULN"),
+      LBSTRESN = .data$LBSTRESN / .data$LBSTNRHI
+    )
+
+  sdtm$domains[["lb"]] <- lb1
+
+  obj |>
+    add_baseline(sdtm, "lb", "BILI_X_ULN", baseline_filter = baseline_filter) |>
+    add_baseline(sdtm, "lb", "AST_X_ULN", baseline_filter = baseline_filter) |>
+    mutate(BL_ODWG = case_when(
+      .data$BL_BILI_X_ULN > 3 & .data$BL_BILI_X_ULN <= 10 ~ "severe",
+      .data$BL_BILI_X_ULN > 1.5 & .data$BL_BILI_X_ULN <= 3 ~ "moderate",
+      (.data$BL_BILI_X_ULN > 1 & .data$BL_BILI_X_ULN <= 1.5) |
+        .data$BL_AST_X_ULN > 1 ~ "mild",
+      .data$BL_BILI_X_ULN <= 1 & .data$BL_BILI_X_ULN <= 1 &
+        .data$BL_AST_X_ULN <= 1 ~ "normal",
+      .default = NA
+    )) |>
+    mutate(BL_ODWG = factor(.data$BL_ODWG,
+                            levels = c("normal", "mild", "moderate", "severe")
+    ))
+}
+
