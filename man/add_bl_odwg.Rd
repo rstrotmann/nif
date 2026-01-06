@@ -7,9 +7,10 @@
 add_bl_odwg(
   obj,
   sdtm,
-  observation_filter = "LBSPEC != 'URINE'",
-  baseline_filter = "LBBLFL == 'Y'",
-  summary_function = mean
+  observation_filter = NULL,
+  baseline_filter = NULL,
+  summary_function = mean,
+  silent = NULL
 )
 }
 \arguments{

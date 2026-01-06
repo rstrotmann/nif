@@ -18,6 +18,7 @@ add_baseline(
   baseline_filter = NULL,
   coding_table = NULL,
   summary_function = mean,
+  factor = 1,
   silent = NULL
 )
 }
@@ -56,6 +57,8 @@ field 'DV' that provides the re-coded value.}
 
 \item{summary_function}{The summary function to summarize multiple baseline
 values. Defaults to \code{mean}.}
+
+\item{factor}{A multiplier for the baseline value, defaults to 1.}
 
 \item{silent}{Suppress messages, defaults to nif_option setting if NULL.}
 }

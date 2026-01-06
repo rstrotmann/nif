@@ -41,6 +41,7 @@
 #'   table needs to have a field that matches a column in the domain, and a
 #'   field 'DV' that provides the re-coded value.
 #' @param name The column label, as character.
+#' @param factor A multiplier for the baseline value, defaults to 1.
 #'
 #' @return A nif object.
 #' @importFrom stats na.omit
@@ -64,6 +65,7 @@ add_baseline <- function(
   baseline_filter = NULL,
   coding_table = NULL,
   summary_function = mean,
+  factor = 1,
   silent = NULL
 ) {
   # input validation
@@ -77,6 +79,7 @@ add_baseline <- function(
   validate_char_param(cat, "cat", allow_null = TRUE)
   validate_char_param(scat, "scat", allow_null = TRUE)
   validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
+  validate_numeric_param(factor, "factor")
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
   # create fields
@@ -197,6 +200,7 @@ add_baseline <- function(
   }
 
   baseline <- baseline |>
+    mutate(DV = DV * factor) |>
     tidyr::pivot_wider(
       names_from = all_of(testcd_field),
       values_from = "DV"
