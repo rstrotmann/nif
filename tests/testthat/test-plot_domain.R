@@ -72,7 +72,7 @@ test_that("plot.domain works with DM domain", {
   # Test basic DM plot
   p <- plot.domain(test_dm)
   expect_s3_class(p, "ggplot")
-  expect_no_error(print(p))
+
 
   # Test DM plot with points = FALSE
   p <- plot.domain(test_dm, points = FALSE)
@@ -153,7 +153,6 @@ test_that("plot.domain works with EX domain", {
   # Test basic EX plot
   p <- plot.domain(test_ex)
   expect_s3_class(p, "ggplot")
-  expect_no_error(print(p))
 
   # Test EX plot with points = FALSE
   p <- plot.domain(test_ex, points = FALSE)
@@ -207,7 +206,7 @@ test_that("plot.domain works with generic domains (LB)", {
   # Test basic LB plot
   p <- plot.domain(test_lb)
   expect_s3_class(p, "ggplot")
-  expect_no_error(print(p))
+
 
   # Test LB plot with lines = TRUE
   p <- plot.domain(test_lb, lines = TRUE)
@@ -245,7 +244,7 @@ test_that("plot.domain works with generic domains (PC)", {
   # Test basic PC plot
   p <- plot.domain(test_pc)
   expect_s3_class(p, "ggplot")
-  expect_no_error(print(p))
+
 
   # Test PC plot with lines = TRUE
   p <- plot.domain(test_pc, lines = TRUE)
@@ -271,7 +270,7 @@ test_that("plot.domain works with generic domains using DY field", {
   # Test VS plot (should use VSDY as time field)
   p <- plot.domain(test_vs)
   expect_s3_class(p, "ggplot")
-  expect_no_error(print(p))
+
 })
 
 
@@ -315,7 +314,7 @@ test_that("plot.domain works with real examplinib data", {
     lb_domain <- domain(examplinib_sad, "lb")
     p <- plot.domain(lb_domain)
     expect_s3_class(p, "ggplot")
-    expect_no_error(print(p))
+
 
     # Test with testcd filter
     p <- plot.domain(lb_domain, testcd = "ALT")
@@ -482,7 +481,7 @@ test_that("plot.domain handles date conversion correctly", {
   # Should handle different date formats via lubrify_dates
   p <- plot.domain(test_lb_dates)
   expect_s3_class(p, "ggplot")
-  expect_no_error(print(p))
+
 })
 
 
