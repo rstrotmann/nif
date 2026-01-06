@@ -3,7 +3,7 @@
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
 assign("show_hash", FALSE, envir = .nif_env)
-assign("abbreviation_threshold", 20, envir = .nif_env)
+assign("abbreviation_threshold", 15, envir = .nif_env)
 assign("abbreviation_maxlines", 10, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
 

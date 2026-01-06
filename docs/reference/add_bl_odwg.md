@@ -9,9 +9,10 @@ serum bilirubin, and AST aspartate aminotransferase.
 add_bl_odwg(
   obj,
   sdtm,
-  observation_filter = "LBSPEC != 'URINE'",
-  baseline_filter = "LBBLFL == 'Y'",
-  summary_function = mean
+  observation_filter = NULL,
+  baseline_filter = NULL,
+  summary_function = mean,
+  silent = NULL
 )
 ```
 
@@ -37,6 +38,10 @@ add_bl_odwg(
 
   The summary function to summarize multiple baseline values. Defaults
   to `mean`
+
+- silent:
+
+  Suppress messages.
 
 ## Value
 

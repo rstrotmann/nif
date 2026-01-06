@@ -20,6 +20,7 @@ add_baseline(
   baseline_filter = NULL,
   coding_table = NULL,
   summary_function = mean,
+  factor = 1,
   silent = NULL
 )
 ```
@@ -86,6 +87,10 @@ add_baseline(
 
   The summary function to summarize multiple baseline values. Defaults
   to `mean`.
+
+- factor:
+
+  A multiplier for the baseline value, defaults to 1.
 
 - silent:
 

@@ -9,7 +9,7 @@ bilirubin, and AST aspartate aminotransferase."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,7 @@ bilirubin, and AST aspartate aminotransferase."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Add baseline hepatic function class</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/nif_class.R" class="external-link"><code>R/nif_class.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/nif_baseline.R" class="external-link"><code>R/nif_baseline.R</code></a></small>
       <div class="d-none name"><code>add_bl_odwg.Rd</code></div>
     </div>
 
@@ -54,9 +54,10 @@ bilirubin, and AST aspartate aminotransferase.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_bl_odwg</span><span class="op">(</span></span>
 <span>  <span class="va">obj</span>,</span>
 <span>  <span class="va">sdtm</span>,</span>
-<span>  observation_filter <span class="op">=</span> <span class="st">"LBSPEC != 'URINE'"</span>,</span>
-<span>  baseline_filter <span class="op">=</span> <span class="st">"LBBLFL == 'Y'"</span>,</span>
-<span>  summary_function <span class="op">=</span> <span class="va">mean</span></span>
+<span>  observation_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  baseline_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  summary_function <span class="op">=</span> <span class="va">mean</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -85,6 +86,10 @@ character.</p></dd>
 <dt id="arg-summary-function">summary_function<a class="anchor" aria-label="anchor" href="#arg-summary-function"></a></dt>
 <dd><p>The summary function to summarize multiple baseline
 values. Defaults to <code>mean</code></p></dd>
+
+
+<dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
+<dd><p>Suppress messages.</p></dd>
 
 </dl></div>
     <div class="section level2">

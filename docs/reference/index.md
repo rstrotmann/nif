@@ -15,6 +15,8 @@
 - [`add_bl_crcl()`](add_bl_crcl.md) : Add baseline creatinine clearance
   field.
 
+- [`add_bl_creat()`](add_bl_creat.md) : Add baseline creatinine
+
 - [`add_bl_lbm()`](add_bl_lbm.md) : Add baseline lean body mass (LBM)
 
 - [`add_bl_odwg()`](add_bl_odwg.md) : Add baseline hepatic function
