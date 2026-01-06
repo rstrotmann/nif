@@ -25,6 +25,7 @@ CFB
 CMT
 CPT
 CRCL
+CREAT
 Clin
 Cmax
 Cockcroft
@@ -88,6 +89,7 @@ Pathol
 Pharmacokinetics
 Pharmacol
 Pharmacometrics
+Pharmaverse
 Pinboard
 Posix
 QD
@@ -175,7 +177,6 @@ pcrftdtc
 pharmacodynamic
 pharmacokinetic
 pharmacometric
-pharmaverse
 phuse
 pinboard
 pknca
@@ -183,7 +184,6 @@ pre
 proto
 raynaud
 readr
-readxl
 requiredness
 rfendtc
 sas
@@ -195,7 +195,6 @@ transaminase
 umol
 vline
 www
-xlsx
 xpt
 xxBLFL
 xxCAT

@@ -175,8 +175,9 @@ add_baseline <- function(
     apply_cat_filter(cat, cat_field) |>
     apply_cat_filter(scat, scat_field)
 
-  if (nrow(filtered_domain) == 0)
+  if (nrow(filtered_domain) == 0) {
     stop(paste0("No data after applying cat and scat filters!"))
+  }
 
   # apply observation and baseline filters
   filtered_domain <- filtered_domain |>
@@ -312,8 +313,10 @@ derive_baseline <- function(
         stop("baseline_filter must evaluate to logical values")
       }
       if (length(test_eval) != nrow(obj)) {
-        stop(paste("baseline_filter must return a logical vector with length",
-                   "equal to number of rows"))
+        stop(paste(
+          "baseline_filter must return a logical vector with length",
+          "equal to number of rows"
+        ))
       }
     },
     error = function(e) {
@@ -452,7 +455,6 @@ add_cfb <- function(
   summary_function = median,
   silent = NULL
 ) {
-
   lifecycle::deprecate_warn("0.61.1", "derive_cfb()", "derive_cfb()")
 
   derive_cfb(obj,
@@ -516,8 +518,10 @@ derive_cfb_analyte <- function(
         stop("baseline_filter must evaluate to logical values")
       }
       if (length(test_eval) != nrow(obj)) {
-        stop(paste("baseline_filter must return a logical vector with length",
-                   "equal to number of rows"))
+        stop(paste(
+          "baseline_filter must return a logical vector with length",
+          "equal to number of rows"
+        ))
       }
     },
     error = function(e) {
@@ -578,7 +582,6 @@ derive_cfb_analyte <- function(
 #' @noRd
 add_rtb <- function(obj, baseline_filter = "TIME <= 0",
                     summary_function = median) {
-
   obj |>
     ensure_analyte() |>
     as.data.frame() |>
@@ -592,7 +595,6 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
 }
 
 
-
 #' Add baseline creatinine
 #'
 #' @param obj A nif data set.
@@ -604,18 +606,20 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
 #' @returns A nif object with the BL_CREAT column added, if possible.
 #' @export
 add_bl_creat <- function(
-    obj,
-    sdtm,
-    baseline_filter = NULL,
-    molar = NULL,
-    silent = NULL
+  obj,
+  sdtm,
+  baseline_filter = NULL,
+  molar = NULL,
+  silent = NULL
 ) {
-  if (!"lb" %in% names(sdtm$domains))
+  if (!"lb" %in% names(sdtm$domains)) {
     stop("LB domain not found!")
+  }
 
   lb <- domain(sdtm, "lb")
-  if (!"CREAT" %in% unique(lb$LBTESTCD))
+  if (!"CREAT" %in% unique(lb$LBTESTCD)) {
     stop("No CREAT data found!")
+  }
 
   # CREAT units
   if ("LBSTRESU" %in% names(lb)) {
@@ -624,40 +628,42 @@ add_bl_creat <- function(
       distinct(.data$LBSTRESU) |>
       pull(.data$LBSTRESU)
 
-    if (length(unit) == 0 | all(is.na(unit))) {
+    if (length(unit) == 0 || all(is.na(unit))) {
       # No unit information found for CREAT records
       if (is.null(molar)) {
         molar <- FALSE
-        conditional_cli(
-          cli_alert_warning("No unit information found for CREAT, assuming mg/dl"),
+        conditional_cli(cli_alert_warning(
+          "No unit information found for CREAT, assuming mg/dl"),
           silent = silent
         )
       }
     } else if (length(unit) > 1) {
-      stop(paste0("Baseline CREAT could not be added: Multiple units (",
-                  nice_enumeration(unit), ")"))
+      stop(paste0(
+        "Baseline CREAT could not be added: Multiple units (",
+        nice_enumeration(unit), ")"
+      ))
     } else {
       # Single unit found
       if (is.null(molar)) {
         molar <- FALSE
         if (unit %in% c("umol/L", "umol/l", "micromol/l", "micromol/L")) {
           molar <- TRUE
-          conditional_cli( {
-            cli_alert_warning("BL_CREAT automatically converted from umol/l to mg/dl!")
-          },
-          silent = silent
+          conditional_cli(
+            cli_alert_warning(
+              "BL_CREAT automatically converted from umol/l to mg/dl!"),
+            silent = silent
           )
         }
       }
     }
   } else {
-    if (is.null(molar))
+    if (is.null(molar)) {
       # assume that CREAT is in mg/dl
-      molar = FALSE
+      molar <- FALSE
+    }
   }
 
   # baseline filter
-
   if (is.null(baseline_filter)) {
     blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))
     if (length(blcol) == 0) {
@@ -670,18 +676,6 @@ add_bl_creat <- function(
     )
   }
 
-
-  # if (is.null(baseline_filter)) {
-  #   blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))[[1]]
-  #   if (is.null(blcol)) {
-  #     stop(
-  #       "No baseline flag column identified. Please provide a baseline_filter"
-  #     )
-  #   }
-  #   baseline_filter <- paste0(
-  #     blcol, " == 'Y'"
-  #   )
-
   if (!is_valid_filter(lb, baseline_filter)) {
     conditional_cli(
       cli_alert_warning("Invalid baseline filter, baseline CREAT not added"),
@@ -690,11 +684,13 @@ add_bl_creat <- function(
     return(obj)
   }
 
-  factor <- ifelse(molar, 1/88.4, 1)
+  factor <- ifelse(molar, 1 / 88.4, 1)
 
   obj |>
-    add_baseline(sdtm, "lb", "CREAT", baseline_filter = baseline_filter,
-                 factor = factor)
+    add_baseline(sdtm, "lb", "CREAT",
+      baseline_filter = baseline_filter,
+      factor = factor
+    )
 }
 
 
@@ -713,12 +709,15 @@ add_bl_creat <- function(
 #' @examples
 #' head(add_bl_crcl(examplinib_poc_nif))
 add_bl_crcl <- function(obj, method = egfr_cg, molar = FALSE) {
-  missing_columns <- setdiff(c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
-                             names(obj))
-  if (length(missing_columns) > 0)
+  missing_columns <- setdiff(
+    c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT"),
+    names(obj)
+  )
+  if (length(missing_columns) > 0) {
     stop(paste0(
       "Missing coluns: ", nice_enumeration(missing_columns), "!"
     ))
+  }
 
   if ("BL_CREAT" %in% colnames(obj)) {
     obj |>
@@ -747,18 +746,19 @@ add_bl_crcl <- function(obj, method = egfr_cg, molar = FALSE) {
 #' @examples
 #' head(add_bl_renal(examplinib_poc_nif), 5)
 add_bl_renal <- function(obj, method = egfr_cg, molar = FALSE) {
-  if (!"BL_CRCL" %in% names(obj))
+  if (!"BL_CRCL" %in% names(obj)) {
     obj <- add_bl_crcl(obj, method = method, molar = molar)
+  }
 
   obj |>
     mutate(BL_RENAL = as.character(
       cut(.data$BL_CRCL,
-          breaks = c(0, 30, 60, 90, Inf),
-          labels = c("severe", "moderate", "mild", "normal")
+        breaks = c(0, 30, 60, 90, Inf),
+        labels = c("severe", "moderate", "mild", "normal")
       )
     )) |>
     mutate(BL_RENAL = factor(.data$BL_RENAL,
-                             levels = c("normal", "mild", "moderate", "severe")
+      levels = c("normal", "mild", "moderate", "severe")
     ))
 }
 
@@ -778,8 +778,9 @@ add_bl_lbm <- function(obj, method = lbm_boer) {
   # input validation
   validate_nif(obj)
   missing_fields <- setdiff(c("WEIGHT", "HEIGHT", "SEX"), names(obj))
-  if (length(missing_fields) > 0)
+  if (length(missing_fields) > 0) {
     stop(paste0("Missing fields: ", nice_enumeration(missing_fields)))
+  }
 
   obj |>
     mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
@@ -809,16 +810,16 @@ add_bl_lbm <- function(obj, method = lbm_boer) {
 #' @return A nif object.
 #' @export
 add_bl_odwg <- function(
-    obj,
-    sdtm,
-    observation_filter = NULL,
-    baseline_filter = NULL,
-    summary_function = mean,
-    silent = NULL
+  obj,
+  sdtm,
+  observation_filter = NULL,
+  baseline_filter = NULL,
+  summary_function = mean,
+  silent = NULL
 ) {
-
   # input validation
-  validate_char_param(observation_filter, "observation_filter", allow_null = TRUE)
+  validate_char_param(observation_filter, "observation_filter",
+                      allow_null = TRUE)
   validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
 
   if (!"lb" %in% names(sdtm$domains)) {
@@ -836,8 +837,10 @@ add_bl_odwg <- function(
   missing_params <- setdiff(c("BILI", "AST"), unique(lb$LBTESTCD))
   if (length(missing_params) > 0) {
     conditional_cli(
-      cli_alert_warning("Missing hepatic function markers: ",
-                        nice_enumeration(missing_params)),
+      cli_alert_warning(
+        "Missing hepatic function markers: ",
+        nice_enumeration(missing_params)
+      ),
       silent = silent
     )
     return(obj)
@@ -845,17 +848,20 @@ add_bl_odwg <- function(
 
   # baseline filter
   if (is.null(baseline_filter)) {
-    blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))[[1]]
-    if (is.null(blcol)) {
+    blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))
+    if (length(blcol) == 0) {
       conditional_cli({
         cli_alert_warning("No baseline flag column found!")
-        cli_text("Please provide an explicit baseline filter to calculate BL_ODWG!")
+        cli_text(
+          "Please provide an explicit baseline filter to calculate BL_ODWG!")
         cli_text()
-      }, silent = silent)
+      }, silent = silent
+      )
       return(obj)
     }
+
     baseline_filter <- paste0(
-      blcol, " == 'Y'"
+      blcol[1], " == 'Y'"
     )
   }
 
@@ -863,8 +869,9 @@ add_bl_odwg <- function(
   if (is.null(observation_filter)) {
     observation_filter <- "TRUE"
     if ("LBSPEC" %in% names(lb)) {
-      if ("URINE" %in% unique(lb$LBSPEC))
+      if ("URINE" %in% unique(lb$LBSPEC)) {
         observation_filter <- "LBSPEC != 'URINE'"
+      }
     }
   }
 
@@ -888,9 +895,11 @@ add_bl_odwg <- function(
 
   if (nrow(lb1) == 0) {
     conditional_cli({
-      cli_alert_warning("No hepatic function markers after baseline and observation filtering!")
+      cli_alert_warning(
+        "No hepatic function markers after baseline and observation filtering!")
       cli_text("BL_ODWG could not be derived!")
-    }, silent = silent)
+    },
+    silent = silent)
     return(obj)
   }
 
@@ -903,8 +912,10 @@ add_bl_odwg <- function(
   sdtm$domains[["lb"]] <- lb1
 
   obj |>
-    add_baseline(sdtm, "lb", "BILI_X_ULN", baseline_filter = baseline_filter) |>
-    add_baseline(sdtm, "lb", "AST_X_ULN", baseline_filter = baseline_filter) |>
+    add_baseline(sdtm, "lb", "BILI_X_ULN", baseline_filter = "TRUE",
+                 summary_function = summary_function) |>
+    add_baseline(sdtm, "lb", "AST_X_ULN", baseline_filter = "TRUE",
+                 summary_function = summary_function) |>
     mutate(BL_ODWG = case_when(
       .data$BL_BILI_X_ULN > 3 & .data$BL_BILI_X_ULN <= 10 ~ "severe",
       .data$BL_BILI_X_ULN > 1.5 & .data$BL_BILI_X_ULN <= 3 ~ "moderate",
@@ -915,7 +926,6 @@ add_bl_odwg <- function(
       .default = NA
     )) |>
     mutate(BL_ODWG = factor(.data$BL_ODWG,
-                            levels = c("normal", "mild", "moderate", "severe")
+      levels = c("normal", "mild", "moderate", "severe")
     ))
 }
-
