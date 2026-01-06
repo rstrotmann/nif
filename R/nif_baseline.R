@@ -601,6 +601,7 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
 #' @param sdtm Source sdtm data object.
 #' @param baseline_filter The filter term to identify baseline conditions.
 #' @param silent Suppress messages.
+#' @param observation_filter An observation filter term as character.
 #'
 #' @returns A nif object with the BL_CREAT column added, if possible. Otherwise
 #' the unchanged input.
@@ -649,7 +650,7 @@ add_bl_creat <- function(
 
   # convert all CREAT values to micromolar concentrations
   temp_lb <- lb |>
-    filter(LBTESTCD == "CREAT")
+    filter(.data$LBTESTCD == "CREAT")
 
   if (!"LBSTRESU" %in% names(lb)) {
     median_creat <- median(temp_lb$LBSTRESN, na.rm = TRUE)

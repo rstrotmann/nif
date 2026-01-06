@@ -19,6 +19,8 @@ add_bl_creat(
 
 \item{baseline_filter}{The filter term to identify baseline conditions.}
 
+\item{observation_filter}{An observation filter term as character.}
+
 \item{silent}{Suppress messages.}
 }
 \value{
