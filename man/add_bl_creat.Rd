@@ -18,7 +18,8 @@ add_bl_creat(obj, sdtm, baseline_filter = NULL, molar = NULL, silent = NULL)
 \item{silent}{Suppress messages.}
 }
 \value{
-A nif object with the BL_CREAT column added, if possible.
+A nif object with the BL_CREAT column added, if possible. Otherwise
+the unchanged input.
 }
 \description{
 Add baseline creatinine

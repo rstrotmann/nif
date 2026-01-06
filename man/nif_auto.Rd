@@ -13,6 +13,8 @@ nif_auto(
   duplicates = "resolve",
   duplicate_function = mean,
   keep = NULL,
+  include_renal = TRUE,
+  include_hepatic = TRUE,
   silent = NULL
 )
 }
@@ -44,6 +46,12 @@ duplicate entries.
 \code{mean}.}
 
 \item{keep}{Columns to keep, as character.}
+
+\item{include_renal}{Add baseline creatinine, CRCL and renal function
+category, if possible.}
+
+\item{include_hepatic}{Add baseline hepatic function category per ODWG
+classification, if possible.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}

@@ -210,6 +210,10 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
 #' @param baseline_filter A filter term to identify the baseline condition, as
 #'   character.
 #' @param ... Formulae to define the relationships between PCTESTCD and EXTRT.
+#' @param include_renal Add baseline creatinine, CRCL and renal function
+#' category, if possible.
+#' @param include_hepatic Add baseline hepatic function category per ODWG
+#' classification, if possible.
 #'
 #' @return A nif object.
 #'
@@ -235,6 +239,8 @@ nif_auto <- function(
   duplicates = "resolve",
   duplicate_function = mean,
   keep = NULL,
+  include_renal = TRUE,
+  include_hepatic = TRUE,
   silent = NULL
 ) {
   # input validation
@@ -324,43 +330,36 @@ nif_auto <- function(
       )
     } else {
       # baseline renal function
-      if ("CREAT" %in% unique(lb$LBTESTCD)) {
-        # conditional_message("Adding baseline CREAT", silent = silent)
-        # out <- add_baseline(out, sdtm, "lb", "CREAT",
-        #   baseline_filter = baseline_filter
-        # )
+      if (include_renal == TRUE) {
+        if ("CREAT" %in% unique(lb$LBTESTCD)) {
+          out <- add_bl_creat(out, sdtm, silent = silent)
+          conditional_cli(cli_alert_info("BL_CREAT added!"), silent = silent)
 
-        out <- add_bl_creat(out, sdtm, silent = silent)
-        conditional_cli(cli_alert_info("BL_CREAT added!"), silent = silent)
-
-        if (all(
-          c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out)
-        )) {
-          out <- add_bl_crcl(out)
-          out <- add_bl_renal(out)
-          # conditional_message(
-          #   "Adding baseline CRCL and renal function class",
-          #   silent = silent
-          # )
-          conditional_cli(
-            cli_alert_info("BL_CRCL and baseline renal function class (BL_RENAL) added!"),
-            silent = silent
-          )
+          if (all(
+            c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out)
+          )) {
+            out <- add_bl_crcl(out)
+            out <- add_bl_renal(out)
+            conditional_cli(
+              cli_alert_info("BL_CRCL and baseline renal function class (BL_RENAL) added!"),
+              silent = silent
+            )
+          }
         }
       }
 
       # baseline hepatic function
-      if (all(c("BILI", "AST") %in% unique(lb$LBTESTCD))) {
-        # conditional_message("Adding baseline hepatic function", silent = silent)
-
-        out <- add_bl_odwg(
-          out, sdtm,
-          baseline_filter = baseline_filter
-        )
-        conditional_cli(
-          cli_alert_info("Baseline hepatic function (BL_ODWG) added!"),
-          silent = silent
-        )
+      if (include_hepatic == TRUE) {
+        if (all(c("BILI", "AST") %in% unique(lb$LBTESTCD))) {
+          out <- add_bl_odwg(
+            out, sdtm,
+            baseline_filter = baseline_filter
+          )
+          conditional_cli(
+            cli_alert_info("Baseline hepatic function (BL_ODWG) added!"),
+            silent = silent
+          )
+        }
       }
     }
   }

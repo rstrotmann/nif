@@ -603,7 +603,8 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
 #' @param molar Use molar units.
 #' @param silent Suppress messages.
 #'
-#' @returns A nif object with the BL_CREAT column added, if possible.
+#' @returns A nif object with the BL_CREAT column added, if possible. Otherwise
+#' the unchanged input.
 #' @export
 add_bl_creat <- function(
   obj,
@@ -638,10 +639,14 @@ add_bl_creat <- function(
         )
       }
     } else if (length(unit) > 1) {
-      stop(paste0(
-        "Baseline CREAT could not be added: Multiple units (",
-        nice_enumeration(unit), ")"
-      ))
+      conditional_cli(
+        cli_alert_warning(paste0(
+          "Baseline CREAT could not be added: Multiple units (",
+          nice_enumeration(unit), ")"
+        )),
+        silent = silent
+      )
+      return(obj)
     } else {
       # Single unit found
       if (is.null(molar)) {
