@@ -624,7 +624,7 @@ add_bl_creat <- function(
       distinct(.data$LBSTRESU) |>
       pull(.data$LBSTRESU)
 
-    if (length(unit) == 0) {
+    if (length(unit) == 0 | all(is.na(unit))) {
       # No unit information found for CREAT records
       if (is.null(molar)) {
         molar <- FALSE
@@ -657,9 +657,10 @@ add_bl_creat <- function(
   }
 
   # baseline filter
+
   if (is.null(baseline_filter)) {
-    blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))[[1]]
-    if (is.null(blcol)) {
+    blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))
+    if (length(blcol) == 0) {
       stop(
         "No baseline flag column identified. Please provide a baseline_filter"
       )
@@ -668,6 +669,18 @@ add_bl_creat <- function(
       blcol, " == 'Y'"
     )
   }
+
+
+  # if (is.null(baseline_filter)) {
+  #   blcol <- intersect(c("LBBLFL", "LBLOBXFL"), names(lb))[[1]]
+  #   if (is.null(blcol)) {
+  #     stop(
+  #       "No baseline flag column identified. Please provide a baseline_filter"
+  #     )
+  #   }
+  #   baseline_filter <- paste0(
+  #     blcol, " == 'Y'"
+  #   )
 
   if (!is_valid_filter(lb, baseline_filter)) {
     conditional_cli(
