@@ -130,7 +130,7 @@ test_that("add_bl_creat errors when multiple units are found", {
 
   expect_message(
     result <- add_bl_creat(test_nif, test_sdtm, silent = FALSE),
-    "Baseline CREAT could not be added"
+    "Multiple units for CREAT"
   )
 })
 

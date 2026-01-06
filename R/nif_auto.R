@@ -332,9 +332,8 @@ nif_auto <- function(
       # baseline renal function
       if (include_renal == TRUE) {
         if ("CREAT" %in% unique(lb$LBTESTCD)) {
+          conditional_cli(cli_alert_info("Adding BL_CREAT"), silent = silent)
           out <- add_bl_creat(out, sdtm, silent = silent)
-          conditional_cli(cli_alert_info("BL_CREAT added!"), silent = silent)
-
           if (all(
             c("BL_CREAT", "AGE", "SEX", "RACE", "WEIGHT") %in% names(out)
           )) {

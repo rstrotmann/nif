@@ -581,7 +581,7 @@ suggest <- function(obj, show_all = FALSE) {
       cli::cli_text()
       if (has_bl_flag) {
         message_code(function(x) {
-          "  add_observation(sdtm, 'lb', 'CREAT')"
+          "  add_baseline(sdtm, 'lb', 'CREAT')"
         }, "")
       } else {
         message_code(function(x) {

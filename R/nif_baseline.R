@@ -613,6 +613,7 @@ add_bl_creat <- function(
   molar = NULL,
   silent = NULL
 ) {
+  # input validation
   if (!"lb" %in% names(sdtm$domains)) {
     stop("LB domain not found!")
   }
@@ -621,6 +622,9 @@ add_bl_creat <- function(
   if (!"CREAT" %in% unique(lb$LBTESTCD)) {
     stop("No CREAT data found!")
   }
+
+  micromolar_units <- c("umol/L", "umol/l", "micromol/l", "micromol/L")
+  mg_units <- c("mg/dl", "mg/dL")
 
   # CREAT units
   if ("LBSTRESU" %in% names(lb)) {
@@ -639,14 +643,16 @@ add_bl_creat <- function(
         )
       }
     } else if (length(unit) > 1) {
-      conditional_cli(
-        cli_alert_warning(paste0(
-          "Baseline CREAT could not be added: Multiple units (",
-          nice_enumeration(unit), ")"
-        )),
-        silent = silent
-      )
+
+      conditional_cli({
+        cli_alert_danger(paste0(
+          "Multiple units for CREAT: ", nice_enumeration(unit)))
+        cli_text("BL_CRCL could not be added. Consider providing a baseline filter")
+        },
+        silent = silent)
+
       return(obj)
+
     } else {
       # Single unit found
       if (is.null(molar)) {
