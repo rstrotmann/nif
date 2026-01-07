@@ -88,9 +88,7 @@ summary.adam <- function(object, ...) {
 #' @export
 #' @noRd
 print.summary_adam <- function(x, ...) {
-  indent <- 2
   hline <- paste0(rep("-", 8), collapse = "")
-  spacer <- paste0(rep(" ", indent), collapse = "")
 
   cat(paste(hline, "ADaM data set summary", hline, "\n"))
 
@@ -134,10 +132,11 @@ dataset <- function(adam, name) {
   validate_adam(adam)
   validate_char_param(name, "name")
 
-  if (!name %in% names(adam))
+  if (!name %in% names(adam)) {
     stop(paste0(
       "Dataset ", name, " not found in adam object!"
     ))
+  }
 
   adam[[name]]
 }

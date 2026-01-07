@@ -179,7 +179,7 @@ test_that("testcd() handles domain parameter correctly", {
 
   # Test with non-existent domain
   expect_message(
-    result_nonexistent <- testcd(sdtm_obj, domain = "NONEXISTENT"),
+    result_nonexistent <- testcd(sdtm_obj, domain = "NONEXISTENT", silent = FALSE),
     "Domain nonexistent not found in sdtm object")
   expect_equal(nrow(result_nonexistent), 0)
 })

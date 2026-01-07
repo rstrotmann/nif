@@ -4,13 +4,15 @@
 \alias{testcd}
 \title{Extract TESTCD fields by domain from a sdtm object}
 \usage{
-testcd(obj, domain = NULL)
+testcd(obj, domain = NULL, silent = NULL)
 }
 \arguments{
 \item{obj}{A sdtm object.}
 
 \item{domain}{Domains to select, as character. Defaults to all domains, if
 NULL.}
+
+\item{silent}{Suppress messages,}
 }
 \value{
 A data frame with columns DOMAIN and TESTCD. Returns an empty data

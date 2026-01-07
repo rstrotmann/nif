@@ -921,12 +921,13 @@ derive_sld <- function(
 #' @param obj A sdtm object.
 #' @param domain Domains to select, as character. Defaults to all domains, if
 #' NULL.
+#' @param silent Suppress messages,
 #'
 #' @returns A data frame with columns DOMAIN and TESTCD. Returns an empty data
 #' frame if no TESTCD columns are found.
 #'
 #' @export
-testcd <- function(obj, domain = NULL) {
+testcd <- function(obj, domain = NULL, silent = NULL) {
   # Validate inputs
   if (!inherits(obj, "sdtm")) {
     stop("Input must be a sdtm object")
@@ -945,7 +946,8 @@ testcd <- function(obj, domain = NULL) {
   if (n_missing > 0) {
     conditional_message(
       plural("Domain", n_missing > 1), " ", nice_enumeration(missing_domains),
-      " not found in sdtm object!"
+      " not found in sdtm object!",
+      silent = silent
     )
     domain <- intersect(domain, names(obj$domains))
   }

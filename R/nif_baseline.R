@@ -455,7 +455,7 @@ add_cfb <- function(
   summary_function = median,
   silent = NULL
 ) {
-  lifecycle::deprecate_warn("0.61.1", "derive_cfb()", "derive_cfb()")
+  lifecycle::deprecate_warn("0.61.1", "add_cfb()", "derive_cfb()")
 
   derive_cfb(obj,
     baseline_filter = baseline_filter,

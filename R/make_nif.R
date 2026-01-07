@@ -92,9 +92,26 @@ index_nif <- function(nif) {
 #' @return A nif object.
 #' @export
 limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
+  # Input validation
+  validate_nif(obj)
+  validate_logical_param(individual, "individual")
+  validate_logical_param(keep_no_obs_sbs, "keep_no_obs_sbs")
+  
+  # Check for required fields
+  required_fields <- c("DTC", "ID", "EVID")
+  missing_fields <- setdiff(required_fields, names(obj))
+  if (length(missing_fields) > 0) {
+    stop(paste0(
+      "Missing required fields in nif object: ",
+      nice_enumeration(missing_fields)
+    ))
+  }
+  
+  max_dtc <- max(obj$DTC, na.rm = TRUE)
+
   max_or_inf <- function(x) {
     if (length(x) == 0) {
-      return(max(obj$DTC, na.rm = TRUE))
+      return(max_dtc)
     }
     max(x, na.rm = TRUE)
   }
@@ -105,6 +122,7 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       filter(sum(.data$EVID == 0) > 0) |>
       ungroup()
   }
+  
   if (individual == TRUE) {
     obj |>
       group_by(.data$ID) |>
@@ -114,7 +132,7 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       select(-c("LAST_OBS_DTC")) |>
       nif()
   } else {
-    last_obs_dtc <- max(obj$DTC[obj$EVID == 0])
+    last_obs_dtc <- max(obj$DTC[obj$EVID == 0], na.rm = TRUE)
     obj |>
       filter(.data$DTC <= last_obs_dtc) |>
       nif()

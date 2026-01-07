@@ -1,11 +1,14 @@
 read_adam <- function(
-    data_path,
-    dataset = NULL,
-    format = "sas", delim = ",", ...) {
+  data_path,
+  dataset = NULL,
+  format = "sas", delim = ",", ...
+) {
   # validate input
   validate_char_param(data_path, "data_path")
-  validate_char_param(dataset, "dataset", allow_null = TRUE,
-                      allow_multiple = TRUE)
+  validate_char_param(dataset, "dataset",
+    allow_null = TRUE,
+    allow_multiple = TRUE
+  )
   validate_char_param(format, "format")
 
   # Validate data_path
@@ -17,15 +20,15 @@ read_adam <- function(
   valid_formats <- c("sas", "xpt", "csv")
   if (!format %in% valid_formats) {
     stop("format must be one of: ", paste(valid_formats, collapse = ", "),
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 
   # Get file extension based on format
   file_ext <- switch(format,
-                     "sas" = ".sas7bdat",
-                     "xpt" = ".xpt",
-                     "csv" = ".csv"
-                     # "xlsx" = ".xlsx"
+    "sas" = ".sas7bdat",
+    "xpt" = ".xpt",
+    "csv" = ".csv"
   )
 
   # set domains
@@ -47,8 +50,8 @@ read_adam <- function(
 
   if (length(missing_files) > 0) {
     stop("The following files do not exist:\n",
-         paste(missing_files, collapse = "\n"),
-         call. = FALSE
+      paste(missing_files, collapse = "\n"),
+      call. = FALSE
     )
   }
 
@@ -82,17 +85,6 @@ read_adam <- function(
       )
     }
   }
-
-  # if (format == "xlsx") {
-  #   for (x in domain) {
-  #     out[[x]] <- as.data.frame(
-  #       readxl::read_xlsx(
-  #         file.path(data_path, paste0(x, ".xlsx")),
-  #         ...
-  #       )
-  #     )
-  #   }
-  # }
 
   if (length(out) == 0) {
     stop("no dataset found")
