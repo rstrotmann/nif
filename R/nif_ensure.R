@@ -111,7 +111,7 @@ ensure_dose <- function(obj) {
 #' @return A NIF object.
 #' @keywords internal
 #' @noRd
-ensure_parent <- function(obj) {
+ensure_parent_old <- function(obj) {
   # Validate input is a NIF object
   validate_nif(obj)
 
@@ -198,6 +198,180 @@ ensure_parent <- function(obj) {
         .default = most_likely_parent
       )
     )
+
+  # Ensure return value is a NIF object
+  nif(obj)
+}
+
+
+#' Ensure that the PARENT field is present in a NIF file.
+#'
+#' The PARENT is defined as the "ANALYTE" of the administered treatment. If
+#' there are multiple treatments, there will be likely different parents (e.g.,
+#' "placebo" and "examplinib").
+#'
+#' If the "PARENT" field is already present in the input nif object, the input
+#' will be returned unchanged. If not, the most likely parent for each analyte
+#' is guessed based on simple heuristics:
+#'
+#' * If there is only one treatment in the input data set, and there are
+#' observations of the same ANALYTE name, that ANALYTE will be considered the
+#' PARENT for all observations.
+#' * If there is only one treatment but no observation with the same ANALYTE
+#' name, the analyte with the lowest compartment (CMT) number is considered the
+#' analyte corresponding the PARENT for all observations. In these cases a
+#' message is issued to inform that this imputation was made.
+#' * If there are multiple treatments in the input data set, however with
+#' individual subjects receiving only one of the treatments, then the PARENT is
+#' imputed as the ANALYTE of the respective treatment.
+#' * If there are multiple treatments in the input data set, and individual
+#' subjects have received multiple treatments, the PARENT for all observations
+#' is imputed as the observation with the lowest compartment (CMT) number. In
+#' these cases, a warning is issued that the parent could not be clearly
+#' determined but was based on assumptions.
+#'
+#' @param obj A NIF object.
+#' @return A NIF object.
+#' @keywords internal
+#' @noRd
+ensure_parent <- function(obj) {
+  # Validate input is a NIF object
+  validate_nif(obj)
+
+  # Validate required columns exist
+  required_cols <- c("EVID", "CMT", "ID")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # Handle empty data frame
+  if (nrow(obj) == 0) {
+    return(
+      obj |>
+        mutate(PARENT = character(0)) |>
+        nif()
+    )
+  }
+
+  # Ensure ANALYTE exists
+  obj <- obj |>
+    ensure_analyte()
+
+  # If PARENT already exists, return early
+  if ("PARENT" %in% names(obj)) {
+    return(nif(obj))
+  }
+
+  # Get treatments (ANALYTE values from administration records)
+  trts <- treatments(obj)
+
+  # Get all unique analytes from observations
+  obs_analytes <- analytes(obj)
+
+  # Case 1: Single treatment
+  if (length(trts) == 1) {
+    single_treatment <- trts[1]
+
+    # Check if there are observations with the same ANALYTE name as the treatment
+    if (single_treatment %in% obs_analytes) {
+      # Case 1a: Single treatment + observations with same ANALYTE
+      obj <- obj |>
+        mutate(
+          PARENT = case_when(
+            .data$EVID == 1 ~ .data$ANALYTE,
+            TRUE ~ single_treatment
+          )
+        )
+    } else {
+      # Case 1b: Single treatment but no matching ANALYTE in observations
+      # Find analyte with lowest CMT number
+      lowest_cmt_analyte <- obj |>
+        filter(.data$EVID == 0) |>
+        arrange(.data$CMT) |>
+        slice(1) |>
+        pull(.data$ANALYTE)
+
+      if (length(lowest_cmt_analyte) == 0 || is.na(lowest_cmt_analyte)) {
+        stop("Cannot determine PARENT: no observation records (EVID == 0) found")
+      }
+
+      message(
+        "PARENT field imputed: Single treatment '", single_treatment,
+        "' found but no observations with matching ANALYTE. ",
+        "Using analyte '", lowest_cmt_analyte,
+        "' (lowest CMT number) as PARENT for all observations."
+      )
+
+      obj <- obj |>
+        mutate(
+          PARENT = case_when(
+            .data$EVID == 1 ~ .data$ANALYTE,
+            TRUE ~ lowest_cmt_analyte
+          )
+        )
+    }
+  } else if (length(trts) > 1) {
+    # Case 2: Multiple treatments
+    # Check if individual subjects received multiple treatments
+    subjects_multiple_treatments <- obj |>
+      filter(.data$EVID == 1) |>
+      group_by(.data$ID) |>
+      summarise(n_treatments = n_distinct(.data$ANALYTE), .groups = "drop") |>
+      filter(.data$n_treatments > 1) |>
+      nrow()
+
+    if (subjects_multiple_treatments == 0) {
+      # Case 2a: Multiple treatments but subjects only receive one each
+      # Create mapping of treatment ANALYTE per subject
+      subject_treatment_map <- obj |>
+        filter(.data$EVID == 1) |>
+        group_by(.data$ID) |>
+        summarise(SUBJECT_PARENT = first(.data$ANALYTE), .groups = "drop")
+
+      obj <- obj |>
+        left_join(subject_treatment_map, by = "ID") |>
+        mutate(
+          PARENT = case_when(
+            .data$EVID == 1 ~ .data$ANALYTE,
+            TRUE ~ .data$SUBJECT_PARENT
+          )
+        ) |>
+        select(-.data$SUBJECT_PARENT)
+    } else {
+      # Case 2b: Multiple treatments and subjects received multiple treatments
+      # Find analyte with lowest CMT number
+      lowest_cmt_info <- obj |>
+        filter(.data$EVID == 0) |>
+        arrange(.data$CMT) |>
+        slice(1)
+
+      if (nrow(lowest_cmt_info) == 0) {
+        stop("Cannot determine PARENT: no observation records (EVID == 0) found")
+      }
+
+      lowest_cmt_analyte <- lowest_cmt_info |>
+        pull(.data$ANALYTE)
+
+      warning(
+        "PARENT field imputed: Multiple treatments found and some subjects ",
+        "received multiple treatments. Parent could not be clearly determined. ",
+        "Using analyte '", lowest_cmt_analyte,
+        "' (lowest CMT number) as PARENT for all observations based on assumptions."
+      )
+
+      obj <- obj |>
+        mutate(
+          PARENT = case_when(
+            .data$EVID == 1 ~ .data$ANALYTE,
+            TRUE ~ lowest_cmt_analyte
+          )
+        )
+    }
+  } else {
+    # No treatments found
+    stop("Cannot determine PARENT: no treatment records (EVID == 1) found")
+  }
 
   # Ensure return value is a NIF object
   nif(obj)

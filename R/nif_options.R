@@ -6,6 +6,7 @@ assign("show_hash", FALSE, envir = .nif_env)
 assign("abbreviation_threshold", 15, envir = .nif_env)
 assign("abbreviation_maxlines", 10, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
+assign("debug", TRUE, envir = .nif_env)
 
 
 #' Set or get global options
