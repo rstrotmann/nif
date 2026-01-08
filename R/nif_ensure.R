@@ -119,13 +119,8 @@ ensure_parent <- function(obj, silent = NULL) {
   obj <- obj |>
     ensure_analyte()
 
-  # Check if there are observations - if not, error
-  # n_obs <- sum(obj$EVID == 0, na.rm = TRUE)
-  # if (n_obs == 0) {
-  #   stop("Cannot determine PARENT: no observation records (EVID == 0) found")
-  # }
-
-  # Check if there are administrations - if not, error (need administrations to determine PARENT)
+  # Check if there are administrations - if not, error (need administrations to
+  # determine PARENT)
   n_admin <- sum(obj$EVID == 1, na.rm = TRUE)
   if (n_admin == 0) {
     stop("Cannot determine PARENT: no treatment records (EVID == 1) found")
@@ -146,7 +141,8 @@ ensure_parent <- function(obj, silent = NULL) {
     # Fill forward to propagate last administration's ANALYTE to observations
     tidyr::fill(".last_admin_analyte", .direction = "downup") |>
     ungroup() |>
-    # Assign PARENT: for administrations use ANALYTE, for observations use last admin's ANALYTE
+    # Assign PARENT: for administrations use ANALYTE, for observations use last
+    # admin's ANALYTE
     mutate(
       PARENT = case_when(
         .data$EVID == 1 ~ .data$ANALYTE,
@@ -158,320 +154,6 @@ ensure_parent <- function(obj, silent = NULL) {
 
   # Return as NIF object
   nif(result)
-}
-
-
-#' Ensure that the PARENT field is present in a NIF file.
-#'
-#' The PARENT is defined as the "ANALYTE" of the administered treatment. If
-#' there are multiple treatments, there will be likely different parents (e.g.,
-#' "placebo" and "examplinib").
-#'
-#' If the "PARENT" field is already present in the input nif object, the input
-#' will be returned unchanged. If not, the most likely parent for each analyte
-#' is guessed based on simple heuristics:
-#'
-#' * If there is only one treatment in the input data set, and there are
-#' observations of the same ANALYTE name, that ANALYTE will be considered the
-#' PARENT for all observations.
-#' * If there is only one treatment but no observation with the same ANALYTE
-#' name, the analyte with the lowest compartment (CMT) number is considered the
-#' analyte corresponding the PARENT for all observations. In these cases a
-#' message is issued to inform that this imputation was made.
-#' * If there are multiple treatments in the input data set, however with
-#' individual subjects receiving only one of the treatments, then the PARENT is
-#' imputed as the ANALYTE of the respective treatment.
-#' * If there are multiple treatments in the input data set, and individual
-#' subjects have received multiple treatments, the PARENT for all observations
-#' is imputed as the observation with the lowest compartment (CMT) number. In
-#' these cases, a warning is issued that the parent could not be clearly
-#' determined but was based on assumptions.
-#'
-#' @param obj A NIF object.
-#' @return A NIF object.
-#' @keywords internal
-#' @noRd
-ensure_parent_old <- function(obj) {
-  # Validate input is a NIF object
-  validate_nif(obj)
-
-  # Validate required columns exist
-  required_cols <- c("EVID", "CMT")
-  missing_cols <- setdiff(required_cols, names(obj))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Handle empty data frame
-  if (nrow(obj) == 0) {
-    return(
-      obj |>
-        mutate(PARENT = numeric(0)) |>
-        nif()
-    )
-  }
-
-  obj <- obj |>
-    ensure_analyte()
-
-  # Get treatments early since it's needed in both code paths
-  treatments <- treatments(obj)
-
-  # Get administration CMT values
-  admin_cmt <- obj |>
-    as.data.frame() |>
-    filter(.data$EVID == 1) |>
-    distinct(.data$CMT)
-
-  # If PARENT already exists, return early
-  if ("PARENT" %in% names(obj)) {
-    return(nif(obj))
-  }
-
-  # Handle case where there are no administrations
-  if (nrow(admin_cmt) == 0) {
-    # Use observation records to determine most likely parent
-    cmt_heuristics <- filter(obj, .data$EVID == 0) |>
-      reframe(.data$ANALYTE, n = n(), .by = "CMT") |>
-      distinct() |>
-      arrange(desc(n))
-
-    # Check if we have any observations to determine parent
-    if (nrow(cmt_heuristics) == 0) {
-      stop("Cannot determine PARENT: no administration records (EVID == 1) and no observation records (EVID == 0)")
-    }
-
-    most_likely_parent <- cmt_heuristics[1, "ANALYTE"]
-
-    obj <- obj |>
-      mutate(
-        PARENT = case_when(
-          .data$EVID == 1 ~ .data$ANALYTE,
-          .data$EVID == 0 & .data$ANALYTE %in% treatments ~ .data$ANALYTE,
-          .default = most_likely_parent
-        )
-      )
-
-    # Ensure return value is a NIF object
-    return(nif(obj))
-  }
-
-  # Handle case where administrations exist
-  admins <- filter(obj, .data$EVID == 1)
-  cmt_heuristics <- admins |>
-    reframe(.data$ANALYTE, n = n(), .by = "CMT") |>
-    distinct() |>
-    arrange(desc(n))
-
-  # This should not happen if admin_cmt has rows, but check for safety
-  if (nrow(cmt_heuristics) == 0) {
-    stop("Cannot determine PARENT: administration records found but no valid ANALYTE values")
-  }
-
-  most_likely_parent <- cmt_heuristics[1, "ANALYTE"]
-
-  obj <- obj |>
-    mutate(
-      PARENT = case_when(
-        .data$EVID == 1 ~ .data$ANALYTE,
-        .data$EVID == 0 & .data$ANALYTE %in% treatments ~ .data$ANALYTE,
-        .default = most_likely_parent
-      )
-    )
-
-  # Ensure return value is a NIF object
-  nif(obj)
-}
-
-
-#' Ensure that the PARENT field is present in a NIF file.
-#'
-#' The PARENT is defined as the "ANALYTE" of the administered treatment. If
-#' there are multiple treatments, there will be likely different parents (e.g.,
-#' "placebo" and "examplinib").
-#'
-#' If the "PARENT" field is already present in the input nif object, the input
-#' will be returned unchanged. If not, the most likely parent for each analyte
-#' is guessed based on simple heuristics:
-#'
-#' * If there is only one treatment in the input data set, and there are
-#' observations of the same ANALYTE name, that ANALYTE will be considered the
-#' PARENT for all observations.
-#' * If there is only one treatment but no observation with the same ANALYTE
-#' name, the PARENT for all observations is imputed to be the ANALYTE of the
-#' administration (the treatment's ANALYTE). In these cases a message is issued
-#' to inform that this imputation was made.
-#'
-#' * If there are multiple treatments in the input data set, the function
-#' considers each subject individually. Subjects who have received only one
-#' treatment have their PARENT for all observations set to the ANALYTE of their
-#' treatment (even if they have no observations with matching ANALYTE). For
-#' subjects who have received multiple treatments, the PARENT for all their
-#' observations is imputed as the ANALYTE of the administration that has the
-#' highest number of corresponding observations in the whole data set. In these
-#' cases, a warning is issued that the parent was imputed based on observation
-#' counts.
-#'
-#' @param obj A NIF object.
-#' @param silent Suppress messages.
-#'
-#' @return A NIF object.
-#' @keywords internal
-#' @noRd
-ensure_parent2 <- function(obj, silent = NULL) {
-  # Validate input is a NIF object
-  validate_nif(obj)
-
-  # Validate required columns exist
-  required_cols <- c("EVID", "CMT", "ID")
-  missing_cols <- setdiff(required_cols, names(obj))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Handle empty data frame
-  if (nrow(obj) == 0) {
-    return(
-      obj |>
-        mutate(PARENT = character(0)) |>
-        nif()
-    )
-  }
-
-  # Ensure ANALYTE exists
-  obj <- obj |>
-    ensure_analyte()
-
-  # If PARENT already exists, return early
-  if ("PARENT" %in% names(obj)) {
-    return(nif(obj))
-  }
-
-  # Get treatments (ANALYTE values from administration records)
-  trts <- treatments(obj)
-
-  # Get all unique analytes from observations
-  obs_analytes <- analytes(obj)
-
-  # Case 1: Single treatment
-  if (length(trts) == 1) {
-    single_treatment <- trts[1]
-
-    # Check if there are observations with the same ANALYTE name as the treatment
-    if (single_treatment %in% obs_analytes) {
-      # Case 1a: Single treatment + observations with same ANALYTE
-      obj <- obj |>
-        mutate(
-          PARENT = case_when(
-            .data$EVID == 1 ~ .data$ANALYTE,
-            TRUE ~ single_treatment
-          )
-        )
-    } else {
-      # Case 1b: Single treatment but no matching ANALYTE in observations
-      # Use the treatment's ANALYTE as PARENT
-      conditional_cli(
-        cli_alert_info(paste0(
-          "PARENT field imputed for all observations to ", single_treatment
-        )),
-        silent = silent
-      )
-
-      obj <- obj |>
-        mutate(
-          PARENT = case_when(
-            .data$EVID == 1 ~ .data$ANALYTE,
-            TRUE ~ single_treatment
-          )
-        )
-    }
-  } else if (length(trts) > 1) {
-    # Case 2: Multiple treatments
-    # Determine PARENT per subject based on number of treatments they received
-    subject_treatment_info <- obj |>
-      filter(.data$EVID == 1) |>
-      group_by(.data$ID) |>
-      summarise(
-        n_treatments = n_distinct(.data$ANALYTE),
-        SUBJECT_TREATMENT = first(.data$ANALYTE),
-        .groups = "drop"
-      )
-
-    # Count observations per ANALYTE in the whole dataset
-    obs_counts <- obj |>
-      filter(.data$EVID == 0) |>
-      count(.data$ANALYTE, name = "OBS_COUNT") |>
-      arrange(desc(.data$OBS_COUNT))
-
-    if (nrow(obs_counts) == 0) {
-      stop("Cannot determine PARENT: no observation records (EVID == 0) found")
-    }
-
-    # For subjects with multiple treatments, determine PARENT based on treatment
-    # with highest observation count
-    subjects_with_multiple <- subject_treatment_info |>
-      filter(.data$n_treatments > 1)
-
-    if (nrow(subjects_with_multiple) > 0) {
-      # Get all treatments for each subject with multiple treatments
-      subject_treatments <- obj |>
-        filter(.data$EVID == 1, .data$ID %in% subjects_with_multiple$ID) |>
-        distinct(.data$ID, .data$ANALYTE) |>
-        left_join(obs_counts, by = "ANALYTE") |>
-        # Replace NA counts with 0 (for treatments with no observations)
-        mutate(OBS_COUNT = if_else(is.na(.data$OBS_COUNT), 0L, .data$OBS_COUNT)) |>
-        # For each subject, select treatment with highest observation count
-        group_by(.data$ID) |>
-        slice_max(.data$OBS_COUNT, n = 1, with_ties = FALSE) |>
-        ungroup() |>
-        select(.data$ID, SUBJECT_PARENT = .data$ANALYTE)
-
-      # Get PARENT for subjects with single treatment
-      subjects_single <- subject_treatment_info |>
-        filter(.data$n_treatments == 1) |>
-        select(.data$ID, SUBJECT_PARENT = .data$SUBJECT_TREATMENT)
-
-      # Combine both groups
-      subject_parent_map <- bind_rows(subjects_single, subject_treatments)
-
-      # Get the most common PARENT for warning message
-      most_common_parent <- subject_treatments |>
-        count(.data$SUBJECT_PARENT, sort = TRUE) |>
-        slice(1) |>
-        pull(.data$SUBJECT_PARENT)
-
-      conditional_cli(
-        cli_alert_warning(paste0(
-          "For subjects with multiple treatments, PARENT field was imputed based on ",
-          "treatment with highest observation count. Most common PARENT: ",
-          most_common_parent
-        )),
-        silent = silent
-      )
-    } else {
-      # All subjects have single treatment
-      subject_parent_map <- subject_treatment_info |>
-        select(.data$ID, SUBJECT_PARENT = .data$SUBJECT_TREATMENT)
-    }
-
-
-    # Apply PARENT mapping
-    obj <- obj |>
-      left_join(subject_parent_map, by = "ID") |>
-      mutate(
-        PARENT = case_when(
-          .data$EVID == 1 ~ .data$ANALYTE,
-          TRUE ~ .data$SUBJECT_PARENT
-        )
-      ) |>
-      select(-.data$SUBJECT_PARENT)
-  } else {
-    # No treatments found
-    stop("Cannot determine PARENT: no treatment records (EVID == 1) found")
-  }
-
-  # Ensure return value is a NIF object
-  nif(obj)
 }
 
 
@@ -527,11 +209,6 @@ ensure_tad <- function(obj) {
   # Add TAD field
   result <- add_tad(obj)
 
-  # Validate TAD was added
-  # if (!"TAD" %in% names(result)) {
-  #   stop("Failed to add TAD field")
-  # }
-
   result
 }
 
@@ -578,11 +255,6 @@ ensure_tafd <- function(obj) {
     }
   )
 
-  # Validate TAFD was added
-  # if (!"TAFD" %in% names(result)) {
-  #   stop("Failed to add TAFD field")
-  # }
-
   result
 }
 
@@ -604,11 +276,6 @@ ensure_tafd <- function(obj) {
 #' @keywords internal
 #' @noRd
 ensure_time <- function(obj) {
-  # Validate input is a NIF object
-  # if (!inherits(obj, "nif")) {
-  #   stop("Input must be a NIF object")
-  # }
-
   # If all required time fields already exist, return object unchanged
   if (all(c("TIME", "TAD", "TAFD") %in% names(obj))) {
     return(obj)
@@ -641,15 +308,6 @@ ensure_time <- function(obj) {
       "time fields"
     ))
   }
-
-  # Validate that all time fields are now present
-  # missing_time_fields <- setdiff(c("TIME", "TAD", "TAFD"), names(result))
-  # if (length(missing_time_fields) > 0) {
-  #   stop(
-  #     "Failed to generate all required time fields: ",
-  #     paste(missing_time_fields, collapse = ", ")
-  #   )
-  # }
 
   result
 }
