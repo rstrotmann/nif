@@ -83,6 +83,30 @@ ensure_dose <- function(obj) {
 
 #' Ensure that the PARENT field is present in a NIF file.
 #'
+#' The PARENT is defined as the "ANALYTE" of the administered treatment. If
+#' there are multiple treatments, there will be likely different parents (e.g.,
+#' "placebo" and "examplinib").
+#'
+#' If the "PARENT" field is already present in the input nif object, the input
+#' will be returned unchanged. If not, the most likely parent for each analyte
+#' is guessed based on simple heuristics:
+#'
+#' * If there is only one treatment in the input data set, and there are
+#' observations of the same ANALYTE name, that ANALYTE will be considered the
+#' PARENT for all observations.
+#' * If there is only one treatment but no observation with the same ANALYTE
+#' name, the analyte with the lowest compartment (CMT) number is considered the
+#' analyte corresponding the PARENT for all observations. In these cases a
+#' message is issued to inform that this imputation was made.
+#' * If there are multiple treatments in the input data set, however with
+#' individual subjects receiving only one of the treatments, then the PARENT is
+#' imputed as the ANALYTE of the respective treatment.
+#' * If there are multiple treatments in the input data set, and individual
+#' subjects have received multiple treatments, the PARENT for all observations
+#' is imputed as the observation with the lowest compartment (CMT) number. In
+#' these cases, a warning is issued that the parent could not be clearly
+#' determined but was based on assumptions.
+#'
 #' @param obj A NIF object.
 #' @return A NIF object.
 #' @keywords internal

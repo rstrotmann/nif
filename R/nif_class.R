@@ -407,6 +407,7 @@ usubjid <- function(obj, id, silent = NULL) {
 
 #' Parent compounds within a NIF object
 #'
+#'
 #' @param obj A NIF object.
 #' @return The parent compounds as character.
 #' @noRd
