@@ -125,10 +125,14 @@ head(nif_poc, 3)
 #  1 2001-01-13 10:36:00    0     0    0   0    1 500     RS2023   1 RS2023     1
 #  2 2001-01-13 10:36:00    0     0    0   0    0   0     RS2023   2 RS2023     1
 #  3 2001-01-13 10:36:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1
-#    METABOLITE DOSE MDV  ACTARMCD IMPUTATION DV BL_CREAT  BL_CRCL
-#  1      FALSE  500   1 TREATMENT            NA 72.78062 107.4689
-#  2      FALSE  500   0 TREATMENT             0 72.78062 107.4689
-#  3      FALSE  500   0 TREATMENT             0 72.78062 107.4689
+#    METABOLITE DOSE MDV  ACTARMCD IMPUTATION SRC_DOMAIN SRC_SEQ DV BL_CREAT
+#  1      FALSE  500   1 TREATMENT                    EX       1 NA 72.78062
+#  2      FALSE  500   0 TREATMENT                    PC       1  0 72.78062
+#  3      FALSE  500   0 TREATMENT                    PC       2  0 72.78062
+#     BL_CRCL
+#  1 107.4689
+#  2 107.4689
+#  3 107.4689
 ```
 
 ## EXPLORATION
@@ -199,7 +203,7 @@ summary(nif_poc)
 #    PARENT   min   max   mean   median   
 #    RS2023   56    99    78.5   79        
 #  
-#  Hash: dcc42d79173632bab45d63031770b507
+#  Hash: b8efad728888558a91be97b58547e99d
 #  Last DTC: 2001-07-14 08:53:00
 ```
 

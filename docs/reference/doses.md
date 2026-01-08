@@ -22,5 +22,5 @@ Numeric.
 
 ``` r
 doses(examplinib_poc_nif)
-#> [1] 250 500
+#> [1] 500 250
 ```

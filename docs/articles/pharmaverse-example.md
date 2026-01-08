@@ -151,7 +151,7 @@ summary(nif)
 #>   PLACEBO   7     210   149.1   182      
 #>   XAN       1     212   99.2    81        
 #> 
-#> Hash: 943b0f31774848c656fe5a8cfe35172c
+#> Hash: a0cef0c464fac964f1efe623607ecd28
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(
@@ -201,6 +201,8 @@ ddt(nif) |>
 | DVBL | Baseline value for dependent variable | numeric | DV value at baseline | NA | SDTM domain |
 | DVCFB | Change from baseline of dependent variable | numeric | DV difference to DVBL | NA | Derived from DV, DVBL |
 | DL | Dose level | numeric | Dose at treatment start | mg | Derived from DOSE |
+| SRC_DOMAIN | NA | character | NA | NA | NA |
+| SRC_SEQ | NA | numeric | NA | NA | NA |
 
 ## DATA EXPLORATION
 

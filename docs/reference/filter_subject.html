@@ -105,31 +105,550 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last DTC: 2001-03-14 10:09:00</span>
 <span class="r-in"><span><span class="fu">filter_subject</span><span class="op">(</span><span class="va">examplinib_poc_nif</span>,</span></span>
 <span class="r-in"><span><span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ----- NONMEM Input Format (NIF) data -----</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44 observations from 1 subject across 1 study </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Analytes: RS2023 and RS2023487A </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0 males (0%), 1 females (100%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   REF, ID, STUDYID, USUBJID, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, DTC, TIME,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Hash: 61a6ceaec997252f60c3b069a151c86c</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data (selected columns):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    0       0       0       RS2023       1      1     500   500    NA         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    0       0       0       RS2023       0      2     0     500    0          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    0       0       0       RS2023487A   0      3     0     500    0          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    0.5     1       1       RS2023       0      2     0     500    636.683    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    0.5     1       1       RS2023487A   0      3     0     500    135.126    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    1       1.467   1.467   RS2023       0      2     0     500    1844.823   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    1       1.467   1.467   RS2023487A   0      3     0     500    677.321    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    1.5     2       2       RS2023       0      2     0     500    2773.308   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    1.5     2       2       RS2023487A   0      3     0     500    1547.253   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1    2       2.467   2.467   RS2023       0      2     0     500    2539.54     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 125 more rows</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     2  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     3  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     4  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     5  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     7  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     8  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     9  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   10  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   11  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   12  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   13  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14   14  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15   15  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16   16  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17   17  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18   18  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19   19  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20   20  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21   21  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22   22  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23   23  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24   24  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25   25  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26   26  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27   27  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28   28  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29   29  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30   30  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31   31  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32   32  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33   33  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34   34  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35   35  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36   36  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37   37  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38   38  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39   39  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40   40  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41   41  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42   42  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43   43  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44   44  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45   45  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46   46  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47   47  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48   48  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49   49  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50   50  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51   51  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52   52  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53   53  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54   54  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55   55  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56   56  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57   57  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58   58  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59   59  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60   60  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61   61  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62   62  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63   63  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64   64  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65   65  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66   66  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67   67  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68   68  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69   69  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70   70  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71   71  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72   72  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73   73  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74   74  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75   75  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76   76  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77   77  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78   78  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79   79  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80   80  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81   81  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82   82  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83   83  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84   84  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85   85  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86   86  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87   87  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88   88  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89   89  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90   90  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91   91  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92   92  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93   93  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94   94  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95   95  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96   96  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97   97  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98   98  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99   99  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100 100  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101 101  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 102  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103 103  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104 104  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105 105  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106 106  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107 107  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108 108  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109 109  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110 110  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111 111  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112 112  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113 113  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114 114  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115 115  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116 116  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117 117  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118 118  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119 119  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120 120  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121 121  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 122 122  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123 123  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124 124  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125 125  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126 126  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127 127  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128 128  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129 129  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130 130  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131 131  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132 132  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133 133  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134 134  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135 135  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     DTC     TIME NTIME     TAFD    TAD EVID AMT    ANALYTE CMT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   2001-01-13 10:36:00    0.000   0.0    0.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2001-01-13 10:36:00    0.000   0.0    0.000  0.000    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   2001-01-13 10:36:00    0.000   0.0    0.000  0.000    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   2001-01-13 11:36:00    1.000   0.5    1.000  1.000    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2001-01-13 11:36:00    1.000   0.5    1.000  1.000    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   2001-01-13 12:04:00    1.467   1.0    1.467  1.467    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   2001-01-13 12:04:00    1.467   1.0    1.467  1.467    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   2001-01-13 12:36:00    2.000   1.5    2.000  2.000    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   2001-01-13 12:36:00    2.000   1.5    2.000  2.000    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  2001-01-13 13:04:00    2.467   2.0    2.467  2.467    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  2001-01-13 13:04:00    2.467   2.0    2.467  2.467    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  2001-01-13 14:08:00    3.533   3.0    3.533  3.533    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  2001-01-13 14:08:00    3.533   3.0    3.533  3.533    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  2001-01-13 15:09:00    4.550   4.0    4.550  4.550    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  2001-01-13 15:09:00    4.550   4.0    4.550  4.550    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  2001-01-13 17:06:00    6.500   6.0    6.500  6.500    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  2001-01-13 17:06:00    6.500   6.0    6.500  6.500    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  2001-01-13 18:58:00    8.367   8.0    8.367  8.367    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  2001-01-13 18:58:00    8.367   8.0    8.367  8.367    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  2001-01-13 21:00:00   10.400  10.0   10.400 10.400    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  2001-01-13 21:00:00   10.400  10.0   10.400 10.400    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  2001-01-13 22:51:00   12.250  12.0   12.250 12.250    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  2001-01-13 22:51:00   12.250  12.0   12.250 12.250    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  2001-01-14 10:36:00   24.000   0.0   24.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  2001-01-15 10:36:00   48.000   0.0   48.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  2001-01-16 10:36:00   72.000   0.0   72.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  2001-01-17 10:36:00   96.000   0.0   96.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  2001-01-18 10:36:00  120.000   0.0  120.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  2001-01-19 10:36:00  144.000   0.0  144.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  2001-01-20 10:36:00  168.000   0.0  168.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  2001-01-21 10:16:00  191.667   0.0  191.667 23.667    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  2001-01-21 10:16:00  191.667   0.0  191.667 23.667    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  2001-01-21 10:36:00  192.000   0.0  192.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  2001-01-21 11:36:00  193.000   0.5  193.000  1.000    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  2001-01-21 11:36:00  193.000   0.5  193.000  1.000    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36  2001-01-21 12:08:00  193.533   1.0  193.533  1.533    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  2001-01-21 12:08:00  193.533   1.0  193.533  1.533    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38  2001-01-21 12:36:00  194.000   1.5  194.000  2.000    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39  2001-01-21 12:36:00  194.000   1.5  194.000  2.000    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40  2001-01-21 13:07:00  194.517   2.0  194.517  2.517    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41  2001-01-21 13:07:00  194.517   2.0  194.517  2.517    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42  2001-01-21 14:05:00  195.483   3.0  195.483  3.483    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  2001-01-21 14:05:00  195.483   3.0  195.483  3.483    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44  2001-01-21 15:07:00  196.517   4.0  196.517  4.517    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45  2001-01-21 15:07:00  196.517   4.0  196.517  4.517    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  2001-01-21 17:19:00  198.717   6.0  198.717  6.717    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47  2001-01-21 17:19:00  198.717   6.0  198.717  6.717    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  2001-01-21 19:08:00  200.533   8.0  200.533  8.533    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  2001-01-21 19:08:00  200.533   8.0  200.533  8.533    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50  2001-01-21 21:22:00  202.767  10.0  202.767 10.767    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51  2001-01-21 21:22:00  202.767  10.0  202.767 10.767    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52  2001-01-21 23:10:00  204.567  12.0  204.567 12.567    0   0     RS2023   2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  2001-01-21 23:10:00  204.567  12.0  204.567 12.567    0   0 RS2023487A   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54  2001-01-22 10:36:00  216.000   0.0  216.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55  2001-01-23 10:36:00  240.000   0.0  240.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56  2001-01-24 10:36:00  264.000   0.0  264.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57  2001-01-25 10:36:00  288.000   0.0  288.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58  2001-01-26 10:36:00  312.000   0.0  312.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59  2001-01-27 10:36:00  336.000   0.0  336.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60  2001-01-28 10:36:00  360.000   0.0  360.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61  2001-01-29 10:36:00  384.000   0.0  384.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62  2001-01-30 10:36:00  408.000   0.0  408.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63  2001-01-31 10:36:00  432.000   0.0  432.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64  2001-02-01 10:36:00  456.000   0.0  456.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65  2001-02-02 10:36:00  480.000   0.0  480.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66  2001-02-03 10:36:00  504.000   0.0  504.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67  2001-02-04 10:36:00  528.000   0.0  528.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68  2001-02-05 10:36:00  552.000   0.0  552.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69  2001-02-06 10:36:00  576.000   0.0  576.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70  2001-02-07 10:36:00  600.000   0.0  600.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71  2001-02-08 10:36:00  624.000   0.0  624.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72  2001-02-09 10:36:00  648.000   0.0  648.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73  2001-02-10 10:36:00  672.000   0.0  672.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74  2001-02-11 10:36:00  696.000   0.0  696.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  2001-02-12 10:36:00  720.000   0.0  720.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76  2001-02-13 10:36:00  744.000   0.0  744.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77  2001-02-14 10:36:00  768.000   0.0  768.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78  2001-02-15 10:36:00  792.000   0.0  792.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  2001-02-16 10:36:00  816.000   0.0  816.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80  2001-02-17 10:36:00  840.000   0.0  840.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81  2001-02-18 10:36:00  864.000   0.0  864.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82  2001-02-19 10:36:00  888.000   0.0  888.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83  2001-02-20 10:36:00  912.000   0.0  912.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84  2001-02-21 10:36:00  936.000   0.0  936.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85  2001-02-22 10:36:00  960.000   0.0  960.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86  2001-02-23 10:36:00  984.000   0.0  984.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87  2001-02-24 10:36:00 1008.000   0.0 1008.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88  2001-02-25 10:36:00 1032.000   0.0 1032.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89  2001-02-26 10:36:00 1056.000   0.0 1056.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90  2001-02-27 10:36:00 1080.000   0.0 1080.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91  2001-02-28 10:36:00 1104.000   0.0 1104.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  2001-03-01 10:36:00 1128.000   0.0 1128.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93  2001-03-02 10:36:00 1152.000   0.0 1152.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  2001-03-03 10:36:00 1176.000   0.0 1176.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  2001-03-04 10:36:00 1200.000   0.0 1200.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96  2001-03-05 10:36:00 1224.000   0.0 1224.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97  2001-03-06 10:36:00 1248.000   0.0 1248.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98  2001-03-07 10:36:00 1272.000   0.0 1272.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99  2001-03-08 10:36:00 1296.000   0.0 1296.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100 2001-03-09 10:36:00 1320.000   0.0 1320.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101 2001-03-10 10:36:00 1344.000   0.0 1344.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 2001-03-11 10:36:00 1368.000   0.0 1368.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103 2001-03-12 10:36:00 1392.000   0.0 1392.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104 2001-03-13 10:36:00 1416.000   0.0 1416.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105 2001-03-14 10:36:00 1440.000   0.0 1440.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106 2001-03-15 10:36:00 1464.000   0.0 1464.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107 2001-03-16 10:36:00 1488.000   0.0 1488.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108 2001-03-17 10:36:00 1512.000   0.0 1512.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109 2001-03-18 10:36:00 1536.000   0.0 1536.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110 2001-03-19 10:36:00 1560.000   0.0 1560.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111 2001-03-20 10:36:00 1584.000   0.0 1584.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112 2001-03-21 10:36:00 1608.000   0.0 1608.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113 2001-03-22 10:36:00 1632.000   0.0 1632.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114 2001-03-23 10:36:00 1656.000   0.0 1656.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115 2001-03-24 10:36:00 1680.000   0.0 1680.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116 2001-03-25 10:36:00 1704.000   0.0 1704.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117 2001-03-26 10:36:00 1728.000   0.0 1728.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118 2001-03-27 10:36:00 1752.000   0.0 1752.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119 2001-03-28 10:36:00 1776.000   0.0 1776.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120 2001-03-29 10:36:00 1800.000   0.0 1800.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121 2001-03-30 10:36:00 1824.000   0.0 1824.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 122 2001-03-31 10:36:00 1848.000   0.0 1848.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123 2001-04-01 10:36:00 1872.000   0.0 1872.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124 2001-04-02 10:36:00 1896.000   0.0 1896.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125 2001-04-03 10:36:00 1920.000   0.0 1920.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126 2001-04-04 10:36:00 1944.000   0.0 1944.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127 2001-04-05 10:36:00 1968.000   0.0 1968.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128 2001-04-06 10:36:00 1992.000   0.0 1992.000  0.000    1 500     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129 2001-04-07 10:36:00 2016.000   0.0 2016.000  0.000    1 250     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130 2001-04-08 10:36:00 2040.000   0.0 2040.000  0.000    1 250     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131 2001-04-09 10:36:00 2064.000   0.0 2064.000  0.000    1 250     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132 2001-04-10 10:36:00 2088.000   0.0 2088.000  0.000    1 250     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133 2001-04-11 10:36:00 2112.000   0.0 2112.000  0.000    1 250     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134 2001-04-12 10:36:00 2136.000   0.0 2136.000  0.000    1 250     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135 2001-04-13 10:36:00 2160.000   0.0 2160.000  0.000    1 250     RS2023   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PARENT TRTDY METABOLITE DOSE MDV  ACTARMCD           IMPUTATION         DV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   RS2023     1      FALSE  500   1 TREATMENT                              NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   RS2023     1      FALSE  500   0 TREATMENT                         0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   RS2023     1      FALSE  500   0 TREATMENT                         0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   RS2023     1      FALSE  500   0 TREATMENT                       636.68326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   RS2023     1      FALSE  500   0 TREATMENT                       135.12591</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   RS2023     1      FALSE  500   0 TREATMENT                      1844.82252</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   RS2023     1      FALSE  500   0 TREATMENT                       677.32072</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   RS2023     1      FALSE  500   0 TREATMENT                      2773.30831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   RS2023     1      FALSE  500   0 TREATMENT                      1547.25317</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  RS2023     1      FALSE  500   0 TREATMENT                      2539.54006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  RS2023     1      FALSE  500   0 TREATMENT                      2070.17408</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  RS2023     1      FALSE  500   0 TREATMENT                      2447.59810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  RS2023     1      FALSE  500   0 TREATMENT                      2324.35622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  RS2023     1      FALSE  500   0 TREATMENT                      1868.59367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  RS2023     1      FALSE  500   0 TREATMENT                      2030.80376</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  RS2023     1      FALSE  500   0 TREATMENT                      1229.61324</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  RS2023     1      FALSE  500   0 TREATMENT                      1344.94101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  RS2023     1      FALSE  500   0 TREATMENT                       750.58308</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  RS2023     1      FALSE  500   0 TREATMENT                       876.74310</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  RS2023     1      FALSE  500   0 TREATMENT                       514.63607</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  RS2023     1      FALSE  500   0 TREATMENT                       553.40020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  RS2023     1      FALSE  500   0 TREATMENT                       338.56491</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  RS2023     1      FALSE  500   0 TREATMENT                       366.67777</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  RS2023     2      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  RS2023     3      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  RS2023     4      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  RS2023     5      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  RS2023     6      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  RS2023     7      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  RS2023     8      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  RS2023     9      FALSE  500   0 TREATMENT                        37.73825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  RS2023     9      FALSE  500   0 TREATMENT                        39.48218</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  RS2023     9      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  RS2023     9      FALSE  500   0 TREATMENT                       704.03188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  RS2023     9      FALSE  500   0 TREATMENT                       171.57539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36  RS2023     9      FALSE  500   0 TREATMENT                      2097.45396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  RS2023     9      FALSE  500   0 TREATMENT                       788.97266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38  RS2023     9      FALSE  500   0 TREATMENT                      2781.27389</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39  RS2023     9      FALSE  500   0 TREATMENT                      1565.10906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40  RS2023     9      FALSE  500   0 TREATMENT                      2746.83456</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41  RS2023     9      FALSE  500   0 TREATMENT                      2125.96520</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42  RS2023     9      FALSE  500   0 TREATMENT                      2329.80693</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  RS2023     9      FALSE  500   0 TREATMENT                      2352.61568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44  RS2023     9      FALSE  500   0 TREATMENT                      1931.86764</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45  RS2023     9      FALSE  500   0 TREATMENT                      2060.28615</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  RS2023     9      FALSE  500   0 TREATMENT                      1111.90828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47  RS2023     9      FALSE  500   0 TREATMENT                      1290.28895</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  RS2023     9      FALSE  500   0 TREATMENT                       779.03438</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  RS2023     9      FALSE  500   0 TREATMENT                       854.16989</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50  RS2023     9      FALSE  500   0 TREATMENT                       470.25848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51  RS2023     9      FALSE  500   0 TREATMENT                       518.20064</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52  RS2023     9      FALSE  500   0 TREATMENT                       308.22383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  RS2023     9      FALSE  500   0 TREATMENT                       349.36931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54  RS2023    10      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55  RS2023    11      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56  RS2023    12      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57  RS2023    13      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58  RS2023    14      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59  RS2023    15      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60  RS2023    16      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61  RS2023    17      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62  RS2023    18      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63  RS2023    19      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64  RS2023    20      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65  RS2023    21      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66  RS2023    22      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67  RS2023    23      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68  RS2023    24      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69  RS2023    25      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70  RS2023    26      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71  RS2023    27      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72  RS2023    28      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73  RS2023    29      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74  RS2023    30      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  RS2023    31      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76  RS2023    32      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77  RS2023    33      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78  RS2023    34      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  RS2023    35      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80  RS2023    36      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81  RS2023    37      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82  RS2023    38      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83  RS2023    39      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84  RS2023    40      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85  RS2023    41      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86  RS2023    42      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87  RS2023    43      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88  RS2023    44      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89  RS2023    45      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90  RS2023    46      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91  RS2023    47      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  RS2023    48      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93  RS2023    49      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  RS2023    50      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  RS2023    51      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96  RS2023    52      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97  RS2023    53      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98  RS2023    54      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99  RS2023    55      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100 RS2023    56      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101 RS2023    57      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 RS2023    58      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103 RS2023    59      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104 RS2023    60      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105 RS2023    61      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106 RS2023    62      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107 RS2023    63      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108 RS2023    64      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109 RS2023    65      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110 RS2023    66      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111 RS2023    67      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112 RS2023    68      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113 RS2023    69      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114 RS2023    70      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115 RS2023    71      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116 RS2023    72      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117 RS2023    73      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118 RS2023    74      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119 RS2023    75      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120 RS2023    76      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121 RS2023    77      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 122 RS2023    78      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123 RS2023    79      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124 RS2023    80      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125 RS2023    81      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126 RS2023    82      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127 RS2023    83      FALSE  500   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128 RS2023    84      FALSE  500   1 TREATMENT                              NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129 RS2023    85      FALSE  250   1 TREATMENT                              NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130 RS2023    86      FALSE  250   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131 RS2023    87      FALSE  250   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132 RS2023    88      FALSE  250   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133 RS2023    89      FALSE  250   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134 RS2023    90      FALSE  250   1 TREATMENT time carried forward         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135 RS2023    91      FALSE  250   1 TREATMENT                              NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     BL_CREAT  BL_CRCL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99  72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 122 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135 72.78062 107.4689</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

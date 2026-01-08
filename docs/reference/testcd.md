@@ -5,7 +5,7 @@ Extract TESTCD fields by domain from a sdtm object
 ## Usage
 
 ``` r
-testcd(obj, domain = NULL)
+testcd(obj, domain = NULL, silent = NULL)
 ```
 
 ## Arguments
@@ -17,6 +17,10 @@ testcd(obj, domain = NULL)
 - domain:
 
   Domains to select, as character. Defaults to all domains, if NULL.
+
+- silent:
+
+  Suppress messages,
 
 ## Value
 
