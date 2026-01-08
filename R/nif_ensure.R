@@ -221,20 +221,22 @@ ensure_parent_old <- function(obj) {
 #' name, the analyte with the lowest compartment (CMT) number is considered the
 #' analyte corresponding the PARENT for all observations. In these cases a
 #' message is issued to inform that this imputation was made.
-#' * If there are multiple treatments in the input data set, however with
-#' individual subjects receiving only one of the treatments, then the PARENT is
-#' imputed as the ANALYTE of the respective treatment.
-#' * If there are multiple treatments in the input data set, and individual
-#' subjects have received multiple treatments, the PARENT for all observations
-#' is imputed as the observation with the lowest compartment (CMT) number. In
-#' these cases, a warning is issued that the parent could not be clearly
-#' determined but was based on assumptions.
+#' * If there are multiple treatments in the input data set, the function
+#' considers each subject individually. Subjects who have received only one
+#' treatment are treated like in case 1, i.e., their PARENT for all observations
+#' is the ANALYTE of the treatment. For subjects who have received multiple
+#' treatments, the PARENT for all their observations is imputed as the
+#' observation with the lowest compartment (CMT) number. In these cases, a
+#' warning is issued that the parent could not be clearly determined but was
+#' based on assumptions.
 #'
 #' @param obj A NIF object.
+#' @param silent Suppress messages.
+#'
 #' @return A NIF object.
 #' @keywords internal
 #' @noRd
-ensure_parent <- function(obj) {
+ensure_parent <- function(obj, silent = NULL) {
   # Validate input is a NIF object
   validate_nif(obj)
 
@@ -296,11 +298,18 @@ ensure_parent <- function(obj) {
         stop("Cannot determine PARENT: no observation records (EVID == 0) found")
       }
 
-      message(
-        "PARENT field imputed: Single treatment '", single_treatment,
-        "' found but no observations with matching ANALYTE. ",
-        "Using analyte '", lowest_cmt_analyte,
-        "' (lowest CMT number) as PARENT for all observations."
+      # message(
+      #   "PARENT field imputed: Single treatment '", single_treatment,
+      #   "' found but no observations with matching ANALYTE. ",
+      #   "Using analyte '", lowest_cmt_analyte,
+      #   "' (lowest CMT number) as PARENT for all observations."
+      # )
+
+      conditional_cli(
+        cli_alert_info(paste0(
+          "PARENT field imputed for all observations to ", lowest_cmt_analyte
+        )),
+        silent = silent
       )
 
       obj <- obj |>
@@ -313,61 +322,74 @@ ensure_parent <- function(obj) {
     }
   } else if (length(trts) > 1) {
     # Case 2: Multiple treatments
-    # Check if individual subjects received multiple treatments
-    subjects_multiple_treatments <- obj |>
+    # Determine PARENT per subject based on number of treatments they received
+    subject_treatment_info <- obj |>
       filter(.data$EVID == 1) |>
       group_by(.data$ID) |>
-      summarise(n_treatments = n_distinct(.data$ANALYTE), .groups = "drop") |>
+      summarise(
+        n_treatments = n_distinct(.data$ANALYTE),
+        SUBJECT_TREATMENT = first(.data$ANALYTE),
+        .groups = "drop"
+      )
+
+    # Find lowest CMT analyte for subjects with multiple treatments
+    lowest_cmt_info <- obj |>
+      filter(.data$EVID == 0) |>
+      arrange(.data$CMT) |>
+      slice(1)
+
+    if (nrow(lowest_cmt_info) == 0) {
+      stop("Cannot determine PARENT: no observation records (EVID == 0) found")
+    }
+
+    lowest_cmt_analyte <- lowest_cmt_info |>
+      pull(.data$ANALYTE)
+
+    # Determine PARENT for each subject:
+    # - If subject has 1 treatment: use that treatment's ANALYTE (like Case 1)
+    # - If subject has multiple treatments: use lowest CMT analyte
+    subject_parent_map <- subject_treatment_info |>
+      mutate(
+        SUBJECT_PARENT = case_when(
+          .data$n_treatments == 1 ~ .data$SUBJECT_TREATMENT,
+          TRUE ~ lowest_cmt_analyte
+        )
+      ) |>
+      select(.data$ID, .data$SUBJECT_PARENT)
+
+    # Check if any subjects have multiple treatments (for warning)
+    subjects_with_multiple <- subject_treatment_info |>
       filter(.data$n_treatments > 1) |>
       nrow()
 
-    if (subjects_multiple_treatments == 0) {
-      # Case 2a: Multiple treatments but subjects only receive one each
-      # Create mapping of treatment ANALYTE per subject
-      subject_treatment_map <- obj |>
-        filter(.data$EVID == 1) |>
-        group_by(.data$ID) |>
-        summarise(SUBJECT_PARENT = first(.data$ANALYTE), .groups = "drop")
+    if (subjects_with_multiple > 0) {
 
-      obj <- obj |>
-        left_join(subject_treatment_map, by = "ID") |>
-        mutate(
-          PARENT = case_when(
-            .data$EVID == 1 ~ .data$ANALYTE,
-            TRUE ~ .data$SUBJECT_PARENT
-          )
-        ) |>
-        select(-.data$SUBJECT_PARENT)
-    } else {
-      # Case 2b: Multiple treatments and subjects received multiple treatments
-      # Find analyte with lowest CMT number
-      lowest_cmt_info <- obj |>
-        filter(.data$EVID == 0) |>
-        arrange(.data$CMT) |>
-        slice(1)
+      # warning(
+      #   "PARENT field imputed: Multiple treatments found and some subjects ",
+      #   "received multiple treatments. For those subjects, parent could not be ",
+      #   "clearly determined. Using analyte '", lowest_cmt_analyte,
+      #   "' (lowest CMT number) as PARENT for their observations based on assumptions."
+      # )
 
-      if (nrow(lowest_cmt_info) == 0) {
-        stop("Cannot determine PARENT: no observation records (EVID == 0) found")
-      }
-
-      lowest_cmt_analyte <- lowest_cmt_info |>
-        pull(.data$ANALYTE)
-
-      warning(
-        "PARENT field imputed: Multiple treatments found and some subjects ",
-        "received multiple treatments. Parent could not be clearly determined. ",
-        "Using analyte '", lowest_cmt_analyte,
-        "' (lowest CMT number) as PARENT for all observations based on assumptions."
+      conditional_cli(
+        cli_alert_warning(paste0(
+        "For subjects with multiple treatments, PARENT field was imputed to ",
+        lowest_cmt_analyte)),
+        silent = silent
       )
-
-      obj <- obj |>
-        mutate(
-          PARENT = case_when(
-            .data$EVID == 1 ~ .data$ANALYTE,
-            TRUE ~ lowest_cmt_analyte
-          )
-        )
     }
+
+
+    # Apply PARENT mapping
+    obj <- obj |>
+      left_join(subject_parent_map, by = "ID") |>
+      mutate(
+        PARENT = case_when(
+          .data$EVID == 1 ~ .data$ANALYTE,
+          TRUE ~ .data$SUBJECT_PARENT
+        )
+      ) |>
+      select(-.data$SUBJECT_PARENT)
   } else {
     # No treatments found
     stop("Cannot determine PARENT: no treatment records (EVID == 1) found")
