@@ -227,9 +227,12 @@ test_that("make_time_from_TIME handles subjects with no administrations", {
   ) %>%
     nif()
 
-  expect_error(
-    make_time_from_TIME(test_data)
+  expect_no_error(
+    result <- make_time_from_TIME(test_data)
   )
+
+  expect_equal(result$TAFD, rep(NA_real_, 3))
+  expect_equal(result$TAD, rep(NA_real_, 3))
 })
 
 

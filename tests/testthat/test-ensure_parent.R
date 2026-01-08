@@ -1,6 +1,6 @@
 # Comprehensive tests for ensure_parent() function
 
-test_that("ensure_parent() handles empty data frame", {
+test_that("ensure_parent() errors on empty data frame", {
   empty_nif <- nif(
     tibble::tribble(
       ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT
@@ -8,13 +8,11 @@ test_that("ensure_parent() handles empty data frame", {
       filter(FALSE)
   )
 
-  result <- ensure_parent(empty_nif)
-
-  # Should return empty data frame with PARENT column
-  expect_true("PARENT" %in% names(result))
-  expect_equal(nrow(result), 0)
-  expect_true(inherits(result, "nif"))
-  expect_type(result$PARENT, "character")
+  # Should error because there are no observations
+  expect_error(
+    ensure_parent(empty_nif),
+    "Cannot determine PARENT"
+  )
 })
 
 
@@ -79,12 +77,7 @@ test_that("ensure_parent() Case 1b: Single treatment without matching ANALYTE us
   )
 
   test_nif <- nif(test_data)
-
-  # Should issue a message about imputation
-  expect_message(
-    result <- ensure_parent(test_nif, silent = FALSE),
-    "PARENT field imputed for all observations to DRUG"
-  )
+  result <- ensure_parent(test_nif)
 
   # Check that PARENT was added
   expect_true("PARENT" %in% names(result))
@@ -94,7 +87,7 @@ test_that("ensure_parent() Case 1b: Single treatment without matching ANALYTE us
   expect_equal(admin_rows$PARENT, admin_rows$ANALYTE)
   expect_equal(unique(admin_rows$PARENT), "DRUG")
 
-  # For observations, PARENT should be DRUG, too
+  # For observations, PARENT should be DRUG (from last administration)
   obs_rows <- result[result$EVID == 0, ]
   expect_equal(unique(obs_rows$PARENT), "DRUG")
 
@@ -112,11 +105,7 @@ test_that("ensure_parent() Case 1b: Single treatment with multiple CMTs", {
   )
 
   test_nif <- nif(test_data)
-
-  expect_message(
-    result <- ensure_parent(test_nif, silent = FALSE),
-    "PARENT field imputed"
-  )
+  result <- ensure_parent(test_nif)
 
   obs_rows <- result[result$EVID == 0, ]
   expect_equal(unique(obs_rows$PARENT), "DRUG")
@@ -138,7 +127,7 @@ test_that("ensure_parent() Case 2a: Multiple treatments, subjects receive one ea
   )
 
   test_nif <- nif(test_data)
-  result <- ensure_parent(test_nif, silent = FALSE)
+  result <- ensure_parent(test_nif)
 
   # Check that PARENT was added
   expect_true("PARENT" %in% names(result))
@@ -178,7 +167,7 @@ test_that("ensure_parent() Case 2a: Multiple treatments with metabolites per sub
   )
 
   test_nif <- nif(test_data)
-  result <- ensure_parent(test_nif, silent = FALSE)
+  result <- ensure_parent(test_nif)
 
   # Subject 1: all observations should have PARENT = "DRUG_A"
   subj1_obs <- result[result$ID == 1 & result$EVID == 0, ]
@@ -192,13 +181,14 @@ test_that("ensure_parent() Case 2a: Multiple treatments with metabolites per sub
 
 test_that("ensure_parent() Case 2b: Multiple treatments, subjects receive multiple", {
   # Multiple treatments: subject 1 has multiple, subject 2 has one
-  # DRUG_A has 3 observations, DRUG_B has 1 observation in the dataset
+  # Subject 1: DRUG_A at TIME=0, DRUG_B at TIME=24
+  # Observations after TIME=24 should use DRUG_B (last administration)
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
     1,   0,     1,     1,    100,  100,  "DRUG_A",  # Subject 1: multiple treatments
     1,   24,    1,     1,    100,  100,  "DRUG_B",
-    1,   1,     0,     1,    50,   0,    "DRUG_A",
-    1,   2,     0,     2,    25,   0,    "METABOLITE",
+    1,   1,     0,     1,    50,   0,    "DRUG_A",  # Before DRUG_B admin, uses DRUG_A
+    1,   25,    0,     2,    25,   0,    "METABOLITE",  # After DRUG_B admin, uses DRUG_B
     2,   0,     1,     1,    100,  100,  "DRUG_A",  # Subject 2: single treatment
     2,   1,     0,     1,    50,   0,    "DRUG_A",
     2,   2,     0,     1,    30,   0,    "DRUG_A",
@@ -206,12 +196,7 @@ test_that("ensure_parent() Case 2b: Multiple treatments, subjects receive multip
   )
 
   test_nif <- nif(test_data)
-
-  # Should issue a warning about observation count-based imputation
-  expect_message(
-    result <- ensure_parent(test_nif, silent = FALSE),
-    "For subjects with multiple treatments, PARENT field was imputed based on"
-  )
+  result <- ensure_parent(test_nif)
 
   # Check that PARENT was added
   expect_true("PARENT" %in% names(result))
@@ -220,10 +205,12 @@ test_that("ensure_parent() Case 2b: Multiple treatments, subjects receive multip
   admin_rows <- result[result$EVID == 1, ]
   expect_equal(admin_rows$PARENT, admin_rows$ANALYTE)
 
-  # Subject 1 (multiple treatments): DRUG_A has 3 observations, DRUG_B has 0
-  # So PARENT should be DRUG_A (highest observation count)
+  # Subject 1 (multiple treatments):
+  # Observation at TIME=1 (before DRUG_B) should use DRUG_A
+  # Observation at TIME=25 (after DRUG_B) should use DRUG_B (last administration)
   subj1_obs <- result[result$ID == 1 & result$EVID == 0, ]
-  expect_equal(unique(subj1_obs$PARENT), "DRUG_A")
+  expect_equal(subj1_obs$PARENT[subj1_obs$TIME == 1], "DRUG_A")
+  expect_equal(subj1_obs$PARENT[subj1_obs$TIME == 25], "DRUG_B")
 
   # Subject 2 (single treatment): PARENT should be DRUG_A (their treatment)
   subj2_obs <- result[result$ID == 2 & result$EVID == 0, ]
@@ -233,72 +220,59 @@ test_that("ensure_parent() Case 2b: Multiple treatments, subjects receive multip
 })
 
 
-test_that("ensure_parent() Case 2b: Multiple treatments with highest observation count", {
-  # Test that treatment with highest observation count is selected
-  # DRUG_A has 0 observations, DRUG_B has 2 observations
+test_that("ensure_parent() Case 2b: Multiple treatments uses last administration", {
+  # Test that last administered treatment (by TIME) is used
+  # DRUG_A at TIME=0, DRUG_B at TIME=24
+  # Observations before TIME=24 use DRUG_A, after use DRUG_B
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
     1,   0,     1,     1,    100,  100,  "DRUG_A",
     1,   24,    1,     1,    100,  100,  "DRUG_B",
-    1,   1,     0,     2,    50,   0,    "DRUG_B",  # DRUG_B has observations
-    1,   2,     0,     2,    25,   0,    "DRUG_B"
+    1,   1,     0,     2,    50,   0,    "DRUG_B",  # Before DRUG_B, uses DRUG_A
+    1,   25,    0,     2,    25,   0,    "DRUG_B"   # After DRUG_B, uses DRUG_B
   )
 
   test_nif <- nif(test_data)
+  result <- ensure_parent(test_nif)
 
-  expect_message(
-    result <- ensure_parent(test_nif, silent = FALSE),
-    "For subjects with multiple treatments, PARENT field was imputed based on"
-  )
-
-  # DRUG_B has 2 observations, DRUG_A has 0, so PARENT should be "DRUG_B"
+  # Observation at TIME=1 (before DRUG_B admin) should use DRUG_A
+  # Observation at TIME=25 (after DRUG_B admin) should use DRUG_B
   obs_rows <- result[result$EVID == 0, ]
-  expect_equal(unique(obs_rows$PARENT), "DRUG_B")
+  expect_equal(obs_rows$PARENT[obs_rows$TIME == 1], "DRUG_A")
+  expect_equal(obs_rows$PARENT[obs_rows$TIME == 25], "DRUG_B")
 })
 
 
-test_that("ensure_parent() Case 2b: Multiple treatments with 4 subjects demonstrating observation count logic", {
+test_that("ensure_parent() Case 2b: Multiple treatments with 4 subjects using last administration", {
   # Comprehensive test with 4 subjects to demonstrate the new behavior
-  # Subject 1: Multiple treatments (DRUG_A, DRUG_B) - DRUG_A has more observations
-  # Subject 2: Multiple treatments (DRUG_B, DRUG_C) - DRUG_B has more observations
-  # Subject 3: Single treatment (DRUG_A)
-  # Subject 4: Multiple treatments (DRUG_A, DRUG_C) - DRUG_A has more observations
-  #
-  # Observation counts across dataset:
-  # - DRUG_A: 5 observations (from subjects 1, 3, 4)
-  # - DRUG_B: 3 observations (from subjects 1, 2)
-  # - DRUG_C: 1 observation (from subject 2)
+  # The new behavior uses the last administered treatment (by TIME) for each observation
   test_data <- tibble::tribble(
-    # Subject 1: Multiple treatments (DRUG_A, DRUG_B)
+    # Subject 1: Multiple treatments (DRUG_A at TIME=0, DRUG_B at TIME=24)
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
     1,   0,     1,     1,    100,  100,  "DRUG_A",
     1,   24,    1,     1,    100,  100,  "DRUG_B",
-    1,   1,     0,     1,    50,   0,    "DRUG_A",  # DRUG_A observation
-    1,   2,     0,     1,    45,   0,    "DRUG_A",  # DRUG_A observation
-    1,   3,     0,     2,    25,   0,    "DRUG_B",  # DRUG_B observation
-    # Subject 2: Multiple treatments (DRUG_B, DRUG_C)
+    1,   1,     0,     1,    50,   0,    "DRUG_A",  # Before DRUG_B, uses DRUG_A
+    1,   2,     0,     1,    45,   0,    "DRUG_A",  # Before DRUG_B, uses DRUG_A
+    1,   25,    0,     2,    25,   0,    "DRUG_B",  # After DRUG_B, uses DRUG_B
+    # Subject 2: Multiple treatments (DRUG_B at TIME=0, DRUG_C at TIME=24)
     2,   0,     1,     1,    100,  100,  "DRUG_B",
     2,   24,    1,     1,    100,  100,  "DRUG_C",
-    2,   1,     0,     1,    50,   0,    "DRUG_B",  # DRUG_B observation
-    2,   2,     0,     1,    45,   0,    "DRUG_B",  # DRUG_B observation
-    2,   3,     0,     3,    20,   0,    "DRUG_C",  # DRUG_C observation
+    2,   1,     0,     1,    50,   0,    "DRUG_B",  # Before DRUG_C, uses DRUG_B
+    2,   2,     0,     1,    45,   0,    "DRUG_B",  # Before DRUG_C, uses DRUG_B
+    2,   25,    0,     3,    20,   0,    "DRUG_C",  # After DRUG_C, uses DRUG_C
     # Subject 3: Single treatment (DRUG_A)
     3,   0,     1,     1,    100,  100,  "DRUG_A",
-    3,   1,     0,     1,    50,   0,    "DRUG_A",  # DRUG_A observation
-    3,   2,     0,     1,    45,   0,    "DRUG_A",  # DRUG_A observation
-    3,   3,     0,     2,    30,   0,    "METABOLITE",
-    # Subject 4: Multiple treatments (DRUG_A, DRUG_C)
+    3,   1,     0,     1,    50,   0,    "DRUG_A",  # Uses DRUG_A
+    3,   2,     0,     1,    45,   0,    "DRUG_A",  # Uses DRUG_A
+    3,   3,     0,     2,    30,   0,    "METABOLITE",  # Uses DRUG_A
+    # Subject 4: Multiple treatments (DRUG_A at TIME=0, DRUG_C at TIME=24)
     4,   0,     1,     1,    100,  100,  "DRUG_A",
     4,   24,    1,     1,    100,  100,  "DRUG_C",
-    4,   1,     0,     1,    50,   0,    "DRUG_A"   # DRUG_A observation
+    4,   1,     0,     1,    50,   0,    "DRUG_A"   # Before DRUG_C, uses DRUG_A
   )
 
   test_nif <- nif(test_data)
-
-  expect_message(
-    result <- ensure_parent(test_nif, silent = FALSE),
-    "For subjects with multiple treatments, PARENT field was imputed based on"
-  )
+  result <- ensure_parent(test_nif)
 
   # Check that PARENT was added
   expect_true("PARENT" %in% names(result))
@@ -307,22 +281,26 @@ test_that("ensure_parent() Case 2b: Multiple treatments with 4 subjects demonstr
   admin_rows <- result[result$EVID == 1, ]
   expect_equal(admin_rows$PARENT, admin_rows$ANALYTE)
 
-  # Subject 1 (multiple treatments): DRUG_A has 5 obs, DRUG_B has 3 obs
-  # So PARENT should be DRUG_A (highest observation count)
+  # Subject 1 (multiple treatments):
+  # Observations before TIME=24 use DRUG_A, after use DRUG_B
   subj1_obs <- result[result$ID == 1 & result$EVID == 0, ]
-  expect_equal(unique(subj1_obs$PARENT), "DRUG_A")
+  expect_equal(subj1_obs$PARENT[subj1_obs$TIME == 1], "DRUG_A")
+  expect_equal(subj1_obs$PARENT[subj1_obs$TIME == 2], "DRUG_A")
+  expect_equal(subj1_obs$PARENT[subj1_obs$TIME == 25], "DRUG_B")
 
-  # Subject 2 (multiple treatments): DRUG_B has 3 obs, DRUG_C has 1 obs
-  # So PARENT should be DRUG_B (highest observation count)
+  # Subject 2 (multiple treatments):
+  # Observations before TIME=24 use DRUG_B, after use DRUG_C
   subj2_obs <- result[result$ID == 2 & result$EVID == 0, ]
-  expect_equal(unique(subj2_obs$PARENT), "DRUG_B")
+  expect_equal(subj2_obs$PARENT[subj2_obs$TIME == 1], "DRUG_B")
+  expect_equal(subj2_obs$PARENT[subj2_obs$TIME == 2], "DRUG_B")
+  expect_equal(subj2_obs$PARENT[subj2_obs$TIME == 25], "DRUG_C")
 
   # Subject 3 (single treatment): PARENT should be DRUG_A (their treatment)
   subj3_obs <- result[result$ID == 3 & result$EVID == 0, ]
   expect_equal(unique(subj3_obs$PARENT), "DRUG_A")
 
-  # Subject 4 (multiple treatments): DRUG_A has 5 obs, DRUG_C has 1 obs
-  # So PARENT should be DRUG_A (highest observation count)
+  # Subject 4 (multiple treatments):
+  # Observation before TIME=24 uses DRUG_A
   subj4_obs <- result[result$ID == 4 & result$EVID == 0, ]
   expect_equal(unique(subj4_obs$PARENT), "DRUG_A")
 
@@ -342,7 +320,7 @@ test_that("ensure_parent() errors when no treatments found", {
   )
 
   expect_error(
-    ensure_parent(no_treatment_nif, silent = FALSE),
+    ensure_parent(no_treatment_nif),
     "Cannot determine PARENT: no treatment records"
   )
 })
@@ -358,9 +336,8 @@ test_that("ensure_parent() errors when no observations found in Case 1b", {
 
   test_nif <- nif(test_data)
 
-  expect_error(
-    ensure_parent(test_nif, silent = FALSE),
-    "Cannot determine PARENT: no observation records"
+  expect_no_error(
+    ensure_parent(test_nif, silent = FALSE)
   )
 })
 
@@ -376,10 +353,8 @@ test_that("ensure_parent() errors when no observations found in Case 2b", {
 
   test_nif <- nif(test_data)
 
-  expect_error(
-    ensure_parent(test_nif, silent = FALSE),
-    "Cannot determine PARENT: no observation records"
-  )
+  expect_no_error(
+    ensure_parent(test_nif, silent = FALSE))
 })
 
 
@@ -391,15 +366,15 @@ test_that("ensure_parent() errors with non-NIF object", {
 
   # Not a NIF object
   expect_error(
-    ensure_parent(test_data, silent = FALSE),
-    "Input must be a nif object"
+    ensure_parent(test_data),
+    "Input must be a NIF object"
   )
 
   # Data frame converted from NIF
   test_nif <- nif(test_data)
   expect_error(
-    ensure_parent(as.data.frame(test_nif, silent = FALSE)),
-    "Input must be a nif object"
+    ensure_parent(as.data.frame(test_nif)),
+    "Input must be a NIF object"
   )
 })
 
@@ -414,7 +389,7 @@ test_that("ensure_parent() creates ANALYTE if missing", {
   )
 
   test_nif <- nif(test_data)
-  result <- ensure_parent(test_nif, silent = FALSE)
+  result <- ensure_parent(test_nif)
 
   # ANALYTE should be created
   expect_true("ANALYTE" %in% names(result))
@@ -435,7 +410,7 @@ test_that("ensure_parent() preserves all original columns", {
   )
 
   test_nif <- nif(test_data)
-  result <- ensure_parent(test_nif, silent = FALSE)
+  result <- ensure_parent(test_nif)
 
   # All original columns should be preserved
   expect_true(all(names(test_data) %in% names(result)))
@@ -452,7 +427,7 @@ test_that("ensure_parent() returns NIF object", {
   )
 
   test_nif <- nif(test_data)
-  result <- ensure_parent(test_nif, silent = FALSE)
+  result <- ensure_parent(test_nif)
 
   expect_s3_class(result, "nif")
   expect_s3_class(result, "data.frame")
@@ -470,19 +445,15 @@ test_that("ensure_parent() handles complex scenario with multiple subjects and t
     # Subject 2: Single treatment DRUG_B
     2,   0,     1,     1,    100,  100,  "DRUG_B",
     2,   1,     0,     1,    50,   0,    "DRUG_B",
-    # Subject 3: Multiple treatments (should trigger Case 2b)
+    # Subject 3: Multiple treatments (DRUG_A at TIME=0, DRUG_B at TIME=24)
     3,   0,     1,     1,    100,  100,  "DRUG_A",
     3,   24,    1,     1,    100,  100,  "DRUG_B",
-    3,   1,     0,     2,    50,   0,    "METABOLITE",
-    3,   2,     0,     3,    25,   0,    "METABOLITE2"
+    3,   1,     0,     2,    50,   0,    "METABOLITE",  # Before DRUG_B, uses DRUG_A
+    3,   25,    0,     3,    25,   0,    "METABOLITE2"  # After DRUG_B, uses DRUG_B
   )
 
   test_nif <- nif(test_data)
-
-  expect_message(
-    result <- ensure_parent(test_nif, silent = FALSE),
-    "For subjects with multiple treatments, PARENT field was imputed to DRUG_A"
-  )
+  result <- ensure_parent(test_nif)
 
   # Subject 1: PARENT should be DRUG_A
   subj1_obs <- result[result$ID == 1 & result$EVID == 0, ]
@@ -492,7 +463,9 @@ test_that("ensure_parent() handles complex scenario with multiple subjects and t
   subj2_obs <- result[result$ID == 2 & result$EVID == 0, ]
   expect_equal(unique(subj2_obs$PARENT), "DRUG_B")
 
-  # Subject 3: PARENT should be lowest CMT analyte (CMT 2 = "METABOLITE")
+  # Subject 3: Observations before TIME=24 use DRUG_A, after use DRUG_B
   subj3_obs <- result[result$ID == 3 & result$EVID == 0, ]
-  expect_equal(unique(subj3_obs$PARENT), "DRUG_A")
+  expect_equal(subj3_obs$PARENT[subj3_obs$TIME == 1], "DRUG_A")
+  expect_equal(subj3_obs$PARENT[subj3_obs$TIME == 25], "DRUG_B")
 })
+

@@ -83,6 +83,86 @@ ensure_dose <- function(obj) {
 
 #' Ensure that the PARENT field is present in a NIF file.
 #'
+#' If the PARENT field is already present in the input nif object, the input
+#' will be returned unchanged. If not, the PARENT is assigned as follows:
+#'
+#' * For administrations (EVID == 1), PARENT is always set to the ANALYTE field.
+#' * For observations (EVID == 0), PARENT is set to the ANALYTE field of the
+#'   last previously administered treatment (by TIME within each subject).
+#'
+#' If there are no observations in the input, the function will error.
+#'
+#' @param obj A NIF object.
+#' @param silent Suppress messages (for compatibility with existing code).
+#' @return A NIF object.
+#' @keywords internal
+#' @noRd
+ensure_parent <- function(obj, silent = NULL) {
+  # Validate input is a NIF object
+  if (!inherits(obj, "nif")) {
+    stop("Input must be a NIF object")
+  }
+
+  # If PARENT already exists, return as is
+  if ("PARENT" %in% names(obj)) {
+    return(obj)
+  }
+
+  # Check for required columns
+  required_cols <- c("ID", "TIME", "EVID")
+  missing_cols <- setdiff(required_cols, names(obj))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
+  # Ensure ANALYTE exists
+  obj <- obj |>
+    ensure_analyte()
+
+  # Check if there are observations - if not, error
+  # n_obs <- sum(obj$EVID == 0, na.rm = TRUE)
+  # if (n_obs == 0) {
+  #   stop("Cannot determine PARENT: no observation records (EVID == 0) found")
+  # }
+
+  # Check if there are administrations - if not, error (need administrations to determine PARENT)
+  n_admin <- sum(obj$EVID == 1, na.rm = TRUE)
+  if (n_admin == 0) {
+    stop("Cannot determine PARENT: no treatment records (EVID == 1) found")
+  }
+
+  # Assign PARENT
+  result <- obj |>
+    as.data.frame() |>
+    # Ensure proper ordering for fill operations
+    arrange(.data$ID, .data$TIME, -.data$EVID) |>
+    # Create temporary column with ANALYTE for administrations
+    mutate(.last_admin_analyte = case_when(
+      .data$EVID == 1 ~ .data$ANALYTE,
+      TRUE ~ NA_character_
+    )) |>
+    # Group by ID to fill within each subject
+    group_by(.data$ID) |>
+    # Fill forward to propagate last administration's ANALYTE to observations
+    tidyr::fill(".last_admin_analyte", .direction = "downup") |>
+    ungroup() |>
+    # Assign PARENT: for administrations use ANALYTE, for observations use last admin's ANALYTE
+    mutate(
+      PARENT = case_when(
+        .data$EVID == 1 ~ .data$ANALYTE,
+        TRUE ~ .data$.last_admin_analyte
+      )
+    ) |>
+    # Remove temporary column
+    select(-".last_admin_analyte")
+
+  # Return as NIF object
+  nif(result)
+}
+
+
+#' Ensure that the PARENT field is present in a NIF file.
+#'
 #' The PARENT is defined as the "ANALYTE" of the administered treatment. If
 #' there are multiple treatments, there will be likely different parents (e.g.,
 #' "placebo" and "examplinib").
@@ -238,7 +318,7 @@ ensure_parent_old <- function(obj) {
 #' @return A NIF object.
 #' @keywords internal
 #' @noRd
-ensure_parent <- function(obj, silent = NULL) {
+ensure_parent2 <- function(obj, silent = NULL) {
   # Validate input is a NIF object
   validate_nif(obj)
 

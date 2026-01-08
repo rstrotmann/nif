@@ -156,7 +156,7 @@ test_that("ensure_time handles missing required columns", {
 
   expect_error(
     result <- ensure_time(test_data),
-    "No administration records"
+    "Failed to calculate TAD/TAFD from TIME"
   )
 })
 
@@ -211,3 +211,4 @@ test_that("ensure_time returns a nif object", {
 
   expect_s3_class(result, "nif")
 })
+
