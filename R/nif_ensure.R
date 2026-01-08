@@ -227,9 +227,10 @@ ensure_parent_old <- function(obj) {
 #' treatment have their PARENT for all observations set to the ANALYTE of their
 #' treatment (even if they have no observations with matching ANALYTE). For
 #' subjects who have received multiple treatments, the PARENT for all their
-#' observations is imputed as the observation with the lowest compartment (CMT)
-#' number. In these cases, a warning is issued that the parent could not be
-#' clearly determined but was based on assumptions.
+#' observations is imputed as the ANALYTE of the administration that has the
+#' highest number of corresponding observations in the whole data set. In these
+#' cases, a warning is issued that the parent was imputed based on observation
+#' counts.
 #'
 #' @param obj A NIF object.
 #' @param silent Suppress messages.
@@ -316,43 +317,61 @@ ensure_parent <- function(obj, silent = NULL) {
         .groups = "drop"
       )
 
-    # Find lowest CMT analyte for subjects with multiple treatments
-    lowest_cmt_info <- obj |>
+    # Count observations per ANALYTE in the whole dataset
+    obs_counts <- obj |>
       filter(.data$EVID == 0) |>
-      arrange(.data$CMT) |>
-      slice(1)
+      count(.data$ANALYTE, name = "OBS_COUNT") |>
+      arrange(desc(.data$OBS_COUNT))
 
-    if (nrow(lowest_cmt_info) == 0) {
+    if (nrow(obs_counts) == 0) {
       stop("Cannot determine PARENT: no observation records (EVID == 0) found")
     }
 
-    lowest_cmt_analyte <- lowest_cmt_info |>
-      pull(.data$ANALYTE)
-
-    # Determine PARENT for each subject:
-    # - If subject has 1 treatment: use that treatment's ANALYTE (even if no matching observations)
-    # - If subject has multiple treatments: use lowest CMT analyte
-    subject_parent_map <- subject_treatment_info |>
-      mutate(
-        SUBJECT_PARENT = case_when(
-          .data$n_treatments == 1 ~ .data$SUBJECT_TREATMENT,
-          TRUE ~ lowest_cmt_analyte
-        )
-      ) |>
-      select(.data$ID, .data$SUBJECT_PARENT)
-
-    # Check if any subjects have multiple treatments (for warning)
+    # For subjects with multiple treatments, determine PARENT based on treatment
+    # with highest observation count
     subjects_with_multiple <- subject_treatment_info |>
-      filter(.data$n_treatments > 1) |>
-      nrow()
+      filter(.data$n_treatments > 1)
 
-    if (subjects_with_multiple > 0) {
+    if (nrow(subjects_with_multiple) > 0) {
+      # Get all treatments for each subject with multiple treatments
+      subject_treatments <- obj |>
+        filter(.data$EVID == 1, .data$ID %in% subjects_with_multiple$ID) |>
+        distinct(.data$ID, .data$ANALYTE) |>
+        left_join(obs_counts, by = "ANALYTE") |>
+        # Replace NA counts with 0 (for treatments with no observations)
+        mutate(OBS_COUNT = if_else(is.na(.data$OBS_COUNT), 0L, .data$OBS_COUNT)) |>
+        # For each subject, select treatment with highest observation count
+        group_by(.data$ID) |>
+        slice_max(.data$OBS_COUNT, n = 1, with_ties = FALSE) |>
+        ungroup() |>
+        select(.data$ID, SUBJECT_PARENT = .data$ANALYTE)
+
+      # Get PARENT for subjects with single treatment
+      subjects_single <- subject_treatment_info |>
+        filter(.data$n_treatments == 1) |>
+        select(.data$ID, SUBJECT_PARENT = .data$SUBJECT_TREATMENT)
+
+      # Combine both groups
+      subject_parent_map <- bind_rows(subjects_single, subject_treatments)
+
+      # Get the most common PARENT for warning message
+      most_common_parent <- subject_treatments |>
+        count(.data$SUBJECT_PARENT, sort = TRUE) |>
+        slice(1) |>
+        pull(.data$SUBJECT_PARENT)
+
       conditional_cli(
         cli_alert_warning(paste0(
-        "For subjects with multiple treatments, PARENT field was imputed to ",
-        lowest_cmt_analyte)),
+          "For subjects with multiple treatments, PARENT field was imputed based on ",
+          "treatment with highest observation count. Most common PARENT: ",
+          most_common_parent
+        )),
         silent = silent
       )
+    } else {
+      # All subjects have single treatment
+      subject_parent_map <- subject_treatment_info |>
+        select(.data$ID, SUBJECT_PARENT = .data$SUBJECT_TREATMENT)
     }
 
 

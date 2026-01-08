@@ -191,24 +191,26 @@ test_that("ensure_parent() Case 2a: Multiple treatments with metabolites per sub
 
 
 test_that("ensure_parent() Case 2b: Multiple treatments, subjects receive multiple", {
-  # Multiple treatments and some subjects receive multiple treatments
+  # Multiple treatments: subject 1 has multiple, subject 2 has one
+  # DRUG_A has 3 observations, DRUG_B has 1 observation in the dataset
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
-    1,   0,     1,     1,    100,  100,  "DRUG_A",
-    1,   24,    1,     1,    100,  100,  "DRUG_B",  # Same subject, different treatment
+    1,   0,     1,     1,    100,  100,  "DRUG_A",  # Subject 1: multiple treatments
+    1,   24,    1,     1,    100,  100,  "DRUG_B",
     1,   1,     0,     1,    50,   0,    "DRUG_A",
     1,   2,     0,     2,    25,   0,    "METABOLITE",
-    2,   0,     1,     1,    100,  100,  "DRUG_A",
+    2,   0,     1,     1,    100,  100,  "DRUG_A",  # Subject 2: single treatment
     2,   1,     0,     1,    50,   0,    "DRUG_A",
-    2,   2,     0,     2,    25,   0,    "METABOLITE"
+    2,   2,     0,     1,    30,   0,    "DRUG_A",
+    2,   3,     0,     2,    25,   0,    "METABOLITE"
   )
 
   test_nif <- nif(test_data)
 
-  # Should issue a warning about assumptions
+  # Should issue a warning about observation count-based imputation
   expect_message(
     result <- ensure_parent(test_nif, silent = FALSE),
-    "For subjects with multiple treatments, PARENT field was imputed to DRUG_A"
+    "For subjects with multiple treatments, PARENT field was imputed based on"
   )
 
   # Check that PARENT was added
@@ -218,38 +220,113 @@ test_that("ensure_parent() Case 2b: Multiple treatments, subjects receive multip
   admin_rows <- result[result$EVID == 1, ]
   expect_equal(admin_rows$PARENT, admin_rows$ANALYTE)
 
-  # For observations, PARENT should be the analyte with lowest CMT
-  # Lowest CMT in observations is 1 (DRUG_A), so all observations should have PARENT = "DRUG_A"
-  obs_rows <- result[result$EVID == 0, ]
-  # Actually, we need to check what the lowest CMT analyte is
-  # CMT 1 = "DRUG_A", CMT 2 = "METABOLITE", so lowest is CMT 1 = "DRUG_A"
-  expect_equal(unique(obs_rows$PARENT), "DRUG_A")
+  # Subject 1 (multiple treatments): DRUG_A has 3 observations, DRUG_B has 0
+  # So PARENT should be DRUG_A (highest observation count)
+  subj1_obs <- result[result$ID == 1 & result$EVID == 0, ]
+  expect_equal(unique(subj1_obs$PARENT), "DRUG_A")
+
+  # Subject 2 (single treatment): PARENT should be DRUG_A (their treatment)
+  subj2_obs <- result[result$ID == 2 & result$EVID == 0, ]
+  expect_equal(unique(subj2_obs$PARENT), "DRUG_A")
 
   expect_true(inherits(result, "nif"))
 })
 
 
-test_that("ensure_parent() Case 2b: Multiple treatments with lowest CMT selection", {
-  # Test that lowest CMT is correctly selected when subjects have multiple treatments
+test_that("ensure_parent() Case 2b: Multiple treatments with highest observation count", {
+  # Test that treatment with highest observation count is selected
+  # DRUG_A has 0 observations, DRUG_B has 2 observations
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
     1,   0,     1,     1,    100,  100,  "DRUG_A",
     1,   24,    1,     1,    100,  100,  "DRUG_B",
-    1,   1,     0,     3,    50,   0,    "CMT3",
-    1,   2,     0,     2,    25,   0,    "CMT2",  # Lowest CMT
-    1,   3,     0,     4,    12,   0,    "CMT4"
+    1,   1,     0,     2,    50,   0,    "DRUG_B",  # DRUG_B has observations
+    1,   2,     0,     2,    25,   0,    "DRUG_B"
   )
 
   test_nif <- nif(test_data)
 
   expect_message(
     result <- ensure_parent(test_nif, silent = FALSE),
-    "For subjects with multiple treatments, PARENT field was imputed to CMT2"
+    "For subjects with multiple treatments, PARENT field was imputed based on"
   )
 
-  # Lowest CMT in observations is 2, so PARENT should be "CMT2"
+  # DRUG_B has 2 observations, DRUG_A has 0, so PARENT should be "DRUG_B"
   obs_rows <- result[result$EVID == 0, ]
-  expect_equal(unique(obs_rows$PARENT), "CMT2")
+  expect_equal(unique(obs_rows$PARENT), "DRUG_B")
+})
+
+
+test_that("ensure_parent() Case 2b: Multiple treatments with 4 subjects demonstrating observation count logic", {
+  # Comprehensive test with 4 subjects to demonstrate the new behavior
+  # Subject 1: Multiple treatments (DRUG_A, DRUG_B) - DRUG_A has more observations
+  # Subject 2: Multiple treatments (DRUG_B, DRUG_C) - DRUG_B has more observations
+  # Subject 3: Single treatment (DRUG_A)
+  # Subject 4: Multiple treatments (DRUG_A, DRUG_C) - DRUG_A has more observations
+  #
+  # Observation counts across dataset:
+  # - DRUG_A: 5 observations (from subjects 1, 3, 4)
+  # - DRUG_B: 3 observations (from subjects 1, 2)
+  # - DRUG_C: 1 observation (from subject 2)
+  test_data <- tibble::tribble(
+    # Subject 1: Multiple treatments (DRUG_A, DRUG_B)
+    ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
+    1,   0,     1,     1,    100,  100,  "DRUG_A",
+    1,   24,    1,     1,    100,  100,  "DRUG_B",
+    1,   1,     0,     1,    50,   0,    "DRUG_A",  # DRUG_A observation
+    1,   2,     0,     1,    45,   0,    "DRUG_A",  # DRUG_A observation
+    1,   3,     0,     2,    25,   0,    "DRUG_B",  # DRUG_B observation
+    # Subject 2: Multiple treatments (DRUG_B, DRUG_C)
+    2,   0,     1,     1,    100,  100,  "DRUG_B",
+    2,   24,    1,     1,    100,  100,  "DRUG_C",
+    2,   1,     0,     1,    50,   0,    "DRUG_B",  # DRUG_B observation
+    2,   2,     0,     1,    45,   0,    "DRUG_B",  # DRUG_B observation
+    2,   3,     0,     3,    20,   0,    "DRUG_C",  # DRUG_C observation
+    # Subject 3: Single treatment (DRUG_A)
+    3,   0,     1,     1,    100,  100,  "DRUG_A",
+    3,   1,     0,     1,    50,   0,    "DRUG_A",  # DRUG_A observation
+    3,   2,     0,     1,    45,   0,    "DRUG_A",  # DRUG_A observation
+    3,   3,     0,     2,    30,   0,    "METABOLITE",
+    # Subject 4: Multiple treatments (DRUG_A, DRUG_C)
+    4,   0,     1,     1,    100,  100,  "DRUG_A",
+    4,   24,    1,     1,    100,  100,  "DRUG_C",
+    4,   1,     0,     1,    50,   0,    "DRUG_A"   # DRUG_A observation
+  )
+
+  test_nif <- nif(test_data)
+
+  expect_message(
+    result <- ensure_parent(test_nif, silent = FALSE),
+    "For subjects with multiple treatments, PARENT field was imputed based on"
+  )
+
+  # Check that PARENT was added
+  expect_true("PARENT" %in% names(result))
+
+  # For administrations, PARENT should equal ANALYTE
+  admin_rows <- result[result$EVID == 1, ]
+  expect_equal(admin_rows$PARENT, admin_rows$ANALYTE)
+
+  # Subject 1 (multiple treatments): DRUG_A has 5 obs, DRUG_B has 3 obs
+  # So PARENT should be DRUG_A (highest observation count)
+  subj1_obs <- result[result$ID == 1 & result$EVID == 0, ]
+  expect_equal(unique(subj1_obs$PARENT), "DRUG_A")
+
+  # Subject 2 (multiple treatments): DRUG_B has 3 obs, DRUG_C has 1 obs
+  # So PARENT should be DRUG_B (highest observation count)
+  subj2_obs <- result[result$ID == 2 & result$EVID == 0, ]
+  expect_equal(unique(subj2_obs$PARENT), "DRUG_B")
+
+  # Subject 3 (single treatment): PARENT should be DRUG_A (their treatment)
+  subj3_obs <- result[result$ID == 3 & result$EVID == 0, ]
+  expect_equal(unique(subj3_obs$PARENT), "DRUG_A")
+
+  # Subject 4 (multiple treatments): DRUG_A has 5 obs, DRUG_C has 1 obs
+  # So PARENT should be DRUG_A (highest observation count)
+  subj4_obs <- result[result$ID == 4 & result$EVID == 0, ]
+  expect_equal(unique(subj4_obs$PARENT), "DRUG_A")
+
+  expect_true(inherits(result, "nif"))
 })
 
 
