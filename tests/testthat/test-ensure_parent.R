@@ -67,7 +67,7 @@ test_that("ensure_parent() Case 1a: Single treatment with matching ANALYTE in ob
 })
 
 
-test_that("ensure_parent() Case 1b: Single treatment without matching ANALYTE uses lowest CMT", {
+test_that("ensure_parent() Case 1b: Single treatment without matching ANALYTE uses administration ANALYTE", {
   # Single treatment "DRUG" but observations are "PARENT" (different ANALYTE)
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
@@ -83,27 +83,26 @@ test_that("ensure_parent() Case 1b: Single treatment without matching ANALYTE us
   # Should issue a message about imputation
   expect_message(
     result <- ensure_parent(test_nif, silent = FALSE),
-    "PARENT field imputed"
+    "PARENT field imputed for all observations to DRUG"
   )
 
   # Check that PARENT was added
   expect_true("PARENT" %in% names(result))
 
-  # For administrations, PARENT should equal ANALYTE
+  # For administrations, PARENT should equal DRUG
   admin_rows <- result[result$EVID == 1, ]
   expect_equal(admin_rows$PARENT, admin_rows$ANALYTE)
   expect_equal(unique(admin_rows$PARENT), "DRUG")
 
-  # For observations, PARENT should be the analyte with lowest CMT (CMT 2 = "METABOLITE")
+  # For observations, PARENT should be DRUG, too
   obs_rows <- result[result$EVID == 0, ]
-  expect_equal(unique(obs_rows$PARENT), "PARENT")
+  expect_equal(unique(obs_rows$PARENT), "DRUG")
 
   expect_true(inherits(result, "nif"))
 })
 
 
-test_that("ensure_parent() Case 1b: Single treatment with multiple CMTs uses lowest", {
-  # Test that lowest CMT is correctly identified when multiple analytes exist
+test_that("ensure_parent() Case 1b: Single treatment with multiple CMTs", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~DV,  ~AMT, ~ANALYTE,
     1,   0,     1,     1,    100,  100,  "DRUG",
@@ -119,9 +118,8 @@ test_that("ensure_parent() Case 1b: Single treatment with multiple CMTs uses low
     "PARENT field imputed"
   )
 
-  # Lowest CMT is 2, so PARENT for observations should be "CMT2"
   obs_rows <- result[result$EVID == 0, ]
-  expect_equal(unique(obs_rows$PARENT), "CMT2")
+  expect_equal(unique(obs_rows$PARENT), "DRUG")
 })
 
 

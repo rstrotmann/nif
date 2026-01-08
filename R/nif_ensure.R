@@ -218,17 +218,18 @@ ensure_parent_old <- function(obj) {
 #' observations of the same ANALYTE name, that ANALYTE will be considered the
 #' PARENT for all observations.
 #' * If there is only one treatment but no observation with the same ANALYTE
-#' name, the analyte with the lowest compartment (CMT) number is considered the
-#' analyte corresponding the PARENT for all observations. In these cases a
-#' message is issued to inform that this imputation was made.
+#' name, the PARENT for all observations is imputed to be the ANALYTE of the
+#' administration (the treatment's ANALYTE). In these cases a message is issued
+#' to inform that this imputation was made.
+#'
 #' * If there are multiple treatments in the input data set, the function
 #' considers each subject individually. Subjects who have received only one
-#' treatment are treated like in case 1, i.e., their PARENT for all observations
-#' is the ANALYTE of the treatment. For subjects who have received multiple
-#' treatments, the PARENT for all their observations is imputed as the
-#' observation with the lowest compartment (CMT) number. In these cases, a
-#' warning is issued that the parent could not be clearly determined but was
-#' based on assumptions.
+#' treatment have their PARENT for all observations set to the ANALYTE of their
+#' treatment (even if they have no observations with matching ANALYTE). For
+#' subjects who have received multiple treatments, the PARENT for all their
+#' observations is imputed as the observation with the lowest compartment (CMT)
+#' number. In these cases, a warning is issued that the parent could not be
+#' clearly determined but was based on assumptions.
 #'
 #' @param obj A NIF object.
 #' @param silent Suppress messages.
@@ -287,27 +288,10 @@ ensure_parent <- function(obj, silent = NULL) {
         )
     } else {
       # Case 1b: Single treatment but no matching ANALYTE in observations
-      # Find analyte with lowest CMT number
-      lowest_cmt_analyte <- obj |>
-        filter(.data$EVID == 0) |>
-        arrange(.data$CMT) |>
-        slice(1) |>
-        pull(.data$ANALYTE)
-
-      if (length(lowest_cmt_analyte) == 0 || is.na(lowest_cmt_analyte)) {
-        stop("Cannot determine PARENT: no observation records (EVID == 0) found")
-      }
-
-      # message(
-      #   "PARENT field imputed: Single treatment '", single_treatment,
-      #   "' found but no observations with matching ANALYTE. ",
-      #   "Using analyte '", lowest_cmt_analyte,
-      #   "' (lowest CMT number) as PARENT for all observations."
-      # )
-
+      # Use the treatment's ANALYTE as PARENT
       conditional_cli(
         cli_alert_info(paste0(
-          "PARENT field imputed for all observations to ", lowest_cmt_analyte
+          "PARENT field imputed for all observations to ", single_treatment
         )),
         silent = silent
       )
@@ -316,7 +300,7 @@ ensure_parent <- function(obj, silent = NULL) {
         mutate(
           PARENT = case_when(
             .data$EVID == 1 ~ .data$ANALYTE,
-            TRUE ~ lowest_cmt_analyte
+            TRUE ~ single_treatment
           )
         )
     }
@@ -346,7 +330,7 @@ ensure_parent <- function(obj, silent = NULL) {
       pull(.data$ANALYTE)
 
     # Determine PARENT for each subject:
-    # - If subject has 1 treatment: use that treatment's ANALYTE (like Case 1)
+    # - If subject has 1 treatment: use that treatment's ANALYTE (even if no matching observations)
     # - If subject has multiple treatments: use lowest CMT analyte
     subject_parent_map <- subject_treatment_info |>
       mutate(
@@ -363,14 +347,6 @@ ensure_parent <- function(obj, silent = NULL) {
       nrow()
 
     if (subjects_with_multiple > 0) {
-
-      # warning(
-      #   "PARENT field imputed: Multiple treatments found and some subjects ",
-      #   "received multiple treatments. For those subjects, parent could not be ",
-      #   "clearly determined. Using analyte '", lowest_cmt_analyte,
-      #   "' (lowest CMT number) as PARENT for their observations based on assumptions."
-      # )
-
       conditional_cli(
         cli_alert_warning(paste0(
         "For subjects with multiple treatments, PARENT field was imputed to ",
