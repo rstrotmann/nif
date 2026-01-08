@@ -107,41 +107,73 @@ ensure_parent <- function(obj) {
     )
   }
 
+  obj <- obj |>
+    ensure_analyte()
+
+  # Get treatments early since it's needed in both code paths
+  treatments <- treatments(obj)
+
   # Get administration CMT values
   admin_cmt <- obj |>
     as.data.frame() |>
     filter(.data$EVID == 1) |>
     distinct(.data$CMT)
 
-  # Handle case where there are no administrations
-  if (nrow(admin_cmt) == 0) {
-    stop("No administration records found (EVID == 1)")
-    # return(obj)
+  # If PARENT already exists, return early
+  if ("PARENT" %in% names(obj)) {
+    return(nif(obj))
   }
 
-  obj <- obj |>
-    ensure_analyte()
-
-  analytes <- analytes(obj)
-  treatments <- treatments(obj)
-
-  if (!"PARENT" %in% names(obj)) {
-    cmt_heuristics <- filter(obj, .data$EVID == 1) |>
+  # Handle case where there are no administrations
+  if (nrow(admin_cmt) == 0) {
+    # Use observation records to determine most likely parent
+    cmt_heuristics <- filter(obj, .data$EVID == 0) |>
       reframe(.data$ANALYTE, n = n(), .by = "CMT") |>
       distinct() |>
       arrange(desc(n))
+
+    # Check if we have any observations to determine parent
+    if (nrow(cmt_heuristics) == 0) {
+      stop("Cannot determine PARENT: no administration records (EVID == 1) and no observation records (EVID == 0)")
+    }
 
     most_likely_parent <- cmt_heuristics[1, "ANALYTE"]
 
     obj <- obj |>
       mutate(
         PARENT = case_when(
-          EVID == 1 ~ .data$ANALYTE,
-          EVID == 0 & .data$ANALYTE %in% treatments ~ .data$ANALYTE,
+          .data$EVID == 1 ~ .data$ANALYTE,
+          .data$EVID == 0 & .data$ANALYTE %in% treatments ~ .data$ANALYTE,
           .default = most_likely_parent
         )
       )
+
+    # Ensure return value is a NIF object
+    return(nif(obj))
   }
+
+  # Handle case where administrations exist
+  admins <- filter(obj, .data$EVID == 1)
+  cmt_heuristics <- admins |>
+    reframe(.data$ANALYTE, n = n(), .by = "CMT") |>
+    distinct() |>
+    arrange(desc(n))
+
+  # This should not happen if admin_cmt has rows, but check for safety
+  if (nrow(cmt_heuristics) == 0) {
+    stop("Cannot determine PARENT: administration records found but no valid ANALYTE values")
+  }
+
+  most_likely_parent <- cmt_heuristics[1, "ANALYTE"]
+
+  obj <- obj |>
+    mutate(
+      PARENT = case_when(
+        .data$EVID == 1 ~ .data$ANALYTE,
+        .data$EVID == 0 & .data$ANALYTE %in% treatments ~ .data$ANALYTE,
+        .default = most_likely_parent
+      )
+    )
 
   # Ensure return value is a NIF object
   nif(obj)
