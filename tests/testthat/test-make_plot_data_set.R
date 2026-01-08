@@ -19,6 +19,7 @@ test_that("make_plot_data_set handles basic functionality", {
   expect_equal(result$facet, "DOSE")
 })
 
+
 test_that("make_plot_data_set handles time parameters correctly", {
   test_nif <- tibble::tribble(
     ~ID, ~ANALYTE,  ~PARENT,   ~EVID, ~DOSE, ~TIME, ~NTIME, ~TAFD, ~TAD, ~DV, ~DVCFB, ~CMT, ~AMT,
@@ -38,6 +39,7 @@ test_that("make_plot_data_set handles time parameters correctly", {
   expect_equal(result_time$data$active_time, c(0, 1, 2))
   expect_equal(result_ntime$data$active_time, c(0, 1, 2))
 })
+
 
 test_that("make_plot_data_set handles color and facet parameters", {
   test_nif <- tibble::tribble(
@@ -66,6 +68,7 @@ test_that("make_plot_data_set handles color and facet parameters", {
   expect_equal(result_facet$facet, "RACE")
 })
 
+
 test_that("make_plot_data_set handles cfb and dose_norm parameters", {
   test_nif <- tibble::tribble(
     ~ID, ~ANALYTE,  ~PARENT,   ~EVID, ~DOSE, ~TIME, ~NTIME, ~TAFD, ~TAD, ~DV, ~DVCFB, ~CMT, ~AMT,
@@ -83,6 +86,7 @@ test_that("make_plot_data_set handles cfb and dose_norm parameters", {
   expect_equal(result_dose_norm$data$DV[result_dose_norm$data$EVID == 0], c(0.1, 0.2))
 })
 
+
 test_that("make_plot_data_set handles min_time and max_time parameters", {
   test_nif <- tibble::tribble(
     ~ID, ~ANALYTE,  ~PARENT,   ~EVID, ~DOSE, ~TIME, ~NTIME, ~TAFD, ~TAD, ~DV, ~DVCFB, ~CMT, ~AMT,
@@ -98,6 +102,7 @@ test_that("make_plot_data_set handles min_time and max_time parameters", {
   expect_equal(result_filtered$data$active_time, c(1, 2))
 })
 
+
 test_that("make_plot_data_set handles multiple analytes", {
   test_nif <- tibble::tribble(
     ~ID, ~ANALYTE,  ~PARENT,   ~EVID, ~DOSE, ~TIME, ~NTIME, ~TAFD, ~TAD, ~DV, ~DVCFB, ~CMT, ~AMT,
@@ -112,6 +117,7 @@ test_that("make_plot_data_set handles multiple analytes", {
   expect_equal(unique(result_multi$data$ANALYTE), c("RS2023", "M1"))
   expect_true("ANALYTE" %in% result_multi$color)
 })
+
 
 test_that("make_plot_data_set handles invalid inputs", {
   test_nif <- tibble::tribble(

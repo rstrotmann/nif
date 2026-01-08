@@ -63,8 +63,10 @@ make_plot_data_set <- function(
              (.data$ANALYTE %in% parent & .data$EVID == 1)) |>
     mutate(DV = case_when(is.na(.data$DV) ~ na_value, .default = .data$DV))
 
+  # doses
   if (is.null(dose)) {
-    dose <- unique(filter(out, .data$EVID == 0)$DOSE)
+    # dose <- unique(filter(out, .data$EVID == 0)$DOSE)
+    dose <- doses(out)
   }
 
   out <- out |>

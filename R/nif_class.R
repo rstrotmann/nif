@@ -560,6 +560,10 @@ doses.nif <- function(obj) {
   # input validation
   validate_nif(obj)
 
+  if ("DOSE" %in% names(obj)) {
+    return(unique(obj$DOSE))
+  }
+
   obj |>
     filter(.data$AMT != 0) |>
     distinct(.data$AMT) |>

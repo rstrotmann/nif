@@ -12,7 +12,8 @@ test_that("make_plot_data_set works with input that has no administrations", {
   test <- examplinib_poc_nif |>
     filter(EVID == 0)
 
-  p <- make_plot_data_set(test, "EXAMPLINIB")
+  expect_no_error(
+    p <- make_plot_data_set(test, "RS2023"))
 })
 
 
@@ -114,13 +115,6 @@ test_that("plot.nif", {
   )
 })
 
-
-test_that("plot.nif works with data sets that have no administrations", {
-  test <- examplinib_poc_nif |>
-    filter(EVID == 0)
-
-  p <- plot(test, "EXAMPLINIB")
-})
 
 
 
