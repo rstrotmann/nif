@@ -65,22 +65,22 @@ guess_lbspec <- function(lb) {
 #' Re-indexing may be required if a NIF object is extended, e.g., by merging in
 #' further data.
 #'
-#' @param nif NIF object.
-#' @return The updated NIF dataset including an updated REF field.
-#' @import dplyr
-#' @keywords internal
-#' @noRd
-index_nif <- function(nif) {
-  expected_fields <- c("ID", "TIME", "EVID")
-  missing_fields <- setdiff(expected_fields, names(nif))
-  if (length(missing_fields) > 0)
-    stop(paste0("Missing expected fields in nif: ", missing_fields))
-
-  nif |>
-    dplyr::arrange(.data$ID, .data$TIME, desc(.data$EVID)) |>
-    dplyr::mutate(REF = row_number()) |>
-    dplyr::relocate("REF")
-}
+# @param nif NIF object.
+#  @return The updated NIF dataset including an updated REF field.
+#  @import dplyr
+#  @keywords internal
+#  @noRd
+# index_nif <- function(nif) {
+#   expected_fields <- c("ID", "TIME", "EVID")
+#   missing_fields <- setdiff(expected_fields, names(nif))
+#   if (length(missing_fields) > 0)
+#     stop(paste0("Missing expected fields in nif: ", missing_fields))
+#
+#   nif |>
+#     dplyr::arrange(.data$ID, .data$TIME, desc(.data$EVID)) |>
+#     dplyr::mutate(REF = row_number()) |>
+#     dplyr::relocate("REF")
+# }
 
 
 #' Subset nif to rows with DTC before the last individual or global observation
@@ -156,11 +156,12 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   validate_logical_param(cleanup)
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
 
-  obj |>
+  out <- obj |>
     index_id() |>
     make_time() |>
     arrange(.data$DTC) |>
-    index_nif() |>
+    # index_nif() |>
+    # arrange_and_add_ref() |>
     # fill down subject-/parent-level fields
     group_by(.data$ID, .data$PARENT) |>
     tidyr::fill(
@@ -176,42 +177,11 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     fill(any_of(c(starts_with("BL_"))), .direction = "downup") |>
     ungroup() |>
     nif_cleanup(keep = keep) |>
-    nif()
-}
+    arrange_and_add_ref()
+    # nif()
 
-
-#' Assign unique ID
-#'
-#' @param obj A nif object
-#'
-#' @returns A inf object with unique IDs
-#' @noRd
-index_id <- function(obj) {
-  if (!any(c("USUBJID", "SUBJID", "ID") %in% names(obj)))
-    stop("Input must have at least one of USUBJID, SUBJID or ID columns!")
-
-  # prefer USUBJID over SUBJID over ID to identify subjects
-  if ("USUBJID" %in% names(obj))
-    obj <- mutate(obj, .temp_id = .data$USUBJID)
-  else {
-    if ("SUBJID" %in% names(obj))
-      obj <- mutate(obj, .temp_id = .data$SUBJID)
-    else
-      obj <- mutate(obj, .temp_id = .data$ID)
-  }
-
-  obj |>
-    unite(.temp_id, any_of(any_of(c("STUDYID", ".temp_id"))),
-          remove = FALSE) |>
-    arrange(across(any_of(c("STUDYID", "USUBJID", "SUBJID", "ID")))) |>
-    mutate(ID = as.numeric(
-      factor(
-        .data$.temp_id,
-        levels = unique(.data$.temp_id)
-        )
-      )
-    ) |>
-    select(-".temp_id")
+    class(out) <- c("nif", "data.frame")
+    order_nif_columns(out)
 }
 
 

@@ -16,6 +16,14 @@ new_nif <- function(obj = NULL, ..., silent = NULL) {
 }
 
 
+#' Order nif rows and add REF column
+#'
+#' Order rows by ID, TIME/DTC and EVID and then assign sequential REF
+#'
+#' @param obj A nif object.
+#'
+#' @returns A nif object.
+#' @noRd
 arrange_and_add_ref <- function(obj) {
   # Create temporary column for descending EVID sort
   if ("EVID" %in% names(obj)) {
@@ -35,6 +43,44 @@ arrange_and_add_ref <- function(obj) {
   obj |>
     dplyr::mutate(REF = row_number()) |>
     dplyr::relocate("REF")
+}
+
+
+#' Assign unique ID
+#'
+#' @param obj A nif object
+#'
+#' @returns A inf object with unique IDs
+#' @noRd
+index_id <- function(obj) {
+  if (!any(c("USUBJID", "SUBJID", "ID") %in% names(obj)))
+    stop("Input must have at least one of USUBJID, SUBJID or ID columns!")
+
+  # prefer USUBJID over SUBJID over ID to identify subjects
+  if ("USUBJID" %in% names(obj))
+    obj <- mutate(obj, .temp_id = .data$USUBJID)
+  else {
+    if ("SUBJID" %in% names(obj))
+      obj <- mutate(obj, .temp_id = .data$SUBJID)
+    else
+      obj <- mutate(obj, .temp_id = .data$ID)
+  }
+
+  out <- obj |>
+    unite(.temp_id, any_of(any_of(c("STUDYID", ".temp_id"))),
+          remove = FALSE) |>
+    arrange(across(any_of(c("STUDYID", "USUBJID", "SUBJID", "ID")))) |>
+    mutate(ID = as.numeric(
+      factor(
+        .data$.temp_id,
+        levels = unique(.data$.temp_id)
+      )
+    )
+    ) |>
+    select(-".temp_id")
+
+  class(out) <- c("nif", "data.frame")
+  out
 }
 
 
@@ -73,6 +119,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   # SDTM data as input
   if (inherits(obj, "sdtm")) {
     temp <- nif_auto(obj, ..., silent = silent)
+
   } else {
     # other input
     if (!is.data.frame(obj)) {
@@ -80,8 +127,10 @@ nif <- function(obj = NULL, ..., silent = NULL) {
     }
 
     # generate ID field if missing
-    if (!"ID" %in% names(obj) && "USUBJID" %in% names(obj))
-      obj <- mutate(obj, ID = as.numeric(as.factor(.data$USUBJID)))
+    # if (!"ID" %in% names(obj) && "USUBJID" %in% names(obj))
+    #   obj <- mutate(obj, ID = as.numeric(as.factor(.data$USUBJID)))
+
+    obj <- index_id(obj)
 
     missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
     if (length(missing_min_fields) > 0)
@@ -105,7 +154,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   }
 
   temp <- temp |>
-    index_id() |>
+    # index_id() |>
     arrange_and_add_ref()
 
   class(temp) <- c("nif", "data.frame")
@@ -453,7 +502,8 @@ dose_red_sbs <- function(obj, analyte = NULL) {
 
   temp <- obj |>
     as.data.frame() |>
-    index_nif() |>
+    # index_nif() |>
+    arrange_and_add_ref() |>
     filter(.data$EVID == 1)
 
   treatments <- unique(temp$ANALYTE)
@@ -852,7 +902,8 @@ fillable_nif_fields <- unique(c(
 index_dosing_interval <- function(obj) {
   obj <- obj |>
     ensure_parent() |>
-    index_nif() |>
+    # index_nif() |>
+    arrange_and_add_ref() |>
     select(-any_of("DI"))
 
   di <- obj |>
@@ -1115,7 +1166,8 @@ add_dose_level <- function(obj) {
 #' add_obs_per_dosing_interval(examplinib_poc_min_nif)
 add_obs_per_dosing_interval <- function(obj) {
   obj |>
-    index_nif() |>
+    # index_nif() |>
+    arrange_and_add_ref() |>
     select(-any_of("DI")) |>
     index_dosing_interval() |>
     group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT", "DI")))) |>

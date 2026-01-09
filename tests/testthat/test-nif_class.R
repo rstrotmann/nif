@@ -146,7 +146,7 @@ test_that("index_dosing_interval works with multiple parents", {
     1,   100.00, 0,    0,     0,     3,   2,    0,    "B"
   ) %>%
     nif() %>%
-    index_nif() %>%
+    # index_nif() %>%
     index_dosing_interval()
 
   temp <- nif %>%
@@ -194,7 +194,7 @@ test_that("n_administrations, max_admin_time works, max_observation_time", {
     1,   100.00, 0,    0,     0,     3,   2,    0,    "B"
   ) %>%
     nif() %>%
-    index_nif() %>%
+    # index_nif() %>%
     index_dosing_interval()
 
   expect_equal(n_administrations(nif)$N, c(4, 3))
