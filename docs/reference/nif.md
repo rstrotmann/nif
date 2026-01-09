@@ -1,9 +1,7 @@
 # nif class constructor
 
-If no obj argument is provided, an empty, minimal nif object will be
-generated. If a data frame is provided for obj, it is converted into a
-nif object. Minimally expected fields are ID, TIME, AMT, CMT, EVID and
-DV. If ID is missing but USUBJID is available, ID will be derived.
+Create an empty nif object or a nif object from sdtm data or from a data
+table.
 
 ## Usage
 
@@ -31,6 +29,11 @@ A nif object.
 
 ## Details
 
+If no obj argument is provided, an empty, minimal nif object will be
+generated. If a data frame is provided for obj, it is converted into a
+nif object. Minimally expected fields are ID, TIME, AMT, CMT, EVID and
+DV. If ID is missing but USUBJID is available, ID will be derived.
+
 If the input is a sdtm object, a pharmacokinetic nif object is
 automatically generated. Analyte mapping formulae can be supplied as the
 ... argument. For details, see [`nif_auto()`](nif_auto.md).
@@ -43,16 +46,6 @@ automatically generated. Analyte mapping formulae can be supplied as the
 
 ``` r
 nif()
-#> ----- NONMEM Input Format (NIF) data -----
-#> 0 observations from 0 subjects  
-#> 0 compartments with observations:  
-#> 
-#> Columns:
-#>   REF, ID, TIME, EVID, AMT, CMT, DV 
-#> 
-#> Hash: dd2b757b67507b02c1335510ce6ef52f
-#> 
-#> Data (selected columns):
-#> 
-#> 0 more rows
+#> [1] REF  ID   TIME EVID AMT  CMT  DV  
+#> <0 rows> (or 0-length row.names)
 ```

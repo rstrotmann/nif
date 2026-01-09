@@ -187,16 +187,6 @@ n_administrations(examplinib_poc_min_nif)
 #> 79 79   CMT1 73
 #> 80 80   CMT1 57
 n_administrations(nif())
-#> ----- NONMEM Input Format (NIF) data -----
-#> 0 observations from 0 subjects  
-#> 0 compartments with observations:  
-#> 
-#> Columns:
-#>   REF, ID, TIME, EVID, AMT, CMT, DV, N 
-#> 
-#> Hash: 701df85f5d36a9da680278a70d1f4cf0
-#> 
-#> Data (selected columns):
-#> 
-#> 0 more rows
+#> [1] REF  ID   TIME EVID AMT  CMT  DV   N   
+#> <0 rows> (or 0-length row.names)
 ```

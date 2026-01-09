@@ -183,8 +183,7 @@
 
 - [`lbm_peters()`](lbm_peters.md) : Lean body mass (Peters formula)
 
-- [`limit()`](limit.md) : Subset nif to rows with DTC before the last
-  individual or global observation
+- [`limit()`](limit.md) : Sort nif object and add REF field
 
 - [`max_admin_time()`](max_admin_time.md) : Maximal administration time
 

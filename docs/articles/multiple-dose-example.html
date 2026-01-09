@@ -185,10 +185,14 @@ creatinine clearance:</p>
 <span><span class="co">#  1 2001-01-13 10:36:00    0     0    0   0    1 500     RS2023   1 RS2023     1</span></span>
 <span><span class="co">#  2 2001-01-13 10:36:00    0     0    0   0    0   0     RS2023   2 RS2023     1</span></span>
 <span><span class="co">#  3 2001-01-13 10:36:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1</span></span>
-<span><span class="co">#    METABOLITE DOSE MDV  ACTARMCD IMPUTATION DV BL_CREAT  BL_CRCL</span></span>
-<span><span class="co">#  1      FALSE  500   1 TREATMENT            NA 72.78062 107.4689</span></span>
-<span><span class="co">#  2      FALSE  500   0 TREATMENT             0 72.78062 107.4689</span></span>
-<span><span class="co">#  3      FALSE  500   0 TREATMENT             0 72.78062 107.4689</span></span></code></pre></div>
+<span><span class="co">#    METABOLITE DOSE MDV  ACTARMCD IMPUTATION SRC_DOMAIN SRC_SEQ DV BL_CREAT</span></span>
+<span><span class="co">#  1      FALSE  500   1 TREATMENT                    EX       1 NA 72.78062</span></span>
+<span><span class="co">#  2      FALSE  500   0 TREATMENT                    PC       1  0 72.78062</span></span>
+<span><span class="co">#  3      FALSE  500   0 TREATMENT                    PC       2  0 72.78062</span></span>
+<span><span class="co">#     BL_CRCL</span></span>
+<span><span class="co">#  1 107.4689</span></span>
+<span><span class="co">#  2 107.4689</span></span>
+<span><span class="co">#  3 107.4689</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploration">EXPLORATION<a class="anchor" aria-label="anchor" href="#exploration"></a>
@@ -258,7 +262,7 @@ impaired renal function:</p>
 <span><span class="co">#    PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#    RS2023   56    99    78.5   79        </span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Hash: dcc42d79173632bab45d63031770b507</span></span>
+<span><span class="co">#  Hash: b8efad728888558a91be97b58547e99d</span></span>
 <span><span class="co">#  Last DTC: 2001-07-14 08:53:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the
