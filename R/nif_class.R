@@ -29,12 +29,10 @@ arrange_and_add_ref <- function(obj) {
   if ("EVID" %in% names(obj)) {
     obj <- obj |>
       dplyr::mutate(.EVID_sort = -.data$EVID)
-      # dplyr::mutate(.EVID_sort = .data$EVID == 1)
   }
 
   obj <- obj |>
     dplyr::arrange(across(any_of(c("ID", "TIME", "DTC", ".EVID_sort"))))
-    # arrange(.data$ID, .data$TIME)
 
   # Remove temporary column
   if (".EVID_sort" %in% names(obj)) {
@@ -55,30 +53,32 @@ arrange_and_add_ref <- function(obj) {
 #' @returns A inf object with unique IDs
 #' @noRd
 index_id <- function(obj) {
-  if (!any(c("USUBJID", "SUBJID", "ID") %in% names(obj)))
+  if (!any(c("USUBJID", "SUBJID", "ID") %in% names(obj))) {
     stop("Input must have at least one of USUBJID, SUBJID or ID columns!")
+  }
 
   # prefer USUBJID over SUBJID over ID to identify subjects
-  if ("USUBJID" %in% names(obj))
+  if ("USUBJID" %in% names(obj)) {
     obj <- mutate(obj, .temp_id = .data$USUBJID)
-  else {
-    if ("SUBJID" %in% names(obj))
+  } else {
+    if ("SUBJID" %in% names(obj)) {
       obj <- mutate(obj, .temp_id = .data$SUBJID)
-    else
+    } else {
       obj <- mutate(obj, .temp_id = .data$ID)
+    }
   }
 
   out <- obj |>
     unite(".temp_id", any_of(any_of(c("STUDYID", ".temp_id"))),
-          remove = FALSE) |>
+      remove = FALSE
+    ) |>
     arrange(across(any_of(c("STUDYID", "USUBJID", "SUBJID", "ID")))) |>
     mutate(ID = as.numeric(
       factor(
         .data$.temp_id,
         levels = unique(.data$.temp_id)
       )
-    )
-    ) |>
+    )) |>
     select(-".temp_id")
 
   class(out) <- c("nif", "data.frame")
@@ -110,7 +110,6 @@ index_id <- function(obj) {
 #' @examples
 #' nif()
 nif <- function(obj = NULL, ..., silent = NULL) {
-
   # Case 1: Empty minimal nif object
   if (is.null(obj)) {
     # empty nif object
@@ -133,28 +132,36 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   }
 
   # Error case: neither nif or data.frame
-  if (!is.data.frame(obj))
+  if (!is.data.frame(obj)) {
     stop("obj must be a data frame or sdtm object")
+  }
 
   # Case 3: Nif object from nif object or from data frame
   # validate inputs
   missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
-  if (length(missing_min_fields) > 0)
-    stop(paste0("Missing essential fields: ",
-                nice_enumeration(missing_min_fields)))
+  if (length(missing_min_fields) > 0) {
+    stop(paste0(
+      "Missing essential fields: ",
+      nice_enumeration(missing_min_fields)
+    ))
+  }
 
-  if (any(is.na(obj$ID)))
+  if (any(is.na(obj$ID))) {
     stop("ID colum must not contain NA values!")
+  }
 
   # Check correct type for essential columns
   min_obj <- obj |>
     select(all_of(minimal_nif_fields))
   non_num_fields <- names(min_obj)[!unlist(lapply(min_obj, numeric_or_na))]
-  if (length(non_num_fields) > 0)
-    stop(paste0("Non-numeric essential fields: ",
-                nice_enumeration(non_num_fields)))
+  if (length(non_num_fields) > 0) {
+    stop(paste0(
+      "Non-numeric essential fields: ",
+      nice_enumeration(non_num_fields)
+    ))
+  }
 
-  # Case 3a: Nif object from nif object
+  # Case 4: Nif object from nif object
   if (inherits(obj, "nif")) {
     out <- obj |>
       index_id() |>
@@ -164,7 +171,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
     return(out)
   }
 
-  # Case 3b: Nif object from data frame
+  # Case 5: Nif object from data frame
   if (inherits(obj, "data.frame")) {
     out <- index_id(obj) |>
       arrange_and_add_ref() |>
@@ -174,62 +181,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
     return(out)
   }
 
-
-  # # Case 2: Nif object from an existing nif object
-  # if (inherits(obj, "nif")) {
-  #   validate_nif(nif)
-  #
-  #
-  #   # only reorder columns, and make ID and REF fields
-  #   out <- obj |>
-  #     index_id() |>
-  #     arrange_and_add_ref() |>
-  #     order_nif_columns()
-  #
-  #   return(out)
-  # }
-  #
-  # temp <- NULL
-  #
-  # # # Case 3: Nif object from a sdtm object using nif_auto()
-  # # if (inherits(obj, "sdtm")) {
-  # #   temp <- nif_auto(obj, ..., silent = silent)
-  #
-  # } else {
-  # # Case 4: Nif object from a data frame
-  #   # other input
-  #   if (!is.data.frame(obj)) {
-  #     stop("obj must be a data frame or sdtm object")
-  #   }
-  #
-  #   # generate ID field if missing
-  #   # if (!"ID" %in% names(obj) && "USUBJID" %in% names(obj))
-  #   #   obj <- mutate(obj, ID = as.numeric(as.factor(.data$USUBJID)))
-  #
-  #   missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
-  #   if (length(missing_min_fields) > 0)
-  #     stop(paste0("Missing essential fields: ",
-  #                 nice_enumeration(missing_min_fields)))
-  #
-  #   min_obj <- obj |>
-  #     select(all_of(minimal_nif_fields))
-  #
-  #   # Check correct type for essential columns
-  #   non_num_fields <- names(min_obj)[!unlist(lapply(min_obj, numeric_or_na))]
-  #   if (length(non_num_fields) > 0)
-  #     stop(paste0("Non-numeric essential fields: ",
-  #                 nice_enumeration(non_num_fields)))
-  #
-  #   temp <- index_id(obj)
-  #   # temp <- obj
-  # }
-  #
-  # temp <- temp |>
-  #   # index_id() |>
-  #   arrange_and_add_ref()
-  #
-  # class(temp) <- c("nif", "data.frame")
-  # order_nif_columns(temp)
+  stop("obj must be a data frame or sdtm object")
 }
 
 
@@ -352,8 +304,10 @@ print.nif <- function(x, color = FALSE, ...) {
     }
 
     cat("\nColumns:\n")
-    cat(str_wrap(paste(names(x), collapse = ", "),
-                 width = 80, indent = 2, exdent = 2),  "\n\n")
+    cat(str_wrap(
+      paste(names(x), collapse = ", "),
+      width = 80, indent = 2, exdent = 2
+    ), "\n\n")
 
     # version hash
     cat(str_glue("\nHash: {rlang::hash(x)}\n\n"))
@@ -484,8 +438,9 @@ subjects.nif <- function(obj) {
   # input validation
   validate_nif(obj)
 
-  if (!"USUBJID" %in% names(obj))
+  if (!"USUBJID" %in% names(obj)) {
     obj <- mutate(obj, USUBJID = NA)
+  }
 
   obj |>
     as.data.frame() |>
@@ -573,7 +528,6 @@ dose_red_sbs <- function(obj, analyte = NULL) {
 
   temp <- obj |>
     as.data.frame() |>
-    # index_nif() |>
     arrange_and_add_ref() |>
     filter(.data$EVID == 1)
 
@@ -610,10 +564,11 @@ dose_red_sbs <- function(obj, analyte = NULL) {
 #' @examples
 #' rich_sampling_sbs(examplinib_poc_nif, n = 6)
 rich_sampling_sbs <- function(
-    obj,
-    analyte = NA,
-    max_time = NA,
-    n = 4) {
+  obj,
+  analyte = NA,
+  max_time = NA,
+  n = 4
+) {
   if (is.na(analyte)) {
     analyte <- guess_analyte(obj)
   }
@@ -973,7 +928,6 @@ fillable_nif_fields <- unique(c(
 index_dosing_interval <- function(obj) {
   obj <- obj |>
     ensure_parent() |>
-    # index_nif() |>
     arrange_and_add_ref() |>
     select(-any_of("DI"))
 
@@ -1097,10 +1051,11 @@ max_observation_time <- function(obj, analyte = NULL) {
 #' max_time(examplinib_poc_nif, analyte = "RS2023")
 #' max_time(examplinib_poc_nif, only_observations = TRUE)
 max_time <- function(
-    obj,
-    time_field = "TIME",
-    analyte = NULL,
-    only_observations = TRUE) {
+  obj,
+  time_field = "TIME",
+  analyte = NULL,
+  only_observations = TRUE
+) {
   times <- obj |>
     ensure_analyte() |>
     filter(is.null(analyte) | .data$ANALYTE %in% analyte) |>
@@ -1222,7 +1177,6 @@ add_dose_level <- function(obj) {
 }
 
 
-
 #' Add the number of observations per dosing interval
 #'
 #' This function adds a variable, `OPDI`, to the NIF object that indicates the
@@ -1237,7 +1191,6 @@ add_dose_level <- function(obj) {
 #' add_obs_per_dosing_interval(examplinib_poc_min_nif)
 add_obs_per_dosing_interval <- function(obj) {
   obj |>
-    # index_nif() |>
     arrange_and_add_ref() |>
     select(-any_of("DI")) |>
     index_dosing_interval() |>
@@ -1307,8 +1260,9 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
 #' @noRd
 #' @examples
 #' filter_subject(
-#' examplinib_poc_nif,
-#' subjects(examplinib_poc_nif)[1, "USUBJID"])
+#'   examplinib_poc_nif,
+#'   subjects(examplinib_poc_nif)[1, "USUBJID"]
+#' )
 filter_subject.nif <- function(obj, usubjid) {
   filter(obj, .data$USUBJID %in% usubjid)
 }

@@ -387,7 +387,8 @@ derive_baseline <- function(
 
 #' Calculate change from baseline
 #'
-#' Extract the individual baseline value and change from baseline for an analyte
+#' Derive the individual baseline value (DVBL field) and the change from
+#' baseline (DVCFB field) for an analyte.
 #'
 #' @param obj A nif object.
 #' @param analyte The analyte to derive the baseline for, as character. Defaults
@@ -400,7 +401,8 @@ derive_baseline <- function(
 #' NA.
 #' @param silent Suppress messages, as logical.
 #'
-#' @returns A nif object with the DVBL field added for the specified analyte.
+#' @returns A nif object with the DVBL and DVCFB fields added for the specified
+#' analyte.
 #' @export
 #'
 #' @examples
@@ -421,6 +423,50 @@ derive_cfb <- function(
     silent = silent
   ) |>
     mutate(DVCFB = .data$DV - .data$DVBL)
+}
+
+
+#' Calculate ratio to baseline
+#'
+#' Derive the individual baseline value (DVBL field) and the ratio of the
+#' current value to baseline (DVRTB field) for an analyte. For analytes with a
+#' baseline of zero, NA values are returned.
+#'
+#' @param obj A nif object.
+#' @param analyte The analyte to derive the baseline for, as character. Defaults
+#' to all analytes if NULL.
+#' @param baseline_filter The baseline condition as character, defaults to
+#' `TAFD <= 0`.
+#' @param summary_function A function to reduce multiple baseline values,
+#' defaults to `median`.
+#' @param default_baseline The default value if the baseline filter computes to
+#' NA.
+#' @param silent Suppress messages, as logical.
+#'
+#' @returns A nif object with the DVBL and DVRTB fields added for the specified
+#' analyte.
+#' @export
+#'
+#' @examples
+#' head(derive_rtb(examplinib_sad_nif))
+#'
+derive_rtb <- function(
+    obj,
+    analyte = NULL,
+    baseline_filter = "TAFD <= 0",
+    summary_function = median,
+    default_baseline = NA_real_,
+    silent = NULL
+) {
+  derive_baseline(
+    obj,
+    analyte = analyte, baseline_filter = baseline_filter,
+    summary_function = summary_function, default_baseline = default_baseline,
+    silent = silent
+  ) |>
+    mutate(DVRTB = ifelse(.data$DVBL == 0 | is.na(.data$DVBL),
+                          NA_real_,
+                          .data$DV / .data$DVBL))
 }
 
 
