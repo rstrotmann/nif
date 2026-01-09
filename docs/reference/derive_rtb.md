@@ -1,15 +1,16 @@
-# Calculate change from baseline
+# Calculate ratio to baseline
 
-Derive the individual baseline value (DVBL field) and the change from
-baseline (DVCFB field) for an analyte.
+Derive the individual baseline value (DVBL field) and the ratio of the
+current value to baseline (DVRTB field) for an analyte. For analytes
+with a baseline of zero, NA values are returned.
 
 ## Usage
 
 ``` r
-derive_cfb(
+derive_rtb(
   obj,
   analyte = NULL,
-  baseline_filter = "TIME <= 0",
+  baseline_filter = "TAFD <= 0",
   summary_function = median,
   default_baseline = NA_real_,
   silent = NULL
@@ -45,13 +46,13 @@ derive_cfb(
 
 ## Value
 
-A nif object with the DVBL and DVCFB fields added for the specified
+A nif object with the DVBL and DVRTB fields added for the specified
 analyte.
 
 ## Examples
 
 ``` r
-head(derive_cfb(examplinib_sad_nif))
+head(derive_rtb(examplinib_sad_nif))
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI
 #> 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #> 2   2  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
@@ -66,18 +67,11 @@ head(derive_cfb(examplinib_sad_nif))
 #> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1
 #> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1
 #> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0  RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV BL_CREAT  BL_CRCL DVBL
-#> 1      FALSE    5   1       C1                 NA  67.4825 115.5074    0
-#> 2      FALSE    5   0       C1             0.0000  67.4825 115.5074    0
-#> 3      FALSE    5   0       C1            40.7852  67.4825 115.5074    0
-#> 4      FALSE    5   0       C1            48.5530  67.4825 115.5074    0
-#> 5      FALSE    5   0       C1            44.0391  67.4825 115.5074    0
-#> 6      FALSE    5   0       C1            34.0729  67.4825 115.5074    0
-#>     DVCFB
-#> 1      NA
-#> 2  0.0000
-#> 3 40.7852
-#> 4 48.5530
-#> 5 44.0391
-#> 6 34.0729
+#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV BL_CREAT  BL_CRCL DVBL DVRTB
+#> 1      FALSE    5   1       C1                 NA  67.4825 115.5074    0    NA
+#> 2      FALSE    5   0       C1             0.0000  67.4825 115.5074    0    NA
+#> 3      FALSE    5   0       C1            40.7852  67.4825 115.5074    0    NA
+#> 4      FALSE    5   0       C1            48.5530  67.4825 115.5074    0    NA
+#> 5      FALSE    5   0       C1            44.0391  67.4825 115.5074    0    NA
+#> 6      FALSE    5   0       C1            34.0729  67.4825 115.5074    0    NA
 ```

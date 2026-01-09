@@ -92,6 +92,8 @@
 - [`derive_cfb_analyte()`](derive_cfb_analyte.md) : Derive a new analyte
   with change from baseline from an existing analyte
 
+- [`derive_rtb()`](derive_rtb.md) : Calculate ratio to baseline
+
 - [`derive_sld()`](derive_sld.md) **\[experimental\]** : Calculate SLD
   for SDTM.TR domain
 
