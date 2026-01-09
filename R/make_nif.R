@@ -96,7 +96,7 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   validate_nif(obj)
   validate_logical_param(individual, "individual")
   validate_logical_param(keep_no_obs_sbs, "keep_no_obs_sbs")
-  
+
   # Check for required fields
   required_fields <- c("DTC", "ID", "EVID")
   missing_fields <- setdiff(required_fields, names(obj))
@@ -106,7 +106,7 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       nice_enumeration(missing_fields)
     ))
   }
-  
+
   max_dtc <- max(obj$DTC, na.rm = TRUE)
 
   max_or_inf <- function(x) {
@@ -122,7 +122,7 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
       filter(sum(.data$EVID == 0) > 0) |>
       ungroup()
   }
-  
+
   if (individual == TRUE) {
     obj |>
       group_by(.data$ID) |>
@@ -157,7 +157,7 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
 
   obj |>
-    mutate(ID = as.numeric(factor(.data$USUBJID, unique(.data$USUBJID)))) |>
+    index_id() |>
     make_time() |>
     arrange(.data$DTC) |>
     index_nif() |>
@@ -177,6 +177,41 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     ungroup() |>
     nif_cleanup(keep = keep) |>
     nif()
+}
+
+
+#' Assign unique ID
+#'
+#' @param obj A nif object
+#'
+#' @returns A inf object with unique IDs
+#' @noRd
+index_id <- function(obj) {
+  if (!any(c("USUBJID", "SUBJID", "ID") %in% names(obj)))
+    stop("Input must have at least one of USUBJID, SUBJID or ID columns!")
+
+  # prefer USUBJID over SUBJID over ID to identify subjects
+  if ("USUBJID" %in% names(obj))
+    obj <- mutate(obj, .temp_id = .data$USUBJID)
+  else {
+    if ("SUBJID" %in% names(obj))
+      obj <- mutate(obj, .temp_id = .data$SUBJID)
+    else
+      obj <- mutate(obj, .temp_id = .data$ID)
+  }
+
+  obj |>
+    unite(.temp_id, any_of(any_of(c("STUDYID", ".temp_id"))),
+          remove = FALSE) |>
+    arrange(across(any_of(c("STUDYID", "USUBJID", "SUBJID", "ID")))) |>
+    mutate(ID = as.numeric(
+      factor(
+        .data$.temp_id,
+        levels = unique(.data$.temp_id)
+        )
+      )
+    ) |>
+    select(-".temp_id")
 }
 
 

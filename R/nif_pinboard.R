@@ -191,6 +191,7 @@ pb_write.nif <- function(
   validate_char_param(name, "name", allow_null = TRUE)
   validate_char_param(title, "title", allow_null = TRUE)
   validate_char_param(dco, "dco", allow_null = TRUE)
+  validate_logical_param(force, "force")
 
   board_obj <- get_pinboard(board)
 
@@ -206,11 +207,15 @@ pb_write.nif <- function(
     dco <- ""
   }
 
+  description <- utils::capture.output(
+    print(summary(obj))
+  )
+
   msg <- utils::capture.output(
     pins::pin_write(
       board_obj, obj,
       name = name, title = title, type = "rds",
-      force_identical_write = force,
+      description = description, force_identical_write = force,
       metadata = list(type = "nif", dco = dco)
     ),
     type = "message"

@@ -74,7 +74,6 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   if (inherits(obj, "sdtm")) {
     temp <- nif_auto(obj, ..., silent = silent)
   } else {
-
     # other input
     if (!is.data.frame(obj)) {
       stop("obj must be a data frame or sdtm object")
@@ -104,8 +103,11 @@ nif <- function(obj = NULL, ..., silent = NULL) {
                   nice_enumeration(non_num_fields)))
     temp <- obj
   }
+
   temp <- temp |>
+    index_id() |>
     arrange_and_add_ref()
+
   class(temp) <- c("nif", "data.frame")
   order_nif_columns(temp)
 }
@@ -619,7 +621,8 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
       select("ID", "ANALYTE", "AMT", any_of(group)) |>
       tidyr::pivot_wider(
         names_from = "ANALYTE",
-        values_from = "AMT", values_fill = 0
+        values_from = "AMT",
+        values_fill = 0
       ) |>
       group_by(across(c(-c("ID")))) |>
       summarize(N = n()) |>

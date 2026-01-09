@@ -43,6 +43,16 @@ automatically generated. Analyte mapping formulae can be supplied as the
 
 ``` r
 nif()
-#> [1] REF  ID   TIME EVID AMT  CMT  DV  
-#> <0 rows> (or 0-length row.names)
+#> ----- NONMEM Input Format (NIF) data -----
+#> 0 observations from 0 subjects  
+#> 0 compartments with observations:  
+#> 
+#> Columns:
+#>   REF, ID, TIME, EVID, AMT, CMT, DV 
+#> 
+#> Hash: dd2b757b67507b02c1335510ce6ef52f
+#> 
+#> Data (selected columns):
+#> 
+#> 0 more rows
 ```
