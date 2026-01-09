@@ -69,7 +69,7 @@ index_id <- function(obj) {
   }
 
   out <- obj |>
-    unite(.temp_id, any_of(any_of(c("STUDYID", ".temp_id"))),
+    unite(".temp_id", any_of(any_of(c("STUDYID", ".temp_id"))),
           remove = FALSE) |>
     arrange(across(any_of(c("STUDYID", "USUBJID", "SUBJID", "ID")))) |>
     mutate(ID = as.numeric(
