@@ -805,10 +805,14 @@ safe_min <- function(x, ...) {
     return(NA)
   }
   out <- min(temp, na.rm = TRUE)
-  attributes(out)$N <- length(temp[!is.na(temp)])
+  # attributes(out)$N <- length(temp[!is.na(temp)])
   out
 }
 
+
+numeric_or_na <- function(x) {
+  all(is.na(x) | is.numeric(x))
+}
 
 #' Difference, or NA, if difference is negative
 #'

@@ -153,9 +153,11 @@ test_that("ensure_tafd handles NA values in ID", {
   test_data <- tibble::tribble(
     ~ID,  ~TIME, ~EVID, ~CMT, ~PARENT, ~DV,  ~AMT,
     1,    0,     1,     1,    "DRUG",  NA,   100,
-    NA,   1,     0,     2,    "DRUG",  10,   0
+    1,   1,     0,     2,    "DRUG",  10,   0
   ) %>%
     nif()
+
+  test_data[2, "ID"] <- NA
 
   expect_error(ensure_tafd(test_data), "ID colum must not contain NA values!")
 })

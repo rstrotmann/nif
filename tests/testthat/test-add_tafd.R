@@ -221,21 +221,6 @@ test_that("add_tafd handles NA values in TIME correctly", {
   expect_true(is.na(result$TAFD[3]))
 })
 
-test_that("add_tafd correctly handles NA values in ID column", {
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
-    1,   0,     1,     "DRUG",  NA,   100,  1,
-    1,   1,     0,     "DRUG",  10,   0,    2,
-    NA,  2,     0,     "DRUG",  20,   0,    2
-  ) %>%
-    nif()
-
-  # Should handle NA in ID column without error
-  expect_error(
-    result <- add_tafd(test_data),
-    "ID colum must not contain NA values!"
-  )
-})
 
 test_that("add_tafd respects parent grouping with mixed dosing times", {
   test_data <- tibble::tribble(

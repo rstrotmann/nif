@@ -17,12 +17,15 @@ nif(obj = NULL, ..., silent = NULL)
 A nif object.
 }
 \description{
+Create an empty nif object or a nif object from sdtm data or from a data
+table.
+}
+\details{
 If no obj argument is provided, an empty, minimal nif object will be
 generated. If a data frame is provided for obj, it is converted into a nif
 object. Minimally expected fields are ID, TIME, AMT, CMT, EVID and DV. If ID
 is missing but USUBJID is available, ID will be derived.
-}
-\details{
+
 If the input is a sdtm object, a pharmacokinetic nif object is automatically
 generated. Analyte mapping formulae can be supplied as the ... argument. For
 details, see \code{nif_auto()}.

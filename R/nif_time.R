@@ -333,7 +333,7 @@ add_tafd <- function(nif) {
   nif |>
     arrange(.data$ID, .data$PARENT, .data$TIME) |>
     group_by(.data$ID, .data$PARENT) |>
-    mutate(first_admin = min(.data$TIME[.data$EVID == 1])) |>
+    mutate(first_admin = safe_min(.data$TIME[.data$EVID == 1])) |>
     mutate(TAFD = .data$TIME - .data$first_admin) |>
     select(-c("first_admin")) |>
     ungroup() |>

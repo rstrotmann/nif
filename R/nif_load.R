@@ -268,6 +268,9 @@ import_from_connection <- function(
     raw[missing_fields] <- NA
   }
 
+  if (any(is.na(raw$ID))){
+    raw <- index_id(raw)
+  }
   nif(raw)
 }
 

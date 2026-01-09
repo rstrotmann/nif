@@ -29,10 +29,12 @@ arrange_and_add_ref <- function(obj) {
   if ("EVID" %in% names(obj)) {
     obj <- obj |>
       dplyr::mutate(.EVID_sort = -.data$EVID)
+      # dplyr::mutate(.EVID_sort = .data$EVID == 1)
   }
 
   obj <- obj |>
     dplyr::arrange(across(any_of(c("ID", "TIME", "DTC", ".EVID_sort"))))
+    # arrange(.data$ID, .data$TIME)
 
   # Remove temporary column
   if (".EVID_sort" %in% names(obj)) {
@@ -86,6 +88,9 @@ index_id <- function(obj) {
 
 #' nif class constructor
 #'
+#' Create an empty nif object or a nif object from sdtm data or from a data
+#' table.
+#'
 #' If no obj argument is provided, an empty, minimal nif object will be
 #' generated. If a data frame is provided for obj, it is converted into a nif
 #' object. Minimally expected fields are ID, TIME, AMT, CMT, EVID and DV. If ID
@@ -106,59 +111,125 @@ index_id <- function(obj) {
 #' nif()
 nif <- function(obj = NULL, ..., silent = NULL) {
 
+  # Case 1: Empty minimal nif object
   if (is.null(obj)) {
     # empty nif object
     fields <- c("REF", minimal_nif_fields)
     temp <- data.frame(matrix(nrow = 0, ncol = length(fields)))
     colnames(temp) <- fields
     class(temp) <- c("nif", "data.frame")
+
     return(order_nif_columns(temp))
   }
 
-  temp <- NULL
-  # SDTM data as input
+  # Case 2: Nif object from a sdtm object using nif_auto()
   if (inherits(obj, "sdtm")) {
-    temp <- nif_auto(obj, ..., silent = silent)
+    temp <- nif_auto(obj, ..., silent = silent) |>
+      arrange_and_add_ref() |>
+      order_nif_columns()
 
-  } else {
-    # other input
-    if (!is.data.frame(obj)) {
-      stop("obj must be a data frame or sdtm object")
-    }
-
-    # generate ID field if missing
-    # if (!"ID" %in% names(obj) && "USUBJID" %in% names(obj))
-    #   obj <- mutate(obj, ID = as.numeric(as.factor(.data$USUBJID)))
-
-    obj <- index_id(obj)
-
-    missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
-    if (length(missing_min_fields) > 0)
-      stop(paste0("Missing essential fields: ",
-                  nice_enumeration(missing_min_fields)))
-
-    min_obj <- obj |>
-      select(all_of(minimal_nif_fields))
-
-    # helper function
-    numeric_or_na <- function(x) {
-      all(is.na(x) | is.numeric(x))
-    }
-
-    non_num_fields <- names(min_obj)[!unlist(lapply(min_obj, numeric_or_na))]
-
-    if (length(non_num_fields) > 0)
-      stop(paste0("Non-numeric essential fields: ",
-                  nice_enumeration(non_num_fields)))
-    temp <- obj
+    class(temp) <- c("nif", "data.frame")
+    return(temp)
   }
 
-  temp <- temp |>
-    # index_id() |>
-    arrange_and_add_ref()
+  # Error case: neither nif or data.frame
+  if (!is.data.frame(obj))
+    stop("obj must be a data frame or sdtm object")
 
-  class(temp) <- c("nif", "data.frame")
-  order_nif_columns(temp)
+  # Case 3: Nif object from nif object or from data frame
+  # validate inputs
+  missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
+  if (length(missing_min_fields) > 0)
+    stop(paste0("Missing essential fields: ",
+                nice_enumeration(missing_min_fields)))
+
+  if (any(is.na(obj$ID)))
+    stop("ID colum must not contain NA values!")
+
+  # Check correct type for essential columns
+  min_obj <- obj |>
+    select(all_of(minimal_nif_fields))
+  non_num_fields <- names(min_obj)[!unlist(lapply(min_obj, numeric_or_na))]
+  if (length(non_num_fields) > 0)
+    stop(paste0("Non-numeric essential fields: ",
+                nice_enumeration(non_num_fields)))
+
+  # Case 3a: Nif object from nif object
+  if (inherits(obj, "nif")) {
+    out <- obj |>
+      index_id() |>
+      arrange_and_add_ref() |>
+      order_nif_columns()
+
+    return(out)
+  }
+
+  # Case 3b: Nif object from data frame
+  if (inherits(obj, "data.frame")) {
+    out <- index_id(obj) |>
+      arrange_and_add_ref() |>
+      order_nif_columns()
+
+    class(out) <- c("nif", "data.frame")
+    return(out)
+  }
+
+
+  # # Case 2: Nif object from an existing nif object
+  # if (inherits(obj, "nif")) {
+  #   validate_nif(nif)
+  #
+  #
+  #   # only reorder columns, and make ID and REF fields
+  #   out <- obj |>
+  #     index_id() |>
+  #     arrange_and_add_ref() |>
+  #     order_nif_columns()
+  #
+  #   return(out)
+  # }
+  #
+  # temp <- NULL
+  #
+  # # # Case 3: Nif object from a sdtm object using nif_auto()
+  # # if (inherits(obj, "sdtm")) {
+  # #   temp <- nif_auto(obj, ..., silent = silent)
+  #
+  # } else {
+  # # Case 4: Nif object from a data frame
+  #   # other input
+  #   if (!is.data.frame(obj)) {
+  #     stop("obj must be a data frame or sdtm object")
+  #   }
+  #
+  #   # generate ID field if missing
+  #   # if (!"ID" %in% names(obj) && "USUBJID" %in% names(obj))
+  #   #   obj <- mutate(obj, ID = as.numeric(as.factor(.data$USUBJID)))
+  #
+  #   missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
+  #   if (length(missing_min_fields) > 0)
+  #     stop(paste0("Missing essential fields: ",
+  #                 nice_enumeration(missing_min_fields)))
+  #
+  #   min_obj <- obj |>
+  #     select(all_of(minimal_nif_fields))
+  #
+  #   # Check correct type for essential columns
+  #   non_num_fields <- names(min_obj)[!unlist(lapply(min_obj, numeric_or_na))]
+  #   if (length(non_num_fields) > 0)
+  #     stop(paste0("Non-numeric essential fields: ",
+  #                 nice_enumeration(non_num_fields)))
+  #
+  #   temp <- index_id(obj)
+  #   # temp <- obj
+  # }
+  #
+  # temp <- temp |>
+  #   # index_id() |>
+  #   arrange_and_add_ref()
+  #
+  # class(temp) <- c("nif", "data.frame")
+  # order_nif_columns(temp)
 }
 
 

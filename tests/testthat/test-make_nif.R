@@ -219,10 +219,8 @@ test_that("filter_exendtc_after_exstdtc works", {
 test_that("make_nif", {
   sdtm <- examplinib_sad
   nif <- nif() %>%
-    add_administration(
-      sdtm,
-      extrt = "EXAMPLINIB", analyte = "RS2023", silent = TRUE
-    ) %>%
+    add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023",
+                       silent = TRUE) %>%
     add_observation(sdtm, domain = "pc", testcd = "RS2023", cmt = 2)
 
   expect_true(

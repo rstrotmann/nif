@@ -103,7 +103,7 @@ test_that("nif() with empty data frame handles correctly", {
   empty_df2 <- data.frame()
   expect_error(
     result2 <- nif(empty_df2),
-    "Missing essential fields")
+    "Missing essential fields: ID, TIME, AMT, CMT, EVID and DV")
 })
 
 
@@ -127,7 +127,7 @@ test_that("nif() with missing minimal fields handles gracefully", {
 
   # Should not error, just creates nif with available columns
   expect_error(result2 <- nif(test_data2),
-               "Missing essential fields: TIME, AMT, CMT, EVID and DV")
+               "Missing essential fields: ID, TIME, AMT, CMT, EVID and DV")
 })
 
 
@@ -248,12 +248,9 @@ test_that("nif() handles NA values in minimal fields", {
     NA,  0,     100,  1,    1,     NA
   )
 
-  # Should not error, NA values are allowed
-  expect_no_error(result <- nif(test_data))
-  expect_s3_class(result, "nif")
-
-  # Check REF is still created
-  expect_equal(result$REF, 1:nrow(result))
+  expect_error(
+    result <- nif(test_data),
+    "ID colum must not contain NA values!")
 })
 
 
@@ -463,20 +460,6 @@ test_that("nif() output works with other nif functions", {
 
   # Should work with other nif functions that validate nif objects
   expect_no_error(validate_nif(result))
-})
-
-
-test_that("nif() handles data with all NA values in minimal fields", {
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    NA,  NA,    NA,   NA,   NA,    NA,
-    NA,  NA,    NA,   NA,   NA,    NA
-  )
-
-  # Should not error, but may have issues with arrangement
-  expect_no_error(result <- nif(test_data))
-  expect_s3_class(result, "nif")
-  expect_equal(nrow(result), 2)
 })
 
 

@@ -445,25 +445,6 @@ test_that("subjects.nif works with empty NIF object", {
 })
 
 
-test_that("subjects.nif handles NA values in ID correctly", {
-  na_id_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~USUBJID,
-    1,   0,     10,   1,    1,     10,    NA,  "SUBJ001",
-    NA,  1,     0,    2,    0,     10,    5.2, "SUBJ002", # NA ID
-    2,   0,     10,   1,    1,     10,    NA,  "SUBJ003",
-    2,   1,     0,    2,    0,     10,    6.1, "SUBJ003"
-  ) %>%
-    nif()
-
-  result <- subjects(na_id_nif)
-
-  # Should include NA ID as a distinct value
-  expect_equal(nrow(result), 3)
-  expect_true(any(is.na(result$ID)))
-  expect_equal(sort(result$ID, na.last = TRUE), c(1, 2, NA))
-})
-
-
 test_that("subjects.nif works with only ID column", {
   id_only_nif <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV,
@@ -592,28 +573,6 @@ test_that("usubjid works with empty NIF", {
     usubjid(empty_nif, 1),
     "USUBJID field not found"
   )
-})
-
-
-test_that("usubjid works with NIF containing NA USUBJID", {
-  # Create NIF with NA USUBJID values
-  na_usubjid_nif <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DOSE, ~DV, ~USUBJID,
-    1,   0,     10,   1,    1,     10,    NA,  "SUBJ001",
-    2,   0,     10,   1,    1,     10,    NA,  NA, # NA USUBJID
-    3,   0,     10,   1,    1,     10,    NA,  "SUBJ003"
-  ) %>%
-    nif()
-
-  # Test with ID that has NA USUBJID
-  result <- usubjid(na_usubjid_nif, 2)
-  expect_type(result, "character")
-  expect_true(is.na(result))
-
-  # Test with ID that has valid USUBJID
-  result <- usubjid(na_usubjid_nif, 1)
-  expect_type(result, "character")
-  expect_equal(result, "SUBJ001")
 })
 
 

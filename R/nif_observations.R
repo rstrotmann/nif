@@ -600,8 +600,14 @@ make_observation <- function(
   }
 
   # merge subject-level information
+  if ("STUDYID" %in% names(sbs) && "STUDYID" %in% names(out)) {
+    out <- inner_join(out, sbs, by = c("USUBJID", "STUDYID"))
+  } else {
+    out <- inner_join(out, sbs, by = c("USUBJID"))
+  }
+
   out |>
-    inner_join(sbs, by = "USUBJID") |>
+    # inner_join(sbs, by = c("USUBJID", "STUDYID")) |>
     group_by(.data$USUBJID) |>
     mutate(TRTDY = as.numeric(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
@@ -924,8 +930,10 @@ add_observation <- function(
   }
 
   obj <- bind_rows(nif, observation) |>
+
     arrange(.data$USUBJID, .data$DTC) |>
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) |>
+
     mutate(PARENT = case_when(.data$PARENT == "." ~ NA,
                               .default = .data$PARENT)) |>
     mutate(.current_admin = case_when(.data$EVID == 1 ~ .data$ANALYTE,

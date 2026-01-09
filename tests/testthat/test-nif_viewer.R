@@ -19,7 +19,7 @@ test_that("nif_viewer handles missing values", {
   missing_nif <- nif(tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~USUBJID, ~ANALYTE, ~PARENT,
     1,   0,     0,    1,    0,     0,   "1",      "TEST",   "TEST",
-    NA,  1,     0,    1,    NA,    0,   "2",      "TEST",   "TEST"
+    1,  1,     0,    1,    NA,    0,   "2",      "TEST",   "TEST"
   ))
 
   # Should show warning but not error
