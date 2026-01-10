@@ -340,7 +340,7 @@ nif_auto <- function(
             out <- add_bl_crcl(out)
             out <- add_bl_renal(out)
             conditional_cli(
-              cli_alert_info("BL_CRCL and baseline renal function class (BL_RENAL) added!"),
+              cli_alert_info("BL_CRCL and BL_RENAL added!"),
               silent = silent
             )
           }

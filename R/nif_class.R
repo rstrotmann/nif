@@ -167,7 +167,6 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   # Case 4: Nif object from nif object
   if (inherits(obj, "nif")) {
     out <- obj |>
-      # index_id() |>
       arrange_and_add_ref() |>
       order_nif_columns()
 
@@ -181,7 +180,6 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       obj <- index_id(obj)
 
     out <- obj |>
-      # index_id() |>
       arrange_and_add_ref() |>
       order_nif_columns()
 
@@ -695,8 +693,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
     ensure_analyte() |>
     filter(.data$EVID == 1) |>
     group_by(.data$ID, .data$ANALYTE, across(any_of(group))) |>
-    arrange(.data$ID, .data$TIME) #|>
-    # ungroup()
+    arrange(.data$ID, .data$TIME)
 
   if (nrow(temp) == 0) {
     NULL

@@ -9,7 +9,7 @@
 get_pinboard <- function(board = NULL) {
   if (is.null(board)) {
     board <- nif_option_value("pinboard")
-    if (is.na(board) | is.null(board) | board == "") {
+    if (is.na(board) || is.null(board) || board == "") {
       board <- Sys.getenv("NIF_PINBOARD")
       if (board == "") {
         stop("No pinboard found")
@@ -23,8 +23,7 @@ get_pinboard <- function(board = NULL) {
     ))
   }
 
-  board_obj <- pins::board_folder(board)
-  return(board_obj)
+  pins::board_folder(board)
 }
 
 
@@ -54,10 +53,8 @@ get_pinboard <- function(board = NULL) {
 #' @seealso [nif::nif_option()]
 #' @export
 nif_pinboard <- function(path = NULL) {
-  # validate_char_param(folder, "folder", allow_null = TRUE)
-
   if (!is.null(path)) {
-    if (!path == "" & !dir.exists(path)) {
+    if (!path == "" && !dir.exists(path)) {
       stop(paste0(
         "Pinboard ", path, " does not exist"
       ))
@@ -250,7 +247,7 @@ pb_read_sdtm <- function(name, board = NULL) {
   out <- pin_read(board_obj, name)
 
   validate_sdtm(out)
-  return(out)
+  out
 }
 
 
@@ -275,7 +272,7 @@ pb_read_nif <- function(name, board = NULL) {
   out <- pin_read(board_obj, name)
 
   validate_nif(out)
-  return(out)
+  out
 }
 
 
@@ -301,9 +298,9 @@ pb_list_object <- function(board = NULL, object_type) {
   temp$dco <- as.character(lapply(temp$meta, function(x) x$user$dco))
   temp$type <- as.character(lapply(temp$meta, function(x) x$user$type))
 
-  temp %>%
-    filter(.data$type == object_type) %>%
-    select("name", "title", "created", "dco") %>%
+  temp |>
+    filter(.data$type == object_type) |>
+    select("name", "title", "created", "dco") |>
     as.data.frame()
 }
 

@@ -249,8 +249,7 @@ make_administration <- function(
         " was automatically assigned!"
       ))
     },
-    silent = silent
-  )
+    silent = silent)
   } else {
     if (!is.POSIXct(cut_off_date)) {
       cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)

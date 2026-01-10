@@ -1,4 +1,4 @@
-test_that("make_time_from_TIME works with basic single subject data", {
+test_that("make_time_from_time works with basic single subject data", {
   # Create test data with single subject, single parent compound
   # TIME is already present (not calculated from DTC)
   test_data <- tibble::tribble(
@@ -10,7 +10,7 @@ test_that("make_time_from_TIME works with basic single subject data", {
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check that TAFD and TAD fields were added
   expect_true(all(c("TAFD", "TAD") %in% names(result)))
@@ -29,7 +29,7 @@ test_that("make_time_from_TIME works with basic single subject data", {
 })
 
 
-test_that("make_time_from_TIME works with multiple subjects", {
+test_that("make_time_from_time works with multiple subjects", {
   # Create test data with two subjects
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -42,7 +42,7 @@ test_that("make_time_from_TIME works with multiple subjects", {
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check TIME values (preserved as-is)
   expect_equal(result$TIME, c(0, 1, 2, 0, 1, 2))
@@ -55,7 +55,7 @@ test_that("make_time_from_TIME works with multiple subjects", {
 })
 
 
-test_that("make_time_from_TIME works with multiple parent compounds", {
+test_that("make_time_from_time works with multiple parent compounds", {
   # Create test data with two parent compounds for same subject
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -68,7 +68,7 @@ test_that("make_time_from_TIME works with multiple parent compounds", {
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data) |>
+  result <- make_time_from_time(test_data) |>
     arrange(ID, PARENT)
 
   # Check TIME values (preserved as-is)
@@ -87,7 +87,7 @@ test_that("make_time_from_TIME works with multiple parent compounds", {
 })
 
 
-test_that("make_time_from_TIME works with multiple administrations of same parent", {
+test_that("make_time_from_time works with multiple administrations of same parent", {
   # Create test data with multiple doses of same parent compound
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -100,7 +100,7 @@ test_that("make_time_from_TIME works with multiple administrations of same paren
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check TIME values (preserved as-is)
   expect_equal(result$TIME, c(0, 1, 2, 3, 4, 5))
@@ -114,7 +114,7 @@ test_that("make_time_from_TIME works with multiple administrations of same paren
 })
 
 
-test_that("make_time_from_TIME handles observations before first administration", {
+test_that("make_time_from_time handles observations before first administration", {
   # Create test data with observations before dosing
   # With downup fill, pre-dose observations should have negative TAD
   test_data <- tibble::tribble(
@@ -127,7 +127,7 @@ test_that("make_time_from_TIME handles observations before first administration"
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check TIME values (preserved as-is)
   expect_equal(result$TIME, c(-1, 0, 1, 2, 3))
@@ -141,14 +141,14 @@ test_that("make_time_from_TIME handles observations before first administration"
 })
 
 
-test_that("make_time_from_TIME handles empty data frame", {
+test_that("make_time_from_time handles empty data frame", {
   # Create empty test data
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV, ~AMT, ~CMT
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check that TAFD and TAD fields are added as empty numeric vectors
   expect_true(all(c("TAFD", "TAD") %in% names(result)))
@@ -158,7 +158,7 @@ test_that("make_time_from_TIME handles empty data frame", {
 })
 
 
-test_that("make_time_from_TIME validates input is nif object", {
+test_that("make_time_from_time validates input is nif object", {
   # Test with regular data frame
   test_data <- data.frame(
     ID = 1,
@@ -170,13 +170,13 @@ test_that("make_time_from_TIME validates input is nif object", {
   )
 
   expect_error(
-    make_time_from_TIME(test_data),
+    make_time_from_time(test_data),
     "Input must be a nif object"
   )
 })
 
 
-test_that("make_time_from_TIME preserves original data columns", {
+test_that("make_time_from_time preserves original data columns", {
   # Create test data with extra columns
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~EXTRA1, ~EXTRA2, ~AMT, ~CMT,
@@ -185,7 +185,7 @@ test_that("make_time_from_TIME preserves original data columns", {
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check that original columns are preserved
   expect_true(all(names(test_data) %in% names(result)))
@@ -194,7 +194,7 @@ test_that("make_time_from_TIME preserves original data columns", {
 })
 
 
-test_that("make_time_from_TIME calculates time with correct precision", {
+test_that("make_time_from_time calculates time with correct precision", {
   # Create test data with precise timing
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -204,7 +204,7 @@ test_that("make_time_from_TIME calculates time with correct precision", {
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check TIME values (preserved as-is)
   expect_equal(result$TIME, c(0, 0.5, 1.258), tolerance = 1e-3)
@@ -217,7 +217,7 @@ test_that("make_time_from_TIME calculates time with correct precision", {
 })
 
 
-test_that("make_time_from_TIME handles subjects with no administrations", {
+test_that("make_time_from_time handles subjects with no administrations", {
   # Create test data with subject having only observations (no EVID=1)
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV, ~AMT, ~CMT,
@@ -228,7 +228,7 @@ test_that("make_time_from_TIME handles subjects with no administrations", {
     nif()
 
   expect_no_error(
-    result <- make_time_from_TIME(test_data)
+    result <- make_time_from_time(test_data)
   )
 
   expect_equal(result$TAFD, rep(NA_real_, 3))
@@ -236,7 +236,7 @@ test_that("make_time_from_TIME handles subjects with no administrations", {
 })
 
 
-test_that("make_time_from_TIME handles complex multi-subject, multi-parent scenario", {
+test_that("make_time_from_time handles complex multi-subject, multi-parent scenario", {
   # Create complex test data with multiple subjects and parent compounds
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -252,7 +252,7 @@ test_that("make_time_from_TIME handles complex multi-subject, multi-parent scena
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check TIME values (preserved as-is, but reordered by function)
   expect_equal(result$TIME, c(0, 1, 2, 3, 4, 5, 0, 1, 2))
@@ -269,7 +269,7 @@ test_that("make_time_from_TIME handles complex multi-subject, multi-parent scena
 })
 
 
-test_that("make_time_from_TIME handles missing TIME values gracefully", {
+test_that("make_time_from_time handles missing TIME values gracefully", {
   # Create test data with some missing TIME values
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -279,7 +279,7 @@ test_that("make_time_from_TIME handles missing TIME values gracefully", {
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check that function handles missing values
   expect_true(all(c("TAFD", "TAD") %in% names(result)))
@@ -291,7 +291,7 @@ test_that("make_time_from_TIME handles missing TIME values gracefully", {
 })
 
 
-test_that("make_time_from_TIME handles predose values with downup fill correctly", {
+test_that("make_time_from_time handles predose values with downup fill correctly", {
   # Test that downup fill allows negative TAD for pre-dose observations
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV, ~AMT, ~CMT,
@@ -304,7 +304,7 @@ test_that("make_time_from_TIME handles predose values with downup fill correctly
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data) %>%
+  result <- make_time_from_time(test_data) %>%
     as.data.frame()
 
   # Check TIME values (preserved as-is)
@@ -319,7 +319,7 @@ test_that("make_time_from_TIME handles predose values with downup fill correctly
 })
 
 
-test_that("make_time_from_TIME works when PARENT column is missing but can be created", {
+test_that("make_time_from_time works when PARENT column is missing but can be created", {
   # Test that ensure_parent is called and works
   # If PARENT can be created from ANALYTE or CMT, it should work
   test_data <- tibble::tribble(
@@ -331,7 +331,7 @@ test_that("make_time_from_TIME works when PARENT column is missing but can be cr
 
   # This should work if ensure_parent can create PARENT from ANALYTE
   # If it can't, it will error, which is expected behavior
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # If successful, check that PARENT exists and calculations work
   expect_true("PARENT" %in% names(result))
@@ -339,7 +339,7 @@ test_that("make_time_from_TIME works when PARENT column is missing but can be cr
 })
 
 
-test_that("make_time_from_TIME handles multiple doses with observations in between", {
+test_that("make_time_from_time handles multiple doses with observations in between", {
   # Test scenario with multiple doses and observations between them
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -352,7 +352,7 @@ test_that("make_time_from_TIME handles multiple doses with observations in betwe
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check TIME values
   expect_equal(result$TIME, c(0, 0.5, 1, 2, 2.5, 3))
@@ -366,7 +366,7 @@ test_that("make_time_from_TIME handles multiple doses with observations in betwe
 })
 
 
-test_that("make_time_from_TIME handles unsorted input data", {
+test_that("make_time_from_time handles unsorted input data", {
   # Test that function properly sorts data before calculations
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
@@ -377,7 +377,7 @@ test_that("make_time_from_TIME handles unsorted input data", {
   ) %>%
     nif()
 
-  result <- make_time_from_TIME(test_data)
+  result <- make_time_from_time(test_data)
 
   # Check that data is properly sorted and calculations are correct
   expect_equal(result$TIME, c(0, 1, 2, 3))

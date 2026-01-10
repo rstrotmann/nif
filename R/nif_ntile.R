@@ -48,9 +48,9 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
 
   # Validate that n is a positive integer between 2 and 100
   if (!is.numeric(n) ||
-      length(n) != 1 ||
-      n < 2 || n > 100 ||
-      n != as.integer(n))
+        length(n) != 1 ||
+        n < 2 || n > 100 ||
+        n != as.integer(n))
     stop("n must be a positive integer between 2 and 100")
 
   # Validate that ntile_name is either NULL or a valid character string
@@ -118,12 +118,8 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   subject_level_data <- subject_level_data |>
     mutate(ntile_value = ntile(.data$value, n = n))
 
-  # Dynamic column naming logic
-  column_name <- if (is.null(ntile_name)) {
-    paste0(input_col, "_NTILE")
-  } else {
-    ntile_name
-  }
+  column_name <- ifelse(is.null(ntile_name), paste0(input_col,
+                                                    "_NTILE"), ntile_name)
 
   # Add the new column with the determined name to the nif object
   nif |>

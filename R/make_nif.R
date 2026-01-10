@@ -151,8 +151,8 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     nif_cleanup(keep = keep) |>
     arrange_and_add_ref()
 
-    class(out) <- c("nif", "data.frame")
-    order_nif_columns(out)
+  class(out) <- c("nif", "data.frame")
+  order_nif_columns(out)
 }
 
 

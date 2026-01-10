@@ -139,7 +139,7 @@ make_time <- function(obj) {
 #'
 #' @return A nif object.
 #' @noRd
-make_time_from_TIME <- function(obj) {
+make_time_from_time <- function(obj) {
   # input validation
   validate_nif(obj)
 

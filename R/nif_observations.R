@@ -607,7 +607,6 @@ make_observation <- function(
   }
 
   out |>
-    # inner_join(sbs, by = c("USUBJID", "STUDYID")) |>
     group_by(.data$USUBJID) |>
     mutate(TRTDY = as.numeric(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),

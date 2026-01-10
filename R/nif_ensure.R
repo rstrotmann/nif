@@ -267,7 +267,7 @@ ensure_tafd <- function(obj) {
 #'
 #' - If DTC (datetime) is available, it uses make_time() to calculate all time
 #' fields
-#' - If only TIME is available, it uses make_time_from_TIME() to derive TAD and
+#' - If only TIME is available, it uses make_time_from_time() to derive TAD and
 #' TAFD
 #'
 #' @param obj A nif object.
@@ -293,10 +293,10 @@ ensure_time <- function(obj) {
       }
     )
   } else if ("TIME" %in% names(obj)) {
-    # TIME available but missing TAD/TAFD - use make_time_from_TIME
+    # TIME available but missing TAD/TAFD - use make_time_from_time
     result <- tryCatch(
       {
-        make_time_from_TIME(obj)
+        make_time_from_time(obj)
       },
       error = function(e) {
         stop("Failed to calculate TAD/TAFD from TIME: ", e$message)

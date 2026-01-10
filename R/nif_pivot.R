@@ -40,9 +40,6 @@ correlate_obs <- function(
   validate_nif(obj)
 
   if (!"REF" %in% names(obj)) {
-    # obj <- index_nif(obj)
-    ## TO DO
-    ## Check whether this needs to be wrapped in a condition
     obj <- arrange_and_add_ref(obj)
   }
   validate_analyte(

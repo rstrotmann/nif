@@ -53,11 +53,6 @@ make_plot_data_set <- function(
 
   parent <- parents(nif)
 
-  # parent <- as.data.frame(nif) |>
-  #   distinct(.data$ANALYTE, .data$PARENT) |>
-  #   filter(.data$ANALYTE %in% analyte) |>
-  #   pull(.data$PARENT)
-
   out <- nif |>
     filter((.data$ANALYTE %in% analyte & .data$EVID == 0) |
              (.data$ANALYTE %in% parent & .data$EVID == 1)) |>
@@ -65,7 +60,6 @@ make_plot_data_set <- function(
 
   # doses
   if (is.null(dose)) {
-    # dose <- unique(filter(out, .data$EVID == 0)$DOSE)
     dose <- doses(out)
   }
 

@@ -451,12 +451,12 @@ derive_cfb <- function(
 #' head(derive_rtb(examplinib_sad_nif))
 #'
 derive_rtb <- function(
-    obj,
-    analyte = NULL,
-    baseline_filter = "TAFD <= 0",
-    summary_function = median,
-    default_baseline = NA_real_,
-    silent = NULL
+  obj,
+  analyte = NULL,
+  baseline_filter = "TAFD <= 0",
+  summary_function = median,
+  default_baseline = NA_real_,
+  silent = NULL
 ) {
   derive_baseline(
     obj,
@@ -598,7 +598,6 @@ derive_cfb_analyte <- function(
 
   out <- bind_rows(obj, temp) |>
     arrange(.data$USUBJID, .data$DTC) |>
-    # index_nif()
     arrange_and_add_ref()
 
   out
@@ -710,16 +709,19 @@ add_bl_creat <- function(
     )
   }
 
-  temp_lb <- temp_lb|>
+  temp_lb <- temp_lb |>
     mutate(.to_convert = .data$LBSTRESU %in% mg_units) |>
     mutate(.no_unit = !.data$LBSTRESU %in% c(mg_units, micromolar_units)) |>
     mutate(LBSTRESN = case_when(
       .data$.to_convert == TRUE ~ .data$LBSTRESN * 88.4,
       .default = .data$LBSTRESN
     )) |>
-    mutate(LBSTRESU = case_when(
-      .data$.to_convert == TRUE ~ "umol/L",
-      .default = .data$LBSTRESU))
+    mutate(
+      LBSTRESU = case_when(
+        .data$.to_convert == TRUE ~ "umol/L",
+        .default = .data$LBSTRESU
+      )
+    )
 
   if (any(temp_lb$.to_convert == TRUE))
     conditional_cli(
@@ -914,8 +916,7 @@ add_bl_odwg <- function(
     if (length(blcol) == 0) {
       conditional_cli({
         cli_alert_warning("No baseline flag column found!")
-        cli_text(
-          "Please provide an explicit baseline filter to calculate BL_ODWG!")
+        cli_text("Please provide an explicit baseline filter!")
         cli_text()
       }, silent = silent
       )
@@ -957,8 +958,7 @@ add_bl_odwg <- function(
 
   if (nrow(lb1) == 0) {
     conditional_cli({
-      cli_alert_warning(
-        "No hepatic function markers after baseline and observation filtering!")
+      cli_alert_warning("No data after baseline and observation filtering!")
       cli_text("BL_ODWG could not be derived!")
     },
     silent = silent)
