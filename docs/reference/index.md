@@ -43,7 +43,8 @@
 - [`add_obs_per_dosing_interval()`](add_obs_per_dosing_interval.md) :
   Add the number of observations per dosing interval
 
-- [`add_observation()`](add_observation.md) : Add observation events
+- [`add_observation()`](add_observation.md) : Add observation events to
+  nif
 
 - [`add_time_deviation()`](add_time_deviation.md) **\[experimental\]** :
   Calculate time deviations for observations
@@ -185,7 +186,8 @@
 
 - [`lbm_peters()`](lbm_peters.md) : Lean body mass (Peters formula)
 
-- [`limit()`](limit.md) : Sort nif object and add REF field
+- [`limit()`](limit.md) : Subset nif to rows with DTC before the last
+  individual or global observation
 
 - [`max_admin_time()`](max_admin_time.md) : Maximal administration time
 

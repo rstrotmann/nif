@@ -1,4 +1,4 @@
-# Add observation events
+# Add observation events to nif
 
 Add rows to a [nif](nif.md) object that represent observation events,
 i.e., with EVID values of 0. This is usually the second step in the
