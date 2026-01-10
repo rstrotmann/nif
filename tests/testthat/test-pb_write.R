@@ -18,7 +18,9 @@ create_multi_study_nif <- function() {
   nif2 <- create_test_nif("STUDY02")
 
   dplyr::bind_rows(nif1, nif2) %>%
-    nif(silent = TRUE)
+    nif(silent = TRUE) |>
+    index_id() |>
+    arrange_and_add_ref()
 }
 
 

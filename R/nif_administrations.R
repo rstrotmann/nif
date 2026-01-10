@@ -106,15 +106,6 @@ expand_ex <- function(ex) {
   }
 
   ex <- ex |>
-    # {\(.) if (all(c("EXSTDY", "EXENDY") %in% names(.))) {
-    #     mutate(., EXDY = date_list(
-    #       .data$EXSTDTC_date, .data$EXENDTC_date,
-    #       .data$EXSTDY, .data$EXENDY
-    #     )[2])
-    #   } else {
-    #     .
-    #   }
-    # }() |>
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
     group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
     mutate(DTC_time = case_when(
@@ -226,6 +217,7 @@ make_administration <- function(
   keep = "",
   silent = NULL
 ) {
+  # extract domains
   dm <- domain(sdtm, "dm") |>
     lubrify_dates()
   ex <- domain(sdtm, "ex") |>
@@ -236,6 +228,7 @@ make_administration <- function(
     vs <- domain(sdtm, "vs")
   }
 
+  # validate extrt
   if (!extrt %in% ex$EXTRT) {
     stop(paste0("Treatment '", extrt, "' not found in EXTRT!"))
   }
@@ -249,22 +242,22 @@ make_administration <- function(
   if (is.null(cut_off_date)) {
     cut_off_date <- last_ex_dtc(ex)
 
-    conditional_cli(
-      {
-        cli_alert_info(paste0(
-          "A global cut-off-date of ",
-          format(cut_off_date),
-          " was automatically assigned!"
-        ))
-      },
-      silent = silent
-    )
+    conditional_cli({
+      cli_alert_info(paste0(
+        "A global cut-off-date of ",
+        format(cut_off_date),
+        " was automatically assigned!"
+      ))
+    },
+    silent = silent
+  )
   } else {
     if (!is.POSIXct(cut_off_date)) {
       cut_off_date <- as_datetime(cut_off_date, format = dtc_formats)
     }
   }
 
+  # make subjects
   sbs <- make_subjects(dm, vs, subject_filter, keep)
 
   admin <- ex
@@ -290,28 +283,27 @@ make_administration <- function(
     select(any_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "EXSEQ")))
 
   if (nrow(cut_off_rows) > 0) {
-    conditional_cli(
-      {
-        cli::cli_alert_warning("Cut off date applied!")
-        cli::cli_text(paste0(
-          nrow(cut_off_rows),
-          " administrations episodes for ", extrt,
-          " begin after the cut-off date (",
-          format(cut_off_date), ") and were deleted from the data set:"
-        ))
-        cli::cli_verbatim(
-          df_to_string(cut_off_rows, indent = 2)
-        )
-        cli::cli_text()
-      },
-      silent = silent
-    )
+    conditional_cli({
+      cli::cli_alert_warning("Cut off date applied!")
+      cli::cli_text(paste0(
+        nrow(cut_off_rows),
+        " administrations episodes for ", extrt,
+        " begin after the cut-off date (",
+        format(cut_off_date), ") and were deleted from the data set:"
+      ))
+      cli::cli_verbatim(
+        df_to_string(cut_off_rows, indent = 2)
+      )
+      cli::cli_text()
+    },
+    silent = silent)
   }
 
   admin <- admin |>
     filter(.data$EXSTDTC <= cut_off_date)
 
   admin <- admin |>
+
     # time imputations
     impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
     impute_missing_exendtc(silent = silent) |>
@@ -361,6 +353,7 @@ make_administration <- function(
       units = "days"
     ) + 1) |>
     ungroup() |>
+    index_id() |>
     nif()
 }
 

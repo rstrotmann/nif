@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_nif.R
 \name{limit}
 \alias{limit}
-\title{Sort nif object and add REF field}
+\title{Subset nif to rows with DTC before the last individual or global observation}
 \usage{
 limit(obj, individual = TRUE, keep_no_obs_sbs = FALSE)
 }
@@ -17,11 +17,5 @@ limit(obj, individual = TRUE, keep_no_obs_sbs = FALSE)
 A nif object.
 }
 \description{
-The input data format expected by NONMEM requires all rows ordered by ID and
-TIME, and indexed sequentially on a subject level with a REF field.
-Re-indexing may be required if a NIF object is extended, e.g., by merging in
-further data.
-}
-\details{
 Subset nif to rows with DTC before the last individual or global observation
 }

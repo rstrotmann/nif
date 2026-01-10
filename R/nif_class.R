@@ -48,6 +48,9 @@ arrange_and_add_ref <- function(obj) {
 
 #' Assign unique ID
 #'
+#' Re-assign unique IDs per subject based on USUBJID or SUBJID, and STUDYID,
+#' if available.
+#'
 #' @param obj A nif object
 #'
 #' @returns A inf object with unique IDs
@@ -164,7 +167,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   # Case 4: Nif object from nif object
   if (inherits(obj, "nif")) {
     out <- obj |>
-      index_id() |>
+      # index_id() |>
       arrange_and_add_ref() |>
       order_nif_columns()
 
@@ -173,7 +176,12 @@ nif <- function(obj = NULL, ..., silent = NULL) {
 
   # Case 5: Nif object from data frame
   if (inherits(obj, "data.frame")) {
-    out <- index_id(obj) |>
+    # make ID only if ID is not yet present
+    if (!"ID" %in% names(obj))
+      obj <- index_id(obj)
+
+    out <- obj |>
+      # index_id() |>
       arrange_and_add_ref() |>
       order_nif_columns()
 
@@ -687,7 +695,8 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
     ensure_analyte() |>
     filter(.data$EVID == 1) |>
     group_by(.data$ID, .data$ANALYTE, across(any_of(group))) |>
-    arrange(.data$ID, .data$TIME)
+    arrange(.data$ID, .data$TIME) #|>
+    # ungroup()
 
   if (nrow(temp) == 0) {
     NULL

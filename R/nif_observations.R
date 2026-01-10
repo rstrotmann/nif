@@ -618,7 +618,7 @@ make_observation <- function(
 }
 
 
-#' Add observation events
+#' Add observation events to nif
 #'
 #' Add rows to a [nif::nif] object that represent observation events, i.e., with
 #' EVID values of 0. This is usually the second step in the creation of NIF data
@@ -981,6 +981,7 @@ add_observation <- function(
 
   obj |>
     select(-c("NO_ADMIN_FLAG")) |>
+    index_id() |>
     nif() |>
     normalize_nif(keep = keep)
 }

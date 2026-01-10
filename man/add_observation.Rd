@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_observations.R
 \name{add_observation}
 \alias{add_observation}
-\title{Add observation events}
+\title{Add observation events to nif}
 \usage{
 add_observation(
   nif,
