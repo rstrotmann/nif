@@ -85,8 +85,9 @@ argument. Note that baseline WEIGHT, HEIGHT and BMI (if applicable) are
 automatically included during the generation of a nif object.
 }
 \examples{
-add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
+head(add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT"))
 add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
   baseline_filter = "VSBLFL == 'Y'"
-)
+) |>
+head()
 }

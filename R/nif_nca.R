@@ -19,10 +19,6 @@
 #' @import dplyr
 #' @return A data frame.
 #' @export
-#' @examples
-#' nca(examplinib_fe_nif)
-#' nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
-#'
 nca <- function(
   obj,
   analyte = NULL,
@@ -199,8 +195,8 @@ nca <- function(
 #' @export
 #'
 #' @examples
-#' nca1(examplinib_sad_nif, time = "TAD")
-#' nca1(examplinib_fe_nif, time = "TAD", group = "FASTED")
+#' head(nca1(examplinib_sad_nif, time = "TAD"))
+#' head(nca1(examplinib_fe_nif, time = "TAD", group = "FASTED"))
 nca1 <- function(nif,
                  analyte = NULL, parent = NULL,
                  keep = NULL, group = NULL,

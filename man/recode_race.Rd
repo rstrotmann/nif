@@ -25,5 +25,5 @@ associations:
 }
 \examples{
 nif::race_coding
-recode_race(examplinib_sad_nif)
+head(recode_race(examplinib_sad_nif))
 }

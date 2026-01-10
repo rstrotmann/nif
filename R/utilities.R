@@ -178,7 +178,7 @@ race_coding <- tibble::tribble(
 #'
 #' @examples
 #' nif::race_coding
-#' recode_race(examplinib_sad_nif)
+#' head(recode_race(examplinib_sad_nif))
 recode_race <- function(obj, coding_table = NULL, silent = NULL) {
   # validate inputs
   validate_nif(obj)
@@ -1150,10 +1150,7 @@ is_valid_filter <- function(data, filter_string, silent = TRUE) {
 #' @param obj A nif object.
 #'
 #' @returns A nif object.
-#' @export
-#'
-#' @examples
-#' dv_na_to_zero(examplinib_sad_min_nif)
+#' @noRd
 dv_na_to_zero <- function(obj) {
   validate_nif(obj)
 

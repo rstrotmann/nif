@@ -52,7 +52,8 @@
 #' @examples
 #' add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
 #'   covariate = "wt"
-#' )
+#' ) |>
+#' head()
 add_covariate <- function(
   nif,
   sdtm,

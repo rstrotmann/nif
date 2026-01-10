@@ -95,9 +95,11 @@ creation of a nif object using \code{\link[=add_administration]{add_administrati
 \code{\link[=add_observation]{add_observation()}} is recommended.
 }
 \examples{
-nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)
-nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE)
-nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE)
+nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE) |> head()
+nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE) |>
+head()
+nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE) |>
+head()
 }
 \seealso{
 \code{\link[=testcd]{testcd()}}

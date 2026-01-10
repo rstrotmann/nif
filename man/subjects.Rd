@@ -16,6 +16,6 @@ A data frame.
 Unique subjects within a data set
 }
 \examples{
-subjects(examplinib_fe_nif)
-subjects(examplinib_poc)
+head(subjects(examplinib_fe_nif))
+head(subjects(examplinib_poc))
 }

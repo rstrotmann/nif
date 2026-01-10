@@ -19,6 +19,6 @@ helpful to identify dosing intervals across which rich sampling was
 conducted.
 }
 \examples{
-add_obs_per_dosing_interval(examplinib_poc_nif)
-add_obs_per_dosing_interval(examplinib_poc_min_nif)
+head(add_obs_per_dosing_interval(examplinib_poc_nif))
+head(add_obs_per_dosing_interval(examplinib_poc_min_nif))
 }

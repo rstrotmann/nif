@@ -85,7 +85,8 @@ argument. By default, it is set to the 'testcd' (without any prefix).
 \examples{
 add_covariate(examplinib_poc_nif, examplinib_poc, "vs", "WEIGHT",
   covariate = "wt"
-)
+) |>
+head()
 }
 \seealso{
 \code{\link[=add_baseline]{add_baseline()}}

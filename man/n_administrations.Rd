@@ -16,7 +16,6 @@ A data frame.
 This function returns the number of administrations per \code{ID} and \code{PARENT}.
 }
 \examples{
-n_administrations(examplinib_poc_nif)
-n_administrations(examplinib_poc_min_nif)
-n_administrations(nif())
+head(n_administrations(examplinib_poc_nif))
+head(n_administrations(examplinib_poc_min_nif))
 }

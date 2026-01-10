@@ -424,8 +424,8 @@ print.subject_info <- function(x, ...) {
 #' @return A data frame.
 #' @export
 #' @examples
-#' subjects(examplinib_fe_nif)
-#' subjects(examplinib_poc)
+#' head(subjects(examplinib_fe_nif))
+#' head(subjects(examplinib_poc))
 subjects <- function(obj) {
   UseMethod("subjects")
 }
@@ -439,7 +439,7 @@ subjects <- function(obj) {
 #' @export
 #' @keywords internal
 #' @examples
-#' subjects(examplinib_fe_nif)
+#' head(subjects(examplinib_fe_nif))
 subjects.nif <- function(obj) {
   # input validation
   validate_nif(obj)
@@ -965,9 +965,8 @@ index_dosing_interval <- function(obj) {
 #' @return A data frame.
 #' @export
 #' @examples
-#' n_administrations(examplinib_poc_nif)
-#' n_administrations(examplinib_poc_min_nif)
-#' n_administrations(nif())
+#' head(n_administrations(examplinib_poc_nif))
+#' head(n_administrations(examplinib_poc_min_nif))
 n_administrations <- function(obj) {
   if (nrow(obj) == 0) {
     mutate(obj, N = NA)
@@ -1193,8 +1192,8 @@ add_dose_level <- function(obj) {
 #' @return Result as NIF object.
 #' @export
 #' @examples
-#' add_obs_per_dosing_interval(examplinib_poc_nif)
-#' add_obs_per_dosing_interval(examplinib_poc_min_nif)
+#' head(add_obs_per_dosing_interval(examplinib_poc_nif))
+#' head(add_obs_per_dosing_interval(examplinib_poc_min_nif))
 add_obs_per_dosing_interval <- function(obj) {
   obj |>
     arrange_and_add_ref() |>
@@ -1268,7 +1267,8 @@ index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
 #' filter_subject(
 #'   examplinib_poc_nif,
 #'   subjects(examplinib_poc_nif)[1, "USUBJID"]
-#' )
+#' ) |>
+#' head()
 filter_subject.nif <- function(obj, usubjid) {
   filter(obj, .data$USUBJID %in% usubjid)
 }

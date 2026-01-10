@@ -43,8 +43,3 @@ A data frame.
 This function is a wrapper around the NCA functions provided by the
 \href{https://CRAN.R-project.org/package=PKNCA}{PKNCA} package.
 }
-\examples{
-nca(examplinib_fe_nif)
-nca(examplinib_fe_nif, group = c("FASTED", "SEX"), analyte = "RS2023")
-
-}

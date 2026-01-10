@@ -40,6 +40,6 @@ This function is a wrapper around the NCA functions provided by the
 \href{https://CRAN.R-project.org/package=PKNCA}{PKNCA} package.
 }
 \examples{
-nca1(examplinib_sad_nif, time = "TAD")
-nca1(examplinib_fe_nif, time = "TAD", group = "FASTED")
+head(nca1(examplinib_sad_nif, time = "TAD"))
+head(nca1(examplinib_fe_nif, time = "TAD", group = "FASTED"))
 }

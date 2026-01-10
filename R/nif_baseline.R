@@ -47,10 +47,11 @@
 #' @importFrom stats na.omit
 #' @export
 #' @examples
-#' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT")
+#' head(add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT"))
 #' add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT",
 #'   baseline_filter = "VSBLFL == 'Y'"
-#' )
+#' ) |>
+#' head()
 add_baseline <- function(
   nif,
   sdtm,
