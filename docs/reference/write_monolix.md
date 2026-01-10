@@ -30,7 +30,7 @@ Nothing.
 ## Examples
 
 ``` r
-write_monolix(examplinib_fe_nif)
+head(write_monolix(examplinib_fe_nif))
 #>  REF ID    STUDYID           USUBJID AGE SEX                      RACE HEIGHT
 #>    1  1 2023000400 20230004001010002  53   1                     WHITE  180.4
 #>    2  1 2023000400 20230004001010002  53   1                     WHITE  180.4
@@ -2915,4 +2915,32 @@ write_monolix(examplinib_fe_nif)
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1     0.0146
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1  9.139e-05
 #>  OPEN LABEL TREATMENT 2      2         B      0   .     1  7.392e-06
+#>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT   BMI
+#> 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46
+#> 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46
+#> 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46
+#> 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46
+#> 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46
+#> 6   6  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46
+#>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
+#> 1 2001-01-05 10:05:00    0     0    0   0    1 500  RS2023   1 RS2023     1
+#> 2 2001-01-05 10:05:00    0     0    0   0    0   0  RS2023   2 RS2023     1
+#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
+#> 4 2001-01-05 11:05:00    1     1    1   1    0   0  RS2023   2 RS2023     1
+#> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1
+#> 6 2001-01-05 12:05:00    2     2    2   2    0   0  RS2023   2 RS2023     1
+#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION   DV                  EPOCH PERIOD
+#> 1      FALSE  500   1       AB               . OPEN LABEL TREATMENT 1      1
+#> 2      FALSE  500   0       AB               0 OPEN LABEL TREATMENT 1      1
+#> 3      FALSE  500   0       AB            4697 OPEN LABEL TREATMENT 1      1
+#> 4      FALSE  500   0       AB            6325 OPEN LABEL TREATMENT 1      1
+#> 5      FALSE  500   0       AB            6294 OPEN LABEL TREATMENT 1      1
+#> 6      FALSE  500   0       AB            5932 OPEN LABEL TREATMENT 1      1
+#>   TREATMENT FASTED ADM YTYPE    Y
+#> 1         A      1   1     .    .
+#> 2         A      1   .     1    0
+#> 3         A      1   .     1 4697
+#> 4         A      1   .     1 6325
+#> 5         A      1   .     1 6294
+#> 6         A      1   .     1 5932
 ```

@@ -114,9 +114,6 @@
 
 - [`doses()`](doses.md) : Doses in a nif or sdtm object
 
-- [`dv_na_to_zero()`](dv_na_to_zero.md) : Set all NA values in DV to
-  zero
-
 - [`edish_plot()`](edish_plot.md) : Drug-induced serious hepatotoxicity
   (eDISH) plot
 
