@@ -17,7 +17,8 @@ nif_viewer <- function(nif) {
   }
 
   # Check for required columns
-  required_cols <- c("ID", "TIME", "AMT", "DV", "EVID", "USUBJID", "ANALYTE", "PARENT")
+  required_cols <- c("ID", "TIME", "AMT", "DV", "EVID", "USUBJID", "ANALYTE",
+                     "PARENT")
   missing_cols <- setdiff(required_cols, names(nif))
   if (length(missing_cols) > 0) {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
@@ -42,28 +43,28 @@ nif_viewer <- function(nif) {
     warning("Dataset contains missing values in ID, TIME, or EVID columns")
   }
 
-  sbs <- nif %>%
-    dplyr::distinct(.data$USUBJID) %>%
+  sbs <- nif |>
+    dplyr::distinct(.data$USUBJID) |>
     dplyr::pull(.data$USUBJID)
 
-  doses <- nif %>%
-    dplyr::distinct(.data$AMT) %>%
-    dplyr::arrange(.data$AMT) %>%
-    dplyr::pull(.data$AMT) %>%
+  doses <- nif |>
+    dplyr::distinct(.data$AMT) |>
+    dplyr::arrange(.data$AMT) |>
+    dplyr::pull(.data$AMT) |>
     as.character()
 
-  analytes <- nif %>%
-    as.data.frame() %>%
-    dplyr::distinct(.data$ANALYTE) %>%
+  analytes <- nif |>
+    as.data.frame() |>
+    dplyr::distinct(.data$ANALYTE) |>
     dplyr::pull(.data$ANALYTE)
 
-  imps <- nif %>%
-    as.data.frame() %>%
-    distinct(.data$PARENT) %>%
+  imps <- nif |>
+    as.data.frame() |>
+    distinct(.data$PARENT) |>
     pull(.data$PARENT)
 
-  max_dose <- nif %>%
-    dplyr::pull(.data$AMT) %>%
+  max_dose <- nif |>
+    dplyr::pull(.data$AMT) |>
     max()
 
   nif_viewer.ui <- shiny::fluidPage(
@@ -149,30 +150,30 @@ nif_viewer <- function(nif) {
     current_analytes <- reactiveVal(analytes)
 
     max_time <- function() {
-      tryCatch(
-        {
-          if (input$timeselect == "indiv") {
-            return(nif %>%
-              dplyr::filter(.data$USUBJID == input$subject) %>%
-              dplyr::pull(.data$TIME) %>%
-              max())
-          } else if (input$timeselect == "global") {
-            return(max(nif$TIME))
-          } else if (input$timeselect == "custom") {
-            if (is.na(input$maxtime) || input$maxtime <= 0) {
-              stop("Custom max time must be a positive number")
-            }
-            return(input$maxtime)
-          }
-        },
-        error = function(e) {
-          shiny::showNotification(
-            paste("Error calculating max time:", e$message),
-            type = "error"
+      tryCatch({
+        if (input$timeselect == "indiv") {
+          return(
+            nif |>
+              dplyr::filter(.data$USUBJID == input$subject) |>
+              dplyr::pull(.data$TIME) |>
+              max()
           )
-          return(NA)
+        } else if (input$timeselect == "global") {
+          return(max(nif$TIME))
+        } else if (input$timeselect == "custom") {
+          if (is.na(input$maxtime) || input$maxtime <= 0) {
+            stop("Custom max time must be a positive number")
+          }
+          return(input$maxtime)
         }
-      )
+      },
+      error = function(e) {
+        shiny::showNotification(
+          paste("Error calculating max time:", e$message),
+          type = "error"
+        )
+        return(NA)
+      })
     }
 
     output$plot.pc <- shiny::renderPlot(
@@ -302,53 +303,40 @@ nif_viewer <- function(nif) {
     })
 
     shiny::observeEvent(input$dose, {
-      tryCatch(
-        {
-          if (input$dose != "all") {
-            filtered_nif <- nif %>%
-              filter(.data$DOSE == as.numeric(input$dose))
+      tryCatch({
+        if (input$dose != "all") {
+          filtered_nif <- nif |>
+            filter(.data$DOSE == as.numeric(input$dose))
 
-            if (nrow(filtered_nif) == 0) {
-              stop("No data available for selected dose")
-            }
-
-            current_nif(filtered_nif)
-          } else {
-            current_nif(nif)
+          if (nrow(filtered_nif) == 0) {
+            stop("No data available for selected dose")
           }
 
-          current_sbs(current_nif() %>%
-            distinct(.data$USUBJID) %>%
-            pull(.data$USUBJID))
-
-          if (length(current_sbs()) == 0) {
-            stop("No subjects available for selected dose")
-          }
-
-          updateSelectInput(
-            session, "subject",
-            choices = current_sbs(), selected = current_sbs()[1]
-          )
-        },
-        error = function(e) {
-          shiny::showNotification(
-            paste("Error updating dose filter:", e$message),
-            type = "error"
-          )
+          current_nif(filtered_nif)
+        } else {
+          current_nif(nif)
         }
-      )
-    })
 
-    # shiny::observeEvent(input$search, {
-    #   # id <- if(nchar(input$search)) {
-    #   #   as.numeric(input$search)
-    #   # }
-    #   # if(id %in% input$subject) {message(id)}
-    #   # shiny::updateSelectInput(session, "subject",
-    #   #                          choices = current_sbs(),
-    #   #                          selected = current_sbs()[current - 1]
-    #   # )
-    # })
+        current_sbs(current_nif() |>
+          distinct(.data$USUBJID) |>
+          pull(.data$USUBJID))
+
+        if (length(current_sbs()) == 0) {
+          stop("No subjects available for selected dose")
+        }
+
+        updateSelectInput(
+          session, "subject",
+          choices = current_sbs(), selected = current_sbs()[1]
+        )
+      },
+      error = function(e) {
+        shiny::showNotification(
+          paste("Error updating dose filter:", e$message),
+          type = "error"
+        )
+      })
+    })
   }
 
   shiny::shinyApp(nif_viewer.ui, nif_viewer.server)
