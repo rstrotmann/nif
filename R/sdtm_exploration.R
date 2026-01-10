@@ -684,4 +684,3 @@ sdtm_missing_times <- function(sdtm, fields) {
   ) |>
     mutate(percent_missing = round(.data$missing / .data$total * 100, 1))
 }
-

@@ -40,7 +40,6 @@ read_sdtm <- function(data_path,
     "sas" = ".sas7bdat",
     "xpt" = ".xpt",
     "csv" = ".csv"
-    # "xlsx" = ".xlsx"
   )
 
   # set domains
@@ -94,17 +93,6 @@ read_sdtm <- function(data_path,
       )
     }
   }
-
-  # if (format == "xlsx") {
-  #   for (x in domain) {
-  #     out[[x]] <- as.data.frame(
-  #       readxl::read_xlsx(
-  #         file.path(data_path, paste0(x, ".xlsx")),
-  #         ...
-  #       )
-  #     )
-  #   }
-  # }
 
   if (length(out) == 0) {
     stop("no domain data found")
