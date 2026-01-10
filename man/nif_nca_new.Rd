@@ -9,19 +9,22 @@ nif_nca_new(obj, analytes = NULL, parameters = NULL, keep = NULL)
 \arguments{
 \item{obj}{A NIF object containing concentration-time data}
 
-\item{analytes}{Optional vector of analytes to analyze. If NULL, all analytes will be analyzed.}
+\item{analytes}{Optional vector of analytes to analyze. If NULL, all analytes
+will be analyzed.}
 
-\item{parameters}{Optional vector of PK parameters to calculate. If NULL, default parameters will be used.}
+\item{parameters}{Optional vector of PK parameters to calculate. If NULL,
+default parameters will be used.}
 
 \item{keep}{Optional vector of additional columns to keep in the output.}
 }
 \value{
-A long data frame containing NCA results with at least the fields USUBJID, PPTESTCD, ANALYTE, PPSTRESN
+A long data frame containing NCA results with at least the fields
+USUBJID, PPTESTCD, ANALYTE, PPSTRESN
 }
 \description{
-This function performs NCA analysis using the pknca package for each subject and analyte
-in a NIF object. It identifies administrations using the EVID field and calculates
-PK parameters for each dosing interval.
+This function performs NCA analysis using the pknca package for each subject
+and analyte in a NIF object. It identifies administrations using the EVID
+field and calculates PK parameters for each dosing interval.
 }
 \examples{
 # nca_results <- nif_nca_new(nif_object)

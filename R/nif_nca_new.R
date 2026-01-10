@@ -1,15 +1,18 @@
 #' Perform Non-Compartmental Analysis (NCA) for each subject and analyte
 #'
-#' This function performs NCA analysis using the pknca package for each subject and analyte
-#' in a NIF object. It identifies administrations using the EVID field and calculates
-#' PK parameters for each dosing interval.
+#' This function performs NCA analysis using the pknca package for each subject
+#' and analyte in a NIF object. It identifies administrations using the EVID
+#' field and calculates PK parameters for each dosing interval.
 #'
 #' @param obj A NIF object containing concentration-time data
-#' @param analytes Optional vector of analytes to analyze. If NULL, all analytes will be analyzed.
-#' @param parameters Optional vector of PK parameters to calculate. If NULL, default parameters will be used.
+#' @param analytes Optional vector of analytes to analyze. If NULL, all analytes
+#'   will be analyzed.
+#' @param parameters Optional vector of PK parameters to calculate. If NULL,
+#'   default parameters will be used.
 #' @param keep Optional vector of additional columns to keep in the output.
 #'
-#' @return A long data frame containing NCA results with at least the fields USUBJID, PPTESTCD, ANALYTE, PPSTRESN
+#' @return A long data frame containing NCA results with at least the fields
+#'   USUBJID, PPTESTCD, ANALYTE, PPSTRESN
 #' @import dplyr
 #' @importFrom PKNCA PKNCAdata PKNCAconc PKNCAdose PKNCAdata PKNCAresults
 #' @export
@@ -41,8 +44,8 @@ nif_nca_new <- function(obj, analytes = NULL, parameters = NULL, keep = NULL) {
   # Process each analyte separately
   for (current_analyte in analytes) {
     # Filter data for current analyte
-    analyte_data <- obj %>%
-      as.data.frame() %>%
+    analyte_data <- obj |>
+      as.data.frame() |>
       filter(.data$ANALYTE == current_analyte)
 
     # Get unique subjects
@@ -51,17 +54,17 @@ nif_nca_new <- function(obj, analytes = NULL, parameters = NULL, keep = NULL) {
     # Process each subject
     for (subject in subjects) {
       # Filter data for current subject
-      subject_data <- analyte_data %>%
+      subject_data <- analyte_data |>
         filter(.data$USUBJID == subject)
 
       # Get dosing information
-      doses <- subject_data %>%
-        filter(.data$EVID == 1) %>%
+      doses <- subject_data |>
+        filter(.data$EVID == 1) |>
         select("USUBJID", "TIME", "AMT")
 
       # Get concentration data
-      conc <- subject_data %>%
-        filter(.data$EVID == 0) %>%
+      conc <- subject_data |>
+        filter(.data$EVID == 0) |>
         select("USUBJID", "TIME", "DV")
 
       # Skip if no observations
@@ -76,7 +79,7 @@ nif_nca_new <- function(obj, analytes = NULL, parameters = NULL, keep = NULL) {
         start = doses$TIME,
         end = c(doses$TIME[-1], max(conc$TIME)),
         aucinf.obs = TRUE
-      ) %>%
+      ) |>
         filter(.data$start < .data$end)
 
       # Create PKNCA data object
@@ -84,27 +87,17 @@ nif_nca_new <- function(obj, analytes = NULL, parameters = NULL, keep = NULL) {
 
       nca_results <- PKNCA::pk.nca(data_obj)
 
-      # Extract results
-      # subject_results <- summary(nca_results) %>%
-      #   mutate(
-      #     USUBJID = subject,
-      #     ANALYTE = current_analyte,
-      #     PPTESTCD = parameter
-      #   ) %>%
-      #   rename(PPSTRESN = result) %>%
-      #   select("USUBJID", "ANALYTE", "PPTESTCD", "PPSTRESN")
-
-      subject_results <- nca_results$result %>%
-        mutate(ANALYTE = current_analyte) %>%
+      subject_results <- nca_results$result |>
+        mutate(ANALYTE = current_analyte) |>
         select("USUBJID", "ANALYTE", "PPTESTCD", "PPORRES")
 
       # Add any additional columns to keep
       if (!is.null(keep)) {
-        keep_data <- subject_data %>%
-          select(any_of(keep)) %>%
-          distinct() %>%
+        keep_data <- subject_data |>
+          select(any_of(keep)) |>
+          distinct() |>
           slice(1)
-        subject_results <- subject_results %>%
+        subject_results <- subject_results |>
           bind_cols(keep_data)
       }
 
@@ -113,5 +106,5 @@ nif_nca_new <- function(obj, analytes = NULL, parameters = NULL, keep = NULL) {
     }
   }
 
-  return(results)
+  results
 }

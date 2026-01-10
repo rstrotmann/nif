@@ -38,7 +38,8 @@ nca <- function(
     stop("Input must be a NIF object")
   }
 
-  required_cols <- unique(c("TIME", "DV", "EVID", "ANALYTE", group, keep, group))
+  required_cols <- unique(c("TIME", "DV", "EVID", "ANALYTE", group, keep,
+                            group))
   if (nominal_time == TRUE) {
     required_cols <- c(required_cols, "NTIME")
   }
@@ -67,53 +68,46 @@ nca <- function(
   }
 
   # Data preparation with error handling
-  obj1 <- tryCatch(
-    {
-      obj %>%
-        as.data.frame() %>%
-        dplyr::filter(.data$ANALYTE == current_analyte) %>%
-        dplyr::mutate(TIME = if (nominal_time) .data$NTIME else .data$TIME) %>%
-        dplyr::mutate(DV = if_else(is.na(.data$DV), 0, .data$DV))
-    },
-    error = function(e) {
-      stop("Error preparing data: ", e$message)
-    }
-  )
+  obj1 <- tryCatch({
+    obj |>
+      as.data.frame() |>
+      dplyr::filter(.data$ANALYTE == current_analyte) |>
+      dplyr::mutate(TIME = if (nominal_time) .data$NTIME else .data$TIME) |>
+      dplyr::mutate(DV = if_else(is.na(.data$DV), 0, .data$DV))
+  },
+  error = function(e) {
+    stop("Error preparing data: ", e$message)
+  })
 
   if (nrow(obj1) == 0) {
     stop("No data found for analyte: ", current_analyte)
   }
 
   # preserve the columns to keep
-  keep_columns <- obj1 %>%
-    dplyr::filter(.data$EVID == 1) %>%
-    as.data.frame() %>%
-    dplyr::select(c("ID", any_of(keep))) %>%
+  keep_columns <- obj1 |>
+    dplyr::filter(.data$EVID == 1) |>
+    as.data.frame() |>
+    dplyr::select(c("ID", any_of(keep))) |>
     dplyr::distinct()
 
-  admin <- obj %>%
-    as.data.frame() %>%
-    dplyr::filter(.data$ANALYTE == parent) #%>%
-    # dplyr::mutate(TIME = case_when(
-    #   nominal_time == TRUE ~ NTIME,
-    #   .default = TIME
-    # )) %>%
+  admin <- obj |>
+    as.data.frame() |>
+    dplyr::filter(.data$ANALYTE == parent)
 
   if (nominal_time == TRUE)
     admin <- mutate(admin, TIME = .data$NTIME)
 
   admin <- admin |>
-    dplyr::filter(.data$EVID == 1) %>%
-    # mutate(PPRFTDTC = .data$DTC) %>%
+    dplyr::filter(.data$EVID == 1) |>
     dplyr::select(any_of(
-      # c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) %>%
+      # c("REF", "ID", "TIME", "DOSE", "DV", "PPRFTDTC", group))) |>
       c("REF", "ID", "TIME", "DOSE", "DV", group)
-    )) %>%
+    )) |>
     as.data.frame()
 
   # concentration data
-  conc <- obj1 %>%
-    dplyr::filter(.data$EVID == 0) %>%
+  conc <- obj1 |>
+    dplyr::filter(.data$EVID == 0) |>
     dplyr::select(any_of(c("ID", "TIME", "DV", "DOSE", group)))
 
   ## to do:
@@ -121,29 +115,23 @@ nca <- function(
   #
 
   if (average_duplicates == TRUE) {
-    conc <- conc %>%
-      group_by(across(any_of(c("ID", "TIME", "DOSE", group)))) %>%
+    conc <- conc |>
+      group_by(across(any_of(c("ID", "TIME", "DOSE", group)))) |>
       summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop")
   }
 
   if (!is.null(group)) {
-    conc <- conc %>%
+    conc <- conc |>
       dplyr::group_by(.data$ID, .data$TIME, across(any_of(group)))
   } else {
-    conc <- conc %>% dplyr::group_by(.data$ID, .data$TIME)
+    conc <- conc |> dplyr::group_by(.data$ID, .data$TIME)
   }
 
   # generate formulae for the conc and admin objects
   conc_formula <- "DV~TIME|ID"
-  # dose_formula <- "DOSE~TIME|ID"
-  # dose_formula <- "DOSE~TIME|PPRFTDTC+ID"
   dose_formula <- "DOSE~TIME|ID"
   if (!is.null(group)) {
     group_string <- paste(group, collapse = "+")
-
-    # if(get("silent", .nif_env) == FALSE) {
-    #   message(paste("NCA: Group by", group_string))
-    # }
 
     conditional_message(
       "NCA: Group by", group_string,
@@ -151,7 +139,6 @@ nca <- function(
     )
 
     conc_formula <- paste0("DV~TIME|", group_string, "+ID")
-    # dose_formula <- paste0("DOSE~TIME|", group_string, "+PPRFTDTC+ID")
     dose_formula <- paste0("DOSE~TIME|", group_string, "+ID")
   }
 
@@ -167,12 +154,11 @@ nca <- function(
 
   data_obj <- PKNCA::PKNCAdata(
     conc_obj,
-    dose_obj # ,
-    # impute = "start_conc0"
+    dose_obj
   )
 
   messages <- capture.output(
-    results_obj <- PKNCA::pk.nca(data_obj, verbose = F)
+    results_obj <- PKNCA::pk.nca(data_obj, verbose = FALSE)
   )
 
   conditional_message(
@@ -180,16 +166,16 @@ nca <- function(
     silent = silent
   )
 
-  temp <- results_obj$result %>%
-    as.data.frame() %>%
+  temp <- results_obj$result |>
+    as.data.frame() |>
     dplyr::left_join(keep_columns, by = "ID")
 
   if (!is.null(group)) {
-    temp <- temp %>%
+    temp <- temp |>
       dplyr::mutate_at(group, as.factor)
   }
 
-  return(temp)
+  temp
 }
 
 
@@ -251,41 +237,37 @@ nca1 <- function(nif,
   }
 
   # make observation and administration data sets
-  obj <- nif %>%
-    ensure_time() %>%
-    index_dosing_interval() %>%
-    as.data.frame() %>%
-    mutate(TIME = .data[[time]]) %>%
-    mutate(DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV)) # %>%
-  # select(any_of(
-  #   c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)))
+  obj <- nif |>
+    ensure_time() |>
+    index_dosing_interval() |>
+    as.data.frame() |>
+    mutate(TIME = .data[[time]]) |>
+    mutate(DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
 
   # preserve the columns to keep
-  keep_columns <- obj %>%
-    # as.data.frame() %>%
-    # filter(EVID == 1) %>%
-    select(c("ID", "DOSE", "DI", any_of(c(keep)))) %>%
+  keep_columns <- obj |>
+    select(c("ID", "DOSE", "DI", any_of(c(keep)))) |>
     distinct()
 
   # dosint data
-  admin <- obj %>%
-    filter(.data$ANALYTE == parent) %>%
-    filter(.data$EVID == 1) %>%
+  admin <- obj |>
+    filter(.data$ANALYTE == parent) |>
+    filter(.data$EVID == 1) |>
     select(any_of(
       c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)
     ))
 
   # concentration data
-  conc <- obj %>%
-    filter(.data$ANALYTE == current_analyte) %>%
-    filter(.data$EVID == 0) %>%
+  conc <- obj |>
+    filter(.data$ANALYTE == current_analyte) |>
+    filter(.data$EVID == 0) |>
     select(any_of(
       c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)
     ))
 
   if (average_duplicates == TRUE) {
-    conc <- conc %>%
-      group_by(across(any_of(c("ID", "TIME", "DOSE", "DI", group)))) %>%
+    conc <- conc |>
+      group_by(across(any_of(c("ID", "TIME", "DOSE", "DI", group)))) |>
       summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop")
   }
 
@@ -306,9 +288,9 @@ nca1 <- function(nif,
     )
   )
 
-  nca$result %>%
-    left_join(keep_columns, by = c("ID", "DI")) %>%
-    as.data.frame() %>%
+  nca$result |>
+    left_join(keep_columns, by = c("ID", "DI")) |>
+    as.data.frame() |>
     dplyr::mutate_at(group, as.factor)
 }
 
@@ -368,7 +350,6 @@ nca_from_pp <- function(
       parse(text = observation_filter)
     },
     error = function(e) {
-      # stop("Invalid observation_filter: ", e$message)
       stop("Invalid observation_filter")
     }
   )
@@ -386,9 +367,9 @@ nca_from_pp <- function(
   }
 
   # preserve the columns to keep from the nif object
-  keep_data <- obj %>%
-    as.data.frame() %>%
-    filter(.data$ANALYTE == current_analyte) %>%
+  keep_data <- obj |>
+    as.data.frame() |>
+    filter(.data$ANALYTE == current_analyte) |>
     select(
       c(
         "ID", "USUBJID", any_of(keep),
@@ -398,7 +379,7 @@ nca_from_pp <- function(
         )),
         starts_with("BL_")
       )
-    ) %>%
+    ) |>
     distinct()
 
   pp <- domain(sdtm_data, "pp")
@@ -435,12 +416,12 @@ nca_from_pp <- function(
     result <- filter(result, .data$PPSCAT == ppscat)
 
   result <- result |>
-    filter(eval(parse(text = observation_filter))) %>%
+    filter(eval(parse(text = observation_filter))) |>
     select(any_of(c(
       "USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
       "PPCAT", "PPRFTDTC", group
-    ))) %>%
-    mutate(ANALYTE = current_analyte) %>%
+    ))) |>
+    mutate(ANALYTE = current_analyte) |>
     left_join(keep_data, by = "USUBJID")
 
   # Validate result
@@ -482,13 +463,13 @@ nca_summary <- function(
   ),
   group = NULL
 ) {
-  out <- nca %>%
-    filter(.data$PPTESTCD %in% parameters) #%>%
+  out <- nca |>
+    filter(.data$PPTESTCD %in% parameters)
 
   if ("exclude" %in% names(out))
     out <- filter(out, is.na(.data$exclude))
 
-  if (!"PPORRES" %in% names(out) & "PPSTRESN" %in% names(out))
+  if (!"PPORRES" %in% names(out) && "PPSTRESN" %in% names(out))
     out <- mutate(out, PPORRES = .data$PPSTRESN)
 
   out |>
@@ -534,7 +515,7 @@ nca_summary_table <- function(
     "tlast", "tmax", "lambda.z.n.points", "TMAX",
     "LAMZNPT"
   )
-  s %>%
+  s |>
     mutate(
       center = case_when(
         .data$PPTESTCD %in% median_parameters ~ as.character(round(.data$median,
@@ -549,8 +530,8 @@ nca_summary_table <- function(
         ),
         .default = as.character(round(.data$geocv))
       )
-    ) %>%
-    mutate(value = paste0(.data$center, " (", .data$dispersion, ")")) %>%
+    ) |>
+    mutate(value = paste0(.data$center, " (", .data$dispersion, ")")) |>
     tidyr::pivot_wider(
       id_cols = c(any_of(c(group, "DOSE")), "n"),
       names_from = "PPTESTCD", values_from = "value"
@@ -587,8 +568,8 @@ nca_summary_table <- function(
 #' @export
 dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
                      lower = 0.8, upper = 1.25) {
-  pp <- nca %>%
-    filter(.data$PPORRES != 0) %>%
+  pp <- nca |>
+    filter(.data$PPORRES != 0) |>
     dplyr::mutate(ldose = log(.data$DOSE), lpp = log(.data$PPORRES))
 
   power_model <- t(sapply(
@@ -597,7 +578,7 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
       as.numeric(
         stats::confint(
           stats::lm(
-            data = (pp %>% filter(.data$PPTESTCD == x)),
+            data = (pp |> filter(.data$PPTESTCD == x)),
             formula = lpp ~ ldose
           ),
           "ldose",
@@ -611,8 +592,8 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
   bu <- 1 + log(upper) / lnr
   power_model <- rbind("thresholds" = c(bl, bu), power_model)
   colnames(power_model) <- c("lower", "upper")
-  power_model %>%
-    as.data.frame() %>%
+  power_model |>
+    as.data.frame() |>
     dplyr::mutate(dose_linear = case_when(
       row_number() == 1 ~ NA,
       .default = lower > lower[1] & upper < upper[1]
@@ -657,16 +638,13 @@ nca_power_model <- function(
   }
 
   pm_plot <- function(param) {
-    pp <- nca %>%
+    pp <- nca |>
       filter(.data$PPTESTCD == param)
 
-    if (!"PPORRES" %in% names(pp) & "PPSTRESN" %in% names(pp))
+    if (!"PPORRES" %in% names(pp) && "PPSTRESN" %in% names(pp))
       pp <- mutate(pp, PPORRES = .data$PPSTRESN)
 
     pp <- filter(pp, .data$PPORRES != 0)
-
-    # pm <- pp %>%
-    #   lm(log(PPORRES) ~ log(DOSE), data = pp)
 
     pm <- lm(log(PPORRES) ~ log(DOSE), data = pp)
 
@@ -676,10 +654,8 @@ nca_power_model <- function(
       pp <- tidyr::unite(pp, "COLOR", all_of(group), sep = "-", remove = FALSE)
 
     out <- pp |>
-      bind_cols(predict.lm(pm, pp,
-        interval = "prediction", se.fit = T,
-        level = 0.9
-      )$fit) %>%
+      bind_cols(predict.lm(pm, pp, interval = "prediction", se.fit = TRUE,
+                           level = 0.9)$fit) |>
       ggplot2::ggplot(ggplot2::aes(x = .data$DOSE, y = exp(.data$fit))) +
       ggplot2::geom_line() +
       ggplot2::geom_ribbon(
@@ -692,18 +668,14 @@ nca_power_model <- function(
 
     if (!is.null(group)) {
       out <- out +
-        ggplot2::geom_point(
-        ggplot2::aes(
-          x = .data$DOSE,
-          y = .data$PPORRES,
-          color = .data$COLOR
-        ),
-        size = size, alpha = alpha
-      )
+        geom_point(
+          aes(x = .data$DOSE, y = .data$PPORRES, color = .data$COLOR),
+          size = size, alpha = alpha
+        )
     } else {
       out <- out +
-        ggplot2::geom_point(ggplot2::aes(x = .data$DOSE, y = .data$PPORRES),
-                            size = size, alpha = alpha)
+        geom_point(ggplot2::aes(x = .data$DOSE, y = .data$PPORRES),
+                   size = size, alpha = alpha)
     }
 
     out <- out +
@@ -722,30 +694,31 @@ nca_power_model <- function(
         ggplot2::labs(color = color_label)
 
     if (!is.null(title))
-      out <- out +
-        ggplot2::ggtitle(title)
+      out <- out + ggtitle(title)
 
-      out +
-        watermark(cex = 1.5)
+    out + watermark(cex = 1.5)
   }
 
   out <- lapply(parameter, pm_plot)
   names(out) <- parameter
-  return(out)
+  out
 }
 
 
 #' Non-compartmental analysis with analyte-based grouping
 #'
-#' This function performs NCA analysis using the PKNCA package for multiple analytes
-#' in a NIF object. It uses analyte-specific grouping in the concentration and dose
-#' formulas.
+#' This function performs NCA analysis using the PKNCA package for multiple
+#' analytes in a NIF object. It uses analyte-specific grouping in the
+#' concentration and dose formulas.
 #'
 #' @param obj A NIF object containing concentration-time data
-#' @param analytes Optional vector of analytes to analyze. If NULL, all analytes will be analyzed.
-#' @param parameters Optional vector of PK parameters to calculate. If NULL, default parameters will be used.
+#' @param analytes Optional vector of analytes to analyze. If NULL, all analytes
+#'   will be analyzed.
+#' @param parameters Optional vector of PK parameters to calculate. If NULL,
+#'   default parameters will be used.
 #' @param keep Optional vector of additional columns to keep in the output.
-#' @param average_duplicates Boolean to indicate whether duplicate entries should be averaged.
+#' @param average_duplicates Boolean to indicate whether duplicate entries
+#'   should be averaged.
 #'
 #' @return A data frame containing NCA results
 #' @import dplyr
@@ -778,14 +751,14 @@ nca2 <- function(obj,
   data <- as.data.frame(obj)
 
   # Prepare concentration data
-  conc_data <- data %>%
-    filter(.data$EVID == 0) %>%
+  conc_data <- data |>
+    filter(.data$EVID == 0) |>
     select(.data$ID, .data$TIME, .data$DV, .data$ANALYTE, .data$RICH_N)
 
   # Prepare dosing data
-  dose_data <- data %>%
-    filter(.data$EVID == 1) %>%
-    select(all_of(c("ID", "TIME", "AMT", "ANALYTE", "RICH_N"))) %>%
+  dose_data <- data |>
+    filter(.data$EVID == 1) |>
+    select(all_of(c("ID", "TIME", "AMT", "ANALYTE", "RICH_N"))) |>
     rename(DOSE = "AMT")
 
   # Create PKNCA objects with analyte-specific formulas
@@ -819,7 +792,6 @@ nca2 <- function(obj,
   data_obj <- PKNCA::PKNCAdata(
     conc_obj,
     dose_obj,
-    # intervals = intervals,
     impute = "start_conc0"
   )
 
@@ -827,18 +799,18 @@ nca2 <- function(obj,
   results <- PKNCA::pk.nca(data_obj)
 
   # Extract and format results
-  final_results <- results$result %>%
+  final_results <- results$result |>
     as.data.frame()
 
   # Add any additional columns to keep
   if (!is.null(keep)) {
-    keep_data <- data %>%
-      select(any_of(c("ID", "ANALYTE", keep))) %>%
+    keep_data <- data |>
+      select(any_of(c("ID", "ANALYTE", keep))) |>
       distinct()
 
-    final_results <- final_results %>%
+    final_results <- final_results |>
       left_join(keep_data, by = c("ID", "ANALYTE"))
   }
 
-  return(final_results)
+  final_results
 }

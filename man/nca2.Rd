@@ -15,19 +15,22 @@ nca2(
 \arguments{
 \item{obj}{A NIF object containing concentration-time data}
 
-\item{analytes}{Optional vector of analytes to analyze. If NULL, all analytes will be analyzed.}
+\item{analytes}{Optional vector of analytes to analyze. If NULL, all analytes
+will be analyzed.}
 
-\item{parameters}{Optional vector of PK parameters to calculate. If NULL, default parameters will be used.}
+\item{parameters}{Optional vector of PK parameters to calculate. If NULL,
+default parameters will be used.}
 
 \item{keep}{Optional vector of additional columns to keep in the output.}
 
-\item{average_duplicates}{Boolean to indicate whether duplicate entries should be averaged.}
+\item{average_duplicates}{Boolean to indicate whether duplicate entries
+should be averaged.}
 }
 \value{
 A data frame containing NCA results
 }
 \description{
-This function performs NCA analysis using the PKNCA package for multiple analytes
-in a NIF object. It uses analyte-specific grouping in the concentration and dose
-formulas.
+This function performs NCA analysis using the PKNCA package for multiple
+analytes in a NIF object. It uses analyte-specific grouping in the
+concentration and dose formulas.
 }

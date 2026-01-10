@@ -805,7 +805,6 @@ safe_min <- function(x, ...) {
     return(NA)
   }
   out <- min(temp, na.rm = TRUE)
-  # attributes(out)$N <- length(temp[!is.na(temp)])
   out
 }
 
