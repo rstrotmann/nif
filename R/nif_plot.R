@@ -172,7 +172,9 @@ make_mean_plot_data_set <- function(data_set) {
 #' @param lines Plot lines, as logical.
 #' @param log Logarithmic y axis, as logical.
 #' @param mean Plot means, as logical.
-#' @param title The plot title, as character.
+#' @param title The plot title, as character. If none is provided, a generic
+#'   title based on the analyte and the faceting will be chosen. Override this
+#'   by setting title = "", if needed.
 #' @param legend Show the plot legend, as logical.
 #' @param size The `size` parameter to [ggplot2::geom_point()] as numeric.
 #' @param scales The `scales` parameter to [ggplot2::facet_wrap()], can be
@@ -251,17 +253,17 @@ plot.nif <- function(
   validate_numeric_param(dose, "dose", allow_null = TRUE,
                          allow_multiple = TRUE)
 
-  temp <- make_plot_data_set(
+  plot_data_set <- make_plot_data_set(
     x, analyte, dose, time, color, min_time, max_time, cfb, dose_norm, facet,
     na_value = na_value
   )
 
   if (isTRUE(mean)) {
-    temp <- make_mean_plot_data_set(temp)
+    plot_data_set <- make_mean_plot_data_set(plot_data_set)
     if (is.null(caption)) caption <- "Mean and SD"
   }
 
-  plot_data <- temp$data
+  plot_data <- plot_data_set$data
 
   if (isTRUE(log)) {
     plot_data <- mutate(plot_data, DV = case_match(.data$DV, 0 ~ NA,
@@ -269,12 +271,23 @@ plot.nif <- function(
   }
 
   plot_data <- plot_data |>
-    tidyr::unite("GROUP", any_of(c((temp$group), (temp$color), (temp$facet))),
+    tidyr::unite("GROUP", any_of(c((plot_data_set$group), (plot_data_set$color), (plot_data_set$facet))),
       sep = "-", remove = FALSE
     )
 
-  analytes <- unique(plot_data$ANALYTE)
+  analytes <- unique(filter(plot_data, .data$EVID == 0)$ANALYTE)
   y_label <- ifelse(length(analytes) == 1, analytes, "DV")
+
+  # Make title
+  if (is.null(title)) {
+    title <- nice_enumeration(analytes)
+    if (cfb == TRUE)
+      title <- paste0(title, " change from baseline")
+    facets <- unique(plot_data$FACET)
+    if (length(facets) > 1)
+      title <- paste0(title, " by ", plot_data_set$facet)
+  }
+
   if (isTRUE(dose_norm)) y_label <- paste0(y_label, " / DOSE")
 
   admin_data <- filter(plot_data, .data$EVID == 1)
@@ -320,12 +333,13 @@ plot.nif <- function(
         ggplot2::aes(ymin = pos_diff(.data$DV, .data$sd),
                      ymax = .data$DV + .data$sd,
                      fill = .data$COLOR),
-        alpha = 0.3, color = NA, show.legend = FALSE
+        alpha = 0.3, color = NA, show.legend = FALSE,
+        na.rm=TRUE
       )
   }
 
-  if (!is.null(temp$facet)) {
-    if (length(unique(plot_data[[temp$facet]])) > 1) {
+  if (!is.null(plot_data_set$facet)) {
+    if (length(unique(plot_data[[plot_data_set$facet]])) > 1) {
       p <- p +
         ggplot2::facet_wrap(~FACET, scales = scales)
     }
@@ -336,7 +350,7 @@ plot.nif <- function(
       ggplot2::scale_y_log10()
   }
 
-  p <- p + ggplot2::labs(color = nice_enumeration(temp$color))
+  p <- p + ggplot2::labs(color = nice_enumeration(plot_data_set$color))
 
   if (!is.null(caption))
     p <- p + ggplot2::labs(caption = caption)
@@ -345,12 +359,12 @@ plot.nif <- function(
     ggplot2::theme_bw() +
     ggplot2::theme(
       legend.position = ifelse(
-        legend == TRUE & length(temp$color) > 0, "bottom", "none"
+        legend == TRUE & length(plot_data_set$color) > 0, "bottom", "none"
       )
     ) +
     ggplot2::ggtitle(title) +
     watermark(cex = 1.5) +
-    ggplot2::labs(x = time, y = y_label, color = nice_enumeration(temp$color))
+    ggplot2::labs(x = time, y = y_label, color = nice_enumeration(plot_data_set$color))
 
   suppressWarnings(return(p))
 }

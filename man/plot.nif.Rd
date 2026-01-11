@@ -67,7 +67,9 @@ character.}
 
 \item{mean}{Plot means, as logical.}
 
-\item{title}{The plot title, as character.}
+\item{title}{The plot title, as character. If none is provided, a generic
+title based on the analyte and the faceting will be chosen. Override this
+by setting title = "", if needed.}
 
 \item{legend}{Show the plot legend, as logical.}
 
