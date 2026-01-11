@@ -100,7 +100,9 @@ plot(
 
 - title:
 
-  The plot title, as character.
+  The plot title, as character. If none is provided, a generic title
+  based on the analyte and the faceting will be chosen. Override this by
+  setting title = "", if needed.
 
 - legend:
 
@@ -173,8 +175,6 @@ plot(examplinib_fe_nif,
   points = TRUE, color = c("FASTED"), mean = TRUE,
   max_time = 12, admin = "RS2023"
 )
-#> Warning: Removed 2 rows containing missing values or values outside the scale range
-#> (`geom_ribbon()`).
 
 plot(examplinib_poc_nif,
   points = TRUE, dose_norm = TRUE, facet = NULL,
@@ -186,6 +186,4 @@ plot(examplinib_fe_nif,
   points = TRUE, color = c("FASTED"), mean = TRUE,
   max_time = 12, admin = "RS2023"
 )
-#> Warning: Removed 2 rows containing missing values or values outside the scale range
-#> (`geom_ribbon()`).
 ```
