@@ -135,7 +135,9 @@ make_ntime_from_tptnum <- function(obj, domain = NULL) {
 #'
 #' @returns A data frame.
 #' @noRd
-make_ntime_from_dy <- function(obj, domain = "PC") {
+make_ntime_from_dy <- function(obj, domain = NULL) {
+  validate_char_param(domain, "domain", allow_null = TRUE)
+
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
   }
@@ -146,6 +148,10 @@ make_ntime_from_dy <- function(obj, domain = "PC") {
   }
 
   tpt <- unique(obj[[tpt_name]])
+
+  if (!is.numeric(tpt)) {
+    stop(paste0(tpt_name, " must be numeric!"))
+  }
 
   out <- data.frame(
     x = tpt,
