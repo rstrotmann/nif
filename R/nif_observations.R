@@ -171,7 +171,12 @@ make_ntime_from_dy <- function(obj, domain = NULL) {
 #'
 #' @returns A data frame.
 #' @noRd
-make_ntime_from_visitdy <- function(obj, domain = "PC") {
+make_ntime_from_visitdy <- function(obj, domain = NULL) {
+  validate_char_param(domain, "domain", allow_null = TRUE)
+
+  if (!"DOMAIN" %in% names(obj))
+    stop("Missing DOMAIN field!")
+
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
   }
