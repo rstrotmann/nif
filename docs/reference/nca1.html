@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,9 @@
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  time <span class="op">=</span> <span class="st">"TIME"</span>,</span>
-<span>  average_duplicates <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  duplicates <span class="op">=</span> <span class="st">"stop"</span>,</span>
+<span>  duplicate_function <span class="op">=</span> <span class="va">mean</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,8 +89,22 @@
 <dd><p>The time field as character.</p></dd>
 
 
-<dt id="arg-average-duplicates">average_duplicates<a class="anchor" aria-label="anchor" href="#arg-average-duplicates"></a></dt>
-<dd><p>Average duplicate concentration values, as logical.</p></dd>
+<dt id="arg-duplicates">duplicates<a class="anchor" aria-label="anchor" href="#arg-duplicates"></a></dt>
+<dd><p>Selection how to deal with duplicate observations with
+respect to the USUBJID, ANALYTE and DTC fields:</p><ul><li><p>'stop': Stop execution and produce error message</p></li>
+<li><p>'identify': Return a list of duplicate entries</p></li>
+<li><p>'resolve': Resolve duplicates, applying the <code>duplicate_function</code> to the
+duplicate entries.</p></li>
+</ul></dd>
+
+
+<dt id="arg-duplicate-function">duplicate_function<a class="anchor" aria-label="anchor" href="#arg-duplicate-function"></a></dt>
+<dd><p>Function to resolve duplicate values, defaults to
+<code>mean</code>.</p></dd>
+
+
+<dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
+<dd><p>Suppress messages.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -99,12 +115,15 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function is a wrapper around the NCA functions provided by the
 <a href="https://CRAN.R-project.org/package=PKNCA" class="external-link">PKNCA</a> package.</p>
+<p>NA values are set to zero!
+Negative concentrations are set to zero!</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">nca1</span><span class="op">(</span><span class="va">examplinib_sad_nif</span>, time <span class="op">=</span> <span class="st">"TAD"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> NCA: No analyte specified. Selected RS2023 as the most likely.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> No analyte specified for NCA!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Selected RS2023 as the most likely analyte!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ID DI start end  PPTESTCD      PPORRES exclude DOSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  1  1     0  24   auclast 135.83589639    &lt;NA&gt;    5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  1  1     0 Inf      cmax  48.55300000    &lt;NA&gt;    5</span>
@@ -112,10 +131,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  1  1     0 Inf     tlast  96.00000000    &lt;NA&gt;    5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  1  1     0 Inf clast.obs   0.00020000    &lt;NA&gt;    5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  1  1     0 Inf  lambda.z   0.08606345    &lt;NA&gt;    5</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">nca1</span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, time <span class="op">=</span> <span class="st">"TAD"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> NCA: No analyte specified. Selected RS2023 as the most likely.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> NCA: Group by FASTED</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Negative concentrations found</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">nca1</span><span class="op">(</span><span class="va">examplinib_fe_nif</span>, time <span class="op">=</span> <span class="st">"TIME"</span>, group <span class="op">=</span> <span class="st">"FASTED"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> No analyte specified for NCA!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Selected RS2023 as the most likely analyte!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 5 negative concentrations set to zero!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> NCA: Group by FASTED</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   FASTED ID DI start end  PPTESTCD      PPORRES exclude DOSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1      1  1  1     0  24   auclast 2.504642e+04    &lt;NA&gt;  500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2      1  1  1     0 Inf      cmax 6.325101e+03    &lt;NA&gt;  500</span>

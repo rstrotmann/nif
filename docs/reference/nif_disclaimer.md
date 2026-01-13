@@ -22,5 +22,5 @@ Character.
 
 ``` r
 nif_disclaimer()
-#> [1] "Data set created with `nif`, version 0.64.6"
+#> [1] "Data set created with `nif`, version 0.64.7"
 ```
