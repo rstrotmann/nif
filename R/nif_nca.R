@@ -336,7 +336,7 @@ nca1 <- function(
         cli_text()
       })
 
-      d <- find_duplicates(observation, fields = dupl_fields)
+      d <- find_duplicates(conc, fields = dupl_fields)
       return(d)
     }
 
