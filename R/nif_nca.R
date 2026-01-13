@@ -197,11 +197,13 @@ nca <- function(
 #' @examples
 #' head(nca1(examplinib_sad_nif, time = "TAD"))
 #' head(nca1(examplinib_fe_nif, time = "TAD", group = "FASTED"))
-nca1 <- function(nif,
-                 analyte = NULL, parent = NULL,
-                 keep = NULL, group = NULL,
-                 time = "TIME",
-                 average_duplicates = TRUE) {
+nca1 <- function(
+    nif,
+    analyte = NULL, parent = NULL,
+    keep = NULL, group = NULL,
+    time = "TIME",
+    average_duplicates = TRUE) {
+  # input validation
   allowed_times <- c("TIME", "NTIME", "TAFD", "TAD")
   if (!time %in% allowed_times) {
     stop(paste0(
