@@ -253,6 +253,10 @@ nca1 <- function(
     analytes_parents <- analyte_overview(nif)
     parent <- analytes_parents[analytes_parents$ANALYTE == current_analyte,
                                "PARENT"]
+    conditional_cli(
+      cli_alert_info(paste0("Parent set to ", parent)),
+      silent = silent
+    )
   }
   if (!parent %in% parents(nif))
     stop("Parent not found (", parent, ")!")
@@ -267,10 +271,10 @@ nca1 <- function(
     mutate(TIME = .data[[time]]) |>
     mutate(DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
 
-  # preserve the columns to keep
-  keep_columns <- obj |>
-    select(c("ID", "DOSE", "DI", any_of(c(keep)))) |>
-    distinct()
+  # # preserve the columns to keep
+  # keep_columns <- obj |>
+  #   select(c("ID", "DOSE", "DI", any_of(c(keep)))) |>
+  #   distinct()
 
   # dosing data
   admin <- obj |>
@@ -288,6 +292,12 @@ nca1 <- function(
       unique(c("ID", "TIME", time, "DI", "EVID", "ANALYTE", "DOSE", "DV", group))
     ))
 
+  # preserve the columns to keep
+  keep_columns <- conc |>
+    select(c("ID", "DOSE", "DI", any_of(c(keep)))) |>
+    distinct()
+
+  # deal with negative concentrations
   n_negative <- nrow(filter(conc, .data$DV < 0))
 
   if (n_negative > 0) {
@@ -301,7 +311,6 @@ nca1 <- function(
   }
 
   # dealing with duplicates
-  # duplicate_identifier <- time
   dupl_fields <- c("ID", "ANALYTE", time)
 
   n_dupl <- find_duplicates(
@@ -362,9 +371,9 @@ nca1 <- function(
     }
   }
 
+  # grouping
   group_string <- paste(group, collapse = "+")
   if (group_string != "") {
-    # conditional_message(paste("NCA: Group by", group_string))
     conditional_cli(
       cli_alert_info(paste0("NCA: Group by ", group_string)),
       silent = silent
@@ -372,6 +381,7 @@ nca1 <- function(
     group_string <- paste0(group_string, "+")
   }
 
+  # conduct NCA
   conc_formula <- paste0("DV~TIME|", group_string, "ID+DI")
   dose_formula <- paste0("DOSE~TIME|", group_string, "ID+DI")
 
