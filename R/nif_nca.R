@@ -180,6 +180,9 @@ nca <- function(
 #' This function is a wrapper around the NCA functions provided by the
 #' [PKNCA](https://CRAN.R-project.org/package=PKNCA) package.
 #'
+#' NA values are set to zero!
+#' Negative concentrations are set to zero!
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
@@ -189,21 +192,36 @@ nca <- function(
 #' @param keep Columns to keep, as character.
 #' @param group Columns to group by, as character.
 #' @param time The time field as character.
-#' @param average_duplicates Average duplicate concentration values, as logical.
+#' @param silent Suppress messages.
+#' @param duplicates Selection how to deal with duplicate observations with
+#'   respect to the USUBJID, ANALYTE and DTC fields:
+#'   * 'stop': Stop execution and produce error message
+#'   * 'identify': Return a list of duplicate entries
+#'   * 'resolve': Resolve duplicates, applying the `duplicate_function` to the
+#'   duplicate entries.
+#' @param duplicate_function Function to resolve duplicate values, defaults to
+#'   `mean`.
 #'
 #' @return A data frame.
 #' @export
 #'
 #' @examples
 #' head(nca1(examplinib_sad_nif, time = "TAD"))
-#' head(nca1(examplinib_fe_nif, time = "TAD", group = "FASTED"))
+#' head(nca1(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 nca1 <- function(
     nif,
-    analyte = NULL, parent = NULL,
-    keep = NULL, group = NULL,
+    analyte = NULL,
+    parent = NULL,
+    keep = NULL,
+    group = NULL,
     time = "TIME",
-    average_duplicates = TRUE) {
+    duplicates = "stop",
+    duplicate_function = mean,
+    silent = NULL
+    ) {
   # input validation
+  validate_nif(nif)
+
   allowed_times <- c("TIME", "NTIME", "TAFD", "TAD")
   if (!time %in% allowed_times) {
     stop(paste0(
@@ -217,26 +235,33 @@ nca1 <- function(
   # guess analyte if not defined
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(nif)
-    conditional_message(
-      "NCA: No analyte specified. Selected ",
-      current_analyte, " as the most likely."
-    )
+    conditional_cli({
+      cli_alert_warning("No analyte specified for NCA!")
+      cli_text(paste0("Selected ", current_analyte,
+                      " as the most likely analyte!"))
+    },
+    silent = silent)
   } else {
     current_analyte <- analyte
   }
 
+  if (is.na(current_analyte) || !current_analyte %in% nif$ANALYTE)
+    stop(paste0("Invalid analyte (", current_analyte, ")!"))
+
   # assign parent if not defined
   if (is.null(parent)) {
     analytes_parents <- analyte_overview(nif)
-    parent <- analytes_parents[
-      analytes_parents$ANALYTE == current_analyte,
-      "PARENT"
-    ]
+    parent <- analytes_parents[analytes_parents$ANALYTE == current_analyte,
+                               "PARENT"]
   }
+  if (!parent %in% parents(nif))
+    stop("Parent not found (", parent, ")!")
 
   # make observation and administration data sets
   obj <- nif |>
     ensure_time() |>
+    ensure_analyte() |>
+    ensure_parent() |>
     index_dosing_interval() |>
     as.data.frame() |>
     mutate(TIME = .data[[time]]) |>
@@ -247,7 +272,7 @@ nca1 <- function(
     select(c("ID", "DOSE", "DI", any_of(c(keep)))) |>
     distinct()
 
-  # dosint data
+  # dosing data
   admin <- obj |>
     filter(.data$ANALYTE == parent) |>
     filter(.data$EVID == 1) |>
@@ -260,18 +285,90 @@ nca1 <- function(
     filter(.data$ANALYTE == current_analyte) |>
     filter(.data$EVID == 0) |>
     select(any_of(
-      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)
+      unique(c("ID", "TIME", time, "DI", "EVID", "ANALYTE", "DOSE", "DV", group))
     ))
 
-  if (average_duplicates == TRUE) {
+  n_negative <- nrow(filter(conc, .data$DV < 0))
+
+  if (n_negative > 0) {
+    conditional_cli(
+      cli_alert_warning(paste0(n_negative,
+                               " negative concentrations set to zero!")),
+      silent = silent
+    )
     conc <- conc |>
-      group_by(across(any_of(c("ID", "TIME", "DOSE", "DI", group)))) |>
-      summarize(DV = mean(.data$DV, na.rm = TRUE), .groups = "drop")
+      mutate(DV = case_when(.data$DV < 0 ~ 0, .default = .data$DV))
+  }
+
+  # dealing with duplicates
+  # duplicate_identifier <- time
+  dupl_fields <- c("ID", "ANALYTE", time)
+
+  n_dupl <- find_duplicates(
+    conc, fields = dupl_fields, count_only = TRUE)
+
+  if (n_dupl != 0) {
+    conditional_cli(
+      cli_alert_warning(paste0(n_dupl, " duplicate observations in NCA for ",
+                               analyte)),
+      silent = silent
+    )
+
+    if (duplicates == "stop") {
+      stop(paste0(
+        n_dupl, " duplicate ",
+        plural("observation", n_dupl > 1), " found with respect to ",
+        nice_enumeration(dupl_fields), ".\n\n",
+        "Identify duplicates using the `duplicates = 'identify'` parameter, ",
+        "or have duplicates automatically resolved with ",
+        "`duplicates = 'resolve'` where the resolution function is specified ",
+        "by the `duplicate_function` parameter (default is `mean`)."
+      ))
+    }
+
+    if (duplicates == "identify") {
+      cli::cli({
+        cli::cli_alert_danger("Only duplicate observations returned")
+        cli::cli_text(paste0(
+          n_dupl, " duplicate observations found with respect to ",
+          nice_enumeration(dupl_fields), "."
+        ))
+        cli_text()
+      })
+
+      d <- find_duplicates(observation, fields = dupl_fields)
+      return(d)
+    }
+
+    if (duplicates == "resolve") {
+      conditional_cli(
+        cli::cli({
+          cli_alert_warning(paste0(
+            n_dupl, " duplicate observations for ", analyte,
+            " resolved, applying ",
+            function_name(duplicate_function)
+          ))
+        }),
+        silent = silent
+      )
+
+      conc <- resolve_duplicates(
+        conc,
+        fields = dupl_fields,
+        dependent_variable = "DV",
+        duplicate_function = duplicate_function,
+        na_rm = TRUE
+      )
+    }
   }
 
   group_string <- paste(group, collapse = "+")
   if (group_string != "") {
-    conditional_message(paste("NCA: Group by", group_string))
+    # conditional_message(paste("NCA: Group by", group_string))
+    conditional_cli(
+      cli_alert_info(paste0("NCA: Group by ", group_string)),
+      silent = silent
+    )
     group_string <- paste0(group_string, "+")
   }
 

@@ -11,7 +11,9 @@ nca1(
   keep = NULL,
   group = NULL,
   time = "TIME",
-  average_duplicates = TRUE
+  duplicates = "stop",
+  duplicate_function = mean,
+  silent = NULL
 )
 }
 \arguments{
@@ -27,7 +29,19 @@ nca1(
 
 \item{time}{The time field as character.}
 
-\item{average_duplicates}{Average duplicate concentration values, as logical.}
+\item{duplicates}{Selection how to deal with duplicate observations with
+respect to the USUBJID, ANALYTE and DTC fields:
+\itemize{
+\item 'stop': Stop execution and produce error message
+\item 'identify': Return a list of duplicate entries
+\item 'resolve': Resolve duplicates, applying the \code{duplicate_function} to the
+duplicate entries.
+}}
+
+\item{duplicate_function}{Function to resolve duplicate values, defaults to
+\code{mean}.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 A data frame.
@@ -38,8 +52,11 @@ A data frame.
 \details{
 This function is a wrapper around the NCA functions provided by the
 \href{https://CRAN.R-project.org/package=PKNCA}{PKNCA} package.
+
+NA values are set to zero!
+Negative concentrations are set to zero!
 }
 \examples{
 head(nca1(examplinib_sad_nif, time = "TAD"))
-head(nca1(examplinib_fe_nif, time = "TAD", group = "FASTED"))
+head(nca1(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 }
