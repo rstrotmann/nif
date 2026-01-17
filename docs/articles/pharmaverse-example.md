@@ -18,7 +18,7 @@ library(pharmaversesdtm)
 CDISCPILOT01
 
 ``` r
-# source: https://github.com/pharmaverse/pharmaversesdtm.git
+# source: https://github.com/pharmaverse/pharmaversesdtm
 
 sdtm <- sdtm(
   list(

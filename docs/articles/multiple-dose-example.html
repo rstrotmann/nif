@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -480,8 +480,8 @@ intervals with rich PK sampling. See the documentation for details.</p>
 </h3>
 <p>The nif package includes functions for non-compartmental PK analysis.
 Essentially, <code><a href="../reference/nca.html">nca()</a></code> is a wrapper around
-<code><a href="http://humanpred.github.io/pknca/reference/pk.nca.html" class="external-link">PKNCA::pk.nca()</a></code> from the popular <a href="https://cran.r-project.org/web/packages/PKNCA/index.html" class="external-link">PKNCA</a>
-package.</p>
+<code><a href="http://humanpred.github.io/pknca/reference/pk.nca.html" class="external-link">PKNCA::pk.nca()</a></code> from the popular PKNCA package
+(github.com/humanpred/pkncal).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nca</span> <span class="op">&lt;-</span> <span class="va">examplinib_poc_nif</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/index_rich_sampling_intervals.html">index_rich_sampling_intervals</a></span><span class="op">(</span>analyte <span class="op">=</span> <span class="st">"RS2023"</span>, min_n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>

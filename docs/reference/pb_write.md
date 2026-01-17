@@ -51,4 +51,6 @@ pb_write(
 
 ## Value
 
+A pinboard object.
+
 Nothing.

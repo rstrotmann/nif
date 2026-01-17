@@ -394,9 +394,7 @@ documentation for details.
 The nif package includes functions for non-compartmental PK analysis.
 Essentially, [`nca()`](../reference/nca.md) is a wrapper around
 [`PKNCA::pk.nca()`](http://humanpred.github.io/pknca/reference/pk.nca.md)
-from the popular
-[PKNCA](https://cran.r-project.org/web/packages/PKNCA/index.html)
-package.
+from the popular PKNCA package (github.com/humanpred/pkncal).
 
 ``` r
 nca <- examplinib_poc_nif %>%

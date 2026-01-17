@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Build and Explore NONMEM Input Format Data Sets from Clinical Study Data">
-<meta name="description" content="A System to Convert Study Data Tabulation Model (SDTM) Formatted Data into Longitudinal Data Tables Suitable for Nonlinear Mixed Effects Modeling (NONMEM). Aggregate Drug Administrations, PK/PD Observations and Covariates in a Stepwise Manner. Explore, Summarize and Visualize SDTM and NONMEM Data Sets.">
-<meta property="og:description" content="A System to Convert Study Data Tabulation Model (SDTM) Formatted Data into Longitudinal Data Tables Suitable for Nonlinear Mixed Effects Modeling (NONMEM). Aggregate Drug Administrations, PK/PD Observations and Covariates in a Stepwise Manner. Explore, Summarize and Visualize SDTM and NONMEM Data Sets.">
+<meta name="description" content="A system to convert clinical study data from the Study Data Tabulation Model (SDTM) format into the NONMEM Input Format (NIF) structure for downstream nonlinear mixed effects modeling, e.g., using NONMEM or nlmixr2. The core functions support the aggregation of drug administration, observations and covariate data in a stepwise manner. A further set of functions support exploratory data analysis of SDTM and NIF data.">
+<meta property="og:description" content="A system to convert clinical study data from the Study Data Tabulation Model (SDTM) format into the NONMEM Input Format (NIF) structure for downstream nonlinear mixed effects modeling, e.g., using NONMEM or nlmixr2. The core functions support the aggregation of drug administration, observations and covariate data in a stepwise manner. A further set of functions support exploratory data analysis of SDTM and NIF data.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,10 +60,8 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="nif">NIF<a class="anchor" aria-label="anchor" href="#nif"></a>
 </h1></div>
-<!-- badges: start -->
-
 <p>This is a package to create NONMEM Input Format (NIF) data tables from SDTM-formatted clinical study data.</p>
-<p>The <a href="https://www.iconplc.com/solutions/technologies/nonmem" class="external-link">NONMEM</a> software that is often used for population pharmacokinetic/pharmacodynamic (PK/PD) modeling expects the input data set to follow specific conventions summarized in <em>Bauer, R.J. (2019), NONMEM Tutorial Part I: Description of Commands and Options, With Simple Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537</em>. <a href="https://doi.org/10.1002/psp4.12404" class="external-link uri">https://doi.org/10.1002/psp4.12404</a>.</p>
+<p>The <a href="https://www.iconplc.com/solutions/technologies/nonmem" class="external-link">NONMEM</a> software that is often used for population pharmacokinetic/pharmacodynamic (PK/PD) modeling expects the input data set to follow specific conventions summarized in <em>Bauer, R.J. (2019), NONMEM Tutorial Part I: Description of Commands and Options, With Simple Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537</em> (doi.org/10.1002/psp4.12404).</p>
 <p>This package provides functions to sequentially aggregate drug administrations, PK/PD observations and covariates into a NONMEM-compliant analysis data set (NIF data set), and tools to explore and visualize NIF data sets.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -137,8 +135,8 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Renal impairment class:</span></span>
 <span><span class="co">#&gt;   CLASS      N    percent   </span></span>
-<span><span class="co">#&gt;   normal     42   87.5      </span></span>
-<span><span class="co">#&gt;   mild       6    12.5      </span></span>
+<span><span class="co">#&gt;   normal     46   95.8      </span></span>
+<span><span class="co">#&gt;   mild       2    4.2       </span></span>
 <span><span class="co">#&gt;   moderate   0    0         </span></span>
 <span><span class="co">#&gt;   severe     0    0          </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -176,14 +174,8 @@
 <span><span class="co">#&gt;   4       X        </span></span>
 <span><span class="co">#&gt;   6       X        </span></span>
 <span><span class="co">#&gt;   8       X        </span></span>
-<span><span class="co">#&gt;   10      X        </span></span>
-<span><span class="co">#&gt;   12      X        </span></span>
-<span><span class="co">#&gt;   24      X        </span></span>
-<span><span class="co">#&gt;   48      X        </span></span>
-<span><span class="co">#&gt;   72      X        </span></span>
-<span><span class="co">#&gt;   96      X        </span></span>
-<span><span class="co">#&gt;   144     X        </span></span>
-<span><span class="co">#&gt;   168     X         </span></span>
+<span><span class="co">#&gt;   10      X         </span></span>
+<span><span class="co">#&gt;   (7 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions</span></span>
 <span><span class="co">#&gt;   RS2023   </span></span>
@@ -193,14 +185,14 @@
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#&gt;   RS2023   1     1     1      1         </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 1ffeca348395517147567cedfdd41e68</span></span>
+<span><span class="co">#&gt; Hash: a14674b06b234d32d526f9c20f0d0e82</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-02 11:31:00</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-2.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-3.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-4.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-5.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-6.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-7.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-8.png" width="50%"><img src="reference/figures/README-unnamed-chunk-4-9.png" width="50%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-2.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-3.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-4.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-5.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-6.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-7.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-8.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-4-9.png" alt="" width="50%"></p>
 </div>
 </div>
 </div>
@@ -240,12 +232,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://CRAN.R-project.org/package=nif" class="external-link"><img src="https://www.r-pkg.org/badges/version/nif" alt="CRAN status"></a></li>
-</ul>
-</div>
+
 
   </aside>
 </div>

@@ -81,6 +81,7 @@ NA values are set to zero! Negative concentrations are set to zero!
 head(nca1(examplinib_sad_nif, time = "TAD"))
 #> ! No analyte specified for NCA!
 #> Selected RS2023 as the most likely analyte!
+#> ℹ Parent set to RS2023
 #>   ID DI start end  PPTESTCD      PPORRES exclude DOSE
 #> 1  1  1     0  24   auclast 135.83589639    <NA>    5
 #> 2  1  1     0 Inf      cmax  48.55300000    <NA>    5
@@ -91,6 +92,7 @@ head(nca1(examplinib_sad_nif, time = "TAD"))
 head(nca1(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 #> ! No analyte specified for NCA!
 #> Selected RS2023 as the most likely analyte!
+#> ℹ Parent set to RS2023
 #> ! 5 negative concentrations set to zero!
 #> ℹ NCA: Group by FASTED
 #>   FASTED ID DI start end  PPTESTCD      PPORRES exclude DOSE

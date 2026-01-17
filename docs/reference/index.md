@@ -156,11 +156,6 @@
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID
   in the data set
 
-- [`find_duplicates()`](find_duplicates.md) : Find duplicate rows in a
-  data frame
-
-- [`get_pinboard()`](get_pinboard.md) : Get pinboard object
-
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection
 
