@@ -1215,9 +1215,8 @@ obs_per_dose_level <- function(
 #'
 #' @description
 #'
-#' Refer to the
-#' [FDA guidance on DILI](https://www.fda.gov/media/116737/download) and
-#' [Watkins 2011](https://doi.org/10.2165/11586600-000000000-00000).
+#' Refer to the FDA guidance on DILI, https://www.fda.gov/media/116737/download
+#' and Watkins 2011, doi.org/10.2165/11586600-000000000-00000.
 #'
 #' @param nif A nif object.
 #' @param sdtm A sdtm object.

@@ -3,12 +3,6 @@
 
 # NIF
 
-<!-- badges: start -->
-
-[![CRAN
-status](https://www.r-pkg.org/badges/version/nif)](https://CRAN.R-project.org/package=nif)
-<!-- badges: end -->
-
 This is a package to create NONMEM Input Format (NIF) data tables from
 SDTM-formatted clinical study data.
 
@@ -18,7 +12,7 @@ pharmacokinetic/pharmacodynamic (PK/PD) modeling expects the input data
 set to follow specific conventions summarized in *Bauer, R.J. (2019),
 NONMEM Tutorial Part I: Description of Commands and Options, With Simple
 Examples of Population Analysis. CPT Pharmacometrics Syst. Pharmacol.,
-8: 525-537*. <https://doi.org/10.1002/psp4.12404>.
+8: 525-537* (doi.org/10.1002/psp4.12404).
 
 This package provides functions to sequentially aggregate drug
 administrations, PK/PD observations and covariates into a
@@ -104,8 +98,8 @@ summary(nif)
 #> 
 #> Renal impairment class:
 #>   CLASS      N    percent   
-#>   normal     42   87.5      
-#>   mild       6    12.5      
+#>   normal     46   95.8      
+#>   mild       2    4.2       
 #>   moderate   0    0         
 #>   severe     0    0          
 #> 
@@ -143,14 +137,8 @@ summary(nif)
 #>   4       X        
 #>   6       X        
 #>   8       X        
-#>   10      X        
-#>   12      X        
-#>   24      X        
-#>   48      X        
-#>   72      X        
-#>   96      X        
-#>   144     X        
-#>   168     X         
+#>   10      X         
+#>   (7 more rows)
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
@@ -160,7 +148,7 @@ summary(nif)
 #>   PARENT   min   max   mean   median   
 #>   RS2023   1     1     1      1         
 #> 
-#> Hash: 1ffeca348395517147567cedfdd41e68
+#> Hash: a14674b06b234d32d526f9c20f0d0e82
 #> Last DTC: 2001-03-02 11:31:00
 
 invisible(capture.output(
@@ -169,7 +157,7 @@ invisible(capture.output(
 ))
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-2.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-3.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-4.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-5.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-6.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-7.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-8.png" width="50%" /><img src="man/figures/README-unnamed-chunk-4-9.png" width="50%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-2.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-3.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-4.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-5.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-6.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-7.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-8.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-4-9.png" alt="" width="50%" />
 
 # Further information
 

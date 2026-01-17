@@ -49,7 +49,6 @@ character, can be 'AST' or 'ALT' (default).}
 A ggplot object.
 }
 \description{
-Refer to the
-\href{https://www.fda.gov/media/116737/download}{FDA guidance on DILI} and
-\href{https://doi.org/10.2165/11586600-000000000-00000}{Watkins 2011}.
+Refer to the FDA guidance on DILI, https://www.fda.gov/media/116737/download
+and Watkins 2011, doi.org/10.2165/11586600-000000000-00000.
 }

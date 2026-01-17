@@ -28,9 +28,8 @@ Estimated GFR in ml/min/1.73 m^2.
 \description{
 Source: Raynaud M, et al., Race-free estimated glomerular
 filtration rate equation in kidney transplant recipients: development and
-validation study. BMJ. 2023 May 31;381:e073654.
-\href{https://doi.org/10.1136/bmj-2022-073654}{doi: 10.1136/bmj-2022-073654}.
-PMID: 37257905; PMCID: PMC10231444.
+validation study. BMJ. 2023 May 31;381:e073654,
+doi.org/10.1136/bmj-2022-073654.
 }
 \details{
 \deqn{
