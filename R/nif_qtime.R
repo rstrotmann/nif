@@ -46,7 +46,7 @@ add_qtime <- function(obj, breaks) {
 #' @param points Plot original data points as logical.
 #' @param caption Show caption as logical.
 #' @param alpha The alpha parameter for the data points.
-#'
+#' @importFrom stats qt
 #' @returns A ggplot object
 #' @export
 qtime_plot <- function(
@@ -69,36 +69,40 @@ qtime_plot <- function(
 
   temp <- obj |>
     add_qtime(breaks) |>
-    filter(ANALYTE == analyte) |>
-    filter(EVID == 0) |>
-    filter(!is.na(QTIME)) |>
-    filter(!is.na(DV)) |>
+    filter(.data$ANALYTE == analyte) |>
+    filter(.data$EVID == 0) |>
+    filter(!is.na(.data$QTIME)) |>
+    filter(!is.na(.data$DV)) |>
     as.data.frame()
 
   out <- temp |>
     reframe(
-      .LEFT, .RIGHT,
-      mean = mean(DV),
-      sd = sd(DV),
+      .data$.LEFT,
+      .data$.RIGHT,
+      mean = mean(.data$DV),
+      sd = sd(.data$DV),
       n = n(),
-      se = sd/sqrt(n),
-      df = n - 1,
-      t = qt(p = 0.05/2, df = df, lower.tail = F),
-      margin_error = t * se,
-      lower_ci = mean - margin_error,
-      upper_ci = mean + margin_error,
+      se = sd/sqrt(.data$n),
+      df = .data$n - 1,
+      t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
+      margin_error = .data$t * .data$se,
+      lower_ci = .data$mean - .data$margin_error,
+      upper_ci = .data$mean + .data$margin_error,
       .by = c("QTIME", "ANALYTE")) |>
     distinct() |>
-    ggplot(aes(x = QTIME, y = mean))
+    ggplot(aes(x = .data$QTIME, y = .data$mean)) +
+    labs(y = analyte, x = "TAFD")
 
   if (points == TRUE) {
     out <- out +
-      geom_point(aes(x = TAFD, y = DV), data = temp, alpha = alpha)
+      geom_point(aes(x = .data$TAFD, y = .data$DV), data = temp, alpha = alpha)
   }
 
   out <- out +
-    geom_segment(aes(x = .LEFT, xend = .RIGHT, y = mean), color = "red") +
-    geom_rect(aes(xmin = .LEFT, xmax = .RIGHT, ymin = lower_ci, ymax = upper_ci),
+    geom_segment(aes(x = .data$.LEFT, xend = .data$.RIGHT,
+                     y = .data$mean), color = "red") +
+    geom_rect(aes(xmin = .data$.LEFT, xmax = .data$.RIGHT,
+                  ymin = .data$lower_ci, ymax = .data$upper_ci),
               fill = "red", alpha = 0.3) +
     theme_bw()
 
