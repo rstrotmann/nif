@@ -4,7 +4,15 @@
 \alias{qtime_plot}
 \title{Plot analyte over time by discretized time after first dose (QTIME)}
 \usage{
-qtime_plot(obj, analyte, breaks, points = FALSE, caption = TRUE, alpha = 1)
+qtime_plot(
+  obj,
+  analyte,
+  breaks,
+  points = FALSE,
+  caption = TRUE,
+  size = 1.5,
+  alpha = 1
+)
 }
 \arguments{
 \item{obj}{A nif object.}
@@ -17,6 +25,8 @@ qtime_plot(obj, analyte, breaks, points = FALSE, caption = TRUE, alpha = 1)
 
 \item{caption}{Show caption as logical.}
 
+\item{size}{The point size.}
+
 \item{alpha}{The alpha parameter for the data points.}
 }
 \value{
@@ -24,4 +34,9 @@ A ggplot object
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+}
+\details{
+First, individual DV values are summarized by analyte over the QTIME periods,
+then those mean values are summarized over all subjects. The mean and its
+90\% CI shown in the figure refers to the latter summary.
 }

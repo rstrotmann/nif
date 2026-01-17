@@ -37,6 +37,10 @@ add_qtime <- function(obj, breaks) {
 
 #' Plot analyte over time by discretized time after first dose (QTIME)
 #'
+#' First, individual DV values are summarized by analyte over the QTIME periods,
+#' then those mean values are summarized over all subjects. The mean and its
+#' 90% CI shown in the figure refers to the latter summary.
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
@@ -45,7 +49,9 @@ add_qtime <- function(obj, breaks) {
 #' @param breaks The breaks for TAFD, as numeric.
 #' @param points Plot original data points as logical.
 #' @param caption Show caption as logical.
+#' @param size The point size.
 #' @param alpha The alpha parameter for the data points.
+#'
 #' @importFrom stats qt
 #' @returns A ggplot object
 #' @export
@@ -55,6 +61,7 @@ qtime_plot <- function(
     breaks,
     points = FALSE,
     caption = TRUE,
+    size = 1.5,
     alpha = 1) {
   validate_nif(obj)
   validate_char_param(analyte, "analyte")
@@ -77,10 +84,35 @@ qtime_plot <- function(
 
   out <- temp |>
     reframe(
+      .data$QTIME,
+      .data$ANALYTE,
       .data$.LEFT,
       .data$.RIGHT,
-      mean = mean(.data$DV),
-      sd = sd(.data$DV),
+      .individual_mean = mean(.data$DV),
+      .by = c("ID", "ANALYTE", "QTIME")
+    ) |>
+    distinct() |>
+
+    # reframe(
+    #   .data$.LEFT,
+    #   .data$.RIGHT,
+    #   mean = mean(.data$DV),
+    #   sd = sd(.data$DV),
+    #   n = n(),
+    #   se = sd/sqrt(.data$n),
+    #   df = .data$n - 1,
+    #   t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
+    #   margin_error = .data$t * .data$se,
+    #   lower_ci = .data$mean - .data$margin_error,
+    #   upper_ci = .data$mean + .data$margin_error,
+    #   .by = c("QTIME", "ANALYTE")) |>
+    # distinct() |>
+
+    reframe(
+      .data$.LEFT,
+      .data$.RIGHT,
+      mean = mean(.data$.individual_mean),
+      sd = sd(.data$.individual_mean),
       n = n(),
       se = sd/sqrt(.data$n),
       df = .data$n - 1,
@@ -90,12 +122,14 @@ qtime_plot <- function(
       upper_ci = .data$mean + .data$margin_error,
       .by = c("QTIME", "ANALYTE")) |>
     distinct() |>
+
     ggplot(aes(x = .data$QTIME, y = .data$mean)) +
     labs(y = analyte, x = "TAFD")
 
   if (points == TRUE) {
     out <- out +
-      geom_point(aes(x = .data$TAFD, y = .data$DV), data = temp, alpha = alpha)
+      geom_point(aes(x = .data$TAFD, y = .data$DV), data = temp, alpha = alpha,
+                 size = size)
   }
 
   out <- out +
