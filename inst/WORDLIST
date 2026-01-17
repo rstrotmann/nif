@@ -19,6 +19,7 @@ BMI
 BMJ
 BRTHDTC
 Biomed
+Bzr
 CDISC
 CDISCPILOT
 CFB
@@ -78,8 +79,6 @@ PCTESTCD
 PCTPT
 PINBOARD
 PKNCA
-PMC
-PMCID
 PMID
 POC
 POSIXct
@@ -155,6 +154,7 @@ et
 examplinib
 exendtc
 extrt
+fda
 ggplot
 ggproto
 github
@@ -162,6 +162,7 @@ glomerular
 grey
 hepatotoxicity
 https
+humanpred
 jcp
 lexjansen
 lightgrey
@@ -182,8 +183,11 @@ pharmacometric
 phuse
 pinboard
 pknca
+pkncal
 pre
 proto
+psp
+pst
 raynaud
 readr
 requiredness
