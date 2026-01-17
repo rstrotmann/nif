@@ -5,7 +5,7 @@
 \alias{nif-package}
 \title{nif: Build and Explore NONMEM Input Format Data Sets from Clinical Study Data}
 \description{
-A System to Convert Study Data Tabulation Model (SDTM) Formatted Data into Longitudinal Data Tables Suitable for Nonlinear Mixed Effects Modeling (NONMEM). Aggregate Drug Administrations, PK/PD Observations and Covariates in a Stepwise Manner. Explore, Summarize and Visualize SDTM and NONMEM Data Sets.
+A system to convert clinical study data from the Study Data Tabulation Model (SDTM) format into the NONEM Input Format (NIF) structure for downstream nonlinear mixed effects modeling, e.g., using NONMEM or 'nlmixr2'. The core functions support the aggregation of drug administration, observations and covariate data in a stepwise manner. A further set of functions support exploratory data analysis of SDTM and NIF data.
 }
 \seealso{
 Useful links:

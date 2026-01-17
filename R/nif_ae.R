@@ -31,7 +31,7 @@
 #' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
-#' @keywords noRd
+#' @noRd
 make_ae <- function(
   sdtm,
   ae_term,
@@ -181,8 +181,28 @@ make_ae <- function(
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @inheritParams make_ae
 #' @param nif A nif object.
+#' @param sdtm A sdtm object.
+#' @param ae_term The AE term as character.
+#' @param ae_field The field in which the AE term is specified in. Can be:
+#'
+#' * AEDECOD:  Dictionary-derived term
+#' * AELLT:    Lowest-level term
+#' * AEHLT:    High-level term
+#' * AEHLGT:   High-level group term
+#' * AESOC:    System organ class
+#' * AEBODSYS: Body system or organ class
+#'
+#' or any other field from the 'AE' domain
+#' @param analyte The name for the AE observation, defaults to 'AE_xx' with xx
+#' the ae_term.
+#' @param parent The parent compound as character.
+#' @param cmt The compartment as numeric.
+#' @param subject_filter A subject filter term.
+#' @param observation_filter An observation filter term.
+#' @param coding_table A DV coding table as data frame. The coding table
+#'   translates columns included in the AE domain into a DV field.
+#' @param keep Columns to keep, as character.
 #' @param debug Include debug fields, as logical.
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'

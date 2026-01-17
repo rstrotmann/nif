@@ -14,8 +14,6 @@ of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
 setting if the 'nif_option' is not set.}
 }
 \value{
-A pinboard object.
-
 A nif object.
 }
 \description{

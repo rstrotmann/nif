@@ -238,9 +238,8 @@ pb_write.nif <- function(
 #' @param board The path to the board object. Defaults to the 'pinboard' value
 #' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
 #' setting if the 'nif_option' is not set.
-#' @return A pinboard object.
-#'
 #' @return A sdtm object.
+#'
 #' @importFrom pins board_folder pin_read
 #' @export
 pb_read_sdtm <- function(name, board = NULL) {
@@ -267,7 +266,7 @@ pb_read_sdtm <- function(name, board = NULL) {
 #' @param board The path to the board object. Defaults to the 'pinboard' value
 #' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
 #' setting if the 'nif_option' is not set.
-#' @return A pinboard object.
+#'
 #' @return A nif object.
 #' @export
 pb_read_nif <- function(name, board = NULL) {
@@ -293,7 +292,6 @@ pb_read_nif <- function(name, board = NULL) {
 #' @param board The path to the board object. Defaults to the 'pinboard' value
 #' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
 #' setting if the 'nif_option' is not set.
-#' @return A pinboard object.
 #' @param object_type The object to filter for (sdtm or nif)
 #'
 #' @return The board folder, defaults to the respective nif_option setting.
