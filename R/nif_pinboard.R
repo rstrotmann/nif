@@ -4,8 +4,9 @@
 #' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
 #' setting if the 'nif_option' is not set.
 #'
-#' @returns A pinboard object.
+#' @return A pinboard object.
 #' @importFrom pins board_folder
+#' @noRd
 get_pinboard <- function(board = NULL) {
   if (is.null(board)) {
     board <- nif_option_value("pinboard")
@@ -48,7 +49,7 @@ get_pinboard <- function(board = NULL) {
 #'
 #' @param path Pinboard path as character.
 #'
-#' @returns Currently active pinboard path as character.
+#' @return Currently active pinboard path as character.
 #' @seealso [usethis::edit_r_environ()]
 #' @seealso [nif::nif_option()]
 #' @export
@@ -73,7 +74,10 @@ nif_pinboard <- function(path = NULL) {
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param obj The object to pin.
-#' @inheritParams get_pinboard
+#' @param board The path to the board object. Defaults to the 'pinboard' value
+#' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
+#' setting if the 'nif_option' is not set.
+#' @return A pinboard object.
 #' @param name Name for the pin object, as character. Defaults to
 #'   'xx_sdtm' or 'xx_nif' with xx the study name.
 #' @param title Title for the pin object, as character. Defaults to
@@ -82,7 +86,7 @@ nif_pinboard <- function(path = NULL) {
 #' @param silent Suppress messages. Defaults to nif_option setting if NULL.
 #' @param force Force-write, as logical.
 #'
-#' @returns Nothing.
+#' @return Nothing.
 #' @export
 pb_write <- function(
   obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
@@ -107,7 +111,7 @@ pb_write <- function(
 #' @param silent Suppress messages. Defaults to nif_option setting if NULL.
 #' @param force Force-write, as logical.
 #'
-#' @returns Nothing.
+#' @return Nothing.
 #' @importFrom pins pin_write board_folder
 #' @importFrom utils capture.output
 #' @export
@@ -173,7 +177,7 @@ pb_write.sdtm <- function(
 #' @param silent Suppress messages. Defaults to nif_option setting if NULL.
 #' @param force Force-write, as logical.
 #'
-#' @returns Nothing.
+#' @return Nothing.
 #' @importFrom pins pin_write board_folder
 #' @importFrom utils capture.output
 #' @export
@@ -231,9 +235,12 @@ pb_write.nif <- function(
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param name The pin name, as character.
-#' @inheritParams get_pinboard
+#' @param board The path to the board object. Defaults to the 'pinboard' value
+#' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
+#' setting if the 'nif_option' is not set.
+#' @return A pinboard object.
 #'
-#' @returns A sdtm object.
+#' @return A sdtm object.
 #' @importFrom pins board_folder pin_read
 #' @export
 pb_read_sdtm <- function(name, board = NULL) {
@@ -257,9 +264,11 @@ pb_read_sdtm <- function(name, board = NULL) {
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param name The pin name, as character.
-#' @inheritParams get_pinboard
-#'
-#' @returns A nif object.
+#' @param board The path to the board object. Defaults to the 'pinboard' value
+#' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
+#' setting if the 'nif_option' is not set.
+#' @return A pinboard object.
+#' @return A nif object.
 #' @export
 pb_read_nif <- function(name, board = NULL) {
   # input validation
@@ -281,12 +290,14 @@ pb_read_nif <- function(name, board = NULL) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @inheritParams get_pinboard
+#' @param board The path to the board object. Defaults to the 'pinboard' value
+#' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
+#' setting if the 'nif_option' is not set.
+#' @return A pinboard object.
 #' @param object_type The object to filter for (sdtm or nif)
 #'
-#' @returns The board folder, defaults to the respective nif_option setting.
+#' @return The board folder, defaults to the respective nif_option setting.
 #' @importFrom pins board_folder pin_search
-#' @keywords internal
 #' @noRd
 pb_list_object <- function(board = NULL, object_type) {
   # input validation
@@ -310,9 +321,11 @@ pb_list_object <- function(board = NULL, object_type) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @inheritParams get_pinboard
+#' @param board The path to the board object. Defaults to the 'pinboard' value
+#' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
+#' setting if the 'nif_option' is not set.
 #'
-#' @returns A data frame.
+#' @return A data frame.
 #' @export
 pb_list_sdtm <- function(board = NULL) {
   pb_list_object(board, "sdtm")
@@ -324,9 +337,11 @@ pb_list_sdtm <- function(board = NULL) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @inheritParams get_pinboard
+#' @param board The path to the board object. Defaults to the 'pinboard' value
+#' of nif_option, or the value of the 'NIF_PINBOARD' key in the .Renviron
+#' setting if the 'nif_option' is not set.
 #'
-#' @returns A data frame.
+#' @return A data frame.
 #' @export
 pb_list_nif <- function(board = NULL) {
   pb_list_object(board, "nif")

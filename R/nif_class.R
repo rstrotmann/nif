@@ -108,7 +108,7 @@ index_id <- function(obj) {
 #' @param ... Further arguments.
 #' @seealso [nif::nif_auto()]
 #'
-#' @returns A nif object.
+#' @return A nif object.
 #' @export
 #' @examples
 #' nif()

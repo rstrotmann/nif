@@ -12,7 +12,7 @@
 #' @param obj A nif object.
 #' @param silent Suppress messages.
 #'
-#' @returns A nif object with the 'TIME_DEV' field added
+#' @return A nif object with the 'TIME_DEV' field added
 #' @export
 #' @examples
 #' library(dplyr)
@@ -90,7 +90,7 @@ add_time_deviation <- function(obj, silent = NULL) {
 #'   defaults to TRUE.
 #' @param silent Suppress messages, as logical.
 #'
-#' @returns A nif object with TIME_DEV, EXCL, EXCL_REASON fields added.
+#' @return A nif object with TIME_DEV, EXCL, EXCL_REASON fields added.
 #' @export
 add_time_window_flag <- function(
   obj, window, analyte = NULL, use_minutes = TRUE, silent = NULL

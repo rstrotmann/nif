@@ -253,7 +253,7 @@ add_baseline <- function(
 #' NA.
 #' @param silent Suppress messages, as logical.
 #'
-#' @returns A nif object with the DVBL field added for the specified analyte.
+#' @return A nif object with the DVBL field added for the specified analyte.
 #' @export
 #'
 #' @examples
@@ -402,7 +402,7 @@ derive_baseline <- function(
 #' NA.
 #' @param silent Suppress messages, as logical.
 #'
-#' @returns A nif object with the DVBL and DVCFB fields added for the specified
+#' @return A nif object with the DVBL and DVCFB fields added for the specified
 #' analyte.
 #' @export
 #'
@@ -444,7 +444,7 @@ derive_cfb <- function(
 #' NA.
 #' @param silent Suppress messages, as logical.
 #'
-#' @returns A nif object with the DVBL and DVRTB fields added for the specified
+#' @return A nif object with the DVBL and DVRTB fields added for the specified
 #' analyte.
 #' @export
 #'
@@ -525,7 +525,7 @@ add_cfb <- function(
 #'   considered.
 #' @param silent Suppress messages, defaults to nif_option setting if NULL.
 #'
-#' @returns A nif object.
+#' @return A nif object.
 #' @export
 derive_cfb_analyte <- function(
   obj, source_analyte, analyte = NULL,
@@ -650,7 +650,7 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
 #' @param silent Suppress messages.
 #' @param observation_filter An observation filter term as character.
 #'
-#' @returns A nif object with the BL_CREAT column added, if possible. Otherwise
+#' @return A nif object with the BL_CREAT column added, if possible. Otherwise
 #' the unchanged input.
 #' @export
 add_bl_creat <- function(

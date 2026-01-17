@@ -30,7 +30,7 @@ domain <- function(obj, name) {
 #' @param domain_data A data.frame.
 #'
 #' @returns A domain object.
-#' @keywords internal
+#' @noRd
 new_domain <- function(
   domain_data
 ) {

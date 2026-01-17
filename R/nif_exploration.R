@@ -840,7 +840,7 @@ covariate_barplot <- function(
 #' @param title The figure title.
 #'
 #' @returns A ggplot2 object.
-#' @keywords internal
+#' @noRd
 cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
   temp <- obj |>
     as.data.frame() |>

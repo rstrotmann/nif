@@ -172,7 +172,7 @@ race_coding <- tibble::tribble(
 #' default coding, if NULL.
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #'
-#' @returns A nif object with the original RACE replaced by the numerical race
+#' @return A nif object with the original RACE replaced by the numerical race
 #' code.
 #' @export
 #'

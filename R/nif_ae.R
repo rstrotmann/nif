@@ -31,7 +31,7 @@
 #' @param keep Columns to keep, as character.
 #'
 #' @return A nif object.
-#' @keywords internal
+#' @keywords noRd
 make_ae <- function(
   sdtm,
   ae_term,

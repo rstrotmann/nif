@@ -34,6 +34,8 @@ the study name(s).}
 \item{silent}{Suppress messages. Defaults to nif_option setting if NULL.}
 }
 \value{
+A pinboard object.
+
 Nothing.
 }
 \description{

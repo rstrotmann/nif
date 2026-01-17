@@ -12,6 +12,7 @@
 #'
 #' @return A data frame containing the duplicate rows and their counts, or just
 #' the count if count_only is TRUE
+#' @noRd
 find_duplicates <- function(
   df,
   fields = NULL,
@@ -91,7 +92,7 @@ find_duplicates <- function(
 #' @return A data frame with duplicate rows resolved. The DV field contains the
 #'   average of duplicate values, and other fields are kept as-is if consistent
 #'   or set to NA if inconsistent within duplicate groups.
-#' @keywords internal
+#' @noRd
 resolve_duplicates <- function(
   df,
   fields = "TIME",

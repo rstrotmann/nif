@@ -75,7 +75,7 @@ ddt_standard_fields <- tibble::tribble(
 #' @param obj A nif object.
 #' @param silent Suppress messages, defaults to nif_option setting if NULL.
 #'
-#' @returns A data table.
+#' @return A data table.
 #' @export
 #'
 #' @examples
@@ -149,7 +149,7 @@ ddt <- function(obj, silent = NULL) {
 #' @param unit Field unit as character.
 #' @param source Field source as character.
 #'
-#' @returns A data frame.
+#' @return A data frame.
 #' @export
 add_dd <- function(
   obj, name, definition, type, description, unit = NA_character_, source = ""

@@ -22,7 +22,7 @@
 #' @param duplicate_function A function to resolve duplicate values for
 #'   observations of the dependent analyte. Defaults to `mean`.
 #'
-#' @returns A data frame.
+#' @return A data frame.
 #' @export
 #'
 #' @examples

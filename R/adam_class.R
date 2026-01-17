@@ -2,7 +2,7 @@
 #'
 #' @param adam_data The ADaM datasets as data frames.
 #'
-#' @returns An adam object.
+#' @return An adam object.
 #' @export
 adam <- function(adam_data) {
   temp <- as.list(adam_data)
@@ -84,7 +84,7 @@ summary.adam <- function(object, ...) {
 #' @param x The summary_adam object.
 #' @param ... Further parameters.
 #'
-#' @returns Nothing.
+#' @return Nothing.
 #' @export
 #' @noRd
 print.summary_adam <- function(x, ...) {
@@ -125,7 +125,7 @@ print.adam <- function(x, ...) {
 #' @param adam An adam object.
 #' @param name The dataset name as character.
 #'
-#' @returns A data frame.
+#' @return A data frame.
 #' @export
 dataset <- function(adam, name) {
   # input validation

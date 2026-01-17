@@ -50,7 +50,7 @@ sdtm <- function(sdtm_data) {
 #'
 #' @param obj A sdtm object.
 #'
-#' @returns The title as ASCII character, or NULL.
+#' @return The title as ASCII character, or NULL.
 #' @export
 #'
 #' @examples
@@ -87,7 +87,7 @@ trial_title <- function(obj) {
 #'
 #' @param obj A sdtm object.
 #'
-#' @returns A POSIXct object or NULL.
+#' @return A POSIXct object or NULL.
 #' @export
 trial_dco <- function(obj) {
   validate_sdtm(obj)
@@ -923,7 +923,7 @@ derive_sld <- function(
 #' NULL.
 #' @param silent Suppress messages,
 #'
-#' @returns A data frame with columns DOMAIN and TESTCD. Returns an empty data
+#' @return A data frame with columns DOMAIN and TESTCD. Returns an empty data
 #' frame if no TESTCD columns are found.
 #'
 #' @export
@@ -984,7 +984,7 @@ testcd <- function(obj, domain = NULL, silent = NULL) {
 #'
 #' @param obj A nif object.
 #'
-#' @returns A POSIXct scalar.
+#' @return A POSIXct scalar.
 #' @export
 #' @keywords internal
 #'

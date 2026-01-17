@@ -61,4 +61,4 @@ AE domain, a coding table must be provided to translate any other field into
 a numeric DV column, e.g.,
 \verb{coding_table = data.frame( AESEV = c("MILD", "MODERATE", "SEVERE"), DV = c(1, 2, 3)}
 }
-\keyword{internal}
+\keyword{noRd}
