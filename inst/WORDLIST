@@ -15,6 +15,7 @@ AST
 Anaesth
 Analyte
 Analytes
+BINTIME
 BMI
 BMJ
 BRTHDTC
@@ -131,12 +132,15 @@ aminotransferase
 analyte
 analytes
 aspartate
+bclust
 bdat
 binwidth
 biomarker
 bja
 bmj
 campatibility
+classInt
+classInterval
 cov
 crea
 creatinine
@@ -161,10 +165,13 @@ ggproto
 github
 glomerular
 grey
+hclust
 hepatotoxicity
 https
 humanpred
 jcp
+jenks
+kmeans
 lexjansen
 lightgrey
 lin
@@ -195,6 +202,7 @@ readr
 requiredness
 rfendtc
 sas
+sd
 sdtm
 settin
 stm

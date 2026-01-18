@@ -38,7 +38,8 @@ Imports:
     lifecycle,
     pins,
     cli,
-    magrittr
+    magrittr,
+    classInt
 Suggests: 
     knitr,
     tibble,
