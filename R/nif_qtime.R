@@ -1,5 +1,8 @@
 #' Make BINTIME field
 #'
+#'#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' @param method Univariate class intervals method, can be one of jenks, kmeans,
 #' pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
 #' for details.
@@ -45,6 +48,9 @@ add_bintime <- function(
 
 
 #' BINTIME plot
+#'
+#'#' @description
+#' `r lifecycle::badge("experimental")`
 #'
 #' @param obj A nif object.
 #' @param analyte The analyte as character.
