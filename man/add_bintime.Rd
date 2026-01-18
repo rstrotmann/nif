@@ -19,5 +19,6 @@ for details.}
 A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
 }
 \description{
-Make BINTIME field
+#' @description
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }

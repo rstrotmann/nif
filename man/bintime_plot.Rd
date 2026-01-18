@@ -8,8 +8,12 @@ bintime_plot(
   obj,
   analyte,
   method = "fisher",
+  min_time = NULL,
+  max_time = NULL,
   points = FALSE,
+  cfb = FALSE,
   caption = TRUE,
+  title = NULL,
   size = 1.5,
   alpha = 1
 )
@@ -23,9 +27,19 @@ bintime_plot(
 pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
 for details.}
 
+\item{min_time}{The minimal time in units of TAFD, as numeric.}
+
+\item{max_time}{The minimal time in units of TAFD, as numeric.}
+
 \item{points}{Plot original data points as logical.}
 
+\item{cfb}{Plot change from baseline, as logical.}
+
 \item{caption}{Show caption as logical.}
+
+\item{title}{The plot title, as character. If none is provided, a generic
+title based on the analyte will be chosen. Override this by setting
+.  title = "", if needed.}
 
 \item{size}{The point size.}
 
@@ -35,5 +49,6 @@ for details.}
 A ggplot2 object.
 }
 \description{
-BINTIME plot
+#' @description
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }

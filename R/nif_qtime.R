@@ -61,6 +61,12 @@ add_bintime <- function(
 #' @param caption Show caption as logical.
 #' @param size The point size.
 #' @param alpha The alpha parameter for the data points.
+#' @param min_time The minimal time in units of TAFD, as numeric.
+#' @param max_time The minimal time in units of TAFD, as numeric.
+#' @param cfb Plot change from baseline, as logical.
+#' @param title The plot title, as character. If none is provided, a generic
+#'   title based on the analyte will be chosen. Override this by setting
+#'.  title = "", if needed.
 #'
 #' @returns A ggplot2 object.
 #' @export
@@ -68,8 +74,12 @@ bintime_plot <- function(
     obj,
     analyte,
     method = "fisher",
+    min_time = NULL,
+    max_time = NULL,
     points = FALSE,
+    cfb = FALSE,
     caption = TRUE,
+    title = NULL,
     size = 1.5,
     alpha = 1) {
   # input validation
@@ -83,12 +93,35 @@ bintime_plot <- function(
     stop(paste0("Method ", method, " not implemented!"))
   }
   # validate_numeric_param(breaks, allow_multiple = TRUE)
-  validate_logical_param(points)
-  validate_logical_param(caption, allow_null = TRUE)
-  validate_numeric_param(alpha)
+  validate_logical_param(points, "points")
+  validate_logical_param(cfb, "cfb")
+  validate_logical_param(caption, "caption", allow_null = TRUE)
+  validate_numeric_param(alpha, "alpha")
+  validate_numeric_param(min_time, "min_time", allow_null = TRUE)
+  validate_numeric_param(max_time, "max_time", allow_null = TRUE)
 
   if (is.null(caption))
     caption <- FALSE
+
+  # time limits
+  if (is.null(max_time)) {
+    max_time <- max(obj$TAFD, na.rm = TRUE)
+  }
+  if (is.null(min_time)) {
+    min_time <- min(obj$TAFD, na.rm = TRUE)
+  }
+
+  # change from baseline
+  if (cfb == TRUE) {
+    obj <- mutate(obj, DV = DVCFB)
+  }
+
+  # Make title
+  if (is.null(title)) {
+    title <- analyte
+    if (cfb == TRUE)
+      title <- paste0(title, " change from baseline")
+  }
 
   temp <- obj |>
     filter(.data$ANALYTE == analyte) |>
@@ -122,9 +155,8 @@ bintime_plot <- function(
       upper_ci = .data$mean + .data$margin_error,
       .by = c("BINTIME", "ANALYTE")) |>
     distinct() |>
-
     ggplot(aes(x = .data$BINTIME, y = .data$mean)) +
-    labs(y = analyte, x = "TAFD")
+    labs(y = analyte, x = "TAFD", title = title)
 
   if (points == TRUE) {
     out <- out +
@@ -138,11 +170,12 @@ bintime_plot <- function(
     geom_rect(aes(xmin = .data$BIN_LEFT, xmax = .data$BIN_RIGHT,
                   ymin = .data$lower_ci, ymax = .data$upper_ci),
               fill = "red", alpha = 0.3) +
+    xlim(min_time, max_time) +
     theme_bw()
 
   if (caption == TRUE) {
     out <- out +
-      labs(caption = "Mean with 90% CI")
+      labs(caption = "Red: Mean with 90% CI")
   }
 
   out
