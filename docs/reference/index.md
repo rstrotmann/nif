@@ -12,6 +12,8 @@
 
 - [`add_baseline()`](add_baseline.md) : Add a baseline covariate
 
+- [`add_bintime()`](add_bintime.md) : Make BINTIME field
+
 - [`add_bl_crcl()`](add_bl_crcl.md) : Add baseline creatinine clearance
   field.
 
@@ -62,6 +64,8 @@
 - [`analyte_overview()`](analyte_overview.md) : Analyte overview
 
 - [`analytes()`](analytes.md) : Analytes within a NIF or SDTM object
+
+- [`bintime_plot()`](bintime_plot.md) : BINTIME plot
 
 - [`compartments()`](compartments.md) : Compartments used in a nif
   object
@@ -255,6 +259,9 @@
 - [`plot(`*`<nif>`*`)`](plot.nif.md) : Plot NIF object.
 
 - [`plot(`*`<sdtm>`*`)`](plot.sdtm.md) : Plot SDTM object
+
+- [`qtime_plot()`](qtime_plot.md) **\[experimental\]** : Plot analyte
+  over time by discretized time after first dose (QTIME)
 
 - [`race_coding`](race_coding.md) : Race coding table
 

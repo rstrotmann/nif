@@ -19,6 +19,7 @@
 <url><loc>/reference/add_ae_observation.html</loc></url>
 <url><loc>/reference/add_analyte_mapping.html</loc></url>
 <url><loc>/reference/add_baseline.html</loc></url>
+<url><loc>/reference/add_bintime.html</loc></url>
 <url><loc>/reference/add_bl_crcl.html</loc></url>
 <url><loc>/reference/add_bl_creat.html</loc></url>
 <url><loc>/reference/add_bl_lbm.html</loc></url>
@@ -44,6 +45,7 @@
 <url><loc>/reference/analytes.data.frame.html</loc></url>
 <url><loc>/reference/analytes.html</loc></url>
 <url><loc>/reference/analytes.sdtm.html</loc></url>
+<url><loc>/reference/bintime_plot.html</loc></url>
 <url><loc>/reference/bmi_by_age.html</loc></url>
 <url><loc>/reference/cat_boxplot.html</loc></url>
 <url><loc>/reference/check_date_format.html</loc></url>
@@ -162,6 +164,7 @@
 <url><loc>/reference/pos_diff.html</loc></url>
 <url><loc>/reference/positive_or_zero.html</loc></url>
 <url><loc>/reference/pt_to_hours.html</loc></url>
+<url><loc>/reference/qtime_plot.html</loc></url>
 <url><loc>/reference/race_coding.html</loc></url>
 <url><loc>/reference/read_sdtm.html</loc></url>
 <url><loc>/reference/recode_race.html</loc></url>
