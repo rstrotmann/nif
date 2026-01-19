@@ -29,24 +29,33 @@ add_bintime <- function(
 
   breaks <- sort(bins$brks)
 
-  bin_median <- Vectorize(
-    function(left, right) {
-      tafd <- obj$TAFD
-      round(median(tafd[tafd >= left & tafd < right]))
-    }
-  )
+  # Cut and assign bin indices
+  obj <- obj |>
+    mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks = breaks, include.lowest = TRUE)))
 
+  # Calculate median TAFD for each bin from actual assignments
+  bin_medians <- obj |>
+    filter(!is.na(.data$.BINTIME_INDEX)) |>
+    reframe(
+      label = round(median(.data$TAFD, na.rm = TRUE)),
+      .by = .data$.BINTIME_INDEX
+    ) |>
+    arrange(.data$.BINTIME_INDEX)
+
+  # Create bin_par data frame with boundaries and calculated medians
   bin_par <- data.frame(
+    .BINTIME_INDEX = seq_along(breaks[-1]),
     left = breaks[-length(breaks)],
     right = breaks[-1]
   ) |>
-    mutate(label = bin_median(.data$left, .data$right))
+    left_join(bin_medians, by = ".BINTIME_INDEX") |>
+    mutate(label = ifelse(is.na(.data$label), round(.data$left), .data$label))
 
+  # Assign bin information to obj
   obj |>
-    mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks, bin_par$label))) |>
     mutate(BIN_LEFT = bin_par[.data$.BINTIME_INDEX, "left"]) |>
     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
-    mutate(BINTIME = round(bin_par[.data$.BINTIME_INDEX, "label"])) |>
+    mutate(BINTIME = bin_par[.data$.BINTIME_INDEX, "label"]) |>
     select(-c(".BINTIME_INDEX"))
 }
 
