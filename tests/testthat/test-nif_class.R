@@ -89,12 +89,6 @@ test_that("analyte_overview works", {
 })
 
 
-test_that("cmt_mapping works", {
-  expect_gt(nrow(compartments(examplinib_poc_nif)), 0)
-  expect_gt(nrow(compartments(examplinib_poc_min_nif)), 0)
-})
-
-
 test_that("index_dosing_interval works with single parent", {
   nif <- tribble(
     ~ID, ~TIME,  ~AMT, ~RATE, ~EVID, ~DV,  ~CMT, ~MDV, ~PARENT,

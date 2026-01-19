@@ -4,16 +4,14 @@
 \alias{add_bintime}
 \title{Make BINTIME field}
 \usage{
-add_bintime(obj, method = "fisher", silent = NULL)
+add_bintime(obj, method = "fisher")
 }
 \arguments{
 \item{obj}{A nif object.}
 
 \item{method}{Univariate class intervals method, can be one of jenks, kmeans,
 pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
-for details.}
-
-\item{silent}{Suppress messages.}
+for details. Default is fisher.}
 }
 \value{
 A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.

@@ -5,8 +5,7 @@
 #'
 #' @param method Univariate class intervals method, can be one of jenks, kmeans,
 #' pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
-#' for details.
-#' @param silent Suppress messages.
+#' for details. Default is fisher.
 #' @param obj A nif object.
 #'
 #' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
@@ -14,8 +13,8 @@
 #' @export
 add_bintime <- function(
     obj,
-    method = "fisher",
-    silent = NULL) {
+    method = "fisher"
+    ) {
   # input validation
   validate_nif(obj)
   validate_char_param(method, "method")
@@ -27,19 +26,24 @@ add_bintime <- function(
   # calculate bins
   obj <- ensure_tafd(obj)
   bins <- classInt::classIntervals(obj$TAFD, style = method)
-  bin_par <- attributes(bins)$parameters
 
   breaks <- sort(bins$brks)
-  labels <- bin_par[,3]
 
-  bin_par <- as.data.frame(bin_par[order(bin_par[,1]),]) |>
-    arrange(min) |>
-    mutate(left = breaks[1:length(breaks) - 1]) |>
-    mutate(right = breaks[-1]) |>
-    mutate(label = round(.data[["class mean"]]))
+  bin_median <- Vectorize(
+    function(left, right) {
+      tafd <- obj$TAFD
+      round(median(tafd[tafd >= left & tafd < right]))
+    }
+  )
+
+  bin_par <- data.frame(
+    left = breaks[-length(breaks)],
+    right = breaks[-1]
+  ) |>
+    mutate(label = bin_median(.data$left, .data$right))
 
   obj |>
-    mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks, labels))) |>
+    mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks, bin_par$label))) |>
     mutate(BIN_LEFT = bin_par[.data$.BINTIME_INDEX, "left"]) |>
     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
     mutate(BINTIME = round(bin_par[.data$.BINTIME_INDEX, "label"])) |>
@@ -113,7 +117,7 @@ bintime_plot <- function(
 
   # change from baseline
   if (cfb == TRUE) {
-    obj <- mutate(obj, DV = DVCFB)
+    obj <- mutate(obj, DV = .data$DVCFB)
   }
 
   # Make title
@@ -175,7 +179,8 @@ bintime_plot <- function(
 
   if (caption == TRUE) {
     out <- out +
-      labs(caption = "Red: Mean with 90% CI")
+      labs(caption = paste0(
+        "Red: Mean with 90% CI (binning: ", method, ")"))
   }
 
   out

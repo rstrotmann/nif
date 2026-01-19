@@ -796,7 +796,7 @@ analytes.data.frame <- function(obj) {
 }
 
 
-#' Analyte - compartment mapping
+#' Analyte-to-compartment mapping
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
@@ -804,10 +804,6 @@ analytes.data.frame <- function(obj) {
 #' @param obj A NIF object
 #' @return A data frame
 #' @export
-#' @keywords internal
-#' @examples
-#' cmt_mapping(examplinib_poc_nif)
-#' cmt_mapping(examplinib_poc_min_nif)
 cmt_mapping <- function(obj) {
   lifecycle::deprecate_warn("0.57.11", "cmt_mapping()", "compartments()")
 
