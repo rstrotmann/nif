@@ -19,6 +19,8 @@ make_plot_data_set(
 )
 }
 \arguments{
+\item{nif}{A nif object.}
+
 \item{analyte}{The analyte(s) to be plotted, as character.}
 
 \item{dose}{The dose(s) to be filtered for.}

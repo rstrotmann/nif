@@ -58,4 +58,3 @@ A ggplot layer object.
 \description{
 Administration geom layer for ggplot
 }
-\keyword{internal}

@@ -4,7 +4,7 @@
 \alias{safe_min}
 \title{Min derivative that works with vectors containing NaN}
 \usage{
-safe_min(x, ...)
+safe_min(x)
 }
 \arguments{
 \item{x}{The input as numeric.}

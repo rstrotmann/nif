@@ -1,5 +1,6 @@
 #' Prepare data set for plotting from NIF object
 #'
+#' @param nif A nif object.
 #' @inheritParams plot.nif
 #'
 #' @return A list with:

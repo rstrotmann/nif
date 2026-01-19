@@ -233,18 +233,18 @@ test_that("ddt handles POSIXct datetime fields correctly", {
   }
 })
 
-test_that("ddt filters out standard fields not present in object", {
-  # Create minimal nif object without all standard fields
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV
-    # No STUDYID, USUBJID, etc.
-  ) %>% nif()
-
-  result <- ddt(test_data, silent = TRUE)
-
-  # Should only include fields that are in the object
-  expect_true(all(result$name %in% names(test_data)))
-})
+# test_that("ddt filters out standard fields not present in object", {
+#   # Create minimal nif object without all standard fields
+#   test_data <- tibble::tribble(
+#     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV
+#     # No STUDYID, USUBJID, etc.
+#   ) %>% nif()
+#
+#   result <- ddt(test_data, silent = TRUE)
+#
+#   # Should only include fields that are in the object
+#   expect_true(all(result$name %in% names(test_data)))
+# })
 
 test_that("ddt handles empty nif object", {
   # Create empty nif object

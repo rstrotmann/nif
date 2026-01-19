@@ -762,7 +762,7 @@ plural <- function(word, plural) {
 #' @return The mean as numeric.
 #' @export
 #' @keywords internal
-safe_mean <- function(x, ...) {
+safe_mean <- function(x) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if (length(temp) == 0) {
     return(NA)
@@ -781,7 +781,7 @@ safe_mean <- function(x, ...) {
 #' @export
 #' @importFrom stats sd
 #' @keywords internal
-safe_sd <- function(x, ...) {
+safe_sd <- function(x) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if (length(temp) == 0) {
     return(NA)
@@ -799,7 +799,7 @@ safe_sd <- function(x, ...) {
 #' @return The mean as numeric.
 #' @export
 #' @keywords internal
-safe_min <- function(x, ...) {
+safe_min <- function(x) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if (length(temp) == 0) {
     return(NA)
