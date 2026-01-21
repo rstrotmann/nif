@@ -47,7 +47,7 @@ test_that("derive_cfb correctly handles baseline calculation with time ≤ 0", {
   test_nif <- nif(test_data)
   result <- derive_cfb(test_nif, baseline_filter = "TIME <= 0")
 
-  # Check baseline values (should be mean of all values with time ≤ 0)
+  # Check baseline values (should be mean of all values with time <= 0)
   expect_equal(result$DVBL[1], 10) # ID 1 baseline (mean of 8, 10, and 12)
   expect_equal(result$DVBL[5], 20) # ID 2 baseline (mean of 18, 20, and 22)
 

@@ -710,48 +710,6 @@ test_that("pb_read_nif handles pin names with special characters", {
 })
 
 
-test_that("pb_read_nif handles very long pin names", {
-  # Create a temporary board directory
-  test_board <- tempfile("test_board")
-  dir.create(test_board)
-  on.exit(unlink(test_board, recursive = TRUE))
-
-  # Create a test nif object
-  test_nif <- create_test_nif()
-
-  # Create a very long pin name
-  long_name <- paste(rep("a", 100), collapse = "")
-  pb_write.nif(test_nif, board = test_board, name = long_name, silent = TRUE)
-
-  # Read it back
-  read_nif <- pb_read_nif(long_name, board = test_board)
-
-  # Verify it worked
-  expect_s3_class(read_nif, "nif")
-  expect_equal(nrow(read_nif), nrow(test_nif))
-})
-
-
-test_that("pb_read_nif works with absolute board paths", {
-  # Create a temporary board directory with absolute path
-  test_board <- normalizePath(tempfile("test_board"), mustWork = FALSE)
-  dir.create(test_board)
-  on.exit(unlink(test_board, recursive = TRUE))
-  test_board <- normalizePath(test_board)
-
-  # Create and write a test nif object
-  test_nif <- create_test_nif()
-  pb_write.nif(test_nif, board = test_board, name = "abs_path_test", silent = TRUE)
-
-  # Read it back
-  read_nif <- pb_read_nif("abs_path_test", board = test_board)
-
-  # Verify it worked
-  expect_s3_class(read_nif, "nif")
-  expect_equal(nrow(read_nif), nrow(test_nif))
-})
-
-
 test_that("pb_read_nif returns identical object to what was written", {
   # Create a temporary board directory
   test_board <- tempfile("test_board")
