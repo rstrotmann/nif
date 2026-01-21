@@ -780,7 +780,7 @@ add_bl_crcl <- function(obj, method = egfr_cg, molar = TRUE) {
   )
   if (length(missing_columns) > 0) {
     stop(paste0(
-      "Missing coluns: ", nice_enumeration(missing_columns), "!"
+      "Missing columns: ", nice_enumeration(missing_columns), "!"
     ))
   }
 

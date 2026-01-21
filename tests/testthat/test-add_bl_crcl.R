@@ -89,7 +89,7 @@ test_that("add_bl_crcl stops when BL_CREAT is missing", {
 
   expect_error(
     result <- add_bl_crcl(test_nif),
-    "Missing coluns: BL_CREAT!"
+    "Missing columns: BL_CREAT!"
   )
 })
 
@@ -104,7 +104,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
 
   expect_error(
     add_bl_crcl(test_nif),
-    "Missing coluns"
+    "Missing columns"
   )
 
   # Missing SEX
@@ -116,7 +116,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
 
   expect_error(
     add_bl_crcl(test_nif2),
-    "Missing coluns"
+    "Missing columns"
   )
 
   # Missing RACE
@@ -128,7 +128,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
 
   expect_error(
     add_bl_crcl(test_nif3),
-    "Missing coluns"
+    "Missing columns"
   )
 
   # Missing WEIGHT
@@ -140,7 +140,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
 
   expect_error(
     add_bl_crcl(test_nif4),
-    "Missing coluns"
+    "Missing columns"
   )
 })
 
