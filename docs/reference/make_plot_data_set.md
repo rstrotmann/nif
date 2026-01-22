@@ -22,6 +22,10 @@ make_plot_data_set(
 
 ## Arguments
 
+- nif:
+
+  A nif object.
+
 - analyte:
 
   The analyte(s) to be plotted, as character.

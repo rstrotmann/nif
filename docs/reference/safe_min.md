@@ -5,7 +5,7 @@ Min derivative that works with vectors containing NaN
 ## Usage
 
 ``` r
-safe_min(x, ...)
+safe_min(x)
 ```
 
 ## Arguments

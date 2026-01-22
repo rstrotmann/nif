@@ -5,7 +5,7 @@ Mean derivative that works with vectors containing NaN
 ## Usage
 
 ``` r
-safe_mean(x, ...)
+safe_mean(x)
 ```
 
 ## Arguments

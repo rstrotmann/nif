@@ -35,7 +35,7 @@ A data frame
 
 ``` r
 nca_summary(nca(examplinib_sad_nif, analyte = "RS2023"))
-#> 
+#> ℹ Parent set to RS2023
 #> # A tibble: 45 × 9
 #> # Groups:   DOSE [9]
 #>     DOSE PPTESTCD   geomean geocv median    iqr    min    max     n

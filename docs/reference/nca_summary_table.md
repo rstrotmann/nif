@@ -40,7 +40,7 @@ A data frame
 
 ``` r
 nca_summary_table(nca(examplinib_sad_nif, analyte = "RS2023"))
-#> 
+#> ℹ Parent set to RS2023
 #> # A tibble: 9 × 7
 #> # Groups:   DOSE [9]
 #>    DOSE     n aucinf.obs    auclast       cmax         half.life tmax      

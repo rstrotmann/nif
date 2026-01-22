@@ -1,6 +1,6 @@
 # BINTIME plot
 
-BINTIME plot
+\#' @description **\[experimental\]**
 
 ## Usage
 
@@ -9,8 +9,12 @@ bintime_plot(
   obj,
   analyte,
   method = "fisher",
+  min_time = NULL,
+  max_time = NULL,
   points = FALSE,
+  cfb = FALSE,
   caption = TRUE,
+  title = NULL,
   size = 1.5,
   alpha = 1
 )
@@ -32,13 +36,31 @@ bintime_plot(
   pretty, quantile, hclust, sd, bclust or fisher. See
   classInt::classInterval() for details.
 
+- min_time:
+
+  The minimal time in units of TAFD, as numeric.
+
+- max_time:
+
+  The minimal time in units of TAFD, as numeric.
+
 - points:
 
   Plot original data points as logical.
 
+- cfb:
+
+  Plot change from baseline, as logical.
+
 - caption:
 
   Show caption as logical.
+
+- title:
+
+  The plot title, as character. If none is provided, a generic title
+  based on the analyte will be chosen. Override this by setting . title
+  = "", if needed.
 
 - size:
 

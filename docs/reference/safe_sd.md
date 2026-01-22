@@ -5,7 +5,7 @@ SD derivative that works with vectors containing NaN
 ## Usage
 
 ``` r
-safe_sd(x, ...)
+safe_sd(x)
 ```
 
 ## Arguments

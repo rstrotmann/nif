@@ -2,6 +2,8 @@
 
 ## All functions
 
+- [`GeomAdmin`](GeomAdmin.md) : GeomAdmin ggproto object
+
 - [`adam()`](adam.md) : adam object class constructor
 
 - [`add_administration()`](add_administration.md) : Add administration
@@ -12,7 +14,8 @@
 
 - [`add_baseline()`](add_baseline.md) : Add a baseline covariate
 
-- [`add_bintime()`](add_bintime.md) : Make BINTIME field
+- [`add_bintime()`](add_bintime.md) **\[experimental\]** : Make BINTIME
+  field
 
 - [`add_bl_crcl()`](add_bl_crcl.md) : Add baseline creatinine clearance
   field.
@@ -65,7 +68,11 @@
 
 - [`analytes()`](analytes.md) : Analytes within a NIF or SDTM object
 
-- [`bintime_plot()`](bintime_plot.md) : BINTIME plot
+- [`bintime_plot()`](bintime_plot.md) **\[experimental\]** : BINTIME
+  plot
+
+- [`cmt_mapping()`](cmt_mapping.md) **\[deprecated\]** :
+  Analyte-to-compartment mapping
 
 - [`compartments()`](compartments.md) : Compartments used in a nif
   object
@@ -160,6 +167,8 @@
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID
   in the data set
 
+- [`geom_admin()`](geom_admin.md) : Administration geom layer for ggplot
+
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection
 
@@ -195,13 +204,8 @@
 - [`n_administrations()`](n_administrations.md) : Number of
   administrations per subject
 
-- [`nca()`](nca.md) : Non-compartmental analysis
-
-- [`nca1()`](nca1.md) **\[experimental\]** : Non-compartmental analysis
-  of NIF data
-
-- [`nca2()`](nca2.md) : Non-compartmental analysis with analyte-based
-  grouping
+- [`nca()`](nca.md) **\[experimental\]** : Non-compartmental analysis of
+  NIF data
 
 - [`nca_from_pp()`](nca_from_pp.md) : Generate NCA table from the
   SDTM.PP domain
@@ -226,9 +230,6 @@
   from sdtm object
 
 - [`nif_disclaimer()`](nif_disclaimer.md) : Disclaimer statement
-
-- [`nif_nca_new()`](nif_nca_new.md) : Perform Non-Compartmental Analysis
-  (NCA) for each subject and analyte
 
 - [`nif_option()`](nif_option.md) : Set or get global options
 
@@ -279,6 +280,9 @@
 
 - [`standardize_date_format()`](standardize_date_format.md) : Convert
   date fields to POSIX format
+
+- [`stat_admin()`](stat_admin.md) : ggplot stat for treatment
+  administrations
 
 - [`studies()`](studies.md) : Studies within a nif object
 

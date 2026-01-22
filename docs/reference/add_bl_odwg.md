@@ -49,7 +49,7 @@ A nif object.
 
 ## Details
 
-- normal: TB & AST ≤ upper limit of normal (ULN)
+- normal: TB & AST \<= upper limit of normal (ULN)
 
 - mild hepatic dysfunction: TB \> ULN to 1.5 x ULN or AST \> ULN
 
