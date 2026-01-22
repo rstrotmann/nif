@@ -29,7 +29,7 @@ test_that("derive_cfb works with valid input", {
 })
 
 
-test_that("derive_cfb correctly handles baseline calculation with time ≤ 0", {
+test_that("derive_cfb correctly handles baseline calculation with time <= 0", {
   # Create test data with multiple pre-dose values
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,

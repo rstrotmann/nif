@@ -24,10 +24,6 @@
 #'
 #' @return A data frame.
 #' @export
-#'
-#' @examples
-#' head(correlate_obs(examplinib_poc_nif, "RS2023", "RS2023487A"), 3)
-#'
 correlate_obs <- function(
   obj,
   indep_analyte,

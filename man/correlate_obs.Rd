@@ -45,7 +45,3 @@ independent observations, with the (summarized) dependent observations and
 the respective summarized observation times for the dependent observations as
 additional columns.
 }
-\examples{
-head(correlate_obs(examplinib_poc_nif, "RS2023", "RS2023487A"), 3)
-
-}

@@ -57,6 +57,6 @@ NA values are set to zero!
 Negative concentrations are set to zero!
 }
 \examples{
-head(nca1(examplinib_sad_nif, time = "TAD"))
-head(nca1(examplinib_fe_nif, time = "TIME", group = "FASTED"))
+head(nca(examplinib_sad_nif, time = "TAD"))
+head(nca(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 }

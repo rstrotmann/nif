@@ -29,8 +29,8 @@
 #' @export
 #'
 #' @examples
-#' head(nca1(examplinib_sad_nif, time = "TAD"))
-#' head(nca1(examplinib_fe_nif, time = "TIME", group = "FASTED"))
+#' head(nca(examplinib_sad_nif, time = "TAD"))
+#' head(nca(examplinib_fe_nif, time = "TIME", group = "FASTED"))
 nca <- function(
     nif,
     analyte = NULL,
@@ -74,13 +74,49 @@ nca <- function(
   # assign parent if not defined
   if (is.null(parent)) {
     analytes_parents <- analyte_overview(nif)
-    parent <- analytes_parents[analytes_parents$ANALYTE == current_analyte,
-                               "PARENT"]
+
+    if (nrow(analytes_parents) == 0) {
+      stop("Cannot determine parent.")
+    }
+
+    if (!current_analyte %in% analytes_parents$ANALYTE) {
+      stop(paste0(
+        "Analyte '", current_analyte,
+        "' not found in analyte_overview(). Cannot determine parent."
+      ))
+    }
+
+    parent_rows <- analytes_parents[analytes_parents$ANALYTE == current_analyte, ]
+
+    if (nrow(parent_rows) == 0) {
+      stop(paste0(
+        "Could not find parent for analyte '", current_analyte,
+        "' in analyte_overview()."
+      ))
+    }
+
+    if (nrow(parent_rows) > 1) {
+      stop(paste0(
+        "Multiple parent entries found for analyte '", current_analyte,
+        "' in analyte_overview()."
+      ))
+    }
+
+    parent <- parent_rows$PARENT[1]
+
+    if (is.na(parent) || length(parent) == 0 || (is.character(parent) && nchar(parent) == 0)) {
+      stop(paste0(
+        "Could not determine parent for analyte '", current_analyte,
+        "'. Parent is missing or empty."
+      ))
+    }
+
     conditional_cli(
       cli_alert_info(paste0("Parent set to ", parent)),
       silent = silent
     )
   }
+
   if (!parent %in% parents(nif))
     stop("Parent not found (", parent, ")!")
 
@@ -112,12 +148,13 @@ nca <- function(
     filter(.data$ANALYTE == current_analyte) |>
     filter(.data$EVID == 0) |>
     select(any_of(
-      unique(c("ID", "TIME", time, "DI", "EVID", "ANALYTE", "DOSE", "DV", group))
+      # unique(c("ID", "TIME", time, "DI", "EVID", "ANALYTE", "DOSE", "DV", group))
+      unique(c("ID", "TIME", time, "DI", "EVID", "ANALYTE", "DOSE", "DV", group, keep))
     ))
 
   # preserve the columns to keep
   keep_columns <- conc |>
-    select(c("ID", "DOSE", "DI", any_of(c(keep)))) |>
+    select(any_of(c("ID", "DOSE", "DI", keep))) |>
     distinct()
 
   # deal with negative concentrations
@@ -141,8 +178,8 @@ nca <- function(
 
   if (n_dupl != 0) {
     conditional_cli(
-      cli_alert_warning(paste0(n_dupl, " duplicate observations in NCA for ",
-                               analyte)),
+      cli_alert_warning(paste0(
+        n_dupl, " duplicate observations in NCA for ", current_analyte)),
       silent = silent
     )
 
@@ -195,7 +232,7 @@ nca <- function(
   }
 
   # grouping
-  group_string <- paste(group, collapse = "+")
+  group_string <- if (!is.null(group)) paste(group, collapse = "+") else ""
   if (group_string != "") {
     conditional_cli(
       cli_alert_info(paste0("NCA: Group by ", group_string)),
@@ -216,10 +253,16 @@ nca <- function(
     )
   )
 
-  nca$result |>
+  result <- nca$result |>
     left_join(keep_columns, by = c("ID", "DI")) |>
-    as.data.frame() |>
-    dplyr::mutate_at(group, as.factor)
+    as.data.frame()
+
+  if (!is.null(group)) {
+    result <- result |>
+      dplyr::mutate(dplyr::across(dplyr::all_of(group), as.factor))
+  }
+
+  result
 }
 
 
