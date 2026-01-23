@@ -16,6 +16,10 @@ knitr::opts_chunk$set(
 
 # INTRODUCTION
 
+This is a tutorial that demonstrates how the sample SDTM data provided by the
+'pharmaversesdtm' package 
+
+
 
 This tutorial contains live code that depends on the following R packages:
 

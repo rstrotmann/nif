@@ -89,22 +89,117 @@
 #' R package version 1.3.1.9011, commit 55eba18f3d1d4b19e4fda886ff2da78582cae933,
 #' <https://github.com/pharmaverse/pharmaversesdtm>.
 #'
-#' This is a fictional study with the title:
-#' "Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in
-#' Patients with Mild to Moderate Alzheimers Disease."
+#' @format ##
+#' \preformatted{
+#' -------- SDTM data set summary --------
+#' Study CDISCPILOT01
 #'
-#' @format ## `cdiscpilot01_sdtm`
-#' A sdtm object with the following domains
-#' \describe{
-#' \item{dm}{Demographics}
-#' \item{ex}{Exposure}
-#' \item{vs}{Vital signs}
-#' \item{pc}{Pharmacokinetic concentrations}
-#' \item{pp}{Pharmacokinetic parameters}
-#' \item{lb}{Laboratory data}
-#' \item{ts}{Trial summary}
-#' \item{eg}{ECG data}
-#' \item{ae}{Adverse events}
+#' Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in
+#' Patients with Mild to Moderate Alzheimers Disease.
+#'
+#' Data disposition
+#'   DOMAIN   SUBJECTS   OBSERVATIONS
+#'   dm       306        306
+#'   ex       254        591
+#'   vs       254        29643
+#'   pc       254        4572
+#'   pp       168        2688
+#'   lb       254        59580
+#'   ts       0          0
+#'   eg       254        26717
+#'   ae       225        1191
+#'
+#' Arms (DM):
+#'   ACTARMCD   ACTARM
+#'   Pbo        Placebo
+#'   Scrnfail   Screen Failure
+#'   Xan_Hi     Xanomeline High Dose
+#'   Xan_Lo     Xanomeline Low Dose
+#'
+#' Treatments (EX):
+#'   PLACEBO, XANOMELINE
+#'
+#' PK sample specimens (PC):
+#'   PLASMA, URINE
+#'
+#' PK analytes (PC):
+#'   PCTEST       PCTESTCD
+#'   XANOMELINE   XAN
 #' }
-#' @source <https://github.com/pharmaverse/pharmaversesdtma>
+#'
+#' @source <https://github.com/pharmaverse/pharmaversesdtm>
 "cdiscpilot01_sdtm"
+
+
+
+#' Pharmaverse sample nif object
+#'
+#' A nif object based on the CDISCPILOT01 data set exported from the
+#' 'pharmaversesdtm' package including administration events for XAN and
+#' PLACEBO, and observations for XAN, ALT and HGB.
+#'
+#' \preformatted{
+#' ----- NONMEM Input Format (NIF) data -----
+#' 8988 observations from 254 subjects across 1 study
+#' Analytes: ALT, HGB, CFB_HGB, XAN and PLACEBO
+#' 111 males (43.7%), 143 females (56.3%)
+#'
+#' Columns:
+#'   REF, ID, STUDYID, USUBJID, AGE, SEX, RACE, WEIGHT, DTC, TIME, NTIME, TAFD,
+#'   TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE, MDV, ACTARMCD,
+#'   IMPUTATION, DV, BL_CREAT, BL_CRCL, BL_RENAL, DL
+#'
+#' Hash: f36650cc3aa5ecdad143a87e418b1439
+#'
+#' Data (selected columns):
+#'   ID   NTIME   TIME      TAD       ANALYTE   EVID   CMT   AMT   DOSE   DV
+#'   1    -192    0         -153.25   ALT       0      3     0     0      27
+#'   1    -192    0         -153.25   HGB       0      4     0     0      8.875
+#'   1    -192    0         -153.25   CFB_HGB   0      5     0     0      0
+#'   1    NA      152.75    -0.5      XAN       0      2     0     0      0
+#'   1    0       153.25    0         PLACEBO   1      1     0     0      NA
+#'   1    0.083   153.333   0.083     XAN       0      2     0     0      NA
+#'   1    0.5     153.75    0.5       XAN       0      2     0     0      NA
+#'   1    NA      154.25    1         XAN       0      2     0     0      NA
+#'   1    NA      154.75    1.5       XAN       0      2     0     0      NA
+#'   1    NA      155.25    2         XAN       0      2     0     0      NA
+#' 38465 more rows
+#' }
+#'
+#' @format
+#' nif object with 38475 rows and 29 columns:
+#'
+#' \describe{
+#'  \item{REF}{row number}
+#'  \item{ID}{subject ID}
+#'  \item{STUDYID}{study ID}
+#'  \item{USUBJID}{unique subject ID}
+#'  \item{AGE}{age in years}
+#'  \item{SEX}{sex (0: male, 1, female)}
+#'  \item{RACE}{race}
+#'  \item{WEIGHT}{baseline body weight}
+#'  \item{DTC}{date time code for event}
+#'  \item{TIME}{time in hours}
+#'  \item{NTIME}{nominal time for event in hours}
+#'  \item{TAFD}{time after individual first dose}
+#'  \item{TAD}{time after last dose}
+#'  \item{EVID}{event ID (0: observation, 1: administraiton)}
+#'  \item{AMT}{amount in mg}
+#'  \item{ANALYTE}{analyte name}
+#'  \item{CMT}{analyte compartment}
+#'  \item{PARENT}{parent analyte}
+#'  \item{TRTDY}{treatment day}
+#'  \item{METABOLITE}{metabolite (0: no, 1: yes)}
+#'  \item{DOSE}{dose in mg}
+#'  \item{MDV}{missing dependent variable}
+#'  \item{ACTARMCD}{actual arm code}
+#'  \item{IMPUTATION}{imputation note}
+#'  \item{DV}{dependent variable}
+#'  \item{BL_CREAT}{baseline creatinine in umol/l}
+#'  \item{BL_CRCL}{baseline creatinine clearance in ml/min}
+#'  \item{BL_RENAL}{baseline renal function category}
+#'  \item{DL}{dose level in mg}
+#'  }
+#'
+#' @source Created from <https://github.com/pharmaverse/pharmaversesdtm>
+"cdiscpilot01_nif"

@@ -5,24 +5,48 @@
 \alias{cdiscpilot01_sdtm}
 \title{Pharmaverse sample SDTM data}
 \format{
-\subsection{\code{cdiscpilot01_sdtm}}{
+\subsection{}{
 
-A sdtm object with the following domains
-\describe{
-\item{dm}{Demographics}
-\item{ex}{Exposure}
-\item{vs}{Vital signs}
-\item{pc}{Pharmacokinetic concentrations}
-\item{pp}{Pharmacokinetic parameters}
-\item{lb}{Laboratory data}
-\item{ts}{Trial summary}
-\item{eg}{ECG data}
-\item{ae}{Adverse events}
+\preformatted{
+-------- SDTM data set summary --------
+Study CDISCPILOT01
+
+Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in
+Patients with Mild to Moderate Alzheimers Disease.
+
+Data disposition
+  DOMAIN   SUBJECTS   OBSERVATIONS
+  dm       306        306
+  ex       254        591
+  vs       254        29643
+  pc       254        4572
+  pp       168        2688
+  lb       254        59580
+  ts       0          0
+  eg       254        26717
+  ae       225        1191
+
+Arms (DM):
+  ACTARMCD   ACTARM
+  Pbo        Placebo
+  Scrnfail   Screen Failure
+  Xan_Hi     Xanomeline High Dose
+  Xan_Lo     Xanomeline Low Dose
+
+Treatments (EX):
+  PLACEBO, XANOMELINE
+
+PK sample specimens (PC):
+  PLASMA, URINE
+
+PK analytes (PC):
+  PCTEST       PCTESTCD
+  XANOMELINE   XAN
 }
 }
 }
 \source{
-\url{https://github.com/pharmaverse/pharmaversesdtma}
+\url{https://github.com/pharmaverse/pharmaversesdtm}
 }
 \usage{
 cdiscpilot01_sdtm
@@ -37,9 +61,5 @@ Shuliar V (2025).
 \emph{pharmaversesdtm: SDTM Test Data for the 'Pharmaverse'Family of Packages}.
 R package version 1.3.1.9011, commit 55eba18f3d1d4b19e4fda886ff2da78582cae933,
 \url{https://github.com/pharmaverse/pharmaversesdtm}.
-
-This is a fictional study with the title:
-"Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in
-Patients with Mild to Moderate Alzheimers Disease."
 }
 \keyword{datasets}
