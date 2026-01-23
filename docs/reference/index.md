@@ -71,6 +71,9 @@
 - [`bintime_plot()`](bintime_plot.md) **\[experimental\]** : BINTIME
   plot
 
+- [`cdiscpilot01_nif`](cdiscpilot01_nif.md) : Pharmaverse sample nif
+  object
+
 - [`cdiscpilot01_sdtm`](cdiscpilot01_sdtm.md) : Pharmaverse sample SDTM
   data
 
