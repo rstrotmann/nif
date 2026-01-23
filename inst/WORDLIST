@@ -20,6 +20,7 @@ BMI
 BMJ
 BRTHDTC
 Biomed
+Bundfuss
 Bzr
 CDISC
 CDISCPILOT
@@ -41,6 +42,7 @@ DV
 DVBL
 DVCFB
 DVRTB
+Dahnert
 EG
 EGFR
 ELTM
@@ -58,6 +60,7 @@ Gault
 GeomAdmin
 GeomVline
 Glomerular
+HGB
 HL
 Hy's
 IEC
@@ -71,6 +74,7 @@ NCA
 NCI
 NONMEM
 NTIME
+Namai
 Nephron
 ODWG
 ORCID
@@ -85,9 +89,8 @@ POC
 POSIXct
 PPCAT
 PPSCAT
-PPSTRESN
-PPTESTCD
 Pathol
+Patil
 Pharmacokinetics
 Pharmacol
 Pharmacometrics
@@ -107,6 +110,7 @@ SDTM
 SLD
 STRESN
 STUDYIDs
+Shuliar
 Snelling
 Syst
 TAFD
@@ -123,6 +127,7 @@ USUBJIDs
 VISIDY
 VISITDY
 VSBLFL
+XAN
 XPT
 adam
 ae
@@ -189,12 +194,11 @@ pcrftdtc
 pharmacodynamic
 pharmacokinetic
 pharmacometric
+pharmaversesdtm
 phuse
 pinboard
-pknca
 pkncal
 pre
-proto
 psp
 pst
 raynaud

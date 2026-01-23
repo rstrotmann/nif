@@ -58,8 +58,7 @@ An sdtm object based on the CDISCPILOT01 data set exported from the
 \details{
 Patil L, Bundfuss S, Dahnert K, Gautier F, Mancini E, Namai T, Nguyen V,
 Shuliar V (2025).
-\emph{pharmaversesdtm: SDTM Test Data for the 'Pharmaverse'Family of Packages}.
-R package version 1.3.1.9011, commit 55eba18f3d1d4b19e4fda886ff2da78582cae933,
+\emph{pharmaversesdtm: SDTM Test Data for the 'Pharmaverse' Family of Packages}.
 \url{https://github.com/pharmaverse/pharmaversesdtm}.
 }
 \keyword{datasets}

@@ -85,8 +85,7 @@
 #'
 #' Patil L, Bundfuss S, Dahnert K, Gautier F, Mancini E, Namai T, Nguyen V,
 #' Shuliar V (2025).
-#' _pharmaversesdtm: SDTM Test Data for the 'Pharmaverse'Family of Packages_.
-#' R package version 1.3.1.9011, commit 55eba18f3d1d4b19e4fda886ff2da78582cae933,
+#' _pharmaversesdtm: SDTM Test Data for the 'Pharmaverse' Family of Packages_.
 #' <https://github.com/pharmaverse/pharmaversesdtm>.
 #'
 #' @format ##
@@ -183,7 +182,7 @@
 #'  \item{NTIME}{nominal time for event in hours}
 #'  \item{TAFD}{time after individual first dose}
 #'  \item{TAD}{time after last dose}
-#'  \item{EVID}{event ID (0: observation, 1: administraiton)}
+#'  \item{EVID}{event ID (0: observation, 1: administration)}
 #'  \item{AMT}{amount in mg}
 #'  \item{ANALYTE}{analyte name}
 #'  \item{CMT}{analyte compartment}

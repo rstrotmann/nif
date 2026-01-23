@@ -21,7 +21,7 @@ nif object with 38475 rows and 29 columns:
 \item{NTIME}{nominal time for event in hours}
 \item{TAFD}{time after individual first dose}
 \item{TAD}{time after last dose}
-\item{EVID}{event ID (0: observation, 1: administraiton)}
+\item{EVID}{event ID (0: observation, 1: administration)}
 \item{AMT}{amount in mg}
 \item{ANALYTE}{analyte name}
 \item{CMT}{analyte compartment}
