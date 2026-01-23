@@ -48,8 +48,8 @@ Suggests:
     withr,
     writexl,
     rxode2,
-    pharmaversesdtm,
-    spelling
+    spelling,
+    pharmaversesdtm
 VignetteBuilder:
     dplyr,
     knitr,
@@ -61,4 +61,4 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Language: en-US
-Config/testthat/parallel: false
+Config/testthat/parallel: true

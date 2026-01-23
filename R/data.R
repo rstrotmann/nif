@@ -76,3 +76,35 @@
 #'     ...
 #' }
 "domain_model"
+
+
+#' Pharmaverse sample SDTM data
+#'
+#' An sdtm object based on the CDISCPILOT01 data set exported from the
+#' 'pharmaversesdtm' package:
+#'
+#' Patil L, Bundfuss S, Dahnert K, Gautier F, Mancini E, Namai T, Nguyen V,
+#' Shuliar V (2025).
+#' _pharmaversesdtm: SDTM Test Data for the 'Pharmaverse'Family of Packages_.
+#' R package version 1.3.1.9011, commit 55eba18f3d1d4b19e4fda886ff2da78582cae933,
+#' <https://github.com/pharmaverse/pharmaversesdtm>.
+#'
+#' This is a fictional study with the title:
+#' "Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in
+#' Patients with Mild to Moderate Alzheimers Disease."
+#'
+#' @format ## `cdiscpilot01_sdtm`
+#' A sdtm object with the following domains
+#' \describe{
+#' \item{dm}{Demographics}
+#' \item{ex}{Exposure}
+#' \item{vs}{Vital signs}
+#' \item{pc}{Pharmacokinetic concentrations}
+#' \item{pp}{Pharmacokinetic parameters}
+#' \item{lb}{Laboratory data}
+#' \item{ts}{Trial summary}
+#' \item{eg}{ECG data}
+#' \item{ae}{Adverse events}
+#' }
+#' @source <https://github.com/pharmaverse/pharmaversesdtma>
+"cdiscpilot01_sdtm"
