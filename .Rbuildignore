@@ -9,3 +9,5 @@
 ^pkgdown$
 ^data-raw$
 ^revdep$
+^cran-comments\.md$
+^\.github$

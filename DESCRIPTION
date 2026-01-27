@@ -16,7 +16,7 @@ License: MIT + file LICENSE
 URL: https://github.com/rstrotmann/nif,
     https://rstrotmann.github.io/nif/reference/index.html
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1.0)
 Imports:
     dplyr,
     tidyselect,
