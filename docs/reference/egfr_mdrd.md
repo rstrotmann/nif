@@ -1,6 +1,6 @@
 # Glomerular filtration rate estimation from serum creatinine (MDRD)
 
-Source: doi.org/10.7326/0003-4819-130-6-199903160-00002.
+Source: <doi:10.7326/0003-4819-130-6-199903160-00002>.
 
 ## Usage
 

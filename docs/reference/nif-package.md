@@ -1,8 +1,8 @@
 # nif: Build and Explore NONMEM Input Format Data Sets from Clinical Study Data
 
 A system to convert clinical study data from the Study Data Tabulation
-Model (SDTM) format into the NONMEM Input Format (NIF) structure for
-downstream nonlinear mixed effects modeling, e.g., using NONMEM or
+Model (SDTM) format into the 'NONMEM' Input Format (NIF) structure for
+downstream nonlinear mixed effects modeling, e.g., using 'NONMEM' or
 'nlmixr2'. The core functions support the aggregation of drug
 administration, observations and covariate data in a stepwise manner. A
 further set of functions support exploratory data analysis of SDTM and

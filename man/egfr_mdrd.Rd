@@ -26,7 +26,7 @@ compatibility.}
 Estimated GFR in ml/min/1.73 m^2.
 }
 \description{
-Source: doi.org/10.7326/0003-4819-130-6-199903160-00002.
+Source: \url{doi:10.7326/0003-4819-130-6-199903160-00002}.
 }
 \details{
 \deqn{

@@ -28,7 +28,7 @@ that is often used for population pharmacokinetic/pharmacodynamic (PK/PD)
 modeling expects the input data set to follow specific conventions summarized in 
 *Bauer, R.J. (2019), NONMEM Tutorial Part I: Description of Commands and
 Options, With Simple Examples of Population Analysis. CPT Pharmacometrics Syst.
-Pharmacol., 8: 525-537* (doi.org/10.1002/psp4.12404).
+Pharmacol., 8: 525-537* <doi:10.1002/psp4.12404>.
 
 This package provides functions to sequentially aggregate drug administrations,
 PK/PD observations and covariates into a NONMEM-compliant analysis data set

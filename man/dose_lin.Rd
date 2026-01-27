@@ -24,7 +24,7 @@ A data frame.
 Currently experimental. Don't use in production!
 
 Using the power model described by
-Hummel, 2009, doi.org/10.1002/pst.326.
+Hummel, 2009, \url{doi:10.1002/pst.326}.
 In brief, a power model is fitted with
 
 ln(AUC) = mu + beta* ln(dose)

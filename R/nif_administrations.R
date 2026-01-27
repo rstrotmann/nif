@@ -378,8 +378,8 @@ make_administration <- function(
 #' For an overview on the representation of administration events in NONMEM
 #' Input Format compliant data sets, see: Bauer, R.J. (2019), NONMEM Tutorial
 #' Part I: Description of Commands and Options, With Simple Examples of
-#' Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537.
-#' doi.org/10.1002/psp4.12404 \doi{doi:10.1086/723805}.
+#' Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537
+#' <doi:10.1002/psp4.12404>.
 #'
 #' To add observation events to the [nif::nif] object, see
 #' [nif::add_observation()].

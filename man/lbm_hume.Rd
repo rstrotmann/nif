@@ -18,7 +18,7 @@ Lean body mass in kg, as numeric. Returns NA for invalid inputs.
 }
 \description{
 Source: Hume R. Prediction of lean body mass from height and weight. J Clin
-Pathol. 1966 Jul;19(4):389-91, doi.org/10.1136/jcp.19.4.389.
+Pathol. 1966 Jul;19(4):389-91, \url{doi:10.1136/jcp.19.4.389}.
 }
 \seealso{
 \code{\link[=lbm_boer]{lbm_boer()}}

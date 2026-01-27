@@ -1,7 +1,7 @@
 # Serum creatinine estimation from eGFR (MDRD)
 
 Inverse of the function published in
-doi.org/10.7326/0003-4819-130-6-199903160-00002.
+<doi:10.7326/0003-4819-130-6-199903160-00002>.
 
 ## Usage
 
