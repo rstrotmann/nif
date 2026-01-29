@@ -44,7 +44,7 @@ calculate_bmi <- function(height, weight) {
 #' Source: Raynaud M, et al., Race-free estimated glomerular
 #' filtration rate equation in kidney transplant recipients: development and
 #' validation study. BMJ. 2023 May 31;381:e073654,
-#' <https://doi.org/10.1136/bmj-2022-073654>.
+#' \doi{10.1136/bmj-2022-073654}.
 #'
 #' \deqn{
 #'  eGFR = e^{4.43 - 0.82 * ln(crea) - 0.012 * crea^2 - 0.006 * age + 0.18 *
@@ -82,7 +82,7 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA,
 #' Serum creatinine estimation from eGFR (Raynaud method)
 #'
 #' Inverse of the function published in
-#' <https://doi.org/10.1136/bmj-2022-073654>.
+#' \doi{10.1136/bmj-2022-073654}.
 #'
 #' To convert crea from mg/dl to umol/l, multiply by 88.4.
 #'
@@ -114,7 +114,7 @@ crea_raynaud <- function(egfr, age, sex, race = "") {
 
 #' Glomerular filtration rate estimation from serum creatinine (MDRD)
 #'
-#' Source: <https://doi.org/10.7326/0003-4819-130-6-199903160-00002>.
+#' Source: \doi{10.7326/0003-4819-130-6-199903160-00002}.
 #'
 #' \deqn{
 #'  eGFR = 175 * crea^{1.154} * age^{0.203} * 0.742 (female) * 1.212 (black)
@@ -149,7 +149,7 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
 #' Serum creatinine estimation from eGFR (MDRD)
 #'
 #' Inverse of the function published in
-#' <https://doi.org/10.7326/0003-4819-130-6-199903160-00002>.
+#' \doi{10.7326/0003-4819-130-6-199903160-00002}.
 #'
 #' To convert crea from mg/dl to umol/l, multiply by 88.4.
 #'
@@ -174,7 +174,7 @@ crea_mdrd <- function(egfr, age, sex, race = "") {
 
 #' Glomerular filtration rate estimation from serum creatinine (Cockcroft-Gault)
 #'
-#' Reference: Cockcroft and Gault, Nephron 1976, <https://doi.org/10.1159/000180580>.
+#' Reference: Cockcroft and Gault, Nephron 1976, \doi{10.1159/000180580}.
 #'
 #' @param crea Serum creatinine in mg/dl.
 #' @param age Age in years.
@@ -245,7 +245,7 @@ is_male <- function(sex) {
 #'
 #' Source: Caruso D, et al., Lean Body Weight-Tailored Iodinated
 #' Contrast Injection in Obese Patient: Boer versus James Formula. Biomed Res
-#' Int. 2018 Aug 13;2018:8521893, <https://doi.org/10.1155/2018/8521893>.
+#' Int. 2018 Aug 13;2018:8521893, \doi{10.1155/2018/8521893}.
 #'
 #' The Boer formula is one of the most commonly used formulas for estimating
 #' lean body mass. It provides separate equations for males and females based on
@@ -281,7 +281,7 @@ lbm_boer <- function(weight, height, sex) {
 #' Lean body mass (Hume formula)
 #'
 #' Source: Hume R. Prediction of lean body mass from height and weight. J Clin
-#' Pathol. 1966 Jul;19(4):389-91, <https://doi.org/10.1136/jcp.19.4.389>.
+#' Pathol. 1966 Jul;19(4):389-91, \doi{10.1136/jcp.19.4.389}.
 #'
 #' @param weight Body weight in kg, as numeric.
 #' @param height Body height in cm, as numeric.
@@ -313,7 +313,7 @@ lbm_hume <- function(weight, height, sex) {
 #'
 #' Source: Peters AM, Snelling HL, Glass DM, Bird NJ. Estimation of lean body
 #' mass in children. Br J Anaesth. 2011 May;106(5):719-23,
-#' <https://doi.org/10.1093/bja/aer057>.
+#'\doi{10.1093/bja/aer057}.
 #' PMID: 21498495.
 #'
 #' @param weight Body weight in kg, as numeric.

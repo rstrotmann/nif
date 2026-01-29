@@ -1,7 +1,7 @@
 # Serum creatinine estimation from eGFR (Raynaud method)
 
 Inverse of the function published in
-<https://doi.org/10.1136/bmj-2022-073654>.
+[doi:10.1136/bmj-2022-073654](https://doi.org/10.1136/bmj-2022-073654) .
 
 ## Usage
 

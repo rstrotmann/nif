@@ -1,7 +1,7 @@
 # Glomerular filtration rate estimation from serum creatinine (Cockcroft-Gault)
 
 Reference: Cockcroft and Gault, Nephron 1976,
-<https://doi.org/10.1159/000180580>.
+[doi:10.1159/000180580](https://doi.org/10.1159/000180580) .
 
 ## Usage
 

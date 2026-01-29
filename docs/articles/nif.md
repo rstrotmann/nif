@@ -25,8 +25,7 @@ further data, e.g., clinical laboratory, vital sign, or biomarker data.
 NONMEM and other modeling software packages expect the input data
 provided in (long) tabular arrangement with strict requirements to the
 formatting and nomenclature of the variables (see, e.g., Bauer, CPT
-Pharmacometrics Syst. Pharmacol. (2019),
-<https://doi.org/10.1002/psp4.12404>. The input data file for these
+Pharmacometrics Syst. Pharmacol. (2019). The input data file for these
 analyses is sometimes casually referred to as a ‘NONMEM input format’ or
 ‘NIF’ file, hence the name of this package.
 
@@ -374,8 +373,7 @@ manner, starting from an empty `nif` object, sequentially adding
 treatment administrations, observations, and covariate fields. The
 result is a data table with individual rows for administrations and
 observations that follows the naming conventions summarized in Bauer,
-CPT Pharmacometrics Syst. Pharmacol. (2019),
-<https://doi.org/10.1002/psp4.12404>.
+CPT Pharmacometrics Syst. Pharmacol. (2019).
 
 The basic `nif` object automatically includes standard demographic
 parameters as subject-level covariates: SEX, AGE and RACE, and baseline

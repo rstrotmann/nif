@@ -2,7 +2,8 @@
 
 Refer to the FDA guidance on DILI,
 https://www.fda.gov/media/116737/download and Watkins 2011,
-<https://doi.org/10.2165/11586600-000000000-00000>.
+[doi:10.2165/11586600-000000000-00000](https://doi.org/10.2165/11586600-000000000-00000)
+.
 
 ## Usage
 
