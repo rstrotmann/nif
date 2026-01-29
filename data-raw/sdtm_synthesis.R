@@ -1049,7 +1049,7 @@ synthesize_sdtm_food_effect_study <- function() {
 #'
 #' @details This function makes use of empirical eGFR data from a study in
 #' non-diseased Caucasian subjects as published by Wetzels et
-#' al. <doi:10.1038/sj.ki.5002374>, Table 1. In this study, eGFR
+#' al. <https://doi.org/10.1038/sj.ki.5002374>, Table 1. In this study, eGFR
 #' were calculated by the Modification of Diet in Renal Disease (MDRD) method.
 #'
 #' The tabulated data is modeled using a generalized linear model based on age
@@ -1070,7 +1070,7 @@ synthesize_sdtm_food_effect_study <- function() {
 #' @keywords internal
 synthesize_crea <- function(dm, crea_method = crea_mdrd) {
   empirical_egfr <- tribble(
-    # Source: <doi:10.1038/sj.ki.5002374>, Table 1.
+    # Source: <https://doi.org/10.1038/sj.ki.5002374>, Table 1.
     ~female, ~age_lo, ~age_hi, ~N, ~Mean, ~SD, ~min, ~max, ~P5, ~P25, ~P50, ~P75, ~P95,
     0, 18, 24, 94, 100, 13, 72, 137, 77, 90, 99, 109, 121,
     0, 25, 29, 96, 93, 13, 67, 125, 74, 82, 90, 102, 117,

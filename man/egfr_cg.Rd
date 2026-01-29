@@ -27,7 +27,7 @@ Estimated GFR in ml/min (as body size is accounted for by the weight
 in the input).
 }
 \description{
-Reference: Cockcroft and Gault, Nephron 1976, \url{doi:10.1159/000180580}.
+Reference: Cockcroft and Gault, Nephron 1976, \url{https://doi.org/10.1159/000180580}.
 }
 \seealso{
 \link{egfr_raynaud}

@@ -25,6 +25,7 @@ Bzr
 CDISC
 CDISCPILOT
 CFB
+CMD
 CMT
 CPT
 CRCL
@@ -131,7 +132,6 @@ XAN
 XPT
 adam
 ae
-aer
 al
 aminotransferase
 analyte
@@ -141,8 +141,6 @@ bclust
 bdat
 binwidth
 biomarker
-bja
-bmj
 campatibility
 classInt
 classInterval
@@ -154,7 +152,6 @@ ddTdd
 dddd
 dl
 dm
-doi
 dosings
 ds
 eDISH
@@ -174,7 +171,6 @@ hclust
 hepatotoxicity
 https
 humanpred
-jcp
 jenks
 kmeans
 lexjansen
@@ -199,8 +195,6 @@ phuse
 pinboard
 pkncal
 pre
-psp
-pst
 raynaud
 readr
 requiredness

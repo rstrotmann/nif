@@ -2,7 +2,7 @@
 
 Source: Peters AM, Snelling HL, Glass DM, Bird NJ. Estimation of lean
 body mass in children. Br J Anaesth. 2011 May;106(5):719-23,
-<doi:10.1093/bja/aer057>. PMID: 21498495.
+<https://doi.org/10.1093/bja/aer057>. PMID: 21498495.
 
 ## Usage
 

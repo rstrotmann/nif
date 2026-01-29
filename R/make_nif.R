@@ -43,8 +43,7 @@ guess_pcspec <- function(pc, silent = NULL) {
 #'
 #' @param lb The LB SDTM domain as data frame.
 #' @return the imputed LBSPEC as character.
-#' @export
-#' @keywords internal
+#' @noRd
 guess_lbspec <- function(lb) {
   lbspecs <- unique(lb$LBSPEC)
   standard_specs <- c("SERUM", "URINE")
@@ -66,6 +65,9 @@ guess_lbspec <- function(lb) {
 #'
 #' @return A nif object.
 #' @export
+#' @examples
+#' limit(examplinib_poc_nif)
+#'
 limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
   # Input validation
   validate_nif(obj)

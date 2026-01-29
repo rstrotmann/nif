@@ -1,7 +1,8 @@
 # Lean body mass (Hume formula)
 
 Source: Hume R. Prediction of lean body mass from height and weight. J
-Clin Pathol. 1966 Jul;19(4):389-91, <doi:10.1136/jcp.19.4.389>.
+Clin Pathol. 1966 Jul;19(4):389-91,
+<https://doi.org/10.1136/jcp.19.4.389>.
 
 ## Usage
 

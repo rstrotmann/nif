@@ -203,9 +203,8 @@ expand_ex <- function(ex) {
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #'
 #' @return A data frame.
-#' @export
+#' @noRd
 #' @import cli
-#' @keywords internal
 #' @seealso [nif::add_administration()]
 make_administration <- function(
   sdtm,
@@ -379,15 +378,21 @@ make_administration <- function(
 #' Input Format compliant data sets, see: Bauer, R.J. (2019), NONMEM Tutorial
 #' Part I: Description of Commands and Options, With Simple Examples of
 #' Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537
-#' <doi:10.1002/psp4.12404>.
+#' <https://doi.org/10.1002/psp4.12404>.
 #'
 #' To add observation events to the [nif::nif] object, see
 #' [nif::add_observation()].
 #'
 #' @param nif A nif object.
-#' @inheritParams make_administration
+#' @param sdtm A sdtm object.
+#' @param subject_filter The filtering to apply to the DM domain, as string,
+#' @param extrt The EXTRT for the administration, as character.
+#' @param analyte The name of the analyte as character.
+#' @param cmt The compartment for the administration as numeric.
+#' @param cut_off_date The data cut-off date as Posix date-time or character.
+#' @param keep Columns to keep after cleanup, as character.
+#' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #' @param debug Include debug fields, as logical.
-#' @param silent Suppress messages, defaults to nif_option standard when NULL.
 #'
 #' @return A nif object.
 #' @export

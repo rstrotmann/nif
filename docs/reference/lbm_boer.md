@@ -2,7 +2,7 @@
 
 Source: Caruso D, et al., Lean Body Weight-Tailored Iodinated Contrast
 Injection in Obese Patient: Boer versus James Formula. Biomed Res Int.
-2018 Aug 13;2018:8521893, <doi:10.1155/2018/8521893>.
+2018 Aug 13;2018:8521893, <https://doi.org/10.1155/2018/8521893>.
 
 ## Usage
 

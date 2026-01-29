@@ -3,7 +3,7 @@
 Source: Raynaud M, et al., Race-free estimated glomerular filtration
 rate equation in kidney transplant recipients: development and
 validation study. BMJ. 2023 May 31;381:e073654,
-<doi:10.1136/bmj-2022-073654>.
+<https://doi.org/10.1136/bmj-2022-073654>.
 
 ## Usage
 

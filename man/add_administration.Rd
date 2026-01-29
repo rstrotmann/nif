@@ -36,7 +36,7 @@ add_administration(
 
 \item{debug}{Include debug fields, as logical.}
 
-\item{silent}{Suppress messages, defaults to nif_option standard when NULL.}
+\item{silent}{Suppress messages, defaults to nif_option standard, if NULL.}
 }
 \value{
 A nif object.
@@ -63,7 +63,7 @@ For an overview on the representation of administration events in NONMEM
 Input Format compliant data sets, see: Bauer, R.J. (2019), NONMEM Tutorial
 Part I: Description of Commands and Options, With Simple Examples of
 Population Analysis. CPT Pharmacometrics Syst. Pharmacol., 8: 525-537
-\url{doi:10.1002/psp4.12404}.
+\url{https://doi.org/10.1002/psp4.12404}.
 
 To add observation events to the \link{nif} object, see
 \code{\link[=add_observation]{add_observation()}}.

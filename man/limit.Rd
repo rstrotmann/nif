@@ -19,3 +19,7 @@ A nif object.
 \description{
 Subset nif to rows with DTC before the last individual or global observation
 }
+\examples{
+limit(examplinib_poc_nif)
+
+}
