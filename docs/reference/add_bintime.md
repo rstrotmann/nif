@@ -1,11 +1,11 @@
 # Make BINTIME field
 
-\#' @description **\[experimental\]**
+**\[experimental\]**
 
 ## Usage
 
 ``` r
-add_bintime(obj, method = "fisher")
+add_bintime(obj, method = "fisher", time = "TAFD")
 ```
 
 ## Arguments
@@ -19,6 +19,10 @@ add_bintime(obj, method = "fisher")
   Univariate class intervals method, can be one of jenks, kmeans,
   pretty, quantile, hclust, sd, bclust or fisher. See
   classInt::classInterval() for details. Default is fisher.
+
+- time:
+
+  The time field to use.
 
 ## Value
 

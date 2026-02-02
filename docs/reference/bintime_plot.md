@@ -1,6 +1,6 @@
 # BINTIME plot
 
-\#' @description **\[experimental\]**
+**\[experimental\]**
 
 ## Usage
 
@@ -9,6 +9,7 @@ bintime_plot(
   obj,
   analyte,
   method = "fisher",
+  time = "TAFD",
   min_time = NULL,
   max_time = NULL,
   points = FALSE,
@@ -16,7 +17,8 @@ bintime_plot(
   caption = TRUE,
   title = NULL,
   size = 1.5,
-  alpha = 1
+  alpha = 1,
+  refline = NULL
 )
 ```
 
@@ -35,6 +37,10 @@ bintime_plot(
   Univariate class intervals method, can be one of jenks, kmeans,
   pretty, quantile, hclust, sd, bclust or fisher. See
   classInt::classInterval() for details.
+
+- time:
+
+  The time field.
 
 - min_time:
 
@@ -69,6 +75,11 @@ bintime_plot(
 - alpha:
 
   The alpha parameter for the data points.
+
+- refline:
+
+  Plot horizontal dashed reference lines at these y axis values,
+  defaults to NULL (no lines).
 
 ## Value
 

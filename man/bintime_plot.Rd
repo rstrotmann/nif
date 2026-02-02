@@ -56,6 +56,5 @@ defaults to NULL (no lines).}
 A ggplot2 object.
 }
 \description{
-#' @description
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
