@@ -8,6 +8,7 @@ bintime_plot(
   obj,
   analyte,
   method = "fisher",
+  time = "TAFD",
   min_time = NULL,
   max_time = NULL,
   points = FALSE,
@@ -15,7 +16,8 @@ bintime_plot(
   caption = TRUE,
   title = NULL,
   size = 1.5,
-  alpha = 1
+  alpha = 1,
+  refline = NULL
 )
 }
 \arguments{
@@ -26,6 +28,8 @@ bintime_plot(
 \item{method}{Univariate class intervals method, can be one of jenks, kmeans,
 pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
 for details.}
+
+\item{time}{The time field.}
 
 \item{min_time}{The minimal time in units of TAFD, as numeric.}
 
@@ -44,6 +48,9 @@ title based on the analyte will be chosen. Override this by setting
 \item{size}{The point size.}
 
 \item{alpha}{The alpha parameter for the data points.}
+
+\item{refline}{Plot horizontal dashed reference lines at these y axis values,
+defaults to NULL (no lines).}
 }
 \value{
 A ggplot2 object.

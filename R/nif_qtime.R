@@ -7,13 +7,15 @@
 #' pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
 #' for details. Default is fisher.
 #' @param obj A nif object.
+#' @param time The time field to use.
 #'
 #' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
 #' @importFrom classInt classIntervals
 #' @export
 add_bintime <- function(
     obj,
-    method = "fisher"
+    method = "fisher",
+    time = "TAFD"
     ) {
   # input validation
   validate_nif(obj)
@@ -23,21 +25,29 @@ add_bintime <- function(
     stop(paste0("Method ", method, " not implemented!"))
   }
 
+  ## to do:
+  ## validate time argument
+
   # calculate bins
-  obj <- ensure_tafd(obj)
-  bins <- classInt::classIntervals(obj$TAFD, style = method)
+  obj <- ensure_tafd(obj) |>
+    mutate(active_time = .data[[time]])
+
+  # bins <- classInt::classIntervals(obj$TAFD, style = method)
+  bins <- classInt::classIntervals(obj$active_time, style = method)
 
   breaks <- sort(bins$brks)
 
   # Cut and assign bin indices
   obj <- obj |>
-    mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks = breaks, include.lowest = TRUE)))
+    mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks = breaks,
+                                           include.lowest = TRUE)))
 
   # Calculate median TAFD for each bin from actual assignments
   bin_medians <- obj |>
     filter(!is.na(.data$.BINTIME_INDEX)) |>
     reframe(
-      label = round(median(.data$TAFD, na.rm = TRUE)),
+      # label = round(median(.data$TAFD, na.rm = TRUE)),
+      label = round(median(.data$active_time, na.rm = TRUE)),
       .by = .data$.BINTIME_INDEX
     ) |>
     arrange(.data$.BINTIME_INDEX)
@@ -80,6 +90,9 @@ add_bintime <- function(
 #' @param title The plot title, as character. If none is provided, a generic
 #'   title based on the analyte will be chosen. Override this by setting
 #'.  title = "", if needed.
+#' @param time The time field.
+#' @param refline Plot horizontal dashed reference lines at these y axis values,
+#' defaults to NULL (no lines).
 #'
 #' @returns A ggplot2 object.
 #' @export
@@ -87,6 +100,7 @@ bintime_plot <- function(
     obj,
     analyte,
     method = "fisher",
+    time = "TAFD",
     min_time = NULL,
     max_time = NULL,
     points = FALSE,
@@ -94,7 +108,8 @@ bintime_plot <- function(
     caption = TRUE,
     title = NULL,
     size = 1.5,
-    alpha = 1) {
+    alpha = 1,
+    refline = NULL) {
   # input validation
   validate_nif(obj)
   validate_char_param(analyte, "analyte")
@@ -110,11 +125,15 @@ bintime_plot <- function(
   validate_logical_param(cfb, "cfb")
   validate_logical_param(caption, "caption", allow_null = TRUE)
   validate_numeric_param(alpha, "alpha")
+  validate_char_param(time, "time")
   validate_numeric_param(min_time, "min_time", allow_null = TRUE)
   validate_numeric_param(max_time, "max_time", allow_null = TRUE)
 
   if (is.null(caption))
     caption <- FALSE
+
+  if (!time %in% names(obj))
+    stop(paste0("Time field ", time, " not found in data set!"))
 
   # time limits
   if (is.null(max_time)) {
@@ -123,6 +142,10 @@ bintime_plot <- function(
   if (is.null(min_time)) {
     min_time <- min(obj$TAFD, na.rm = TRUE)
   }
+
+  # time field
+  # obj |>
+  #   mutate(active_time = .data[[time]])
 
   # change from baseline
   if (cfb == TRUE) {
@@ -139,7 +162,7 @@ bintime_plot <- function(
   temp <- obj |>
     filter(.data$ANALYTE == analyte) |>
     filter(.data$EVID == 0) |>
-    add_bintime(method = method) |>
+    add_bintime(method = method, time = time) |>
     filter(!is.na(.data$BINTIME)) |>
     filter(!is.na(.data$DV)) |>
     as.data.frame()
@@ -164,19 +187,23 @@ bintime_plot <- function(
       df = .data$n - 1,
       t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
       margin_error = .data$t * .data$se,
-      # lower_ci = .data$mean - .data$margin_error,
-      # upper_ci = .data$mean + .data$margin_error,
       lower_ci = lower_ci(.data$mean, .data$sd, .data$n, 0.9),
       upper_ci = upper_ci(.data$mean, .data$sd, .data$n, 0.9),
       .by = c("BINTIME", "ANALYTE")) |>
     distinct() |>
     ggplot(aes(x = .data$BINTIME, y = .data$mean)) +
-    labs(y = analyte, x = "TAFD", title = title)
+    labs(y = analyte, x = time, title = title)
 
   if (points == TRUE) {
     out <- out +
-      geom_point(aes(x = .data$TAFD, y = .data$DV), data = temp, alpha = alpha,
-                 size = size)
+      geom_point(aes(
+        # x = .data$TAFD,
+        x = .data$active_time,
+        y = .data$DV
+        ),
+        data = temp,
+        alpha = alpha,
+        size = size)
   }
 
   out <- out +
@@ -187,6 +214,11 @@ bintime_plot <- function(
               fill = "red", alpha = 0.3) +
     xlim(min_time, max_time) +
     theme_bw()
+
+  if (!is.null(refline)) {
+    out <- out +
+      geom_hline(yintercept = refline, color = "blue", linetype = "dashed")
+  }
 
   if (caption == TRUE) {
     out <- out +
