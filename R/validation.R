@@ -153,7 +153,7 @@ validate_sdtm <- function(
 #' @returns Nothing or stop.
 #' @noRd
 validate_param <- function(
-  type = c("string", "logical", "numeric"),
+  type = c("character", "string", "logical", "numeric"),
   param,
   param_name,
   allow_null = FALSE,
@@ -180,6 +180,7 @@ validate_param <- function(
 
   # Type checking
   if ((type == "string" && !is.character(param)) ||
+        (type == "character" && !is.character(param)) ||
         (type == "logical" && !is.logical(param)) ||
         (type == "numeric" && !is.numeric(param))) {
     stop(paste0(param_name, " must be a ", type, " value"))
@@ -192,7 +193,7 @@ validate_param <- function(
 
   # Empty string check (only for character types)
   if (
-    type == "string" &&
+    (type == "string" || type == "character") &&
       !allow_empty && length(param) > 0 &&
       any(nchar(param) == 0)
   ) {

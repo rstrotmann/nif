@@ -1240,3 +1240,15 @@ apply_cat_filter <- function(obj, param, param_field) {
   }
   obj
 }
+
+
+
+lower_ci <- function(mean, sd, n, conf_level = 0.9){
+  se <- sd / sqrt(n)
+  mean - qt(1 - ((1 - conf_level) / 2), n - 1) * se
+}
+
+upper_ci <- function(mean, sd, n, conf_level = 0.9){
+  se <- sd / sqrt(n)
+  mean + qt(1 - ((1 - conf_level) / 2), n - 1) * se
+}

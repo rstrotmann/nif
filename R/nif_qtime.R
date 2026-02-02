@@ -164,8 +164,10 @@ bintime_plot <- function(
       df = .data$n - 1,
       t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
       margin_error = .data$t * .data$se,
-      lower_ci = .data$mean - .data$margin_error,
-      upper_ci = .data$mean + .data$margin_error,
+      # lower_ci = .data$mean - .data$margin_error,
+      # upper_ci = .data$mean + .data$margin_error,
+      lower_ci = lower_ci(.data$mean, .data$sd, .data$n, 0.9),
+      upper_ci = upper_ci(.data$mean, .data$sd, .data$n, 0.9),
       .by = c("BINTIME", "ANALYTE")) |>
     distinct() |>
     ggplot(aes(x = .data$BINTIME, y = .data$mean)) +
@@ -305,8 +307,10 @@ qtime_plot <- function(
       df = .data$n - 1,
       t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
       margin_error = .data$t * .data$se,
-      lower_ci = .data$mean - .data$margin_error,
-      upper_ci = .data$mean + .data$margin_error,
+      # lower_ci = .data$mean - .data$margin_error,
+      # upper_ci = .data$mean + .data$margin_error,
+      lower_ci = lower_ci(.data$mean, .data$sd, .data$n, 0.9),
+      upper_ci = upper_ci(.data$mean, .data$sd, .data$n, 0.9),
       .by = c("QTIME", "ANALYTE")) |>
     distinct() |>
 
