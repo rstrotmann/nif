@@ -1,6 +1,6 @@
 #' Make BINTIME field
 #'
-#'#' @description
+#' @description
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param method Univariate class intervals method, can be one of jenks, kmeans,
@@ -72,7 +72,7 @@ add_bintime <- function(
 
 #' BINTIME plot
 #'
-#'#' @description
+#' @description
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param obj A nif object.
