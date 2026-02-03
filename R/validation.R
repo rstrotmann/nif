@@ -204,6 +204,72 @@ validate_param <- function(
 }
 
 
+#' validate function argument
+#'
+#' @param param The argument.
+#' @param type The expected parameter type (one of 'character', 'logical' or
+#' 'numeric').
+#' @param allow_null Allow NULL values.
+#' @param allow_empty Allow empty values.
+#' @param allow_multiple Allow multiple values.
+#' @param allow_na Allow NA values.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+validate_argument <- function(
+    param,
+    type = c("character", "logical", "numeric"),
+    allow_null = FALSE,
+    allow_empty = FALSE,
+    allow_multiple = FALSE,
+    allow_na = FALSE
+) {
+  # Validate type parameter
+  type <- match.arg(type)
+
+  param_name <- deparse(substitute(param))
+
+  # Check for NULL first
+  if (is.null(param)) {
+    if (allow_null) {
+      return(invisible(NULL))
+    } else {
+      stop(paste0(param_name, " must not be NULL"))
+    }
+  }
+
+  # Check for NA values
+  if (!allow_na && any(is.na(param))) {
+    stop(paste0(param_name, " must not contain NA"))
+  }
+
+  # Type checking
+  if ((type == "character" && !is.character(param)) ||
+      (type == "logical" && !is.logical(param)) ||
+      (type == "numeric" && !is.numeric(param))) {
+    stop(paste0(param_name, " must be a ", type, " value"))
+  }
+
+  # Length checking
+  if (length(param) != 1 && !allow_multiple) {
+    stop(paste0(param_name, " must be a single value"))
+  }
+
+  # Empty string check (only for character types)
+  if (
+    type == "character" &&
+    !allow_empty &&
+    length(param) > 0 &&
+    any(nchar(param) == 0)
+  ) {
+    stop(paste0(param_name, " must be a non-empty string"))
+  }
+
+  invisible(NULL)
+}
+
+
+
 #' Validate character parameter
 #'
 #' @param param The parameter to be tested.
