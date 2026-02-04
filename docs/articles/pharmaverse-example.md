@@ -128,18 +128,18 @@ summary(nif)
 #>   2     XAN       3556   
 #>   3     ALT       1814    
 #> 
-#> Sampling schedule:
-#>   NTIME                ALT   XAN   
-#>   -2448                X           
-#>   -2184                X           
-#>   -1920                X           
-#>   -1896                X           
-#>   -1584                X           
-#>   -1560                X           
-#>   -1536                X           
-#>   -1248                X           
-#>   -1200                X           
-#>   -1056                X            
+#> Observations by NTIME:
+#>   NTIME   ALT   XAN    
+#>   -2448   1     -      
+#>   -2184   1     -      
+#>   -1920   1     -      
+#>   -1896   1     -      
+#>   -1584   1     -      
+#>   -1560   1     -      
+#>   -1536   1     -      
+#>   -1248   1     -      
+#>   -1200   1     -      
+#>   -1056   1     -       
 #>   (202 more rows)
 #> 
 #> Subjects with dose reductions

@@ -540,18 +540,18 @@ summary(nif)
 #>   CMT   ANALYTE   N     
 #>   2     RS2023    680    
 #> 
-#> Sampling schedule:
+#> Observations by NTIME:
 #>   NTIME   RS2023   
-#>   0       X        
-#>   0.5     X        
-#>   1       X        
-#>   1.5     X        
-#>   2       X        
-#>   3       X        
-#>   4       X        
-#>   6       X        
-#>   8       X        
-#>   10      X         
+#>   0       40       
+#>   0.5     40       
+#>   1       40       
+#>   1.5     40       
+#>   2       40       
+#>   3       40       
+#>   4       40       
+#>   6       40       
+#>   8       40       
+#>   10      40        
 #>   (7 more rows)
 #> 
 #> Subjects with dose reductions

@@ -177,19 +177,19 @@ summary(nif_poc)
 #    2     RS2023       672   
 #    3     RS2023487A   672    
 #  
-#  Sampling schedule:
+#  Observations by NTIME:
 #    NTIME   RS2023   RS2023487A   
-#    0       X        X            
-#    0.5     X        X            
-#    1       X        X            
-#    1.5     X        X            
-#    2       X        X            
-#    3       X        X            
-#    4       X        X            
-#    6       X        X            
-#    8       X        X            
-#    10      X        X            
-#    12      X        X             
+#    0       160      160          
+#    0.5     24       24           
+#    1       24       24           
+#    1.5     160      160          
+#    2       24       24           
+#    3       24       24           
+#    4       160      160          
+#    6       24       24           
+#    8       24       24           
+#    10      24       24           
+#    12      24       24            
 #  
 #  Subjects with dose reductions
 #    RS2023   
