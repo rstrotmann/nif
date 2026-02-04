@@ -394,7 +394,13 @@ summary.nif <- function(
   # sampling overview
   sampling_table <- NULL
   if ("NTIME" %in% names(object) && sampling == TRUE) {
-    sampling_table <- sampling_summary(object)
+    sampling_table <- object |>
+      as.data.frame() |>
+      filter(.data$EVID == 0) |>
+      reframe(n = n(), .by = c("NTIME", "ANALYTE")) |>
+      pivot_wider(names_from = "ANALYTE", values_from = "n") |>
+      arrange(.data$NTIME) |>
+      as.data.frame()
   }
 
   out <- list(
@@ -517,11 +523,11 @@ print.summary_nif <- function(
   # sampling overview
   if (!is.null(x$sampling)) {
     sampling_schedule <- x$sampling
-    cat("Sampling schedule:\n")
+    cat("Observations by NTIME:\n")
     cat(df_to_string(
-      sampling_schedule,
+      round(sampling_schedule, 3) |>
+        mutate(across(-1, function(x) ifelse(is.na(x), "-", as.character(x)))),
       indent = indent
-      # abbr_lines = 5, abbr_threshold = 20
     ))
     cat("\n\n")
   }
