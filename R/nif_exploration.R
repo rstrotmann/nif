@@ -474,10 +474,16 @@ print.summary_nif <- function(
           #   0 ~ "male",
           #   1 ~ "female"
           # )) |>
-          mutate(SEX = recode_values(
-            .data$SEX,
-            0 ~ "male",
-            1 ~ "female"
+
+          # mutate(SEX = recode_values(
+          #   .data$SEX,
+          #   0 ~ "male",
+          #   1 ~ "female"
+          # )) |>
+
+          mutate(SEX = case_when(
+            .data$SEX == 0 ~ "male",
+            .data$SEX == 1 ~ "female"
           )) |>
 
           mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),

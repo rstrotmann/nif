@@ -99,10 +99,15 @@ ddt <- function(obj, silent = NULL) {
     #   1 ~ "administration"
     # )) |>
 
-    mutate(TYPE = recode_values(
-      .data$EVID,
-      0 ~ "observation",
-      1 ~ "administration"
+    # mutate(TYPE = recode_values(
+    #   .data$EVID,
+    #   0 ~ "observation",
+    #   1 ~ "administration"
+    # )) |>
+
+    mutate(TYPE = case_when(
+      .data$EVID == 0 ~ "observation",
+      .data$EVID == 1 ~ "administration"
     )) |>
 
     mutate(DESC = paste(.data$CMT, "=", .data$ANALYTE, .data$TYPE))

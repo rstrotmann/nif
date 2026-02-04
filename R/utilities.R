@@ -123,13 +123,18 @@ recode_sex <- function(obj) {
       #   .default = NA
       # )
 
-      recode_values(
-        str_trim(toupper(as.character(.data$SEX))),
-                 "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-                 "\u7537" ~ 0, "\u5973" ~ 1, # 男, 女
-                 default = NA
-      )
+      # recode_values(
+      #   str_trim(toupper(as.character(.data$SEX))),
+      #            "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
+      #            "\u7537" ~ 0, "\u5973" ~ 1, # 男, 女
+      #            default = NA
+      # )
 
+      case_when(
+        str_trim(toupper(as.character(.data$SEX))) %in% c("M", "0", "\u7537") ~ 0,
+        str_trim(toupper(as.character(.data$SEX))) %in% c("F", "1", "\u5973") ~ 1,
+        .default = NA
+      )
     ))
 
   # Warn about invalid values that were converted to NA
@@ -573,10 +578,15 @@ pt_to_hours <- function(iso) {
     #   .default = 1
     # )) |>
 
-    mutate(sign = recode_values(
-      .data$SIGN,
-      "-" ~ -1,
-      default = 1
+    # mutate(sign = recode_values(
+    #   .data$SIGN,
+    #   "-" ~ -1,
+    #   default = 1
+    # )) |>
+
+    mutate(sign = case_when(
+      .data$SIGN == "-" ~ -1,
+      .default = 1
     )) |>
 
     mutate(hours = case_when(

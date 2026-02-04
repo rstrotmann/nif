@@ -906,10 +906,15 @@ derive_sld <- function(
       #   "N_TARGET" ~ "Number of target lesions used for SLD calculation"
       # )
 
-      TRTEST = recode_values(
-        .data$TRTESTCD,
-        "SLD" ~ "Sum of longest diameters",
-        "N_TARGET" ~ "Number of target lesions used for SLD calculation"
+      # TRTEST = recode_values(
+      #   .data$TRTESTCD,
+      #   "SLD" ~ "Sum of longest diameters",
+      #   "N_TARGET" ~ "Number of target lesions used for SLD calculation"
+      # )
+
+      TRTEST = case_when(
+        .data$TRTESTCD == "SLD" ~ "Sum of longest diameters",
+        .data$TRTESTCD == "N_TARGET" ~ "Number of target lesions used for SLD calculation"
       )
 
     )

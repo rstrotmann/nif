@@ -80,7 +80,8 @@ make_plot_data_set <- function(
     index_dosing_interval() |>
 
     # mutate(DI = case_match(.data$EVID, 1 ~ NA, .default = .data$DI))
-    mutate(DI = recode_values(.data$EVID, 1 ~ NA, default = .data$DI))
+    # mutate(DI = recode_values(.data$EVID, 1 ~ NA, default = .data$DI))
+    mutate(DI = case_when(.data$EVID == 1 ~ NA, .default = .data$DI))
 
   if (cfb == TRUE)
     out <- mutate(out, DV = .data$DVCFB)
@@ -272,13 +273,18 @@ plot.nif <- function(
     # plot_data <- mutate(plot_data, DV = case_match(.data$DV, 0 ~ NA,
     #                                                .default = .data$DV))
 
+    # plot_data <- mutate(
+    #   plot_data, DV = recode_values(.data$DV, 0 ~ NA, default = .data$DV)
+    # )
+
     plot_data <- mutate(
-      plot_data, DV = recode_values(.data$DV, 0 ~ NA, default = .data$DV)
+      plot_data, DV = case_when(.data$DV == 0 ~ NA, .default = .data$DV)
     )
   }
 
   plot_data <- plot_data |>
-    tidyr::unite("GROUP", any_of(c((plot_data_set$group), (plot_data_set$color), (plot_data_set$facet))),
+    tidyr::unite("GROUP", any_of(
+      c((plot_data_set$group), (plot_data_set$color), (plot_data_set$facet))),
       sep = "-", remove = FALSE
     )
 

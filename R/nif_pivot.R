@@ -126,9 +126,14 @@ correlate_obs <- function(
       #   .default = paste(.data$ANALYTE, .data$param, sep = "_")
       # )) |>
 
-      mutate(param = recode_values(
-        .data$param, "DV" ~ .data$ANALYTE,
-        default = paste(.data$ANALYTE, .data$param, sep = "_")
+      # mutate(param = recode_values(
+      #   .data$param, "DV" ~ .data$ANALYTE,
+      #   default = paste(.data$ANALYTE, .data$param, sep = "_")
+      # )) |>
+
+      mutate(param = case_when(
+        .data$param == "DV" ~ .data$ANALYTE,
+        .default = paste(.data$ANALYTE, .data$param, sep = "_")
       )) |>
 
       select(-c("ANALYTE")) |>

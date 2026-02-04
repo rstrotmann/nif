@@ -611,9 +611,14 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     #   2 ~ "OPEN LABEL TREATMENT 2"
     # )) %>%
 
-    mutate(EPOCH = recode_values(
-      .data$PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
-      2 ~ "OPEN LABEL TREATMENT 2"
+    # mutate(EPOCH = recode_values(
+    #   .data$PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
+    #   2 ~ "OPEN LABEL TREATMENT 2"
+    # )) %>%
+
+    mutate(EPOCH = case_when(
+      .data$PERIOD == 1 ~ "OPEN LABEL TREATMENT 1",
+      .data$PERIOD == 2 ~ "OPEN LABEL TREATMENT 2"
     )) %>%
 
     dplyr::select(-c(
@@ -743,8 +748,12 @@ synthesize_sdtm_sad_study <- function() {
     #   .default = "SCRNFAIL"
     # )) %>%
 
-    mutate(ACTARMCD = recode_values(.data$ACTARMCD, "" ~ paste0("C", cohort),
-                                 default = "SCRNFAIL"
+    # mutate(ACTARMCD = recode_values(.data$ACTARMCD, "" ~ paste0("C", cohort),
+    #                              default = "SCRNFAIL"
+    # )) %>%
+
+    mutate(ACTARMCD = case_when(.data$ACTARMCD == "" ~ paste0("C", cohort),
+                                    .default = "SCRNFAIL"
     )) %>%
 
     # mutate(ACTARM = case_match(.data$ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
@@ -754,11 +763,17 @@ synthesize_sdtm_sad_study <- function() {
     #   )
     # )) %>%
 
-    mutate(ACTARM = recode_values(.data$ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
-                               default = paste0(
-                                 "Treatment cohort ", cohort, ", ",
-                                 dose, " mg examplinib"
-                               )
+    # mutate(ACTARM = recode_values(.data$ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
+    #                            default = paste0(
+    #                              "Treatment cohort ", cohort, ", ",
+    #                              dose, " mg examplinib"
+    #                            )
+    # )) %>%
+
+    mutate(ACTARM = case_when(
+      .data$ACTARMCD == "SCRNFAIL" ~ "Screen Failure",
+      .default = paste0("Treatment cohort ", cohort, ", ", dose,
+                        " mg examplinib")
     )) %>%
 
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
@@ -850,8 +865,12 @@ synthesize_sdtm_poc_study <- function(
     #   .default = .data$ACTARMCD
     # )) %>%
 
-    mutate(ACTARMCD = recode_values(.data$ACTARMCD, "" ~ "TREATMENT",
-                                 default = .data$ACTARMCD
+    # mutate(ACTARMCD = recode_values(.data$ACTARMCD, "" ~ "TREATMENT",
+    #                              default = .data$ACTARMCD
+    # )) %>%
+
+    mutate(ACTARMCD = case_when(.data$ACTARMCD == "" ~ "TREATMENT",
+                               .default = .data$ACTARMCD
     )) %>%
 
     # mutate(ACTARM = case_match(
@@ -860,10 +879,15 @@ synthesize_sdtm_poc_study <- function(
     #   "TREATMENT" ~ "Single Arm Treatment"
     # )) %>%
 
-    mutate(ACTARM = recode_values(
-      .data$ACTARMCD,
-      "SCRNFAIL" ~ "Screen Faillure",
-      "TREATMENT" ~ "Single Arm Treatment"
+    # mutate(ACTARM = recode_values(
+    #   .data$ACTARMCD,
+    #   "SCRNFAIL" ~ "Screen Faillure",
+    #   "TREATMENT" ~ "Single Arm Treatment"
+    # )) %>%
+
+    mutate(ACTARM = case_when(
+      .data$ACTARMCD == "SCRNFAIL" ~ "Screen Faillure",
+      .data$ACTARMCD == "TREATMENT" ~ "Single Arm Treatment"
     )) %>%
 
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)

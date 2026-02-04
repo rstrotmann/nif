@@ -232,10 +232,15 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
       #   FALSE ~ .data$EXENDTC
       # )) |>
 
-      mutate(EXENDTC = recode_values(
-        .data$imputation_flag,
-        TRUE ~ .data$next_start - days(1),
-        FALSE ~ .data$EXENDTC
+      # mutate(EXENDTC = recode_values(
+      #   .data$imputation_flag,
+      #   TRUE ~ .data$next_start - days(1),
+      #   FALSE ~ .data$EXENDTC
+      # )) |>
+
+      mutate(EXENDTC = case_when(
+        .data$imputation_flag == TRUE ~ .data$next_start - days(1),
+        .data$imputation_flag == FALSE ~ .data$EXENDTC
       )) |>
 
       # mutate(IMPUTATION = case_match(
@@ -244,10 +249,15 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
       #   FALSE ~ .data$IMPUTATION
       # )) |>
 
-      mutate(IMPUTATION = recode_values(
-        .data$imputation_flag,
-        TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
-        FALSE ~ .data$IMPUTATION
+      # mutate(IMPUTATION = recode_values(
+      #   .data$imputation_flag,
+      #   TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
+      #   FALSE ~ .data$IMPUTATION
+      # )) |>
+
+      mutate(IMPUTATION = case_when(
+        .data$imputation_flag == TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
+        .data$imputation_flag == FALSE ~ .data$IMPUTATION
       )) |>
 
       select(-"imputation_flag")
