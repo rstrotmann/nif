@@ -120,10 +120,17 @@ correlate_obs <- function(
         cols = c("DV", "TIME"),
         names_to = "param", values_to = "value"
       ) |>
-      mutate(param = case_match(
+
+      # mutate(param = case_match(
+      #   .data$param, "DV" ~ .data$ANALYTE,
+      #   .default = paste(.data$ANALYTE, .data$param, sep = "_")
+      # )) |>
+
+      mutate(param = recode_values(
         .data$param, "DV" ~ .data$ANALYTE,
-        .default = paste(.data$ANALYTE, .data$param, sep = "_")
+        default = paste(.data$ANALYTE, .data$param, sep = "_")
       )) |>
+
       select(-c("ANALYTE")) |>
       pivot_wider(names_from = "param", values_from = "value")
     bind_cols(indep, dep)

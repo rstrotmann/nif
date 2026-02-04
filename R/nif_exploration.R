@@ -468,11 +468,18 @@ print.summary_nif <- function(
       "Sex distribution:\n",
       df_to_string(
         x$sex |>
-          mutate(SEX = case_match(
+
+          # mutate(SEX = case_match(
+          #   .data$SEX,
+          #   0 ~ "male",
+          #   1 ~ "female"
+          # )) |>
+          mutate(SEX = recode_values(
             .data$SEX,
             0 ~ "male",
             1 ~ "female"
           )) |>
+
           mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
         indent = indent
       ),

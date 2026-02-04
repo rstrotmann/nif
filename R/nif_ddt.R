@@ -92,11 +92,19 @@ ddt <- function(obj, silent = NULL) {
     as.data.frame() |>
     distinct(.data$ANALYTE, .data$CMT, .data$EVID) |>
     arrange(.data$CMT) |>
-    mutate(TYPE = case_match(
+
+    # mutate(TYPE = case_match(
+    #   .data$EVID,
+    #   0 ~ "observation",
+    #   1 ~ "administration"
+    # )) |>
+
+    mutate(TYPE = recode_values(
       .data$EVID,
       0 ~ "observation",
       1 ~ "administration"
     )) |>
+
     mutate(DESC = paste(.data$CMT, "=", .data$ANALYTE, .data$TYPE))
 
   out[out$name == "CMT", "description"] <- paste(temp$DESC, collapse = ", ")

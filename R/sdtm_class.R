@@ -731,6 +731,7 @@ make_subjects_sdtm <- function(obj, ...) {
 #'
 #' @examples
 #' guess_ntime(examplinib_poc)
+
 guess_ntime <- function(sdtm) {
   if (!has_domain(sdtm, "pc")) {
     stop("PC domain not found in SDTM object")
@@ -786,9 +787,9 @@ guess_ntime <- function(sdtm) {
     ) |>
     mutate(pre = str_match(tolower(.data$PCTPT), "pre") == "pre") |>
     mutate(NTIME = case_when(
-      is.na(.data$time) & pre == TRUE ~ 0,
-      !is.na(.data$time) & pre == TRUE ~ -as.numeric(.data$time),
-      is.na(.data$time) & is.na(.data$pre) ~ NA,
+      as.logical(is.na(.data$time) & .data$pre == TRUE) ~ 0,
+      as.logical(!is.na(.data$time) & pre == TRUE) ~ -as.numeric(.data$time),
+      as.logical(is.na(.data$time) & is.na(.data$pre)) ~ NA,
       .default = as.numeric(.data$time)
     )) |>
     select(-c("time", "pre"))
@@ -898,11 +899,19 @@ derive_sld <- function(
   if ("TRTEST" %in% names(tr)) {
     sld_data <- mutate(
       sld_data,
-      TRTEST = case_match(
+
+      # TRTEST = case_match(
+      #   .data$TRTESTCD,
+      #   "SLD" ~ "Sum of longest diameters",
+      #   "N_TARGET" ~ "Number of target lesions used for SLD calculation"
+      # )
+
+      TRTEST = recode_values(
         .data$TRTESTCD,
         "SLD" ~ "Sum of longest diameters",
         "N_TARGET" ~ "Number of target lesions used for SLD calculation"
       )
+
     )
   }
 

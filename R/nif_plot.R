@@ -78,7 +78,9 @@ make_plot_data_set <- function(
 
   out <- out |>
     index_dosing_interval() |>
-    mutate(DI = case_match(.data$EVID, 1 ~ NA, .default = .data$DI))
+
+    # mutate(DI = case_match(.data$EVID, 1 ~ NA, .default = .data$DI))
+    mutate(DI = recode_values(.data$EVID, 1 ~ NA, default = .data$DI))
 
   if (cfb == TRUE)
     out <- mutate(out, DV = .data$DVCFB)
@@ -267,8 +269,12 @@ plot.nif <- function(
   plot_data <- plot_data_set$data
 
   if (isTRUE(log)) {
-    plot_data <- mutate(plot_data, DV = case_match(.data$DV, 0 ~ NA,
-                                                   .default = .data$DV))
+    # plot_data <- mutate(plot_data, DV = case_match(.data$DV, 0 ~ NA,
+    #                                                .default = .data$DV))
+
+    plot_data <- mutate(
+      plot_data, DV = recode_values(.data$DV, 0 ~ NA, default = .data$DV)
+    )
   }
 
   plot_data <- plot_data |>

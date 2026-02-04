@@ -226,16 +226,30 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
     temp <- temp |>
       mutate(imputation_flag = (is.na(.data$EXENDTC) &
                                   .data$LAST_ADMIN == FALSE)) |>
-      mutate(EXENDTC = case_match(
+      # mutate(EXENDTC = case_match(
+      #   .data$imputation_flag,
+      #   TRUE ~ .data$next_start - days(1),
+      #   FALSE ~ .data$EXENDTC
+      # )) |>
+
+      mutate(EXENDTC = recode_values(
         .data$imputation_flag,
         TRUE ~ .data$next_start - days(1),
         FALSE ~ .data$EXENDTC
       )) |>
-      mutate(IMPUTATION = case_match(
+
+      # mutate(IMPUTATION = case_match(
+      #   .data$imputation_flag,
+      #   TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
+      #   FALSE ~ .data$IMPUTATION
+      # )) |>
+
+      mutate(IMPUTATION = recode_values(
         .data$imputation_flag,
         TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
         FALSE ~ .data$IMPUTATION
       )) |>
+
       select(-"imputation_flag")
   }
 

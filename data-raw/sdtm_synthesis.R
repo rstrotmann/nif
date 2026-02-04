@@ -605,10 +605,17 @@ make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
     ungroup() %>%
     mutate(PCSPEC = "PLASMA") %>%
     mutate(PCRFTDTC = .data$RFSTDTC) %>%
-    mutate(EPOCH = case_match(
+
+    # mutate(EPOCH = case_match(
+    #   .data$PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
+    #   2 ~ "OPEN LABEL TREATMENT 2"
+    # )) %>%
+
+    mutate(EPOCH = recode_values(
       .data$PERIOD, 1 ~ "OPEN LABEL TREATMENT 1",
       2 ~ "OPEN LABEL TREATMENT 2"
     )) %>%
+
     dplyr::select(-c(
       "id", "time", "c_centr", "c_metab", "RFSTDTC",
       "NTIME"
@@ -731,15 +738,29 @@ synthesize_sdtm_sad_study <- function() {
 
   dm <- dm %>%
     left_join(sb_assignment, by = "USUBJID") %>%
-    mutate(ACTARMCD = case_match(.data$ACTARMCD, "" ~ paste0("C", cohort),
-      .default = "SCRNFAIL"
+
+    # mutate(ACTARMCD = case_match(.data$ACTARMCD, "" ~ paste0("C", cohort),
+    #   .default = "SCRNFAIL"
+    # )) %>%
+
+    mutate(ACTARMCD = recode_values(.data$ACTARMCD, "" ~ paste0("C", cohort),
+                                 default = "SCRNFAIL"
     )) %>%
-    mutate(ACTARM = case_match(.data$ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
-      .default = paste0(
-        "Treatment cohort ", cohort, ", ",
-        dose, " mg examplinib"
-      )
+
+    # mutate(ACTARM = case_match(.data$ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
+    #   .default = paste0(
+    #     "Treatment cohort ", cohort, ", ",
+    #     dose, " mg examplinib"
+    #   )
+    # )) %>%
+
+    mutate(ACTARM = recode_values(.data$ACTARMCD, "SCRNFAIL" ~ "Screen Failure",
+                               default = paste0(
+                                 "Treatment cohort ", cohort, ", ",
+                                 dose, " mg examplinib"
+                               )
     )) %>%
+
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
 
   vs <- synthesize_vs(dm)
@@ -824,14 +845,27 @@ synthesize_sdtm_poc_study <- function(
     studyid = studyid, nsubs = nsubs, nsites = nsites,
     female_fraction = 0.4, duration = duration, min_age = 47, max_age = 86
   ) %>%
-    mutate(ACTARMCD = case_match(.data$ACTARMCD, "" ~ "TREATMENT",
-      .default = .data$ACTARMCD
+
+    # mutate(ACTARMCD = case_match(.data$ACTARMCD, "" ~ "TREATMENT",
+    #   .default = .data$ACTARMCD
+    # )) %>%
+
+    mutate(ACTARMCD = recode_values(.data$ACTARMCD, "" ~ "TREATMENT",
+                                 default = .data$ACTARMCD
     )) %>%
-    mutate(ACTARM = case_match(
+
+    # mutate(ACTARM = case_match(
+    #   .data$ACTARMCD,
+    #   "SCRNFAIL" ~ "Screen Faillure",
+    #   "TREATMENT" ~ "Single Arm Treatment"
+    # )) %>%
+
+    mutate(ACTARM = recode_values(
       .data$ACTARMCD,
       "SCRNFAIL" ~ "Screen Faillure",
       "TREATMENT" ~ "Single Arm Treatment"
     )) %>%
+
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
 
   vs <- synthesize_vs(dm)
