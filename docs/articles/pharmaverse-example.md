@@ -70,7 +70,7 @@ summary(sdtm)
 #>   PCTEST       PCTESTCD   
 #>   XANOMELINE   XAN          
 #> 
-#> Hash: ea521310d575b59e085e2909e748c533
+#> Hash: 017bf42677d51bf947d39d78d393dd10
 #> Last DTC: 2015-03-05 15:40:00
 
 plot(sdtm, domain = "dm", points = F)
@@ -151,7 +151,7 @@ summary(nif)
 #>   PLACEBO   7     210   149.1   182      
 #>   XAN       1     212   99.2    81        
 #> 
-#> Hash: 943b0f31774848c656fe5a8cfe35172c
+#> Hash: cfd2015fe178c8c89d67b3bffb4cbe7d
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

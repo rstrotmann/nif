@@ -173,6 +173,9 @@
 - [`filter_subject()`](filter_subject.md) : Keep only selected USUBJID
   in the data set
 
+- [`gather_duplicates()`](gather_duplicates.md) **\[experimental\]** :
+  Consolidate multiplicates
+
 - [`geom_admin()`](geom_admin.md) : Administration geom layer for ggplot
 
 - [`import_from_connection()`](import_from_connection.md) : Import nif
