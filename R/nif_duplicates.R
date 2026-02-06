@@ -264,11 +264,18 @@ gather_duplicates <- function(
   # Group by fields and summarize
   obj |>
     reframe(
-      DV = f(.data$DV),
-      TIME = f(.data$TIME),
+      across(any_of(
+        setdiff(c("DV", "TAFD", "TAD", "NTIME", "TIME"), id_field)), f),
       .by = c("ID", "ANALYTE", "CMT", "AMT", "EVID", id_field)
     ) |>
     left_join(bl, by = "ID") |>
-    nif() |>
-    make_time_from_time()
+    nif()
 }
+
+
+
+
+
+
+
+
