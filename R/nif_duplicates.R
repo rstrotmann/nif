@@ -242,7 +242,7 @@ gather_duplicates <- function(
   }
 
   # baseline fields by ID
-  bl_col <- set_diff(identify_baseline_columns(obj), c("EVID", "AMT"))
+  bl_col <- setdiff(identify_baseline_columns(obj), c("EVID", "AMT"))
   bl <- obj |>
     as.data.frame() |>
     distinct_at(c("ID", bl_col))
