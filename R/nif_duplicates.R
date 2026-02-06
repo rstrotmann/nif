@@ -201,3 +201,74 @@ resolve_duplicates <- function(
     relocate(any_of(names(df))) |>
     as.data.frame()
 }
+
+
+
+#' Consolidate multiplicates
+#'
+#' Identify duplicates or multiplicates by ID/USUBJID, ANALYTE/CMT and 'fields'
+#' and integrate the DV value for them using the 'duplicate_function'. A common
+#' application is the averaging of triplicate ECG parameter observations by
+#' NTIME.
+#'
+#' Observations with MDV == 1 are excluded from the process.
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param obj A nif object.
+#' @param id_field The field(s) over which to identify duplicates (in addition
+#' to ID ANALYTE and CMT which are automatically considered).
+#' @param silent Suppress messages.
+#' @param duplicate_function A function by which to consolidate the
+#' multiplicates
+#' @param na_rm Remove NA values.
+#'
+#' @returns A nif object.
+#' @export
+gather_duplicates <- function(
+    obj,
+    id_field = "NTIME",
+    duplicate_function = mean,
+    na_rm = TRUE,
+    silent = NULL
+) {
+  # validate input
+  ## to do
+
+  # if MDV is present, delete observations with MDV == 1
+  if ("MDV" %in% names(obj)) {
+    obj <- filter(obj, .data$MDV != 1)
+  }
+
+  # baseline fields by ID
+  bl_col <- identify_baseline_columns(obj)
+  bl <- obj |>
+    as.data.frame() |>
+    distinct_at(c("ID", bl_col))
+
+  # enhanced duplicate_function
+  f <- function(x) {
+    if (na_rm == TRUE) {
+      x_filtered <- x[!is.na(x)]
+      if (length(x_filtered) == 0) {
+        # All values are NA - return NA instead of NaN
+        return(NA)
+      }
+      duplicate_function(x_filtered)
+    } else {
+      duplicate_function(x)
+    }
+  }
+
+  # Group by fields and summarize
+  obj |>
+    reframe(
+      DV = f(.data$DV),
+      TIME = f(.data$TIME),
+      .by = c("ID", "ANALYTE", "CMT", "AMT", "EVID", id_field)
+    ) |>
+    left_join(bl, by = "ID") |>
+    nif() |>
+    make_time_from_time()
+}
