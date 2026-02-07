@@ -503,3 +503,22 @@ validate_analyte <- function(
     }
   }
 }
+
+
+#' Confirm that fields are present in nif object
+#'
+#' @param obj A data frame.
+#' @param fields Fields(s) to confirm presence of.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+validate_fields <- function(obj, fields) {
+  missing_fields <- setdiff(fields, names(obj))
+  if (length(missing_fields) > 0) {
+    stop(paste0(
+      plural("Field", length(missing_fields) > 1),
+      " not found in nif object: ", nice_enumeration(missing_fields)
+    ))
+  }
+}
+

@@ -204,12 +204,11 @@ resolve_duplicates <- function(
 
 
 
-#' Consolidate multiplicates
+#' Consolidate multiplicate observations
 #'
-#' Identify duplicates or multiplicates by ID/USUBJID, ANALYTE/CMT and 'fields'
-#' and integrate the DV value for them using the 'duplicate_function'. A common
-#' application is the averaging of triplicate ECG parameter observations by
-#' NTIME.
+#' Identify multiplicate observations over ID, CMT and 'fields' and integrate
+#' the DV value for them using the 'duplicate_function'. A common application is
+#' the averaging of triplicate ECG parameter observations by NTIME.
 #'
 #' Observations with MDV == 1 are excluded from the process.
 #'
@@ -234,7 +233,17 @@ gather_duplicates <- function(
     silent = NULL
 ) {
   # validate input
-  ## to do
+  validate_nif(obj)
+  validate_argument(id_field, "character", allow_multiple = TRUE)
+  validate_argument(na_rm, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+  group_fields <- c("ID", "CMT", "AMT", "EVID", "ANALYTE", id_field)
+  validate_fields(obj, group_fields)
+
+  if (!is.function(duplicate_function)) {
+    stop("duplicate_function must be a function")
+  }
 
   # if MDV is present, delete observations with MDV == 1
   if ("MDV" %in% names(obj)) {
@@ -245,7 +254,25 @@ gather_duplicates <- function(
   bl_col <- setdiff(identify_baseline_columns(obj), c("EVID", "AMT"))
   bl <- obj |>
     as.data.frame() |>
-    distinct_at(c("ID", bl_col))
+    distinct(across(c("ID", bl_col)))
+
+  duplicate_bl_ids <- bl$ID[duplicated(bl$ID)]
+  if (length(duplicate_bl_ids) > 0) {
+    stop(
+      "Baseline must be unique per ID. Inconsistent baseline for ID(s): ",
+      nice_enumeration(unique(duplicate_bl_ids))
+    )
+  }
+
+  # identify duplicates
+  n_dupl <- find_duplicates(obj, group_fields, count_only = TRUE)
+  conditional_cli(
+    cli_alert_info(paste0(
+      n_dupl, " duplicate observation gathered using '",
+      deparse(substitute(duplicate_function)), "'!"
+    )),
+    silent = silent
+  )
 
   # enhanced duplicate_function
   f <- function(x) {
@@ -262,11 +289,20 @@ gather_duplicates <- function(
   }
 
   # Group by fields and summarize
+  # obj |>
+  #   reframe(
+  #     across(any_of(
+  #       setdiff(c("DV", "TAFD", "TAD", "NTIME", "TIME"), id_field)), f),
+  #     .by = c("ID", "CMT", "AMT", "EVID", id_field)
+  #   ) |>
+  #   left_join(bl, by = "ID") |>
+  #   nif()
+
   obj |>
     reframe(
       across(any_of(
         setdiff(c("DV", "TAFD", "TAD", "NTIME", "TIME"), id_field)), f),
-      .by = c("ID", "ANALYTE", "CMT", "AMT", "EVID", id_field)
+      .by = any_of(group_fields)
     ) |>
     left_join(bl, by = "ID") |>
     nif()
