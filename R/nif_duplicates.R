@@ -226,11 +226,11 @@ resolve_duplicates <- function(
 #' @returns A nif object.
 #' @export
 gather_duplicates <- function(
-    obj,
-    id_field = "NTIME",
-    duplicate_function = mean,
-    na_rm = TRUE,
-    silent = NULL
+  obj,
+  id_field = "NTIME",
+  duplicate_function = mean,
+  na_rm = TRUE,
+  silent = NULL
 ) {
   # validate input
   validate_nif(obj)
@@ -253,7 +253,8 @@ gather_duplicates <- function(
   # baseline fields by ID
   bl_col <- setdiff(
     identify_baseline_columns(obj),
-    c("EVID", "AMT", "NTIME", "TIME", "DV"))
+    c("EVID", "AMT", "NTIME", "TIME", "DV")
+  )
   bl <- obj |>
     as.data.frame() |>
     distinct(across(all_of(c("ID", bl_col))))
@@ -292,30 +293,13 @@ gather_duplicates <- function(
     }
   }
 
-  # Group by fields and summarize
-  # obj |>
-  #   reframe(
-  #     across(any_of(
-  #       setdiff(c("DV", "TAFD", "TAD", "NTIME", "TIME"), id_field)), f),
-  #     .by = c("ID", "CMT", "AMT", "EVID", id_field)
-  #   ) |>
-  #   left_join(bl, by = "ID") |>
-  #   nif()
-
   obj |>
     reframe(
       across(any_of(
-        setdiff(c("DV", "TAFD", "TAD", "NTIME", "TIME"), id_field)), f),
+        setdiff(c("DV", "TAFD", "TAD", "NTIME", "TIME"), id_field)
+      ), f),
       .by = any_of(group_fields)
     ) |>
     left_join(bl, by = "ID") |>
     nif()
 }
-
-
-
-
-
-
-
-
