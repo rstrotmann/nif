@@ -88,7 +88,9 @@
 #' _pharmaversesdtm: SDTM Test Data for the 'Pharmaverse' Family of Packages_.
 #' <https://github.com/pharmaverse/pharmaversesdtm>.
 #'
-#' @format ##
+#' @format
+#' sdtm object with 9 domains:
+#'
 #' \preformatted{
 #' -------- SDTM data set summary --------
 #' Study CDISCPILOT01

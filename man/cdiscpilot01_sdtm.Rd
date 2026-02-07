@@ -5,7 +5,7 @@
 \alias{cdiscpilot01_sdtm}
 \title{Pharmaverse sample SDTM data}
 \format{
-\subsection{}{
+sdtm object with 9 domains:
 
 \preformatted{
 -------- SDTM data set summary --------
@@ -42,7 +42,6 @@ PK sample specimens (PC):
 PK analytes (PC):
   PCTEST       PCTESTCD
   XANOMELINE   XAN
-}
 }
 }
 \source{
