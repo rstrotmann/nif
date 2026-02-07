@@ -174,7 +174,7 @@
   in the data set
 
 - [`gather_duplicates()`](gather_duplicates.md) **\[experimental\]** :
-  Consolidate multiplicates
+  Consolidate multiplicate observations
 
 - [`geom_admin()`](geom_admin.md) : Administration geom layer for ggplot
 

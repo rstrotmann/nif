@@ -1,4 +1,4 @@
-# Consolidate multiplicates
+# Consolidate multiplicate observations
 
 **\[experimental\]**
 
@@ -43,9 +43,9 @@ A nif object.
 
 ## Details
 
-Identify duplicates or multiplicates by ID/USUBJID, ANALYTE/CMT and
-'fields' and integrate the DV value for them using the
-'duplicate_function'. A common application is the averaging of
-triplicate ECG parameter observations by NTIME.
+Identify multiplicate observations over ID, CMT and 'fields' and
+integrate the DV value for them using the 'duplicate_function'. A common
+application is the averaging of triplicate ECG parameter observations by
+NTIME.
 
 Observations with MDV == 1 are excluded from the process.
