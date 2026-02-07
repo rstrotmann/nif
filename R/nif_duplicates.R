@@ -251,15 +251,19 @@ gather_duplicates <- function(
   }
 
   # baseline fields by ID
-  bl_col <- setdiff(identify_baseline_columns(obj), c("EVID", "AMT"))
+  bl_col <- setdiff(
+    identify_baseline_columns(obj),
+    c("EVID", "AMT", "NTIME", "TIME", "DV"))
   bl <- obj |>
     as.data.frame() |>
-    distinct(across(c("ID", bl_col)))
+    distinct(across(all_of(c("ID", bl_col))))
 
   duplicate_bl_ids <- bl$ID[duplicated(bl$ID)]
   if (length(duplicate_bl_ids) > 0) {
     stop(
-      "Baseline must be unique per ID. Inconsistent baseline for ID(s): ",
+      "Baseline (",
+      nice_enumeration(bl_col),
+      ") must be unique per ID. Inconsistent baseline for ID(s): ",
       nice_enumeration(unique(duplicate_bl_ids))
     )
   }
