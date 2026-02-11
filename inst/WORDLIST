@@ -49,7 +49,6 @@ EGFR
 ELTM
 EVID
 EXAMPLINIB
-EXENDT
 EXENDTC
 EXSDTDTC
 EXSTDTC
@@ -67,7 +66,6 @@ Hy's
 IEC
 Iodinated
 LBM
-LBSPEC
 MDRD
 MDV
 Monolix
@@ -98,11 +96,11 @@ Pharmacometrics
 Pharmaverse
 Pinboard
 Posix
-QD
 QTIME
 RACEN
 RFENDTC
 RFSTDTC
+RICHINT
 RStudio
 Raynaud
 Rdnm
@@ -152,14 +150,12 @@ ddTdd
 dddd
 dl
 dm
-dosings
 ds
 eDISH
 eGFR
 egfr
 et
 examplinib
-exendtc
 extrt
 fda
 ggplot
@@ -182,11 +178,12 @@ magrittr
 mdrd
 micromolar
 mol
+multiplicate
+multiplicates
 ng
 nlmixr
 ntime
 onla
-pcrftdtc
 pharmacodynamic
 pharmacokinetic
 pharmacometric
@@ -198,7 +195,6 @@ pre
 raynaud
 readr
 requiredness
-rfendtc
 sas
 sd
 sdtm

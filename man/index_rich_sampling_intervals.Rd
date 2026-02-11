@@ -22,13 +22,17 @@ A new NIF object.
 Currently experimental. Don't use in production!
 }
 \details{
-Adds the fields \code{DI} (dosing interval per analyte), \code{RICHINT} (rich sampling
-interval), and \code{RICH_N} (index of the rich sampling interval by analyte).
+Adds the fields 'DI' (dosing interval per analyte), \code{RICHINT} (rich sampling
+interval), and 'RICH_N' (index of the rich sampling interval by analyte).
 
 This function identifies rich sampling intervals by the number of
-observations that follow an administration. A number of \code{min_n} or more
+observations that follow an administration. A number of 'min_n' or more
 observations before the next administration is interpreted as a rich sampling
-interval and the corresponding observations are flagged with \code{RICHINT} ==
+interval and the corresponding observations are flagged with 'RICHINT' ==
 TRUE. The index of the rich sampling intervals per subject and analyte is
-reported in the \code{RICH_N} field.
+reported in the 'RICH_N' field.
+}
+\examples{
+head(index_rich_sampling_intervals(examplinib_poc_nif))
+
 }

@@ -14,7 +14,7 @@ A data frame.
 }
 \description{
 Overview on the analytes included in a nif object and their respective parent
-analytes.
+treatments
 }
 \examples{
 analyte_overview(examplinib_poc_nif)
