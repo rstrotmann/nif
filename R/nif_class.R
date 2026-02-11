@@ -1216,15 +1216,17 @@ add_obs_per_dosing_interval <- function(obj) {
 #'
 #' Currently experimental. Don't use in production!
 #'
-#' Adds the fields `DI` (dosing interval per analyte), `RICHINT` (rich sampling
-#' interval), and `RICH_N` (index of the rich sampling interval by analyte).
+#' Adds the fields 'DI' (dosing interval per analyte), `RICHINT` (rich sampling
+#' interval), and 'RICH_N' (index of the rich sampling interval by analyte).
+#'
 #' @details
 #' This function identifies rich sampling intervals by the number of
-#' observations that follow an administration. A number of `min_n` or more
+#' observations that follow an administration. A number of 'min_n' or more
 #' observations before the next administration is interpreted as a rich sampling
-#' interval and the corresponding observations are flagged with `RICHINT` ==
+#' interval and the corresponding observations are flagged with 'RICHINT' ==
 #' TRUE. The index of the rich sampling intervals per subject and analyte is
-#' reported in the `RICH_N` field.
+#' reported in the 'RICH_N' field.
+#'
 #' @param obj The NIF object.
 #' @param min_n The minimum number of PK samples per analyte to qualify as rich
 #' sampling.
@@ -1233,7 +1235,15 @@ add_obs_per_dosing_interval <- function(obj) {
 #'
 #' @return A new NIF object.
 #' @export
+#' @examples
+#' head(index_rich_sampling_intervals(examplinib_poc_nif))
+#'
 index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
+  # input validation
+  validate_nif(obj)
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(min_n, "numeric")
+
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
   }
