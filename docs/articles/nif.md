@@ -326,7 +326,7 @@ suggest(examplinib_fe)
 #>   144 HOURS POST-DOSE   144        PT144H   
 #>   168 HOURS POST-DOSE   168        PT168H
 #> 
-#> Consider specifying a suitabe 'ntime_method' argument to 'add_observation()'.
+#> Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the
 #> PCTPT field.
 #> 

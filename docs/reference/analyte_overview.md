@@ -1,7 +1,7 @@
 # Analyte overview
 
 Overview on the analytes included in a nif object and their respective
-parent analytes.
+parent treatments
 
 ## Usage
 

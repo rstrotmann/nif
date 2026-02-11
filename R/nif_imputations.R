@@ -31,7 +31,7 @@ impute_exendtc_to_rfendtc <- function(
   n <- length(missing_ex_columns)
   if (n > 0) {
     stop(paste0(
-      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      "Missing ", plural("column", n > 1), " in domain EX: ",
       nice_enumeration(missing_ex_columns)
     ))
   }
@@ -184,7 +184,7 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
   n <- length(missing_columns)
   if (n > 0) {
     stop(paste0(
-      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      "Missing ", plural("column", n > 1), " in domain EX: ",
       nice_enumeration(missing_columns)
     ))
   }
@@ -294,7 +294,7 @@ impute_exendtc_to_cutoff <- function(
   n <- length(missing_columns)
   if (n > 0) {
     stop(paste0(
-      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      "Missing ", plural("column", n > 1), " in domain EX: ",
       nice_enumeration(missing_columns)
     ))
   }
@@ -464,7 +464,7 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
   n <- length(missing_ex_columns)
   if (n > 0) {
     stop(paste0(
-      "Missing ", plural("colum", n > 1), " in domain EX: ",
+      "Missing ", plural("column", n > 1), " in domain EX: ",
       nice_enumeration(missing_ex_columns)
     ))
   }

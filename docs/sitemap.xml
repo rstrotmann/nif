@@ -8,7 +8,6 @@
 <url><loc>/articles/multiple-study-example.html</loc></url>
 <url><loc>/articles/nif-formulas.html</loc></url>
 <url><loc>/articles/nif-imputations.html</loc></url>
-<url><loc>/articles/nif-tutorial.html</loc></url>
 <url><loc>/articles/nif.html</loc></url>
 <url><loc>/articles/pharmaverse-example.html</loc></url>
 <url><loc>/authors.html</loc></url>
@@ -17,7 +16,6 @@
 <url><loc>/reference/adam.html</loc></url>
 <url><loc>/reference/add_administration.html</loc></url>
 <url><loc>/reference/add_ae_observation.html</loc></url>
-<url><loc>/reference/add_analyte_mapping.html</loc></url>
 <url><loc>/reference/add_baseline.html</loc></url>
 <url><loc>/reference/add_bintime.html</loc></url>
 <url><loc>/reference/add_bl_crcl.html</loc></url>
@@ -29,14 +27,11 @@
 <url><loc>/reference/add_covariate.html</loc></url>
 <url><loc>/reference/add_dd.html</loc></url>
 <url><loc>/reference/add_dose_level.html</loc></url>
-<url><loc>/reference/add_metabolite_mapping.html</loc></url>
 <url><loc>/reference/add_ntile.html</loc></url>
 <url><loc>/reference/add_obs_per_dosing_interval.html</loc></url>
 <url><loc>/reference/add_observation.html</loc></url>
-<url><loc>/reference/add_parent_mapping.html</loc></url>
 <url><loc>/reference/add_tafd.html</loc></url>
 <url><loc>/reference/add_time_deviation.html</loc></url>
-<url><loc>/reference/add_time_mapping.html</loc></url>
 <url><loc>/reference/add_time_window_flag.html</loc></url>
 <url><loc>/reference/add_trtdy.html</loc></url>
 <url><loc>/reference/administration_summary.html</loc></url>
@@ -47,7 +42,6 @@
 <url><loc>/reference/analytes.sdtm.html</loc></url>
 <url><loc>/reference/bintime_plot.html</loc></url>
 <url><loc>/reference/bmi_by_age.html</loc></url>
-<url><loc>/reference/cat_boxplot.html</loc></url>
 <url><loc>/reference/cdiscpilot01_nif.html</loc></url>
 <url><loc>/reference/cdiscpilot01_sdtm.html</loc></url>
 <url><loc>/reference/check_date_format.html</loc></url>
@@ -81,7 +75,6 @@
 <url><loc>/reference/doses.nif.html</loc></url>
 <url><loc>/reference/doses.sdtm.html</loc></url>
 <url><loc>/reference/dtc_formats.html</loc></url>
-<url><loc>/reference/dv_na_to_zero.html</loc></url>
 <url><loc>/reference/edish_plot.html</loc></url>
 <url><loc>/reference/egfr_cg.html</loc></url>
 <url><loc>/reference/egfr_mdrd.html</loc></url>
@@ -96,12 +89,9 @@
 <url><loc>/reference/examplinib_sad_nif.html</loc></url>
 <url><loc>/reference/filter_correct_date_format.html</loc></url>
 <url><loc>/reference/filter_subject.html</loc></url>
-<url><loc>/reference/find_duplicates.html</loc></url>
 <url><loc>/reference/function_name.html</loc></url>
 <url><loc>/reference/gather_duplicates.html</loc></url>
 <url><loc>/reference/geom_admin.html</loc></url>
-<url><loc>/reference/get_pinboard.html</loc></url>
-<url><loc>/reference/guess_lbspec.html</loc></url>
 <url><loc>/reference/guess_ntime.html</loc></url>
 <url><loc>/reference/has_domain.html</loc></url>
 <url><loc>/reference/ht_by_wt.html</loc></url>
@@ -124,8 +114,6 @@
 <url><loc>/reference/lbm_peters.html</loc></url>
 <url><loc>/reference/limit.html</loc></url>
 <url><loc>/reference/lubrify_dates.html</loc></url>
-<url><loc>/reference/make_administration.html</loc></url>
-<url><loc>/reference/make_ae.html</loc></url>
 <url><loc>/reference/make_observation.html</loc></url>
 <url><loc>/reference/make_plot_data_set.html</loc></url>
 <url><loc>/reference/max_admin_time.html</loc></url>
@@ -134,13 +122,10 @@
 <url><loc>/reference/mean_dose_plot.html</loc></url>
 <url><loc>/reference/n_administrations.html</loc></url>
 <url><loc>/reference/nca.html</loc></url>
-<url><loc>/reference/nca1.html</loc></url>
-<url><loc>/reference/nca2.html</loc></url>
 <url><loc>/reference/nca_from_pp.html</loc></url>
 <url><loc>/reference/nca_power_model.html</loc></url>
 <url><loc>/reference/nca_summary.html</loc></url>
 <url><loc>/reference/nca_summary_table.html</loc></url>
-<url><loc>/reference/new_domain.html</loc></url>
 <url><loc>/reference/new_nif.html</loc></url>
 <url><loc>/reference/new_sdtm.html</loc></url>
 <url><loc>/reference/nice_enumeration.html</loc></url>
@@ -148,7 +133,6 @@
 <url><loc>/reference/nif.html</loc></url>
 <url><loc>/reference/nif_auto.html</loc></url>
 <url><loc>/reference/nif_disclaimer.html</loc></url>
-<url><loc>/reference/nif_nca_new.html</loc></url>
 <url><loc>/reference/nif_option.html</loc></url>
 <url><loc>/reference/nif_pinboard.html</loc></url>
 <url><loc>/reference/nif_plot_id.html</loc></url>
@@ -171,7 +155,6 @@
 <url><loc>/reference/race_coding.html</loc></url>
 <url><loc>/reference/read_sdtm.html</loc></url>
 <url><loc>/reference/recode_race.html</loc></url>
-<url><loc>/reference/resolve_duplicates.html</loc></url>
 <url><loc>/reference/rich_sampling_sbs.html</loc></url>
 <url><loc>/reference/safe_mean.html</loc></url>
 <url><loc>/reference/safe_min.html</loc></url>
@@ -180,7 +163,6 @@
 <url><loc>/reference/sdtm_missing_times.html</loc></url>
 <url><loc>/reference/standardize_date_format.html</loc></url>
 <url><loc>/reference/stat_admin.html</loc></url>
-<url><loc>/reference/stat_admin_proto.html</loc></url>
 <url><loc>/reference/studies.html</loc></url>
 <url><loc>/reference/subject_info.html</loc></url>
 <url><loc>/reference/subject_info.sdtm.html</loc></url>

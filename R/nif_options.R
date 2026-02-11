@@ -21,7 +21,7 @@ assign("version", packageVersion("nif"), envir = .nif_env)
 #' * `show_hash` as logical: Include dataset hash in figures.
 #' * `abbreviation_threshold` as numeric: Allowed line count in message output
 #' without abbreviation. Set to Inf to always show all lines.
-#' * `abbrevation_maxlines` as numeric: Line number to that lists in message
+#' * `abbreviation_maxlines` as numeric: Line number to that lists in message
 #' output will be abbreviated if the line count threshold is exceeded.
 #'
 #' @param ... Options as named values, or nothing.
@@ -41,10 +41,8 @@ nif_option <- function(...) {
     "debug",      is.logical,
     "show_hash",  is.logical,
     "test",       is.character,
-    # "abbreviate", is.logical,
     "abbreviation_threshold", is.numeric,
     "abbreviation_maxlines", is.numeric
-    # "disclaimer", is.character
   )
 
   if (length(args) == 0) {

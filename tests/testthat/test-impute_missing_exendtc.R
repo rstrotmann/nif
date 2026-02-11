@@ -7,7 +7,7 @@ test_that("impute_missing_exendtc validates input correctly", {
 
   expect_error(
     impute_missing_exendtc(ex_missing_cols),
-    "Missing colums in domain EX: EXSTDTC and EXENDTC"
+    "Missing columns in domain EX: EXSTDTC and EXENDTC"
   )
 })
 

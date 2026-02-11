@@ -66,7 +66,7 @@ suggest(examplinib_poc)
 #>   POSTDOSE 10 H    10         PT10H    
 #>   POSTDOSE 12 H    12         PT12H     
 #> 
-#> Consider specifying a suitabe 'ntime_method' argument to 'add_observation()'.
+#> Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the
 #> PCTPT field.
 #> 

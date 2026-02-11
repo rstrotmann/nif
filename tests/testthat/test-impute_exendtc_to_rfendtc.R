@@ -29,7 +29,7 @@ test_that("impute_exendtc_to_rfendtc validates input correctly", {
 
   expect_error(
     impute_exendtc_to_rfendtc(ex_missing_cols, dm_valid, "DRUG A"),
-    "Missing colums in domain EX: EXSTDTC and EXENDTC"
+    "Missing columns in domain EX: EXSTDTC and EXENDTC"
   )
 })
 

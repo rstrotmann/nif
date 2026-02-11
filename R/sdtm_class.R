@@ -105,7 +105,7 @@ trial_dco <- function(obj) {
   }
   dco <- ts$TSVAL[ts$TSPARMCD == "DCUTDTC"]
   if (length(dco) > 1)
-    warning("TS domain inclucdes multiple data cut-off dates!")
+    warning("TS domain includes multiple data cut-off dates!")
   lubridate::as_datetime(dco, format = dtc_formats)
 }
 
@@ -535,7 +535,7 @@ suggest <- function(obj, show_all = FALSE) {
     ))
     cli::cli_text()
     cli::cli_text(paste0(
-      "Consider specifying a suitabe 'ntime_method' argument to ",
+      "Consider specifying a suitable 'ntime_method' argument to ",
       "'add_observation()'. By default, the function will attempt to extract ",
       "time information from the PCTPT field."
     ))

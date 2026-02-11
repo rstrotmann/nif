@@ -23,7 +23,7 @@ supported:
 \item \code{show_hash} as logical: Include dataset hash in figures.
 \item \code{abbreviation_threshold} as numeric: Allowed line count in message output
 without abbreviation. Set to Inf to always show all lines.
-\item \code{abbrevation_maxlines} as numeric: Line number to that lists in message
+\item \code{abbreviation_maxlines} as numeric: Line number to that lists in message
 output will be abbreviated if the line count threshold is exceeded.
 }
 }

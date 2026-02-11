@@ -1,9 +1,8 @@
 # Index dosing intervals
 
-This function adds a column `DI` that indicates the dosing interval. All
+This function adds a column 'DI' that indicates the dosing interval. All
 baseline observations before the first dosing interval get assigned to
-the first dosing interval, too. In addition to `DI`, the function also
-calls `index_nif()`, thus creating the field `REF` as a side effect.
+the first dosing interval.
 
 ## Usage
 

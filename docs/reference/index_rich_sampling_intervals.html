@@ -75,16 +75,50 @@ sampling.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Adds the fields <code>DI</code> (dosing interval per analyte), <code>RICHINT</code> (rich sampling
-interval), and <code>RICH_N</code> (index of the rich sampling interval by analyte).</p>
+    <p>Adds the fields 'DI' (dosing interval per analyte), <code>RICHINT</code> (rich sampling
+interval), and 'RICH_N' (index of the rich sampling interval by analyte).</p>
 <p>This function identifies rich sampling intervals by the number of
-observations that follow an administration. A number of <code>min_n</code> or more
+observations that follow an administration. A number of 'min_n' or more
 observations before the next administration is interpreted as a rich sampling
-interval and the corresponding observations are flagged with <code>RICHINT</code> ==
+interval and the corresponding observations are flagged with 'RICHINT' ==
 TRUE. The index of the rich sampling intervals per subject and analyte is
-reported in the <code>RICH_N</code> field.</p>
+reported in the 'RICH_N' field.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">index_rich_sampling_intervals</span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC  TIME NTIME  TAFD   TAD EVID AMT    ANALYTE CMT PARENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-13 10:36:00 0.000   0.0 0.000 0.000    1 500     RS2023   1 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-13 10:36:00 0.000   0.0 0.000 0.000    0   0     RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-13 10:36:00 0.000   0.0 0.000 0.000    0   0 RS2023487A   3 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-13 11:36:00 1.000   0.5 1.000 1.000    0   0     RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-13 11:36:00 1.000   0.5 1.000 1.000    0   0 RS2023487A   3 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-13 12:04:00 1.467   1.0 1.467 1.467    0   0     RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   TRTDY METABOLITE DOSE MDV  ACTARMCD IMPUTATION RICH_N DI        DV BL_CREAT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE  500   1 TREATMENT                 1  1        NA 72.78062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE  500   0 TREATMENT                 1  1    0.0000 72.78062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE  500   0 TREATMENT                 1  1    0.0000 72.78062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE  500   0 TREATMENT                 1  1  636.6833 72.78062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE  500   0 TREATMENT                 1  1  135.1259 72.78062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE  500   0 TREATMENT                 1  1 1844.8225 72.78062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    BL_CRCL OPDI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 107.4689   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 107.4689   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 107.4689   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 107.4689   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 107.4689   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 107.4689   11</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
