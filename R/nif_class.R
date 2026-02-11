@@ -468,7 +468,8 @@ subjects.nif <- function(obj) {
 usubjid <- function(obj, id, silent = NULL) {
   # input validation
   validate_nif(obj)
-  validate_numeric_param(id, "id", allow_multiple = TRUE, allow_null = TRUE)
+  # validate_numeric_param(id, "id", allow_multiple = TRUE, allow_null = TRUE)
+  validate_argument(id, "numeric", allow_multiple = TRUE, allow_null = TRUE)
   if (!"USUBJID" %in% names(obj)) {
     stop("USUBJID field not found")
   }
@@ -510,43 +511,52 @@ parents <- function(obj) {
 #' Subjects with dose reduction
 #'
 #' @param obj A NIF object object.
-#' @param analyte The analyte of interest as string. considers all analytes if
-#'   analyte is NULL (default).
+#' @param analyte The treatment of interest as character. Automatically selects
+#' the treatment if NULL but fails if there are multiple treatments.
 #' @return A data frame with the ID and, if available, the USUBJID of subjects
-#'   with dose reductions.
+#' with dose reductions.
 #' @export
 #' @examples
 #' dose_red_sbs(examplinib_poc_nif)
+#' dose_red_sbs(examplinib_poc_nif, "RS2023")
+#'
 dose_red_sbs <- function(obj, analyte = NULL) {
   # input validation
   validate_nif(obj)
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
+  validate_argument(analyte, "character", allow_null = TRUE)
 
-  if (!"ANALYTE" %in% names(obj)) {
-    obj <- obj |>
-      mutate(ANALYTE = .data$CMT)
+  obj <- ensure_analyte(obj)
+
+  available_treatments <- treatments(obj)
+
+  if (is.null(analyte)) {
+    if (length(available_treatments) == 0)
+      stop("No treatment found!")
+
+    if (length(available_treatments) == 1)
+      analyte <- available_treatments
+
+    if (length(available_treatments) > 1)
+      stop(paste0(
+        "Multiple treatments in data set (",
+        nice_enumeration(available_treatments),
+        "). Please specify exactly one treatment."))
+
   }
 
-  if (!is.null(analyte)) {
+  if (!analyte %in% available_treatments)
+    stop(paste0("Treatment ", analyte, " not found!"))
+
+  # if (!is.null(analyte)) {
     obj <- obj |>
       filter(.data$ANALYTE %in% analyte)
-  }
+  # }
 
-  temp <- obj |>
+  obj |>
     as.data.frame() |>
+    filter(.data$ANALYTE %in% analyte) |>
     arrange_and_add_ref() |>
-    filter(.data$EVID == 1)
-
-  treatments <- unique(temp$ANALYTE)
-  if (length(treatments) > 1) {
-    stop(
-      "Multiple treatments in data set (",
-      nice_enumeration(treatments),
-      "). Please specify exactly one treatment."
-    )
-  }
-
-  temp |>
+    filter(.data$EVID == 1) |>
     arrange(.data$TIME) |>
     group_by(.data$ID, .data$ANALYTE) |>
     mutate(initial_dose = .data$AMT[row_number() == 1]) |>

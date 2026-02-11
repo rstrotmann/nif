@@ -9,8 +9,8 @@ dose_red_sbs(obj, analyte = NULL)
 \arguments{
 \item{obj}{A NIF object object.}
 
-\item{analyte}{The analyte of interest as string. considers all analytes if
-analyte is NULL (default).}
+\item{analyte}{The treatment of interest as character. Automatically selects
+the treatment if NULL but fails if there are multiple treatments.}
 }
 \value{
 A data frame with the ID and, if available, the USUBJID of subjects
@@ -21,4 +21,6 @@ Subjects with dose reduction
 }
 \examples{
 dose_red_sbs(examplinib_poc_nif)
+dose_red_sbs(examplinib_poc_nif, "RS2023")
+
 }

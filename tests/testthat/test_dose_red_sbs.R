@@ -269,18 +269,19 @@ test_that("dose_red_sbs validates analyte parameter", {
   expect_no_error(dose_red_sbs(nif, analyte = NULL))
 
   # Should handle character analyte
-  expect_no_error(dose_red_sbs(nif, analyte = "DRUG1"))
+  expect_error(
+    dose_red_sbs(nif, analyte = "DRUG1"),
+    "Treatment DRUG1 not found!")
 })
 
 
 test_that("dose_red_sbs handles empty NIF object", {
   empty_nif <- nif()
 
-  result <- dose_red_sbs(empty_nif)
-
-  expect_s3_class(result, "data.frame")
-  expect_equal(nrow(result), 0)
-  expect_true("ID" %in% names(result))
+  expect_error(
+    result <- dose_red_sbs(empty_nif),
+    "No treatment found!"
+  )
 })
 
 
@@ -300,3 +301,4 @@ test_that("dose_red_sbs handles subjects with only single dose", {
   expect_equal(result$ID, 2)
   expect_false(1 %in% result$ID)
 })
+
