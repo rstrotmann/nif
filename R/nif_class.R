@@ -688,7 +688,9 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
   # input validation
   validate_nif(obj)
   validate_numeric_param(cmt, "cmt")
-  validate_char_param(group, "group", allow_null = TRUE, allow_multiple = TRUE)
+  # validate_argument(cmt, "numeric")
+  validate_argument(group, "character", allow_null = TRUE, allow_multiple = TRUE)
+  # validate_char_param(group, "group", allow_null = TRUE, allow_multiple = TRUE)
 
   expected_fields <- c("ID", "AMT", "TIME", group)
   missing_fields <- setdiff(expected_fields, names(obj))
