@@ -1,3 +1,36 @@
+#' Minimal nif fields
+#'
+#' @return A character vector of the minimal NIF fields
+#' @noRd
+minimal_nif_fields <- c(
+  "ID", "TIME", "AMT", "CMT", "EVID", "DV"
+)
+
+
+#' Standard nif fields
+#'
+#' @return A character vector of the standard NIF fields
+#' @noRd
+standard_nif_fields <- c(
+  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "TAFD", "ANALYTE",
+  "AMT", "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX",
+  "RACE", "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
+  "METABOLITE", "TRTDY", "DI", "PART", "COHORT", "FASTED", "DTC", "RICH_N"
+)
+
+
+#' Fillable nif fields
+#'
+#' @return A character vector of the fillable NIF fields
+#' @noRd
+fillable_nif_fields <- unique(c(
+  "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
+  "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED",
+  "IMPUTATION",
+  "DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED"
+))
+
+
 #' nif class constructor
 #'
 #' @description
@@ -688,9 +721,7 @@ dose_levels <- function(obj, cmt = 1, group = NULL) {
   # input validation
   validate_nif(obj)
   validate_numeric_param(cmt, "cmt")
-  # validate_argument(cmt, "numeric")
   validate_argument(group, "character", allow_null = TRUE, allow_multiple = TRUE)
-  # validate_char_param(group, "group", allow_null = TRUE, allow_multiple = TRUE)
 
   expected_fields <- c("ID", "AMT", "TIME", group)
   missing_fields <- setdiff(expected_fields, names(obj))
@@ -768,7 +799,7 @@ analytes.nif <- function(obj) {
 #' Analyte overview
 #'
 #' Overview on the analytes included in a nif object and their respective parent
-#' analytes.
+#' treatments
 #'
 #' @param obj A nif object.
 #'
@@ -893,45 +924,12 @@ head.nif <- function(x, ...) {
 }
 
 
-#' Minimal nif fields
-#'
-#' @return A character vector of the minimal NIF fields
-#' @noRd
-minimal_nif_fields <- c(
-  "ID", "TIME", "AMT", "CMT", "EVID", "DV"
-)
-
-
-#' Standard nif fields
-#'
-#' @return A character vector of the standard NIF fields
-#' @noRd
-standard_nif_fields <- c(
-  "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "TAFD", "ANALYTE",
-  "AMT", "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX",
-  "RACE", "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
-  "METABOLITE", "TRTDY", "DI", "PART", "COHORT", "FASTED", "DTC", "RICH_N"
-)
-
-
-#' Fillable nif fields
-#'
-#' @return A character vector of the fillable NIF fields
-#' @noRd
-fillable_nif_fields <- unique(c(
-  "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
-  "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED",
-  "IMPUTATION",
-  "DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED"
-))
-
-
 #' Index dosing intervals
 #'
-#' This function adds a column `DI` that indicates the dosing interval. All
+#' This function adds a column 'DI' that indicates the dosing interval. All
 #' baseline observations before the first dosing interval get assigned to the
-#' first dosing interval, too. In addition to `DI`, the function also calls
-#' `index_nif()`, thus creating the field `REF` as a side effect.
+#' first dosing interval.
+#'
 #' @param obj The NIF object.
 #' @return A new NIF object.
 #' @export
@@ -940,6 +938,8 @@ fillable_nif_fields <- unique(c(
 #' head(index_dosing_interval(examplinib_poc_nif))
 #' head(index_dosing_interval(examplinib_poc_min_nif))
 index_dosing_interval <- function(obj) {
+  validate_nif(obj)
+
   obj <- obj |>
     ensure_parent() |>
     arrange_and_add_ref() |>
