@@ -96,8 +96,8 @@ function_name <- function(fun) {
 #'
 #' @param obj The data.frame containing a SEX field
 #' @return The output data frame with SEX coded as:
-#'   - 0: "M", "男", "0"
-#'   - 1: "F", "女", "1"
+#'   - 0: "M", "0"
+#'   - 1: "F", "1"
 #'   - NA: Any other values (with warning)
 #' @import dplyr
 #' @keywords internal
@@ -116,20 +116,6 @@ recode_sex <- function(obj) {
 
   result <- obj |>
     mutate(SEX = as.numeric(
-
-      # case_match(str_trim(toupper(as.character(.data$SEX))),
-      #   "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-      #   "\u7537" ~ 0, "\u5973" ~ 1, # 男, 女
-      #   .default = NA
-      # )
-
-      # recode_values(
-      #   str_trim(toupper(as.character(.data$SEX))),
-      #            "M" ~ 0, "F" ~ 1, "1" ~ 1, "0" ~ 0,
-      #            "\u7537" ~ 0, "\u5973" ~ 1, # 男, 女
-      #            default = NA
-      # )
-
       case_when(
         str_trim(toupper(as.character(.data$SEX))) %in% c("M", "0", "\u7537") ~ 0,
         str_trim(toupper(as.character(.data$SEX))) %in% c("F", "1", "\u5973") ~ 1,
@@ -987,22 +973,22 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
   separator <- if (strict) strict_separator else relaxed_separator
 
   # Combined patterns
-  # Extended format: YYYY-MM-DDThh:mm:ss(.sss)(Z|±hh:mm)
+  # Extended format: YYYY-MM-DDThh:mm:ss(.sss)(Z|+/-hh:mm)
   datetime_extended <- paste0(
     "^", date_extended, separator, time_extended, timezone, "$"
   )
 
-  # Basic format: YYYYMMDDThhmmss(.sss)(Z|±hhmm)
+  # Basic format: YYYYMMDDThhmmss(.sss)(Z|+/-hhmm)
   datetime_basic <- paste0(
     "^", date_basic, strict_separator, time_basic, timezone, "$"
   )
 
-  # Mix of extended date with basic time: YYYY-MM-DDThhmmss(.sss)(Z|±hhmm)
+  # Mix of extended date with basic time: YYYY-MM-DDThhmmss(.sss)(Z|+/-hhmm)
   datetime_mixed1 <- paste0(
     "^", date_extended, separator, time_basic, timezone, "$"
   )
 
-  # Mix of basic date with extended time: YYYYMMDDThh:mm:ss(.sss)(Z|±hh:mm)
+  # Mix of basic date with extended time: YYYYMMDDThh:mm:ss(.sss)(Z|+/-hh:mm)
   datetime_mixed2 <- paste0(
     "^", date_basic, strict_separator, time_extended, timezone, "$"
   )
