@@ -254,7 +254,7 @@ add_tad <- function(nif) {
   result <- nif |>
     as.data.frame() |>
     # Ensure proper ordering for fill operations
-    arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) |>
+    arrange(.data$ID, .data$PARENT, .data$TIME, .data$EVID) |>
     # Create admin_time column for dosing events
     mutate(admin_time = case_when(
       .data$EVID == 1 ~ .data$TIME,
