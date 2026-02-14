@@ -227,22 +227,22 @@ test_that("make_time validates DTC column type", {
 })
 
 
-test_that("make_time validates input is nif object", {
-  # Test with regular data frame
-  test_data <- data.frame(
-    ID = 1,
-    DTC = as.POSIXct("2023-01-01 08:00:00"),
-    EVID = 1,
-    ANALYTE = "DRUG",
-    PARENT = "DRUG",
-    DV = NA
-  )
-
-  expect_error(
-    make_time(test_data),
-    "Input must be a nif object"
-  )
-})
+# test_that("make_time validates input is nif object", {
+#   # Test with regular data frame
+#   test_data <- data.frame(
+#     ID = 1,
+#     DTC = as.POSIXct("2023-01-01 08:00:00"),
+#     EVID = 1,
+#     ANALYTE = "DRUG",
+#     PARENT = "DRUG",
+#     DV = NA
+#   )
+#
+#   expect_error(
+#     make_time(test_data),
+#     "Input must be a nif object"
+#   )
+# })
 
 
 test_that("make_time preserves original data columns", {

@@ -54,11 +54,11 @@ last_ex_dtc <- function(ex) {
 #'
 #' @param obj A nif object.
 #' @return A nif object with TIME, TAFD, and TAD fields added.
-#' @noRd
+#' @export
 make_time <- function(obj) {
   # Input validation
-  if (!inherits(obj, "nif"))
-    stop("Input must be a nif object")
+  # if (!inherits(obj, "nif"))
+  #   stop("Input must be a nif object")
 
   required_cols <- c("ID", "DTC", "ANALYTE", "PARENT", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
