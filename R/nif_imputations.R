@@ -448,6 +448,44 @@ impute_admin_from_pcrftdtc <- function(
 }
 
 
+#' derive DTC_time in EX after expansion
+#'
+#' @param ex The expanded EX domain.
+#'
+#' @returns The expanded EX domain with DTC_time imputed.
+#' @noRd
+derive_ex_dtc_time <- function(ex) {
+  ex |>
+    group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
+
+    # make DTC_time field
+    mutate(DTC_time = case_when(
+      row_number() == 1 & n() == 1 ~ .data$EXSTDTC_time,
+      row_number() == n() & !is.na(EXENDTC_time) ~ .data$EXENDTC_time,
+      .default = .data$EXSTDTC_time
+    )) |>
+
+    # make IMPUTATION field
+    mutate(IMPUTATION = case_when(
+      row_number() == n() & !is.na(EXENDTC_time) ~ "",
+
+      row_number() == 1 & !is.na(EXSTDTC_time) ~ "",
+
+      row_number() == n() & is.na(EXENDTC_time) &
+        !is.na(EXSTDTC_time) ~ "time carried forward",
+
+      row_number() != n() & row_number() != 1 &
+        !is.na(EXSTDTC_time) ~ "time carried forward",
+
+      row_number() != n() & is.na(EXSTDTC) ~ "no time information",
+
+      .default = "no time information"
+    )) |>
+    ungroup() |>
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
+}
+
+
 #' Remove administrations with EXSTDTC after EXENDTC
 #'
 #' @param ex The ex domain as data frame.
@@ -526,3 +564,56 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
                   !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
                   .data$EXSTDTC > .data$EXENDTC)))
 }
+
+
+
+#' standard imputation function
+#'
+#' @param step Imputation step
+#'
+#' @returns A function
+#' @export
+imputation_standard <- function(
+    step = c("ex_pre_expansion", "ex_post_expansion")) {
+  # input validation
+  match.arg(step)
+
+  # EX pre-expansion, called before administration episodes between EXSTDTC and
+  # EXENDTC are expanded
+  if (step == "ex_pre_expansion") {
+    return(
+      function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+        dm <- lubrify_dates(domain(sdtm, "dm"))
+
+        ex |>
+          impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
+          impute_missing_exendtc(silent = silent) |>
+          filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
+      }
+    )
+  }
+
+  if (step == "ex_post_expansion") {
+    return(
+      function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+        # impute missing administration times from PCRFTDTC where available
+        if ("pc" %in% names(sdtm$domains)) {
+          pc <- lubrify_dates(domain(sdtm, "pc"))
+          if ("PCRFTDTC" %in% names(pc)) {
+            ex <- impute_admin_from_pcrftdtc(
+              ex, pc, analyte, analyte, silent = silent)
+          }
+        }
+        return(ex)
+      }
+    )
+  }
+
+  stop("unknown step")
+}
+
+
+
+
+
+

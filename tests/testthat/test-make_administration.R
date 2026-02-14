@@ -11,18 +11,19 @@ test_that("make_administration works for examplinib_poc", {
 test_that("make_administration works without pc", {
   sdtm <- sdtm(list(
     dm = tibble::tribble(
-      ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
-      1, 1, "2024-12-16T7:50", "2024-12-19", "ARM A",
-      2, 1, "2024-12-16T7:50", "2024-12-18", "ARM A",
-      3, 1, "2024-12-16T7:50", "2024-12-17", "ARM A"
-    ),
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+             1,    1, "2024-12-16T7:50", "2024-12-19",   "ARM A",
+             2,    1, "2024-12-16T7:50", "2024-12-18",   "ARM A",
+             3,    1, "2024-12-16T7:50", "2024-12-17",   "ARM A"
+      ),
+
     ex = tibble::tribble(
-      ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXDOSE,
-      1, 1, "A", "2024-12-16T7:50", "2024-12-19", 100,
-      2, 2, "A", "2024-12-16T7:50", "2024-12-18", 100,
-      3, 3, "A", "2024-12-16T7:50", "2024-12-17", 100,
-      3, 4, "A", "2024-12-20", "2024-12-22", 100
-    )
+      ~USUBJID, ~EXSEQ, ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+             1,      1,    "A", "2024-12-16T7:50", "2024-12-19",     100,
+             2,      2,    "A", "2024-12-16T7:50", "2024-12-18",     100,
+             3,      3,    "A", "2024-12-16T7:50", "2024-12-17",     100,
+             3,      4,    "A",      "2024-12-20", "2024-12-22",     100
+      )
   ))
 
   expect_no_error(
@@ -48,9 +49,9 @@ test_that("make_administration works without pc", {
       "time carried forward",
       "",
       "time carried forward",
-      "time carried forward",
-      "time carried forward",
-      "time carried forward"
+      "no time information",
+      "no time information",
+      "no time information"
     )
   )
 })

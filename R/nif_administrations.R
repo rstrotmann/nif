@@ -85,18 +85,20 @@ expand_ex <- function(ex) {
     ex$EXENDY <- as.numeric(ex$EXENDY)
   }
 
+  # create IMPUTATION field if necessary
   if (!"IMPUTATION" %in% names(ex)) {
     ex <- mutate(ex, IMPUTATION = "")
   }
 
+  # Expand days
   ex <- ex |>
-    decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
-
+    decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
     rowwise() |>
     mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1])
 
+  # expand EXDY, if present
   if (all(c("EXSTDY", "EXENDY") %in% names(ex))) {
     ex <- ex |>
       mutate(EXDY = date_list(
@@ -107,26 +109,15 @@ expand_ex <- function(ex) {
 
   ex <- ex |>
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
-    group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
-    mutate(DTC_time = case_when(
-      row_number() == n() & !is.na(EXENDTC_time) ~ .data$EXENDTC_time,
-      .default = .data$EXSTDTC_time
-    )) |>
-    # make imputation field
-    mutate(IMPUTATION = case_when(
-      row_number() == n() & !is.na(EXENDTC_time) ~ .data$IMPUTATION,
-      row_number() == n() & row_number() != 1 & is.na(EXENDTC_time) &
-        !is.na(EXSTDTC_time) ~ "time carried forward",
-      row_number() == 1 & !is.na(EXSTDTC_time) ~ .data$IMPUTATION,
-      !is.na(EXSTDTC_time) ~ "time carried forward",
-      .default = "no time information"
-    )) |>
-    ungroup() |>
+    mutate(DTC_time = NA) |>
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
-    select(-c(
-      "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time",
-      "DTC_date", "DTC_time"
-    ))
+    mutate(IMPUTATION = "no time information") |>
+    # basic assumption: in all treatment episodes, time is from EXSTDTC but for
+    # the last day, where it is from EXENDTC. This can be overridden by the
+    # ex_post_expansion imputation.
+    derive_ex_dtc_time()
+
+  return(ex)
 }
 
 
@@ -201,6 +192,7 @@ expand_ex <- function(ex) {
 #' @param cut_off_date The data cut-off date as Posix date-time or character.
 #' @param keep Columns to keep after cleanup, as character.
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
+#' @param imputation The imputation engine.
 #'
 #' @return A data frame.
 #' @noRd
@@ -214,6 +206,7 @@ make_administration <- function(
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
   keep = "",
+  imputation = imputation_standard,
   silent = NULL
 ) {
   # extract domains
@@ -232,12 +225,20 @@ make_administration <- function(
     stop(paste0("Treatment '", extrt, "' not found in EXTRT!"))
   }
 
+  conditional_cli(
+    cli_alert_info(paste0(
+      "Using imputation model ", deparse(substitute(imputation)))),
+    silent = silent
+  )
+
+  # Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent
   ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
   if (is.null(analyte)) {
     analyte <- extrt
   }
 
+  # generate data cut off date
   if (is.null(cut_off_date)) {
     cut_off_date <- last_ex_dtc(ex)
 
@@ -266,6 +267,7 @@ make_administration <- function(
     admin <- mutate(admin, SRC_SEQ = NA)
   }
 
+  # create imputation field
   if (!"IMPUTATION" %in% names(admin)) {
     admin <- mutate(admin, IMPUTATION = "")
   }
@@ -275,7 +277,7 @@ make_administration <- function(
     filter(.data$EXTRT == extrt) |>
     decompose_dtc("EXSTDTC")
 
-  # apply cut-off date
+  # apply data cut-off date
   cut_off_rows <- admin |>
     filter(.data$EXSTDTC > cut_off_date) |>
     select(any_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "EXSEQ")))
@@ -298,48 +300,42 @@ make_administration <- function(
   }
 
   admin <- admin |>
-    filter(.data$EXSTDTC <= cut_off_date)
-
-  admin <- admin |>
-
-    # time imputations
-    impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
-    impute_missing_exendtc(silent = silent) |>
-    filter_exendtc_after_exstdtc(dm, extrt, silent = silent) |>
-    decompose_dtc("EXENDTC") |>
-
-    # make generic fields
-    mutate(
-      TIME = NA_integer_, NTIME = 0, ANALYTE = analyte, PARENT = analyte,
-      METABOLITE = FALSE, DV = NA_real_, CMT = cmt, EVID = 1, MDV = 1,
-      DOSE = .data$EXDOSE, AMT = .data$EXDOSE
+    filter(.data$EXSTDTC <= cut_off_date) |>
+    # IMPUTATION 1: pre-expansion
+    imputation("ex_pre_expansion")(
+      sdtm,
+      extrt,
+      analyte,
+      cut_off_date,
+      silent = silent
     ) |>
-    expand_ex()
 
-  # impute missing administration times from PCRFTDTC
-  if ("pc" %in% names(sdtm$domains)) {
-    pc <- domain(sdtm, "pc") |>
-      lubrify_dates()
+    # make standard fields
+    mutate(
+      TIME = NA_integer_,
+      NTIME = 0,
+      ANALYTE = analyte,
+      PARENT = analyte,
+      METABOLITE = FALSE,
+      DV = NA_real_,
+      CMT = cmt,
+      EVID = 1,
+      MDV = 1,
+      DOSE = .data$EXDOSE,
+      AMT = .data$EXDOSE
+    ) |>
+    # expand administration episodes
+    expand_ex() |>
 
-    if ("PCRFTDTC" %in% names(pc)) {
-      admin <- admin |>
-        impute_admin_from_pcrftdtc(pc, analyte, analyte, silent = silent)
-    }
-  }
+    # IMPUTATION 2: post-expansion
+    imputation("ex_post_expansion")(
+      sdtm,
+      extrt,
+      analyte,
+      cut_off_date,
+      silent = silent
+    ) |>
 
-  admin |>
-    # carry forward missing administration times
-    decompose_dtc("DTC") |>
-    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC) |>
-    mutate(IMPUTATION = case_when(
-      is.na(.data$DTC_time) == TRUE ~ "time carried forward",
-      .default = .data$IMPUTATION
-    )) |>
-    group_by(.data$USUBJID, .data$ANALYTE) |>
-    tidyr::fill("DTC_time", .direction = "down") |>
-    ungroup() |>
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
-    select(-c("DTC_date", "DTC_time")) |>
     inner_join(sbs, by = "USUBJID") |>
     group_by(.data$USUBJID) |>
     mutate(TRTDY = as.numeric(
@@ -353,6 +349,8 @@ make_administration <- function(
     ungroup() |>
     index_id() |>
     nif()
+
+  return(admin)
 }
 
 
