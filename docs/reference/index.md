@@ -203,6 +203,8 @@
 - [`limit()`](limit.md) : Subset nif to rows with DTC before the last
   individual or global observation
 
+- [`make_time()`](make_time.md) : Calculate time fields based on DTC
+
 - [`max_admin_time()`](max_admin_time.md) : Maximal administration time
 
 - [`max_observation_time()`](max_observation_time.md) : Maximal

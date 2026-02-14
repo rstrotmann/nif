@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/rstrotmann/nif/blob/HEAD/DESCRIPTION)
 
 Strotmann R (2026). *nif: Build and Explore NONMEM Input Format Data
-Sets from Clinical Study Data*. R package version 0.64.14,
+Sets from Clinical Study Data*. R package version 0.64.15,
 <https://github.com/rstrotmann/nif>.
 
     @Manual{,
       title = {nif: Build and Explore NONMEM Input Format Data Sets from Clinical Study Data},
       author = {Rainer Strotmann},
       year = {2026},
-      note = {R package version 0.64.14},
+      note = {R package version 0.64.15},
       url = {https://github.com/rstrotmann/nif},
     }
