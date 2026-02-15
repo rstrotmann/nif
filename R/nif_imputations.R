@@ -603,25 +603,24 @@ get_admin_time_from_pcrfdtc <- function(
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
 
   ex_temp <- ex |>
-    filter(EXTRT == extrt) |>
-    distinct(USUBJID, DTC_date)
+    filter(.data$EXTRT == extrt) |>
+    distinct(.data$USUBJID, .data$DTC_date)
 
   temp <- pc |>
-    # filter(.data$USUBJID == usubjid) |>
     filter(.data$PCTESTCD %in% pctestcd) |>
     filter(!is.na(.data$PCRFTDTC)) |>
     lubrify_dates() |>
     distinct(.data$USUBJID, .data$PCRFTDTC, .data$PCTESTCD) |>
     decompose_dtc("PCRFTDTC") |>
     arrange(.data$PCRFTDTC_date) |>
-    distinct(USUBJID, PCRFTDTC_date, PCRFTDTC_time) |>
+    distinct(.data$USUBJID, .data$PCRFTDTC_date, .data$PCRFTDTC_time) |>
     reframe(
-      USUBJID,
-      PCRFTDTC_date,
-      PCRFTDTC_time,
+      .data$USUBJID,
+      .data$PCRFTDTC_date,
+      .data$fPCRFTDTC_time,
       .N = n(),
       .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
-    mutate(DTC_date = as.Date(PCRFTDTC_date))
+    mutate(DTC_date = as.Date(.data$PCRFTDTC_date))
 
   # check for duplicate times
   n_dupl <- filter(temp, .data$.N > 1) |>
