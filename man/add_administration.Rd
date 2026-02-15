@@ -14,6 +14,7 @@ add_administration(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
+  imputation = imputation_standard,
   silent = NULL
 )
 }
@@ -35,6 +36,8 @@ add_administration(
 \item{keep}{Columns to keep after cleanup, as character.}
 
 \item{debug}{Include debug fields, as logical.}
+
+\item{imputation}{The imputation rule set.}
 
 \item{silent}{Suppress messages, defaults to nif_option standard, if NULL.}
 }

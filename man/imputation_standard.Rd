@@ -3,20 +3,21 @@
 \docType{data}
 \name{imputation_standard}
 \alias{imputation_standard}
-\title{standard imputation function}
+\title{Standard imputation rules}
 \format{
-An object of class \code{list} of length 2.
+A list with the following elements:
+\describe{
+\item{admin_pre_expansion}{A function to conduct imputations on the EX domain
+before expansion of the administration episodes.}
+\item{admin_post_expansion}{A function to conduct imputations on the EX domain
+after expansion of the administration episodes}
+}
 }
 \usage{
 imputation_standard
 }
-\arguments{
-\item{step}{Imputation step}
-}
-\value{
-A function
-}
 \description{
-standard imputation function
+A list containing the standard imputation functions to be used in
+add_administration().
 }
 \keyword{datasets}

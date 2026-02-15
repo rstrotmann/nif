@@ -192,7 +192,7 @@ expand_ex <- function(ex) {
 #' @param cut_off_date The data cut-off date as Posix date-time or character.
 #' @param keep Columns to keep after cleanup, as character.
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
-#' @param imputation The imputation engine.
+#' @param imputation The imputation rule set.
 #'
 #' @return A data frame.
 #' @noRd
@@ -302,21 +302,13 @@ make_administration <- function(
   admin <- admin |>
     filter(.data$EXSTDTC <= cut_off_date) |>
     # IMPUTATION 1: pre-expansion
-    imputation[["ex_pre_expansion"]](
+    imputation[["admin_pre_expansion"]](
       sdtm,
       extrt,
       analyte,
       cut_off_date,
       silent = silent
     ) |>
-
-    # imputation("ex_pre_expansion")(
-    #   sdtm,
-    #   extrt,
-    #   analyte,
-    #   cut_off_date,
-    #   silent = silent
-    # ) |>
 
     # make standard fields
     mutate(
@@ -336,21 +328,13 @@ make_administration <- function(
     expand_ex() |>
 
     # IMPUTATION 2: post-expansion
-    imputation[["ex_post_expansion"]](
+    imputation[["admin_post_expansion"]](
       sdtm,
       extrt,
       analyte,
       cut_off_date,
       silent = silent
     ) |>
-
-    # imputation("ex_post_expansion")(
-    #   sdtm,
-    #   extrt,
-    #   analyte,
-    #   cut_off_date,
-    #   silent = silent
-    # ) |>
 
     inner_join(sbs, by = "USUBJID") |>
     group_by(.data$USUBJID) |>
@@ -407,7 +391,7 @@ make_administration <- function(
 #' @param keep Columns to keep after cleanup, as character.
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #' @param debug Include debug fields, as logical.
-#'
+#' @param imputation The imputation rule set.
 #' @return A nif object.
 #' @export
 #' @examples
@@ -424,6 +408,7 @@ add_administration <- function(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
+  imputation = imputation_standard,
   silent = NULL
 ) {
   # validate input
@@ -445,7 +430,7 @@ add_administration <- function(
     nif,
     make_administration(
       sdtm, extrt, analyte, cmt, subject_filter, cut_off_date, keep,
-      silent = silent
+      imputation = imputation, silent = silent
     )
   ) |>
     normalize_nif(keep = keep)
