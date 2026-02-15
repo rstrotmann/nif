@@ -12,7 +12,7 @@ pk_sim <- function(event_table) {
   keep_columns <- event_table %>%
     mutate(time = as.numeric(time)) %>%
     mutate(NTIME = as.numeric(NTIME)) %>%
-    select(any_of(c("id", "time", "NTIME", "PERIOD"))) %>%
+    select(any_of(c("id", "time", "NTIME", "PERIOD", "pcrft"))) %>%
     distinct()
 
   mod <- rxode2::rxode2({
@@ -970,6 +970,11 @@ synthesize_sdtm_poc_study <- function(
       "RS2023" = "c_centr", "RS2023487A" = "c_metab",
       "NTIME"
     )) %>%
+    mutate(pcrft = case_when(
+      time >= 0 & time < 192 ~ 0,
+      time >= 192 ~ 192,
+      .default = NA
+    )) |>
     mutate(
       RS2023 = .data$RS2023 * 1000,
       RS2023487A = .data$RS2023487A * 1000
@@ -995,12 +1000,14 @@ synthesize_sdtm_poc_study <- function(
       by = "USUBJID"
     ) %>%
     mutate(PCDTC = .data$RFSTDTC + .data$delta_time * 3600) %>%
+    mutate(PCRFTDTC = .data$RFSTDTC + .data$pcrft * 3600) |>
+    select(-c("pcrft")) |>
     mutate(DOMAIN = "PC", PCSPEC = "PLASMA", EPOCH = "TREATMENT") %>%
     mutate(PCTPT = case_when(.data$NTIME == 0 ~ "PREDOSE",
       .default = paste0("POSTDOSE ", .data$NTIME, " H")
     )) %>%
     mutate(PCTPTNUM = .data$NTIME) %>%
-    mutate(PCRFTDTC = .data$RFSTDTC) %>%
+    # mutate(PCRFTDTC = .data$RFSTDTC) %>%
     select(-RFSTDTC) %>%
     mutate(PCELTM = paste0("PT", as.character(.data$NTIME), "H")) %>%
     select(-c("time", "NTIME", "delta_time", "id")) %>%

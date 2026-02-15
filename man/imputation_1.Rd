@@ -13,6 +13,7 @@ imputation_1
 \description{
 \itemize{
 \item No administration time imputations
+\item TAFD is set to 0 for predose observations
 }
 }
 \keyword{datasets}

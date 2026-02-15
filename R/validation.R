@@ -207,8 +207,8 @@ validate_param <- function(
 #' validate function argument
 #'
 #' @param param The argument.
-#' @param type The expected parameter type (one of 'character', 'logical' or
-#' 'numeric').
+#' @param type The expected parameter type (one of 'character', 'logical',
+#' 'numeric' or 'date').
 #' @param allow_null Allow NULL values.
 #' @param allow_empty Allow empty values.
 #' @param allow_multiple Allow multiple values.
@@ -218,7 +218,7 @@ validate_param <- function(
 #' @noRd
 validate_argument <- function(
     param,
-    type = c("character", "logical", "numeric"),
+    type = c("character", "logical", "numeric", "date"),
     allow_null = FALSE,
     allow_empty = FALSE,
     allow_multiple = FALSE,
@@ -246,7 +246,8 @@ validate_argument <- function(
   # Type checking
   if ((type == "character" && !is.character(param)) ||
       (type == "logical" && !is.logical(param)) ||
-      (type == "numeric" && !is.numeric(param))) {
+      (type == "numeric" && !is.numeric(param)) ||
+      (type == "date" && !is.Date(param))) {
     stop(paste0(param_name, " must be a ", type, " value"))
   }
 
