@@ -568,23 +568,23 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 
 
 
-#' Title
+#' Get administration time from the PCRFTDTC where available
 #'
-#' @param date
-#' @param sdtm
-#' @param analyte
-#' @param silent
+#' @param date The dates to get reference PCRFTDTC times for, as character.
+#' @param sdtm The sdtm data.
+#' @param analyte The analyte as character.
+#' @param silent Suppress messages.
 #'
-#' @returns
-#' @export
-#'
-#' @examples
+#' @returns A character vector with the administration times, if they can be
+#' derived from PCRFTDTC. The vector has the same length as the input date
+#' vector.
+#' @noRd
 get_admin_time_from_pcrfdtc <- function(
     usubjid, date, sdtm, pctestcd = NULL, silent = NULL
   ) {
   # validate inputs
   validate_argument(usubjid, "character")
-  validate_argument(date, "date", allow_multiple = TRUE)
+  validate_argument(date, "character", allow_multiple = TRUE)
   validate_sdtm(sdtm, "pc")
   validate_argument(pctestcd, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
@@ -606,6 +606,7 @@ get_admin_time_from_pcrfdtc <- function(
   temp <- pc |>
     filter(.data$USUBJID == usubjid) |>
     filter(.data$PCTESTCD %in% pctestcd) |>
+    filter(!is.na(.data$PCRFTDTC)) |>
     lubrify_dates() |>
     distinct(.data$USUBJID, .data$PCRFTDTC) |>
     decompose_dtc("PCRFTDTC") |>
@@ -618,75 +619,12 @@ get_admin_time_from_pcrfdtc <- function(
       .by = any_of(c("PCRFTDTC_date")))
 
   # check for duplicate times
-  n_dupl <- filter(temp, n > 1) |> nrow()
+  n_dupl <- filter(temp, n > 1) |>
+    nrow()
   if (n_dupl > 0)
     stop(paste0(n_dupl, "duplicate administration times by USUBJID, and date"))
 
-  x <- c("A", "B", "C", "D")
-
-  temp[which(temp$PCRFTDTC_date == date),] |> head()
-
-  match(date, temp$PCRFTDTC_date)
-
-  #
-  # temp <- obj |>
-  #   lubrify_dates() |>
-  #   decompose_dtc("DTC") |>
-  #   left_join(pc_ref,
-  #             by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")
-  #   )
-  #
-  # if (!"IMPUTATION" %in% names(temp)) {
-  #   temp <- mutate(temp, IMPUTATION = "")
-  # }
-  #
-  # conflicting_rows <- which(
-  #   (!is.na(temp$PCRFTDTC_time) &
-  #      !is.na(temp$DTC_time) &
-  #      temp$DTC_time != temp$PCRFTDTC_time) |
-  #     (is.na(temp$DTC_time) & !is.na(temp$PCRFTDTC_time))
-  # )
-  #
-  # if (length(conflicting_rows) != 0) {
-  #   conditional_cli(
-  #     {
-  #       cli_alert_warning(paste0(
-  #         "Inconsistent PCRFTDTC and EXSTDTC/EXENDTC"
-  #       ))
-  #       cli_text(paste0(
-  #         "For ", length(conflicting_rows), " administrations of ", analyte,
-  #         ", administration times were different between PCRFDTC and ",
-  #         "EXSTDTC/EXENDTC. In these cases, PCRFTDTC was prioritized: "
-  #       ))
-  #       cli_verbatim(
-  #         df_to_string(
-  #           temp[
-  #             conflicting_rows,
-  #             c("USUBJID", "ANALYTE", "DTC", "PCRFTDTC_time")
-  #           ]
-  #           # abbr_lines = 5, abbr_threshold = 20
-  #         )
-  #       )
-  #       cli_text()
-  #     },
-  #     silent = silent
-  #   )
-  #
-  #   temp <- temp |>
-  #     mutate(DTC_time = case_when(
-  #       row_number() %in% conflicting_rows ~ .data$PCRFTDTC_time,
-  #       .default = .data$DTC_time
-  #     )) |>
-  #     mutate(IMPUTATION = case_when(
-  #       row_number() %in% conflicting_rows ~
-  #         "admin time from PCRFTDTC",
-  #       .default = .data$IMPUTATION
-  #     ))
-  # }
-  #
-  # temp |>
-  #   mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
-  #   select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
+  return(temp[match(date, temp$PCRFTDTC_date), "PCRFTDTC_time"])
 }
 
 
@@ -778,6 +716,8 @@ imputation_1 <- list(
   },
 
   admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+    # ex_date <- ex$EXDTC
+    # temp <- get_admin_time_from_pcrfdtc()
     ex
   },
 
