@@ -570,21 +570,20 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 
 #' Get administration time from the PCRFTDTC where available
 #'
-#' @param date The dates to get reference PCRFTDTC times for, as character.
+#' @param ex The EX domain after expansion.
 #' @param sdtm The sdtm data.
-#' @param analyte The analyte as character.
+#' @param extrt The treatment as character.
+#' @param pctestcd The PCTESTCD corresponding to the treatment, as character.
 #' @param silent Suppress messages.
 #'
-#' @returns A character vector with the administration times, if they can be
-#' derived from PCRFTDTC. The vector has the same length as the input date
-#' vector.
+#' @returns The ex domain with DTC_time imputed from PCRFTDTC, and the DTC and
+#' IMPUTATION fields updated for the respective rows.
 #' @noRd
 get_admin_time_from_pcrfdtc <- function(
-    usubjid, date, sdtm, pctestcd = NULL, silent = NULL
+    ex,
+    sdtm, extrt, pctestcd = NULL, silent = NULL
   ) {
   # validate inputs
-  validate_argument(usubjid, "character")
-  validate_argument(date, "character", allow_multiple = TRUE)
   validate_sdtm(sdtm, "pc")
   validate_argument(pctestcd, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
@@ -603,28 +602,55 @@ get_admin_time_from_pcrfdtc <- function(
   if (length(missing_pctestcd) > 0)
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
 
+  ex_temp <- ex |>
+    filter(EXTRT == extrt) |>
+    distinct(USUBJID, DTC_date)
+
   temp <- pc |>
-    filter(.data$USUBJID == usubjid) |>
+    # filter(.data$USUBJID == usubjid) |>
     filter(.data$PCTESTCD %in% pctestcd) |>
     filter(!is.na(.data$PCRFTDTC)) |>
     lubrify_dates() |>
-    distinct(.data$USUBJID, .data$PCRFTDTC) |>
+    distinct(.data$USUBJID, .data$PCRFTDTC, .data$PCTESTCD) |>
     decompose_dtc("PCRFTDTC") |>
-    arrange(PCRFTDTC_date) |>
+    arrange(.data$PCRFTDTC_date) |>
+    distinct(USUBJID, PCRFTDTC_date, PCRFTDTC_time) |>
     reframe(
       USUBJID,
       PCRFTDTC_date,
       PCRFTDTC_time,
-      n = n(),
-      .by = any_of(c("PCRFTDTC_date")))
+      .N = n(),
+      .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
+    mutate(DTC_date = as.Date(PCRFTDTC_date))
 
   # check for duplicate times
-  n_dupl <- filter(temp, n > 1) |>
+  n_dupl <- filter(temp, .data$.N > 1) |>
     nrow()
-  if (n_dupl > 0)
-    stop(paste0(n_dupl, "duplicate administration times by USUBJID, and date"))
+  if (n_dupl > 0) {
+    conditional_cli({
+      cli_alert_danger(paste0(
+        n_dupl, " duplicate administration times for ", extrt,
+        " by USUBJID and date"))
+      cli_text(
+        "There may be administrations of multiple EXTRT. ",
+        "Consider defining the PCTESTCD that corresponds to the desired EXTRT!"
+      )
+    },
+    silent = silent)
+  }
 
-  return(temp[match(date, temp$PCRFTDTC_date), "PCRFTDTC_time"])
+  ex |>
+    left_join(temp, by = c("USUBJID", "DTC_date")) |>
+    mutate(IMPUTATION = case_when(
+      !is.na(.data$PCRFTDTC_time) ~ "time copied from PCRFTDTC",
+      .default = .data$IMPUTATION
+    )) |>
+    mutate(DTC_time = case_when(
+      !is.na(.data$PCRFTDTC_time) ~ .data$PCRFTDTC_time,
+      .default = .data$DTC_time
+    )) |>
+    select(-c("PCRFTDTC_date", "PCRFTDTC_time", ".N")) |>
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
 }
 
 
@@ -718,7 +744,8 @@ imputation_1 <- list(
   admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
     # ex_date <- ex$EXDTC
     # temp <- get_admin_time_from_pcrfdtc()
-    ex
+    ex |>
+      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent)
   },
 
   obs_raw = function(obs, silent) {
