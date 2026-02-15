@@ -26,6 +26,7 @@ make_observation(
   keep = NULL,
   include_day_in_ntime = FALSE,
   omit_not_done = TRUE,
+  imputation = imputation_standard,
   silent = NULL,
   na_to_zero = FALSE
 )
@@ -87,6 +88,8 @@ is the domain name.}
 \item{include_day_in_ntime}{as logical.}
 
 \item{omit_not_done}{Delete rows where xxSTAT is "NOT DONE, as logical.}
+
+\item{imputation}{The imputation rule set.}
 
 \item{silent}{Suppress messages, as logical. Defaults to nif_option setting
 if NULL.}

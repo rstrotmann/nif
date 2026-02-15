@@ -577,8 +577,10 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 #' \describe{
 #'   \item{admin_pre_expansion}{A function to conduct imputations on the EX domain
 #'   before expansion of the administration episodes.}
-#'   \item{admin_post_expansion}{A function to conduct imputations on the EX domain
-#'   after expansion of the administration episodes}
+#'   \item{admin_post_expansion}{A function to conduct imputations on the
+#'   administration data table after expansion of the administration episodes}
+#'   \item{obs_final}{A function to conduct imputations on the observation table
+#'   before finalization}
 #' }
 #'
 #' @export
@@ -602,7 +604,12 @@ imputation_standard <- list(
       }
     }
     return(ex)
+  },
+
+  obs_final = function(obs, silent) {
+    obs
   }
+
 )
 
 

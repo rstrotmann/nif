@@ -209,6 +209,9 @@ make_administration <- function(
   imputation = imputation_standard,
   silent = NULL
 ) {
+  # input validation
+  validate_imputation_set(imputation)
+
   # extract domains
   dm <- domain(sdtm, "dm") |>
     lubrify_dates()

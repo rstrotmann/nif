@@ -340,6 +340,7 @@ make_ntime <- function(
 #' @param scat xxSCAT filter to apply, as character.
 #' @param omit_not_done Delete rows where xxSTAT is "NOT DONE, as logical.
 #' @param na_to_zero Set all NA values of DV to 0, as logical.
+#' @param imputation The imputation rule set.
 #'
 #' @return A data frame.
 #' @keywords internal
@@ -369,6 +370,7 @@ make_observation <- function(
   keep = NULL,
   include_day_in_ntime = FALSE,
   omit_not_done = TRUE,
+  imputation = imputation_standard,
   silent = NULL,
   na_to_zero = FALSE
 ) {
@@ -385,6 +387,8 @@ make_observation <- function(
   validate_logical_param(omit_not_done, "omit_not_done")
   # other validations not implemented - add_observation takes care of that.
   validate_logical_param(na_to_zero, "na_to_zero")
+
+  validate_imputation_set(imputation)
 
   domain_name <- tolower(domain)
 
@@ -624,7 +628,12 @@ make_observation <- function(
       units = "days"
     ) + 1) |>
     ungroup() |>
-    filter(!is.na(.data$DTC))
+    filter(!is.na(.data$DTC)) |>
+
+    # IMPUTATION
+    imputation[["obs_final"]](
+      silent = silent
+    )
 }
 
 
