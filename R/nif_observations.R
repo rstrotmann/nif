@@ -631,7 +631,7 @@ make_observation <- function(
     filter(!is.na(.data$DTC)) |>
 
     # IMPUTATION
-    imputation[["obs_final"]](
+    imputation[["obs_raw"]](
       silent = silent
     )
 }
@@ -806,8 +806,8 @@ add_observation <- function(
 
   conditional_cli(
     cli_alert_info(paste0(
-      "Observations for ", testcd,
-      " using imputation model '", deparse(substitute(imputation)), "'")),
+      "Imputation model '", deparse(substitute(imputation)), "'",
+      " applied to ", testcd, " observations")),
     silent = silent
   )
 
@@ -879,7 +879,8 @@ add_observation <- function(
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
     silent = silent, na_to_zero = na_to_zero, imputation = imputation
   ) |>
-    select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
+    select(any_of(c(standard_nif_fields, "IMPUTATION", keep))) |>
+    mutate(.current_observation = TRUE)
 
   # Duplicate handling
   dupl_fields <- c("USUBJID", "ANALYTE", duplicate_identifier)
@@ -957,20 +958,24 @@ add_observation <- function(
   }
 
   obj <- bind_rows(nif, observation) |>
-
+    # make ID field
     arrange(.data$USUBJID, .data$DTC) |>
     mutate(ID = as.numeric(as.factor(.data$USUBJID))) |>
 
-    mutate(PARENT = case_when(.data$PARENT == "." ~ NA,
-                              .default = .data$PARENT)) |>
-    mutate(.current_admin = case_when(.data$EVID == 1 ~ .data$ANALYTE,
-                                      .default = NA)) |>
+    mutate(PARENT = case_when(
+      .data$PARENT == "." ~ NA, .default = .data$PARENT)) |>
+
+    # make current admin field, i.e., the last administration before an
+    # observation
+    mutate(.current_admin = case_when(
+      .data$EVID == 1 ~ .data$ANALYTE, .default = NA)) |>
     group_by(.data$USUBJID) |>
     fill(".current_admin", .direction = "downup") |>
     ungroup() |>
-    mutate(PARENT = case_when(is.na(.data$PARENT) ~ .current_admin,
-                              .default = .data$PARENT)) |>
+    mutate(PARENT = case_when
+           (is.na(.data$PARENT) ~ .current_admin, .default = .data$PARENT)) |>
     select(-c(".current_admin")) |>
+
     group_by(.data$USUBJID, .data$PARENT) |>
     mutate(NO_ADMIN_FLAG = case_when(
       sum(.data$EVID == 1) == 0 ~ TRUE,
@@ -1009,8 +1014,14 @@ add_observation <- function(
   obj |>
     select(-c("NO_ADMIN_FLAG")) |>
     index_id() |>
-    nif() |>
-    normalize_nif(keep = keep)
+    # nif() |>
+    normalize_nif(keep = c(keep, ".current_observation")) |>
+
+    # IMPUTATION
+    imputation[["obs_final"]](
+      silent = silent
+    ) |>
+    select(-c(".current_observation"))
 }
 
 

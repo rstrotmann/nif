@@ -579,8 +579,11 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 #'   before expansion of the administration episodes.}
 #'   \item{admin_post_expansion}{A function to conduct imputations on the
 #'   administration data table after expansion of the administration episodes}
-#'   \item{obs_final}{A function to conduct imputations on the observation table
-#'   before finalization}
+#'   \item{obs_raw}{A function to conduct imputations on the observation data.
+#'   At this stage, time fields other than NTIME are not derived yet.}
+#'   \item{obs_final}{A function to conduct imputations on the nif data table
+#'   including the new observations, before finalization. New observations are
+#'   flagged by .current_observation == TRUE.}
 #' }
 #'
 #' @export
@@ -606,12 +609,21 @@ imputation_standard <- list(
     return(ex)
   },
 
+  obs_raw = function(obs, silent) {
+    obs
+  },
+
   obs_final = function(obs, silent) {
     obs
   }
 )
 
 
+#' Void imputation rule set
+#'
+#' * No administration time imputations
+#' * No imputations on observations
+#'
 imputation_none <- list(
   admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
     ex
@@ -621,9 +633,40 @@ imputation_none <- list(
     ex
   },
 
+  obs_raw = function(obs, silent) {
+    obs
+  },
+
   obs_final = function(obs, silent) {
     obs
   }
 )
 
+
+#' Alternative imputation rule set
+#'
+#' * No administration time imputations
+#' * TAFD is set to 0 for predose observations
+#'
+imputation_1 <- list(
+  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+    ex
+  },
+
+  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+    ex
+  },
+
+  obs_raw = function(obs, silent) {
+    obs
+  },
+
+  obs_final = function(obs, silent) {
+    obs |>
+      mutate(TAFD = case_when(
+        .current_observation == TRUE & TAFD < 0 ~ 0,
+        .default = TAFD)
+      )
+  }
+)
 

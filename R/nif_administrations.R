@@ -424,8 +424,8 @@ add_administration <- function(
 
   conditional_cli(
     cli_alert_info(paste0(
-      "Administration of ", extrt,
-      " using imputation model '", deparse(substitute(imputation)), "'")),
+      "Imputation model '", deparse(substitute(imputation)),
+      "' applied to administration of ", extrt)),
     silent = silent
   )
 

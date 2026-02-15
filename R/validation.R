@@ -534,7 +534,7 @@ validate_imputation_set <- function(obj) {
     stop("Imputation rule set must be a list!")
 
   expected_fields <- c("admin_pre_expansion", "admin_post_expansion",
-                       "obs_final")
+                       "obs_raw", "obs_final")
   missing_fields <- setdiff(expected_fields, names(obj))
   if (length(missing_fields) > 0) {
     stop(paste0(

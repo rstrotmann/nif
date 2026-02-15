@@ -11,8 +11,11 @@ A list with the following elements:
 before expansion of the administration episodes.}
 \item{admin_post_expansion}{A function to conduct imputations on the
 administration data table after expansion of the administration episodes}
-\item{obs_final}{A function to conduct imputations on the observation table
-before finalization}
+\item{obs_raw}{A function to conduct imputations on the observation data.
+At this stage, time fields other than NTIME are not derived yet.}
+\item{obs_final}{A function to conduct imputations on the nif data table
+including the new observations, before finalization. New observations are
+flagged by .current_observation == TRUE.}
 }
 }
 \usage{
