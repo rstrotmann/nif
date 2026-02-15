@@ -33,7 +33,8 @@ add_observation(
   duplicate_identifier = "DTC",
   omit_not_done = TRUE,
   na_rm = TRUE,
-  na_to_zero = FALSE
+  na_to_zero = FALSE,
+  imputation = imputation_standard
 )
 }
 \arguments{
@@ -122,6 +123,8 @@ Consider also "NTIME", or any other custom field.}
 duplicate_function. Defaults to TRUE.}
 
 \item{na_to_zero}{Set all NA values of DV to 0, as logical.}
+
+\item{imputation}{The imputation rule set.}
 }
 \value{
 A nif object.

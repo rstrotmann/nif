@@ -609,9 +609,21 @@ imputation_standard <- list(
   obs_final = function(obs, silent) {
     obs
   }
-
 )
 
 
+imputation_none <- list(
+  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+    ex
+  },
+
+  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+    ex
+  },
+
+  obs_final = function(obs, silent) {
+    obs
+  }
+)
 
 

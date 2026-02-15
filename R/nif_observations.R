@@ -804,6 +804,13 @@ add_observation <- function(
 
   validate_logical_param(na_to_zero, "na_to_zero")
 
+  conditional_cli(
+    cli_alert_info(paste0(
+      "Observations for ", testcd,
+      " using imputation model '", deparse(substitute(imputation)), "'")),
+    silent = silent
+  )
+
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) {
     keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")

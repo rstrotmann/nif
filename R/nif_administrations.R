@@ -228,12 +228,6 @@ make_administration <- function(
     stop(paste0("Treatment '", extrt, "' not found in EXTRT!"))
   }
 
-  conditional_cli(
-    cli_alert_info(paste0(
-      "Using imputation model ", deparse(substitute(imputation)))),
-    silent = silent
-  )
-
   # Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent
   ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
@@ -425,6 +419,15 @@ add_administration <- function(
   validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
   validate_logical_param(debug, "debug")
   validate_logical_param(silent, "silent", allow_null = TRUE)
+
+  validate_imputation_set(imputation)
+
+  conditional_cli(
+    cli_alert_info(paste0(
+      "Administration of ", extrt,
+      " using imputation model '", deparse(substitute(imputation)), "'")),
+    silent = silent
+  )
 
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
