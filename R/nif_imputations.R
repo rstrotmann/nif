@@ -573,46 +573,68 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 #'
 #' @returns A function
 #' @export
-imputation_standard <- function(
-    step = c("ex_pre_expansion", "ex_post_expansion")) {
-  # input validation
-  match.arg(step)
+# imputation_standard <- function(
+#     step = c("ex_pre_expansion", "ex_post_expansion")) {
+#   # input validation
+#   match.arg(step)
+#
+#   # EX pre-expansion, called before administration episodes between EXSTDTC and
+#   # EXENDTC are expanded
+#   if (step == "ex_pre_expansion") {
+#     return(
+#       function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+#         dm <- lubrify_dates(domain(sdtm, "dm"))
+#
+#         ex |>
+#           impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
+#           impute_missing_exendtc(silent = silent) |>
+#           filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
+#       }
+#     )
+#   }
+#
+#   if (step == "ex_post_expansion") {
+#     return(
+#       function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+#         # impute missing administration times from PCRFTDTC where available
+#         if ("pc" %in% names(sdtm$domains)) {
+#           pc <- lubrify_dates(domain(sdtm, "pc"))
+#           if ("PCRFTDTC" %in% names(pc)) {
+#             ex <- impute_admin_from_pcrftdtc(
+#               ex, pc, analyte, analyte, silent = silent)
+#           }
+#         }
+#         return(ex)
+#       }
+#     )
+#   }
+#
+#   stop("unknown step")
+# }
 
-  # EX pre-expansion, called before administration episodes between EXSTDTC and
-  # EXENDTC are expanded
-  if (step == "ex_pre_expansion") {
-    return(
-      function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-        dm <- lubrify_dates(domain(sdtm, "dm"))
 
-        ex |>
-          impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
-          impute_missing_exendtc(silent = silent) |>
-          filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
+imputation_standard <- list(
+  ex_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+    dm <- lubrify_dates(domain(sdtm, "dm"))
+
+    ex |>
+      impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
+      impute_missing_exendtc(silent = silent) |>
+      filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
+  },
+
+  ex_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+    # impute missing administration times from PCRFTDTC where available
+    if ("pc" %in% names(sdtm$domains)) {
+      pc <- lubrify_dates(domain(sdtm, "pc"))
+      if ("PCRFTDTC" %in% names(pc)) {
+        ex <- impute_admin_from_pcrftdtc(
+          ex, pc, analyte, analyte, silent = silent)
       }
-    )
+    }
+    return(ex)
   }
-
-  if (step == "ex_post_expansion") {
-    return(
-      function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-        # impute missing administration times from PCRFTDTC where available
-        if ("pc" %in% names(sdtm$domains)) {
-          pc <- lubrify_dates(domain(sdtm, "pc"))
-          if ("PCRFTDTC" %in% names(pc)) {
-            ex <- impute_admin_from_pcrftdtc(
-              ex, pc, analyte, analyte, silent = silent)
-          }
-        }
-        return(ex)
-      }
-    )
-  }
-
-  stop("unknown step")
-}
-
-
+)
 
 
 

@@ -302,13 +302,21 @@ make_administration <- function(
   admin <- admin |>
     filter(.data$EXSTDTC <= cut_off_date) |>
     # IMPUTATION 1: pre-expansion
-    imputation("ex_pre_expansion")(
+    imputation[["ex_pre_expansion"]](
       sdtm,
       extrt,
       analyte,
       cut_off_date,
       silent = silent
     ) |>
+
+    # imputation("ex_pre_expansion")(
+    #   sdtm,
+    #   extrt,
+    #   analyte,
+    #   cut_off_date,
+    #   silent = silent
+    # ) |>
 
     # make standard fields
     mutate(
@@ -328,13 +336,21 @@ make_administration <- function(
     expand_ex() |>
 
     # IMPUTATION 2: post-expansion
-    imputation("ex_post_expansion")(
+    imputation[["ex_post_expansion"]](
       sdtm,
       extrt,
       analyte,
       cut_off_date,
       silent = silent
     ) |>
+
+    # imputation("ex_post_expansion")(
+    #   sdtm,
+    #   extrt,
+    #   analyte,
+    #   cut_off_date,
+    #   silent = silent
+    # ) |>
 
     inner_join(sbs, by = "USUBJID") |>
     group_by(.data$USUBJID) |>
