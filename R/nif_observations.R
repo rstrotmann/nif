@@ -775,7 +775,8 @@ add_observation <- function(
   duplicate_identifier = "DTC",
   omit_not_done = TRUE,
   na_rm = TRUE,
-  na_to_zero = FALSE
+  na_to_zero = FALSE,
+  imputation = imputation_standard
 ) {
   # validate inputs
   validate_min_nif(nif)
@@ -869,7 +870,7 @@ add_observation <- function(
     observation_filter, cat, scat, testcd_field, dtc_field, dv_field,
     coding_table, factor, ntime_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
-    silent = silent, na_to_zero = na_to_zero
+    silent = silent, na_to_zero = na_to_zero, imputation = imputation
   ) |>
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep)))
 
