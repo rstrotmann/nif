@@ -707,6 +707,37 @@ has_time <- function(obj) {
   }
 }
 
+
+#' Convert nominal time labels to hours
+#'
+#' PCTPT is sponsor-defined text and not drawn from a CDISC CT codelist. This is
+#' why there is variation across studies and sponsors. This function attempts to
+#' derive the nominal sampling time from the PCTPT field based on common
+#' patterns.
+#'
+#' @param x A character vector.
+#'
+#' @returns A numerical vector with NTIME in hours. Time labels not recognized
+#' are NA.
+#' @noRd
+pctpt_to_hours <- function(x) {
+  x <- toupper(x)
+  temp <- data.frame(
+    pre = ifelse(stringr::str_detect(x, "^PRE[- ]?DOSE$"), 0, NA),
+    h = as.numeric(stringr::str_extract(
+      x, "([0-9]+\\.?[0-9]*)\\s*(H|HR|HRS|HOUR|HOURS)", group = 1)),
+    m = as.numeric(stringr::str_extract(
+      x, "([0-9]+\\.?[0-9]*)\\s*(M|MIN|MINS|MINUTE|MINUTES)", group = 1)) / 60
+  ) |>
+    mutate(NTIME = case_when(
+      is.na(.data$pre) & is.na(.data$h) & is.na(.data$m) ~ NA,
+      .default = rowSums(across(c("pre", "h", "m")), na.rm = TRUE))
+    )
+
+  temp$NTIME
+}
+
+
 #' Nice enumeration of multiple strings
 #'
 #' @param items Items to enumerate as character.
