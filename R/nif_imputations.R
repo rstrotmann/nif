@@ -602,9 +602,9 @@ get_admin_time_from_pcrfdtc <- function(
   if (length(missing_pctestcd) > 0)
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
 
-  ex_temp <- ex |>
-    filter(.data$EXTRT == extrt) |>
-    distinct(.data$USUBJID, .data$DTC_date)
+  # ex_temp <- ex |>
+  #   filter(.data$EXTRT == extrt) |>
+  #   distinct(.data$USUBJID, .data$DTC_date)
 
   temp <- pc |>
     filter(.data$PCTESTCD %in% pctestcd) |>
@@ -617,7 +617,7 @@ get_admin_time_from_pcrfdtc <- function(
     reframe(
       .data$USUBJID,
       .data$PCRFTDTC_date,
-      .data$fPCRFTDTC_time,
+      .data$PCRFTDTC_time,
       .N = n(),
       .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
     mutate(DTC_date = as.Date(.data$PCRFTDTC_date))
@@ -653,110 +653,50 @@ get_admin_time_from_pcrfdtc <- function(
 }
 
 
-
-
-#' Standard imputation rules
+#' Title
 #'
-#' A list containing the standard imputation functions to be used in
-#' add_administration().
+#' @param ex
+#' @param sdtm
+#' @param extrt
+#' @param pctestcd
+#' @param silent
 #'
-#' @format A list with the following elements:
-#' \describe{
-#'   \item{admin_pre_expansion}{A function to conduct imputations on the EX domain
-#'   before expansion of the administration episodes.}
-#'   \item{admin_post_expansion}{A function to conduct imputations on the
-#'   administration data table after expansion of the administration episodes}
-#'   \item{obs_raw}{A function to conduct imputations on the observation data.
-#'   At this stage, time fields other than NTIME are not derived yet.}
-#'   \item{obs_final}{A function to conduct imputations on the nif data table
-#'   including the new observations, before finalization. New observations are
-#'   flagged by .current_observation == TRUE.}
-#' }
-#'
+#' @returns
 #' @export
-imputation_standard <- list(
-  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-    dm <- lubrify_dates(domain(sdtm, "dm"))
+#'
+#' @examples
+get_admin_time_from_ntime <- function(
+    ex, sdtm, extrt, pctestcd = NULL, silent = NULL
+) {
+  # validate inputs
+  validate_sdtm(sdtm, "pc")
+  validate_argument(pctestcd, "character", allow_null = TRUE)
+  validate_argument(silent, "logical", allow_null = TRUE)
 
-    ex |>
-      impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
-      impute_missing_exendtc(silent = silent) |>
-      filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
-  },
+  pc <- domain(sdtm, "pc")
 
-  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-    # impute missing administration times from PCRFTDTC where available
-    if ("pc" %in% names(sdtm$domains)) {
-      pc <- lubrify_dates(domain(sdtm, "pc"))
-      if ("PCRFTDTC" %in% names(pc)) {
-        ex <- impute_admin_from_pcrftdtc(
-          ex, pc, analyte, analyte, silent = silent)
-      }
-    }
-    return(ex)
-  },
-
-  obs_raw = function(obs, silent) {
-    obs
-  },
-
-  obs_final = function(obs, silent) {
-    obs
+  # if PCRFTDTC is not available, return NA
+  if (!"PCTPT" %in% names(pc)) {
+    return(rep(NA, length(date)))
   }
-)
+
+  if (is.null(pctestcd))
+    pctestcd <- unique(pc$PCTESTCD)
+
+  missing_pctestcd <- setdiff(pctestcd, unique(pc$PCTESTCD))
+  if (length(missing_pctestcd) > 0)
+    stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
+
+  # business logic
+
+  # To Do:
+  # - extract NTIME from PCTPT (or PCTPTN)
+  # - filter for NTIME < 24 h
+  # - back-calculate the time of administration from NTIME
+  # - average the times of administration (potentially use weighted average to
+  #   account for the different time windows)
+  #
 
 
-#' Void imputation rule set
-#'
-#' * No administration time imputations
-#' * No imputations on observations
-#'
-imputation_none <- list(
-  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-    ex
-  },
-
-  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-    ex
-  },
-
-  obs_raw = function(obs, silent) {
-    obs
-  },
-
-  obs_final = function(obs, silent) {
-    obs
-  }
-)
-
-
-#' Alternative imputation rule set
-#'
-#' * No administration time imputations
-#' * TAFD is set to 0 for predose observations
-#'
-imputation_1 <- list(
-  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-    ex
-  },
-
-  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-    # ex_date <- ex$EXDTC
-    # temp <- get_admin_time_from_pcrfdtc()
-    ex |>
-      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent)
-  },
-
-  obs_raw = function(obs, silent) {
-    obs
-  },
-
-  obs_final = function(obs, silent) {
-    obs |>
-      mutate(TAFD = case_when(
-        .current_observation == TRUE & TAFD < 0 ~ 0,
-        .default = TAFD)
-      )
-  }
-)
+}
 
