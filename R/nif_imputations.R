@@ -653,18 +653,16 @@ get_admin_time_from_pcrfdtc <- function(
 }
 
 
-#' Title
+#' Estimate administration time from PC
 #'
-#' @param ex
-#' @param sdtm
-#' @param extrt
-#' @param pctestcd
-#' @param silent
-#'
-#' @returns
-#' @export
-#'
-#' @examples
+#' @param ex The EX domain after expansion.
+#' @param sdtm The sdtm data.
+#' @param extrt The treatment as character.
+#' @param pctestcd The PCTESTCD corresponding to the treatment, as character.
+#' @param silent Suppress messages.
+
+#' @returns A data frame.
+#' @noRd
 get_admin_time_from_ntime <- function(
     ex, sdtm, extrt, pctestcd = NULL, silent = NULL
 ) {
@@ -675,11 +673,6 @@ get_admin_time_from_ntime <- function(
 
   pc <- domain(sdtm, "pc")
 
-  # if PCRFTDTC is not available, return NA
-  if (!"PCTPT" %in% names(pc)) {
-    return(rep(NA, length(date)))
-  }
-
   if (is.null(pctestcd))
     pctestcd <- unique(pc$PCTESTCD)
 
@@ -688,6 +681,12 @@ get_admin_time_from_ntime <- function(
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
 
   # business logic
+  temp <- pc |>
+    lubrify_dates() |>
+    mutate(NTIME = extract_pc_ntime(pc)) |>
+    mutate(NTIME = case_when(NTIME <= 0 ~ NA, .default = NTIME)) |>
+    mutate(.estimated_admin_time = PCDTC - NTIME * 3600)
+
 
   # To Do:
   # - extract NTIME from PCTPT (or PCTPTN)
@@ -697,6 +696,6 @@ get_admin_time_from_ntime <- function(
   #   account for the different time windows)
   #
 
-
+  return(temp)
 }
 
