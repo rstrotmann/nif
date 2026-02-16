@@ -581,7 +581,10 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 #' @noRd
 get_admin_time_from_pcrfdtc <- function(
     ex,
-    sdtm, extrt, pctestcd = NULL, silent = NULL
+    sdtm,
+    extrt,
+    pctestcd = NULL,
+    silent = NULL
   ) {
   # validate inputs
   validate_sdtm(sdtm, "pc")
@@ -596,6 +599,9 @@ get_admin_time_from_pcrfdtc <- function(
   }
 
   if (is.null(pctestcd))
+    pctestcd <- unique(pc$PCTESTCD)
+
+  if (!pctestcd %in% unique(pc$PCTESTCD))
     pctestcd <- unique(pc$PCTESTCD)
 
   missing_pctestcd <- setdiff(pctestcd, unique(pc$PCTESTCD))
@@ -666,6 +672,8 @@ get_admin_time_from_pcrfdtc <- function(
 #' @param ntime_exponent Exponent to NTIME for the weighted averaging of the
 #' estimated administration time.
 #'
+#' @importFrom stats weighted.mean
+#'
 #' @returns A data frame.
 #' @noRd
 get_admin_time_from_ntime <- function(
@@ -698,7 +706,7 @@ get_admin_time_from_ntime <- function(
   temp <- temp |>
     decompose_dtc("PCDTC") |>
     mutate(NTIME = extract_pc_ntime(temp)) |>
-    filter(NTIME > 0) |>
+    filter(.data$NTIME > 0) |>
     mutate(.estimated_admin_dtc = .data$PCDTC - .data$NTIME * 3600) |>
     mutate(.weight = .data$NTIME ^ ntime_exponent) |>
     group_by(.data$PCDTC_date) |>
