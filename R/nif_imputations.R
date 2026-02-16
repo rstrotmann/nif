@@ -602,10 +602,6 @@ get_admin_time_from_pcrfdtc <- function(
   if (length(missing_pctestcd) > 0)
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
 
-  # ex_temp <- ex |>
-  #   filter(.data$EXTRT == extrt) |>
-  #   distinct(.data$USUBJID, .data$DTC_date)
-
   temp <- pc |>
     filter(.data$PCTESTCD %in% pctestcd) |>
     filter(!is.na(.data$PCRFTDTC)) |>
@@ -620,7 +616,8 @@ get_admin_time_from_pcrfdtc <- function(
       .data$PCRFTDTC_time,
       .N = n(),
       .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
-    mutate(DTC_date = as.Date(.data$PCRFTDTC_date))
+    mutate(DTC_date = as.Date(.data$PCRFTDTC_date)) |>
+    mutate(.PCRFTDTC_DTC_time = .data$PCRFTDTC_time)
 
   # check for duplicate times
   n_dupl <- filter(temp, .data$.N > 1) |>
@@ -638,18 +635,24 @@ get_admin_time_from_pcrfdtc <- function(
     silent = silent)
   }
 
+  temp <- temp |>
+    distinct(.data$USUBJID, .data$DTC_date, .data$.PCRFTDTC_DTC_time)
+
   ex |>
-    left_join(temp, by = c("USUBJID", "DTC_date")) |>
-    mutate(IMPUTATION = case_when(
-      !is.na(.data$PCRFTDTC_time) ~ "time copied from PCRFTDTC",
-      .default = .data$IMPUTATION
-    )) |>
-    mutate(DTC_time = case_when(
-      !is.na(.data$PCRFTDTC_time) ~ .data$PCRFTDTC_time,
-      .default = .data$DTC_time
-    )) |>
-    select(-c("PCRFTDTC_date", "PCRFTDTC_time", ".N")) |>
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
+    left_join(temp, by = c("USUBJID", "DTC_date"))
+
+  # ex |>
+  #   left_join(temp, by = c("USUBJID", "DTC_date")) |>
+  #   mutate(IMPUTATION = case_when(
+  #     !is.na(.data$PCRFTDTC_time) ~ "time copied from PCRFTDTC",
+  #     .default = .data$IMPUTATION
+  #   )) |>
+  #   mutate(DTC_time = case_when(
+  #     !is.na(.data$PCRFTDTC_time) ~ .data$PCRFTDTC_time,
+  #     .default = .data$DTC_time
+  #   )) |>
+  #   select(-c("PCRFTDTC_date", "PCRFTDTC_time", ".N")) |>
+  #   mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
 }
 
 
@@ -660,11 +663,18 @@ get_admin_time_from_pcrfdtc <- function(
 #' @param extrt The treatment as character.
 #' @param pctestcd The PCTESTCD corresponding to the treatment, as character.
 #' @param silent Suppress messages.
-
+#' @param ntime_exponent Exponent to NTIME for the weighted averaging of the
+#' estimated administration time.
+#'
 #' @returns A data frame.
 #' @noRd
 get_admin_time_from_ntime <- function(
-    ex, sdtm, extrt, pctestcd = NULL, silent = NULL
+    ex,
+    sdtm,
+    extrt,
+    pctestcd = NULL,
+    silent = NULL,
+    ntime_exponent = -0.8
 ) {
   # validate inputs
   validate_sdtm(sdtm, "pc")
@@ -682,20 +692,26 @@ get_admin_time_from_ntime <- function(
 
   # business logic
   temp <- pc |>
-    lubrify_dates() |>
-    mutate(NTIME = extract_pc_ntime(pc)) |>
-    mutate(NTIME = case_when(NTIME <= 0 ~ NA, .default = NTIME)) |>
-    mutate(.estimated_admin_time = PCDTC - NTIME * 3600)
+    filter(.data$PCTESTCD %in% pctestcd) |>
+    lubrify_dates()
 
+  temp <- temp |>
+    decompose_dtc("PCDTC") |>
+    mutate(NTIME = extract_pc_ntime(temp)) |>
+    filter(NTIME > 0) |>
+    mutate(.estimated_admin_dtc = .data$PCDTC - .data$NTIME * 3600) |>
+    mutate(.weight = .data$NTIME ^ ntime_exponent) |>
+    group_by(.data$PCDTC_date) |>
+    mutate(.mean_est_admin_dtc = weighted.mean(
+      .data$.estimated_admin_dtc, .data$.weight, na.rm = TRUE)) |>
+    ungroup() |>
+    mutate(.NTIME_DTC_time = extract_time(.data$.mean_est_admin_dtc)) |>
+    distinct(
+      .data$USUBJID,
+      DTC_date = as.Date(.data$PCDTC_date),
+      .data$.NTIME_DTC_time)
 
-  # To Do:
-  # - extract NTIME from PCTPT (or PCTPTN)
-  # - filter for NTIME < 24 h
-  # - back-calculate the time of administration from NTIME
-  # - average the times of administration (potentially use weighted average to
-  #   account for the different time windows)
-  #
-
-  return(temp)
+  ex |>
+    left_join(temp, by = c("USUBJID", "DTC_date"))
 }
 

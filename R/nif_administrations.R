@@ -107,17 +107,34 @@ expand_ex <- function(ex) {
       )[2])
   }
 
-  ex <- ex |>
+  ex |>
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
-    mutate(DTC_time = NA) |>
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
-    mutate(IMPUTATION = "no time information") |>
-    # basic assumption: in all treatment episodes, time is from EXSTDTC but for
-    # the last day, where it is from EXENDTC. This can be overridden by the
-    # ex_post_expansion imputation.
-    derive_ex_dtc_time()
+    # mutate(DTC_time = NA) |>
+    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
+    # mutate(IMPUTATION = "no time information") |>
 
-  return(ex)
+    # # basic assumption: in all treatment episodes, time is from EXSTDTC but for
+    # # the last day, where it is from EXENDTC. This can be overridden by the
+    # # ex_post_expansion imputation.
+    # derive_ex_dtc_time()
+
+    group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
+
+    # make DTC_time field
+    mutate(DTC_time = case_when(
+      row_number() == 1 & !is.na(EXSTDTC_time) ~ .data$EXSTDTC_time,
+      row_number() == n() & !is.na(EXENDTC_time) ~ .data$EXENDTC_time,
+      .default = NA
+    )) |>
+
+    # make IMPUTATION field
+    mutate(IMPUTATION = case_when(
+      row_number() == 1 & !is.na(EXSTDTC_time) ~ "time copied from EXSTDTC",
+      row_number() == n() & !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
+      .default = "no time information"
+    )) |>
+    ungroup() #|>
+    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
 }
 
 
@@ -332,6 +349,8 @@ make_administration <- function(
       cut_off_date,
       silent = silent
     ) |>
+
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
 
     inner_join(sbs, by = "USUBJID") |>
     group_by(.data$USUBJID) |>
