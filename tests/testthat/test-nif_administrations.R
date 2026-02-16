@@ -14,15 +14,15 @@ test_that("expand_ex works in general", {
   expect_equal(
     temp$IMPUTATION,
     c(
-      "",
-      "time carried forward",
-      "time carried forward",
-      "",
-      "time carried forward",
-      "time carried forward",
-      "",
-      "time carried forward",
-      ""
+      "time copied from EXSTDTC",
+      "no time information",
+      "no time information",
+      "time copied from EXSTDTC",
+      "no time information",
+      "no time information",
+      "time copied from EXSTDTC",
+      "no time information",
+      "time copied from EXENDTC"
     )
   )
 })
@@ -58,14 +58,14 @@ test_that("expand_ex works with missing EXENDTC", {
   expect_equal(
     temp$IMPUTATION,
     c(
-      "",
-      "time carried forward",
-      "time carried forward",
-      "",
+      "time copied from EXSTDTC",
+      "no time information",
+      "no time information",
+      "time copied from EXSTDTC",
       "no time information",
       "no time information",
       "no time information",
-      ""
+      "time copied from EXSTDTC"
     )
   )
 })

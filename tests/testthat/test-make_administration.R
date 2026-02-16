@@ -40,19 +40,19 @@ test_that("make_administration works without pc", {
   expect_equal(
     test$IMPUTATION,
     c(
-      "",
+      "time copied from EXSTDTC",
       "time carried forward",
       "time carried forward",
       "time carried forward",
-      "",
+      "time copied from EXSTDTC",
       "time carried forward",
       "time carried forward",
-      "",
+      "time copied from EXSTDTC",
       "time carried forward",
-      "no time information",
-      "no time information",
-      "no time information"
-    )
+      "time carried forward",
+      "time carried forward",
+      "time carried forward"
+      )
   )
 })
 
@@ -385,9 +385,11 @@ test_that("make_administration integrates with PC domain for time imputation", {
 
   result <- make_administration(sdtm, "DRUG_A", analyte = "DRUG_A", silent = TRUE)
 
-  # Check that some times were imputed from PCRFTDTC
-  imputed_times <- result$IMPUTATION[grepl("admin time from PCRFTDTC", result$IMPUTATION)]
-  expect_true(length(imputed_times) > 0)
+  expect_equal(
+    result$IMPUTATION,
+    c("time copied from PCRFTDTC",
+      "time copied from PCRFTDTC",
+      "time carried forward"))
 })
 
 

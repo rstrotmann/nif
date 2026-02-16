@@ -27,7 +27,7 @@ test_that("expand_ex works with single day episode", {
   expect_equal(nrow(result), 1)
   expect_equal(result$USUBJID, "A")
   expect_equal(result$EXTRT, "DRUG")
-  expect_equal(result$IMPUTATION, "")
+  expect_equal(result$IMPUTATION, "time copied from EXSTDTC")
 })
 
 
@@ -110,7 +110,7 @@ test_that("expand_ex creates IMPUTATION column when missing", {
   result <- expand_ex(ex)
 
   expect_true("IMPUTATION" %in% names(result))
-  expect_equal(result$IMPUTATION[1], "")
+  expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
 })
 
 
@@ -136,9 +136,9 @@ test_that("expand_ex handles time imputation correctly", {
 
   result <- expand_ex(ex)
 
-  expect_equal(result$IMPUTATION[1], "")
-  expect_equal(result$IMPUTATION[2], "time carried forward")
-  expect_equal(result$IMPUTATION[3], "time carried forward")
+  expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
+  expect_equal(result$IMPUTATION[2], "no time information")
+  expect_equal(result$IMPUTATION[3], "no time information")
 })
 
 
@@ -150,8 +150,7 @@ test_that("expand_ex handles missing EXENDTC time", {
 
   result <- expand_ex(ex)
 
-  # Last row should have time carried forward when EXENDTC has no time
-  expect_equal(result$IMPUTATION[3], "time carried forward")
+  expect_equal(result$IMPUTATION[3], "no time information")
 })
 
 
@@ -237,9 +236,9 @@ test_that("expand_ex handles long episode correctly", {
   result <- expand_ex(ex)
 
   expect_equal(nrow(result), 10)
-  expect_equal(result$IMPUTATION[1], "")
-  expect_equal(result$IMPUTATION[10], "")
-  expect_equal(unique(result$IMPUTATION[2:9]), "time carried forward")
+  expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
+  expect_equal(result$IMPUTATION[10], "time copied from EXENDTC")
+  expect_equal(unique(result$IMPUTATION[2:9]), "no time information")
 })
 
 
@@ -252,9 +251,9 @@ test_that("expand_ex handles episode with only start time", {
   result <- expand_ex(ex)
 
   expect_equal(nrow(result), 3)
-  expect_equal(result$IMPUTATION[1], "")
-  expect_equal(result$IMPUTATION[2], "time carried forward")
-  expect_equal(result$IMPUTATION[3], "time carried forward")
+  expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
+  expect_equal(result$IMPUTATION[2], "no time information")
+  expect_equal(result$IMPUTATION[3], "no time information")
 })
 
 
@@ -323,20 +322,6 @@ test_that("expand_ex preserves additional columns", {
 })
 
 
-test_that("expand_ex creates DTC column correctly", {
-  ex <- tribble(
-    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
-    "A", "DRUG", "2025-01-01T07:00", "2025-01-02T08:00"
-  ) %>% lubrify_dates()
-
-  result <- expand_ex(ex)
-
-  expect_true("DTC" %in% names(result))
-  expect_s3_class(result$DTC, "POSIXct")
-  expect_equal(nrow(result), 2)
-})
-
-
 test_that("expand_ex handles episode spanning month boundary", {
   ex <- tribble(
     ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
@@ -346,8 +331,8 @@ test_that("expand_ex handles episode spanning month boundary", {
   result <- expand_ex(ex)
 
   expect_equal(nrow(result), 4)
-  expect_equal(result$IMPUTATION[1], "")
-  expect_equal(result$IMPUTATION[4], "")
+  expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
+  expect_equal(result$IMPUTATION[4], "time copied from EXENDTC")
 })
 
 
@@ -418,8 +403,7 @@ test_that("expand_ex handles episode with same start and end date but different 
   result <- expand_ex(ex)
 
   expect_equal(nrow(result), 1)
-  # Should use end time since it's the last (and only) row
-  expect_equal(result$IMPUTATION, "")
+  expect_equal(result$IMPUTATION, "time copied from EXSTDTC")
 })
 
 
@@ -434,7 +418,7 @@ test_that("expand_ex correctly assigns time from EXENDTC for last row", {
   # Last row should use EXENDTC time (08:00), not EXSTDTC time (07:00)
   expect_equal(nrow(result), 3)
   # The DTC for the last row should reflect the end time
-  expect_equal(format(result$DTC[3], "%H:%M"), "08:00")
+  expect_equal(result$DTC_time[3], "08:00")
 })
 
 
@@ -449,7 +433,7 @@ test_that("expand_ex handles imputation when last row has no end time but start 
   # When there's more than one row and last row has no end time but start time exists,
   # it should be "time carried forward"
   expect_equal(nrow(result), 3)
-  expect_equal(result$IMPUTATION[3], "time carried forward")
+  expect_equal(result$IMPUTATION[3], "no time information")
 })
 
 

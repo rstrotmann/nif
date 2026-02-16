@@ -95,6 +95,6 @@ test_that("add_administration imputes missing time to PCRFTDTC", {
   )
 
   expect_equal(
-    result[1, "IMPUTATION"], "admin time from PCRFTDTC"
+    result[1, "IMPUTATION"], "time copied from PCRFTDTC"
   )
 })
