@@ -29,33 +29,39 @@ imputation_standard <- list(
 
   admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
     # impute missing administration times from PCRFTDTC where available
-    if ("pc" %in% names(sdtm$domains)) {
-      pc <- lubrify_dates(domain(sdtm, "pc"))
-      if ("PCRFTDTC" %in% names(pc)) {
-        ex <- ex |>
-          get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) |>
-
-        # first priority: Get admin time from PCRFTDTC
-        mutate(IMPUTATION = case_when(
-          !is.na(.data$.PCRFTDTC_DTC_time) ~ "time copied from PCRFTDTC",
-          .default = .data$IMPUTATION
-        )) |>
-          mutate(DTC_time = case_when(
-            !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
-            .default = .data$DTC_time
-          ))
-      }
-    }
-
     ex |>
-      # carry forward imputed times
+      # get time from PCRFTDTC
+      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) |>
+
+      # complete IMPUTATION field for PCDTCTPT-derived administration times
+      mutate(IMPUTATION = case_when(
+        !is.na(.data$.PCRFTDTC_DTC_time) ~ "time imputed from PCRFTDTC",
+        .default = .data$IMPUTATION)) |>
+
+      # identify PCRFTDTC-derived times to be carried forward
+      mutate(.carry_forward = case_when(
+        !is.na(.data$.PCRFTDTC_DTC_time) ~ TRUE, .default = NA)) |>
+      fill(.data$.carry_forward, .direction = "down") |>
+      mutate(.carry_forward = case_when(
+        !is.na(.data$.PCRFTDTC_DTC_time) ~ NA, .default = .data$.carry_forward)) |>
+
+      # complete IMPUTATION field for to-be-carried-forward rows
+      mutate(IMPUTATION = case_when(
+        .data$.carry_forward == TRUE ~ "time carried forward",
+        .default = .data$IMPUTATION)) |>
+
+      # carry forward PCRFTDTC-derived administration times
       group_by(USUBJID, EXTRT, EXSTDTC_date) |>
-        mutate(IMPUTATION = case_when(
-          is.na(.data$DTC_time) ~ "time carried forward",
-          .default = .data$IMPUTATION
-        )) |>
-        fill(DTC_time, .direction = "down") |>
-        ungroup()
+      fill(.data$.PCRFTDTC_DTC_time, .direction = "down") |>
+      ungroup() |>
+
+      # use PCRFTDTC-derived or carried-forward administration times
+      mutate(DTC_time = case_when(
+        !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
+        .default = .data$DTC_time)) |>
+
+      # clean up
+      select(-c(".PCRFTDTC_DTC_time", ".carry_forward"))
   },
 
   obs_raw = function(obs, silent) {
@@ -145,7 +151,8 @@ imputation_1 <- list(
         .default = .data$IMPUTATION
       )) |>
       fill(DTC_time, .direction = "down") |>
-      ungroup()
+      ungroup() |>
+      select(-c(".PCRFTDTC_DTC_time"))
   },
 
   obs_raw = function(obs, silent) {

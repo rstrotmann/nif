@@ -68,14 +68,12 @@ expand_ex <- function(ex) {
 
   missing_ex_fields <- setdiff(
     c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC"),
-    names(ex)
-  )
-
-  if (length(missing_ex_fields) > 0) {
+    names(ex))
+  if (length(missing_ex_fields) > 0)
     stop(paste0(
-      "Missing fields: ", nice_enumeration(missing_ex_fields), "!"
-    ))
-  }
+      "Missing fields: ", nice_enumeration(missing_ex_fields), "!"))
+
+  ex <- lubrify_dates(ex)
 
   # Convert EXSTDY and EXENDY to numeric if they exist
   if ("EXSTDY" %in% names(ex)) {
@@ -120,13 +118,31 @@ expand_ex <- function(ex) {
 
     group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
 
+    # # make DTC_time field
+    # mutate(DTC_time = case_when(
+    #   row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
+    #   row_number() == n() & !is.na(.data$EXENDTC_time) ~ .data$EXENDTC_time,
+    #   row_number() == n() & is.na(.data$EXENDTC_time) &
+    #     !is.na(.data$EXSTDTC_time) ~ NA,
+    #   .default = NA
+    # )) |>
+    #
+    # # make IMPUTATION field
+    # mutate(IMPUTATION = case_when(
+    #   row_number() == 1 & !is.na(EXSTDTC_time) ~ "time copied from EXSTDTC",
+    #   row_number() == n() & !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
+    #   row_number() == n() & is.na(.data$EXENDTC_time) &
+    #     !is.na(.data$EXSTDTC_time) ~ "no time information",
+    #   .default = "no time information"
+    # )) |>
+
     # make DTC_time field
     mutate(DTC_time = case_when(
       row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
       row_number() == n() & !is.na(.data$EXENDTC_time) ~ .data$EXENDTC_time,
       row_number() == n() & is.na(.data$EXENDTC_time) &
-        !is.na(.data$EXSTDTC_time) ~ NA,
-      .default = NA
+        !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
+      .default = .data$EXSTDTC_time
     )) |>
 
     # make IMPUTATION field
@@ -134,9 +150,10 @@ expand_ex <- function(ex) {
       row_number() == 1 & !is.na(EXSTDTC_time) ~ "time copied from EXSTDTC",
       row_number() == n() & !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
       row_number() == n() & is.na(.data$EXENDTC_time) &
-        !is.na(.data$EXSTDTC_time) ~ "no time information",
-      .default = "no time information"
+        !is.na(.data$EXSTDTC_time) ~ "time carried forward",
+      .default = "time carried forward"
     )) |>
+
     ungroup() #|>
     # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
 }
