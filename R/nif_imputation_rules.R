@@ -1,4 +1,4 @@
-#' Standard imputation rules
+#' Standard imputation rule set
 #'
 #' A list containing the standard imputation functions to be used in
 #' add_administration().
@@ -22,6 +22,7 @@ imputation_standard <- list(
     dm <- lubrify_dates(domain(sdtm, "dm"))
 
     ex |>
+      filter(.data$EXSTDTC <= cut_off_date) |>
       impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
       impute_missing_exendtc(silent = silent) |>
       filter_exendtc_after_exstdtc(dm, extrt, silent = silent)

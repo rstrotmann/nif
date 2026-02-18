@@ -1,3 +1,5 @@
+## Tests for make_administration using the standard imputation rule set
+
 test_that("make_administration works for examplinib_poc", {
   expect_no_error(
     make_administration(
@@ -608,3 +610,57 @@ test_that("make_administration handles silent parameter", {
     result <- make_administration(sdtm, "DRUG_A", silent = TRUE)
   )
 })
+
+
+
+# -----------
+## Tests for make_administration using no imputation rules
+
+test_that("make_administration works with void imputation rule set", {
+  # Minimal test data
+  sdtm <- list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX,   ~ACTARMCD,
+           "1",    "DM",    0, "TREATMENT"
+    ),
+
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN,   ~PCTESTCD,          ~PCRFTDTC,
+           "1",    "PC", "ANALYTE_A", "2025-08-15T08:15",
+    ),
+
+    ex = tibble::tribble(
+      ~USUBJID,           ~EXSTDTC,     ~EXENDTC,              ~EXTRT, ~EXDOSE,
+           "1", "2025-01-13T07:00", "2025-01-18T08:00", "TREATMENT_A",     100
+    )
+  ) |>
+    sdtm()
+
+  result = make_administration(
+    sdtm, "TREATMENT_A", imputation = list(), silent = TRUE)
+
+  test <- result |>
+    decompose_dtc("DTC")
+
+  expect_equal(test$DTC_time, c(
+      "07:00", "07:00", "07:00", "07:00", "07:00", "08:00"))
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

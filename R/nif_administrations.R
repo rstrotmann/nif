@@ -107,34 +107,7 @@ expand_ex <- function(ex) {
 
   ex |>
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
-    # mutate(DTC_time = NA) |>
-    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
-    # mutate(IMPUTATION = "no time information") |>
-
-    # # basic assumption: in all treatment episodes, time is from EXSTDTC but for
-    # # the last day, where it is from EXENDTC. This can be overridden by the
-    # # ex_post_expansion imputation.
-    # derive_ex_dtc_time()
-
     group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
-
-    # # make DTC_time field
-    # mutate(DTC_time = case_when(
-    #   row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
-    #   row_number() == n() & !is.na(.data$EXENDTC_time) ~ .data$EXENDTC_time,
-    #   row_number() == n() & is.na(.data$EXENDTC_time) &
-    #     !is.na(.data$EXSTDTC_time) ~ NA,
-    #   .default = NA
-    # )) |>
-    #
-    # # make IMPUTATION field
-    # mutate(IMPUTATION = case_when(
-    #   row_number() == 1 & !is.na(EXSTDTC_time) ~ "time copied from EXSTDTC",
-    #   row_number() == n() & !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
-    #   row_number() == n() & is.na(.data$EXENDTC_time) &
-    #     !is.na(.data$EXSTDTC_time) ~ "no time information",
-    #   .default = "no time information"
-    # )) |>
 
     # make DTC_time field
     mutate(DTC_time = case_when(
@@ -154,8 +127,7 @@ expand_ex <- function(ex) {
       .default = "time carried forward"
     )) |>
 
-    ungroup() #|>
-    # mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time))
+    ungroup()
 }
 
 
@@ -248,7 +220,8 @@ make_administration <- function(
   silent = NULL
 ) {
   # input validation
-  validate_imputation_set(imputation)
+  if (!is.list(imputation))
+    stop("imputation must be a list!")
 
   # extract domains
   dm <- domain(sdtm, "dm") |>
@@ -334,17 +307,19 @@ make_administration <- function(
     silent = silent)
   }
 
-  admin <- admin |>
-    filter(.data$EXSTDTC <= cut_off_date) |>
-    # IMPUTATION 1: pre-expansion
-    imputation[["admin_pre_expansion"]](
-      sdtm,
-      extrt,
-      analyte,
-      cut_off_date,
-      silent = silent
-    ) |>
+  # IMPUTATION 1: pre-expansion
+  if ("admin_pre_expansion" %in% names(imputation)) {
+    admin <- admin |>
+      imputation[["admin_pre_expansion"]](
+        sdtm,
+        extrt,
+        analyte,
+        cut_off_date,
+        silent = silent
+      )
+  }
 
+  admin <- admin |>
     # make standard fields
     mutate(
       TIME = NA_integer_,
@@ -360,34 +335,44 @@ make_administration <- function(
       AMT = .data$EXDOSE
     ) |>
     # expand administration episodes
-    expand_ex() |>
+    expand_ex()
 
-    # IMPUTATION 2: post-expansion
-    imputation[["admin_post_expansion"]](
-      sdtm,
-      extrt,
-      analyte,
-      cut_off_date,
-      silent = silent
-    ) |>
+  # IMPUTATION 2: post-expansion
+  if ("admin_post_expansion" %in% names(imputation)) {
+    admin <- admin |>
+      imputation[["admin_post_expansion"]](
+        sdtm,
+        extrt,
+        analyte,
+        cut_off_date,
+        silent = silent
+      )
+  }
 
+  admin <- admin |>
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
-
     inner_join(sbs, by = "USUBJID") |>
-    group_by(.data$USUBJID) |>
-    mutate(TRTDY = as.numeric(
-      ## changed from RFXSTDTC to RFSTDTC. The difference between both dates is
-      ## that RFXSTDTC includes any exposure captured in the EX domain, whereas
-      ## RFSTDTC refers to the first exposure to study treatment.
-      ## Reference: https://www.lexjansen.com/phuse-us/2020/ds/DS07.pdf
-      difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
-      units = "days"
-    ) + 1) |>
+    group_by(.data$USUBJID)
+
+  if ("RFSTDTC" %in% names(admin)) {
+    admin <- admin |>
+      mutate(TRTDY = as.numeric(
+        ## changed from RFXSTDTC to RFSTDTC. The difference between both dates is
+        ## that RFXSTDTC includes any exposure captured in the EX domain, whereas
+        ## RFSTDTC refers to the first exposure to study treatment.
+        ## Reference: https://www.lexjansen.com/phuse-us/2020/ds/DS07.pdf
+        difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
+        units = "days"
+      ) + 1)
+  }
+
+  admin |>
     ungroup() |>
+    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
+    select(-any_of(c("DTC_date", "DTC_time", "EXSTDTC_date", "EXSTDTC_time",
+                     "EXENDTC_date", "EXENDTC_time", "TEST"))) |>
     index_id() |>
     nif()
-
-  return(admin)
 }
 
 
