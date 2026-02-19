@@ -657,8 +657,9 @@ get_admin_time_from_pcrfdtc <- function(
       .data$PCRFTDTC_time,
       .N = n(),
       .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
-    mutate(DTC_date = as.Date(.data$PCRFTDTC_date)) |>
     mutate(.PCRFTDTC_DTC_time = .data$PCRFTDTC_time) |>
+    # mutate(DTC_date = as.Date(.data$PCRFTDTC_date)) |>
+    mutate(DTC_date = .data$PCRFTDTC_date) |>
     arrange(strptime(.PCRFTDTC_DTC_time, format = c("%H:%M", "%H:%M:%S")))
 
   # check for duplicate times
@@ -682,7 +683,17 @@ get_admin_time_from_pcrfdtc <- function(
     distinct(.data$USUBJID, .data$DTC_date, .data$.PCRFTDTC_DTC_time)
 
   ex |>
-    left_join(temp, by = c("USUBJID", "DTC_date"))
+    left_join(temp, by = c("USUBJID", "DTC_date")) |>
+
+    # complete IMPUTATION field for PCDTCTPT-derived administration times
+    mutate(IMPUTATION = case_when(
+      !is.na(.data$.PCRFTDTC_DTC_time) ~ "time imputed from PCRFTDTC",
+      .default = .data$IMPUTATION)) |>
+
+      # copy imputed times
+      mutate(DTC_time = case_when(
+        !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
+        .default = .data$DTC_time))
 }
 
 
@@ -710,7 +721,10 @@ carry_forward_admin_time_imputations <- function(ex) {
     )) |>
 
     # clean up
-    select(-any_of(c("PCRFTDTC_date", ".PCRFTDTC_DTC_time", ".carry_forward")))
+    select(-any_of(c(
+      "PCRFTDTC_date", ".PCRFTDTC_DTC_time", ".carry_forward",
+      "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time"
+      )))
 }
 
 

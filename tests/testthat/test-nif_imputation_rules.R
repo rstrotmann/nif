@@ -14,11 +14,12 @@ test_that("imputation_standard works with single treatment", {
          "1", "2025-01-13T07:00", "2025-01-18", "TREATMENT_A"
     )
 
-  expanded_ex <- expand_ex(ex)
+  ex <- expand_ex(ex)
 
   result <- imputation_standard[["admin_post_expansion"]](
     expanded_ex, sdtm, "TREATMENT_A", analyte = "ANALYTE_A",
-    cut_off_date = NULL, silent = FALSE)
+    cut_off_date = NULL, silent = FALSE) |>
+    decompose_dtc("DTC")
 
   expect_equal(
     result$IMPUTATION,
@@ -37,6 +38,9 @@ test_that("imputation_standard works with single treatment", {
       cut_off_date = NULL, silent = FALSE),
     "Assuming PCTESTCD 'ANALYTE_A' relates to EXTRT 'TREATMENT_A'!"
   )
+
+  result <- result |>
+    decompose_dtc("DTC")
 
   expect_equal(
     result$IMPUTATION,
@@ -78,6 +82,9 @@ test_that("imputation_standard works with multiple treatments", {
     "Multiple PCRFTDTC for same days, selecting the earlier!"
   )
 
+  result <- result |>
+    decompose_dtc("DTC")
+
   expect_equal(
     result$IMPUTATION,
     c("time copied from EXSTDTC", "time carried forward",
@@ -95,6 +102,9 @@ test_that("imputation_standard works with multiple treatments", {
       cut_off_date = NULL, silent = FALSE),
     "Multiple PCRFTDTC for same days, selecting the earlier"
   )
+
+  result <- result |>
+    decompose_dtc("DTC")
 
   expect_equal(
     result$IMPUTATION,

@@ -1,60 +1,14 @@
-#' Expand dates
-#'
-#' @param stdtc STDTC as character.
-#' @param endtc ENDTC as character.
-#' @param stdy STDY as numeric.
-#' @param endy ENDY as numeric.
-#'
-#' @return Vector of lists: Dates and Days.
-#' @noRd
-date_list <- function(stdtc, endtc, stdy = NA, endy = NA) {
-  tryCatch(
-    {
-      start_date <- as.Date(stdtc)
-      end_date <- as.Date(endtc)
-    },
-    error = function(e) {
-      stop("Failed to parse dates: ", stdtc, " to ", endtc)
-    }
-  )
-
-  if (!is.na(end_date) && end_date < start_date) {
-    stop(paste0(
-      "End date before start date for: ", stdtc, " to ", endtc
-    ))
-  }
-
-  if (!is.na(endy) && !is.na(stdy) && endy < stdy) {
-    stop(paste0(
-      "End day before start day for: ", stdy, " to ", endy
-    ))
-  }
-
-  if (!is.na(endtc)) {
-    dtc_list <- seq(start_date, end_date, by = "days")
-  } else {
-    dtc_list <- start_date
-  }
-
-  if (!is.na(stdy)) {
-    if (!is.na(endy)) {
-      dy_list <- seq(stdy, endy)
-    } else {
-      dy_list <- seq(stdy, stdy + length(dtc_list) - 1)
-    }
-  } else {
-    dy_list <- rep(NA_integer_, length(dtc_list))
-  }
-
-  if (length(dtc_list) != length(dy_list)) {
-    stop("DTC list and DY list have different lengths!")
-  }
-
-  c(list(dtc_list), list(dy_list))
-}
-
-
 #' Expand administration episodes
+#'
+#' Administration episodes are expanded between EXSTDTC and EXENDTC (and between
+#' EXSTDY and EXENDY, if present). The resulting expanded date field is DTC_date.
+#' In addition, DTC_time is taken from the time component of EXSTDTC and EXENDTC
+#' for the episode start and end times, if available in EXSTDTC and EXENDTC.
+#' For the other days, DTC_time is set to NA.
+#'
+#' The resulting data frame maintins the decomposed XX_date and XX_time fields,
+#' and the generated DTC_data and DTC_time fields are not re-composed into the
+#' DTC field. This must be done externally.
 #'
 #' @param ex The EX domain as data frame.
 #'
@@ -89,27 +43,56 @@ expand_ex <- function(ex) {
     ex <- mutate(ex, IMPUTATION = "")
   }
 
-  # Expand days
+  has_study_days <- all(c("EXSTDY", "EXENDY") %in% names(ex))
+
+  # Expand days (assuming QD administration)
   ex <- ex |>
-    # expand dates
-    # to do: implement dose frequencies other than QD (e.g., BID)
-
     decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
-    rowwise() |>
-    mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1])
+    mutate(
+      .start_date = as.Date(.data$EXSTDTC_date),
+      .end_date = if_else(
+        is.na(.data$EXENDTC_date),
+        as.Date(.data$EXSTDTC_date),
+        as.Date(.data$EXENDTC_date)
+      ),
+      .n_days = as.integer(.data$.end_date - .data$.start_date) + 1L
+    )
 
-  # expand EXDY, if present
-  if (all(c("EXSTDY", "EXENDY") %in% names(ex))) {
-    ex <- ex |>
-      mutate(EXDY = date_list(
-        .data$EXSTDTC_date, .data$EXENDTC_date,
-        .data$EXSTDY, .data$EXENDY
-      )[2])
+  # validation (vectorized)
+  bad_dates <- which(ex$.n_days < 1L)
+  if (length(bad_dates) > 0) {
+    stop("End date before start date for row(s): ",
+         paste(bad_dates, collapse = ", "))
   }
+
+  if (has_study_days) {
+    bad_days <- which(ex$EXENDY < ex$EXSTDY)
+    if (length(bad_days) > 0) {
+      stop("End day before start day for row(s): ",
+           paste(bad_days, collapse = ", "))
+    }
+  }
+
+  ex <- ex |>
+    tidyr::uncount(.data$.n_days, .remove = FALSE) |>
+    group_by(.data$USUBJID, .data$EXTRT, .data$EXSTDTC_date, .data$EXENDTC_date) |>
+    mutate(
+      .offset = row_number() - 1L,
+      DTC_date = as.character(.data$.start_date + .data$.offset)
+    )
+
+  if (has_study_days) {
+    ex <- mutate(ex, EXDY = .data$EXSTDY + .data$.offset)
+  }
+
+  ex <- ex |>
+    select(-c(".start_date", ".end_date", ".n_days", ".offset")) |>
+    ungroup()
+
 
   # unnest and annotate administrations
   ex |>
-    tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
+    # tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
     group_by(.data$USUBJID, .data$EXTRT, .data$EXSTDTC_date, .data$EXENDTC_date) |>
 
     # make DTC_time field

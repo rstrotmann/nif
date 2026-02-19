@@ -33,18 +33,6 @@ imputation_standard <- list(
     ex |>
       # get time from PCRFTDTC
       get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) |>
-
-      # complete IMPUTATION field for PCDTCTPT-derived administration times
-      mutate(IMPUTATION = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ "time imputed from PCRFTDTC",
-        .default = .data$IMPUTATION)) |>
-
-      # copy imputed times
-      mutate(DTC_time = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
-        .default = .data$DTC_time)) |>
-
-      # carry forward imputation times
       carry_forward_admin_time_imputations()
   },
 
