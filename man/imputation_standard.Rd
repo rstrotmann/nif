@@ -3,7 +3,7 @@
 \docType{data}
 \name{imputation_standard}
 \alias{imputation_standard}
-\title{Standard imputation rules}
+\title{Standard imputation rule set}
 \format{
 A list with the following elements:
 \describe{

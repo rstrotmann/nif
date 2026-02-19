@@ -82,11 +82,11 @@ test_that("imputation_standard works with multiple treatments", {
     result$IMPUTATION,
     c("time copied from EXSTDTC", "time carried forward",
       "time imputed from PCRFTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward")
+      "time imputed from PCRFTDTC", "time copied from EXENDTC")
   )
   expect_equal(
     result$DTC_time,
-    c("07:00", "07:00", "08:15", "08:15", "09:17", "09:17")
+    c("07:00", "07:00", "08:15", "08:15", "09:17", "10:00")
   )
 
   expect_message(
@@ -100,10 +100,10 @@ test_that("imputation_standard works with multiple treatments", {
     result$IMPUTATION,
     c("time copied from EXSTDTC", "time carried forward",
       "time imputed from PCRFTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward")
+      "time imputed from PCRFTDTC", "time copied from EXENDTC")
   )
   expect_equal(
     result$DTC_time,
-    c("07:00", "07:00", "08:15", "08:15", "09:17", "09:17")
+    c("07:00", "07:00", "08:15", "08:15", "09:17", "10:00")
   )
 })

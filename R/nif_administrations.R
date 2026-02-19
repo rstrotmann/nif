@@ -73,6 +73,7 @@ expand_ex <- function(ex) {
     stop(paste0(
       "Missing fields: ", nice_enumeration(missing_ex_fields), "!"))
 
+  # prepare fields
   ex <- lubrify_dates(ex)
 
   # Convert EXSTDY and EXENDY to numeric if they exist
@@ -92,6 +93,7 @@ expand_ex <- function(ex) {
   ex <- ex |>
     # expand dates
     # to do: implement dose frequencies other than QD (e.g., BID)
+
     decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
     rowwise() |>
     mutate(DTC_date = date_list(.data$EXSTDTC_date, .data$EXENDTC_date)[1])
@@ -105,41 +107,60 @@ expand_ex <- function(ex) {
       )[2])
   }
 
+  # unnest and annotate administrations
   ex |>
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
     # group_by(.data$USUBJID, .data$EXTRT, .data$EXENDTC_date) |>
     group_by(.data$USUBJID, .data$EXTRT, .data$EXSTDTC_date) |>
 
     # make DTC_time field
+    # mutate(DTC_time = case_when(
+    #   # first line
+    #   row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
+    #
+    #   # last line
+    #   row_number() == n() & !is.na(.data$EXENDTC_time) ~ .data$EXENDTC_time,
+    #   row_number() == n() & is.na(.data$EXENDTC_time) &
+    #     !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
+    #
+    #   # default
+    #   .default = .data$EXSTDTC_time
+    # )) |>
+
     mutate(DTC_time = case_when(
       # first line
       row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
-
       # last line
       row_number() == n() & !is.na(.data$EXENDTC_time) ~ .data$EXENDTC_time,
-      row_number() == n() & is.na(.data$EXENDTC_time) &
-        !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
-
       # default
-      .default = .data$EXSTDTC_time
+      .default = NA
     )) |>
 
     # make IMPUTATION field
+    # mutate(IMPUTATION = case_when(
+    #   # first line
+    #   row_number() == 1 & !is.na(EXSTDTC_time) ~ "time copied from EXSTDTC",
+    #   row_number() == 1 & is.na(EXSTDTC_time) ~ "no time information",
+    #
+    #   # last line
+    #   row_number() == n() & .data$IMPUTATION != "" ~ .data$IMPUTATION,
+    #   row_number() == n() & .data$IMPUTATION == "" &
+    #     !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
+    #
+    #   row_number() == n() & .data$IMPUTATION != "" &
+    #     is.na(.data$EXENDTC_time) & !is.na(.data$EXSTDTC_time) ~ "time carried forward",
+    #
+    #   # default
+    #   .default = "time carried forward"
+    # )) |>
+
     mutate(IMPUTATION = case_when(
       # first line
       row_number() == 1 & !is.na(EXSTDTC_time) ~ "time copied from EXSTDTC",
-      row_number() == 1 & is.na(EXSTDTC_time) ~ "no time information",
-
       # last line
-      row_number() == n() & .data$IMPUTATION != "" ~ .data$IMPUTATION,
-      row_number() == n() & .data$IMPUTATION == "" &
-        !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
-
-      row_number() == n() & .data$IMPUTATION != "" &
-        is.na(.data$EXENDTC_time) & !is.na(.data$EXSTDTC_time) ~ "time carried forward",
-
+      row_number() == n() & !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
       # default
-      .default = "time carried forward"
+      .default = ""
     )) |>
 
     ungroup()

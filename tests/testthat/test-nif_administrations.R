@@ -1,6 +1,3 @@
-
-
-
 test_that("expand_ex works in general", {
   ex <- tribble(
     ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
@@ -13,17 +10,8 @@ test_that("expand_ex works in general", {
 
   expect_equal(
     temp$IMPUTATION,
-    c(
-      "time copied from EXSTDTC",
-      "no time information",
-      "no time information",
-      "time copied from EXSTDTC",
-      "no time information",
-      "no time information",
-      "time copied from EXSTDTC",
-      "no time information",
-      "time copied from EXENDTC"
-    )
+    c("time copied from EXSTDTC", "", "", "time copied from EXSTDTC", "", "",
+      "time copied from EXSTDTC", "", "time copied from EXENDTC")
   )
 })
 
@@ -57,16 +45,8 @@ test_that("expand_ex works with missing EXENDTC", {
   expect_no_error(temp <- expand_ex(ex))
   expect_equal(
     temp$IMPUTATION,
-    c(
-      "time copied from EXSTDTC",
-      "no time information",
-      "no time information",
-      "time copied from EXSTDTC",
-      "no time information",
-      "no time information",
-      "no time information",
-      "time copied from EXSTDTC"
-    )
+    c("time copied from EXSTDTC", "", "", "time copied from EXSTDTC", "", "",
+      "", "time copied from EXSTDTC")
   )
 })
 
@@ -89,3 +69,4 @@ test_that("expand_ex errs when end day before start day", {
 
   expect_error(expand_ex(ex))
 })
+

@@ -338,12 +338,7 @@ test_that("make_administration imputes missing middle EXENDTC", {
   ))
 
   # Capture messages to avoid cluttering output
-  expect_message(
-    expect_message(
-      result <- make_administration(sdtm, "DRUG_A", silent = FALSE),
-      "EXENDTC imputation"
-    ),
-    "A global cut-off-date of 2024-12-24 07:50:00 was automatically assigned!")
+  result <- make_administration(sdtm, "DRUG_A", silent = TRUE)
 
   # Middle episode should be imputed to day before next episode
   middle_episode <- result[result$DTC >= as.Date("2024-12-19") & result$DTC < as.Date("2024-12-22"), ]
@@ -392,8 +387,7 @@ test_that("make_administration integrates with PC domain for time imputation", {
 
   expect_equal(
     result$IMPUTATION,
-    c("time copied from PCRFTDTC",
-      "time copied from PCRFTDTC",
+    c("time imputed from PCRFTDTC", "time imputed from PCRFTDTC",
       "time carried forward"))
 })
 

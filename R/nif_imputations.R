@@ -638,9 +638,6 @@ get_admin_time_from_pcrfdtc <- function(
     }
   }
 
-  # if (!all(pctestcd %in% unique(pc$PCTESTCD)))
-  #   pctestcd <- unique(pc$PCTESTCD)
-
   missing_pctestcd <- setdiff(pctestcd, unique(pc$PCTESTCD))
   if (length(missing_pctestcd) > 0)
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
@@ -686,6 +683,34 @@ get_admin_time_from_pcrfdtc <- function(
 
   ex |>
     left_join(temp, by = c("USUBJID", "DTC_date"))
+}
+
+
+#' Carry forward administration time imputations
+#'
+#' @param ex The EX domain after expansion.
+#' @returns The ex domain with
+#' @noRd
+carry_forward_admin_time_imputations <- function(ex) {
+  ex |>
+    # mark rows that will be carried forward (needed for the IMPUTATION note)
+    group_by(USUBJID, EXTRT) |>
+    mutate(.carry_forward = is.na(.data$DTC_time)) |>
+    ungroup() |>
+
+    # conduct carry-forward
+    group_by(USUBJID, EXTRT) |>
+    fill("DTC_time", .direction = "down") |>
+    ungroup() |>
+
+    # fill IMPUTATION
+    mutate(IMPUTATION = case_when(
+      .data$.carry_forward == TRUE & !is.na(DTC_time) ~ "time carried forward",
+      .default = .data$IMPUTATION
+    )) |>
+
+    # clean up
+    select(-any_of(c("PCRFTDTC_date", ".PCRFTDTC_DTC_time", ".carry_forward")))
 }
 
 

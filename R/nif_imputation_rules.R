@@ -39,30 +39,13 @@ imputation_standard <- list(
         !is.na(.data$.PCRFTDTC_DTC_time) ~ "time imputed from PCRFTDTC",
         .default = .data$IMPUTATION)) |>
 
-      # identify PCRFTDTC-derived times to be carried forward
-      mutate(.carry_forward = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ TRUE, .default = NA)) |>
-      fill(.data$.carry_forward, .direction = "down") |>
-      mutate(.carry_forward = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ NA, .default = .data$.carry_forward)) |>
-
-      # complete IMPUTATION field for to-be-carried-forward rows
-      mutate(IMPUTATION = case_when(
-        .data$.carry_forward == TRUE ~ "time carried forward",
-        .default = .data$IMPUTATION)) |>
-
-      # carry forward PCRFTDTC-derived administration times
-      group_by(USUBJID, EXTRT, EXSTDTC_date) |>
-      fill(.data$.PCRFTDTC_DTC_time, .direction = "down") |>
-      ungroup() |>
-
-      # use PCRFTDTC-derived or carried-forward administration times
+      # copy imputed times
       mutate(DTC_time = case_when(
         !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
         .default = .data$DTC_time)) |>
 
-      # clean up
-      select(-c(".PCRFTDTC_DTC_time", ".carry_forward"))
+      # carry forward imputation times
+      carry_forward_admin_time_imputations()
   },
 
   obs_raw = function(obs, silent) {
@@ -91,13 +74,14 @@ imputation_none <- list(
   admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
     ex |>
       # carry forward imputed times
-      group_by(USUBJID, EXTRT, EXSTDTC_date) |>
-      mutate(IMPUTATION = case_when(
-        is.na(.data$DTC_time) ~ "time carried forward",
-        .default = .data$IMPUTATION
-      )) |>
-      fill(DTC_time, .direction = "down") |>
-      ungroup()
+      # group_by(USUBJID, EXTRT, EXSTDTC_date) |>
+      # mutate(IMPUTATION = case_when(
+      #   is.na(.data$DTC_time) ~ "time carried forward",
+      #   .default = .data$IMPUTATION
+      # )) |>
+      # fill(DTC_time, .direction = "down") |>
+      # ungroup()
+      carry_forward_admin_time_imputations()
   },
 
   obs_raw = function(obs, silent) {

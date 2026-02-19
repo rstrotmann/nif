@@ -33,14 +33,14 @@ test_that("expand_ex works with single day episode", {
 
 test_that("expand_ex works with single day episode without time", {
   ex <- tribble(
-    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
-    "A", "DRUG", "2025-01-01", "2025-01-01"
+    ~USUBJID, ~EXTRT,     ~EXSTDTC,    ~EXENDTC,
+         "A", "DRUG", "2025-01-01", "2025-01-01"
   ) %>% lubrify_dates()
 
   result <- expand_ex(ex)
 
   expect_equal(nrow(result), 1)
-  expect_equal(result$IMPUTATION, "no time information")
+  expect_equal(result$IMPUTATION, "")
 })
 
 
@@ -129,16 +129,16 @@ test_that("expand_ex creates IMPUTATION column when missing", {
 
 
 test_that("expand_ex handles time imputation correctly", {
-  ex <- tribble(
-    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
-    "A", "DRUG", "2025-01-01T07:00", "2025-01-03"
-  ) %>% lubrify_dates()
+  ex <- tibble::tribble(
+     ~USUBJID, ~EXTRT,           ~EXSTDTC,     ~EXENDTC,
+          "A", "DRUG", "2025-01-01T07:00", "2025-01-03"
+     ) %>% lubrify_dates()
 
   result <- expand_ex(ex)
 
   expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
-  expect_equal(result$IMPUTATION[2], "no time information")
-  expect_equal(result$IMPUTATION[3], "no time information")
+  expect_equal(result$IMPUTATION[2], "")
+  expect_equal(result$IMPUTATION[3], "")
 })
 
 
@@ -150,7 +150,7 @@ test_that("expand_ex handles missing EXENDTC time", {
 
   result <- expand_ex(ex)
 
-  expect_equal(result$IMPUTATION[3], "no time information")
+  expect_equal(result$IMPUTATION[3], "")
 })
 
 
@@ -162,7 +162,7 @@ test_that("expand_ex handles no time information", {
 
   result <- expand_ex(ex)
 
-  expect_equal(unique(result$IMPUTATION), "no time information")
+  expect_equal(unique(result$IMPUTATION), "")
 })
 
 
@@ -238,7 +238,7 @@ test_that("expand_ex handles long episode correctly", {
   expect_equal(nrow(result), 10)
   expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
   expect_equal(result$IMPUTATION[10], "time copied from EXENDTC")
-  expect_equal(unique(result$IMPUTATION[2:9]), "no time information")
+  expect_equal(unique(result$IMPUTATION[2:9]), "")
 })
 
 
@@ -252,8 +252,8 @@ test_that("expand_ex handles episode with only start time", {
 
   expect_equal(nrow(result), 3)
   expect_equal(result$IMPUTATION[1], "time copied from EXSTDTC")
-  expect_equal(result$IMPUTATION[2], "no time information")
-  expect_equal(result$IMPUTATION[3], "no time information")
+  expect_equal(result$IMPUTATION[2], "")
+  expect_equal(result$IMPUTATION[3], "")
 })
 
 
@@ -266,13 +266,11 @@ test_that("expand_ex handles episode with only end time", {
   result <- expand_ex(ex)
 
   expect_equal(nrow(result), 3)
-  # First row has no time, so "no time information"
-  # Last row has end time, so should preserve original imputation or set appropriately
-  expect_equal(result$IMPUTATION[1], "no time information")
-  expect_equal(result$IMPUTATION[2], "no time information")
-  # Last row: if it's the last row and has EXENDTC_time, preserves IMPUTATION
-  # But since first row has no time, it should be "no time information" unless
-  # there's special handling
+  expect_equal(
+    result$IMPUTATION,
+    c("", "", "time copied from EXENDTC")
+  )
+  expect_equal(result$DTC_time, c(NA, NA, "08:00"))
 })
 
 
@@ -433,7 +431,7 @@ test_that("expand_ex handles imputation when last row has no end time but start 
   # When there's more than one row and last row has no end time but start time exists,
   # it should be "time carried forward"
   expect_equal(nrow(result), 3)
-  expect_equal(result$IMPUTATION[3], "no time information")
+  expect_equal(result$IMPUTATION[3], "")
 })
 
 
