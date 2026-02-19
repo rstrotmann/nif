@@ -388,7 +388,9 @@ make_observation <- function(
   # other validations not implemented - add_observation takes care of that.
   validate_logical_param(na_to_zero, "na_to_zero")
 
-  validate_imputation_set(imputation)
+  # validate_imputation_set(imputation)
+  if (!is.list(imputation))
+    stop("imputation must be a list!")
 
   domain_name <- tolower(domain)
 
@@ -628,12 +630,17 @@ make_observation <- function(
       units = "days"
     ) + 1) |>
     ungroup() |>
-    filter(!is.na(.data$DTC)) |>
+    filter(!is.na(.data$DTC))
+
 
     # IMPUTATION
-    imputation[["obs_raw"]](
-      silent = silent
+  if ("obs_raw" %in% names(imputation)) {
+    out <- imputation[["obs_raw"]](
+      out, silent = silent
     )
+  }
+
+  out
 }
 
 
@@ -1011,16 +1018,20 @@ add_observation <- function(
       filter(.data$NO_ADMIN_FLAG == 0)
   }
 
-  obj |>
+  out <- obj |>
     select(-c("NO_ADMIN_FLAG")) |>
     index_id() |>
     # nif() |>
-    normalize_nif(keep = c(keep, ".current_observation")) |>
+    normalize_nif(keep = c(keep, ".current_observation"))
 
     # IMPUTATION
-    imputation[["obs_final"]](
-      silent = silent
-    ) |>
+  if ("obs_final" %in% names(imputation)) {
+    out <- imputation[["obs_final"]](
+      out, silent = silent
+    )
+  }
+
+  out |>
     select(-c(".current_observation"))
 }
 

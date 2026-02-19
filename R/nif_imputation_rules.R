@@ -31,17 +31,8 @@ imputation_standard <- list(
   admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
     # impute missing administration times from PCRFTDTC where available
     ex |>
-      # get time from PCRFTDTC
-      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) |>
-      carry_forward_admin_time_imputations()
-  },
-
-  obs_raw = function(obs, silent) {
-    obs
-  },
-
-  obs_final = function(obs, silent) {
-    obs
+      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) #|>
+      # carry_forward_admin_time_imputations()
   }
 )
 

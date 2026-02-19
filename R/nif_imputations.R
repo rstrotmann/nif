@@ -658,9 +658,8 @@ get_admin_time_from_pcrfdtc <- function(
       .N = n(),
       .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
     mutate(.PCRFTDTC_DTC_time = .data$PCRFTDTC_time) |>
-    # mutate(DTC_date = as.Date(.data$PCRFTDTC_date)) |>
     mutate(DTC_date = .data$PCRFTDTC_date) |>
-    arrange(strptime(.PCRFTDTC_DTC_time, format = c("%H:%M", "%H:%M:%S")))
+    arrange(strptime(.PCRFTDTC_DTC_time, format = "%H:%M"))
 
   # check for duplicate times
   n_dupl <- filter(temp, .data$.N > 1) |>

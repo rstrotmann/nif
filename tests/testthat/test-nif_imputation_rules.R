@@ -17,40 +17,34 @@ test_that("imputation_standard works with single treatment", {
   ex <- expand_ex(ex)
 
   result <- imputation_standard[["admin_post_expansion"]](
-    expanded_ex, sdtm, "TREATMENT_A", analyte = "ANALYTE_A",
-    cut_off_date = NULL, silent = FALSE) |>
-    decompose_dtc("DTC")
+    ex, sdtm, extrt = "TREATMENT_A", analyte = "ANALYTE_A",
+    cut_off_date = NULL, silent = FALSE)
 
   expect_equal(
     result$IMPUTATION,
-    c("time copied from EXSTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward")
+    c("time copied from EXSTDTC", "", "time imputed from PCRFTDTC", "",
+      "time imputed from PCRFTDTC", "")
   )
   expect_equal(
     result$DTC_time,
-    c("07:00", "07:00", "08:15", "08:15", "09:17", "09:17")
+    c("07:00", NA, "08:15", NA, "09:17", NA)
   )
 
   expect_message(
     result <- imputation_standard[["admin_post_expansion"]](
-      expanded_ex, sdtm, "TREATMENT_A", analyte = NULL,
+      ex, sdtm, "TREATMENT_A", analyte = NULL,
       cut_off_date = NULL, silent = FALSE),
     "Assuming PCTESTCD 'ANALYTE_A' relates to EXTRT 'TREATMENT_A'!"
   )
 
-  result <- result |>
-    decompose_dtc("DTC")
-
   expect_equal(
     result$IMPUTATION,
-    c("time copied from EXSTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward")
+    c("time copied from EXSTDTC", "", "time imputed from PCRFTDTC", "",
+      "time imputed from PCRFTDTC", "")
   )
   expect_equal(
     result$DTC_time,
-    c("07:00", "07:00", "08:15", "08:15", "09:17", "09:17")
+    c("07:00", NA, "08:15", NA, "09:17", NA)
   )
 })
 
@@ -82,18 +76,14 @@ test_that("imputation_standard works with multiple treatments", {
     "Multiple PCRFTDTC for same days, selecting the earlier!"
   )
 
-  result <- result |>
-    decompose_dtc("DTC")
-
   expect_equal(
     result$IMPUTATION,
-    c("time copied from EXSTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward",
+    c("time copied from EXSTDTC", "", "time imputed from PCRFTDTC", "",
       "time imputed from PCRFTDTC", "time copied from EXENDTC")
   )
   expect_equal(
     result$DTC_time,
-    c("07:00", "07:00", "08:15", "08:15", "09:17", "10:00")
+    c("07:00", NA, "08:15", NA, "09:17", "10:00")
   )
 
   expect_message(
@@ -103,17 +93,13 @@ test_that("imputation_standard works with multiple treatments", {
     "Multiple PCRFTDTC for same days, selecting the earlier"
   )
 
-  result <- result |>
-    decompose_dtc("DTC")
-
   expect_equal(
     result$IMPUTATION,
-    c("time copied from EXSTDTC", "time carried forward",
-      "time imputed from PCRFTDTC", "time carried forward",
+    c("time copied from EXSTDTC", "", "time imputed from PCRFTDTC", "",
       "time imputed from PCRFTDTC", "time copied from EXENDTC")
   )
   expect_equal(
     result$DTC_time,
-    c("07:00", "07:00", "08:15", "08:15", "09:17", "10:00")
+    c("07:00", NA, "08:15", NA, "09:17", "10:00")
   )
 })

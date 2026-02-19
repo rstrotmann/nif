@@ -342,6 +342,7 @@ make_administration <- function(
   }
 
   admin <- admin |>
+    carry_forward_admin_time_imputations() |>
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
     inner_join(sbs, by = "USUBJID") |>
     group_by(.data$USUBJID)
@@ -437,7 +438,8 @@ add_administration <- function(
   validate_logical_param(debug, "debug")
   validate_logical_param(silent, "silent", allow_null = TRUE)
 
-  validate_imputation_set(imputation)
+  if (!is.list(imputation))
+    stop("imputation must be a list!")
 
   conditional_cli(
     cli_alert_info(paste0(

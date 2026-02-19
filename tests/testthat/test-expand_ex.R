@@ -114,18 +114,18 @@ test_that("expand_ex creates IMPUTATION column when missing", {
 })
 
 
-# test_that("expand_ex preserves existing IMPUTATION values", {
-#   ex <- tribble(
-#     ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
-#     "A", "DRUG", "2025-01-01T07:00", "2025-01-03T08:00", "original"
-#   ) %>% lubrify_dates()
-#
-#   result <- expand_ex(ex)
-#
-#   expect_equal(result$IMPUTATION[1], "original")
-#   expect_equal(result$IMPUTATION[2], "time carried forward")
-#   expect_equal(result$IMPUTATION[3], "original")
-# })
+test_that("expand_ex preserves existing IMPUTATION values", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~IMPUTATION,
+    "A", "DRUG", "2025-01-01T07:00", "2025-01-03T08:00", "original"
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_equal(result$IMPUTATION[1], "original; time copied from EXSTDTC")
+  expect_equal(result$IMPUTATION[2], "original")
+  expect_equal(result$IMPUTATION[3], "original; time copied from EXENDTC")
+})
 
 
 test_that("expand_ex handles time imputation correctly", {
@@ -450,8 +450,140 @@ test_that("expand_ex handles multiple subjects with different episode lengths", 
 })
 
 
+test_that("expand_ex handles NA EXENDTC by falling back to EXSTDTC date", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-01T07:00", NA
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_equal(nrow(result), 1)
+  expect_equal(result$DTC_date, "2025-01-01")
+  expect_equal(result$DTC_time, "07:00")
+  expect_equal(result$IMPUTATION, "time copied from EXSTDTC")
+})
 
 
+test_that("expand_ex handles NA EXENDTC without start time", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-01", NA
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_equal(nrow(result), 1)
+  expect_equal(result$DTC_date, "2025-01-01")
+  expect_true(is.na(result$DTC_time))
+  expect_equal(result$IMPUTATION, "")
+})
+
+
+test_that("expand_ex handles empty data frame", {
+  ex <- suppressWarnings(
+    tribble(~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC) %>% lubrify_dates()
+  )
+
+  result <- suppressWarnings(expand_ex(ex))
+
+  expect_equal(nrow(result), 0)
+  expect_true("DTC_date" %in% names(result))
+  expect_true("DTC_time" %in% names(result))
+  expect_true("IMPUTATION" %in% names(result))
+})
+
+
+test_that("expand_ex generates correct DTC_date values", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-01T07:00", "2025-01-05T08:00"
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_equal(
+    result$DTC_date,
+    c("2025-01-01", "2025-01-02", "2025-01-03", "2025-01-04", "2025-01-05")
+  )
+})
+
+
+test_that("expand_ex generates correct DTC_date for month boundary", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-30T07:00", "2025-02-01T08:00"
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_equal(
+    result$DTC_date,
+    c("2025-01-30", "2025-01-31", "2025-02-01")
+  )
+})
+
+
+test_that("expand_ex assigns correct DTC_time for all rows", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-01T07:00", "2025-01-04T08:00"
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_equal(result$DTC_time[1], "07:00")
+  expect_true(is.na(result$DTC_time[2]))
+  expect_true(is.na(result$DTC_time[3]))
+  expect_equal(result$DTC_time[4], "08:00")
+})
+
+
+test_that("expand_ex uses EXSTDTC time for single-day episode with both times", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-01T07:00", "2025-01-01T20:00"
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_equal(nrow(result), 1)
+  expect_equal(result$DTC_time, "07:00")
+  expect_equal(result$IMPUTATION, "time copied from EXSTDTC")
+})
+
+
+test_that("expand_ex output contains expected columns", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC,
+    "A", "DRUG", "2025-01-01T07:00", "2025-01-03T08:00"
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expected_cols <- c(
+    "USUBJID", "EXTRT", "EXSTDTC", "EXENDTC",
+    "DTC_date", "DTC_time", "IMPUTATION",
+    "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time"
+  )
+  for (col in expected_cols) {
+    expect_true(col %in% names(result), info = paste("Missing column:", col))
+  }
+})
+
+
+test_that("expand_ex output contains EXDY when study days provided", {
+  ex <- tribble(
+    ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXSTDY, ~EXENDY,
+    "A", "DRUG", "2025-01-01T07:00", "2025-01-03T08:00", 1, 3
+  ) %>% lubrify_dates()
+
+  result <- expand_ex(ex)
+
+  expect_true("EXDY" %in% names(result))
+  expect_false("EXSTDY" %in% names(result) && "EXENDY" %in% names(result) &&
+    !"EXDY" %in% names(result))
+})
 
 
 
