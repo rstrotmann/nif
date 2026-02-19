@@ -31,8 +31,7 @@ imputation_standard <- list(
   admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
     # impute missing administration times from PCRFTDTC where available
     ex |>
-      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) #|>
-      # carry_forward_admin_time_imputations()
+      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent)
   }
 )
 
@@ -48,27 +47,6 @@ imputation_none <- list(
     ex |>
       impute_missing_exendtc(silent = silent) |>
       filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
-  },
-
-  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
-    ex |>
-      # carry forward imputed times
-      # group_by(USUBJID, EXTRT, EXSTDTC_date) |>
-      # mutate(IMPUTATION = case_when(
-      #   is.na(.data$DTC_time) ~ "time carried forward",
-      #   .default = .data$IMPUTATION
-      # )) |>
-      # fill(DTC_time, .direction = "down") |>
-      # ungroup()
-      carry_forward_admin_time_imputations()
-  },
-
-  obs_raw = function(obs, silent) {
-    obs
-  },
-
-  obs_final = function(obs, silent) {
-    obs
   }
 )
 
@@ -117,10 +95,6 @@ imputation_1 <- list(
       fill(DTC_time, .direction = "down") |>
       ungroup() |>
       select(-c(".PCRFTDTC_DTC_time"))
-  },
-
-  obs_raw = function(obs, silent) {
-    obs
   },
 
   obs_final = function(obs, silent) {
