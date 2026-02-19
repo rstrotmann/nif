@@ -14,7 +14,7 @@ date_list <- function(stdtc, endtc, stdy = NA, endy = NA) {
       end_date <- as.Date(endtc)
     },
     error = function(e) {
-      warning("Failed to parse dates: ", stdtc, " to ", endtc)
+      stop("Failed to parse dates: ", stdtc, " to ", endtc)
     }
   )
 
@@ -110,7 +110,7 @@ expand_ex <- function(ex) {
   # unnest and annotate administrations
   ex |>
     tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
-    group_by(.data$USUBJID, .data$EXTRT, .data$EXSTDTC_date) |>
+    group_by(.data$USUBJID, .data$EXTRT, .data$EXSTDTC_date, .data$EXENDTC_date) |>
 
     # make DTC_time field
     mutate(DTC_time = case_when(
@@ -123,14 +123,18 @@ expand_ex <- function(ex) {
     )) |>
 
     # make IMPUTATION field
-    mutate(IMPUTATION = case_when(
-      # first line
-      row_number() == 1 & !is.na(EXSTDTC_time) ~ "time copied from EXSTDTC",
-      # last line
-      row_number() == n() & !is.na(EXENDTC_time) ~ "time copied from EXENDTC",
-      # default
+    mutate(.expand_imp = case_when(
+      row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ "time copied from EXSTDTC",
+      row_number() == n() & !is.na(.data$EXENDTC_time) ~ "time copied from EXENDTC",
       .default = ""
     )) |>
+    mutate(IMPUTATION = trimws(
+      paste(
+      .data$IMPUTATION,
+      .data$.expand_imp,
+      sep = "; "),
+      whitespace = "[; ]+")) |>
+    select(-".expand_imp") |>
 
     ungroup()
 }
