@@ -5,7 +5,7 @@
 \alias{imputation_1}
 \title{Alternative imputation rule set}
 \format{
-An object of class \code{list} of length 3.
+An object of class \code{list} of length 2.
 }
 \usage{
 imputation_1

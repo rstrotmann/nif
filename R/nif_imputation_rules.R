@@ -63,48 +63,55 @@ imputation_none <- list(
 #' * TAFD is set to 0 for predose observations
 #'
 imputation_1 <- list(
-  admin_pre_expansion = function(
-      ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
-    ) {
-    ex
-  },
+  # admin_pre_expansion = function(
+  #     ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+  #   ) {
+  #   ex
+  # },
 
   admin_post_expansion = function(
       ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
     ) {
     ex |>
-      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) |>
-      get_admin_time_from_ntime(sdtm, extrt, analyte, silent) |>
+      # get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) |>
+      # get_admin_time_from_ntime(sdtm, extrt, analyte, silent) |>
+      #
+      # # first priority: Get admin time from PCRFTDTC
+      # mutate(IMPUTATION = case_when(
+      #   !is.na(.data$.PCRFTDTC_DTC_time) ~ "time copied from PCRFTDTC",
+      #   .default = .data$IMPUTATION
+      # )) |>
+      # mutate(DTC_time = case_when(
+      #   !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
+      #   .default = .data$DTC_time
+      # )) |>
+      #
+      # # second priority: Get admin time from NTIME
+      # mutate(IMPUTATION = case_when(
+      #   (is.na(.data$.PCRFTDTC_DTC_time) & !is.na(.data$.NTIME_DTC_time)) ~ "time imputed from PCTPT",
+      #   .default = .data$IMPUTATION
+      # )) |>
+      # mutate(DTC_time = case_when(
+      #   (is.na(.data$.PCRFTDTC_DTC_time) & !is.na(.data$.NTIME_DTC_time)) ~ .data$.NTIME_DTC_time,
+      #   .default = .data$DTC_time
+      # )) |>
+      #
+      # # carry forward imputed times
+      # group_by(USUBJID, EXTRT, EXSTDTC_date) |>
+      # mutate(IMPUTATION = case_when(
+      #   is.na(.data$DTC_time) ~ "time carried forward",
+      #   .default = .data$IMPUTATION
+      # )) |>
+      # fill(DTC_time, .direction = "down") |>
+      # ungroup() |>
+      # select(-c(".PCRFTDTC_DTC_time"))
 
-      # first priority: Get admin time from PCRFTDTC
-      mutate(IMPUTATION = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ "time copied from PCRFTDTC",
-        .default = .data$IMPUTATION
-      )) |>
-      mutate(DTC_time = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
-        .default = .data$DTC_time
-      )) |>
-
-      # second priority: Get admin time from NTIME
-      mutate(IMPUTATION = case_when(
-        (is.na(.data$.PCRFTDTC_DTC_time) & !is.na(.data$.NTIME_DTC_time)) ~ "time imputed from PCTPT",
-        .default = .data$IMPUTATION
-      )) |>
-      mutate(DTC_time = case_when(
-        (is.na(.data$.PCRFTDTC_DTC_time) & !is.na(.data$.NTIME_DTC_time)) ~ .data$.NTIME_DTC_time,
-        .default = .data$DTC_time
-      )) |>
-
-      # carry forward imputed times
-      group_by(USUBJID, EXTRT, EXSTDTC_date) |>
-      mutate(IMPUTATION = case_when(
-        is.na(.data$DTC_time) ~ "time carried forward",
-        .default = .data$IMPUTATION
-      )) |>
-      fill(DTC_time, .direction = "down") |>
-      ungroup() |>
-      select(-c(".PCRFTDTC_DTC_time"))
+      get_admin_time_from_ntime(
+        sdtm, extrt = "TREATMENT_A", pctestcd = pctestcd, silent = FALSE
+      ) |>
+      get_admin_time_from_pcrfdtc(
+        sdtm, extrt = "TREATMENT_A", pctestcd = pctestcd, silent = FALSE
+      )
   },
 
   obs_final = function(obs, silent) {

@@ -98,8 +98,6 @@ creation of a nif object using \code{\link[=add_administration]{add_administrati
 nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE) |> head()
 nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE) |>
 head()
-nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE) |>
-head()
 }
 \seealso{
 \code{\link[=testcd]{testcd()}}

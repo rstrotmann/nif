@@ -103,3 +103,42 @@ test_that("imputation_standard works with multiple treatments", {
     c("07:00", NA, "08:15", NA, "09:17", "10:00")
   )
 })
+
+
+
+test_that("get_admin_time_from_ntime works as intended", {
+  sdtm <- sdtm(list(
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN,   ~PCTESTCD,          ~PCRFTDTC,         ~PCTPT,             ~PCDTC,
+           "1",    "PC", "ANALYTE_A", "2025-01-14T08:00",     "PRE-DOSE", "2025-01-14T07:00",
+           "1",    "PC", "ANALYTE_A", "2025-01-14T08:00", "1 H POSTDOSE", "2025-01-14T09:05",
+           "1",    "PC", "ANALYTE_A", "2025-01-14T08:00",      "2H POST", "2025-01-14T10:05",
+           "1",    "PC", "ANALYTE_A", "2025-01-14T08:00",         "4HRS", "2025-01-14T12:05"
+      )
+  ))
+
+  ex <- tibble::tribble(
+     ~USUBJID,     ~EXSTDTC,           ~EXENDTC,        ~EXTRT,
+          "1", "2025-01-13T07:00", "2025-01-18", "TREATMENT_A"
+     )
+
+  ex <- expand_ex(ex)
+
+  result <- ex |>
+    get_admin_time_from_ntime(
+      sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = FALSE
+    ) |>
+    get_admin_time_from_pcrfdtc(
+      sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = FALSE
+    ) |>
+    carry_forward_admin_time_imputations()
+
+})
+
+
+
+
+
+
+
+

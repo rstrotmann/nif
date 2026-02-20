@@ -659,7 +659,7 @@ get_admin_time_from_pcrfdtc <- function(
       .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
     mutate(.PCRFTDTC_DTC_time = .data$PCRFTDTC_time) |>
     mutate(DTC_date = .data$PCRFTDTC_date) |>
-    arrange(strptime(.PCRFTDTC_DTC_time, format = "%H:%M"))
+    arrange(strptime(.data$.PCRFTDTC_DTC_time, format = "%H:%M"))
 
   # check for duplicate times
   n_dupl <- filter(temp, .data$.N > 1) |>
@@ -674,7 +674,7 @@ get_admin_time_from_pcrfdtc <- function(
     silent = silent)
 
     temp <- temp |>
-      group_by(USUBJID, PCRFTDTC_date) |>
+      group_by(.data$USUBJID, .data$PCRFTDTC_date) |>
       filter(row_number() == 1)
   }
 
@@ -693,37 +693,6 @@ get_admin_time_from_pcrfdtc <- function(
       mutate(DTC_time = case_when(
         !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
         .default = .data$DTC_time))
-}
-
-
-#' Carry forward administration time imputations
-#'
-#' @param ex The EX domain after expansion.
-#' @returns The ex domain with
-#' @noRd
-carry_forward_admin_time_imputations <- function(ex) {
-  ex |>
-    # mark rows that will be carried forward (needed for the IMPUTATION note)
-    group_by(USUBJID, EXTRT) |>
-    mutate(.carry_forward = is.na(.data$DTC_time)) |>
-    ungroup() |>
-
-    # conduct carry-forward
-    group_by(USUBJID, EXTRT) |>
-    fill("DTC_time", .direction = "down") |>
-    ungroup() |>
-
-    # fill IMPUTATION
-    mutate(IMPUTATION = case_when(
-      .data$.carry_forward == TRUE & !is.na(DTC_time) ~ "time carried forward",
-      .default = .data$IMPUTATION
-    )) |>
-
-    # clean up
-    select(-any_of(c(
-      "PCRFTDTC_date", ".PCRFTDTC_DTC_time", ".carry_forward",
-      "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time"
-      )))
 }
 
 
@@ -781,10 +750,56 @@ get_admin_time_from_ntime <- function(
     mutate(.NTIME_DTC_time = extract_time(.data$.mean_est_admin_dtc)) |>
     distinct(
       .data$USUBJID,
-      DTC_date = as.Date(.data$PCDTC_date),
+      # DTC_date = as.Date(.data$PCDTC_date),
+      DTC_date = .data$PCDTC_date,
       .data$.NTIME_DTC_time)
 
   ex |>
-    left_join(temp, by = c("USUBJID", "DTC_date"))
+    left_join(temp, by = c("USUBJID", "DTC_date")) |>
+
+    # complete IMPUTATION field for NTIME-derived administration times
+    mutate(IMPUTATION = case_when(
+      !is.na(.data$.NTIME_DTC_time) ~ "time imputed from NTIME",
+      .default = .data$IMPUTATION)) |>
+
+    # copy imputed times
+    mutate(DTC_time = case_when(
+      !is.na(.data$.NTIME_DTC_time) ~ .data$.NTIME_DTC_time,
+      .default = .data$DTC_time))
 }
+
+
+#' Carry forward administration time imputations
+#'
+#' @param ex The EX domain after expansion.
+#' @returns The ex domain with
+#' @noRd
+carry_forward_admin_time_imputations <- function(ex) {
+  ex |>
+    # mark rows that will be carried forward (needed for the IMPUTATION note)
+    group_by(.data$USUBJID, .data$EXTRT) |>
+    mutate(.carry_forward = is.na(.data$DTC_time)) |>
+    ungroup() |>
+
+    # conduct carry-forward
+    group_by(.data$USUBJID, .data$EXTRT) |>
+    fill("DTC_time", .direction = "down") |>
+    ungroup() |>
+
+    # fill IMPUTATION
+    mutate(IMPUTATION = case_when(
+      .data$.carry_forward == TRUE & !is.na(.data$DTC_time) ~ "time carried forward",
+      .default = .data$IMPUTATION
+    )) |>
+
+    # clean up
+    select(-any_of(c(
+      "PCRFTDTC_date", ".PCRFTDTC_DTC_time", ".NTIME_DTC_time",
+      ".carry_forward",
+      "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time"
+      )))
+}
+
+
+
 
