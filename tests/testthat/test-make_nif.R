@@ -201,27 +201,13 @@ test_that("filter_exendtc_after_exstdtc works", {
 })
 
 
-# test_that("make_subjects works", {
-#   sdtm <- examplinib_poc
-#   expect_no_error(
-#     temp <- make_subjects(domain(sdtm, "dm"), domain(sdtm, "vs"))
-#   )
-#   expect_equal(nrow(temp), 80)
-#   expect_equal(
-#     names(temp),
-#     # c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-#     #   "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC"))
-#     c("ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-#       "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC"))
-# })
-
-
 test_that("make_nif", {
   sdtm <- examplinib_sad
   nif <- nif() %>%
     add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023",
                        silent = TRUE) %>%
-    add_observation(sdtm, domain = "pc", testcd = "RS2023", cmt = 2)
+    add_observation(sdtm, domain = "pc", testcd = "RS2023", cmt = 2,
+                    silent = TRUE)
 
   expect_true(
     all.equal(obs_per_dose_level(nif), obs_per_dose_level(examplinib_sad_nif))

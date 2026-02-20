@@ -594,7 +594,7 @@ get_admin_time_from_pcrfdtc <- function(
     conditional_cli(
       cli_alert_warning(paste0(
         "PC not found in sdtm object - ",
-        "administration times cannot be copied from PCRFTDTC!")),
+        "administration times cannot be imputed from PCRFTDTC!")),
       silent = silent)
 
     return(mutate(ex, .PCRFTDTC_DTC_time = NA))

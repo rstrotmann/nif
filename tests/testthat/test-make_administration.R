@@ -200,8 +200,11 @@ test_that("make_administration auto-assigns cut_off_date when NULL", {
   ))
 
   expect_message(
-    result <- make_administration(sdtm, "DRUG_A", cut_off_date = NULL, silent = FALSE),
-    "A global cut-off-date of"
+    expect_message(
+      result <- make_administration(sdtm, "DRUG_A", cut_off_date = NULL, silent = FALSE),
+      "A global cut-off-date of"
+    ),
+    "PC not found in sdtm object - administration times cannot"
   )
 
   expect_s3_class(result, "nif")
@@ -634,11 +637,6 @@ test_that("make_administration works with examplinib without matching analyte", 
       result <- make_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023")
     )
   )
-
-  # result |>
-  #   filter(EVID == 1) |>
-  #   decompose_dtc("DTC") |>
-  #   select(USUBJID, DTC_date, DTC_time, IMPUTATION)
 })
 
 

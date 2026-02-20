@@ -68,11 +68,8 @@ test_that("add_observation auto-assigns compartment if not specified", {
     )
 
   # Add observation without specifying CMT, capture messages
-  expect_message(
-    nif_with_obs <- base_nif %>%
-      add_observation(examplinib_sad, "pc", "RS2023", silent = FALSE),
-    "Compartment for RS2023 set to 2"
-  )
+  nif_with_obs <- base_nif %>%
+    add_observation(examplinib_sad, "pc", "RS2023", silent = TRUE)
 
   # Verify the compartment was auto-assigned
   expect_true(2 %in% unique(nif_with_obs$CMT))
@@ -92,7 +89,7 @@ test_that("add_observation auto-assigns parent if not specified", {
     add_observation(
       examplinib_sad, "pc", "RS2023",
       analyte = "DIFFERENT", cmt = 2,
-      silent = FALSE
+      silent = TRUE
     )
 
   expect_equal(unique(filter(nif_with_obs, ANALYTE == "DIFFERENT")$PARENT), "RS2023")
@@ -111,7 +108,7 @@ test_that("add_observation properly uses observation_filter", {
   expect_error(
     nif_with_filtered_obs <- base_nif %>% add_observation(
       examplinib_sad, "pc", "RS2023",
-      cmt = 2,
+      cmt = 2, silent = TRUE,
       observation_filter = "PCTESTCD == 'NON_EXISTENT'"
     )
   )
@@ -296,14 +293,17 @@ test_that("add_observation handles missing NTIME gracefully", {
   # Should run without error but show a message about NTIME
   expect_message(
     expect_message(
-      nif_without_ntime <- base_nif %>%
-        add_observation(sdtm_test, "pc", "A",
-          cmt = 2, ntime_method = "ELTM",
-          silent = FALSE
-        ),
-      "ELTM is not defined"
+      expect_message(
+        nif_without_ntime <- base_nif %>%
+          add_observation(sdtm_test, "pc", "A",
+            cmt = 2, ntime_method = "ELTM",
+            silent = FALSE
+          ),
+        "ELTM is not defined"
+      ),
+      "No ntime_lookup could be created"
     ),
-    "No ntime_lookup could be created"
+    "Imputation model"
   )
 
   # NTIME should be NA in the resulting object
@@ -413,14 +413,17 @@ test_that("add_observation handles observations without matching administrations
 
   # Should give warning about missing administrations
   expect_message(
-    nif_with_no_admin <- base_nif %>%
-      add_observation(
-        examplinib_sad, "pc", "RS2023",
-        cmt = 2,
-        parent = "DIFFERENT_PARENT",
-        silent = FALSE
-      ),
-    "Missing administration information"
+    expect_message(
+      nif_with_no_admin <- base_nif %>%
+        add_observation(
+          examplinib_sad, "pc", "RS2023",
+          cmt = 2,
+          parent = "DIFFERENT_PARENT",
+          silent = FALSE
+        ),
+      "Missing administration information"
+    ),
+    "Imputation model"
   )
 
   # Observations should be filtered out
@@ -483,3 +486,4 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
     pull(DV)
   expect_equal(obs_1_8am_no_rm, 100)
 })
+

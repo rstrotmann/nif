@@ -18,7 +18,7 @@ test_that("imputation_standard works with single treatment", {
 
   result <- imputation_standard[["admin_post_expansion"]](
     ex, sdtm, extrt = "TREATMENT_A", analyte = "ANALYTE_A",
-    cut_off_date = NULL, silent = FALSE)
+    cut_off_date = NULL, silent = TRUE)
 
   expect_equal(
     result$IMPUTATION,
