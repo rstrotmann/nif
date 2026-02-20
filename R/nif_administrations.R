@@ -212,7 +212,7 @@ make_administration <- function(
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
   keep = "",
-  imputation = imputation_standard,
+  imputation = imputation_rules_standard,
   silent = NULL
 ) {
   # input validation
@@ -434,7 +434,7 @@ add_administration <- function(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
-  imputation = imputation_standard,
+  imputation = imputation_rules_standard,
   silent = NULL
 ) {
   # validate input

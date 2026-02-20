@@ -370,7 +370,7 @@ make_observation <- function(
   keep = NULL,
   include_day_in_ntime = FALSE,
   omit_not_done = TRUE,
-  imputation = imputation_standard,
+  imputation = imputation_rules_standard,
   silent = NULL,
   na_to_zero = FALSE
 ) {
@@ -783,7 +783,7 @@ add_observation <- function(
   omit_not_done = TRUE,
   na_rm = TRUE,
   na_to_zero = FALSE,
-  imputation = imputation_standard
+  imputation = imputation_rules_standard
 ) {
   # validate inputs
   validate_min_nif(nif)

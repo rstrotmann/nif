@@ -34,7 +34,7 @@ add_observation(
   omit_not_done = TRUE,
   na_rm = TRUE,
   na_to_zero = FALSE,
-  imputation = imputation_standard
+  imputation = imputation_rules_standard
 )
 }
 \arguments{

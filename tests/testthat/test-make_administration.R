@@ -622,7 +622,7 @@ test_that("make_administration works with examplinib without matching analyte", 
   subject_filter <- "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')"
   cut_off_date <- NULL
   keep <- ""
-  imputation <- imputation_standard
+  imputation <- imputation_rules_standard
   silent <- NULL
 
   # no pctestcd

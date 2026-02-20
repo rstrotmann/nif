@@ -8,7 +8,7 @@ assign("abbreviation_maxlines", 10, envir = .nif_env)
 assign("version", packageVersion("nif"), envir = .nif_env)
 
 # REMOVE BEFORE FLIGHT
-assign("debug", TRUE, envir = .nif_env)
+# assign("debug", TRUE, envir = .nif_env)
 ##
 
 

@@ -26,7 +26,7 @@ make_observation(
   keep = NULL,
   include_day_in_ntime = FALSE,
   omit_not_done = TRUE,
-  imputation = imputation_standard,
+  imputation = imputation_rules_standard,
   silent = NULL,
   na_to_zero = FALSE
 )

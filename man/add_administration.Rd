@@ -15,7 +15,7 @@ add_administration(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
-  imputation = imputation_standard,
+  imputation = imputation_rules_standard,
   silent = NULL
 )
 }
