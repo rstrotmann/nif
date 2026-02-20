@@ -83,9 +83,10 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
 #' @noRd
 auto_mapping <- function(sdtm, ..., silent = NULL) {
   # input validation
-  if (!inherits(sdtm, "sdtm")) {
-    stop("sdtm must be an sdtm object")
-  }
+  # if (!inherits(sdtm, "sdtm")) {
+  #   stop("sdtm must be an sdtm object")
+  # }
+  validate_sdtm(sdtm)
 
   mapping <- list(...)
 
@@ -246,23 +247,8 @@ nif_auto <- function(
   silent = NULL
 ) {
   # input validation
-  if (!inherits(sdtm, "sdtm")) {
-    stop("sdtm must be an sdtm object")
-  }
-
-  validate_char_param(
-    baseline_filter, "baseline_filter",
-    allow_multiple = FALSE, allow_null = TRUE
-  )
-
-  expected_domains <- c("dm", "vs", "ex", "pc")
-  missing_domains <- setdiff(expected_domains, names(sdtm$domains))
-  if (length(missing_domains) > 0) {
-    stop(paste0(
-      "Missing expected domains: ",
-      nice_enumeration(missing_domains)
-    ))
-  }
+  validate_sdtm(sdtm, c("dm", "vs", "ex", "pc"))
+  validate_argument(baseline_filter, "character", allow_null = TRUE)
 
   analyte_mapping <- auto_mapping(sdtm, ...)
   if (nrow(analyte_mapping) == 0) {
@@ -274,7 +260,7 @@ nif_auto <- function(
   # treatments
   treatments <- analyte_mapping |>
     filter(.data$METABOLITE == FALSE) |>
-    distinct(.data$EXTRT, .data$ANALYTE)
+    distinct(.data$EXTRT, .data$ANALYTE, .data$TESTCD)
 
   for (i in seq_len(nrow(treatments))) {
     t <- treatments[i, ]
@@ -282,6 +268,7 @@ nif_auto <- function(
       add_administration(
         sdtm,
         extrt = t$EXTRT,
+        pctestcd = t$TESTCD,
         analyte = t$ANALYTE,
         subject_filter = subject_filter,
         silent = silent

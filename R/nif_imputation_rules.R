@@ -18,7 +18,9 @@
 #'
 #' @export
 imputation_standard <- list(
-  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+  admin_pre_expansion = function(
+      ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+    ) {
     dm <- lubrify_dates(domain(sdtm, "dm"))
 
     ex |>
@@ -28,10 +30,13 @@ imputation_standard <- list(
       filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
   },
 
-  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+  admin_post_expansion = function(
+      ex, sdtm,
+      extrt,
+      analyte = NULL, pctestcd = NULL, cut_off_date = NULL, silent = NULL
+    ) {
     # impute missing administration times from PCRFTDTC where available
-    ex |>
-      get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent)
+    get_admin_time_from_pcrfdtc(ex, sdtm, extrt, pctestcd, silent)
   }
 )
 
@@ -42,7 +47,9 @@ imputation_standard <- list(
 #' * No imputations on observations
 #'
 imputation_none <- list(
-  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+  admin_pre_expansion = function(
+      ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+    ) {
     dm <- domain(sdtm, "dm")
     ex |>
       impute_missing_exendtc(silent = silent) |>
@@ -57,11 +64,15 @@ imputation_none <- list(
 #' * TAFD is set to 0 for predose observations
 #'
 imputation_1 <- list(
-  admin_pre_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+  admin_pre_expansion = function(
+      ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+    ) {
     ex
   },
 
-  admin_post_expansion = function(ex, sdtm, extrt, analyte, cut_off_date, silent) {
+  admin_post_expansion = function(
+      ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+    ) {
     ex |>
       get_admin_time_from_pcrfdtc(sdtm, extrt, analyte, silent) |>
       get_admin_time_from_ntime(sdtm, extrt, analyte, silent) |>

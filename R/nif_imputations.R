@@ -647,7 +647,7 @@ get_admin_time_from_pcrfdtc <- function(
     filter(.data$PCTESTCD %in% pctestcd) |>
     filter(!is.na(.data$PCRFTDTC)) |>
     lubrify_dates() |>
-    distinct(.data$USUBJID, .data$PCRFTDTC, .data$PCTESTCD) |>
+    # distinct(.data$USUBJID, .data$PCRFTDTC, .data$PCTESTCD) |>
     decompose_dtc("PCRFTDTC") |>
     arrange(.data$PCRFTDTC_date) |>
     distinct(.data$USUBJID, .data$PCRFTDTC_date, .data$PCRFTDTC_time) |>

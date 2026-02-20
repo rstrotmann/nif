@@ -610,7 +610,36 @@ test_that("make_administration works with void imputation rule set", {
 })
 
 
+test_that("make_administration works with examplinib without matching analyte", {
+  sdtm <- examplinib_poc
 
+  analyte <- NULL
+  pctestcd = NULL
+  cmt <- 1
+  subject_filter <- "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')"
+  cut_off_date <- NULL
+  keep <- ""
+  imputation <- imputation_standard
+  silent <- NULL
+
+  # no pctestcd
+  expect_no_error(
+    expect_message(
+      result <- make_administration(sdtm, extrt = "EXAMPLINIB")
+    )
+  )
+
+  expect_no_error(
+    expect_message(
+      result <- make_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023")
+    )
+  )
+
+  # result |>
+  #   filter(EVID == 1) |>
+  #   decompose_dtc("DTC") |>
+  #   select(USUBJID, DTC_date, DTC_time, IMPUTATION)
+})
 
 
 

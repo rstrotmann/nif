@@ -324,7 +324,7 @@ test_that("nif() handles sdtm object input", {
   # This should call nif_auto
   if (exists("examplinib_sad")) {
     expect_no_error(
-      result <- nif(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = T)
+      result <- nif(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)
     )
     expect_s3_class(result, "nif")
   }

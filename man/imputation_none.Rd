@@ -5,7 +5,7 @@
 \alias{imputation_none}
 \title{Void imputation rule set}
 \format{
-An object of class \code{list} of length 4.
+An object of class \code{list} of length 1.
 }
 \usage{
 imputation_none

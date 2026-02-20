@@ -190,6 +190,9 @@ expand_ex <- function(ex) {
 #' @param subject_filter The filtering to apply to the DM domain, as string,
 #' @param extrt The EXTRT for the administration, as character.
 #' @param analyte The name of the analyte as character.
+#' @param pctestcd The PCTESTCD of the pharmacokinetic analyte corresponding to
+#' the administered drug. This is needed when administration times are imputed
+#' from the PCRFTDTC field from the PC domain.
 #' @param cmt The compartment for the administration as numeric.
 #' @param cut_off_date The data cut-off date as Posix date-time or character.
 #' @param keep Columns to keep after cleanup, as character.
@@ -204,6 +207,7 @@ make_administration <- function(
   sdtm,
   extrt,
   analyte = NULL,
+  pctestcd = NULL,
   cmt = 1,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
@@ -233,10 +237,6 @@ make_administration <- function(
 
   # Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent
   ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
-
-  if (is.null(analyte)) {
-    analyte <- extrt
-  }
 
   # generate data cut off date
   if (is.null(cut_off_date)) {
@@ -299,6 +299,11 @@ make_administration <- function(
     silent = silent)
   }
 
+  # ensure analyte
+  if (is.null(analyte)) {
+    analyte <- extrt
+  }
+
   # IMPUTATION 1: pre-expansion
   if ("admin_pre_expansion" %in% names(imputation)) {
     admin <- admin |>
@@ -306,6 +311,7 @@ make_administration <- function(
         sdtm,
         extrt,
         analyte,
+        pctestcd,
         cut_off_date,
         silent = silent
       )
@@ -336,6 +342,7 @@ make_administration <- function(
         sdtm,
         extrt,
         analyte,
+        pctestcd,
         cut_off_date,
         silent = silent
       )
@@ -401,6 +408,9 @@ make_administration <- function(
 #' @param subject_filter The filtering to apply to the DM domain, as string,
 #' @param extrt The EXTRT for the administration, as character.
 #' @param analyte The name of the analyte as character.
+#' @param pctestcd The PCTESTCD of the pharmacokinetic analyte corresponding to
+#' the administered drug. This is needed when administration times are imputed
+#' from the PCRFTDTC field from the PC domain.
 #' @param cmt The compartment for the administration as numeric.
 #' @param cut_off_date The data cut-off date as Posix date-time or character.
 #' @param keep Columns to keep after cleanup, as character.
@@ -418,6 +428,7 @@ add_administration <- function(
   sdtm,
   extrt,
   analyte = NULL,
+  pctestcd = NULL,
   cmt = 1,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
@@ -429,14 +440,23 @@ add_administration <- function(
   # validate input
   validate_min_nif(nif)
   validate_sdtm(sdtm, c("dm", "ex"))
-  validate_char_param(extrt, "extrt")
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_numeric_param(cmt, "cmt")
-  validate_char_param(subject_filter, "subject_filter")
-  validate_char_param(cut_off_date, "cut_off_date", allow_null = TRUE)
-  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
-  validate_logical_param(debug, "debug")
-  validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_argument(extrt, "character")
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(cmt, "numeric")
+  validate_argument(subject_filter, "character")
+  validate_argument(cut_off_date, "character", allow_null = TRUE)
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(debug, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+  # validate_char_param(extrt, "extrt")
+  # validate_char_param(analyte, "analyte", allow_null = TRUE)
+  # validate_numeric_param(cmt, "cmt")
+  # validate_char_param(subject_filter, "subject_filter")
+  # validate_char_param(cut_off_date, "cut_off_date", allow_null = TRUE)
+  # validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
+  # validate_logical_param(debug, "debug")
+  # validate_logical_param(silent, "silent", allow_null = TRUE)
 
   if (!is.list(imputation))
     stop("imputation must be a list!")
@@ -454,8 +474,15 @@ add_administration <- function(
   bind_rows(
     nif,
     make_administration(
-      sdtm, extrt, analyte, cmt, subject_filter, cut_off_date, keep,
-      imputation = imputation, silent = silent
+      sdtm, extrt,
+      analyte = analyte,
+      pctestcd = pctestcd,
+      cmt = cmt,
+      subject_filter = subject_filter,
+      cut_off_date = cut_off_date,
+      keep = keep,
+      imputation = imputation,
+      silent = silent
     )
   ) |>
     normalize_nif(keep = keep)

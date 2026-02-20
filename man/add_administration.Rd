@@ -9,6 +9,7 @@ add_administration(
   sdtm,
   extrt,
   analyte = NULL,
+  pctestcd = NULL,
   cmt = 1,
   subject_filter = "!ACTARMCD \%in\% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
@@ -26,6 +27,10 @@ add_administration(
 \item{extrt}{The EXTRT for the administration, as character.}
 
 \item{analyte}{The name of the analyte as character.}
+
+\item{pctestcd}{The PCTESTCD of the pharmacokinetic analyte corresponding to
+the administered drug. This is needed when administration times are imputed
+from the PCRFTDTC field from the PC domain.}
 
 \item{cmt}{The compartment for the administration as numeric.}
 
