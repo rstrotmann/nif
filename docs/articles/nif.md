@@ -562,7 +562,7 @@ summary(nif)
 #>   PARENT   min   max   mean   median   
 #>   RS2023   2     2     2      2         
 #> 
-#> Hash: 18f2357de9faa8fcc64cb06f04f8d3b0
+#> Hash: 0b22d9347cf34a021b517d91a7c011f7
 #> Last DTC: 2001-03-10 10:28:00
 ```
 

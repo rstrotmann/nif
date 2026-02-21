@@ -102,6 +102,6 @@ nif %>%
 #>   PARENT   min   max   mean   median   
 #>   RS2023   1     99    43     58.5      
 #> 
-#> Hash: 40680c14d55779eb649defbea4096cb9
+#> Hash: dc0c30d4b2c03f9f06a162b7ac91f1aa
 #> Last DTC: 2001-07-14 08:53:00
 ```
