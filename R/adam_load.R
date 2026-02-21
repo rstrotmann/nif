@@ -1,15 +1,29 @@
+#' Read ADaM data
+#'
+#' @param data_path The file system path to the source folder as character.
+#' @param dataset The ADaM data sets to load. Defaults to all, if NULL.
+#' @param format The format of the source files as character, either 'sas'
+#'   (default), 'xpt', or 'csv'.
+#' @param delim delim Deliminator as character.
+#' @param ... Further parameters to `readr::read_csv`.
+#'
+#' @returns An `adam` object.
+#' @import readr
+#' @import haven
+#' @export
 read_adam <- function(
   data_path,
   dataset = NULL,
-  format = "sas", delim = ",", ...
+  format = "sas",
+  delim = ",",
+  ...
 ) {
   # validate input
-  validate_char_param(data_path, "data_path")
-  validate_char_param(dataset, "dataset",
-    allow_null = TRUE,
-    allow_multiple = TRUE
-  )
-  validate_char_param(format, "format")
+  validate_argument(data_path, "character")
+  validate_argument(dataset, "character", allow_null = TRUE,
+                    allow_multiple = TRUE)
+  validate_argument(format, "character")
+  validate_argument(delim, "character")
 
   # Validate data_path
   if (!dir.exists(data_path)) {
@@ -31,7 +45,7 @@ read_adam <- function(
     "csv" = ".csv"
   )
 
-  # set domains
+  # set data sets
   if (is.null(dataset)) {
     temp <- list.files(file.path(data_path), pattern = paste0(".*\\", file_ext))
     dataset <- gsub(paste0("^(.*)\\", file_ext), "\\1", temp)

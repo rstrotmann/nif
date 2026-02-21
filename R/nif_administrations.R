@@ -6,9 +6,9 @@
 #' for the episode start and end times, if available in EXSTDTC and EXENDTC.
 #' For the other days, DTC_time is set to NA.
 #'
-#' The resulting data frame maintins the decomposed XX_date and XX_time fields,
+#' The resulting data frame maintains the decomposed XX_date and XX_time fields,
 #' and the generated DTC_data and DTC_time fields are not re-composed into the
-#' DTC field. This must be done externally.
+#' DTC field. This is accomplished in `make_administration()`,
 #'
 #' @param ex The EX domain as data frame.
 #'
@@ -448,15 +448,6 @@ add_administration <- function(
   validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(debug, "logical")
   validate_argument(silent, "logical", allow_null = TRUE)
-
-  # validate_char_param(extrt, "extrt")
-  # validate_char_param(analyte, "analyte", allow_null = TRUE)
-  # validate_numeric_param(cmt, "cmt")
-  # validate_char_param(subject_filter, "subject_filter")
-  # validate_char_param(cut_off_date, "cut_off_date", allow_null = TRUE)
-  # validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
-  # validate_logical_param(debug, "debug")
-  # validate_logical_param(silent, "silent", allow_null = TRUE)
 
   if (!is.list(imputation))
     stop("imputation must be a list!")
