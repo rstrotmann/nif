@@ -1351,3 +1351,27 @@ last_dtc_data_frame <- function(obj) {
 
   out
 }
+
+
+#' Summary of imputations in nif object
+#'
+#' @param obj A nif object.
+#' @param analyte
+#'
+#' @returns A data frame.
+#' @export
+imputation_summary <- function(obj, analyte = NULL) {
+  # input validation
+  validate_nif(obj)
+  validate_fields(obj, c("ANALYTE", "IMPUTATION"))
+  validate_argument(analyte, "character", allow_null = TRUE)
+
+  if (!is.null(analyte)) {
+    obj <- filter(obj, .data$ANALYTE %in% analyte)
+  }
+
+  obj |>
+    filter(.data$EVID == 1) |>
+    reframe(N = n(), .by = c("ANALYTE", "IMPUTATION")) |>
+    arrange(.data$ANALYTE, .data$IMPUTATION)
+}
