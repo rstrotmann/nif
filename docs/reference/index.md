@@ -277,6 +277,8 @@
 
 - [`race_coding`](race_coding.md) : Race coding table
 
+- [`read_adam()`](read_adam.md) : Load ADaM data sets from disk
+
 - [`read_sdtm()`](read_sdtm.md) : Read SDTM data
 
 - [`recode_race()`](recode_race.md) : Recode RACE columns in nif object

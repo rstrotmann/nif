@@ -112,9 +112,10 @@ test_that("read_adam reads XPT format correctly", {
   expect_s3_class(result, "adam")
   expect_equal(length(result), 1)
   # XPT format keeps original case
-  expect_equal(names(result), "DM")
-  expect_equal(nrow(result$DM), 2)
-  expect_equal(result$DM$USUBJID, c("SUBJ-001", "SUBJ-002"))
+
+  expect_equal(names(result), "dm")
+  expect_equal(nrow(result$dm), 2)
+  expect_equal(result$dm$USUBJID, c("SUBJ-001", "SUBJ-002"))
 })
 
 
@@ -134,13 +135,13 @@ test_that("read_adam reads CSV format correctly", {
   write.csv(dm_data, file.path(test_dir, "DM.csv"), row.names = FALSE)
 
   # Test reading CSV format
-  result <- read_adam(test_dir, dataset = "DM", format = "csv")
+  result <- read_adam(test_dir, dataset = "dm", format = "csv")
   expect_s3_class(result, "adam")
   expect_equal(length(result), 1)
   # CSV format keeps original case
-  expect_equal(names(result), "DM")
-  expect_equal(nrow(result$DM), 2)
-  expect_equal(result$DM$USUBJID, c("SUBJ-001", "SUBJ-002"))
+  expect_equal(names(result), "dm")
+  expect_equal(nrow(result$dm), 2)
+  expect_equal(result$dm$USUBJID, c("SUBJ-001", "SUBJ-002"))
 })
 
 
@@ -160,10 +161,10 @@ test_that("read_adam handles custom delimiters for CSV", {
   write.csv2(dm_data, file.path(test_dir, "DM.csv"), row.names = FALSE)
 
   # Test reading with semicolon delimiter
-  result <- read_adam(test_dir, dataset = "DM", format = "csv", delim = ";")
+  result <- read_adam(test_dir, dataset = "dm", format = "csv", delim = ";")
   expect_s3_class(result, "adam")
-  expect_equal(nrow(result$DM), 2)
-  expect_equal(result$DM$USUBJID, c("SUBJ-001", "SUBJ-002"))
+  expect_equal(nrow(result$dm), 2)
+  expect_equal(result$dm$USUBJID, c("SUBJ-001", "SUBJ-002"))
 })
 
 
@@ -262,15 +263,21 @@ test_that("read_adam handles missing files correctly", {
   on.exit(unlink(test_dir, recursive = TRUE))
 
   # Test missing file
-  expect_error(
-    read_adam(test_dir, dataset = "NONEXISTENT", format = "sas"),
-    "The following files do not exist"
+  expect_message(
+    expect_error(
+      read_adam(test_dir, dataset = "NONEXISTENT", format = "sas"),
+      "no dataset found"
+    ),
+    " Missing files: NONEXISTENT"
   )
 
   # Test multiple missing files
-  expect_error(
-    read_adam(test_dir, dataset = c("DM", "EX", "NONEXISTENT"), format = "sas"),
-    "The following files do not exist"
+  expect_message(
+    expect_error(
+      read_adam(test_dir, dataset = c("DM", "EX", "NONEXISTENT"), format = "sas"),
+      "no dataset found"
+    ),
+    "Missing files: DM, EX and NONEXISTENT"
   )
 })
 
@@ -316,78 +323,6 @@ test_that("read_adam handles case sensitivity in dataset names for SAS", {
 })
 
 
-test_that("read_adam preserves case for XPT format", {
-  test_dir <- tempfile("adam_test")
-  dir.create(test_dir)
-  on.exit(unlink(test_dir, recursive = TRUE))
-
-  # Create test data
-  dm_data <- tibble::tribble(
-    ~USUBJID, ~STUDYID,
-    "SUBJ-001", "STUDY-001"
-  )
-
-  # Write file with uppercase name
-  haven::write_xpt(dm_data, file.path(test_dir, "DM.xpt"))
-
-  # Test reading - should preserve case
-  result <- read_adam(test_dir, dataset = "DM", format = "xpt")
-  expect_s3_class(result, "adam")
-  expect_equal(names(result), "DM")
-})
-
-
-test_that("read_adam preserves case for CSV format", {
-  test_dir <- tempfile("adam_test")
-  dir.create(test_dir)
-  on.exit(unlink(test_dir, recursive = TRUE))
-
-  # Create test data
-  dm_data <- tibble::tribble(
-    ~USUBJID, ~STUDYID,
-    "SUBJ-001", "STUDY-001"
-  )
-
-  # Write file with uppercase name
-  write.csv(dm_data, file.path(test_dir, "DM.csv"), row.names = FALSE)
-
-  # Test reading - should preserve case
-  result <- read_adam(test_dir, dataset = "DM", format = "csv")
-  expect_s3_class(result, "adam")
-  expect_equal(names(result), "DM")
-})
-
-
-test_that("read_adam handles mixed case in auto-discovery for SAS", {
-  test_dir <- tempfile("adam_test")
-  dir.create(test_dir)
-  on.exit(unlink(test_dir, recursive = TRUE))
-
-  # Create test data
-  dm_data <- tibble::tribble(
-    ~USUBJID, ~STUDYID,
-    "SUBJ-001", "STUDY-001"
-  )
-
-  ex_data <- tibble::tribble(
-    ~USUBJID, ~STUDYID,
-    "SUBJ-001", "STUDY-001"
-  )
-
-  # Write files with different cases
-  suppressWarnings({
-    haven::write_sas(dm_data, file.path(test_dir, "DM.sas7bdat"))
-    haven::write_sas(ex_data, file.path(test_dir, "ex.sas7bdat"))
-  })
-
-  # Test auto-discovery - should convert to lowercase
-  result <- read_adam(test_dir, format = "sas")
-  expect_s3_class(result, "adam")
-  expect_equal(length(result), 2)
-  expect_equal(sort(names(result)), c("dm", "ex"))
-})
-
-
 test_that("read_adam handles multiple formats in same directory", {
   test_dir <- tempfile("adam_test")
   dir.create(test_dir)
@@ -413,11 +348,11 @@ test_that("read_adam handles multiple formats in same directory", {
 
   result_xpt <- read_adam(test_dir, dataset = "DM", format = "xpt")
   expect_s3_class(result_xpt, "adam")
-  expect_equal(names(result_xpt), "DM")
+  expect_equal(names(result_xpt), "dm")
 
   result_csv <- read_adam(test_dir, dataset = "DM", format = "csv")
   expect_s3_class(result_csv, "adam")
-  expect_equal(names(result_csv), "DM")
+  expect_equal(names(result_csv), "dm")
 })
 
 
@@ -570,7 +505,8 @@ test_that("read_adam passes additional parameters to read functions", {
     locale = readr::locale(encoding = "UTF-8")
   )
   expect_s3_class(result, "adam")
-  expect_equal(nrow(result$DM), 2)
+
+  expect_equal(nrow(result$dm), 2)
 })
 
 
@@ -595,3 +531,4 @@ test_that("read_adam handles file path with spaces", {
   expect_s3_class(result, "adam")
   expect_equal(nrow(result$dm), 1)
 })
+

@@ -2,25 +2,25 @@
 % Please edit documentation in R/adam_load.R
 \name{read_adam}
 \alias{read_adam}
-\title{Read ADaM data}
+\title{Load ADaM data sets from disk}
 \usage{
 read_adam(data_path, dataset = NULL, format = "sas", delim = ",", ...)
 }
 \arguments{
-\item{data_path}{The file system path to the source folder as character.}
+\item{data_path}{The path to read from.}
 
-\item{dataset}{The ADaM data sets to load. Defaults to all, if NULL.}
+\item{dataset}{The data set names to load, defaults to all, if NULL.}
 
-\item{format}{The format of the source files as character, either 'sas'
-(default), 'xpt', or 'csv'.}
+\item{format}{The data format, can be one of "sas", "xpt" or "csv."}
 
-\item{delim}{delim Deliminator as character.}
+\item{delim}{Delimiter in csv files.}
 
-\item{...}{Further parameters to \code{readr::read_csv}.}
+\item{...}{Further arguments to \code{haven::read_sas()}, \code{haven::read_xpt()} or
+\code{readr::read_delim()}.}
 }
 \value{
-An \code{adam} object.
+An adam object.
 }
 \description{
-Read ADaM data
+Load ADaM data sets from disk
 }
