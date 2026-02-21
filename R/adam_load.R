@@ -31,59 +31,42 @@ read_adam <- function(
     "csv" = ".csv"
   )
 
-  # set domains
+  available_file_name <- list.files(file.path(data_path), pattern = paste0(".*\\", file_ext))
+  available_file_stem <- gsub(paste0("^(.*)\\", file_ext), "\\1", available_file_name)
+
+  # set data sets
   if (is.null(dataset)) {
-    temp <- list.files(file.path(data_path), pattern = paste0(".*\\", file_ext))
-    dataset <- gsub(paste0("^(.*)\\", file_ext), "\\1", temp)
+    dataset <- available_file_stem
     # dataset names starting with an underscore are omitted
     dataset <- dataset[substring(dataset, 1, 1) != "_"]
   }
 
-  # Check if all required files exist
-  missing_files <- character()
-  for (x in dataset) {
-    file_path <- file.path(data_path, paste0(x, file_ext))
-    if (!file.exists(file_path)) {
-      missing_files <- c(missing_files, file_path)
-    }
-  }
-
-  if (length(missing_files) > 0) {
-    stop("The following files do not exist:\n",
-      paste(missing_files, collapse = "\n"),
-      call. = FALSE
+  missing_files <- dataset[!(toupper(dataset) %in% available_file_stem)]
+  if (length(missing_files) > 0)
+    conditional_cli(
+      cli_alert_warning(paste0(
+        "Missing files: ", nice_enumeration(missing_files)
+      )), silent = FALSE
     )
-  }
+
+  active_file_name <- available_file_name[toupper(available_file_stem) %in% toupper(dataset)]
 
   out <- list()
 
-  if (format == "sas") {
-    for (x in dataset) {
-      out[[tolower(x)]] <- as.data.frame(haven::read_sas(
-        file.path(data_path, paste0(x, ".sas7bdat"))
-      ))
-    }
-  }
+  for (x in active_file_name) {
+    dataset_name <- tolower(gsub(paste0("^(.*)\\", file_ext), "\\1", x))
 
-  if (format == "xpt") {
-    for (x in dataset) {
-      out[[x]] <- as.data.frame(haven::read_xpt(
-        file.path(data_path, paste0(x, ".xpt"))
-      ))
-    }
-  }
+    if (format == "sas")
+      out[[dataset_name]] <- as.data.frame(haven::read_sas(
+        file.path(data_path, x)))
 
-  if (format == "csv") {
-    for (x in dataset) {
-      out[[x]] <- as.data.frame(
-        # readr::read_delim(
-        readr::read_delim(
-          file.path(data_path, paste0(x, ".csv")),
-          delim = delim,
-          show_col_types = FALSE
-        )
-      )
-    }
+    if (format == "xpt")
+      out[[dataset_name]] <- as.data.frame(haven::read_xpt(
+        file.path(data_path, x)))
+
+    if (format == "csv")
+      out[[dataset_name]] <- as.data.frame(readr::read_delim(
+        file.path(data_path, x), delim = delim, show_col_types = FALSE))
   }
 
   if (length(out) == 0) {
