@@ -1,7 +1,20 @@
+#' Load ADaM data sets from disk
+#'
+#' @param data_path The path to read from.
+#' @param dataset The data set names to load, defaults to all, if NULL.
+#' @param format The data format, can be one of "sas", "xpt" or "csv."
+#' @param delim Delimiter in csv files.
+#' @param ... Further arguments to `haven::read_sas()`, `haven::read_xpt()` or
+#' `readr::read_delim()`.
+#'
+#' @returns An adam object.
+#' @export
 read_adam <- function(
   data_path,
   dataset = NULL,
-  format = "sas", delim = ",", ...
+  format = "sas",
+  delim = ",",
+  ...
 ) {
   # validate input
   validate_char_param(data_path, "data_path")
@@ -58,15 +71,15 @@ read_adam <- function(
 
     if (format == "sas")
       out[[dataset_name]] <- as.data.frame(haven::read_sas(
-        file.path(data_path, x)))
+        file.path(data_path, x), ...))
 
     if (format == "xpt")
       out[[dataset_name]] <- as.data.frame(haven::read_xpt(
-        file.path(data_path, x)))
+        file.path(data_path, x), ...))
 
     if (format == "csv")
       out[[dataset_name]] <- as.data.frame(readr::read_delim(
-        file.path(data_path, x), delim = delim, show_col_types = FALSE))
+        file.path(data_path, x), delim = delim, show_col_types = FALSE, ...))
   }
 
   if (length(out) == 0) {
