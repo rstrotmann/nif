@@ -2,7 +2,8 @@
 #'
 #' The formula object must be given as PCTESTCD ~ EXTRT or, if there are
 #' multiple analytes from the same treatment: PCTESTCD1 + PCTESTCD2 ~ EXTRT,
-#' etc.
+#' etc.. The first analyte is expected to be the pharmacokinetic analyte
+#' related to the administered drug.
 #'
 #' The return object is a data frame with one line for each analyte. The ANALYTE
 #' field is the PCTESTCD for the respective analyte.
@@ -28,33 +29,40 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
     ))
   }
 
+  # parse formula
+  # identify treatments from right hand side of f
   extrt <- intersect(str_split_1(deparse(f_rhs(f)), " "), treatments(sdtm))
 
-  if (length(extrt) == 0) {
-    stop(paste0(
-      "extrt ", as.character(rlang::f_rhs(f)), " not found in EX!"
-    ))
-  }
+  if (length(extrt) == 0)
+    stop(paste0( "extrt ", as.character(rlang::f_rhs(f)), " not found in EX!"))
 
   allowed_testcd <- testcd(sdtm)
 
   # identify analytes from left hand side of f
-  temp <- str_split_1(deparse(f_lhs(f)), " ")
-  parent <- temp[1]
-  temp <- temp[grepl("^[A-Z0-9_]*$", temp)]
+  analytes <- str_split_1(deparse(f_lhs(f)), " ")
+  parent <- analytes[1]
+  analytes <- analytes[grepl("^[A-Z0-9_]*$", analytes)]
 
-  invalid_analytes <- setdiff(temp, allowed_testcd$TESTCD)
+  invalid_analytes <- setdiff(analytes, allowed_testcd$TESTCD)
   n_invalid <- length(invalid_analytes)
   if (n_invalid > 0) {
-    conditional_message(
-      plural("analyte", n_invalid > 1), " ",
-      invalid_analytes, " not found in any domain!",
-      silent = silent
-    )
+    # conditional_message(
+    #   plural("analyte", n_invalid > 1), " ",
+    #   invalid_analytes, " not found in any domain!",
+    #   silent = silent
+    # )
+    stop(paste0(
+      plural("Analyte", n_invalid > 1), " ",
+      invalid_analytes, " not found!"
+    ))
   }
 
+  # ensure that the first analyte is a pharmacokinetic analyte
+  if (!any(filter(allowed_testcd, TESTCD == parent)$DOMAIN == "PC"))
+    stop(paste0("The first analyte (", parent, ") must be a PK analyte!"))
+
   testcd <- testcd(sdtm) |>
-    filter(.data$TESTCD %in% temp)
+    filter(.data$TESTCD %in% analytes)
 
   testcd |>
     mutate(PARAM = paste0(.data$DOMAIN, "TESTCD")) |>
@@ -83,9 +91,6 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
 #' @noRd
 auto_mapping <- function(sdtm, ..., silent = NULL) {
   # input validation
-  # if (!inherits(sdtm, "sdtm")) {
-  #   stop("sdtm must be an sdtm object")
-  # }
   validate_sdtm(sdtm)
 
   mapping <- list(...)
@@ -142,7 +147,6 @@ auto_mapping <- function(sdtm, ..., silent = NULL) {
   }
 
   # make analyte list from mapping
-  # for (i in 1:length(mapping)) {
   for (i in seq_along(mapping)) {
     f <- mapping[[i]]
     if (rlang::is_formula(f)) {

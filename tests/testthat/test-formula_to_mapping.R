@@ -1,37 +1,38 @@
 # Create test sdtm object
 test_sdtm_formula_to_mapping <- function() {
   sdtm(list(
-    pc = tibble::tribble(
-      ~USUBJID, ~PCTESTCD, ~PCSTRESN, ~DOMAIN,
-      "001", "ANALYTE1", 1, "PC",
-      "001", "ANALYTE2", 2, "PC",
-      "002", "ANALYTE1", 3, "PC",
-      "002", "ANALYTE2", 4, "PC"
-    ),
-    lb = tibble::tribble(
-      ~USUBJID, ~LBTESTCD, ~LBSTRESN, ~DOMAIN,
-      "001", "GLUC", 5.5, "LB",
-      "001", "LACT", 2.1, "LB",
-      "002", "GLUC", 6.2, "LB",
-      "002", "LACT", 1.8, "LB"
-    ),
     ex = tibble::tribble(
-      ~USUBJID, ~EXTRT, ~DOMAIN,
-      "001", "DRUG1", "EX",
-      "001", "DRUG2", "EX",
-      "002", "DRUG1", "EX",
-      "002", "DRUG2", "EX"
-    )
+       ~USUBJID,  ~EXTRT, ~DOMAIN,
+          "001", "DRUG1",    "EX",
+          "001", "DRUG2",    "EX",
+          "002", "DRUG1",    "EX",
+          "002", "DRUG2",    "EX"
+       ),
+    pc = tibble::tribble(
+       ~USUBJID,  ~PCTESTCD, ~PCSTRESN, ~DOMAIN,
+          "001", "ANALYTE1",         1,    "PC",
+          "001", "ANALYTE2",         2,    "PC",
+          "002", "ANALYTE1",         3,    "PC",
+          "002", "ANALYTE2",         4,    "PC"
+       ),
+    lb = tibble::tribble(
+       ~USUBJID, ~LBTESTCD, ~LBSTRESN, ~DOMAIN,
+          "001",    "GLUC",       5.5,    "LB",
+          "001",    "LACT",       2.1,    "LB",
+          "002",    "GLUC",       6.2,    "LB",
+          "002",    "LACT",       1.8,    "LB"
+       )
   ))
 }
 
 test_that("formula_to_mapping works with single analyte", {
   f <- ANALYTE1 ~ DRUG1
 
-  expected <- tibble::tribble(
-    ~DOMAIN, ~TESTCD, ~PARAM, ~EXTRT, ~ANALYTE, ~PARENT,
-    "PC", "ANALYTE1", "PCTESTCD", "DRUG1", "ANALYTE1", "ANALYTE1"
+  expected <-tibble::tribble(
+     ~DOMAIN,    ~TESTCD,     ~PARAM,  ~EXTRT,   ~ANALYTE,    ~PARENT,
+        "PC", "ANALYTE1", "PCTESTCD", "DRUG1", "ANALYTE1", "ANALYTE1"
   )
+
 
   result <- formula_to_mapping(test_sdtm_formula_to_mapping(), f)
   expect_equal(as_tibble(result), expected)
@@ -52,6 +53,22 @@ test_that("formula_to_mapping works with multiple analytes", {
 })
 
 
+test_that("formula_to_mapping fails if first analyte is not PK", {
+  f <- LACT + ANALYTE1 ~ DRUG1
+
+  expected <- tibble::tribble(
+    ~DOMAIN, ~TESTCD, ~PARAM, ~EXTRT, ~ANALYTE, ~PARENT,
+    "PC", "ANALYTE1", "PCTESTCD", "DRUG1", "ANALYTE1", "ANALYTE1",
+    "LB", "LACT", "LBTESTCD", "DRUG1", "LACT", "ANALYTE1"
+  )
+
+  expect_error(
+    formula_to_mapping(test_sdtm_formula_to_mapping(), f),
+    "The first analyte"
+  )
+})
+
+
 test_that("formula_to_mapping handles non-matching treatments", {
   f <- GLUC ~ NONEXISTENT
 
@@ -65,13 +82,12 @@ test_that("formula_to_mapping handles non-matching treatments", {
 test_that("formula_to_mapping handles non-matching analytes", {
   f <- NONEXISTENT ~ DRUG1
 
-  expect_message(
+  expect_error(
     result <- formula_to_mapping(test_sdtm_formula_to_mapping(), f,
       silent = FALSE
     ),
-    "analyte NONEXISTENT not found in any domain!"
+    "Analyte NONEXISTENT not found!"
   )
-  expect_equal(nrow(result), 0)
 })
 
 
@@ -90,3 +106,4 @@ test_that("formula_to_mapping throws error for non-formula input", {
     "argument not_formula is not a formula!"
   )
 })
+
