@@ -46,11 +46,6 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
   invalid_analytes <- setdiff(analytes, allowed_testcd$TESTCD)
   n_invalid <- length(invalid_analytes)
   if (n_invalid > 0) {
-    # conditional_message(
-    #   plural("analyte", n_invalid > 1), " ",
-    #   invalid_analytes, " not found in any domain!",
-    #   silent = silent
-    # )
     stop(paste0(
       plural("Analyte", n_invalid > 1), " ",
       invalid_analytes, " not found!"
