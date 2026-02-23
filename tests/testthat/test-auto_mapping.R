@@ -56,24 +56,22 @@ test_that("auto_mapping creates correct mapping from single formula", {
 
 test_that("auto_mapping creates correct mapping from list of formulae", {
   # Create test SDTM object with domains
-  dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID,
-    "DM", "STUDY1", "SUBJ-001"
-  )
-
-  ex_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~EXTRT,
-    "EX", "STUDY1", "SUBJ-001", "DRUG1",
-    "EX", "STUDY1", "SUBJ-001", "DRUG2"
-  )
-
-  pc_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~PCTESTCD,
-    "PC", "STUDY1", "SUBJ-001", "PK1",
-    "PC", "STUDY1", "SUBJ-001", "PK2"
-  )
-
-  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,
+         "DM", "STUDY1", "SUBJ-001"
+      ),
+    ex = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,  ~EXTRT,
+         "EX", "STUDY1", "SUBJ-001", "DRUG1",
+         "EX", "STUDY1", "SUBJ-001", "DRUG2"
+      ),
+    pc = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID, ~PCTESTCD,
+         "PC", "STUDY1", "SUBJ-001",     "PK1",
+         "PC", "STUDY1", "SUBJ-001",     "PK2"
+      )
+  ))
 
   result <- auto_mapping(test_sdtm, PK1 ~ DRUG1, PK2 ~ DRUG2)
 
@@ -86,23 +84,21 @@ test_that("auto_mapping creates correct mapping from list of formulae", {
 
 test_that("auto_mapping handles multiple analytes from same treatment", {
   # Create test SDTM object with domains
-  dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID,
-    "DM", "STUDY1", "SUBJ-001"
-  )
-
-  ex_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~EXTRT,
-    "EX", "STUDY1", "SUBJ-001", "DRUG1"
-  )
-
-  pc_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~PCTESTCD,
-    "PC", "STUDY1", "SUBJ-001", "PK1",
-    "PC", "STUDY1", "SUBJ-001", "PK2"
-  )
-
-  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,
+         "DM", "STUDY1", "SUBJ-001"
+      ),
+    ex = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,  ~EXTRT,
+         "EX", "STUDY1", "SUBJ-001", "DRUG1"
+      ),
+    pc = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID, ~PCTESTCD,
+         "PC", "STUDY1", "SUBJ-001",     "PK1",
+         "PC", "STUDY1", "SUBJ-001",     "PK2"
+      )
+  ))
 
   result <- auto_mapping(test_sdtm, PK1 + PK2 ~ DRUG1)
 
@@ -115,22 +111,20 @@ test_that("auto_mapping handles multiple analytes from same treatment", {
 
 test_that("auto_mapping detects duplicate mappings", {
   # Create test SDTM object with domains
-  dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID,
-    "DM", "STUDY1", "SUBJ-001"
-  )
-
-  ex_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~EXTRT,
-    "EX", "STUDY1", "SUBJ-001", "DRUG1"
-  )
-
-  pc_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~PCTESTCD,
-    "PC", "STUDY1", "SUBJ-001", "PK1"
-  )
-
-  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,
+         "DM", "STUDY1", "SUBJ-001"
+      ),
+    ex = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,  ~EXTRT,
+         "EX", "STUDY1", "SUBJ-001", "DRUG1"
+      ),
+    pc = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID, ~PCTESTCD,
+         "PC", "STUDY1", "SUBJ-001",     "PK1"
+      )
+  ))
 
   expect_error(
     auto_mapping(test_sdtm, PK1 ~ DRUG1, PK1 ~ DRUG1),
@@ -141,22 +135,20 @@ test_that("auto_mapping detects duplicate mappings", {
 
 test_that("auto_mapping validates input types", {
   # Create test SDTM object with domains
-  dm_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID,
-    "DM", "STUDY1", "SUBJ-001"
-  )
-
-  ex_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~EXTRT,
-    "EX", "STUDY1", "SUBJ-001", "DRUG1"
-  )
-
-  pc_data <- tibble::tribble(
-    ~DOMAIN, ~STUDYID, ~USUBJID, ~PCTESTCD,
-    "PC", "STUDY1", "SUBJ-001", "PK1"
-  )
-
-  test_sdtm <- sdtm(list(dm = dm_data, ex = ex_data, pc = pc_data))
+  test_sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,
+         "DM", "STUDY1", "SUBJ-001"
+      ),
+    ex = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID,  ~EXTRT,
+         "EX", "STUDY1", "SUBJ-001", "DRUG1"
+      ),
+    pc = tibble::tribble(
+      ~DOMAIN, ~STUDYID,   ~USUBJID, ~PCTESTCD,
+         "PC", "STUDY1", "SUBJ-001",     "PK1"
+      )
+  ))
 
   # Test invalid mapping type
   expect_error(
@@ -201,22 +193,22 @@ test_that("auto_mapping generates automatic mapping for multiple analytes", {
   # Create test SDTM object with domains
   test_sdtm <- sdtm(list(
     dm = tibble::tribble(
-      ~DOMAIN, ~STUDYID, ~USUBJID,
-      "DM", "STUDY1", "SUBJ-001",
-      "DM", "STUDY1", "SUBJ-002"
-    ),
+      ~DOMAIN, ~STUDYID,   ~USUBJID,
+         "DM", "STUDY1", "SUBJ-001",
+         "DM", "STUDY1", "SUBJ-002"
+      ),
     ex = tibble::tribble(
-      ~DOMAIN, ~STUDYID, ~USUBJID, ~EXTRT,
-      "EX", "STUDY1", "SUBJ-001", "DRUG1",
-      "EX", "STUDY1", "SUBJ-001", "DRUG2",
-      "EX", "STUDY1", "SUBJ-002", "DRUG1"
-    ),
+      ~DOMAIN, ~STUDYID,   ~USUBJID,  ~EXTRT,
+         "EX", "STUDY1", "SUBJ-001", "DRUG1",
+         "EX", "STUDY1", "SUBJ-001", "DRUG2",
+         "EX", "STUDY1", "SUBJ-002", "DRUG1"
+      ),
     pc = tibble::tribble(
-      ~DOMAIN, ~STUDYID, ~USUBJID, ~PCTESTCD,
-      "PC", "STUDY1", "SUBJ-001", "DRUG1",
-      "PC", "STUDY1", "SUBJ-001", "DRUG2",
-      "PC", "STUDY1", "SUBJ-002", "DRUG1"
-    )
+      ~DOMAIN, ~STUDYID,   ~USUBJID, ~PCTESTCD,
+         "PC", "STUDY1", "SUBJ-001",   "DRUG1",
+         "PC", "STUDY1", "SUBJ-001",   "DRUG2",
+         "PC", "STUDY1", "SUBJ-002",   "DRUG1"
+      )
   ))
 
   result <- auto_mapping(test_sdtm, silent = TRUE)
