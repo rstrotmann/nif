@@ -133,6 +133,15 @@ test_that("get_admin_time_from_ntime works as intended", {
     ) |>
     carry_forward_admin_time_imputations()
 
+  expect_equal(
+    result$IMPUTATION,
+    c("time copied from EXSTDTC", "time imputed from PCRFTDTC",
+      "time carried forward", "time carried forward", "time carried forward",
+      "time carried forward"))
+
+  expect_equal(
+    result$DTC_time,
+    c("07:00", "08:00", "08:00", "08:00", "08:00", "08:00"))
 })
 
 

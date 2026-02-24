@@ -431,6 +431,8 @@ test_that("plot.domain handles legend positioning correctly", {
   expect_s3_class(p2, "ggplot")
 
   # Both should be valid ggplot objects
+  pdf(NULL)  # open null device (discards output)
+  on.exit(dev.off(), add = TRUE)
   expect_no_error(print(p1))
   expect_no_error(print(p2))
 })
