@@ -1356,7 +1356,7 @@ last_dtc_data_frame <- function(obj) {
 #' Summary of imputations in nif object
 #'
 #' @param obj A nif object.
-#' @param analyte
+#' @param analyte The analyte as character. Defaults to all analytes if NULL.
 #'
 #' @returns A data frame.
 #' @export

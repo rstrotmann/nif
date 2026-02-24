@@ -53,7 +53,7 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
   }
 
   # ensure that the first analyte is a pharmacokinetic analyte
-  if (!any(filter(allowed_testcd, TESTCD == parent)$DOMAIN == "PC"))
+  if (!any(filter(allowed_testcd, .data$TESTCD == parent)$DOMAIN == "PC"))
     stop(paste0("The first analyte (", parent, ") must be a PK analyte!"))
 
   testcd <- testcd(sdtm) |>

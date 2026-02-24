@@ -9,7 +9,7 @@ imputation_summary(obj, analyte = NULL)
 \arguments{
 \item{obj}{A nif object.}
 
-\item{analyte}{}
+\item{analyte}{The analyte as character. Defaults to all analytes if NULL.}
 }
 \value{
 A data frame.
