@@ -648,13 +648,18 @@ extract_pc_ntime <- function(pc) {
 #' @examples
 #' compose_dtc(date = "2022-09-29", time = "09:30")
 compose_dtc <- function(date, time) {
-  data.frame(date = as.character(date), time = as.character(time)) |>
-    mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) |>
-    mutate(DTC = str_trim(paste(as.character(.data$date), .data$time))) |>
-    mutate(DTC = lubridate::as_datetime(.data$DTC,
-      format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
-    )) |>
-    pull(.data$DTC)
+  tryCatch(
+    data.frame(date = as.character(date), time = as.character(time)) |>
+      mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) |>
+      mutate(DTC = str_trim(paste(as.character(.data$date), .data$time))) |>
+      mutate(DTC = lubridate::as_datetime(.data$DTC,
+        format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
+      )) |>
+      pull(.data$DTC),
+    warning = function(w) {
+      message(paste0("Warning from composing DTC: ", w))
+    }
+  )
 }
 
 
@@ -671,7 +676,8 @@ decompose_dtc <- function(obj, dtc_field) {
   if (!is.data.frame(obj)) {
     stop("obj must be a data frame!")
   }
-  validate_char_param(dtc_field, "dtc_field", allow_multiple = TRUE)
+  # validate_char_param(dtc_field, "dtc_field", allow_multiple = TRUE)
+  validate_argument(dtc_field, "character", allow_multiple = TRUE)
 
   missing_fields <- setdiff(dtc_field, names(obj))
   n_missing <- length(missing_fields)
@@ -693,14 +699,22 @@ decompose_dtc <- function(obj, dtc_field) {
     if (dtc_date %in% names(obj) || dtc_time %in% names(obj))
       obj <- select(obj, -any_of(c(dtc_date, dtc_time)))
 
-    out <- obj |>
-      mutate(has_time = has_time(.data[[fld]])) |>
-      mutate(.temp_date = extract_date(.data[[fld]])) |>
-      mutate(.temp_time = case_when(
-        .data$has_time == TRUE ~ extract_time(.data[[fld]]),
-        .default = NA
-      )) |>
-      select(-c("has_time"))
+    tryCatch(
+      out <- obj |>
+        mutate(has_time = has_time(.data[[fld]])) |>
+        mutate(.temp_date = extract_date(.data[[fld]])) |>
+        mutate(.temp_time = case_when(
+          .data$has_time == TRUE ~ extract_time(.data[[fld]]),
+          .default = NA
+        )) |>
+        select(-c("has_time")),
+      warning = function(w) {
+        message(paste0(
+          "Warning decomposing DTC: ", w
+        ))
+      }
+    )
+
     names(out)[names(out) == ".temp_date"] <- dtc_date
     names(out)[names(out) == ".temp_time"] <- dtc_time
     out

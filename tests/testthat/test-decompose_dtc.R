@@ -157,7 +157,7 @@ test_that("decompose_dtc validates input parameters", {
 
   # Test invalid DTC_field parameter
   expect_error(decompose_dtc(test_data, NULL), "dtc_field must not be NULL")
-  expect_error(decompose_dtc(test_data, 123), "dtc_field must be a string value")
+  expect_error(decompose_dtc(test_data, 123), "dtc_field must be a character value")
   expect_error(
     decompose_dtc(test_data, c("STDTC", 123)),
     "Column not found in obj: 123"
