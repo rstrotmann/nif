@@ -5,15 +5,67 @@
 \alias{imputation_rules_1}
 \title{Alternative imputation rule set}
 \format{
-An object of class \code{list} of length 2.
+A list of the following functions:
+\itemize{
+\item admin_post_expansion()
+\item obs_final()
+}
 }
 \usage{
 imputation_rules_1
 }
 \description{
+Alternative imputation rule set
+}
+\details{
+This imputation rule set includes the following imputation steps:
+\subsection{Treatment administrations:}{
 \itemize{
-\item No administration time imputations
-\item TAFD is set to 0 for predose observations
+\item Filter administrations to the cut-off date.
+\item Impute missing EXENDTC values in the last administration episode to the
+cut-off date.
+\item Impute missing (non-last) EXENDTC values to the day before the start of the
+subsequent administration episode.
+\item Remove records where EXENDTC is before EXSTDTC.
+\item Expand administration episodes from the EX domain between EXSTDTC and
+EXENDTC.
+\item For each administration event, take the administration time from
+PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
+The name of the PK analyte (PCTESTCD) that corresponds with the administered
+treatment (EXTRT) must be specified by the 'pctestcd' to
+add_administration().
+\item For administration events that have associated PK observations but PCRFTDTC
+is not defined, back-calculate the administration time, if possible, from
+the PK observations based on their nominal time (PCTPT).
+\item Unless imputed by the above rules, administrations inherit the
+administration time from EXSTDTC or EXENDTC.
+\item After the above imputations, the administration time is carried forward for
+subsequent administration events until the next imputed time.
 }
 }
+
+\subsection{Observations}{
+\itemize{
+\item For all predose observations, TAFD is set to zero.
+}
+}
+}
+\section{Creating custom imputation rules}{
+
+You can create your own imputation rule set by providing a named list
+with any combination of the four function slots: \code{admin_pre_expansion},
+\code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
+receives specific arguments depending on its slot.
+}
+
+\seealso{
+add_administration()
+
+add_observation()
+
+Other imputation rules: 
+\code{\link{imputation_rules_minimal}},
+\code{\link{imputation_rules_standard}}
+}
+\concept{imputation rules}
 \keyword{datasets}

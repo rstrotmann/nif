@@ -1,20 +1,57 @@
 #' Standard imputation rule set
 #'
-#' A list containing the standard imputation functions to be used in
+#' Standard imputation rule set
+#'
+#' @format A list of the following functions:
+#'
+#' * admin_pre_expansion()
+#' * admin_post_expansion()
+#'
+#' @details
+#'
+#' This imputation rule set includes the  following imputation steps:
+#'
+#' ## Treatment administrations:
+#'
+#' * Filter administrations to the cut-off date.
+#'
+#' * Impute missing EXENDTC values in the last administration episode to the
+#' cut-off date.
+#'
+#' * Impute missing (non-last) EXENDTC values to the day before the start of the
+#' subsequent administration episode.
+#'
+#' * Remove records where EXENDTC is before EXSTDTC.
+#'
+#' * Expand administration episodes from the EX domain between EXSTDTC and
+#' EXENDTC.
+#'
+#' * For each administration event, take the administration time from
+#' PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
+#' The name of the PK analyte (PCTESTCD) that corresponds with the administered
+#' treatment (EXTRT) must be specified by the 'pctestcd' to
 #' add_administration().
 #'
-#' @format A list with the following elements:
-#' \describe{
-#'   \item{admin_pre_expansion}{A function to conduct imputations on the EX domain
-#'   before expansion of the administration episodes.}
-#'   \item{admin_post_expansion}{A function to conduct imputations on the
-#'   administration data table after expansion of the administration episodes}
-#'   \item{obs_raw}{A function to conduct imputations on the observation data.
-#'   At this stage, time fields other than NTIME are not derived yet.}
-#'   \item{obs_final}{A function to conduct imputations on the nif data table
-#'   including the new observations, before finalization. New observations are
-#'   flagged by .current_observation == TRUE.}
-#' }
+#' * Unless imputed by the above rule, administrations inherit the
+#' administration time from EXSTDTC or EXENDTC.
+#'
+#' * After the above imputations, carry forward the administration time for
+#' subsequent administration events until the next imputed time.
+#'
+#' ## Observations
+#'
+#' * No imputations.
+#'
+#'@section Creating custom imputation rules:
+#' You can create your own imputation rule set by providing a named list
+#' with any combination of the four function slots: `admin_pre_expansion`,
+#' `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
+#' receives specific arguments depending on its slot.
+#'
+#' @seealso add_administration()
+#' @seealso add_observation()
+#'
+#' @family imputation rules
 #'
 #' @export
 imputation_rules_standard <- list(
@@ -31,8 +68,8 @@ imputation_rules_standard <- list(
   },
 
   admin_post_expansion = function(
-      ex, sdtm,
-      extrt,analyte = NULL, pctestcd = NULL, cut_off_date = NULL, silent = NULL
+      ex, sdtm, extrt, analyte = NULL, pctestcd = NULL, cut_off_date = NULL,
+      silent = NULL
     ) {
     # impute missing administration times from PCRFTDTC where available
     get_admin_time_from_pcrfdtc(ex, sdtm, extrt, pctestcd, silent)
@@ -40,21 +77,106 @@ imputation_rules_standard <- list(
 )
 
 
-#' Void imputation rule set
+#' Minimal imputation rule set
 #'
-#' * No administration time imputations
-#' * No imputations on observations
+#' @format An empty list.
+#'
+#' @details
+#'
+#' This imputation rule set includes the following minimal imputation steps:
+#'
+#' ## Treatment administrations:
+#'
+#' * Filter administrations to the cut-off date.
+#'
+#' * Impute missing EXENDTC values in the last administration episode to the
+#' cut-off date.
+#'
+#' * Impute missing (non-last) EXENDTC values to the day before the start of the
+#' subsequent administration episode.
+#'
+#' * Remove records where EXENDTC is before EXSTDTC.
+#'
+#' * Expand administration episodes from the EX domain between EXSTDTC and
+#' EXENDTC.
+#'
+#' * Administrations inherit the administration time from EXSTDTC or EXENDTC.
+#'
+#' * After the above imputations, the administration time is carried forward for
+#' subsequent administration events until the next imputed time.
+#'
+#' @section Creating custom imputation rules:
+#' You can create your own imputation rule set by providing a named list
+#' with any combination of the four function slots: `admin_pre_expansion`,
+#' `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
+#' receives specific arguments depending on its slot.
+#'
+#' @seealso add_administration()
+#' @seealso add_observation()
+#' @family imputation rules
 #'
 #' @export
-imputation_rules_none <- list(
+imputation_rules_minimal <- list()
 
-)
 
 
 #' Alternative imputation rule set
 #'
-#' * No administration time imputations
-#' * TAFD is set to 0 for predose observations
+#' @format A list of the following functions:
+#'
+#' * admin_post_expansion()
+#' * obs_final()
+#'
+#' @details
+#'
+#' This imputation rule set includes the following imputation steps:
+#'
+#' ## Treatment administrations:
+#'
+#' * Filter administrations to the cut-off date.
+#'
+#' * Impute missing EXENDTC values in the last administration episode to the
+#' cut-off date.
+#'
+#' * Impute missing (non-last) EXENDTC values to the day before the start of the
+#' subsequent administration episode.
+#'
+#' * Remove records where EXENDTC is before EXSTDTC.
+#'
+#' * Expand administration episodes from the EX domain between EXSTDTC and
+#' EXENDTC.
+#'
+#' * For each administration event, take the administration time from
+#' PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
+#' The name of the PK analyte (PCTESTCD) that corresponds with the administered
+#' treatment (EXTRT) must be specified by the 'pctestcd' to
+#' add_administration().
+#'
+#' * For administration events that have associated PK observations but PCRFTDTC
+#' is not defined, back-calculate the administration time, if possible, from
+#' the PK observations based on their nominal time (PCTPT).
+#'
+#' * Unless imputed by the above rules, administrations inherit the
+#' administration time from EXSTDTC or EXENDTC.
+#'
+#' * After the above imputations, the administration time is carried forward for
+#' subsequent administration events until the next imputed time.
+#'
+#'
+#' ## Observations
+#'
+#' * For all predose observations, TAFD is set to zero.
+#'
+#' @section Creating custom imputation rules:
+#' You can create your own imputation rule set by providing a named list
+#' with any combination of the four function slots: `admin_pre_expansion`,
+#' `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
+#' receives specific arguments depending on its slot.
+#'
+#' @seealso add_administration()
+#'
+#' @seealso add_observation()
+#' @family imputation rules
 #'
 #' @export
 imputation_rules_1 <- list(
