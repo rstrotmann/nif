@@ -7,7 +7,7 @@
 bintime_plot(
   obj,
   analyte,
-  method = "fisher",
+  method = "kmeans",
   time = "TAFD",
   min_time = NULL,
   max_time = NULL,

@@ -99,7 +99,7 @@ add_bintime <- function(
 bintime_plot <- function(
     obj,
     analyte,
-    method = "fisher",
+    method = "kmeans",
     time = "TAFD",
     min_time = NULL,
     max_time = NULL,

@@ -17,16 +17,10 @@ Minimal imputation rule set
 This imputation rule set includes the following minimal imputation steps:
 \subsection{Treatment administrations:}{
 \itemize{
-\item Filter administrations to the cut-off date.
-\item Impute missing EXENDTC values in the last administration episode to the
-cut-off date.
-\item Impute missing (non-last) EXENDTC values to the day before the start of the
-subsequent administration episode.
-\item Remove records where EXENDTC is before EXSTDTC.
 \item Expand administration episodes from the EX domain between EXSTDTC and
 EXENDTC.
 \item Administrations inherit the administration time from EXSTDTC or EXENDTC.
-\item After the above imputations, the administration time is carried forward for
+\item The administration time is carried forward for
 subsequent administration events until the next imputed time.
 }
 }
