@@ -1,13 +1,21 @@
 test_that("imputation_rules_standard works with single treatment", {
   # Test data
-  sdtm <- list(
+  # sdtm <- list(
+  #   pc = tibble::tribble(
+  #     ~USUBJID, ~DOMAIN,   ~PCTESTCD,          ~PCRFTDTC,
+  #          "1",    "PC", "ANALYTE_A", "2025-01-15T08:15",
+  #          "1",    "PC", "ANALYTE_A", "2025-01-17T09:17",
+  #   )
+  # ) |>
+  #   sdtm()
+
+  sdtm <- sdtm(list(
     pc = tibble::tribble(
       ~USUBJID, ~DOMAIN,   ~PCTESTCD,          ~PCRFTDTC,
            "1",    "PC", "ANALYTE_A", "2025-01-15T08:15",
-           "1",    "PC", "ANALYTE_A", "2025-01-17T09:17",
-    )
-  ) |>
-    sdtm()
+           "1",    "PC", "ANALYTE_A", "2025-01-17T09:17"
+      )
+  ))
 
   ex <- tibble::tribble(
     ~USUBJID,     ~EXSTDTC,           ~EXENDTC,        ~EXTRT,
@@ -18,7 +26,7 @@ test_that("imputation_rules_standard works with single treatment", {
 
   result <- imputation_rules_standard[["admin_post_expansion"]](
     ex, sdtm, extrt = "TREATMENT_A", analyte = "ANALYTE_A",
-    cut_off_date = NULL, silent = TRUE)
+    pctestcd = "ANALYTE_A", cut_off_date = NULL, silent = TRUE)
 
   expect_equal(
     result$IMPUTATION,
@@ -32,7 +40,7 @@ test_that("imputation_rules_standard works with single treatment", {
 
   expect_message(
     result <- imputation_rules_standard[["admin_post_expansion"]](
-      ex, sdtm, "TREATMENT_A", analyte = NULL,
+      ex, sdtm, "TREATMENT_A", analyte = NULL, pctestcd = NULL,
       cut_off_date = NULL, silent = FALSE),
     "Assuming PCTESTCD 'ANALYTE_A' relates to EXTRT 'TREATMENT_A'!"
   )
@@ -52,15 +60,24 @@ test_that("imputation_rules_standard works with single treatment", {
 
 test_that("imputation_rules_standard works with multiple treatments", {
   # Test data
-  sdtm <- list(
+  # sdtm <- list(
+  #   pc = tibble::tribble(
+  #      ~USUBJID, ~DOMAIN,   ~PCTESTCD,          ~PCRFTDTC,
+  #           "1",    "PC", "ANALYTE_B", "2025-01-17T09:20",
+  #           "1",    "PC", "ANALYTE_A", "2025-01-15T08:15",
+  #           "1",    "PC", "ANALYTE_A", "2025-01-17T09:17"
+  #     )
+  # ) |>
+  #   sdtm()
+
+  sdtm <- sdtm(list(
     pc = tibble::tribble(
-       ~USUBJID, ~DOMAIN,   ~PCTESTCD,          ~PCRFTDTC,
-            "1",    "PC", "ANALYTE_B", "2025-01-17T09:20",
-            "1",    "PC", "ANALYTE_A", "2025-01-15T08:15",
-            "1",    "PC", "ANALYTE_A", "2025-01-17T09:17"
+      ~USUBJID, ~DOMAIN,   ~PCTESTCD,          ~PCRFTDTC,
+           "1",    "PC", "ANALYTE_B", "2025-01-17T09:20",
+           "1",    "PC", "ANALYTE_A", "2025-01-15T08:15",
+           "1",    "PC", "ANALYTE_A", "2025-01-17T09:17"
       )
-  ) |>
-    sdtm()
+  ))
 
   ex <- tibble::tribble(
     ~USUBJID,     ~EXSTDTC,           ~EXENDTC,              ~EXTRT,
@@ -72,7 +89,7 @@ test_that("imputation_rules_standard works with multiple treatments", {
   expect_message(
     result <- imputation_rules_standard[["admin_post_expansion"]](
       expanded_ex, sdtm, "TREATMENT_B", analyte = NULL,
-      cut_off_date = NULL, silent = FALSE),
+      pctestcd = NULL, cut_off_date = NULL, silent = FALSE),
     "Multiple PCRFTDTC for same days, selecting the earlier!"
   )
 
@@ -89,7 +106,7 @@ test_that("imputation_rules_standard works with multiple treatments", {
   expect_message(
     result <- imputation_rules_standard[["admin_post_expansion"]](
       expanded_ex, sdtm, "TREATMENT_A", analyte = NULL,
-      cut_off_date = NULL, silent = FALSE),
+      pctestcd = NULL, cut_off_date = NULL, silent = FALSE),
     "Multiple PCRFTDTC for same days, selecting the earlier"
   )
 
@@ -128,7 +145,7 @@ test_that("get_admin_time_from_ntime works as intended", {
     get_admin_time_from_ntime(
       sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = FALSE
     ) |>
-    get_admin_time_from_pcrfdtc(
+    get_admin_time_from_pcrftdtc(
       sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = FALSE
     ) |>
     carry_forward_admin_time_imputations()

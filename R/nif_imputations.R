@@ -226,34 +226,10 @@ impute_missing_exendtc <- function(ex, silent = NULL) {
     temp <- temp |>
       mutate(imputation_flag = (is.na(.data$EXENDTC) &
                                   .data$LAST_ADMIN == FALSE)) |>
-      # mutate(EXENDTC = case_match(
-      #   .data$imputation_flag,
-      #   TRUE ~ .data$next_start - days(1),
-      #   FALSE ~ .data$EXENDTC
-      # )) |>
-
-      # mutate(EXENDTC = recode_values(
-      #   .data$imputation_flag,
-      #   TRUE ~ .data$next_start - days(1),
-      #   FALSE ~ .data$EXENDTC
-      # )) |>
-
       mutate(EXENDTC = case_when(
         .data$imputation_flag == TRUE ~ .data$next_start - days(1),
         .data$imputation_flag == FALSE ~ .data$EXENDTC
       )) |>
-
-      # mutate(IMPUTATION = case_match(
-      #   .data$imputation_flag,
-      #   TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
-      #   FALSE ~ .data$IMPUTATION
-      # )) |>
-
-      # mutate(IMPUTATION = recode_values(
-      #   .data$imputation_flag,
-      #   TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
-      #   FALSE ~ .data$IMPUTATION
-      # )) |>
 
       mutate(IMPUTATION = case_when(
         .data$imputation_flag == TRUE ~ "EXENDTC imputed as the day before the next EXSTDTC",
@@ -350,102 +326,102 @@ impute_exendtc_to_cutoff <- function(
 }
 
 
-#' Derive administration time from PCRFTDTC
-#'
-#' @param obj A data frame.
-#' @param pc The corresponding PC domain as data frame.
-#' @param analyte The analyte as character.
-#' @param pctestcd The PCTESTCD corresponding to the analyte as character.
-#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
-#'
-#' @return A data frame.
-#' @keywords internal
-#' @import cli
-#' @noRd
-impute_admin_from_pcrftdtc <- function(
-  obj, pc, analyte, pctestcd, silent = NULL
-) {
-  # validate inputs
-  if (!pctestcd %in% pc$PCTESTCD) {
-    conditional_cli({
-      cli_alert_info(paste0("Analyte ", pctestcd, " not found in PCTESTCD"))
-      cli_text(paste0(
-        "Administrations times for ", analyte, " ",
-        "cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!"
-      ))
-    }, silent = silent)
-  }
-
-  pc_ref <- pc |>
-    lubrify_dates() |>
-    filter(.data$PCTESTCD == pctestcd) |>
-    mutate(ANALYTE = analyte) |>
-    decompose_dtc("PCRFTDTC") |>
-    select(c(
-      "USUBJID", "ANALYTE", "PCRFTDTC_date",
-      "PCRFTDTC_time"
-    )) |>
-    distinct()
-
-  temp <- obj |>
-    lubrify_dates() |>
-    decompose_dtc("DTC") |>
-    left_join(pc_ref,
-      by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")
-    )
-
-  if (!"IMPUTATION" %in% names(temp)) {
-    temp <- mutate(temp, IMPUTATION = "")
-  }
-
-  conflicting_rows <- which(
-    (!is.na(temp$PCRFTDTC_time) &
-       !is.na(temp$DTC_time) &
-       temp$DTC_time != temp$PCRFTDTC_time) |
-      (is.na(temp$DTC_time) & !is.na(temp$PCRFTDTC_time))
-  )
-
-  if (length(conflicting_rows) != 0) {
-    conditional_cli(
-      {
-        cli_alert_warning(paste0(
-          "Inconsistent PCRFTDTC and EXSTDTC/EXENDTC"
-        ))
-        cli_text(paste0(
-          "For ", length(conflicting_rows), " administrations of ", analyte,
-          ", administration times were different between PCRFDTC and ",
-          "EXSTDTC/EXENDTC. In these cases, PCRFTDTC was prioritized: "
-        ))
-        cli_verbatim(
-          df_to_string(
-            temp[
-              conflicting_rows,
-              c("USUBJID", "ANALYTE", "DTC", "PCRFTDTC_time")
-            ]
-            # abbr_lines = 5, abbr_threshold = 20
-          )
-        )
-        cli_text()
-      },
-      silent = silent
-    )
-
-    temp <- temp |>
-      mutate(DTC_time = case_when(
-        row_number() %in% conflicting_rows ~ .data$PCRFTDTC_time,
-        .default = .data$DTC_time
-      )) |>
-      mutate(IMPUTATION = case_when(
-        row_number() %in% conflicting_rows ~
-          "admin time from PCRFTDTC",
-        .default = .data$IMPUTATION
-      ))
-  }
-
-  temp |>
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
-    select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
-}
+# Derive administration time from PCRFTDTC
+#
+# @param obj A data frame.
+# @param pc The corresponding PC domain as data frame.
+# @param analyte The analyte as character.
+# @param pctestcd The PCTESTCD corresponding to the analyte as character.
+# @param silent Suppress messages, defaults to nif_option setting, if NULL.
+#
+# @return A data frame.
+# @keywords internal
+# @import cli
+# @noRd
+# impute_admin_from_pcrftdtc <- function(
+#   obj, pc, analyte, pctestcd, silent = NULL
+# ) {
+#   # validate inputs
+#   if (!pctestcd %in% pc$PCTESTCD) {
+#     conditional_cli({
+#       cli_alert_info(paste0("Analyte ", pctestcd, " not found in PCTESTCD"))
+#       cli_text(paste0(
+#         "Administrations times for ", analyte, " ",
+#         "cannot be derived from PCRFDTC and will be taken from EXSTDTC/EXENDTC!"
+#       ))
+#     }, silent = silent)
+#   }
+#
+#   pc_ref <- pc |>
+#     lubrify_dates() |>
+#     filter(.data$PCTESTCD == pctestcd) |>
+#     mutate(ANALYTE = analyte) |>
+#     decompose_dtc("PCRFTDTC") |>
+#     select(c(
+#       "USUBJID", "ANALYTE", "PCRFTDTC_date",
+#       "PCRFTDTC_time"
+#     )) |>
+#     distinct()
+#
+#   temp <- obj |>
+#     lubrify_dates() |>
+#     decompose_dtc("DTC") |>
+#     left_join(pc_ref,
+#       by = c("USUBJID", "ANALYTE", "DTC_date" = "PCRFTDTC_date")
+#     )
+#
+#   if (!"IMPUTATION" %in% names(temp)) {
+#     temp <- mutate(temp, IMPUTATION = "")
+#   }
+#
+#   conflicting_rows <- which(
+#     (!is.na(temp$PCRFTDTC_time) &
+#        !is.na(temp$DTC_time) &
+#        temp$DTC_time != temp$PCRFTDTC_time) |
+#       (is.na(temp$DTC_time) & !is.na(temp$PCRFTDTC_time))
+#   )
+#
+#   if (length(conflicting_rows) != 0) {
+#     conditional_cli(
+#       {
+#         cli_alert_warning(paste0(
+#           "Inconsistent PCRFTDTC and EXSTDTC/EXENDTC"
+#         ))
+#         cli_text(paste0(
+#           "For ", length(conflicting_rows), " administrations of ", analyte,
+#           ", administration times were different between PCRFDTC and ",
+#           "EXSTDTC/EXENDTC. In these cases, PCRFTDTC was prioritized: "
+#         ))
+#         cli_verbatim(
+#           df_to_string(
+#             temp[
+#               conflicting_rows,
+#               c("USUBJID", "ANALYTE", "DTC", "PCRFTDTC_time")
+#             ]
+#             # abbr_lines = 5, abbr_threshold = 20
+#           )
+#         )
+#         cli_text()
+#       },
+#       silent = silent
+#     )
+#
+#     temp <- temp |>
+#       mutate(DTC_time = case_when(
+#         row_number() %in% conflicting_rows ~ .data$PCRFTDTC_time,
+#         .default = .data$DTC_time
+#       )) |>
+#       mutate(IMPUTATION = case_when(
+#         row_number() %in% conflicting_rows ~
+#           "admin time from PCRFTDTC",
+#         .default = .data$IMPUTATION
+#       ))
+#   }
+#
+#   temp |>
+#     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
+#     select(-c("PCRFTDTC_time", "DTC_date", "DTC_time"))
+# }
 
 
 #' derive DTC_time in EX after expansion
@@ -567,6 +543,42 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 }
 
 
+#' Apply cutoff date to administrations before expansion
+#'
+#' @param ex The (non-expanded) ex domain data.
+#' @param extrt The treatment.
+#' @param cut_off_date The cut-off date as Date.
+#' @param silent Suppress messages.
+#'
+#' @returns The modified EX domain.
+#' @noRd
+apply_cut_off_date <- function(ex, extrt, cut_off_date, silent = NULL) {
+  cut_off_rows <- ex |>
+    filter(.data$EXSTDTC > cut_off_date) |>
+    select(any_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "EXSEQ")))
+
+  if (nrow(cut_off_rows) > 0) {
+    conditional_cli({
+      cli::cli_alert_warning("Cut off date applied!")
+      cli::cli_text(paste0(
+        nrow(cut_off_rows),
+        " administrations episodes for ", extrt,
+        " begin after the cut-off date (",
+        format(cut_off_date), ") and were deleted from the data set:"
+      ))
+      cli::cli_verbatim(
+        df_to_string(cut_off_rows, indent = 2)
+      )
+      cli::cli_text()
+    },
+    silent = silent)
+
+    return(filter(ex, .data$EXSTDTC <= cut_off_date))
+  }
+  return(ex)
+}
+
+
 
 #' Get administration time from the PCRFTDTC where available
 #'
@@ -579,7 +591,7 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
 #' @returns The ex domain with DTC_time imputed from PCRFTDTC, and the DTC and
 #' IMPUTATION fields updated for the respective rows.
 #' @noRd
-get_admin_time_from_pcrfdtc <- function(
+get_admin_time_from_pcrftdtc <- function(
     ex,
     sdtm,
     extrt,

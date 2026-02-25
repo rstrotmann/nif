@@ -61,18 +61,17 @@ imputation_rules_standard <- list(
     dm <- lubrify_dates(domain(sdtm, "dm"))
 
     ex |>
-      filter(.data$EXSTDTC <= cut_off_date) |>
+      apply_cut_off_date(extrt, cut_off_date, silent = silent) |>
       impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
       impute_missing_exendtc(silent = silent) |>
       filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
   },
 
   admin_post_expansion = function(
-      ex, sdtm, extrt, analyte = NULL, pctestcd = NULL, cut_off_date = NULL,
-      silent = NULL
+      ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
     ) {
     # impute missing administration times from PCRFTDTC where available
-    get_admin_time_from_pcrfdtc(ex, sdtm, extrt, pctestcd, silent)
+    get_admin_time_from_pcrftdtc(ex, sdtm, extrt, pctestcd, silent)
   }
 )
 
@@ -87,22 +86,12 @@ imputation_rules_standard <- list(
 #'
 #' ## Treatment administrations:
 #'
-#' * Filter administrations to the cut-off date.
-#'
-#' * Impute missing EXENDTC values in the last administration episode to the
-#' cut-off date.
-#'
-#' * Impute missing (non-last) EXENDTC values to the day before the start of the
-#' subsequent administration episode.
-#'
-#' * Remove records where EXENDTC is before EXSTDTC.
-#'
 #' * Expand administration episodes from the EX domain between EXSTDTC and
 #' EXENDTC.
 #'
 #' * Administrations inherit the administration time from EXSTDTC or EXENDTC.
 #'
-#' * After the above imputations, the administration time is carried forward for
+#' * The administration time is carried forward for
 #' subsequent administration events until the next imputed time.
 #'
 #' @section Creating custom imputation rules:
@@ -187,7 +176,7 @@ imputation_rules_1 <- list(
       get_admin_time_from_ntime(
         sdtm, extrt = extrt, pctestcd = pctestcd, silent = silent
       ) |>
-      get_admin_time_from_pcrfdtc(
+      get_admin_time_from_pcrftdtc(
         sdtm, extrt = extrt, pctestcd = pctestcd, silent = silent
       )
   },

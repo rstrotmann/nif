@@ -167,19 +167,21 @@ test_that("make_administration respects subject_filter parameter", {
 test_that("make_administration handles cut_off_date parameter", {
   sdtm <- sdtm(list(
     dm = tibble::tribble(
-      ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
-      "001", 1, "2024-12-16T7:50", "2024-12-25", "ARM A"
-    ),
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+         "001",    1, "2024-12-16T7:50", "2024-12-25",   "ARM A"
+      ),
     ex = tibble::tribble(
-      ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXDOSE,
-      "001", 1, "DRUG_A", "2024-12-16T7:50", "2024-12-19", 100,
-      "001", 2, "DRUG_A", "2024-12-20T7:50", "2024-12-23", 100,
-      "001", 3, "DRUG_A", "2024-12-24T7:50", "2024-12-27", 100
-    )
+      ~USUBJID, ~EXSEQ,   ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+         "001",      1, "DRUG_A", "2024-12-16T7:50", "2024-12-19",     100,
+         "001",      2, "DRUG_A", "2024-12-20T7:50", "2024-12-23",     100,
+         "001",      3, "DRUG_A", "2024-12-24T7:50", "2024-12-27",     100
+      )
   ))
 
-  cut_off <- as.POSIXct("2024-12-22 23:59:59", tz = "UTC")
-  result <- make_administration(sdtm, "DRUG_A", cut_off_date = cut_off, silent = TRUE)
+  cut_off <- as.POSIXct("2024-12-22 23:59:59")
+
+  result <- make_administration(
+    sdtm, "DRUG_A", cut_off_date = cut_off, silent = TRUE)
 
   # Should exclude the third administration episode that starts after cut-off
   expect_false(any(result$DTC >= as.Date("2024-12-24")))
