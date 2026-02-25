@@ -185,10 +185,10 @@ imputation_rules_1 <- list(
     ) {
     ex |>
       get_admin_time_from_ntime(
-        sdtm, extrt = "TREATMENT_A", pctestcd = pctestcd, silent = FALSE
+        sdtm, extrt = extrt, pctestcd = pctestcd, silent = silent
       ) |>
       get_admin_time_from_pcrfdtc(
-        sdtm, extrt = "TREATMENT_A", pctestcd = pctestcd, silent = FALSE
+        sdtm, extrt = extrt, pctestcd = pctestcd, silent = silent
       )
   },
 
