@@ -4,7 +4,7 @@
 \alias{add_bintime}
 \title{Make BINTIME field}
 \usage{
-add_bintime(obj, method = "fisher", time = "TAFD")
+add_bintime(obj, method = "fisher", time = "TAFD", group = NULL)
 }
 \arguments{
 \item{obj}{A nif object.}
@@ -14,6 +14,8 @@ pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
 for details. Default is fisher.}
 
 \item{time}{The time field to use.}
+
+\item{group}{The grouping variable(s).}
 }
 \value{
 A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.

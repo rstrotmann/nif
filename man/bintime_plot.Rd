@@ -9,6 +9,8 @@ bintime_plot(
   analyte,
   method = "kmeans",
   time = "TAFD",
+  color = NULL,
+  facet = "DOSE",
   min_time = NULL,
   max_time = NULL,
   points = FALSE,
@@ -17,7 +19,9 @@ bintime_plot(
   title = NULL,
   size = 1.5,
   alpha = 1,
-  refline = NULL
+  scales = "fixed",
+  refline = NULL,
+  legend = TRUE
 )
 }
 \arguments{
@@ -30,6 +34,10 @@ pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
 for details.}
 
 \item{time}{The time field.}
+
+\item{color}{The coloring field.}
+
+\item{facet}{The faceting field, defaults to DOSE.}
 
 \item{min_time}{The minimal time in units of TAFD, as numeric.}
 
@@ -49,8 +57,12 @@ title based on the analyte will be chosen. Override this by setting
 
 \item{alpha}{The alpha parameter for the data points.}
 
+\item{scales}{The scales parameter to facet_wrap.}
+
 \item{refline}{Plot horizontal dashed reference lines at these y axis values,
 defaults to NULL (no lines).}
+
+\item{legend}{Show legend.}
 }
 \value{
 A ggplot2 object.
