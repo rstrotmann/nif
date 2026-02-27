@@ -61,13 +61,13 @@ summary(examplinib_poc)
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
-#>   dm       103        103            
-#>   vs       103        206            
-#>   ex       80         468            
+#>   dm       89         89             
+#>   vs       89         178            
+#>   ex       80         477            
 #>   pc       80         1344           
-#>   lb       103        103            
+#>   lb       89         89             
 #>   ts       0          0              
-#>   pp       13         432             
+#>   pp       12         432             
 #> 
 #> Arms (DM):
 #>   ACTARMCD    ACTARM                 
@@ -85,6 +85,6 @@ summary(examplinib_poc)
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A     
 #> 
-#> Hash: d95b1f82cd5c3ee539ac05c62347ba18
-#> Last DTC: 2001-07-14 10:53:00
+#> Hash: dc62553e8fc9a5099b9b2df98196d13d
+#> Last DTC: 2001-07-18 10:24:00
 ```

@@ -109,12 +109,16 @@ head(nif, 3)
 #> 3   3  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #>                   DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY
 #> 1 2000-12-31 10:18:00    0     0    0   0    1   5     RS2023   1 RS2023     1
-#> 2 2000-12-31 10:18:00    0     0    0   0    0   0     RS2023   2 RS2023     1
-#> 3 2000-12-31 10:18:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION DV BL_CREAT  BL_CRCL BL_RENAL
-#> 1      FALSE    5   1       C1            NA  67.4825 135.8911   normal
-#> 2      FALSE    5   0       C1             0  67.4825 135.8911   normal
-#> 3       TRUE    5   0       C1             0  67.4825 135.8911   normal
+#> 2 2000-12-31 10:18:00    0     0    0   0    0   0     RS2023   2 RS2023    NA
+#> 3 2000-12-31 10:18:00    0     0    0   0    0   0 RS2023487A   3 RS2023    NA
+#>   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION DV BL_CREAT  BL_CRCL
+#> 1      FALSE    5   1       C1 time imputed from PCRFTDTC NA  67.4825 135.8911
+#> 2      FALSE    5   0       C1                             0  67.4825 135.8911
+#> 3       TRUE    5   0       C1                             0  67.4825 135.8911
+#>   BL_RENAL
+#> 1   normal
+#> 2   normal
+#> 3   normal
 ```
 
 [`nif_auto()`](../reference/nif_auto.md) will further attempt to infer

@@ -34,9 +34,9 @@ Numeric.
 
 ``` r
 max_time(examplinib_poc_nif)
-#> [1] 228.717
+#> [1] 220.85
 max_time(examplinib_poc_nif, analyte = "RS2023")
-#> [1] 228.717
+#> [1] 220.85
 max_time(examplinib_poc_nif, only_observations = TRUE)
-#> [1] 228.717
+#> [1] 220.85
 ```

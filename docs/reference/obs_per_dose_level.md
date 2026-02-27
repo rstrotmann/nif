@@ -47,6 +47,6 @@ obs_per_dose_level(examplinib_sad_nif)
 #> 9 1000  RS2023  51
 obs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
 #>    DL ANALYTE SEX   N
-#> 1 500  RS2023   1 294
-#> 2 500  RS2023   0 378
+#> 1 500  RS2023   0 404
+#> 2 500  RS2023   1 268
 ```

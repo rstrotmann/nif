@@ -151,7 +151,7 @@ summary(nif)
 #>   PLACEBO   7     210   149.1   182      
 #>   XAN       1     212   99.2    81        
 #> 
-#> Hash: ce313bc9b472b0b8e917d95828b18735
+#> Hash: 2dc0b91676cbc061300a3f454cc600e7
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

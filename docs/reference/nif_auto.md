@@ -138,18 +138,25 @@ nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE) |> head()
 #> 6   6  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
 #> 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5  RS2023   1 RS2023     1
-#> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1
-#> 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
-#> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1
-#> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1
-#> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0  RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV BL_CREAT  BL_CRCL BL_RENAL
-#> 1      FALSE    5   1       C1                 NA  67.4825 135.8911   normal
-#> 2      FALSE    5   0       C1             0.0000  67.4825 135.8911   normal
-#> 3      FALSE    5   0       C1            40.7852  67.4825 135.8911   normal
-#> 4      FALSE    5   0       C1            48.5530  67.4825 135.8911   normal
-#> 5      FALSE    5   0       C1            44.0391  67.4825 135.8911   normal
-#> 6      FALSE    5   0       C1            34.0729  67.4825 135.8911   normal
+#> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023    NA
+#> 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023    NA
+#> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023    NA
+#> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023    NA
+#> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0  RS2023   2 RS2023    NA
+#>   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION      DV BL_CREAT
+#> 1      FALSE    5   1       C1 time imputed from PCRFTDTC      NA  67.4825
+#> 2      FALSE    5   0       C1                             0.0000  67.4825
+#> 3      FALSE    5   0       C1                            40.7852  67.4825
+#> 4      FALSE    5   0       C1                            48.5530  67.4825
+#> 5      FALSE    5   0       C1                            44.0391  67.4825
+#> 6      FALSE    5   0       C1                            34.0729  67.4825
+#>    BL_CRCL BL_RENAL
+#> 1 135.8911   normal
+#> 2 135.8911   normal
+#> 3 135.8911   normal
+#> 4 135.8911   normal
+#> 5 135.8911   normal
+#> 6 135.8911   normal
 nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE) |>
 head()
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI
@@ -161,46 +168,23 @@ head()
 #> 6   6  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #>                   DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY
 #> 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5     RS2023   1 RS2023     1
-#> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0     RS2023   2 RS2023     1
-#> 3 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0 RS2023487A   3 RS2023     1
-#> 4 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0     RS2023   2 RS2023     1
-#> 5 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0 RS2023487A   3 RS2023     1
-#> 6 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0     RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV BL_CREAT  BL_CRCL BL_RENAL
-#> 1      FALSE    5   1       C1                 NA  67.4825 135.8911   normal
-#> 2      FALSE    5   0       C1             0.0000  67.4825 135.8911   normal
-#> 3       TRUE    5   0       C1             0.0000  67.4825 135.8911   normal
-#> 4      FALSE    5   0       C1            40.7852  67.4825 135.8911   normal
-#> 5       TRUE    5   0       C1            13.8228  67.4825 135.8911   normal
-#> 6      FALSE    5   0       C1            48.5530  67.4825 135.8911   normal
-nif_auto(examplinib_sad, RS2023 + WEIGHT ~ EXAMPLINIB, silent = TRUE) |>
-head()
-#>   REF ID    STUDYID           USUBJID AGE SEX                      RACE HEIGHT
-#> 1   1  1 2023000001 20230000011010001  43   0                     WHITE  187.4
-#> 2   2  2 2023000001 20230000011010002  49   0                     WHITE  189.6
-#> 3   3  3 2023000001 20230000011010003  46   0 BLACK OR AFRICAN AMERICAN  174.6
-#> 4   4  4 2023000001 20230000011010005  23   0                     WHITE  168.2
-#> 5   5  5 2023000001 20230000011010006  47   0 BLACK OR AFRICAN AMERICAN  174.1
-#> 6   6  6 2023000001 20230000011010007  31   0                     WHITE  172.5
-#>   WEIGHT      BMI                 DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT
-#> 1   77.0 21.92560 2000-12-31 10:18:00    0     0    0   0    1   5  WEIGHT   1
-#> 2   72.8 20.25138 2000-12-29 10:30:00    0     0    0   0    1   5  WEIGHT   1
-#> 3   80.0 26.24228 2000-12-29 09:22:00    0     0    0   0    1   5  WEIGHT   1
-#> 4   78.8 27.85314 2001-01-02 09:22:00    0     0    0   0    1  10  WEIGHT   1
-#> 5   89.5 29.52742 2001-01-03 12:24:00    0     0    0   0    1  10  WEIGHT   1
-#> 6   90.0 30.24575 2001-01-02 10:00:00    0     0    0   0    1  10  WEIGHT   1
-#>   PARENT TRTDY METABOLITE DOSE MDV ACTARMCD IMPUTATION DV BL_CREAT  BL_CRCL
-#> 1 WEIGHT     1      FALSE    5   1       C1            NA 67.48250 135.8911
-#> 2 WEIGHT     1      FALSE    5   1       C1            NA 65.09655 124.9495
-#> 3 WEIGHT     1      FALSE    5   1       C1            NA 90.12031 102.4507
-#> 4 WEIGHT     1      FALSE   10   1       C2            NA 57.91688 195.4459
-#> 5 WEIGHT     1      FALSE   10   1       C2            NA 75.77307 134.8686
-#> 6 WEIGHT     1      FALSE   10   1       C2            NA 70.01583 172.0254
-#>   BL_RENAL
-#> 1   normal
-#> 2   normal
-#> 3   normal
-#> 4   normal
-#> 5   normal
-#> 6   normal
+#> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0     RS2023   2 RS2023    NA
+#> 3 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0 RS2023487A   3 RS2023    NA
+#> 4 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0     RS2023   2 RS2023    NA
+#> 5 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0 RS2023487A   3 RS2023    NA
+#> 6 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0     RS2023   2 RS2023    NA
+#>   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION      DV BL_CREAT
+#> 1      FALSE    5   1       C1 time imputed from PCRFTDTC      NA  67.4825
+#> 2      FALSE    5   0       C1                             0.0000  67.4825
+#> 3       TRUE    5   0       C1                             0.0000  67.4825
+#> 4      FALSE    5   0       C1                            40.7852  67.4825
+#> 5       TRUE    5   0       C1                            13.8228  67.4825
+#> 6      FALSE    5   0       C1                            48.5530  67.4825
+#>    BL_CRCL BL_RENAL
+#> 1 135.8911   normal
+#> 2 135.8911   normal
+#> 3 135.8911   normal
+#> 4 135.8911   normal
+#> 5 135.8911   normal
+#> 6 135.8911   normal
 ```

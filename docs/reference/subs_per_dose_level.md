@@ -48,6 +48,6 @@ subs_per_dose_level(examplinib_sad_nif)
 #> 9 1000  RS2023  3
 subs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
 #>    DL ANALYTE SEX  N
-#> 1 500  RS2023   1 33
-#> 2 500  RS2023   0 47
+#> 1 500  RS2023   0 46
+#> 2 500  RS2023   1 34
 ```

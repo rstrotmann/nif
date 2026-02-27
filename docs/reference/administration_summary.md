@@ -25,5 +25,5 @@ A data frame.
 ``` r
 administration_summary(examplinib_poc_nif)
 #>   PARENT min max mean median
-#> 1 RS2023  56  99 78.5     79
+#> 1 RS2023  55  97 73.2   72.5
 ```

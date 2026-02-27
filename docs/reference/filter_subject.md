@@ -35,11 +35,11 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
 #>   dm       1          1              
 #>   vs       1          2              
-#>   ex       1          7              
+#>   ex       1          3              
 #>   pc       1          44             
 #>   lb       1          1              
 #>   ts       0          0              
-#>   pp       1          18              
+#>   pp       1          36              
 #> 
 #> Arms (DM):
 #>   ACTARMCD    ACTARM                 
@@ -56,33 +56,33 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A     
 #> 
-#> Hash: 216b9caf40bd9c3d9effec57c8553dfd
-#> Last DTC: 2001-03-14 10:09:00
+#> Hash: 93dc2ba6e83c56fb5b03f2007f5493df
+#> Last DTC: 2001-03-26 13:05:00
 filter_subject(examplinib_poc_nif,
 subjects(examplinib_poc_nif)[1, "USUBJID"])
 #> ----- NONMEM Input Format (NIF) data -----
 #> 44 observations from 1 subject across 1 study 
 #> Analytes: RS2023 and RS2023487A 
-#> 0 males (0%), 1 females (100%)
+#> 1 male (100%), 0 female (0%)
 #> 
 #> Columns:
 #>   REF, ID, STUDYID, USUBJID, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, DTC, TIME,
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL 
 #> 
-#> Hash: 61a6ceaec997252f60c3b069a151c86c
+#> Hash: 41db6eb28a6c92fda185ad92d25887e9
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV         
 #>   1    0       0       0       RS2023       1      1     500   500    NA         
 #>   1    0       0       0       RS2023       0      2     0     500    0          
 #>   1    0       0       0       RS2023487A   0      3     0     500    0          
-#>   1    0.5     1       1       RS2023       0      2     0     500    636.683    
-#>   1    0.5     1       1       RS2023487A   0      3     0     500    135.126    
-#>   1    1       1.467   1.467   RS2023       0      2     0     500    1844.823   
-#>   1    1       1.467   1.467   RS2023487A   0      3     0     500    677.321    
-#>   1    1.5     2       2       RS2023       0      2     0     500    2773.308   
-#>   1    1.5     2       2       RS2023487A   0      3     0     500    1547.253   
-#>   1    2       2.467   2.467   RS2023       0      2     0     500    2539.54     
-#> 125 more rows
+#>   1    0.5     0.867   0.867   RS2023       0      2     0     500    615.055    
+#>   1    0.5     0.867   0.867   RS2023487A   0      3     0     500    120.161    
+#>   1    1       1.333   1.333   RS2023       0      2     0     500    1841.724   
+#>   1    1       1.333   1.333   RS2023487A   0      3     0     500    604.224    
+#>   1    1.5     1.833   1.833   RS2023       0      2     0     500    2563.4     
+#>   1    1.5     1.833   1.833   RS2023487A   0      3     0     500    1374.883   
+#>   1    2       2.283   2.283   RS2023       0      2     0     500    2995.306    
+#> 104 more rows
 ```

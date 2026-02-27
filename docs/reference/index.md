@@ -14,9 +14,6 @@
 
 - [`add_baseline()`](add_baseline.md) : Add a baseline covariate
 
-- [`add_bintime()`](add_bintime.md) **\[experimental\]** : Make BINTIME
-  field
-
 - [`add_bl_crcl()`](add_bl_crcl.md) : Add baseline creatinine clearance
   field.
 
@@ -185,6 +182,18 @@
 
 - [`import_observation()`](import_observation.md) **\[experimental\]** :
   Add observation from non-SDTM-formatted data table
+
+- [`imputation_rules_1`](imputation_rules_1.md) : Alternative imputation
+  rule set
+
+- [`imputation_rules_minimal`](imputation_rules_minimal.md) : Minimal
+  imputation rule set
+
+- [`imputation_rules_standard`](imputation_rules_standard.md) : Standard
+  imputation rule set
+
+- [`imputation_summary()`](imputation_summary.md) : Summary of
+  imputations in nif object
 
 - [`index_dosing_interval()`](index_dosing_interval.md) : Index dosing
   intervals

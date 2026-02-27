@@ -26,13 +26,19 @@ nif <- nif() %>%
   add_baseline(examplinib_poc, "lb", "CREAT") %>%
   add_bl_crcl() %>%
   add_bl_renal()
+#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
+#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
+#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-03-03 10:28:00 was automatically assigned!
+#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> Warning in add_observation(., examplinib_fe, "pc", "RS2023", cmt = 2):
 #> Compartment 2 is already assigned!
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
-#> ℹ A global cut-off-date of 2001-07-14 08:53:00 was automatically assigned!
+#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
+#> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
+#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> Warning in add_observation(., examplinib_poc, "pc", "RS2023", cmt = 2):
 #> Compartment 2 is already assigned!
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
@@ -48,15 +54,15 @@ nif %>%
 #> 
 #> Sex distribution:
 #>   SEX      N     percent   
-#>   male     108   73        
-#>   female   40    27         
+#>   male     107   72.3      
+#>   female   41    27.7       
 #> 
 #> Renal impairment class:
-#>   CLASS      N     percent   
-#>   normal     103   69.6      
-#>   mild       33    22.3      
-#>   moderate   12    8.1       
-#>   severe     0     0          
+#>   CLASS      N    percent   
+#>   normal     89   60.1      
+#>   mild       48   32.4      
+#>   moderate   10   6.8       
+#>   severe     1    0.7        
 #> 
 #> Treatments:
 #>   RS2023
@@ -96,12 +102,12 @@ nif %>%
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
-#>   25        
+#>   30        
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   RS2023   1     99    43     58.5      
+#>   RS2023   1     97    40.2   58.5      
 #> 
-#> Hash: dc0c30d4b2c03f9f06a162b7ac91f1aa
-#> Last DTC: 2001-07-14 08:53:00
+#> Hash: 25977a4c8479217861e2a2a88c8231ba
+#> Last DTC: 2001-07-18 08:24:00
 ```

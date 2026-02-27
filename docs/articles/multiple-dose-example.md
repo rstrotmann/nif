@@ -45,13 +45,13 @@ summary(examplinib_poc)
 #> 
 #> Data disposition
 #>   DOMAIN   SUBJECTS   OBSERVATIONS   
-#>   dm       103        103            
-#>   vs       103        206            
-#>   ex       80         468            
+#>   dm       89         89             
+#>   vs       89         178            
+#>   ex       80         477            
 #>   pc       80         1344           
-#>   lb       103        103            
+#>   lb       89         89             
 #>   ts       0          0              
-#>   pp       13         432             
+#>   pp       12         432             
 #> 
 #> Arms (DM):
 #>   ACTARMCD    ACTARM                 
@@ -69,8 +69,8 @@ summary(examplinib_poc)
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A     
 #> 
-#> Hash: d95b1f82cd5c3ee539ac05c62347ba18
-#> Last DTC: 2001-07-14 10:53:00
+#> Hash: dc62553e8fc9a5099b9b2df98196d13d
+#> Last DTC: 2001-07-18 10:24:00
 ```
 
 Note that in the EX domain, the administered drug is given as
@@ -89,7 +89,10 @@ nif_poc <- nif() %>%
   add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3)
-#> ℹ A global cut-off-date of 2001-07-14 08:53:00 was automatically assigned!
+#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
+#> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
+#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
 ```
 
 Let’s add some further baseline data to our nif object. The serum
@@ -118,17 +121,17 @@ creatinine clearance:
 ``` r
 head(nif_poc, 3)
 #    REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
-#  1   1  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922
-#  2   2  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922
-#  3   3  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922
+#  1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
+#  2   2  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
+#  3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
 #                    DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY
-#  1 2001-01-13 10:36:00    0     0    0   0    1 500     RS2023   1 RS2023     1
-#  2 2001-01-13 10:36:00    0     0    0   0    0   0     RS2023   2 RS2023     1
-#  3 2001-01-13 10:36:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1
-#    METABOLITE DOSE MDV  ACTARMCD IMPUTATION DV BL_CREAT  BL_CRCL
-#  1      FALSE  500   1 TREATMENT            NA 72.78062 107.4689
-#  2      FALSE  500   0 TREATMENT             0 72.78062 107.4689
-#  3      FALSE  500   0 TREATMENT             0 72.78062 107.4689
+#  1 2001-01-07 09:42:00    0     0    0   0    1 500     RS2023   1 RS2023     1
+#  2 2001-01-07 09:42:00    0     0    0   0    0   0     RS2023   2 RS2023    NA
+#  3 2001-01-07 09:42:00    0     0    0   0    0   0 RS2023487A   3 RS2023    NA
+#    METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION DV BL_CREAT  BL_CRCL
+#  1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC NA 86.46559 78.66727
+#  2      FALSE  500   0 TREATMENT                             0 86.46559 78.66727
+#  3      FALSE  500   0 TREATMENT                             0 86.46559 78.66727
 ```
 
 ## EXPLORATION
@@ -152,15 +155,15 @@ summary(nif_poc)
 #  
 #  Sex distribution:
 #    SEX      N    percent   
-#    male     47   58.8      
-#    female   33   41.2       
+#    male     46   57.5      
+#    female   34   42.5       
 #  
 #  Renal impairment class:
 #    CLASS      N    percent   
-#    normal     40   50        
-#    mild       28   35        
-#    moderate   12   15        
-#    severe     0    0          
+#    normal     26   32.5      
+#    mild       43   53.8      
+#    moderate   10   12.5      
+#    severe     1    1.2        
 #  
 #  Treatments:
 #    RS2023
@@ -193,14 +196,14 @@ summary(nif_poc)
 #  
 #  Subjects with dose reductions
 #    RS2023   
-#    25        
+#    30        
 #  
 #  Treatment duration overview:
 #    PARENT   min   max   mean   median   
-#    RS2023   56    99    78.5   79        
+#    RS2023   55    97    73.2   72.5      
 #  
-#  Hash: dcc42d79173632bab45d63031770b507
-#  Last DTC: 2001-07-14 08:53:00
+#  Hash: c28e0e62f9c591c4342158c658d8b55c
+#  Last DTC: 2001-07-18 08:24:00
 ```
 
 For a visual overview of the NIF data set
@@ -247,8 +250,8 @@ nif_poc %>%
 
 | DOSE |    n |
 |-----:|-----:|
-|  250 |  916 |
-|  500 | 5362 |
+|  250 | 1093 |
+|  500 | 4763 |
 
 To identify the subjects with dose reductions, we can use the
 [`dose_red_sbs()`](../reference/dose_red_sbs.md) function provided by
@@ -257,20 +260,20 @@ the nif package:
 ``` r
 nif_poc %>%
   dose_red_sbs()
-#  # A tibble: 25 × 2
+#  # A tibble: 30 × 2
 #        ID USUBJID          
 #     <dbl> <chr>            
-#   1    62 20230000221060015
-#   2    66 20230000221070005
-#   3    44 20230000221050006
-#   4     3 20230000221010005
-#   5    17 20230000221030004
-#   6    76 20230000221070016
-#   7    77 20230000221070018
-#   8    10 20230000221020007
-#   9    22 20230000221030010
-#  10    46 20230000221050008
-#  # ℹ 15 more rows
+#   1    29 20230000221030016
+#   2    34 20230000221040006
+#   3    67 20230000221070001
+#   4    79 20230000221080005
+#   5    76 20230000221080002
+#   6    13 20230000221020012
+#   7    35 20230000221040007
+#   8     5 20230000221010005
+#   9    77 20230000221080003
+#  10    32 20230000221040004
+#  # ℹ 20 more rows
 ```
 
 Let’s have a plot of the doses over time in these subjects:
@@ -341,7 +344,7 @@ identify those:
 ``` r
 nif_poc %>%
   rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 6)
-#   [1]  1  4  5 15 28 29 40 50 51 52 63 64
+#   [1]  1  6  7 17 18 19 20 21 30 42 54 67
 ```
 
 For details, see the documentation to
@@ -408,8 +411,8 @@ nca %>%
 
 | RICH_N | DOSE | n | aucinf.obs | auclast | cmax | half.life | tmax |
 |:---|---:|---:|:---|:---|:---|:---|:---|
-| 1 | 500 | 12 | 21147.25 (37) | 19382.1 (37) | 3530.09 (37) | 3 (14) | 2.53 (2; 2.78) |
-| 2 | 500 | 12 | 21405.96 (36) | 19592.19 (36) | 3559.39 (36) | 3.05 (12) | 2.51 (1.68; 3.03) |
-| NA | 250 | 2 | NA | 11020.87 (40) | 3434.92 (41) | NA | 2.13 (2.05; 2.22) |
-| NA | 500 | 164 | NA | 6145.97 (178) | NA | NA | NA |
-| NA | 500 | 168 | NA | NA | 1289.73 (637) | NA | 2.17 (1.65; 47.97) |
+| 1 | 500 | 12 | 21258.59 (29) | 19493.05 (29) | 3542.7 (28) | 3.02 (7) | 2.48 (2.17; 3.95) |
+| 2 | 500 | 12 | 21626.44 (29) | 19812.43 (29) | 3533.69 (27) | 3.05 (7) | 2.44 (1.85; 3.93) |
+| NA | 250 | 1 | NA | 10796.66 (NA) | 3223.87 (NA) | NA | 2.32 (2.32; 2.32) |
+| NA | 500 | 164 | NA | 6587.16 (160) | NA | NA | NA |
+| NA | 500 | 170 | NA | NA | 1313.48 (642) | NA | 2.24 (1.55; 47.97) |

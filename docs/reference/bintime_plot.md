@@ -8,8 +8,10 @@
 bintime_plot(
   obj,
   analyte,
-  method = "fisher",
+  method = "kmeans",
   time = "TAFD",
+  color = NULL,
+  facet = "DOSE",
   min_time = NULL,
   max_time = NULL,
   points = FALSE,
@@ -18,7 +20,9 @@ bintime_plot(
   title = NULL,
   size = 1.5,
   alpha = 1,
-  refline = NULL
+  scales = "fixed",
+  refline = NULL,
+  legend = TRUE
 )
 ```
 
@@ -41,6 +45,14 @@ bintime_plot(
 - time:
 
   The time field.
+
+- color:
+
+  The coloring field.
+
+- facet:
+
+  The faceting field, defaults to DOSE.
 
 - min_time:
 
@@ -76,10 +88,18 @@ bintime_plot(
 
   The alpha parameter for the data points.
 
+- scales:
+
+  The scales parameter to facet_wrap.
+
 - refline:
 
   Plot horizontal dashed reference lines at these y axis values,
   defaults to NULL (no lines).
+
+- legend:
+
+  Show legend.
 
 ## Value
 

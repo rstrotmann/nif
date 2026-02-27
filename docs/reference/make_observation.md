@@ -36,6 +36,7 @@ make_observation(
   keep = NULL,
   include_day_in_ntime = FALSE,
   omit_not_done = TRUE,
+  imputation = imputation_rules_standard,
   silent = NULL,
   na_to_zero = FALSE
 )
@@ -140,6 +141,10 @@ make_observation(
 - omit_not_done:
 
   Delete rows where xxSTAT is "NOT DONE, as logical.
+
+- imputation:
+
+  The imputation rule set.
 
 - silent:
 

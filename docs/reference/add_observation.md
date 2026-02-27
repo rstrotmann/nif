@@ -37,7 +37,8 @@ add_observation(
   duplicate_identifier = "DTC",
   omit_not_done = TRUE,
   na_rm = TRUE,
-  na_to_zero = FALSE
+  na_to_zero = FALSE,
+  imputation = imputation_rules_standard
 )
 ```
 
@@ -185,6 +186,10 @@ add_observation(
 - na_to_zero:
 
   Set all NA values of DV to 0, as logical.
+
+- imputation:
+
+  The imputation rule set.
 
 ## Value
 

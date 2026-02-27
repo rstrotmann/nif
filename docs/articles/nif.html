@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -440,16 +440,16 @@ the ‘EXTRT’ field is ‘EXAMPLINIB’ while the pharmacokinetic analyte name
 <span><span class="co">#&gt; 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
 <span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV</span></span>
-<span><span class="co">#&gt; 1      FALSE  500   1       AB                  NA</span></span>
-<span><span class="co">#&gt; 2      FALSE  500   0       AB               0.000</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB            4697.327</span></span>
-<span><span class="co">#&gt; 4      FALSE  500   0       AB            6325.101</span></span>
-<span><span class="co">#&gt; 5      FALSE  500   0       AB            6294.187</span></span></code></pre></div>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV</span></span>
+<span><span class="co">#&gt; 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA</span></span>
+<span><span class="co">#&gt; 2      FALSE  500   0       AB                               0.000</span></span>
+<span><span class="co">#&gt; 3      FALSE  500   0       AB                            4697.327</span></span>
+<span><span class="co">#&gt; 4      FALSE  500   0       AB                            6325.101</span></span>
+<span><span class="co">#&gt; 5      FALSE  500   0       AB                            6294.187</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-analytes">Multiple analytes<a class="anchor" aria-label="anchor" href="#multiple-analytes"></a>
@@ -514,16 +514,16 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 <span><span class="co">#&gt; 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
 <span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV                  EPOCH</span></span>
-<span><span class="co">#&gt; 1      FALSE  500   1       AB                  NA OPEN LABEL TREATMENT 1</span></span>
-<span><span class="co">#&gt; 2      FALSE  500   0       AB               0.000 OPEN LABEL TREATMENT 1</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB            4697.327 OPEN LABEL TREATMENT 1</span></span>
-<span><span class="co">#&gt;   PERIOD TREATMENT FASTED</span></span>
-<span><span class="co">#&gt; 1      1         A      1</span></span>
-<span><span class="co">#&gt; 2      1         A      1</span></span>
-<span><span class="co">#&gt; 3      1         A      1</span></span></code></pre></div>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV</span></span>
+<span><span class="co">#&gt; 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA</span></span>
+<span><span class="co">#&gt; 2      FALSE  500   0       AB                               0.000</span></span>
+<span><span class="co">#&gt; 3      FALSE  500   0       AB                            4697.327</span></span>
+<span><span class="co">#&gt;                    EPOCH PERIOD TREATMENT FASTED</span></span>
+<span><span class="co">#&gt; 1 OPEN LABEL TREATMENT 1      1         A      1</span></span>
+<span><span class="co">#&gt; 2 OPEN LABEL TREATMENT 1      1         A      1</span></span>
+<span><span class="co">#&gt; 3 OPEN LABEL TREATMENT 1      1         A      1</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -586,7 +586,7 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#&gt;   RS2023   2     2     2      2         </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 0b22d9347cf34a021b517d91a7c011f7</span></span>
+<span><span class="co">#&gt; Hash: e40147b74a313c10dcb1f68df10f8aa9</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 10:28:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
 covariates and raw plots of the analytes over time. In the following

@@ -15,7 +15,7 @@ If NTIME == 0, the data point is considered pre-dose, and instead of TAD, the
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.64.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,33 +88,33 @@ If NTIME == 0, the data point is considered pre-dose, and instead of TAD, the
 <span class="r-in"><span>  <span class="fu">add_time_deviation</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000022 20230000221010001  58   1 WHITE  185.3   91.4 26.61922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC  TIME NTIME  TAFD   TAD EVID AMT    ANALYTE CMT PARENT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-13 10:36:00 0.000   0.0 0.000 0.000    1 500     RS2023   1 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-13 10:36:00 0.000   0.0 0.000 0.000    0   0     RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-13 10:36:00 0.000   0.0 0.000 0.000    0   0 RS2023487A   3 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-13 11:36:00 1.000   0.5 1.000 1.000    0   0     RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-13 11:36:00 1.000   0.5 1.000 1.000    0   0 RS2023487A   3 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-13 12:04:00 1.467   1.0 1.467 1.467    0   0     RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    1 500     RS2023   1 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    0   0     RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    0   0 RS2023487A   3 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-07 10:34:00 0.867   0.5 0.867 0.867    0   0     RS2023   2 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-07 10:34:00 0.867   0.5 0.867 0.867    0   0 RS2023487A   3 RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-07 11:02:00 1.333   1.0 1.333 1.333    0   0     RS2023   2 RS2023</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   TRTDY METABOLITE DOSE MDV  ACTARMCD IMPUTATION        DV BL_CREAT  BL_CRCL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE  500   1 TREATMENT                   NA 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE  500   0 TREATMENT               0.0000 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE  500   0 TREATMENT               0.0000 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE  500   0 TREATMENT             636.6833 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE  500   0 TREATMENT             135.1259 72.78062 107.4689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE  500   0 TREATMENT            1844.8225 72.78062 107.4689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE  500   1 TREATMENT                   NA 86.46559 78.66727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE  500   0 TREATMENT               0.0000 86.46559 78.66727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE  500   0 TREATMENT               0.0000 86.46559 78.66727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE  500   0 TREATMENT             615.0549 86.46559 78.66727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE  500   0 TREATMENT             120.1609 86.46559 78.66727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE  500   0 TREATMENT            1841.7238 86.46559 78.66727</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   TIME_DEV</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  -24.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3  -24.000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0.500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.467</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0.367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.333</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

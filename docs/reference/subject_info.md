@@ -46,15 +46,15 @@ subject_info(examplinib_poc_nif, 1)
 #>          [,1]              
 #> USUBJID  20230000221010001 
 #> ID       1                 
-#> SEX      1                 
-#> AGE      58                
+#> SEX      0                 
+#> AGE      81                
 #> RACE     WHITE             
-#> WEIGHT   91.4              
-#> HEIGHT   185.3             
-#> BMI      26.6192219323749  
+#> WEIGHT   93.9              
+#> HEIGHT   180.5             
+#> BMI      28.8211416425595  
 #> ACTARMCD TREATMENT         
-#> BL_CREAT 72.7806177350607  
-#> BL_CRCL  107.468949824365  
+#> BL_CREAT 86.4655906117736  
+#> BL_CRCL  78.6672665801518  
 #> ANALYTE  RS2023, RS2023487A
 #> IMP      RS2023            
 head(subject_info(examplinib_poc_nif, 1)$administrations)

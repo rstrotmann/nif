@@ -12,11 +12,13 @@ add_administration(
   sdtm,
   extrt,
   analyte = NULL,
+  pctestcd = NULL,
   cmt = 1,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
+  imputation = imputation_rules_standard,
   silent = NULL
 )
 ```
@@ -39,6 +41,12 @@ add_administration(
 
   The name of the analyte as character.
 
+- pctestcd:
+
+  The PCTESTCD of the pharmacokinetic analyte corresponding to the
+  administered drug. This is needed when administration times are
+  imputed from the PCRFTDTC field from the PC domain.
+
 - cmt:
 
   The compartment for the administration as numeric.
@@ -58,6 +66,10 @@ add_administration(
 - debug:
 
   Include debug fields, as logical.
+
+- imputation:
+
+  The imputation rule set.
 
 - silent:
 
@@ -96,10 +108,8 @@ To add observation events to the [nif](nif.md) object, see
 ``` r
 add_administration(nif(), examplinib_sad, "EXAMPLINIB") |>
 head()
+#> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
-#> ℹ Analyte EXAMPLINIB not found in PCTESTCD
-#> Administrations times for EXAMPLINIB cannot be derived from PCRFDTC and will be
-#> taken from EXSTDTC/EXENDTC!
 #>   REF ID    STUDYID           USUBJID AGE SEX                      RACE HEIGHT
 #> 1   1  1 2023000001 20230000011010001  43   0                     WHITE  187.4
 #> 2   2  2 2023000001 20230000011010002  49   0                     WHITE  189.6
@@ -114,11 +124,18 @@ head()
 #> 4   78.8 27.85314 2001-01-02 09:22:00    0     0    0   0    1  10 EXAMPLINIB
 #> 5   89.5 29.52742 2001-01-03 12:24:00    0     0    0   0    1  10 EXAMPLINIB
 #> 6   90.0 30.24575 2001-01-02 10:00:00    0     0    0   0    1  10 EXAMPLINIB
-#>   CMT     PARENT TRTDY METABOLITE DOSE MDV ACTARMCD IMPUTATION DV
-#> 1   1 EXAMPLINIB     1      FALSE    5   1       C1            NA
-#> 2   1 EXAMPLINIB     1      FALSE    5   1       C1            NA
-#> 3   1 EXAMPLINIB     1      FALSE    5   1       C1            NA
-#> 4   1 EXAMPLINIB     1      FALSE   10   1       C2            NA
-#> 5   1 EXAMPLINIB     1      FALSE   10   1       C2            NA
-#> 6   1 EXAMPLINIB     1      FALSE   10   1       C2            NA
+#>   CMT     PARENT TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION
+#> 1   1 EXAMPLINIB     1      FALSE    5   1       C1 time imputed from PCRFTDTC
+#> 2   1 EXAMPLINIB     1      FALSE    5   1       C1 time imputed from PCRFTDTC
+#> 3   1 EXAMPLINIB     1      FALSE    5   1       C1 time imputed from PCRFTDTC
+#> 4   1 EXAMPLINIB     1      FALSE   10   1       C2 time imputed from PCRFTDTC
+#> 5   1 EXAMPLINIB     1      FALSE   10   1       C2 time imputed from PCRFTDTC
+#> 6   1 EXAMPLINIB     1      FALSE   10   1       C2 time imputed from PCRFTDTC
+#>   DV
+#> 1 NA
+#> 2 NA
+#> 3 NA
+#> 4 NA
+#> 5 NA
+#> 6 NA
 ```

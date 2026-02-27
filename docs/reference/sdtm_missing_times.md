@@ -27,6 +27,6 @@ A data frame.
 ``` r
 sdtm_missing_times(examplinib_poc, c("EXSTDTC", "EXENDTC"))
 #>     field missing total percent_missing
-#> 1 EXSTDTC       0   468               0
-#> 2 EXENDTC       0   468               0
+#> 1 EXSTDTC       0   477               0
+#> 2 EXENDTC       0   477               0
 ```

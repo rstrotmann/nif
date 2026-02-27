@@ -406,16 +406,16 @@ head(nif, 5)
 #> 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
 #>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
 #> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1
-#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1
-#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
-#> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1
-#> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV
-#> 1      FALSE  500   1       AB                  NA
-#> 2      FALSE  500   0       AB               0.000
-#> 3      FALSE  500   0       AB            4697.327
-#> 4      FALSE  500   0       AB            6325.101
-#> 5      FALSE  500   0       AB            6294.187
+#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023    NA
+#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023    NA
+#> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023    NA
+#> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023    NA
+#>   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV
+#> 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA
+#> 2      FALSE  500   0       AB                               0.000
+#> 3      FALSE  500   0       AB                            4697.327
+#> 4      FALSE  500   0       AB                            6325.101
+#> 5      FALSE  500   0       AB                            6294.187
 ```
 
 ### Multiple analytes
@@ -490,16 +490,16 @@ head(nif, 3)
 #> 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
 #>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
 #> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1
-#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1
-#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION       DV                  EPOCH
-#> 1      FALSE  500   1       AB                  NA OPEN LABEL TREATMENT 1
-#> 2      FALSE  500   0       AB               0.000 OPEN LABEL TREATMENT 1
-#> 3      FALSE  500   0       AB            4697.327 OPEN LABEL TREATMENT 1
-#>   PERIOD TREATMENT FASTED
-#> 1      1         A      1
-#> 2      1         A      1
-#> 3      1         A      1
+#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023    NA
+#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023    NA
+#>   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV
+#> 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA
+#> 2      FALSE  500   0       AB                               0.000
+#> 3      FALSE  500   0       AB                            4697.327
+#>                    EPOCH PERIOD TREATMENT FASTED
+#> 1 OPEN LABEL TREATMENT 1      1         A      1
+#> 2 OPEN LABEL TREATMENT 1      1         A      1
+#> 3 OPEN LABEL TREATMENT 1      1         A      1
 ```
 
 ## DATA EXPLORATION
@@ -562,7 +562,7 @@ summary(nif)
 #>   PARENT   min   max   mean   median   
 #>   RS2023   2     2     2      2         
 #> 
-#> Hash: 0b22d9347cf34a021b517d91a7c011f7
+#> Hash: e40147b74a313c10dcb1f68df10f8aa9
 #> Last DTC: 2001-03-10 10:28:00
 ```
 
