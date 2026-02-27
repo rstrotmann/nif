@@ -13,63 +13,6 @@
 #' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
 #' @importFrom classInt classIntervals
 #' @export
-# add_bintime <- function(
-#     obj,
-#     method = "fisher",
-#     time = "TAFD"
-#     ) {
-#   # input validation
-#   validate_nif(obj)
-#   validate_char_param(method, "method")
-#   if(!method %in%c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
-#                  "bclust", "fisher")) {
-#     stop(paste0("Method ", method, " not implemented!"))
-#   }
-#
-#   ## to do:
-#   ## validate time argument
-#
-#   # calculate bins
-#   obj <- ensure_tafd(obj) |>
-#     mutate(active_time = .data[[time]])
-#
-#   # bins <- classInt::classIntervals(obj$TAFD, style = method)
-#   bins <- classInt::classIntervals(obj$active_time, style = method)
-#
-#   breaks <- sort(bins$brks)
-#
-#   # Cut and assign bin indices
-#   obj <- obj |>
-#     mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks = breaks,
-#                                            include.lowest = TRUE)))
-#
-#   # Calculate median TAFD for each bin from actual assignments
-#   bin_medians <- obj |>
-#     filter(!is.na(.data$.BINTIME_INDEX)) |>
-#     reframe(
-#       # label = round(median(.data$TAFD, na.rm = TRUE)),
-#       label = round(median(.data$active_time, na.rm = TRUE)),
-#       .by = .data$.BINTIME_INDEX
-#     ) |>
-#     arrange(.data$.BINTIME_INDEX)
-#
-#   # Create bin_par data frame with boundaries and calculated medians
-#   bin_par <- data.frame(
-#     .BINTIME_INDEX = seq_along(breaks[-1]),
-#     left = breaks[-length(breaks)],
-#     right = breaks[-1]
-#   ) |>
-#     left_join(bin_medians, by = ".BINTIME_INDEX") |>
-#     mutate(label = ifelse(is.na(.data$label), round(.data$left), .data$label))
-#
-#   # Assign bin information to obj
-#   obj |>
-#     mutate(BIN_LEFT = bin_par[.data$.BINTIME_INDEX, "left"]) |>
-#     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
-#     mutate(BINTIME = bin_par[.data$.BINTIME_INDEX, "label"]) |>
-#     select(-c(".BINTIME_INDEX"))
-# }
-
 add_bintime <- function(
     obj,
     method = "fisher",
@@ -110,8 +53,9 @@ add_bintime <- function(
   breaks <- sort(bins$brks)
 
   obj <- obj |>
-    mutate(.BINTIME_INDEX = as.numeric(cut(.data$TAFD, breaks = breaks,
-                                           include.lowest = TRUE)))
+    mutate(
+      .BINTIME_INDEX = as.numeric(
+        cut(.data$active_time, breaks = breaks, include.lowest = TRUE)))
 
   bin_medians <- obj |>
     filter(!is.na(.data$.BINTIME_INDEX)) |>
@@ -187,22 +131,22 @@ bintime_plot <- function(
     legend = TRUE) {
   # input validation
   validate_nif(obj)
-  validate_char_param(analyte, "analyte")
+  validate_argument(analyte, "character")
   validate_analyte(obj, analyte)
-  validate_nif(obj)
-  validate_char_param(method, "method")
+
+  validate_argument(method, "character")
   if(!method %in%c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
                    "bclust", "fisher")) {
     stop(paste0("Method ", method, " not implemented!"))
   }
-  # validate_numeric_param(breaks, allow_multiple = TRUE)
-  validate_logical_param(points, "points")
-  validate_logical_param(cfb, "cfb")
-  validate_logical_param(caption, "caption", allow_null = TRUE)
-  validate_numeric_param(alpha, "alpha")
-  validate_char_param(time, "time")
-  validate_numeric_param(min_time, "min_time", allow_null = TRUE)
-  validate_numeric_param(max_time, "max_time", allow_null = TRUE)
+
+  validate_argument(points, "logical")
+  validate_argument(cfb, "logical")
+  validate_argument(caption, "logical", allow_null = TRUE)
+  validate_argument(alpha, "numeric")
+  validate_argument(time, "character")
+  validate_argument(min_time, "numeric", allow_null = TRUE)
+  validate_argument(max_time, "numeric", allow_null = TRUE)
 
   if (is.null(caption))
     caption <- FALSE
@@ -212,15 +156,11 @@ bintime_plot <- function(
 
   # time limits
   if (is.null(max_time)) {
-    max_time <- max(obj$TAFD, na.rm = TRUE)
+    max_time <- max(obj[[time]], na.rm = TRUE)
   }
   if (is.null(min_time)) {
-    min_time <- min(obj$TAFD, na.rm = TRUE)
+    min_time <- min(obj[[time]], na.rm = TRUE)
   }
-
-  # time field
-  # obj |>
-  #   mutate(active_time = .data[[time]])
 
   # change from baseline
   if (cfb == TRUE) {
@@ -240,12 +180,6 @@ bintime_plot <- function(
     ensure_dose() |>
     filter(!is.na(.data$DV)) |>
     as.data.frame()
-
-    #
-    # add_bintime(method = method, time = time) |>
-    # filter(!is.na(.data$BINTIME)) |>
-    # filter(!is.na(.data$DV)) |>
-    # as.data.frame()
 
   # Create COLOR column
   if (length(color) != 0) {
@@ -280,68 +214,6 @@ bintime_plot <- function(
     filter(!is.na(.data$BINTIME)) |>
     as.data.frame()
 
-
-  # out <- temp |>
-  #   reframe(
-  #     .data$BINTIME,
-  #     .data$ANALYTE,
-  #     .data$BIN_LEFT,
-  #     .data$BIN_RIGHT,
-  #     .individual_mean = mean(.data$DV),
-  #     .by = c("ID", "ANALYTE", "BINTIME")
-  #   ) |>
-  #   distinct() |>
-  #   reframe(
-  #     .data$BIN_LEFT,
-  #     .data$BIN_RIGHT,
-  #     mean = mean(.data$.individual_mean),
-  #     sd = sd(.data$.individual_mean),
-  #     n = n(),
-  #     se = sd/sqrt(.data$n),
-  #     df = .data$n - 1,
-  #     t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
-  #     margin_error = .data$t * .data$se,
-  #     lower_ci = lower_ci(.data$mean, .data$sd, .data$n, 0.9),
-  #     upper_ci = upper_ci(.data$mean, .data$sd, .data$n, 0.9),
-  #     .by = c("BINTIME", "ANALYTE")) |>
-  #   distinct() |>
-  #   ggplot(aes(x = .data$BINTIME, y = .data$mean)) +
-  #   labs(y = analyte, x = time, title = title)
-  #
-  # if (points == TRUE) {
-  #   out <- out +
-  #     geom_point(aes(
-  #       # x = .data$TAFD,
-  #       x = .data$active_time,
-  #       y = .data$DV
-  #       ),
-  #       data = temp,
-  #       alpha = alpha,
-  #       size = size)
-  # }
-  #
-  # out <- out +
-  #   geom_segment(aes(x = .data$BIN_LEFT, xend = .data$BIN_RIGHT,
-  #                    y = .data$mean), color = "red") +
-  #   geom_rect(aes(xmin = .data$BIN_LEFT, xmax = .data$BIN_RIGHT,
-  #                 ymin = .data$lower_ci, ymax = .data$upper_ci),
-  #             fill = "red", alpha = 0.3) +
-  #   xlim(min_time, max_time) +
-  #   theme_bw()
-  #
-  # if (!is.null(refline)) {
-  #   out <- out +
-  #     geom_hline(yintercept = refline, color = "blue", linetype = "dashed")
-  # }
-  #
-  # if (caption == TRUE) {
-  #   out <- out +
-  #     labs(caption = paste0(
-  #       "Red: Mean with 90% CI (binning: ", method, ")"))
-  # }
-  #
-  # out
-
   group_vars_individual <- c("ID", "ANALYTE", "BINTIME", "COLOR")
   group_vars_summary <- c("BINTIME", "ANALYTE", "COLOR")
   if (!is.null(facet)) {
@@ -364,17 +236,24 @@ bintime_plot <- function(
       .data$BIN_LEFT,
       .data$BIN_RIGHT,
       mean = mean(.data$.individual_mean),
-      sd = sd(.data$.individual_mean),
       n = n(),
-      se = sd / sqrt(.data$n),
+      sd = ifelse(.data$n > 1, sd(.data$.individual_mean), NA_real_),
+      se = .data$sd / sqrt(.data$n),
       df = .data$n - 1,
-      t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
+      t = ifelse(.data$df > 0,
+                 stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
+                 NA_real_),
       margin_error = .data$t * .data$se,
-      lower_ci = lower_ci(.data$mean, .data$sd, .data$n, 0.9),
-      upper_ci = upper_ci(.data$mean, .data$sd, .data$n, 0.9),
+      lower_ci = ifelse(.data$n > 1,
+                        lower_ci(.data$mean, .data$sd, .data$n, 0.9),
+                        NA_real_),
+      upper_ci = ifelse(.data$n > 1,
+                        upper_ci(.data$mean, .data$sd, .data$n, 0.9),
+                        NA_real_),
       .by = all_of(group_vars_summary)
     ) |>
-    distinct()
+      distinct()
+
 
   out <- summary_data |>
     ggplot(aes(x = .data$BINTIME, y = .data$mean, color = .data$COLOR)) #+
@@ -558,8 +437,6 @@ qtime_plot <- function(
       df = .data$n - 1,
       t = stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
       margin_error = .data$t * .data$se,
-      # lower_ci = .data$mean - .data$margin_error,
-      # upper_ci = .data$mean + .data$margin_error,
       lower_ci = lower_ci(.data$mean, .data$sd, .data$n, 0.9),
       upper_ci = upper_ci(.data$mean, .data$sd, .data$n, 0.9),
       .by = c("QTIME", "ANALYTE")) |>
