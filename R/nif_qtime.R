@@ -3,16 +3,16 @@
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
+#' @param obj A nif object.
 #' @param method Univariate class intervals method, can be one of jenks, kmeans,
 #' pretty, quantile, hclust, sd, bclust or fisher. See classInt::classInterval()
 #' for details. Default is fisher.
-#' @param obj A nif object.
 #' @param time The time field to use.
 #' @param group The grouping variable(s).
 #'
 #' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
 #' @importFrom classInt classIntervals
-#' @export
+#' @noRd
 add_bintime <- function(
     obj,
     method = "fisher",
@@ -22,7 +22,7 @@ add_bintime <- function(
   # input validation
   validate_nif(obj)
   validate_char_param(method, "method")
-  if(!method %in%c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
+  if(!method %in% c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
                    "bclust", "fisher")) {
     stop(paste0("Method ", method, " not implemented!"))
   }
@@ -61,7 +61,7 @@ add_bintime <- function(
     filter(!is.na(.data$.BINTIME_INDEX)) |>
     reframe(
       label = round(median(.data$active_time, na.rm = TRUE)),
-      .by = .data$.BINTIME_INDEX
+      .by = ".BINTIME_INDEX"
     ) |>
     arrange(.data$.BINTIME_INDEX)
 
@@ -77,7 +77,8 @@ add_bintime <- function(
     mutate(BIN_LEFT = bin_par[.data$.BINTIME_INDEX, "left"]) |>
     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
     mutate(BINTIME = bin_par[.data$.BINTIME_INDEX, "label"]) |>
-    select(-c(".BINTIME_INDEX"))
+    select(-c(".BINTIME_INDEX")) |>
+    as_nif()
 }
 
 
