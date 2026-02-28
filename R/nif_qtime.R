@@ -96,12 +96,12 @@ add_bintime <- function(
 #' @param caption Show caption as logical.
 #' @param size The point size.
 #' @param alpha The alpha parameter for the data points.
-#' @param min_time The minimal time in units of TAFD, as numeric.
-#' @param max_time The minimal time in units of TAFD, as numeric.
+#' @param min_time The minimal time, as numeric.
+#' @param max_time The maximal time, as numeric.
 #' @param cfb Plot change from baseline, as logical.
 #' @param title The plot title, as character. If none is provided, a generic
 #'   title based on the analyte will be chosen. Override this by setting
-#'.  title = "", if needed.
+#'   title = "", if needed.
 #' @param time The time field.
 #' @param refline Plot horizontal dashed reference lines at these y axis values,
 #' defaults to NULL (no lines).
@@ -113,6 +113,11 @@ add_bintime <- function(
 #' @returns A ggplot2 object.
 #' @importFrom stats qt
 #' @export
+#' @examples
+#' examplinib_poc_nif |>
+#'   filter(TAFD < 48) |>
+#'   bintime_plot("RS2023", points = T, alpha = 0.2)
+#'
 bintime_plot <- function(
     obj,
     analyte,
@@ -137,7 +142,7 @@ bintime_plot <- function(
   validate_analyte(obj, analyte)
 
   validate_argument(method, "character")
-  if(!method %in%c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
+  if(!method %in% c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
                    "bclust", "fisher")) {
     stop(paste0("Method ", method, " not implemented!"))
   }
@@ -149,6 +154,9 @@ bintime_plot <- function(
   validate_argument(time, "character")
   validate_argument(min_time, "numeric", allow_null = TRUE)
   validate_argument(max_time, "numeric", allow_null = TRUE)
+
+  if (isTRUE(cfb) && !"DVCFB" %in% names(obj))
+    stop("Missing DVCFB column!")
 
   if (is.null(caption))
     caption <- FALSE
@@ -165,14 +173,14 @@ bintime_plot <- function(
   }
 
   # change from baseline
-  if (cfb == TRUE) {
+  if (isTRUE(cfb)) {
     obj <- mutate(obj, DV = .data$DVCFB)
   }
 
   # Make title
   if (is.null(title)) {
     title <- analyte
-    if (cfb == TRUE)
+    if (isTRUE(cfb))
       title <- paste0(title, " change from baseline")
   }
 
@@ -185,8 +193,8 @@ bintime_plot <- function(
 
   # Create COLOR column
   if (length(color) != 0) {
-    temp <- tidyr::unite(temp, "COLOR", all_of(!!color), sep = "-",
-                         remove = FALSE)
+    temp <- tidyr::unite(
+      temp, "COLOR", all_of(!!color), sep = "-", remove = FALSE)
   } else {
     temp <- mutate(temp, COLOR = "all")
   }
@@ -196,8 +204,8 @@ bintime_plot <- function(
     if (length(facet) == 1) {
       temp <- mutate(temp, FACET = .data[[facet]])
     } else {
-      temp <- tidyr::unite(temp, "FACET", all_of(facet), sep = "-",
-                           remove = FALSE)
+      temp <- tidyr::unite(
+        temp, "FACET", all_of(facet), sep = "-", remove = FALSE)
     }
   }
 
@@ -242,36 +250,32 @@ bintime_plot <- function(
       sd = ifelse(.data$n > 1, sd(.data$.individual_mean), NA_real_),
       se = .data$sd / sqrt(.data$n),
       df = .data$n - 1,
-      t = ifelse(.data$df > 0,
-                 stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
-                 NA_real_),
+      t = ifelse(
+        .data$df > 0, stats::qt(p = 0.05/2, df = .data$df, lower.tail = FALSE),
+        NA_real_),
       margin_error = .data$t * .data$se,
-      lower_ci = ifelse(.data$n > 1,
-                        lower_ci(.data$mean, .data$sd, .data$n, 0.9),
-                        NA_real_),
-      upper_ci = ifelse(.data$n > 1,
-                        upper_ci(.data$mean, .data$sd, .data$n, 0.9),
-                        NA_real_),
+      lower_ci = ifelse(
+        .data$n > 1, lower_ci(.data$mean, .data$sd, .data$n, 0.9), NA_real_),
+      upper_ci = ifelse(
+        .data$n > 1, upper_ci(.data$mean, .data$sd, .data$n, 0.9), NA_real_),
       .by = all_of(group_vars_summary)
     ) |>
       distinct()
 
-
   out <- summary_data |>
-    ggplot(aes(x = .data$BINTIME, y = .data$mean, color = .data$COLOR)) #+
-    # labs(y = analyte, x = time, title = title, color = nice_enumeration(color))
+    ggplot(aes(x = .data$BINTIME, y = .data$mean, color = .data$COLOR))
 
-  if (points == TRUE) {
+  if (isTRUE(points)) {
     if (length(color) > 0) {
       out <- out +
         geom_point(
-          aes(x = .data$active_time, y = .data$DV, color = .data$COLOR),
+          aes(x = .data[[time]], y = .data$DV, color = .data$COLOR),
           data = temp, alpha = alpha, size = size
         )
     } else {
       out <- out +
         geom_point(
-          aes(x = .data$active_time, y = .data$DV),
+          aes(x = .data[[time]], y = .data$DV),
           data = temp,
           alpha = alpha,
           size = size,
@@ -285,6 +289,7 @@ bintime_plot <- function(
       x = .data$BIN_LEFT,
       xend = .data$BIN_RIGHT,
       y = .data$mean,
+      yend = .data$mean,
       color = .data$COLOR)) +
     geom_rect(aes(
       xmin = .data$BIN_LEFT,
@@ -301,7 +306,7 @@ bintime_plot <- function(
   # Faceting
   if (!is.null(facet)) {
     out <- out + facet_wrap(~FACET, scales = scales)
-    title <- paste0(title, " by ", facet)
+    title <- paste0(title, " by ", nice_enumeration(facet))
   }
 
   # Reference lines
@@ -315,7 +320,7 @@ bintime_plot <- function(
    labs(y = analyte, x = time, title = title, color = nice_enumeration(color))
 
   # Caption
-  if (caption == TRUE) {
+  if (isTRUE(caption)) {
     out <- out +
       labs(caption = paste0("Mean with 90% CI (binning: ", method, ")"))
   }
