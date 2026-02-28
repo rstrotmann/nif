@@ -72,7 +72,7 @@ A ggplot2 object.
 }
 \examples{
 examplinib_poc_nif |>
-  filter(TAFD < 48) |>
-  bintime_plot("RS2023", points = T, alpha = 0.2)
+  dplyr::filter(TAFD < 48) |>
+  bintime_plot("RS2023", points = TRUE, alpha = 0.2)
 
 }
