@@ -39,9 +39,9 @@ for details.}
 
 \item{facet}{The faceting field, defaults to DOSE.}
 
-\item{min_time}{The minimal time in units of TAFD, as numeric.}
+\item{min_time}{The minimal time, as numeric.}
 
-\item{max_time}{The minimal time in units of TAFD, as numeric.}
+\item{max_time}{The maximal time, as numeric.}
 
 \item{points}{Plot original data points as logical.}
 
@@ -51,7 +51,7 @@ for details.}
 
 \item{title}{The plot title, as character. If none is provided, a generic
 title based on the analyte will be chosen. Override this by setting
-.  title = "", if needed.}
+title = "", if needed.}
 
 \item{size}{The point size.}
 
@@ -69,4 +69,10 @@ A ggplot2 object.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+}
+\examples{
+examplinib_poc_nif |>
+  filter(TAFD < 48) |>
+  bintime_plot("RS2023", points = T, alpha = 0.2)
+
 }
