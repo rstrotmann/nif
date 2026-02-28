@@ -56,11 +56,11 @@ bintime_plot(
 
 - min_time:
 
-  The minimal time in units of TAFD, as numeric.
+  The minimal time, as numeric.
 
 - max_time:
 
-  The minimal time in units of TAFD, as numeric.
+  The maximal time, as numeric.
 
 - points:
 
@@ -77,8 +77,8 @@ bintime_plot(
 - title:
 
   The plot title, as character. If none is provided, a generic title
-  based on the analyte will be chosen. Override this by setting . title
-  = "", if needed.
+  based on the analyte will be chosen. Override this by setting title =
+  "", if needed.
 
 - size:
 
@@ -104,3 +104,12 @@ bintime_plot(
 ## Value
 
 A ggplot2 object.
+
+## Examples
+
+``` r
+examplinib_poc_nif |>
+  dplyr::filter(TAFD < 48) |>
+  bintime_plot("RS2023", points = TRUE, alpha = 0.2)
+
+```

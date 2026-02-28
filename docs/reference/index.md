@@ -281,9 +281,6 @@
 
 - [`plot(`*`<sdtm>`*`)`](plot.sdtm.md) : Plot SDTM object
 
-- [`qtime_plot()`](qtime_plot.md) **\[experimental\]** : Plot analyte
-  over time by discretized time after first dose (QTIME)
-
 - [`race_coding`](race_coding.md) : Race coding table
 
 - [`read_adam()`](read_adam.md) : Load ADaM data sets from disk
