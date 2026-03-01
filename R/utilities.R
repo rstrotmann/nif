@@ -1324,3 +1324,31 @@ upper_ci <- function(mean, sd, n, conf_level = 0.9){
   se <- sd / sqrt(n)
   mean + qt(1 - ((1 - conf_level) / 2), n - 1) * se
 }
+
+
+#' Re-assign ID based on consistent criteria
+#'
+#' @param obj A nif object.
+#'
+#' @returns A nif object.
+#' @noRd
+#'
+#' @examples
+#' normalize_id(examplinib_sad_nif)
+normalize_id <- function(obj) {
+  validate_nif(obj)
+
+  fingerprint <- obj %>%
+    reframe(
+      sum_dv = sum(DV, na.rm = TRUE), sum_amt = sum(AMT, na.rm = TRUE),
+      .by = c("ID")) %>%
+    arrange(.data$sum_dv, .data$sum_amt) %>%
+    mutate(.id_order = row_number())
+
+  obj %>%
+    left_join(fingerprint, by = "ID") %>%
+    arrange(.data$.id_order) %>%
+    mutate(ID = .data$.id_order) %>%
+    select(-c("sum_dv", "sum_amt", ".id_order")) %>%
+    arrange(.data$ID)
+}
