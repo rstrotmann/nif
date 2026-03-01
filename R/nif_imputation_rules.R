@@ -55,6 +55,7 @@
 #'
 #' @export
 imputation_rules_standard <- list(
+  # pre-expansion: impute EXENDTC where needed
   admin_pre_expansion = function(
       ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
     ) {
@@ -67,11 +68,21 @@ imputation_rules_standard <- list(
       filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
   },
 
+  # post-expansion: impute time from PCRFTDTC where possible
   admin_post_expansion = function(
       ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
     ) {
-    # impute missing administration times from PCRFTDTC where available
     get_admin_time_from_pcrftdtc(ex, sdtm, extrt, pctestcd, silent)
+  },
+
+  # raw observations: no action
+  obs_raw <- function (obs, silent) {
+    obs
+  },
+
+  # final observations: no action
+  obs_final = function(obs, silent) {
+    obs
   }
 )
 
@@ -169,6 +180,14 @@ imputation_rules_minimal <- list()
 #'
 #' @export
 imputation_rules_1 <- list(
+  # pre-expansion: no action
+  admin_pre_expansion = function(
+    ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+  ) {
+    ex
+  },
+
+  # post expansion: impute NTIME from PCRFTDTC or from NTIME
   admin_post_expansion = function(
       ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
     ) {
@@ -181,6 +200,12 @@ imputation_rules_1 <- list(
       )
   },
 
+  # raw observations: no action
+  obs_raw <- function (obs, silent) {
+    obs
+  },
+
+  # final observations: Set TAFD to zero for predose
   obs_final = function(obs, silent) {
     obs |>
       mutate(TAFD = case_when(
