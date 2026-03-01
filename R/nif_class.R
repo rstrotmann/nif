@@ -268,7 +268,6 @@ order_nif_columns <- function(obj) {
 #' @param ... Additional parameters
 #'
 #' @export
-#' @importFrom rlang hash
 #' @noRd
 print.nif <- function(x, color = FALSE, ...) {
   debug <- rlang::is_true(nif_option_value("debug"))
@@ -349,7 +348,8 @@ print.nif <- function(x, color = FALSE, ...) {
     ), "\n\n")
 
     # version hash
-    cat(str_glue("\nHash: {rlang::hash(x)}\n\n"))
+    # cat(str_glue("\nHash: {rlang::hash(x)}\n\n"))
+    cat(str_glue("\nHash: {nif::hash(x)}\n\n"))
 
     temp <- x |>
       as.data.frame() |>

@@ -306,7 +306,7 @@ plot.nif <- function(
   admin_data <- filter(plot_data, .data$EVID == 1)
 
   if (is.null(caption) && nif_option_value("show_hash") == TRUE) {
-    caption <- paste0("dataset hash: ", hash(x))
+    caption <- paste0("dataset: ", hash(x))
   }
 
 

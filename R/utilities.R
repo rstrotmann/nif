@@ -1340,7 +1340,8 @@ normalize_id <- function(obj) {
 
   fingerprint <- obj %>%
     reframe(
-      sum_dv = sum(DV, na.rm = TRUE), sum_amt = sum(AMT, na.rm = TRUE),
+      sum_dv = sum(.data$DV, na.rm = TRUE),
+      sum_amt = sum(.data$AMT, na.rm = TRUE),
       .by = c("ID")) %>%
     arrange(.data$sum_dv, .data$sum_amt) %>%
     mutate(.id_order = row_number())
@@ -1351,4 +1352,24 @@ normalize_id <- function(obj) {
     mutate(ID = .data$.id_order) %>%
     select(-c("sum_dv", "sum_amt", ".id_order")) %>%
     arrange(.data$ID)
+}
+
+
+#' XXH128 hash
+#'
+#' @param x An object.
+#'
+#' @returns XXH128 hash as string.
+#' @export
+hash <- function(x) {
+  UseMethod("hash")
+}
+
+
+#' @rdname hash
+#' @export
+hash.nif <- function(x) {
+  x |>
+    normalize_id() |>
+    rlang::hash()
 }

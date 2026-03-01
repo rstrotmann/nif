@@ -117,7 +117,7 @@ summary.domain <- function(object, ..., silent = NULL) {
     tpt = tpt,
     n_obs = nrow(object),
     visit = visit,
-    hash = rlang::hash(object),
+    hash = hash.domain(object),
     last = last_dtc(object)
   )
 
@@ -406,4 +406,13 @@ plot.domain <- function(
 last_dtc.domain <- function(obj) {
   validate_domain(obj, silent = TRUE)
   last_dtc_data_frame(as.data.frame(obj))
+}
+
+
+
+#' @rdname hash
+#' @export
+hash.domain <- function(x) {
+  x |>
+    rlang::hash()
 }

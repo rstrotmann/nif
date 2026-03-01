@@ -132,7 +132,6 @@ trial_dco <- function(obj) {
 #' @param ... Further parameters.
 #' @return A sdtm_summary object.
 #' @export
-#' @importFrom rlang hash
 #' @keywords internal
 #' @examples
 #' summary(examplinib_poc)
@@ -152,7 +151,7 @@ summary.sdtm <- function(object, ...) {
     analyte_mapping = object$analyte_mapping,
     metabolite_mapping = object$metabolite_mapping,
     time_mapping = object$time_mapping,
-    hash = rlang::hash(object),
+    hash = hash.sdtm(object),
     last = last_dtc(object),
     title = trial_title(object),
     dco = trial_dco(object)
@@ -1013,4 +1012,13 @@ last_dtc.sdtm <- function(obj) {
   }
 
   as.POSIXct(max(unlist(temp), na.rm = TRUE))
+}
+
+
+
+#' @rdname hash
+#' @export
+hash.sdtm <- function(x) {
+  x$domains |>
+    rlang::hash()
 }
