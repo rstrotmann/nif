@@ -1,6 +1,4 @@
-#' Standard imputation rule set
-#'
-#' Standard imputation rule set
+#' Minimal imputation rule set
 #'
 #' @format A list of the following functions:
 #'
@@ -54,7 +52,7 @@
 #' @family imputation rules
 #'
 #' @export
-imputation_rules_standard <- list(
+imputation_rules_minimal <- list(
   # pre-expansion: impute EXENDTC where needed
   admin_pre_expansion = function(
       ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
@@ -87,7 +85,7 @@ imputation_rules_standard <- list(
 )
 
 
-#' Minimal imputation rule set
+#' Void imputation rule set
 #'
 #' @format An empty list.
 #'
@@ -116,15 +114,16 @@ imputation_rules_standard <- list(
 #' @family imputation rules
 #'
 #' @export
-imputation_rules_minimal <- list()
+imputation_rules_void <- list()
 
 
 
-#' Alternative imputation rule set
+#' Standard imputation rule set
 #'
 #' @format A list of the following functions:
 #'
 #' * admin_post_expansion()
+#' * obs_raw()
 #' * obs_final()
 #'
 #' @details
@@ -182,12 +181,18 @@ imputation_rules_minimal <- list()
 #' @family imputation rules
 #'
 #' @export
-imputation_rules_1 <- list(
-  # pre-expansion: no action
+imputation_rules_standard <- list(
+  # pre-expansion: impute EXENDTC where needed
   admin_pre_expansion = function(
     ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
   ) {
-    ex
+    dm <- lubrify_dates(domain(sdtm, "dm"))
+
+    ex |>
+      apply_cut_off_date(extrt, cut_off_date, silent = silent) |>
+      impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
+      impute_missing_exendtc(silent = silent) |>
+      filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
   },
 
   # post expansion: impute NTIME from PCRFTDTC or from NTIME

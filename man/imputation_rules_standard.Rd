@@ -7,8 +7,9 @@
 \format{
 A list of the following functions:
 \itemize{
-\item admin_pre_expansion()
 \item admin_post_expansion()
+\item obs_raw()
+\item obs_final()
 }
 }
 \usage{
@@ -18,7 +19,7 @@ imputation_rules_standard
 Standard imputation rule set
 }
 \details{
-This imputation rule set includes the  following imputation steps:
+This imputation rule set includes the following imputation steps:
 \subsection{Treatment administrations:}{
 \itemize{
 \item Filter administrations to the cut-off date.
@@ -34,16 +35,21 @@ PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
 The name of the PK analyte (PCTESTCD) that corresponds with the administered
 treatment (EXTRT) must be specified by the 'pctestcd' to
 add_administration().
-\item Unless imputed by the above rule, administrations inherit the
+\item For administration events that have associated PK observations but PCRFTDTC
+is not defined, back-calculate the administration time, if possible, from
+the PK observations based on their nominal time (PCTPT).
+\item Unless imputed by the above rules, administrations inherit the
 administration time from EXSTDTC or EXENDTC.
-\item After the above imputations, carry forward the administration time for
+\item After the above imputations, the administration time is carried forward for
 subsequent administration events until the next imputed time.
 }
 }
 
 \subsection{Observations}{
 \itemize{
-\item No imputations.
+\item Pharmacokinetic observations below the level of quantification (BLQ) are
+set to PCLLOQ / 2.
+\item For all predose observations, TAFD is set to zero.
 }
 }
 }
@@ -61,8 +67,8 @@ add_administration()
 add_observation()
 
 Other imputation rules: 
-\code{\link{imputation_rules_1}},
-\code{\link{imputation_rules_minimal}}
+\code{\link{imputation_rules_minimal}},
+\code{\link{imputation_rules_void}}
 }
 \concept{imputation rules}
 \keyword{datasets}

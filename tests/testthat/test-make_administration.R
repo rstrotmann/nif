@@ -348,9 +348,9 @@ test_that("make_administration integrates with PC domain for time imputation", {
       "001", 1, "DRUG_A", "2024-12-16", "2024-12-18", 100
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~PCTESTCD, ~PCRFTDTC,
-      "001", "DRUG_A", "2024-12-16T08:15",
-      "001", "DRUG_A", "2024-12-17T09:30"
+      ~USUBJID, ~PCTESTCD, ~PCRFTDTC, ~PCDTC,
+      "001", "DRUG_A", "2024-12-16T08:15", "2024-12-16",
+      "001", "DRUG_A", "2024-12-17T09:30", "2024-12-17"
     )
   ))
 
@@ -579,9 +579,6 @@ test_that("make_administration handles silent parameter", {
   )
 })
 
-
-
-# -----------
 ## Tests for make_administration using no imputation rules
 
 test_that("make_administration works with void imputation rule set", {

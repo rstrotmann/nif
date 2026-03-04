@@ -731,9 +731,13 @@ get_admin_time_from_ntime <- function(
     ntime_exponent = -0.8
 ) {
   # validate inputs
-  validate_sdtm(sdtm, "pc")
+  validate_sdtm(sdtm)
   validate_argument(pctestcd, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
+
+  if (!"pc" %in% names(sdtm$domains)) {
+    return(mutate(ex, .NTIME_DTC_time = NA))
+  }
 
   pc <- domain(sdtm, "pc")
 

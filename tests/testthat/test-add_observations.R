@@ -294,16 +294,19 @@ test_that("add_observation handles missing NTIME gracefully", {
   expect_message(
     expect_message(
       expect_message(
-        nif_without_ntime <- base_nif %>%
-          add_observation(sdtm_test, "pc", "A",
-            cmt = 2, ntime_method = "ELTM",
-            silent = FALSE
-          ),
-        "ELTM is not defined"
+        expect_message(
+          nif_without_ntime <- base_nif %>%
+            add_observation(sdtm_test, "pc", "A",
+              cmt = 2, ntime_method = "ELTM",
+              silent = FALSE
+            ),
+          "ELTM is not defined"
+        ),
+        "No ntime_lookup could be created"
       ),
-      "No ntime_lookup could be created"
+      "Imputation model"
     ),
-    "Imputation model"
+    "Missing fields"
   )
 
   # NTIME should be NA in the resulting object
@@ -414,16 +417,19 @@ test_that("add_observation handles observations without matching administrations
   # Should give warning about missing administrations
   expect_message(
     expect_message(
-      nif_with_no_admin <- base_nif %>%
-        add_observation(
-          examplinib_sad, "pc", "RS2023",
-          cmt = 2,
-          parent = "DIFFERENT_PARENT",
-          silent = FALSE
-        ),
-      "Missing administration information"
+      expect_message(
+        nif_with_no_admin <- base_nif %>%
+          add_observation(
+            examplinib_sad, "pc", "RS2023",
+            cmt = 2,
+            parent = "DIFFERENT_PARENT",
+            silent = FALSE
+          ),
+        "Missing administration information"
+      ),
+      "Imputation model"
     ),
-    "Imputation model"
+    "Missing fields"
   )
 
   # Observations should be filtered out

@@ -348,11 +348,14 @@ test_that("make_observation works with ntime_method = 'TPT'", {
   ))
 
   # Test make_observation
-  result <- make_observation(
-    sdtm = sdtm,
-    domain = "PC",
-    testcd = "TEST1",
-    ntime_method = "TPT"
+  expect_message(
+    result <- make_observation(
+      sdtm = sdtm,
+      domain = "PC",
+      testcd = "TEST1",
+      ntime_method = "TPT"
+    ),
+    "Missing fields"
   )
 
   # Verify results
@@ -396,11 +399,14 @@ test_that("make_observation handles missing NTIME values", {
   ))
 
   # Test make_observation
-  result <- make_observation(
-    sdtm = sdtm,
-    domain = "PC",
-    testcd = "TEST1",
-    ntime_method = "TPT"
+  expect_message(
+    result <- make_observation(
+      sdtm = sdtm,
+      domain = "PC",
+      testcd = "TEST1",
+      ntime_method = "TPT"
+    ),
+    "Missing fields"
   )
 
   # Verify results
@@ -440,11 +446,14 @@ test_that("make_observation handles different time point formats", {
   ))
 
   # Test make_observation
-  result <- make_observation(
-    sdtm = sdtm,
-    domain = "PC",
-    testcd = "TEST1",
-    ntime_method = "TPT"
+  expect_message(
+    result <- make_observation(
+      sdtm = sdtm,
+      domain = "PC",
+      testcd = "TEST1",
+      ntime_method = "TPT"
+    ),
+    "Missing fields"
   )
 
   # Verify results
@@ -1010,3 +1019,4 @@ test_that("make_observation validates omit_not_done parameter", {
     make_observation(sdtm, "pc", "A", omit_not_done = FALSE, silent = TRUE)
   )
 })
+

@@ -5,7 +5,11 @@
 \alias{imputation_rules_minimal}
 \title{Minimal imputation rule set}
 \format{
-An empty list.
+A list of the following functions:
+\itemize{
+\item admin_pre_expansion()
+\item admin_post_expansion()
+}
 }
 \usage{
 imputation_rules_minimal
@@ -14,14 +18,32 @@ imputation_rules_minimal
 Minimal imputation rule set
 }
 \details{
-This imputation rule set includes the following minimal imputation steps:
+This imputation rule set includes the  following imputation steps:
 \subsection{Treatment administrations:}{
 \itemize{
+\item Filter administrations to the cut-off date.
+\item Impute missing EXENDTC values in the last administration episode to the
+cut-off date.
+\item Impute missing (non-last) EXENDTC values to the day before the start of the
+subsequent administration episode.
+\item Remove records where EXENDTC is before EXSTDTC.
 \item Expand administration episodes from the EX domain between EXSTDTC and
 EXENDTC.
-\item Administrations inherit the administration time from EXSTDTC or EXENDTC.
-\item The administration time is carried forward for
+\item For each administration event, take the administration time from
+PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
+The name of the PK analyte (PCTESTCD) that corresponds with the administered
+treatment (EXTRT) must be specified by the 'pctestcd' to
+add_administration().
+\item Unless imputed by the above rule, administrations inherit the
+administration time from EXSTDTC or EXENDTC.
+\item After the above imputations, carry forward the administration time for
 subsequent administration events until the next imputed time.
+}
+}
+
+\subsection{Observations}{
+\itemize{
+\item No imputations.
 }
 }
 }
@@ -39,8 +61,8 @@ add_administration()
 add_observation()
 
 Other imputation rules: 
-\code{\link{imputation_rules_1}},
-\code{\link{imputation_rules_standard}}
+\code{\link{imputation_rules_standard}},
+\code{\link{imputation_rules_void}}
 }
 \concept{imputation rules}
 \keyword{datasets}
