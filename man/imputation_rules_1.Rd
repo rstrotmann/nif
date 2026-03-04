@@ -46,6 +46,8 @@ subsequent administration events until the next imputed time.
 
 \subsection{Observations}{
 \itemize{
+\item Pharmacokinetic observations below the level of quantification (BLQ) are
+set to PCLLOQ / 2.
 \item For all predose observations, TAFD is set to zero.
 }
 }

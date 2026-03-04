@@ -165,6 +165,9 @@ imputation_rules_minimal <- list()
 #'
 #' ## Observations
 #'
+#' * Pharmacokinetic observations below the level of quantification (BLQ) are
+#' set to PCLLOQ / 2.
+
 #' * For all predose observations, TAFD is set to zero.
 #'
 #' @section Creating custom imputation rules:
