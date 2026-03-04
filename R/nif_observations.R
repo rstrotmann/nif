@@ -623,7 +623,7 @@ make_observation <- function(
     out <- inner_join(out, sbs, by = c("USUBJID"))
   }
 
-  out |>
+  out <- out |>
     group_by(.data$USUBJID) |>
     mutate(TRTDY = as.numeric(
       difftime(date(.data$DTC), date(safe_min(.data$RFSTDTC))),
@@ -633,7 +633,7 @@ make_observation <- function(
     filter(!is.na(.data$DTC))
 
 
-    # IMPUTATION
+  # IMPUTATION
   if ("obs_raw" %in% names(imputation)) {
     out <- imputation[["obs_raw"]](
       out, silent = silent

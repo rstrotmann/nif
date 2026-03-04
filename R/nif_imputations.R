@@ -814,4 +814,71 @@ carry_forward_admin_time_imputations <- function(ex) {
 
 
 
+#' Impute PC observations with LLOQ to custom value
+#'
+#' @param pc The PC domain as data frame.
+#' @param lloq_filter The filter term to identify LLOQ conditions.
+#' @param lloq_expression The imputation term to replace LLOQ values with.
+#' @param silent Suppress messages.
+#'
+#' @returns A data frame.
+#' @noRd
+impute_lloq_pc <- function(
+    pc,
+    lloq_filter = "BQL|BLQ|LOQ|<",
+    lloq_expression = "PCLLOQ / 2",
+    silent = NULL
+  ) {
+  # validate input
+  validate_argument(lloq_filter, "character")
+  validate_argument(lloq_expression, "character")
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+  if (!"DOMAIN" %in% names(pc) || !any(pc$DOMAIN == "PC"))
+    return(pc)
+
+  # Parse the LLOQ expression
+  expr <- tryCatch(
+    rlang::parse_expr(lloq_expression),
+    error = function(e) {
+      stop(paste0("Invalid LLOQ expression: ", e))
+    }
+  )
+
+  # Extract column names from the expression
+  lloq_expression_fields <- tryCatch(
+    all.vars(expr),
+    error = function(e) character(0)
+  )
+
+  expected_columns <- c("PCLLOQ", "PCSTRESC", "PCSTRESN", lloq_expression_fields)
+  missing_columns <- setdiff(expected_columns, names(pc))
+  if (length(missing_columns) > 0) {
+    conditional_cli(
+      cli_alert_warning(paste0(
+        "Missing ", plural("field", length(missing_columns) > 1), ": ",
+        nice_enumeration(missing_columns), ". LLOQ imputation cannot be done."
+      )),
+      silent = silent
+    )
+    return(pc)
+  }
+
+  if (!"IMPUTATION" %in% names(pc))
+    pc <- mutate(pc, IMPUTATION = "")
+
+  # conduct imputations
+  pc |>
+    mutate(DV = case_when(
+      # str_detect(.data$PCSTRESC, lloq_filter) ~ eval(parse(text = lloq_expression)),
+      str_detect(.data$PCSTRESC, lloq_filter) ~ !!expr,
+      .default = .data$PCSTRESN
+    )) |>
+    mutate(IMPUTATION = case_when(
+      str_detect(.data$PCSTRESC, lloq_filter) ~ "LLOQ imputation",
+      .default = .data$IMPUTATION
+    ))
+}
+
+
 

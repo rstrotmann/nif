@@ -76,7 +76,7 @@ imputation_rules_standard <- list(
   },
 
   # raw observations: no action
-  obs_raw <- function (obs, silent) {
+  obs_raw = function (obs, silent) {
     obs
   },
 
@@ -201,8 +201,9 @@ imputation_rules_1 <- list(
   },
 
   # raw observations: no action
-  obs_raw <- function (obs, silent) {
-    obs
+  obs_raw = function (obs, silent) {
+    # obs
+    impute_lloq_pc(obs, silent = silent)
   },
 
   # final observations: Set TAFD to zero for predose
