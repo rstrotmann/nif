@@ -97,7 +97,7 @@ treatment administrations but only for the first and last ones (i.e., as
 reflected in 'EXSTDTC' and 'EXENDTC'). In addition, the time parts of 'EXSDTDTC'
 or 'EXENDTC' may be missing. This if often the case when preliminary and not
 fully cleaned SDTM data are used to generate an analysis data set Since precise
-time information foradministration events is usually essential for modeling
+time information for administration events is usually essential for modeling
 analyses, a series of time imputations are performed by `add_admininstration()`.
 
 The following section describes the steps performed by the default imputation 
