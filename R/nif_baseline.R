@@ -528,80 +528,100 @@ add_cfb <- function(
 #' @return A nif object.
 #' @export
 derive_cfb_analyte <- function(
-  obj, source_analyte, analyte = NULL,
+  obj,
+  source_analyte,
+  analyte = NULL,
   baseline_filter = "TIME <= 0",
   summary_function = median,
   silent = NULL
 ) {
   # input validation
   validate_nif(obj)
-  validate_char_param(source_analyte, "source_analyte")
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_analyte(obj, source_analyte)
 
-  if (!source_analyte %in% analytes(obj)) {
-    stop(paste0("Analyte ", source_analyte, " not found in analytes!"))
-  }
+  # validate_char_param(source_analyte, "source_analyte")
+  # validate_char_param(analyte, "analyte", allow_null = TRUE)
+  # validate_logical_param(silent, "silent", allow_null = TRUE)
 
-  if (is.null(analyte)) {
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(silent, "logical", allow_null = TRUE)
+  validate_argument(baseline_filter, "character")
+
+  # if (!source_analyte %in% analytes(obj)) {
+  #   stop(paste0("Analyte ", source_analyte, " not found in analytes!"))
+  # }
+
+  if (is.null(analyte))
     analyte <- paste0("CFB_", source_analyte)
-  }
 
-  if (analyte %in% analytes(obj)) {
+  if (analyte %in% analytes(obj))
     stop(paste0("Analyte ", analyte, " already in data set!"))
-  }
 
   # Validate summary function
-  if (!is.function(summary_function)) {
+  if (!is.function(summary_function))
     stop("summary_function must be a function")
-  }
 
-  # Safe evaluation of filter
-  tryCatch(
-    {
-      filter_expr <- parse(text = baseline_filter)
-      test_eval <- eval(filter_expr, envir = obj)
-      if (!is.logical(test_eval)) {
-        stop("baseline_filter must evaluate to logical values")
-      }
-      if (length(test_eval) != nrow(obj)) {
-        stop(paste(
-          "baseline_filter must return a logical vector with length",
-          "equal to number of rows"
-        ))
-      }
-    },
-    error = function(e) {
-      stop("Invalid baseline_filter expression: ", e$message)
-    }
-  )
-
-  # cmt
+  # compartment
   cmt <- max(obj$CMT) + 1
   conditional_message(
     "Compartment for ", analyte, " set to ", cmt,
     silent = silent
   )
 
-  # make new analyte
+  # business logic
   temp <- obj |>
     filter(.data$EVID == 0) |>
-    filter(.data$ANALYTE == source_analyte) |>
+    filter(.data$ANALYTE == source_analyte)
+
+
+  # Safe evaluation of filter
+  #
+  ## To Do:
+  # use is_valid_filter() instead
+  #
+
+  # tryCatch(
+  #   {
+  #     filter_expr <- parse(text = baseline_filter)
+  #     test_eval <- eval(filter_expr, envir = obj)
+  #     if (!is.logical(test_eval)) {
+  #       stop("baseline_filter must evaluate to logical values")
+  #     }
+  #     if (length(test_eval) != nrow(obj)) {
+  #       stop(paste(
+  #         "baseline_filter must return a logical vector with length",
+  #         "equal to number of rows"
+  #       ))
+  #     }
+  #   },
+  #   error = function(e) {
+  #     stop("Invalid baseline_filter expression: ", e$message)
+  #   }
+  # )
+
+  if (!is_valid_filter(temp, baseline_filter, silent = silent))
+    stop(paste0("Invalid filter: ", baseline_filter))
+
+  # make new analyte
+  # temp <- obj |>
+  #   filter(.data$EVID == 0) |>
+  #   filter(.data$ANALYTE == source_analyte) |>
+  temp <- temp |>
     group_by(.data$ID) |>
     mutate(.BL = summary_function(
       na.omit(.data$DV[eval(parse(text = baseline_filter))])
     )) |>
     ungroup() |>
     mutate(DV = .data$DV - .data$.BL) |>
-    select(-all_of(c(".BL", "REF"))) |>
+    select(-any_of(c(".BL", "REF"))) |>
     mutate(ANALYTE = analyte) |>
     mutate(CMT = cmt)
 
   out <- bind_rows(obj, temp) |>
-    arrange(.data$USUBJID, .data$DTC) |>
+    # arrange(.data$USUBJID, .data$DTC) |>
     arrange_and_add_ref()
 
-  out
+  nif(out)
 }
 
 
