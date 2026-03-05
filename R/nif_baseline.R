@@ -539,17 +539,9 @@ derive_cfb_analyte <- function(
   validate_nif(obj)
   validate_analyte(obj, source_analyte)
 
-  # validate_char_param(source_analyte, "source_analyte")
-  # validate_char_param(analyte, "analyte", allow_null = TRUE)
-  # validate_logical_param(silent, "silent", allow_null = TRUE)
-
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
   validate_argument(baseline_filter, "character")
-
-  # if (!source_analyte %in% analytes(obj)) {
-  #   stop(paste0("Analyte ", source_analyte, " not found in analytes!"))
-  # }
 
   if (is.null(analyte))
     analyte <- paste0("CFB_", source_analyte)
@@ -573,39 +565,10 @@ derive_cfb_analyte <- function(
     filter(.data$EVID == 0) |>
     filter(.data$ANALYTE == source_analyte)
 
-
-  # Safe evaluation of filter
-  #
-  ## To Do:
-  # use is_valid_filter() instead
-  #
-
-  # tryCatch(
-  #   {
-  #     filter_expr <- parse(text = baseline_filter)
-  #     test_eval <- eval(filter_expr, envir = obj)
-  #     if (!is.logical(test_eval)) {
-  #       stop("baseline_filter must evaluate to logical values")
-  #     }
-  #     if (length(test_eval) != nrow(obj)) {
-  #       stop(paste(
-  #         "baseline_filter must return a logical vector with length",
-  #         "equal to number of rows"
-  #       ))
-  #     }
-  #   },
-  #   error = function(e) {
-  #     stop("Invalid baseline_filter expression: ", e$message)
-  #   }
-  # )
-
   if (!is_valid_filter(temp, baseline_filter, silent = silent))
     stop(paste0("Invalid filter: ", baseline_filter))
 
   # make new analyte
-  # temp <- obj |>
-  #   filter(.data$EVID == 0) |>
-  #   filter(.data$ANALYTE == source_analyte) |>
   temp <- temp |>
     group_by(.data$ID) |>
     mutate(.BL = summary_function(
@@ -618,7 +581,6 @@ derive_cfb_analyte <- function(
     mutate(CMT = cmt)
 
   out <- bind_rows(obj, temp) |>
-    # arrange(.data$USUBJID, .data$DTC) |>
     arrange_and_add_ref()
 
   nif(out)
