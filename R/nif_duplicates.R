@@ -70,28 +70,41 @@ find_duplicates <- function(
 }
 
 
-#' Resolve duplicate rows by averaging DV and setting conflicting fields to NA
+#' Resolve source-data duplicates in observation data frames
 #'
-#' This function identifies duplicate rows based on specified identifier fields
-#' and resolves them by:
-#' - Averaging the DV field across duplicates
-#' - Keeping other fields as-is if they have the same value across duplicates
-#' - Setting fields to NA if they have multiple different values within
-#' duplicates
+#' Collapses rows that are duplicated with respect to the specified identifier
+#' fields (e.g., USUBJID, ANALYTE, and DTC) during NIF construction. This
+#' addresses unintended duplicates in the source data, such as repeated lab
+#' results at the same datetime.
 #'
-#' @param df A data frame to resolve duplicates from
-#' @param fields A character vector of field names to identify duplicates. These
-#'   fields are used to group rows that are considered duplicates.
-#' @param duplicate_function A function to apply to duplicate values. Default is
-#' mean. The function should take a vector and return a single value.
-#' @param dependent_variable The name of the field to apply the
-#' duplicate_function to. Defaults to "DV".
-#' @param na_rm Logical indicating whether to remove NA values when applying the
-#' duplicate_function. Defaults to TRUE.
+#' The dependent variable (default: DV) is aggregated using
+#' `duplicate_function`. All other (non-grouping) columns are kept if their
+#' values are consistent within each duplicate group, or set to NA if they
+#' conflict. This means baseline covariates may be lost if they differ across
+#' duplicate rows.
 #'
-#' @return A data frame with duplicate rows resolved. The DV field contains the
-#'   average of duplicate values, and other fields are kept as-is if consistent
-#'   or set to NA if inconsistent within duplicate groups.
+#' Rows with MDV == 1 are excluded before duplicate detection.
+#'
+#' @param df A data frame (typically an intermediate observation table during
+#'   NIF construction).
+#' @param fields A character vector of column names that define duplicate
+#'   groups. Rows sharing the same values in these fields are considered
+#'   duplicates. Must contain at least one field other than the dependent
+#'   variable.
+#' @param dependent_variable The column to aggregate across duplicates.
+#'   Defaults to "DV".
+#' @param duplicate_function A function applied to the dependent variable
+#'   within each duplicate group (e.g., `mean`, `median`, `max`). Must accept
+#'   a numeric vector and return a single value. Defaults to `mean`.
+#' @param na_rm Logical. Remove NA values before applying
+#'   `duplicate_function`? Defaults to TRUE.
+#'
+#' @return A data frame with one row per unique combination of `fields`.
+#'   The dependent variable is aggregated; other columns retain their value
+#'   if uniform within the group or are set to NA if conflicting.
+#'
+#' @seealso [nif::gather_duplicates()] for consolidating multiplicate measurements
+#'   in a finished nif object with baseline-safe handling.
 #' @noRd
 resolve_duplicates <- function(
   df,
@@ -203,27 +216,37 @@ resolve_duplicates <- function(
 }
 
 
-
-#' Consolidate multiplicate observations
+#' Consolidate multiplicate observations in a nif object
 #'
-#' Identify multiplicate observations over ID, CMT and 'fields' and integrate
-#' the DV value for them using the 'duplicate_function'. A common application is
-#' the averaging of triplicate ECG parameter observations by NTIME.
+#' Collapses replicate measurements (e.g., triplicate ECG readings) that share
+#' the same subject, analyte, compartment, and nominal time point into a single
+#' row by applying `duplicate_function` to the dependent variable and
+#' time-related fields.
 #'
-#' Observations with MDV == 1 are excluded from the process.
+#' Unlike [nif::resolve_duplicates()], baseline covariates are preserved safely:
+#' they are separated before aggregation and re-joined by ID afterward, so
+#' they are never set to NA due to row-level inconsistencies.
+#'
+#' Duplicate groups are defined by ID, CMT, AMT, EVID, ANALYTE, and
+#' `id_field`. The aggregation function is applied to DV, TIME, NTIME, TAD,
+#' and TAFD (except those used as grouping fields). Rows with MDV == 1 are
+#' excluded before processing.
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
 #' @param obj A nif object.
-#' @param id_field The field(s) over which to identify duplicates (in addition
-#' to ID ANALYTE and CMT which are automatically considered).
-#' @param silent Suppress messages.
-#' @param duplicate_function A function by which to consolidate the
-#' multiplicates
-#' @param na_rm Remove NA values.
+#' @param id_field Character vector of additional field(s) used (together with
+#'   ID, CMT, AMT, EVID, and ANALYTE) to define duplicate groups. Defaults to
+#'   "NTIME".
+#' @param duplicate_function A function applied to numeric columns within each
+#'   duplicate group (e.g., `mean`, `median`, `sum`). Defaults to `mean`.
+#' @param na_rm Logical. Remove NA values before applying
+#'   `duplicate_function`? Defaults to TRUE.
+#' @param silent Logical or NULL. Suppress informational messages? NULL uses
+#'   the package default.
 #'
-#' @returns A nif object.
+#' @returns A nif object with multiplicate observations consolidated.
 #' @export
 gather_duplicates <- function(
   obj,

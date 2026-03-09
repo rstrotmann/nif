@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_duplicates.R
 \name{gather_duplicates}
 \alias{gather_duplicates}
-\title{Consolidate multiplicate observations}
+\title{Consolidate multiplicate observations in a nif object}
 \usage{
 gather_duplicates(
   obj,
@@ -15,26 +15,37 @@ gather_duplicates(
 \arguments{
 \item{obj}{A nif object.}
 
-\item{id_field}{The field(s) over which to identify duplicates (in addition
-to ID ANALYTE and CMT which are automatically considered).}
+\item{id_field}{Character vector of additional field(s) used (together with
+ID, CMT, AMT, EVID, and ANALYTE) to define duplicate groups. Defaults to
+"NTIME".}
 
-\item{duplicate_function}{A function by which to consolidate the
-multiplicates}
+\item{duplicate_function}{A function applied to numeric columns within each
+duplicate group (e.g., \code{mean}, \code{median}, \code{sum}). Defaults to \code{mean}.}
 
-\item{na_rm}{Remove NA values.}
+\item{na_rm}{Logical. Remove NA values before applying
+\code{duplicate_function}? Defaults to TRUE.}
 
-\item{silent}{Suppress messages.}
+\item{silent}{Logical or NULL. Suppress informational messages? NULL uses
+the package default.}
 }
 \value{
-A nif object.
+A nif object with multiplicate observations consolidated.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
-Identify multiplicate observations over ID, CMT and 'fields' and integrate
-the DV value for them using the 'duplicate_function'. A common application is
-the averaging of triplicate ECG parameter observations by NTIME.
+Collapses replicate measurements (e.g., triplicate ECG readings) that share
+the same subject, analyte, compartment, and nominal time point into a single
+row by applying \code{duplicate_function} to the dependent variable and
+time-related fields.
 
-Observations with MDV == 1 are excluded from the process.
+Unlike \code{\link[=resolve_duplicates]{resolve_duplicates()}}, baseline covariates are preserved safely:
+they are separated before aggregation and re-joined by ID afterward, so
+they are never set to NA due to row-level inconsistencies.
+
+Duplicate groups are defined by ID, CMT, AMT, EVID, ANALYTE, and
+\code{id_field}. The aggregation function is applied to DV, TIME, NTIME, TAD,
+and TAFD (except those used as grouping fields). Rows with MDV == 1 are
+excluded before processing.
 }
