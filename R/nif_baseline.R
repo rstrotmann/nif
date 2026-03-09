@@ -72,16 +72,17 @@ add_baseline <- function(
   # input validation
   validate_nif(nif)
   validate_sdtm(sdtm)
+
   validate_testcd(sdtm, testcd, domain)
-  validate_char_param(name, "name", allow_null = TRUE)
-  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
-  validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
-  validate_char_param(observation_filter, "observation_filter")
-  validate_char_param(cat, "cat", allow_null = TRUE)
-  validate_char_param(scat, "scat", allow_null = TRUE)
-  validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
-  validate_numeric_param(factor, "factor")
-  validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_argument(name, "character", allow_null = TRUE)
+  validate_argument(dv_field, "character", allow_null = TRUE)
+  validate_argument(testcd_field, "character", allow_null = TRUE)
+  validate_argument(observation_filter, "character")
+  validate_argument(cat, "character", allow_null = TRUE)
+  validate_argument(scat, "character", allow_null = TRUE)
+  validate_argument(baseline_filter, "character", allow_null = TRUE)
+  validate_argument(factor, "numeric")
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   # create fields
   cat_field <- paste0(toupper(domain), "CAT")
@@ -121,9 +122,9 @@ add_baseline <- function(
   }
 
   # Validate testcd exists in the domain
-  if (!testcd %in% domain_data[[testcd_field]]) {
-    stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
-  }
+  # if (!testcd %in% domain_data[[testcd_field]]) {
+  #   stop(paste0("Test code '", testcd, "' not found in domain '", domain, "'"))
+  # }
 
   if (is.null(name)) {
     bl_field <- paste0("BL_", testcd)
@@ -180,10 +181,21 @@ add_baseline <- function(
     stop(paste0("No data after applying cat and scat filters!"))
   }
 
-  # apply observation and baseline filters
+  # validate and apply observation filter
+  if (!is_valid_filter(filtered_domain, observation_filter, silent = silent))
+    stop(paste0("Invalid observation_filter: ", observation_filter))
+
   filtered_domain <- filtered_domain |>
     filter(eval(parse(text = observation_filter))) |>
-    filter(.data[[testcd_field]] %in% testcd) |>
+    filter(.data[[testcd_field]] %in% testcd)
+
+  # validate and apply baseline filter
+  if (nrow(filtered_domain) > 0) {
+    if (!is_valid_filter(filtered_domain, baseline_filter, silent = silent))
+      stop(paste0("Invalid baseline_filter: ", baseline_filter))
+  }
+
+  filtered_domain <- filtered_domain |>
     filter(eval(parse(text = baseline_filter)))
 
   # Check if any data remains after filtering
