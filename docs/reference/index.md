@@ -171,9 +171,11 @@
   in the data set
 
 - [`gather_duplicates()`](gather_duplicates.md) **\[experimental\]** :
-  Consolidate multiplicate observations
+  Consolidate multiplicate observations in a nif object
 
 - [`geom_admin()`](geom_admin.md) : Administration geom layer for ggplot
+
+- [`hash()`](hash.md) : XXH128 hash
 
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection
@@ -183,14 +185,14 @@
 - [`import_observation()`](import_observation.md) **\[experimental\]** :
   Add observation from non-SDTM-formatted data table
 
-- [`imputation_rules_1`](imputation_rules_1.md) : Alternative imputation
-  rule set
-
 - [`imputation_rules_minimal`](imputation_rules_minimal.md) : Minimal
   imputation rule set
 
 - [`imputation_rules_standard`](imputation_rules_standard.md) : Standard
   imputation rule set
+
+- [`imputation_rules_void`](imputation_rules_void.md) : Void imputation
+  rule set
 
 - [`imputation_summary()`](imputation_summary.md) : Summary of
   imputations in nif object

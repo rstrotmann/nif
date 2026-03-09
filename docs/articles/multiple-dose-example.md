@@ -69,7 +69,7 @@ summary(examplinib_poc)
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A     
 #> 
-#> Hash: dc62553e8fc9a5099b9b2df98196d13d
+#> Hash: abed731bff41ca58a9d467247093fcac
 #> Last DTC: 2001-07-18 10:24:00
 ```
 
@@ -92,7 +92,9 @@ nif_poc <- nif() %>%
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
+#> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 ```
 
 Let’s add some further baseline data to our nif object. The serum
@@ -126,8 +128,8 @@ head(nif_poc, 3)
 #  3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
 #                    DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY
 #  1 2001-01-07 09:42:00    0     0    0   0    1 500     RS2023   1 RS2023     1
-#  2 2001-01-07 09:42:00    0     0    0   0    0   0     RS2023   2 RS2023    NA
-#  3 2001-01-07 09:42:00    0     0    0   0    0   0 RS2023487A   3 RS2023    NA
+#  2 2001-01-07 09:42:00    0     0    0   0    0   0     RS2023   2 RS2023     1
+#  3 2001-01-07 09:42:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1
 #    METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION DV BL_CREAT  BL_CRCL
 #  1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC NA 86.46559 78.66727
 #  2      FALSE  500   0 TREATMENT                             0 86.46559 78.66727
@@ -202,7 +204,7 @@ summary(nif_poc)
 #    PARENT   min   max   mean   median   
 #    RS2023   55    97    73.2   72.5      
 #  
-#  Hash: c28e0e62f9c591c4342158c658d8b55c
+#  Hash: e4fcddbba19e111740b7eae4175747ea
 #  Last DTC: 2001-07-18 08:24:00
 ```
 

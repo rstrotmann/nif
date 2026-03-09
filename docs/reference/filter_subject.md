@@ -56,7 +56,7 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 #>   RS2023       RS2023       
 #>   RS2023487A   RS2023487A     
 #> 
-#> Hash: 93dc2ba6e83c56fb5b03f2007f5493df
+#> Hash: 9c818c9d8f5990ff2cfcaec04f771bde
 #> Last DTC: 2001-03-26 13:05:00
 filter_subject(examplinib_poc_nif,
 subjects(examplinib_poc_nif)[1, "USUBJID"])
@@ -70,7 +70,7 @@ subjects(examplinib_poc_nif)[1, "USUBJID"])
 #>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
 #>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL 
 #> 
-#> Hash: 41db6eb28a6c92fda185ad92d25887e9
+#> Hash: 6d3a9b41967f83ccacb15756ebf0d7ba
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV         

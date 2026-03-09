@@ -70,7 +70,7 @@ summary(sdtm)
 #>   PCTEST       PCTESTCD   
 #>   XANOMELINE   XAN          
 #> 
-#> Hash: 017bf42677d51bf947d39d78d393dd10
+#> Hash: c02433c6355f083fd3df90e2d4f496a5
 #> Last DTC: 2015-03-05 15:40:00
 
 plot(sdtm, domain = "dm", points = F)
@@ -151,7 +151,7 @@ summary(nif)
 #>   PLACEBO   7     210   149.1   182      
 #>   XAN       1     212   99.2    81        
 #> 
-#> Hash: 2dc0b91676cbc061300a3f454cc600e7
+#> Hash: 886686261a9cc9c0ea3f6ea6f3b1b437
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(
@@ -216,8 +216,6 @@ mean_dose_plot(nif)
 
 ``` r
 plot(nif, "XAN")
-#> `geom_line()`: Each group consists of only one observation.
-#> ℹ Do you need to adjust the group aesthetic?
 ```
 
 ![](pharmaverse-example_files/figure-html/unnamed-chunk-8-1.png)

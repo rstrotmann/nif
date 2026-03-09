@@ -12,9 +12,11 @@ imputation_rules_standard
 
 A list of the following functions:
 
-- admin_pre_expansion()
-
 - admin_post_expansion()
+
+- obs_raw()
+
+- obs_final()
 
 ## Details
 
@@ -41,15 +43,24 @@ This imputation rule set includes the following imputation steps:
   with the administered treatment (EXTRT) must be specified by the
   'pctestcd' to add_administration().
 
-- Unless imputed by the above rule, administrations inherit the
+- For administration events that have associated PK observations but
+  PCRFTDTC is not defined, back-calculate the administration time, if
+  possible, from the PK observations based on their nominal time
+  (PCTPT).
+
+- Unless imputed by the above rules, administrations inherit the
   administration time from EXSTDTC or EXENDTC.
 
-- After the above imputations, carry forward the administration time for
-  subsequent administration events until the next imputed time.
+- After the above imputations, the administration time is carried
+  forward for subsequent administration events until the next imputed
+  time.
 
 ### Observations
 
-- No imputations.
+- Pharmacokinetic observations below the level of quantification (BLQ)
+  are set to PCLLOQ / 2.
+
+- For all predose observations, TAFD is set to zero.
 
 ## Creating custom imputation rules
 
@@ -64,5 +75,6 @@ add_administration()
 
 add_observation()
 
-Other imputation rules: [`imputation_rules_1`](imputation_rules_1.md),
-[`imputation_rules_minimal`](imputation_rules_minimal.md)
+Other imputation rules:
+[`imputation_rules_minimal`](imputation_rules_minimal.md),
+[`imputation_rules_void`](imputation_rules_void.md)

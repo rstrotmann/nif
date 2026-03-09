@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,12 +53,13 @@
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A list of the following functions:</p><ul><li><p>admin_pre_expansion()</p></li>
-<li><p>admin_post_expansion()</p></li>
+    <p>A list of the following functions:</p><ul><li><p>admin_post_expansion()</p></li>
+<li><p>obs_raw()</p></li>
+<li><p>obs_final()</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This imputation rule set includes the  following imputation steps:</p><div class="section">
+    <p>This imputation rule set includes the following imputation steps:</p><div class="section">
 <h3 id="treatment-administrations-">Treatment administrations:<a class="anchor" aria-label="anchor" href="#treatment-administrations-"></a></h3>
 
 <ul><li><p>Filter administrations to the cut-off date.</p></li>
@@ -74,16 +75,21 @@ PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
 The name of the PK analyte (PCTESTCD) that corresponds with the administered
 treatment (EXTRT) must be specified by the 'pctestcd' to
 add_administration().</p></li>
-<li><p>Unless imputed by the above rule, administrations inherit the
+<li><p>For administration events that have associated PK observations but PCRFTDTC
+is not defined, back-calculate the administration time, if possible, from
+the PK observations based on their nominal time (PCTPT).</p></li>
+<li><p>Unless imputed by the above rules, administrations inherit the
 administration time from EXSTDTC or EXENDTC.</p></li>
-<li><p>After the above imputations, carry forward the administration time for
+<li><p>After the above imputations, the administration time is carried forward for
 subsequent administration events until the next imputed time.</p></li>
 </ul></div>
 
 <div class="section">
 <h3 id="observations">Observations<a class="anchor" aria-label="anchor" href="#observations"></a></h3>
 
-<ul><li><p>No imputations.</p></li>
+<ul><li><p>Pharmacokinetic observations below the level of quantification (BLQ) are
+set to PCLLOQ / 2.</p></li>
+<li><p>For all predose observations, TAFD is set to zero.</p></li>
 </ul></div>
 
     </div>
@@ -101,8 +107,8 @@ receives specific arguments depending on its slot.</p>
     <div class="dont-index"><p>add_administration()</p>
 <p>add_observation()</p>
 <p>Other imputation rules:
-<code><a href="imputation_rules_1.html">imputation_rules_1</a></code>,
-<code><a href="imputation_rules_minimal.html">imputation_rules_minimal</a></code></p></div>
+<code><a href="imputation_rules_minimal.html">imputation_rules_minimal</a></code>,
+<code><a href="imputation_rules_void.html">imputation_rules_void</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -218,7 +218,7 @@ information:</p>
 <span><span class="co">#&gt;   RS2023       RS2023       </span></span>
 <span><span class="co">#&gt;   RS2023487A   RS2023487A     </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: fe221c9908fca418b46a1bd52f7b885b</span></span>
+<span><span class="co">#&gt; Hash: 295fd51437d90b19b7e4d80e4c7dd51f</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 11:28:00</span></span></code></pre></div>
 <p>High-level subject-level disposition data for a specific subject can
 be extracted using <code><a href="../reference/subject_info.html">subject_info()</a></code>:</p>
@@ -440,10 +440,10 @@ the ‘EXTRT’ field is ‘EXAMPLINIB’ while the pharmacokinetic analyte name
 <span><span class="co">#&gt; 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
 <span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023    NA</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023    NA</span></span>
-<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023    NA</span></span>
-<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
 <span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV</span></span>
 <span><span class="co">#&gt; 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA</span></span>
 <span><span class="co">#&gt; 2      FALSE  500   0       AB                               0.000</span></span>
@@ -514,8 +514,8 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 <span><span class="co">#&gt; 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
 <span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023    NA</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023    NA</span></span>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
 <span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV</span></span>
 <span><span class="co">#&gt; 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA</span></span>
 <span><span class="co">#&gt; 2      FALSE  500   0       AB                               0.000</span></span>
@@ -586,7 +586,7 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#&gt;   RS2023   2     2     2      2         </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: e40147b74a313c10dcb1f68df10f8aa9</span></span>
+<span><span class="co">#&gt; Hash: 281979a9c070e4b08518ad0a83f89c75</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 10:28:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
 covariates and raw plots of the analytes over time. In the following

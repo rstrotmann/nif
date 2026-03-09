@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,7 +137,7 @@ a high-level overview:</p>
 <span><span class="co">#&gt;   RS2023       RS2023       </span></span>
 <span><span class="co">#&gt;   RS2023487A   RS2023487A     </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: dc62553e8fc9a5099b9b2df98196d13d</span></span>
+<span><span class="co">#&gt; Hash: abed731bff41ca58a9d467247093fcac</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-07-18 10:24:00</span></span></code></pre></div>
 <p>Note that in the EX domain, the administered drug is given as
 ‘EXAMPLINIB’ while in PC, the corresponding analyte is ‘RS2023’. The
@@ -160,7 +160,9 @@ pharmacokinetic nif object from <code>examplinic_poc</code>:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023 observations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023487A observations</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023487A observations</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span></code></pre></div>
 <p>Let’s add some further baseline data to our nif object. The serum
 creatinine concentration can be used to calculate the individual
 baseline creatinine clearance as an estimate for glomerular filtration
@@ -186,8 +188,8 @@ creatinine clearance:</p>
 <span><span class="co">#  3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span></span>
 <span><span class="co">#                    DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY</span></span>
 <span><span class="co">#  1 2001-01-07 09:42:00    0     0    0   0    1 500     RS2023   1 RS2023     1</span></span>
-<span><span class="co">#  2 2001-01-07 09:42:00    0     0    0   0    0   0     RS2023   2 RS2023    NA</span></span>
-<span><span class="co">#  3 2001-01-07 09:42:00    0     0    0   0    0   0 RS2023487A   3 RS2023    NA</span></span>
+<span><span class="co">#  2 2001-01-07 09:42:00    0     0    0   0    0   0     RS2023   2 RS2023     1</span></span>
+<span><span class="co">#  3 2001-01-07 09:42:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1</span></span>
 <span><span class="co">#    METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION DV BL_CREAT  BL_CRCL</span></span>
 <span><span class="co">#  1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC NA 86.46559 78.66727</span></span>
 <span><span class="co">#  2      FALSE  500   0 TREATMENT                             0 86.46559 78.66727</span></span>
@@ -261,7 +263,7 @@ impaired renal function:</p>
 <span><span class="co">#    PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#    RS2023   55    97    73.2   72.5      </span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Hash: c28e0e62f9c591c4342158c658d8b55c</span></span>
+<span><span class="co">#  Hash: e4fcddbba19e111740b7eae4175747ea</span></span>
 <span><span class="co">#  Last DTC: 2001-07-18 08:24:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the

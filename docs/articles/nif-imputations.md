@@ -1,25 +1,43 @@
 # Imputations and assumptions
 
-This vignette outlines the inner workings of the two main functions
-provided by the `nif` package to create nif objects, i.e.,
+## INTRODUCTION
+
+Dealing with missing data and resolving ambiguity in the input is an
+important aspect of creating analysis data sets. Typical examples
+include the imputation of treatment administration times that are not
+explicitly captured in the input, substitution of missing demographic
+data with best guesses from the overall population, or making
+assumptions about pharmacokinetic observations that are be below the
+detection limit of the method.
+
+In most cases, there are different options how to resolve such data
+inconsistencies, and in fact, analysts use individual imputation
+strategies based on the scientific question, certain conventions or even
+personal preferences. The nif package accounts for these different
+approaches by giving the data programmer the choice of different
+pre-defined imputation rule sets, or the option to define custom
+imputation rules.
+
+This vignette outlines the inner workings of the two functions that are
+central to the dataset generation pipeline, i.e.,
 [`add_administration()`](../reference/add_administration.md) and
-`add_obervation()`. It is meant to summarize what assumptions are made
-and how missing information is imputed.
+`add_obervation()`, including the ways how data imputations can be
+adjusted.
 
-## Baseline parameters
+## BASELINE AND DEMOGRAPHIC PARAMETERS
 
-The subjects’ age is derived from the ‘AGE’ field in the ‘DM’ domain
-(such domain/field pairs are referred to in the following as, e.g.,
-*DM.AGE*). If ‘DM.AGE’ is missing, age is derived as the difference
-between ‘DM.RFSTDTC’ and ‘DM.BRTHDTC’.
+The subjects’ age is derived from the ‘AGE’ field in the ‘DM’ domain of
+the input SDTM data. If this columns is missing, age is derived as the
+difference between ‘RFSTDTC’ and ‘BRTHDTC’.
 
-Besides age, the subjects’ height and body weight are included as
-standard fields in the nif object. Both values are derived from the ‘VS’
-domain, where the baseline time point is identified as either ‘VISIT’ =
-“SCREENING” or ‘VSBLFL’ = “Y”. If multiple measurements fulfilling these
-condition are found for a given subject, the mean value is used.
+Besides age, the subjects’ height and body weight are included, if
+possible, as standard fields in the nif object. Both values are derived
+from the ‘VS’ domain of the SDTM input, where the baseline time point is
+identified as either `VISIT == "SCREENING"` or `VSBLFL' == "Y"`. If
+multiple measurements fulfilling these condition are found for a given
+subject, their mean value is used.
 
-## Administrations
+## TREATMENT ADMINISTRATIONS
 
 In general, drug administration events are added to a nif object in the
 following way:
@@ -28,14 +46,15 @@ following way:
 library(dplyr)
 library(nif)
 
-my_nif <- nif() %>%
+my_nif <- nif() |> 
   add_administration(examplinib_sad, extrt = "EXAMPLINIB", analyte = "RS2023")
 ```
 
-The [`add_administration()`](../reference/add_administration.md)
-function uses the drug administration data from ‘EX’ with ‘EX.EXTRT’
-filtered for the indicated treatment. If an ‘analyte’ is specified, this
-analyte name is used instead of the ‘extrt’.
+Note that [`add_administration()`](../reference/add_administration.md)
+has an optional argument, `imputation`, that defines a set of imputation
+rules, essentially a list of functions that are applied at different
+stages. The default is ’imputation_rules_standard\`. More on this
+further below.
 
 ### Subject filtering
 
@@ -49,26 +68,50 @@ Other exclusion filters can be used, if needed.
 
 Depending on the study type (single vs. multiple administrations), ‘EX’
 may define administration episodes spanning multiple administrations,
-i.e., from ‘EX.EXSTDTC’ to ‘EX.EXENDTC’. A typical example is shown
-below (some columns omitted for clarity):
+i.e., from ‘EXSTDTC’ to ‘EXENDTC’. A typical example is shown below
+(some columns omitted for clarity):
 
-    STUDYID     USUBJID           EXDOSE  EXDOSFRQ  EXSTDTC           EXENDTC
-    2023000400  0230004001010002  500     ONCE      2023-08-18T08:06  2023-08-21T08:43
+    #>      STUDYID           USUBJID EXDOSE          EXSTDTC          EXENDTC
+    #> 1 2023000001 20230000011010001      5 2000-12-31T10:18 2000-12-31T10:18
 
-[`add_administration()`](../reference/add_administration.md) expands
-administration episodes to individual rows for each day.
+In general, [`add_administration()`](../reference/add_administration.md)
+expands administration episodes to individual rows for each
+administration event.
 
-Administration episodes do not include time information for individual
-days. In addition, the time part of ‘EXSDTDTC’ or ‘EXENDTC’ may be
-missing. This if often the case when uncleaned data is analyzed. Since
-precise time information for administration events is essential for all
-downstream analyses, a series of time imputations are performed by
-`add_admininstration()`.
+Administration episodes in ‘EX’ do not include time information for
+individual treatment administrations but only for the first and last
+ones (i.e., as reflected in ‘EXSTDTC’ and ‘EXENDTC’). In addition, the
+time parts of ‘EXSDTDTC’ or ‘EXENDTC’ may be missing. This if often the
+case when preliminary and not fully cleaned SDTM data are used to
+generate an analysis data set Since precise time information for
+administration events is usually essential for modeling analyses, a
+series of time imputations are performed by `add_admininstration()`.
 
-A first set of imputations (see 1. through 3. below) is performed on the
-non-expanded EX domain with the aim to ensure that each episode has
-‘EXSTDTC’ and ‘EXENDTC’ fields. Imputations 5. and 6. are performed
-after expansion of the administration episodes:
+The following section describes the steps performed by the default
+imputation rule set, ‘imputation_rules_standard’, and the alternative
+pre-defined rule set, ‘imputation_rules_1’. It is possible and
+encouraged to write custom rule sets, however the details go beyond the
+scope of this vignette.
+
+In either case, a first set of data imputations are performed on the
+non-expanded EX domain, with the aim to ensure that each episode has
+valid ‘EXSTDTC’ and ‘EXENDTC’ fields that can be then expanded to
+individual rows. A second set of imputations are performed after
+expansion. The focus there is to ensure that all administration events
+include the most precise time information, either derived from the
+available data sources, or imputed in a consistent way.
+
+#### Default imputation rule set
+
+To be completed.
+
+#### Alternative imputation rule set
+
+To be completed.
+
+## OBSERVATIONS
+
+To be completed.
 
 #### 1. Missing last EXENDTC
 

@@ -94,6 +94,7 @@
 <url><loc>/reference/geom_admin.html</loc></url>
 <url><loc>/reference/guess_ntime.html</loc></url>
 <url><loc>/reference/has_domain.html</loc></url>
+<url><loc>/reference/hash.html</loc></url>
 <url><loc>/reference/ht_by_wt.html</loc></url>
 <url><loc>/reference/import_from_connection.html</loc></url>
 <url><loc>/reference/import_nif.html</loc></url>
@@ -101,6 +102,7 @@
 <url><loc>/reference/imputation_rules_1.html</loc></url>
 <url><loc>/reference/imputation_rules_minimal.html</loc></url>
 <url><loc>/reference/imputation_rules_standard.html</loc></url>
+<url><loc>/reference/imputation_rules_void.html</loc></url>
 <url><loc>/reference/imputation_summary.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/index_dosing_interval.html</loc></url>
