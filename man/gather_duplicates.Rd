@@ -40,9 +40,9 @@ the same subject, analyte, compartment, and nominal time point into a single
 row by applying \code{duplicate_function} to the dependent variable and
 time-related fields.
 
-Unlike \code{\link[=resolve_duplicates]{resolve_duplicates()}}, baseline covariates are preserved safely:
-they are separated before aggregation and re-joined by ID afterward, so
-they are never set to NA due to row-level inconsistencies.
+Baseline covariates are preserved safely: they are separated before
+aggregation and re-joined by ID afterward, so they are never set to NA due to
+row-level inconsistencies.
 
 Duplicate groups are defined by ID, CMT, AMT, EVID, ANALYTE, and
 \code{id_field}. The aggregation function is applied to DV, TIME, NTIME, TAD,

@@ -16,6 +16,7 @@ Anaesth
 Analyte
 Analytes
 BINTIME
+BLQ
 BMI
 BMJ
 BRTHDTC
@@ -78,6 +79,7 @@ Nephron
 ODWG
 ORCID
 PCELTM
+PCLLOQ
 PCRFTDTC
 PCTESTCD
 PCTPT
@@ -90,6 +92,7 @@ PPCAT
 PPSCAT
 Pathol
 Patil
+Pharmacokinetic
 Pharmacokinetics
 Pharmacol
 Pharmacometrics
@@ -124,7 +127,6 @@ USUBJID
 USUBJIDs
 VISIDY
 VISITDY
-VSBLFL
 XAN
 XPT
 XXH
@@ -156,7 +158,6 @@ eGFR
 egfr
 et
 examplinib
-extrt
 fda
 ggplot
 ggproto
@@ -179,7 +180,6 @@ mdrd
 micromolar
 mol
 multiplicate
-multiplicates
 ng
 nlmixr
 ntime
