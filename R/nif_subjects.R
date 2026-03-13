@@ -139,7 +139,7 @@ make_subjects <- function(
   }
 
   # Apply filter to dm and prepare output
-  subject_expr <- validate_filter_ast(subject_filter, data = dm)
+  subject_expr <- validate_filter(subject_filter, data = dm)
   filtered_dm <- dm |>
     lubrify_dates() |>
     filter(rlang::eval_tidy(subject_expr, data = pick(everything())))

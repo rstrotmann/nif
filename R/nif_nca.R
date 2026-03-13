@@ -386,8 +386,13 @@ nca_from_pp <- function(
   if (!is.null(ppscat))
     result <- filter(result, .data$PPSCAT == ppscat)
 
+  if (nrow(result) > 0) {
+    obs_expr <- validate_filter(observation_filter, data = result)
+  } else {
+    obs_expr <- validate_filter(observation_filter)
+  }
   result <- result |>
-    filter(eval(parse(text = observation_filter))) |>
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     select(any_of(c(
       "USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
       "PPCAT", "PPRFTDTC", group

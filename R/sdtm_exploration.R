@@ -278,11 +278,22 @@ plot.sdtm <- function(
   subject_filter = TRUE,
   ...
 ) {
-  obj <- x |>
+  if (is.logical(subject_filter)) {
+    subject_filter <- as.character(subject_filter)
+  }
+
+  domain_data <- x |>
     domain(domain) |>
     filter(if (!is.null(usubjid)) .data$USUBJID %in% usubjid else TRUE) |>
-    lubrify_dates() |>
-    filter(eval(parse(text = subject_filter))) |>
+    lubrify_dates()
+
+  if (nrow(domain_data) > 0) {
+    subj_expr <- validate_filter(subject_filter, data = domain_data)
+  } else {
+    subj_expr <- validate_filter(subject_filter)
+  }
+  obj <- domain_data |>
+    filter(rlang::eval_tidy(subj_expr, data = pick(everything()))) |>
     as.data.frame()
 
   if (domain == "pc") {

@@ -137,8 +137,13 @@ make_ae <- function(
   }
 
 
+  if (nrow(obj) > 0) {
+    obs_expr <- validate_filter(observation_filter, data = obj)
+  } else {
+    obs_expr <- validate_filter(observation_filter)
+  }
   obj |>
-    filter(eval(parse(text = observation_filter))) |>
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     filter(.data[[ae_field]] == ae_term) |>
     mutate(
       DTC = .data[["AESTDTC"]],

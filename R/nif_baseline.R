@@ -183,9 +183,9 @@ add_baseline <- function(
 
   # validate and apply observation filter
   if (nrow(filtered_domain) > 0) {
-    obs_expr <- validate_filter_ast(observation_filter, data = filtered_domain)
+    obs_expr <- validate_filter(observation_filter, data = filtered_domain)
   } else {
-    obs_expr <- validate_filter_ast(observation_filter)
+    obs_expr <- validate_filter(observation_filter)
   }
 
   filtered_domain <- filtered_domain |>
@@ -194,9 +194,9 @@ add_baseline <- function(
 
   # validate and apply baseline filter
   if (nrow(filtered_domain) > 0) {
-    bl_expr <- validate_filter_ast(baseline_filter, data = filtered_domain)
+    bl_expr <- validate_filter(baseline_filter, data = filtered_domain)
   } else {
-    bl_expr <- validate_filter_ast(baseline_filter)
+    bl_expr <- validate_filter(baseline_filter)
   }
 
   filtered_domain <- filtered_domain |>
@@ -348,7 +348,7 @@ derive_baseline <- function(
   }
 
   # Validate and parse filter expression (rejects unsafe constructs)
-  filter_expr <- validate_filter_ast(baseline_filter, data = obj)
+  filter_expr <- validate_filter(baseline_filter, data = obj)
 
   temp <- obj |>
     filter(.data$ANALYTE %in% analyte)
@@ -576,9 +576,9 @@ derive_cfb_analyte <- function(
     filter(.data$ANALYTE == source_analyte)
 
   if (nrow(temp) > 0) {
-    bl_expr <- validate_filter_ast(baseline_filter, data = temp)
+    bl_expr <- validate_filter(baseline_filter, data = temp)
   } else {
-    bl_expr <- validate_filter_ast(baseline_filter)
+    bl_expr <- validate_filter(baseline_filter)
   }
 
   # make new analyte
@@ -624,12 +624,13 @@ derive_cfb_analyte <- function(
 #' @noRd
 add_rtb <- function(obj, baseline_filter = "TIME <= 0",
                     summary_function = median) {
+  bl_expr <- validate_filter(baseline_filter, data = obj)
   obj |>
     ensure_analyte() |>
     as.data.frame() |>
     group_by(.data$ID, .data$ANALYTE) |>
     mutate(DVBL = summary_function(
-      na.omit(.data$DV[eval(parse(text = baseline_filter))])
+      na.omit(.data$DV[rlang::eval_tidy(bl_expr, data = pick(everything()))])
     )) |>
     mutate(DVRTB = .data$DV / .data$DVBL) |>
     ungroup() |>
@@ -682,7 +683,11 @@ add_bl_creat <- function(
     )
   }
 
-  if (!is_valid_filter(lb, baseline_filter)) {
+  bl_valid <- tryCatch(
+    { validate_filter(baseline_filter, data = lb); TRUE },
+    error = function(e) FALSE
+  )
+  if (!bl_valid) {
     conditional_cli(
       cli_alert_warning("Invalid baseline filter, baseline CREAT not added"),
       silent = silent
@@ -947,9 +952,16 @@ add_bl_odwg <- function(
   }
 
   # apply filters
+  if (nrow(lb) > 0) {
+    bl_expr <- validate_filter(baseline_filter, data = lb)
+    obs_expr <- validate_filter(observation_filter, data = lb)
+  } else {
+    bl_expr <- validate_filter(baseline_filter)
+    obs_expr <- validate_filter(observation_filter)
+  }
   lb1 <- lb |>
-    filter(eval(parse(text = baseline_filter))) |>
-    filter(eval(parse(text = observation_filter))) |>
+    filter(rlang::eval_tidy(bl_expr, data = pick(everything()))) |>
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     filter(.data$LBTESTCD %in% c("AST", "BILI"))
 
   if (nrow(lb1) == 0) {

@@ -529,9 +529,9 @@ make_observation <- function(
 
   # apply observation filter, add debug fields
   if (nrow(obj) > 0) {
-    obs_expr <- validate_filter_ast(observation_filter, data = obj)
+    obs_expr <- validate_filter(observation_filter, data = obj)
   } else {
-    obs_expr <- validate_filter_ast(observation_filter)
+    obs_expr <- validate_filter(observation_filter)
   }
   filtered_obj <- obj |>
     mutate(SRC_DOMAIN = .data$DOMAIN) |>
@@ -1154,8 +1154,13 @@ import_observation <- function(
     mutate(IMPUTATION = "") |>
     distinct()
 
+  if (nrow(raw) > 0) {
+    obs_expr <- validate_filter(observation_filter, data = raw)
+  } else {
+    obs_expr <- validate_filter(observation_filter)
+  }
   filtered_raw <- raw |>
-    filter(eval(parse(text = observation_filter)))
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything())))
 
   # Add warning if subject_filter returns no entries
   if (nrow(filtered_raw) == 0) {

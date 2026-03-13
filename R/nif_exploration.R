@@ -1296,8 +1296,11 @@ edish_plot <- function(
     }
   }
 
-  if (!is_valid_filter(lb, observation_filter))
-    stop(paste0("Invalid observation filter: ", observation_filter))
+  if (nrow(lb) > 0) {
+    obs_expr <- validate_filter(observation_filter, data = lb)
+  } else {
+    obs_expr <- validate_filter(observation_filter)
+  }
 
   expected_tests <- c("BILI", enzyme)
   missing_tests <- setdiff(expected_tests, unique(lb$LBTESTCD))
@@ -1307,24 +1310,27 @@ edish_plot <- function(
     ))
   }
 
-  if (!is_valid_filter(lb, baseline_filter)) {
-    conditional_cli(
-      cli_alert_warning(
-        paste0(
-          "Invalid baseline filter (",
-          baseline_filter,
-          ") ignored!"
-        )
-      ),
-      silent = silent
-    )
-    baseline_filter = "FALSE"
-  }
+  bl_expr <- tryCatch(
+    validate_filter(baseline_filter, data = lb),
+    error = function(e) {
+      conditional_cli(
+        cli_alert_warning(
+          paste0(
+            "Invalid baseline filter (",
+            baseline_filter,
+            ") ignored!"
+          )
+        ),
+        silent = silent
+      )
+      rlang::parse_expr("FALSE")
+    }
+  )
 
   xuln <- lb |>
     filter(!is.na(.data$LBSTRESN)) |>
     filter(!is.na(.data$LBSTNRHI)) |>
-    filter(eval(parse(text = observation_filter))) |>
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     filter(.data$LBTESTCD %in% expected_tests) |>
     mutate(XULN = .data$LBSTRESN / .data$LBSTNRHI) |>
     inner_join(subjects(nif), by = "USUBJID") |>
@@ -1337,7 +1343,7 @@ edish_plot <- function(
 
   xuln <- mutate(
     xuln, BL = case_when(
-      eval(parse(text = baseline_filter)) ~ TRUE,
+      rlang::eval_tidy(bl_expr, data = pick(everything())) ~ TRUE,
       .default = FALSE
     )
   )

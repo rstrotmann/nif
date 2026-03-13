@@ -157,8 +157,15 @@ add_covariate <- function(
   # apply other filtering
   filtered_cov <- filtered_cov |>
     filter(.data$USUBJID %in% unique(nif$USUBJID)) |>
-    lubrify_dates() |>
-    filter(eval(parse(text = observation_filter))) |>
+    lubrify_dates()
+
+  if (nrow(filtered_cov) > 0) {
+    obs_expr <- validate_filter(observation_filter, data = filtered_cov)
+  } else {
+    obs_expr <- validate_filter(observation_filter)
+  }
+  filtered_cov <- filtered_cov |>
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     filter(.data[[testcd_field]] == testcd)
 
   # Check if any data remains after filtering

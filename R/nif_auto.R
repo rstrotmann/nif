@@ -308,7 +308,12 @@ nif_auto <- function(
       )
     }
 
-    if (!is_valid_filter(lb, baseline_filter)) {
+    bl_valid <- tryCatch(
+      { validate_filter(baseline_filter, data = lb); TRUE },
+      error = function(e) FALSE
+    )
+
+    if (!bl_valid) {
       conditional_message(
         "'", baseline_filter, "' is not a valid baseline filter! ",
         "Baseline renal and hepatic function markers were not be added!",
