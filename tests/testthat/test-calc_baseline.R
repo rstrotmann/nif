@@ -6,7 +6,7 @@ test_that("calc_baseline returns summary of filtered DV values", {
     15,    1,
     18,    2
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_equal(result, 11)
@@ -20,7 +20,7 @@ test_that("calc_baseline works with mean summary function", {
     14,    0,
     20,    1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, mean, NA_real_)
   expect_equal(result, 12)
@@ -34,7 +34,7 @@ test_that("calc_baseline works with min summary function", {
     14,    0,
     20,    1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, min, NA_real_)
   expect_equal(result, 10)
@@ -48,7 +48,7 @@ test_that("calc_baseline works with max summary function", {
     14,    0,
     20,    1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, max, NA_real_)
   expect_equal(result, 14)
@@ -62,7 +62,7 @@ test_that("calc_baseline returns default when filter matches no rows", {
     12,    2,
     15,    3
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_true(is.na(result))
@@ -75,7 +75,7 @@ test_that("calc_baseline returns custom default when filter matches no rows", {
     10,    1,
     12,    2
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, 999)
   expect_equal(result, 999)
@@ -89,7 +89,7 @@ test_that("calc_baseline returns default when all filtered DV values are NA", {
     NA_real_,   0,
     15,         1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_true(is.na(result))
@@ -103,7 +103,7 @@ test_that("calc_baseline returns custom default when all filtered DV are NA", {
     NA_real_,   0,
     15,         1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, -1)
   expect_equal(result, -1)
@@ -117,7 +117,7 @@ test_that("calc_baseline removes NA values before summarizing", {
     NA_real_,   0,
     15,         1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_equal(result, 10)
@@ -131,7 +131,7 @@ test_that("calc_baseline handles single matching observation", {
     10,    1,
     12,    2
   )
-  filter_expr <- parse(text = "TAFD <= -1")
+  filter_expr <- rlang::parse_expr("TAFD <= -1")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_equal(result, 42)
@@ -145,7 +145,7 @@ test_that("calc_baseline handles all rows matching the filter", {
     12,   -1,
     14,    0
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_equal(result, 12)
@@ -159,7 +159,7 @@ test_that("calc_baseline returns default when summary function returns NaN", {
     10,   -1,
     12,    0
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, nan_fun, 77)
   expect_equal(result, 77)
@@ -173,7 +173,7 @@ test_that("calc_baseline returns default when summary function returns NA", {
     10,   -1,
     12,    0
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, na_fun, 55)
   expect_equal(result, 55)
@@ -188,7 +188,7 @@ test_that("calc_baseline works with complex filter expressions", {
     12,    0,    0,
     15,    1,    0
   )
-  filter_expr <- parse(text = "TAFD <= 0 & EVID == 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0 & EVID == 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_equal(result, 11)
@@ -202,7 +202,7 @@ test_that("calc_baseline works with character column filter", {
     12,   "FED",
     20,   "FASTED"
   )
-  filter_expr <- parse(text = "FOOD == 'FED'")
+  filter_expr <- rlang::parse_expr("FOOD == 'FED'")
 
   result <- calc_baseline(group_data, filter_expr, mean, NA_real_)
   expect_equal(result, 11)
@@ -216,7 +216,7 @@ test_that("calc_baseline handles negative DV values", {
     -20,    0,
     5,      1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_equal(result, -15)
@@ -230,7 +230,7 @@ test_that("calc_baseline handles zero DV values", {
     0,     0,
     5,     1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
   expect_equal(result, 0)
@@ -243,7 +243,7 @@ test_that("calc_baseline with default 0 returns 0 when no data matches", {
     10,    1,
     12,    2
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, median, 0)
   expect_equal(result, 0)
@@ -256,7 +256,7 @@ test_that("calc_baseline handles large number of observations", {
     DV = seq_len(n),
     TAFD = seq_len(n) - 501
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   # TAFD <= 0 matches rows 1:501 (TAFD = -500 to 0), so DV = 1:501
   result <- calc_baseline(group_data, filter_expr, median, NA_real_)
@@ -273,7 +273,7 @@ test_that("calc_baseline handles mixed NA and valid DV in baseline window", {
     12,         0,
     20,         1
   )
-  filter_expr <- parse(text = "TAFD <= 0")
+  filter_expr <- rlang::parse_expr("TAFD <= 0")
 
   result <- calc_baseline(group_data, filter_expr, mean, NA_real_)
   expect_equal(result, 11)

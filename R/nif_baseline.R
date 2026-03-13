@@ -266,7 +266,7 @@ add_baseline <- function(
 #' @return A single numeric baseline value.
 #' @noRd
 calc_baseline <- function(group_data, filter_expr, summary_fun, default) {
-  filtered_dv <- na.omit(group_data$DV[eval(filter_expr, envir = group_data)])
+  filtered_dv <- na.omit(group_data$DV[rlang::eval_tidy(filter_expr, data = group_data)])
   if (length(filtered_dv) == 0) {
     return(default)
   }
@@ -343,25 +343,8 @@ derive_baseline <- function(
     stop("summary_function must be a function")
   }
 
-  # Safe evaluation of filter
-  tryCatch(
-    {
-      filter_expr <- parse(text = baseline_filter)
-      test_eval <- eval(filter_expr, envir = obj)
-      if (!is.logical(test_eval)) {
-        stop("baseline_filter must evaluate to logical values")
-      }
-      if (length(test_eval) != nrow(obj)) {
-        stop(paste(
-          "baseline_filter must return a logical vector with length",
-          "equal to number of rows"
-        ))
-      }
-    },
-    error = function(e) {
-      stop("Invalid baseline_filter expression: ", e$message)
-    }
-  )
+  # Validate and parse filter expression (rejects unsafe constructs)
+  filter_expr <- validate_filter_ast(baseline_filter, data = obj)
 
   temp <- obj |>
     filter(.data$ANALYTE %in% analyte)
@@ -384,8 +367,6 @@ derive_baseline <- function(
       silent = silent
     )
   }
-
-  filter_expr <- parse(text = baseline_filter)
 
   bl <- temp |>
     filter(!is.na(.data$ID)) |>

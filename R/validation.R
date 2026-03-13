@@ -620,5 +620,159 @@ is_valid_filter <- function(data, filter_string, silent = TRUE) {
 }
 
 
+#' Recursively validate an expression AST node
+#'
+#' Walks the parsed expression tree and ensures every node is an allowed
+#' construct: comparison operators, logical connectors, `is.na()`, negation,
+#' parentheses, symbols (column names), and literals. Rejects arbitrary
+#' function calls, assignments, and other unsafe constructs.
+#'
+#' @param node A language object (parsed R expression node).
+#' @param col_names Character vector of allowed column names, or NULL to skip
+#'   column validation.
+#'
+#' @return Invisibly returns TRUE if the node is valid. Stops with an
+#'   informative error otherwise.
+#' @noRd
+walk_expr <- function(node, col_names = NULL) {
+  allowed_ops <- c("<=", "<", ">=", ">", "==", "!=", "&", "&&", "|", "||")
+
+  if (is.symbol(node)) {
+    name <- as.character(node)
+    if (name %in% c("TRUE", "FALSE", "T", "F")) {
+      return(invisible(TRUE))
+    }
+    if (!is.null(col_names) && !name %in% col_names) {
+      stop(
+        "Column '", name, "' not found in data. ",
+        "Available columns: ", paste(col_names, collapse = ", ")
+      )
+    }
+    return(invisible(TRUE))
+  }
+
+  if (is.numeric(node) || is.character(node) || is.logical(node)) {
+    return(invisible(TRUE))
+  }
+
+  if (is.call(node)) {
+    fn_node <- node[[1]]
+
+    # reject namespace calls (e.g., pkg::fun) -- fn_node is itself a call
+    if (is.call(fn_node)) {
+      stop(
+        "Disallowed construct in filter expression: '",
+        deparse(fn_node), "'. ",
+        "Namespaced function calls are not allowed."
+      )
+    }
+
+    fn <- as.character(fn_node)
+
+    # comparison and logical operators
+    if (fn %in% allowed_ops) {
+      walk_expr(node[[2]], col_names)
+      walk_expr(node[[3]], col_names)
+      return(invisible(TRUE))
+    }
+
+    # unary negation / not
+    if (fn == "!") {
+      walk_expr(node[[2]], col_names)
+      return(invisible(TRUE))
+    }
+
+    # unary minus (negative numeric literals like -1)
+    if (fn == "-" && length(node) == 2) {
+      walk_expr(node[[2]], col_names)
+      return(invisible(TRUE))
+    }
+
+    # parenthesized grouping
+    if (fn == "(") {
+      walk_expr(node[[2]], col_names)
+      return(invisible(TRUE))
+    }
+
+    # is.na(COLUMN) -- argument must be a symbol
+    if (fn == "is.na") {
+      if (length(node) != 2 || !is.symbol(node[[2]])) {
+        stop("is.na() must be called with a single column name")
+      }
+      walk_expr(node[[2]], col_names)
+      return(invisible(TRUE))
+    }
+
+    # COL %in% c(...) -- LHS must be a symbol, RHS must be c() of literals
+    if (fn == "%in%") {
+      lhs <- node[[2]]
+      rhs <- node[[3]]
+      if (!is.symbol(lhs)) {
+        stop("%in% left-hand side must be a column name")
+      }
+      walk_expr(lhs, col_names)
+      if (!is.call(rhs) || !identical(as.character(rhs[[1]]), "c")) {
+        stop("%in% right-hand side must be a c() call of literals")
+      }
+      for (i in seq_along(rhs)[-1]) {
+        elem <- rhs[[i]]
+        if (!(is.numeric(elem) || is.character(elem) || is.logical(elem))) {
+          stop(
+            "%in% c() arguments must be literals, got: ",
+            deparse(elem)
+          )
+        }
+      }
+      return(invisible(TRUE))
+    }
+
+    stop(
+      "Disallowed construct in filter expression: '", fn, "'. ",
+      "Only column comparisons (<=, <, >=, >, ==, !=), ",
+      "logical operators (&, |, !), is.na(), %in% c(), ",
+      "and literals are allowed."
+    )
+  }
+
+  stop(
+    "Unexpected element in filter expression: ",
+    deparse(node)
+  )
+}
 
 
+#' Validate and parse a filter expression string
+#'
+#' Parses the filter string with [rlang::parse_expr()] and walks the resulting
+#' AST to ensure it contains only safe constructs: column comparisons, logical
+#' operators, `is.na()`, and literals. Rejects arbitrary function calls,
+#' assignments, namespace operators, and other unsafe code.
+#'
+#' @param filter_string A filter expression as a single character string.
+#' @param data Optional data frame. If provided, column names referenced in the
+#'   expression are validated against `names(data)`.
+#'
+#' @return The parsed expression (a language object), invisibly. Stops with an
+#'   error if the expression is invalid or contains disallowed constructs.
+#' @noRd
+validate_filter_ast <- function(filter_string, data = NULL) {
+  if (!is.character(filter_string) || length(filter_string) != 1) {
+    stop("filter_string must be a single character string")
+  }
+
+  if (nchar(trimws(filter_string)) == 0) {
+    stop("filter_string must not be empty")
+  }
+
+  expr <- tryCatch(
+    rlang::parse_expr(filter_string),
+    error = function(e) {
+      stop("Failed to parse filter expression: ", e$message)
+    }
+  )
+
+  col_names <- if (!is.null(data)) names(data) else NULL
+  walk_expr(expr, col_names)
+
+  invisible(expr)
+}
