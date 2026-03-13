@@ -139,9 +139,10 @@ make_subjects <- function(
   }
 
   # Apply filter to dm and prepare output
+  subject_expr <- validate_filter_ast(subject_filter, data = dm)
   filtered_dm <- dm |>
     lubrify_dates() |>
-    filter(eval(parse(text = subject_filter)))
+    filter(rlang::eval_tidy(subject_expr, data = pick(everything())))
 
   # Add warning if subject_filter returns no entries
   if (nrow(filtered_dm) == 0) {

@@ -191,12 +191,13 @@ add_baseline <- function(
 
   # validate and apply baseline filter
   if (nrow(filtered_domain) > 0) {
-    if (!is_valid_filter(filtered_domain, baseline_filter, silent = silent))
-      stop(paste0("Invalid baseline_filter: ", baseline_filter))
+    bl_expr <- validate_filter_ast(baseline_filter, data = filtered_domain)
+  } else {
+    bl_expr <- validate_filter_ast(baseline_filter)
   }
 
   filtered_domain <- filtered_domain |>
-    filter(eval(parse(text = baseline_filter)))
+    filter(rlang::eval_tidy(bl_expr, data = pick(everything())))
 
   # Check if any data remains after filtering
   if (nrow(filtered_domain) == 0) {
