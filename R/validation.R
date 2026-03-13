@@ -658,13 +658,28 @@ walk_expr <- function(node, col_names = NULL) {
   if (is.call(node)) {
     fn_node <- node[[1]]
 
-    # reject namespace calls (e.g., pkg::fun) -- fn_node is itself a call
+    # handle namespace calls (e.g., pkg::fun) -- fn_node is itself a call
     if (is.call(fn_node)) {
-      stop(
-        "Disallowed construct in filter expression: '",
-        deparse(fn_node), "'. ",
-        "Namespaced function calls are not allowed."
-      )
+      allowed_ns_funs <- c("lubridate::as_datetime")
+      ns_name <- deparse(fn_node)
+      if (!ns_name %in% allowed_ns_funs) {
+        stop(
+          "Disallowed construct in filter expression: '",
+          ns_name, "'. ",
+          "Only these namespaced functions are allowed: ",
+          paste(allowed_ns_funs, collapse = ", ")
+        )
+      }
+      for (i in seq_along(node)[-1]) {
+        arg <- node[[i]]
+        if (!(is.numeric(arg) || is.character(arg) || is.logical(arg))) {
+          stop(
+            ns_name, "() arguments must be literals, got: ",
+            deparse(arg)
+          )
+        }
+      }
+      return(invisible(TRUE))
     }
 
     fn <- as.character(fn_node)

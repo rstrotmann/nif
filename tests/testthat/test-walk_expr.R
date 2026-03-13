@@ -232,16 +232,34 @@ test_that("walk_expr rejects c()", {
 })
 
 
+# --- Allowed namespace calls ---
+
+test_that("walk_expr accepts lubridate::as_datetime with string literal", {
+  expr <- rlang::parse_expr("lubridate::as_datetime('2023-01-01')")
+  expect_invisible(walk_expr(expr))
+})
+
+test_that("walk_expr accepts lubridate::as_datetime in comparison", {
+  expr <- rlang::parse_expr("VSDTC == lubridate::as_datetime('2023-01-01')")
+  expect_invisible(walk_expr(expr))
+})
+
+test_that("walk_expr rejects lubridate::as_datetime with non-literal argument", {
+  expr <- rlang::parse_expr("lubridate::as_datetime(COL)")
+  expect_error(walk_expr(expr), "arguments must be literals")
+})
+
+
 # --- Rejected: namespace calls ---
 
-test_that("walk_expr rejects namespaced function calls", {
-  expr <- rlang::parse_expr("lubridate::as_datetime('2023')")
-  expect_error(walk_expr(expr), "Namespaced function calls are not allowed")
+test_that("walk_expr rejects non-allowlisted namespace calls", {
+  expr <- rlang::parse_expr("base::system('ls')")
+  expect_error(walk_expr(expr), "Disallowed construct.*base::system")
 })
 
 test_that("walk_expr rejects triple-colon namespace calls", {
   expr <- rlang::parse_expr("base:::system('ls')")
-  expect_error(walk_expr(expr), "Namespaced function calls are not allowed")
+  expect_error(walk_expr(expr), "Disallowed construct")
 })
 
 

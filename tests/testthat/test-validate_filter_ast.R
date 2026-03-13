@@ -157,10 +157,15 @@ test_that("validate_filter_ast rejects arbitrary function calls", {
   expect_error(validate_filter_ast("system('ls')"), "Disallowed construct")
 })
 
-test_that("validate_filter_ast rejects namespace calls", {
+test_that("validate_filter_ast accepts lubridate::as_datetime in filter", {
+  expr <- validate_filter_ast("VSDTC >= lubridate::as_datetime('2023-06-01')")
+  expect_true(is.call(expr))
+})
+
+test_that("validate_filter_ast rejects non-allowlisted namespace calls", {
   expect_error(
-    validate_filter_ast("lubridate::as_datetime('2023')"),
-    "Namespaced function calls are not allowed"
+    validate_filter_ast("base::system('ls')"),
+    "Disallowed construct.*base::system"
   )
 })
 

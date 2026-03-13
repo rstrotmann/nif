@@ -182,11 +182,14 @@ add_baseline <- function(
   }
 
   # validate and apply observation filter
-  if (!is_valid_filter(filtered_domain, observation_filter, silent = silent))
-    stop(paste0("Invalid observation_filter: ", observation_filter))
+  if (nrow(filtered_domain) > 0) {
+    obs_expr <- validate_filter_ast(observation_filter, data = filtered_domain)
+  } else {
+    obs_expr <- validate_filter_ast(observation_filter)
+  }
 
   filtered_domain <- filtered_domain |>
-    filter(eval(parse(text = observation_filter))) |>
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     filter(.data[[testcd_field]] %in% testcd)
 
   # validate and apply baseline filter
@@ -572,14 +575,17 @@ derive_cfb_analyte <- function(
     filter(.data$EVID == 0) |>
     filter(.data$ANALYTE == source_analyte)
 
-  if (!is_valid_filter(temp, baseline_filter, silent = silent))
-    stop(paste0("Invalid filter: ", baseline_filter))
+  if (nrow(temp) > 0) {
+    bl_expr <- validate_filter_ast(baseline_filter, data = temp)
+  } else {
+    bl_expr <- validate_filter_ast(baseline_filter)
+  }
 
   # make new analyte
   temp <- temp |>
     group_by(.data$ID) |>
     mutate(.BL = summary_function(
-      na.omit(.data$DV[eval(parse(text = baseline_filter))])
+      na.omit(.data$DV[rlang::eval_tidy(bl_expr, data = pick(everything()))])
     )) |>
     ungroup() |>
     mutate(DV = .data$DV - .data$.BL) |>

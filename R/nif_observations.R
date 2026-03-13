@@ -528,9 +528,14 @@ make_observation <- function(
   }
 
   # apply observation filter, add debug fields
+  if (nrow(obj) > 0) {
+    obs_expr <- validate_filter_ast(observation_filter, data = obj)
+  } else {
+    obs_expr <- validate_filter_ast(observation_filter)
+  }
   filtered_obj <- obj |>
     mutate(SRC_DOMAIN = .data$DOMAIN) |>
-    filter(eval(parse(text = observation_filter)))
+    filter(rlang::eval_tidy(obs_expr, data = pick(everything())))
 
   if (paste0(toupper(domain), "SEQ") %in% names(obj)) {
     filtered_obj <- mutate(

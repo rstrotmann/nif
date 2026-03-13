@@ -391,7 +391,7 @@ test_that("derive_cfb_analyte rejects filter referencing nonexistent column", {
       test_nif, source_analyte = "A",
       baseline_filter = "NONEXISTENT_COL <= 0",
       silent = TRUE),
-    "Invalid filter"
+    "not found in data"
   )
 })
 
