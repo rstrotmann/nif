@@ -417,13 +417,14 @@ miss_admins <- function(start_dtc, end_dtc, dose = 500, dose_red = 250,
 #'
 #' @return The EX domain as data frame.
 #' @keywords internal
-make_md_ex <- function(dm,
-                       drug = "RS2023",
-                       dose = 500,
-                       treatment_duration = 50,
-                       missed_prob = 0.15,
-                       missed_doses = T,
-                       red_prob = 0.3) {
+make_md_ex <- function(
+    dm,
+    drug = "RS2023",
+    dose = 500,
+    treatment_duration = 50,
+    missed_prob = 0.15,
+    missed_doses = T,
+    red_prob = 0.3) {
   ex <- dm %>%
     filter(.data$ACTARMCD != "SCRNFAIL") %>%
     select(c("STUDYID", "USUBJID", "RFSTDTC")) %>%
@@ -1281,3 +1282,75 @@ synthesize_pp <- function(obj) {
   }
   return(out)
 }
+
+
+
+#' Synthesize SDTM data for a CYP3A4 induction study
+#'
+#' @returns A sdtm object
+synthesize_rifa_study <- function() {
+    studyid <- "2023000403"
+    studytitle <- "An open-label 2-period crossover study in healthy subjects to investigate the effect of rifampicin on the pharmacokinetics of examplinib"
+
+    sampling_scheme <- rich_sampling_scheme <- tibble::tribble(
+      ~time, ~PCTPT,
+      0, "PREDOSE",
+      0.5, "0.5 HOURS POST-DOSE",
+      1, "1 HOURS POST-DOSE",
+      1.5, "1.5 HOURS POST-DOSE",
+      2, "2 HOURS POST-DOSE",
+      3, "3 HOURS POST-DOSE",
+      4, "4 HOURS POST-DOSE",
+      6, "6 HOURS POST-DOSE",
+      8, "8 HOURS POST-DOSE",
+      10, "10 HOURS POST-DOSE",
+      12, "12 HOURS POST-DOSE",
+      24, "24 HOURS POST-DOSE",
+      48, "48 HOURS POST-DOSE",
+      72, "72 HOURS POST-DOSE",
+      96, "96 HOURS POST-DOSE",
+      144, "144 HOURS POST-DOSE",
+      168, "168 HOURS POST-DOSE",
+    )
+
+    dm <- synthesize_dm(studyid = studyid, nsubs = 20)
+    i_treated <- which(dm$ACTARMCD != "SCRNFAIL")
+    i_seq1 <- sample(i_treated, length(i_treated) / 2)
+
+    dm <- dm %>%
+      mutate(ACTARMCD = case_when(
+        row_number() %in% i_seq1 ~ "AB",
+        row_number() %in% i_treated & !(row_number() %in% i_seq1) ~ "TR",
+        .default = "SCRNFAIL"
+      )) %>%
+      mutate(ACTARM = ACTARMCD) %>%
+      mutate(ARM = ACTARM, ARMCD = ACTARMCD)
+
+    vs <- synthesize_vs(dm)
+    lb <- synthesize_lb(dm)
+    ex <- make_sd_ex(dm, drug = "RS2023")
+
+    ex_rifa <- make_md_ex(dm, drug = "rifa", dose = 50, treatment_duration = 10, missed_doses = F)
+
+    dm <- dm %>%
+      add_RFENDTC(ex)
+
+    pc <- make_fe_pc(ex, dm, vs, sampling_scheme)
+
+    ts <- synthesize_ts(studyid, studytitle, c("fe", "pk"), "1",
+                        startdate = format(min(dm$RFICDTC, na.rm = T)),
+                        enddate = format(last_dtc_data_frame(pc)),
+                        hv = TRUE
+    )
+
+    out <- list(
+      dm = dm,
+      vs = vs,
+      ex = mutate(ex, EXTRT = "EXAMPLINIB"),
+      pc = pc,
+      lb = lb,
+      ts = ts
+    )
+
+    sdtm(lapply(out, isofy_dates))
+  }

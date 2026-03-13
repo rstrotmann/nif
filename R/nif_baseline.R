@@ -252,6 +252,32 @@ add_baseline <- function(
 }
 
 
+#' Calculate baseline value from group data
+#'
+#' Applies a filter expression to a group's DV values, removes NAs, and
+#' summarizes with the given function. Returns `default` when no valid
+#' observations remain or when the summary produces NA/NaN.
+#'
+#' @param group_data A data frame for a single ID/ANALYTE group.
+#' @param filter_expr A parsed expression used to subset rows.
+#' @param summary_fun A summary function (e.g., `median`, `mean`).
+#' @param default The fallback value when no valid baseline can be computed.
+#'
+#' @return A single numeric baseline value.
+#' @noRd
+calc_baseline <- function(group_data, filter_expr, summary_fun, default) {
+  filtered_dv <- na.omit(group_data$DV[eval(filter_expr, envir = group_data)])
+  if (length(filtered_dv) == 0) {
+    return(default)
+  }
+  result <- summary_fun(filtered_dv)
+  if (is.na(result) || is.nan(result)) {
+    return(default)
+  }
+  result
+}
+
+
 #' Extract the individual baseline value for an analyte
 #'
 #' @param obj A nif object.
@@ -357,19 +383,6 @@ derive_baseline <- function(
       "These rows will be excluded from calculations.",
       silent = silent
     )
-  }
-
-  # Helper function to calculate baseline for a group
-  calc_baseline <- function(group_data, filter_expr, summary_fun, default) {
-    filtered_dv <- na.omit(group_data$DV[eval(filter_expr, envir = group_data)])
-    if (length(filtered_dv) == 0) {
-      return(default)
-    }
-    result <- summary_fun(filtered_dv)
-    if (is.na(result) || is.nan(result)) {
-      return(default)
-    }
-    result
   }
 
   filter_expr <- parse(text = baseline_filter)
