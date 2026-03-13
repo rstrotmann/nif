@@ -971,13 +971,16 @@ test_that("make_observation shows correct message when omit_not_done filters obs
 
   # Test that message is shown when silent = FALSE
   expect_message(
-    make_observation(
-      test_sdtm_message, "pc", "A",
-      ntime_method = "ELTM",
-      omit_not_done = TRUE,
-      silent = FALSE
+    expect_message(
+      make_observation(
+        test_sdtm_message, "pc", "A",
+        ntime_method = "ELTM",
+        omit_not_done = TRUE,
+        silent = FALSE
+      ),
+      "2 observations for A with PCSTAT of 'NOT DONE' omitted"
     ),
-    "2 observations for A with PCSTAT of 'NOT DONE' omitted"
+    "LLOQ imputation cannot be done"
   )
 
   # Test that no message is shown when silent = TRUE
