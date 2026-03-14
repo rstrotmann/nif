@@ -98,13 +98,75 @@ debug_plot <- function(
     plot_title <- paste0(plot_title, " by ", plot_data_set$facet)
   }
 
+  render_sdtm_table <- function(df, seq_col, highlight_seq) {
+    header <- paste0(
+      "<tr>",
+      paste0("<th>", htmltools::htmlEscape(names(df)), "</th>", collapse = ""),
+      "</tr>"
+    )
+
+    rows <- vapply(seq_len(nrow(df)), function(i) {
+      is_selected <- !is.null(highlight_seq) && !is.null(seq_col) &&
+        seq_col %in% names(df) && !is.na(df[[seq_col]][i]) &&
+        df[[seq_col]][i] == highlight_seq
+      cls <- if (is_selected) ' class="highlight-row"' else ""
+      cells <- paste0(
+        "<td>",
+        vapply(df[i, ], function(v) {
+          htmltools::htmlEscape(as.character(v))
+        }, character(1)),
+        "</td>",
+        collapse = ""
+      )
+      paste0("<tr", cls, ">", cells, "</tr>")
+    }, character(1))
+
+    shiny::HTML(paste0(
+      '<div style="overflow-x: auto;">',
+      '<table class="table table-bordered table-striped table-hover"',
+      ' style="width: 100%;">',
+      "<thead>", header, "</thead>",
+      "<tbody>", paste(rows, collapse = ""), "</tbody>",
+      "</table></div>"
+    ))
+  }
+
+  lookup_domain_neighbors <- function(sdtm_obj, domain_name, usubjid,
+                                      target_seq) {
+    src_data <- domain(sdtm_obj, tolower(domain_name))
+    seq_col <- paste0(toupper(domain_name), "SEQ")
+
+    if (!seq_col %in% names(src_data)) {
+      return(list(data = NULL, seq_col = seq_col, seq_val = target_seq))
+    }
+
+    subj_data <- src_data
+    if ("USUBJID" %in% names(src_data)) {
+      subj_data <- src_data[src_data$USUBJID == usubjid, , drop = FALSE]
+    }
+    subj_data <- subj_data[order(subj_data[[seq_col]]), , drop = FALSE]
+
+    match_idx <- which(subj_data[[seq_col]] == target_seq)
+    if (length(match_idx) == 0) {
+      return(list(data = NULL, seq_col = seq_col, seq_val = target_seq))
+    }
+
+    idx <- match_idx[1]
+    neighbor_idx <- seq(max(1, idx - 1), min(nrow(subj_data), idx + 1))
+    list(
+      data = subj_data[neighbor_idx, , drop = FALSE],
+      seq_col = seq_col,
+      seq_val = target_seq
+    )
+  }
+
   ui <- shiny::fluidPage(
     title = "NIF debug plot",
     shiny::tags$style(shiny::HTML(
       ".highlight-row { background-color: #fff3cd !important;
          font-weight: bold; }
-       #source_table table { font-size: 12px; }
-       #source_table td, #source_table th { padding: 4px 8px; }"
+       .sdtm-table table { font-size: 12px; }
+       .sdtm-table td, .sdtm-table th { padding: 4px 8px; }"
     )),
     shiny::h3("NIF debug plot"),
     shiny::plotOutput("main_plot", click = "plot_click", height = "500px"),
@@ -116,7 +178,8 @@ debug_plot <- function(
         shiny::conditionalPanel(
           condition = "output.has_selection",
           shiny::h5(shiny::textOutput("selection_info")),
-          shiny::uiOutput("source_table")
+          shiny::div(class = "sdtm-table", shiny::uiOutput("source_table")),
+          shiny::uiOutput("ex_section")
         ),
         shiny::conditionalPanel(
           condition = "!output.has_selection",
@@ -133,6 +196,8 @@ debug_plot <- function(
     selected_source <- shiny::reactiveVal(NULL)
     selected_seq <- shiny::reactiveVal(NULL)
     selected_info <- shiny::reactiveVal("")
+    selected_ex <- shiny::reactiveVal(NULL)
+    selected_ex_seq <- shiny::reactiveVal(NULL)
 
     output$main_plot <- shiny::renderPlot({
       p <- obs_data |>
@@ -188,6 +253,32 @@ debug_plot <- function(
       suppressWarnings(p)
     })
 
+    find_related_ex <- function(clicked_row) {
+      usubjid <- clicked_row$USUBJID[1]
+      parent <- clicked_row$PARENT[1]
+      obs_time <- clicked_row$TIME[1]
+
+      if (is.na(parent) || is.na(obs_time)) return(NULL)
+
+      admins <- nif[nif$EVID == 1 &
+                    nif$USUBJID == usubjid &
+                    nif$ANALYTE == parent &
+                    !is.na(nif$TIME) &
+                    nif$TIME <= obs_time, , drop = FALSE]
+
+      if (nrow(admins) == 0) return(NULL)
+
+      admins <- admins[order(admins$TIME, decreasing = TRUE), , drop = FALSE]
+      closest_admin <- admins[1, , drop = FALSE]
+
+      if (!"SRC_SEQ" %in% names(closest_admin) ||
+          is.na(closest_admin$SRC_SEQ[1])) {
+        return(NULL)
+      }
+
+      closest_admin$SRC_SEQ[1]
+    }
+
     shiny::observeEvent(input$plot_click, {
       clicked <- shiny::nearPoints(
         obs_data, input$plot_click,
@@ -200,6 +291,8 @@ debug_plot <- function(
         selected_source(NULL)
         selected_seq(NULL)
         selected_info("")
+        selected_ex(NULL)
+        selected_ex_seq(NULL)
         return()
       }
 
@@ -220,6 +313,8 @@ debug_plot <- function(
           " | DV = ", round(clicked$DV[1], 4),
           " | Source: IMPORT"
         ))
+        selected_ex(NULL)
+        selected_ex_seq(NULL)
         return()
       }
 
@@ -233,45 +328,25 @@ debug_plot <- function(
           " | ", clicked$ANALYTE[1],
           " | Domain: ", src_domain
         ))
+        selected_ex(NULL)
+        selected_ex_seq(NULL)
         return()
       }
 
       tryCatch({
-        src_data <- domain(sdtm, tolower(src_domain))
-        seq_col <- paste0(toupper(src_domain), "SEQ")
+        result <- lookup_domain_neighbors(sdtm, src_domain,
+                                          clicked$USUBJID[1], src_seq)
 
-        if (!seq_col %in% names(src_data)) {
-          selected_source(
-            data.frame(Note = paste0("Column ", seq_col, " not found in ",
-                                     src_domain, " domain."))
-          )
-          selected_seq(NULL)
-          selected_info(paste0("Domain: ", src_domain))
-          return()
-        }
-
-        subj_data <- src_data
-        if ("USUBJID" %in% names(src_data)) {
-          subj_data <- src_data[src_data$USUBJID == clicked$USUBJID[1], ,
-                                drop = FALSE]
-        }
-        subj_data <- subj_data[order(subj_data[[seq_col]]), , drop = FALSE]
-
-        match_idx <- which(subj_data[[seq_col]] == src_seq)
-
-        if (length(match_idx) == 0) {
+        if (is.null(result$data)) {
           selected_source(
             data.frame(Note = paste0(
               "No matching record found in ", src_domain,
-              " for ", seq_col, " = ", src_seq
+              " for ", result$seq_col, " = ", src_seq
             ))
           )
           selected_seq(NULL)
         } else {
-          idx <- match_idx[1]
-          neighbor_idx <- seq(max(1, idx - 1), min(nrow(subj_data), idx + 1))
-          neighbors <- subj_data[neighbor_idx, , drop = FALSE]
-          selected_source(neighbors)
+          selected_source(result$data)
           selected_seq(src_seq)
         }
 
@@ -280,7 +355,7 @@ debug_plot <- function(
           " | ", clicked$ANALYTE[1],
           " | ", time, " = ", round(clicked$active_time[1], 2),
           " | DV = ", round(clicked$DV[1], 4),
-          " | Source: ", src_domain, " (", seq_col, " = ", src_seq, ")"
+          " | Source: ", src_domain, " (", result$seq_col, " = ", src_seq, ")"
         ))
       },
       error = function(e) {
@@ -289,6 +364,23 @@ debug_plot <- function(
         )
         selected_seq(NULL)
         selected_info(paste0("Domain: ", src_domain, " (lookup failed)"))
+      })
+
+      tryCatch({
+        ex_seq <- find_related_ex(clicked[1, , drop = FALSE])
+        if (!is.null(ex_seq) && has_domain(sdtm, "ex")) {
+          ex_result <- lookup_domain_neighbors(sdtm, "EX",
+                                               clicked$USUBJID[1], ex_seq)
+          selected_ex(ex_result$data)
+          selected_ex_seq(ex_seq)
+        } else {
+          selected_ex(NULL)
+          selected_ex_seq(NULL)
+        }
+      },
+      error = function(e) {
+        selected_ex(NULL)
+        selected_ex_seq(NULL)
       })
     })
 
@@ -305,45 +397,24 @@ debug_plot <- function(
       shiny::req(selected_source())
       df <- selected_source()
       sel_seq <- selected_seq()
-
       src_dom <- selected_point()$SRC_DOMAIN[1]
-      seq_col <- if (!is.na(src_dom)) {
-        paste0(toupper(src_dom), "SEQ")
-      } else {
-        NULL
-      }
+      seq_col <- if (!is.na(src_dom)) paste0(toupper(src_dom), "SEQ") else NULL
 
-      header <- paste0(
-        "<tr>",
-        paste0("<th>", htmltools::htmlEscape(names(df)), "</th>",
-               collapse = ""),
-        "</tr>"
-      )
+      render_sdtm_table(df, seq_col, sel_seq)
+    })
 
-      rows <- vapply(seq_len(nrow(df)), function(i) {
-        is_selected <- !is.null(sel_seq) && !is.null(seq_col) &&
-          seq_col %in% names(df) && !is.na(df[[seq_col]][i]) &&
-          df[[seq_col]][i] == sel_seq
-        cls <- if (is_selected) ' class="highlight-row"' else ""
-        cells <- paste0(
-          "<td>",
-          vapply(df[i, ], function(v) {
-            htmltools::htmlEscape(as.character(v))
-          }, character(1)),
-          "</td>",
-          collapse = ""
+    output$ex_section <- shiny::renderUI({
+      ex_data <- selected_ex()
+      if (is.null(ex_data)) return(NULL)
+
+      shiny::tagList(
+        shiny::hr(),
+        shiny::h4("Related administration (EX)"),
+        shiny::div(
+          class = "sdtm-table",
+          render_sdtm_table(ex_data, "EXSEQ", selected_ex_seq())
         )
-        paste0("<tr", cls, ">", cells, "</tr>")
-      }, character(1))
-
-      shiny::HTML(paste0(
-        '<div style="overflow-x: auto;">',
-        '<table class="table table-bordered table-striped table-hover"',
-        ' style="width: 100%;">',
-        "<thead>", header, "</thead>",
-        "<tbody>", paste(rows, collapse = ""), "</tbody>",
-        "</table></div>"
-      ))
+      )
     })
   }
 
