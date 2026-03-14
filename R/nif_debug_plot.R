@@ -98,18 +98,17 @@ debug_plot <- function(
     plot_title <- paste0(plot_title, " by ", plot_data_set$facet)
   }
 
-  render_sdtm_table <- function(df, seq_col, highlight_seq) {
+  render_highlight_table <- function(df, highlight_rows = NULL) {
     header <- paste0(
       "<tr>",
       paste0("<th>", htmltools::htmlEscape(names(df)), "</th>", collapse = ""),
       "</tr>"
     )
 
+    if (is.null(highlight_rows)) highlight_rows <- rep(FALSE, nrow(df))
+
     rows <- vapply(seq_len(nrow(df)), function(i) {
-      is_selected <- !is.null(highlight_seq) && !is.null(seq_col) &&
-        seq_col %in% names(df) && !is.na(df[[seq_col]][i]) &&
-        df[[seq_col]][i] == highlight_seq
-      cls <- if (is_selected) ' class="highlight-row"' else ""
+      cls <- if (highlight_rows[i]) ' class="highlight-row"' else ""
       cells <- paste0(
         "<td>",
         vapply(df[i, ], function(v) {
@@ -129,6 +128,15 @@ debug_plot <- function(
       "<tbody>", paste(rows, collapse = ""), "</tbody>",
       "</table></div>"
     ))
+  }
+
+  render_sdtm_table <- function(df, seq_col, highlight_seq) {
+    hl <- rep(FALSE, nrow(df))
+    if (!is.null(highlight_seq) && !is.null(seq_col) &&
+        seq_col %in% names(df)) {
+      hl <- !is.na(df[[seq_col]]) & df[[seq_col]] == highlight_seq
+    }
+    render_highlight_table(df, hl)
   }
 
   lookup_domain_neighbors <- function(sdtm_obj, domain_name, usubjid,
@@ -179,7 +187,8 @@ debug_plot <- function(
           condition = "output.has_selection",
           shiny::h5(shiny::textOutput("selection_info")),
           shiny::div(class = "sdtm-table", shiny::uiOutput("source_table")),
-          shiny::uiOutput("ex_section")
+          shiny::uiOutput("ex_section"),
+          shiny::uiOutput("nif_section")
         ),
         shiny::conditionalPanel(
           condition = "!output.has_selection",
@@ -198,6 +207,8 @@ debug_plot <- function(
     selected_info <- shiny::reactiveVal("")
     selected_ex <- shiny::reactiveVal(NULL)
     selected_ex_seq <- shiny::reactiveVal(NULL)
+    selected_nif_rows <- shiny::reactiveVal(NULL)
+    selected_nif_highlight <- shiny::reactiveVal(NULL)
 
     output$main_plot <- shiny::renderPlot({
       p <- obs_data |>
@@ -293,6 +304,8 @@ debug_plot <- function(
         selected_info("")
         selected_ex(NULL)
         selected_ex_seq(NULL)
+        selected_nif_rows(NULL)
+        selected_nif_highlight(NULL)
         return()
       }
 
@@ -315,6 +328,8 @@ debug_plot <- function(
         ))
         selected_ex(NULL)
         selected_ex_seq(NULL)
+        selected_nif_rows(NULL)
+        selected_nif_highlight(NULL)
         return()
       }
 
@@ -330,6 +345,8 @@ debug_plot <- function(
         ))
         selected_ex(NULL)
         selected_ex_seq(NULL)
+        selected_nif_rows(NULL)
+        selected_nif_highlight(NULL)
         return()
       }
 
@@ -382,6 +399,36 @@ debug_plot <- function(
         selected_ex(NULL)
         selected_ex_seq(NULL)
       })
+
+      tryCatch({
+        subj_nif <- nif[nif$USUBJID == clicked$USUBJID[1] &
+                        nif$EVID == 0, , drop = FALSE]
+        subj_nif <- subj_nif[order(subj_nif$TIME), , drop = FALSE]
+
+        match_idx <- which(
+          !is.na(subj_nif$SRC_DOMAIN) & subj_nif$SRC_DOMAIN == src_domain &
+          !is.na(subj_nif$SRC_SEQ) & subj_nif$SRC_SEQ == src_seq &
+          subj_nif$ANALYTE == clicked$ANALYTE[1]
+        )
+
+        if (length(match_idx) > 0) {
+          idx <- match_idx[1]
+          neighbor_idx <- seq(max(1, idx - 1),
+                              min(nrow(subj_nif), idx + 1))
+          nif_subset <- subj_nif[neighbor_idx, , drop = FALSE]
+          hl <- rep(FALSE, length(neighbor_idx))
+          hl[which(neighbor_idx == idx)] <- TRUE
+          selected_nif_rows(nif_subset)
+          selected_nif_highlight(hl)
+        } else {
+          selected_nif_rows(NULL)
+          selected_nif_highlight(NULL)
+        }
+      },
+      error = function(e) {
+        selected_nif_rows(NULL)
+        selected_nif_highlight(NULL)
+      })
     })
 
     output$has_selection <- shiny::reactive({
@@ -413,6 +460,20 @@ debug_plot <- function(
         shiny::div(
           class = "sdtm-table",
           render_sdtm_table(ex_data, "EXSEQ", selected_ex_seq())
+        )
+      )
+    })
+
+    output$nif_section <- shiny::renderUI({
+      nif_data <- selected_nif_rows()
+      if (is.null(nif_data)) return(NULL)
+
+      shiny::tagList(
+        shiny::hr(),
+        shiny::h4("NIF record"),
+        shiny::div(
+          class = "sdtm-table",
+          render_highlight_table(nif_data, selected_nif_highlight())
         )
       )
     })
