@@ -100,6 +100,12 @@ debug_plot <- function(
 
   ui <- shiny::fluidPage(
     title = "NIF debug plot",
+    shiny::tags$style(shiny::HTML(
+      ".highlight-row { background-color: #fff3cd !important;
+         font-weight: bold; }
+       #source_table table { font-size: 12px; }
+       #source_table td, #source_table th { padding: 4px 8px; }"
+    )),
     shiny::h3("NIF debug plot"),
     shiny::plotOutput("main_plot", click = "plot_click", height = "500px"),
     shiny::hr(),
@@ -110,18 +116,22 @@ debug_plot <- function(
         shiny::conditionalPanel(
           condition = "output.has_selection",
           shiny::h5(shiny::textOutput("selection_info")),
-          shiny::tableOutput("source_table")
+          shiny::uiOutput("source_table")
         ),
         shiny::conditionalPanel(
           condition = "!output.has_selection",
-          shiny::p(shiny::em("Click a data point to display the source SDTM record."))
+          shiny::p(shiny::em(
+            "Click a data point to display the source SDTM record."
+          ))
         )
       )
     )
   )
 
   server <- function(input, output, session) {
+    selected_point <- shiny::reactiveVal(NULL)
     selected_source <- shiny::reactiveVal(NULL)
+    selected_seq <- shiny::reactiveVal(NULL)
     selected_info <- shiny::reactiveVal("")
 
     output$main_plot <- shiny::renderPlot({
@@ -139,6 +149,15 @@ debug_plot <- function(
       }
 
       p <- p + ggplot2::geom_point(size = size, alpha = alpha, na.rm = TRUE)
+
+      sel <- selected_point()
+      if (!is.null(sel)) {
+        p <- p +
+          ggplot2::geom_point(
+            data = sel, size = size + 3, shape = 21, stroke = 2,
+            fill = NA, color = "black", na.rm = TRUE
+          )
+      }
 
       if (!is.null(plot_data_set$facet)) {
         if ("FACET" %in% names(obs_data) &&
@@ -177,10 +196,14 @@ debug_plot <- function(
       )
 
       if (nrow(clicked) == 0) {
+        selected_point(NULL)
         selected_source(NULL)
+        selected_seq(NULL)
         selected_info("")
         return()
       }
+
+      selected_point(clicked[1, , drop = FALSE])
 
       src_domain <- clicked$SRC_DOMAIN[1]
       src_seq <- clicked$SRC_SEQ[1]
@@ -189,6 +212,7 @@ debug_plot <- function(
         selected_source(
           data.frame(Note = "Source: imported data (no SDTM source record)")
         )
+        selected_seq(NULL)
         selected_info(paste0(
           "Subject ", clicked$USUBJID[1],
           " | ", clicked$ANALYTE[1],
@@ -203,6 +227,7 @@ debug_plot <- function(
         selected_source(
           data.frame(Note = "SRC_SEQ is NA; cannot look up source record.")
         )
+        selected_seq(NULL)
         selected_info(paste0(
           "Subject ", clicked$USUBJID[1],
           " | ", clicked$ANALYTE[1],
@@ -220,26 +245,34 @@ debug_plot <- function(
             data.frame(Note = paste0("Column ", seq_col, " not found in ",
                                      src_domain, " domain."))
           )
+          selected_seq(NULL)
           selected_info(paste0("Domain: ", src_domain))
           return()
         }
 
-        matched <- src_data[src_data[[seq_col]] == src_seq, , drop = FALSE]
-
-        if ("USUBJID" %in% names(matched)) {
-          matched <- matched[matched$USUBJID == clicked$USUBJID[1], ,
-                             drop = FALSE]
+        subj_data <- src_data
+        if ("USUBJID" %in% names(src_data)) {
+          subj_data <- src_data[src_data$USUBJID == clicked$USUBJID[1], ,
+                                drop = FALSE]
         }
+        subj_data <- subj_data[order(subj_data[[seq_col]]), , drop = FALSE]
 
-        if (nrow(matched) == 0) {
+        match_idx <- which(subj_data[[seq_col]] == src_seq)
+
+        if (length(match_idx) == 0) {
           selected_source(
             data.frame(Note = paste0(
               "No matching record found in ", src_domain,
               " for ", seq_col, " = ", src_seq
             ))
           )
+          selected_seq(NULL)
         } else {
-          selected_source(matched)
+          idx <- match_idx[1]
+          neighbor_idx <- seq(max(1, idx - 1), min(nrow(subj_data), idx + 1))
+          neighbors <- subj_data[neighbor_idx, , drop = FALSE]
+          selected_source(neighbors)
+          selected_seq(src_seq)
         }
 
         selected_info(paste0(
@@ -254,6 +287,7 @@ debug_plot <- function(
         selected_source(
           data.frame(Note = paste0("Error looking up source: ", e$message))
         )
+        selected_seq(NULL)
         selected_info(paste0("Domain: ", src_domain, " (lookup failed)"))
       })
     })
@@ -267,10 +301,50 @@ debug_plot <- function(
       selected_info()
     })
 
-    output$source_table <- shiny::renderTable({
+    output$source_table <- shiny::renderUI({
       shiny::req(selected_source())
-      selected_source()
-    }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+      df <- selected_source()
+      sel_seq <- selected_seq()
+
+      src_dom <- selected_point()$SRC_DOMAIN[1]
+      seq_col <- if (!is.na(src_dom)) {
+        paste0(toupper(src_dom), "SEQ")
+      } else {
+        NULL
+      }
+
+      header <- paste0(
+        "<tr>",
+        paste0("<th>", htmltools::htmlEscape(names(df)), "</th>",
+               collapse = ""),
+        "</tr>"
+      )
+
+      rows <- vapply(seq_len(nrow(df)), function(i) {
+        is_selected <- !is.null(sel_seq) && !is.null(seq_col) &&
+          seq_col %in% names(df) && !is.na(df[[seq_col]][i]) &&
+          df[[seq_col]][i] == sel_seq
+        cls <- if (is_selected) ' class="highlight-row"' else ""
+        cells <- paste0(
+          "<td>",
+          vapply(df[i, ], function(v) {
+            htmltools::htmlEscape(as.character(v))
+          }, character(1)),
+          "</td>",
+          collapse = ""
+        )
+        paste0("<tr", cls, ">", cells, "</tr>")
+      }, character(1))
+
+      shiny::HTML(paste0(
+        '<div style="overflow-x: auto;">',
+        '<table class="table table-bordered table-striped table-hover"',
+        ' style="width: 100%;">',
+        "<thead>", header, "</thead>",
+        "<tbody>", paste(rows, collapse = ""), "</tbody>",
+        "</table></div>"
+      ))
+    })
   }
 
   shiny::shinyApp(ui, server)
