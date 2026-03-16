@@ -186,6 +186,42 @@ test_that("validate_filter rejects %in% with non-literal in c()", {
   expect_error(validate_filter("A %in% c(mean(X))"), "c\\(\\) arguments must be literals")
 })
 
+test_that("validate_filter accepts grepl with character pattern and column", {
+  result <- validate_filter('grepl("PLASMA", PCSPEC)')
+  expect_true(is.call(result))
+})
+
+test_that("validate_filter accepts grepl in compound expression", {
+  expect_no_error(validate_filter('PCTESTCD == "XAN" & grepl("PLASMA", PCSPEC)'))
+})
+
+test_that("validate_filter rejects grepl with non-character pattern", {
+  expect_error(
+    validate_filter("grepl(PCSPEC, OTHER)"),
+    "grepl\\(\\) pattern \\(first argument\\) must be a character literal"
+  )
+})
+
+test_that("validate_filter rejects grepl with non-symbol second argument", {
+  expect_error(
+    validate_filter('grepl("X", "literal")'),
+    "grepl\\(\\) x \\(second argument\\) must be a column name"
+  )
+})
+
+test_that("validate_filter validates grepl column against data", {
+  df <- tibble::tribble(
+    ~PCSPEC, ~PCTESTCD,
+    "PLASMA", "XAN",
+    "SERUM",  "XAN"
+  )
+  expect_no_error(validate_filter('grepl("PLASMA", PCSPEC)', data = df))
+  expect_error(
+    validate_filter('grepl("X", BADCOL)', data = df),
+    "Column 'BADCOL' not found"
+  )
+})
+
 
 # --- Real-world baseline_filter expressions ---
 

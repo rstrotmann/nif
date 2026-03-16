@@ -552,8 +552,8 @@ validate_imputation_set <- function(obj) {
 #' Recursively validate an expression AST node
 #'
 #' Walks the parsed expression tree and ensures every node is an allowed
-#' construct: comparison operators, logical connectors, `is.na()`, negation,
-#' parentheses, symbols (column names), and literals. Rejects arbitrary
+#' construct: comparison operators, logical connectors, `is.na()`, `grepl()`,
+#' negation, parentheses, symbols (column names), and literals. Rejects arbitrary
 #' function calls, assignments, and other unsafe constructs.
 #'
 #' @param node A language object (parsed R expression node).
@@ -647,6 +647,21 @@ walk_expr <- function(node, col_names = NULL) {
       return(invisible(TRUE))
     }
 
+    # grepl(pattern, COLUMN) -- pattern must be character literal, second arg column name
+    if (fn == "grepl") {
+      if (length(node) < 3) {
+        stop("grepl() must be called with at least two arguments: pattern and x")
+      }
+      if (!is.character(node[[2]])) {
+        stop("grepl() pattern (first argument) must be a character literal")
+      }
+      if (!is.symbol(node[[3]])) {
+        stop("grepl() x (second argument) must be a column name")
+      }
+      walk_expr(node[[3]], col_names)
+      return(invisible(TRUE))
+    }
+
     # COL %in% c(...) -- LHS must be a symbol, RHS must be c() of literals
     if (fn == "%in%") {
       lhs <- node[[2]]
@@ -673,7 +688,7 @@ walk_expr <- function(node, col_names = NULL) {
     stop(
       "Disallowed construct in filter expression: '", fn, "'. ",
       "Only column comparisons (<=, <, >=, >, ==, !=), ",
-      "logical operators (&, |, !), is.na(), %in% c(), ",
+      "logical operators (&, |, !), is.na(), grepl(), %in% c(), ",
       "and literals are allowed."
     )
   }
@@ -689,7 +704,7 @@ walk_expr <- function(node, col_names = NULL) {
 #'
 #' Parses the filter string with [rlang::parse_expr()] and walks the resulting
 #' AST to ensure it contains only safe constructs: column comparisons, logical
-#' operators, `is.na()`, and literals. Rejects arbitrary function calls,
+#' operators, `is.na()`, `grepl()`, and literals. Rejects arbitrary function calls,
 #' assignments, namespace operators, and other unsafe code.
 #'
 #' @param filter_string A filter expression as a single character string.
