@@ -11,7 +11,7 @@ tables, after add_administration()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -188,7 +188,10 @@ is the domain name.</p></dd>
 
 
 <dt id="arg-debug">debug<a class="anchor" aria-label="anchor" href="#arg-debug"></a></dt>
-<dd><p>Include debug fields, as logical.</p></dd>
+<dd><p>Include debug fields, as logical. When enabled (either via this
+argument or the global <code>nif_option("debug")</code>), additional source-tracking
+fields <code>SRC_DOMAIN</code>, <code>SRC_SEQ</code> and <code>SRC_TESTCD</code> are retained in the nif
+object.</p></dd>
 
 
 <dt id="arg-include-day-in-ntime">include_day_in_ntime<a class="anchor" aria-label="anchor" href="#arg-include-day-in-ntime"></a></dt>

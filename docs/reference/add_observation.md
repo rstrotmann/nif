@@ -140,7 +140,10 @@ add_observation(
 
 - debug:
 
-  Include debug fields, as logical.
+  Include debug fields, as logical. When enabled (either via this
+  argument or the global `nif_option("debug")`), additional
+  source-tracking fields `SRC_DOMAIN`, `SRC_SEQ` and `SRC_TESTCD` are
+  retained in the nif object.
 
 - include_day_in_ntime:
 
