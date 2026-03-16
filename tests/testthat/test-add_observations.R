@@ -215,6 +215,36 @@ test_that("add_observation handles debug mode correctly", {
   # Check if debug columns are present
   expect_true("SRC_DOMAIN" %in% names(nif_debug))
   expect_true("SRC_SEQ" %in% names(nif_debug))
+  expect_true("SRC_TESTCD" %in% names(nif_debug))
+
+  # For observation rows, SRC_TESTCD should equal the original TESTCD
+  src_testcd_values <- nif_debug %>%
+    filter(EVID == 0) %>%
+    pull(SRC_TESTCD) %>%
+    unique()
+  expect_true(length(src_testcd_values) >= 1)
+})
+
+
+test_that("add_observation drops SRC_TESTCD when debug is disabled", {
+  # Ensure global debug is disabled
+  old_opts <- nif_option()
+  on.exit(do.call(nif_option, old_opts), add = TRUE)
+  nif_option(debug = FALSE)
+
+  base_nif <- nif() %>%
+    add_administration(
+      examplinib_sad, "EXAMPLINIB",
+      analyte = "RS2023", silent = TRUE
+    )
+
+  nif_nodebug <- base_nif %>%
+    add_observation(
+      examplinib_sad, "pc", "RS2023",
+      debug = FALSE, silent = TRUE
+    )
+
+  expect_false("SRC_TESTCD" %in% names(nif_nodebug))
 })
 
 

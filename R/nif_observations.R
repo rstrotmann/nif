@@ -596,7 +596,8 @@ make_observation <- function(
       METABOLITE = metabolite,
       EVID = 0,
       MDV = as.numeric(is.na(.data$DV)),
-      IMPUTATION = ""
+      IMPUTATION = "",
+      SRC_TESTCD = .data[[testcd_field]]
     )
 
   join_variables <- intersect(names(ntime_lookup), names(obj))
@@ -736,7 +737,10 @@ make_observation <- function(
 #'
 #' @param nif A nif object.
 #' @inheritParams make_observation
-#' @param debug Include debug fields, as logical.
+#' @param debug Include debug fields, as logical. When enabled (either via this
+#'   argument or the global `nif_option("debug")`), additional source-tracking
+#'   fields `SRC_DOMAIN`, `SRC_SEQ` and `SRC_TESTCD` are retained in the nif
+#'   object.
 #' @param silent Suppress messages, as logical. Defaults to nif_option setting
 #'   if NULL.
 #' @param duplicates Selection how to deal with duplicate observations with
@@ -825,7 +829,7 @@ add_observation <- function(
 
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) {
-    keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
+    keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ", "SRC_TESTCD")
   }
 
   # validate duplicate handler arguments

@@ -93,7 +93,10 @@ is the domain name.}
 
 \item{keep}{Columns to keep, as character.}
 
-\item{debug}{Include debug fields, as logical.}
+\item{debug}{Include debug fields, as logical. When enabled (either via this
+argument or the global \code{nif_option("debug")}), additional source-tracking
+fields \code{SRC_DOMAIN}, \code{SRC_SEQ} and \code{SRC_TESTCD} are retained in the nif
+object.}
 
 \item{include_day_in_ntime}{as logical.}
 

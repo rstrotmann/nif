@@ -190,6 +190,7 @@ test_that("make_observation creates proper output fields", {
   expect_true("CMT" %in% names(result))
   expect_true("EVID" %in% names(result))
   expect_true("MDV" %in% names(result))
+  expect_true("SRC_TESTCD" %in% names(result))
 
   # Check values of specific fields
   expect_equal(unique(result$ANALYTE), "A")
@@ -198,6 +199,7 @@ test_that("make_observation creates proper output fields", {
   expect_equal(unique(result$METABOLITE), TRUE)
   expect_equal(unique(result$EVID), 0) # Observations have EVID=0
   expect_equal(unique(result$MDV), 0) # DV exists so MDV=0
+  expect_equal(unique(result$SRC_TESTCD), "A")
 })
 
 
