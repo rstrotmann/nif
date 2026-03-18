@@ -223,3 +223,126 @@ imputation_rules_standard <- list(
       )
   }
 )
+
+
+
+#' Alternative imputation rule set 1
+#'
+#' @format A list of the following functions:
+#'
+#' * admin_pre_expansion()
+#' * admin_post_expansion()
+#' * obs_raw()
+#' * obs_final()
+#'
+#' @details
+#'
+#' This imputation rule set includes the following imputation steps:
+#'
+#' ## Treatment administrations:
+#'
+#' * Filter administrations to the cut-off date.
+#'
+#' * Impute missing EXENDTC values in the last administration episode to the
+#' cut-off date.
+#'
+#' * Impute missing (non-last) EXENDTC values to the day before the start of the
+#' subsequent administration episode.
+#'
+#' * Remove records where EXENDTC is before EXSTDTC.
+#'
+#' * Expand administration episodes from the EX domain between EXSTDTC and
+#' EXENDTC.
+#'
+#' * For each administration event, take the administration time from
+#' PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
+#' The name of the PK analyte (PCTESTCD) that corresponds with the administered
+#' treatment (EXTRT) must be specified by the 'pctestcd' to
+#' add_administration().
+#'
+#' * For administration events that have associated PK observations but PCRFTDTC
+#' is not defined, back-calculate the administration time, if possible, from
+#' the PK observations based on their nominal time (PCTPT).
+#'
+#' * In cases where the administration time back-calculated from NTIME is more
+#' than 10 min different from the administration time taken from the EXSTDTC,
+#' it is assumed that the NTIME-derived administration time is more precise than
+#' that from EXSTDTC and is prioritized.
+#'
+#' * After the above imputations, the administration time is carried forward for
+#' subsequent administration events until the next imputed time.
+#'
+#'
+#' ## Observations
+#'
+#' * Pharmacokinetic observations below the level of quantification (BLQ) are
+#' set to PCLLOQ / 2.
+
+#' * For all predose observations, TAFD is set to zero.
+#'
+#' @section Creating custom imputation rules:
+#' You can create your own imputation rule set by providing a named list
+#' with any combination of the four function slots: `admin_pre_expansion`,
+#' `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
+#' receives specific arguments depending on its slot.
+#'
+#' @seealso add_administration()
+#'
+#' @seealso add_observation()
+#' @family imputation rules
+#'
+#' @export
+imputation_rules_1 <- list(
+  # pre-expansion: impute EXENDTC where needed
+  admin_pre_expansion = function(
+    ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+  ) {
+    dm <- lubrify_dates(domain(sdtm, "dm"))
+
+    ex |>
+      apply_cut_off_date(extrt, cut_off_date, silent = silent) |>
+      impute_exendtc_to_cutoff(cut_off_date = cut_off_date, silent = silent) |>
+      impute_missing_exendtc(silent = silent) |>
+      filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
+  },
+
+  # post expansion: impute NTIME from PCRFTDTC or from NTIME
+  admin_post_expansion = function(
+    ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+  ) {
+    temp <- ex |>
+      get_admin_time_from_ntime(
+        sdtm, extrt, pctestcd, silent
+      ) |>
+      mutate(.ntime_time = .data$DTC_time) |>
+      pull(.data$.ntime_time)
+
+    ex |>
+      mutate(.ntime_time = temp) |>
+      get_admin_time_from_pcrftdtc(
+        sdtm, extrt, pctestcd, silent
+      ) |>
+      mutate(.dtc_ex = compose_dtc(DTC_date, DTC_time)) |>
+      mutate(.dtc_ntime = compose_dtc(DTC_date, .ntime_time)) |>
+      mutate(DTC_time = case_when(
+        !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
+        difftime(.data$.dtc_ex, .data$.dtc_ntime, units = "mins") > 10 ~ .data$.ntime_time,
+        .default = .data$DTC_time
+      ))
+  },
+
+  # raw observations: no action
+  obs_raw = function (obs, silent) {
+    obs
+    # impute_lloq_pc(obs, silent = silent)
+  },
+
+  # final observations: Set TAFD to zero for predose
+  obs_final = function(obs, silent) {
+    obs |>
+      mutate(TAFD = case_when(
+        .data$.current_observation == TRUE & .data$TAFD < 0 ~ 0,
+        .default = .data$TAFD)
+      )
+  }
+)

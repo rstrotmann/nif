@@ -61,6 +61,7 @@ add_administration()
 add_observation()
 
 Other imputation rules: 
+\code{\link{imputation_rules_1}},
 \code{\link{imputation_rules_standard}},
 \code{\link{imputation_rules_void}}
 }
