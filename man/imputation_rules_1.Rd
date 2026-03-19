@@ -7,6 +7,7 @@
 \format{
 A list of the following functions:
 \itemize{
+\item admin_pre_expansion()
 \item admin_post_expansion()
 \item obs_raw()
 \item obs_final()
@@ -38,8 +39,10 @@ add_administration().
 \item For administration events that have associated PK observations but PCRFTDTC
 is not defined, back-calculate the administration time, if possible, from
 the PK observations based on their nominal time (PCTPT).
-\item Unless imputed by the above rules, administrations inherit the
-administration time from EXSTDTC or EXENDTC.
+\item In cases where the administration time back-calculated from NTIME is more
+than 10 min different from the administration time taken from the EXSTDTC,
+it is assumed that the NTIME-derived administration time is more precise than
+that from EXSTDTC and is prioritized.
 \item After the above imputations, the administration time is carried forward for
 subsequent administration events until the next imputed time.
 }

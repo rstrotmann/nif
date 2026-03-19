@@ -79,39 +79,6 @@ egfr_raynaud <- function(crea, age, sex, race = "", weight = NA,
 }
 
 
-#' Serum creatinine estimation from eGFR (Raynaud method)
-#'
-#' Inverse of the function published in
-#' \doi{10.1136/bmj-2022-073654}.
-#'
-#' To convert crea from mg/dl to umol/l, multiply by 88.4.
-#'
-#' @param egfr EGFR in ml/min/1.73 m^2.
-#' @param age Age in years.
-#' @param sex Sex encoded as number (male is 0) or character (male is "M").
-#' @param race Race. Dummy variable for compatibility, race is not used by this
-#'   method.
-#'
-#' @importFrom pracma lambertWn
-#' @importFrom pracma lambertWp
-#' @seealso [nif::crea_mdrd()]
-#'
-#' @return Serum creatinine in mg/dl.
-#' @export
-crea_raynaud <- function(egfr, age, sex, race = "") {
-  male <- ifelse((sex == 0) | (sex == "M"), 1, 0)
-  a <- 4.4275492 - 0.0055068 * age + 0.1806494 * male
-  b <- 0.8230475
-  c <- 0.0124264
-
-  z <- 2 * exp(2 * a / b) * c * egfr^(-2 / b) / b
-  w <- pracma::lambertWp(z)
-  crea <- 0.707107 * sqrt(b) * sqrt(w) / sqrt(c)
-  base::attr(crea, "unit") <- "mg/dl"
-  crea
-}
-
-
 #' Glomerular filtration rate estimation from serum creatinine (MDRD)
 #'
 #' Source: \doi{10.7326/0003-4819-130-6-199903160-00002}.
@@ -158,7 +125,6 @@ egfr_mdrd <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
 #' @param sex Sex encoded as number (female is 1) or character (female is "F").
 #' @param race Race as per CDISC nomenclature. Black race is identified as the
 #'   occurrence of 'black' in the value.
-#' @seealso [nif::crea_raynaud()]
 #'
 #' @return Serum creatinine in mg/dl.
 #' @export
