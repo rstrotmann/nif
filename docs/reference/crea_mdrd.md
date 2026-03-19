@@ -36,7 +36,3 @@ Serum creatinine in mg/dl.
 ## Details
 
 To convert crea from mg/dl to umol/l, multiply by 88.4.
-
-## See also
-
-[`crea_raynaud()`](crea_raynaud.md)

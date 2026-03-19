@@ -1,6 +1,6 @@
-# Alternative imputation rule set
+# Alternative imputation rule set 1
 
-Alternative imputation rule set
+Alternative imputation rule set 1
 
 ## Usage
 
@@ -12,7 +12,11 @@ imputation_rules_1
 
 A list of the following functions:
 
+- admin_pre_expansion()
+
 - admin_post_expansion()
+
+- obs_raw()
 
 - obs_final()
 
@@ -46,14 +50,19 @@ This imputation rule set includes the following imputation steps:
   possible, from the PK observations based on their nominal time
   (PCTPT).
 
-- Unless imputed by the above rules, administrations inherit the
-  administration time from EXSTDTC or EXENDTC.
+- In cases where the administration time back-calculated from NTIME is
+  more than 10 min different from the administration time taken from the
+  EXSTDTC, it is assumed that the NTIME-derived administration time is
+  more precise than that from EXSTDTC and is prioritized.
 
 - After the above imputations, the administration time is carried
   forward for subsequent administration events until the next imputed
   time.
 
 ### Observations
+
+- Pharmacokinetic observations below the level of quantification (BLQ)
+  are set to PCLLOQ / 2.
 
 - For all predose observations, TAFD is set to zero.
 
@@ -72,4 +81,5 @@ add_observation()
 
 Other imputation rules:
 [`imputation_rules_minimal`](imputation_rules_minimal.md),
-[`imputation_rules_standard`](imputation_rules_standard.md)
+[`imputation_rules_standard`](imputation_rules_standard.md),
+[`imputation_rules_void`](imputation_rules_void.md)

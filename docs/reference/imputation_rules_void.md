@@ -41,6 +41,6 @@ add_administration()
 
 add_observation()
 
-Other imputation rules:
+Other imputation rules: [`imputation_rules_1`](imputation_rules_1.md),
 [`imputation_rules_minimal`](imputation_rules_minimal.md),
 [`imputation_rules_standard`](imputation_rules_standard.md)

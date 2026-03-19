@@ -255,9 +255,6 @@ For further guidance see the help for individual functions and the
 - [`crea_mdrd()`](crea_mdrd.md) : Serum creatinine estimation from eGFR
   (MDRD)
 
-- [`crea_raynaud()`](crea_raynaud.md) : Serum creatinine estimation from
-  eGFR (Raynaud method)
-
 - [`dataset()`](dataset.md) : Retrieve dataset from adam object
 
 - [`ddt()`](ddt.md) : Data definition table for nif object
@@ -347,6 +344,9 @@ For further guidance see the help for individual functions and the
 
 - [`import_observation()`](import_observation.md) **\[experimental\]** :
   Add observation from non-SDTM-formatted data table
+
+- [`imputation_rules_1`](imputation_rules_1.md) : Alternative imputation
+  rule set 1
 
 - [`imputation_rules_minimal`](imputation_rules_minimal.md) : Minimal
   imputation rule set
