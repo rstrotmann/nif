@@ -37,7 +37,6 @@ Imports:
     lifecycle,
     pins,
     cli,
-    magrittr,
     classInt
 Suggests: 
     knitr,
