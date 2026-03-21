@@ -108,19 +108,6 @@ test_that("check.nif uses analytes() default (EVID == 0 distinct ANALYTE)", {
     "TAD inconsistent with NTIME"))
 })
 
-test_that("check.nif does not flag observation analytes when analyte filter excludes them", {
-  raw <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~NTIME, ~TAD, ~ANALYTE,
-    1L, 0, 100, 1, 1L, NA_real_, 0, 0, "DRUG",
-    1L, 1, 0, 2, 0L, 10, 10, 13, "DRUG"
-  )
-  obj <- nif(raw)
-
-  out <- check.nif(obj, analyte = "MET", ntime_threshold = 0.2, silent = TRUE)
-
-  expect_equal(out$CHECK[out$EVID == 0], "")
-})
-
 test_that("check.nif leaves rows without observation analytes unflagged when analytes() is empty", {
   raw <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~NTIME, ~TAD, ~ANALYTE,
@@ -161,10 +148,20 @@ test_that("check.nif overwrites CHECK when time deviation flag is true", {
   expect_equal(out$CHECK[out$EVID == 0], "TAD inconsistent with NTIME")
 })
 
-test_that("check.nif errors when minimal empty nif lacks ref_time and NTIME", {
+test_that("check.nif errors when minimal empty nif lacks ref_time, NTIME, and ANALYTE", {
   obj <- nif()
 
-  expect_error(check.nif(obj, silent = TRUE), "TAD")
+  expect_error(check.nif(obj, silent = TRUE), "not found in nif object")
+})
+
+test_that("check.nif errors with clear message when a required column is missing", {
+  raw <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~TAD, ~ANALYTE,
+    1L, 0, 100, 1, 1L, NA_real_, 0, "DRUG"
+  )
+  obj <- nif(raw)
+
+  expect_error(check.nif(obj, silent = TRUE), "NTIME")
 })
 
 test_that("check.nif works on zero-row nif with required time columns", {
@@ -231,4 +228,42 @@ test_that("check.nif flags positive TAD when NTIME is zero (threshold uses stric
 
   expect_equal(out$CHECK[out$EVID == 0 & out$NTIME == 0], "TAD inconsistent with NTIME")
 })
+
+test_that("check.nif validates ntime_threshold", {
+  raw <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~NTIME, ~TAD, ~ANALYTE,
+    1L, 0, 100, 1, 1L, NA_real_, 0, 0, "DRUG",
+    1L, 1, 0, 2, 0L, 10, 10, 10, "DRUG"
+  )
+  obj <- nif(raw)
+
+  expect_error(check.nif(obj, ntime_threshold = -0.1, silent = TRUE), "negative")
+  expect_error(check.nif(obj, ntime_threshold = Inf, silent = TRUE), "finite")
+  expect_error(check.nif(obj, ntime_threshold = "0.2", silent = TRUE), "numeric")
+  expect_no_error(check.nif(obj, ntime_threshold = 0, silent = TRUE))
+})
+
+test_that("check.nif validates silent", {
+  raw <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~NTIME, ~TAD, ~ANALYTE,
+    1L, 0, 100, 1, 1L, NA_real_, 0, 0, "DRUG",
+    1L, 1, 0, 2, 0L, 10, 10, 10, "DRUG"
+  )
+  obj <- nif(raw)
+
+  expect_error(check.nif(obj, silent = "yes"), "logical")
+})
+
+test_that("check.nif validates analyte when not NULL", {
+  raw <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~NTIME, ~TAD, ~ANALYTE,
+    1L, 0, 100, 1, 1L, NA_real_, 0, 0, "DRUG",
+    1L, 1, 0, 2, 0L, 10, 10, 10, "DRUG"
+  )
+  obj <- nif(raw)
+
+  expect_error(check.nif(obj, analyte = NA_character_, silent = TRUE), "NA")
+  expect_error(check.nif(obj, analyte = 1L, silent = TRUE), "character")
+})
+
 

@@ -17,6 +17,7 @@ check <- function(obj, ...) {
 #' @param silent Suppress messages.
 #' @param ref_time Time field
 #' @param analyte The analyte to apply the nif check to. Defaults to all if NULL.
+#' @param ... Further arguments.
 #'
 #' @returns The nif object with the CHECK field added.
 #' @export
@@ -29,9 +30,26 @@ check.nif <- function(
     silent = NULL,
     ...
   ) {
-  # input validation
   validate_nif(obj)
+  validate_argument(ntime_threshold, "numeric")
 
+  if (!is.finite(ntime_threshold))
+    stop("ntime_threshold must be finite")
+  if (ntime_threshold < 0)
+    stop("ntime_threshold must not be negative")
+
+  validate_argument(ref_time, "character")
+  validate_fields(obj, unique(c("NTIME", "ANALYTE", ref_time)))
+  validate_argument(silent, type = "logical", allow_null = TRUE)
+  validate_argument(analyte, "character", allow_null = TRUE, allow_multiple = TRUE)
+
+  missing_analytes <- setdiff(analyte, analytes(obj))
+  if (length(missing_analytes) > 0)
+    stop(paste0(
+      "Missing ", plural("analyte", length(missing_analytes) > 1),
+      ": ", nice_enumeration(missing_analytes)))
+
+  # setup
   if (!"CHECK" %in% names(obj))
     obj <- mutate(obj, CHECK = "")
 
@@ -50,13 +68,20 @@ check.nif <- function(
         paste0(ref_time, " inconsistent with NTIME"),
       .default = .data$CHECK))
 
-  conditional_cli(
-    cli_alert_info(paste0(
-      nrow(filter(obj, .data$.time_deviation_flag == TRUE)),
-      " rows with time deviations"
-    )),
-    silent = silent
-  )
+  n_time_dev_rows <- nrow(filter(obj, .data$.time_deviation_flag == TRUE))
+
+  if (n_time_dev_rows > 0) {
+    conditional_cli(
+      cli_alert_info(paste0(
+        plural("analyte", length(analyte) > 1), " ",
+        nice_enumeration(analyte, conjunction = "or"), ": ",
+        n_time_dev_rows, plural(" row", n_time_dev_rows > 1),
+        " with ", ref_time, " deviating from NTIME by >",
+        ntime_threshold * 100, "%"
+      )),
+      silent = silent
+    )
+  }
 
   obj |>
     select(-c(".time_deviation_flag"))
