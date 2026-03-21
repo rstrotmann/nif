@@ -1180,7 +1180,6 @@ synthesize_crea <- function(dm, crea_method = crea_mdrd) {
     -21.652 * log(AGE) - 6.462 * female + 164.179
   }
 
-
   dm <- dm %>%
     mutate(target_egfr = egfr(AGE, SEX))
 

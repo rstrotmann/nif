@@ -54,7 +54,15 @@ A list with:
 }
 }
 \description{
-Prepare data set for plotting from NIF object
+The core functionality is:
+\itemize{
+\item filters for the specified analyte and dose
+\item sets missing DV values to the specified na_value
+\item sets .active_time to the specified time and filters min_time and max_time
+\item sets DV to DVCFB or dose-normalizes if specified
+\item make COLOR field based on color and analyte if more than one
+\item make FACET field
+}
 }
 \examples{
 make_plot_data_set(examplinib_sad_nif)
