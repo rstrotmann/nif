@@ -15,6 +15,8 @@
 \arguments{
 \item{obj}{A nif object.}
 
+\item{analyte}{The analyte to apply the nif check to. Defaults to all if NULL.}
+
 \item{ntime_threshold}{The allowed fractional difference between TAD and NTIME.}
 
 \item{ref_time}{Time field}

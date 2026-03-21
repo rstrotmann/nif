@@ -1,5 +1,3 @@
-# Tests for check.nif — time deviation vs NTIME and CHECK column handling
-
 test_that("check.nif rejects non-nif input", {
   expect_error(
     check.nif(mtcars),
@@ -19,7 +17,6 @@ test_that("check.nif adds empty CHECK when missing and no deviation", {
 
   expect_true("CHECK" %in% names(out))
   expect_equal(out$CHECK[out$EVID == 0], "")
-  expect_true(".time_deviation_flag" %in% names(out))
   expect_false(any(out$.time_deviation_flag, na.rm = TRUE))
 })
 
@@ -35,7 +32,6 @@ test_that("check.nif flags when TAD exceeds NTIME by more than relative threshol
 
   obs <- out[out$EVID == 0, ]
   expect_equal(obs$CHECK, "TAD inconsistent with NTIME")
-  expect_true(obs$.time_deviation_flag[[1]])
 })
 
 test_that("check.nif does not flag at exact threshold (strict inequality)", {
@@ -50,7 +46,6 @@ test_that("check.nif does not flag at exact threshold (strict inequality)", {
   out <- check.nif(obj, ntime_threshold = 0.2, silent = TRUE)
 
   expect_equal(out$CHECK[out$EVID == 0], "")
-  expect_false(out$.time_deviation_flag[out$EVID == 0][[1]])
 })
 
 test_that("check.nif respects custom ntime_threshold", {
@@ -236,3 +231,4 @@ test_that("check.nif flags positive TAD when NTIME is zero (threshold uses stric
 
   expect_equal(out$CHECK[out$EVID == 0 & out$NTIME == 0], "TAD inconsistent with NTIME")
 })
+

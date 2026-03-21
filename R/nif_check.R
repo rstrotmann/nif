@@ -1,6 +1,7 @@
 #' Check nif or sdtm object
 #'
 #' @param obj The nif or sdtm object
+#' @param ... Further arguments.
 #'
 #' @returns The input with the CHECK field added.
 #' @export
@@ -15,6 +16,7 @@ check <- function(obj, ...) {
 #' @param ntime_threshold The allowed fractional difference between TAD and NTIME.
 #' @param silent Suppress messages.
 #' @param ref_time Time field
+#' @param analyte The analyte to apply the nif check to. Defaults to all if NULL.
 #'
 #' @returns The nif object with the CHECK field added.
 #' @export

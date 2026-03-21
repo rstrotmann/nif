@@ -8,6 +8,8 @@ check(obj, ...)
 }
 \arguments{
 \item{obj}{The nif or sdtm object}
+
+\item{...}{Further arguments.}
 }
 \value{
 The input with the CHECK field added.
