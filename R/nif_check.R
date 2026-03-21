@@ -20,12 +20,14 @@ check <- function(obj, ...) {
 #'
 #' @returns The nif object with the CHECK field added.
 #' @export
+#' @noRd
 check.nif <- function(
     obj,
     analyte = NULL,
     ntime_threshold = 0.2,
     ref_time = "TAD",
-    silent = NULL
+    silent = NULL,
+    ...
   ) {
   # input validation
   validate_nif(obj)
