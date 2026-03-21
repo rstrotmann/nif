@@ -1,6 +1,19 @@
 # Prepare data set for plotting from NIF object
 
-Prepare data set for plotting from NIF object
+The core functionality is:
+
+- filters for the specified analyte and dose
+
+- sets missing DV values to the specified na_value
+
+- sets .active_time to the specified time and filters min_time and
+  max_time
+
+- sets DV to DVCFB or dose-normalizes if specified
+
+- make COLOR field based on color and analyte if more than one
+
+- make FACET field
 
 ## Usage
 

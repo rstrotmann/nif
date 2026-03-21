@@ -74,6 +74,8 @@
 - [`cdiscpilot01_sdtm`](cdiscpilot01_sdtm.md) : Pharmaverse sample SDTM
   data
 
+- [`check()`](check.md) : Check nif or sdtm object
+
 - [`cmt_mapping()`](cmt_mapping.md) **\[deprecated\]** :
   Analyte-to-compartment mapping
 
