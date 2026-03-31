@@ -53,50 +53,50 @@ test_that("BMI calculation handles edge cases correctly", {
   expect_true(is.na(result$BMI[result$USUBJID == "006"]), "Zero WEIGHT should result in NA BMI")
 })
 
-test_that("validate_lbw_parameters validates inputs correctly", {
+test_that("validate_body_size_parameters validates inputs correctly", {
   # Test with valid inputs
-  expect_true(validate_lbw_parameters(weight = 70, height = 170, sex = "M"))
-  expect_true(validate_lbw_parameters(weight = 70, height = 170, sex = 0))
-  expect_true(validate_lbw_parameters(weight = 60, height = 160, sex = "F"))
-  expect_true(validate_lbw_parameters(weight = 60, height = 160, sex = 1))
-  expect_true(validate_lbw_parameters(weight = 70, height = 170, sex = "m"))
-  expect_true(validate_lbw_parameters(weight = 60, height = 160, sex = "f"))
+  expect_true(validate_body_size_parameters(weight = 70, height = 170, sex = "M"))
+  expect_true(validate_body_size_parameters(weight = 70, height = 170, sex = 0))
+  expect_true(validate_body_size_parameters(weight = 60, height = 160, sex = "F"))
+  expect_true(validate_body_size_parameters(weight = 60, height = 160, sex = 1))
+  expect_true(validate_body_size_parameters(weight = 70, height = 170, sex = "m"))
+  expect_true(validate_body_size_parameters(weight = 60, height = 160, sex = "f"))
 })
 
-test_that("validate_lbw_parameters handles NA values correctly", {
+test_that("validate_body_size_parameters handles NA values correctly", {
   # Test with NA values
-  expect_false(validate_lbw_parameters(weight = NA, height = 170, sex = "M"))
-  expect_false(validate_lbw_parameters(weight = 70, height = NA, sex = "M"))
-  expect_false(validate_lbw_parameters(weight = 70, height = 170, sex = NA))
-  expect_false(validate_lbw_parameters(weight = NA, height = NA, sex = "M"))
-  expect_false(validate_lbw_parameters(weight = NA, height = 170, sex = NA))
-  expect_false(validate_lbw_parameters(weight = 70, height = NA, sex = NA))
-  expect_false(validate_lbw_parameters(weight = NA, height = NA, sex = NA))
+  expect_false(validate_body_size_parameters(weight = NA, height = 170, sex = "M"))
+  expect_false(validate_body_size_parameters(weight = 70, height = NA, sex = "M"))
+  expect_false(validate_body_size_parameters(weight = 70, height = 170, sex = NA))
+  expect_false(validate_body_size_parameters(weight = NA, height = NA, sex = "M"))
+  expect_false(validate_body_size_parameters(weight = NA, height = 170, sex = NA))
+  expect_false(validate_body_size_parameters(weight = 70, height = NA, sex = NA))
+  expect_false(validate_body_size_parameters(weight = NA, height = NA, sex = NA))
 })
 
-test_that("validate_lbw_parameters handles invalid numeric inputs correctly", {
+test_that("validate_body_size_parameters handles invalid numeric inputs correctly", {
   # Test with zero or negative values
-  expect_false(validate_lbw_parameters(weight = 0, height = 170, sex = "M"))
-  expect_false(validate_lbw_parameters(weight = -70, height = 170, sex = "M"))
-  expect_false(validate_lbw_parameters(weight = 70, height = 0, sex = "M"))
-  expect_false(validate_lbw_parameters(weight = 70, height = -170, sex = "M"))
+  expect_false(validate_body_size_parameters(weight = 0, height = 170, sex = "M"))
+  expect_false(validate_body_size_parameters(weight = -70, height = 170, sex = "M"))
+  expect_false(validate_body_size_parameters(weight = 70, height = 0, sex = "M"))
+  expect_false(validate_body_size_parameters(weight = 70, height = -170, sex = "M"))
 })
 
-test_that("validate_lbw_parameters handles invalid sex values correctly", {
+test_that("validate_body_size_parameters handles invalid sex values correctly", {
   # Test with invalid sex values
-  expect_false(validate_lbw_parameters(weight = 70, height = 170, sex = "X"))
-  expect_false(validate_lbw_parameters(weight = 70, height = 170, sex = 2))
-  expect_false(validate_lbw_parameters(weight = 70, height = 170, sex = "male"))
-  expect_false(validate_lbw_parameters(weight = 70, height = 170, sex = "female"))
+  expect_false(validate_body_size_parameters(weight = 70, height = 170, sex = "X"))
+  expect_false(validate_body_size_parameters(weight = 70, height = 170, sex = 2))
+  expect_false(validate_body_size_parameters(weight = 70, height = 170, sex = "male"))
+  expect_false(validate_body_size_parameters(weight = 70, height = 170, sex = "female"))
 })
 
-test_that("validate_lbw_parameters handles vectorized inputs correctly", {
+test_that("validate_body_size_parameters handles vectorized inputs correctly", {
   # Test with vectors of valid inputs
   weights <- c(70, 60, 80)
   heights <- c(170, 160, 180)
   sexes <- c("M", "F", "M")
 
-  result <- validate_lbw_parameters(weight = weights, height = heights, sex = sexes)
+  result <- validate_body_size_parameters(weight = weights, height = heights, sex = sexes)
   expect_true(all(result))
 
   # Test with mixed valid and invalid inputs
@@ -104,39 +104,39 @@ test_that("validate_lbw_parameters handles vectorized inputs correctly", {
   heights <- c(170, 160, NA)
   sexes <- c("M", "F", "M")
 
-  result <- validate_lbw_parameters(weight = weights, height = heights, sex = sexes)
+  result <- validate_body_size_parameters(weight = weights, height = heights, sex = sexes)
   expect_true(result[1])
   expect_false(result[2])
   expect_false(result[3])
 })
 
-test_that("validate_lbw_parameters handles length mismatches correctly", {
+test_that("validate_body_size_parameters handles length mismatches correctly", {
   # Test with mismatched vector lengths
   expect_error(
-    validate_lbw_parameters(weight = c(70, 60), height = 170, sex = "M"),
+    validate_body_size_parameters(weight = c(70, 60), height = 170, sex = "M"),
     "Height and weight vectors must have the same length"
   )
 
   expect_error(
-    validate_lbw_parameters(weight = 70, height = c(170, 160), sex = "M"),
+    validate_body_size_parameters(weight = 70, height = c(170, 160), sex = "M"),
     "Height and weight vectors must have the same length"
   )
 
   expect_error(
-    validate_lbw_parameters(weight = 70, height = 170, sex = c("M", "F")),
+    validate_body_size_parameters(weight = 70, height = 170, sex = c("M", "F")),
     "Height and weight vectors must have the same length"
   )
 })
 
-test_that("validate_lbw_parameters handles non-numeric inputs correctly", {
+test_that("validate_body_size_parameters handles non-numeric inputs correctly", {
   # Test with non-numeric inputs
   expect_error(
-    validate_lbw_parameters(weight = "70", height = 170, sex = "M"),
+    validate_body_size_parameters(weight = "70", height = 170, sex = "M"),
     "Height and weight must be numeric values"
   )
 
   expect_error(
-    validate_lbw_parameters(weight = 70, height = "170", sex = "M"),
+    validate_body_size_parameters(weight = 70, height = "170", sex = "M"),
     "Height and weight must be numeric values"
   )
 })

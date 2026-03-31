@@ -176,7 +176,7 @@ egfr_cg <- function(crea, age, sex, race = "", weight = NA, molar = FALSE) {
 #'
 #' @return vector of valid inputs
 #' @noRd
-validate_lbw_parameters <- function(weight, height, sex) {
+validate_body_size_parameters <- function(weight, height, sex) {
   if (!(is.numeric(height) || is.na(height)) ||
         !(is.numeric(weight) || is.na(weight))) {
     stop("Height and weight must be numeric values")
@@ -227,7 +227,7 @@ is_male <- function(sex) {
 #' @export
 lbm_boer <- function(weight, height, sex) {
   # Input validation
-  valid_inputs <- validate_lbw_parameters(weight, height, sex)
+  valid_inputs <- validate_body_size_parameters(weight, height, sex)
 
   result <- rep(NA_real_, length(height))
 
@@ -259,7 +259,7 @@ lbm_boer <- function(weight, height, sex) {
 #' @export
 lbm_hume <- function(weight, height, sex) {
   # Input validation
-  valid_inputs <- validate_lbw_parameters(weight, height, sex)
+  valid_inputs <- validate_body_size_parameters(weight, height, sex)
 
   result <- rep(NA_real_, length(height))
 
@@ -292,14 +292,62 @@ lbm_hume <- function(weight, height, sex) {
 #' @export
 lbm_peters <- function(weight, height, sex) {
   # Input validation
-  valid_inputs <- validate_lbw_parameters(weight, height, sex)
+  valid_inputs <- validate_body_size_parameters(weight, height, sex)
 
   result <- rep(NA_real_, length(height))
 
-  3.8 * (0.0215 * weight^0.6469 * height^0.7236)
+  # 3.8 * (0.0215 * weight^0.6469 * height^0.7236)
 
   result[valid_inputs] <- 3.8 * (0.0215 * weight[valid_inputs]^0.6469 *
                                    height[valid_inputs]^0.7236)
 
   result
 }
+
+
+#' Body surface area (Mosteller formula)
+#'
+#' Source: Mosteller RD. Simplified calculation of body-surface area.
+#' N Engl J Med. 1987 Oct 22;317(17):1098.
+#' \doi{10.1056/NEJM198710223171717}
+#'
+#' @param weight Body weight in kg, as numeric.
+#' @param height Body height in cm, as numeric.
+#'
+#' @returns BSA in m^2
+#' @export
+bsa_mosteller <- function(weight, height) {
+  valid_inputs <- validate_body_size_parameters(weight, height, rep(0, length(weight)))
+
+  result <- rep(NA_real_, length(height))
+
+  result[valid_inputs] <- sqrt(
+    height[valid_inputs] * weight[valid_inputs] / 3600)
+
+  result
+}
+
+
+#' Body surface area (Du Bois formula)
+#'
+#' Source: Du Bois D, Du Bois EF. A formula to estimate the approximate surface
+#' area if height and weight be known. 1916. Nutrition.
+#' 1989 Sep-Oct;5(5):303-11; discussion 312-3.
+#' \doi{10.1001/archinte.1916.00080130010002}
+#'
+#' @param weight Body weight in kg, as numeric.
+#' @param height Body height in cm, as numeric.
+#'
+#' @returns BSA in m^2
+#' @export
+bsa_dubois <- function(weight, height) {
+  valid_inputs <- validate_body_size_parameters(weight, height, rep(0, length(weight)))
+
+  result <- rep(NA_real_, length(height))
+
+  result[valid_inputs] <- 0.007184 * height[valid_inputs] ^ 0.725 *
+    weight[valid_inputs] ^ 0.425
+
+  result
+}
+

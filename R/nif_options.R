@@ -37,29 +37,43 @@ assign("version", packageVersion("nif"), envir = .nif_env)
 #' nif_option(silent = TRUE)
 nif_option <- function(...) {
   args <- list(...)
-  allowed_options <- tribble(
-    ~name,        ~type_test,
-    "pinboard",   is.character,
-    "silent",     is.logical,
-    "watermark",  is.character,
-    "debug",      is.logical,
-    "show_hash",  is.logical,
-    "test",       is.character,
-    "abbreviation_threshold", is.numeric,
-    "abbreviation_maxlines", is.numeric
+  # allowed_options <- tribble(
+  #   ~name,        ~type_test, ~readonly,
+  #   "pinboard",   is.character, FALSE,
+  #   "silent",     is.logical, FALSE,
+  #   "watermark",  is.character, FALSE,
+  #   "debug",      is.logical, FALSE,
+  #   "show_hash",  is.logical, FALSE,
+  #   "test",       is.character, FALSE,
+  #   "version",    is.character, TRUE,
+  #   "abbreviation_threshold", is.numeric, FALSE,
+  #   "abbreviation_maxlines", is.numeric, FALSE
+  # )
+
+  allowed_options <- tibble::tribble(
+                     ~name,                 ~type_test, ~readonly,
+                "pinboard", .Primitive("is.character"),     FALSE,
+                  "silent",   .Primitive("is.logical"),     FALSE,
+               "watermark", .Primitive("is.character"),     FALSE,
+                   "debug",   .Primitive("is.logical"),     FALSE,
+               "show_hash",   .Primitive("is.logical"),     FALSE,
+                    "test", .Primitive("is.character"),     FALSE,
+                 "version", .Primitive("is.character"),      TRUE,
+  "abbreviation_threshold",   .Primitive("is.numeric"),     FALSE,
+   "abbreviation_maxlines",   .Primitive("is.numeric"),     FALSE
   )
 
   if (length(args) == 0) {
     as.list(.nif_env)
   } else {
-    # for (i in 1:length(args)) {
+    # args <- unlist(args)
     for (i in seq_along(args)) {
       option_name <- names(args)[[i]]
       option_value <- args[[i]]
       temp <- filter(allowed_options, .data$name == option_name)
       if (nrow(temp) == 0) {
         message(paste0("Unknown option '", option_name, "'!"))
-      } else if (nrow(temp) == 1) {
+      } else if (nrow(temp) == 1 && !any(temp$readonly == TRUE)) {
         if (!temp$type_test[[1]](option_value)) {
           message(paste0("option '", option_name, "' has the wrong type!"))
         } else {
