@@ -42,6 +42,8 @@
 <url><loc>/reference/analytes.sdtm.html</loc></url>
 <url><loc>/reference/bintime_plot.html</loc></url>
 <url><loc>/reference/bmi_by_age.html</loc></url>
+<url><loc>/reference/bsa_dubois.html</loc></url>
+<url><loc>/reference/bsa_mosteller.html</loc></url>
 <url><loc>/reference/cdiscpilot01_nif.html</loc></url>
 <url><loc>/reference/cdiscpilot01_sdtm.html</loc></url>
 <url><loc>/reference/check.html</loc></url>
@@ -82,6 +84,7 @@
 <url><loc>/reference/egfr_raynaud.html</loc></url>
 <url><loc>/reference/examplinib_fe.html</loc></url>
 <url><loc>/reference/examplinib_fe_nif.html</loc></url>
+<url><loc>/reference/examplinib_iv.html</loc></url>
 <url><loc>/reference/examplinib_poc.html</loc></url>
 <url><loc>/reference/examplinib_poc_min_nif.html</loc></url>
 <url><loc>/reference/examplinib_poc_nif.html</loc></url>

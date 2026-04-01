@@ -68,6 +68,11 @@
 - [`bintime_plot()`](bintime_plot.md) **\[experimental\]** : BINTIME
   plot
 
+- [`bsa_dubois()`](bsa_dubois.md) : Body surface area (Du Bois formula)
+
+- [`bsa_mosteller()`](bsa_mosteller.md) : Body surface area (Mosteller
+  formula)
+
 - [`cdiscpilot01_nif`](cdiscpilot01_nif.md) : Pharmaverse sample nif
   object
 
@@ -144,6 +149,9 @@
 
 - [`examplinib_fe_nif`](examplinib_fe_nif.md) : Synthetic NIF data from
   a fictional clinical food effect study for 'examplinib'.
+
+- [`examplinib_iv`](examplinib_iv.md) : Synthetic SDTM data from a
+  fictional clinical iv administraiton study for 'examplinib'.
 
 - [`examplinib_poc`](examplinib_poc.md) : Synthetic SDTM data from a
   fictional clinical single-arm study with rich and sparse pk sampling.
