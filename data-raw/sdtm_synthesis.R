@@ -86,6 +86,77 @@ pk_sim <- function(event_table) {
 }
 
 
+#' Simulate PK after iv administration based on the examplinib PopPK model
+#'
+#' @param event_table The event table as required by RxODE.
+#' @return PK simulation as data frame
+#' @keywords internal
+pk_iv_sim <- function(event_table) {
+  if (!("EGFR" %in% colnames(event_table))) {
+    event_table <- event_table %>%
+      mutate(EGFR = 120)
+  }
+
+  keep_columns <- event_table %>%
+    mutate(time = as.numeric(time)) %>%
+    mutate(NTIME = as.numeric(NTIME)) %>%
+    select(any_of(c("id", "time", "NTIME", "PERIOD", "pcrft"))) %>%
+    distinct()
+
+  mod <- rxode2::rxode2({
+    v_centr <- t_v_centr * (WEIGHT / 70)^1
+
+    c_centr <- centr / v_centr * (1 + centr.err)
+    c_peri <- peri / v_peri
+    c_metab <- metab / v_centr
+
+    ke <- t_ke * exp(eta_ke) * (EGFR / 120)^1.2 # renal clearance
+    cl_par <- t_cl_par * (WEIGHT / 70)^0.75 * exp(eta_cl_par) # clearance of parent to metabolite
+    cl_met <- t_cl_met * (WEIGHT / 70)^0.75 * exp(eta_cl_met) # clearance of metabolite
+    q <- t_q * exp(eta_q)
+
+    d / dt(centr) <- - ke * centr - q * centr + q * peri - cl_par * centr
+    d / dt(peri) <- q * centr - q * peri
+    d / dt(metab) <- cl_par * centr - cl_met * metab
+    d / dt(renal) <- ke * centr
+    d / dt(auc) <- centr
+    d / dt(auc_metab) <- metab
+  })
+
+  theta <- c(
+    t_ke = 5 / 10,
+    t_cl_par = 10 / 10,
+    t_q = 10 / 100,
+    t_cl_met = 10 / 10,
+    t_v_centr = 10,
+
+    v_peri = 100
+  )
+
+  omega <- rxode2::lotri(
+    eta_ke ~ 0.1^2,
+    eta_q ~ 0.1^2,
+    eta_cl_par ~ 0.1^2,
+    eta_cl_met ~ 0.1^2
+  )
+
+
+  sigma <- rxode2::lotri(centr.err ~ .03^2)
+
+  mod$solve(theta, event_table,
+            omega = omega, sigma = sigma,
+            keep = c("NTIME", "EGFR", "WEIGHT", "AGE")
+  ) %>%
+    as.data.frame()
+
+  mod$solve(theta, event_table, omega = omega, sigma = sigma) %>%
+    as.data.frame() %>%
+    left_join(keep_columns, by = c("id", "time"))
+}
+
+
+
+
 #' Simulate fictional subject disposition data
 #'
 #' This function generates a pre-specified number of subjects across different
@@ -689,6 +760,8 @@ subject_baseline_data <- function(dm, vs, lb) {
       "ACTARMCD"
     )) %>%
     mutate(ID = row_number())
+
+  sbs
 }
 
 
@@ -1360,3 +1433,196 @@ synthesize_rifa_study <- function() {
 
     sdtm(lapply(out, isofy_dates))
   }
+
+
+#' Title
+#'
+#' @param dm
+#' @param ex
+#' @param vs
+#' @param lb
+#' @param sampling_scheme
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+make_iv_pc <- function(dm, ex, vs, lb, sampling_scheme) {
+  sbs <- subject_baseline_data(dm, vs, lb) %>%
+    left_join(ex %>%
+                distinct(.data$USUBJID, .data$EXDOSE) %>%
+                select(c("USUBJID", "EXDOSE")), by = "USUBJID") %>%
+    mutate(FOOD = 0, PERIOD = 1)
+
+  ev <- rxode2::et(amountUnits = "mg", timeUnits = "hours") %>%
+    rxode2::add.dosing(
+      dose = 500, dosing.to = 1, dur = 1,
+      start.time = 0
+    ) %>%
+    rxode2::add.sampling(sampling_scheme$time) %>%
+    rxode2::et(id = sbs$ID) %>%
+    mutate(NTIME = .data$time) %>%
+    left_join(
+      sbs %>%
+        dplyr::select(c(
+          "id" = "ID", "USUBJID", "SEX", "AGE", "HEIGHT",
+          "WEIGHT", "FOOD", "PERIOD", "EGFR", "EXDOSE"
+        )),
+      by = "id"
+    ) %>%
+    mutate(amt = case_when(!is.na(.data$amt) ~ .data$EXDOSE, .default = NA)) %>%
+    mutate(NTIME = .data$time)
+
+  sim <- pk_iv_sim(ev) %>%
+    left_join(sbs %>% select(c("id" = "ID", "USUBJID")), by = "id")
+
+  pc <- sim %>%
+    dplyr::select(c("USUBJID", "id", "time", "c_centr", "c_metab")) %>%
+    mutate(RS2023 = .data$c_centr * 1000, RS2023487A = .data$c_metab * 1000) %>%
+    tidyr::pivot_longer(c("RS2023", "RS2023487A"),
+                        names_to = "PCTESTCD",
+                        values_to = "PCSTRESN"
+    ) %>%
+    mutate(PCTEST = case_when(
+      .data$PCTESTCD == "RS2023" ~ "RS2023",
+      .data$PCTESTCD == "RS2023487A" ~ "RS2023487A"
+    )) %>%
+    mutate(PCSTRESN = round(.data$PCSTRESN, 4)) %>%
+    left_join(
+      dm %>%
+        distinct(.data$USUBJID, .data$RFSTDTC),
+      by = "USUBJID"
+    ) %>%
+    mutate(STUDYID = unique(dm$STUDYID), DOMAIN = "PC") %>%
+    mutate(PCELTM = paste0("PT", as.character(time), "H")) %>%
+    mutate(PCTPTNUM = .data$time) %>%
+    left_join(sampling_scheme, by = "time") %>%
+    mutate(PCDTC = .data$RFSTDTC + time * 60 * 60) %>%
+    arrange(.data$id, .data$PCDTC, .data$PCTESTCD) %>%
+    group_by(.data$id) %>%
+    mutate(PCSEQ = row_number()) %>%
+    ungroup() %>%
+    mutate(PCSPEC = "PLASMA") %>%
+    mutate(PCRFTDTC = .data$RFSTDTC) %>%
+    mutate(EPOCH = "OPEN LABEL TREATMENT") %>%
+    dplyr::select(-c("id", "time", "c_centr", "c_metab", "RFSTDTC"))
+  return(pc)
+}
+
+
+#' Title
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+synthesize_sdtm_iv_study <- function() {
+  studyid <- "2026000011"
+  studytitle <- "A dose confirmation study of RS2023 administered intravenously in healthy subjects"
+
+  rich_sampling_scheme <- rich_sampling_scheme <- tibble::tribble(
+    ~time, ~PCTPT,
+    0, "PREDOSE",
+    1, "END OF INFUSION",
+    1.5, "0.5 HOURS AFTER INFUSION",
+    2, "1 HOURS AFTER INFUSION",
+    2.5, "1.5 HOURS AFTER INFUSION",
+    3, "2 HOURS AFTER INFUSION",
+    4, "3 HOURS AFTER INFUSION",
+    5, "4 HOURS AFTER INFUSION",
+    7, "6 HOURS AFTER INFUSION",
+    9, "8 HOURS AFTER INFUSION",
+    11, "10 HOURS AFTER INFUSION",
+    13, "12 HOURS AFTER INFUSION",
+    25, "24 HOURS AFTER INFUSION"
+  )
+
+  dose_levels <- data.frame(
+    dose = c(20, 50, 100, 200),
+    n = c(6, 6, 6, 6)
+  ) %>%
+    mutate(cohort = row_number()) %>%
+    group_by(.data$cohort, .data$dose) %>%
+    tidyr::expand(i = seq(n)) %>%
+    select(-i) %>%
+    ungroup()
+
+  dm <- synthesize_dm(
+    studyid = studyid, nsubs = nrow(dose_levels), nsites = 1,
+    female_fraction = .5,
+    duration = 10,
+    min_age = 18,
+    max_age = 55
+  )
+
+  sb_assignment <- dose_levels %>%
+    mutate(USUBJID = dm %>%
+             filter(.data$ACTARMCD != "SCRNFAIL") %>%
+             arrange(.data$USUBJID) %>%
+             pull(.data$USUBJID))
+
+  dm <- dm %>%
+    left_join(sb_assignment, by = "USUBJID") %>%
+    mutate(ACTARMCD = case_when(
+      # .data$ACTARMCD == "" ~ paste0("C", cohort),
+      .data$ACTARMCD == "" ~ paste0(dose, "MGM2"),
+      .default = "SCRNFAIL"
+    )) %>%
+    mutate(ACTARM = case_when(
+      .data$ACTARMCD == "SCRNFAIL" ~ "Screen Failure",
+      .default = paste0(dose, " mg/m2 examplinib")
+    )) %>%
+    mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
+
+  vs <- synthesize_vs(dm)
+  lb <- synthesize_lb(dm)
+
+  ex <- make_sd_ex(
+    dm, drug = "RS2023", admindays = 1, dose = NA) %>%
+    select(-EXDOSE) %>%
+    left_join(
+      sb_assignment %>%
+        distinct(.data$USUBJID, EXDOSE = .data$dose),
+      by = "USUBJID"
+    ) |>
+    mutate(
+      EXROUTE = "IV",
+      EXDOSFRM = "INFUSION",
+      EPOCH = "OPEN LABEL TREATMENT"
+    )
+
+  bsa <- vs |>
+    select(USUBJID, VSTESTCD, VSSTRESN) |>
+    pivot_wider(
+      names_from = "VSTESTCD", values_from = "VSSTRESN") |>
+    mutate(BSA = bsa_mosteller(WEIGHT, HEIGHT)) |>
+    select(USUBJID, BSA)
+
+  ex <- ex |>
+    left_join(bsa, by = "USUBJID") |>
+    mutate(EXDOSE = round(BSA, 2)) |>
+    select(-BSA)
+
+  dm <- dm %>%
+    add_RFENDTC(ex)
+
+  pc <- make_iv_pc(dm, ex, vs, lb, rich_sampling_scheme)
+
+  ts <- synthesize_ts(
+    studyid, studytitle, c("saf", "tol", "pk"), "1",
+    startdate = format(min(dm$RFICDTC, na.rm = T)),
+    enddate = format(last_dtc_data_frame(pc)),
+    hv = TRUE
+  )
+
+  out <- list(
+    dm = select(dm, -c("cohort", "dose")),
+    vs = vs,
+    ex = mutate(ex, EXTRT = "EXAMPLINIB"),
+    pc = pc,
+    lb = lb,
+    ts = ts
+  )
+
+  sdtm(lapply(out, isofy_dates))
+}

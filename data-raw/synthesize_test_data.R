@@ -17,6 +17,7 @@ set.seed(1234)
 examplinib_sad <- synthesize_sdtm_sad_study()
 examplinib_poc <- synthesize_sdtm_poc_study()
 examplinib_fe <- synthesize_sdtm_food_effect_study()
+examplinib_iv <- synthesize_sdtm_iv_study()
 
 examplinib_sad_nif <- nif() %>%
   add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
@@ -62,6 +63,7 @@ examplinib_fe$domains[["pp"]] <- examplinib_fe_nif %>%
 usethis::use_data(examplinib_sad, overwrite = T)
 usethis::use_data(examplinib_poc, overwrite = T)
 usethis::use_data(examplinib_fe, overwrite = T)
+usethis::use_data(examplinib_iv, overwrite = T)
 
 usethis::use_data(examplinib_sad_nif, overwrite = T)
 usethis::use_data(examplinib_poc_nif, overwrite = T)
