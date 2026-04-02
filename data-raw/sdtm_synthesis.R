@@ -1505,7 +1505,13 @@ make_iv_pc <- function(dm, ex, vs, lb, sampling_scheme) {
     mutate(PCSPEC = "PLASMA") %>%
     mutate(PCRFTDTC = .data$RFSTDTC) %>%
     mutate(EPOCH = "OPEN LABEL TREATMENT") %>%
-    dplyr::select(-c("id", "time", "c_centr", "c_metab", "RFSTDTC"))
+    dplyr::select(-c("id", "time", "c_centr", "c_metab", "RFSTDTC")) |>
+    mutate(PCLLOQ = 0.05) |>
+    mutate(PCSTRESC = case_when(
+      PCSTRESN < PCLLOQ ~ "<LLOQ",
+      .default = as.character(PCSTRESN)
+    ))
+
   return(pc)
 }
 
