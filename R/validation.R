@@ -213,6 +213,7 @@ validate_param <- function(
 #' @param allow_empty Allow empty values.
 #' @param allow_multiple Allow multiple values.
 #' @param allow_na Allow NA values.
+#' @param values Allowed values.
 #'
 #' @returns Nothing or stop.
 #' @noRd
@@ -222,7 +223,8 @@ validate_argument <- function(
     allow_null = FALSE,
     allow_empty = FALSE,
     allow_multiple = FALSE,
-    allow_na = FALSE
+    allow_na = FALSE,
+    values = NULL
 ) {
   # Validate type parameter
   type <- match.arg(type)
@@ -264,6 +266,14 @@ validate_argument <- function(
     any(nchar(param) == 0)
   ) {
     stop(paste0(param_name, " must be a non-empty string"))
+  }
+
+  if (!is.null(values)) {
+    if (!all(param %in% values))
+      stop(paste0(
+        param_name, " must be ",
+        nice_enumeration(values, conjunction = "or"), "!"
+      ))
   }
 
   invisible(NULL)

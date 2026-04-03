@@ -194,13 +194,19 @@
 #'   c("1H POST", "1H POST EOI", "1H POST INFUSION"),
 #'   treatment_duration = 2
 #' )
-convert_xxtpt_to_hours <- function(xxtpt,
-                                   treatment_duration = 0,
-                                   range_method = "midpoint") {
+convert_xxtpt_to_hours <- function(
+    xxtpt,
+    treatment_duration = 0,
+    range_method = "midpoint") {
   # Validate inputs
   assert_character_vector(xxtpt)
   assert_numeric_vector(treatment_duration)
   assert_character_vector(range_method, values = c("start", "end", "midpoint"))
+
+  validate_argument(xxtpt, "character", allow_multiple = TRUE)
+  validate_argument(treatment_duration, "numeric", allow_multiple = TRUE)
+  validate_argument(range_method, "character")
+
 
   # Validate treatment_duration length
   if (length(treatment_duration) != 1 && length(treatment_duration) != length(xxtpt)) {
