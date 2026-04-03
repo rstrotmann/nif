@@ -272,8 +272,6 @@ import_from_connection <- function(
     raw <- index_id(raw)
   }
 
-
-
   nif(raw)
 }
 
@@ -305,7 +303,7 @@ import_nif <- function(
   }
   connection <- file(filename)
   on.exit(close(connection))
-  import_from_connection(
+  obj <- import_from_connection(
     connection,
     ...,
     format = format,
@@ -313,4 +311,7 @@ import_nif <- function(
     no_numeric = no_numeric,
     silent = silent
   )
+
+  nif_check_id_integrity(obj)
+  obj
 }

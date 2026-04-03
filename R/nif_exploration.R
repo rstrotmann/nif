@@ -271,7 +271,8 @@ summary.nif <- function(
 ) {
   # input validation
   validate_min_nif(object)
-  validate_logical_param(sampling, "sampling")
+  # validate_logical_param(sampling, "sampling")
+  validate_argument(sampling, "logical")
 
   # Validate data is not empty
   if (nrow(object) == 0) {
@@ -300,6 +301,8 @@ summary.nif <- function(
     class(out) <- "summary_nif"
     return(out)
   }
+
+  nif_check_id_integrity(object)
 
   subjects <- subjects(object)
   analytes <- analytes(object)
