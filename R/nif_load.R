@@ -271,6 +271,9 @@ import_from_connection <- function(
   if (any(is.na(raw$ID))) {
     raw <- index_id(raw)
   }
+
+
+
   nif(raw)
 }
 
