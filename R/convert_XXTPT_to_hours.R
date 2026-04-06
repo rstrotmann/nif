@@ -7,8 +7,7 @@
 #' admiral: ADaM in R Asset Library. R package version 1.4.1,
 #' https://pharmaverse.github.io/admiral/.
 #'
-#' @description
-#' `r lifecycle::badge("experimental")`
+#' and improved.
 #'
 #' Converts CDISC timepoint strings (e.g., `PCTPT`, `VSTPT`, `EGTPT`,
 #' `ISTPT`, `LBTPT`) into numeric hours for analysis. The function handles
@@ -19,7 +18,6 @@
 #'   `--TPT` variables (e.g., `PCTPT`, `VSTPT`, `EGTPT`, `ISTPT`, `LBTPT`).
 #'   Can contain `NA` values.
 #'
-#'
 #' @param treatment_duration Numeric value(s) specifying the duration of treatment
 #'   in hours. Used to convert "EOI/EOT" (End of Infusion/Treatment) patterns
 #'   and patterns describing time after end of treatment. Must be non-negative.
@@ -29,11 +27,9 @@
 #'
 #'   Default is 0 hours (for instantaneous treatments like oral medications).
 #'
-#'
 #' @param range_method Method for converting time ranges to single values.
 #'   Options are "midpoint" (default), "start", or "end". For example,
 #'   "0-6h" with midpoint returns 3, with start returns 0, with end returns 6.
-#'
 #'
 #' @details
 #' The function recognizes the following patterns (all case-insensitive):
@@ -121,92 +117,14 @@
 #' Returns `numeric(0)` for empty input.
 #'
 #' @noRd
-#'
-#' @examples
-#' convert_xxtpt_to_hours(c(
-#'   "Screening",
-#'   "Pre-dose",
-#'   "Pre-treatment",
-#'   "Before",
-#'   "30M",
-#'   "1H",
-#'   "2H POSTDOSE",
-#'   "Day 1"
-#' ))
-#'
-#' convert_xxtpt_to_hours(c(
-#'   "EOT",
-#'   "1 HOUR POST EOT",
-#'   "1 HOUR AFTER EOT",
-#'   "After End of Treatment"
-#' ))
-#'
-#' convert_xxtpt_to_hours(
-#'   c(
-#'     "EOI",
-#'     "1 HOUR POST EOI",
-#'     "24 HR POST INF",
-#'     "24 HR POST-INF",
-#'     "30MIN AFTER END OF INFUSION",
-#'     "8H PRIOR START OF INFUSION",
-#'     "10MIN PRE EOI"
-#'   ),
-#'   treatment_duration = 1
-#' )
-#'
-#' convert_xxtpt_to_hours(
-#'   c("EOI", "1 HOUR POST EOI", "EOI", "1 HOUR POST EOI"),
-#'   treatment_duration = c(1, 1, 2, 2)
-#' )
-#'
-#' convert_xxtpt_to_hours(c(
-#'   "0-6h Post-dose",
-#'   "0-4H PRIOR START OF INFUSION",
-#'   "8-16H POST START OF INFUSION"
-#' ))
-#'
-#' convert_xxtpt_to_hours("0-6h Post-dose", range_method = "end")
-#' convert_xxtpt_to_hours("0-6h Post-dose", range_method = "start")
-#'
-#' convert_xxtpt_to_hours(
-#'   c(
-#'     "0-4H AFTER EOI",
-#'     "0-4H POST EOI",
-#'     "4-8H AFTER END OF INFUSION",
-#'     "4-8H AFTER EOT",
-#'     "4-8H POST INFUSION",
-#'     "4-8H POST-INF"
-#'   ),
-#'   treatment_duration = 1
-#' )
-#'
-#' convert_xxtpt_to_hours(
-#'   c("Pre-dose", "1H POST", "2H POST", "4H POST"),
-#'   treatment_duration = 2
-#' )
-#'
-#' convert_xxtpt_to_hours(
-#'   c("Pre-dose", "EOI", "1H POST EOI", "2H POST EOI"),
-#'   treatment_duration = 2
-#' )
-#'
-#' convert_xxtpt_to_hours(
-#'   c("1H POST", "1H POST EOI", "1H POST INFUSION"),
-#'   treatment_duration = 2
-#' )
 convert_xxtpt_to_hours <- function(
     xxtpt,
     treatment_duration = 0,
     range_method = "midpoint") {
   # Validate inputs
-  assert_character_vector(xxtpt)
-  assert_numeric_vector(treatment_duration)
-  assert_character_vector(range_method, values = c("start", "end", "midpoint"))
-
   validate_argument(xxtpt, "character", allow_multiple = TRUE)
   validate_argument(treatment_duration, "numeric", allow_multiple = TRUE)
-  validate_argument(range_method, "character")
-
+  validate_argument(range_method, "character", values = c("start", "end", "midpoint"))
 
   # Validate treatment_duration length
   if (length(treatment_duration) != 1 && length(treatment_duration) != length(xxtpt)) {
@@ -366,6 +284,7 @@ convert_time_units <- function(xxtpt, result, na_idx) {
     ignore_case = TRUE,
     comments = TRUE
   )
+
   hm_matches <- str_match(xxtpt, hm_pattern)
   hm_idx <- !is.na(hm_matches[, 1]) & is.na(result) & !na_idx
   if (any(hm_idx)) {
@@ -376,6 +295,7 @@ convert_time_units <- function(xxtpt, result, na_idx) {
 
   result
 }
+
 
 #' Convert Range Patterns
 #'
@@ -713,7 +633,7 @@ convert_post_end_patterns <- function(xxtpt, result, na_idx, treatment_duration)
 convert_start_patterns <- function(xxtpt, result, na_idx) {
   h_start_treatment_pattern <- regex(
     paste0(
-      "^(?<value>\\d+(?:\\.\\d+)?)h\\s+",
+      "^(?<value>\\d+(?:\\.\\d+)?)\\s*h\\s+",
       "(?<direction>prior|before|post|after)\\s+",
       "start\\s+of\\s+(?:infusion|treatment)$"
     ),
@@ -757,11 +677,17 @@ convert_start_patterns <- function(xxtpt, result, na_idx) {
 #' @keywords internal
 #' @noRd
 convert_min_after_start <- function(xxtpt, result, na_idx) {
-  min_after_start_pattern <- regex(
-    "^(?<value>\\d+(?:\\.\\d+)?)\\s*m(?:in|inute)?s?\\s+after\\s+start\\s+inf$",
+  min_after_start_pattern <- regex(paste0(
+      "^(?<value>\\d+(?:\\.\\d+)?)\\s*",
+      "m(?:in|inute)?s?\\s+",
+      # "after\\s+start\\s+(?:of\\s+)?inf(?:usion)?$"
+      "after\\s+start\\s+(?:of\\s+)?(?:inf(?:usion)|treatment)?$"
+    ),
     ignore_case = TRUE,
     comments = TRUE
   )
+
+
   min_after_start_matches <- str_match(xxtpt, min_after_start_pattern)
   min_after_start_idx <- !is.na(min_after_start_matches[, 1]) &
     is.na(result) & !na_idx
@@ -772,6 +698,7 @@ convert_min_after_start <- function(xxtpt, result, na_idx) {
   }
   result
 }
+
 
 #' Convert MIN PRE/BEFORE EOI/EOT Patterns
 #'
@@ -819,6 +746,7 @@ convert_min_pre_eot <- function(xxtpt, result, na_idx, treatment_duration) {
   }
   result
 }
+
 
 #' Convert Simple Time Unit Patterns
 #'
