@@ -6,6 +6,7 @@ This tutorial contains live code that depends on the following R
 packages:
 
 ``` r
+
 library(dplyr)
 library(ggplot2)
 library(nif)
@@ -18,6 +19,7 @@ library(pharmaversesdtm)
 CDISCPILOT01
 
 ``` r
+
 # source: https://github.com/pharmaverse/pharmaversesdtm
 
 sdtm <- sdtm(
@@ -35,6 +37,7 @@ sdtm <- sdtm(
 ```
 
 ``` r
+
 summary(sdtm)
 #> -------- SDTM data set summary -------- 
 #> Study CDISCPILOT01 
@@ -70,7 +73,7 @@ summary(sdtm)
 #>   PCTEST       PCTESTCD   
 #>   XANOMELINE   XAN          
 #> 
-#> Hash: c02433c6355f083fd3df90e2d4f496a5
+#> Hash: 0bc904e6d0b7176f1cde4212c701676f
 #> Last DTC: 2015-03-05 15:40:00
 
 plot(sdtm, domain = "dm", points = F)
@@ -79,6 +82,7 @@ plot(sdtm, domain = "dm", points = F)
 ## NONMEM INPUT FORMAT DATA
 
 ``` r
+
 nif_option(silent = TRUE)
 
 nif <- nif() |> 
@@ -93,6 +97,7 @@ nif <- nif() |>
 ```
 
 ``` r
+
 summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 254 subjects across one study:
@@ -151,7 +156,7 @@ summary(nif)
 #>   PLACEBO   7     210   149.1   182      
 #>   XAN       1     212   99.2    81        
 #> 
-#> Hash: 886686261a9cc9c0ea3f6ea6f3b1b437
+#> Hash: 4dbd24ca48d3ab80591da8a0eddc5be2
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(
@@ -164,6 +169,7 @@ invisible(capture.output(
 ### Data definition table
 
 ``` r
+
 ddt(nif) |> 
   kable()
 ```
@@ -207,6 +213,7 @@ ddt(nif) |>
 ### Exposure
 
 ``` r
+
 mean_dose_plot(nif)
 ```
 
@@ -215,6 +222,7 @@ mean_dose_plot(nif)
 ### Pharmacokinetics
 
 ``` r
+
 plot(nif, "XAN")
 ```
 

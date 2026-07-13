@@ -1,6 +1,7 @@
 # Example: Multiple-dose study
 
 ``` r
+
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -37,6 +38,7 @@ Let’s summarize the `examplinib_poc` sdtm object for a high-level
 overview:
 
 ``` r
+
 summary(examplinib_poc)
 #> -------- SDTM data set summary -------- 
 #> Study 2023000022 
@@ -83,6 +85,7 @@ Following the tutorial given in `vignette("nif-tutorial")`, we start
 with a basic pharmacokinetic nif object from `examplinic_poc`:
 
 ``` r
+
 sdtm <- examplinib_poc
 
 nif_poc <- nif() %>%
@@ -111,6 +114,7 @@ Cockcroft-Gault formula by default. For further options, see the
 documentation for [`add_bl_crcl()`](../reference/add_bl_crcl.md).
 
 ``` r
+
 nif_poc <- nif_poc %>%
   add_baseline(sdtm, domain = "lb", testcd = "CREAT") %>%
   add_bl_crcl()
@@ -121,6 +125,7 @@ The nif data set now includes both baseline creatinine and baseline
 creatinine clearance:
 
 ``` r
+
 head(nif_poc, 3)
 #    REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
 #  1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
@@ -149,6 +154,7 @@ number of patients with normal renal function or impaired renal
 function:
 
 ``` r
+
 summary(nif_poc)
 #  ----- NONMEM Input Format (NIF) data summary -----
 #  Data from 80 subjects across one study:
@@ -204,7 +210,7 @@ summary(nif_poc)
 #    PARENT   min   max   mean   median   
 #    RS2023   55    97    73.2   72.5      
 #  
-#  Hash: e4fcddbba19e111740b7eae4175747ea
+#  Hash: 2a97389fea4070e881abe4cc0fe9468b
 #  Last DTC: 2001-07-18 08:24:00
 ```
 
@@ -215,6 +221,7 @@ construct in the below code. Its purpose is to hide non-graphical
 output.
 
 ``` r
+
 invisible(capture.output(
   plot(summary(nif_poc))
 ))
@@ -227,6 +234,7 @@ invisible(capture.output(
 In this study, all 80 subject received the same dose level:
 
 ``` r
+
 nif_poc %>%
   dose_levels() %>%
   kable(caption = "Dose levels")
@@ -236,13 +244,14 @@ nif_poc %>%
 |-------:|----:|
 |    500 |  80 |
 
-Dose levels
+Dose levels {.table}
 
 However, there were subjects with dose reductions, as we can see when
 filtering the nif data set for `EVID == 1` (i.e., administrations) and
 summarizing the administered dose:
 
 ``` r
+
 nif_poc %>%
   filter(EVID == 1) %>%
   group_by(DOSE) %>%
@@ -260,6 +269,7 @@ To identify the subjects with dose reductions, we can use the
 the nif package:
 
 ``` r
+
 nif_poc %>%
   dose_red_sbs()
 #  # A tibble: 30 × 2
@@ -281,6 +291,7 @@ nif_poc %>%
 Let’s have a plot of the doses over time in these subjects:
 
 ``` r
+
 nif_poc %>%
   filter(ID %in% (dose_red_sbs(nif_poc))$ID) %>%
   filter(EVID == 1) %>%
@@ -297,6 +308,7 @@ treatment. Another way of visualizing this is per the
 [`mean_dose_plot()`](../reference/mean_dose_plot.md) function:
 
 ``` r
+
 nif_poc %>%
   mean_dose_plot()
 ```
@@ -315,6 +327,7 @@ fluctuations that indicate single missed doses in individual subjects!
 The PK sampling time points in this study were:
 
 ``` r
+
 nif_poc %>%
   filter(EVID == 0) %>%
   group_by(NTIME, ANALYTE) %>%
@@ -337,13 +350,14 @@ nif_poc %>%
 |  10.0 |     24 |         24 |
 |  12.0 |     24 |         24 |
 
-Observations by time point and analyte
+Observations by time point and analyte {.table}
 
 From the different numbers of samplings per nominal time point, we guess
 that only a subset of subjects had a rich sampling scheme. Let’s
 identify those:
 
 ``` r
+
 nif_poc %>%
   rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 6)
 #   [1]  1  6  7 17 18 19 20 21 30 42 54 67
@@ -358,6 +372,7 @@ Let’s plot the individual and mean plasma concentration profiles on Day
 1 for the parent, RS2023, and the metabolite, RS2023487A:
 
 ``` r
+
 temp <- nif_poc %>%
   filter(ID %in% (rich_sampling_sbs(nif_poc, analyte = "RS2023", n = 4)))
 
@@ -370,6 +385,7 @@ temp %>%
 For single and multiple dose administrations separately:
 
 ``` r
+
 temp <- temp %>%
   index_rich_sampling_intervals()
 
@@ -381,6 +397,7 @@ temp %>%
 ![](multiple-dose-example_files/figure-html/unnamed-chunk-16-1.png)
 
 ``` r
+
 
 temp %>%
   filter(RICH_N == 2) %>%
@@ -398,10 +415,11 @@ documentation for details.
 
 The nif package includes functions for non-compartmental PK analysis.
 Essentially, [`nca()`](../reference/nca.md) is a wrapper around
-[`PKNCA::pk.nca()`](http://humanpred.github.io/pknca/reference/pk.nca.md)
+[`PKNCA::pk.nca()`](https://humanpred.github.io/pknca/reference/pk.nca.html)
 from the popular PKNCA package (github.com/humanpred/pkncal).
 
 ``` r
+
 nca <- examplinib_poc_nif %>%
   index_rich_sampling_intervals(analyte = "RS2023", min_n = 4) %>%
   nca("RS2023", group = "RICH_N")

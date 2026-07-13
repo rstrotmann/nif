@@ -40,6 +40,7 @@ A data frame with 1969 rows and 6 columns.
 
 The first few lines of the data set for reference:
 
+
     DOMAIN   VARNAM                            VARLABEL DEFTYPE LENGTH CORE
         TA  STUDYID                    Study Identifier    text     10  Req
         TA   DOMAIN                 Domain Abbreviation    text      2  Req

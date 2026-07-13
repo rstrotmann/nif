@@ -75,6 +75,7 @@ This tutorial contains live code that depends on the following R
 packages:
 
 ``` r
+
 library(tidyr)
 library(dplyr)
 library(stringr)
@@ -93,6 +94,7 @@ The SDTM data can be loaded using
 [`read_sdtm()`](../reference/read_sdtm.md):
 
 ``` r
+
 read_sdtm("path/to/sdtm/data")
 ```
 
@@ -100,6 +102,7 @@ Windows users may want to provide the file path as raw string, i.e., in
 the form of:
 
 ``` r
+
 read_sdtm(r"(path\to\sdtm\data)")
 ```
 
@@ -129,6 +132,7 @@ study with multiple-dose administrations (`examplinib_poc`).
 Printing an `sdtm` object shows relevant summary information:
 
 ``` r
+
 examplinib_fe
 #> -------- SDTM data set summary -------- 
 #> Study 2023000400 
@@ -171,6 +175,7 @@ High-level subject-level disposition data for a specific subject can be
 extracted using [`subject_info()`](../reference/subject_info.md):
 
 ``` r
+
 examplinib_fe %>%
   subject_info("20230004001050001")
 #>          [,1]                     
@@ -199,6 +204,7 @@ The original SDTM data for specific domains can be retrieved from `sdtm`
 objects with the [`domain()`](../reference/domain.md) function:
 
 ``` r
+
 domain(examplinib_sad, "dm") %>%
   head(3)
 #>   SITEID  SUBJID                              ACTARM ACTARMCD          RFICDTC
@@ -223,6 +229,7 @@ domain(examplinib_sad, "dm") %>%
 high-level data disposition overview on a specific domain:
 
 ``` r
+
 summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #> -------- SDTM domain summary -------- 
 #> Study 2023000001 
@@ -259,6 +266,7 @@ A graphical timeline overview can be generated for a specific domain by,
 e.g.:
 
 ``` r
+
 plot(examplinib_fe, "dm")
 ```
 
@@ -280,6 +288,7 @@ disposition, the [`suggest()`](../reference/suggest.md) function provide
 useful code snippets for the creation of analysis data sets:
 
 ``` r
+
 suggest(examplinib_fe)
 #> 
 #> ── 1. Treatments ───────────────────────────────────────────────────────────────
@@ -381,6 +390,7 @@ WEIGHT and HEIGHT are taken from the DM and VS domains, respectively,
 and merged into the data set as columns of those names:
 
 ``` r
+
 sdtm <- examplinib_fe
 
 nif <- nif() %>%
@@ -397,6 +407,7 @@ the ‘EXTRT’ field is ‘EXAMPLINIB’ while the pharmacokinetic analyte name
 These are the first rows of the resulting data table:
 
 ``` r
+
 head(nif, 5)
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
 #> 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
@@ -430,6 +441,7 @@ observations are added to the data set, setting the metabolite’s name to
 the ‘parent’ parameter:
 
 ``` r
+
 sdtm1 <- examplinib_sad
 
 nif1 <- nif() %>%
@@ -469,6 +481,7 @@ the SDTM data but can be included using the `keep` parameter in
 [`add_administration()`](../reference/add_administration.md):
 
 ``` r
+
 nif <- nif() %>%
   add_administration(
     examplinib_fe, "EXAMPLINIB",
@@ -483,6 +496,7 @@ nif <- nif() %>%
 These are again the first 3 lines of the resulting nif object:
 
 ``` r
+
 head(nif, 3)
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
 #> 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
@@ -515,6 +529,7 @@ generates a general overview on the data disposition in a `nif` data
 set:
 
 ``` r
+
 summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 20 subjects across one study:
@@ -562,7 +577,7 @@ summary(nif)
 #>   PARENT   min   max   mean   median   
 #>   RS2023   2     2     2      2         
 #> 
-#> Hash: 281979a9c070e4b08518ad0a83f89c75
+#> Hash: fc1b21edda89361c2edd585665813fcd
 #> Last DTC: 2001-03-10 10:28:00
 ```
 
@@ -573,6 +588,7 @@ code, ignore the `ìnvisible(capture.output())` construct around the
 sole purpose is to omit some non-graphical output:
 
 ``` r
+
 invisible(capture.output(
   nif %>%
     summary() %>%
@@ -596,6 +612,7 @@ In its simplest form,
 analytes, and uses ‘time after first dose’ (‘TAFD’) as the time metric:
 
 ``` r
+
 plot(nif)
 ```
 
@@ -605,6 +622,7 @@ To check the integrity of the data set, it is often helpful to plot the
 analyte concentrations over time-after-dose (TAD):
 
 ``` r
+
 nif %>%
   plot(time = "TAD", points = TRUE, lines = FALSE, log = TRUE)
 ```
@@ -616,6 +634,7 @@ the below figure focuses on the first 24 hours on the linear scale and
 introduces coloring based on the ‘FASTED’ covariate field:
 
 ``` r
+
 nif %>%
   plot(color = "FASTED", max_time = 24, points = TRUE)
 ```
@@ -625,6 +644,7 @@ nif %>%
 The following compares the mean plasma concentration profiles:
 
 ``` r
+
 nif %>%
   plot(color = "FASTED", max_time = 24, mean = TRUE, points = TRUE)
 ```
@@ -643,5 +663,6 @@ fully appreciate its potential, you are encouraged to test
 [`nif_viewer()`](../reference/nif_viewer.md) within your RStudio.
 
 ``` r
+
 nif_viewer(nif)
 ```

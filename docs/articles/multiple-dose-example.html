@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Example: Multiple-dose study • nif</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Example: Multiple-dose study">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -263,7 +263,7 @@ impaired renal function:</p>
 <span><span class="co">#    PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#    RS2023   55    97    73.2   72.5      </span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Hash: e4fcddbba19e111740b7eae4175747ea</span></span>
+<span><span class="co">#  Hash: 2a97389fea4070e881abe4cc0fe9468b</span></span>
 <span><span class="co">#  Last DTC: 2001-07-18 08:24:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the
@@ -485,7 +485,7 @@ intervals with rich PK sampling. See the documentation for details.</p>
 </h3>
 <p>The nif package includes functions for non-compartmental PK analysis.
 Essentially, <code><a href="../reference/nca.html">nca()</a></code> is a wrapper around
-<code><a href="http://humanpred.github.io/pknca/reference/pk.nca.html" class="external-link">PKNCA::pk.nca()</a></code> from the popular PKNCA package
+<code><a href="https://humanpred.github.io/pknca/reference/pk.nca.html" class="external-link">PKNCA::pk.nca()</a></code> from the popular PKNCA package
 (github.com/humanpred/pkncal).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nca</span> <span class="op">&lt;-</span> <span class="va">examplinib_poc_nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>

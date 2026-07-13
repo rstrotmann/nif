@@ -281,8 +281,8 @@ import_from_connection <- function(
     raw <- index_id(raw)
   }
 
-  # nif(raw)
-  raw
+  nif(raw)
+  # raw
 }
 
 

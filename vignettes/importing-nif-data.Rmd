@@ -62,9 +62,8 @@ nif <- import_nif(csv_file_name, format = "csv")
 head(nif)
 ```
 
-The resulting object behaves as a regular `nif` object, for example, it can be 
-summarized or plotted or otherwise explored (see `vignette("nif-tutorial")` for
-more information):
+The resulting object is a regular `nif` object. It can be summarized or plotted
+or otherwise explored (see `vignette("nif-tutorial")` for more information):
 
 ```{r}
 summary(nif)

@@ -13,6 +13,7 @@ cdiscpilot01_sdtm
 
 sdtm object with 9 domains:
 
+
     -------- SDTM data set summary --------
     Study CDISCPILOT01
 

@@ -1,6 +1,7 @@
 # More than one study in a NIF dataset
 
 ``` r
+
 library(dplyr)
 #> 
 #> Attaching package: 'dplyr'
@@ -14,6 +15,7 @@ library(nif)
 ```
 
 ``` r
+
 nif <- nif() %>%
   add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
   add_observation(examplinib_sad, "pc", "RS2023", cmt = 2) %>%
@@ -111,6 +113,6 @@ nif %>%
 #>   PARENT   min   max   mean   median   
 #>   RS2023   1     97    40.2   58.5      
 #> 
-#> Hash: 5d2f0f2f1963db17cba54ec657d24443
+#> Hash: b02845ed42df7b58a09340063a773b71
 #> Last DTC: 2001-07-18 08:24:00
 ```

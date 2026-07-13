@@ -1,6 +1,7 @@
 # Data definition using formulas
 
 ``` r
+
 library(dplyr)
 library(nif)
 
@@ -19,6 +20,7 @@ data set, sequentially adding administrations, observations, baseline
 data and covariates. A typical workflow may look like this:
 
 ``` r
+
 sdtm <- examplinib_sad
 
 nif <- nif() %>%
@@ -38,6 +40,7 @@ We can get an overview on all observation events included in the SDTM
 data like so:
 
 ``` r
+
 testcd(sdtm)
 #>    DOMAIN     TESTCD
 #> 1      VS     HEIGHT
@@ -60,6 +63,7 @@ Likewise, we can get an overview on the treatments included in the SDTM
 data with:
 
 ``` r
+
 treatments(sdtm)
 #> [1] "EXAMPLINIB"
 ```
@@ -73,6 +77,7 @@ allows the definition of the data sources for an analysis data set using
 *formulae*:
 
 ``` r
+
 nif <- nif_auto(sdtm, RS2023 + RS2023487A ~ EXAMPLINIB)
 ```
 
@@ -102,6 +107,7 @@ creatinine data and derived the baseline creatinine clearance and renal
 function category from it:
 
 ``` r
+
 head(nif, 3)
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI
 #> 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256

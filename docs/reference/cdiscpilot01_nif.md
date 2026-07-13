@@ -136,6 +136,7 @@ Created from <https://github.com/pharmaverse/pharmaversesdtm>
 
 ## Details
 
+
     ----- NONMEM Input Format (NIF) data -----
     8988 observations from 254 subjects across 1 study
     Analytes: ALT, HGB, CFB_HGB, XAN and PLACEBO

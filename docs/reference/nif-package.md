@@ -20,3 +20,8 @@ Useful links:
 
 **Maintainer**: Rainer Strotmann <rainer.strotmann@mailbox.org>
 ([ORCID](https://orcid.org/0000-0003-0543-7984)) \[copyright holder\]
+
+Authors:
+
+- Rainer Strotmann <rainer.strotmann@mailbox.org>
+  ([ORCID](https://orcid.org/0000-0003-0543-7984)) \[copyright holder\]

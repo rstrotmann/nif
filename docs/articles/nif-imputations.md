@@ -43,6 +43,7 @@ In general, drug administration events are added to a nif object in the
 following way:
 
 ``` r
+
 library(dplyr)
 library(nif)
 

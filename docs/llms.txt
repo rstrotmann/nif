@@ -21,6 +21,7 @@ and visualize NIF data sets.
 You can install the development version of `nif` like this:
 
 ``` r
+
 devtools::install_github("rstrotmann/nif", build_vignettes=TRUE)
 ```
 
@@ -32,6 +33,7 @@ This is a very basic example using sample SDTM data from a fictional
 single ascending dose study to create a NIF data set using `make_nif()`:
 
 ``` r
+
 library(nif)
 library(tidyverse)
 
@@ -69,6 +71,7 @@ In many cases, you may want to add further covariates, e.g., baseline
 creatinine from the LB domain:
 
 ``` r
+
 nif <- nif %>%
   mutate(COHORT = ACTARMCD) %>%
   add_baseline(sdtm, "lb", "CREAT") %>%
@@ -82,6 +85,7 @@ The `nif` package provides a range of functions to explore and summarize
 NIF files:
 
 ``` r
+
 summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 48 subjects across one study:

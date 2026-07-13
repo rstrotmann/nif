@@ -11,6 +11,7 @@
 The code in this vignette depends on the following packages:
 
 ``` r
+
 library(dplyr)
 library(nif)
 ```
@@ -49,15 +50,16 @@ The external data can be imported as a nif object using
 [`import_nif()`](../reference/import_nif.md):
 
 ``` r
+
 nif <- import_nif(csv_file_name, format = "csv")
 head(nif)
-#>   REF ID TIME EVID AMT CMT MDV RATE     DV
-#> 1   1  1  0.0    1   5   1   1    0     NA
-#> 2   2  1  0.0    0   0   2   0    0 0.0000
-#> 3   3  1  0.5    0   0   2   0    0 0.0024
-#> 4   4  1  1.0    0   0   2   0    0 0.0072
-#> 5   5  1  1.5    0   0   2   0    0 0.0157
-#> 6   6  1  2.0    0   0   2   0    0 0.0209
+#>   ID TIME AMT RATE EVID     DV CMT MDV
+#> 1  1  0.0   5    0    1     NA   1   1
+#> 2  1  0.0   0    0    0 0.0000   2   0
+#> 3  1  0.5   0    0    0 0.0024   2   0
+#> 4  1  1.0   0    0    0 0.0072   2   0
+#> 5  1  1.5   0    0    0 0.0157   2   0
+#> 6  1  2.0   0    0    0 0.0209   2   0
 ```
 
 The resulting object behaves as a regular `nif` object, for example, it
@@ -65,42 +67,361 @@ can be summarized or plotted or otherwise explored (see
 `vignette("nif-tutorial")` for more information):
 
 ``` r
+
 summary(nif)
-#> ----- NONMEM Input Format (NIF) data summary -----
-#> Data from 2 subjects across 0 studies:
-#>   N   
-#>   2    
-#> 
-#> Sex distribution:
-#>   SEX      N   percent   
-#>   male     0   0         
-#>   female   0   0         
-#>   NA       2   100        
-#> 
-#> Treatments:
-#>   CMT1
-#> 
-#> Analytes:
-#>   CMT2
-#> 
-#> Subjects per dose level:
-#>   CMT1   N   
-#>   5      2    
-#> 
-#> 16 observations:
-#>   CMT   N    
-#>   2     16    
-#> 
-#> Subjects with dose reductions
-#>   CMT1   
-#>   0       
-#> 
-#> Treatment duration overview:
-#>   PARENT   min   max   mean   median   
-#>   CMT1     1     1     1      1         
-#> 
-#> Hash: c03cb2ca160fb8dfbb480ce8dc7d965f
+#>        ID           TIME          AMT              RATE        EVID       
+#>  Min.   :1.0   Min.   :0.0   Min.   :0.0000   Min.   :0   Min.   :0.0000  
+#>  1st Qu.:1.0   1st Qu.:0.5   1st Qu.:0.0000   1st Qu.:0   1st Qu.:0.0000  
+#>  Median :1.5   Median :1.5   Median :0.0000   Median :0   Median :0.0000  
+#>  Mean   :1.5   Mean   :2.0   Mean   :0.5556   Mean   :0   Mean   :0.1111  
+#>  3rd Qu.:2.0   3rd Qu.:3.0   3rd Qu.:0.0000   3rd Qu.:0   3rd Qu.:0.0000  
+#>  Max.   :2.0   Max.   :6.0   Max.   :5.0000   Max.   :0   Max.   :1.0000  
+#>                                                                           
+#>        DV                CMT             MDV        
+#>  Min.   :0.000000   Min.   :1.000   Min.   :0.0000  
+#>  1st Qu.:0.005025   1st Qu.:2.000   1st Qu.:0.0000  
+#>  Median :0.013050   Median :2.000   Median :0.0000  
+#>  Mean   :0.012700   Mean   :1.889   Mean   :0.1111  
+#>  3rd Qu.:0.020000   3rd Qu.:2.000   3rd Qu.:0.0000  
+#>  Max.   :0.027200   Max.   :2.000   Max.   :1.0000  
+#>  NAs    :2
 plot(nif, log = T, points = T)
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
+#> Warning in axis(side = side, at = at, labels = labels, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.xy(xy.coords(x, y), type = type, ...): "points" is not a
+#> graphical parameter
+#> Warning in plot.window(...): "points" is not a graphical parameter
+#> Warning in plot.xy(xy, type, ...): "points" is not a graphical parameter
+#> Warning in title(...): "points" is not a graphical parameter
 ```
 
 ![](importing-nif-data_files/figure-html/unnamed-chunk-5-1.png)
@@ -121,6 +442,7 @@ terms need to be provided in the form of
 `new_field ~ transformation_term`:
 
 ``` r
+
 nif <- import_nif(
   csv_file_name,
   format = "csv",
@@ -129,11 +451,11 @@ nif <- import_nif(
 )
 
 head(nif)
-#>   REF ID TIME NTIME EVID AMT CMT MDV RATE        DV
-#> 1   1  1  0.0   0.0    1   5   1   1    0        NA
-#> 2   2  1  0.0   0.0    0   0   2   0    0 0.000e+00
-#> 3   3  1  0.5   0.5    0   0   2   0    0 6.000e-06
-#> 4   4  1  1.0   1.0    0   0   2   0    0 1.800e-05
-#> 5   5  1  1.5   1.5    0   0   2   0    0 3.925e-05
-#> 6   6  1  2.0   2.0    0   0   2   0    0 5.225e-05
+#>   ID TIME AMT RATE EVID        DV CMT MDV NTIME
+#> 1  1  0.0   5    0    1        NA   1   1   0.0
+#> 2  1  0.0   0    0    0 0.000e+00   2   0   0.0
+#> 3  1  0.5   0    0    0 6.000e-06   2   0   0.5
+#> 4  1  1.0   0    0    0 1.800e-05   2   0   1.0
+#> 5  1  1.5   0    0    0 3.925e-05   2   0   1.5
+#> 6  1  2.0   0    0    0 5.225e-05   2   0   2.0
 ```

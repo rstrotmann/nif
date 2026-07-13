@@ -7,7 +7,3 @@ The list of expected date/time formats as per ISO 8601
 ``` r
 dtc_formats
 ```
-
-## Format
-
-An object of class `character` of length 7.
