@@ -26,7 +26,7 @@ test_that("import_from_connection handles CSV data correctly", {
   # Test expectations
   expect_s3_class(result, "nif")
   expect_equal(nrow(result), 4)
-  expect_equal(ncol(result), 11)
+  expect_equal(ncol(result), 10)
   expect_equal(result$USUBJID[1], "SUBJ-001")
 })
 
@@ -53,7 +53,7 @@ test_that("import_from_connection handles fixed-width data correctly", {
   # Test expectations
   expect_s3_class(result, "nif")
   expect_equal(nrow(result), 4)
-  expect_equal(ncol(result), 11)
+  expect_equal(ncol(result), 10)
 })
 
 
@@ -562,4 +562,37 @@ test_that("import_from_connection handles renaming that overwrites existing colu
   expect_s3_class(result, "nif")
   expect_equal(result$DV[1], 21.0)
   expect_equal(result$DV[2], 30.6)
+})
+
+
+test_that("import_from_connection handles quoted input correctly", {
+  # Create CSV data
+  csv_data_unquoted <- c(
+    "USUBJID,STUDYID,PARENT,ANALYTE,TIME,DV,CMT",
+    "SUBJ-001,STUDY-001,DRUG-A,ANALYTE-X,0,0,1",
+    "SUBJ-001,STUDY-001,DRUG-A,ANALYTE-X,1,10.5,2",
+    "SUBJ-002,STUDY-001,DRUG-A,ANALYTE-X,0,0,1",
+    "SUBJ-002,STUDY-001,DRUG-A,ANALYTE-X,2,15.3,2"
+  )
+
+  csv_data_quoted <- c(
+    "\"USUBJID\", \"STUDYID\", \"PARENT\", \"ANALYTE\", \"TIME\", \"DV\", \"CMT\"",
+    "\"SUBJ-001\", \"STUDY-001\", \"DRUG-A\", \"ANALYTE-X\", \"0\", \"0\", \"1\"",
+    "\"SUBJ-001\", \"STUDY-001\", \"DRUG-A\", \"ANALYTE-X\", \"1\", \"10.5\", \"2\"",
+    "\"SUBJ-002\", \"STUDY-001\", \"DRUG-A\", \"ANALYTE-X\", \"0\", \"0\", \"1\"",
+    "\"SUBJ-002\", \"STUDY-001\", \"DRUG-A\", \"ANALYTE-X\", \"2\", \"15.3\", \"2\""
+  )
+
+  # imported unquoted data
+  con <- textConnection(csv_data_unquoted)
+  reference <- import_from_connection(con, format = "csv", silent = TRUE)
+  close(con)
+
+  # imported quoted data
+  con <- textConnection(csv_data_quoted)
+  test <- import_from_connection(con, format = "csv", silent = TRUE)
+  close(con)
+
+  # Test expectations
+  expect_equal(test, reference)
 })

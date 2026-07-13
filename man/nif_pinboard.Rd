@@ -28,12 +28,12 @@ the order of their priority):
 \item The .Renviron variable NIF_PINBOARD (lowest)
 }
 
-You may use the convenience function \code{\link[usethis:edit]{usethis::edit_r_environ()}} to edit the
+You may use the convenience function \code{\link[usethis:edit_r_environ]{usethis::edit_r_environ()}} to edit the
 .Renviron file and include a user-level setting for the default pinboard path
 (e.g., \verb{NIF_PINBOARD=\\path\\to\\pinboard\\folder}).
 }
 \seealso{
-\code{\link[usethis:edit]{usethis::edit_r_environ()}}
+\code{\link[usethis:edit_r_environ]{usethis::edit_r_environ()}}
 
 \code{\link[=nif_option]{nif_option()}}
 }

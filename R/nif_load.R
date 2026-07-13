@@ -163,6 +163,14 @@ import_from_connection <- function(
 
   # read raw line data from connection
   lines <- readLines(connection, skipNul = TRUE)
+  lines <- sapply(
+    lines,
+    function(x) {
+      str_remove_all(x,"\"")
+    },
+    USE.NAMES = FALSE
+  )
+
   comment_lines <- which(substr(trimws(lines), 1, 1) == "#")
   empty_lines <- which(nchar(trimws(lines)) == 0)
   if (length(c(comment_lines, empty_lines)) != 0) {
@@ -236,10 +244,11 @@ import_from_connection <- function(
 
   if (format == "csv") {
     raw <- data.frame(str_split(lines[-1], delimiter, simplify = TRUE))
-    colnames(raw) <- str_split(lines[1], delimiter, simplify = TRUE)
+    colnames(raw) <- trimws(str_split(lines[1], delimiter, simplify = TRUE))
   }
 
   raw <- raw |>
+    mutate(across(is.character, trimws)) |>
     mutate(across(
       -c(any_of(no_numeric)),
       ~ type.convert(.x,
@@ -272,7 +281,8 @@ import_from_connection <- function(
     raw <- index_id(raw)
   }
 
-  nif(raw)
+  # nif(raw)
+  raw
 }
 
 

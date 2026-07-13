@@ -11,3 +11,5 @@
 ^revdep$
 ^cran-comments\.md$
 ^\.github$
+^\.positai$
+^\.claude$
