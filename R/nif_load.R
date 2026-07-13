@@ -248,7 +248,7 @@ import_from_connection <- function(
   }
 
   raw <- raw |>
-    mutate(across(is.character, trimws)) |>
+    mutate(across(where(is.character), trimws)) |>
     mutate(across(
       -c(any_of(no_numeric)),
       ~ type.convert(.x,
