@@ -409,7 +409,7 @@ df_preprint <- function(
 #' @inheritParams df_preprint
 #'
 #' @returns nothing
-#' @export
+#' @noRd
 df_to_string <- function(
     df,
     indent = 0,
@@ -429,151 +429,27 @@ df_to_string <- function(
 }
 
 
-
-
-
-
-#' Render data frame object to string
+#' Print data frame as cli object
 #'
-#' This function renders a data.frame into a string similar to its
-#' representation when printed without line numbers
-#'
-#' @param df The data.frame to be rendered.
-#' @param indent Indentation level, as numeric.
-#' @param header Boolean to indicate whether the header row is to be included.
-#' @param color Print headers in grey as logical.
-#' @param n The number of lines to be included, or all if NULL.
-#' @param show_none Show empty data frame as 'none', as logical.
-#' @param header_sep Show separation line after header, as logical.
-#' @param na_string String to use for NA values. Defaults to "NA".
-#' @param abbr_lines The row number to which long data frames are abbreviated
-#' in the ouput if the threshold is exceeded. Defaults to nif_option settings if
-#' NULL.
-#' @param abbr_threshold The row number threshold beyond which long data frames
-#' are abbreviated. Defaults to nif_option settings if NULL.
-#'
-#' @return The output as string.
-#' @import utils
-#' @keywords internal
+#' @inheritParams df_preprint
+#' @return nothing
 #' @noRd
-df_to_string_old <- function(
-  df,
-  indent = 0,
-  n = NULL,
-  header = TRUE,
-  header_sep = FALSE,
-  color = FALSE,
-  show_none = FALSE,
-  na_string = "NA",
-  abbr_lines = NULL,
-  abbr_threshold = NULL
+df_to_cli <- function(
+    df,
+    indent = 0,
+    n = NULL,
+    header = TRUE,
+    header_sep = FALSE,
+    color = FALSE,
+    show_none = FALSE,
+    na_string = "NA",
+    abbr_lines = NULL,
+    abbr_threshold = NULL
 ) {
-  # Input validation
-  if (is.null(df)) {
-    return("")
-  }
-
-  # if (!is.data.frame(df) & !is_tibble(df)) {
-  if (!inherits(df, "data.frame")) {
-    stop("Input must be a data frame")
-  }
-
-  if (!is.numeric(indent) || indent < 0) {
-    stop("Indent must be a non-negative number")
-  }
-
-  # Handle empty data frame early
-  if (nrow(df) == 0) {
-    if (show_none) {
-      return(paste0(indent_string(indent), "none\n"))
-    }
-    return("")
-  }
-
-  max_widths <- as.numeric(lapply(
-    rbind(mutate(df, across(everything(), as.character)), names(df)),
-    function(x) max(nchar(x), na.rm = TRUE)
-  ))
-
-  # Create the padding function
-  pad_element <- function(element, width) {
-    sprintf(paste0("%-", width, "s   "), element)
-  }
-
-  footer <- ""
-
-  # abbreviation handler
-  if (is.null(abbr_lines))
-    abbr_lines <- nif_option_value("abbreviation_maxlines")
-
-  if (is.null(abbr_threshold))
-    abbr_threshold <- nif_option_value("abbreviation_threshold")
-
-  nr <- nrow(df)
-  if (nr > abbr_threshold) {
-    if (!is.null(abbr_lines)) {
-      df <- head(df, abbr_lines)
-      if (nr - abbr_lines > 0) {
-        footer <- paste0(
-          "\n", indent_string(indent), "(", nr - abbr_lines, " more rows)"
-        )
-      }
-    }
-  }
-
-  # Convert all columns to character, handling NA values
-  df <- as.data.frame(df) |>
-    mutate(across(everything(), ~ ifelse(is.na(.), na_string, as.character(.))))
-
-  # Create line renderer
-  render_line <- function(line) {
-    paste0(
-      indent_string(indent),
-      paste0(
-        mapply(
-          pad_element,
-          element = as.character(line),
-          width = max_widths
-        ),
-        collapse = ""
-      )
-    )
-  }
-
-  # Build output starting with header if requested
-  output_parts <- character(0)
-
-  if (header) {
-    header_line <- render_line(names(df))
-    if (color) {
-      header_line <- paste0("\u001b[38;5;248m", header_line, "\u001b[0m")
-    }
-    output_parts <- c(output_parts, header_line)
-
-    if (header_sep) {
-      separator <- paste0(
-        indent_string(indent),
-        paste(
-          mapply(
-            function(w) paste(rep("-", w), collapse = ""),
-            max_widths
-          ),
-          collapse = "   "
-        )
-      )
-      output_parts <- c(output_parts, separator)
-    }
-  }
-
-  # Add data rows
-  data_rows <- if (!is.null(n)) utils::head(df, n = n) else df
-  # row_strings <- apply(data_rows, 1, render_line)
-  # output_parts <- c(output_parts, row_strings)
-
-  output_parts <- c(output_parts, apply(data_rows, 1, render_line))
-
-  # Combine all parts with newlines
-  paste(paste(output_parts, collapse = "\n"), footer)
+  temp <- df_preprint(
+    df, indent, n, header, header_sep, color, show_none, na_string, abbr_lines,
+    abbr_threshold)
+  dummy <- lapply(temp, function(x) cli_verbatim(x))
 }
 
 
