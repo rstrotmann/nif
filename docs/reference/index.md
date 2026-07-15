@@ -116,6 +116,8 @@
 - [`derive_sld()`](derive_sld.md) **\[experimental\]** : Calculate SLD
   for SDTM.TR domain
 
+- [`df_preprint()`](df_preprint.md) : Render data frame object to string
+
 - [`disposition_summary()`](disposition_summary.md) : Subject
   disposition overview
 

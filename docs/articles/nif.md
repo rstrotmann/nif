@@ -148,13 +148,15 @@ examplinib_fe
 #>   pc       20         1360           
 #>   lb       28         28             
 #>   ts       0          0              
-#>   pp       20         360             
+#>   pp       20         360            
+#> 
 #> 
 #> Arms (DM):
 #>   ACTARMCD   ACTARM           
 #>   AB         Fasted - Fed     
 #>   BA         Fed - Fasted     
-#>   SCRNFAIL   Screen Failure    
+#>   SCRNFAIL   Screen Failure   
+#> 
 #> 
 #> Treatments (EX):
 #>   EXAMPLINIB
@@ -165,7 +167,8 @@ examplinib_fe
 #> PK analytes (PC):
 #>   PCTEST       PCTESTCD     
 #>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A     
+#>   RS2023487A   RS2023487A   
+#>  
 #> 
 #> Hash: 295fd51437d90b19b7e4d80e4c7dd51f
 #> Last DTC: 2001-03-10 11:28:00
@@ -240,7 +243,8 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #> Testcodes
 #>   PCTEST       PCTESTCD     PCSPEC   
 #>   RS2023       RS2023       PLASMA   
-#>   RS2023487A   RS2023487A   PLASMA     
+#>   RS2023487A   RS2023487A   PLASMA   
+#>  
 #> 
 #> Observation time points
 #>   PCTPT                 PCTPTNUM   PCELTM   
@@ -253,11 +257,12 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #>   4 HOURS POST-DOSE     4          PT4H     
 #>   6 HOURS POST-DOSE     6          PT6H     
 #>   8 HOURS POST-DOSE     8          PT8H     
-#>   10 HOURS POST-DOSE    10         PT10H     
+#>   10 HOURS POST-DOSE    10         PT10H    
 #>   (7 more rows) 
 #> 
 #> Epochs
-#>   OPEN LABEL TREATMENT     
+#>   OPEN LABEL TREATMENT   
+#>  
 #> Hash: d29adb9ffafcfd308f6b38947fefecde
 #> Last DTC: 2001-03-02 12:31:00
 ```
@@ -534,12 +539,14 @@ summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 20 subjects across one study:
 #>   STUDYID      N    
-#>   2023000400   20    
+#>   2023000400   20   
+#> 
 #> 
 #> Sex distribution:
 #>   SEX      N    percent   
 #>   male     13   65        
-#>   female   7    35         
+#>   female   7    35        
+#> 
 #> 
 #> Treatments:
 #>   RS2023
@@ -549,11 +556,13 @@ summary(nif)
 #> 
 #> Subjects per dose level:
 #>   RS2023   N    
-#>   500      20    
+#>   500      20   
+#> 
 #> 
 #> 680 observations:
 #>   CMT   ANALYTE   N     
-#>   2     RS2023    680    
+#>   2     RS2023    680   
+#> 
 #> 
 #> Observations by NTIME:
 #>   NTIME   RS2023   
@@ -566,16 +575,18 @@ summary(nif)
 #>   4       40       
 #>   6       40       
 #>   8       40       
-#>   10      40        
+#>   10      40       
 #>   (7 more rows)
 #> 
 #> Subjects with dose reductions
 #>   RS2023   
-#>   0         
+#>   0        
+#> 
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   RS2023   2     2     2      2         
+#>   RS2023   2     2     2      2        
+#> 
 #> 
 #> Hash: fc1b21edda89361c2edd585665813fcd
 #> Last DTC: 2001-03-10 10:28:00

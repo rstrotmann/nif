@@ -53,12 +53,14 @@ summary(examplinib_poc)
 #>   pc       80         1344           
 #>   lb       89         89             
 #>   ts       0          0              
-#>   pp       12         432             
+#>   pp       12         432            
+#> 
 #> 
 #> Arms (DM):
 #>   ACTARMCD    ACTARM                 
 #>   SCRNFAIL    Screen Faillure        
-#>   TREATMENT   Single Arm Treatment    
+#>   TREATMENT   Single Arm Treatment   
+#> 
 #> 
 #> Treatments (EX):
 #>   EXAMPLINIB
@@ -69,7 +71,8 @@ summary(examplinib_poc)
 #> PK analytes (PC):
 #>   PCTEST       PCTESTCD     
 #>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A     
+#>   RS2023487A   RS2023487A   
+#>  
 #> 
 #> Hash: abed731bff41ca58a9d467247093fcac
 #> Last DTC: 2001-07-18 10:24:00
@@ -159,19 +162,22 @@ summary(nif_poc)
 #  ----- NONMEM Input Format (NIF) data summary -----
 #  Data from 80 subjects across one study:
 #    STUDYID      N    
-#    2023000022   80    
+#    2023000022   80   
+#  
 #  
 #  Sex distribution:
 #    SEX      N    percent   
 #    male     46   57.5      
-#    female   34   42.5       
+#    female   34   42.5      
+#  
 #  
 #  Renal impairment class:
 #    CLASS      N    percent   
 #    normal     26   32.5      
 #    mild       43   53.8      
 #    moderate   10   12.5      
-#    severe     1    1.2        
+#    severe     1    1.2       
+#  
 #  
 #  Treatments:
 #    RS2023
@@ -181,12 +187,14 @@ summary(nif_poc)
 #  
 #  Subjects per dose level:
 #    RS2023   N    
-#    500      80    
+#    500      80   
+#  
 #  
 #  1344 observations:
 #    CMT   ANALYTE      N     
 #    2     RS2023       672   
-#    3     RS2023487A   672    
+#    3     RS2023487A   672   
+#  
 #  
 #  Observations by NTIME:
 #    NTIME   RS2023   RS2023487A   
@@ -200,15 +208,18 @@ summary(nif_poc)
 #    6       24       24           
 #    8       24       24           
 #    10      24       24           
-#    12      24       24            
+#    12      24       24           
+#  
 #  
 #  Subjects with dose reductions
 #    RS2023   
-#    30        
+#    30       
+#  
 #  
 #  Treatment duration overview:
 #    PARENT   min   max   mean   median   
-#    RS2023   55    97    73.2   72.5      
+#    RS2023   55    97    73.2   72.5     
+#  
 #  
 #  Hash: 2a97389fea4070e881abe4cc0fe9468b
 #  Last DTC: 2001-07-18 08:24:00

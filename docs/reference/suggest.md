@@ -40,7 +40,7 @@ suggest(examplinib_poc)
 #> 
 #>   PCTEST       PCTESTCD     
 #>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A    
+#>   RS2023487A   RS2023487A   
 #> 
 #> Consider adding them to the nif object using `add_observation()`, see the code
 #> snippet below (replace 'sdtm' with the name of your sdtm object):
@@ -64,7 +64,7 @@ suggest(examplinib_poc)
 #>   POSTDOSE 6 H     6          PT6H     
 #>   POSTDOSE 8 H     8          PT8H     
 #>   POSTDOSE 10 H    10         PT10H    
-#>   POSTDOSE 12 H    12         PT12H     
+#>   POSTDOSE 12 H    12         PT12H    
 #> 
 #> Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the
@@ -75,7 +75,7 @@ suggest(examplinib_poc)
 #> 
 #>   ACTARMCD    ACTARM                 
 #>   SCRNFAIL    Screen Faillure        
-#>   TREATMENT   Single Arm Treatment    
+#>   TREATMENT   Single Arm Treatment   
 #> 
 #> Consider defining a PART or ARM variable, filtering for a particular arm, or
 #> defining a covariate based on ACTARMCD.

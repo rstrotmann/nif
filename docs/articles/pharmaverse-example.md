@@ -54,14 +54,16 @@ summary(sdtm)
 #>   lb       254        59580          
 #>   ts       0          0              
 #>   eg       254        26717          
-#>   ae       225        1191            
+#>   ae       225        1191           
+#> 
 #> 
 #> Arms (DM):
 #>   ACTARMCD   ACTARM                 
 #>   Pbo        Placebo                
 #>   Scrnfail   Screen Failure         
 #>   Xan_Hi     Xanomeline High Dose   
-#>   Xan_Lo     Xanomeline Low Dose     
+#>   Xan_Lo     Xanomeline Low Dose    
+#> 
 #> 
 #> Treatments (EX):
 #>   PLACEBO, XANOMELINE
@@ -71,7 +73,8 @@ summary(sdtm)
 #> 
 #> PK analytes (PC):
 #>   PCTEST       PCTESTCD   
-#>   XANOMELINE   XAN          
+#>   XANOMELINE   XAN        
+#>  
 #> 
 #> Hash: 0bc904e6d0b7176f1cde4212c701676f
 #> Last DTC: 2015-03-05 15:40:00
@@ -102,12 +105,14 @@ summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 254 subjects across one study:
 #>   STUDYID        N     
-#>   CDISCPILOT01   254    
+#>   CDISCPILOT01   254   
+#> 
 #> 
 #> Sex distribution:
 #>   SEX      N     percent   
 #>   male     111   43.7      
-#>   female   143   56.3       
+#>   female   143   56.3      
+#> 
 #> 
 #> Renal impairment class:
 #>   CLASS      N     percent   
@@ -115,7 +120,8 @@ summary(nif)
 #>   mild       58    22.8      
 #>   moderate   173   68.1      
 #>   severe     16    6.3       
-#>   NA         3     1.2        
+#>   NA         3     1.2       
+#> 
 #> 
 #> Treatments:
 #>   PLACEBO, XAN
@@ -126,12 +132,14 @@ summary(nif)
 #> Subjects per dose level:
 #>   PLACEBO   XAN   N     
 #>   0         0     86    
-#>   0         54    168    
+#>   0         54    168   
+#> 
 #> 
 #> 5370 observations:
 #>   CMT   ANALYTE   N      
 #>   2     XAN       3556   
-#>   3     ALT       1814    
+#>   3     ALT       1814   
+#> 
 #> 
 #> Observations by NTIME:
 #>   NTIME   ALT   XAN    
@@ -144,17 +152,19 @@ summary(nif)
 #>   -1536   1     -      
 #>   -1248   1     -      
 #>   -1200   1     -      
-#>   -1056   1     -       
+#>   -1056   1     -      
 #>   (202 more rows)
 #> 
 #> Subjects with dose reductions
 #>   PLACEBO   XAN   
-#>   0         0      
+#>   0         0     
+#> 
 #> 
 #> Treatment duration overview:
 #>   PARENT    min   max   mean    median   
 #>   PLACEBO   7     210   149.1   182      
-#>   XAN       1     212   99.2    81        
+#>   XAN       1     212   99.2    81       
+#> 
 #> 
 #> Hash: 4dbd24ca48d3ab80591da8a0eddc5be2
 #> Last DTC: 2015-03-05 14:40:00

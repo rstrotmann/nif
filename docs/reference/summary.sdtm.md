@@ -67,12 +67,14 @@ summary(examplinib_poc)
 #>   pc       80         1344           
 #>   lb       89         89             
 #>   ts       0          0              
-#>   pp       12         432             
+#>   pp       12         432            
+#> 
 #> 
 #> Arms (DM):
 #>   ACTARMCD    ACTARM                 
 #>   SCRNFAIL    Screen Faillure        
-#>   TREATMENT   Single Arm Treatment    
+#>   TREATMENT   Single Arm Treatment   
+#> 
 #> 
 #> Treatments (EX):
 #>   EXAMPLINIB
@@ -83,7 +85,8 @@ summary(examplinib_poc)
 #> PK analytes (PC):
 #>   PCTEST       PCTESTCD     
 #>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A     
+#>   RS2023487A   RS2023487A   
+#>  
 #> 
 #> Hash: abed731bff41ca58a9d467247093fcac
 #> Last DTC: 2001-07-18 10:24:00

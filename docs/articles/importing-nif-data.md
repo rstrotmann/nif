@@ -72,13 +72,15 @@ summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 2 subjects across 0 studies:
 #>   N   
-#>   2    
+#>   2   
+#> 
 #> 
 #> Sex distribution:
 #>   SEX      N   percent   
 #>   male     0   0         
 #>   female   0   0         
-#>   NA       2   100        
+#>   NA       2   100       
+#> 
 #> 
 #> Treatments:
 #>   CMT1
@@ -88,19 +90,23 @@ summary(nif)
 #> 
 #> Subjects per dose level:
 #>   CMT1   N   
-#>   5      2    
+#>   5      2   
+#> 
 #> 
 #> 16 observations:
 #>   CMT   N    
-#>   2     16    
+#>   2     16   
+#> 
 #> 
 #> Subjects with dose reductions
 #>   CMT1   
-#>   0       
+#>   0      
+#> 
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   CMT1     1     1     1      1         
+#>   CMT1     1     1     1      1        
+#> 
 #> 
 #> Hash: c03cb2ca160fb8dfbb480ce8dc7d965f
 plot(nif, log = T, points = T)
