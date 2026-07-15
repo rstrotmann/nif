@@ -370,6 +370,7 @@ convert_ranges <- function(xxtpt, result, na_idx, range_method) {
   result
 }
 
+
 #' Calculate Range Value Based on Method
 #'
 #' Calculates a single numeric value from a range (start and end) using the
