@@ -1526,68 +1526,74 @@ synthesize_sdtm_iv_study <- function() {
   studyid <- "2026000011"
   studytitle <- "A dose confirmation study of RS2023 administered intravenously in healthy subjects"
 
-  rich_sampling_scheme <- rich_sampling_scheme <- tibble::tribble(
-    ~time, ~PCTPT,
-    0, "PREDOSE",
-    1, "END OF INFUSION",
-    1.5, "0.5 HOURS AFTER INFUSION",
-    2, "1 HOURS AFTER INFUSION",
-    2.5, "1.5 HOURS AFTER INFUSION",
-    3, "2 HOURS AFTER INFUSION",
-    4, "3 HOURS AFTER INFUSION",
-    5, "4 HOURS AFTER INFUSION",
-    7, "6 HOURS AFTER INFUSION",
-    9, "8 HOURS AFTER INFUSION",
-    11, "10 HOURS AFTER INFUSION",
-    13, "12 HOURS AFTER INFUSION",
-    25, "24 HOURS AFTER INFUSION"
-  )
+  rich_sampling_scheme <- tibble::tribble(
+     ~time,                     ~PCTPT,
+         0,                  "PREDOSE",
+         1,          "END OF INFUSION",
+       1.5, "0.5 HOURS AFTER INFUSION",
+         2,   "1 HOURS AFTER INFUSION",
+       2.5, "1.5 HOURS AFTER INFUSION",
+         3,   "2 HOURS AFTER INFUSION",
+         4,   "3 HOURS AFTER INFUSION",
+         5,   "4 HOURS AFTER INFUSION",
+         7,   "6 HOURS AFTER INFUSION",
+         9,   "8 HOURS AFTER INFUSION",
+        11,  "10 HOURS AFTER INFUSION",
+        13,  "12 HOURS AFTER INFUSION",
+        25,  "24 HOURS AFTER INFUSION"
+     )
 
-  dose_levels <- data.frame(
-    dose = c(20, 50, 100, 200),
-    n = c(6, 6, 6, 6)
-  ) %>%
-    mutate(cohort = row_number()) %>%
-    group_by(.data$cohort, .data$dose) %>%
-    tidyr::expand(i = seq(n)) %>%
-    select(-i) %>%
+
+  dose_levels <- tibble::tribble(
+     ~dose, ~n,
+        20,  6,
+        50,  6,
+       100,  6,
+       200,  6
+     ) |>
+    mutate(cohort = row_number()) |>
+    group_by(.data$cohort, .data$dose) |>
+    tidyr::expand(i = seq(n)) |>
+    select(-i) |>
     ungroup()
 
   dm <- synthesize_dm(
-    studyid = studyid, nsubs = nrow(dose_levels), nsites = 1,
+    studyid = studyid,
+    nsubs = nrow(dose_levels),
+    nsites = 1,
     female_fraction = .5,
     duration = 10,
     min_age = 18,
     max_age = 55
   )
 
-  sb_assignment <- dose_levels %>%
-    mutate(USUBJID = dm %>%
-             filter(.data$ACTARMCD != "SCRNFAIL") %>%
-             arrange(.data$USUBJID) %>%
-             pull(.data$USUBJID))
+  sb_assignment <- mutate(
+    dose_levels,
+    USUBJID = dm |>
+      filter(.data$ACTARMCD != "SCRNFAIL") |>
+      arrange(.data$USUBJID) |>
+      pull(.data$USUBJID)
+  )
 
-  dm <- dm %>%
-    left_join(sb_assignment, by = "USUBJID") %>%
+  dm <- dm |>
+    left_join(sb_assignment, by = "USUBJID") |>
     mutate(ACTARMCD = case_when(
-      # .data$ACTARMCD == "" ~ paste0("C", cohort),
       .data$ACTARMCD == "" ~ paste0(dose, "MGM2"),
       .default = "SCRNFAIL"
-    )) %>%
+    )) |>
     mutate(ACTARM = case_when(
       .data$ACTARMCD == "SCRNFAIL" ~ "Screen Failure",
       .default = paste0(dose, " mg/m2 examplinib")
-    )) %>%
+    )) |>
     mutate(ARM = .data$ACTARM, ARMCD = .data$ACTARMCD)
 
   vs <- synthesize_vs(dm)
   lb <- synthesize_lb(dm)
 
-  ex <- make_sd_ex(
-    dm, drug = "RS2023", admindays = 1, dose = NA) %>%
-    select(-EXDOSE) %>%
+  ex <- make_sd_ex(dm, drug = "RS2023", admindays = 1, dose = NA) %>%
+    select(-EXDOSE) |>
     left_join(
-      sb_assignment %>%
+      sb_assignment |>
         distinct(.data$USUBJID, EXDOSE = .data$dose),
       by = "USUBJID"
     ) |>

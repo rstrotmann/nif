@@ -639,7 +639,13 @@ test_that("make_administration works with examplinib without matching analyte", 
 })
 
 
+test_that("make_administration works with iv administrations", {
+  sdtm <- examplinib_iv
 
+  expect_message(
+    test <- make_administration(sdtm, "EXAMPLINIB")
+  )
+})
 
 
 

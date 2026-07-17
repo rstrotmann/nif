@@ -198,6 +198,7 @@ expand_ex <- function(ex) {
 #' @param keep Columns to keep after cleanup, as character.
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #' @param imputation The imputation rule set.
+#' @param duration The duration of iv administrations.
 #'
 #' @return A data frame.
 #' @noRd
@@ -213,6 +214,7 @@ make_administration <- function(
   cut_off_date = NULL,
   keep = "",
   imputation = imputation_rules_standard,
+  duration = NULL,
   silent = NULL
 ) {
   # input validation
@@ -260,6 +262,38 @@ make_administration <- function(
   sbs <- make_subjects(dm, vs, subject_filter, keep)
 
   admin <- ex
+
+  # iv administration?
+  is_iv_admin = FALSE
+  # {
+  #   if ("EXROUTE" %in% names(admin)) {
+  #     if (any(toupper(ex$EXROUTE) %in% c("IV", "INTRAVENOUS"))) {
+  #       is_iv_admin = TRUE
+  #
+  #       # check whether EXDUR is the same for all records
+  #       if ("EXDUR" %in% names(admin)) {
+  #         # admin <- mutate(admin, DUR = lubrify_dates(col = "EXDUR"))
+  #         admin <- mutate(admin, pt_to_hours(.data$EXDUR))
+  #         actual_durations <- unique(admin$DUR)
+  #         if (length(actual_durations) > 1) {
+  #           warning(paste0(
+  #             "EXDUR has multiple values: ",
+  #             nice_enumeration(actual_durations), "!"
+  #           ))
+  #         }
+  #         if (!is.null(duration) & any(actual_duration != duration)) {
+  #           warning(paste0(
+  #             "Duration mismatch: EXDUR of ",
+  #             nice_enumeration(actual_duration),
+  #             " will all be set to ", duration, "!"
+  #           ))
+  #       }
+  #     } else
+  #       admin <- mutate(admin, DUR = duration)
+  #     }
+  #   }
+  # }
+
 
   if ("EXSEQ" %in% names(ex)) {
     admin <- mutate(admin, SRC_SEQ = .data$EXSEQ)
@@ -334,6 +368,13 @@ make_administration <- function(
     ) |>
     # expand administration episodes
     expand_ex()
+
+  conditional_cli(
+    cli_alert_info(paste0(
+      "Compartment for ", extrt, " administrations set to ", cmt
+    )),
+    silent = silent
+  )
 
   # IMPUTATION 2: post-expansion
   if ("admin_post_expansion" %in% names(imputation)) {

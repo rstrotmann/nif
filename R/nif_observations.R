@@ -863,20 +863,28 @@ add_observation <- function(
   # Test if compartment is already assigned
   if (!is.null(cmt)) {
     if (cmt %in% unique(nif$CMT)) {
-      warning(paste0("Compartment ", cmt, " is already assigned!"))
+      warning(paste0("Compartment ", cmt,
+                     " is already assigned. Is this intended?"))
     }
   }
 
   # Assign compartment for observation if CMT == NULL
   if (is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
-    conditional_cli(
-      cli_alert_info(paste0(
-        "Compartment for ", testcd, " set to ", cmt
-      )),
-      silent = silent
-    )
+    # conditional_cli(
+    #   cli_alert_info(paste0(
+    #     "Compartment for ", testcd, " set to ", cmt
+    #   )),
+    #   silent = silent
+    # )
   }
+
+  conditional_cli(
+    cli_alert_info(paste0(
+      "Compartment for ", testcd, " observations set to ", cmt
+    )),
+    silent = silent
+  )
 
   if (is.null(analyte)) {
     analyte <- testcd
