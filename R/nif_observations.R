@@ -871,12 +871,6 @@ add_observation <- function(
   # Assign compartment for observation if CMT == NULL
   if (is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
-    # conditional_cli(
-    #   cli_alert_info(paste0(
-    #     "Compartment for ", testcd, " set to ", cmt
-    #   )),
-    #   silent = silent
-    # )
   }
 
   conditional_cli(

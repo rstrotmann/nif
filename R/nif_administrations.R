@@ -366,7 +366,6 @@ make_administration <- function(
       DOSE = .data$EXDOSE,
       AMT = .data$EXDOSE
     ) |>
-    # expand administration episodes
     expand_ex()
 
   conditional_cli(
