@@ -4,69 +4,75 @@
 \alias{imputation_rules_1}
 \title{Alternative imputation rule set 1}
 \format{
-A list of the following functions:
-\itemize{
-\item admin_pre_expansion()
-\item admin_post_expansion()
-\item obs_raw()
-\item obs_final()
+A named list with these functions:
+\describe{
+\item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations (same as
+standard).}
+\item{admin_post_expansion}{NTIME and PCRFTDTC with a 10-minute EX
+comparison.}
+\item{obs_raw}{Identity (no LLOQ imputation).}
+\item{obs_final}{Predose TAFD adjustment (same as standard).}
 }
 }
 \usage{
 imputation_rules_1
 }
 \description{
-Alternative imputation rule set 1
+Same pre-expansion steps as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}, with a different
+post-expansion time rule (10-minute NTIME vs EX gate) and a no-op
+\code{obs_raw}.
 }
-\details{
-This imputation rule set includes the following imputation steps:
-\subsection{Treatment administrations:}{
-\itemize{
-\item Filter administrations to the cut-off date.
-\item Impute missing EXENDTC values in the last administration episode to the
-cut-off date.
-\item Impute missing (non-last) EXENDTC values to the day before the start of the
-subsequent administration episode.
-\item Remove records where EXENDTC is before EXSTDTC.
-\item Expand administration episodes from the EX domain between EXSTDTC and
-EXENDTC.
-\item For each administration event, take the administration time from
-PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
-The name of the PK analyte (PCTESTCD) that corresponds with the administered
-treatment (EXTRT) must be specified by the 'pctestcd' to
-add_administration().
-\item For administration events that have associated PK observations but PCRFTDTC
-is not defined, back-calculate the administration time, if possible, from
-the PK observations based on their nominal time (PCTPT).
-\item In cases where the administration time back-calculated from NTIME is more
-than 10 min different from the administration time taken from the EXSTDTC,
-it is assumed that the NTIME-derived administration time is more precise than
-that from EXSTDTC and is prioritized.
-\item After the above imputations, the administration time is carried forward for
-subsequent administration events until the next imputed time.
+\section{Steps in this rule set}{
+\subsection{Host steps (not in this list)}{
+
+Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}: RFENDTC fill, \code{expand_ex}, and
+time carry-forward.
+}
+
+\subsection{\code{admin_pre_expansion}}{
+
+Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}.
+}
+
+\subsection{\code{admin_post_expansion}}{
+\enumerate{
+\item Compute an NTIME-based administration time via
+\code{get_admin_time_from_ntime} (stored alongside the current EX-based
+time).
+\item Apply \code{get_admin_time_from_pcrftdtc} when PCRFTDTC is available
+(takes precedence).
+\item If PCRFTDTC is absent and the NTIME-derived time differs from the
+EX-derived time by more than 10 minutes, use the NTIME-derived time;
+otherwise keep the EX-derived time.
+}
+
+After this slot, host carry-forward fills remaining missing times.
+}
+
+\subsection{\code{obs_raw}}{
+
+No-op (LLOQ imputation is not applied in this rule set).
+}
+
+\subsection{\code{obs_final}}{
+
+Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}: predose \code{TAFD < 0} set to zero for
+the current observation.
 }
 }
 
-\subsection{Observations}{
-\itemize{
-\item Pharmacokinetic observations below the level of quantification (BLQ) are
-set to PCLLOQ / 2.
-\item For all predose observations, TAFD is set to zero.
-}
-}
-}
 \section{Creating custom imputation rules}{
 
 You can create your own imputation rule set by providing a named list
 with any combination of the four function slots: \code{admin_pre_expansion},
 \code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
-receives specific arguments depending on its slot.
+receives specific arguments depending on its slot. See the implementations
+in this file for the expected signatures.
 }
 
 \seealso{
-add_administration()
-
-add_observation()
+\code{\link[=add_administration]{add_administration()}}, \code{\link[=add_observation]{add_observation()}},
+\code{\link[=imputation_rules_standard]{imputation_rules_standard()}}, \code{\link[=imputation_rules_void]{imputation_rules_void()}}
 
 Other imputation rules:
 \code{\link{imputation_rules_minimal}},

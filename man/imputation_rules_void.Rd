@@ -10,32 +10,36 @@ An empty list.
 imputation_rules_void
 }
 \description{
-Void imputation rule set
+Empty rule list: no pre-/post-expansion or observation slot functions.
+Host steps in \code{add_administration()} / \code{make_administration()} still run
+(RFENDTC fill, episode expansion, time carry-forward).
 }
-\details{
-This imputation rule set includes the following minimal imputation steps:
-\subsection{Treatment administrations:}{
+\section{Steps in this rule set}{
+This object defines no slot functions. Behavior is limited to host steps:
 \itemize{
-\item Expand administration episodes from the EX domain between EXSTDTC and
-EXENDTC.
-\item Administrations inherit the administration time from EXSTDTC or EXENDTC.
-\item The administration time is carried forward for
-subsequent administration events until the next imputed time.
+\item Last-episode \code{EXENDTC} from \code{DM.RFENDTC} (\code{impute_exendtc_to_rfendtc}).
+\item Episode expansion (\code{expand_ex}); times from \code{EXSTDTC} / \code{EXENDTC} when
+present.
+\item Administration time carry-forward after expansion.
 }
+
+There is no cut-off filter, no EXENDTC cutoff/middle imputation via rules,
+no PCRFTDTC or NTIME time imputation, and no observation imputations from
+this object.
 }
-}
+
 \section{Creating custom imputation rules}{
 
 You can create your own imputation rule set by providing a named list
 with any combination of the four function slots: \code{admin_pre_expansion},
 \code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
-receives specific arguments depending on its slot.
+receives specific arguments depending on its slot. See the implementations
+in this file for the expected signatures.
 }
 
 \seealso{
-add_administration()
-
-add_observation()
+\code{\link[=add_administration]{add_administration()}}, \code{\link[=add_observation]{add_observation()}},
+\code{\link[=imputation_rules_standard]{imputation_rules_standard()}}
 
 Other imputation rules:
 \code{\link{imputation_rules_1}},
