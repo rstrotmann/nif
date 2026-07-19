@@ -159,8 +159,8 @@ expand_ex <- function(ex) {
 #'    subject and treatment, then compose `DTC`, join subjects, set `TRTDY`,
 #'    and return a nif object.
 #'
-#' Default `imputation` is [imputation_rules_standard()]. Use
-#' [imputation_rules_void()] or a custom list to change or skip rule slots.
+#' Default `imputation` is [nif::imputation_rules_standard()]. Use
+#' [nif::imputation_rules_void()] or a custom list to change or skip rule slots.
 #' RFENDTC imputation and carry-forward still run when rules are empty.
 #'
 #' @param sdtm A sdtm object.

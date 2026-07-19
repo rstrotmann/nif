@@ -4,66 +4,93 @@
 \alias{imputation_rules_standard}
 \title{Standard imputation rule set}
 \format{
-A list of the following functions:
-\itemize{
-\item admin_post_expansion()
-\item obs_raw()
-\item obs_final()
+A named list with these functions:
+\describe{
+\item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations before
+expansion.}
+\item{admin_post_expansion}{NTIME then PCRFTDTC administration-time
+imputation after expansion.}
+\item{obs_raw}{BLQ / LLOQ imputation on raw PC observations.}
+\item{obs_final}{Predose TAFD adjustment.}
 }
 }
 \usage{
 imputation_rules_standard
 }
 \description{
-Standard imputation rule set
+Default imputation rule set for \code{\link[=add_administration]{add_administration()}} and
+\code{\link[=add_observation]{add_observation()}}. Canonical documentation for the administration and
+observation steps; other rule sets document only how they differ.
 }
-\details{
-This imputation rule set includes the following imputation steps:
-\subsection{Treatment administrations:}{
+\section{Steps in this rule set}{
+Documented in execution order. Helper names match the implementation.
+\subsection{Host steps (not in this list)}{
+
+These always run in \code{add_administration()} / \code{make_administration()},
+regardless of the rule set:
 \itemize{
-\item Filter administrations to the cut-off date.
-\item Impute missing EXENDTC values in the last administration episode to the
-cut-off date.
-\item Impute missing (non-last) EXENDTC values to the day before the start of the
-subsequent administration episode.
-\item Remove records where EXENDTC is before EXSTDTC.
-\item Expand administration episodes from the EX domain between EXSTDTC and
-EXENDTC.
-\item For each administration event, take the administration time from
-PCRFTDTC of the PC domain if there are related pharmacokinetic observations.
-The name of the PK analyte (PCTESTCD) that corresponds with the administered
-treatment (EXTRT) must be specified by the 'pctestcd' to
-add_administration().
-\item For administration events that have associated PK observations but PCRFTDTC
-is not defined, back-calculate the administration time, if possible, from
-the PK observations based on their nominal time (PCTPT).
-\item Unless imputed by the above rules, administrations inherit the
-administration time from EXSTDTC or EXENDTC.
-\item After the above imputations, the administration time is carried forward for
-subsequent administration events until the next imputed time.
+\item Last-episode \code{EXENDTC} from \code{DM.RFENDTC} (\code{impute_exendtc_to_rfendtc}).
+\item Episode expansion (\code{expand_ex}) between pre- and post-expansion (QD;
+\code{EXDOSFRQ} is not used). Start/end times come from \code{EXSTDTC} / \code{EXENDTC}
+when present; other days are missing until later steps.
+\item Administration time carry-forward after post-expansion.
 }
 }
 
-\subsection{Observations}{
+\subsection{\code{admin_pre_expansion}}{
+\enumerate{
+\item \code{apply_cut_off_date} — delete episodes with \code{EXSTDTC} after the cut-off
+date.
+\item \code{impute_exendtc_to_cutoff} — if the last episode still has missing
+\code{EXENDTC}, set it to the cut-off date (e.g. ongoing treatment).
+\item \code{impute_missing_exendtc} — for non-last episodes with missing
+\code{EXENDTC}, set it to the day before the next episode's \code{EXSTDTC}.
+\item \code{filter_exendtc_after_exstdtc} — remove episodes where \code{EXENDTC} is
+before \code{EXSTDTC}.
+}
+}
+
+\subsection{\code{admin_post_expansion}}{
+\enumerate{
+\item \code{get_admin_time_from_ntime} — back-calculate administration time from PK
+nominal times (\code{PCTPT} / NTIME). When an estimate exists, it replaces
+the current \code{DTC_time} (including times from EX).
+\item \code{get_admin_time_from_pcrftdtc} — set \code{DTC_time} from \code{PC.PCRFTDTC} when
+available; this overwrites a prior NTIME estimate for that day. Pass
+\code{pctestcd} to \code{\link[=add_administration]{add_administration()}} for the matching \code{PCTESTCD}.
+}
+
+After this slot, host carry-forward fills remaining missing times.
+}
+
+\subsection{\code{obs_raw}}{
 \itemize{
-\item Pharmacokinetic observations below the level of quantification (BLQ) are
-set to PCLLOQ / 2.
-\item For all predose observations, TAFD is set to zero.
+\item \code{impute_lloq_pc} — pharmacokinetic observations below the limit of
+quantification are set to \code{PCLLOQ / 2}.
+}
+}
+
+\subsection{\code{obs_final}}{
+\itemize{
+\item For predose observations of the current analyte, set \code{TAFD} to zero when
+it would otherwise be negative.
 }
 }
 }
+
 \section{Creating custom imputation rules}{
 
 You can create your own imputation rule set by providing a named list
 with any combination of the four function slots: \code{admin_pre_expansion},
 \code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
-receives specific arguments depending on its slot.
+receives specific arguments depending on its slot. See the implementations
+in this file for the expected signatures.
 }
 
 \seealso{
-add_administration()
-
-add_observation()
+\code{\link[=add_administration]{add_administration()}}, \code{\link[=add_observation]{add_observation()}},
+\code{\link[=imputation_rules_minimal]{imputation_rules_minimal()}}, \code{\link[=imputation_rules_1]{imputation_rules_1()}},
+\code{\link[=imputation_rules_void]{imputation_rules_void()}}
 
 Other imputation rules:
 \code{\link{imputation_rules_1}},
