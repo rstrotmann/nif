@@ -127,64 +127,41 @@ expand_ex <- function(ex) {
 #'
 #' @details
 #' A discussion on EC vs EX is provided
-#' [here](https://www.cdisc.org/kb/ecrf/exposure-collected)
+#' [here](https://www.cdisc.org/kb/ecrf/exposure-collected).
 #'
-#' @details
-#' # Time imputations and filtering
+#' # Administration pipeline
 #'
-#' The following time imputations and filters are applied in the given
-#' order:
+#' `make_administration()` builds dosing rows from EX in this order:
 #'
-#' ## 1. nif::impute_exendtc_to_rfendtc()
+#' 1. **RFENDTC imputation (always)** — If the last episode per subject and
+#'    `extrt` has missing `EXENDTC`, fill from `DM.RFENDTC` when available.
+#'    This step is hardcoded and not controlled by `imputation`.
 #'
-#' If EXENDTC is missing in the last administration episode for a given subject,
-#' it is replaced with DM.RFENDTC, if available.
+#' 2. **Cut-off date** — Use `cut_off_date`, or if `NULL`, derive one from EX
+#'    via `last_ex_dtc()`.
 #'
-#' ## 2. nif::filter_EXENDTC_after_EXSTDTC()
+#' 3. **Subjects** — Build the subject table from DM (and VS if present) using
+#'    `subject_filter` and `keep`.
 #'
-#' Administration episodes in which EXSTDTC is after EXENDT are deleted from the
-#' data set.
+#' 4. **Pre-expansion rules** — If `imputation` has `admin_pre_expansion`,
+#'    call it (e.g. cut-off filter, EXENDTC imputations, invalid-episode
+#'    filter). See the chosen rule set for exact steps and order.
 #'
-#' ## 3. nif::impute_exendtc_to_cutoff()
+#' 5. **Expand episodes** — Expand each EX row between `EXSTDTC` and `EXENDTC`
+#'    to one row per day (QD only; `EXDOSFRQ` is not used). Start/end times
+#'    come from `EXSTDTC` / `EXENDTC` when present; other days are `NA`.
 #'
-#' If in the last administration episode per subject and treatment, EXENDTC is
-#' missing, for example because the treatment is still ongoing at the time of
-#' the SDTM generation, EXENDTC is replaced with the cut-off date.
+#' 6. **Post-expansion rules** — If `imputation` has `admin_post_expansion`,
+#'    call it (e.g. NTIME back-calculation, PCRFTDTC). Again, details depend
+#'    on the rule set.
 #'
-#' ## 4. nif::impute_missing_exendtc()
+#' 7. **Carry forward** — Always fill missing `DTC_time` forward within
+#'    subject and treatment, then compose `DTC`, join subjects, set `TRTDY`,
+#'    and return a nif object.
 #'
-#' If in any further episode, EXENDTC is missing, it is replaced with the day
-#' before the subsequent administration episode start (EXSTDTC). It should be
-#' understood that this reflects a rather strong assumption, i.e., that the
-#' treatment was continued into the next administration episode. This imputation
-#' therefore issues a warning that cannot be suppressed.
-#'
-#' ## 5. Expand administration episodes
-#'
-#' All administration episodes, i.e., the intervals between EXSTDTC and EXENDTC
-#' for a given row in EX, are expanded into a sequence of rows with one
-#' administration day per row. The administration times for all rows except for
-#' the last are taken from the time information in EXSTDTD, whereas the time
-#' for the last administration event in the respective episode is taken from the
-#' time information in EXENDTC.
-#'
-#' **Development note:** In the present version of the function, once-daily (QD)
-#' dosing is assumed. Multiple-daily dosings are not supported. In future
-#' versions, the dosing frequency provided in `EXDOSFRQ` may be taken into
-#' account to adequately handle multiple daily administrations.
-#'
-#' ## 6. nif::impute_admin_from_pcrftdtc()
-#'
-#' For administration days for which PK sampling events are recorded in PC, the
-#' administration time is taken from PC.PCRFTDTC, if this field is available.
-#'
-#' **Development note:** This may be updated in future versions of the function
-#' to work with multiple-daily administrations.
-#'
-#' ## 7. Carry forward time
-#'
-#' For all administration events per subject and treatment, missing time
-#' information is finally carried forward from available time information.
+#' Default `imputation` is [imputation_rules_standard()]. Use
+#' [imputation_rules_void()] or a custom list to change or skip rule slots.
+#' RFENDTC imputation and carry-forward still run when rules are empty.
 #'
 #' @param sdtm A sdtm object.
 #' @param subject_filter The filtering to apply to the DM domain, as string,
