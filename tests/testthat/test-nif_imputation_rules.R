@@ -14,15 +14,18 @@ test_that("imputation_rules_standard works with single treatment", {
 
   ex <- expand_ex(ex)
 
-  result <- imputation_rules_minimal[["admin_post_expansion"]](
-    ex, sdtm, extrt = "TREATMENT_A", analyte = "ANALYTE_A",
-    pctestcd = "ANALYTE_A", cut_off_date = NULL, silent = TRUE)
+  expect_no_message(
+    result <- imputation_rules_minimal[["admin_post_expansion"]](
+      ex, sdtm, extrt = "TREATMENT_A", analyte = "ANALYTE_A",
+      pctestcd = "ANALYTE_A", cut_off_date = NULL, silent = FALSE)
+  )
 
   expect_equal(
     result$IMPUTATION,
     c("time copied from EXSTDTC", "", "time imputed from PCRFTDTC", "",
       "time imputed from PCRFTDTC", "")
   )
+
   expect_equal(
     result$DTC_time,
     c("07:00", NA, "08:15", NA, "09:17", NA)
@@ -30,8 +33,8 @@ test_that("imputation_rules_standard works with single treatment", {
 
   expect_message(
     result <- imputation_rules_minimal[["admin_post_expansion"]](
-      ex, sdtm, "TREATMENT_A", analyte = NULL, pctestcd = NULL,
-      cut_off_date = NULL, silent = FALSE),
+      ex, sdtm, extrt = "TREATMENT_A", analyte = NULL,
+      pctestcd = NULL, cut_off_date = NULL, silent = FALSE),
     "Assuming PCTESTCD 'ANALYTE_A' relates to EXTRT 'TREATMENT_A'!"
   )
 
@@ -40,6 +43,7 @@ test_that("imputation_rules_standard works with single treatment", {
     c("time copied from EXSTDTC", "", "time imputed from PCRFTDTC", "",
       "time imputed from PCRFTDTC", "")
   )
+
   expect_equal(
     result$DTC_time,
     c("07:00", NA, "08:15", NA, "09:17", NA)
@@ -94,6 +98,7 @@ test_that("imputation_rules_standard works with multiple treatments", {
     c("time copied from EXSTDTC", "", "time imputed from PCRFTDTC", "",
       "time imputed from PCRFTDTC", "time copied from EXENDTC")
   )
+
   expect_equal(
     result$DTC_time,
     c("07:00", NA, "08:15", NA, "09:17", "10:00")
@@ -138,6 +143,40 @@ test_that("get_admin_time_from_ntime works as intended", {
   expect_equal(
     result$DTC_time,
     c("07:00", "08:00", "08:00", "08:00", "08:00", "08:00"))
+})
+
+
+test_that("get_admin_time_from_ntime estimates times per subject, not across subjects", {
+  ## Two subjects share the same PCDTC calendar day but have clearly different
+  ## implied administration times. Estimation must not pool across USUBJID.
+
+  sdtm <- sdtm(list(
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN,   ~PCTESTCD, ~PCRFTDTC,         ~PCTPT,             ~PCDTC,
+           "A",    "PC", "ANALYTE_A",        NA, "1 H POSTDOSE", "2025-01-14T09:00",
+           "B",    "PC", "ANALYTE_A",        NA, "1 H POSTDOSE", "2025-01-14T13:00"
+      )
+  ))
+
+  ex <- tibble::tribble(
+    ~USUBJID,     ~EXSTDTC,     ~EXENDTC,        ~EXTRT,
+         "A", "2025-01-14", "2025-01-14", "TREATMENT_A",
+         "B", "2025-01-14", "2025-01-14", "TREATMENT_A"
+  ) |>
+    expand_ex()
+
+  result <- get_admin_time_from_ntime(
+    ex, sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = FALSE
+  )
+
+  time_a <- result$DTC_time[result$USUBJID == "A"]
+  time_b <- result$DTC_time[result$USUBJID == "B"]
+
+  ## Subject A: 09:00 minus 1 h NTIME -> 08:00
+  ## Subject B: 13:00 minus 1 h NTIME -> 12:00
+  expect_equal(time_a, "08:00")
+  expect_equal(time_b, "12:00")
+  expect_false(identical(time_a, time_b))
 })
 
 

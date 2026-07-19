@@ -759,7 +759,8 @@ get_admin_time_from_ntime <- function(
     filter(.data$NTIME > 0) |>
     mutate(.estimated_admin_dtc = .data$PCDTC - .data$NTIME * 3600) |>
     mutate(.weight = .data$NTIME ^ ntime_exponent) |>
-    group_by(.data$PCDTC_date) |>
+    # group_by(.data$PCDTC_date) |>
+    group_by(.data$USUBJID, .data$PCDTC_date) |>
     mutate(.mean_est_admin_dtc = weighted.mean(
       .data$.estimated_admin_dtc, .data$.weight, na.rm = TRUE)) |>
     ungroup() |>

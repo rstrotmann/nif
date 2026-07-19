@@ -125,15 +125,12 @@ test_that("minimal rules: obs_raw and obs_final are identity (no LLOQ, no TAFD f
          "P01",      1,    "X", "2025-03-01T08:00", "2025-03-01T08:00",     100
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD,             ~PCDTC, ~PCSTRESN, ~PCSTRESC,
-                                                            ~PCLLOQ, ~PCRFTDTC,      ~PCTPT,
-         "P01",    "PC",       "X", "2025-03-01T07:00",  NA_real_,     "BLQ",
-                                                               0.5,        NA, "PRE-DOSE",
-         "P01",    "PC",       "X", "2025-03-01T09:00",       5.2,     "5.2",
-                                                               0.5,        NA, "1 H POSTDOSE",
-         "P01",    "PC",       "X", "2025-03-01T10:00",      10.0,    "10.0",
-                                                               0.5,        NA, "2H POST"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD,             ~PCDTC, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ, ~PCRFTDTC,         ~PCTPT,
+          "P01",    "PC",       "X", "2025-03-01T07:00",        NA,     "BLQ",     0.5,        NA,     "PRE-DOSE",
+          "P01",    "PC",       "X", "2025-03-01T09:00",       5.2,     "5.2",     0.5,        NA, "1 H POSTDOSE",
+          "P01",    "PC",       "X", "2025-03-01T10:00",        10,    "10.0",     0.5,        NA,      "2H POST"
+       )
+
   ))
 
   nif_result <- nif() |>
@@ -252,17 +249,12 @@ test_that("standard rules: NTIME-based admin time estimation from PC", {
          "P01",      1,    "D", "2025-06-01T08:00", "2025-06-03",     100
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD,          ~PCRFTDTC,      ~PCTPT,
-                                                                    ~PCDTC,
-         "P01",    "PC",       "D", "2025-06-01T08:00", "PRE-DOSE",
-                                                   "2025-06-01T07:00",
-         "P01",    "PC",       "D", "2025-06-01T08:00", "1 H POSTDOSE",
-                                                   "2025-06-01T09:05",
-         "P01",    "PC",       "D", "2025-06-01T08:00", "2H POST",
-                                                   "2025-06-01T10:05",
-         "P01",    "PC",       "D", "2025-06-01T08:00", "4HRS",
-                                                   "2025-06-01T12:05"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD,          ~PCRFTDTC,         ~PCTPT,             ~PCDTC,
+          "P01",    "PC",       "D", "2025-06-01T08:00",     "PRE-DOSE", "2025-06-01T07:00",
+          "P01",    "PC",       "D", "2025-06-01T08:00", "1 H POSTDOSE", "2025-06-01T09:05",
+          "P01",    "PC",       "D", "2025-06-01T08:00",      "2H POST", "2025-06-01T10:05",
+          "P01",    "PC",       "D", "2025-06-01T08:00",         "4HRS", "2025-06-01T12:05"
+       )
   ))
 
   expect_no_message(
@@ -298,15 +290,11 @@ test_that("standard rules: NTIME estimate used when PCRFTDTC absent", {
          "P01",      1,    "D", "2025-07-01",      "2025-07-03",     100
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCRFTDTC,         ~PCTPT,
-                                                                    ~PCDTC,
-         "P01",    "PC",       "D",        NA, "1 H POSTDOSE",
-                                                   "2025-07-01T09:00",
-         "P01",    "PC",       "D",        NA, "2H POST",
-                                                   "2025-07-01T10:00",
-         "P01",    "PC",       "D",        NA, "4HRS",
-                                                   "2025-07-01T12:00"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCRFTDTC,         ~PCTPT,             ~PCDTC,
+          "P01",    "PC",       "D",        NA, "1 H POSTDOSE", "2025-07-01T09:00",
+          "P01",    "PC",       "D",        NA,      "2H POST", "2025-07-01T10:00",
+          "P01",    "PC",       "D",        NA,         "4HRS", "2025-07-01T12:00"
+       )
   ))
 
   expect_no_message(
@@ -328,6 +316,42 @@ test_that("standard rules: NTIME estimate used when PCRFTDTC absent", {
 })
 
 
+test_that("standard rules: NTIME admin time is estimated per subject on shared dates", {
+  ## Subjects on the same calendar day must not share a pooled NTIME estimate.
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~SEX,          ~RFSTDTC, ~ACTARMCD,
+           "A",    1, "2025-01-14T08:00",   "ARM A",
+           "B",    1, "2025-01-14T12:00",   "ARM A"
+    ),
+    ex = tibble::tribble(
+      ~USUBJID, ~EXSEQ, ~EXTRT,     ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+           "A",      1,    "D", "2025-01-14", "2025-01-14",     100,
+           "B",      1,    "D", "2025-01-14", "2025-01-14",     100
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCRFTDTC,         ~PCTPT,             ~PCDTC,
+           "A",    "PC",       "D",        NA, "1 H POSTDOSE", "2025-01-14T09:00",
+           "B",    "PC",       "D",        NA, "1 H POSTDOSE", "2025-01-14T13:00"
+    )
+  ))
+
+  result <- as.data.frame(make_administration(
+    sdtm, "D",
+    pctestcd = "D",
+    imputation = imputation_rules_standard,
+    silent = TRUE
+  ))
+
+  time_a <- format(result$DTC[result$USUBJID == "A"], "%H:%M")
+  time_b <- format(result$DTC[result$USUBJID == "B"], "%H:%M")
+
+  expect_equal(time_a, "08:00")
+  expect_equal(time_b, "12:00")
+  expect_false(identical(time_a, time_b))
+})
+
+
 test_that("standard rules: LLOQ imputation on PC observations", {
   sdtm <- sdtm(list(
     dm = tibble::tribble(
@@ -346,21 +370,14 @@ test_that("standard rules: LLOQ imputation on PC observations", {
          "P02",      1,    "D", "2025-08-01T08:00", "2025-08-01T08:00",     200
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,
-                                                                   ~PCDTC,      ~PCTPT,
-         "P01",    "PC",       "D",  NA_real_,     "BLQ",      0.5,
-                                                    "2025-08-01T07:00", "PRE-DOSE",
-         "P01",    "PC",       "D",       5.2,     "5.2",      0.5,
-                                                    "2025-08-01T09:00", "1 H POSTDOSE",
-         "P01",    "PC",       "D",      10.0,    "10.0",      0.5,
-                                                    "2025-08-01T10:00", "2H POST",
-         "P02",    "PC",       "D",  NA_real_,    "<0.5",      0.5,
-                                                    "2025-08-01T07:30", "PRE-DOSE",
-         "P02",    "PC",       "D",      12.0,    "12.0",      0.5,
-                                                    "2025-08-01T09:30", "1 H POSTDOSE",
-         "P02",    "PC",       "D",  NA_real_,     "BQL",      1.0,
-                                                    "2025-08-01T12:00", "4HRS"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,             ~PCDTC,         ~PCTPT,
+          "P01",    "PC",       "D",        NA,     "BLQ",     0.5, "2025-08-01T07:00",     "PRE-DOSE",
+          "P01",    "PC",       "D",       5.2,     "5.2",     0.5, "2025-08-01T09:00", "1 H POSTDOSE",
+          "P01",    "PC",       "D",        10,    "10.0",     0.5, "2025-08-01T10:00",      "2H POST",
+          "P02",    "PC",       "D",        NA,    "<0.5",     0.5, "2025-08-01T07:30",     "PRE-DOSE",
+          "P02",    "PC",       "D",        12,    "12.0",     0.5, "2025-08-01T09:30", "1 H POSTDOSE",
+          "P02",    "PC",       "D",        NA,     "BQL",       1, "2025-08-01T12:00",         "4HRS"
+       )
   ))
 
   nif_result <- nif() |>
@@ -415,22 +432,12 @@ test_that("standard rules: predose TAFD set to zero", {
          "P01",      1,    "D", "2025-09-01T08:00", "2025-09-03T08:00",     100
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,
-                                                                   ~PCDTC,
-                                                                       ~PCTPT,  ~PCRFTDTC,
-         "P01",    "PC",       "D",       2.0,     "2.0",      0.5,
-                                                    "2025-09-01T07:00",
-                                                    "PRE-DOSE",  "2025-09-01T08:00",
-         "P01",    "PC",       "D",      10.0,    "10.0",      0.5,
-                                                    "2025-09-01T09:00",
-                                                    "1 H POSTDOSE",  "2025-09-01T08:00",
-         "P01",    "PC",       "D",       5.0,     "5.0",      0.5,
-                                                    "2025-09-02T07:30",
-                                                    "PRE-DOSE",  "2025-09-02T08:00",
-         "P01",    "PC",       "D",      12.0,    "12.0",      0.5,
-                                                    "2025-09-02T09:00",
-                                                    "1 H POSTDOSE",  "2025-09-02T08:00"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,             ~PCDTC,         ~PCTPT,          ~PCRFTDTC,
+          "P01",    "PC",       "D",         2,     "2.0",     0.5, "2025-09-01T07:00",     "PRE-DOSE", "2025-09-01T08:00",
+          "P01",    "PC",       "D",        10,    "10.0",     0.5, "2025-09-01T09:00", "1 H POSTDOSE", "2025-09-01T08:00",
+          "P01",    "PC",       "D",         5,     "5.0",     0.5, "2025-09-02T07:30",     "PRE-DOSE", "2025-09-02T08:00",
+          "P01",    "PC",       "D",        12,    "12.0",     0.5, "2025-09-02T09:00", "1 H POSTDOSE", "2025-09-02T08:00"
+       )
   ))
 
   nif_result <- nif() |>
@@ -478,25 +485,13 @@ test_that("standard rules: multi-subject full pipeline with all imputation steps
          "A02",      2,    "D", "2025-10-03T09:00",                 NA,     200
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,
-                                                                   ~PCDTC,
-                                                            ~PCRFTDTC,        ~PCTPT,
-         "A01",    "PC",       "D",  NA_real_,     "BLQ",      0.5,
-                                                    "2025-10-01T07:30",
-                                             "2025-10-01T08:15", "PRE-DOSE",
-         "A01",    "PC",       "D",      25.0,    "25.0",      0.5,
-                                                    "2025-10-01T09:15",
-                                             "2025-10-01T08:15", "1 H POSTDOSE",
-         "A01",    "PC",       "D",      50.0,    "50.0",      0.5,
-                                                    "2025-10-01T10:15",
-                                             "2025-10-01T08:15", "2H POST",
-         "A02",    "PC",       "D",       3.0,     "3.0",      1.0,
-                                                    "2025-10-01T08:30",
-                                             "2025-10-01T09:30", "PRE-DOSE",
-         "A02",    "PC",       "D",      15.0,    "15.0",      1.0,
-                                                    "2025-10-01T10:30",
-                                             "2025-10-01T09:30", "1 H POSTDOSE"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,             ~PCDTC,          ~PCRFTDTC,         ~PCTPT,
+          "A01",    "PC",       "D",        NA,     "BLQ",     0.5, "2025-10-01T07:30", "2025-10-01T08:15",     "PRE-DOSE",
+          "A01",    "PC",       "D",        25,    "25.0",     0.5, "2025-10-01T09:15", "2025-10-01T08:15", "1 H POSTDOSE",
+          "A01",    "PC",       "D",        50,    "50.0",     0.5, "2025-10-01T10:15", "2025-10-01T08:15",      "2H POST",
+          "A02",    "PC",       "D",         3,     "3.0",       1, "2025-10-01T08:30", "2025-10-01T09:30",     "PRE-DOSE",
+          "A02",    "PC",       "D",        15,    "15.0",       1, "2025-10-01T10:30", "2025-10-01T09:30", "1 H POSTDOSE"
+       )
   ))
 
   cut_off <- "2025-10-12 23:59:59"
@@ -556,16 +551,10 @@ test_that("minimal vs standard: BLQ handling differs", {
          "C01",      1,    "D", "2025-11-01T08:00", "2025-11-01T08:00",     100
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,
-                                                                   ~PCDTC,
-                                                             ~PCTPT, ~PCRFTDTC,
-         "C01",    "PC",       "D",  NA_real_,     "BLQ",      0.5,
-                                                    "2025-11-01T07:30",
-                                              "PRE-DOSE", "2025-11-01T08:00",
-         "C01",    "PC",       "D",       5.0,     "5.0",      0.5,
-                                                    "2025-11-01T09:00",
-                                              "1 H POSTDOSE", "2025-11-01T08:00"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,             ~PCDTC,         ~PCTPT,          ~PCRFTDTC,
+          "C01",    "PC",       "D",        NA,     "BLQ",     0.5, "2025-11-01T07:30",     "PRE-DOSE", "2025-11-01T08:00",
+          "C01",    "PC",       "D",         5,     "5.0",     0.5, "2025-11-01T09:00", "1 H POSTDOSE", "2025-11-01T08:00"
+       )
   ))
 
   nif_minimal <- nif() |>
@@ -609,16 +598,10 @@ test_that("minimal vs standard: predose TAFD handling differs", {
          "C01",      1,    "D", "2025-12-01T10:00", "2025-12-01T10:00",     100
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,
-                                                                   ~PCDTC,
-                                                             ~PCTPT, ~PCRFTDTC,
-         "C01",    "PC",       "D",       1.0,     "1.0",      0.5,
-                                                    "2025-12-01T09:00",
-                                              "PRE-DOSE", "2025-12-01T10:00",
-         "C01",    "PC",       "D",      20.0,    "20.0",      0.5,
-                                                    "2025-12-01T11:00",
-                                              "1 H POSTDOSE", "2025-12-01T10:00"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,             ~PCDTC,         ~PCTPT,          ~PCRFTDTC,
+          "C01",    "PC",       "D",         1,     "1.0",     0.5, "2025-12-01T09:00",     "PRE-DOSE", "2025-12-01T10:00",
+          "C01",    "PC",       "D",        20,    "20.0",     0.5, "2025-12-01T11:00", "1 H POSTDOSE", "2025-12-01T10:00"
+       )
   ))
 
   nif_minimal <- nif() |>
@@ -717,31 +700,15 @@ test_that("standard rules: complex multi-episode multi-subject integration", {
          "M03",      2,    "D", "2026-01-15T07:00",                 NA,     300
     ),
     pc = tibble::tribble(
-      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,
-                                                                   ~PCDTC,
-                                                            ~PCRFTDTC,        ~PCTPT,
-         "M01",    "PC",       "D",  NA_real_,     "BLQ",      0.5,
-                                                    "2026-01-01T07:30",
-                                             "2026-01-01T08:15", "PRE-DOSE",
-         "M01",    "PC",       "D",      20.0,    "20.0",      0.5,
-                                                    "2026-01-01T09:15",
-                                             "2026-01-01T08:15", "1 H POSTDOSE",
-         "M01",    "PC",       "D",      40.0,    "40.0",      0.5,
-                                                    "2026-01-01T10:15",
-                                             "2026-01-01T08:15", "2H POST",
-         "M01",    "PC",       "D",      30.0,    "30.0",      0.5,
-                                                    "2026-01-01T12:15",
-                                             "2026-01-01T08:15", "4HRS",
-         "M02",    "PC",       "D",       1.0,     "1.0",      1.0,
-                                                    "2026-01-01T08:30",
-                                             "2026-01-01T09:30", "PRE-DOSE",
-         "M02",    "PC",       "D",      50.0,    "50.0",      1.0,
-                                                    "2026-01-01T10:30",
-                                             "2026-01-01T09:30", "1 H POSTDOSE",
-         "M02",    "PC",       "D",  NA_real_,     "BQL",      1.0,
-                                                    "2026-01-01T13:30",
-                                             "2026-01-01T09:30", "4HRS"
-    )
+       ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCSTRESN, ~PCSTRESC, ~PCLLOQ,             ~PCDTC,          ~PCRFTDTC,         ~PCTPT,
+          "M01",    "PC",       "D",        NA,     "BLQ",     0.5, "2026-01-01T07:30", "2026-01-01T08:15",     "PRE-DOSE",
+          "M01",    "PC",       "D",        20,    "20.0",     0.5, "2026-01-01T09:15", "2026-01-01T08:15", "1 H POSTDOSE",
+          "M01",    "PC",       "D",        40,    "40.0",     0.5, "2026-01-01T10:15", "2026-01-01T08:15",      "2H POST",
+          "M01",    "PC",       "D",        30,    "30.0",     0.5, "2026-01-01T12:15", "2026-01-01T08:15",         "4HRS",
+          "M02",    "PC",       "D",         1,     "1.0",       1, "2026-01-01T08:30", "2026-01-01T09:30",     "PRE-DOSE",
+          "M02",    "PC",       "D",        50,    "50.0",       1, "2026-01-01T10:30", "2026-01-01T09:30", "1 H POSTDOSE",
+          "M02",    "PC",       "D",        NA,     "BQL",       1, "2026-01-01T13:30", "2026-01-01T09:30",         "4HRS"
+       )
   ))
 
   cut_off <- "2026-01-18 23:59:59"
@@ -839,3 +806,4 @@ test_that("standard rules: dose escalation with multiple episodes", {
   expect_equal(format(res$DTC[4], "%H:%M"), "09:00")
   expect_equal(format(res$DTC[7], "%H:%M"), "08:45")
 })
+
