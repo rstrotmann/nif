@@ -1,6 +1,9 @@
 # Alternative imputation rule set 1
 
-Alternative imputation rule set 1
+Same pre-expansion steps as
+[`imputation_rules_standard()`](imputation_rules_standard.md), with a
+different post-expansion time rule (10-minute NTIME vs EX gate) and a
+no-op `obs_raw`.
 
 ## Usage
 
@@ -10,74 +13,73 @@ imputation_rules_1
 
 ## Format
 
-A list of the following functions:
+A named list with these functions:
 
-- admin_pre_expansion()
+- admin_pre_expansion:
 
-- admin_post_expansion()
+  Cut-off filter and EXENDTC imputations (same as standard).
 
-- obs_raw()
+- admin_post_expansion:
 
-- obs_final()
+  NTIME and PCRFTDTC with a 10-minute EX comparison.
 
-## Details
+- obs_raw:
 
-This imputation rule set includes the following imputation steps:
+  Identity (no LLOQ imputation).
 
-### Treatment administrations:
+- obs_final:
 
-- Filter administrations to the cut-off date.
+  Predose TAFD adjustment (same as standard).
 
-- Impute missing EXENDTC values in the last administration episode to
-  the cut-off date.
+## Steps in this rule set
 
-- Impute missing (non-last) EXENDTC values to the day before the start
-  of the subsequent administration episode.
+### Host steps (not in this list)
 
-- Remove records where EXENDTC is before EXSTDTC.
+Same as [`imputation_rules_standard()`](imputation_rules_standard.md):
+RFENDTC fill, `expand_ex`, and time carry-forward.
 
-- Expand administration episodes from the EX domain between EXSTDTC and
-  EXENDTC.
+### `admin_pre_expansion`
 
-- For each administration event, take the administration time from
-  PCRFTDTC of the PC domain if there are related pharmacokinetic
-  observations. The name of the PK analyte (PCTESTCD) that corresponds
-  with the administered treatment (EXTRT) must be specified by the
-  'pctestcd' to add_administration().
+Same as [`imputation_rules_standard()`](imputation_rules_standard.md).
 
-- For administration events that have associated PK observations but
-  PCRFTDTC is not defined, back-calculate the administration time, if
-  possible, from the PK observations based on their nominal time
-  (PCTPT).
+### `admin_post_expansion`
 
-- In cases where the administration time back-calculated from NTIME is
-  more than 10 min different from the administration time taken from the
-  EXSTDTC, it is assumed that the NTIME-derived administration time is
-  more precise than that from EXSTDTC and is prioritized.
+1.  Compute an NTIME-based administration time via
+    `get_admin_time_from_ntime` (stored alongside the current EX-based
+    time).
 
-- After the above imputations, the administration time is carried
-  forward for subsequent administration events until the next imputed
-  time.
+2.  Apply `get_admin_time_from_pcrftdtc` when PCRFTDTC is available
+    (takes precedence).
 
-### Observations
+3.  If PCRFTDTC is absent and the NTIME-derived time differs from the
+    EX-derived time by more than 10 minutes, use the NTIME-derived time;
+    otherwise keep the EX-derived time.
 
-- Pharmacokinetic observations below the level of quantification (BLQ)
-  are set to PCLLOQ / 2.
+After this slot, host carry-forward fills remaining missing times.
 
-- For all predose observations, TAFD is set to zero.
+### `obs_raw`
+
+No-op (LLOQ imputation is not applied in this rule set).
+
+### `obs_final`
+
+Same as [`imputation_rules_standard()`](imputation_rules_standard.md):
+predose `TAFD < 0` set to zero for the current observation.
 
 ## Creating custom imputation rules
 
 You can create your own imputation rule set by providing a named list
 with any combination of the four function slots: `admin_pre_expansion`,
 `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
-receives specific arguments depending on its slot.
+receives specific arguments depending on its slot. See the
+implementations in this file for the expected signatures.
 
 ## See also
 
-add_administration()
-
-add_observation()
+[`add_administration()`](add_administration.md),
+[`add_observation()`](add_observation.md),
+[`imputation_rules_standard()`](imputation_rules_standard.md),
+[`imputation_rules_void()`](imputation_rules_void.md)
 
 Other imputation rules:
 [`imputation_rules_minimal`](imputation_rules_minimal.md),

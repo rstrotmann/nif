@@ -1,6 +1,10 @@
 # Standard imputation rule set
 
-Standard imputation rule set
+Default imputation rule set for
+[`add_administration()`](add_administration.md) and
+[`add_observation()`](add_observation.md). Canonical documentation for
+the administration and observation steps; other rule sets document only
+how they differ.
 
 ## Usage
 
@@ -10,70 +14,94 @@ imputation_rules_standard
 
 ## Format
 
-A list of the following functions:
+A named list with these functions:
 
-- admin_post_expansion()
+- admin_pre_expansion:
 
-- obs_raw()
+  Cut-off filter and EXENDTC imputations before expansion.
 
-- obs_final()
+- admin_post_expansion:
 
-## Details
+  NTIME then PCRFTDTC administration-time imputation after expansion.
 
-This imputation rule set includes the following imputation steps:
+- obs_raw:
 
-### Treatment administrations:
+  BLQ / LLOQ imputation on raw PC observations.
 
-- Filter administrations to the cut-off date.
+- obs_final:
 
-- Impute missing EXENDTC values in the last administration episode to
-  the cut-off date.
+  Predose TAFD adjustment.
 
-- Impute missing (non-last) EXENDTC values to the day before the start
-  of the subsequent administration episode.
+## Steps in this rule set
 
-- Remove records where EXENDTC is before EXSTDTC.
+Documented in execution order. Helper names match the implementation.
 
-- Expand administration episodes from the EX domain between EXSTDTC and
-  EXENDTC.
+### Host steps (not in this list)
 
-- For each administration event, take the administration time from
-  PCRFTDTC of the PC domain if there are related pharmacokinetic
-  observations. The name of the PK analyte (PCTESTCD) that corresponds
-  with the administered treatment (EXTRT) must be specified by the
-  'pctestcd' to add_administration().
+These always run in [`add_administration()`](add_administration.md) /
+`make_administration()`, regardless of the rule set:
 
-- For administration events that have associated PK observations but
-  PCRFTDTC is not defined, back-calculate the administration time, if
-  possible, from the PK observations based on their nominal time
-  (PCTPT).
+- Last-episode `EXENDTC` from `DM.RFENDTC`
+  (`impute_exendtc_to_rfendtc`).
 
-- Unless imputed by the above rules, administrations inherit the
-  administration time from EXSTDTC or EXENDTC.
+- Episode expansion (`expand_ex`) between pre- and post-expansion (QD;
+  `EXDOSFRQ` is not used). Start/end times come from `EXSTDTC` /
+  `EXENDTC` when present; other days are missing until later steps.
 
-- After the above imputations, the administration time is carried
-  forward for subsequent administration events until the next imputed
-  time.
+- Administration time carry-forward after post-expansion.
 
-### Observations
+### `admin_pre_expansion`
 
-- Pharmacokinetic observations below the level of quantification (BLQ)
-  are set to PCLLOQ / 2.
+1.  `apply_cut_off_date` — delete episodes with `EXSTDTC` after the
+    cut-off date.
 
-- For all predose observations, TAFD is set to zero.
+2.  `impute_exendtc_to_cutoff` — if the last episode still has missing
+    `EXENDTC`, set it to the cut-off date (e.g. ongoing treatment).
+
+3.  `impute_missing_exendtc` — for non-last episodes with missing
+    `EXENDTC`, set it to the day before the next episode's `EXSTDTC`.
+
+4.  `filter_exendtc_after_exstdtc` — remove episodes where `EXENDTC` is
+    before `EXSTDTC`.
+
+### `admin_post_expansion`
+
+1.  `get_admin_time_from_ntime` — back-calculate administration time
+    from PK nominal times (`PCTPT` / NTIME). When an estimate exists, it
+    replaces the current `DTC_time` (including times from EX).
+
+2.  `get_admin_time_from_pcrftdtc` — set `DTC_time` from `PC.PCRFTDTC`
+    when available; this overwrites a prior NTIME estimate for that day.
+    Pass `pctestcd` to [`add_administration()`](add_administration.md)
+    for the matching `PCTESTCD`.
+
+After this slot, host carry-forward fills remaining missing times.
+
+### `obs_raw`
+
+- `impute_lloq_pc` — pharmacokinetic observations below the limit of
+  quantification are set to `PCLLOQ / 2`.
+
+### `obs_final`
+
+- For predose observations of the current analyte, set `TAFD` to zero
+  when it would otherwise be negative.
 
 ## Creating custom imputation rules
 
 You can create your own imputation rule set by providing a named list
 with any combination of the four function slots: `admin_pre_expansion`,
 `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
-receives specific arguments depending on its slot.
+receives specific arguments depending on its slot. See the
+implementations in this file for the expected signatures.
 
 ## See also
 
-add_administration()
-
-add_observation()
+[`add_administration()`](add_administration.md),
+[`add_observation()`](add_observation.md),
+[`imputation_rules_minimal()`](imputation_rules_minimal.md),
+[`imputation_rules_1()`](imputation_rules_1.md),
+[`imputation_rules_void()`](imputation_rules_void.md)
 
 Other imputation rules: [`imputation_rules_1`](imputation_rules_1.md),
 [`imputation_rules_minimal`](imputation_rules_minimal.md),

@@ -1,6 +1,9 @@
 # Minimal imputation rule set
 
-Minimal imputation rule set
+Same pre-expansion steps as
+[`imputation_rules_standard()`](imputation_rules_standard.md), but
+post-expansion uses PCRFTDTC only (no NTIME back-calculation).
+Observation slots are no-ops.
 
 ## Usage
 
@@ -10,59 +13,73 @@ imputation_rules_minimal
 
 ## Format
 
-A list of the following functions:
+A named list with these functions:
 
-- admin_pre_expansion()
+- admin_pre_expansion:
 
-- admin_post_expansion()
+  Cut-off filter and EXENDTC imputations (same as standard).
 
-## Details
+- admin_post_expansion:
 
-This imputation rule set includes the following imputation steps:
+  Administration time from PCRFTDTC only.
 
-### Treatment administrations:
+- obs_raw:
 
-- Filter administrations to the cut-off date.
+  Identity (no change).
 
-- Impute missing EXENDTC values in the last administration episode to
-  the cut-off date.
+- obs_final:
 
-- Impute missing (non-last) EXENDTC values to the day before the start
-  of the subsequent administration episode.
+  Identity (no change).
 
-- Remove records where EXENDTC is before EXSTDTC.
+## Steps in this rule set
 
-- Expand administration episodes from the EX domain between EXSTDTC and
-  EXENDTC.
+### Host steps (not in this list)
 
-- For each administration event, take the administration time from
-  PCRFTDTC of the PC domain if there are related pharmacokinetic
-  observations. The name of the PK analyte (PCTESTCD) that corresponds
-  with the administered treatment (EXTRT) must be specified by the
-  'pctestcd' to add_administration().
+These always run in [`add_administration()`](add_administration.md) /
+`make_administration()`, regardless of the rule set:
 
-- Unless imputed by the above rule, administrations inherit the
-  administration time from EXSTDTC or EXENDTC.
+- Last-episode `EXENDTC` from `DM.RFENDTC`
+  (`impute_exendtc_to_rfendtc`).
 
-- After the above imputations, carry forward the administration time for
-  subsequent administration events until the next imputed time.
+- Episode expansion (`expand_ex`) between pre- and post-expansion.
 
-### Observations
+- Administration time carry-forward after post-expansion.
 
-- No imputations.
+### `admin_pre_expansion`
+
+Same as [`imputation_rules_standard()`](imputation_rules_standard.md):
+`apply_cut_off_date`, `impute_exendtc_to_cutoff`,
+`impute_missing_exendtc`, then `filter_exendtc_after_exstdtc`.
+
+### `admin_post_expansion`
+
+1.  `get_admin_time_from_pcrftdtc` — set `DTC_time` from `PC.PCRFTDTC`
+    when related PK observations exist. Pass `pctestcd` to
+    [`add_administration()`](add_administration.md) for the matching
+    `PCTESTCD`.
+
+After this slot, host carry-forward fills remaining missing times.
+Unless set by PCRFTDTC or carry-forward, times come from `EXSTDTC` /
+`EXENDTC` during expansion.
+
+### `obs_raw` / `obs_final`
+
+No observation imputations.
 
 ## Creating custom imputation rules
 
 You can create your own imputation rule set by providing a named list
 with any combination of the four function slots: `admin_pre_expansion`,
 `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
-receives specific arguments depending on its slot.
+receives specific arguments depending on its slot. See the
+implementations in this file for the expected signatures.
 
 ## See also
 
-add_administration()
-
-add_observation()
+[`add_administration()`](add_administration.md),
+[`add_observation()`](add_observation.md),
+[`imputation_rules_standard()`](imputation_rules_standard.md),
+[`imputation_rules_void()`](imputation_rules_void.md)
 
 Other imputation rules: [`imputation_rules_1`](imputation_rules_1.md),
 [`imputation_rules_standard`](imputation_rules_standard.md),
