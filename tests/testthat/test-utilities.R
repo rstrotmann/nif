@@ -178,6 +178,14 @@ test_that("pt_to_hours works", {
 })
 
 
+test_that("pt_to_hours works with length-1 input", {
+  expect_equal(pt_to_hours("PT1H"), 1)
+  expect_equal(pt_to_hours("PT30M"), 0.5)
+  expect_equal(pt_to_hours("PT1.5H"), 1.5)
+  expect_true(is.na(pt_to_hours(NA_character_)))
+})
+
+
 test_that("compose_dtc works", {
   expect_s3_class(compose_dtc(date = "2022-09-29", time = "09:30"), "POSIXct")
 })

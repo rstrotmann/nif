@@ -191,19 +191,20 @@ test_that("make_administration handles cut_off_date parameter", {
 test_that("make_administration auto-assigns cut_off_date when NULL", {
   sdtm <- sdtm(list(
     dm = tibble::tribble(
-      ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
-      "001", 1, "2024-12-16T7:50", "2024-12-25", "ARM A"
-    ),
+       ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+          "001",    1, "2024-12-16T7:50", "2024-12-25",   "ARM A"
+       ),
     ex = tibble::tribble(
-      ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXDOSE,
-      "001", 1, "DRUG_A", "2024-12-16T7:50", "2024-12-19", 100,
-      "001", 2, "DRUG_A", "2024-12-20T7:50", "2024-12-23", 100
-    )
+       ~USUBJID, ~EXSEQ,   ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+          "001",      1, "DRUG_A", "2024-12-16T7:50", "2024-12-19",     100,
+          "001",      2, "DRUG_A", "2024-12-20T7:50", "2024-12-23",     100
+       )
   ))
 
   expect_message(
     expect_message(
-      result <- make_administration(sdtm, "DRUG_A", cut_off_date = NULL, silent = FALSE),
+      result <- make_administration(
+        sdtm, "DRUG_A", cmt = 1, cut_off_date = NULL, silent = FALSE),
       "A global cut-off-date of"
     ),
     "PC not found in sdtm object - administration times cannot"

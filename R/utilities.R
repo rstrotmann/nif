@@ -617,6 +617,10 @@ pt_to_hours <- function(iso) {
     regex("(-)?PT(([0-9.]*)H)?(([0-9.]*)M)?"),
     group = c(1, 3, 5)
   )
+  # length-1 input returns a vector; coerce to a 1-row matrix
+  if (is.null(dim(temp))) {
+    temp <- matrix(temp, nrow = 1)
+  }
   colnames(temp) <- c("SIGN", "H", "MIN")
 
   as.data.frame(temp) |>
@@ -1204,6 +1208,34 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
   })
 
   # Ensure logical return type
+  as.logical(result)
+}
+
+
+#' Title
+#'
+#' @param x A character string or vector of strings to check.
+#'
+#' @returns A logical vector.
+#' @export
+#'
+#' @examples
+#' is_iso8601_pt("PT10M")
+is_iso8601_pt <- function(x) {
+  if (!is.character(x)) {
+    stop("Input must be a character string")
+  }
+
+  # ISO 8601 PT pattern
+  pt_pattern <- "^-?PT([0-9.]*H)?([0-9]*M)?([0-9]*S)?$"
+
+  result <- sapply(x, function(s) {
+    if (is.na(s))
+      return(NA)
+
+    grepl(pt_pattern, s)
+  })
+
   as.logical(result)
 }
 

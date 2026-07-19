@@ -123,6 +123,68 @@ expand_ex <- function(ex) {
 }
 
 
+#' Check and prepare ex for iv administrations
+#'
+#' @param admin The un-expanded EX domain
+#' @param iv_admin Administration is iv, as boolean. If NULL, will be tested
+#' automatically based on the EXROUTE field, if available.
+#' @param duration The duration of the iv administration as numeric. If NULL,
+#' will be determined automatically based on the EXDUR field, if available.
+#' @param silent Suppress messages.
+#'
+#' @returns The updated EX domain.
+create_iv_fields <- function(admin, iv_admin = NULL, duration = NULL,
+                             silent = NULL) {
+  # input validation
+  if (!is.data.frame(admin)) stop("Input must be a data frame!")
+  validate_argument(iv_admin, "logical", allow_null = TRUE)
+  validate_argument(duration, "numeric", allow_null = TRUE)
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+
+  # check whether iv administration
+  if (is.null(iv_admin)) {
+    if ("EXROUTE" %in% names(admin)) {
+      if (any(toupper(admin$EXROUTE) %in% c("IV", "INTRAVENOUS")))
+        iv_admin <- TRUE
+    }
+  }
+
+  # prepare fields for iv administrations
+  if (isTRUE(iv_admin)) {
+    # create duration field (DUR)
+    if ("EXDUR" %in% names(admin)) {
+      if (any(is_iso8601_pt(admin$EXDUR) == FALSE, na.rm = TRUE)) {
+        stop("EXDUR must be an ISO8601-formatted duration!")
+      }
+      if (is.null(duration)) {
+        admin <- mutate(admin, DUR = pt_to_hours(EXDUR))
+      } else {
+        admin <- mutate(admin, DUR = duration)
+        conditional_cli(cli_alert(paste0(
+          "Treatment duration (EXDUR) was replaced with custom duration (",
+          duration, ")"
+        )),
+        silent)
+      }
+    } else {
+      if (is.null(duration)) {
+        admin <- mutate(admin, DUR = 0)
+        conditional_cli(cli_alert(
+          "No EXDUR in data set and no duration specified. DUR will be 0!"
+          ),
+          silent
+        )
+      } else {
+        admin <- mutate(admin, DUR = duration)
+      }
+    }
+  }
+
+  return(admin)
+}
+
+
 #' Compile administration data frame
 #'
 #' @details
@@ -215,6 +277,7 @@ make_administration <- function(
   keep = "",
   imputation = imputation_rules_standard,
   duration = NULL,
+  iv_admin = NULL,
   silent = NULL
 ) {
   # input validation
@@ -263,8 +326,26 @@ make_administration <- function(
 
   admin <- ex
 
+  # # check iv administration
+  # if (is.null(iv_admin)) {
+  #   if ("EXROUTE" %in% names(admin)) {
+  #     if (any(toupper(ex$EXROUTE) %in% c("IV", "INTRAVENOUS")))
+  #       iv_admin = TRUE
+  #   }
+  # }
+  #
+  # # prepare fields for iv administrations
+  # if (isTRUE(iv_admin)) {
+  #   # create duration field (DUR)
+  #   if ("EXDUR" %in% names(admin)) {
+  #     if (!is.null(duration)) {
+  #
+  #     }
+  #   }
+  # }
+
+
   # iv administration?
-  is_iv_admin = FALSE
   # {
   #   if ("EXROUTE" %in% names(admin)) {
   #     if (any(toupper(ex$EXROUTE) %in% c("IV", "INTRAVENOUS"))) {
@@ -368,12 +449,12 @@ make_administration <- function(
     ) |>
     expand_ex()
 
-  conditional_cli(
-    cli_alert_info(paste0(
-      "Compartment for ", extrt, " administrations set to ", cmt
-    )),
-    silent = silent
-  )
+  # conditional_cli(
+  #   cli_alert_info(paste0(
+  #     "Compartment for ", extrt, " administrations set to ", cmt
+  #   )),
+  #   silent = silent
+  # )
 
   # IMPUTATION 2: post-expansion
   if ("admin_post_expansion" %in% names(imputation)) {
