@@ -644,7 +644,13 @@ test_that("make_administration works with iv administrations", {
   sdtm <- examplinib_iv
 
   expect_message(
-    test <- make_administration(sdtm, "EXAMPLINIB")
+    expect_message(
+      expect_message(
+        test <- make_administration(sdtm, "EXAMPLINIB")
+      ),
+      "IV administration"
+    ),
+    "No EXDUR"
   )
 })
 

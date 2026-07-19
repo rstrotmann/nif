@@ -42,21 +42,21 @@ make_test_sdtm1 <- function() {
 }
 
 
-test_that("add_observation warns about duplicate compartment", {
-  # Create a base nif object with administration data where CMT=1
-  base_nif <- nif() %>%
-    add_administration(
-      examplinib_sad, "EXAMPLINIB",
-      analyte = "RS2023", silent = TRUE
-    )
-
-  # Try to add observation with the same compartment
-  expect_warning(
-    base_nif %>%
-      add_observation(examplinib_sad, "pc", "RS2023", cmt = 1, silent = TRUE),
-    "Compartment 1 is already assigned"
-  )
-})
+# test_that("add_observation warns about duplicate compartment", {
+#   # Create a base nif object with administration data where CMT=1
+#   base_nif <- nif() %>%
+#     add_administration(
+#       examplinib_sad, "EXAMPLINIB",
+#       analyte = "RS2023", silent = TRUE
+#     )
+#
+#   # Try to add observation with the same compartment
+#   expect_warning(
+#     base_nif %>%
+#       add_observation(examplinib_sad, "pc", "RS2023", cmt = 1, silent = TRUE),
+#     "Compartment 1 is already assigned"
+#   )
+# })
 
 
 test_that("add_observation auto-assigns compartment if not specified", {

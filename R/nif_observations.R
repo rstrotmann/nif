@@ -860,11 +860,14 @@ add_observation <- function(
     stop("Please add at least one administration first!")
   }
 
-  # Test if compartment is already assigned
   if (!is.null(cmt)) {
     if (cmt %in% unique(nif$CMT)) {
-      warning(paste0("Compartment ", cmt,
-                     " is already assigned. Is this intended?"))
+      conditional_cli(
+        cli_alert_warning(paste0(
+          "Compartment ", cmt, " is already assigned. Is this intended?"
+        )),
+        silent = silent
+      )
     }
   }
 

@@ -169,7 +169,7 @@ nif_cleanup <- function(nif, keep = NULL) {
   selector <- unique(c(
     "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
     "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
-    "PCELTM", "EVID", "AMT", "ANALYTE", "CMT", "PARENT", "TRTDY",
+    "PCELTM", "EVID", "AMT", "DUR", "ANALYTE", "CMT", "PARENT", "TRTDY",
     "METABOLITE", "DOSE", "DV", "MDV", "ACTARMCD", "IMPUTATION",
     "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
     "TREATMENT", keep

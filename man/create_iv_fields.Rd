@@ -14,6 +14,8 @@ automatically based on the EXROUTE field, if available.}
 
 \item{duration}{The duration of the iv administration as numeric. If NULL,
 will be determined automatically based on the EXDUR field, if available.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 The updated EX domain.

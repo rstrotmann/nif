@@ -217,8 +217,11 @@ test_that("create_iv_fields replaces EXDUR with custom duration", {
   )
 
   expect_message(
-    result <- create_iv_fields(admin, duration = 0.5, silent = FALSE),
-    "Treatment duration \\(EXDUR\\) was replaced with custom duration \\(0.5\\)"
+    expect_message(
+      result <- create_iv_fields(admin, duration = 0.5, silent = FALSE),
+      "Treatment duration \\(EXDUR\\) was replaced with custom duration \\(0.5\\)"
+    ),
+    "IV administration"
   )
   expect_equal(result$DUR, c(0.5, 0.5))
 })
@@ -257,10 +260,7 @@ test_that("create_iv_fields sets DUR to 0 when EXDUR and duration are absent", {
         "IV",      20
   )
 
-  expect_message(
-    result <- create_iv_fields(admin, silent = FALSE),
-    "No EXDUR in data set and no duration specified. DUR will be 0!"
-  )
+  result <- create_iv_fields(admin, silent = TRUE)
   expect_equal(result$DUR, c(0, 0))
 })
 
@@ -306,3 +306,4 @@ test_that("create_iv_fields returns a data frame", {
 
   expect_s3_class(result, "data.frame")
 })
+

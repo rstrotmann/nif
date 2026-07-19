@@ -133,8 +133,9 @@ expand_ex <- function(ex) {
 #' @param silent Suppress messages.
 #'
 #' @returns The updated EX domain.
-create_iv_fields <- function(admin, iv_admin = NULL, duration = NULL,
-                             silent = NULL) {
+create_iv_fields <- function(
+    admin, iv_admin = NULL, duration = NULL, silent = NULL
+  ) {
   # input validation
   if (!is.data.frame(admin)) stop("Input must be a data frame!")
   validate_argument(iv_admin, "logical", allow_null = TRUE)
@@ -145,8 +146,13 @@ create_iv_fields <- function(admin, iv_admin = NULL, duration = NULL,
   # check whether iv administration
   if (is.null(iv_admin)) {
     if ("EXROUTE" %in% names(admin)) {
-      if (any(toupper(admin$EXROUTE) %in% c("IV", "INTRAVENOUS")))
+      if (any(toupper(admin$EXROUTE) %in% c("IV", "INTRAVENOUS"))) {
         iv_admin <- TRUE
+        conditional_cli(
+          cli_alert_info("IV administration detected"),
+          silent = silent
+        )
+      }
     }
   }
 
@@ -170,7 +176,7 @@ create_iv_fields <- function(admin, iv_admin = NULL, duration = NULL,
     } else {
       if (is.null(duration)) {
         admin <- mutate(admin, DUR = 0)
-        conditional_cli(cli_alert(
+        conditional_cli(cli_alert_warning(
           "No EXDUR in data set and no duration specified. DUR will be 0!"
           ),
           silent
@@ -260,7 +266,7 @@ create_iv_fields <- function(admin, iv_admin = NULL, duration = NULL,
 #' @param keep Columns to keep after cleanup, as character.
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #' @param imputation The imputation rule set.
-#' @param duration The duration of iv administrations.
+#' @inheritParams create_iv_fields iv_admin duration
 #'
 #' @return A data frame.
 #' @noRd
@@ -326,54 +332,8 @@ make_administration <- function(
 
   admin <- ex
 
-  # # check iv administration
-  # if (is.null(iv_admin)) {
-  #   if ("EXROUTE" %in% names(admin)) {
-  #     if (any(toupper(ex$EXROUTE) %in% c("IV", "INTRAVENOUS")))
-  #       iv_admin = TRUE
-  #   }
-  # }
-  #
-  # # prepare fields for iv administrations
-  # if (isTRUE(iv_admin)) {
-  #   # create duration field (DUR)
-  #   if ("EXDUR" %in% names(admin)) {
-  #     if (!is.null(duration)) {
-  #
-  #     }
-  #   }
-  # }
-
-
-  # iv administration?
-  # {
-  #   if ("EXROUTE" %in% names(admin)) {
-  #     if (any(toupper(ex$EXROUTE) %in% c("IV", "INTRAVENOUS"))) {
-  #       is_iv_admin = TRUE
-  #
-  #       # check whether EXDUR is the same for all records
-  #       if ("EXDUR" %in% names(admin)) {
-  #         # admin <- mutate(admin, DUR = lubrify_dates(col = "EXDUR"))
-  #         admin <- mutate(admin, pt_to_hours(.data$EXDUR))
-  #         actual_durations <- unique(admin$DUR)
-  #         if (length(actual_durations) > 1) {
-  #           warning(paste0(
-  #             "EXDUR has multiple values: ",
-  #             nice_enumeration(actual_durations), "!"
-  #           ))
-  #         }
-  #         if (!is.null(duration) & any(actual_duration != duration)) {
-  #           warning(paste0(
-  #             "Duration mismatch: EXDUR of ",
-  #             nice_enumeration(actual_duration),
-  #             " will all be set to ", duration, "!"
-  #           ))
-  #       }
-  #     } else
-  #       admin <- mutate(admin, DUR = duration)
-  #     }
-  #   }
-  # }
+  # # create iv fields, if needed
+  # admin <- create_iv_fields(admin, iv_admin = iv_admin, duration = duration)
 
 
   if ("EXSEQ" %in% names(ex)) {
@@ -391,6 +351,9 @@ make_administration <- function(
     mutate(SRC_DOMAIN = "EX") |>
     filter(.data$EXTRT == extrt) |>
     decompose_dtc("EXSTDTC")
+
+  # create iv fields, if needed
+  admin <- create_iv_fields(admin, iv_admin = iv_admin, duration = duration)
 
   # apply data cut-off date
   # cut_off_rows <- admin |>
@@ -448,13 +411,6 @@ make_administration <- function(
       AMT = .data$EXDOSE
     ) |>
     expand_ex()
-
-  # conditional_cli(
-  #   cli_alert_info(paste0(
-  #     "Compartment for ", extrt, " administrations set to ", cmt
-  #   )),
-  #   silent = silent
-  # )
 
   # IMPUTATION 2: post-expansion
   if ("admin_post_expansion" %in% names(imputation)) {
@@ -537,7 +493,9 @@ make_administration <- function(
 #' @param keep Columns to keep after cleanup, as character.
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #' @param debug Include debug fields, as logical.
+#' @inheritParams create_iv_fields iv_admin duration
 #' @param imputation The imputation rule set.
+#'
 #' @return A nif object.
 #' @export
 #' @examples
@@ -556,6 +514,8 @@ add_administration <- function(
   keep = NULL,
   debug = FALSE,
   imputation = imputation_rules_standard,
+  duration = NULL,
+  iv_admin = NULL,
   silent = NULL
 ) {
   # validate input
@@ -594,6 +554,8 @@ add_administration <- function(
       cut_off_date = cut_off_date,
       keep = keep,
       imputation = imputation,
+      iv_admin = iv_admin,
+      duration = duration,
       silent = silent
     )
   ) |>

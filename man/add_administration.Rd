@@ -16,6 +16,8 @@ add_administration(
   keep = NULL,
   debug = FALSE,
   imputation = imputation_rules_standard,
+  duration = NULL,
+  iv_admin = NULL,
   silent = NULL
 )
 }
@@ -43,6 +45,12 @@ from the PCRFTDTC field from the PC domain.}
 \item{debug}{Include debug fields, as logical.}
 
 \item{imputation}{The imputation rule set.}
+
+\item{duration}{The duration of the iv administration as numeric. If NULL,
+will be determined automatically based on the EXDUR field, if available.}
+
+\item{iv_admin}{Administration is iv, as boolean. If NULL, will be tested
+automatically based on the EXROUTE field, if available.}
 
 \item{silent}{Suppress messages, defaults to nif_option standard, if NULL.}
 }
