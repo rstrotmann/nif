@@ -6,43 +6,49 @@
 \format{
 A named list with these functions:
 \describe{
-\item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations before
-expansion.}
-\item{admin_post_expansion}{NTIME then PCRFTDTC administration-time
-imputation after expansion.}
-\item{obs_raw}{BLQ / LLOQ imputation on raw PC observations.}
-\item{obs_final}{Predose TAFD adjustment.}
+\item{admin_pre_expansion}{Data imputations before
+expansion of individual drug administration episodes.}
+\item{admin_post_expansion}{Data imputations after expansion
+of drug administration episodes.}
+\item{obs_raw}{Imputations on raw observation data.}
+\item{obs_final}{Imputations on  observation data}
 }
 }
 \usage{
 imputation_rules_standard
 }
 \description{
-Default imputation rule set for \code{\link[=add_administration]{add_administration()}} and
-\code{\link[=add_observation]{add_observation()}}. Canonical documentation for the administration and
-observation steps; other rule sets document only how they differ.
+Imputations that are applied when administrations or observations are added
+to a NIF data set are bundled in imputation rule sets.
 }
-\section{Steps in this rule set}{
-Documented in execution order. Helper names match the implementation.
-\subsection{Host steps (not in this list)}{
+\details{
+This is the default imputation rule set for \code{\link[=add_administration]{add_administration()}} and
+\code{\link[=add_observation]{add_observation()}}.
+}
+\section{Imputation rules for drug administrations}{
 
-These always run in \code{add_administration()} / \code{make_administration()},
-regardless of the rule set:
+\subsection{Generic imputations}{
+
+These steps are always performed regardless of the specific rule set:
 \itemize{
-\item Last-episode \code{EXENDTC} from \code{DM.RFENDTC} (\code{impute_exendtc_to_rfendtc}).
-\item Episode expansion (\code{expand_ex}) between pre- and post-expansion (QD;
-\code{EXDOSFRQ} is not used). Start/end times come from \code{EXSTDTC} / \code{EXENDTC}
-when present; other days are missing until later steps.
-\item Administration time carry-forward after post-expansion.
+\item Missing end date-time of the last administration episode. If missing,
+\code{EXENDTC} of the last administration episode for each subject is set to
+\code{DM.RFENDTC}
+\item Expansion of individual administration episode, i.e., conversion of date
+ranges between \code{EXSTDTC} and \code{EXENDTC} into one row for each individual
+administration event. This step is conducted after \code{admin_pre_examsion()}
+and \code{admin_post_expansion()}.
+\item Carry-forward of missing administration times after
+\code{admin_post_expansion()}.
 }
 }
 
 \subsection{\code{admin_pre_expansion}}{
 \enumerate{
-\item \code{apply_cut_off_date} — delete episodes with \code{EXSTDTC} after the cut-off
-date.
+\item \code{apply_cut_off_date} — delete episodes with \code{EXSTDTC} after the global
+cut-off date.
 \item \code{impute_exendtc_to_cutoff} — if the last episode still has missing
-\code{EXENDTC}, set it to the cut-off date (e.g. ongoing treatment).
+\code{EXENDTC}, set it to the cut-off date (e.g. for ongoing treatment).
 \item \code{impute_missing_exendtc} — for non-last episodes with missing
 \code{EXENDTC}, set it to the day before the next episode's \code{EXSTDTC}.
 \item \code{filter_exendtc_after_exstdtc} — remove episodes where \code{EXENDTC} is
@@ -52,16 +58,18 @@ before \code{EXSTDTC}.
 
 \subsection{\code{admin_post_expansion}}{
 \enumerate{
-\item \code{get_admin_time_from_ntime} — back-calculate administration time from PK
-nominal times (\code{PCTPT} / NTIME). When an estimate exists, it replaces
-the current \code{DTC_time} (including times from EX).
-\item \code{get_admin_time_from_pcrftdtc} — set \code{DTC_time} from \code{PC.PCRFTDTC} when
-available; this overwrites a prior NTIME estimate for that day. Pass
-\code{pctestcd} to \code{\link[=add_administration]{add_administration()}} for the matching \code{PCTESTCD}.
+\item \code{get_admin_time_from_pcrftdtc} — Use the \code{PCRFTDTC} field from the PC
+domain, if available, to complete missing administration times.
+\item \code{get_admin_time_from_ntime} — back-calculate administration time, if still
+missing from the nominal PK observation times in \code{PCTPT}, if available.
 }
 
-After this slot, host carry-forward fills remaining missing times.
+After these imputations, remaining missing administration times are carried
+forward.
 }
+}
+
+\section{Imputation rules for observations}{
 
 \subsection{\code{obs_raw}}{
 \itemize{
@@ -80,7 +88,7 @@ it would otherwise be negative.
 
 \section{Creating custom imputation rules}{
 
-You can create your own imputation rule set by providing a named list
+You can create further imputation rule sets by providing a named list
 with any combination of the four function slots: \code{admin_pre_expansion},
 \code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
 receives specific arguments depending on its slot. See the implementations

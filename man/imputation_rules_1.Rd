@@ -6,27 +6,32 @@
 \format{
 A named list with these functions:
 \describe{
-\item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations (same as
-standard).}
-\item{admin_post_expansion}{NTIME and PCRFTDTC with a 10-minute EX
-comparison.}
-\item{obs_raw}{Identity (no LLOQ imputation).}
-\item{obs_final}{Predose TAFD adjustment (same as standard).}
+\item{admin_pre_expansion}{Data imputations before
+expansion of individual drug administration episodes.}
+\item{admin_post_expansion}{Data imputations after expansion
+of drug administration episodes.}
+\item{obs_raw}{Imputations on raw observation data.}
+\item{obs_final}{Imputations on  observation data}
 }
 }
 \usage{
 imputation_rules_1
 }
 \description{
-Same pre-expansion steps as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}, with a different
-post-expansion time rule (10-minute NTIME vs EX gate) and a no-op
-\code{obs_raw}.
+Same pre-expansion steps as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}, with a
+different post-expansion time rule and no \code{obs_raw} imputation.
 }
-\section{Steps in this rule set}{
-\subsection{Host steps (not in this list)}{
+\section{Imputation rules for drug administrations}{
 
-Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}: RFENDTC fill, \code{expand_ex}, and
-time carry-forward.
+\subsection{Generic imputations}{
+
+These steps are always performed regardless of the specific rule set. Same
+as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}:
+\itemize{
+\item RFENDTC fill
+\item \code{expand_ex}
+\item time carry-forward.
+}
 }
 
 \subsection{\code{admin_pre_expansion}}{
@@ -37,33 +42,35 @@ Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}.
 \subsection{\code{admin_post_expansion}}{
 \enumerate{
 \item Compute an NTIME-based administration time via
-\code{get_admin_time_from_ntime} (stored alongside the current EX-based
-time).
-\item Apply \code{get_admin_time_from_pcrftdtc} when PCRFTDTC is available
-(takes precedence).
+\code{get_admin_time_from_ntime}
+\item Apply \code{get_admin_time_from_pcrftdtc} when PCRFTDTC is available.
 \item If PCRFTDTC is absent and the NTIME-derived time differs from the
 EX-derived time by more than 10 minutes, use the NTIME-derived time;
 otherwise keep the EX-derived time.
 }
 
-After this slot, host carry-forward fills remaining missing times.
+After these imputations, remaining missing administration times are carried
+forward.
 }
+}
+
+\section{Imputation rules for observations}{
 
 \subsection{\code{obs_raw}}{
 
-No-op (LLOQ imputation is not applied in this rule set).
+No action (LLOQ imputation is not applied in this rule set).
 }
 
 \subsection{\code{obs_final}}{
 
-Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}: predose \code{TAFD < 0} set to zero for
-the current observation.
+Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}: predose \code{TAFD} is set to zero
+when negative.
 }
 }
 
 \section{Creating custom imputation rules}{
 
-You can create your own imputation rule set by providing a named list
+You can create further imputation rule sets by providing a named list
 with any combination of the four function slots: \code{admin_pre_expansion},
 \code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
 receives specific arguments depending on its slot. See the implementations

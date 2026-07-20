@@ -1,45 +1,52 @@
 #' Minimal imputation rule set
 #'
-#' Same pre-expansion steps as [nif::imputation_rules_standard()], but post-expansion
-#' uses PCRFTDTC only (no NTIME back-calculation). Observation slots are
-#' no-ops.
+#' Same pre-expansion steps as [nif::imputation_rules_standard()], but
+#' post-expansion uses PCRFTDTC only (no NTIME back-calculation). No
+#' data imputations for observations.
 #'
 #' @format A named list with these functions:
 #' \describe{
-#'   \item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations (same as
-#'   standard).}
-#'   \item{admin_post_expansion}{Administration time from PCRFTDTC only.}
-#'   \item{obs_raw}{Identity (no change).}
-#'   \item{obs_final}{Identity (no change).}
+#'   \item{admin_pre_expansion}{Data imputations before
+#'   expansion of individual drug administration episodes.}
+#'   \item{admin_post_expansion}{Data imputations after expansion
+#'   of drug administration episodes.}
+#'   \item{obs_raw}{Imputations on raw observation data.}
+#'   \item{obs_final}{Imputations on  observation data}
 #' }
 #'
 #' @details
-#' # Steps in this rule set
 #'
-#' ## Host steps (not in this list)
+#' #' @section Imputation rules for drug administrations:
 #'
-#' These always run in `add_administration()` / `make_administration()`,
-#' regardless of the rule set:
+#' ### Generic imputations
 #'
-#' * Last-episode `EXENDTC` from `DM.RFENDTC` (`impute_exendtc_to_rfendtc`).
-#' * Episode expansion (`expand_ex`) between pre- and post-expansion.
-#' * Administration time carry-forward after post-expansion.
+#' These steps are always performed regardless of the specific rule set:
 #'
-#' ## `admin_pre_expansion`
+#' * Missing end date-time of the last administration episode. If missing,
+#' `EXENDTC` of the last administration episode for each subject is set to
+#' `DM.RFENDTC`
+#' * Expansion of individual administration episode, i.e., conversion of date
+#' ranges between `EXSTDTC` and `EXENDTC` into one row for each individual
+#' administration event. This step is conducted after `admin_pre_examsion()`
+#' and `admin_post_expansion()`.
+#' * Carry-forward of missing administration times after
+#' `admin_post_expansion()`.
+#'
+#' ### `admin_pre_expansion`
 #'
 #' Same as [nif::imputation_rules_standard()]: `apply_cut_off_date`,
 #' `impute_exendtc_to_cutoff`, `impute_missing_exendtc`, then
 #' `filter_exendtc_after_exstdtc`.
 #'
-#' ## `admin_post_expansion`
+#' ### `admin_post_expansion`
 #'
 #' 1. `get_admin_time_from_pcrftdtc` — set `DTC_time` from `PC.PCRFTDTC` when
-#'    related PK observations exist. Pass `pctestcd` to
-#'    [nif::add_administration()] for the matching `PCTESTCD`.
+#'    related PK observations exist.
 #'
-#' After this slot, host carry-forward fills remaining missing times. Unless
-#' set by PCRFTDTC or carry-forward, times come from `EXSTDTC` / `EXENDTC`
-#' during expansion.
+#' After these imputations, remaining missing administration times are carried
+#' forward.
+#'
+#' @section Imputation rules for observations:
 #'
 #' ## `obs_raw` / `obs_final`
 #'
@@ -121,70 +128,75 @@ imputation_rules_void <- list()
 
 #' Standard imputation rule set
 #'
-#' Default imputation rule set for [nif::add_administration()] and
-#' [nif::add_observation()]. Canonical documentation for the administration and
-#' observation steps; other rule sets document only how they differ.
+#' Imputations that are applied when administrations or observations are added
+#' to a NIF data set are bundled in imputation rule sets.
+#'
+#' This is the default imputation rule set for [nif::add_administration()] and
+#' [nif::add_observation()].
 #'
 #' @format A named list with these functions:
 #' \describe{
-#'   \item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations before
-#'   expansion.}
-#'   \item{admin_post_expansion}{NTIME then PCRFTDTC administration-time
-#'   imputation after expansion.}
-#'   \item{obs_raw}{BLQ / LLOQ imputation on raw PC observations.}
-#'   \item{obs_final}{Predose TAFD adjustment.}
+#'   \item{admin_pre_expansion}{Data imputations before
+#'   expansion of individual drug administration episodes.}
+#'   \item{admin_post_expansion}{Data imputations after expansion
+#'   of drug administration episodes.}
+#'   \item{obs_raw}{Imputations on raw observation data.}
+#'   \item{obs_final}{Imputations on  observation data}
 #' }
 #'
 #' @details
-#' # Steps in this rule set
 #'
-#' Documented in execution order. Helper names match the implementation.
+#' @section Imputation rules for drug administrations:
 #'
-#' ## Host steps (not in this list)
+#' ### Generic imputations
 #'
-#' These always run in `add_administration()` / `make_administration()`,
-#' regardless of the rule set:
+#' These steps are always performed regardless of the specific rule set:
 #'
-#' * Last-episode `EXENDTC` from `DM.RFENDTC` (`impute_exendtc_to_rfendtc`).
-#' * Episode expansion (`expand_ex`) between pre- and post-expansion (QD;
-#'   `EXDOSFRQ` is not used). Start/end times come from `EXSTDTC` / `EXENDTC`
-#'   when present; other days are missing until later steps.
-#' * Administration time carry-forward after post-expansion.
+#' * Missing end date-time of the last administration episode. If missing,
+#' `EXENDTC` of the last administration episode for each subject is set to
+#' `DM.RFENDTC`
+#' * Expansion of individual administration episode, i.e., conversion of date
+#' ranges between `EXSTDTC` and `EXENDTC` into one row for each individual
+#' administration event. This step is conducted after `admin_pre_examsion()`
+#' and `admin_post_expansion()`.
+#' * Carry-forward of missing administration times after
+#' `admin_post_expansion()`.
 #'
-#' ## `admin_pre_expansion`
+#' ### `admin_pre_expansion`
 #'
-#' 1. `apply_cut_off_date` — delete episodes with `EXSTDTC` after the cut-off
-#'    date.
+#' 1. `apply_cut_off_date` — delete episodes with `EXSTDTC` after the global
+#'    cut-off date.
 #' 2. `impute_exendtc_to_cutoff` — if the last episode still has missing
-#'    `EXENDTC`, set it to the cut-off date (e.g. ongoing treatment).
+#'    `EXENDTC`, set it to the cut-off date (e.g. for ongoing treatment).
 #' 3. `impute_missing_exendtc` — for non-last episodes with missing
 #'    `EXENDTC`, set it to the day before the next episode's `EXSTDTC`.
 #' 4. `filter_exendtc_after_exstdtc` — remove episodes where `EXENDTC` is
 #'    before `EXSTDTC`.
 #'
-#' ## `admin_post_expansion`
+#' ### `admin_post_expansion`
 #'
-#' 1. `get_admin_time_from_ntime` — back-calculate administration time from PK
-#'    nominal times (`PCTPT` / NTIME). When an estimate exists, it replaces
-#'    the current `DTC_time` (including times from EX).
-#' 2. `get_admin_time_from_pcrftdtc` — set `DTC_time` from `PC.PCRFTDTC` when
-#'    available; this overwrites a prior NTIME estimate for that day. Pass
-#'    `pctestcd` to [nif::add_administration()] for the matching `PCTESTCD`.
+#' 1. `get_admin_time_from_pcrftdtc` — Use the `PCRFTDTC` field from the PC
+#'    domain, if available, to complete missing administration times.
+#' 2. `get_admin_time_from_ntime` — back-calculate administration time, if still
+#'    missing from the nominal PK observation times in `PCTPT`, if available.
 #'
-#' After this slot, host carry-forward fills remaining missing times.
+#' After these imputations, remaining missing administration times are carried
+#' forward.
 #'
-#' ## `obs_raw`
+#' @section Imputation rules for observations:
+#'
+#' ### `obs_raw`
 #'
 #' * `impute_lloq_pc` — pharmacokinetic observations below the limit of
 #'   quantification are set to `PCLLOQ / 2`.
 #'
-#' ## `obs_final`
+#' ### `obs_final`
 #'
 #' * For predose observations of the current analyte, set `TAFD` to zero when
 #'   it would otherwise be negative.
 #'
 #' @section Creating custom imputation rules:
-#' You can create your own imputation rule set by providing a named list
+#' You can create further imputation rule sets by providing a named list
 #' with any combination of the four function slots: `admin_pre_expansion`,
 #' `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
 #' receives specific arguments depending on its slot. See the implementations
@@ -244,53 +256,57 @@ imputation_rules_standard <- list(
 
 #' Alternative imputation rule set 1
 #'
-#' Same pre-expansion steps as [nif::imputation_rules_standard()], with a different
-#' post-expansion time rule (10-minute NTIME vs EX gate) and a no-op
-#' `obs_raw`.
+#' Same pre-expansion steps as [nif::imputation_rules_standard()], with a
+#' different post-expansion time rule and no `obs_raw` imputation.
 #'
 #' @format A named list with these functions:
 #' \describe{
-#'   \item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations (same as
-#'   standard).}
-#'   \item{admin_post_expansion}{NTIME and PCRFTDTC with a 10-minute EX
-#'   comparison.}
-#'   \item{obs_raw}{Identity (no LLOQ imputation).}
-#'   \item{obs_final}{Predose TAFD adjustment (same as standard).}
+#'   \item{admin_pre_expansion}{Data imputations before
+#'   expansion of individual drug administration episodes.}
+#'   \item{admin_post_expansion}{Data imputations after expansion
+#'   of drug administration episodes.}
+#'   \item{obs_raw}{Imputations on raw observation data.}
+#'   \item{obs_final}{Imputations on  observation data}
 #' }
 #'
 #' @details
-#' # Steps in this rule set
 #'
-#' ## Host steps (not in this list)
+#' @section Imputation rules for drug administrations:
 #'
-#' Same as [nif::imputation_rules_standard()]: RFENDTC fill, `expand_ex`, and
-#' time carry-forward.
+#' ### Generic imputations
 #'
-#' ## `admin_pre_expansion`
+#' These steps are always performed regardless of the specific rule set. Same
+#' as [nif::imputation_rules_standard()]:
+#' * RFENDTC fill
+#' * `expand_ex`
+#' * time carry-forward.
+#'
+#' ### `admin_pre_expansion`
 #'
 #' Same as [nif::imputation_rules_standard()].
 #'
-#' ## `admin_post_expansion`
+#' ### `admin_post_expansion`
 #'
 #' 1. Compute an NTIME-based administration time via
-#'    `get_admin_time_from_ntime` (stored alongside the current EX-based
-#'    time).
-#' 2. Apply `get_admin_time_from_pcrftdtc` when PCRFTDTC is available
-#'    (takes precedence).
+#'    `get_admin_time_from_ntime`
+#' 2. Apply `get_admin_time_from_pcrftdtc` when PCRFTDTC is available.
 #' 3. If PCRFTDTC is absent and the NTIME-derived time differs from the
 #'    EX-derived time by more than 10 minutes, use the NTIME-derived time;
 #'    otherwise keep the EX-derived time.
 #'
-#' After this slot, host carry-forward fills remaining missing times.
+#' After these imputations, remaining missing administration times are carried
+#' forward.
 #'
-#' ## `obs_raw`
+#' @section Imputation rules for observations:
 #'
-#' No-op (LLOQ imputation is not applied in this rule set).
+#' ### `obs_raw`
 #'
-#' ## `obs_final`
+#' No action (LLOQ imputation is not applied in this rule set).
 #'
-#' Same as [nif::imputation_rules_standard()]: predose `TAFD < 0` set to zero for
-#' the current observation.
+#' ### `obs_final`
+#'
+#' Same as [nif::imputation_rules_standard()]: predose `TAFD` is set to zero
+#' when negative.
 #'
 #' @inheritSection imputation_rules_standard Creating custom imputation rules
 #'

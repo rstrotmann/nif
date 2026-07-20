@@ -30,7 +30,7 @@ this object.
 
 \section{Creating custom imputation rules}{
 
-You can create your own imputation rule set by providing a named list
+You can create further imputation rule sets by providing a named list
 with any combination of the four function slots: \code{admin_pre_expansion},
 \code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
 receives specific arguments depending on its slot. See the implementations

@@ -6,30 +6,37 @@
 \format{
 A named list with these functions:
 \describe{
-\item{admin_pre_expansion}{Cut-off filter and EXENDTC imputations (same as
-standard).}
-\item{admin_post_expansion}{Administration time from PCRFTDTC only.}
-\item{obs_raw}{Identity (no change).}
-\item{obs_final}{Identity (no change).}
+\item{admin_pre_expansion}{Data imputations before
+expansion of individual drug administration episodes.}
+\item{admin_post_expansion}{Data imputations after expansion
+of drug administration episodes.}
+\item{obs_raw}{Imputations on raw observation data.}
+\item{obs_final}{Imputations on  observation data}
 }
 }
 \usage{
 imputation_rules_minimal
 }
 \description{
-Same pre-expansion steps as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}, but post-expansion
-uses PCRFTDTC only (no NTIME back-calculation). Observation slots are
-no-ops.
+Same pre-expansion steps as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}, but
+post-expansion uses PCRFTDTC only (no NTIME back-calculation). No
+data imputations for observations.
 }
-\section{Steps in this rule set}{
-\subsection{Host steps (not in this list)}{
+\details{
+#' @section Imputation rules for drug administrations:
+\subsection{Generic imputations}{
 
-These always run in \code{add_administration()} / \code{make_administration()},
-regardless of the rule set:
+These steps are always performed regardless of the specific rule set:
 \itemize{
-\item Last-episode \code{EXENDTC} from \code{DM.RFENDTC} (\code{impute_exendtc_to_rfendtc}).
-\item Episode expansion (\code{expand_ex}) between pre- and post-expansion.
-\item Administration time carry-forward after post-expansion.
+\item Missing end date-time of the last administration episode. If missing,
+\code{EXENDTC} of the last administration episode for each subject is set to
+\code{DM.RFENDTC}
+\item Expansion of individual administration episode, i.e., conversion of date
+ranges between \code{EXSTDTC} and \code{EXENDTC} into one row for each individual
+administration event. This step is conducted after \code{admin_pre_examsion()}
+and \code{admin_post_expansion()}.
+\item Carry-forward of missing administration times after
+\code{admin_post_expansion()}.
 }
 }
 
@@ -43,14 +50,14 @@ Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}: \
 \subsection{\code{admin_post_expansion}}{
 \enumerate{
 \item \code{get_admin_time_from_pcrftdtc} — set \code{DTC_time} from \code{PC.PCRFTDTC} when
-related PK observations exist. Pass \code{pctestcd} to
-\code{\link[=add_administration]{add_administration()}} for the matching \code{PCTESTCD}.
+related PK observations exist.
 }
 
-After this slot, host carry-forward fills remaining missing times. Unless
-set by PCRFTDTC or carry-forward, times come from \code{EXSTDTC} / \code{EXENDTC}
-during expansion.
+After these imputations, remaining missing administration times are carried
+forward.
 }
+}
+\section{Imputation rules for observations}{
 
 \subsection{\code{obs_raw} / \code{obs_final}}{
 
@@ -60,7 +67,7 @@ No observation imputations.
 
 \section{Creating custom imputation rules}{
 
-You can create your own imputation rule set by providing a named list
+You can create further imputation rule sets by providing a named list
 with any combination of the four function slots: \code{admin_pre_expansion},
 \code{admin_post_expansion}, \code{obs_raw}, and \code{obs_final}. Each function
 receives specific arguments depending on its slot. See the implementations
