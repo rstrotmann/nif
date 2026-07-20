@@ -31,20 +31,21 @@ nif <- nif() %>%
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ℹ Compartment for RS2023 observations set to 2
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-03-03 10:28:00 was automatically assigned!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
-#> Warning in add_observation(., examplinib_fe, "pc", "RS2023", cmt = 2):
-#> Compartment 2 is already assigned!
+#> ! Compartment 2 is already assigned. Is this intended?
+#> ℹ Compartment for RS2023 observations set to 2
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
-#> Warning in add_observation(., examplinib_poc, "pc", "RS2023", cmt = 2):
-#> Compartment 2 is already assigned!
+#> ! Compartment 2 is already assigned. Is this intended?
+#> ℹ Compartment for RS2023 observations set to 2
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 

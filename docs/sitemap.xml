@@ -59,6 +59,7 @@
 <url><loc>/reference/covariate_hist.html</loc></url>
 <url><loc>/reference/crea_mdrd.html</loc></url>
 <url><loc>/reference/crea_raynaud.html</loc></url>
+<url><loc>/reference/create_iv_fields.html</loc></url>
 <url><loc>/reference/dataset.html</loc></url>
 <url><loc>/reference/ddt.html</loc></url>
 <url><loc>/reference/decompose_dtc.html</loc></url>
@@ -114,6 +115,7 @@
 <url><loc>/reference/index_rich_sampling_intervals.html</loc></url>
 <url><loc>/reference/is_iso8601_date.html</loc></url>
 <url><loc>/reference/is_iso8601_datetime.html</loc></url>
+<url><loc>/reference/is_iso8601_pt.html</loc></url>
 <url><loc>/reference/is_iso_date.html</loc></url>
 <url><loc>/reference/is_iso_date_time.html</loc></url>
 <url><loc>/reference/last_dtc.domain.html</loc></url>

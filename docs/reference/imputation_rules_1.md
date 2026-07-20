@@ -2,8 +2,7 @@
 
 Same pre-expansion steps as
 [`imputation_rules_standard()`](imputation_rules_standard.md), with a
-different post-expansion time rule (10-minute NTIME vs EX gate) and a
-no-op `obs_raw`.
+different post-expansion time rule and no `obs_raw` imputation.
 
 ## Usage
 
@@ -17,26 +16,33 @@ A named list with these functions:
 
 - admin_pre_expansion:
 
-  Cut-off filter and EXENDTC imputations (same as standard).
+  Data imputations before expansion of individual drug administration
+  episodes.
 
 - admin_post_expansion:
 
-  NTIME and PCRFTDTC with a 10-minute EX comparison.
+  Data imputations after expansion of drug administration episodes.
 
 - obs_raw:
 
-  Identity (no LLOQ imputation).
+  Imputations on raw observation data.
 
 - obs_final:
 
-  Predose TAFD adjustment (same as standard).
+  Imputations on observation data
 
-## Steps in this rule set
+## Imputation rules for drug administrations
 
-### Host steps (not in this list)
+### Generic imputations
 
+These steps are always performed regardless of the specific rule set.
 Same as [`imputation_rules_standard()`](imputation_rules_standard.md):
-RFENDTC fill, `expand_ex`, and time carry-forward.
+
+- RFENDTC fill
+
+- `expand_ex`
+
+- time carry-forward.
 
 ### `admin_pre_expansion`
 
@@ -45,30 +51,31 @@ Same as [`imputation_rules_standard()`](imputation_rules_standard.md).
 ### `admin_post_expansion`
 
 1.  Compute an NTIME-based administration time via
-    `get_admin_time_from_ntime` (stored alongside the current EX-based
-    time).
+    `get_admin_time_from_ntime`
 
-2.  Apply `get_admin_time_from_pcrftdtc` when PCRFTDTC is available
-    (takes precedence).
+2.  Apply `get_admin_time_from_pcrftdtc` when PCRFTDTC is available.
 
 3.  If PCRFTDTC is absent and the NTIME-derived time differs from the
     EX-derived time by more than 10 minutes, use the NTIME-derived time;
     otherwise keep the EX-derived time.
 
-After this slot, host carry-forward fills remaining missing times.
+After these imputations, remaining missing administration times are
+carried forward.
+
+## Imputation rules for observations
 
 ### `obs_raw`
 
-No-op (LLOQ imputation is not applied in this rule set).
+No action (LLOQ imputation is not applied in this rule set).
 
 ### `obs_final`
 
 Same as [`imputation_rules_standard()`](imputation_rules_standard.md):
-predose `TAFD < 0` set to zero for the current observation.
+predose `TAFD` is set to zero when negative.
 
 ## Creating custom imputation rules
 
-You can create your own imputation rule set by providing a named list
+You can create further imputation rule sets by providing a named list
 with any combination of the four function slots: `admin_pre_expansion`,
 `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
 receives specific arguments depending on its slot. See the

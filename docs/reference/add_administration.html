@@ -11,7 +11,7 @@ data tables."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,6 +66,8 @@ data tables.</p>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  debug <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  imputation <span class="op">=</span> <span class="va">imputation_rules_standard</span>,</span>
+<span>  duration <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  iv_admin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -118,6 +120,16 @@ from the PCRFTDTC field from the PC domain.</p></dd>
 
 <dt id="arg-imputation">imputation<a class="anchor" aria-label="anchor" href="#arg-imputation"></a></dt>
 <dd><p>The imputation rule set.</p></dd>
+
+
+<dt id="arg-duration">duration<a class="anchor" aria-label="anchor" href="#arg-duration"></a></dt>
+<dd><p>The duration of the iv administration as numeric. If NULL,
+will be determined automatically based on the EXDUR field, if available.</p></dd>
+
+
+<dt id="arg-iv-admin">iv_admin<a class="anchor" aria-label="anchor" href="#arg-iv-admin"></a></dt>
+<dd><p>Administration is iv, as boolean. If NULL, will be tested
+automatically based on the EXROUTE field, if available.</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>

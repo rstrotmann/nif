@@ -99,6 +99,9 @@
 - [`crea_mdrd()`](crea_mdrd.md) : Serum creatinine estimation from eGFR
   (MDRD)
 
+- [`create_iv_fields()`](create_iv_fields.md) : Check and prepare ex for
+  iv administrations
+
 - [`dataset()`](dataset.md) : Retrieve dataset from adam object
 
 - [`ddt()`](ddt.md) : Data definition table for nif object
@@ -214,6 +217,8 @@
 
 - [`index_rich_sampling_intervals()`](index_rich_sampling_intervals.md)
   : Identify and index rich PK sampling intervals
+
+- [`is_iso8601_pt()`](is_iso8601_pt.md) : Title
 
 - [`last_dtc()`](last_dtc.md) : Last recorded date-time
 

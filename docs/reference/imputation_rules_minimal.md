@@ -2,8 +2,8 @@
 
 Same pre-expansion steps as
 [`imputation_rules_standard()`](imputation_rules_standard.md), but
-post-expansion uses PCRFTDTC only (no NTIME back-calculation).
-Observation slots are no-ops.
+post-expansion uses PCRFTDTC only (no NTIME back-calculation). No data
+imputations for observations.
 
 ## Usage
 
@@ -17,33 +17,40 @@ A named list with these functions:
 
 - admin_pre_expansion:
 
-  Cut-off filter and EXENDTC imputations (same as standard).
+  Data imputations before expansion of individual drug administration
+  episodes.
 
 - admin_post_expansion:
 
-  Administration time from PCRFTDTC only.
+  Data imputations after expansion of drug administration episodes.
 
 - obs_raw:
 
-  Identity (no change).
+  Imputations on raw observation data.
 
 - obs_final:
 
-  Identity (no change).
+  Imputations on observation data
 
-## Steps in this rule set
+## Details
 
-### Host steps (not in this list)
+\#' @section Imputation rules for drug administrations:
 
-These always run in [`add_administration()`](add_administration.md) /
-`make_administration()`, regardless of the rule set:
+### Generic imputations
 
-- Last-episode `EXENDTC` from `DM.RFENDTC`
-  (`impute_exendtc_to_rfendtc`).
+These steps are always performed regardless of the specific rule set:
 
-- Episode expansion (`expand_ex`) between pre- and post-expansion.
+- Missing end date-time of the last administration episode. If missing,
+  `EXENDTC` of the last administration episode for each subject is set
+  to `DM.RFENDTC`
 
-- Administration time carry-forward after post-expansion.
+- Expansion of individual administration episode, i.e., conversion of
+  date ranges between `EXSTDTC` and `EXENDTC` into one row for each
+  individual administration event. This step is conducted after
+  `admin_pre_examsion()` and `admin_post_expansion()`.
+
+- Carry-forward of missing administration times after
+  `admin_post_expansion()`.
 
 ### `admin_pre_expansion`
 
@@ -54,13 +61,12 @@ Same as [`imputation_rules_standard()`](imputation_rules_standard.md):
 ### `admin_post_expansion`
 
 1.  `get_admin_time_from_pcrftdtc` — set `DTC_time` from `PC.PCRFTDTC`
-    when related PK observations exist. Pass `pctestcd` to
-    [`add_administration()`](add_administration.md) for the matching
-    `PCTESTCD`.
+    when related PK observations exist.
 
-After this slot, host carry-forward fills remaining missing times.
-Unless set by PCRFTDTC or carry-forward, times come from `EXSTDTC` /
-`EXENDTC` during expansion.
+After these imputations, remaining missing administration times are
+carried forward.
+
+## Imputation rules for observations
 
 ### `obs_raw` / `obs_final`
 
@@ -68,7 +74,7 @@ No observation imputations.
 
 ## Creating custom imputation rules
 
-You can create your own imputation rule set by providing a named list
+You can create further imputation rule sets by providing a named list
 with any combination of the four function slots: `admin_pre_expansion`,
 `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
 receives specific arguments depending on its slot. See the

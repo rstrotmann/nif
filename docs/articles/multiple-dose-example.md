@@ -98,8 +98,10 @@ nif_poc <- nif() %>%
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
+#> ℹ Compartment for RS2023 observations set to 2
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
+#> ℹ Compartment for RS2023487A observations set to 3
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 ```
 

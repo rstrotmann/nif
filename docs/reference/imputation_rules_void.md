@@ -34,7 +34,7 @@ imputations from this object.
 
 ## Creating custom imputation rules
 
-You can create your own imputation rule set by providing a named list
+You can create further imputation rule sets by providing a named list
 with any combination of the four function slots: `admin_pre_expansion`,
 `admin_post_expansion`, `obs_raw`, and `obs_final`. Each function
 receives specific arguments depending on its slot. See the
