@@ -677,7 +677,7 @@ test_that("egfr_raynaud handles numeric sex encoding (0 = male, 1 = female)", {
   # Male should have higher eGFR (due to +0.1806494 factor)
   expect_true(result_male > result_female)
 
-  # Verify the relationship: exp(0.1806494) ≈ 1.198
+  # Verify the relationship: exp(0.1806494) = 1.198
   expected_ratio <- exp(0.1806494)
   expect_equal(result_male / result_female, expected_ratio, tolerance = 0.01)
 })

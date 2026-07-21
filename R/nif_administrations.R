@@ -201,29 +201,29 @@ create_iv_fields <- function(
 #'
 #' `make_administration()` builds dosing rows from EX in this order:
 #'
-#' 1. **RFENDTC imputation (always)** — If the last episode per subject and
+#' 1. **RFENDTC imputation (always)** - If the last episode per subject and
 #'    `extrt` has missing `EXENDTC`, fill from `DM.RFENDTC` when available.
 #'    This step is hardcoded and not controlled by `imputation`.
 #'
-#' 2. **Cut-off date** — Use `cut_off_date`, or if `NULL`, derive one from EX
+#' 2. **Cut-off date** - Use `cut_off_date`, or if `NULL`, derive one from EX
 #'    via `last_ex_dtc()`.
 #'
-#' 3. **Subjects** — Build the subject table from DM (and VS if present) using
+#' 3. **Subjects** - Build the subject table from DM (and VS if present) using
 #'    `subject_filter` and `keep`.
 #'
-#' 4. **Pre-expansion rules** — If `imputation` has `admin_pre_expansion`,
+#' 4. **Pre-expansion rules** - If `imputation` has `admin_pre_expansion`,
 #'    call it (e.g. cut-off filter, EXENDTC imputations, invalid-episode
 #'    filter). See the chosen rule set for exact steps and order.
 #'
-#' 5. **Expand episodes** — Expand each EX row between `EXSTDTC` and `EXENDTC`
+#' 5. **Expand episodes** - Expand each EX row between `EXSTDTC` and `EXENDTC`
 #'    to one row per day (QD only; `EXDOSFRQ` is not used). Start/end times
 #'    come from `EXSTDTC` / `EXENDTC` when present; other days are `NA`.
 #'
-#' 6. **Post-expansion rules** — If `imputation` has `admin_post_expansion`,
+#' 6. **Post-expansion rules** - If `imputation` has `admin_post_expansion`,
 #'    call it (e.g. NTIME back-calculation, PCRFTDTC). Again, details depend
 #'    on the rule set.
 #'
-#' 7. **Carry forward** — Always fill missing `DTC_time` forward within
+#' 7. **Carry forward** - Always fill missing `DTC_time` forward within
 #'    subject and treatment, then compose `DTC`, join subjects, set `TRTDY`,
 #'    and return a nif object.
 #'

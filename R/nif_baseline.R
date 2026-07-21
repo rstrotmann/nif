@@ -859,8 +859,8 @@ add_bl_lbm <- function(obj, method = lbm_boer) {
 #'
 #' * normal: TB & AST <= upper limit of normal (ULN)
 #' * mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
-#' * moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
-#' * severe hepatic dysfunction: TB >3 - 10 x ULN, any AST
+#' * moderate hepatic dysfunction: TB >1.5 to 3 x ULN, any AST
+#' * severe hepatic dysfunction: TB >3 to 10 x ULN, any AST
 #'
 #' @param obj A nif object.
 #' @param sdtm The corresponding sdtm object.
