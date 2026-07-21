@@ -2,6 +2,7 @@
 
 .nif_env <- new.env(parent = emptyenv())
 assign("silent", FALSE, envir = .nif_env)
+assign("verbose", FALSE, envir = .nif_env)
 assign("show_hash", FALSE, envir = .nif_env)
 assign("abbreviation_threshold", 15, envir = .nif_env)
 assign("abbreviation_maxlines", 10, envir = .nif_env)
@@ -19,6 +20,7 @@ assign("version", packageVersion("nif"), envir = .nif_env)
 #' supported:
 #'
 #' * `silent` as logical: Suppress messages.
+#' * `verbose` as logical: Verbose messages
 #' * `watermark` as character: Watermark text on all figures.
 #' * `pinboard` as character: Pinboard path for sharing of nif/sdtm objects.
 #' * `debug` as logical: Print debug information.
@@ -41,6 +43,7 @@ nif_option <- function(...) {
   #   ~name,        ~type_test, ~readonly,
   #   "pinboard",   is.character, FALSE,
   #   "silent",     is.logical, FALSE,
+  #.  "verbose",    is.logical, FALSE,
   #   "watermark",  is.character, FALSE,
   #   "debug",      is.logical, FALSE,
   #   "show_hash",  is.logical, FALSE,
@@ -54,6 +57,7 @@ nif_option <- function(...) {
                      ~name,                 ~type_test, ~readonly,
                 "pinboard", .Primitive("is.character"),     FALSE,
                   "silent",   .Primitive("is.logical"),     FALSE,
+                "verbose",    .Primitive("is.logical"),     FALSE,
                "watermark", .Primitive("is.character"),     FALSE,
                    "debug",   .Primitive("is.logical"),     FALSE,
                "show_hash",   .Primitive("is.logical"),     FALSE,

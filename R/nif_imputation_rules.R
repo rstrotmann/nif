@@ -1,3 +1,37 @@
+# ---- imputation_rules_void ----
+#' Void imputation rule set
+#'
+#' Empty rule list: no pre-/post-expansion or observation slot functions.
+#' Host steps in `add_administration()` / `make_administration()` still run
+#' (RFENDTC fill, episode expansion, time carry-forward).
+#'
+#' @format An empty list.
+#'
+#' @details
+#' # Steps in this rule set
+#'
+#' This object defines no slot functions. Behavior is limited to host steps:
+#'
+#' * Last-episode `EXENDTC` from `DM.RFENDTC` (`impute_exendtc_to_rfendtc`).
+#' * Episode expansion (`expand_ex`); times from `EXSTDTC` / `EXENDTC` when
+#'   present.
+#' * Administration time carry-forward after expansion.
+#'
+#' There is no cut-off filter, no EXENDTC cutoff/middle imputation via rules,
+#' no PCRFTDTC or NTIME time imputation, and no observation imputations from
+#' this object.
+#'
+#' @inheritSection imputation_rules_standard Creating custom imputation rules
+#'
+#' @seealso [nif::add_administration()], [nif::add_observation()],
+#'   [nif::imputation_rules_standard()]
+#' @family imputation rules
+#'
+#' @export
+imputation_rules_void <- list()
+
+
+# ---- imputation_rules_minimal ----
 #' Minimal imputation rule set
 #'
 #' Same pre-expansion steps as [nif::imputation_rules_standard()], but
@@ -93,39 +127,7 @@ imputation_rules_minimal <- list(
 )
 
 
-#' Void imputation rule set
-#'
-#' Empty rule list: no pre-/post-expansion or observation slot functions.
-#' Host steps in `add_administration()` / `make_administration()` still run
-#' (RFENDTC fill, episode expansion, time carry-forward).
-#'
-#' @format An empty list.
-#'
-#' @details
-#' # Steps in this rule set
-#'
-#' This object defines no slot functions. Behavior is limited to host steps:
-#'
-#' * Last-episode `EXENDTC` from `DM.RFENDTC` (`impute_exendtc_to_rfendtc`).
-#' * Episode expansion (`expand_ex`); times from `EXSTDTC` / `EXENDTC` when
-#'   present.
-#' * Administration time carry-forward after expansion.
-#'
-#' There is no cut-off filter, no EXENDTC cutoff/middle imputation via rules,
-#' no PCRFTDTC or NTIME time imputation, and no observation imputations from
-#' this object.
-#'
-#' @inheritSection imputation_rules_standard Creating custom imputation rules
-#'
-#' @seealso [nif::add_administration()], [nif::add_observation()],
-#'   [nif::imputation_rules_standard()]
-#' @family imputation rules
-#'
-#' @export
-imputation_rules_void <- list()
-
-
-
+# ---- imputation_rules_standard ----
 #' Standard imputation rule set
 #'
 #' Imputations that are applied when administrations or observations are added
@@ -253,7 +255,7 @@ imputation_rules_standard <- list(
 )
 
 
-
+# ---- imputation_rules_1 ----
 #' Alternative imputation rule set 1
 #'
 #' Same pre-expansion steps as [nif::imputation_rules_standard()], with a
