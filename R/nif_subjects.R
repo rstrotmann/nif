@@ -73,7 +73,7 @@ make_subjects <- function(
     )
   }
 
-  # If vs is provided, validate it's a data frame
+  # If vs is provided, validate it is a data frame
   if (!is.null(vs)) {
     if (!is.data.frame(vs)) {
       stop("The 'vs' parameter must be a data frame or NULL")

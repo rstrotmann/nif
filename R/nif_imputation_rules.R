@@ -271,8 +271,6 @@ imputation_rules_standard <- list(
 #'   \item{obs_final}{Imputations on  observation data}
 #' }
 #'
-#' @details
-#'
 #' @section Imputation rules for drug administrations:
 #'
 #' ### Generic imputations

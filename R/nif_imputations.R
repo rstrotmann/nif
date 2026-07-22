@@ -898,4 +898,93 @@ impute_lloq_pc <- function(
 }
 
 
+#' Impute missing basline values
+#'
+#' @param nif The infput nif object.
+#' @param baseline_fields Baseline fields to impute, as character. Will be set
+#' to default values (WEIGHT, HEIGHT, BMI, other fields starting with BL_), if
+#' NULL.
+#' @param summary_function A function to determine the population center value
+#' of each baseline. Defaults tom median.
+#'
+#' @returns The nif object with missing baseline values imputed to the
+#' respective population center value.
+#' @export
+impute_missing_baseline <- function(
+    nif,
+    baseline_fields = NULL,
+    summary_function = median
+) {
+  # input validation
+  validate_nif(nif)
+  validate_argument(
+    baseline_fields, "character", allow_multiple = TRUE, allow_null = TRUE)
+  if (!is.function(summary_function))
+    stop("summary_function must be a function!")
+
+  # check that baseline columns are present
+  if (!is.null(baseline_fields)) {
+    missing_cols <- setdiff(baseline_fields, names(nif))
+    if (length(missing_cols) > 0) {
+      stop(paste0(
+        "The following baseline columns are missing in the input: ",
+        nice_enumeration(missing_cols)
+      ))
+    }
+  }
+
+  # auto-assign baseline fields, if needed
+  if (is.null(baseline_fields)) {
+    baseline_fields <- nif |>
+      select(any_of(
+        c("HEIGHT", "WEIGHT", "BMI", starts_with("BL_"))
+      )) |>
+      names()
+  }
+
+  multiple_bl <- nif |>
+    pivot_longer(cols = baseline_fields, names_to = "param", values_to = "value") |>
+    distinct(ID, param, value) |>
+    filter(!is.na(value)) |>
+    reframe(n = n_distinct(value), .by = c("ID", "param")) |>
+    filter(n > 1)
+
+  if (nrow(multiple_bl) > 0) {
+    stop(paste0(
+      "Multiple baseline values found:\n",
+      # nice_enumeration(names(multiple_bl))
+      df_to_string(multiple_bl, indent = 2)
+    ))
+  }
+
+  # business logic
+  bl_population_center <- nif |>
+    pivot_longer(
+      cols = any_of(baseline_fields),
+      names_to = "param",
+      values_to = "value"
+    ) |>
+    distinct(.data[["ID"]], .data[["param"]], .data[["value"]]) |>
+    filter(!is.na(value)) |>
+    reframe(center = summary_function(value), .by = "param")
+
+  conditional_cli({
+      cli_alert_info("Baseline population center values:")
+      df_to_cli(bl_population_center, indent = 2)
+    },
+    silent = F
+  )
+
+  for (i in bl_population_center$param) {
+    nif <- nif |>
+      mutate(!!i := case_when(
+        is.na(.data[[i]]) ~ as.numeric(
+          bl_population_center[bl_population_center$param == i, "center"]),
+        .default = .data[[i]]
+      ))
+  }
+
+  return(nif)
+}
+
 

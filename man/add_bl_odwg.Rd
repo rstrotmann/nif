@@ -40,7 +40,7 @@ bilirubin, and AST aspartate aminotransferase.
 \itemize{
 \item normal: TB & AST <= upper limit of normal (ULN)
 \item mild hepatic dysfunction: TB > ULN to 1.5 x ULN or AST > ULN
-\item moderate hepatic dysfunction: TB >1.5–3 x ULN, any AST
-\item severe hepatic dysfunction: TB >3 - 10 x ULN, any AST
+\item moderate hepatic dysfunction: TB >1.5 to 3 x ULN, any AST
+\item severe hepatic dysfunction: TB >3 to 10 x ULN, any AST
 }
 }
