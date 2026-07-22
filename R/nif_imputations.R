@@ -759,15 +759,27 @@ get_admin_time_from_ntime <- function(
     filter(.data$NTIME > 0) |>
     mutate(.estimated_admin_dtc = .data$PCDTC - .data$NTIME * 3600) |>
     mutate(.weight = .data$NTIME ^ ntime_exponent) |>
-    # group_by(.data$PCDTC_date) |>
     group_by(.data$USUBJID, .data$PCDTC_date) |>
     mutate(.mean_est_admin_dtc = weighted.mean(
       .data$.estimated_admin_dtc, .data$.weight, na.rm = TRUE)) |>
     ungroup() |>
-    mutate(.NTIME_DTC_time = extract_time(.data$.mean_est_admin_dtc)) |>
+    mutate(.NTIME_DTC_time = extract_time(.data$.mean_est_admin_dtc))
+
+  # if (isFALSE(nif_option_value("silent")) & isTRUE(nif_option_value("verbose"))) {
+  if (isTRUE(nif_option_value("debug"))) {
+    cli(
+      cli_alert_info(paste0(
+        "get_admin_time_from_ntime: NTIME details for ", extrt
+      ))
+    )
+    temp |>
+      select(USUBJID, PCTPT, PCDTC, NTIME, .NTIME_DTC_time) |>
+      df_to_cli()
+  }
+
+  temp <- temp |>
     distinct(
       .data$USUBJID,
-      # DTC_date = as.Date(.data$PCDTC_date),
       DTC_date = .data$PCDTC_date,
       .data$.NTIME_DTC_time)
 
@@ -776,7 +788,7 @@ get_admin_time_from_ntime <- function(
 
     # complete IMPUTATION field for NTIME-derived administration times
     mutate(IMPUTATION = case_when(
-      !is.na(.data$.NTIME_DTC_time) ~ "time imputed from NTIME",
+      !is.na(.data$.NTIME_DTC_time) ~ "time imputed from PCELTM/PCTPT",
       .default = .data$IMPUTATION)) |>
 
     # copy imputed times

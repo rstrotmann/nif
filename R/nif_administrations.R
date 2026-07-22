@@ -330,7 +330,8 @@ make_administration <- function(
     decompose_dtc("EXSTDTC")
 
   # create iv fields, if needed
-  admin <- create_iv_fields(admin, iv_admin = iv_admin, duration = duration)
+  admin <- create_iv_fields(admin, iv_admin = iv_admin, duration = duration,
+                            silent = silent)
 
   # apply data cut-off date
   # cut_off_rows <- admin |>

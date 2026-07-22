@@ -310,7 +310,7 @@ test_that("standard rules: NTIME estimate used when PCRFTDTC absent", {
 
   # Day 1: should have NTIME-based time estimation (no PCRFTDTC available)
   day1 <- res[as.Date(res$DTC) == as.Date("2025-07-01"), ]
-  expect_true(grepl("NTIME", day1$IMPUTATION))
+  expect_true(grepl("PCELTM/PCTPT", day1$IMPUTATION))
   dtc_time <- format(day1$DTC, "%H:%M")
   expect_true(!is.na(dtc_time))
 })
