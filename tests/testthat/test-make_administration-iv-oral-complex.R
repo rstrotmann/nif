@@ -155,13 +155,17 @@ test_that("add_administration oral-IV complex detects IV route", {
   sdtm <- sdtm(list(dm = dm, ex = ex))
 
   expect_message(
-    add_administration(
-      nif(),
-      sdtm,
-      extrt      = "EXAMPLINIB",
-      imputation = imputation_rules_void,
-      silent     = FALSE
-    ),
-    "IV administration"
+      expect_message(
+      expect_message(
+        add_administration(
+          nif(),
+          sdtm,
+          extrt      = "EXAMPLINIB",
+          imputation = imputation_rules_void,
+          silent     = FALSE
+        ),
+        "IV administration"
+      )
+    )
   )
 })
