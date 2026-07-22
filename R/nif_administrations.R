@@ -309,10 +309,6 @@ make_administration <- function(
 
   admin <- ex
 
-  # # create iv fields, if needed
-  # admin <- create_iv_fields(admin, iv_admin = iv_admin, duration = duration)
-
-
   if ("EXSEQ" %in% names(ex)) {
     admin <- mutate(admin, SRC_SEQ = .data$EXSEQ)
   } else {
@@ -330,30 +326,9 @@ make_administration <- function(
     decompose_dtc("EXSTDTC")
 
   # create iv fields, if needed
-  admin <- create_iv_fields(admin, iv_admin = iv_admin, duration = duration,
-                            silent = silent)
-
-  # apply data cut-off date
-  # cut_off_rows <- admin |>
-  #   filter(.data$EXSTDTC > cut_off_date) |>
-  #   select(any_of(c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC", "EXSEQ")))
-  #
-  # if (nrow(cut_off_rows) > 0) {
-  #   conditional_cli({
-  #     cli::cli_alert_warning("Cut off date applied!")
-  #     cli::cli_text(paste0(
-  #       nrow(cut_off_rows),
-  #       " administrations episodes for ", extrt,
-  #       " begin after the cut-off date (",
-  #       format(cut_off_date), ") and were deleted from the data set:"
-  #     ))
-  #     cli::cli_verbatim(
-  #       df_to_string(cut_off_rows, indent = 2)
-  #     )
-  #     cli::cli_text()
-  #   },
-  #   silent = silent)
-  # }
+  admin <- create_iv_fields(
+    admin, iv_admin = iv_admin, duration = duration, silent = silent
+  )
 
   # ensure analyte
   if (is.null(analyte)) {
