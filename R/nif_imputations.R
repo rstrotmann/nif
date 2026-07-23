@@ -900,12 +900,16 @@ impute_lloq_pc <- function(
 
 #' Impute missing basline values
 #'
-#' @param nif The infput nif object.
+#' Fill individual missing baseline values, and replace missing baseline values
+#' on subject level with the population center.
+#'
+#' @param nif The input nif object.
 #' @param baseline_fields Baseline fields to impute, as character. Will be set
 #' to default values (WEIGHT, HEIGHT, BMI, other fields starting with BL_), if
 #' NULL.
 #' @param summary_function A function to determine the population center value
 #' of each baseline. Defaults tom median.
+#' @param silent Suppress messages.
 #'
 #' @returns The nif object with missing baseline values imputed to the
 #' respective population center value.
@@ -913,7 +917,8 @@ impute_lloq_pc <- function(
 impute_missing_baseline <- function(
     nif,
     baseline_fields = NULL,
-    summary_function = median
+    summary_function = median,
+    silent = NULL
 ) {
   # input validation
   validate_nif(nif)
@@ -921,6 +926,8 @@ impute_missing_baseline <- function(
     baseline_fields, "character", allow_multiple = TRUE, allow_null = TRUE)
   if (!is.function(summary_function))
     stop("summary_function must be a function!")
+
+  num_cols <- names(sapply(nif, class)[sapply(nif, class) %in% c("numeric", "integer")])
 
   # check that baseline columns are present
   if (!is.null(baseline_fields)) {
@@ -933,13 +940,27 @@ impute_missing_baseline <- function(
     }
   }
 
+  # check that baseline colunmns are numeric
+  if (!is.null(baseline_fields)) {
+    non_num_bl <- setdiff(baseline_fields, num_cols)
+    if (length(non_num_bl) > 0) {
+      stop(paste0(
+        "Non-numeric baseline colums: ",
+        nice_enumeration((non_num_bl))
+      ))
+    }
+  }
+
   # automatically identify baseline fields
   if (is.null(baseline_fields)) {
-    baseline_fields <- nif |>
-      select(any_of(
-        c("HEIGHT", "WEIGHT", "BMI", starts_with("BL_"))
-      )) |>
-      names()
+    baseline_fields <- intersect(
+      nif |>
+        select(any_of(
+          c("HEIGHT", "WEIGHT", "BMI", starts_with("BL_"))
+        )) |>
+        names(),
+      num_cols
+    )
   }
 
   # identify multiple baseline values per subject
@@ -974,7 +995,7 @@ impute_missing_baseline <- function(
       cli_alert_info("Baseline population center values:")
       df_to_cli(bl_population_center, indent = 2)
     },
-    silent = F
+    silent = silent
   )
 
   for (i in bl_population_center$param) {
