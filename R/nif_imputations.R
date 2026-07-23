@@ -933,7 +933,7 @@ impute_missing_baseline <- function(
     }
   }
 
-  # auto-assign baseline fields, if needed
+  # automatically identify baseline fields
   if (is.null(baseline_fields)) {
     baseline_fields <- nif |>
       select(any_of(
@@ -942,8 +942,10 @@ impute_missing_baseline <- function(
       names()
   }
 
+  # identify multiple baseline values per subject
   multiple_bl <- nif |>
-    pivot_longer(cols = baseline_fields, names_to = "param", values_to = "value") |>
+    pivot_longer(
+      cols = baseline_fields, names_to = "param", values_to = "value") |>
     distinct(ID, param, value) |>
     filter(!is.na(value)) |>
     reframe(n = n_distinct(value), .by = c("ID", "param")) |>
@@ -976,6 +978,13 @@ impute_missing_baseline <- function(
   )
 
   for (i in bl_population_center$param) {
+    # fill individual missing baseline values
+    nif <- nif |>
+      group_by(.data[["ID"]]) |>
+      tidyr::fill(all_of(i), .direction = "downup") |>
+      ungroup()
+
+    # set missing baseline values to population center
     nif <- nif |>
       mutate(!!i := case_when(
         is.na(.data[[i]]) ~ as.numeric(
