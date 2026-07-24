@@ -5,6 +5,8 @@ supported:
 
 - `silent` as logical: Suppress messages.
 
+- `verbose` as logical: Verbose messages
+
 - `watermark` as character: Watermark text on all figures.
 
 - `pinboard` as character: Pinboard path for sharing of nif/sdtm

@@ -588,7 +588,7 @@ summary(nif)
 #>   RS2023   2     2     2      2        
 #> 
 #> 
-#> Hash: c60c209cfbedc4ada400e4b60e37536d
+#> Hash: b0f4def325dc1ca0f48143ff4bb6c66a
 #> Last DTC: 2001-03-10 10:28:00
 ```
 

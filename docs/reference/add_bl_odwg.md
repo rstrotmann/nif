@@ -53,6 +53,6 @@ A nif object.
 
 - mild hepatic dysfunction: TB \> ULN to 1.5 x ULN or AST \> ULN
 
-- moderate hepatic dysfunction: TB \>1.5–3 x ULN, any AST
+- moderate hepatic dysfunction: TB \>1.5 to 3 x ULN, any AST
 
-- severe hepatic dysfunction: TB \>3 - 10 x ULN, any AST
+- severe hepatic dysfunction: TB \>3 to 10 x ULN, any AST

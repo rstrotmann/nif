@@ -166,7 +166,7 @@ summary(nif)
 #>   XAN       1     212   99.2    81       
 #> 
 #> 
-#> Hash: 2a52d26824045030fc3038a661da3f2d
+#> Hash: 99ef75ebe81a91ec759fce0b385bdcd1
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

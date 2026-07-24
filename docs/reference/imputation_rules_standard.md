@@ -56,24 +56,24 @@ These steps are always performed regardless of the specific rule set:
 
 ### `admin_pre_expansion`
 
-1.  `apply_cut_off_date` — delete episodes with `EXSTDTC` after the
+1.  `apply_cut_off_date` - delete episodes with `EXSTDTC` after the
     global cut-off date.
 
-2.  `impute_exendtc_to_cutoff` — if the last episode still has missing
+2.  `impute_exendtc_to_cutoff` - if the last episode still has missing
     `EXENDTC`, set it to the cut-off date (e.g. for ongoing treatment).
 
-3.  `impute_missing_exendtc` — for non-last episodes with missing
+3.  `impute_missing_exendtc` - for non-last episodes with missing
     `EXENDTC`, set it to the day before the next episode's `EXSTDTC`.
 
-4.  `filter_exendtc_after_exstdtc` — remove episodes where `EXENDTC` is
+4.  `filter_exendtc_after_exstdtc` - remove episodes where `EXENDTC` is
     before `EXSTDTC`.
 
 ### `admin_post_expansion`
 
-1.  `get_admin_time_from_pcrftdtc` — Use the `PCRFTDTC` field from the
+1.  `get_admin_time_from_pcrftdtc` - Use the `PCRFTDTC` field from the
     PC domain, if available, to complete missing administration times.
 
-2.  `get_admin_time_from_ntime` — back-calculate administration time, if
+2.  `get_admin_time_from_ntime` - back-calculate administration time, if
     still missing from the nominal PK observation times in `PCTPT`, if
     available.
 
@@ -84,7 +84,7 @@ carried forward.
 
 ### `obs_raw`
 
-- `impute_lloq_pc` — pharmacokinetic observations below the limit of
+- `impute_lloq_pc` - pharmacokinetic observations below the limit of
   quantification are set to `PCLLOQ / 2`.
 
 ### `obs_final`

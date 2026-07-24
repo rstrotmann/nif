@@ -9,7 +9,7 @@ to a NIF data set are bundled in imputation rule sets."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,22 +99,22 @@ and <code>admin_post_expansion()</code>.</p></li>
 <div class="section">
 <h3 id="admin-pre-expansion"><code>admin_pre_expansion</code><a class="anchor" aria-label="anchor" href="#admin-pre-expansion"></a></h3>
 
-<ol><li><p><code>apply_cut_off_date</code> — delete episodes with <code>EXSTDTC</code> after the global
+<ol><li><p><code>apply_cut_off_date</code> - delete episodes with <code>EXSTDTC</code> after the global
 cut-off date.</p></li>
-<li><p><code>impute_exendtc_to_cutoff</code> — if the last episode still has missing
+<li><p><code>impute_exendtc_to_cutoff</code> - if the last episode still has missing
 <code>EXENDTC</code>, set it to the cut-off date (e.g. for ongoing treatment).</p></li>
-<li><p><code>impute_missing_exendtc</code> — for non-last episodes with missing
+<li><p><code>impute_missing_exendtc</code> - for non-last episodes with missing
 <code>EXENDTC</code>, set it to the day before the next episode's <code>EXSTDTC</code>.</p></li>
-<li><p><code>filter_exendtc_after_exstdtc</code> — remove episodes where <code>EXENDTC</code> is
+<li><p><code>filter_exendtc_after_exstdtc</code> - remove episodes where <code>EXENDTC</code> is
 before <code>EXSTDTC</code>.</p></li>
 </ol></div>
 
 <div class="section">
 <h3 id="admin-post-expansion"><code>admin_post_expansion</code><a class="anchor" aria-label="anchor" href="#admin-post-expansion"></a></h3>
 
-<ol><li><p><code>get_admin_time_from_pcrftdtc</code> — Use the <code>PCRFTDTC</code> field from the PC
+<ol><li><p><code>get_admin_time_from_pcrftdtc</code> - Use the <code>PCRFTDTC</code> field from the PC
 domain, if available, to complete missing administration times.</p></li>
-<li><p><code>get_admin_time_from_ntime</code> — back-calculate administration time, if still
+<li><p><code>get_admin_time_from_ntime</code> - back-calculate administration time, if still
 missing from the nominal PK observation times in <code>PCTPT</code>, if available.</p></li>
 </ol><p>After these imputations, remaining missing administration times are carried
 forward.</p>
@@ -128,7 +128,7 @@ forward.</p>
 <div class="section">
 <h3 id="obs-raw"><code>obs_raw</code><a class="anchor" aria-label="anchor" href="#obs-raw"></a></h3>
 
-<ul><li><p><code>impute_lloq_pc</code> — pharmacokinetic observations below the limit of
+<ul><li><p><code>impute_lloq_pc</code> - pharmacokinetic observations below the limit of
 quantification are set to <code>PCLLOQ / 2</code>.</p></li>
 </ul></div>
 
