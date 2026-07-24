@@ -940,7 +940,7 @@ impute_missing_baseline <- function(
     }
   }
 
-  # check that baseline colunmns are numeric
+  # check that baseline columns are numeric
   if (!is.null(baseline_fields)) {
     non_num_bl <- setdiff(baseline_fields, num_cols)
     if (length(non_num_bl) > 0) {
@@ -955,12 +955,17 @@ impute_missing_baseline <- function(
   if (is.null(baseline_fields)) {
     baseline_fields <- intersect(
       nif |>
-        select(any_of(
-          c("HEIGHT", "WEIGHT", "BMI", starts_with("BL_"))
-        )) |>
+        select(
+          any_of(c("HEIGHT", "WEIGHT", "BMI")),
+          dplyr::starts_with("BL_")
+        ) |>
         names(),
       num_cols
     )
+
+    if (length(baseline_fields) == 0) {
+      stop("No numeric baseline fields detected!")
+    }
   }
 
   # identify multiple baseline values per subject
@@ -1014,7 +1019,7 @@ impute_missing_baseline <- function(
       ))
   }
 
-  return(nif)
+  return(nif(nif))
 }
 
 
