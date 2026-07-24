@@ -4,10 +4,15 @@
 \alias{impute_missing_baseline}
 \title{Impute missing basline values}
 \usage{
-impute_missing_baseline(nif, baseline_fields = NULL, summary_function = median)
+impute_missing_baseline(
+  nif,
+  baseline_fields = NULL,
+  summary_function = median,
+  silent = NULL
+)
 }
 \arguments{
-\item{nif}{The infput nif object.}
+\item{nif}{The input nif object.}
 
 \item{baseline_fields}{Baseline fields to impute, as character. Will be set
 to default values (WEIGHT, HEIGHT, BMI, other fields starting with BL_), if
@@ -15,11 +20,14 @@ NULL.}
 
 \item{summary_function}{A function to determine the population center value
 of each baseline. Defaults tom median.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 The nif object with missing baseline values imputed to the
 respective population center value.
 }
 \description{
-Impute missing basline values
+Fill individual missing baseline values, and replace missing baseline values
+on subject level with the population center.
 }

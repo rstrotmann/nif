@@ -164,7 +164,7 @@ create_iv_fields <- function(
         stop("EXDUR must be an ISO8601-formatted duration!")
       }
       if (is.null(duration)) {
-        admin <- mutate(admin, DUR = pt_to_hours(EXDUR))
+        admin <- mutate(admin, DUR = pt_to_hours(.data[[EXDUR]]))
       } else {
         admin <- mutate(admin, DUR = duration)
         conditional_cli(cli_alert(paste0(

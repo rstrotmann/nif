@@ -773,7 +773,7 @@ get_admin_time_from_ntime <- function(
       ))
     )
     temp |>
-      select(USUBJID, PCTPT, PCDTC, NTIME, .NTIME_DTC_time) |>
+      select("USUBJID", "PCTPT", "PCDTC", "NTIME", ".NTIME_DTC_time") |>
       df_to_cli()
   }
 
@@ -972,7 +972,7 @@ impute_missing_baseline <- function(
   multiple_bl <- nif |>
     pivot_longer(
       cols = baseline_fields, names_to = "param", values_to = "value") |>
-    distinct(ID, param, value) |>
+    distinct(.data$ID, .data$param, .data$value) |>
     filter(!is.na(value)) |>
     reframe(n = n_distinct(value), .by = c("ID", "param")) |>
     filter(n > 1)
@@ -1003,21 +1003,15 @@ impute_missing_baseline <- function(
     silent = silent
   )
 
-  for (i in bl_population_center$param) {
-    # fill individual missing baseline values
-    nif <- nif |>
-      group_by(.data[["ID"]]) |>
-      tidyr::fill(all_of(i), .direction = "downup") |>
-      ungroup()
-
-    # set missing baseline values to population center
-    nif <- nif |>
-      mutate(!!i := case_when(
-        is.na(.data[[i]]) ~ as.numeric(
-          bl_population_center[bl_population_center$param == i, "center"]),
-        .default = .data[[i]]
-      ))
-  }
+  nif <- nif |>
+    group_by(.data$ID) |>
+    fill(all_of(baseline_fields), .direction = "downup") |>
+    ungroup() |>
+    pivot_longer(all_of(baseline_fields), names_to = "param", values_to = "value") |>
+    left_join(bl_population_center, by = "param") |>
+    mutate(value = coalesce(value, center)) |>
+    select(-center) |>
+    pivot_wider(names_from = param, values_from = value)
 
   return(nif(nif))
 }
