@@ -2,7 +2,7 @@
 % Please edit documentation in R/nif_imputations.R
 \name{impute_missing_baseline}
 \alias{impute_missing_baseline}
-\title{Impute missing basline values}
+\title{Impute missing baseline values}
 \usage{
 impute_missing_baseline(
   nif,
@@ -19,7 +19,7 @@ to default values (WEIGHT, HEIGHT, BMI, other fields starting with BL_), if
 NULL.}
 
 \item{summary_function}{A function to determine the population center value
-of each baseline. Defaults tom median.}
+of each baseline. Defaults to median.}
 
 \item{silent}{Suppress messages.}
 }

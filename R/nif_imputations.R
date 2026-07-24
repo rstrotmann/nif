@@ -898,7 +898,7 @@ impute_lloq_pc <- function(
 }
 
 
-#' Impute missing basline values
+#' Impute missing baseline values
 #'
 #' Fill individual missing baseline values, and replace missing baseline values
 #' on subject level with the population center.
@@ -908,7 +908,7 @@ impute_lloq_pc <- function(
 #' to default values (WEIGHT, HEIGHT, BMI, other fields starting with BL_), if
 #' NULL.
 #' @param summary_function A function to determine the population center value
-#' of each baseline. Defaults tom median.
+#' of each baseline. Defaults to median.
 #' @param silent Suppress messages.
 #'
 #' @returns The nif object with missing baseline values imputed to the
@@ -945,7 +945,7 @@ impute_missing_baseline <- function(
     non_num_bl <- setdiff(baseline_fields, num_cols)
     if (length(non_num_bl) > 0) {
       stop(paste0(
-        "Non-numeric baseline colums: ",
+        "Non-numeric baseline columns: ",
         nice_enumeration((non_num_bl))
       ))
     }
@@ -983,12 +983,13 @@ impute_missing_baseline <- function(
   if (nrow(multiple_bl) > 0) {
     stop(paste0(
       "Multiple baseline values found:\n",
-      # nice_enumeration(names(multiple_bl))
       df_to_string(multiple_bl, indent = 2)
     ))
   }
 
   # business logic
+  sf_label <- deparse(substitute(summary_function))
+
   bl_population_center <- nif |>
     pivot_longer(
       cols = any_of(baseline_fields),
@@ -1000,23 +1001,72 @@ impute_missing_baseline <- function(
     reframe(center = summary_function(.data$value), .by = "param")
 
   conditional_cli({
-      cli_alert_info("Baseline population center values:")
-      df_to_cli(bl_population_center, indent = 2)
+      cli_alert_info(paste0(
+        "Baseline population ", sf_label, " values:"
+      ))
+      df_to_cli(
+        rename(bl_population_center, "value" = "center"),
+        indent = 2
+      )
     },
     silent = silent
   )
 
-  nif <- nif |>
+  # fill missing baseline values
+  out <- nif |>
     group_by(.data$ID) |>
     fill(all_of(baseline_fields), .direction = "downup") |>
     ungroup() |>
-    pivot_longer(all_of(baseline_fields), names_to = "param", values_to = "value") |>
+    pivot_longer(
+      cols = all_of(baseline_fields),
+      names_to = "param",
+      values_to = "value_after_fill"
+    ) |>
     left_join(bl_population_center, by = "param") |>
-    mutate(value = coalesce(.data$value, .data$center)) |>
-    select(-c("center")) |>
-    pivot_wider(names_from = "param", values_from = "value")
+    mutate(value_final = case_when(
+      is.na(.data$value_after_fill) ~ .data$center,
+      .default = .data$value_after_fill
+    ))
 
-  return(nif(nif))
+  comparison <- nif |>
+    pivot_longer(
+      cols = all_of(baseline_fields),
+      names_to = "param",
+      values_to = "value_before"
+    ) |>
+    left_join(
+      out,
+      by = c("REF", "ID", "param")
+    ) |>
+    select("REF", "ID", "param", "value_before", "value_after_fill",
+           "value_final", "center") |>
+    mutate(imputation = case_when(
+      is.na(value_before) & !is.na(value_after_fill) ~ "filled within subject",
+      is.na(value_after_fill) & !is.na(value_final) ~ paste0(
+        "filled with population ", sf_label),
+      .default = NA
+      ))
+
+  imputation_summary <- comparison |>
+    filter(!is.na(.data$imputation)) |>
+    reframe(n = n(), .by = c("param", "imputation"))
+
+  if (nrow(imputation_summary) > 0) {
+    conditional_cli({
+      cli_alert_warning(paste0(
+        "A total of ", sum(imputation_summary$n),
+        " baseline values were imputed:"
+      ))
+      df_to_cli(imputation_summary, indent = 2)
+    },
+    silent = silent)
+  }
+
+  nif(
+    out |>
+      select(-c("value_after_fill", "center")) |>
+      pivot_wider(names_from = "param", values_from = "value_final")
+  )
 }
 
 
