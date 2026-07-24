@@ -213,7 +213,7 @@
   imputations in nif object
 
 - [`impute_missing_baseline()`](impute_missing_baseline.md) : Impute
-  missing basline values
+  missing baseline values
 
 - [`index_dosing_interval()`](index_dosing_interval.md) : Index dosing
   intervals

@@ -1,4 +1,4 @@
-# Impute missing basline values
+# Impute missing baseline values
 
 Fill individual missing baseline values, and replace missing baseline
 values on subject level with the population center.
@@ -28,7 +28,7 @@ impute_missing_baseline(
 - summary_function:
 
   A function to determine the population center value of each baseline.
-  Defaults tom median.
+  Defaults to median.
 
 - silent:
 
