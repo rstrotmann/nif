@@ -502,6 +502,79 @@ isofy_date_format <- function(obj, fields = NULL) {
 }
 
 
+#' Whether character DTC values parse with package dtc_formats
+#'
+#' @param x Character vector of DTC strings (already trimmed).
+#' @return Logical vector: TRUE if parseable, FALSE if not, NA if missing/blank.
+#' @noRd
+is_parseable_dtc <- function(x) {
+  x <- as.character(x)
+  out <- rep(NA, length(x))
+  non_missing <- !is.na(x) & x != ""
+  if (!any(non_missing)) {
+    return(out)
+  }
+
+  parsed <- suppressWarnings(
+    lubridate::as_datetime(x[non_missing], format = dtc_formats)
+  )
+  out[non_missing] <- !is.na(parsed)
+  out
+}
+
+
+#' Trim, coerce blanks to NA, and drop unparseable DTC values
+#'
+#' Prepares a DTC column so [lubrify_dates()] will not emit lubridate
+#' "failed to parse" warnings. Blank / whitespace-only strings become NA.
+#' Rows where `col` is non-missing but not parseable with [dtc_formats] are
+#' dropped, with a package message (unless `silent`).
+#'
+#' @param obj A data frame.
+#' @param col DTC column name as character (length 1).
+#' @param silent Suppress messages.
+#'
+#' @return The filtered data frame with `col` trimmed (blanks as NA).
+#' @noRd
+filter_parseable_dtc <- function(obj, col, silent = NULL) {
+  if (!is.data.frame(obj)) {
+    stop("obj must be a data frame!")
+  }
+  validate_char_param(col, "col")
+  if (!col %in% names(obj)) {
+    stop(paste0("Column not found in data frame: ", col))
+  }
+  if (nrow(obj) == 0) {
+    return(obj)
+  }
+
+  # POSIXct already parseable — nothing to validate as character
+  if (inherits(obj[[col]], "POSIXct")) {
+    return(obj)
+  }
+
+  obj[[col]] <- stringr::str_trim(as.character(obj[[col]]))
+  obj[[col]][is.na(obj[[col]]) | obj[[col]] == ""] <- NA_character_
+
+  parseable <- is_parseable_dtc(obj[[col]])
+  bad <- which(!is.na(parseable) & parseable == FALSE)
+
+  if (length(bad) > 0) {
+    bad_vals <- unique(obj[[col]][bad])
+    conditional_cli({
+      cli_alert_warning(paste0(
+        length(bad), plural(" row", length(bad) > 1),
+        " with unparseable ", col, " ignored: ",
+        nice_enumeration(bad_vals)
+      ))
+    }, silent = silent)
+    obj <- obj[-bad, , drop = FALSE]
+  }
+
+  obj
+}
+
+
 #' Convert all DTC fields from ISO 8601 into POSIXct
 #'
 #' Change all columns in the input data frame that end with 'DTC' to standard
@@ -530,8 +603,18 @@ lubrify_dates <- function(obj, col = NULL) {
         nice_enumeration(missing_columns)
       ))
     }
+    if (nrow(obj) == 0) {
+      return(obj)
+    }
     obj |>
-      mutate(across(all_of(col), ~ as_datetime(.x, format = dtc_formats)))
+      mutate(across(all_of(col), function(x) {
+        if (inherits(x, "POSIXct")) {
+          return(x)
+        }
+        x <- stringr::str_trim(as.character(x))
+        x[x == ""] <- NA_character_
+        lubridate::as_datetime(x, format = dtc_formats)
+      }))
   } else {
     obj |>
       dplyr::mutate_at(
@@ -541,6 +624,8 @@ lubrify_dates <- function(obj, col = NULL) {
             return(as_datetime(x))
 
           if (!is.POSIXct(x)) {
+            x <- stringr::str_trim(as.character(x))
+            x[x == ""] <- NA_character_
             x <- lubridate::as_datetime(x, format = dtc_formats)
           }
           x

@@ -654,13 +654,29 @@ get_admin_time_from_pcrftdtc <- function(
   if (length(missing_pctestcd) > 0)
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
 
-
   temp <- pc |>
     filter(.data$PCTESTCD %in% pctestcd) |>
+    filter(!is.na(.data$PCRFTDTC) & .data$PCRFTDTC != "") |>
+    filter_parseable_dtc("PCRFTDTC", silent = silent) |>
     filter(!is.na(.data$PCRFTDTC)) |>
-    lubrify_dates() |>
-    # distinct(.data$USUBJID, .data$PCRFTDTC, .data$PCTESTCD) |>
-    decompose_dtc("PCRFTDTC") |>
+    lubrify_dates("PCRFTDTC") |>
+    decompose_dtc("PCRFTDTC")
+
+  # Date-only (or otherwise timeless) PCRFTDTC cannot supply a clock time
+  n_no_time <- temp |>
+    filter(!is.na(.data$PCRFTDTC_date) & is.na(.data$PCRFTDTC_time)) |>
+    nrow()
+  if (n_no_time > 0) {
+    conditional_cli({
+      cli_alert_warning(paste0(
+        "Administration time imputation from PCRFTDTC: ",
+        n_no_time, plural(" value", n_no_time > 1),
+        " of PCRFTDTC has no time component and was ignored for time imputation!"
+      ))
+    }, silent = silent)
+  }
+
+  temp <- temp |>
     arrange(.data$PCRFTDTC_date) |>
     distinct(.data$USUBJID, .data$PCRFTDTC_date, .data$PCRFTDTC_time) |>
     reframe(
@@ -739,6 +755,7 @@ get_admin_time_from_ntime <- function(
     return(mutate(ex, .NTIME_DTC_time = NA))
   }
 
+  # validate PC domain
   pc <- domain(sdtm, "pc")
 
   if (is.null(pctestcd))
@@ -751,7 +768,8 @@ get_admin_time_from_ntime <- function(
   # business logic
   temp <- pc |>
     filter(.data$PCTESTCD %in% pctestcd) |>
-    lubrify_dates()
+    filter_parseable_dtc("PCDTC", silent = silent) |>
+    lubrify_dates("PCDTC")
 
   temp <- temp |>
     decompose_dtc("PCDTC") |>

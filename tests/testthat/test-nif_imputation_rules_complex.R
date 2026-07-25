@@ -134,11 +134,12 @@ test_that("minimal rules: obs_raw and obs_final are identity (no LLOQ, no TAFD f
   ))
 
   nif_result <- nif() |>
-    add_administration(sdtm, "X", imputation = imputation_rules_minimal,
-                       silent = TRUE) |>
-    add_observation(sdtm, "PC", "X",
-                    imputation = imputation_rules_minimal,
-                    silent = TRUE)
+    add_administration(
+      sdtm, "X", imputation = imputation_rules_minimal, silent = TRUE
+    ) |>
+    add_observation(
+      sdtm, "PC", "X", imputation = imputation_rules_minimal, silent = TRUE
+    )
 
   obs <- as.data.frame(nif_result) |>
     dplyr::filter(EVID == 0)
