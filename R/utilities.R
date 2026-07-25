@@ -525,9 +525,9 @@ is_parseable_dtc <- function(x) {
 
 #' Trim, coerce blanks to NA, and drop unparseable DTC values
 #'
-#' Prepares a DTC column so [lubrify_dates()] will not emit lubridate
+#' Prepares a DTC column so [nif::lubrify_dates()] will not emit lubridate
 #' "failed to parse" warnings. Blank / whitespace-only strings become NA.
-#' Rows where `col` is non-missing but not parseable with [dtc_formats] are
+#' Rows where `col` is non-missing but not parseable are
 #' dropped, with a package message (unless `silent`).
 #'
 #' @param obj A data frame.
