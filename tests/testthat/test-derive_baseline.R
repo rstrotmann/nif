@@ -360,3 +360,85 @@ test_that("derive_baseline errors on invalid input", {
   expect_error(derive_baseline(test_nif, default_baseline = "NA"), "default_baseline must be a numeric value")
 })
 
+
+test_that("derive_baseline does not warn when DVBL is absent or all NA", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~AMT, ~CMT,
+       1,    -1,  10,      "A",     0,    0,    2,
+       1,     0,  12,      "A",     0,    0,    2,
+       1,     1,  15,      "A",     0,    0,    2
+     ) |>
+    mutate(TAFD = TIME)
+
+  test_nif <- nif(test_data)
+
+  expect_no_message(derive_baseline(test_nif, silent = FALSE))
+
+  # DVBL present but all NA should also not warn
+  test_nif_na_dvbl <- mutate(test_nif, DVBL = NA_real_)
+  expect_no_message(derive_baseline(test_nif_na_dvbl, silent = FALSE))
+})
+
+
+test_that("derive_baseline warns when existing DVBL values will be overwritten", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~AMT, ~CMT,
+       1,    -1,  10,      "A",     0,    0,    2,
+       1,     0,  12,      "A",     0,    0,    2,
+       1,     1,  15,      "A",     0,    0,    2,
+       1,    -1,  20,      "B",     0,    0,    3,
+       1,     0,  22,      "B",     0,    0,    3,
+       1,     1,  25,      "B",     0,    0,    3
+     ) |>
+    mutate(TAFD = TIME)
+
+  test_nif <- nif(test_data)
+  with_baseline <- derive_baseline(test_nif, silent = TRUE)
+
+  expect_message(
+    derive_baseline(with_baseline, silent = FALSE),
+    "Existing DVBL values for analytes A and B will be overwritten."
+  )
+
+  expect_message(
+    derive_baseline(with_baseline, analyte = "A", silent = FALSE),
+    "Existing DVBL values for analyte A will be overwritten."
+  )
+})
+
+
+test_that("derive_baseline overwrite warning is suppressed when silent = TRUE", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~AMT, ~CMT,
+       1,    -1,  10,      "A",     0,    0,    2,
+       1,     0,  12,      "A",     0,    0,    2,
+       1,     1,  15,      "A",     0,    0,    2
+     ) |>
+    mutate(TAFD = TIME)
+
+  test_nif <- nif(test_data)
+  with_baseline <- derive_baseline(test_nif, silent = TRUE)
+
+  expect_no_message(derive_baseline(with_baseline, silent = TRUE))
+})
+
+
+test_that("derive_baseline does not warn for analytes without existing DVBL", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~AMT, ~CMT,
+       1,    -1,  10,      "A",     0,    0,    2,
+       1,     0,  12,      "A",     0,    0,    2,
+       1,     1,  15,      "A",     0,    0,    2,
+       1,    -1,  20,      "B",     0,    0,    3,
+       1,     0,  22,      "B",     0,    0,    3,
+       1,     1,  25,      "B",     0,    0,    3
+     ) |>
+    mutate(TAFD = TIME)
+
+  test_nif <- nif(test_data)
+  only_a <- derive_baseline(test_nif, analyte = "A", silent = TRUE)
+
+  # Analyte B has no existing DVBL yet, so no overwrite warning for B
+  expect_no_message(derive_baseline(only_a, analyte = "B", silent = FALSE))
+})
+
