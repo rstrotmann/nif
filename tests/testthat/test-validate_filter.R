@@ -1,4 +1,4 @@
-# --- Input validation ---
+# ---- Input validation ----
 
 test_that("validate_filter rejects non-character input", {
   expect_error(validate_filter(42), "filter_string must be a single character string")
@@ -28,7 +28,7 @@ test_that("validate_filter rejects whitespace-only string", {
 })
 
 
-# --- Parse errors ---
+# ---- Parse errors ----
 
 test_that("validate_filter rejects unparseable expression", {
   expect_error(validate_filter("A >"), "Failed to parse filter expression")
@@ -43,7 +43,7 @@ test_that("validate_filter rejects trailing operator", {
 })
 
 
-# --- Valid expressions without data ---
+# ---- Valid expressions without data ----
 
 test_that("validate_filter accepts simple comparison", {
   result <- validate_filter("TAFD <= 0")
@@ -97,7 +97,7 @@ test_that("validate_filter accepts deeply nested expression", {
 })
 
 
-# --- Return type ---
+# ---- Return type ----
 
 test_that("validate_filter returns a language object", {
   result <- validate_filter("A == 1")
@@ -109,49 +109,176 @@ test_that("validate_filter returns invisibly", {
 })
 
 
-# --- Column validation with data ---
+# ---- Column validation with data ----
 
 test_that("validate_filter passes when all columns exist in data", {
-  df <- data.frame(TAFD = 1, EVID = 0, TIME = 2)
+  df <- tibble::tribble(
+    ~TAFD, ~EVID, ~TIME,
+        1,     0,     2
+  )
   result <- validate_filter("TAFD <= 0 & EVID == 0", data = df)
   expect_equal(result, rlang::parse_expr("TAFD <= 0 & EVID == 0"))
 })
 
+
 test_that("validate_filter rejects unknown column when data is provided", {
-  df <- data.frame(TAFD = 1, TIME = 2)
+  df <- tibble::tribble(
+    ~TAFD, ~TIME,
+        1,     2
+  )
   expect_error(
     validate_filter("NONEXISTENT <= 0", data = df),
     "Column 'NONEXISTENT' not found in data"
   )
 })
 
+
 test_that("validate_filter rejects unknown column in compound expression", {
-  df <- data.frame(A = 1)
+  df <- tibble::tribble(
+    ~A,
+    1
+  )
   expect_error(
     validate_filter("A == 1 & BAD == 2", data = df),
     "Column 'BAD' not found in data"
   )
 })
 
-test_that("validate_filter validates is.na column against data", {
-  df <- data.frame(A = 1)
+
+test_that("validate_filter passes when is.na column exists in data", {
+  df <- tibble::tribble(
+    ~TAFD,    ~TIME,
+        0, NA_real_
+  )
+  expect_no_error(validate_filter("TAFD <= 0 | is.na(TIME)", data = df))
+})
+
+
+test_that("validate_filter rejects missing is.na column", {
+  df <- tibble::tribble(
+    ~A,
+    1
+  )
   expect_error(
     validate_filter("is.na(MISSING)", data = df),
     "Column 'MISSING' not found in data"
   )
 })
 
+
+test_that("validate_filter passes when %in% column exists in data", {
+  df <- tibble::tribble(
+    ~FOOD,
+    "FED",
+    "FASTED"
+  )
+  expect_no_error(validate_filter("FOOD %in% c('FED', 'FASTED')", data = df))
+})
+
+
+test_that("validate_filter rejects missing %in% column", {
+  df <- tibble::tribble(
+    ~A,
+    1
+  )
+  expect_error(
+    validate_filter("FOOD %in% c('FED')", data = df),
+    "Column 'FOOD' not found in data"
+  )
+})
+
+
+test_that("validate_filter rejects missing column in negated expression", {
+  df <- tibble::tribble(
+    ~A,
+    1
+  )
+  expect_error(
+    validate_filter("!(MISSING > 0)", data = df),
+    "Column 'MISSING' not found in data"
+  )
+})
+
+
+test_that("validate_filter rejects missing column in nested OR expression", {
+  df <- tibble::tribble(
+    ~TAFD, ~EVID,
+        0,     0
+  )
+  expect_error(
+    validate_filter("(TAFD <= 0 & EVID == 0) | (BAD == 1)", data = df),
+    "Column 'BAD' not found in data"
+  )
+})
+
+
+test_that("validate_filter rejects missing column when comparing two columns", {
+  df <- tibble::tribble(
+    ~A,
+    1
+  )
+  expect_error(
+    validate_filter("A == B", data = df),
+    "Column 'B' not found in data"
+  )
+})
+
+
+test_that("validate_filter passes when comparing two columns that both exist", {
+  df <- tibble::tribble(
+    ~A, ~B,
+     1,  1
+  )
+  expect_no_error(validate_filter("A == B", data = df))
+})
+
+
+test_that("validate_filter error lists available columns", {
+  df <- tibble::tribble(
+    ~TAFD, ~TIME,
+        1,     2
+  )
+  expect_error(
+    validate_filter("MISSING <= 0", data = df),
+    "Available columns: TAFD, TIME"
+  )
+})
+
+
 test_that("validate_filter allows TRUE without it being in data columns", {
-  df <- data.frame(A = 1)
+  df <- tibble::tribble(
+    ~A,
+    1
+  )
   expect_no_error(validate_filter("TRUE", data = df))
 })
+
 
 test_that("validate_filter skips column check when data is NULL", {
   expect_no_error(validate_filter("ANY_COL <= 0", data = NULL))
 })
 
 
-# --- AST rejection is surfaced through validate_filter ---
+test_that("validate_filter accepts real-world baseline filters against matching data", {
+  df <- tibble::tribble(
+    ~TAFD, ~TIME, ~EVID, ~VSBLFL, ~LBBLFL, ~FOOD,
+        0,     0,     0,     "Y",     "Y", "FED"
+  )
+  filters <- c(
+    "TAFD <= 0",
+    "TIME <= 0 & EVID == 0",
+    "VSBLFL == 'Y'",
+    "LBBLFL == 'Y'",
+    "TAFD <= 0 | is.na(TAFD)",
+    "TIME <= 0 & FOOD == 'FED'"
+  )
+  for (f in filters) {
+    expect_no_error(validate_filter(f, data = df))
+  }
+})
+
+
+# ---- AST rejection is surfaced through validate_filter ----
 
 test_that("validate_filter rejects arbitrary function calls", {
   expect_error(validate_filter("system('ls')"), "Disallowed construct")
@@ -211,9 +338,9 @@ test_that("validate_filter rejects grepl with non-symbol second argument", {
 
 test_that("validate_filter validates grepl column against data", {
   df <- tibble::tribble(
-    ~PCSPEC, ~PCTESTCD,
-    "PLASMA", "XAN",
-    "SERUM",  "XAN"
+     ~PCSPEC, ~PCTESTCD,
+    "PLASMA",     "XAN",
+     "SERUM",     "XAN"
   )
   expect_no_error(validate_filter('grepl("PLASMA", PCSPEC)', data = df))
   expect_error(
@@ -223,7 +350,7 @@ test_that("validate_filter validates grepl column against data", {
 })
 
 
-# --- Real-world baseline_filter expressions ---
+# ---- Real-world baseline_filter expressions ----
 
 test_that("validate_filter accepts all real-world baseline filters", {
   filters <- c(

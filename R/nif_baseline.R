@@ -269,7 +269,12 @@ add_baseline <- function(
 #'
 #' @return A single numeric baseline value.
 #' @noRd
-calc_baseline <- function(group_data, filter_expr, summary_fun, default) {
+calc_baseline <- function(
+    group_data,
+    filter_expr,
+    summary_fun,
+    default
+  ) {
   filtered_dv <- na.omit(group_data$DV[rlang::eval_tidy(filter_expr, data = group_data)])
   if (length(filtered_dv) == 0) {
     return(default)
@@ -363,6 +368,7 @@ derive_baseline <- function(
     )
   }
 
+
   na_analytes <- temp$ANALYTE[is.na(temp$ANALYTE)]
   if (length(na_analytes) > 0) {
     conditional_message(
@@ -372,7 +378,27 @@ derive_baseline <- function(
     )
   }
 
+  # warn regarding overwriting exisiting baseline values
+  has_existing_dvbl <- obj |>
+    filter(.data$ANALYTE %in% analyte) |>
+    summarize(any_existing = any(!is.na(.data$DVBL))) |>
+    pull(.data$any_existing)
+
+  if (has_existing_dvbl) {
+    conditional_cli(
+      cli_alert_danger(paste0(
+      "Existing DVBL values for ",
+      plural("analyte", length(analyte) > 1), " ",
+      nice_enumeration(analyte),
+      " will be overwritten."
+      )),
+      silent = silent
+    )
+  }
+
+  # business logic
   bl <- temp |>
+    as.data.frame() |>
     filter(!is.na(.data$ID)) |>
     filter(!is.na(.data$ANALYTE)) |>
     filter(.data$EVID == 0) |>
@@ -385,8 +411,7 @@ derive_baseline <- function(
         default_baseline
       ),
       .groups = "drop"
-    ) |>
-    as.data.frame()
+    )
 
   obj |>
     coalesce_join(
