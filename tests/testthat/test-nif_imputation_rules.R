@@ -180,6 +180,34 @@ test_that("get_admin_time_from_ntime estimates times per subject, not across sub
 })
 
 
+test_that("get_admin_time_from_ntime emits NTIME debug details when debug is enabled", {
+  nif_option(debug = TRUE)
+  on.exit(nif_option(debug = FALSE), add = TRUE)
+
+  sdtm <- sdtm(list(
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN,   ~PCTESTCD, ~PCRFTDTC,         ~PCTPT,             ~PCDTC,
+           "A",    "PC", "ANALYTE_A",        NA, "1 H POSTDOSE", "2025-01-14T09:00"
+      )
+  ))
+
+  ex <- tibble::tribble(
+    ~USUBJID,     ~EXSTDTC,     ~EXENDTC,        ~EXTRT,
+         "A", "2025-01-14", "2025-01-14", "TREATMENT_A"
+  ) |>
+    expand_ex()
+
+  expect_message(
+    result <- get_admin_time_from_ntime(
+      ex, sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = TRUE
+    ),
+    "get_admin_time_from_ntime: NTIME details for TREATMENT_A"
+  )
+
+  expect_equal(result$DTC_time, "08:00")
+})
+
+
 
 
 

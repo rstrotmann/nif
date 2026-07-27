@@ -765,16 +765,15 @@ get_admin_time_from_ntime <- function(
     ungroup() |>
     mutate(.NTIME_DTC_time = extract_time(.data$.mean_est_admin_dtc))
 
-  # if (isFALSE(nif_option_value("silent")) & isTRUE(nif_option_value("verbose"))) {
   if (isTRUE(nif_option_value("debug"))) {
-    cli(
+    cli({
       cli_alert_info(paste0(
         "get_admin_time_from_ntime: NTIME details for ", extrt
       ))
-    )
-    temp |>
-      select("USUBJID", "PCTPT", "PCDTC", "NTIME", ".NTIME_DTC_time") |>
-      df_to_cli()
+      temp |>
+        select("USUBJID", "PCTPT", "PCDTC", "NTIME", ".NTIME_DTC_time") |>
+        df_to_cli(indent = 2)
+    })
   }
 
   temp <- temp |>
