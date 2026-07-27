@@ -1,14 +1,14 @@
 test_that("derive_baseline works with valid input", {
   # Create a simple test dataset
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~TAFD, ~AMT, ~CMT,
-    1,   -1,    10,   "A",      0,     -1,   0,    2,
-    1,   0,     12,   "A",      0,     0,    0,    2,
-    1,   1,     15,   "A",      0,     1,    0,    2,
-    2,   -1,    20,   "A",      0,     -1,   0,    2,
-    2,   0,     22,   "A",      0,     0,    0,    2,
-    2,   1,     25,   "A",      0,     1,    0,    2
-  )
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~TAFD, ~AMT, ~CMT,
+       1,    -1,  10,      "A",     0,    -1,    0,    2,
+       1,     0,  12,      "A",     0,     0,    0,    2,
+       1,     1,  15,      "A",     0,     1,    0,    2,
+       2,    -1,  20,      "A",     0,    -1,    0,    2,
+       2,     0,  22,      "A",     0,     0,    0,    2,
+       2,     1,  25,      "A",     0,     1,    0,    2
+     )
 
   test_nif <- nif(test_data)
 
@@ -27,14 +27,14 @@ test_that("derive_baseline works with valid input", {
 test_that("derive_baseline handles empty baseline sets correctly", {
   # Create test data where baseline filter matches no rows
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV,  ~ANALYTE, ~EVID, ~TAFD, ~AMT, ~CMT,
-    1,   1,     10,   "A",      0,     1,    0,    2,
-    1,   2,     12,   "A",      0,     2,    0,    2,
-    1,   3,     15,   "A",      0,     3,    0,    2,
-    2,   1,     20,   "A",      0,     1,    0,    2,
-    2,   2,     22,   "A",      0,     2,    0,    2,
-    2,   3,     25,   "A",      0,     3,    0,    2
-  )
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~EVID, ~TAFD, ~AMT, ~CMT,
+       1,     1,  10,      "A",     0,     1,    0,    2,
+       1,     2,  12,      "A",     0,     2,    0,    2,
+       1,     3,  15,      "A",     0,     3,    0,    2,
+       2,     1,  20,      "A",     0,     1,    0,    2,
+       2,     2,  22,      "A",     0,     2,    0,    2,
+       2,     3,  25,      "A",     0,     3,    0,    2
+     )
 
   test_nif <- nif(test_data)
 
