@@ -269,7 +269,12 @@ add_baseline <- function(
 #'
 #' @return A single numeric baseline value.
 #' @noRd
-calc_baseline <- function(group_data, filter_expr, summary_fun, default) {
+calc_baseline <- function(
+    group_data,
+    filter_expr,
+    summary_fun,
+    default
+  ) {
   filtered_dv <- na.omit(group_data$DV[rlang::eval_tidy(filter_expr, data = group_data)])
   if (length(filtered_dv) == 0) {
     return(default)
@@ -373,6 +378,7 @@ derive_baseline <- function(
   }
 
   bl <- temp |>
+    as.data.frame() |>
     filter(!is.na(.data$ID)) |>
     filter(!is.na(.data$ANALYTE)) |>
     filter(.data$EVID == 0) |>
@@ -385,8 +391,7 @@ derive_baseline <- function(
         default_baseline
       ),
       .groups = "drop"
-    ) |>
-    as.data.frame()
+    )
 
   obj |>
     coalesce_join(
