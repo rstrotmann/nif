@@ -1025,3 +1025,428 @@ test_that("make_observation validates omit_not_done parameter", {
   )
 })
 
+
+## Validation and error paths
+
+test_that("make_observation rejects non-list imputation argument", {
+  sdtm <- make_test_sdtm1()
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      imputation = "imputation_rules_standard",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "imputation must be a list!"
+  )
+})
+
+
+test_that("make_observation rejects invalid ntime_method", {
+  sdtm <- make_test_sdtm1()
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      ntime_method = "INVALID",
+      silent = TRUE
+    ),
+    "ntime_method must be one of"
+  )
+})
+
+
+test_that("make_observation wraps make_subjects errors", {
+  sdtm <- make_test_sdtm1()
+  sdtm$domains$dm$ACTARMCD <- NULL
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "Error getting subject data:"
+  )
+})
+
+
+test_that("make_observation rejects missing required domain fields", {
+  sdtm <- make_test_sdtm1()
+  sdtm$domains$pc$PCDTC <- NULL
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "Required field\\(s\\) missing in domain 'pc': PCDTC"
+  )
+})
+
+
+test_that("make_observation validates na_to_zero parameter", {
+  sdtm <- make_test_sdtm1()
+
+  expect_error(
+    make_observation(sdtm, "pc", "A", na_to_zero = "yes", silent = TRUE),
+    "na_to_zero must be a logical value"
+  )
+  expect_error(
+    make_observation(sdtm, "pc", "A", na_to_zero = NULL, silent = TRUE),
+    "na_to_zero must not be NULL"
+  )
+})
+
+
+## NTIME methods and lookup validation
+
+test_that("make_observation works with ntime_method = 'TPTNUM'", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFSTDTC, ~STUDYID,
+         "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "Study 1"
+    ),
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+         "1",    "VS",  "HEIGHT",       170, "2024-01-01T08:00:00"
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTPTNUM, ~PCDTC,              ~PCSTRESN,
+         "1",    "PC",       "A",         0, "2024-01-01T08:00:00",       100,
+         "1",    "PC",       "A",         2, "2024-01-01T10:00:00",       200
+    )
+  ))
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    ntime_method = "TPTNUM",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result), 2)
+  expect_equal(sort(result$NTIME), c(0, 2))
+})
+
+
+test_that("make_observation works with ntime_method = 'VISITDY'", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFSTDTC, ~STUDYID,
+         "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "Study 1"
+    ),
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+         "1",    "VS",  "HEIGHT",       170, "2024-01-01T08:00:00"
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~VISITDY, ~PCDTC,              ~PCSTRESN,
+         "1",    "PC",       "A",        1, "2024-01-01T08:00:00",       100,
+         "1",    "PC",       "A",        2, "2024-01-02T08:00:00",       200
+    )
+  ))
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    ntime_method = "VISITDY",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result), 2)
+  expect_equal(sort(result$NTIME), c(0, 24))
+})
+
+
+test_that("make_observation works with ntime_method = 'DY'", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFSTDTC, ~STUDYID,
+         "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "Study 1"
+    ),
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+         "1",    "VS",  "HEIGHT",       170, "2024-01-01T08:00:00"
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDY, ~PCDTC,              ~PCSTRESN,
+         "1",    "PC",       "A",     1, "2024-01-01T08:00:00",       100,
+         "1",    "PC",       "A",     2, "2024-01-02T08:00:00",       200
+    )
+  ))
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    ntime_method = "DY",
+    silent = TRUE
+  )
+
+  expect_equal(nrow(result), 2)
+  expect_equal(sort(result$NTIME), c(0, 24))
+})
+
+
+test_that("make_observation validates custom ntime_lookup structure", {
+  sdtm <- make_test_sdtm1()
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      ntime_lookup = list(NTIME = 0),
+      silent = TRUE
+    ),
+    "ntime_lookup must be a data frame"
+  )
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      ntime_lookup = data.frame(PCELTM = "PT0H"),
+      silent = TRUE
+    ),
+    "ntime_lookup must contain a 'NTIME' column"
+  )
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      ntime_lookup = data.frame(NTIME = 0, LOOKUP = "X"),
+      silent = TRUE
+    ),
+    "ntime_lookup must contain at least one column that matches"
+  )
+})
+
+
+test_that("make_observation validates coding table structure", {
+  sdtm <- make_test_sdtm1()
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      coding_table = tibble::tribble(~JOINCOL, ~DV, "X", 1),
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "Coding table cannot be applied to data set!"
+  )
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      coding_table = tibble::tribble(~PCTESTCD, ~DV, "A", "not_numeric"),
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "DV field in coding table must be numeric!"
+  )
+})
+
+
+test_that("make_observation converts NA DV values to zero when na_to_zero is TRUE", {
+  sdtm <- make_test_sdtm1()
+  sdtm$domains$pc$PCSTRESN[c(1, 2)] <- NA
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    na_to_zero = TRUE,
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(result$DV[result$USUBJID %in% c("1", "2")], c(0, 0))
+  expect_equal(result$MDV[result$USUBJID %in% c("1", "2")], c(0, 0))
+})
+
+
+test_that("make_observation validates observation filter on empty domain data", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFSTDTC, ~STUDYID,
+         "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "Study 1"
+    ),
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+         "1",    "VS",  "HEIGHT",       170, "2024-01-01T08:00:00"
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC, ~PCSTRESN, ~PCELTM
+    )
+  ))
+
+  expect_error(
+    suppressWarnings(
+      make_observation(
+        sdtm, "pc", "A",
+        observation_filter = "TRUE",
+        ntime_method = "ELTM",
+        silent = TRUE
+      )
+    ),
+    "No entries found after applying observation filter!"
+  )
+})
+
+
+test_that("make_observation errors when all observations are NOT DONE", {
+  sdtm <- make_test_sdtm1()
+  sdtm$domains$pc$PCSTAT <- "NOT DONE"
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      omit_not_done = TRUE,
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "No entries found after omitting 'NOT DONE' entries"
+  )
+})
+
+
+test_that("make_observation errors when cat field is missing from domain", {
+  sdtm <- make_test_sdtm1()
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      cat = "PK",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "The input does not have a PCCAT field!"
+  )
+})
+
+
+test_that("make_observation errors when cat and scat filters leave no rows", {
+  sdtm <- make_test_sdtm1()
+
+  local_mocked_bindings(
+    apply_cat_filter = function(obj, param, param_field) {
+      if (!is.null(param)) {
+        return(obj[0, , drop = FALSE])
+      }
+      obj
+    },
+    .package = "nif"
+  )
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      cat = "PK",
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "No entries found after applying cat and scat filters"
+  )
+})
+
+
+test_that("make_observation rejects include_day_in_ntime when DY field is missing", {
+  sdtm <- make_test_sdtm1()
+
+  expect_error(
+    make_observation(
+      sdtm, "pc", "A",
+      include_day_in_ntime = TRUE,
+      ntime_method = "ELTM",
+      silent = TRUE
+    ),
+    "PCDY not found in domain, day cannot be included in observation"
+  )
+})
+
+
+test_that("make_observation adds trial day offset when include_day_in_ntime is TRUE", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFSTDTC, ~STUDYID,
+         "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "Study 1"
+    ),
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+         "1",    "VS",  "HEIGHT",       170, "2024-01-01T08:00:00"
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDY, ~PCDTC,              ~PCSTRESN, ~PCELTM,
+         "1",    "PC",       "A",     1, "2024-01-01T08:00:00",       100,  "PT0H",
+         "1",    "PC",       "A",     2, "2024-01-02T08:00:00",       200,  "PT2H"
+    )
+  ))
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    include_day_in_ntime = TRUE,
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(sort(result$NTIME), c(0, 26))
+})
+
+
+test_that("make_observation defaults analyte and parent to testcd", {
+  sdtm <- make_test_sdtm1()
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(unique(result$ANALYTE), "A")
+  expect_equal(unique(result$PARENT), "A")
+})
+
+
+test_that("make_observation sets SRC_SEQ to NA when domain SEQ field is missing", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~SEX, ~ACTARMCD, ~RFSTDTC, ~STUDYID,
+         "1",    "DM",  "M",       "A", "2024-01-01T08:00:00", "Study 1"
+    ),
+    vs = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~VSTESTCD, ~VSSTRESN, ~VSDTC,
+         "1",    "VS",  "HEIGHT",       170, "2024-01-01T08:00:00"
+    ),
+    pc = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC,              ~PCSTRESN, ~PCELTM,
+         "1",    "PC",       "A", "2024-01-01T08:00:00",       100,  "PT0H"
+    )
+  ))
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_true("SRC_SEQ" %in% names(result))
+  expect_true(all(is.na(result$SRC_SEQ)))
+})
+
+
+test_that("make_observation applies obs_raw imputation when present", {
+  sdtm <- make_test_sdtm1()
+  imputation <- list(
+    admin_pre_expansion = identity,
+    admin_post_expansion = identity,
+    obs_raw = function(obs, silent = NULL) {
+      dplyr::mutate(obs, IMPUTATION = "obs raw applied")
+    },
+    obs_final = identity
+  )
+
+  result <- make_observation(
+    sdtm, "pc", "A",
+    imputation = imputation,
+    ntime_method = "ELTM",
+    silent = TRUE
+  )
+
+  expect_equal(unique(result$IMPUTATION), "obs raw applied")
+})
+
