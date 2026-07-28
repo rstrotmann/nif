@@ -365,7 +365,7 @@ test_that("add_observation handles DV field properly", {
     nif_custom_dv <- base_nif %>%
       add_observation(
         sdtm_test, "pc", "A",
-        dv_field = "PCSTRESN", ,
+        dv_field = "PCSTRESN",
         ntime_method = "ELTM", silent = TRUE
       )
   })
@@ -514,5 +514,244 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
     filter(USUBJID == "1" & EVID == 0 & format(DTC, "%H:%M") == "08:00") %>%
     pull(DV)
   expect_equal(obs_1_8am_no_rm, 100)
+})
+
+
+add_obs_base_nif <- function(sdtm = make_test_sdtm1()) {
+  nif() |>
+    add_administration(sdtm, "A", analyte = "A", silent = TRUE)
+}
+
+
+duplicate_obs_sdtm <- function() {
+  sdtm <- make_test_sdtm1()
+  sdtm$domains$pc <- tibble::tribble(
+    ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC,                ~PCSTRESN, ~PCELTM,
+    "1",      "PC",    "A",       "2024-01-01T08:00:00",       100,  "PT0H",
+    "1",      "PC",    "A",       "2024-01-01T08:00:00",       200,  "PT0H",
+    "2",      "PC",    "A",       "2024-01-01T08:00:00",       300,  "PT0H"
+  )
+  sdtm
+}
+
+
+test_that("add_observation requires at least one administration", {
+  sdtm <- make_test_sdtm1()
+  empty_nif <- nif()
+  empty_nif$PARENT <- character(0)
+  empty_nif$USUBJID <- character(0)
+
+  expect_error(
+    empty_nif |>
+      add_observation(
+        sdtm, "pc", "A",
+        duplicate_identifier = "ID",
+        ntime_method = "ELTM",
+        silent = TRUE
+      ),
+    "Please add at least one administration first!"
+  )
+})
+
+
+test_that("add_observation rejects invalid duplicates parameter", {
+  base_nif <- add_obs_base_nif()
+
+  expect_error(
+    base_nif |>
+      add_observation(
+        make_test_sdtm1(), "pc", "A",
+        duplicates = "drop",
+        ntime_method = "ELTM",
+        silent = TRUE
+      ),
+    "Invalid value for 'duplicates'"
+  )
+})
+
+
+test_that("add_observation rejects missing duplicate_identifier fields", {
+  base_nif <- add_obs_base_nif()
+
+  expect_error(
+    base_nif |>
+      add_observation(
+        make_test_sdtm1(), "pc", "A",
+        duplicate_identifier = "NOT_A_NIF_COLUMN",
+        ntime_method = "ELTM",
+        silent = TRUE
+      ),
+    "Missing field in input: NOT_A_NIF_COLUMN"
+  )
+})
+
+
+test_that("add_observation stops on duplicate observations by default", {
+  sdtm <- duplicate_obs_sdtm()
+  base_nif <- add_obs_base_nif(sdtm)
+
+  expect_error(
+    base_nif |>
+      add_observation(
+        sdtm, "pc", "A",
+        duplicates = "stop",
+        ntime_method = "ELTM",
+        silent = TRUE
+      ),
+    "duplicate observations found with respect to"
+  )
+})
+
+
+test_that("add_observation identify returns duplicate rows from source domain", {
+  sdtm <- duplicate_obs_sdtm()
+  base_nif <- add_obs_base_nif(sdtm)
+
+  expect_message(
+    result <- base_nif |>
+    add_observation(
+      sdtm, "pc", "A",
+      duplicates = "identify",
+      ntime_method = "ELTM",
+      silent = TRUE
+    )
+  )
+
+  expect_false(inherits(result, "nif"))
+  expect_equal(nrow(result), 2)
+  expect_true(all(result$USUBJID == "1"))
+  expect_equal(sort(result$PCSTRESN), c(100, 200))
+})
+
+
+test_that("add_observation resolve reports duplicate resolution", {
+  sdtm <- duplicate_obs_sdtm()
+  base_nif <- add_obs_base_nif(sdtm)
+
+  expect_message(
+    expect_message(
+      expect_message(
+        expect_message(
+          result <- base_nif |>
+            add_observation(
+              sdtm, "pc", "A",
+              duplicates = "resolve",
+              ntime_method = "ELTM",
+              silent = FALSE
+            ),
+          "duplicate observations for A"
+        )
+      )
+    )
+  )
+
+  resolved <- result |>
+    filter(.data$EVID == 0, .data$USUBJID == "1")
+
+  expect_equal(nrow(resolved), 1)
+  expect_equal(resolved$DV, 150)
+})
+
+
+test_that("add_observation ignore keeps duplicate observations", {
+  sdtm <- duplicate_obs_sdtm()
+  base_nif <- add_obs_base_nif(sdtm)
+
+  expect_message(
+    expect_message(
+      expect_message(
+        expect_message(
+          result <- base_nif |>
+            add_observation(
+              sdtm, "pc", "A",
+              duplicates = "ignore",
+              ntime_method = "ELTM",
+              silent = FALSE
+            ),
+          "Duplicates in the data set!"
+        )
+      )
+    )
+  )
+
+
+  dup_rows <- result |>
+    filter(.data$EVID == 0, .data$USUBJID == "1")
+
+  expect_equal(nrow(dup_rows), 2)
+})
+
+
+test_that("add_observation warns and drops observations without matching parent", {
+  base_nif <- add_obs_base_nif()
+
+  expect_message(
+    expect_message(
+      expect_message(
+        expect_message(
+          result <- base_nif |>
+            add_observation(
+              make_test_sdtm1(), "pc", "A",
+              cmt = 2,
+              parent = "UNKNOWN_PARENT",
+              ntime_method = "ELTM",
+              silent = FALSE
+            ),
+          "Missing parent!"
+        )
+      )
+    )
+  )
+
+
+  expect_equal(
+    sum(result$EVID == 0 & result$PARENT == "UNKNOWN_PARENT"),
+    0
+  )
+})
+
+
+test_that("add_observation applies obs_final imputation when present", {
+  base_nif <- add_obs_base_nif()
+  imputation <- list(
+    admin_pre_expansion = function(ex, ...) ex,
+    admin_post_expansion = function(ex, ...) ex,
+    obs_raw = function(obs, silent = NULL) obs,
+    obs_final = function(obs, silent = NULL) {
+      dplyr::mutate(obs, IMPUTATION = "obs final applied")
+    }
+  )
+
+  result <- base_nif |>
+    add_observation(
+      make_test_sdtm1(), "pc", "A",
+      imputation = imputation,
+      ntime_method = "ELTM",
+      silent = TRUE
+    )
+
+  obs_imp <- result |>
+    filter(.data$EVID == 0) |>
+    pull(.data$IMPUTATION) |>
+    unique()
+
+  expect_equal(obs_imp, "obs final applied")
+})
+
+
+test_that("add_observation keeps debug fields when global debug option is enabled", {
+  base_nif <- add_obs_base_nif()
+
+  nif_option(debug = TRUE)
+  on.exit(nif_option(debug = FALSE), add = TRUE)
+
+  result <- base_nif |>
+    add_observation(
+      make_test_sdtm1(), "pc", "A",
+      ntime_method = "ELTM",
+      silent = TRUE
+    )
+
+  expect_true(all(c("SRC_DOMAIN", "SRC_SEQ", "SRC_TESTCD") %in% names(result)))
 })
 

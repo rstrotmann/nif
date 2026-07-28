@@ -939,7 +939,8 @@ add_observation <- function(
         mutate(DTC = .data[[paste0(toupper(domain), "DTC")]]) |>
         mutate(ANALYTE = .data[[paste0(toupper(domain), "TESTCD")]]) |>
         lubrify_dates() |>
-        inner_join(d[, dupl_fields], by = dupl_fields) |>
+        # inner_join(d[, dupl_fields], by = dupl_fields) |>
+        inner_join(distinct(d[, dupl_fields]), by = dupl_fields) |>
         distinct()
 
       return(temp)
