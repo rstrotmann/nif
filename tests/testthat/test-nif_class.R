@@ -219,7 +219,7 @@ test_that("add_dose_level works", {
   temp <- add_dose_level(nif) %>%
     distinct(ID, DL)
   expect_equal(nrow(temp), 3)
-  expect_equal(unique(temp$DL), 100)
+  expect_equal(unique(temp$DL), "100-CMT1")
 })
 
 

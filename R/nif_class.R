@@ -1174,23 +1174,18 @@ add_dose_level <- function(obj, silent = NULL) {
   }
 
   # business logic
-  temp <- obj |>
+  admin <- obj |>
     ensure_dose() |>
     ensure_analyte() |>
-    # ensure_parent() |>
-    # ensure_metabolite() |>
     as.data.frame() |>
-    # filter(.data$METABOLITE == FALSE) |>
     filter(.data$EVID == 1)
 
-  if (nrow(temp) == 0) {
+  if (nrow(admin) == 0) {
     stop("No administrations (EVID = 1) in data set!")
   }
 
-  temp <- temp |>
+  first_dose <- admin |>
     filter(
-      # .data$PARENT != "",
-      # !is.na(.data$DOSE),
       !is.na(.data$AMT),
       .data$AMT != 0
     ) |>
@@ -1198,22 +1193,30 @@ add_dose_level <- function(obj, silent = NULL) {
     group_by(.data$ID, .data$ANALYTE) |>
     filter(.data$TIME == min(.data$TIME)) |>
     ungroup() |>
-    distinct(.data$ID, .data$ANALYTE, .data$AMT) |>
-    group_by(.data$ID)
+    distinct(.data$ID, .data$ANALYTE, .data$AMT)
 
-  if (ungroup(temp) |> distinct(.data$ANALYTE) |> nrow() == 1) {
-    temp <- temp |>
-      mutate(DL = .data$AMT) |>
-      select(c("ID", "DL"))
-  } else {
-    temp <- temp |>
-      mutate(DL = paste0(.data$AMT, "-", .data$ANALYTE)) |>
-      arrange(.data$ID) |>
-      arrange(factor(.data$ANALYTE, levels = analytes(obj))) |>
-      summarize(DL = paste0(.data$DL, collapse = "+"))
+  multiple_dl <- first_dose |>
+    reframe(n = n(), .by = c("ID", "ANALYTE")) |>
+    filter(n > 1) |>
+    pull(ID)
+
+  if (length(multiple_dl) > 0) {
+    stop(paste0(
+      "Dose level cannot be determined! ",
+      "Multiple first administrations for ",
+      plural("subject", length(multiple_dl) > 1), " ",
+      nice_enumeration(multiple_dl), "!"
+    ))
   }
 
-  # left_join(obj, select(temp, c("ID", "DL")), by = "ID")
+  temp <- first_dose |>
+    mutate(DL = paste0(.data$AMT, "-", .data$ANALYTE)) |>
+    arrange(.data$ID) |>
+    group_by(.data$ID) |>
+    arrange(factor(.data$ANALYTE, levels = analytes(obj))) |>
+    summarize(DL = paste0(.data$DL, collapse = "+")) |>
+    ungroup()
+
   left_join(obj, temp, by = "ID")
 }
 

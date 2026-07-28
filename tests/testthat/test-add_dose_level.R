@@ -28,21 +28,27 @@ test_that("add_dose_level uses starting dose and ignores later dose changes", {
     as.data.frame(distinct(result, ID, DL)),
     as.data.frame(tibble::tribble(
       ~ID, ~DL,
-         1, 100,
-         2, 200,
-         3, 100
+         1, "100-A",
+         2, "200-A",
+         3, "100-A"
     ))
   )
-  expect_type(result$DL, "double")
+  expect_type(result$DL, "character")
 })
 
 
-test_that("add_dose_level returns numeric DL for single-analyte data", {
+test_that("add_dose_level returns character DL for single-analyte data", {
   result <- add_dose_level(examplinib_sad_nif)
 
   expect_true("DL" %in% names(result))
-  expect_type(result$DL, "double")
-  expect_equal(sort(unique(result$DL)), c(5, 10, 20, 50, 100, 200, 500, 800, 1000))
+  expect_type(result$DL, "character")
+  expect_setequal(
+    unique(result$DL),
+    c(
+      "5-RS2023", "10-RS2023", "20-RS2023", "50-RS2023", "100-RS2023",
+      "200-RS2023", "500-RS2023", "800-RS2023", "1000-RS2023"
+    )
+  )
 })
 
 
@@ -50,7 +56,8 @@ test_that("add_dose_level matches dose_levels for example data when DOSE equals 
   result <- add_dose_level(examplinib_sad_nif)
 
   expected <- dose_levels(examplinib_sad_nif)$RS2023
-  expect_true(all(sort(unique(result$DL)) %in% expected))
+  dl_numeric <- as.numeric(sub("-.*$", "", unique(result$DL)))
+  expect_true(all(sort(dl_numeric) %in% expected))
 })
 
 
@@ -76,7 +83,7 @@ test_that("add_dose_level works on minimal nif via ensure helpers", {
   result <- add_dose_level(examplinib_sad_min_nif)
 
   expect_true("DL" %in% names(result))
-  expect_type(result$DL, "double")
+  expect_type(result$DL, "character")
   expect_gt(length(unique(result$DL)), 1)
 })
 
@@ -102,7 +109,22 @@ test_that("add_dose_level preserves row count when starting doses are duplicated
 })
 
 
-test_that("add_dose_level keeps numeric DL for single-drug subjects in mixed studies", {
+test_that("add_dose_level preserves row count when starting doses conflict at same time", {
+  obj <- nif(tibble::tribble(
+     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+       1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+       1,     0,  200,    1,     1,  NA,      "A",     "A",       FALSE,   200,
+       1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA
+    ))
+
+  expect_error(
+    result <- suppressWarnings(add_dose_level(obj)),
+    "Dose level cannot be determined"
+  )
+})
+
+
+test_that("add_dose_level uses character DL for single-drug subjects in mixed studies", {
   obj <- nif(tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
      1,    0,  100,    1,     1,  NA, "DRUG_A", "DRUG_A",       FALSE,   100,
@@ -138,9 +160,8 @@ test_that("add_dose_level agrees with dose_levels when DOSE and AMT differ", {
 )
 
   result <- add_dose_level(obj)
-  levels <- dose_levels(obj)
 
-  expect_equal(unique(result$DL), levels$A[1])
+  expect_equal(unique(result$DL), "100-A")
 })
 
 
@@ -166,3 +187,4 @@ test_that("add_dose_level errors when no qualifying administrations exist", {
 
   expect_error(add_dose_level(obj), "No administrations")
 })
+

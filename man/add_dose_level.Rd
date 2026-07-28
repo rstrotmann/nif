@@ -4,10 +4,12 @@
 \alias{add_dose_level}
 \title{Add dose level (\code{DL}) column}
 \usage{
-add_dose_level(obj)
+add_dose_level(obj, silent = NULL)
 }
 \arguments{
 \item{obj}{A NIF dataset.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 A NIF dataset.

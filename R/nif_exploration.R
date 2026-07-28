@@ -1159,6 +1159,18 @@ mean_dose_plot <- function(
 }
 
 
+#' extract the dose of the first component from a dose level string
+#'
+#' @param dl Dose level as character.
+#'
+#' @returns Dose of the first dose level component as numeric.
+#' @noRd
+sorting_dose_level <- function(dl) {
+  as.numeric(sub("-.*$", "", dl))
+}
+
+
+
 #' Subjects per dose level
 #'
 #' The number of subjects that have observations, per dose level and analyte.
@@ -1184,6 +1196,8 @@ subs_per_dose_level <- function(
   if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
+
+  # business logic
   obj |>
     ensure_analyte() |>
     add_dose_level() |>
@@ -1192,7 +1206,9 @@ subs_per_dose_level <- function(
     filter(.data$EVID == 0) |>
     distinct(across(any_of(c("ID", "DL", "ANALYTE", group)))) |>
     reframe(N = n(), .by = any_of(c("DL", "ANALYTE", "SEX"))) |>
-    arrange(.data$DL, .data$ANALYTE)
+    mutate(.sorting = sorting_dose_level(DL)) |>
+    arrange(.data$.sorting, .data$ANALYTE) |>
+    select(-".sorting")
 }
 
 
@@ -1228,7 +1244,9 @@ obs_per_dose_level <- function(
     filter(.data$ANALYTE %in% analyte) |>
     filter(.data$EVID == 0) |>
     reframe(N = n(), .by = any_of(c("DL", "ANALYTE", group))) |>
-    arrange(.data$DL, .data$ANALYTE)
+    mutate(.sorting = sorting_dose_level(DL)) |>
+    arrange(.data$.sorting, .data$ANALYTE) |>
+    select(-".sorting")
 }
 
 
