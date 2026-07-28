@@ -1151,42 +1151,70 @@ guess_parent <- function(obj) {
 #' administration, `DL`is a numerical value, for drug combinations, it is a
 #' character value specifying the `PARENT` and dose level for the individual
 #' components.
+#'
+#' @param silent Suppress messages.
 #' @param obj A NIF dataset.
+#'
 #' @return A NIF dataset.
 #' @export
 #' @examples
 #' head(add_dose_level(examplinib_sad_nif))
 #' head(add_dose_level(examplinib_sad_min_nif))
-add_dose_level <- function(obj) {
+add_dose_level <- function(obj, silent = NULL) {
+  # input validation
+  validate_nif(obj)
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+  if ("DL" %in% names(obj)) {
+    conditional_cli(
+      cli_alert_warning("DL column will be replaced!"),
+      silent = silent
+    )
+    obj <- select(obj, -c("DL"))
+  }
+
+  # business logic
   temp <- obj |>
     ensure_dose() |>
     ensure_analyte() |>
-    ensure_parent() |>
-    ensure_metabolite() |>
+    # ensure_parent() |>
+    # ensure_metabolite() |>
     as.data.frame() |>
-    filter(.data$METABOLITE == FALSE) |>
+    # filter(.data$METABOLITE == FALSE) |>
+    filter(.data$EVID == 1)
+
+  if (nrow(temp) == 0) {
+    stop("No administrations (EVID = 1) in data set!")
+  }
+
+  temp <- temp |>
     filter(
-      .data$PARENT != "", !is.na(.data$DOSE), .data$AMT != 0,
-      .data$EVID == 1
+      # .data$PARENT != "",
+      # !is.na(.data$DOSE),
+      !is.na(.data$AMT),
+      .data$AMT != 0
     ) |>
-    group_by(.data$ID, .data$ANALYTE) |>
     arrange(.data$ID, .data$TIME, .data$ANALYTE) |>
+    group_by(.data$ID, .data$ANALYTE) |>
     filter(.data$TIME == min(.data$TIME)) |>
-    select("ID", "ANALYTE", "DOSE") |>
+    ungroup() |>
+    distinct(.data$ID, .data$ANALYTE, .data$AMT) |>
     group_by(.data$ID)
 
   if (ungroup(temp) |> distinct(.data$ANALYTE) |> nrow() == 1) {
     temp <- temp |>
-      mutate(DL = .data$DOSE)
+      mutate(DL = .data$AMT) |>
+      select(c("ID", "DL"))
   } else {
     temp <- temp |>
-      mutate(DL = paste0(.data$DOSE, "-", .data$ANALYTE)) |>
+      mutate(DL = paste0(.data$AMT, "-", .data$ANALYTE)) |>
       arrange(.data$ID) |>
       arrange(factor(.data$ANALYTE, levels = analytes(obj))) |>
       summarize(DL = paste0(.data$DL, collapse = "+"))
   }
 
-  left_join(obj, select(temp, c("ID", "DL")), by = "ID")
+  # left_join(obj, select(temp, c("ID", "DL")), by = "ID")
+  left_join(obj, temp, by = "ID")
 }
 
 
@@ -1375,3 +1403,4 @@ imputation_summary <- function(obj, analyte = NULL) {
     reframe(N = n(), .by = c("ANALYTE", "IMPUTATION")) |>
     arrange(.data$ANALYTE, .data$IMPUTATION)
 }
+
