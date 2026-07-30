@@ -123,7 +123,7 @@ documentation for [`add_bl_crcl()`](../reference/add_bl_crcl.md).
 nif_poc <- nif_poc %>%
   add_baseline(sdtm, domain = "lb", testcd = "CREAT") %>%
   add_bl_crcl()
-#> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
+#> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 ```
 
 The nif data set now includes both baseline creatinine and baseline

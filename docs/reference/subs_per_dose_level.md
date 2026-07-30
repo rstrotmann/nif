@@ -32,22 +32,22 @@ A data frame.
 
 ``` r
 subs_per_dose_level(examplinib_poc_nif)
-#>    DL    ANALYTE  N
-#> 1 500     RS2023 80
-#> 2 500 RS2023487A 80
+#>           DL    ANALYTE  N
+#> 1 500-RS2023     RS2023 80
+#> 2 500-RS2023 RS2023487A 80
 subs_per_dose_level(examplinib_sad_nif)
-#>     DL ANALYTE  N
-#> 1    5  RS2023  3
-#> 2   10  RS2023  3
-#> 3   20  RS2023  3
-#> 4   50  RS2023  3
-#> 5  100  RS2023  6
-#> 6  200  RS2023  3
-#> 7  500  RS2023 18
-#> 8  800  RS2023  6
-#> 9 1000  RS2023  3
+#>            DL ANALYTE  N
+#> 1    5-RS2023  RS2023  3
+#> 2   10-RS2023  RS2023  3
+#> 3   20-RS2023  RS2023  3
+#> 4   50-RS2023  RS2023  3
+#> 5  100-RS2023  RS2023  6
+#> 6  200-RS2023  RS2023  3
+#> 7  500-RS2023  RS2023 18
+#> 8  800-RS2023  RS2023  6
+#> 9 1000-RS2023  RS2023  3
 subs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
-#>    DL ANALYTE SEX  N
-#> 1 500  RS2023   0 46
-#> 2 500  RS2023   1 34
+#>           DL ANALYTE SEX  N
+#> 1 500-RS2023  RS2023   0 46
+#> 2 500-RS2023  RS2023   1 34
 ```

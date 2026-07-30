@@ -121,7 +121,7 @@ automatically included during the generation of a nif object.
 
 ``` r
 head(add_baseline(examplinib_sad_nif, examplinib_sad, "vs", "WEIGHT"))
-#> baseline_filter for BL_WEIGHT set to VSBLFL == 'Y'
+#> ℹ baseline_filter for BL_WEIGHT set to VSBLFL == 'Y'
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI
 #> 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #> 2   2  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
