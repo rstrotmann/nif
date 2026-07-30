@@ -1206,7 +1206,7 @@ subs_per_dose_level <- function(
     filter(.data$EVID == 0) |>
     distinct(across(any_of(c("ID", "DL", "ANALYTE", group)))) |>
     reframe(N = n(), .by = any_of(c("DL", "ANALYTE", "SEX"))) |>
-    mutate(.sorting = sorting_dose_level(DL)) |>
+    mutate(.sorting = sorting_dose_level(.data$DL)) |>
     arrange(.data$.sorting, .data$ANALYTE) |>
     select(-".sorting")
 }
@@ -1237,6 +1237,7 @@ obs_per_dose_level <- function(
   if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
+
   obj |>
     ensure_analyte() |>
     add_dose_level() |>
@@ -1244,7 +1245,7 @@ obs_per_dose_level <- function(
     filter(.data$ANALYTE %in% analyte) |>
     filter(.data$EVID == 0) |>
     reframe(N = n(), .by = any_of(c("DL", "ANALYTE", group))) |>
-    mutate(.sorting = sorting_dose_level(DL)) |>
+    mutate(.sorting = sorting_dose_level(.data$DL)) |>
     arrange(.data$.sorting, .data$ANALYTE) |>
     select(-".sorting")
 }

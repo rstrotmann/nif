@@ -149,9 +149,11 @@ add_baseline <- function(
     baseline_filter <- paste0(
       blcol, " == 'Y'"
     )
-    conditional_message(
-      "baseline_filter for ", bl_field, " set to ",
-      baseline_filter,
+    conditional_cli(
+      cli_alert_info(paste0(
+        "baseline_filter for ", bl_field, " set to ",
+        baseline_filter
+      )),
       silent = silent
     )
   }

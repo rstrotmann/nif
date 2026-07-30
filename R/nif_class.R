@@ -1145,35 +1145,36 @@ guess_parent <- function(obj) {
 }
 
 
-#' Add dose level (`DL`) column
+#' Index dosing regimen episodes
 #'
-#' Dose level is defined as the starting dose. For data sets with single drug
-#' administration, `DL`is a numerical value, for drug combinations, it is a
-#' character value specifying the `PARENT` and dose level for the individual
-#' components.
+#' Identifies treatment regimen episodes from administration records. Administrations
+#' within `admin_window` hours of each other (per subject) are treated as
+#' co-administrations. A new `REG_ID` starts whenever the set of co-administered
+#' analytes changes.
 #'
+#' @param obj A nif object.
+#' @param admin_window Time window in hours within which administrations are
+#'   considered co-administrations. Defaults to `12`.
 #' @param silent Suppress messages.
-#' @param obj A NIF dataset.
 #'
-#' @return A NIF dataset.
+#' @returns The input with treatment regimen episode ID column `REG_ID`, regimen
+#' `REG` and dose level `DL` added.
 #' @export
-#' @examples
-#' head(add_dose_level(examplinib_sad_nif))
-#' head(add_dose_level(examplinib_sad_min_nif))
-add_dose_level <- function(obj, silent = NULL) {
-  # input validation
+index_regimen <- function(obj, admin_window = 12, silent = NULL) {
   validate_nif(obj)
-  validate_argument(silent, "logical", allow_null = TRUE)
-
-  if ("DL" %in% names(obj)) {
-    conditional_cli(
-      cli_alert_warning("DL column will be replaced!"),
-      silent = silent
-    )
-    obj <- select(obj, -c("DL"))
+  validate_argument(admin_window, "numeric")
+  if (admin_window <= 0) {
+    stop("admin_window must be positive!")
   }
 
-  # business logic
+  if (any(c("DL", "REG", "REG_ID") %in% names(obj))) {
+    conditional_cli(
+      cli_alert_warning("DL, REG and REG_ID columns will be replaced!"),
+      silent = silent
+    )
+    obj <- select(obj, -any_of(c("DL", "REG", "REG_ID")))
+  }
+
   admin <- obj |>
     ensure_dose() |>
     ensure_analyte() |>
@@ -1184,40 +1185,116 @@ add_dose_level <- function(obj, silent = NULL) {
     stop("No administrations (EVID = 1) in data set!")
   }
 
-  first_dose <- admin |>
-    filter(
-      !is.na(.data$AMT),
-      .data$AMT != 0
+  # business logic starts here
+
+  # administration times with any administrations being within the admin_window
+  # to each other falling into one .cluster
+  admin_times <- obj |>
+    filter(.data$EVID == 1) |>
+    distinct(.data$ID, .data$TIME) |>
+    arrange(.data$ID, .data$TIME) |>
+    group_by(.data$ID) |>
+    mutate(
+      .cluster = cumsum(
+        dplyr::row_number() == 1 |
+          (.data$TIME - dplyr::lag(.data$TIME)) >= admin_window
+      )
     ) |>
-    arrange(.data$ID, .data$TIME, .data$ANALYTE) |>
-    group_by(.data$ID, .data$ANALYTE) |>
-    filter(.data$TIME == min(.data$TIME)) |>
+    ungroup()
+
+  # identify dose level, dosing regimen
+  dose_regimen <- obj |>
+    ensure_analyte() |>
+    filter(.data$EVID == 1) |>
+    left_join(admin_times, by = c("ID", "TIME")) |>
+    group_by(.data$ID, .data$.cluster, .data$ANALYTE) |>
+    summarize(
+      TIME = min(.data$TIME),
+      AMT = .data$AMT[which.min(.data$TIME)],
+      .groups = "drop_last"
+    ) |>
+    arrange(.data$ANALYTE) |>
+    summarize(
+      TIME = min(.data$TIME),
+      REG = paste(.data$ANALYTE, collapse = "+"),
+      DL = paste(paste(.data$AMT, .data$ANALYTE, sep = "-"), collapse = "+"),
+      .groups = "drop"
+    ) |>
+    group_by(.data$ID) |>
+    mutate(.last_reg = dplyr::lag(.data$REG, default = "start")) |>
+    filter(.data$REG != .data$.last_reg) |>
+    mutate(REG_ID = dplyr::row_number()) |>
     ungroup() |>
-    distinct(.data$ID, .data$ANALYTE, .data$AMT)
+    select("ID", "TIME", "REG_ID", "REG", "DL")
 
-  multiple_dl <- first_dose |>
-    reframe(n = n(), .by = c("ID", "ANALYTE")) |>
-    filter(n > 1) |>
-    pull(ID)
+  obj |>
+    left_join(dose_regimen, by = c("ID", "TIME")) |>
+    group_by(.data$ID) |>
+    arrange(.data$TIME, .by_group = TRUE) |>
+    tidyr::fill("REG_ID", .direction = "downup") |>
+    tidyr::fill("REG", .direction = "downup") |>
+    tidyr::fill("DL", .direction = "downup") |>
+    ungroup() |>
+    nif()
+}
 
-  if (length(multiple_dl) > 0) {
+
+#' Add dose level column
+#'
+#' Dose level is defined as the starting dose regimen for each ID.
+#'
+#' @param obj A NIF dataset.
+#' @param silent Suppress messages.
+#'
+#' @return A NIF dataset.
+#' @export
+add_dose_level <- function(obj, silent = NULL) {
+  # input validation
+  validate_nif(obj)
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+  if (any(c("DL", "REG", "REG_ID") %in% names(obj))) {
+    conditional_cli(
+      cli_alert_warning("DL, REG and REG_ID columns will be replaced!"),
+      silent = silent
+    )
+    obj <- select(obj, -any_of(c("DL", "REG", "REG_ID")))
+  }
+
+  # business logic
+  if (!"REF" %in% names(obj)) {
+    obj <- arrange_and_add_ref(obj)
+  }
+
+  admin <- obj |>
+    ensure_dose() |>
+    ensure_analyte() |>
+    as.data.frame() |>
+    filter(.data$EVID == 1)
+
+  if (nrow(admin) == 0) {
+    stop("No administrations (EVID = 1) in data set!")
+  }
+
+  duplicate_admin <- admin |>
+    reframe(n = n(), .by = c("ID", "TIME", "ANALYTE")) |>
+    filter(n > 1)
+
+  if (nrow(duplicate_admin) > 0) {
     stop(paste0(
-      "Dose level cannot be determined! ",
-      "Multiple first administrations for ",
-      plural("subject", length(multiple_dl) > 1), " ",
-      nice_enumeration(multiple_dl), "!"
+      "Dose level cannot be determined: ",
+      "Multiple administrations per time point.\n",
+      df_to_string(duplicate_admin, indent = 2)
     ))
   }
 
-  temp <- first_dose |>
-    mutate(DL = paste0(.data$AMT, "-", .data$ANALYTE)) |>
-    arrange(.data$ID) |>
+  obj |>
+    index_regimen() |>
     group_by(.data$ID) |>
-    arrange(factor(.data$ANALYTE, levels = analytes(obj))) |>
-    summarize(DL = paste0(.data$DL, collapse = "+")) |>
-    ungroup()
+    mutate(DL = .data$DL[row_number() == 1]) |>
+    select(-c("REG_ID", "REG")) |>
+    nif()
 
-  left_join(obj, temp, by = "ID")
 }
 
 
