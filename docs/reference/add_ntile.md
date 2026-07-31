@@ -1,14 +1,18 @@
 # Add quantiles for a subject-level covariate
 
-Calculate quantiles for a column's values across all subjects. Each
-subject gets the same n-tile value across all their rows. The input
-column must have exactly one distinct value per subject (e.g., age,
-weight, baseline values).
+Assigns n-tile bins for a subject-level numeric column. Bins are
+computed from the distinct non-missing values across subjects (via
+[`dplyr::ntile()`](https://dplyr.tidyverse.org/reference/ntile.html)),
+then mapped back so identical values always share the same bin. Each
+subject gets the same n-tile across all their rows. The input column
+must have exactly one distinct value per subject, including `NA` (e.g.,
+age, weight, baseline values). If there are fewer distinct values than
+`n`, fewer than `n` bins are used.
 
 ## Usage
 
 ``` r
-add_ntile(nif, input_col, n = 4, ntile_name = NULL)
+add_ntile(nif, input_col, n = 4, ntile_name = NULL, silent = NULL)
 ```
 
 ## Arguments
@@ -31,16 +35,20 @@ add_ntile(nif, input_col, n = 4, ntile_name = NULL)
   Custom name for the output column. If NULL, uses `x_NTILE` format
   where x is the name of the input column
 
+- silent:
+
+  Suppress messages.
+
 ## Value
 
-A nif object with a new column containing the n-tile values (1 to n),
-named either `x_NTILE` (default) or the custom name specified in
-`ntile_name`
+A nif object with a new column containing the n-tile values (1 to at
+most `n`), named either `x_NTILE` (default) or the custom name specified
+in `ntile_name`. Subjects with a missing input value receive `NA`.
 
 ## See also
 
-[`dplyr::ntile()`](https://dplyr.tidyverse.org/reference/ntile.html) for
-the underlying n-tile calculation
+[`dplyr::ntile()`](https://dplyr.tidyverse.org/reference/ntile.html)
+used on distinct subject values
 
 ## Examples
 
@@ -66,6 +74,6 @@ examplinib_poc_nif |>
   distinct(ID, WEIGHT, WEIGHT_NTILE) |>
   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
   geom_point() +
-  labs(title = "Plasma concentrations by WEIGHT quartiles") +
+  labs(title = "WEIGHT by n-tile") +
   theme_bw()
 ```

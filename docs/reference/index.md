@@ -116,7 +116,8 @@
   in the data set
 - [`gather_duplicates()`](gather_duplicates.md) **\[experimental\]** :
   Consolidate multiplicate observations in a nif object
-- [`geom_admin()`](geom_admin.md) : Administration geom layer for ggplot
+- [`geom_admin()`](geom_admin.md) : Administration lines for a selected
+  analyte
 - [`hash()`](hash.md) : XXH128 hash
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection
@@ -200,8 +201,6 @@
   entries with missing time information
 - [`standardize_date_format()`](standardize_date_format.md) : Convert
   date fields to POSIX format
-- [`stat_admin()`](stat_admin.md) : ggplot stat for treatment
-  administrations
 - [`studies()`](studies.md) : Studies within a nif object
 - [`subject_info()`](subject_info.md) : Baseline details for specific
   subjects
