@@ -32,7 +32,7 @@ for. If NULL, no filtering is done.}
 
 \item{keep}{Columns to keep from the input nif object, as character.}
 
-\item{group}{Grouping variable from the pp domain, as character.}
+\item{group}{Grouping variable from the pp domain to retain, as character.}
 
 \item{observation_filter}{Observation filter term as character. Must be valid
 R code that can be evaluated on the PP domain.}

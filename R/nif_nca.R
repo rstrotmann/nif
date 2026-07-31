@@ -275,7 +275,7 @@ nca <- function(
 #' @param keep Columns to keep from the input nif object, as character.
 #' @param observation_filter Observation filter term as character. Must be valid
 #'   R code that can be evaluated on the PP domain.
-#' @param group Grouping variable from the pp domain, as character.
+#' @param group Grouping variable from the pp domain to retain, as character.
 #' @param silent Suppress message output.
 #' @param ppcat The value for PPCAT (Test category) to filter the PP domain for.
 #'   If NULL, no filtering is done.
@@ -295,42 +295,23 @@ nca_from_pp <- function(
   observation_filter = "TRUE",
   silent = NULL
 ) {
-  # Input validation
-  if (!inherits(obj, "nif")) {
-    stop("nif must be an nif object")
-  }
-
-  if (!inherits(sdtm_data, "sdtm")) {
-    stop("sdtm_data must be an sdtm object")
-  }
-
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(ppcat, "ppcat", allow_null = TRUE)
-  validate_char_param(ppscat, "ppscat", allow_null = TRUE)
-  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
-  validate_char_param(group, "group", allow_null = TRUE)
-  validate_char_param(observation_filter, "observation_filter")
-
-  if (!"pp" %in% names(sdtm_data$domains)) {
-    stop("Domain PP is not included in the sdtm object")
-  }
-
-  # Validate observation filter
-  tryCatch(
-    {
-      parse(text = observation_filter)
-    },
-    error = function(e) {
-      stop("Invalid observation_filter")
-    }
-  )
+  validate_nif(obj)
+  validate_sdtm(sdtm_data, "pp")
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(ppcat, "character", allow_null = TRUE)
+  validate_argument(ppscat, "character", allow_null = TRUE)
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(group, "character", allow_null = TRUE)
+  validate_argument(observation_filter, "character")
 
   # Guess analyte if not provided
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
-    conditional_message(
-      "NCA: No analyte specified. Selected", current_analyte,
-      "as the most likely.",
+    conditional_cli(
+      cli_alert_warning(paste0(
+        "NCA: No analyte specified. Selected ", current_analyte,
+        " as the most likely."
+      )),
       silent = silent
     )
   } else {
@@ -338,20 +319,41 @@ nca_from_pp <- function(
   }
 
   # preserve the columns to keep from the nif object
+  keep_fields <- intersect(
+    names(obj),
+    unique(c(
+      "ID", "USUBJID", "AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI", "PART",
+      "COHORT",
+      keep,
+      str_subset(names(obj), "BL_.*")
+    ))
+  )
+
+  conditional_cli(
+    cli_alert_info(paste0(
+      "Keep fields: ",
+      nice_enumeration(keep_fields)
+    )),
+    silent = silent
+  )
+
   keep_data <- obj |>
     as.data.frame() |>
     filter(.data$ANALYTE == current_analyte) |>
-    select(
-      c(
-        "ID", "USUBJID", any_of(keep),
-        any_of(c(
-          "AGE", "SEX", "RACE", "WEIGHT", "HEIGHT", "BMI",
-          "PART", "COHORT", "DOSE"
-        )),
-        starts_with("BL_")
-      )
-    ) |>
+    select(all_of(keep_fields)) |>
     distinct()
+
+  # ensure keep_data has only one row per subject
+  multiple_keep_per_id <- keep_data |>
+    reframe(n = n(), .by = "ID") |>
+    filter(n > 1)
+
+  if (nrow(multiple_keep_per_id) > 0) {
+    stop(paste0(
+      "Multiple keep values for subjects ",
+      nice_enumeration(multiple_keep_per_id$ID)
+    ))
+  }
 
   pp <- domain(sdtm_data, "pp")
 
@@ -391,6 +393,7 @@ nca_from_pp <- function(
   } else {
     obs_expr <- validate_filter(observation_filter)
   }
+
   result <- result |>
     filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     select(any_of(c(
@@ -437,7 +440,7 @@ nca_summary <- function(
     "auclast", "cmax", "tmax", "half.life", "aucinf.obs",
     "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"
   ),
-  group = NULL
+  group = "DOSE"
 ) {
   out <- nca |>
     filter(.data$PPTESTCD %in% parameters)
@@ -449,7 +452,7 @@ nca_summary <- function(
     out <- mutate(out, PPORRES = .data$PPSTRESN)
 
   out |>
-    group_by_at(c(group, "DOSE", "PPTESTCD")) |>
+    group_by_at(c(group, "PPTESTCD")) |>
     summarize(
       geomean = PKNCA::geomean(.data$PPORRES, na.rm = TRUE),
       geocv = PKNCA::geocv(.data$PPORRES, na.rm = TRUE),
@@ -483,7 +486,7 @@ nca_summary_table <- function(
     "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"
   ),
   digits = 2,
-  group = NULL
+  group = "DOSE"
 ) {
   s <- nca_summary(nca, parameters, group = group)
 
@@ -509,7 +512,7 @@ nca_summary_table <- function(
     ) |>
     mutate(value = paste0(.data$center, " (", .data$dispersion, ")")) |>
     tidyr::pivot_wider(
-      id_cols = c(any_of(c(group, "DOSE")), "n"),
+      id_cols = c(any_of(c(group)), "n"),
       names_from = "PPTESTCD", values_from = "value"
     )
 }

@@ -9,7 +9,7 @@ nca_summary_table(
   parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs", "AUCLST", "CMAX",
     "TMAX", "LAMZHL", "AUCIFP"),
   digits = 2,
-  group = NULL
+  group = "DOSE"
 )
 }
 \arguments{
