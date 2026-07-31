@@ -100,7 +100,7 @@ add_ntile <- function(
       silent = silent
     )
     nif <- nif |>
-      select(-c(column_name))
+      select(-all_of(column_name))
   }
 
   # One value per subject, then n-tiles on distinct values (ties stay together)

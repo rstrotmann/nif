@@ -15,6 +15,7 @@ stat_admin_proto <- ggplot2::ggproto(
   "stat_admin_proto",
   ggplot2::Stat,
   required_aes = c("x", "admin"),
+  dropped_aes = c("x", "y", "admin"),
   default_aes = ggplot2::aes(
     xintercept = after_stat(xintercept)
   ),
@@ -28,11 +29,6 @@ stat_admin_proto <- ggplot2::ggproto(
     missing_cols <- setdiff(required_cols, names(data))
     if (length(missing_cols) > 0) {
       stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-    }
-
-    # Convert admin to logical if numeric
-    if (is.numeric(data$admin)) {
-      data$admin <- as.logical(data$admin)
     }
 
     # Validate admin values
@@ -102,6 +98,13 @@ stat_admin_proto <- ggplot2::ggproto(
 #'
 #' @import ggplot2
 #' @export
+#' @examples
+#' nif |>
+#' filter(ID == 1) |>
+#' ggplot(aes(x = TIME, y = DV, admin = EVID == 1)) +
+#' geom_admin() +
+#' geom_point()
+#'
 stat_admin <- function(
   mapping = NULL,
   data = NULL,

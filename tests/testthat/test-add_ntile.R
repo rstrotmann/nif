@@ -347,72 +347,10 @@ test_that("add_ntile handles empty data frame", {
 
   expect_error(
     add_ntile(test_data, input_col = "DV"),
-    # "Insufficient subjects (0) for calculating 4 n-tiles. Need at least 4 subjects."
     "Column 'DV' must contain numeric values"
   )
 })
 
-# test_that("add_ntile handles insufficient subjects", {
-#   test_data <- tibble::tribble(
-#     ~ID, ~TIME, ~DV, ~ANALYTE,
-#     1,   0,     10,  "A",
-#     1,   1,     10,  "A",
-#     2,   0,     25,  "A",
-#     2,   1,     25,  "A"
-#   )
-#
-#   class(test_data) <- c("nif", "data.frame")
-#
-#   # Test with default n=4 but only 2 subjects
-#   expect_error(
-#     add_ntile(test_data, input_col = "DV"),
-#     "Insufficient subjects (2) for calculating 4 n-tiles. Need at least 4 subjects."
-#   )
-#
-#   # Test with n=2 and 2 subjects (should work)
-#   result <- add_ntile(test_data, input_col = "DV", n = 2)
-#   expect_true("DV_NTILE" %in% names(result))
-#   expect_true(all(result$DV_NTILE >= 1 & result$DV_NTILE <= 2))
-# })
-
-# test_that("add_ntile handles single subject", {
-#   test_data <- tibble::tribble(
-#     ~ID, ~TIME, ~DV, ~ANALYTE,
-#     1,   0,     10,  "A",
-#     1,   1,     10,  "A",
-#     1,   2,     10,  "A"
-#   )
-#
-#   class(test_data) <- c("nif", "data.frame")
-#
-#   expect_error(
-#     add_ntile(test_data, input_col = "DV"),
-#     "Insufficient subjects (1) for calculating 4 n-tiles. Need at least 4 subjects."
-#   )
-#
-#   # Test with n=1 (should fail validation)
-#   expect_error(
-#     add_ntile(test_data, input_col = "DV", n = 1),
-#     "n must be a positive integer between 2 and 100"
-#   )
-# })
-
-# test_that("add_ntile handles n larger than number of subjects", {
-#   test_data <- tibble::tribble(
-#     ~ID, ~TIME, ~DV, ~ANALYTE,
-#     1,   0,     10,  "A",
-#     1,   1,     10,  "A",
-#     2,   0,     25,  "A",
-#     2,   1,     25,  "A"
-#   )
-#
-#   class(test_data) <- c("nif", "data.frame")
-#
-#   expect_error(
-#     add_ntile(test_data, input_col = "DV", n = 10),
-#     "Insufficient subjects (2) for calculating 10 n-tiles. Need at least 10 subjects."
-#   )
-# })
 
 test_that("add_ntile preserves original data", {
   test_data <- tibble::tribble(
@@ -526,33 +464,99 @@ test_that("add_ntile assigns one n-tile when all subjects share the same value",
 })
 
 
-test_that("add_ntile handles subjects with multiple distinct values", {
+test_that("add_ntile errors when a subject has multiple distinct values", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
-    1,   0,     10,  "A",      0,    1,    0,
-    1,   1,     10,  "A",      0,    1,    0,
-    1,   2,     10,  "A",      0,    1,    0,    # Multiple rows for ID 1, but same value
-    2,   0,     25,  "A",      0,    1,    0,
-    2,   1,     25,  "A",      0,    1,    0,
-    3,   0,     5,   "A",      0,    1,    0,
-    3,   1,     5,   "A",      0,    1,    0,
-    4,   0,     40,  "A",      0,    1,    0,
-    4,   1,     40,  "A",      0,    1,    0
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+       1,     0,  10,      "A",    0,    1,     0,
+       1,     1,  20,      "A",    0,    1,     0,
+       2,     0,  25,      "A",    0,    1,     0,
+       3,     0,   5,      "A",    0,    1,     0,
+       4,     0,  40,      "A",    0,    1,     0
   )
 
   class(test_data) <- c("nif", "data.frame")
 
-  result <- add_ntile(test_data, input_col = "DV")
-
-  # Check that NTILE column was added
-  expect_true("DV_NTILE" %in% names(result))
-
-  # Check that all rows for each subject have the same NTILE value
-  expect_equal(result$DV_NTILE[result$ID == 1], rep(result$DV_NTILE[result$ID == 1][1], 3))
-  expect_equal(result$DV_NTILE[result$ID == 2], rep(result$DV_NTILE[result$ID == 2][1], 2))
-  expect_equal(result$DV_NTILE[result$ID == 3], rep(result$DV_NTILE[result$ID == 3][1], 2))
-  expect_equal(result$DV_NTILE[result$ID == 4], rep(result$DV_NTILE[result$ID == 4][1], 2))
+  expect_error(
+    add_ntile(test_data, input_col = "DV"),
+    "Some subjects do not have unique values for DV"
+  )
 })
+
+
+test_that("add_ntile errors when a subject mixes NA and non-NA values", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+       1,     0,  NA,      "A",    0,    1,     0,
+       1,     1,  10,      "A",    0,    1,     0,
+       2,     0,  20,      "A",    0,    1,     0,
+       3,     0,  30,      "A",    0,    1,     0,
+       4,     0,  40,      "A",    0,    1,     0
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  expect_error(
+    add_ntile(test_data, input_col = "DV"),
+    "Some subjects do not have unique values for DV"
+  )
+})
+
+
+test_that("add_ntile replaces an existing n-tile column", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+       1,     0,  10,      "A",    0,    1,     0,
+       2,     0,  25,      "A",    0,    1,     0,
+       3,     0,   5,      "A",    0,    1,     0,
+       4,     0,  40,      "A",    0,    1,     0
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  first <- add_ntile(test_data, input_col = "DV")
+  second <- add_ntile(first, input_col = "DV", silent = TRUE)
+
+  expect_equal(sum(names(second) == "DV_NTILE"), 1)
+  expect_false(any(c("DV_NTILE.x", "DV_NTILE.y") %in% names(second)))
+  expect_equal(second$DV_NTILE, first$DV_NTILE)
+  expect_s3_class(second, "nif")
+})
+
+
+test_that("add_ntile allows fewer subjects than n and uses fewer bins", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+       1,     0,  10,      "A",    0,    1,     0,
+       1,     1,  10,      "A",    0,    1,     0,
+       2,     0,  25,      "A",    0,    1,     0,
+       2,     1,  25,      "A",    0,    1,     0
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  result <- add_ntile(test_data, input_col = "DV", n = 4)
+
+  expect_true("DV_NTILE" %in% names(result))
+  expect_equal(sort(unique(result$DV_NTILE)), c(1L, 2L))
+  expect_equal(nrow(result), nrow(test_data))
+})
+
+
+test_that("add_ntile errors when ID is missing", {
+  test_data <- tibble::tribble(
+     ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+         0,  10,      "A",    0,    1,     0,
+         1,  10,      "A",    0,    1,     0
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  expect_error(
+    add_ntile(test_data, input_col = "DV"),
+    "Missing essential fields in nif object: ID"
+  )
+})
+
 
 test_that("add_ntile handles invalid input object", {
   # Test with non-nif object
