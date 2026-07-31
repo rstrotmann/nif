@@ -1,8 +1,12 @@
 #' Add quantiles for a subject-level covariate
 #'
-#' Calculate quantiles for a column's values across all subjects. Each subject
-#' gets the same n-tile value across all their rows. The input column must have
-#' exactly one distinct value per subject (e.g., age, weight, baseline values).
+#' Assigns n-tile bins for a subject-level numeric column. Bins are computed
+#' from the distinct non-missing values across subjects (via [dplyr::ntile()]),
+#' then mapped back so identical values always share the same bin. Each subject
+#' gets the same n-tile across all their rows. The input column must have
+#' exactly one distinct value per subject, including `NA` (e.g., age, weight,
+#' baseline values). If there are fewer distinct values than `n`, fewer than `n`
+#' bins are used.
 #'
 #' @param nif A nif object
 #' @param input_col The column name to calculate n-tiles for (must have one
@@ -10,15 +14,16 @@
 #' @param n The number of quantiles (n-tiles) to generate (default = 4)
 #' @param ntile_name Custom name for the output column. If NULL, uses `x_NTILE`
 #'   format where x is the name of the input column
+#' @param silent Suppress messages.
 #'
-#' @return A nif object with a new column containing the n-tile values (1 to n),
-#'   named either `x_NTILE` (default) or the custom name specified in
-#'   `ntile_name`
+#' @return A nif object with a new column containing the n-tile values (1 to at
+#'   most `n`), named either `x_NTILE` (default) or the custom name specified in
+#'   `ntile_name`. Subjects with a missing input value receive `NA`.
 #'
 #' @import dplyr
 #' @export
 #'
-#' @seealso [dplyr::ntile()] for the underlying n-tile calculation
+#' @seealso [dplyr::ntile()] used on distinct subject values
 #'
 #' @examples
 #' library(dplyr)
@@ -33,31 +38,25 @@
 #'   distinct(ID, WEIGHT, WEIGHT_NTILE) |>
 #'   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
 #'   geom_point() +
-#'   labs(title = "Plasma concentrations by WEIGHT quartiles") +
+#'   labs(title = "WEIGHT by n-tile") +
 #'   theme_bw()
-add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
-  # Validate that input is a nif object
-  if (!inherits(nif, "nif")) {
-    stop("Input must be a nif object")
-  }
+add_ntile <- function(
+    nif,
+    input_col,
+    n = 4,
+    ntile_name = NULL,
+    silent = NULL
+    ) {
+  # input validation
+  validate_nif(nif)
+  validate_argument(input_col, "character")
+  validate_argument(n, "numeric")
 
-  # Validate that input_col parameter is a character string
-  if (!is.character(input_col) || length(input_col) != 1) {
-    stop("input_col must be a single character string")
-  }
+  if (n < 2 || n > 100)  stop("n must be a positive integer between 2 and 100")
+  validate_argument(ntile_name, "character", allow_null = TRUE)
 
-  # Validate that n is a positive integer between 2 and 100
-  if (!is.numeric(n) ||
-        length(n) != 1 ||
-        n < 2 || n > 100 ||
-        n != as.integer(n))
-    stop("n must be a positive integer between 2 and 100")
-
-  # Validate that ntile_name is either NULL or a valid character string
-  if (!is.null(ntile_name)) {
-    if (!is.character(ntile_name) || length(ntile_name) != 1) {
-      stop("ntile_name must be a single character string or NULL")
-    }
+  if (n %% 1 != 0) {
+    stop("n must be an integer value!")
   }
 
   # Check that required columns exist: ID, input_col
@@ -76,58 +75,49 @@ add_ntile <- function(nif, input_col, n = 4, ntile_name = NULL) {
   }
 
   # Validate that input_col has exactly one distinct value per subject (ID)
-  subject_values <- nif |>
-    as.data.frame() |>
-    group_by(.data$ID) |>
-    summarise(
-      n_distinct_values = n_distinct(.data[[input_col]], na.rm = TRUE),
-      .groups = "drop"
-    )
+  multiple_baseline_id <- nif |>
+    reframe(n = n_distinct(.data[[input_col]], na.rm = FALSE), .by = "ID") |>
+    filter(n > 1)
 
-  # Check if any subject has multiple distinct values
-  subjects_with_multiple <- subject_values |>
-    filter(.data$n_distinct_values > 1)
-
-  if (nrow(subjects_with_multiple) > 0) {
-    stop(
-      "Column '", input_col, "' must have exactly one distinct value per ",
-      "subject. Found multiple values for subjects: ",
-      nice_enumeration(subjects_with_multiple$ID)
-    )
+  if (nrow(multiple_baseline_id) > 0) {
+    stop(paste0(
+      "Some subjects do not have unique values for ", input_col, ":\n",
+      df_to_string(multiple_baseline_id, indent = 2)
+    ))
   }
 
-  # Extract unique subject-level values for n-tile calculation
+  column_name <- ifelse(
+    is.null(ntile_name),
+    paste0(input_col, "_NTILE"),
+    ntile_name
+    )
+
+  if (column_name %in% names(nif)) {
+    conditional_cli(
+      cli_alert_warning(paste0(
+        "Column ", column_name, " will be replaced!"
+      )),
+      silent = silent
+    )
+    nif <- nif |>
+      select(-c(column_name))
+  }
+
+  # One value per subject, then n-tiles on distinct values (ties stay together)
   subject_level_data <- nif |>
-    as.data.frame() |>
-    group_by(.data$ID) |>
-    summarise(
-      value = first(.data[[input_col]]),
-      .groups = "drop"
-    )
+    reframe(value = first(.data[[input_col]], na_rm = TRUE), .by = "ID")
 
-  # Handle cases where there are insufficient observations for n-tile
-  # calculation
-  if (nrow(subject_level_data) < n) {
-    stop(
-      "Insufficient subjects (", nrow(subject_level_data),
-      ") for calculating ", n, " n-tiles. Need at least ", n, " subjects."
-    )
-  }
+  temp <- subject_level_data |>
+    filter(!is.na(value)) |>
+    distinct(value) |>
+    mutate(ntile = ntile(.data$value, n = n)) |>
+    rename_with(~ input_col, "value") |>
+    rename_with(~ column_name, "ntile")
 
-  # Calculate n-tiles across all subjects (not within each subject)
-  subject_level_data <- subject_level_data |>
-    mutate(ntile_value = ntile(.data$value, n = n))
-
-  column_name <- ifelse(is.null(ntile_name), paste0(input_col,
-                                                    "_NTILE"), ntile_name)
-
-  # Add the new column with the determined name to the nif object
   nif |>
-    as.data.frame() |>
     left_join(
-      select(subject_level_data, "ID", "ntile_value"),
-      by = "ID"
+      temp,
+      by = input_col
     ) |>
-    rename_with(~ column_name, "ntile_value") |>
     nif()
 }

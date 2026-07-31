@@ -93,35 +93,127 @@ test_that("add_ntile works with custom column name", {
   }
 })
 
-# test_that("add_ntile handles ties correctly", {
-#   test_data <- tibble::tribble(
-#     ~ID, ~TIME, ~DV, ~ANALYTE,
-#     1,   0,     10,  "A",
-#     1,   1,     10,  "A",  # Same value as ID 1
-#     2,   0,     10,  "A",  # Same value as ID 1
-#     2,   1,     10,  "A",
-#     3,   0,     20,  "A",
-#     3,   1,     20,  "A",
-#     4,   0,     20,  "A",  # Same value as ID 3
-#     4,   1,     20,  "A",
-#     5,   0,     30,  "A",
-#     5,   1,     30,  "A",
-#     6,   0,     30,  "A",  # Same value as ID 5
-#     6,   1,     30,  "A"
-#   )
-#
-#   class(test_data) <- c("nif", "data.frame")
-#
-#   result <- add_ntile(test_data, input_col = "DV", n = 4)
-#
-#   # Check that subjects with same values get same NTILE
-#   expect_equal(result$DV_NTILE[result$ID == 1], result$DV_NTILE[result$ID == 2])
-#   expect_equal(result$DV_NTILE[result$ID == 3], result$DV_NTILE[result$ID == 4])
-#   expect_equal(result$DV_NTILE[result$ID == 5], result$DV_NTILE[result$ID == 6])
-#
-#   # Check that NTILE values are between 1 and 4
-#   expect_true(all(result$DV_NTILE >= 1 & result$DV_NTILE <= 4))
-# })
+test_that("add_ntile assigns the same n-tile to subjects with equal values", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+       1,     0,  10,      "A",    0,    1,     0,
+       1,     1,  10,      "A",    0,    1,     0,
+       2,     0,  10,      "A",    0,    1,     0,
+       2,     1,  10,      "A",    0,    1,     0,
+       3,     0,  20,      "A",    0,    1,     0,
+       3,     1,  20,      "A",    0,    1,     0,
+       4,     0,  20,      "A",    0,    1,     0,
+       4,     1,  20,      "A",    0,    1,     0,
+       5,     0,  30,      "A",    0,    1,     0,
+       5,     1,  30,      "A",    0,    1,     0,
+       6,     0,  30,      "A",    0,    1,     0,
+       6,     1,  30,      "A",    0,    1,     0
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  result <- add_ntile(test_data, input_col = "DV", n = 4)
+
+  expect_equal(
+    unique(result$DV_NTILE[result$ID == 1]),
+    unique(result$DV_NTILE[result$ID == 2])
+  )
+  expect_equal(
+    unique(result$DV_NTILE[result$ID == 3]),
+    unique(result$DV_NTILE[result$ID == 4])
+  )
+  expect_equal(
+    unique(result$DV_NTILE[result$ID == 5]),
+    unique(result$DV_NTILE[result$ID == 6])
+  )
+  expect_true(all(result$DV_NTILE >= 1 & result$DV_NTILE <= 4))
+})
+
+
+test_that("add_ntile does not split tied values across n-tiles", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~WEIGHT, ~AMT, ~CMT, ~EVID, ~DV,
+       1,     0,      70,    0,    1,     0,  1,
+       2,     0,      70,    0,    1,     0,  1,
+       3,     0,      70,    0,    1,     0,  1,
+       4,     0,      90,    0,    1,     0,  1,
+       5,     0,      90,    0,    1,     0,  1
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  result <- add_ntile(test_data, input_col = "WEIGHT", n = 4)
+  by_id <- distinct(result, ID, WEIGHT, WEIGHT_NTILE)
+
+  expect_equal(length(unique(by_id$WEIGHT_NTILE[by_id$WEIGHT == 70])), 1)
+  expect_equal(length(unique(by_id$WEIGHT_NTILE[by_id$WEIGHT == 90])), 1)
+  expect_equal(unique(by_id$WEIGHT_NTILE[by_id$WEIGHT == 70]), 1)
+  expect_equal(unique(by_id$WEIGHT_NTILE[by_id$WEIGHT == 90]), 2)
+})
+
+
+test_that("add_ntile maps each distinct value to exactly one n-tile", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~WEIGHT, ~AMT, ~CMT, ~EVID, ~DV,
+       1,     0,       1,    0,    1,     0,  1,
+       2,     0,       2,    0,    1,     0,  1,
+       3,     0,      10,    0,    1,     0,  1,
+       4,     0,      NA,    0,    1,     0,  1,
+       5,     0,       1,    0,    1,     0,  1,
+       6,     0,       2,    0,    1,     0,  1,
+       7,     0,      11,    0,    1,     0,  1,
+       8,     0,      NA,    0,    1,     0,  1,
+       9,     0,       1,    0,    1,     0,  1,
+      10,     0,       2,    0,    1,     0,  1
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  result <- add_ntile(test_data, input_col = "WEIGHT", n = 4)
+  by_id <- distinct(result, ID, WEIGHT, WEIGHT_NTILE)
+
+  ntiles_per_value <- by_id |>
+    filter(!is.na(WEIGHT)) |>
+    reframe(n_ntile = n_distinct(WEIGHT_NTILE), .by = WEIGHT)
+
+  expect_true(all(ntiles_per_value$n_ntile == 1))
+  expect_equal(
+    by_id$WEIGHT_NTILE[match(c(1, 2, 10, 11), by_id$WEIGHT)],
+    c(1L, 2L, 3L, 4L)
+  )
+  expect_true(all(is.na(by_id$WEIGHT_NTILE[is.na(by_id$WEIGHT)])))
+})
+
+
+test_that("add_ntile n-tile assignment is independent of row order", {
+  obj_a <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~AMT, ~CMT, ~EVID,
+       1,     0,  10,    0,    1,     0,
+       2,     0,  10,    0,    1,     0,
+       3,     0,  20,    0,    1,     0,
+       4,     0,  30,    0,    1,     0,
+       5,     0,  40,    0,    1,     0
+  )
+  obj_b <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~AMT, ~CMT, ~EVID,
+       2,     0,  10,    0,    1,     0,
+       1,     0,  10,    0,    1,     0,
+       5,     0,  40,    0,    1,     0,
+       4,     0,  30,    0,    1,     0,
+       3,     0,  20,    0,    1,     0
+  )
+
+  class(obj_a) <- c("nif", "data.frame")
+  class(obj_b) <- c("nif", "data.frame")
+
+  result_a <- distinct(add_ntile(obj_a, input_col = "DV"), ID, DV, DV_NTILE) |>
+    arrange(ID)
+  result_b <- distinct(add_ntile(obj_b, input_col = "DV"), ID, DV, DV_NTILE) |>
+    arrange(ID)
+
+  expect_equal(result_a$DV_NTILE, result_b$DV_NTILE)
+})
+
 
 test_that("add_ntile handles NA values in input column", {
   test_data <- tibble::tribble(
@@ -181,7 +273,7 @@ test_that("add_ntile handles missing input column", {
     add_ntile(
       select(test_data, -DV),
       input_col = "DV"),
-    "Missing required columns: DV"
+    "Missing essential fields in nif object: DV"
   )
 })
 
@@ -226,6 +318,25 @@ test_that("add_ntile handles invalid n value", {
     "n must be a positive integer between 2 and 100"
   )
 })
+
+
+test_that("add_ntile rejects non-integer n within the allowed range", {
+  test_data <- tibble::tribble(
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+       1,     0,  10,      "A",    0,    1,     0,
+       2,     0,  25,      "A",    0,    1,     0,
+       3,     0,   5,      "A",    0,    1,     0,
+       4,     0,  40,      "A",    0,    1,     0
+  )
+
+  class(test_data) <- c("nif", "data.frame")
+
+  expect_error(
+    add_ntile(test_data, input_col = "DV", n = 2.5),
+    "n must be an integer value!"
+  )
+})
+
 
 test_that("add_ntile handles empty data frame", {
   test_data <- tibble::tribble(
@@ -391,32 +502,29 @@ test_that("add_ntile works with different input columns", {
   expect_false(identical(result_dv2$DV_NTILE, result_weight2$WEIGHT_NTILE))
 })
 
-test_that("add_ntile handles all subjects having the same value", {
+
+test_that("add_ntile assigns one n-tile when all subjects share the same value", {
   test_data <- tibble::tribble(
-    ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
-    1,   0,     10,  "A",      0,    1,    0,
-    1,   1,     10,  "A",      0,    1,    0,
-    2,   0,     10,  "A",      0,    1,    0,
-    2,   1,     10,  "A",      0,    1,    0,
-    3,   0,     10,  "A",      0,    1,    0,
-    3,   1,     10,  "A",      0,    1,    0,
-    4,   0,     10,  "A",      0,    1,    0,
-    4,   1,     10,  "A",      0,    1,    0
+     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID,
+       1,     0,  10,      "A",    0,    1,     0,
+       1,     1,  10,      "A",    0,    1,     0,
+       2,     0,  10,      "A",    0,    1,     0,
+       2,     1,  10,      "A",    0,    1,     0,
+       3,     0,  10,      "A",    0,    1,     0,
+       3,     1,  10,      "A",    0,    1,     0,
+       4,     0,  10,      "A",    0,    1,     0,
+       4,     1,  10,      "A",    0,    1,     0
   )
 
   class(test_data) <- c("nif", "data.frame")
 
   result <- add_ntile(test_data, input_col = "DV")
 
-  # Check that NTILE column was added
   expect_true("DV_NTILE" %in% names(result))
-
-  # Check that all subjects get different NTILE values
-  # Note: dplyr::ntile assigns different n-tiles even for identical values
-  # based on the order of the data, so we expect different n-tiles
-  expect_equal(length(unique(result$DV_NTILE)), 4) # All 4 n-tiles should be used
+  expect_equal(length(unique(result$DV_NTILE)), 1)
   expect_true(all(result$DV_NTILE >= 1 & result$DV_NTILE <= 4))
 })
+
 
 test_that("add_ntile handles subjects with multiple distinct values", {
   test_data <- tibble::tribble(
@@ -480,19 +588,19 @@ test_that("add_ntile handles invalid input_col parameter", {
   # Test with NULL input_col
   expect_error(
     add_ntile(test_data, input_col = NULL),
-    "input_col must be a single character string"
+    "input_col must not be NULL"
   )
 
   # Test with numeric input_col
   expect_error(
     add_ntile(test_data, input_col = 123),
-    "input_col must be a single character string"
+    "input_col must be a character value"
   )
 
   # Test with multiple input_col values
   expect_error(
     add_ntile(test_data, input_col = c("DV", "TIME")),
-    "input_col must be a single character string"
+    "input_col must be a single value"
   )
 })
 
@@ -514,12 +622,13 @@ test_that("add_ntile handles invalid ntile_name parameter", {
   # Test with numeric ntile_name
   expect_error(
     add_ntile(test_data, input_col = "DV", ntile_name = 123),
-    "ntile_name must be a single character string or NULL"
+    "ntile_name must be a character value"
   )
 
   # Test with multiple ntile_name values
   expect_error(
     add_ntile(test_data, input_col = "DV", ntile_name = c("A", "B")),
-    "ntile_name must be a single character string or NULL"
+    "ntile_name must be a single value"
   )
 })
+

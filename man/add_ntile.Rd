@@ -4,7 +4,7 @@
 \alias{add_ntile}
 \title{Add quantiles for a subject-level covariate}
 \usage{
-add_ntile(nif, input_col, n = 4, ntile_name = NULL)
+add_ntile(nif, input_col, n = 4, ntile_name = NULL, silent = NULL)
 }
 \arguments{
 \item{nif}{A nif object}
@@ -16,16 +16,22 @@ distinct entry per subject)}
 
 \item{ntile_name}{Custom name for the output column. If NULL, uses \code{x_NTILE}
 format where x is the name of the input column}
+
+\item{silent}{Suppress messages.}
 }
 \value{
-A nif object with a new column containing the n-tile values (1 to n),
-named either \code{x_NTILE} (default) or the custom name specified in
-\code{ntile_name}
+A nif object with a new column containing the n-tile values (1 to at
+most \code{n}), named either \code{x_NTILE} (default) or the custom name specified in
+\code{ntile_name}. Subjects with a missing input value receive \code{NA}.
 }
 \description{
-Calculate quantiles for a column's values across all subjects. Each subject
-gets the same n-tile value across all their rows. The input column must have
-exactly one distinct value per subject (e.g., age, weight, baseline values).
+Assigns n-tile bins for a subject-level numeric column. Bins are computed
+from the distinct non-missing values across subjects (via \code{\link[dplyr:ntile]{dplyr::ntile()}}),
+then mapped back so identical values always share the same bin. Each subject
+gets the same n-tile across all their rows. The input column must have
+exactly one distinct value per subject, including \code{NA} (e.g., age, weight,
+baseline values). If there are fewer distinct values than \code{n}, fewer than \code{n}
+bins are used.
 }
 \examples{
 library(dplyr)
@@ -40,9 +46,9 @@ examplinib_poc_nif |>
   distinct(ID, WEIGHT, WEIGHT_NTILE) |>
   ggplot(aes(x = WEIGHT_NTILE, y = WEIGHT)) +
   geom_point() +
-  labs(title = "Plasma concentrations by WEIGHT quartiles") +
+  labs(title = "WEIGHT by n-tile") +
   theme_bw()
 }
 \seealso{
-\code{\link[dplyr:ntile]{dplyr::ntile()}} for the underlying n-tile calculation
+\code{\link[dplyr:ntile]{dplyr::ntile()}} used on distinct subject values
 }
