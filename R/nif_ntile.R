@@ -108,8 +108,8 @@ add_ntile <- function(
     reframe(value = first(.data[[input_col]], na_rm = TRUE), .by = "ID")
 
   temp <- subject_level_data |>
-    filter(!is.na(value)) |>
-    distinct(value) |>
+    filter(!is.na(.data$value)) |>
+    distinct(.data$value) |>
     mutate(ntile = ntile(.data$value, n = n)) |>
     rename_with(~ input_col, "value") |>
     rename_with(~ column_name, "ntile")

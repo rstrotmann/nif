@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot_extension.R
 \name{geom_admin}
 \alias{geom_admin}
-\title{Administration geom layer for ggplot}
+\title{Administration lines for a selected analyte}
 \usage{
 geom_admin(
   mapping = NULL,
@@ -18,37 +18,29 @@ geom_admin(
 )
 }
 \arguments{
-\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}. If
-specified and \code{inherit.aes = TRUE} (the default), it is combined with the
-default mapping at the top level of the plot. You must supply \code{mapping} if
-there is no plot mapping.}
+\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}. Must
+include \code{admin}, a character string naming the analyte whose administrations
+should be plotted (e.g. \code{aes(admin = "RS2023")}). \code{x} is typically inherited
+from the plot (e.g. \code{TIME}).}
 
-\item{data}{The data to be displayed in this layer. There are three options:
-If \code{NULL}, the default, the data is inherited from the plot data as
-specified in the call to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}. A \code{data.frame}, or other
-object, will override the plot data. A \code{function} will be called with a
-single argument, the plot data. The return value must be a \code{data.frame},
-and will be used as the layer data.}
+\item{data}{A nif object. If \code{NULL}, the default, the plot data is used and
+must be a nif object.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with a
 warning. If \code{TRUE}, missing values are silently removed.}
 
-\item{show.legend}{logical. Should this layer be included in the legends?
-\code{NA}, the default, includes if any aesthetics are mapped. \code{FALSE} never
-includes, and \code{TRUE} always includes.}
+\item{show.legend}{logical. Should this layer be included in the legends?}
 
-\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics, rather than
-combining with them. This is most useful for helper functions that define
-both data and aesthetics and shouldn't inherit behavior from the default
-plot specification.}
+\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics rather than
+combining with them.}
 
-\item{color}{The color of the vertical lines. Defaults to "grey".}
+\item{color}{The color of the vertical lines. Defaults to \code{"grey"}.}
 
-\item{linewidth}{The width of the lines. Defaults to 0.5.}
+\item{linewidth}{The width of the lines. Defaults to \code{0.5}.}
 
-\item{linetype}{The type of the lines. Defaults to 1 (solid).}
+\item{linetype}{The type of the lines. Defaults to \code{1} (solid).}
 
-\item{alpha}{The transparency of the lines. Defaults to NA (fully opaque).}
+\item{alpha}{The transparency of the lines. Defaults to \code{NA} (opaque).}
 
 \item{...}{Additional parameters passed to the layer.}
 }
@@ -56,5 +48,17 @@ plot specification.}
 A ggplot layer object.
 }
 \description{
-Administration geom layer for ggplot
+Draws vertical lines at administration times (\code{EVID == 1}) for the analyte
+named in the \code{admin} aesthetic. The plot or layer data must be a nif object
+(with \code{EVID} and \code{ANALYTE} columns).
+}
+\examples{
+library(dplyr)
+library(ggplot2)
+
+examplinib_sad_nif |>
+  filter(ID == 1) |>
+  ggplot(aes(x = TIME, y = DV)) +
+  geom_admin(aes(admin = "RS2023")) +
+  geom_point(na.rm = TRUE)
 }

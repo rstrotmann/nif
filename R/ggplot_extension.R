@@ -1,156 +1,6 @@
 # source: https://ggplot2-book.org/extensions#sec-modifying-geom-defaults
 
 
-#' @title stat_admin_proto ggproto object
-#' @description A ggplot2 stat for treatment administrations that creates
-#'   vertical lines at administration times.
-#' @details This stat requires a data frame with columns 'x' and 'admin', where
-#'   'admin' should be a logical or numeric column indicating administration
-#'   events (1 or TRUE for administrations, 0 or FALSE otherwise).
-#' @import ggplot2
-#' @format NULL
-#' @usage NULL
-#' @noRd
-stat_admin_proto <- ggplot2::ggproto(
-  "stat_admin_proto",
-  ggplot2::Stat,
-  required_aes = c("x", "admin"),
-  dropped_aes = c("x", "y", "admin"),
-  default_aes = ggplot2::aes(
-    xintercept = after_stat(xintercept)
-  ),
-  compute_group = function(data, scales) {
-    # Input validation
-    if (!is.data.frame(data)) {
-      stop("data must be a data frame")
-    }
-
-    required_cols <- c("x", "admin")
-    missing_cols <- setdiff(required_cols, names(data))
-    if (length(missing_cols) > 0) {
-      stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-    }
-
-    # Validate admin values
-    if (!is.logical(data$admin)) {
-      stop("admin column must be logical or numeric (0/1)")
-    }
-
-    # Handle NA values
-    if (any(is.na(data$admin))) {
-      warning("NA values found in admin column, these will be treated as FALSE")
-      data$admin[is.na(data$admin)] <- FALSE
-    }
-
-    # Get administration points
-    tryCatch(
-      {
-        admin_data <- data[data$admin, ]
-
-        # Return empty data frame if no administrations
-        if (nrow(admin_data) == 0) {
-          return(data.frame(xintercept = numeric(0)))
-        }
-
-        # Create result
-        result <- data.frame(
-          xintercept = admin_data$x
-        )
-        return(result)
-      },
-      error = function(e) {
-        stop("Error in compute_group: ", e$message)
-      }
-    )
-  }
-)
-
-
-#' ggplot stat for treatment administrations
-#'
-#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. If
-#'   specified and `inherit.aes = TRUE` (the default), it is combined with the
-#'   default mapping at the top level of the plot. You must supply `mapping` if
-#'   there is no plot mapping.
-#' @param data The data to be displayed in this layer. There are three options:
-#'   If `NULL`, the default, the data is inherited from the plot data as
-#'   specified in the call to [ggplot2::ggplot()]. A `data.frame`, or other
-#'   object, will override the plot data. A `function` will be called with a
-#'   single argument, the plot data. The return value must be a `data.frame`,
-#'   and will be used as the layer data.
-#' @param geom The geometric object to use to display the data. Defaults to
-#'   "vline".
-#' @param position Position adjustment, either as a string, or the result of a
-#'   call to a position adjustment function. Defaults to "identity".
-#' @param na.rm If `FALSE`, the default, missing values are removed with a
-#'   warning. If `TRUE`, missing values are silently removed.
-#' @param show.legend logical. Should this layer be included in the legends?
-#'   `NA`, the default, includes if any aesthetics are mapped. `FALSE` never
-#'   includes, and `TRUE` always includes.
-#' @param inherit.aes If `FALSE`, overrides the default aesthetics, rather than
-#'   combining with them. This is most useful for helper functions that define
-#'   both data and aesthetics and shouldn't inherit behavior from the default
-#'   plot specification.
-#' @param color The color of the vertical lines. Defaults to "grey".
-#' @param ... Additional parameters passed to the layer.
-#'
-#' @return A ggplot layer object.
-#'
-#' @import ggplot2
-#' @export
-#' @examples
-#' nif |>
-#' filter(ID == 1) |>
-#' ggplot(aes(x = TIME, y = DV, admin = EVID == 1)) +
-#' geom_admin() +
-#' geom_point()
-#'
-stat_admin <- function(
-  mapping = NULL,
-  data = NULL,
-  geom = "vline",
-  position = "identity",
-  na.rm = FALSE,
-  show.legend = NA,
-  inherit.aes = TRUE,
-  color = "grey",
-  ...
-) {
-  # Validate parameters
-  if (!is.null(mapping) && !inherits(mapping, "uneval")) {
-    stop("mapping must be created using aes()")
-  }
-
-  if (!is.logical(na.rm) || length(na.rm) != 1) {
-    stop("na.rm must be a single logical value")
-  }
-
-  if (!is.logical(show.legend) || length(show.legend) != 1) {
-    stop("show.legend must be a single logical value")
-  }
-
-  if (!is.logical(inherit.aes) || length(inherit.aes) != 1) {
-    stop("inherit.aes must be a single logical value")
-  }
-
-  if (!is.character(color) || length(color) != 1) {
-    stop("color must be a single character value")
-  }
-
-  # Create layer
-  layer(
-    stat = stat_admin_proto,
-    data = data,
-    mapping = mapping,
-    geom = geom,
-    position = position,
-    show.legend = show.legend,
-    inherit.aes = inherit.aes,
-    params = list(na.rm = na.rm, color = color, ...)
-  )
-}
-
-
 #' @title GeomAdmin ggproto object
 #' @description A ggplot2 geom for treatment administration lines that extends
 #'   GeomVline.
@@ -171,37 +21,92 @@ GeomAdmin <- ggplot2::ggproto(
 )
 
 
-#' Administration geom layer for ggplot
+#' @title stat_admin_proto ggproto object
+#' @description ggplot2 stat that draws administration times for a selected
+#'   analyte from a nif data set.
+#' @details Requires aesthetics `x` and `admin`, where `admin` is a character
+#'   analyte name. Uses columns `EVID` and `ANALYTE` from the nif data.
+#' @format NULL
+#' @usage NULL
+#' @noRd
+stat_admin_proto <- ggplot2::ggproto(
+  "stat_admin_proto",
+  ggplot2::Stat,
+  required_aes = c("x", "admin"),
+  optional_aes = c("EVID", "ANALYTE"),
+  dropped_aes = c("x", "y", "admin", "EVID", "ANALYTE"),
+  default_aes = ggplot2::aes(
+    xintercept = after_stat(xintercept)
+  ),
+  compute_group = function(data, scales) {
+    if (!is.data.frame(data)) {
+      stop("data must be a data frame")
+    }
+
+    required_cols <- c("x", "admin", "EVID", "ANALYTE")
+    missing_cols <- setdiff(required_cols, names(data))
+    if (length(missing_cols) > 0) {
+      stop(
+        "Missing required columns: ", paste(missing_cols, collapse = ", "),
+        ". geom_admin() requires nif data with EVID and ANALYTE."
+      )
+    }
+
+    if (!is.character(data$admin) && !is.factor(data$admin)) {
+      stop("'admin' must be a character analyte name")
+    }
+
+    analyte <- as.character(unique(data$admin))
+    if (length(analyte) != 1 || is.na(analyte) || analyte == "") {
+      stop("'admin' must specify a single non-missing analyte name")
+    }
+
+    admin_rows <- data$EVID == 1 & data$ANALYTE == analyte
+    admin_rows[is.na(admin_rows)] <- FALSE
+    xintercept <- unique(data$x[admin_rows])
+    xintercept <- xintercept[!is.na(xintercept)]
+
+    data.frame(xintercept = xintercept)
+  }
+)
+
+
+#' Administration lines for a selected analyte
 #'
-#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. If
-#'   specified and `inherit.aes = TRUE` (the default), it is combined with the
-#'   default mapping at the top level of the plot. You must supply `mapping` if
-#'   there is no plot mapping.
-#' @param data The data to be displayed in this layer. There are three options:
-#'   If `NULL`, the default, the data is inherited from the plot data as
-#'   specified in the call to [ggplot2::ggplot()]. A `data.frame`, or other
-#'   object, will override the plot data. A `function` will be called with a
-#'   single argument, the plot data. The return value must be a `data.frame`,
-#'   and will be used as the layer data.
+#' Draws vertical lines at administration times (`EVID == 1`) for the analyte
+#' named in the `admin` aesthetic. The plot or layer data must be a nif object
+#' (with `EVID` and `ANALYTE` columns).
+#'
+#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. Must
+#'   include `admin`, a character string naming the analyte whose administrations
+#'   should be plotted (e.g. `aes(admin = "RS2023")`). `x` is typically inherited
+#'   from the plot (e.g. `TIME`).
+#' @param data A nif object. If `NULL`, the default, the plot data is used and
+#'   must be a nif object.
 #' @param na.rm If `FALSE`, the default, missing values are removed with a
 #'   warning. If `TRUE`, missing values are silently removed.
 #' @param show.legend logical. Should this layer be included in the legends?
-#'   `NA`, the default, includes if any aesthetics are mapped. `FALSE` never
-#'   includes, and `TRUE` always includes.
-#' @param inherit.aes If `FALSE`, overrides the default aesthetics, rather than
-#'   combining with them. This is most useful for helper functions that define
-#'   both data and aesthetics and shouldn't inherit behavior from the default
-#'   plot specification.
-#' @param color The color of the vertical lines. Defaults to "grey".
-#' @param linewidth The width of the lines. Defaults to 0.5.
-#' @param linetype The type of the lines. Defaults to 1 (solid).
-#' @param alpha The transparency of the lines. Defaults to NA (fully opaque).
+#' @param inherit.aes If `FALSE`, overrides the default aesthetics rather than
+#'   combining with them.
+#' @param color The color of the vertical lines. Defaults to `"grey"`.
+#' @param linewidth The width of the lines. Defaults to `0.5`.
+#' @param linetype The type of the lines. Defaults to `1` (solid).
+#' @param alpha The transparency of the lines. Defaults to `NA` (opaque).
 #' @param ... Additional parameters passed to the layer.
 #'
 #' @return A ggplot layer object.
 #'
 #' @import ggplot2
 #' @export
+#' @examples
+#' library(dplyr)
+#' library(ggplot2)
+#'
+#' examplinib_sad_nif |>
+#'   filter(ID == 1) |>
+#'   ggplot(aes(x = TIME, y = DV)) +
+#'   geom_admin(aes(admin = "RS2023")) +
+#'   geom_point(na.rm = TRUE)
 geom_admin <- function(
   mapping = NULL,
   data = NULL,
@@ -214,35 +119,64 @@ geom_admin <- function(
   alpha = NA,
   ...
 ) {
-  # Validate parameters
-  if (!is.null(mapping) && !inherits(mapping, "uneval"))
+  if (!is.null(mapping) && !inherits(mapping, "uneval")) {
     stop("mapping must be created using aes()")
+  }
 
-  if (!is.logical(na.rm) || length(na.rm) != 1)
+  if (!is.logical(na.rm) || length(na.rm) != 1) {
     stop("na.rm must be a single logical value")
+  }
 
-  if (!is.logical(show.legend) || length(show.legend) != 1)
+  if (!is.logical(show.legend) || length(show.legend) != 1) {
     stop("show.legend must be a single logical value")
+  }
 
-  if (!is.logical(inherit.aes) || length(inherit.aes) != 1)
+  if (!is.logical(inherit.aes) || length(inherit.aes) != 1) {
     stop("inherit.aes must be a single logical value")
+  }
 
-  if (!is.character(color) || length(color) != 1)
+  if (!is.character(color) || length(color) != 1) {
     stop("color must be a single character value")
+  }
 
-  if (!is.numeric(linewidth) || length(linewidth) != 1 || linewidth < 0)
+  if (!is.numeric(linewidth) || length(linewidth) != 1 || linewidth < 0) {
     stop("linewidth must be a non-negative numeric value")
+  }
 
-  if (!is.numeric(linetype) && !is.character(linetype) ||
-        length(linetype) != 1)
+  if ((!is.numeric(linetype) && !is.character(linetype)) ||
+        length(linetype) != 1) {
     stop("linetype must be a single numeric or character value")
+  }
 
-  if (!is.na(alpha) &&
-        (!is.numeric(alpha) || length(alpha) != 1 || alpha < 0 || alpha > 1))
+  if (length(alpha) != 1 ||
+        (!is.na(alpha) &&
+           (!is.numeric(alpha) || alpha < 0 || alpha > 1))) {
     stop("alpha must be NA or a numeric value between 0 and 1")
+  }
 
-  # Create layer
-  layer(
+  # Validate nif now, or when plot data is inherited
+  if (is.null(data)) {
+    data <- function(x) {
+      validate_nif(x)
+      x
+    }
+  } else {
+    validate_nif(data)
+  }
+
+  # Ensure EVID and ANALYTE reach the stat (nif columns, not plot aesthetics)
+  nif_mapping <- ggplot2::aes(EVID = .data$EVID, ANALYTE = .data$ANALYTE)
+  mapping <- if (is.null(mapping)) {
+    nif_mapping
+  } else {
+    utils::modifyList(nif_mapping, mapping)
+  }
+
+  if (is.null(mapping$admin)) {
+    stop("geom_admin() requires an 'admin' aesthetic with an analyte name")
+  }
+
+  ggplot2::layer(
     geom = GeomAdmin,
     data = data,
     mapping = mapping,

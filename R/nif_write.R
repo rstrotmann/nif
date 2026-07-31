@@ -1,38 +1,5 @@
 #' Write NONMEM input formatted nif object to file
 #'
-#' @description
-#' `r lifecycle::badge("deprecated")`
-#'
-#' @param obj The NIF object.
-#' @param fields The fields to export. If NULL (default), all fields will be
-#' exported.
-#' @param filename The filename as string. If not filename is specified, the
-#' file is printed only.
-#' @param sep The separating character, e.g. ',' or ';'. If NULL (default), the
-#' output has a space-separated, fixed-width format.
-#' @return Nothing.
-#'
-#' @export
-#' @keywords internal
-write_nif <- function(
-  obj,
-  filename = NULL,
-  fields = NULL,
-  sep = NULL
-) {
-  # superseded
-  lifecycle::deprecate_warn("0.57.10", "write_nif()", "write_nonmem()")
-
-  write_nonmem(
-    obj, filename, fields, sep,
-    numeric_fields_only = FALSE,
-    dot_columns = NULL
-  )
-}
-
-
-#' Write NONMEM input formatted nif object to file
-#'
 #' Write as space-delimited, fixed-width or a character-separated file. If the
 #' 'numeric_fields_only' argument is TRUE, only columns that are numeric will be
 #' exported.
