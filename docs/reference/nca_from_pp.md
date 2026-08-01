@@ -49,7 +49,7 @@ nca_from_pp(
 
 - group:
 
-  Grouping variable from the pp domain, as character.
+  Grouping variable from the pp domain to retain, as character.
 
 - observation_filter:
 

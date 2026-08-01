@@ -79,8 +79,6 @@
 - [`domain()`](domain.md) : Return a specific domain from a sdtm object
 - [`domain_model`](domain_model.md) : SDTM Domain Model variables
 - [`dose_levels()`](dose_levels.md) : Dose levels within a NIF object
-- [`dose_lin()`](dose_lin.md) **\[experimental\]** : Test for dose
-  linearity
 - [`dose_red_sbs()`](dose_red_sbs.md) : Subjects with dose reduction
 - [`doses()`](doses.md) : Doses in a nif or sdtm object
 - [`edish_plot()`](edish_plot.md) : Drug-induced serious hepatotoxicity
@@ -164,7 +162,7 @@
 - [`nca_summary()`](nca_summary.md) : PK parameter summary statistics by
   dose
 - [`nca_summary_table()`](nca_summary_table.md) : PK parameter summary
-  statistics table by dose
+  statistics table by grouping variables
 - [`new_nif()`](new_nif.md) **\[deprecated\]** : nif class constructor
 - [`new_sdtm()`](new_sdtm.md) **\[deprecated\]** : SDTM class
   constructor, creating a sdtm object from a set of SDTM domains
