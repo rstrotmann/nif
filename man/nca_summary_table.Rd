@@ -2,20 +2,20 @@
 % Please edit documentation in R/nif_nca.R
 \name{nca_summary_table}
 \alias{nca_summary_table}
-\title{PK parameter summary statistics table by dose}
+\title{PK parameter summary statistics table by grouping variables}
 \usage{
 nca_summary_table(
   nca,
   parameters = c("auclast", "cmax", "tmax", "half.life", "aucinf.obs", "AUCLST", "CMAX",
     "TMAX", "LAMZHL", "AUCIFP"),
   digits = 2,
-  group = "DOSE"
+  group = NULL
 )
 }
 \arguments{
 \item{nca}{The NCA results as provided by \code{nca}, as data frame.}
 
-\item{parameters}{The NCA parameters to be tabulated as character,}
+\item{parameters}{The NCA parameters to be tabulated as character.}
 
 \item{digits}{The number of significant digits to be displayed.}
 
@@ -25,7 +25,7 @@ nca_summary_table(
 A data frame
 }
 \description{
-PK parameter summary statistics table by dose
+PK parameter summary statistics table by grouping variables
 }
 \examples{
 nca_summary_table(nca(examplinib_sad_nif, analyte = "RS2023"))

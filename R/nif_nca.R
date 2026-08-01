@@ -571,68 +571,6 @@ nca_summary_table <- function(
 }
 
 
-#' Test for dose linearity
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#'
-#' Currently experimental. Don't use in production!
-#'
-#' Using the power model described by
-#' Hummel, 2009, \doi{10.1002/pst.326}.
-#' In brief, a power model is fitted with
-#'
-#' ln(AUC) = mu + beta * ln(dose)
-#'
-#' and the 90% CI of beta compared to the below acceptance criteria, assuming
-#'
-#' theta_L of 0.8 and theta_U of 1.25:
-#'
-#' (beta_L, beta_U) = ( 1 + ln(theta_L) / ln(r), 1 + lntheta_U) / ln(r) )
-#'
-#' with ln(r) the logarithm of the ratio of the highest dose to the lowest dose.
-#' @param nca The non-compartmental analysis data.
-#' @param parameters The NCA parameters to investigate for dose linearity.
-#' @param lower The lower threshold for Rdnm.
-#' @param upper the upper threshold for Rdnm.
-#'
-#' @return A data frame.
-#' @export
-dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
-                     lower = 0.8, upper = 1.25) {
-  pp <- nca |>
-    filter(.data$PPORRES != 0) |>
-    dplyr::mutate(ldose = log(.data$DOSE), lpp = log(.data$PPORRES))
-
-  power_model <- t(sapply(
-    parameters,
-    function(x) {
-      as.numeric(
-        stats::confint(
-          stats::lm(
-            data = (pp |> filter(.data$PPTESTCD == x)),
-            formula = lpp ~ ldose
-          ),
-          "ldose",
-          level = 0.9
-        )
-      )
-    }
-  ))
-  lnr <- log(max(pp$DOSE) / min(pp$DOSE))
-  bl <- 1 + log(lower) / lnr
-  bu <- 1 + log(upper) / lnr
-  power_model <- rbind("thresholds" = c(bl, bu), power_model)
-  colnames(power_model) <- c("lower", "upper")
-  power_model |>
-    as.data.frame() |>
-    dplyr::mutate(dose_linear = case_when(
-      row_number() == 1 ~ NA,
-      .default = lower > lower[1] & upper < upper[1]
-    ))
-}
-
-
 #' Power fit for PK parameters
 #'
 #' @description
