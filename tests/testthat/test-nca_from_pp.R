@@ -203,17 +203,6 @@ test_that("nca_from_pp filters by ppscat", {
 })
 
 
-test_that("nca_from_pp errors on multiple PPCAT in result", {
-  nif_obj <- make_nca_from_pp_nif()
-  sdtm_data <- make_nca_from_pp_sdtm()
-
-  expect_error(
-    nca_from_pp(nif_obj, sdtm_data, analyte = "DRUG", silent = TRUE),
-    "Multiple PPCAT in result"
-  )
-})
-
-
 test_that("nca_from_pp validates ppcat against PP domain", {
   nif_obj <- make_nca_from_pp_nif()
   sdtm_data <- make_nca_from_pp_sdtm()
@@ -455,21 +444,19 @@ test_that("nca_from_pp leaves PP subjects missing from nif unmatched", {
 })
 
 
-test_that("nca_from_pp analyte with no nif rows still returns PP data", {
+test_that("nca_from_pp stops when analyte not found", {
   nif_obj <- make_nca_from_pp_nif()
   sdtm_data <- make_nca_from_pp_sdtm()
 
-  result <- nca_from_pp(
-    nif_obj, sdtm_data,
-    analyte = "UNKNOWN",
-    ppcat = "DRUG",
-    silent = TRUE
+  expect_error(
+    result <- nca_from_pp(
+      nif_obj, sdtm_data,
+      analyte = "UNKNOWN",
+      ppcat = "DRUG",
+      silent = TRUE
+    ),
+    "Analyte UNKNOWN not found in nif object!"
   )
-
-  expect_equal(nrow(result), 4)
-  expect_equal(unique(result$ANALYTE), "UNKNOWN")
-  expect_true(all(is.na(result$ID)))
-  expect_false("DOSE" %in% names(result))
 })
 
 
@@ -514,7 +501,7 @@ test_that("nca_from_pp validates filter when ppcat and ppscat leave no rows", {
   ))
 
   # PPCAT and PPSCAT each exist in PP, but not together
-  expect_warning(
+  expect_error(
     result <- nca_from_pp(
       nif_obj, sdtm_data,
       analyte = "DRUG",
@@ -522,9 +509,8 @@ test_that("nca_from_pp validates filter when ppcat and ppscat leave no rows", {
       ppscat = "STEADY STATE",
       silent = TRUE
     ),
-    "No data found after applying filters"
+    "PPCAT/PPSCAT filtering returned no results!"
   )
-  expect_equal(nrow(result), 0)
 })
 
 
@@ -565,5 +551,107 @@ test_that("nca_from_pp keep can add DOSE when constant per subject", {
   expect_true("DOSE" %in% names(result))
   expect_equal(result$DOSE[result$USUBJID == "SUBJ1"][1], 100)
   expect_equal(result$DOSE[result$USUBJID == "SUBJ2"][1], 200)
+})
+
+
+test_that("nca_from_pp requires USUBJID and ANALYTE in nif", {
+  sdtm_data <- sdtm(list(
+    pp = tibble::tribble(
+      ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPCAT,
+      "SUBJ1",  "AUC",     100,       "DRUG"
+    )
+  ))
+
+  nif_no_usubjid <- structure(
+    tibble::tribble(
+      ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~DOSE,
+       1,     0,  100,    1,     1,   0,   "DRUG",  100,
+       1,     1,    0,    2,     0,  10,   "DRUG",  100
+    ),
+    class = c("nif", "data.frame")
+  )
+  expect_error(
+    nca_from_pp(
+      nif_no_usubjid, sdtm_data,
+      analyte = "DRUG",
+      ppcat = "DRUG",
+      silent = TRUE
+    ),
+    "Missing fields in nif object: USUBJID"
+  )
+
+  nif_no_analyte <- structure(
+    tibble::tribble(
+      ~ID, ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~DOSE,
+       1,   "SUBJ1",     0,  100,    1,     1,   0,  100,
+       1,   "SUBJ1",     1,    0,    2,     0,  10,  100
+    ),
+    class = c("nif", "data.frame")
+  )
+  expect_error(
+    nca_from_pp(
+      nif_no_analyte, sdtm_data,
+      analyte = "DRUG",
+      ppcat = "DRUG",
+      silent = TRUE
+    ),
+    "Missing fields in nif object: ANALYTE"
+  )
+})
+
+
+test_that("nca_from_pp errors when group column is missing from PP", {
+  nif_obj <- make_nca_from_pp_nif()
+  sdtm_data <- make_nca_from_pp_sdtm()
+
+  expect_error(
+    nca_from_pp(
+      nif_obj, sdtm_data,
+      analyte = "DRUG",
+      ppcat = "DRUG",
+      group = "NOT_A_PP_COLUMN",
+      silent = TRUE
+    ),
+    "Missing grouping fields in PP: NOT_A_PP_COLUMN"
+  )
+})
+
+
+test_that("nca_from_pp retains PPORRES when present", {
+  nif_obj <- make_nca_from_pp_nif()
+  sdtm_data <- sdtm(list(
+    pp = tibble::tribble(
+      ~USUBJID, ~PPTESTCD, ~PPORRES, ~PPCAT,
+      "SUBJ1",  "AUC",         100,  "DRUG",
+      "SUBJ2",  "AUC",         200,  "DRUG"
+    )
+  ))
+
+  result <- nca_from_pp(
+    nif_obj, sdtm_data,
+    analyte = "DRUG",
+    ppcat = "DRUG",
+    silent = TRUE
+  )
+
+  expect_true("PPORRES" %in% names(result))
+  expect_false("PPSTRESN" %in% names(result))
+  expect_equal(result$PPORRES[result$USUBJID == "SUBJ1"], 100)
+})
+
+
+test_that("nca_from_pp retains PPSCAT in output", {
+  nif_obj <- make_nca_from_pp_nif()
+  sdtm_data <- make_nca_from_pp_sdtm()
+
+  result <- nca_from_pp(
+    nif_obj, sdtm_data,
+    analyte = "DRUG",
+    ppcat = "DRUG",
+    silent = TRUE
+  )
+
+  expect_true("PPSCAT" %in% names(result))
+  expect_equal(unique(result$PPSCAT), "SINGLE DOSE")
 })
 

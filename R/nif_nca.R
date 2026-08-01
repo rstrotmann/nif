@@ -304,6 +304,16 @@ nca_from_pp <- function(
   validate_argument(group, "character", allow_null = TRUE)
   validate_argument(observation_filter, "character")
 
+  # validate that obj has USUBJID and ANALYTE columns
+  required_nif_columns <- c("USUBJID", "ANALYTE")
+  missing_nif_columns <- setdiff(required_nif_columns, names(obj))
+  if (length(missing_nif_columns) > 0) {
+    stop(paste0(
+      "Missing fields in nif object: ",
+      nice_enumeration(missing_nif_columns)
+    ))
+  }
+
   # Guess analyte if not provided
   if (is.null(analyte)) {
     current_analyte <- guess_analyte(obj)
@@ -316,6 +326,47 @@ nca_from_pp <- function(
     )
   } else {
     current_analyte <- analyte
+  }
+
+  # validate that analyte exists
+  if (!current_analyte %in% analytes(obj)) {
+    stop(paste0(
+      "Analyte ", current_analyte, " not found in nif object!"
+    ))
+  }
+
+  pp <- domain(sdtm_data, "pp")
+
+  # validate that group fields are in PP domain
+  missing_group_fields <- setdiff(group, names(pp))
+  if (length(missing_group_fields) > 0) {
+    stop(paste0(
+      "Missing grouping fields in PP: ",
+      nice_enumeration(missing_group_fields)
+    ))
+  }
+
+  # validate ppcat and ppscat
+  if (!is.null(ppcat)) {
+    if (!"PPCAT" %in% names(pp)) {
+      stop("PPCAT not found in PP domain")
+    }
+    if (!ppcat %in% unique(pp$PPCAT)) {
+      stop(paste0(
+        "PPCAT of ", ppcat, " not found in PP domain"
+      ))
+    }
+  }
+
+  if (!is.null(ppscat)) {
+    if (!"PPSCAT" %in% names(pp)) {
+      stop("PPSCAT not found in PP domain")
+    }
+    if (!ppscat %in% unique(pp$PPSCAT)) {
+      stop(paste0(
+        "PPSCAT of ", ppscat, " not found in PP domain"
+      ))
+    }
   }
 
   # preserve the columns to keep from the nif object
@@ -345,60 +396,39 @@ nca_from_pp <- function(
 
   # ensure keep_data has only one row per subject
   multiple_keep_per_id <- keep_data |>
-    reframe(n = n(), .by = "ID") |>
+    reframe(n = n(), .by = "USUBJID") |>
     filter(n > 1)
 
   if (nrow(multiple_keep_per_id) > 0) {
     stop(paste0(
       "Multiple keep values for subjects ",
-      nice_enumeration(multiple_keep_per_id$ID)
+      nice_enumeration(multiple_keep_per_id$USUBJID)
     ))
   }
 
-  pp <- domain(sdtm_data, "pp")
-
-  # validate ppcat and ppscat
-  if (!is.null(ppcat)) {
-    if (!"PPCAT" %in% names(pp)) {
-      stop("PPCAT not found in PP domain")
-    }
-    if (!ppcat %in% unique(pp$PPCAT)) {
-      stop(paste0(
-        "PPCAT of ", ppcat, " not found in PP domain"
-      ))
-    }
-  }
-
-  if (!is.null(ppscat)) {
-    if (!"PPSCAT" %in% names(pp)) {
-      stop("PPSCAT not found in PP domain")
-    }
-    if (!ppscat %in% unique(pp$PPSCAT)) {
-      stop(paste0(
-        "PPSCAT of ", ppscat, " not found in PP domain"
-      ))
-    }
-  }
-
+  # business logic
   result <- pp
 
+  # cat and scat filtering
   if (!is.null(ppcat))
-    result <- filter(result, .data$PPCAT == ppcat)
+    result <- filter(result, .data$PPCAT %in% ppcat)
 
   if (!is.null(ppscat))
-    result <- filter(result, .data$PPSCAT == ppscat)
+    result <- filter(result, .data$PPSCAT %in% ppscat)
 
-  if (nrow(result) > 0) {
-    obs_expr <- validate_filter(observation_filter, data = result)
-  } else {
-    obs_expr <- validate_filter(observation_filter)
+  if (nrow(result) == 0) {
+    stop(
+      "PPCAT/PPSCAT filtering returned no results!"
+    )
   }
+
+  obs_expr <- validate_filter(observation_filter, data = result)
 
   result <- result |>
     filter(rlang::eval_tidy(obs_expr, data = pick(everything()))) |>
     select(any_of(c(
-      "USUBJID", "PPTESTCD", "PPSTRESN", "PPSPEC",
-      "PPCAT", "PPRFTDTC", group
+      "USUBJID", "PPTESTCD", "PPSTRESN", "PPORRES", "PPSPEC",
+      "PPCAT", "PPSCAT", "PPRFTDTC", group
     ))) |>
     mutate(ANALYTE = current_analyte) |>
     left_join(keep_data, by = "USUBJID")
@@ -408,14 +438,6 @@ nca_from_pp <- function(
     warning("No data found after applying filters")
   }
 
-  if ("PPCAT" %in% names(result)) {
-    ppcats <- unique(result$PPCAT)
-    if (length(ppcats) > 1) {
-      stop(paste0(
-        "Multiple PPCAT in result:\n", nice_enumeration(ppcats)
-      ))
-    }
-  }
   result
 }
 
@@ -435,40 +457,66 @@ nca_from_pp <- function(
 #' @examples
 #' nca_summary(nca(examplinib_sad_nif, analyte = "RS2023"))
 nca_summary <- function(
-  nca,
-  parameters = c(
-    "auclast", "cmax", "tmax", "half.life", "aucinf.obs",
-    "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"
-  ),
-  group = "DOSE"
-) {
+    nca,
+    parameters = c(
+      "auclast", "cmax", "tmax", "half.life", "aucinf.obs",
+      "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"
+    ),
+    group = NULL
+  ) {
+  # input validation
+  if (!is.data.frame(nca)) {
+    stop("Input must be a data frame!")
+  }
+
+  validate_argument(parameters, "character", allow_multiple = TRUE)
+  validate_argument(group, "character", allow_multiple = TRUE, allow_null = TRUE)
+
+  expected_fields <- c("PPTESTCD", group)
+  missing_fields <- setdiff(expected_fields, names(nca))
+  if (length(missing_fields) > 0) {
+    stop(paste0(
+      "Missing fields in nca: ",
+      nice_enumeration(missing_fields)
+    ))
+  }
+
+  # business logic
   out <- nca |>
     filter(.data$PPTESTCD %in% parameters)
 
   if ("exclude" %in% names(out))
     out <- filter(out, is.na(.data$exclude))
 
-  if (!"PPORRES" %in% names(out) && "PPSTRESN" %in% names(out))
-    out <- mutate(out, PPORRES = .data$PPSTRESN)
+  # generate result field: PPSTRESN or, if absent, PPORRES
+  if ("PPSTRESN" %in% names(out)) {
+    out <- mutate(out, .result = .data$PPSTRESN)
+  } else {
+    if ("PPORRES" %in% names(out)) {
+      out <- mutate(out, .result = .data$PPORRES)
+    } else {
+      stop("Neither PPSTRESN nor PPORRES found in input!")
+    }
+  }
 
   out |>
-    group_by_at(c(group, "PPTESTCD")) |>
+    group_by(across(all_of(c(group, "PPTESTCD")))) |>
     summarize(
-      geomean = PKNCA::geomean(.data$PPORRES, na.rm = TRUE),
-      geocv = PKNCA::geocv(.data$PPORRES, na.rm = TRUE),
-      median = median(.data$PPORRES, na.rm = TRUE),
-      iqr = IQR(.data$PPORRES, na.rm = TRUE),
-      min = min(.data$PPORRES, na.rm = TRUE),
-      max = max(.data$PPORRES, na.rm = TRUE),
+      geomean = PKNCA::geomean(.data$.result, na.rm = TRUE),
+      geocv = PKNCA::geocv(.data$.result, na.rm = TRUE),
+      median = median(.data$.result, na.rm = TRUE),
+      iqr = IQR(.data$.result, na.rm = TRUE),
+      min = min(.data$.result, na.rm = TRUE),
+      max = max(.data$.result, na.rm = TRUE),
       n = n()
     )
 }
 
 
-#' PK parameter summary statistics table by dose
+#' PK parameter summary statistics table by grouping variables
 #'
 #' @param nca The NCA results as provided by `nca`, as data frame.
-#' @param parameters The NCA parameters to be tabulated as character,
+#' @param parameters The NCA parameters to be tabulated as character.
 #' @param digits The number of significant digits to be displayed.
 #' @param group The grouping variable, defaults to DOSE.
 #' @return A data frame
@@ -486,8 +534,13 @@ nca_summary_table <- function(
     "AUCLST", "CMAX", "TMAX", "LAMZHL", "AUCIFP"
   ),
   digits = 2,
-  group = "DOSE"
+  group = NULL
 ) {
+  # input validation
+  validate_argument(parameters, "character", allow_multiple = TRUE)
+  validate_argument(digits, "numeric")
+
+  # business logic
   s <- nca_summary(nca, parameters, group = group)
 
   median_parameters <- c(
