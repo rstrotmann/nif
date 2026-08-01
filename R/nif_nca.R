@@ -661,24 +661,58 @@ dose_lin <- function(nca, parameters = c("aucinf.obs", "cmax"),
 #'   c("cmax", "aucinf.obs")
 #' )
 nca_power_model <- function(
-  nca, parameter = NULL,
-  group = NULL, title = NULL, size = 2, alpha = 1
+  nca,
+  parameter = NULL,
+  group = NULL,
+  title = NULL,
+  size = 2,
+  alpha = 1
 ) {
+  # input validation
+  if (!is.data.frame(nca)) {
+    stop("Input must be a data frame!")
+  }
+
+  validate_argument(parameter, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(group, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(title, "character", allow_null = TRUE)
+  validate_argument(size, "numeric")
+  if (size < 0) stop("Size must be positive!")
+  validate_argument(alpha, "numeric")
+  if (alpha < 0) stop("Alpha must be positive!")
+
+  expected_fields <- c("DOSE", "PPTESTCD")
+  missing_fields <- setdiff(expected_fields, names(nca))
+  if (length(missing_fields) > 0) {
+    stop(paste0(
+      "Missing fields in input: ",
+      nice_enumeration(missing_fields)
+    ))
+  }
+
+  # business logic
   if (is.null(parameter)) {
     std_parameters <- c("cmax", "aucinf.obs", "CMAX", "AUCIFP")
     parameter <- std_parameters[which(std_parameters %in% unique(nca$PPTESTCD))]
   }
 
+  # generate result field: PPSTRESN or, if absent, PPORRES
+  if ("PPSTRESN" %in% names(nca)) {
+    nca <- mutate(nca, .result = .data$PPSTRESN)
+  } else {
+    if ("PPORRES" %in% names(nca)) {
+      nca <- mutate(nca, .result = .data$PPORRES)
+    } else {
+      stop("Neither PPSTRESN nor PPORRES found in input!")
+    }
+  }
+
   pm_plot <- function(param) {
     pp <- nca |>
-      filter(.data$PPTESTCD == param)
+      filter(.data$PPTESTCD == param) |>
+      filter(.data$.result > 0)
 
-    if (!"PPORRES" %in% names(pp) && "PPSTRESN" %in% names(pp))
-      pp <- mutate(pp, PPORRES = .data$PPSTRESN)
-
-    pp <- filter(pp, .data$PPORRES != 0)
-
-    pm <- lm(log(PPORRES) ~ log(DOSE), data = pp)
+    pm <- lm(log(.result) ~ log(DOSE), data = pp)
 
     color_label <- nice_enumeration(unique(group))
 
@@ -701,12 +735,12 @@ nca_power_model <- function(
     if (!is.null(group)) {
       out <- out +
         geom_point(
-          aes(x = .data$DOSE, y = .data$PPORRES, color = .data$COLOR),
+          aes(x = .data$DOSE, y = .data$.result, color = .data$COLOR),
           size = size, alpha = alpha
         )
     } else {
       out <- out +
-        geom_point(ggplot2::aes(x = .data$DOSE, y = .data$PPORRES),
+        geom_point(ggplot2::aes(x = .data$DOSE, y = .data$.result),
                    size = size, alpha = alpha)
     }
 
