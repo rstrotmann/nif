@@ -52,8 +52,7 @@ to get to analysis-ready data sets. This is frequently encountered when
 analyzing preliminary data from ongoing clinical studies that have not
 been fully cleaned. The `nif` package provides a number of standardized
 imputation rules to resolve these issues. More on this point later as
-well in a separate vignette
-([`vignette("nif-imputations")`](../articles/nif-imputations.md)).
+well in a separate vignette (`vignette("nif-imputations")`).
 
 Overall, the `nif` package is intended to facilitate the creation of
 analysis data sets (‘NIF data sets’) from SDTM-formatted clinical data.
