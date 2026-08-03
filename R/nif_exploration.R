@@ -682,14 +682,13 @@ covariate_hist <- function(
   title = NULL
 ) {
   # input validation
-  validate_nif(obj)
-  ## TO DO
-  validate_char_param(cov, "cov")
-  validate_numeric_param(nbins, "nbins")
-  validate_char_param(group, "group", allow_null = TRUE)
-  validate_numeric_param(alpha, "alpha")
-  validate_logical_param(density, "density")
-  validate_char_param(title, "title", allow_null = TRUE)
+  validate_argument(cov, "char")
+  validate_argument(group, "character", allow_multiple = TRUE, allow_null = TRUE)
+  validate_nif(obj, fields = unique(c(cov, group)))
+  validate_argument(nbins, "numeric")
+  validate_argument(alpha, "numeric")
+  validate_argument(density, "logical")
+  validate_argument(title, "character", allow_null = TRUE)
 
   cov_params <- get_cov_plot_params(cov)
   xlabel <- cov_params$xlabel
@@ -797,14 +796,16 @@ covariate_hist <- function(
 #' @examples
 #' covariate_barplot(examplinib_poc_nif, "SEX")
 covariate_barplot <- function(
-  obj, cov, group = NULL, title = NULL
+  obj,
+  cov,
+  group = NULL,
+  title = NULL
 ) {
   # input validation
-  validate_nif(obj)
-  # TO DO
-  validate_char_param(cov, "cov")
-  validate_char_param(group, "group", allow_null = TRUE)
-  validate_char_param(title, "title", allow_null = TRUE)
+  validate_argument(cov, "char")
+  validate_argument(group, "character", allow_multiple = TRUE, allow_null = TRUE)
+  validate_nif(obj, fields = unique(c(cov, group)))
+  validate_argument(title, "character", allow_null = TRUE)
 
   if (is.null(title)) {
     title <- cov
@@ -863,7 +864,19 @@ covariate_barplot <- function(
 #'
 #' @returns A ggplot2 object.
 #' @noRd
-cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
+cat_boxplot <- function(
+    obj,
+    cat_field,
+    val_field,
+    title = NULL
+) {
+  # input validation
+  validate_argument(cat_field, "character")
+  validate_argument(val_field, "character")
+  validate_nif(obj, fields = unique(c(cat_field, val_field)))
+  validate_argument(title, "character", allow_null = TRUE)
+
+  # business logic
   temp <- obj |>
     as.data.frame() |>
     mutate(.cat = as.factor(.data[[cat_field]])) |>
@@ -935,7 +948,7 @@ wt_by_race <- function(obj) {
 wt_by_ht <- function(obj, alpha = 0.7) {
   # input validation
   validate_nif(obj, fields = c("HEIGHT", "WEIGHT"))
-  validate_numeric_param(alpha, "alpha")
+  validate_argument(alpha, "numeric")
 
   obj |>
     as.data.frame() |>
@@ -961,7 +974,7 @@ wt_by_ht <- function(obj, alpha = 0.7) {
 ht_by_wt <- function(obj, alpha = 0.7) {
   # input validation
   validate_nif(obj, fields = c("HEIGHT", "WEIGHT"))
-  validate_numeric_param(alpha, "alpha")
+  validate_argument(alpha, "numeric")
 
   obj |>
     as.data.frame() |>
@@ -988,7 +1001,7 @@ ht_by_wt <- function(obj, alpha = 0.7) {
 bmi_by_age <- function(obj, alpha = 0.7) {
   # input validation
   validate_nif(obj, fields = c("AGE", "BMI"))
-  validate_numeric_param(alpha, "alpha")
+  validate_argument(alpha, "numeric")
 
   obj |>
     as.data.frame() |>
@@ -1016,12 +1029,13 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 time_by_ntime <- function(obj, max_time = NULL, ...) {
   # input validation
   validate_nif(obj, fields = c("NTIME", "ANALYTE"))
-  validate_numeric_param(max_time, "max_time", allow_null = TRUE)
+  validate_argument(max_time, "numeric", allow_null = TRUE)
 
   if (is.null(max_time)) {
     max_time <- max_time(obj, only_observations = TRUE)
   }
 
+  # business logic
   obj |>
     ensure_analyte() |>
     filter(.data$TIME <= max_time) |>
@@ -1085,13 +1099,10 @@ administration_summary <- function(obj) {
 #' @returns A data frame.
 #' @noRd
 sampling_summary <- function(obj) {
-  # validate input
-  validate_nif(obj)
+  # input validation
+  validate_nif(obj, fields = "NTIME")
 
-  if (!"NTIME" %in% names(obj)) {
-    stop("NTIME not found in input!")
-  }
-
+  # business_logic
   obj |>
     as.data.frame() |>
     filter(.data$EVID == 0) |>
@@ -1118,16 +1129,19 @@ sampling_summary <- function(obj) {
 #' @examples
 #' mean_dose_plot(examplinib_poc_nif)
 mean_dose_plot <- function(
-  obj, analyte = NULL, title = NULL
+  obj,
+  analyte = NULL,
+  title = NULL
 ) {
   # input validation
+  validate_argument(analyte, "char", allow_null = TRUE)
+  validate_argument(title, "character", allow_null = TRUE)
   validate_nif(obj, fields = c("ANALYTE"))
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(title, "title", allow_null = TRUE)
 
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
   }
+  validate_analyte(obj, analyte)
 
   # make plot title
   if (is.null(title)) {
@@ -1139,6 +1153,7 @@ mean_dose_plot <- function(
     title <- paste0(title, "Mean ", analyte, " dose over time")
   }
 
+  # business logic
   obj |>
     ensure_tafd() |>
     as.data.frame() |>
@@ -1171,7 +1186,6 @@ sorting_dose_level <- function(dl) {
 }
 
 
-
 #' Subjects per dose level
 #'
 #' The number of subjects that have observations, per dose level and analyte.
@@ -1187,16 +1201,19 @@ sorting_dose_level <- function(dl) {
 #' subs_per_dose_level(examplinib_sad_nif)
 #' subs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
 subs_per_dose_level <- function(
-  obj, analyte = NULL, group = NULL
+  obj,
+  analyte = NULL,
+  group = NULL
 ) {
   # input validation
-  validate_nif(obj)
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(group, "group", allow_null = TRUE)
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(group, "character", allow_null = TRUE)
+  validate_nif(obj, fields = unique(c("ANALYTE", group)))
 
   if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
+  validate_analyte(obj, analyte)
 
   # business logic
   obj |>
@@ -1228,17 +1245,21 @@ subs_per_dose_level <- function(
 #' obs_per_dose_level(examplinib_sad_nif)
 #' obs_per_dose_level(examplinib_poc_nif, group = "SEX", analyte = "RS2023")
 obs_per_dose_level <- function(
-  obj, analyte = NULL, group = NULL
+  obj,
+  analyte = NULL,
+  group = NULL
 ) {
   # input validation
-  validate_nif(obj)
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(group, "group", allow_null = TRUE)
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(group, "character", allow_null = TRUE)
+  validate_nif(obj, fields = unique(c("ANALYTE", group)))
 
   if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
+  validate_analyte(obj, analyte)
 
+  # business logic
   obj |>
     ensure_analyte() |>
     add_dose_level() |>
@@ -1290,18 +1311,30 @@ edish_plot <- function(
   silent = NULL,
   ...
 ) {
-  # Input validation
-  if (!inherits(sdtm, "sdtm")) {
-    stop("sdtm must be an sdtm object")
-  }
+  # input validation
+  validate_sdtm(sdtm, "lb")
+  validate_nif(nif)
+  validate_argument(enzyme, "character", values = c("ALT", "AST"))
+  validate_argument(observation_filter, "character", allow_null = TRUE)
+  validate_argument(baseline_filter, "character", allow_null = TRUE)
+  validate_argument(show_labels, "logical")
+  validate_argument(shading, "logical")
+  validate_argument(title, "character", allow_null = TRUE)
+  validate_argument(size, "numeric")
+  validate_argument(alpha, "numeric")
+  validate_argument(silent, "logical")
 
-  if (!inherits(nif, "nif")) {
-    stop("nif must be a nif object")
-  }
+  # if (!inherits(sdtm, "sdtm")) {
+  #   stop("sdtm must be an sdtm object")
+  # }
+  #
+  # if (!inherits(nif, "nif")) {
+  #   stop("nif must be a nif object")
+  # }
 
-  if (!enzyme %in% c("ALT", "AST")) {
-    stop("enzyme must be either 'ALT' or 'AST'")
-  }
+  # if (!enzyme %in% c("ALT", "AST")) {
+  #   stop("enzyme must be either 'ALT' or 'AST'")
+  # }
 
   lb <- domain(sdtm, "lb")
 

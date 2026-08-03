@@ -558,15 +558,11 @@ validate_analyte <- function(
   allow_empty = FALSE
 ) {
   # validate inputs
-  validate_nif(nif)
-  # validate_char_param(
-  #   analyte, "analyte",
-  #   allow_multiple = allow_multiple, allow_null = allow_null,
-  #   allow_empty = allow_empty
-  # )
+  validate_nif(nif, fields = "ANALYTE")
 
-  validate_argument(analyte, "character", allow_multiple = allow_multiple,
-                    allow_null = allow_null, allow_empty = allow_empty)
+  validate_argument(
+    analyte, "character", allow_multiple = allow_multiple,
+    allow_null = allow_null, allow_empty = allow_empty)
 
   if (!is.null(analyte)) {
     missing_analytes <- setdiff(analyte, analytes(nif))

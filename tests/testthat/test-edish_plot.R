@@ -42,11 +42,16 @@ test_that("edish_plot handles valid input correctly", {
   expect_equal(result$labels$y, "BILI/ULN")
 })
 
+test_that("edish_plot works with basic input", {
+  expect_no_error(
+    edish_plot(create_edish_nif(), create_edish_sdtm(), silent = TRUE)
+  )
+})
 
 test_that("edish_plot validates enzyme parameter", {
   expect_error(
     edish_plot(create_edish_nif(), create_edish_sdtm(), enzyme = "INVALID", silent = TRUE),
-    "enzyme must be either 'ALT' or 'AST'"
+    "enzyme must be ALT or AST!"
   )
 })
 
@@ -62,3 +67,4 @@ test_that("edish_plot handles missing required lab tests", {
     "missing lab tests for BILI"
   )
 })
+
