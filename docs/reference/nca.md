@@ -47,7 +47,7 @@ nca(
 - duplicates:
 
   Selection how to deal with duplicate observations with respect to the
-  USUBJID, ANALYTE and DTC fields:
+  ID, ANALYTE and the selected time fields:
 
   - 'stop': Stop execution and produce error message
 
