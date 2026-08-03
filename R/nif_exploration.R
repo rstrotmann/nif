@@ -463,7 +463,7 @@ print.summary_nif <- function(
     cat(paste0(length(x$studies), " studies:\n"))
   }
 
-  cat(paste0(df_to_string(x$n_studies, color = color, indent = indent), "\n\n"))
+  cat(paste0(df_to_string(x$n_studies, color = color, indent = indent), "\n"))
 
   if (!is.null(x$sex)) {
     cat(paste0(
@@ -478,7 +478,7 @@ print.summary_nif <- function(
           mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
         indent = indent
       ),
-      "\n\n"
+      "\n"
     ))
   }
 
@@ -490,7 +490,7 @@ print.summary_nif <- function(
           mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
         indent = indent
       ),
-      "\n\n"
+      "\n"
     ))
   }
 
@@ -501,26 +501,28 @@ print.summary_nif <- function(
         x$odwg |>
           mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
         color = color, indent = indent
-      ), "\n\n"
+      ), "\n"
     ))
   }
 
   cat(paste0(
-    "Treatments:\n",
-    paste0(spacer, paste(x$drugs, collapse = ", ")), "\n\n"
+    "Treatments: ",
+    nice_enumeration(x$drugs),
+    "\n"
   ))
 
   cat(paste0(
-    "Analytes:\n",
-    paste0(spacer, paste0(x$analytes, collapse = ", ")), "\n\n"
+    "Analytes:",
+    nice_enumeration(x$analytes),
+    "\n\n"
   ))
 
   cat("Subjects per dose level:\n")
   cat(df_to_string(x$dose_levels, color = color, indent = indent))
-  cat("\n\n")
+  cat("\n")
 
   cat(paste(sum(x$n_obs$N), "observations:\n"))
-  cat(paste0(df_to_string(x$n_obs, color = color, indent = indent), "\n\n"))
+  cat(paste0(df_to_string(x$n_obs, color = color, indent = indent), "\n"))
 
   # sampling overview
   if (!is.null(x$sampling)) {
@@ -531,19 +533,19 @@ print.summary_nif <- function(
         mutate(across(-1, function(x) ifelse(is.na(x), "-", as.character(x)))),
       indent = indent
     ))
-    cat("\n\n")
+    cat("\n")
   }
 
   dr_summary <- lapply(x$dose_red_sbs, nrow) |>
     data.frame()
   cat("Subjects with dose reductions\n")
   cat(df_to_string(dr_summary, color = color, indent = indent))
-  cat("\n\n")
+  cat("\n")
 
   cat("Treatment duration overview:\n")
   cat(df_to_string(x$administration_duration, color = color, indent = indent))
 
-  cat(paste0("\n\nHash: ", x$hash))
+  cat(paste0("\nHash: ", x$hash))
   if (!is.null(x$last)) {
     cat(paste0("\nLast DTC: ", x$last))
   }

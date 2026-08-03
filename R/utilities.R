@@ -1,3 +1,294 @@
+# ---- general functions ----
+
+#' Get the name of a function
+#'
+#' Returns the name of a function that is supplied as an argument.
+#'
+#' @param fun A function.
+#' @return The name of the function as a character string.
+#' @export
+#' @keywords internal
+#' @examples
+#' function_name(mean)
+#' function_name(sum)
+function_name <- function(fun) {
+  deparse(substitute(fun))
+}
+
+
+#' Coalescing join
+#'
+#' Source:
+#' https://www.r-bloggers.com/2023/05/
+#' replace-missing-value-from-other-columns-using-coalesce-join-in-dplyr/
+#'
+#' @param x Left, as data frame.
+#' @param y Right, as data frame.
+#' @param by The 'by' argument of the join functions.
+#' @param keep 'left' means keep value from left table if values exist in both
+#'  tables.
+#' @param suffix Same as the suffix argument in dplyr joins.
+#' @param join Choose a join type from the list. The default is full_join.
+#'
+#' @return A data frame.
+#' @noRd
+coalesce_join <- function(
+    x, y, by = NULL,
+    keep = c("left", "right"),
+    suffix = c(".x", ".y"),
+    join = c("full_join", "left_join", "right_join", "inner_join")
+) {
+  keep <- match.arg(keep)
+
+  # Confirm the join argument is in the list and matches the string to the
+  # function
+  join <- match.arg(join)
+  join <- match.fun(join)
+
+  # Depends on the keep argument, overwrite the duplicate value
+  # If keep = "left", the value from the left table will be kept, vice versa.
+  if (keep == "left") suffix_ <- suffix else suffix_ <- rev(suffix)
+
+  join(x, y, by = by, suffix = suffix) |>
+    mutate(
+      across( # Apply the coalesce function to all overlapped columns
+        # Select columns ended with .x if keep = "left"; or .y if keep = "right"
+        ends_with(suffix_[1]),
+        # Replace .x in var.x with .y to generate var.y, if keep = "left"; or
+        # vice versa
+        ~ coalesce(., get(str_replace(cur_column(), suffix_[1], suffix_[2]))),
+        # Remove the suffix from the combined columns
+        .names = "{str_remove(.col, suffix_[1])}"
+      ),
+      # Remove the temporary columns ended with suffix
+      .keep = "unused"
+    )
+}
+
+
+# ---- NIF helpers ----
+
+#' Identify baseline columns in a data frame
+#'
+#' Identifies columns that are constant (baseline) for each ID value. A baseline
+#' column is one where all rows with the same ID have the same value.
+#'
+#' @param df A data frame.
+#' @param id_col Character string specifying the ID column name. Defaults to
+#'   "ID".
+#'
+#' @return A character vector of column names that are baseline columns
+#'   (constant per ID). Returns an empty character vector if no baseline columns
+#'   are found.
+#'
+#' @import dplyr
+#' @noRd
+identify_baseline_columns <- function(df, id_col = "ID") {
+  # Input validation
+  if (!is.data.frame(df)) {
+    stop("Input must be a data frame")
+  }
+
+  if (nrow(df) == 0) {
+    return(character(0))
+  }
+
+  if (!is.character(id_col) || length(id_col) != 1) {
+    stop("id_col must be a single character string")
+  }
+
+  if (!id_col %in% names(df)) {
+    stop("ID column '", id_col, "' not found in data frame")
+  }
+
+  # Get all column names except the ID column
+  all_cols <- names(df)
+  cols_to_check <- setdiff(all_cols, id_col)
+
+  if (length(cols_to_check) == 0) {
+    return(character(0))
+  }
+
+  # Check each column to see if it's constant per ID
+  baseline_cols <- character(0)
+
+  for (col in cols_to_check) {
+    # Count distinct values per ID for this column
+    distinct_counts <- df |>
+      group_by(.data[[id_col]]) |>
+      summarize(
+        n_distinct = n_distinct(.data[[col]], na.rm = TRUE),
+        .groups = "drop"
+      )
+
+    # Column is baseline if all IDs have at most 1 distinct value (allowing for
+    # NA values - if all values are NA for an ID, that's still baseline)
+    if (all(distinct_counts$n_distinct <= 1)) {
+      baseline_cols <- c(baseline_cols, col)
+    }
+  }
+
+  baseline_cols
+}
+
+
+#' Re-assign ID based on consistent criteria
+#'
+#' @param obj A nif object.
+#'
+#' @returns A nif object.
+#' @noRd
+#'
+#' @examples
+#' normalize_id(examplinib_sad_nif)
+normalize_id <- function(obj) {
+  validate_nif(obj)
+
+  fingerprint <- obj %>%
+    reframe(
+      sum_dv = sum(.data$DV, na.rm = TRUE),
+      sum_amt = sum(.data$AMT, na.rm = TRUE),
+      .by = c("ID")) %>%
+    arrange(.data$sum_dv, .data$sum_amt) %>%
+    mutate(.id_order = row_number())
+
+  obj %>%
+    left_join(fingerprint, by = "ID") %>%
+    arrange(.data$.id_order) %>%
+    mutate(ID = .data$.id_order) %>%
+    select(-c("sum_dv", "sum_amt", ".id_order")) %>%
+    arrange(.data$ID)
+}
+
+
+#' XXH128 hash
+#'
+#' @param x An object.
+#'
+#' @returns XXH128 hash as string.
+#' @export
+hash <- function(x) {
+  UseMethod("hash")
+}
+
+
+#' @rdname hash
+#' @export
+hash.nif <- function(x) {
+  x |>
+    normalize_id() |>
+    rlang::hash()
+}
+
+
+#' Ensure that fields are unique per subject
+#'
+#' @param nif A nif object.
+#' @param field field(s) to check for uniqueness as character. "ID" is ignored.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+ensure_unique_per_subject <- function(nif, field) {
+  # input validation
+  validate_nif(nif)
+  validate_argument(
+    field, allow_multiple = TRUE, allow_null = TRUE, values = names(nif))
+
+  # business logic
+  field <- setdiff(field, "ID")
+  if (length(field) != 0) {
+    multiple_baseline <- nif |>
+      select(all_of(c("ID", field))) |>
+      pivot_longer(cols = all_of(field), names_to = "param", values_to = "value") |>
+      reframe(n = n_distinct(.data$value), .by = c("ID", "param")) |>
+      filter(n > 1)
+
+    n_multiple <- nrow(multiple_baseline)
+    if (n_multiple > 0) {
+      stop(paste0(
+        "Non-unique values for ",
+        nice_enumeration(unique(multiple_baseline$param), conjunction = "or"),
+        ":\n",
+        df_to_string(multiple_baseline, indent = 2)
+      ))
+    }
+  }
+  invisible(NULL)
+}
+
+
+#' Check consistency of ID, USUBJID and STUDYID assignments
+#'
+#' @section Cases
+#'
+#' **ID must not be re-assigned**
+#'
+#' ID values must be unique for USUBJID/STUDYID. If an ID is assigned to
+#' different combinations of USUBJID and STUDYID, if present, an error is
+#' issued.
+#'
+#' **The same USUBJID in different STUDYID**
+#'
+#' This may happen if the same participant was enrolled in different studies. In
+#' these cases, they need to be assigned a different ID in the NIF. In such
+#' cases, a warning is issued.
+#'
+#' If the STUDYID field is not present, the same USUBJID must not be assigned to
+#' different ID. An error is issued.
+#'
+#' **The same USUBJID assigned to different ID but consistent STUDYID**
+#'
+#' This must not happen and results in an error.
+#'
+#' @param obj A data frame or nif object.
+#'
+#' @returns Nothing.
+#' @noRd
+nif_check_id_integrity <- function(obj) {
+  if (!inherits(obj, "data.frame"))
+    stop("input must be a data frame!")
+
+  if (!"ID" %in% names(obj))
+    stop("Input must contain at least the ID column!")
+
+  if (any(is.na(obj$ID)))
+    stop("ID must not be NA!")
+
+  ids <- obj |>
+    select(any_of(c("ID", "USUBJID", "STUDYID"))) |>
+    distinct()
+
+  # ID must be only assigned once
+  id_reassignment <- ids |>
+    group_by(.data$ID) |>
+    filter(n() >1) |>
+    ungroup()
+
+  if (nrow(id_reassignment) > 0)
+    stop(paste0(
+      "Multiple assignment of the following ID:\n",
+      df_to_string(id_reassignment, indent = 2)))
+
+  if (all(c("STUDYID", "USUBJID") %in% names(ids))) {
+
+    # Warn if an USUBJID is in multiple studies
+    usubjid_reassignment <- ids |>
+      select(c("USUBJID", "STUDYID")) |>
+      distinct() |>
+      group_by(.data$USUBJID) |>
+      filter(n() > 1) |>
+      ungroup()
+
+    if (nrow(usubjid_reassignment) > 0)
+      warning(paste0(
+        "The following USUBJID was found in multiple studies:\n",
+        df_to_string(usubjid_reassignment, indent = 2)))
+  }
+}
+
+
+# ---- conditional printing ----
+
 #' Issue cli message based on silent flag
 #'
 #' @param cli_expression Message components as cli calls.
@@ -76,380 +367,208 @@ print_debug <- function(obj) {
 }
 
 
-#' Get the name of a function
+# ---- dates and times ----
+
+#' Check if a string matches ISO 8601 date-time format
 #'
-#' Returns the name of a function that is supplied as an argument.
+#' This function checks whether a character string complies with the ISO 8601
+#' standard for date-time representation (combined date and time). Unlike the
+#' more general `is_iso8601_format()` function, this specifically checks for the
+#' presence of both date and time components.
 #'
-#' @param fun A function.
-#' @return The name of the function as a character string.
+#' Valid formats include:
+#' - Extended format with separators: "2023-10-15T14:30:00"
+#' - Basic format without separators: "20231015T143000"
+#' - With timezone information: "2023-10-15T14:30:00Z" or
+#' "2023-10-15T14:30:00+02:00"
+#' - With fractional seconds: "2023-10-15T14:30:00.123"
+#' - Using space instead of T separator: "2023-10-15 14:30:00" (non-strict mode
+#' only)
+#'
+#' @param x A character string or vector of strings to check.
+#' @param strict Logical, whether to strictly enforce ISO 8601 specification.
+#'   Default is FALSE, which allows some common variations like space instead of
+#'   'T' separator.
+#'
+#' @return Logical value indicating whether the string is in ISO 8601 date-time
+#'   format.
 #' @export
 #' @keywords internal
-#' @examples
-#' function_name(mean)
-#' function_name(sum)
-function_name <- function(fun) {
-  deparse(substitute(fun))
-}
-
-
-#' Re-code SEX field in a data frame
-#'
-#' @param obj The data.frame containing a SEX field
-#' @return The output data frame with SEX coded as:
-#'   - 0: "M", "0"
-#'   - 1: "F", "1"
-#'   - NA: Any other values (with warning)
-#' @import dplyr
-#' @keywords internal
-#' @noRd
-recode_sex <- function(obj) {
-  # Input validation
-  if (!is.data.frame(obj)) {
-    stop("Input must be a data frame")
-  }
-  if (!"SEX" %in% names(obj)) {
-    stop("Input data frame must contain 'SEX' column")
-  }
-
-  # Store original values for warning message
-  orig_vals <- unique(obj$SEX[!is.na(obj$SEX)])
-
-  result <- obj |>
-    mutate(SEX = as.numeric(
-      case_when(
-        str_trim(toupper(as.character(.data$SEX))) %in% c("M", "0", "\u7537") ~ 0,
-        str_trim(toupper(as.character(.data$SEX))) %in% c("F", "1", "\u5973") ~ 1,
-        .default = NA
-      )
-    ))
-
-  # Warn about invalid values that were converted to NA
-  valid_vals <- c("m", "f", "M", "F", "0", "1", "\u7537", "\u5973")
-  invalid_vals <- setdiff(orig_vals, valid_vals)
-  if (length(invalid_vals) > 0) {
-    warning(
-      "Invalid sex values converted to NA: ",
-      paste(invalid_vals, collapse = ", ")
-    )
-  }
-
-  result
-}
-
-
-#' Race coding table
-#'
-#' Standard race coding table with numeric codes and labels
-#'
-#' @format A data frame with 8 rows and 3 columns:
-#' \describe{
-#'   \item{RACEN}{Numeric code}
-#'   \item{RACE}{RACE CDISC submission value as per NCI code C74457}
-#'   \item{LABEL}{Abbreviation for labeling purpose}
-#' }
-#' @export
-race_coding <- tibble::tribble(
-  ~RACEN, ~RACE, ~LABEL,
-  0, "WHITE", "White",
-  1, "ASIAN", "Asian",
-  2, "BLACK OR AFRICAN AMERICAN", "Black",
-  3, "AMERICAN INDIAN OR ALASKA NATIVE", "Native",
-  4, "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER", "Pacific",
-  5, "NOT REPORTED", "NR",
-  6, "UNKNOWN", "Unknown",
-  7, "OTHER", "Other"
-)
-
-
-#' Recode RACE columns in nif object
-#'
-#' For some purposes, e.g., NONMEM-based modeling, numerical values are expected
-#' in the RACE field. This function recodes RACE based on the following
-#' associations:
-#'
-#' @param obj A nif object with RACE as character field.
-#' @param coding_table A data frame with the columns RACE and RACEN. Uses
-#' default coding, if NULL.
-#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
-#'
-#' @return A nif object with the original RACE replaced by the numerical race
-#' code.
-#' @export
 #'
 #' @examples
-#' nif::race_coding
-#' head(recode_race(examplinib_sad_nif))
-recode_race <- function(obj, coding_table = NULL, silent = NULL) {
-  # validate inputs
-  validate_nif(obj)
-  validate_logical_param(silent, "silent", allow_null = TRUE)
+#' is_iso8601_datetime("2023-10-15T14:30:00") # TRUE
+#' is_iso8601_datetime("2023-10-15 14:30:00") # TRUE (with default strict=FALSE)
+#' is_iso8601_datetime("2023-10-15 14:30:00", TRUE) # FALSE (with strict=TRUE)
+#' is_iso8601_datetime("2023-10-15T14:30:00Z") # TRUE
+#' is_iso8601_datetime("2023-10-15T14:30:00+02:00") # TRUE
+#' is_iso8601_datetime("20231015T143000") # TRUE
+#' is_iso8601_datetime("2023-10-15") # FALSE (no time component)
+#' is_iso8601_datetime("14:30:00") # FALSE (no date component)
+is_iso8601_datetime <- function(x, strict = FALSE) {
+  if (!is.character(x)) {
+    stop("Input must be a character string")
+  }
 
-  # validate coding table
-  if (!is.null(coding_table)) {
-    if (!all(c("RACE", "RACEN") %in% names(coding_table))) {
-      stop("coding_table must contain RACE and RACEN columns")
+  # If x is NA, return NA
+  if (length(x) == 1 && is.na(x)) {
+    return(NA)
+  }
+
+  # Date patterns
+  date_extended <- "\\d{4}-\\d{2}-\\d{2}" # YYYY-MM-DD
+  date_basic <- "\\d{4}\\d{2}\\d{2}" # YYYYMMDD
+
+  # Time patterns
+  time_extended <- "\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?"
+  time_basic <- "\\d{2}\\d{2}\\d{2}(?:\\.\\d+)?"
+
+  # Timezone pattern
+  timezone <- "(?:Z|[+-]\\d{2}(?::\\d{2}|\\d{2}))?"
+
+  # Separators
+  strict_separator <- "T"
+  relaxed_separator <- "[ T]"
+  separator <- if (strict) strict_separator else relaxed_separator
+
+  # Combined patterns
+  # Extended format: YYYY-MM-DDThh:mm:ss(.sss)(Z|+/-hh:mm)
+  datetime_extended <- paste0(
+    "^", date_extended, separator, time_extended, timezone, "$"
+  )
+
+  # Basic format: YYYYMMDDThhmmss(.sss)(Z|+/-hhmm)
+  datetime_basic <- paste0(
+    "^", date_basic, strict_separator, time_basic, timezone, "$"
+  )
+
+  # Mix of extended date with basic time: YYYY-MM-DDThhmmss(.sss)(Z|+/-hhmm)
+  datetime_mixed1 <- paste0(
+    "^", date_extended, separator, time_basic, timezone, "$"
+  )
+
+  # Mix of basic date with extended time: YYYYMMDDThh:mm:ss(.sss)(Z|+/-hh:mm)
+  datetime_mixed2 <- paste0(
+    "^", date_basic, strict_separator, time_extended, timezone, "$"
+  )
+
+  # For each element in the input vector
+  result <- sapply(x, function(str) {
+    if (is.na(str)) {
+      return(NA)
     }
-    if (!is.numeric(coding_table$RACEN)) {
-      stop("RACEN column in coding_table must be numeric")
-    }
-  }
 
-  if (!"RACE" %in% names(obj)) {
-    stop("RACE field not found")
-  }
+    # Check if the string matches any of the patterns
+    grepl(datetime_extended, str) ||
+      grepl(datetime_basic, str) ||
+      grepl(datetime_mixed1, str) ||
+      grepl(datetime_mixed2, str)
+  })
 
-  if (is.null(coding_table)) {
-    coding_table <- race_coding
-  }
-
-  # check coding table before joining
-  unmatched <- setdiff(unique(obj$RACE), coding_table$RACE)
-  if (length(unmatched) > 0) {
-    conditional_message(
-      "The following RACE values could not be matched and will become NA: ",
-      nice_enumeration(unmatched),
-      silent = silent
-    )
-  }
-
-  obj |>
-    left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") |>
-    select(-c("RACE")) |>
-    rename(RACE = "RACEN") |>
-    order_nif_columns()
+  as.logical(result)
 }
 
 
-#' Positive value or zero if negative
+#' Check if a string matches ISO 8601 date format
 #'
-#' @param x Numeric.
-#' @return Numeric.
+#' This function checks whether a character string complies with the ISO 8601
+#' standard for date representation (without time components). Unlike the more
+#' general `is_iso8601_format()` function or the `is_iso8601_datetime()`
+#' function, this specifically validates date-only formats.
+#'
+#' Valid formats include:
+#' - Extended format with separators: "2023-10-15"
+#' - Basic format without separators: "20231015"
+#' - Reduced precision (year-month): "2023-10" or "202310"
+#' - Reduced precision (year only): "2023"
+#'
+#' @param x A character string or vector of strings to check.
+#' @param allow_reduced_precision Logical, whether to allow reduced precision
+#'   formats (year-month or year only). Default is TRUE.
+#'
+#' @return Logical value indicating whether the string is in ISO 8601 date
+#'   format.
 #' @export
 #' @keywords internal
+#'
 #' @examples
-#' positive_or_zero(2)
-#' positive_or_zero(-2)
-#' positive_or_zero(c(2, 1, 0, -1, -2))
-positive_or_zero <- function(x) {
-  x[which(x < 0 | is.na(x))] <- 0
-  x
+#' is_iso8601_date("2023-10-15") # TRUE
+#' is_iso8601_date("20231015") # TRUE
+#' is_iso8601_date("2023-10") # TRUE
+#' is_iso8601_date("2023") # TRUE
+#' is_iso8601_date("2023-10", FALSE) # FALSE
+#' is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
+#' is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time component)
+is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
+  if (!is.character(x)) {
+    stop("Input must be a character string")
+  }
+
+  # If x is NA, return NA
+  if (length(x) == 1 && is.na(x)) {
+    return(NA)
+  }
+
+  # Date patterns
+  date_extended <- "^\\d{4}-\\d{2}-\\d{2}$" # YYYY-MM-DD
+  date_basic <- "^\\d{4}\\d{2}\\d{2}$" # YYYYMMDD
+
+  # Reduced precision date patterns (if allowed)
+  year_month_extended <- "^\\d{4}-\\d{2}$" # YYYY-MM
+  year_month_basic <- "^\\d{4}\\d{2}$" # YYYYMM
+  year_only <- "^\\d{4}$" # YYYY
+
+  # For each element in the input vector
+  result <- sapply(x, function(str) {
+    if (is.na(str)) {
+      return(NA)
+    }
+
+    # Check if the string matches full date patterns
+    is_full_date <- grepl(date_extended, str) || grepl(date_basic, str)
+
+    # If it's a full date or we don't allow reduced precision, return result
+    if (is_full_date || !allow_reduced_precision) {
+      return(is_full_date)
+    }
+
+    # Otherwise also check reduced precision formats
+    is_reduced_precision <- grepl(year_month_extended, str) ||
+      grepl(year_month_basic, str) ||
+      grepl(year_only, str)
+
+    is_full_date || is_reduced_precision
+  })
+
+  # Ensure logical return type
+  as.logical(result)
 }
 
 
-#' Convert indent level to padding string of spaces
+#' Check ISO 8601 PT format
 #'
-#' @param indent The indent level as numeric.
+#' @param x A character string or vector of strings to check.
 #'
-#' @return A character string
-#' @keywords internal
-#' @noRd
-indent_string <- function(indent = 0) {
-  paste(replicate(positive_or_zero(indent), " "), collapse = "")
-}
-
-
-#' Render data frame object to string
+#' @returns A logical vector.
+#' @export
 #'
-#' This function renders a data.frame into a character vector, similar to its
-#' representation when printed without line numbers
-#'
-#' @param df The data frame to be rendered.
-#' @param indent Indentation level, as numeric.
-#' @param header Boolean to indicate whether the header row is to be included.
-#' @param color Print headers in grey as logical.
-#' @param n The number of lines to be included, or all if NULL.
-#' @param show_none Show empty data frame as 'none', as logical.
-#' @param header_sep Show separation line after header, as logical.
-#' @param na_string String to use for NA values. Defaults to "NA".
-#' @param abbr_lines The row number to which long data frames are abbreviated
-#' in the ouput if the threshold is exceeded. Defaults to nif_option settings if
-#' NULL.
-#' @param abbr_threshold The row number threshold beyond which long data frames
-#' are abbreviated. Defaults to nif_option settings if NULL.
-#'
-#' @returns Character vector.
-df_preprint <- function(
-    df,
-    indent = 0,
-    n = NULL,
-    header = TRUE,
-    header_sep = FALSE,
-    color = FALSE,
-    show_none = FALSE,
-    na_string = "NA",
-    abbr_lines = NULL,
-    abbr_threshold = NULL
-) {
-
-  # Input validation
-  if (is.null(df)) {
-    return("")
+#' @examples
+#' is_iso8601_pt("PT10M")
+is_iso8601_pt <- function(x) {
+  if (!is.character(x)) {
+    stop("Input must be a character string")
   }
 
-  if (!inherits(df, "data.frame")) {
-    stop("Input must be a data frame")
-  }
+  # ISO 8601 PT pattern
+  pt_pattern <- "^-?PT([0-9.]*H)?([0-9]*M)?([0-9]*S)?$"
 
-  if (!is.numeric(indent) || indent < 0) {
-    stop("Indent must be a non-negative number")
-  }
+  result <- sapply(x, function(s) {
+    if (is.na(s))
+      return(NA)
 
-  validate_argument(n, "numeric", allow_null = TRUE)
-  validate_argument(header, "logical")
-  validate_argument(header_sep, "logical")
-  validate_argument(color, "logical")
-  validate_argument(show_none, "logical")
-  validate_argument(na_string, "character")
-  validate_argument(abbr_lines, "numeric", allow_null = TRUE)
-  validate_argument(abbr_threshold, "numeric", allow_null = TRUE)
+    grepl(pt_pattern, s)
+  })
 
-  # business logic
-
-  # Handle empty data frame early
-  if (nrow(df) == 0) {
-    if (show_none) {
-      return(paste0(indent_string(indent), "none\n"))
-    }
-    return("")
-  }
-
-  if (!is.null(n)) {
-    df <- head(df, n = n)
-  }
-
-  # formatted output
-  footer <- ""
-
-  max_widths <- as.numeric(lapply(
-    rbind(mutate(df, across(everything(), as.character)), names(df)),
-    function(x) max(nchar(x), na.rm = TRUE)
-  ))
-
-  # Create the padding function
-  pad_element <- function(element, width) {
-    sprintf(paste0("%-", width, "s   "), element)
-  }
-
-  # abbreviation handler
-  if (is.null(abbr_lines))
-    abbr_lines <- nif_option_value("abbreviation_maxlines")
-
-  if (is.null(abbr_threshold))
-    abbr_threshold <- nif_option_value("abbreviation_threshold")
-
-  nr <- nrow(df)
-  if (nr > abbr_threshold) {
-    if (!is.null(abbr_lines)) {
-      df <- head(df, abbr_lines)
-      if (nr - abbr_lines > 0) {
-        footer <- paste0(
-          indent_string(indent), "(", nr - abbr_lines, " more rows)"
-        )
-      }
-    }
-  }
-
-  # Convert all columns to character, handling NA values
-  df <- as.data.frame(df) |>
-    mutate(across(everything(), ~ ifelse(is.na(.), na_string, as.character(.))))
-
-  # Create line renderer
-  render_line <- function(line) {
-    paste0(
-      indent_string(indent),
-      paste0(
-        mapply(
-          pad_element,
-          element = as.character(line),
-          width = max_widths
-        ),
-        collapse = ""
-      )
-    )
-  }
-
-  # Build output starting with header if requested
-  output_parts <- character(0)
-
-  if (header) {
-    header_line <- render_line(names(df))
-    if (color) {
-      header_line <- paste0("\u001b[38;5;248m", header_line, "\u001b[0m")
-    }
-    output_parts <- c(output_parts, header_line)
-
-    if (header_sep) {
-      separator <- paste0(
-        indent_string(indent),
-        paste(
-          mapply(
-            function(w) paste(rep("-", w), collapse = ""),
-            max_widths
-          ),
-          collapse = "   "
-        )
-      )
-      if (color) {
-        separator <- paste0("\u001b[38;5;248m", separator, "\u001b[0m")
-      }
-      output_parts <- c(output_parts, separator)
-    }
-  }
-
-  # Add data rows
-  c(output_parts, apply(df, 1, render_line), footer)
-}
-
-
-#' Render data frame object to string
-#'
-#' This function renders a data.frame into a string similar to its
-#' representation when printed without line numbers
-#'
-#' @inheritParams df_preprint
-#'
-#' @returns nothing
-#' @noRd
-df_to_string <- function(
-    df,
-    indent = 0,
-    n = NULL,
-    header = TRUE,
-    header_sep = FALSE,
-    color = FALSE,
-    show_none = FALSE,
-    na_string = "NA",
-    abbr_lines = NULL,
-    abbr_threshold = NULL
-) {
-  temp <- df_preprint(
-    df, indent, n, header, header_sep, color, show_none, na_string,
-    abbr_lines, abbr_threshold)
-  paste(temp, collapse = "\n")
-}
-
-
-#' Print data frame as cli object
-#'
-#' @inheritParams df_preprint
-#' @return nothing
-#' @noRd
-df_to_cli <- function(
-    df,
-    indent = 0,
-    n = NULL,
-    header = TRUE,
-    header_sep = FALSE,
-    color = FALSE,
-    show_none = FALSE,
-    na_string = "NA",
-    abbr_lines = NULL,
-    abbr_threshold = NULL
-) {
-  temp <- df_preprint(
-    df, indent, n, header, header_sep, color, show_none, na_string, abbr_lines,
-    abbr_threshold)
-  dummy <- lapply(temp, function(x) cli_verbatim(x))
+  as.logical(result)
 }
 
 
@@ -832,6 +951,35 @@ has_time <- function(obj) {
 }
 
 
+#' Convert trial day to elapsed days
+#'
+#' This function corrects for trial day 1 actually indicating zero elapsed days
+#' since the treatment start.
+#'
+#' @param x The trial day as numeric.
+#'
+#' @return The number of elapsed days as numeric.
+#' @noRd
+#'
+trialday_to_day <- function(x) {
+  if (any(x[which(!is.na(x))] == 0)) stop("Trial day cannot be zero!")
+  x + (x > 0) * -1
+}
+
+
+# ---- nice printing ----
+
+#' Convert indent level to padding string of spaces
+#'
+#' @param indent The indent level as numeric.
+#'
+#' @return A character string
+#' @keywords internal
+#' @noRd
+indent_string <- function(indent = 0) {
+  paste(replicate(positive_or_zero(indent), " "), collapse = "")
+}
+
 
 #' Nice enumeration of multiple strings
 #'
@@ -891,6 +1039,230 @@ plural <- function(word, plural) {
   } else {
     word
   }
+}
+
+
+#' Render data frame object to string
+#'
+#' This function renders a data.frame into a character vector, similar to its
+#' representation when printed without line numbers
+#'
+#' @param df The data frame to be rendered.
+#' @param indent Indentation level, as numeric.
+#' @param header Boolean to indicate whether the header row is to be included.
+#' @param color Print headers in grey as logical.
+#' @param n The number of lines to be included, or all if NULL.
+#' @param show_none Show empty data frame as 'none', as logical.
+#' @param header_sep Show separation line after header, as logical.
+#' @param na_string String to use for NA values. Defaults to "NA".
+#' @param abbr_lines The row number to which long data frames are abbreviated
+#' in the ouput if the threshold is exceeded. Defaults to nif_option settings if
+#' NULL.
+#' @param abbr_threshold The row number threshold beyond which long data frames
+#' are abbreviated. Defaults to nif_option settings if NULL.
+#'
+#' @returns Character vector.
+df_preprint <- function(
+    df,
+    indent = 0,
+    n = NULL,
+    header = TRUE,
+    header_sep = FALSE,
+    color = FALSE,
+    show_none = FALSE,
+    na_string = "NA",
+    abbr_lines = NULL,
+    abbr_threshold = NULL
+) {
+
+  # Input validation
+  if (is.null(df)) {
+    return("")
+  }
+
+  if (!inherits(df, "data.frame")) {
+    stop("Input must be a data frame")
+  }
+
+  if (!is.numeric(indent) || indent < 0) {
+    stop("Indent must be a non-negative number")
+  }
+
+  validate_argument(n, "numeric", allow_null = TRUE)
+  validate_argument(header, "logical")
+  validate_argument(header_sep, "logical")
+  validate_argument(color, "logical")
+  validate_argument(show_none, "logical")
+  validate_argument(na_string, "character")
+  validate_argument(abbr_lines, "numeric", allow_null = TRUE)
+  validate_argument(abbr_threshold, "numeric", allow_null = TRUE)
+
+  # business logic
+
+  # Handle empty data frame early
+  if (nrow(df) == 0) {
+    if (show_none) {
+      return(paste0(indent_string(indent), "none\n"))
+    }
+    return("")
+  }
+
+  if (!is.null(n)) {
+    df <- head(df, n = n)
+  }
+
+  # formatted output
+  footer <- ""
+
+  max_widths <- as.numeric(lapply(
+    rbind(mutate(df, across(everything(), as.character)), names(df)),
+    function(x) max(nchar(x), na.rm = TRUE)
+  ))
+
+  # Create the padding function
+  pad_element <- function(element, width) {
+    sprintf(paste0("%-", width, "s   "), element)
+  }
+
+  # abbreviation handler
+  if (is.null(abbr_lines))
+    abbr_lines <- nif_option_value("abbreviation_maxlines")
+
+  if (is.null(abbr_threshold))
+    abbr_threshold <- nif_option_value("abbreviation_threshold")
+
+  nr <- nrow(df)
+  if (nr > abbr_threshold) {
+    if (!is.null(abbr_lines)) {
+      df <- head(df, abbr_lines)
+      if (nr - abbr_lines > 0) {
+        footer <- paste0(
+          indent_string(indent), "(", nr - abbr_lines, " more rows)"
+        )
+      }
+    }
+  }
+
+  # Convert all columns to character, handling NA values
+  df <- as.data.frame(df) |>
+    mutate(across(everything(), ~ ifelse(is.na(.), na_string, as.character(.))))
+
+  # Create line renderer
+  render_line <- function(line) {
+    paste0(
+      indent_string(indent),
+      paste0(
+        mapply(
+          pad_element,
+          element = as.character(line),
+          width = max_widths
+        ),
+        collapse = ""
+      )
+    )
+  }
+
+  # Build output starting with header if requested
+  output_parts <- character(0)
+
+  if (header) {
+    header_line <- render_line(names(df))
+    if (color) {
+      header_line <- paste0("\u001b[38;5;248m", header_line, "\u001b[0m")
+    }
+    output_parts <- c(output_parts, header_line)
+
+    if (header_sep) {
+      separator <- paste0(
+        indent_string(indent),
+        paste(
+          mapply(
+            function(w) paste(rep("-", w), collapse = ""),
+            max_widths
+          ),
+          collapse = "   "
+        )
+      )
+      if (color) {
+        separator <- paste0("\u001b[38;5;248m", separator, "\u001b[0m")
+      }
+      output_parts <- c(output_parts, separator)
+    }
+  }
+
+  # Add data rows
+  c(output_parts, apply(df, 1, render_line), footer)
+}
+
+
+#' Render data frame object to string
+#'
+#' This function renders a data.frame into a string similar to its
+#' representation when printed without line numbers
+#'
+#' @inheritParams df_preprint
+#'
+#' @returns nothing
+#' @noRd
+df_to_string <- function(
+    df,
+    indent = 0,
+    n = NULL,
+    header = TRUE,
+    header_sep = FALSE,
+    color = FALSE,
+    show_none = FALSE,
+    na_string = "NA",
+    abbr_lines = NULL,
+    abbr_threshold = NULL
+) {
+  temp <- df_preprint(
+    df, indent, n, header, header_sep, color, show_none, na_string,
+    abbr_lines, abbr_threshold)
+  paste(temp, collapse = "\n")
+}
+
+
+#' Print data frame as cli object
+#'
+#' @inheritParams df_preprint
+#' @return nothing
+#' @noRd
+df_to_cli <- function(
+    df,
+    indent = 0,
+    n = NULL,
+    header = TRUE,
+    header_sep = FALSE,
+    color = FALSE,
+    show_none = FALSE,
+    na_string = "NA",
+    abbr_lines = NULL,
+    abbr_threshold = NULL
+) {
+  temp <- df_preprint(
+    df, indent, n, header, header_sep, color, show_none, na_string, abbr_lines,
+    abbr_threshold)
+  dummy <- lapply(temp, function(x) cli_verbatim(x))
+}
+
+
+
+# ---- numeric helpers ----
+
+#' Positive value or zero if negative
+#'
+#' @param x Numeric.
+#' @return Numeric.
+#' @export
+#' @keywords internal
+#' @examples
+#' positive_or_zero(2)
+#' positive_or_zero(-2)
+#' positive_or_zero(c(2, 1, 0, -1, -2))
+positive_or_zero <- function(x) {
+  x[which(x < 0 | is.na(x))] <- 0
+  x
 }
 
 
@@ -971,272 +1343,14 @@ pos_diff <- function(a, b) {
 }
 
 
-#' Coalescing join
-#'
-#' Source:
-#' https://www.r-bloggers.com/2023/05/
-#' replace-missing-value-from-other-columns-using-coalesce-join-in-dplyr/
-#'
-#' @param x Left, as data frame.
-#' @param y Right, as data frame.
-#' @param by The 'by' argument of the join functions.
-#' @param keep 'left' means keep value from left table if values exist in both
-#'  tables.
-#' @param suffix Same as the suffix argument in dplyr joins.
-#' @param join Choose a join type from the list. The default is full_join.
-#'
-#' @return A data frame.
-#' @noRd
-coalesce_join <- function(
-  x, y, by = NULL,
-  keep = c("left", "right"),
-  suffix = c(".x", ".y"),
-  join = c("full_join", "left_join", "right_join", "inner_join")
-) {
-  keep <- match.arg(keep)
-
-  # Confirm the join argument is in the list and matches the string to the
-  # function
-  join <- match.arg(join)
-  join <- match.fun(join)
-
-  # Depends on the keep argument, overwrite the duplicate value
-  # If keep = "left", the value from the left table will be kept, vice versa.
-  if (keep == "left") suffix_ <- suffix else suffix_ <- rev(suffix)
-
-  join(x, y, by = by, suffix = suffix) |>
-    mutate(
-      across( # Apply the coalesce function to all overlapped columns
-        # Select columns ended with .x if keep = "left"; or .y if keep = "right"
-        ends_with(suffix_[1]),
-        # Replace .x in var.x with .y to generate var.y, if keep = "left"; or
-        # vice versa
-        ~ coalesce(., get(str_replace(cur_column(), suffix_[1], suffix_[2]))),
-        # Remove the suffix from the combined columns
-        .names = "{str_remove(.col, suffix_[1])}"
-      ),
-      # Remove the temporary columns ended with suffix
-      .keep = "unused"
-    )
+lower_ci <- function(mean, sd, n, conf_level = 0.9){
+  se <- sd / sqrt(n)
+  mean - qt(1 - ((1 - conf_level) / 2), n - 1) * se
 }
 
-
-#' Convert trial day to elapsed days
-#'
-#' This function corrects for trial day 1 actually indicating zero elapsed days
-#' since the treatment start.
-#'
-#' @param x The trial day as numeric.
-#'
-#' @return The number of elapsed days as numeric.
-#' @noRd
-#'
-trialday_to_day <- function(x) {
-  if (any(x[which(!is.na(x))] == 0)) stop("Trial day cannot be zero!")
-  x + (x > 0) * -1
-}
-
-
-#' Check if a string matches ISO 8601 date-time format
-#'
-#' This function checks whether a character string complies with the ISO 8601
-#' standard for date-time representation (combined date and time). Unlike the
-#' more general `is_iso8601_format()` function, this specifically checks for the
-#' presence of both date and time components.
-#'
-#' Valid formats include:
-#' - Extended format with separators: "2023-10-15T14:30:00"
-#' - Basic format without separators: "20231015T143000"
-#' - With timezone information: "2023-10-15T14:30:00Z" or
-#' "2023-10-15T14:30:00+02:00"
-#' - With fractional seconds: "2023-10-15T14:30:00.123"
-#' - Using space instead of T separator: "2023-10-15 14:30:00" (non-strict mode
-#' only)
-#'
-#' @param x A character string or vector of strings to check.
-#' @param strict Logical, whether to strictly enforce ISO 8601 specification.
-#'   Default is FALSE, which allows some common variations like space instead of
-#'   'T' separator.
-#'
-#' @return Logical value indicating whether the string is in ISO 8601 date-time
-#'   format.
-#' @export
-#' @keywords internal
-#'
-#' @examples
-#' is_iso8601_datetime("2023-10-15T14:30:00") # TRUE
-#' is_iso8601_datetime("2023-10-15 14:30:00") # TRUE (with default strict=FALSE)
-#' is_iso8601_datetime("2023-10-15 14:30:00", TRUE) # FALSE (with strict=TRUE)
-#' is_iso8601_datetime("2023-10-15T14:30:00Z") # TRUE
-#' is_iso8601_datetime("2023-10-15T14:30:00+02:00") # TRUE
-#' is_iso8601_datetime("20231015T143000") # TRUE
-#' is_iso8601_datetime("2023-10-15") # FALSE (no time component)
-#' is_iso8601_datetime("14:30:00") # FALSE (no date component)
-is_iso8601_datetime <- function(x, strict = FALSE) {
-  if (!is.character(x)) {
-    stop("Input must be a character string")
-  }
-
-  # If x is NA, return NA
-  if (length(x) == 1 && is.na(x)) {
-    return(NA)
-  }
-
-  # Date patterns
-  date_extended <- "\\d{4}-\\d{2}-\\d{2}" # YYYY-MM-DD
-  date_basic <- "\\d{4}\\d{2}\\d{2}" # YYYYMMDD
-
-  # Time patterns
-  time_extended <- "\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?"
-  time_basic <- "\\d{2}\\d{2}\\d{2}(?:\\.\\d+)?"
-
-  # Timezone pattern
-  timezone <- "(?:Z|[+-]\\d{2}(?::\\d{2}|\\d{2}))?"
-
-  # Separators
-  strict_separator <- "T"
-  relaxed_separator <- "[ T]"
-  separator <- if (strict) strict_separator else relaxed_separator
-
-  # Combined patterns
-  # Extended format: YYYY-MM-DDThh:mm:ss(.sss)(Z|+/-hh:mm)
-  datetime_extended <- paste0(
-    "^", date_extended, separator, time_extended, timezone, "$"
-  )
-
-  # Basic format: YYYYMMDDThhmmss(.sss)(Z|+/-hhmm)
-  datetime_basic <- paste0(
-    "^", date_basic, strict_separator, time_basic, timezone, "$"
-  )
-
-  # Mix of extended date with basic time: YYYY-MM-DDThhmmss(.sss)(Z|+/-hhmm)
-  datetime_mixed1 <- paste0(
-    "^", date_extended, separator, time_basic, timezone, "$"
-  )
-
-  # Mix of basic date with extended time: YYYYMMDDThh:mm:ss(.sss)(Z|+/-hh:mm)
-  datetime_mixed2 <- paste0(
-    "^", date_basic, strict_separator, time_extended, timezone, "$"
-  )
-
-  # For each element in the input vector
-  result <- sapply(x, function(str) {
-    if (is.na(str)) {
-      return(NA)
-    }
-
-    # Check if the string matches any of the patterns
-    grepl(datetime_extended, str) ||
-      grepl(datetime_basic, str) ||
-      grepl(datetime_mixed1, str) ||
-      grepl(datetime_mixed2, str)
-  })
-
-  as.logical(result)
-}
-
-
-#' Check if a string matches ISO 8601 date format
-#'
-#' This function checks whether a character string complies with the ISO 8601
-#' standard for date representation (without time components). Unlike the more
-#' general `is_iso8601_format()` function or the `is_iso8601_datetime()`
-#' function, this specifically validates date-only formats.
-#'
-#' Valid formats include:
-#' - Extended format with separators: "2023-10-15"
-#' - Basic format without separators: "20231015"
-#' - Reduced precision (year-month): "2023-10" or "202310"
-#' - Reduced precision (year only): "2023"
-#'
-#' @param x A character string or vector of strings to check.
-#' @param allow_reduced_precision Logical, whether to allow reduced precision
-#'   formats (year-month or year only). Default is TRUE.
-#'
-#' @return Logical value indicating whether the string is in ISO 8601 date
-#'   format.
-#' @export
-#' @keywords internal
-#'
-#' @examples
-#' is_iso8601_date("2023-10-15") # TRUE
-#' is_iso8601_date("20231015") # TRUE
-#' is_iso8601_date("2023-10") # TRUE
-#' is_iso8601_date("2023") # TRUE
-#' is_iso8601_date("2023-10", FALSE) # FALSE
-#' is_iso8601_date("2023/10/15") # FALSE (not ISO 8601 format)
-#' is_iso8601_date("2023-10-15T14:30:00") # FALSE (has time component)
-is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
-  if (!is.character(x)) {
-    stop("Input must be a character string")
-  }
-
-  # If x is NA, return NA
-  if (length(x) == 1 && is.na(x)) {
-    return(NA)
-  }
-
-  # Date patterns
-  date_extended <- "^\\d{4}-\\d{2}-\\d{2}$" # YYYY-MM-DD
-  date_basic <- "^\\d{4}\\d{2}\\d{2}$" # YYYYMMDD
-
-  # Reduced precision date patterns (if allowed)
-  year_month_extended <- "^\\d{4}-\\d{2}$" # YYYY-MM
-  year_month_basic <- "^\\d{4}\\d{2}$" # YYYYMM
-  year_only <- "^\\d{4}$" # YYYY
-
-  # For each element in the input vector
-  result <- sapply(x, function(str) {
-    if (is.na(str)) {
-      return(NA)
-    }
-
-    # Check if the string matches full date patterns
-    is_full_date <- grepl(date_extended, str) || grepl(date_basic, str)
-
-    # If it's a full date or we don't allow reduced precision, return result
-    if (is_full_date || !allow_reduced_precision) {
-      return(is_full_date)
-    }
-
-    # Otherwise also check reduced precision formats
-    is_reduced_precision <- grepl(year_month_extended, str) ||
-      grepl(year_month_basic, str) ||
-      grepl(year_only, str)
-
-    is_full_date || is_reduced_precision
-  })
-
-  # Ensure logical return type
-  as.logical(result)
-}
-
-
-#' Title
-#'
-#' @param x A character string or vector of strings to check.
-#'
-#' @returns A logical vector.
-#' @export
-#'
-#' @examples
-#' is_iso8601_pt("PT10M")
-is_iso8601_pt <- function(x) {
-  if (!is.character(x)) {
-    stop("Input must be a character string")
-  }
-
-  # ISO 8601 PT pattern
-  pt_pattern <- "^-?PT([0-9.]*H)?([0-9]*M)?([0-9]*S)?$"
-
-  result <- sapply(x, function(s) {
-    if (is.na(s))
-      return(NA)
-
-    grepl(pt_pattern, s)
-  })
-
-  as.logical(result)
+upper_ci <- function(mean, sd, n, conf_level = 0.9){
+  se <- sd / sqrt(n)
+  mean + qt(1 - ((1 - conf_level) / 2), n - 1) * se
 }
 
 
@@ -1253,67 +1367,212 @@ dv_na_to_zero <- function(obj) {
 }
 
 
-#' Identify baseline columns in a data frame
+# ---- recoding ----
+
+#' Re-code SEX field in a data frame
 #'
-#' Identifies columns that are constant (baseline) for each ID value. A baseline
-#' column is one where all rows with the same ID have the same value.
-#'
-#' @param df A data frame.
-#' @param id_col Character string specifying the ID column name. Defaults to
-#'   "ID".
-#'
-#' @return A character vector of column names that are baseline columns
-#'   (constant per ID). Returns an empty character vector if no baseline columns
-#'   are found.
-#'
+#' @param obj The data.frame containing a SEX field
+#' @return The output data frame with SEX coded as:
+#'   - 0: "M", "0"
+#'   - 1: "F", "1"
+#'   - NA: Any other values (with warning)
 #' @import dplyr
+#' @keywords internal
 #' @noRd
-identify_baseline_columns <- function(df, id_col = "ID") {
+recode_sex <- function(obj) {
   # Input validation
-  if (!is.data.frame(df)) {
+  if (!is.data.frame(obj)) {
     stop("Input must be a data frame")
   }
-
-  if (nrow(df) == 0) {
-    return(character(0))
+  if (!"SEX" %in% names(obj)) {
+    stop("Input data frame must contain 'SEX' column")
   }
 
-  if (!is.character(id_col) || length(id_col) != 1) {
-    stop("id_col must be a single character string")
-  }
+  # Store original values for warning message
+  orig_vals <- unique(obj$SEX[!is.na(obj$SEX)])
 
-  if (!id_col %in% names(df)) {
-    stop("ID column '", id_col, "' not found in data frame")
-  }
-
-  # Get all column names except the ID column
-  all_cols <- names(df)
-  cols_to_check <- setdiff(all_cols, id_col)
-
-  if (length(cols_to_check) == 0) {
-    return(character(0))
-  }
-
-  # Check each column to see if it's constant per ID
-  baseline_cols <- character(0)
-
-  for (col in cols_to_check) {
-    # Count distinct values per ID for this column
-    distinct_counts <- df |>
-      group_by(.data[[id_col]]) |>
-      summarize(
-        n_distinct = n_distinct(.data[[col]], na.rm = TRUE),
-        .groups = "drop"
+  result <- obj |>
+    mutate(SEX = as.numeric(
+      case_when(
+        str_trim(toupper(as.character(.data$SEX))) %in% c("M", "0", "\u7537") ~ 0,
+        str_trim(toupper(as.character(.data$SEX))) %in% c("F", "1", "\u5973") ~ 1,
+        .default = NA
       )
+    ))
 
-    # Column is baseline if all IDs have at most 1 distinct value (allowing for
-    # NA values - if all values are NA for an ID, that's still baseline)
-    if (all(distinct_counts$n_distinct <= 1)) {
-      baseline_cols <- c(baseline_cols, col)
+  # Warn about invalid values that were converted to NA
+  valid_vals <- c("m", "f", "M", "F", "0", "1", "\u7537", "\u5973")
+  invalid_vals <- setdiff(orig_vals, valid_vals)
+  if (length(invalid_vals) > 0) {
+    warning(
+      "Invalid sex values converted to NA: ",
+      paste(invalid_vals, collapse = ", ")
+    )
+  }
+
+  result
+}
+
+
+#' Race coding table
+#'
+#' Standard race coding table with numeric codes and labels
+#'
+#' @format A data frame with 8 rows and 3 columns:
+#' \describe{
+#'   \item{RACEN}{Numeric code}
+#'   \item{RACE}{RACE CDISC submission value as per NCI code C74457}
+#'   \item{LABEL}{Abbreviation for labeling purpose}
+#' }
+#' @export
+race_coding <- tibble::tribble(
+  ~RACEN, ~RACE, ~LABEL,
+  0, "WHITE", "White",
+  1, "ASIAN", "Asian",
+  2, "BLACK OR AFRICAN AMERICAN", "Black",
+  3, "AMERICAN INDIAN OR ALASKA NATIVE", "Native",
+  4, "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER", "Pacific",
+  5, "NOT REPORTED", "NR",
+  6, "UNKNOWN", "Unknown",
+  7, "OTHER", "Other"
+)
+
+
+#' Recode RACE columns in nif object
+#'
+#' For some purposes, e.g., NONMEM-based modeling, numerical values are expected
+#' in the RACE field. This function recodes RACE based on the following
+#' associations:
+#'
+#' @param obj A nif object with RACE as character field.
+#' @param coding_table A data frame with the columns RACE and RACEN. Uses
+#' default coding, if NULL.
+#' @param silent Suppress messages, defaults to nif_option setting, if NULL.
+#'
+#' @return A nif object with the original RACE replaced by the numerical race
+#' code.
+#' @export
+#'
+#' @examples
+#' nif::race_coding
+#' head(recode_race(examplinib_sad_nif))
+recode_race <- function(obj, coding_table = NULL, silent = NULL) {
+  # validate inputs
+  validate_nif(obj)
+  validate_logical_param(silent, "silent", allow_null = TRUE)
+
+  # validate coding table
+  if (!is.null(coding_table)) {
+    if (!all(c("RACE", "RACEN") %in% names(coding_table))) {
+      stop("coding_table must contain RACE and RACEN columns")
+    }
+    if (!is.numeric(coding_table$RACEN)) {
+      stop("RACEN column in coding_table must be numeric")
     }
   }
 
-  baseline_cols
+  if (!"RACE" %in% names(obj)) {
+    stop("RACE field not found")
+  }
+
+  if (is.null(coding_table)) {
+    coding_table <- race_coding
+  }
+
+  # check coding table before joining
+  unmatched <- setdiff(unique(obj$RACE), coding_table$RACE)
+  if (length(unmatched) > 0) {
+    conditional_message(
+      "The following RACE values could not be matched and will become NA: ",
+      nice_enumeration(unmatched),
+      silent = silent
+    )
+  }
+
+  obj |>
+    left_join(select(coding_table, c("RACEN", "RACE")), by = "RACE") |>
+    select(-c("RACE")) |>
+    rename(RACE = "RACEN") |>
+    order_nif_columns()
+}
+
+
+# ---- filtering ----
+
+#' Test whether a filter term is valid
+#'
+#' @param data A data frame.
+#' @param filter_string A filter term as character.
+#'
+#' @returns Logical.
+#' @noRd
+is_valid_filter <- function(data, filter_string) {
+  # Input validation
+  if (!is.data.frame(data)) {
+    stop("data must be a data frame")
+  }
+  if (!is.character(filter_string) || length(filter_string) != 1) {
+    stop("filter_string must be a single character string")
+  }
+
+  # Check for empty filter string
+  if (nchar(trimws(filter_string)) == 0) {
+    return(FALSE)
+  }
+
+  # Parse the filter expression
+  filter_expr <- tryCatch({
+    rlang::parse_expr(filter_string)
+  }, error = function(e) {
+    return(FALSE)
+  })
+
+  if (isFALSE(filter_expr)) {
+    return(FALSE)
+  }
+
+  # Extract column names from the expression
+  col_names <- tryCatch({
+    all.vars(filter_expr)
+  }, error = function(e) {
+    return(FALSE)
+  })
+
+  if (isFALSE(col_names)) {
+    return(FALSE)
+  }
+
+  # Check if all columns exist in the data frame
+  if (!all(col_names %in% names(data))) {
+    return(FALSE)
+  }
+
+  # Try to evaluate the filter expression
+  result <- tryCatch({
+    # Create a test row with NA values for all columns
+    test_row <- data[1, , drop = FALSE]
+    if (nrow(data) == 0) {
+      # For empty data frames, create a row with appropriate types
+      test_row <- data.frame(
+        lapply(data, function(x) {
+          if (is.numeric(x)) 0
+          else if (is.character(x)) ""
+          else if (is.logical(x)) FALSE
+          else if (inherits(x, "Date")) as.Date("2000-01-01")
+          else NA
+        }),
+        stringsAsFactors = FALSE
+      )
+    }
+
+    # Try to evaluate the filter on the test row
+    eval_result <- dplyr::filter(test_row, !!filter_expr)
+    TRUE
+  }, error = function(e) {
+    FALSE
+  })
+
+  return(result)
 }
 
 
@@ -1334,101 +1593,4 @@ apply_cat_filter <- function(obj, param, param_field) {
     return(filter(obj, .data[[param_field]] == param))
   }
   obj
-}
-
-
-
-lower_ci <- function(mean, sd, n, conf_level = 0.9){
-  se <- sd / sqrt(n)
-  mean - qt(1 - ((1 - conf_level) / 2), n - 1) * se
-}
-
-upper_ci <- function(mean, sd, n, conf_level = 0.9){
-  se <- sd / sqrt(n)
-  mean + qt(1 - ((1 - conf_level) / 2), n - 1) * se
-}
-
-
-#' Re-assign ID based on consistent criteria
-#'
-#' @param obj A nif object.
-#'
-#' @returns A nif object.
-#' @noRd
-#'
-#' @examples
-#' normalize_id(examplinib_sad_nif)
-normalize_id <- function(obj) {
-  validate_nif(obj)
-
-  fingerprint <- obj %>%
-    reframe(
-      sum_dv = sum(.data$DV, na.rm = TRUE),
-      sum_amt = sum(.data$AMT, na.rm = TRUE),
-      .by = c("ID")) %>%
-    arrange(.data$sum_dv, .data$sum_amt) %>%
-    mutate(.id_order = row_number())
-
-  obj %>%
-    left_join(fingerprint, by = "ID") %>%
-    arrange(.data$.id_order) %>%
-    mutate(ID = .data$.id_order) %>%
-    select(-c("sum_dv", "sum_amt", ".id_order")) %>%
-    arrange(.data$ID)
-}
-
-
-#' XXH128 hash
-#'
-#' @param x An object.
-#'
-#' @returns XXH128 hash as string.
-#' @export
-hash <- function(x) {
-  UseMethod("hash")
-}
-
-
-#' @rdname hash
-#' @export
-hash.nif <- function(x) {
-  x |>
-    normalize_id() |>
-    rlang::hash()
-}
-
-
-#' Ensure that fields are unique per subject
-#'
-#' @param nif A nif object.
-#' @param field field(s) to check for uniqueness as character. "ID" is ignored.
-#'
-#' @returns Nothing or stop.
-#' @noRd
-ensure_unique_per_subject <- function(nif, field) {
-  # input validation
-  validate_nif(nif)
-  validate_argument(
-    field, allow_multiple = TRUE, allow_null = TRUE, values = names(nif))
-
-  # business logic
-  field <- setdiff(field, "ID")
-  if (length(field) != 0) {
-    multiple_baseline <- nif |>
-      select(all_of(c("ID", field))) |>
-      pivot_longer(cols = all_of(field), names_to = "param", values_to = "value") |>
-      reframe(n = n_distinct(.data$value), .by = c("ID", "param")) |>
-      filter(n > 1)
-
-    n_multiple <- nrow(multiple_baseline)
-    if (n_multiple > 0) {
-      stop(paste0(
-        "Non-unique values for ",
-        nice_enumeration(unique(multiple_baseline$param), conjunction = "or"),
-        ":\n",
-        df_to_string(multiple_baseline, indent = 2)
-      ))
-    }
-  }
-  invisible(NULL)
 }

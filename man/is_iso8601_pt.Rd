@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{is_iso8601_pt}
 \alias{is_iso8601_pt}
-\title{Title}
+\title{Check ISO 8601 PT format}
 \usage{
 is_iso8601_pt(x)
 }
@@ -13,7 +13,7 @@ is_iso8601_pt(x)
 A logical vector.
 }
 \description{
-Title
+Check ISO 8601 PT format
 }
 \examples{
 is_iso8601_pt("PT10M")
