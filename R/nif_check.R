@@ -30,7 +30,7 @@ check.nif <- function(
     silent = NULL,
     ...
   ) {
-  validate_nif(obj)
+  validate_nif(obj, fields = unique(c("NTIME", "ANALYTE", ref_time)))
   validate_argument(ntime_threshold, "numeric")
 
   if (!is.finite(ntime_threshold))
@@ -39,7 +39,6 @@ check.nif <- function(
     stop("ntime_threshold must not be negative")
 
   validate_argument(ref_time, "character")
-  validate_fields(obj, unique(c("NTIME", "ANALYTE", ref_time)))
   validate_argument(silent, type = "logical", allow_null = TRUE)
   validate_argument(analyte, "character", allow_null = TRUE, allow_multiple = TRUE)
 

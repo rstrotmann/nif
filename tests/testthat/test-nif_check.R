@@ -151,7 +151,10 @@ test_that("check.nif overwrites CHECK when time deviation flag is true", {
 test_that("check.nif errors when minimal empty nif lacks ref_time, NTIME, and ANALYTE", {
   obj <- nif()
 
-  expect_error(check.nif(obj, silent = TRUE), "not found in nif object")
+  expect_error(
+    check.nif(obj, silent = TRUE),
+    "Missing required fields: NTIME, ANALYTE and TAD"
+  )
 })
 
 test_that("check.nif errors with clear message when a required column is missing", {

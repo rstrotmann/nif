@@ -256,13 +256,12 @@ gather_duplicates <- function(
   silent = NULL
 ) {
   # validate input
-  validate_nif(obj)
   validate_argument(id_field, "character", allow_multiple = TRUE)
   validate_argument(na_rm, "logical")
   validate_argument(silent, "logical", allow_null = TRUE)
 
   group_fields <- c("ID", "CMT", "AMT", "EVID", "ANALYTE", id_field)
-  validate_fields(obj, group_fields)
+  validate_nif(obj, fields = group_fields)
 
   if (!is.function(duplicate_function)) {
     stop("duplicate_function must be a function")

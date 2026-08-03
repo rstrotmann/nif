@@ -36,7 +36,7 @@ test_that("imputation_summary validates required fields", {
 
   expect_error(
     imputation_summary(obj_no_imputation),
-    "Field not found in nif object: IMPUTATION"
+    "Missing required fields: IMPUTATION"
   )
 
   obj_no_analyte <- obj
@@ -44,7 +44,7 @@ test_that("imputation_summary validates required fields", {
 
   expect_error(
     imputation_summary(obj_no_analyte),
-    "Field not found in nif object: ANALYTE"
+    "Missing required fields: ANALYTE"
   )
 })
 
@@ -177,3 +177,4 @@ test_that("imputation_summary filters example nif by analyte", {
       examplinib_poc_nif$ANALYTE == "RS2023"
   ))
 })
+

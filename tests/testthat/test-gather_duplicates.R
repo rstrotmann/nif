@@ -183,7 +183,7 @@ test_that("gather_duplicates errors when id_field column is missing", {
 
   expect_error(
     gather_duplicates(obj, silent = TRUE),
-    "not found in nif object"
+    "Missing required fields: NTIME"
   )
 })
 

@@ -1470,8 +1470,7 @@ last_dtc_data_frame <- function(obj) {
 #' @export
 imputation_summary <- function(obj, analyte = NULL) {
   # input validation
-  validate_nif(obj)
-  validate_fields(obj, c("ANALYTE", "IMPUTATION"))
+  validate_nif(obj, fields = c("ANALYTE", "IMPUTATION"))
   validate_argument(analyte, "character", allow_null = TRUE)
 
   if (!is.null(analyte)) {
