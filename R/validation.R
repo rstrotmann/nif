@@ -208,7 +208,7 @@ validate_param <- function(
 #'
 #' @param param The argument.
 #' @param type The expected parameter type (one of 'character', 'logical',
-#' 'numeric' or 'date').
+#' 'numeric', 'date' or 'function').
 #' @param allow_null Allow NULL values.
 #' @param allow_empty Allow empty values.
 #' @param allow_multiple Allow multiple values.
@@ -219,7 +219,7 @@ validate_param <- function(
 #' @noRd
 validate_argument <- function(
     param,
-    type = c("character", "logical", "numeric", "date"),
+    type = c("character", "logical", "numeric", "date", "function"),
     allow_null = FALSE,
     allow_empty = FALSE,
     allow_multiple = FALSE,
@@ -240,17 +240,21 @@ validate_argument <- function(
     }
   }
 
-  # Check for NA values
-  if (!allow_na && any(is.na(param))) {
-    stop(paste0(param_name, " must not contain NA"))
-  }
-
   # Type checking
   if ((type == "character" && !is.character(param)) ||
       (type == "logical" && !is.logical(param)) ||
       (type == "numeric" && !is.numeric(param)) ||
-      (type == "date" && !is.Date(param))) {
+      (type == "date" && !is.Date(param)) ||
+      (type == 'function' && !is.function(param))
+  ) {
     stop(paste0(param_name, " must be a ", type, " value"))
+  }
+
+  # Check for NA values
+  if (type != "function") {
+    if (!allow_na && any(is.na(param))) {
+      stop(paste0(param_name, " must not contain NA"))
+    }
   }
 
   # Length checking
@@ -258,12 +262,12 @@ validate_argument <- function(
     stop(paste0(param_name, " must be a single value"))
   }
 
-  # Empty string check (only for character types)
+  # Empty string check (only for character types; ignore NA when allow_na)
   if (
     type == "character" &&
     !allow_empty &&
     length(param) > 0 &&
-    any(nchar(param) == 0)
+    any(nchar(param[!is.na(param)]) == 0)
   ) {
     stop(paste0(param_name, " must be a non-empty string"))
   }

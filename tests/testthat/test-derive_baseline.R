@@ -346,18 +346,32 @@ test_that("derive_baseline errors on invalid input", {
   test_nif <- nif(base_data)
 
   test_nif_no_dv <- select(test_nif, -DV)
-  expect_error(derive_baseline(test_nif_no_dv), "Missing required columns: DV")
+  expect_error(
+    derive_baseline(test_nif_no_dv),
+    "Missing essential fields in nif object: DV"
+  )
 
   test_nif_char_dv <- mutate(test_nif, DV = as.character(DV))
-  expect_error(derive_baseline(test_nif_char_dv), "DV column must contain numeric values")
+  expect_error(
+    derive_baseline(test_nif_char_dv),
+    "DV column must contain numeric values"
+  )
 
-  expect_error(derive_baseline(test_nif, analyte = "NONEXISTENT"), "not found in nif object")
+  expect_error(
+    derive_baseline(test_nif, analyte = "NONEXISTENT"),
+    "not found in nif object")
 
-  expect_error(derive_baseline(test_nif, baseline_filter = "system('ls')"), "Disallowed construct")
+  expect_error(
+    derive_baseline(test_nif, baseline_filter = "system('ls')"),
+    "Disallowed construct")
 
-  expect_error(derive_baseline(test_nif, summary_function = "median"), "summary_function must be a function")
+  expect_error(
+    derive_baseline(test_nif, summary_function = "median"),
+    "summary_function must be a function")
 
-  expect_error(derive_baseline(test_nif, default_baseline = "NA"), "default_baseline must be a numeric value")
+  expect_error(
+    derive_baseline(test_nif, default_baseline = "NA"),
+    "default_baseline must be a numeric value")
 })
 
 

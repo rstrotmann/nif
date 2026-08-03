@@ -276,7 +276,7 @@ calc_baseline <- function(
     filter_expr,
     summary_fun,
     default
-  ) {
+) {
   filtered_dv <- na.omit(group_data$DV[rlang::eval_tidy(filter_expr, data = group_data)])
   if (length(filtered_dv) == 0) {
     return(default)
@@ -316,14 +316,15 @@ derive_baseline <- function(
   default_baseline = NA_real_,
   silent = NULL
 ) {
+  # input validation
   obj <- ensure_analyte(obj)
+  validate_nif(obj, fields = c("ID", "DV", "TIME", "ANALYTE", "EVID"))
 
-  # Validate required columns
-  required_cols <- c("ID", "DV", "TIME", "ANALYTE", "EVID")
-  missing_cols <- setdiff(required_cols, names(obj))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
+  validate_argument(analyte, allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(baseline_filter, "character")
+  validate_argument(summary_function, "function")
+  validate_argument(default_baseline, "numeric", allow_na = TRUE)
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   # create empty DVBL column if needed
   if (!"DVBL" %in% names(obj)) {
@@ -336,7 +337,7 @@ derive_baseline <- function(
   }
   validate_analyte(obj, analyte)
 
-  validate_numeric_param(default_baseline, "default_baseline", allow_na = TRUE)
+  # validate_numeric_param(default_baseline, "default_baseline", allow_na = TRUE)
 
   # Validate data types
   if (!is.numeric(obj$DV)) {
@@ -347,11 +348,6 @@ derive_baseline <- function(
   }
   if (!is.numeric(obj$ID)) {
     stop("ID column must contain numeric values")
-  }
-
-  # Validate summary function
-  if (!is.function(summary_function)) {
-    stop("summary_function must be a function")
   }
 
   # Validate and parse filter expression (rejects unsafe constructs)
@@ -369,7 +365,6 @@ derive_baseline <- function(
       silent = silent
     )
   }
-
 
   na_analytes <- temp$ANALYTE[is.na(temp$ANALYTE)]
   if (length(na_analytes) > 0) {
@@ -866,14 +861,14 @@ add_bl_renal <- function(obj, method = egfr_cg, molar = FALSE) {
 #' @seealso [nif::lbm_boer()]
 #' @seealso [nif::lbm_peters()]
 #' @export
-add_bl_lbm <- function(obj, method = lbm_boer) {
+add_bl_lbm <- function(
+  obj,
+  method = lbm_boer
+) {
   # input validation
-  validate_nif(obj)
-  missing_fields <- setdiff(c("WEIGHT", "HEIGHT", "SEX"), names(obj))
-  if (length(missing_fields) > 0) {
-    stop(paste0("Missing fields: ", nice_enumeration(missing_fields)))
-  }
+  validate_nif(obj, fields = c("WEIGHT", "HEIGHT", "SEX"))
 
+  # business logic
   obj |>
     mutate(BL_LBM = method(.data$WEIGHT, .data$HEIGHT, .data$SEX))
 }
@@ -910,17 +905,11 @@ add_bl_odwg <- function(
   silent = NULL
 ) {
   # input validation
-  validate_char_param(observation_filter, "observation_filter",
-                      allow_null = TRUE)
-  validate_char_param(baseline_filter, "baseline_filter", allow_null = TRUE)
-
-  if (!"lb" %in% names(sdtm$domains)) {
-    conditional_cli(
-      cli_alert_warning("LB domain not found, BL_ODWG could not be added!"),
-      silent = silent
-    )
-    return(obj)
-  }
+  validate_nif(obj)
+  validate_sdtm(sdtm, "lb")
+  validate_argument(observation_filter, "character", allow_null = TRUE)
+  validate_argument(baseline_filter, "character", allow_null = TRUE)
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   lb <- sdtm |>
     domain("lb")

@@ -446,8 +446,9 @@ print.summary_nif <- function(
   ...
 ) {
   # input validation
-  validate_logical_param(color, "color")
+  validate_argument(color, "logical")
 
+  # business logic
   indent <- 2
   spacer <- paste(replicate(indent, " "), collapse = "")
   hline <- "-----"
@@ -469,19 +470,6 @@ print.summary_nif <- function(
       "Sex distribution:\n",
       df_to_string(
         x$sex |>
-
-          # mutate(SEX = case_match(
-          #   .data$SEX,
-          #   0 ~ "male",
-          #   1 ~ "female"
-          # )) |>
-
-          # mutate(SEX = recode_values(
-          #   .data$SEX,
-          #   0 ~ "male",
-          #   1 ~ "female"
-          # )) |>
-
           mutate(SEX = case_when(
             .data$SEX == 0 ~ "male",
             .data$SEX == 1 ~ "female"
@@ -571,8 +559,9 @@ print.summary_nif <- function(
 #' @noRd
 get_cov_plot_params <- function(field) {
   # input validation
-  validate_char_param(field, "field")
+  validate_argument(field, "character")
 
+  # business logic
   params <- tribble(
     ~field, ~binwidth, ~xlabel, ~title, ~limits,
     "AGE", 5, "age (years)", "Age", NULL,
@@ -606,7 +595,17 @@ get_cov_plot_params <- function(field) {
 #' @noRd
 #' @examples
 #' plot(summary(examplinib_poc_nif))
-plot.summary_nif <- function(x, baseline = TRUE, analytes = TRUE, ...) {
+plot.summary_nif <- function(
+    x,
+    baseline = TRUE,
+    analytes = TRUE,
+    ...
+) {
+  # input validation
+  validate_argument(baseline, "logical")
+  validate_argument(analytes, "logical")
+
+  # business logic
   nif <- x$nif
   out <- list()
 

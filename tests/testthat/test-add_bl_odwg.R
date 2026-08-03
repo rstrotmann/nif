@@ -46,8 +46,9 @@ test_that("add_bl_odwg classifies all hepatic function categories correctly", {
     "3",      3,   0,     0,    1,    0,     NA,
     "4",      4,   0,     0,    1,    0,     NA,
     "5",      5,   0,     0,    1,    0,     NA
-  )
-  class(test_nif) <- c("nif", "data.frame")
+  ) |>
+    nif()
+  # class(test_nif) <- c("nif", "data.frame")
 
   result <- add_bl_odwg(test_nif, sdtm, silent = TRUE)
 
@@ -76,10 +77,10 @@ test_that("add_bl_odwg handles missing LB domain gracefully", {
   )
   sdtm <- sdtm(list(dm = dm))
 
-  result <- add_bl_odwg(test_nif, sdtm, silent = TRUE)
-
-  expect_false("BL_ODWG" %in% names(result))
-  expect_equal(result, test_nif)
+  expect_error(
+    result <- add_bl_odwg(test_nif, sdtm, silent = TRUE),
+    "Expected domain missing in sdtm object: lb"
+  )
 })
 
 

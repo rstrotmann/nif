@@ -145,12 +145,16 @@ test_that("derive_cfb handles missing required columns", {
   )
   test_nif <- nif(test_data)
   test_nif <- select(test_nif, -DV)
-  expect_error(derive_cfb(test_nif), "Missing required columns: DV")
+  expect_error(
+    derive_cfb(test_nif),
+    "Missing essential fields in nif object: DV")
 
 
   test_nif <- nif(test_data)
   test_nif <- select(test_nif, -TIME)
-  expect_error(derive_cfb(test_nif), "Missing required columns: TIME")
+  expect_error(
+    derive_cfb(test_nif),
+    "Missing essential fields in nif object: TIME")
 })
 
 
