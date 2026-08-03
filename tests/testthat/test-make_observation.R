@@ -1038,7 +1038,7 @@ test_that("make_observation rejects non-list imputation argument", {
       ntime_method = "ELTM",
       silent = TRUE
     ),
-    "imputation must be a list!"
+    "Imputation rule set must be a list!"
   )
 })
 
@@ -1052,7 +1052,7 @@ test_that("make_observation rejects invalid ntime_method", {
       ntime_method = "INVALID",
       silent = TRUE
     ),
-    "ntime_method must be one of"
+    "ntime_method must be TPT, TPTNUM, ELTM, VISITDY or DY!"
   )
 })
 
@@ -1082,7 +1082,7 @@ test_that("make_observation rejects missing required domain fields", {
       ntime_method = "ELTM",
       silent = TRUE
     ),
-    "Required field\\(s\\) missing in domain 'pc': PCDTC"
+    "Missing required fields: PCDTC"
   )
 })
 

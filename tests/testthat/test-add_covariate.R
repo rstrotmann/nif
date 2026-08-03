@@ -129,7 +129,7 @@ test_that("add_covariate validates domain exists", {
 
   expect_error(
     add_covariate(nif, sdtm, "xx", "WEIGHT", covariate = "wt"),
-    "Domain not found in sdtm object: xx"
+    "Expected domain missing in sdtm object: xx"
   )
 })
 
@@ -281,3 +281,4 @@ test_that("add_covariate handles pre-exisiting covariate name", {
     "Covariate WEIGHT is already in nif"
   )
 })
+

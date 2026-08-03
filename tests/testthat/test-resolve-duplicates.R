@@ -333,7 +333,7 @@ test_that("resolve_duplicates validates duplicate_function parameter", {
 
   expect_error(
     resolve_duplicates(test_df, fields = "TIME", duplicate_function = NULL),
-    "duplicate_function must be a function"
+    "duplicate_function must not be NULL"
   )
 })
 

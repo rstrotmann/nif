@@ -18,15 +18,14 @@ find_duplicates <- function(
   fields = NULL,
   count_only = FALSE
 ) {
-  ## input validation
+  # input validation
   if (!is.data.frame(df)) {
     stop("df must be a data frame!")
   }
-  validate_char_param(
-    fields, "fields",
-    allow_multiple = TRUE, allow_null = TRUE
-  )
-  validate_logical_param(count_only, "count_only")
+
+  validate_argument(
+    fields, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(count_only, "logical")
 
   if (is.null(fields)) {
     fields <- c("ID", "TIME", "ANALYTE")
@@ -118,8 +117,10 @@ resolve_duplicates <- function(
     stop("df must be a data frame!")
   }
 
-  validate_char_param(fields, "fields", allow_multiple = TRUE,
-                      allow_null = FALSE)
+  validate_argument(fields, "character", allow_multiple = TRUE)
+  validate_argument(dependent_variable, "character")
+  validate_argument(duplicate_function, "function")
+  validate_argument(na_rm, "logical")
 
   # Check if all specified fields exist in the data frame
   missing_fields <- setdiff(fields, names(df))
@@ -138,10 +139,10 @@ resolve_duplicates <- function(
     ))
   }
 
-  # Validate that duplicate_function is a function
-  if (!is.function(duplicate_function)) {
-    stop("duplicate_function must be a function")
-  }
+  # # Validate that duplicate_function is a function
+  # if (!is.function(duplicate_function)) {
+  #   stop("duplicate_function must be a function")
+  # }
 
   # Remove DV from fields if present (it will be handled separately)
   fields <- setdiff(fields, dependent_variable)

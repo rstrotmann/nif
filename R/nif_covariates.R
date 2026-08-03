@@ -70,20 +70,15 @@ add_covariate <- function(
   silent = NULL
 ) {
   # input validation
+  validate_argument(domain, "character")
+  validate_sdtm(sdtm, domain)
   validate_nif(nif)
-  validate_sdtm(sdtm)
-
-  # validate domain
-  validate_char_param(domain, "domain")
-  if (!has_domain(sdtm, domain))
-    stop(paste0("Domain not found in sdtm object: ", domain))
 
   # Get domain data
   domain_data <- domain(sdtm, str_to_lower(domain))
 
-  # validate testcd
-  validate_char_param(testcd, "testcd")
-  validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
+  validate_argument(testcd, "character")
+  validate_argument(testcd_field, "character", allow_null = TRUE)
   if (!is.null(testcd_field)) {
     if (!testcd_field %in% names(domain(sdtm, domain)))
       stop(paste0(
@@ -100,13 +95,14 @@ add_covariate <- function(
     ))
   }
 
-  validate_char_param(covariate, "covariate", allow_null = TRUE)
-  validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
-  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
-  validate_char_param(observation_filter, "observation_filter")
-  validate_logical_param(silent, "silent", allow_null = TRUE)
-  validate_char_param(cat, "cat", allow_null = TRUE)
-  validate_char_param(scat, "scat", allow_null = TRUE)
+  validate_argument(covariate, "character", allow_null = TRUE)
+  validate_argument(dtc_field, "character", allow_null = TRUE)
+  validate_argument(dv_field, "character", allow_null = TRUE)
+  validate_argument(observation_filter, "character")
+  validate_argument(cat, "character", allow_null = TRUE)
+  validate_argument(scat, "character", allow_null = TRUE)
+  validate_argument(duplicate_function, "function")
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   # Set up field names
   if (is.null(dtc_field)) dtc_field <- paste0(str_to_upper(domain), "DTC")
@@ -115,7 +111,6 @@ add_covariate <- function(
   cat_field <- paste0(toupper(domain), "CAT")
   scat_field <- paste0(toupper(domain), "SCAT")
 
-  # check whether covariate name is already taken
   if (covariate %in% names(nif)) {
     stop(paste0(
       "Covariate ", covariate, " is already in nif, please provide a ",
@@ -123,9 +118,8 @@ add_covariate <- function(
     ))
   }
 
+  # business logic
   cov_field <- covariate
-
-  # Get domain data
   domain_data <- domain(sdtm, str_to_lower(domain))
 
   # Validate required fields exist in domain data
@@ -138,7 +132,7 @@ add_covariate <- function(
     ))
   }
 
-  # Validate subjects exist in both datasets
+  # Validate subjects exist in both data sets
   if (!any(domain_data$USUBJID %in% nif$USUBJID)) {
     stop("No matching subjects found between SDTM domain and NIF object")
   }

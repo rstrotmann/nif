@@ -25,7 +25,13 @@
 #' df <- data.frame(PCTPT = c("PRE-DOSE", "1H POST-DOSE", "2.5 HRS POST-DOSE"))
 #' make_ntime_from_tpt(df) # Returns c(0, 1, 2.5)
 #' @noRd
-make_ntime_from_tpt <- function(obj, domain = NULL) {
+make_ntime_from_tpt <- function(
+    obj,
+    domain = NULL
+) {
+  # input validation
+  validate_argument(domain, "character", allow_null = TRUE)
+
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
   }
@@ -104,7 +110,13 @@ make_ntime_from_tpt <- function(obj, domain = NULL) {
 #' @returns A data frame with a column representing the unique values of the
 #'   xxTPT variable and a NTIME column with the time in hours.
 #' @noRd
-make_ntime_from_tptnum <- function(obj, domain = NULL) {
+make_ntime_from_tptnum <- function(
+    obj,
+    domain = NULL
+) {
+  # input validation
+  validate_argument(domain, "character", allow_null = TRUE)
+
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
   }
@@ -135,8 +147,12 @@ make_ntime_from_tptnum <- function(obj, domain = NULL) {
 #'
 #' @returns A data frame.
 #' @noRd
-make_ntime_from_dy <- function(obj, domain = NULL) {
-  validate_char_param(domain, "domain", allow_null = TRUE)
+make_ntime_from_dy <- function(
+    obj,
+    domain = NULL
+) {
+  # input validation
+  validate_argument(domain, "character", allow_null = TRUE)
 
   if (is.null(domain)) {
     domain <- unique(obj$DOMAIN)[1]
@@ -171,8 +187,12 @@ make_ntime_from_dy <- function(obj, domain = NULL) {
 #'
 #' @returns A data frame.
 #' @noRd
-make_ntime_from_visitdy <- function(obj, domain = NULL) {
-  validate_char_param(domain, "domain", allow_null = TRUE)
+make_ntime_from_visitdy <- function(
+    obj,
+    domain = NULL
+) {
+  # input validation
+  validate_argument(domain, "character", allow_null = TRUE)
 
   if (!"DOMAIN" %in% names(obj))
     stop("Missing DOMAIN field!")
@@ -219,6 +239,12 @@ make_ntime <- function(
   include_day = FALSE,
   silent = NULL
 ) {
+  # input validation
+  validate_argument(domain, "character", allow_null = TRUE)
+  validate_argument(include_day, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+  # business logi
   pull_column <- function(col_tail) {
     temp <- obj |>
       select(ends_with(col_tail))
@@ -374,43 +400,47 @@ make_observation <- function(
   silent = NULL,
   na_to_zero = FALSE
 ) {
-  # validate inputs
-  validate_char_param(domain, "domain")
+  # input validation
+  validate_argument(domain, "character")
   validate_sdtm(sdtm, domain)
-  validate_char_param(testcd, "testcd")
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(parent, "parent", allow_null = TRUE)
+  validate_argument(testcd, "character")
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(parent, "character", allow_null = TRUE)
+  validate_argument(metabolite, "logical")
+  validate_argument(cmt, "numeric", allow_na = TRUE)
+  validate_argument(subject_filter, "character")
+  validate_argument(observation_filter, "character")
+  validate_argument(cat, "character", allow_null = TRUE)
+  validate_argument(scat, "character", allow_null = TRUE)
+  validate_argument(testcd_field, "character", allow_null = TRUE)
+  validate_argument(dtc_field, "character", allow_null = TRUE)
+  validate_argument(dv_field, "character", allow_null = TRUE)
 
-  validate_char_param(cat, "cat", allow_null = TRUE)
-  validate_char_param(scat, "scat", allow_null = TRUE)
+  # coding table
 
-  validate_logical_param(omit_not_done, "omit_not_done")
-  # other validations not implemented - add_observation takes care of that.
-  validate_logical_param(na_to_zero, "na_to_zero")
-
-  # validate_imputation_set(imputation)
-  if (!is.list(imputation))
-    stop("imputation must be a list!")
+  validate_argument(factor, "numeric")
+  validate_argument(
+    ntime_method, "character",
+    values = c('TPT', 'TPTNUM', 'ELTM', 'VISITDY', 'DY')
+  )
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(include_day_in_ntime, "logical")
+  validate_argument(omit_not_done, "logical")
+  validate_imputation_set(imputation)
+  validate_argument(silent, "logical", allow_null = TRUE)
+  validate_argument(na_to_zero, "logical")
 
   domain_name <- tolower(domain)
 
-  # validate ntime method
-  allowed_ntime_method <- c("TPT", "TPTNUM", "ELTM", "VISITDY", "DY")
-  if (!ntime_method %in% allowed_ntime_method) {
-    stop(paste0(
-      "ntime_method must be one of ",
-      nice_enumeration(allowed_ntime_method, conjunction = "or")
-    ))
-  }
-
   # Create fields
-  if (is.null(dtc_field)) dtc_field <- paste0(toupper(domain), "DTC")
-  if (is.null(dv_field)) dv_field <- paste0(toupper(domain), "STRESN")
-  if (is.null(testcd_field)) testcd_field <- paste0(toupper(domain), "TESTCD")
-
+  if (is.null(dtc_field))
+    dtc_field <- paste0(toupper(domain), "DTC")
+  if (is.null(dv_field))
+    dv_field <- paste0(toupper(domain), "STRESN")
+  if (is.null(testcd_field))
+    testcd_field <- paste0(toupper(domain), "TESTCD")
   cat_field <- paste0(toupper(domain), "CAT")
   scat_field <- paste0(toupper(domain), "SCAT")
-
   if (is.null(analyte)) analyte <- testcd
   if (is.null(parent)) parent <- analyte
 
@@ -426,19 +456,12 @@ make_observation <- function(
     }
   )
 
-  # Get observation data
+  # validate required domain fields
   obj <- domain(sdtm, domain_name) |>
     lubrify_dates()
 
-  # Check whether required fields exist
-  required_fields <- c(testcd_field, dtc_field)
-  missing_fields <- required_fields[!required_fields %in% names(obj)]
-  if (length(missing_fields) > 0) {
-    stop(paste0(
-      "Required field(s) missing in domain '", domain_name, "': ",
-      nice_enumeration(missing_fields)
-    ))
-  }
+  validate_fields(obj, unique(
+    c(dtc_field, testcd_field)))
 
   # Check if DV field exists when no coding table
   if (!dv_field %in% names(obj) && is.null(coding_table)) {

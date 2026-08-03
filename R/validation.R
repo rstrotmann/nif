@@ -243,7 +243,7 @@ validate_argument <- function(
   # Type checking
   if ((type == "character" && !is.character(param)) ||
       (type == "logical" && !is.logical(param)) ||
-      (type == "numeric" && !is.numeric(param)) ||
+      (type == "numeric" && !is.numeric(param) && !is.na(param)) ||
       (type == "date" && !is.Date(param)) ||
       (type == 'function' && !is.function(param))
   ) {
@@ -369,6 +369,32 @@ validate_numeric_param <- function(
   )
 }
 
+#' Validate fields in a data frame
+#'
+#' @param obj A data frame.
+#' @param fields Required fields as character.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+validate_fields <- function(obj, fields = NULL) {
+  # input validation
+  if (!is.data.frame(obj)) {
+    stop("Input must be a data frame!")
+  }
+  validate_argument(
+    fields, "character", allow_null = TRUE, allow_multiple = TRUE)
+
+  # business logic
+  missing_additional_fields <- setdiff(fields, names(obj))
+  if (length(missing_additional_fields) > 0) {
+    stop(paste0(
+      "Missing required fields: ",
+      nice_enumeration(missing_additional_fields)
+    ))
+  }
+  invisible(NULL)
+}
+
 
 #' Validate nif object parameter
 #'
@@ -399,13 +425,16 @@ validate_nif <- function(obj, fields = NULL) {
     ))
   }
 
-  missing_additional_fields <- setdiff(fields, names(obj))
-  if (length(missing_additional_fields) > 0) {
-    stop(paste0(
-      "Missing required fields: ",
-      nice_enumeration(missing_additional_fields)
-    ))
-  }
+  # missing_additional_fields <- setdiff(fields, names(obj))
+  # if (length(missing_additional_fields) > 0) {
+  #   stop(paste0(
+  #     "Missing required fields: ",
+  #     nice_enumeration(missing_additional_fields)
+  #   ))
+  # }
+
+  validate_fields(obj, fields)
+
   invisible(NULL)
 }
 
