@@ -1396,3 +1396,39 @@ hash.nif <- function(x) {
     normalize_id() |>
     rlang::hash()
 }
+
+
+#' Ensure that fields are unique per subject
+#'
+#' @param nif A nif object.
+#' @param field field(s) to check for uniqueness as character. "ID" is ignored.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+ensure_unique_per_subject <- function(nif, field) {
+  # input validation
+  validate_nif(nif)
+  validate_argument(
+    field, allow_multiple = TRUE, allow_null = TRUE, values = names(nif))
+
+  # business logic
+  field <- setdiff(field, "ID")
+  if (length(field) != 0) {
+    multiple_baseline <- nif |>
+      select(all_of(c("ID", field))) |>
+      pivot_longer(cols = field, names_to = "param", values_to = "value") |>
+      reframe(n = n_distinct(value), .by = c("ID", "param")) |>
+      filter(n > 1)
+
+    n_multiple <- nrow(multiple_baseline)
+    if (n_multiple > 0) {
+      stop(paste0(
+        "Non-unique values for ",
+        nice_enumeration(unique(multiple_baseline$param), conjunction = "or"),
+        ":\n",
+        df_to_string(multiple_baseline, indent = 2)
+      ))
+    }
+  }
+  invisible(NULL)
+}

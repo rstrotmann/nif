@@ -30,7 +30,7 @@ nca(
 \item{time}{The time field as character.}
 
 \item{duplicates}{Selection how to deal with duplicate observations with
-respect to the USUBJID, ANALYTE and DTC fields:
+respect to the ID, ANALYTE and the selected time fields:
 \itemize{
 \item 'stop': Stop execution and produce error message
 \item 'identify': Return a list of duplicate entries

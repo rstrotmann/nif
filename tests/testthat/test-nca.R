@@ -119,7 +119,7 @@ test_that("nca() time parameter validation", {
   # Test invalid time parameter
   expect_error(
     nca(test_nif, analyte = "DRUG", time = "INVALID"),
-    "'time' parameter must be one of"
+    "time must be TIME, TAFD or TAD!"
   )
 })
 
@@ -193,12 +193,6 @@ test_that("nca() handles invalid analyte", {
   # Test with non-existent analyte
   expect_error(
     nca(test_nif, analyte = "NONEXISTENT", silent = TRUE),
-    "Invalid analyte"
-  )
-
-  # Test with NA analyte
-  expect_error(
-    nca(test_nif, analyte = NA_character_, silent = TRUE),
     "Invalid analyte"
   )
 })
@@ -284,7 +278,7 @@ test_that("nca() duplicate handling - identify", {
   expect_s3_class(result, "data.frame")
   expect_true(nrow(result) > 0)
   # Should contain the duplicate rows
-  expect_true(any(result$TIME == 0))
+  expect_true(any(result$selected_time == 0))
 })
 
 

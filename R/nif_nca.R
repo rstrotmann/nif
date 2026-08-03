@@ -17,7 +17,7 @@
 #' @param time The time field as character.
 #' @param silent Suppress messages.
 #' @param duplicates Selection how to deal with duplicate observations with
-#'   respect to the USUBJID, ANALYTE and DTC fields:
+#'   respect to the ID, ANALYTE and the selected time fields:
 #'   * 'stop': Stop execution and produce error message
 #'   * 'identify': Return a list of duplicate entries
 #'   * 'resolve': Resolve duplicates, applying the `duplicate_function` to the
@@ -44,16 +44,24 @@ nca <- function(
     ) {
   # input validation
   validate_nif(nif)
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(parent, "character", allow_null = TRUE)
+  validate_argument(
+    keep, "character", allow_null = TRUE, allow_multiple = TRUE,
+    values = names(nif))
+  validate_argument(
+    group, "character", allow_null = TRUE, allow_multiple = TRUE,
+    values = names(nif))
+  validate_argument(
+    time, "character", allow_null = FALSE,
+    values = intersect(names(nif), c("TIME", "NTIME", "TAFD", "TAD")))
+  validate_argument(
+    duplicates, "character",
+    values = c("stop", "identify", "resolve"))
+  validate_argument(silent, "logical", allow_null = TRUE)
 
-  allowed_times <- c("TIME", "NTIME", "TAFD", "TAD")
-  if (!time %in% allowed_times) {
-    stop(paste0(
-      "'time' parameter must be one of ",
-      nice_enumeration(allowed_times, conjunction = "or")
-    ))
-  }
-
-  ## check that analyte and parent are scalars!
+  # ensure that keep columns are unique by subject
+  ensure_unique_per_subject(nif, keep)
 
   # guess analyte if not defined
   if (is.null(analyte)) {
@@ -127,20 +135,15 @@ nca <- function(
     ensure_parent() |>
     index_dosing_interval() |>
     as.data.frame() |>
-    mutate(TIME = .data[[time]]) |>
+    mutate(selected_time = .data[[time]]) |>
     mutate(DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
-
-  # # preserve the columns to keep
-  # keep_columns <- obj |>
-  #   select(c("ID", "DOSE", "DI", any_of(c(keep)))) |>
-  #   distinct()
 
   # dosing data
   admin <- obj |>
     filter(.data$ANALYTE == parent) |>
     filter(.data$EVID == 1) |>
     select(any_of(
-      c("ID", "TIME", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)
+      c("ID", "selected_time", "DI", "EVID", "ANALYTE", "DOSE", "DV", group)
     ))
 
   # concentration data
@@ -148,8 +151,8 @@ nca <- function(
     filter(.data$ANALYTE == current_analyte) |>
     filter(.data$EVID == 0) |>
     select(any_of(
-      # unique(c("ID", "TIME", time, "DI", "EVID", "ANALYTE", "DOSE", "DV", group))
-      unique(c("ID", "TIME", time, "DI", "EVID", "ANALYTE", "DOSE", "DV", group, keep))
+      unique(c("ID", "selected_time", "DI", "EVID", "ANALYTE", "DOSE", "DV",
+               group, keep))
     ))
 
   # preserve the columns to keep
@@ -162,8 +165,8 @@ nca <- function(
 
   if (n_negative > 0) {
     conditional_cli(
-      cli_alert_warning(paste0(n_negative,
-                               " negative concentrations set to zero!")),
+      cli_alert_warning(paste0(
+        n_negative, " negative concentrations set to zero!")),
       silent = silent
     )
     conc <- conc |>
@@ -171,7 +174,7 @@ nca <- function(
   }
 
   # dealing with duplicates
-  dupl_fields <- c("ID", "ANALYTE", time)
+  dupl_fields <- c("ID", "ANALYTE", "selected_time")
 
   n_dupl <- find_duplicates(
     conc, fields = dupl_fields, count_only = TRUE)
@@ -213,7 +216,7 @@ nca <- function(
       conditional_cli(
         cli::cli({
           cli_alert_warning(paste0(
-            n_dupl, " duplicate observations for ", analyte,
+            n_dupl, " duplicate observations for ", current_analyte,
             " resolved, applying ",
             function_name(duplicate_function)
           ))
@@ -242,8 +245,8 @@ nca <- function(
   }
 
   # conduct NCA
-  conc_formula <- paste0("DV~TIME|", group_string, "ID+DI")
-  dose_formula <- paste0("DOSE~TIME|", group_string, "ID+DI")
+  conc_formula <- paste0("DV~selected_time|", group_string, "ID+DI")
+  dose_formula <- paste0("DOSE~selected_time|", group_string, "ID+DI")
 
   nca <- PKNCA::pk.nca(
     PKNCA::PKNCAdata(
