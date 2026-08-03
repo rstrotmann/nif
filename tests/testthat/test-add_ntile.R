@@ -478,7 +478,7 @@ test_that("add_ntile errors when a subject has multiple distinct values", {
 
   expect_error(
     add_ntile(test_data, input_col = "DV"),
-    "Some subjects do not have unique values for DV"
+    "Non-unique values for DV"
   )
 })
 
@@ -497,7 +497,7 @@ test_that("add_ntile errors when a subject mixes NA and non-NA values", {
 
   expect_error(
     add_ntile(test_data, input_col = "DV"),
-    "Some subjects do not have unique values for DV"
+    "Non-unique values for DV:"
   )
 })
 

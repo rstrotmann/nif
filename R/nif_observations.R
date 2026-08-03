@@ -795,7 +795,7 @@ add_observation <- function(
   imputation = imputation_rules_standard
 ) {
   # validate inputs
-  validate_min_nif(nif)
+  validate_nif(nif)
   validate_sdtm(sdtm)
   validate_testcd(sdtm, testcd, domain)
 
@@ -1088,7 +1088,7 @@ import_observation <- function(
   silent = NULL
 ) {
   # validate inputs
-  validate_min_nif(nif)
+  validate_nif(nif)
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(parent, "parent", allow_null = TRUE)
   validate_numeric_param(cmt, "cmt", allow_null = TRUE)

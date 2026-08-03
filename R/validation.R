@@ -368,16 +368,25 @@ validate_numeric_param <- function(
 
 #' Validate nif object parameter
 #'
+#' Checks that input is a nif object and has at least the minimally required
+#' fields, ID, TIME, AMT, CMT, EVID and DV.
+#' Further required fields can be specified with 'fields'.
+#'
 #' @param obj A nif object.
+#' @param fields Custom required fields as character.
 #'
 #' @returns Nothing or stop.
 #' @noRd
-#'
-validate_nif <- function(obj) {
+validate_nif <- function(obj, fields = NULL) {
+  # input validation
   if (!inherits(obj, "nif")) {
     stop("Input must be a nif object")
   }
 
+  validate_argument(
+    fields, "character", allow_null = TRUE, allow_multiple = TRUE)
+
+  # business logic
   missing_minimal_fields <- setdiff(minimal_nif_fields, names(obj))
   if (length(missing_minimal_fields) > 0) {
     stop(paste0(
@@ -385,6 +394,15 @@ validate_nif <- function(obj) {
       nice_enumeration(missing_minimal_fields)
     ))
   }
+
+  missing_additional_fields <- setdiff(fields, names(obj))
+  if (length(missing_additional_fields) > 0) {
+    stop(paste0(
+      "Missing required fields: ",
+      nice_enumeration(missing_additional_fields)
+    ))
+  }
+  invisible(NULL)
 }
 
 
@@ -468,31 +486,6 @@ nif_check_id_integrity <- function(obj) {
 validate_domain_param <- function(obj) {
   if (!inherits(obj, "domain")) {
     stop("Input must be a domain object")
-  }
-}
-
-
-#' Validate nif object with minimally required fields
-#'
-#' @param obj A nif object.
-#' @param additional_fields Additional required fields as character.
-#'
-#' @returns Nothing or stop.
-#' @noRd
-#'
-validate_min_nif <- function(obj, additional_fields = NULL) {
-  validate_nif(obj)
-
-  missing_fields <- setdiff(
-    c(minimal_nif_fields, additional_fields),
-    names(obj)
-  )
-
-  if (length(missing_fields) > 0) {
-    stop(paste0(
-      "missing required ", plural("field", length(missing_fields) > 1), ": ",
-      nice_enumeration(missing_fields)
-    ))
   }
 }
 

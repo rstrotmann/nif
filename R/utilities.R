@@ -1416,7 +1416,7 @@ ensure_unique_per_subject <- function(nif, field) {
   if (length(field) != 0) {
     multiple_baseline <- nif |>
       select(all_of(c("ID", field))) |>
-      pivot_longer(cols = field, names_to = "param", values_to = "value") |>
+      pivot_longer(cols = all_of(field), names_to = "param", values_to = "value") |>
       reframe(n = n_distinct(value), .by = c("ID", "param")) |>
       filter(n > 1)
 

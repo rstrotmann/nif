@@ -270,8 +270,7 @@ summary.nif <- function(
   ...
 ) {
   # input validation
-  validate_min_nif(object)
-  # validate_logical_param(sampling, "sampling")
+  validate_nif(object)
   validate_argument(sampling, "logical")
 
   # Validate data is not empty
@@ -683,7 +682,8 @@ covariate_hist <- function(
   title = NULL
 ) {
   # input validation
-  validate_min_nif(obj)
+  validate_nif(obj)
+  ## TO DO
   validate_char_param(cov, "cov")
   validate_numeric_param(nbins, "nbins")
   validate_char_param(group, "group", allow_null = TRUE)
@@ -800,7 +800,8 @@ covariate_barplot <- function(
   obj, cov, group = NULL, title = NULL
 ) {
   # input validation
-  validate_min_nif(obj)
+  validate_nif(obj)
+  # TO DO
   validate_char_param(cov, "cov")
   validate_char_param(group, "group", allow_null = TRUE)
   validate_char_param(title, "title", allow_null = TRUE)
@@ -903,7 +904,7 @@ cat_boxplot <- function(obj, cat_field, val_field, title = NULL) {
 #' @examples
 #' wt_by_sex(examplinib_poc_nif)
 wt_by_sex <- function(obj) {
-  validate_min_nif(obj, c("SEX", "WEIGHT"))
+  validate_nif(obj, fields = c("SEX", "WEIGHT"))
   cat_boxplot(obj, "SEX", "WEIGHT", "Body weight by sex")
 }
 
@@ -917,7 +918,7 @@ wt_by_sex <- function(obj) {
 #' @examples
 #' wt_by_race(examplinib_poc_nif)
 wt_by_race <- function(obj) {
-  validate_min_nif(obj, c("RACE", "WEIGHT"))
+  validate_nif(obj, fields = c("RACE", "WEIGHT"))
   cat_boxplot(obj, "RACE", "WEIGHT", "Body weight by race")
 }
 
@@ -933,7 +934,7 @@ wt_by_race <- function(obj) {
 #' wt_by_ht(examplinib_poc_nif)
 wt_by_ht <- function(obj, alpha = 0.7) {
   # input validation
-  validate_min_nif(obj, c("HEIGHT", "WEIGHT"))
+  validate_nif(obj, fields = c("HEIGHT", "WEIGHT"))
   validate_numeric_param(alpha, "alpha")
 
   obj |>
@@ -959,7 +960,7 @@ wt_by_ht <- function(obj, alpha = 0.7) {
 #' ht_by_wt(examplinib_poc_nif)
 ht_by_wt <- function(obj, alpha = 0.7) {
   # input validation
-  validate_min_nif(obj, c("HEIGHT", "WEIGHT"))
+  validate_nif(obj, fields = c("HEIGHT", "WEIGHT"))
   validate_numeric_param(alpha, "alpha")
 
   obj |>
@@ -986,7 +987,7 @@ ht_by_wt <- function(obj, alpha = 0.7) {
 #' bmi_by_age(examplinib_poc_nif)
 bmi_by_age <- function(obj, alpha = 0.7) {
   # input validation
-  validate_min_nif(obj, c("AGE", "BMI"))
+  validate_nif(obj, fields = c("AGE", "BMI"))
   validate_numeric_param(alpha, "alpha")
 
   obj |>
@@ -1014,7 +1015,7 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 #' @export
 time_by_ntime <- function(obj, max_time = NULL, ...) {
   # input validation
-  validate_min_nif(obj, c("NTIME", "ANALYTE"))
+  validate_nif(obj, fields = c("NTIME", "ANALYTE"))
   validate_numeric_param(max_time, "max_time", allow_null = TRUE)
 
   if (is.null(max_time)) {
@@ -1052,7 +1053,7 @@ time_by_ntime <- function(obj, max_time = NULL, ...) {
 #' administration_summary(examplinib_poc_nif)
 administration_summary <- function(obj) {
   # input validation
-  validate_min_nif(obj)
+  validate_nif(obj)
 
   temp <- obj |>
     ensure_parent() |>
@@ -1120,7 +1121,7 @@ mean_dose_plot <- function(
   obj, analyte = NULL, title = NULL
 ) {
   # input validation
-  validate_min_nif(obj, c("ANALYTE"))
+  validate_nif(obj, fields = c("ANALYTE"))
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(title, "title", allow_null = TRUE)
 
@@ -1189,7 +1190,7 @@ subs_per_dose_level <- function(
   obj, analyte = NULL, group = NULL
 ) {
   # input validation
-  validate_min_nif(obj)
+  validate_nif(obj)
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(group, "group", allow_null = TRUE)
 
@@ -1230,7 +1231,7 @@ obs_per_dose_level <- function(
   obj, analyte = NULL, group = NULL
 ) {
   # input validation
-  validate_min_nif(obj)
+  validate_nif(obj)
   validate_char_param(analyte, "analyte", allow_null = TRUE)
   validate_char_param(group, "group", allow_null = TRUE)
 

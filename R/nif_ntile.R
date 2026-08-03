@@ -75,16 +75,7 @@ add_ntile <- function(
   }
 
   # Validate that input_col has exactly one distinct value per subject (ID)
-  multiple_baseline_id <- nif |>
-    reframe(n = n_distinct(.data[[input_col]], na.rm = FALSE), .by = "ID") |>
-    filter(n > 1)
-
-  if (nrow(multiple_baseline_id) > 0) {
-    stop(paste0(
-      "Some subjects do not have unique values for ", input_col, ":\n",
-      df_to_string(multiple_baseline_id, indent = 2)
-    ))
-  }
+  ensure_unique_per_subject(nif, input_col)
 
   column_name <- ifelse(
     is.null(ntile_name),
