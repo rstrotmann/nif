@@ -1506,14 +1506,15 @@ recode_race <- function(obj, coding_table = NULL, silent = NULL) {
 #'
 #' @returns Logical.
 #' @noRd
-is_valid_filter <- function(data, filter_string) {
-  # Input validation
+is_valid_filter <- function(
+    data,
+    filter_string
+) {
+  # validate inputs
   if (!is.data.frame(data)) {
     stop("data must be a data frame")
   }
-  if (!is.character(filter_string) || length(filter_string) != 1) {
-    stop("filter_string must be a single character string")
-  }
+  validate_argument(filter_string, "character")
 
   # Check for empty filter string
   if (nchar(trimws(filter_string)) == 0) {
