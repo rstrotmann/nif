@@ -319,7 +319,7 @@ summary.nif <- function(
     as.data.frame() |>
     filter(.data$EVID == 0) |>
     group_by(across(any_of(c("CMT", "ANALYTE")))) |>
-    summarize(N = n(), .groups = "drop") |>
+    summarize(n = n(), .groups = "drop") |>
     as.data.frame()
 
   n_studies <- object |>
@@ -457,121 +457,102 @@ print.summary_nif <- function(
   hline <- "-----"
   cat(paste0(hline, " NONMEM Input Format (NIF) data summary ", hline, "\n"))
 
+  compose_message <- function(..., condition = TRUE) {
+    args <- list(...)
+    if (length(args) > 0) {
+      trimws(paste(lapply(
+        args,
+        function(x) {
+          ifelse(
+            inherits(x, "data.frame"),
+            df_to_string(x, color = color, indent = indent),
+            as.character(x)
+          )
+        }
+      ), collapse = "\n"))
+    }
+  }
+
   out <- list(
     # study disposition
-    trimws(
-      paste0(
-        "Data from ", sum(x$n_studies$N), " subjects across ",
+    compose_message(
+      paste(
+        "Data from", sum(x$n_studies$N), "subjects across",
         ifelse(
           length(x$studies) == 1, "one study:",
-          paste0(length(x$studies), " studies:")
-        ),
-        "\n",
-        df_to_string(x$n_studies, color = color, indent = indent)
-      )
+          paste0(length(x$studies), "studies:")
+        )
+      ),
+      x$n_studies
     ),
 
     # sex disposition
-    trimws(
-      ifelse(is.null(x$sex), "",
-        paste0(
-          "Sex distribution:\n",
-          df_to_string(
-            mutate(x$sex, SEX = case_when(
-              .data$SEX == 0 ~ "male",
-              .data$SEX == 1 ~ "female"
-            )) |>
-            mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
-            color = color, indent = indent
-          )
-        )
+    ifelse(is.null(x$sex), "",
+      compose_message(
+        "Sex distribution:",
+        # df_to_string(
+          mutate(x$sex, SEX = case_when(
+            .data$SEX == 0 ~ "male",
+            .data$SEX == 1 ~ "female"
+          )) |>
+          mutate(percent = round(.data$N / sum(.data$N) * 100, 1))
+        # )
       )
     ),
 
     # renal function disposition
-    trimws(
-      ifelse(is.null(x$renal_function), "",
-        paste0(
-          "Renal impairment class:\n",
-          df_to_string(
-            mutate(x$renal_function,
-                   percent = round(.data$N / sum(.data$N) * 100, 1)),
-            color = color, indent = indent
-          )
-        )
+    ifelse(is.null(x$renal_function), "",
+      compose_message(
+        "Renal impairment class:",
+        mutate(x$renal_function,
+               percent = round(.data$N / sum(.data$N) * 100, 1))
       )
     ),
 
     # hepatic function class
-    trimws(
-      ifelse(is.null(x$odwg), "",
-         paste0(
-           "NCI ODWG hepatic impairment class:\n",
-           df_to_string(
-             mutate(x$odwg,
-                    percent = round(.data$N / sum(.data$N) * 100, 1)),
-             color = color, indent = indent
-           )
-         )
+    ifelse(is.null(x$odwg), "",
+      compose_message(
+        "NCI ODWG hepatic impairment class:",
+        mutate(x$odwg, percent = round(.data$N / sum(.data$N) * 100, 1))
       )
     ),
 
-    # treatments
+    # treatments and analytes
     trimws(paste0("Treatments: ", nice_enumeration(x$drugs))),
-
-    # analytes
     trimws(paste0("Analytes: ", nice_enumeration(x$analytes))),
 
     # dose levels
-    trimws(
-      paste0(
-        "Subjects per dose level:\n",
-        df_to_string(x$dose_levels, color = color, indent = indent)
-      )
+    compose_message(
+      "Subjects per dose level:",
+      x$dose_levels
     ),
 
     # observations
-    trimws(
-      paste0(
-        sum(x$n_obs$N), " observations:\n",
-        df_to_string(x$n_obs, color = color, indent = indent)
-      )
+    compose_message(
+      paste(sum(x$n_obs$n), "observations:"),
+      x$n_obs
     ),
 
     # sampling
-    trimws(
-      ifelse(is.null(x$sampling), "",
-        paste0(
-          "Observations by NTIME:\n",
-          df_to_string(
-            round(x$sampling, 3) |>
-              mutate(across(-1, function(x)
-                ifelse(is.na(x), "-", as.character(x)))),
-            color = color, indent = indent
-          )
-        )
+    ifelse(is.null(x$sampling), "",
+      compose_message(
+        "Observations by NTIME:",
+        round(x$sampling, 3) |>
+          mutate(across(-1, function(x) ifelse(is.na(x), "-", as.character(x))))
       )
     ),
 
     # dose reductions
-    trimws(
-      paste0(
-        "Subjects with dose reductions:\n",
-        df_to_string(
-          # data.frame(lapply(x$dose_red_sbs, nrow)),
-          sapply(x$dose_red_sbs, nrow) |>
-            tibble::enframe(name = "treatment", value = "n"),
-          color = color, indent = indent
-        )
-      )
+    compose_message(
+      "Subjects with dose reductions:",
+      sapply(x$dose_red_sbs, nrow) |>
+        tibble::enframe(name = "treatment", value = "n")
     ),
 
     # treatment duration
-    trimws(
-      paste0(
-        "Treatment duration overview:\n",
-        df_to_string(x$administration_duration, color = color, indent = indent)
-      )
+    compose_message(
+      "Treatment duration overview:",
+      x$administration_duration
     ),
 
     # hash and time stamp
