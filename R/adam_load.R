@@ -54,7 +54,7 @@ read_adam <- function(
     dataset <- dataset[substring(dataset, 1, 1) != "_"]
   }
 
-  missing_files <- dataset[!(toupper(dataset) %in% available_file_stem)]
+  missing_files <- dataset[!(toupper(dataset) %in% toupper(available_file_stem))]
   if (length(missing_files) > 0)
     conditional_cli(
       cli_alert_warning(paste0(

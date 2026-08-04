@@ -490,13 +490,11 @@ print.summary_nif <- function(
     ifelse(is.null(x$sex), "",
       compose_message(
         "Sex distribution:",
-        # df_to_string(
-          mutate(x$sex, SEX = case_when(
-            .data$SEX == 0 ~ "male",
-            .data$SEX == 1 ~ "female"
-          )) |>
-          mutate(percent = round(.data$N / sum(.data$N) * 100, 1))
-        # )
+        mutate(x$sex, SEX = case_when(
+          .data$SEX == 0 ~ "male",
+          .data$SEX == 1 ~ "female"
+        )) |>
+        mutate(percent = round(.data$N / sum(.data$N) * 100, 1))
       )
     ),
 

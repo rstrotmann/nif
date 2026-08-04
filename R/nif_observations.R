@@ -895,16 +895,19 @@ add_observation <- function(
   }
 
   # Assign compartment for observation if CMT == NULL
-  if (is.null(cmt)) {
-    cmt <- max(nif$CMT) + 1
-  }
+  # if (is.null(cmt)) {
+  #   actual_cmt <- max(nif$CMT) + 1
+  # }
+  actual_cmt <- ifelse(is.null(cmt), max(nif$CMT) + 1, cmt)
 
-  conditional_cli(
-    cli_alert_info(paste0(
-      "Compartment for ", testcd, " observations set to ", cmt
-    )),
-    silent = silent
-  )
+  if (is.null(cmt)) {
+    conditional_cli(
+      cli_alert_info(paste0(
+        "Compartment for ", testcd, " observations set to ", actual_cmt
+      )),
+      silent = silent
+    )
+  }
 
   if (is.null(analyte)) {
     analyte <- testcd
@@ -917,7 +920,7 @@ add_observation <- function(
   }
 
   observation <- make_observation(
-    sdtm, domain, testcd, analyte, parent, metabolite, cmt, subject_filter,
+    sdtm, domain, testcd, analyte, parent, metabolite, actual_cmt, subject_filter,
     observation_filter, cat, scat, testcd_field, dtc_field, dv_field,
     coding_table, factor, ntime_lookup, ntime_method, keep,
     include_day_in_ntime = include_day_in_ntime, omit_not_done = omit_not_done,
