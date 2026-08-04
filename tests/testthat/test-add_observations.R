@@ -697,7 +697,7 @@ test_that("add_observation warns and drops observations without matching parent"
               ntime_method = "ELTM",
               silent = FALSE
             ),
-          "Missing parent!"
+          "Missing administration information"
         )
       )
     )

@@ -981,7 +981,8 @@ add_observation <- function(
           cli_alert_warning(paste0(
             n_dupl, " duplicate observations for ", testcd,
             " (analyte ", analyte, ") resolved, applying ",
-            function_name(duplicate_function)
+            # function_name(duplicate_function)
+            deparse(substitute(duplicate_function))
           ))
         }),
         silent = silent
@@ -1030,27 +1031,26 @@ add_observation <- function(
 
   n_no_admin <- sum(obj$NO_ADMIN_FLAG == TRUE)
   if (n_no_admin != 0) {
-    conditional_cli(
-      {
-        cli_alert_warning("Missing parent!")
-        cli_text(paste0(
-          "Missing administration information in ",
-          n_no_admin, " observations (did you set a ",
-          "parent for these observations?)"
-        ))
-        cli_verbatim(df_to_string(
-          obj |>
-            filter(.data$NO_ADMIN_FLAG == TRUE) |>
-            group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) |>
-            mutate(N = sum(.data$EVID == 0)) |>
-            ungroup() |>
-            distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, .data$N),
-          indent = 2, abbr_lines = 5, abbr_threshold = 20
-        ))
-        cli_text()
-      },
-      silent = silent
-    )
+    conditional_cli({
+      # cli_alert_warning("Missing parent!")
+      cli_text(paste0(
+        "Missing administration information in ",
+        n_no_admin, " ", analyte, " observations (did you set a ",
+        "parent for these observations?)"
+      ))
+      cli_verbatim(df_to_string(
+        obj |>
+          filter(.data$NO_ADMIN_FLAG == TRUE) |>
+          group_by(.data$USUBJID, .data$PARENT, .data$ANALYTE) |>
+          mutate(N = sum(.data$EVID == 0)) |>
+          ungroup() |>
+          distinct(.data$USUBJID, .data$PARENT, .data$ANALYTE, .data$N),
+        indent = 2, abbr_lines = 5, abbr_threshold = 20)
+      )
+      cli_text()
+    },
+    silent = silent
+  )
 
     obj <- obj |>
       filter(.data$NO_ADMIN_FLAG == 0)

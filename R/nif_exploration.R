@@ -344,8 +344,11 @@ summary.nif <- function(
   n_females <- as.numeric(sex[which(sex$SEX == 1), "N"])
 
   # dose levels
-  dl_groups <- intersect(c("PART", "COHORT", "GROUP"), names(object))
-  dose_levels <- dose_levels(object, group = dl_groups)
+  # dl_groups <- intersect(c("PART", "COHORT", "GROUP"), names(object))
+  # dose_levels <- dose_levels(object, group = dl_groups)
+  dose_levels <- object |>
+    add_dose_level() |>
+    reframe(n = n_distinct(.data$ID), .by = "DL")
 
   if ("BL_CRCL" %in% colnames(object)) {
     renal_function <- object |>
@@ -454,101 +457,138 @@ print.summary_nif <- function(
   hline <- "-----"
   cat(paste0(hline, " NONMEM Input Format (NIF) data summary ", hline, "\n"))
 
-  cat(paste(
-    "Data from", sum(x$n_studies$N), "subjects across "
-  ))
-  if (length(x$studies) == 1) {
-    cat("one study:\n")
-  } else {
-    cat(paste0(length(x$studies), " studies:\n"))
-  }
+  out <- list(
+    # study disposition
+    trimws(
+      paste0(
+        "Data from ", sum(x$n_studies$N), " subjects across ",
+        ifelse(
+          length(x$studies) == 1, "one study:",
+          paste0(length(x$studies), " studies:")
+        ),
+        "\n",
+        df_to_string(x$n_studies, color = color, indent = indent)
+      )
+    ),
 
-  cat(paste0(df_to_string(x$n_studies, color = color, indent = indent), "\n"))
+    # sex disposition
+    trimws(
+      ifelse(is.null(x$sex), "",
+        paste0(
+          "Sex distribution:\n",
+          df_to_string(
+            mutate(x$sex, SEX = case_when(
+              .data$SEX == 0 ~ "male",
+              .data$SEX == 1 ~ "female"
+            )) |>
+            mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
+            color = color, indent = indent
+          )
+        )
+      )
+    ),
 
-  if (!is.null(x$sex)) {
-    cat(paste0(
-      "Sex distribution:\n",
-      df_to_string(
-        x$sex |>
-          mutate(SEX = case_when(
-            .data$SEX == 0 ~ "male",
-            .data$SEX == 1 ~ "female"
-          )) |>
+    # renal function disposition
+    trimws(
+      ifelse(is.null(x$renal_function), "",
+        paste0(
+          "Renal impairment class:\n",
+          df_to_string(
+            mutate(x$renal_function,
+                   percent = round(.data$N / sum(.data$N) * 100, 1)),
+            color = color, indent = indent
+          )
+        )
+      )
+    ),
 
-          mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
-        indent = indent
-      ),
-      "\n"
-    ))
-  }
+    # hepatic function class
+    trimws(
+      ifelse(is.null(x$odwg), "",
+         paste0(
+           "NCI ODWG hepatic impairment class:\n",
+           df_to_string(
+             mutate(x$odwg,
+                    percent = round(.data$N / sum(.data$N) * 100, 1)),
+             color = color, indent = indent
+           )
+         )
+      )
+    ),
 
-  if (!is.null(x$renal_function)) {
-    cat(paste0(
-      "Renal impairment class:\n",
-      df_to_string(
-        x$renal_function |>
-          mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
-        indent = indent
-      ),
-      "\n"
-    ))
-  }
+    # treatments
+    trimws(paste0("Treatments: ", nice_enumeration(x$drugs))),
 
-  if (!is.null(x$odwg)) {
-    cat(paste0(
-      "NCI ODWG hepatic impairment class:\n",
-      df_to_string(
-        x$odwg |>
-          mutate(percent = round(.data$N / sum(.data$N) * 100, 1)),
-        color = color, indent = indent
-      ), "\n"
-    ))
-  }
+    # analytes
+    trimws(paste0("Analytes: ", nice_enumeration(x$analytes))),
 
-  cat(paste0(
-    "Treatments: ",
-    nice_enumeration(x$drugs),
-    "\n"
-  ))
+    # dose levels
+    trimws(
+      paste0(
+        "Subjects per dose level:\n",
+        df_to_string(x$dose_levels, color = color, indent = indent)
+      )
+    ),
 
-  cat(paste0(
-    "Analytes:",
-    nice_enumeration(x$analytes),
-    "\n\n"
-  ))
+    # observations
+    trimws(
+      paste0(
+        sum(x$n_obs$N), " observations:\n",
+        df_to_string(x$n_obs, color = color, indent = indent)
+      )
+    ),
 
-  cat("Subjects per dose level:\n")
-  cat(df_to_string(x$dose_levels, color = color, indent = indent))
-  cat("\n")
+    # sampling
+    trimws(
+      ifelse(is.null(x$sampling), "",
+        paste0(
+          "Observations by NTIME:\n",
+          df_to_string(
+            round(x$sampling, 3) |>
+              mutate(across(-1, function(x)
+                ifelse(is.na(x), "-", as.character(x)))),
+            color = color, indent = indent
+          )
+        )
+      )
+    ),
 
-  cat(paste(sum(x$n_obs$N), "observations:\n"))
-  cat(paste0(df_to_string(x$n_obs, color = color, indent = indent), "\n"))
+    # dose reductions
+    trimws(
+      paste0(
+        "Subjects with dose reductions:\n",
+        df_to_string(
+          # data.frame(lapply(x$dose_red_sbs, nrow)),
+          sapply(x$dose_red_sbs, nrow) |>
+            tibble::enframe(name = "treatment", value = "n"),
+          color = color, indent = indent
+        )
+      )
+    ),
 
-  # sampling overview
-  if (!is.null(x$sampling)) {
-    sampling_schedule <- x$sampling
-    cat("Observations by NTIME:\n")
-    cat(df_to_string(
-      round(sampling_schedule, 3) |>
-        mutate(across(-1, function(x) ifelse(is.na(x), "-", as.character(x)))),
-      indent = indent
-    ))
-    cat("\n")
-  }
+    # treatment duration
+    trimws(
+      paste0(
+        "Treatment duration overview:\n",
+        df_to_string(x$administration_duration, color = color, indent = indent)
+      )
+    ),
 
-  dr_summary <- lapply(x$dose_red_sbs, nrow) |>
-    data.frame()
-  cat("Subjects with dose reductions\n")
-  cat(df_to_string(dr_summary, color = color, indent = indent))
-  cat("\n")
+    # hash and time stamp
+    trimws(
+      paste0(
+        "Hash: ", x$hash,
+        ifelse(is.null(x$last), "", paste0("\nLast DTC: ", x$last))
+      )
+    )
+  )
 
-  cat("Treatment duration overview:\n")
-  cat(df_to_string(x$administration_duration, color = color, indent = indent))
+  dummy <- lapply(
+    out,
+    function(x) {
+      cat(ifelse(x == "", "", paste0(x, "\n\n")))
+    })
 
-  cat(paste0("\nHash: ", x$hash))
-  if (!is.null(x$last)) {
-    cat(paste0("\nLast DTC: ", x$last))
-  }
   invisible(x)
 }
 

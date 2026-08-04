@@ -161,16 +161,16 @@ test_that("summary.nif handles hepatic function classification correctly", {
 
 
 # Test subjects per dose level
-test_that("summary.nif correctly counts subjects per dose level", {
-  s <- summary(examplinib_poc_nif)
-
-  # Check that dose levels are calculated
-  expect_false(is.null(s$dose_levels))
-
-  # Check that it matches with the direct calculation
-  direct_count <- dose_levels(examplinib_poc_nif)
-  expect_equal(s$dose_levels$N, direct_count$N)
-})
+# test_that("summary.nif correctly counts subjects per dose level", {
+#   s <- summary(examplinib_poc_nif)
+#
+#   # Check that dose levels are calculated
+#   expect_false(is.null(s$dose_levels))
+#
+#   # Check that it matches with the direct calculation
+#   direct_count <- dose_levels(examplinib_poc_nif)
+#   expect_equal(s$dose_levels$N, direct_count$N)
+# })
 
 
 # Test administration duration

@@ -139,11 +139,6 @@ resolve_duplicates <- function(
     ))
   }
 
-  # # Validate that duplicate_function is a function
-  # if (!is.function(duplicate_function)) {
-  #   stop("duplicate_function must be a function")
-  # }
-
   # Remove DV from fields if present (it will be handled separately)
   fields <- setdiff(fields, dependent_variable)
 
@@ -153,7 +148,7 @@ resolve_duplicates <- function(
                "identify duplicates"))
   }
 
-  ## business logic
+  # business logic
   # if MDV is present, delete observations with MDV == 1
   if ("MDV" %in% names(df)) {
     df <- df |>
