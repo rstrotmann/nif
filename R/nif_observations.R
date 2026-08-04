@@ -819,29 +819,42 @@ add_observation <- function(
 ) {
   # validate inputs
   validate_nif(nif)
-  validate_sdtm(sdtm)
+  validate_argument(domain, "character")
+  validate_sdtm(sdtm, domain)
   validate_testcd(sdtm, testcd, domain)
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(parent, "character", allow_null = TRUE)
+  validate_argument(metabolite, "logical")
+  validate_argument(cmt, "numeric", allow_null = TRUE)
+  validate_argument(subject_filter, "character")
+  validate_argument(observation_filter, "character")
+  validate_argument(cat, "character", allow_null = TRUE)
+  validate_argument(scat, "character", allow_null = TRUE)
+  validate_argument(testcd_field, "character", allow_null = TRUE)
+  validate_argument(dtc_field, "character", allow_null = TRUE)
+  # coding table
+  validate_argument(factor, "numeric")
+  # ntime_lookup
+  validate_argument(ntime_method, "character", values = c())
+  validate_argument(
+    ntime_method, "character",
+    values = c('TPT', 'TPTNUM', 'ELTM', 'VISITDY', 'DY')
+  )
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(debug, "logical")
 
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(parent, "parent", allow_null = TRUE)
-  validate_logical_param(metabolite, "metabolite")
-  validate_numeric_param(cmt, "cmt", allow_null = TRUE)
-  validate_char_param(subject_filter, "subject_filter")
-  validate_char_param(observation_filter, "observation_filter")
-  validate_char_param(testcd_field, "testcd_field", allow_null = TRUE)
-  validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
-  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
-  validate_numeric_param(factor, "factor")
-  validate_char_param(ntime_method, "ntime_method", allow_null = TRUE)
-  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
-  validate_logical_param(debug, "debug")
-  validate_logical_param(include_day_in_ntime, "include_day_in_ntime")
-  validate_logical_param(silent, "silent", allow_null = TRUE)
-  validate_char_param(duplicates, "duplicates")
-  validate_char_param(duplicate_identifier, "duplicate_identifier",
-                      allow_multiple = TRUE)
-
-  validate_logical_param(na_to_zero, "na_to_zero")
+  validate_argument(include_day_in_ntime, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
+  validate_argument(
+    duplicates, "character",
+    values = c('stop', 'identify', 'ignore', 'resolve')
+  )
+  validate_argument(duplicate_function, "function")
+  validate_argument(duplicate_identifier, "character", allow_multiple = TRUE)
+  validate_argument(omit_not_done, "logical")
+  validate_argument(na_rm, "logical")
+  validate_argument(na_to_zero, "logical")
+  validate_imputation_set(imputation)
 
   conditional_cli(
     cli_alert_info(paste0(
@@ -855,25 +868,28 @@ add_observation <- function(
     keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ", "SRC_TESTCD")
   }
 
-  # validate duplicate handler arguments
-  valid_duplicate_values <- c("stop", "ignore", "identify", "resolve")
-  if (!duplicates %in% valid_duplicate_values) {
-    stop(paste0(
-      "Invalid value for 'duplicates' - must be one of ",
-      nice_enumeration(valid_duplicate_values, conjunction = "or")
-    ))
-  }
+  # # validate duplicate handler arguments
+  # valid_duplicate_values <- c("stop", "ignore", "identify", "resolve")
+  # if (!duplicates %in% valid_duplicate_values) {
+  #   stop(paste0(
+  #     "Invalid value for 'duplicates' - must be one of ",
+  #     nice_enumeration(valid_duplicate_values, conjunction = "or")
+  #   ))
+  # }
 
-  missing_dupl_id <- setdiff(duplicate_identifier, names(nif))
-  if (length(missing_dupl_id) > 0) {
-    stop(paste0(
-      "Missing ", plural("field", length(missing_dupl_id) > 1),
-      " in input: ", nice_enumeration(missing_dupl_id)
-    ))
-  }
+  # missing_dupl_id <- setdiff(duplicate_identifier, names(nif))
+  # if (length(missing_dupl_id) > 0) {
+  #   stop(paste0(
+  #     "Missing ", plural("field", length(missing_dupl_id) > 1),
+  #     " in input: ", nice_enumeration(missing_dupl_id)
+  #   ))
+  # }
+
 
   # ensure that keep includes all fields already present in the nif
   keep <- unique(c(keep, names(nif), duplicate_identifier))
+
+  # validate_nif(nif, fields = keep)
 
   # ensure analytes
   nif <- nif |>
@@ -895,9 +911,6 @@ add_observation <- function(
   }
 
   # Assign compartment for observation if CMT == NULL
-  # if (is.null(cmt)) {
-  #   actual_cmt <- max(nif$CMT) + 1
-  # }
   actual_cmt <- ifelse(is.null(cmt), max(nif$CMT) + 1, cmt)
 
   if (is.null(cmt)) {

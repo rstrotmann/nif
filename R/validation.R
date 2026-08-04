@@ -425,14 +425,6 @@ validate_nif <- function(obj, fields = NULL) {
     ))
   }
 
-  # missing_additional_fields <- setdiff(fields, names(obj))
-  # if (length(missing_additional_fields) > 0) {
-  #   stop(paste0(
-  #     "Missing required fields: ",
-  #     nice_enumeration(missing_additional_fields)
-  #   ))
-  # }
-
   validate_fields(obj, fields)
 
   invisible(NULL)

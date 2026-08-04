@@ -562,7 +562,7 @@ test_that("add_observation rejects invalid duplicates parameter", {
         ntime_method = "ELTM",
         silent = TRUE
       ),
-    "Invalid value for 'duplicates'"
+    "duplicates must be stop, identify, ignore or resolve!"
   )
 })
 
@@ -578,7 +578,7 @@ test_that("add_observation rejects missing duplicate_identifier fields", {
         ntime_method = "ELTM",
         silent = TRUE
       ),
-    "Missing field in input: NOT_A_NIF_COLUMN"
+    "Field not found in input: NOT_A_NIF_COLUMN"
   )
 })
 
