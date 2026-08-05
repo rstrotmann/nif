@@ -12,7 +12,7 @@
 #'
 #' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
 #' @importFrom classInt classIntervals
-#' @noRd
+#' @export
 add_bintime <- function(
     obj,
     method = "fisher",
@@ -96,7 +96,7 @@ add_bintime <- function(
 #'   (default), classInt chooses the number of classes.
 #'
 #' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
-#' @noRd
+#' @export
 add_bintime1 <- function(
     obj,
     method = "fisher",
