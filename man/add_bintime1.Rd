@@ -4,7 +4,14 @@
 \alias{add_bintime1}
 \title{Make BINTIME field (shared global bins)}
 \usage{
-add_bintime1(obj, method = "fisher", time = "TAFD", n = NULL, group = NULL)
+add_bintime1(
+  obj,
+  method = "fisher",
+  time = "TAFD",
+  n = NULL,
+  group = NULL,
+  silent = NULL
+)
 }
 \arguments{
 \item{obj}{A nif object.}
@@ -17,6 +24,10 @@ pretty, quantile, hclust, sd, bclust or fisher. See
 
 \item{n}{Number of bins passed to \code{\link[classInt:classIntervals]{classInt::classIntervals()}}. If \code{NULL}
 (default), classInt chooses the number of classes.}
+
+\item{group}{Grouping variables as character.}
+
+\item{silent}{Suppress messages.}
 }
 \value{
 A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.

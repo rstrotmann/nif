@@ -94,6 +94,8 @@ add_bintime <- function(
 #' @param time The time field to use.
 #' @param n Number of bins passed to [classInt::classIntervals()]. If `NULL`
 #'   (default), classInt chooses the number of classes.
+#' @param group Grouping variables as character.
+#' @param silent Suppress messages.
 #'
 #' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
 #' @export
@@ -102,7 +104,8 @@ add_bintime1 <- function(
     method = "fisher",
     time = "TAFD",
     n = NULL,
-    group = NULL
+    group = NULL,
+    silent = NULL
 ) {
   # input validation
   validate_argument(time, "character", values = c("TIME", "NTIME", "TAFD", "TAD"))
@@ -119,6 +122,34 @@ add_bintime1 <- function(
 
   # business code
   active_time <- obj[[time]]
+
+  ####
+
+  finite_times <- active_time[is.finite(active_time)]
+  n_unique <- dplyr::n_distinct(finite_times)
+
+  if (n_unique < 2) {
+    # warning("Only one unique time value; returning a single bin.")
+    conditional_cli(
+      cli_alert_warning(paste0(
+        "Single value for ", time, ", returning a single bintime!"
+        )),
+      silent = silent
+    )
+
+    t0 <- if (n_unique == 1) finite_times[[1]] else NA_real_
+    return(
+      obj |>
+        mutate(
+          BIN_LEFT  = ifelse(is.finite(.data[[time]]), t0, NA_real_),
+          BIN_RIGHT = ifelse(is.finite(.data[[time]]), t0, NA_real_),
+          BINTIME   = ifelse(is.finite(.data[[time]]), round(t0), NA_real_)
+        ) |>
+        as_nif()
+    )
+  }
+
+  ####
 
   if (is.null(n)) {
     bins <- classInt::classIntervals(active_time, style = method)
@@ -219,7 +250,7 @@ bintime_plot <- function(
     scales = "fixed",
     refline = NULL,
     legend = TRUE,
-    bintime_function = add_bintime
+    bintime_function = add_bintime1
 ) {
   # input validation
   validate_nif(obj)
