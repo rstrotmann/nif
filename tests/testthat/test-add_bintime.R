@@ -14,12 +14,13 @@ test_that("add_bintime works with basic input", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_true("BINTIME" %in% names(result))
   expect_true("BIN_LEFT" %in% names(result))
   expect_true("BIN_RIGHT" %in% names(result))
 })
+
 
 test_that("add_bintime returns a nif object", {
   test_data <- tibble::tribble(
@@ -37,10 +38,10 @@ test_that("add_bintime returns a nif object", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
-
+  result <- add_bintime(test_data, time = "TIME")
   expect_s3_class(result, "nif")
 })
+
 
 test_that("add_bintime bins span observation times", {
   test_data <- tibble::tribble(
@@ -60,12 +61,13 @@ test_that("add_bintime bins span observation times", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   obs <- result %>% filter(EVID == 0 & !is.na(BIN_LEFT))
   expect_true(all(obs$active_time >= obs$BIN_LEFT))
   expect_true(all(obs$active_time <= obs$BIN_RIGHT))
 })
+
 
 test_that("add_bintime BIN_LEFT < BIN_RIGHT for all bins", {
   test_data <- tibble::tribble(
@@ -83,11 +85,12 @@ test_that("add_bintime BIN_LEFT < BIN_RIGHT for all bins", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   obs <- result %>% filter(!is.na(BIN_LEFT))
   expect_true(all(obs$BIN_LEFT < obs$BIN_RIGHT))
 })
+
 
 test_that("add_bintime BINTIME is numeric", {
   test_data <- tibble::tribble(
@@ -105,12 +108,13 @@ test_that("add_bintime BINTIME is numeric", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_type(result$BINTIME, "double")
   expect_type(result$BIN_LEFT, "double")
   expect_type(result$BIN_RIGHT, "double")
 })
+
 
 test_that("add_bintime preserves original columns", {
   test_data <- tibble::tribble(
@@ -128,12 +132,13 @@ test_that("add_bintime preserves original columns", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_true("EXTRA" %in% names(result))
   expect_equal(result$EXTRA, test_data$EXTRA)
   expect_true(all(c("ID", "TIME", "EVID", "DV", "AMT", "CMT") %in% names(result)))
 })
+
 
 test_that("add_bintime preserves row count", {
   test_data <- tibble::tribble(
@@ -151,10 +156,11 @@ test_that("add_bintime preserves row count", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_equal(nrow(result), nrow(test_data))
 })
+
 
 test_that("add_bintime removes .BINTIME_INDEX column", {
   test_data <- tibble::tribble(
@@ -172,10 +178,11 @@ test_that("add_bintime removes .BINTIME_INDEX column", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_false(".BINTIME_INDEX" %in% names(result))
 })
+
 
 test_that("add_bintime works with data that already has TAFD", {
   test_data <- tibble::tribble(
@@ -193,12 +200,13 @@ test_that("add_bintime works with data that already has TAFD", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TAFD")
 
   expect_true("BINTIME" %in% names(result))
   expect_true("BIN_LEFT" %in% names(result))
   expect_true("BIN_RIGHT" %in% names(result))
 })
+
 
 test_that("add_bintime default method is fisher", {
   test_data <- tibble::tribble(
@@ -216,13 +224,14 @@ test_that("add_bintime default method is fisher", {
   ) %>%
     nif()
 
-  result_default <- add_bintime(test_data)
-  result_fisher <- add_bintime(test_data, method = "fisher")
+  result_default <- add_bintime(test_data, time = "TIME")
+  result_fisher <- add_bintime(test_data, method = "fisher", time = "TIME")
 
   expect_equal(result_default$BINTIME, result_fisher$BINTIME)
   expect_equal(result_default$BIN_LEFT, result_fisher$BIN_LEFT)
   expect_equal(result_default$BIN_RIGHT, result_fisher$BIN_RIGHT)
 })
+
 
 test_that("add_bintime works with different methods", {
   test_data <- tibble::tribble(
@@ -248,7 +257,7 @@ test_that("add_bintime works with different methods", {
                "sd", "fisher")
 
   for (m in methods) {
-    result <- add_bintime(test_data, method = m)
+    result <- add_bintime(test_data, method = m, time = "TIME")
     expect_true("BINTIME" %in% names(result),
                 info = paste("Method:", m))
     expect_true("BIN_LEFT" %in% names(result),
@@ -257,6 +266,7 @@ test_that("add_bintime works with different methods", {
                 info = paste("Method:", m))
   }
 })
+
 
 test_that("add_bintime rejects invalid method", {
   test_data <- tibble::tribble(
@@ -270,10 +280,11 @@ test_that("add_bintime rejects invalid method", {
     nif()
 
   expect_error(
-    add_bintime(test_data, method = "invalid_method"),
-    "not implemented"
+    add_bintime(test_data, method = "invalid_method", time = "TIME"),
+    "method must be"
   )
 })
+
 
 test_that("add_bintime rejects non-character method", {
   test_data <- tibble::tribble(
@@ -286,9 +297,10 @@ test_that("add_bintime rejects non-character method", {
   ) %>%
     nif()
 
-  expect_error(add_bintime(test_data, method = 123))
-  expect_error(add_bintime(test_data, method = TRUE))
+  expect_error(add_bintime(test_data, method = 123, time = "TIME"))
+  expect_error(add_bintime(test_data, method = TRUE, time = "TIME"))
 })
+
 
 test_that("add_bintime rejects non-nif input", {
   test_data <- tibble::tribble(
@@ -301,10 +313,11 @@ test_that("add_bintime rejects non-nif input", {
   )
 
   expect_error(
-    add_bintime(test_data),
+    add_bintime(test_data, time = "TIME"),
     "Input must be a nif object"
   )
 })
+
 
 test_that("add_bintime default time is TAFD", {
   test_data <- tibble::tribble(
@@ -322,11 +335,12 @@ test_that("add_bintime default time is TAFD", {
   ) %>%
     nif()
 
-  result_default <- add_bintime(test_data)
+  result_default <- add_bintime(test_data, time = "TIME")
   result_tafd <- add_bintime(test_data, time = "TAFD")
 
   expect_equal(result_default$BINTIME, result_tafd$BINTIME)
 })
+
 
 test_that("add_bintime works with custom time field", {
   test_data <- tibble::tribble(
@@ -350,6 +364,7 @@ test_that("add_bintime works with custom time field", {
   expect_true("BIN_LEFT" %in% names(result))
   expect_true("BIN_RIGHT" %in% names(result))
 })
+
 
 test_that("add_bintime with group parameter produces correct output columns", {
   test_data <- tibble::tribble(
@@ -376,6 +391,7 @@ test_that("add_bintime with group parameter produces correct output columns", {
   expect_s3_class(result, "nif")
 })
 
+
 test_that("add_bintime with group preserves row count", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT, ~TAFD, ~GRP,
@@ -396,6 +412,7 @@ test_that("add_bintime with group preserves row count", {
 
   expect_equal(nrow(result), nrow(test_data))
 })
+
 
 test_that("add_bintime with multiple group variables works", {
   test_data <- tibble::tribble(
@@ -421,6 +438,7 @@ test_that("add_bintime with multiple group variables works", {
   expect_s3_class(result, "nif")
 })
 
+
 test_that("add_bintime rejects missing group variable", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT, ~TAFD,
@@ -434,9 +452,10 @@ test_that("add_bintime rejects missing group variable", {
 
   expect_error(
     add_bintime(test_data, group = "NONEXISTENT"),
-    "not found in data set"
+    "Missing required fields: NONEXISTENT"
   )
 })
+
 
 test_that("add_bintime with group=NULL is same as no group", {
   test_data <- tibble::tribble(
@@ -454,13 +473,14 @@ test_that("add_bintime with group=NULL is same as no group", {
   ) %>%
     nif()
 
-  result_null <- add_bintime(test_data, group = NULL)
-  result_default <- add_bintime(test_data)
+  result_null <- add_bintime(test_data, group = NULL, time = "TIME")
+  result_default <- add_bintime(test_data, time = "TIME")
 
   expect_equal(result_null$BINTIME, result_default$BINTIME)
   expect_equal(result_null$BIN_LEFT, result_default$BIN_LEFT)
   expect_equal(result_null$BIN_RIGHT, result_default$BIN_RIGHT)
 })
+
 
 test_that("add_bintime works with multiple subjects", {
   test_data <- tibble::tribble(
@@ -483,12 +503,13 @@ test_that("add_bintime works with multiple subjects", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_true("BINTIME" %in% names(result))
   expect_equal(nrow(result), nrow(test_data))
   expect_true(all(unique(result$ID) %in% c(1, 2, 3)))
 })
+
 
 test_that("add_bintime BINTIME falls within bin boundaries", {
   test_data <- tibble::tribble(
@@ -508,12 +529,13 @@ test_that("add_bintime BINTIME falls within bin boundaries", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   obs <- result %>% filter(!is.na(BINTIME))
   expect_true(all(obs$BINTIME >= obs$BIN_LEFT))
   expect_true(all(obs$BINTIME <= obs$BIN_RIGHT))
 })
+
 
 test_that("add_bintime bins are non-overlapping", {
   test_data <- tibble::tribble(
@@ -533,7 +555,7 @@ test_that("add_bintime bins are non-overlapping", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   bins <- result %>%
     filter(!is.na(BIN_LEFT)) %>%
@@ -547,6 +569,7 @@ test_that("add_bintime bins are non-overlapping", {
     }
   }
 })
+
 
 test_that("add_bintime works with widely spaced time points", {
   test_data <- tibble::tribble(
@@ -564,11 +587,12 @@ test_that("add_bintime works with widely spaced time points", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_true("BINTIME" %in% names(result))
   expect_equal(nrow(result), nrow(test_data))
 })
+
 
 test_that("add_bintime works with closely spaced time points", {
   test_data <- tibble::tribble(
@@ -586,11 +610,12 @@ test_that("add_bintime works with closely spaced time points", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_true("BINTIME" %in% names(result))
   expect_equal(nrow(result), nrow(test_data))
 })
+
 
 test_that("add_bintime rejects non-character group parameter", {
   test_data <- tibble::tribble(
@@ -603,9 +628,10 @@ test_that("add_bintime rejects non-character group parameter", {
   ) %>%
     nif()
 
-  expect_error(add_bintime(test_data, group = 123))
-  expect_error(add_bintime(test_data, group = TRUE))
+  expect_error(add_bintime(test_data, group = 123, time = "TIME"))
+  expect_error(add_bintime(test_data, group = TRUE, time = "TIME"))
 })
+
 
 test_that("add_bintime different methods produce different bins", {
   test_data <- tibble::tribble(
@@ -631,8 +657,8 @@ test_that("add_bintime different methods produce different bins", {
   ) %>%
     nif()
 
-  result_pretty <- add_bintime(test_data, method = "pretty")
-  result_quantile <- add_bintime(test_data, method = "quantile")
+  result_pretty <- add_bintime(test_data, method = "pretty", time = "TIME")
+  result_quantile <- add_bintime(test_data, method = "quantile", time = "TIME")
 
   bins_pretty <- result_pretty %>%
     filter(!is.na(BIN_LEFT)) %>%
@@ -645,6 +671,7 @@ test_that("add_bintime different methods produce different bins", {
 
   expect_false(identical(bins_pretty, bins_quantile))
 })
+
 
 test_that("add_bintime with group applies binning independently per group", {
   test_data <- tibble::tribble(
@@ -662,8 +689,8 @@ test_that("add_bintime with group applies binning independently per group", {
   ) %>%
     nif()
 
-  result_grouped <- add_bintime(test_data, group = "DOSE")
-  result_ungrouped <- add_bintime(test_data)
+  result_grouped <- add_bintime(test_data, group = "DOSE", time = "TIME")
+  result_ungrouped <- add_bintime(test_data, time = "TIME")
 
   bins_grouped <- result_grouped %>%
     filter(!is.na(BIN_LEFT)) %>%
@@ -679,6 +706,7 @@ test_that("add_bintime with group applies binning independently per group", {
     sort(unique(bins_ungrouped$BIN_LEFT))
   ))
 })
+
 
 test_that("add_bintime handles observations before first dose", {
   test_data <- tibble::tribble(
@@ -698,11 +726,12 @@ test_that("add_bintime handles observations before first dose", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_true("BINTIME" %in% names(result))
   expect_equal(nrow(result), nrow(test_data))
 })
+
 
 test_that("add_bintime with single observation per subject works", {
   test_data <- tibble::tribble(
@@ -720,7 +749,7 @@ test_that("add_bintime with single observation per subject works", {
   ) %>%
     nif()
 
-  result <- add_bintime(test_data)
+  result <- add_bintime(test_data, time = "TIME")
 
   expect_true("BINTIME" %in% names(result))
   expect_equal(nrow(result), nrow(test_data))

@@ -20,21 +20,18 @@ add_bintime <- function(
     group = NULL
 ) {
   # input validation
-  validate_nif(obj)
-  validate_char_param(method, "method")
-  if(!method %in% c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
-                   "bclust", "fisher")) {
-    stop(paste0("Method ", method, " not implemented!"))
-  }
-  validate_char_param(group, "group", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(time, "character", values = c("TIME", "NTIME", "TAFD", "TAD"))
+  validate_argument(
+    method, "character",
+    values = c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
+               "bclust", "fisher")
+  )
+  validate_argument(group, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_nif(obj, fields = c(time, group))
 
+  # business code
   # Grouped binning: split by group, apply ungrouped binning to each, combine
   if (!is.null(group)) {
-    missing <- setdiff(group, names(obj))
-    if (length(missing) > 0)
-      stop(paste0("Group variable(s) ", paste(missing, collapse = ", "),
-                  " not found in data set!"))
-
     return(
       obj |>
         tidyr::nest(.by = all_of(group)) |>
@@ -46,7 +43,7 @@ add_bintime <- function(
     )
   }
 
-  obj <- ensure_tafd(obj) |>
+  obj <- obj |>
     mutate(active_time = .data[[time]])
 
   bins <- classInt::classIntervals(obj$active_time, style = method)
