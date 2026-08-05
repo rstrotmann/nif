@@ -79,6 +79,90 @@ add_bintime <- function(
 }
 
 
+#' Make BINTIME field (shared global bins)
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' Optimized variant of add_bintime() that always derives a single set of time
+#' bins from the full data set (shared / global binning). No per-group recursion.
+#'
+#' @param obj A nif object.
+#' @param method Univariate class intervals method, can be one of jenks, kmeans,
+#'   pretty, quantile, hclust, sd, bclust or fisher. See
+#'   [classInt::classIntervals()] for details. Default is fisher.
+#' @param time The time field to use.
+#' @param n Number of bins passed to [classInt::classIntervals()]. If `NULL`
+#'   (default), classInt chooses the number of classes.
+#'
+#' @returns A nif object with the BINTIME, BIN_LEFT and BIN_RIGHT fields added.
+#' @noRd
+add_bintime1 <- function(
+    obj,
+    method = "fisher",
+    time = "TAFD",
+    n = NULL,
+    group = NULL
+) {
+  # input validation
+  validate_argument(time, "character", values = c("TIME", "NTIME", "TAFD", "TAD"))
+  validate_argument(
+    method, "character",
+    values = c("jenks", "kmeans", "pretty", "quantile", "hclust", "sd",
+               "bclust", "fisher")
+  )
+  validate_argument(n, "numeric", allow_null = TRUE)
+  if (!is.null(n) && (length(n) != 1 || is.na(n) || n < 1 || n != floor(n))) {
+    stop("`n` must be a positive integer or NULL!")
+  }
+  validate_nif(obj, fields = time)
+
+  # business code
+  active_time <- obj[[time]]
+
+  if (is.null(n)) {
+    bins <- classInt::classIntervals(active_time, style = method)
+  } else {
+    bins <- classInt::classIntervals(active_time, style = method, n = n)
+  }
+  breaks <- sort(unique(bins$brks))
+
+  bin_index <- as.numeric(
+    cut(active_time, breaks = breaks, include.lowest = TRUE)
+  )
+
+  bin_par <- data.frame(
+    .BINTIME_INDEX = seq_along(breaks[-1]),
+    BIN_LEFT = breaks[-length(breaks)],
+    BIN_RIGHT = breaks[-1]
+  )
+
+  bin_labels <- data.frame(
+    .BINTIME_INDEX = bin_index,
+    active_time = active_time
+  ) |>
+    filter(!is.na(.data$.BINTIME_INDEX)) |>
+    reframe(
+      BINTIME = round(median(.data$active_time, na.rm = TRUE)),
+      .by = ".BINTIME_INDEX"
+    )
+
+  bin_par <- bin_par |>
+    left_join(bin_labels, by = ".BINTIME_INDEX") |>
+    mutate(
+      BINTIME = ifelse(
+        is.na(.data$BINTIME), round(.data$BIN_LEFT), .data$BINTIME
+      )
+    )
+
+  obj |>
+    mutate(.BINTIME_INDEX = bin_index) |>
+    left_join(bin_par, by = ".BINTIME_INDEX") |>
+    select(-".BINTIME_INDEX") |>
+    as_nif()
+}
+
+
 #' BINTIME plot
 #'
 #' @description
@@ -106,6 +190,8 @@ add_bintime <- function(
 #' @param facet The faceting field, defaults to DOSE.
 #' @param scales The scales parameter to facet_wrap.
 #' @param legend Show legend.
+#' @param bintime_function Function to add bintime. Can be add_bintime (breaks
+#' per group) or add_bintime1 (global breaks).
 #'
 #' @returns A ggplot2 object.
 #' @importFrom stats qt
@@ -132,7 +218,9 @@ bintime_plot <- function(
     alpha = 1,
     scales = "fixed",
     refline = NULL,
-    legend = TRUE) {
+    legend = TRUE,
+    bintime_function = add_bintime
+) {
   # input validation
   validate_nif(obj)
   validate_argument(analyte, "character")
@@ -217,7 +305,8 @@ bintime_plot <- function(
 
   temp <- temp |>
     as_nif() |>
-    add_bintime(method = method, time = time, group = bin_group_vars) |>
+    # add_bintime(method = method, time = time, group = bin_group_vars) |>
+    bintime_function(method = method, time = time, group = bin_group_vars) |>
     filter(!is.na(.data$BINTIME)) |>
     as.data.frame()
 

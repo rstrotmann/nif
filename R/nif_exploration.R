@@ -344,10 +344,8 @@ summary.nif <- function(
   n_females <- as.numeric(sex[which(sex$SEX == 1), "N"])
 
   # dose levels
-  # dl_groups <- intersect(c("PART", "COHORT", "GROUP"), names(object))
-  # dose_levels <- dose_levels(object, group = dl_groups)
   dose_levels <- object |>
-    add_dose_level() |>
+    add_dose_level(silent = TRUE) |>
     reframe(n = n_distinct(.data$ID), .by = "DL")
 
   if ("BL_CRCL" %in% colnames(object)) {

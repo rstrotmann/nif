@@ -21,7 +21,8 @@ bintime_plot(
   alpha = 1,
   scales = "fixed",
   refline = NULL,
-  legend = TRUE
+  legend = TRUE,
+  bintime_function = add_bintime
 )
 }
 \arguments{
@@ -63,6 +64,9 @@ title = "", if needed.}
 defaults to NULL (no lines).}
 
 \item{legend}{Show legend.}
+
+\item{bintime_function}{Function to add bintime. Can be add_bintime (breaks
+per group) or add_bintime1 (global breaks).}
 }
 \value{
 A ggplot2 object.

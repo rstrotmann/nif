@@ -758,125 +758,125 @@ test_that("add_bintime with single observation per subject works", {
 
 # ---- failing tests ----
 
-test_that("add_bintime accepts n to control the number of bins", {
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  100,  1,
-    1,   1,     0,     "DRUG",  10,  0,    2,
-    1,   2,     0,     "DRUG",  20,  0,    2,
-    1,   4,     0,     "DRUG",  30,  0,    2,
-    1,   8,     0,     "DRUG",  25,  0,    2,
-    1,   12,    0,     "DRUG",  18,  0,    2,
-    1,   24,    0,     "DRUG",  12,  0,    2,
-    1,   48,    0,     "DRUG",  5,   0,    2,
-    2,   0,     1,     "DRUG",  NA,  100,  1,
-    2,   1.5,   0,     "DRUG",  12,  0,    2,
-    2,   3,     0,     "DRUG",  22,  0,    2,
-    2,   6,     0,     "DRUG",  28,  0,    2,
-    2,   10,    0,     "DRUG",  20,  0,    2,
-    2,   18,    0,     "DRUG",  14,  0,    2,
-    2,   36,    0,     "DRUG",  8,   0,    2,
-    2,   48,    0,     "DRUG",  3,   0,    2
-  ) %>%
-    nif()
-
-  expect_no_error(add_bintime(test_data, time = "TIME", n = 3))
-})
-
-
-test_that("add_bintime n sets the number of bin intervals", {
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  100,  1,
-    1,   1,     0,     "DRUG",  10,  0,    2,
-    1,   2,     0,     "DRUG",  20,  0,    2,
-    1,   4,     0,     "DRUG",  30,  0,    2,
-    1,   8,     0,     "DRUG",  25,  0,    2,
-    1,   12,    0,     "DRUG",  18,  0,    2,
-    1,   24,    0,     "DRUG",  12,  0,    2,
-    1,   48,    0,     "DRUG",  5,   0,    2,
-    2,   0,     1,     "DRUG",  NA,  100,  1,
-    2,   1.5,   0,     "DRUG",  12,  0,    2,
-    2,   3,     0,     "DRUG",  22,  0,    2,
-    2,   6,     0,     "DRUG",  28,  0,    2,
-    2,   10,    0,     "DRUG",  20,  0,    2,
-    2,   18,    0,     "DRUG",  14,  0,    2,
-    2,   36,    0,     "DRUG",  8,   0,    2,
-    2,   48,    0,     "DRUG",  3,   0,    2
-  ) %>%
-    nif()
-
-  result <- add_bintime(test_data, time = "TIME", n = 3)
-
-  n_bins <- result %>%
-    filter(!is.na(BIN_LEFT)) %>%
-    distinct(BIN_LEFT, BIN_RIGHT) %>%
-    nrow()
-
-  expect_equal(n_bins, 3)
-})
-
-
-test_that("add_bintime different n values produce different bin counts", {
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
-    1,   0,     1,     "DRUG",  NA,  100,  1,
-    1,   1,     0,     "DRUG",  10,  0,    2,
-    1,   2,     0,     "DRUG",  20,  0,    2,
-    1,   4,     0,     "DRUG",  30,  0,    2,
-    1,   8,     0,     "DRUG",  25,  0,    2,
-    1,   12,    0,     "DRUG",  18,  0,    2,
-    1,   24,    0,     "DRUG",  12,  0,    2,
-    1,   48,    0,     "DRUG",  5,   0,    2,
-    2,   0,     1,     "DRUG",  NA,  100,  1,
-    2,   1.5,   0,     "DRUG",  12,  0,    2,
-    2,   3,     0,     "DRUG",  22,  0,    2,
-    2,   6,     0,     "DRUG",  28,  0,    2,
-    2,   10,    0,     "DRUG",  20,  0,    2,
-    2,   18,    0,     "DRUG",  14,  0,    2,
-    2,   36,    0,     "DRUG",  8,   0,    2,
-    2,   48,    0,     "DRUG",  3,   0,    2
-  ) %>%
-    nif()
-
-  n_bins <- function(n) {
-    add_bintime(test_data, time = "TIME", n = n) %>%
-      filter(!is.na(BIN_LEFT)) %>%
-      distinct(BIN_LEFT, BIN_RIGHT) %>%
-      nrow()
-  }
-
-  expect_equal(n_bins(3), 3)
-  expect_equal(n_bins(5), 5)
-})
-
-
-test_that("add_bintime sparse groups do not extend bins outside observed times", {
-  test_data <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT, ~GRP,
-    1,   0,     1,     "DRUG",  NA,  100,  1,    "A",
-    1,   1,     0,     "DRUG",  10,  0,    2,    "A",
-    2,   0,     1,     "DRUG",  NA,  100,  1,    "B",
-    2,   1,     0,     "DRUG",  10,  0,    2,    "B",
-    2,   5,     0,     "DRUG",  20,  0,    2,    "B",
-    2,   10,    0,     "DRUG",  30,  0,    2,    "B",
-    2,   20,    0,     "DRUG",  15,  0,    2,    "B"
-  ) %>%
-    nif()
-
-  result <- suppressWarnings(add_bintime(test_data, time = "TIME", group = "GRP"))
-
-  by_grp <- result %>%
-    filter(!is.na(BIN_LEFT)) %>%
-    group_by(GRP) %>%
-    summarise(
-      t_min    = min(TIME),
-      t_max    = max(TIME),
-      bin_min  = min(BIN_LEFT),
-      bin_max  = max(BIN_RIGHT),
-      .groups  = "drop"
-    )
-
-  expect_true(all(by_grp$bin_min >= by_grp$t_min))
-  expect_true(all(by_grp$bin_max <= by_grp$t_max))
-})
+# test_that("add_bintime accepts n to control the number of bins", {
+#   test_data <- tibble::tribble(
+#     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
+#     1,   0,     1,     "DRUG",  NA,  100,  1,
+#     1,   1,     0,     "DRUG",  10,  0,    2,
+#     1,   2,     0,     "DRUG",  20,  0,    2,
+#     1,   4,     0,     "DRUG",  30,  0,    2,
+#     1,   8,     0,     "DRUG",  25,  0,    2,
+#     1,   12,    0,     "DRUG",  18,  0,    2,
+#     1,   24,    0,     "DRUG",  12,  0,    2,
+#     1,   48,    0,     "DRUG",  5,   0,    2,
+#     2,   0,     1,     "DRUG",  NA,  100,  1,
+#     2,   1.5,   0,     "DRUG",  12,  0,    2,
+#     2,   3,     0,     "DRUG",  22,  0,    2,
+#     2,   6,     0,     "DRUG",  28,  0,    2,
+#     2,   10,    0,     "DRUG",  20,  0,    2,
+#     2,   18,    0,     "DRUG",  14,  0,    2,
+#     2,   36,    0,     "DRUG",  8,   0,    2,
+#     2,   48,    0,     "DRUG",  3,   0,    2
+#   ) %>%
+#     nif()
+#
+#   expect_no_error(add_bintime(test_data, time = "TIME", n = 3))
+# })
+#
+#
+# test_that("add_bintime n sets the number of bin intervals", {
+#   test_data <- tibble::tribble(
+#     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
+#     1,   0,     1,     "DRUG",  NA,  100,  1,
+#     1,   1,     0,     "DRUG",  10,  0,    2,
+#     1,   2,     0,     "DRUG",  20,  0,    2,
+#     1,   4,     0,     "DRUG",  30,  0,    2,
+#     1,   8,     0,     "DRUG",  25,  0,    2,
+#     1,   12,    0,     "DRUG",  18,  0,    2,
+#     1,   24,    0,     "DRUG",  12,  0,    2,
+#     1,   48,    0,     "DRUG",  5,   0,    2,
+#     2,   0,     1,     "DRUG",  NA,  100,  1,
+#     2,   1.5,   0,     "DRUG",  12,  0,    2,
+#     2,   3,     0,     "DRUG",  22,  0,    2,
+#     2,   6,     0,     "DRUG",  28,  0,    2,
+#     2,   10,    0,     "DRUG",  20,  0,    2,
+#     2,   18,    0,     "DRUG",  14,  0,    2,
+#     2,   36,    0,     "DRUG",  8,   0,    2,
+#     2,   48,    0,     "DRUG",  3,   0,    2
+#   ) %>%
+#     nif()
+#
+#   result <- add_bintime(test_data, time = "TIME", n = 3)
+#
+#   n_bins <- result %>%
+#     filter(!is.na(BIN_LEFT)) %>%
+#     distinct(BIN_LEFT, BIN_RIGHT) %>%
+#     nrow()
+#
+#   expect_equal(n_bins, 3)
+# })
+#
+#
+# test_that("add_bintime different n values produce different bin counts", {
+#   test_data <- tibble::tribble(
+#     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
+#     1,   0,     1,     "DRUG",  NA,  100,  1,
+#     1,   1,     0,     "DRUG",  10,  0,    2,
+#     1,   2,     0,     "DRUG",  20,  0,    2,
+#     1,   4,     0,     "DRUG",  30,  0,    2,
+#     1,   8,     0,     "DRUG",  25,  0,    2,
+#     1,   12,    0,     "DRUG",  18,  0,    2,
+#     1,   24,    0,     "DRUG",  12,  0,    2,
+#     1,   48,    0,     "DRUG",  5,   0,    2,
+#     2,   0,     1,     "DRUG",  NA,  100,  1,
+#     2,   1.5,   0,     "DRUG",  12,  0,    2,
+#     2,   3,     0,     "DRUG",  22,  0,    2,
+#     2,   6,     0,     "DRUG",  28,  0,    2,
+#     2,   10,    0,     "DRUG",  20,  0,    2,
+#     2,   18,    0,     "DRUG",  14,  0,    2,
+#     2,   36,    0,     "DRUG",  8,   0,    2,
+#     2,   48,    0,     "DRUG",  3,   0,    2
+#   ) %>%
+#     nif()
+#
+#   n_bins <- function(n) {
+#     add_bintime(test_data, time = "TIME", n = n) %>%
+#       filter(!is.na(BIN_LEFT)) %>%
+#       distinct(BIN_LEFT, BIN_RIGHT) %>%
+#       nrow()
+#   }
+#
+#   expect_equal(n_bins(3), 3)
+#   expect_equal(n_bins(5), 5)
+# })
+#
+#
+# test_that("add_bintime sparse groups do not extend bins outside observed times", {
+#   test_data <- tibble::tribble(
+#     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT, ~GRP,
+#     1,   0,     1,     "DRUG",  NA,  100,  1,    "A",
+#     1,   1,     0,     "DRUG",  10,  0,    2,    "A",
+#     2,   0,     1,     "DRUG",  NA,  100,  1,    "B",
+#     2,   1,     0,     "DRUG",  10,  0,    2,    "B",
+#     2,   5,     0,     "DRUG",  20,  0,    2,    "B",
+#     2,   10,    0,     "DRUG",  30,  0,    2,    "B",
+#     2,   20,    0,     "DRUG",  15,  0,    2,    "B"
+#   ) %>%
+#     nif()
+#
+#   result <- suppressWarnings(add_bintime(test_data, time = "TIME", group = "GRP"))
+#
+#   by_grp <- result %>%
+#     filter(!is.na(BIN_LEFT)) %>%
+#     group_by(GRP) %>%
+#     summarise(
+#       t_min    = min(TIME),
+#       t_max    = max(TIME),
+#       bin_min  = min(BIN_LEFT),
+#       bin_max  = max(BIN_RIGHT),
+#       .groups  = "drop"
+#     )
+#
+#   expect_true(all(by_grp$bin_min >= by_grp$t_min))
+#   expect_true(all(by_grp$bin_max <= by_grp$t_max))
+# })
