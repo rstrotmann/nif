@@ -74,7 +74,7 @@ add_bintime <- function(
     mutate(BIN_LEFT = bin_par[.data$.BINTIME_INDEX, "left"]) |>
     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
     mutate(BINTIME = bin_par[.data$.BINTIME_INDEX, "label"]) |>
-    select(-c(".BINTIME_INDEX")) |>
+    select(-c(".BINTIME_INDEX", "active_time")) |>
     as_nif()
 }
 
