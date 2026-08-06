@@ -147,7 +147,7 @@ make_ae <- function(
       PARENT = parent,
       METABOLITE = FALSE,
       EVID = 0,
-      MDV = 0,
+      MDV = as.numeric(is.na(.data$DV)),
       IMPUTATION = ""
     ) |>
     inner_join(sbs, by = "USUBJID") |>
@@ -217,10 +217,25 @@ add_ae_observation <- function(
   debug = FALSE,
   silent = NULL
 ) {
+  # input validation
+  validate_nif(nif)
+  validate_sdtm(sdtm, expected_domains = "ae")
+  validate_argument(ae_term, "character")
+  validate_argument(ae_field, "character")
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(parent, "character", allow_null = TRUE)
+  validate_argument(cmt, "numeric", allow_null = TRUE)
+  validate_argument(subject_filter, "character")
+  validate_argument(observation_filter, "character")
+  validate_df_argument(coding_table, allow_null = TRUE)
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(debug, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
 
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
   if (is.null(analyte)) {
     analyte <- paste0("AE_", gsub(" ", "_", ae_term))
   }
@@ -237,7 +252,6 @@ add_ae_observation <- function(
   if (is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_message(paste0(
-      # "Compartment for AE_", ae_term,
       "Compartment for ", analyte,
       " was not specified and has been set to ", cmt
     ), silent = silent)
