@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -442,18 +442,18 @@ the ‘EXTRT’ field is ‘EXAMPLINIB’ while the pharmacokinetic analyte name
 <span><span class="co">#&gt; 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt; 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt; 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
-<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV</span></span>
-<span><span class="co">#&gt; 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA</span></span>
-<span><span class="co">#&gt; 2      FALSE  500   0       AB                               0.000</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB                            4697.327</span></span>
-<span><span class="co">#&gt; 4      FALSE  500   0       AB                            6325.101</span></span>
-<span><span class="co">#&gt; 5      FALSE  500   0       AB                            6294.187</span></span></code></pre></div>
+<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT</span></span>
+<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0   2 6325.101  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0   2 6294.187  RS2023 RS2023</span></span>
+<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION</span></span>
+<span><span class="co">#&gt; 1     1      FALSE  500   1       AB time imputed from PCRFTDTC</span></span>
+<span><span class="co">#&gt; 2     1      FALSE  500   0       AB                           </span></span>
+<span><span class="co">#&gt; 3     1      FALSE  500   0       AB                           </span></span>
+<span><span class="co">#&gt; 4     1      FALSE  500   0       AB                           </span></span>
+<span><span class="co">#&gt; 5     1      FALSE  500   0       AB</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-analytes">Multiple analytes<a class="anchor" aria-label="anchor" href="#multiple-analytes"></a>
@@ -516,14 +516,14 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 <span><span class="co">#&gt; 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt; 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
 <span><span class="co">#&gt; 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
-<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV</span></span>
-<span><span class="co">#&gt; 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA</span></span>
-<span><span class="co">#&gt; 2      FALSE  500   0       AB                               0.000</span></span>
-<span><span class="co">#&gt; 3      FALSE  500   0       AB                            4697.327</span></span>
+<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT</span></span>
+<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023</span></span>
+<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION</span></span>
+<span><span class="co">#&gt; 1     1      FALSE  500   1       AB time imputed from PCRFTDTC</span></span>
+<span><span class="co">#&gt; 2     1      FALSE  500   0       AB                           </span></span>
+<span><span class="co">#&gt; 3     1      FALSE  500   0       AB                           </span></span>
 <span><span class="co">#&gt;                    EPOCH PERIOD TREATMENT FASTED</span></span>
 <span><span class="co">#&gt; 1 OPEN LABEL TREATMENT 1      1         A      1</span></span>
 <span><span class="co">#&gt; 2 OPEN LABEL TREATMENT 1      1         A      1</span></span>
@@ -547,30 +547,24 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
 <span><span class="co">#&gt; Data from 20 subjects across one study:</span></span>
 <span><span class="co">#&gt;   STUDYID      N    </span></span>
-<span><span class="co">#&gt;   2023000400   20   </span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   2023000400   20</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
 <span><span class="co">#&gt;   SEX      N    percent   </span></span>
 <span><span class="co">#&gt;   male     13   65        </span></span>
-<span><span class="co">#&gt;   female   7    35        </span></span>
+<span><span class="co">#&gt;   female   7    35</span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Treatments: RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Treatments:</span></span>
-<span><span class="co">#&gt;   RS2023</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Analytes:</span></span>
-<span><span class="co">#&gt;   RS2023</span></span>
+<span><span class="co">#&gt; Analytes: RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects per dose level:</span></span>
-<span><span class="co">#&gt;   RS2023   N    </span></span>
-<span><span class="co">#&gt;   500      20   </span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   DL           n    </span></span>
+<span><span class="co">#&gt;   500-RS2023   20</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 680 observations:</span></span>
-<span><span class="co">#&gt;   CMT   ANALYTE   N     </span></span>
-<span><span class="co">#&gt;   2     RS2023    680   </span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   CMT   ANALYTE   n     </span></span>
+<span><span class="co">#&gt;   2     RS2023    680</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Observations by NTIME:</span></span>
 <span><span class="co">#&gt;   NTIME   RS2023   </span></span>
@@ -586,17 +580,15 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   10      40       </span></span>
 <span><span class="co">#&gt;   (7 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Subjects with dose reductions</span></span>
-<span><span class="co">#&gt;   RS2023   </span></span>
-<span><span class="co">#&gt;   0        </span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Subjects with dose reductions:</span></span>
+<span><span class="co">#&gt;   treatment   n   </span></span>
+<span><span class="co">#&gt;   RS2023      0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
 <span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#&gt;   RS2023   2     2     2      2        </span></span>
+<span><span class="co">#&gt;   RS2023   2     2     2      2</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: b0f4def325dc1ca0f48143ff4bb6c66a</span></span>
+<span><span class="co">#&gt; Hash: ca2e5edc43a9b5eae8635ddad806f08b</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 10:28:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
 covariates and raw plots of the analytes over time. In the following

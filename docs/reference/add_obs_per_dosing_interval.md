@@ -35,22 +35,22 @@ head(add_obs_per_dosing_interval(examplinib_poc_nif))
 #> 4     4     1 2023000022 20230000221010001    81     0 WHITE   180.   93.9  28.8
 #> 5     5     1 2023000022 20230000221010001    81     0 WHITE   180.   93.9  28.8
 #> 6     6     1 2023000022 20230000221010001    81     0 WHITE   180.   93.9  28.8
-#>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT ANALYTE      CMT
-#>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>      <dbl>
-#> 1 2001-01-07 09:42:00 0       0   0     0         1   500 RS2023         1
-#> 2 2001-01-07 09:42:00 0       0   0     0         0     0 RS2023         2
-#> 3 2001-01-07 09:42:00 0       0   0     0         0     0 RS2023487A     3
-#> 4 2001-01-07 10:34:00 0.867   0.5 0.867 0.867     0     0 RS2023         2
-#> 5 2001-01-07 10:34:00 0.867   0.5 0.867 0.867     0     0 RS2023487A     3
-#> 6 2001-01-07 11:02:00 1.33    1   1.33  1.33      0     0 RS2023         2
-#>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD  IMPUTATION    DI    DV BL_CREAT
-#>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>     <chr>      <int> <dbl>    <dbl>
-#> 1 RS2023     1 FALSE        500     1 TREATMENT ""             1   NA      86.5
-#> 2 RS2023     1 FALSE        500     0 TREATMENT ""             1    0      86.5
-#> 3 RS2023     1 FALSE        500     0 TREATMENT ""             1    0      86.5
-#> 4 RS2023     1 FALSE        500     0 TREATMENT ""             1  615.     86.5
-#> 5 RS2023     1 FALSE        500     0 TREATMENT ""             1  120.     86.5
-#> 6 RS2023     1 FALSE        500     0 TREATMENT ""             1 1842.     86.5
+#>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   
+#>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>     
+#> 1 2001-01-07 09:42:00 0       0   0     0         1   500     1   NA  RS2023    
+#> 2 2001-01-07 09:42:00 0       0   0     0         0     0     2    0  RS2023    
+#> 3 2001-01-07 09:42:00 0       0   0     0         0     0     3    0  RS2023487A
+#> 4 2001-01-07 10:34:00 0.867   0.5 0.867 0.867     0     0     2  615. RS2023    
+#> 5 2001-01-07 10:34:00 0.867   0.5 0.867 0.867     0     0     3  120. RS2023487A
+#> 6 2001-01-07 11:02:00 1.33    1   1.33  1.33      0     0     2 1842. RS2023    
+#>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD  IMPUTATION    DI BL_CREAT
+#>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>     <chr>      <int>    <dbl>
+#> 1 RS2023     1 FALSE        500     1 TREATMENT ""             1     86.5
+#> 2 RS2023     1 FALSE        500     0 TREATMENT ""             1     86.5
+#> 3 RS2023     1 FALSE        500     0 TREATMENT ""             1     86.5
+#> 4 RS2023     1 FALSE        500     0 TREATMENT ""             1     86.5
+#> 5 RS2023     1 FALSE        500     0 TREATMENT ""             1     86.5
+#> 6 RS2023     1 FALSE        500     0 TREATMENT ""             1     86.5
 #>   BL_CRCL  OPDI
 #>     <dbl> <int>
 #> 1    78.7    11
@@ -62,14 +62,14 @@ head(add_obs_per_dosing_interval(examplinib_poc_nif))
 head(add_obs_per_dosing_interval(examplinib_poc_min_nif))
 #> # A tibble: 6 × 13
 #> # Groups:   ID, ANALYTE, PARENT, DI [3]
-#>     REF    ID  TIME  EVID   AMT ANALYTE   CMT PARENT   MDV    DI  RATE    DV
-#>   <int> <dbl> <dbl> <dbl> <dbl> <chr>   <dbl> <chr>  <dbl> <int> <dbl> <dbl>
-#> 1     1     1  0        1   500 CMT1        1 CMT1       1     1     0 NA   
-#> 2     2     1  0        0     0 CMT2        2 CMT1       0     1     0  0   
-#> 3     3     1  0        0     0 CMT3        3 CMT1       0     1     0  0   
-#> 4     4     1  2.17     0     0 CMT2        2 CMT1       0     1     0  3.38
-#> 5     5     1  2.17     0     0 CMT3        3 CMT1       0     1     0  3.45
-#> 6     6     1  4.63     0     0 CMT2        2 CMT1       0     1     0  1.48
+#>     REF    ID  TIME  EVID   AMT   CMT    DV ANALYTE PARENT   MDV    DI  RATE
+#>   <int> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>   <chr>  <dbl> <int> <dbl>
+#> 1     1     1  0        1   500     1 NA    CMT1    CMT1       1     1     0
+#> 2     2     1  0        0     0     2  0    CMT2    CMT1       0     1     0
+#> 3     3     1  0        0     0     3  0    CMT3    CMT1       0     1     0
+#> 4     4     1  2.17     0     0     2  3.38 CMT2    CMT1       0     1     0
+#> 5     5     1  2.17     0     0     3  3.45 CMT3    CMT1       0     1     0
+#> 6     6     1  4.63     0     0     2  1.48 CMT2    CMT1       0     1     0
 #>    OPDI
 #>   <int>
 #> 1     0

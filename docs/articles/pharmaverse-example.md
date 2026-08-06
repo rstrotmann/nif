@@ -105,14 +105,12 @@ summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 254 subjects across one study:
 #>   STUDYID        N     
-#>   CDISCPILOT01   254   
-#> 
+#>   CDISCPILOT01   254
 #> 
 #> Sex distribution:
 #>   SEX      N     percent   
 #>   male     111   43.7      
-#>   female   143   56.3      
-#> 
+#>   female   143   56.3
 #> 
 #> Renal impairment class:
 #>   CLASS      N     percent   
@@ -120,26 +118,21 @@ summary(nif)
 #>   mild       58    22.8      
 #>   moderate   173   68.1      
 #>   severe     16    6.3       
-#>   NA         3     1.2       
+#>   NA         3     1.2
 #> 
+#> Treatments: PLACEBO and XAN
 #> 
-#> Treatments:
-#>   PLACEBO, XAN
-#> 
-#> Analytes:
-#>   ALT, XAN
+#> Analytes: ALT and XAN
 #> 
 #> Subjects per dose level:
-#>   PLACEBO   XAN   N     
-#>   0         0     86    
-#>   0         54    168   
-#> 
+#>   DL          n     
+#>   0-PLACEBO   86    
+#>   54-XAN      168
 #> 
 #> 5370 observations:
-#>   CMT   ANALYTE   N      
+#>   CMT   ANALYTE   n      
 #>   2     XAN       3556   
-#>   3     ALT       1814   
-#> 
+#>   3     ALT       1814
 #> 
 #> Observations by NTIME:
 #>   NTIME   ALT   XAN    
@@ -155,18 +148,17 @@ summary(nif)
 #>   -1056   1     -      
 #>   (202 more rows)
 #> 
-#> Subjects with dose reductions
-#>   PLACEBO   XAN   
-#>   0         0     
-#> 
+#> Subjects with dose reductions:
+#>   treatment   n   
+#>   PLACEBO     0   
+#>   XAN         0
 #> 
 #> Treatment duration overview:
 #>   PARENT    min   max   mean    median   
 #>   PLACEBO   7     210   149.1   182      
-#>   XAN       1     212   99.2    81       
+#>   XAN       1     212   99.2    81
 #> 
-#> 
-#> Hash: f156dcc849bf4b52a4b8831b4f7af5f5
+#> Hash: 9144cbb68a20a5e495071d644ef0b8ca
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -162,10 +162,8 @@ pharmacokinetic nif object from <code>examplinic_poc</code>:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023 observations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Compartment for RS2023 observations set to 2</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023487A observations</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Compartment for RS2023487A observations set to 3</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span></code></pre></div>
 <p>Let’s add some further baseline data to our nif object. The serum
 creatinine concentration can be used to calculate the individual
@@ -190,14 +188,18 @@ creatinine clearance:</p>
 <span><span class="co">#  1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span></span>
 <span><span class="co">#  2   2  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span></span>
 <span><span class="co">#  3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span></span>
-<span><span class="co">#                    DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY</span></span>
-<span><span class="co">#  1 2001-01-07 09:42:00    0     0    0   0    1 500     RS2023   1 RS2023     1</span></span>
-<span><span class="co">#  2 2001-01-07 09:42:00    0     0    0   0    0   0     RS2023   2 RS2023     1</span></span>
-<span><span class="co">#  3 2001-01-07 09:42:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1</span></span>
-<span><span class="co">#    METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION DV BL_CREAT  BL_CRCL</span></span>
-<span><span class="co">#  1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC NA 86.46559 78.66727</span></span>
-<span><span class="co">#  2      FALSE  500   0 TREATMENT                             0 86.46559 78.66727</span></span>
-<span><span class="co">#  3      FALSE  500   0 TREATMENT                             0 86.46559 78.66727</span></span></code></pre></div>
+<span><span class="co">#                    DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT</span></span>
+<span><span class="co">#  1 2001-01-07 09:42:00    0     0    0   0    1 500   1 NA     RS2023 RS2023</span></span>
+<span><span class="co">#  2 2001-01-07 09:42:00    0     0    0   0    0   0   2  0     RS2023 RS2023</span></span>
+<span><span class="co">#  3 2001-01-07 09:42:00    0     0    0   0    0   0   3  0 RS2023487A RS2023</span></span>
+<span><span class="co">#    TRTDY METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION BL_CREAT</span></span>
+<span><span class="co">#  1     1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC 86.46559</span></span>
+<span><span class="co">#  2     1      FALSE  500   0 TREATMENT                            86.46559</span></span>
+<span><span class="co">#  3     1      FALSE  500   0 TREATMENT                            86.46559</span></span>
+<span><span class="co">#     BL_CRCL</span></span>
+<span><span class="co">#  1 78.66727</span></span>
+<span><span class="co">#  2 78.66727</span></span>
+<span><span class="co">#  3 78.66727</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploration">EXPLORATION<a class="anchor" aria-label="anchor" href="#exploration"></a>
@@ -216,39 +218,32 @@ impaired renal function:</p>
 <span><span class="co">#  ----- NONMEM Input Format (NIF) data summary -----</span></span>
 <span><span class="co">#  Data from 80 subjects across one study:</span></span>
 <span><span class="co">#    STUDYID      N    </span></span>
-<span><span class="co">#    2023000022   80   </span></span>
-<span><span class="co">#  </span></span>
+<span><span class="co">#    2023000022   80</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Sex distribution:</span></span>
 <span><span class="co">#    SEX      N    percent   </span></span>
 <span><span class="co">#    male     46   57.5      </span></span>
-<span><span class="co">#    female   34   42.5      </span></span>
-<span><span class="co">#  </span></span>
+<span><span class="co">#    female   34   42.5</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Renal impairment class:</span></span>
 <span><span class="co">#    CLASS      N    percent   </span></span>
 <span><span class="co">#    normal     26   32.5      </span></span>
 <span><span class="co">#    mild       43   53.8      </span></span>
 <span><span class="co">#    moderate   10   12.5      </span></span>
-<span><span class="co">#    severe     1    1.2       </span></span>
+<span><span class="co">#    severe     1    1.2</span></span>
 <span><span class="co">#  </span></span>
+<span><span class="co">#  Treatments: RS2023</span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Treatments:</span></span>
-<span><span class="co">#    RS2023</span></span>
-<span><span class="co">#  </span></span>
-<span><span class="co">#  Analytes:</span></span>
-<span><span class="co">#    RS2023, RS2023487A</span></span>
+<span><span class="co">#  Analytes: RS2023 and RS2023487A</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Subjects per dose level:</span></span>
-<span><span class="co">#    RS2023   N    </span></span>
-<span><span class="co">#    500      80   </span></span>
-<span><span class="co">#  </span></span>
+<span><span class="co">#    DL           n    </span></span>
+<span><span class="co">#    500-RS2023   80</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  1344 observations:</span></span>
-<span><span class="co">#    CMT   ANALYTE      N     </span></span>
+<span><span class="co">#    CMT   ANALYTE      n     </span></span>
 <span><span class="co">#    2     RS2023       672   </span></span>
-<span><span class="co">#    3     RS2023487A   672   </span></span>
-<span><span class="co">#  </span></span>
+<span><span class="co">#    3     RS2023487A   672</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Observations by NTIME:</span></span>
 <span><span class="co">#    NTIME   RS2023   RS2023487A   </span></span>
@@ -262,20 +257,17 @@ impaired renal function:</p>
 <span><span class="co">#    6       24       24           </span></span>
 <span><span class="co">#    8       24       24           </span></span>
 <span><span class="co">#    10      24       24           </span></span>
-<span><span class="co">#    12      24       24           </span></span>
+<span><span class="co">#    12      24       24</span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  </span></span>
-<span><span class="co">#  Subjects with dose reductions</span></span>
-<span><span class="co">#    RS2023   </span></span>
-<span><span class="co">#    30       </span></span>
-<span><span class="co">#  </span></span>
+<span><span class="co">#  Subjects with dose reductions:</span></span>
+<span><span class="co">#    treatment   n    </span></span>
+<span><span class="co">#    RS2023      30</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Treatment duration overview:</span></span>
 <span><span class="co">#    PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#    RS2023   55    97    73.2   72.5     </span></span>
+<span><span class="co">#    RS2023   55    97    73.2   72.5</span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  </span></span>
-<span><span class="co">#  Hash: e2a623dcdb39740a695d9ec3f75313b8</span></span>
+<span><span class="co">#  Hash: 1b6f537a004f8e28eccfc1fc22f0436d</span></span>
 <span><span class="co">#  Last DTC: 2001-07-18 08:24:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the

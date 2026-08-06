@@ -419,18 +419,18 @@ head(nif, 5)
 #> 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
 #> 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
 #> 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
-#> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1
-#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1
-#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
-#> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1
-#> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV
-#> 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA
-#> 2      FALSE  500   0       AB                               0.000
-#> 3      FALSE  500   0       AB                            4697.327
-#> 4      FALSE  500   0       AB                            6325.101
-#> 5      FALSE  500   0       AB                            6294.187
+#>                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT
+#> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023
+#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023
+#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023
+#> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0   2 6325.101  RS2023 RS2023
+#> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0   2 6294.187  RS2023 RS2023
+#>   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION
+#> 1     1      FALSE  500   1       AB time imputed from PCRFTDTC
+#> 2     1      FALSE  500   0       AB                           
+#> 3     1      FALSE  500   0       AB                           
+#> 4     1      FALSE  500   0       AB                           
+#> 5     1      FALSE  500   0       AB
 ```
 
 ### Multiple analytes
@@ -506,14 +506,14 @@ head(nif, 3)
 #> 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
 #> 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
 #> 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
-#> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500  RS2023   1 RS2023     1
-#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1
-#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION       DV
-#> 1      FALSE  500   1       AB time imputed from PCRFTDTC       NA
-#> 2      FALSE  500   0       AB                               0.000
-#> 3      FALSE  500   0       AB                            4697.327
+#>                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT
+#> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023
+#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023
+#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023
+#>   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION
+#> 1     1      FALSE  500   1       AB time imputed from PCRFTDTC
+#> 2     1      FALSE  500   0       AB                           
+#> 3     1      FALSE  500   0       AB                           
 #>                    EPOCH PERIOD TREATMENT FASTED
 #> 1 OPEN LABEL TREATMENT 1      1         A      1
 #> 2 OPEN LABEL TREATMENT 1      1         A      1
@@ -538,30 +538,24 @@ summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
 #> Data from 20 subjects across one study:
 #>   STUDYID      N    
-#>   2023000400   20   
-#> 
+#>   2023000400   20
 #> 
 #> Sex distribution:
 #>   SEX      N    percent   
 #>   male     13   65        
-#>   female   7    35        
+#>   female   7    35
 #> 
+#> Treatments: RS2023
 #> 
-#> Treatments:
-#>   RS2023
-#> 
-#> Analytes:
-#>   RS2023
+#> Analytes: RS2023
 #> 
 #> Subjects per dose level:
-#>   RS2023   N    
-#>   500      20   
-#> 
+#>   DL           n    
+#>   500-RS2023   20
 #> 
 #> 680 observations:
-#>   CMT   ANALYTE   N     
-#>   2     RS2023    680   
-#> 
+#>   CMT   ANALYTE   n     
+#>   2     RS2023    680
 #> 
 #> Observations by NTIME:
 #>   NTIME   RS2023   
@@ -577,17 +571,15 @@ summary(nif)
 #>   10      40       
 #>   (7 more rows)
 #> 
-#> Subjects with dose reductions
-#>   RS2023   
-#>   0        
-#> 
+#> Subjects with dose reductions:
+#>   treatment   n   
+#>   RS2023      0
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   RS2023   2     2     2      2        
+#>   RS2023   2     2     2      2
 #> 
-#> 
-#> Hash: b0f4def325dc1ca0f48143ff4bb6c66a
+#> Hash: ca2e5edc43a9b5eae8635ddad806f08b
 #> Last DTC: 2001-03-10 10:28:00
 ```
 

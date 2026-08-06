@@ -22,7 +22,8 @@ bintime_plot(
   alpha = 1,
   scales = "fixed",
   refline = NULL,
-  legend = TRUE
+  legend = TRUE,
+  bintime_function = add_bintime1
 )
 ```
 
@@ -101,6 +102,11 @@ bintime_plot(
 
   Show legend.
 
+- bintime_function:
+
+  Function to add bintime. Can be add_bintime (breaks per group) or
+  add_bintime1 (global breaks).
+
 ## Value
 
 A ggplot2 object.
@@ -110,6 +116,6 @@ A ggplot2 object.
 ``` r
 examplinib_poc_nif |>
   dplyr::filter(TAFD < 48) |>
-  bintime_plot("RS2023", points = TRUE, alpha = 0.2)
+  bintime_plot("RS2023", points = TRUE, alpha = 0.2, method = "pretty")
 
 ```

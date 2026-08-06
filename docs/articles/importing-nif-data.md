@@ -53,13 +53,13 @@ The external data can be imported as a nif object using
 
 nif <- import_nif(csv_file_name, format = "csv")
 head(nif)
-#>   REF ID TIME EVID AMT CMT MDV RATE     DV
-#> 1   1  1  0.0    1   5   1   1    0     NA
-#> 2   2  1  0.0    0   0   2   0    0 0.0000
-#> 3   3  1  0.5    0   0   2   0    0 0.0024
-#> 4   4  1  1.0    0   0   2   0    0 0.0072
-#> 5   5  1  1.5    0   0   2   0    0 0.0157
-#> 6   6  1  2.0    0   0   2   0    0 0.0209
+#>   REF ID TIME EVID AMT CMT     DV MDV RATE
+#> 1   1  1  0.0    1   5   1     NA   1    0
+#> 2   2  1  0.0    0   0   2 0.0000   0    0
+#> 3   3  1  0.5    0   0   2 0.0024   0    0
+#> 4   4  1  1.0    0   0   2 0.0072   0    0
+#> 5   5  1  1.5    0   0   2 0.0157   0    0
+#> 6   6  1  2.0    0   0   2 0.0209   0    0
 ```
 
 The resulting object is a regular `nif` object. It can be summarized or
@@ -70,45 +70,37 @@ information):
 
 summary(nif)
 #> ----- NONMEM Input Format (NIF) data summary -----
-#> Data from 2 subjects across 0 studies:
+#> Data from 2 subjects across 0studies:
 #>   N   
-#>   2   
-#> 
+#>   2
 #> 
 #> Sex distribution:
 #>   SEX      N   percent   
 #>   male     0   0         
 #>   female   0   0         
-#>   NA       2   100       
+#>   NA       2   100
 #> 
+#> Treatments: CMT1
 #> 
-#> Treatments:
-#>   CMT1
-#> 
-#> Analytes:
-#>   CMT2
+#> Analytes: CMT2
 #> 
 #> Subjects per dose level:
-#>   CMT1   N   
-#>   5      2   
-#> 
+#>   DL       n   
+#>   5-CMT1   2
 #> 
 #> 16 observations:
-#>   CMT   N    
-#>   2     16   
+#>   CMT   n    
+#>   2     16
 #> 
-#> 
-#> Subjects with dose reductions
-#>   CMT1   
-#>   0      
-#> 
+#> Subjects with dose reductions:
+#>   treatment   n   
+#>   CMT1        0
 #> 
 #> Treatment duration overview:
 #>   PARENT   min   max   mean   median   
-#>   CMT1     1     1     1      1        
+#>   CMT1     1     1     1      1
 #> 
-#> 
-#> Hash: c03cb2ca160fb8dfbb480ce8dc7d965f
+#> Hash: 3fa3de0c673f465e5b638327df10ab84
 plot(nif, log = T, points = T)
 ```
 
@@ -139,11 +131,11 @@ nif <- import_nif(
 )
 
 head(nif)
-#>   REF ID TIME NTIME EVID AMT CMT MDV RATE        DV
-#> 1   1  1  0.0   0.0    1   5   1   1    0        NA
-#> 2   2  1  0.0   0.0    0   0   2   0    0 0.000e+00
-#> 3   3  1  0.5   0.5    0   0   2   0    0 6.000e-06
-#> 4   4  1  1.0   1.0    0   0   2   0    0 1.800e-05
-#> 5   5  1  1.5   1.5    0   0   2   0    0 3.925e-05
-#> 6   6  1  2.0   2.0    0   0   2   0    0 5.225e-05
+#>   REF ID TIME NTIME EVID AMT CMT        DV MDV RATE
+#> 1   1  1  0.0   0.0    1   5   1        NA   1    0
+#> 2   2  1  0.0   0.0    0   0   2 0.000e+00   0    0
+#> 3   3  1  0.5   0.5    0   0   2 6.000e-06   0    0
+#> 4   4  1  1.0   1.0    0   0   2 1.800e-05   0    0
+#> 5   5  1  1.5   1.5    0   0   2 3.925e-05   0    0
+#> 6   6  1  2.0   2.0    0   0   2 5.225e-05   0    0
 ```

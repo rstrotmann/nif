@@ -98,10 +98,8 @@ nif_poc <- nif() %>%
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
-#> ℹ Compartment for RS2023 observations set to 2
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
-#> ℹ Compartment for RS2023487A observations set to 3
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 ```
 
@@ -136,14 +134,18 @@ head(nif_poc, 3)
 #  1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
 #  2   2  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
 #  3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#                    DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY
-#  1 2001-01-07 09:42:00    0     0    0   0    1 500     RS2023   1 RS2023     1
-#  2 2001-01-07 09:42:00    0     0    0   0    0   0     RS2023   2 RS2023     1
-#  3 2001-01-07 09:42:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1
-#    METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION DV BL_CREAT  BL_CRCL
-#  1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC NA 86.46559 78.66727
-#  2      FALSE  500   0 TREATMENT                             0 86.46559 78.66727
-#  3      FALSE  500   0 TREATMENT                             0 86.46559 78.66727
+#                    DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT
+#  1 2001-01-07 09:42:00    0     0    0   0    1 500   1 NA     RS2023 RS2023
+#  2 2001-01-07 09:42:00    0     0    0   0    0   0   2  0     RS2023 RS2023
+#  3 2001-01-07 09:42:00    0     0    0   0    0   0   3  0 RS2023487A RS2023
+#    TRTDY METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION BL_CREAT
+#  1     1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC 86.46559
+#  2     1      FALSE  500   0 TREATMENT                            86.46559
+#  3     1      FALSE  500   0 TREATMENT                            86.46559
+#     BL_CRCL
+#  1 78.66727
+#  2 78.66727
+#  3 78.66727
 ```
 
 ## EXPLORATION
@@ -164,39 +166,32 @@ summary(nif_poc)
 #  ----- NONMEM Input Format (NIF) data summary -----
 #  Data from 80 subjects across one study:
 #    STUDYID      N    
-#    2023000022   80   
-#  
+#    2023000022   80
 #  
 #  Sex distribution:
 #    SEX      N    percent   
 #    male     46   57.5      
-#    female   34   42.5      
-#  
+#    female   34   42.5
 #  
 #  Renal impairment class:
 #    CLASS      N    percent   
 #    normal     26   32.5      
 #    mild       43   53.8      
 #    moderate   10   12.5      
-#    severe     1    1.2       
+#    severe     1    1.2
 #  
+#  Treatments: RS2023
 #  
-#  Treatments:
-#    RS2023
-#  
-#  Analytes:
-#    RS2023, RS2023487A
+#  Analytes: RS2023 and RS2023487A
 #  
 #  Subjects per dose level:
-#    RS2023   N    
-#    500      80   
-#  
+#    DL           n    
+#    500-RS2023   80
 #  
 #  1344 observations:
-#    CMT   ANALYTE      N     
+#    CMT   ANALYTE      n     
 #    2     RS2023       672   
-#    3     RS2023487A   672   
-#  
+#    3     RS2023487A   672
 #  
 #  Observations by NTIME:
 #    NTIME   RS2023   RS2023487A   
@@ -210,20 +205,17 @@ summary(nif_poc)
 #    6       24       24           
 #    8       24       24           
 #    10      24       24           
-#    12      24       24           
+#    12      24       24
 #  
-#  
-#  Subjects with dose reductions
-#    RS2023   
-#    30       
-#  
+#  Subjects with dose reductions:
+#    treatment   n    
+#    RS2023      30
 #  
 #  Treatment duration overview:
 #    PARENT   min   max   mean   median   
-#    RS2023   55    97    73.2   72.5     
+#    RS2023   55    97    73.2   72.5
 #  
-#  
-#  Hash: e2a623dcdb39740a695d9ec3f75313b8
+#  Hash: 1b6f537a004f8e28eccfc1fc22f0436d
 #  Last DTC: 2001-07-18 08:24:00
 ```
 

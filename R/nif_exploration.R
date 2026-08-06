@@ -344,9 +344,15 @@ summary.nif <- function(
   n_females <- as.numeric(sex[which(sex$SEX == 1), "N"])
 
   # dose levels
-  dose_levels <- object |>
-    add_dose_level(silent = TRUE) |>
-    reframe(n = n_distinct(.data$ID), .by = "DL")
+  dose_levels <- NULL
+
+  tryCatch({
+    dose_levels <- object |>
+      add_dose_level(silent = TRUE) |>
+      reframe(n = n_distinct(.data$ID), .by = "DL")
+  }, error = function(msg) {
+    invisible(NULL)
+  })
 
   if ("BL_CRCL" %in% colnames(object)) {
     renal_function <- object |>
@@ -518,9 +524,11 @@ print.summary_nif <- function(
     trimws(paste0("Analytes: ", nice_enumeration(x$analytes))),
 
     # dose levels
-    compose_message(
-      "Subjects per dose level:",
-      x$dose_levels
+    ifelse(is.null(x$dose_levels), "",
+      compose_message(
+        "Subjects per dose level:",
+        x$dose_levels
+      )
     ),
 
     # observations

@@ -38,10 +38,10 @@ limit(examplinib_poc_nif)
 #> 
 #> Columns:
 #>   REF, ID, STUDYID, USUBJID, AGE, SEX, RACE, HEIGHT, WEIGHT, BMI, DTC, TIME,
-#>   NTIME, TAFD, TAD, EVID, AMT, ANALYTE, CMT, PARENT, TRTDY, METABOLITE, DOSE,
-#>   MDV, ACTARMCD, IMPUTATION, DV, BL_CREAT, BL_CRCL 
+#>   NTIME, TAFD, TAD, EVID, AMT, CMT, DV, ANALYTE, PARENT, TRTDY, METABOLITE,
+#>   DOSE, MDV, ACTARMCD, IMPUTATION, BL_CREAT, BL_CRCL 
 #> 
-#> Hash: c4afab57d11b66d8eff195469ca7c67d
+#> Hash: ddddab974b01fc6e59550cc326da1654
 #> 
 #> Data (selected columns):
 #>   ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV         

@@ -5,7 +5,7 @@
 ## Usage
 
 ``` r
-add_bintime(obj, method = "fisher", time = "TAFD")
+add_bintime(obj, method = "fisher", time = "TAFD", group = NULL)
 ```
 
 ## Arguments
@@ -23,6 +23,10 @@ add_bintime(obj, method = "fisher", time = "TAFD")
 - time:
 
   The time field to use.
+
+- group:
+
+  The grouping variable(s).
 
 ## Value
 

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -157,18 +157,18 @@ category from it:</p>
 <span><span class="co">#&gt; 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
 <span><span class="co">#&gt; 2   2  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
 <span><span class="co">#&gt; 3   3  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE CMT PARENT TRTDY</span></span>
-<span><span class="co">#&gt; 1 2000-12-31 10:18:00    0     0    0   0    1   5     RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2000-12-31 10:18:00    0     0    0   0    0   0     RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2000-12-31 10:18:00    0     0    0   0    0   0 RS2023487A   3 RS2023     1</span></span>
-<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD                 IMPUTATION DV BL_CREAT  BL_CRCL</span></span>
-<span><span class="co">#&gt; 1      FALSE    5   1       C1 time imputed from PCRFTDTC NA  67.4825 135.8911</span></span>
-<span><span class="co">#&gt; 2      FALSE    5   0       C1                             0  67.4825 135.8911</span></span>
-<span><span class="co">#&gt; 3       TRUE    5   0       C1                             0  67.4825 135.8911</span></span>
-<span><span class="co">#&gt;   BL_RENAL</span></span>
-<span><span class="co">#&gt; 1   normal</span></span>
-<span><span class="co">#&gt; 2   normal</span></span>
-<span><span class="co">#&gt; 3   normal</span></span></code></pre></div>
+<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT</span></span>
+<span><span class="co">#&gt; 1 2000-12-31 10:18:00    0     0    0   0    1   5   1 NA     RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 2 2000-12-31 10:18:00    0     0    0   0    0   0   2  0     RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 3 2000-12-31 10:18:00    0     0    0   0    0   0   3  0 RS2023487A RS2023</span></span>
+<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION BL_CREAT</span></span>
+<span><span class="co">#&gt; 1     1      FALSE    5   1       C1 time imputed from PCRFTDTC  67.4825</span></span>
+<span><span class="co">#&gt; 2     1      FALSE    5   0       C1                             67.4825</span></span>
+<span><span class="co">#&gt; 3     1       TRUE    5   0       C1                             67.4825</span></span>
+<span><span class="co">#&gt;    BL_CRCL BL_RENAL</span></span>
+<span><span class="co">#&gt; 1 135.8911   normal</span></span>
+<span><span class="co">#&gt; 2 135.8911   normal</span></span>
+<span><span class="co">#&gt; 3 135.8911   normal</span></span></code></pre></div>
 <p><code><a href="../reference/nif_auto.html">nif_auto()</a></code> will further attempt to infer the baseline
 hepatic function category as per the NCI ODWG classification from
 baseline bilirubin and AST data. In this example SDTM data set, these

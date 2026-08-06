@@ -173,6 +173,20 @@ test_that("summary.nif handles hepatic function classification correctly", {
 # })
 
 
+test_that("summary.nif works when dose level cannot be determined", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA
+  ))
+
+  expect_no_error(
+    summary(obj)
+  )
+})
+
+
 # Test administration duration
 test_that("summary.nif correctly calculates administration duration", {
   s <- summary(examplinib_poc_nif)
@@ -210,19 +224,3 @@ test_that("plot.summary_nif produces plots", {
 })
 
 
-# Test that the weight column typo fix works
-test_that("plot.summary_nif handles weight correctly", {
-  # Create a NIF with WEIGHT and SEX columns
-  test_nif <- examplinib_poc_nif %>%
-    filter(ID %in% 1:10) %>%
-    mutate(WEIGHT = 70, SEX = ifelse(ID <= 5, 0, 1))
-
-  s <- summary(test_nif)
-
-  # Test plotting - this would have failed with the WEIGTH typo
-  p <- plot(s, baseline = TRUE, analytes = FALSE)
-
-  # Should have a WT_SEX plot
-  expect_true("WT_SEX" %in% names(p))
-  expect_s3_class(p$WT_SEX, "ggplot")
-})

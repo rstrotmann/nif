@@ -129,25 +129,25 @@ head()
 #> 4   4  4 2023000001 20230000011010005  23   0                     WHITE  168.2
 #> 5   5  5 2023000001 20230000011010006  47   0 BLACK OR AFRICAN AMERICAN  174.1
 #> 6   6  6 2023000001 20230000011010007  31   0                     WHITE  172.5
-#>   WEIGHT      BMI                 DTC TIME NTIME TAFD TAD EVID AMT    ANALYTE
-#> 1   77.0 21.92560 2000-12-31 10:18:00    0     0    0   0    1   5 EXAMPLINIB
-#> 2   72.8 20.25138 2000-12-29 10:30:00    0     0    0   0    1   5 EXAMPLINIB
-#> 3   80.0 26.24228 2000-12-29 09:22:00    0     0    0   0    1   5 EXAMPLINIB
-#> 4   78.8 27.85314 2001-01-02 09:22:00    0     0    0   0    1  10 EXAMPLINIB
-#> 5   89.5 29.52742 2001-01-03 12:24:00    0     0    0   0    1  10 EXAMPLINIB
-#> 6   90.0 30.24575 2001-01-02 10:00:00    0     0    0   0    1  10 EXAMPLINIB
-#>   CMT     PARENT TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION
-#> 1   1 EXAMPLINIB     1      FALSE    5   1       C1 time imputed from PCRFTDTC
-#> 2   1 EXAMPLINIB     1      FALSE    5   1       C1 time imputed from PCRFTDTC
-#> 3   1 EXAMPLINIB     1      FALSE    5   1       C1 time imputed from PCRFTDTC
-#> 4   1 EXAMPLINIB     1      FALSE   10   1       C2 time imputed from PCRFTDTC
-#> 5   1 EXAMPLINIB     1      FALSE   10   1       C2 time imputed from PCRFTDTC
-#> 6   1 EXAMPLINIB     1      FALSE   10   1       C2 time imputed from PCRFTDTC
-#>   DV
-#> 1 NA
-#> 2 NA
-#> 3 NA
-#> 4 NA
-#> 5 NA
-#> 6 NA
+#>   WEIGHT      BMI                 DTC TIME NTIME TAFD TAD EVID AMT CMT DV
+#> 1   77.0 21.92560 2000-12-31 10:18:00    0     0    0   0    1   5   1 NA
+#> 2   72.8 20.25138 2000-12-29 10:30:00    0     0    0   0    1   5   1 NA
+#> 3   80.0 26.24228 2000-12-29 09:22:00    0     0    0   0    1   5   1 NA
+#> 4   78.8 27.85314 2001-01-02 09:22:00    0     0    0   0    1  10   1 NA
+#> 5   89.5 29.52742 2001-01-03 12:24:00    0     0    0   0    1  10   1 NA
+#> 6   90.0 30.24575 2001-01-02 10:00:00    0     0    0   0    1  10   1 NA
+#>      ANALYTE     PARENT TRTDY METABOLITE DOSE MDV ACTARMCD
+#> 1 EXAMPLINIB EXAMPLINIB     1      FALSE    5   1       C1
+#> 2 EXAMPLINIB EXAMPLINIB     1      FALSE    5   1       C1
+#> 3 EXAMPLINIB EXAMPLINIB     1      FALSE    5   1       C1
+#> 4 EXAMPLINIB EXAMPLINIB     1      FALSE   10   1       C2
+#> 5 EXAMPLINIB EXAMPLINIB     1      FALSE   10   1       C2
+#> 6 EXAMPLINIB EXAMPLINIB     1      FALSE   10   1       C2
+#>                   IMPUTATION
+#> 1 time imputed from PCRFTDTC
+#> 2 time imputed from PCRFTDTC
+#> 3 time imputed from PCRFTDTC
+#> 4 time imputed from PCRFTDTC
+#> 5 time imputed from PCRFTDTC
+#> 6 time imputed from PCRFTDTC
 ```

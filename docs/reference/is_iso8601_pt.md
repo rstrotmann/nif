@@ -1,6 +1,6 @@
-# Title
+# Check ISO 8601 PT format
 
-Title
+Check ISO 8601 PT format
 
 ## Usage
 
