@@ -130,9 +130,10 @@ limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   # input validation
   validate_nif(obj)
-  validate_logical_param(cleanup)
-  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(cleanup, "logical")
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
 
+  # business logic
   out <- obj |>
     index_id() |>
     make_time() |>
@@ -149,8 +150,14 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
       .direction = "downup"
     ) |>
     fill(any_of(c(starts_with("BL_"))), .direction = "downup") |>
-    ungroup() |>
-    nif_cleanup(keep = keep) |>
+    ungroup()
+
+  if (isTRUE(cleanup)) {
+    out <- out |>
+      nif_cleanup(keep = keep)
+  }
+
+  out <- out |>
     arrange_and_add_ref()
 
   class(out) <- c("nif", "data.frame")

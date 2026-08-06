@@ -477,7 +477,7 @@ test_that("dataset throws error for invalid name parameter", {
 
   expect_error(
     dataset(adam_obj, 123),
-    "must be a string value"
+    "name must be a character value"
   )
 
   expect_error(

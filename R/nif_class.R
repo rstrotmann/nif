@@ -250,7 +250,7 @@ order_nif_columns <- function(obj) {
   selector <- unique(c(
     "REF", "ID", "STUDYID", "USUBJID", "AGE", "SEX", "RACE",
     "HEIGHT", "WEIGHT", "BMI", "DTC", "TIME", "NTIME", "TAFD", "TAD",
-    "PCELTM", "EVID", "AMT", "DUR", "ANALYTE", "CMT", "PARENT", "TRTDY",
+    "PCELTM", "EVID", "AMT", "DUR", "CMT", "DV", "ANALYTE", "PARENT", "TRTDY",
     "METABOLITE", "DOSE", "MDV", "ACTARMCD", "IMPUTATION",
     "FOOD", "PART", "PERIOD", "COHORT", "FASTED", "RICH_N", "DI",
     "TREATMENT", "SRC_DOMAIN", "SRC_SEQ"

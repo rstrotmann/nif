@@ -1127,17 +1127,18 @@ import_observation <- function(
   silent = NULL
 ) {
   # validate inputs
-  validate_nif(nif)
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(parent, "parent", allow_null = TRUE)
-  validate_numeric_param(cmt, "cmt", allow_null = TRUE)
-  validate_char_param(observation_filter, "observation_filter")
-  validate_char_param(dtc_field, "dtc_field", allow_null = TRUE)
-  validate_char_param(ntime_field, "ntime_field", allow_null = TRUE)
-  validate_char_param(dv_field, "dv_field", allow_null = TRUE)
-  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
-  validate_logical_param(debug, "debug")
-  validate_logical_param(silent, "silent", allow_null = TRUE)
+  validate_argument(analyte, "character")
+  validate_argument(parent, "character", allow_null = TRUE)
+  validate_argument(cmt, "numeric", allow_null = TRUE)
+  validate_argument(observation_filter, "character")
+  validate_argument(usubjid_field, "character")
+  validate_argument(dtc_field, "character", allow_null = TRUE)
+  validate_argument(ntime_field, "character", allow_null = TRUE)
+  validate_argument(dv_field, "character", allow_null = TRUE)
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(debug, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
+  validate_nif(nif, fields = keep)
 
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -1163,11 +1164,9 @@ import_observation <- function(
   if (is.null(cmt)) {
     cmt <- max(nif$CMT) + 1
     conditional_cli(
-      {
-        cli_alert_info(paste0(
-          "Compartment for ", analyte, " set to ", cmt
-        ))
-      },
+      cli_alert_info(paste0(
+        "Compartment for ", analyte, " set to ", cmt
+      )),
       silent = silent
     )
   }
@@ -1193,9 +1192,8 @@ import_observation <- function(
   sbs <- nif |>
     filter(.data$EVID == 1) |>
     select(
-      # "USUBJID", "ID", any_of(fillable_nif_fields),
-      any_of(c("ID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT",
-               "BMI")),
+      any_of(
+        c("ID", "USUBJID", "AGE", "SEX", "RACE", "HEIGHT", "WEIGHT", "BMI")),
       starts_with("BL_"),
       any_of(keep)
     ) |>

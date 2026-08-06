@@ -130,7 +130,7 @@ print.adam <- function(x, ...) {
 dataset <- function(adam, name) {
   # input validation
   validate_adam(adam)
-  validate_char_param(name, "name")
+    validate_argument(name, "character")
 
   if (!name %in% names(adam)) {
     stop(paste0(
