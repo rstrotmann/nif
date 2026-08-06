@@ -43,7 +43,7 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
 #' Compile subject information
 #'
 #' @param dm The DM domain as data table.
-#' @param vs The VS domain as data table.
+#' @param vs The VS domain as data table or NULL.
 #' @param subject_filter The filtering to apply to the DM domain.
 #' @param keep Columns to keep, as character vector.
 #'
@@ -57,38 +57,19 @@ make_subjects <- function(
   dm,
   vs = NULL,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-  keep = character(0)
+  keep = NULL
 ) {
-  # Input validation
-  if (!is.data.frame(dm)) {
-    stop("The 'dm' parameter must be a data frame")
-  }
-
-  required_cols <- c("USUBJID", "SEX", "ACTARMCD")
-  missing_cols <- setdiff(required_cols, colnames(dm))
-  if (length(missing_cols) > 0) {
-    stop(
-      "The following required columns are missing from the 'dm' data frame: ",
-      paste(missing_cols, collapse = ", ")
-    )
-  }
+  # input validation
+  validate_df_argument(dm, expected_fields = c("USUBJID", "SEX", "ACTARMCD"))
+  validate_argument(subject_filter, "character")
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_df_argument(
+    vs, allow_null = TRUE,
+    expected_fields = c("USUBJID", "VSTESTCD", "VSSTRESN")
+  )
 
   # If vs is provided, validate it is a data frame
   if (!is.null(vs)) {
-    if (!is.data.frame(vs)) {
-      stop("The 'vs' parameter must be a data frame or NULL")
-    }
-
-    # Check for required columns in vs
-    vs_required_cols <- c("USUBJID", "VSTESTCD", "VSSTRESN")
-    vs_missing_cols <- setdiff(vs_required_cols, colnames(vs))
-    if (length(vs_missing_cols) > 0) {
-      stop(
-        "The following required columns are missing from the 'vs' data frame: ",
-        paste(vs_missing_cols, collapse = ", ")
-      )
-    }
-
     # Check for VSDTC when needed for baseline determination
     if (!"VSBLFL" %in% names(vs) && !"VSDTC" %in% names(vs)) {
       stop(
@@ -107,8 +88,8 @@ make_subjects <- function(
     # Check if RFSTDTC exists in dm when needed for baseline calculations
     if (!"VSBLFL" %in% names(vs) && !"RFSTDTC" %in% colnames(dm)) {
       stop(paste(
-        "When 'VSBLFL' is not available in vs, 'RFSTDTC' must be",
-        "present in dm for baseline determination"
+        "Baseline covariates cannot be determined because",
+        "VS has not VSBLFL field, and DM has no RFSTDTC."
       ))
     }
 
@@ -126,7 +107,7 @@ make_subjects <- function(
     baseline_covariates <- baseline_covariates |>
       filter(.data$VSTESTCD %in% c("WEIGHT", "HEIGHT")) |>
       group_by(.data$USUBJID, .data$VSTESTCD) |>
-      summarize(mean = mean(.data$VSSTRESN), .groups = "drop") |>
+      summarize(mean = mean(.data$VSSTRESN, na.rm = TRUE), .groups = "drop") |>
       tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "mean")
 
     if ("HEIGHT" %in% colnames(baseline_covariates) &&

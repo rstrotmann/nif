@@ -103,13 +103,13 @@ test_that("make_ae validates sdtm object", {
   # Test with non-sdtm object
   expect_error(
     make_ae(list(ae = test_ae), "Headache"),
-    "sdtm must be an sdtm object"
+    "Input must be a sdtm object"
   )
 
   # Test with NULL
   expect_error(
     make_ae(NULL, "Headache"),
-    "sdtm must be an sdtm object"
+    "Input must be a sdtm object"
   )
 })
 
@@ -123,19 +123,19 @@ test_that("make_ae validates character parameters", {
   # Test with numeric ae_term
   expect_error(
     make_ae(test_sdtm, 123),
-    "ae_term"
+    "ae_term must be a character value"
   )
 
   # Test with NULL ae_term
   expect_error(
     make_ae(test_sdtm, NULL),
-    "ae_term"
+    "ae_term must not be NULL"
   )
 
   # Test with numeric ae_field
   expect_error(
     make_ae(test_sdtm, "Headache", ae_field = 123),
-    "ae_field"
+    "ae_field must be a character value"
   )
 })
 
@@ -156,7 +156,7 @@ test_that("make_ae validates missing domains", {
   ))
   expect_error(
     make_ae(test_sdtm_no_ae, "Headache"),
-    "Domain AE not found"
+    "Expected domain missing in sdtm object: ae"
   )
 
   # Test missing DM domain
@@ -168,7 +168,7 @@ test_that("make_ae validates missing domains", {
   ))
   expect_error(
     make_ae(test_sdtm_no_dm, "Headache"),
-    "Domain DM not found"
+    "Expected domain missing in sdtm object: dm"
   )
 
   # Test missing VS domain
@@ -180,7 +180,7 @@ test_that("make_ae validates missing domains", {
   ))
   expect_error(
     make_ae(test_sdtm_no_vs, "Headache"),
-    "Domain VS not found"
+    "Expected domain missing in sdtm object: vs"
   )
 })
 
@@ -643,7 +643,7 @@ test_that("make_ae handles compartment and parent parameters correctly", {
   # Test with default values
   result_default <- make_ae(test_sdtm, "Headache")
   expect_true(is.na(unique(result_default$CMT)))
-  expect_equal(unique(result_default$PARENT), "")
+  expect_true(is.na(unique(result_default$PARENT)))
 })
 
 test_that("make_ae sets SRC_DOMAIN correctly", {

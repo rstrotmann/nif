@@ -37,37 +37,26 @@ make_ae <- function(
   ae_term,
   ae_field = "AEDECOD",
   analyte = NULL,
-  parent = "",
-  cmt = NA,
+  parent = NA_character_,
+  cmt = NA_real_,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   observation_filter = "TRUE",
   coding_table = NULL,
   keep = NULL
 ) {
-  # Input validation
-  if (!inherits(sdtm, "sdtm")) {
-    stop("sdtm must be an sdtm object")
-  }
-
-  validate_char_param(ae_term, "ae_term")
-  validate_char_param(ae_field, "ae_field")
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_char_param(parent, "parent", allow_empty = TRUE)
-  validate_char_param(subject_filter, "subject_filter")
-  validate_char_param(observation_filter, "observation_filter")
-  validate_char_param(keep, "keep", allow_null = TRUE, allow_multiple = TRUE)
+  # input validation
+  validate_sdtm(sdtm, expected_domains = c("dm", "vs", "ae"))
+  validate_argument(ae_term, "character")
+  validate_argument(ae_field, "character")
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(parent, "character", allow_na = TRUE)
+  validate_argument(cmt, "numeric", allow_na = TRUE)
+  validate_argument(subject_filter, "character")
+  validate_argument(observation_filter, "character")
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
 
   if (is.null(analyte)) {
     analyte <- paste0("AE_", gsub(" ", "_", ae_term))
-  }
-
-  expected_domains <- c("DM", "VS", "AE")
-  missing_domains <- setdiff(expected_domains, toupper(names(sdtm$domains)))
-  if (length(missing_domains) > 0) {
-    stop(paste0(
-      plural("Domain", length(missing_domains) > 1), " ",
-      nice_enumeration(missing_domains), " not found!"
-    ))
   }
 
   sbs <- make_subjects(

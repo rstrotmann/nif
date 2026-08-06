@@ -180,8 +180,7 @@ test_that("make_subjects validates inputs correctly", {
   # Test with non-data frame input
   expect_error(
     make_subjects(list(a = 1, b = 2)),
-    "The 'dm' parameter must be a data frame",
-    fixed = TRUE
+    "dm must be a data.frame"
   )
 
   # Test with missing required columns in dm
@@ -192,8 +191,7 @@ test_that("make_subjects validates inputs correctly", {
 
   expect_error(
     make_subjects(incomplete_dm),
-    "The following required columns are missing from the 'dm' data frame: SEX",
-    fixed = TRUE
+    "Missing columns in dm: SEX"
   )
 
   # Test with incomplete vs data
@@ -209,15 +207,13 @@ test_that("make_subjects validates inputs correctly", {
 
   expect_error(
     make_subjects(valid_dm, incomplete_vs),
-    "The following required columns are missing from the 'vs' data frame: VSTESTCD",
-    fixed = TRUE
+    "Missing columns in vs: VSTESTCD"
   )
 
   # Test with non-data frame vs
   expect_error(
     make_subjects(valid_dm, vs = list(a = 1)),
-    "The 'vs' parameter must be a data frame or NULL",
-    fixed = TRUE
+    "vs must be a data.frame"
   )
 
   # Test with missing RFSTDTC when needed
@@ -233,7 +229,7 @@ test_that("make_subjects validates inputs correctly", {
 
   expect_error(
     make_subjects(valid_dm_no_rfstdtc, vs_no_blfl),
-    "When 'VSBLFL' is not available in vs, 'RFSTDTC' must be present in dm for baseline determination",
+    "Baseline covariates cannot be determined",
     fixed = TRUE
   )
 })

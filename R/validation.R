@@ -140,6 +140,7 @@ validate_sdtm <- function(
 }
 
 
+
 #' Generic function parameter validation
 #'
 #' @param type Parameter type (string, logical or numeric)
@@ -208,7 +209,7 @@ validate_param <- function(
 #'
 #' @param param The argument.
 #' @param type The expected parameter type (one of 'character', 'logical',
-#' 'numeric', 'date' or 'function').
+#'   'numeric', 'date', or 'function').
 #' @param allow_null Allow NULL values.
 #' @param allow_empty Allow empty values.
 #' @param allow_multiple Allow multiple values.
@@ -219,7 +220,9 @@ validate_param <- function(
 #' @noRd
 validate_argument <- function(
     param,
-    type = c("character", "logical", "numeric", "date", "function"),
+    type = c(
+      "character", "logical", "numeric", "date", "function"
+    ),
     allow_null = FALSE,
     allow_empty = FALSE,
     allow_multiple = FALSE,
@@ -245,7 +248,7 @@ validate_argument <- function(
       (type == "logical" && !is.logical(param)) ||
       (type == "numeric" && !is.numeric(param) && !is.na(param)) ||
       (type == "date" && !is.Date(param)) ||
-      (type == 'function' && !is.function(param))
+      (type == "function" && !is.function(param))
   ) {
     stop(paste0(param_name, " must be a ", type, " value"))
   }
@@ -283,6 +286,43 @@ validate_argument <- function(
   invisible(NULL)
 }
 
+
+#' Validate function argument as data frame
+#'
+#' @param param The argument.
+#' @param expected_fields Expected columns in the data frame.
+#' @param allow_null Allow NULL.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+validate_df_argument <- function(
+    param,
+    expected_fields = NULL,
+    allow_null = FALSE
+) {
+  param_name <- deparse(substitute(param))
+
+  # Check for NULL first
+  if (is.null(param)) {
+    if (allow_null) {
+      return(invisible(NULL))
+    } else {
+      stop(paste0(param_name, " must not be NULL"))
+    }
+  }
+
+  if (!inherits(param, "data.frame"))
+    stop(paste0(param_name, " must be a data.frame"))
+
+  missing_fields <- setdiff(expected_fields, names(param))
+  if (length(missing_fields) > 0) {
+    stop(paste0(
+      "Missing columns in ", param_name, ": ",
+      nice_enumeration(missing_fields)
+    ))
+  }
+  invisible(NULL)
+}
 
 
 #' Validate character parameter

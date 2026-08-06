@@ -257,7 +257,7 @@ make_administration <- function(
   cmt = 1,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
   cut_off_date = NULL,
-  keep = "",
+  keep = NULL,
   imputation = imputation_rules_standard,
   duration = NULL,
   iv_admin = NULL,
