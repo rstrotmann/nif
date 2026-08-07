@@ -22,26 +22,20 @@ subject_info(obj, id)
 
 ``` r
 subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
-#>          [,1]             
-#> SITEID   102              
-#> SUBJID   1020001          
-#> ACTARM   Screen Failure   
-#> ACTARMCD SCRNFAIL         
-#> RFICDTC  2000-12-21T10:30 
-#> RFSTDTC  NA               
-#> RFXSTDTC NA               
-#> STUDYID  2023000400       
-#> USUBJID  20230004001020001
-#> SEX      F                
-#> AGE      42               
-#> AGEU     YEARS            
-#> COUNTRY  DEU              
-#> DOMAIN   DM               
-#> ARM      Screen Failure   
-#> ARMCD    SCRNFAIL         
-#> RACE     WHITE            
-#> ETHNIC                    
-#> RFENDTC  NA               
+#> SUBJID     1020001             
+#> USUBJID    20230004001020001   
+#> SITEID     102                 
+#> COUNTRY    DEU                 
+#> ARM        Screen Failure      
+#> ARMCD      SCRNFAIL            
+#> ACTARM     Screen Failure      
+#> ACTARMCD   SCRNFAIL            
+#> RFSTDTC    NA                  
+#> RFENDTC    NA                  
+#> SEX        F                   
+#> AGE        42                  
+#> RACE       WHITE               
+#> ETHNIC                         
 subject_info(examplinib_poc_nif, 1)
 #>          [,1]              
 #> USUBJID  20230000221010001 

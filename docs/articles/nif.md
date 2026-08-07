@@ -180,26 +180,20 @@ extracted using [`subject_info()`](../reference/subject_info.md):
 
 examplinib_fe %>%
   subject_info("20230004001050001")
-#>          [,1]                     
-#> SITEID   105                      
-#> SUBJID   1050001                  
-#> ACTARM   Fasted - Fed             
-#> ACTARMCD AB                       
-#> RFICDTC  2000-12-26T10:05         
-#> RFSTDTC  2001-01-05T10:05         
-#> RFXSTDTC 2001-01-05T10:05         
-#> STUDYID  2023000400               
-#> USUBJID  20230004001050001        
-#> SEX      M                        
-#> AGE      34                       
-#> AGEU     YEARS                    
-#> COUNTRY  DEU                      
-#> DOMAIN   DM                       
-#> ARM      Fasted - Fed             
-#> ARMCD    AB                       
-#> RACE     BLACK OR AFRICAN AMERICAN
-#> ETHNIC                            
-#> RFENDTC  2001-01-18T10:05
+#> SUBJID     1050001                     
+#> USUBJID    20230004001050001           
+#> SITEID     105                         
+#> COUNTRY    DEU                         
+#> ARM        Fasted - Fed                
+#> ARMCD      AB                          
+#> ACTARM     Fasted - Fed                
+#> ACTARMCD   AB                          
+#> RFSTDTC    2001-01-05T10:05            
+#> RFENDTC    2001-01-18T10:05            
+#> SEX        M                           
+#> AGE        34                          
+#> RACE       BLACK OR AFRICAN AMERICAN   
+#> ETHNIC
 ```
 
 The original SDTM data for specific domains can be retrieved from `sdtm`

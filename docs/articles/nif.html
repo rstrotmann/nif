@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -227,26 +227,20 @@ be extracted using <code><a href="../reference/subject_info.html">subject_info()
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          [,1]                     </span></span>
-<span><span class="co">#&gt; SITEID   105                      </span></span>
-<span><span class="co">#&gt; SUBJID   1050001                  </span></span>
-<span><span class="co">#&gt; ACTARM   Fasted - Fed             </span></span>
-<span><span class="co">#&gt; ACTARMCD AB                       </span></span>
-<span><span class="co">#&gt; RFICDTC  2000-12-26T10:05         </span></span>
-<span><span class="co">#&gt; RFSTDTC  2001-01-05T10:05         </span></span>
-<span><span class="co">#&gt; RFXSTDTC 2001-01-05T10:05         </span></span>
-<span><span class="co">#&gt; STUDYID  2023000400               </span></span>
-<span><span class="co">#&gt; USUBJID  20230004001050001        </span></span>
-<span><span class="co">#&gt; SEX      M                        </span></span>
-<span><span class="co">#&gt; AGE      34                       </span></span>
-<span><span class="co">#&gt; AGEU     YEARS                    </span></span>
-<span><span class="co">#&gt; COUNTRY  DEU                      </span></span>
-<span><span class="co">#&gt; DOMAIN   DM                       </span></span>
-<span><span class="co">#&gt; ARM      Fasted - Fed             </span></span>
-<span><span class="co">#&gt; ARMCD    AB                       </span></span>
-<span><span class="co">#&gt; RACE     BLACK OR AFRICAN AMERICAN</span></span>
-<span><span class="co">#&gt; ETHNIC                            </span></span>
-<span><span class="co">#&gt; RFENDTC  2001-01-18T10:05</span></span></code></pre></div>
+<span><span class="co">#&gt; SUBJID     1050001                     </span></span>
+<span><span class="co">#&gt; USUBJID    20230004001050001           </span></span>
+<span><span class="co">#&gt; SITEID     105                         </span></span>
+<span><span class="co">#&gt; COUNTRY    DEU                         </span></span>
+<span><span class="co">#&gt; ARM        Fasted - Fed                </span></span>
+<span><span class="co">#&gt; ARMCD      AB                          </span></span>
+<span><span class="co">#&gt; ACTARM     Fasted - Fed                </span></span>
+<span><span class="co">#&gt; ACTARMCD   AB                          </span></span>
+<span><span class="co">#&gt; RFSTDTC    2001-01-05T10:05            </span></span>
+<span><span class="co">#&gt; RFENDTC    2001-01-18T10:05            </span></span>
+<span><span class="co">#&gt; SEX        M                           </span></span>
+<span><span class="co">#&gt; AGE        34                          </span></span>
+<span><span class="co">#&gt; RACE       BLACK OR AFRICAN AMERICAN   </span></span>
+<span><span class="co">#&gt; ETHNIC</span></span></code></pre></div>
 <p>The original SDTM data for specific domains can be retrieved from
 <code>sdtm</code> objects with the <code><a href="../reference/domain.html">domain()</a></code> function:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -506,8 +500,8 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 <span>    analyte <span class="op">=</span> <span class="st">"RS2023"</span>, keep <span class="op">=</span> <span class="st">"EPOCH"</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="st">"pc"</span>, <span class="st">"RS2023"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PERIOD <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TREATMENT <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">PERIOD</span>, <span class="va">PERIOD</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PERIOD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/stringr/man/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">EPOCH</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TREATMENT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/stringr/man/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">ACTARMCD</span>, <span class="va">PERIOD</span>, <span class="va">PERIOD</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FASTED <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">TREATMENT</span> <span class="op">==</span> <span class="st">"A"</span> <span class="op">~</span> <span class="fl">1</span>, .default <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>These are again the first 3 lines of the resulting nif object:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">

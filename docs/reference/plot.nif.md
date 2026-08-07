@@ -60,7 +60,7 @@ plot(
 
 - facet:
 
-  The column(s) to be used for faceting.
+  The column to be used for faceting. Only single values are allowed.
 
 - min_time:
 
@@ -68,7 +68,7 @@ plot(
 
 - max_time:
 
-  The minimal time in units of the selected time field, as numeric.
+  The maximal time in units of the selected time field, as numeric.
 
 - cfb:
 

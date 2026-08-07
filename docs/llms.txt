@@ -342,20 +342,9 @@ For further guidance see the help for individual functions and the
   from sdtm object
 - [`nif_disclaimer()`](nif_disclaimer.md) : Disclaimer statement
 - [`nif_option()`](nif_option.md) : Set or get global options
-- [`nif_pinboard()`](nif_pinboard.md) : Get or set pinboard path
 - [`nif_viewer()`](nif_viewer.md) : NIF viewer
 - [`obs_per_dose_level()`](obs_per_dose_level.md) : Observations per
   dose level
-- [`pb_list_nif()`](pb_list_nif.md) **\[experimental\]** : List nif
-  objects in pinboard
-- [`pb_list_sdtm()`](pb_list_sdtm.md) **\[experimental\]** : List sdtm
-  objects in pinboard
-- [`pb_read_nif()`](pb_read_nif.md) **\[experimental\]** : Read nif
-  object from pinboard
-- [`pb_read_sdtm()`](pb_read_sdtm.md) **\[experimental\]** : Read sdtm
-  object from pinboard
-- [`pb_write()`](pb_write.md) **\[experimental\]** : Generic pin_write
-  function
 - [`plot(`*`<domain>`*`)`](plot.domain.md) : Plot domain object
 - [`plot(`*`<nif>`*`)`](plot.nif.md) : Plot NIF object.
 - [`plot(`*`<sdtm>`*`)`](plot.sdtm.md) : Plot SDTM object
