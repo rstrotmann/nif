@@ -28,7 +28,12 @@
 #' @family imputation rules
 #'
 #' @export
-imputation_rules_void <- list()
+imputation_rules_void <- list(
+  # admin_pre_expansion = NULL,
+  # admin_post_expansion = NULL,
+  # obs_raw = NULL,
+  # obs_final = NULL
+)
 
 
 # ---- imputation_rules_minimal ----

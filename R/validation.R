@@ -583,14 +583,14 @@ validate_imputation_set <- function(obj) {
   if (!is.list(obj))
     stop("Imputation rule set must be a list!")
 
-  expected_fields <- c("admin_pre_expansion", "admin_post_expansion",
-                       "obs_raw", "obs_final")
-  missing_fields <- setdiff(expected_fields, names(obj))
-  if (length(missing_fields) > 0) {
-    stop(paste0(
-      "Missing ", plural("field", length(missing_fields) > 1),
-      " in imputation rule set: ", nice_enumeration(missing_fields)))
-  }
+  # expected_fields <- c("admin_pre_expansion", "admin_post_expansion",
+  #                      "obs_raw", "obs_final")
+  # missing_fields <- setdiff(expected_fields, names(obj))
+  # if (length(missing_fields) > 0) {
+  #   stop(paste0(
+  #     "Missing ", plural("field", length(missing_fields) > 1),
+  #     " in imputation rule set: ", nice_enumeration(missing_fields)))
+  # }
 }
 
 

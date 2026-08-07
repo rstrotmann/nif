@@ -1069,3 +1069,82 @@ impute_missing_baseline <- function(
 }
 
 
+#' Remove duplicate administrations with respect to USUBJID, DTC and ANALYTE
+#'
+#' @param obj A data frame.
+#' @param silent Suppress messages.
+#'
+#' @returns Data frame with duplicate administrations removed, if possible.
+#' @noRd
+remove_duplicate_administrations <- function(
+  obj,
+  silent = NULL
+){
+  # input validation
+  validate_df_argument(
+    obj, expected_fields = c("USUBJID", "DTC", "ANALYTE", ".SEQ", "AMT"))
+  validate_argument(silent, "logical", allow_null = TRUE)
+
+  # business logic
+  temp <- obj |>
+    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$.SEQ) |>
+    group_by(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$AMT) |>
+    mutate(.n = n()) |>
+    mutate(EXCLUDE = case_when(
+      .n > 1 & row_number() != 1 ~ TRUE,
+      .default = FALSE
+    )) |>
+    ungroup()
+
+  # duplicate administrations with the same dose
+  n_dupl <- nrow(filter(temp, .data$EXCLUDE == TRUE))
+  if (n_dupl > 0) {
+    conditional_cli({
+      cli_alert_warning(paste(
+        n_dupl,
+        "duplicate administrations with respect to USUBJID, DTC and ANALYTE were removed:"
+      ))
+      df_to_cli(
+        temp |>
+          filter(.data$EXCLUDE == TRUE) |>
+          select(any_of(
+            c("ID", "USUBJID", "TIME", "DTC", ".SEQ", "ANALYTE", "EXTRT", "AMT"))
+          ), indent = 2)
+    },
+    silent = silent)
+  }
+
+  # duplicate administrations with different doses
+  temp <- temp |>
+    filter(.data$EXCLUDE == FALSE) |>
+    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$.SEQ) |>
+    group_by(.data$USUBJID, .data$ANALYTE, .data$DTC) |>
+    mutate(.n = n()) |>
+    mutate(EXCLUDE_DIFFERENT_AMT = case_when(
+      .n > 1 & row_number() != n() ~ TRUE,
+      .default = FALSE
+    )) |>
+    ungroup()
+
+  n_different_amt <- nrow(filter(temp, .data$EXCLUDE_DIFFERENT_AMT == TRUE))
+  if (n_different_amt > 0) {
+    cli({
+      cli_alert_warning(paste(
+        n_different_amt, "duplicate administrations with respect to USUBJID, DTC",
+        "and ANALYTE but different AMT found! The respective last row was",
+        "kept and the following rows deleted:"
+        ))
+        df_to_cli(
+          temp |>
+            filter(.data$EXCLUDE_DIFFERENT_AMT == TRUE) |>
+            select(any_of(
+              c("ID", "USUBJID", "TIME", "DTC", ".SEQ", "ANALYTE", "EXTRT", "AMT"))
+            ), indent = 2)
+    })
+  }
+
+  temp |>
+    filter(.data$EXCLUDE_DIFFERENT_AMT == FALSE) |>
+    select(-c(".n", "EXCLUDE", "EXCLUDE_DIFFERENT_AMT"))
+}
+

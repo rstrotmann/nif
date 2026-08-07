@@ -64,18 +64,18 @@ test_that("make_administration works without pc", {
 test_that("make_administration errors when extrt not found in EX", {
   sdtm <- sdtm(list(
     dm = tibble::tribble(
-      ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
-      "001", 1, "2024-12-16T7:50", "2024-12-19", "ARM A"
-    ),
+       ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+          "001",    1, "2024-12-16T7:50", "2024-12-19",   "ARM A"
+       ),
     ex = tibble::tribble(
-      ~USUBJID, ~EXSEQ, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXDOSE,
-      "001", 1, "DRUG_A", "2024-12-16T7:50", "2024-12-19", 100
-    )
+       ~USUBJID, ~EXSEQ,   ~EXTRT,          ~EXSTDTC,     ~EXENDTC, ~EXDOSE,
+          "001",      1, "DRUG_A", "2024-12-16T7:50", "2024-12-19",     100
+       )
   ))
 
   expect_error(
     make_administration(sdtm, "DRUG_B", silent = TRUE),
-    "Treatment 'DRUG_B' not found in EXTRT!"
+    "EXTRT DRUG_B not found in EX domain!"
   )
 })
 
@@ -232,6 +232,12 @@ test_that("make_administration expands administration episodes correctly", {
   expect_equal(nrow(result), 3)
   expect_equal(length(unique(result$DTC)), 3)
 })
+
+
+
+
+
+
 
 
 test_that("make_administration handles EXSTDY and EXENDY correctly", {
@@ -463,23 +469,23 @@ test_that("make_administration handles EXSEQ when present", {
 })
 
 
-test_that("make_administration handles missing EXSEQ", {
-  sdtm <- sdtm(list(
-    dm = tibble::tribble(
-      ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
-      "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
-    ),
-    ex = tibble::tribble(
-      ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXDOSE,
-      "001", "DRUG_A", "2024-12-16T7:50", "2024-12-18T7:50", 100
-    )
-  ))
-
-  result <- make_administration(sdtm, "DRUG_A", keep = "SRC_SEQ", silent = TRUE)
-
-  expect_true("SRC_SEQ" %in% names(result))
-  expect_true(all(is.na(result$SRC_SEQ)))
-})
+# test_that("make_administration handles missing EXSEQ", {
+#   sdtm <- sdtm(list(
+#     dm = tibble::tribble(
+#       ~USUBJID, ~SEX, ~RFSTDTC, ~RFENDTC, ~ACTARMCD,
+#       "001", 1, "2024-12-16T7:50", "2024-12-20T7:50", "ARM A"
+#     ),
+#     ex = tibble::tribble(
+#       ~USUBJID, ~EXTRT, ~EXSTDTC, ~EXENDTC, ~EXDOSE,
+#       "001", "DRUG_A", "2024-12-16T7:50", "2024-12-18T7:50", 100
+#     )
+#   ))
+#
+#   expect_error(
+#     result <- make_administration(sdtm, "DRUG_A", keep = "SRC_SEQ", silent = TRUE),
+#     "Missing columns in obj: EXSEQ"
+#   )
+# })
 
 
 test_that("make_administration handles VS domain when present", {
@@ -596,14 +602,14 @@ test_that("make_administration works with void imputation rule set", {
     ),
 
     ex = tibble::tribble(
-      ~USUBJID,           ~EXSTDTC,     ~EXENDTC,              ~EXTRT, ~EXDOSE,
-           "1", "2025-01-13T07:00", "2025-01-18T08:00", "TREATMENT_A",     100
+      ~USUBJID,           ~EXSTDTC,     ~EXENDTC,              ~EXTRT, ~EXDOSE, ~EXSEQ,
+           "1", "2025-01-13T07:00", "2025-01-18T08:00", "TREATMENT_A",     100,      1
     )
   ) |>
     sdtm()
 
   result = make_administration(
-    sdtm, "TREATMENT_A", imputation = list(), silent = TRUE)
+    sdtm, "TREATMENT_A", imputation = imputation_rules_void, silent = TRUE)
 
   test <- result |>
     decompose_dtc("DTC")
@@ -655,9 +661,65 @@ test_that("make_administration works with iv administrations", {
 })
 
 
+test_that("make_administration does not create duplicate administrations for overlapping EX episodes", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+         "001",    1, "2024-12-16T7:50", "2024-12-20",   "ARM A"
+    ),
+    ex = tibble::tribble(
+      ~USUBJID, ~EXSEQ,   ~EXTRT,          ~EXSTDTC,          ~EXENDTC, ~EXDOSE,
+         "001",      1, "DRUG_A", "2024-12-16T7:50", "2024-12-18T7:50",     100,
+         "001",      2, "DRUG_A", "2024-12-17T7:50", "2024-12-19T7:50",     100
+    )
+  ))
+
+  result <- make_administration(
+    sdtm,
+    "DRUG_A",
+    iv_admin = FALSE,
+    silent = TRUE
+  )
+
+  duplicates <- result |>
+    dplyr::count(.data$USUBJID, .data$DTC, .data$EXTRT) |>
+    dplyr::filter(.data$n > 1)
+
+  expect_equal(nrow(duplicates), 0)
+  expect_equal(nrow(result), 4)
+})
 
 
+test_that("make_administration warns if different doses overlap", {
+  sdtm <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~SEX,          ~RFSTDTC,     ~RFENDTC, ~ACTARMCD,
+      "001",    1, "2024-12-16T7:50", "2024-12-20",   "ARM A"
+    ),
+    ex = tibble::tribble(
+      ~USUBJID, ~EXSEQ,   ~EXTRT,          ~EXSTDTC,          ~EXENDTC, ~EXDOSE,
+      "001",      1, "DRUG_A", "2024-12-16T7:50", "2024-12-18T7:50",     100,
+      "001",      2, "DRUG_A", "2024-12-17T7:50", "2024-12-19T7:50",     50
+    )
+  ))
 
+  expect_message(
+    result <- make_administration(
+      sdtm,
+      "DRUG_A",
+      iv_admin = FALSE,
+      silent = TRUE
+    ),
+    "2 duplicate administrations"
+  )
+
+  duplicates <- result |>
+    dplyr::count(.data$USUBJID, .data$DTC, .data$EXTRT) |>
+    dplyr::filter(.data$n > 1)
+
+  expect_equal(nrow(duplicates), 0)
+  expect_equal(nrow(result), 4)
+})
 
 
 

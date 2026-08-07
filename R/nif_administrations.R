@@ -264,32 +264,47 @@ make_administration <- function(
   silent = NULL
 ) {
   # input validation
-  if (!is.list(imputation))
-    stop("imputation must be a list!")
+  validate_sdtm(sdtm, c("dm", "ex"))
+  validate_argument(extrt, "character")
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_argument(pctestcd, "character", allow_null = TRUE)
+  validate_argument(cmt, "numeric")
+  validate_argument(subject_filter, "character")
+  validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_imputation_set(imputation)
+  validate_argument(duration, "numeric", allow_null = TRUE)
+  validate_argument(iv_admin, "logical", allow_null = TRUE)
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   # extract domains
   dm <- domain(sdtm, "dm") |>
     lubrify_dates()
+
   ex <- domain(sdtm, "ex") |>
     lubrify_dates()
+
   vs <- NULL
 
   if (has_domain(sdtm, "vs")) {
     vs <- domain(sdtm, "vs")
   }
 
-  # validate extrt
-  if (!extrt %in% ex$EXTRT) {
-    stop(paste0("Treatment '", extrt, "' not found in EXTRT!"))
+  # validate EX
+  expected_fields <- c("USUBJID", "EXSTDTC", "EXENDTC", "EXDOSE", "EXTRT")
+  missing_fields <- setdiff(expected_fields, names(ex))
+  if (length(missing_fields) > 0) {
+    stop(paste0(
+      "Missing required fields in EX: ",
+      nice_enumeration(missing_fields)
+    ))
   }
 
   # Impute very last EXENDTC for a subject and EXTRT to RFENDTC, if absent
-  ex <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
+  admin <- impute_exendtc_to_rfendtc(ex, dm, extrt, cut_off_date, silent = silent)
 
   # generate data cut off date
   if (is.null(cut_off_date)) {
-    cut_off_date <- last_ex_dtc(ex)
-
+    cut_off_date <- last_ex_dtc(admin)
     conditional_cli({
       cli_alert_info(paste0(
         "A global cut-off-date of ",
@@ -304,15 +319,22 @@ make_administration <- function(
     }
   }
 
-  # make subjects
-  sbs <- make_subjects(dm, vs, subject_filter, keep)
+  # # make subjects
+  # sbs <- make_subjects(dm, vs, subject_filter, keep)
 
-  admin <- ex
+  # admin <- ex
 
-  if ("EXSEQ" %in% names(ex)) {
-    admin <- mutate(admin, SRC_SEQ = .data$EXSEQ)
+  # deal with missing EXSEQ, create SRC_SEQ, .SEQ
+  if ("EXSEQ" %in% names(admin)) {
+    admin <- admin |>
+      mutate(.SEQ = .data$EXSEQ) |>
+      mutate(SRC_SEQ = .data$EXSEQ)
   } else {
-    admin <- mutate(admin, SRC_SEQ = NA)
+    admin <- admin |>
+      group_by(USUBJID, EXTRT) |>
+      mutate(.SEQ = row_number()) |>
+      ungroup() |>
+      mutate(SRC_SEQ = NA)
   }
 
   # create imputation field
@@ -348,8 +370,8 @@ make_administration <- function(
       )
   }
 
+  # expand EX
   admin <- admin |>
-    # make standard fields
     mutate(
       TIME = NA_integer_,
       NTIME = 0,
@@ -378,6 +400,9 @@ make_administration <- function(
       )
   }
 
+  # make subjects
+  sbs <- make_subjects(dm, vs, subject_filter, keep)
+
   admin <- admin |>
     carry_forward_admin_time_imputations() |>
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
@@ -396,11 +421,13 @@ make_administration <- function(
       ) + 1)
   }
 
+  admin <- remove_duplicate_administrations(admin, silent)
+
   admin |>
     ungroup() |>
     mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
     select(-any_of(c("DTC_date", "DTC_time", "EXSTDTC_date", "EXSTDTC_time",
-                     "EXENDTC_date", "EXENDTC_time", "TEST"))) |>
+                     "EXENDTC_date", "EXENDTC_time", "TEST", ".SEQ"))) |>
     index_id() |>
     nif()
 }

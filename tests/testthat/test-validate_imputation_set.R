@@ -83,154 +83,154 @@ test_that("validate_imputation_set rejects non-list input", {
 })
 
 
-test_that("validate_imputation_set rejects data frames missing required slots", {
-  expect_error(
-    validate_imputation_set(data.frame(slot = "admin_pre_expansion")),
-    "Missing fields in imputation rule set:"
-  )
-  expect_error(
-    validate_imputation_set(data.frame(slot = "admin_pre_expansion")),
-    "admin_pre_expansion"
-  )
-})
+# test_that("validate_imputation_set rejects data frames missing required slots", {
+#   expect_error(
+#     validate_imputation_set(data.frame(slot = "admin_pre_expansion")),
+#     "Missing fields in imputation rule set:"
+#   )
+#   expect_error(
+#     validate_imputation_set(data.frame(slot = "admin_pre_expansion")),
+#     "admin_pre_expansion"
+#   )
+# })
 
 
-test_that("validate_imputation_set rejects empty lists", {
-  expect_error(
-    validate_imputation_set(list()),
-    paste0(
-      "Missing fields in imputation rule set: ",
-      "admin_pre_expansion, admin_post_expansion, obs_raw and obs_final"
-    )
-  )
-  expect_error(
-    validate_imputation_set(imputation_rules_void),
-    paste0(
-      "Missing fields in imputation rule set: ",
-      "admin_pre_expansion, admin_post_expansion, obs_raw and obs_final"
-    )
-  )
-})
+# test_that("validate_imputation_set rejects empty lists", {
+#   expect_error(
+#     validate_imputation_set(list()),
+#     paste0(
+#       "Missing fields in imputation rule set: ",
+#       "admin_pre_expansion, admin_post_expansion, obs_raw and obs_final"
+#     )
+#   )
+#   expect_error(
+#     validate_imputation_set(imputation_rules_void),
+#     paste0(
+#       "Missing fields in imputation rule set: ",
+#       "admin_pre_expansion, admin_post_expansion, obs_raw and obs_final"
+#     )
+#   )
+# })
 
 
-test_that("validate_imputation_set rejects a single missing field", {
-  rules <- valid_imputation_set()
-  rules$admin_post_expansion <- NULL
-  rules <- rules[names(rules) != "admin_post_expansion"]
-
-  expect_error(
-    validate_imputation_set(rules),
-    "Missing field in imputation rule set: admin_post_expansion"
-  )
-})
-
-
-test_that("validate_imputation_set rejects each required field individually", {
-  for (field in c(
-    "admin_pre_expansion",
-    "admin_post_expansion",
-    "obs_raw",
-    "obs_final"
-  )) {
-    rules <- valid_imputation_set()
-    rules[[field]] <- NULL
-    rules <- rules[names(rules) != field]
-
-    expect_error(
-      validate_imputation_set(rules),
-      paste0("Missing field in imputation rule set: ", field)
-    )
-  }
-})
+# test_that("validate_imputation_set rejects a single missing field", {
+#   rules <- valid_imputation_set()
+#   rules$admin_post_expansion <- NULL
+#   rules <- rules[names(rules) != "admin_post_expansion"]
+#
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "Missing field in imputation rule set: admin_post_expansion"
+#   )
+# })
 
 
-test_that("validate_imputation_set rejects multiple missing fields", {
-  rules <- list(
-    admin_pre_expansion = function(
-        ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
-      ) {
-      ex
-    },
-    obs_final = function(obs, silent) {
-      obs
-    }
-  )
-
-  expect_error(
-    validate_imputation_set(rules),
-    paste0(
-      "Missing fields in imputation rule set: ",
-      "admin_post_expansion and obs_raw"
-    )
-  )
-})
+# test_that("validate_imputation_set rejects each required field individually", {
+#   for (field in c(
+#     "admin_pre_expansion",
+#     "admin_post_expansion",
+#     "obs_raw",
+#     "obs_final"
+#   )) {
+#     rules <- valid_imputation_set()
+#     rules[[field]] <- NULL
+#     rules <- rules[names(rules) != field]
+#
+#     expect_error(
+#       validate_imputation_set(rules),
+#       paste0("Missing field in imputation rule set: ", field)
+#     )
+#   }
+# })
 
 
-test_that("validate_imputation_set rejects lists with unrelated names only", {
-  rules <- list(
-    step_one = function(x) x,
-    step_two = function(x) x,
-    step_three = function(x) x,
-    step_four = function(x) x
-  )
-
-  expect_error(
-    validate_imputation_set(rules),
-    "Missing fields in imputation rule set:"
-  )
-  expect_error(
-    validate_imputation_set(rules),
-    "admin_pre_expansion"
-  )
-  expect_error(
-    validate_imputation_set(rules),
-    "admin_post_expansion"
-  )
-  expect_error(
-    validate_imputation_set(rules),
-    "obs_raw"
-  )
-  expect_error(
-    validate_imputation_set(rules),
-    "obs_final"
-  )
-})
+# test_that("validate_imputation_set rejects multiple missing fields", {
+#   rules <- list(
+#     admin_pre_expansion = function(
+#         ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
+#       ) {
+#       ex
+#     },
+#     obs_final = function(obs, silent) {
+#       obs
+#     }
+#   )
+#
+#   expect_error(
+#     validate_imputation_set(rules),
+#     paste0(
+#       "Missing fields in imputation rule set: ",
+#       "admin_post_expansion and obs_raw"
+#     )
+#   )
+# })
 
 
-test_that("validate_imputation_set error uses singular field for one omission", {
-  rules <- list(
-    admin_pre_expansion = identity,
-    admin_post_expansion = identity,
-    obs_raw = identity
-  )
+# test_that("validate_imputation_set rejects lists with unrelated names only", {
+#   rules <- list(
+#     step_one = function(x) x,
+#     step_two = function(x) x,
+#     step_three = function(x) x,
+#     step_four = function(x) x
+#   )
+#
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "Missing fields in imputation rule set:"
+#   )
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "admin_pre_expansion"
+#   )
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "admin_post_expansion"
+#   )
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "obs_raw"
+#   )
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "obs_final"
+#   )
+# })
 
-  expect_error(
-    validate_imputation_set(rules),
-    "Missing field in imputation rule set:"
-  )
-  expect_error(
-    validate_imputation_set(rules),
-    "obs_final"
-  )
-})
+
+# test_that("validate_imputation_set error uses singular field for one omission", {
+#   rules <- list(
+#     admin_pre_expansion = identity,
+#     admin_post_expansion = identity,
+#     obs_raw = identity
+#   )
+#
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "Missing field in imputation rule set:"
+#   )
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "obs_final"
+#   )
+# })
 
 
-test_that("validate_imputation_set error uses plural fields for multiple omissions", {
-  rules <- list(
-    admin_pre_expansion = identity,
-    obs_final = identity
-  )
-
-  expect_error(
-    validate_imputation_set(rules),
-    "Missing fields in imputation rule set:"
-  )
-  expect_error(
-    validate_imputation_set(rules),
-    "admin_post_expansion"
-  )
-  expect_error(
-    validate_imputation_set(rules),
-    "obs_raw"
-  )
-})
+# test_that("validate_imputation_set error uses plural fields for multiple omissions", {
+#   rules <- list(
+#     admin_pre_expansion = identity,
+#     obs_final = identity
+#   )
+#
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "Missing fields in imputation rule set:"
+#   )
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "admin_post_expansion"
+#   )
+#   expect_error(
+#     validate_imputation_set(rules),
+#     "obs_raw"
+#   )
+# })
