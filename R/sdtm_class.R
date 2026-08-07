@@ -393,7 +393,7 @@ subject_info.sdtm <- function(obj, id) {
 
 
   temp <- domain(obj, "dm") |>
-    filter(USUBJID %in% id) |>
+    filter(.data$USUBJID %in% id) |>
     select(any_of(c("SUBJID", "USUBJID", "SITEID", "COUNTRY", "ARM", "ARMCD",
                     "ACTARM", "ACTARMCD", "RFSTDTC", "RFENDTC", "SEX", "AGE",
                     "RACE", "ETHNIC"))) |>

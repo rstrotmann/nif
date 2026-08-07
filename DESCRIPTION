@@ -35,7 +35,6 @@ Imports:
     shiny,
     shinyjs,
     lifecycle,
-    pins,
     cli,
     classInt
 Suggests: 

@@ -326,7 +326,7 @@ make_administration <- function(
       mutate(SRC_SEQ = .data$EXSEQ)
   } else {
     admin <- admin |>
-      group_by(USUBJID, EXTRT) |>
+      group_by(.data$USUBJID, .data$EXTRT) |>
       mutate(.SEQ = row_number()) |>
       ungroup() |>
       mutate(SRC_SEQ = NA)
