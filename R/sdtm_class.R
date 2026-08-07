@@ -380,16 +380,31 @@ subject_info <- function(obj, id) {
 #' @keywords internal
 #' @examples
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
+#' subject_info(examplinib_fe, subjects(examplinib_fe)[1:3, "USUBJID"])
 subject_info.sdtm <- function(obj, id) {
   validate_sdtm(obj, "dm")
-  validate_char_param(id, "id", allow_multiple = FALSE)
+  validate_argument(id, "character", allow_multiple = TRUE)
 
   temp <- obj |>
     domain("dm") |>
     dplyr::filter(.data$USUBJID %in% id) |>
     as.list()
   class(temp) <- c("subject_info", "data.frame")
-  temp
+
+
+  temp <- domain(obj, "dm") |>
+    filter(USUBJID %in% id) |>
+    select(any_of(c("SUBJID", "USUBJID", "SITEID", "COUNTRY", "ARM", "ARMCD",
+                    "ACTARM", "ACTARMCD", "RFSTDTC", "RFENDTC", "SEX", "AGE",
+                    "RACE", "ETHNIC"))) |>
+    mutate(across(everything(), as.character))
+
+  rbind(colnames(temp), temp) |>
+    as.matrix() |>
+    t() |>
+    data.frame() |>
+    df_to_string(header = F) |>
+    cat()
 }
 
 
@@ -407,8 +422,8 @@ subject_info.sdtm <- function(obj, id) {
 #' suggest(examplinib_poc)
 suggest <- function(obj, show_all = FALSE) {
   # input validation
-  validate_sdtm(obj)
-  validate_logical_param(show_all, "show_all")
+  validate_sdtm(obj, expected_domains = c("dm", "ex", "pc"))
+  validate_argument(show_all, "logical")
 
   message_code <- function(
     fct, data,
@@ -418,10 +433,6 @@ suggest <- function(obj, show_all = FALSE) {
   ) {
     lines <- sapply(data, fct)
     cli::cli_code(lines)
-  }
-
-  if (!has_domain(obj, c("dm", "ex", "pc"))) {
-    stop("Domains DM, EX and PC must be present!")
   }
 
   # Domains

@@ -319,11 +319,6 @@ make_administration <- function(
     }
   }
 
-  # # make subjects
-  # sbs <- make_subjects(dm, vs, subject_filter, keep)
-
-  # admin <- ex
-
   # deal with missing EXSEQ, create SRC_SEQ, .SEQ
   if ("EXSEQ" %in% names(admin)) {
     admin <- admin |>

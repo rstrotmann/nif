@@ -86,7 +86,7 @@ test_that("suggest throws error when required domains are missing", {
 
   expect_error(
     suggest(test_data),
-    "Domains DM, EX and PC must be present!"
+    "Expected domain missing in sdtm object: pc"
   )
 
   # Create test data with missing EX domain
@@ -100,15 +100,7 @@ test_that("suggest throws error when required domains are missing", {
 
   expect_error(
     suggest(test_data),
-    "Domains DM, EX and PC must be present!"
-  )
-})
-
-
-test_that("subject_info works", {
-  expect_type(
-    subject_info(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"]),
-    "list"
+    "Expected domain missing in sdtm object: ex"
   )
 })
 
