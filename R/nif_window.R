@@ -93,36 +93,25 @@ add_time_deviation <- function(obj, silent = NULL) {
 #' @return A nif object with TIME_DEV, EXCL, EXCL_REASON fields added.
 #' @export
 add_time_window_flag <- function(
-  obj, window, analyte = NULL, use_minutes = TRUE, silent = NULL
+  obj,
+  window,
+  analyte = NULL,
+  use_minutes = TRUE,
+  silent = NULL
 ) {
   # validate input
   validate_nif(obj)
-  validate_char_param(analyte, "analyte", allow_null = TRUE)
-  validate_logical_param(silent, "silent", allow_null = TRUE)
-
-  if (!inherits(window, "data.frame")) {
-    stop("'window' must be a data frame!")
-  }
+  validate_df_argument(window, expected_fields = c("NTIME", "BEFORE", "AFTER"))
+  validate_analyte(obj, analyte, allow_null = TRUE)
+  validate_argument(use_minutes, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
-
     conditional_cli(
       cli_alert_info(paste0("No analyte specified, using ", analyte)),
       silent = silent
     )
-  }
-
-  if (!analyte %in% analytes(obj)) {
-    stop("analyte ", analyte, " not found in nif object!")
-  }
-
-  missing_fields <- setdiff(c("NTIME", "BEFORE", "AFTER"), names(window))
-  if (length(missing_fields) > 0) {
-    stop(paste0(
-      "Missing ", plural("field", length(missing_fields) > 1),
-      " in 'window': ", nice_enumeration(missing_fields)
-    ))
   }
 
   if (!all(as.logical(lapply(window, is.numeric)))) {
@@ -156,19 +145,14 @@ add_time_window_flag <- function(
     add_time_deviation() |>
     left_join(temp, by = "NTIME") |>
     mutate(EXCL = case_when(
-      # .data$ANALYTE == analyte &
       (.data$TIME_DEV < -1 * .data$.BEFORE |
          .data$TIME_DEV > .data$.AFTER) ~ TRUE,
       .default = .data$EXCL
     )) |>
     mutate(EXCL_REASON = case_when(
-      # .data$ANALYTE == analyte &
       (.data$TIME_DEV < -1 * .data$.BEFORE |
          .data$TIME_DEV > .data$.AFTER) ~ "time window violation",
       .default = .data$EXCL_REASON
     )) |>
     select(-c(".BEFORE", ".AFTER"))
 }
-
-## to do
-# simplify to only accept a data frame for window!

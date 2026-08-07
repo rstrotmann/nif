@@ -909,24 +909,10 @@ derive_sld <- function(
   if ("TRTEST" %in% names(tr)) {
     sld_data <- mutate(
       sld_data,
-
-      # TRTEST = case_match(
-      #   .data$TRTESTCD,
-      #   "SLD" ~ "Sum of longest diameters",
-      #   "N_TARGET" ~ "Number of target lesions used for SLD calculation"
-      # )
-
-      # TRTEST = recode_values(
-      #   .data$TRTESTCD,
-      #   "SLD" ~ "Sum of longest diameters",
-      #   "N_TARGET" ~ "Number of target lesions used for SLD calculation"
-      # )
-
       TRTEST = case_when(
         .data$TRTESTCD == "SLD" ~ "Sum of longest diameters",
         .data$TRTESTCD == "N_TARGET" ~ "Number of target lesions used for SLD calculation"
       )
-
     )
   }
 
@@ -952,29 +938,15 @@ derive_sld <- function(
 #'
 #' @export
 testcd <- function(obj, domain = NULL, silent = NULL) {
-  # Validate inputs
-  if (!inherits(obj, "sdtm")) {
-    stop("Input must be a sdtm object")
-  }
+  # input validation
+  validate_argument(domain, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_sdtm(obj, expected_domains = domain)
 
-  validate_char_param(domain, "domain", allow_null = TRUE,
-                      allow_multiple = TRUE)
   if (is.null(domain)) {
     domain <- names(obj$domains)
   }
 
   domain <- tolower(domain)
-
-  missing_domains <- setdiff(domain, names(obj$domains))
-  n_missing <- length(missing_domains)
-  if (n_missing > 0) {
-    conditional_message(
-      plural("Domain", n_missing > 1), " ", nice_enumeration(missing_domains),
-      " not found in sdtm object!",
-      silent = silent
-    )
-    domain <- intersect(domain, names(obj$domains))
-  }
 
   purrr::reduce(
     obj$domains[domain],

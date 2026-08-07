@@ -91,8 +91,9 @@ test_that("domain() handles input validation correctly", {
   )
   expect_error(
     domain(test_data, 123),
-    "name must be a string value"
+    "name must be a character value"
   )
+
   expect_error(
     domain(test_data, character(0)),
     "name must be a single value"

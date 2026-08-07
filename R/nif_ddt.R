@@ -81,8 +81,9 @@ ddt_standard_fields <- tibble::tribble(
 #' @examples
 #' ddt(examplinib_sad_nif)
 ddt <- function(obj, silent = NULL) {
-  # validate inputs
+  # input validation
   validate_nif(obj)
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   out <- ddt_standard_fields
 
@@ -92,18 +93,6 @@ ddt <- function(obj, silent = NULL) {
     as.data.frame() |>
     distinct(.data$ANALYTE, .data$CMT, .data$EVID) |>
     arrange(.data$CMT) |>
-
-    # mutate(TYPE = case_match(
-    #   .data$EVID,
-    #   0 ~ "observation",
-    #   1 ~ "administration"
-    # )) |>
-
-    # mutate(TYPE = recode_values(
-    #   .data$EVID,
-    #   0 ~ "observation",
-    #   1 ~ "administration"
-    # )) |>
 
     mutate(TYPE = case_when(
       .data$EVID == 0 ~ "observation",
@@ -165,29 +154,23 @@ ddt <- function(obj, silent = NULL) {
 #' @return A data frame.
 #' @export
 add_dd <- function(
-  obj, name, definition, type, description, unit = NA_character_, source = ""
+  obj,
+  name,
+  definition,
+  type,
+  description,
+  unit = NA_character_,
+  source = ""
 ) {
-  # validate input
-  ddt_fields <- c("name", "definition", "type", "description", "unit", "source")
-  if (!inherits(obj, "data.frame")) {
-    stop("obj must be a data frame")
-  }
-
-  missing_fields <- setdiff(ddt_fields, names(obj))
-  if (length(missing_fields) > 0) {
-    stop(paste0(
-      "missing fields in ddt: ", nice_enumeration(missing_fields)
-    ))
-  }
-
-  validate_char_param(name, "name")
-  validate_char_param(definition, "definition")
-  validate_char_param(type, "type")
-  validate_char_param(description, "description")
-  if (!is.na(unit)) {
-    validate_char_param(unit, "unit")
-  }
-  validate_char_param(source, "source")
+  # input validation
+  validate_df_argument(obj,
+    expected_fields = c("name", "definition", "type", "description", "unit", "source"))
+  validate_argument(name, "character")
+  validate_argument(definition, "character")
+  validate_argument(type, "character")
+  validate_argument(description, "character")
+  validate_argument(unit, "character", allow_na = TRUE)
+  validate_argument(source, "character")
 
   bind_rows(
     obj,

@@ -14,25 +14,21 @@
 #' @import readr
 #' @import haven
 #' @export
-read_sdtm <- function(data_path,
-                      domain = NULL,
-                      format = "sas", delim = ",", ...) {
+read_sdtm <- function(
+    data_path,
+    domain = NULL,
+    format = "sas",
+    delim = ",",
+    ...
+) {
   # validate input
-  validate_char_param(data_path, "data_path")
-  validate_char_param(domain, "domain", allow_null = TRUE,
-                      allow_multiple = TRUE)
-  validate_char_param(format, "format")
+  validate_argument(data_path, "character")
+  validate_argument(domain, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(format, "character", values = c("sas", "xpt", "csv", "xlsx"))
 
   # Validate data_path
   if (!dir.exists(data_path)) {
     stop("data_path does not exist: ", data_path, call. = FALSE)
-  }
-
-  # Validate format
-  valid_formats <- c("sas", "xpt", "csv", "xlsx")
-  if (!format %in% valid_formats) {
-    stop("format must be one of: ", paste(valid_formats, collapse = ", "),
-         call. = FALSE)
   }
 
   # Get file extension based on format

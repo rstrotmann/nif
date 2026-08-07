@@ -16,5 +16,6 @@ Baseline details for specific subjects
 }
 \examples{
 subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
+subject_info(examplinib_fe, subjects(examplinib_fe)[1:3, "USUBJID"])
 }
 \keyword{internal}

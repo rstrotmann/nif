@@ -8,7 +8,7 @@ test_that("read_sdtm validates inputs correctly", {
   # Test invalid format
   expect_error(
     read_sdtm(tempdir(), format = "invalid"),
-    "format must be one of: sas, xpt, csv, xlsx"
+    "format must be sas, xpt, csv or xlsx!"
   )
 
   # Test invalid domain
@@ -18,7 +18,7 @@ test_that("read_sdtm validates inputs correctly", {
   )
   expect_error(
     read_sdtm(tempdir(), domain = 123),
-    "domain must be a string value"
+    "domain must be a character value"
   )
 })
 

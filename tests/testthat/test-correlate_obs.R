@@ -87,7 +87,7 @@ test_that("correlate_obs validates time_field parameter", {
   # Test invalid time_field value
   expect_error(
     correlate_obs(test_nif, "DRUG", "METAB", time_field = "INVALID"),
-    "time_field.*must be one of"
+    "time_field must be DTC or TIME!"
   )
 
   # Test missing TIME field

@@ -118,10 +118,8 @@ validate_sdtm <- function(
   obj,
   expected_domains = NULL
 ) {
-  validate_char_param(expected_domains, "expected_domains",
-    allow_null = TRUE,
-    allow_multiple = TRUE
-  )
+  validate_argument(expected_domains, "character", allow_null = TRUE,
+                    allow_multiple = TRUE)
 
   if (!inherits(obj, "sdtm")) {
     stop("Input must be a sdtm object")
@@ -137,71 +135,6 @@ validate_sdtm <- function(
       ))
     }
   }
-}
-
-
-
-#' Generic function parameter validation
-#'
-#' @param type Parameter type (string, logical or numeric)
-#' @param param The parameter to be tested.
-#' @param param_name The parameter name as character.
-#' @param allow_null Allow NULL values, as logical.
-#' @param allow_empty Allow empty parameter, as logical.
-#' @param allow_multiple Allow vector of the specified type, as logical.
-#' @param allow_na Allow NA value, as logical.
-#'
-#' @returns Nothing or stop.
-#' @noRd
-validate_param <- function(
-  type = c("character", "string", "logical", "numeric"),
-  param,
-  param_name,
-  allow_null = FALSE,
-  allow_empty = FALSE,
-  allow_multiple = FALSE,
-  allow_na = FALSE
-) {
-  # Validate type parameter
-  type <- match.arg(type)
-
-  # Check for NULL first
-  if (is.null(param)) {
-    if (allow_null) {
-      return(invisible(NULL))
-    } else {
-      stop(paste0(param_name, " must not be NULL"))
-    }
-  }
-
-  # Check for NA values
-  if (!allow_na && any(is.na(param))) {
-    stop(paste0(param_name, " must not contain NA"))
-  }
-
-  # Type checking
-  if ((type == "string" && !is.character(param)) ||
-        (type == "character" && !is.character(param)) ||
-        (type == "logical" && !is.logical(param)) ||
-        (type == "numeric" && !is.numeric(param))) {
-    stop(paste0(param_name, " must be a ", type, " value"))
-  }
-
-  # Length checking
-  if (length(param) != 1 && !allow_multiple) {
-    stop(paste0(param_name, " must be a single value"))
-  }
-
-  # Empty string check (only for character types)
-  if (
-    (type == "string" || type == "character") &&
-      !allow_empty && length(param) > 0 &&
-      any(nchar(param) == 0)
-  ) {
-    stop(paste0(param_name, " must be a non-empty string"))
-  }
-
-  invisible(NULL)
 }
 
 
@@ -325,90 +258,6 @@ validate_df_argument <- function(
 }
 
 
-#' Validate character parameter
-#'
-#' @param param The parameter to be tested.
-#' @param param_name The parameter name as character.
-#' @param allow_null Allow NULL values, as logical.
-#' @param allow_empty Allow empty parameter, as logical.
-#' @param allow_multiple Allow vector of the specified type, as logical.
-#'
-#' @returns Nothing or stop.
-#' @noRd
-validate_char_param <- function(
-  param,
-  param_name,
-  allow_null = FALSE,
-  allow_empty = FALSE,
-  allow_multiple = FALSE
-) {
-  validate_param(
-    "string",
-    param,
-    param_name,
-    allow_null,
-    allow_empty,
-    allow_multiple
-  )
-}
-
-#' Validate logical parameter
-#'
-#' @param param The parameter to be tested.
-#' @param param_name The parameter name as character.
-#' @param allow_null Allow NULL values, as logical.
-#' @param allow_empty Allow empty parameter, as logical.
-#' @param allow_multiple Allow vector of the specified type, as logical.
-#'
-#' @returns Nothing or stop.
-#' @noRd
-validate_logical_param <- function(
-  param,
-  param_name,
-  allow_null = FALSE,
-  allow_empty = FALSE,
-  allow_multiple = FALSE
-) {
-  validate_param(
-    "logical",
-    param,
-    param_name,
-    allow_null,
-    allow_empty,
-    allow_multiple
-  )
-}
-
-#' Validate numeric parameter
-#'
-#' @param param The parameter to be tested.
-#' @param param_name The parameter name as character.
-#' @param allow_null Allow NULL values, as logical.
-#' @param allow_empty Allow empty parameter, as logical.
-#' @param allow_multiple Allow vector of the specified type, as logical.
-#' @param allow_na Allow NA values, as logical.
-#'
-#' @returns Nothing or stop.
-#' @noRd
-validate_numeric_param <- function(
-  param,
-  param_name,
-  allow_null = FALSE,
-  allow_empty = FALSE,
-  allow_multiple = FALSE,
-  allow_na = FALSE
-) {
-  validate_param(
-    "numeric",
-    param,
-    param_name,
-    allow_null,
-    allow_empty,
-    allow_multiple,
-    allow_na
-  )
-}
-
 #' Validate fields in a data frame
 #'
 #' @param obj A data frame.
@@ -494,16 +343,12 @@ validate_domain_param <- function(obj) {
 #' @returns Validated testcode(s) as character.
 validate_testcd <- function(sdtm, testcd, domain = NULL) {
   # input validation
-  validate_char_param(domain, "domain", allow_null = TRUE)
-  validate_char_param(testcd, "testcd", allow_multiple = TRUE)
+  validate_argument(domain, "character", allow_null = TRUE)
+  validate_argument(testcd, "character", allow_multiple = TRUE)
+  validate_sdtm(sdtm, domain)
 
   if (!is.null(domain)) {
     domain <- tolower(domain)
-    if (!domain %in% names(sdtm$domains)) {
-      stop(paste0(
-        "Domain ", domain, " not found in sdtm object!"
-      ))
-    }
 
     temp <- domain(sdtm, domain)
     testcd_field <- paste0(toupper(domain), "TESTCD")

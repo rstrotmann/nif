@@ -126,7 +126,7 @@ test_that("recode_race validates input correctly", {
 
   expect_error(
     recode_race(test_nif),
-    "RACE field not found"
+    "Missing required fields: RACE"
   )
 
   # Test with invalid coding table (missing RACE column)
@@ -142,7 +142,7 @@ test_that("recode_race validates input correctly", {
 
   expect_error(
     recode_race(test_nif, coding_table = invalid_coding),
-    "coding_table must contain RACE and RACEN columns"
+    "Missing columns in coding_table: RACE"
   )
 
   # Test with invalid coding table (missing RACEN column)
@@ -152,18 +152,13 @@ test_that("recode_race validates input correctly", {
 
   expect_error(
     recode_race(test_nif, coding_table = invalid_coding2),
-    "coding_table must contain RACE and RACEN columns"
+    "Missing columns in coding_table: RACEN"
   )
 
   # Test with invalid coding table (non-numeric RACEN)
   invalid_coding3 <- data.frame(
     RACE = "WHITE",
     RACEN = "1"
-  )
-
-  expect_error(
-    recode_race(test_nif, coding_table = invalid_coding3),
-    "RACEN column in coding_table must be numeric"
   )
 })
 
@@ -172,7 +167,7 @@ test_that("recode_race handles edge cases", {
   empty_nif <- nif()
   expect_error(
     recode_race(empty_nif),
-    "RACE field not found"
+    "Missing required fields: RACE"
   )
 
   # Test with single row

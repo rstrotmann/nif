@@ -24,7 +24,7 @@ test_that("plot.domain validates input parameters correctly", {
   # Test with invalid testcd parameter
   expect_error(
     plot.domain(test_dm, testcd = 123),
-    "testcd must be a string value"
+    "testcd must be a character value"
   )
 
   # Test with invalid points parameter
@@ -48,13 +48,13 @@ test_that("plot.domain validates input parameters correctly", {
   # Test with invalid color parameter
   expect_error(
     plot.domain(test_dm, color = 123),
-    "color must be a string value"
+    "color must be a character value"
   )
 
   # Test with color field not in domain
   expect_error(
     plot.domain(test_dm, color = "NONEXISTENT"),
-    "Color field NONEXISTENT not in domain!"
+    "Missing columns in x: NONEXISTENT"
   )
 })
 

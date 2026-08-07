@@ -151,7 +151,7 @@ test_that("add_baseline validates inputs correctly", {
   # Test invalid domain
   expect_error(
     add_baseline(test_nif, test_sdtm, "invalid_domain", "WEIGHT"),
-    "Domain invalid_domain not found in sdtm object!"
+    "Expected domain missing in sdtm object: invalid_domain"
   )
 
   # Test invalid testcd

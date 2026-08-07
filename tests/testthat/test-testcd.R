@@ -178,10 +178,9 @@ test_that("testcd() handles domain parameter correctly", {
   expect_equal(sort(result_multi$DOMAIN), c("DM", "VS"))
 
   # Test with non-existent domain
-  expect_message(
+  expect_error(
     result_nonexistent <- testcd(sdtm_obj, domain = "NONEXISTENT", silent = FALSE),
-    "Domain nonexistent not found in sdtm object")
-  expect_equal(nrow(result_nonexistent), 0)
+    "Expected domain missing in sdtm object: nonexistent")
 })
 
 
@@ -289,12 +288,12 @@ test_that("testcd() handles domain parameter validation", {
   # Test with invalid domain parameter types
   expect_error(
     testcd(sdtm_obj, domain = 123),
-    "domain.*string"
+    "domain must be a character value"
   )
 
   expect_error(
     testcd(sdtm_obj, domain = list("dm")),
-    "domain.*string"
+    "domain must be a character value"
   )
 })
 

@@ -19,19 +19,19 @@ test_that("pb_write.sdtm validates inputs correctly", {
   # Test invalid board parameter
   expect_error(
     pb_write.sdtm(test_sdtm, board = 123),
-    "board must be a string value"
+    "board must be a character value"
   )
 
   # Test invalid name parameter
   expect_error(
     pb_write.sdtm(test_sdtm, name = 456),
-    "name must be a string value"
+    "name must be a character value"
   )
 
   # Test invalid title parameter
   expect_error(
     pb_write.sdtm(test_sdtm, title = 789),
-    "title must be a string value"
+    "title must be a character value"
   )
 })
 
@@ -312,13 +312,13 @@ test_that("pb_read_nif validates inputs correctly", {
   # Test invalid board parameter (non-character)
   expect_error(
     pb_read_nif("test_pin", board = 123),
-    "board must be a string value"
+    "board must be a character value"
   )
 
   # Test invalid name parameter (non-character)
   expect_error(
     pb_read_nif(name = 456, board = test_board),
-    "name must be a string value"
+    "name must be a character value"
   )
 
   # Test missing name parameter

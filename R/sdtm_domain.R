@@ -10,7 +10,7 @@
 domain <- function(obj, name) {
   # validate input
   validate_sdtm(obj)
-  validate_char_param(name, "name")
+  validate_argument(name, "character")
 
   # Normalize domain name to lowercase
   name <- tolower(name)
@@ -211,17 +211,12 @@ plot.domain <- function(
 ) {
   # input validation
   validate_domain_param(x)
-  validate_char_param(testcd, "testcd", allow_null = TRUE)
-  validate_logical_param(points, "points")
-  validate_logical_param(lines, "lines")
-  validate_logical_param(legend, "legend")
-  validate_char_param(color, "color", allow_null = TRUE)
-
-  if (!is.null(color)) {
-    if (!color %in% names(x)) {
-      stop(paste0("Color field ", color, " not in domain!"))
-    }
-  }
+  validate_argument(testcd, "character", allow_null = TRUE)
+  validate_argument(points, "logical")
+  validate_argument(lines, "logical")
+  validate_argument(legend, "logical")
+  validate_argument(color, "character", allow_null = TRUE)
+  validate_df_argument(x, expected_fields = color)
 
   # fields
   domain <- toupper(unique(x$DOMAIN))

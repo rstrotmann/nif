@@ -635,10 +635,11 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' @keywords internal
 lubrify_dates <- function(obj, col = NULL) {
   # input validation
-  if (!is.data.frame(obj)) {
-    stop("obj must be a data frame!")
-  }
-  validate_char_param(col, "col", allow_multiple = TRUE, allow_null = TRUE)
+  # if (!is.data.frame(obj)) {
+  #   stop("obj must be a data frame!")
+  # }
+  validate_df_argument(obj)
+  validate_argument(col, "character", allow_multiple = TRUE, allow_null = TRUE)
 
   if (!is.null(col)) {
     missing_columns <- setdiff(col, names(obj))
@@ -862,7 +863,6 @@ decompose_dtc <- function(obj, dtc_field) {
   if (!is.data.frame(obj)) {
     stop("obj must be a data frame!")
   }
-  # validate_char_param(dtc_field, "dtc_field", allow_multiple = TRUE)
   validate_argument(dtc_field, "character", allow_multiple = TRUE)
 
   missing_fields <- setdiff(dtc_field, names(obj))
@@ -1456,20 +1456,16 @@ race_coding <- tibble::tribble(
 #' @examples
 #' nif::race_coding
 #' head(recode_race(examplinib_sad_nif))
-recode_race <- function(obj, coding_table = NULL, silent = NULL) {
+recode_race <- function(
+    obj,
+    coding_table = NULL,
+    silent = NULL
+) {
   # validate inputs
-  validate_nif(obj)
-  validate_logical_param(silent, "silent", allow_null = TRUE)
-
-  # validate coding table
-  if (!is.null(coding_table)) {
-    if (!all(c("RACE", "RACEN") %in% names(coding_table))) {
-      stop("coding_table must contain RACE and RACEN columns")
-    }
-    if (!is.numeric(coding_table$RACEN)) {
-      stop("RACEN column in coding_table must be numeric")
-    }
-  }
+  validate_nif(obj, fields = "RACE")
+  validate_df_argument(coding_table, allow_null = TRUE,
+                       expected_fields = c("RACE", "RACEN"))
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   if (!"RACE" %in% names(obj)) {
     stop("RACE field not found")

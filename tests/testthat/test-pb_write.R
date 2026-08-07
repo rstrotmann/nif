@@ -37,25 +37,25 @@ test_that("pb_write.nif validates inputs correctly", {
   # Test invalid board parameter
   expect_error(
     pb_write.nif(test_nif, board = 123),
-    "board must be a string value"
+    "board must be a character value"
   )
 
   # Test invalid name parameter
   expect_error(
     pb_write.nif(test_nif, name = 456),
-    "name must be a string value"
+    "name must be a character value"
   )
 
   # Test invalid title parameter
   expect_error(
     pb_write.nif(test_nif, title = 789),
-    "title must be a string value"
+    "title must be a character value"
   )
 
   # Test invalid dco parameter
   expect_error(
     pb_write.nif(test_nif, dco = 123),
-    "dco must be a string value"
+    "dco must be a character value"
   )
 
   # Test invalid force parameter

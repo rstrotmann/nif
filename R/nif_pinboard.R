@@ -8,6 +8,10 @@
 #' @importFrom pins board_folder
 #' @noRd
 get_pinboard <- function(board = NULL) {
+  # input validation
+  validate_argument(board, "character", allow_null = TRUE)
+
+  # business logic
   if (is.null(board)) {
     board <- nif_option_value("pinboard")
     if (is.na(board) || is.null(board) || board == "") {
@@ -54,6 +58,10 @@ get_pinboard <- function(board = NULL) {
 #' @seealso [nif::nif_option()]
 #' @export
 nif_pinboard <- function(path = NULL) {
+  # input validation
+  validate_argument(path, "character", allow_null = TRUE)
+
+  # business logic
   if (!is.null(path)) {
     if (!path == "" && !dir.exists(path)) {
       stop(paste0(
@@ -117,16 +125,22 @@ pb_write <- function(
 #' @export
 #' @noRd
 pb_write.sdtm <- function(
-  obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
+  obj,
+  name = NULL,
+  board = NULL,
+  title = NULL,
+  dco = NULL,
+  force = FALSE,
   silent = NULL
 ) {
   # input validation
   validate_sdtm(obj)
-  validate_char_param(board, "board", allow_null = TRUE)
-  validate_char_param(name, "name", allow_null = TRUE)
-  validate_char_param(title, "title", allow_null = TRUE)
-  validate_char_param(dco, "dco", allow_null = TRUE)
-  validate_logical_param(force, "force")
+  validate_argument(name, "character", allow_null = TRUE)
+  validate_argument(board, "character", allow_null = TRUE)
+  validate_argument(title, "character", allow_null = TRUE)
+  validate_argument(dco, "character", allow_null = TRUE)
+  validate_argument(force, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   board_obj <- get_pinboard(board)
 
@@ -183,16 +197,22 @@ pb_write.sdtm <- function(
 #' @export
 #' @noRd
 pb_write.nif <- function(
-  obj, name = NULL, board = NULL, title = NULL, dco = NULL, force = FALSE,
+  obj,
+  name = NULL,
+  board = NULL,
+  title = NULL,
+  dco = NULL,
+  force = FALSE,
   silent = NULL
 ) {
   # input validation
   validate_nif(obj)
-  validate_char_param(board, "board", allow_null = TRUE)
-  validate_char_param(name, "name", allow_null = TRUE)
-  validate_char_param(title, "title", allow_null = TRUE)
-  validate_char_param(dco, "dco", allow_null = TRUE)
-  validate_logical_param(force, "force")
+  validate_argument(name, "character", allow_null = TRUE)
+  validate_argument(board, "character", allow_null = TRUE)
+  validate_argument(title, "character", allow_null = TRUE)
+  validate_argument(dco, "character", allow_null = TRUE)
+  validate_argument(force, "logical")
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   board_obj <- get_pinboard(board)
 
@@ -244,8 +264,8 @@ pb_write.nif <- function(
 #' @export
 pb_read_sdtm <- function(name, board = NULL) {
   # input validation
-  validate_char_param(board, "board", allow_null = TRUE)
-  validate_char_param(name, "name")
+  validate_argument(name, "character")
+  validate_argument(board, "character", allow_null = TRUE)
 
   board_obj <- get_pinboard(board)
 
@@ -271,8 +291,8 @@ pb_read_sdtm <- function(name, board = NULL) {
 #' @export
 pb_read_nif <- function(name, board = NULL) {
   # input validation
-  validate_char_param(board, "board", allow_null = TRUE)
-  validate_char_param(name, "name")
+  validate_argument(name, "character")
+  validate_argument(board, "character", allow_null = TRUE)
 
   board_obj <- get_pinboard(board)
 
@@ -297,9 +317,13 @@ pb_read_nif <- function(name, board = NULL) {
 #' @return The board folder, defaults to the respective nif_option setting.
 #' @importFrom pins board_folder pin_search
 #' @noRd
-pb_list_object <- function(board = NULL, object_type) {
+pb_list_object <- function(
+    board = NULL,
+    object_type
+) {
   # input validation
-  validate_char_param(board, "board", allow_null = TRUE)
+  validate_argument(board, "character", allow_null = TRUE)
+  validate_argument(object_type, "character", value = c("sdtm", "nif"))
 
   board_obj <- get_pinboard(board)
   temp <- pin_search(board_obj)

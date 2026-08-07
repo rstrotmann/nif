@@ -32,31 +32,28 @@ correlate_obs <- function(
   time_field = "TIME",
   duplicate_function = mean
 ) {
-  # validate input
+  # input validation
   validate_nif(obj)
 
   if (!"REF" %in% names(obj)) {
     obj <- arrange_and_add_ref(obj)
   }
+
   validate_analyte(
     obj, indep_analyte,
     allow_multiple = FALSE, allow_null = FALSE
   )
+
   validate_analyte(
     obj, dep_analyte,
     allow_multiple = TRUE, allow_null = FALSE
   )
-  validate_numeric_param(window, "window")
+
+  validate_argument(window, "numeric")
 
   # validate time parameter
-  validate_char_param(time_field, "time_field")
-  allowed_time_fields <- c("DTC", "TIME")
-  if (!time_field %in% allowed_time_fields) {
-    stop(
-      "'time_field' must be one of: ",
-      nice_enumeration(allowed_time_fields, conjunction = "or")
-    )
-  }
+  validate_argument(time_field, "character", values = c("DTC", "TIME"))
+
   if (!time_field %in% names(obj)) {
     stop("Time field '", time_field, "' not found in input!")
   }

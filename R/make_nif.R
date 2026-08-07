@@ -68,11 +68,15 @@ guess_lbspec <- function(lb) {
 #' @examples
 #' limit(examplinib_poc_nif)
 #'
-limit <- function(obj, individual = TRUE, keep_no_obs_sbs = FALSE) {
+limit <- function(
+    obj,
+    individual = TRUE,
+    keep_no_obs_sbs = FALSE
+) {
   # Input validation
   validate_nif(obj)
-  validate_logical_param(individual, "individual")
-  validate_logical_param(keep_no_obs_sbs, "keep_no_obs_sbs")
+  validate_argument(individual, "logical")
+  validate_argument(keep_no_obs_sbs, "logical")
 
   # Check for required fields
   required_fields <- c("DTC", "ID", "EVID")

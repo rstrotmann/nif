@@ -201,22 +201,22 @@ test_that("add_time_window_flag handles specified analyte", {
 
 test_that("add_time_window_flag handles missing window fields", {
   test_data <- tibble::tribble(
-    ~USUBJID,    ~DTC,              ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV,  ~ID, ~TIME, ~AMT, ~CMT,
-    "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     100,  1,
-    "SUBJ-001",  "2020-01-01 08:00:00", 0,  "DRUG",  "DRUG",   0,   0,     NA,   1,   0,     0,    2
-  ) %>%
+       ~USUBJID,                  ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~ID, ~TIME, ~AMT, ~CMT,
+     "SUBJ-001", "2020-01-01 08:00:00",     1,  "DRUG",   "DRUG",    0,      0,  NA,   1,     0,  100,    1,
+     "SUBJ-001", "2020-01-01 08:00:00",     0,  "DRUG",   "DRUG",    0,      0,  NA,   1,     0,    0,    2
+     ) |>
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
 
   # Window missing BEFORE field
   window <- tibble::tribble(
-    ~NTIME, ~AFTER,
-    2, 30
-  )
+     ~NTIME, ~AFTER,
+          2,     30
+     )
 
   expect_error(
     add_time_window_flag(test_data, window, silent = TRUE),
-    "Missing.*field.*in 'window'.*BEFORE"
+    "Missing columns in window: BEFORE"
   )
 })
 
@@ -280,7 +280,7 @@ test_that("add_time_window_flag handles invalid analyte", {
 
   expect_error(
     add_time_window_flag(test_data, window, analyte = "INVALID"),
-    "analyte INVALID not found in nif object"
+    "Analyte INVALID not found in nif object!"
   )
 })
 
@@ -295,7 +295,7 @@ test_that("add_time_window_flag handles non-data.frame window", {
 
   expect_error(
     add_time_window_flag(test_data, window = "not a data frame"),
-    "'window' must be a data frame"
+    "window must be a data.frame"
   )
 })
 

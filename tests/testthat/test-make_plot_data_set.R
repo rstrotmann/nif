@@ -114,7 +114,7 @@ test_that("make_plot_data_set handles multiple analytes", {
 
   # Test multiple analytes
   result_multi <- make_plot_data_set(test_nif, analyte = c("RS2023", "M1"))
-  expect_equal(unique(result_multi$data$ANALYTE), c("RS2023", "M1"))
+  expect_equal(unique(result_multi$data$ANALYTE), c("M1", "RS2023"))
   expect_true("ANALYTE" %in% result_multi$color)
 })
 

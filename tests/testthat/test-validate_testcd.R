@@ -125,11 +125,11 @@ test_that("validate_testcd errors for non-existent domain", {
   # Test with non-existent domain
   expect_error(
     validate_testcd(test_sdtm, "RS2023", "lb"),
-    "Domain lb not found in sdtm object!"
+    "Expected domain missing in sdtm object: lb"
   )
   expect_error(
     validate_testcd(test_sdtm, "RS2023", "ae"),
-    "Domain ae not found in sdtm object!"
+    "Expected domain missing in sdtm object: ae"
   )
 })
 
@@ -233,11 +233,11 @@ test_that("validate_testcd handles input validation correctly", {
   # Test with invalid testcd parameter
   expect_error(
     validate_testcd(test_sdtm, 123),
-    "must be a string value"
+    "testcd must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, TRUE),
-    "must be a string value"
+    "testcd must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, NULL),
@@ -247,11 +247,11 @@ test_that("validate_testcd handles input validation correctly", {
   # Test with invalid domain parameter
   expect_error(
     validate_testcd(test_sdtm, "RS2023", 123),
-    "must be a string value"
+    "domain must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, "RS2023", TRUE),
-    "must be a string value"
+    "domain must be a character value"
   )
   expect_error(
     validate_testcd(test_sdtm, "RS2023", c("pc", "dm")),

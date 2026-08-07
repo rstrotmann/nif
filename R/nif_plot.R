@@ -16,8 +16,7 @@
 #'   * 'group', the grouping variable
 #'   * 'color', the coloring variable
 #'   * 'facet', the faceting variable
-#' @export
-#' @keywords internal
+#' @noRd
 #'
 #' @examples
 #' make_plot_data_set(examplinib_sad_nif)
@@ -37,10 +36,8 @@ make_plot_data_set <- function(
   facet = "DOSE",
   na_value = NA
 ) {
-  # validate time parameter
-  if (!time %in% c("TIME", "NTIME", "TAFD", "TAD")) {
-    stop("time must be either 'TIME', 'NTIME', 'TAFD' or 'TAD'!")
-  }
+  # input validation
+  validate_argument(time, "character", values = c("TIME", "NTIME", "TAFD", "TAD"))
 
   nif <- nif |>
     ensure_analyte() |>
@@ -86,13 +83,16 @@ make_plot_data_set <- function(
 
   out <- out |>
     index_dosing_interval() |>
-
-    # mutate(DI = case_match(.data$EVID, 1 ~ NA, .default = .data$DI))
-    # mutate(DI = recode_values(.data$EVID, 1 ~ NA, default = .data$DI))
     mutate(DI = case_when(.data$EVID == 1 ~ NA, .default = .data$DI))
 
-  if (cfb == TRUE)
+  if (cfb == TRUE) {
+    if (!"DVCFB" %in% names(out)) {
+      out <- out |>
+        derive_cfb()
+    }
+
     out <- mutate(out, DV = .data$DVCFB)
+  }
 
   if (dose_norm == TRUE)
     out <- mutate(out, DV = .data$DV / .data$DOSE)
@@ -100,7 +100,7 @@ make_plot_data_set <- function(
   out <- out |>
     filter(.data$active_time >= min_time) |>
     filter(.data$active_time <= max_time) |>
-    group_by("ID", "ANALYTE") |>
+    group_by(across(c("ID", "ANALYTE"))) |>
     mutate(n_obs = sum(.data$EVID == 0)) |>
     ungroup() |>
     as.data.frame()
@@ -110,7 +110,7 @@ make_plot_data_set <- function(
   }
 
   out <- out |>
-    arrange("ID", "DOSE")
+    arrange(.data$ID, .data$DOSE)
 
   if (length(color) != 0) {
     out <- tidyr::unite(out, "COLOR", all_of(!!color), sep = "-",
@@ -131,7 +131,8 @@ make_plot_data_set <- function(
   }
 
   out <- out |>
-    arrange("ID", "COLOR", "DOSE", "FACET")
+    # arrange(.data$ID, .data$COLOR, .data$DOSE, .data$FACET)
+    arrange(across(any_of(c("ID", "COLOR", "DOSE", "FACET"))))
 
   list(data = out, group = "ID", color = color, facet = facet)
 }
@@ -173,11 +174,12 @@ make_mean_plot_data_set <- function(data_set) {
 #' @param color The column(s) to be used for coloring.
 #' @param min_time The minimal time in units of the selected time field, as
 #'   numeric.
-#' @param max_time The minimal time in units of the selected time field, as
+#' @param max_time The maximal time in units of the selected time field, as
 #'   numeric.
 #' @param cfb Plot change from baseline, as logical.
 #' @param dose_norm Dose-normalized values, as logical.
-#' @param facet The column(s) to be used for faceting.
+#' @param facet The column to be used for faceting. Only single values are
+#'   allowed.
 #' @param admin The analyte to be plotted as administration markers, as
 #'   character.
 #' @param points Plot points, as logical.
@@ -260,11 +262,30 @@ plot.nif <- function(
   }
 
   # input validation
-  validate_char_param(analyte, "analyte", allow_null = TRUE,
-                      allow_multiple = TRUE)
-  validate_numeric_param(dose, "dose", allow_null = TRUE,
-                         allow_multiple = TRUE)
+  validate_nif(x)
+  validate_argument(analyte, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(dose, "numeric", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(time, "character", values=c("TIME", "NTIME", "TAD", "TAFD"))
+  validate_argument(color, "character", allow_null = TRUE, allow_multiple = TRUE)
+  validate_argument(facet, "character", allow_null = TRUE)
+  validate_argument(min_time, "numeric", allow_null = TRUE)
+  validate_argument(max_time, "numeric", allow_null = TRUE)
+  validate_argument(cfb, "logical")
+  validate_argument(dose_norm, "logical")
+  validate_argument(admin, "character" , allow_null = TRUE)
+  validate_argument(points, "logical")
+  validate_argument(lines, "logical")
+  validate_argument(log, "logical")
+  validate_argument(mean, "logical")
+  validate_argument(title, "character", allow_null = TRUE)
+  validate_argument(legend, "logical")
+  validate_argument(size, "numeric")
+  validate_argument(scales, "character")
+  validate_argument(alpha, "numeric")
+  validate_argument(caption, "character", allow_null = TRUE)
+  validate_argument(ribbon, "logical")
 
+  # business logic
   plot_data_set <- make_plot_data_set(
     x, analyte, dose, time, color, min_time, max_time, cfb, dose_norm, facet,
     na_value = na_value
@@ -278,13 +299,6 @@ plot.nif <- function(
   plot_data <- plot_data_set$data
 
   if (isTRUE(log)) {
-    # plot_data <- mutate(plot_data, DV = case_match(.data$DV, 0 ~ NA,
-    #                                                .default = .data$DV))
-
-    # plot_data <- mutate(
-    #   plot_data, DV = recode_values(.data$DV, 0 ~ NA, default = .data$DV)
-    # )
-
     plot_data <- mutate(
       plot_data, DV = case_when(.data$DV == 0 ~ NA, .default = .data$DV)
     )
@@ -317,8 +331,7 @@ plot.nif <- function(
     caption <- paste0("dataset: ", hash(x))
   }
 
-
-  p <- plot_data |>
+    p <- plot_data |>
     filter(.data$EVID == 0) |>
     filter(!is.na(.data$DV))
 
@@ -326,7 +339,7 @@ plot.nif <- function(
     p <- dplyr::bind_rows(p, dplyr::mutate(admin_data, DV = NA))
 
   p <- p |>
-    arrange("GROUP", "active_time", -.data$EVID) |>
+    arrange(.data$GROUP, .data$active_time, -.data$EVID) |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time,
       y = .data$DV,

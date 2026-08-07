@@ -337,8 +337,6 @@ derive_baseline <- function(
   }
   validate_analyte(obj, analyte)
 
-  # validate_numeric_param(default_baseline, "default_baseline", allow_na = TRUE)
-
   # Validate data types
   if (!is.numeric(obj$DV)) {
     stop("DV column must contain numeric values")

@@ -105,10 +105,10 @@ test_that("lubrify_dates handles all supported DTC formats", {
 })
 
 test_that("lubrify_dates throws error for non-data frame input", {
-  expect_error(lubrify_dates("not a data frame"), "obj must be a data frame!")
-  expect_error(lubrify_dates(123), "obj must be a data frame!")
-  expect_error(lubrify_dates(list()), "obj must be a data frame!")
-  expect_error(lubrify_dates(NULL), "obj must be a data frame!")
+  expect_error(lubrify_dates("not a data frame"), "obj must be a data.frame")
+  expect_error(lubrify_dates(123), "obj must be a data.frame")
+  expect_error(lubrify_dates(list()), "obj must be a data.frame")
+  expect_error(lubrify_dates(NULL), "obj must not be NULL")
 })
 
 test_that("lubrify_dates throws error for missing columns when col is specified", {
