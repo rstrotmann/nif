@@ -300,7 +300,7 @@ test_that("nca() duplicate handling - resolve", {
         result <- nca(test_nif, analyte = "DRUG", duplicates = "resolve", silent = FALSE),
         "Too few points for half-life calculation"
       ),
-      "2 duplicate observations for DRUG resolved"
+      "2 duplicate observations for DRUG resolved, applying mean"
     )
   )
 

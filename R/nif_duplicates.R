@@ -251,6 +251,8 @@ gather_duplicates <- function(
   na_rm = TRUE,
   silent = NULL
 ) {
+  dup_fun_name <- deparse(substitute(duplicate_function))
+
   # validate input
   validate_argument(id_field, "character", allow_multiple = TRUE)
   validate_argument(na_rm, "logical")
@@ -292,7 +294,7 @@ gather_duplicates <- function(
   conditional_cli(
     cli_alert_info(paste0(
       n_dupl, " duplicate observation gathered using '",
-      deparse(substitute(duplicate_function)), "'!"
+      dup_fun_name, "'!"
     )),
     silent = silent
   )

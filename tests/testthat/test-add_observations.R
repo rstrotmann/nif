@@ -636,7 +636,7 @@ test_that("add_observation resolve reports duplicate resolution", {
               ntime_method = "ELTM",
               silent = FALSE
             ),
-          "duplicate observations for A"
+          "resolved, applying mean"
         )
       )
     )

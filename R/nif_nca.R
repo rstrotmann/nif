@@ -42,6 +42,8 @@ nca <- function(
     duplicate_function = mean,
     silent = NULL
     ) {
+  dup_fun_name <- deparse(substitute(duplicate_function))
+
   # input validation
   validate_nif(nif)
   validate_argument(analyte, "character", allow_null = TRUE)
@@ -218,7 +220,7 @@ nca <- function(
           cli_alert_warning(paste0(
             n_dupl, " duplicate observations for ", current_analyte,
             " resolved, applying ",
-            function_name(duplicate_function)
+            dup_fun_name
           ))
         }),
         silent = silent

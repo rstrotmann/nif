@@ -817,6 +817,8 @@ add_observation <- function(
   na_to_zero = FALSE,
   imputation = imputation_rules_standard
 ) {
+  dup_fun_name <- deparse(substitute(duplicate_function))
+
   # validate inputs
   validate_nif(nif)
   validate_argument(domain, "character")
@@ -997,8 +999,7 @@ add_observation <- function(
           cli_alert_warning(paste0(
             n_dupl, " duplicate observations for ", testcd,
             " (analyte ", analyte, ") resolved, applying ",
-            # function_name(duplicate_function)
-            deparse(substitute(duplicate_function))
+            dup_fun_name
           ))
         }),
         silent = silent
