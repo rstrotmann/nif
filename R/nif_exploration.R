@@ -135,9 +135,16 @@ nif_plot_id <- function(
       )
   }
 
-  if (lines == TRUE)
-    p <- p +
-      ggplot2::geom_line()
+  # if (lines == TRUE)
+  #   p <- p +
+  #     ggplot2::geom_line()
+
+  if (isTRUE(lines)) {
+    counts <- dplyr::count(obs, .data$group)
+    if (any(counts$n > 1)) {
+      p <- p + ggplot2::geom_line()
+    }
+  }
 
   p <- p +
     ggplot2::geom_point(size = point_size) +
@@ -234,8 +241,12 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
       y = .data$AMT,
       group = interaction(.data$ID, .data$ANALYTE),
       color = .data$ANALYTE
-    )) +
-    ggplot2::geom_line() +
+    ))
+
+  p <- p +
+    ggplot2::geom_line()
+
+  p <- p +
     ggplot2::geom_point(size = point_size) +
     ggplot2::ylim(0, max_dose) +
     ggplot2::xlim(0, max_time) +
