@@ -135,14 +135,13 @@ nif_plot_id <- function(
       )
   }
 
-  # if (lines == TRUE)
-  #   p <- p +
-  #     ggplot2::geom_line()
-
   if (isTRUE(lines)) {
-    counts <- dplyr::count(obs, .data$group)
-    if (any(counts$n > 1)) {
-      p <- p + ggplot2::geom_line()
+    line_obs <- obs |>
+      dplyr::group_by(.data$group) |>
+      dplyr::filter(dplyr::n() > 1) |>
+      dplyr::ungroup()
+    if (nrow(line_obs) > 0) {
+      p <- p + ggplot2::geom_line(data = line_obs)
     }
   }
 
@@ -233,18 +232,26 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 
   admin <- x |>
     dplyr::filter(.data$EVID == 1) |>
-    mutate(active_time = .data[[time_field]])
+    mutate(
+      active_time = .data[[time_field]],
+      group = interaction(.data$ID, .data$ANALYTE)
+    )
 
   p <- admin |>
     ggplot2::ggplot(ggplot2::aes(
       x = .data$active_time,
       y = .data$AMT,
-      group = interaction(.data$ID, .data$ANALYTE),
+      group = .data$group,
       color = .data$ANALYTE
     ))
 
-  p <- p +
-    ggplot2::geom_line()
+  line_admin <- admin |>
+    dplyr::group_by(.data$group) |>
+    dplyr::filter(dplyr::n() > 1) |>
+    dplyr::ungroup()
+  if (nrow(line_admin) > 0) {
+    p <- p + ggplot2::geom_line(data = line_admin)
+  }
 
   p <- p +
     ggplot2::geom_point(size = point_size) +
