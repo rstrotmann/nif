@@ -11,31 +11,16 @@
 #' @export
 #'
 nif_viewer <- function(nif) {
-  # Input validation
-  if (!inherits(nif, "nif")) {
-    stop("Input must be a nif object")
-  }
-
-  # Check for required columns
-  required_cols <- c("ID", "TIME", "AMT", "DV", "EVID", "USUBJID", "ANALYTE",
-                     "PARENT")
-  missing_cols <- setdiff(required_cols, names(nif))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
-
-  # Validate data types
-  if (!is.numeric(nif$TIME) || !is.numeric(nif$AMT) || !is.numeric(nif$DV)) {
-    stop("TIME, AMT, and DV columns must be numeric")
-  }
-
-  if (!is.numeric(nif$EVID)) {
-    stop("EVID column must be numeric")
-  }
-
-  # Check for empty dataset
-  if (nrow(nif) == 0) {
-    stop("nif dataset is empty")
+  # input validation
+  required_fields <- c("ID", "TIME", "AMT", "DV", "EVID", "USUBJID", "ANALYTE",
+                       "PARENT")
+  validate_nif(nif, fields = required_fields)
+  numeric_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
+  wrong_type <- numeric_fields[lapply(nif[numeric_fields], is.numeric) == FALSE]
+  if (length(any(wrong_type) > 1)) {
+    stop(paste(
+      nice_enumeration(wrong_type), "must be numeric!"
+    ))
   }
 
   # Check for invalid values
@@ -43,30 +28,17 @@ nif_viewer <- function(nif) {
     warning("Dataset contains missing values in ID, TIME, or EVID columns")
   }
 
-  sbs <- nif |>
-    dplyr::distinct(.data$USUBJID) |>
-    dplyr::pull(.data$USUBJID)
+  sbs <- subjects(nif)$USUBJID
+  doses <- doses(nif)
+  analytes <- analytes(nif)
+  imps <- treatments(nif)
 
-  doses <- nif |>
-    dplyr::distinct(.data$AMT) |>
-    dplyr::arrange(.data$AMT) |>
-    dplyr::pull(.data$AMT) |>
-    as.character()
+  max_dose <- max(doses, na.rm = TRUE)
+  if (!is.finite(max_dose)) {
+    max_dose <- 1
+  }
 
-  analytes <- nif |>
-    as.data.frame() |>
-    dplyr::distinct(.data$ANALYTE) |>
-    dplyr::pull(.data$ANALYTE)
-
-  imps <- nif |>
-    as.data.frame() |>
-    distinct(.data$PARENT) |>
-    pull(.data$PARENT)
-
-  max_dose <- nif |>
-    dplyr::pull(.data$AMT) |>
-    max()
-
+  # user interface
   nif_viewer.ui <- shiny::fluidPage(
     title = "NIF viewer",
     shinyjs::useShinyjs(),
@@ -144,23 +116,62 @@ nif_viewer <- function(nif) {
   )
 
 
+  # server
   nif_viewer.server <- function(input, output, session) {
     current_nif <- reactiveVal(nif)
     current_sbs <- reactiveVal(sbs)
     current_analytes <- reactiveVal(analytes)
 
+    # max_time <- function() {
+    #   tryCatch({
+    #     if (input$timeselect == "indiv") {
+    #       return(
+    #         nif |>
+    #           dplyr::filter(.data$USUBJID == input$subject) |>
+    #           dplyr::pull(.data$TIME) |>
+    #           max()
+    #       )
+    #     } else if (input$timeselect == "global") {
+    #       return(max(nif$TIME))
+    #     } else if (input$timeselect == "custom") {
+    #       if (is.na(input$maxtime) || input$maxtime <= 0) {
+    #         stop("Custom max time must be a positive number")
+    #       }
+    #       return(input$maxtime)
+    #     }
+    #   },
+    #   error = function(e) {
+    #     shiny::showNotification(
+    #       paste("Error calculating max time:", e$message),
+    #       type = "error"
+    #     )
+    #     return(NA)
+    #   })
+    # }
+
     max_time <- function() {
       tryCatch({
+        time_field <- input$time
+        dat <- current_nif()
+
+        if (!time_field %in% names(dat)) {
+          stop(paste0("Time field ", time_field, " not found in data"))
+        }
+
         if (input$timeselect == "indiv") {
           return(
-            nif |>
+            dat |>
               dplyr::filter(.data$USUBJID == input$subject) |>
-              dplyr::pull(.data$TIME) |>
-              max()
+              dplyr::pull(.data[[time_field]]) |>
+              max(na.rm = TRUE)
           )
-        } else if (input$timeselect == "global") {
-          return(max(nif$TIME))
-        } else if (input$timeselect == "custom") {
+        }
+
+        if (input$timeselect == "global") {
+          return(max(dat[[time_field]], na.rm = TRUE))
+        }
+
+        if (input$timeselect == "custom") {
           if (is.na(input$maxtime) || input$maxtime <= 0) {
             stop("Custom max time must be a positive number")
           }
@@ -248,7 +259,7 @@ nif_viewer <- function(nif) {
       tryCatch(
         {
           current <- which(current_sbs() == input$subject)
-          if (current > 0) {
+          if (current > 1) {
             shiny::updateSelectInput(session, "subject",
               choices = current_sbs(),
               selected = current_sbs()[current - 1]
