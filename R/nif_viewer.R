@@ -17,7 +17,7 @@ nif_viewer <- function(nif) {
   validate_nif(nif, fields = required_fields)
   numeric_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
   wrong_type <- numeric_fields[lapply(nif[numeric_fields], is.numeric) == FALSE]
-  if (length(any(wrong_type) > 1)) {
+  if (length(wrong_type) > 0) {
     stop(paste(
       nice_enumeration(wrong_type), "must be numeric!"
     ))
@@ -191,7 +191,9 @@ nif_viewer <- function(nif) {
       {
         tryCatch(
           {
-            y_scale_type <- ifelse(input$log_yscale, "log", "lin")
+            # y_scale_type <- ifelse(input$log_yscale, "log", "lin")
+            imp <- if (identical(input$admin, "none")) NULL else input$admin
+
             suppressWarnings(print(
               nif::nif_plot_id(
                 current_nif(),
@@ -201,7 +203,7 @@ nif_viewer <- function(nif) {
                 max_time = max_time(),
                 log = input$log_yscale,
                 point_size = 3,
-                imp = input$admin
+                imp = imp
               )
             ))
           },
