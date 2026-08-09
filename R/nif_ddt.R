@@ -8,10 +8,10 @@ ddt_standard_fields <- tibble::tribble(
   NA, "Produced",
   "USUBJID", "USUBJID in source", "character", "Unique subject ID in study", NA,
   "DM: USUBJID",
-  "AGE", "Age", "numeric", "Age of subjec at study start", "years",
+  "AGE", "Age", "numeric", "Age of subject at study start", "years",
   "DM: AGE or derived from DM: BRTHDTC",
   "SEX", "Sex", "0, 1", "0 = Male, 1 = Female", NA, "Derived from DM: SEX",
-  "RACE", "Race", "character", "Race category", NA, "DM: RACE",
+  "RACE", "Race", "character", "Race", NA, "DM: RACE",
   "HEIGHT", "Body height", "numeric", "Baseline body height", "cm",
   "VS: VSTESTCD = HEIGHT",
   "WEIGHT", "Body weight", "numeric", "Baseline body weight", "kg",
@@ -40,7 +40,7 @@ ddt_standard_fields <- tibble::tribble(
   "Automatically or manually assigned",
   "METABOLITE", "Metabolite", "logical", "Metabolite flag", NA,
   "Automatically or manually assigned",
-  "DOSE", "Dose", "numeric", "Last administerd dose", "mg", "EX: EXDOSE",
+  "DOSE", "Dose", "numeric", "Last administered dose", "mg", "EX: EXDOSE",
   "DV", "Dependent variable", "numeric",
   "Dependent variable, NA for administrations", NA, "SDTM domain",
   "MDV", "Missing DV", "numeric", "0 = non-missing DV, 1 = Missing DV", NA,
@@ -53,7 +53,7 @@ ddt_standard_fields <- tibble::tribble(
   "SDTM domain",
   "BL_CREAT", "Baseline creatinine", "numeric",
   "Serum creatinine value at baseline", "umol/l", "LB",
-  "BL_CRCL", "Baseline creatinnine clearance", "numeric",
+  "BL_CRCL", "Baseline creatinine clearance", "numeric",
   "Creatinine clearance based on baseline serum creatinine", "ml/min", "LB, DM",
   "BL_RENAL", "Baseline renal function class", "normal, mild, moderate, severe",
   "Renal function category at baseline, based on BL_CRCL", NA,
@@ -101,8 +101,10 @@ ddt <- function(obj, silent = NULL) {
 
     mutate(DESC = paste(.data$CMT, "=", .data$ANALYTE, .data$TYPE))
 
-  out[out$name == "CMT", "description"] <- paste(temp$DESC, collapse = ", ")
-  out[out$name == "CMT", "type"] <- paste(temp$CMT, collapse = ", ")
+  if (nrow(temp) > 0) {
+    out[out$name == "CMT", "description"] <- paste(temp$DESC, collapse = ", ")
+    out[out$name == "CMT", "type"] <- paste(temp$CMT, collapse = ", ")
+  }
 
   # race
   if ("RACE" %in% names(obj)) {
@@ -111,8 +113,12 @@ ddt <- function(obj, silent = NULL) {
         as.data.frame() |>
         distinct(.data$RACE) |>
         arrange(.data$RACE) |>
-        left_join(race_coding, by = c("RACE" = "RACEN")) |>
-        mutate(DESC = paste(.data$RACE, "=", .data$RACE.y))
+        left_join(
+          race_coding |> select(RACEN, RACE_LABEL = RACE),
+          by = c("RACE" = "RACEN")
+        ) |>
+        mutate(DESC = paste(.data$RACE, "=", .data$RACE_LABEL))
+
       out[out$name == "RACE", "type"] <- "numeric"
       out[out$name == "RACE", "description"] <- paste(temp$DESC,
                                                       collapse = ", ")
@@ -121,7 +127,13 @@ ddt <- function(obj, silent = NULL) {
 
   # further fields
   further_name <- setdiff(names(obj), unique(out$name))
-  further_type <- as.character(lapply(obj, class)[further_name])
+  further_type <- vapply(
+    obj[further_name],
+    function(x) {
+      as.character(class(x)[1])
+    },
+    FUN.VALUE = character(1)
+  )
 
   further <- data.frame(name = further_name, type = further_type)
 
@@ -131,7 +143,7 @@ ddt <- function(obj, silent = NULL) {
 
   if (nrow(further) > 0) {
     conditional_cli({
-      cli_alert_warning("Some data definition fields could not be generated:")
+      cli_alert_warning("Some data definition fields need completion :")
       cli_text(nice_enumeration(further$name))
     },
     silent = silent)
@@ -170,11 +182,11 @@ add_dd <- function(
   validate_argument(type, "character")
   validate_argument(description, "character")
   validate_argument(unit, "character", allow_na = TRUE)
-  validate_argument(source, "character")
+  validate_argument(source, "character", allow_empty = TRUE)
 
-  bind_rows(
-    obj,
-    c(
+  # business logic
+  if (name %in% obj$name) {
+    obj[obj$name == name, ] <- list(
       name = name,
       definition = definition,
       type = type,
@@ -182,5 +194,18 @@ add_dd <- function(
       unit = unit,
       source = source
     )
-  )
+  } else {
+    obj <- bind_rows(
+      obj,
+      list(
+        name = name,
+        definition = definition,
+        type = type,
+        description = description,
+        unit = unit,
+        source = source
+      )
+    )
+  }
+  obj
 }
