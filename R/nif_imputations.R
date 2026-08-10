@@ -102,9 +102,10 @@ impute_exendtc_to_rfendtc <- function(
 
     if (replace_n > 0) {
       conditional_cli({
-          cli_alert_info(
-            "Missing EXENDTC in final administration episodes (EXENDTC imputed RFENDTC:",
-          )
+          cli_alert_info(paste(
+            "Missing EXENDTC in final administration episodes",
+            "(EXENDTC was imputed RFENDTC):"
+          ))
           df_to_cli(
             rows_for_message |>
               select(any_of(
