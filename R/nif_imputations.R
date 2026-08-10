@@ -1139,9 +1139,8 @@ remove_duplicate_administrations <- function(
   if (n_different_amt > 0) {
     cli({
       cli_alert_warning(paste(
-        n_different_amt, "duplicate administrations with respect to USUBJID, DTC",
-        "and ANALYTE but different AMT found! The respective last row was",
-        "kept and the following rows deleted:"
+        n_different_amt, "duplicate administrations with different AMT!",
+        "The following rows were removed:"
         ))
         df_to_cli(
           temp |>
