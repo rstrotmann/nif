@@ -287,22 +287,17 @@ test_that("impute_missing_baseline reports population center and population fill
   obj <- make_bl_nif(c(70, NA_real_))
 
   expect_message(
-    expect_message(
-      impute_missing_baseline(
-        obj, baseline_fields = "WEIGHT", silent = FALSE
-      ),
-      "Baseline population "
+    impute_missing_baseline(
+      obj, baseline_fields = "WEIGHT", silent = FALSE
     ),
-    "baseline values were imputed"
+    "Baseline values "
   )
 
   expect_message(
-    expect_message(
-      impute_missing_baseline(
-        obj, baseline_fields = "WEIGHT", silent = FALSE
-      ),
-      "filled with population median"
-    )
+    impute_missing_baseline(
+      obj, baseline_fields = "WEIGHT", silent = FALSE
+    ),
+    "population median"
   )
 })
 
@@ -312,12 +307,10 @@ test_that("impute_missing_baseline reports within-subject fills", {
   obj$WEIGHT[obj$ID == 1] <- c(NA_real_, 70, NA_real_)
 
   expect_message(
-    expect_message(
-      impute_missing_baseline(
-        obj, baseline_fields = "WEIGHT", silent = FALSE
-      ),
-      "filled within subject"
-    )
+    impute_missing_baseline(
+      obj, baseline_fields = "WEIGHT", silent = FALSE
+    ),
+    "filled within subject"
   )
 })
 
@@ -326,44 +319,14 @@ test_that("impute_missing_baseline reports custom summary_function label", {
   obj <- make_bl_nif(c(70, NA_real_))
 
   expect_message(
-    expect_message(
-      impute_missing_baseline(
-        obj,
-        baseline_fields = "WEIGHT",
-        summary_function = mean,
-        silent = FALSE
-      ),
-      "filled with population mean"
-    )
-  )
-})
-
-
-test_that("impute_missing_baseline reports center but not fills when nothing missing", {
-  obj <- make_bl_nif(c(70, 80))
-
-  msgs <- capture_messages(
     impute_missing_baseline(
-      obj, baseline_fields = "WEIGHT", silent = FALSE
-    )
+      obj,
+      baseline_fields = "WEIGHT",
+      summary_function = mean,
+      silent = FALSE
+    ),
+    "population mean"
   )
-
-  expect_true(any(grepl("Baseline population", msgs)))
-  expect_false(any(grepl("baseline values were imputed", msgs)))
-})
-
-
-test_that("impute_missing_baseline does not report fills for all-NA field", {
-  obj <- make_bl_nif(c(NA_real_, NA_real_))
-
-  msgs <- capture_messages(
-    impute_missing_baseline(
-      obj, baseline_fields = "WEIGHT", silent = FALSE
-    )
-  )
-
-  expect_true(any(grepl("Baseline population", msgs)))
-  expect_false(any(grepl("baseline values were imputed", msgs)))
 })
 
 

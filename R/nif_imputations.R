@@ -1008,18 +1008,6 @@ impute_missing_baseline <- function(
     filter(!is.na(.data$value)) |>
     reframe(center = summary_function(.data$value), .by = "param")
 
-  conditional_cli({
-      cli_alert_info(paste0(
-        "Baseline population ", sf_label, " values:"
-      ))
-      df_to_cli(
-        rename(bl_population_center, "value" = "center"),
-        indent = 2
-      )
-    },
-    silent = silent
-  )
-
   # fill missing baseline values
   out <- nif |>
     group_by(.data$ID) |>
@@ -1048,22 +1036,31 @@ impute_missing_baseline <- function(
     ) |>
     select("REF", "ID", "param", "value_before", "value_after_fill",
            "value_final", "center") |>
+
     mutate(imputation = case_when(
       is.na(value_before) & !is.na(value_after_fill) ~ "filled within subject",
       is.na(value_after_fill) & !is.na(value_final) ~ paste0(
-        "filled with population ", sf_label),
+        "population ", sf_label, " (", .data$center, ")"
+        ),
       .default = NA
-      ))
+    ))
 
   imputation_summary <- comparison |>
     filter(!is.na(.data$imputation)) |>
+    distinct(.data$ID, .data$param, .data$imputation) |>
     reframe(n = n(), .by = c("param", "imputation"))
 
-  if (nrow(imputation_summary) > 0) {
+  n_subjects_imputed <- comparison |>
+    filter(!is.na(.data$imputation)) |>
+    distinct(.data$ID) |>
+    nrow()
+
+  if (n_subjects_imputed > 0) {
     conditional_cli({
       cli_alert_warning(paste0(
-        "A total of ", sum(imputation_summary$n),
-        " baseline values were imputed:"
+        "Baseline values were imputed in a total of ",
+        n_subjects_imputed,
+        plural(" subject", n_subjects_imputed != 1), ":"
       ))
       df_to_cli(imputation_summary, indent = 2)
     },
