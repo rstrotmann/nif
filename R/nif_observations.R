@@ -679,6 +679,9 @@ make_observation <- function(
 #' EVID values of 0. This is usually the second step in the creation of NIF data
 #' tables, after [nif::add_administration()].
 #'
+#' Only observations for subjects that are in the nif data set already, i.e.,
+#' those that have administrations, are added.
+#'
 #' Observations can be pharmacokinetic observations (i.e., from the PC domain),
 #' or any other type of observation from any other SDTM domain. The `domain` and
 #' `testcd` arguments specify the source of the observation events.
@@ -870,24 +873,6 @@ add_observation <- function(
     keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ", "SRC_TESTCD")
   }
 
-  # # validate duplicate handler arguments
-  # valid_duplicate_values <- c("stop", "ignore", "identify", "resolve")
-  # if (!duplicates %in% valid_duplicate_values) {
-  #   stop(paste0(
-  #     "Invalid value for 'duplicates' - must be one of ",
-  #     nice_enumeration(valid_duplicate_values, conjunction = "or")
-  #   ))
-  # }
-
-  # missing_dupl_id <- setdiff(duplicate_identifier, names(nif))
-  # if (length(missing_dupl_id) > 0) {
-  #   stop(paste0(
-  #     "Missing ", plural("field", length(missing_dupl_id) > 1),
-  #     " in input: ", nice_enumeration(missing_dupl_id)
-  #   ))
-  # }
-
-
   # ensure that keep includes all fields already present in the nif
   keep <- unique(c(keep, names(nif), duplicate_identifier))
 
@@ -942,7 +927,8 @@ add_observation <- function(
     silent = silent, na_to_zero = na_to_zero, imputation = imputation
   ) |>
     select(any_of(c(standard_nif_fields, "IMPUTATION", keep))) |>
-    mutate(.current_observation = TRUE)
+    mutate(.current_observation = TRUE) |>
+    filter(.data$USUBJID %in% subjects(nif)$USUBJID)
 
   # Duplicate handling
   dupl_fields <- c("USUBJID", "ANALYTE", duplicate_identifier)
@@ -1070,7 +1056,7 @@ add_observation <- function(
   )
 
     obj <- obj |>
-      filter(.data$NO_ADMIN_FLAG == 0)
+      filter(.data$NO_ADMIN_FLAG == FALSE)
   }
 
   out <- obj |>
