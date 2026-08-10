@@ -34,12 +34,18 @@ library(nif)
 csv_file_name <- tempfile(fileext = ".csv")
 on.exit(unlink(csv_file_name))
 
-csv_content <- examplinib_sad_min_nif |>
+csv_content <- utils::capture.output(
+  examplinib_sad_min_nif |>
+    filter(ID < 3) |>
+    filter(TIME < 8) |>
+    write_nonmem(sep = ",")
+)
+
+examplinib_sad_min_nif |>
   filter(ID < 3) |> 
   filter(TIME < 8) |> 
-  write_nonmem(sep = ",")
+  write_nonmem(sep = ",", filename = csv_file_name)
 
-writeLines(csv_content, csv_file_name)
 ```
 
 For this demonstration, we use a minimal nif dataset that contains data from 2
@@ -47,7 +53,7 @@ subjects with single administrations into compartment 1, and observations up to
 6 hours from compartment 2:
 
 ```{r echo = FALSE, comment = ""}
-cat(csv_content)
+cat(paste(csv_content, collapse = "\n"))
 ```
 
 The dataset contains the minimally expected columns, ID, TIME, AMT, RATE, EVID,
