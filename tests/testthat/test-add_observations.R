@@ -633,6 +633,7 @@ test_that("add_observation resolve reports duplicate resolution", {
             add_observation(
               sdtm, "pc", "A",
               duplicates = "resolve",
+              duplicate_function = mean,
               ntime_method = "ELTM",
               silent = FALSE
             ),

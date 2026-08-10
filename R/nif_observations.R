@@ -777,7 +777,7 @@ make_observation <- function(
 #'   * 'resolve': Resolve duplicates, applying the `duplicate_function` to the
 #'   duplicate entries.
 #' @param duplicate_function Function to resolve duplicate values, defaults to
-#'   `mean`.
+#'   `median`.
 #' @param duplicate_identifier Fields by which duplicates are identified (after
 #'   addition of the observations to the nif object), defaults to "DTC".
 #'   Consider also "NTIME", or any other custom field.
@@ -813,7 +813,7 @@ add_observation <- function(
   include_day_in_ntime = FALSE,
   silent = NULL,
   duplicates = "stop",
-  duplicate_function = mean,
+  duplicate_function = median,
   duplicate_identifier = "DTC",
   omit_not_done = TRUE,
   na_rm = TRUE,

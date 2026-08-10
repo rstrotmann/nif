@@ -43,7 +43,7 @@ duplicate entries.
 }}
 
 \item{duplicate_function}{Function to resolve duplicate values, defaults to
-\code{mean}.}
+\code{median}.}
 
 \item{keep}{Columns to keep, as character.}
 
