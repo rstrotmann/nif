@@ -101,24 +101,32 @@ impute_exendtc_to_rfendtc <- function(
     replace_n <- nrow(rows_for_message)
 
     if (replace_n > 0) {
-      conditional_cli(
-        {
-          cli_alert_info("Missing EXENDTC")
-          cli_text(paste0(
-            replace_n, " ",
-            plural("subject", replace_n > 1),
-            " had a missing EXENDTC in their final administration episode.\n",
-            "In these cases, EXENDTC was imputed to RFENDTC."
-          ))
-          cli_verbatim(df_to_string(
+      conditional_cli({
+          cli_alert_info(
+            "Missing EXENDTC in final administration episodes (EXENDTC imputed RFENDTC:",
+          )
+          df_to_cli(
             rows_for_message |>
               select(any_of(
                 c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")
               )),
             indent = 2
-            # abbr_lines = 5, abbr_threshold = 20
-          ))
-          cli_text()
+          )
+          # cli_text(paste0(
+          #   replace_n, " ",
+          #   plural("subject", replace_n > 1),
+          #   " had a missing EXENDTC in their final administration episode.\n",
+          #   "In these cases, EXENDTC was imputed to RFENDTC."
+          # ))
+          # cli_verbatim(df_to_string(
+          #   rows_for_message |>
+          #     select(any_of(
+          #       c("USUBJID", "EXTRT", "EXSEQ", "EXSTDTC", "EXENDTC", "RFENDTC")
+          #     )),
+          #   indent = 2
+          #   # abbr_lines = 5, abbr_threshold = 20
+          # ))
+          # cli_text()
         },
         silent = silent
       )
