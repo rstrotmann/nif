@@ -182,9 +182,9 @@ ddt(nif) |>
 | STUDYID | Study | character | Study identification number | NA | DM: STUDYID |
 | ID | Subject identifier | numeric | Unique subject ID across all studies | NA | Produced |
 | USUBJID | USUBJID in source | character | Unique subject ID in study | NA | DM: USUBJID |
-| AGE | Age | numeric | Age of subjec at study start | years | DM: AGE or derived from DM: BRTHDTC |
+| AGE | Age | numeric | Age of subject at study start | years | DM: AGE or derived from DM: BRTHDTC |
 | SEX | Sex | 0, 1 | 0 = Male, 1 = Female | NA | Derived from DM: SEX |
-| RACE | Race | character | Race category | NA | DM: RACE |
+| RACE | Race | character | Race | NA | DM: RACE |
 | WEIGHT | Body weight | numeric | Baseline body weight | kg | VS: VSTESTCD = WEIGHT |
 | DTC | Datetime | datetime | Date and time of event | Datetime | SDTM domain |
 | TIME | Time since start of treatment | numeric | Individual time since individual start of treatment | hours | DTC |
@@ -197,14 +197,14 @@ ddt(nif) |>
 | CMT | Compartment | 1, 1, 2, 3 | 1 = PLACEBO administration, 1 = XAN administration, 2 = XAN observation, 3 = ALT observation | NA | Produced or assigned |
 | PARENT | Parent analyte | character | Reference drug name for observations | NA | Automatically or manually assigned |
 | METABOLITE | Metabolite | logical | Metabolite flag | NA | Automatically or manually assigned |
-| DOSE | Dose | numeric | Last administerd dose | mg | EX: EXDOSE |
+| DOSE | Dose | numeric | Last administered dose | mg | EX: EXDOSE |
 | DV | Dependent variable | numeric | Dependent variable, NA for administrations | NA | SDTM domain |
 | MDV | Missing DV | numeric | 0 = non-missing DV, 1 = Missing DV | NA | Produced |
 | IMPUTATION | Imputation | character | time imputation applied to record | NA | Produced |
 | ACTARMCD | Actual arm code | character | ACTARMCD as in SDTM source | NA | DM: ACTARMCD |
 | TRTDY | Treatment day | numeric | Day after treatment start | NA | SDTM domain |
 | BL_CREAT | Baseline creatinine | numeric | Serum creatinine value at baseline | umol/l | LB |
-| BL_CRCL | Baseline creatinnine clearance | numeric | Creatinine clearance based on baseline serum creatinine | ml/min | LB, DM |
+| BL_CRCL | Baseline creatinine clearance | numeric | Creatinine clearance based on baseline serum creatinine | ml/min | LB, DM |
 | BL_RENAL | Baseline renal function class | normal, mild, moderate, severe | Renal function category at baseline, based on BL_CRCL | NA | Derived from BL_CRCL |
 | DVBL | Baseline value for dependent variable | numeric | DV value at baseline | NA | SDTM domain |
 | DVCFB | Change from baseline of dependent variable | numeric | DV difference to DVBL | NA | Derived from DV, DVBL |

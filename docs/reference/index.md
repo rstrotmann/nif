@@ -210,7 +210,5 @@
 - [`usubjid()`](usubjid.md) : Get the USUBJID of subject
 - [`watermark()`](watermark.md) : Add a watermark annotation layer for a
   ggplot2 object
-- [`write_monolix()`](write_monolix.md) : Write as comma-separated file,
-  complying with the format used by Monolix
 - [`write_nonmem()`](write_nonmem.md) : Write NONMEM input formatted nif
   object to file

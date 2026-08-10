@@ -29,44 +29,44 @@ A data table.
 
 ``` r
 ddt(examplinib_sad_nif)
-#>          name                     definition      type
-#> 1         REF      Consecutive record number   integer
-#> 2     STUDYID                          Study character
-#> 3          ID             Subject identifier   numeric
-#> 4     USUBJID              USUBJID in source character
-#> 5         AGE                            Age   numeric
-#> 6         SEX                            Sex      0, 1
-#> 7        RACE                           Race character
-#> 8      HEIGHT                    Body height   numeric
-#> 9      WEIGHT                    Body weight   numeric
-#> 10        BMI                Body Mass Index   numeric
-#> 11        DTC                       Datetime  datetime
-#> 12       TIME  Time since start of treatment   numeric
-#> 13      NTIME                   Nominal time   numeric
-#> 14       TAFD          Time after first dose   numeric
-#> 15        TAD           Time after last dose   numeric
-#> 16       EVID                       Event ID      0, 1
-#> 17        AMT                         Amount   numeric
-#> 18    ANALYTE                        Analyte character
-#> 19        CMT                    Compartment      1, 2
-#> 20     PARENT                 Parent analyte character
-#> 21 METABOLITE                     Metabolite   logical
-#> 22       DOSE                           Dose   numeric
-#> 23         DV             Dependent variable   numeric
-#> 24        MDV                     Missing DV   numeric
-#> 25 IMPUTATION                     Imputation character
-#> 26   ACTARMCD                Actual arm code character
-#> 27      TRTDY                  Treatment day   numeric
-#> 28   BL_CREAT            Baseline creatinine   numeric
-#> 29    BL_CRCL Baseline creatinnine clearance   numeric
+#>          name                    definition      type
+#> 1         REF     Consecutive record number   integer
+#> 2     STUDYID                         Study character
+#> 3          ID            Subject identifier   numeric
+#> 4     USUBJID             USUBJID in source character
+#> 5         AGE                           Age   numeric
+#> 6         SEX                           Sex      0, 1
+#> 7        RACE                          Race character
+#> 8      HEIGHT                   Body height   numeric
+#> 9      WEIGHT                   Body weight   numeric
+#> 10        BMI               Body Mass Index   numeric
+#> 11        DTC                      Datetime  datetime
+#> 12       TIME Time since start of treatment   numeric
+#> 13      NTIME                  Nominal time   numeric
+#> 14       TAFD         Time after first dose   numeric
+#> 15        TAD          Time after last dose   numeric
+#> 16       EVID                      Event ID      0, 1
+#> 17        AMT                        Amount   numeric
+#> 18    ANALYTE                       Analyte character
+#> 19        CMT                   Compartment      1, 2
+#> 20     PARENT                Parent analyte character
+#> 21 METABOLITE                    Metabolite   logical
+#> 22       DOSE                          Dose   numeric
+#> 23         DV            Dependent variable   numeric
+#> 24        MDV                    Missing DV   numeric
+#> 25 IMPUTATION                    Imputation character
+#> 26   ACTARMCD               Actual arm code character
+#> 27      TRTDY                 Treatment day   numeric
+#> 28   BL_CREAT           Baseline creatinine   numeric
+#> 29    BL_CRCL Baseline creatinine clearance   numeric
 #>                                                description     unit
 #> 1                               Unique number for each row     <NA>
 #> 2                              Study identification number     <NA>
 #> 3                     Unique subject ID across all studies     <NA>
 #> 4                               Unique subject ID in study     <NA>
-#> 5                             Age of subjec at study start    years
+#> 5                            Age of subject at study start    years
 #> 6                                     0 = Male, 1 = Female     <NA>
-#> 7                                            Race category     <NA>
+#> 7                                                     Race     <NA>
 #> 8                                     Baseline body height       cm
 #> 9                                     Baseline body weight       kg
 #> 10                                            Baseline BMI   kg/m^2
@@ -81,7 +81,7 @@ ddt(examplinib_sad_nif)
 #> 19       1 = RS2023 administration, 2 = RS2023 observation     <NA>
 #> 20                    Reference drug name for observations     <NA>
 #> 21                                         Metabolite flag     <NA>
-#> 22                                   Last administerd dose       mg
+#> 22                                  Last administered dose       mg
 #> 23              Dependent variable, NA for administrations     <NA>
 #> 24                      0 = non-missing DV, 1 = Missing DV     <NA>
 #> 25                       time imputation applied to record     <NA>

@@ -11,7 +11,7 @@ specifications can be added manually using add_dd()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,44 +76,44 @@ specifications can be added manually using <code><a href="add_dd.html">add_dd()<
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">ddt</span><span class="op">(</span><span class="va">examplinib_sad_nif</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          name                     definition      type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         REF      Consecutive record number   integer</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     STUDYID                          Study character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          ID             Subject identifier   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     USUBJID              USUBJID in source character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         AGE                            Age   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         SEX                            Sex      0, 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        RACE                           Race character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8      HEIGHT                    Body height   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9      WEIGHT                    Body weight   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        BMI                Body Mass Index   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        DTC                       Datetime  datetime</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12       TIME  Time since start of treatment   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13      NTIME                   Nominal time   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14       TAFD          Time after first dose   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15        TAD           Time after last dose   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16       EVID                       Event ID      0, 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17        AMT                         Amount   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18    ANALYTE                        Analyte character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19        CMT                    Compartment      1, 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20     PARENT                 Parent analyte character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 METABOLITE                     Metabolite   logical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22       DOSE                           Dose   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23         DV             Dependent variable   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24        MDV                     Missing DV   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 IMPUTATION                     Imputation character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26   ACTARMCD                Actual arm code character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27      TRTDY                  Treatment day   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28   BL_CREAT            Baseline creatinine   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29    BL_CRCL Baseline creatinnine clearance   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          name                    definition      type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         REF     Consecutive record number   integer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     STUDYID                         Study character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          ID            Subject identifier   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     USUBJID             USUBJID in source character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         AGE                           Age   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         SEX                           Sex      0, 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        RACE                          Race character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8      HEIGHT                   Body height   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      WEIGHT                   Body weight   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10        BMI               Body Mass Index   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11        DTC                      Datetime  datetime</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12       TIME Time since start of treatment   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      NTIME                  Nominal time   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14       TAFD         Time after first dose   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15        TAD          Time after last dose   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16       EVID                      Event ID      0, 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17        AMT                        Amount   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18    ANALYTE                       Analyte character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19        CMT                   Compartment      1, 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20     PARENT                Parent analyte character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 METABOLITE                    Metabolite   logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22       DOSE                          Dose   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23         DV            Dependent variable   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24        MDV                    Missing DV   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 IMPUTATION                    Imputation character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26   ACTARMCD               Actual arm code character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27      TRTDY                 Treatment day   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28   BL_CREAT           Baseline creatinine   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29    BL_CRCL Baseline creatinine clearance   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                description     unit</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                               Unique number for each row     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                              Study identification number     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                     Unique subject ID across all studies     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4                               Unique subject ID in study     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                             Age of subjec at study start    years</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                            Age of subject at study start    years</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6                                     0 = Male, 1 = Female     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                            Race category     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                     Race     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8                                     Baseline body height       cm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9                                     Baseline body weight       kg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10                                            Baseline BMI   kg/m^2</span>
@@ -128,7 +128,7 @@ specifications can be added manually using <code><a href="add_dd.html">add_dd()<
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19       1 = RS2023 administration, 2 = RS2023 observation     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 20                    Reference drug name for observations     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21                                         Metabolite flag     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                   Last administerd dose       mg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                  Last administered dose       mg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23              Dependent variable, NA for administrations     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24                      0 = non-missing DV, 1 = Missing DV     &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25                       time imputation applied to record     &lt;NA&gt;</span>
