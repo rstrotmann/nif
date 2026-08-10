@@ -303,7 +303,7 @@ test_that("index_rich_sampling_intervals works", {
     nif()
 
   temp <- as.data.frame(index_rich_sampling_intervals(nif))
-  expect_equal(unique(temp$RICH_N), c(NA, 1, 2))
+  expect_equal(unique(temp$RICH_N), c(1, NA, 2))
   temp1 <- distinct(temp, OPDI, RICH_N)
   expect_equal(temp1[which(temp1$OPDI == 5), "RICH_N"], 1)
   expect_equal(temp1[which(temp1$OPDI == 6), "RICH_N"], 2)

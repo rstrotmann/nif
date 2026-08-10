@@ -96,7 +96,7 @@ write_nonmem <- function(
 # #' @export
 # #' @examples
 # #' head(write_monolix(examplinib_fe_nif))
-# write_monolix <- function(obj, filename = NULL, fields = NULL) {
+  # write_monolix <- function(obj, filename = NULL, fields = NULL) {
 #   double_fields <- c(
 #     "NTIME", "TIME", "TAD", "AMT", "RATE", "DV", "LNDV", "DOSE",
 #     "AGE", "HEIGHT", "WEIGHT", "BMI"

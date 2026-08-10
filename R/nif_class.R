@@ -1300,8 +1300,8 @@ add_dose_level <- function(obj, silent = NULL) {
 #' Add the number of observations per dosing interval
 #'
 #' This function adds a variable, `OPDI`, to the NIF object that indicates the
-#' number of observations per analyte and dosing interval. This field can be
-#' helpful to identify dosing intervals across which rich sampling was
+#' number of observations per subject, parent and dosing interval. This field
+#' can be helpful to identify dosing intervals across which rich sampling was
 #' conducted.
 #' @param obj A NIF object.
 #' @return Result as NIF object.
@@ -1310,12 +1310,16 @@ add_dose_level <- function(obj, silent = NULL) {
 #' head(add_obs_per_dosing_interval(examplinib_poc_nif))
 #' head(add_obs_per_dosing_interval(examplinib_poc_min_nif))
 add_obs_per_dosing_interval <- function(obj) {
+  # input validation
+  validate_nif(obj)
+
+  # business logic
   obj |>
-    arrange_and_add_ref() |>
-    select(-any_of("DI")) |>
     index_dosing_interval() |>
-    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "PARENT", "DI")))) |>
-    mutate(OPDI = sum(.data$EVID == 0))
+    group_by(across(any_of(c("ID", "USUBJID", "PARENT", "DI")))) |>
+    mutate(OPDI = sum(.data$EVID == 0)) |>
+    ungroup() |>
+    nif()
 }
 
 
