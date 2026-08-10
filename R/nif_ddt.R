@@ -114,7 +114,8 @@ ddt <- function(obj, silent = NULL) {
         distinct(.data$RACE) |>
         arrange(.data$RACE) |>
         left_join(
-          race_coding |> select(RACEN, RACE_LABEL = RACE),
+          race_coding |>
+            select("RACEN", "RACE_LABEL" = "RACE"),
           by = c("RACE" = "RACEN")
         ) |>
         mutate(DESC = paste(.data$RACE, "=", .data$RACE_LABEL))

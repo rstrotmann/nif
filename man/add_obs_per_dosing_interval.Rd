@@ -14,8 +14,8 @@ Result as NIF object.
 }
 \description{
 This function adds a variable, \code{OPDI}, to the NIF object that indicates the
-number of observations per analyte and dosing interval. This field can be
-helpful to identify dosing intervals across which rich sampling was
+number of observations per subject, parent and dosing interval. This field
+can be helpful to identify dosing intervals across which rich sampling was
 conducted.
 }
 \examples{
