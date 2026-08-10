@@ -138,6 +138,9 @@ EVID values of 0. This is usually the second step in the creation of NIF data
 tables, after \code{\link[=add_administration]{add_administration()}}.
 }
 \details{
+Only observations for subjects that are in the nif data set already, i.e.,
+those that have administrations, are added.
+
 Observations can be pharmacokinetic observations (i.e., from the PC domain),
 or any other type of observation from any other SDTM domain. The \code{domain} and
 \code{testcd} arguments specify the source of the observation events.
