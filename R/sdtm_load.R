@@ -24,7 +24,7 @@ read_sdtm <- function(
   # validate input
   validate_argument(data_path, "character")
   validate_argument(domain, "character", allow_null = TRUE, allow_multiple = TRUE)
-  validate_argument(format, "character", values = c("sas", "xpt", "csv", "xlsx"))
+  validate_argument(format, "character", values = c("sas", "xpt", "csv"))
 
   # Validate data_path
   if (!dir.exists(data_path)) {
@@ -38,7 +38,7 @@ read_sdtm <- function(
     "csv" = ".csv"
   )
 
-  # set domains
+  # domain auto discovery
   if (is.null(domain)) {
     temp <- list.files(file.path(data_path), pattern = paste0(".*\\", file_ext))
     domain <- gsub(paste0("^(.*)\\", file_ext), "\\1", temp)
@@ -46,18 +46,40 @@ read_sdtm <- function(
     domain <- domain[substring(domain, 1, 1) != "_"]
   }
 
-  # Check if all required files exist
-  missing_files <- character()
-  for (x in domain) {
-    file_path <- file.path(data_path, paste0(x, file_ext))
-    if (!file.exists(file_path)) {
-      missing_files <- c(missing_files, file_path)
+  resolve_domain_file <- function(data_path, domain, file_ext) {
+    wanted <- paste0(tolower(domain), tolower(file_ext))
+    files <- list.files(data_path)
+    hit <- files[tolower(files) == wanted]
+    if (length(hit) == 0) {
+      return(NA_character_)
     }
+    if (length(hit) > 1) {
+      warning(paste0(
+        "Multiple hits for ", domain, " (", nice_enumeration(hit), "), ",
+        "Selected ", hit[1]
+      ), call. = FALSE)
+      hit <- hit[[1]]
+    }
+    file.path(data_path, hit)
   }
 
-  if (length(missing_files) > 0) {
-    stop("The following files do not exist:\n",
-      paste(missing_files, collapse = "\n"),
+  # Resolve each domain file once (avoids repeated multi-hit warnings)
+  domain_files <- setNames(
+    vapply(
+      domain,
+      function(x) resolve_domain_file(data_path, x, file_ext),
+      character(1)
+    ),
+    domain
+  )
+
+  missing_domains <- names(domain_files)[
+    is.na(domain_files) | !file.exists(domain_files)
+  ]
+  if (length(missing_domains) > 0) {
+    stop(
+      "The following files do not exist:\n",
+      paste0(missing_domains, file_ext, collapse = "\n"),
       call. = FALSE
     )
   }
@@ -65,26 +87,26 @@ read_sdtm <- function(
   out <- list()
   if (format == "sas") {
     for (x in domain) {
-      out[[x]] <- as.data.frame(haven::read_sas(
-        file.path(data_path, paste0(x, ".sas7bdat"))
-      ))
+      out[[tolower(x)]] <- as.data.frame(
+        haven::read_sas(domain_files[[x]], ...)
+      )
     }
   }
   if (format == "xpt") {
     for (x in domain) {
-      out[[x]] <- as.data.frame(haven::read_xpt(
-        file.path(data_path, paste0(x, ".xpt"))
-      ))
+      out[[tolower(x)]] <- as.data.frame(
+        haven::read_xpt(domain_files[[x]], ...)
+      )
     }
   }
   if (format == "csv") {
     for (x in domain) {
-      out[[x]] <- as.data.frame(
-        # readr::read_delim(
+      out[[tolower(x)]] <- as.data.frame(
         readr::read_delim(
-          file.path(data_path, paste0(x, ".csv")),
+          domain_files[[x]],
           delim = delim,
-          show_col_types = FALSE
+          show_col_types = FALSE,
+          ...
         )
       )
     }
