@@ -13,6 +13,7 @@
 #' @return A `sdtm` object.
 #' @import readr
 #' @import haven
+#' @importFrom stats setNames
 #' @export
 read_sdtm <- function(
     data_path,
@@ -64,7 +65,7 @@ read_sdtm <- function(
   }
 
   # Resolve each domain file once (avoids repeated multi-hit warnings)
-  domain_files <- setNames(
+  domain_files <- stats::setNames(
     vapply(
       domain,
       function(x) resolve_domain_file(data_path, x, file_ext),
