@@ -1,6 +1,6 @@
-# Test file for summary.domain() function
+# Test file for summary.sdtm_domain() function
 
-test_that("summary.domain handles valid domain objects correctly", {
+test_that("summary.sdtm_domain handles valid domain objects correctly", {
   # Create a valid PC domain object for testing
   test_pc <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STUDYID, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCCAT, ~PCSCAT, ~PCTPT, ~PCTPTNUM, ~PCELTM, ~EPOCH, ~VISIT,
@@ -8,7 +8,7 @@ test_that("summary.domain handles valid domain objects correctly", {
     "SUBJ-001", "PC", "STUDY-001", 2, "DRUGA", "Drug A", "PK", "PLASMA", "1HR", 1, "PT1H", "TREATMENT", "DAY1",
     "SUBJ-002", "PC", "STUDY-001", 3, "DRUGA", "Drug A", "PK", "PLASMA", "2HR", 2, "PT2H", "TREATMENT", "DAY1"
   )
-  class(test_pc) <- c("domain", "data.frame")
+  class(test_pc) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_pc, silent = TRUE)
@@ -28,14 +28,14 @@ test_that("summary.domain handles valid domain objects correctly", {
   expect_equal(nrow(result$category), 1)
 })
 
-test_that("summary.domain handles domains without test fields gracefully", {
+test_that("summary.sdtm_domain handles domains without test fields gracefully", {
   # Create a DM domain object (no test fields)
   test_dm <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STUDYID, ~AGE, ~SEX, ~RACE,
     "SUBJ-001", "DM", "STUDY-001", 25, "M", "WHITE",
     "SUBJ-002", "DM", "STUDY-001", 30, "F", "BLACK"
   )
-  class(test_dm) <- c("domain", "data.frame")
+  class(test_dm) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_dm, silent = TRUE)
@@ -54,7 +54,7 @@ test_that("summary.domain handles domains without test fields gracefully", {
   expect_null(result$category)
 })
 
-test_that("summary.domain handles domains with time points correctly", {
+test_that("summary.sdtm_domain handles domains with time points correctly", {
   # Create a PC domain object with time points
   test_pc <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCTPT, ~PCTPTNUM, ~PCELTM,
@@ -62,7 +62,7 @@ test_that("summary.domain handles domains with time points correctly", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "1HR", 1, "PT1H",
     "SUBJ-001", "PC", 3, "DRUGA", "Drug A", "2HR", 2, "PT2H"
   )
-  class(test_pc) <- c("domain", "data.frame")
+  class(test_pc) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_pc, silent = TRUE)
@@ -74,7 +74,7 @@ test_that("summary.domain handles domains with time points correctly", {
   expect_equal(result$tpt$PCELTM, c("PT0H", "PT1H", "PT2H"))
 })
 
-test_that("summary.domain handles domains with epochs correctly", {
+test_that("summary.sdtm_domain handles domains with epochs correctly", {
   # Create a domain object with epochs
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~EPOCH,
@@ -82,7 +82,7 @@ test_that("summary.domain handles domains with epochs correctly", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "TREATMENT",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "SCREENING"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -92,7 +92,7 @@ test_that("summary.domain handles domains with epochs correctly", {
   expect_equal(sort(result$epoch$EPOCH), c("SCREENING", "TREATMENT"))
 })
 
-test_that("summary.domain handles domains with categories correctly", {
+test_that("summary.sdtm_domain handles domains with categories correctly", {
   # Create a domain object with multiple category fields
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCCAT, ~PCSCAT, ~VISIT,
@@ -100,7 +100,7 @@ test_that("summary.domain handles domains with categories correctly", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "PK", "URINE", "DAY1",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "PK", "PLASMA", "DAY1"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -111,7 +111,7 @@ test_that("summary.domain handles domains with categories correctly", {
   expect_equal(sort(result$category$PCSCAT), c("PLASMA", "URINE"))
 })
 
-test_that("summary.domain handles domains with observations correctly", {
+test_that("summary.sdtm_domain handles domains with observations correctly", {
   # Create a domain object with test codes
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCCAT,
@@ -119,7 +119,7 @@ test_that("summary.domain handles domains with observations correctly", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "PK",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "PK"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -130,14 +130,14 @@ test_that("summary.domain handles domains with observations correctly", {
   expect_equal(result$observations$n, 3)
 })
 
-test_that("summary.domain handles domains with PCSPEC field", {
+test_that("summary.sdtm_domain handles domains with PCSPEC field", {
   # Create a domain object with PCSPEC field
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCSPEC,
     "SUBJ-001", "PC", 1, "DRUGA", "Drug A", "PLASMA",
     "SUBJ-002", "PC", 2, "DRUGA", "Drug A", "PLASMA"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -147,14 +147,14 @@ test_that("summary.domain handles domains with PCSPEC field", {
   expect_equal(result$test$PCSPEC, "PLASMA")
 })
 
-test_that("summary.domain handles domains with FAST field", {
+test_that("summary.sdtm_domain handles domains with FAST field", {
   # Create a domain object with FAST field
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCCAT, ~PCFAST,
     "SUBJ-001", "PC", 1, "DRUGA", "Drug A", "PK", "Y",
     "SUBJ-002", "PC", 2, "DRUGA", "Drug A", "PK", "N"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -164,7 +164,7 @@ test_that("summary.domain handles domains with FAST field", {
   expect_equal(sort(result$test$PCFAST), c("N", "Y"))
 })
 
-test_that("summary.domain handles domains with VISIT field", {
+test_that("summary.sdtm_domain handles domains with VISIT field", {
   # Create a domain object with VISIT field
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~VISIT,
@@ -172,7 +172,7 @@ test_that("summary.domain handles domains with VISIT field", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "DAY1",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "SCREENING"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -182,14 +182,14 @@ test_that("summary.domain handles domains with VISIT field", {
   expect_equal(sort(result$visit$VISIT), c("DAY1", "SCREENING"))
 })
 
-test_that("summary.domain handles domains with SUBJID field", {
+test_that("summary.sdtm_domain handles domains with SUBJID field", {
   # Create a domain object with both USUBJID and SUBJID
   test_domain <- tibble::tribble(
     ~USUBJID, ~SUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST,
     "STUDY-001-001", "001", "PC", 1, "DRUGA", "Drug A",
     "STUDY-001-002", "002", "PC", 2, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -201,14 +201,14 @@ test_that("summary.domain handles domains with SUBJID field", {
   expect_true("SUBJID" %in% names(result$subjects))
 })
 
-test_that("summary.domain handles domains with only USUBJID field", {
+test_that("summary.sdtm_domain handles domains with only USUBJID field", {
   # Create a domain object with only USUBJID
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST,
     "STUDY-001-001", "PC", 1, "DRUGA", "Drug A",
     "STUDY-001-002", "PC", 2, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -219,14 +219,14 @@ test_that("summary.domain handles domains with only USUBJID field", {
   expect_true("USUBJID" %in% names(result$subjects))
 })
 
-test_that("summary.domain handles domains with multiple DOMAIN values", {
+test_that("summary.sdtm_domain handles domains with multiple DOMAIN values", {
   # Create a domain object with multiple DOMAIN values (should error)
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST,
     "SUBJ-001", "PC", 1, "DRUGA", "Drug A",
     "SUBJ-002", "LB", 1, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Should error due to multiple domains
   expect_error(
@@ -235,14 +235,14 @@ test_that("summary.domain handles domains with multiple DOMAIN values", {
   )
 })
 
-test_that("summary.domain handles domains with empty DOMAIN column", {
+test_that("summary.sdtm_domain handles domains with empty DOMAIN column", {
   # Create a domain object with empty DOMAIN column
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST,
     "SUBJ-001", "", 1, "DRUGA", "Drug A",
     "SUBJ-002", "", 2, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Should error due to empty domain
   expect_error(
@@ -251,14 +251,14 @@ test_that("summary.domain handles domains with empty DOMAIN column", {
   )
 })
 
-test_that("summary.domain handles domains with missing DOMAIN column", {
+test_that("summary.sdtm_domain handles domains with missing DOMAIN column", {
   # Create a domain object without DOMAIN column
   test_domain <- tibble::tribble(
     ~USUBJID, ~PCSEQ, ~PCTESTCD, ~PCTEST,
     "SUBJ-001", 1, "DRUGA", "Drug A",
     "SUBJ-002", 2, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Should error due to missing DOMAIN column
   expect_error(
@@ -267,14 +267,14 @@ test_that("summary.domain handles domains with missing DOMAIN column", {
   )
 })
 
-test_that("summary.domain handles domains with missing optional fields gracefully", {
+test_that("summary.sdtm_domain handles domains with missing optional fields gracefully", {
   # Create a minimal domain object
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~STUDYID, ~PCSEQ, ~PCTESTCD, ~PCTEST,
     "SUBJ-001", "PC", "STUDY-001", 1, "DRUGA", "Drug A",
     "SUBJ-002", "PC", "STUDY-001", 2, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -295,7 +295,7 @@ test_that("summary.domain handles domains with missing optional fields gracefull
   expect_null(result$visit)
 })
 
-# test_that("summary.domain handles domains with all optional fields", {
+# test_that("summary.sdtm_domain handles domains with all optional fields", {
 #   # Create a comprehensive domain object with all optional fields
 #   test_domain <- tibble::tribble(
 #     ~USUBJID, ~DOMAIN, ~STUDYID, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCCAT, ~PCSCAT, ~PCFAST, ~PCTPT, ~PCTPTNUM, ~PCELTM, ~EPOCH, ~VISIT, ~PCSPEC,
@@ -303,7 +303,7 @@ test_that("summary.domain handles domains with missing optional fields gracefull
 #     "SUBJ-001", "PC", "STUDY-001", 2, "DRUGA", "Drug A", "PK", "PLASMA", "Y", "1HR", 1, "PT1H", "TREATMENT", "DAY1", "PLASMA",
 #     "SUBJ-002", "PC", "STUDY-001", 3, "DRUGA", "Drug A", "PK", "PLASMA", "N", "PRE", 0, "PT0H", "TREATMENT", "DAY1", "PLASMA"
 #   )
-#   class(test_domain) <- c("domain", "data.frame")
+#   class(test_domain) <- c("sdtm_domain", "data.frame")
 #
 #   # Call summary
 #   result <- summary(test_domain, silent = TRUE)
@@ -332,14 +332,14 @@ test_that("summary.domain handles domains with missing optional fields gracefull
 #   expect_equal(result$visit$VISIT, "DAY1")
 # })
 
-test_that("summary.domain handles domains with case-insensitive domain codes", {
+test_that("summary.sdtm_domain handles domains with case-insensitive domain codes", {
   # Create a domain object with lowercase domain code
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST,
     "SUBJ-001", "pc", 1, "DRUGA", "Drug A",
     "SUBJ-002", "pc", 2, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -349,7 +349,7 @@ test_that("summary.domain handles domains with case-insensitive domain codes", {
   expect_equal(result$n_obs, 2)
 })
 
-test_that("summary.domain handles domains with numeric fields correctly", {
+test_that("summary.sdtm_domain handles domains with numeric fields correctly", {
   # Create a domain object with numeric fields
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCTPTNUM, ~PCSTRESN,
@@ -357,7 +357,7 @@ test_that("summary.domain handles domains with numeric fields correctly", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", 1, 15.2,
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", 0, 12.3
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -369,7 +369,7 @@ test_that("summary.domain handles domains with numeric fields correctly", {
   expect_equal(result$tpt, NULL)
 })
 
-test_that("summary.domain handles domains with NA values gracefully", {
+test_that("summary.sdtm_domain handles domains with NA values gracefully", {
   # Create a domain object with NA values
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCCAT,
@@ -377,7 +377,7 @@ test_that("summary.domain handles domains with NA values gracefully", {
     "SUBJ-001", "PC", 2, "DRUGA", NA, "PK",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", NA
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -391,7 +391,7 @@ test_that("summary.domain handles domains with NA values gracefully", {
   expect_equal(nrow(result$category), 2)
 })
 
-test_that("summary.domain handles domains with duplicate values correctly", {
+test_that("summary.sdtm_domain handles domains with duplicate values correctly", {
   # Create a domain object with duplicate values
   test_domain <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCSEQ, ~PCTESTCD, ~PCTEST, ~PCCAT, ~PCTPT,
@@ -399,7 +399,7 @@ test_that("summary.domain handles domains with duplicate values correctly", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "PK", "PRE",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "PK", "PRE"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Call summary
   result <- summary(test_domain, silent = TRUE)
@@ -422,7 +422,7 @@ test_that("print.summary_domain displays basic information correctly", {
     "SUBJ-001", "PC", "STUDY-001", 2, "DRUGA", "Drug A", "PK", "PLASMA", "1HR", 1, "PT1H", "TREATMENT", "DAY1",
     "SUBJ-002", "PC", "STUDY-001", 3, "DRUGA", "Drug A", "PK", "PLASMA", "2HR", 2, "PT2H", "TREATMENT", "DAY1"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -445,7 +445,7 @@ test_that("print.summary_domain displays categories when present", {
     "SUBJ-001", "PC", 1, "DRUGA", "Drug A", "PK", "PLASMA", "Y",
     "SUBJ-002", "PC", 2, "DRUGA", "Drug A", "PK", "URINE", "N"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -467,7 +467,7 @@ test_that("print.summary_domain displays test codes when present", {
     "SUBJ-001", "PC", 1, "DRUGA", "Drug A", "PK", "PLASMA",
     "SUBJ-002", "PC", 2, "DRUGB", "Drug B", "PK", "PLASMA"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -490,7 +490,7 @@ test_that("print.summary_domain displays time points when present", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "1HR", 1, "PT1H",
     "SUBJ-001", "PC", 3, "DRUGA", "Drug A", "2HR", 2, "PT2H"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -513,7 +513,7 @@ test_that("print.summary_domain displays epochs when present", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "TREATMENT",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "SCREENING"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -534,7 +534,7 @@ test_that("print.summary_domain handles domains without optional fields graceful
     "SUBJ-001", "PC", "STUDY-001", 1, "DRUGA", "Drug A",
     "SUBJ-002", "PC", "STUDY-001", 2, "DRUGA", "Drug A"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -561,7 +561,7 @@ test_that("print.summary_domain handles domains with only some optional fields",
     "SUBJ-001", "PC", 1, "DRUGA", "Drug A", "PK", "PLASMA",
     "SUBJ-002", "PC", 2, "DRUGA", "Drug A", "PK", "URINE"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -591,7 +591,7 @@ test_that("print.summary_domain handles domains with multiple test codes correct
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "PK",
     "SUBJ-002", "PC", 4, "DRUGC", "Drug C", "PD"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -624,7 +624,7 @@ test_that("print.summary_domain handles domains with complex time point informat
     "SUBJ-001", "PC", 7, "DRUGA", "Drug A", "8HR", 8, "PT8H",
     "SUBJ-001", "PC", 8, "DRUGA", "Drug A", "24HR", 24, "PT24H"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -652,7 +652,7 @@ test_that("print.summary_domain handles domains with mixed field types", {
     "SUBJ-001", "PC", 2, "DRUGA", "Drug A", "PK", "PLASMA", "Y", "PLASMA", "1HR", 1, "PT1H", "TREATMENT", "DAY1",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", "PK", "URINE", "N", "URINE", "PRE", 0, "PT0H", "TREATMENT", "DAY1"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -683,7 +683,7 @@ test_that("print.summary_domain handles domains with special characters in text 
     "SUBJ-001", "PC", 1, "DRUG-A", "Drug A (Parent)", "PK", "Plasma (EDTA)",
     "SUBJ-002", "PC", 2, "DRUG-B", "Drug B (Metabolite)", "PD", "Serum (Heparin)"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -708,7 +708,7 @@ test_that("print.summary_domain handles domains with numeric test codes", {
     "SUBJ-001", "PC", 2, "002", "Test 2", "PK",
     "SUBJ-002", "PC", 3, "003", "Test 3", "PD"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)
@@ -734,7 +734,7 @@ test_that("print.summary_domain handles domains with missing values gracefully",
     "SUBJ-001", "PC", 2, "DRUGA", NA, "PK", "PLASMA",
     "SUBJ-002", "PC", 3, "DRUGA", "Drug A", NA, "PLASMA"
   )
-  class(test_domain) <- c("domain", "data.frame")
+  class(test_domain) <- c("sdtm_domain", "data.frame")
 
   # Create summary object
   summary_obj <- summary(test_domain, silent = TRUE)

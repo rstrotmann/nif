@@ -2,14 +2,14 @@
 % Please edit documentation in R/sdtm_class.R, R/sdtm_domain.R, R/utilities.R
 \name{hash.sdtm}
 \alias{hash.sdtm}
-\alias{hash.domain}
+\alias{hash.sdtm_domain}
 \alias{hash}
 \alias{hash.nif}
 \title{XXH128 hash}
 \usage{
 \method{hash}{sdtm}(x)
 
-\method{hash}{domain}(x)
+\method{hash}{sdtm_domain}(x)
 
 hash(x)
 

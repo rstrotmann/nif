@@ -327,8 +327,8 @@ validate_nif <- function(obj, fields = NULL) {
 #' @returns Nothing or stop.
 #' @noRd
 validate_domain_param <- function(obj) {
-  if (!inherits(obj, "domain")) {
-    stop("Input must be a domain object")
+  if (!inherits(obj, "sdtm_domain")) {
+    stop("Input must be a sdtm_domain object")
   }
 }
 

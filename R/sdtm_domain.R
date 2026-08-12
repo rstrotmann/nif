@@ -34,7 +34,7 @@ domain <- function(obj, name) {
 new_domain <- function(
   domain_data
 ) {
-  class(domain_data) <- c("domain", "data.frame")
+  class(domain_data) <- c("sdtm_domain", "data.frame")
   domain_data
 }
 
@@ -48,7 +48,7 @@ new_domain <- function(
 #' @returns A summary object
 #' @export
 #' @keywords internal
-summary.domain <- function(object, ..., silent = NULL) {
+summary.sdtm_domain <- function(object, ..., silent = NULL) {
   # validate input
   if (!inherits(object, "data.frame")) {
     stop("Input must be a data frame")
@@ -117,7 +117,7 @@ summary.domain <- function(object, ..., silent = NULL) {
     tpt = tpt,
     n_obs = nrow(object),
     visit = visit,
-    hash = hash.domain(object),
+    hash = hash.sdtm_domain(object),
     last = last_dtc(object)
   )
 
@@ -200,7 +200,7 @@ print.summary_domain <- function(x, ...) {
 #'
 #' @examples
 #' plot(domain(examplinib_sad, "lb"))
-plot.domain <- function(
+plot.sdtm_domain <- function(
   x,
   testcd = NULL,
   points = TRUE,
@@ -398,7 +398,7 @@ plot.domain <- function(
 #'
 #' @examples
 #' last_dtc(examplinib_sad_nif)
-last_dtc.domain <- function(obj) {
+last_dtc.sdtm_domain <- function(obj) {
   validate_domain(obj, silent = TRUE)
   last_dtc_data_frame(as.data.frame(obj))
 }
@@ -407,7 +407,7 @@ last_dtc.domain <- function(obj) {
 
 #' @rdname hash
 #' @export
-hash.domain <- function(x) {
+hash.sdtm_domain <- function(x) {
   x |>
     rlang::hash()
 }
