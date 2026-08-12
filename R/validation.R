@@ -91,6 +91,19 @@ validate_domain <- function(domain, silent = NULL) {
 }
 
 
+#' Check whether object is an adam_dataset
+#'
+#' @param obj Input.
+#'
+#' @returns Nothing or stop.
+#' @noRd
+validate_dataset <- function(obj) {
+  if (!inherits(obj, "adam_dataset")) {
+    stop("Input must be an adam_dataset object")
+  }
+}
+
+
 #' Check whether domains of sdtm object are compliant with SDTM standard
 #'
 #' @param sdtm SDTM object.

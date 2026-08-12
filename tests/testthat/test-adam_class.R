@@ -431,8 +431,8 @@ test_that("dataset retrieves correct dataset from adam object", {
   result_dm <- dataset(adam_obj, "dm")
   result_ex <- dataset(adam_obj, "ex")
 
-  expect_equal(result_dm, dm)
-  expect_equal(result_ex, ex)
+  expect_equal(as.data.frame(result_dm), as.data.frame(dm))
+  expect_equal(as.data.frame(result_ex), as.data.frame(ex))
   expect_equal(nrow(result_dm), 2)
   expect_equal(nrow(result_ex), 1)
 })
@@ -537,10 +537,10 @@ test_that("dataset works with multiple datasets", {
 
   adam_obj <- adam(list(dm = dm, ex = ex, pc = pc, vs = vs))
 
-  expect_equal(dataset(adam_obj, "dm"), dm)
-  expect_equal(dataset(adam_obj, "ex"), ex)
-  expect_equal(dataset(adam_obj, "pc"), pc)
-  expect_equal(dataset(adam_obj, "vs"), vs)
+  expect_equal(as_tibble(dataset(adam_obj, "dm")), dm)
+  expect_equal(as_tibble(dataset(adam_obj, "ex")), ex)
+  expect_equal(as_tibble(dataset(adam_obj, "pc")), pc)
+  expect_equal(as_tibble(dataset(adam_obj, "vs")), vs)
 })
 
 

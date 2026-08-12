@@ -119,24 +119,3 @@ print.adam <- function(x, ...) {
   print(summary(x))
 }
 
-
-#' Retrieve dataset from adam object
-#'
-#' @param adam An adam object.
-#' @param name The dataset name as character.
-#'
-#' @return A data frame.
-#' @export
-dataset <- function(adam, name) {
-  # input validation
-  validate_adam(adam)
-    validate_argument(name, "character")
-
-  if (!name %in% names(adam)) {
-    stop(paste0(
-      "Dataset ", name, " not found in adam object!"
-    ))
-  }
-
-  adam[[name]]
-}
