@@ -125,6 +125,7 @@
 <url><loc>/reference/last_dtc.html</loc></url>
 <url><loc>/reference/last_dtc.nif.html</loc></url>
 <url><loc>/reference/last_dtc.sdtm.html</loc></url>
+<url><loc>/reference/last_dtc.sdtm_domain.html</loc></url>
 <url><loc>/reference/lbm_boer.html</loc></url>
 <url><loc>/reference/lbm_hume.html</loc></url>
 <url><loc>/reference/lbm_peters.html</loc></url>
@@ -164,6 +165,7 @@
 <url><loc>/reference/plot.domain.html</loc></url>
 <url><loc>/reference/plot.nif.html</loc></url>
 <url><loc>/reference/plot.sdtm.html</loc></url>
+<url><loc>/reference/plot.sdtm_domain.html</loc></url>
 <url><loc>/reference/plural.html</loc></url>
 <url><loc>/reference/pos_diff.html</loc></url>
 <url><loc>/reference/positive_or_zero.html</loc></url>
@@ -191,6 +193,7 @@
 <url><loc>/reference/summary.adam.html</loc></url>
 <url><loc>/reference/summary.domain.html</loc></url>
 <url><loc>/reference/summary.sdtm.html</loc></url>
+<url><loc>/reference/summary.sdtm_domain.html</loc></url>
 <url><loc>/reference/testcd.html</loc></url>
 <url><loc>/reference/time_by_ntime.html</loc></url>
 <url><loc>/reference/treatments.html</loc></url>

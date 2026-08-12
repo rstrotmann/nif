@@ -178,9 +178,10 @@
 - [`nif_viewer()`](nif_viewer.md) : NIF viewer
 - [`obs_per_dose_level()`](obs_per_dose_level.md) : Observations per
   dose level
-- [`plot(`*`<domain>`*`)`](plot.domain.md) : Plot domain object
 - [`plot(`*`<nif>`*`)`](plot.nif.md) : Plot NIF object.
 - [`plot(`*`<sdtm>`*`)`](plot.sdtm.md) : Plot SDTM object
+- [`plot(`*`<sdtm_domain>`*`)`](plot.sdtm_domain.md) : Plot domain
+  object
 - [`race_coding`](race_coding.md) : Race coding table
 - [`read_adam()`](read_adam.md) : Load ADaM data sets from disk
 - [`read_sdtm()`](read_sdtm.md) : Read SDTM data

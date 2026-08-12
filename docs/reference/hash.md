@@ -8,7 +8,7 @@ XXH128 hash
 # S3 method for class 'sdtm'
 hash(x)
 
-# S3 method for class 'domain'
+# S3 method for class 'sdtm_domain'
 hash(x)
 
 hash(x)

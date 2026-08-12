@@ -33,7 +33,7 @@ add_observation(
   include_day_in_ntime = FALSE,
   silent = NULL,
   duplicates = "stop",
-  duplicate_function = mean,
+  duplicate_function = median,
   duplicate_identifier = "DTC",
   omit_not_done = TRUE,
   na_rm = TRUE,
@@ -169,7 +169,7 @@ add_observation(
 
 - duplicate_function:
 
-  Function to resolve duplicate values, defaults to `mean`.
+  Function to resolve duplicate values, defaults to `median`.
 
 - duplicate_identifier:
 
@@ -199,6 +199,9 @@ add_observation(
 A nif object.
 
 ## Details
+
+Only observations for subjects that are in the nif data set already,
+i.e., those that have administrations, are added.
 
 Observations can be pharmacokinetic observations (i.e., from the PC
 domain), or any other type of observation from any other SDTM domain.

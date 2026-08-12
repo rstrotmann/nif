@@ -59,7 +59,7 @@ nif_auto(
 
 - duplicate_function:
 
-  Function to resolve duplicate values, defaults to `mean`.
+  Function to resolve duplicate values, defaults to `median`.
 
 - keep:
 

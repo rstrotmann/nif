@@ -256,7 +256,7 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #> Epochs
 #>   OPEN LABEL TREATMENT   
 #>  
-#> Hash: d29adb9ffafcfd308f6b38947fefecde
+#> Hash: 1845066a836e2bcc64e20d8d8b7951ff
 #> Last DTC: 2001-03-02 12:31:00
 ```
 
