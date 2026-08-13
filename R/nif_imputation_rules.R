@@ -79,8 +79,8 @@ imputation_rules_void <- list(
 #'
 #' ### `admin_post_expansion`
 #'
-#' 1. `get_admin_time_from_pcrftdtc` - set `DTC_time` from `PC.PCRFTDTC` when
-#'    related PK observations exist.
+#' 1. `get_admin_time_from_pcrftdtc` - set missing `DTC_time` from `PC.PCRFTDTC`
+#'    when related PK observations exist.
 #'
 #' After these imputations, remaining missing administration times are carried
 #' forward.
@@ -185,7 +185,7 @@ imputation_rules_minimal <- list(
 #' 1. `get_admin_time_from_pcrftdtc` - Use the `PCRFTDTC` field from the PC
 #'    domain, if available, to complete missing administration times.
 #' 2. `get_admin_time_from_ntime` - back-calculate administration time, if still
-#'    missing from the nominal PK observation times in `PCTPT`, if available.
+#'    missing, from the nominal PK observation times in `PCTPT`, if available.
 #'
 #' After these imputations, remaining missing administration times are carried
 #' forward.
@@ -230,15 +230,15 @@ imputation_rules_standard <- list(
       filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
   },
 
-  # post expansion: impute NTIME from PCRFTDTC or from NTIME
+  # post expansion: PCRFTDTC first, then NTIME (fill missing only; order = priority)
   admin_post_expansion = function(
       ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
     ) {
     ex |>
-      get_admin_time_from_ntime(
+      get_admin_time_from_pcrftdtc(
         sdtm, extrt = extrt, pctestcd = pctestcd, silent = silent
       ) |>
-      get_admin_time_from_pcrftdtc(
+      get_admin_time_from_ntime(
         sdtm, extrt = extrt, pctestcd = pctestcd, silent = silent
       )
   },
@@ -292,12 +292,11 @@ imputation_rules_standard <- list(
 #'
 #' ### `admin_post_expansion`
 #'
-#' 1. Compute an NTIME-based administration time via
-#'    `get_admin_time_from_ntime`
-#' 2. Apply `get_admin_time_from_pcrftdtc` when PCRFTDTC is available.
-#' 3. If PCRFTDTC is absent and the NTIME-derived time differs from the
-#'    EX-derived time by more than 10 minutes, use the NTIME-derived time;
-#'    otherwise keep the EX-derived time.
+#' 1. Apply `get_admin_time_from_ntime` (fills missing times; keeps
+#'    `.NTIME_DTC_time` estimates).
+#' 2. Apply `get_admin_time_from_pcrftdtc` for remaining missing times.
+#' 3. If PCRFTDTC was not used and the NTIME-derived time differs from the
+#'    current time by more than 10 minutes, use the NTIME-derived time.
 #'
 #' After these imputations, remaining missing administration times are carried
 #' forward.
@@ -335,29 +334,38 @@ imputation_rules_1 <- list(
       filter_exendtc_after_exstdtc(dm, extrt, silent = silent)
   },
 
-  # post expansion: impute NTIME from PCRFTDTC or from NTIME
+  # post expansion: NTIME estimates, then PCRFTDTC; 10-minute NTIME override
   admin_post_expansion = function(
     ex, sdtm, extrt, analyte, pctestcd, cut_off_date, silent
   ) {
-    temp <- ex |>
+    ex |>
       get_admin_time_from_ntime(
         sdtm, extrt, pctestcd, silent
       ) |>
-      mutate(.ntime_time = .data$DTC_time) |>
-      pull(.data$.ntime_time)
-
-    ex |>
-      mutate(.ntime_time = temp) |>
       get_admin_time_from_pcrftdtc(
         sdtm, extrt, pctestcd, silent
       ) |>
-      mutate(.dtc_ex = compose_dtc(DTC_date, DTC_time)) |>
-      mutate(.dtc_ntime = compose_dtc(DTC_date, .ntime_time)) |>
-      mutate(DTC_time = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
-        difftime(.data$.dtc_ex, .data$.dtc_ntime, units = "mins") > 10 ~ .data$.ntime_time,
-        .default = .data$DTC_time
-      ))
+      mutate(
+        .dtc_curr = compose_dtc(.data$DTC_date, .data$DTC_time),
+        .dtc_ntime = compose_dtc(.data$DTC_date, .data$.NTIME_DTC_time),
+        .use_ntime = .data$IMPUTATION != "time imputed from PCRFTDTC" &
+          !is.na(.data$.NTIME_DTC_time) &
+          (is.na(.data$DTC_time) |
+            abs(as.numeric(difftime(
+              .data$.dtc_curr, .data$.dtc_ntime, units = "mins"
+            ))) > 10),
+        IMPUTATION = if_else(
+          .data$.use_ntime,
+          "time imputed from PCELTM/PCTPT",
+          .data$IMPUTATION
+        ),
+        DTC_time = if_else(
+          .data$.use_ntime,
+          .data$.NTIME_DTC_time,
+          .data$DTC_time
+        )
+      ) |>
+      select(-any_of(c(".dtc_curr", ".dtc_ntime", ".use_ntime")))
   },
 
   # raw observations: no action

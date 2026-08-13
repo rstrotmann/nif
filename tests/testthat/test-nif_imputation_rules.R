@@ -126,10 +126,10 @@ test_that("get_admin_time_from_ntime works as intended", {
   ex <- expand_ex(ex)
 
   result <- ex |>
-    get_admin_time_from_ntime(
+    get_admin_time_from_pcrftdtc(
       sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = FALSE
     ) |>
-    get_admin_time_from_pcrftdtc(
+    get_admin_time_from_ntime(
       sdtm, extrt = "TREATMENT_A", pctestcd = "ANALYTE_A", silent = FALSE
     ) |>
     carry_forward_admin_time_imputations()

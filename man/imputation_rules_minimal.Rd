@@ -49,8 +49,8 @@ Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}: \
 
 \subsection{\code{admin_post_expansion}}{
 \enumerate{
-\item \code{get_admin_time_from_pcrftdtc} - set \code{DTC_time} from \code{PC.PCRFTDTC} when
-related PK observations exist.
+\item \code{get_admin_time_from_pcrftdtc} - set missing \code{DTC_time} from \code{PC.PCRFTDTC}
+when related PK observations exist.
 }
 
 After these imputations, remaining missing administration times are carried

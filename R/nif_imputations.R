@@ -589,7 +589,10 @@ apply_cut_off_date <- function(ex, extrt, cut_off_date, silent = NULL) {
 
 
 
-#' Get administration time from the PCRFTDTC where available
+#' Impute missing administration time from PCRFTDTC
+#'
+#' Fills `DTC_time` only where it is still missing. When multiple `PCRFTDTC`
+#' values exist for the same subject and day, the earlier time is used.
 #'
 #' @param ex The EX domain after expansion.
 #' @param sdtm The sdtm data.
@@ -597,8 +600,8 @@ apply_cut_off_date <- function(ex, extrt, cut_off_date, silent = NULL) {
 #' @param pctestcd The PCTESTCD corresponding to the treatment, as character.
 #' @param silent Suppress messages.
 #'
-#' @returns The ex domain with DTC_time imputed from PCRFTDTC, and the DTC and
-#' IMPUTATION fields updated for the respective rows.
+#' @returns The ex domain with missing `DTC_time` imputed from PCRFTDTC and
+#'   `IMPUTATION` updated for the respective rows.
 #' @noRd
 get_admin_time_from_pcrftdtc <- function(
     ex,
@@ -607,23 +610,20 @@ get_admin_time_from_pcrftdtc <- function(
     pctestcd = NULL,
     silent = NULL
   ) {
-  # validate inputs
   validate_argument(pctestcd, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
 
-  if (!"pc" %in% names(sdtm$domains)) {
+  if (!has_domain(sdtm, "pc")) {
     conditional_cli(
       cli_alert_warning(paste0(
         "PC not found in sdtm object - ",
         "administration times cannot be imputed from PCRFTDTC!")),
       silent = silent)
-
-    return(mutate(ex, .PCRFTDTC_DTC_time = NA))
+    return(ex)
   }
 
   pc <- domain(sdtm, "pc")
 
-  # if PCRFTDTC is not available, return NA
   if (!"PCRFTDTC" %in% names(pc)) {
     conditional_cli(
       cli_alert_warning(paste0(
@@ -631,60 +631,50 @@ get_admin_time_from_pcrftdtc <- function(
         "administration times cannot be copied from PCRFTDTC!")),
       silent = silent
     )
-    return(mutate(ex, .PCRFTDTC_DTC_time = NA))
+    return(ex)
   }
 
-  # selection of pctestcd, if applicable
   available_pctestcd <- unique(pc$PCTESTCD)
 
   if (is.null(pctestcd)) {
     if (extrt %in% available_pctestcd) {
       pctestcd <- extrt
+    } else if (length(available_pctestcd) == 1) {
+      pctestcd <- available_pctestcd
+      conditional_cli(
+        cli_alert_warning(paste0(
+          "Administration time imputation from PCRFTDTC: Assuming PCTESTCD '",
+          pctestcd, "' relates to EXTRT '",
+          extrt, "'!"
+        )),
+        silent = silent
+      )
     } else {
-      if (length(available_pctestcd) == 1) {
-        # only one PCTESTCD
-        pctestcd <- available_pctestcd
-        conditional_cli(
-          cli_alert_warning(paste0(
-            "Administration time imputation from PCRFTDTC: Assuming PCTESTCD '",
-            pctestcd, "' relates to EXTRT '",
-            extrt, "'!"
-          )),
-          silent = silent
-        )
-      } else {
-        # multiple PCTESTCD
-        pctestcd <- available_pctestcd
-      }
+      pctestcd <- available_pctestcd
     }
   }
 
-  missing_pctestcd <- setdiff(pctestcd, unique(pc$PCTESTCD))
-  if (length(missing_pctestcd) > 0)
+  missing_pctestcd <- setdiff(pctestcd, available_pctestcd)
+  if (length(missing_pctestcd) > 0) {
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
+  }
 
-
-  temp <- pc |>
-    filter(.data$PCTESTCD %in% pctestcd) |>
-    filter(!is.na(.data$PCRFTDTC)) |>
+  ref <- pc |>
+    filter(.data$PCTESTCD %in% pctestcd, !is.na(.data$PCRFTDTC)) |>
     lubrify_dates() |>
-    # distinct(.data$USUBJID, .data$PCRFTDTC, .data$PCTESTCD) |>
     decompose_dtc("PCRFTDTC") |>
-    arrange(.data$PCRFTDTC_date) |>
-    distinct(.data$USUBJID, .data$PCRFTDTC_date, .data$PCRFTDTC_time) |>
-    reframe(
+    filter(!is.na(.data$PCRFTDTC_time)) |>
+    arrange(
       .data$USUBJID,
       .data$PCRFTDTC_date,
-      .data$PCRFTDTC_time,
-      .N = n(),
-      .by = any_of(c("PCRFTDTC_date", "USUBJID"))) |>
-    mutate(.PCRFTDTC_DTC_time = .data$PCRFTDTC_time) |>
-    mutate(DTC_date = .data$PCRFTDTC_date) |>
-    arrange(strptime(.data$.PCRFTDTC_DTC_time, format = "%H:%M"))
+      strptime(.data$PCRFTDTC_time, format = "%H:%M")
+    )
 
-  # check for duplicate times
-  n_dupl <- filter(temp, .data$.N > 1) |>
+  n_dupl <- ref |>
+    count(.data$USUBJID, .data$PCRFTDTC_date) |>
+    filter(.data$n > 1) |>
     nrow()
+
   if (n_dupl > 0) {
     conditional_cli({
       cli_alert_danger(paste0(
@@ -693,27 +683,28 @@ get_admin_time_from_pcrftdtc <- function(
       ))
     },
     silent = silent)
-
-    temp <- temp |>
-      group_by(.data$USUBJID, .data$PCRFTDTC_date) |>
-      filter(row_number() == 1)
   }
 
-  temp <- temp |>
-    distinct(.data$USUBJID, .data$DTC_date, .data$.PCRFTDTC_DTC_time)
+  ref <- ref |>
+    distinct(.data$USUBJID, DTC_date = .data$PCRFTDTC_date, .keep_all = TRUE) |>
+    transmute(
+      .data$USUBJID,
+      .data$DTC_date,
+      .time = .data$PCRFTDTC_time
+    )
 
   ex |>
-    left_join(temp, by = c("USUBJID", "DTC_date")) |>
-
-    # complete IMPUTATION field for PCDTCTPT-derived administration times
-    mutate(IMPUTATION = case_when(
-      !is.na(.data$.PCRFTDTC_DTC_time) ~ "time imputed from PCRFTDTC",
-      .default = .data$IMPUTATION)) |>
-
-      # copy imputed times
-      mutate(DTC_time = case_when(
-        !is.na(.data$.PCRFTDTC_DTC_time) ~ .data$.PCRFTDTC_DTC_time,
-        .default = .data$DTC_time))
+    left_join(ref, by = c("USUBJID", "DTC_date")) |>
+    mutate(
+      .impute = is.na(.data$DTC_time) & !is.na(.data$.time),
+      IMPUTATION = if_else(
+        .data$.impute,
+        "time imputed from PCRFTDTC",
+        .data$IMPUTATION
+      ),
+      DTC_time = if_else(.data$.impute, .data$.time, .data$DTC_time)
+    ) |>
+    select(-any_of(c(".time", ".impute")))
 }
 
 
@@ -744,20 +735,21 @@ get_admin_time_from_ntime <- function(
   validate_argument(pctestcd, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
 
-  if (!"pc" %in% names(sdtm$domains)) {
-    return(mutate(ex, .NTIME_DTC_time = NA))
+  if (!has_domain(sdtm, "pc")) {
+    return(mutate(ex, .NTIME_DTC_time = NA_character_))
   }
 
   pc <- domain(sdtm, "pc")
 
-  if (is.null(pctestcd))
+  if (is.null(pctestcd)) {
     pctestcd <- unique(pc$PCTESTCD)
+  }
 
   missing_pctestcd <- setdiff(pctestcd, unique(pc$PCTESTCD))
-  if (length(missing_pctestcd) > 0)
+  if (length(missing_pctestcd) > 0) {
     stop("missing PCTESTCD ", nice_enumeration(missing_pctestcd))
+  }
 
-  # business logic
   temp <- pc |>
     filter(.data$PCTESTCD %in% pctestcd) |>
     lubrify_dates()
@@ -785,24 +777,29 @@ get_admin_time_from_ntime <- function(
     })
   }
 
-  temp <- temp |>
+  ref <- temp |>
     distinct(
       .data$USUBJID,
       DTC_date = .data$PCDTC_date,
-      .data$.NTIME_DTC_time)
+      .data$.NTIME_DTC_time
+    )
 
   ex |>
-    left_join(temp, by = c("USUBJID", "DTC_date")) |>
-
-    # complete IMPUTATION field for NTIME-derived administration times
-    mutate(IMPUTATION = case_when(
-      !is.na(.data$.NTIME_DTC_time) ~ "time imputed from PCELTM/PCTPT",
-      .default = .data$IMPUTATION)) |>
-
-    # copy imputed times
-    mutate(DTC_time = case_when(
-      !is.na(.data$.NTIME_DTC_time) ~ .data$.NTIME_DTC_time,
-      .default = .data$DTC_time))
+    left_join(ref, by = c("USUBJID", "DTC_date")) |>
+    mutate(
+      .impute = is.na(.data$DTC_time) & !is.na(.data$.NTIME_DTC_time),
+      IMPUTATION = if_else(
+        .data$.impute,
+        "time imputed from PCELTM/PCTPT",
+        .data$IMPUTATION
+      ),
+      DTC_time = if_else(
+        .data$.impute,
+        .data$.NTIME_DTC_time,
+        .data$DTC_time
+      )
+    ) |>
+    select(-any_of(c(".impute")))
 }
 
 
@@ -831,7 +828,7 @@ carry_forward_admin_time_imputations <- function(ex) {
 
     # clean up
     select(-any_of(c(
-      "PCRFTDTC_date", ".PCRFTDTC_DTC_time", ".NTIME_DTC_time",
+      ".NTIME_DTC_time",
       ".carry_forward",
       "EXSTDTC_date", "EXSTDTC_time", "EXENDTC_date", "EXENDTC_time"
       )))

@@ -41,12 +41,11 @@ Same as \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}.
 
 \subsection{\code{admin_post_expansion}}{
 \enumerate{
-\item Compute an NTIME-based administration time via
-\code{get_admin_time_from_ntime}
-\item Apply \code{get_admin_time_from_pcrftdtc} when PCRFTDTC is available.
-\item If PCRFTDTC is absent and the NTIME-derived time differs from the
-EX-derived time by more than 10 minutes, use the NTIME-derived time;
-otherwise keep the EX-derived time.
+\item Apply \code{get_admin_time_from_ntime} (fills missing times; keeps
+\code{.NTIME_DTC_time} estimates).
+\item Apply \code{get_admin_time_from_pcrftdtc} for remaining missing times.
+\item If PCRFTDTC was not used and the NTIME-derived time differs from the
+current time by more than 10 minutes, use the NTIME-derived time.
 }
 
 After these imputations, remaining missing administration times are carried

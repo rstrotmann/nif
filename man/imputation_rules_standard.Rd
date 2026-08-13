@@ -61,7 +61,7 @@ before \code{EXSTDTC}.
 \item \code{get_admin_time_from_pcrftdtc} - Use the \code{PCRFTDTC} field from the PC
 domain, if available, to complete missing administration times.
 \item \code{get_admin_time_from_ntime} - back-calculate administration time, if still
-missing from the nominal PK observation times in \code{PCTPT}, if available.
+missing, from the nominal PK observation times in \code{PCTPT}, if available.
 }
 
 After these imputations, remaining missing administration times are carried

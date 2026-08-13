@@ -62,10 +62,10 @@ test_that("minimal rules: multi-subject with missing EXENDTC, cutoff, and invali
   expect_true(as.Date("2025-01-06") %in% s01_dates)
   expect_true(as.Date("2025-01-09") %in% s01_dates)
 
-  # PCRFTDTC-based time imputation should appear for matching dates
+  # PCRFTDTC fills missing middle-day times; day 1 already has EXSTDTC time
   s01_imp <- res$IMPUTATION[res$USUBJID == "S01" &
                               as.Date(res$DTC) == as.Date("2025-01-01")]
-  expect_true(any(grepl("PCRFTDTC", s01_imp)))
+  expect_true(any(grepl("EXSTDTC", s01_imp)))
 
   s01_day3_imp <- res$IMPUTATION[res$USUBJID == "S01" &
                                    as.Date(res$DTC) == as.Date("2025-01-03")]
@@ -151,7 +151,7 @@ test_that("minimal rules: obs_raw and obs_final are identity (no LLOQ, no TAFD f
 })
 
 
-test_that("minimal rules: PCRFTDTC overrides EXSTDTC time on matching days", {
+test_that("minimal rules: PCRFTDTC fills missing times but does not override EX times", {
   sdtm <- sdtm(list(
     dm = tibble::tribble(
       ~USUBJID, ~SEX,          ~RFSTDTC, ~ACTARMCD,
@@ -181,25 +181,25 @@ test_that("minimal rules: PCRFTDTC overrides EXSTDTC time on matching days", {
   res <- as.data.frame(result)
   expect_equal(nrow(res), 5)
 
-  # Day 1: PCRFTDTC (08:30) should override EXSTDTC time (08:00)
+  # Day 1: EXSTDTC time (08:00) is kept; PCRFTDTC does not overwrite
   day1 <- res[as.Date(res$DTC) == as.Date("2025-04-01"), ]
-  expect_equal(format(day1$DTC, "%H:%M"), "08:30")
-  expect_true(grepl("PCRFTDTC", day1$IMPUTATION))
+  expect_equal(format(day1$DTC, "%H:%M"), "08:00")
+  expect_true(grepl("EXSTDTC", day1$IMPUTATION))
 
-  # Day 3: PCRFTDTC (09:15) imputed
+  # Day 3: missing EX time filled from PCRFTDTC (09:15)
   day3 <- res[as.Date(res$DTC) == as.Date("2025-04-03"), ]
   expect_equal(format(day3$DTC, "%H:%M"), "09:15")
   expect_true(grepl("PCRFTDTC", day3$IMPUTATION))
 
-  # Day 2: no PCRFTDTC -> carried forward from day 1 (08:30)
+  # Day 2: no PCRFTDTC -> carried forward from day 1 (08:00)
   day2 <- res[as.Date(res$DTC) == as.Date("2025-04-02"), ]
-  expect_equal(format(day2$DTC, "%H:%M"), "08:30")
+  expect_equal(format(day2$DTC, "%H:%M"), "08:00")
   expect_true(grepl("carried forward", day2$IMPUTATION))
 
-  # Day 5: PCRFTDTC (07:45) overrides the EXENDTC time (08:00)
+  # Day 5: EXENDTC time (08:00) is kept; PCRFTDTC does not overwrite
   day5 <- res[as.Date(res$DTC) == as.Date("2025-04-05"), ]
-  expect_equal(format(day5$DTC, "%H:%M"), "07:45")
-  expect_true(grepl("PCRFTDTC", day5$IMPUTATION))
+  expect_equal(format(day5$DTC, "%H:%M"), "08:00")
+  expect_true(grepl("EXENDTC", day5$IMPUTATION))
 })
 
 
@@ -268,9 +268,9 @@ test_that("standard rules: NTIME-based admin time estimation from PC", {
 
   res <- as.data.frame(result)
 
-  # Day 1: should have time derived from PCRFTDTC (takes precedence over NTIME)
+  # Day 1: EXSTDTC time kept (08:00); PCRFTDTC matches but does not overwrite
   day1 <- res[as.Date(res$DTC) == as.Date("2025-06-01"), ]
-  expect_true(grepl("PCRFTDTC", day1$IMPUTATION))
+  expect_true(grepl("EXSTDTC", day1$IMPUTATION))
   expect_equal(format(day1$DTC, "%H:%M"), "08:00")
 
   # Day 2: no PCRFTDTC or PC data -> carried forward
@@ -528,9 +528,10 @@ test_that("standard rules: multi-subject full pipeline with all imputation steps
   all_predose <- obs[obs$NTIME == 0, ]
   expect_true(all(all_predose$TAFD == 0))
 
-  # A01 day1: admin time from PCRFTDTC
+  # A01 day1: EXSTDTC time kept (08:00); PCRFTDTC does not overwrite
   a01_day1_admin <- a01_admin[as.Date(a01_admin$DTC) == as.Date("2025-10-01"), ]
-  expect_equal(format(a01_day1_admin$DTC, "%H:%M"), "08:15")
+  expect_equal(format(a01_day1_admin$DTC, "%H:%M"), "08:00")
+  expect_true(grepl("EXSTDTC", a01_day1_admin$IMPUTATION))
 })
 
 
@@ -753,9 +754,10 @@ test_that("standard rules: complex multi-episode multi-subject integration", {
   all_predose <- obs[obs$NTIME == 0, ]
   expect_true(all(all_predose$TAFD == 0))
 
-  # Admin times from PCRFTDTC
+  # Admin times: EXSTDTC kept on day 1 (PCRFTDTC does not overwrite)
   m01_day1 <- m01_admin[as.Date(m01_admin$DTC) == as.Date("2026-01-01"), ]
-  expect_equal(format(m01_day1$DTC, "%H:%M"), "08:15")
+  expect_equal(format(m01_day1$DTC, "%H:%M"), "08:00")
+  expect_true(grepl("EXSTDTC", m01_day1$IMPUTATION))
 })
 
 
@@ -798,12 +800,12 @@ test_that("standard rules: dose escalation with multiple episodes", {
   expect_equal(res$DOSE[4:6], c(100, 100, 100))
   expect_equal(res$DOSE[7:9], c(200, 200, 200))
 
-  # PCRFTDTC imputation on first day of each episode
+  # Episode starts already have EXSTDTC times; PCRFTDTC does not overwrite
   episode_starts <- res[c(1, 4, 7), ]
-  expect_true(all(grepl("PCRFTDTC", episode_starts$IMPUTATION)))
+  expect_true(all(grepl("EXSTDTC", episode_starts$IMPUTATION)))
 
-  expect_equal(format(res$DTC[1], "%H:%M"), "08:30")
-  expect_equal(format(res$DTC[4], "%H:%M"), "09:00")
-  expect_equal(format(res$DTC[7], "%H:%M"), "08:45")
+  expect_equal(format(res$DTC[1], "%H:%M"), "08:00")
+  expect_equal(format(res$DTC[4], "%H:%M"), "08:00")
+  expect_equal(format(res$DTC[7], "%H:%M"), "08:00")
 })
 
