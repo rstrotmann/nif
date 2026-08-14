@@ -30,17 +30,20 @@ nif <- nif() %>%
   add_bl_renal()
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
+#> ✖ Administration time imputation from PCRFTDTC: Multiple PCRFTDTC for same days, selecting the earlier!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-03-03 10:28:00 was automatically assigned!
+#> ✖ Administration time imputation from PCRFTDTC: Multiple PCRFTDTC for same days, selecting the earlier!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> ! Compartment 2 is already assigned. Is this intended?
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
+#> ✖ Administration time imputation from PCRFTDTC: Multiple PCRFTDTC for same days, selecting the earlier!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> ! Compartment 2 is already assigned. Is this intended?
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
@@ -109,6 +112,6 @@ nif %>%
 #>   PARENT   min   max   mean   median   
 #>   RS2023   1     97    40.2   58.5
 #> 
-#> Hash: 2b7544c739c19864ad1b0d1376781490
+#> Hash: 68b8c51996a1b1168a076027557962fe
 #> Last DTC: 2001-07-18 08:24:00
 ```

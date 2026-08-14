@@ -122,6 +122,7 @@ add_administration(nif(), examplinib_sad, "EXAMPLINIB") |>
 head()
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
+#> ✖ Administration time imputation from PCRFTDTC: Multiple PCRFTDTC for same days, selecting the earlier!
 #>   REF ID    STUDYID           USUBJID AGE SEX                      RACE HEIGHT
 #> 1   1  1 2023000001 20230000011010001  43   0                     WHITE  187.4
 #> 2   2  2 2023000001 20230000011010002  49   0                     WHITE  189.6
@@ -143,11 +144,11 @@ head()
 #> 4 EXAMPLINIB EXAMPLINIB     1      FALSE   10   1       C2
 #> 5 EXAMPLINIB EXAMPLINIB     1      FALSE   10   1       C2
 #> 6 EXAMPLINIB EXAMPLINIB     1      FALSE   10   1       C2
-#>                   IMPUTATION
-#> 1 time imputed from PCRFTDTC
-#> 2 time imputed from PCRFTDTC
-#> 3 time imputed from PCRFTDTC
-#> 4 time imputed from PCRFTDTC
-#> 5 time imputed from PCRFTDTC
-#> 6 time imputed from PCRFTDTC
+#>                 IMPUTATION
+#> 1 time copied from EXSTDTC
+#> 2 time copied from EXSTDTC
+#> 3 time copied from EXSTDTC
+#> 4 time copied from EXSTDTC
+#> 5 time copied from EXSTDTC
+#> 6 time copied from EXSTDTC
 ```

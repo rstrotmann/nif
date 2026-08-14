@@ -9,7 +9,7 @@ different post-expansion time rule and no obs_raw imputation."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.20</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.21</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,12 +95,11 @@ as <code><a href="imputation_rules_standard.html">imputation_rules_standard()</a
 <div class="section">
 <h3 id="admin-post-expansion"><code>admin_post_expansion</code><a class="anchor" aria-label="anchor" href="#admin-post-expansion"></a></h3>
 
-<ol><li><p>Compute an NTIME-based administration time via
-<code>get_admin_time_from_ntime</code></p></li>
-<li><p>Apply <code>get_admin_time_from_pcrftdtc</code> when PCRFTDTC is available.</p></li>
-<li><p>If PCRFTDTC is absent and the NTIME-derived time differs from the
-EX-derived time by more than 10 minutes, use the NTIME-derived time;
-otherwise keep the EX-derived time.</p></li>
+<ol><li><p>Apply <code>get_admin_time_from_ntime</code> (fills missing times; keeps
+<code>.NTIME_DTC_time</code> estimates).</p></li>
+<li><p>Apply <code>get_admin_time_from_pcrftdtc</code> for remaining missing times.</p></li>
+<li><p>If PCRFTDTC was not used and the NTIME-derived time differs from the
+current time by more than 10 minutes, use the NTIME-derived time.</p></li>
 </ol><p>After these imputations, remaining missing administration times are carried
 forward.</p>
 </div>

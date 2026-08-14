@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.20</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.21</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,6 +161,7 @@ pharmacokinetic nif object from <code>examplinic_poc</code>:</p>
 <span>  <span class="fu"><a href="../reference/add_observation.html">add_observation</a></span><span class="op">(</span><span class="va">sdtm</span>, domain <span class="op">=</span> <span class="st">"pc"</span>, testcd <span class="op">=</span> <span class="st">"RS2023487A"</span>, parent <span class="op">=</span> <span class="st">"RS2023"</span>, cmt <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Administration time imputation from PCRFTDTC: Multiple PCRFTDTC for same days, selecting the earlier!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023 observations</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Imputation model 'imputation_rules_standard' applied to RS2023487A observations</span></span>
@@ -192,10 +193,10 @@ creatinine clearance:</p>
 <span><span class="co">#  1 2001-01-07 09:42:00    0     0    0   0    1 500   1 NA     RS2023 RS2023</span></span>
 <span><span class="co">#  2 2001-01-07 09:42:00    0     0    0   0    0   0   2  0     RS2023 RS2023</span></span>
 <span><span class="co">#  3 2001-01-07 09:42:00    0     0    0   0    0   0   3  0 RS2023487A RS2023</span></span>
-<span><span class="co">#    TRTDY METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION BL_CREAT</span></span>
-<span><span class="co">#  1     1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC 86.46559</span></span>
-<span><span class="co">#  2     1      FALSE  500   0 TREATMENT                            86.46559</span></span>
-<span><span class="co">#  3     1      FALSE  500   0 TREATMENT                            86.46559</span></span>
+<span><span class="co">#    TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION BL_CREAT</span></span>
+<span><span class="co">#  1     1      FALSE  500   1 TREATMENT time copied from EXSTDTC 86.46559</span></span>
+<span><span class="co">#  2     1      FALSE  500   0 TREATMENT                          86.46559</span></span>
+<span><span class="co">#  3     1      FALSE  500   0 TREATMENT                          86.46559</span></span>
 <span><span class="co">#     BL_CRCL</span></span>
 <span><span class="co">#  1 78.66727</span></span>
 <span><span class="co">#  2 78.66727</span></span>
@@ -267,7 +268,7 @@ impaired renal function:</p>
 <span><span class="co">#    PARENT   min   max   mean   median   </span></span>
 <span><span class="co">#    RS2023   55    97    73.2   72.5</span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Hash: 1b6f537a004f8e28eccfc1fc22f0436d</span></span>
+<span><span class="co">#  Hash: aa660bc847f46a194ec6f224b400c125</span></span>
 <span><span class="co">#  Last DTC: 2001-07-18 08:24:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the

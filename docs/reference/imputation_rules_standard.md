@@ -74,7 +74,7 @@ These steps are always performed regardless of the specific rule set:
     PC domain, if available, to complete missing administration times.
 
 2.  `get_admin_time_from_ntime` - back-calculate administration time, if
-    still missing from the nominal PK observation times in `PCTPT`, if
+    still missing, from the nominal PK observation times in `PCTPT`, if
     available.
 
 After these imputations, remaining missing administration times are

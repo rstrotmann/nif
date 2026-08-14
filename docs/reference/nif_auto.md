@@ -143,20 +143,20 @@ nif_auto(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE) |> head()
 #> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0   2 48.5530  RS2023 RS2023
 #> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0   2 44.0391  RS2023 RS2023
 #> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0   2 34.0729  RS2023 RS2023
-#>   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION BL_CREAT
-#> 1     1      FALSE    5   1       C1 time imputed from PCRFTDTC  67.4825
-#> 2     1      FALSE    5   0       C1                             67.4825
-#> 3     1      FALSE    5   0       C1                             67.4825
-#> 4     1      FALSE    5   0       C1                             67.4825
-#> 5     1      FALSE    5   0       C1                             67.4825
-#> 6     1      FALSE    5   0       C1                             67.4825
-#>    BL_CRCL BL_RENAL
-#> 1 135.8911   normal
-#> 2 135.8911   normal
-#> 3 135.8911   normal
-#> 4 135.8911   normal
-#> 5 135.8911   normal
-#> 6 135.8911   normal
+#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION BL_CREAT  BL_CRCL
+#> 1     1      FALSE    5   1       C1 time copied from EXSTDTC  67.4825 135.8911
+#> 2     1      FALSE    5   0       C1                           67.4825 135.8911
+#> 3     1      FALSE    5   0       C1                           67.4825 135.8911
+#> 4     1      FALSE    5   0       C1                           67.4825 135.8911
+#> 5     1      FALSE    5   0       C1                           67.4825 135.8911
+#> 6     1      FALSE    5   0       C1                           67.4825 135.8911
+#>   BL_RENAL
+#> 1   normal
+#> 2   normal
+#> 3   normal
+#> 4   normal
+#> 5   normal
+#> 6   normal
 nif_auto(examplinib_sad, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE) |>
 head()
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI
@@ -173,13 +173,13 @@ head()
 #> 4 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0   2 40.7852     RS2023
 #> 5 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0   3 13.8228 RS2023487A
 #> 6 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0   2 48.5530     RS2023
-#>   PARENT TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION BL_CREAT
-#> 1 RS2023     1      FALSE    5   1       C1 time imputed from PCRFTDTC  67.4825
-#> 2 RS2023     1      FALSE    5   0       C1                             67.4825
-#> 3 RS2023     1       TRUE    5   0       C1                             67.4825
-#> 4 RS2023     1      FALSE    5   0       C1                             67.4825
-#> 5 RS2023     1       TRUE    5   0       C1                             67.4825
-#> 6 RS2023     1      FALSE    5   0       C1                             67.4825
+#>   PARENT TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION BL_CREAT
+#> 1 RS2023     1      FALSE    5   1       C1 time copied from EXSTDTC  67.4825
+#> 2 RS2023     1      FALSE    5   0       C1                           67.4825
+#> 3 RS2023     1       TRUE    5   0       C1                           67.4825
+#> 4 RS2023     1      FALSE    5   0       C1                           67.4825
+#> 5 RS2023     1       TRUE    5   0       C1                           67.4825
+#> 6 RS2023     1      FALSE    5   0       C1                           67.4825
 #>    BL_CRCL BL_RENAL
 #> 1 135.8911   normal
 #> 2 135.8911   normal

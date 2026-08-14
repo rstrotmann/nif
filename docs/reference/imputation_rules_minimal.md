@@ -60,8 +60,8 @@ Same as [`imputation_rules_standard()`](imputation_rules_standard.md):
 
 ### `admin_post_expansion`
 
-1.  `get_admin_time_from_pcrftdtc` - set `DTC_time` from `PC.PCRFTDTC`
-    when related PK observations exist.
+1.  `get_admin_time_from_pcrftdtc` - set missing `DTC_time` from
+    `PC.PCRFTDTC` when related PK observations exist.
 
 After these imputations, remaining missing administration times are
 carried forward.

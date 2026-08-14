@@ -97,6 +97,7 @@ nif_poc <- nif() %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3)
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
+#> ✖ Administration time imputation from PCRFTDTC: Multiple PCRFTDTC for same days, selecting the earlier!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
@@ -138,10 +139,10 @@ head(nif_poc, 3)
 #  1 2001-01-07 09:42:00    0     0    0   0    1 500   1 NA     RS2023 RS2023
 #  2 2001-01-07 09:42:00    0     0    0   0    0   0   2  0     RS2023 RS2023
 #  3 2001-01-07 09:42:00    0     0    0   0    0   0   3  0 RS2023487A RS2023
-#    TRTDY METABOLITE DOSE MDV  ACTARMCD                 IMPUTATION BL_CREAT
-#  1     1      FALSE  500   1 TREATMENT time imputed from PCRFTDTC 86.46559
-#  2     1      FALSE  500   0 TREATMENT                            86.46559
-#  3     1      FALSE  500   0 TREATMENT                            86.46559
+#    TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION BL_CREAT
+#  1     1      FALSE  500   1 TREATMENT time copied from EXSTDTC 86.46559
+#  2     1      FALSE  500   0 TREATMENT                          86.46559
+#  3     1      FALSE  500   0 TREATMENT                          86.46559
 #     BL_CRCL
 #  1 78.66727
 #  2 78.66727
@@ -215,7 +216,7 @@ summary(nif_poc)
 #    PARENT   min   max   mean   median   
 #    RS2023   55    97    73.2   72.5
 #  
-#  Hash: 1b6f537a004f8e28eccfc1fc22f0436d
+#  Hash: aa660bc847f46a194ec6f224b400c125
 #  Last DTC: 2001-07-18 08:24:00
 ```
 

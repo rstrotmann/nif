@@ -419,11 +419,11 @@ head(nif, 5)
 #> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023
 #> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0   2 6325.101  RS2023 RS2023
 #> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0   2 6294.187  RS2023 RS2023
-#>   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION
-#> 1     1      FALSE  500   1       AB time imputed from PCRFTDTC
-#> 2     1      FALSE  500   0       AB                           
-#> 3     1      FALSE  500   0       AB                           
-#> 4     1      FALSE  500   0       AB                           
+#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION
+#> 1     1      FALSE  500   1       AB time copied from EXSTDTC
+#> 2     1      FALSE  500   0       AB                         
+#> 3     1      FALSE  500   0       AB                         
+#> 4     1      FALSE  500   0       AB                         
 #> 5     1      FALSE  500   0       AB
 ```
 
@@ -504,10 +504,10 @@ head(nif, 3)
 #> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023
 #> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023
 #> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023
-#>   TRTDY METABOLITE DOSE MDV ACTARMCD                 IMPUTATION
-#> 1     1      FALSE  500   1       AB time imputed from PCRFTDTC
-#> 2     1      FALSE  500   0       AB                           
-#> 3     1      FALSE  500   0       AB                           
+#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION
+#> 1     1      FALSE  500   1       AB time copied from EXSTDTC
+#> 2     1      FALSE  500   0       AB                         
+#> 3     1      FALSE  500   0       AB                         
 #>                    EPOCH PERIOD TREATMENT FASTED
 #> 1 OPEN LABEL TREATMENT 1      1         A      1
 #> 2 OPEN LABEL TREATMENT 1      1         A      1
@@ -573,7 +573,7 @@ summary(nif)
 #>   PARENT   min   max   mean   median   
 #>   RS2023   2     2     2      2
 #> 
-#> Hash: ca2e5edc43a9b5eae8635ddad806f08b
+#> Hash: 6d6ade77da102051b4e01e0afd03f890
 #> Last DTC: 2001-03-10 10:28:00
 ```
 

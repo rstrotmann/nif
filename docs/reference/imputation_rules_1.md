@@ -50,14 +50,13 @@ Same as [`imputation_rules_standard()`](imputation_rules_standard.md).
 
 ### `admin_post_expansion`
 
-1.  Compute an NTIME-based administration time via
-    `get_admin_time_from_ntime`
+1.  Apply `get_admin_time_from_ntime` (fills missing times; keeps
+    `.NTIME_DTC_time` estimates).
 
-2.  Apply `get_admin_time_from_pcrftdtc` when PCRFTDTC is available.
+2.  Apply `get_admin_time_from_pcrftdtc` for remaining missing times.
 
-3.  If PCRFTDTC is absent and the NTIME-derived time differs from the
-    EX-derived time by more than 10 minutes, use the NTIME-derived time;
-    otherwise keep the EX-derived time.
+3.  If PCRFTDTC was not used and the NTIME-derived time differs from the
+    current time by more than 10 minutes, use the NTIME-derived time.
 
 After these imputations, remaining missing administration times are
 carried forward.
