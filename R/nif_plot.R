@@ -81,9 +81,9 @@ make_plot_data_set <- function(
     min_time <- min(out$active_time, na.rm = TRUE)
   }
 
-  out <- out |>
-    index_dosing_interval() |>
-    mutate(DI = case_when(.data$EVID == 1 ~ NA, .default = .data$DI))
+  # out <- out |>
+  #   index_dosing_interval() |>
+  #   mutate(DI = case_when(.data$EVID == 1 ~ NA, .default = .data$DI))
 
   if (cfb == TRUE) {
     if (!"DVCFB" %in% names(out)) {

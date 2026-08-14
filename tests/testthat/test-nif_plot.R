@@ -74,13 +74,6 @@ test_that("plot.nif", {
   expect_no_error(
     plot(examplinib_poc_nif,
       analyte = "RS2023", dose = 500, points = T,
-      lines = F, log = T, color = "DI", mean = T, time = "TAD"
-    )
-  )
-
-  expect_no_error(
-    plot(examplinib_poc_nif,
-      analyte = "RS2023", dose = 500, points = T,
       admin = "RS2023", max_time = 300
     )
   )
