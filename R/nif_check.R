@@ -30,6 +30,7 @@ check.nif <- function(
     silent = NULL,
     ...
   ) {
+  # input validation
   validate_nif(obj, fields = unique(c("NTIME", "ANALYTE", ref_time)))
   validate_argument(ntime_threshold, "numeric")
 
@@ -55,7 +56,7 @@ check.nif <- function(
   if (is.null(analyte))
     analyte <- analytes(obj)
 
-  # check for conspicuous time deviations
+  # business logic
   obj <- obj |>
     mutate(
       .time_deviation_flag = (.data[[ref_time]] - .data$NTIME) >
@@ -84,4 +85,86 @@ check.nif <- function(
 
   obj |>
     select(-c(".time_deviation_flag"))
+}
+
+
+#' Plot time metrics against each other for observations
+#'
+#' @param obj A nif object.
+#' @param max_time The maximum x axis time as numeric.
+#' @param ... Further graphical parameters.
+#' @param xtime The x axis time metric as character.
+#' @param ytime The y axis time metric as character.
+#' @param analyte The analyte as character. Defaults to all, if NULL.
+#' @param color The field to color by, as character. Defaults to CHECK.
+#'
+#' @return A ggplot object.
+#' @export
+time_plot <- function(
+    obj,
+    xtime = "TIME",
+    ytime = "TAD",
+    analyte = NULL,
+    max_time = NULL,
+    color = "CHECK",
+    ...
+) {
+  # input validation
+  validate_argument(xtime, "character", values = c("TIME", "TAFD", "TAD", "NTIME"))
+  validate_argument(ytime, "character", values = c("TIME", "TAFD", "TAD", "NTIME"))
+  validate_argument(analyte, "character", allow_null = TRUE)
+  validate_nif(obj, fields = c(xtime, ytime))
+  if (is.null(analyte)) {
+    analyte <- analytes(obj)
+  }
+  validate_analyte(obj, analyte)
+  validate_argument(max_time, "numeric", allow_null = TRUE)
+  if (is.null(max_time)) {
+    max_time <- max(filter(obj, .data$EVID == 0)[, xtime], is.na = TRUE)
+  }
+
+  # business logic
+  temp <- obj |>
+    ensure_analyte() |>
+    filter(.data$ANALYTE %in% analyte) |>
+    filter(!is.na(.data[[xtime]]), !is.na(.data[[ytime]])) |>
+    filter(.data[[xtime]] <= max_time) |>
+    filter(.data$EVID == 0)
+
+  p <- temp |>
+    ggplot2::ggplot(
+      ggplot2::aes(
+        x = .data[[xtime]],
+        y = .data[[ytime]],
+        group = .data$ID
+      )
+    )
+
+  if (color %in% names(obj)) {
+    p <- temp |>
+      ggplot2::ggplot(
+        ggplot2::aes(
+          x = .data[[xtime]],
+          y = .data[[ytime]],
+          color = .data[[color]],
+          group = .data$ID
+        )
+      ) +
+      labs(color = NULL)
+  } else {
+    p <- temp |>
+      ggplot2::ggplot(
+        ggplot2::aes(
+          x = .data[[xtime]],
+          y = .data[[ytime]],
+          group = .data$ID
+        )
+      )
+  }
+
+  p +
+    ggplot2::geom_point(...) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "bottom") +
+    watermark()
 }

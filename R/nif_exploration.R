@@ -1061,43 +1061,6 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 }
 
 
-#' Plot TIME vs NTIME
-#'
-#' @param obj A nif object.
-#' @param max_time The maximum time as numeric.
-#' @param ... Further graphical parameters.
-#'
-#' @return A ggplot object.
-#' @keywords internal
-#' @export
-time_by_ntime <- function(obj, max_time = NULL, ...) {
-  # input validation
-  validate_nif(obj, fields = c("NTIME", "ANALYTE"))
-  validate_argument(max_time, "numeric", allow_null = TRUE)
-
-  if (is.null(max_time)) {
-    max_time <- max_time(obj, only_observations = TRUE)
-  }
-
-  # business logic
-  obj |>
-    ensure_analyte() |>
-    filter(.data$TIME <= max_time) |>
-    filter(.data$EVID == 0) |>
-    filter(!is.na(.data$TIME)) |>
-    ggplot2::ggplot(
-      ggplot2::aes(
-        x = .data$NTIME,
-        y = .data$TIME,
-        group = .data$ID
-      )
-    ) +
-    ggplot2::geom_point(...) +
-    ggplot2::theme_bw() +
-    watermark()
-}
-
-
 #' Administration summary
 #'
 #' Summary statistics on the number of administrations per subject, by parent.

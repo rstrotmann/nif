@@ -69,11 +69,6 @@ test_that("x_by_y works", {
 })
 
 
-test_that("time_by_ntime works", {
-  expect_no_error(time_by_ntime(examplinib_sad_nif))
-})
-
-
 test_that("administration_summary works", {
   expect_equal(
     nrow(administration_summary(examplinib_poc_nif)),
