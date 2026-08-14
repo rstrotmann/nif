@@ -929,28 +929,43 @@ head.nif <- function(x, ...) {
 #' baseline observations before the first dosing interval get assigned to the
 #' first dosing interval.
 #'
+#' @param parent The treatments to filter for. Defaults to all parents, if
+#'   NULL.
 #' @param obj The NIF object.
+#'
 #' @return A new NIF object.
 #' @export
 #' @examples
 #' head(index_dosing_interval(examplinib_fe_nif))
 #' head(index_dosing_interval(examplinib_poc_nif))
 #' head(index_dosing_interval(examplinib_poc_min_nif))
-index_dosing_interval <- function(obj) {
+index_dosing_interval <- function(
+    obj,
+    parent = NULL
+) {
+  # input validation
   validate_nif(obj)
+  validate_argument(parent, "character", allow_null = TRUE)
 
+  # business logic
   obj <- obj |>
+    ensure_analyte() |>
     ensure_parent() |>
     arrange_and_add_ref() |>
     select(-any_of("DI"))
 
+  if (is.null(parent)) {
+    parent <- parents(obj)
+  }
+
   di <- obj |>
     as.data.frame() |>
-    filter(.data$EVID == 1) |>
-    group_by(.data$ID, .data$PARENT) |>
-    arrange(.data$TIME) |>
-    mutate(DI = row_number()) |>
-    ungroup() |>
+    filter(.data$PARENT %in% parent, .data$EVID == 1) |>
+    arrange(.data$ID, .data$PARENT, .data$TIME, .data$REF) |>
+    mutate(
+      DI = dplyr::dense_rank(.data$TIME),
+      .by = c("ID", "PARENT")
+    ) |>
     select("REF", "DI")
 
   obj |>

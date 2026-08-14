@@ -4,10 +4,13 @@
 \alias{index_dosing_interval}
 \title{Index dosing intervals}
 \usage{
-index_dosing_interval(obj)
+index_dosing_interval(obj, parent = NULL)
 }
 \arguments{
 \item{obj}{The NIF object.}
+
+\item{parent}{The treatments to filter for. Defaults to all parents, if
+NULL.}
 }
 \value{
 A new NIF object.

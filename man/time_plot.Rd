@@ -17,7 +17,15 @@ time_plot(
 \arguments{
 \item{obj}{A nif object.}
 
-\item{max_time}{The maximum time as numeric.}
+\item{xtime}{The x axis time metric as character.}
+
+\item{ytime}{The y axis time metric as character.}
+
+\item{analyte}{The analyte as character. Defaults to all, if NULL.}
+
+\item{max_time}{The maximum x axis time as numeric.}
+
+\item{color}{The field to color by, as character. Defaults to CHECK.}
 
 \item{...}{Further graphical parameters.}
 }
@@ -27,4 +35,3 @@ A ggplot object.
 \description{
 Plot time metrics against each other for observations
 }
-\keyword{internal}
