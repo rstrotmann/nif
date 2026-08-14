@@ -671,7 +671,11 @@ get_admin_time_from_pcrftdtc <- function(
     )
 
   n_dupl <- ref |>
-    count(.data$USUBJID, .data$PCRFTDTC_date) |>
+    # count(.data$USUBJID, .data$PCRFTDTC_date) |>
+    reframe(
+      n = n_distinct(.data$PCRFTDTC_time),
+      .by = c("USUBJID", "PCRFTDTC_date")
+    ) |>
     filter(.data$n > 1) |>
     nrow()
 

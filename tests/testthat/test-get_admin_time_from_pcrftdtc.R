@@ -1,7 +1,3 @@
-# Comprehensive tests for get_admin_time_from_pcrftdtc() (fill-if-missing).
-# Expanded EX is expected as input (DTC_date, DTC_time, IMPUTATION present).
-
-
 test_that("get_admin_time_from_pcrftdtc imputes missing DTC_time from PCRFTDTC by USUBJID and date", {
   sdtm <- sdtm(list(
     pc = tibble::tribble(
