@@ -241,7 +241,7 @@ popular PKNCA package (github.com/humanpred/pkncal).
 
 ```{r message = F, warning= F}
 nca <- examplinib_poc_nif %>%
-  index_rich_sampling_intervals(analyte = "RS2023", min_n = 4) %>%
+  index_rich_sampling_intervals(min_n = 4) %>%
   nca("RS2023", group = "RICH_N")
 
 nca %>%
