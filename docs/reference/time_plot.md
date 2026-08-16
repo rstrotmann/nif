@@ -22,9 +22,25 @@ time_plot(
 
   A nif object.
 
+- xtime:
+
+  The x axis time metric as character.
+
+- ytime:
+
+  The y axis time metric as character.
+
+- analyte:
+
+  The analyte as character. Defaults to all, if NULL.
+
 - max_time:
 
-  The maximum time as numeric.
+  The maximum x axis time as numeric.
+
+- color:
+
+  The field to color by, as character. Defaults to CHECK.
 
 - ...:
 

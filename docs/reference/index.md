@@ -205,6 +205,8 @@
   objects
 - [`testcd()`](testcd.md) : Extract TESTCD fields by domain from a sdtm
   object
+- [`time_plot()`](time_plot.md) : Plot time metrics against each other
+  for observations
 - [`treatments()`](treatments.md) : Treatments in a nif or sdtm object
 - [`trial_dco()`](trial_dco.md) : Cut-off date
 - [`trial_title()`](trial_title.md) : Trial title

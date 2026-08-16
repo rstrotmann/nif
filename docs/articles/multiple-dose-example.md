@@ -97,7 +97,6 @@ nif_poc <- nif() %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3)
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
-#> ✖ Administration time imputation from PCRFTDTC: Multiple PCRFTDTC for same days, selecting the earlier!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
