@@ -1325,7 +1325,7 @@ add_obs_per_dosing_interval <- function(obj) {
   # business logic
   obj |>
     index_dosing_interval() |>
-    group_by(across(any_of(c("ID", "USUBJID", "PARENT", "DI")))) |>
+    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "DI")))) |>
     mutate(OPDI = sum(.data$EVID == 0)) |>
     ungroup() |>
     nif()
@@ -1336,42 +1336,37 @@ add_obs_per_dosing_interval <- function(obj) {
 #'
 #' Currently experimental. Don't use in production!
 #'
-#' Adds the fields 'DI' (dosing interval per analyte), `RICHINT` (rich sampling
-#' interval), and 'RICH_N' (index of the rich sampling interval by analyte).
+#' Adds the fields 'DI' (dosing interval per analyte) and 'RICH_N' (index of the
+#' rich sampling interval by analyte).
 #'
-#' @details
-#' This function identifies rich sampling intervals by the number of
+#' @details This function identifies rich sampling intervals by the number of
 #' observations that follow an administration. A number of 'min_n' or more
 #' observations before the next administration is interpreted as a rich sampling
-#' interval and the corresponding observations are flagged with 'RICHINT' ==
-#' TRUE. The index of the rich sampling intervals per subject and analyte is
+#' interval. The index of the rich sampling intervals per subject and analyte is
 #' reported in the 'RICH_N' field.
 #'
 #' @param obj The NIF object.
 #' @param min_n The minimum number of PK samples per analyte to qualify as rich
-#' sampling.
-#' @param analyte The analyte as character. If `NA` (default), the most likely
-#' will be selected automatically.
+#'   sampling.
 #'
 #' @return A new NIF object.
 #' @export
 #' @examples
 #' head(index_rich_sampling_intervals(examplinib_poc_nif))
 #'
-index_rich_sampling_intervals <- function(obj, analyte = NULL, min_n = 4) {
+index_rich_sampling_intervals <- function(
+    obj,
+    min_n = 4
+) {
   # input validation
   validate_nif(obj)
-  validate_argument(analyte, "character", allow_null = TRUE)
+  # validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(min_n, "numeric")
-
-  if (is.null(analyte)) {
-    analyte <- guess_analyte(obj)
-  }
 
   obj |>
     ensure_analyte() |>
     arrange(.data$ID, .data$TIME, .data$ANALYTE) |>
-    index_dosing_interval() |>
+    # index_dosing_interval() |>
     add_obs_per_dosing_interval() |>
     mutate(RICHINT_TEMP = (.data$OPDI >= min_n)) |>
     group_by(.data$ID, .data$ANALYTE, .data$DI) |>

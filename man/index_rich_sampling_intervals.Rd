@@ -4,13 +4,10 @@
 \alias{index_rich_sampling_intervals}
 \title{Identify and index rich PK sampling intervals}
 \usage{
-index_rich_sampling_intervals(obj, analyte = NULL, min_n = 4)
+index_rich_sampling_intervals(obj, min_n = 4)
 }
 \arguments{
 \item{obj}{The NIF object.}
-
-\item{analyte}{The analyte as character. If \code{NA} (default), the most likely
-will be selected automatically.}
 
 \item{min_n}{The minimum number of PK samples per analyte to qualify as rich
 sampling.}
@@ -22,14 +19,13 @@ A new NIF object.
 Currently experimental. Don't use in production!
 }
 \details{
-Adds the fields 'DI' (dosing interval per analyte), \code{RICHINT} (rich sampling
-interval), and 'RICH_N' (index of the rich sampling interval by analyte).
+Adds the fields 'DI' (dosing interval per analyte) and 'RICH_N' (index of the
+rich sampling interval by analyte).
 
 This function identifies rich sampling intervals by the number of
 observations that follow an administration. A number of 'min_n' or more
 observations before the next administration is interpreted as a rich sampling
-interval and the corresponding observations are flagged with 'RICHINT' ==
-TRUE. The index of the rich sampling intervals per subject and analyte is
+interval. The index of the rich sampling intervals per subject and analyte is
 reported in the 'RICH_N' field.
 }
 \examples{

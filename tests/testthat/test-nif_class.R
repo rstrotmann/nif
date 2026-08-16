@@ -279,30 +279,30 @@ test_that("add_trtdy works", {
 
 test_that("index_rich_sampling_intervals works", {
   nif <- tibble::tribble(
-    ~ID, ~TIME, ~EVID, ~CMT, ~AMT, ~DV,
-    1,   0,     1,     1,    100,  NA,
-    1,   0,     0,     2,    0,    10,
-    1,   2,     0,     2,    0,    20,
-    1,   4,     0,     2,    0,    30,
-    1,   6,     0,     2,    0,    40,
-    1,   8,     0,     2,    0,    50,
-    1,   24,    1,     1,    100,  NA,
-    1,   48,    1,     1,    100,  NA,
-    1,   72,    1,     1,    100,  NA,
-    1,   72,    0,     2,    0,    60,
-    1,   72,    1,     1,    100,  NA,
-    1,   96,    1,     1,    100,  NA,
-    1,   96,    0,     2,    0,    70,
-    1,   97,    0,     2,    0,    80,
-    1,   98,    0,     2,    0,    90,
-    1,   100,   0,     2,    0,    100,
-    1,   102,   0,     2,    0,    110,
-    1,   104,   0,     2,    0,    120
-  ) %>%
+     ~REF, ~ID, ~TIME, ~EVID, ~AMT, ~CMT, ~DV, ~expected_rich_n,
+       1L,   1,     0,     1,  100,    1,  NA,               NA,
+       2L,   1,     0,     0,    0,    2,  10,               1L,
+       3L,   1,     2,     0,    0,    2,  20,               1L,
+       4L,   1,     4,     0,    0,    2,  30,               1L,
+       5L,   1,     6,     0,    0,    2,  40,               1L,
+       6L,   1,     8,     0,    0,    2,  50,               1L,
+       7L,   1,    24,     1,  100,    1,  NA,               NA,
+       8L,   1,    48,     1,  100,    1,  NA,               NA,
+       9L,   1,    72,     1,  100,    1,  NA,               NA,
+      10L,   1,    72,     1,  100,    1,  NA,               NA,
+      11L,   1,    72,     0,    0,    2,  60,               NA,
+      12L,   1,    96,     1,  100,    1,  NA,               NA,
+      13L,   1,    96,     0,    0,    2,  70,               2L,
+      14L,   1,    97,     0,    0,    2,  80,               2L,
+      15L,   1,    98,     0,    0,    2,  90,               2L,
+      16L,   1,   100,     0,    0,    2, 100,               2L,
+      17L,   1,   102,     0,    0,    2, 110,               2L,
+      18L,   1,   104,     0,    0,    2, 120,               2L
+     ) |>
     nif()
 
   temp <- as.data.frame(index_rich_sampling_intervals(nif))
-  expect_equal(unique(temp$RICH_N), c(1, NA, 2))
+  expect_equal(temp$RICH_N, temp$expected_rich_n)
   temp1 <- distinct(temp, OPDI, RICH_N)
   expect_equal(temp1[which(temp1$OPDI == 5), "RICH_N"], 1)
   expect_equal(temp1[which(temp1$OPDI == 6), "RICH_N"], 2)

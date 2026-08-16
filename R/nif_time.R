@@ -344,7 +344,7 @@ add_tafd <- function(nif) {
 #' Add treatment day ('TRTDY') column
 #'
 #' @param obj The NIF object as data frame.
-#' @return The updated NIF object as data frame.
+#' @return The updated NIF object.
 #' @export
 #' @examples
 #' head(add_trtdy(examplinib_poc_nif))
