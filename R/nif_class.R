@@ -929,11 +929,11 @@ head.nif <- function(x, ...) {
 #' baseline observations before the first dosing interval get assigned to the
 #' first dosing interval.
 #'
-#' @param parent The treatments to filter for. Defaults to all parents, if
-#'   NULL.
+#' @param parent The treatments to filter for. Defaults to the most abundant
+#'   parent, if NULL.
 #' @param obj The NIF object.
 #'
-#' @return A new NIF object.
+#' @return A NIF object with the DI column added.
 #' @export
 #' @examples
 #' head(index_dosing_interval(examplinib_fe_nif))
@@ -941,7 +941,8 @@ head.nif <- function(x, ...) {
 #' head(index_dosing_interval(examplinib_poc_min_nif))
 index_dosing_interval <- function(
     obj,
-    parent = NULL
+    parent = NULL,
+    silent = NULL
 ) {
   # input validation
   validate_nif(obj)
@@ -955,7 +956,13 @@ index_dosing_interval <- function(
     select(-any_of("DI"))
 
   if (is.null(parent)) {
-    parent <- parents(obj)
+    parent <- guess_parent(obj)
+    conditional_cli(
+      cli_alert_warning(
+        paste0("Dosing intervals for parent ", parent, "!")
+      ),
+      silent = silent
+    )
   }
 
   di <- obj |>
