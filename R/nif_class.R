@@ -925,13 +925,12 @@ head.nif <- function(x, ...) {
 
 #' Index dosing intervals
 #'
-#' This function adds a column 'DI' that indicates the dosing interval. All
-#' baseline observations before the first dosing interval get assigned to the
-#' first dosing interval.
+#' This function adds a column 'DI' that indicates the dosing interval per
+#' parent. All baseline observations before the first dosing interval get
+#' assigned to the first dosing interval.
 #'
-#' @param parent The treatments to filter for. Defaults to the most abundant
-#'   parent, if NULL.
 #' @param obj The NIF object.
+#' @param parent The treatments to filter for. Defaults to all parents, if NULL.
 #'
 #' @return A NIF object with the DI column added.
 #' @export
@@ -941,12 +940,12 @@ head.nif <- function(x, ...) {
 #' head(index_dosing_interval(examplinib_poc_min_nif))
 index_dosing_interval <- function(
     obj,
-    parent = NULL,
-    silent = NULL
+    parent = NULL
 ) {
   # input validation
   validate_nif(obj)
-  validate_argument(parent, "character", allow_null = TRUE)
+  validate_argument(parent, "character", allow_null = TRUE,
+                    allow_multiple = TRUE)
 
   # business logic
   obj <- obj |>
@@ -956,13 +955,7 @@ index_dosing_interval <- function(
     select(-any_of("DI"))
 
   if (is.null(parent)) {
-    parent <- guess_parent(obj)
-    conditional_cli(
-      cli_alert_warning(
-        paste0("Dosing intervals for parent ", parent, "!")
-      ),
-      silent = silent
-    )
+    parent <- parents(obj)
   }
 
   di <- obj |>
@@ -1132,37 +1125,31 @@ guess_analyte <- function(obj) {
 
 #' Guess the most likely parent based on its prevalence in the NIF object
 #'
+#' Among administration rows, return the most frequent PARENT (ties:
+#' alphabetical). If there are no administrations, return NULL.
+#'
 #' @param obj A nif object.
 #'
 #' @return The parent as character
 #' @keywords internal
 #' @noRd
 guess_parent <- function(obj) {
+  # input validation
   validate_nif(obj)
+
+  # business logic
+  if (nrow(filter(obj, .data$EVID == 1)) == 0)
+    return(NULL)
 
   imp <- obj |>
     ensure_analyte() |>
+    ensure_parent() |>
     filter(.data$EVID == 1) |>
-    reframe(n = n(), .by = "ANALYTE") |>
-    arrange(-.data$n, .data$ANALYTE)
+    reframe(n = n(), .by = "PARENT") |>
+    arrange(-.data$n, .data$PARENT)
 
-  # if administrations in data set, return analyte with most observations
-  if (nrow(imp) > 0) {
-    imp[1, ] |>
-      pull(.data$ANALYTE)
-  } else {
-    obs <- obj |>
-      ensure_analyte() |>
-      filter(!"METABOLITE" %in% names(obj) | .data$METABOLITE == FALSE) |>
-      reframe(n = n(), .by = "ANALYTE") |>
-      arrange(-n, "ANALYTE")
-
-    if (nrow(obs) > 0) {
-      obs[1, "ANALYTE"]
-    } else {
-      NULL
-    }
-  }
+  # if administrations in data set, return parent with most administrations
+  imp$PARENT[[1]]
 }
 
 

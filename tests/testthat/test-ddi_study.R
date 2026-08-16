@@ -206,12 +206,15 @@ ddi_nif <- tibble::tribble(
 ) |>
   nif()
 
-ddi_nif |>
-  filter(USUBJID == "DDI-001") |>
-  index_dosing_interval(c()) |>
-  as.data.frame() |>
-  select(USUBJID, ANALYTE, EVID, DI)
 
+test_that("index_dosing_interval works with real-life data set", {
+  temp <- ddi_nif |>
+    index_dosing_interval() |>
+    as.data.frame()
+
+  expect_equal(unique(filter(temp, TIME <= 168, EVID == 0)$DI), 1)
+  expect_equal(unique(filter(temp, TIME > 168, EVID == 0)$DI), 2)
+})
 
 
 

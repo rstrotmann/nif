@@ -1,3 +1,9 @@
+## Tests for index_dosing_interval
+##
+## Contract: add DI per ID × PARENT from distinct admin TIMEs (dense_rank).
+## Default parent = all parents. Predose observations join the first interval.
+
+
 test_that("index_dosing_interval numbers administrations and assigns observations", {
   nif_obj <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT, ~ANALYTE,
@@ -11,12 +17,12 @@ test_that("index_dosing_interval numbers administrations and assigns observation
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
+  expect_s3_class(index_dosing_interval(nif_obj), "nif")
   expect_equal(result$DI, c(1, 1, 1, 2, 2, 3, 3))
   expect_equal(max(result$DI), 3)
-  expect_s3_class(index_dosing_interval(nif_obj, silent = TRUE), "nif")
 })
 
 
@@ -32,11 +38,10 @@ test_that("index_dosing_interval assigns predose observations to the first inter
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
-  predose <- result[result$TIME < 0, ]
-  expect_true(all(predose$DI == 1))
+  expect_true(all(result$DI[result$TIME < 0] == 1))
   expect_equal(result$DI[result$TIME == 0], 1)
   expect_equal(result$DI[result$TIME == 25], 2)
 })
@@ -54,11 +59,27 @@ test_that("index_dosing_interval indexes separately per ID", {
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
   expect_equal(max(result$DI[result$ID == 1]), 2)
   expect_equal(max(result$DI[result$ID == 2]), 1)
+})
+
+
+test_that("index_dosing_interval indexes separately per PARENT by default", {
+  nif_obj <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~ANALYTE, ~PARENT, ~expected_DI,
+      1,     0,  100,     1,  NA,    1,    1, "DRUG A",     "A",            1,
+      1,    24,  100,     1,  NA,    1,    1, "DRUG B",     "B",            1,
+      1,    48,  100,     1,  NA,    1,    1, "DRUG B",     "B",            2,
+      1,    72,  100,     1,  NA,    1,    1, "DRUG A",     "A",            2
+  ) |>
+    nif()
+
+  result <- index_dosing_interval(nif_obj)
+
+  expect_equal(result$DI, result$expected_DI)
 })
 
 
@@ -74,17 +95,11 @@ test_that("index_dosing_interval shares intervals across analytes of the same PA
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
-  expect_equal(
-    result$DI[result$ANALYTE == "M"],
-    c(1, 2)
-  )
-  expect_equal(
-    result$DI[result$ANALYTE == "A"],
-    c(1, 1, 2, 2)
-  )
+  expect_equal(result$DI[result$ANALYTE == "M"], c(1, 2))
+  expect_equal(result$DI[result$ANALYTE == "A"], c(1, 1, 2, 2))
 })
 
 
@@ -107,6 +122,62 @@ test_that("index_dosing_interval with parent restricts which administrations are
 })
 
 
+test_that("index_dosing_interval accepts multiple parents", {
+  nif_obj <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT, ~ANALYTE,
+      1,     0,  100,     1,  NA,    1,    1,     "A",      "A",
+      1,     1,    0,     0,   1,    2,    0,     "A",      "A",
+      1,    24,  100,     1,  NA,    1,    1,     "A",      "A",
+      1,     0,   50,     1,  NA,    3,    1,     "B",      "B",
+      1,     1,    0,     0, 0.5,    4,    0,     "B",      "B",
+      1,    48,   50,     1,  NA,    3,    1,     "B",      "B",
+      1,     0,   25,     1,  NA,    5,    1,     "C",      "C",
+      1,     1,    0,     0, 0.2,    6,    0,     "C",      "C"
+  ) |>
+    nif()
+
+  result <- index_dosing_interval(nif_obj, parent = c("A", "B")) |>
+    as.data.frame()
+
+  expect_equal(result$DI[result$PARENT == "A"], c(1, 1, 2))
+  expect_equal(result$DI[result$PARENT == "B"], c(1, 1, 2))
+  expect_true(all(is.na(result$DI[result$PARENT == "C"])))
+})
+
+
+test_that("index_dosing_interval with all parents matches the default", {
+  nif_obj <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT, ~ANALYTE,
+      1,     0,  100,     1,  NA,    1,    1,     "A",      "A",
+      1,     1,    0,     0,   1,    2,    0,     "A",      "A",
+      1,    24,  100,     1,  NA,    1,    1,     "A",      "A",
+      1,     0,   50,     1,  NA,    3,    1,     "B",      "B",
+      1,     1,    0,     0, 0.5,    4,    0,     "B",      "B"
+  ) |>
+    nif()
+
+  default_di <- index_dosing_interval(nif_obj)$DI
+  explicit_di <- index_dosing_interval(nif_obj, parent = c("A", "B"))$DI
+
+  expect_equal(default_di, explicit_di)
+})
+
+
+test_that("index_dosing_interval leaves DI as NA for an unknown parent filter", {
+  nif_obj <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT, ~ANALYTE,
+      1,     0,  100,     1,  NA,    1,    1,     "A",      "A",
+      1,     1,    0,     0,   1,    2,    0,     "A",      "A"
+  ) |>
+    nif()
+
+  result <- index_dosing_interval(nif_obj, parent = "Z") |>
+    as.data.frame()
+
+  expect_true(all(is.na(result$DI)))
+})
+
+
 test_that("index_dosing_interval leaves DI as NA when a subject has no administrations", {
   nif_obj <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT, ~ANALYTE,
@@ -117,7 +188,7 @@ test_that("index_dosing_interval leaves DI as NA when a subject has no administr
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
   expect_true(all(is.na(result$DI[result$ID == 1])))
@@ -134,7 +205,7 @@ test_that("index_dosing_interval gives the same DI to simultaneous administratio
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
   expect_equal(result$DI[result$EVID == 1], c(1, 1))
@@ -153,7 +224,7 @@ test_that("index_dosing_interval counts EVID == 1 with AMT == 0 as an interval",
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
   expect_equal(result$DI, c(1, 1, 2, 2))
@@ -170,14 +241,31 @@ test_that("index_dosing_interval is idempotent when re-applied", {
   ) |>
     nif()
 
-  once <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  once <- index_dosing_interval(nif_obj) |>
     as.data.frame()
-  twice <- index_dosing_interval(nif_obj, silent = TRUE) |>
-    index_dosing_interval(silent = TRUE) |>
+  twice <- index_dosing_interval(nif_obj) |>
+    index_dosing_interval() |>
     as.data.frame()
 
   expect_equal(once$DI, twice$DI)
   expect_equal(once$DI, c(1, 1, 2, 2))
+})
+
+
+test_that("index_dosing_interval replaces an existing DI column", {
+  nif_obj <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT, ~ANALYTE, ~DI,
+      1,     0,  100,     1,  NA,    1,    1,     "A",      "A",  99,
+      1,     1,    0,     0,   1,    2,    0,     "A",      "A",  99,
+      1,    24,  100,     1,  NA,    1,    1,     "A",      "A",  99,
+      1,    25,    0,     0,   2,    2,    0,     "A",      "A",  99
+  ) |>
+    nif()
+
+  result <- index_dosing_interval(nif_obj) |>
+    as.data.frame()
+
+  expect_equal(result$DI, c(1, 1, 2, 2))
 })
 
 
@@ -191,11 +279,28 @@ test_that("index_dosing_interval ensures PARENT when missing", {
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
   expect_true("PARENT" %in% names(result))
   expect_equal(unique(result$PARENT), "A")
+  expect_equal(result$DI, c(1, 1, 2, 2))
+})
+
+
+test_that("index_dosing_interval works without ANALYTE when PARENT is present", {
+  nif_obj <- tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~MDV, ~PARENT,
+      1,     0,  100,     1,  NA,    1,    1,     "A",
+      1,     1,    0,     0,   1,    2,    0,     "A",
+      1,    24,  100,     1,  NA,    1,    1,     "A",
+      1,    25,    0,     0,   2,    2,    0,     "A"
+  ) |>
+    nif()
+
+  result <- index_dosing_interval(nif_obj) |>
+    as.data.frame()
+
   expect_equal(result$DI, c(1, 1, 2, 2))
 })
 
@@ -210,7 +315,7 @@ test_that("index_dosing_interval adds REF and returns rows in REF order", {
   ) |>
     nif()
 
-  result <- index_dosing_interval(nif_obj, silent = TRUE) |>
+  result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
 
   expect_true("REF" %in% names(result))
@@ -239,12 +344,19 @@ test_that("index_dosing_interval validates inputs", {
   )
 
   expect_error(
-    index_dosing_interval(nif_obj, parent = c("A", "B")),
-    "parent must be a single value"
-  )
-
-  expect_error(
     index_dosing_interval(nif()),
     "Cannot determine PARENT"
   )
+})
+
+
+test_that("index_dosing_interval works with examplinib data", {
+  result <- index_dosing_interval(examplinib_poc_min_nif)
+
+  expect_true("DI" %in% names(result))
+  expect_true(all(result$DI >= 1 | is.na(result$DI)))
+  expect_gt(max(result$DI, na.rm = TRUE), 0)
+
+  expect_no_error(index_dosing_interval(examplinib_poc_nif))
+  expect_no_error(index_dosing_interval(examplinib_fe_nif))
 })

@@ -57,17 +57,17 @@ test_that("add_obs_per_dosing_interval assigns the same OPDI to admin and observ
 
 test_that("add_obs_per_dosing_interval counts separately by PARENT", {
   nif_obj <- tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~EVID, ~DV,      ~CMT, ~PARENT, ~ANALYTE,
-    1,   0,     100,  1,     NA_real_, 1,    "A",     "A",
-    1,   1,     0,    0,     1,        2,    "A",     "A",
-    1,   2,     0,    0,     2,        2,    "A",     "A",
-    1,   24,    100,  1,     NA_real_, 1,    "A",     "A",
-    1,   0,     50,   1,     NA_real_, 3,    "B",     "B",
-    1,   1,     0,    0,     5,        4,    "B",     "B",
-    1,   48,    50,   1,     NA_real_, 3,    "B",     "B",
-    1,   49,    0,    0,     6,        4,    "B",     "B",
-    1,   50,    0,    0,     7,        4,    "B",     "B"
-  ) |>
+     ~ID, ~TIME, ~AMT, ~EVID, ~DV, ~CMT, ~PARENT, ~ANALYTE,
+       1,     0,  100,     1,  NA,    1,     "A",      "A",
+       1,     1,    0,     0,   1,    2,     "A",      "A",
+       1,     2,    0,     0,   2,    2,     "A",      "A",
+       1,    24,  100,     1,  NA,    1,     "A",      "A",
+       1,     0,   50,     1,  NA,    3,     "B",      "B",
+       1,     1,    0,     0,   5,    4,     "B",      "B",
+       1,    48,   50,     1,  NA,    3,     "B",      "B",
+       1,    49,    0,     0,   6,    4,     "B",      "B",
+       1,    50,    0,     0,   7,    4,     "B",      "B"
+     ) |>
     nif()
 
   result <- add_obs_per_dosing_interval(nif_obj) |>

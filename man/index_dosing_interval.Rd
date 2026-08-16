@@ -9,16 +9,15 @@ index_dosing_interval(obj, parent = NULL)
 \arguments{
 \item{obj}{The NIF object.}
 
-\item{parent}{The treatments to filter for. Defaults to all parents, if
-NULL.}
+\item{parent}{The treatments to filter for. Defaults to all parents, if NULL.}
 }
 \value{
-A new NIF object.
+A NIF object with the DI column added.
 }
 \description{
-This function adds a column 'DI' that indicates the dosing interval. All
-baseline observations before the first dosing interval get assigned to the
-first dosing interval.
+This function adds a column 'DI' that indicates the dosing interval per
+parent. All baseline observations before the first dosing interval get
+assigned to the first dosing interval.
 }
 \examples{
 head(index_dosing_interval(examplinib_fe_nif))
