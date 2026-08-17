@@ -15,5 +15,5 @@ dataset(adam, name)
 A data frame.
 }
 \description{
-Retrieve dataset from adam object
+Overview: \href{https://www.cdisc.org/standards/foundational/adam/adamig-v1-3}{ADaMIG v1.3}
 }

@@ -10,7 +10,7 @@ add_trtdy(obj)
 \item{obj}{The NIF object as data frame.}
 }
 \value{
-The updated NIF object as data frame.
+The updated NIF object.
 }
 \description{
 Add treatment day ('TRTDY') column

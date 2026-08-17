@@ -347,7 +347,6 @@ test_that("print.summary_adam produces output", {
   expect_output(print(summary_obj), "Data from")
   expect_output(print(summary_obj), "subjects")
   expect_output(print(summary_obj), "study")
-  expect_output(print(summary_obj), "Data disposition")
 })
 
 

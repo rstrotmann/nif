@@ -1,5 +1,7 @@
 #' Retrieve dataset from adam object
 #'
+#' Overview: [ADaMIG v1.3](https://www.cdisc.org/standards/foundational/adam/adamig-v1-3)
+#'
 #' @param adam An adam object.
 #' @param name The dataset name as character.
 #'
@@ -39,6 +41,83 @@ new_dataset <- function(
 }
 
 
+#' Summarize ADSL dataset
+#'
+#' [Reference](https://sastricks.com/cdisc/ADaMIG_v1.3.pdf)
+#'
+#' @param obj An adam dataset object.
+#'
+#' @returns Nothing.
+#' @export
+adsl_summary <- function(
+    obj
+) {
+  # input validation
+  validate_dataset(obj)
+
+  # one record per subject
+  temp <- obj |>
+    reframe(n = n(), .by = "USUBJID") |>
+    filter(n > 1)
+  if (nrow(temp) > 0) {
+    stop(paste0(
+      "data set contains more than one rows per subject!"
+    ))
+  }
+
+  add_percent <- function(df) {
+    df |>
+      mutate(percent = round(.data$n/sum(.data$n) * 100, 1))
+  }
+
+  arm <- obj |>
+    reframe(n = n(), .by = c("ARMCD", "ARM")) |>
+    add_percent()
+
+  treated <-  obj |>
+    filter(!toupper(ARM) %in% c("SCREEN FAILURE"))
+
+  country <- reframe(treated, n = n(), .by = "COUNTRY") |>
+    add_percent()
+
+  sex <- reframe(treated, n = n(), .by = "SEX") |>
+    add_percent()
+
+  race <- treated |>
+    reframe(n = n(), .by = "RACE") |>
+    add_percent()
+
+  disposition_by_flag <- function(flag) {
+    if (flag %in% names(treated)) {
+      treated |>
+        reframe(n = n(), .by = all_of(flag)) |>
+        add_percent() |>
+        filter(.data[[flag]] == "Y") |>
+        mutate(population = flag) |>
+        select(-c(flag)) |>
+        relocate(population)
+    } else {
+      NULL
+    }
+  }
+
+  pop <- bind_rows(lapply(
+    c("FASFL", "SAFFL", "ITTFL", "PPROTFL", "COMPLFL", "RANDFL", "ENRLFL"),
+    disposition_by_flag))
+
+  out <- list(
+    country = country,
+    site = unique(obj$SITEID),
+    sex = sex,
+    race = race,
+    arm = arm,
+    population = pop
+  )
+
+  return(out)
+}
+
+
 #' Summarize adam_dataset
 #'
 #' @param obj An adam_daaset object.
@@ -63,13 +142,20 @@ summary.adam_dataset <- function(object, ...) {
 
   flags <- names(object)[grepl("FL$", names(object))]
 
+  if ("adsl" %in% names(object)) {
+    subj_disposition <- adsl_summary(dataset(object, "adsl"))
+  } else {
+    subj_disposition <- NULL
+  }
+
   out <- list(
     data = object,
     domain = ifelse("DOMAIN" %in% names(object), unique(object$DOMAIN), "NULL"),
     subjects = subjects,
     study = study,
     flags = flags,
-    params = params
+    params = params,
+    subj_disposition = subj_disposition
   )
 
   class(out) <- "summary_dataset"

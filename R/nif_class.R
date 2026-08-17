@@ -1360,13 +1360,12 @@ index_rich_sampling_intervals <- function(
 ) {
   # input validation
   validate_nif(obj)
-  # validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(min_n, "numeric")
 
+  # business logic
   obj |>
     ensure_analyte() |>
     arrange(.data$ID, .data$TIME, .data$ANALYTE) |>
-    # index_dosing_interval() |>
     add_obs_per_dosing_interval() |>
     mutate(RICHINT_TEMP = (.data$OPDI >= min_n)) |>
     group_by(.data$ID, .data$ANALYTE, .data$DI) |>

@@ -74,6 +74,10 @@ summary.adam <- function(object, ...) {
 
   out$datasets <- names(object)
 
+  if ("adsl" %in% names(object)) {
+    out$subj_disposition <- adsl_summary(dataset(object, "adsl"))
+  }
+
   class(out) <- "summary_adam"
   out
 }
@@ -101,9 +105,35 @@ print.summary_adam <- function(x, ...) {
   ))
 
   cat(paste0(
-    "Data disposition:\n",
-    df_to_string(x$n_observations, indent = 2)
+    "DATASET OVERVIEW:\n",
+    df_to_string(x$n_observations, indent = 2),
+    "\n"
   ))
+
+  if ("subj_disposition" %in% names(x)) {
+    cat("SUBJECT DISPOSITION (non-enrollment failures):\n\n")
+
+    temp <- x$subj_disposition
+    cat(paste0(
+      "Countries:\n", df_to_string(temp$country, indent = 2), "\n"
+    ))
+
+    cat(paste0(
+      "Sex:\n", df_to_string(temp$sex, indent = 2), "\n"
+    ))
+
+    cat(paste0(
+      "Race:\n", df_to_string(temp$race, indent = 2), "\n"
+    ))
+
+    cat(paste0(
+      "Treatment arms:\n", df_to_string(temp$arm, indent = 2), "\n"
+    ))
+
+    cat(paste0(
+      "Analysis populations:\n", df_to_string(temp$population, indent = 2), "\n"
+    ))
+  }
 }
 
 
