@@ -93,47 +93,63 @@ summary.adam <- function(object, ...) {
 #' @noRd
 print.summary_adam <- function(x, ...) {
   hline <- paste0(rep("-", 8), collapse = "")
+  indent <- 2
+  color <- FALSE
 
   cat(paste(hline, "ADaM data set summary", hline, "\n"))
 
-  cat(paste0(
-    "Data from ", length(x$subjects), " subjects across ",
-    length(x$study), " ",
-    plural("study", length(x$study) > 1), ":\n",
-    nice_enumeration(x$study),
-    "\n\n"
-  ))
+  compose_message <- function(..., condition = TRUE) {
+    args <- list(...)
+    if (length(args) > 0) {
+      trimws(paste(lapply(
+        args,
+        function(x) {
+          ifelse(
+            inherits(x, "data.frame"),
+            df_to_string(x, color = color, indent = indent),
+            as.character(x)
+          )
+        }
+      ), collapse = "\n"))
+    }
+  }
 
-  cat(paste0(
-    "DATASET OVERVIEW:\n",
-    df_to_string(x$n_observations, indent = 2),
-    "\n"
-  ))
+  out <- list(
+    compose_message(
+      paste("Data from", length(x$subjects), "subjects across",
+        ifelse(
+          length(x$study) == 1, "one study:",
+          paste0(length(x$study), "studies:")
+        ),
+        nice_enumeration(x$study)
+      )
+    ),
+
+    compose_message( "Dataset overview:", x$n_observations)
+  )
 
   if ("subj_disposition" %in% names(x)) {
-    cat("SUBJECT DISPOSITION (non-enrollment failures):\n\n")
-
     temp <- x$subj_disposition
-    cat(paste0(
-      "Countries:\n", df_to_string(temp$country, indent = 2), "\n"
-    ))
-
-    cat(paste0(
-      "Sex:\n", df_to_string(temp$sex, indent = 2), "\n"
-    ))
-
-    cat(paste0(
-      "Race:\n", df_to_string(temp$race, indent = 2), "\n"
-    ))
-
-    cat(paste0(
-      "Treatment arms:\n", df_to_string(temp$arm, indent = 2), "\n"
-    ))
-
-    cat(paste0(
-      "Analysis populations:\n", df_to_string(temp$population, indent = 2), "\n"
-    ))
+    out <- append(
+      out,
+      list(
+        compose_message("Subject disposition (non-enrollment failures)"),
+        compose_message("Countries:", temp$country),
+        compose_message("Sex:", temp$sex),
+        compose_message("Race:", temp$race),
+        compose_message("Treatment arms:",  temp$arm),
+        compose_message("Analysis populations:", temp$population)
+      )
+    )
   }
+
+  dummy <- lapply(
+    out,
+    function(x) {
+      cat(ifelse(x == "", "", paste0(x, "\n\n")))
+    })
+
+  invisible(x)
 }
 
 
