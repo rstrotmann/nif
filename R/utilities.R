@@ -1121,7 +1121,7 @@ df_preprint <- function(
 
   # Create the padding function
   pad_element <- function(element, width) {
-    sprintf(paste0("%-", width, "s   "), element)
+    sprintf(paste0("%-", width, "s  "), element)
   }
 
   # abbreviation handler

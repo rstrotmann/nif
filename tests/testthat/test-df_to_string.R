@@ -9,13 +9,13 @@ test_that("df_to_string basic functionality works", {
   # Test basic output with default parameters
   result <- df_to_string(df)
   expect_type(result, "character")
-  expect_true(grepl("a   b", result)) # Check header exists
-  expect_true(grepl("1   x", result)) # Check data exists
+  expect_true(grepl("a. b", result)) # Check header exists
+  expect_true(grepl("1. x", result)) # Check data exists
 
   # Test without header
   result_no_header <- df_to_string(df, header = FALSE)
-  expect_false(grepl("a   b", result_no_header))
-  expect_true(grepl("1   x", result_no_header))
+  expect_false(grepl("a. b", result_no_header))
+  expect_true(grepl("1. x", result_no_header))
 
   # Test with indentation
   result_indent <- df_to_string(df, indent = 2)
