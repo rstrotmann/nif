@@ -70,12 +70,20 @@ adsl_summary <- function(
       mutate(percent = round(.data$n/sum(.data$n) * 100, 1))
   }
 
-  arm <- obj |>
-    reframe(n = n(), .by = c("ARMCD", "ARM")) |>
-    add_percent()
+  if (any(c("ARMCD", "ARM") %in% names(obj))) {
+    arm <- obj |>
+      reframe(n = n(), .by = any_of(c("ARMCD", "ARM"))) |>
+      add_percent()
+  } else {
+    arm <- NULL
+  }
 
-  treated <-  obj |>
-    filter(!toupper(ARM) %in% c("SCREEN FAILURE"))
+  if ("ARM" %in% names(obj)) {
+    treated <-  obj |>
+      filter(!toupper(ARM) %in% c("SCREEN FAILURE"))
+  } else {
+    treated <- obj
+  }
 
   country <- reframe(treated, n = n(), .by = "COUNTRY") |>
     add_percent()
