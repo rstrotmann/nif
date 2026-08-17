@@ -80,7 +80,7 @@ adsl_summary <- function(
 
   if ("ARM" %in% names(obj)) {
     treated <-  obj |>
-      filter(!toupper(ARM) %in% c("SCREEN FAILURE"))
+      filter(!toupper(.data$ARM) %in% c("SCREEN FAILURE"))
   } else {
     treated <- obj
   }
@@ -103,7 +103,7 @@ adsl_summary <- function(
         filter(.data[[flag]] == "Y") |>
         mutate(population = flag) |>
         select(-c(flag)) |>
-        relocate(population)
+        relocate("population")
     } else {
       NULL
     }
