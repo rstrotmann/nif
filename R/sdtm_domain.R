@@ -136,52 +136,24 @@ summary.sdtm_domain <- function(object, ..., silent = NULL) {
 #' @noRd
 print.summary_domain <- function(x, ...) {
   indent <- 2
-  hline <- paste0(rep("-", 8), collapse = "")
+  cat(paste(hline(), "SDTM domain summary", hline(), "\n"))
 
-  cat(paste(hline, "SDTM domain summary", hline, "\n"))
+  out <- list(
+    compose_message(paste0(
+      "Study: ", x$study, "\n",
+      "Domain: ", x$domain, "\n",
+      nrow(x$subjects), " subjects\n",
+      x$n_obs, " observations"
+    )),
 
-  cat(paste("Study", x$study, "\n"))
-  cat(paste("Domain", x$domain, "\n"))
+    compose_message("Categories:", x$category, condition = !is.null(x$category)),
+    compose_message("Testcodes:", x$test, condition = !is.null(x$test)),
+    compose_message("Time points:", x$tpt, condition = !is.null(x$tpt)),
+    compose_message("Epochs:", x$epoch, condition = !is.null(x$epoch)),
+    compose_message(paste0("Hash: ", x$hash), paste0("Last DTC: ", x$last))
+  )
 
-  cat(paste(nrow(x$subjects), "subjects\n"))
-  cat(paste(x$n_obs, "observations\n"))
-
-  cat("\n")
-
-  if (!is.null(x$category)) {
-    cat("Categories\n")
-    cat(df_to_string(
-      x$category,
-      indent = indent, show_none = TRUE
-    ), "\n\n")
-  }
-
-  if (!is.null(x$test)) {
-    cat("Testcodes\n")
-    cat(df_to_string(
-      x$test,
-      indent = indent, show_none = TRUE
-    ), "\n\n")
-  }
-
-  if (!is.null(x$tpt)) {
-    cat("Observation time points\n")
-    cat(df_to_string(
-      x$tpt,
-      indent = indent, show_none = TRUE
-    ), "\n\n")
-  }
-
-  if (!is.null(x$epoch)) {
-    cat("Epochs\n")
-    cat(df_to_string(
-      x$epoch,
-      indent = indent, show_none = TRUE, header = FALSE
-    ), "\n")
-  }
-
-  cat(paste0("Hash: ", x$hash, "\n"))
-  cat(paste0("Last DTC: ", x$last))
+  cat_message(out)
 }
 
 

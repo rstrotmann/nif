@@ -432,8 +432,8 @@ test_that("print.summary_domain displays basic information correctly", {
 
   # Check basic structure
   expect_true(any(grepl("SDTM domain summary", output)))
-  expect_true(any(grepl("Study STUDY-001", output)))
-  expect_true(any(grepl("Domain PC", output)))
+  expect_true(any(grepl("Study: STUDY-001", output)))
+  expect_true(any(grepl("Domain: PC", output)))
   expect_true(any(grepl("2 subjects", output)))
   expect_true(any(grepl("3 observations", output)))
 })
@@ -499,7 +499,7 @@ test_that("print.summary_domain displays time points when present", {
   output <- capture.output(print(summary_obj))
 
   # Check time points section
-  expect_true(any(grepl("Observation time points", output)))
+  expect_true(any(grepl("Time points", output)))
   expect_true(any(grepl("PCTPT", output)))
   expect_true(any(grepl("PCTPTNUM", output)))
   expect_true(any(grepl("PCELTM", output)))
@@ -544,8 +544,8 @@ test_that("print.summary_domain handles domains without optional fields graceful
 
   # Check basic information is displayed
   expect_true(any(grepl("SDTM domain summary", output)))
-  expect_true(any(grepl("Study STUDY-001", output)))
-  expect_true(any(grepl("Domain PC", output)))
+  expect_true(any(grepl("Study: STUDY-001", output)))
+  expect_true(any(grepl("Domain: PC", output)))
   expect_true(any(grepl("2 subjects", output)))
   expect_true(any(grepl("2 observations", output)))
 
@@ -633,7 +633,7 @@ test_that("print.summary_domain handles domains with complex time point informat
   output <- capture.output(print(summary_obj))
 
   # Check that time points section displays all time points
-  expect_true(any(grepl("Observation time points", output)))
+  expect_true(any(grepl("Time points", output)))
   expect_true(any(grepl("PRE", output)))
   expect_true(any(grepl("15MIN", output)))
   expect_true(any(grepl("30MIN", output)))
@@ -663,8 +663,8 @@ test_that("print.summary_domain handles domains with mixed field types", {
   # Check that all sections are displayed
   expect_true(any(grepl("Categories", output)))
   expect_true(any(grepl("Testcodes", output)))
-  expect_true(any(grepl("Observation time points", output)))
-  expect_true(any(grepl("Epochs", output)))
+  expect_true(any(grepl("Time points", output)))
+  expect_true(any(grepl("Epochs:", output)))
 
   # Check that all relevant fields are shown
   expect_true(any(grepl("PCCAT", output)))

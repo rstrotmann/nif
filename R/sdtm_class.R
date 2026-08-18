@@ -245,70 +245,40 @@ summary.sdtm <- function(object, ...) {
 #' @noRd
 print.summary_sdtm <- function(x, color = FALSE, ...) {
   indent <- 2
-  hline <- paste0(rep("-", 8), collapse = "")
   spacer <- paste0(rep(" ", indent), collapse = "")
 
-  cat(paste(hline, "SDTM data set summary", hline, "\n"))
-  cat(paste(
-    plural("Study", length(x$study) > 1),
-    nice_enumeration(x$study),
-    "\n"
-  ))
+  cat(paste(hline(), "SDTM data set summary", hline(), "\n"))
 
-  if (!is.null(x$title)) {
-    cat(paste0("\n", str_wrap(x$title, width = 80), "\n"))
-  }
+  out <- list(
+    compose_message(paste(plural("Study", length(x$study) > 1),
+                          nice_enumeration(x$study))),
 
-  if (!is.null(x$dco)) {
-    cat(paste0("\nDCO: ", x$dco, "\n"))
-  }
+    compose_message(str_wrap(x$title, width = 80),
+                    condition = !is.null(x$title)),
 
-  cat("\nData disposition\n")
-  cat(df_to_string(
-    x$disposition,
-    color = color, indent = indent
-  ))
-  cat("\n\n")
+    compose_message(paste("DCO:", x$dco), condition = !is.null(x$dco)),
+    compose_message("Data disposition:", x$disposition),
+    compose_message("Arms:", arrange(x$arms, .data$ACTARMCD)),
 
-  cat("Arms (DM):\n")
-  cat(paste0(df_to_string(
-    x$arms |>
-      arrange(.data$ACTARMCD),
-    color = color, indent = indent,
-    show_none = TRUE
-  ), "\n\n"))
+    compose_message(
+      "Treatments:",
+      paste0(spacer, nice_enumeration(x$treatments)),
+      condition = "ex" %in% tolower(x$disposition$DOMAIN)
+    ),
 
-  if ("ex" %in% tolower(x$disposition$DOMAIN)) {
-    cat("Treatments (EX):\n")
-    temp <- paste0(
-      str_trim(x$treatments),
-      collapse = ", "
-    )
-    temp <- ifelse(temp == "", "none", temp)
-    cat(paste0(spacer, temp, "\n\n"))
-  }
+    compose_message(
+      "PK sample specimens:",
+      paste0(spacer, nice_enumeration(x$specimens)),
+      condition = "pc" %in% tolower(x$disposition$DOMAIN)
+    ),
 
-  if ("pc" %in% tolower(x$disposition$DOMAIN)) {
-    cat("PK sample specimens (PC):\n")
-    temp <- paste0(x$specimens, collapse = ", ")
-    temp <- ifelse(temp == "", "none", temp)
-    cat(paste0(spacer, temp, "\n\n"))
+    compose_message("PK analytes:", x$analytes,
+                    condition = "pc" %in% tolower(x$disposition$DOMAIN)),
 
-    cat("PK analytes (PC):\n")
-    cat(
-      df_to_string(
-        x$analytes,
-        color = color,
-        indent = indent,
-        show_none = TRUE
-      ),
-      "\n\n"
-    )
-  }
+    compose_message(paste0("Hash: ", x$hash), paste0("Last DTC: ", x$last))
+  )
 
-  cat(paste0("Hash: ", x$hash, "\n"))
-  cat(paste0("Last DTC: ", x$last))
-
+  cat_message(out)
   invisible(x)
 }
 

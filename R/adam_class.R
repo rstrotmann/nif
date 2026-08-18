@@ -92,27 +92,7 @@ summary.adam <- function(object, ...) {
 #' @export
 #' @noRd
 print.summary_adam <- function(x, ...) {
-  hline <- paste0(rep("-", 8), collapse = "")
-  indent <- 2
-  color <- FALSE
-
-  cat(paste(hline, "ADaM data set summary", hline, "\n"))
-
-  compose_message <- function(..., condition = TRUE) {
-    args <- list(...)
-    if (length(args) > 0) {
-      trimws(paste(lapply(
-        args,
-        function(x) {
-          ifelse(
-            inherits(x, "data.frame"),
-            df_to_string(x, color = color, indent = indent),
-            as.character(x)
-          )
-        }
-      ), collapse = "\n"))
-    }
-  }
+  cat(paste(hline(), "ADaM data set summary", hline(), "\n"))
 
   out <- list(
     compose_message(
@@ -124,8 +104,7 @@ print.summary_adam <- function(x, ...) {
         nice_enumeration(x$study)
       )
     ),
-
-    compose_message( "Dataset overview:", x$n_observations)
+    compose_message("Dataset overview:", x$n_observations)
   )
 
   if ("subj_disposition" %in% names(x)) {
@@ -133,7 +112,9 @@ print.summary_adam <- function(x, ...) {
     out <- append(
       out,
       list(
-        compose_message("Subject disposition (non-enrollment failures)"),
+        compose_message(paste(
+          hline(3), "Subject disposition (non-enrollment failures)")
+        ),
         compose_message("Countries:", temp$country),
         compose_message("Sex:", temp$sex),
         compose_message("Race:", temp$race),
@@ -143,13 +124,7 @@ print.summary_adam <- function(x, ...) {
     )
   }
 
-  dummy <- lapply(
-    out,
-    function(x) {
-      cat(ifelse(x == "", "", paste0(x, "\n\n")))
-    })
-
-  invisible(x)
+    cat_message(out)
 }
 
 

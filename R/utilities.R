@@ -969,6 +969,65 @@ trialday_to_day <- function(x) {
 
 # ---- nice printing ----
 
+#' Horizontal line using unicode characters
+#'
+#' @param length Line length.
+#'
+#' @returns A character string.
+#' @noRd
+hline <- function(length = 8) {
+  paste0(rep("\U2500", length), collapse = "")
+}
+
+
+#' Create command line message from components
+#'
+#' @param ... Message components as character or data frame arguments.
+#' @param condition Output condition as logical.
+#' @param indent The indentation level as numeric.
+#' @param color Print color as logical.
+#'
+#' @returns A list of character strings.
+#' @noRd
+compose_message <- function(
+    ...,
+    condition = TRUE,
+    indent = 2,
+    color = FALSE
+) {
+  args <- list(...)
+  if (length(args) > 0 & isTRUE(condition)) {
+    trimws(paste(lapply(
+      args,
+      function(x) {
+        ifelse(
+          inherits(x, "data.frame"),
+          df_to_string(x, color = color, indent = indent),
+          as.character(x)
+        )
+      }
+    ), collapse = "\n"))
+  }
+}
+
+
+#' Output message components
+#'
+#' @param message A list of character strings.
+#'
+#' @returns Nothing.
+#' @noRd
+cat_message <- function(message) {
+  dummy <- lapply(
+    message,
+    function(x) {
+      cat(ifelse(x == "", "", paste0(x, "\n\n")))
+    })
+
+  invisible(message)
+}
+
+
 #' Convert indent level to padding string of spaces
 #'
 #' @param indent The indent level as numeric.

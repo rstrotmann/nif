@@ -180,26 +180,18 @@ summary.adam_dataset <- function(object, ...) {
 #' @noRd
 #' @export
 print.summary_dataset <- function(x, ...) {
-  indent <- 2
-  hline <- paste0(rep("-", 8), collapse = "")
+  cat(paste(hline(), "ADaM dataset summary", hline(), "\n"))
 
-  cat(paste(hline, "ADaM dataset summary", hline, "\n"))
+  out <- list(
+    compose_message(paste0(
+      "Domain: ", x$domain, "\n",
+      "Study: ", x$study, "\n",
+      length(x$subjects), " subjects"
+    )),
 
-  if (!is.null(x$domain)) {
-    cat(paste("Domain", x$domain, "\n"))
-  }
-  cat(paste("Study", x$study, "\n"))
+    compose_message("Parameters:", x$params, condition = !is.null(x$params)),
+    compose_message("Flags:", paste0("  ", nice_enumeration(x$flags)))
+  )
 
-  cat(paste(length(x$subjects), "subjects\n\n"))
-
-  if (!is.null(x$params)) {
-    cat(paste0(
-      nrow(x$params), " parameters:\n",
-      df_to_string(x$params, indent = indent, abbr_threshold = Inf),
-      "\n"
-    ))
-  }
-
-  cat(paste("Flags:", nice_enumeration(x$flags), "\n"))
-
+  cat_message(out)
 }
