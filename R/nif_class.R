@@ -276,8 +276,10 @@ print.nif <- function(x, color = FALSE, ...) {
   if (debug == TRUE || !all(minimal_nif_fields %in% names(x))) {
     print(as.data.frame(x))
   } else {
-    hline <- "-----"
-    cat(paste0(hline, " NONMEM Input Format (NIF) data ", hline, "\n"))
+    # hline <- "-----"
+    # cat(paste0(hline, " NONMEM Input Format (NIF) data ", hline, "\n"))
+
+    cat(paste0(hline(), " NONMEM Input Format (NIF) data ", hline(), "\n"))
 
     n_obs <- x |>
       filter(!"EVID" %in% names(x) | .data$EVID == 0) |>

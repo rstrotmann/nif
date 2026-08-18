@@ -982,6 +982,8 @@ hline <- function(length = 8) {
 
 #' Create command line message from components
 #'
+#' If any component is NULL, the message will be empty.
+#'
 #' @param ... Message components as character or data frame arguments.
 #' @param condition Output condition as logical.
 #' @param indent The indentation level as numeric.
@@ -996,6 +998,9 @@ compose_message <- function(
     color = FALSE
 ) {
   args <- list(...)
+  if (any(sapply(args, is.null)))
+    return(NULL)
+
   if (length(args) > 0 & isTRUE(condition)) {
     trimws(paste(lapply(
       args,

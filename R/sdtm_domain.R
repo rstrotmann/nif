@@ -146,10 +146,10 @@ print.summary_domain <- function(x, ...) {
       x$n_obs, " observations"
     )),
 
-    compose_message("Categories:", x$category, condition = !is.null(x$category)),
-    compose_message("Testcodes:", x$test, condition = !is.null(x$test)),
-    compose_message("Time points:", x$tpt, condition = !is.null(x$tpt)),
-    compose_message("Epochs:", x$epoch, condition = !is.null(x$epoch)),
+    compose_message("Categories:", x$category),
+    compose_message("Testcodes:", x$test),
+    compose_message("Time points:", x$tpt),
+    compose_message("Epochs:", x$epoch),
     compose_message(paste0("Hash: ", x$hash), paste0("Last DTC: ", x$last))
   )
 

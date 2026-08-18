@@ -253,10 +253,9 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
     compose_message(paste(plural("Study", length(x$study) > 1),
                           nice_enumeration(x$study))),
 
-    compose_message(str_wrap(x$title, width = 80),
-                    condition = !is.null(x$title)),
+    compose_message(str_wrap(x$title, width = 80)),
 
-    compose_message(paste("DCO:", x$dco), condition = !is.null(x$dco)),
+    compose_message(paste("DCO:", x$dco)),
     compose_message("Data disposition:", x$disposition),
     compose_message("Arms:", arrange(x$arms, .data$ACTARMCD)),
 
@@ -272,9 +271,7 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
       condition = "pc" %in% tolower(x$disposition$DOMAIN)
     ),
 
-    compose_message("PK analytes:", x$analytes,
-                    condition = "pc" %in% tolower(x$disposition$DOMAIN)),
-
+    compose_message("PK analytes:", x$analytes),
     compose_message(paste0("Hash: ", x$hash), paste0("Last DTC: ", x$last))
   )
 

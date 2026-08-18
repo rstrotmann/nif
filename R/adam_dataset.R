@@ -189,7 +189,8 @@ print.summary_dataset <- function(x, ...) {
       length(x$subjects), " subjects"
     )),
 
-    compose_message("Parameters:", x$params, condition = !is.null(x$params)),
+    # compose_message("Parameters:", x$params, condition = !is.null(x$params)),
+    compose_message("Parameters:", x$params),
     compose_message("Flags:", paste0("  ", nice_enumeration(x$flags)))
   )
 

@@ -474,26 +474,7 @@ print.summary_nif <- function(
   validate_argument(color, "logical")
 
   # business logic
-  indent <- 2
-  spacer <- paste(replicate(indent, " "), collapse = "")
-  hline <- "-----"
-  cat(paste0(hline, " NONMEM Input Format (NIF) data summary ", hline, "\n"))
-
-  compose_message <- function(..., condition = TRUE) {
-    args <- list(...)
-    if (length(args) > 0) {
-      trimws(paste(lapply(
-        args,
-        function(x) {
-          ifelse(
-            inherits(x, "data.frame"),
-            df_to_string(x, color = color, indent = indent),
-            as.character(x)
-          )
-        }
-      ), collapse = "\n"))
-    }
-  }
+  cat(paste0(hline(), " NONMEM Input Format (NIF) data summary ", hline(), "\n"))
 
   out <- list(
     # study disposition
@@ -509,15 +490,13 @@ print.summary_nif <- function(
     ),
 
     # sex disposition
-    ifelse(is.null(x$sex), "",
-      compose_message(
-        "Sex distribution:",
-        mutate(x$sex, SEX = case_when(
-          .data$SEX == 0 ~ "male",
-          .data$SEX == 1 ~ "female"
-        )) |>
+    compose_message(
+      "Sex distribution:",
+      mutate(x$sex, SEX = case_when(
+        .data$SEX == 0 ~ "male",
+        .data$SEX == 1 ~ "female"
+      )) |>
         mutate(percent = round(.data$N / sum(.data$N) * 100, 1))
-      )
     ),
 
     # renal function disposition
@@ -542,18 +521,10 @@ print.summary_nif <- function(
     trimws(paste0("Analytes: ", nice_enumeration(x$analytes))),
 
     # dose levels
-    ifelse(is.null(x$dose_levels), "",
-      compose_message(
-        "Subjects per dose level:",
-        x$dose_levels
-      )
-    ),
+    compose_message("Subjects per dose level:", x$dose_levels),
 
     # observations
-    compose_message(
-      paste(sum(x$n_obs$n), "observations:"),
-      x$n_obs
-    ),
+    compose_message(paste(sum(x$n_obs$n), "observations:"), x$n_obs),
 
     # sampling
     ifelse(is.null(x$sampling), "",
@@ -572,10 +543,7 @@ print.summary_nif <- function(
     ),
 
     # treatment duration
-    compose_message(
-      "Treatment duration overview:",
-      x$administration_duration
-    ),
+    compose_message("Treatment duration overview:", x$administration_duration),
 
     # hash and time stamp
     trimws(
