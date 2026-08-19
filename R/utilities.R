@@ -1431,6 +1431,17 @@ dv_na_to_zero <- function(obj) {
 }
 
 
+#' Add percent column to data frame, based on the n column.
+#'
+#' @param df A data frame.
+#'
+#' @returns The data frame with the 'percent' field added.
+#' @noRd
+add_percent <- function(df) {
+  mutate(df, percent = round(.data$n/sum(.data$n) * 100, 1))
+}
+
+
 # ---- recoding ----
 
 #' Re-code SEX field in a data frame

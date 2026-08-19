@@ -119,7 +119,8 @@ print.summary_adam <- function(x, ...) {
         compose_message("Sex:", temp$sex),
         compose_message("Race:", temp$race),
         compose_message("Treatment arms:",  temp$arm),
-        compose_message("Analysis populations:", temp$population)
+        compose_message("Analysis populations:", temp$population),
+        compose_message("Completion status:", temp$eos)
       )
     )
   }

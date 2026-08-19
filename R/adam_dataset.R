@@ -47,7 +47,7 @@ new_dataset <- function(
 #'
 #' @param obj An adam dataset object.
 #'
-#' @returns Nothing.
+#' @returns A list.
 #' @export
 adsl_summary <- function(
     obj
@@ -65,35 +65,20 @@ adsl_summary <- function(
     ))
   }
 
-  add_percent <- function(df) {
-    df |>
-      mutate(percent = round(.data$n/sum(.data$n) * 100, 1))
-  }
-
-  if (any(c("ARMCD", "ARM") %in% names(obj))) {
-    arm <- obj |>
-      reframe(n = n(), .by = any_of(c("ARMCD", "ARM"))) |>
-      add_percent()
-  } else {
-    arm <- NULL
-  }
-
-  if ("ARM" %in% names(obj)) {
+  if ("TRT01P" %in% names(obj)) {
     treated <-  obj |>
-      filter(!toupper(.data$ARM) %in% c("SCREEN FAILURE"))
+      filter(!toupper(.data$TRT01P) %in% c("SCREEN FAILURE"))
   } else {
     treated <- obj
   }
 
-  country <- reframe(treated, n = n(), .by = "COUNTRY") |>
-    add_percent()
-
-  sex <- reframe(treated, n = n(), .by = "SEX") |>
-    add_percent()
-
-  race <- treated |>
-    reframe(n = n(), .by = "RACE") |>
-    add_percent()
+  summary_by_field <- function(field) {
+    matched_fields <- intersect(names(treated), field)
+    if (length(matched_fields) == 0)
+      return(NULL)
+    reframe(treated, n = n(), .by = any_of(matched_fields)) |>
+      add_percent()
+  }
 
   disposition_by_flag <- function(flag) {
     if (flag %in% names(treated)) {
@@ -102,7 +87,7 @@ adsl_summary <- function(
         add_percent() |>
         filter(.data[[flag]] == "Y") |>
         mutate(population = flag) |>
-        select(-c(flag)) |>
+        select(-all_of(flag)) |>
         relocate("population")
     } else {
       NULL
@@ -113,12 +98,16 @@ adsl_summary <- function(
     c("FASFL", "SAFFL", "ITTFL", "PPROTFL", "COMPLFL", "RANDFL", "ENRLFL"),
     disposition_by_flag))
 
+  if (nrow(pop) == 0)
+    pop <- NULL
+
   out <- list(
-    country = country,
-    site = unique(obj$SITEID),
-    sex = sex,
-    race = race,
-    arm = arm,
+    country = summary_by_field("COUNTRY"),
+    site = unique(treated$SITEID),
+    sex = summary_by_field("SEX"),
+    race = summary_by_field("RACE"),
+    arm = summary_by_field(c("TRT01P", "TRT01A")),
+    eos = summary_by_field("EOSSTT"),
     population = pop
   )
 
@@ -150,20 +139,13 @@ summary.adam_dataset <- function(object, ...) {
 
   flags <- names(object)[grepl("FL$", names(object))]
 
-  if ("adsl" %in% names(object)) {
-    subj_disposition <- adsl_summary(dataset(object, "adsl"))
-  } else {
-    subj_disposition <- NULL
-  }
-
   out <- list(
     data = object,
     domain = ifelse("DOMAIN" %in% names(object), unique(object$DOMAIN), "NULL"),
     subjects = subjects,
     study = study,
     flags = flags,
-    params = params,
-    subj_disposition = subj_disposition
+    params = params
   )
 
   class(out) <- "summary_dataset"

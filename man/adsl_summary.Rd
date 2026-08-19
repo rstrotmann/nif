@@ -10,7 +10,7 @@ adsl_summary(obj)
 \item{obj}{An adam dataset object.}
 }
 \value{
-Nothing.
+A list.
 }
 \description{
 \href{https://sastricks.com/cdisc/ADaMIG_v1.3.pdf}{Reference}
