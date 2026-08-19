@@ -18,17 +18,22 @@ test_that("adsl_summary returns the expected list structure", {
     names(result),
     c("country", "site", "sex", "race", "arm", "eos", "population")
   )
+  expect_equal(
+    names(result$population),
+    c("population", "flag", "n", "percent")
+  )
 })
 
 
 test_that("adsl_summary summarizes TRT01P/TRT01A and excludes screen failures", {
   adsl <- new_dataset(tibble::tribble(
-    ~USUBJID, ~SITEID, ~COUNTRY, ~SEX, ~RACE,                     ~TRT01P,         ~TRT01A, ~SAFFL, ~ITTFL, ~FASFL,
-       "U1",    "01",    "USA",  "M", "WHITE",                    "Placebo",       "Placebo",   "Y",   "Y",   "Y",
-       "U2",    "01",    "USA",  "F", "WHITE",                    "Active",        "Active",    "Y",   "Y",   "N",
-       "U3",    "02",    "DEU",  "M", "ASIAN",                    "SCREEN FAILURE", "SCREEN FAILURE", "N", "N", "N",
-       "U4",    "02",    "DEU",  "F", "BLACK OR AFRICAN AMERICAN", "Placebo",       "Placebo",   "Y",   "N",   "N"
-  ))
+     ~USUBJID, ~SITEID, ~COUNTRY, ~SEX,                       ~RACE,          ~TRT01P,          ~TRT01A, ~SAFFL, ~ITTFL, ~FASFL,
+         "U1",    "01",    "USA",  "M",                     "WHITE",        "Placebo",        "Placebo",    "Y",    "Y",    "Y",
+         "U2",    "01",    "USA",  "F",                     "WHITE",         "Active",         "Active",    "Y",    "Y",    "N",
+         "U3",    "02",    "DEU",  "M",                     "ASIAN", "SCREEN FAILURE", "SCREEN FAILURE",    "N",    "N",    "N",
+         "U4",    "02",    "DEU",  "F", "BLACK OR AFRICAN AMERICAN",        "Placebo",        "Placebo",    "Y",    "N",    "N"
+     )
+)
 
   result <- adsl_summary(adsl)
 
@@ -52,26 +57,34 @@ test_that("adsl_summary summarizes TRT01P/TRT01A and excludes screen failures", 
   expect_equal(result$arm$n, c(2, 1))
   expect_equal(result$arm$percent, c(66.7, 33.3))
 
-  expect_equal(result$population$population, c("FASFL", "SAFFL", "ITTFL"))
   expect_equal(
-    result$population$n[result$population$population == "SAFFL"],
+    result$population$population,
+    c("Full Analysis Set", "Safety", "Intent-To-Treat")
+  )
+  expect_equal(result$population$flag, c("FASFL", "SAFFL", "ITTFL"))
+  expect_equal(
+    result$population$n[result$population$flag == "SAFFL"],
     3
   )
   expect_equal(
-    result$population$percent[result$population$population == "SAFFL"],
+    result$population$percent[result$population$flag == "SAFFL"],
     100
   )
   expect_equal(
-    result$population$n[result$population$population == "FASFL"],
+    result$population$n[result$population$flag == "FASFL"],
     1
   )
   expect_equal(
-    result$population$percent[result$population$population == "FASFL"],
+    result$population$percent[result$population$flag == "FASFL"],
     round(100 / 3, 1)
   )
   expect_equal(
-    result$population$n[result$population$population == "ITTFL"],
+    result$population$n[result$population$flag == "ITTFL"],
     2
+  )
+  expect_equal(
+    result$population$percent[result$population$flag == "ITTFL"],
+    round(200 / 3, 1)
   )
 })
 
@@ -123,6 +136,9 @@ test_that("adsl_summary returns NULL arm when TRT01P/TRT01A are absent", {
   # Without TRT01P, screen failures are not excluded
   expect_equal(sort(result$site), c("01", "02"))
   expect_equal(sum(result$sex$n), 2)
+  expect_equal(result$population$population, "Safety")
+  expect_equal(result$population$flag, "SAFFL")
+  expect_equal(result$population$n, 1)
 })
 
 
@@ -152,16 +168,57 @@ test_that("adsl_summary only keeps population rows flagged Y", {
 
   result <- adsl_summary(adsl)
 
-  expect_equal(result$population$population, c("SAFFL", "ITTFL"))
+  expect_equal(
+    result$population$population,
+    c("Safety", "Intent-To-Treat")
+  )
+  expect_equal(result$population$flag, c("SAFFL", "ITTFL"))
   expect_true(all(result$population$n >= 1))
   expect_equal(
-    result$population$n[result$population$population == "SAFFL"],
+    result$population$n[result$population$flag == "SAFFL"],
     2
   )
   expect_equal(
-    result$population$n[result$population$population == "ITTFL"],
+    result$population$n[result$population$flag == "ITTFL"],
     1
   )
+  expect_equal(
+    result$population$percent[result$population$flag == "SAFFL"],
+    round(200 / 3, 1)
+  )
+  expect_equal(
+    result$population$percent[result$population$flag == "ITTFL"],
+    round(100 / 3, 1)
+  )
+})
+
+
+test_that("adsl_summary maps all recognized population flags", {
+  adsl <- new_dataset(tibble::tribble(
+    ~USUBJID, ~TRT01P,  ~FASFL, ~SAFFL, ~ITTFL, ~PPROTFL, ~COMPLFL, ~RANDFL, ~ENRLFL,
+       "U1", "Placebo",   "Y",    "Y",    "Y",      "Y",      "Y",     "Y",    "Y"
+  ))
+
+  result <- adsl_summary(adsl)
+
+  expect_equal(
+    result$population$flag,
+    c("FASFL", "SAFFL", "ITTFL", "PPROTFL", "COMPLFL", "RANDFL", "ENRLFL")
+  )
+  expect_equal(
+    result$population$population,
+    c(
+      "Full Analysis Set",
+      "Safety",
+      "Intent-To-Treat",
+      "Per-Protocol",
+      "Completers",
+      "Randomized",
+      "Enrolled"
+    )
+  )
+  expect_true(all(result$population$n == 1))
+  expect_true(all(result$population$percent == 100))
 })
 
 

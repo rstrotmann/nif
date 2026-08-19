@@ -55,6 +55,18 @@ adsl_summary <- function(
   # input validation
   validate_dataset(obj)
 
+  # definitions
+  population_flags <- tibble::tribble(
+    ~flag,                ~population,
+    "FASFL", "Full Analysis Set",
+    "SAFFL",            "Safety",
+    "ITTFL",   "Intent-To-Treat",
+    "PPROTFL",      "Per-Protocol",
+    "COMPLFL",        "Completers",
+    "RANDFL",        "Randomized",
+    "ENRLFL",          "Enrolled"
+  )
+
   # one record per subject
   temp <- obj |>
     reframe(n = n(), .by = "USUBJID") |>
@@ -86,9 +98,9 @@ adsl_summary <- function(
         reframe(n = n(), .by = all_of(flag)) |>
         add_percent() |>
         filter(.data[[flag]] == "Y") |>
-        mutate(population = flag) |>
+        mutate(flag = flag) |>
         select(-all_of(flag)) |>
-        relocate("population")
+        relocate("flag")
     } else {
       NULL
     }
@@ -96,10 +108,16 @@ adsl_summary <- function(
 
   pop <- bind_rows(lapply(
     c("FASFL", "SAFFL", "ITTFL", "PPROTFL", "COMPLFL", "RANDFL", "ENRLFL"),
-    disposition_by_flag))
+    disposition_by_flag
+  ))
 
-  if (nrow(pop) == 0)
+  if (is.null(pop) || nrow(pop) == 0) {
     pop <- NULL
+  } else {
+    pop <- pop |>
+      left_join(population_flags, by = "flag") |>
+      relocate("population")
+  }
 
   out <- list(
     country = summary_by_field("COUNTRY"),
