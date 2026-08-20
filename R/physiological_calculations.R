@@ -39,6 +39,36 @@ calculate_bmi <- function(height, weight) {
 }
 
 
+#' Translate body mass index (BMI) into body weight classes
+#'
+#' Based on NIH / NHLBI Expert Panel (1998) — Clinical Guidelines on the
+#' Identification, Evaluation, and Treatment of Overweight and Obesity in
+#' Adults, Table ES-2 (NCBI Bookshelf).
+#'
+#' https://www.nhlbi.nih.gov/files/docs/guidelines/prctgd_c.pdf
+#'
+#' @param bmi A numerical vector.
+#'
+#' @returns A character vector.
+#' @export
+obesity_class <- function(bmi) {
+  if (!is.numeric(bmi))
+    stop("BMI must be numeric!")
+
+  if (any(bmi <= 0))
+    stop("BMI must be positive!")
+
+  cut(
+    bmi,
+    breaks = c(0, 18.5, 25, 30, 35, 40, Inf),
+    labels = c("underweight", "normal", "overweight", "obese class 1",
+               "obese class 2", "obese class 3"),
+    right = FALSE
+  ) |>
+    as.character()
+}
+
+
 #' Glomerular filtration rate estimation from serum creatinine (Raynaud method)
 #'
 #' Source: Raynaud M, et al., Race-free estimated glomerular
