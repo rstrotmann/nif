@@ -396,7 +396,7 @@ make_administration <- function(
   }
 
   # make subjects
-  sbs <- make_subjects(dm, vs, subject_filter, keep)
+  sbs <- make_subjects(dm, vs, subject_filter = subject_filter, keep = keep)
 
   admin <- admin |>
     carry_forward_admin_time_imputations() |>

@@ -448,7 +448,8 @@ make_observation <- function(
   tryCatch(
     {
       sbs <- make_subjects(
-        domain(sdtm, "dm"), domain(sdtm, "vs"), subject_filter, keep
+        domain(sdtm, "dm"), domain(sdtm, "vs"),
+        subject_filter = subject_filter, keep = keep
       )
     },
     error = function(e) {

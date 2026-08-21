@@ -47,17 +47,26 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
 #' @param subject_filter The filtering to apply to the DM domain.
 #' @param keep Columns to keep, as character vector.
 #' @param silent Suppress messages, as logical.
+#' @param bl_covariates The TESTCD to keep as baseline covariates, as character.
+#' Defaults to WEIGHT and HEIGHT.
+#' @param duplicate_function The summary function to calculate the baseline
+#'in case of duplicate values. Defaults to mean.
 #'
-#' @return A data table.
+#' @return A data frame
 #' @import tidyselect
 #' @import dplyr
 #' @import lubridate
 #' @keywords internal
 #' @noRd
+#' @examples
+#' make_subjects(domain(examplinib_poc, "dm"), domain(examplinib_poc, "vs"))
+#'
 make_subjects <- function(
   dm,
   vs = NULL,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
+  bl_covariates = c("WEIGHT", "HEIGHT"),
+  duplicate_function = mean,
   keep = NULL,
   silent = NULL
 ) {
@@ -83,7 +92,7 @@ make_subjects <- function(
   if (!is.null(vs)) {
     # Check if RFSTDTC exists in dm when needed for baseline calculations
     if (!"VSBLFL" %in% names(vs) && !"RFSTDTC" %in% colnames(dm)) {
-      stop("Baseline covariates cannot be determined because VS has not VSBLFL field, and DM has no RFSTDTC.")
+      stop("Baseline covariates cannot be determined because VS has no VSBLFL field, and DM has no RFSTDTC.")
     }
 
     baseline_covariates <- vs |>
@@ -99,12 +108,14 @@ make_subjects <- function(
                                     .data$VSDTC < .data$RFSTDTC)
     }
 
+    # deal with duplicates and make wide table
     baseline_covariates <- baseline_covariates |>
-      filter(.data$VSTESTCD %in% c("WEIGHT", "HEIGHT")) |>
-      group_by(.data$USUBJID, .data$VSTESTCD) |>
-      summarize(mean = mean(.data$VSSTRESN, na.rm = TRUE), .groups = "drop") |>
-      tidyr::pivot_wider(names_from = "VSTESTCD", values_from = "mean")
+      filter(.data$VSTESTCD %in% bl_covariates) |>
+      reframe(value = duplicate_function(.data$VSSTRESN, na.rm = TRUE),
+              .by = c("USUBJID", "VSTESTCD")) |>
+      pivot_wider(names_from = "VSTESTCD", values_from = "value")
 
+    # calculate BMI
     if ("HEIGHT" %in% colnames(baseline_covariates) &&
           "WEIGHT" %in% colnames(baseline_covariates)) {
       baseline_covariates <- baseline_covariates |>
@@ -140,7 +151,7 @@ make_subjects <- function(
     mutate(ID = row_number()) |>
     relocate("ID") |>
     select(any_of(c(
-      "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE", "HEIGHT",
-      "WEIGHT", "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC", keep
+      "ID", "USUBJID", "SEX", "RACE", "ETHNIC", "COUNTRY", "AGE",
+      "BMI", "ACTARMCD", "RFXSTDTC", "RFSTDTC", bl_covariates, keep
     )))
 }
