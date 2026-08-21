@@ -46,6 +46,7 @@ calculate_age <- function(df, ref_date_col = "RFICDTC", preserve_age = TRUE) {
 #' @param vs The VS domain as data table or NULL.
 #' @param subject_filter The filtering to apply to the DM domain.
 #' @param keep Columns to keep, as character vector.
+#' @param silent Suppress messages, as logical.
 #'
 #' @return A data table.
 #' @import tidyselect
@@ -57,7 +58,8 @@ make_subjects <- function(
   dm,
   vs = NULL,
   subject_filter = "!ACTARMCD %in% c('SCRNFAIL', 'NOTTRT')",
-  keep = NULL
+  keep = NULL,
+  silent = NULL
 ) {
   # input validation
   validate_df_argument(dm, expected_fields = c("USUBJID", "SEX", "ACTARMCD"))
@@ -68,34 +70,27 @@ make_subjects <- function(
     expected_fields = c("USUBJID", "VSTESTCD", "VSSTRESN")
   )
 
-  # If vs is provided, validate it is a data frame
+  # If vs is provided, validate required fields
   if (!is.null(vs)) {
-    # Check for VSDTC when needed for baseline determination
     if (!"VSBLFL" %in% names(vs) && !"VSDTC" %in% names(vs)) {
-      stop(
-        paste(
-          "When 'VSBLFL' is not available in vs, 'VSDTC' must be present",
-          "for baseline determination"
-        )
-      )
+      stop("When VSBLFL is not available, VSDTC must be present for baseline determination!")
     }
   }
 
-  # Calculate age if necessary columns are present
+  # business logic
   dm <- calculate_age(dm)
 
   if (!is.null(vs)) {
     # Check if RFSTDTC exists in dm when needed for baseline calculations
     if (!"VSBLFL" %in% names(vs) && !"RFSTDTC" %in% colnames(dm)) {
-      stop(paste(
-        "Baseline covariates cannot be determined because",
-        "VS has not VSBLFL field, and DM has no RFSTDTC."
-      ))
+      stop("Baseline covariates cannot be determined because VS has not VSBLFL field, and DM has no RFSTDTC.")
     }
 
     baseline_covariates <- vs |>
       lubrify_dates() |>
-      left_join(select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID")
+      left_join(
+        select(dm, c("USUBJID", "RFSTDTC")), by = "USUBJID"
+      )
 
     if ("VSBLFL" %in% names(vs)) {
       baseline_covariates <- filter(baseline_covariates, .data$VSBLFL == "Y")

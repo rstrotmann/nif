@@ -116,7 +116,7 @@ test_that("make_subjects requires VSDTC when VSBLFL is absent", {
 
   expect_error(
     make_subjects(dm, vs),
-    "When 'VSBLFL' is not available in vs, 'VSDTC' must be present for baseline determination",
+    "When VSBLFL is not available, VSDTC must be present for baseline determination!",
     fixed = TRUE
   )
 })
