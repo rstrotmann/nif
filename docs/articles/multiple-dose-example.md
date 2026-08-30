@@ -40,41 +40,38 @@ overview:
 ``` r
 
 summary(examplinib_poc)
-#> -------- SDTM data set summary -------- 
-#> Study 2023000022 
+#> ──────── SDTM data set summary ──────── 
+#> Study 2023000022
 #> 
 #> An open-label single-arm Phase 2 study of examplinib in patients
 #> 
-#> Data disposition
-#>   DOMAIN   SUBJECTS   OBSERVATIONS   
-#>   dm       89         89             
-#>   vs       89         178            
-#>   ex       80         477            
-#>   pc       80         1344           
-#>   lb       89         89             
-#>   ts       0          0              
-#>   pp       12         432            
+#> Data disposition:
+#>   DOMAIN  SUBJECTS  OBSERVATIONS  
+#>   dm      89        89            
+#>   vs      89        178           
+#>   ex      80        477           
+#>   pc      80        1344          
+#>   lb      89        89            
+#>   ts      0         0             
+#>   pp      12        432
 #> 
+#> Arms:
+#>   ACTARMCD   ACTARM                
+#>   SCRNFAIL   Screen Faillure       
+#>   TREATMENT  Single Arm Treatment
 #> 
-#> Arms (DM):
-#>   ACTARMCD    ACTARM                 
-#>   SCRNFAIL    Screen Faillure        
-#>   TREATMENT   Single Arm Treatment   
-#> 
-#> 
-#> Treatments (EX):
+#> Treatments:
 #>   EXAMPLINIB
 #> 
-#> PK sample specimens (PC):
+#> PK sample specimens:
 #>   PLASMA
 #> 
-#> PK analytes (PC):
-#>   PCTEST       PCTESTCD     
-#>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A   
-#>  
+#> PK analytes:
+#>   PCTEST      PCTESTCD    
+#>   RS2023      RS2023      
+#>   RS2023487A  RS2023487A
 #> 
-#> Hash: abed731bff41ca58a9d467247093fcac
+#> Hash: a548abb8766f7d82a2a6be50c784b09b
 #> Last DTC: 2001-07-18 10:24:00
 ```
 
@@ -163,59 +160,59 @@ function:
 ``` r
 
 summary(nif_poc)
-#  ----- NONMEM Input Format (NIF) data summary -----
+#  ──────── NONMEM Input Format (NIF) data summary ────────
 #  Data from 80 subjects across one study:
-#    STUDYID      N    
-#    2023000022   80
+#    STUDYID     N   
+#    2023000022  80
 #  
 #  Sex distribution:
-#    SEX      N    percent   
-#    male     46   57.5      
-#    female   34   42.5
+#    SEX     N   percent  
+#    male    46  57.5     
+#    female  34  42.5
 #  
 #  Renal impairment class:
-#    CLASS      N    percent   
-#    normal     26   32.5      
-#    mild       43   53.8      
-#    moderate   10   12.5      
-#    severe     1    1.2
+#    CLASS     N   percent  
+#    normal    26  32.5     
+#    mild      43  53.8     
+#    moderate  10  12.5     
+#    severe    1   1.2
 #  
 #  Treatments: RS2023
 #  
 #  Analytes: RS2023 and RS2023487A
 #  
 #  Subjects per dose level:
-#    DL           n    
-#    500-RS2023   80
+#    DL          n   
+#    500-RS2023  80
 #  
 #  1344 observations:
-#    CMT   ANALYTE      n     
-#    2     RS2023       672   
-#    3     RS2023487A   672
+#    CMT  ANALYTE     n    
+#    2    RS2023      672  
+#    3    RS2023487A  672
 #  
 #  Observations by NTIME:
-#    NTIME   RS2023   RS2023487A   
-#    0       160      160          
-#    0.5     24       24           
-#    1       24       24           
-#    1.5     160      160          
-#    2       24       24           
-#    3       24       24           
-#    4       160      160          
-#    6       24       24           
-#    8       24       24           
-#    10      24       24           
-#    12      24       24
+#    NTIME  RS2023  RS2023487A  
+#    0      160     160         
+#    0.5    24      24          
+#    1      24      24          
+#    1.5    160     160         
+#    2      24      24          
+#    3      24      24          
+#    4      160     160         
+#    6      24      24          
+#    8      24      24          
+#    10     24      24          
+#    12     24      24
 #  
 #  Subjects with dose reductions:
-#    treatment   n    
-#    RS2023      30
+#    treatment  n   
+#    RS2023     30
 #  
 #  Treatment duration overview:
-#    PARENT   min   max   mean   median   
-#    RS2023   55    97    73.2   72.5
+#    PARENT  min  max  mean  median  
+#    RS2023  55   97   73.2  72.5
 #  
-#  Hash: aa660bc847f46a194ec6f224b400c125
+#  Hash: 193c3c088ae6a5a98cd5a1d011a5c4d2
 #  Last DTC: 2001-07-18 08:24:00
 ```
 
@@ -426,7 +423,7 @@ from the popular PKNCA package (github.com/humanpred/pkncal).
 ``` r
 
 nca <- examplinib_poc_nif %>%
-  index_rich_sampling_intervals(analyte = "RS2023", min_n = 4) %>%
+  index_rich_sampling_intervals(min_n = 4) %>%
   nca("RS2023", group = "RICH_N")
 
 nca %>%
@@ -436,9 +433,7 @@ nca %>%
 
 | RICH_N | n | aucinf.obs | auclast | cmax | half.life | tmax |
 |:---|---:|:---|:---|:---|:---|:---|
-| 1 | 12 | 21258.59 (29) | NA | NA | 3.02 (7) | NA |
-| 1 | 80 | NA | 11996.77 (33) | 3396.84 (24) | NA | 2.14 (1.55; 3.95) |
-| 2 | 12 | 21626.44 (29) | NA | NA | 3.05 (7) | NA |
-| 2 | 80 | NA | 11850.93 (34) | 3408.24 (24) | NA | 2.13 (1.6; 4.33) |
-| NA | 29 | NA | 626.78 (41) | NA | NA | NA |
-| NA | 35 | NA | NA | 34.27 (148) | NA | 23.8 (23.3; 47.97) |
+| 1 | 12 | 21258.59 (29) | 19493.05 (29) | 3542.7 (28) | 3.02 (7) | 2.48 (2.17; 3.95) |
+| 2 | 12 | 21626.44 (29) | 19812.43 (29) | 3533.69 (27) | 3.05 (7) | 2.44 (1.85; 3.93) |
+| NA | 165 | NA | 6606.92 (159) | NA | NA | NA |
+| NA | 171 | NA | NA | 1320.39 (636) | NA | 2.25 (1.55; 47.97) |

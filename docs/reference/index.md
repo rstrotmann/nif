@@ -40,6 +40,7 @@
 - [`add_trtdy()`](add_trtdy.md) : Add treatment day ('TRTDY') column
 - [`administration_summary()`](administration_summary.md) :
   Administration summary
+- [`adsl_summary()`](adsl_summary.md) : Summarize ADSL dataset
 - [`ae_summary()`](ae_summary.md) : AE summary
 - [`analyte_overview()`](analyte_overview.md) : Analyte overview
 - [`analytes()`](analytes.md) : Analytes within a NIF or SDTM object
@@ -98,7 +99,7 @@
 - [`examplinib_fe_nif`](examplinib_fe_nif.md) : Synthetic NIF data from
   a fictional clinical food effect study for 'examplinib'.
 - [`examplinib_iv`](examplinib_iv.md) : Synthetic SDTM data from a
-  fictional clinical iv administraiton study for 'examplinib'.
+  fictional clinical iv administration study for 'examplinib'.
 - [`examplinib_poc`](examplinib_poc.md) : Synthetic SDTM data from a
   fictional clinical single-arm study with rich and sparse pk sampling.
 - [`examplinib_poc_min_nif`](examplinib_poc_min_nif.md) : Synthetic NIF
@@ -143,7 +144,6 @@
 - [`index_regimen()`](index_regimen.md) : Index dosing regimen episodes
 - [`index_rich_sampling_intervals()`](index_rich_sampling_intervals.md)
   : Identify and index rich PK sampling intervals
-- [`is_iso8601_pt()`](is_iso8601_pt.md) : Check ISO 8601 PT format
 - [`last_dtc()`](last_dtc.md) : Last recorded date-time
 - [`lbm_boer()`](lbm_boer.md) : Lean body mass (Boer formula)
 - [`lbm_hume()`](lbm_hume.md) : Lean body mass (Hume formula)
@@ -176,6 +176,8 @@
 - [`nif_disclaimer()`](nif_disclaimer.md) : Disclaimer statement
 - [`nif_option()`](nif_option.md) : Set or get global options
 - [`nif_viewer()`](nif_viewer.md) : NIF viewer
+- [`obesity_class()`](obesity_class.md) : Translate body mass index
+  (BMI) into body weight classes
 - [`obs_per_dose_level()`](obs_per_dose_level.md) : Observations per
   dose level
 - [`plot(`*`<nif>`*`)`](plot.nif.md) : Plot NIF object.
@@ -191,8 +193,6 @@
 - [`sdtm()`](sdtm.md) : SDTM class constructor
 - [`sdtm_missing_times()`](sdtm_missing_times.md) : Number of DTC
   entries with missing time information
-- [`standardize_date_format()`](standardize_date_format.md) : Convert
-  date fields to POSIX format
 - [`studies()`](studies.md) : Studies within a nif object
 - [`subject_info()`](subject_info.md) : Baseline details for specific
   subjects

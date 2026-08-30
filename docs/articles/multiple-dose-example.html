@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,41 +105,38 @@ domains. Let’s summarize the <code>examplinib_poc</code> sdtm object for
 a high-level overview:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">examplinib_poc</span><span class="op">)</span></span>
-<span><span class="co">#&gt; -------- SDTM data set summary -------- </span></span>
-<span><span class="co">#&gt; Study 2023000022 </span></span>
+<span><span class="co">#&gt; ──────── SDTM data set summary ──────── </span></span>
+<span><span class="co">#&gt; Study 2023000022</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; An open-label single-arm Phase 2 study of examplinib in patients</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Data disposition</span></span>
-<span><span class="co">#&gt;   DOMAIN   SUBJECTS   OBSERVATIONS   </span></span>
-<span><span class="co">#&gt;   dm       89         89             </span></span>
-<span><span class="co">#&gt;   vs       89         178            </span></span>
-<span><span class="co">#&gt;   ex       80         477            </span></span>
-<span><span class="co">#&gt;   pc       80         1344           </span></span>
-<span><span class="co">#&gt;   lb       89         89             </span></span>
-<span><span class="co">#&gt;   ts       0          0              </span></span>
-<span><span class="co">#&gt;   pp       12         432            </span></span>
+<span><span class="co">#&gt; Data disposition:</span></span>
+<span><span class="co">#&gt;   DOMAIN  SUBJECTS  OBSERVATIONS  </span></span>
+<span><span class="co">#&gt;   dm      89        89            </span></span>
+<span><span class="co">#&gt;   vs      89        178           </span></span>
+<span><span class="co">#&gt;   ex      80        477           </span></span>
+<span><span class="co">#&gt;   pc      80        1344          </span></span>
+<span><span class="co">#&gt;   lb      89        89            </span></span>
+<span><span class="co">#&gt;   ts      0         0             </span></span>
+<span><span class="co">#&gt;   pp      12        432</span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Arms:</span></span>
+<span><span class="co">#&gt;   ACTARMCD   ACTARM                </span></span>
+<span><span class="co">#&gt;   SCRNFAIL   Screen Faillure       </span></span>
+<span><span class="co">#&gt;   TREATMENT  Single Arm Treatment</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Arms (DM):</span></span>
-<span><span class="co">#&gt;   ACTARMCD    ACTARM                 </span></span>
-<span><span class="co">#&gt;   SCRNFAIL    Screen Faillure        </span></span>
-<span><span class="co">#&gt;   TREATMENT   Single Arm Treatment   </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Treatments (EX):</span></span>
+<span><span class="co">#&gt; Treatments:</span></span>
 <span><span class="co">#&gt;   EXAMPLINIB</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; PK sample specimens (PC):</span></span>
+<span><span class="co">#&gt; PK sample specimens:</span></span>
 <span><span class="co">#&gt;   PLASMA</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; PK analytes (PC):</span></span>
-<span><span class="co">#&gt;   PCTEST       PCTESTCD     </span></span>
-<span><span class="co">#&gt;   RS2023       RS2023       </span></span>
-<span><span class="co">#&gt;   RS2023487A   RS2023487A   </span></span>
-<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; PK analytes:</span></span>
+<span><span class="co">#&gt;   PCTEST      PCTESTCD    </span></span>
+<span><span class="co">#&gt;   RS2023      RS2023      </span></span>
+<span><span class="co">#&gt;   RS2023487A  RS2023487A</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: abed731bff41ca58a9d467247093fcac</span></span>
+<span><span class="co">#&gt; Hash: a548abb8766f7d82a2a6be50c784b09b</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-07-18 10:24:00</span></span></code></pre></div>
 <p>Note that in the EX domain, the administered drug is given as
 ‘EXAMPLINIB’ while in PC, the corresponding analyte is ‘RS2023’. The
@@ -215,59 +212,59 @@ also summarizes the number of patients with normal renal function or
 impaired renal function:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif_poc</span><span class="op">)</span></span>
-<span><span class="co">#  ----- NONMEM Input Format (NIF) data summary -----</span></span>
+<span><span class="co">#  ──────── NONMEM Input Format (NIF) data summary ────────</span></span>
 <span><span class="co">#  Data from 80 subjects across one study:</span></span>
-<span><span class="co">#    STUDYID      N    </span></span>
-<span><span class="co">#    2023000022   80</span></span>
+<span><span class="co">#    STUDYID     N   </span></span>
+<span><span class="co">#    2023000022  80</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Sex distribution:</span></span>
-<span><span class="co">#    SEX      N    percent   </span></span>
-<span><span class="co">#    male     46   57.5      </span></span>
-<span><span class="co">#    female   34   42.5</span></span>
+<span><span class="co">#    SEX     N   percent  </span></span>
+<span><span class="co">#    male    46  57.5     </span></span>
+<span><span class="co">#    female  34  42.5</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Renal impairment class:</span></span>
-<span><span class="co">#    CLASS      N    percent   </span></span>
-<span><span class="co">#    normal     26   32.5      </span></span>
-<span><span class="co">#    mild       43   53.8      </span></span>
-<span><span class="co">#    moderate   10   12.5      </span></span>
-<span><span class="co">#    severe     1    1.2</span></span>
+<span><span class="co">#    CLASS     N   percent  </span></span>
+<span><span class="co">#    normal    26  32.5     </span></span>
+<span><span class="co">#    mild      43  53.8     </span></span>
+<span><span class="co">#    moderate  10  12.5     </span></span>
+<span><span class="co">#    severe    1   1.2</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Treatments: RS2023</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Analytes: RS2023 and RS2023487A</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Subjects per dose level:</span></span>
-<span><span class="co">#    DL           n    </span></span>
-<span><span class="co">#    500-RS2023   80</span></span>
+<span><span class="co">#    DL          n   </span></span>
+<span><span class="co">#    500-RS2023  80</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  1344 observations:</span></span>
-<span><span class="co">#    CMT   ANALYTE      n     </span></span>
-<span><span class="co">#    2     RS2023       672   </span></span>
-<span><span class="co">#    3     RS2023487A   672</span></span>
+<span><span class="co">#    CMT  ANALYTE     n    </span></span>
+<span><span class="co">#    2    RS2023      672  </span></span>
+<span><span class="co">#    3    RS2023487A  672</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Observations by NTIME:</span></span>
-<span><span class="co">#    NTIME   RS2023   RS2023487A   </span></span>
-<span><span class="co">#    0       160      160          </span></span>
-<span><span class="co">#    0.5     24       24           </span></span>
-<span><span class="co">#    1       24       24           </span></span>
-<span><span class="co">#    1.5     160      160          </span></span>
-<span><span class="co">#    2       24       24           </span></span>
-<span><span class="co">#    3       24       24           </span></span>
-<span><span class="co">#    4       160      160          </span></span>
-<span><span class="co">#    6       24       24           </span></span>
-<span><span class="co">#    8       24       24           </span></span>
-<span><span class="co">#    10      24       24           </span></span>
-<span><span class="co">#    12      24       24</span></span>
+<span><span class="co">#    NTIME  RS2023  RS2023487A  </span></span>
+<span><span class="co">#    0      160     160         </span></span>
+<span><span class="co">#    0.5    24      24          </span></span>
+<span><span class="co">#    1      24      24          </span></span>
+<span><span class="co">#    1.5    160     160         </span></span>
+<span><span class="co">#    2      24      24          </span></span>
+<span><span class="co">#    3      24      24          </span></span>
+<span><span class="co">#    4      160     160         </span></span>
+<span><span class="co">#    6      24      24          </span></span>
+<span><span class="co">#    8      24      24          </span></span>
+<span><span class="co">#    10     24      24          </span></span>
+<span><span class="co">#    12     24      24</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Subjects with dose reductions:</span></span>
-<span><span class="co">#    treatment   n    </span></span>
-<span><span class="co">#    RS2023      30</span></span>
+<span><span class="co">#    treatment  n   </span></span>
+<span><span class="co">#    RS2023     30</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  Treatment duration overview:</span></span>
-<span><span class="co">#    PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#    RS2023   55    97    73.2   72.5</span></span>
+<span><span class="co">#    PARENT  min  max  mean  median  </span></span>
+<span><span class="co">#    RS2023  55   97   73.2  72.5</span></span>
 <span><span class="co">#  </span></span>
-<span><span class="co">#  Hash: aa660bc847f46a194ec6f224b400c125</span></span>
+<span><span class="co">#  Hash: 193c3c088ae6a5a98cd5a1d011a5c4d2</span></span>
 <span><span class="co">#  Last DTC: 2001-07-18 08:24:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the
@@ -493,19 +490,19 @@ Essentially, <code><a href="../reference/nca.html">nca()</a></code> is a wrapper
 (github.com/humanpred/pkncal).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nca</span> <span class="op">&lt;-</span> <span class="va">examplinib_poc_nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/index_rich_sampling_intervals.html">index_rich_sampling_intervals</a></span><span class="op">(</span>analyte <span class="op">=</span> <span class="st">"RS2023"</span>, min_n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/index_rich_sampling_intervals.html">index_rich_sampling_intervals</a></span><span class="op">(</span>min_n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/nca.html">nca</a></span><span class="op">(</span><span class="st">"RS2023"</span>, group <span class="op">=</span> <span class="st">"RICH_N"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">nca</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/nca_summary_table.html">nca_summary_table</a></span><span class="op">(</span>group <span class="op">=</span> <span class="st">"RICH_N"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
+<table style="width:100%;" class="table">
 <colgroup>
 <col width="8%">
-<col width="3%">
+<col width="4%">
 <col width="17%">
 <col width="17%">
-<col width="16%">
+<col width="17%">
 <col width="12%">
 <col width="23%">
 </colgroup>
@@ -523,55 +520,37 @@ Essentially, <code><a href="../reference/nca.html">nca()</a></code> is a wrapper
 <td align="left">1</td>
 <td align="right">12</td>
 <td align="left">21258.59 (29)</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left">19493.05 (29)</td>
+<td align="left">3542.7 (28)</td>
 <td align="left">3.02 (7)</td>
-<td align="left">NA</td>
+<td align="left">2.48 (2.17; 3.95)</td>
 </tr>
 <tr class="even">
-<td align="left">1</td>
-<td align="right">80</td>
-<td align="left">NA</td>
-<td align="left">11996.77 (33)</td>
-<td align="left">3396.84 (24)</td>
-<td align="left">NA</td>
-<td align="left">2.14 (1.55; 3.95)</td>
-</tr>
-<tr class="odd">
 <td align="left">2</td>
 <td align="right">12</td>
 <td align="left">21626.44 (29)</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left">19812.43 (29)</td>
+<td align="left">3533.69 (27)</td>
 <td align="left">3.05 (7)</td>
-<td align="left">NA</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">80</td>
-<td align="left">NA</td>
-<td align="left">11850.93 (34)</td>
-<td align="left">3408.24 (24)</td>
-<td align="left">NA</td>
-<td align="left">2.13 (1.6; 4.33)</td>
+<td align="left">2.44 (1.85; 3.93)</td>
 </tr>
 <tr class="odd">
 <td align="left">NA</td>
-<td align="right">29</td>
+<td align="right">165</td>
 <td align="left">NA</td>
-<td align="left">626.78 (41)</td>
+<td align="left">6606.92 (159)</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">NA</td>
-<td align="right">35</td>
+<td align="right">171</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">34.27 (148)</td>
+<td align="left">1320.39 (636)</td>
 <td align="left">NA</td>
-<td align="left">23.8 (23.3; 47.97)</td>
+<td align="left">2.25 (1.55; 47.97)</td>
 </tr>
 </tbody>
 </table>

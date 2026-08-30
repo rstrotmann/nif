@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,7 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9">
-<div class="section level1">
+  <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="nif">NIF<a class="anchor" aria-label="anchor" href="#nif"></a>
 </h1></div>
 <p>This is a package to create NONMEM Input Format (NIF) data tables from SDTM-formatted clinical study data.</p>
@@ -95,27 +94,27 @@
 <span><span class="co">#&gt; 4   4  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
 <span><span class="co">#&gt; 5   5  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
 <span><span class="co">#&gt; 6   6  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY</span></span>
-<span><span class="co">#&gt; 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5  RS2023   1 RS2023     1</span></span>
-<span><span class="co">#&gt; 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt; 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0  RS2023   2 RS2023     1</span></span>
-<span><span class="co">#&gt;   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV</span></span>
-<span><span class="co">#&gt; 1      FALSE    5   1       C1                 NA</span></span>
-<span><span class="co">#&gt; 2      FALSE    5   0       C1             0.0000</span></span>
-<span><span class="co">#&gt; 3      FALSE    5   0       C1            40.7852</span></span>
-<span><span class="co">#&gt; 4      FALSE    5   0       C1            48.5530</span></span>
-<span><span class="co">#&gt; 5      FALSE    5   0       C1            44.0391</span></span>
-<span><span class="co">#&gt; 6      FALSE    5   0       C1            34.0729</span></span></code></pre></div>
+<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT CMT      DV ANALYTE PARENT</span></span>
+<span><span class="co">#&gt; 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5   1      NA  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0   2  0.0000  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0   2 40.7852  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0   2 48.5530  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0   2 44.0391  RS2023 RS2023</span></span>
+<span><span class="co">#&gt; 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0   2 34.0729  RS2023 RS2023</span></span>
+<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION</span></span>
+<span><span class="co">#&gt; 1     1      FALSE    5   1       C1 time copied from EXSTDTC</span></span>
+<span><span class="co">#&gt; 2     1      FALSE    5   0       C1                         </span></span>
+<span><span class="co">#&gt; 3     1      FALSE    5   0       C1                         </span></span>
+<span><span class="co">#&gt; 4     1      FALSE    5   0       C1                         </span></span>
+<span><span class="co">#&gt; 5     1      FALSE    5   0       C1                         </span></span>
+<span><span class="co">#&gt; 6     1      FALSE    5   0       C1</span></span></code></pre></div>
 <p>In many cases, you may want to add further covariates, e.g., baseline creatinine from the LB domain:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="va">nif</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>COHORT <span class="op">=</span> <span class="va">ACTARMCD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="reference/add_baseline.html">add_baseline</a></span><span class="op">(</span><span class="va">sdtm</span>, <span class="st">"lb"</span>, <span class="st">"CREAT"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="reference/add_bl_crcl.html">add_bl_crcl</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; baseline_filter for BL_CREAT set to LBBLFL == 'Y'</span></span></code></pre></div>
+<span><span class="co">#&gt; ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-exploration">Data exploration<a class="anchor" aria-label="anchor" href="#data-exploration"></a>
@@ -123,69 +122,66 @@
 <p>The <code>nif</code> package provides a range of functions to explore and summarize NIF files:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data summary ────────</span></span>
 <span><span class="co">#&gt; Data from 48 subjects across one study:</span></span>
-<span><span class="co">#&gt;   STUDYID      N    </span></span>
-<span><span class="co">#&gt;   2023000001   48    </span></span>
+<span><span class="co">#&gt;   STUDYID     N   </span></span>
+<span><span class="co">#&gt;   2023000001  48</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
-<span><span class="co">#&gt;   SEX      N    percent   </span></span>
-<span><span class="co">#&gt;   male     48   100       </span></span>
-<span><span class="co">#&gt;   female   0    0          </span></span>
+<span><span class="co">#&gt;   SEX     N   percent  </span></span>
+<span><span class="co">#&gt;   male    48  100      </span></span>
+<span><span class="co">#&gt;   female  0   0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Renal impairment class:</span></span>
-<span><span class="co">#&gt;   CLASS      N    percent   </span></span>
-<span><span class="co">#&gt;   normal     46   95.8      </span></span>
-<span><span class="co">#&gt;   mild       2    4.2       </span></span>
-<span><span class="co">#&gt;   moderate   0    0         </span></span>
-<span><span class="co">#&gt;   severe     0    0          </span></span>
+<span><span class="co">#&gt;   CLASS     N   percent  </span></span>
+<span><span class="co">#&gt;   normal    46  95.8     </span></span>
+<span><span class="co">#&gt;   mild      2   4.2      </span></span>
+<span><span class="co">#&gt;   moderate  0   0        </span></span>
+<span><span class="co">#&gt;   severe    0   0</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Treatments:</span></span>
-<span><span class="co">#&gt;   RS2023</span></span>
+<span><span class="co">#&gt; Treatments: RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Analytes:</span></span>
-<span><span class="co">#&gt;   RS2023</span></span>
+<span><span class="co">#&gt; Analytes: RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects per dose level:</span></span>
-<span><span class="co">#&gt;   COHORT   RS2023   N    </span></span>
-<span><span class="co">#&gt;   C1       5        3    </span></span>
-<span><span class="co">#&gt;   C10      500      12   </span></span>
-<span><span class="co">#&gt;   C2       10       3    </span></span>
-<span><span class="co">#&gt;   C3       20       3    </span></span>
-<span><span class="co">#&gt;   C4       50       3    </span></span>
-<span><span class="co">#&gt;   C5       100      6    </span></span>
-<span><span class="co">#&gt;   C6       200      3    </span></span>
-<span><span class="co">#&gt;   C7       500      6    </span></span>
-<span><span class="co">#&gt;   C8       800      6    </span></span>
-<span><span class="co">#&gt;   C9       1000     3     </span></span>
+<span><span class="co">#&gt;   DL           n   </span></span>
+<span><span class="co">#&gt;   5-RS2023     3   </span></span>
+<span><span class="co">#&gt;   10-RS2023    3   </span></span>
+<span><span class="co">#&gt;   20-RS2023    3   </span></span>
+<span><span class="co">#&gt;   50-RS2023    3   </span></span>
+<span><span class="co">#&gt;   100-RS2023   6   </span></span>
+<span><span class="co">#&gt;   200-RS2023   3   </span></span>
+<span><span class="co">#&gt;   500-RS2023   18  </span></span>
+<span><span class="co">#&gt;   800-RS2023   6   </span></span>
+<span><span class="co">#&gt;   1000-RS2023  3</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 816 observations:</span></span>
-<span><span class="co">#&gt;   CMT   ANALYTE   N     </span></span>
-<span><span class="co">#&gt;   2     RS2023    816    </span></span>
+<span><span class="co">#&gt;   CMT  ANALYTE  n    </span></span>
+<span><span class="co">#&gt;   2    RS2023   816</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Sampling schedule:</span></span>
-<span><span class="co">#&gt;   NTIME   RS2023   </span></span>
-<span><span class="co">#&gt;   0       X        </span></span>
-<span><span class="co">#&gt;   0.5     X        </span></span>
-<span><span class="co">#&gt;   1       X        </span></span>
-<span><span class="co">#&gt;   1.5     X        </span></span>
-<span><span class="co">#&gt;   2       X        </span></span>
-<span><span class="co">#&gt;   3       X        </span></span>
-<span><span class="co">#&gt;   4       X        </span></span>
-<span><span class="co">#&gt;   6       X        </span></span>
-<span><span class="co">#&gt;   8       X        </span></span>
-<span><span class="co">#&gt;   10      X         </span></span>
+<span><span class="co">#&gt; Observations by NTIME:</span></span>
+<span><span class="co">#&gt;   NTIME  RS2023  </span></span>
+<span><span class="co">#&gt;   0      48      </span></span>
+<span><span class="co">#&gt;   0.5    48      </span></span>
+<span><span class="co">#&gt;   1      48      </span></span>
+<span><span class="co">#&gt;   1.5    48      </span></span>
+<span><span class="co">#&gt;   2      48      </span></span>
+<span><span class="co">#&gt;   3      48      </span></span>
+<span><span class="co">#&gt;   4      48      </span></span>
+<span><span class="co">#&gt;   6      48      </span></span>
+<span><span class="co">#&gt;   8      48      </span></span>
+<span><span class="co">#&gt;   10     48      </span></span>
 <span><span class="co">#&gt;   (7 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Subjects with dose reductions</span></span>
-<span><span class="co">#&gt;   RS2023   </span></span>
-<span><span class="co">#&gt;   0         </span></span>
+<span><span class="co">#&gt; Subjects with dose reductions:</span></span>
+<span><span class="co">#&gt;   treatment  n  </span></span>
+<span><span class="co">#&gt;   RS2023     0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
-<span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#&gt;   RS2023   1     1     1      1         </span></span>
+<span><span class="co">#&gt;   PARENT  min  max  mean  median  </span></span>
+<span><span class="co">#&gt;   RS2023  1    1    1     1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: a14674b06b234d32d526f9c20f0d0e82</span></span>
+<span><span class="co">#&gt; Hash: 23e082c5dba19799165cbe0b10b9b947</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-02 11:31:00</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>
@@ -232,12 +228,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/rstrotmann/nif/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/rstrotmann/nif/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-</ul>
-</div>
+
 
   </aside>
 </div>

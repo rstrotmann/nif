@@ -38,9 +38,9 @@ suggest(examplinib_poc)
 #> ── 2. Pharmacokinetic observations ─────────────────────────────────────────────
 #> There are 2 pharmacokinetic analytes:
 #> 
-#>   PCTEST       PCTESTCD     
-#>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A   
+#>   PCTEST      PCTESTCD    
+#>   RS2023      RS2023      
+#>   RS2023487A  RS2023487A  
 #> 
 #> Consider adding them to the nif object using `add_observation()`, see the code
 #> snippet below (replace 'sdtm' with the name of your sdtm object):
@@ -53,18 +53,18 @@ suggest(examplinib_poc)
 #> The PC domain contains multiple fields that the nominal sampling time can be
 #> derived from:
 #> 
-#>   PCTPT            PCTPTNUM   PCELTM   
-#>   PREDOSE          0          PT0H     
-#>   POSTDOSE 0.5 H   0.5        PT0.5H   
-#>   POSTDOSE 1 H     1          PT1H     
-#>   POSTDOSE 1.5 H   1.5        PT1.5H   
-#>   POSTDOSE 2 H     2          PT2H     
-#>   POSTDOSE 3 H     3          PT3H     
-#>   POSTDOSE 4 H     4          PT4H     
-#>   POSTDOSE 6 H     6          PT6H     
-#>   POSTDOSE 8 H     8          PT8H     
-#>   POSTDOSE 10 H    10         PT10H    
-#>   POSTDOSE 12 H    12         PT12H    
+#>   PCTPT           PCTPTNUM  PCELTM  
+#>   PREDOSE         0         PT0H    
+#>   POSTDOSE 0.5 H  0.5       PT0.5H  
+#>   POSTDOSE 1 H    1         PT1H    
+#>   POSTDOSE 1.5 H  1.5       PT1.5H  
+#>   POSTDOSE 2 H    2         PT2H    
+#>   POSTDOSE 3 H    3         PT3H    
+#>   POSTDOSE 4 H    4         PT4H    
+#>   POSTDOSE 6 H    6         PT6H    
+#>   POSTDOSE 8 H    8         PT8H    
+#>   POSTDOSE 10 H   10        PT10H   
+#>   POSTDOSE 12 H   12        PT12H   
 #> 
 #> Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the
@@ -73,9 +73,9 @@ suggest(examplinib_poc)
 #> ── 3. Study arms ───────────────────────────────────────────────────────────────
 #> There are 2 study arms defined in DM:
 #> 
-#>   ACTARMCD    ACTARM                 
-#>   SCRNFAIL    Screen Faillure        
-#>   TREATMENT   Single Arm Treatment   
+#>   ACTARMCD   ACTARM                
+#>   SCRNFAIL   Screen Faillure       
+#>   TREATMENT  Single Arm Treatment  
 #> 
 #> Consider defining a PART or ARM variable, filtering for a particular arm, or
 #> defining a covariate based on ACTARMCD.

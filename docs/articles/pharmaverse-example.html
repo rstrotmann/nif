@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,44 +102,41 @@ packages:</p>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sdtm</span><span class="op">)</span></span>
-<span><span class="co">#&gt; -------- SDTM data set summary -------- </span></span>
-<span><span class="co">#&gt; Study CDISCPILOT01 </span></span>
+<span><span class="co">#&gt; ──────── SDTM data set summary ──────── </span></span>
+<span><span class="co">#&gt; Study CDISCPILOT01</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in</span></span>
 <span><span class="co">#&gt; Patients with Mild to Moderate Alzheimers Disease.</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Data disposition</span></span>
-<span><span class="co">#&gt;   DOMAIN   SUBJECTS   OBSERVATIONS   </span></span>
-<span><span class="co">#&gt;   dm       306        306            </span></span>
-<span><span class="co">#&gt;   ex       254        591            </span></span>
-<span><span class="co">#&gt;   vs       254        29643          </span></span>
-<span><span class="co">#&gt;   pc       254        4572           </span></span>
-<span><span class="co">#&gt;   lb       254        59580          </span></span>
-<span><span class="co">#&gt;   ts       0          0              </span></span>
-<span><span class="co">#&gt;   eg       254        26717          </span></span>
-<span><span class="co">#&gt;   ae       225        1191           </span></span>
+<span><span class="co">#&gt; Data disposition:</span></span>
+<span><span class="co">#&gt;   DOMAIN  SUBJECTS  OBSERVATIONS  </span></span>
+<span><span class="co">#&gt;   dm      306       306           </span></span>
+<span><span class="co">#&gt;   ex      254       591           </span></span>
+<span><span class="co">#&gt;   vs      254       29643         </span></span>
+<span><span class="co">#&gt;   pc      254       4572          </span></span>
+<span><span class="co">#&gt;   lb      254       59580         </span></span>
+<span><span class="co">#&gt;   ts      0         0             </span></span>
+<span><span class="co">#&gt;   eg      254       26717         </span></span>
+<span><span class="co">#&gt;   ae      225       1191</span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Arms:</span></span>
+<span><span class="co">#&gt;   ACTARMCD  ACTARM                </span></span>
+<span><span class="co">#&gt;   Pbo       Placebo               </span></span>
+<span><span class="co">#&gt;   Scrnfail  Screen Failure        </span></span>
+<span><span class="co">#&gt;   Xan_Hi    Xanomeline High Dose  </span></span>
+<span><span class="co">#&gt;   Xan_Lo    Xanomeline Low Dose</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Arms (DM):</span></span>
-<span><span class="co">#&gt;   ACTARMCD   ACTARM                 </span></span>
-<span><span class="co">#&gt;   Pbo        Placebo                </span></span>
-<span><span class="co">#&gt;   Scrnfail   Screen Failure         </span></span>
-<span><span class="co">#&gt;   Xan_Hi     Xanomeline High Dose   </span></span>
-<span><span class="co">#&gt;   Xan_Lo     Xanomeline Low Dose    </span></span>
+<span><span class="co">#&gt; Treatments:</span></span>
+<span><span class="co">#&gt;   PLACEBO and XANOMELINE</span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; PK sample specimens:</span></span>
+<span><span class="co">#&gt;   PLASMA and URINE</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Treatments (EX):</span></span>
-<span><span class="co">#&gt;   PLACEBO, XANOMELINE</span></span>
+<span><span class="co">#&gt; PK analytes:</span></span>
+<span><span class="co">#&gt;   PCTEST      PCTESTCD  </span></span>
+<span><span class="co">#&gt;   XANOMELINE  XAN</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; PK sample specimens (PC):</span></span>
-<span><span class="co">#&gt;   PLASMA, URINE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; PK analytes (PC):</span></span>
-<span><span class="co">#&gt;   PCTEST       PCTESTCD   </span></span>
-<span><span class="co">#&gt;   XANOMELINE   XAN        </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 0bc904e6d0b7176f1cde4212c701676f</span></span>
+<span><span class="co">#&gt; Hash: 225dce0eb67a5748787059eacf2b00b3</span></span>
 <span><span class="co">#&gt; Last DTC: 2015-03-05 15:40:00</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sdtm</span>, domain <span class="op">=</span> <span class="st">"dm"</span>, points <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
@@ -161,63 +158,63 @@ packages:</p>
 <span>  <span class="fu"><a href="../reference/add_dose_level.html">add_dose_level</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data summary ────────</span></span>
 <span><span class="co">#&gt; Data from 254 subjects across one study:</span></span>
-<span><span class="co">#&gt;   STUDYID        N     </span></span>
-<span><span class="co">#&gt;   CDISCPILOT01   254</span></span>
+<span><span class="co">#&gt;   STUDYID       N    </span></span>
+<span><span class="co">#&gt;   CDISCPILOT01  254</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
-<span><span class="co">#&gt;   SEX      N     percent   </span></span>
-<span><span class="co">#&gt;   male     111   43.7      </span></span>
-<span><span class="co">#&gt;   female   143   56.3</span></span>
+<span><span class="co">#&gt;   SEX     N    percent  </span></span>
+<span><span class="co">#&gt;   male    111  43.7     </span></span>
+<span><span class="co">#&gt;   female  143  56.3</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Renal impairment class:</span></span>
-<span><span class="co">#&gt;   CLASS      N     percent   </span></span>
-<span><span class="co">#&gt;   normal     4     1.6       </span></span>
-<span><span class="co">#&gt;   mild       58    22.8      </span></span>
-<span><span class="co">#&gt;   moderate   173   68.1      </span></span>
-<span><span class="co">#&gt;   severe     16    6.3       </span></span>
-<span><span class="co">#&gt;   NA         3     1.2</span></span>
+<span><span class="co">#&gt;   CLASS     N    percent  </span></span>
+<span><span class="co">#&gt;   normal    4    1.6      </span></span>
+<span><span class="co">#&gt;   mild      58   22.8     </span></span>
+<span><span class="co">#&gt;   moderate  173  68.1     </span></span>
+<span><span class="co">#&gt;   severe    16   6.3      </span></span>
+<span><span class="co">#&gt;   NA        3    1.2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments: PLACEBO and XAN</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Analytes: ALT and XAN</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects per dose level:</span></span>
-<span><span class="co">#&gt;   DL          n     </span></span>
-<span><span class="co">#&gt;   0-PLACEBO   86    </span></span>
-<span><span class="co">#&gt;   54-XAN      168</span></span>
+<span><span class="co">#&gt;   DL         n    </span></span>
+<span><span class="co">#&gt;   0-PLACEBO  86   </span></span>
+<span><span class="co">#&gt;   54-XAN     168</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 5370 observations:</span></span>
-<span><span class="co">#&gt;   CMT   ANALYTE   n      </span></span>
-<span><span class="co">#&gt;   2     XAN       3556   </span></span>
-<span><span class="co">#&gt;   3     ALT       1814</span></span>
+<span><span class="co">#&gt;   CMT  ANALYTE  n     </span></span>
+<span><span class="co">#&gt;   2    XAN      3556  </span></span>
+<span><span class="co">#&gt;   3    ALT      1814</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Observations by NTIME:</span></span>
-<span><span class="co">#&gt;   NTIME   ALT   XAN    </span></span>
-<span><span class="co">#&gt;   -2448   1     -      </span></span>
-<span><span class="co">#&gt;   -2184   1     -      </span></span>
-<span><span class="co">#&gt;   -1920   1     -      </span></span>
-<span><span class="co">#&gt;   -1896   1     -      </span></span>
-<span><span class="co">#&gt;   -1584   1     -      </span></span>
-<span><span class="co">#&gt;   -1560   1     -      </span></span>
-<span><span class="co">#&gt;   -1536   1     -      </span></span>
-<span><span class="co">#&gt;   -1248   1     -      </span></span>
-<span><span class="co">#&gt;   -1200   1     -      </span></span>
-<span><span class="co">#&gt;   -1056   1     -      </span></span>
+<span><span class="co">#&gt;   NTIME  ALT  XAN   </span></span>
+<span><span class="co">#&gt;   -2448  1    -     </span></span>
+<span><span class="co">#&gt;   -2184  1    -     </span></span>
+<span><span class="co">#&gt;   -1920  1    -     </span></span>
+<span><span class="co">#&gt;   -1896  1    -     </span></span>
+<span><span class="co">#&gt;   -1584  1    -     </span></span>
+<span><span class="co">#&gt;   -1560  1    -     </span></span>
+<span><span class="co">#&gt;   -1536  1    -     </span></span>
+<span><span class="co">#&gt;   -1248  1    -     </span></span>
+<span><span class="co">#&gt;   -1200  1    -     </span></span>
+<span><span class="co">#&gt;   -1056  1    -     </span></span>
 <span><span class="co">#&gt;   (202 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions:</span></span>
-<span><span class="co">#&gt;   treatment   n   </span></span>
-<span><span class="co">#&gt;   PLACEBO     0   </span></span>
-<span><span class="co">#&gt;   XAN         0</span></span>
+<span><span class="co">#&gt;   treatment  n  </span></span>
+<span><span class="co">#&gt;   PLACEBO    0  </span></span>
+<span><span class="co">#&gt;   XAN        0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
-<span><span class="co">#&gt;   PARENT    min   max   mean    median   </span></span>
-<span><span class="co">#&gt;   PLACEBO   7     210   149.1   182      </span></span>
-<span><span class="co">#&gt;   XAN       1     212   99.2    81</span></span>
+<span><span class="co">#&gt;   PARENT   min  max  mean   median  </span></span>
+<span><span class="co">#&gt;   PLACEBO  7    210  149.1  182     </span></span>
+<span><span class="co">#&gt;   XAN      1    212  99.2   81</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 9144cbb68a20a5e495071d644ef0b8ca</span></span>
+<span><span class="co">#&gt; Hash: 31e99cae09e1d7ca29daa791e2e6df25</span></span>
 <span><span class="co">#&gt; Last DTC: 2015-03-05 14:40:00</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span></span>

@@ -1,6 +1,6 @@
-# Synthetic SDTM data from a fictional clinical iv administraiton study for 'examplinib'.
+# Synthetic SDTM data from a fictional clinical iv administration study for 'examplinib'.
 
-Synthetic SDTM data from a fictional clinical iv administraiton study
+Synthetic SDTM data from a fictional clinical iv administration study
 for 'examplinib'.
 
 ## Usage

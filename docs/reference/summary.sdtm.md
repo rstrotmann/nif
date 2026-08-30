@@ -54,40 +54,38 @@ A sdtm_summary object.
 
 ``` r
 summary(examplinib_poc)
-#> -------- SDTM data set summary -------- 
-#> Study 2023000022 
+#> ──────── SDTM data set summary ──────── 
+#> Study 2023000022
 #> 
 #> An open-label single-arm Phase 2 study of examplinib in patients
 #> 
-#> Data disposition
-#>   DOMAIN   SUBJECTS   OBSERVATIONS   
-#>   dm       89         89             
-#>   vs       89         178            
-#>   ex       80         477            
-#>   pc       80         1344           
-#>   lb       89         89             
-#>   ts       0          0              
-#>   pp       12         432            
+#> Data disposition:
+#>   DOMAIN  SUBJECTS  OBSERVATIONS  
+#>   dm      89        89            
+#>   vs      89        178           
+#>   ex      80        477           
+#>   pc      80        1344          
+#>   lb      89        89            
+#>   ts      0         0             
+#>   pp      12        432
 #> 
+#> Arms:
+#>   ACTARMCD   ACTARM                
+#>   SCRNFAIL   Screen Faillure       
+#>   TREATMENT  Single Arm Treatment
 #> 
-#> Arms (DM):
-#>   ACTARMCD    ACTARM                 
-#>   SCRNFAIL    Screen Faillure        
-#>   TREATMENT   Single Arm Treatment   
-#> 
-#> 
-#> Treatments (EX):
+#> Treatments:
 #>   EXAMPLINIB
 #> 
-#> PK sample specimens (PC):
+#> PK sample specimens:
 #>   PLASMA
 #> 
-#> PK analytes (PC):
-#>   PCTEST       PCTESTCD     
-#>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A   
-#>  
+#> PK analytes:
+#>   PCTEST      PCTESTCD    
+#>   RS2023      RS2023      
+#>   RS2023487A  RS2023487A
 #> 
-#> Hash: abed731bff41ca58a9d467247093fcac
+#> Hash: a548abb8766f7d82a2a6be50c784b09b
 #> Last DTC: 2001-07-18 10:24:00
+#> 
 ```

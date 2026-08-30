@@ -133,43 +133,40 @@ Printing an `sdtm` object shows relevant summary information:
 ``` r
 
 examplinib_fe
-#> -------- SDTM data set summary -------- 
-#> Study 2023000400 
+#> ──────── SDTM data set summary ──────── 
+#> Study 2023000400
 #> 
 #> An open-label 2-period crossover study in healthy subjects to investigate the
 #> effect of food on the pharmacokinetics of examplinib
 #> 
-#> Data disposition
-#>   DOMAIN   SUBJECTS   OBSERVATIONS   
-#>   dm       28         28             
-#>   vs       28         56             
-#>   ex       20         40             
-#>   pc       20         1360           
-#>   lb       28         28             
-#>   ts       0          0              
-#>   pp       20         360            
+#> Data disposition:
+#>   DOMAIN  SUBJECTS  OBSERVATIONS  
+#>   dm      28        28            
+#>   vs      28        56            
+#>   ex      20        40            
+#>   pc      20        1360          
+#>   lb      28        28            
+#>   ts      0         0             
+#>   pp      20        360
 #> 
+#> Arms:
+#>   ACTARMCD  ACTARM          
+#>   AB        Fasted - Fed    
+#>   BA        Fed - Fasted    
+#>   SCRNFAIL  Screen Failure
 #> 
-#> Arms (DM):
-#>   ACTARMCD   ACTARM           
-#>   AB         Fasted - Fed     
-#>   BA         Fed - Fasted     
-#>   SCRNFAIL   Screen Failure   
-#> 
-#> 
-#> Treatments (EX):
+#> Treatments:
 #>   EXAMPLINIB
 #> 
-#> PK sample specimens (PC):
+#> PK sample specimens:
 #>   PLASMA
 #> 
-#> PK analytes (PC):
-#>   PCTEST       PCTESTCD     
-#>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A   
-#>  
+#> PK analytes:
+#>   PCTEST      PCTESTCD    
+#>   RS2023      RS2023      
+#>   RS2023487A  RS2023487A
 #> 
-#> Hash: 295fd51437d90b19b7e4d80e4c7dd51f
+#> Hash: 0bd5d61ddcbeb185fe55a919c37b651a
 #> Last DTC: 2001-03-10 11:28:00
 ```
 
@@ -180,19 +177,19 @@ extracted using [`subject_info()`](../reference/subject_info.md):
 
 examplinib_fe %>%
   subject_info("20230004001050001")
-#> SUBJID     1050001                     
-#> USUBJID    20230004001050001           
-#> SITEID     105                         
-#> COUNTRY    DEU                         
-#> ARM        Fasted - Fed                
-#> ARMCD      AB                          
-#> ACTARM     Fasted - Fed                
-#> ACTARMCD   AB                          
-#> RFSTDTC    2001-01-05T10:05            
-#> RFENDTC    2001-01-18T10:05            
-#> SEX        M                           
-#> AGE        34                          
-#> RACE       BLACK OR AFRICAN AMERICAN   
+#> SUBJID    1050001                    
+#> USUBJID   20230004001050001          
+#> SITEID    105                        
+#> COUNTRY   DEU                        
+#> ARM       Fasted - Fed               
+#> ARMCD     AB                         
+#> ACTARM    Fasted - Fed               
+#> ACTARMCD  AB                         
+#> RFSTDTC   2001-01-05T10:05           
+#> RFENDTC   2001-01-18T10:05           
+#> SEX       M                          
+#> AGE       34                         
+#> RACE      BLACK OR AFRICAN AMERICAN  
 #> ETHNIC
 ```
 
@@ -227,36 +224,36 @@ high-level data disposition overview on a specific domain:
 ``` r
 
 summary(domain(examplinib_sad, "pc"), silent = TRUE)
-#> -------- SDTM domain summary -------- 
-#> Study 2023000001 
-#> Domain PC 
+#> ──────── SDTM domain summary ──────── 
+#> Study: 2023000001
+#> Domain: PC
 #> 48 subjects
 #> 1632 observations
 #> 
-#> Testcodes
-#>   PCTEST       PCTESTCD     PCSPEC   
-#>   RS2023       RS2023       PLASMA   
-#>   RS2023487A   RS2023487A   PLASMA   
-#>  
+#> Testcodes:
+#>   PCTEST      PCTESTCD    PCSPEC  
+#>   RS2023      RS2023      PLASMA  
+#>   RS2023487A  RS2023487A  PLASMA
 #> 
-#> Observation time points
-#>   PCTPT                 PCTPTNUM   PCELTM   
-#>   PREDOSE               0          PT0H     
-#>   0.5 HOURS POST-DOSE   0.5        PT0.5H   
-#>   1 HOURS POST-DOSE     1          PT1H     
-#>   1.5 HOURS POST-DOSE   1.5        PT1.5H   
-#>   2 HOURS POST-DOSE     2          PT2H     
-#>   3 HOURS POST-DOSE     3          PT3H     
-#>   4 HOURS POST-DOSE     4          PT4H     
-#>   6 HOURS POST-DOSE     6          PT6H     
-#>   8 HOURS POST-DOSE     8          PT8H     
-#>   10 HOURS POST-DOSE    10         PT10H    
-#>   (7 more rows) 
+#> Time points:
+#>   PCTPT                PCTPTNUM  PCELTM  
+#>   PREDOSE              0         PT0H    
+#>   0.5 HOURS POST-DOSE  0.5       PT0.5H  
+#>   1 HOURS POST-DOSE    1         PT1H    
+#>   1.5 HOURS POST-DOSE  1.5       PT1.5H  
+#>   2 HOURS POST-DOSE    2         PT2H    
+#>   3 HOURS POST-DOSE    3         PT3H    
+#>   4 HOURS POST-DOSE    4         PT4H    
+#>   6 HOURS POST-DOSE    6         PT6H    
+#>   8 HOURS POST-DOSE    8         PT8H    
+#>   10 HOURS POST-DOSE   10        PT10H   
+#>   (7 more rows)
 #> 
-#> Epochs
-#>   OPEN LABEL TREATMENT   
-#>  
-#> Hash: 1845066a836e2bcc64e20d8d8b7951ff
+#> Epochs:
+#>   EPOCH                 
+#>   OPEN LABEL TREATMENT
+#> 
+#> Hash: 0a223bbb9643ac266829d56717a1fe1f
 #> Last DTC: 2001-03-02 12:31:00
 ```
 
@@ -299,9 +296,9 @@ suggest(examplinib_fe)
 #> ── 2. Pharmacokinetic observations ─────────────────────────────────────────────
 #> There are 2 pharmacokinetic analytes:
 #> 
-#>   PCTEST       PCTESTCD     
-#>   RS2023       RS2023       
-#>   RS2023487A   RS2023487A
+#>   PCTEST      PCTESTCD    
+#>   RS2023      RS2023      
+#>   RS2023487A  RS2023487A
 #> 
 #> Consider adding them to the nif object using `add_observation()`, see the code
 #> snippet below (replace 'sdtm' with the name of your sdtm object):
@@ -314,24 +311,24 @@ suggest(examplinib_fe)
 #> The PC domain contains multiple fields that the nominal sampling time can be
 #> derived from:
 #> 
-#>   PCTPT                 PCTPTNUM   PCELTM   
-#>   PREDOSE               0          PT0H     
-#>   0.5 HOURS POST-DOSE   0.5        PT0.5H   
-#>   1 HOURS POST-DOSE     1          PT1H     
-#>   1.5 HOURS POST-DOSE   1.5        PT1.5H   
-#>   2 HOURS POST-DOSE     2          PT2H     
-#>   3 HOURS POST-DOSE     3          PT3H     
-#>   4 HOURS POST-DOSE     4          PT4H     
-#>   6 HOURS POST-DOSE     6          PT6H     
-#>   8 HOURS POST-DOSE     8          PT8H     
-#>   10 HOURS POST-DOSE    10         PT10H    
-#>   12 HOURS POST-DOSE    12         PT12H    
-#>   24 HOURS POST-DOSE    24         PT24H    
-#>   48 HOURS POST-DOSE    48         PT48H    
-#>   72 HOURS POST-DOSE    72         PT72H    
-#>   96 HOURS POST-DOSE    96         PT96H    
-#>   144 HOURS POST-DOSE   144        PT144H   
-#>   168 HOURS POST-DOSE   168        PT168H
+#>   PCTPT                PCTPTNUM  PCELTM  
+#>   PREDOSE              0         PT0H    
+#>   0.5 HOURS POST-DOSE  0.5       PT0.5H  
+#>   1 HOURS POST-DOSE    1         PT1H    
+#>   1.5 HOURS POST-DOSE  1.5       PT1.5H  
+#>   2 HOURS POST-DOSE    2         PT2H    
+#>   3 HOURS POST-DOSE    3         PT3H    
+#>   4 HOURS POST-DOSE    4         PT4H    
+#>   6 HOURS POST-DOSE    6         PT6H    
+#>   8 HOURS POST-DOSE    8         PT8H    
+#>   10 HOURS POST-DOSE   10        PT10H   
+#>   12 HOURS POST-DOSE   12        PT12H   
+#>   24 HOURS POST-DOSE   24        PT24H   
+#>   48 HOURS POST-DOSE   48        PT48H   
+#>   72 HOURS POST-DOSE   72        PT72H   
+#>   96 HOURS POST-DOSE   96        PT96H   
+#>   144 HOURS POST-DOSE  144       PT144H  
+#>   168 HOURS POST-DOSE  168       PT168H
 #> 
 #> Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.
 #> By default, the function will attempt to extract time information from the
@@ -340,10 +337,10 @@ suggest(examplinib_fe)
 #> ── 3. Study arms ───────────────────────────────────────────────────────────────
 #> There are 3 study arms defined in DM:
 #> 
-#>   ACTARMCD   ACTARM           
-#>   AB         Fasted - Fed     
-#>   BA         Fed - Fasted     
-#>   SCRNFAIL   Screen Failure
+#>   ACTARMCD  ACTARM          
+#>   AB        Fasted - Fed    
+#>   BA        Fed - Fasted    
+#>   SCRNFAIL  Screen Failure
 #> 
 #> Consider defining a PART or ARM variable, filtering for a particular arm, or
 #> defining a covariate based on ACTARMCD.
@@ -529,51 +526,51 @@ set:
 ``` r
 
 summary(nif)
-#> ----- NONMEM Input Format (NIF) data summary -----
+#> ──────── NONMEM Input Format (NIF) data summary ────────
 #> Data from 20 subjects across one study:
-#>   STUDYID      N    
-#>   2023000400   20
+#>   STUDYID     N   
+#>   2023000400  20
 #> 
 #> Sex distribution:
-#>   SEX      N    percent   
-#>   male     13   65        
-#>   female   7    35
+#>   SEX     N   percent  
+#>   male    13  65       
+#>   female  7   35
 #> 
 #> Treatments: RS2023
 #> 
 #> Analytes: RS2023
 #> 
 #> Subjects per dose level:
-#>   DL           n    
-#>   500-RS2023   20
+#>   DL          n   
+#>   500-RS2023  20
 #> 
 #> 680 observations:
-#>   CMT   ANALYTE   n     
-#>   2     RS2023    680
+#>   CMT  ANALYTE  n    
+#>   2    RS2023   680
 #> 
 #> Observations by NTIME:
-#>   NTIME   RS2023   
-#>   0       40       
-#>   0.5     40       
-#>   1       40       
-#>   1.5     40       
-#>   2       40       
-#>   3       40       
-#>   4       40       
-#>   6       40       
-#>   8       40       
-#>   10      40       
+#>   NTIME  RS2023  
+#>   0      40      
+#>   0.5    40      
+#>   1      40      
+#>   1.5    40      
+#>   2      40      
+#>   3      40      
+#>   4      40      
+#>   6      40      
+#>   8      40      
+#>   10     40      
 #>   (7 more rows)
 #> 
 #> Subjects with dose reductions:
-#>   treatment   n   
-#>   RS2023      0
+#>   treatment  n  
+#>   RS2023     0
 #> 
 #> Treatment duration overview:
-#>   PARENT   min   max   mean   median   
-#>   RS2023   2     2     2      2
+#>   PARENT  min  max  mean  median  
+#>   RS2023  2    2    2     2
 #> 
-#> Hash: 6d6ade77da102051b4e01e0afd03f890
+#> Hash: d944c56787aebf5d23c1a59f891fc991
 #> Last DTC: 2001-03-10 10:28:00
 ```
 

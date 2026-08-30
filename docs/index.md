@@ -51,20 +51,20 @@ head(nif)
 #> 4   4  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #> 5   5  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
 #> 6   6  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
-#>                   DTC TIME NTIME TAFD TAD EVID AMT ANALYTE CMT PARENT TRTDY
-#> 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5  RS2023   1 RS2023     1
-#> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0  RS2023   2 RS2023     1
-#> 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0  RS2023   2 RS2023     1
-#> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0  RS2023   2 RS2023     1
-#> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0  RS2023   2 RS2023     1
-#> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0  RS2023   2 RS2023     1
-#>   METABOLITE DOSE MDV ACTARMCD IMPUTATION      DV
-#> 1      FALSE    5   1       C1                 NA
-#> 2      FALSE    5   0       C1             0.0000
-#> 3      FALSE    5   0       C1            40.7852
-#> 4      FALSE    5   0       C1            48.5530
-#> 5      FALSE    5   0       C1            44.0391
-#> 6      FALSE    5   0       C1            34.0729
+#>                   DTC TIME NTIME TAFD TAD EVID AMT CMT      DV ANALYTE PARENT
+#> 1 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    1   5   1      NA  RS2023 RS2023
+#> 2 2000-12-31 10:18:00  0.0   0.0  0.0 0.0    0   0   2  0.0000  RS2023 RS2023
+#> 3 2000-12-31 10:48:00  0.5   0.5  0.5 0.5    0   0   2 40.7852  RS2023 RS2023
+#> 4 2000-12-31 11:18:00  1.0   1.0  1.0 1.0    0   0   2 48.5530  RS2023 RS2023
+#> 5 2000-12-31 11:48:00  1.5   1.5  1.5 1.5    0   0   2 44.0391  RS2023 RS2023
+#> 6 2000-12-31 12:18:00  2.0   2.0  2.0 2.0    0   0   2 34.0729  RS2023 RS2023
+#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION
+#> 1     1      FALSE    5   1       C1 time copied from EXSTDTC
+#> 2     1      FALSE    5   0       C1                         
+#> 3     1      FALSE    5   0       C1                         
+#> 4     1      FALSE    5   0       C1                         
+#> 5     1      FALSE    5   0       C1                         
+#> 6     1      FALSE    5   0       C1
 ```
 
 In many cases, you may want to add further covariates, e.g., baseline
@@ -76,7 +76,7 @@ nif <- nif %>%
   mutate(COHORT = ACTARMCD) %>%
   add_baseline(sdtm, "lb", "CREAT") %>%
   add_bl_crcl()
-#> baseline_filter for BL_CREAT set to LBBLFL == 'Y'
+#> ℹ baseline_filter for BL_CREAT set to LBBLFL == 'Y'
 ```
 
 ### Data exploration
@@ -87,69 +87,66 @@ NIF files:
 ``` r
 
 summary(nif)
-#> ----- NONMEM Input Format (NIF) data summary -----
+#> ──────── NONMEM Input Format (NIF) data summary ────────
 #> Data from 48 subjects across one study:
-#>   STUDYID      N    
-#>   2023000001   48    
+#>   STUDYID     N   
+#>   2023000001  48
 #> 
 #> Sex distribution:
-#>   SEX      N    percent   
-#>   male     48   100       
-#>   female   0    0          
+#>   SEX     N   percent  
+#>   male    48  100      
+#>   female  0   0
 #> 
 #> Renal impairment class:
-#>   CLASS      N    percent   
-#>   normal     46   95.8      
-#>   mild       2    4.2       
-#>   moderate   0    0         
-#>   severe     0    0          
+#>   CLASS     N   percent  
+#>   normal    46  95.8     
+#>   mild      2   4.2      
+#>   moderate  0   0        
+#>   severe    0   0
 #> 
-#> Treatments:
-#>   RS2023
+#> Treatments: RS2023
 #> 
-#> Analytes:
-#>   RS2023
+#> Analytes: RS2023
 #> 
 #> Subjects per dose level:
-#>   COHORT   RS2023   N    
-#>   C1       5        3    
-#>   C10      500      12   
-#>   C2       10       3    
-#>   C3       20       3    
-#>   C4       50       3    
-#>   C5       100      6    
-#>   C6       200      3    
-#>   C7       500      6    
-#>   C8       800      6    
-#>   C9       1000     3     
+#>   DL           n   
+#>   5-RS2023     3   
+#>   10-RS2023    3   
+#>   20-RS2023    3   
+#>   50-RS2023    3   
+#>   100-RS2023   6   
+#>   200-RS2023   3   
+#>   500-RS2023   18  
+#>   800-RS2023   6   
+#>   1000-RS2023  3
 #> 
 #> 816 observations:
-#>   CMT   ANALYTE   N     
-#>   2     RS2023    816    
+#>   CMT  ANALYTE  n    
+#>   2    RS2023   816
 #> 
-#> Sampling schedule:
-#>   NTIME   RS2023   
-#>   0       X        
-#>   0.5     X        
-#>   1       X        
-#>   1.5     X        
-#>   2       X        
-#>   3       X        
-#>   4       X        
-#>   6       X        
-#>   8       X        
-#>   10      X         
+#> Observations by NTIME:
+#>   NTIME  RS2023  
+#>   0      48      
+#>   0.5    48      
+#>   1      48      
+#>   1.5    48      
+#>   2      48      
+#>   3      48      
+#>   4      48      
+#>   6      48      
+#>   8      48      
+#>   10     48      
 #>   (7 more rows)
 #> 
-#> Subjects with dose reductions
-#>   RS2023   
-#>   0         
+#> Subjects with dose reductions:
+#>   treatment  n  
+#>   RS2023     0
 #> 
 #> Treatment duration overview:
-#>   PARENT   min   max   mean   median   
-#>   RS2023   1     1     1      1         
+#>   PARENT  min  max  mean  median  
+#>   RS2023  1    1    1     1
 #> 
-#> Hash: a14674b06b234d32d526f9c20f0d0e82
+#> Hash: 23e082c5dba19799165cbe0b10b9b947
 #> Last DTC: 2001-03-02 11:31:00
 
 invisible(capture.output(

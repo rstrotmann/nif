@@ -69,38 +69,38 @@ information):
 ``` r
 
 summary(nif)
-#> ----- NONMEM Input Format (NIF) data summary -----
+#> ──────── NONMEM Input Format (NIF) data summary ────────
 #> Data from 2 subjects across 0studies:
-#>   N   
+#>   N  
 #>   2
 #> 
 #> Sex distribution:
-#>   SEX      N   percent   
-#>   male     0   0         
-#>   female   0   0         
-#>   NA       2   100
+#>   SEX     N  percent  
+#>   male    0  0        
+#>   female  0  0        
+#>   NA      2  100
 #> 
 #> Treatments: CMT1
 #> 
 #> Analytes: CMT2
 #> 
 #> Subjects per dose level:
-#>   DL       n   
-#>   5-CMT1   2
+#>   DL      n  
+#>   5-CMT1  2
 #> 
 #> 16 observations:
-#>   CMT   n    
-#>   2     16
+#>   CMT  n   
+#>   2    16
 #> 
 #> Subjects with dose reductions:
-#>   treatment   n   
-#>   CMT1        0
+#>   treatment  n  
+#>   CMT1       0
 #> 
 #> Treatment duration overview:
-#>   PARENT   min   max   mean   median   
-#>   CMT1     1     1     1      1
+#>   PARENT  min  max  mean  median  
+#>   CMT1    1    1    1     1
 #> 
-#> Hash: 3fa3de0c673f465e5b638327df10ab84
+#> Hash: 08341872853e476ce3516d7ce21df1dc
 plot(nif, log = T, points = T)
 ```
 

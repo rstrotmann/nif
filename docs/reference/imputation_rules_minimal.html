@@ -11,7 +11,7 @@ data imputations for observations."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,8 +75,10 @@ of drug administration episodes.</p></dd>
 
 </dl></div>
     <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>#' @section Imputation rules for drug administrations:</p><div class="section">
+    <h2 id="imputation-rules-for-drug-administrations">Imputation rules for drug administrations<a class="anchor" aria-label="anchor" href="#imputation-rules-for-drug-administrations"></a></h2>
+
+
+<div class="section">
 <h3 id="generic-imputations">Generic imputations<a class="anchor" aria-label="anchor" href="#generic-imputations"></a></h3>
 
 
@@ -85,7 +87,7 @@ of drug administration episodes.</p></dd>
 <code>DM.RFENDTC</code></p></li>
 <li><p>Expansion of individual administration episode, i.e., conversion of date
 ranges between <code>EXSTDTC</code> and <code>EXENDTC</code> into one row for each individual
-administration event. This step is conducted after <code>admin_pre_examsion()</code>
+administration event. This step is conducted after <code>admin_pre_expansion()</code>
 and <code>admin_post_expansion()</code>.</p></li>
 <li><p>Carry-forward of missing administration times after
 <code>admin_post_expansion()</code>.</p></li>

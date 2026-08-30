@@ -16,7 +16,7 @@ add_trtdy(obj)
 
 ## Value
 
-The updated NIF object as data frame.
+The updated NIF object.
 
 ## Examples
 

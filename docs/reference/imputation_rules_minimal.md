@@ -32,9 +32,7 @@ A named list with these functions:
 
   Imputations on observation data
 
-## Details
-
-\#' @section Imputation rules for drug administrations:
+## Imputation rules for drug administrations
 
 ### Generic imputations
 
@@ -47,7 +45,7 @@ These steps are always performed regardless of the specific rule set:
 - Expansion of individual administration episode, i.e., conversion of
   date ranges between `EXSTDTC` and `EXENDTC` into one row for each
   individual administration event. This step is conducted after
-  `admin_pre_examsion()` and `admin_post_expansion()`.
+  `admin_pre_expansion()` and `admin_post_expansion()`.
 
 - Carry-forward of missing administration times after
   `admin_post_expansion()`.

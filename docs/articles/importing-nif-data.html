@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -130,38 +130,38 @@ summarized or plotted or otherwise explored (see
 <code>vignette("nif-tutorial")</code> for more information):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data summary ────────</span></span>
 <span><span class="co">#&gt; Data from 2 subjects across 0studies:</span></span>
-<span><span class="co">#&gt;   N   </span></span>
+<span><span class="co">#&gt;   N  </span></span>
 <span><span class="co">#&gt;   2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
-<span><span class="co">#&gt;   SEX      N   percent   </span></span>
-<span><span class="co">#&gt;   male     0   0         </span></span>
-<span><span class="co">#&gt;   female   0   0         </span></span>
-<span><span class="co">#&gt;   NA       2   100</span></span>
+<span><span class="co">#&gt;   SEX     N  percent  </span></span>
+<span><span class="co">#&gt;   male    0  0        </span></span>
+<span><span class="co">#&gt;   female  0  0        </span></span>
+<span><span class="co">#&gt;   NA      2  100</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments: CMT1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Analytes: CMT2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects per dose level:</span></span>
-<span><span class="co">#&gt;   DL       n   </span></span>
-<span><span class="co">#&gt;   5-CMT1   2</span></span>
+<span><span class="co">#&gt;   DL      n  </span></span>
+<span><span class="co">#&gt;   5-CMT1  2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 16 observations:</span></span>
-<span><span class="co">#&gt;   CMT   n    </span></span>
-<span><span class="co">#&gt;   2     16</span></span>
+<span><span class="co">#&gt;   CMT  n   </span></span>
+<span><span class="co">#&gt;   2    16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions:</span></span>
-<span><span class="co">#&gt;   treatment   n   </span></span>
-<span><span class="co">#&gt;   CMT1        0</span></span>
+<span><span class="co">#&gt;   treatment  n  </span></span>
+<span><span class="co">#&gt;   CMT1       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
-<span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#&gt;   CMT1     1     1     1      1</span></span>
+<span><span class="co">#&gt;   PARENT  min  max  mean  median  </span></span>
+<span><span class="co">#&gt;   CMT1    1    1    1     1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 3fa3de0c673f465e5b638327df10ab84</span></span>
+<span><span class="co">#&gt; Hash: 08341872853e476ce3516d7ce21df1dc</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif</span>, log <span class="op">=</span> <span class="cn">T</span>, points <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="importing-nif-data_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="700"></p>
 <div class="section level3">

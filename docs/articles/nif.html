@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -184,62 +184,59 @@ administrations (<code>examplinib_poc</code>).</p>
 information:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span></span>
-<span><span class="co">#&gt; -------- SDTM data set summary -------- </span></span>
-<span><span class="co">#&gt; Study 2023000400 </span></span>
+<span><span class="co">#&gt; ──────── SDTM data set summary ──────── </span></span>
+<span><span class="co">#&gt; Study 2023000400</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; An open-label 2-period crossover study in healthy subjects to investigate the</span></span>
 <span><span class="co">#&gt; effect of food on the pharmacokinetics of examplinib</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Data disposition</span></span>
-<span><span class="co">#&gt;   DOMAIN   SUBJECTS   OBSERVATIONS   </span></span>
-<span><span class="co">#&gt;   dm       28         28             </span></span>
-<span><span class="co">#&gt;   vs       28         56             </span></span>
-<span><span class="co">#&gt;   ex       20         40             </span></span>
-<span><span class="co">#&gt;   pc       20         1360           </span></span>
-<span><span class="co">#&gt;   lb       28         28             </span></span>
-<span><span class="co">#&gt;   ts       0          0              </span></span>
-<span><span class="co">#&gt;   pp       20         360            </span></span>
+<span><span class="co">#&gt; Data disposition:</span></span>
+<span><span class="co">#&gt;   DOMAIN  SUBJECTS  OBSERVATIONS  </span></span>
+<span><span class="co">#&gt;   dm      28        28            </span></span>
+<span><span class="co">#&gt;   vs      28        56            </span></span>
+<span><span class="co">#&gt;   ex      20        40            </span></span>
+<span><span class="co">#&gt;   pc      20        1360          </span></span>
+<span><span class="co">#&gt;   lb      28        28            </span></span>
+<span><span class="co">#&gt;   ts      0         0             </span></span>
+<span><span class="co">#&gt;   pp      20        360</span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Arms:</span></span>
+<span><span class="co">#&gt;   ACTARMCD  ACTARM          </span></span>
+<span><span class="co">#&gt;   AB        Fasted - Fed    </span></span>
+<span><span class="co">#&gt;   BA        Fed - Fasted    </span></span>
+<span><span class="co">#&gt;   SCRNFAIL  Screen Failure</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Arms (DM):</span></span>
-<span><span class="co">#&gt;   ACTARMCD   ACTARM           </span></span>
-<span><span class="co">#&gt;   AB         Fasted - Fed     </span></span>
-<span><span class="co">#&gt;   BA         Fed - Fasted     </span></span>
-<span><span class="co">#&gt;   SCRNFAIL   Screen Failure   </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Treatments (EX):</span></span>
+<span><span class="co">#&gt; Treatments:</span></span>
 <span><span class="co">#&gt;   EXAMPLINIB</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; PK sample specimens (PC):</span></span>
+<span><span class="co">#&gt; PK sample specimens:</span></span>
 <span><span class="co">#&gt;   PLASMA</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; PK analytes (PC):</span></span>
-<span><span class="co">#&gt;   PCTEST       PCTESTCD     </span></span>
-<span><span class="co">#&gt;   RS2023       RS2023       </span></span>
-<span><span class="co">#&gt;   RS2023487A   RS2023487A   </span></span>
-<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; PK analytes:</span></span>
+<span><span class="co">#&gt;   PCTEST      PCTESTCD    </span></span>
+<span><span class="co">#&gt;   RS2023      RS2023      </span></span>
+<span><span class="co">#&gt;   RS2023487A  RS2023487A</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 295fd51437d90b19b7e4d80e4c7dd51f</span></span>
+<span><span class="co">#&gt; Hash: 0bd5d61ddcbeb185fe55a919c37b651a</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 11:28:00</span></span></code></pre></div>
 <p>High-level subject-level disposition data for a specific subject can
 be extracted using <code><a href="../reference/subject_info.html">subject_info()</a></code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; SUBJID     1050001                     </span></span>
-<span><span class="co">#&gt; USUBJID    20230004001050001           </span></span>
-<span><span class="co">#&gt; SITEID     105                         </span></span>
-<span><span class="co">#&gt; COUNTRY    DEU                         </span></span>
-<span><span class="co">#&gt; ARM        Fasted - Fed                </span></span>
-<span><span class="co">#&gt; ARMCD      AB                          </span></span>
-<span><span class="co">#&gt; ACTARM     Fasted - Fed                </span></span>
-<span><span class="co">#&gt; ACTARMCD   AB                          </span></span>
-<span><span class="co">#&gt; RFSTDTC    2001-01-05T10:05            </span></span>
-<span><span class="co">#&gt; RFENDTC    2001-01-18T10:05            </span></span>
-<span><span class="co">#&gt; SEX        M                           </span></span>
-<span><span class="co">#&gt; AGE        34                          </span></span>
-<span><span class="co">#&gt; RACE       BLACK OR AFRICAN AMERICAN   </span></span>
+<span><span class="co">#&gt; SUBJID    1050001                    </span></span>
+<span><span class="co">#&gt; USUBJID   20230004001050001          </span></span>
+<span><span class="co">#&gt; SITEID    105                        </span></span>
+<span><span class="co">#&gt; COUNTRY   DEU                        </span></span>
+<span><span class="co">#&gt; ARM       Fasted - Fed               </span></span>
+<span><span class="co">#&gt; ARMCD     AB                         </span></span>
+<span><span class="co">#&gt; ACTARM    Fasted - Fed               </span></span>
+<span><span class="co">#&gt; ACTARMCD  AB                         </span></span>
+<span><span class="co">#&gt; RFSTDTC   2001-01-05T10:05           </span></span>
+<span><span class="co">#&gt; RFENDTC   2001-01-18T10:05           </span></span>
+<span><span class="co">#&gt; SEX       M                          </span></span>
+<span><span class="co">#&gt; AGE       34                         </span></span>
+<span><span class="co">#&gt; RACE      BLACK OR AFRICAN AMERICAN  </span></span>
 <span><span class="co">#&gt; ETHNIC</span></span></code></pre></div>
 <p>The original SDTM data for specific domains can be retrieved from
 <code>sdtm</code> objects with the <code><a href="../reference/domain.html">domain()</a></code> function:</p>
@@ -266,36 +263,36 @@ be extracted using <code><a href="../reference/subject_info.html">subject_info()
 overview on a specific domain:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/domain.html">domain</a></span><span class="op">(</span><span class="va">examplinib_sad</span>, <span class="st">"pc"</span><span class="op">)</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; -------- SDTM domain summary -------- </span></span>
-<span><span class="co">#&gt; Study 2023000001 </span></span>
-<span><span class="co">#&gt; Domain PC </span></span>
+<span><span class="co">#&gt; ──────── SDTM domain summary ──────── </span></span>
+<span><span class="co">#&gt; Study: 2023000001</span></span>
+<span><span class="co">#&gt; Domain: PC</span></span>
 <span><span class="co">#&gt; 48 subjects</span></span>
 <span><span class="co">#&gt; 1632 observations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Testcodes</span></span>
-<span><span class="co">#&gt;   PCTEST       PCTESTCD     PCSPEC   </span></span>
-<span><span class="co">#&gt;   RS2023       RS2023       PLASMA   </span></span>
-<span><span class="co">#&gt;   RS2023487A   RS2023487A   PLASMA   </span></span>
-<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Testcodes:</span></span>
+<span><span class="co">#&gt;   PCTEST      PCTESTCD    PCSPEC  </span></span>
+<span><span class="co">#&gt;   RS2023      RS2023      PLASMA  </span></span>
+<span><span class="co">#&gt;   RS2023487A  RS2023487A  PLASMA</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Observation time points</span></span>
-<span><span class="co">#&gt;   PCTPT                 PCTPTNUM   PCELTM   </span></span>
-<span><span class="co">#&gt;   PREDOSE               0          PT0H     </span></span>
-<span><span class="co">#&gt;   0.5 HOURS POST-DOSE   0.5        PT0.5H   </span></span>
-<span><span class="co">#&gt;   1 HOURS POST-DOSE     1          PT1H     </span></span>
-<span><span class="co">#&gt;   1.5 HOURS POST-DOSE   1.5        PT1.5H   </span></span>
-<span><span class="co">#&gt;   2 HOURS POST-DOSE     2          PT2H     </span></span>
-<span><span class="co">#&gt;   3 HOURS POST-DOSE     3          PT3H     </span></span>
-<span><span class="co">#&gt;   4 HOURS POST-DOSE     4          PT4H     </span></span>
-<span><span class="co">#&gt;   6 HOURS POST-DOSE     6          PT6H     </span></span>
-<span><span class="co">#&gt;   8 HOURS POST-DOSE     8          PT8H     </span></span>
-<span><span class="co">#&gt;   10 HOURS POST-DOSE    10         PT10H    </span></span>
-<span><span class="co">#&gt;   (7 more rows) </span></span>
+<span><span class="co">#&gt; Time points:</span></span>
+<span><span class="co">#&gt;   PCTPT                PCTPTNUM  PCELTM  </span></span>
+<span><span class="co">#&gt;   PREDOSE              0         PT0H    </span></span>
+<span><span class="co">#&gt;   0.5 HOURS POST-DOSE  0.5       PT0.5H  </span></span>
+<span><span class="co">#&gt;   1 HOURS POST-DOSE    1         PT1H    </span></span>
+<span><span class="co">#&gt;   1.5 HOURS POST-DOSE  1.5       PT1.5H  </span></span>
+<span><span class="co">#&gt;   2 HOURS POST-DOSE    2         PT2H    </span></span>
+<span><span class="co">#&gt;   3 HOURS POST-DOSE    3         PT3H    </span></span>
+<span><span class="co">#&gt;   4 HOURS POST-DOSE    4         PT4H    </span></span>
+<span><span class="co">#&gt;   6 HOURS POST-DOSE    6         PT6H    </span></span>
+<span><span class="co">#&gt;   8 HOURS POST-DOSE    8         PT8H    </span></span>
+<span><span class="co">#&gt;   10 HOURS POST-DOSE   10        PT10H   </span></span>
+<span><span class="co">#&gt;   (7 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Epochs</span></span>
-<span><span class="co">#&gt;   OPEN LABEL TREATMENT   </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Hash: 1845066a836e2bcc64e20d8d8b7951ff</span></span>
+<span><span class="co">#&gt; Epochs:</span></span>
+<span><span class="co">#&gt;   EPOCH                 </span></span>
+<span><span class="co">#&gt;   OPEN LABEL TREATMENT</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Hash: 0a223bbb9643ac266829d56717a1fe1f</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-02 12:31:00</span></span></code></pre></div>
 <p>A graphical timeline overview can be generated for a specific domain
 by, e.g.:</p>
@@ -331,9 +328,9 @@ useful code snippets for the creation of analysis data sets:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">2. Pharmacokinetic observations</span> <span style="color: #00BBBB;">─────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; There are 2 pharmacokinetic analytes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   PCTEST       PCTESTCD     </span></span>
-<span><span class="co">#&gt;   RS2023       RS2023       </span></span>
-<span><span class="co">#&gt;   RS2023487A   RS2023487A</span></span>
+<span><span class="co">#&gt;   PCTEST      PCTESTCD    </span></span>
+<span><span class="co">#&gt;   RS2023      RS2023      </span></span>
+<span><span class="co">#&gt;   RS2023487A  RS2023487A</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Consider adding them to the nif object using `add_observation()`, see the code</span></span>
 <span><span class="co">#&gt; snippet below (replace 'sdtm' with the name of your sdtm object):</span></span>
@@ -346,24 +343,24 @@ useful code snippets for the creation of analysis data sets:</p>
 <span><span class="co">#&gt; The PC domain contains multiple fields that the nominal sampling time can be</span></span>
 <span><span class="co">#&gt; derived from:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   PCTPT                 PCTPTNUM   PCELTM   </span></span>
-<span><span class="co">#&gt;   PREDOSE               0          PT0H     </span></span>
-<span><span class="co">#&gt;   0.5 HOURS POST-DOSE   0.5        PT0.5H   </span></span>
-<span><span class="co">#&gt;   1 HOURS POST-DOSE     1          PT1H     </span></span>
-<span><span class="co">#&gt;   1.5 HOURS POST-DOSE   1.5        PT1.5H   </span></span>
-<span><span class="co">#&gt;   2 HOURS POST-DOSE     2          PT2H     </span></span>
-<span><span class="co">#&gt;   3 HOURS POST-DOSE     3          PT3H     </span></span>
-<span><span class="co">#&gt;   4 HOURS POST-DOSE     4          PT4H     </span></span>
-<span><span class="co">#&gt;   6 HOURS POST-DOSE     6          PT6H     </span></span>
-<span><span class="co">#&gt;   8 HOURS POST-DOSE     8          PT8H     </span></span>
-<span><span class="co">#&gt;   10 HOURS POST-DOSE    10         PT10H    </span></span>
-<span><span class="co">#&gt;   12 HOURS POST-DOSE    12         PT12H    </span></span>
-<span><span class="co">#&gt;   24 HOURS POST-DOSE    24         PT24H    </span></span>
-<span><span class="co">#&gt;   48 HOURS POST-DOSE    48         PT48H    </span></span>
-<span><span class="co">#&gt;   72 HOURS POST-DOSE    72         PT72H    </span></span>
-<span><span class="co">#&gt;   96 HOURS POST-DOSE    96         PT96H    </span></span>
-<span><span class="co">#&gt;   144 HOURS POST-DOSE   144        PT144H   </span></span>
-<span><span class="co">#&gt;   168 HOURS POST-DOSE   168        PT168H</span></span>
+<span><span class="co">#&gt;   PCTPT                PCTPTNUM  PCELTM  </span></span>
+<span><span class="co">#&gt;   PREDOSE              0         PT0H    </span></span>
+<span><span class="co">#&gt;   0.5 HOURS POST-DOSE  0.5       PT0.5H  </span></span>
+<span><span class="co">#&gt;   1 HOURS POST-DOSE    1         PT1H    </span></span>
+<span><span class="co">#&gt;   1.5 HOURS POST-DOSE  1.5       PT1.5H  </span></span>
+<span><span class="co">#&gt;   2 HOURS POST-DOSE    2         PT2H    </span></span>
+<span><span class="co">#&gt;   3 HOURS POST-DOSE    3         PT3H    </span></span>
+<span><span class="co">#&gt;   4 HOURS POST-DOSE    4         PT4H    </span></span>
+<span><span class="co">#&gt;   6 HOURS POST-DOSE    6         PT6H    </span></span>
+<span><span class="co">#&gt;   8 HOURS POST-DOSE    8         PT8H    </span></span>
+<span><span class="co">#&gt;   10 HOURS POST-DOSE   10        PT10H   </span></span>
+<span><span class="co">#&gt;   12 HOURS POST-DOSE   12        PT12H   </span></span>
+<span><span class="co">#&gt;   24 HOURS POST-DOSE   24        PT24H   </span></span>
+<span><span class="co">#&gt;   48 HOURS POST-DOSE   48        PT48H   </span></span>
+<span><span class="co">#&gt;   72 HOURS POST-DOSE   72        PT72H   </span></span>
+<span><span class="co">#&gt;   96 HOURS POST-DOSE   96        PT96H   </span></span>
+<span><span class="co">#&gt;   144 HOURS POST-DOSE  144       PT144H  </span></span>
+<span><span class="co">#&gt;   168 HOURS POST-DOSE  168       PT168H</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.</span></span>
 <span><span class="co">#&gt; By default, the function will attempt to extract time information from the</span></span>
@@ -372,10 +369,10 @@ useful code snippets for the creation of analysis data sets:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">3. Study arms</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; There are 3 study arms defined in DM:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   ACTARMCD   ACTARM           </span></span>
-<span><span class="co">#&gt;   AB         Fasted - Fed     </span></span>
-<span><span class="co">#&gt;   BA         Fed - Fasted     </span></span>
-<span><span class="co">#&gt;   SCRNFAIL   Screen Failure</span></span>
+<span><span class="co">#&gt;   ACTARMCD  ACTARM          </span></span>
+<span><span class="co">#&gt;   AB        Fasted - Fed    </span></span>
+<span><span class="co">#&gt;   BA        Fed - Fasted    </span></span>
+<span><span class="co">#&gt;   SCRNFAIL  Screen Failure</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Consider defining a PART or ARM variable, filtering for a particular arm, or</span></span>
 <span><span class="co">#&gt; defining a covariate based on ACTARMCD.</span></span>
@@ -538,51 +535,51 @@ some basic examples.</p>
 the data disposition in a <code>nif</code> data set:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ----- NONMEM Input Format (NIF) data summary -----</span></span>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data summary ────────</span></span>
 <span><span class="co">#&gt; Data from 20 subjects across one study:</span></span>
-<span><span class="co">#&gt;   STUDYID      N    </span></span>
-<span><span class="co">#&gt;   2023000400   20</span></span>
+<span><span class="co">#&gt;   STUDYID     N   </span></span>
+<span><span class="co">#&gt;   2023000400  20</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sex distribution:</span></span>
-<span><span class="co">#&gt;   SEX      N    percent   </span></span>
-<span><span class="co">#&gt;   male     13   65        </span></span>
-<span><span class="co">#&gt;   female   7    35</span></span>
+<span><span class="co">#&gt;   SEX     N   percent  </span></span>
+<span><span class="co">#&gt;   male    13  65       </span></span>
+<span><span class="co">#&gt;   female  7   35</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatments: RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Analytes: RS2023</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects per dose level:</span></span>
-<span><span class="co">#&gt;   DL           n    </span></span>
-<span><span class="co">#&gt;   500-RS2023   20</span></span>
+<span><span class="co">#&gt;   DL          n   </span></span>
+<span><span class="co">#&gt;   500-RS2023  20</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 680 observations:</span></span>
-<span><span class="co">#&gt;   CMT   ANALYTE   n     </span></span>
-<span><span class="co">#&gt;   2     RS2023    680</span></span>
+<span><span class="co">#&gt;   CMT  ANALYTE  n    </span></span>
+<span><span class="co">#&gt;   2    RS2023   680</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Observations by NTIME:</span></span>
-<span><span class="co">#&gt;   NTIME   RS2023   </span></span>
-<span><span class="co">#&gt;   0       40       </span></span>
-<span><span class="co">#&gt;   0.5     40       </span></span>
-<span><span class="co">#&gt;   1       40       </span></span>
-<span><span class="co">#&gt;   1.5     40       </span></span>
-<span><span class="co">#&gt;   2       40       </span></span>
-<span><span class="co">#&gt;   3       40       </span></span>
-<span><span class="co">#&gt;   4       40       </span></span>
-<span><span class="co">#&gt;   6       40       </span></span>
-<span><span class="co">#&gt;   8       40       </span></span>
-<span><span class="co">#&gt;   10      40       </span></span>
+<span><span class="co">#&gt;   NTIME  RS2023  </span></span>
+<span><span class="co">#&gt;   0      40      </span></span>
+<span><span class="co">#&gt;   0.5    40      </span></span>
+<span><span class="co">#&gt;   1      40      </span></span>
+<span><span class="co">#&gt;   1.5    40      </span></span>
+<span><span class="co">#&gt;   2      40      </span></span>
+<span><span class="co">#&gt;   3      40      </span></span>
+<span><span class="co">#&gt;   4      40      </span></span>
+<span><span class="co">#&gt;   6      40      </span></span>
+<span><span class="co">#&gt;   8      40      </span></span>
+<span><span class="co">#&gt;   10     40      </span></span>
 <span><span class="co">#&gt;   (7 more rows)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Subjects with dose reductions:</span></span>
-<span><span class="co">#&gt;   treatment   n   </span></span>
-<span><span class="co">#&gt;   RS2023      0</span></span>
+<span><span class="co">#&gt;   treatment  n  </span></span>
+<span><span class="co">#&gt;   RS2023     0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Treatment duration overview:</span></span>
-<span><span class="co">#&gt;   PARENT   min   max   mean   median   </span></span>
-<span><span class="co">#&gt;   RS2023   2     2     2      2</span></span>
+<span><span class="co">#&gt;   PARENT  min  max  mean  median  </span></span>
+<span><span class="co">#&gt;   RS2023  2    2    2     2</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hash: 6d6ade77da102051b4e01e0afd03f890</span></span>
+<span><span class="co">#&gt; Hash: d944c56787aebf5d23c1a59f891fc991</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 10:28:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
 covariates and raw plots of the analytes over time. In the following

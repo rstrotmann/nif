@@ -22,7 +22,7 @@ A NIF object.
 
 ``` r
 add_tafd(examplinib_poc_nif)
-#> ----- NONMEM Input Format (NIF) data -----
+#> ──────── NONMEM Input Format (NIF) data ────────
 #> 1344 observations from 80 subjects across 1 study 
 #> Analytes: RS2023 and RS2023487A 
 #> 46 males (57.5%), 34 females (42.5%)
@@ -32,20 +32,20 @@ add_tafd(examplinib_poc_nif)
 #>   NTIME, TAFD, TAD, EVID, AMT, CMT, DV, ANALYTE, PARENT, TRTDY, METABOLITE,
 #>   DOSE, MDV, ACTARMCD, IMPUTATION, BL_CREAT, BL_CRCL 
 #> 
-#> Hash: 767b69b62881133639136784cc10714c
+#> Hash: 659b22679f3190b5ca1051c7ff4aff77
 #> 
 #> Data (selected columns):
-#>   ID   NTIME   TIME    TAD     ANALYTE      EVID   CMT   AMT   DOSE   DV         
-#>   1    0       0       0       RS2023       1      1     500   500    NA         
-#>   1    0       0       0       RS2023       0      2     0     500    0          
-#>   1    0       0       0       RS2023487A   0      3     0     500    0          
-#>   1    0.5     0.867   0.867   RS2023       0      2     0     500    615.055    
-#>   1    0.5     0.867   0.867   RS2023487A   0      3     0     500    120.161    
-#>   1    1       1.333   1.333   RS2023       0      2     0     500    1841.724   
-#>   1    1       1.333   1.333   RS2023487A   0      3     0     500    604.224    
-#>   1    1.5     1.833   1.833   RS2023       0      2     0     500    2563.4     
-#>   1    1.5     1.833   1.833   RS2023487A   0      3     0     500    1374.883   
-#>   1    2       2.283   2.283   RS2023       0      2     0     500    2995.306   
+#>   ID  NTIME  TIME   TAD    ANALYTE     EVID  CMT  AMT  DOSE  DV        
+#>   1   0      0      0      RS2023      1     1    500  500   NA        
+#>   1   0      0      0      RS2023      0     2    0    500   0         
+#>   1   0      0      0      RS2023487A  0     3    0    500   0         
+#>   1   0.5    0.867  0.867  RS2023      0     2    0    500   615.055   
+#>   1   0.5    0.867  0.867  RS2023487A  0     3    0    500   120.161   
+#>   1   1      1.333  1.333  RS2023      0     2    0    500   1841.724  
+#>   1   1      1.333  1.333  RS2023487A  0     3    0    500   604.224   
+#>   1   1.5    1.833  1.833  RS2023      0     2    0    500   2563.4    
+#>   1   1.5    1.833  1.833  RS2023487A  0     3    0    500   1374.883  
+#>   1   2      2.283  2.283  RS2023      0     2    0    500   2995.306  
 #> 
 #> 7190 more rows
 ```

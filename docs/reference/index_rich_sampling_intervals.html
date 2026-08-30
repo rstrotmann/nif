@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">index_rich_sampling_intervals</span><span class="op">(</span><span class="va">obj</span>, analyte <span class="op">=</span> <span class="cn">NULL</span>, min_n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">index_rich_sampling_intervals</span><span class="op">(</span><span class="va">obj</span>, min_n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,11 +56,6 @@
 
 <dl><dt id="arg-obj">obj<a class="anchor" aria-label="anchor" href="#arg-obj"></a></dt>
 <dd><p>The NIF object.</p></dd>
-
-
-<dt id="arg-analyte">analyte<a class="anchor" aria-label="anchor" href="#arg-analyte"></a></dt>
-<dd><p>The analyte as character. If <code>NA</code> (default), the most likely
-will be selected automatically.</p></dd>
 
 
 <dt id="arg-min-n">min_n<a class="anchor" aria-label="anchor" href="#arg-min-n"></a></dt>
@@ -74,13 +69,12 @@ sampling.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Adds the fields 'DI' (dosing interval per analyte), <code>RICHINT</code> (rich sampling
-interval), and 'RICH_N' (index of the rich sampling interval by analyte).</p>
+    <p>Adds the fields 'DI' (dosing interval per analyte) and 'RICH_N' (index of the
+rich sampling interval by analyte).</p>
 <p>This function identifies rich sampling intervals by the number of
 observations that follow an administration. A number of 'min_n' or more
 observations before the next administration is interpreted as a rich sampling
-interval and the corresponding observations are flagged with 'RICHINT' ==
-TRUE. The index of the rich sampling intervals per subject and analyte is
+interval. The index of the rich sampling intervals per subject and analyte is
 reported in the 'RICH_N' field.</p>
     </div>
 
@@ -109,12 +103,12 @@ reported in the 'RICH_N' field.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 RS2023     1      FALSE  500   0 TREATMENT                 1  1 86.46559</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 RS2023     1      FALSE  500   0 TREATMENT                 1  1 86.46559</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    BL_CRCL OPDI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 78.66727   22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 78.66727   22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 78.66727   22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 78.66727   22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 78.66727   22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 78.66727   22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 78.66727   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 78.66727   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 78.66727   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 78.66727   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 78.66727   11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 78.66727   11</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

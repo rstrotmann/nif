@@ -5,7 +5,7 @@ Currently experimental. Don't use in production!
 ## Usage
 
 ``` r
-index_rich_sampling_intervals(obj, analyte = NULL, min_n = 4)
+index_rich_sampling_intervals(obj, min_n = 4)
 ```
 
 ## Arguments
@@ -13,11 +13,6 @@ index_rich_sampling_intervals(obj, analyte = NULL, min_n = 4)
 - obj:
 
   The NIF object.
-
-- analyte:
-
-  The analyte as character. If `NA` (default), the most likely will be
-  selected automatically.
 
 - min_n:
 
@@ -30,15 +25,13 @@ A new NIF object.
 
 ## Details
 
-Adds the fields 'DI' (dosing interval per analyte), `RICHINT` (rich
-sampling interval), and 'RICH_N' (index of the rich sampling interval by
-analyte).
+Adds the fields 'DI' (dosing interval per analyte) and 'RICH_N' (index
+of the rich sampling interval by analyte).
 
 This function identifies rich sampling intervals by the number of
 observations that follow an administration. A number of 'min_n' or more
 observations before the next administration is interpreted as a rich
-sampling interval and the corresponding observations are flagged with
-'RICHINT' == TRUE. The index of the rich sampling intervals per subject
+sampling interval. The index of the rich sampling intervals per subject
 and analyte is reported in the 'RICH_N' field.
 
 ## Examples
@@ -67,10 +60,10 @@ head(index_rich_sampling_intervals(examplinib_poc_nif))
 #> 5 RS2023     1      FALSE  500   0 TREATMENT                 1  1 86.46559
 #> 6 RS2023     1      FALSE  500   0 TREATMENT                 1  1 86.46559
 #>    BL_CRCL OPDI
-#> 1 78.66727   22
-#> 2 78.66727   22
-#> 3 78.66727   22
-#> 4 78.66727   22
-#> 5 78.66727   22
-#> 6 78.66727   22
+#> 1 78.66727   11
+#> 2 78.66727   11
+#> 3 78.66727   11
+#> 4 78.66727   11
+#> 5 78.66727   11
+#> 6 78.66727   11
 ```

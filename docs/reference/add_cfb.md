@@ -2,7 +2,7 @@
 
 **\[deprecated\]**
 
-This function is deprecated. Pleas use [`derive_cfb()`](derive_cfb.md)
+This function is deprecated. Please use [`derive_cfb()`](derive_cfb.md)
 instead.
 
 ## Usage

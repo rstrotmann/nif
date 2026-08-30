@@ -39,44 +39,41 @@ sdtm <- sdtm(
 ``` r
 
 summary(sdtm)
-#> -------- SDTM data set summary -------- 
-#> Study CDISCPILOT01 
+#> ──────── SDTM data set summary ──────── 
+#> Study CDISCPILOT01
 #> 
 #> Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in
 #> Patients with Mild to Moderate Alzheimers Disease.
 #> 
-#> Data disposition
-#>   DOMAIN   SUBJECTS   OBSERVATIONS   
-#>   dm       306        306            
-#>   ex       254        591            
-#>   vs       254        29643          
-#>   pc       254        4572           
-#>   lb       254        59580          
-#>   ts       0          0              
-#>   eg       254        26717          
-#>   ae       225        1191           
+#> Data disposition:
+#>   DOMAIN  SUBJECTS  OBSERVATIONS  
+#>   dm      306       306           
+#>   ex      254       591           
+#>   vs      254       29643         
+#>   pc      254       4572          
+#>   lb      254       59580         
+#>   ts      0         0             
+#>   eg      254       26717         
+#>   ae      225       1191
 #> 
+#> Arms:
+#>   ACTARMCD  ACTARM                
+#>   Pbo       Placebo               
+#>   Scrnfail  Screen Failure        
+#>   Xan_Hi    Xanomeline High Dose  
+#>   Xan_Lo    Xanomeline Low Dose
 #> 
-#> Arms (DM):
-#>   ACTARMCD   ACTARM                 
-#>   Pbo        Placebo                
-#>   Scrnfail   Screen Failure         
-#>   Xan_Hi     Xanomeline High Dose   
-#>   Xan_Lo     Xanomeline Low Dose    
+#> Treatments:
+#>   PLACEBO and XANOMELINE
 #> 
+#> PK sample specimens:
+#>   PLASMA and URINE
 #> 
-#> Treatments (EX):
-#>   PLACEBO, XANOMELINE
+#> PK analytes:
+#>   PCTEST      PCTESTCD  
+#>   XANOMELINE  XAN
 #> 
-#> PK sample specimens (PC):
-#>   PLASMA, URINE
-#> 
-#> PK analytes (PC):
-#>   PCTEST       PCTESTCD   
-#>   XANOMELINE   XAN        
-#>  
-#> 
-#> Hash: 0bc904e6d0b7176f1cde4212c701676f
+#> Hash: 225dce0eb67a5748787059eacf2b00b3
 #> Last DTC: 2015-03-05 15:40:00
 
 plot(sdtm, domain = "dm", points = F)
@@ -102,63 +99,63 @@ nif <- nif() |>
 ``` r
 
 summary(nif)
-#> ----- NONMEM Input Format (NIF) data summary -----
+#> ──────── NONMEM Input Format (NIF) data summary ────────
 #> Data from 254 subjects across one study:
-#>   STUDYID        N     
-#>   CDISCPILOT01   254
+#>   STUDYID       N    
+#>   CDISCPILOT01  254
 #> 
 #> Sex distribution:
-#>   SEX      N     percent   
-#>   male     111   43.7      
-#>   female   143   56.3
+#>   SEX     N    percent  
+#>   male    111  43.7     
+#>   female  143  56.3
 #> 
 #> Renal impairment class:
-#>   CLASS      N     percent   
-#>   normal     4     1.6       
-#>   mild       58    22.8      
-#>   moderate   173   68.1      
-#>   severe     16    6.3       
-#>   NA         3     1.2
+#>   CLASS     N    percent  
+#>   normal    4    1.6      
+#>   mild      58   22.8     
+#>   moderate  173  68.1     
+#>   severe    16   6.3      
+#>   NA        3    1.2
 #> 
 #> Treatments: PLACEBO and XAN
 #> 
 #> Analytes: ALT and XAN
 #> 
 #> Subjects per dose level:
-#>   DL          n     
-#>   0-PLACEBO   86    
-#>   54-XAN      168
+#>   DL         n    
+#>   0-PLACEBO  86   
+#>   54-XAN     168
 #> 
 #> 5370 observations:
-#>   CMT   ANALYTE   n      
-#>   2     XAN       3556   
-#>   3     ALT       1814
+#>   CMT  ANALYTE  n     
+#>   2    XAN      3556  
+#>   3    ALT      1814
 #> 
 #> Observations by NTIME:
-#>   NTIME   ALT   XAN    
-#>   -2448   1     -      
-#>   -2184   1     -      
-#>   -1920   1     -      
-#>   -1896   1     -      
-#>   -1584   1     -      
-#>   -1560   1     -      
-#>   -1536   1     -      
-#>   -1248   1     -      
-#>   -1200   1     -      
-#>   -1056   1     -      
+#>   NTIME  ALT  XAN   
+#>   -2448  1    -     
+#>   -2184  1    -     
+#>   -1920  1    -     
+#>   -1896  1    -     
+#>   -1584  1    -     
+#>   -1560  1    -     
+#>   -1536  1    -     
+#>   -1248  1    -     
+#>   -1200  1    -     
+#>   -1056  1    -     
 #>   (202 more rows)
 #> 
 #> Subjects with dose reductions:
-#>   treatment   n   
-#>   PLACEBO     0   
-#>   XAN         0
+#>   treatment  n  
+#>   PLACEBO    0  
+#>   XAN        0
 #> 
 #> Treatment duration overview:
-#>   PARENT    min   max   mean    median   
-#>   PLACEBO   7     210   149.1   182      
-#>   XAN       1     212   99.2    81
+#>   PARENT   min  max  mean   median  
+#>   PLACEBO  7    210  149.1  182     
+#>   XAN      1    212  99.2   81
 #> 
-#> Hash: 9144cbb68a20a5e495071d644ef0b8ca
+#> Hash: 31e99cae09e1d7ca29daa791e2e6df25
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

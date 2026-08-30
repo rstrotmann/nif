@@ -48,67 +48,67 @@ nif <- nif() %>%
 
 nif %>%
   summary()
-#> ----- NONMEM Input Format (NIF) data summary -----
+#> ──────── NONMEM Input Format (NIF) data summary ────────
 #> Data from 148 subjects across 3studies:
-#>   STUDYID      N    
-#>   2023000001   48   
-#>   2023000022   80   
-#>   2023000400   20
+#>   STUDYID     N   
+#>   2023000001  48  
+#>   2023000022  80  
+#>   2023000400  20
 #> 
 #> Sex distribution:
-#>   SEX      N     percent   
-#>   male     107   72.3      
-#>   female   41    27.7
+#>   SEX     N    percent  
+#>   male    107  72.3     
+#>   female  41   27.7
 #> 
 #> Renal impairment class:
-#>   CLASS      N    percent   
-#>   normal     89   60.1      
-#>   mild       48   32.4      
-#>   moderate   10   6.8       
-#>   severe     1    0.7
+#>   CLASS     N   percent  
+#>   normal    89  60.1     
+#>   mild      48  32.4     
+#>   moderate  10  6.8      
+#>   severe    1   0.7
 #> 
 #> Treatments: RS2023
 #> 
 #> Analytes: RS2023
 #> 
 #> Subjects per dose level:
-#>   DL            n     
-#>   5-RS2023      3     
-#>   10-RS2023     3     
-#>   20-RS2023     3     
-#>   50-RS2023     3     
-#>   100-RS2023    6     
-#>   200-RS2023    3     
-#>   500-RS2023    118   
-#>   800-RS2023    6     
-#>   1000-RS2023   3
+#>   DL           n    
+#>   5-RS2023     3    
+#>   10-RS2023    3    
+#>   20-RS2023    3    
+#>   50-RS2023    3    
+#>   100-RS2023   6    
+#>   200-RS2023   3    
+#>   500-RS2023   118  
+#>   800-RS2023   6    
+#>   1000-RS2023  3
 #> 
 #> 2168 observations:
-#>   CMT   ANALYTE   n      
-#>   2     RS2023    2168
+#>   CMT  ANALYTE  n     
+#>   2    RS2023   2168
 #> 
 #> Observations by NTIME:
-#>   NTIME   RS2023   
-#>   0       248      
-#>   0.5     112      
-#>   1       112      
-#>   1.5     248      
-#>   2       112      
-#>   3       112      
-#>   4       248      
-#>   6       112      
-#>   8       112      
-#>   10      112      
+#>   NTIME  RS2023  
+#>   0      248     
+#>   0.5    112     
+#>   1      112     
+#>   1.5    248     
+#>   2      112     
+#>   3      112     
+#>   4      248     
+#>   6      112     
+#>   8      112     
+#>   10     112     
 #>   (7 more rows)
 #> 
 #> Subjects with dose reductions:
-#>   treatment   n    
-#>   RS2023      30
+#>   treatment  n   
+#>   RS2023     30
 #> 
 #> Treatment duration overview:
-#>   PARENT   min   max   mean   median   
-#>   RS2023   1     97    40.2   58.5
+#>   PARENT  min  max  mean  median  
+#>   RS2023  1    97   40.2  58.5
 #> 
-#> Hash: 68b8c51996a1b1168a076027557962fe
+#> Hash: f064eecaf491724caa01ddd7e950380c
 #> Last DTC: 2001-07-18 08:24:00
 ```

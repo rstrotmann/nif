@@ -47,18 +47,18 @@ head(add_obs_per_dosing_interval(examplinib_poc_nif))
 #> 5 RS2023     1      FALSE  500   0 TREATMENT             1 86.46559 78.66727
 #> 6 RS2023     1      FALSE  500   0 TREATMENT             1 86.46559 78.66727
 #>   OPDI
-#> 1   22
-#> 2   22
-#> 3   22
-#> 4   22
-#> 5   22
-#> 6   22
+#> 1   11
+#> 2   11
+#> 3   11
+#> 4   11
+#> 5   11
+#> 6   11
 head(add_obs_per_dosing_interval(examplinib_poc_min_nif))
 #>   REF ID  TIME EVID AMT CMT       DV ANALYTE PARENT MDV DI RATE OPDI
-#> 1   1  1 0.000    1 500   1       NA    CMT1   CMT1   1  1    0    6
-#> 2   2  1 0.000    0   0   2 0.000000    CMT2   CMT1   0  1    0    6
-#> 3   3  1 0.000    0   0   3 0.000000    CMT3   CMT1   0  1    0    6
-#> 4   4  1 2.167    0   0   2 3.380265    CMT2   CMT1   0  1    0    6
-#> 5   5  1 2.167    0   0   3 3.453869    CMT3   CMT1   0  1    0    6
-#> 6   6  1 4.633    0   0   2 1.477397    CMT2   CMT1   0  1    0    6
+#> 1   1  1 0.000    1 500   1       NA    CMT1   CMT1   1  1    0    0
+#> 2   2  1 0.000    0   0   2 0.000000    CMT2   CMT1   0  1    0    3
+#> 3   3  1 0.000    0   0   3 0.000000    CMT3   CMT1   0  1    0    3
+#> 4   4  1 2.167    0   0   2 3.380265    CMT2   CMT1   0  1    0    3
+#> 5   5  1 2.167    0   0   3 3.453869    CMT3   CMT1   0  1    0    3
+#> 6   6  1 4.633    0   0   2 1.477397    CMT2   CMT1   0  1    0    3
 ```

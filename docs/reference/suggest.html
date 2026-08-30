@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.22</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65.23</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,9 +81,9 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">2. Pharmacokinetic observations</span> <span style="color: #00BBBB;">─────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> There are 2 pharmacokinetic analytes:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   PCTEST       PCTESTCD     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   RS2023       RS2023       </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   RS2023487A   RS2023487A   </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   PCTEST      PCTESTCD    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   RS2023      RS2023      </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   RS2023487A  RS2023487A  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Consider adding them to the nif object using `add_observation()`, see the code</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> snippet below (replace 'sdtm' with the name of your sdtm object):</span>
@@ -96,18 +96,18 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The PC domain contains multiple fields that the nominal sampling time can be</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> derived from:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   PCTPT            PCTPTNUM   PCELTM   </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   PREDOSE          0          PT0H     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 0.5 H   0.5        PT0.5H   </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 1 H     1          PT1H     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 1.5 H   1.5        PT1.5H   </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 2 H     2          PT2H     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 3 H     3          PT3H     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 4 H     4          PT4H     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 6 H     6          PT6H     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 8 H     8          PT8H     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 10 H    10         PT10H    </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 12 H    12         PT12H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   PCTPT           PCTPTNUM  PCELTM  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   PREDOSE         0         PT0H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 0.5 H  0.5       PT0.5H  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 1 H    1         PT1H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 1.5 H  1.5       PT1.5H  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 2 H    2         PT2H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 3 H    3         PT3H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 4 H    4         PT4H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 6 H    6         PT6H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 8 H    8         PT8H    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 10 H   10        PT10H   </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   POSTDOSE 12 H   12        PT12H   </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Consider specifying a suitable 'ntime_method' argument to 'add_observation()'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> By default, the function will attempt to extract time information from the</span>
@@ -116,9 +116,9 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">3. Study arms</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> There are 2 study arms defined in DM:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   ACTARMCD    ACTARM                 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   SCRNFAIL    Screen Faillure        </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   TREATMENT   Single Arm Treatment   </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   ACTARMCD   ACTARM                </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   SCRNFAIL   Screen Faillure       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   TREATMENT  Single Arm Treatment  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Consider defining a PART or ARM variable, filtering for a particular arm, or</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> defining a covariate based on ACTARMCD.</span>
