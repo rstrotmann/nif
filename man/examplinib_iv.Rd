@@ -3,7 +3,7 @@
 \docType{data}
 \name{examplinib_iv}
 \alias{examplinib_iv}
-\title{Synthetic SDTM data from a fictional clinical iv administraiton study for
+\title{Synthetic SDTM data from a fictional clinical iv administration study for
 'examplinib'.}
 \format{
 A sdtm object
@@ -12,7 +12,7 @@ A sdtm object
 examplinib_iv
 }
 \description{
-Synthetic SDTM data from a fictional clinical iv administraiton study for
+Synthetic SDTM data from a fictional clinical iv administration study for
 'examplinib'.
 }
 \keyword{datasets}

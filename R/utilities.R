@@ -6,9 +6,9 @@
 #'
 #' @param fun A function.
 #' @return The name of the function as a character string.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
+#'
 #' function_name(mean)
 #' function_name(sum)
 function_name <- function(fun) {
@@ -392,8 +392,7 @@ print_debug <- function(obj) {
 #'
 #' @return Logical value indicating whether the string is in ISO 8601 date-time
 #'   format.
-#' @export
-#' @keywords internal
+#' @noRd
 #'
 #' @examples
 #' is_iso8601_datetime("2023-10-15T14:30:00") # TRUE
@@ -487,8 +486,7 @@ is_iso8601_datetime <- function(x, strict = FALSE) {
 #'
 #' @return Logical value indicating whether the string is in ISO 8601 date
 #'   format.
-#' @export
-#' @keywords internal
+#' @noRd
 #'
 #' @examples
 #' is_iso8601_date("2023-10-15") # TRUE
@@ -549,7 +547,7 @@ is_iso8601_date <- function(x, allow_reduced_precision = TRUE) {
 #' @param x A character string or vector of strings to check.
 #'
 #' @returns A logical vector.
-#' @export
+#' @noRd
 #'
 #' @examples
 #' is_iso8601_pt("PT10M")
@@ -595,7 +593,7 @@ dtc_formats <- c(
 #' @param obj A data frame.
 #' @param fields Date variable names as character.
 #' @return A data frame
-#' @export
+#' @noRd
 standardize_date_format <- function(obj, fields = NULL) {
   obj |>
     dplyr::mutate_at(fields, function(x) {
@@ -631,13 +629,9 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' NULL.
 #'
 #' @return A data frame.
-#' @export
-#' @keywords internal
+#' @noRd
 lubrify_dates <- function(obj, col = NULL) {
   # input validation
-  # if (!is.data.frame(obj)) {
-  #   stop("obj must be a data frame!")
-  # }
   validate_df_argument(obj)
   validate_argument(col, "character", allow_multiple = TRUE, allow_null = TRUE)
 
@@ -693,8 +687,7 @@ isofy_dates <- function(obj) {
 #' also include seconds information are also recognized.
 #' @param x The input as character.
 #' @return Boolean.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' is_iso_date_time("2023-09-27T15:04")
 #' is_iso_date_time("2023-09-27T15:04:00")
@@ -712,8 +705,7 @@ is_iso_date_time <- function(x) {
 #' of month are not accepted.
 #' @param x The input as character.
 #' @return Boolean.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' is_iso_date("2023-09-27")
 #' is_iso_date(c("2023-03-21T11:55", "2023-07-18"))
@@ -727,8 +719,7 @@ is_iso_date <- function(x) {
 #' @param iso The duration as ISO 8601-formatted string.
 #'
 #' @return Duration in hours.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' pt_to_hours(c("PT1H15M", "PT1.5H", "-PT4H30M"))
 pt_to_hours <- function(iso) {
@@ -856,8 +847,7 @@ compose_dtc <- function(date, time) {
 #' @param dtc_field The field to decompose as character.
 #'
 #' @return A data frame.
-#' @export
-#' @keywords internal
+#' @noRd
 decompose_dtc <- function(obj, dtc_field) {
   # input validation
   if (!is.data.frame(obj)) {
@@ -1051,8 +1041,7 @@ indent_string <- function(indent = 0) {
 #' @param conjunction The conjunction between the last and penultimate items.
 #'
 #' @return Enumeration as character.
-#' @export
-#' @keywords internal
+#' @noRd
 #'
 #' @examples
 #' nice_enumeration("A")
@@ -1079,9 +1068,9 @@ nice_enumeration <- function(items, conjunction = "and") {
 #' @param plural Return plural form, as character.
 #'
 #' @return Character.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
+#'
 #' plural("subject", FALSE)
 #' plural("subject", TRUE)
 #' plural("study", FALSE)
@@ -1318,8 +1307,7 @@ df_to_cli <- function(
 #'
 #' @param x Numeric.
 #' @return Numeric.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' positive_or_zero(2)
 #' positive_or_zero(-2)
@@ -1335,8 +1323,7 @@ positive_or_zero <- function(x) {
 #' @param x The input as numeric.
 #'
 #' @return The mean as numeric.
-#' @export
-#' @keywords internal
+#' @noRd
 safe_mean <- function(x) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if (length(temp) == 0) {
@@ -1353,9 +1340,7 @@ safe_mean <- function(x) {
 #' @param x The input as numeric.
 #'
 #' @return The mean as numeric.
-#' @export
-#' @importFrom stats sd
-#' @keywords internal
+#' @noRd
 safe_sd <- function(x) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if (length(temp) == 0) {
@@ -1372,8 +1357,7 @@ safe_sd <- function(x) {
 #' @param x The input as numeric.
 #'
 #' @return The mean as numeric.
-#' @export
-#' @keywords internal
+#' @noRd
 safe_min <- function(x) {
   temp <- x[!is.nan(x) & !is.na(x)]
   if (length(temp) == 0) {
@@ -1394,8 +1378,7 @@ numeric_or_na <- function(x) {
 #' @param b B as numeric.
 #'
 #' @return Numeric.
-#' @export
-#' @keywords internal
+#' @noRd
 pos_diff <- function(a, b) {
   data.frame(
     a = a,

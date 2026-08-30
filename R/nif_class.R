@@ -14,8 +14,8 @@ minimal_nif_fields <- c(
 standard_nif_fields <- c(
   "REF", "STUDYID", "ID", "USUBJID", "NTIME", "TIME", "TAD", "TAFD", "ANALYTE",
   "AMT", "RATE", "DV", "LNDV", "MDV", "CMT", "EVID", "DOSE", "AGE", "SEX",
-  "RACE", "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ANALYTE", "PARENT",
-  "METABOLITE", "TRTDY", "DI", "PART", "COHORT", "FASTED", "DTC", "RICH_N"
+  "RACE", "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "PARENT", "METABOLITE",
+  "TRTDY", "DI", "PART", "COHORT", "FASTED", "DTC", "RICH_N"
 )
 
 
@@ -26,8 +26,7 @@ standard_nif_fields <- c(
 fillable_nif_fields <- unique(c(
   "SUBJID", "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
   "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "FASTED",
-  "IMPUTATION",
-  "DOSE", "EPOCH", "PART", "COHORT", "FOOD", "FASTED"
+  "IMPUTATION", "DOSE", "EPOCH", "FOOD", "FASTED"
 ))
 
 
@@ -183,7 +182,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   }
 
   if (any(is.na(obj$ID))) {
-    stop("ID colum must not contain NA values!")
+    stop("ID column must not contain NA values!")
   }
 
   # Check correct type for essential columns

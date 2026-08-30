@@ -506,7 +506,7 @@ derive_rtb <- function(
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This function is deprecated. Pleas use [nif::derive_cfb()] instead.
+#' This function is deprecated. Please use [nif::derive_cfb()] instead.
 #'
 #' @details
 #' Output fields:

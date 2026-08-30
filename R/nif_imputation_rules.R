@@ -53,9 +53,7 @@ imputation_rules_void <- list(
 #'   \item{obs_final}{Imputations on  observation data}
 #' }
 #'
-#' @details
-#'
-#' #' @section Imputation rules for drug administrations:
+#' @section Imputation rules for drug administrations:
 #'
 #' ### Generic imputations
 #'
@@ -66,7 +64,7 @@ imputation_rules_void <- list(
 #' `DM.RFENDTC`
 #' * Expansion of individual administration episode, i.e., conversion of date
 #' ranges between `EXSTDTC` and `EXENDTC` into one row for each individual
-#' administration event. This step is conducted after `admin_pre_examsion()`
+#' administration event. This step is conducted after `admin_pre_expansion()`
 #' and `admin_post_expansion()`.
 #' * Carry-forward of missing administration times after
 #' `admin_post_expansion()`.

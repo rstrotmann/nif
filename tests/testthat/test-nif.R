@@ -250,7 +250,7 @@ test_that("nif() handles NA values in minimal fields", {
 
   expect_error(
     result <- nif(test_data),
-    "ID colum must not contain NA values!")
+    "ID column must not contain NA values!")
 })
 
 

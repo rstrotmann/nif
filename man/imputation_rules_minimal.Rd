@@ -22,8 +22,8 @@ Same pre-expansion steps as \code{\link[=imputation_rules_standard]{imputation_r
 post-expansion uses PCRFTDTC only (no NTIME back-calculation). No
 data imputations for observations.
 }
-\details{
-#' @section Imputation rules for drug administrations:
+\section{Imputation rules for drug administrations}{
+
 \subsection{Generic imputations}{
 
 These steps are always performed regardless of the specific rule set:
@@ -33,7 +33,7 @@ These steps are always performed regardless of the specific rule set:
 \code{DM.RFENDTC}
 \item Expansion of individual administration episode, i.e., conversion of date
 ranges between \code{EXSTDTC} and \code{EXENDTC} into one row for each individual
-administration event. This step is conducted after \code{admin_pre_examsion()}
+administration event. This step is conducted after \code{admin_pre_expansion()}
 and \code{admin_post_expansion()}.
 \item Carry-forward of missing administration times after
 \code{admin_post_expansion()}.
@@ -57,6 +57,7 @@ After these imputations, remaining missing administration times are carried
 forward.
 }
 }
+
 \section{Imputation rules for observations}{
 
 \subsection{\code{obs_raw} / \code{obs_final}}{

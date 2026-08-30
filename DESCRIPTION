@@ -19,6 +19,7 @@ Depends:
     R (>= 4.1.0)
 Imports:
     dplyr,
+    tibble,
     tidyselect,
     gdata,
     ggplot2,
@@ -39,7 +40,6 @@ Imports:
     classInt
 Suggests: 
     knitr,
-    tibble,
     rmarkdown,
     testthat (>= 3.0.0),
     withr,

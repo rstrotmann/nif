@@ -13,7 +13,7 @@
 #' @format A sdtm object
 "examplinib_fe"
 
-#' Synthetic SDTM data from a fictional clinical iv administraiton study for
+#' Synthetic SDTM data from a fictional clinical iv administration study for
 #' 'examplinib'.
 #' @format A sdtm object
 "examplinib_iv"

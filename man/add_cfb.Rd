@@ -29,7 +29,7 @@ A NIF object
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This function is deprecated. Pleas use \code{\link[=derive_cfb]{derive_cfb()}} instead.
+This function is deprecated. Please use \code{\link[=derive_cfb]{derive_cfb()}} instead.
 }
 \details{
 Output fields:
