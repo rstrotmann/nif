@@ -629,7 +629,7 @@ isofy_date_format <- function(obj, fields = NULL) {
 #' NULL.
 #'
 #' @return A data frame.
-#' @export
+#' @noRd
 lubrify_dates <- function(obj, col = NULL) {
   # input validation
   validate_df_argument(obj)
