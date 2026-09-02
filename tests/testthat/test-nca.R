@@ -4,13 +4,10 @@ test_that("nca() input validation", {
                "Input must be a nif object")
 
   # Test that missing required columns are caught
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID,
       1, 2, 3
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_error(
     nca(test_nif),
@@ -20,8 +17,7 @@ test_that("nca() input validation", {
 
 test_that("nca() analyte handling", {
   # Create a minimal valid nif object
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~DV,  ~EVID, ~ANALYTE, ~DOSE, ~AMT, ~CMT,
       1,   0,     0,    1,     "DRUG",   100,   100,  1,
       1,   0,     10,   0,     "DRUG",   100,   0,    2,
@@ -35,9 +31,7 @@ test_that("nca() analyte handling", {
       3,   0,     8,    0,     "DRUG",   100,   0,    2,
       3,   2,     4,    0,     "DRUG",   100,   0,    2,
       3,   3,     1,    0,     "DRUG",   100,   0,    2
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   # Test automatic analyte selection
   expect_no_error(
@@ -57,8 +51,7 @@ test_that("nca() analyte handling", {
 
 test_that("nca() grouping functionality", {
   # Create a nif object with grouping variable
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~DV,  ~EVID, ~ANALYTE, ~DOSE, ~GROUP, ~AMT, ~CMT,
       1,   0,     0,    1,     "DRUG",   100,   "A",   100,  1,
       1,   0,     0,    0,     "DRUG",   100,   "A",   0,    2,
@@ -75,9 +68,7 @@ test_that("nca() grouping functionality", {
       3,   1,     8,    0,     "DRUG",   100,   "A",   0,    2,
       3,   2,     4,    0,     "DRUG",   100,   "A",   0,    2,
       3,   3,     1,    0,     "DRUG",   100,   "A",   0,    2
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   # Test grouping
   expect_no_error(

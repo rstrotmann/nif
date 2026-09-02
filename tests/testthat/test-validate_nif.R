@@ -1,12 +1,9 @@
 test_that("validate_nif passes for a minimal valid nif", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
       1,   0,     100,  1,    1,     0,
       1,   1,     0,    2,    0,     10
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_invisible(validate_nif(test_nif))
   expect_null(validate_nif(test_nif))
@@ -32,13 +29,10 @@ test_that("validate_nif rejects non-nif input", {
 
 
 test_that("validate_nif rejects missing essential fields", {
-  incomplete <- structure(
-    tibble::tribble(
+  incomplete <- as_nif_test(tibble::tribble(
       ~ID,
       1
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_error(
     validate_nif(incomplete),
@@ -48,13 +42,10 @@ test_that("validate_nif rejects missing essential fields", {
 
 
 test_that("validate_nif reports a single missing essential field", {
-  missing_dv <- structure(
-    tibble::tribble(
+  missing_dv <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID,
       1,   0,     100,  1,    1
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_error(
     validate_nif(missing_dv),
@@ -64,66 +55,51 @@ test_that("validate_nif reports a single missing essential field", {
 
 
 test_that("validate_nif accepts empty nif with required columns", {
-  empty <- structure(
-    tibble::tribble(
+  empty <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_invisible(validate_nif(empty))
 })
 
 
 test_that("validate_nif accepts extra columns beyond the minimum", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,  ~ANALYTE, ~WEIGHT,
       1,   0,     100,  1,    1,     0,    "DRUG",   70,
       1,   1,     0,    2,    0,     10,   "DRUG",   70
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_invisible(validate_nif(test_nif))
 })
 
 
 test_that("validate_nif fields=NULL is a no-op", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
       1,   0,     100,  1,    1,     0
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_invisible(validate_nif(test_nif, fields = NULL))
 })
 
 
 test_that("validate_nif fields=character(0) is a no-op", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
       1,   0,     100,  1,    1,     0
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_invisible(validate_nif(test_nif, fields = character(0)))
 })
 
 
 test_that("validate_nif accepts present additional fields", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,  ~ANALYTE, ~WEIGHT,
       1,   0,     100,  1,    1,     0,    "DRUG",   70,
       1,   1,     0,    2,    0,     10,   "DRUG",   70
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_invisible(validate_nif(test_nif, fields = "ANALYTE"))
   expect_invisible(validate_nif(test_nif, fields = c("ANALYTE", "WEIGHT")))
@@ -131,13 +107,10 @@ test_that("validate_nif accepts present additional fields", {
 
 
 test_that("validate_nif errors when additional fields are missing", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,  ~ANALYTE,
       1,   0,     100,  1,    1,     0,    "DRUG"
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_error(
     validate_nif(test_nif, fields = "WEIGHT"),
@@ -151,13 +124,10 @@ test_that("validate_nif errors when additional fields are missing", {
 
 
 test_that("validate_nif additional fields can overlap minimal fields", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
       1,   0,     100,  1,    1,     0
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_invisible(validate_nif(test_nif, fields = "TIME"))
   expect_invisible(validate_nif(test_nif, fields = c("ID", "DV")))
@@ -165,13 +135,10 @@ test_that("validate_nif additional fields can overlap minimal fields", {
 
 
 test_that("validate_nif reports only missing additional fields when minimal are present", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,  ~ANALYTE,
       1,   0,     100,  1,    1,     0,    "DRUG"
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   err <- tryCatch(
     validate_nif(test_nif, fields = c("ANALYTE", "WEIGHT")),
@@ -184,13 +151,10 @@ test_that("validate_nif reports only missing additional fields when minimal are 
 
 
 test_that("validate_nif validates fields argument type", {
-  test_nif <- structure(
-    tibble::tribble(
+  test_nif <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
       1,   0,     100,  1,    1,     0
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 
   expect_error(
     validate_nif(test_nif, fields = 1),
@@ -225,8 +189,7 @@ test_that("validate_nif works with tibble class underneath", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     0
   )
-  class(test_nif) <- c("nif", class(test_nif))
-
+  test_nif <- as_nif_test(test_nif)
   expect_invisible(validate_nif(test_nif))
   expect_invisible(validate_nif(test_nif, fields = "TIME"))
 })

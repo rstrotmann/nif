@@ -79,8 +79,7 @@ test_that("add_tad handles empty data frame", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT
   )
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_tad(test_data)
 
   expect_equal(nrow(result), 0)
@@ -94,8 +93,7 @@ test_that("add_tad handles missing required columns", {
     1,   0,     0,    1,    0,     NA,
     1,   1,     0,    1,    0,     NA
   )
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(add_tad(test_data), "Missing required columns")
 })
 
@@ -107,8 +105,7 @@ test_that("add_tad preserves original data", {
     1,   1,     0,     "DRUG",  10,   "B",    0,    1,
     1,   2,     0,     "DRUG",  20,   "C",    0,    1
   )
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_tad(test_data)
 
   # Check that original columns are preserved

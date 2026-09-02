@@ -155,8 +155,7 @@ test_that("make_time validates required columns", {
     ~DTC,                              ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
     as.POSIXct("2023-01-01 08:00:00"), 0,    1,     "DRUG",   "DRUG",  NA,  100,  1
   )
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     make_time(test_data),
     "Missing required columns: ID"
@@ -203,8 +202,7 @@ test_that("make_time validates required columns", {
     ~ID, ~DTC,                              ~TIME, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
     1,   as.POSIXct("2023-01-01 08:00:00"), 0,     "DRUG",   "DRUG",  NA,  100,  1
   )
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     make_time(test_data),
     "Missing required columns: EVID"

@@ -48,14 +48,7 @@ automatically generated. Analyte mapping formulae can be supplied as the
 nif()
 #> ──────── NONMEM Input Format (NIF) data ────────
 #> 0 observations from 0 subjects  
-#> 0 compartments with observations:  
 #> 
-#> Columns:
-#>   REF, ID, TIME, EVID, AMT, CMT, DV 
-#> 
-#> Hash: 07e64585080a10e9acda64c39f4e5d32
-#> 
-#> Data (selected columns):
-#> 
-#> 0 more rows
+#> # A tibble: 0 × 7
+#> # ℹ 7 variables: REF <int>, ID <int>, TIME <int>, AMT <int>, CMT <int>, EVID <int>, DV <int>
 ```

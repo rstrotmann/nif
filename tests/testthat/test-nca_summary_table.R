@@ -320,16 +320,13 @@ test_that("nca_summary_table works with nca() output", {
 
 
 test_that("nca_summary_table works with nca_from_pp output", {
-  nif_obj <- structure(
-    tibble::tribble(
+  nif_obj <- as_nif_test(tibble::tribble(
       ~ID, ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~DOSE,
        1,   "SUBJ1",     0,  100,    1,     1,   0,   "DRUG",  100,
        1,   "SUBJ1",     1,    0,    2,     0,  10,   "DRUG",  100,
        2,   "SUBJ2",     0,  200,    1,     1,   0,   "DRUG",  200,
        2,   "SUBJ2",     1,    0,    2,     0,  20,   "DRUG",  200
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
   sdtm_data <- sdtm(list(
     pp = tibble::tribble(
       ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPCAT,
@@ -361,16 +358,13 @@ test_that("nca_summary_table works with nca_from_pp output", {
 
 
 test_that("nca_summary_table works with nca_from_pp when grouping by DOSE", {
-  nif_obj <- structure(
-    tibble::tribble(
+  nif_obj <- as_nif_test(tibble::tribble(
       ~ID, ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~DOSE,
        1,   "SUBJ1",     0,  100,    1,     1,   0,   "DRUG",  100,
        1,   "SUBJ1",     1,    0,    2,     0,  10,   "DRUG",  100,
        2,   "SUBJ2",     0,  200,    1,     1,   0,   "DRUG",  200,
        2,   "SUBJ2",     1,    0,    2,     0,  20,   "DRUG",  200
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
   sdtm_data <- sdtm(list(
     pp = tibble::tribble(
       ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPCAT,

@@ -1,7 +1,7 @@
 # Helper to create minimal nif objects for testing
 make_test_nif <- function(...) {
   df <- tibble::tribble(...) %>% as.data.frame()
-  class(df) <- c("nif", "data.frame")
+  df <- as_nif_test(df)
   df
 }
 
@@ -234,8 +234,7 @@ test_that("normalize_id() handles many subjects", {
     )
   })
   df <- do.call(rbind, rows)
-  class(df) <- c("nif", "data.frame")
-
+  df <- as_nif_test(df)
   result <- normalize_id(df)
 
   expect_equal(sort(unique(result$ID)), 1:n_subjects)

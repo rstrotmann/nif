@@ -273,7 +273,7 @@ test_that("derive_baseline handles multiple baseline values, analytes, and subje
     distinct(ID, ANALYTE, DVBL) |>
     arrange(ID, ANALYTE)
 
-  expect_equal(actual, expected)
+  expect_equal(actual, expected, ignore_attr = TRUE)
 
   # DVBL constant within ID/ANALYTE and present on post-baseline rows
   expect_equal(
@@ -310,8 +310,7 @@ test_that("derive_baseline handles mixed valid and invalid row data", {
      )
 
   test_nif <- bind_rows(test_nif, invalid_rows)
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   # Pass analyte explicitly so NA ANALYTE values do not enter validate_analyte
   expect_message(
     result <- derive_baseline(

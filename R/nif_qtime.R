@@ -226,6 +226,7 @@ add_bintime1 <- function(
 #'
 #' @returns A ggplot2 object.
 #' @importFrom stats qt
+#' @importFrom stats sd
 #' @export
 #' @examples
 #' examplinib_poc_nif |>

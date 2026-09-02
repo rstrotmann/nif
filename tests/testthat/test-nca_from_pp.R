@@ -1,15 +1,12 @@
 make_nca_from_pp_nif <- function() {
-  structure(
-    tibble::tribble(
+  as_nif_test(tibble::tribble(
       ~ID, ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~DOSE, ~AGE, ~SEX, ~WEIGHT, ~BL_CRCL, ~CUSTOM,
       1,   "SUBJ1",  0,     100,  1,    1,     0,  "DRUG",   100,   30,   "M",  70,      90,       "A",
       1,   "SUBJ1",  1,     0,    2,    0,     10, "DRUG",   100,   30,   "M",  70,      90,       "A",
       2,   "SUBJ2",  0,     200,  1,    1,     0,  "DRUG",   200,   40,   "F",  60,      80,       "B",
       2,   "SUBJ2",  1,     0,    2,    0,     20, "DRUG",   200,   40,   "F",  60,      80,       "B",
       1,   "SUBJ1",  1,     0,    3,    0,     5,  "METAB",  100,   30,   "M",  70,      90,       "A"
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
 }
 
 
@@ -303,13 +300,10 @@ test_that("nca_from_pp validates nif and sdtm inputs", {
     "Input must be a nif object"
   )
 
-  incomplete_nif <- structure(
-    tibble::tribble(
+  incomplete_nif <- as_nif_test(tibble::tribble(
       ~ID, ~USUBJID, ~ANALYTE,
       1,   "SUBJ1",  "DRUG"
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
   expect_error(
     nca_from_pp(incomplete_nif, sdtm_data, silent = TRUE),
     "Missing essential fields in nif object"
@@ -461,15 +455,12 @@ test_that("nca_from_pp stops when analyte not found", {
 
 
 test_that("nca_from_pp errors when keep columns vary within subject", {
-  nif_obj <- structure(
-    tibble::tribble(
+  nif_obj <- as_nif_test(tibble::tribble(
       ~ID, ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~DOSE, ~CUSTOM,
       1,   "SUBJ1",  0,     100,  1,    1,     0,  "DRUG",   100,   "A",
       1,   "SUBJ1",  1,     0,    2,    0,     10, "DRUG",   100,   "A",
       1,   "SUBJ1",  2,     0,    2,    0,     8,  "DRUG",   100,   "B"
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
   sdtm_data <- sdtm(list(
     pp = tibble::tribble(
       ~USUBJID, ~PPTESTCD, ~PPSTRESN, ~PPCAT,
@@ -562,14 +553,11 @@ test_that("nca_from_pp requires USUBJID and ANALYTE in nif", {
     )
   ))
 
-  nif_no_usubjid <- structure(
-    tibble::tribble(
+  nif_no_usubjid <- as_nif_test(tibble::tribble(
       ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~DOSE,
        1,     0,  100,    1,     1,   0,   "DRUG",  100,
        1,     1,    0,    2,     0,  10,   "DRUG",  100
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
   expect_error(
     nca_from_pp(
       nif_no_usubjid, sdtm_data,
@@ -580,14 +568,11 @@ test_that("nca_from_pp requires USUBJID and ANALYTE in nif", {
     "Missing fields in nif object: USUBJID"
   )
 
-  nif_no_analyte <- structure(
-    tibble::tribble(
+  nif_no_analyte <- as_nif_test(tibble::tribble(
       ~ID, ~USUBJID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~DOSE,
        1,   "SUBJ1",     0,  100,    1,     1,   0,  100,
        1,   "SUBJ1",     1,    0,    2,     0,  10,  100
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
   expect_error(
     nca_from_pp(
       nif_no_analyte, sdtm_data,

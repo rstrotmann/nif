@@ -9,6 +9,23 @@ test_that("nif works", {
 })
 
 
+test_that("nif objects are tibbles with nif_version", {
+  empty <- nif()
+  expect_s3_class(empty, "nif")
+  expect_s3_class(empty, "tbl_df")
+  expect_equal(attr(empty, "nif_version"), packageVersion("nif"))
+
+  from_df <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     100,  1,    1,     NA_real_
+  ))
+  expect_s3_class(from_df, "nif")
+  expect_s3_class(from_df, "tbl_df")
+  expect_equal(class(from_df), c("nif", "tbl_df", "tbl", "data.frame"))
+  expect_equal(attr(from_df, "nif_version"), packageVersion("nif"))
+})
+
+
 test_that("subject_info works", {
   expect_no_error(invisible(capture.output(subject_info(examplinib_sad_nif, 1))))
   expect_no_error(invisible(capture.output(

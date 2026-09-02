@@ -1,6 +1,6 @@
 make_test_nif <- function(...) {
   obj <- tibble::tribble(...)
-  class(obj) <- c("nif", "data.frame")
+  obj <- as_nif_test(obj)
   obj
 }
 
@@ -263,8 +263,7 @@ test_that("write_nonmem handles empty nif objects", {
     EVID = numeric(0),
     DV   = numeric(0)
   )
-  class(empty_data) <- c("nif", "data.frame")
-
+  empty_data <- as_nif_test(empty_data)
   temp_file <- tempfile()
   on.exit(unlink(temp_file), add = TRUE)
 
@@ -343,8 +342,7 @@ test_that("write_nonmem rejects nif objects missing essential fields", {
     ~ID, ~TIME,
     1,   0
   )
-  class(incomplete) <- c("nif", "data.frame")
-
+  incomplete <- as_nif_test(incomplete)
   expect_error(
     write_nonmem(incomplete),
     "Missing essential fields in nif object"

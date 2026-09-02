@@ -41,8 +41,7 @@ test_that("add_baseline handles custom baseline filter", {
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~DOMAIN,
     "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "",      "VS",
@@ -75,8 +74,7 @@ test_that("add_baseline handles coding table correctly", {
     1,   "SUBJ-001",  "2023-01-01", 0,     0,    1,    0,     NA,
     2,   "SUBJ-002",  "2023-01-01", 0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   test_vs <- data.frame(
     USUBJID = c("SUBJ-001", "SUBJ-002"),
     VSDTC = c("2023-01-01", "2023-01-01"),
@@ -116,8 +114,7 @@ test_that("add_baseline validates inputs correctly", {
     ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   test_vs <- data.frame(
     USUBJID = c("SUBJ-001"),
     VSDTC = c("2023-01-01"),
@@ -167,8 +164,7 @@ test_that("add_baseline handles multiple baseline values correctly", {
     ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
     "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",
@@ -201,8 +197,7 @@ test_that("add_baseline handles empty result after filtering", {
     ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
     "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "N"
@@ -269,8 +264,7 @@ test_that("add baseline hepatic function class works", {
     "4",      4,   0,     0,    1,    0,     NA,
     "5",      5,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   expect_no_error(
     temp <- test_nif %>%
       add_bl_odwg(sdtm)
@@ -289,8 +283,7 @@ test_that("add_baseline handles all NA baseline values correctly", {
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
     "SUBJ-001",  "2023-01-01", "WEIGHT",  NA,        "Y",
@@ -319,8 +312,7 @@ test_that("add_baseline warns when some baseline values are NA", {
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA,
     "SUBJ-003",  "2023-01-01", 3,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL,
     "SUBJ-001",  "2023-01-01", "WEIGHT",  70,        "Y",
@@ -356,8 +348,7 @@ test_that("add_baseline validates required fields correctly", {
     ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   # Create a domain with missing field
   test_vs_missing_field <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSBLFL, # Missing VSSTRESN

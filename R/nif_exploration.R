@@ -449,7 +449,8 @@ summary.nif <- function(
     administration_duration = administration_summary(object),
     sampling = sampling_table,
     hash = hash.nif(object),
-    last = last_dtc(object)
+    last = last_dtc(object),
+    nif_version = attr(object, "nif_version")
   )
   class(out) <- "summary_nif"
   out
@@ -548,6 +549,7 @@ print.summary_nif <- function(
     # hash and time stamp
     trimws(
       paste0(
+        "NIF version: ", x$nif_version, "\n",
         "Hash: ", x$hash,
         ifelse(is.null(x$last), "", paste0("\nLast DTC: ", x$last))
       )

@@ -109,6 +109,7 @@ nif %>%
 #>   PARENT  min  max  mean  median  
 #>   RS2023  1    97   40.2  58.5
 #> 
-#> Hash: f064eecaf491724caa01ddd7e950380c
+#> NIF version: 0.65.23
+#> Hash: 5b5df5a517577f28706bdffcf495a9b5
 #> Last DTC: 2001-07-18 08:24:00
 ```

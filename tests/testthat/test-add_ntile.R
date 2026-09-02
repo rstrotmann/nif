@@ -16,8 +16,7 @@ test_that("add_ntile works with basic input", {
     4,   2,     40,  "A",      0,    1,    0    # Same value for ID 4
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV")
 
   # Check that NTILE column was added
@@ -48,8 +47,7 @@ test_that("add_ntile works with custom n value", {
     5,   1,     60,  "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV", n = 5)
 
   # Check that NTILE column was added
@@ -78,8 +76,7 @@ test_that("add_ntile works with custom column name", {
     4,   1,     40,  "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV", ntile_name = "CUSTOM_NTILE")
 
   # Check that custom column name was used
@@ -110,8 +107,7 @@ test_that("add_ntile assigns the same n-tile to subjects with equal values", {
        6,     1,  30,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV", n = 4)
 
   expect_equal(
@@ -140,8 +136,7 @@ test_that("add_ntile does not split tied values across n-tiles", {
        5,     0,      90,    0,    1,     0,  1
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "WEIGHT", n = 4)
   by_id <- distinct(result, ID, WEIGHT, WEIGHT_NTILE)
 
@@ -167,8 +162,7 @@ test_that("add_ntile maps each distinct value to exactly one n-tile", {
       10,     0,       2,    0,    1,     0,  1
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "WEIGHT", n = 4)
   by_id <- distinct(result, ID, WEIGHT, WEIGHT_NTILE)
 
@@ -203,9 +197,8 @@ test_that("add_ntile n-tile assignment is independent of row order", {
        3,     0,  20,    0,    1,     0
   )
 
-  class(obj_a) <- c("nif", "data.frame")
-  class(obj_b) <- c("nif", "data.frame")
-
+  obj_a <- as_nif_test(obj_a)
+  obj_b <- as_nif_test(obj_b)
   result_a <- distinct(add_ntile(obj_a, input_col = "DV"), ID, DV, DV_NTILE) |>
     arrange(ID)
   result_b <- distinct(add_ntile(obj_b, input_col = "DV"), ID, DV, DV_NTILE) |>
@@ -228,8 +221,7 @@ test_that("add_ntile handles NA values in input column", {
     4,   1,     40,  "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV")
 
   # Check that subject with NA gets NA NTILE
@@ -250,8 +242,7 @@ test_that("add_ntile handles non-numeric input column", {
     2,   1,     "B", "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     add_ntile(test_data, input_col = "DV"),
     "Column 'DV' must contain numeric values"
@@ -267,8 +258,7 @@ test_that("add_ntile handles missing input column", {
     2,   1,     "A",      0,    1,    0,     NA
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     add_ntile(
       select(test_data, -DV),
@@ -286,8 +276,7 @@ test_that("add_ntile handles invalid n value", {
     2,   1,     25,  "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   # Test with n = 0
   expect_error(
     add_ntile(test_data, input_col = "DV", n = 0),
@@ -329,8 +318,7 @@ test_that("add_ntile rejects non-integer n within the allowed range", {
        4,     0,  40,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     add_ntile(test_data, input_col = "DV", n = 2.5),
     "n must be an integer value!"
@@ -343,8 +331,7 @@ test_that("add_ntile handles empty data frame", {
     ~ID, ~TIME, ~DV, ~ANALYTE, ~AMT, ~CMT, ~EVID
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     add_ntile(test_data, input_col = "DV"),
     "Column 'DV' must contain numeric values"
@@ -365,8 +352,7 @@ test_that("add_ntile preserves original data", {
     4,   1,     40,  "A",      "S",    0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV")
 
   # Check that original columns are preserved
@@ -387,8 +373,7 @@ test_that("add_ntile returns a nif object", {
     4,   1,     40,  "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV")
 
   expect_s3_class(result, "nif")
@@ -407,8 +392,7 @@ test_that("add_ntile works with different input columns", {
     4,   1,     40,  "A",      90,      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   # Test with DV column
   result_dv <- add_ntile(test_data, input_col = "DV")
   expect_true("DV_NTILE" %in% names(result_dv))
@@ -431,8 +415,7 @@ test_that("add_ntile works with different input columns", {
     4,   1,     40,  "A",      25,      0,    1,    0
   )
 
-  class(test_data2) <- c("nif", "data.frame")
-
+  test_data2 <- as_nif_test(test_data2)
   result_dv2 <- add_ntile(test_data2, input_col = "DV")
   result_weight2 <- add_ntile(test_data2, input_col = "WEIGHT")
 
@@ -454,8 +437,7 @@ test_that("add_ntile assigns one n-tile when all subjects share the same value",
        4,     1,  10,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV")
 
   expect_true("DV_NTILE" %in% names(result))
@@ -474,8 +456,7 @@ test_that("add_ntile errors when a subject has multiple distinct values", {
        4,     0,  40,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     add_ntile(test_data, input_col = "DV"),
     "Non-unique values for DV"
@@ -493,8 +474,7 @@ test_that("add_ntile errors when a subject mixes NA and non-NA values", {
        4,     0,  40,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     add_ntile(test_data, input_col = "DV"),
     "Non-unique values for DV:"
@@ -511,8 +491,7 @@ test_that("add_ntile replaces an existing n-tile column", {
        4,     0,  40,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   first <- add_ntile(test_data, input_col = "DV")
   second <- add_ntile(first, input_col = "DV", silent = TRUE)
 
@@ -532,8 +511,7 @@ test_that("add_ntile allows fewer subjects than n and uses fewer bins", {
        2,     1,  25,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   result <- add_ntile(test_data, input_col = "DV", n = 4)
 
   expect_true("DV_NTILE" %in% names(result))
@@ -549,8 +527,7 @@ test_that("add_ntile errors when ID is missing", {
          1,  10,      "A",    0,    1,     0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   expect_error(
     add_ntile(test_data, input_col = "DV"),
     "Missing essential fields in nif object: ID"
@@ -587,8 +564,7 @@ test_that("add_ntile handles invalid input_col parameter", {
     4,   1,     40,  "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   # Test with NULL input_col
   expect_error(
     add_ntile(test_data, input_col = NULL),
@@ -621,8 +597,7 @@ test_that("add_ntile handles invalid ntile_name parameter", {
     4,   1,     40,  "A",      0,    1,    0
   )
 
-  class(test_data) <- c("nif", "data.frame")
-
+  test_data <- as_nif_test(test_data)
   # Test with numeric ntile_name
   expect_error(
     add_ntile(test_data, input_col = "DV", ntile_name = 123),

@@ -202,13 +202,10 @@ test_that("ensure_unique_per_subject validates nif input", {
     "Input must be a nif object"
   )
 
-  incomplete <- structure(
-    tibble::tribble(
+  incomplete <- as_nif_test(tibble::tribble(
       ~ID, ~WEIGHT,
       1,   70
-    ),
-    class = c("nif", "data.frame")
-  )
+    ))
   expect_error(
     ensure_unique_per_subject(incomplete, "WEIGHT"),
     "Missing essential fields in nif object"

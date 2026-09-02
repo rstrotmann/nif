@@ -302,7 +302,8 @@ test_that("add_observation handles include_day_in_ntime parameter", {
 
   expect_equal(
     nif_with_day[nif_with_day$EVID == 0, "NTIME"],
-    nif_without_day[nif_with_day$EVID == 0, "NTIME"] + 24
+    nif_without_day[nif_with_day$EVID == 0, "NTIME"] + 24,
+    ignore_attr = TRUE
   )
 })
 

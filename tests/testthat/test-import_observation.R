@@ -491,7 +491,8 @@ test_that("import_observation preserves keep fields from nif through import", {
       arrange(USUBJID),
     test_nif %>%
       distinct(USUBJID, COHORT) %>%
-      arrange(USUBJID)
+      arrange(USUBJID),
+    ignore_attr = TRUE
   )
 })
 

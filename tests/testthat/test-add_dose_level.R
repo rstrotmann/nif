@@ -31,7 +31,8 @@ test_that("add_dose_level uses starting dose and ignores later dose changes", {
          1, "100-A",
          2, "200-A",
          3, "100-A"
-    ))
+    )),
+    ignore_attr = TRUE
   )
   expect_type(result$DL, "character")
 })

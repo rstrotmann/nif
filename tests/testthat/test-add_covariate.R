@@ -14,7 +14,6 @@ create_test_nif <- function() {
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
     nif()
 
-  # class(nif_df) <- c("nif", "data.frame")
   return(nif_df)
 }
 
@@ -258,6 +257,7 @@ test_that("add_covariate uses default covariate name if not specified", {
 
 test_that("add_covariate works with actual data set", {
   sdtm <- examplinib_poc
+
   nif <- nif(sdtm, RS2023 + RS2023487A ~ EXAMPLINIB, silent = TRUE) %>%
     add_covariate(sdtm, "pc", "RS2023", covariate = "TEST")
 

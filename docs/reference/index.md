@@ -167,7 +167,6 @@
   dose
 - [`nca_summary_table()`](nca_summary_table.md) : PK parameter summary
   statistics table by grouping variables
-- [`new_nif()`](new_nif.md) **\[deprecated\]** : nif class constructor
 - [`new_sdtm()`](new_sdtm.md) **\[deprecated\]** : SDTM class
   constructor, creating a sdtm object from a set of SDTM domains
 - [`nif()`](nif.md) : nif class constructor

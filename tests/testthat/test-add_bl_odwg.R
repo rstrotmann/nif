@@ -48,8 +48,6 @@ test_that("add_bl_odwg classifies all hepatic function categories correctly", {
     "5",      5,   0,     0,    1,    0,     NA
   ) |>
     nif()
-  # class(test_nif) <- c("nif", "data.frame")
-
   result <- add_bl_odwg(test_nif, sdtm, silent = TRUE)
 
   expect_true("BL_ODWG" %in% names(result))
@@ -69,8 +67,7 @@ test_that("add_bl_odwg handles missing LB domain gracefully", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -89,8 +86,7 @@ test_that("add_bl_odwg handles missing BILI marker", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -115,8 +111,7 @@ test_that("add_bl_odwg handles missing AST marker", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -141,8 +136,7 @@ test_that("add_bl_odwg handles missing both BILI and AST markers", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -167,8 +161,7 @@ test_that("add_bl_odwg handles missing LBSTRESN field", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -194,8 +187,7 @@ test_that("add_bl_odwg handles missing LBSTNRHI field", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -221,8 +213,7 @@ test_that("add_bl_odwg handles missing both required fields", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -248,8 +239,7 @@ test_that("add_bl_odwg handles missing baseline flag columns", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -275,8 +265,7 @@ test_that("add_bl_odwg works with LBLOBXFL instead of LBBLFL", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -302,8 +291,7 @@ test_that("add_bl_odwg handles empty results after filtering", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -329,8 +317,7 @@ test_that("add_bl_odwg works with custom baseline_filter", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -362,8 +349,7 @@ test_that("add_bl_odwg works with custom observation_filter", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -397,8 +383,7 @@ test_that("add_bl_odwg automatically excludes URINE when LBSPEC contains URINE",
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -428,8 +413,7 @@ test_that("add_bl_odwg handles multiple baseline values with summary_function", 
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -467,8 +451,7 @@ test_that("add_bl_odwg handles division by zero in LBSTNRHI", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -495,8 +478,7 @@ test_that("add_bl_odwg handles NA values in LBSTNRHI", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -529,8 +511,7 @@ test_that("add_bl_odwg handles edge cases for classification boundaries", {
     "6",      6,   0,     0,    1,    0,     NA,
     "7",      7,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT",
@@ -576,8 +557,7 @@ test_that("add_bl_odwg handles BILI > 10 (should be NA)", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -603,8 +583,7 @@ test_that("add_bl_odwg handles missing values in BL_BILI_X_ULN or BL_AST_X_ULN",
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -630,8 +609,7 @@ test_that("add_bl_odwg respects silent parameter", {
     ~USUBJID, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "1",      1,   0,     0,    1,    0,     NA
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT"
@@ -660,8 +638,7 @@ test_that("add_bl_odwg preserves original nif object structure", {
     "1",      1,   0,     0,    1,    0,     NA,  "value1",
     "2",      2,   0,     0,    1,    0,     NA,  "value2"
   )
-  class(test_nif) <- c("nif", "data.frame")
-
+  test_nif <- as_nif_test(test_nif)
   dm <- tribble(
     ~USUBJID, ~DOMAIN, ~ACTARMCD,
     "1",      "DM",    "TREATMENT",
