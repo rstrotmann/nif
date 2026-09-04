@@ -313,7 +313,9 @@ summary.nif <- function(
       administration_duration = NULL,
       sampling = NULL,
       hash = NULL,
-      last = NULL
+      last = NULL,
+      nif_version = attr(object, "nif_version"),
+      creation_date = attr(object, "creation_date")
     )
     class(out) <- "summary_nif"
     return(out)
@@ -450,7 +452,8 @@ summary.nif <- function(
     sampling = sampling_table,
     hash = hash.nif(object),
     last = last_dtc(object),
-    nif_version = attr(object, "nif_version")
+    nif_version = attr(object, "nif_version"),
+    creation_date = attr(object, "creation_date")
   )
   class(out) <- "summary_nif"
   out
@@ -550,6 +553,10 @@ print.summary_nif <- function(
     trimws(
       paste0(
         "NIF version: ", x$nif_version, "\n",
+        if (!is.null(x$creation_date))
+          paste0("Creation date: ", x$creation_date, "\n")
+        else
+          "",
         "Hash: ", x$hash,
         ifelse(is.null(x$last), "", paste0("\nLast DTC: ", x$last))
       )

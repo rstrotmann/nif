@@ -154,15 +154,24 @@ test_that("imputation_summary works with example nif objects", {
   expect_equal(
     as.data.frame(sad_result),
     as.data.frame(tibble::tribble(
-      ~ANALYTE, ~IMPUTATION, ~N,
-      "RS2023",           "", 48
+      ~ANALYTE,                 ~IMPUTATION, ~N,
+      "RS2023", "time copied from EXSTDTC", 48
     ))
   )
 
   poc_result <- imputation_summary(examplinib_poc_nif)
 
-  expect_equal(nrow(poc_result), 2)
-  expect_true(all(c("", "time carried forward") %in% poc_result$IMPUTATION))
+  expect_equal(
+    as.data.frame(poc_result),
+    as.data.frame(tibble::tribble(
+      ~ANALYTE,                     ~IMPUTATION,   ~N,
+      "RS2023",           "time carried forward", 5212,
+      "RS2023",       "time copied from EXENDTC",  414,
+      "RS2023",       "time copied from EXSTDTC",  455,
+      "RS2023", "time imputed from PCELTM/PCTPT",    1,
+      "RS2023",     "time imputed from PCRFTDTC",   68
+    ))
+  )
   expect_equal(unique(poc_result$ANALYTE), "RS2023")
   expect_equal(sum(poc_result$N), sum(examplinib_poc_nif$EVID == 1))
 })

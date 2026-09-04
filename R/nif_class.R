@@ -110,14 +110,18 @@ index_id <- function(obj) {
 #'
 #' @returns A nif object.
 #' @noRd
-new_nif <- function(data, nif_version = NULL) {
+new_nif <- function(data, nif_version = NULL, creation_date = NULL) {
   if (is.null(nif_version))
     nif_version <- packageVersion("nif")
+
+  if (is.null(creation_date))
+    creation_date <- Sys.Date()
 
   structure(
     as_tibble(data),
     class = unique(c("nif", "tbl_df", "tbl", "data.frame")),
-    nif_version = nif_version
+    nif_version = nif_version,
+    creation_date = creation_date
   )
 }
 
@@ -149,21 +153,11 @@ nif <- function(obj = NULL, ..., silent = NULL) {
   # Case 1: Empty minimal nif object
   if (is.null(obj)) {
     # empty nif object
-
-    # fields <- c("REF", minimal_nif_fields)
-    # temp <- (matrix(nrow = 0, ncol = length(fields)))
-    # colnames(temp) <- fields
-    # class(temp) <- c("nif",  "tbl_df", "tbl", "data.frame")
-
-    # tibble::as_tibble(matrix(nrow = 0, ncol = length(cols), dimnames = list(NULL, cols)))
-
-    # data <- as_tibble(matrix(nrow = 0, ncol = length(fields), dimnames = list(NULL, fields)))
     data <- tibble(
       REF = integer(), ID = integer(), TIME = integer(), AMT = integer(),
       CMT = integer(), EVID = integer(), DV = integer()
     )
 
-    # return(order_nif_columns(temp))
     return(new_nif(data))
   }
 
@@ -173,8 +167,6 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       arrange_and_add_ref() |>
       order_nif_columns()
 
-    # class(temp) <- c("nif", "tbl_df", "tbl", "data.frame")
-    # return(temp)
     return(new_nif(data))
   }
 
@@ -216,7 +208,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       arrange_and_add_ref() |>
       order_nif_columns()
 
-    return(new_nif(out))
+    return(new_nif(out, creation_date = attr(obj, "creation_date")))
   }
 
   # Case 5: Nif object from data frame
@@ -229,8 +221,6 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       arrange_and_add_ref() |>
       order_nif_columns()
 
-    # class(out) <- c("nif", "data.frame")
-    # return(out)
     return(new_nif(data))
   }
 
@@ -241,7 +231,11 @@ nif <- function(obj = NULL, ..., silent = NULL) {
 #' @exportS3Method dplyr::dplyr_reconstruct
 #' @noRd
 dplyr_reconstruct.nif <- function(data, template) {
-  new_nif(data, nif_version = attr(template, "nif_version"))
+  new_nif(
+    data,
+    nif_version = attr(template, "nif_version"),
+    creation_date = attr(template, "creation_date")
+    )
 }
 
 
@@ -256,8 +250,6 @@ as_nif <- function(obj) {
     stop("obj must be a data frame!")
   }
 
-  # out <- as.data.frame(obj)
-  # class(out) <- c("nif", "data.frame")
   out <- nif(obj)
   order_nif_columns(out)
 }
@@ -292,114 +284,6 @@ order_nif_columns <- function(obj) {
 #'
 #' @export
 #' @noRd
-# print.nif <- function(x, color = FALSE, ...) {
-#   debug <- rlang::is_true(nif_option_value("debug"))
-#
-#   # print as normal data frame if minimal fields not present
-#   if (debug == TRUE || !all(minimal_nif_fields %in% names(x))) {
-#     print(as.data.frame(x))
-#   } else {
-#     # hline <- "-----"
-#     # cat(paste0(hline, " NONMEM Input Format (NIF) data ", hline, "\n"))
-#
-#     cat(paste0(hline(), " NONMEM Input Format (NIF) data ", hline(), "\n"))
-#
-#     n_obs <- x |>
-#       filter(!"EVID" %in% names(x) | .data$EVID == 0) |>
-#       nrow()
-#     n_subs <- subjects(x) |>
-#       nrow()
-#     n_studies <- length(unique(x$STUDYID))
-#
-#     cat(paste(
-#       n_obs,
-#       plural("observation", n_obs != 1), "from",
-#       n_subs, plural("subject", n_subs != 1),
-#       ifelse("STUDYID" %in% names(x),
-#         paste("across", n_studies, plural("study", n_studies > 1)),
-#         ""
-#       ),
-#       "\n"
-#     ))
-#
-#     if ("ANALYTE" %in% names(x)) {
-#       cat(paste(
-#         "Analytes:", nice_enumeration(unique(x$ANALYTE)), "\n"
-#       ))
-#     } else {
-#       obs_cmt <- sapply(
-#         unique(x[x$EVID == 0, "CMT"]),
-#         function(x) paste0("'", x, "'")
-#       )
-#       cat(paste(
-#         length(obs_cmt),
-#         plural("compartment", length(obs_cmt) != 1),
-#         "with observations:", nice_enumeration(obs_cmt)
-#       ), "\n")
-#     }
-#
-#     if ("SEX" %in% names(x)) {
-#       n_sex <- x |>
-#         dplyr::distinct(.data$USUBJID, .data$SEX) |>
-#         dplyr::group_by(.data$SEX) |>
-#         dplyr::summarize(n = n())
-#
-#       n_males <- n_sex |>
-#         dplyr::filter(.data$SEX == 0) |>
-#         dplyr::pull(.data$n)
-#       if (length(n_males) == 0) {
-#         n_males <- 0
-#       }
-#
-#       n_females <- n_sex |>
-#         dplyr::filter(.data$SEX == 1) |>
-#         dplyr::pull(.data$n)
-#       if (length(n_females) == 0) {
-#         n_females <- 0
-#       }
-#
-#       cat(paste0(
-#         n_males, plural(" male", n_males != 1),
-#         " (", round(n_males / (n_males + n_females) * 100, 1), "%), ",
-#         n_females, plural(" female", n_males != 1),
-#         " (", round(n_females / (n_males + n_females) * 100, 1), "%)\n"
-#       ))
-#     }
-#
-#     cat("\nColumns:\n")
-#     cat(str_wrap(
-#       paste(names(x), collapse = ", "),
-#       width = 80, indent = 2, exdent = 2
-#     ), "\n\n")
-#
-#     # version hash
-#     # cat(str_glue("\nHash: {rlang::hash(x)}\n\n"))
-#     cat(str_glue("\nHash: {nif::hash(x)}\n\n"))
-#
-#     temp <- x |>
-#       as.data.frame() |>
-#       select(any_of(c(
-#         "ID", "NTIME", "TIME", "TAD", "ANALYTE",
-#         "EVID", "CMT", "AMT", "DOSE", "DV"
-#       ))) |>
-#       head(10)
-#
-#     temp <- temp |>
-#       mutate(across(where(is.numeric), ~ round(., 3))) |>
-#       df_to_string(color = color, indent = 2)
-#     cat(paste0("\nData (selected columns):\n", temp, "\n"))
-#
-#     footer <- paste0(positive_or_zero(nrow(x) - 10), " more rows")
-#
-#     if (color == TRUE) {
-#       cat(paste0("\u001b[38;5;248m", footer, "\u001b[0m"))
-#     } else {
-#       cat(footer)
-#     }
-#
-#     invisible(x)
-#   }
-# }
 print.nif <- function(x, color = FALSE, ...) {
     cat(paste0(hline(), " NONMEM Input Format (NIF) data ", hline(), "\n"))
 
