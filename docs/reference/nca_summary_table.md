@@ -44,5 +44,5 @@ nca_summary_table(nca(examplinib_sad_nif, analyte = "RS2023"))
 #> # A tibble: 1 × 6
 #>       n aucinf.obs    auclast       cmax          half.life tmax      
 #>   <int> <chr>         <chr>         <chr>         <chr>     <chr>     
-#> 1    48 5215.11 (417) 5169.51 (417) 1664.86 (412) 7.33 (11) 1 (1; 1.5)
+#> 1    48 5305.17 (374) 5257.01 (374) 1701.72 (375) 7.39 (10) 1 (1; 1.5)
 ```

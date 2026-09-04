@@ -35,5 +35,5 @@ A list of IDs in numeric format.
 
 ``` r
 rich_sampling_sbs(examplinib_poc_nif, n = 6)
-#>  [1]  1  6  7 17 18 19 20 21 30 42 54 67
+#>  [1]  1 10 11 24 25 35 36 45 56 57 58 75
 ```

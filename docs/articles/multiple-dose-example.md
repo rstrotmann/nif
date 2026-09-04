@@ -47,11 +47,11 @@ summary(examplinib_poc)
 #> 
 #> Data disposition:
 #>   DOMAIN  SUBJECTS  OBSERVATIONS  
-#>   dm      89        89            
-#>   vs      89        178           
-#>   ex      80        477           
+#>   dm      117       117           
+#>   vs      117       234           
+#>   ex      80        455           
 #>   pc      80        1344          
-#>   lb      89        89            
+#>   lb      117       117           
 #>   ts      0         0             
 #>   pp      12        432
 #> 
@@ -71,8 +71,8 @@ summary(examplinib_poc)
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: a548abb8766f7d82a2a6be50c784b09b
-#> Last DTC: 2001-07-18 10:24:00
+#> Hash: 5bc89e9fe26d195ef49ffc7b75abbe9b
+#> Last DTC: 2001-08-15 11:01:00
 ```
 
 Note that in the EX domain, the administered drug is given as
@@ -93,7 +93,7 @@ nif_poc <- nif() %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023", analyte = "RS2023", cmt = 2) %>%
   add_observation(sdtm, domain = "pc", testcd = "RS2023487A", parent = "RS2023", cmt = 3)
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
-#> ℹ A global cut-off-date of 2001-07-18 08:24:00 was automatically assigned!
+#> ℹ A global cut-off-date of 2001-08-15 09:01:00 was automatically assigned!
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023 observations
 #> ! Missing fields: PCLLOQ and PCSTRESC. LLOQ imputation cannot be done.
 #> ℹ Imputation model 'imputation_rules_standard' applied to RS2023487A observations
@@ -128,21 +128,21 @@ creatinine clearance:
 
 head(nif_poc, 3)
 #    REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
-#  1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#  2   2  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#  3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
+#  1   1  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
+#  2   2  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
+#  3   3  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
 #                    DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT
-#  1 2001-01-07 09:42:00    0     0    0   0    1 500   1 NA     RS2023 RS2023
-#  2 2001-01-07 09:42:00    0     0    0   0    0   0   2  0     RS2023 RS2023
-#  3 2001-01-07 09:42:00    0     0    0   0    0   0   3  0 RS2023487A RS2023
+#  1 2001-01-05 10:25:00    0     0    0   0    1 500   1 NA     RS2023 RS2023
+#  2 2001-01-05 10:25:00    0     0    0   0    0   0   2  0     RS2023 RS2023
+#  3 2001-01-05 10:25:00    0     0    0   0    0   0   3  0 RS2023487A RS2023
 #    TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION BL_CREAT
-#  1     1      FALSE  500   1 TREATMENT time copied from EXSTDTC 86.46559
-#  2     1      FALSE  500   0 TREATMENT                          86.46559
-#  3     1      FALSE  500   0 TREATMENT                          86.46559
+#  1     1      FALSE  500   1 TREATMENT time copied from EXSTDTC 58.84185
+#  2     1      FALSE  500   0 TREATMENT                          58.84185
+#  3     1      FALSE  500   0 TREATMENT                          58.84185
 #     BL_CRCL
-#  1 78.66727
-#  2 78.66727
-#  3 78.66727
+#  1 165.5927
+#  2 165.5927
+#  3 165.5927
 ```
 
 ## EXPLORATION
@@ -167,15 +167,15 @@ summary(nif_poc)
 #  
 #  Sex distribution:
 #    SEX     N   percent  
-#    male    46  57.5     
-#    female  34  42.5
+#    male    51  63.7     
+#    female  29  36.2
 #  
 #  Renal impairment class:
 #    CLASS     N   percent  
-#    normal    26  32.5     
-#    mild      43  53.8     
-#    moderate  10  12.5     
-#    severe    1   1.2
+#    normal    28  35       
+#    mild      41  51.2     
+#    moderate  11  13.8     
+#    severe    0   0
 #  
 #  Treatments: RS2023
 #  
@@ -206,15 +206,16 @@ summary(nif_poc)
 #  
 #  Subjects with dose reductions:
 #    treatment  n   
-#    RS2023     30
+#    RS2023     22
 #  
 #  Treatment duration overview:
 #    PARENT  min  max  mean  median  
-#    RS2023  55   97   73.2  72.5
+#    RS2023  58   101  76.9  75
 #  
 #  NIF version: 0.66.0
-#  Hash: 869e719464b5c2bd6fdd8efea89dd238
-#  Last DTC: 2001-07-18 08:24:00
+#  Creation date: 2026-09-04
+#  Hash: 68511475f912873c7c147da2df3898da
+#  Last DTC: 2001-08-15 09:01:00
 ```
 
 For a visual overview of the NIF data set
@@ -264,8 +265,8 @@ nif_poc %>%
 
 | DOSE |    n |
 |-----:|-----:|
-|  250 | 1093 |
-|  500 | 4763 |
+|  250 |  721 |
+|  500 | 5429 |
 
 To identify the subjects with dose reductions, we can use the
 [`dose_red_sbs()`](../reference/dose_red_sbs.md) function provided by
@@ -275,20 +276,20 @@ the nif package:
 
 nif_poc %>%
   dose_red_sbs()
-#  # A tibble: 30 × 2
+#  # A tibble: 22 × 2
 #        ID USUBJID          
 #     <dbl> <chr>            
-#   1    29 20230000221030016
-#   2    34 20230000221040006
-#   3    67 20230000221070001
-#   4    79 20230000221080005
-#   5    76 20230000221080002
-#   6    13 20230000221020012
-#   7    35 20230000221040007
-#   8     5 20230000221010005
-#   9    77 20230000221080003
-#  10    32 20230000221040004
-#  # ℹ 20 more rows
+#   1    36 20230000221040002
+#   2    13 20230000221020006
+#   3    73 20230000221070009
+#   4    48 20230000221050007
+#   5    75 20230000221080001
+#   6    11 20230000221020002
+#   7    53 20230000221050012
+#   8    47 20230000221050005
+#   9    18 20230000221020012
+#  10    14 20230000221020007
+#  # ℹ 12 more rows
 ```
 
 Let’s have a plot of the doses over time in these subjects:
@@ -363,7 +364,7 @@ identify those:
 
 nif_poc %>%
   rich_sampling_sbs(analyte = "RS2023", max_time = 24, n = 6)
-#   [1]  1  6  7 17 18 19 20 21 30 42 54 67
+#   [1]  1 10 11 24 25 35 36 45 56 57 58 75
 ```
 
 For details, see the documentation to
@@ -434,7 +435,7 @@ nca %>%
 
 | RICH_N | n | aucinf.obs | auclast | cmax | half.life | tmax |
 |:---|---:|:---|:---|:---|:---|:---|
-| 1 | 12 | 21258.59 (29) | 19493.05 (29) | 3542.7 (28) | 3.02 (7) | 2.48 (2.17; 3.95) |
-| 2 | 12 | 21626.44 (29) | 19812.43 (29) | 3533.69 (27) | 3.05 (7) | 2.44 (1.85; 3.93) |
-| NA | 165 | NA | 6606.92 (159) | NA | NA | NA |
-| NA | 171 | NA | NA | 1320.39 (636) | NA | 2.25 (1.55; 47.97) |
+| 1 | 12 | 18559.49 (32) | 17034.86 (30) | 3130.56 (28) | 3.01 (9) | 2.48 (2.12; 3.02) |
+| 2 | 12 | 18822.38 (32) | 17261.24 (31) | 3110.41 (28) | 3.01 (9) | 2.49 (2.18; 3.02) |
+| NA | 173 | NA | 5744.66 (186) | NA | NA | NA |
+| NA | 176 | NA | NA | 1221.45 (607) | NA | 2.15 (1.62; 47.98) |

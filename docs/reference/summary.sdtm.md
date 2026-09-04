@@ -61,11 +61,11 @@ summary(examplinib_poc)
 #> 
 #> Data disposition:
 #>   DOMAIN  SUBJECTS  OBSERVATIONS  
-#>   dm      89        89            
-#>   vs      89        178           
-#>   ex      80        477           
+#>   dm      117       117           
+#>   vs      117       234           
+#>   ex      80        455           
 #>   pc      80        1344          
-#>   lb      89        89            
+#>   lb      117       117           
 #>   ts      0         0             
 #>   pp      12        432
 #> 
@@ -85,7 +85,7 @@ summary(examplinib_poc)
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: a548abb8766f7d82a2a6be50c784b09b
-#> Last DTC: 2001-07-18 10:24:00
+#> Hash: 5bc89e9fe26d195ef49ffc7b75abbe9b
+#> Last DTC: 2001-08-15 11:01:00
 #> 
 ```

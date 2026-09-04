@@ -42,42 +42,49 @@ head(index_dosing_interval(examplinib_fe_nif))
 #> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0   2 6325.101  RS2023 RS2023
 #> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0   2 6294.187  RS2023 RS2023
 #> 6 2001-01-05 12:05:00  2.0   2.0  2.0 2.0    0   0   2 5932.464  RS2023 RS2023
-#>   TRTDY METABOLITE DOSE MDV ACTARMCD IMPUTATION PERIOD FASTED DI TREATMENT
-#> 1     1      FALSE  500   1       AB                 1      1  1         A
-#> 2     1      FALSE  500   0       AB                 1      1  1         A
-#> 3     1      FALSE  500   0       AB                 1      1  1         A
-#> 4     1      FALSE  500   0       AB                 1      1  1         A
-#> 5     1      FALSE  500   0       AB                 1      1  1         A
-#> 6     1      FALSE  500   0       AB                 1      1  1         A
-#>                    EPOCH
-#> 1 OPEN LABEL TREATMENT 1
-#> 2 OPEN LABEL TREATMENT 1
-#> 3 OPEN LABEL TREATMENT 1
-#> 4 OPEN LABEL TREATMENT 1
-#> 5 OPEN LABEL TREATMENT 1
-#> 6 OPEN LABEL TREATMENT 1
+#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION PERIOD FASTED DI
+#> 1     1      FALSE  500   1       AB time copied from EXSTDTC      1      1  1
+#> 2     1      FALSE  500   0       AB                               1      1  1
+#> 3     1      FALSE  500   0       AB                               1      1  1
+#> 4     1      FALSE  500   0       AB                               1      1  1
+#> 5     1      FALSE  500   0       AB                               1      1  1
+#> 6     1      FALSE  500   0       AB                               1      1  1
+#>   TREATMENT                  EPOCH
+#> 1         A OPEN LABEL TREATMENT 1
+#> 2         A OPEN LABEL TREATMENT 1
+#> 3         A OPEN LABEL TREATMENT 1
+#> 4         A OPEN LABEL TREATMENT 1
+#> 5         A OPEN LABEL TREATMENT 1
+#> 6         A OPEN LABEL TREATMENT 1
 head(index_dosing_interval(examplinib_poc_nif))
 #>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
-#> 1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#> 2   2  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#> 3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#> 4   4  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#> 5   5  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
-#> 6   6  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114
+#> 1   1  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
+#> 2   2  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
+#> 3   3  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
+#> 4   4  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
+#> 5   5  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
+#> 6   6  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
 #>                   DTC  TIME NTIME  TAFD   TAD EVID AMT CMT        DV    ANALYTE
-#> 1 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    1 500   1        NA     RS2023
-#> 2 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    0   0   2    0.0000     RS2023
-#> 3 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    0   0   3    0.0000 RS2023487A
-#> 4 2001-01-07 10:34:00 0.867   0.5 0.867 0.867    0   0   2  615.0549     RS2023
-#> 5 2001-01-07 10:34:00 0.867   0.5 0.867 0.867    0   0   3  120.1609 RS2023487A
-#> 6 2001-01-07 11:02:00 1.333   1.0 1.333 1.333    0   0   2 1841.7238     RS2023
-#>   PARENT TRTDY METABOLITE DOSE MDV  ACTARMCD IMPUTATION DI BL_CREAT  BL_CRCL
-#> 1 RS2023     1      FALSE  500   1 TREATMENT             1 86.46559 78.66727
-#> 2 RS2023     1      FALSE  500   0 TREATMENT             1 86.46559 78.66727
-#> 3 RS2023     1      FALSE  500   0 TREATMENT             1 86.46559 78.66727
-#> 4 RS2023     1      FALSE  500   0 TREATMENT             1 86.46559 78.66727
-#> 5 RS2023     1      FALSE  500   0 TREATMENT             1 86.46559 78.66727
-#> 6 RS2023     1      FALSE  500   0 TREATMENT             1 86.46559 78.66727
+#> 1 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    1 500   1        NA     RS2023
+#> 2 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    0   0   2    0.0000     RS2023
+#> 3 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    0   0   3    0.0000 RS2023487A
+#> 4 2001-01-05 11:31:00 1.100   0.5 1.100 1.100    0   0   2  553.4686     RS2023
+#> 5 2001-01-05 11:31:00 1.100   0.5 1.100 1.100    0   0   3  121.0349 RS2023487A
+#> 6 2001-01-05 12:00:00 1.583   1.0 1.583 1.583    0   0   2 1484.4186     RS2023
+#>   PARENT TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION DI
+#> 1 RS2023     1      FALSE  500   1 TREATMENT time copied from EXSTDTC  1
+#> 2 RS2023     1      FALSE  500   0 TREATMENT                           1
+#> 3 RS2023     1      FALSE  500   0 TREATMENT                           1
+#> 4 RS2023     1      FALSE  500   0 TREATMENT                           1
+#> 5 RS2023     1      FALSE  500   0 TREATMENT                           1
+#> 6 RS2023     1      FALSE  500   0 TREATMENT                           1
+#>   BL_CREAT  BL_CRCL
+#> 1 58.84185 165.5927
+#> 2 58.84185 165.5927
+#> 3 58.84185 165.5927
+#> 4 58.84185 165.5927
+#> 5 58.84185 165.5927
+#> 6 58.84185 165.5927
 head(index_dosing_interval(examplinib_poc_min_nif))
 #>   REF ID  TIME EVID AMT CMT       DV ANALYTE PARENT MDV DI RATE
 #> 1   1  1 0.000    1 500   1       NA    CMT1   CMT1   1  1    0

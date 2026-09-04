@@ -118,9 +118,9 @@ head(nif, 3)
 #> 2 2000-12-31 10:18:00    0     0    0   0    0   0   2  0     RS2023 RS2023
 #> 3 2000-12-31 10:18:00    0     0    0   0    0   0   3  0 RS2023487A RS2023
 #>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION BL_CREAT  BL_CRCL
-#> 1     1      FALSE    5   1       C1 time copied from EXSTDTC  67.4825 135.8911
-#> 2     1      FALSE    5   0       C1                           67.4825 135.8911
-#> 3     1       TRUE    5   0       C1                           67.4825 135.8911
+#> 1     1      FALSE    5   1       C1 time copied from EXSTDTC  88.9614 103.0815
+#> 2     1      FALSE    5   0       C1                           88.9614 103.0815
+#> 3     1       TRUE    5   0       C1                           88.9614 103.0815
 #>   BL_RENAL
 #> 1   normal
 #> 2   normal

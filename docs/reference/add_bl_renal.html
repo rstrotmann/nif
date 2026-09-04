@@ -79,29 +79,29 @@ Currently either: egfr_mdrd, egfr_cg or egfr_raynaud</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">add_bl_renal</span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000022 20230000221010001  81   0 WHITE  180.5   93.9 28.82114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC  TIME NTIME  TAFD   TAD EVID AMT    ANALYTE CMT PARENT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    1 500     RS2023   1 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    0   0     RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-07 09:42:00 0.000   0.0 0.000 0.000    0   0 RS2023487A   3 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-07 10:34:00 0.867   0.5 0.867 0.867    0   0     RS2023   2 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-07 10:34:00 0.867   0.5 0.867 0.867    0   0 RS2023487A   3 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   TRTDY METABOLITE DOSE MDV  ACTARMCD IMPUTATION       DV BL_CREAT  BL_CRCL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE  500   1 TREATMENT                  NA 86.46559 78.66727</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE  500   0 TREATMENT              0.0000 86.46559 78.66727</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE  500   0 TREATMENT              0.0000 86.46559 78.66727</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE  500   0 TREATMENT            615.0549 86.46559 78.66727</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE  500   0 TREATMENT            120.1609 86.46559 78.66727</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   BL_RENAL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     mild</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     mild</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     mild</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     mild</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     mild</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV    ANALYTE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-05 10:25:00  0.0   0.0  0.0 0.0    1 500   1       NA     RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-05 10:25:00  0.0   0.0  0.0 0.0    0   0   2   0.0000     RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-05 10:25:00  0.0   0.0  0.0 0.0    0   0   3   0.0000 RS2023487A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-05 11:31:00  1.1   0.5  1.1 1.1    0   0   2 553.4686     RS2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-05 11:31:00  1.1   0.5  1.1 1.1    0   0   3 121.0349 RS2023487A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PARENT TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION BL_CREAT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 RS2023     1      FALSE  500   1 TREATMENT time copied from EXSTDTC 58.84185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 RS2023     1      FALSE  500   0 TREATMENT                          58.84185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 RS2023     1      FALSE  500   0 TREATMENT                          58.84185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 RS2023     1      FALSE  500   0 TREATMENT                          58.84185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 RS2023     1      FALSE  500   0 TREATMENT                          58.84185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    BL_CRCL BL_RENAL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 165.5927   normal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 165.5927   normal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 165.5927   normal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 165.5927   normal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 165.5927   normal</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

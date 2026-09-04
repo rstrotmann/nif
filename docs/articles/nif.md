@@ -166,7 +166,7 @@ examplinib_fe
 #>   RS2023      RS2023      
 #>   RS2023487A  RS2023487A
 #> 
-#> Hash: 0bd5d61ddcbeb185fe55a919c37b651a
+#> Hash: 7c0d6cea178d5af0da1768a17b2513a3
 #> Last DTC: 2001-03-10 11:28:00
 ```
 
@@ -253,7 +253,7 @@ summary(domain(examplinib_sad, "pc"), silent = TRUE)
 #>   EPOCH                 
 #>   OPEN LABEL TREATMENT
 #> 
-#> Hash: 0a223bbb9643ac266829d56717a1fe1f
+#> Hash: 618e6736d84c901296ac92207aeed368
 #> Last DTC: 2001-03-02 12:31:00
 ```
 
@@ -571,7 +571,8 @@ summary(nif)
 #>   RS2023  2    2    2     2
 #> 
 #> NIF version: 0.66.0
-#> Hash: d73b33857db2ba4ef00cf17ff0887a1e
+#> Creation date: 2026-09-04
+#> Hash: f3450737405f8bea2b71507367049d1f
 #> Last DTC: 2001-03-10 10:28:00
 ```
 
