@@ -20,7 +20,7 @@ parent. All baseline observations before the first dosing interval get
 assigned to the first dosing interval.
 }
 \examples{
-head(index_dosing_interval(examplinib_fe_nif))
-head(index_dosing_interval(examplinib_poc_nif))
-head(index_dosing_interval(examplinib_poc_min_nif))
+index_dosing_interval(examplinib_fe_nif)
+index_dosing_interval(examplinib_poc_nif)
+index_dosing_interval(examplinib_poc_min_nif)
 }

@@ -152,7 +152,6 @@ index_id <- function(obj) {
 nif <- function(obj = NULL, ..., silent = NULL) {
   # Case 1: Empty minimal nif object
   if (is.null(obj)) {
-    # empty nif object
     data <- tibble(
       REF = integer(), ID = integer(), TIME = integer(), AMT = integer(),
       CMT = integer(), EVID = integer(), DV = integer()
@@ -874,13 +873,51 @@ head.nif <- function(x, ...) {
 #' @return A NIF object with the DI column added.
 #' @export
 #' @examples
-#' head(index_dosing_interval(examplinib_fe_nif))
-#' head(index_dosing_interval(examplinib_poc_nif))
-#' head(index_dosing_interval(examplinib_poc_min_nif))
-index_dosing_interval <- function(
-    obj,
-    parent = NULL
-) {
+#' index_dosing_interval(examplinib_fe_nif)
+#' index_dosing_interval(examplinib_poc_nif)
+#' index_dosing_interval(examplinib_poc_min_nif)
+# index_dosing_interval <- function(
+#     obj,
+#     parent = NULL
+# ) {
+#   # input validation
+#   validate_nif(obj)
+#   validate_argument(parent, "character", allow_null = TRUE,
+#                     allow_multiple = TRUE)
+#
+#   # business logic
+#   obj <- obj |>
+#     ensure_analyte() |>
+#     ensure_parent() |>
+#     arrange_and_add_ref() |>
+#     select(-any_of("DI"))
+#
+#   if (is.null(parent)) {
+#     parent <- parents(obj)
+#   }
+#
+#   di <- obj |>
+#     # as.data.frame() |>
+#     filter(.data$PARENT %in% parent, .data$EVID == 1) |>
+#     arrange(.data$ID, .data$PARENT, .data$TIME, .data$REF) |>
+#     mutate(
+#       DI = dplyr::dense_rank(.data$TIME),
+#       .by = c("ID", "PARENT")
+#     ) |>
+#     select("REF", "DI")
+#
+#   obj |>
+#     left_join(di, by = "REF") |>
+#
+#     group_by(.data$ID, .data$PARENT) |>
+#     arrange(.data$REF) |>
+#     tidyr::fill("DI", .direction = "downup") |>
+#     ungroup() |>
+#
+#     nif()
+# }
+
+index_dosing_interval <- function(obj, parent = NULL) {
   # input validation
   validate_nif(obj)
   validate_argument(parent, "character", allow_null = TRUE,
@@ -888,32 +925,24 @@ index_dosing_interval <- function(
 
   # business logic
   obj <- obj |>
-    ensure_analyte() |>
     ensure_parent() |>
-    arrange_and_add_ref() |>
     select(-any_of("DI"))
 
-  if (is.null(parent)) {
-    parent <- parents(obj)
-  }
-
-  di <- obj |>
-    as.data.frame() |>
-    filter(.data$PARENT %in% parent, .data$EVID == 1) |>
-    arrange(.data$ID, .data$PARENT, .data$TIME, .data$REF) |>
+  obj |>
     mutate(
-      DI = dplyr::dense_rank(.data$TIME),
+      DI = dplyr::dense_rank(
+        replace(
+          .data$TIME,
+          .data$EVID != 1 |
+            (!is.null(parent) & !.data$PARENT %in% parent),
+          NA
+        )
+      ),
       .by = c("ID", "PARENT")
     ) |>
-    select("REF", "DI")
-
-  obj |>
-    left_join(di, by = "REF") |>
-    group_by(.data$ID, .data$PARENT) |>
-    arrange(.data$REF) |>
-    tidyr::fill("DI", .direction = "downup") |>
-    ungroup() |>
-    nif()
+    arrange(.data$ID, .data$PARENT, .data$TIME) |>
+    tidyr::fill("DI", .direction = "downup", .by = c("ID", "PARENT"))# |>
+    # nif()
 }
 
 
@@ -1108,8 +1137,10 @@ guess_parent <- function(obj) {
 #' `REG` and dose level `DL` added.
 #' @export
 index_regimen <- function(obj, admin_window = 12, silent = NULL) {
+  # input validation
   validate_nif(obj)
   validate_argument(admin_window, "numeric")
+
   if (admin_window <= 0) {
     stop("admin_window must be positive!")
   }
@@ -1125,14 +1156,14 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
   admin <- obj |>
     ensure_dose() |>
     ensure_analyte() |>
-    as.data.frame() |>
+    # as.data.frame() |>
     filter(.data$EVID == 1)
 
   if (nrow(admin) == 0) {
     stop("No administrations (EVID = 1) in data set!")
   }
 
-  # business logic starts here
+  # business logic
 
   # administration times with any administrations being within the admin_window
   # to each other falling into one .cluster
@@ -1140,14 +1171,23 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
     filter(.data$EVID == 1) |>
     distinct(.data$ID, .data$TIME) |>
     arrange(.data$ID, .data$TIME) |>
-    group_by(.data$ID) |>
+
+    # group_by(.data$ID) |>
+    # mutate(
+    #   .cluster = cumsum(
+    #     dplyr::row_number() == 1 |
+    #       (.data$TIME - dplyr::lag(.data$TIME)) >= admin_window
+    #   )
+    # ) |>
+    # ungroup()
+
     mutate(
       .cluster = cumsum(
         dplyr::row_number() == 1 |
           (.data$TIME - dplyr::lag(.data$TIME)) >= admin_window
-      )
-    ) |>
-    ungroup()
+      ),
+      .by = "ID"
+    )
 
   # identify dose level, dosing regimen
   dose_regimen <- obj |>
@@ -1176,13 +1216,19 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
 
   obj |>
     left_join(dose_regimen, by = c("ID", "TIME")) |>
-    group_by(.data$ID) |>
-    arrange(.data$TIME, .by_group = TRUE) |>
+    # group_by(.data$ID) |>
+    # arrange(.data$TIME, .by_group = TRUE) |>
+    # tidyr::fill("REG_ID", .direction = "downup") |>
+    # tidyr::fill("REG", .direction = "downup") |>
+    # tidyr::fill("DL", .direction = "downup") |>
+    # ungroup() |>
+    # nif()
+
+    # group_by(.data$ID) |>
+    arrange(across(any_of(c("ID", "TIME")))) |>
     tidyr::fill("REG_ID", .direction = "downup") |>
     tidyr::fill("REG", .direction = "downup") |>
-    tidyr::fill("DL", .direction = "downup") |>
-    ungroup() |>
-    nif()
+    tidyr::fill("DL", .direction = "downup")
 }
 
 
@@ -1216,7 +1262,7 @@ add_dose_level <- function(obj, silent = NULL) {
   admin <- obj |>
     ensure_dose() |>
     ensure_analyte() |>
-    as.data.frame() |>
+    # as.data.frame() |>
     filter(.data$EVID == 1)
 
   if (nrow(admin) == 0) {
@@ -1237,10 +1283,13 @@ add_dose_level <- function(obj, silent = NULL) {
 
   obj |>
     index_regimen() |>
-    group_by(.data$ID) |>
-    mutate(DL = .data$DL[row_number() == 1]) |>
-    select(-c("REG_ID", "REG")) |>
-    nif()
+
+    # group_by(.data$ID) |>
+    # mutate(DL = .data$DL[row_number() == 1]) |>
+
+    mutate(DL = .data$DL[row_number() == 1], .by = "ID") |>
+    select(-c("REG_ID", "REG")) #|>
+    # nif()
 
 }
 
@@ -1255,19 +1304,19 @@ add_dose_level <- function(obj, silent = NULL) {
 #' @return Result as NIF object.
 #' @export
 #' @examples
-#' head(add_obs_per_dosing_interval(examplinib_poc_nif))
-#' head(add_obs_per_dosing_interval(examplinib_poc_min_nif))
+#' add_obs_per_dosing_interval(examplinib_poc_nif)
+#' add_obs_per_dosing_interval(examplinib_poc_min_nif)
 add_obs_per_dosing_interval <- function(obj) {
   # input validation
   validate_nif(obj)
 
   # business logic
   obj |>
+    ensure_analyte() |>
     index_dosing_interval() |>
-    group_by(across(any_of(c("ID", "USUBJID", "ANALYTE", "DI")))) |>
-    mutate(OPDI = sum(.data$EVID == 0)) |>
-    ungroup() |>
-    nif()
+
+    mutate(OPDI = sum(.data$EVID == 0),
+           .by = any_of(c("ID", "USUBJID", "ANALYTE", "DI")))
 }
 
 
@@ -1291,7 +1340,7 @@ add_obs_per_dosing_interval <- function(obj) {
 #' @return A new NIF object.
 #' @export
 #' @examples
-#' head(index_rich_sampling_intervals(examplinib_poc_nif))
+#' index_rich_sampling_intervals(examplinib_poc_nif)
 #'
 index_rich_sampling_intervals <- function(
     obj,
@@ -1303,27 +1352,11 @@ index_rich_sampling_intervals <- function(
 
   # business logic
   obj |>
-    ensure_analyte() |>
-    arrange(.data$ID, .data$TIME, .data$ANALYTE) |>
     add_obs_per_dosing_interval() |>
-    mutate(RICHINT_TEMP = (.data$OPDI >= min_n)) |>
-    group_by(.data$ID, .data$ANALYTE, .data$DI) |>
-    mutate(RICH_START = case_when(
-      row_number() == 1 & .data$RICHINT_TEMP == TRUE ~ TRUE,
-      .default = FALSE
-    )) |>
-    ungroup() |>
-    group_by(.data$ID, .data$ANALYTE, .data$RICH_START) |>
-    mutate(RICH_N = case_when(
-      .data$RICHINT_TEMP == TRUE & .data$RICH_START == TRUE ~ row_number(),
-      .default = NA
-    )) |>
-    ungroup() |>
-    group_by(.data$ID, .data$ANALYTE, .data$DI, .data$RICHINT_TEMP) |>
-    tidyr::fill("RICH_N", .direction = "down") |>
-    ungroup() |>
-    select(-c("RICHINT_TEMP", "RICH_START")) |>
-    nif()
+    mutate(
+      RICH_N = dplyr::dense_rank(replace(.data$DI, .data$OPDI < min_n, NA)),
+      .by = c("ID", "ANALYTE")
+    )
 }
 
 

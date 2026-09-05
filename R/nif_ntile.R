@@ -61,6 +61,7 @@ add_ntile <- function(
 
   # Check that required columns exist: ID, input_col
   required_cols <- c("ID", input_col)
+
   missing_cols <- setdiff(required_cols, names(nif))
   if (length(missing_cols) > 0) {
     stop(
@@ -109,6 +110,5 @@ add_ntile <- function(
     left_join(
       temp,
       by = input_col
-    ) |>
-    nif()
+    )
 }

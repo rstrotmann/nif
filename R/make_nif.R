@@ -129,20 +129,6 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     index_id() |>
     make_time() |>
     arrange(.data$DTC) |>
-    # group_by(.data$ID, .data$PARENT) |>
-    # tidyr::fill(
-    #   any_of(
-    #     c(
-    #       "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
-    #       "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT",
-    #       "DOSE", "EPOCH", "FASTED", "FOOD"
-    #     )
-    #   ),
-    #   .direction = "downup"
-    # ) |>
-    # fill(any_of(c(starts_with("BL_"))), .direction = "downup") |>
-    # ungroup()
-
     tidyr::fill(
       any_of(c(
         "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY", "HEIGHT",
@@ -164,10 +150,8 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   }
 
   out <- out |>
-    # nif() |>
     arrange_and_add_ref()
 
-  # class(out) <- c("nif", "data.frame")
   order_nif_columns(out)
 }
 

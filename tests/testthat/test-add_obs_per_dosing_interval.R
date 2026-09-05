@@ -163,8 +163,7 @@ test_that("add_obs_per_dosing_interval derives CMT-based ANALYTE and counts per 
   ) |>
     nif()
 
-  result <- add_obs_per_dosing_interval(nif_obj) |>
-    as.data.frame()
+  result <- add_obs_per_dosing_interval(nif_obj)
 
   expect_true("ANALYTE" %in% names(result))
   expect_true(all(c("CMT1", "CMT2") %in% result$ANALYTE))

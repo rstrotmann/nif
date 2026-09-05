@@ -65,7 +65,7 @@ The external data can be imported as a nif object using `import_nif()`:
 
 ```{r}
 nif <- import_nif(csv_file_name, format = "csv")
-head(nif)
+nif
 ```
 
 The resulting object is a regular `nif` object. It can be summarized or plotted

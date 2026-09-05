@@ -32,15 +32,21 @@ add_bintime <- function(
   # business code
   # Grouped binning: split by group, apply ungrouped binning to each, combine
   if (!is.null(group)) {
-    return(
-      obj |>
-        tidyr::nest(.by = all_of(group)) |>
-        mutate(data = purrr::map(data, function(x) {
-          as_nif(x) |> add_bintime(method = method, time = time)
-        })) |>
-        tidyr::unnest(cols = "data") |>
-        as_nif()
-    )
+    out <- obj |>
+      group_by(across(all_of(group))) |>
+      group_modify(function(.x, .y) {
+        add_bintime(
+          new_nif(
+            .x,
+            nif_version = attr(obj, "nif_version"),
+            creation_date = attr(obj, "creation_date")
+          ),
+          method = method,
+          time = time
+        )
+      }) |>
+      ungroup()
+    return(dplyr::dplyr_reconstruct(out, obj))
   }
 
   obj <- obj |>
@@ -74,8 +80,8 @@ add_bintime <- function(
     mutate(BIN_LEFT = bin_par[.data$.BINTIME_INDEX, "left"]) |>
     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
     mutate(BINTIME = bin_par[.data$.BINTIME_INDEX, "label"]) |>
-    select(-c(".BINTIME_INDEX", "active_time")) |>
-    as_nif()
+    select(-c(".BINTIME_INDEX", "active_time")) #|>
+    # as_nif()
 }
 
 

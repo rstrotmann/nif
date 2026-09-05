@@ -29,6 +29,6 @@ interval. The index of the rich sampling intervals per subject and analyte is
 reported in the 'RICH_N' field.
 }
 \examples{
-head(index_rich_sampling_intervals(examplinib_poc_nif))
+index_rich_sampling_intervals(examplinib_poc_nif)
 
 }

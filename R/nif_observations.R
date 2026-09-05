@@ -1063,7 +1063,6 @@ add_observation <- function(
   out <- obj |>
     select(-c("NO_ADMIN_FLAG")) |>
     index_id() |>
-    # nif() |>
     normalize_nif(keep = c(keep, ".current_observation"))
 
     # IMPUTATION
