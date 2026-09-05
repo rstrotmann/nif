@@ -64,7 +64,7 @@ guess_lbspec <- function(lb) {
 #' @param keep_no_obs_sbs Retain subjects without observations.
 #'
 #' @return A nif object.
-#' @export
+#' @noRd
 #' @examples
 #' limit(examplinib_poc_nif)
 #'
@@ -74,19 +74,9 @@ limit <- function(
     keep_no_obs_sbs = FALSE
 ) {
   # Input validation
-  validate_nif(obj)
+  validate_nif(obj, fields = c("DTC", "ID", "EVID"))
   validate_argument(individual, "logical")
   validate_argument(keep_no_obs_sbs, "logical")
-
-  # Check for required fields
-  required_fields <- c("DTC", "ID", "EVID")
-  missing_fields <- setdiff(required_fields, names(obj))
-  if (length(missing_fields) > 0) {
-    stop(paste0(
-      "Missing required fields in nif object: ",
-      nice_enumeration(missing_fields)
-    ))
-  }
 
   max_dtc <- max(obj$DTC, na.rm = TRUE)
 
@@ -99,24 +89,18 @@ limit <- function(
 
   if (keep_no_obs_sbs == FALSE) {
     obj <- obj |>
-      group_by(.data$ID) |>
-      filter(sum(.data$EVID == 0) > 0) |>
-      ungroup()
+      filter(sum(.data$EVID == 0) > 0, .by = "ID")
   }
 
   if (individual == TRUE) {
     obj |>
-      group_by(.data$ID) |>
-      mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[.data$EVID == 0])) |>
-      ungroup() |>
+      mutate(LAST_OBS_DTC = max_or_inf(.data$DTC[.data$EVID == 0]), .by = "ID") |>
       filter(.data$DTC <= .data$LAST_OBS_DTC) |>
-      select(-c("LAST_OBS_DTC")) |>
-      nif()
+      select(-c("LAST_OBS_DTC"))
   } else {
     last_obs_dtc <- max(obj$DTC[obj$EVID == 0], na.rm = TRUE)
     obj |>
-      filter(.data$DTC <= last_obs_dtc) |>
-      nif()
+      filter(.data$DTC <= last_obs_dtc)
   }
 }
 

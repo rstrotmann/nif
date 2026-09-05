@@ -110,7 +110,7 @@ index_id <- function(obj) {
 #'
 #' @returns A nif object.
 #' @noRd
-new_nif <- function(data, nif_version = NULL, creation_date = NULL) {
+  new_nif <- function(data, nif_version = NULL, creation_date = NULL) {
   if (is.null(nif_version))
     nif_version <- packageVersion("nif")
 
@@ -175,7 +175,9 @@ nif <- function(obj = NULL, ..., silent = NULL) {
     stop("obj must be a data frame or sdtm object")
   }
 
-  # Case 3: Nif object from nif object or from data frame
+  # Pre-processing for other cases:
+  # Nif object from nif object or from data frame
+
   # validate inputs
   missing_min_fields <- setdiff(minimal_nif_fields, names(obj))
   if (length(missing_min_fields) > 0) {
@@ -202,7 +204,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
     ))
   }
 
-  # Case 4: Nif object from nif object
+  # Case 3: Nif object from nif object
   if (inherits(obj, "nif")) {
     out <- obj |>
       arrange_and_add_ref() |>
@@ -211,7 +213,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
     return(new_nif(out, creation_date = attr(obj, "creation_date")))
   }
 
-  # Case 5: Nif object from data frame
+  # Case 4: Nif object from data frame
   if (inherits(obj, "data.frame")) {
     # make ID only if ID is not yet present
     if (!"ID" %in% names(obj))

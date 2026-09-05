@@ -214,7 +214,7 @@ test_that("limit handles empty nif object", {
   # Should error because DTC field is missing
   expect_error(
     limit(empty_nif),
-    "Missing required fields in nif object"
+    "Missing required fields: DTC"
   )
 })
 
