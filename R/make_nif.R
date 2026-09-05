@@ -115,6 +115,9 @@ limit <- function(
 #' @param cleanup Remove non-essential fields, as logical.
 #' @return A nif object.
 #' @noRd
+#' @examples
+#' normalize_nif(examplinib_sad_nif)
+#'
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   # input validation
   validate_nif(obj)
@@ -126,19 +129,34 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
     index_id() |>
     make_time() |>
     arrange(.data$DTC) |>
-    group_by(.data$ID, .data$PARENT) |>
+    # group_by(.data$ID, .data$PARENT) |>
+    # tidyr::fill(
+    #   any_of(
+    #     c(
+    #       "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
+    #       "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT",
+    #       "DOSE", "EPOCH", "FASTED", "FOOD"
+    #     )
+    #   ),
+    #   .direction = "downup"
+    # ) |>
+    # fill(any_of(c(starts_with("BL_"))), .direction = "downup") |>
+    # ungroup()
+
     tidyr::fill(
-      any_of(
-        c(
-          "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY",
-          "HEIGHT", "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT",
-          "DOSE", "EPOCH", "FASTED", "FOOD"
-        )
-      ),
-      .direction = "downup"
+      any_of(c(
+        "STUDYID", "AGE", "SEX", "RACE", "ETHNIC", "COUNTRY", "HEIGHT",
+        "WEIGHT", "BMI", "ACTARMCD", "ARM", "PART", "COHORT", "DOSE", "EPOCH",
+        "FASTED", "FOOD"
+      )),
+      .direction = "downup",
+      .by = c("ID", "PARENT")
     ) |>
-    fill(any_of(c(starts_with("BL_"))), .direction = "downup") |>
-    ungroup()
+    fill(
+      any_of(c(starts_with("BL_"))),
+      .direction = "downup",
+      .by = c("ID", "PARENT")
+    )
 
   if (isTRUE(cleanup)) {
     out <- out |>
@@ -146,7 +164,7 @@ normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   }
 
   out <- out |>
-    nif() |>
+    # nif() |>
     arrange_and_add_ref()
 
   # class(out) <- c("nif", "data.frame")
