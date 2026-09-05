@@ -98,8 +98,6 @@ index_id <- function(obj) {
     )) |>
     select(-".temp_id")
 
-  # class(out) <- c("nif", "data.frame")
-  # out
   new_nif(out)
 }
 
@@ -874,49 +872,6 @@ head.nif <- function(x, ...) {
 #' @export
 #' @examples
 #' index_dosing_interval(examplinib_fe_nif)
-#' index_dosing_interval(examplinib_poc_nif)
-#' index_dosing_interval(examplinib_poc_min_nif)
-# index_dosing_interval <- function(
-#     obj,
-#     parent = NULL
-# ) {
-#   # input validation
-#   validate_nif(obj)
-#   validate_argument(parent, "character", allow_null = TRUE,
-#                     allow_multiple = TRUE)
-#
-#   # business logic
-#   obj <- obj |>
-#     ensure_analyte() |>
-#     ensure_parent() |>
-#     arrange_and_add_ref() |>
-#     select(-any_of("DI"))
-#
-#   if (is.null(parent)) {
-#     parent <- parents(obj)
-#   }
-#
-#   di <- obj |>
-#     # as.data.frame() |>
-#     filter(.data$PARENT %in% parent, .data$EVID == 1) |>
-#     arrange(.data$ID, .data$PARENT, .data$TIME, .data$REF) |>
-#     mutate(
-#       DI = dplyr::dense_rank(.data$TIME),
-#       .by = c("ID", "PARENT")
-#     ) |>
-#     select("REF", "DI")
-#
-#   obj |>
-#     left_join(di, by = "REF") |>
-#
-#     group_by(.data$ID, .data$PARENT) |>
-#     arrange(.data$REF) |>
-#     tidyr::fill("DI", .direction = "downup") |>
-#     ungroup() |>
-#
-#     nif()
-# }
-
 index_dosing_interval <- function(obj, parent = NULL) {
   # input validation
   validate_nif(obj)
@@ -941,8 +896,7 @@ index_dosing_interval <- function(obj, parent = NULL) {
       .by = c("ID", "PARENT")
     ) |>
     arrange(.data$ID, .data$PARENT, .data$TIME) |>
-    tidyr::fill("DI", .direction = "downup", .by = c("ID", "PARENT"))# |>
-    # nif()
+    tidyr::fill("DI", .direction = "downup", .by = c("ID", "PARENT"))
 }
 
 
@@ -1156,7 +1110,6 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
   admin <- obj |>
     ensure_dose() |>
     ensure_analyte() |>
-    # as.data.frame() |>
     filter(.data$EVID == 1)
 
   if (nrow(admin) == 0) {
@@ -1171,16 +1124,6 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
     filter(.data$EVID == 1) |>
     distinct(.data$ID, .data$TIME) |>
     arrange(.data$ID, .data$TIME) |>
-
-    # group_by(.data$ID) |>
-    # mutate(
-    #   .cluster = cumsum(
-    #     dplyr::row_number() == 1 |
-    #       (.data$TIME - dplyr::lag(.data$TIME)) >= admin_window
-    #   )
-    # ) |>
-    # ungroup()
-
     mutate(
       .cluster = cumsum(
         dplyr::row_number() == 1 |
@@ -1216,19 +1159,10 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
 
   obj |>
     left_join(dose_regimen, by = c("ID", "TIME")) |>
-    # group_by(.data$ID) |>
-    # arrange(.data$TIME, .by_group = TRUE) |>
-    # tidyr::fill("REG_ID", .direction = "downup") |>
-    # tidyr::fill("REG", .direction = "downup") |>
-    # tidyr::fill("DL", .direction = "downup") |>
-    # ungroup() |>
-    # nif()
-
-    # group_by(.data$ID) |>
     arrange(across(any_of(c("ID", "TIME")))) |>
-    tidyr::fill("REG_ID", .direction = "downup") |>
-    tidyr::fill("REG", .direction = "downup") |>
-    tidyr::fill("DL", .direction = "downup")
+    tidyr::fill("REG_ID", .direction = "downup", .by = "ID") |>
+    tidyr::fill("REG", .direction = "downup", .by = "ID") |>
+    tidyr::fill("DL", .direction = "downup", .by = "ID")
 }
 
 
@@ -1283,13 +1217,8 @@ add_dose_level <- function(obj, silent = NULL) {
 
   obj |>
     index_regimen() |>
-
-    # group_by(.data$ID) |>
-    # mutate(DL = .data$DL[row_number() == 1]) |>
-
     mutate(DL = .data$DL[row_number() == 1], .by = "ID") |>
-    select(-c("REG_ID", "REG")) #|>
-    # nif()
+    select(-c("REG_ID", "REG"))
 
 }
 

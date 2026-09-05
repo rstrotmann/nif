@@ -284,3 +284,86 @@ test_that("index_regimen builds DL with analytes sorted like REG", {
   expect_equal(unique(result$DL), "100-DRUG_A+50-DRUG_B")
 })
 
+
+test_that("index_regimen fills predose observations from the first administration", {
+  obj <- nif(tibble::tribble(
+     ~ID, ~TIME, ~AMT, ~CMT, ~EVID,  ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+       1,    -1,    0,    2,     0,  0.1,      "A",     "A",       FALSE,    NA,
+       1,     0,  100,    1,     1,   NA,      "A",     "A",       FALSE,   100,
+       1,     1,    0,    2,     0,   10,      "A",     "A",       FALSE,    NA
+  ))
+
+  result <- index_regimen(obj)
+
+  expect_equal(result$REG_ID, c(1L, 1L, 1L))
+  expect_equal(unique(result$REG), "A")
+  expect_equal(unique(result$DL), "100-A")
+})
+
+
+test_that("index_regimen does not fill REG across subjects onto predose rows", {
+  obj <- nif(tibble::tribble(
+     ~ID, ~TIME, ~AMT, ~CMT, ~EVID,  ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+       1,     0,  100,    1,     1,   NA,      "A",     "A",       FALSE,   100,
+       1,     0,   50,    2,     1,   NA,      "B",     "B",       FALSE,    50,
+       1,     1,    0,    3,     0,   10,      "A",     "A",       FALSE,    NA,
+       2,    -1,    0,    2,     0,  0.1,      "A",     "A",       FALSE,    NA,
+       2,     0,  100,    1,     1,   NA,      "A",     "A",       FALSE,   100
+  ))
+
+  result <- index_regimen(obj)
+  id2 <- result[result$ID == 2, ]
+
+  expect_equal(unique(result$REG[result$ID == 1]), "A+B")
+  expect_equal(unique(id2$REG), "A")
+  expect_equal(id2$REG_ID, c(1L, 1L))
+  expect_equal(unique(id2$DL), "100-A")
+})
+
+
+test_that("index_regimen errors when admin_window is not positive", {
+  obj <- nif(tibble::tribble(
+     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+       1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100
+  ))
+
+  expect_error(
+    index_regimen(obj, admin_window = 0),
+    "admin_window must be positive"
+  )
+  expect_error(
+    index_regimen(obj, admin_window = -1),
+    "admin_window must be positive"
+  )
+})
+
+
+test_that("index_regimen errors when there are no administrations", {
+  obj <- nif(tibble::tribble(
+     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+       1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA
+  ))
+
+  expect_error(index_regimen(obj), "No administrations")
+})
+
+
+test_that("index_regimen replaces existing REG, REG_ID, and DL", {
+  obj <- nif(tibble::tribble(
+     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+       1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+       1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA
+  )) |>
+    mutate(REG = "OLD", REG_ID = 99L, DL = "placeholder")
+
+  result <- index_regimen(obj, silent = TRUE)
+
+  expect_false(
+    any(c("REG.x", "REG.y", "REG_ID.x", "REG_ID.y", "DL.x", "DL.y") %in%
+          names(result))
+  )
+  expect_equal(unique(result$REG), "A")
+  expect_equal(unique(result$REG_ID), 1L)
+  expect_equal(unique(result$DL), "100-A")
+})
+

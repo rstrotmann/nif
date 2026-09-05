@@ -19,8 +19,3 @@ This function adds a column 'DI' that indicates the dosing interval per
 parent. All baseline observations before the first dosing interval get
 assigned to the first dosing interval.
 }
-\examples{
-index_dosing_interval(examplinib_fe_nif)
-index_dosing_interval(examplinib_poc_nif)
-index_dosing_interval(examplinib_poc_min_nif)
-}
