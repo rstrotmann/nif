@@ -11,7 +11,7 @@ assigned to the first dosing interval."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,76 +73,6 @@ assigned to the first dosing interval.</p>
     <p>A NIF object with the DI column added.</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">index_dosing_interval</span><span class="op">(</span><span class="va">examplinib_fe_nif</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0   2 6325.101  RS2023 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0   2 6294.187  RS2023 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-05 12:05:00  2.0   2.0  2.0 2.0    0   0   2 5932.464  RS2023 RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION PERIOD FASTED DI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1      FALSE  500   1       AB time copied from EXSTDTC      1      1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      FALSE  500   0       AB                               1      1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1      FALSE  500   0       AB                               1      1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1      FALSE  500   0       AB                               1      1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     1      FALSE  500   0       AB                               1      1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     1      FALSE  500   0       AB                               1      1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   TREATMENT                  EPOCH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         A OPEN LABEL TREATMENT 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         A OPEN LABEL TREATMENT 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         A OPEN LABEL TREATMENT 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         A OPEN LABEL TREATMENT 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         A OPEN LABEL TREATMENT 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         A OPEN LABEL TREATMENT 1</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">index_dosing_interval</span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC  TIME NTIME  TAFD   TAD EVID AMT CMT        DV    ANALYTE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    1 500   1        NA     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    0   0   2    0.0000     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    0   0   3    0.0000 RS2023487A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-05 11:31:00 1.100   0.5 1.100 1.100    0   0   2  553.4686     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-05 11:31:00 1.100   0.5 1.100 1.100    0   0   3  121.0349 RS2023487A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-05 12:00:00 1.583   1.0 1.583 1.583    0   0   2 1484.4186     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   PARENT TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION DI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 RS2023     1      FALSE  500   1 TREATMENT time copied from EXSTDTC  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 RS2023     1      FALSE  500   0 TREATMENT                           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 RS2023     1      FALSE  500   0 TREATMENT                           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 RS2023     1      FALSE  500   0 TREATMENT                           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 RS2023     1      FALSE  500   0 TREATMENT                           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 RS2023     1      FALSE  500   0 TREATMENT                           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   BL_CREAT  BL_CRCL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 58.84185 165.5927</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 58.84185 165.5927</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 58.84185 165.5927</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 58.84185 165.5927</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 58.84185 165.5927</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 58.84185 165.5927</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">index_dosing_interval</span><span class="op">(</span><span class="va">examplinib_poc_min_nif</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID  TIME EVID AMT CMT       DV ANALYTE PARENT MDV DI RATE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 0.000    1 500   1       NA    CMT1   CMT1   1  1    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 0.000    0   0   2 0.000000    CMT2   CMT1   0  1    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 0.000    0   0   3 0.000000    CMT3   CMT1   0  1    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2.167    0   0   2 3.380265    CMT2   CMT1   0  1    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2.167    0   0   3 3.453869    CMT3   CMT1   0  1    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 4.633    0   0   2 1.477397    CMT2   CMT1   0  1    0</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

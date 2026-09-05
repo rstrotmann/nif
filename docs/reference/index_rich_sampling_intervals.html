@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nif</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.66.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,35 +80,60 @@ reported in the 'RICH_N' field.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">index_rich_sampling_intervals</span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   DTC  TIME NTIME  TAFD   TAD EVID AMT CMT        DV    ANALYTE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    1 500   1        NA     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    0   0   2    0.0000     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2001-01-05 10:25:00 0.000   0.0 0.000 0.000    0   0   3    0.0000 RS2023487A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2001-01-05 11:31:00 1.100   0.5 1.100 1.100    0   0   2  553.4686     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2001-01-05 11:31:00 1.100   0.5 1.100 1.100    0   0   3  121.0349 RS2023487A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2001-01-05 12:00:00 1.583   1.0 1.583 1.583    0   0   2 1484.4186     RS2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   PARENT TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION RICH_N DI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 RS2023     1      FALSE  500   1 TREATMENT time copied from EXSTDTC      1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 RS2023     1      FALSE  500   0 TREATMENT                               1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 RS2023     1      FALSE  500   0 TREATMENT                               1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 RS2023     1      FALSE  500   0 TREATMENT                               1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 RS2023     1      FALSE  500   0 TREATMENT                               1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 RS2023     1      FALSE  500   0 TREATMENT                               1  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   BL_CREAT  BL_CRCL OPDI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 58.84185 165.5927   11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 58.84185 165.5927   11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 58.84185 165.5927   11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 58.84185 165.5927   11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 58.84185 165.5927   11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 58.84185 165.5927   11</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">index_rich_sampling_intervals</span><span class="op">(</span><span class="va">examplinib_poc_nif</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── NONMEM Input Format (NIF) data ────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1344 observations from 80 subjects across 1 study </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7,494 × 32</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     2     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     4     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     5     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     6     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     9     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    10     1 2023000022 20230000221010001    49     1 WHITE   180.   103.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      BMI DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>  31.5 2001-01-05 <span style="color: #949494;">10:25:00</span>  0      0    0     0        1   500     1   <span style="color: #BB0000;">NA</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>  31.5 2001-01-05 <span style="color: #949494;">10:25:00</span>  0      0    0     0        0     0     2    0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  31.5 2001-01-05 <span style="color: #949494;">10:25:00</span>  0      0    0     0        0     0     3    0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  31.5 2001-01-05 <span style="color: #949494;">11:31:00</span>  1.1    0.5  1.1   1.1      0     0     2  553.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>  31.5 2001-01-05 <span style="color: #949494;">11:31:00</span>  1.1    0.5  1.1   1.1      0     0     3  121.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>  31.5 2001-01-05 <span style="color: #949494;">12:00:00</span>  1.58   1    1.58  1.58     0     0     2 <span style="text-decoration: underline;">1</span>484.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>  31.5 2001-01-05 <span style="color: #949494;">12:00:00</span>  1.58   1    1.58  1.58     0     0     3  579.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>  31.5 2001-01-05 <span style="color: #949494;">12:32:00</span>  2.12   1.5  2.12  2.12     0     0     2 <span style="text-decoration: underline;">2</span>073.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>  31.5 2001-01-05 <span style="color: #949494;">12:32:00</span>  2.12   1.5  2.12  2.12     0     0     3 <span style="text-decoration: underline;">1</span>287.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  31.5 2001-01-05 <span style="color: #949494;">13:00:00</span>  2.58   2    2.58  2.58     0     0     2 <span style="text-decoration: underline;">2</span>032.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    ANALYTE    PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> RS2023     RS2023     1 FALSE        500     1 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> RS2023     RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> RS2023487A RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> RS2023     RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> RS2023487A RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> RS2023     RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> RS2023487A RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> RS2023     RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> RS2023487A RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> RS2023     RS2023     1 FALSE        500     0 TREATMENT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    IMPUTATION                 BL_CREAT BL_CRCL    DI  OPDI RICH_N</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #949494;">"</span>time copied from EXSTDTC<span style="color: #949494;">"</span>     58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> <span style="color: #949494;">""</span>                             58.8    166.     1    11      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7,484 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

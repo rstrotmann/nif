@@ -312,8 +312,6 @@ For further guidance see the help for individual functions and the
 - [`lbm_boer()`](lbm_boer.md) : Lean body mass (Boer formula)
 - [`lbm_hume()`](lbm_hume.md) : Lean body mass (Hume formula)
 - [`lbm_peters()`](lbm_peters.md) : Lean body mass (Peters formula)
-- [`limit()`](limit.md) : Subset nif to rows with DTC before the last
-  individual or global observation
 - [`make_time()`](make_time.md) : Calculate time fields based on DTC
 - [`max_admin_time()`](max_admin_time.md) : Maximal administration time
 - [`max_observation_time()`](max_observation_time.md) : Maximal

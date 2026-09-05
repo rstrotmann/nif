@@ -155,9 +155,9 @@ summary(nif)
 #>   PLACEBO  7    210  149.1  182     
 #>   XAN      1    212  99.2   81
 #> 
-#> NIF version: 0.66.0
-#> Creation date: 2026-09-04
-#> Hash: 9ee81cee80bbc171e70a00a2728b948b
+#> NIF version: 0.66.1
+#> Creation date: 2026-09-05
+#> Hash: 52d9bf7b21058f76f0290aa037e072dd
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

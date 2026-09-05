@@ -32,7 +32,7 @@ max_observation_time(examplinib_fe_nif)
 max_observation_time(examplinib_poc_nif)
 #> [1] 220.9
 max_observation_time(examplinib_poc_min_nif)
-#> [1] 228.417
+#> [1] 220.9
 max_observation_time(examplinib_poc_min_nif, analyte = "CMT4")
 #> [1] NA
 ```

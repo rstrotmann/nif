@@ -32,10 +32,10 @@ head(n_administrations(examplinib_poc_nif))
 #> 6  6 20230000221010007 RS2023 70
 head(n_administrations(examplinib_poc_min_nif))
 #>   ID PARENT  N
-#> 1  1   CMT1 64
-#> 2  2   CMT1 71
-#> 3  3   CMT1 55
-#> 4  4   CMT1 78
-#> 5  5   CMT1 95
-#> 6  6   CMT1 91
+#> 1  1   CMT1 81
+#> 2  2   CMT1 92
+#> 3  3   CMT1 76
+#> 4  4   CMT1 58
+#> 5  5   CMT1 70
+#> 6  6   CMT1 70
 ```
