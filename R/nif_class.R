@@ -1168,7 +1168,9 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
 
 #' Add dose level column
 #'
-#' Dose level is defined as the starting dose regimen for each ID.
+#' Dose level is the starting dose regimen for each ID: administrations whose
+#' consecutive times fall within 12 hours (the same window as
+#' [nif::index_regimen()]). Later dose or regimen changes are ignored.
 #'
 #' @param obj A NIF dataset.
 #' @param silent Suppress messages.
@@ -1188,16 +1190,16 @@ add_dose_level <- function(obj, silent = NULL) {
     obj <- select(obj, -any_of(c("DL", "REG", "REG_ID")))
   }
 
-  # business logic
-  if (!"REF" %in% names(obj)) {
-    obj <- arrange_and_add_ref(obj)
-  }
+  # Starting cluster uses the same 12 h consecutive-admin window as
+  # index_regimen().
+  admin_window <- 12
+
+  obj <- ensure_analyte(obj)
 
   admin <- obj |>
-    ensure_dose() |>
-    ensure_analyte() |>
-    # as.data.frame() |>
-    filter(.data$EVID == 1)
+    filter(.data$EVID == 1) |>
+    select("ID", "TIME", "ANALYTE", "AMT") |>
+    as.data.frame()
 
   if (nrow(admin) == 0) {
     stop("No administrations (EVID = 1) in data set!")
@@ -1205,7 +1207,7 @@ add_dose_level <- function(obj, silent = NULL) {
 
   duplicate_admin <- admin |>
     reframe(n = n(), .by = c("ID", "TIME", "ANALYTE")) |>
-    filter(n > 1)
+    filter(.data$n > 1)
 
   if (nrow(duplicate_admin) > 0) {
     stop(paste0(
@@ -1215,11 +1217,33 @@ add_dose_level <- function(obj, silent = NULL) {
     ))
   }
 
-  obj |>
-    index_regimen() |>
-    mutate(DL = .data$DL[row_number() == 1], .by = "ID") |>
-    select(-c("REG_ID", "REG"))
+  starting_times <- admin |>
+    distinct(.data$ID, .data$TIME) |>
+    arrange(.data$ID, .data$TIME) |>
+    mutate(
+      .cluster = cumsum(
+        dplyr::row_number() == 1 |
+          (.data$TIME - dplyr::lag(.data$TIME)) >= admin_window
+      ),
+      .by = "ID"
+    ) |>
+    filter(.data$.cluster == 1) |>
+    select("ID", "TIME")
 
+  starting_dl <- admin |>
+    inner_join(starting_times, by = c("ID", "TIME")) |>
+    summarise(
+      AMT = .data$AMT[which.min(.data$TIME)],
+      .by = c("ID", "ANALYTE")
+    ) |>
+    arrange(.data$ID, .data$ANALYTE) |>
+    summarise(
+      DL = paste(paste(.data$AMT, .data$ANALYTE, sep = "-"), collapse = "+"),
+      .by = "ID"
+    )
+
+  obj |>
+    left_join(starting_dl, by = "ID")
 }
 
 

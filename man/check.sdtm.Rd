@@ -7,9 +7,9 @@
 \method{check}{sdtm}(obj, verbose = TRUE, ...)
 }
 \arguments{
-\item{verbose}{Boolean to indicate whether to include details.}
+\item{obj}{The SDTM as SDTM object.}
 
-\item{sdtm}{The SDTM as SDTM object.}
+\item{verbose}{Boolean to indicate whether to include details.}
 }
 \value{
 Nothing.

@@ -15,5 +15,7 @@ add_dose_level(obj, silent = NULL)
 A NIF dataset.
 }
 \description{
-Dose level is defined as the starting dose regimen for each ID.
+Dose level is the starting dose regimen for each ID: administrations whose
+consecutive times fall within 12 hours (the same window as
+\code{\link[=index_regimen]{index_regimen()}}). Later dose or regimen changes are ignored.
 }

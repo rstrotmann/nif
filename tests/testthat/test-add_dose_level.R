@@ -238,3 +238,109 @@ test_that("add_dose_level errors when no qualifying administrations exist", {
 
   expect_error(add_dose_level(obj), "No administrations")
 })
+
+
+test_that("add_dose_level assigns starting DL to predose observations", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,    -1,    0,    2,     0,   5,      "A",     "A",       FALSE,    NA,
+      1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA
+  ))
+
+  result <- add_dose_level(obj)
+
+  expect_equal(unique(result$DL), "100-A")
+  expect_equal(result$DL[result$TIME == -1], "100-A")
+})
+
+
+test_that("add_dose_level is constant per ID on all rows", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA,
+      1,    24,   50,    1,     1,  NA,      "A",     "A",       FALSE,    50,
+      2,     0,  200,    1,     1,  NA,      "A",     "A",       FALSE,   200,
+      2,     2,    0,    2,     0,  20,      "A",     "A",       FALSE,    NA
+  ))
+
+  result <- add_dose_level(obj)
+
+  expect_equal(unique(result$DL[result$ID == 1]), "100-A")
+  expect_equal(unique(result$DL[result$ID == 2]), "200-A")
+  expect_equal(n_distinct(result$DL[result$ID == 1]), 1)
+  expect_equal(n_distinct(result$DL[result$ID == 2]), 1)
+})
+
+
+test_that("add_dose_level treats a 12 h gap as a new cluster", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE,  ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA, "DRUG_A", "DRUG_A",       FALSE,   100,
+      1,    12,   50,    2,     1,  NA, "DRUG_B", "DRUG_B",       FALSE,    50,
+      1,    13,    0,    3,     0,  10, "DRUG_A", "DRUG_A",       FALSE,    NA
+  ))
+
+  result <- add_dose_level(obj)
+
+  expect_equal(unique(result$DL), "100-DRUG_A")
+})
+
+
+test_that("add_dose_level treats an 11 h gap as the starting cluster", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE,  ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA, "DRUG_A", "DRUG_A",       FALSE,   100,
+      1,    11,   50,    2,     1,  NA, "DRUG_B", "DRUG_B",       FALSE,    50,
+      1,    12,    0,    3,     0,  10, "DRUG_A", "DRUG_A",       FALSE,    NA
+  ))
+
+  result <- add_dose_level(obj)
+
+  expect_equal(unique(result$DL), "100-DRUG_A+50-DRUG_B")
+})
+
+
+test_that("add_dose_level clusters by consecutive admin gaps, not distance from first dose", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE,  ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA, "DRUG_A", "DRUG_A",       FALSE,   100,
+      1,     6,   50,    2,     1,  NA, "DRUG_B", "DRUG_B",       FALSE,    50,
+      1,    12,   25,    3,     1,  NA, "DRUG_C", "DRUG_C",       FALSE,    25,
+      1,    13,    0,    4,     0,  10, "DRUG_A", "DRUG_A",       FALSE,    NA
+  ))
+
+  result <- add_dose_level(obj)
+
+  expect_equal(unique(result$DL), "100-DRUG_A+50-DRUG_B+25-DRUG_C")
+})
+
+
+test_that("add_dose_level uses the earliest AMT when an analyte repeats in the starting cluster", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     2,   80,    1,     1,  NA,      "A",     "A",       FALSE,    80,
+      1,     3,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA
+  ))
+
+  result <- add_dose_level(obj)
+
+  expect_equal(unique(result$DL), "100-A")
+})
+
+
+test_that("add_dose_level leaves DL as NA for subjects with no administrations", {
+  obj <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA,
+      2,     1,    0,    2,     0,  20,      "A",     "A",       FALSE,    NA
+  ))
+
+  result <- add_dose_level(obj)
+
+  expect_equal(unique(result$DL[result$ID == 1]), "100-A")
+  expect_true(all(is.na(result$DL[result$ID == 2])))
+})
