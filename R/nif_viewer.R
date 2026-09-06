@@ -195,7 +195,7 @@ nif_viewer <- function(nif) {
             imp <- if (identical(input$admin, "none")) NULL else input$admin
 
             suppressWarnings(print(
-              nif::nif_plot_id(
+              nif_plot_id(
                 current_nif(),
                 time_field = input$time,
                 input$subject,
@@ -230,7 +230,7 @@ nif_viewer <- function(nif) {
         tryCatch(
           {
             suppressWarnings(print(
-              nif::dose_plot_id(current_nif(),
+              dose_plot_id(current_nif(),
                 input$subject,
                 time_field = input$time,
                 point_size = 3,

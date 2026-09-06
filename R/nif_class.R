@@ -781,9 +781,9 @@ analytes.data.frame <- function(obj) {
 #'
 #' @param obj A NIF object
 #' @return A data frame
-#' @export
+#' @noRd
 cmt_mapping <- function(obj) {
-  lifecycle::deprecate_warn("0.57.11", "cmt_mapping()", "compartments()")
+  # lifecycle::deprecate_warn("0.57.11", "cmt_mapping()", "compartments()")
 
   obj |>
     ensure_analyte() |>

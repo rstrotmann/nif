@@ -8,8 +8,7 @@
 #' @param silent Suppress messages, defaults to nif_option settin, if NULL.
 #'
 #' @return The filtered SDTM domain as data frame.
-#' @keywords internal
-#' @export
+#' @noRd
 filter_correct_date_format <- function(
   obj,
   verbose = TRUE,
@@ -67,8 +66,7 @@ filter_correct_date_format <- function(
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to issue message output.
 #' @return The (unchanged) SDTM domain.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' ex <- check_date_format(domain(examplinib_poc, "ex"))
 check_date_format <- function(obj, verbose = TRUE) {
@@ -95,8 +93,7 @@ check_date_format <- function(obj, verbose = TRUE) {
 #' @param obj The SDTM domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
 #' @return The unchanged SDTM domain.
-#' @export
-#' @keywords internal
+#' @noRd
 check_date_time_format <- function(obj, verbose = TRUE) {
   domain <- obj |> distinct(.data$DOMAIN)
   temp <- obj |>
@@ -123,8 +120,7 @@ check_date_time_format <- function(obj, verbose = TRUE) {
 #' @param verbose Boolean to indicate whether to include details.
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
 #' @return The unchanged SDTM domain.
-#' @export
-#' @keywords internal
+#' @noRd
 check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
   # Input validation
   if (!is.data.frame(obj)) {
@@ -174,8 +170,7 @@ check_missing_time <- function(obj, verbose = TRUE, silent = NULL) {
 #' @param ex The SDTM EX domain as data frame.
 #' @param verbose Boolean to indicate whether to include details.
 #' @return The unchanged EX domain.
-#' @export
-#' @keywords internal
+#' @noRd
 check_last_exendtc <- function(ex, verbose = TRUE) {
   domain <- ex |> distinct(.data$DOMAIN)
 
@@ -217,8 +212,8 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
 #' @export
 #' @keywords internal
 #' @examples
-#' check_sdtm(examplinib_poc)
-check_sdtm <- function(sdtm, verbose = TRUE) {
+#' check.sdtm(examplinib_poc)
+check.sdtm <- function(sdtm, verbose = TRUE) {
   ## Date-times in DM
   sdtm |>
     domain("dm") |>

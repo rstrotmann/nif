@@ -19,8 +19,7 @@
 #'
 #' @return A ggplot2 object.
 #' @import dplyr
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' nif_plot_id(examplinib_poc_nif, 1)
 #' nif_plot_id(examplinib_poc_min_nif, 1, log = TRUE)
@@ -192,8 +191,7 @@ nif_plot_id <- function(
 #'
 #' @return A ggplot object.
 #' @import dplyr
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' dose_plot_id(examplinib_poc_nif, 18)
 #' dose_plot_id(examplinib_poc_nif, dose_red_sbs(examplinib_poc_nif)[1, 1])
@@ -1124,7 +1122,6 @@ sampling_summary <- function(obj) {
 #' @param title The plot title as character.
 #' @return A ggplot object.
 #' @export
-#' @keywords internal
 #' @examples
 #' mean_dose_plot(examplinib_poc_nif)
 mean_dose_plot <- function(

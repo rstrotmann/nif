@@ -369,8 +369,7 @@ make_ntime <- function(
 #' @param imputation The imputation rule set.
 #'
 #' @return A data frame.
-#' @keywords internal
-#' @export
+#' @noRd
 #' @import stringr
 #' @import cli
 #'
@@ -763,7 +762,46 @@ make_observation <- function(
 #' [nif::add_administration()].
 #'
 #' @param nif A nif object.
-#' @inheritParams make_observation
+#' @param sdtm A sdtm object. Needs at least the 'DM' and 'VS' domains, and the
+#'   domain the observations come from.
+#' @param domain The domain as character.
+#' @param testcd The observation variable, as character.
+#' @param analyte The name for the analyte. Defaults to the 'testcd', if NULL.
+#' @param parent The name of the parent analyte for the observation as
+#'   character. Defaults to the respective treatment administered before the
+#'   observation, if NULL.
+#' @param metabolite Observation is a metabolite, as logical.
+#' @param cmt The compartment for the observation as numeric.
+#' @param subject_filter The filtering to apply to the DM domain.
+#' @param observation_filter The filtering to apply to the observation source
+#'   data.
+#' @param testcd_field The xxTESTCD field. Defaults to the two-character domain
+#'   name followed by 'TESTCD', if NULL.
+#' @param dtc_field The field to use as the date-time code for the observation.
+#'   Defaults to the two-character domain name followed by 'DTC', if NULL.
+#' @param dv_field the field to use as the dependent variable. Defaults to the
+#'   two-character domain name followed by 'STRESN', if NULL.
+#' @param coding_table Coding table to translate a categorical values into
+#'   numerical values, as data frame. The data frame must have at least one
+#'   column that matches a column in the domain, and a numerical 'DV' column
+#'   that provides the recoding result.
+#' @param factor Multiplier for the DV field, as numeric.
+#' @param ntime_lookup A data frame with two columns, a column that defines the
+#'   custom nominal time information in the target domain (e.g., 'PCELTM'), and
+#'   'NTIME'. This data frame is left_joined into the observation data frame
+#'   to provide the NTIME field.
+#' @param keep Columns to keep, as character.
+#' @param silent Suppress messages, as logical. Defaults to nif_option setting
+#'   if NULL.
+#' @param ntime_method the field to derive the nominal time from. Allowed values
+#'   are 'TPT', 'TPTNUM', 'ELTM', 'VISITDY' and 'DY'. Defaults to xxTPT where xx
+#'   is the domain name.
+#' @param include_day_in_ntime as logical.
+#' @param cat xxCAT filter to apply, as character.
+#' @param scat xxSCAT filter to apply, as character.
+#' @param omit_not_done Delete rows where xxSTAT is "NOT DONE, as logical.
+#' @param na_to_zero Set all NA values of DV to 0, as logical.
+#' @param imputation The imputation rule set.
 #' @param debug Include debug fields, as logical. When enabled (either via this
 #'   argument or the global `nif_option("debug")`), additional source-tracking
 #'   fields `SRC_DOMAIN`, `SRC_SEQ` and `SRC_TESTCD` are retained in the nif

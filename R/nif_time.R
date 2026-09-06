@@ -262,8 +262,7 @@ add_tad <- function(nif) {
 #'
 #' @param nif A NIF object.
 #' @return A NIF object.
-#' @export
-#' @keywords internal
+#' @noRd
 #' @examples
 #' add_tafd(examplinib_poc_nif)
 add_tafd <- function(nif) {

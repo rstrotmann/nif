@@ -1,16 +1,11 @@
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
-#' @description
-#' `r lifecycle::badge("deprecated")`
-#'
 #' @param sdtm_data The SDTM domains as list of data frames.
 #'
 #' @import dplyr
 #' @return A sdtm object.
-#' @export
+#' @noRd
 new_sdtm <- function(sdtm_data) {
-  lifecycle::deprecate_warn("0.61.1", "new_sdtm()", "sdtm()")
-
   sdtm(sdtm_data)
 }
 
@@ -704,12 +699,10 @@ make_subjects_sdtm <- function(obj, ...) {
 #' @param sdtm A sdtm object.
 #'
 #' @return A data frame.
-#' @export
-#' @keywords internal
+#' @noRd
 #'
 #' @examples
 #' guess_ntime(examplinib_poc)
-
 guess_ntime <- function(sdtm) {
   if (!has_domain(sdtm, "pc")) {
     stop("PC domain not found in SDTM object")
