@@ -827,14 +827,31 @@ extract_pc_ntime <- function(pc) {
 #' @examples
 #' compose_dtc(date = "2022-09-29", time = "09:30")
 compose_dtc <- function(date, time) {
+  n_date <- length(date)
+  n_time <- length(time)
+  if (n_date != n_time) {
+    if (n_date == 1L && n_time > 0L) {
+      date <- rep(date, n_time)
+    } else if (n_time == 1L && n_date > 0L) {
+      time <- rep(time, n_date)
+    } else {
+      stop(
+        "arguments imply differing number of rows: ",
+        n_date, ", ", n_time
+      )
+    }
+  }
+
+  date <- as.character(date)
+  time <- as.character(time)
+  time[is.na(time)] <- ""
+  stamp <- str_trim(paste(date, time))
+
   tryCatch(
-    data.frame(date = as.character(date), time = as.character(time)) |>
-      mutate(time = case_when(is.na(.data$time) ~ "", .default = .data$time)) |>
-      mutate(DTC = str_trim(paste(as.character(.data$date), .data$time))) |>
-      mutate(DTC = lubridate::as_datetime(.data$DTC,
-        format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
-      )) |>
-      pull(.data$DTC),
+    lubridate::as_datetime(
+      stamp,
+      format = c("%Y-%m-%d %H:%M", "%Y-%m-%d")
+    ),
     warning = function(w) {
       message(paste0("Warning from composing DTC: ", w))
     }

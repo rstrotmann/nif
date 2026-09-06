@@ -408,7 +408,6 @@ make_administration <- function(
 
   admin |>
     ungroup() |>
-    mutate(DTC = compose_dtc(.data$DTC_date, .data$DTC_time)) |>
     select(-any_of(c("DTC_date", "DTC_time", "EXSTDTC_date", "EXSTDTC_time",
                      "EXENDTC_date", "EXENDTC_time", "TEST", ".SEQ"))) |>
     index_id() |>

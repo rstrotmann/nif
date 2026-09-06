@@ -56,63 +56,47 @@ last_ex_dtc <- function(ex) {
 #' @return A nif object with TIME, TAFD, and TAD fields added.
 #' @export
 make_time <- function(obj) {
-  # Input validation
-  # if (!inherits(obj, "nif"))
-  #   stop("Input must be a nif object")
-
   required_cols <- c("ID", "DTC", "ANALYTE", "PARENT", "EVID")
   missing_cols <- setdiff(required_cols, names(obj))
   if (length(missing_cols) > 0) {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
   }
 
-  # Handle empty data frame
   if (nrow(obj) == 0) {
     return(
-      obj |>
-        mutate(
-          TIME = numeric(0),
-          TAFD = numeric(0),
-          TAD = numeric(0)
-        ) |>
-        nif()
+      mutate(
+        obj,
+        TIME = numeric(0),
+        TAFD = numeric(0),
+        TAD = numeric(0)
+      ) |>
+        dplyr::dplyr_reconstruct(obj)
     )
   }
 
-  # Validate DTC column
   if (!is.POSIXct(obj$DTC)) {
     stop("DTC column must contain POSIXct datetime values")
   }
 
-  # Calculate reference time fields
-  result <- obj |>
-    as.data.frame() |>
-    # Group by ID to find first time point for each subject
+  obj |>
+    mutate(.row = dplyr::row_number()) |>
     group_by(.data$ID) |>
     mutate(FIRSTDTC = min(.data$DTC, na.rm = TRUE)) |>
     ungroup() |>
-    # Group by ID and PARENT to find first administration for each drug
-    group_by(.data$ID, .data$PARENT) |>
-    mutate(
-      # Find first administration time for TAFD
-      FIRSTADMIN = if (any(.data$EVID == 1)) {
-        min(.data$DTC[.data$EVID == 1], na.rm = TRUE)
-      } else {
-        NA_POSIXct_
-      }
-    ) |>
-    ungroup()
-
-  # Calculate TIME and TAFD
-  result <- result |>
-    # TIME: time since first record (in hours)
     mutate(
       TIME = round(
         as.numeric(difftime(.data$DTC, .data$FIRSTDTC, units = "hours")),
         digits = 3
       )
     ) |>
-    # TAFD: time since first administration of parent (in hours)
+    group_by(.data$ID, .data$PARENT) |>
+    mutate(
+      FIRSTADMIN = if (any(.data$EVID == 1)) {
+        min(.data$DTC[.data$EVID == 1], na.rm = TRUE)
+      } else {
+        NA_POSIXct_
+      }
+    ) |>
     mutate(
       TAFD = ifelse(
         is.na(.data$FIRSTADMIN),
@@ -123,13 +107,19 @@ make_time <- function(obj) {
         )
       )
     ) |>
-    # Remove temporary columns
-    select(-c("FIRSTDTC", "FIRSTADMIN")) |>
-    # Convert to nif object before adding TAD
-    nif()
-
-  # Add the TAD field
-  add_tad(result)
+    arrange(.data$ID, .data$PARENT, .data$TIME, .data$EVID) |>
+    mutate(
+      admin_time = case_when(
+        .data$EVID == 1 ~ .data$TIME,
+        TRUE ~ NA_real_
+      )
+    ) |>
+    tidyr::fill("admin_time", .direction = "downup") |>
+    mutate(TAD = .data$TIME - .data$admin_time) |>
+    ungroup() |>
+    arrange(.data$.row) |>
+    select(-c("FIRSTDTC", "FIRSTADMIN", "admin_time", ".row")) |>
+    dplyr::dplyr_reconstruct(obj)
 }
 
 
@@ -156,12 +146,12 @@ make_time_from_time <- function(obj) {
   # Handle empty data frame
   if (nrow(obj) == 0) {
     return(
-      obj |>
-        mutate(
-          TAFD = numeric(0),
-          TAD = numeric(0)
-        ) |>
-        nif()
+      mutate(
+        obj,
+        TAFD = numeric(0),
+        TAD = numeric(0)
+      ) |>
+        dplyr::dplyr_reconstruct(obj)
     )
   }
 
@@ -178,12 +168,9 @@ make_time_from_time <- function(obj) {
 
   # Calculate time fields
   result <- obj |>
-    as.data.frame() |>
-    # Ensure proper ordering for fill operations
+    mutate(.row = dplyr::row_number()) |>
     arrange(.data$ID, .data$PARENT, .data$TIME, -.data$EVID) |>
-    # Group by ID and PARENT to find first administration for each drug
     group_by(.data$ID, .data$PARENT) |>
-    # Calculate TAFD: time after first dose
     mutate(.first_admin = if (any(.data$EVID == 1)) {
       min(.data$TIME[.data$EVID == 1], na.rm = TRUE)
     } else {
@@ -194,18 +181,16 @@ make_time_from_time <- function(obj) {
       NA_real_,
       round(.data$TIME - .data$.first_admin, digits = 3)
     )) |>
-    # Calculate TAD: time after dose
     mutate(.admin_time = case_when(
       .data$EVID == 1 ~ .data$TIME,
       TRUE ~ NA_real_
     )) |>
-    # Fill admin_time forward and backward within each group
     tidyr::fill(".admin_time", .direction = "downup") |>
     mutate(TAD = .data$TIME - .data$.admin_time) |>
     ungroup() |>
-    # Remove temporary columns
-    select(-c(".first_admin", ".admin_time")) |>
-    nif()
+    arrange(.data$.row) |>
+    select(-c(".first_admin", ".admin_time", ".row")) |>
+    dplyr::dplyr_reconstruct(obj)
 
   result
 }
@@ -236,7 +221,10 @@ add_tad <- function(nif) {
 
   # Handle empty data frame
   if (nrow(nif) == 0) {
-    return(mutate(nif, TAD = numeric(0)))
+    return(
+      mutate(nif, TAD = numeric(0)) |>
+        dplyr::dplyr_reconstruct(nif)
+    )
   }
 
   # Validate data types
@@ -252,26 +240,21 @@ add_tad <- function(nif) {
 
   # Calculate TAD
   result <- nif |>
-    as.data.frame() |>
-    # Ensure proper ordering for fill operations
+    mutate(.row = dplyr::row_number()) |>
     arrange(.data$ID, .data$PARENT, .data$TIME, .data$EVID) |>
-    # Create admin_time column for dosing events
     mutate(admin_time = case_when(
       .data$EVID == 1 ~ .data$TIME,
       TRUE ~ NA_real_
     )) |>
-    # Group by subject and parent compound
     group_by(.data$ID, .data$PARENT) |>
-    # Fill admin_time forward within each group
     tidyr::fill("admin_time", .direction = "downup") |>
-    # Calculate TAD
     mutate(TAD = .data$TIME - .data$admin_time) |>
-    # Remove temporary column
-    select(-"admin_time") |>
-    ungroup()
+    ungroup() |>
+    arrange(.data$.row) |>
+    select(-c("admin_time", ".row")) |>
+    dplyr::dplyr_reconstruct(nif)
 
-  # Return as NIF object
-  nif(result)
+  result
 }
 
 

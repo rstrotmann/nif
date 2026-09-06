@@ -1090,6 +1090,7 @@ remove_duplicate_administrations <- function(
   # input validation
   validate_df_argument(
     obj, expected_fields = c("USUBJID", "DTC", "ANALYTE", ".SEQ", "AMT"))
+
   validate_argument(silent, "logical", allow_null = TRUE)
 
   warn_cols <- c("ID", "USUBJID", "TIME", "DTC", ".SEQ", "ANALYTE", "EXTRT", "AMT")

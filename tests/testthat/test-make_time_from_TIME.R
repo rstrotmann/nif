@@ -377,9 +377,9 @@ test_that("make_time_from_time handles unsorted input data", {
   ) %>%
     nif()
 
-  result <- make_time_from_time(test_data)
+  result <- make_time_from_time(test_data) |>
+    dplyr::arrange(.data$TIME)
 
-  # Check that data is properly sorted and calculations are correct
   expect_equal(result$TIME, c(0, 1, 2, 3))
   expect_equal(result$TAFD, c(0, 1, 2, 3))
   expect_equal(result$TAD, c(0, 1, 2, 3))
