@@ -109,26 +109,19 @@ identify_baseline_columns <- function(df, id_col = "ID") {
     return(character(0))
   }
 
-  # Check each column to see if it's constant per ID
-  baseline_cols <- character(0)
+  # A column is baseline if every ID has at most one distinct
+  # non-NA value (all-NA per ID is still baseline).
+  is_constant <- df |>
+    summarise(
+      across(
+        all_of(cols_to_check),
+        ~ n_distinct(.x, na.rm = TRUE) <= 1
+      ),
+      .by = all_of(id_col)
+    ) |>
+    summarise(across(-all_of(id_col), all))
 
-  for (col in cols_to_check) {
-    # Count distinct values per ID for this column
-    distinct_counts <- df |>
-      group_by(.data[[id_col]]) |>
-      summarize(
-        n_distinct = n_distinct(.data[[col]], na.rm = TRUE),
-        .groups = "drop"
-      )
-
-    # Column is baseline if all IDs have at most 1 distinct value (allowing for
-    # NA values - if all values are NA for an ID, that's still baseline)
-    if (all(distinct_counts$n_distinct <= 1)) {
-      baseline_cols <- c(baseline_cols, col)
-    }
-  }
-
-  baseline_cols
+  cols_to_check[unlist(is_constant, use.names = FALSE)]
 }
 
 
