@@ -1092,65 +1092,61 @@ remove_duplicate_administrations <- function(
     obj, expected_fields = c("USUBJID", "DTC", "ANALYTE", ".SEQ", "AMT"))
   validate_argument(silent, "logical", allow_null = TRUE)
 
-  # business logic
-  temp <- obj |>
-    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$.SEQ) |>
-    group_by(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$AMT) |>
-    mutate(.n = n()) |>
-    mutate(EXCLUDE = case_when(
-      .n > 1 & row_number() != 1 ~ TRUE,
-      .default = FALSE
-    )) |>
-    ungroup()
+  warn_cols <- c("ID", "USUBJID", "TIME", "DTC", ".SEQ", "ANALYTE", "EXTRT", "AMT")
 
-  # duplicate administrations with the same dose
-  n_dupl <- nrow(filter(temp, .data$EXCLUDE == TRUE))
-  if (n_dupl > 0) {
+  # One global arrange. Incoming groups are dropped so .by_group arrange cannot
+  # change which row is first/last when .SEQ ties. as_tibble() matches the
+  # grouped dplyr pipeline this replaced.
+  temp <- obj |>
+    ungroup() |>
+    as_tibble() |>
+    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$.SEQ)
+
+  if (nrow(temp) <= 1) {
+    return(temp)
+  }
+
+  # Fast path: unique on the collapse key.
+  if (!any(duplicated(temp[c("USUBJID", "ANALYTE", "DTC")]))) {
+    return(temp)
+  }
+
+  # Same AMT: keep the first row in each USUBJID-ANALYTE-DTC-AMT group.
+  same_amt_dup <- duplicated(temp[c("USUBJID", "ANALYTE", "DTC", "AMT")])
+  if (any(same_amt_dup)) {
+    n_dupl <- sum(same_amt_dup)
     conditional_cli({
       cli_alert_warning(paste(
         n_dupl,
         "duplicate administrations with respect to USUBJID, DTC and ANALYTE were removed:"
       ))
       df_to_cli(
-        temp |>
-          filter(.data$EXCLUDE == TRUE) |>
-          select(any_of(
-            c("ID", "USUBJID", "TIME", "DTC", ".SEQ", "ANALYTE", "EXTRT", "AMT"))
-          ), indent = 2)
+        select(temp[same_amt_dup, ], any_of(warn_cols)),
+        indent = 2)
     },
     silent = silent)
+    temp <- temp[!same_amt_dup, ]
   }
 
-  # duplicate administrations with different doses
-  temp <- temp |>
-    filter(.data$EXCLUDE == FALSE) |>
-    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$.SEQ) |>
-    group_by(.data$USUBJID, .data$ANALYTE, .data$DTC) |>
-    mutate(.n = n()) |>
-    mutate(EXCLUDE_DIFFERENT_AMT = case_when(
-      .n > 1 & row_number() != n() ~ TRUE,
-      .default = FALSE
-    )) |>
-    ungroup()
-
-  n_different_amt <- nrow(filter(temp, .data$EXCLUDE_DIFFERENT_AMT == TRUE))
-  if (n_different_amt > 0) {
+  # Different AMT: keep the last row in each remaining USUBJID-ANALYTE-DTC group.
+  diff_amt_dup <- duplicated(
+    temp[c("USUBJID", "ANALYTE", "DTC")],
+    fromLast = TRUE
+  )
+  if (any(diff_amt_dup)) {
+    n_different_amt <- sum(diff_amt_dup)
     cli({
       cli_alert_warning(paste(
         n_different_amt, "duplicate administrations with different AMT!",
         "The following rows were removed:"
         ))
         df_to_cli(
-          temp |>
-            filter(.data$EXCLUDE_DIFFERENT_AMT == TRUE) |>
-            select(any_of(
-              c("ID", "USUBJID", "TIME", "DTC", ".SEQ", "ANALYTE", "EXTRT", "AMT"))
-            ), indent = 2)
+          select(temp[diff_amt_dup, ], any_of(warn_cols)),
+          indent = 2)
     })
+    temp <- temp[!diff_amt_dup, ]
   }
 
-  temp |>
-    filter(.data$EXCLUDE_DIFFERENT_AMT == FALSE) |>
-    select(-c(".n", "EXCLUDE", "EXCLUDE_DIFFERENT_AMT"))
+  temp
 }
 

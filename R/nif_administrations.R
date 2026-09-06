@@ -28,7 +28,9 @@ expand_ex <- function(ex) {
       "Missing fields: ", nice_enumeration(missing_ex_fields), "!"))
 
   # prepare fields
-  ex <- lubrify_dates(ex)
+  ex <- lubrify_dates(ex) |>
+    as_tibble() |>
+    ungroup()
 
   # Convert EXSTDY and EXENDY to numeric if they exist
   if ("EXSTDY" %in% names(ex)) {
@@ -74,10 +76,9 @@ expand_ex <- function(ex) {
   }
 
   ex <- ex |>
-    tidyr::uncount(.data$.n_days, .remove = FALSE) |>
-    group_by(.data$USUBJID, .data$EXTRT, .data$EXSTDTC_date, .data$EXENDTC_date) |>
+    tidyr::uncount(.data$.n_days, .remove = FALSE, .id = ".day") |>
     mutate(
-      .offset = row_number() - 1L,
+      .offset = .data$.day - 1L,
       DTC_date = as.character(.data$.start_date + .data$.offset)
     )
 
@@ -85,40 +86,29 @@ expand_ex <- function(ex) {
     ex <- mutate(ex, EXDY = .data$EXSTDY + .data$.offset)
   }
 
-  ex <- ex |>
-    select(-c(".start_date", ".end_date", ".n_days", ".offset")) |>
-    ungroup()
-
-
-  # unnest and annotate administrations
   ex |>
-    # tidyr::unnest(any_of(c("DTC_date", "EXDY"))) |>
-    group_by(.data$USUBJID, .data$EXTRT, .data$EXSTDTC_date, .data$EXENDTC_date) |>
-
-    # make DTC_time field
-    mutate(DTC_time = case_when(
-      # first line
-      row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
-      # last line
-      row_number() == n() & !is.na(.data$EXENDTC_time) ~ .data$EXENDTC_time,
-      # default
-      .default = NA
-    )) |>
-
-    # make IMPUTATION field
-    mutate(.expand_imp = case_when(
-      row_number() == 1 & !is.na(.data$EXSTDTC_time) ~ "time copied from EXSTDTC",
-      row_number() == n() & !is.na(.data$EXENDTC_time) ~ "time copied from EXENDTC",
-      .default = ""
-    )) |>
-    mutate(IMPUTATION = trimws(
-      paste(
-      .data$IMPUTATION,
-      .data$.expand_imp,
-      sep = "; "),
-      whitespace = "[; ]+")) |>
-    select(-".expand_imp") |>
-
+    mutate(
+      DTC_time = case_when(
+        .data$.offset == 0L & !is.na(.data$EXSTDTC_time) ~ .data$EXSTDTC_time,
+        .data$.offset == .data$.n_days - 1L & !is.na(.data$EXENDTC_time) ~
+          .data$EXENDTC_time,
+        .default = NA
+      ),
+      .expand_imp = case_when(
+        .data$.offset == 0L & !is.na(.data$EXSTDTC_time) ~
+          "time copied from EXSTDTC",
+        .data$.offset == .data$.n_days - 1L & !is.na(.data$EXENDTC_time) ~
+          "time copied from EXENDTC",
+        .default = ""
+      ),
+      IMPUTATION = trimws(
+        paste(.data$IMPUTATION, .data$.expand_imp, sep = "; "),
+        whitespace = "[; ]+"
+      )
+    ) |>
+    select(
+      -c(".start_date", ".end_date", ".n_days", ".offset", ".day", ".expand_imp")
+    ) |>
     ungroup()
 }
 
