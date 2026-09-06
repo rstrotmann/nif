@@ -27,11 +27,6 @@ expand_ex <- function(ex) {
     stop(paste0(
       "Missing fields: ", nice_enumeration(missing_ex_fields), "!"))
 
-  # prepare fields
-  ex <- lubrify_dates(ex) |>
-    as_tibble() |>
-    ungroup()
-
   # Convert EXSTDY and EXENDY to numeric if they exist
   if ("EXSTDY" %in% names(ex)) {
     ex$EXSTDY <- as.numeric(ex$EXSTDY)
@@ -45,7 +40,12 @@ expand_ex <- function(ex) {
     ex <- mutate(ex, IMPUTATION = "")
   }
 
+  # business logic
   has_study_days <- all(c("EXSTDY", "EXENDY") %in% names(ex))
+
+  ex <- lubrify_dates(ex) |>
+    as_tibble() |>
+    ungroup()
 
   # Expand days (assuming QD administration)
   ex <- ex |>
@@ -106,10 +106,8 @@ expand_ex <- function(ex) {
         whitespace = "[; ]+"
       )
     ) |>
-    select(
-      -c(".start_date", ".end_date", ".n_days", ".offset", ".day", ".expand_imp")
-    ) |>
-    ungroup()
+    select(-c(".start_date", ".end_date", ".n_days", ".offset", ".day",
+              ".expand_imp"))
 }
 
 
