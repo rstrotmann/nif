@@ -205,17 +205,16 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
 
 #' Check SDTM domains DM, EX and PC for missing date and time information.
 #'
-#' @param sdtm The SDTM as SDTM object.
+#' @param obj The SDTM as SDTM object.
 #' @param verbose Boolean to indicate whether to include details.
 #'
 #' @return Nothing.
 #' @export
-#' @keywords internal
 #' @examples
-#' check.sdtm(examplinib_poc)
-check.sdtm <- function(sdtm, verbose = TRUE) {
+#' check(examplinib_poc)
+check.sdtm <- function(obj, verbose = TRUE, ...) {
   ## Date-times in DM
-  sdtm |>
+  obj |>
     domain("dm") |>
     filter(.data$ACTARMCD != "SCRNFAIL") |>
     select("USUBJID", "DOMAIN", "RFENDTC") |>
@@ -223,14 +222,14 @@ check.sdtm <- function(sdtm, verbose = TRUE) {
     check_missing_time(verbose = verbose)
 
   ## Date-times in EX
-  sdtm |>
+  obj |>
     domain("ex") |>
     check_date_format(verbose = verbose) |>
     check_missing_time(verbose = verbose) |>
     check_last_exendtc(verbose = verbose)
 
   ## Date-times in PC
-  sdtm |>
+  obj |>
     domain("pc") |>
     select("USUBJID", "DOMAIN", "PCDTC") |>
     check_date_format(verbose = verbose) |>

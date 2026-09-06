@@ -4,12 +4,12 @@
 \alias{check.sdtm}
 \title{Check SDTM domains DM, EX and PC for missing date and time information.}
 \usage{
-\method{check}{sdtm}(sdtm, verbose = TRUE)
+\method{check}{sdtm}(obj, verbose = TRUE, ...)
 }
 \arguments{
-\item{sdtm}{The SDTM as SDTM object.}
-
 \item{verbose}{Boolean to indicate whether to include details.}
+
+\item{sdtm}{The SDTM as SDTM object.}
 }
 \value{
 Nothing.
@@ -18,6 +18,5 @@ Nothing.
 Check SDTM domains DM, EX and PC for missing date and time information.
 }
 \examples{
-check.sdtm(examplinib_poc)
+check(examplinib_poc)
 }
-\keyword{internal}
