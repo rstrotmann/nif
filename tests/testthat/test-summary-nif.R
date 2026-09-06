@@ -187,6 +187,60 @@ test_that("summary.nif works when dose level cannot be determined", {
 })
 
 
+test_that("summary.nif counts observations by CMT and ANALYTE", {
+  test_nif <- nif(tibble::tribble(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA,
+      1,     2,    0,    2,     0,  20,      "A",     "A",       FALSE,    NA,
+      1,     1,    0,    3,     0,   5,      "B",     "A",        TRUE,    NA
+  ))
+
+  s <- summary(test_nif)
+
+  expect_s3_class(s$n_obs, "data.frame")
+  expect_equal(s$n_obs$n[s$n_obs$ANALYTE == "A"], 2)
+  expect_equal(s$n_obs$n[s$n_obs$ANALYTE == "B"], 1)
+})
+
+
+test_that("summary.nif counts subjects with administrations by study", {
+  test_nif <- nif(tibble::tribble(
+    ~ID, ~STUDYID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,     "S1",     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     "S1",     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA,
+      2,     "S1",     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      3,     "S2",     0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      4,     "S2",     1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA
+  ))
+
+  s <- summary(test_nif)
+
+  expect_equal(s$n_subj, 4)
+  expect_equal(s$n_studies$N[s$n_studies$STUDYID == "S1"], 2)
+  expect_equal(s$n_studies$N[s$n_studies$STUDYID == "S2"], 1)
+})
+
+
+test_that("summary.nif tabulates observations by NTIME and ANALYTE", {
+  test_nif <- nif(tibble::tribble(
+    ~ID, ~TIME, ~NTIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~PARENT, ~METABOLITE, ~DOSE,
+      1,     0,      0,  100,    1,     1,  NA,      "A",     "A",       FALSE,   100,
+      1,     1,      1,    0,    2,     0,  10,      "A",     "A",       FALSE,    NA,
+      1,     2,      2,    0,    2,     0,  20,      "A",     "A",       FALSE,    NA,
+      1,     1,      1,    0,    3,     0,   5,      "B",     "A",        TRUE,    NA
+  ))
+
+  s <- summary(test_nif)
+  expect_equal(s$sampling$NTIME, c(1, 2))
+  expect_equal(s$sampling$A, c(1, 1))
+  expect_equal(s$sampling$B, c(1, NA_integer_))
+
+  s_off <- summary(test_nif, sampling = FALSE)
+  expect_null(s_off$sampling)
+})
+
+
 # Test administration duration
 test_that("summary.nif correctly calculates administration duration", {
   s <- summary(examplinib_poc_nif)

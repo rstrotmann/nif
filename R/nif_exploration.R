@@ -323,7 +323,24 @@ summary.nif <- function(
 
   nif_check_id_integrity(object)
 
-  subjects <- subjects(object)
+  sbs_cols <- intersect(
+    c("ID", "USUBJID", "SEX", "STUDYID", "BL_CRCL", "BL_ODWG"),
+    names(object)
+  )
+  sbs <- object |>
+    select(all_of(sbs_cols)) |>
+    distinct() |>
+    as.data.frame()
+
+  if (!"USUBJID" %in% names(sbs)) {
+    sbs <- mutate(sbs, USUBJID = NA)
+  }
+
+  subjects <- sbs |>
+    select("ID", "USUBJID") |>
+    distinct() |>
+    as.data.frame()
+
   analytes <- analytes(object)
   parents <- parents(object)
 
@@ -335,25 +352,27 @@ summary.nif <- function(
   )
   names(dose_red_sbs) <- parents
 
-  observations <- object |>
-    as.data.frame() |>
+  obs <- object |>
     filter(.data$EVID == 0) |>
+    select(any_of(c("CMT", "ANALYTE", "NTIME"))) |>
+    as.data.frame()
+
+  observations <- obs |>
     group_by(across(any_of(c("CMT", "ANALYTE")))) |>
     summarize(n = n(), .groups = "drop") |>
     as.data.frame()
 
   n_studies <- object |>
-    as.data.frame() |>
     filter(.data$EVID == 1) |>
-    group_by(across(any_of(c("STUDYID")))) |>
+    select(any_of(c("ID", "STUDYID"))) |>
+    as.data.frame() |>
+    group_by(across(any_of("STUDYID"))) |>
     summarize(N = n_distinct(.data$ID), .groups = "drop")
 
-  # Handle sex distribution with safety checks
-  sex <- object |>
-    as.data.frame()
-
-  if (!"SEX" %in% names(sex))
+  sex <- sbs
+  if (!"SEX" %in% names(sex)) {
     sex <- mutate(sex, SEX = NA)
+  }
 
   sex <- sex |>
     distinct(.data$ID, .data$SEX) |>
@@ -374,9 +393,8 @@ summary.nif <- function(
     invisible(NULL)
   })
 
-  if ("BL_CRCL" %in% colnames(object)) {
-    renal_function <- object |>
-      as.data.frame() |>
+  if ("BL_CRCL" %in% names(sbs)) {
+    renal_function <- sbs |>
       mutate(CLASS = as.character(
         cut(.data$BL_CRCL,
           breaks = c(0, 30, 60, 90, Inf),
@@ -398,9 +416,8 @@ summary.nif <- function(
     renal_function <- NULL
   }
 
-  if ("BL_ODWG" %in% colnames(object)) {
-    odwg <- object |>
-      as.data.frame() |>
+  if ("BL_ODWG" %in% names(sbs)) {
+    odwg <- sbs |>
       mutate(CLASS = .data$BL_ODWG) |>
       distinct(.data$ID, .data$CLASS) |>
       mutate(
@@ -421,10 +438,8 @@ summary.nif <- function(
 
   # sampling overview
   sampling_table <- NULL
-  if ("NTIME" %in% names(object) && sampling == TRUE) {
-    sampling_table <- object |>
-      as.data.frame() |>
-      filter(.data$EVID == 0) |>
+  if ("NTIME" %in% names(object) && isTRUE(sampling)) {
+    sampling_table <- obs |>
       reframe(n = n(), .by = c("NTIME", "ANALYTE")) |>
       pivot_wider(names_from = "ANALYTE", values_from = "n") |>
       arrange(.data$NTIME) |>
