@@ -27,7 +27,7 @@ test_that("check_last_exendtc works", {
 
 
 test_that("check_sdtm works", {
-  expect_no_message(check_sdtm(examplinib_poc))
+  expect_no_message(check.sdtm(examplinib_poc))
 })
 
 
