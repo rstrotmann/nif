@@ -170,3 +170,85 @@ test_that("decompose_dtc validates input parameters", {
   )
 })
 
+
+test_that("decompose_dtc keeps existing date and time companions", {
+  test_data <- tibble::tribble(
+    ~ID,             ~STDTC,    ~STDTC_date, ~STDTC_time,
+      1, "2024-12-05T08:12", "stale-date-1",     "99:99",
+      2,        "2024-12-06", "stale-date-2",     "88:88"
+  ) %>%
+    lubrify_dates()
+
+  result <- decompose_dtc(test_data, "STDTC")
+
+  expect_equal(result$STDTC_date, c("stale-date-1", "stale-date-2"))
+  expect_equal(result$STDTC_time, c("99:99", "88:88"))
+  expect_equal(result$ID, test_data$ID)
+  expect_equal(result$STDTC, test_data$STDTC)
+})
+
+
+test_that("decompose_dtc recomputes when only the date companion exists", {
+  test_data <- tibble::tribble(
+    ~ID,             ~STDTC,    ~STDTC_date,
+      1, "2024-12-05T08:12", "stale-date-1",
+      2,        "2024-12-06", "stale-date-2"
+  ) %>%
+    lubrify_dates()
+
+  result <- decompose_dtc(test_data, "STDTC")
+
+  expect_equal(result$STDTC_date, c("2024-12-05", "2024-12-06"))
+  expect_equal(result$STDTC_time, c("08:12", NA))
+})
+
+
+test_that("decompose_dtc recomputes when only the time companion exists", {
+  test_data <- tibble::tribble(
+    ~ID,             ~STDTC, ~STDTC_time,
+      1, "2024-12-05T08:12",     "99:99",
+      2,        "2024-12-06",     "88:88"
+  ) %>%
+    lubrify_dates()
+
+  result <- decompose_dtc(test_data, "STDTC")
+
+  expect_equal(result$STDTC_date, c("2024-12-05", "2024-12-06"))
+  expect_equal(result$STDTC_time, c("08:12", NA))
+})
+
+
+test_that("decompose_dtc skips complete fields and recomputes incomplete ones", {
+  test_data <- tibble::tribble(
+    ~ID,             ~STDTC,             ~ENDTC,    ~STDTC_date, ~STDTC_time,
+      1, "2024-12-05T08:12", "2024-12-06T14:30", "stale-date-1",     "99:99",
+      2,        "2024-12-07",        "2024-12-08", "stale-date-2",     "88:88"
+  ) %>%
+    lubrify_dates()
+
+  result <- decompose_dtc(test_data, c("STDTC", "ENDTC"))
+
+  expect_equal(result$STDTC_date, c("stale-date-1", "stale-date-2"))
+  expect_equal(result$STDTC_time, c("99:99", "88:88"))
+  expect_equal(result$ENDTC_date, c("2024-12-06", "2024-12-08"))
+  expect_equal(result$ENDTC_time, c("14:30", NA))
+})
+
+
+test_that("decompose_dtc adds a new field without touching complete companions", {
+  test_data <- tibble::tribble(
+    ~ID,             ~STDTC,             ~ENDTC,    ~STDTC_date, ~STDTC_time,
+      1, "2024-12-05T08:12", "2024-12-06T14:30", "stale-date-1",     "99:99",
+      2,        "2024-12-07",        "2024-12-08", "stale-date-2",     "88:88"
+  ) %>%
+    lubrify_dates()
+
+  result <- decompose_dtc(test_data, c("STDTC", "ENDTC"))
+
+  expect_true(all(c("ENDTC_date", "ENDTC_time") %in% names(result)))
+  expect_equal(result$STDTC_date, test_data$STDTC_date)
+  expect_equal(result$STDTC_time, test_data$STDTC_time)
+  expect_equal(result$ENDTC_date, c("2024-12-06", "2024-12-08"))
+  expect_equal(result$ENDTC_time, c("14:30", NA))
+})
+

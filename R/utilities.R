@@ -854,6 +854,11 @@ compose_dtc <- function(date, time) {
 
 #' Decompose DTC field into date and time components
 #'
+#' For each `dtc_field`, adds `{field}_date` and `{field}_time`. If both
+#' companion columns already exist, that field is left unchanged (fast path).
+#' If only one companion exists, both are dropped and recomputed from the DTC
+#' column.
+#'
 #' @param obj A data frame.
 #' @param dtc_field The field to decompose as character.
 #'
@@ -875,41 +880,42 @@ decompose_dtc <- function(obj, dtc_field) {
     ))
   }
 
-  dec_dtc <- function(fld) {
-    if (length(fld) > 1)
-      stop(paste0("fld has a length > 1: ", fld))
+  # business logic
+  date_cols <- paste0(dtc_field, "_date")
+  time_cols <- paste0(dtc_field, "_time")
+  has_date <- date_cols %in% names(obj)
+  has_time_col <- time_cols %in% names(obj)
+  complete <- has_date & has_time_col
+  partial <- (has_date | has_time_col) & !complete
 
-    dtc_date <- paste0(fld, "_date")
-    dtc_time <- paste0(fld, "_time")
-
-    # delete fields if already existing
-    if (dtc_date %in% names(obj) || dtc_time %in% names(obj))
-      obj <- select(obj, -any_of(c(dtc_date, dtc_time)))
-
-    tryCatch(
-      out <- obj |>
-        mutate(has_time = has_time(.data[[fld]])) |>
-        mutate(.temp_date = extract_date(.data[[fld]])) |>
-        mutate(.temp_time = case_when(
-          .data$has_time == TRUE ~ extract_time(.data[[fld]]),
-          .default = NA
-        )) |>
-        select(-c("has_time")),
-      warning = function(w) {
-        message(paste0(
-          "Warning decomposing DTC: ", w
-        ))
-      }
-    )
-
-    names(out)[names(out) == ".temp_date"] <- dtc_date
-    names(out)[names(out) == ".temp_time"] <- dtc_time
-    out
+  if (any(partial)) {
+    obj <- select(obj, -any_of(c(date_cols[partial], time_cols[partial])))
   }
 
-  for (i in dtc_field) {
-    obj <- dec_dtc(i)
+  to_compute <- dtc_field[!complete]
+  if (length(to_compute) == 0L) {
+    return(obj)
   }
+
+  tryCatch(
+    obj <- mutate(
+      obj,
+      across(
+        all_of(to_compute),
+        list(
+          date = extract_date,
+          time = function(x) {
+            if_else(has_time(x), extract_time(x), NA_character_)
+          }
+        ),
+        .names = "{.col}_{.fn}"
+      )
+    ),
+    warning = function(w) {
+      message(paste0("Warning decomposing DTC: ", w))
+    }
+  )
+
   obj
 }
 
