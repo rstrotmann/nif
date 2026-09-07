@@ -473,6 +473,12 @@ derive_ex_dtc_time <- function(ex) {
 
 #' Remove administrations with EXSTDTC after EXENDTC
 #'
+#' Invalid episodes are those whose start date is after the end date, or whose
+#' start and end fall on the same date with both times present and the start
+#' datetime after the end datetime. Date-only values (including midnight) are
+#' not treated as times. Rows with missing `EXENDTC` are also dropped, matching
+#' `dplyr::filter()` NA semantics.
+#'
 #' @param ex The ex domain as data frame.
 #' @param dm The dm domain as data frame.
 #' @param silent Suppress messages, defaults to nif_option setting, if NULL.
@@ -481,8 +487,8 @@ derive_ex_dtc_time <- function(ex) {
 #' @return A data frame.
 #' @noRd
 filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
-  # Input validation
-  expected_ex_columns <- c("USUBJID", "EXSTDTC", "EXENDTC")
+  # input validation
+  expected_ex_columns <- c("USUBJID", "EXTRT", "EXSTDTC", "EXENDTC")
   missing_ex_columns <- setdiff(expected_ex_columns, names(ex))
   n <- length(missing_ex_columns)
   if (n > 0) {
@@ -492,29 +498,29 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
     ))
   }
 
-  # Convert dates to POSIXct for proper comparison
-  ex <- lubrify_dates(ex)
-  dm <- lubrify_dates(dm)
+  # business logic
+  ex <- lubrify_dates(ex) |>
+    filter(.data$EXTRT == extrt)
 
-  temp <- ex |>
-    filter(.data$EXTRT == extrt) |>
-    decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
-    filter(
-      # either the start date is after the end date
-      (as.Date(.data$EXSTDTC_date) > as.Date(.data$EXENDTC_date)) |
-        # or the start and end dates are the same, both times are not NA, and
-        # the start datetime is still after the end datetime
-        (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
-           !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
-           .data$EXSTDTC > .data$EXENDTC)
-    ) |>
-    left_join(
-      dm |>
-        select(any_of(c("USUBJID", "RFSTDTC", "RFENDTC"))),
-      by = "USUBJID"
-    )
+  start_date <- extract_date(ex$EXSTDTC)
+  end_date <- extract_date(ex$EXENDTC)
+  invalid <- (start_date > end_date) |
+    (start_date == end_date &
+       has_time(ex$EXSTDTC) &
+       has_time(ex$EXENDTC) &
+       ex$EXSTDTC > ex$EXENDTC)
 
-  if (nrow(temp) > 0) {
+  if (any(invalid, na.rm = TRUE)) {
+    temp <- ex[which(invalid), ]
+    dm_cols <- intersect(c("USUBJID", "RFSTDTC", "RFENDTC"), names(dm))
+    if (length(dm_cols) > 1) {
+      temp <- left_join(
+        temp,
+        select(lubrify_dates(dm), all_of(dm_cols)),
+        by = "USUBJID"
+      )
+    }
+
     conditional_cli(
       {
         cli::cli_alert_warning("EXSTDTC after EXENDTC!")
@@ -541,14 +547,7 @@ filter_exendtc_after_exstdtc <- function(ex, dm, extrt, silent = NULL) {
     )
   }
 
-  ex |>
-    filter(.data$EXTRT == extrt) |>
-    decompose_dtc(c("EXSTDTC", "EXENDTC")) |>
-    filter(
-      !((as.Date(.data$EXSTDTC_date) > as.Date(.data$EXENDTC_date)) |
-          (as.Date(.data$EXSTDTC_date) == as.Date(.data$EXENDTC_date) &
-             !is.na(.data$EXSTDTC_time) & !is.na(.data$EXENDTC_time) &
-             .data$EXSTDTC > .data$EXENDTC)))
+  ex[!is.na(invalid) & !invalid, ]
 }
 
 
