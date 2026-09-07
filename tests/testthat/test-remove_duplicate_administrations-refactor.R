@@ -1,9 +1,8 @@
 ## Characterization tests for remove_duplicate_administrations()
 ##
-## These tests pin current behavior so an efficiency refactor (one arrange,
-## vectorized duplicated()/slice, early return when unique) cannot change
-## which rows are kept, how NAs and tied .SEQ are resolved, output shape,
-## or when warnings fire.
+## These tests pin keep/drop rules, NA and tied-.SEQ resolution, output shape,
+## and when warnings fire. Unique rows keep input order; colliding keys are
+## arranged by .SEQ only.
 
 remove_duplicate_administrations <- nif:::remove_duplicate_administrations
 
@@ -29,7 +28,7 @@ test_that("unique rows are kept and helper columns are not returned", {
 })
 
 
-test_that("output is arranged by USUBJID, ANALYTE, DTC, .SEQ even when unique", {
+test_that("unique rows keep input order", {
   obj <- tibble::tribble(
     ~USUBJID, ~DTC, ~ANALYTE, ~.SEQ, ~AMT,
        "002",   d1,      "B",     1,   50,
@@ -41,11 +40,11 @@ test_that("output is arranged by USUBJID, ANALYTE, DTC, .SEQ even when unique", 
   result <- remove_duplicate_administrations(obj, silent = TRUE)
 
   expect_equal(nrow(result), 4)
-  expect_equal(result$USUBJID, c("001", "001", "001", "002"))
-  expect_equal(result$ANALYTE, c("A", "A", "B", "B"))
-  expect_equal(result$DTC, c(d1, d2, d1, d1))
-  expect_equal(result$.SEQ, c(1, 2, 1, 1))
-  expect_equal(result$AMT, c(300, 200, 100, 50))
+  expect_equal(result$USUBJID, obj$USUBJID)
+  expect_equal(result$ANALYTE, obj$ANALYTE)
+  expect_equal(result$DTC, obj$DTC)
+  expect_equal(result$.SEQ, obj$.SEQ)
+  expect_equal(result$AMT, obj$AMT)
 })
 
 

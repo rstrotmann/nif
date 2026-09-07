@@ -1077,6 +1077,10 @@ impute_missing_baseline <- function(
 
 #' Remove duplicate administrations with respect to USUBJID, DTC and ANALYTE
 #'
+#' Unique rows are returned in input order. Colliding keys are arranged by
+#' `.SEQ` (NA last) so same-AMT groups keep the first row and different-AMT
+#' groups keep the last row.
+#'
 #' @param obj A data frame.
 #' @param silent Suppress messages.
 #'
@@ -1089,30 +1093,30 @@ remove_duplicate_administrations <- function(
   # input validation
   validate_df_argument(
     obj, expected_fields = c("USUBJID", "DTC", "ANALYTE", ".SEQ", "AMT"))
-
   validate_argument(silent, "logical", allow_null = TRUE)
-
   warn_cols <- c("ID", "USUBJID", "TIME", "DTC", ".SEQ", "ANALYTE", "EXTRT", "AMT")
 
-  # One global arrange. Incoming groups are dropped so .by_group arrange cannot
-  # change which row is first/last when .SEQ ties. as_tibble() matches the
-  # grouped dplyr pipeline this replaced.
-  temp <- obj |>
-    ungroup() |>
-    as_tibble() |>
-    arrange(.data$USUBJID, .data$ANALYTE, .data$DTC, .data$.SEQ)
+  # business logic
+  temp <- ungroup(as_tibble(obj))
 
   if (nrow(temp) <= 1) {
     return(temp)
   }
 
-  # Fast path: unique on the collapse key.
-  if (!any(duplicated(temp[c("USUBJID", "ANALYTE", "DTC")]))) {
+  key <- temp[c("USUBJID", "ANALYTE", "DTC")]
+  if (anyDuplicated(key) == 0L) {
     return(temp)
   }
 
+  is_dup <- duplicated(key) | duplicated(key, fromLast = TRUE)
+  unique_rows <- temp[!is_dup, ]
+  dup_rows <- arrange(
+    temp[is_dup, ],
+    .data$USUBJID, .data$ANALYTE, .data$DTC, .data$.SEQ
+  )
+
   # Same AMT: keep the first row in each USUBJID-ANALYTE-DTC-AMT group.
-  same_amt_dup <- duplicated(temp[c("USUBJID", "ANALYTE", "DTC", "AMT")])
+  same_amt_dup <- duplicated(dup_rows[c("USUBJID", "ANALYTE", "DTC", "AMT")])
   if (any(same_amt_dup)) {
     n_dupl <- sum(same_amt_dup)
     conditional_cli({
@@ -1121,16 +1125,16 @@ remove_duplicate_administrations <- function(
         "duplicate administrations with respect to USUBJID, DTC and ANALYTE were removed:"
       ))
       df_to_cli(
-        select(temp[same_amt_dup, ], any_of(warn_cols)),
+        select(dup_rows[same_amt_dup, ], any_of(warn_cols)),
         indent = 2)
     },
     silent = silent)
-    temp <- temp[!same_amt_dup, ]
+    dup_rows <- dup_rows[!same_amt_dup, ]
   }
 
   # Different AMT: keep the last row in each remaining USUBJID-ANALYTE-DTC group.
   diff_amt_dup <- duplicated(
-    temp[c("USUBJID", "ANALYTE", "DTC")],
+    dup_rows[c("USUBJID", "ANALYTE", "DTC")],
     fromLast = TRUE
   )
   if (any(diff_amt_dup)) {
@@ -1141,12 +1145,12 @@ remove_duplicate_administrations <- function(
         "The following rows were removed:"
         ))
         df_to_cli(
-          select(temp[diff_amt_dup, ], any_of(warn_cols)),
+          select(dup_rows[diff_amt_dup, ], any_of(warn_cols)),
           indent = 2)
     })
-    temp <- temp[!diff_amt_dup, ]
+    dup_rows <- dup_rows[!diff_amt_dup, ]
   }
 
-  temp
+  bind_rows(unique_rows, dup_rows)
 }
 
