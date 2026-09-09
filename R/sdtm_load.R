@@ -8,11 +8,14 @@
 #'   all domains found in the folder.
 #' @param format The format of the source files as character, either 'sas'
 #'   (default), 'xpt', or 'csv'.
-#' @param ... Further parameters, refer to readr::read_csv
 #' @param delim Deliminator.
+#' @param silent Suppress the progress bar. If `NULL`, uses the package
+#'   `silent` option.
+#' @param ... Further parameters, refer to readr::read_csv
 #' @return A `sdtm` object.
 #' @import readr
 #' @import haven
+#' @import cli
 #' @importFrom stats setNames
 #' @export
 read_sdtm <- function(
@@ -20,12 +23,14 @@ read_sdtm <- function(
     domain = NULL,
     format = "sas",
     delim = ",",
+    silent = NULL,
     ...
 ) {
   # validate input
   validate_argument(data_path, "character")
   validate_argument(domain, "character", allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(format, "character", values = c("sas", "xpt", "csv"))
+  validate_argument(silent, "logical", allow_null = TRUE)
 
   # Validate data_path
   if (!dir.exists(data_path)) {
@@ -85,31 +90,73 @@ read_sdtm <- function(
     )
   }
 
-  out <- list()
-  if (format == "sas") {
-    for (x in domain) {
-      out[[tolower(x)]] <- as.data.frame(
-        haven::read_sas(domain_files[[x]], ...)
-      )
-    }
+  if (length(domain) == 0) {
+    stop("no domain data found")
   }
-  if (format == "xpt") {
-    for (x in domain) {
-      out[[tolower(x)]] <- as.data.frame(
-        haven::read_xpt(domain_files[[x]], ...)
-      )
-    }
-  }
-  if (format == "csv") {
-    for (x in domain) {
-      out[[tolower(x)]] <- as.data.frame(
+
+  read_one <- switch(
+    format,
+    "sas" = function(path) as.data.frame(haven::read_sas(path, ...)),
+    "xpt" = function(path) as.data.frame(haven::read_xpt(path, ...)),
+    "csv" = function(path) {
+      as.data.frame(
         readr::read_delim(
-          domain_files[[x]],
+          path,
           delim = delim,
           show_col_types = FALSE,
           ...
         )
       )
+    }
+  )
+
+  show_progress <- if (is.null(silent)) {
+    !isTRUE(nif_option_value("silent"))
+  } else {
+    !isTRUE(silent)
+  }
+
+  sizes <- vapply(
+    domain_files[domain],
+    function(path) {
+      size <- file.info(path)$size
+      if (is.na(size)) 0 else size
+    },
+    numeric(1)
+  )
+  total_size <- sum(sizes)
+  use_bytes <- total_size > 0
+
+  if (show_progress) {
+    cli::cli_progress_bar(
+      name = "Reading SDTM",
+      total = if (use_bytes) total_size else length(domain),
+      format = paste0(
+        "{cli::pb_spin} {cli::pb_bar} {cli::pb_percent} | ",
+        "{.field {cli::pb_extra$domain}} ({cli::pb_extra$size})"
+      ),
+      extra = list(domain = "", size = format_bytes(0)),
+      clear = TRUE
+    )
+    on.exit(cli::cli_progress_done(), add = TRUE)
+  }
+
+  out <- list()
+  for (x in domain) {
+    path <- domain_files[[x]]
+    size <- unname(sizes[[x]])
+    if (show_progress) {
+      cli::cli_progress_update(
+        inc = 0,
+        extra = list(
+          domain = toupper(x),
+          size = format_bytes(size)
+        )
+      )
+    }
+    out[[tolower(x)]] <- read_one(path)
+    if (show_progress) {
+      cli::cli_progress_update(inc = if (use_bytes) size else 1)
     }
   }
 

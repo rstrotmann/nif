@@ -4,7 +4,14 @@
 \alias{read_sdtm}
 \title{Read SDTM data}
 \usage{
-read_sdtm(data_path, domain = NULL, format = "sas", delim = ",", ...)
+read_sdtm(
+  data_path,
+  domain = NULL,
+  format = "sas",
+  delim = ",",
+  silent = NULL,
+  ...
+)
 }
 \arguments{
 \item{data_path}{The file system path to the source folder as character.}
@@ -16,6 +23,9 @@ all domains found in the folder.}
 (default), 'xpt', or 'csv'.}
 
 \item{delim}{Deliminator.}
+
+\item{silent}{Suppress the progress bar. If \code{NULL}, uses the package
+\code{silent} option.}
 
 \item{...}{Further parameters, refer to readr::read_csv}
 }

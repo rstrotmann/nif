@@ -16,6 +16,30 @@ function_name <- function(fun) {
 }
 
 
+#' Format a file size in bytes for display
+#'
+#' @param n Size in bytes as a single numeric value.
+#'
+#' @return A character string such as `"512 B"`, `"1.5 KB"`, `"2.0 MB"`.
+#' @noRd
+format_bytes <- function(n) {
+  if (length(n) != 1 || !is.numeric(n) || is.na(n) || n < 0) {
+    return("0 B")
+  }
+
+  if (n < 1024) {
+    return(paste(round(n), "B"))
+  }
+  if (n < 1024^2) {
+    return(sprintf("%.1f KB", n / 1024))
+  }
+  if (n < 1024^3) {
+    return(sprintf("%.1f MB", n / 1024^2))
+  }
+  sprintf("%.1f GB", n / 1024^3)
+}
+
+
 #' Coalescing join
 #'
 #' Source:

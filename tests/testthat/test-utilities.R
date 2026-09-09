@@ -451,3 +451,23 @@ test_that("is_iso8601_date works with vectors", {
   results_strict <- is_iso8601_date(test_dates, allow_reduced_precision = FALSE)
   expect_equal(results_strict, expected_results_strict)
 })
+
+
+test_that("format_bytes formats byte sizes", {
+  expect_equal(format_bytes(0), "0 B")
+  expect_equal(format_bytes(512), "512 B")
+  expect_equal(format_bytes(1023), "1023 B")
+  expect_equal(format_bytes(1024), "1.0 KB")
+  expect_equal(format_bytes(1536), "1.5 KB")
+  expect_equal(format_bytes(1024^2), "1.0 MB")
+  expect_equal(format_bytes(1.5 * 1024^2), "1.5 MB")
+  expect_equal(format_bytes(1024^3), "1.0 GB")
+})
+
+
+test_that("format_bytes treats invalid input as zero bytes", {
+  expect_equal(format_bytes(NA_real_), "0 B")
+  expect_equal(format_bytes(-1), "0 B")
+  expect_equal(format_bytes(c(1, 2)), "0 B")
+  expect_equal(format_bytes("512"), "0 B")
+})
