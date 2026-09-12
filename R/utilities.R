@@ -1466,6 +1466,56 @@ add_percent <- function(df) {
 }
 
 
+#' Geometric mean
+#'
+#' @param x A numeric vector.
+#' @param na.rm Logical. Drop missing values before calculation.
+#'   Defaults to `FALSE`.
+#'
+#' @return A numeric scalar. Zeros yield `0`. Negatives yield `NaN`.
+#'   An empty vector, or all-`NA` input with `na.rm = TRUE`, returns `NA_real_`.
+#' @export
+geomean <- function(x, na.rm = FALSE) {
+  if (!is.numeric(x)) {
+    stop("`x` must be numeric")
+  }
+  if (isTRUE(na.rm)) {
+    x <- x[!is.na(x)]
+  } else if (anyNA(x)) {
+    return(NA_real_)
+  }
+  if (!length(x)) {
+    return(NA_real_)
+  }
+  exp(mean(log(x)))
+}
+
+
+#' Geometric coefficient of variation, in percent
+#'
+#' @param x A numeric vector.
+#' @param na.rm Logical. Drop missing values before calculation.
+#'   Defaults to `FALSE`.
+#'
+#' @return A numeric scalar (percent). Fewer than two non-missing values
+#'   returns `NA_real_`. Zeros and negatives yield `NaN`.
+#' @export
+geocv <- function(x, na.rm = FALSE) {
+  if (!is.numeric(x)) {
+    stop("`x` must be numeric")
+  }
+  if (isTRUE(na.rm)) {
+    x <- x[!is.na(x)]
+  } else if (anyNA(x)) {
+    return(NA_real_)
+  }
+  if (length(x) < 2L) {
+    return(NA_real_)
+  }
+  sqrt(exp(stats::sd(log(x))^2) - 1) * 100
+}
+
+
 # ---- recoding ----
 
 #' Re-code SEX field in a data frame
