@@ -207,6 +207,7 @@ check_last_exendtc <- function(ex, verbose = TRUE) {
 #'
 #' @param obj The SDTM as SDTM object.
 #' @param verbose Boolean to indicate whether to include details.
+#' @param ... Further arguments.
 #'
 #' @return Nothing.
 #' @export
