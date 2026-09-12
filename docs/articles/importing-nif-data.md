@@ -118,8 +118,8 @@ summary(nif)
 #>   CMT1    1    1    1     1
 #> 
 #> NIF version: 0.66.1
-#> Creation date: 2026-09-05
-#> Hash: be76f670814bbd674b60e36f0fcf0875
+#> Creation date: 2026-09-12
+#> Hash: f7ef760eac2095a3768714af2d21e8e4
 plot(nif, log = T, points = T)
 ```
 

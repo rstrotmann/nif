@@ -1,6 +1,9 @@
 # Add dose level column
 
-Dose level is defined as the starting dose regimen for each ID.
+Dose level is the starting dose regimen for each ID: administrations
+whose consecutive times fall within 12 hours (the same window as
+[`index_regimen()`](index_regimen.md)). Later dose or regimen changes
+are ignored.
 
 ## Usage
 

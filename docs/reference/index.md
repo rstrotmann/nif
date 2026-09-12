@@ -54,8 +54,8 @@
 - [`cdiscpilot01_sdtm`](cdiscpilot01_sdtm.md) : Pharmaverse sample SDTM
   data
 - [`check()`](check.md) : Check nif or sdtm object
-- [`cmt_mapping()`](cmt_mapping.md) **\[deprecated\]** :
-  Analyte-to-compartment mapping
+- [`check(`*`<sdtm>`*`)`](check.sdtm.md) : Check SDTM domains DM, EX and
+  PC for missing date and time information.
 - [`compartments()`](compartments.md) : Compartments used in a nif
   object
 - [`correlate_obs()`](correlate_obs.md) **\[experimental\]** : Correlate
@@ -119,8 +119,10 @@
   in the data set
 - [`gather_duplicates()`](gather_duplicates.md) **\[experimental\]** :
   Consolidate multiplicate observations in a nif object
+- [`geocv()`](geocv.md) : Geometric coefficient of variation, in percent
 - [`geom_admin()`](geom_admin.md) : Administration lines for a selected
   analyte
+- [`geomean()`](geomean.md) : Geometric mean
 - [`hash()`](hash.md) : XXH128 hash
 - [`import_from_connection()`](import_from_connection.md) : Import nif
   object from connection
@@ -153,6 +155,7 @@
 - [`max_observation_time()`](max_observation_time.md) : Maximal
   observation time
 - [`max_time()`](max_time.md) : Maximal time in nif object
+- [`mean_dose_plot()`](mean_dose_plot.md) : Mean dose plot
 - [`n_administrations()`](n_administrations.md) : Number of
   administrations per subject
 - [`nca()`](nca.md) **\[experimental\]** : Non-compartmental analysis of
@@ -165,8 +168,6 @@
   dose
 - [`nca_summary_table()`](nca_summary_table.md) : PK parameter summary
   statistics table by grouping variables
-- [`new_sdtm()`](new_sdtm.md) **\[deprecated\]** : SDTM class
-  constructor, creating a sdtm object from a set of SDTM domains
 - [`nif()`](nif.md) : nif class constructor
 - [`nif_auto()`](nif_auto.md) **\[experimental\]** : Auto-generate nif
   from sdtm object

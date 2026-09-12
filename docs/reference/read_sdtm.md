@@ -6,7 +6,14 @@ folder location.
 ## Usage
 
 ``` r
-read_sdtm(data_path, domain = NULL, format = "sas", delim = ",", ...)
+read_sdtm(
+  data_path,
+  domain = NULL,
+  format = "sas",
+  delim = ",",
+  silent = NULL,
+  ...
+)
 ```
 
 ## Arguments
@@ -28,6 +35,11 @@ read_sdtm(data_path, domain = NULL, format = "sas", delim = ",", ...)
 - delim:
 
   Deliminator.
+
+- silent:
+
+  Suppress the progress bar. If `NULL`, uses the package `silent`
+  option.
 
 - ...:
 

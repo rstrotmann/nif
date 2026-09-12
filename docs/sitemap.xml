@@ -49,6 +49,7 @@
 <url><loc>/reference/cdiscpilot01_nif.html</loc></url>
 <url><loc>/reference/cdiscpilot01_sdtm.html</loc></url>
 <url><loc>/reference/check.html</loc></url>
+<url><loc>/reference/check.sdtm.html</loc></url>
 <url><loc>/reference/check_date_format.html</loc></url>
 <url><loc>/reference/check_date_time_format.html</loc></url>
 <url><loc>/reference/check_last_exendtc.html</loc></url>
@@ -99,7 +100,9 @@
 <url><loc>/reference/filter_subject.html</loc></url>
 <url><loc>/reference/function_name.html</loc></url>
 <url><loc>/reference/gather_duplicates.html</loc></url>
+<url><loc>/reference/geocv.html</loc></url>
 <url><loc>/reference/geom_admin.html</loc></url>
+<url><loc>/reference/geomean.html</loc></url>
 <url><loc>/reference/guess_ntime.html</loc></url>
 <url><loc>/reference/has_domain.html</loc></url>
 <url><loc>/reference/hash.html</loc></url>

@@ -571,8 +571,8 @@ summary(nif)
 #>   RS2023  2    2    2     2
 #> 
 #> NIF version: 0.66.1
-#> Creation date: 2026-09-05
-#> Hash: 6044200c641a160a8b2ff21e984217bb
+#> Creation date: 2026-09-12
+#> Hash: 10d0fb9e5597669f8025390dbaf2fb91
 #> Last DTC: 2001-03-10 10:28:00
 ```
 
