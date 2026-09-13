@@ -127,22 +127,30 @@ creatinine clearance:
 ``` r
 
 head(nif_poc, 3)
-#    REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
-#  1   1  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
-#  2   2  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
-#  3   3  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639
-#                    DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT
-#  1 2001-01-05 10:25:00    0     0    0   0    1 500   1 NA     RS2023 RS2023
-#  2 2001-01-05 10:25:00    0     0    0   0    0   0   2  0     RS2023 RS2023
-#  3 2001-01-05 10:25:00    0     0    0   0    0   0   3  0 RS2023487A RS2023
-#    TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION BL_CREAT
-#  1     1      FALSE  500   1 TREATMENT time copied from EXSTDTC 58.84185
-#  2     1      FALSE  500   0 TREATMENT                          58.84185
-#  3     1      FALSE  500   0 TREATMENT                          58.84185
-#     BL_CRCL
-#  1 165.5927
-#  2 165.5927
-#  3 165.5927
+#  ──────── NONMEM Input Format (NIF) data ────────
+#  2 observations from 1 subject across 1 study
+#  
+#  # A tibble: 3 × 29
+#      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
+#    <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
+#  1     1     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5
+#  2     2     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5
+#  3     3     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5
+#    DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   
+#    <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>     
+#  1 2001-01-05 10:25:00     0     0     0     0     1   500     1    NA RS2023    
+#  2 2001-01-05 10:25:00     0     0     0     0     0     0     2     0 RS2023    
+#  3 2001-01-05 10:25:00     0     0     0     0     0     0     3     0 RS2023487A
+#    PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD  IMPUTATION                
+#    <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>     <chr>                     
+#  1 RS2023     1 FALSE        500     1 TREATMENT "time copied from EXSTDTC"
+#  2 RS2023     1 FALSE        500     0 TREATMENT ""                        
+#  3 RS2023     1 FALSE        500     0 TREATMENT ""                        
+#    BL_CREAT BL_CRCL
+#       <dbl>   <dbl>
+#  1     58.8    166.
+#  2     58.8    166.
+#  3     58.8    166.
 ```
 
 ## EXPLORATION
@@ -213,8 +221,8 @@ summary(nif_poc)
 #    RS2023  58   101  76.9  75
 #  
 #  NIF version: 0.66.1
-#  Creation date: 2026-09-12
-#  Hash: b4a1ddb2afd70fff2581222ff74b6d37
+#  Creation date: 2026-09-13
+#  Hash: ece6f63960475b8121568b693136282e
 #  Last DTC: 2001-08-15 09:01:00
 ```
 

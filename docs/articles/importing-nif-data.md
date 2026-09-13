@@ -54,7 +54,7 @@ The external data can be imported as a nif object using
 nif <- import_nif(csv_file_name, format = "csv")
 nif
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 16 observations from 2 subjects  
+#> 16 observations from 2 subjects
 #> 
 #> # A tibble: 18 × 8
 #>      REF    ID  TIME  EVID   AMT   CMT    DV   MDV
@@ -118,8 +118,8 @@ summary(nif)
 #>   CMT1    1    1    1     1
 #> 
 #> NIF version: 0.66.1
-#> Creation date: 2026-09-12
-#> Hash: f7ef760eac2095a3768714af2d21e8e4
+#> Creation date: 2026-09-13
+#> Hash: ad12b292e2d826399f0066ca09c321bb
 plot(nif, log = T, points = T)
 ```
 
@@ -150,11 +150,16 @@ nif <- import_nif(
 )
 
 head(nif)
-#>   REF ID TIME NTIME EVID AMT CMT        DV MDV
-#> 1   1  1  0.0   0.0    1   5   1        NA   1
-#> 2   2  1  0.0   0.0    0   0   2 0.0000000   0
-#> 3   3  1  0.5   0.5    0   0   2 0.1112935   0
-#> 4   4  1  1.0   1.0    0   0   2 0.1405375   0
-#> 5   5  1  1.5   1.5    0   0   2 0.1259357   0
-#> 6   6  1  2.0   2.0    0   0   2 0.1018652   0
+#> ──────── NONMEM Input Format (NIF) data ────────
+#> 5 observations from 1 subject
+#> 
+#> # A tibble: 6 × 9
+#>     REF    ID  TIME NTIME  EVID   AMT   CMT     DV   MDV
+#>   <int> <int> <dbl> <dbl> <int> <int> <int>  <dbl> <int>
+#> 1     1     1   0     0       1     5     1 NA         1
+#> 2     2     1   0     0       0     0     2  0         0
+#> 3     3     1   0.5   0.5     0     0     2  0.111     0
+#> 4     4     1   1     1       0     0     2  0.141     0
+#> 5     5     1   1.5   1.5     0     0     2  0.126     0
+#> 6     6     1   2     2       0     0     2  0.102     0
 ```

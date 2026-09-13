@@ -153,23 +153,31 @@ summary.sdtm <- function(object, ...) {
   )
 
   # Numbers of subjects and observations by domain
-  out$disposition <- purrr::map(
-    object$domains,
+  if (length(object$domains) == 0L) {
+    out$disposition <- data.frame(
+      DOMAIN = character(),
+      SUBJECTS = integer(),
+      OBSERVATIONS = integer()
+    )
+  } else {
+    out$disposition <- purrr::map(
+      object$domains,
 
-    function(x) {
-      if ("USUBJID" %in% names(x)) {
-        data.frame(
-          SUBJECTS = length(unique(x$USUBJID)),
-          OBSERVATIONS = dim(x)[1]
-        )
-      } else {
-        data.frame(SUBJECTS = 0, OBSERVATIONS = 0)
+      function(x) {
+        if ("USUBJID" %in% names(x)) {
+          data.frame(
+            SUBJECTS = length(unique(x$USUBJID)),
+            OBSERVATIONS = dim(x)[1]
+          )
+        } else {
+          data.frame(SUBJECTS = 0, OBSERVATIONS = 0)
+        }
       }
-    }
-  ) |>
-    purrr::list_rbind() |>
-    mutate(DOMAIN = names(object$domains)) |>
-    select(c("DOMAIN", "SUBJECTS", "OBSERVATIONS"))
+    ) |>
+      purrr::list_rbind() |>
+      mutate(DOMAIN = names(object$domains)) |>
+      select(c("DOMAIN", "SUBJECTS", "OBSERVATIONS"))
+  }
 
   # Get data for DM domain if it exists
   if (has_domain(object, "dm")) {
@@ -233,45 +241,49 @@ summary.sdtm <- function(object, ...) {
 
 #' print SDTM summary
 #'
-#' @param x SDTM object
-#' @param ... Further parameters
-#' @return none
-#' @export
+#' @param x SDTM summary object.
+#' @param ... Further parameters.
+#' @return The SDTM summary object.
+#' @exportS3Method base::print
 #' @noRd
-print.summary_sdtm <- function(x, color = FALSE, ...) {
+print.summary_sdtm <- function(x, ...) {
   indent <- 2
   spacer <- paste0(rep(" ", indent), collapse = "")
 
   cat(paste(hline(), "SDTM data set summary", hline(), "\n"))
 
-  out <- list(
-    compose_message(paste(plural("Study", length(x$study) > 1),
-                          nice_enumeration(x$study))),
+  if (nrow(x$disposition) == 0L) {
+    cat("(empty)\n")
+  } else {
+    out <- list(
+      compose_message(paste(plural("Study", length(x$study) > 1),
+                            nice_enumeration(x$study))),
 
-    compose_message(str_wrap(x$title, width = 80),
-                    condition = !is.null(x$title)),
+      compose_message(str_wrap(x$title, width = 80),
+                      condition = !is.null(x$title)),
 
-    compose_message(paste("DCO:", x$dco), condition = !is.null(x$dco)),
-    compose_message("Data disposition:", x$disposition),
-    compose_message("Arms:", arrange(x$arms, .data$ACTARMCD)),
+      compose_message(paste("DCO:", x$dco), condition = !is.null(x$dco)),
+      compose_message("Data disposition:", x$disposition),
+      compose_message("Arms:", arrange(x$arms, .data$ACTARMCD)),
 
-    compose_message(
-      "Treatments:",
-      paste0(spacer, nice_enumeration(x$treatments)),
-      condition = "ex" %in% tolower(x$disposition$DOMAIN)
-    ),
+      compose_message(
+        "Treatments:",
+        paste0(spacer, nice_enumeration(x$treatments)),
+        condition = "ex" %in% tolower(x$disposition$DOMAIN)
+      ),
 
-    compose_message(
-      "PK sample specimens:",
-      paste0(spacer, nice_enumeration(x$specimens)),
-      condition = "pc" %in% tolower(x$disposition$DOMAIN)
-    ),
+      compose_message(
+        "PK sample specimens:",
+        paste0(spacer, nice_enumeration(x$specimens)),
+        condition = "pc" %in% tolower(x$disposition$DOMAIN)
+      ),
 
-    compose_message("PK analytes:", x$analytes),
-    compose_message(paste0("Hash: ", x$hash), paste0("Last DTC: ", x$last))
-  )
+      compose_message("PK analytes:", x$analytes),
+      compose_message(paste0("Hash: ", x$hash), paste0("Last DTC: ", x$last))
+    )
 
-  cat_message(out)
+    cat_message(out)
+  }
   invisible(x)
 }
 
@@ -279,11 +291,12 @@ print.summary_sdtm <- function(x, color = FALSE, ...) {
 #' print() implementation for a sdtm object
 #'
 #' @param x A SDTM object.
-#' @param ... Further parameters
-#' @export
+#' @param ... Further arguments.
+#' @exportS3Method base::print
 #' @noRd
 print.sdtm <- function(x, ...) {
-  print(summary(x))
+  print(summary(x), ...)
+  invisible(x)
 }
 
 
@@ -319,55 +332,6 @@ has_domain <- function(obj, name) {
 
   # Check if all domains exist
   all(names_lower %in% names(obj$domains))
-}
-
-
-#' Baseline details for specific subjects
-#'
-#' @param obj The object, either an SDTM or NIF object.
-#' @param id The ID or USUBJID as numeric or character.
-#' @export
-#' @examples
-#' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
-#' subject_info(examplinib_poc_nif, 1)
-#' head(subject_info(examplinib_poc_nif, 1)$administrations)
-subject_info <- function(obj, id) {
-  UseMethod("subject_info")
-}
-
-
-#' Baseline details for specific subjects
-#'
-#' @inheritParams subject_info
-#' @export
-#' @keywords internal
-#' @examples
-#' subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
-#' subject_info(examplinib_fe, subjects(examplinib_fe)[1:3, "USUBJID"])
-subject_info.sdtm <- function(obj, id) {
-  validate_sdtm(obj, "dm")
-  validate_argument(id, "character", allow_multiple = TRUE)
-
-  temp <- obj |>
-    domain("dm") |>
-    dplyr::filter(.data$USUBJID %in% id) |>
-    as.list()
-  class(temp) <- c("subject_info", "data.frame")
-
-
-  temp <- domain(obj, "dm") |>
-    filter(.data$USUBJID %in% id) |>
-    select(any_of(c("SUBJID", "USUBJID", "SITEID", "COUNTRY", "ARM", "ARMCD",
-                    "ACTARM", "ACTARMCD", "RFSTDTC", "RFENDTC", "SEX", "AGE",
-                    "RACE", "ETHNIC"))) |>
-    mutate(across(everything(), as.character))
-
-  rbind(colnames(temp), temp) |>
-    as.matrix() |>
-    t() |>
-    data.frame() |>
-    df_to_string(header = F) |>
-    cat()
 }
 
 

@@ -19,6 +19,10 @@ check(obj, verbose = TRUE, ...)
 
   Boolean to indicate whether to include details.
 
+- ...:
+
+  Further arguments.
+
 ## Value
 
 Nothing.

@@ -122,7 +122,7 @@ add_administration(nif(), examplinib_sad, "EXAMPLINIB")
 #> ℹ Imputation model 'imputation_rules_standard' applied to administration of EXAMPLINIB
 #> ℹ A global cut-off-date of 2001-02-23 11:31:00 was automatically assigned!
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 0 observations from 48 subjects across 1 study 
+#> 0 observations from 48 subjects across 1 study
 #> 
 #> # A tibble: 48 × 27
 #>      REF    ID STUDYID    USUBJID             AGE   SEX

@@ -29,7 +29,7 @@ A NIF object with the DI column added.
 ``` r
 index_dosing_interval(examplinib_fe_nif)
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 680 observations from 20 subjects across 1 study 
+#> 680 observations from 20 subjects across 1 study
 #> 
 #> # A tibble: 720 × 32
 #>      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT

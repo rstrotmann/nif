@@ -181,22 +181,30 @@ documentation for <code><a href="../reference/add_bl_crcl.html">add_bl_crcl()</a
 creatinine clearance:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif_poc</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#    REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
-<span><span class="co">#  1   1  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span></span>
-<span><span class="co">#  2   2  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span></span>
-<span><span class="co">#  3   3  1 2023000022 20230000221010001  49   1 WHITE  180.4  102.6 31.52639</span></span>
-<span><span class="co">#                    DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT</span></span>
-<span><span class="co">#  1 2001-01-05 10:25:00    0     0    0   0    1 500   1 NA     RS2023 RS2023</span></span>
-<span><span class="co">#  2 2001-01-05 10:25:00    0     0    0   0    0   0   2  0     RS2023 RS2023</span></span>
-<span><span class="co">#  3 2001-01-05 10:25:00    0     0    0   0    0   0   3  0 RS2023487A RS2023</span></span>
-<span><span class="co">#    TRTDY METABOLITE DOSE MDV  ACTARMCD               IMPUTATION BL_CREAT</span></span>
-<span><span class="co">#  1     1      FALSE  500   1 TREATMENT time copied from EXSTDTC 58.84185</span></span>
-<span><span class="co">#  2     1      FALSE  500   0 TREATMENT                          58.84185</span></span>
-<span><span class="co">#  3     1      FALSE  500   0 TREATMENT                          58.84185</span></span>
-<span><span class="co">#     BL_CRCL</span></span>
-<span><span class="co">#  1 165.5927</span></span>
-<span><span class="co">#  2 165.5927</span></span>
-<span><span class="co">#  3 165.5927</span></span></code></pre></div>
+<span><span class="co">#  ──────── NONMEM Input Format (NIF) data ────────</span></span>
+<span><span class="co">#  2 observations from 1 subject across 1 study</span></span>
+<span><span class="co">#  </span></span>
+<span><span class="co">#  <span style="color: #949494;"># A tibble: 3 × 29</span></span></span>
+<span><span class="co">#      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI</span></span>
+<span><span class="co">#    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">1</span>     1     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5</span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">2</span>     2     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5</span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">3</span>     3     1 2023000022 20230000221010001    49     1 WHITE   180.   103.  31.5</span></span>
+<span><span class="co">#    DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   </span></span>
+<span><span class="co">#    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">1</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     1   500     1    <span style="color: #BB0000;">NA</span> RS2023    </span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">2</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     0     0     2     0 RS2023    </span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">3</span> 2001-01-05 <span style="color: #949494;">10:25:00</span>     0     0     0     0     0     0     3     0 RS2023487A</span></span>
+<span><span class="co">#    PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD  IMPUTATION                </span></span>
+<span><span class="co">#    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE        500     1 TREATMENT <span style="color: #949494;">"</span>time copied from EXSTDTC<span style="color: #949494;">"</span></span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">2</span> RS2023     1 FALSE        500     0 TREATMENT <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">3</span> RS2023     1 FALSE        500     0 TREATMENT <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#    BL_CREAT BL_CRCL</span></span>
+<span><span class="co">#       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">1</span>     58.8    166.</span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">2</span>     58.8    166.</span></span>
+<span><span class="co">#  <span style="color: #BCBCBC;">3</span>     58.8    166.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploration">EXPLORATION<a class="anchor" aria-label="anchor" href="#exploration"></a>
@@ -265,8 +273,8 @@ impaired renal function:</p>
 <span><span class="co">#    RS2023  58   101  76.9  75</span></span>
 <span><span class="co">#  </span></span>
 <span><span class="co">#  NIF version: 0.66.1</span></span>
-<span><span class="co">#  Creation date: 2026-09-12</span></span>
-<span><span class="co">#  Hash: b4a1ddb2afd70fff2581222ff74b6d37</span></span>
+<span><span class="co">#  Creation date: 2026-09-13</span></span>
+<span><span class="co">#  Hash: ece6f63960475b8121568b693136282e</span></span>
 <span><span class="co">#  Last DTC: 2001-08-15 09:01:00</span></span></code></pre></div>
 <p>For a visual overview of the NIF data set <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> can be
 applied to the nif summary object. Ignore the

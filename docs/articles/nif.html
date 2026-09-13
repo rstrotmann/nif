@@ -224,14 +224,15 @@ be extracted using <code><a href="../reference/subject_info.html">subject_info()
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">examplinib_fe</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/subject_info.html">subject_info</a></span><span class="op">(</span><span class="st">"20230004001050001"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ──────── Subject information ────────</span></span>
 <span><span class="co">#&gt; SUBJID    1050001                    </span></span>
 <span><span class="co">#&gt; USUBJID   20230004001050001          </span></span>
-<span><span class="co">#&gt; SITEID    105                        </span></span>
-<span><span class="co">#&gt; COUNTRY   DEU                        </span></span>
 <span><span class="co">#&gt; ARM       Fasted - Fed               </span></span>
 <span><span class="co">#&gt; ARMCD     AB                         </span></span>
 <span><span class="co">#&gt; ACTARM    Fasted - Fed               </span></span>
 <span><span class="co">#&gt; ACTARMCD  AB                         </span></span>
+<span><span class="co">#&gt; SITEID    105                        </span></span>
+<span><span class="co">#&gt; COUNTRY   DEU                        </span></span>
 <span><span class="co">#&gt; RFSTDTC   2001-01-05T10:05           </span></span>
 <span><span class="co">#&gt; RFENDTC   2001-01-18T10:05           </span></span>
 <span><span class="co">#&gt; SEX       M                          </span></span>
@@ -427,24 +428,31 @@ the ‘EXTRT’ field is ‘EXAMPLINIB’ while the pharmacokinetic analyte name
 <p>These are the first rows of the resulting data table:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
-<span><span class="co">#&gt; 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt; 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt; 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt; 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt; 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT</span></span>
-<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0   2 6325.101  RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0   2 6294.187  RS2023 RS2023</span></span>
-<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION</span></span>
-<span><span class="co">#&gt; 1     1      FALSE  500   1       AB time copied from EXSTDTC</span></span>
-<span><span class="co">#&gt; 2     1      FALSE  500   0       AB                         </span></span>
-<span><span class="co">#&gt; 3     1      FALSE  500   0       AB                         </span></span>
-<span><span class="co">#&gt; 4     1      FALSE  500   0       AB                         </span></span>
-<span><span class="co">#&gt; 5     1      FALSE  500   0       AB</span></span></code></pre></div>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data ────────</span></span>
+<span><span class="co">#&gt; 4 observations from 1 subject across 1 study</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 27</span></span></span>
+<span><span class="co">#&gt;     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     4     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     5     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt;   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2001-01-05 <span style="color: #949494;">10:05:00</span>   0     0     0     0       1   500     1   <span style="color: #BB0000;">NA</span>  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2001-01-05 <span style="color: #949494;">10:05:00</span>   0     0     0     0       0     0     2    0  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2001-01-05 <span style="color: #949494;">10:35:00</span>   0.5   0.5   0.5   0.5     0     0     2 <span style="text-decoration: underline;">4</span>697. RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2001-01-05 <span style="color: #949494;">11:05:00</span>   1     1     1     1       0     0     2 <span style="text-decoration: underline;">6</span>325. RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2001-01-05 <span style="color: #949494;">11:35:00</span>   1.5   1.5   1.5   1.5     0     0     2 <span style="text-decoration: underline;">6</span>294. RS2023 </span></span>
+<span><span class="co">#&gt;   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE        500     1 AB       <span style="color: #949494;">"</span>time copied from EXSTDTC<span style="color: #949494;">"</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> RS2023     1 FALSE        500     0 AB       <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> RS2023     1 FALSE        500     0 AB       <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> RS2023     1 FALSE        500     0 AB       <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> RS2023     1 FALSE        500     0 AB       <span style="color: #949494;">""</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-analytes">Multiple analytes<a class="anchor" aria-label="anchor" href="#multiple-analytes"></a>
@@ -503,22 +511,30 @@ parameter in <code><a href="../reference/add_administration.html">add_administra
 <p>These are again the first 3 lines of the resulting nif object:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI</span></span>
-<span><span class="co">#&gt; 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt; 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt; 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT</span></span>
-<span><span class="co">#&gt; 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023</span></span>
-<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION</span></span>
-<span><span class="co">#&gt; 1     1      FALSE  500   1       AB time copied from EXSTDTC</span></span>
-<span><span class="co">#&gt; 2     1      FALSE  500   0       AB                         </span></span>
-<span><span class="co">#&gt; 3     1      FALSE  500   0       AB                         </span></span>
-<span><span class="co">#&gt;                    EPOCH PERIOD TREATMENT FASTED</span></span>
-<span><span class="co">#&gt; 1 OPEN LABEL TREATMENT 1      1         A      1</span></span>
-<span><span class="co">#&gt; 2 OPEN LABEL TREATMENT 1      1         A      1</span></span>
-<span><span class="co">#&gt; 3 OPEN LABEL TREATMENT 1      1         A      1</span></span></code></pre></div>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data ────────</span></span>
+<span><span class="co">#&gt; 2 observations from 1 subject across 1 study</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 31</span></span></span>
+<span><span class="co">#&gt;     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5</span></span>
+<span><span class="co">#&gt;   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2001-01-05 <span style="color: #949494;">10:05:00</span>   0     0     0     0       1   500     1   <span style="color: #BB0000;">NA</span>  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2001-01-05 <span style="color: #949494;">10:05:00</span>   0     0     0     0       0     0     2    0  RS2023 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2001-01-05 <span style="color: #949494;">10:35:00</span>   0.5   0.5   0.5   0.5     0     0     2 <span style="text-decoration: underline;">4</span>697. RS2023 </span></span>
+<span><span class="co">#&gt;   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE        500     1 AB       <span style="color: #949494;">"</span>time copied from EXSTDTC<span style="color: #949494;">"</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> RS2023     1 FALSE        500     0 AB       <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> RS2023     1 FALSE        500     0 AB       <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#&gt;   EPOCH                  PERIOD TREATMENT FASTED</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> OPEN LABEL TREATMENT 1 1      A              1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> OPEN LABEL TREATMENT 1 1      A              1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> OPEN LABEL TREATMENT 1 1      A              1</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -580,8 +596,8 @@ the data disposition in a <code>nif</code> data set:</p>
 <span><span class="co">#&gt;   RS2023  2    2    2     2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; NIF version: 0.66.1</span></span>
-<span><span class="co">#&gt; Creation date: 2026-09-12</span></span>
-<span><span class="co">#&gt; Hash: 10d0fb9e5597669f8025390dbaf2fb91</span></span>
+<span><span class="co">#&gt; Creation date: 2026-09-13</span></span>
+<span><span class="co">#&gt; Hash: 7c29b98e687a88c9c3cd473af1d4ee50</span></span>
 <span><span class="co">#&gt; Last DTC: 2001-03-10 10:28:00</span></span></code></pre></div>
 <p>Plotting the summary yields histograms of the baseline demographic
 covariates and raw plots of the analytes over time. In the following

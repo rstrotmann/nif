@@ -6,7 +6,7 @@ assign("verbose", FALSE, envir = .nif_env)
 assign("show_hash", FALSE, envir = .nif_env)
 assign("abbreviation_threshold", 15, envir = .nif_env)
 assign("abbreviation_maxlines", 10, envir = .nif_env)
-assign("version", packageVersion("nif"), envir = .nif_env)
+assign("version", utils::packageVersion("nif"), envir = .nif_env)
 
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -120,7 +120,9 @@ nif_option_value <- function(option) {
 #' @examples
 #' nif_disclaimer()
 nif_disclaimer <- function(disclaimer_text = NA) {
-  temp <- paste0("Data set created with `nif`, version ", packageVersion("nif"))
+  temp <- paste0(
+    "Data set created with `nif`, version ", utils::packageVersion("nif")
+  )
   disc <- disclaimer_text
   if (!is.na(disc)) {
     temp <- paste0(temp, "\n", disc)

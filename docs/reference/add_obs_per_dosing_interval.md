@@ -26,7 +26,7 @@ Result as NIF object.
 ``` r
 add_obs_per_dosing_interval(examplinib_poc_nif)
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 1344 observations from 80 subjects across 1 study 
+#> 1344 observations from 80 subjects across 1 study
 #> 
 #> # A tibble: 7,494 × 31
 #>      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT
@@ -80,7 +80,7 @@ add_obs_per_dosing_interval(examplinib_poc_nif)
 #> # ℹ 7,484 more rows
 add_obs_per_dosing_interval(examplinib_poc_min_nif)
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 1344 observations from 80 subjects  
+#> 1344 observations from 80 subjects
 #> 
 #> # A tibble: 7,494 × 12
 #>      REF    ID  TIME  EVID   AMT   CMT    DV ANALYTE PARENT   MDV    DI  OPDI

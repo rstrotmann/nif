@@ -53,6 +53,65 @@ test_that("sdtm summary", {
 })
 
 
+test_that("print.sdtm returns the sdtm object invisibly", {
+  output <- capture.output({
+    result <- print(examplinib_sad)
+  })
+
+  expect_s3_class(result, "sdtm")
+  expect_identical(result, examplinib_sad)
+  expect_false(inherits(result, "summary_sdtm"))
+  expect_true(any(grepl("SDTM data set summary", output)))
+})
+
+
+test_that("print.sdtm shows the summary banner and study details", {
+  output <- paste(capture.output(print(examplinib_sad)), collapse = "\n")
+
+  expect_match(output, "SDTM data set summary")
+  expect_match(output, "Study 2023000001")
+  expect_match(output, "Data disposition:")
+  expect_match(output, "Treatments:")
+  expect_match(output, "PK analytes:")
+  expect_match(output, "Hash:")
+})
+
+
+test_that("print.sdtm output matches print of summary", {
+  sdtm_out <- capture.output(print(examplinib_sad))
+  summary_out <- capture.output(print(summary(examplinib_sad)))
+  expect_equal(sdtm_out, summary_out)
+})
+
+
+test_that("print.sdtm omits treatments when EX is absent", {
+  obj <- sdtm(list(
+    dm = tibble::tribble(
+      ~USUBJID, ~DOMAIN, ~STUDYID, ~ACTARMCD, ~ACTARM,
+      "001",    "DM",    "S1",     "A",       "Arm A"
+    )
+  ))
+
+  output <- paste(capture.output(print(obj)), collapse = "\n")
+  expect_match(output, "SDTM data set summary")
+  expect_match(output, "Study S1")
+  expect_false(grepl("Treatments:", output))
+})
+
+
+test_that("print.sdtm handles an empty sdtm object", {
+  empty <- sdtm(list())
+  output <- capture.output({
+    result <- print(empty)
+  })
+
+  expect_s3_class(result, "sdtm")
+  expect_identical(result, empty)
+  expect_true(any(grepl("SDTM data set summary", output)))
+  expect_true(any(grepl("(empty)", output, fixed = TRUE)))
+})
+
+
 test_that("suggest_sdtm works", {
   suppressMessages(
     expect_message(suggest(examplinib_sad))

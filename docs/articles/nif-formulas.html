@@ -153,22 +153,30 @@ and derived the baseline creatinine clearance and renal function
 category from it:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI</span></span>
-<span><span class="co">#&gt; 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt; 2   2  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt; 3   3  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256</span></span>
-<span><span class="co">#&gt;                   DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT</span></span>
-<span><span class="co">#&gt; 1 2000-12-31 10:18:00    0     0    0   0    1   5   1 NA     RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 2 2000-12-31 10:18:00    0     0    0   0    0   0   2  0     RS2023 RS2023</span></span>
-<span><span class="co">#&gt; 3 2000-12-31 10:18:00    0     0    0   0    0   0   3  0 RS2023487A RS2023</span></span>
-<span><span class="co">#&gt;   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION BL_CREAT  BL_CRCL</span></span>
-<span><span class="co">#&gt; 1     1      FALSE    5   1       C1 time copied from EXSTDTC  88.9614 103.0815</span></span>
-<span><span class="co">#&gt; 2     1      FALSE    5   0       C1                           88.9614 103.0815</span></span>
-<span><span class="co">#&gt; 3     1       TRUE    5   0       C1                           88.9614 103.0815</span></span>
-<span><span class="co">#&gt;   BL_RENAL</span></span>
-<span><span class="co">#&gt; 1   normal</span></span>
-<span><span class="co">#&gt; 2   normal</span></span>
-<span><span class="co">#&gt; 3   normal</span></span></code></pre></div>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data ────────</span></span>
+<span><span class="co">#&gt; 2 observations from 1 subject across 1 study</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 30</span></span></span>
+<span><span class="co">#&gt;     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1 2023000001 20230000011010001    43     0 WHITE   187.     77  21.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1 2023000001 20230000011010001    43     0 WHITE   187.     77  21.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1 2023000001 20230000011010001    43     0 WHITE   187.     77  21.9</span></span>
+<span><span class="co">#&gt;   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2000-12-31 <span style="color: #949494;">10:18:00</span>     0     0     0     0     1     5     1    <span style="color: #BB0000;">NA</span> RS2023    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2000-12-31 <span style="color: #949494;">10:18:00</span>     0     0     0     0     0     0     2     0 RS2023    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2000-12-31 <span style="color: #949494;">10:18:00</span>     0     0     0     0     0     0     3     0 RS2023487A</span></span>
+<span><span class="co">#&gt;   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> RS2023     1 FALSE          5     1 C1       <span style="color: #949494;">"</span>time copied from EXSTDTC<span style="color: #949494;">"</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> RS2023     1 FALSE          5     0 C1       <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> RS2023     1 TRUE           5     0 C1       <span style="color: #949494;">""</span>                        </span></span>
+<span><span class="co">#&gt;   BL_CREAT BL_CRCL BL_RENAL</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     89.0    103. normal  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     89.0    103. normal  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     89.0    103. normal</span></span></code></pre></div>
 <p><code><a href="../reference/nif_auto.html">nif_auto()</a></code> will further attempt to infer the baseline
 hepatic function category as per the NCI ODWG classification from
 baseline bilirubin and AST data. In this example SDTM data set, these

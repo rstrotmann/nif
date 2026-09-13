@@ -62,7 +62,7 @@ filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 filter_subject(examplinib_poc_nif,
 subjects(examplinib_poc_nif)[1, "USUBJID"])
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 44 observations from 1 subject across 1 study 
+#> 44 observations from 1 subject across 1 study
 #> 
 #> # A tibble: 125 × 29
 #>      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT

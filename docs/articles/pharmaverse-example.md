@@ -156,8 +156,8 @@ summary(nif)
 #>   XAN      1    212  99.2   81
 #> 
 #> NIF version: 0.66.1
-#> Creation date: 2026-09-12
-#> Hash: 61713a4fa1bfc32a7fa028dd56293de8
+#> Creation date: 2026-09-13
+#> Hash: 983163ef4b0c551ef964dee3cdef0dd2
 #> Last DTC: 2015-03-05 14:40:00
 
 invisible(capture.output(

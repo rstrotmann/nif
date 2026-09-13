@@ -37,7 +37,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Baseline details for specific subjects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/sdtm_class.R" class="external-link"><code>R/sdtm_class.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rstrotmann/nif/blob/HEAD/R/subject_info_class.R" class="external-link"><code>R/subject_info_class.R</code></a></small>
       <div class="d-none name"><code>subject_info.sdtm.Rd</code></div>
     </div>
 
@@ -48,7 +48,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'sdtm'</span></span>
-<span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">id</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">id</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -62,19 +62,24 @@
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
 <dd><p>The ID or USUBJID as numeric or character.</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Further arguments.</p></dd>
+
 </dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── Subject information ────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SUBJID    1020001            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USUBJID   20230004001020001  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SITEID    102                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> COUNTRY   DEU                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARM       Screen Failure     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARMCD     SCRNFAIL           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ACTARM    Screen Failure     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ACTARMCD  SCRNFAIL           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SITEID    102                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> COUNTRY   DEU                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RFSTDTC   NA                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RFENDTC   NA                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SEX       F                  </span>
@@ -82,14 +87,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> RACE      WHITE              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ETHNIC                       </span>
 <span class="r-in"><span><span class="fu"><a href="subject_info.html">subject_info</a></span><span class="op">(</span><span class="va">examplinib_fe</span>, <span class="fu"><a href="subjects.html">subjects</a></span><span class="op">(</span><span class="va">examplinib_fe</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="st">"USUBJID"</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────── Subject information ────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SUBJID    1020001            1040001            1050001                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USUBJID   20230004001020001  20230004001040001  20230004001050001          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SITEID    102                104                105                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> COUNTRY   DEU                DEU                DEU                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARM       Screen Failure     Fed - Fasted       Fasted - Fed               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARMCD     SCRNFAIL           BA                 AB                         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ACTARM    Screen Failure     Fed - Fasted       Fasted - Fed               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ACTARMCD  SCRNFAIL           BA                 AB                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SITEID    102                104                105                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> COUNTRY   DEU                DEU                DEU                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RFSTDTC   NA                 2001-01-02T09:47   2001-01-05T10:05           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RFENDTC   NA                 2001-01-15T09:47   2001-01-18T10:05           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SEX       F                  M                  M                          </span>

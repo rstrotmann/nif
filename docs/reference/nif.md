@@ -47,7 +47,7 @@ automatically generated. Analyte mapping formulae can be supplied as the
 ``` r
 nif()
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 0 observations from 0 subjects  
+#> 0 observations from 0 subjects
 #> 
 #> # A tibble: 0 × 7
 #> # ℹ 7 variables: REF <int>, ID <int>, TIME <int>, AMT <int>, CMT <int>, EVID <int>, DV <int>

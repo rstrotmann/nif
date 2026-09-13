@@ -119,7 +119,7 @@ RATE, EVID, DV, CMT, MDV, and is provided as a csv file
 <code class="sourceCode R"><span><span class="va">nif</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_nif.html">import_nif</a></span><span class="op">(</span><span class="va">csv_file_name</span>, format <span class="op">=</span> <span class="st">"csv"</span><span class="op">)</span></span>
 <span><span class="va">nif</span></span>
 <span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data ────────</span></span>
-<span><span class="co">#&gt; 16 observations from 2 subjects  </span></span>
+<span><span class="co">#&gt; 16 observations from 2 subjects</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 18 × 8</span></span></span>
 <span><span class="co">#&gt;      REF    ID  TIME  EVID   AMT   CMT    DV   MDV</span></span>
@@ -179,8 +179,8 @@ summarized or plotted or otherwise explored (see
 <span><span class="co">#&gt;   CMT1    1    1    1     1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; NIF version: 0.66.1</span></span>
-<span><span class="co">#&gt; Creation date: 2026-09-12</span></span>
-<span><span class="co">#&gt; Hash: f7ef760eac2095a3768714af2d21e8e4</span></span>
+<span><span class="co">#&gt; Creation date: 2026-09-13</span></span>
+<span><span class="co">#&gt; Hash: ad12b292e2d826399f0066ca09c321bb</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nif</span>, log <span class="op">=</span> <span class="cn">T</span>, points <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="importing-nif-data_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="700"></p>
 <div class="section level3">
@@ -205,13 +205,18 @@ form of <code>new_field ~ transformation_term</code>:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">nif</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   REF ID TIME NTIME EVID AMT CMT        DV MDV</span></span>
-<span><span class="co">#&gt; 1   1  1  0.0   0.0    1   5   1        NA   1</span></span>
-<span><span class="co">#&gt; 2   2  1  0.0   0.0    0   0   2 0.0000000   0</span></span>
-<span><span class="co">#&gt; 3   3  1  0.5   0.5    0   0   2 0.1112935   0</span></span>
-<span><span class="co">#&gt; 4   4  1  1.0   1.0    0   0   2 0.1405375   0</span></span>
-<span><span class="co">#&gt; 5   5  1  1.5   1.5    0   0   2 0.1259357   0</span></span>
-<span><span class="co">#&gt; 6   6  1  2.0   2.0    0   0   2 0.1018652   0</span></span></code></pre></div>
+<span><span class="co">#&gt; ──────── NONMEM Input Format (NIF) data ────────</span></span>
+<span><span class="co">#&gt; 5 observations from 1 subject</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 9</span></span></span>
+<span><span class="co">#&gt;     REF    ID  TIME NTIME  EVID   AMT   CMT     DV   MDV</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     1   0     0       1     5     1 <span style="color: #BB0000;">NA</span>         1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     1   0     0       0     0     2  0         0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     1   0.5   0.5     0     0     2  0.111     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     4     1   1     1       0     0     2  0.141     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     5     1   1.5   1.5     0     0     2  0.126     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>     6     1   2     2       0     0     2  0.102     0</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

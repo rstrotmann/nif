@@ -177,14 +177,15 @@ extracted using [`subject_info()`](../reference/subject_info.md):
 
 examplinib_fe %>%
   subject_info("20230004001050001")
+#> ──────── Subject information ────────
 #> SUBJID    1050001                    
 #> USUBJID   20230004001050001          
-#> SITEID    105                        
-#> COUNTRY   DEU                        
 #> ARM       Fasted - Fed               
 #> ARMCD     AB                         
 #> ACTARM    Fasted - Fed               
 #> ACTARMCD  AB                         
+#> SITEID    105                        
+#> COUNTRY   DEU                        
 #> RFSTDTC   2001-01-05T10:05           
 #> RFENDTC   2001-01-18T10:05           
 #> SEX       M                          
@@ -404,24 +405,31 @@ These are the first rows of the resulting data table:
 ``` r
 
 head(nif, 5)
-#>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
-#> 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#> 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#> 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#> 4   4  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#> 5   5  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#>                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT
-#> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023
-#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023
-#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023
-#> 4 2001-01-05 11:05:00  1.0   1.0  1.0 1.0    0   0   2 6325.101  RS2023 RS2023
-#> 5 2001-01-05 11:35:00  1.5   1.5  1.5 1.5    0   0   2 6294.187  RS2023 RS2023
-#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION
-#> 1     1      FALSE  500   1       AB time copied from EXSTDTC
-#> 2     1      FALSE  500   0       AB                         
-#> 3     1      FALSE  500   0       AB                         
-#> 4     1      FALSE  500   0       AB                         
-#> 5     1      FALSE  500   0       AB
+#> ──────── NONMEM Input Format (NIF) data ────────
+#> 4 observations from 1 subject across 1 study
+#> 
+#> # A tibble: 5 × 27
+#>     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
+#>   <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
+#> 1     1     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 2     2     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 3     3     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 4     4     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 5     5     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
+#>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
+#> 1 2001-01-05 10:05:00   0     0     0     0       1   500     1   NA  RS2023 
+#> 2 2001-01-05 10:05:00   0     0     0     0       0     0     2    0  RS2023 
+#> 3 2001-01-05 10:35:00   0.5   0.5   0.5   0.5     0     0     2 4697. RS2023 
+#> 4 2001-01-05 11:05:00   1     1     1     1       0     0     2 6325. RS2023 
+#> 5 2001-01-05 11:35:00   1.5   1.5   1.5   1.5     0     0     2 6294. RS2023 
+#>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
+#>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
+#> 1 RS2023     1 FALSE        500     1 AB       "time copied from EXSTDTC"
+#> 2 RS2023     1 FALSE        500     0 AB       ""                        
+#> 3 RS2023     1 FALSE        500     0 AB       ""                        
+#> 4 RS2023     1 FALSE        500     0 AB       ""                        
+#> 5 RS2023     1 FALSE        500     0 AB       ""
 ```
 
 ### Multiple analytes
@@ -493,22 +501,30 @@ These are again the first 3 lines of the resulting nif object:
 ``` r
 
 head(nif, 3)
-#>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT      BMI
-#> 1   1  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#> 2   2  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#> 3   3  1 2023000400 20230004001010002  53   1 WHITE  180.4   73.1 22.46179
-#>                   DTC TIME NTIME TAFD TAD EVID AMT CMT       DV ANALYTE PARENT
-#> 1 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    1 500   1       NA  RS2023 RS2023
-#> 2 2001-01-05 10:05:00  0.0   0.0  0.0 0.0    0   0   2    0.000  RS2023 RS2023
-#> 3 2001-01-05 10:35:00  0.5   0.5  0.5 0.5    0   0   2 4697.327  RS2023 RS2023
-#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION
-#> 1     1      FALSE  500   1       AB time copied from EXSTDTC
-#> 2     1      FALSE  500   0       AB                         
-#> 3     1      FALSE  500   0       AB                         
-#>                    EPOCH PERIOD TREATMENT FASTED
-#> 1 OPEN LABEL TREATMENT 1      1         A      1
-#> 2 OPEN LABEL TREATMENT 1      1         A      1
-#> 3 OPEN LABEL TREATMENT 1      1         A      1
+#> ──────── NONMEM Input Format (NIF) data ────────
+#> 2 observations from 1 subject across 1 study
+#> 
+#> # A tibble: 3 × 31
+#>     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
+#>   <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
+#> 1     1     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 2     2     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#> 3     3     1 2023000400 20230004001010002    53     1 WHITE   180.   73.1  22.5
+#>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE
+#>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>  
+#> 1 2001-01-05 10:05:00   0     0     0     0       1   500     1   NA  RS2023 
+#> 2 2001-01-05 10:05:00   0     0     0     0       0     0     2    0  RS2023 
+#> 3 2001-01-05 10:35:00   0.5   0.5   0.5   0.5     0     0     2 4697. RS2023 
+#>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
+#>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
+#> 1 RS2023     1 FALSE        500     1 AB       "time copied from EXSTDTC"
+#> 2 RS2023     1 FALSE        500     0 AB       ""                        
+#> 3 RS2023     1 FALSE        500     0 AB       ""                        
+#>   EPOCH                  PERIOD TREATMENT FASTED
+#>   <chr>                  <chr>  <chr>      <dbl>
+#> 1 OPEN LABEL TREATMENT 1 1      A              1
+#> 2 OPEN LABEL TREATMENT 1 1      A              1
+#> 3 OPEN LABEL TREATMENT 1 1      A              1
 ```
 
 ## DATA EXPLORATION
@@ -571,8 +587,8 @@ summary(nif)
 #>   RS2023  2    2    2     2
 #> 
 #> NIF version: 0.66.1
-#> Creation date: 2026-09-12
-#> Hash: 10d0fb9e5597669f8025390dbaf2fb91
+#> Creation date: 2026-09-13
+#> Hash: 7c29b98e687a88c9c3cd473af1d4ee50
 #> Last DTC: 2001-03-10 10:28:00
 ```
 

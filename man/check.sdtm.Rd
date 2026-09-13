@@ -10,6 +10,8 @@
 \item{obj}{The SDTM as SDTM object.}
 
 \item{verbose}{Boolean to indicate whether to include details.}
+
+\item{...}{Further arguments.}
 }
 \value{
 Nothing.

@@ -6,7 +6,7 @@ Baseline details for specific subjects
 
 ``` r
 # S3 method for class 'sdtm'
-subject_info(obj, id)
+subject_info(obj, id, ...)
 ```
 
 ## Arguments
@@ -19,18 +19,23 @@ subject_info(obj, id)
 
   The ID or USUBJID as numeric or character.
 
+- ...:
+
+  Further arguments.
+
 ## Examples
 
 ``` r
 subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
+#> ──────── Subject information ────────
 #> SUBJID    1020001            
 #> USUBJID   20230004001020001  
-#> SITEID    102                
-#> COUNTRY   DEU                
 #> ARM       Screen Failure     
 #> ARMCD     SCRNFAIL           
 #> ACTARM    Screen Failure     
 #> ACTARMCD  SCRNFAIL           
+#> SITEID    102                
+#> COUNTRY   DEU                
 #> RFSTDTC   NA                 
 #> RFENDTC   NA                 
 #> SEX       F                  
@@ -38,14 +43,15 @@ subject_info(examplinib_fe, subjects(examplinib_fe)[1, "USUBJID"])
 #> RACE      WHITE              
 #> ETHNIC                       
 subject_info(examplinib_fe, subjects(examplinib_fe)[1:3, "USUBJID"])
+#> ──────── Subject information ────────
 #> SUBJID    1020001            1040001            1050001                    
 #> USUBJID   20230004001020001  20230004001040001  20230004001050001          
-#> SITEID    102                104                105                        
-#> COUNTRY   DEU                DEU                DEU                        
 #> ARM       Screen Failure     Fed - Fasted       Fasted - Fed               
 #> ARMCD     SCRNFAIL           BA                 AB                         
 #> ACTARM    Screen Failure     Fed - Fasted       Fasted - Fed               
 #> ACTARMCD  SCRNFAIL           BA                 AB                         
+#> SITEID    102                104                105                        
+#> COUNTRY   DEU                DEU                DEU                        
 #> RFSTDTC   NA                 2001-01-02T09:47   2001-01-05T10:05           
 #> RFENDTC   NA                 2001-01-15T09:47   2001-01-18T10:05           
 #> SEX       F                  M                  M                          

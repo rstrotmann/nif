@@ -39,7 +39,7 @@ and analyte is reported in the 'RICH_N' field.
 ``` r
 index_rich_sampling_intervals(examplinib_poc_nif)
 #> ──────── NONMEM Input Format (NIF) data ────────
-#> 1344 observations from 80 subjects across 1 study 
+#> 1344 observations from 80 subjects across 1 study
 #> 
 #> # A tibble: 7,494 × 32
 #>      REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT

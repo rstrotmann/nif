@@ -110,7 +110,7 @@ index_id <- function(obj) {
 #' @noRd
   new_nif <- function(data, nif_version = NULL, creation_date = NULL) {
   if (is.null(nif_version))
-    nif_version <- packageVersion("nif")
+    nif_version <- utils::packageVersion("nif")
 
   if (is.null(creation_date))
     creation_date <- Sys.Date()
@@ -278,112 +278,31 @@ order_nif_columns <- function(obj) {
 #' print() implementation for nif objects
 #'
 #' @param x A nif object.
-#' @param color Colored output.
 #' @param ... Additional parameters
-#'
-#' @export
+#' @exportS3Method base::print
 #' @noRd
-print.nif <- function(x, color = FALSE, ...) {
-    cat(paste0(hline(), " NONMEM Input Format (NIF) data ", hline(), "\n"))
+print.nif <- function(x, ...) {
+  cat(paste0(hline(), " NONMEM Input Format (NIF) data ", hline(), "\n"))
 
-    n_obs <- x |>
-      filter(!"EVID" %in% names(x) | .data$EVID == 0) |>
-      nrow()
+  n_obs <- if ("EVID" %in% names(x)) sum(x$EVID == 0, na.rm = TRUE) else nrow(x)
+  n_subs <- length(unique(x$ID))
+  n_studies <- ifelse(
+    "STUDYID" %in% names(x),
+    length(unique(x$STUDYID)),
+    NA
+  )
 
-    n_subs <- subjects(x) |>
-      nrow()
+  cat(paste0(
+    n_obs, plural(" observation", n_obs != 1), " from ",
+    n_subs, plural(" subject", n_subs != 1),
+    ifelse(!is.na(n_studies),
+      paste(" across", n_studies, plural("study", n_studies > 1)),
+      ""
+    ),
+    "\n\n"
+  ))
 
-    n_studies <- ifelse(
-      "STUDYID" %in% names(x),
-      length(unique(x$STUDYID)),
-      NA
-    )
-
-    cat(paste(
-      n_obs, plural("observation", n_obs != 1), "from",
-      n_subs, plural("subject", n_subs != 1),
-      ifelse(!is.na(n_studies),
-        paste("across", n_studies, plural("study", n_studies > 1)),
-        ""
-      ),
-      "\n\n"
-    ))
-
-    NextMethod()
-}
-
-
-#' Subject information
-#'
-#' This function summarizes baseline information for a subject or a list of
-#' subjects, including sex, age, weight, height, BMI, ACTARMCD, analytes, IMPs
-#' and baseline covariates as available.
-#' @details
-#' The output is an object of the class 'subject_info' which is a wrapper for
-#' the named list of the above.
-#' The field `administrations` is not printed automatically but can be accessed
-#' as list item (see example).
-#' @param obj A NIF object.
-#' @param id The USUBJID or ID.
-#' @export
-#' @noRd
-#' @examples
-#' subject_info(examplinib_poc_nif, 1)
-#' unclass(subject_info(examplinib_poc_nif, 1))
-#' subject_info(examplinib_poc_nif, 1)$administrations
-subject_info.nif <- function(obj, id) {
-  temp <- obj |>
-    filter(.data$ID %in% id | .data$USUBJID %in% id) |>
-    filter(!is.na(.data$DOSE))
-
-  out <- temp |>
-    select(any_of(
-      c(
-        "USUBJID", "ID", "SEX", "AGE", "RACE", "WEIGHT", "HEIGHT", "BMI",
-        "ACTARMCD", "PART", "COHORT"
-      )
-    ), starts_with("BL_")) |>
-    distinct_all() |>
-    as.list()
-
-  out$ANALYTE <- temp |>
-    distinct(.data$ANALYTE) |>
-    pull(.data$ANALYTE)
-
-  out$IMP <- temp |>
-    filter(.data$PARENT != "") |>
-    distinct(.data$PARENT) |>
-    pull(.data$PARENT)
-
-  out$administrations <- temp |>
-    add_trtdy() |>
-    filter(.data$EVID == 1) |>
-    select(c("USUBJID", "TIME", "ANALYTE", "DTC", "TRTDY")) |>
-    arrange(.data$ANALYTE, .data$TIME) |>
-    select(c("ANALYTE", "TIME", "TRTDY")) |>
-    as.data.frame()
-
-  class(out) <- c("subject_info", "data.frame")
-  out
-}
-
-
-#' Implementation of print for subject info
-#'
-#' @param x A data frame.
-#' @param ... Optional further parameters.
-#' @export
-#' @noRd
-print.subject_info <- function(x, ...) {
-  temp <- lapply(x, function(i) {
-    paste(i, collapse = ", ")
-  }) |>
-    as.data.frame() |>
-    select(-any_of(c("administrations"))) |>
-    t()
-  colnames(temp) <- NULL
-  print(temp, quote = FALSE, col.names = FALSE)
-  invisible(x)
+  NextMethod()
 }
 
 
@@ -842,21 +761,7 @@ treatments.nif <- function(obj) {
 }
 
 
-#' Return the first lines of a nif object
-#'
-#' @param x A nif object.
-#' @param ... Further arguments.
-#'
-#' @import dplyr
-#' @return A data frame.
-#' @import utils
-#' @export
-#' @noRd
-head.nif <- function(x, ...) {
-  x <- x |>
-    as.data.frame()
-  NextMethod("head")
-}
+
 
 
 #' Index dosing intervals

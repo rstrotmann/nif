@@ -109,22 +109,30 @@ function category from it:
 ``` r
 
 head(nif, 3)
-#>   REF ID    STUDYID           USUBJID AGE SEX  RACE HEIGHT WEIGHT     BMI
-#> 1   1  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
-#> 2   2  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
-#> 3   3  1 2023000001 20230000011010001  43   0 WHITE  187.4     77 21.9256
-#>                   DTC TIME NTIME TAFD TAD EVID AMT CMT DV    ANALYTE PARENT
-#> 1 2000-12-31 10:18:00    0     0    0   0    1   5   1 NA     RS2023 RS2023
-#> 2 2000-12-31 10:18:00    0     0    0   0    0   0   2  0     RS2023 RS2023
-#> 3 2000-12-31 10:18:00    0     0    0   0    0   0   3  0 RS2023487A RS2023
-#>   TRTDY METABOLITE DOSE MDV ACTARMCD               IMPUTATION BL_CREAT  BL_CRCL
-#> 1     1      FALSE    5   1       C1 time copied from EXSTDTC  88.9614 103.0815
-#> 2     1      FALSE    5   0       C1                           88.9614 103.0815
-#> 3     1       TRUE    5   0       C1                           88.9614 103.0815
-#>   BL_RENAL
-#> 1   normal
-#> 2   normal
-#> 3   normal
+#> ──────── NONMEM Input Format (NIF) data ────────
+#> 2 observations from 1 subject across 1 study
+#> 
+#> # A tibble: 3 × 30
+#>     REF    ID STUDYID    USUBJID             AGE   SEX RACE  HEIGHT WEIGHT   BMI
+#>   <int> <dbl> <chr>      <chr>             <dbl> <dbl> <fct>  <dbl>  <dbl> <dbl>
+#> 1     1     1 2023000001 20230000011010001    43     0 WHITE   187.     77  21.9
+#> 2     2     1 2023000001 20230000011010001    43     0 WHITE   187.     77  21.9
+#> 3     3     1 2023000001 20230000011010001    43     0 WHITE   187.     77  21.9
+#>   DTC                  TIME NTIME  TAFD   TAD  EVID   AMT   CMT    DV ANALYTE   
+#>   <dttm>              <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>     
+#> 1 2000-12-31 10:18:00     0     0     0     0     1     5     1    NA RS2023    
+#> 2 2000-12-31 10:18:00     0     0     0     0     0     0     2     0 RS2023    
+#> 3 2000-12-31 10:18:00     0     0     0     0     0     0     3     0 RS2023487A
+#>   PARENT TRTDY METABOLITE  DOSE   MDV ACTARMCD IMPUTATION                
+#>   <chr>  <dbl> <lgl>      <dbl> <dbl> <chr>    <chr>                     
+#> 1 RS2023     1 FALSE          5     1 C1       "time copied from EXSTDTC"
+#> 2 RS2023     1 FALSE          5     0 C1       ""                        
+#> 3 RS2023     1 TRUE           5     0 C1       ""                        
+#>   BL_CREAT BL_CRCL BL_RENAL
+#>      <dbl>   <dbl> <fct>   
+#> 1     89.0    103. normal  
+#> 2     89.0    103. normal  
+#> 3     89.0    103. normal
 ```
 
 [`nif_auto()`](../reference/nif_auto.md) will further attempt to infer
