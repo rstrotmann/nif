@@ -194,35 +194,30 @@ test_that("nca() handles negative concentrations", {
     ~ID, ~TIME, ~TAD, ~TAFD, ~DV,  ~EVID, ~ANALYTE, ~PARENT, ~DOSE, ~AMT, ~CMT,
     1,   0,     0,    0,     0,    1,     "DRUG",   "DRUG",  100,   100,  1,
     1,   0,     0,    0,     10,   0,     "DRUG",   "DRUG",  100,   0,    2,
-    1,   2,     2,    2,     -5,   0,     "DRUG",   "DRUG",  100,   0,    2,  # Negative concentration
+    1,   2,     2,    2,     -5,   0,     "DRUG",   "DRUG",  100,   0,    2,
     1,   4,     4,    4,     2,    0,     "DRUG",   "DRUG",  100,   0,    2
   ) |>
     nif(silent = TRUE)
 
-  # Negative concentrations should be set to zero (may produce warnings)
-  # PKNCA may also produce warnings about insufficient data points
   suppressMessages(
     suppressWarnings(
       result <- nca(test_nif, analyte = "DRUG", silent = FALSE)
     ))
 
-  # Should complete successfully
   expect_s3_class(result, "data.frame")
-  })
+})
 
 
-test_that("nca() handles NA concentrations", {
+test_that("nca() does not error when observation DV is missing", {
   test_nif <- tibble::tribble(
     ~ID, ~TIME, ~TAD, ~TAFD, ~DV,  ~EVID, ~ANALYTE, ~PARENT, ~DOSE, ~AMT, ~CMT,
     1,   0,     0,    0,     0,    1,     "DRUG",   "DRUG",  100,   100,  1,
     1,   0,     0,    0,     10,   0,     "DRUG",   "DRUG",  100,   0,    2,
-    1,   2,     2,    2,     NA,   0,     "DRUG",   "DRUG",  100,   0,    2,  # NA concentration
+    1,   2,     2,    2,     NA,   0,     "DRUG",   "DRUG",  100,   0,    2,
     1,   4,     4,    4,     2,    0,     "DRUG",   "DRUG",  100,   0,    2
   ) |>
     nif(silent = TRUE)
 
-  # NA values should be set to zero (as documented)
-  # PKNCA may warn about insufficient data
   suppressWarnings({
     expect_no_error(
       result <- nca(test_nif, analyte = "DRUG", silent = TRUE)

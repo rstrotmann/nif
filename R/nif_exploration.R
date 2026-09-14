@@ -637,6 +637,7 @@ plot.summary_nif <- function(
     ...
 ) {
   # input validation
+  validate_nif(x$nif)
   validate_argument(baseline, "logical")
   validate_argument(analytes, "logical")
 

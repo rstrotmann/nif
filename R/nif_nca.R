@@ -3,8 +3,10 @@
 #' This function is a wrapper around the NCA functions provided by the
 #' [PKNCA](https://CRAN.R-project.org/package=PKNCA) package.
 #'
-#' NA values are set to zero!
-#' Negative concentrations are set to zero!
+#' Missing observation concentrations are excluded by default. Use
+#' `na_action = "zero"` to treat them as 0, or `"error"` to stop. Negative
+#' concentrations are set to zero with a warning. PKNCA still imputes a missing
+#' concentration at the start of each interval (`impute = "start_conc0"`).
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -24,6 +26,12 @@
 #'   duplicate entries.
 #' @param duplicate_function Function to resolve duplicate values, defaults to
 #'   `mean`.
+#' @param na_action How to handle missing observation `DV`:
+#'   * `'exclude'`: Drop missing concentrations (default).
+#'   * `'zero'`: Replace missing concentrations with 0.
+#'   * `'error'`: Stop if any observation `DV` is missing.
+#'   Dose rows are not changed. Missing concentrations at the start of an
+#'   interval are still imputed as 0 by PKNCA.
 #'
 #' @return A data frame.
 #' @export
@@ -40,7 +48,8 @@ nca <- function(
     time = "TIME",
     duplicates = "stop",
     duplicate_function = mean,
-    silent = NULL
+    silent = NULL,
+    na_action = "exclude"
     ) {
   dup_fun_name <- deparse(substitute(duplicate_function))
 
@@ -60,6 +69,9 @@ nca <- function(
   validate_argument(
     duplicates, "character",
     values = c("stop", "identify", "resolve"))
+  validate_argument(
+    na_action, "character",
+    values = c("exclude", "zero", "error"))
   validate_argument(silent, "logical", allow_null = TRUE)
 
   # ensure that keep columns are unique by subject
@@ -137,8 +149,7 @@ nca <- function(
     ensure_parent() |>
     index_dosing_interval() |>
     as.data.frame() |>
-    mutate(selected_time = .data[[time]]) |>
-    mutate(DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
+    mutate(selected_time = .data[[time]])
 
   # dosing data
   admin <- obj |>
@@ -162,13 +173,51 @@ nca <- function(
     select(any_of(c("ID", "DOSE", "DI", keep))) |>
     distinct()
 
+  # deal with missing concentrations
+  n_na <- sum(is.na(conc$DV))
+
+  if (n_na > 0) {
+    if (na_action == "error") {
+      stop(paste0(
+        n_na, " missing ",
+        plural("concentration", n_na > 1),
+        " in NCA observations."
+      ))
+    }
+
+    if (na_action == "exclude") {
+      conditional_cli(
+        cli_alert_warning(paste0(
+          n_na, " missing ",
+          plural("concentration", n_na > 1),
+          " excluded from NCA!")),
+        silent = silent
+      )
+      conc <- filter(conc, !is.na(.data$DV))
+    }
+
+    if (na_action == "zero") {
+      conditional_cli(
+        cli_alert_warning(paste0(
+          n_na, " missing ",
+          plural("concentration", n_na > 1),
+          " set to zero!")),
+        silent = silent
+      )
+      conc <- conc |>
+        mutate(DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
+    }
+  }
+
   # deal with negative concentrations
   n_negative <- nrow(filter(conc, .data$DV < 0))
 
   if (n_negative > 0) {
     conditional_cli(
       cli_alert_warning(paste0(
-        n_negative, " negative concentrations set to zero!")),
+        n_negative, " negative ",
+        plural("concentration", n_negative > 1),
+        " set to zero!")),
       silent = silent
     )
     conc <- conc |>

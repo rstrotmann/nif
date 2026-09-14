@@ -13,7 +13,8 @@ nca(
   time = "TIME",
   duplicates = "stop",
   duplicate_function = mean,
-  silent = NULL
+  silent = NULL,
+  na_action = "exclude"
 )
 }
 \arguments{
@@ -42,6 +43,15 @@ duplicate entries.
 \code{mean}.}
 
 \item{silent}{Suppress messages.}
+
+\item{na_action}{How to handle missing observation \code{DV}:
+\itemize{
+\item \code{'exclude'}: Drop missing concentrations (default).
+\item \code{'zero'}: Replace missing concentrations with 0.
+\item \code{'error'}: Stop if any observation \code{DV} is missing.
+}
+Dose rows are not changed. Missing concentrations at the start of an
+interval are still imputed as 0 by PKNCA.}
 }
 \value{
 A data frame.
@@ -53,8 +63,10 @@ A data frame.
 This function is a wrapper around the NCA functions provided by the
 \href{https://CRAN.R-project.org/package=PKNCA}{PKNCA} package.
 
-NA values are set to zero!
-Negative concentrations are set to zero!
+Missing observation concentrations are excluded by default. Use
+\code{na_action = "zero"} to treat them as 0, or \code{"error"} to stop. Negative
+concentrations are set to zero with a warning. PKNCA still imputes a missing
+concentration at the start of each interval (\code{impute = "start_conc0"}).
 }
 \examples{
 head(nca(examplinib_sad_nif, time = "TAD"))
