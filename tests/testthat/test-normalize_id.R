@@ -1,8 +1,10 @@
 # Helper to create minimal nif objects for testing
-make_test_nif <- function(...) {
-  df <- tibble::tribble(...) %>% as.data.frame()
-  df <- as_nif_test(df)
-  df
+make_test_nif <- function(..., creation_date = as.Date("2020-01-15")) {
+  nif:::new_nif(
+    as.data.frame(tibble::tribble(...)),
+    nif_version = as.package_version("0.1.0"),
+    creation_date = creation_date
+  )
 }
 
 
@@ -17,11 +19,12 @@ test_that("normalize_id() reassigns IDs as sequential integers starting at 1", {
 
   result <- normalize_id(obj)
 
-  expect_equal(sort(unique(result$ID)), c(1, 2))
+  expect_equal(unique(result$ID), 1:2)
+  expect_type(result$ID, "integer")
 })
 
 
-test_that("normalize_id() orders IDs by fingerprint (sum_dv, then sum_amt)", {
+test_that("normalize_id() assigns ID 1 to the subject with the lowest sum_dv", {
   obj <- make_test_nif(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA,
@@ -34,12 +37,8 @@ test_that("normalize_id() orders IDs by fingerprint (sum_dv, then sum_amt)", {
 
   result <- normalize_id(obj)
 
-  dv_by_new_id <- result %>%
-    filter(EVID == 0) %>%
-    reframe(sum_dv = sum(DV, na.rm = TRUE), .by = "ID") %>%
-    arrange(ID)
-
-  expect_equal(dv_by_new_id$sum_dv, sort(dv_by_new_id$sum_dv))
+  expect_equal(result$ID, c(1L, 1L, 2L, 2L, 3L, 3L))
+  expect_equal(result$DV, c(NA, 10, NA, 50, NA, 80))
 })
 
 
@@ -54,11 +53,90 @@ test_that("normalize_id() uses sum_amt as tiebreaker when sum_dv is equal", {
 
   result <- normalize_id(obj)
 
-  amt_by_new_id <- result %>%
-    reframe(sum_amt = sum(AMT, na.rm = TRUE), .by = "ID") %>%
-    arrange(ID)
+  expect_equal(result$ID, c(1L, 1L, 2L, 2L))
+  expect_equal(result$AMT, c(100, 0, 200, 0))
+})
 
-  expect_equal(amt_by_new_id$sum_amt, sort(amt_by_new_id$sum_amt))
+
+test_that("normalize_id() treats missing AMT as zero in the fingerprint", {
+  obj <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     NA,   1,    1,     10,
+    2,   0,     50,   1,    1,     10
+  )
+
+  result <- normalize_id(obj)
+
+  expect_equal(result$ID, c(1L, 2L))
+  expect_equal(result$AMT, c(NA_real_, 50))
+})
+
+
+test_that("normalize_id() treats missing DV as zero in the fingerprint", {
+  obj <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     100,  1,    1,     NA,
+    2,   0,     200,  1,    1,     NA
+  )
+
+  result <- normalize_id(obj)
+
+  expect_equal(result$ID, c(1L, 2L))
+  expect_equal(result$AMT, c(100, 200))
+})
+
+
+test_that("normalize_id() breaks identical fingerprints by first appearance", {
+  obj <- make_test_nif(
+    ~ID,      ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~USUBJID,
+    2,        0,     100,  1,    1,     NA,  "SECOND",
+    2,        1,     0,    1,    0,     50,  "SECOND",
+    1,        0,     100,  1,    1,     NA,  "FIRST",
+    1,        1,     0,    1,    0,     50,  "FIRST"
+  )
+
+  result <- normalize_id(obj)
+
+  expect_equal(result$ID, c(1L, 1L, 2L, 2L))
+  expect_equal(result$USUBJID, c("SECOND", "SECOND", "FIRST", "FIRST"))
+})
+
+
+test_that("normalize_id() keeps original within-subject row order", {
+  obj <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~USUBJID,
+    20,  2,     0,    1,    0,     30,  "B",
+    10,  0,     100,  1,    1,     NA,  "A",
+    20,  0,     200,  1,    1,     NA,  "B",
+    10,  1,     0,    1,    0,     50,  "A"
+  )
+
+  result <- normalize_id(obj)
+
+  expect_equal(result$ID, c(1L, 1L, 2L, 2L))
+  expect_equal(result$TIME, c(2, 0, 0, 1))
+  expect_equal(result$USUBJID, c("B", "B", "A", "A"))
+  expect_equal(result$DV, c(30, NA, NA, 50))
+})
+
+
+test_that("normalize_id() maps every row of a subject to the same new ID", {
+  obj <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~USUBJID,
+    10,  0,     100,  1,    1,     NA,  "A",
+    10,  1,     0,    1,    0,     50,  "A",
+    10,  2,     0,    1,    0,     25,  "A",
+    10,  3,     0,    1,    0,     12,  "A",
+    20,  0,     100,  1,    1,     NA,  "B",
+    20,  1,     0,    1,    0,     40,  "B"
+  )
+
+  result <- normalize_id(obj)
+
+  expect_equal(unique(result$ID[result$USUBJID == "A"]), 2L)
+  expect_equal(unique(result$ID[result$USUBJID == "B"]), 1L)
+  expect_equal(sum(result$USUBJID == "A"), 4)
+  expect_equal(sum(result$USUBJID == "B"), 2)
 })
 
 
@@ -78,7 +156,7 @@ test_that("normalize_id() preserves the number of rows", {
 })
 
 
-test_that("normalize_id() preserves all original columns", {
+test_that("normalize_id() preserves columns and does not add helpers", {
   obj <- make_test_nif(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~ANALYTE, ~DOSE,
     1,   0,     100,  1,    1,     NA,  "DRUG",   100,
@@ -89,23 +167,10 @@ test_that("normalize_id() preserves all original columns", {
 
   result <- normalize_id(obj)
 
-  expect_true(all(names(obj) %in% names(result)))
+  expect_equal(names(result), names(obj))
   expect_false("sum_dv" %in% names(result))
   expect_false("sum_amt" %in% names(result))
   expect_false(".id_order" %in% names(result))
-})
-
-
-test_that("normalize_id() does not add extra columns", {
-  obj <- make_test_nif(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    1,   0,     100,  1,    1,     NA,
-    2,   0,     100,  1,    1,     NA
-  )
-
-  result <- normalize_id(obj)
-
-  expect_equal(sort(names(result)), sort(names(obj)))
 })
 
 
@@ -119,32 +184,9 @@ test_that("normalize_id() handles a single subject", {
 
   result <- normalize_id(obj)
 
-  expect_equal(unique(result$ID), 1)
-  expect_equal(nrow(result), 3)
-})
-
-
-test_that("normalize_id() maps all rows of same original ID to same new ID", {
-  obj <- make_test_nif(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    10,  0,     100,  1,    1,     NA,
-    10,  1,     0,    1,    0,     50,
-    10,  2,     0,    1,    0,     25,
-    10,  3,     0,    1,    0,     12,
-    20,  0,     100,  1,    1,     NA,
-    20,  1,     0,    1,    0,     40
-  )
-
-  result <- normalize_id(obj)
-
-  ids_for_orig_10 <- unique(result$ID[obj$ID == 10 |
-    result$DV %in% c(50, 25, 12) | (result$AMT == 100 & result$DV == 50)])
-
-  expect_equal(length(unique(result$ID)), 2)
-  for (new_id in unique(result$ID)) {
-    rows <- result[result$ID == new_id, ]
-    expect_true(nrow(rows) >= 1)
-  }
+  expect_equal(result$ID, c(1L, 1L, 1L))
+  expect_equal(result$TIME, c(0, 1, 2))
+  expect_equal(result$DV, c(NA, 50, 25))
 })
 
 
@@ -166,7 +208,7 @@ test_that("normalize_id() is deterministic across repeated calls", {
 })
 
 
-test_that("normalize_id() produces same result regardless of original ID values", {
+test_that("normalize_id() produces the same rows regardless of original ID values", {
   obj_a <- make_test_nif(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA,
@@ -189,20 +231,7 @@ test_that("normalize_id() produces same result regardless of original ID values"
   expect_equal(result_a$ID, result_b$ID)
   expect_equal(result_a$DV, result_b$DV)
   expect_equal(result_a$AMT, result_b$AMT)
-})
-
-
-test_that("normalize_id() handles all-NA DV values", {
-  obj <- make_test_nif(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    1,   0,     100,  1,    1,     NA,
-    2,   0,     200,  1,    1,     NA
-  )
-
-  result <- normalize_id(obj)
-
-  expect_equal(sort(unique(result$ID)), c(1, 2))
-  expect_equal(nrow(result), 2)
+  expect_equal(result_a$TIME, result_b$TIME)
 })
 
 
@@ -217,13 +246,13 @@ test_that("normalize_id() handles zero DV and AMT values", {
 
   result <- normalize_id(obj)
 
-  expect_equal(sort(unique(result$ID)), c(1, 2))
+  expect_equal(result$ID, c(1L, 1L, 2L, 2L))
 })
 
 
 test_that("normalize_id() handles many subjects", {
   n_subjects <- 20
-  rows <- lapply(1:n_subjects, function(i) {
+  rows <- lapply(seq_len(n_subjects), function(i) {
     data.frame(
       ID = i * 10,
       TIME = c(0, 1),
@@ -233,16 +262,23 @@ test_that("normalize_id() handles many subjects", {
       DV = c(NA, i * 10)
     )
   })
-  df <- do.call(rbind, rows)
-  df <- as_nif_test(df)
+  df <- nif:::new_nif(
+    do.call(rbind, rows),
+    nif_version = as.package_version("0.1.0"),
+    creation_date = as.Date("2020-01-15")
+  )
   result <- normalize_id(df)
 
-  expect_equal(sort(unique(result$ID)), 1:n_subjects)
+  expect_equal(unique(result$ID), seq_len(n_subjects))
   expect_equal(nrow(result), n_subjects * 2)
+  expect_equal(
+    result$DV[result$EVID == 0],
+    sort(seq_len(n_subjects) * 10)
+  )
 })
 
 
-test_that("normalize_id() output is sorted by ID", {
+test_that("normalize_id() output is sorted by the new ID", {
   obj <- make_test_nif(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     3,   0,     100,  1,    1,     NA,
@@ -256,63 +292,23 @@ test_that("normalize_id() output is sorted by ID", {
   result <- normalize_id(obj)
 
   expect_equal(result$ID, sort(result$ID))
+  expect_equal(result$DV, c(NA, 20, NA, 50, NA, 80))
 })
 
 
-test_that("normalize_id() rejects non-nif input", {
-  df <- data.frame(
-    ID = c(1, 2),
-    TIME = c(0, 0),
-    AMT = c(100, 100),
-    CMT = c(1, 1),
-    EVID = c(1, 1),
-    DV = c(NA, NA)
-  )
-
-  expect_error(normalize_id(df), "Input must be a nif object")
-})
-
-
-test_that("normalize_id() rejects non-data-frame input", {
-  expect_error(normalize_id("not a nif"), "Input must be a nif object")
-  expect_error(normalize_id(42), "Input must be a nif object")
-  expect_error(normalize_id(NULL), "Input must be a nif object")
-})
-
-
-test_that("normalize_id() preserves non-ID data values", {
-  obj <- make_test_nif(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    10,  0,     100,  1,    1,     NA,
-    10,  1,     0,    1,    0,     50,
-    10,  2,     0,    1,    0,     25,
-    20,  0,     200,  1,    1,     NA,
-    20,  1,     0,    1,    0,     30
-  )
-
-  result <- normalize_id(obj)
-
-  expect_true(all(c(100, 200) %in% result$AMT))
-  expect_true(all(c(50, 25, 30) %in% result$DV[!is.na(result$DV)]))
-  expect_equal(sort(result$TIME), sort(obj$TIME))
-})
-
-
-test_that("normalize_id() works with already-sequential IDs", {
+test_that("normalize_id() reorders already-sequential IDs when fingerprints disagree", {
   obj <- make_test_nif(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA,
     1,   1,     0,    1,    0,     50,
     2,   0,     100,  1,    1,     NA,
-    2,   1,     0,    1,    0,     30,
-    3,   0,     100,  1,    1,     NA,
-    3,   1,     0,    1,    0,     10
+    2,   1,     0,    1,    0,     10
   )
 
   result <- normalize_id(obj)
 
-  expect_equal(sort(unique(result$ID)), c(1, 2, 3))
-  expect_equal(nrow(result), 6)
+  expect_equal(result$ID, c(1L, 1L, 2L, 2L))
+  expect_equal(result$DV, c(NA, 10, NA, 50))
 })
 
 
@@ -328,8 +324,8 @@ test_that("normalize_id() handles mixed NA and numeric DV per subject", {
 
   result <- normalize_id(obj)
 
-  expect_equal(sort(unique(result$ID)), c(1, 2))
-  expect_equal(nrow(result), 5)
+  expect_equal(result$ID, c(1L, 1L, 2L, 2L, 2L))
+  expect_equal(result$DV, c(NA, 30, NA, 50, NA))
 })
 
 
@@ -338,47 +334,115 @@ test_that("normalize_id() works with the examplinib_sad_nif data set", {
 
   expect_equal(sort(unique(result$ID)), seq_along(unique(result$ID)))
   expect_equal(nrow(result), nrow(examplinib_sad_nif))
-  expect_true(all(names(examplinib_sad_nif) %in% names(result)))
+  expect_equal(names(result), names(examplinib_sad_nif))
 })
 
 
-test_that("normalize_id() correctly groups rows after ID reassignment", {
+test_that("normalize_id() preserves nif class and attributes", {
   obj <- make_test_nif(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    10,  0,     100,  1,    1,     NA,
-    10,  1,     0,    1,    0,     50,
-    10,  2,     0,    1,    0,     25,
-    20,  0,     200,  1,    1,     NA,
-    20,  1,     0,    1,    0,     30,
-    20,  2,     0,    1,    0,     15
+    5,   0,     100,  1,    1,     NA
   )
 
   result <- normalize_id(obj)
 
-  for (new_id in unique(result$ID)) {
-    group <- result[result$ID == new_id, ]
-    dv_vals <- group$DV[!is.na(group$DV)]
-    amt_val <- group$AMT[group$AMT > 0]
-    if (length(amt_val) > 0 && amt_val[1] == 100) {
-      expect_true(all(dv_vals %in% c(50, 25)))
-    } else if (length(amt_val) > 0 && amt_val[1] == 200) {
-      expect_true(all(dv_vals %in% c(30, 15)))
-    }
-  }
+  expect_s3_class(result, "nif")
+  expect_s3_class(result, "tbl_df")
+  expect_equal(attr(result, "nif_version"), as.package_version("0.1.0"))
+  expect_equal(attr(result, "creation_date"), as.Date("2020-01-15"))
 })
 
 
-test_that("normalize_id() handles subjects with identical fingerprints", {
-  obj <- make_test_nif(
+test_that("normalize_id() handles an empty nif object", {
+  obj <- nif:::new_nif(
+    data.frame(
+      ID = numeric(),
+      TIME = numeric(),
+      AMT = numeric(),
+      CMT = numeric(),
+      EVID = numeric(),
+      DV = numeric()
+    ),
+    nif_version = as.package_version("0.1.0"),
+    creation_date = as.Date("2020-01-15")
+  )
+
+  result <- normalize_id(obj)
+
+  expect_equal(nrow(result), 0)
+  expect_equal(names(result), names(obj))
+  expect_s3_class(result, "nif")
+  expect_type(result$ID, "integer")
+})
+
+
+test_that("normalize_id() rejects non-nif input", {
+  df <- data.frame(
+    ID = c(1, 2),
+    TIME = c(0, 0),
+    AMT = c(100, 100),
+    CMT = c(1, 1),
+    EVID = c(1, 1),
+    DV = c(NA, NA)
+  )
+
+  expect_error(normalize_id(df), "Input must be a nif object")
+  expect_error(normalize_id("not a nif"), "Input must be a nif object")
+  expect_error(normalize_id(42), "Input must be a nif object")
+  expect_error(normalize_id(NULL), "Input must be a nif object")
+})
+
+
+test_that("hash.nif() is invariant to original ID values", {
+  obj_a <- make_test_nif(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA,
     1,   1,     0,    1,    0,     50,
-    2,   0,     100,  1,    1,     NA,
-    2,   1,     0,    1,    0,     50
+    2,   0,     200,  1,    1,     NA,
+    2,   1,     0,    1,    0,     30
   )
 
-  result <- normalize_id(obj)
+  obj_b <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    99,  0,     100,  1,    1,     NA,
+    99,  1,     0,    1,    0,     50,
+    77,  0,     200,  1,    1,     NA,
+    77,  1,     0,    1,    0,     30
+  )
 
-  expect_equal(sort(unique(result$ID)), c(1, 2))
-  expect_equal(nrow(result), 4)
+  expect_equal(hash(obj_a), hash(obj_b))
+})
+
+
+test_that("hash.nif() changes when observations change", {
+  obj_a <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     100,  1,    1,     NA,
+    1,   1,     0,    1,    0,     50
+  )
+
+  obj_b <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     100,  1,    1,     NA,
+    1,   1,     0,    1,    0,     51
+  )
+
+  expect_false(identical(hash(obj_a), hash(obj_b)))
+})
+
+
+test_that("hash.nif() includes nif attributes", {
+  obj_a <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     100,  1,    1,     NA,
+    creation_date = as.Date("2020-01-15")
+  )
+
+  obj_b <- make_test_nif(
+    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+    1,   0,     100,  1,    1,     NA,
+    creation_date = as.Date("2021-01-15")
+  )
+
+  expect_false(identical(hash(obj_a), hash(obj_b)))
 })

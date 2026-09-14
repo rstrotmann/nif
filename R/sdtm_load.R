@@ -124,6 +124,7 @@ read_sdtm <- function(
     },
     numeric(1)
   )
+
   total_size <- sum(sizes)
   use_bytes <- total_size > 0
 

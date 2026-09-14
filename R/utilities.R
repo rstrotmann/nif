@@ -151,6 +151,10 @@ identify_baseline_columns <- function(df, id_col = "ID") {
 
 #' Re-assign ID based on consistent criteria
 #'
+#' Subjects are ranked by `sum(DV)` then `sum(AMT)` (missing values as zero).
+#' Ties keep first-appearance order. The result is sorted by the new ID, with
+#' within-subject row order preserved.
+#'
 #' @param obj A nif object.
 #'
 #' @returns A nif object.
@@ -159,22 +163,42 @@ identify_baseline_columns <- function(df, id_col = "ID") {
 #' @examples
 #' normalize_id(examplinib_sad_nif)
 normalize_id <- function(obj) {
+  # input validation
   validate_nif(obj)
 
-  fingerprint <- obj %>%
-    reframe(
-      sum_dv = sum(.data$DV, na.rm = TRUE),
-      sum_amt = sum(.data$AMT, na.rm = TRUE),
-      .by = c("ID")) %>%
-    arrange(.data$sum_dv, .data$sum_amt) %>%
-    mutate(.id_order = row_number())
+  # business logic
+  id <- obj$ID
+  if (length(id) == 0L) {
+    out <- obj
+    out$ID <- integer()
+    return(new_nif(
+      out,
+      nif_version = attr(obj, "nif_version"),
+      creation_date = attr(obj, "creation_date")
+    ))
+  }
 
-  obj %>%
-    left_join(fingerprint, by = "ID") %>%
-    arrange(.data$.id_order) %>%
-    mutate(ID = .data$.id_order) %>%
-    select(-c("sum_dv", "sum_amt", ".id_order")) %>%
-    arrange(.data$ID)
+  uid <- unique(id)
+  n_id <- length(uid)
+  g <- match(id, uid)
+
+  sums <- rowsum(
+    cbind(obj$DV, obj$AMT, deparse.level = 0),
+    group = g,
+    reorder = FALSE,
+    na.rm = TRUE
+  )
+  o <- order(sums[, 1L], sums[, 2L])
+  new_for_uid <- integer(n_id)
+  new_for_uid[o] <- seq_len(n_id)
+
+  out <- obj
+  out$ID <- new_for_uid[g]
+  new_nif(
+    out[order(out$ID), ],
+    nif_version = attr(obj, "nif_version"),
+    creation_date = attr(obj, "creation_date")
+  )
 }
 
 

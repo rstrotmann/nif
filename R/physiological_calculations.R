@@ -49,23 +49,25 @@ calculate_bmi <- function(height, weight) {
 #'
 #' @param bmi A numerical vector.
 #'
-#' @returns A character vector.
+#' @returns A character vector of NHLBI obesity classes. Missing, non-finite,
+#'   or non-positive BMI values yield `NA`.
 #' @export
 obesity_class <- function(bmi) {
-  if (!is.numeric(bmi))
+  if (!is.numeric(bmi)) {
     stop("BMI must be numeric!")
+  }
 
-  if (any(bmi <= 0))
-    stop("BMI must be positive!")
+  result <- rep(NA_character_, length(bmi))
+  valid <- is.finite(bmi) & bmi > 0
 
-  cut(
-    bmi,
+  result[valid] <- as.character(cut(
+    bmi[valid],
     breaks = c(0, 18.5, 25, 30, 35, 40, Inf),
     labels = c("underweight", "normal", "overweight", "obese class 1",
                "obese class 2", "obese class 3"),
     right = FALSE
-  ) |>
-    as.character()
+  ))
+  result
 }
 
 
