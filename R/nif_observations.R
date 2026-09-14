@@ -528,7 +528,7 @@ make_observation <- function(
       stop("DV field in coding table must be numeric!")
     }
     # Capture warnings instead of suppressing them
-    join_msgs <- capture.output(type = "message", {
+    join_msgs <- utils::capture.output(type = "message", {
       obj <- obj |>
         left_join(coding_table)
     })

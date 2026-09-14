@@ -76,7 +76,7 @@ write_nonmem <- function(
     temp <- rbind(colnames(temp), temp)
     write.fwf(temp, file = filename, colnames = FALSE)
   } else {
-    write.table(
+    utils::write.table(
       temp,
       file = filename, row.names = FALSE,
       sep = sep, dec = ".", quote = FALSE

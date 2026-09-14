@@ -230,7 +230,7 @@ import_from_connection <- function(
     # column positions
     max_width <- max(nchar(lines))
     col_start <- str_locate_all(lines[1], "[A-Za-z_]+")[[1]][, 1]
-    col_pos <- cbind(col_start, c(head(lead(col_start) - 1, -1), max_width))
+    col_pos <- cbind(col_start, c(utils::head(lead(col_start) - 1, -1), max_width))
 
     row_vector <- function(line) {
       trimws(apply(col_pos, 1, function(x) substr(line, x[1], x[2])))

@@ -49,9 +49,9 @@ duplicate entries.
 \item \code{'exclude'}: Drop missing concentrations (default).
 \item \code{'zero'}: Replace missing concentrations with 0.
 \item \code{'error'}: Stop if any observation \code{DV} is missing.
-}
 Dose rows are not changed. Missing concentrations at the start of an
-interval are still imputed as 0 by PKNCA.}
+interval are still imputed as 0 by PKNCA.
+}}
 }
 \value{
 A data frame.

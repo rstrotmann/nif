@@ -684,7 +684,7 @@ guess_ntime <- function(sdtm) {
     iso_date_values <- unique(pc_domain$PCTPT[iso_date_entries])
     warning(
       "Some PCTPT entries are in ISO 8601 date format (e.g., ",
-      paste(head(iso_date_values, 3), collapse = ", "),
+      paste(utils::head(iso_date_values, 3), collapse = ", "),
       if (length(iso_date_values) > 3) "..." else "",
       "). These date-only values may not have extractable time information."
     )

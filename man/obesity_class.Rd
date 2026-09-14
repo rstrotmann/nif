@@ -10,8 +10,8 @@ obesity_class(bmi)
 \item{bmi}{A numerical vector.}
 }
 \value{
-A character vector of NHLBI obesity classes. Missing, non-finite, or
-non-positive BMI values yield \code{NA}.
+A character vector of NHLBI obesity classes. Missing, non-finite,
+or non-positive BMI values yield \code{NA}.
 }
 \description{
 Based on NIH / NHLBI Expert Panel (1998) — Clinical Guidelines on the

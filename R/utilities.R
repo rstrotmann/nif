@@ -1226,7 +1226,7 @@ df_preprint <- function(
   }
 
   if (!is.null(n)) {
-    df <- head(df, n = n)
+    df <- utils::head(df, n = n)
   }
 
   # formatted output
@@ -1252,7 +1252,7 @@ df_preprint <- function(
   nr <- nrow(df)
   if (nr > abbr_threshold) {
     if (!is.null(abbr_lines)) {
-      df <- head(df, abbr_lines)
+      df <- utils::head(df, abbr_lines)
       if (nr - abbr_lines > 0) {
         footer <- paste0(
           indent_string(indent), "(", nr - abbr_lines, " more rows)"
