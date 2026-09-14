@@ -126,9 +126,10 @@ test_that("domain function behaviors", {
   class(test_data) <- c("sdtm", "list")
 
   # Test that domain() works with a single name
-  expect_s3_class(domain(test_data, "dm"), "data.frame")
+  expect_s3_class(domain(test_data, "dm"), "sdtm_domain")
+  expect_s3_class(domain(test_data, "dm"), "tbl_df")
 
   # Test that domain() is case-insensitive
-  expect_s3_class(domain(test_data, "DM"), "data.frame")
-  expect_s3_class(domain(test_data, "Dm"), "data.frame")
+  expect_s3_class(domain(test_data, "DM"), "sdtm_domain")
+  expect_s3_class(domain(test_data, "Dm"), "sdtm_domain")
 })

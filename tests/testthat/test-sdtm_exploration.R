@@ -51,7 +51,7 @@ test_that("disposition_summary works", {
   expect_equal(
     disposition_summary(examplinib_sad) %>%
       filter(ACTARMCD != "SCRNFAIL"),
-    as.data.frame(tribble(
+    tribble(
       ~ACTARMCD, ~ONGOING, ~N,
       "C1", FALSE, 3L,
       "C10", FALSE, 12L,
@@ -63,7 +63,7 @@ test_that("disposition_summary works", {
       "C7", FALSE, 6L,
       "C8", FALSE, 6L,
       "C9", FALSE, 3L
-    ))
+    )
   )
 })
 

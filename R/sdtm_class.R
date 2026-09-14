@@ -57,10 +57,14 @@ trial_title <- function(obj) {
   if (!"TS" %in% domains) {
     return(NULL)
   }
-  ts <- domain(obj, "ts")
+
+  # ts <- domain(obj, "ts")
+  ts <- obj$domains[["ts"]]
+
   if (!"TSPARMCD" %in% names(ts)) {
     return(NULL)
   }
+
   if (!"TITLE" %in% unique(ts$TSPARMCD)) {
     return(NULL)
   }

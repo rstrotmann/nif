@@ -20,8 +20,21 @@ domain <- function(obj, name) {
     stop("Domain '", name, "' not found in SDTM object")
   }
 
-  obj$domains[[name]] |>
-    new_domain()
+  out <- obj$domains[[name]]
+
+  trial_title <- trial_title(obj)
+
+  if ("STUDYID" %in% names(out)) {
+    studyid <- unique(out$STUDYID)
+    if (length(studyid) > 1) {
+      studyid <- paste(studyid, collapse = ",")
+    }
+  } else {
+    studyid <- ""
+  }
+
+  out |>
+    new_domain(name = name, trial_title = trial_title, studyid = studyid)
 }
 
 
@@ -31,11 +44,50 @@ domain <- function(obj, name) {
 #'
 #' @returns A domain object.
 #' @noRd
-new_domain <- function(
-  domain_data
-) {
-  class(domain_data) <- c("sdtm_domain", "data.frame")
-  domain_data
+new_domain <- function(domain_data, name = "", trial_title = "", studyid = "") {
+  structure(
+    as_tibble(domain_data),
+    class = unique(c("sdtm_domain", "tbl_df", "tbl", "data.frame")),
+    name = name,
+    trial_title = trial_title,
+    studyid = studyid
+  )
+}
+
+
+#' @exportS3Method dplyr::dplyr_reconstruct
+#' @noRd
+dplyr_reconstruct.sdtm_domain <- function(data, template) {
+  new_domain(
+    data,
+    name = attr(template, "name"),
+    trial_title = attr(template, "trial_title"),
+    studyid = attr(template, "studyid")
+  )
+}
+
+
+#' Print method for SDTM domain objects
+#'
+#' @param x A sdtm_domain object.
+#' @param ... Further arguments.
+#'
+#' @returns Noting.
+#' @exportS3Method base::print
+#' @noRd
+print.sdtm_domain <- function(x, ...) {
+  # indent <- 2
+  # domain = toupper(attr(x, "name"))
+  title = trimws(attr(x, "trial_title"))
+  # studyid = attr(x, "studyid")
+
+  cat(paste(hline(), "SDTM domain", hline(), "\n"))
+  cat(paste0("Domain ", toupper(attr(x, "name")), ", "))
+  cat(paste0("study ", attr(x, "studyid"), "\n"))
+  if (nchar(title) > 0)
+    cat(paste0(title, "\n"))
+  cat("\n")
+  NextMethod()
 }
 
 
@@ -132,7 +184,7 @@ summary.sdtm_domain <- function(object, ..., silent = NULL) {
 #' @param ... Further parameters.
 #'
 #' @returns Nothing.
-#' @export
+#' @exportS3Method base::print
 #' @noRd
 print.summary_domain <- function(x, ...) {
   indent <- 2
@@ -154,6 +206,7 @@ print.summary_domain <- function(x, ...) {
   )
 
   cat_message(out)
+  invisible(x)
 }
 
 
@@ -380,6 +433,8 @@ last_dtc.sdtm_domain <- function(obj) {
 #' @rdname hash
 #' @export
 hash.sdtm_domain <- function(x) {
-  x |>
-    rlang::hash()
+  temp <- as.data.frame(x)
+  extra <- setdiff(names(attributes(temp)), c("names", "class", "row.names"))
+  attributes(temp)[extra] <- NULL
+  rlang::hash(temp)
 }
