@@ -92,7 +92,7 @@ summary.adam <- function(object, ...) {
 #' @export
 #' @noRd
 print.summary_adam <- function(x, ...) {
-  cat(paste(hline(), "ADaM data set summary", hline(), "\n"))
+  cat(paste(hline(), "ADaM data summary", hline(), "\n"))
 
   out <- list(
     compose_message(
@@ -104,7 +104,7 @@ print.summary_adam <- function(x, ...) {
         nice_enumeration(x$study)
       )
     ),
-    compose_message("Dataset overview:", x$n_observations)
+    compose_message("Datasets:", x$n_observations)
   )
 
   if ("subj_disposition" %in% names(x)) {

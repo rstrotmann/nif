@@ -6,7 +6,7 @@
 
 
 test_that("adsl_summary returns the expected list structure", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~SITEID, ~COUNTRY, ~SEX, ~RACE,  ~TRT01P,  ~TRT01A, ~SAFFL,
        "U1",    "01",    "USA",  "M", "WHITE", "Placebo", "Placebo",   "Y"
   ))
@@ -26,7 +26,7 @@ test_that("adsl_summary returns the expected list structure", {
 
 
 test_that("adsl_summary summarizes TRT01P/TRT01A and excludes screen failures", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
      ~USUBJID, ~SITEID, ~COUNTRY, ~SEX,                       ~RACE,          ~TRT01P,          ~TRT01A, ~SAFFL, ~ITTFL, ~FASFL,
          "U1",    "01",    "USA",  "M",                     "WHITE",        "Placebo",        "Placebo",    "Y",    "Y",    "Y",
          "U2",    "01",    "USA",  "F",                     "WHITE",         "Active",         "Active",    "Y",    "Y",    "N",
@@ -90,7 +90,7 @@ test_that("adsl_summary summarizes TRT01P/TRT01A and excludes screen failures", 
 
 
 test_that("adsl_summary is case-insensitive for screen failure on TRT01P", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~TRT01P,           ~SEX, ~COUNTRY, ~SITEID, ~RACE,
        "U1", "Placebo",          "M",    "USA",    "01", "WHITE",
        "U2", "screen failure",   "F",    "DEU",    "02", "ASIAN"
@@ -105,7 +105,7 @@ test_that("adsl_summary is case-insensitive for screen failure on TRT01P", {
 
 
 test_that("adsl_summary returns NULL for missing optional columns", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~TRT01P,
        "U1", "Placebo"
   ))
@@ -124,7 +124,7 @@ test_that("adsl_summary returns NULL for missing optional columns", {
 
 
 test_that("adsl_summary returns NULL arm when TRT01P/TRT01A are absent", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~ARM, ~ARMCD, ~SEX, ~COUNTRY, ~SITEID, ~RACE, ~SAFFL,
        "U1", "Placebo", "PBO", "M", "USA", "01", "WHITE", "Y",
        "U2", "SCREEN FAILURE", "SCRNFAIL", "F", "DEU", "02", "ASIAN", "N"
@@ -143,7 +143,7 @@ test_that("adsl_summary returns NULL arm when TRT01P/TRT01A are absent", {
 
 
 test_that("adsl_summary summarizes EOSSTT when present", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~TRT01P,  ~EOSSTT,      ~SEX, ~COUNTRY, ~SITEID, ~RACE,
        "U1", "Placebo", "COMPLETED",  "M",    "USA",    "01", "WHITE",
        "U2", "Active",  "DISCONTINUED", "F",  "USA",    "01", "WHITE",
@@ -159,7 +159,7 @@ test_that("adsl_summary summarizes EOSSTT when present", {
 
 
 test_that("adsl_summary only keeps population rows flagged Y", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~TRT01P,  ~SAFFL, ~ITTFL,
        "U1", "Placebo",   "Y",   "Y",
        "U2", "Active",    "Y",   "N",
@@ -194,7 +194,7 @@ test_that("adsl_summary only keeps population rows flagged Y", {
 
 
 test_that("adsl_summary maps all recognized population flags", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~TRT01P,  ~FASFL, ~SAFFL, ~ITTFL, ~PPROTFL, ~COMPLFL, ~RANDFL, ~ENRLFL,
        "U1", "Placebo",   "Y",    "Y",    "Y",      "Y",      "Y",     "Y",    "Y"
   ))
@@ -223,7 +223,7 @@ test_that("adsl_summary maps all recognized population flags", {
 
 
 test_that("adsl_summary errors when USUBJID is not unique", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~TRT01P,
        "U1", "Placebo",
        "U1", "Placebo"
@@ -245,7 +245,7 @@ test_that("adsl_summary validates adam_dataset input", {
 
 
 test_that("adsl_summary errors when USUBJID is missing", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~TRT01P, ~SEX,
     "Placebo", "M"
   ))
@@ -255,7 +255,7 @@ test_that("adsl_summary errors when USUBJID is missing", {
 
 
 test_that("adsl_summary works with TRT01P only (no TRT01A)", {
-  adsl <- new_dataset(tibble::tribble(
+  adsl <- as_adam_dataset_test(tibble::tribble(
     ~USUBJID, ~TRT01P,  ~SEX, ~COUNTRY, ~SITEID, ~RACE,
        "U1", "Placebo", "M",    "USA",    "01", "WHITE",
        "U2", "Active",  "F",    "USA",    "01", "WHITE"

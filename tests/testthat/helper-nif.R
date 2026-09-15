@@ -15,6 +15,11 @@ as_domain_test <- function(df, name = "", trial_title = "", studyid = "") {
 }
 
 
+as_adam_dataset_test <- function(df) {
+  nif:::new_adam_dataset(df)
+}
+
+
 # Snapshot .nif_env, optionally set options, and restore when the calling
 # frame exits (testthat block or on error).
 local_nif_option <- function(..., .envir = parent.frame()) {

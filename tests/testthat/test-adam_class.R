@@ -343,7 +343,7 @@ test_that("print.summary_adam produces output", {
   adam_obj <- adam(list(dm = dm, ex = ex))
   summary_obj <- summary(adam_obj)
 
-  expect_output(print(summary_obj), "ADaM data set summary")
+  expect_output(print(summary_obj), "ADaM data summary")
   expect_output(print(summary_obj), "Data from")
   expect_output(print(summary_obj), "subjects")
   expect_output(print(summary_obj), "study")
@@ -409,7 +409,7 @@ test_that("print.adam calls summary and prints", {
 
   adam_obj <- adam(list(dm = dm))
 
-  expect_output(print(adam_obj), "ADaM data set summary")
+  expect_output(print(adam_obj), "ADaM data summary")
 })
 
 

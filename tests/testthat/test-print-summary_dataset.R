@@ -272,7 +272,7 @@ test_that("print.summary_dataset ignores unused dots", {
 
 
 test_that("print.summary_dataset works with objects from summary.adam_dataset", {
-  obj <- new_dataset(tibble::tribble(
+  obj <- as_adam_dataset_test(tibble::tribble(
     ~STUDYID, ~DOMAIN,   ~USUBJID, ~PARAMCD, ~PARAM, ~SAFFL, ~FASFL,
         "S1",  "ADPC", "SUBJ-001",   "CMAX", "Cmax",    "Y",    "Y",
         "S1",  "ADPC", "SUBJ-002",    "AUC",  "AUC",    "Y",    "N"

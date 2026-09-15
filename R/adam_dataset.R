@@ -1,3 +1,20 @@
+#' adam_dataset class constructor
+#'
+#' @param data A data frame
+#'
+#' @returns An adam dotaset object
+#' @noRd
+new_adam_dataset <- function(data) {
+  # input validation
+  validate_df_argument(data)
+
+  structure(
+    as_tibble(data),
+    class = unique(c("adam_dataset", "tbl_df", "tbl", "data.frame"))
+  )
+}
+
+
 #' Retrieve dataset from adam object
 #'
 #' Overview: [ADaMIG v1.3](https://www.cdisc.org/standards/foundational/adam/adamig-v1-3)
@@ -19,25 +36,30 @@ dataset <- function(adam, name) {
   }
 
   adam[[name]] |>
-    new_dataset()
+    new_adam_dataset()
 }
 
 
-#' adam class constructor
-#'
-#' @param data A data frame
-#'
-#' @returns An adam dotaset object
+#' @exportS3Method dplyr::dplyr_reconstruct
 #' @noRd
-new_dataset <- function(
+dplyr_reconstruct.adam_dataset <- function(data, template) {
+  new_adam_dataset(
     data
-) {
-  # input validation
-  validate_df_argument(data)
+  )
+}
 
-  # business logic
-  class(data) <- c("adam_dataset", "data.frame")
-  data
+
+#' Print method for ADaM dataset objects
+#'
+#' @param x A dataset object.
+#' @param ... Further arguments.
+#'
+#' @returns Noting.
+#' @exportS3Method base::print
+print.adam_dataset <- function(x, ...) {
+  cat(paste(hline(), "ADaM dataset", hline(), "\n"))
+
+  NextMethod()
 }
 
 
