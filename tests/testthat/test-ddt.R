@@ -331,9 +331,7 @@ test_that("ddt warns about further fields when silent is FALSE", {
     1,   0,     100,  1,    1,     NA,  "value1"
   ) |> nif()
 
-  old_silent <- nif_option_value("silent")
-  nif_option("silent" = FALSE)
-  on.exit(nif_option("silent" = old_silent), add = TRUE)
+  local_nif_option(silent = FALSE)
 
   expect_message(
     ddt(test_data, silent = FALSE),
@@ -348,9 +346,7 @@ test_that("ddt lists further field names in the completion message", {
     1,   0,     100,  1,    1,     NA,  1,        "x"
   ) |> nif()
 
-  old_silent <- nif_option_value("silent")
-  nif_option("silent" = FALSE)
-  on.exit(nif_option("silent" = old_silent), add = TRUE)
+  local_nif_option(silent = FALSE)
 
   expect_message(
     ddt(test_data, silent = FALSE),
@@ -369,9 +365,7 @@ test_that("ddt does not warn when there are no further fields", {
     1,   0,     100,  1,    1,     NA
   ) |> nif()
 
-  old_silent <- nif_option_value("silent")
-  nif_option("silent" = FALSE)
-  on.exit(nif_option("silent" = old_silent), add = TRUE)
+  local_nif_option(silent = FALSE)
 
   expect_no_message(ddt(test_data, silent = FALSE))
 })
@@ -393,13 +387,10 @@ test_that("ddt uses nif_option silent setting when silent is NULL", {
     1,   0,     100,  1,    1,     NA,  "value1"
   ) |> nif()
 
-  old_silent <- nif_option_value("silent")
-  on.exit(nif_option("silent" = old_silent), add = TRUE)
-
-  nif_option("silent" = TRUE)
+  local_nif_option(silent = TRUE)
   expect_no_message(ddt(test_data, silent = NULL))
 
-  nif_option("silent" = FALSE)
+  local_nif_option(silent = FALSE)
   expect_message(
     ddt(test_data, silent = NULL),
     "Some data definition fields need completion"

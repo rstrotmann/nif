@@ -181,8 +181,7 @@ test_that("get_admin_time_from_ntime estimates times per subject, not across sub
 
 
 test_that("get_admin_time_from_ntime emits NTIME debug details when debug is enabled", {
-  nif_option(debug = TRUE)
-  on.exit(nif_option(debug = FALSE), add = TRUE)
+  local_nif_option(debug = TRUE)
 
   sdtm <- sdtm(list(
     pc = tibble::tribble(

@@ -747,13 +747,10 @@ test_that("silent = NULL follows package silent option for same-AMT warnings", {
        "001",   d1,      "A",     2,  100
   )
 
-  old <- get("silent", envir = nif:::.nif_env)
-  withr::defer(assign("silent", old, envir = nif:::.nif_env))
-
-  assign("silent", TRUE, envir = nif:::.nif_env)
+  local_nif_option(silent = TRUE)
   expect_silent(remove_duplicate_administrations(obj, silent = NULL))
 
-  assign("silent", FALSE, envir = nif:::.nif_env)
+  local_nif_option(silent = FALSE)
   expect_message(
     remove_duplicate_administrations(obj, silent = NULL),
     "duplicate administrations with respect to USUBJID"
@@ -768,13 +765,10 @@ test_that("explicit silent overrides package silent option", {
        "001",   d1,      "A",     2,  100
   )
 
-  old <- get("silent", envir = nif:::.nif_env)
-  withr::defer(assign("silent", old, envir = nif:::.nif_env))
-
-  assign("silent", FALSE, envir = nif:::.nif_env)
+  local_nif_option(silent = FALSE)
   expect_silent(remove_duplicate_administrations(obj, silent = TRUE))
 
-  assign("silent", TRUE, envir = nif:::.nif_env)
+  local_nif_option(silent = TRUE)
   expect_message(
     remove_duplicate_administrations(obj, silent = FALSE),
     "duplicate administrations with respect to USUBJID"

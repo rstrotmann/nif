@@ -686,13 +686,10 @@ test_that("check.nif silent = NULL follows nif_option('silent')", {
      1L,     0,  100,    1,    1L,   NA_real_,      0,    0,   "DRUG",
      1L,     1,    0,    2,    0L,         10,     10,   13,   "DRUG"
   ))
-  old_silent <- nif_option_value("silent")
-  on.exit(nif_option(silent = old_silent), add = TRUE)
-
-  nif_option(silent = TRUE)
+  local_nif_option(silent = TRUE)
   expect_silent(check.nif(obj, ntime_threshold = 0.2, silent = NULL))
 
-  nif_option(silent = FALSE)
+  local_nif_option(silent = FALSE)
   expect_message(
     check.nif(obj, ntime_threshold = 0.2, silent = NULL),
     "deviating from NTIME"

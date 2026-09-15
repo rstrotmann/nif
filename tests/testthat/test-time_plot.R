@@ -383,11 +383,7 @@ test_that("time_plot forwards graphical parameters to geom_point", {
 
 
 test_that("time_plot has no watermark layer when the watermark option is unset", {
-  old_wm <- tryCatch(
-    get("watermark", envir = nif:::.nif_env),
-    error = function(e) NA
-  )
-  on.exit(assign("watermark", old_wm, envir = nif:::.nif_env), add = TRUE)
+  local_nif_option()
   assign("watermark", NA, envir = nif:::.nif_env)
 
   p <- time_plot(time_plot_nif())
@@ -398,12 +394,7 @@ test_that("time_plot has no watermark layer when the watermark option is unset",
 
 
 test_that("time_plot adds a watermark layer when nif_option watermark is set", {
-  old_wm <- tryCatch(
-    get("watermark", envir = nif:::.nif_env),
-    error = function(e) NA
-  )
-  on.exit(assign("watermark", old_wm, envir = nif:::.nif_env), add = TRUE)
-  nif_option(watermark = "CONFIDENTIAL")
+  local_nif_option(watermark = "CONFIDENTIAL")
 
   p <- time_plot(time_plot_nif())
 

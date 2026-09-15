@@ -9,18 +9,20 @@ test_that("nif_disclaimer works with custom text", {
 
 
 test_that("nif_option works", {
+  local_nif_option()
+
   expect_no_error(nif_option(test = "test"))
   expect_message(nif_option(test = FALSE))
   expect_message(nif_option(foo = TRUE))
 
   nif_option(silent = TRUE, debug = FALSE)
-  expect_equal(get("silent", .nif_env), TRUE)
-  expect_equal(get("debug", .nif_env), FALSE)
+  expect_equal(get("silent", nif:::.nif_env), TRUE)
+  expect_equal(get("debug", nif:::.nif_env), FALSE)
 })
 
 
 test_that("nif_option_value works", {
-  nif_option(silent = TRUE)
+  local_nif_option(silent = TRUE)
   expect_equal(nif_option_value("silent"), TRUE)
 })
 

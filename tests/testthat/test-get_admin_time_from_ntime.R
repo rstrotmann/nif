@@ -484,8 +484,7 @@ test_that("get_admin_time_from_ntime preserves EX columns and does not leave .im
 
 
 test_that("get_admin_time_from_ntime emits NTIME debug details when debug is enabled", {
-  nif_option(debug = TRUE)
-  on.exit(nif_option(debug = FALSE), add = TRUE)
+  local_nif_option(debug = TRUE)
 
   sdtm <- sdtm(list(
     pc = tibble::tribble(
@@ -512,7 +511,7 @@ test_that("get_admin_time_from_ntime emits NTIME debug details when debug is ena
 
 
 test_that("get_admin_time_from_ntime does not emit debug details when debug is disabled", {
-  nif_option(debug = FALSE)
+  local_nif_option(debug = FALSE)
 
   sdtm <- sdtm(list(
     pc = tibble::tribble(

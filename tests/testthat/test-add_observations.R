@@ -227,10 +227,7 @@ test_that("add_observation handles debug mode correctly", {
 
 
 test_that("add_observation drops SRC_TESTCD when debug is disabled", {
-  # Ensure global debug is disabled
-  old_opts <- nif_option()
-  on.exit(do.call(nif_option, old_opts), add = TRUE)
-  nif_option(debug = FALSE)
+  local_nif_option(debug = FALSE)
 
   base_nif <- nif() %>%
     add_administration(
@@ -737,9 +734,7 @@ test_that("add_observation applies obs_final imputation when present", {
 
 test_that("add_observation keeps debug fields when global debug option is enabled", {
   base_nif <- add_obs_base_nif()
-
-  nif_option(debug = TRUE)
-  on.exit(nif_option(debug = FALSE), add = TRUE)
+  local_nif_option(debug = TRUE)
 
   result <- base_nif |>
     add_observation(
