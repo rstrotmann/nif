@@ -114,13 +114,15 @@ time_plot <- function(
   validate_argument(ytime, "character", values = c("TIME", "TAFD", "TAD", "NTIME"))
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_nif(obj, fields = c(xtime, ytime))
+
   if (is.null(analyte)) {
     analyte <- analytes(obj)
   }
   validate_analyte(obj, analyte)
   validate_argument(max_time, "numeric", allow_null = TRUE)
+
   if (is.null(max_time)) {
-    max_time <- max(filter(obj, .data$EVID == 0)[, xtime], is.na = TRUE)
+    max_time <- max(filter(obj, .data$EVID == 0)[, xtime], na.rm = TRUE)
   }
 
   # business logic
