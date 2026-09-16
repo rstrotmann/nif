@@ -34,7 +34,7 @@ domain <- function(obj, name) {
   }
 
   out |>
-    new_domain(name = name, trial_title = trial_title, studyid = studyid)
+    new_sdtm_domain(name = name, trial_title = trial_title, studyid = studyid)
 }
 
 
@@ -44,7 +44,7 @@ domain <- function(obj, name) {
 #'
 #' @returns A domain object.
 #' @noRd
-new_domain <- function(domain_data, name = "", trial_title = "", studyid = "") {
+new_sdtm_domain <- function(domain_data, name = "", trial_title = "", studyid = "") {
   structure(
     as_tibble(domain_data),
     class = unique(c("sdtm_domain", "tbl_df", "tbl", "data.frame")),
@@ -55,10 +55,51 @@ new_domain <- function(domain_data, name = "", trial_title = "", studyid = "") {
 }
 
 
+#' Constructor for sdtm_domain objects
+#'
+#' @param data A data frame.
+#' @param trial_title The trial title. Defaults to "".
+#'
+#' @returns A sdtm_domain object.
+#' @export
+sdtm_domain <- function(data, trial_title = "") {
+  # input validation
+  validate_df_argument(data)
+
+  # business logic
+  if ("DOMAIN" %in% names(data))
+    name <- unique(tolower(data$DOMAIN))
+  else
+    name <- ""
+
+  if (length(name) > 1) {
+    warning("Multiple DOMAIN values in input!")
+    name <- paste(name, collapse = ",")
+  }
+
+  if ("STUDYID" %in% names(data))
+    studyid <- unique(data$STUDYID)
+  else
+    studyid <- ""
+
+  if (length(studyid) > 1) {
+    warning("Multiple STUDYID values in input!")
+    studyid <- paste(studyid, collapse = ",")
+  }
+
+  new_sdtm_domain(
+    data,
+    name = name,
+    studyid = studyid,
+    trial_title = trial_title
+  )
+}
+
+
 #' @exportS3Method dplyr::dplyr_reconstruct
 #' @noRd
 dplyr_reconstruct.sdtm_domain <- function(data, template) {
-  new_domain(
+  new_sdtm_domain(
     data,
     name = attr(template, "name"),
     trial_title = attr(template, "trial_title"),
@@ -84,7 +125,7 @@ print.sdtm_domain <- function(x, ...) {
   cat(paste(hline(), "SDTM domain", hline(), "\n"))
   cat(paste0("Domain ", toupper(attr(x, "name")), ", "))
   cat(paste0("study ", attr(x, "studyid"), "\n"))
-  if (nchar(title) > 0)
+  if (isTRUE(nchar(title) > 0))
     cat(paste0(title, "\n"))
   cat("\n")
   NextMethod()

@@ -213,12 +213,14 @@ hash <- function(x) {
 }
 
 
-#' @rdname hash
 #' @export
-hash.nif <- function(x) {
-  x |>
-    normalize_id() |>
-    rlang::hash()
+hash.default <- function(x) {
+  stop(
+    "hash() has no method for class ",
+    paste(class(x), collapse = "/"),
+    ". Use a nif, sdtm, sdtm_domain or adam_dataset object.",
+    call. = FALSE
+  )
 }
 
 

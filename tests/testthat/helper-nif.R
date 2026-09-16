@@ -6,7 +6,7 @@ as_nif_test <- function(df) {
 
 
 as_domain_test <- function(df, name = "", trial_title = "", studyid = "") {
-  nif:::new_domain(
+  nif:::new_sdtm_domain(
     df,
     name = name,
     trial_title = trial_title,

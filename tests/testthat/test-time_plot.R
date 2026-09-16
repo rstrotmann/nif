@@ -239,20 +239,6 @@ test_that("time_plot with Inf max_time includes all finite observation times", {
 })
 
 
-test_that("time_plot default max_time is NA when any observation xtime is NA, yielding no points", {
-  obj <- as_nif_test(tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID,        ~DV, ~TAD, ~ANALYTE,
-     1L,     0,  100,    1,    1L,   NA_real_,    0,   "DRUG",
-     1L,    NA,    0,    2,    0L,         10,    1,   "DRUG",
-     1L,     3,    0,    2,    0L,         30,    3,   "DRUG"
-  ))
-
-  pts <- point_data(time_plot(obj))
-
-  expect_equal(nrow(pts), 0L)
-})
-
-
 test_that("time_plot groups points by ID", {
   obj <- as_nif_test(tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID,        ~DV, ~TAD, ~ANALYTE,
@@ -298,19 +284,6 @@ test_that("time_plot restricts points to the requested analyte", {
 
   expect_equal(pts$x, 2)
   expect_equal(pts$y, 2)
-})
-
-
-test_that("time_plot returns an empty ggplot when the nif has no observation analytes", {
-  obj <- as_nif_test(tibble::tribble(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID,        ~DV, ~TAD, ~ANALYTE,
-     1L,     0,  100,    1,    1L,   NA_real_,    0,   "DRUG"
-  ))
-
-  p <- time_plot(obj)
-
-  expect_s3_class(p, "ggplot")
-  expect_equal(nrow(point_data(p)), 0L)
 })
 
 

@@ -16,7 +16,7 @@ test_that("adsl_summary returns the expected list structure", {
   expect_type(result, "list")
   expect_equal(
     names(result),
-    c("country", "site", "sex", "race", "arm", "eos", "population")
+    c("country", "sex", "race", "arm", "eos", "population", "site")
   )
   expect_equal(
     names(result$population),

@@ -79,15 +79,15 @@ adsl_summary <- function(
 
   # definitions
   population_flags <- tibble::tribble(
-    ~flag,                ~population,
-    "FASFL", "Full Analysis Set",
-    "SAFFL",            "Safety",
-    "ITTFL",   "Intent-To-Treat",
-    "PPROTFL",      "Per-Protocol",
-    "COMPLFL",        "Completers",
-    "RANDFL",        "Randomized",
-    "ENRLFL",          "Enrolled"
-  )
+         ~flag,         ~population,
+       "FASFL", "Full Analysis Set",
+       "SAFFL",            "Safety",
+       "ITTFL",   "Intent-To-Treat",
+     "PPROTFL",      "Per-Protocol",
+     "COMPLFL",        "Completers",
+      "RANDFL",        "Randomized",
+      "ENRLFL",          "Enrolled"
+     )
 
   # one record per subject
   temp <- obj |>
@@ -143,13 +143,18 @@ adsl_summary <- function(
 
   out <- list(
     country = summary_by_field("COUNTRY"),
-    site = unique(treated$SITEID),
+    # site = unique(treated$SITEID),
     sex = summary_by_field("SEX"),
     race = summary_by_field("RACE"),
     arm = summary_by_field(c("TRT01P", "TRT01A")),
     eos = summary_by_field("EOSSTT"),
     population = pop
   )
+
+  if ("SITEID" %in% names(treated))
+    out$site <- unique(treated$SITEID)
+  else
+    out$site <- NULL
 
   return(out)
 }
@@ -167,8 +172,8 @@ summary.adam_dataset <- function(object, ...) {
   validate_dataset(object)
 
   # business logic
-  subjects <- unique(object$USUBJID)
-  study <- unique(object$STUDYID)
+  subjects <- if ("USUBJID" %in% names(object)) unique(object$USUBJID) else NULL
+  study <- if ("STUDYID" %in% names(object)) unique(object$STUDYID) else NULL
 
   if ("PARAM" %in% names(object)) {
     params <- object |>
@@ -217,4 +222,14 @@ print.summary_dataset <- function(x, ...) {
   )
 
   cat_message(out)
+}
+
+
+#' @rdname hash
+#' @export
+hash.adam_dataset <- function(x) {
+  temp <- as.data.frame(x)
+  extra <- setdiff(names(attributes(temp)), c("names", "class", "row.names"))
+  attributes(temp)[extra] <- NULL
+  rlang::hash(temp)
 }

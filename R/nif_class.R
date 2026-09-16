@@ -306,6 +306,15 @@ print.nif <- function(x, ...) {
 }
 
 
+#' @rdname hash
+#' @export
+hash.nif <- function(x) {
+  x |>
+    normalize_id() |>
+    rlang::hash()
+}
+
+
 #' Unique subjects within a data set
 #'
 #' @param obj The data set, either a `nif` or a `sdtm` object.
