@@ -4,12 +4,22 @@
 \alias{nif}
 \title{nif class constructor}
 \usage{
-nif(obj = NULL, ..., silent = NULL)
+nif(
+  obj = NULL,
+  ...,
+  imputation_rules = "imputation_rules_standard",
+  silent = NULL
+)
 }
 \arguments{
 \item{obj}{A data frame containing the actual NIF data or a sdtm object.}
 
 \item{...}{Further arguments.}
+
+\item{imputation_rules}{Default imputation rule set for
+\code{\link[=add_administration]{add_administration()}} and \code{\link[=add_observation]{add_observation()}} when those
+functions are called with \code{imputation = NULL}. A list, or the name of a
+package rule set as character (e.g. \code{"imputation_rules_standard"}).}
 
 \item{silent}{suppress messages.}
 }

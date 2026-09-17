@@ -34,7 +34,7 @@ add_observation(
   omit_not_done = TRUE,
   na_rm = TRUE,
   na_to_zero = FALSE,
-  imputation = imputation_rules_standard
+  imputation = NULL
 )
 }
 \arguments{
@@ -127,7 +127,8 @@ duplicate_function. Defaults to TRUE.}
 
 \item{na_to_zero}{Set all NA values of DV to 0, as logical.}
 
-\item{imputation}{The imputation rule set.}
+\item{imputation}{The imputation rule set as a list, or \code{NULL} to use
+\code{attr(nif, "imputation_rules")}.}
 }
 \value{
 A nif object.

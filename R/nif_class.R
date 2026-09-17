@@ -98,17 +98,73 @@ index_id <- function(obj) {
     )) |>
     select(-".temp_id")
 
-  new_nif(out)
+  restore_nif(out, obj)
+}
+
+
+#' Resolve imputation rules
+#'
+#' Accepts `NULL` (standard rules), a single character name of an object in
+#' the nif namespace, or a list. The stored nif attribute is always a list.
+#'
+#' @param x `NULL`, character, or imputation rule set.
+#'
+#' @returns An imputation rule set (list).
+#' @noRd
+resolve_imputation_rules <- function(x) {
+  if (is.null(x)) {
+    x <- imputation_rules_standard
+  }
+
+  if (is.character(x)) {
+    if (length(x) != 1L) {
+      stop("imputation_rules must be a single character name or a list!")
+    }
+    ns <- asNamespace("nif")
+    if (!exists(x, envir = ns, inherits = FALSE)) {
+      stop("Unknown imputation rule set: ", x)
+    }
+    x <- get(x, envir = ns, inherits = FALSE)
+  }
+
+  validate_imputation_set(x)
+  x
+}
+
+
+#' Rebuild a nif object, copying metadata from a template
+#'
+#' @param data A data frame.
+#' @param template A nif object (or any object with nif attributes).
+#'
+#' @returns A nif object.
+#' @noRd
+restore_nif <- function(data, template) {
+  new_nif(
+    data,
+    nif_version = attr(template, "nif_version"),
+    creation_date = attr(template, "creation_date"),
+    imputation_rules = attr(template, "imputation_rules")
+  )
 }
 
 
 #' nif constructor
 #'
 #' @param data A tibble or data frame
+#' @param nif_version The nif package version used.
+#' @param creation_date The nif creation date as character.
+#' @param imputation_rules The default imputation rule set as a list, or the
+#'   name of a package rule set as character. Resolved and stored as a list.
 #'
 #' @returns A nif object.
 #' @noRd
-  new_nif <- function(data, nif_version = NULL, creation_date = NULL) {
+new_nif <- function(
+    data,
+    nif_version = NULL,
+    creation_date = NULL,
+    imputation_rules = "imputation_rules_standard"
+  ) {
   if (is.null(nif_version))
     nif_version <- utils::packageVersion("nif")
 
@@ -119,7 +175,8 @@ index_id <- function(obj) {
     as_tibble(data),
     class = unique(c("nif", "tbl_df", "tbl", "data.frame")),
     nif_version = nif_version,
-    creation_date = creation_date
+    creation_date = creation_date,
+    imputation_rules = resolve_imputation_rules(imputation_rules)
   )
 }
 
@@ -140,14 +197,24 @@ index_id <- function(obj) {
 #'
 #' @param obj A data frame containing the actual NIF data or a sdtm object.
 #' @param silent suppress messages.
+#' @param imputation_rules Default imputation rule set for
+#'   [nif::add_administration()] and [nif::add_observation()] when those
+#'   functions are called with `imputation = NULL`. A list, or the name of a
+#'   package rule set as character (e.g. `"imputation_rules_standard"`).
 #' @param ... Further arguments.
+#'
 #' @seealso [nif::nif_auto()]
 #'
 #' @return A nif object.
 #' @export
 #' @examples
 #' nif()
-nif <- function(obj = NULL, ..., silent = NULL) {
+nif <- function(
+    obj = NULL,
+    ...,
+    imputation_rules = "imputation_rules_standard",
+    silent = NULL
+  ) {
   # Case 1: Empty minimal nif object
   if (is.null(obj)) {
     data <- tibble(
@@ -155,7 +222,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       CMT = integer(), EVID = integer(), DV = integer()
     )
 
-    return(new_nif(data))
+    return(new_nif(data, imputation_rules = imputation_rules))
   }
 
   # Case 2: Nif object from a sdtm object using nif_auto()
@@ -164,7 +231,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       arrange_and_add_ref() |>
       order_nif_columns()
 
-    return(new_nif(data))
+    return(new_nif(data, imputation_rules = imputation_rules))
   }
 
   # Error case: neither nif or data.frame
@@ -207,7 +274,12 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       arrange_and_add_ref() |>
       order_nif_columns()
 
-    return(new_nif(out, creation_date = attr(obj, "creation_date")))
+    return(new_nif(
+      out,
+      nif_version = attr(obj, "nif_version"),
+      creation_date = attr(obj, "creation_date"),
+      imputation_rules = attr(obj, "imputation_rules")
+      ))
   }
 
   # Case 4: Nif object from data frame
@@ -220,7 +292,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
       arrange_and_add_ref() |>
       order_nif_columns()
 
-    return(new_nif(data))
+    return(new_nif(data, imputation_rules = imputation_rules))
   }
 
   stop("obj must be a data frame or sdtm object")
@@ -230,11 +302,7 @@ nif <- function(obj = NULL, ..., silent = NULL) {
 #' @exportS3Method dplyr::dplyr_reconstruct
 #' @noRd
 dplyr_reconstruct.nif <- function(data, template) {
-  new_nif(
-    data,
-    nif_version = attr(template, "nif_version"),
-    creation_date = attr(template, "creation_date")
-    )
+  restore_nif(data, template)
 }
 
 

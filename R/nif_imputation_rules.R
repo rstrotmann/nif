@@ -136,8 +136,9 @@ imputation_rules_minimal <- list(
 #' Imputations that are applied when administrations or observations are added
 #' to a NIF data set are bundled in imputation rule sets.
 #'
-#' This is the default imputation rule set for [nif::add_administration()] and
-#' [nif::add_observation()].
+#' This is the default stored on objects created by [nif::nif()] and used by
+#' [nif::add_administration()] and [nif::add_observation()] when `imputation`
+#' is `NULL`.
 #'
 #' @format A named list with these functions:
 #' \describe{

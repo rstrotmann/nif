@@ -171,11 +171,7 @@ normalize_id <- function(obj) {
   if (length(id) == 0L) {
     out <- obj
     out$ID <- integer()
-    return(new_nif(
-      out,
-      nif_version = attr(obj, "nif_version"),
-      creation_date = attr(obj, "creation_date")
-    ))
+    return(restore_nif(out, obj))
   }
 
   uid <- unique(id)
@@ -194,11 +190,7 @@ normalize_id <- function(obj) {
 
   out <- obj
   out$ID <- new_for_uid[g]
-  new_nif(
-    out[order(out$ID), ],
-    nif_version = attr(obj, "nif_version"),
-    creation_date = attr(obj, "creation_date")
-  )
+  restore_nif(out[order(out$ID), ], obj)
 }
 
 

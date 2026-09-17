@@ -22,8 +22,9 @@ Imputations that are applied when administrations or observations are added
 to a NIF data set are bundled in imputation rule sets.
 }
 \details{
-This is the default imputation rule set for \code{\link[=add_administration]{add_administration()}} and
-\code{\link[=add_observation]{add_observation()}}.
+This is the default stored on objects created by \code{\link[=nif]{nif()}} and used by
+\code{\link[=add_administration]{add_administration()}} and \code{\link[=add_observation]{add_observation()}} when \code{imputation}
+is \code{NULL}.
 }
 \section{Imputation rules for drug administrations}{
 

@@ -15,7 +15,7 @@ add_administration(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
-  imputation = imputation_rules_standard,
+  imputation = NULL,
   duration = NULL,
   iv_admin = NULL,
   silent = NULL
@@ -44,7 +44,8 @@ from the PCRFTDTC field from the PC domain.}
 
 \item{debug}{Include debug fields, as logical.}
 
-\item{imputation}{The imputation rule set.}
+\item{imputation}{The imputation rule set as a list, or \code{NULL} to use
+\code{attr(nif, "imputation_rules")}.}
 
 \item{duration}{The duration of the iv administration as numeric. If NULL,
 will be determined automatically based on the EXDUR field, if available.}

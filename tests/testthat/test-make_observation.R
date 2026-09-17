@@ -1028,21 +1028,6 @@ test_that("make_observation validates omit_not_done parameter", {
 
 ## Validation and error paths
 
-test_that("make_observation rejects non-list imputation argument", {
-  sdtm <- make_test_sdtm1()
-
-  expect_error(
-    make_observation(
-      sdtm, "pc", "A",
-      imputation = "imputation_rules_standard",
-      ntime_method = "ELTM",
-      silent = TRUE
-    ),
-    "Imputation rule set must be a list!"
-  )
-})
-
-
 test_that("make_observation rejects invalid ntime_method", {
   sdtm <- make_test_sdtm1()
 

@@ -319,6 +319,7 @@ test_that("add_observation handles missing NTIME gracefully", {
     add_administration(sdtm_test, "A", analyte = "A", silent = TRUE)
 
   # Should run without error but show a message about NTIME
+
   expect_message(
     expect_message(
       expect_message(
@@ -332,9 +333,9 @@ test_that("add_observation handles missing NTIME gracefully", {
         ),
         "No ntime_lookup could be created"
       ),
-      "Imputation model"
-    ),
     "Missing fields"
+    ),
+    "Default nif imputation rules"
   )
 
   # NTIME should be NA in the resulting object

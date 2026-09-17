@@ -215,9 +215,11 @@ create_iv_fields <- function(
 #'    subject and treatment, then compose `DTC`, join subjects, set `TRTDY`,
 #'    and return a nif object.
 #'
-#' Default `imputation` is [nif::imputation_rules_standard()]. Use
-#' [nif::imputation_rules_void()] or a custom list to change or skip rule slots.
-#' RFENDTC imputation and carry-forward still run when rules are empty.
+#' Default `imputation` is [nif::imputation_rules_standard()].
+#' [nif::add_administration()] uses `attr(nif, "imputation_rules")` when
+#' `imputation` is `NULL`. Use [nif::imputation_rules_void()] or a custom list
+#' to change or skip rule slots. RFENDTC imputation and carry-forward still
+#' run when rules are empty.
 #'
 #' @param sdtm A sdtm object.
 #' @param subject_filter The filtering to apply to the DM domain, as string,
@@ -259,7 +261,7 @@ make_administration <- function(
   validate_argument(cmt, "numeric")
   validate_argument(subject_filter, "character")
   validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
-  validate_imputation_set(imputation)
+  imputation <- resolve_imputation_rules(imputation)
   validate_argument(duration, "numeric", allow_null = TRUE)
   validate_argument(iv_admin, "logical", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
@@ -456,7 +458,8 @@ make_administration <- function(
 #' @param silent Suppress messages, defaults to nif_option standard, if NULL.
 #' @param debug Include debug fields, as logical.
 #' @inheritParams create_iv_fields iv_admin duration
-#' @param imputation The imputation rule set.
+#' @param imputation The imputation rule set as a list, or `NULL` to use
+#'   `attr(nif, "imputation_rules")`.
 #'
 #' @return A nif object.
 #' @export
@@ -474,7 +477,7 @@ add_administration <- function(
   cut_off_date = NULL,
   keep = NULL,
   debug = FALSE,
-  imputation = imputation_rules_standard,
+  imputation = NULL,
   duration = NULL,
   iv_admin = NULL,
   silent = NULL
@@ -491,15 +494,32 @@ add_administration <- function(
   validate_argument(debug, "logical")
   validate_argument(silent, "logical", allow_null = TRUE)
 
-  if (!is.list(imputation))
-    stop("imputation must be a list!")
+  # imputation rules
+  if (is.null(imputation)) {
+    imputation <- attr(nif, "imputation_rules")
+    # imputation_label <- "default nif imputation rules"
+    conditional_cli(
+      cli_alert_info(paste0(
+        "Default nif imputation rules applied to administration of ", extrt)),
+      silent = silent
+    )
+  } else {
+    imputation_label <- deparse(substitute(imputation))
+    conditional_cli(
+      cli_alert_info(paste0(
+        "Imputation model '", imputation_label,
+        "' applied to administration of ", extrt)),
+      silent = silent
+    )
+  }
+  imputation <- resolve_imputation_rules(imputation)
 
-  conditional_cli(
-    cli_alert_info(paste0(
-      "Imputation model '", deparse(substitute(imputation)),
-      "' applied to administration of ", extrt)),
-    silent = silent
-  )
+  # conditional_cli(
+  #   cli_alert_info(paste0(
+  #     "Imputation model '", imputation_label,
+  #     "' applied to administration of ", extrt)),
+  #   silent = silent
+  # )
 
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")
@@ -520,5 +540,6 @@ add_administration <- function(
       silent = silent
     )
   ) |>
-    normalize_nif(keep = keep)
+    normalize_nif(keep = keep) |>
+    restore_nif(nif)
 }

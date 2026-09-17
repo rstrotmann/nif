@@ -425,7 +425,7 @@ make_observation <- function(
   validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(include_day_in_ntime, "logical")
   validate_argument(omit_not_done, "logical")
-  validate_imputation_set(imputation)
+  imputation <- resolve_imputation_rules(imputation)
   validate_argument(silent, "logical", allow_null = TRUE)
   validate_argument(na_to_zero, "logical")
 
@@ -801,7 +801,8 @@ make_observation <- function(
 #' @param scat xxSCAT filter to apply, as character.
 #' @param omit_not_done Delete rows where xxSTAT is "NOT DONE, as logical.
 #' @param na_to_zero Set all NA values of DV to 0, as logical.
-#' @param imputation The imputation rule set.
+#' @param imputation The imputation rule set as a list, or `NULL` to use
+#'   `attr(nif, "imputation_rules")`.
 #' @param debug Include debug fields, as logical. When enabled (either via this
 #'   argument or the global `nif_option("debug")`), additional source-tracking
 #'   fields `SRC_DOMAIN`, `SRC_SEQ` and `SRC_TESTCD` are retained in the nif
@@ -857,7 +858,7 @@ add_observation <- function(
   omit_not_done = TRUE,
   na_rm = TRUE,
   na_to_zero = FALSE,
-  imputation = imputation_rules_standard
+  imputation = NULL
 ) {
   dup_fun_name <- deparse(substitute(duplicate_function))
 
@@ -898,14 +899,33 @@ add_observation <- function(
   validate_argument(omit_not_done, "logical")
   validate_argument(na_rm, "logical")
   validate_argument(na_to_zero, "logical")
-  validate_imputation_set(imputation)
 
-  conditional_cli(
-    cli_alert_info(paste0(
-      "Imputation model '", deparse(substitute(imputation)), "'",
-      " applied to ", testcd, " observations")),
-    silent = silent
-  )
+  # imputation model
+  if (is.null(imputation)) {
+    imputation <- attr(nif, "imputation_rules")
+    # imputation_label <- "nif default"
+    conditional_cli(
+      cli_alert_info(paste0(
+        "Default nif imputation rules applied to ", testcd, " observations")),
+      silent = silent
+    )
+  } else {
+    imputation_label <- deparse(substitute(imputation))
+    conditional_cli(
+      cli_alert_info(paste0(
+        "Imputation model '", imputation_label, "'",
+        " applied to ", testcd, " observations")),
+      silent = silent
+    )
+  }
+  imputation <- resolve_imputation_rules(imputation)
+
+  # conditional_cli(
+  #   cli_alert_info(paste0(
+  #     "Imputation model '", imputation_label, "'",
+  #     " applied to ", testcd, " observations")),
+  #   silent = silent
+  # )
 
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) {
@@ -1110,8 +1130,10 @@ add_observation <- function(
     )
   }
 
-  out |>
-    select(-c(".current_observation"))
+  restore_nif(
+    select(out, -c(".current_observation")),
+    nif
+  )
 }
 
 

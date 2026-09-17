@@ -36,11 +36,7 @@ add_bintime <- function(
       group_by(across(all_of(group))) |>
       group_modify(function(.x, .y) {
         add_bintime(
-          new_nif(
-            .x,
-            nif_version = attr(obj, "nif_version"),
-            creation_date = attr(obj, "creation_date")
-          ),
+          restore_nif(.x, obj),
           method = method,
           time = time
         )
