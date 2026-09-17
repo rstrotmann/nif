@@ -734,7 +734,7 @@ get_admin_time_from_ntime <- function(
     ntime_exponent = -0.8
 ) {
   # validate inputs
-  validate_sdtm(sdtm)
+  validate_sdtm_argument(sdtm)
   validate_argument(pctestcd, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)
 

@@ -24,6 +24,11 @@ new_sdtm <- function(sdtm_data, source = "") {
 #' @returns The unchanged sdtm object.
 #' @export
 validate_sdtm <- function(obj) {
+  na_domains <- is.na(names(obj))
+  if (any(na_domains)) {
+    stop("Unnamed domains in input!")
+  }
+
   duplicated <- duplicated(tolower(names(obj)))
   if (length(which(duplicated == TRUE)) > 0) {
     warning(paste0(
@@ -81,7 +86,7 @@ sdtm <- function(sdtm_data, source = "") {
 #' @examples
 #' trial_title(examplinib_sad)
 trial_title <- function(obj) {
-  validate_sdtm(obj)
+  validate_sdtm_argument(obj)
 
   domains <- toupper(names(obj))
   if (!"TS" %in% domains) {
@@ -118,7 +123,7 @@ trial_title <- function(obj) {
 #' @return A POSIXct object or NULL.
 #' @export
 trial_dco <- function(obj) {
-  validate_sdtm(obj)
+  validate_sdtm_argument(obj)
 
   domains <- toupper(names(obj))
   if (!"TS" %in% domains) {
@@ -162,7 +167,7 @@ trial_dco <- function(obj) {
 #' summary(examplinib_poc)
 summary.sdtm <- function(object, ...) {
   # validate input
-  validate_sdtm(object)
+  validate_sdtm_argument(object)
 
   # Initialize empty output
   out <- list(
@@ -382,7 +387,7 @@ has_domain <- function(obj, name) {
 #' suggest(examplinib_poc)
 suggest <- function(obj, show_all = FALSE) {
   # input validation
-  validate_sdtm(obj, expected_domains = c("dm", "ex", "pc"))
+  validate_sdtm_argument(obj, expected_domains = c("dm", "ex", "pc"))
   validate_argument(show_all, "logical")
 
   message_code <- function(
@@ -580,7 +585,7 @@ suggest <- function(obj, show_all = FALSE) {
 #' subjects(examplinib_poc)
 subjects.sdtm <- function(obj) {
   # input validation
-  validate_sdtm(obj, "dm")
+  validate_sdtm_argument(obj, "dm")
 
   obj |>
     domain("dm") |>
@@ -601,7 +606,7 @@ subjects.sdtm <- function(obj) {
 #' analytes(examplinib_sad)
 analytes.sdtm <- function(obj) {
   # validate input
-  validate_sdtm(obj, "pc")
+  validate_sdtm_argument(obj, "pc")
 
   unique(domain(obj, "pc")$PCTESTCD)
 }
@@ -619,7 +624,7 @@ analytes.sdtm <- function(obj) {
 #' doses(examplinib_poc)
 doses.sdtm <- function(obj) {
   # validate input
-  validate_sdtm(obj, "ex")
+  validate_sdtm_argument(obj, "ex")
 
   unique(domain(obj, "ex")$EXDOSE)
 }
@@ -898,7 +903,7 @@ derive_sld <- function(
 testcd <- function(obj, domain = NULL, silent = NULL) {
   # input validation
   validate_argument(domain, "character", allow_null = TRUE, allow_multiple = TRUE)
-  validate_sdtm(obj, expected_domains = domain)
+  validate_sdtm_argument(obj, expected_domains = domain)
 
   if (is.null(domain)) {
     domain <- names(obj)
@@ -945,7 +950,7 @@ testcd <- function(obj, domain = NULL, silent = NULL) {
 #' @examples
 #' last_dtc(examplinib_sad)
 last_dtc.sdtm <- function(obj) {
-  validate_sdtm(obj)
+  validate_sdtm_argument(obj)
 
   temp <- lapply(as.list(obj), last_dtc_data_frame)
   if (is.null(unlist(temp))) {

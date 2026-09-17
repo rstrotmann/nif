@@ -4,7 +4,7 @@
 \alias{validate_sdtm}
 \title{Validate sdtm object}
 \usage{
-validate_sdtm(obj, expected_domains = NULL)
+validate_sdtm(obj)
 }
 \arguments{
 \item{obj}{sdtm object.}

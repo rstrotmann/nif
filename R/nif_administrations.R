@@ -252,7 +252,7 @@ make_administration <- function(
   silent = NULL
 ) {
   # input validation
-  validate_sdtm(sdtm, c("dm", "ex"))
+  validate_sdtm_argument(sdtm, c("dm", "ex"))
   validate_argument(extrt, "character")
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(pctestcd, "character", allow_null = TRUE)
@@ -481,7 +481,7 @@ add_administration <- function(
 ) {
   # validate input
   validate_nif(nif)
-  validate_sdtm(sdtm, c("dm", "ex"))
+  validate_sdtm_argument(sdtm, c("dm", "ex"))
   validate_argument(extrt, "character")
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(cmt, "numeric")

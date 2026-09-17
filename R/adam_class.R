@@ -56,6 +56,11 @@ validate_adam <- function(obj) {
     stop("Input must be a adam object")
   }
 
+  na_datasets <- is.na(names(obj))
+  if (any(na_datasets)) {
+    stop("Unnamed datasets in input!")
+  }
+
   duplicated <- duplicated(tolower(names(obj)))
   if (length(which(duplicated == TRUE)) > 0) {
     warning(paste0(

@@ -1309,7 +1309,7 @@ edish_plot <- function(
   ...
 ) {
   # input validation
-  validate_sdtm(sdtm, "lb")
+  validate_sdtm_argument(sdtm, "lb")
   validate_nif(nif)
   validate_argument(enzyme, "character", values = c("ALT", "AST"))
   validate_argument(observation_filter, "character", allow_null = TRUE)

@@ -47,7 +47,7 @@ print.subject_info <- function(x, ...) {
 #' subject_info(examplinib_fe, subjects(examplinib_fe)[1:3, "USUBJID"])
 subject_info.sdtm <- function(obj, id, ...) {
   # input validation
-  validate_sdtm(obj, "dm")
+  validate_sdtm_argument(obj, "dm")
   validate_argument(id, "character", allow_multiple = TRUE)
 
   out <- domain(obj, "dm") |>

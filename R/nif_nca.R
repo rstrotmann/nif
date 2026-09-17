@@ -350,7 +350,7 @@ nca_from_pp <- function(
   silent = NULL
 ) {
   validate_nif(obj)
-  validate_sdtm(sdtm_data, "pp")
+  validate_sdtm_argument(sdtm_data, "pp")
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(ppcat, "character", allow_null = TRUE)
   validate_argument(ppscat, "character", allow_null = TRUE)

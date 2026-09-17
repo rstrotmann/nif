@@ -71,7 +71,7 @@ add_covariate <- function(
 ) {
   # input validation
   validate_argument(domain, "character")
-  validate_sdtm(sdtm, domain)
+  validate_sdtm_argument(sdtm, domain)
   validate_nif(nif)
 
   # Get domain data

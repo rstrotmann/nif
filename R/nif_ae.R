@@ -45,7 +45,7 @@ make_ae <- function(
   keep = NULL
 ) {
   # input validation
-  validate_sdtm(sdtm, expected_domains = c("dm", "vs", "ae"))
+  validate_sdtm_argument(sdtm, expected_domains = c("dm", "vs", "ae"))
   validate_argument(ae_term, "character")
   validate_argument(ae_field, "character")
   validate_argument(analyte, "character", allow_null = TRUE)
@@ -219,7 +219,7 @@ add_ae_observation <- function(
 ) {
   # input validation
   validate_nif(nif)
-  validate_sdtm(sdtm, expected_domains = "ae")
+  validate_sdtm_argument(sdtm, expected_domains = "ae")
   validate_argument(ae_term, "character")
   validate_argument(ae_field, "character")
   validate_argument(analyte, "character", allow_null = TRUE)

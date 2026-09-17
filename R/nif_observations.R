@@ -401,7 +401,7 @@ make_observation <- function(
 ) {
   # input validation
   validate_argument(domain, "character")
-  validate_sdtm(sdtm, domain)
+  validate_sdtm_argument(sdtm, domain)
   validate_argument(testcd, "character")
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(parent, "character", allow_null = TRUE)
@@ -864,7 +864,7 @@ add_observation <- function(
   # validate inputs
   validate_nif(nif)
   validate_argument(domain, "character")
-  validate_sdtm(sdtm, domain)
+  validate_sdtm_argument(sdtm, domain)
   validate_testcd(sdtm, testcd, domain)
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(parent, "character", allow_null = TRUE)

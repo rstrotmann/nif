@@ -71,7 +71,7 @@ add_baseline <- function(
 ) {
   # input validation
   validate_nif(nif)
-  validate_sdtm(sdtm)
+  validate_sdtm_argument(sdtm)
 
   validate_testcd(sdtm, testcd, domain)
   validate_argument(name, "character", allow_null = TRUE)
@@ -904,7 +904,7 @@ add_bl_odwg <- function(
 ) {
   # input validation
   validate_nif(obj)
-  validate_sdtm(sdtm, "lb")
+  validate_sdtm_argument(sdtm, "lb")
   validate_argument(observation_filter, "character", allow_null = TRUE)
   validate_argument(baseline_filter, "character", allow_null = TRUE)
   validate_argument(silent, "logical", allow_null = TRUE)

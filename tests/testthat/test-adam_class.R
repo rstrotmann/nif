@@ -62,7 +62,7 @@ test_that("adam constructor works with named list", {
 })
 
 
-test_that("adam constructor works with unnamed list", {
+test_that("adam constructor errors on unnamed list", {
   dm <- tibble::tribble(
     ~USUBJID, ~STUDYID,
     "SUBJ-001", "STUDY-001"
@@ -73,10 +73,10 @@ test_that("adam constructor works with unnamed list", {
     "SUBJ-001", "STUDY-001"
   )
 
-  adam_obj <- adam(list(dm, ex))
-
-  expect_s3_class(adam_obj, "adam")
-  expect_equal(length(adam_obj), 2)
+  expect_error(
+    adam_obj <- adam(list(dm, ex)),
+    "Unnamed datasets in input!"
+  )
 })
 
 

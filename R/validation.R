@@ -120,14 +120,14 @@ validate_sdtm_domains <- function(sdtm, silent = NULL) {
 }
 
 
-#' Validate sdtm object
+#' Validate sdtm argument
 #'
 #' @param obj A stdm object.
 #' @param expected_domains Expected domains as character.
 #'
 #' @returns Nothing or stop.
 #' @noRd
-validate_sdtm <- function(
+validate_sdtm_argument <- function(
   obj,
   expected_domains = NULL
 ) {
@@ -358,7 +358,7 @@ validate_testcd <- function(sdtm, testcd, domain = NULL) {
   # input validation
   validate_argument(domain, "character", allow_null = TRUE)
   validate_argument(testcd, "character", allow_multiple = TRUE)
-  validate_sdtm(sdtm, domain)
+  validate_sdtm_argument(sdtm, domain)
 
   if (!is.null(domain)) {
     domain <- tolower(domain)

@@ -9,7 +9,7 @@
 #' head(domain(examplinib_fe, "dm"), 3)
 domain <- function(obj, name) {
   # validate input
-  validate_sdtm(obj)
+  validate_sdtm_argument(obj)
   validate_argument(name, "character")
 
   # Normalize domain name to lowercase

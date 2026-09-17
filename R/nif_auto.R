@@ -86,7 +86,7 @@ formula_to_mapping <- function(sdtm, f, silent = NULL) {
 #' @noRd
 auto_mapping <- function(sdtm, ..., silent = NULL) {
   # input validation
-  validate_sdtm(sdtm)
+  validate_sdtm_argument(sdtm)
 
   mapping <- list(...)
 
@@ -244,7 +244,7 @@ nif_auto <- function(
   silent = NULL
 ) {
   # input validation
-  validate_sdtm(sdtm, c("dm", "vs", "ex", "pc"))
+  validate_sdtm_argument(sdtm, c("dm", "vs", "ex", "pc"))
   validate_argument(baseline_filter, "character", allow_null = TRUE)
 
   analyte_mapping <- auto_mapping(sdtm, ...)
