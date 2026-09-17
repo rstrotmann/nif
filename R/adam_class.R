@@ -3,7 +3,7 @@
 #' @param adam_data The ADaM datasets as list of data frames.
 #' @param source Source information as character.
 #'
-#' @returns
+#' @returns An adam object.
 #' @noRd
 new_adam <- function(adam_data, source = "") {
   names(adam_data) <- tolower(names(adam_data))
@@ -39,7 +39,9 @@ adam <- function(adam_data, source = "") {
   }
 
   # business logic
-  new_adam(adam_data, source = source)
+  out <- new_adam(adam_data, source = source)
+  validate_adam(out)
+  out
 }
 
 
@@ -53,6 +55,16 @@ validate_adam <- function(obj) {
   if (!inherits(obj, "adam")) {
     stop("Input must be a adam object")
   }
+
+  duplicated <- duplicated(tolower(names(obj)))
+  if (length(which(duplicated == TRUE)) > 0) {
+    warning(paste0(
+      "Duplicated domains: ",
+      nice_enumeration(names(obj)[duplicated])))
+  }
+
+
+  invisible(obj)
 }
 
 
