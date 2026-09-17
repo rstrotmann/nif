@@ -29,6 +29,7 @@ dataset <- function(adam, name) {
   validate_adam(adam)
   validate_argument(name, "character")
 
+  name <- tolower(name)
   if (!name %in% names(adam)) {
     stop(paste0(
       "Dataset ", name, " not found in adam object!"

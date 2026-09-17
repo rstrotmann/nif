@@ -12,8 +12,8 @@ domain(obj, name)
 \item{name}{The domain to return as a single character string.}
 }
 \value{
-The specified domain as data frame. Issues a warning if the domain
-does not exist and returns NULL.
+The specified domain as data frame. Stops if the domain is not
+available.
 }
 \description{
 Return a specific domain from a sdtm object

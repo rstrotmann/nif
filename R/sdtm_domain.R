@@ -2,8 +2,8 @@
 #'
 #' @param obj The sdtm object.
 #' @param name The domain to return as a single character string.
-#' @return The specified domain as data frame. Issues a warning if the domain
-#'   does not exist and returns NULL.
+#' @return The specified domain as data frame. Stops if the domain is not
+#'   available.
 #' @export
 #' @examples
 #' head(domain(examplinib_fe, "dm"), 3)
