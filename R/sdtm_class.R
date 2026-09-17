@@ -6,18 +6,6 @@
 #' @return A sdtm object.
 #' @noRd
 new_sdtm <- function(sdtm_data) {
-  # input validation
-  if (!is.list(sdtm_data) || is.data.frame(sdtm_data)) {
-    stop("Input must be a list of data frames!")
-  }
-  temp <- vapply(sdtm_data, is.data.frame, logical(1))
-  if (any(!temp)) {
-    stop(paste0(
-      "Input is not a data frame: ",
-      nice_enumeration(names(sdtm_data)[!temp])
-    ))
-  }
-
   # business logic
   names(sdtm_data) <- tolower(names(sdtm_data))
   class(sdtm_data) <- c("sdtm", "list")
@@ -37,6 +25,18 @@ new_sdtm <- function(sdtm_data) {
 #' @return A sdtm object.
 #' @export
 sdtm <- function(sdtm_data) {
+  # input validation
+  if (!is.list(sdtm_data) || is.data.frame(sdtm_data)) {
+    stop("Input must be a list of data frames!")
+  }
+  temp <- vapply(sdtm_data, is.data.frame, logical(1))
+  if (any(!temp)) {
+    stop(paste0(
+      "Input is not a data frame: ",
+      nice_enumeration(names(sdtm_data)[!temp])
+    ))
+  }
+
   new_sdtm(sdtm_data)
 }
 
