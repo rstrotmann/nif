@@ -27,7 +27,7 @@ add_bintime <- function(
                "bclust", "fisher")
   )
   validate_argument(group, "character", allow_null = TRUE, allow_multiple = TRUE)
-  validate_nif(obj, fields = c(time, group))
+  validate_nif_argument(obj, fields = c(time, group))
 
   # business code
   # Grouped binning: split by group, apply ungrouped binning to each, combine
@@ -124,7 +124,7 @@ add_bintime1 <- function(
   if (!is.null(n) && (length(n) != 1 || is.na(n) || n < 1 || n != floor(n))) {
     stop("`n` must be a positive integer or NULL!")
   }
-  validate_nif(obj, fields = time)
+  validate_nif_argument(obj, fields = time)
 
   # business code
   active_time <- obj[[time]]
@@ -260,7 +260,7 @@ bintime_plot <- function(
     bintime_function = add_bintime1
 ) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(analyte, "character")
   validate_analyte(obj, analyte)
 

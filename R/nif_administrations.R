@@ -480,7 +480,7 @@ add_administration <- function(
   silent = NULL
 ) {
   # validate input
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_sdtm_argument(sdtm, c("dm", "ex"))
   validate_argument(extrt, "character")
   validate_argument(analyte, "character", allow_null = TRUE)

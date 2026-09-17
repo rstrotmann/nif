@@ -54,7 +54,7 @@ nca <- function(
   dup_fun_name <- deparse(substitute(duplicate_function))
 
   # input validation
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(parent, "character", allow_null = TRUE)
   validate_argument(
@@ -349,7 +349,7 @@ nca_from_pp <- function(
   observation_filter = "TRUE",
   silent = NULL
 ) {
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_sdtm_argument(sdtm_data, "pp")
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(ppcat, "character", allow_null = TRUE)

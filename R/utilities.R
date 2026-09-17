@@ -164,7 +164,7 @@ identify_baseline_columns <- function(df, id_col = "ID") {
 #' normalize_id(examplinib_sad_nif)
 normalize_id <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   # business logic
   id <- obj$ID
@@ -233,7 +233,7 @@ hash.default <- function(x) {
 #' @noRd
 ensure_unique_per_subject <- function(nif, field) {
   # input validation
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_argument(
     field, allow_multiple = TRUE, allow_null = TRUE, values = names(nif))
 
@@ -1475,7 +1475,7 @@ upper_ci <- function(mean, sd, n, conf_level = 0.9){
 #' @returns A nif object.
 #' @noRd
 dv_na_to_zero <- function(obj) {
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   mutate(obj, DV = case_when(is.na(.data$DV) ~ 0, .default = .data$DV))
 }
@@ -1637,7 +1637,7 @@ recode_race <- function(
     silent = NULL
 ) {
   # validate inputs
-  validate_nif(obj, fields = "RACE")
+  validate_nif_argument(obj, fields = "RACE")
   validate_df_argument(coding_table, allow_null = TRUE,
                        expected_fields = c("RACE", "RACEN"))
   validate_argument(silent, "logical", allow_null = TRUE)

@@ -157,11 +157,11 @@ geom_admin <- function(
   # Validate nif now, or when plot data is inherited
   if (is.null(data)) {
     data <- function(x) {
-      validate_nif(x)
+      validate_nif_argument(x)
       x
     }
   } else {
-    validate_nif(data)
+    validate_nif_argument(data)
   }
 
   # Ensure EVID and ANALYTE reach the stat (nif columns, not plot aesthetics)

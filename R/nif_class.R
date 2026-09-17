@@ -336,19 +336,19 @@ subjects <- function(obj) {
 #' @export
 #' @keywords internal
 #' @examples
-#' head(subjects(examplinib_fe_nif))
+#' subjects(examplinib_fe_nif)
 subjects.nif <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   if (!"USUBJID" %in% names(obj)) {
     obj <- mutate(obj, USUBJID = NA)
   }
 
   obj |>
-    as.data.frame() |>
     select(any_of(c("ID", "USUBJID"))) |>
-    distinct()
+    distinct() |>
+    as.data.frame()
 }
 
 
@@ -364,7 +364,7 @@ subjects.nif <- function(obj) {
 #' usubjid(examplinib_fe_nif, 1, silent = FALSE)
 usubjid <- function(obj, id, silent = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(id, "numeric", allow_multiple = TRUE, allow_null = TRUE)
   if (!"USUBJID" %in% names(obj)) {
     stop("USUBJID field not found")
@@ -393,11 +393,11 @@ usubjid <- function(obj, id, silent = NULL) {
 #' @noRd
 parents <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   obj |>
     ensure_parent() |>
-    as.data.frame() |>
+    # as.data.frame() |>
     distinct(.data$PARENT) |>
     filter(.data$PARENT != "") |>
     pull(.data$PARENT)
@@ -418,7 +418,7 @@ parents <- function(obj) {
 #'
 dose_red_sbs <- function(obj, analyte = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(analyte, "character", allow_null = TRUE)
 
   obj <- ensure_analyte(obj)
@@ -511,7 +511,7 @@ rich_sampling_sbs <- function(
 #' studies(examplinib_poc_nif)
 studies <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   if ("STUDYID" %in% names(obj)) {
     obj |>
@@ -548,7 +548,7 @@ doses <- function(obj) {
 #' doses(examplinib_poc_nif)
 doses.nif <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   if ("DOSE" %in% names(obj)) {
     return(unique(obj$DOSE))
@@ -582,7 +582,7 @@ doses.nif <- function(obj) {
 #' dose_levels(nif())
 dose_levels <- function(obj, cmt = 1, group = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(group, "character", allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(cmt, "numeric")
 
@@ -649,10 +649,10 @@ analytes <- function(obj) {
 #' analytes(examplinib_poc_min_nif)
 analytes.nif <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   ensure_analyte(obj) |>
-    as.data.frame() |>
+    # as.data.frame() |>
     filter(.data$EVID == 0) |>
     distinct(.data$ANALYTE) |>
     pull(.data$ANALYTE)
@@ -675,8 +675,9 @@ analyte_overview <- function(obj) {
   obj |>
     ensure_analyte() |>
     ensure_parent() |>
-    as.data.frame() |>
-    distinct(.data$ANALYTE, .data$PARENT)
+    # as.data.frame() |>
+    distinct(.data$ANALYTE, .data$PARENT) |>
+    as.data.frame()
 }
 
 
@@ -695,7 +696,7 @@ analyte_overview <- function(obj) {
 #' analytes(examplinib_poc_min_nif)
 analytes.data.frame <- function(obj) {
   ensure_analyte(obj) |>
-    as.data.frame() |>
+    # as.data.frame() |>
     filter(.data$EVID == 0) |>
     distinct(.data$ANALYTE) |>
     pull(.data$ANALYTE)
@@ -730,7 +731,7 @@ cmt_mapping <- function(obj) {
 #' compartments(examplinib_poc_nif)
 #' compartments(examplinib_poc_min_nif)
 compartments <- function(obj) {
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   obj |>
     ensure_analyte() |>
@@ -788,7 +789,7 @@ treatments.nif <- function(obj) {
 #' index_dosing_interval(examplinib_fe_nif)
 index_dosing_interval <- function(obj, parent = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(parent, "character", allow_null = TRUE,
                     allow_multiple = TRUE)
 
@@ -971,7 +972,7 @@ guess_analyte <- function(obj) {
 #' @noRd
 guess_parent <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   # business logic
   if (nrow(filter(obj, .data$EVID == 1)) == 0)
@@ -1006,7 +1007,7 @@ guess_parent <- function(obj) {
 #' @export
 index_regimen <- function(obj, admin_window = 12, silent = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(admin_window, "numeric")
 
   if (admin_window <= 0) {
@@ -1093,7 +1094,7 @@ index_regimen <- function(obj, admin_window = 12, silent = NULL) {
 #' @export
 add_dose_level <- function(obj, silent = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(silent, "logical", allow_null = TRUE)
 
   if (any(c("DL", "REG", "REG_ID") %in% names(obj))) {
@@ -1175,7 +1176,7 @@ add_dose_level <- function(obj, silent = NULL) {
 #' add_obs_per_dosing_interval(examplinib_poc_min_nif)
 add_obs_per_dosing_interval <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   # business logic
   obj |>
@@ -1214,7 +1215,7 @@ index_rich_sampling_intervals <- function(
     min_n = 4
 ) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(min_n, "numeric")
 
   # business logic
@@ -1267,7 +1268,7 @@ last_dtc <- function(obj) {
 #' @examples
 #' last_dtc(examplinib_sad_nif)
 last_dtc.nif <- function(obj) {
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   out <- NULL
   if ("DTC" %in% names(obj)) {
@@ -1315,7 +1316,7 @@ last_dtc_data_frame <- function(obj) {
 #' @export
 imputation_summary <- function(obj, analyte = NULL) {
   # input validation
-  validate_nif(obj, fields = c("ANALYTE", "IMPUTATION"))
+  validate_nif_argument(obj, fields = c("ANALYTE", "IMPUTATION"))
   validate_argument(analyte, "character", allow_null = TRUE)
 
   if (!is.null(analyte)) {

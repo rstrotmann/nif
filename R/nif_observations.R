@@ -862,7 +862,7 @@ add_observation <- function(
   dup_fun_name <- deparse(substitute(duplicate_function))
 
   # validate inputs
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_argument(domain, "character")
   validate_sdtm_argument(sdtm, domain)
   validate_testcd(sdtm, testcd, domain)
@@ -915,7 +915,7 @@ add_observation <- function(
   # ensure that keep includes all fields already present in the nif
   keep <- unique(c(keep, names(nif), duplicate_identifier))
 
-  # validate_nif(nif, fields = keep)
+  # validate_nif_argument(nif, fields = keep)
 
   # ensure analytes
   nif <- nif |>
@@ -1163,7 +1163,7 @@ import_observation <- function(
   validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(debug, "logical")
   validate_argument(silent, "logical", allow_null = TRUE)
-  validate_nif(nif, fields = keep)
+  validate_nif_argument(nif, fields = keep)
 
   debug <- isTRUE(debug) | isTRUE(nif_option_value("debug"))
   if (isTRUE(debug)) keep <- c(keep, "SRC_DOMAIN", "SRC_SEQ")

@@ -76,7 +76,7 @@ subject_info.sdtm <- function(obj, id, ...) {
 #' subject_info(examplinib_poc_nif, 1:3)
 subject_info.nif <- function(obj, id, digits = 1, ...) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   out <- obj |>
     filter(.data$ID %in% id | .data$USUBJID %in% id) |>

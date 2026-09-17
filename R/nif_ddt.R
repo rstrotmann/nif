@@ -82,7 +82,7 @@ ddt_standard_fields <- tibble::tribble(
 #' ddt(examplinib_sad_nif)
 ddt <- function(obj, silent = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(silent, "logical", allow_null = TRUE)
 
   out <- ddt_standard_fields

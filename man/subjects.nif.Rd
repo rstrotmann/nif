@@ -16,6 +16,6 @@ A data frame of all ID - USUBJID pairs in the data set.
 Unique subjects within a NIF object
 }
 \examples{
-head(subjects(examplinib_fe_nif))
+subjects(examplinib_fe_nif)
 }
 \keyword{internal}

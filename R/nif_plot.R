@@ -262,7 +262,7 @@ plot.nif <- function(
   }
 
   # input validation
-  validate_nif(x)
+  validate_nif_argument(x)
   validate_argument(analyte, "character", allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(dose, "numeric", allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(time, "character", values=c("TIME", "NTIME", "TAD", "TAFD"))

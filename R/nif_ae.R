@@ -218,7 +218,7 @@ add_ae_observation <- function(
   silent = NULL
 ) {
   # input validation
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_sdtm_argument(sdtm, expected_domains = "ae")
   validate_argument(ae_term, "character")
   validate_argument(ae_field, "character")

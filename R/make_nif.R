@@ -74,7 +74,7 @@ limit <- function(
     keep_no_obs_sbs = FALSE
 ) {
   # Input validation
-  validate_nif(obj, fields = c("DTC", "ID", "EVID"))
+  validate_nif_argument(obj, fields = c("DTC", "ID", "EVID"))
   validate_argument(individual, "logical")
   validate_argument(keep_no_obs_sbs, "logical")
 
@@ -120,7 +120,7 @@ limit <- function(
 #'
 normalize_nif <- function(obj, cleanup = TRUE, keep = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_argument(cleanup, "logical")
   validate_argument(keep, "character", allow_null = TRUE, allow_multiple = TRUE)
 

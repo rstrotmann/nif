@@ -14,7 +14,7 @@ nif_viewer <- function(nif) {
   # input validation
   required_fields <- c("ID", "TIME", "AMT", "DV", "EVID", "USUBJID", "ANALYTE",
                        "PARENT")
-  validate_nif(nif, fields = required_fields)
+  validate_nif_argument(nif, fields = required_fields)
   numeric_fields <- c("ID", "TIME", "AMT", "DV", "EVID")
   wrong_type <- numeric_fields[lapply(nif[numeric_fields], is.numeric) == FALSE]
   if (length(wrong_type) > 0) {

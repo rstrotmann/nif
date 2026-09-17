@@ -45,7 +45,7 @@ write_nonmem <- function(
   validate_argument(numeric_fields_only, "logical")
   validate_argument(
     dot_columns, "character", allow_null = TRUE, allow_multiple = TRUE)
-  validate_nif(obj, c(fields, dot_columns))
+  validate_nif_argument(obj, c(fields, dot_columns))
 
   # business logic
   temp <- as.data.frame(obj)

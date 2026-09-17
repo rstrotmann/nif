@@ -31,7 +31,7 @@ check.nif <- function(
     ...
   ) {
   # input validation
-  validate_nif(obj, fields = unique(c("NTIME", "ANALYTE", ref_time)))
+  validate_nif_argument(obj, fields = unique(c("NTIME", "ANALYTE", ref_time)))
   validate_argument(ntime_threshold, "numeric")
 
   if (!is.finite(ntime_threshold))
@@ -113,7 +113,7 @@ time_plot <- function(
   validate_argument(xtime, "character", values = c("TIME", "TAFD", "TAD", "NTIME"))
   validate_argument(ytime, "character", values = c("TIME", "TAFD", "TAD", "NTIME"))
   validate_argument(analyte, "character", allow_null = TRUE)
-  validate_nif(obj, fields = c(xtime, ytime))
+  validate_nif_argument(obj, fields = c(xtime, ytime))
 
   if (is.null(analyte)) {
     analyte <- analytes(obj)

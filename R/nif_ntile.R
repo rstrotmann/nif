@@ -48,7 +48,7 @@ add_ntile <- function(
     silent = NULL
     ) {
   # input validation
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_argument(input_col, "character")
   validate_argument(n, "numeric")
 

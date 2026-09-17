@@ -929,7 +929,7 @@ impute_missing_baseline <- function(
     silent = NULL
 ) {
   # input validation
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_argument(
     baseline_fields, "character", allow_multiple = TRUE, allow_null = TRUE)
   if (!is.function(summary_function))

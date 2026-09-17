@@ -298,7 +298,7 @@ validate_fields <- function(obj, fields = NULL) {
 }
 
 
-#' Validate nif object parameter
+#' Validate nif argument
 #'
 #' Checks that input is a nif object and has at least the minimally required
 #' fields, ID, TIME, AMT, CMT, EVID and DV.
@@ -309,7 +309,7 @@ validate_fields <- function(obj, fields = NULL) {
 #'
 #' @returns Nothing or stop.
 #' @noRd
-validate_nif <- function(obj, fields = NULL) {
+validate_nif_argument <- function(obj, fields = NULL) {
   # input validation
   if (!inherits(obj, "nif")) {
     stop("Input must be a nif object")
@@ -410,7 +410,7 @@ validate_analyte <- function(
   allow_empty = FALSE
 ) {
   # validate inputs
-  validate_nif(nif, fields = "ANALYTE")
+  validate_nif_argument(nif, fields = "ANALYTE")
 
   validate_argument(
     analyte, "character", allow_multiple = allow_multiple,

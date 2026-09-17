@@ -23,7 +23,7 @@
 #'
 add_time_deviation <- function(obj, silent = NULL) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   # ensure that TAD and NTIME fields are present and not NA
   required_fields <- c("TAD", "NTIME")
@@ -100,7 +100,7 @@ add_time_window_flag <- function(
   silent = NULL
 ) {
   # validate input
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_df_argument(window, expected_fields = c("NTIME", "BEFORE", "AFTER"))
   validate_analyte(obj, analyte, allow_null = TRUE)
   validate_argument(use_minutes, "logical")

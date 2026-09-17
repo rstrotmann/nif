@@ -131,7 +131,7 @@ make_time <- function(obj) {
 #' @noRd
 make_time_from_time <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   # Ensure PARENT column exists
   obj <- ensure_parent(obj)
@@ -211,7 +211,7 @@ make_time_from_time <- function(obj) {
 #' add_tad(examplinib_poc_nif)
 add_tad <- function(nif) {
   # Input validation
-  validate_nif(nif)
+  validate_nif_argument(nif)
 
   required_cols <- c("ID", "TIME", "EVID", "PARENT")
   missing_cols <- setdiff(required_cols, names(nif))
@@ -331,7 +331,7 @@ add_tafd <- function(nif) {
 #' @examples
 #' head(add_trtdy(examplinib_poc_nif))
 add_trtdy <- function(obj) {
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   obj |>
     dplyr::group_by(.data$ID) |>

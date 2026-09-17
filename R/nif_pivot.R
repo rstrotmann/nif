@@ -33,7 +33,7 @@ correlate_obs <- function(
   duplicate_function = mean
 ) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   if (!"REF" %in% names(obj)) {
     obj <- arrange_and_add_ref(obj)

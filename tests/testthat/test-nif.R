@@ -459,7 +459,7 @@ test_that("nif() output works with other nif functions", {
   expect_equal(nrow(subjects_result), 2)
 
   # Should work with other nif functions that validate nif objects
-  expect_no_error(validate_nif(result))
+  expect_no_error(validate_nif_argument(result))
 })
 
 

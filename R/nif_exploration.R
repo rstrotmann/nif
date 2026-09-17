@@ -45,7 +45,7 @@ nif_plot_id <- function(
   imp = NULL,
   ...
 ) {
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   x <- obj |>
     ensure_parent() |>
@@ -199,7 +199,7 @@ nif_plot_id <- function(
 dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
                          time_field = "TIME", point_size = 2, max_time = NA,
                          analyte = NULL, ...) {
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   x <- obj |>
     ensure_parent() |>
@@ -286,7 +286,7 @@ summary.nif <- function(
   ...
 ) {
   # input validation
-  validate_nif(object)
+  validate_nif_argument(object)
   validate_argument(sampling, "logical")
 
   # Validate data is not empty
@@ -637,7 +637,7 @@ plot.summary_nif <- function(
     ...
 ) {
   # input validation
-  validate_nif(x$nif)
+  validate_nif_argument(x$nif)
   validate_argument(baseline, "logical")
   validate_argument(analytes, "logical")
 
@@ -719,7 +719,7 @@ covariate_hist <- function(
   # input validation
   validate_argument(cov, "char")
   validate_argument(group, "character", allow_multiple = TRUE, allow_null = TRUE)
-  validate_nif(obj, fields = unique(c(cov, group)))
+  validate_nif_argument(obj, fields = unique(c(cov, group)))
   validate_argument(nbins, "numeric")
   validate_argument(alpha, "numeric")
   validate_argument(density, "logical")
@@ -839,7 +839,7 @@ covariate_barplot <- function(
   # input validation
   validate_argument(cov, "char")
   validate_argument(group, "character", allow_multiple = TRUE, allow_null = TRUE)
-  validate_nif(obj, fields = unique(c(cov, group)))
+  validate_nif_argument(obj, fields = unique(c(cov, group)))
   validate_argument(title, "character", allow_null = TRUE)
 
   if (is.null(title)) {
@@ -908,7 +908,7 @@ cat_boxplot <- function(
   # input validation
   validate_argument(cat_field, "character")
   validate_argument(val_field, "character")
-  validate_nif(obj, fields = unique(c(cat_field, val_field)))
+  validate_nif_argument(obj, fields = unique(c(cat_field, val_field)))
   validate_argument(title, "character", allow_null = TRUE)
 
   # business logic
@@ -952,7 +952,7 @@ cat_boxplot <- function(
 #' @examples
 #' wt_by_sex(examplinib_poc_nif)
 wt_by_sex <- function(obj) {
-  validate_nif(obj, fields = c("SEX", "WEIGHT"))
+  validate_nif_argument(obj, fields = c("SEX", "WEIGHT"))
   cat_boxplot(obj, "SEX", "WEIGHT", "Body weight by sex")
 }
 
@@ -966,7 +966,7 @@ wt_by_sex <- function(obj) {
 #' @examples
 #' wt_by_race(examplinib_poc_nif)
 wt_by_race <- function(obj) {
-  validate_nif(obj, fields = c("RACE", "WEIGHT"))
+  validate_nif_argument(obj, fields = c("RACE", "WEIGHT"))
   cat_boxplot(obj, "RACE", "WEIGHT", "Body weight by race")
 }
 
@@ -982,7 +982,7 @@ wt_by_race <- function(obj) {
 #' wt_by_ht(examplinib_poc_nif)
 wt_by_ht <- function(obj, alpha = 0.7) {
   # input validation
-  validate_nif(obj, fields = c("HEIGHT", "WEIGHT"))
+  validate_nif_argument(obj, fields = c("HEIGHT", "WEIGHT"))
   validate_argument(alpha, "numeric")
 
   obj |>
@@ -1008,7 +1008,7 @@ wt_by_ht <- function(obj, alpha = 0.7) {
 #' ht_by_wt(examplinib_poc_nif)
 ht_by_wt <- function(obj, alpha = 0.7) {
   # input validation
-  validate_nif(obj, fields = c("HEIGHT", "WEIGHT"))
+  validate_nif_argument(obj, fields = c("HEIGHT", "WEIGHT"))
   validate_argument(alpha, "numeric")
 
   obj |>
@@ -1035,7 +1035,7 @@ ht_by_wt <- function(obj, alpha = 0.7) {
 #' bmi_by_age(examplinib_poc_nif)
 bmi_by_age <- function(obj, alpha = 0.7) {
   # input validation
-  validate_nif(obj, fields = c("AGE", "BMI"))
+  validate_nif_argument(obj, fields = c("AGE", "BMI"))
   validate_argument(alpha, "numeric")
 
   obj |>
@@ -1065,7 +1065,7 @@ bmi_by_age <- function(obj, alpha = 0.7) {
 #' administration_summary(examplinib_poc_nif)
 administration_summary <- function(obj) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
 
   temp <- obj |>
     ensure_parent() |>
@@ -1098,7 +1098,7 @@ administration_summary <- function(obj) {
 #' @noRd
 sampling_summary <- function(obj) {
   # input validation
-  validate_nif(obj, fields = "NTIME")
+  validate_nif_argument(obj, fields = "NTIME")
 
   # business_logic
   obj |>
@@ -1133,7 +1133,7 @@ mean_dose_plot <- function(
   # input validation
   validate_argument(analyte, "char", allow_null = TRUE)
   validate_argument(title, "character", allow_null = TRUE)
-  validate_nif(obj, fields = c("ANALYTE"))
+  validate_nif_argument(obj, fields = c("ANALYTE"))
 
   if (is.null(analyte)) {
     analyte <- guess_analyte(obj)
@@ -1205,7 +1205,7 @@ subs_per_dose_level <- function(
   # input validation
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(group, "character", allow_null = TRUE)
-  validate_nif(obj, fields = unique(c("ANALYTE", group)))
+  validate_nif_argument(obj, fields = unique(c("ANALYTE", group)))
 
   if (is.null(analyte)) {
     analyte <- analytes(obj)
@@ -1249,7 +1249,7 @@ obs_per_dose_level <- function(
   # input validation
   validate_argument(analyte, "character", allow_null = TRUE)
   validate_argument(group, "character", allow_null = TRUE)
-  validate_nif(obj, fields = unique(c("ANALYTE", group)))
+  validate_nif_argument(obj, fields = unique(c("ANALYTE", group)))
 
   if (is.null(analyte)) {
     analyte <- analytes(obj)
@@ -1310,7 +1310,7 @@ edish_plot <- function(
 ) {
   # input validation
   validate_sdtm_argument(sdtm, "lb")
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_argument(enzyme, "character", values = c("ALT", "AST"))
   validate_argument(observation_filter, "character", allow_null = TRUE)
   validate_argument(baseline_filter, "character", allow_null = TRUE)

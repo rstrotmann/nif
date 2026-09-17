@@ -70,7 +70,7 @@ add_baseline <- function(
   silent = NULL
 ) {
   # input validation
-  validate_nif(nif)
+  validate_nif_argument(nif)
   validate_sdtm_argument(sdtm)
 
   validate_testcd(sdtm, testcd, domain)
@@ -318,7 +318,7 @@ derive_baseline <- function(
 ) {
   # input validation
   obj <- ensure_analyte(obj)
-  validate_nif(obj, fields = c("ID", "DV", "TIME", "ANALYTE", "EVID"))
+  validate_nif_argument(obj, fields = c("ID", "DV", "TIME", "ANALYTE", "EVID"))
 
   validate_argument(analyte, allow_null = TRUE, allow_multiple = TRUE)
   validate_argument(baseline_filter, "character")
@@ -566,7 +566,7 @@ derive_cfb_analyte <- function(
   silent = NULL
 ) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_analyte(obj, source_analyte)
 
   validate_argument(analyte, "character", allow_null = TRUE)
@@ -864,7 +864,7 @@ add_bl_lbm <- function(
   method = lbm_boer
 ) {
   # input validation
-  validate_nif(obj, fields = c("WEIGHT", "HEIGHT", "SEX"))
+  validate_nif_argument(obj, fields = c("WEIGHT", "HEIGHT", "SEX"))
 
   # business logic
   obj |>
@@ -903,7 +903,7 @@ add_bl_odwg <- function(
   silent = NULL
 ) {
   # input validation
-  validate_nif(obj)
+  validate_nif_argument(obj)
   validate_sdtm_argument(sdtm, "lb")
   validate_argument(observation_filter, "character", allow_null = TRUE)
   validate_argument(baseline_filter, "character", allow_null = TRUE)
