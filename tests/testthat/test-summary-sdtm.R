@@ -20,14 +20,7 @@ test_that("summary.sdtm handles valid SDTM objects correctly", {
         "SUBJ-001", "EX", "Drug A", 100,
         "SUBJ-002", "EX", "Drug A", 200
       )
-    ),
-    analyte_mapping = data.frame(
-      EXTRT = "Drug A",
-      PCTESTCD = "DRUGA",
-      ANALYTE = "DRUGA"
-    ),
-    metabolite_mapping = data.frame(),
-    time_mapping = data.frame()
+    )
   )
   class(test_data) <- c("sdtm", "list")
 
@@ -57,10 +50,7 @@ test_that("summary.sdtm handles missing domains gracefully", {
   test_data <- list(
     domains = list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM")
-    ),
-    analyte_mapping = data.frame(),
-    metabolite_mapping = data.frame(),
-    time_mapping = data.frame()
+    )
   )
   class(test_data) <- c("sdtm", "list")
 
@@ -96,10 +86,7 @@ test_that("summary.sdtm handles missing fields in domains", {
     domains = list(
       dm = test_dm,
       pc = test_pc
-    ),
-    analyte_mapping = data.frame(),
-    metabolite_mapping = data.frame(),
-    time_mapping = data.frame()
+    )
   )
   class(test_data) <- c("sdtm", "list")
 
@@ -152,10 +139,7 @@ test_that("summary.sdtm handles empty data frames", {
     domains = list(
       dm = data.frame(USUBJID = character(0), DOMAIN = character(0), STUDYID = character(0)),
       pc = data.frame(USUBJID = character(0), DOMAIN = character(0))
-    ),
-    analyte_mapping = data.frame(),
-    metabolite_mapping = data.frame(),
-    time_mapping = data.frame()
+    )
   )
   class(test_data) <- c("sdtm", "list")
 
@@ -231,10 +215,7 @@ test_that("summary.sdtm handles multiple unique values appropriately", {
     domains = list(
       dm = test_dm,
       pc = test_pc
-    ),
-    analyte_mapping = data.frame(),
-    metabolite_mapping = data.frame(),
-    time_mapping = data.frame()
+    )
   )
   class(test_data) <- c("sdtm", "list")
 

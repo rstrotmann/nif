@@ -6,7 +6,26 @@
 #' @return A sdtm object.
 #' @noRd
 new_sdtm <- function(sdtm_data) {
-  sdtm(sdtm_data)
+  # input validation
+  if (!is.list(sdtm_data) || is.data.frame(sdtm_data)) {
+    stop("Input must be a list of data frames!")
+  }
+  temp <- vapply(sdtm_data, is.data.frame, logical(1))
+  if (any(!temp)) {
+    # not_df_item <- sdtm_data[[temp != TRUE]]
+    stop(paste0(
+      "Input is not a data frame: ",
+      nice_enumeration(names(sdtm_data)[!temp])
+    ))
+  }
+
+  # business logic
+  names(sdtm_data) <- tolower(names(sdtm_data))
+
+  out <- list()
+  out$domains <- sdtm_data
+  class(out) <- c("sdtm", "list")
+  out
 }
 
 
@@ -18,23 +37,7 @@ new_sdtm <- function(sdtm_data) {
 #' @return A sdtm object.
 #' @export
 sdtm <- function(sdtm_data) {
-  domains <- sdtm_data
-
-  analyte_mapping <- data.frame()
-  metabolite_mapping <- data.frame()
-  parent_mapping <- data.frame()
-  time_mapping <- data.frame()
-
-  temp <- list(
-    domains = domains,
-    analyte_mapping = analyte_mapping,
-    metabolite_mapping = metabolite_mapping,
-    parent_mapping = parent_mapping,
-    time_mapping = time_mapping
-  )
-
-  class(temp) <- c("sdtm", "list")
-  temp
+  new_sdtm(sdtm_data)
 }
 
 
@@ -123,9 +126,6 @@ trial_dco <- function(obj) {
 #' * `specimens` The unique `PCSPEC` as character.
 #' * `analytes` The unique `PCTEST` and `PCTESTCD` as data frame.
 #' * `pc_timepoints` The unique `PCTPT` and `PCTPTNUM` as data frame.
-#' * `analyte_mapping` The analyte mapping as data frame.
-#' * `metabolite_mapping` The metabolite mapping as data frame.
-#' * `time_mapping` The time mapping as data frame.
 #'
 #' @param object A SDTM object.
 #' @param ... Further parameters.
@@ -147,9 +147,6 @@ summary.sdtm <- function(object, ...) {
     doses = data.frame(EXTRT = character(0), EXDOSE = numeric(0)),
     specimens = character(0),
     analytes = data.frame(PCTEST = character(0), PCTESTCD = character(0)),
-    analyte_mapping = object$analyte_mapping,
-    metabolite_mapping = object$metabolite_mapping,
-    time_mapping = object$time_mapping,
     hash = hash.sdtm(object),
     last = last_dtc(object),
     title = trial_title(object),

@@ -44,13 +44,11 @@ test_that("subject_info.sdtm requires a dm domain", {
 })
 
 
-test_that("subject_info.sdtm requires the dm domain name to be lowercase", {
+test_that("subject_info.sdtm finds dm when the list key is uppercase", {
   obj <- sdtm(list(DM = full_dm()))
 
-  expect_error(
-    subject_info.sdtm(obj, "SUBJ-001"),
-    "Expected domain missing in sdtm object: dm"
-  )
+  out <- subject_info.sdtm(obj, "SUBJ-001")
+  expect_equal(out$USUBJID, "SUBJ-001")
 })
 
 

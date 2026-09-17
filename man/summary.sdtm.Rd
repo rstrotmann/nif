@@ -29,9 +29,6 @@ respective unique USUBJID, as data frame,
 \item \code{specimens} The unique \code{PCSPEC} as character.
 \item \code{analytes} The unique \code{PCTEST} and \code{PCTESTCD} as data frame.
 \item \code{pc_timepoints} The unique \code{PCTPT} and \code{PCTPTNUM} as data frame.
-\item \code{analyte_mapping} The analyte mapping as data frame.
-\item \code{metabolite_mapping} The metabolite mapping as data frame.
-\item \code{time_mapping} The time mapping as data frame.
 }
 }
 \examples{

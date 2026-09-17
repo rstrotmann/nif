@@ -434,18 +434,18 @@ test_that("read_sdtm stores explicitly uppercase domain names as lowercase", {
 })
 
 
-test_that("read_sdtm initializes empty mapping tables on the sdtm object", {
+test_that("read_sdtm does not attach mapping tables on the sdtm object", {
   test_dir <- make_sdtm_dir()
   on.exit(unlink(test_dir, recursive = TRUE), add = TRUE)
 
   write_domain_csv(test_dir, "dm", dm_test_data())
 
   result <- read_sdtm(test_dir, domain = "dm", format = "csv")
-  expect_true(is.data.frame(result$analyte_mapping))
-  expect_true(is.data.frame(result$metabolite_mapping))
-  expect_true(is.data.frame(result$parent_mapping))
-  expect_true(is.data.frame(result$time_mapping))
-  expect_equal(nrow(result$analyte_mapping), 0)
+  expect_named(result, "domains")
+  expect_null(result$analyte_mapping)
+  expect_null(result$metabolite_mapping)
+  expect_null(result$parent_mapping)
+  expect_null(result$time_mapping)
 })
 
 

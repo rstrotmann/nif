@@ -30,16 +30,63 @@ test_that("guess_ntime works", {
 })
 
 
-test_that("sdtm", {
+test_that("sdtm() returns an sdtm object with only a domains list", {
   temp <- examplinib_sad
-  expect_no_error(
-    sdtm(list(
-      dm = domain(temp, "dm"),
-      vs = domain(temp, "vs"),
-      lb = domain(temp, "lb"),
-      ex = domain(temp, "ex"),
-      pc = domain(temp, "pc")
-    ))
+  out <- sdtm(list(
+    dm = domain(temp, "dm"),
+    vs = domain(temp, "vs"),
+    lb = domain(temp, "lb"),
+    ex = domain(temp, "ex"),
+    pc = domain(temp, "pc")
+  ))
+
+  expect_s3_class(out, "sdtm")
+  expect_named(out, "domains")
+  expect_null(out$analyte_mapping)
+  expect_null(out$metabolite_mapping)
+  expect_null(out$parent_mapping)
+  expect_null(out$time_mapping)
+})
+
+
+test_that("sdtm() lowercases domain list keys", {
+  dm <- tibble::tribble(
+      ~USUBJID, ~DOMAIN,
+    "SUBJ-001",    "DM"
+  )
+  ts <- tibble::tribble(
+    ~TSPARMCD,            ~TSVAL,
+      "TITLE", "Food effect study"
+  )
+  out <- sdtm(list(DM = dm, TS = ts))
+
+  expect_equal(names(out$domains), c("dm", "ts"))
+  expect_true(has_domain(out, "dm"))
+  expect_true(has_domain(out, "ts"))
+  expect_equal(trial_title(out), "Food effect study")
+})
+
+
+test_that("sdtm() rejects a data frame, NULL, and non-list input", {
+  expect_error(sdtm(mtcars), "Input must be a list of data frames!")
+  expect_error(sdtm(NULL), "Input must be a list of data frames!")
+  expect_error(sdtm("dm"), "Input must be a list of data frames!")
+})
+
+
+test_that("sdtm() rejects list elements that are not data frames", {
+  dm <- tibble::tribble(
+      ~USUBJID, ~DOMAIN,
+    "SUBJ-001",    "DM"
+  )
+
+  expect_error(
+    sdtm(list(dm = dm, pc = 1)),
+    "Input is not a data frame: pc"
+  )
+  expect_error(
+    sdtm(list(dm = dm, pc = 1, vs = "x")),
+    "Input is not a data frame: pc and vs"
   )
 })
 
@@ -47,9 +94,6 @@ test_that("sdtm", {
 test_that("sdtm summary", {
   expect_no_error(summary(examplinib_sad))
   expect_output(print(summary(examplinib_sad)))
-  test <- examplinib_fe
-  test$analyte_mapping <- NULL
-  expect_no_error(summary(test))
 })
 
 
