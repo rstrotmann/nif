@@ -114,7 +114,7 @@ validate_dataset <- function(obj) {
 #'  if required columns are missing.
 #' @noRd
 validate_sdtm_domains <- function(sdtm, silent = NULL) {
-  for (d in sdtm$domains) {
+  for (d in as.list(sdtm)) {
     validate_domain(d, silent = silent)
   }
 }
@@ -140,7 +140,7 @@ validate_sdtm <- function(
 
   if (!is.null(expected_domains)) {
     expected_domains <- tolower(expected_domains)
-    missing_domains <- setdiff(expected_domains, names(obj$domains))
+    missing_domains <- setdiff(expected_domains, names(obj))
     if (length(missing_domains) > 0) {
       stop(paste0(
         "Expected ", plural("domain", length(missing_domains) > 1),

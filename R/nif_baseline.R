@@ -677,7 +677,7 @@ add_bl_creat <- function(
   silent = NULL
 ) {
   # input validation
-  if (!"lb" %in% names(sdtm$domains)) {
+  if (!"lb" %in% names(sdtm)) {
     stop("LB domain not found!")
   }
 
@@ -767,7 +767,7 @@ add_bl_creat <- function(
   }
 
   temp_sdtm <- sdtm
-  temp_sdtm$domains[["lb"]] <- temp_lb
+  temp_sdtm[["lb"]] <- temp_lb
 
   obj |>
     add_baseline(temp_sdtm, "lb", "CREAT",
@@ -993,7 +993,7 @@ add_bl_odwg <- function(
       LBSTRESN = .data$LBSTRESN / .data$LBSTNRHI
     )
 
-  sdtm$domains[["lb"]] <- lb1
+  sdtm[["lb"]] <- lb1
 
   obj |>
     add_baseline(sdtm, "lb", "BILI_X_ULN", baseline_filter = "TRUE",

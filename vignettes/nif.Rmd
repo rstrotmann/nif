@@ -122,8 +122,8 @@ The return value of this function is a `sdtm` object.
 
 ## SDTM objects
 
-`sdtm` objects are essentially aggregates (lists) of the SDTM domains from a
-particular clinical study, plus some metadata. The easiest way of creating
+`sdtm` objects are named lists of the SDTM domains from a
+particular clinical study. The easiest way of creating
 `sdtm` objects is by importing the SDTM data using `read_sdtm()` as shown above.
 
 The `nif` package includes sample SDTM data sets for demonstration purposes.

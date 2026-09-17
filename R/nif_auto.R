@@ -293,7 +293,7 @@ nif_auto <- function(
   }
 
   # LB-related baseline covariates
-  if ("lb" %in% names(sdtm$domains)) {
+  if ("lb" %in% names(sdtm)) {
     lb <- domain(sdtm, "lb")
 
     if (is.null(baseline_filter)) {

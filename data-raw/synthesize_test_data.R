@@ -25,7 +25,7 @@ examplinib_sad_nif <- nif() %>%
   add_baseline(examplinib_sad, "lb", "CREAT") %>%
   add_bl_crcl()
 
-examplinib_sad$domains[["pp"]] <- examplinib_sad_nif %>%
+examplinib_sad[["pp"]] <- examplinib_sad_nif %>%
   index_rich_sampling_intervals() %>%
   # as.data.frame() %>%
   filter(!is.na("RICH_N")) %>%
@@ -41,7 +41,7 @@ examplinib_poc_nif <- nif() %>%
   add_baseline(examplinib_poc, "lb", "CREAT") %>%
   add_bl_crcl()
 
-examplinib_poc$domains[["pp"]] <- examplinib_poc_nif %>%
+examplinib_poc[["pp"]] <- examplinib_poc_nif %>%
   index_rich_sampling_intervals() %>%
   # as.data.frame() %>%
   filter(!is.na("RICH_N")) %>%
@@ -54,7 +54,7 @@ examplinib_fe_nif <- nif() %>%
   mutate(TREATMENT = str_sub(ACTARMCD, PERIOD, PERIOD)) %>%
   mutate(FASTED = case_when(TREATMENT == "A" ~ 1, .default = 0))
 
-examplinib_fe$domains[["pp"]] <- examplinib_fe_nif %>%
+examplinib_fe[["pp"]] <- examplinib_fe_nif %>%
   index_rich_sampling_intervals() %>%
   # as.data.frame() %>%
   filter(!is.na("RICH_N")) %>%

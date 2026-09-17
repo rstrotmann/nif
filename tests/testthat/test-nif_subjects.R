@@ -130,17 +130,16 @@ make_test_sdtm <- function() {
     "3", "DM", "SERUM", "Y", "CREAT", 77.8168976104201,
     "4", "DM", "SERUM", "Y", "CREAT", 66.8305453780658
   )
-  temp <- list(
+  sdtm(list(
     dm = dm,
     vs = vs,
     lb = lb
-  )
-  return(list(domains = temp))
+  ))
 }
 
 
 test_that("make subjects", {
-  test_sdtm <- make_test_sdtm()$domains
+  test_sdtm <- make_test_sdtm()
   expect_no_error(
     test <- make_subjects(test_sdtm$dm, test_sdtm$vs)
   )

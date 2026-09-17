@@ -2,14 +2,12 @@
 
 test_that("has_domain correctly identifies existing domains", {
   # Create a simple SDTM object for testing
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM"),
       pc = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "PC"),
       ex = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "EX")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Test with existing domains
   expect_true(has_domain(test_data, "dm"))
@@ -25,12 +23,10 @@ test_that("has_domain correctly identifies existing domains", {
 
 test_that("has_domain is case-insensitive", {
   # Create a simple SDTM object for testing
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Test with different case variations
   expect_true(has_domain(test_data, "dm"))
@@ -42,12 +38,10 @@ test_that("has_domain is case-insensitive", {
 
 test_that("has_domain handles input validation correctly", {
   # Create a simple SDTM object for testing
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Test with invalid object
   invalid_obj <- list(domains = list())
@@ -65,14 +59,12 @@ test_that("has_domain handles input validation correctly", {
 
 test_that("has_domain handles multiple domain names correctly", {
   # Create a simple SDTM object for testing
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM"),
       pc = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "PC"),
       ex = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "EX")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Test with multiple existing domains
   expect_true(has_domain(test_data, c("dm", "pc")))
@@ -87,13 +79,11 @@ test_that("has_domain handles multiple domain names correctly", {
 
 test_that("domain() rejects vectors with multiple names", {
   # Create a simple SDTM object for testing
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM"),
       pc = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "PC")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # domain() rejects vectors with multiple names
   expect_error(
@@ -117,13 +107,11 @@ test_that("has_domain works with example data", {
 
 test_that("domain function behaviors", {
   # Create a simple SDTM object for testing
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM"),
       pc = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "PC")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Test that domain() works with a single name
   expect_s3_class(domain(test_data, "dm"), "sdtm_domain")

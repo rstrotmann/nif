@@ -12,7 +12,6 @@ new_sdtm <- function(sdtm_data) {
   }
   temp <- vapply(sdtm_data, is.data.frame, logical(1))
   if (any(!temp)) {
-    # not_df_item <- sdtm_data[[temp != TRUE]]
     stop(paste0(
       "Input is not a data frame: ",
       nice_enumeration(names(sdtm_data)[!temp])
@@ -21,17 +20,18 @@ new_sdtm <- function(sdtm_data) {
 
   # business logic
   names(sdtm_data) <- tolower(names(sdtm_data))
-
-  out <- list()
-  out$domains <- sdtm_data
-  class(out) <- c("sdtm", "list")
-  out
+  class(sdtm_data) <- c("sdtm", "list")
+  sdtm_data
 }
 
 
-#' SDTM class constructor
+#' sdtm object constructor
 #'
-#' @param sdtm_data The SDTM domains as list of data frames.
+#' Create an `sdtm` object from a named list of domain data frames. Domain names
+#' are stored in lowercase. The object is that named list (class `c("sdtm",
+#' "list")`); extract a domain with `obj$dm` or [domain()].
+#'
+#' @param sdtm_data The SDTM domains as a named list of data frames.
 #'
 #' @import dplyr
 #' @return A sdtm object.
@@ -56,13 +56,12 @@ sdtm <- function(sdtm_data) {
 trial_title <- function(obj) {
   validate_sdtm(obj)
 
-  domains <- toupper(names(obj$domains))
+  domains <- toupper(names(obj))
   if (!"TS" %in% domains) {
     return(NULL)
   }
 
-  # ts <- domain(obj, "ts")
-  ts <- obj$domains[["ts"]]
+  ts <- obj[["ts"]]
 
   if (!"TSPARMCD" %in% names(ts)) {
     return(NULL)
@@ -94,7 +93,7 @@ trial_title <- function(obj) {
 trial_dco <- function(obj) {
   validate_sdtm(obj)
 
-  domains <- toupper(names(obj$domains))
+  domains <- toupper(names(obj))
   if (!"TS" %in% domains) {
     return(NULL)
   }
@@ -154,7 +153,7 @@ summary.sdtm <- function(object, ...) {
   )
 
   # Numbers of subjects and observations by domain
-  if (length(object$domains) == 0L) {
+  if (length(object) == 0L) {
     out$disposition <- data.frame(
       DOMAIN = character(),
       SUBJECTS = integer(),
@@ -162,7 +161,7 @@ summary.sdtm <- function(object, ...) {
     )
   } else {
     out$disposition <- purrr::map(
-      object$domains,
+      as.list(object),
 
       function(x) {
         if ("USUBJID" %in% names(x)) {
@@ -176,7 +175,7 @@ summary.sdtm <- function(object, ...) {
       }
     ) |>
       purrr::list_rbind() |>
-      mutate(DOMAIN = names(object$domains)) |>
+      mutate(DOMAIN = names(object)) |>
       select(c("DOMAIN", "SUBJECTS", "OBSERVATIONS"))
   }
 
@@ -332,7 +331,7 @@ has_domain <- function(obj, name) {
   names_lower <- tolower(name)
 
   # Check if all domains exist
-  all(names_lower %in% names(obj$domains))
+  all(names_lower %in% names(obj))
 }
 
 
@@ -497,7 +496,7 @@ suggest <- function(obj, show_all = FALSE) {
   }
 
   # Baseline covariates
-  if ("lb" %in% names(obj$domains)) {
+  if ("lb" %in% names(obj)) {
     lb <- domain(obj, "lb")
     if ("CREAT" %in% lb$LBTESTCD) {
       cli::cli_h1("{n_suggestion}. Baseline covariates")
@@ -634,7 +633,7 @@ filter_subject <- function(obj, usubjid) {
 #' filter_subject(examplinib_poc, subjects(examplinib_poc)[1, "USUBJID"])
 filter_subject.sdtm <- function(obj, usubjid) {
   lapply(
-    obj$domains,
+    obj,
     function(x) {
       if ("USUBJID" %in% names(x)) {
         filter(x, .data$USUBJID %in% usubjid)
@@ -762,7 +761,7 @@ derive_sld <- function(
     stop("Input must be a sdtm object")
   }
 
-  if (!"tr" %in% names(sdtm_obj$domains)) {
+  if (!"tr" %in% names(sdtm_obj)) {
     warning("TR domain not in SDTM object, returning unchanged.")
     return(sdtm_obj)
   }
@@ -847,7 +846,7 @@ derive_sld <- function(
     arrange(.data$USUBJID, .data$TRDTC)
 
   temp <- sdtm_obj
-  temp$domains[["tr"]] <- tr
+  temp[["tr"]] <- tr
   temp
 }
 
@@ -869,13 +868,13 @@ testcd <- function(obj, domain = NULL, silent = NULL) {
   validate_sdtm(obj, expected_domains = domain)
 
   if (is.null(domain)) {
-    domain <- names(obj$domains)
+    domain <- names(obj)
   }
 
   domain <- tolower(domain)
 
   purrr::reduce(
-    obj$domains[domain],
+    as.list(obj)[domain],
     function(acc, x) {
       if (!"DOMAIN" %in% names(x)) {
         return(acc)
@@ -915,7 +914,7 @@ testcd <- function(obj, domain = NULL, silent = NULL) {
 last_dtc.sdtm <- function(obj) {
   validate_sdtm(obj)
 
-  temp <- lapply(obj$domains, last_dtc_data_frame)
+  temp <- lapply(as.list(obj), last_dtc_data_frame)
   if (is.null(unlist(temp))) {
     return(NULL)
   }
@@ -928,6 +927,6 @@ last_dtc.sdtm <- function(obj) {
 #' @rdname hash
 #' @export
 hash.sdtm <- function(x) {
-  x$domains |>
+  unclass(x) |>
     rlang::hash()
 }

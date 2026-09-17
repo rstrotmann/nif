@@ -222,20 +222,20 @@ test_that("read_sdtm reads sas, xpt, and csv formats", {
   )
   result_sas <- read_sdtm(test_dir, domain = "dm", format = "sas")
   expect_s3_class(result_sas, "sdtm")
-  expect_equal(names(result_sas$domains), "dm")
-  expect_equal(nrow(result_sas$domains$dm), 2)
-  expect_equal(result_sas$domains$dm$USUBJID, c("001", "002"))
+  expect_equal(names(result_sas), "dm")
+  expect_equal(nrow(result_sas$dm), 2)
+  expect_equal(result_sas$dm$USUBJID, c("001", "002"))
 
   haven::write_xpt(test_data, file.path(test_dir, "dm.xpt"))
   result_xpt <- read_sdtm(test_dir, domain = "dm", format = "xpt")
   expect_s3_class(result_xpt, "sdtm")
-  expect_equal(nrow(result_xpt$domains$dm), 2)
+  expect_equal(nrow(result_xpt$dm), 2)
 
   write_domain_csv(test_dir, "dm", test_data)
   result_csv <- read_sdtm(test_dir, domain = "dm", format = "csv")
   expect_s3_class(result_csv, "sdtm")
-  expect_equal(nrow(result_csv$domains$dm), 2)
-  expect_equal(result_csv$domains$dm$SEX, c("M", "F"))
+  expect_equal(nrow(result_csv$dm), 2)
+  expect_equal(result_csv$dm$SEX, c("M", "F"))
 })
 
 
@@ -257,9 +257,9 @@ test_that("read_sdtm reads multiple explicitly requested domains", {
 
   result <- read_sdtm(test_dir, domain = c("dm", "vs"), format = "sas")
   expect_s3_class(result, "sdtm")
-  expect_equal(names(result$domains), c("dm", "vs"))
-  expect_equal(nrow(result$domains$dm), 2)
-  expect_equal(nrow(result$domains$vs), 2)
+  expect_equal(names(result), c("dm", "vs"))
+  expect_equal(nrow(result$dm), 2)
+  expect_equal(nrow(result$vs), 2)
 })
 
 
@@ -279,7 +279,7 @@ test_that("read_sdtm auto-discovers domains and lowercases names", {
 
   result <- read_sdtm(test_dir, format = "csv")
   expect_s3_class(result, "sdtm")
-  expect_setequal(names(result$domains), c("dm", "vs"))
+  expect_setequal(names(result), c("dm", "vs"))
   expect_equal(nrow(domain(result, "dm")), 2)
   expect_equal(nrow(domain(result, "vs")), 1)
 })
@@ -293,8 +293,8 @@ test_that("read_sdtm omits underscore-prefixed files during auto-discovery", {
   write_domain_csv(test_dir, "_meta", dm_test_data())
 
   result <- read_sdtm(test_dir, format = "csv")
-  expect_equal(names(result$domains), "dm")
-  expect_false("_meta" %in% names(result$domains))
+  expect_equal(names(result), "dm")
+  expect_false("_meta" %in% names(result))
 })
 
 
@@ -306,8 +306,8 @@ test_that("read_sdtm handles custom CSV delimiters", {
 
   result <- read_sdtm(test_dir, domain = "dm", format = "csv", delim = ";")
   expect_s3_class(result, "sdtm")
-  expect_equal(nrow(result$domains$dm), 2)
-  expect_equal(result$domains$dm$USUBJID, c("001", "002"))
+  expect_equal(nrow(result$dm), 2)
+  expect_equal(result$dm$USUBJID, c("001", "002"))
 })
 
 
@@ -324,7 +324,7 @@ test_that("read_sdtm forwards additional arguments to the reader", {
     locale = readr::locale(encoding = "UTF-8")
   )
   expect_s3_class(result, "sdtm")
-  expect_equal(nrow(result$domains$dm), 2)
+  expect_equal(nrow(result$dm), 2)
 
   expect_error(
     read_sdtm(
@@ -351,8 +351,8 @@ test_that("read_sdtm finds uppercase domain files when domain is lowercase", {
 
   result <- read_sdtm(test_dir, domain = "dm", format = "csv")
   expect_s3_class(result, "sdtm")
-  expect_equal(names(result$domains), "dm")
-  expect_equal(nrow(result$domains$dm), 2)
+  expect_equal(names(result), "dm")
+  expect_equal(nrow(result$dm), 2)
 })
 
 
@@ -417,8 +417,8 @@ test_that("read_sdtm warns once when multiple case-variant domain files match", 
   expect_match(warnings, "Selected DM.csv")
 
   expect_s3_class(result, "sdtm")
-  expect_equal(names(result$domains), "dm")
-  expect_equal(nrow(result$domains$dm), 2)
+  expect_equal(names(result), "dm")
+  expect_equal(nrow(result$dm), 2)
 })
 
 
@@ -429,7 +429,7 @@ test_that("read_sdtm stores explicitly uppercase domain names as lowercase", {
   write.csv(dm_test_data(), file.path(test_dir, "DM.csv"), row.names = FALSE)
 
   result <- read_sdtm(test_dir, domain = "DM", format = "csv")
-  expect_equal(names(result$domains), "dm")
+  expect_equal(names(result), "dm")
   expect_equal(nrow(domain(result, "dm")), 2)
 })
 
@@ -441,7 +441,8 @@ test_that("read_sdtm does not attach mapping tables on the sdtm object", {
   write_domain_csv(test_dir, "dm", dm_test_data())
 
   result <- read_sdtm(test_dir, domain = "dm", format = "csv")
-  expect_named(result, "domains")
+  expect_named(result, "dm")
+  expect_null(result$domains)
   expect_null(result$analyte_mapping)
   expect_null(result$metabolite_mapping)
   expect_null(result$parent_mapping)
@@ -464,7 +465,7 @@ test_that("read_sdtm is silent when silent is TRUE", {
     )
   )
   expect_s3_class(result, "sdtm")
-  expect_equal(names(result$domains), "dm")
+  expect_equal(names(result), "dm")
 })
 
 
@@ -511,7 +512,7 @@ test_that("read_sdtm does not auto-discover files with other extensions", {
   writeLines("notes", file.path(test_dir, "README.md"))
 
   result <- read_sdtm(test_dir, format = "csv", silent = TRUE)
-  expect_equal(names(result$domains), "dm")
+  expect_equal(names(result), "dm")
 })
 
 
@@ -525,8 +526,8 @@ test_that("read_sdtm does not auto-discover domain files in subdirectories", {
   write_domain_csv(subdir, "vs", vs_test_data())
 
   result <- read_sdtm(test_dir, format = "csv", silent = TRUE)
-  expect_equal(names(result$domains), "dm")
-  expect_false("vs" %in% names(result$domains))
+  expect_equal(names(result), "dm")
+  expect_false("vs" %in% names(result))
 })
 
 
@@ -539,9 +540,9 @@ test_that("read_sdtm auto-discovers xpt files", {
   write_domain_csv(test_dir, "ex", dm_test_data())
 
   result <- read_sdtm(test_dir, format = "xpt", silent = TRUE)
-  expect_setequal(names(result$domains), c("dm", "vs"))
-  expect_equal(nrow(result$domains$dm), 2)
-  expect_equal(nrow(result$domains$vs), 2)
+  expect_setequal(names(result), c("dm", "vs"))
+  expect_equal(nrow(result$dm), 2)
+  expect_equal(nrow(result$vs), 2)
 })
 
 
@@ -559,8 +560,8 @@ test_that("read_sdtm loads only the requested domains", {
     format = "csv",
     silent = TRUE
   )
-  expect_equal(names(result$domains), c("ex", "dm"))
-  expect_false("vs" %in% names(result$domains))
+  expect_equal(names(result), c("ex", "dm"))
+  expect_false("vs" %in% names(result))
 })
 
 
@@ -605,8 +606,8 @@ test_that("read_sdtm reads an empty CSV domain", {
     silent = TRUE
   )
   expect_s3_class(result, "sdtm")
-  expect_equal(nrow(result$domains$dm), 0)
-  expect_equal(names(result$domains$dm), c("USUBJID", "SEX"))
+  expect_equal(nrow(result$dm), 0)
+  expect_equal(names(result$dm), c("USUBJID", "SEX"))
 })
 
 
@@ -622,7 +623,7 @@ test_that("read_sdtm preserves mixed-case explicit domain as lowercase", {
     format = "csv",
     silent = TRUE
   )
-  expect_equal(names(result$domains), "dm")
+  expect_equal(names(result), "dm")
   expect_equal(nrow(domain(result, "dm")), 2)
 })
 
@@ -641,9 +642,9 @@ test_that("read_sdtm returns a sdtm object with data-frame domains", {
   )
   expect_s3_class(result, "sdtm")
   expect_true(inherits(result, "list"))
-  expect_true(is.data.frame(result$domains$dm))
-  expect_equal(result$domains$dm$USUBJID, c("001", "002"))
-  expect_equal(result$domains$dm$SEX, c("M", "F"))
+  expect_true(is.data.frame(result$dm))
+  expect_equal(result$dm$USUBJID, c("001", "002"))
+  expect_equal(result$dm$SEX, c("M", "F"))
 })
 
 
@@ -698,7 +699,7 @@ test_that("read_sdtm uses a size-weighted progress bar", {
     progress_incs(captured$updates),
     c(0, dm_size, 0, vs_size)
   )
-  expect_equal(names(captured$result$domains), c("dm", "vs"))
+  expect_equal(names(captured$result), c("dm", "vs"))
 })
 
 

@@ -2,8 +2,7 @@
 
 test_that("summary.sdtm handles valid SDTM objects correctly", {
   # Create a simple SDTM object for testing
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = tibble::tribble(
         ~USUBJID, ~DOMAIN, ~STUDYID, ~ACTARMCD, ~ACTARM,
         "SUBJ-001", "DM", "STUDY-001", "ARM1", "Treatment Arm 1",
@@ -22,7 +21,6 @@ test_that("summary.sdtm handles valid SDTM objects correctly", {
       )
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Call summary
   result <- summary(test_data)
@@ -47,12 +45,10 @@ test_that("summary.sdtm handles valid SDTM objects correctly", {
 
 test_that("summary.sdtm handles missing domains gracefully", {
   # Create an SDTM object with missing domains
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001", "SUBJ-002"), DOMAIN = "DM")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Call summary
   result <- summary(test_data)
@@ -82,13 +78,11 @@ test_that("summary.sdtm handles missing fields in domains", {
     # Missing PCSPEC, PCTEST, PCTESTCD
   )
 
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = test_dm,
       pc = test_pc
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Call summary
   result <- summary(test_data)
@@ -107,8 +101,7 @@ test_that("summary.sdtm handles missing fields in domains", {
 
 test_that("summary.sdtm correctly processes pc_timepoints", {
   # Create a simple SDTM object with PC timepoints
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       pc = tibble::tribble(
         ~USUBJID, ~DOMAIN, ~PCTPT, ~PCTPTNUM,
         "SUBJ-001", "PC", "PRE", 0,
@@ -118,7 +111,6 @@ test_that("summary.sdtm correctly processes pc_timepoints", {
     )
   )
 
-  class(test_data) <- c("sdtm", "list")
 
   # Call summary
   expect_no_error(
@@ -135,13 +127,11 @@ test_that("summary.sdtm correctly processes pc_timepoints", {
 
 test_that("summary.sdtm handles empty data frames", {
   # Create SDTM object with empty data frames
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = character(0), DOMAIN = character(0), STUDYID = character(0)),
       pc = data.frame(USUBJID = character(0), DOMAIN = character(0))
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Call summary
   expect_no_error(
@@ -161,8 +151,7 @@ test_that("summary.sdtm handles empty data frames", {
 
 test_that("summary.sdtm handles NA values in fields", {
   # Create SDTM object with NA values
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = tibble::tribble(
         ~USUBJID, ~DOMAIN, ~STUDYID, ~ACTARMCD, ~ACTARM,
         "SUBJ-001", "DM", "STUDY-001", "ARM1", NA,
@@ -175,7 +164,6 @@ test_that("summary.sdtm handles NA values in fields", {
       )
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Call summary
   expect_no_error(
@@ -211,13 +199,11 @@ test_that("summary.sdtm handles multiple unique values appropriately", {
     PCTESTCD = c("DRUGA", "DRUGB", "DRUGC")
   )
 
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = test_dm,
       pc = test_pc
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   # Call summary
   result <- summary(test_data)

@@ -60,7 +60,7 @@ test_that("edish_plot handles missing required lab tests", {
   sdtm <- create_edish_sdtm()
   invalid_lb <- domain(sdtm, "lb") %>%
     filter(LBTESTCD != "BILI")
-  sdtm$domains$lb <- invalid_lb
+  sdtm$lb <- invalid_lb
 
   expect_error(
     edish_plot(create_edish_nif(), sdtm, silent = TRUE),

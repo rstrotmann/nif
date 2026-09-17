@@ -42,7 +42,7 @@ test_that("plot.sdtm works", {
   xx <- domain(temp, "pc") %>%
     mutate(DOMAIN = "XX") %>%
     mutate(XXDTC = PCDTC)
-  temp$domains$xx <- xx
+  temp$xx <- xx
   expect_no_error(plot(temp, domain = "xx"))
 })
 

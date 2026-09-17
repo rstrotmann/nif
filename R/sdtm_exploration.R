@@ -564,7 +564,7 @@ ae_summary <- function(
     stop("Input must be an SDTM object")
   }
 
-  if (!"ae" %in% names(sdtm_data$domains)) {
+  if (!"ae" %in% names(sdtm_data)) {
     stop("AE domain not found in SDTM data")
   }
 
@@ -577,7 +577,7 @@ ae_summary <- function(
   }
 
   # Get AE domain
-  ae <- sdtm_data$domains$ae
+  ae <- sdtm_data$ae
 
   # Validate required columns
   required_cols <- c("USUBJID", level)

@@ -126,7 +126,7 @@ test_that("make_observation handles custom DV_field correctly", {
   sdtm <- make_test_sdtm1()
 
   # Create test data with a custom field
-  sdtm$domains$pc$PCCUSTOM <- sdtm$domains$pc$PCSTRESN * 2
+  sdtm$pc$PCCUSTOM <- sdtm$pc$PCSTRESN * 2
 
   custom_obs <- make_observation(sdtm, "pc", "A",
     dv_field = "PCCUSTOM",
@@ -140,8 +140,8 @@ test_that("make_observation handles custom TESTCD_field correctly", {
   sdtm <- make_test_sdtm1()
 
   # Create test data with a custom TESTCD field
-  sdtm$domains$pc$PCCUSTOMCD <- "CUSTOM"
-  sdtm$domains$pc$PCCUSTOMCD[2] <- "A"
+  sdtm$pc$PCCUSTOMCD <- "CUSTOM"
+  sdtm$pc$PCCUSTOMCD[2] <- "A"
 
   # Should only select rows where PCCUSTOMCD equals "A"
   custom_obs <- make_observation(
@@ -162,7 +162,7 @@ test_that("make_observation handles custom DTC_field correctly", {
 
   # Create test data with a custom date field
   custom_date <- "2024-01-02 12:00:00"
-  sdtm$domains$pc$PCCUSTOMDTC <- custom_date
+  sdtm$pc$PCCUSTOMDTC <- custom_date
 
   custom_obs <- make_observation(
     sdtm, "pc", "A",
@@ -246,9 +246,9 @@ test_that("make_observation handles missing DV field with coding table", {
   sdtm <- make_test_sdtm1()
 
   # Create a version without PCSTRESN
-  modified_pc <- sdtm$domains$pc
+  modified_pc <- sdtm$pc
   modified_pc$PCSTRESN <- NULL
-  sdtm$domains$pc <- modified_pc
+  sdtm$pc <- modified_pc
 
   # Should error when no coding table is provided
   expect_error(
@@ -281,7 +281,7 @@ test_that("make_observation sets MDV correctly for missing values", {
   sdtm <- make_test_sdtm1()
 
   # Create test data with some missing values
-  sdtm$domains$pc$PCSTRESN[1] <- NA
+  sdtm$pc$PCSTRESN[1] <- NA
 
   result <- make_observation(
     sdtm, "pc", "A",
@@ -842,8 +842,8 @@ test_that("make_observation handles omit_not_done parameter correctly", {
   sdtm <- make_test_sdtm1()
 
   # Add PCSTAT field to the PC domain
-  sdtm$domains$pc$PCSTAT <- ""
-  sdtm$domains$pc$PCSTAT[c(1, 3)] <- "NOT DONE" # Set 2 rows to "NOT DONE"
+  sdtm$pc$PCSTAT <- ""
+  sdtm$pc$PCSTAT[c(1, 3)] <- "NOT DONE" # Set 2 rows to "NOT DONE"
 
   # Test with omit_not_done = TRUE (default)
   result_omit_true <- make_observation(
@@ -875,8 +875,8 @@ test_that("make_observation handles omit_not_done with different domains", {
   sdtm <- make_test_sdtm1()
 
   # Add LBSTAT field to the LB domain
-  sdtm$domains$lb$LBSTAT <- ""
-  sdtm$domains$lb$LBSTAT[2] <- "NOT DONE" # Set 1 row to "NOT DONE"
+  sdtm$lb$LBSTAT <- ""
+  sdtm$lb$LBSTAT[2] <- "NOT DONE" # Set 1 row to "NOT DONE"
 
   # Test with omit_not_done = TRUE for LB domain
   result_lb_omit_true <- make_observation(
@@ -1059,7 +1059,7 @@ test_that("make_observation rejects invalid ntime_method", {
 
 test_that("make_observation wraps make_subjects errors", {
   sdtm <- make_test_sdtm1()
-  sdtm$domains$dm$ACTARMCD <- NULL
+  sdtm$dm$ACTARMCD <- NULL
 
   expect_error(
     make_observation(
@@ -1074,7 +1074,7 @@ test_that("make_observation wraps make_subjects errors", {
 
 test_that("make_observation rejects missing required domain fields", {
   sdtm <- make_test_sdtm1()
-  sdtm$domains$pc$PCDTC <- NULL
+  sdtm$pc$PCDTC <- NULL
 
   expect_error(
     make_observation(
@@ -1246,7 +1246,7 @@ test_that("make_observation validates coding table structure", {
 
 test_that("make_observation converts NA DV values to zero when na_to_zero is TRUE", {
   sdtm <- make_test_sdtm1()
-  sdtm$domains$pc$PCSTRESN[c(1, 2)] <- NA
+  sdtm$pc$PCSTRESN[c(1, 2)] <- NA
 
   result <- make_observation(
     sdtm, "pc", "A",
@@ -1291,7 +1291,7 @@ test_that("make_observation validates observation filter on empty domain data", 
 
 test_that("make_observation errors when all observations are NOT DONE", {
   sdtm <- make_test_sdtm1()
-  sdtm$domains$pc$PCSTAT <- "NOT DONE"
+  sdtm$pc$PCSTAT <- "NOT DONE"
 
   expect_error(
     make_observation(

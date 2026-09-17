@@ -2,16 +2,17 @@
 % Please edit documentation in R/sdtm_class.R
 \name{sdtm}
 \alias{sdtm}
-\title{SDTM class constructor}
+\title{sdtm object constructor}
 \usage{
 sdtm(sdtm_data)
 }
 \arguments{
-\item{sdtm_data}{The SDTM domains as list of data frames.}
+\item{sdtm_data}{The SDTM domains as a named list of data frames.}
 }
 \value{
 A sdtm object.
 }
 \description{
-SDTM class constructor
+Create an \code{sdtm} object from a named list of domain data frames. Domain names
+are stored in lowercase. The object is that named list (class \code{c("sdtm", "list")}); extract a domain with \code{obj$dm} or \code{\link[=domain]{domain()}}.
 }

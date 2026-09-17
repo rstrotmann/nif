@@ -51,20 +51,11 @@ create_test_sdtm <- function() {
     "SUBJ-003",  "LB",    "CREAT",   1.0,       "2020-01-15"
   )
 
-  # Create sdtm object
-  sdtm <- list(
-    domains = list(
-      dm = dm,
-      vs = vs,
-      lb = lb
-    ),
+  sdtm(list(
     dm = dm,
     vs = vs,
     lb = lb
-  )
-
-  class(sdtm) <- c("sdtm", "list")
-  return(sdtm)
+  ))
 }
 
 
@@ -139,9 +130,9 @@ test_that("add_covariate validates required fields exist", {
   sdtm <- create_test_sdtm()
 
   # Create a broken VS domain without VSSTRESN
-  # broken_vs <- sdtm$domains$vs %>% select(-VSSTRESN)
+  # broken_vs <- sdtm$vs %>% select(-VSSTRESN)
   broken_vs <- domain(sdtm, "vs") %>% select(-VSSTRESN)
-  sdtm$domains$vs <- broken_vs
+  sdtm$vs <- broken_vs
   sdtm$vs <- broken_vs
 
   expect_error(
@@ -199,14 +190,14 @@ test_that("add_covariate works with custom field names", {
   sdtm <- create_test_sdtm()
 
   # Rename fields in VS domain
-  vs_custom <- sdtm$domains$vs %>%
+  vs_custom <- sdtm$vs %>%
     rename(
       CUSTOM_DTC = VSDTC,
       CUSTOM_TESTCD = VSTESTCD,
       CUSTOM_STRESN = VSSTRESN
     )
 
-  sdtm$domains$vs <- vs_custom
+  sdtm$vs <- vs_custom
   # sdtm$vs <- vs_custom
 
   # Add WEIGHT covariate with custom field names
@@ -228,10 +219,10 @@ test_that("add_covariate handles duplicated observations correctly", {
   sdtm <- create_test_sdtm()
 
   # Add duplicate observation on same date with different values
-  dup_row <- sdtm$domains$vs[1, ]
+  dup_row <- sdtm$vs[1, ]
   dup_row$VSSTRESN <- 75 # Different value
-  sdtm$domains$vs <- bind_rows(sdtm$domains$vs, dup_row)
-  # sdtm$vs <- sdtm$domains$vs
+  sdtm$vs <- bind_rows(sdtm$vs, dup_row)
+  # sdtm$vs <- sdtm$vs
 
   # Should take the last value due to distinct() in the function
   result <- add_covariate(nif, sdtm, "vs", "WEIGHT", covariate = "wt")

@@ -493,7 +493,7 @@ test_that("testcd() handles domains with factor TESTCD values", {
   sdtm_obj <- sdtm(sdtm_data)
 
   # Convert TESTCD to factor
-  sdtm_obj$domains$dm$DMTESTCD <- factor(sdtm_obj$domains$dm$DMTESTCD)
+  sdtm_obj$dm$DMTESTCD <- factor(sdtm_obj$dm$DMTESTCD)
 
   # Expected output (factors should be converted to character)
   expected <- tribble(

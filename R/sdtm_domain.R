@@ -20,7 +20,7 @@ domain <- function(obj, name) {
     stop("Domain '", name, "' not found in SDTM object")
   }
 
-  out <- obj$domains[[name]]
+  out <- obj[[name]]
 
   trial_title <- trial_title(obj)
 

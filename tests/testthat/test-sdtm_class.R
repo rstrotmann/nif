@@ -30,7 +30,7 @@ test_that("guess_ntime works", {
 })
 
 
-test_that("sdtm() returns an sdtm object with only a domains list", {
+test_that("sdtm() returns an sdtm object that is a list of domains", {
   temp <- examplinib_sad
   out <- sdtm(list(
     dm = domain(temp, "dm"),
@@ -41,11 +41,24 @@ test_that("sdtm() returns an sdtm object with only a domains list", {
   ))
 
   expect_s3_class(out, "sdtm")
-  expect_named(out, "domains")
+  expect_setequal(names(out), c("dm", "vs", "lb", "ex", "pc"))
+  expect_true(is.data.frame(out$dm))
+  expect_null(out$domains)
   expect_null(out$analyte_mapping)
   expect_null(out$metabolite_mapping)
   expect_null(out$parent_mapping)
   expect_null(out$time_mapping)
+})
+
+
+test_that("package sdtm data is a flat list of domains", {
+  expect_s3_class(examplinib_sad, "sdtm")
+  expect_true(is.data.frame(examplinib_sad$dm))
+  expect_null(examplinib_sad$domains)
+  expect_setequal(names(examplinib_sad), c("dm", "vs", "ex", "pc", "lb", "ts", "pp"))
+  expect_setequal(names(examplinib_poc), c("dm", "vs", "ex", "pc", "lb", "ts", "pp"))
+  expect_setequal(names(examplinib_fe), c("dm", "vs", "ex", "pc", "lb", "ts", "pp"))
+  expect_setequal(names(examplinib_iv), c("dm", "vs", "ex", "pc", "lb", "ts"))
 })
 
 
@@ -60,7 +73,7 @@ test_that("sdtm() lowercases domain list keys", {
   )
   out <- sdtm(list(DM = dm, TS = ts))
 
-  expect_equal(names(out$domains), c("dm", "ts"))
+  expect_equal(names(out), c("dm", "ts"))
   expect_true(has_domain(out, "dm"))
   expect_true(has_domain(out, "ts"))
   expect_equal(trial_title(out), "Food effect study")
@@ -179,13 +192,11 @@ test_that("suggest throws error when required domains are missing", {
     )
   }
 
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "DM"),
       ex = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "EX", EXTRT = "TEST")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   expect_error(
     suggest(test_data),
@@ -193,13 +204,11 @@ test_that("suggest throws error when required domains are missing", {
   )
 
   # Create test data with missing EX domain
-  test_data <- list(
-    domains = list(
+  test_data <- sdtm(list(
       dm = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "DM"),
       pc = data.frame(USUBJID = c("SUBJ-001"), DOMAIN = "PC", PCTEST = "TEST", PCTESTCD = "TEST")
     )
   )
-  class(test_data) <- c("sdtm", "list")
 
   expect_error(
     suggest(test_data),

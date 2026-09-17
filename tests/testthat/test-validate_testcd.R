@@ -21,14 +21,12 @@ test_that("validate_testcd works correctly with valid inputs", {
     "SUBJ-002", "LB", "CREAT", "Creatinine", 0.9
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       dm = test_dm,
       pc = test_pc,
       lb = test_lb
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test successful validation without domain specification
   expect_equal(validate_testcd(test_sdtm, "AGE"), "AGE")
@@ -50,12 +48,10 @@ test_that("validate_testcd handles case-insensitive domain names", {
     "SUBJ-001", "PC", "RS2023", "Concentration", 10.5
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with different case variations
   expect_equal(validate_testcd(test_sdtm, "RS2023", "pc"), "RS2023")
@@ -69,12 +65,10 @@ test_that("validate_testcd handles NULL domain parameter", {
     "SUBJ-001", "PC", "RS2023", "Concentration", 10.5
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with NULL domain (should validate across all domains)
   expect_equal(validate_testcd(test_sdtm, "RS2023", NULL), "RS2023")
@@ -90,12 +84,10 @@ test_that("validate_testcd handles multiple testcd values", {
     "SUBJ-002", "PC", "RS2025", "Concentration", 12.3
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with multiple testcd values
   expect_equal(
@@ -115,12 +107,10 @@ test_that("validate_testcd errors for non-existent domain", {
     "SUBJ-001", "PC", "RS2023", "Concentration", 10.5
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with non-existent domain
   expect_error(
@@ -141,12 +131,10 @@ test_that("validate_testcd errors for domain without TESTCD field", {
     "SUBJ-002", "DM", 30
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       dm = test_dm
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with domain that has no TESTCD field
   expect_error(
@@ -163,12 +151,10 @@ test_that("validate_testcd errors for missing testcd in specified domain", {
     "SUBJ-002", "PC", "RS2024", "Concentration", 12.3
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with testcd that doesn't exist in the specified domain
   expect_error(
@@ -188,12 +174,10 @@ test_that("validate_testcd errors for missing testcd across all domains", {
     "SUBJ-001", "PC", "RS2023", "Concentration", 10.5
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with testcd that doesn't exist in any domain
   expect_error(
@@ -213,12 +197,10 @@ test_that("validate_testcd handles input validation correctly", {
     "SUBJ-001", "PC", "RS2023", "Concentration", 10.5
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with invalid sdtm object
   expect_error(
@@ -265,12 +247,10 @@ test_that("validate_testcd works with empty domains", {
     ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCTEST, ~PCSTRESN
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_empty
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with empty domain - should error since no testcd values exist
   expect_error(
@@ -287,12 +267,10 @@ test_that("validate_testcd handles mixed case testcd values", {
     "SUBJ-002", "PC", "RS2024", "Concentration", 12.3
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       pc = test_pc
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with exact case matching
   expect_equal(validate_testcd(test_sdtm, "rs2023", "pc"), "rs2023")
@@ -312,13 +290,11 @@ test_that("validate_testcd works with single testcd in multiple domains", {
     "SUBJ-001", "VS", "AGE", "Age", 25
   )
 
-  test_sdtm <- list(
-    domains = list(
+  test_sdtm <- sdtm(list(
       dm = test_dm,
       vs = test_vs
     )
   )
-  class(test_sdtm) <- c("sdtm", "list")
 
   # Test with testcd that exists in multiple domains
   expect_equal(validate_testcd(test_sdtm, "AGE"), "AGE")

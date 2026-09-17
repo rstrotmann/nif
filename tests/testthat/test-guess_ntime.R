@@ -13,10 +13,7 @@ test_that("guess_ntime correctly parses various time formats", {
     "SUBJ-001", "PC", "BASELINE"
   )
 
-  mock_sdtm <- list(
-    domains = list(pc = mock_pc)
-  )
-  class(mock_sdtm) <- c("sdtm", "list")
+  mock_sdtm <- sdtm(list(pc = mock_pc))
 
   expectation <- c(2, 2, 2, 2, 2, 0, 0, -2, 2.5, NA)
 
@@ -41,10 +38,7 @@ test_that("guess_ntime handles ISO 8601 dates with a warning", {
     )
   )
 
-  mock_sdtm <- list(
-    domains = list(pc = mock_pc)
-  )
-  class(mock_sdtm) <- c("sdtm", "list")
+  mock_sdtm <- sdtm(list(pc = mock_pc))
 
   # Should issue a warning
   expect_warning(
@@ -62,10 +56,8 @@ test_that("guess_ntime handles ISO 8601 dates with a warning", {
 
 test_that("guess_ntime errors on missing PC domain", {
   # Create a mock SDTM object without PC domain
-  mock_sdtm <- list(
-    domains = list(dm = data.frame())
+  mock_sdtm <- sdtm(list(dm = data.frame())
   )
-  class(mock_sdtm) <- c("sdtm", "list")
 
   # Test that it errors correctly
   expect_error(
@@ -83,10 +75,7 @@ test_that("guess_ntime errors on missing PCTPT column", {
     # No PCTPT column
   )
 
-  mock_sdtm <- list(
-    domains = list(pc = mock_pc)
-  )
-  class(mock_sdtm) <- c("sdtm", "list")
+  mock_sdtm <- sdtm(list(pc = mock_pc))
 
   # Test that it errors correctly
   expect_error(
@@ -109,10 +98,7 @@ test_that("guess_ntime handles additional predose variations", {
     )
   )
 
-  mock_sdtm <- list(
-    domains = list(pc = mock_pc)
-  )
-  class(mock_sdtm) <- c("sdtm", "list")
+  mock_sdtm <- sdtm(list(pc = mock_pc))
 
   result <- guess_ntime(mock_sdtm)
 

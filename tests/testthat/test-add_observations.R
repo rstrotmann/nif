@@ -279,7 +279,7 @@ test_that("add_observation handles include_day_in_ntime parameter", {
     )
 
   custom_sdtm <- examplinib_sad
-  custom_sdtm$domains$pc$PCDY <- 2
+  custom_sdtm$pc$PCDY <- 2
 
   # Add observation with include_day_in_ntime = TRUE
   nif_with_day <- base_nif %>%
@@ -310,8 +310,8 @@ test_that("add_observation handles missing NTIME gracefully", {
   sdtm_test <- make_test_sdtm1()
 
   # Remove PCELTM field
-  if ("PCELTM" %in% names(sdtm_test$domains$pc)) {
-    sdtm_test$domains$pc$PCELTM <- NULL
+  if ("PCELTM" %in% names(sdtm_test$pc)) {
+    sdtm_test$pc$PCELTM <- NULL
   }
 
   # Create a base nif with administration data
@@ -370,7 +370,7 @@ test_that("add_observation handles DV field properly", {
     filter(EVID == 0) %>%
     pull(DV)
 
-  source_values <- sdtm_test$domains$pc %>%
+  source_values <- sdtm_test$pc %>%
     filter(PCTESTCD == "A") %>%
     pull(PCSTRESN)
 
@@ -473,7 +473,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
     "2",      "PC",    "A",       "2023-01-01 12:00:00", 800
   )
 
-  sdtm_obj$domains$pc <- pc
+  sdtm_obj$pc <- pc
 
   # Create administration data
   base_nif <- nif() %>%
@@ -520,7 +520,7 @@ add_obs_base_nif <- function(sdtm = make_test_sdtm1()) {
 
 duplicate_obs_sdtm <- function() {
   sdtm <- make_test_sdtm1()
-  sdtm$domains$pc <- tibble::tribble(
+  sdtm$pc <- tibble::tribble(
     ~USUBJID, ~DOMAIN, ~PCTESTCD, ~PCDTC,                ~PCSTRESN, ~PCELTM,
     "1",      "PC",    "A",       "2024-01-01T08:00:00",       100,  "PT0H",
     "1",      "PC",    "A",       "2024-01-01T08:00:00",       200,  "PT0H",
