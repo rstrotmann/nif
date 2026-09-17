@@ -137,6 +137,14 @@
 "cdiscpilot01_sdtm"
 
 
+#' Pharmaverse sample ADaM data
+#'
+#' An adam object based on the CDISCPILOT01 data set exported from the
+#' 'pharmaverseadam' package:
+#'
+#' @source <https://github.com/pharmaverse/pharmaverseadam>
+"cdiscpilot01_adam"
+
 
 #' Pharmaverse sample nif object
 #'

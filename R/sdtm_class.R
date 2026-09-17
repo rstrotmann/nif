@@ -24,7 +24,7 @@ new_sdtm <- function(sdtm_data, source = "") {
 #' @returns The unchanged sdtm object.
 #' @export
 validate_sdtm <- function(obj) {
-  na_domains <- is.na(names(obj))
+  na_domains <- is.na(names(obj)) | nchar(trimws(names(obj))) == 0
   if (any(na_domains)) {
     stop("Unnamed domains in input!")
   }

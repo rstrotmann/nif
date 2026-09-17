@@ -80,6 +80,24 @@ test_that("adam constructor errors on unnamed list", {
 })
 
 
+test_that("adam constructor errors on whitespace names", {
+  dm <- tibble::tribble(
+    ~USUBJID, ~STUDYID,
+    "SUBJ-001", "STUDY-001"
+  )
+
+  ex <- tibble::tribble(
+    ~USUBJID, ~STUDYID,
+    "SUBJ-001", "STUDY-001"
+  )
+
+  expect_error(
+    adam_obj <- adam(list(" " = dm, ex = ex)),
+    "Unnamed datasets in input!"
+  )
+})
+
+
 test_that("validate_adam passes for valid adam object", {
   dm <- tibble::tribble(
     ~USUBJID, ~STUDYID,
