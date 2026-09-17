@@ -17,6 +17,24 @@ new_sdtm <- function(sdtm_data, source = "") {
 }
 
 
+#' Validate sdtm object
+#'
+#' @param obj sdtm object.
+#'
+#' @returns The unchanged sdtm object.
+#' @export
+validate_sdtm <- function(obj) {
+  duplicated <- duplicated(tolower(names(obj)))
+  if (length(which(duplicated == TRUE)) > 0) {
+    warning(paste0(
+      "Duplicated domains: ",
+      nice_enumeration(names(obj)[duplicated])))
+  }
+
+  invisible(obj)
+}
+
+
 #' sdtm object constructor
 #'
 #' Create an `sdtm` object from a named list of domain data frames. Domain names
@@ -44,7 +62,9 @@ sdtm <- function(sdtm_data, source = "") {
     ))
   }
 
-  new_sdtm(sdtm_data, source = source)
+  out <- new_sdtm(sdtm_data, source = source)
+  validate_sdtm(out)
+  out
 }
 
 

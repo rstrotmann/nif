@@ -1,13 +1,45 @@
-#' adam object class constructor
+#' Constructor for adam objects
 #'
-#' @param adam_data The ADaM datasets as data frames.
+#' @param adam_data The ADaM datasets as list of data frames.
+#' @param source Source information as character.
+#'
+#' @returns
+#' @noRd
+new_adam <- function(adam_data, source = "") {
+  names(adam_data) <- tolower(names(adam_data))
+
+  structure(
+    adam_data,
+    class = c("adam", "list"),
+    source = source
+  )
+}
+
+
+#' Public constructor for adam objects
+#'
+#' @param adam_data The ADaM datasets as list of data frames.
+#' @param source Source information as character.
 #'
 #' @return An adam object.
 #' @export
-adam <- function(adam_data) {
-  temp <- as.list(adam_data)
-  class(temp) <- c("adam", "list")
-  temp
+adam <- function(adam_data, source = "") {
+  # input validation
+  validate_argument(source, "character", allow_empty = TRUE)
+
+  if (!is.list(adam_data) || is.data.frame(adam_data)) {
+    stop("Input must be a list of data frames!")
+  }
+  temp <- vapply(adam_data, is.data.frame, logical(1))
+  if (any(!temp)) {
+    stop(paste0(
+      "Input is not a data frame: ",
+      nice_enumeration(names(adam_data)[!temp])
+    ))
+  }
+
+  # business logic
+  new_adam(adam_data, source = source)
 }
 
 
@@ -36,7 +68,8 @@ summary.adam <- function(object, ...) {
     study = character(0),
     subjects = character(0),
     adam = object,
-    n_observations = NULL
+    n_observations = NULL,
+    source = attr(object, "source")
   )
 
   out$study <- purrr::map(
@@ -95,6 +128,11 @@ print.summary_adam <- function(x, ...) {
   cat(paste(hline(), "ADaM data summary", hline(), "\n"))
 
   out <- list(
+    compose_message(
+      paste0("Source: ", x$source),
+      condition = (!is.null(x$source) & nchar(x$source) > 0)
+    ),
+
     compose_message(
       paste("Data from", length(x$subjects), "subjects across",
         ifelse(

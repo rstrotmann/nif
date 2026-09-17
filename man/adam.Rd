@@ -2,16 +2,18 @@
 % Please edit documentation in R/adam_class.R
 \name{adam}
 \alias{adam}
-\title{adam object class constructor}
+\title{Public constructor for adam objects}
 \usage{
-adam(adam_data)
+adam(adam_data, source = "")
 }
 \arguments{
-\item{adam_data}{The ADaM datasets as data frames.}
+\item{adam_data}{The ADaM datasets as list of data frames.}
+
+\item{source}{Source information as character.}
 }
 \value{
 An adam object.
 }
 \description{
-adam object class constructor
+Public constructor for adam objects
 }

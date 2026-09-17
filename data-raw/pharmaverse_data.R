@@ -9,8 +9,20 @@ cdiscpilot01_sdtm <- sdtm(
     ts = pharmaversesdtm::ts,
     eg = pharmaversesdtm::eg,
     ae  = pharmaversesdtm::ae
-  )
+  ),
+  source = "Pharmaverse"
 )
+
+
+cdiscpilot01_adam <- adam(list(
+  adsl = pharmaverseadam::adsl,
+  adex = pharmaverseadam::adex,
+  adpc = pharmaverseadam::adpc,
+  adlb = pharmaverseadam::adlb
+), source = "Pharmaverse")
+
+
+sdtm <- cdiscpilot01_sdtm
 
 cdiscpilot01_nif <- nif() |>
   add_administration(sdtm, 'XANOMELINE', analyte = "XAN") |>
@@ -25,4 +37,5 @@ cdiscpilot01_nif <- nif() |>
 
 
 usethis::use_data(cdiscpilot01_sdtm, overwrite = T)
+usethis::use_data(cdiscpilot01_adam, overwrite = T)
 usethis::use_data(cdiscpilot01_nif, overwrite = T)
