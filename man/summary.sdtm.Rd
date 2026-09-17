@@ -24,7 +24,7 @@ This function returns a named list of properties of the SDTM object:
 \item \code{domains} The included domains by their SDTM code and the number of
 respective unique USUBJID, as data frame,
 \item \code{treatments} The unique \code{EXTRT} as character.
-\item \code{arms} The unique \code{ACTAMCD} and \code{ACTARM} as data frame.
+\item \code{arms} The unique \code{ACTARMCD} and \code{ACTARM} as data frame.
 \item \code{doses} The unique \code{EXTRT} and \code{EXDOSE} as data frame.
 \item \code{specimens} The unique \code{PCSPEC} as character.
 \item \code{analytes} The unique \code{PCTEST} and \code{PCTESTCD} as data frame.

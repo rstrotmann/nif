@@ -127,7 +127,7 @@ trial_dco <- function(obj) {
 #' * `domains` The included domains by their SDTM code and the number of
 #'   respective unique USUBJID, as data frame,
 #' * `treatments` The unique `EXTRT` as character.
-#' * `arms` The unique `ACTAMCD` and `ACTARM` as data frame.
+#' * `arms` The unique `ACTARMCD` and `ACTARM` as data frame.
 #' * `doses` The unique `EXTRT` and `EXDOSE` as data frame.
 #' * `specimens` The unique `PCSPEC` as character.
 #' * `analytes` The unique `PCTEST` and `PCTESTCD` as data frame.
