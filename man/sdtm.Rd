@@ -4,10 +4,12 @@
 \alias{sdtm}
 \title{sdtm object constructor}
 \usage{
-sdtm(sdtm_data)
+sdtm(sdtm_data, source = "")
 }
 \arguments{
 \item{sdtm_data}{The SDTM domains as a named list of data frames.}
+
+\item{source}{Source information as character.}
 }
 \value{
 A sdtm object.

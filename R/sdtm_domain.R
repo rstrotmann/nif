@@ -44,7 +44,12 @@ domain <- function(obj, name) {
 #'
 #' @returns A domain object.
 #' @noRd
-new_sdtm_domain <- function(domain_data, name = "", trial_title = "", studyid = "") {
+new_sdtm_domain <- function(
+    domain_data,
+    name = "",
+    trial_title = "",
+    studyid = ""
+) {
   structure(
     as_tibble(domain_data),
     class = unique(c("sdtm_domain", "tbl_df", "tbl", "data.frame")),

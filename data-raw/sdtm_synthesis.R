@@ -616,7 +616,7 @@ make_sd_pc <- function(dm, ex, vs, lb, sampling_scheme) {
 #' @param sampling_scheme The sampling scheme to be used.
 #' @return PC data as data frame.
 #' @keywords internal
-make_fe_pc <- function(ex, dm, vs, sampling_scheme) {
+make_fe_pc <- function(ex, dm, vs, lb, sampling_scheme) {
   sbs <- subject_baseline_data(dm, vs, lb)
 
   temp <- sbs %>%
@@ -883,7 +883,7 @@ synthesize_sdtm_sad_study <- function() {
     ts = ts
   )
 
-  sdtm(lapply(out, isofy_dates))
+  sdtm(lapply(out, isofy_dates), source = "synthetic data")
 }
 
 
@@ -1107,7 +1107,7 @@ synthesize_sdtm_poc_study <- function(
     ts = ts
   )
 
-  sdtm(lapply(out, isofy_dates))
+  sdtm(lapply(out, isofy_dates), source = "synthetic data")
 }
 
 
@@ -1163,7 +1163,7 @@ synthesize_sdtm_food_effect_study <- function() {
   dm <- dm %>%
     add_RFENDTC(ex)
 
-  pc <- make_fe_pc(ex, dm, vs, sampling_scheme)
+  pc <- make_fe_pc(ex, dm, vs, lb, sampling_scheme)
 
   ts <- synthesize_ts(studyid, studytitle, c("fe", "pk"), "1",
     startdate = format(min(dm$RFICDTC, na.rm = T)),
@@ -1180,7 +1180,7 @@ synthesize_sdtm_food_effect_study <- function() {
     ts = ts
   )
 
-  sdtm(lapply(out, isofy_dates))
+  sdtm(lapply(out, isofy_dates), source = "synthetic data")
 }
 
 
@@ -1636,5 +1636,5 @@ synthesize_sdtm_iv_study <- function() {
     ts = ts
   )
 
-  sdtm(lapply(out, isofy_dates))
+  sdtm(lapply(out, isofy_dates), source = "synthetic data")
 }

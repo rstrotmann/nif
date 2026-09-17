@@ -11,6 +11,8 @@
 #' SDTM/PC domain. These data are created using a population PK model that is
 #' parametrized with arbitrary parameters.
 
+library(rxode2)
+
 set.seed(1234)
 
 # synthesize SDTM package data

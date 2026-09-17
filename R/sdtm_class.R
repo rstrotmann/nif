@@ -1,15 +1,19 @@
 #' SDTM class constructor, creating a sdtm object from a set of SDTM domains
 #'
 #' @param sdtm_data The SDTM domains as list of data frames.
+#' @param source Source information as character.
 #'
 #' @import dplyr
 #' @return A sdtm object.
 #' @noRd
-new_sdtm <- function(sdtm_data) {
-  # business logic
+new_sdtm <- function(sdtm_data, source = "") {
   names(sdtm_data) <- tolower(names(sdtm_data))
-  class(sdtm_data) <- c("sdtm", "list")
-  sdtm_data
+
+  structure(
+    sdtm_data,
+    class = c("sdtm", "list"),
+    source = source
+  )
 }
 
 
@@ -20,12 +24,15 @@ new_sdtm <- function(sdtm_data) {
 #' "list")`); extract a domain with `obj$dm` or [domain()].
 #'
 #' @param sdtm_data The SDTM domains as a named list of data frames.
+#' @param source Source information as character.
 #'
 #' @import dplyr
 #' @return A sdtm object.
 #' @export
-sdtm <- function(sdtm_data) {
+sdtm <- function(sdtm_data, source = "") {
   # input validation
+  validate_argument(source, "character", allow_empty = TRUE)
+
   if (!is.list(sdtm_data) || is.data.frame(sdtm_data)) {
     stop("Input must be a list of data frames!")
   }
@@ -37,7 +44,7 @@ sdtm <- function(sdtm_data) {
     ))
   }
 
-  new_sdtm(sdtm_data)
+  new_sdtm(sdtm_data, source = source)
 }
 
 
@@ -149,7 +156,8 @@ summary.sdtm <- function(object, ...) {
     hash = hash.sdtm(object),
     last = last_dtc(object),
     title = trial_title(object),
-    dco = trial_dco(object)
+    dco = trial_dco(object),
+    source = attr(object, "source")
   )
 
   # Numbers of subjects and observations by domain
@@ -256,6 +264,11 @@ print.summary_sdtm <- function(x, ...) {
     cat("(empty)\n")
   } else {
     out <- list(
+      compose_message(
+        paste0("Source: ", x$source),
+        condition = (!is.null(x$source) & nchar(x$source) > 0)
+      ),
+
       compose_message(paste(plural("Study", length(x$study) > 1),
                             nice_enumeration(x$study))),
 
