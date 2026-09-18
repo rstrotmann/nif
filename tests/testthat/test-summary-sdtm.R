@@ -39,7 +39,7 @@ test_that("summary.sdtm handles valid SDTM objects correctly", {
   expect_equal(nrow(result$analytes), 1)
 
   # Check print method works without error
-  expect_output(print(result), "SDTM data set summary")
+  expect_output(print(result), "SDTM data summary")
 })
 
 
@@ -60,7 +60,7 @@ test_that("summary.sdtm handles missing domains gracefully", {
   expect_equal(nrow(result$analytes), 0)
 
   # Check print method works without error
-  expect_output(print(result), "SDTM data set summary")
+  expect_output(print(result), "SDTM data summary")
 })
 
 
@@ -95,7 +95,7 @@ test_that("summary.sdtm handles missing fields in domains", {
   expect_equal(nrow(result$analytes), 0)
 
   # Check print method works without error
-  expect_output(print(result), "SDTM data set summary")
+  expect_output(print(result), "SDTM data summary")
 })
 
 
@@ -145,7 +145,7 @@ test_that("summary.sdtm handles empty data frames", {
   expect_equal(nrow(result$disposition), 2)
 
   # Check print method still works
-  expect_output(print(result), "SDTM data set summary")
+  expect_output(print(result), "SDTM data summary")
 })
 
 
@@ -177,7 +177,7 @@ test_that("summary.sdtm handles NA values in fields", {
   # expect_equal(nrow(result$analytes), 1)   # Rows with NA should be filtered out
   #
   # # Check print method still works
-  # expect_output(print(result), "SDTM data set summary")
+  # expect_output(print(result), "SDTM data summary")
 })
 
 
@@ -216,5 +216,5 @@ test_that("summary.sdtm handles multiple unique values appropriately", {
   expect_equal(nrow(result$arms), 3) # All arms should be included
 
   # Check print method still works
-  expect_output(print(result), "SDTM data set summary")
+  expect_output(print(result), "SDTM data summary")
 })

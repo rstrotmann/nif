@@ -118,14 +118,14 @@ test_that("print.sdtm returns the sdtm object invisibly", {
   expect_s3_class(result, "sdtm")
   expect_identical(result, examplinib_sad)
   expect_false(inherits(result, "summary_sdtm"))
-  expect_true(any(grepl("SDTM data set summary", output)))
+  expect_true(any(grepl("SDTM data summary", output)))
 })
 
 
 test_that("print.sdtm shows the summary banner and study details", {
   output <- paste(capture.output(print(examplinib_sad)), collapse = "\n")
 
-  expect_match(output, "SDTM data set summary")
+  expect_match(output, "SDTM data summary")
   expect_match(output, "Study 2023000001")
   expect_match(output, "Data disposition:")
   expect_match(output, "Treatments:")
@@ -150,7 +150,7 @@ test_that("print.sdtm omits treatments when EX is absent", {
   ))
 
   output <- paste(capture.output(print(obj)), collapse = "\n")
-  expect_match(output, "SDTM data set summary")
+  expect_match(output, "SDTM data summary")
   expect_match(output, "Study S1")
   expect_false(grepl("Treatments:", output))
 })
@@ -164,7 +164,7 @@ test_that("print.sdtm handles an empty sdtm object", {
 
   expect_s3_class(result, "sdtm")
   expect_identical(result, empty)
-  expect_true(any(grepl("SDTM data set summary", output)))
+  expect_true(any(grepl("SDTM data summary", output)))
   expect_true(any(grepl("(empty)", output, fixed = TRUE)))
 })
 

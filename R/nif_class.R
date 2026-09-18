@@ -222,6 +222,17 @@ nif <- function(
       CMT = integer(), EVID = integer(), DV = integer()
     )
 
+    if (is.character(imputation_rules))
+      imputation_label <- imputation_rules
+    else
+      imputation_label <- "custom"
+
+    conditional_cli(cli_alert_info(paste0(
+      "Default imputation rules: ",
+      imputation_label)),
+      silent = silent
+    )
+
     return(new_nif(data, imputation_rules = imputation_rules))
   }
 
@@ -377,9 +388,10 @@ print.nif <- function(x, ...) {
 #' @rdname hash
 #' @export
 hash.nif <- function(x) {
-  x |>
-    normalize_id() |>
-    rlang::hash()
+  temp <- as.data.frame(normalize_id(x))
+  extra <- setdiff(names(attributes(temp)), c("names", "class", "row.names"))
+  attributes(temp)[extra] <- NULL
+  rlang::hash(temp)
 }
 
 

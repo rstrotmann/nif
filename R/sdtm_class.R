@@ -286,7 +286,7 @@ print.summary_sdtm <- function(x, ...) {
   indent <- 2
   spacer <- paste0(rep(" ", indent), collapse = "")
 
-  cat(paste(hline(), "SDTM data set summary", hline(), "\n"))
+  cat(paste(hline(), "SDTM data summary", hline(), "\n"))
 
   if (nrow(x$disposition) == 0L) {
     cat("(empty)\n")

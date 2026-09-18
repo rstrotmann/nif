@@ -430,19 +430,3 @@ test_that("hash.nif() changes when observations change", {
   expect_false(identical(hash(obj_a), hash(obj_b)))
 })
 
-
-test_that("hash.nif() includes nif attributes", {
-  obj_a <- make_test_nif(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    1,   0,     100,  1,    1,     NA,
-    creation_date = as.Date("2020-01-15")
-  )
-
-  obj_b <- make_test_nif(
-    ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
-    1,   0,     100,  1,    1,     NA,
-    creation_date = as.Date("2021-01-15")
-  )
-
-  expect_false(identical(hash(obj_a), hash(obj_b)))
-})
