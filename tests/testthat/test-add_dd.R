@@ -171,7 +171,7 @@ test_that("add_dd can complete a stub produced by ddt", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~CUSTOM,
     1,   0,     100,  1,    1,     NA,  "a",
     1,   1,     0,    2,    0,     10,  "b"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE) |>
     add_dd(

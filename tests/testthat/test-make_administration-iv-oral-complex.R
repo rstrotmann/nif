@@ -81,7 +81,7 @@ test_that("add_administration handles oral plus IV on day 3 for 8 subjects", {
   expected_iv <- anthro |>
     dplyr::select(USUBJID, expected_iv_amt = IV_DOSE, expected_iv_dur = IV_DUR)
 
-  result <- nif() |>
+  result <- nif(silent = TRUE) |>
     add_administration(
       sdtm,
       extrt      = "EXAMPLINIB",
@@ -158,7 +158,7 @@ test_that("add_administration oral-IV complex detects IV route", {
       expect_message(
       expect_message(
         add_administration(
-          nif(),
+          nif(silent = TRUE),
           sdtm,
           extrt      = "EXAMPLINIB",
           imputation = imputation_rules_void,

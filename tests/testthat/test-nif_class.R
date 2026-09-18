@@ -1,16 +1,16 @@
 test_that("nif works", {
   suppressMessages(expect_equal(
-    dim(nif()),
+    dim(nif(silent = TRUE)),
     c(0, 7)))
 
   suppressMessages(expect_no_error(
-    nif(examplinib_sad, RS2023 ~ EXAMPLINIB)
+    nif(examplinib_sad, RS2023 ~ EXAMPLINIB, silent = TRUE)
   ))
 })
 
 
 test_that("nif objects are tibbles with nif_version", {
-  empty <- nif()
+  empty <- nif(silent = TRUE)
   expect_s3_class(empty, "nif")
   expect_s3_class(empty, "tbl_df")
   expect_equal(attr(empty, "nif_version"), packageVersion("nif"))
@@ -121,7 +121,7 @@ test_that("index_dosing_interval works with single parent", {
        1,    74,    0,     0,     0,   2,    2,    0,     "A",
        1,    76,    0,     0,     0,   3,    2,    0,     "A"
      ) |>
-    nif()
+    nif(silent = TRUE)
 
   temp <- nif %>%
     index_dosing_interval() %>%
@@ -156,7 +156,7 @@ test_that("index_dosing_interval works with multiple parents", {
     1,   98.00,  0,    0,     0,     2,   2,    0,    "B",
     1,   100.00, 0,    0,     0,     3,   2,    0,    "B"
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     index_dosing_interval()
 
   temp <- nif %>%
@@ -203,7 +203,7 @@ test_that("n_administrations, max_admin_time works, max_observation_time", {
     1,   98.00,  0,    0,     0,     2,   2,    0,    "B",
     1,   100.00, 0,    0,     0,     3,   2,    0,    "B"
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     # index_nif() %>%
     index_dosing_interval()
 
@@ -230,7 +230,7 @@ test_that("add_dose_level works", {
     3,   0,     100,  1,    1,     NA,
     3,   24,    NA,   1,    1,     NA,
     3,   48,    150,  1,    1,     NA
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
 
   temp <- add_dose_level(nif) %>%
     distinct(ID, DL)
@@ -256,7 +256,7 @@ test_that("add_dose_level works", {
 #     2,    58,   80,    1,     1,
 #     2,    60,   NA,    2,     0
 #   ) %>%
-#     nif()
+#     nif(silent = TRUE)
 #
 #   expect_equal(
 #     add_tad(nif)$TAD,
@@ -285,7 +285,7 @@ test_that("add_trtdy works", {
     2,   60,    NA,   2,    0,     "2024-12-08 19:31:35.14839", 70
   ) %>%
     mutate(DTC = as.POSIXct(DTC)) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(
     add_trtdy(nif)$TRTDY,
@@ -316,7 +316,7 @@ test_that("index_rich_sampling_intervals works", {
       17L,   1,   102,     0,    0,    2, 110,               2L,
       18L,   1,   104,     0,    0,    2, 120,               2L
      ) |>
-    nif()
+    nif(silent = TRUE)
 
   temp <- as.data.frame(index_rich_sampling_intervals(nif))
   expect_equal(temp$RICH_N, temp$expected_rich_n)
@@ -336,7 +336,7 @@ test_that("cfb works", {
     1,   "A",      0,     4,     4,   0,    2,
     1,   "A",      0,     5,     5,   0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_no_error(
     test <- obj %>%
@@ -386,7 +386,7 @@ test_that("add_rtb works", {
     2,   4,     0,     2,    30,   0,
     2,   72,    0,     2,    40,   0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   temp <- as.data.frame(add_rtb(nif))
   expect_equal(
@@ -426,7 +426,7 @@ test_that("subjects.nif works with minimal NIF object", {
     2,   1,     0,    2,    0,     10,    6.1,
     2,   2,     0,    2,    0,     10,    5.9
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- subjects(minimal_nif)
 
@@ -444,7 +444,7 @@ test_that("subjects.nif works with minimal NIF object", {
 
 
 test_that("subjects.nif works with empty NIF object", {
-  empty_nif <- nif()
+  empty_nif <- nif(silent = TRUE)
   result <- subjects(empty_nif)
 
   # Check return type
@@ -463,7 +463,7 @@ test_that("subjects.nif works with only ID column", {
     2,   0,     10,   1,    1,     10,    NA,
     2,   1,     0,    2,    0,     10,    6.1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- subjects(id_only_nif)
 
@@ -521,7 +521,7 @@ test_that("usubjid works with minimal NIF", {
     2,   0,     10,   1,    1,     10,    NA,
     2,   1,     0,    2,    0,     10,    6.1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Should error because USUBJID field is not found
   expect_error(
@@ -576,7 +576,7 @@ test_that("usubjid validates input parameters", {
 
 
 test_that("usubjid works with empty NIF", {
-  empty_nif <- nif()
+  empty_nif <- nif(silent = TRUE)
 
   # Should error because USUBJID field is not found
   expect_error(

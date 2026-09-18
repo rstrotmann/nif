@@ -47,7 +47,7 @@ test_that("add_bl_odwg classifies all hepatic function categories correctly", {
     "4",      4,   0,     0,    1,    0,     NA,
     "5",      5,   0,     0,    1,    0,     NA
   ) |>
-    nif()
+    nif(silent = TRUE)
   result <- add_bl_odwg(test_nif, sdtm, silent = TRUE)
 
   expect_true("BL_ODWG" %in% names(result))

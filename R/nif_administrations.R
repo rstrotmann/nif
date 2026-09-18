@@ -413,7 +413,7 @@ make_administration <- function(
     select(-any_of(c("DTC_date", "DTC_time", "EXSTDTC_date", "EXSTDTC_time",
                      "EXENDTC_date", "EXENDTC_time", "TEST", ".SEQ"))) |>
     index_id() |>
-    nif()
+    nif(silent = silent)
 }
 
 
@@ -464,7 +464,7 @@ make_administration <- function(
 #' @return A nif object.
 #' @export
 #' @examples
-#' add_administration(nif(), examplinib_sad, "EXAMPLINIB")
+#' add_administration(nif(silent = TRUE), examplinib_sad, "EXAMPLINIB")
 #'
 add_administration <- function(
   nif,

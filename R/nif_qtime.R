@@ -45,18 +45,18 @@ add_bintime <- function(
     return(dplyr::dplyr_reconstruct(out, obj))
   }
 
-  obj <- obj |>
+  out <- obj |>
     mutate(active_time = .data[[time]])
 
-  bins <- classInt::classIntervals(obj$active_time, style = method)
+  bins <- classInt::classIntervals(out$active_time, style = method)
   breaks <- sort(bins$brks)
 
-  obj <- obj |>
+  out <- out |>
     mutate(
       .BINTIME_INDEX = as.numeric(
         cut(.data$active_time, breaks = breaks, include.lowest = TRUE)))
 
-  bin_medians <- obj |>
+  bin_medians <- out |>
     filter(!is.na(.data$.BINTIME_INDEX)) |>
     reframe(
       label = round(median(.data$active_time, na.rm = TRUE)),
@@ -72,12 +72,13 @@ add_bintime <- function(
     left_join(bin_medians, by = ".BINTIME_INDEX") |>
     mutate(label = ifelse(is.na(.data$label), round(.data$left), .data$label))
 
-  obj |>
+  out |>
     mutate(BIN_LEFT = bin_par[.data$.BINTIME_INDEX, "left"]) |>
     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
     mutate(BINTIME = bin_par[.data$.BINTIME_INDEX, "label"]) |>
-    select(-c(".BINTIME_INDEX", "active_time")) #|>
+    select(-c(".BINTIME_INDEX", "active_time")) |>
     # as_nif()
+    restore_nif(obj)
 }
 
 
@@ -147,7 +148,8 @@ add_bintime1 <- function(
           BIN_RIGHT = ifelse(is.finite(.data[[time]]), t0, NA_real_),
           BINTIME   = ifelse(is.finite(.data[[time]]), round(t0), NA_real_)
         ) |>
-        as_nif()
+        # as_nif()
+        restore_nif(obj)
     )
   }
 
@@ -192,7 +194,8 @@ add_bintime1 <- function(
     mutate(.BINTIME_INDEX = bin_index) |>
     left_join(bin_par, by = ".BINTIME_INDEX") |>
     select(-".BINTIME_INDEX") |>
-    as_nif()
+    # as_nif()
+    restore_nif(obj)
 }
 
 

@@ -12,7 +12,7 @@ test_that("add_bintime1 works with basic input", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime1(test_data, time = "TIME")
 
@@ -45,7 +45,7 @@ test_that("add_bintime1 uses shared bins across dose groups", {
     3,   24,    0,     "DRUG",  3,   0,    2,    50,
     3,   48,    0,     "DRUG",  0.5, 0,    2,    50
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- suppressWarnings(add_bintime1(test_data, time = "TIME"))
 
@@ -86,7 +86,7 @@ test_that("add_bintime1 n sets the number of bin intervals", {
     2,   36,    0,     "DRUG",  8,   0,    2,
     2,   48,    0,     "DRUG",  3,   0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime1(test_data, time = "TIME", n = 3)
 
@@ -106,7 +106,7 @@ test_that("add_bintime1 rejects invalid n", {
     1,   1,     0,     "DRUG",  10,  0,    2,
     1,   5,     0,     "DRUG",  20,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(add_bintime1(test_data, time = "TIME", n = 0))
   expect_error(add_bintime1(test_data, time = "TIME", n = 1.5))
@@ -130,7 +130,7 @@ test_that("add_bintime1 BIN_LEFT < BIN_RIGHT and times fall in bins", {
     2,   20,    0,     "DRUG",  20,  0,    2,
     2,   24,    0,     "DRUG",  10,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime1(test_data, time = "TIME")
   obs <- result %>% filter(!is.na(BIN_LEFT))
@@ -152,7 +152,7 @@ test_that("add_bintime1 handles all identical times", {
     2,   5,     1,     "DRUG",  NA,  100,  1,
     2,   5,     0,     "DRUG",  12,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- tryCatch(
       add_bintime1(test_data, time = "TIME", silent = TRUE),
@@ -183,7 +183,7 @@ test_that("add_bintime1 handles identical times with NAs", {
     2,   0,     1,     "DRUG",  NA,  100,  1,    NA,
     2,   5,     0,     "DRUG",  12,  0,    2,    5
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- tryCatch(
     add_bintime1(test_data, time = "TAFD", silent = TRUE),
@@ -217,7 +217,7 @@ test_that("add_bintime1 handles constant NTIME (single nominal time)", {
     2,   0,     1,     "DRUG",  NA,  100,  1,    12,
     2,   12.1,  0,     "DRUG",  12,  0,    2,    12
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- tryCatch(
     add_bintime1(test_data, time = "NTIME", silent = TRUE),
@@ -236,7 +236,7 @@ test_that("add_bintime1 handles single-row nif with one time", {
     ~ID, ~TIME, ~EVID, ~PARENT, ~DV, ~AMT, ~CMT,
     1,   8,     0,     "DRUG",  10,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- tryCatch(
     add_bintime1(test_data, time = "TIME", silent = TRUE),
@@ -263,7 +263,7 @@ test_that("add_bintime1 handles identical times with explicit n", {
     1,   24,    0,     "DRUG",  20,  0,    2,
     2,   24,    0,     "DRUG",  15,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- tryCatch(
     add_bintime1(test_data, time = "TIME", n = 3, silent = TRUE),

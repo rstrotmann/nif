@@ -48,7 +48,7 @@ test_that("TAFD is correctly calculated for different treatments", {
 
   sdtm <- sdtm(temp)
 
-  nif <- nif() %>%
+  nif <- nif(silent = TRUE) %>%
     add_administration(sdtm, "ACTIVE", silent = TRUE) %>%
     add_administration(sdtm, "PLACEBO", silent = TRUE) %>%
     add_observation(sdtm, "lb", "AST", silent = TRUE)

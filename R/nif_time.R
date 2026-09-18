@@ -302,24 +302,27 @@ add_tafd <- function(nif) {
     stop("No dosing event, TAFD cannot be calculated")
   }
 
+  # business code
   # Safely ensure parent exists
   tryCatch(
     {
-      nif <- ensure_parent(nif)
+      out <- ensure_parent(nif)
     },
     error = function(e) {
       stop("Failed to ensure PARENT column: ", e$message)
     }
   )
 
-  nif |>
+  out |>
     arrange(.data$ID, .data$PARENT, .data$TIME) |>
     group_by(.data$ID, .data$PARENT) |>
     mutate(first_admin = safe_min(.data$TIME[.data$EVID == 1])) |>
     mutate(TAFD = .data$TIME - .data$first_admin) |>
     select(-c("first_admin")) |>
     ungroup() |>
-    nif()
+    # nif()
+    arrange_and_add_ref() |>
+    restore_nif(nif)
 }
 
 
@@ -347,6 +350,8 @@ add_trtdy <- function(obj) {
       .default = .data$TRTDY + 1
     )) |>
     select(-c("FIRSTTRTDTC")) |>
-    nif()
+    # nif()
+    arrange_and_add_ref() |>
+    restore_nif(obj)
 }
 

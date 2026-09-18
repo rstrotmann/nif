@@ -12,7 +12,7 @@ test_that("add_bintime works with basic input", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -36,7 +36,7 @@ test_that("add_bintime returns a nif object", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
   expect_s3_class(result, "nif")
@@ -59,7 +59,7 @@ test_that("add_bintime bins span observation times", {
     2,   20,    0,     "DRUG",  20,  0,    2,
     2,   24,    0,     "DRUG",  10,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -83,7 +83,7 @@ test_that("add_bintime BIN_LEFT < BIN_RIGHT for all bins", {
     2,   15,    0,     "DRUG",  28,  0,    2,
     2,   22,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -106,7 +106,7 @@ test_that("add_bintime BINTIME is numeric", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -130,7 +130,7 @@ test_that("add_bintime preserves original columns", {
     2,   15,    0,     "DRUG",  28,  0,    2,    "I",
     2,   22,    0,     "DRUG",  18,  0,    2,    "J"
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -154,7 +154,7 @@ test_that("add_bintime preserves row count", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -176,7 +176,7 @@ test_that("add_bintime removes .BINTIME_INDEX column", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -198,7 +198,7 @@ test_that("add_bintime works with data that already has TAFD", {
     2,   12,    0,     "DRUG",  28,  0,    2,    12,
     2,   18,    0,     "DRUG",  18,  0,    2,    18
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TAFD")
 
@@ -222,7 +222,7 @@ test_that("add_bintime default method is fisher", {
     2,   15,    0,     "DRUG",  28,  0,    2,
     2,   22,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_default <- add_bintime(test_data, time = "TIME")
   result_fisher <- add_bintime(test_data, method = "fisher", time = "TIME")
@@ -251,7 +251,7 @@ test_that("add_bintime works with different methods", {
     2,   18,    0,     "DRUG",  14,  0,    2,
     2,   24,    0,     "DRUG",  8,   0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   methods <- c("jenks", "kmeans", "pretty", "quantile", "hclust",
                "sd", "fisher")
@@ -277,7 +277,7 @@ test_that("add_bintime rejects invalid method", {
     1,   10,    0,     "DRUG",  30,  0,    2,
     1,   20,    0,     "DRUG",  15,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_bintime(test_data, method = "invalid_method", time = "TIME"),
@@ -295,7 +295,7 @@ test_that("add_bintime rejects non-character method", {
     1,   10,    0,     "DRUG",  30,  0,    2,
     1,   20,    0,     "DRUG",  15,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(add_bintime(test_data, method = 123, time = "TIME"))
   expect_error(add_bintime(test_data, method = TRUE, time = "TIME"))
@@ -333,7 +333,7 @@ test_that("add_bintime default time is TAFD", {
     2,   12,    0,     "DRUG",  28,  0,    2,    12,
     2,   18,    0,     "DRUG",  18,  0,    2,    18
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_default <- add_bintime(test_data, time = "TIME")
   result_tafd <- add_bintime(test_data, time = "TAFD")
@@ -356,7 +356,7 @@ test_that("add_bintime works with custom time field", {
     2,   12,    0,     "DRUG",  28,  0,    2,    12,    12,
     2,   18,    0,     "DRUG",  18,  0,    2,    18,    18
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TAD")
 
@@ -380,7 +380,7 @@ test_that("add_bintime with group parameter produces correct output columns", {
     2,   12,    0,     "DRUG",  28,  0,    2,    12,    "B",
     2,   18,    0,     "DRUG",  18,  0,    2,    18,    "B"
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, group = "GRP")
 
@@ -406,7 +406,7 @@ test_that("add_bintime with group preserves row count", {
     2,   12,    0,     "DRUG",  28,  0,    2,    12,    "B",
     2,   18,    0,     "DRUG",  18,  0,    2,    18,    "B"
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, group = "GRP")
 
@@ -428,7 +428,7 @@ test_that("add_bintime with multiple group variables works", {
     2,   12,    0,     "DRUG",  28,  0,    2,    12,    "B",   "Y",
     2,   18,    0,     "DRUG",  18,  0,    2,    18,    "B",   "Y"
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, group = c("GRP1", "GRP2"))
 
@@ -448,7 +448,7 @@ test_that("add_bintime rejects missing group variable", {
     1,   10,    0,     "DRUG",  30,  0,    2,    10,
     1,   20,    0,     "DRUG",  15,  0,    2,    20
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_bintime(test_data, group = "NONEXISTENT"),
@@ -471,7 +471,7 @@ test_that("add_bintime with group=NULL is same as no group", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_null <- add_bintime(test_data, group = NULL, time = "TIME")
   result_default <- add_bintime(test_data, time = "TIME")
@@ -501,7 +501,7 @@ test_that("add_bintime works with multiple subjects", {
     3,   11,    0,     "DRUG",  25,  0,    2,
     3,   22,    0,     "DRUG",  13,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -527,7 +527,7 @@ test_that("add_bintime BINTIME falls within bin boundaries", {
     2,   20,    0,     "DRUG",  20,  0,    2,
     2,   24,    0,     "DRUG",  10,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -553,7 +553,7 @@ test_that("add_bintime bins are non-overlapping", {
     2,   20,    0,     "DRUG",  20,  0,    2,
     2,   24,    0,     "DRUG",  10,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -585,7 +585,7 @@ test_that("add_bintime works with widely spaced time points", {
     2,   600,   0,     "DRUG",  28,  0,    2,
     2,   900,   0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -608,7 +608,7 @@ test_that("add_bintime works with closely spaced time points", {
     2,   0.6,   0,     "DRUG",  28,  0,    2,
     2,   0.9,   0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -626,7 +626,7 @@ test_that("add_bintime rejects non-character group parameter", {
     1,   10,    0,     "DRUG",  30,  0,    2,    10,
     1,   20,    0,     "DRUG",  15,  0,    2,    20
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(add_bintime(test_data, group = 123, time = "TIME"))
   expect_error(add_bintime(test_data, group = TRUE, time = "TIME"))
@@ -655,7 +655,7 @@ test_that("add_bintime different methods produce different bins", {
     2,   36,    0,     "DRUG",  6,   0,    2,
     2,   48,    0,     "DRUG",  3,   0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_pretty <- add_bintime(test_data, method = "pretty", time = "TIME")
   result_quantile <- add_bintime(test_data, method = "quantile", time = "TIME")
@@ -687,7 +687,7 @@ test_that("add_bintime with group applies binning independently per group", {
     2,   12,    0,     "DRUG",  56,  0,    2,    12,    200,
     2,   18,    0,     "DRUG",  36,  0,    2,    18,    200
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_grouped <- add_bintime(test_data, group = "DOSE", time = "TIME")
   result_ungrouped <- add_bintime(test_data, time = "TIME")
@@ -724,7 +724,7 @@ test_that("add_bintime handles observations before first dose", {
     2,   12,    0,     "DRUG",  28,  0,    2,
     2,   18,    0,     "DRUG",  18,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -747,7 +747,7 @@ test_that("add_bintime with single observation per subject works", {
     5,   0,     1,     "DRUG",  NA,  100,  1,
     5,   1,     0,     "DRUG",  10,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bintime(test_data, time = "TIME")
 
@@ -778,7 +778,7 @@ test_that("add_bintime with single observation per subject works", {
 #     2,   36,    0,     "DRUG",  8,   0,    2,
 #     2,   48,    0,     "DRUG",  3,   0,    2
 #   ) %>%
-#     nif()
+#     nif(silent = TRUE)
 #
 #   expect_no_error(add_bintime(test_data, time = "TIME", n = 3))
 # })
@@ -804,7 +804,7 @@ test_that("add_bintime with single observation per subject works", {
 #     2,   36,    0,     "DRUG",  8,   0,    2,
 #     2,   48,    0,     "DRUG",  3,   0,    2
 #   ) %>%
-#     nif()
+#     nif(silent = TRUE)
 #
 #   result <- add_bintime(test_data, time = "TIME", n = 3)
 #
@@ -837,7 +837,7 @@ test_that("add_bintime with single observation per subject works", {
 #     2,   36,    0,     "DRUG",  8,   0,    2,
 #     2,   48,    0,     "DRUG",  3,   0,    2
 #   ) %>%
-#     nif()
+#     nif(silent = TRUE)
 #
 #   n_bins <- function(n) {
 #     add_bintime(test_data, time = "TIME", n = n) %>%
@@ -862,7 +862,7 @@ test_that("add_bintime with single observation per subject works", {
 #     2,   10,    0,     "DRUG",  30,  0,    2,    "B",
 #     2,   20,    0,     "DRUG",  15,  0,    2,    "B"
 #   ) %>%
-#     nif()
+#     nif(silent = TRUE)
 #
 #   result <- suppressWarnings(add_bintime(test_data, time = "TIME", group = "GRP"))
 #

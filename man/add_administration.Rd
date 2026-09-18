@@ -86,6 +86,6 @@ To add observation events to the \link{nif} object, see
 \code{\link[=add_observation]{add_observation()}}.
 }
 \examples{
-add_administration(nif(), examplinib_sad, "EXAMPLINIB")
+add_administration(nif(silent = TRUE), examplinib_sad, "EXAMPLINIB")
 
 }

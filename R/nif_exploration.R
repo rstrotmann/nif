@@ -279,7 +279,7 @@ dose_plot_id <- function(obj, id, y_scale = "lin", max_dose = NA,
 #' @examples
 #' summary(examplinib_poc_nif)
 #' summary(examplinib_poc_min_nif)
-#' summary(nif())
+#' summary(nif(silent = TRUE))
 summary.nif <- function(
   object,
   sampling = TRUE,

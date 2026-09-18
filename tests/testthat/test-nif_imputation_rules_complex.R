@@ -133,7 +133,7 @@ test_that("minimal rules: obs_raw and obs_final are identity (no LLOQ, no TAFD f
 
   ))
 
-  nif_result <- nif() |>
+  nif_result <- nif(silent = TRUE) |>
     add_administration(sdtm, "X", imputation = imputation_rules_minimal,
                        silent = TRUE) |>
     add_observation(sdtm, "PC", "X",
@@ -380,7 +380,7 @@ test_that("standard rules: LLOQ imputation on PC observations", {
        )
   ))
 
-  nif_result <- nif() |>
+  nif_result <- nif(silent = TRUE) |>
     add_administration(sdtm, "D",
                        imputation = imputation_rules_standard,
                        silent = TRUE) |>
@@ -440,7 +440,7 @@ test_that("standard rules: predose TAFD set to zero", {
        )
   ))
 
-  nif_result <- nif() |>
+  nif_result <- nif(silent = TRUE) |>
     add_administration(sdtm, "D",
                        imputation = imputation_rules_standard,
                        silent = TRUE) |>
@@ -496,7 +496,7 @@ test_that("standard rules: multi-subject full pipeline with all imputation steps
 
   cut_off <- "2025-10-12 23:59:59"
 
-  nif_result <- nif() |>
+  nif_result <- nif(silent = TRUE) |>
     add_administration(sdtm, "D",
                        imputation = imputation_rules_standard,
                        cut_off_date = cut_off,
@@ -558,13 +558,13 @@ test_that("minimal vs standard: BLQ handling differs", {
        )
   ))
 
-  nif_minimal <- nif() |>
+  nif_minimal <- nif(silent = TRUE) |>
     add_administration(sdtm, "D", imputation = imputation_rules_minimal,
                        silent = TRUE) |>
     add_observation(sdtm, "PC", "D", imputation = imputation_rules_minimal,
                     silent = TRUE)
 
-  nif_standard <- nif() |>
+  nif_standard <- nif(silent = TRUE) |>
     add_administration(sdtm, "D", imputation = imputation_rules_standard,
                        silent = TRUE) |>
     add_observation(sdtm, "PC", "D", imputation = imputation_rules_standard,
@@ -605,13 +605,13 @@ test_that("minimal vs standard: predose TAFD handling differs", {
        )
   ))
 
-  nif_minimal <- nif() |>
+  nif_minimal <- nif(silent = TRUE) |>
     add_administration(sdtm, "D", imputation = imputation_rules_minimal,
                        silent = TRUE) |>
     add_observation(sdtm, "PC", "D", imputation = imputation_rules_minimal,
                     silent = TRUE)
 
-  nif_standard <- nif() |>
+  nif_standard <- nif(silent = TRUE) |>
     add_administration(sdtm, "D", imputation = imputation_rules_standard,
                        silent = TRUE) |>
     add_observation(sdtm, "PC", "D", imputation = imputation_rules_standard,
@@ -714,7 +714,7 @@ test_that("standard rules: complex multi-episode multi-subject integration", {
 
   cut_off <- "2026-01-18 23:59:59"
 
-  nif_result <- nif() |>
+  nif_result <- nif(silent = TRUE) |>
     add_administration(sdtm, "D",
                        imputation = imputation_rules_standard,
                        cut_off_date = cut_off,

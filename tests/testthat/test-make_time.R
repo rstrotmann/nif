@@ -7,7 +7,7 @@ test_that("make_time works with basic single subject data", {
     1,   as.POSIXct("2023-01-01 10:00:00"), 2,    0,     "DRUG",   "DRUG",  20,  0,    2,
     1,   as.POSIXct("2023-01-01 11:00:00"), 3,    0,     "DRUG",   "DRUG",  15,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -39,7 +39,7 @@ test_that("make_time works with multiple subjects", {
     2,   as.POSIXct("2023-01-01 13:00:00"), 1,    0,     "DRUG",   "DRUG",  30,  0,    2,
     2,   as.POSIXct("2023-01-01 14:00:00"), 2,    0,     "DRUG",   "DRUG",  40,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -65,7 +65,7 @@ test_that("make_time works with multiple parent compounds", {
     1,   as.POSIXct("2023-01-01 12:00:00"), 4,    0,     "DRUG1",  "DRUG1", 15,  0,    2,
     1,   as.POSIXct("2023-01-01 13:00:00"), 5,    0,     "DRUG2",  "DRUG2", 25,  0,    4
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -91,7 +91,7 @@ test_that("make_time works with multiple administrations of same parent", {
     1,   as.POSIXct("2023-01-01 12:00:00"), 4,    0,     "DRUG",   "DRUG",  15,  0,    2,
     1,   as.POSIXct("2023-01-01 13:00:00"), 5,    0,     "DRUG",   "DRUG",  25,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -116,7 +116,7 @@ test_that("make_time handles observations before first administration", {
     1,   as.POSIXct("2023-01-01 10:00:00"), 2,     0,     "DRUG",   "DRUG",  10, 0,    2,
     1,   as.POSIXct("2023-01-01 11:00:00"), 3,     0,     "DRUG",   "DRUG",  20, 0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -136,7 +136,7 @@ test_that("make_time handles empty data frame", {
   test_data <- tibble::tribble(
     ~ID, ~DTC, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV, ~AMT, ~CMT
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -166,7 +166,7 @@ test_that("make_time validates required columns", {
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
     1,   0,     1,     "DRUG",   "DRUG",  NA,   100,  1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     make_time(test_data),
@@ -178,7 +178,7 @@ test_that("make_time validates required columns", {
     ~ID, ~DTC,                              ~TIME, ~EVID, ~PARENT, ~DV,  ~AMT, ~CMT,
     1,   as.POSIXct("2023-01-01 08:00:00"), 0,    1,     "DRUG",  NA,  100,  1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     make_time(test_data),
@@ -190,7 +190,7 @@ test_that("make_time validates required columns", {
     ~ID, ~DTC,                              ~TIME, ~EVID, ~ANALYTE, ~DV,  ~AMT, ~CMT,
     1,   as.POSIXct("2023-01-01 08:00:00"), 0,    1,     "DRUG",   NA,  100,  1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     make_time(test_data),
@@ -216,7 +216,7 @@ test_that("make_time validates DTC column type", {
     ~ID, ~DTC,              ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV,  ~AMT, ~CMT,
     1,   "2023-01-01 08:00:00", 0,  1,     "DRUG",   "DRUG",  NA,  100,  1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     make_time(test_data),
@@ -250,7 +250,7 @@ test_that("make_time preserves original data columns", {
     1,   as.POSIXct("2023-01-01 08:00:00"), 0,    1,     "DRUG",   "DRUG",  NA,   "A",     123,     100,  1,
     1,   as.POSIXct("2023-01-01 09:00:00"), 1,    0,     "DRUG",   "DRUG",  10,   "B",     456,     0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -269,7 +269,7 @@ test_that("make_time calculates time with correct precision", {
     1,   as.POSIXct("2023-01-01 08:30:00.000"), 0.5,  0,     "DRUG",   "DRUG",  10,  0,    2,
     1,   as.POSIXct("2023-01-01 09:15:30.000"), 1.258, 0,     "DRUG",   "DRUG",  20,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -292,7 +292,7 @@ test_that("make_time handles subjects with no administrations", {
     1,   as.POSIXct("2023-01-01 09:00:00"), 1,    0,     "DRUG",   "DRUG",  10, 0,    2,
     1,   as.POSIXct("2023-01-01 10:00:00"), 2,    0,     "DRUG",   "DRUG",  15, 0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -321,7 +321,7 @@ test_that("make_time handles complex multi-subject, multi-parent scenario", {
     2,   as.POSIXct("2023-01-01 15:00:00"), 1,    0,     "DRUG1",  "DRUG1", 30,  0,    2,
     2,   as.POSIXct("2023-01-01 16:00:00"), 2,    0,     "DRUG1",  "DRUG1", 40,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -344,7 +344,7 @@ test_that("make_time handles missing DTC values gracefully", {
     1,   as.POSIXct(NA),                    NA,   0,     "DRUG",   "DRUG",  10,  0,    2,
     1,   as.POSIXct("2023-01-01 10:00:00"), 2,    0,     "DRUG",   "DRUG",  20,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_data)
 
@@ -369,7 +369,7 @@ test_that("make_time handles predose values before the first admin correctly", {
     1,   "2023-01-01 10:30:00", 1.5,   0.5,    0,     "A",      "A",     4,   0,    2
   ) %>%
     lubrify_dates() %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time(test_nif) %>%
     as.data.frame()

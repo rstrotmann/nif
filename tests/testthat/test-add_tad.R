@@ -9,7 +9,7 @@ test_that("add_tad works with basic input", {
     2,   1,     0,     "DRUG",  30,   0,    1,
     2,   2,     0,     "DRUG",  40,   0,    1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_tad(test_data)
 
@@ -30,7 +30,7 @@ test_that("add_tad handles multiple administrations", {
     1,   3,     0,     "DRUG",  20,   0,    1,
     1,   4,     0,     "DRUG",  30,   0,    1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_tad(test_data)
 
@@ -47,7 +47,7 @@ test_that("add_tad handles observations before first dose", {
     1,   1,     0,     "DRUG",  10,   0,    1,
     1,   2,     0,     "DRUG",  20,   0,    1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_tad(test_data)
 
@@ -66,7 +66,7 @@ test_that("add_tad handles multiple parent compounds", {
     1,   1,     0,     "DRUG2", 30,   0,    1,
     1,   2,     0,     "DRUG2", 40,   0,    1
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_tad(test_data)
 
@@ -121,7 +121,7 @@ test_that("add_tad handles NA values in TIME", {
     1,   NA,    0,     "DRUG",  10,   0,    1,
     1,   2,     0,     "DRUG",  20,   0,    1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_tad(test_data)
 
@@ -136,7 +136,7 @@ test_that("add_tad returns a nif object", {
     1,   0,     1,     "DRUG",  NA,   100,  1,
     1,   1,     0,     "DRUG",  10,   0,    1
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_tad(test_data)
 

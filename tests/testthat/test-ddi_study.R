@@ -204,7 +204,7 @@ ddi_nif <- tibble::tribble(
   93L,  2L, "DDI-002",   408,    144,   408,  144,    0L,    0,   2L, 0.000154811924,         "test",         "test",       FALSE,   100,   0L,
   94L,  2L, "DDI-002",   432,    168,   432,  168,    0L,    0,   2L, 1.84379743e-05,         "test",         "test",       FALSE,   100,   0L
 ) |>
-  nif()
+  nif(silent = TRUE)
 
 
 test_that("index_dosing_interval works with real-life data set", {

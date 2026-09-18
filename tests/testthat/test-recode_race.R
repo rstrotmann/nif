@@ -164,7 +164,7 @@ test_that("recode_race validates input correctly", {
 
 test_that("recode_race handles edge cases", {
   # Test with empty nif object
-  empty_nif <- nif()
+  empty_nif <- nif(silent = TRUE)
   expect_error(
     recode_race(empty_nif),
     "Missing required fields: RACE"

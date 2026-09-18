@@ -13,7 +13,7 @@ test_that("add_bl_renal classifies existing BL_CRCL values", {
       3,     0,    0,    1,     0,  NA,      75,
       4,     0,    0,    1,     0,  NA,     100
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_renal(nif_obj)
 
@@ -32,7 +32,7 @@ test_that("add_bl_renal returns an ordered factor with expected levels", {
       1,     0,    0,    1,     0,  NA,      25,
       2,     0,    0,    1,     0,  NA,     100
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_renal(nif_obj)
 
@@ -51,7 +51,7 @@ test_that("add_bl_renal uses closed-on-the-right cut boundaries", {
       2,     0,    0,    1,     0,  NA,      60,
       3,     0,    0,    1,     0,  NA,      90
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_renal(nif_obj)
 
@@ -69,7 +69,7 @@ test_that("add_bl_renal keeps BL_RENAL constant within a subject", {
       1,     1,    0,    2,     0,  10,      45,
       1,    24,  100,    1,     1,  NA,      45
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_renal(nif_obj)
 
@@ -84,7 +84,7 @@ test_that("add_bl_renal calculates BL_CRCL when it is missing", {
       1, "SUBJ-001",     0,    0,    1,     0,  NA,       0.8,   45,    0, "WHITE",      70,
       1, "SUBJ-001",    24,    0,    1,     0,  NA,       0.8,   45,    0, "WHITE",      70
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_renal(nif_obj, molar = FALSE)
 
@@ -101,7 +101,7 @@ test_that("add_bl_renal can use an alternate eGFR method when deriving BL_CRCL",
     ~ID, ~USUBJID,   ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,    ~WEIGHT,
       1, "SUBJ-001",     0,    0,    1,     0,  NA,       0.8,   45,    0, "WHITE",      70
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   cg <- add_bl_renal(nif_obj, method = egfr_cg, molar = FALSE)
   mdrd <- add_bl_renal(nif_obj, method = egfr_mdrd, molar = FALSE)
@@ -118,7 +118,7 @@ test_that("add_bl_renal does not recompute BL_CRCL when already present", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CRCL, ~BL_CREAT, ~AGE, ~SEX, ~RACE, ~WEIGHT,
       1,     0,    0,    1,     0,  NA,      120,       5.0,   80,    1, "WHITE",     50
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_renal(nif_obj)
 
@@ -132,7 +132,7 @@ test_that("add_bl_renal errors when BL_CRCL cannot be derived", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
       1,     0,    0,    1,     0,  NA
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_bl_renal(nif_obj),

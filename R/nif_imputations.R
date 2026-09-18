@@ -1067,11 +1067,17 @@ impute_missing_baseline <- function(
     silent = silent)
   }
 
-  nif(
-    out |>
-      select(-c("value_after_fill", "center")) |>
-      pivot_wider(names_from = "param", values_from = "value_final")
-  )
+  # nif(
+  #   out |>
+  #     select(-c("value_after_fill", "center")) |>
+  #     pivot_wider(names_from = "param", values_from = "value_final")
+  # )
+
+  out |>
+    select(-c("value_after_fill", "center")) |>
+    pivot_wider(names_from = "param", values_from = "value_final") |>
+    restore_nif(nif)
+
 }
 
 

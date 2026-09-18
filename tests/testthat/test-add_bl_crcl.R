@@ -7,7 +7,7 @@ test_that("add_bl_crcl adds BL_CRCL column with default method (egfr_cg)", {
     2,   "SUBJ-002",  0,     0,    1,    0,     NA,  0.9,       55,   1,    "WHITE",  65,
     2,   "SUBJ-002",  24,    0,    1,    0,     NA,  0.9,       55,   1,    "WHITE",  65
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif)
 
@@ -36,7 +36,7 @@ test_that("add_bl_crcl works with egfr_cg method", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif, method = egfr_cg)
 
@@ -52,7 +52,7 @@ test_that("add_bl_crcl works with egfr_mdrd method", {
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  70,
     2,   "SUBJ-002",  0,     0,    1,    0,     NA,  0.9,       55,   1,    "BLACK",  65
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif, method = egfr_mdrd)
 
@@ -70,7 +70,7 @@ test_that("add_bl_crcl works with egfr_raynaud method", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif, method = egfr_raynaud)
 
@@ -85,7 +85,7 @@ test_that("add_bl_crcl stops when BL_CREAT is missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     result <- add_bl_crcl(test_nif),
@@ -100,7 +100,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_bl_crcl(test_nif),
@@ -112,7 +112,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_bl_crcl(test_nif2),
@@ -124,7 +124,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_bl_crcl(test_nif3),
@@ -136,7 +136,7 @@ test_that("add_bl_crcl errors when required columns are missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE"
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_bl_crcl(test_nif4),
@@ -151,7 +151,7 @@ test_that("add_bl_crcl handles different sex encodings", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_male <- add_bl_crcl(test_nif_male, method = egfr_cg)
 
@@ -159,7 +159,7 @@ test_that("add_bl_crcl handles different sex encodings", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   1,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_female <- add_bl_crcl(test_nif_female, method = egfr_cg)
 
@@ -174,7 +174,7 @@ test_that("add_bl_crcl handles different race values", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "BLACK",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_black <- add_bl_crcl(test_nif_black, method = egfr_mdrd)
 
@@ -182,7 +182,7 @@ test_that("add_bl_crcl handles different race values", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_white <- add_bl_crcl(test_nif_white, method = egfr_mdrd)
 
@@ -200,7 +200,7 @@ test_that("add_bl_crcl handles multiple subjects correctly", {
     2,   "SUBJ-002",  24,    0,    1,    0,     NA,  0.9,       55,   1,    "WHITE",  65,
     3,   "SUBJ-003",  0,     0,    1,    0,     NA,  1.0,       65,   0,    "BLACK",  80
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif)
 
@@ -224,7 +224,7 @@ test_that("add_bl_crcl handles NA values in input columns", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  NA,        45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif)
 
@@ -239,7 +239,7 @@ test_that("add_bl_crcl preserves all original columns", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT, ~OTHER_COL,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  70,       "test"
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif)
 
@@ -258,7 +258,7 @@ test_that("add_bl_crcl calculates correct values for known inputs (egfr_cg)", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif, method = egfr_cg, molar = FALSE)
 
@@ -274,7 +274,7 @@ test_that("add_bl_crcl works with molar units (umol/l)", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  70.72,     45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif, method = egfr_cg)
 
@@ -290,7 +290,7 @@ test_that("add_bl_crcl handles edge case with very high creatinine", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  5.0,       45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif, method = egfr_cg)
 
@@ -306,7 +306,7 @@ test_that("add_bl_crcl handles edge case with very low creatinine", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.3,       45,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_crcl(test_nif, method = egfr_cg)
 
@@ -322,7 +322,7 @@ test_that("add_bl_crcl handles different age values", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       25,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_young <- add_bl_crcl(test_nif_young, method = egfr_cg)
 
@@ -330,7 +330,7 @@ test_that("add_bl_crcl handles different age values", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       75,   0,    "WHITE",  70
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_old <- add_bl_crcl(test_nif_old, method = egfr_cg)
 
@@ -344,7 +344,7 @@ test_that("add_bl_crcl handles different weight values", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  50
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_light <- add_bl_crcl(test_nif_light, method = egfr_cg)
 
@@ -352,7 +352,7 @@ test_that("add_bl_crcl handles different weight values", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~AGE, ~SEX, ~RACE,     ~WEIGHT,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,  0.8,       45,   0,    "WHITE",  90
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result_heavy <- add_bl_crcl(test_nif_heavy, method = egfr_cg)
 

@@ -72,7 +72,8 @@ add_time_deviation <- function(obj, silent = NULL) {
       3
     )) |>
     select(-c("TTND", "next_admin")) |>
-    nif()
+    # nif()
+    restore_nif(obj)
 }
 
 

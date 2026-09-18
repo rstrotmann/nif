@@ -7,7 +7,7 @@ test_that("max_observation_time returns max time for observations only", {
     1,    10,     0,  15,    2,   10,
     1,    12,     1,  NA,    1,   10
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 10)
 })
@@ -20,7 +20,7 @@ test_that("max_observation_time ignores dosing events (EVID == 1)", {
     1,    50,     1,  NA,    1,   10,
     1,     5,     0,  20,    2,   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 5)
 })
@@ -33,7 +33,7 @@ test_that("max_observation_time filters by analyte when specified", {
     1,    10,     0,  15,    3,   "CMT3",   10,
     1,    20,     0,  25,    3,   "CMT3",   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif, analyte = "CMT2"), 5)
   expect_equal(max_observation_time(nif, analyte = "CMT3"), 20)
@@ -47,7 +47,7 @@ test_that("max_observation_time returns max across all analytes when analyte is 
     1,    10,     0,  15,    3,   "CMT3",   10,
     1,    20,     0,  25,    3,   "CMT3",   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif, analyte = NULL), 20)
   expect_equal(max_observation_time(nif), 20)  # NULL is default
@@ -60,7 +60,7 @@ test_that("max_observation_time returns NA when no observations exist", {
     1,    24,     1,  NA,    1,   10,
     1,    48,     1,  NA,    1,   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), NA)
 })
@@ -71,14 +71,14 @@ test_that("max_observation_time returns NA when analyte has no observations", {
     1,   1,     0,     10,  2,    "CMT2",   10,
     1,   5,     0,     20,  2,    "CMT2",   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif, analyte = "CMT4"), NA)
   expect_equal(max_observation_time(nif, analyte = "NONEXISTENT"), NA)
 })
 
 test_that("max_observation_time handles empty nif object", {
-  nif <- nif()
+  nif <- nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), NA)
 })
@@ -88,7 +88,7 @@ test_that("max_observation_time handles single observation", {
     ~ID, ~TIME, ~EVID, ~DV, ~CMT, ~AMT,
     1,   5,     0,     10,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 5)
 })
@@ -100,7 +100,7 @@ test_that("max_observation_time handles NA values in TIME", {
     1,   NA,    0,     20,  2,    10,    # NA time should be ignored
     1,   5,     0,     15,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 5)
 })
@@ -112,7 +112,7 @@ test_that("max_observation_time creates ANALYTE from CMT when missing", {
     1,   5,     0,     20,  2,    10,
     1,   10,    0,     15,  3,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Should work even without ANALYTE column (ensure_analyte creates it)
   result <- max_observation_time(nif)
@@ -130,7 +130,7 @@ test_that("max_observation_time works with multiple subjects", {
     3,   3,     0,     12,  2,    10,
     3,   12,    0,     30,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 12)
 })
@@ -142,7 +142,7 @@ test_that("max_observation_time handles zero time observations", {
     1,   1,     0,     10,  2,    10,
     1,   5,     0,     20,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 5)
 })
@@ -154,7 +154,7 @@ test_that("max_observation_time handles negative time observations", {
     1,   0,     0,     0,   2,    10,
     1,   5,     0,     20,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 5)
 })
@@ -168,7 +168,7 @@ test_that("max_observation_time works with multiple analytes and filters correct
     1,   20,    0,     25,  3,    "METABOLITE",   10,
     1,   30,    0,     30,  4,    "METABOLITE2",   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif, analyte = "DRUG"), 5)
   expect_equal(max_observation_time(nif, analyte = "METABOLITE"), 20)
@@ -185,7 +185,7 @@ test_that("max_observation_time handles vector of analytes", {
     1,   20,    0,     25,  3,    "CMT3",   10,
     1,   30,    0,     30,  4,    "CMT4",   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # When multiple analytes specified, should return max across those analytes
   result <- max_observation_time(nif, analyte = c("CMT2", "CMT3"))
@@ -198,7 +198,7 @@ test_that("max_observation_time handles all NA times in observations", {
     1,   NA,    0,     10,  2,    10,
     1,   NA,    0,     20,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # When all times are NA, max with na.rm=TRUE returns -Inf
   result <- max_observation_time(nif)
@@ -213,7 +213,7 @@ test_that("max_observation_time works with decimal time values", {
     1,   2.75,  0,     15,  2,    10,
     1,   10.5,  0,     25,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 10.5)
 })
@@ -225,7 +225,7 @@ test_that("max_observation_time handles very large time values", {
     1,   1000,  0,     20,  2,    10,
     1,   500,   0,     15,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 1000)
 })
@@ -237,7 +237,7 @@ test_that("max_observation_time correctly filters when analyte column exists", {
     1,   5,     0,     20,  2,    "ANALYTE1",   10,
     1,   10,    0,     15,  2,    "ANALYTE2",   10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif, analyte = "ANALYTE1"), 5)
   expect_equal(max_observation_time(nif, analyte = "ANALYTE2"), 10)
@@ -250,7 +250,7 @@ test_that("max_observation_time returns correct value when all observations have
     1,   5,     0,     20,  2,    10,
     1,   5,     0,     15,  2,    10
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(max_observation_time(nif), 5)
 })

@@ -15,7 +15,7 @@ test_that("index_rich_sampling_intervals adds DI, OPDI, and RICH_N", {
       1,    24,     1,    1,  100,  NA,     "A",      "A",
       1,    25,     0,    2,    0,  50,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_rich_sampling_intervals(nif_obj, min_n = 4)
 
@@ -45,7 +45,7 @@ test_that("index_rich_sampling_intervals indexes rich intervals with default min
       1,   102,     0,    2,    0, 110,     "A",      "A",
       1,   104,     0,    2,    0, 120,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_rich_sampling_intervals(nif_obj) |>
     as.data.frame()
@@ -75,7 +75,7 @@ test_that("index_rich_sampling_intervals respects min_n", {
       1,    24,     1,    1,  100,  NA,     "A",      "A",
       1,    25,     0,    2,    0,  40,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   with_default <- index_rich_sampling_intervals(nif_obj, min_n = 4) |>
     as.data.frame()
@@ -102,7 +102,7 @@ test_that("index_rich_sampling_intervals indexes rich intervals separately per s
       2,     0,     1,    1,  100,  NA,     "A",      "A",
       2,     1,     0,    2,    0,   5,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_rich_sampling_intervals(nif_obj, min_n = 4) |>
     as.data.frame()
@@ -121,7 +121,7 @@ test_that("index_rich_sampling_intervals works without ANALYTE column", {
       1,     3,     0,    2,    0,  30,
       1,     4,     0,    2,    0,  40
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_rich_sampling_intervals(nif_obj, min_n = 4) |>
     as.data.frame()
@@ -137,7 +137,7 @@ test_that("index_rich_sampling_intervals validates inputs", {
       1,     0,     1,    1,  100,  NA,     "A",      "A",
       1,     1,     0,    2,    0,  10,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     index_rich_sampling_intervals(data.frame(ID = 1)),

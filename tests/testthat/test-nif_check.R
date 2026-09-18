@@ -10,7 +10,7 @@ test_that("check.nif rejects non-nif input", {
 
 test_that("check.nif errors when empty nif lacks NTIME, ANALYTE, and TAD", {
   expect_error(
-    check.nif(nif(), silent = TRUE),
+    check.nif(nif(silent = TRUE), silent = TRUE),
     "Missing required fields: NTIME, ANALYTE and TAD"
   )
 })

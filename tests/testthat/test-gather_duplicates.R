@@ -5,7 +5,7 @@ test_that("gather_duplicates returns nif object", {
     1,     "1",      "DRUG",   0,     100,   0,    0,     0,      10,   1,
     1,     "1",      "DRUG",   0,     100,   0,    1,     1,      20,   2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- gather_duplicates(obj, silent = TRUE)
   expect_s3_class(result, "nif")
@@ -25,7 +25,7 @@ test_that("gather_duplicates collapses triplicates by NTIME with mean", {
     1,     "1",      "QT",     0,     100,   0,    1.2,   1,      457,  2,
     1,     "1",      "HR",     0,     100,   0,    0,     0,      50,   3
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, silent = TRUE))
 
@@ -45,7 +45,7 @@ test_that("gather_duplicates works with no duplicates", {
     1,     "1",      "QT",     0,     100,   0,    1,     1,      455,  2,
     1,     "1",      "QT",     0,     100,   0,    2,     2,      460,  3
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, silent = TRUE))
   expect_equal(nrow(result), 3L)
@@ -61,7 +61,7 @@ test_that("gather_duplicates works with custom duplicate_function (sum)", {
     1,     "1",      "X",      0,     100,   0,    0.2,   0,      30,   1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      5,    2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, duplicate_function = sum, silent = TRUE))
   expect_equal(nrow(result), 2L)
@@ -78,7 +78,7 @@ test_that("gather_duplicates works with custom duplicate_function (median)", {
     1,     "1",      "X",      0,     100,   0,    0.2,   0,      30,   1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      99,   2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, duplicate_function = median, silent = TRUE))
   expect_equal(nrow(result), 2L)
@@ -95,7 +95,7 @@ test_that("gather_duplicates with na_rm = TRUE uses only non-NA values", {
     1,     "1",      "X",      0,     100,   0,    0.2,   0,      30,   1,
     1,     "1",      "Y",      0,     100,   0,    1,     1,      7,    2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, na_rm = TRUE, silent = TRUE))
   expect_equal(nrow(result), 2L)
@@ -113,7 +113,7 @@ test_that("gather_duplicates returns NA (not NaN) when all DV in group are NA wi
     1,     "1",      "X",      0,     100,   0,    0.2,   0,      NA,   1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      5,    2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, na_rm = TRUE, silent = TRUE))
 
@@ -133,7 +133,7 @@ test_that("gather_duplicates excludes MDV == 1 rows before gathering", {
     1,     "1",      "X",      1,     100,   100,  0,     0,      999,   0,    1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      100,  2,    0
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, silent = TRUE))
   # Only MDV=0 rows: CMT=1 triplicate -> mean 15, CMT=2 single -> 100
@@ -151,7 +151,7 @@ test_that("gather_duplicates with custom id_field", {
     1,     "1",      "X",      0,     100,   0,    1,     1,      30,   1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      8,    2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj2, id_field = "TIME", silent = TRUE))
   expect_equal(nrow(result), 3L)  # X TIME 0 (collapsed), X TIME 1, Y TIME 0
@@ -179,7 +179,7 @@ test_that("gather_duplicates errors when id_field column is missing", {
     1,     "1",      "X",      0,     100,   0,    0,     10,   1,
     1,     "1",      "X",      0,     100,   0,    1,     20,   2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     gather_duplicates(obj, silent = TRUE),
@@ -194,7 +194,7 @@ test_that("gather_duplicates errors when duplicate_function is not a function", 
     1,     "1",      "X",      0,     100,   0,    0,     0,      10,   1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      20,   2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     gather_duplicates(obj, duplicate_function = "mean", silent = TRUE),
@@ -215,7 +215,7 @@ test_that("gather_duplicates errors when baseline is inconsistent per ID", {
     1,     "1",      "X",      0,     100,   0,    0.1,   0,      20,   1,
     1,     NA_character_, "X", 0,    100,   0,    0.2,   0,      30,   1
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     gather_duplicates(obj, silent = TRUE),
@@ -233,7 +233,7 @@ test_that("gather_duplicates works with multiple ANALYTEs", {
     1,     "1",      "HR",     0,     100,   0,    0.1,   0,      51,   3,
     1,     "1",      "HR",     0,     100,   0,    0.2,   0,      52,   3
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, silent = TRUE))
 
@@ -255,7 +255,7 @@ test_that("gather_duplicates works with multiple IDs", {
     2,     "2",      "X",      0,     100,   0,    0.1,   0,      40,   1,
     2,     "2",      "Y",      0,     100,   0,    0,     0,      2,    2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, silent = TRUE))
 
@@ -274,7 +274,7 @@ test_that("gather_duplicates accepts silent = TRUE and silent = NULL", {
     1,     "1",      "X",      0,     100,   0,    0.1,   0,      20,   1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      5,    2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_no_error(gather_duplicates(obj, silent = TRUE))
   expect_message(expect_no_error(gather_duplicates(obj, silent = NULL)))
@@ -290,7 +290,7 @@ test_that("gather_duplicates with dosing row (EVID=1) and observations", {
     1,     "1",      "QT",     0,     100,   0,    0.1,   0,      451,  2,
     1,     "1",      "QT",     0,     100,   0,    0.2,   0,      452,  2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- as.data.frame(gather_duplicates(obj, silent = TRUE))
 
@@ -305,7 +305,7 @@ test_that("gather_duplicates validates na_rm is logical", {
     1,     "1",      "X",      0,     100,   0,    0,     0,      10,   1,
     1,     "1",      "Y",      0,     100,   0,    0,     0,      20,   2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     gather_duplicates(obj, na_rm = 1L, silent = TRUE),

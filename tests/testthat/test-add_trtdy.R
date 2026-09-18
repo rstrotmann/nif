@@ -12,7 +12,7 @@ test_that("add_trtdy adds TRTDY and preserves nif class", {
       1,    24,  100,    1,     1,  NA, "2024-12-07 08:00:00"
   ) |>
     dplyr::mutate(DTC = as.POSIXct(.data$DTC, tz = "UTC")) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_trtdy(nif_obj)
 
@@ -30,7 +30,7 @@ test_that("add_trtdy sets day of first dose to 1", {
       1,     2,    0,    2,     0,  20, "2024-12-06 10:00:00"
   ) |>
     dplyr::mutate(DTC = as.POSIXct(.data$DTC, tz = "UTC")) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_trtdy(nif_obj)
 
@@ -47,7 +47,7 @@ test_that("add_trtdy increments by calendar day after first dose", {
       1,    48,    0,    2,     0,  20, "2024-12-08 08:00:00"
   ) |>
     dplyr::mutate(DTC = as.POSIXct(.data$DTC, tz = "UTC")) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_trtdy(nif_obj)
 
@@ -63,7 +63,7 @@ test_that("add_trtdy keeps negative days for predose DTCs", {
       1,     1,    0,    2,     0,  10, "2024-12-06 09:00:00"
   ) |>
     dplyr::mutate(DTC = as.POSIXct(.data$DTC, tz = "UTC")) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_trtdy(nif_obj)
 
@@ -80,7 +80,7 @@ test_that("add_trtdy calculates TRTDY separately per subject", {
       2,    24,    0,    2,     0,  20, "2024-12-09 08:00:00"
   ) |>
     dplyr::mutate(DTC = as.POSIXct(.data$DTC, tz = "UTC")) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_trtdy(nif_obj)
 
@@ -97,7 +97,7 @@ test_that("add_trtdy uses the earliest administration DTC as day 1 anchor", {
       1,    48,    0,    2,     0,  10, "2024-12-08 08:00:00"
   ) |>
     dplyr::mutate(DTC = as.POSIXct(.data$DTC, tz = "UTC")) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_trtdy(nif_obj) |>
     as.data.frame() |>
@@ -125,7 +125,7 @@ test_that("add_trtdy matches expected values from the historical fixture", {
       2,    60,   NA,    2,     0, "2024-12-08 19:31:35.14839",  70
   ) |>
     dplyr::mutate(DTC = as.POSIXct(.data$DTC)) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_equal(
     add_trtdy(nif_obj)$TRTDY,

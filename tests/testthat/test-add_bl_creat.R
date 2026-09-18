@@ -6,7 +6,7 @@ test_that("add_bl_creat adds BL_CREAT column with mg/dl units", {
     1,   "SUBJ-001",  24,    0,    1,    0,     NA,
     2,   "SUBJ-002",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Create SDTM with LB domain containing CREAT in mg/dl
   test_lb <- tibble::tribble(
@@ -39,7 +39,7 @@ test_that("add_bl_creat converts umol/L to mg/dl automatically", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # CREAT in umol/L (70.72 umol/L = 0.8 mg/dl)
   test_lb <- tibble::tribble(
@@ -68,7 +68,7 @@ test_that("add_bl_creat handles different umol/L unit formats", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_dm <- tibble::tribble(
     ~USUBJID,    ~DOMAIN, ~ACTARMCD,
@@ -109,7 +109,7 @@ test_that("add_bl_creat errors when multiple units are found", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Multiple units for CREAT
   test_lb <- tibble::tribble(
@@ -137,7 +137,7 @@ test_that("add_bl_creat handles missing unit information", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # LBSTRESU column exists but is empty/NA for CREAT
   test_lb <- tibble::tribble(
@@ -170,7 +170,7 @@ test_that("add_bl_creat handles missing LBSTRESU column", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # No LBSTRESU column
   test_lb <- tibble::tribble(
@@ -201,7 +201,7 @@ test_that("add_bl_creat errors when LB domain is missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_dm <- tibble::tribble(
     ~USUBJID,    ~DOMAIN, ~ACTARMCD,
@@ -222,7 +222,7 @@ test_that("add_bl_creat errors when CREAT test code is missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # LB domain exists but no CREAT
   test_lb <- tibble::tribble(
@@ -249,7 +249,7 @@ test_that("add_bl_creat handles custom baseline filter", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Use LBLOBXFL instead of LBBLFL
   test_lb <- tibble::tribble(
@@ -281,7 +281,7 @@ test_that("add_bl_creat uses LBBLFL when available", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_lb <- tibble::tribble(
     ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBSTRESU, ~LBBLFL, ~LBDTC,
@@ -308,7 +308,7 @@ test_that("add_bl_creat uses LBLOBXFL when LBBLFL is missing", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Only LBLOBXFL, no LBBLFL
   test_lb <- tibble::tribble(
@@ -336,7 +336,7 @@ test_that("add_bl_creat errors when no baseline flag column exists", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # No baseline flag columns
   test_lb <- tibble::tribble(
@@ -363,7 +363,7 @@ test_that("add_bl_creat handles invalid baseline filter gracefully", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_lb <- tibble::tribble(
     ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBSTRESU, ~LBBLFL, ~LBDTC,
@@ -398,7 +398,7 @@ test_that("add_bl_creat handles silent parameter", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # CREAT in umol/L (should warn)
   test_lb <- tibble::tribble(
@@ -431,7 +431,7 @@ test_that("add_bl_creat handles multiple subjects correctly", {
     2,   "SUBJ-002",  24,    0,    1,    0,     NA,
     3,   "SUBJ-003",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_lb <- tibble::tribble(
     ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBSTRESU, ~LBBLFL, ~LBDTC,
@@ -464,7 +464,7 @@ test_that("add_bl_creat preserves all original columns", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~OTHER_COL,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA, "test"
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_lb <- tibble::tribble(
     ~USUBJID,    ~DOMAIN, ~LBTESTCD, ~LBSTRESN, ~LBSTRESU, ~LBBLFL, ~LBDTC,
@@ -493,7 +493,7 @@ test_that("add_bl_creat handles NA values in LBSTRESN", {
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # CREAT with NA value
   test_lb <- tibble::tribble(
@@ -520,7 +520,7 @@ test_that("add_bl_creat handles multiple baseline values (uses mean by default)"
     ~ID, ~USUBJID,    ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   "SUBJ-001",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Multiple baseline CREAT values
   test_lb <- tibble::tribble(
@@ -549,7 +549,7 @@ test_that("add_bl_creat handles multiple units", {
     1,   "SUBJ-001",  0,     0,    1,    0,     NA,
     2,   "SUBJ-002",  0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Multiple units for CREAT
   test_lb <- tibble::tribble(

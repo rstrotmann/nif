@@ -203,7 +203,7 @@ test_that("filter_exendtc_after_exstdtc works", {
 
 test_that("make_nif", {
   sdtm <- examplinib_sad
-  nif <- nif() %>%
+  nif <- nif(silent = TRUE) %>%
     add_administration(sdtm, extrt = "EXAMPLINIB", analyte = "RS2023",
                        silent = TRUE) %>%
     add_observation(sdtm, domain = "pc", testcd = "RS2023", cmt = 2,
@@ -231,7 +231,7 @@ test_that("make_time", {
     1,   "B",      "B",     "2024-03-18T10:00", 0,     3,    1,     0,    18
   ) %>%
     lubrify_dates() %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_no_error(temp <- make_time(test) %>% as.data.frame())
 })
@@ -240,7 +240,7 @@ test_that("make_time", {
 test_that("add_administration, add_observation", {
   suppressMessages(
     expect_no_error(
-      nif <- nif() %>%
+      nif <- nif(silent = TRUE) %>%
         add_administration(examplinib_sad, "EXAMPLINIB", analyte = "RS2023") %>%
         add_observation(examplinib_sad, "pc", "RS2023", silent = TRUE)
     )
@@ -284,7 +284,7 @@ test_that("make_nif integration works", {
   sdtm <- examplinib_poc
   suppressMessages(
     expect_no_error(
-      nif <- nif() %>%
+      nif <- nif(silent = TRUE) %>%
         add_administration(sdtm, "EXAMPLINIB", analyte = "RS2023") %>%
         add_observation(sdtm, "pc", "RS2023", cmt = 2) %>%
         add_observation(sdtm, "pc", "RS2023487A",

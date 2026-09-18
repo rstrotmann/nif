@@ -57,7 +57,7 @@ create_ae_fixture <- function(
   }
 
   test_sdtm <- sdtm(list(ae = ae, dm = dm, vs = vs, ex = ex))
-  base_nif <- nif() |>
+  base_nif <- nif(silent = TRUE) |>
     add_administration(test_sdtm, "DRUG", analyte = "DRUG", silent = TRUE)
 
   list(sdtm = test_sdtm, nif = base_nif, ae = ae, dm = dm, vs = vs, ex = ex)

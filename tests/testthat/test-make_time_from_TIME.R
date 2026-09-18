@@ -8,7 +8,7 @@ test_that("make_time_from_time works with basic single subject data", {
     1,   2,     0,     "DRUG",   "DRUG",  20,  0,    2,
     1,   3,     0,     "DRUG",   "DRUG",  15,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -40,7 +40,7 @@ test_that("make_time_from_time works with multiple subjects", {
     2,   1,     0,     "DRUG",   "DRUG",  30,  0,    2,
     2,   2,     0,     "DRUG",   "DRUG",  40,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -66,7 +66,7 @@ test_that("make_time_from_time works with multiple parent compounds", {
     1,   4,     0,     "DRUG1",  "DRUG1", 15,  0,    2,
     1,   5,     0,     "DRUG2",  "DRUG2", 25,  0,    4
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data) |>
     arrange(ID, PARENT)
@@ -98,7 +98,7 @@ test_that("make_time_from_time works with multiple administrations of same paren
     1,   4,     0,     "DRUG",   "DRUG",  15,  0,    2,
     1,   5,     0,     "DRUG",   "DRUG",  25,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -125,7 +125,7 @@ test_that("make_time_from_time handles observations before first administration"
     1,   2,     0,     "DRUG",   "DRUG",  10, 0,    2,
     1,   3,     0,     "DRUG",   "DRUG",  20, 0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -146,7 +146,7 @@ test_that("make_time_from_time handles empty data frame", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~ANALYTE, ~PARENT, ~DV, ~AMT, ~CMT
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -183,7 +183,7 @@ test_that("make_time_from_time preserves original data columns", {
     1,   0,     1,     "DRUG",   "DRUG",  NA,   "A",     123,     100,  1,
     1,   1,     0,     "DRUG",   "DRUG",  10,   "B",     456,     0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -202,7 +202,7 @@ test_that("make_time_from_time calculates time with correct precision", {
     1,   0.5,   0,     "DRUG",   "DRUG",  10,  0,    2,
     1,   1.258, 0,     "DRUG",   "DRUG",  20,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -225,7 +225,7 @@ test_that("make_time_from_time handles subjects with no administrations", {
     1,   1,     0,     "DRUG",   "DRUG",  10, 0,    2,
     1,   2,     0,     "DRUG",   "DRUG",  15, 0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_no_error(
     result <- make_time_from_time(test_data)
@@ -250,7 +250,7 @@ test_that("make_time_from_time handles complex multi-subject, multi-parent scena
     2,   1,     0,     "DRUG1",  "DRUG1", 30,  0,    2,
     2,   2,     0,     "DRUG1",  "DRUG1", 40,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -277,7 +277,7 @@ test_that("make_time_from_time handles missing TIME values gracefully", {
     1,   NA,    0,     "DRUG",   "DRUG",  10,  0,    2,
     1,   2,     0,     "DRUG",   "DRUG",  20,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -302,7 +302,7 @@ test_that("make_time_from_time handles predose values with downup fill correctly
     1,   1,     1,     "A",      "A",     NA, 100,  1,
     1,   1.5,   0,     "A",      "A",     4,   0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data) %>%
     as.data.frame()
@@ -327,7 +327,7 @@ test_that("make_time_from_time works when PARENT column is missing but can be cr
     1,   0,     1,     "DRUG",   NA,  100,  1,
     1,   1,     0,     "DRUG",   10,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # This should work if ensure_parent can create PARENT from ANALYTE
   # If it can't, it will error, which is expected behavior
@@ -350,7 +350,7 @@ test_that("make_time_from_time handles multiple doses with observations in betwe
     1,   2.5,   0,     "DRUG",   "DRUG",  15,  0,    2,   # Obs after second dose
     1,   3,     0,     "DRUG",   "DRUG",  20,  0,    2   # Obs after second dose
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data)
 
@@ -375,7 +375,7 @@ test_that("make_time_from_time handles unsorted input data", {
     1,   0,     1,     "DRUG",   "DRUG",  NA,  100,  1,
     1,   2,     0,     "DRUG",   "DRUG",  20,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- make_time_from_time(test_data) |>
     dplyr::arrange(.data$TIME)

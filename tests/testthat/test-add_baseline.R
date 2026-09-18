@@ -6,7 +6,7 @@ test_that("add_baseline adds baseline covariate correctly", {
     "SUBJ-001",  "2023-01-02", 100,   1,   24,    0,    1,    0,     NA,
     "SUBJ-002",  "2023-01-01", 200,   2,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   sdtm_data <- list(
     dm = tibble::tribble(
@@ -420,7 +420,7 @@ test_that("add_baseline coding table validation works correctly", {
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -495,7 +495,7 @@ test_that("add_baseline coding table with multiple join fields works", {
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
@@ -534,7 +534,7 @@ test_that("add_baseline coding table with partial matches works", {
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
@@ -574,7 +574,7 @@ test_that("add_baseline coding table with missing values handles correctly", {
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA,
     "SUBJ-003",  "2023-01-01", 3,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -615,7 +615,7 @@ test_that("add_baseline handles different summary functions with coding tables",
     ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Need to use different test codes to avoid pivot_wider issues
   test_vs <- tibble::tribble(
@@ -666,7 +666,7 @@ test_that("add_baseline handles complex coding scenarios", {
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA,
     "SUBJ-003",  "2023-01-01", 3,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -710,7 +710,7 @@ test_that("add_baseline handles baseline filter with LOBXFL", {
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
     "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_lb <- tibble::tribble(
     ~USUBJID,    ~LBDTC,       ~LBTESTCD, ~LBSTRESN, ~LBLOBXFL,
@@ -742,7 +742,7 @@ test_that("add_baseline handles custom observation filter with coding tables", {
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
     "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSCAT, ~VSBLFL,
@@ -785,7 +785,7 @@ test_that("add_baseline handles edge cases with coding tables", {
     ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -833,7 +833,7 @@ test_that("add_baseline handles numeric coding with different data types", {
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA,
     "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -887,7 +887,7 @@ test_that("add_baseline handles multiple test codes with coding tables", {
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA,
     "SUBJ-002",  "2023-01-01", 2,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSORRES, ~VSBLFL,
@@ -940,7 +940,7 @@ test_that("add_baseline cat filter works correctly", {
     "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA,
     "SUBJ-003", "2023-01-01", 3, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
@@ -995,7 +995,7 @@ test_that("add_baseline scat filter works correctly", {
     "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA,
     "SUBJ-003", "2023-01-01", 3, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
@@ -1050,7 +1050,7 @@ test_that("add_baseline cat and scat filters work together", {
     "SUBJ-002", "2023-01-01", 2, 0, 0, 1, 0, NA,
     "SUBJ-003", "2023-01-01", 3, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,        ~VSSCAT,
@@ -1104,7 +1104,7 @@ test_that("add_baseline cat filter handles missing field", {
     ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Domain without VSCAT field
   test_vs <- tibble::tribble(
@@ -1134,7 +1134,7 @@ test_that("add_baseline scat filter handles missing field", {
     ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   # Domain without VSSCAT field
   test_vs <- tibble::tribble(
@@ -1164,7 +1164,7 @@ test_that("add_baseline cat filter error when cat category not available", {
     ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,
@@ -1194,7 +1194,7 @@ test_that("add_baseline scat filter error when scat category not available", {
     ~USUBJID, ~DTC, ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001", "2023-01-01", 1, 0, 0, 1, 0, NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID, ~VSDTC, ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSSCAT,
@@ -1224,7 +1224,7 @@ test_that("add_baseline cat filter with multiple baseline values", {
     ~USUBJID,    ~DTC,         ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     "SUBJ-001",  "2023-01-01", 1,   0,     0,    1,    0,     NA
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   test_vs <- tibble::tribble(
     ~USUBJID,    ~VSDTC,       ~VSTESTCD, ~VSSTRESN, ~VSBLFL, ~VSCAT,

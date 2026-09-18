@@ -9,7 +9,7 @@ test_that("add_bl_lbm adds BL_LBM with the default Boer method", {
       1,     0,  100,    1,     1,  NA,      70,     170,    0,
       1,     1,    0,    2,     0,  10,      70,     170,    0
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_lbm(nif_obj)
 
@@ -25,7 +25,7 @@ test_that("add_bl_lbm works with character SEX codes", {
       1,     0,  100,    1,     1,  NA,      70,     170,  "M",
       2,     0,  100,    1,     1,  NA,      60,     165,  "F"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_lbm(nif_obj)
 
@@ -39,7 +39,7 @@ test_that("add_bl_lbm accepts lbm_hume as method", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~WEIGHT, ~HEIGHT, ~SEX,
       1,     0,  100,    1,     1,  NA,      70,     170,    0
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_lbm(nif_obj, method = lbm_hume)
 
@@ -53,7 +53,7 @@ test_that("add_bl_lbm accepts lbm_peters as method", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~WEIGHT, ~HEIGHT, ~SEX,
       1,     0,  100,    1,     1,  NA,      70,     170,    0
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_lbm(nif_obj, method = lbm_peters)
 
@@ -70,7 +70,7 @@ test_that("add_bl_lbm keeps BL_LBM constant within a subject", {
       2,     0,  100,    1,     1,  NA,      65,     170,    1,
       2,     1,    0,    2,     0,  20,      65,     170,    1
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_lbm(nif_obj)
 
@@ -87,7 +87,7 @@ test_that("add_bl_lbm propagates NA covariates as NA LBM", {
       2,     0,  100,    1,     1,  NA,      70,      NA,    0,
       3,     0,  100,    1,     1,  NA,      70,     170,   NA
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_bl_lbm(nif_obj)
 
@@ -100,19 +100,19 @@ test_that("add_bl_lbm requires WEIGHT, HEIGHT, and SEX", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~HEIGHT, ~SEX,
       1,     0,  100,    1,     1,  NA,     170,    0
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   missing_height <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~WEIGHT, ~SEX,
       1,     0,  100,    1,     1,  NA,      70,    0
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   missing_sex <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~WEIGHT, ~HEIGHT,
       1,     0,  100,    1,     1,  NA,      70,     170
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(add_bl_lbm(missing_weight), "Missing required fields: WEIGHT")
   expect_error(add_bl_lbm(missing_height), "Missing required fields: HEIGHT")

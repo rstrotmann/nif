@@ -19,7 +19,7 @@ test_that("add_obs_per_dosing_interval adds OPDI with correct observation counts
       1,    74,    0,     0,   2,    2,     "A",      "A",
       1,    76,    0,     0,   3,    2,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_obs_per_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -47,7 +47,7 @@ test_that("add_obs_per_dosing_interval shares OPDI across admin and obs of the s
       1,    24,  100,     1,  NA,    1,     "A",      "A",
       1,    25,    0,     0,  15,    2,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_obs_per_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -75,7 +75,7 @@ test_that("add_obs_per_dosing_interval counts separately by ANALYTE", {
       1,    49,    0,     0,   6,    4,     "B",      "B",
       1,    50,    0,     0,   7,    4,     "B",      "B"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_obs_per_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -100,7 +100,7 @@ test_that("add_obs_per_dosing_interval does not let metabolites inflate parent O
       1,    24,  100,     1,  NA,    1,     "A",      "A",      FALSE,
       1,    25,    0,     0,   5,    2,     "A",      "A",      FALSE
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_obs_per_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -123,7 +123,7 @@ test_that("add_obs_per_dosing_interval counts separately by subject", {
       2,     0,  100,     1,  NA,    1,     "A",      "A",
       2,     1,    0,     0,   5,    2,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_obs_per_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -141,7 +141,7 @@ test_that("add_obs_per_dosing_interval replaces an existing DI column", {
       1,    24,  100,     1,  NA,    1,     "A",      "A",  99,
       1,    25,    0,     0,   2,    2,     "A",      "A",  99
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_obs_per_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -161,7 +161,7 @@ test_that("add_obs_per_dosing_interval derives CMT-based ANALYTE and counts per 
       1,    24,  100,     1,  NA,    1,     "A",
       1,    25,    0,     0,   3,    2,     "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- add_obs_per_dosing_interval(nif_obj)
 

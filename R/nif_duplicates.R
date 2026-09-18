@@ -321,5 +321,6 @@ gather_duplicates <- function(
       .by = any_of(group_fields)
     ) |>
     left_join(bl, by = "ID") |>
-    nif()
+    # nif()
+    restore_nif(obj)
 }

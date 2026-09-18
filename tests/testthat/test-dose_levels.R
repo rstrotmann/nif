@@ -1,7 +1,7 @@
 # Comprehensive tests for dose_levels()
 
 test_that("dose_levels returns NULL for empty NIF", {
-  empty_nif <- nif()
+  empty_nif <- nif(silent = TRUE)
   result <- dose_levels(empty_nif)
   expect_null(result)
 })
@@ -13,7 +13,7 @@ test_that("dose_levels returns NULL when no dosing events (all EVID = 0)", {
     1,     0,     0,    1,    0,     0,
     1,     1,     0,    1,    0,     10,
     2,     0,     0,    1,    0,     0
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_null(result)
 })
@@ -25,7 +25,7 @@ test_that("dose_levels returns one row for single subject, single analyte, one d
     1,     0,     100,  1,    1,     NA,
     1,     1,     0,    1,    0,     10,
     1,     2,     0,    1,    0,     20
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 1)
@@ -41,7 +41,7 @@ test_that("dose_levels uses first dose only per subject and analyte", {
     1,     24,    200,  1,    1,     NA,
     1,     48,    200,  1,    1,     NA,
     1,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_equal(nrow(result), 1)
   expect_equal(result$CMT1, 100)
@@ -58,7 +58,7 @@ test_that("dose_levels aggregates multiple subjects at same dose", {
     2,     1,     0,    1,    0,     6,
     3,     0,     50,   1,    1,     NA,
     3,     1,     0,    1,    0,     7
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_equal(nrow(result), 1)
   expect_equal(result$N, 3)
@@ -75,7 +75,7 @@ test_that("dose_levels returns multiple rows for multiple dose levels", {
     2,     1,     0,    1,    0,     5,
     3,     0,     100,  1,    1,     NA,
     3,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_equal(nrow(result), 3)
   expect_equal(sort(result$CMT1), c(25, 50, 100))
@@ -90,7 +90,7 @@ test_that("dose_levels with multiple analytes pivots to one column per analyte",
     1,     0,     0,    2,    1,     NA,   "MET",
     1,     1,     0,    1,    0,     10,   "DRUG",
     1,     1,     0,    2,    0,     2,    "MET"
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_equal(nrow(result), 1)
   expect_equal(result$N, 1)
@@ -110,7 +110,7 @@ test_that("dose_levels with group adds grouping columns", {
     2,     1,     0,    1,    0,     6,    "F",
     3,     0,     50,   1,    1,     NA,   "M",
     3,     1,     0,    1,    0,     7,    "M"
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat, group = "SEX")
   expect_equal(nrow(result), 2)
   expect_true("SEX" %in% names(result))
@@ -130,7 +130,7 @@ test_that("dose_levels with multiple group columns", {
     2,     1,     0,    1,    0,     6,    "M",    "N",
     3,     0,     50,   1,    1,     NA,   "F",    "Y",
     3,     1,     0,    1,    0,     7,    "F",    "Y"
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat, group = c("SEX", "FASTED"))
   expect_equal(nrow(result), 3)
   expect_true("SEX" %in% names(result))
@@ -144,7 +144,7 @@ test_that("dose_levels errors when group column is missing", {
     ~ID,   ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,     0,     100,  1,    1,     NA,
     1,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   expect_error(dose_levels(dat, group = "SEX"), "Required.*missing")
 })
 
@@ -154,7 +154,7 @@ test_that("dose_levels errors on invalid cmt type", {
     ~ID,   ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,     0,     100,  1,    1,     NA,
     1,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   expect_error(dose_levels(dat, cmt = "x"), "numeric")
 })
 
@@ -164,7 +164,7 @@ test_that("dose_levels errors when group is not character", {
     ~ID,   ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,     0,     100,  1,    1,     NA,
     1,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   expect_error(dose_levels(dat, group = 1), "character")
 })
 
@@ -184,7 +184,7 @@ test_that("dose_levels returns data.frame", {
     ~ID,   ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,     0,     100,  1,    1,     NA,
     1,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_true(is.data.frame(result))
   expect_false(inherits(result, "tbl_df"))
@@ -196,7 +196,7 @@ test_that("dose_levels with group NULL works as default", {
     ~ID,   ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,     0,     100,  1,    1,     NA,
     1,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat, group = NULL)
   expect_equal(nrow(result), 1)
   expect_equal(result$N, 1)
@@ -209,7 +209,7 @@ test_that("dose_levels preserves existing ANALYTE when present", {
     ~ID,   ~TIME, ~AMT, ~CMT, ~EVID, ~DV,  ~ANALYTE,
     1,     0,     100,  1,    1,     NA,   "EXAMPLINIB",
     1,     1,     0,    1,    0,     10,   "EXAMPLINIB"
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_true("EXAMPLINIB" %in% names(result))
   expect_equal(result$EXAMPLINIB, 100)
@@ -224,7 +224,7 @@ test_that("dose_levels same dose different groups gives separate rows", {
     1,     1,     0,    1,    0,     10,   "A",
     2,     0,     100,  1,    1,     NA,   "B",
     2,     1,     0,    1,    0,     12,   "B"
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat, group = "COHORT")
   expect_equal(nrow(result), 2)
   expect_equal(result$N, c(1, 1))
@@ -240,7 +240,7 @@ test_that("dose_levels first dose per subject uses minimum TIME within group", {
     1,     12,    50,   1,    1,     NA,
     1,     24,    50,   1,    1,     NA,
     1,     1,     0,    1,    0,     10
-  ) %>% nif()
+  ) %>% nif(silent = TRUE)
   result <- dose_levels(dat)
   expect_equal(nrow(result), 1)
   expect_equal(result$CMT1, 100)

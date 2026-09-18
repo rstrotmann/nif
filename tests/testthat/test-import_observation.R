@@ -5,7 +5,7 @@ create_test_nif <- function() {
     "SUBJ-001",  1,   "DRUG",   1,   100,  100,   ymd_hms("2023-01-01 08:00:00"), 0,      0,     "DRUG",  FALSE,       1,     1,    NA,  "",
     "SUBJ-002",  2,   "DRUG",   1,   150,  150,   ymd_hms("2023-01-01 08:00:00"), 0,      0,     "DRUG",  FALSE,       1,     1,    NA,  ""
   ) %>%
-    nif()
+    nif(silent = TRUE)
 }
 
 

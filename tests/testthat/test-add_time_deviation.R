@@ -8,7 +8,7 @@ test_that("add_time_deviation works with basic input", {
     "SUBJ-001",  "2020-01-01 16:00:00", 0,  "DRUG",  "DRUG",   8,   8,     30,   1,   8,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -30,7 +30,7 @@ test_that("add_time_deviation calculates deviations for early/late observations"
     "SUBJ-001",  "2020-01-01 15:00:00", 0,  "DRUG",  "DRUG",   7,    8,     30,   1,   7,      0,    2     # 1 hour early
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -48,7 +48,7 @@ test_that("add_time_deviation handles pre-dose observations (NTIME == 0)", {
     "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,    2,     10,  1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -71,7 +71,7 @@ test_that("add_time_deviation handles multiple administrations", {
     "SUBJ-001",  "2020-01-02 02:00:00", 0,  "DRUG",  "DRUG",   2,   2,     20,   1,   18,    0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -90,7 +90,7 @@ test_that("add_time_deviation handles multiple subjects", {
     "SUBJ-002",  "2020-01-01 11:00:00", 0,  "DRUG",  "DRUG",   3,   2,     20,   2,   3,     0,    2   # 1 hour late
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -110,7 +110,7 @@ test_that("add_time_deviation handles multiple parent compounds", {
     "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG2", "DRUG2",  2,   2,     20,   1,   2,     0,    4
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -129,7 +129,7 @@ test_that("add_time_deviation handles observations without next administration",
     "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   -2,  0,     5,   1,   -2,    0,    2   # Pre-dose, but no next admin
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -148,7 +148,7 @@ test_that("add_time_deviation handles NA values in TAD", {
     "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -167,7 +167,7 @@ test_that("add_time_deviation handles NA values in NTIME", {
     "SUBJ-001",  "2020-01-01 12:00:00", 0,  "DRUG",  "DRUG",   4,   4,     20,   1,   4,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_message(
     result <- add_time_deviation(test_data, silent = F),
@@ -188,7 +188,7 @@ test_that("add_time_deviation rounds TIME_DEV to 3 decimal places", {
     "SUBJ-001",  "2020-01-01 10:00:00.123", 0, "DRUG",  "DRUG",   2.0003417, 2,     10,   1,   2.0003417,  0,    2   # Very precise
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -203,7 +203,7 @@ test_that("add_time_deviation handles empty data frame", {
     ~USUBJID, ~DTC, ~EVID, ~PARENT, ~ANALYTE, ~TAD, ~NTIME, ~DV, ~ID, ~TIME, ~AMT, ~CMT
   ) %>%
     mutate(DTC = lubridate::as_datetime(character(0))) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -218,7 +218,7 @@ test_that("add_time_deviation handles missing TAD field", {
     "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  0,     NA,   1,   0,     100,  1
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_time_deviation(test_data),
@@ -233,7 +233,7 @@ test_that("add_time_deviation handles missing NTIME field", {
     "SUBJ-001",  "2020-01-01 08:00:00", 1,  "DRUG",  0,   NA,   1,   0,     100,  1
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     add_time_deviation(test_data),
@@ -249,7 +249,7 @@ test_that("add_time_deviation preserves original data columns", {
     "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   "B",        1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -266,7 +266,7 @@ test_that("add_time_deviation removes temporary columns", {
     "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -283,7 +283,7 @@ test_that("add_time_deviation returns a nif object", {
     "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   2,     10,   1,   2,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -303,7 +303,7 @@ test_that("add_time_deviation handles complex scenario with multiple pre-dose ob
     "SUBJ-001",  "2020-01-02 02:00:00", 0,  "DRUG",  "DRUG",   2,    2,     20,  1,   18,    0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -328,7 +328,7 @@ test_that("add_time_deviation handles observations exactly at scheduled time", {
     "SUBJ-001",  "2020-01-01 16:00:00", 0,  "DRUG",  "DRUG",   8,   8,     30,   1,   8,     0,    2
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -346,7 +346,7 @@ test_that("add_time_deviation handles very large time deviations", {
     "SUBJ-001",  "2020-01-01 20:00:00", 0,  "DRUG",  "DRUG",   12,  4,     20,   1,   12,    0,    2    # 8 hours late
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 
@@ -364,7 +364,7 @@ test_that("add_time_deviation handles negative NTIME values", {
     "SUBJ-001",  "2020-01-01 10:00:00", 0,  "DRUG",  "DRUG",   2,   -1,    10,   1,   2,     0,    2   # Negative NTIME
   ) %>%
     mutate(DTC = lubridate::as_datetime(DTC)) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- add_time_deviation(test_data)
 

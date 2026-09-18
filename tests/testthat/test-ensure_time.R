@@ -8,7 +8,7 @@ test_that("ensure_time works with TIME, TAD, and TAFD already present", {
     2,   0,     0,     0,    1,     NA,  100,  1,
     2,   1,     1,     1,    0,     30,  0,    2
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_time(test_data)
 
@@ -52,7 +52,7 @@ test_that("ensure_time calculates TIME, TAD, and TAFD from TIME", {
     2,   0,     1,     1,    NA,  100,
     2,   1,     0,     2,    30,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_time(test_data)
 
@@ -77,7 +77,7 @@ test_that("ensure_time handles multiple dosing events", {
     1,   3,     0,     2,    20,  0,
     1,   4,     0,     2,    15,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_time(test_data)
 
@@ -103,7 +103,7 @@ test_that("ensure_time handles multiple parent compounds", {
     1,   4,     0,     4,    "DRUG2", 30,  0,
     1,   5,     0,     4,    "DRUG2", 25,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_time(test_data)
 
@@ -128,7 +128,7 @@ test_that("ensure_time handles observations before first dose", {
     1,   4,     0,     2,    10,  0,
     1,   5,     0,     2,    20,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_time(test_data)
 
@@ -151,7 +151,7 @@ test_that("ensure_time handles missing required columns", {
     1,   10,   0,     0,    1,    0,
     1,   20,   1,     0,    1,    0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     result <- ensure_time(test_data),
@@ -170,7 +170,7 @@ test_that("ensure_time handles missing required columns", {
     2,   0,     0,     0,    1,     NA,  100,  1,
     2,   1,     1,     1,    0,     30,  0,    2
   ) %>%
-    nif() |>
+    nif(silent = TRUE) |>
     select(-TIME)
 
   expect_error(
@@ -188,7 +188,7 @@ test_that("ensure_time preserves original data", {
     1,   1,     0,     2,    10,   "B",     456,     0,
     1,   2,     0,     2,    20,   "C",     789,     0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_time(test_data)
 
@@ -204,7 +204,7 @@ test_that("ensure_time returns a nif object", {
     1,   0,     1,     1,    NA,  100,
     1,   1,     0,     2,    10,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_time(test_data)
 

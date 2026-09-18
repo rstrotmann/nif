@@ -28,8 +28,7 @@ ensure_analyte <- function(obj) {
     mutate(ANALYTE = case_when(
       is.na(CMT) ~ NA_character_,
       TRUE ~ paste0("CMT", as.character(CMT))
-    )) |>
-    nif() # Ensure return value is a NIF object
+    ))
 }
 
 
@@ -77,7 +76,8 @@ ensure_dose <- function(obj) {
     ungroup()
 
   # Return as NIF object
-  nif(result)
+  # nif(result)
+  restore_nif(result, obj)
 }
 
 
@@ -153,7 +153,7 @@ ensure_parent <- function(obj, silent = NULL) {
     select(-".last_admin_analyte")
 
   # Return as NIF object
-  nif(result)
+  restore_nif(result, obj)
 }
 
 

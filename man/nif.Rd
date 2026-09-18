@@ -41,7 +41,7 @@ generated. Analyte mapping formulae can be supplied as the ... argument. For
 details, see \code{nif_auto()}.
 }
 \examples{
-nif()
+nif(silent = TRUE)
 }
 \seealso{
 \code{\link[=nif_auto]{nif_auto()}}

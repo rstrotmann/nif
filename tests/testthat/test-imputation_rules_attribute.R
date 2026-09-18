@@ -19,19 +19,19 @@ test_that("resolve_imputation_rules() maps names and NULL to lists", {
 
 
 test_that("nif() stores a resolved imputation_rules list", {
-  empty <- nif()
+  empty <- nif(silent = TRUE)
   expect_identical(
     attr(empty, "imputation_rules"),
     imputation_rules_standard
   )
 
-  by_name <- nif(imputation_rules = "imputation_rules_void")
+  by_name <- nif(imputation_rules = "imputation_rules_void", silent = TRUE)
   expect_identical(
     attr(by_name, "imputation_rules"),
     imputation_rules_void
   )
 
-  by_list <- nif(imputation_rules = imputation_rules_minimal)
+  by_list <- nif(imputation_rules = imputation_rules_minimal, silent = TRUE)
   expect_identical(
     attr(by_list, "imputation_rules"),
     imputation_rules_minimal
@@ -72,7 +72,7 @@ test_that("nif() wrapping a nif object keeps imputation_rules", {
 
 
 test_that("dplyr verbs keep imputation_rules via reconstruct", {
-  obj <- nif(imputation_rules = imputation_rules_void)
+  obj <- nif(imputation_rules = imputation_rules_void, silent = TRUE)
   out <- dplyr::filter(obj, ID > 0)
 
   expect_s3_class(out, "nif")
@@ -121,13 +121,13 @@ test_that("add_administration() uses nif imputation_rules when imputation is NUL
   ))
 
   from_attr <- add_administration(
-    nif(imputation_rules = imputation_rules_void),
+    nif(imputation_rules = imputation_rules_void, silent = TRUE),
     sdtm_obj,
     "A",
     silent = TRUE
   )
   from_arg <- add_administration(
-    nif(),
+    nif(silent = TRUE),
     sdtm_obj,
     "A",
     imputation = imputation_rules_void,
@@ -167,7 +167,7 @@ test_that("add_observation() uses nif imputation_rules when imputation is NULL",
   ))
 
   nif_obj <- add_administration(
-    nif(imputation_rules = imputation_rules_void),
+    nif(imputation_rules = imputation_rules_void, silent = TRUE),
     sdtm_obj,
     "A",
     silent = TRUE

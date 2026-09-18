@@ -19,7 +19,7 @@ test_that("correlate_obs validates analyte parameters", {
     1,   0,     0,   1,     "DRUG",   "2023-01-01T00:00:00", 1,   100,  1,
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Test missing independent analyte
@@ -56,7 +56,7 @@ test_that("correlate_obs validates window parameter", {
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Test invalid window (non-numeric)
@@ -81,7 +81,7 @@ test_that("correlate_obs validates time_field parameter", {
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Test invalid time_field value
@@ -114,7 +114,7 @@ test_that("correlate_obs basic functionality works with single dependent analyte
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   result <- correlate_obs(
@@ -144,7 +144,7 @@ test_that("correlate_obs works with multiple dependent analytes", {
     1,   0,     5,   0,     "METAB",     "2023-01-01T00:00:00", 3,   0,    3,
     1,   0,     3,   0,     "BIOMARKER", "2023-01-01T00:00:00", 4,   0,    4
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   result <- correlate_obs(
@@ -176,7 +176,7 @@ test_that("correlate_obs matches observations within time window using TIME", {
     1,   0,      10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   5/60,   5,   0,     "METAB",  "2023-01-01T00:05:00", 3,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Default window is 10/60 = 10 minutes, so this should match
@@ -211,7 +211,7 @@ test_that("correlate_obs matches observations within time window using DTC", {
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   5,     5,   0,     "METAB",  "2023-01-01T00:05:00", 3,   0,    3   # 5 minutes later
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Default window is 10/60 = 10 minutes, so this should match
@@ -236,7 +236,7 @@ test_that("correlate_obs handles multiple matches within window", {
     1,   2 / 60,   5,   0,     "METAB",  "2023-01-01T00:02:00", 3,   0,    3,   # 2 minutes later
     1,   3 / 60,   7,   0,     "METAB",  "2023-01-01T00:03:00", 4,   0,    3   # 3 minutes later
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Default duplicate_function is mean, so should average 5 and 7 = 6
@@ -262,7 +262,7 @@ test_that("correlate_obs handles custom duplicate function", {
     1,   2 / 60,   5,   0,     "METAB",  "2023-01-01T00:02:00", 3,   0,    3,
     1,   3 / 60,   7,   0,     "METAB",  "2023-01-01T00:03:00", 4,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Test with sum function
@@ -307,7 +307,7 @@ test_that("correlate_obs handles no matches", {
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   120,   5,   0,     "METAB",  "2023-01-01T02:00:00", 3,   0,    3   # 2 hours later
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   result <- correlate_obs(
@@ -330,7 +330,7 @@ test_that("correlate_obs filters NA and NaN values", {
     1,   0,     NaN,  0,     "DRUG",   "2023-01-01T00:00:00", 4,   0,    2,   # NaN value
     1,   0,     5,    0,     "METAB",  "2023-01-01T00:00:00", 5,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   result <- correlate_obs(
@@ -356,7 +356,7 @@ test_that("correlate_obs handles multiple subjects", {
     2,   0,     15,  0,     "DRUG",   "2023-01-01T00:00:00", 5,   0,    2,
     2,   0,     8,   0,     "METAB",  "2023-01-01T00:00:00", 6,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   result <- correlate_obs(
@@ -391,7 +391,7 @@ test_that("correlate_obs handles multiple independent analyte observations", {
     1,   0,        5,   0,     "METAB",  "2023-01-01T00:00:00", 4,   0,    3,
     1,   2 / 60,   15,  0,     "METAB",  "2023-01-01T00:02:00", 5,   0,    3
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Use a small window (1 minute) so each matches only its corresponding observation
@@ -427,7 +427,7 @@ test_that("correlate_obs only matches observations from same subject", {
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     2,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3   # Different subject
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Function matches by ID, so different subjects shouldn't match
@@ -449,7 +449,7 @@ test_that("correlate_obs handles observations only with EVID == 0", {
     1,   0,     10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,   # EVID == 0 (observation)
     1,   0,     5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3   # EVID == 0 (observation)
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   result <- correlate_obs(
@@ -473,7 +473,7 @@ test_that("correlate_obs handles multiple dependent analytes with different matc
     1,   0,     5,   0,     "METAB",     "2023-01-01T00:00:00", 3,   0,    3,   # Matches
     1,   120,   3,   0,     "BIOMARKER", "2023-01-01T02:00:00", 4,   0,    4   # Doesn't match (too far)
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   result <- correlate_obs(
@@ -498,7 +498,7 @@ test_that("correlate_obs handles very small time window", {
     1,   0,         10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   0.000278,  5,   0,     "METAB",  "2023-01-01T00:00:01", 3,   0,    3   # 1 second later (0.000278 hours)
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # With 1 minute window (1/60 hours = 0.01667 hours), should match
@@ -531,7 +531,7 @@ test_that("correlate_obs handles backward time differences", {
     1,   5 / 60,   10,  0,     "DRUG",   "2023-01-01T00:05:00", 2,   0,    2,
     1,   0,        5,   0,     "METAB",  "2023-01-01T00:00:00", 3,   0,    3   # 5 minutes before
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Default window is 10 minutes, so should match (abs(5 minutes) < 10 minutes)
@@ -555,7 +555,7 @@ test_that("correlate_obs handles TIME vs DTC field differences", {
     1,   0,        10,  0,     "DRUG",   "2023-01-01T00:00:00", 2,   0,    2,
     1,   5 / 60,   5,   0,     "METAB",  "2023-01-01T00:05:00", 3,   0,    3   # 5 minutes later
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Test with TIME field - should match (5 minutes < 10 minutes window)
@@ -595,7 +595,7 @@ test_that("correlate_obs handles multiple independent observations with multiple
     1,   0,        7,   0,     "BIOMARKER", "2023-01-01T00:00:00", 6,   0,    4,
     1,   2 / 60,   12,  0,     "BIOMARKER", "2023-01-01T00:02:00", 7,   0,    4
   ) %>%
-    nif() %>%
+    nif(silent = TRUE) %>%
     lubrify_dates()
 
   # Use small window so each independent observation matches only corresponding dependent observations

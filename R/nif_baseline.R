@@ -613,10 +613,14 @@ derive_cfb_analyte <- function(
     mutate(ANALYTE = analyte) |>
     mutate(CMT = cmt)
 
-  out <- bind_rows(obj, temp) |>
-    arrange_and_add_ref()
+  # out <- bind_rows(obj, temp) |>
+  #   arrange_and_add_ref()
 
-  nif(out)
+  # nif(out)
+
+  bind_rows(obj, temp) |>
+    arrange_and_add_ref() |>
+    restore_nif(obj)
 }
 
 
@@ -647,14 +651,15 @@ add_rtb <- function(obj, baseline_filter = "TIME <= 0",
   bl_expr <- validate_filter(baseline_filter, data = obj)
   obj |>
     ensure_analyte() |>
-    as.data.frame() |>
+    # as.data.frame() |>
     group_by(.data$ID, .data$ANALYTE) |>
     mutate(DVBL = summary_function(
       na.omit(.data$DV[rlang::eval_tidy(bl_expr, data = pick(everything()))])
     )) |>
     mutate(DVRTB = .data$DV / .data$DVBL) |>
     ungroup() |>
-    nif()
+    # nif()
+    restore_nif(obj)
 }
 
 

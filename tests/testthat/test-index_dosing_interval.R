@@ -15,7 +15,7 @@ test_that("index_dosing_interval numbers administrations and assigns observation
       1,    48,  100,     1,  NA,    1,    1,     "A",      "A",
       1,    49,    0,     0,   4,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -36,7 +36,7 @@ test_that("index_dosing_interval assigns predose observations to the first inter
       1,    24,  100,     1,  NA,    1,    1,     "A",      "A",
       1,    25,    0,     0,   2,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -57,7 +57,7 @@ test_that("index_dosing_interval indexes separately per ID", {
       2,     0,  100,     1,  NA,    1,    1,     "A",      "A",
       2,     1,    0,     0,   1,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -75,7 +75,7 @@ test_that("index_dosing_interval indexes separately per PARENT by default", {
       1,    48,  100,     1,  NA,    1,    1, "DRUG B",     "B",            2,
       1,    72,  100,     1,  NA,    1,    1, "DRUG A",     "A",            2
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj)
 
@@ -93,7 +93,7 @@ test_that("index_dosing_interval shares intervals across analytes of the same PA
       1,    25,    0,     0,    2,    2,    0,     "A",      "A",
       1,    25,    0,     0,    1,    3,    0,     "A",      "M"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -112,7 +112,7 @@ test_that("index_dosing_interval with parent restricts which administrations are
       1,     0,   50,     1,  NA,    1,    1,     "B",      "B",
       1,     1,    0,     0, 0.5,    3,    0,     "B",      "B"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj, parent = "A") |>
     as.data.frame()
@@ -134,7 +134,7 @@ test_that("index_dosing_interval accepts multiple parents", {
       1,     0,   25,     1,  NA,    5,    1,     "C",      "C",
       1,     1,    0,     0, 0.2,    6,    0,     "C",      "C"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj, parent = c("A", "B")) |>
     as.data.frame()
@@ -154,7 +154,7 @@ test_that("index_dosing_interval with all parents matches the default", {
       1,     0,   50,     1,  NA,    3,    1,     "B",      "B",
       1,     1,    0,     0, 0.5,    4,    0,     "B",      "B"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   default_di <- index_dosing_interval(nif_obj)$DI
   explicit_di <- index_dosing_interval(nif_obj, parent = c("A", "B"))$DI
@@ -169,7 +169,7 @@ test_that("index_dosing_interval leaves DI as NA for an unknown parent filter", 
       1,     0,  100,     1,  NA,    1,    1,     "A",      "A",
       1,     1,    0,     0,   1,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj, parent = "Z") |>
     as.data.frame()
@@ -186,7 +186,7 @@ test_that("index_dosing_interval leaves DI as NA when a subject has no administr
       2,     0,  100,     1,  NA,    1,    1,     "A",      "A",
       2,     1,    0,     0,   1,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -203,7 +203,7 @@ test_that("index_dosing_interval gives the same DI to simultaneous administratio
       1,     0,   50,     1,  NA,    1,    1,     "A",      "B",
       1,     1,    0,     0,   1,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -222,7 +222,7 @@ test_that("index_dosing_interval counts EVID == 1 with AMT == 0 as an interval",
       1,    24,  100,     1,  NA,    1,    1,     "A",      "A",
       1,    25,    0,     0,   2,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -239,7 +239,7 @@ test_that("index_dosing_interval is idempotent when re-applied", {
       1,    24,  100,     1,  NA,    1,    1,     "A",      "A",
       1,    25,    0,     0,   2,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   once <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -260,7 +260,7 @@ test_that("index_dosing_interval replaces an existing DI column", {
       1,    24,  100,     1,  NA,    1,    1,     "A",      "A",  99,
       1,    25,    0,     0,   2,    2,    0,     "A",      "A",  99
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -277,7 +277,7 @@ test_that("index_dosing_interval ensures PARENT when missing", {
       1,    24,  100,     1,  NA,    1,    1,      "A",
       1,    25,    0,     0,   2,    2,    0,      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -296,7 +296,7 @@ test_that("index_dosing_interval works without ANALYTE when PARENT is present", 
       1,    24,  100,     1,  NA,    1,    1,     "A",
       1,    25,    0,     0,   2,    2,    0,     "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -313,7 +313,7 @@ test_that("index_dosing_interval adds REF and returns rows in REF order", {
       1,     1,    0,     0,   1,    2,    0,     "A",      "A",
       1,    25,    0,     0,   2,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   result <- index_dosing_interval(nif_obj) |>
     as.data.frame()
@@ -331,7 +331,7 @@ test_that("index_dosing_interval validates inputs", {
       1,     0,  100,     1,  NA,    1,    1,     "A",      "A",
       1,     1,    0,     0,   1,    2,    0,     "A",      "A"
   ) |>
-    nif()
+    nif(silent = TRUE)
 
   expect_error(
     index_dosing_interval(data.frame(ID = 1)),
@@ -344,7 +344,7 @@ test_that("index_dosing_interval validates inputs", {
   )
 
   expect_error(
-    index_dosing_interval(nif()),
+    index_dosing_interval(nif(silent = TRUE)),
     "Cannot determine PARENT"
   )
 })

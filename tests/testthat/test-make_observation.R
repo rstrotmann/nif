@@ -299,7 +299,7 @@ test_that("make_observation sets MDV correctly for missing values", {
 # Tests for add_observation function
 test_that("add_observation basic functionality works", {
   # Create a base nif object with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE

@@ -5,7 +5,7 @@ test_that("ddt returns a data frame with required columns", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA,
     1,   1,     0,    2,    0,     10
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 
@@ -22,7 +22,7 @@ test_that("ddt includes only fields present in the nif object", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~STUDYID,
     1,   0,     100,  1,    1,     NA,  "STUDY1"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 
@@ -37,7 +37,7 @@ test_that("ddt returns unique field names", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~AGE, ~SEX,
     1,   0,     100,  1,    1,     NA,  30,   0,
     1,   1,     0,    2,    0,     10,  30,   0
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 
@@ -49,7 +49,7 @@ test_that("ddt preserves standard metadata for known fields", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~STUDYID, ~USUBJID, ~AGE, ~SEX,
     1,   0,     100,  1,    1,     NA,  "STUDY1", "SUBJ-001", 40,  1
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 
@@ -74,7 +74,7 @@ test_that("ddt derives CMT type and description from analytes and EVID", {
     1,   0,     100,  1,    1,     NA,  "DRUG",
     1,   1,     0,    1,    0,     10,  "DRUG",
     1,   2,     0,    2,    0,     5,   "MET"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   cmt_row <- result[result$name == "CMT", ]
@@ -94,7 +94,7 @@ test_that("ddt builds CMT description when ANALYTE is missing", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA,
     1,   1,     0,    2,    0,     10
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   cmt_row <- result[result$name == "CMT", ]
@@ -112,7 +112,7 @@ test_that("ddt does not error when CMT contains NA", {
     1,   0,     100,  1,    1,     NA,  "DRUG",
     1,   1,     0,    NA,   0,     10,  "MET",
     1,   2,     0,    1,    0,     5,   "DRUG"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   expect_no_error(result <- ddt(test_data, silent = TRUE))
 
@@ -127,14 +127,14 @@ test_that("ddt does not error when EVID contains NA", {
     1,   0,     100,  1,    1,     NA,  "DRUG",
     1,   1,     0,    2,    NA,    10,  "MET",
     1,   2,     0,    1,    0,     5,   "DRUG"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   expect_no_error(ddt(test_data, silent = TRUE))
 })
 
 
 test_that("ddt preserves standard CMT metadata for empty nif", {
-  result <- ddt(nif(), silent = TRUE)
+  result <- ddt(nif(silent = TRUE), silent = TRUE)
   cmt_row <- result[result$name == "CMT", ]
 
   expect_equal(nrow(cmt_row), 1)
@@ -144,15 +144,15 @@ test_that("ddt preserves standard CMT metadata for empty nif", {
 
 
 test_that("ddt handles empty nif object", {
-  result <- ddt(nif(), silent = TRUE)
+  result <- ddt(nif(silent = TRUE), silent = TRUE)
 
   expect_s3_class(result, "data.frame")
   expect_named(
     result,
     c("name", "definition", "type", "description", "unit", "source")
   )
-  expect_true(all(result$name %in% names(nif())))
-  expect_equal(nrow(result), length(names(nif())))
+  expect_true(all(result$name %in% names(nif(silent = TRUE))))
+  expect_equal(nrow(result), length(names(nif(silent = TRUE))))
 })
 
 
@@ -162,7 +162,7 @@ test_that("ddt annotates numeric RACE with coded labels", {
     1,   0,     100,  1,    1,     NA,  0,
     2,   0,     100,  1,    1,     NA,  1,
     3,   0,     100,  1,    1,     NA,  2
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   race_row <- result[result$name == "RACE", ]
@@ -182,7 +182,7 @@ test_that("ddt does not annotate integer RACE codes", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~RACE,
     1,   0,     100,  1,    1,     NA,  0L,
     2,   0,     100,  1,    1,     NA,  1L
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   expect_true(is.integer(test_data$RACE))
 
@@ -198,7 +198,7 @@ test_that("ddt handles unmapped numeric RACE codes", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~RACE,
     1,   0,     100,  1,    1,     NA,  99,
     2,   0,     100,  1,    1,     NA,  0
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   race_row <- result[result$name == "RACE", ]
@@ -220,7 +220,7 @@ test_that("ddt annotates all mapped numeric RACE codes", {
     6,   0,     100,  1,    1,     NA,  5,
     7,   0,     100,  1,    1,     NA,  6,
     8,   0,     100,  1,    1,     NA,  7
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   race_row <- result[result$name == "RACE", ]
@@ -248,7 +248,7 @@ test_that("ddt leaves character RACE on standard metadata", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~RACE,
     1,   0,     100,  1,    1,     NA,  "WHITE",
     2,   0,     100,  1,    1,     NA,  "ASIAN"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   race_row <- result[result$name == "RACE", ]
@@ -265,7 +265,7 @@ test_that("ddt adds further fields with detected type and empty metadata", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~CUSTOM_FIELD,
     1,   0,     100,  1,    1,     NA,  "value1",
     1,   1,     0,    2,    0,     10,  "value2"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   custom_row <- result[result$name == "CUSTOM_FIELD", ]
@@ -284,7 +284,7 @@ test_that("ddt detects types for multiple further fields", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~FIELD1, ~FIELD2, ~FIELD3,
     1,   0,     100,  1,    1,     NA,  10,      "A",     TRUE,
     1,   1,     0,    2,    0,     10,  20,      "B",     FALSE
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 
@@ -299,7 +299,7 @@ test_that("ddt reports first class for multi-class further fields", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~CUSTOM_DTC,
     1,   0,     100,  1,    1,     NA,  as.POSIXct("2024-01-01 08:00:00"),
     1,   1,     0,    2,    0,     10,  as.POSIXct("2024-01-01 12:00:00")
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   custom_row <- result[result$name == "CUSTOM_DTC", ]
@@ -314,7 +314,7 @@ test_that("ddt keeps standard type for known datetime field DTC", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~DTC,
     1,   0,     100,  1,    1,     NA,  as.POSIXct("2024-01-01 08:00:00"),
     1,   1,     0,    2,    0,     10,  as.POSIXct("2024-01-01 12:00:00")
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
   dtc_row <- result[result$name == "DTC", ]
@@ -329,7 +329,7 @@ test_that("ddt warns about further fields when silent is FALSE", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~CUSTOM_FIELD,
     1,   0,     100,  1,    1,     NA,  "value1"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   local_nif_option(silent = FALSE)
 
@@ -344,7 +344,7 @@ test_that("ddt lists further field names in the completion message", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~FIELD_A, ~FIELD_B,
     1,   0,     100,  1,    1,     NA,  1,        "x"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   local_nif_option(silent = FALSE)
 
@@ -363,7 +363,7 @@ test_that("ddt does not warn when there are no further fields", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   local_nif_option(silent = FALSE)
 
@@ -375,7 +375,7 @@ test_that("ddt suppresses completion message when silent is TRUE", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~CUSTOM_FIELD,
     1,   0,     100,  1,    1,     NA,  "value1"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   expect_no_message(ddt(test_data, silent = TRUE))
 })
@@ -385,7 +385,7 @@ test_that("ddt uses nif_option silent setting when silent is NULL", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~CUSTOM_FIELD,
     1,   0,     100,  1,    1,     NA,  "value1"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   local_nif_option(silent = TRUE)
   expect_no_message(ddt(test_data, silent = NULL))
@@ -419,7 +419,7 @@ test_that("ddt validates silent argument", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
     1,   0,     100,  1,    1,     NA
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   expect_error(
     ddt(test_data, silent = "yes"),
@@ -433,7 +433,7 @@ test_that("ddt includes standard baseline and derived fields when present", {
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~HEIGHT, ~WEIGHT, ~BMI, ~DOSE, ~DL,
     1,   0,     100,  1,    1,     NA,  170,     70,      24.2, 100,   100,
     1,   1,     0,    2,    0,     10,  170,     70,      24.2, 100,   100
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 
@@ -449,7 +449,7 @@ test_that("ddt includes renal baseline fields when present", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV, ~BL_CREAT, ~BL_CRCL, ~BL_RENAL,
     1,   0,     100,  1,    1,     NA,  80,        90,       "normal"
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 
@@ -469,7 +469,7 @@ test_that("ddt works on a complex multi-field nif object", {
     1,   1,     0,    2,    0,     10,  "STUDY1", "SUBJ-001", "METABOLITE", 0,     30,   0,
     2,   0,     150,  1,    1,     NA,  "STUDY1", "SUBJ-002", "DRUG",       1,     25,   1,
     2,   1,     0,    2,    0,     15,  "STUDY1", "SUBJ-002", "METABOLITE", 1,     25,   1
-  ) |> nif()
+  ) |> nif(silent = TRUE)
 
   result <- ddt(test_data, silent = TRUE)
 

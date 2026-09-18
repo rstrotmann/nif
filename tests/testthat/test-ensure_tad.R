@@ -8,7 +8,7 @@ test_that("ensure_tad handles missing input columns", {
     2,   1,     0,     2,    "DRUG",  30,  0,
     2,   2,     0,     2,    "DRUG",  40,  0
   ) %>%
-    nif() |>
+    nif(silent = TRUE) |>
     select(-TIME)
 
   expect_error(
@@ -29,7 +29,7 @@ test_that("ensure_tad works with basic input", {
     2,   1,     0,     2,    "DRUG",  30,  0,
     2,   2,     0,     2,    "DRUG",  40,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 
@@ -50,7 +50,7 @@ test_that("ensure_tad handles multiple administrations", {
     1,   3,     0,     2,    "DRUG",  20,  0,
     1,   4,     0,     2,    "DRUG",  30,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 
@@ -67,7 +67,7 @@ test_that("ensure_tad handles observations before first dose", {
     1,   1,     0,     2,    "DRUG",  10,  0,
     1,   2,     0,     2,    "DRUG",  20,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 
@@ -86,7 +86,7 @@ test_that("ensure_tad handles multiple parent compounds", {
     1,   1,     0,     4,    "DRUG2", 30,  0,
     1,   2,     0,     4,    "DRUG2", 40,  0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 
@@ -99,7 +99,7 @@ test_that("ensure_tad handles empty data frame", {
   test_data <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~PARENT, ~DV, ~AMT
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
     result <- ensure_tad(test_data)
 
@@ -115,7 +115,7 @@ test_that("ensure_tad preserves original data", {
     1,   1,     0,     2,    "DRUG",  10,   "B",    0,
     1,   2,     0,     2,    "DRUG",  20,   "C",    0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 
@@ -132,7 +132,7 @@ test_that("ensure_tad handles NA values in TIME", {
     1,   NA,    0,     2,    "DRUG",  10,   0,
     1,   2,     0,     2,    "DRUG",  20,   0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 
@@ -147,7 +147,7 @@ test_that("ensure_tad returns a nif object", {
     1,   0,     1,     1,    "DRUG",  NA,   100,
     1,   1,     0,     2,    "DRUG",  10,   0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 
@@ -171,7 +171,7 @@ test_that("ensure_tad handles existing TAD column", {
     1,   0,     1,     1,    "DRUG",  NA,   0,    100,
     1,   1,     0,     2,    "DRUG",  10,   1,    0
   ) %>%
-    nif()
+    nif(silent = TRUE)
 
   result <- ensure_tad(test_data)
 

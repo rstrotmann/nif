@@ -44,7 +44,7 @@ make_test_sdtm1 <- function() {
 
 # test_that("add_observation warns about duplicate compartment", {
 #   # Create a base nif object with administration data where CMT=1
-#   base_nif <- nif() %>%
+#   base_nif <- nif(silent = TRUE) %>%
 #     add_administration(
 #       examplinib_sad, "EXAMPLINIB",
 #       analyte = "RS2023", silent = TRUE
@@ -61,7 +61,7 @@ make_test_sdtm1 <- function() {
 
 test_that("add_observation auto-assigns compartment if not specified", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -78,7 +78,7 @@ test_that("add_observation auto-assigns compartment if not specified", {
 
 test_that("add_observation auto-assigns parent if not specified", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -98,7 +98,7 @@ test_that("add_observation auto-assigns parent if not specified", {
 
 test_that("add_observation properly uses observation_filter", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -117,7 +117,7 @@ test_that("add_observation properly uses observation_filter", {
 
 test_that("add_observation works with factor parameter", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -149,7 +149,7 @@ test_that("add_observation works with factor parameter", {
 
 test_that("add_observation handles metabolites correctly", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -175,7 +175,7 @@ test_that("add_observation handles metabolites correctly", {
 
 test_that("add_observation works with custom ntime_lookup", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -201,7 +201,7 @@ test_that("add_observation works with custom ntime_lookup", {
 
 test_that("add_observation handles debug mode correctly", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023",
@@ -229,7 +229,7 @@ test_that("add_observation handles debug mode correctly", {
 test_that("add_observation drops SRC_TESTCD when debug is disabled", {
   local_nif_option(debug = FALSE)
 
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -247,7 +247,7 @@ test_that("add_observation drops SRC_TESTCD when debug is disabled", {
 
 test_that("add_observation updates columns correctly", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -272,7 +272,7 @@ test_that("add_observation updates columns correctly", {
 
 test_that("add_observation handles include_day_in_ntime parameter", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -315,7 +315,7 @@ test_that("add_observation handles missing NTIME gracefully", {
   }
 
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(sdtm_test, "A", analyte = "A", silent = TRUE)
 
   # Should run without error but show a message about NTIME
@@ -353,7 +353,7 @@ test_that("add_observation handles DV field properly", {
   sdtm_test <- make_test_sdtm1()
 
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(sdtm_test, "A", analyte = "A", silent = TRUE)
 
   # Custom DV field
@@ -385,7 +385,7 @@ test_that("add_observation handles subject filtering", {
   sdtm_test <- make_test_sdtm1()
 
   # Create a base nif with administration data
-  base_nif <- nif() |>
+  base_nif <- nif(silent = TRUE) |>
     add_administration(sdtm_test, "A", analyte = "A", silent = TRUE)
 
   # Filter to include only subject "1"
@@ -410,7 +410,7 @@ test_that("add_observation handles subject filtering", {
 
 test_that("add_observation can handle non-existent domain gracefully", {
   # Create a base nif with administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -429,7 +429,7 @@ test_that("add_observation can handle non-existent domain gracefully", {
 
 test_that("add_observation handles observations without matching administrations", {
   # Create a base nif with administration data for a different analyte
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(
       examplinib_sad, "EXAMPLINIB",
       analyte = "RS2023", silent = TRUE
@@ -477,7 +477,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
   sdtm_obj$pc <- pc
 
   # Create administration data
-  base_nif <- nif() %>%
+  base_nif <- nif(silent = TRUE) %>%
     add_administration(sdtm_obj, "A", analyte = "A", silent = TRUE)
 
   # Test with na.rm = TRUE (default)
@@ -514,7 +514,7 @@ test_that("add_observation handles na.rm parameter when resolving duplicates", {
 
 
 add_obs_base_nif <- function(sdtm = make_test_sdtm1()) {
-  nif() |>
+  nif(silent = TRUE) |>
     add_administration(sdtm, "A", analyte = "A", silent = TRUE)
 }
 
@@ -533,7 +533,7 @@ duplicate_obs_sdtm <- function() {
 
 test_that("add_observation requires at least one administration", {
   sdtm <- make_test_sdtm1()
-  empty_nif <- nif()
+  empty_nif <- nif(silent = TRUE)
   empty_nif$PARENT <- character(0)
   empty_nif$USUBJID <- character(0)
 

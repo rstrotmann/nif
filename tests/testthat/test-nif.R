@@ -1,5 +1,5 @@
 test_that("nif() creates empty nif object with correct structure", {
-  result <- nif()
+  result <- nif(silent = TRUE)
 
   # Check dimensions
   expect_equal(dim(result), c(0, 7))

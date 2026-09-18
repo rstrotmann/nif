@@ -208,7 +208,7 @@ new_nif <- function(
 #' @return A nif object.
 #' @export
 #' @examples
-#' nif()
+#' nif(silent = TRUE)
 nif <- function(
     obj = NULL,
     ...,
@@ -659,7 +659,7 @@ doses.nif <- function(obj) {
 #' dose_levels(examplinib_fe_nif, group = "SEX")
 #' dose_levels(examplinib_fe_nif, group = c("SEX", "FASTED"))
 #' dose_levels(examplinib_sad_min_nif)
-#' dose_levels(nif())
+#' dose_levels(nif(silent = TRUE))
 dose_levels <- function(obj, cmt = 1, group = NULL) {
   # input validation
   validate_nif_argument(obj)
