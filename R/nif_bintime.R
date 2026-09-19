@@ -77,7 +77,6 @@ add_bintime <- function(
     mutate(BIN_RIGHT = bin_par[.data$.BINTIME_INDEX, "right"]) |>
     mutate(BINTIME = bin_par[.data$.BINTIME_INDEX, "label"]) |>
     select(-c(".BINTIME_INDEX", "active_time")) |>
-    # as_nif()
     restore_nif(obj)
 }
 
@@ -148,7 +147,6 @@ add_bintime1 <- function(
           BIN_RIGHT = ifelse(is.finite(.data[[time]]), t0, NA_real_),
           BINTIME   = ifelse(is.finite(.data[[time]]), round(t0), NA_real_)
         ) |>
-        # as_nif()
         restore_nif(obj)
     )
   }
@@ -194,7 +192,6 @@ add_bintime1 <- function(
     mutate(.BINTIME_INDEX = bin_index) |>
     left_join(bin_par, by = ".BINTIME_INDEX") |>
     select(-".BINTIME_INDEX") |>
-    # as_nif()
     restore_nif(obj)
 }
 
@@ -286,6 +283,8 @@ bintime_plot <- function(
   if (!time %in% names(obj))
     stop(paste0("Time field ", time, " not found in data set!"))
 
+  # business logic
+
   # time limits
   if (is.null(max_time)) {
     max_time <- max(obj[[time]], na.rm = TRUE)
@@ -306,28 +305,28 @@ bintime_plot <- function(
       title <- paste0(title, " change from baseline")
   }
 
-  temp <- obj |>
+  # get observations for analyte
+  observations <- obj |>
+    ensure_dose() |>
     filter(.data$ANALYTE == analyte) |>
     filter(.data$EVID == 0) |>
-    ensure_dose() |>
-    filter(!is.na(.data$DV)) |>
-    as.data.frame()
+    filter(!is.na(.data$DV))
 
   # Create COLOR column
   if (length(color) != 0) {
-    temp <- tidyr::unite(
-      temp, "COLOR", all_of(!!color), sep = "-", remove = FALSE)
+    observations <- tidyr::unite(
+      observations, "COLOR", all_of(!!color), sep = "-", remove = FALSE)
   } else {
-    temp <- mutate(temp, COLOR = "all")
+    observations <- mutate(observations, COLOR = "all")
   }
 
   # Create FACET column
   if (!is.null(facet)) {
     if (length(facet) == 1) {
-      temp <- mutate(temp, FACET = .data[[facet]])
+      observations <- mutate(observations, FACET = .data[[facet]])
     } else {
-      temp <- tidyr::unite(
-        temp, "FACET", all_of(facet), sep = "-", remove = FALSE)
+      observations <- tidyr::unite(
+        observations, "FACET", all_of(facet), sep = "-", remove = FALSE)
     }
   }
 
@@ -340,12 +339,10 @@ bintime_plot <- function(
   if (length(bin_group_vars) == 0)
     bin_group_vars <- NULL
 
-  temp <- temp |>
-    as_nif() |>
-    # add_bintime(method = method, time = time, group = bin_group_vars) |>
+  observations <- observations |>
+    restore_nif(obj) |>
     bintime_function(method = method, time = time, group = bin_group_vars) |>
-    filter(!is.na(.data$BINTIME)) |>
-    as.data.frame()
+    filter(!is.na(.data$BINTIME))
 
   group_vars_individual <- c("ID", "ANALYTE", "BINTIME", "COLOR")
   group_vars_summary <- c("BINTIME", "ANALYTE", "COLOR")
@@ -354,7 +351,7 @@ bintime_plot <- function(
     group_vars_summary <- c(group_vars_summary, "FACET")
   }
 
-  summary_data <- temp |>
+  summary_data <- observations |>
     reframe(
       .data$BINTIME,
       .data$ANALYTE,
@@ -393,13 +390,13 @@ bintime_plot <- function(
       out <- out +
         geom_point(
           aes(x = .data[[time]], y = .data$DV, color = .data$COLOR),
-          data = temp, alpha = alpha, size = size
+          data = observations, alpha = alpha, size = size
         )
     } else {
       out <- out +
         geom_point(
           aes(x = .data[[time]], y = .data$DV),
-          data = temp,
+          data = observations,
           alpha = alpha,
           size = size,
           color = "black"

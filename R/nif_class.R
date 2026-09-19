@@ -317,22 +317,6 @@ dplyr_reconstruct.nif <- function(data, template) {
 }
 
 
-#' Convert data frame to nif object
-#'
-#' @param obj A data frame.
-#'
-#' @return A nif object.
-#' @noRd
-as_nif <- function(obj) {
-  if (!inherits(obj, "data.frame")) {
-    stop("obj must be a data frame!")
-  }
-
-  out <- nif(obj)
-  order_nif_columns(out)
-}
-
-
 #' Establish standard order of nif object columns
 #'
 #' @param obj A data frame.
