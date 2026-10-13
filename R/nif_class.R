@@ -192,15 +192,21 @@ new_nif <- function(
 #' is missing but USUBJID is available, ID will be derived.
 #'
 #' If the input is a sdtm object, a pharmacokinetic nif object is automatically
-#' generated. Analyte mapping formulae can be supplied as the ... argument. For
+#' generated. Analyte mapping formulas can be supplied as the ... argument. For
 #' details, see `nif_auto()`.
 #'
-#' @param obj A data frame containing the actual NIF data or a sdtm object.
+#' If a new nif object is created (no `obj`, a data frame, or a sdtm object), it
+#' stores `imputation_rules` (default [nif::imputation_rules_standard()]). If
+#' `obj` is already a nif, that stored set is kept: `imputation_rules` is
+#' ignored. The wrap still re-sorts rows and refreshes `REF`.
+#'
+#' @param obj A data frame, a sdtm object, or an existing nif object.
 #' @param silent suppress messages.
 #' @param imputation_rules Default imputation rule set for
 #'   [nif::add_administration()] and [nif::add_observation()] when those
 #'   functions are called with `imputation = NULL`. A list, or the name of a
-#'   package rule set as character (e.g. `"imputation_rules_standard"`).
+#'   package rule set as character (e.g. `"imputation_rules_standard"`). Used
+#'   only when creating a new nif. Ignored if `obj` is already a nif object.
 #' @param ... Further arguments.
 #'
 #' @seealso [nif::nif_auto()]

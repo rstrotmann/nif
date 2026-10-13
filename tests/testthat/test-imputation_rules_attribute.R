@@ -71,6 +71,23 @@ test_that("nif() wrapping a nif object keeps imputation_rules", {
 })
 
 
+test_that("nif() wrapping a nif object ignores imputation_rules", {
+  from_df <- nif(
+    tibble::tribble(
+      ~ID, ~TIME, ~AMT, ~CMT, ~EVID, ~DV,
+      1,   0,     100,  1,    1,     NA_real_
+    ),
+    imputation_rules = imputation_rules_void
+  )
+
+  wrapped <- nif(from_df, imputation_rules = imputation_rules_minimal)
+  expect_identical(
+    attr(wrapped, "imputation_rules"),
+    imputation_rules_void
+  )
+})
+
+
 test_that("dplyr verbs keep imputation_rules via reconstruct", {
   obj <- nif(imputation_rules = imputation_rules_void, silent = TRUE)
   out <- dplyr::filter(obj, ID > 0)

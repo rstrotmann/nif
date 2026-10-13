@@ -12,14 +12,15 @@ nif(
 )
 }
 \arguments{
-\item{obj}{A data frame containing the actual NIF data or a sdtm object.}
+\item{obj}{A data frame, a sdtm object, or an existing nif object.}
 
 \item{...}{Further arguments.}
 
 \item{imputation_rules}{Default imputation rule set for
 \code{\link[=add_administration]{add_administration()}} and \code{\link[=add_observation]{add_observation()}} when those
 functions are called with \code{imputation = NULL}. A list, or the name of a
-package rule set as character (e.g. \code{"imputation_rules_standard"}).}
+package rule set as character (e.g. \code{"imputation_rules_standard"}). Used
+only when creating a new nif. Ignored if \code{obj} is already a nif object.}
 
 \item{silent}{suppress messages.}
 }
@@ -37,8 +38,13 @@ object. Minimally expected fields are ID, TIME, AMT, CMT, EVID and DV. If ID
 is missing but USUBJID is available, ID will be derived.
 
 If the input is a sdtm object, a pharmacokinetic nif object is automatically
-generated. Analyte mapping formulae can be supplied as the ... argument. For
+generated. Analyte mapping formulas can be supplied as the ... argument. For
 details, see \code{nif_auto()}.
+
+If a new nif object is created (no \code{obj}, a data frame, or a sdtm object), it
+stores \code{imputation_rules} (default \code{\link[=imputation_rules_standard]{imputation_rules_standard()}}). If
+\code{obj} is already a nif, that stored set is kept: \code{imputation_rules} is
+ignored. The wrap still re-sorts rows and refreshes \code{REF}.
 }
 \examples{
 nif(silent = TRUE)
