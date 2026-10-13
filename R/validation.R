@@ -437,20 +437,73 @@ validate_analyte <- function(
 #'
 #' @returns Nothing or stop.
 #' @noRd
+# validate_imputation_set <- function(obj) {
+#   if (!is.list(obj))
+#     stop("Imputation rule set must be a list!")
+#
+#   # expected_fields <- c("admin_pre_expansion", "admin_post_expansion",
+#   #                      "obs_raw", "obs_final")
+#   # missing_fields <- setdiff(expected_fields, names(obj))
+#   # if (length(missing_fields) > 0) {
+#   #   stop(paste0(
+#   #     "Missing ", plural("field", length(missing_fields) > 1),
+#   #     " in imputation rule set: ", nice_enumeration(missing_fields)))
+#   # }
+# }
+
 validate_imputation_set <- function(obj) {
-  if (!is.list(obj))
+  if (!is.list(obj) || is.data.frame(obj))
     stop("Imputation rule set must be a list!")
 
-  # expected_fields <- c("admin_pre_expansion", "admin_post_expansion",
-  #                      "obs_raw", "obs_final")
-  # missing_fields <- setdiff(expected_fields, names(obj))
-  # if (length(missing_fields) > 0) {
-  #   stop(paste0(
-  #     "Missing ", plural("field", length(missing_fields) > 1),
-  #     " in imputation rule set: ", nice_enumeration(missing_fields)))
-  # }
-}
+  if (length(obj) == 0)
+    return(invisible(NULL))
 
+  if (is.null(names(obj)) || any(names(obj) == ""))
+    stop("All elements of an imputation rule set must be named!")
+
+  # number of positional arguments
+  n_positional <- c(
+    admin_pre_expansion = 6,
+    admin_post_expansion = 6,
+    obs_raw = 1,
+    obs_final = 1
+  )
+
+  unknown <- setdiff(names(obj), names(n_positional))
+  if (length(unknown) > 0)
+    stop(paste0(
+      "Unknown ", plural("slot", length(unknown) > 1),
+      " in imputation rule set: ", nice_enumeration(unknown),
+      ". Allowed: ", nice_enumeration(names(n_positional))
+    ))
+
+  slot_problem <- function(name) {
+    f <- obj[[name]]
+    if (!is.function(f))
+      return(paste0("'", name, "' must be a function"))
+    args <- names(formals(f))
+    if ("..." %in% args)
+      return(NA_character_)
+    if (!"silent" %in% args ||
+        length(setdiff(args, "silent")) < n_positional[[name]])
+      return(paste0(
+        "'", name, "' must accept ", n_positional[[name]],
+        " positional ", plural("argument", n_positional[[name]] > 1),
+        " and the 'silent' argument"
+      ))
+    NA_character_
+  }
+
+  problems <- vapply(names(obj), slot_problem, character(1))
+  problems <- problems[!is.na(problems)]
+  if (length(problems) > 0)
+    stop(paste0(
+      "Invalid imputation rule set: ",
+      paste(problems, collapse = "; "), "!"
+    ))
+
+  invisible(NULL)
+}
 
 
 #' Recursively validate an expression AST node

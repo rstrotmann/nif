@@ -1417,12 +1417,12 @@ test_that("make_observation sets SRC_SEQ to NA when domain SEQ field is missing"
 test_that("make_observation applies obs_raw imputation when present", {
   sdtm <- make_test_sdtm1()
   imputation <- list(
-    admin_pre_expansion = identity,
-    admin_post_expansion = identity,
+    admin_pre_expansion = function(ex, ...) ex,
+    admin_post_expansion = function(ex, ...) ex,
     obs_raw = function(obs, silent = NULL) {
       dplyr::mutate(obs, IMPUTATION = "obs raw applied")
     },
-    obs_final = identity
+    obs_final = function(obs, silent = NULL) obs
   )
 
   result <- make_observation(
