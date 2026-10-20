@@ -1,0 +1,94 @@
+---
+title: "imputations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{imputations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup echo = FALSE}
+library(nif)
+library(DiagrammeR)
+```
+
+# Background
+
+# Imputations
+
+## Administrations
+
+```{r echo=FALSE}
+grViz("
+digraph surveillance_diagram {
+
+  graph [
+    layout = dot,
+    rankdir = TB,
+    fontsize = 10
+  ]
+  
+  node [
+    shape = rectangle,
+    #fixedsize = true,
+    width = 2
+  ]
+  
+  EX [label = \"EX domain\"]
+  admin_pre_expansion [shape = none, label = \"admin_pre_expansion()\"]
+  expand [label = \"treatment episode\nexpansion\"]
+  admin_post_expansion [shape = none, label = \"admin_post_expansion()\"]
+  carry_forward [label = \"carry forward\nadministration times\"]
+
+  EX -> admin_pre_expansion
+  admin_pre_expansion  -> expand
+  expand -> admin_post_expansion
+  admin_post_expansion -> carry_forward
+}
+")
+```
+
+## Observations
+
+```{r echo=FALSE}
+grViz("
+digraph surveillance_diagram {
+
+  graph [
+    layout = dot,
+    rankdir = TB,
+    fontsize = 10
+  ]
+  
+  node [
+    shape = rectangle,
+    #fixedsize = true,
+    width = 2
+  ]
+  
+  domain [label = \"XX domain\"]
+  coding_table [label = \"apply coding table\n(if applicable)\"]
+  obs_filter [label = \"apply observation filter\n(if applicable)\"]
+  cat_filter [label = \"apply cat/scat filters\n(if applicable)\"]
+  obs_raw [shape = none, label = \"obs_raw()\"]
+  merge [label = \"merge observations\ninto nif object\"]
+  times [label = \"update TIME, TAD,\nTAFD fields\"]
+  obs_final [shape = none, label = \"obs_final()\"]
+  
+  domain -> coding_table
+  coding_table -> obs_filter
+  obs_filter -> cat_filter
+  cat_filter -> obs_raw
+  obs_raw -> merge
+  merge -> times
+  times -> obs_final
+}
+")
+```
