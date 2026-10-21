@@ -11,7 +11,8 @@
 #' @param ... Further parameters.
 #'
 #' @returns A ggplot object.
-dtc_plot <- function(
+#' @export
+time_chart <- function(
     x,
     id = NULL,
     analyte = NULL,
