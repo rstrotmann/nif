@@ -45,6 +45,8 @@ make_ntime_from_tpt <- function(
 
   # Create a function to process each TPT value
   extract_ntime <- function(x) {
+    x <- toupper(x)
+
     if (is.na(x)) {
       return(NA)
     }

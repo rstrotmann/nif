@@ -59,4 +59,4 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/testthat/parallel: true
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1

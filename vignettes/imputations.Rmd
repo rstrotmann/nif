@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup echo = FALSE}
+```{r setup, echo = FALSE}
 library(nif)
 library(DiagrammeR)
 ```
@@ -24,6 +24,47 @@ library(DiagrammeR)
 # Imputations
 
 ## Administrations
+
+For clinical studies that include multiple-dose treatment administrations,
+series of administrations are often collated to single data records in the EX
+domain. Such entries contain a start day and time (EXSTDTC) and an end day and
+time (EXENDTC), and it is implicitly assumed that within treatment episodes, the 
+drug dose, regimen, dosing frequency and time of administration remains
+the same.
+
+To make downstream analysis easier, the `add_admimnistration()` function
+converts treatment administration episodes to individual administration events.
+During this conversion, it is the baseline assumption that the administration
+times within an episode are constant for all administration days.
+
+Real-life EX data are often not unambiguous or have missing elements. Typical
+examples include:
+
+* missing EXENDTC in the last administration episode for a subject, e.g., for
+interim data from clinical studies that are still ongoing
+
+* missing EXENDTC for other episodes, e.g., when patient records are incomplete
+
+* missing time of the day in EXSTDTC or EXENDTC
+
+* EXSTDTC that conflict with the records of PCRFTDTC (the administration
+reference time point for PK observations) falling into the respective episode
+
+* in some cases, both the time of the day in EXSTDTC or EXENDTC within the EX
+domain, as well as in PCRFTDTC may be missing, providing no information
+on the actual administration time point apart from the nominal sampling time 
+recorded in PCTPT or TPTPTNUM
+
+In such cases, the data analyst must make certain assumptions regarding the
+administration times, i.e., impute missing data. This is often more of an art
+than science. There may be certain preferences stipulated by the analysis plan
+that can vary between studies.
+
+While some conflicts cannot be automatically resolved and need manual
+imputations by the data programmer, the nif package provides methods to deal
+with time imputations in the generation of administration events.
+
+
 
 ```{r echo=FALSE}
 grViz("

@@ -175,32 +175,44 @@ import(shiny, except = c(dataTableOutput, renderDataTable))
 import(stringr)
 import(tidyr)
 import(tidyselect)
-importFrom(PKNCA,geocv)
-importFrom(PKNCA,geomean)
+importFrom(PKNCA,
+  geocv,
+  geomean
+)
 importFrom(classInt,classIntervals)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,distinct)
+importFrom(dplyr,
+  bind_rows,
+  distinct
+)
 importFrom(gdata,write.fwf)
 importFrom(ggplot2,annotation_custom)
 importFrom(ggrepel,geom_text_repel)
-importFrom(grid,gpar)
-importFrom(grid,textGrob)
+importFrom(grid,
+  gpar,
+  textGrob
+)
 importFrom(lifecycle,deprecated)
-importFrom(rlang,f_lhs)
-importFrom(rlang,f_rhs)
-importFrom(rlang,is_formula)
-importFrom(shinyjs,disable)
-importFrom(shinyjs,enable)
-importFrom(shinyjs,useShinyjs)
-importFrom(stats,IQR)
-importFrom(stats,as.formula)
-importFrom(stats,lm)
-importFrom(stats,median)
-importFrom(stats,na.omit)
-importFrom(stats,predict.lm)
-importFrom(stats,qt)
-importFrom(stats,sd)
-importFrom(stats,setNames)
-importFrom(stats,weighted.mean)
+importFrom(rlang,
+  f_lhs,
+  f_rhs,
+  is_formula
+)
+importFrom(shinyjs,
+  disable,
+  enable,
+  useShinyjs
+)
+importFrom(stats,
+  IQR,
+  as.formula,
+  lm,
+  median,
+  na.omit,
+  predict.lm,
+  qt,
+  sd,
+  setNames,
+  weighted.mean
+)
 importFrom(stringr,str_length)
 importFrom(utils,packageVersion)
