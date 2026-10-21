@@ -1,4 +1,4 @@
-#' Nif timing plot
+#' Nif event timing chart
 #'
 #' Plot absolute times of administrations and observations.
 #'
@@ -12,7 +12,7 @@
 #'
 #' @returns A ggplot object.
 #' @export
-time_chart <- function(
+timing_chart <- function(
     x,
     id = NULL,
     analyte = NULL,
